@@ -1,0 +1,311 @@
+All invdividual profiles are private... If no individual logged on, redirect to login/register page.
+
+
+
+------------------------
+if(session.getAttribute("userId") == null OR if no USERID Period) {
+			return "redirect:/";
+		}
+
+^ When no users in Database... Also create custom ERROR page nomatter
+what link joined
+---------------------
+
+
+
+
+Arells: Make Money With Your Life Story<Slogan
+
+
+#Security# Signs Out Automatically After 5-10 minutes of no action
+#Message# Hi *name*, you've been inactive for 15 minutes so we've signed you out for your financial security.
+#2FA for signing in/purchasing/refunding(phone number automatic)
+
+
+Make Arells title (and some words thick)
+**
+
+
+
+
+
+
+----- Sign In
+1. Username 
+2. Password (forgot password? e-mail/phone#)
+[Wrong U/name/pWord Combo]
+
+
+
+------Create Account
+e-mail
+Username (arells.com/username (private (log in/ Sign up to continue)))
+Password
+**BY Continuing, you gree to adgere to Arell's Rules/Regulations and 
+Terms/Conditions Agreements**
+[Continue]
+
+If they X or close screen after this, bring them back here or ask to Log-Out?
+
+-----(Auto onboarding process *Research Proof of Humanity/Identity System (for US users first)* (SSN, Etc)) One Person per account!!
+-----[Review Robinhood On-boarding process]
+-*** If Already Validated/ (Cannot Create More than 1 Storytelling Account).***
+-----2 Factor, etc
+
+****(If already verified (per phone/e-mail take straight to "Create Account or whichever page they were on last")
+
+If they X or close screen after this, bring them back here or ask to Log-Out?
+----- Identity, Verified!  
+  (Create Profile)
+
+
+If they X or close screen after this, bring them back here or ask to Log-Out?
+----- My Novestic Wallet
+Address: (arells.com/username))
+
+(Create Key) <error if no username in Address
+))Create Key Recovery Method (like password recovery) while purchasing/withdrawing((
+
+
+-----(logo) Key Created! If they X or close screen after this, bring them back here or ask to Log-Out?
+    **For Your Own Financial Security** 
+(don’t save as password type in code backend) 
+         [you are your own bank] 
+   Copy and save this key somewhere safe. 
+   You will need it to access your money. 
+
+Tap here for more info: 
+For your own financial security, you are your own bank which means we don’t save your key in our database. 
+Once our system generates it, we cannot recover it so it is highly recommended you copy 
+and paste it somewhere secure, because if you loose it, you will loose access to the money you generate with 
+this key and will have to generate a brand new key with a new wallet, thus your old wallet will be shut down forever. 
+(In generate new key/wallet ask them twice (your funds will revert back to A0 as new wallet will be generated (show them more info again)). 
+We value the financial security of everyone who uses our platform to generate wealth for themselves and their family/friends, 
+thus financial security is our number one priority. 
+((Wallet is only created after user clicks next(generates new key after each refresh[teat this section 4-5 times])))———-Enter your Key to Buy, send, refund
+
+(Continue)
+
+
+
+
+If they X or close screen after this, bring them back here or ask to Log-Out?
+----- Upload Picture
+Include real name here
+Choose Color (entire color scheme changes)
+
+(Continue)
+
+
+
+
+
+>>>>>>>Main PAGE
+
+
+
+
+>POP UP
+LOG IN MESSAGE: "Welcome to Arells, we value your life story."
+
+(ONLY AFTER FIRST LOG IN DOES THIS MESSAGE OCCUR: Take Tour or Skip Tour 
+*WORK ON WHAT TOUR WILL ENTAIL INCLUDING PLACE WHERE YOU CAN SHOP, etc (i.e. walkthrough pages)*)
+
+“Financial Security Guideline":
+
+At Arells, we’ve created extremely secure safeguards to protect your funds from theft from our 2fa login and KYC/AML sign-up process, to our *link*insurance policy*. Nevertheless, theft is still possible so in order to increase the security of your funds, we’ve provided you with some extremely important guidelines in order to prevent such a scenario:
+
+1. Always check the domain from which you receive emails/text-messages from us: The more financially successful you become on Arells, the more scammers/criminals will try to coerce you into logging into your account via another website link. So remember to always verify that the link to any email/text-message we send you links to our domain *arells.com* or directly to our App.
+
+3. Always ensure any Arells App you download is an accredited Arells App created
+
+4. Always download updates to our App frequently.
+
+If you follow these guidelines strictly while we protect you with our automated security protocols, you’ll ensure that your finances are protected with utmost scrutiny.
+
+
+
+
+
+
+
+
+
+
+THREE DOTTED BUTTON OPENS MENU TAB:
+
+-THEFT PREVENTION GUIDELINE
+-NAME & COLOR (Edit name/color)
+-WALLET/WALLETS (ADDRESS, NOVS, forgot/lost Address/Key)
+-ACCOUNT
+-SETTINGS
+-ABOUT US
+-PRIVACY POLICY
+-TERMS OF SERVICE
+-HELP {include forgot|lost-wallet-key/financial-security-guideline/terms/conditions/rules/regulations and contact(E-mail))
+-LOGOUT
+
+
+
+[[ALL WITHDRAWALS OF FUNDS REQUIRE Key (if on computer) & 2FA]]
+
+
+--- MY LIFE STORY (HOME)
+    (top,left) |||, account, color tune, log-out, etc
+    (top, right) O-O, Contributors
+    (Center, Top) <Earnings button, as well as Arells in account)
+
+---Earnings
+    {{Notification bubble everytime number changes}}
+
+
+                               MY LIFE STORY
+        (Fiction)              (Non-Fiction)             (Animated)
+         cmng sn                                          cmng sn 
+     [Filters/Upload]                                   [CARTOONS/VR] 
+
+(Make posts have no sharp edges)
+
+
+0. "Real Name"<Can Edit and change anytime you want.
+6. ((Contributors)) {{Notification Bubble area only for 
+Requests
+{Yada nada wants to add you as a Contributor}
+(Accept/Decline)
+
+
+SORT by (Oldest/Newest first (no click))
+4. Posts can be "Hidden" never deleted
+    [show more (by 20)]
+5. (Hide) button below every post (Hidden from public) (unhide)
+
+ v-- Add to your life story to start making money
+(+*rounded edges*) Rounded Rectangle for PHOTOGRAPH
+
+
+
+
+
+-------------------------------------------------------
+While Adding ANY Post:
+- (Photograph[flip camera])[automatically posts]
+---------------------------------------------------------
+After Individual Post Added:
+     You just made money (+A1) to make more, 
+     (Contribute to other life stories) <takes you to (CONTRIBUTORs)
+     ____________________
+     (Dismiss)
+
+((((You can only add one post to your life story each day, 
+     to make more money 
+     (Contribute to other life stories) <takes you to (CONTRIBUTORs)
+OR
+
+If (personal daily limit reached)
+----Show personal daily limit message
+
+
+[[[You've made your daily limit (+A10 per day)]], wait until tomorrow to make more money]]]<3 second pop up removes any prior pop-up
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------EARNINGS
+    (Shows how much money you have in regards to fiat)
+    [Withdraw to bank account] Dollars...
+
+    {{Notification bubble
+    (Pop Up Logo of Names of who contributed +A to your life story(and date))
+
+
+
+
+
+
+
+
+
+
+
+
+
+------- CONTRIBUTORS
+"Contribute to other life stories to hit your daily limit (A10)"
+
+
+If (No Contributors)
+--Add people to contribute to their life stories to make more money----
+
+     -----ADD PEOPLE------
+(Allow Arells to access your contacts, etc) <view snapchat/messenger for reference...
+Shows phone numbers (next to names(pictures) if they have a profile)
+[Add Request Sent]
+
+If (contributors)
+--CONTRIBUTE bubble next to names (Ordered by A - z)
+
+If (personal daily limit reached)
+--Show personal daily limit message
+
+if (Contributors have reached their own personal daily limit)
+-- profiles are automatically hidden
+(show/hide)(contributors who've hit daily limit)
+
+
+
+--Clicking on a profile image takes you to...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------- CONTRIBUTOR (arells.com/username)
+
+First Name, Last Name, Profile Image, username
+
+Delete, Block.
+
+
+
+
+
+
+
+
+
+
+
+AFTER BUILDING:::::
+
+TEST EVERY INPUT SOMEONE ADDS (PRICE, NAME, ETC) Test UI for
+length of numbers/words
+
+
+
+--------v---------v-v-v-v---------------v---vvv----- After 1,000 or more individuals join.....vvv .v.vvv....v
+
+
+
+(REFER to  growth strategy)
+
+
