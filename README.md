@@ -1,4 +1,4 @@
-<img src="https://github.com/Ecare-Exchange/Arells/blob/main/Logos-Art/Arells-Icon.png" width="70px"> 
+<img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/Arells-Icon.png" width="70px"> 
 
 # [Arells](https://arells.com)
 ### An ecosystem created to lift storytellers out of poverty.
