@@ -7,7 +7,7 @@
 		<script src="javascript/arells.js"></script>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/arells-roadmap.css">	
+		<link rel="stylesheet" type="text/css" href="css/roadmap.css">	
 			
 		<meta charset="UTF-8">
 		
@@ -19,28 +19,25 @@
 		<meta name="author" content="Arells">
 		<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" >
 		
-				<!-- Change below link after test -->
 		<link rel="icon" type="image/x-icon" href="/icons&images/Arells-Favicon.ico" sizes="156x156">
 				<!-- Change below link after test -->
-		<link rel="canonical" href="https://ecare.exchange/arells-roadmap">
+		<link rel="canonical" href="https://arells.com/roadmap">
 		
-				<!-- Change below link after test -->
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/197365387-1384787a-0dd7-4e78-88f9-7464a8eb07c1.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
 		<meta property="og:title" content="Arells">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://ecare.exchange/arells-roadmap">
+		<meta propety="og:url" content="https://arells.com/roadmap">
 		<meta property="og:description" content="Make Money With Your Life Story">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
 		<meta name="twitter:title" content="Arells">
-				<!-- Change below link after test -->
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/197365387-1384787a-0dd7-4e78-88f9-7464a8eb07c1.jpg">
 				<!-- Change below link after test -->
-		<meta name="twitter:url" content="https://ecare.exchange/arells-roadmap">
+		<meta name="twitter:url" content="https://arells.com/roadmap">
 		<meta name="twitter:card" content="summary_large_image">
 		<meta name="twitter:description" content="Make Money With Your Life Story">
 		<meta name="description" content="Make Money With Your Life Story">
@@ -57,8 +54,7 @@
 			
 				<p id="date-title">Oct 2022 - Aug 2025</p>
 			
-			<!-- change link below after test -->	
-				<form method="get" action="/test">
+				<form method="get" action="https://ecare.exchange">
 				<button id="wrapper-content">
 					<p id="milestone">Infrastructure
 					</p>
@@ -74,8 +70,7 @@
 			<section id="wrapper-date-top">
 			
 				<p id="date-title">Sep 2025 - Dec 2027</p>
-			
-			<!-- change link below after test -->
+
 				<form method="get" target="_blank" action="https://github.com/Ecare-Exchange/Arells">
 				<button id="wrapper-content">
 					<p id="milestone">Protocol
@@ -87,7 +82,6 @@
 				</button>
 				</form>	
 				
-			<!-- change link below after test -->
 				<form method="get" target="_blank" action="https://github.com/Ecare-Exchange/Arells">		
 				<button id="wrapper-content">
 					<p id="milestone">Apps
@@ -138,7 +132,7 @@
 			<footer>
 			      
 				<!-- change link below after test -->	
-				   	<a id="homelink" href="/test">
+				   	<a id="homelink" href="https://ecare.exchange">
 				     	<img id="img" src="/icons&images/guideIcon.png"/>	  
 				  	</a>
 				  
