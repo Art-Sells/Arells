@@ -1,4 +1,4 @@
-<img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/Arells-Icon.png" width="70px"> 
+<img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon.png" width="70px"> 
 
 # [Arells](https://arells.com)
 ### An ecosystem created to lift storytellers out of poverty.
@@ -6,10 +6,10 @@
 ## Roadmap 
 
 - **Oct 2022 - Nov 2022**
-  - [ ] Update Infrastructure Page *[[In Development]](https://github.com/Ecare-Exchange/infrastructure/tree/main/MVP)*
-  - [ ] Official Website *[[In Development]](https://github.com/Ecare-Exchange/Arells)*
-  - [ ] Official Roadmap *[announced]*
-  - [ ] Twitter/Medium Pages *[announced]*
+  - [X] Update Infrastructure Page *[[Complete]](https://ecare.exchange)*
+  - [ ] Official Website *[[In Development]](https://ecare.exchange/arells)*
+  - [ ] Official Roadmap *[[In Development]](https://ecare.exchange/arells-roadmap)*
+  - [X] Twitter/Medium Pages *[[Complete]](https://twitter.com/arellsofficial)*
 
 - **Oct 2022 - Aug 2025**
    - [ ] Infrastructure *[[In Development]](https://github.com/Ecare-Exchange/infrastructure)*
