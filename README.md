@@ -7,8 +7,8 @@
 
 - **Oct 2022 - Nov 2022**
   - [X] Update Infrastructure Page *[[Complete]](https://ecare.exchange)*
-  - [ ] Official Website *[[In Development]](http://arells.com)*
-  - [ ] Official Roadmap *[[In Development]](http://arells.com/roadmap)*
+  - [ ] Official Website *[[In Development]](https://arells.com)*
+  - [ ] Official Roadmap *[[In Development]](https://arells.com/roadmap)*
   - [X] Twitter/Medium Pages *[[Complete]](https://twitter.com/arellsofficial)*
 
 - **Oct 2022 - Aug 2025**
