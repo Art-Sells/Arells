@@ -6,7 +6,6 @@ body {
   margin-right: 0%;
   margin-bottom: 0%;
   background: white;
-  box-shadow: 0px 0px 15px -2px black; 
 }
 
 
@@ -236,15 +235,8 @@ footer {
 	rgba(187,1,158,1) 85%); 
      animation: gradient 20s ease infinite; 
      background-size: 1000% 1000%;
-}
-#contact {
-	padding-top: 20px;
-	margin-left: auto;
-	margin-right: auto;	
-	width: 50px;
-	opacity: .7;
-	padding-bottom: 40px;
-}
+  	box-shadow: 0px 8px 12px -6px black;      
+}	
 @-webkit-keyframes gradient{
   0% {
     background-position: 0 50%;
@@ -288,6 +280,35 @@ footer {
 		margin-bottom: 0px;
 		opacity: 1;
 	}
+	
+#footer {
+	padding-top: 40px;
+	padding-bottom: 40px;	
+}	
+	#follow-us {
+	    font-size: 8px;
+	    letter-spacing: 2px; 
+	    font-weight: 800; 
+	    margin-right: 4px;
+	    margin-left: 7px;
+	    opacity: .7;
+	    color: black;
+	}
+	#contact {
+		margin-left: auto;
+		margin-right: auto;	
+		opacity: .8;
+	}
+	#contact:hover,
+	#contact:focus {
+		  opacity: .4;
+		  transition: 1s;
+		  cursor: pointer;
+	}
+	#twitter {
+		width: 40px;
+				margin-bottom: -10px;
+	}		
 	
 	
 	

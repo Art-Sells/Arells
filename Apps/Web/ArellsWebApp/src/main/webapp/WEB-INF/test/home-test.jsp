@@ -100,11 +100,14 @@
 			
 		</footer>
 		
-		  <a href="https://twitter.com/arellsofficial"
-		      target="_blank"
-		      id="contact">
-		      <img id="twitter" src="/icons&images/GithubBright.png">
-		  </a>  
+		<div id="footer">
+			  <span id="follow-us">FOLLOW US</span>
+			  <a href="https://twitter.com/arellsofficial"
+			      target="_blank"
+			      id="contact">
+			      <img id="twitter" src="/icons&images/Twitter.png">
+			  </a>  		
+		</div>
 	
 	
 	</body>
