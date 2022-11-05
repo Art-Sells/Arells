@@ -123,8 +123,8 @@ body {
 	  transition: 1s;
 	  cursor: pointer;
 	}
-	
-		#mc_embed_signup{
+		#sign-up{
+			height: 
 		}	
 	#rdmp{
 	  margin-top: 45px;	
@@ -236,6 +236,14 @@ footer {
 	rgba(187,1,158,1) 85%); 
      animation: gradient 20s ease infinite; 
      background-size: 1000% 1000%;
+}
+#contact {
+	padding-top: 20px;
+	margin-left: auto;
+	margin-right: auto;	
+	width: 50px;
+	opacity: .7;
+	padding-bottom: 40px;
 }
 @-webkit-keyframes gradient{
   0% {

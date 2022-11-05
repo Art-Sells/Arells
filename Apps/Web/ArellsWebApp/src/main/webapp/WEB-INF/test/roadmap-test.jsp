@@ -7,7 +7,7 @@
 		<script src="javascript/arells.js"></script>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/roadmap.css">	
+		<link rel="stylesheet" type="text/css" href="css/test/roadmap-test.css">	
 			
 		<meta charset="UTF-8">
 		
