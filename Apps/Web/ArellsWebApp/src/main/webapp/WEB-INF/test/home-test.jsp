@@ -52,9 +52,15 @@
 				   document.getElementById('signUp').style.display = "block";
 			}
 			function signUp() {
-				if (document.getElementById('input-one').value = ""){
-										
+				if (document.getElementById('email-input').value == ""){
+					document.getElementById('email-error').style.display = "block";
 					}
+				else if (document.getElementById('first-input').value == ""){
+					document.getElementById('first-error').style.display = "block";
+					}
+				else if (document.getElementById('last-input').value == ""){
+					document.getElementById('last-error').style.display = "block";
+					}				
 				else {
 					RWmodal.open(1, "We'll be in touch!");
 				    document.getElementById('signUp').style.display = "none";					
@@ -100,18 +106,18 @@
 				<form>
 					<div id="enter-content">
 						<label id="label">Email</label>	
-						<p id="error" style="display:none">Required</p>			
-						<input name="email" type="email" id="input"></input>
+						<p id="email-error" style="display:none">Required</p>			
+						<input name="email" type="email" id="email-input"></input>
 					</div>	
 					<div id="enter-content">
 						<label id="label">First Name</label>
-						<p id="error" style="display:none">Required</p>	
-						<input name="firstName" type="text" id="input"></input>
+						<p id="first-error" style="display:none">Required</p>	
+						<input name="firstName" type="text" id="first-input"></input>
 					</div>
 					<div id="enter-content">
 						<label id="label">Last Name</label>
-						<p id="error" style="display:none">Required</p>	
-						<input name="lastName" type="text" id="input"></input>
+						<p id="last-error" style="display:none">Required</p>	
+						<input name="lastName" type="text" id="last-input"></input>
 					</div>														
 					<br>
 				    <button id="submit"  
