@@ -122,7 +122,10 @@ body {
 	  opacity: .4;
 	  transition: 1s;
 	  cursor: pointer;
-	}	
+	}
+	
+		#mc_embed_signup{
+		}	
 	#rdmp{
 	  margin-top: 45px;	
 	}
