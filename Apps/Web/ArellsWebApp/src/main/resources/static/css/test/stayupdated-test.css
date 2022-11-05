@@ -6,13 +6,12 @@ body {
   margin-right: 0%;
   margin-bottom: 0%;
   background: white;
-  box-shadow: 0px 0px 15px -2px black;   
 }
 
 #wrapper {
-	padding-top: 20px;
-	padding-bottom: 5px;
-  	height: 800px;
+	padding-top: 50px;
+	padding-bottom: 20px;
+  	height: 550px;
   	width: 100%;
 	background: linear-gradient(90deg, 
 	rgba(255,0,0,1) 0%, 
@@ -22,7 +21,7 @@ body {
 	rgba(187,1,158,1) 100%);    
      animation: gradients 20s ease infinite; 
      background-size: 10000% 10000%;
-     box-shadow: 0px 0px 15px -2px black;      
+  	box-shadow: 0px 4px 12px -6px black;           
 
 }
 @-webkit-keyframes gradients{
@@ -54,87 +53,87 @@ body {
   }
 }
 
-/* span {
-	color: white;
-	padding-top: 20px;
-	font-size: 20px;
-	margin-right: 10px;
-	letter-spacing: 10px;
-	margin: auto;
-	font-weight: 400;
+	#arells-icon{
+		margin-left: auto;	
+		margin-right: auto;	
+		margin-top: 40px;
+		width: 40px;
+		opacity: .7;
+	}
 	
-	opacity: 1;
-}	 */
+	#slogan {
+		color: white;
+		margin-left: auto;	
+		margin-right: auto;	
+		margin-top: 20px;
+		font-weight: 600;	
+		font-size: 17px;
+		letter-spacing: 3px;
+		margin-left: 3px;
+		opacity: .9;					
+	}
+	#desc {
+		color: white;
+		margin-left: auto;	
+		margin-right: auto;	
+		margin-top: 15px;	
+		font-weight: 800;	
+		font-size: 12px;
+		letter-spacing: 0px;
+		margin-left: 0px;
+		opacity: .7;				
+	}	
 
-#sign-up {
-	width: 500px;
-	height: 360px;
-	padding: 10px;
-	margin-top: 70px;
-	border: solid;	
-	border-width: 1px;
-	border-color: gray;
-	border-radius: 20px;
-	margin-left: auto;
-	margin-right: auto;
-}
+
+	#sign-up {
+		color: white;
+		width: 100%;
+		height: 270px;
+		padding-top: 40px;
+		margin-top: 40px;
+		margin-left: auto;
+		margin-right: auto;
+		background: linear-gradient(90deg, 
+		rgba(255,0,0,1) 0%, 
+		rgba(178,179,2,1) 25%, 
+		rgba(1,187,1,1) 50%, 
+		rgba(33,0,255,1) 75%, 
+		rgba(187,1,158,1) 100%);    
+	     animation: gradients 20s ease infinite; 
+	     background-size: 4500% 4500%;
+  		box-shadow: 0px 5px 20px -15px black;     	
+	}
+		#label{
+			font-weight: 800;
+			font-size: 15px;
+			letter-spacing: 1px;
+		}
+		
+	#footer {
+		padding-top: 40px;
+		padding-bottom: 40px;	
+	}		
+
+		#contact {
+			opacity: .7;
+		}
+		#contact:hover,
+		#contact:focus {
+			  opacity: .4;
+			  transition: 1s;
+			  cursor: pointer;
+		}
+		#twitter {
+			width: 30px;
+		}	
+
 
 
 @media screen and (max-width: 650px){
 
 
-/* span {
-	font-size: 15px;
-	margin-left: 10px;
-	letter-spacing: 7px;
-}	 */
-
-#wrapper-ongoing {
-	width: 300px;
-    height: 350px;
-}	
-
-#wrapper-date-top {
-	width: 300px;
-    height: 550px;
-}	
-
-#wrapper-date {
-	width: 300px;	
-    height: 350px;
-}	
-
-	#date-title {
-		font-size: 11px;	
+	#twitter {
+		width: 27px;
 	}	
-	
-	#wrapper-content {
-		width: 160px;
-		height: 180px;
-	}	
-		#milestone {
-			font-size: 13px;
-			margin-bottom: -3px;
-			
-		}	
-		#status-title {
-			font-size: 10px;
-			margin-bottom: -5px;						
-		}	
-		#status {
-		line-height: 15px;
-			font-size: 9px;
-		}
-		
-footer {
-	text-decoration: none;
-	padding-top: 50px;
-	width: 100%;
-	height: 50px;
-}
-
-	#img {
-	  width: 15px;
-	}
 		
 }

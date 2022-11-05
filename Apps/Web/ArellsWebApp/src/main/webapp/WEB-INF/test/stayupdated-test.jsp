@@ -7,7 +7,8 @@
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/test/stayupdated-test.css">	
-			
+		<link rel="stylesheet" href="css/RWmodalani.css" />	
+		
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
@@ -45,19 +46,16 @@
 
 <!-- Sign up Javascript Below -->
 
+
  		<script src="javascript/RWmodal.min.js"></script>
 		<script type="text/javascript">
 		
 			function signUp() {
-				if (document.getElementById('email-input').value == ""){
-					document.getElementById('email-error').style.display = "block";
-					}
-				if (document.getElementById('first-input').value == ""){
-					document.getElementById('first-error').style.display = "block";
-					}
-				if (document.getElementById('last-input').value == ""){
-					document.getElementById('last-error').style.display = "block";
-					}				
+				if (document.getElementById('email-input').value !== "" &&
+					document.getElementById('first-input').value !== ""	&&
+					document.getElementById('last-input').value !== ""){
+						RWmodal.open(1, 'SUBMITTED');
+					}			
 			}
 		</script>
 
@@ -69,34 +67,34 @@
 	
 		<div id="wrapper">
 		
-			<img id="arells-icon" src="/icons&images/Arells-Icon.png"/>
+			<img id="arells-icon" src="/icons&images/Arells-Icon-Ivory.png"/>
 			
 			<h2 id="slogan">STAY UPDATED</h2>
 			
-			<p id="slogan">To Make Money With Your Life Story</p>			
+			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>			
 			
             <div id="sign-up">
 				<form>
 					<div id="enter-content">
-						<label id="label">Email</label>	
-						<p id="email-error" style="display:none">Required</p>			
-						<input name="email" type="email" id="email-input"></input>
+						<label id="label">Email</label>		
+						<br>
+						<input name="email" type="email" id="email-input" required></input>
 					</div>	
 					<div id="enter-content">
 						<label id="label">First Name</label>
-						<p id="first-error" style="display:none">Required</p>	
-						<input name="first_name" type="text" id="first-input"></input>
+						<br>
+						<input name="first_name" type="text" id="first-input" required></input>
 					</div>
 					<div id="enter-content">
 						<label id="label">Last Name</label>
-						<p id="last-error" style="display:none">Required</p>	
-						<input name="last_name" type="text" id="last-input"></input>
+						<br>
+						<input name="last_name" type="text" id="last-input" required></input>
 					</div>														
 					<br>
 				    <button id="submit"  
 				    onclick="signUp()">Submit</button>
 				</form>
-            </div>		
+            </div>
 		
 		</div>			
 		
