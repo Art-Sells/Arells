@@ -67,7 +67,7 @@
 	
 		<div id="wrapper">
 		
-			<img id="arells-icon" src="/icons&images/Arells-Icon-Ivory.png"/>
+			<img id="arells-icon" src="/icons&images/Arells-Icon.png"/>
 			
 			<h2 id="slogan">STAY UPDATED</h2>
 			
@@ -76,29 +76,41 @@
             <div id="sign-up">
 				<form>
 					<div id="enter-content">
-						<label id="label">Email</label>		
+						<label id="label">EMAIL</label>		
 						<br>
-						<input name="email" type="email" id="email-input" required></input>
+						<input name="email" type="email" 
+						id="email-input" 
+						class=".form-control" required></input>
 					</div>	
 					<div id="enter-content">
-						<label id="label">First Name</label>
+						<label id="label">FIRST NAME</label>
 						<br>
-						<input name="first_name" type="text" id="first-input" required></input>
+						<input name="first_name" type="text" 
+						id="first-input" 
+						class=".form-control" required></input>
 					</div>
 					<div id="enter-content">
-						<label id="label">Last Name</label>
+						<label id="label">LAST NAME</label>
 						<br>
-						<input name="last_name" type="text" id="last-input" required></input>
+						<input name="last_name" type="text" 
+						id="last-input" 
+						class=".form-control" required></input>
 					</div>														
 					<br>
 				    <button id="submit"  
-				    onclick="signUp()">Submit</button>
+				    onclick="signUp()">SUBMIT</button>
 				</form>
             </div>
 		
 		</div>			
 		
-
+		<div id="footer">
+		  <a href="https://twitter.com/arellsofficial"
+		      target="_blank"
+		      id="contact">
+		      <img id="twitter" src="/icons&images/Twitter.png">
+		  </a>  		
+		</div>
 	
 	
 	</body>

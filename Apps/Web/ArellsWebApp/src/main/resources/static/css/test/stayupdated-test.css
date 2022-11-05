@@ -9,9 +9,9 @@ body {
 }
 
 #wrapper {
-	padding-top: 50px;
+	padding-top: 20px;
 	padding-bottom: 20px;
-  	height: 550px;
+  	height: 700px;
   	width: 100%;
 	background: linear-gradient(90deg, 
 	rgba(255,0,0,1) 0%, 
@@ -58,7 +58,7 @@ body {
 		margin-right: auto;	
 		margin-top: 40px;
 		width: 40px;
-		opacity: .7;
+		opacity: .4;
 	}
 	
 	#slogan {
@@ -67,29 +67,29 @@ body {
 		margin-right: auto;	
 		margin-top: 20px;
 		font-weight: 600;	
-		font-size: 17px;
-		letter-spacing: 3px;
-		margin-left: 3px;
+		font-size: 20px;
+		letter-spacing: 0px;
+		margin-left: 0px;
 		opacity: .9;					
 	}
 	#desc {
 		color: white;
 		margin-left: auto;	
 		margin-right: auto;	
-		margin-top: 15px;	
-		font-weight: 800;	
-		font-size: 12px;
-		letter-spacing: 0px;
-		margin-left: 0px;
-		opacity: .7;				
+		margin-top: -10px;	
+		font-weight: 500;	
+		font-size: 10px;
+		letter-spacing: 1px;
+		margin-left: 1px;
+		opacity: .9;				
 	}	
 
 
 	#sign-up {
 		color: white;
 		width: 100%;
-		height: 270px;
-		padding-top: 40px;
+		height: 440px;
+		padding-top: 20px;
 		margin-top: 40px;
 		margin-left: auto;
 		margin-right: auto;
@@ -103,11 +103,67 @@ body {
 	     background-size: 4500% 4500%;
   		box-shadow: 0px 5px 20px -15px black;     	
 	}
-		#label{
-			font-weight: 800;
-			font-size: 15px;
-			letter-spacing: 1px;
+		#enter-content {
+			margin-top: 20px;
 		}
+		#label{
+			text-align: left;
+			font-weight: 500;
+			font-size: 11px;
+			letter-spacing: 0px;
+			margin-left: 0px;
+			opacity: .9;
+		}
+       	   input { 
+       	   	    text-align: center;
+       	   		margin-top: 2px;     	   
+       	   		padding: 20px;
+       	   		color: white;
+       	   		font-weight: 500;
+       	   		border: none;
+       	   		border-radius: 10px;
+       	   		font-size: 15px;
+       	   		width: 240px;
+       	   		height: 15px;
+       	   		background: black;
+       	   		opacity: .4;
+       	   }
+			 input:focus {
+			    cursor: pointer;
+			    outline: none;
+			    transition: 1s;
+       	   		opacity: .8;			    
+			  }       	   
+		  .form-control:focus{
+		       border-width: 7px;
+               -webkit-box-shadow: none !important;
+               -moz-box-shadow: none !important;
+               box-shadow: none !important;
+           }       	   
+			#submit {
+			  margin-top: 20px;
+			  background: none;
+			  text-decoration: none;
+			  color: white;
+			  font-weight:500;
+			  font-size: 11px;
+			  padding-top: 20px;
+			  padding-bottom: 20px;
+			  padding-right: 54px;
+			  padding-left: 55px;	  
+			  border: solid;
+			  letter-spacing: 1px;
+			  border-radius: 10px;
+			  border-width: 1px;
+			  width: 200px;
+			  opacity: 1;
+			}
+			#submit:hover,
+			#submit:focus {
+			  opacity: .4;
+			  transition: 1s;
+			  cursor: pointer;
+			}       	   
 		
 	#footer {
 		padding-top: 40px;
