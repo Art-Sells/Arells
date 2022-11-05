@@ -61,7 +61,7 @@
 			
 			<p id="slogan">MAKE MONEY WITH YOUR LIFE STORY</p>
 			
-			<hr>
+			<hr id="white-line">
 			
 			<p id="description">
 				CREATED TO LIFT STORYTELLERS OUT OF POVERTY
@@ -101,12 +101,13 @@
 		</footer>
 		
 		<div id="footer">
-			  <span id="follow-us">FOLLOW US</span>
-			  <a href="https://twitter.com/arellsofficial"
-			      target="_blank"
-			      id="contact">
-			      <img id="twitter" src="/icons&images/Twitter.png">
-			  </a>  		
+			<hr id="black-line">		
+<!--  			  <p id="follow-us">FOLLOW US</p> -->
+		  <a href="https://twitter.com/arellsofficial"
+		      target="_blank"
+		      id="contact">
+		      <img id="twitter" src="/icons&images/Twitter.png">
+		  </a>  		
 		</div>
 	
 	
