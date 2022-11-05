@@ -51,6 +51,15 @@
 			function showSignUp() {
 				   document.getElementById('signUp').style.display = "block";
 			}
+			function signUp() {
+				if (document.getElementById('input-one').value = ""){
+										
+					}
+				else {
+					RWmodal.open(1, "We'll be in touch!");
+				    document.getElementById('signUp').style.display = "none";					
+				}
+			}
 		</script>
 
 		<title>Arells</title>
@@ -90,15 +99,18 @@
             	<h2 id="sign-up-desc">To Make Money With Your Life Story</h2>
 				<form>
 					<div id="enter-content">
-						<label id="label">Email</label>						
+						<label id="label">Email</label>	
+						<p id="error" style="display:none">Required</p>			
 						<input name="email" type="email" id="input"></input>
 					</div>	
 					<div id="enter-content">
 						<label id="label">First Name</label>
+						<p id="error" style="display:none">Required</p>	
 						<input name="firstName" type="text" id="input"></input>
 					</div>
 					<div id="enter-content">
 						<label id="label">Last Name</label>
+						<p id="error" style="display:none">Required</p>	
 						<input name="lastName" type="text" id="input"></input>
 					</div>														
 					<br>
