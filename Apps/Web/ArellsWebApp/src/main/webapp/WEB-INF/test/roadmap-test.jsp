@@ -22,7 +22,7 @@
 				<!-- Change below link after test -->
 		<link rel="canonical" href="https://arells.com/roadmap-test">
 		
-		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/197365387-1384787a-0dd7-4e78-88f9-7464a8eb07c1.jpg">	
+		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/200199141-3bebaf4d-9052-45c0-a1fa-7bc82bdd263a.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
 		<meta property="og:title" content="Arells">
@@ -33,13 +33,13 @@
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Arells">
-		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/197365387-1384787a-0dd7-4e78-88f9-7464a8eb07c1.jpg">
+		<meta name="twitter:title" content="Make Money With Your Life Story">
+		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/200199141-3bebaf4d-9052-45c0-a1fa-7bc82bdd263a.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/roadmap-test">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:description" content="Make Money With Your Life Story">
-		<meta name="description" content="Make Money With Your Life Story">
+		<meta name="twitter:description" content="Arells">
+		<meta name="description" content="Arells">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 		<title>Roadmap</title>
