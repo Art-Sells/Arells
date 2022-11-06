@@ -4,7 +4,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="javascript/arells.js"></script>
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/roadmap.css">	
@@ -49,6 +48,8 @@
 	<body>
 
 	<div id="wrapper">
+	
+		<h2 id="slogan">ROADMAP</h2>
 	
 		<section id="wrapper-ongoing">
 			

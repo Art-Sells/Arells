@@ -6,7 +6,6 @@ body {
   margin-right: 0%;
   margin-bottom: 0%;
   background: white;
-  box-shadow: 0px 0px 15px -2px black; 
 }
 
 
@@ -70,7 +69,7 @@ body {
 		opacity: 1;
 	}
 	
-	hr {
+	#white-line {
 	  margin-top: 30px;
 	  background-color: white;
 	  border: none;
@@ -122,7 +121,7 @@ body {
 	  opacity: .4;
 	  transition: 1s;
 	  cursor: pointer;
-	}	
+	}
 	#rdmp{
 	  margin-top: 45px;	
 	}
@@ -173,7 +172,7 @@ body {
 		letter-spacing: .5px;
 		margin-right: .5px;
 	}
-	hr {
+	#white-line {
 	  height: 1px;	
 	  margin-top: 30px;
 	  width: 150px;
@@ -233,7 +232,8 @@ footer {
 	rgba(187,1,158,1) 85%); 
      animation: gradient 20s ease infinite; 
      background-size: 1000% 1000%;
-}
+  	box-shadow: 0px 8px 12px -6px black;      
+}	
 @-webkit-keyframes gradient{
   0% {
     background-position: 0 50%;
@@ -278,13 +278,49 @@ footer {
 		opacity: 1;
 	}
 	
+#footer {
+	padding-top: 10px;
+	padding-bottom: 40px;	
+}	
+	#black-line {
+	  background-color: black;
+	  border: none;
+	  height: 3px;
+	  border-radius: 30px;
+	  width: 70%;
+	  margin-bottom: 40px;
+	  opacity: .5;
+	}		
+/*  	#follow-us {
+	    font-size: 8px;
+	    letter-spacing: 1px; 
+	    font-weight: 800; 
+	    margin-left: 1px;
+	    margin-bottom: 5px;
+	    opacity: .7;
+	    color: black;
+	}  */
+
+	#contact {
+		opacity: .7;
+	}
+	#contact:hover,
+	#contact:focus {
+		  opacity: .4;
+		  transition: 1s;
+		  cursor: pointer;
+	}
+	#twitter {
+		width: 30px;
+	}		
+	
 	
 	
 @media screen and (max-width: 650px) {
 
 	footer {
 	   height: 90px;
-	}
+	}	
 		#powered {
 		    font-size: 6px;
 		    letter-spacing: 3px; 
@@ -294,7 +330,10 @@ footer {
 		#ecare-icon {
 			width: 15px;
 			margin-bottom: 0px;
-		}					
+		}	
+	#twitter {
+		width: 27px;
+	}						
 	
 }	
 

@@ -4,7 +4,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<!-- Change below link after test -->
+		
+				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/home.css">	
 			
 		<meta charset="UTF-8">
@@ -16,13 +17,11 @@
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
 		<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" >
-
-
+	
 		<link rel="icon" type="image/x-icon" href="/icons&images/Arells-Ico.ico" sizes="156x156">
 				<!-- Change below link after test -->
 		<link rel="canonical" href="https://arells.com">
 		
-
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/197365387-1384787a-0dd7-4e78-88f9-7464a8eb07c1.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
@@ -43,6 +42,7 @@
 		<meta name="description" content="Make Money With Your Life Story">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
+
 		<title>Arells</title>
 	
 	</head>
@@ -61,7 +61,7 @@
 			
 			<p id="slogan">MAKE MONEY WITH YOUR LIFE STORY</p>
 			
-			<hr>
+			<hr id="white-line">
 			
 			<p id="description">
 				CREATED TO LIFT STORYTELLERS OUT OF POVERTY
@@ -70,8 +70,7 @@
 			<p id="coming-soon">COMING SOON</p>
 			
 			<!-- Change below link after test -->
-			<a href="https://twitter.com/arellsofficial" 
-			target="_blank"
+			<a href="/stayupdated" 
 			id="updates">
 	      		STAY UPDATED
 	        </a>
@@ -99,6 +98,16 @@
 		  	</a>  		
 			
 		</footer>
+		
+		<div id="footer">
+			<hr id="black-line">		
+<!--  			  <p id="follow-us">FOLLOW US</p> -->
+		  <a href="https://twitter.com/arellsofficial"
+		      target="_blank"
+		      id="contact">
+		      <img id="twitter" src="/icons&images/Twitter.png">
+		  </a>  		
+		</div>
 	
 	
 	</body>
