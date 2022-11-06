@@ -48,8 +48,12 @@
 
 
  		<script src="javascript/RWmodal.min.js"></script>
-		<script type="text/javascript">
-		
+ 		<script
+			src="https://code.jquery.com/jquery-3.4.1.js"
+			integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+			crossorigin="anonymous">
+		</script>
+		<script>		
 			function signUp() {
 				if (document.getElementById('email-input').value == "" &&
 					document.getElementById('first-input').value == ""	&&
@@ -64,6 +68,11 @@
 				else if (document.getElementById('email-input').value !== "" &&
 					document.getElementById('first-input').value !== ""	&&
 					document.getElementById('last-input').value !== ""){
+						$.ajax({
+							url:"https://api.apispreadsheets.com/data/5bGY18b4lgwYGYIb/",
+							type:"post",
+							data:$("#myForm").serializeArray()
+						});					
 						document.getElementById('email-input').value = "";
 						document.getElementById('first-input').value = "";
 						document.getElementById('last-input').value = "";					
@@ -71,6 +80,7 @@
 					}			
 			}
 		</script>
+<!-- Sign up Javascript Above -->		
 
 		<title>Stay Updated</title>
 	
@@ -86,8 +96,8 @@
 			
 			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>			
 			
-            <div id="sign-up" style="display:block">
-				<form>
+            <div id="sign-up">
+				<form id="myForm">
 					<div id="enter-content">
 						<label id="label">EMAIL</label>		
 						<br>
