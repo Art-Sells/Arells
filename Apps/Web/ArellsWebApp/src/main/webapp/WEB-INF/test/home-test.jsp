@@ -71,7 +71,6 @@
 			
 			<!-- Change below link after test -->
 			<a href="/stayupdated-test" 
-			target="_blank"
 			id="updates">
 	      		STAY UPDATED
 	        </a>

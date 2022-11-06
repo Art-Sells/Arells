@@ -50,6 +50,8 @@
 
 	<div id="wrapper">
 	
+		<h2 id="slogan">ROADMAP</h2>
+	
 		<section id="wrapper-ongoing">
 			
 				<p id="date-title">Oct 2022 - Aug 2025</p>

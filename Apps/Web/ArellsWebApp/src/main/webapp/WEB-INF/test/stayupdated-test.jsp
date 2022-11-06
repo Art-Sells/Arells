@@ -51,10 +51,23 @@
 		<script type="text/javascript">
 		
 			function signUp() {
-				if (document.getElementById('email-input').value !== "" &&
+				if (document.getElementById('email-input').value == "" &&
+					document.getElementById('first-input').value == ""	&&
+					document.getElementById('last-input').value == ""){
+						RWmodal.open(1, 'ENTER INFORMATION');
+						}	
+				if (document.getElementById('email-input').value == "" ||
+						document.getElementById('first-input').value == "" ||
+						document.getElementById('last-input').value == ""){
+							RWmodal.open(1, 'ENTER INFORMATION');
+							}								
+				else if (document.getElementById('email-input').value !== "" &&
 					document.getElementById('first-input').value !== ""	&&
 					document.getElementById('last-input').value !== ""){
-						RWmodal.open(1, 'SUBMITTED');
+						document.getElementById('email-input').value = "";
+						document.getElementById('first-input').value = "";
+						document.getElementById('last-input').value = "";					
+						RWmodal.open(1, 'SUBMITTED');					
 					}			
 			}
 		</script>
@@ -67,40 +80,50 @@
 	
 		<div id="wrapper">
 		
-			<img id="arells-icon" src="/icons&images/Arells-Icon.png"/>
+<!-- 			<img id="arells-icon" src="/icons&images/Arells-Icon.png"/> -->
 			
 			<h2 id="slogan">STAY UPDATED</h2>
 			
 			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>			
 			
-            <div id="sign-up">
+            <div id="sign-up" style="display:block">
 				<form>
 					<div id="enter-content">
 						<label id="label">EMAIL</label>		
 						<br>
 						<input name="email" type="email" 
 						id="email-input" 
-						class=".form-control" required></input>
+						class=".form-control"></input>
 					</div>	
 					<div id="enter-content">
 						<label id="label">FIRST NAME</label>
 						<br>
 						<input name="first_name" type="text" 
 						id="first-input" 
-						class=".form-control" required></input>
+						class=".form-control"></input>
 					</div>
 					<div id="enter-content">
 						<label id="label">LAST NAME</label>
 						<br>
 						<input name="last_name" type="text" 
 						id="last-input" 
-						class=".form-control" required></input>
+						class=".form-control"></input>
 					</div>														
 					<br>
-				    <button id="submit"  
-				    onclick="signUp()">SUBMIT</button>
+				    <a id="submit"  
+				    onclick="signUp()">SUBMIT</a>
 				</form>
             </div>
+            
+<!--             <div id="signed-up" style="display:block">
+            
+            	<div id="signed-up-spacer">
+            		
+            		<h1 id="signed-up-text">WE'LL BE IN TOUCH</h1>
+            	
+            	</div>
+				
+            </div>    -->         
 		
 		</div>			
 		
