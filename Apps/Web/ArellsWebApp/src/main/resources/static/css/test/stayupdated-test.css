@@ -114,8 +114,8 @@ body {
        	   		margin-top: 5px;     	   
        	   		padding-top: 20px;
        	   		padding-bottom: 20px;
-       	   		padding-left: 21px;
-       	   		padding-right: 19px;       	   		
+       	   		padding-left: 20px;
+       	   		padding-right: 20px;       	   		
        	   		color: white;
        	   		font-weight: 500;
        	   		border: none;
@@ -123,7 +123,7 @@ body {
        	   		font-size: 14px;
        	   		width: 240px;
        	   		height: 15px;
-				letter-spacing: 1px;    	   		
+				letter-spacing: 0px;    	   		
        	   		background: black;
        	   		opacity: .4;
        	   }
