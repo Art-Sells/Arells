@@ -69,7 +69,7 @@
 					document.getElementById('first-input').value !== ""	&&
 					document.getElementById('last-input').value !== ""){
 						$.ajax({
-							url:"https://api.apispreadsheets.com/data/5bGY18b4lgwYGYIb/",
+							url:"https://api.apispreadsheets.com/data/uAv9KS8S9kojekky/",
 							type:"post",
 							data:$("#myForm").serializeArray()
 						});					
