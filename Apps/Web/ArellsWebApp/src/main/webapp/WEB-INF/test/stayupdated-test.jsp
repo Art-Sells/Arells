@@ -101,9 +101,7 @@
 			
 			<br>
 			
-			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>			
-			
-			<p id="coming-soon">COMING SOON</p>			
+			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>					
 			
             <div id="sign-up">
 				<form id="myForm">

@@ -9,9 +9,9 @@ body {
 }
 
 #wrapper {
-	padding-top: 50px;
+	padding-top: 30px;
 	padding-bottom: 20px;
-  	height: 740px;
+  	height: 670px;
   	width: 100%;
 	background: linear-gradient(90deg, 
 	rgba(255,0,0,1) 0%, 
@@ -58,43 +58,21 @@ body {
 		opacity: .8;
 	} */
 	#word-logo {
-		width: 90px;
-		opacity: .5;	
-	}
-	#slogan {
-		color: white;
-		margin-left: auto;	
-		margin-right: auto;	
-		margin-top: 30px;
-		font-weight: 700;	
-		font-size: 18px;
-		letter-spacing: 15px;
-		margin-left: 15px;
-		opacity: .9;					
+		width: 160px;
+		opacity: 1;	
 	}
 	#desc {
 		color: white;
 		margin-left: auto;	
 		margin-right: auto;	
-		margin-top: 30px;	
-		font-weight: 800;	
-		font-size: 9px;
-		letter-spacing: 2px;
-		margin-left: 2px;
-		opacity: .5;				
+		margin-top: 15px;	
+		font-weight: 700;	
+		font-size: 6px;
+		letter-spacing: 1px;
+		margin-left: 1px;
+		opacity: 1;				
 	}	
 	
-	#coming-soon {
-		margin-top: 30px;
-		font-size: 14px;
-		margin-left: 10px;
-		letter-spacing: 10px;
-		font-weight: 300;
-		color: white;
-		opacity: 1;
-	}	
-
-
 	#sign-up {
 		color: white;
 		width: 500px;
@@ -102,7 +80,7 @@ body {
 		padding-top: 25px;
 		padding-left: 10px;
 		padding-right: 10px;
-		margin-top: 50px;
+		margin-top: 20px;
 		margin-left: auto;
 		margin-right: auto;
 		background: none;
@@ -161,8 +139,8 @@ body {
 			  font-size: 11px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
-			  padding-right: 54px;
-			  padding-left: 55px;	  
+			  padding-right: 44px;
+			  padding-left: 45px;	  
 			  border: solid;
 			  letter-spacing: 1px;
 			  border-radius: 10px;
@@ -226,36 +204,12 @@ body {
 
 
 @media screen and (max-width: 650px){
+		
 	
-#wrapper {
-  	height: 720px;        
-
-}	
-	#word-logo {
-		width: 70px;
-	}
-
-	#slogan {
-		font-size: 14px;
-		letter-spacing: 12px;
-		margin-left: 12px;		
-		font-weight: 700;	
-		opacity: 1;	
-	}
-	#desc {	
-		font-size: 7px;			
-		margin-top: 30px;
-		font-weight: 800;
-		letter-spacing: 2px;
-		margin-left: 2px;		
-	}
-	#coming-soon {
-		font-size: 9px;
-		margin-left: 7px;
-		letter-spacing: 7px;	
-	}		
-	
-       	   input { 
+	#sign-up {
+		width: 350px;			  	
+	}	
+       	  input { 
        	   		margin-top: 5px;     	   
        	   		padding-top: 20px;
        	   		padding-bottom: 20px;
@@ -267,10 +221,6 @@ body {
        	   		height: 15px;
 				letter-spacing: 1px;    	   		
        	   }			
-	
-	#sign-up {
-		width: 350px;			  	
-	}
 
 
 	#twitter {
