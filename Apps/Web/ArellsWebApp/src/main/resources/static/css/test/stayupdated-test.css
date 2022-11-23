@@ -83,6 +83,16 @@ body {
 		margin-left: 2px;
 		opacity: .5;				
 	}	
+	
+	#coming-soon {
+		margin-top: 30px;
+		font-size: 14px;
+		margin-left: 10px;
+		letter-spacing: 10px;
+		font-weight: 300;
+		color: white;
+		opacity: 1;
+	}	
 
 
 	#sign-up {
@@ -238,7 +248,12 @@ body {
 		font-weight: 800;
 		letter-spacing: 2px;
 		margin-left: 2px;		
-	}	
+	}
+	#coming-soon {
+		font-size: 9px;
+		margin-left: 7px;
+		letter-spacing: 7px;	
+	}		
 	
        	   input { 
        	   		margin-top: 5px;     	   

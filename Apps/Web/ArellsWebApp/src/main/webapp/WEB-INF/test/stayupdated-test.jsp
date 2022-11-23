@@ -101,9 +101,9 @@
 			
 			<br>
 			
-			<h2 id="slogan">STAY UPDATED</h2>
-			
 			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>			
+			
+			<p id="coming-soon">COMING SOON</p>			
 			
             <div id="sign-up">
 				<form id="myForm">
@@ -130,7 +130,7 @@
 					</div>														
 					<br>
 				    <a id="submit"  
-				    onclick="signUp()">SUBMIT</a>
+				    onclick="signUp()">STAY UPDATED</a>
 				</form>
             </div>
             
