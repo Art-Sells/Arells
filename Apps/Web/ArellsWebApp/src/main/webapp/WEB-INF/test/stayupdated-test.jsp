@@ -90,15 +90,17 @@
 	
 		<div id="wrapper">
 		
+<!-- 			<img id="arells-icon" src="/icons&images/Arells-Icon-Ivory.png"/>		
+			 -->
+			<br>		
+			
 			<img id="word-logo" src="/icons&images/Arells-Logo.png">	
 			
 			<br>
 			
-			<p id="slogan">MAKE MONEY WITH YOUR LIFE STORY</p>
+			<h2 id="slogan">STAY UPDATED</h2>
 			
-			<hr id="white-line">			
-			
-			<h2 id="slogan">STAY UPDATED</h2>			
+			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>			
 			
             <div id="sign-up">
 				<form id="myForm">
