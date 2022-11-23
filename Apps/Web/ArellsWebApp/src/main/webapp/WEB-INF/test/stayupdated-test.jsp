@@ -71,7 +71,10 @@
 						$.ajax({
 							url:"https://api.apispreadsheets.com/data/uAv9KS8S9kojekky/",
 							type:"post",
-							data:$("#myForm").serializeArray()
+							data:$("#myForm").serializeArray(),
+							headers:{
+								accessKey: "c492c5cefcf9fdde44bbcd84a97465f1",
+								secretKey: "ac667f2902e4e472c82aff475a4a7a07"}
 						});					
 						document.getElementById('email-input').value = "";
 						document.getElementById('first-input').value = "";
