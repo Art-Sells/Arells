@@ -68,8 +68,8 @@ body {
 		margin-top: 30px;
 		font-weight: 700;	
 		font-size: 18px;
-		letter-spacing: 12px;
-		margin-left: 12px;
+		letter-spacing: 15px;
+		margin-left: 15px;
 		opacity: .9;					
 	}
 	#desc {
@@ -230,7 +230,8 @@ body {
 		letter-spacing: 12px;
 		margin-left: 12px;	
 		margin-top: 30px;	
-		font-weight: 700;		
+		font-weight: 700;	
+		opacity: 1;	
 	}
 	#desc {	
 		font-size: 7px;			
