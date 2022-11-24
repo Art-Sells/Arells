@@ -69,9 +69,12 @@
 					document.getElementById('first-input').value !== ""	&&
 					document.getElementById('last-input').value !== ""){
 						$.ajax({
-							url:"https://api.apispreadsheets.com/data/5bGY18b4lgwYGYIb/",
+							url:"https://api.apispreadsheets.com/data/uAv9KS8S9kojekky/",
 							type:"post",
-							data:$("#myForm").serializeArray()
+							data:$("#myForm").serializeArray(),
+							headers:{
+								accessKey: "c492c5cefcf9fdde44bbcd84a97465f1",
+								secretKey: "ac667f2902e4e472c82aff475a4a7a07"}
 						});					
 						document.getElementById('email-input').value = "";
 						document.getElementById('first-input').value = "";
@@ -90,11 +93,15 @@
 	
 		<div id="wrapper">
 		
-<!-- 			<img id="arells-icon" src="/icons&images/Arells-Icon.png"/> -->
+<!-- 			<img id="arells-icon" src="/icons&images/Arells-Icon-Ivory.png"/>		
+			 -->
+			<br>		
 			
-			<h2 id="slogan">STAY UPDATED</h2>
+			<img id="word-logo" src="/icons&images/Arells-Logo.png">	
 			
-			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>			
+			<br>
+			
+			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>					
 			
             <div id="sign-up">
 				<form id="myForm">
@@ -121,7 +128,7 @@
 					</div>														
 					<br>
 				    <a id="submit"  
-				    onclick="signUp()">SUBMIT</a>
+				    onclick="signUp()">STAY UPDATED</a>
 				</form>
             </div>
             
