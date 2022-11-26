@@ -59,14 +59,14 @@ body {
 	} */
 	#word-logo {
 		width: 120px;
-		opacity: .5;	
+		opacity: .4;	
 	}
 	#desc {
 		color: white;
 		margin-left: auto;	
 		margin-right: auto;	
 		margin-top: 15px;	
-		font-weight: 700;	
+		font-weight: 400;	
 		font-size: 7px;
 		letter-spacing: 4px;
 		word-spacing: 0px;
