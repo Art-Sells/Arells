@@ -58,7 +58,7 @@ body {
 		opacity: .8;
 	} */
 	#word-logo {
-		width: 145px;
+		width: 140px;
 		opacity: 1;	
 	}
 	#desc {
@@ -70,7 +70,7 @@ body {
 		font-size: 9.5px;
 		letter-spacing: 1px;
 		word-spacing: 0px;
-		opacity: 1;				
+		opacity: .8;				
 	}	
 	
 	#sign-up {
@@ -205,18 +205,6 @@ body {
 
 @media screen and (max-width: 650px){
 
-	#wrapper {
-	  	height: 650px;
-	}
-		
-	#word-logo {
-		width: 110px;	
-	}
-	#desc {
-		font-size: 8px;
-		letter-spacing: 1px;
-		word-spacing: 0px;			
-	}	
 	#sign-up {
 		width: 350px;			  	
 	}	
@@ -236,5 +224,4 @@ body {
 
 	#twitter {
 		width: 27px;
-	}	
-		
+	}
