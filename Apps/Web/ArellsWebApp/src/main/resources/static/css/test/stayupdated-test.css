@@ -58,8 +58,8 @@ body {
 		opacity: .8;
 	} */
 	#word-logo {
-		width: 140px;
-		opacity: 1;	
+		width: 120px;
+		opacity: .5;	
 	}
 	#desc {
 		color: white;
@@ -67,10 +67,10 @@ body {
 		margin-right: auto;	
 		margin-top: 15px;	
 		font-weight: 700;	
-		font-size: 6px;
-		letter-spacing: 1px;
-		margin-left: 1px;
-		opacity: .8;				
+		font-size: 7px;
+		letter-spacing: 4px;
+		word-spacing: 0px;
+		opacity: 1;				
 	}	
 	
 	#sign-up {
@@ -204,8 +204,19 @@ body {
 
 
 @media screen and (max-width: 650px){
+
+	#wrapper {
+	  	height: 650px;
+	}
 		
-	
+	#word-logo {
+		width: 100px;	
+	}
+	#desc {
+		font-size: 6px;
+		letter-spacing: 3px;
+		word-spacing: 0px;			
+	}	
 	#sign-up {
 		width: 350px;			  	
 	}	
