@@ -1,9 +1,7 @@
-Cendentralized Blockchain:::::::::
------Centralized Blockchain (to prove which nodes [proven by identity verification] can create the tokens)
------Decentralized Blockchain (to create a distributed system secure from 51% attacks)
+************Can the Arells Token have its own internal price-monitering system, 
+with  a selling point connected to bank accounts *Plaid*?*****************
 
-Every new User will be a node.
-Transactions settled by many nodes
+
 Creators of tokens are those who successfully join the ecosystem (Arells Storytellers), their accounts are the token creation tools.
 
 
