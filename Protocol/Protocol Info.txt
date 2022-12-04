@@ -8,8 +8,6 @@ Creators of tokens are those who successfully join the ecosystem (Arells Storyte
 --------------------------------
 
 
-Build/Launch on Optimism?
-
 TOTAL SUPPLY/CIRCULATING SUPPL
 
 Total Supply: Created In Ecosystem (Those that are exchanged into fiat by Businesses/Individuals/Us are all automatically burned, 
@@ -67,6 +65,11 @@ Images and Videos can't be deleted, only hidden...
 
 
 LIST Token on lower-barrier entry exchange...
+****Arells Internal Wallet (built into website/app *possible seed phrase?*)******
+RPCURL.... 
+Arells.infura.io?
+Blockexplorer....
+arells.etherscan.io?
 _________Build API for this______________________________________________________
 For Exchange/Website Addresses: (arells.com/exchangename-websitename/email-username)
 For Exchange/Website Keys: (Any Words/Letters/Prefixes Websites Deem)
