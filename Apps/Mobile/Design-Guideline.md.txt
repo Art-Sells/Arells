@@ -47,9 +47,12 @@ Terms/Conditions Agreements**
 
 If they X or close screen after this, bring them back here or ask to Log-Out?
 
------(Auto onboarding process *Research Proof of Humanity/Identity System (for US users first)* (SSN, Etc)) One Person per account!!
------[Review Robinhood On-boarding process]
--*** If Already Validated/ (Cannot Create More than 1 Storytelling Account).***
+-----(Auto onboarding process 
+   *Research Proof of Humanity/Identity System (for US users first)* 
+    (SSN, Etc)) [Plaid Identity Verification or Robinhood]
+	whichever verification system that will allow one Person per account!!
+*** If Already Validated/ (Cannot Create More than 1 Account or (Log In to Account, Already has AccounT)).***
+
 -----2 Factor, etc
 
 ****(If already verified (per phone/e-mail take straight to "Create Account or whichever page they were on last")
@@ -60,30 +63,14 @@ If they X or close screen after this, bring them back here or ask to Log-Out?
 
 
 If they X or close screen after this, bring them back here or ask to Log-Out?
------ My Novestic Wallet
-Address: (arells.com/username))
-
-(Create Key) <error if no username in Address
-))Create Key Recovery Method (like password recovery) while purchasing/withdrawing((
 
 
------(logo) Key Created! If they X or close screen after this, bring them back here or ask to Log-Out?
-    **For Your Own Financial Security** 
-(don’t save as password type in code backend) 
-         [you are your own bank] 
-   Copy and save this key somewhere safe. 
-   You will need it to access your money. 
+**REFER TO 1.PROTOCOL INFO (ARELLS WALLET)**
+----- Create Wallet (APP/Browser/ETC extention)
 
-Tap here for more info: 
-For your own financial security, you are your own bank which means we don’t save your key in our database. 
-Once our system generates it, we cannot recover it so it is highly recommended you copy 
-and paste it somewhere secure, because if you loose it, you will loose access to the money you generate with 
-this key and will have to generate a brand new key with a new wallet, thus your old wallet will be shut down forever. 
-(In generate new key/wallet ask them twice (your funds will revert back to A0 as new wallet will be generated (show them more info again)). 
-We value the financial security of everyone who uses our platform to generate wealth for themselves and their family/friends, 
-thus financial security is our number one priority. 
-((Wallet is only created after user clicks next(generates new key after each refresh[teat this section 4-5 times])))———-Enter your Key to Buy, send, refund
 
+
+------After wallet Created, (Revert back here from Arells Wallet
 (Continue)
 
 
@@ -153,7 +140,7 @@ THREE DOTTED BUTTON OPENS MENU TAB:
 --- MY LIFE STORY (HOME)
     (top,left) |||, account, color tune, log-out, etc
     (top, right) O-O, Contributors
-    (Center, Top) <Earnings button, as well as Arells in account)
+    (Center, Top) <Earnings button <<Leads to ARELLS WALLET
 
 ---Earnings
     {{Notification bubble everytime number changes}}
