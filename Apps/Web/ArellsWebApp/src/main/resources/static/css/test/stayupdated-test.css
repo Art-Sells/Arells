@@ -57,19 +57,27 @@ body {
 		width: 45px;
 		opacity: .8;
 	} */
+	#word-logo-link {
+		text-decoration: none;
+	}
 	#word-logo {
 		width: 80px;
 		opacity: 1;	
 	}
+	#word-logo:hover {
+	  opacity: .4;
+	  transition: 1s;
+	  cursor: pointer;
+	} 	
 	#stay-updated {
 		color: white;
 		margin-left: auto;	
 		margin-right: auto;	
 		margin-top: -2px;	
-		font-weight: 700;	
-		font-size: 23.5px;
-		margin-left: 3.2px;
-		letter-spacing: 3.2px;
+		font-weight: 500;	
+		font-size: 20px;
+		margin-left: 5.8px;
+		letter-spacing: 5.8px;
 		word-spacing: 0px;
 		opacity: .8;			
 	}
@@ -77,8 +85,8 @@ body {
 		color: white;
 		margin-left: auto;	
 		margin-right: auto;	
-		margin-top: -25px;	
-		font-weight: 700;	
+		margin-top: -22px;	
+		font-weight: 500;	
 		font-size: 9.5px;
 		margin-left: 1px;
 		letter-spacing: 1px;

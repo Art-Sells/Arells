@@ -97,7 +97,7 @@
 			 -->
 			<br>	
 				<!-- Change below link after test -->				
-			<a href="/test">
+			<a id="word-logo-link" href="/test">
 				<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 			</a>	
 			
