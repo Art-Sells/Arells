@@ -58,16 +58,29 @@ body {
 		opacity: .8;
 	} */
 	#word-logo {
-		width: 140px;
+		width: 80px;
 		opacity: 1;	
+	}
+	#stay-updated {
+		color: white;
+		margin-left: auto;	
+		margin-right: auto;	
+		margin-top: -2px;	
+		font-weight: 700;	
+		font-size: 23.5px;
+		margin-left: 3.2px;
+		letter-spacing: 3.2px;
+		word-spacing: 0px;
+		opacity: .8;			
 	}
 	#desc {
 		color: white;
 		margin-left: auto;	
 		margin-right: auto;	
-		margin-top: 15px;	
-		font-weight: 500;	
+		margin-top: -25px;	
+		font-weight: 700;	
 		font-size: 9.5px;
+		margin-left: 1px;
 		letter-spacing: 1px;
 		word-spacing: 0px;
 		opacity: .8;				

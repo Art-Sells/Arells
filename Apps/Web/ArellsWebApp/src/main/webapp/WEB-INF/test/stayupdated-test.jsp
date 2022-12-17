@@ -95,11 +95,15 @@
 		
 <!-- 			<img id="arells-icon" src="/icons&images/Arells-Icon-Ivory.png"/>		
 			 -->
-			<br>		
-			
-			<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
+			<br>	
+				<!-- Change below link after test -->				
+			<a href="/test">
+				<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
+			</a>	
 			
 			<br>
+			
+			<p id="stay-updated">STAY UPDATED</p>
 			
 			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>					
 			
@@ -128,7 +132,7 @@
 					</div>														
 					<br>
 				    <a id="submit"  
-				    onclick="signUp()">STAY UPDATED</a>
+				    onclick="signUp()">SUBMIT</a>
 				</form>
             </div>
             
