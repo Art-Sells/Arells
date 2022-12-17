@@ -1,5 +1,26 @@
 Update 5:
 
+From TrainTracks to TrainEngine
+
+Arells Infrastructure (Ecare)'s original vision is turning 
+out to be more like a Train Engine than the Train Tracks that will power Arells 
+
+While working on Ecare, it was discovered that 
+sifting not only from one Building tool to another, but re-writing 
+entire API channels to new Blockchain Wallets that encompass their own unique
+price monitoring mechanics is much more descriptive of engine components... 
+ 
+Challenging times have surely arrived.
+
+But with these challenges come opportunities to improve, adapt, and innovate.
+
+Ready, set, build.
+
+We continue, follow us for continued updates!
+
+
+Update 6:
+
 Timing in regards to anti-trust issues with Apple/Google
 
 Picture of Time
