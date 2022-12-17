@@ -57,17 +57,38 @@ body {
 		width: 45px;
 		opacity: .8;
 	} */
+	#word-logo-link {
+		text-decoration: none;
+	}
 	#word-logo {
-		width: 140px;
+		width: 80px;
 		opacity: 1;	
+	}
+	#word-logo:hover {
+	  opacity: .4;
+	  transition: 1s;
+	  cursor: pointer;
+	} 	
+	#stay-updated {
+		color: white;
+		margin-left: auto;	
+		margin-right: auto;	
+		margin-top: -2px;	
+		font-weight: 500;	
+		font-size: 20px;
+		margin-left: 5.8px;
+		letter-spacing: 5.8px;
+		word-spacing: 0px;
+		opacity: .8;			
 	}
 	#desc {
 		color: white;
 		margin-left: auto;	
 		margin-right: auto;	
-		margin-top: 15px;	
+		margin-top: -22px;	
 		font-weight: 500;	
-		font-size: 9.5px;
+		font-size: 9px;
+		margin-left: 1px;
 		letter-spacing: 1px;
 		word-spacing: 0px;
 		opacity: .8;				
@@ -224,5 +245,4 @@ body {
 
 	#twitter {
 		width: 27px;
-	}	
-		
+	}
