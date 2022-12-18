@@ -103,13 +103,14 @@
 			
 			<br>
 			
-			<p id="stay-updated">STAY UPDATED</p>
-			
-			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>	
+			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>					
 			
 			<p id="coming-soon">COMING SOON</p>				
 			
             <div id="sign-up">
+            
+				<p id="stay-updated">STAY UPDATED</p>    
+				
 				<form id="myForm">
 					<div id="enter-content">
 						<label id="label">EMAIL</label>		
