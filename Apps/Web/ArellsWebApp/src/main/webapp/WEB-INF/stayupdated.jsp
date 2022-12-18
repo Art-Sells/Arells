@@ -105,7 +105,9 @@
 			
 			<p id="stay-updated">STAY UPDATED</p>
 			
-			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>					
+			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>	
+			
+			<p id="coming-soon">COMING SOON</p>				
 			
             <div id="sign-up">
 				<form id="myForm">

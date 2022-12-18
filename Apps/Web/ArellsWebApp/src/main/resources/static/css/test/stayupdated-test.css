@@ -11,7 +11,7 @@ body {
 #wrapper {
 	padding-top: 30px;
 	padding-bottom: 20px;
-  	height: 670px;
+  	height: 700px;
   	width: 100%;
 	background: linear-gradient(90deg, 
 	rgba(255,0,0,1) 0%, 
@@ -69,36 +69,34 @@ body {
 	  transition: 1s;
 	  cursor: pointer;
 	} 	
-	#stay-updated {
-		color: white;
-		margin-left: auto;	
-		margin-right: auto;	
-		margin-top: -2px;	
-		font-weight: 500;	
-		font-size: 20px;
-		margin-left: 5.8px;
-		letter-spacing: 5.8px;
-		word-spacing: 0px;
-		opacity: .8;			
-	}
+
 	#desc {
 		color: white;
 		margin-left: auto;	
 		margin-right: auto;	
-		margin-top: -22px;	
+		margin-top: 5px;	
 		font-weight: 500;	
 		font-size: 9px;
 		margin-left: 1px;
 		letter-spacing: 1px;
 		word-spacing: 0px;
-		opacity: .8;				
-	}	
+		opacity: 1;				
+	}
+	#coming-soon {
+		margin-top: -5px;	
+		font-size: 9px;
+		margin-left: 13px;
+		letter-spacing: 13px;
+		font-weight: 300;
+		color: white;
+		opacity: 1;
+	}		
 	
 	#sign-up {
 		color: white;
 		width: 500px;
-		height: 460px;
-		padding-top: 25px;
+		height: 500px;
+		padding-top: 40px;
 		padding-left: 10px;
 		padding-right: 10px;
 		margin-top: 20px;
@@ -108,6 +106,17 @@ body {
 		border-radius: 0px;
   		box-shadow: 0px 5px 25px -10px black;  				  	
 	}
+		#stay-updated {
+			color: white;
+			margin-left: auto;	
+			margin-right: auto;	
+			font-weight: 500;	
+			font-size: 15px;
+			margin-left: 1px;
+			letter-spacing: 1px;
+			word-spacing: 0px;
+			opacity: 1;			
+		}	
 		#enter-content {
 			margin-top: 20px;
 		}
@@ -150,7 +159,7 @@ body {
                box-shadow: none !important;
            }  
            #last-input{
-			  margin-bottom: 50px;           
+			  margin-bottom: 35px;           
            }     	   
 			#submit {
 			  background: none;
