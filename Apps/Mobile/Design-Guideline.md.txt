@@ -175,7 +175,7 @@ SORT by (Oldest/Newest first (no click))
 
 -------------------------------------------------------
 While Adding ANY Post:
-- (Photograph[flip camera])[automatically posts]
+- (Photograph[flip camera])[automatically posts] *ALL ENCRYPTED*
 ---------------------------------------------------------
 After Individual Post Added:
      You just made money (+A1) to make more, 
