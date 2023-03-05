@@ -10,8 +10,8 @@ body {
 
 
 #overlay {
-	padding-top: 70px;
-	height: 560px;
+	padding-top: 100px;
+	height: 600px;
 	width: 100%;
 	margin-top: 0px;	
     margin-bottom: 0px;	
@@ -27,6 +27,7 @@ body {
      animation: gradients 20s ease infinite; 
      background-size: 20000% 20000%;
      z-index: 1;
+     box-shadow: 0px 8px 12px -6px black;  
 }
 @-webkit-keyframes gradients{
   0% {
@@ -218,68 +219,10 @@ body {
 }	
 
 
-footer {
-   padding-top: 40px;
-   height: 100px;
-	margin-left: auto;
-	margin-right: auto;	
-	z-index: 2;
-	background: linear-gradient(50deg, 
-	rgba(255,0,0,1) 15%, 
-	rgba(178,179,2,1) 30%, 
-	rgba(1,187,1,1) 50%, 
-	rgba(33,0,255,1) 70%, 
-	rgba(187,1,158,1) 85%); 
-     animation: gradient 20s ease infinite; 
-     background-size: 1000% 1000%;
-  	box-shadow: 0px 8px 12px -6px black;      
-}	
-@-webkit-keyframes gradient{
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-     background-position: 0% 50%;
-  }
-}
-@keyframes gradient{
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-     background-position: 0% 50%;
-  }
-}
-	#powered {
-	    font-size: 8px;
-	    letter-spacing: 5px; 
-	    font-weight: 500; 
-	    margin-right: 10px;
-	    opacity: .8;
-	    color: white;
-	}
-	#ecare-link {
-		text-decoration: none;		
-	}
-	#ecare-link:hover{
-		opacity: .2;
-	    cursor: pointer;
-		transition: 1s;
-	}
-	#ecare-icon {
-		width: 20px;
-		margin-bottom: 0px;
-		opacity: 1;
-	}
+
 	
 #footer {
-	padding-top: 10px;
+	padding-top: 30px;
 	padding-bottom: 40px;	
 }	
 	#black-line {

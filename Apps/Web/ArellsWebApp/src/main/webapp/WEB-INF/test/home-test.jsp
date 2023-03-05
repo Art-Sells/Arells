@@ -64,7 +64,7 @@
 			<hr id="white-line">
 			
 			<p id="description">
-				CREATED TO LIFT STORYTELLERS OUT OF POVERTY
+				UP TO 90% IN ROYALTIES FOR YOUR NFTs
 			</p>
 			
 			<p id="coming-soon">COMING SOON</p>
@@ -88,16 +88,6 @@
 		
 		</div>			
 		
-		<footer>
-
-		    <span id="powered">POWERED BY</span>
-		    <!-- Change below link after test -->		
-	        <a href="https://ecare.exchange"
-		      id="ecare-link">
-		      <img id="ecare-icon" src="/icons&images/Icon.png"/>
-		  	</a>  		
-			
-		</footer>
 		
 		<div id="footer">
 			<hr id="black-line">		
