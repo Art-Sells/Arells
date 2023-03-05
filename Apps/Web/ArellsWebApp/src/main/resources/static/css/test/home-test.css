@@ -77,7 +77,7 @@ body {
 	  border: none;
 	  height: 1px;
 	  border-radius: 30px;
-	  width: 320px;
+	  width: 300px;
 	  opacity: 1;
 	}	
 	
@@ -92,9 +92,9 @@ body {
 	}	
 	#coming-soon {
 		margin-top: 40px;
-		font-size: 14px;
+		font-size: 12px;
 		margin-left: 10px;
-		letter-spacing: 10px;
+		letter-spacing: 15px;
 		font-weight: 300;
 		color: white;
 		margin-bottom: 90px;
@@ -102,16 +102,16 @@ body {
 	}
 	
 	#updates {
-	  background: none;
+	  background: white;
 	  text-decoration: none;
-	  color: white;
+	  color: black;
 	  font-weight:500;
 	  font-size: 11px;
 	  padding-top: 20px;
 	  padding-bottom: 20px;
 	  padding-right: 54px;
 	  padding-left: 55px;	  
-	  border: solid;
+	  border: none;
 	  letter-spacing: 1px;
 	  border-radius: 10px;
 	  border-width: 1px;
@@ -124,32 +124,7 @@ body {
 	  transition: 1s;
 	  cursor: pointer;
 	}
-	#rdmp{
-	  margin-top: 45px;	
-	}
-	#roadmap {
-	  background: none;
-	  text-decoration: none;
-	  color: white;
-	  font-weight:500;
-	  font-size: 11px;
-	  padding-top: 20px;
-	  padding-bottom: 20px;
-	  padding-right: 69px;
-	  padding-left: 70px;	  
-	  border: solid;
-	  letter-spacing: 1px;
-	  border-radius: 10px;
-	  border-width: 1px;
-	  width: 200px;
-	  opacity: 1;
-	}
-	#roadmap:hover,
-	#roadmap:focus {
-	  opacity: .4;
-	  transition: 1s;
-	  cursor: pointer;
-	}		
+	
 	
 @media screen and (max-width: 650px) {
   body {
@@ -200,19 +175,6 @@ body {
 	  padding-bottom: 20px;
 	  padding-right: 34px;
 	  padding-left: 35px;
-	  border-width: 1px;	
-	  letter-spacing: 1px;	    
-	}	
-	#rdmp{
-	  margin-top: 40px;	
-	}	
-	#roadmap {
-	  font-weight:400;
-	  font-size: 9px;
-	  padding-top: 20px;
-	  padding-bottom: 20px;
-	  padding-right: 47px;
-	  padding-left: 48px;	
 	  border-width: 1px;	
 	  letter-spacing: 1px;	    
 	}		
