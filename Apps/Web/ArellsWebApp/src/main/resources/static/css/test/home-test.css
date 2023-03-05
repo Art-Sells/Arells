@@ -10,7 +10,7 @@ body {
 
 
 #overlay {
-	padding-top: 100px;
+	padding-top: 80px;
 	height: 600px;
 	width: 100%;
 	margin-top: 0px;	
@@ -82,10 +82,10 @@ body {
 	
 	#description {
 		margin-top: 30px;
-		font-size: 9px;
+		font-size: 15px;
 		letter-spacing: 3px;
 		margin-left: 3px;
-		font-weight: 400;
+		font-weight: 700;
 		opacity: 1;
 		color: white;
 	}	
@@ -222,7 +222,7 @@ body {
 
 	
 #footer {
-	padding-top: 30px;
+	padding-top: 50px;
 	padding-bottom: 40px;	
 }	
 	#black-line {

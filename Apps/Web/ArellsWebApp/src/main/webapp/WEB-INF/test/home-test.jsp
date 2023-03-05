@@ -67,6 +67,8 @@
 				UP TO 90% IN ROYALTIES FOR YOUR NFTs
 			</p>
 			
+			<hr id="white-line">
+			
 			<p id="coming-soon">COMING SOON</p>
 			
 			<!-- Change below link after test -->
@@ -89,8 +91,7 @@
 		</div>			
 		
 		
-		<div id="footer">
-			<hr id="black-line">		
+		<div id="footer">	
 <!--  			  <p id="follow-us">FOLLOW US</p> -->
 		  <a href="https://twitter.com/arellsofficial"
 		      target="_blank"
