@@ -76,16 +76,6 @@
 			id="updates">
 	      		STAY UPDATED
 	        </a>
-	        
-	        <br>
-		
-			<p id="rdmp">
-				<!-- Change below link after test -->
-				<a href="/roadmap-test" 
-				id="roadmap">
-		      		ROADMAP
-		        </a>				
-			</p>
 		
 		
 		</div>			

@@ -11,7 +11,7 @@ body {
 
 #overlay {
 	padding-top: 80px;
-	height: 600px;
+	height: 620px;
 	width: 100%;
 	margin-top: 0px;	
     margin-bottom: 0px;	
@@ -68,6 +68,7 @@ body {
 		font-weight: 700;
 		color: white;
 		opacity: 1;
+		padding-bottom: 10px;
 	}
 	
 	#white-line {
@@ -76,27 +77,27 @@ body {
 	  border: none;
 	  height: 1px;
 	  border-radius: 30px;
-	  width: 200px;
+	  width: 320px;
 	  opacity: 1;
 	}	
 	
 	#description {
 		margin-top: 30px;
-		font-size: 15px;
-		letter-spacing: 3px;
-		margin-left: 3px;
-		font-weight: 700;
+		font-size: 11px;
+		letter-spacing: 4px;
+		margin-left: 4px;
+		font-weight: 800;
 		opacity: 1;
 		color: white;
 	}	
 	#coming-soon {
-		margin-top: 25px;
+		margin-top: 40px;
 		font-size: 14px;
 		margin-left: 10px;
 		letter-spacing: 10px;
 		font-weight: 300;
 		color: white;
-		margin-bottom: 60px;
+		margin-bottom: 90px;
 		opacity: 1;
 	}
 	
