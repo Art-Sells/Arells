@@ -92,24 +92,15 @@
 	<body>
 	
 		<div id="wrapper">
-		
-<!-- 			<img id="arells-icon" src="/icons&images/Arells-Icon-Ivory.png"/>		
-			 -->
-			<br>	
-				<!-- Change below link after test -->				
-			<a id="word-logo-link" href="/test">
-				<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-			</a>	
 			
-			<br>
+			<p id="stay-updated">STAY UPDATED</p> 
 			
-			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>					
+			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>	
 			
-			<p id="coming-soon">COMING SOON</p>				
+			<br>				
+						
 			
-            <div id="sign-up">
-            
-				<p id="stay-updated">STAY UPDATED</p>    
+            <div id="sign-up">   
 				
 				<form id="myForm">
 					<div id="enter-content">

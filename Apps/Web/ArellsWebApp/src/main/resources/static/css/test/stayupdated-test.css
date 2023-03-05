@@ -5,14 +5,6 @@ body {
   margin-left: 0%;
   margin-right: 0%;
   margin-bottom: 0%;
-  background: white;
-}
-
-#wrapper {
-	padding-top: 30px;
-	padding-bottom: 20px;
-  	height: 670px;
-  	width: 100%;
 	background: linear-gradient(90deg, 
 	rgba(255,0,0,1) 0%, 
 	rgba(178,179,2,1) 25%, 
@@ -20,8 +12,11 @@ body {
 	rgba(33,0,255,1) 75%, 
 	rgba(187,1,158,1) 100%);    
      animation: gradients 20s ease infinite; 
-     background-size: 10000% 10000%;
-  	box-shadow: 0px 8px 12px -6px black;           
+     background-size: 10000% 10000%;    
+}
+
+#wrapper {
+	padding-top: 50px;    
 
 }
 @-webkit-keyframes gradients{
@@ -53,70 +48,47 @@ body {
   }
 }
 
-/* 	#arells-icon {
-		width: 45px;
-		opacity: .8;
-	} */
-	#word-logo-link {
-		text-decoration: none;
-	}
-	#word-logo {
-		width: 80px;
-		opacity: 1;	
-	}
-	#word-logo:hover {
-	  opacity: .4;
-	  transition: 1s;
-	  cursor: pointer;
-	} 	
 
+	#stay-updated {
+		color: white;
+		margin-left: auto;	
+		margin-right: auto;	
+		font-weight: 800;	
+		font-size: 15px;
+		margin-left: 10px;
+		letter-spacing: 10px;
+		word-spacing: 0px;
+		opacity: .8;			
+	}	
 	#desc {
 		color: white;
 		margin-left: auto;	
 		margin-right: auto;	
-		margin-top: 5px;	
+		margin-top: -10px;	
 		font-weight: 500;	
 		font-size: 9px;
-		margin-left: 1px;
-		letter-spacing: 1px;
+		margin-left: 1.7px;
+		letter-spacing: 1.7px;
 		word-spacing: 0px;
-		opacity: 1;				
+		opacity: .8;				
 	}
-	#coming-soon {
-		margin-top: -5px;	
-		font-size: 9px;
-		margin-left: 13px;
-		letter-spacing: 13px;
-		font-weight: 300;
-		color: white;
-		opacity: 1;
-	}		
+
 	
 	#sign-up {
 		color: white;
 		width: 500px;
-		height: 480px;
+		height: 460px;
 		padding-top: 30px;
 		padding-left: 10px;
 		padding-right: 10px;
-		margin-top: 20px;
+		margin-top: 10px;
 		margin-left: auto;
 		margin-right: auto;
 		background: none;
 		border-radius: 0px;
   		box-shadow: 0px 5px 25px -10px black;  				  	
 	}
-		#stay-updated {
-			color: white;
-			margin-left: auto;	
-			margin-right: auto;	
-			font-weight: 800;	
-			font-size: 15px;
-			margin-left: 0px;
-			letter-spacing: 0px;
-			word-spacing: 0px;
-			opacity: .7;			
-		}	
+
 		#enter-content {
 			margin-top: 20px;
 		}
@@ -137,7 +109,7 @@ body {
        	   		color: white;
        	   		font-weight: 500;
        	   		border: none;
-       	   		border-radius: 10px;
+       	   		border-radius: 0px;
        	   		font-size: 13px;
        	   		width: 240px;
        	   		height: 15px;
@@ -162,56 +134,29 @@ body {
 			  margin-bottom: 35px;           
            }     	   
 			#submit {
-			  background: none;
+			  background: black;
 			  text-decoration: none;
 			  color: white;
-			  font-weight:500;
+			  font-weight: 500;
 			  font-size: 11px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
-			  padding-right: 44px;
+			  padding-right: 42px;
 			  padding-left: 45px;	  
 			  border: solid;
-			  letter-spacing: 1px;
-			  border-radius: 10px;
-			  border-width: 1px;
+			  letter-spacing: 3px;
+			  border-radius: 0px;
+			  border-width: 0px;
 			  width: 200px;
 			  opacity: 1;
+	  		  box-shadow: 0px 8px 12px -6px black; 			  
 			}
 			#submit:hover,
 			#submit:focus {
 			  opacity: .4;
 			  transition: 1s;
 			  cursor: pointer;
-			}
-/* 	#signed-up {
-		color: white;
-		width: 500px;
-		height: 460px;
-		padding-top: 25px;
-		padding-left: 10px;
-		padding-right: 10px;
-		margin-top: 50px;
-		margin-left: auto;
-		margin-right: auto;
-		background: none;
-		border-radius: 0px;
-  		box-shadow: 0px 5px 25px -10px black;  				  	
-	}
-		#signed-up-spacer{
-			margin: auto;
-			padding-top: 50px;
-			width: 100px;
-		}	
-		#signed-up-text{
-		    line-height: 30px;	    
-			color: white;
-			font-weight: 500;
-			font-size: 40px;
-			letter-spacing: 2px;
-			margin-left: 2px;
-			opacity: .8;
-		}	 */       	   
+			}      	   
 		
 	#footer {
 		padding-top: 50px;
@@ -255,3 +200,4 @@ body {
 	#twitter {
 		width: 27px;
 	}
+}
