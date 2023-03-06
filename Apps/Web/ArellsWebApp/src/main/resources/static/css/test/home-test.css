@@ -53,8 +53,8 @@ body {
 	#slogann {
 		margin-top: 35px;
 		font-size: 14px;
-		letter-spacing: 10px;
-		margin-left: 10px; 
+		letter-spacing: 13px;
+		margin-left: 13px; 
 		font-weight: 500;
 		color: white;
 		opacity: 1;
@@ -82,7 +82,7 @@ body {
 	}	
 	#coming-soonn {
 		margin-top: 40px;
-		font-size: 12px;
+		font-size: 11px;
 		margin-left: 15px;
 		letter-spacing: 15px;
 		font-weight: 300;
@@ -154,7 +154,7 @@ body {
 	}
 	#black-line {
 	  margin-top: 30px;
-	  width: 230px;
+	  width: 235px;
 	}	
 	
 	#descriptionn {
@@ -181,5 +181,5 @@ body {
 		width: 27px;
 	}	
 	
-}		
+}	
 
