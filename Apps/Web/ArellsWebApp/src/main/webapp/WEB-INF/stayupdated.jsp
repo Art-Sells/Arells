@@ -13,7 +13,7 @@
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
 		<meta name="title" content="Arells">
-		<meta name="description" content="Make Money With Your Life Story">
+		<meta name="description" content="Art Sells">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
@@ -29,12 +29,12 @@
 		<meta property="og:title" content="Arells">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/stayupdated">
-		<meta property="og:description" content="Make Money With Your Life Story">
+		<meta property="og:description" content="Art Sells">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Make Money With Your Life Story">
+		<meta name="twitter:title" content="Art Sells">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/200199141-3bebaf4d-9052-45c0-a1fa-7bc82bdd263a.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/stayupdated">
