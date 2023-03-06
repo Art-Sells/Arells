@@ -77,7 +77,7 @@ body {
 	#sign-up {
 		color: white;
 		width: 500px;
-		height: 460px;
+		height: 450px;
 		padding-top: 30px;
 		padding-left: 10px;
 		padding-right: 10px;
@@ -109,7 +109,7 @@ body {
        	   		color: white;
        	   		font-weight: 500;
        	   		border: none;
-       	   		border-radius: 10px;
+       	   		border-radius: 7px;
        	   		font-size: 13px;
        	   		width: 240px;
        	   		height: 15px;
@@ -145,7 +145,7 @@ body {
 			  padding-left: 45px;	  
 			  border: solid;
 			  letter-spacing: 3px;
-			  border-radius: 10px;
+			  border-radius: 5px;
 			  border-width: 0px;
 			  width: 200px;
 			  opacity: 1;
