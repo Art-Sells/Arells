@@ -61,13 +61,13 @@
 			
 			<p id="slogan">MAKE MONEY WITH YOUR LIFE STORY</p>
 			
-			<hr id="white-line">
+			<hr id="black-line">
 			
 			<p id="description">
 				UP TO 90% IN ROYALTIES FOR YOUR NFTs
 			</p>
 			
-			<hr id="white-line">
+			<hr id="black-line">
 			
 			<p id="coming-soon">COMING SOON</p>
 			
