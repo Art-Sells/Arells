@@ -95,7 +95,6 @@
 			
 			<p id="stay-updated">STAY UPDATED</p> 
 			
-			<p id="desc">MAKE MONEY WITH YOUR LIFE STORY</p>	
 			
 			<br>				
 						

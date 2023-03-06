@@ -16,7 +16,7 @@ body {
 }
 
 #wrapper {
-	padding-top: 50px;    
+	padding-top: 30px;    
 
 }
 @-webkit-keyframes gradients{
@@ -59,19 +59,7 @@ body {
 		letter-spacing: 10px;
 		word-spacing: 0px;
 		opacity: .8;			
-	}	
-	#desc {
-		color: white;
-		margin-left: auto;	
-		margin-right: auto;	
-		margin-top: -10px;	
-		font-weight: 500;	
-		font-size: 9px;
-		margin-left: 1.7px;
-		letter-spacing: 1.7px;
-		word-spacing: 0px;
-		opacity: .8;				
-	}
+	}		
 
 	
 	#sign-up {

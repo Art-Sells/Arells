@@ -59,7 +59,7 @@
 			
 			<br>
 			
-			<p id="slogann">MAKE MONEY WITH YOUR LIFE STORY</p>
+			<p id="slogann">ART SELLS</p>
 			
 			<hr id="black-line">
 			
