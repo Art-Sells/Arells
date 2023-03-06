@@ -5,19 +5,6 @@ body {
   margin-left: 0%;
   margin-right: 0%;
   margin-bottom: 0%;
-  background: white;
-}
-
-
-#overlay {
-	padding-top: 70px;
-	height: 560px;
-	width: 100%;
-	margin-top: 0px;	
-    margin-bottom: 0px;	
-	margin-left: auto;
-	margin-right: auto;
-	border-radius: 0px;	
 	background: linear-gradient(50deg, 
 	rgba(255,0,0,1) 15%, 
 	rgba(178,179,2,1) 30%, 
@@ -26,7 +13,11 @@ body {
 	rgba(187,1,158,1) 85%);    
      animation: gradients 20s ease infinite; 
      background-size: 20000% 20000%;
-     z-index: 1;
+}
+
+
+#overlay {
+	padding-top: 80px;
 }
 @-webkit-keyframes gradients{
   0% {
@@ -52,7 +43,7 @@ body {
 }
 
 	#arells-icon {
-		width: 100px;
+		width: 80px;
 		opacity: 1;
 	}
 	#word-logo {
@@ -67,32 +58,33 @@ body {
 		font-weight: 700;
 		color: white;
 		opacity: 1;
+		padding-bottom: 10px;
 	}
 	
 	#white-line {
 	  margin-top: 30px;
-	  background-color: white;
+	  background-color: black;
 	  border: none;
-	  height: 1px;
+	  height: 2px;
 	  border-radius: 30px;
-	  width: 200px;
-	  opacity: 1;
+	  width: 330px;
+	  opacity: .2;
 	}	
 	
 	#description {
 		margin-top: 30px;
-		font-size: 9px;
-		letter-spacing: 3px;
-		margin-left: 3px;
-		font-weight: 400;
+		font-size: 11px;
+		letter-spacing: 4px;
+		margin-left: 4px;
+		font-weight: 800;
 		opacity: 1;
 		color: white;
 	}	
 	#coming-soon {
-		margin-top: 25px;
-		font-size: 14px;
-		margin-left: 10px;
-		letter-spacing: 10px;
+		margin-top: 40px;
+		font-size: 12px;
+		margin-left: 15px;
+		letter-spacing: 15px;
 		font-weight: 300;
 		color: white;
 		margin-bottom: 60px;
@@ -100,21 +92,22 @@ body {
 	}
 	
 	#updates {
-	  background: none;
+	  background: black;
 	  text-decoration: none;
 	  color: white;
-	  font-weight:500;
+	  font-weight: 200;
 	  font-size: 11px;
 	  padding-top: 20px;
 	  padding-bottom: 20px;
-	  padding-right: 54px;
+	  padding-right: 52px;
 	  padding-left: 55px;	  
-	  border: solid;
-	  letter-spacing: 1px;
-	  border-radius: 10px;
-	  border-width: 1px;
+	  border: none;
+	  letter-spacing: 3px;
+	  border-radius: 5px;
+	  border-width: 0px;
 	  width: 200px;
 	  opacity: 1;
+	  box-shadow: 0px 8px 12px -6px black;  
 	}
 	#updates:hover,
 	#updates:focus {
@@ -122,185 +115,12 @@ body {
 	  transition: 1s;
 	  cursor: pointer;
 	}
-	#rdmp{
-	  margin-top: 45px;	
-	}
-	#roadmap {
-	  background: none;
-	  text-decoration: none;
-	  color: white;
-	  font-weight:500;
-	  font-size: 11px;
-	  padding-top: 20px;
-	  padding-bottom: 20px;
-	  padding-right: 69px;
-	  padding-left: 70px;	  
-	  border: solid;
-	  letter-spacing: 1px;
-	  border-radius: 10px;
-	  border-width: 1px;
-	  width: 200px;
-	  opacity: 1;
-	}
-	#roadmap:hover,
-	#roadmap:focus {
-	  opacity: .4;
-	  transition: 1s;
-	  cursor: pointer;
-	}		
-	
-@media screen and (max-width: 650px) {
-  body {
-    -webkit-text-size-adjust: none;
-  }
-  #overlay {
-		height: 500px;
-		padding-top: 70px;
-	}	  
-	#arells-icon {
-		width: 75px;
-	}
-
-	#word-logo {
-		margin-top: 20px;
-		width: 95px;	
-	}  
-  	#slogan {
-		margin-top: 25px;
-		font-size: 9px;
-		font-weight: 700;
-		letter-spacing: .5px;
-		margin-right: .5px;
-	}
-	#white-line {
-	  height: 1px;	
-	  margin-top: 30px;
-	  width: 150px;
-	}	
-	
-	#description {
-		margin-top: 30px;
-		font-size: 7px;
-		letter-spacing: 2px;
-		margin-left: 1px;
-	}		
-	#coming-soon {
-		margin-top: 30px;
-		font-size: 9px;
-		margin-left: 7px;
-		letter-spacing: 7px;
-		margin-bottom: 50px;		
-	}
-	#updates {
-	  font-weight:400;
-	  font-size: 9px;
-	  padding-top: 20px;
-	  padding-bottom: 20px;
-	  padding-right: 34px;
-	  padding-left: 35px;
-	  border-width: 1px;	
-	  letter-spacing: 1px;	    
-	}	
-	#rdmp{
-	  margin-top: 40px;	
-	}	
-	#roadmap {
-	  font-weight:400;
-	  font-size: 9px;
-	  padding-top: 20px;
-	  padding-bottom: 20px;
-	  padding-right: 47px;
-	  padding-left: 48px;	
-	  border-width: 1px;	
-	  letter-spacing: 1px;	    
-	}		
-	
-}	
-
-
-footer {
-   padding-top: 40px;
-   height: 100px;
-	margin-left: auto;
-	margin-right: auto;	
-	z-index: 2;
-	background: linear-gradient(50deg, 
-	rgba(255,0,0,1) 15%, 
-	rgba(178,179,2,1) 30%, 
-	rgba(1,187,1,1) 50%, 
-	rgba(33,0,255,1) 70%, 
-	rgba(187,1,158,1) 85%); 
-     animation: gradient 20s ease infinite; 
-     background-size: 1000% 1000%;
-  	box-shadow: 0px 8px 12px -6px black;      
-}	
-@-webkit-keyframes gradient{
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-     background-position: 0% 50%;
-  }
-}
-@keyframes gradient{
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-     background-position: 0% 50%;
-  }
-}
-	#powered {
-	    font-size: 8px;
-	    letter-spacing: 5px; 
-	    font-weight: 500; 
-	    margin-right: 10px;
-	    opacity: .8;
-	    color: white;
-	}
-	#ecare-link {
-		text-decoration: none;		
-	}
-	#ecare-link:hover{
-		opacity: .2;
-	    cursor: pointer;
-		transition: 1s;
-	}
-	#ecare-icon {
-		width: 20px;
-		margin-bottom: 0px;
-		opacity: 1;
-	}
 	
 #footer {
-	padding-top: 10px;
-	padding-bottom: 40px;	
+	padding-top: 80px;
+	padding-bottom: 80px;	
 }	
-	#black-line {
-	  background-color: black;
-	  border: none;
-	  height: 3px;
-	  border-radius: 30px;
-	  width: 70%;
-	  margin-bottom: 40px;
-	  opacity: .5;
-	}		
-/*  	#follow-us {
-	    font-size: 8px;
-	    letter-spacing: 1px; 
-	    font-weight: 800; 
-	    margin-left: 1px;
-	    margin-bottom: 5px;
-	    opacity: .7;
-	    color: black;
-	}  */
-
+	
 	#contact {
 		opacity: .7;
 	}
@@ -315,25 +135,52 @@ footer {
 	}		
 	
 	
-	
 @media screen and (max-width: 650px) {
+  body {
+    -webkit-text-size-adjust: none;
+  }  
+	#arells-icon {
+		width: 65px;
+	}
 
-	footer {
-	   height: 90px;
+	#word-logo {
+		width: 110px;	
+	}  
+  	#slogan {
+		font-size: 9px;
+		font-weight: 700;
+		letter-spacing: .5px;
+		margin-right: .5px;
+	}
+	#white-line {
+	  margin-top: 30px;
+	  width: 230px;
 	}	
-		#powered {
-		    font-size: 6px;
-		    letter-spacing: 3px; 
-		    margin-right: 7px;
-		}
-		
-		#ecare-icon {
-			width: 15px;
-			margin-bottom: 0px;
-		}	
+	
+	#description {
+		font-size: 9px;
+		letter-spacing: 2px;
+		margin-left: 2px;
+	}		
+	#coming-soon {
+		font-size: 9px;
+		margin-left: 11px;
+		letter-spacing: 11px;	
+	}
+	#updates {
+	  font-weight:400;
+	  font-size: 9px;
+	  padding-top: 20px;
+	  padding-bottom: 20px;
+	  padding-right: 32px;
+	  padding-left: 35px;
+	  border-width: 1px;	    
+	}		
+
 	#twitter {
 		width: 27px;
-	}						
+	}	
 	
 }	
+
 

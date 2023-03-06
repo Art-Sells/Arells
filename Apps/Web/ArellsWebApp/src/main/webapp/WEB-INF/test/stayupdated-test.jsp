@@ -130,15 +130,7 @@
 				</form>
             </div>
             
-<!--             <div id="signed-up" style="display:block">
-            
-            	<div id="signed-up-spacer">
-            		
-            		<h1 id="signed-up-text">WE'LL BE IN TOUCH</h1>
-            	
-            	</div>
-				
-            </div>    -->         
+      
 		
 		</div>			
 		

@@ -23,19 +23,19 @@ public class MainController {
 		return "stayupdated.jsp";
 	}
 
-	@GetMapping("/roadmap")
-	public String roadmap() {
-		return "roadmap.jsp";
-	}
+//	@GetMapping("/roadmap")
+//	public String roadmap() {
+//		return "roadmap.jsp";
+//	}
 
 	// Comment out bottom getters after successful tests
 	
-	 @GetMapping("/test") public String test() { return "test/home-test.jsp"; }
+//	 @GetMapping("/test") public String test() { return "test/home-test.jsp"; }
 //	 
-	 @GetMapping("/stayupdated-test") public String stayUpdatedTest() { return "test/stayupdated-test.jsp"; }	 
+//	 @GetMapping("/stayupdated-test") public String stayUpdatedTest() { return "test/stayupdated-test.jsp"; }	 
 //	 
-	 @GetMapping("/roadmap-test") public String roadmapTest() { return
-	 "test/roadmap-test.jsp"; }
+//	 @GetMapping("/roadmap-test") public String roadmapTest() { return
+//	 "test/roadmap-test.jsp"; }
 	 
 
 }

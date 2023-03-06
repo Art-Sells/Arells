@@ -64,8 +64,10 @@
 			<hr id="white-line">
 			
 			<p id="description">
-				CREATED TO LIFT STORYTELLERS OUT OF POVERTY
+				UP TO 90% IN ROYALTIES FOR YOUR NFTs
 			</p>
+			
+			<hr id="white-line">
 			
 			<p id="coming-soon">COMING SOON</p>
 			
@@ -74,33 +76,12 @@
 			id="updates">
 	      		STAY UPDATED
 	        </a>
-	        
-	        <br>
-		
-			<p id="rdmp">
-				<!-- Change below link after test -->
-				<a href="/roadmap" 
-				id="roadmap">
-		      		ROADMAP
-		        </a>				
-			</p>
 		
 		
 		</div>			
 		
-		<footer>
-
-		    <span id="powered">POWERED BY</span>
-		    <!-- Change below link after test -->		
-	        <a href="https://ecare.exchange"
-		      id="ecare-link">
-		      <img id="ecare-icon" src="/icons&images/Icon.png"/>
-		  	</a>  		
-			
-		</footer>
 		
-		<div id="footer">
-			<hr id="black-line">		
+		<div id="footer">	
 <!--  			  <p id="follow-us">FOLLOW US</p> -->
 		  <a href="https://twitter.com/arellsofficial"
 		      target="_blank"
