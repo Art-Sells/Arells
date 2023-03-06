@@ -22,7 +22,7 @@
 				<!-- Change below link after test -->
 		<link rel="canonical" href="https://arells.com">
 		
-		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/200199141-3bebaf4d-9052-45c0-a1fa-7bc82bdd263a.jpg">	
+		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/223032781-b7093bf3-26c2-4884-8a62-2cfd1f9dd947.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
 		<meta property="og:title" content="Arells">
@@ -34,7 +34,7 @@
 		<meta property="og:image:height" content="400">
 		
 		<meta name="twitter:title" content="Art Sells">
-		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/200199141-3bebaf4d-9052-45c0-a1fa-7bc82bdd263a.jpg">
+		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/223032781-b7093bf3-26c2-4884-8a62-2cfd1f9dd947.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com">
 		<meta name="twitter:card" content="summary_large_image">
