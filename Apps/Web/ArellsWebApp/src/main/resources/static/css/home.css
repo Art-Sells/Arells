@@ -16,7 +16,7 @@ body {
 }
 
 
-#overlay {
+#overlayy {
 	padding-top: 80px;
 }
 @-webkit-keyframes gradients{
@@ -42,15 +42,15 @@ body {
   }
 }
 
-	#arells-icon {
+	#arells-iconn {
 		width: 80px;
 		opacity: 1;
 	}
-	#word-logo {
+	#word-logoo {
 		margin-top: 20px;
 		width: 120px;	
 	}
-	#slogan {
+	#slogann {
 		margin-top: 30px;
 		font-size: 11px;
 		letter-spacing: 1px;
@@ -71,7 +71,7 @@ body {
 	  opacity: .2;
 	}	
 	
-	#description {
+	#descriptionn {
 		margin-top: 30px;
 		font-size: 11px;
 		letter-spacing: 4px;
@@ -80,7 +80,7 @@ body {
 		opacity: 1;
 		color: white;
 	}	
-	#coming-soon {
+	#coming-soonn {
 		margin-top: 40px;
 		font-size: 12px;
 		margin-left: 15px;
@@ -91,7 +91,7 @@ body {
 		opacity: 1;
 	}
 	
-	#updates {
+	#updatess {
 	  background: black;
 	  text-decoration: none;
 	  color: white;
@@ -109,28 +109,28 @@ body {
 	  opacity: 1;
 	  box-shadow: 0px 8px 12px -6px black;  
 	}
-	#updates:hover,
-	#updates:focus {
+	#updatess:hover,
+	#updatess:focus {
 	  opacity: .4;
 	  transition: 1s;
 	  cursor: pointer;
 	}
 	
-#footer {
+#footerr {
 	padding-top: 80px;
 	padding-bottom: 80px;	
 }	
 	
-	#contact {
+	#contactt {
 		opacity: .7;
 	}
-	#contact:hover,
-	#contact:focus {
+	#contactt:hover,
+	#contactt:focus {
 		  opacity: .4;
 		  transition: 1s;
 		  cursor: pointer;
 	}
-	#twitter {
+	#twitterr {
 		width: 30px;
 	}		
 	
@@ -139,35 +139,35 @@ body {
   body {
     -webkit-text-size-adjust: none;
   }  
-	#arells-icon {
+	#arells-iconn {
 		width: 65px;
 	}
 
-	#word-logo {
+	#word-logoo {
 		width: 110px;	
 	}  
-  	#slogan {
+  	#slogann {
 		font-size: 9px;
 		font-weight: 700;
 		letter-spacing: .5px;
 		margin-right: .5px;
 	}
-	#black-line {
+	#black-linee {
 	  margin-top: 30px;
 	  width: 230px;
 	}	
 	
-	#description {
+	#descriptionn {
 		font-size: 9px;
 		letter-spacing: 2px;
 		margin-left: 2px;
 	}		
-	#coming-soon {
+	#coming-soonn {
 		font-size: 9px;
 		margin-left: 11px;
 		letter-spacing: 11px;	
 	}
-	#updates {
+	#updatess {
 	  font-weight:400;
 	  font-size: 9px;
 	  padding-top: 20px;
@@ -177,7 +177,7 @@ body {
 	  border-width: 1px;	    
 	}		
 
-	#twitter {
+	#twitterr {
 		width: 27px;
 	}	
 	

@@ -49,31 +49,31 @@
 	
 	<body>
 	
-		<div id="overlay">
+		<div id="overlayy">
 		
-			<img id="arells-icon" src="/icons&images/Arells-Icon.png"/>
+			<img id="arells-iconn" src="/icons&images/Arells-Icon.png"/>
 		
 			<br>
 			
-			<img id="word-logo" src="/icons&images/Arells-Logo.png">	
+			<img id="word-logoo" src="/icons&images/Arells-Logo.png">	
 			
 			<br>
 			
-			<p id="slogan">MAKE MONEY WITH YOUR LIFE STORY</p>
+			<p id="slogann">MAKE MONEY WITH YOUR LIFE STORY</p>
 			
 			<hr id="black-line">
 			
-			<p id="description">
+			<p id="descriptionn">
 				UP TO 90% IN ROYALTIES FOR YOUR NFTs
 			</p>
 			
 			<hr id="black-line">
 			
-			<p id="coming-soon">COMING SOON</p>
+			<p id="coming-soonn">COMING SOON</p>
 			
 			<!-- Change below link after test -->
 			<a href="/stayupdated" 
-			id="updates">
+			id="updatess">
 	      		STAY UPDATED
 	        </a>
 		
@@ -81,12 +81,12 @@
 		</div>			
 		
 		
-		<div id="footer">	
+		<div id="footerr">	
 <!--  			  <p id="follow-us">FOLLOW US</p> -->
 		  <a href="https://twitter.com/arellsofficial"
 		      target="_blank"
-		      id="contact">
-		      <img id="twitter" src="/icons&images/Twitter.png">
+		      id="contactt">
+		      <img id="twitterr" src="/icons&images/Twitter.png">
 		  </a>  		
 		</div>
 	
