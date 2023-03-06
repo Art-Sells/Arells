@@ -64,7 +64,7 @@
 			<hr id="black-line">
 			
 			<p id="descriptionn">
-				90% IN ROYALTIES ON ALL NFTs
+				90% ROYALTIES ON ALL NFTs
 			</p>
 			
 			<hr id="black-line">
