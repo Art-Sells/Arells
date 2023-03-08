@@ -1,9 +1,11 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-### An ecosystem created to lift storytellers out of poverty.
+### An NFT market that lifts artists out of poverty.
 
-## Roadmap 
+***Note: Arells has taken a massive pivot away from protocol development and into the NFT marketplace... And thus, the below Roadmap is to-be-refactored soon to reflect this new pivot in strategy.***
+
+## Roadmap
 
 - **Oct 2022 - Nov 2022**
   - [X] Update Infrastructure Page *[[Complete]](https://ecare.exchange)*----*ecare.exchange*
