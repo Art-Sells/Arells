@@ -64,7 +64,7 @@
 			<hr id="black-line">
 			
 			<p id="descriptionn">
-				90% ROYALTIES ON ALL NFTs
+				AN NFT MARKET TO LIFT ARTISTS OUT OF POVERTY
 			</p>
 			
 			<hr id="black-line">
