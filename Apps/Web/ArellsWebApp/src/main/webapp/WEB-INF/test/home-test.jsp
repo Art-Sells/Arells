@@ -64,7 +64,7 @@
 			<hr id="black-line">
 			
 			<p id="descriptionn">
-				AN NFT MARKET TO LIFT ARTISTS OUT OF POVERTY
+				AN NFT MARKET THAT LIFTS ARTISTS OUT OF POVERTY
 			</p>
 			
 			<hr id="black-line">
