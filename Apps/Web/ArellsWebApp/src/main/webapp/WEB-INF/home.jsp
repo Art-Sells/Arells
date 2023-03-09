@@ -63,7 +63,7 @@
 			
 			<hr id="black-line">
 			
-			<p id="descriptionn">
+			<p id="description">
 				AN NFT STORE THAT FINANCIALLY EMPOWERS ARTISTS
 			</p>
 			
