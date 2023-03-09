@@ -74,8 +74,8 @@ body {
 	#descriptionn {
 		margin-top: 30px;
 		font-size: 9px;
-		letter-spacing: 1.5px;
-		margin-left: 1.5px;
+		letter-spacing: 2px;
+		margin-left: 2px;
 		font-weight: 800;
 		opacity: 1;
 		color: white;
@@ -154,13 +154,13 @@ body {
 	}
 	#black-line {
 	  margin-top: 30px;
-	  width: 210px;
+	  width: 220px;
 	}	
 	
 	#descriptionn {
-		font-size: 7.1px;
-		letter-spacing: 1.1px;
-		margin-left: 1.1px;
+		font-size: 8px;
+		letter-spacing: 1.2px;
+		margin-left: 1.2px;
 	}		
 	#coming-soonn {
 		font-size: 9px;
