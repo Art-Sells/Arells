@@ -6,7 +6,7 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/homee.css">	
+		<link rel="stylesheet" type="text/css" href="css/homeee.css">	
 			
 		<meta charset="UTF-8">
 		
