@@ -61,7 +61,7 @@ body {
 		padding-bottom: 10px;
 	}
 	
-	#black-line {
+	#black-liner {
 	  margin-top: 30px;
 	  background-color: black;
 	  border: none;
@@ -71,7 +71,7 @@ body {
 	  opacity: .3;
 	}	
 	
-	#description {
+	#descriptioner {
 		margin-top: 30px;
 		font-size: 9px;
 		letter-spacing: 2px;
@@ -152,12 +152,12 @@ body {
 		letter-spacing: 10px;
 		margin-left: 10px;
 	}
-	#black-line {
+	#black-liner {
 	  margin-top: 30px;
 	  width: 220px;
 	}	
 	
-	#description {
+	#descriptioner {
 		font-size: 7.5px;
 		letter-spacing: 1.2px;
 		margin-left: 1.2px;

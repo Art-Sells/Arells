@@ -61,13 +61,13 @@
 			
 			<p id="slogann">ART SELLS</p>
 			
-			<hr id="black-line">
+			<hr id="black-liner">
 			
-			<p id="description">
+			<p id="descriptioner">
 				AN NFT STORE THAT FINANCIALLY EMPOWERS ARTISTS
 			</p>
 			
-			<hr id="black-line">
+			<hr id="black-liner">
 			
 			<p id="coming-soonn">COMING SOON</p>
 			
