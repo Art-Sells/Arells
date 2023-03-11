@@ -30,7 +30,7 @@ public class MainController {
 
 	// Comment out bottom getters after successful tests
 	
-//	 @GetMapping("/test") public String test() { return "test/home-test.jsp"; }
+	 @GetMapping("/test") public String test() { return "test/home-test.jsp"; }
 //	 
 //	 @GetMapping("/stayupdated-test") public String stayUpdatedTest() { return "test/stayupdated-test.jsp"; }	 
 //	 
