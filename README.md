@@ -1,7 +1,13 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-### An NFT market that lifts artists out of poverty.
+## An NFT store that financially empowers artists.
+
+#### Problem:
+Most Artists are living in poverty.
+
+#### Solution:
+Art + Sells = Arells: An NFT store that financially empowers artists. Arells plans on achieving this by offering each artist 90% royalties for each NFT sold.
 
 ***Note: Arells has taken a massive pivot away from protocol development and into the NFT marketplace... And thus, the below Roadmap is to-be-refactored soon to reflect this new pivot in strategy.***
 
