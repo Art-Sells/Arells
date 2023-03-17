@@ -9,24 +9,19 @@ Most Artists are living in poverty.
 #### Solution:
 Art + Sells = Arells: An NFT store that financially empowers artists. Arells plans on achieving this by offering each artist 90% royalties for each NFT sold.
 
-***Note: Arells has taken a massive pivot away from protocol development and into the NFT marketplace... And thus, the below Roadmap is to-be-refactored soon to reflect this new pivot in strategy.***
-
 ## Roadmap
 
 - **Oct 2022 - Nov 2022**
-  - [X] Update Infrastructure Page *[[Complete]](https://ecare.exchange)*----*ecare.exchange*
   - [X] Official Website *[[Complete]](https://arells.com)*----*arells.com*
-  - [X] Official Roadmap *[[Complete]](https://arells.com/roadmap)*----*arells.com/roadmap*
 
-- **Oct 2022 - Aug 2025**
-   - [ ] Infrastructure *[[In Development]](https://github.com/Ecare-Exchange/infrastructure)*
+- **Oct 2022 - Mar 2023**
+   - [X] Infrastructure *[[Dissolved into Arells]](https://github.com/Ecare-Exchange/infrastructure)*
 
-- **Sep 2025 - Dec 2027**
-  - [ ] Protocol *[announced]*
-  - [ ] iOS/Android Apps *[announced]*
+- **Mar 2023 - May 2023**
+  - [ ] Prototype *[[In-Development]](https://github.com/Art-Sells/Arells/tree/main/Apps/Web/ArellsWebApp)*
 
-- **Jan 2028 - Dec 2028**
-  - [ ] Testnet *[announced]*
+- **May 2023 - Aug 2023**
+  - [ ] MVP *[announced]*
 
-- **Jan 2029 - Dec 2029**
-  - [ ] Mainnet *[announced]*
+- **Aug 2023 - indefinitely**
+  - [ ] Full iteration of product *[announced]*
