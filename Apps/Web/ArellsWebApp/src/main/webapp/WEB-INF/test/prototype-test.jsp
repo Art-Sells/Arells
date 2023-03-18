@@ -48,22 +48,23 @@
 	</head>
 	
 <body>
-	<div class="container">
-		<img class="profile-photo" src="your-profile-photo.jpg">
-		<div class="row">
-			<div class="col"><img class="photo" src="photo1.jpg"></div>
-			<div class="col"><img class="photo" src="photo2.jpg"></div>
-			<div class="col"><img class="photo" src="photo3.jpg"></div>
+
+	<img class="profile-photo" src="your-profile-photo.jpg">
+	<div id="container">
+		<div id="row">
+			<div id="col"><img id="photo" src="photo1.jpg"></div>
+			<div id="col"><img id="photo" src="photo2.jpg"></div>
+			<div id="col"><img id="photo" src="photo3.jpg"></div>
 		</div>
-		<div class="row">
-			<div class="col"><img class="photo" src="photo4.jpg"></div>
-			<div class="col"><img class="photo" src="photo5.jpg"></div>
-			<div class="col"><img class="photo" src="photo6.jpg"></div>
+		<div id="row">
+			<div id="col"><img id="photo" src="photo4.jpg"></div>
+			<div id="col"><img id="photo" src="photo5.jpg"></div>
+			<div id="col"><img id="photo" src="photo6.jpg"></div>
 		</div>
-		<div class="row">
-			<div class="col"><img class="photo" src="photo7.jpg"></div>
-			<div class="col"><img class="photo" src="photo8.jpg"></div>
-			<div class="col"><img class="photo" src="photo9.jpg"></div>
+		<div id="row">
+			<div id="col"><img id="photo" src="photo7.jpg"></div>
+			<div id="col"><img id="photo" src="photo8.jpg"></div>
+			<div id="col"><img id="photo" src="photo9.jpg"></div>
 		</div>
 	</div>
 </body>
