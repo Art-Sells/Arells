@@ -23,10 +23,6 @@ public class MainController {
 		return "stayupdated.jsp";
 	}
 
-//	@GetMapping("/roadmap")
-//	public String roadmap() {
-//		return "roadmap.jsp";
-//	}
 
 	// Comment out bottom getters after successful tests
 	
@@ -34,8 +30,8 @@ public class MainController {
 //	 
 //	 @GetMapping("/stayupdated-test") public String stayUpdatedTest() { return "test/stayupdated-test.jsp"; }	 
 //	 
-//	 @GetMapping("/roadmap-test") public String roadmapTest() { return
-//	 "test/roadmap-test.jsp"; }
+	 @GetMapping("/prototype-test") public String roadmapTest() { return
+	 "test/prototype-test.jsp"; }
 	 
 
 }
