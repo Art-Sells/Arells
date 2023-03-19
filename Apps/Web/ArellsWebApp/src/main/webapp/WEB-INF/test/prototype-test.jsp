@@ -59,19 +59,20 @@
 	</section>
 	<div id="container">
 		<div id="row">
-			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
-			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
-			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
+		  	<a href="/ethereum" target="_self" id="col"><img id="photo" src="/icons&images/EthCDAP(banner).jpg"/>
+		    </a>
+		  	<a href="https://bitruism.com" target="_blank" id="col"><img id="photo" src="/icons&images/Bitruism(banner).jpg"/>
+		    </a>
+		     <a href="https://cryptodea.com" target="_blank" id="col"><img id="photo" src="/icons&images/Cryptodea(banner).jpg"/>
+		    </a>
 		</div>
 		<div id="row">
-			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
-			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
-			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
-		</div>
-		<div id="row">
-			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
-			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
-			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
+		  	<a href="/ethereum" target="_self" id="col"><img id="photo" src="/icons&images/EthCDAP(banner).jpg"/>
+		    </a>
+		  	<a href="https://bitruism.com" target="_blank" id="col"><img id="photo" src="/icons&images/Bitruism(banner).jpg"/>
+		    </a>
+		     <a href="https://cryptodea.com" target="_blank" id="col"><img id="photo" src="/icons&images/Cryptodea(banner).jpg"/>
+		    </a>
 		</div>
 	</div>
 </body>
