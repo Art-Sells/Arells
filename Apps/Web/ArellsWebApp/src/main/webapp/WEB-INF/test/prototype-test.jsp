@@ -52,26 +52,27 @@
 	<a id="connect-wallet">
      		CONNECT WALLET
        </a>	
-	<section id="header">
-		<div id="profile-img-container">
-			<img id="profile-photo" src="/icons&images/Arells-Ico-Icon.ico">
-		</div>	
-	</section>
+    <div id="header">
+		<img id="banner" src="/icons&images/prototype/proto-banner.jpg">	
+	</div>   
+    <div id="profile-img-container">
+		<img id="profile-photo" src="/icons&images/prototype/profile.jpg">
+	</div>	   
 	<div id="container">
 		<div id="row">
-		  	<a href="/ethereum" target="_self" id="col"><img id="photo" src="/icons&images/EthCDAP(banner).jpg"/>
+		  	<a href="/ethereum" target="_self" id="col"><img id="photo" src="/icons&images/prototype/1.jpg"/>
 		    </a>
-		  	<a href="https://bitruism.com" target="_blank" id="col"><img id="photo" src="/icons&images/Bitruism(banner).jpg"/>
+		  	<a href="https://bitruism.com" target="_self" id="col"><img id="photo" src="/icons&images/prototype/2.jpg"/>
 		    </a>
-		     <a href="https://cryptodea.com" target="_blank" id="col"><img id="photo" src="/icons&images/Cryptodea(banner).jpg"/>
+		     <a href="https://cryptodea.com" target="_self" id="col"><img id="photo" src="/icons&images/prototype/3.jpg"/>
 		    </a>
 		</div>
 		<div id="row">
-		  	<a href="/ethereum" target="_self" id="col"><img id="photo" src="/icons&images/EthCDAP(banner).jpg"/>
+		  	<a href="/ethereum" target="_self" id="col"><img id="photo" src="/icons&images/prototype/4.jpg"/>
 		    </a>
-		  	<a href="https://bitruism.com" target="_blank" id="col"><img id="photo" src="/icons&images/Bitruism(banner).jpg"/>
+		  	<a href="https://bitruism.com" target="_self" id="col"><img id="photo" src="/icons&images/prototype/5.jpg"/>
 		    </a>
-		     <a href="https://cryptodea.com" target="_blank" id="col"><img id="photo" src="/icons&images/Cryptodea(banner).jpg"/>
+		     <a href="https://cryptodea.com" target="_self" id="col"><img id="photo" src="/icons&images/prototype/6.jpg"/>
 		    </a>
 		</div>
 	</div>

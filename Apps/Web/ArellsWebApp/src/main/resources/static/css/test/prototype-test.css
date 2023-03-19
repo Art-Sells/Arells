@@ -6,41 +6,11 @@ body {
   margin-right: 0%;
   margin-bottom: 0%;
   padding-bottom: 30px;
-	background: linear-gradient(50deg, 
-	rgba(255,0,0,1) 15%, 
-	rgba(178,179,2,1) 30%, 
-	rgba(1,187,1,1) 50%, 
-	rgba(33,0,255,1) 70%, 
-	rgba(187,1,158,1) 85%);    
-     animation: gradients 20s ease infinite; 
-     background-size: 20000% 20000%;
-}
-@-webkit-keyframes gradients{
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-     background-position: 0% 50%;
-  }
-}
-@keyframes gradients{
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-     background-position: 0% 50%;
-  }
+  background: white;
 }
 
 	#connect-wallet {
 		  margin-top: 90px;
-		  background: black;
 		  text-decoration: none;
 		  color: white;
 		  font-weight: 200;
@@ -56,6 +26,37 @@ body {
 		  width: 200px;
 		  opacity: 1;
 		  box-shadow: 0px 8px 12px -6px black;  
+			background: linear-gradient(50deg, 
+			rgba(255,0,0,1) 15%, 
+			rgba(178,179,2,1) 30%, 
+			rgba(1,187,1,1) 50%, 
+			rgba(33,0,255,1) 70%, 
+			rgba(187,1,158,1) 85%);    
+		     animation: gradients 20s ease infinite; 
+		     background-size: 20000% 20000%;
+		}
+		@-webkit-keyframes gradients{
+		  0% {
+		    background-position: 0 50%;
+		  }
+		  50% {
+		    background-position: 100% 50%;
+		  }
+		  100% {
+		     background-position: 0% 50%;
+		  }
+		}
+		@keyframes gradients{
+		  0% {
+		    background-position: 0 50%;
+		  }
+		  50% {
+		    background-position: 100% 50%;
+		  }
+		  100% {
+		     background-position: 0% 50%;
+		  }
+		}		  
 	}
 	#connect-wallet:hover,
 	#connect-wallet:focus {
@@ -64,38 +65,44 @@ body {
 		  cursor: pointer;
 	}
 	#header{
+	position: absolute;
 		margin-top: 50px;
 		box-shadow: 0px 5px 12px -6px black; 
 		height: 130px;
-		padding: 60px;
 		width: 600px;
 		margin-left: auto;
 		margin-right: auto;
 	  	border-radius: 15px;		
-		background: black; 
-	     background-size: 20000% 20000%;
+		background-color: black; 
+		z-index: 1;
 	}
-		#profile-img-container {
-			width: 100px;
-			height: 100px;
-			border-radius: 15px;
-			margin-left: auto;
-	  		margin-right: auto;
-	  		display: flex;
-	  		background-color: white;
-	  		overflow: hidden;
-	  		align-items: center;
-	  		justify-content: center;
-	  		box-shadow: 0px 5px 12px -6px black; 
-	  		opacity: 1;
-			
-		}
-			#profile-photo {
-				object-fit: cover;
-				overflow: hidden;
-				width: 100%;
-				opacity: 1;
-			}
+		#banner {
+			object-fit: cover;
+			overflow: hidden;
+			width: 100%;
+		}		
+	
+	#profile-img-container {
+	position: absolute;
+		width: 100px;
+		height: 100px;
+		border-radius: 15px;
+		margin-left: auto;
+  		margin-right: auto;
+  		display: flex;
+  		background-color: white;
+  		overflow: hidden;
+  		align-items: center;
+  		justify-content: center;
+  		box-shadow: 0px 5px 12px -6px black; 
+  		z-index: 2;
+		
+	}
+		#profile-photo {
+			object-fit: cover;
+			overflow: hidden;
+			width: 100%;
+		}		
 
 	#container {
 		padding: 30px;
@@ -125,13 +132,25 @@ body {
 			align-items: center;
 			 overflow: hidden;
 			box-shadow: 0px 5px 12px -6px black; 
-			width: 150px;
+			width: 200px;
 			height: 150px;
+			padding: 30px;
+			background: #0098bf;
+			background: linear-gradient(50deg, 
+			rgba(255,0,0,1) 15%, 
+			rgba(178,179,2,1) 30%, 
+			rgba(1,187,1,1) 50%, 
+			rgba(33,0,255,1) 70%, 
+			rgba(187,1,158,1) 85%);    
+		     animation: gradients 20s ease infinite; 
+		     background-size: 20000% 20000%;
 		}
 		
 		#photo {
 			object-fit: cover;
 			width: 100%;
+  			box-shadow: 0px 10px 30px -20px black;	
+  			border-radius: 15px;		
 		}
 	
 	
