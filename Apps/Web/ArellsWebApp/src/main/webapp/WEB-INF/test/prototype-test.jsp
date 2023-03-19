@@ -52,27 +52,37 @@
 	<a id="connect-wallet">
      		CONNECT WALLET
        </a>	
-    <div id="header">
-		<img id="banner" src="/icons&images/prototype/proto-banner.jpg">	
-	</div>   
     <div id="profile-img-container">
-		<img id="profile-photo" src="/icons&images/prototype/profile.jpg">
-	</div>	   
+		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
+	</div>	 
+	<h1 id="name">Abstract Creations</h1>  
 	<div id="container">
 		<div id="row">
-		  	<a href="/ethereum" target="_self" id="col"><img id="photo" src="/icons&images/prototype/1.jpg"/>
+		  	<a href="/ethereum" target="_self" id="col">
+		  		<img id="photo" src="/icons&images/prototype/1.jpg"/>
+		  		<p id="price">$1,200</p>
 		    </a>
-		  	<a href="https://bitruism.com" target="_self" id="col"><img id="photo" src="/icons&images/prototype/2.jpg"/>
+		  	<a href="https://bitruism.com" target="_self" id="col">
+		  		<img id="photo" src="/icons&images/prototype/2.jpg"/>
+		  		<p id="price">$200</p>
 		    </a>
-		     <a href="https://cryptodea.com" target="_self" id="col"><img id="photo" src="/icons&images/prototype/3.jpg"/>
+		     <a href="https://cryptodea.com" target="_self" id="col">
+		     	<img id="photo" src="/icons&images/prototype/3.jpg"/>
+		     	<p id="price">$14,500</p>
 		    </a>
 		</div>
 		<div id="row">
-		  	<a href="/ethereum" target="_self" id="col"><img id="photo" src="/icons&images/prototype/4.jpg"/>
+		  	<a href="/ethereum" target="_self" id="col">
+		  		<img id="photo" src="/icons&images/prototype/4.jpg"/>
+		  		<p id="price">$2,000,000</p>
 		    </a>
-		  	<a href="https://bitruism.com" target="_self" id="col"><img id="photo" src="/icons&images/prototype/5.jpg"/>
+		  	<a href="https://bitruism.com" target="_self" id="col">
+		  		<img id="photo" src="/icons&images/prototype/5.jpg"/>
+		  		<p id="price">$100</p>
 		    </a>
-		     <a href="https://cryptodea.com" target="_self" id="col"><img id="photo" src="/icons&images/prototype/6.jpg"/>
+		     <a href="https://cryptodea.com" target="_self" id="col">
+		     	<img id="photo" src="/icons&images/prototype/6.jpg"/>
+		     	<p id="price">$12,000</p>
 		    </a>
 		</div>
 	</div>
