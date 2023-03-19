@@ -49,7 +49,7 @@
 	
 <body>
 
-	<img class="profile-photo" src="your-profile-photo.jpg">
+	<img id="profile-photo" src="your-profile-photo.jpg">
 	<div id="container">
 		<div id="row">
 			<div id="col"><img id="photo" src="photo1.jpg"></div>
