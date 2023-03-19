@@ -9,31 +9,71 @@ body {
   padding-bottom: 30px;
 }
 
-	#profile-photo {
-		width: 100px;
-		height: 100px;
-		border-radius: 30px;
-		object-fit: cover;
-		margin-top: 50px;
-		margin-left: auto;
-  		margin-right: auto;
-  		box-shadow: 0px 5px 12px -6px red; 
-		
+	#connect-wallet {
+		  margin-top: 90px;
+		  background: black;
+		  text-decoration: none;
+		  color: white;
+		  font-weight: 200;
+		  font-size: 11px;
+		  padding-top: 20px;
+		  padding-bottom: 20px;
+		  padding-right: 52px;
+		  padding-left: 55px;	  
+		  border: none;
+		  letter-spacing: 3px;
+		  border-radius: 5px;
+		  border-width: 0px;
+		  width: 200px;
+		  opacity: 1;
+		  box-shadow: 0px 8px 12px -6px black;  
 	}
+	#connect-wallet:hover,
+	#connect-wallet:focus {
+		  opacity: .4;
+		  transition: 1s;
+		  cursor: pointer;
+	}
+	#header{
+		margin-top: 50px;
+		background-color: red;
+		box-shadow: 0px 5px 12px -6px black; 
+		height: 130px;
+		padding: 60px;
+		width: 600px;
+		margin-left: auto;
+		margin-right: auto;
+	  	border-radius: 15px;		
+	}
+		#profile-img-container {
+			width: 100px;
+			height: 100px;
+			border-radius: 15px;
+			margin-left: auto;
+	  		margin-right: auto;
+	  		display: flex;
+	  		background-color: silver;
+	  		overflow: hidden;
+	  		align-items: center;
+	  		justify-content: center;
+	  		box-shadow: 0px 5px 12px -6px black; 
+			
+		}
+			#profile-photo {
+				object-fit: cover;
+				overflow: hidden;
+			}
 
 	#container {
 		padding: 30px;
 		margin-top: 50px;
 		width: 600px;
-		background-color: white;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		margin-left: auto;
   		margin-right: auto;
-  		border-radius: 80px;
-  		box-shadow: 0px 5px 12px -6px red; 
 	}
 	
 		#row {
@@ -41,21 +81,23 @@ body {
 			justify-content: center;
 			align-items: center;
 			margin-top: 20px;
-			margin-bottom: 20px;
+			margin-bottom: 50px;
 		}
 		
 		#col {
 			flex: 1;
 			margin: 10px;
 			background-color: silver;
-			border-radius: 40px;
-			box-shadow: 0px 5px 12px -6px red; 
+			border-radius: 15px;
+			align-items: center;
+			 overflow: hidden;
+			box-shadow: 0px 5px 12px -6px black; 
 			width: 150px;
 			height: 150px;
 		}
 		
 		#photo {
-			object-fit: fill;
+			object-fit: cover;
 		}
 	
 	

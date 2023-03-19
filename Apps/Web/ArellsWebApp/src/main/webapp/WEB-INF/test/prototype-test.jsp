@@ -49,7 +49,14 @@
 	
 <body>
 
-	<img id="profile-photo" src="/icons&images/Arells-Ico-Icon.ico"s>
+	<a id="connect-wallet">
+     		CONNECT WALLET
+       </a>	
+	<section id="header">
+		<div id="profile-img-container">
+			<img id="profile-photo" src="/icons&images/Arells-Ico-Icon.ico">
+		</div>	
+	</section>
 	<div id="container">
 		<div id="row">
 			<div id="col"><img id="photo" src="/icons&images/Arells-Ico-Icon.ico"></div>
