@@ -6,6 +6,7 @@ body {
   margin-right: 0%;
   margin-bottom: 0%;
   background-color: white;
+  padding-bottom: 30px;
 }
 
 	#profile-photo {
@@ -16,6 +17,7 @@ body {
 		margin-top: 50px;
 		margin-left: auto;
   		margin-right: auto;
+  		box-shadow: 0px 5px 12px -6px red; 
 		
 	}
 
@@ -23,7 +25,7 @@ body {
 		padding: 30px;
 		margin-top: 50px;
 		width: 600px;
-		background-color: red;
+		background-color: white;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
@@ -31,6 +33,7 @@ body {
 		margin-left: auto;
   		margin-right: auto;
   		border-radius: 80px;
+  		box-shadow: 0px 5px 12px -6px red; 
 	}
 	
 		#row {
@@ -44,12 +47,15 @@ body {
 		#col {
 			flex: 1;
 			margin: 10px;
+			background-color: silver;
+			border-radius: 40px;
+			box-shadow: 0px 5px 12px -6px red; 
+			width: 150px;
+			height: 150px;
 		}
 		
 		#photo {
-			width: 100%;
-			height: auto;
-			object-fit: cover;
+			object-fit: fill;
 		}
 	
 	
