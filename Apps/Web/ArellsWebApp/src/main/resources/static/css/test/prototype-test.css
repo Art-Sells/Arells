@@ -56,13 +56,13 @@ body {
 			height: 100%;
 		}	
 	#name {
-	  font-size: 14pt;
-	  font-weight: 200;
+	  font-size: 17pt;
+	  font-weight: 800;
 	  opacity: 1;
 	  color: black;	
 	  margin-top: 30px;
-	  letter-spacing: 0px;	  
-	  margin-left: 0px;
+	  letter-spacing: -1px;	  
+	  margin-left: -1px;
 	}	
 	#profileline {
 	  margin-top: 30px;
@@ -70,10 +70,10 @@ body {
 	  border: none;
 	  height: 2px;
 	  border-radius: 30px;
-	  width: 840px;
+	  width: 600px;
 	  opacity: .3;
 	}
-	#collection {
+/* 	#collection {
 	  font-size: 10pt;
 	  font-weight: 200;
 	  opacity: .5;
@@ -90,10 +90,10 @@ body {
 	  margin-top: -10px;
 	  letter-spacing: 0px;	  
 	  margin-left: 0px;
-	}		
+	}	 */	
 
 	#container {
-		margin-top: 0px;
+		margin-top: 30px;
 		width: 600px;
 		height: 100%;
 		display: flex;

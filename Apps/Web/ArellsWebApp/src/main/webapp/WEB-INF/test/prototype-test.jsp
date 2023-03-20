@@ -57,8 +57,8 @@
 	</div>	 
 	<h1 id="name">Abstract Creations</h1>  
 	<hr id="profileline">
-	<p id="collection">Collection</p> 
-	<p id="description">Abstractions of Life</p> 
+<!-- 	<p id="collection">Collection</p> 
+	<p id="description">Abstractions of Life</p>  -->
 	<div id="container">
 		<div id="row">
 		  	<div id="col">
