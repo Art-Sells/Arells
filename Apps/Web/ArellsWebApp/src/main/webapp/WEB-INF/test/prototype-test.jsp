@@ -56,16 +56,19 @@
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
 	<h1 id="name">Abstract Creations</h1>  
+	<hr id="profileline">
+	<p id="collection">Collection</p> 
+	<p id="description">Abstractions of Life</p> 
 	<div id="container">
 		<div id="row">
 		  	<div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
 		  		</a>
-		  		<p id="lowestbid">Lowest Bid:</p>
+		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$18,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price:</p>
+		  		<p id="yourprice">Your Price</p>
 		     	<p id="price">$1,200</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
@@ -75,10 +78,10 @@
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
 		  		</a>
-		  		<p id="lowestbid">Lowest Bid:</p>
+		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$3,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price:</p>
+		  		<p id="yourprice">Your Price</p>
 		     	<p id="price">$200</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
@@ -88,10 +91,10 @@
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
 		  		</a>
-		  		<p id="lowestbid">Lowest Bid:</p>
+		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$217,500</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price:</p>
+		  		<p id="yourprice">Your Price</p>
 		     	<p id="price">$14,500</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
@@ -103,10 +106,10 @@
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
 		  		</a>
-		  		<p id="lowestbid">Lowest Bid:</p>
+		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$30,000,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price:</p>
+		  		<p id="yourprice">Your Price</p>
 		     	<p id="price">$2,000,000</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
@@ -116,10 +119,10 @@
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
 		  		</a>
-		  		<p id="lowestbid">Lowest Bid:</p>
+		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$1,500</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price:</p>
+		  		<p id="yourprice">Your Price</p>
 		     	<p id="price">$100</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
@@ -129,10 +132,10 @@
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
 		  		</a>
-		  		<p id="lowestbid">Lowest Bid:</p>
+		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$180,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price:</p>
+		  		<p id="yourprice">Your Price</p>
 		     	<p id="price">$12,000</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
