@@ -49,13 +49,12 @@
 	
 <body>
 
-	<a id="connect-wallet">
-     		CONNECT WALLET
-       </a>	
+	<a id="connect-wallet">CONNECT WALLET</a>	
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
 	<h1 id="name">Abstract Creations</h1>  
+	<a id="share">SHARE</a>	
 	<hr id="profileline">
 <!-- 	<p id="collection">Collection</p> 
 	<p id="description">Abstractions of Life</p>  -->
@@ -70,9 +69,7 @@
 		  		<hr id="priceline">
 		  		<p id="yourprice">Your Price</p>
 		     	<p id="price">$1,200</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>	
+	     		<a id="add-to-cart">ADD TO CART</a>	
 		    </div>
 		  	<div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
