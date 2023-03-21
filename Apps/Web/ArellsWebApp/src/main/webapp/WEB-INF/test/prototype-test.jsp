@@ -49,7 +49,9 @@
 	
 <body>
 
-	<a id="connect-wallet">CONNECT WALLET</a>	
+	<div id="header">
+		<a id="connect-wallet">CONNECT WALLET</a>		
+	</div>
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
@@ -59,7 +61,6 @@
 <!-- 	<p id="collection">Collection</p> 
 	<p id="description">Abstractions of Life</p>  -->
 	<div id="container">
-		<div id="row">
 		  	<div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
@@ -97,8 +98,6 @@
 		     		ADD TO CART
 		       </a>			     	
 		    </div>
-		</div>
-		<div id="row">
 		  	<div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
@@ -138,7 +137,6 @@
 		     		ADD TO CART
 		       </a>			     	
 		    </div>
-		</div>
 	</div>
 </body>
 </html>
