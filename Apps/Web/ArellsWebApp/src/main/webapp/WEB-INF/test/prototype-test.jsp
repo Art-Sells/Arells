@@ -56,10 +56,9 @@
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
 	<h1 id="name">Abstract Creations</h1>  
+	<p id="description">This collection abstracts the artistic moments of our lives.</p> 
 	<a id="share">SHARE</a>	
 	<hr id="profileline">
-<!-- 	<p id="collection">Collection</p> 
-	<p id="description">Abstractions of Life</p>  -->
 	<div id="container">
 		  	<div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
