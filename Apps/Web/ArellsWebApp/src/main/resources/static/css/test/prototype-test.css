@@ -253,7 +253,50 @@ body {
 @media screen and (max-width: 1000px) {
 	  body {
 	    -webkit-text-size-adjust: none;
+	      padding-top: 50px;
 	  }  
+		#connect-wallet {
+			  font-size: 9px;
+			  padding-top: 20px;
+			  padding-bottom: 20px;
+			  padding-right: 32px;
+			  padding-left: 35px;	  
+			  letter-spacing: 2px;
+			  width: 150px;
+			}	  	
+	
+		#profile-img-container {
+			width: 100px;
+			height: 100px;
+			margin-top: 50px;
+			
+		}
+			#profile-photo {
+				object-fit: cover;
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+			}	
+		#name {
+		  font-size: 13pt;
+		  font-weight: 800;
+		  margin-top: 25px;
+		  letter-spacing: -1px;	  
+		  margin-left: -1px;
+		  	margin-bottom: 30px;
+		}		  
+		#share {
+		  font-size: 8px;
+		  padding-top: 15px;
+		  padding-bottom: 15px;
+		  padding-right: 15px;
+		  padding-left: 18px;	  
+		  border: none;
+		  letter-spacing: 3px;
+		}	  	
+		#profileline {
+		  width: 220px;
+		}	  
 	  #container {
 	    width: 440px;
 	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
