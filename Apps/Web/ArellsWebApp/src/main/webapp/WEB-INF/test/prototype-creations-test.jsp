@@ -55,8 +55,8 @@
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
-	<h1 id="name">Abstract Creations</h1>  
-	<p id="description">This collection abstracts the artistic moments of our lives.</p> 
+	<h1 id="name">Abstract Kadabra</h1>  
+	<p id="description">Collections Created</p> 
 	<a id="share">SHARE</a>	
 	<hr id="profileline">
 	<div id="container">
