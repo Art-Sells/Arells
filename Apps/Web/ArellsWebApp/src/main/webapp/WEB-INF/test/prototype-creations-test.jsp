@@ -56,9 +56,13 @@
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
 	<h1 id="name">Abstract Kadabra</h1>  
-	<p id="description">Collections Created</p> 
+	<p id="description">Here rests life's abstractions painted in majestic endeavours.</p> 
 	<a id="share">SHARE</a>	
 	<hr id="profileline">
+	<div id="created-collected">
+		<a id="created">Created</a>	
+		<a id="collected">Collected</a>	
+	</div>
 	<div id="container">
 		  	<div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
@@ -67,7 +71,7 @@
 		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$60,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price</p>
+		  		<p id="yourprice">Price</p>
 		     	<p id="price">$1,200</p>
 	     		<a id="add-to-cart">ADD TO CART</a>	
 		    </div>
@@ -78,7 +82,7 @@
 		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$10,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price</p>
+		  		<p id="yourprice">Price</p>
 		     	<p id="price">$200</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
@@ -91,7 +95,7 @@
 		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$725,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price</p>
+		  		<p id="yourprice">Price</p>
 		     	<p id="price">$14,500</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
@@ -104,7 +108,7 @@
 		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$20,000,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price</p>
+		  		<p id="yourprice">Price</p>
 		     	<p id="price">$400,000</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
@@ -117,7 +121,7 @@
 		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$5,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price</p>
+		  		<p id="yourprice">Price</p>
 		     	<p id="price">$100</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
@@ -130,7 +134,7 @@
 		  		<p id="lowestbid">Lowest Bid</p>
 		  		<p id="price2">$600,000</p>
 		  		<hr id="priceline">
-		  		<p id="yourprice">Your Price</p>
+		  		<p id="yourprice">Price</p>
 		     	<p id="price">$12,000</p>
 	     		<a id="add-to-cart">
 		     		ADD TO CART
