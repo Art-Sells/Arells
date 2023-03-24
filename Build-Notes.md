@@ -9,7 +9,7 @@
 
 #### Profile
 - Theme: [A][R][T][I][S][T]
-- Sticky [CREATE] button for minting.
+- Sticky [CREATE] button for minting (JQuery/JavaScript Dissapearing Module).
 
 #### Buying Mechanics:
 - Once an NFT is bought, the new price is 50xed from original price.
