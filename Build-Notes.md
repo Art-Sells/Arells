@@ -11,6 +11,9 @@
 - Theme: [A][R][T][I][S][T]
 - Sticky [CREATE] button for minting (JQuery/JavaScript Dissapearing Module).
 
+#### Modal
+- 30% from top.
+
 #### Buying Mechanics:
 - Once an NFT is bought, the new price is 50xed from original price.
 - Buyer cannot set price no lower than selling price, they can however increase buying offer to as high as possible.
