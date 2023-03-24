@@ -57,7 +57,7 @@
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
 	<h1 id="name">Abstract Kadabra</h1>  
-	<p id="description">Here rests life's abstractions painted in majestic endeavours.</p> 
+	<p id="description">Here rests life's abstractions painted in majestic endeavors.</p> 
 	<a id="share">SHARE</a>	
 	<hr id="profileline">
 	<div id="created-collected">

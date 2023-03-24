@@ -76,7 +76,7 @@ body {
 	  font-weight: 800;
 	  opacity: 1;
 	  color: black;	
-	  margin-top: 25px;
+	  margin-top: 20px;
 	  letter-spacing: -1px;	  
 	  margin-left: -1px;
 	}	
@@ -86,11 +86,11 @@ body {
 	  font-weight: 200;
 	  opacity: .5;
 	  color: black;	
-	  margin-top: -5px;
+	  margin-top: 0px;
 	  letter-spacing: 0px;	  
 	  margin-left: auto;
 	  margin-right: auto;
-	  width: 600px;
+	  width: 420px;
 	  margin-bottom: 30px;
 	}
 	#share {
@@ -127,7 +127,7 @@ body {
 	  opacity: .2;
 	}
 	#created-collected {
-		margin-top: 40px;
+		margin-top: 30px;
 		flex-direction: column;
 		align-items: center;
 		  width: 600px;
@@ -183,11 +183,15 @@ body {
 			  cursor: pointer;
 			  background: gray;
 			  opacity: .7;
-		}		
+		}	
+		
+	#profileline {
+	  margin-top: 30px;
+	}			
 		
 
 	#container {
-		margin-top: 35px;
+		margin-top: 25px;
 		flex-direction: column;
 		align-items: center;
 		  display: grid;
@@ -344,7 +348,7 @@ body {
 		#name {
 		  font-size: 13pt;
 		  font-weight: 800;
-		  margin-top: 25px;
+		  margin-top: 20px;
 		  letter-spacing: -1px;	  
 		  margin-left: -1px;
 		}	
@@ -368,33 +372,33 @@ body {
 		  width: 300px;
 		}	
 		#created-collected {
-			margin-top: 40px;
+			margin-top: 25px;
 			align-items: center;
 			  width: 400px;
 		}	  
-		#created {		
-		margin: 12px;
-		  font-size: 12px;
-		  padding-top: 13px;
-		  padding-bottom: 13px;
-		  padding-right: 23px;
-		  padding-left: 23px;	  
-		  letter-spacing: 0px;
-			
-		}  		
-		#collected {		
-		margin: 5px;
-		  font-size: 12px;
-		  padding-top: 13px;
-		  padding-bottom: 13px;
-		  padding-right: 23px;
-		  padding-left: 23px;	  
-		  letter-spacing: 0px;
-		}			
+			#created {		
+			margin: 12px;
+			  font-size: 12px;
+			  padding-top: 13px;
+			  padding-bottom: 13px;
+			  padding-right: 23px;
+			  padding-left: 23px;	  
+			  letter-spacing: 0px;
+				
+			}  		
+			#collected {		
+			margin: 5px;
+			  font-size: 12px;
+			  padding-top: 13px;
+			  padding-bottom: 13px;
+			  padding-right: 23px;
+			  padding-left: 23px;	  
+			  letter-spacing: 0px;
+			}			
 		  #container {
 		    width: 440px;
 		    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-		    margin-top: 40px;
+		    margin-top: 25px;
 		  }
 			#col {		
 				margin: 5px;
