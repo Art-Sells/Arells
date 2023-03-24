@@ -50,7 +50,13 @@
 <body>
 
 	<div id="header">
-		<a id="connect-wallet">CONNECT WALLET</a>		
+		<a id="icon-link" href="/">
+			<img id="arells-icon" src="/icons&images/Arells-Icon.png"/>
+		</a>
+		<a id="connect-wallet">CONNECT WALLET</a>	
+		<a id="cart-link" href="/">
+			<img id="arells-icon" src="/icons&images/Arells-Icon.png"/>
+		</a>	
 	</div>
 	<br>
     <div id="profile-img-container">
