@@ -52,6 +52,7 @@
 	<div id="header">
 		<a id="connect-wallet">CONNECT WALLET</a>		
 	</div>
+	<br>
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
