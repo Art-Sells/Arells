@@ -29,8 +29,8 @@ body {
 			text-decoration: none;
 			margin-right: 50px;
 			  text-decoration: none;
-			  padding-top: 10px;
-			  padding-bottom: 10px;
+			  padding-top: 12px;
+			  padding-bottom: 9px;
 			  padding-right: 12px;
 			  padding-left: 12px;	  	  
 			  border: solid;
@@ -49,7 +49,7 @@ body {
 			  opacity: 1;
 			}		
 			#arells-icon {
-				width: 20px;
+				height: 18px;
 			}
 
 		#connect-wallet {
@@ -83,7 +83,7 @@ body {
 			margin-left: 50px;
 			  text-decoration: none;
 			  padding-top: 10px;
-			  padding-bottom: 10px;
+			  padding-bottom: 7px;
 			  padding-right: 12px;
 			  padding-left: 12px;	  
 			  border: solid;
@@ -100,7 +100,10 @@ body {
 			  cursor: pointer;
 			  border-color: gray;
 			  opacity: 1;	
-		}					
+		}	
+			#cart-icon {
+				height: 23px;
+			}				
 	
 	#profile-img-container {
 	position: static;
@@ -404,21 +407,21 @@ body {
 		}	
 		#icon-link{	
 			margin-right: 30px;
-			  padding-top: 8px;
-			  padding-bottom: 8px;
+			  padding-top: 10px;
+			  padding-bottom: 7px;
 			  padding-right: 10px;
 			  padding-left: 10px;	
 			  border-radius: 12px;
 			  width: 40px;		
 		}	
 		#arells-icon {
-				width: 15px;
+				height: 15px;
 			}	  
 		#connect-wallet {
 			  font-size: 9px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
-			  padding-right: 8px;
+			  padding-right: 7px;
 			  padding-left: 10px;	 	  
 			  letter-spacing: 2px;
 			  width: 150px;
@@ -426,12 +429,15 @@ body {
 		#cart-link{
 			margin-left: 30px;
 			  padding-top: 8px;
-			  padding-bottom: 8px;
+			  padding-bottom: 5px;
 			  padding-right: 10px;
 			  padding-left: 10px;	
 			  border-radius: 12px;	
 			  width: 40px;  					
-		}		
+		}
+		#cart-icon {
+				height: 18px;
+			}	  				
 	
 		#profile-img-container {
 			width: 70px;
