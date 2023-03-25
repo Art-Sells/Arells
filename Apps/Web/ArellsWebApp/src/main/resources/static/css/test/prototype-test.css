@@ -15,7 +15,7 @@ body {
 			margin-top: 0px;
 			align-items: center;
 			position: fixed;
-			padding-top: 20px;
+			padding-top: 25px;
 			background: none;
 			width: 100%;
 			height: 50px;
@@ -29,24 +29,24 @@ body {
 			text-decoration: none;
 			margin-right: 155px;
 			  text-decoration: none;
-			  padding-top: 15px;
-			  padding-bottom: 15px;
-			  padding-right: 15px;
-			  padding-left: 15px;	  
-			  border: none;
-			  border-color: silver;
-			  border-radius: 10px;
-			  border-width: 1px;
+			  padding-top: 10px;
+			  padding-bottom: 10px;
+			  padding-right: 12px;
+			  padding-left: 12px;	  
+			  border: solid;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  border-radius: 15px;
+			  border-width: 3px;
 			  opacity: 1;
-				background: white;			
-			
+				background: rgba(255, 255, 255, 0.8);						
 		}
 		#icon-link:hover,
 		#icon-link:focus {
-			  opacity: .4;
 			  transition: 1s;
 			  cursor: pointer;
-		}		
+			  border-color: rgba(0, 0, 0, 1);
+			  opacity: 2;
+			}		
 			#arells-icon {
 				width: 25px;
 			}
@@ -83,22 +83,23 @@ body {
 			text-decoration: none;
 			margin-left: 155px;
 			  text-decoration: none;
-			  padding-top: 15px;
-			  padding-bottom: 15px;
-			  padding-right: 15px;
-			  padding-left: 15px;	  
-			  border: none;
-			  border-color: silver;
-			  border-radius: 10px;
-			  border-width: 1px;
+			  padding-top: 10px;
+			  padding-bottom: 10px;
+			  padding-right: 12px;
+			  padding-left: 12px;	  
+			  border: solid;
+			  border-color: rgba(215, 215, 215, 0.7);;
+			  border-radius: 15px;
+			  border-width: 3px;
 			  opacity: 1;
-				background: white;						
+				background: rgba(255, 255, 255, 0.8);						
 		}
 		#cart-link:hover,
 		#cart-link:focus {
-			  opacity: .4;
 			  transition: 1s;
 			  cursor: pointer;
+			  border-color: rgba(0, 0, 0, 1);
+			  opacity: 2;	
 		}					
 	
 	#profile-img-container {
@@ -174,7 +175,7 @@ body {
 	  height: 4px;
 	  border-radius: 30px;
 	  width: 600px;
-	  opacity: .2;
+	  opacity: .1;
 	}
 	#created-collected {
 		margin-top: 30px;
@@ -189,21 +190,21 @@ body {
 		margin: 10px;
 		align-items: center;	
 		  text-decoration: none;
-		  color: white;
+		  color: black;
 		  font-weight: 300;
 		  font-size: 13px;
-		  padding-top: 15px;
-		  padding-bottom: 15px;
+		  padding-top: 12px;
+		  padding-bottom: 12px;
 		  padding-right: 25px;
-		  padding-left: 25px;	  
-		  border: none;
-		  letter-spacing: 0px;
-		  border-radius: 5px;
-		  border-width: 1px;
+		  padding-left: 25.5px;	  
+		  border: solid;
+		  letter-spacing: .5px;
+		  border-radius: 10px;
+		  border-width: 3px;
 		  border-color: black;
 		  width: 150px;
-		background: gray;
-		opacity: .7;
+		background: none;
+		opacity: 1;
 			
 		}  		
 		#collected {
@@ -211,28 +212,29 @@ body {
 		margin: 10px;
 		align-items: center;	
 		  text-decoration: none;
-		  color: white;
+		  color: gray;
 		  font-weight: 300;
 		  font-size: 13px;
-		  padding-top: 15px;
-		  padding-bottom: 15px;
+		  padding-top: 13px;
+		  padding-bottom: 13px;
 		  padding-right: 25px;
-		  padding-left: 25px;	  
-		  border: none;
-		  letter-spacing: 0px;
-		  border-radius: 5px;
-		  border-width: 1px;
-		  border-color: black;
+		  padding-left: 25.5px;	  
+		  border: solid;
+		  letter-spacing: .5px;
+		  border-radius: 10px;
+		  border-width: 3px;
+		  border-color: rgba(215, 215, 215, 0.7);
 		  width: 150px;
 		  opacity: 1;
-			background: silver;
+			background: none;
 		}	
 		#collected:hover,
 		#collected:focus {
 			  transition: 1s;
 			  cursor: pointer;
-			  background: gray;
-			  opacity: .7;
+			  color: black;
+			  border-color: black;
+			  opacity: 1;
 		}	
 		
 	#profileline {
@@ -370,7 +372,18 @@ body {
 	  }  
 	#header {
 			margin-top: 0px;
-		}	  
+			padding-top: 25px;			
+		}	
+		#icon-link{	
+			margin-right: 80px;
+			  padding-top: 8px;
+			  padding-bottom: 8px;
+			  padding-right: 10px;
+			  padding-left: 10px;				
+		}	
+		#arells-icon {
+				width: 20px;
+			}	  
 		#connect-wallet {
 			  font-size: 9px;
 			  padding-top: 20px;
@@ -379,12 +392,19 @@ body {
 			  padding-left: 35px;	  
 			  letter-spacing: 2px;
 			  width: 150px;
-			}	  	
+			}	  
+		#cart-link{
+			margin-left: 80px;
+			  padding-top: 8px;
+			  padding-bottom: 8px;
+			  padding-right: 10px;
+			  padding-left: 10px;	  					
+		}		
 	
 		#profile-img-container {
 			width: 70px;
 			height: 70px;
-			margin-top: 80px;
+			margin-top: 100px;
 			
 		}
 			#profile-photo {
@@ -427,21 +447,21 @@ body {
 			#created {		
 			margin: 12px;
 			  font-size: 12px;
-			  padding-top: 13px;
-			  padding-bottom: 13px;
-			  padding-right: 23px;
-			  padding-left: 23px;	  
-			  letter-spacing: 0px;
+			  padding-top: 10px;
+			  padding-bottom: 10px;
+			  padding-right: 20px;
+			  padding-left: 20.5px;	  
+			  letter-spacing: .5px;
 				
 			}  		
 			#collected {		
 			margin: 5px;
 			  font-size: 12px;
-			  padding-top: 13px;
-			  padding-bottom: 13px;
-			  padding-right: 23px;
-			  padding-left: 23px;	  
-			  letter-spacing: 0px;
+			  padding-top: 10px;
+			  padding-bottom: 10px;
+			  padding-right: 20px;
+			  padding-left: 20.5px;	  
+			  letter-spacing: .5px;
 			}			
 	  #container {
 	    width: 660px;
@@ -503,10 +523,20 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  
-		#profileline {
-		  width: 300px;
-		}		
-	  #container {
-	    width: 440px;
-	  }  
+	  		#connect-wallet {
+			  padding-right: 7px;
+			  padding-left: 10px;	  
+			}	
+	  		#icon-link{
+			margin-right: 20px;  					
+			}	
+		  	#cart-link{
+			margin-left: 20px;  					
+			}		
+			#profileline {
+			  width: 300px;
+			}		
+		  #container {
+		    width: 440px;
+		  }  
 }
