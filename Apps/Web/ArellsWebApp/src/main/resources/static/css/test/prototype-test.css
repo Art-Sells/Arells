@@ -12,7 +12,6 @@ body {
 
 	#header {
 			justify-content: center;
-			margin-top: 0px;
 			align-items: center;
 			position: fixed;
 			padding-top: 25px;
@@ -27,16 +26,16 @@ body {
 			display: inline-block;
 			flex: 1;
 			text-decoration: none;
-			margin-right: 155px;
+			margin-right: 90px;
 			  text-decoration: none;
 			  padding-top: 10px;
 			  padding-bottom: 10px;
 			  padding-right: 12px;
-			  padding-left: 12px;	  
+			  padding-left: 12px;	  	  
 			  border: solid;
 			  border-color: rgba(215, 215, 215, 0.7);
 			  border-radius: 15px;
-			  border-width: 3px;
+			  border-width: 1px;
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
@@ -44,14 +43,15 @@ body {
 		#icon-link:focus {
 			  transition: 1s;
 			  cursor: pointer;
-			  border-color: rgba(0, 0, 0, 1);
-			  opacity: 2;
+			  border-color: gray;
+			  opacity: 1;
 			}		
 			#arells-icon {
-				width: 25px;
+				width: 20px;
 			}
 
 		#connect-wallet {
+			margin-top: 20px;
 			display: inline-block;
 			  flex: 1;	
 			  text-decoration: none;
@@ -81,7 +81,7 @@ body {
 			display: inline-block;
 			flex: 1;
 			text-decoration: none;
-			margin-left: 155px;
+			margin-left: 90px;
 			  text-decoration: none;
 			  padding-top: 10px;
 			  padding-bottom: 10px;
@@ -90,7 +90,7 @@ body {
 			  border: solid;
 			  border-color: rgba(215, 215, 215, 0.7);;
 			  border-radius: 15px;
-			  border-width: 3px;
+			  border-width: 1px;
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
@@ -98,15 +98,15 @@ body {
 		#cart-link:focus {
 			  transition: 1s;
 			  cursor: pointer;
-			  border-color: rgba(0, 0, 0, 1);
-			  opacity: 2;	
+			  border-color: gray;
+			  opacity: 1;	
 		}					
 	
 	#profile-img-container {
 	position: static;
 		width: 100px;
 		height: 100px;
-		margin-top: 110px;
+		margin-top: 100px;
 		border-radius: 10px;
 		margin-left: auto;
   		margin-right: auto;
@@ -200,8 +200,8 @@ body {
 		  border: solid;
 		  letter-spacing: .5px;
 		  border-radius: 10px;
-		  border-width: 3px;
-		  border-color: black;
+		  border-width: 1px;
+		  border-color: gray;
 		  width: 150px;
 		background: none;
 		opacity: 1;
@@ -222,7 +222,7 @@ body {
 		  border: solid;
 		  letter-spacing: .5px;
 		  border-radius: 10px;
-		  border-width: 3px;
+		  border-width: 1px;
 		  border-color: rgba(215, 215, 215, 0.7);
 		  width: 150px;
 		  opacity: 1;
@@ -233,7 +233,7 @@ body {
 			  transition: 1s;
 			  cursor: pointer;
 			  color: black;
-			  border-color: black;
+			  border-color: gray;
 			  opacity: 1;
 		}	
 		
@@ -366,6 +366,34 @@ body {
 				  transition: 1s;
 				  cursor: pointer;
 			}		
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 @media screen and (max-width: 1000px) {
 	  body {
 	    -webkit-text-size-adjust: none;
@@ -379,17 +407,18 @@ body {
 			  padding-top: 8px;
 			  padding-bottom: 8px;
 			  padding-right: 10px;
-			  padding-left: 10px;				
+			  padding-left: 10px;	
+			  border-radius: 12px;			
 		}	
 		#arells-icon {
-				width: 20px;
+				width: 15px;
 			}	  
 		#connect-wallet {
 			  font-size: 9px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
-			  padding-right: 32px;
-			  padding-left: 35px;	  
+			  padding-right: 8px;
+			  padding-left: 10px;	 	  
 			  letter-spacing: 2px;
 			  width: 150px;
 			}	  
@@ -398,7 +427,8 @@ body {
 			  padding-top: 8px;
 			  padding-bottom: 8px;
 			  padding-right: 10px;
-			  padding-left: 10px;	  					
+			  padding-left: 10px;	
+			  border-radius: 12px;	  					
 		}		
 	
 		#profile-img-container {
@@ -519,19 +549,31 @@ body {
 }					
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 @media screen and (max-width: 700px) {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  
-	  		#connect-wallet {
-			  padding-right: 7px;
-			  padding-left: 10px;	  
-			}	
 	  		#icon-link{
-			margin-right: 20px;  					
+			margin-right: 40px;  					
 			}	
 		  	#cart-link{
-			margin-left: 20px;  					
+			margin-left: 40px;  					
 			}		
 			#profileline {
 			  width: 300px;
