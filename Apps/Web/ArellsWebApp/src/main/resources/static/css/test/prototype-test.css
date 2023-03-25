@@ -102,7 +102,7 @@ body {
 			  opacity: 1;	
 		}	
 			#cart-icon {
-				height: 23px;
+				height: 18px;
 			}				
 	
 	#profile-img-container {
@@ -428,15 +428,15 @@ body {
 			}	  
 		#cart-link{
 			margin-left: 30px;
-			  padding-top: 8px;
-			  padding-bottom: 5px;
+			  padding-top: 10px;
+			  padding-bottom: 7px;
 			  padding-right: 10px;
 			  padding-left: 10px;	
 			  border-radius: 12px;	
 			  width: 40px;  					
 		}
 		#cart-icon {
-				height: 18px;
+				height: 15px;
 			}	  				
 	
 		#profile-img-container {
