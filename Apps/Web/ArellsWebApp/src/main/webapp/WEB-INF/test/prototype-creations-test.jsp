@@ -55,7 +55,7 @@
 		</a>
 		<a id="connect-wallet">CONNECT WALLET</a>	
 		<a id="cart-link" href="/">
-			<img id="arells-icon" src="/icons&images/Arells-Icon.png"/>
+			<img id="arells-icon" src="/icons&images/shopping-cart-empty.png"/>
 		</a>	
 	</div>
 	<br>
