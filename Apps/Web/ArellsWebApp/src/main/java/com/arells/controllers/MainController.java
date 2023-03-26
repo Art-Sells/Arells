@@ -30,8 +30,8 @@ public class MainController {
 //	 
 //	 @GetMapping("/stayupdated-test") public String stayUpdatedTest() { return "test/stayupdated-test.jsp"; }	 
 //	 
-	 @GetMapping("/prototype-creations-test") public String prototypeCreationsTest() { return
-	 "test/prototype-creations-test.jsp"; }
+	 @GetMapping("/prototype-home-test") public String prototypeCreationsTest() { return
+	 "test/prototype-home-test.jsp"; }
 	 
 
 }
