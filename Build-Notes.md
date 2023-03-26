@@ -8,7 +8,7 @@
 - Coinbase/USDC Wallet only?
 
 #### Profile
-- Theme: [A][R][T][I][S][T]
+- Theme: Arells Logo needs to be 300-500px
 - Sticky [CREATE] button for minting (JQuery/JavaScript Dissapearing Module).
 
 #### Modal
