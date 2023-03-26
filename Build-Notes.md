@@ -4,7 +4,7 @@
 
 - Use GPT-4?
 
-#### Wallet (Chrome, Edge, Brave, Opera, iOS, PlayStore): 
+#### Wallet: 
 - Coinbase/USDC Wallet only?
 
 #### Profile
@@ -27,8 +27,12 @@
 
 - Use GPT-4?
 
+#### Profile
+- Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
+
+#### Image
+- Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
+
 ##### Wallet:
 - USDC only
-
-#### Theme:
-- [A][R][T][I][S][T]
+- Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
