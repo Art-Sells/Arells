@@ -55,7 +55,7 @@
 		
 			<br>
 			
-			<img id="word-logoo" src="/icons&images/Arells-Logo.png">	
+			<img id="word-logoo" src="/icons&images/Arells-Logo-Ebony.png">	
 			
 			<br>
 			
