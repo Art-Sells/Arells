@@ -27,7 +27,7 @@ body {
 		#icon-link{
 			display: inline-block;
 			text-decoration: none;
-			margin-right: 58px;
+			margin-right: 128px;
 			  text-decoration: none;
 			  padding-top: 13px;
 			  padding-bottom: 10px;
@@ -50,37 +50,11 @@ body {
 			}		
 			#arells-icon {
 				height: 16px;
-			}
-
-		#connect-wallet {
-			display: inline-block;
-			  text-decoration: none;
-			  color: white;
-			  font-weight: 200;
-			  font-size: 11px;
-			  padding-top: 20px;
-			  padding-bottom: 20px;
-			  padding-right: 52px;
-			  padding-left: 55px;	  
-			  border: none;
-			  letter-spacing: 3px;
-			  border-radius: 5px;
-			  border-width: 0px;
-			  width: 150px;
-			  opacity: 1;
-			  box-shadow: 0px 8px 12px -6px black;  
-				background: black;
-			}	  
-		#connect-wallet:hover,
-		#connect-wallet:focus {
-			  opacity: .4;
-			  transition: 1s;
-			  cursor: pointer;
-		}	
+			}	
 		#cart-link{
 			display: inline-block;
 			text-decoration: none;
-			margin-left: 54px;
+			margin-left: 124px;
 			  text-decoration: none;
 			  padding-top: 12px;
 			  padding-bottom: 9px;
@@ -103,13 +77,28 @@ body {
 		}	
 			#cart-icon {
 				height: 18px;
-			}				
+			}
+			
+	#word-logo {
+		margin-top: 37px;
+		width: 110px;	
+	}
+	#slogan {
+		margin-top: 0px;
+		font-size: 8px;
+		letter-spacing: 10px;
+		margin-left: 10px; 
+		font-weight: 500;
+		color: gray;
+		opacity: 1;
+		word-spacing: -3px;
+	}							
 	
 	#profile-img-container {
 	position: static;
 		width: 100px;
 		height: 100px;
-		margin-top: 100px;
+		margin-top: 30px;
 		border-radius: 10px;
 		margin-left: auto;
   		margin-right: auto;
@@ -172,7 +161,6 @@ body {
 		  cursor: pointer;
 	}		
 	#profileline {
-	  margin-top: 40px;
 	  background-color: black;
 	  border: none;
 	  height: 4px;
@@ -190,7 +178,7 @@ body {
 	}	
 		#created {
 		flex: 1;			
-		margin: 10px;
+		margin-right: 10px;
 		align-items: center;	
 		  text-decoration: none;
 		  color: black;
@@ -212,7 +200,7 @@ body {
 		}  		
 		#collected {
 		flex: 1;			
-		margin: 10px;
+		margin-left: 10px;
 		align-items: center;	
 		  text-decoration: none;
 		  color: gray;
@@ -246,7 +234,7 @@ body {
 		
 
 	#container {
-		margin-top: 25px;
+		margin-top: 30px;
 		flex-direction: column;
 		align-items: center;
 		  display: grid;
@@ -401,48 +389,51 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  
-	#header {
-			margin-top: 0px;
-			padding-top: 25px;			
-		}	
-		#icon-link{	
-			margin-right: 38px;
-			  padding-top: 10px;
-			  padding-bottom: 7px;
-			  padding-right: 6px;
-			  padding-left: 6px;	
-			  border-radius: 12px;
-			  width: 40px;		
-		}	
-		#arells-icon {
-				height: 15px;
-			}	  
-		#connect-wallet {
-			  font-size: 9px;
-			  padding-top: 20px;
-			  padding-bottom: 20px;
-			  padding-right: 7px;
-			  padding-left: 10px;	 	  
-			  letter-spacing: 2px;
-			  width: 150px;
-			}	  
-		#cart-link{
-			margin-left: 34px;
-			  padding-top: 10px;
-			  padding-bottom: 7px;
-			  padding-right: 8px;
-			  padding-left: 8px;	
-			  border-radius: 12px;	
-			  width: 40px;  					
+		#header {
+				margin-top: 0px;
+				padding-top: 25px;			
+			}	
+			#icon-link{	
+				margin-right: 90px;
+				  padding-top: 10px;
+				  padding-bottom: 7px;
+				  padding-right: 6px;
+				  padding-left: 6px;	
+				  border-radius: 12px;
+				  width: 40px;		
+			}	
+			#arells-icon {
+					height: 15px;
+				}	    
+			#cart-link{
+				margin-left: 96px;
+				  padding-top: 10px;
+				  padding-bottom: 7px;
+				  padding-right: 8px;
+				  padding-left: 8px;	
+				  border-radius: 12px;	
+				  width: 40px;  					
+			}
+			#cart-icon {
+					height: 15px;
+				}	
+			
+			  				
+		#word-logo {
+			margin-top: 35px;
+			width: 90px;	
 		}
-		#cart-icon {
-				height: 15px;
-			}	  				
-	
+		#slogan {
+			margin-top: -2px;
+			font-size: 7px;
+			letter-spacing: 8px;
+			margin-left: 8px; 
+			word-spacing: -3px;
+		}		
 		#profile-img-container {
 			width: 70px;
 			height: 70px;
-			margin-top: 85px;
+			margin-top: 30px;
 			
 		}
 			#profile-photo {
@@ -478,33 +469,34 @@ body {
 		  width: 470px;
 		}	
 		#created-collected {
-			margin-top: 25px;
+			margin-top: 20px;
 			align-items: center;
 			  width: 400px;
 		}	  
 			#created {		
-			margin: 12px;
-			  font-size: 12px;
+			margin-right: 10px;
+			margin-left: 8px;
+			  font-size: 10px;
 			  padding-top: 10px;
 			  padding-bottom: 10px;
-			  padding-right: 20px;
-			  padding-left: 20.5px;	  
+			  padding-right: 15px;
+			  padding-left: 15.5px;	  
 			  letter-spacing: .5px;
 				
 			}  		
 			#collected {		
-			margin: 5px;
-			  font-size: 12px;
+			margin-left: 0px;
+			  font-size: 10px;
 			  padding-top: 10px;
 			  padding-bottom: 10px;
-			  padding-right: 20px;
-			  padding-left: 20.5px;	  
+			  padding-right: 15px;
+			  padding-left: 15.5px;	  
 			  letter-spacing: .5px;
 			}			
 	  #container {
 	    width: 660px;
 	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	    margin-top: 25px;
+	    margin-top: 20px;
 	  }
 		#col {		
 			margin: 5px;

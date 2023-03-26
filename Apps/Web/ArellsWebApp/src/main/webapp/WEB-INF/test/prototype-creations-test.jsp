@@ -50,21 +50,24 @@
 <body>
 
 	<div id="header">
-		<a id="icon-link" href="/">
+	
+	<!-- Change below link after test -->
+		<a id="icon-link" href="/test">
 			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
-		</a>
-		<a id="connect-wallet">CONNECT WALLET</a>	
+		</a>		
 		<a id="cart-link" href="/">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>	
 	</div>
-	<br>
+	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan">ART SELLS</p>
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
 	<h1 id="name">Abstract Kadabra</h1>  
 	<p id="description">Here rests life's abstractions painted in majestic endeavors.</p> 
 	<a id="share">SHARE</a>	
+	<br>
 	<hr id="profileline">
 	<div id="created-collected">
 		<a id="created">Created</a>	
