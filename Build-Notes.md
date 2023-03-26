@@ -4,15 +4,15 @@
 
 - Use GPT-4?
 
-#### Wallet: 
+#### Wallet (Chrome, Edge, Brave, Opera, iOS, PlayStore): 
 - Coinbase/USDC Wallet only?
 
 #### Profile
-- Theme: [A][R][T][I][S][T]
+- Theme: Arells Logo needs to be 300-500px
 - Sticky [CREATE] button for minting (JQuery/JavaScript Dissapearing Module).
 
 #### Modal
-- 30% from top.
+- 30% from top (after Add-to-Cart, Cart, or Add button clicked)
 
 #### Buying Mechanics:
 - Once an NFT is bought, the new price is 50xed from original price.
