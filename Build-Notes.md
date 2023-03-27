@@ -9,7 +9,11 @@
 
 #### Profile
 - Theme: Arells Logo needs to be 300-500px
-- Sticky [CREATE] button for minting (JQuery/JavaScript Dissapearing Module).
+- Sticky [+] button for minting (JQuery/JavaScript Dissapearing Module)
+- Minting [+] allows cropping for preview <Also for Profile Picture Upload
+
+#### Image
+- Edit Button next to image for preview.
 
 #### Modal
 - 30% from top (after Add-to-Cart, Cart, or Add button clicked)
