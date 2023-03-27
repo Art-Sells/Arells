@@ -6,7 +6,7 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/prototype-home-test.css">	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype-collected-test.css">	
 			
 		<meta charset="UTF-8">
 		
@@ -70,87 +70,12 @@
 	<br>
 	<hr id="profileline">
 	<div id="created-collected">
-		<a id="created">Created</a>	
-	<!-- Change below link after test -->		
-		<a id="collected" href="/prototype-collected-test">Collected</a>	
+		<a id="created" href="/prototype-home-test">Created</a>	
+		<a id="collected">Collected</a>	
 	</div>
-	<div id="container">
-		  	<div id="col">
-		  		<a href="/ethereum" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
-		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$60,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$1,200</p>
-	     		<a id="add-to-cart">ADD TO CART</a>	
-		    </div>
-		  	<div id="col">
-		  		<a href="/ethereum" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
-		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$10,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$200</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
-		    </div>
-		     <div id="col">
-		  		<a href="/ethereum" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
-		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$725,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$14,500</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
-		    </div>
-		  	<div id="col">
-		  		<a href="/ethereum" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
-		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$20,000,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$400,000</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>	
-		    </div>
-		  	<div id="col">
-		  		<a href="/ethereum" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
-		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$5,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$100</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
-		    </div>
-		     <div id="col">
-		  		<a href="/ethereum" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
-		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$600,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$12,000</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
-		    </div>
-	</div>
+		<p id="no-art">
+			no art collected
+			<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		</p>
 </body>
 </html>
