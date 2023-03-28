@@ -161,6 +161,7 @@ body {
 		  cursor: pointer;
 	}		
 	#profileline {
+	margin-top: 35px;
 	  background-color: black;
 	  border: none;
 	  height: 4px;
@@ -227,10 +228,7 @@ body {
 			  border-color: gray;
 			  opacity: 1;
 		}	
-		
-	#profileline {
-	  margin-top: 30px;
-	}			
+				
 		
 
 	#container {

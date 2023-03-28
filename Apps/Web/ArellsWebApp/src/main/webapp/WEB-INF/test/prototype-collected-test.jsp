@@ -65,7 +65,7 @@
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
 	<h1 id="name">Abstract Kadabra</h1>  
-	<p id="description">Here rests life's abstractions painted in majestic endeavors.</p> 
+	<p id="description">Here rests life's abstractions captured in majestic endeavors.</p> 
 	<a id="share">SHARE</a>	
 	<br>
 	<hr id="profileline">
@@ -74,7 +74,7 @@
 		<a id="collected">Collected</a>	
 	</div>
 		<p id="no-art">
-			no art collected
+			No art collected
 			<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</p>
 </body>
