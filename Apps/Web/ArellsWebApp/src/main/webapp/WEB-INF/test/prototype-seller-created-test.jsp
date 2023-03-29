@@ -6,7 +6,7 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/prototype-home-test.css">	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype-seller-created-test.css">	
 			
 		<meta charset="UTF-8">
 		
@@ -72,7 +72,7 @@
 	<div id="created-collected">
 		<a id="created">Created</a>	
 	<!-- Change below link after test -->		
-		<a id="collected" href="/prototype-collected-test">Collected</a>	
+		<a id="collected" href="/prototype-seller-collected-test">Collected</a>	
 	</div>
 	<div id="container">
 		  	<div id="col">

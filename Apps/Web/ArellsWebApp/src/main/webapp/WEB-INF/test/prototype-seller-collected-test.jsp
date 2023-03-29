@@ -6,7 +6,7 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/prototype-collected-test.css">	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype-seller-collected-test.css">	
 			
 		<meta charset="UTF-8">
 		
@@ -70,7 +70,8 @@
 	<br>
 	<hr id="profileline">
 	<div id="created-collected">
-		<a id="created" href="/prototype-home-test">Created</a>	
+<!-- Change below link after test -->
+		<a id="created" href="/prototype-seller-created-test">Created</a>	
 		<a id="collected">Collected</a>	
 	</div>
 		<p id="no-art">
