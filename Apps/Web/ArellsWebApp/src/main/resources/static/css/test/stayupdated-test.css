@@ -60,7 +60,7 @@ body {
 		margin-left: 10px;
 		letter-spacing: 10px;
 		word-spacing: 0px;
-		opacity: .8;			
+		opacity: .6;			
 	}		
 
 	
@@ -87,7 +87,7 @@ body {
 			font-size: 9px;
 			letter-spacing: 2px;
 			margin-left: 2px;
-			opacity: 1;
+			opacity: .8;
 		}
        	   input { 
        	   	    text-align: center;
@@ -154,7 +154,7 @@ body {
 	}		
 
 		#contact {
-			opacity: .7;
+			opacity: .5;
 		}
 		#contact:hover,
 		#contact:focus {
@@ -181,7 +181,7 @@ body {
        	   		padding-right: 19px;       	   		
        	   		font-weight: 500;
        	   		font-size: 14px;
-       	   		width: 200px;
+       	   		width: 190px;
        	   		height: 15px;
 				letter-spacing: 1px;    	   		
        	   }			
