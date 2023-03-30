@@ -70,9 +70,9 @@
 	<br>
 	<hr id="profileline">
 	<div id="created-collected">
-		<a id="created">Created</a>	
-	<!-- Change below link after test -->		
-		<a id="collected" href="/prototype-buyer-collected-test">Collected</a>	
+		<!-- Change below link after test -->
+		<a id="created" href="/prototype-buyer-created-test">Created</a>		
+		<a id="collected">Collected</a>	
 	</div>
 	<div id="container">
 		  	<div id="col">

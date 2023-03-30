@@ -88,7 +88,7 @@ body {
 		font-size: 8px;
 		letter-spacing: 10px;
 		margin-left: 10px; 
-		font-weight: 500;
+		font-weight: 600;
 		color: gray;
 		opacity: 1;
 		word-spacing: -3px;
@@ -228,28 +228,10 @@ body {
 		background: none;
 		opacity: 1;			
 		}		
-	
-
-	#no-art{
-		margin-top: 60px;
-		width: 500px;
-		  font-size: 12pt;
-		  font-weight: 500;
-		  opacity: .4;
-		  color: black;	
-		  letter-spacing: 0px;	 
-		  margin-left: 0px; 
-		  margin-right: auto;
-		  margin-left: auto;			
-	}	
-	#cart-icon-collected{
-		height: 25px;
-		margin-left: 10px;
-		opacity: 1;
-	}		
+				
 		
 
-	/* #container {
+	#container {
 		margin-top: 30px;
 		flex-direction: column;
 		align-items: center;
@@ -262,7 +244,7 @@ body {
 		  margin-bottom: 60px;		
 	}
 		
-		 #col {
+		#col {
 			flex: 1;			
 			margin: 10px;
 			border-radius: 15px;
@@ -372,7 +354,7 @@ body {
 				  opacity: .4;
 				  transition: 1s;
 				  cursor: pointer;
-			}		 */
+			}		
 			
 			
 			
@@ -489,7 +471,7 @@ body {
 			margin-top: 20px;
 			align-items: center;
 			  width: 400px;
-		}	  
+		}
 			#created {		
 			margin-right: 10px;
 			margin-left: 8px;
@@ -509,22 +491,13 @@ body {
 			  padding-right: 15px;
 			  padding-left: 15.5px;	  
 			  letter-spacing: .5px;
-			}	
-			#no-art{
-				margin-top: 50px;
-				width: 300px;
-				font-size: 13px;
-			}	
-			#cart-icon-collected{
-				height: 20px;
-				margin-left: 5px;
 			}			
-	  /* #container {
+	  #container {
 	    width: 660px;
 	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	    margin-top: 20px;
 	  }
-		 #col {		
+		#col {		
 			margin: 5px;
 			align-items: center;
 			width: 130px;
@@ -571,7 +544,7 @@ body {
 				  border: none;
 				  letter-spacing: 1px;
 				  width: 80px;
-				}	  			 */	  
+				}	  				  
 }					
 	
 	
