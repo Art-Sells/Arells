@@ -62,7 +62,7 @@
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>
     <div id="profile-img-container">
-		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
+		<img id="profile-photo" src="/icons&images/prototype/Profile-Icon.png">
 	</div>	 
 	<h1 id="name">Abstract Kadabra</h1>  
 	<p id="description">Here rests life's abstractions captured in majestic endeavors.</p> 
