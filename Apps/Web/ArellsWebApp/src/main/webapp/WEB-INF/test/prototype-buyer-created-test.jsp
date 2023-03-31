@@ -76,7 +76,7 @@
 	</div>
 	<p id="no-art">
 		No art created
-		<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<img id="cart-icon-collected" src="/icons&images/prototype/Add.png"/>
 	</p>
 </body>
 </html>
