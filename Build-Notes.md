@@ -9,6 +9,7 @@
 
 #### Profile
 - Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
+- Terms & Conditions Agreement
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - (Art)(Sells)(+) buttons are Z-Indexed Sticky
 - Minting [+] allows cropping for preview <Also for Profile Picture Upload
