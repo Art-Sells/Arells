@@ -66,10 +66,10 @@ body {
 	  margin-top: 30px;
 	  background-color: black;
 	  border: none;
-	  height: 4px;
+	  height: 1px;
 	  border-radius: 30px;
 	  width: 255px;
-	  opacity: .1;
+	  opacity: .3;
 	}	
 	
 	#descriptioner {
@@ -77,8 +77,8 @@ body {
 		font-size: 9px;
 		letter-spacing: 1px;
 		margin-left: 1px;
-		font-weight: 800;
-		opacity: .4;
+		font-weight: 600;
+		opacity: .5;
 		color: black;
 	}	
 	#coming-soonn {
