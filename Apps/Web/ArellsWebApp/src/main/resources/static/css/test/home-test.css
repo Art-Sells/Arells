@@ -18,7 +18,7 @@ body {
 
 
 #overlayy {
-	padding-top: 80px;
+	padding-top: 70px;
 }
 @-webkit-keyframes gradients{
   0% {
@@ -48,28 +48,28 @@ body {
 		opacity: 1;
 	}
 	#word-logoo {
-		margin-top: 20px;
+		margin-top: 15px;
 		width: 120px;	
 	}
 	#slogann {
-		margin-top: 35px;
+		margin-top: 25px;
 		font-size: 14px;
 		letter-spacing: 13px;
 		margin-left: 13px; 
 		font-weight: 800;
 		color: black;
 		opacity: .5;
-		padding-bottom: 10px;
+		padding-bottom: -10px;
 	}
 	
 	#black-liner {
 	  margin-top: 30px;
 	  background-color: black;
 	  border: none;
-	  height: 1px;
+	  height: 4px;
 	  border-radius: 30px;
 	  width: 255px;
-	  opacity: .3;
+	  opacity: .1;
 	}	
 	
 	#descriptioner {
@@ -82,13 +82,13 @@ body {
 		color: black;
 	}	
 	#coming-soonn {
-		margin-top: 40px;
+		margin-top: 30px;
 		font-size: 11px;
 		margin-left: 15px;
 		letter-spacing: 15px;
 		font-weight: 800;
 		color: black;
-		margin-bottom: 60px;
+		margin-bottom: 45px;
 		opacity: .5;
 	}
 	
@@ -100,8 +100,8 @@ body {
 	  font-size: 11px;
 	  padding-top: 20px;
 	  padding-bottom: 20px;
-	  padding-right: 52px;
-	  padding-left: 55px;	  
+	  padding-right: 32px;
+	  padding-left: 35px;	  
 	  border: none;
 	  letter-spacing: 3px;
 	  border-radius: 5px;
@@ -116,9 +116,38 @@ body {
 	  transition: 1s;
 	  cursor: pointer;
 	}
+
+	#prototype-spacer{
+		margin-top: 60px;
+	}
+		#prototype {
+		  background: none;
+		  text-decoration: none;
+		  color: gray;
+		  font-weight: 300;
+		  font-size: 11px;
+		  padding-top: 17px;
+		  padding-bottom: 17px;
+		  padding-right: 33px;
+		  padding-left: 35px;	  
+		  border: solid;
+		  letter-spacing: 1px;
+		  border-radius: 10px;
+		  border-width: 1px;
+		  border-color: rgba(215, 215, 215, 0.7);
+		  width: 200px;
+		  opacity: 1;
+		}
+		#prototype:hover,
+		#prototype:focus {
+		  border-color: gray;
+		  color: black;
+		  transition: 1s;
+		  cursor: pointer;
+		}	
 	
 #footerr {
-	padding-top: 80px;
+	padding-top: 45px;
 	padding-bottom: 80px;	
 }	
 	
@@ -145,7 +174,7 @@ body {
 	}
 
 	#word-logoo {
-		width: 110px;	
+		width: 100px;	
 	}  
   	#slogann {
 		font-size: 12px;
@@ -153,7 +182,6 @@ body {
 		margin-left: 10px;
 	}
 	#black-liner {
-	  margin-top: 30px;
 	  width: 205px;
 	}	
 	
@@ -170,12 +198,12 @@ body {
 	#updatess {
 	  font-weight:400;
 	  font-size: 9px;
-	  padding-top: 20px;
-	  padding-bottom: 20px;
-	  padding-right: 32px;
-	  padding-left: 35px;
 	  border-width: 1px;	    
-	}		
+	}	
+	#prototype {
+	  font-weight:400;
+	  font-size: 9px;
+	}	
 
 	#twitterr {
 		width: 27px;

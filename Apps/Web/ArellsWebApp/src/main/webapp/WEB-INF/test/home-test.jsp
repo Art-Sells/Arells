@@ -75,14 +75,20 @@
 			<a href="/stayupdated-test" 
 			id="updatess">
 	      		STAY UPDATED
-	        </a>
-		
+	        </a>			
+	        
+	        <div id="prototype-spacer">
+			<!-- Change below link after test -->
+			<a href="/prototype-seller-created-test" 
+			id="prototype">
+	      		PROTOTYPE
+	        </a>	        
+	        </div>
 		
 		</div>			
 		
 		
 		<div id="footerr">	
-<!--  			  <p id="follow-us">FOLLOW US</p> -->
 		  <a href="https://twitter.com/arellsofficial"
 		      target="_blank"
 		      id="contactt">
