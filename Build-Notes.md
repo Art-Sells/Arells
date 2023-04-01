@@ -9,7 +9,7 @@
 
 #### Profile
 - Theme: Arells Logo needs to be 300-500px
-- Sticky [+] button for minting (JQuery/JavaScript Dissapearing Module)
+- (Art)(Sells)(+) buttons are Z-Indexed Sticky
 - Minting [+] allows cropping for preview <Also for Profile Picture Upload
 
 #### Image
