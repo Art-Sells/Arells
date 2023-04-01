@@ -8,13 +8,15 @@
 - Coinbase/USDC Wallet only?
 
 #### Profile
-- Proof-of-ownership (Website/Social-Media-Links) to prevent plagarism for artwork creating.
+- Proof-of-ownership (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - (Art)(Sells)(+) buttons are Z-Indexed Sticky
 - Minting [+] allows cropping for preview <Also for Profile Picture Upload
 
 #### Image (listed as an asset/blockchainaddress)
 - Edit Button next to image for preview.
+- Proof-of-Creation
+- Proof-of-Ownership
 
 #### Modal
 - 30% from top (after Add-to-Cart, Cart, or Add button clicked)
