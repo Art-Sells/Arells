@@ -8,11 +8,12 @@
 - Coinbase/USDC Wallet only?
 
 #### Profile
+- Proof-of-ownership (Website/Social-Media-Links) to prevent plagarism for artwork creating.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - (Art)(Sells)(+) buttons are Z-Indexed Sticky
 - Minting [+] allows cropping for preview <Also for Profile Picture Upload
 
-#### Image
+#### Image (listed as an asset/blockchainaddress)
 - Edit Button next to image for preview.
 
 #### Modal
@@ -32,6 +33,7 @@
 - Use GPT-4?
 
 #### Profile
+- Proof-of-ownership for major assets.
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
 
 #### Image
