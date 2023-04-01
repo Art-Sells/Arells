@@ -8,7 +8,7 @@
 - Coinbase/USDC Wallet only?
 
 #### Profile
-- Theme: Arells Logo needs to be 300-500px
+- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - (Art)(Sells)(+) buttons are Z-Indexed Sticky
 - Minting [+] allows cropping for preview <Also for Profile Picture Upload
 
