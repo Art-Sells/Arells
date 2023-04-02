@@ -19,17 +19,17 @@
 - Proof-of-Creation
 - Proof-of-Ownership
 
-#### Modal
-- 30% from top (after Add-to-Cart, Cart, or Add button clicked)
+#### Selling Mechanics
+- PAP price calculated 50x from price listed by creator
 
 #### Buying Mechanics:
 - Once an NFT is bought, the new price is 50xed from original price.
-- Buyer cannot set price no lower than selling price, they can however increase buying offer to as high as possible.
 
 #### After Purchase:
- 1. Message to buyer: "Purchased, waiting for seller to accept."
- 2. Message to seller: "Your Art xxxx has been bought by xxxx for xxxx, accept sale? [Accept], [Deny]
- 3. If/Then messages corresponding to above messages. 
+ 1. "Purchased... PAP: $, List For Sale? [Yes][No]".
+ 2. If Yes, then "Add-to-Cart", if No then "Not For Sale"
+ 5. Message to seller: "Your Art xxxx has been bought by xxxx for xxxx"
+ 6. If/Then messages corresponding to above messages. 
 
 ## Fully integrated App
 
