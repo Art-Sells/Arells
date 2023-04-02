@@ -134,7 +134,7 @@ body {
 	  margin-left: auto;
 	  margin-right: auto;
 	  width: 420px;
-	  margin-bottom: 25px;
+	  margin-bottom: 20px;
 	}
 	#copy-link {
 	  text-decoration: none;
@@ -165,7 +165,7 @@ body {
 			margin-right: 5px;
 		}
 	#profileline {
-	margin-top: 35px;
+	margin-top: 25px;
 	  background-color: black;
 	  border: none;
 	  height: 4px;
@@ -456,7 +456,7 @@ body {
 		  font-size: 9pt;
 		  line-height: 15px;
 		  width: 200px;
-		  margin-bottom: 20px;
+		  margin-bottom: 15px;
 		}	  
 		#copy-link {
 		  font-size: 8px;
@@ -472,7 +472,7 @@ body {
 				width: 12px;
 			}
 		#profileline {
-		margin-top: 30px;
+		margin-top: 20px;
 		  width: 470px;
 		}	
 		#created-collected {

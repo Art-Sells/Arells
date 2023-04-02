@@ -42,12 +42,59 @@
 		<meta name="description" content="Arells">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
+<!-- Modal scripts -->
+	    
+		<script>
+
+
+			function copyLink() {
+			// Open copyLink
+			  document.getElementById('copiedLink').style.display = "block";			
+				
+			  // Get the link to be copied
+			  var link = window.location.href;
+
+			  // Create a temporary input element to copy the link
+			  var input = document.createElement('input');
+			  input.setAttribute('value', link);
+			  document.body.appendChild(input);
+
+			  // Select the input element and copy the link
+			  input.select();
+			  document.execCommand('copy');
+
+			  // Remove the temporary input element
+			  document.body.removeChild(input);
+			  
+			}	
+			
+			
+			function closeCopiedLink() {
+				document.getElementById('copiedLink').style.display = "none";
+			}			
+			
+		
+		</script>	
+		
+		
+<!-- Modal scripts -->		
 
 		<title>Prototype</title>
 	
 	</head>
 	
 <body>
+
+	<!-- Modal/s below -->
+	
+		<div id="copiedLink" style="display: none;">
+		  <div class="modal-content">
+			<p>LINK COPIED</p>
+	    	<button class="close"
+		    	onClick="closeCopiedLink()">OK</button>	
+		  </div>
+		</div>	
+	<!-- Modal/s above -->
 
 	<div id="header">
 	
@@ -66,7 +113,10 @@
 	</div>	 
 	<h1 id="name">Unnamed</h1>  
 	<p id="description">Creator & Collector</p> 
-	<a id="share">SHARE</a>	
+	<button id="copy-link"
+		onClick="copyLink()">
+		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+		COPY LINK</button>	
 	<br>
 	<hr id="profileline">
 	<div id="created-collected">

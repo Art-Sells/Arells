@@ -7,7 +7,7 @@
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/test/prototype-buyer-collected-test.css">	
-		<link rel="stylesheet" href="css/test/copedlink-test.css" />	
+		<link rel="stylesheet" href="css/test/copiedlink-test.css" />	
 			
 		<meta charset="UTF-8">
 		
