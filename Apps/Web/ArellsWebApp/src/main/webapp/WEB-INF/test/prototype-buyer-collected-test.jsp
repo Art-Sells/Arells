@@ -114,9 +114,9 @@
 	</div>	 
 	<h1 id="name">Unnamed</h1>  
 	<p id="description">Creator & Collector</p> 
-	<button id="share"
+	<button id="copy-link"
 		onClick="copyLink()">
-		<img id="link" src="/icons&images/prototype/link.png"/>
+		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
 		COPY LINK</button>	
 	<br>
 	<hr id="profileline">
