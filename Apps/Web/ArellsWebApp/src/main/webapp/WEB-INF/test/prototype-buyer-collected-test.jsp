@@ -47,15 +47,12 @@
 	    
 		<script>
 	
-		window.onload = function (){
-			var shareModal;
+			var shareModal = document.getElementById('shareModal');
 			function openShareModal() {
-			  shareModal = document.getElementById('#shareModal');
-			  shareModal.style.display =='block';
+			  shareModal.style.display = 'block';
 			}
 			function closeShareModal() {
-			  shareModal = document.getElementById('#shareModal');
-			  shareModal.style.display = "none";
+			  shareModal.style.display = 'none';
 			}
 
 
@@ -76,9 +73,7 @@
 			  document.body.removeChild(input);
 
 			  alert('Link copied to clipboard!');
-			}	
-			
-		}		
+			}			
 		</script>	
 <!-- Modal scripts -->		
 
@@ -96,7 +91,7 @@
 	    		onClick="copyLink()">COPY LINK</button>
 	    		<br>
 	    	<button class="cancel"
-		    	onClick="closeModal()">CANCEL</button>	
+		    	onClick="closeShareModal()">CANCEL</button>	
 		  </div>
 		</div>
 	<!-- Share Modal/s above -->
@@ -119,7 +114,7 @@
 	<h1 id="name">Unnamed</h1>  
 	<p id="description">Creator & Collector</p> 
 	<button id="share"
-		onClick="openModal()">SHARE</button>	
+		onClick="openShareModal()">SHARE</button>	
 	<br>
 	<hr id="profileline">
 	<div id="created-collected">
