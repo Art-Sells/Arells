@@ -44,55 +44,41 @@
 <!-- Above information for social media sharing and search-engine/browser optimization -->
 
 <!-- Modal scripts -->
+	    
 		<script>
-			// Get the modal
-			var modal = document.querySelector('.modal');
 	
-			// Get the button that opens the modal
-			var btn = document.querySelector('#share');
-	
-			// Get the <span> element that closes the modal
-			var span = document.querySelector('.close');
-	
-			// When the user clicks on the button, open the modal
-			btn.onclick = function() {
-			  modal.style.display = "block";
+		window.onload = function (){
+			var shareModal;
+			function openShareModal() {
+			  shareModal = document.getElementById('#shareModal');
+			  shareModal.style.display =='block';
 			}
-	
-			// When the user clicks on <span> (x), close the modal
-			span.onclick = function() {
-			  modal.style.display = "none";
+			function closeShareModal() {
+			  shareModal = document.getElementById('#shareModal');
+			  shareModal.style.display = "none";
 			}
-	
-			// When the user clicks anywhere outside of the modal, close it
-			window.onclick = function(event) {
-			  if (event.target == modal) {
-			    modal.style.display = "none";
-			  }
-			}		
-			// Get the button that copies the link
-			var copyBtn = document.querySelector('#copy-link-btn');
-	
-			// When the user clicks on the button, copy the link to the clipboard
-			copyBtn.onclick = function() {
+
+
+			function copyLink() {
 			  // Get the link to be copied
 			  var link = window.location.href;
-	
+
 			  // Create a temporary input element to copy the link
 			  var input = document.createElement('input');
 			  input.setAttribute('value', link);
 			  document.body.appendChild(input);
-	
+
 			  // Select the input element and copy the link
 			  input.select();
 			  document.execCommand('copy');
-	
+
 			  // Remove the temporary input element
 			  document.body.removeChild(input);
-	
-			  // Show a message to indicate that the link has been copied
+
 			  alert('Link copied to clipboard!');
-			}		
+			}	
+			
+		}		
 		</script>	
 <!-- Modal scripts -->		
 
@@ -103,15 +89,17 @@
 <body>
 
 	<!-- Share Modal below -->
-		<div class="modal">
+		<div id="shareModal" style="display: none;">
 		  <div class="modal-content">
-		    <span class="close">&times;</span>
 		<!-- Change below link after test -->
-		    <p>arells.com/prototype-buyer-created-test</p>
-	    	<button id="copy-link-btn">COPY LINK</button>
+	    	<button id="copy-link-btn"
+	    		onClick="copyLink()">COPY LINK</button>
+	    		<br>
+	    	<button class="cancel"
+		    	onClick="closeModal()">CANCEL</button>	
 		  </div>
 		</div>
-	<!-- Share Modal above -->
+	<!-- Share Modal/s above -->
 
 	<div id="header">
 	
@@ -130,7 +118,8 @@
 	</div>	 
 	<h1 id="name">Unnamed</h1>  
 	<p id="description">Creator & Collector</p> 
-	<button id="share">SHARE</button>	
+	<button id="share"
+		onClick="openModal()">SHARE</button>	
 	<br>
 	<hr id="profileline">
 	<div id="created-collected">
