@@ -7,7 +7,7 @@
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/test/prototype-buyer-collected-test.css">	
-		<link rel="stylesheet" href="css/test/sharemodal-test.css" />	
+		<link rel="stylesheet" href="css/test/copedlink-test.css" />	
 			
 		<meta charset="UTF-8">
 		
@@ -90,7 +90,7 @@
 	
 		<div id="copiedLink" style="display: none;">
 		  <div class="modal-content">
-			<h3>Copied to Clipboard</h3>
+			<p>LINK COPIED</p>
 	    	<button class="close"
 		    	onClick="closeCopiedLink()">OK</button>	
 		  </div>
