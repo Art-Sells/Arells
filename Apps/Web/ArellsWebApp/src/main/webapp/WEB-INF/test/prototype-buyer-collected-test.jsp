@@ -46,17 +46,12 @@
 <!-- Modal scripts -->
 	    
 		<script>
-	
-			var shareModal = document.getElementById('shareModal');
-			function openShareModal() {
-			  shareModal.style.display = 'block';
-			}
-			function closeShareModal() {
-			  shareModal.style.display = 'none';
-			}
 
 
 			function copyLink() {
+			// Open copyLink
+			  document.getElementById('copiedLink').style.display = "block";			
+				
 			  // Get the link to be copied
 			  var link = window.location.href;
 
@@ -71,10 +66,18 @@
 
 			  // Remove the temporary input element
 			  document.body.removeChild(input);
-
-			  alert('Link copied to clipboard!');
+			  
+			}	
+			
+			
+			function closeCopiedLink() {
+				document.getElementById('copiedLink').style.display = "none";
 			}			
+			
+		
 		</script>	
+		
+		
 <!-- Modal scripts -->		
 
 		<title>Prototype</title>
@@ -83,18 +86,16 @@
 	
 <body>
 
-	<!-- Share Modal below -->
-		<div id="shareModal" style="display: none;">
+	<!-- Modal/s below -->
+	
+		<div id="copiedLink" style="display: none;">
 		  <div class="modal-content">
-		<!-- Change below link after test -->
-	    	<button id="copy-link-btn"
-	    		onClick="copyLink()">COPY LINK</button>
-	    		<br>
-	    	<button class="cancel"
-		    	onClick="closeShareModal()">CANCEL</button>	
+			<h3>Copied to Clipboard</h3>
+	    	<button class="close"
+		    	onClick="closeCopiedLink()">OK</button>	
 		  </div>
-		</div>
-	<!-- Share Modal/s above -->
+		</div>	
+	<!-- Modal/s above -->
 
 	<div id="header">
 	
@@ -114,7 +115,9 @@
 	<h1 id="name">Unnamed</h1>  
 	<p id="description">Creator & Collector</p> 
 	<button id="share"
-		onClick="openShareModal()">SHARE</button>	
+		onClick="copyLink()">
+		<img id="link" src="/icons&images/prototype/link.png"/>
+		COPY LINK</button>	
 	<br>
 	<hr id="profileline">
 	<div id="created-collected">
