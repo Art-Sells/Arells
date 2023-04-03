@@ -8,6 +8,7 @@
 - Coinbase/USDC Wallet only?
 
 #### Profile
+- Register with Google/Apple/Facebook/Etc
 - Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
 - Terms & Conditions Agreement
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
