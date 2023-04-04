@@ -45,6 +45,8 @@
 #### Image
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
 
-##### Wallet:
-- USDC only
+#### Wallet:
+- USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
 - Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
+
+#### Contact (discord/email/etc)
