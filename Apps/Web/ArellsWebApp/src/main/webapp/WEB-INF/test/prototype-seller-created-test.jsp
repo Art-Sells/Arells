@@ -103,9 +103,9 @@
 		<a id="icon-link" href="/test">
 			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<a id="cart-link" href="/">
+		<button id="cart-link" href="/">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
-		</a>	
+		</button>		
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>

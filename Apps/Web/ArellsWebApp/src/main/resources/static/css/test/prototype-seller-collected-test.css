@@ -37,7 +37,7 @@ body {
 			  border-color: rgba(215, 215, 215, 0.7);
 			  border-radius: 15px;
 			  border-width: 1px;
-			  width: 50px;
+			  width: 43px;
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
@@ -61,7 +61,7 @@ body {
 			  padding-right: 10px;
 			  padding-left: 10px;	  
 			  border: solid;
-			  width: 50px;
+			  width: 60px;
 			  border-color: rgba(215, 215, 215, 0.7);
 			  border-radius: 15px;
 			  border-width: 1px;
@@ -292,7 +292,7 @@ body {
 				  padding-right: 6px;
 				  padding-left: 6px;	
 				  border-radius: 12px;
-				  width: 40px;		
+				  width: 30px;		
 			}	
 			#arells-icon {
 					height: 15px;
@@ -304,11 +304,11 @@ body {
 				  padding-right: 8px;
 				  padding-left: 8px;	
 				  border-radius: 12px;	
-				  width: 40px;  					
+				  width: 45px;  					
 			}
 			#cart-icon {
 					height: 15px;
-				}	
+				}
 			
 			  				
 		#word-logo {
