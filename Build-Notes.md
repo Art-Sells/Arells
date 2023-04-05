@@ -20,9 +20,10 @@
 - Proof-of-Creation
 - Proof-of-Ownership
 
-#### Selling Mechanics
-- PAP price calculated 50x from price listed by creator
-
+#### Creating Mechanics
+- PAP price calculated 50x from price listed by creator (After Sale: You Keep... 90%, Buyer Keeps... 7%, Fees... 3%)... Opposite for Seller
+- 1 Blockchain (Polygon)--- This is automatically chosen for buyer... prices in USDC
+                                                
 #### Buying Mechanics:
 - Once an NFT is bought, the new price is 50xed from original price.
 - Implement PAP Algo.
@@ -42,6 +43,7 @@
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
 - - Proof-of-creation 70x PAP for Copyright Proven Artistic Works
 - - Proof-of-ownership for major assets.
+- - [Price Not Shown for unlisted items, only Owner's name]
 
 #### Image
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
