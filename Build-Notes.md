@@ -25,6 +25,7 @@
 
 #### Buying Mechanics:
 - Once an NFT is bought, the new price is 50xed from original price.
+- Implement PAP Algo.
 
 #### After Purchase:
  1. "Purchased... PAP: $, List For Sale? [Yes][No]".
