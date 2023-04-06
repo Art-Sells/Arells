@@ -7,7 +7,8 @@
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/test/prototype-buyer-created-test.css">	
-			
+		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />	
+	
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
@@ -42,11 +43,9 @@
 		<meta name="description" content="Arells">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
-<!-- Modal scripts -->
-	    
 		<script>
 
-
+<!-- Modal script below-->
 			function copyLink() {
 			// Open copyLink
 			  document.getElementById('copiedLink').style.display = "block";			
@@ -72,12 +71,25 @@
 			function closeCopiedLink() {
 				document.getElementById('copiedLink').style.display = "none";
 			}			
+<!-- Modal script above-->	
+
+
+
+<!-- Connect Wallet scrip below-->
+	function connectWallet() {
+		// Open copyLink
+		  document.getElementById('connectWalletBuy').style.display = "block";			
+		  
+		}	
+	function walletConnected() {
+		document.getElementById('connectWalletBuy').style.display = "none";
+	}	
+<!-- Connect Wallet script above-->
 			
 		
 		</script>	
 		
 		
-<!-- Modal scripts -->		
 
 		<title>Prototype</title>
 	
@@ -94,7 +106,8 @@
 		    	onClick="closeCopiedLink()">OK</button>	
 		  </div>
 		</div>	
-	<!-- Modal/s above -->
+	
+	<!-- Modal/s above -->	
 
 	<div id="header">
 	
@@ -102,7 +115,7 @@
 		<a id="icon-link" href="/test">
 			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" href="/">
+		<button id="cart-link" onClick="/">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>	
 	</div>
