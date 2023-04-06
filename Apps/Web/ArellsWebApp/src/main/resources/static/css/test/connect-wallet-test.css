@@ -56,11 +56,13 @@
   border: solid;
   border-width: 1px;
   font-weight: 500;
-  border-radius: 10px;
+  border-radius: 15px;
   font-size: 15px;
-  padding: 15px;
-  letter-spacing: 1px;
-  width: 100px; 
+  padding-top: 18px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 15px;
+  width: 81.5px; 
 }
 .close:hover,
 .close:focus {

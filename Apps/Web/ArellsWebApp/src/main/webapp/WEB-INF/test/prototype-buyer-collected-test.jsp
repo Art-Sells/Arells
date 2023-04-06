@@ -81,12 +81,11 @@
 	function connectWallet() {
 		// Open copyLink
 		  document.getElementById('connectWalletBuy').style.display = "block";			
-			
-			function walletConnected() {
-				document.getElementById('connectWalletBuy').style.display = "none";
-			}	
 		  
 		}	
+	function walletConnected() {
+		document.getElementById('connectWalletBuy').style.display = "none";
+	}	
 <!-- Connect Wallet script above-->
 			
 		
@@ -116,11 +115,10 @@
 	
 		<div id="connectWalletBuy" style="display: none;">
 		  <div class="modal-content">
-			<p>CONNECT WALLET TO USE</p>
+			<p>CONNECT WALLET</p>
 	    	<button class="close"
-		    	onClick="closeCopiedLink()">
+		    	onClick="walletConnected()">
 		    	<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
-		    	COINBASE WALLET
 		    	</button>	
 		  </div>
 		</div>	
