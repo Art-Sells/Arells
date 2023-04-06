@@ -7,7 +7,8 @@
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/test/prototype-buyer-collected-test.css">	
-		<link rel="stylesheet" href="css/test/copiedlink-test.css" />	
+		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />	
+		<link rel="stylesheet" type="text/css" href="css/test/connect-wallet-test.css" />	
 			
 		<meta charset="UTF-8">
 		
@@ -77,7 +78,7 @@
 
 
 <!-- Connect Wallet scrip below-->
-	function copyLink() {
+	function connectWallet() {
 		// Open copyLink
 		  document.getElementById('connectWalletBuy').style.display = "block";			
 			
@@ -115,10 +116,11 @@
 	
 		<div id="connectWalletBuy" style="display: none;">
 		  <div class="modal-content">
-			<p>CONNECT WALLET TO BUY</p>
+			<p>CONNECT WALLET TO USE</p>
 	    	<button class="close"
 		    	onClick="closeCopiedLink()">
-		    	CONNECT <img id="cart-icon" src="/icons&images/prototype/coinbase.png"/>
+		    	<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+		    	COINBASE WALLET
 		    	</button>	
 		  </div>
 		</div>	
@@ -131,7 +133,7 @@
 		<a id="icon-link" href="/test">
 			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="copyLink()">
+		<button id="cart-link" onClick="connectWallet()">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>	
 	</div>
