@@ -16,17 +16,17 @@
 - Minting [+] allows cropping for preview <Also for Profile Picture Upload
 
 #### Image (listed as an asset/blockchainaddress)
-- Edit Button next to image for preview.
+- Edit Button next to image for preview (JPEGs as high res as possible)
 - Proof-of-Creation
 - Proof-of-Ownership
 
 #### Creating Mechanics
-- PAP price calculated 50x from price listed by creator (After Sale: You Keep... 90%, Buyer Keeps... 7%, Fees... 3%)... Opposite for Seller
+- PAP price calculated 50x from price listed by creator (After Sale: You Keep... 90%, Buyer Keeps... 7%, Fees... 3%)...
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer... prices in USDC
                                                 
 #### Buying Mechanics:
 - Once an NFT is bought, the new price is 50xed from original price.
-- Implement PAP Algo.
+- Implement PAP Algo (After Sale: You Keep... 7%, Creator Keeps... 90%, Fees... 3%)
 
 #### After Purchase:
  1. "Purchased... PAP: $, List For Sale? [Yes][No]".
