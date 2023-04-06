@@ -114,9 +114,9 @@
 	<!-- Modal/s below -->
 	
 		<div id="connectWalletBuy" style="display: none;">
-		  <div class="modal-content">
+		  <div class="connect-wallet-content">
 			<p>CONNECT WALLET</p>
-	    	<button class="close"
+	    	<button class="connectWallet"
 		    	onClick="walletConnected()">
 		    	<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 		    	</button>	
