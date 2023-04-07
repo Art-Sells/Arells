@@ -79,11 +79,13 @@
 <!-- Connect Wallet script below-->
 	function connectWallet() {
 		// Open copyLink
-		  document.getElementById('connectWalletBuy').style.display = "block";			
+		document.getElementById('connectWalletBuy').style.display = "block";			
 		  
-		}	
+	}	
 	function walletConnected() {
 		document.getElementById('connectWalletBuy').style.display = "none";
+		document.getElementById('slogan').style.display = "none";
+		document.getElementById('wallet-connected').style.display = "block";
 	}	
 <!-- Connect Wallet script above-->
 			
@@ -110,11 +112,11 @@
 	
 		<div id="connectWalletBuy" style="display: none;">
 		  <div class="connect-wallet-content">
-			<p>CONNECT WALLET</p>
-	    	<button class="connectWallet"
+			<p id="connect-wallet-words">CONNECT WALLET</p>
+	    	<button id="connectWallet"
 		    	onClick="walletConnected()">
 		    	<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
-		    	</button>	
+		    </button>		
 		  </div>
 		</div>	
 	<!-- Modal/s above -->	
@@ -130,7 +132,9 @@
 		</button>	
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
+	<p id="slogan" style="display: block;">ART SELLS</p>
+	<p id="wallet-connected" style="display: none;">
+		WALLET CONNECTED</p>
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
