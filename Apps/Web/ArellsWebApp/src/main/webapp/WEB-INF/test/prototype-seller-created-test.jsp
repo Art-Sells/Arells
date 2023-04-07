@@ -133,7 +133,7 @@
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan" style="display: block;">ART SELLS</p>
-	<p id="wallet-connected" style="display: none;">
+		<p id="wallet-connected" style="display: none;">
 		WALLET CONNECTED</p>
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
