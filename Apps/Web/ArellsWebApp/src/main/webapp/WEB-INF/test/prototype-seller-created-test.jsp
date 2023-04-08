@@ -84,8 +84,7 @@
 	}	
 	function walletConnected() {
 		document.getElementById('connectWalletBuy').style.display = "none";
-		document.getElementById('slogan').style.display = "none";
-		document.getElementById('wallet-connected').style.display = "block";
+		document.getElementById('wallet-connected-div').style.display = "block";
 	}	
 <!-- Connect Wallet script above-->
 			
@@ -132,9 +131,13 @@
 		</button>	
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan" style="display: block;">ART SELLS</p>
-		<p id="wallet-connected" style="display: none;">
+	<p id="slogan">ART SELLS</p>
+	<div id="wallet-connected-div" style="display: none;">
+		<hr id="priceline">
+		<p id="wallet-connected" >
 		WALLET CONNECTED</p>
+		<hr id="priceline">
+	</div>
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 

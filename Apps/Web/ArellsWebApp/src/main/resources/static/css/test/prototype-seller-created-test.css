@@ -93,8 +93,16 @@ body {
 			opacity: 1;
 			word-spacing: -3px;
 		}	
+		
+		#wallet-connected-div{
+			margin-top: 30px;
+			width: 250px;
+			margin-left: auto;
+			margin-right: auto;
+		}
 			#wallet-connected {
-				margin-top: 0px;
+				padding-bottom: 10px;
+				padding-top: 5px;
 				font-size: 8px;
 				letter-spacing: 3px;
 				margin-left: 3px; 
@@ -442,8 +450,14 @@ body {
 			letter-spacing: 8px;
 			margin-left: 8px; 
 			word-spacing: -3px;
-		}		
+		}
+		#wallet-connected-div{
+			margin-top: 20px;
+			width: 200px;
+		}				
 			#wallet-connected {
+				padding-bottom: 7px;
+				padding-top: 6px;
 				margin-top: -2px;
 				font-size: 7px;
 				letter-spacing: 2px;
@@ -453,7 +467,7 @@ body {
 		#profile-img-container {
 			width: 70px;
 			height: 70px;
-			margin-top: 30px;
+			margin-top: 23px;
 			
 		}
 			#profile-photo {
