@@ -6,8 +6,9 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/prototype-buyer-collected-test.css">	
+		<link rel="stylesheet" type="text/css" href="css/test/seller-created-test.css">	
 		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />	
+		<link rel="stylesheet" type="text/css" href="css/test/connect-wallet-test.css" />
 			
 		<meta charset="UTF-8">
 		
@@ -21,14 +22,14 @@
 	
 		<link rel="icon" type="image/x-icon" href="/icons&images/Arells-Ico.ico" sizes="156x156">
 				<!-- Change below link after test -->
-		<link rel="canonical" href="https://arells.com/prototype-buyer-collected-test">
+		<link rel="canonical" href="https://arells.com/prototype-seller-created-test">
 		
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
 		<meta property="og:title" content="Arells">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/prototype-buyer-collected-test">
+		<meta propety="og:url" content="https://arells.com/prototype-seller-created-test">
 		<meta property="og:description" content="Art Sells">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
@@ -37,13 +38,12 @@
 		<meta name="twitter:title" content="Art Sells">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">
 				<!-- Change below link after test -->
-		<meta name="twitter:url" content="https://arells.com/prototype-buyer-collected-test">
+		<meta name="twitter:url" content="https://arells.com/prototype-seller-created-test">
 		<meta name="twitter:card" content="summary_large_image">
 		<meta name="twitter:description" content="Arells">
 		<meta name="description" content="Arells">
-<!-- Above information for social media sharing and search-engine/browser optimization -->
+<!-- Above information for social media sharing and search-engine/browser optimization -->	
 
-	    
 		<script>
 
 <!-- Modal script below-->
@@ -79,11 +79,12 @@
 <!-- Connect Wallet script below-->
 	function connectWallet() {
 		// Open copyLink
-		  document.getElementById('connectWalletBuy').style.display = "block";			
+		document.getElementById('connectWalletBuy').style.display = "block";			
 		  
-		}	
+	}	
 	function walletConnected() {
 		document.getElementById('connectWalletBuy').style.display = "none";
+		document.getElementById('wallet-connected-div').style.display = "block";
 	}	
 <!-- Connect Wallet script above-->
 			
@@ -108,8 +109,16 @@
 		  </div>
 		</div>	
 	
+		<div id="connectWalletBuy" style="display: none;">
+		  <div class="connect-wallet-content">
+			<p id="connect-wallet-words">CONNECT WALLET</p>
+	    	<button id="connectWallet"
+		    	onClick="walletConnected()">
+		    	<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+		    </button>		
+		  </div>
+		</div>	
 	<!-- Modal/s above -->	
-	
 
 	<div id="header">
 	
@@ -117,17 +126,23 @@
 		<a id="icon-link" href="/test">
 			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="/">
+		<button id="cart-link" onClick="connectWallet()">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>	
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>
+	<div id="wallet-connected-div" style="display: none;">
+		<hr id="connected-line">
+		<p id="wallet-connected" >
+		WALLET CONNECTED</p>
+		<hr id="connected-line">
+	</div>
     <div id="profile-img-container">
-		<img id="profile-photo" src="/icons&images/prototype/Unnamed-Icon.jpg">
+		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
-	<h1 id="name">Unnamed</h1>  
-	<p id="description">Creator & Collector</p> 
+	<h1 id="name">Abstract Kadabra</h1>  
+	<p id="description">Here rests life's abstractions captured in majestic endeavors.</p> 
 	<button id="copy-link"
 		onClick="copyLink()">
 		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
@@ -135,9 +150,9 @@
 	<br>
 	<hr id="profileline">
 	<div id="created-collected">
-		<!-- Change below link after test -->
-		<a id="created" href="/prototype-buyer-created-test">Created</a>		
-		<a id="collected">Collected</a>	
+		<a id="created">Created</a>	
+	<!-- Change below link after test -->		
+		<a id="collected" href="/prototype-seller-collected-test">Collected</a>	
 	</div>
 	<div id="container">
 		  	<div id="col">
@@ -149,7 +164,8 @@
 		  		<hr id="priceline">
 		  		<p id="yourprice">Price</p>
 		     	<p id="price">$1,200</p>
-	     		<a id="add-to-cart">ADD TO CART</a>	
+	     		<button id="add-to-cart" onClick="connectWallet()">
+	     		ADD TO CART</button>	
 		    </div>
 		  	<div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
@@ -160,9 +176,8 @@
 		  		<hr id="priceline">
 		  		<p id="yourprice">Price</p>
 		     	<p id="price">$200</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
+	     		<button id="add-to-cart" onClick="connectWallet()">
+	     		ADD TO CART</button>		     	
 		    </div>
 		     <div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
@@ -173,9 +188,8 @@
 		  		<hr id="priceline">
 		  		<p id="yourprice">Price</p>
 		     	<p id="price">$14,500</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
+	     		<button id="add-to-cart" onClick="connectWallet()">
+	     		ADD TO CART</button>			     	
 		    </div>
 		  	<div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
@@ -186,9 +200,8 @@
 		  		<hr id="priceline">
 		  		<p id="yourprice">Price</p>
 		     	<p id="price">$400,000</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>	
+	     		<button id="add-to-cart" onClick="connectWallet()">
+	     		ADD TO CART</button>	
 		    </div>
 		  	<div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
@@ -199,9 +212,8 @@
 		  		<hr id="priceline">
 		  		<p id="yourprice">Price</p>
 		     	<p id="price">$100</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
+	     		<button id="add-to-cart" onClick="connectWallet()">
+	     		ADD TO CART</button>			     	
 		    </div>
 		     <div id="col">
 		  		<a href="/ethereum" target="_self" id="photo-link">
@@ -212,9 +224,8 @@
 		  		<hr id="priceline">
 		  		<p id="yourprice">Price</p>
 		     	<p id="price">$12,000</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
+	     		<button id="add-to-cart" onClick="connectWallet()">
+	     		ADD TO CART</button>			     	
 		    </div>
 	</div>
 </body>

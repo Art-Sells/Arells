@@ -96,20 +96,27 @@ body {
 		
 		#wallet-connected-div{
 			margin-top: 30px;
-			width: 250px;
 			margin-left: auto;
 			margin-right: auto;
 		}
+			#connected-line {
+			  margin-top: -5px;
+			  background-color: black;
+			  border: none;
+			  height: 4px;
+			  border-radius: 30px;
+			  width: 100px;
+			  opacity: .1;
+			}	
 			#wallet-connected {
 				padding-bottom: 10px;
 				padding-top: 5px;
-				font-size: 8px;
-				letter-spacing: 3px;
-				margin-left: 3px; 
-				font-weight: 600;
+				font-size: 9px;
+				letter-spacing: 0px;
+				margin-left: 0px; 
+				font-weight: 800;
 				color: gray;
 				opacity: 1;
-				word-spacing: -1px;
 			}							
 	
 	#profile-img-container {
@@ -283,6 +290,10 @@ body {
 			background: white;
 		     
 		}
+		
+		#photo-link {
+			text-decoration: none;
+		}
 
 		#photo-link:hover {
 		  opacity: .5;
@@ -351,7 +362,7 @@ body {
 				letter-spacing: 0px;
 				padding-left: 0px;
 				opacity: .7;
-				margin-bottom: 40px;
+				margin-bottom: 28px;
 			}
 			#add-to-cart {
 				  text-decoration: none;
@@ -360,13 +371,13 @@ body {
 				  font-size: 11px;
 				  padding-top: 20px;
 				  padding-bottom: 20px;
-				  padding-right: 32px;
-				  padding-left: 35px;	  
+				  padding-right: 22px;
+				  padding-left: 25px;	  
 				  border: none;
 				  letter-spacing: 3px;
 				  border-radius: 5px;
 				  border-width: 0px;
-				  width: 150px;
+				  width: 170px;
 				  opacity: 1;
 				  box-shadow: 0px 8px 12px -6px black;  
 					background: black;
@@ -452,22 +463,22 @@ body {
 			word-spacing: -3px;
 		}
 		#wallet-connected-div{
-			margin-top: 20px;
-			width: 200px;
-		}				
+			margin-top: 25px;
+		}	
+			#connected-line {
+			  width: 90px;
+			}				
 			#wallet-connected {
-				padding-bottom: 7px;
-				padding-top: 6px;
-				margin-top: -2px;
-				font-size: 7px;
-				letter-spacing: 2px;
-				margin-left: 2px; 
-				word-spacing: -1px;
+				padding-bottom: 12px;
+				padding-top: 7px;
+				font-size: 8px;
+				letter-spacing: 0px;
+				margin-left: 0px; 
 			}
 		#profile-img-container {
-			width: 70px;
-			height: 70px;
-			margin-top: 23px;
+			width: 90px;
+			height: 90px;
+			margin-top: 25px;
 			
 		}
 			#profile-photo {
@@ -571,18 +582,18 @@ body {
 			#price {
 			margin-top: -10px;
 				font-size: 15px;
-				margin-bottom: 35px;	
+				margin-bottom: 20px;	
 			}			
 			#add-to-cart {
 				  font-weight: 200;
 				  font-size: 9px;
 				  padding-top: 20px;
 				  padding-bottom: 20px;
-				  padding-right: 22px;
-				  padding-left: 25px;	  
+				  padding-right: 12px;
+				  padding-left: 15px;	  
 				  border: none;
 				  letter-spacing: 1px;
-				  width: 80px;
+				  width: 120px;
 				}	  				  
 }					
 	

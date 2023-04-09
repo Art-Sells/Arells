@@ -31,15 +31,17 @@ public class MainController {
 	 @GetMapping("/stayupdated-test") public String stayUpdatedTest() { return "test/stayupdated-test.jsp"; }	 
 	 
 	 @GetMapping("/prototype-seller-created-test") public String prototypeSellerCreatedTest() { return
-	 "test/prototype-seller-created-test.jsp"; }
+	 "test/seller-created-test.jsp"; }
 	 
 	 @GetMapping("/prototype-seller-collected-test") public String prototypeSellerCollectedTest() { return
-	 "test/prototype-seller-collected-test.jsp"; }
+	 "test/seller-collected-test.jsp"; }
 	 
 	 @GetMapping("/prototype-buyer-created-test") public String prototypeBuyerCreatedTest() { return
-	 "test/prototype-buyer-created-test.jsp"; }
+	 "test/buyer-created-test.jsp"; }
 	 
 	 @GetMapping("/prototype-buyer-collected-test") public String prototypeBuyerCollectedTest() { return
-	 "test/prototype-buyer-collected-test.jsp"; }
+	 "test/buyer-collected-test.jsp"; }
 
+	 @GetMapping("/prototype-cart-test") public String cartTest() { return
+	 "test/cart-test.jsp"; }
 }
