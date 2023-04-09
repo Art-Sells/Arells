@@ -107,7 +107,7 @@ body {
 				opacity: 1;
 			}	
 				
-		#finalprice {
+		#totalprice {
 			text-align: center;
 			color: black;
 			font-weight: 300;
@@ -116,7 +116,7 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}	
-		#finalprice-price {
+		#totalprice-price {
 		margin-top: -10px;
 		text-align: center;
 			color: black;
@@ -156,7 +156,7 @@ body {
 		  border: none;
 		  height: 4px;
 		  border-radius: 30px;
-		  width: 700px;
+		  width: 450px;
 		  opacity: .1;
 		}
 		
@@ -184,8 +184,7 @@ body {
 			
 	
 		#container {
-			margin-top: 25px;
-			align-items: center;
+			margin-top: 30px;
 			  width: 900px;
 			  margin-left: auto;
 			  margin-right: auto;
@@ -193,31 +192,33 @@ body {
 		}
 			
 			#blue-orange, #beach-houses, #colour-glass,
-			#layers, #succint-drop, #paint-rain{	
-				margin: 10px;
+			#layers, #succint-drop, #paint-rain{
+				margin-left: auto;
+			    margin-right: auto;
+			    margin-bottom: 10px;
+			    align-items: center;
 				border-radius: 15px;
-				align-items: center;
 				overflow: hidden;
 				box-shadow: 0px 5px 20px -6px silver; 
-				width: 700px;
-				height: 200px;
-				padding-top: 50px;
+				width: 450px;
+				height: 170px;
+				padding-top: 30px;
 				padding-left: 50px;
 				padding-right: 50px;
-				padding-bottom: 60px;			
+				padding-bottom: 35px;			
 				text-decoration: none;
 				background: white;
 			     
 			}
 			
 			#photo-link {
+				display: inline-block;
 				text-decoration: none; 
 			}
 				#photo {
-					display: inline-block;
 					object-fit: cover;
-					width: 200px;
-					height: 100%;
+					width: 150px;
+					height: 150px;
 		  			border-radius: 10px;		
 		  			box-shadow: 0px 8px 12px -6px black; 
 				}
@@ -235,11 +236,15 @@ body {
 			}		
 			#prices {
 				display: inline-block;
+				margin-left: 30px;
+				margin-right: 30px;
+				text-align: left;
+				width: 200px;
 			}	
 			
 				#PAP {
+				width: 70px;
 				margin-top: 30px;
-				text-align: center;
 					color: black;
 					font-weight: 300;
 					font-size: 12px;
@@ -249,7 +254,6 @@ body {
 				}
 				#price2 {
 				margin-top: -7px;
-				text-align: center;
 					color: black;
 					font-weight: 300;
 					font-size: 17px;
@@ -263,12 +267,11 @@ body {
 				  border: none;
 				  height: 4px;
 				  border-radius: 30px;
-				  width: 60%;
+				  width: 100%;
 				  opacity: .1;
 				}	
 				#yourprice {
-				margin-top: 15px;
-				text-align: center;
+				margin-top: 13px;
 					color: black;
 					font-weight: 300;
 					font-size: 15px;
@@ -278,7 +281,6 @@ body {
 				}
 				#price {
 				margin-top: -10px;
-				text-align: center;
 					color: black;
 					font-weight: 300;
 					font-size: 20px;
@@ -287,33 +289,32 @@ body {
 					opacity: .7;
 					margin-bottom: 28px;
 				}
-				#remove {
+			#remove {
 				display: inline-block;
-					  text-decoration: none;
-					  color: gray;
-					  font-weight: 200;
-					  font-size: 11px;
-					  padding-top: 20px;
-					  padding-bottom: 20px;
-					  padding-right: 22px;
-					  padding-left: 23px;	  
-					  border: solid;
-					  border-width: 1px;
-					  border-color: silver;
-					  letter-spacing: 1px;
-					  border-radius: 10px;
-					  border-width: 0px;
-					  width: 140px;
-					  opacity: 1;
-					  box-shadow: 0px 2px 10px -3px silver;  
-						background: white;
-					}	  
-				#remove:hover,
-				#remove:focus {
-					  opacity: .4;
-					  transition: 1s;
-					  cursor: pointer;
-				}		
+				  text-decoration: none;
+				  color: gray;
+				  font-weight: 200;
+				  font-size: 11px;
+				  padding-top: 10px;
+				  padding-bottom: 10px;
+				  padding-right: 12px;
+				  padding-left: 13px;	  
+				  border: none;
+				  letter-spacing: 1px;
+				  border-radius: 10px;
+				  border-width: 0px;
+				  width: 70px;
+				  height: 70px;
+				  opacity: 1;
+				  box-shadow: 0px 2px 10px -3px silver;  
+					background: white;
+				}	  
+			#remove:hover,
+			#remove:focus {
+				  opacity: .4;
+				  transition: 1s;
+				  cursor: pointer;
+			}		
 				
 			
 			
@@ -403,10 +404,10 @@ body {
 				letter-spacing: 0px;
 				margin-left: 0px; 
 			}
-		#finalprice{
+		#totalprice{
 			font-size: 13px;
 		}  
-		#finalprice-price {
+		#totalprice-price {
 			margin-top: -10px;
 			font-size: 15px;
 			margin-bottom: 20px;
@@ -424,75 +425,110 @@ body {
 		}	  	
 		#profileline {
 		margin-top: 25px;
-		  width: 470px;
+		  width: 400px;
 		}	
 		
+		#no-art{
+			margin-top: 50px;
+			width: 300px;
+			font-size: 13px;
+		}	
+		#cart-icon-collected{
+			height: 20px;
+			margin-left: 5px;
+		}		
+						
+				
+		#container {
+			  width: 660px;	
+		}
+			
+			#blue-orange, #beach-houses, #colour-glass,
+			#layers, #succint-drop, #paint-rain{
+				margin-left: auto;
+			    margin-right: auto;
+			    margin-bottom: 10px;
+			    align-items: center;
+				border-radius: 15px;
+				overflow: hidden;
+				box-shadow: 0px 5px 20px -6px silver; 
+				width: 400px;
+				height: 90px;
+				padding-top: 35px;
+				padding-left: 35px;
+				padding-right: 35px;
+				padding-bottom: 35px;			
+				text-decoration: none;
+				background: white;
+			     
+			}
+			
+				#photo {
+					width: 100px;
+					height: 100px;
+				}
 		
-	  #container {
-	    width: 660px;
-	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	    margin-top: 20px;
-	  }
-		#blue-orange, #beach-houses, #colour-glass,
-			#layers, #succint-drop, #paint-rain {		
-			margin: 5px;
-			align-items: center;
-			width: 130px;
-			height: 320px;
-			padding-top: 40px;
-			padding-left: 40px;
-			padding-right: 40px;
-			padding-bottom: 40px;			
-		     
-		}
-		#photo {
-			width: 100%;
-			height: 130px;
-  			border-radius: 10px;		
-		}
+			#prices {
+				margin-left: 20px;
+				margin-right: 20px;
+				width: 200px;
+			}	
+			
 			#PAP {
-			margin-top: 20px;
+				width: 70px;
+				margin-top: 20px;
 				font-size: 12px;
 			}
 			#price2 {
-			margin-top: -8px;
+				margin-top: -8px;
 				font-size: 13px;
 			}
 			#priceline {
 			  margin-top: -2px;
-			  width: 60%;
+			  width: 100%;
 			}	
 			#yourprice {
-			margin-top: 10px;
+				margin-top: 10px;
 				font-size: 13px;
 			}
 			#price {
-			margin-top: -10px;
+				margin-top: -10px;
 				font-size: 15px;
-				margin-bottom: 22px;	
-			}			
-			#remove {
-				  font-weight: 200;
-				  font-size: 9px;
-				  padding-top: 20px;
-				  padding-bottom: 20px;
-				  padding-right: 12px;
-				  padding-left: 15px;	  
-				  border: none;
-				  letter-spacing: 1px;
-				  width: 120px;
-				}	
-				
-			#no-art{
-				margin-top: 50px;
-				width: 300px;
-				font-size: 13px;
+				margin-bottom: 20px;	
 			}	
-			#cart-icon-collected{
-				height: 20px;
-				margin-left: 5px;
-			}			  				  
+			#remove {
+				display: inline-block;
+				  text-decoration: none;
+				  color: gray;
+				  font-weight: 200;
+				  font-size: 8px;
+				  padding-top: 10px;
+				  padding-bottom: 10px;
+				  padding-right: 12px;
+				  padding-left: 13px;	  
+				  width: 50px;
+				  height: 50px;
+				  opacity: 1;
+				  box-shadow: 0px 2px 10px -3px silver;  
+					background: white;
+				}	  	
+								
+		
+				  				  
 }					
+		
+				
+				
+				
+				
+				
+				
+				
+				
+				
+					
+				
+	
 	
 	
 	
@@ -521,4 +557,9 @@ body {
 		  #container {
 		    width: 440px;
 		  }  
+		  	#blue-orange, #beach-houses, #colour-glass,
+			#layers, #succint-drop, #paint-rain{
+				width: 300px;
+			     
+			}
 }

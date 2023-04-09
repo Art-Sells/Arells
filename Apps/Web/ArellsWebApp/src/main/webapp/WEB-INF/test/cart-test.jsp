@@ -95,13 +95,13 @@
 		</p>
 	</div>
 	<div id="cart-full" style="display: block;">
-		<p id="finalprice">Price</p>
-	  	<p id="finalprice-price">$20,500</p>
+		<p id="totalprice">Total Price</p>
+	  	<p id="totalprice-price">$20,500</p>
 			<button id="checkout">
 			CHECKOUT</button>	
 		<hr id="profileline"> 
 		<div id="container">
-			  	<div id="blue-orange" style="display: block;">
+			  	<div id="blue-orange" style="display: flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
 			  		</a>
@@ -111,11 +111,11 @@
 				  		<hr id="priceline">
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$1,200</p>
-			  		</div>
-		     		<button id="remove">
-		     		DELETE</button>	
+			  		</div>			  		
+		  			<button id="remove">
+	     		    DEL</button>
 			    </div>
-			  	<div id="beach-houses" style="display: block;">
+			  	<div id="beach-houses" style="display: flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
 			  		</a>
@@ -127,9 +127,9 @@
 				     	<p id="price">$200</p>
 			     	</div>
 		     		<button id="remove">
-		     		DELETE</button>		     	
+		     		DEL</button>		     	
 			    </div>
-			     <div id="colour-glass" style="display: block;">
+			     <div id="colour-glass" style="display: flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
 			  		</a>
@@ -141,9 +141,9 @@
 				     	<p id="price">$14,500</p>
 			     	</div>
 		     		<button id="remove">
-		     		DELETE</button>			     	
+		     		DEL</button>			     	
 			    </div>
-			  	<div id="layers" style="display: block;">
+			  	<div id="layers" style="display: flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
 			  		</a>
@@ -155,9 +155,9 @@
 				     	<p id="price">$400,000</p>
 			     	</div>
 		     		<button id="remove">
-		     		DELETE</button>	
+		     		DEL</button>	
 			    </div>
-			  	<div id="succint-drop" style="display: block;">
+			  	<div id="succint-drop" style="display:flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
 			  		</a>
@@ -169,9 +169,9 @@
 				     	<p id="price">$100</p>
 			     	</div>
 		     		<button id="remove">
-		     		DELETE</button>			     	
+		     		DEL</button>			     	
 			    </div>
-			     <div id="paint-rain" style="display: block;">
+			     <div id="paint-rain" style="display: flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
 			  		</a>
@@ -183,7 +183,7 @@
 				     	<p id="price">$12,000</p>
 			     	</div>
 		     		<button id="remove">
-		     		DELETE</button>			     	
+		     		DEL</button>			     	
 			    </div>
 		</div>	
 	</div>	
