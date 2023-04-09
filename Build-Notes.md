@@ -31,7 +31,7 @@
 - Implement PAP Algo (After Sale: You Keep... 7%, Creator Keeps... 90%, Fees... 3%)
 
 #### After Purchase:
- 1. "Purchased... PAP: $, List For Sale? [List][Un-List] (On Buyer)... (Nothing Shows in Public Buyer)".
+ 1. "Purchased... PAP: $, List For Sale? [List {Opens Modal}][Un-List] (On Buyer)... (Nothing Shows in Public Buyer)".
  2. If Yes, then "Add-to-Cart", if No then "Collected" (On Seller)
  5. Message to seller: "Your Art xxxx has been bought by xxxx for xxxx"
  6. If/Then messages corresponding to above messages. 
