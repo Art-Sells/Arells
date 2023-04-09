@@ -113,7 +113,8 @@
 				     	<p id="price">$1,200</p>
 			  		</div>			  		
 		  			<button id="remove">
-	     		    DEL</button>
+	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+	     		    </button>
 			    </div>
 			  	<div id="beach-houses" style="display: flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
@@ -126,8 +127,9 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$200</p>
 			     	</div>
-		     		<button id="remove">
-		     		DEL</button>		     	
+		  			<button id="remove">
+	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+	     		    </button>	     	
 			    </div>
 			     <div id="colour-glass" style="display: flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
@@ -140,8 +142,9 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$14,500</p>
 			     	</div>
-		     		<button id="remove">
-		     		DEL</button>			     	
+		  			<button id="remove">
+	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+	     		    </button>		     	
 			    </div>
 			  	<div id="layers" style="display: flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
@@ -154,8 +157,9 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$400,000</p>
 			     	</div>
-		     		<button id="remove">
-		     		DEL</button>	
+		  			<button id="remove">
+	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+	     		    </button>
 			    </div>
 			  	<div id="succint-drop" style="display:flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
@@ -168,8 +172,9 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$100</p>
 			     	</div>
-		     		<button id="remove">
-		     		DEL</button>			     	
+		  			<button id="remove">
+	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+	     		    </button>			     	
 			    </div>
 			     <div id="paint-rain" style="display: flex;">
 			  		<a href="/ethereum" target="_self" id="photo-link">
@@ -182,8 +187,9 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$12,000</p>
 			     	</div>
-		     		<button id="remove">
-		     		DEL</button>			     	
+		  			<button id="remove">
+	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+	     		    </button>		     	
 			    </div>
 		</div>	
 	</div>	
