@@ -52,7 +52,6 @@ body {
 				height: 16px;
 			}	
 		#cart-link{
-			display: inline-block;
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -68,8 +67,26 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
+		#cart-link-connected{
+			text-decoration: none;
+			margin-left: 124px;
+			  text-decoration: none;
+			  padding-top: 12px;
+			  padding-bottom: 9px;
+			  padding-right: 10px;
+			  padding-left: 10px;	  
+			  border: solid;
+			  width: 38px;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  border-radius: 15px;
+			  border-width: 1px;
+			  opacity: 1;
+				background: rgba(255, 255, 255, 0.8);						
+		}
 		#cart-link:hover,
-		#cart-link:focus {
+		#cart-link:focus, 
+		#cart-link-connected:hover,
+		#cart-link-connected:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
@@ -77,22 +94,47 @@ body {
 		}	
 			#cart-icon {
 				height: 18px;
-			}
+			}		
 			
-	#word-logo {
-		margin-top: 37px;
-		width: 110px;	
-	}
-	#slogan {
-		margin-top: 0px;
-		font-size: 8px;
-		letter-spacing: 10px;
-		margin-left: 10px; 
-		font-weight: 600;
-		color: gray;
-		opacity: 1;
-		word-spacing: -3px;
-	}							
+		#word-logo {
+			margin-top: 37px;
+			width: 110px;	
+		}
+		#slogan {
+			margin-top: 0px;
+			font-size: 8px;
+			letter-spacing: 10px;
+			margin-left: 10px; 
+			font-weight: 600;
+			color: gray;
+			opacity: 1;
+			word-spacing: -3px;
+		}	
+		
+		#wallet-connected-div{
+			margin-top: 30px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+			#connected-line {
+			  margin-top: -5px;
+			  background-color: black;
+			  border: none;
+			  height: 4px;
+			  border-radius: 30px;
+			  width: 100px;
+			  opacity: .1;
+			}	
+			#wallet-connected {
+				padding-bottom: 10px;
+				padding-top: 5px;
+				font-size: 9px;
+				letter-spacing: 0px;
+				margin-left: 0px; 
+				font-weight: 800;
+				color: gray;
+				opacity: 1;
+			}							
 	
 	#profile-img-container {
 	position: static;
@@ -304,9 +346,18 @@ body {
 				  border-radius: 12px;	
 				  width: 45px;  					
 			}
+			#cart-link-connected{
+				margin-left: 96px;
+				  padding-top: 10px;
+				  padding-bottom: 7px;
+				  padding-right: 8px;
+				  padding-left: 8px;	
+				  border-radius: 12px;	
+				  width: 27px;  					
+			}
 			#cart-icon {
 					height: 15px;
-				}	
+				}
 			
 			  				
 		#word-logo {
@@ -319,11 +370,24 @@ body {
 			letter-spacing: 8px;
 			margin-left: 8px; 
 			word-spacing: -3px;
-		}		
+		}
+		#wallet-connected-div{
+			margin-top: 25px;
+		}	
+			#connected-line {
+			  width: 90px;
+			}				
+			#wallet-connected {
+				padding-bottom: 12px;
+				padding-top: 7px;
+				font-size: 8px;
+				letter-spacing: 0px;
+				margin-left: 0px; 
+			}
 		#profile-img-container {
-			width: 70px;
-			height: 70px;
-			margin-top: 30px;
+			width: 90px;
+			height: 90px;
+			margin-top: 25px;
 			
 		}
 			#profile-photo {

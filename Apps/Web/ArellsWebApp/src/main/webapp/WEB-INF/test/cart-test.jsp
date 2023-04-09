@@ -90,7 +90,7 @@
 	</div>	
 	<div id="cart-empty" style="display: none;">
 			<p id="no-art">
-			Cart Empty
+			cart empty
 			<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</p>
 	</div>

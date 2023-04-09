@@ -52,7 +52,6 @@ body {
 				height: 16px;
 			}	
 		#cart-link{
-			display: inline-block;
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -68,8 +67,26 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
+		#cart-link-connected{
+			text-decoration: none;
+			margin-left: 124px;
+			  text-decoration: none;
+			  padding-top: 12px;
+			  padding-bottom: 9px;
+			  padding-right: 10px;
+			  padding-left: 10px;	  
+			  border: solid;
+			  width: 38px;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  border-radius: 15px;
+			  border-width: 1px;
+			  opacity: 1;
+				background: rgba(255, 255, 255, 0.8);						
+		}
 		#cart-link:hover,
-		#cart-link:focus {
+		#cart-link:focus, 
+		#cart-link-connected:hover,
+		#cart-link-connected:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
@@ -77,22 +94,47 @@ body {
 		}	
 			#cart-icon {
 				height: 18px;
-			}
+			}		
 			
-	#word-logo {
-		margin-top: 37px;
-		width: 110px;	
-	}
-	#slogan {
-		margin-top: 0px;
-		font-size: 8px;
-		letter-spacing: 10px;
-		margin-left: 10px; 
-		font-weight: 600;
-		color: gray;
-		opacity: 1;
-		word-spacing: -3px;
-	}							
+		#word-logo {
+			margin-top: 37px;
+			width: 110px;	
+		}
+		#slogan {
+			margin-top: 0px;
+			font-size: 8px;
+			letter-spacing: 10px;
+			margin-left: 10px; 
+			font-weight: 600;
+			color: gray;
+			opacity: 1;
+			word-spacing: -3px;
+		}	
+		
+		#wallet-connected-div{
+			margin-top: 30px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+			#connected-line {
+			  margin-top: -5px;
+			  background-color: black;
+			  border: none;
+			  height: 4px;
+			  border-radius: 30px;
+			  width: 100px;
+			  opacity: .1;
+			}	
+			#wallet-connected {
+				padding-bottom: 10px;
+				padding-top: 5px;
+				font-size: 9px;
+				letter-spacing: 0px;
+				margin-left: 0px; 
+				font-weight: 800;
+				color: gray;
+				opacity: 1;
+			}							
 	
 	#profile-img-container {
 	position: static;
@@ -134,7 +176,7 @@ body {
 	  margin-left: auto;
 	  margin-right: auto;
 	  width: 420px;
-	  margin-bottom: 20px;	  
+	  margin-bottom: 20px;
 	}
 	#copy-link {
 	  text-decoration: none;
@@ -170,7 +212,7 @@ body {
 	  border: none;
 	  height: 4px;
 	  border-radius: 30px;
-	  width: 700px;
+	  width: 350px;
 	  opacity: .1;
 	}
 	#created-collected {
@@ -180,7 +222,7 @@ body {
 		  width: 600px;
 		  margin-left: auto;
 		  margin-right: auto;	
-	}	
+	}
 		#created {
 		flex: 1;			
 		margin-right: 10px;
@@ -200,8 +242,7 @@ body {
 		  border-color: rgba(215, 215, 215, 0.7);
 		  width: 150px;
 		  opacity: 1;
-			background: none;
-			
+			background: none;		
 		}  	
 		#created:hover,
 		#created:focus {
@@ -210,7 +251,7 @@ body {
 			  color: black;
 			  border-color: gray;
 			  opacity: 1;
-		}			
+		}				
 		#collected {
 		flex: 1;			
 		margin-left: 10px;
@@ -231,134 +272,116 @@ body {
 		  width: 150px;
 		background: none;
 		opacity: 1;			
-		}		
+		}	
 				
 		
 
-	#container {
-		margin-top: 30px;
-		flex-direction: column;
-		align-items: center;
-		  display: grid;
-		  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		  grid-gap: 0px;
-		  width: 950px;
-		  margin-left: auto;
-		  margin-right: auto;
-		  margin-bottom: 60px;		
-	}
+		#container {
+			margin-top: 35px;
+			  width: 900px;
+			  margin-left: auto;
+			  margin-right: auto;
+			  margin-bottom: 60px;		
+		}
+			
+			#blue-orange, #beach-houses, #colour-glass,
+			#layers, #succint-drop, #paint-rain{
+				margin-left: auto;
+			    margin-right: auto;
+			    margin-bottom: 10px;
+			    align-items: center;
+				border-radius: 15px;
+				overflow: hidden;
+				box-shadow: 0px 5px 20px -6px silver; 
+				width: 350px;
+				height: 160px;
+				padding-top: 30px;
+				padding-left: 40px;
+				padding-right: 40px;
+				padding-bottom: 30px;			
+				text-decoration: none;
+				background: white;
+			     
+			}
+			
+			#photo-link {
+				display: inline-block;
+				text-decoration: none; 
+			}
+				#photo {
+					object-fit: cover;
+					width: 150px;
+					height: 150px;
+		  			border-radius: 10px;		
+		  			box-shadow: 0px 8px 12px -6px black; 
+				}
 		
-		#col {
-			flex: 1;			
-			margin: 10px;
-			border-radius: 15px;
-			align-items: center;
-			overflow: hidden;
-			box-shadow: 0px 5px 20px -6px silver; 
-			width: 200px;
-			height: 420px;
-			padding-top: 50px;
-			padding-left: 50px;
-			padding-right: 50px;
-			padding-bottom: 60px;			
-			text-decoration: none;
-			background: white;
-		     
-		}
-
-		#photo-link:hover {
-		  opacity: .5;
-		  transition: 1s;
-		  box-shadow: none;
-		  cursor: pointer;
-		}
-		#photo-link:focus {
-		  opacity: .5;
-		  box-shadow: none;
-		  cursor: pointer;
-		}			
-		
-		#photo {
-			object-fit: cover;
-			width: 100%;
-			height: 200px;
-  			border-radius: 10px;		
-  			box-shadow: 0px 8px 12px -6px black;  
-		}
-			#PAP {
-			margin-top: 30px;
-			text-align: center;
-				color: black;
-				font-weight: 300;
-				font-size: 12px;
-				letter-spacing: 0px;
-				padding-left: 0px;
-				opacity: .4;
-			}
-			#price2 {
-			margin-top: -7px;
-			text-align: center;
-				color: black;
-				font-weight: 300;
-				font-size: 17px;
-				letter-spacing: 0px;
-				padding-left: 0px;
-				opacity: .5;
-			}
-			#priceline {
-			  margin-top: -5px;
-			  background-color: black;
-			  border: none;
-			  height: 4px;
-			  border-radius: 30px;
-			  width: 60%;
-			  opacity: .1;
-			}	
-			#yourprice {
-			margin-top: 15px;
-			text-align: center;
-				color: black;
-				font-weight: 300;
-				font-size: 15px;
-				letter-spacing: 0px;
-				padding-left: 0px;
-				opacity: .4;
-			}
-			#price {
-			margin-top: -10px;
-			text-align: center;
-				color: black;
-				font-weight: 300;
-				font-size: 20px;
-				letter-spacing: 0px;
-				padding-left: 0px;
-				opacity: .7;
-				margin-bottom: 40px;
-			}
-			#add-to-cart {
-				  text-decoration: none;
-				  color: white;
-				  font-weight: 200;
-				  font-size: 11px;
-				  padding-top: 20px;
-				  padding-bottom: 20px;
-				  padding-right: 32px;
-				  padding-left: 35px;	  
-				  border: none;
-				  letter-spacing: 3px;
-				  border-radius: 5px;
-				  border-width: 0px;
-				  width: 150px;
-				  opacity: 1;
-				  box-shadow: 0px 8px 12px -6px black;  
-					background: black;
-				}	  
-			#add-to-cart:hover,
-			#add-to-cart:focus {
-				  opacity: .4;
+				#photo-link:hover {
+				  opacity: .5;
 				  transition: 1s;
+				  box-shadow: none;
+				  cursor: pointer;
+				}
+				#photo-link:focus {
+				  opacity: .5;
+				  box-shadow: none;
 				  cursor: pointer;
 			}		
+			#prices {
+				display: inline-block;
+				margin-left: 20px;
+				margin-right: 20px;
+				text-align: left;
+			}	
+			
+				#PAP {
+				width: 70px;
+				margin-top: 30px;
+					color: black;
+					font-weight: 300;
+					font-size: 12px;
+					letter-spacing: 0px;
+					padding-left: 0px;
+					opacity: .4;
+				}
+				#price2 {
+				margin-top: -7px;
+					color: black;
+					font-weight: 300;
+					font-size: 17px;
+					letter-spacing: 0px;
+					padding-left: 0px;
+					opacity: .5;
+				}
+				#priceline {
+				  margin-top: -5px;
+				  background-color: black;
+				  border: none;
+				  height: 4px;
+				  border-radius: 30px;
+				  width: 400px;
+				  opacity: .04;
+				}	
+				#yourprice {
+				margin-top: 13px;
+					color: black;
+					font-weight: 300;
+					font-size: 15px;
+					letter-spacing: 0px;
+					padding-left: 0px;
+					opacity: .4;
+				}
+				#price {
+				margin-top: -10px;
+					color: black;
+					font-weight: 300;
+					font-size: 20px;
+					letter-spacing: 0px;
+					padding-left: 0px;
+					opacity: .7;
+					margin-bottom: 28px;
+				}
+			
 			
 			
 			
@@ -416,9 +439,18 @@ body {
 				  border-radius: 12px;	
 				  width: 45px;  					
 			}
+			#cart-link-connected{
+				margin-left: 96px;
+				  padding-top: 10px;
+				  padding-bottom: 7px;
+				  padding-right: 8px;
+				  padding-left: 8px;	
+				  border-radius: 12px;	
+				  width: 27px;  					
+			}
 			#cart-icon {
 					height: 15px;
-				}	
+				}
 			
 			  				
 		#word-logo {
@@ -431,11 +463,24 @@ body {
 			letter-spacing: 8px;
 			margin-left: 8px; 
 			word-spacing: -3px;
-		}		
+		}
+		#wallet-connected-div{
+			margin-top: 25px;
+		}	
+			#connected-line {
+			  width: 90px;
+			}				
+			#wallet-connected {
+				padding-bottom: 12px;
+				padding-top: 7px;
+				font-size: 8px;
+				letter-spacing: 0px;
+				margin-left: 0px; 
+			}
 		#profile-img-container {
-			width: 70px;
-			height: 70px;
-			margin-top: 30px;
+			width: 90px;
+			height: 90px;
+			margin-top: 25px;
 			
 		}
 			#profile-photo {
@@ -472,13 +517,13 @@ body {
 			}
 		#profileline {
 		margin-top: 20px;
-		  width: 470px;
+		  width: 250px;
 		}	
 		#created-collected {
 			margin-top: 20px;
 			align-items: center;
 			  width: 400px;
-		}
+		}  
 			#created {		
 			margin-right: 10px;
 			margin-left: 8px;
@@ -498,60 +543,64 @@ body {
 			  padding-right: 15px;
 			  padding-left: 15.5px;	  
 			  letter-spacing: .5px;
-			}			
-	  #container {
-	    width: 660px;
-	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	    margin-top: 20px;
-	  }
-		#col {		
-			margin: 5px;
-			align-items: center;
-			width: 130px;
-			height: 320px;
-			padding-top: 40px;
-			padding-left: 40px;
-			padding-right: 40px;
-			padding-bottom: 40px;			
-		     
+			}	
+		#container {
+			  width: 660px;
+			  margin-top: 25px;	
 		}
-		#photo {
-			width: 100%;
-			height: 130px;
-  			border-radius: 10px;		
-		}
+			
+			#blue-orange, #beach-houses, #colour-glass,
+			#layers, #succint-drop, #paint-rain{
+				margin-left: auto;
+			    margin-right: auto;
+			    margin-bottom: 10px;
+			    align-items: center;
+				border-radius: 15px;
+				overflow: hidden;
+				box-shadow: 0px 5px 20px -6px silver; 
+				width: 250px;
+				height: 90px;
+				padding-top: 35px;
+				padding-left: 35px;
+				padding-right: 35px;
+				padding-bottom: 35px;			
+				text-decoration: none;
+				background: white;
+			     
+			}
+			
+				#photo {
+					width: 100px;
+					height: 100px;
+				}
+		
+			#prices {
+				margin-left: 20px;
+				margin-right: 20px;
+				width: 400px;
+			}	
+			
 			#PAP {
-			margin-top: 20px;
+				width: 70px;
+				margin-top: 20px;
 				font-size: 12px;
 			}
 			#price2 {
-			margin-top: -8px;
-				font-size: 13px;
+				margin-top: -8px;
+				font-size: 12px;
 			}
 			#priceline {
 			  margin-top: -2px;
-			  width: 60%;
 			}	
 			#yourprice {
-			margin-top: 10px;
+				margin-top: 10px;
 				font-size: 13px;
 			}
 			#price {
-			margin-top: -10px;
-				font-size: 15px;
-				margin-bottom: 35px;	
-			}			
-			#add-to-cart {
-				  font-weight: 200;
-				  font-size: 9px;
-				  padding-top: 20px;
-				  padding-bottom: 20px;
-				  padding-right: 22px;
-				  padding-left: 25px;	  
-				  border: none;
-				  letter-spacing: 1px;
-				  width: 80px;
-				}	  				  
+				margin-top: -10px;
+				font-size: 13px;
+				margin-bottom: 20px;	
+			}						  
 }					
 	
 	
@@ -581,4 +630,9 @@ body {
 		  #container {
 		    width: 440px;
 		  }  
+		  	#blue-orange, #beach-houses, #colour-glass,
+			#layers, #succint-drop, #paint-rain{
+				width: 300px;
+			     
+			}
 }

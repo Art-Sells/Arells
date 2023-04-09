@@ -7,7 +7,8 @@
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/test/buyer-created-test.css">	
-		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />	
+		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />
+				<link rel="stylesheet" type="text/css" href="css/test/connect-wallet-test.css" />	
 	
 		<meta charset="UTF-8">
 		
@@ -75,52 +76,77 @@
 
 
 
-<!-- Connect Wallet scrip below-->
+	<!-- Connect Wallet script below-->
 	function connectWallet() {
-		// Open copyLink
-		  document.getElementById('connectWalletBuy').style.display = "block";			
+		document.getElementById('connectWalletBuy').style.display = "block";			
 		  
-		}	
+	}	
 	function walletConnected() {
 		document.getElementById('connectWalletBuy').style.display = "none";
+		
+		document.getElementById('cart-link').style.display = "none";
+		document.getElementById('wallet-connected-div').style.display = "block";
+		
+		document.getElementById('cart-link-connected').style.display = "inline-block";
+	 
 	}	
-<!-- Connect Wallet script above-->
-			
-		
-		</script>	
-		
-		
-
-		<title>Prototype</title>
+	<!-- Connect Wallet script above-->
+	
+	
+	</script>	
+	
+	
+	
+	<title>Prototype</title>
 	
 	</head>
 	
-<body>
-
+	<body>
+	
 	<!-- Modal/s below -->
 	
-		<div id="copiedLink" style="display: none;">
-		  <div class="modal-content">
-			<p>LINK COPIED</p>
-	    	<button class="close"
-		    	onClick="closeCopiedLink()">OK</button>	
-		  </div>
-		</div>	
+	<div id="copiedLink" style="display: none;">
+	<div class="modal-content">
+	<p>LINK COPIED</p>
+	<button class="close"
+		onClick="closeCopiedLink()">OK</button>	
+	</div>
+	</div>	
 	
+	
+	<div id="connectWalletBuy" style="display: none;">
+		<div class="connect-wallet-content">
+			<p id="connect-wallet-words">CONNECT WALLET</p>
+			<button id="connectWallet"
+				onClick="walletConnected()">
+				<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+			</button>		
+		</div>
+	</div>		
 	<!-- Modal/s above -->	
-
+	
+	
 	<div id="header">
 	
 	<!-- Change below link after test -->
 		<a id="icon-link" href="/test">
 			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="/">
+		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
-		</button>	
+		</button>
+		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		</a>
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>
+	<div id="wallet-connected-div" style="display: none;">
+		<hr id="connected-line">
+		<p id="wallet-connected" >
+		WALLET CONNECTED</p>
+		<hr id="connected-line">
+	</div>
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/Unnamed-Icon.jpg">
 	</div>	 
@@ -138,7 +164,7 @@
 		<a id="collected" href="/prototype-buyer-collected-test">Collected</a>	
 	</div>
 	<p id="no-art">
-		No art created
+		no art created
 		<img id="cart-icon-collected" src="/icons&images/prototype/Add.png"/>
 	</p>
 </body>

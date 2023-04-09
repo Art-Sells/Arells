@@ -78,14 +78,21 @@
 
 
 <!-- Connect Wallet script below-->
-	function connectWallet() {
-		// Open copyLink
-		  document.getElementById('connectWalletBuy').style.display = "block";			
-		  
-		}	
-	function walletConnected() {
-		document.getElementById('connectWalletBuy').style.display = "none";
-	}	
+			function connectWallet() {
+				document.getElementById('connectWalletBuy').style.display = "block";			
+				  
+			}	
+			function walletConnected() {
+				document.getElementById('connectWalletBuy').style.display = "none";
+				
+				document.getElementById('wallet-connected-div').style.display = "block";
+				
+				document.getElementById('cart-link').style.display = "none";
+				document.getElementById('wallet-connected-div').style.display = "block";
+				
+				document.getElementById('cart-link-connected').style.display = "inline-block";
+			 
+}	
 <!-- Connect Wallet script above-->
 			
 		
@@ -111,11 +118,11 @@
 	
 		<div id="connectWalletBuy" style="display: none;">
 		  <div class="connect-wallet-content">
-			<p>CONNECT WALLET</p>
-	    	<button class="connectWallet"
+			<p id="connect-wallet-words">CONNECT WALLET</p>
+	    	<button id="connectWallet"
 		    	onClick="walletConnected()">
 		    	<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
-		    	</button>	
+		    </button>		
 		  </div>
 		</div>	
 	<!-- Modal/s above -->	
@@ -126,12 +133,21 @@
 		<a id="icon-link" href="/test">
 			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()">
+		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
-		</button>	
+		</button>
+		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		</a>	
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>
+	<div id="wallet-connected-div" style="display: none;">
+		<hr id="connected-line">
+		<p id="wallet-connected" >
+		WALLET CONNECTED</p>
+		<hr id="connected-line">
+	</div>
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
@@ -149,7 +165,7 @@
 		<a id="collected">Collected</a>	
 	</div>
 		<p id="no-art">
-			No art collected
+			no art collected
 			<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</p>
 </body>

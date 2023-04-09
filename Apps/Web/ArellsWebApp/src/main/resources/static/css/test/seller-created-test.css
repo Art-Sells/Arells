@@ -52,7 +52,6 @@ body {
 				height: 16px;
 			}	
 		#cart-link{
-			display: inline-block;
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -68,8 +67,26 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
+		#cart-link-connected{
+			text-decoration: none;
+			margin-left: 124px;
+			  text-decoration: none;
+			  padding-top: 12px;
+			  padding-bottom: 9px;
+			  padding-right: 10px;
+			  padding-left: 10px;	  
+			  border: solid;
+			  width: 38px;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  border-radius: 15px;
+			  border-width: 1px;
+			  opacity: 1;
+				background: rgba(255, 255, 255, 0.8);						
+		}
 		#cart-link:hover,
-		#cart-link:focus {
+		#cart-link:focus, 
+		#cart-link-connected:hover,
+		#cart-link-connected:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
@@ -273,7 +290,8 @@ body {
 		  margin-bottom: 60px;		
 	}
 		
-		#col {
+		#blue-orange, #beach-houses, #colour-glass,
+		#layers, #succint-drop, #paint-rain {
 			flex: 1;			
 			margin: 10px;
 			border-radius: 15px;
@@ -364,9 +382,16 @@ body {
 				opacity: .7;
 				margin-bottom: 28px;
 			}
-			#add-to-cart {
+			#blue-orange-add-to-cart, #beach-houses-add-to-cart, 
+			#colour-glass-add-to-cart, #layers-add-to-cart, 
+			#succint-drop-add-to-cart, #paint-rain-add-to-cart,
+			#blue-orange-add-to-cart-connected, #beach-houses-add-to-cart-connected, 
+			#colour-glass-add-to-cart-connected, #layers-add-to-cart-connected, 
+			#succint-drop-add-to-cart-connected, #paint-rain-add-to-cart-connected  {
 				  text-decoration: none;
 				  color: white;
+				  margin-left: auto;
+				  margin-right: auto;
 				  font-weight: 200;
 				  font-size: 11px;
 				  padding-top: 20px;
@@ -382,12 +407,43 @@ body {
 				  box-shadow: 0px 8px 12px -6px black;  
 					background: black;
 				}	  
-			#add-to-cart:hover,
-			#add-to-cart:focus {
+			#blue-orange-add-to-cart:hover, #beach-houses-add-to-cart:hover, 
+			#colour-glass-add-to-cart:hover, #layers-add-to-cart:hover, 
+			#succint-drop-add-to-cart:hover, #paint-rain-add-to-cart:hover,
+			#blue-orange-add-to-cart:focus, #beach-houses-add-to-cart:focus, 
+			#colour-glass-add-to-cart:focus, #layers-add-to-cart:focus, 
+			#succint-drop-add-to-cart:focus, #paint-rain-add-to-cart:focus,
+			#blue-orange-add-to-cart-connected:hover, #beach-houses-add-to-cart-connected:hover, 
+			#colour-glass-add-to-cart-connected:hover, #layers-add-to-cart-connected:hover, 
+			#succint-drop-add-to-cart-connected:hover, #paint-rain-add-to-cart-connected:hover,
+			#blue-orange-add-to-cart-connected:focus, #beach-houses-add-to-cart-connected:focus, 
+			#colour-glass-add-to-cart-connected:focus, #layers-add-to-cart-connected:focus, 
+			#succint-drop-add-to-cart-connected:focus, #paint-rain-add-to-cart-connected:focus {
 				  opacity: .4;
 				  transition: 1s;
 				  cursor: pointer;
-			}		
+			}
+			#blue-orange-added, #beach-houses-added, 
+			#colour-glass-added, #layers-added, 
+			#succint-drop-added, #paint-rain-added {
+				  text-decoration: none;
+				  margin-left: auto;
+				  margin-right: auto;
+				  color: white;
+				  font-weight: 200;
+				  font-size: 11px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 22px;
+				  padding-left: 25px;	  
+				  border: none;
+				  letter-spacing: 3px;
+				  border-radius: 5px;
+				  border-width: 0px;
+				  width: 170px;
+				  opacity: 1; 
+					background: silver;
+				}		
 			
 			
 			
@@ -445,6 +501,15 @@ body {
 				  padding-left: 8px;	
 				  border-radius: 12px;	
 				  width: 45px;  					
+			}
+			#cart-link-connected{
+				margin-left: 96px;
+				  padding-top: 10px;
+				  padding-bottom: 7px;
+				  padding-right: 8px;
+				  padding-left: 8px;	
+				  border-radius: 12px;	
+				  width: 27px;  					
 			}
 			#cart-icon {
 					height: 15px;
@@ -547,7 +612,8 @@ body {
 	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	    margin-top: 20px;
 	  }
-		#col {		
+		#blue-orange, #beach-houses, #colour-glass,
+		#layers, #succint-drop, #paint-rain {		
 			margin: 5px;
 			align-items: center;
 			width: 130px;
@@ -584,7 +650,12 @@ body {
 				font-size: 15px;
 				margin-bottom: 20px;	
 			}			
-			#add-to-cart {
+			#blue-orange-add-to-cart, #beach-houses-add-to-cart, 
+			#colour-glass-add-to-cart, #layers-add-to-cart, 
+			#succint-drop-add-to-cart, #paint-rain-add-to-cart,
+			#blue-orange-add-to-cart-connected, #beach-houses-add-to-cart-connected, 
+			#colour-glass-add-to-cart-connected, #layers-add-to-cart-connected, 
+			#succint-drop-add-to-cart-connected, #paint-rain-add-to-cart-connected {
 				  font-weight: 200;
 				  font-size: 9px;
 				  padding-top: 20px;
@@ -594,7 +665,20 @@ body {
 				  border: none;
 				  letter-spacing: 1px;
 				  width: 120px;
-				}	  				  
+				}	  
+			#blue-orange-added, #beach-houses-added, 
+			#colour-glass-added, #layers-added, 
+			#succint-drop-added, #paint-rain-added {
+				  font-weight: 200;
+				  font-size: 9px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 12px;
+				  padding-left: 15px;	  
+				  border: none;
+				  letter-spacing: 1px;
+				  width: 120px;
+				}						  
 }					
 	
 	

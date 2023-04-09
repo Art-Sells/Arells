@@ -8,6 +8,7 @@
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/test/buyer-collected-test.css">	
 		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />	
+		<link rel="stylesheet" type="text/css" href="css/test/connect-wallet-test.css" />
 			
 		<meta charset="UTF-8">
 		
@@ -77,14 +78,21 @@
 
 
 <!-- Connect Wallet script below-->
-	function connectWallet() {
-		// Open copyLink
-		  document.getElementById('connectWalletBuy').style.display = "block";			
-		  
-		}	
-	function walletConnected() {
-		document.getElementById('connectWalletBuy').style.display = "none";
-	}	
+			function connectWallet() {
+				document.getElementById('connectWalletBuy').style.display = "block";			
+				  
+			}	
+			function walletConnected() {
+				document.getElementById('connectWalletBuy').style.display = "none";
+				
+				document.getElementById('wallet-connected-div').style.display = "block";
+				
+				document.getElementById('cart-link').style.display = "none";
+				document.getElementById('wallet-connected-div').style.display = "block";
+				
+				document.getElementById('cart-link-connected').style.display = "inline-block";
+			 
+}	
 <!-- Connect Wallet script above-->
 			
 		
@@ -107,7 +115,17 @@
 		    	onClick="closeCopiedLink()">OK</button>	
 		  </div>
 		</div>	
-	
+		
+		
+		<div id="connectWalletBuy" style="display: none;">
+		  <div class="connect-wallet-content">
+			<p id="connect-wallet-words">CONNECT WALLET</p>
+	    	<button id="connectWallet"
+		    	onClick="walletConnected()">
+		    	<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+		    </button>		
+		  </div>
+		</div>		
 	<!-- Modal/s above -->	
 	
 
@@ -117,12 +135,21 @@
 		<a id="icon-link" href="/test">
 			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="/">
+		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
-		</button>	
+		</button>
+		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		</a>
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>
+	<div id="wallet-connected-div" style="display: none;">
+		<hr id="connected-line">
+		<p id="wallet-connected" >
+		WALLET CONNECTED</p>
+		<hr id="connected-line">
+	</div>
     <div id="profile-img-container">
 		<img id="profile-photo" src="/icons&images/prototype/Unnamed-Icon.jpg">
 	</div>	 
@@ -140,82 +167,78 @@
 		<a id="collected">Collected</a>	
 	</div>
 	<div id="container">
-		  	<div id="col">
+		  	<div id="blue-orange" style="display: flex;">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$60,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$1,200</p>
-	     		<a id="add-to-cart">ADD TO CART</a>	
+		  		<div id="prices">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$3,000,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$60,000</p>
+		  		</div>			  		
 		    </div>
-		  	<div id="col">
+		  	<div id="beach-houses" style="display: flex;">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$10,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$200</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
+		  		<div id="prices">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$500,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$10,000</p>
+		     	</div>	     	
 		    </div>
-		     <div id="col">
+		     <div id="colour-glass" style="display: flex;">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$725,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$14,500</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
+		  		<div id="prices">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$36,250,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$725,000</p>
+		     	</div>	     	
 		    </div>
-		  	<div id="col">
+		  	<div id="layers" style="display: flex;">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$20,000,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$400,000</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>	
+		  		<div id="prices">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$1,000,000,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$20,000,000</p>
+		     	</div>
 		    </div>
-		  	<div id="col">
+		  	<div id="succint-drop" style="display:flex;">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$5,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$100</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
+		  		<div id="prices">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$250,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$5,000</p>
+		     	</div>		     	
 		    </div>
-		     <div id="col">
+		     <div id="paint-rain" style="display: flex;">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$600,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$12,000</p>
-	     		<a id="add-to-cart">
-		     		ADD TO CART
-		       </a>			     	
+		  		<div id="prices">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$30,000,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$600,000</p>
+		     	</div>	     	
 		    </div>
-	</div>
+	</div>	
 </body>
 </html>

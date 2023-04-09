@@ -78,15 +78,69 @@
 
 <!-- Connect Wallet script below-->
 	function connectWallet() {
-		// Open copyLink
 		document.getElementById('connectWalletBuy').style.display = "block";			
 		  
 	}	
 	function walletConnected() {
 		document.getElementById('connectWalletBuy').style.display = "none";
+		
+		document.getElementById('cart-link').style.display = "none";
 		document.getElementById('wallet-connected-div').style.display = "block";
+		
+		document.getElementById('cart-link-connected').style.display = "inline-block";
+		
+		document.getElementById('blue-orange-add-to-cart').style.display = "none";
+		document.getElementById('beach-houses-add-to-cart').style.display = "none";
+		document.getElementById('colour-glass-add-to-cart').style.display = "none";
+		document.getElementById('layers-add-to-cart').style.display = "none";
+		document.getElementById('succint-drop-add-to-cart').style.display = "none";
+		document.getElementById('paint-rain-add-to-cart').style.display = "none";
+		document.getElementById('blue-orange-add-to-cart-connected').style.display = "block";
+		document.getElementById('beach-houses-add-to-cart-connected').style.display = "block";
+		document.getElementById('colour-glass-add-to-cart-connected').style.display = "block";
+		document.getElementById('layers-add-to-cart-connected').style.display = "block";
+		document.getElementById('succint-drop-add-to-cart-connected').style.display = "block";
+		document.getElementById('paint-rain-add-to-cart-connected').style.display = "block";
+	 
 	}	
 <!-- Connect Wallet script above-->
+
+
+<!--  Add To Cart script below-->
+
+	function addBlueOrangeToCart() {
+		document.getElementById('blue-orange-add-to-cart-connected').style.display = "none";
+		document.getElementById('blue-orange-added').style.display = "block";	
+		  
+	}
+	function addBeachHousesToCart() {
+		document.getElementById('beach-houses-add-to-cart-connected').style.display = "none";
+		document.getElementById('beach-houses-added').style.display = "block";
+		  
+	}
+	function addColourGlassToCart() {
+		document.getElementById('colour-glass-add-to-cart-connected').style.display = "none";
+		document.getElementById('colour-glass-added').style.display = "block";
+		  
+	}
+	function addLayersToCart() {
+		document.getElementById('layers-add-to-cart-connected').style.display = "none";
+		document.getElementById('layers-added').style.display = "block";
+		
+		  
+	}
+	function addSuccintDropToCart() {
+		document.getElementById('succint-drop-add-to-cart-connected').style.display = "none";
+		document.getElementById('succint-drop-added').style.display = "block";
+		  
+	}
+	function addPaintRainToCart() {
+		document.getElementById('paint-rain-add-to-cart-connected').style.display = "none";
+		document.getElementById('paint-rain-added').style.display = "block";
+		  
+	}
+	
+<!--  Add To Cart script up-->	
 			
 		
 		</script>	
@@ -126,9 +180,12 @@
 		<a id="icon-link" href="/test">
 			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()">
+		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
-		</button>	
+		</button>
+		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		</a>	
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>
@@ -155,77 +212,179 @@
 		<a id="collected" href="/prototype-seller-collected-test">Collected</a>	
 	</div>
 	<div id="container">
-		  	<div id="col">
+		  	<div id="blue-orange">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$60,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$1,200</p>
-	     		<button id="add-to-cart" onClick="connectWallet()">
-	     		ADD TO CART</button>	
+		  		<div id="blue-orange-prices-before" style="display: block;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$60,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$1,200</p>
+		  		</div>	
+		  		<div id="blue-orange-prices-after" style="display: none;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$3,000,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$60,000</p>
+		  		</div>	
+		     	<button id="blue-orange-add-to-cart" onClick="connectWallet()"
+	     		style="display: block;">
+	     		ADD TO CART</button>
+	     		<button id="blue-orange-add-to-cart-connected" onClick="addBlueOrangeToCart()"
+	     		style="display: none;">
+	     		ADD TO CART</button>
+	     		<button id="blue-orange-added" style="display: none;">
+	     		ADDED</button>	
+	     		<button id="blue-orange-collected" style="display: none;">
+	     		COLLECTED</button>	
 		    </div>
-		  	<div id="col">
+		  	<div id="beach-houses">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$10,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$200</p>
-	     		<button id="add-to-cart" onClick="connectWallet()">
-	     		ADD TO CART</button>		     	
+		  		<div id="beach-houses-prices-before" style="display: block;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$10,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$200</p>
+		     	</div>
+		     	<div id="beach-houses-prices-after" style="display: none;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$500,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$10,000</p>
+		     	</div>
+	     		<button id="beach-houses-add-to-cart" onClick="connectWallet()" 
+	     		style="display: block;">
+	     		ADD TO CART</button>
+	     		<button id="beach-houses-add-to-cart-connected" onClick="addBeachHousesToCart()" 
+	     		style="display: none;">
+	     		ADD TO CART</button>
+	     		<button id="beach-houses-added" style="display: none;">
+	     		ADDED</button>	
+	     		<button id="beach-houses-collected" style="display: none;">
+	     		COLLECTED</button>			     	
 		    </div>
-		     <div id="col">
+		     <div id="colour-glass">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$725,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$14,500</p>
-	     		<button id="add-to-cart" onClick="connectWallet()">
-	     		ADD TO CART</button>			     	
+		  		<div id="colour-glass-prices-before" style="display: block;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$725,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$14,500</p>
+		     	</div>
+		     	<div id="colour-glass-prices-before" style="display: none;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$36,250,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$725,000</p>
+		     	</div>
+	     		<button id="colour-glass-add-to-cart" onClick="connectWallet()"
+	     		style="display: block;">
+	     		ADD TO CART</button>
+	     		<button id="colour-glass-add-to-cart-connected" onClick="addColourGlassToCart()"
+	     		style="display: none;">
+	     		ADD TO CART</button>
+	     		<button id="colour-glass-added" style="display: none;">
+	     		ADDED</button>		
+	     		<button id="colour-glass-collected" style="display: none;">
+	     		COLLECTED</button>			     	
 		    </div>
-		  	<div id="col">
+		  	<div id="layers">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$20,000,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$400,000</p>
-	     		<button id="add-to-cart" onClick="connectWallet()">
+		  		<div id="layers-prices-before" style="display: block;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$20,000,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$400,000</p>
+		     	</div>
+		     	<div id="layers-prices-after" style="display: none;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$1,000,000,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$20,000,000</p>
+		     	</div>
+	     		<button id="layers-add-to-cart" onClick="connectWallet()"
+	     		style="display: block;">
+	     		ADD TO CART</button>
+	     		<button id="layers-add-to-cart-connected" onClick="addLayersToCart()"
+	     		style="display: none;">
 	     		ADD TO CART</button>	
+	     		<button id="layers-added" style="display: none;">
+	     		ADDED</button>	
+	     		<button id="layers-collected" style="display: none;">
+	     		COLLECTED</button>	
 		    </div>
-		  	<div id="col">
+		  	<div id="succint-drop">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$5,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$100</p>
-	     		<button id="add-to-cart" onClick="connectWallet()">
-	     		ADD TO CART</button>			     	
+		  		<div id="succint-drop-prices-before" style="display: block;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$5,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$100</p>
+		     	</div>
+		     	<div id="succint-drop-prices-after" style="display: none;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$250,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$5,000</p>
+		     	</div>
+	     		<button id="succint-drop-add-to-cart" onClick="connectWallet()"
+	     		style="display: block;">
+	     		ADD TO CART</button>
+	     		<button id="succint-drop-add-to-cart-connected" onClick="addSuccintDropToCart()"
+	     		style="display: none;">
+	     		ADD TO CART</button>
+	     		<button id="succint-drop-added" style="display: none;">
+	     		ADDED</button>	
+	     		<button id="succint-drop-collected" style="display: none;">
+	     		COLLECTED</button>				     	
 		    </div>
-		     <div id="col">
+		     <div id="paint-rain">
 		  		<a href="/ethereum" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
 		  		</a>
-		  		<p id="PAP">Price After Purchase</p>
-		  		<p id="price2">$600,000</p>
-		  		<hr id="priceline">
-		  		<p id="yourprice">Price</p>
-		     	<p id="price">$12,000</p>
-	     		<button id="add-to-cart" onClick="connectWallet()">
-	     		ADD TO CART</button>			     	
+		  		<div id="paint-rain-prices-before" style="display: block;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$600,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$12,000</p>
+		     	</div>
+		     	<div id="paint-rain-prices-after" style="display: none;">
+			  		<p id="PAP">Price After Purchase</p>
+			  		<p id="price2">$30,000,000</p>
+			  		<hr id="priceline">
+			  		<p id="yourprice">Price</p>
+			     	<p id="price">$600,000</p>
+		     	</div>
+	     		<button id="paint-rain-add-to-cart" onClick="connectWallet()"
+	     		style="display: block;">
+	     		ADD TO CART</button>
+	     		<button id="paint-rain-add-to-cart-connected" onClick="addPaintRainToCart()"
+	     		style="display: none;">
+	     		ADD TO CART</button>
+	     		<button id="paint-rain-added" style="display: none;">
+	     		ADDED</button>	
+	     		<button id="paint-rain-collected" style="display: none;">
+	     		COLLECTED</button>				     	
 		    </div>
 	</div>
 </body>
