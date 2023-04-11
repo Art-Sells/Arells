@@ -6,9 +6,9 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/seller-created-test.css">	
-		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />	
-		<link rel="stylesheet" type="text/css" href="css/test/connect-wallet-test.css" />
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/seller-created-test.css">	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/copiedlink-test.css" />	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/connect-wallet-test.css" />
 			
 		<meta charset="UTF-8">
 		

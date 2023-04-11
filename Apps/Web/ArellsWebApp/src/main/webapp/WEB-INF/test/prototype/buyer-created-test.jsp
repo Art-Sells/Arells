@@ -6,10 +6,10 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/seller-collected-test.css">	
-		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />	
-		<link rel="stylesheet" type="text/css" href="css/test/connect-wallet-test.css" />
-			
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/buyer-created-test.css">	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/copiedlink-test.css" />	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/connect-wallet-test.css" />
+	
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
@@ -22,14 +22,14 @@
 	
 		<link rel="icon" type="image/x-icon" href="/icons&images/Arells-Ico.ico" sizes="156x156">
 				<!-- Change below link after test -->
-		<link rel="canonical" href="https://arells.com/prototype-seller-collected-test">
+		<link rel="canonical" href="https://arells.com/prototype-buyer-created-test">
 		
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
 		<meta property="og:title" content="Arells">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/prototype-seller-collected-test">
+		<meta propety="og:url" content="https://arells.com/prototype-buyer-created-test">
 		<meta property="og:description" content="Art Sells">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
@@ -38,12 +38,11 @@
 		<meta name="twitter:title" content="Art Sells">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">
 				<!-- Change below link after test -->
-		<meta name="twitter:url" content="https://arells.com/prototype-seller-collected-test">
+		<meta name="twitter:url" content="https://arells.com/prototype-buyer-created-test">
 		<meta name="twitter:card" content="summary_large_image">
 		<meta name="twitter:description" content="Arells">
 		<meta name="description" content="Arells">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
-
 
 		<script>
 
@@ -77,56 +76,56 @@
 
 
 
-<!-- Connect Wallet script below-->
-			function connectWallet() {
-				document.getElementById('connectWalletBuy').style.display = "block";			
-				  
-			}	
-			function walletConnected() {
-				document.getElementById('connectWalletBuy').style.display = "none";
-				
-				document.getElementById('wallet-connected-div').style.display = "block";
-				
-				document.getElementById('cart-link').style.display = "none";
-				document.getElementById('wallet-connected-div').style.display = "block";
-				
-				document.getElementById('cart-link-connected').style.display = "inline-block";
-			 
-}	
-<!-- Connect Wallet script above-->
-			
+	<!-- Connect Wallet script below-->
+	function connectWallet() {
+		document.getElementById('connectWalletBuy').style.display = "block";			
+		  
+	}	
+	function walletConnected() {
+		document.getElementById('connectWalletBuy').style.display = "none";
 		
-		</script>	
+		document.getElementById('cart-link').style.display = "none";
+		document.getElementById('wallet-connected-div').style.display = "block";
 		
-		
-
-		<title>Prototype</title>
+		document.getElementById('cart-link-connected').style.display = "inline-block";
+	 
+	}	
+	<!-- Connect Wallet script above-->
+	
+	
+	</script>	
+	
+	
+	
+	<title>Prototype</title>
 	
 	</head>
 	
-<body>
-
+	<body>
+	
 	<!-- Modal/s below -->
 	
-		<div id="copiedLink" style="display: none;">
-		  <div class="modal-content">
-			<p>LINK COPIED</p>
-	    	<button class="close"
-		    	onClick="closeCopiedLink()">OK</button>	
-		  </div>
-		</div>	
+	<div id="copiedLink" style="display: none;">
+	<div class="modal-content">
+	<p>LINK COPIED</p>
+	<button class="close"
+		onClick="closeCopiedLink()">OK</button>	
+	</div>
+	</div>	
 	
-		<div id="connectWalletBuy" style="display: none;">
-		  <div class="connect-wallet-content">
+	
+	<div id="connectWalletBuy" style="display: none;">
+		<div class="connect-wallet-content">
 			<p id="connect-wallet-words">CONNECT WALLET</p>
-	    	<button id="connectWallet"
-		    	onClick="walletConnected()">
-		    	<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
-		    </button>		
-		  </div>
-		</div>	
+			<button id="connectWallet"
+				onClick="walletConnected()">
+				<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+			</button>		
+		</div>
+	</div>		
 	<!-- Modal/s above -->	
-
+	
+	
 	<div id="header">
 	
 	<!-- Change below link after test -->
@@ -138,7 +137,7 @@
 		</button>
 		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
-		</a>	
+		</a>
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>
@@ -149,10 +148,10 @@
 		<hr id="connected-line">
 	</div>
     <div id="profile-img-container">
-		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
+		<img id="profile-photo" src="/icons&images/prototype/Unnamed-Icon.jpg">
 	</div>	 
-	<h1 id="name">Abstract Kadabra</h1>  
-	<p id="description">Here rests life's abstractions captured in majestic endeavors.</p> 
+	<h1 id="name">Unnamed</h1>  
+	<p id="description">Creator & Collector</p> 
 	<button id="copy-link"
 		onClick="copyLink()">
 		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
@@ -160,13 +159,13 @@
 	<br>
 	<hr id="profileline">
 	<div id="created-collected">
-<!-- Change below link after test -->
-		<a id="created" href="/prototype-seller-created-test">Created</a>	
-		<a id="collected">Collected</a>	
+		<a id="created">Created</a>	
+	<!-- Change below link after test -->		
+		<a id="collected" href="/prototype-buyer-collected-test">Collected</a>	
 	</div>
-		<p id="no-art">
-			no art collected
-			<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
-		</p>
+	<p id="no-art">
+		no art created
+		<img id="cart-icon-collected" src="/icons&images/prototype/Add.png"/>
+	</p>
 </body>
 </html>

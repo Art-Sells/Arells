@@ -6,10 +6,10 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/buyer-created-test.css">	
-		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />
-				<link rel="stylesheet" type="text/css" href="css/test/connect-wallet-test.css" />	
-	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/images/succinct-drop-test.css">	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/copiedlink-test.css" />	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/connect-wallet-test.css" />
+			
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
@@ -22,14 +22,14 @@
 	
 		<link rel="icon" type="image/x-icon" href="/icons&images/Arells-Ico.ico" sizes="156x156">
 				<!-- Change below link after test -->
-		<link rel="canonical" href="https://arells.com/prototype-buyer-created-test">
+		<link rel="canonical" href="https://arells.com/prototype-succinct-drop-test">
 		
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
 		<meta property="og:title" content="Arells">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/prototype-buyer-created-test">
+		<meta propety="og:url" content="https://arells.com/prototype-succinct-drop-test">
 		<meta property="og:description" content="Art Sells">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
@@ -38,7 +38,7 @@
 		<meta name="twitter:title" content="Art Sells">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">
 				<!-- Change below link after test -->
-		<meta name="twitter:url" content="https://arells.com/prototype-buyer-created-test">
+		<meta name="twitter:url" content="https://arells.com/prototype-succinct-drop-test">
 		<meta name="twitter:card" content="summary_large_image">
 		<meta name="twitter:description" content="Arells">
 		<meta name="description" content="Arells">
@@ -76,7 +76,7 @@
 
 
 
-	<!-- Connect Wallet script below-->
+<!-- Connect Wallet script below-->
 	function connectWallet() {
 		document.getElementById('connectWalletBuy').style.display = "block";			
 		  
@@ -88,44 +88,57 @@
 		document.getElementById('wallet-connected-div').style.display = "block";
 		
 		document.getElementById('cart-link-connected').style.display = "inline-block";
+		
+		document.getElementById('succint-drop-add-to-cart').style.display = "none";
+		document.getElementById('succint-drop-add-to-cart-connected').style.display = "block";
+
 	 
 	}	
-	<!-- Connect Wallet script above-->
+<!-- Connect Wallet script above-->
+
+
+<!--  Add To Cart script below-->
+
+	function addSuccintDropToCart() {
+		document.getElementById('succint-drop-add-to-cart-connected').style.display = "none";
+		document.getElementById('succint-drop-added').style.display = "block";
+		  
+	}
 	
-	
-	</script>	
-	
-	
-	
-	<title>Prototype</title>
+<!--  Add To Cart script up-->	
+			
+		
+		</script>	
+		
+		
+
+		<title>Prototype</title>
 	
 	</head>
 	
-	<body>
-	
+<body>
+
 	<!-- Modal/s below -->
 	
-	<div id="copiedLink" style="display: none;">
-	<div class="modal-content">
-	<p>LINK COPIED</p>
-	<button class="close"
-		onClick="closeCopiedLink()">OK</button>	
-	</div>
-	</div>	
+		<div id="copiedLink" style="display: none;">
+		  <div class="modal-content">
+			<p>LINK COPIED</p>
+	    	<button class="close"
+		    	onClick="closeCopiedLink()">OK</button>	
+		  </div>
+		</div>	
 	
-	
-	<div id="connectWalletBuy" style="display: none;">
-		<div class="connect-wallet-content">
+		<div id="connectWalletBuy" style="display: none;">
+		  <div class="connect-wallet-content">
 			<p id="connect-wallet-words">CONNECT WALLET</p>
-			<button id="connectWallet"
-				onClick="walletConnected()">
-				<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
-			</button>		
-		</div>
-	</div>		
+	    	<button id="connectWallet"
+		    	onClick="walletConnected()">
+		    	<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+		    </button>		
+		  </div>
+		</div>	
 	<!-- Modal/s above -->	
-	
-	
+
 	<div id="header">
 	
 	<!-- Change below link after test -->
@@ -137,7 +150,7 @@
 		</button>
 		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
-		</a>
+		</a>	
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>
@@ -147,25 +160,43 @@
 		WALLET CONNECTED</p>
 		<hr id="connected-line">
 	</div>
-    <div id="profile-img-container">
-		<img id="profile-photo" src="/icons&images/prototype/Unnamed-Icon.jpg">
-	</div>	 
-	<h1 id="name">Unnamed</h1>  
-	<p id="description">Creator & Collector</p> 
-	<button id="copy-link"
+
+  	<div id="succint-drop">
+  		<a href="/ethereum" target="_self" id="photo-link">
+  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
+  		</a>
+      	<h3 id="name">Succinct Drop</h3>  		
+     	<p>Created By: Abstract Kadabra</p>
+     	<p>Owned By: Abstract Kadabra</p>
+		<button id="copy-link"
 		onClick="copyLink()">
 		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
 		COPY LINK</button>	
-	<br>
-	<hr id="profileline">
-	<div id="created-collected">
-		<a id="created">Created</a>	
-	<!-- Change below link after test -->		
-		<a id="collected" href="/prototype-buyer-collected-test">Collected</a>	
-	</div>
-	<p id="no-art">
-		no art created
-		<img id="cart-icon-collected" src="/icons&images/prototype/Add.png"/>
-	</p>
+		<div id="succint-drop-prices-before" style="display: block;">
+	  		<p id="PAP">Price After Purchase</p>
+	  		<p id="price2">$5,000</p>
+	  		<hr id="priceline">
+	  		<p id="yourprice">Price</p>
+	     	<p id="price">$100</p>
+     	</div>
+     	<div id="succint-drop-prices-after" style="display: none;">
+	  		<p id="PAP">Price After Purchase</p>
+	  		<p id="price2">$250,000</p>
+	  		<hr id="priceline">
+	  		<p id="yourprice">Price</p>
+	     	<p id="price">$5,000</p>
+     	</div>
+    	<button id="succint-drop-add-to-cart" onClick="connectWallet()"
+    		style="display: block;">
+    		ADD TO CART</button>
+    	<button id="succint-drop-add-to-cart-connected" onClick="addSuccintDropToCart()"
+    		style="display: none;">
+    		ADD TO CART</button>
+    	<button id="succint-drop-added" style="display: none;">
+    		ADDED</button>	
+    	<button id="succint-drop-collected" style="display: none;">
+    		COLLECTED</button>				     	
+    </div>
+
 </body>
 </html>

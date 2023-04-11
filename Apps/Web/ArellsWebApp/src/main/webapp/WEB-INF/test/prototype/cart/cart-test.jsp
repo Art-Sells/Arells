@@ -6,9 +6,9 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/cart-test.css">	
-		<link rel="stylesheet" type="text/css" href="css/test/copiedlink-test.css" />	
-		<link rel="stylesheet" type="text/css" href="css/test/connect-wallet-test.css" />
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/cart/cart-test.css">	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/copiedlink-test.css" />	
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/connect-wallet-test.css" />
 			
 		<meta charset="UTF-8">
 		
@@ -59,7 +59,7 @@
 					document.getElementById('cart-empty').style.display == "block";
 				}
 		}	
-/* 		function removeBeachHouses() {
+		function removeBeachHouses() {
 			document.getElementById('beach-houses').style.display = "none";	
 			if (document.getElementById('blue-orange').style.display == "none"
 				&& document.getElementById('colour-glass').style.display == "none" 
@@ -113,7 +113,7 @@
 					document.getElementById('cart-full').style.display == "none";
 					document.getElementById('cart-empty').style.display == "block";
 				}			
-		}		 */
+		}		
 <!-- Remove scripts above-->	
 
 

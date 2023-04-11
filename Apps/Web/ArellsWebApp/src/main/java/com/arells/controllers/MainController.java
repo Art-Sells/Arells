@@ -30,18 +30,26 @@ public class MainController {
 	 
 	 @GetMapping("/stayupdated-test") public String stayUpdatedTest() { return "test/stayupdated-test.jsp"; }	 
 	 
+	 
+	 // Prototype Test
 	 @GetMapping("/prototype-seller-created-test") public String prototypeSellerCreatedTest() { return
-	 "test/seller-created-test.jsp"; }
+	 "test/prototype/seller-created-test.jsp"; }
 	 
 	 @GetMapping("/prototype-seller-collected-test") public String prototypeSellerCollectedTest() { return
-	 "test/seller-collected-test.jsp"; }
+	 "test/prototype/seller-collected-test.jsp"; }
 	 
 	 @GetMapping("/prototype-buyer-created-test") public String prototypeBuyerCreatedTest() { return
-	 "test/buyer-created-test.jsp"; }
+	 "test/prototype/buyer-created-test.jsp"; }
 	 
 	 @GetMapping("/prototype-buyer-collected-test") public String prototypeBuyerCollectedTest() { return
-	 "test/buyer-collected-test.jsp"; }
-
+	 "test/prototype/buyer-collected-test.jsp"; }
+	 
+	 
+	 // Cart Test
 	 @GetMapping("/prototype-cart-test") public String cartTest() { return
-	 "test/cart-test.jsp"; }
+	 "test/prototype/cart/cart-test.jsp"; }
+	 
+	 // Images Test
+	 @GetMapping("/prototype-succinct-drop-test") public String succinctDropTest() { return
+	 "test/prototype/images/succinct-drop-test.jsp"; }
 }
