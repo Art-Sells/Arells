@@ -46,15 +46,78 @@
 
 		<script>
 
-<!-- Modal script below-->
+<!-- Remove scripts below-->
+
+		function removeBlueOrange() {
+			document.getElementById('blue-orange').style.display = "none";	
+			if (document.getElementById('beach-houses').style.display == "none"
+				&& document.getElementById('colour-glass').style.display == "none" 
+				&& document.getElementById('layers').style.display == "none"
+				&& document.getElementById('succint-drop').style.display == "none"
+				&& document.getElementById('paint-rain').style.display == "none"){
+					document.getElementById('cart-full').style.display == "none";
+					document.getElementById('cart-empty').style.display == "block";
+				}
+		}	
+/* 		function removeBeachHouses() {
+			document.getElementById('beach-houses').style.display = "none";	
+			if (document.getElementById('blue-orange').style.display == "none"
+				&& document.getElementById('colour-glass').style.display == "none" 
+				&& document.getElementById('layers').style.display == "none"
+				&& document.getElementById('succint-drop').style.display == "none"
+				&& document.getElementById('paint-rain').style.display == "none"){
+					document.getElementById('cart-full').style.display == "none";
+					document.getElementById('cart-empty').style.display == "block";
+				}			
+		}		
+		function removeColourGlass() {
+			document.getElementById('colour-glass').style.display = "none";	
+			if (document.getElementById('beach-houses').style.display == "none"
+				document.getElementById('blue-orange').style.display == "none" 
+				&& document.getElementById('layers').style.display == "none"
+				&& document.getElementById('succint-drop').style.display == "none"
+				&& document.getElementById('paint-rain').style.display == "none"){
+					document.getElementById('cart-full').style.display == "none";
+					document.getElementById('cart-empty').style.display == "block";
+				}			
+		}
+		function removeLayers() {
+			document.getElementById('layers').style.display = "none";
+			if (document.getElementById('beach-houses').style.display == "none"
+				&& document.getElementById('colour-glass').style.display == "none" 
+				&& document.getElementById('blue-orange').style.display == "none"
+				&& document.getElementById('succint-drop').style.display == "none"
+				&& document.getElementById('paint-rain').style.display == "none"){
+					document.getElementById('cart-full').style.display == "none";
+					document.getElementById('cart-empty').style.display == "block";
+				}			
+		}
+		function removeSuccintDrop() {
+			document.getElementById('succint-drop').style.display = "none";
+			if (document.getElementById('beach-houses').style.display == "none"
+				&& document.getElementById('colour-glass').style.display == "none" 
+				&& document.getElementById('layers').style.display == "none"
+				&& document.getElementById('blue-orange').style.display == "none"
+				&& document.getElementById('paint-rain').style.display == "none"){
+					document.getElementById('cart-full').style.display == "none";
+					document.getElementById('cart-empty').style.display == "block";
+				}			
+		}		
+		function removeBlueOrange() {
+			document.getElementById('paint-rain').style.display = "none";
+			if (document.getElementById('beach-houses').style.display == "none"
+				&& document.getElementById('colour-glass').style.display == "none" 
+				&& document.getElementById('layers').style.display == "none"
+				&& document.getElementById('succint-drop').style.display == "none"
+				&& document.getElementById('blue-orange').style.display == "none"){
+					document.getElementById('cart-full').style.display == "none";
+					document.getElementById('cart-empty').style.display == "block";
+				}			
+		}		 */
+<!-- Remove scripts above-->	
 
 
-<!-- Modal script above-->	
 
-
-
-			
-		
 		</script>	
 		
 		
@@ -112,7 +175,7 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$1,200</p>
 			  		</div>			  		
-		  			<button id="remove">
+		  			<button id="remove" onClick="removeBlueOrange()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>
 			    </div>
@@ -127,7 +190,7 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$200</p>
 			     	</div>
-		  			<button id="remove">
+		  			<button id="remove" onClick="removeBeachHouses()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>	     	
 			    </div>
@@ -142,7 +205,7 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$14,500</p>
 			     	</div>
-		  			<button id="remove">
+		  			<button id="remove" onClick="removeColourGlass()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>		     	
 			    </div>
@@ -157,7 +220,7 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$400,000</p>
 			     	</div>
-		  			<button id="remove">
+		  			<button id="remove" onClick="removeLayers()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>
 			    </div>
@@ -172,7 +235,7 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$100</p>
 			     	</div>
-		  			<button id="remove">
+		  			<button id="remove" onClick="removeSuccintDrop()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>			     	
 			    </div>
@@ -187,7 +250,7 @@
 				  		<p id="yourprice">Price</p>
 				     	<p id="price">$12,000</p>
 			     	</div>
-		  			<button id="remove">
+		  			<button id="remove" onClick="removePaintRain()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>		     	
 			    </div>
