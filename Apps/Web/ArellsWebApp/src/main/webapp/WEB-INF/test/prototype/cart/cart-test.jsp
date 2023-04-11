@@ -55,8 +55,8 @@
 				&& document.getElementById('layers').style.display == "none"
 				&& document.getElementById('succint-drop').style.display == "none"
 				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display == "none";
-					document.getElementById('cart-empty').style.display == "block";
+					document.getElementById('cart-full').style.display = "none";
+					document.getElementById('cart-empty').style.display = "block";
 				}
 		}	
 		function removeBeachHouses() {
@@ -66,19 +66,19 @@
 				&& document.getElementById('layers').style.display == "none"
 				&& document.getElementById('succint-drop').style.display == "none"
 				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display == "none";
-					document.getElementById('cart-empty').style.display == "block";
+					document.getElementById('cart-full').style.display = "none";
+					document.getElementById('cart-empty').style.display = "block";
 				}			
 		}		
 		function removeColourGlass() {
 			document.getElementById('colour-glass').style.display = "none";	
-			if (document.getElementById('beach-houses').style.display == "none"
-				document.getElementById('blue-orange').style.display == "none" 
+			if (document.getElementById('beach-houses').style.display = "none"
+				&& document.getElementById('blue-orange').style.display == "none" 
 				&& document.getElementById('layers').style.display == "none"
 				&& document.getElementById('succint-drop').style.display == "none"
 				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display == "none";
-					document.getElementById('cart-empty').style.display == "block";
+					document.getElementById('cart-full').style.display = "none";
+					document.getElementById('cart-empty').style.display = "block";
 				}			
 		}
 		function removeLayers() {
@@ -88,8 +88,8 @@
 				&& document.getElementById('blue-orange').style.display == "none"
 				&& document.getElementById('succint-drop').style.display == "none"
 				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display == "none";
-					document.getElementById('cart-empty').style.display == "block";
+					document.getElementById('cart-full').style.display = "none";
+					document.getElementById('cart-empty').style.display = "block";
 				}			
 		}
 		function removeSuccintDrop() {
@@ -99,19 +99,19 @@
 				&& document.getElementById('layers').style.display == "none"
 				&& document.getElementById('blue-orange').style.display == "none"
 				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display == "none";
-					document.getElementById('cart-empty').style.display == "block";
+					document.getElementById('cart-full').style.display = "none";
+					document.getElementById('cart-empty').style.display = "block";
 				}			
 		}		
-		function removeBlueOrange() {
+		function removePaintRain() {
 			document.getElementById('paint-rain').style.display = "none";
 			if (document.getElementById('beach-houses').style.display == "none"
 				&& document.getElementById('colour-glass').style.display == "none" 
 				&& document.getElementById('layers').style.display == "none"
 				&& document.getElementById('succint-drop').style.display == "none"
 				&& document.getElementById('blue-orange').style.display == "none"){
-					document.getElementById('cart-full').style.display == "none";
-					document.getElementById('cart-empty').style.display == "block";
+					document.getElementById('cart-full').style.display = "none";
+					document.getElementById('cart-empty').style.display = "block";
 				}			
 		}		
 <!-- Remove scripts above-->	
