@@ -41,6 +41,7 @@
 ## Fully integrated App
 
 - Use GPT-4?
+- Heavy KYC/AML [USDC -to-bank- transfers only]
 
 #### Profile
 - Create Categories (General, Illustrations, etc)
