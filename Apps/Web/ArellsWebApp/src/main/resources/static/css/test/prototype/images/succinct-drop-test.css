@@ -136,48 +136,9 @@ body {
 				opacity: 1;
 			}							
 	
-	#profile-img-container {
-	position: static;
-		width: 100px;
-		height: 100px;
-		margin-top: 30px;
-		border-radius: 10px;
-		margin-left: auto;
-  		margin-right: auto;
-  		background-color: none;
-  		overflow: hidden;
-  		align-items: center;
-  		justify-content: center;
-		
-	}
-		#profile-photo {
-			object-fit: cover;
-			overflow: hidden;
-			width: 100%;
-			height: 100%;
-		}	
-	#name {
-	  font-size: 17pt;
-	  font-weight: 800;
-	  opacity: 1;
-	  color: black;	
-	  margin-top: 20px;
-	  letter-spacing: -1px;	  
-	  margin-left: -1px;
-	}	
+
 	
-	#description {
-	  font-size: 12pt;
-	  font-weight: 200;
-	  opacity: .5;
-	  color: black;	
-	  margin-top: 0px;
-	  letter-spacing: 0px;	  
-	  margin-left: auto;
-	  margin-right: auto;
-	  width: 420px;
-	  margin-bottom: 20px;
-	}
+
 	#copy-link {
 	  text-decoration: none;
 	  color: white;
@@ -206,131 +167,52 @@ body {
 			width: 15px;
 			margin-right: 5px;
 		}
-	#profileline {
-	margin-top: 25px;
-	  background-color: black;
-	  border: none;
-	  height: 4px;
-	  border-radius: 30px;
-	  width: 700px;
-	  opacity: .1;
-	}
-	#created-collected {
-		margin-top: 30px;
-		flex-direction: column;
-		align-items: center;
-		  width: 600px;
-		  margin-left: auto;
-		  margin-right: auto;	
-	}
-		#created {
-		flex: 1;			
-		margin-right: 10px;
-		align-items: center;	
-		  text-decoration: none;
-		  color: black;
-		  font-weight: 300;
-		  font-size: 13px;
-		  padding-top: 12px;
-		  padding-bottom: 12px;
-		  padding-right: 25px;
-		  padding-left: 25.5px;	  
-		  border: solid;
-		  letter-spacing: .5px;
-		  border-radius: 10px;
-		  border-width: 1px;
-		  border-color: gray;
-		  width: 150px;
-		background: none;
-		opacity: 1;
-			
-		}  		
-		#collected {
-		flex: 1;			
-		margin-left: 10px;
-		align-items: center;	
-		  text-decoration: none;
-		  color: gray;
-		  font-weight: 300;
-		  font-size: 13px;
-		  padding-top: 13px;
-		  padding-bottom: 13px;
-		  padding-right: 25px;
-		  padding-left: 25.5px;	  
-		  border: solid;
-		  letter-spacing: .5px;
-		  border-radius: 10px;
-		  border-width: 1px;
-		  border-color: rgba(215, 215, 215, 0.7);
-		  width: 150px;
-		  opacity: 1;
-			background: none;
-		}	
-		#collected:hover,
-		#collected:focus {
-			  transition: 1s;
-			  cursor: pointer;
-			  color: black;
-			  border-color: gray;
-			  opacity: 1;
-		}	
+					
 				
 		
-
-	#container {
-		margin-top: 30px;
-		flex-direction: column;
+	#succinct-drop {	
+		margin-top: 40px;
+		margin-left: auto;
+		margin-right: auto;
+		border-radius: 15px;
 		align-items: center;
-		  display: grid;
-		  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		  grid-gap: 0px;
-		  width: 950px;
-		  margin-left: auto;
-		  margin-right: auto;
-		  margin-bottom: 60px;		
+		overflow: hidden;
+		box-shadow: 0px 5px 20px -6px silver; 
+		width: 600px;
+		height: 100%;
+		padding-top: 50px;
+		padding-left: 50px;
+		padding-right: 50px;
+		padding-bottom: 60px;			
+		text-decoration: none;
+		background: white;
 	}
-		
-		#blue-orange, #beach-houses, #colour-glass,
-		#layers, #succint-drop, #paint-rain {
-			flex: 1;			
-			margin: 10px;
-			border-radius: 15px;
-			align-items: center;
-			overflow: hidden;
-			box-shadow: 0px 5px 20px -6px silver; 
-			width: 200px;
-			height: 420px;
-			padding-top: 50px;
-			padding-left: 50px;
-			padding-right: 50px;
-			padding-bottom: 60px;			
-			text-decoration: none;
-			background: white;
-		     
-		}
-		
-		#photo-link {
-			text-decoration: none;
-		}
-
-		#photo-link:hover {
+	
+		#name {
+		  font-size: 17pt;
+		  font-weight: 800;
 		  opacity: .5;
-		  transition: 1s;
-		  box-shadow: none;
-		  cursor: pointer;
+		  color: black;	
+		  margin-top: -20px;
+		  letter-spacing: -1px;	  
+		  margin-left: -1px;
 		}
-		#photo-link:focus {
-		  opacity: .5;
-		  box-shadow: none;
-		  cursor: pointer;
-		}			
+				
 		
 		#photo {
 			object-fit: cover;
-			width: 100%;
-			height: 200px;
+			width: 90%;
+			height: 90%;
   			border-radius: 10px;		
-  			box-shadow: 0px 8px 12px -6px black;  
+		}
+		#line {
+		margin-top: 25px;
+		  background-color: black;
+		  border: none;
+		  height: 4px;
+		  border-radius: 30px;
+		  width: 700px;
+		  opacity: .1;
 		}
 			#PAP {
 			margin-top: 30px;
@@ -382,12 +264,8 @@ body {
 				opacity: .7;
 				margin-bottom: 28px;
 			}
-			#blue-orange-add-to-cart, #beach-houses-add-to-cart, 
-			#colour-glass-add-to-cart, #layers-add-to-cart, 
-			#succint-drop-add-to-cart, #paint-rain-add-to-cart,
-			#blue-orange-add-to-cart-connected, #beach-houses-add-to-cart-connected, 
-			#colour-glass-add-to-cart-connected, #layers-add-to-cart-connected, 
-			#succint-drop-add-to-cart-connected, #paint-rain-add-to-cart-connected  {
+		    #succint-drop-add-to-cart, 
+			#succint-drop-add-to-cart-connected  {
 				  text-decoration: none;
 				  color: white;
 				  margin-left: auto;
@@ -407,25 +285,13 @@ body {
 				  box-shadow: 0px 8px 12px -6px black;  
 					background: black;
 				}	  
-			#blue-orange-add-to-cart:hover, #beach-houses-add-to-cart:hover, 
-			#colour-glass-add-to-cart:hover, #layers-add-to-cart:hover, 
-			#succint-drop-add-to-cart:hover, #paint-rain-add-to-cart:hover,
-			#blue-orange-add-to-cart:focus, #beach-houses-add-to-cart:focus, 
-			#colour-glass-add-to-cart:focus, #layers-add-to-cart:focus, 
-			#succint-drop-add-to-cart:focus, #paint-rain-add-to-cart:focus,
-			#blue-orange-add-to-cart-connected:hover, #beach-houses-add-to-cart-connected:hover, 
-			#colour-glass-add-to-cart-connected:hover, #layers-add-to-cart-connected:hover, 
-			#succint-drop-add-to-cart-connected:hover, #paint-rain-add-to-cart-connected:hover,
-			#blue-orange-add-to-cart-connected:focus, #beach-houses-add-to-cart-connected:focus, 
-			#colour-glass-add-to-cart-connected:focus, #layers-add-to-cart-connected:focus, 
-			#succint-drop-add-to-cart-connected:focus, #paint-rain-add-to-cart-connected:focus {
+			#succint-drop-add-to-cart:hover, 
+			#succint-drop-add-to-cart-connected:focus {
 				  opacity: .4;
 				  transition: 1s;
 				  cursor: pointer;
-			}
-			#blue-orange-added, #beach-houses-added, 
-			#colour-glass-added, #layers-added, 
-			#succint-drop-added, #paint-rain-added {
+			} 
+			#succint-drop-added {
 				  text-decoration: none;
 				  margin-left: auto;
 				  margin-right: auto;
@@ -540,31 +406,6 @@ body {
 				letter-spacing: 0px;
 				margin-left: 0px; 
 			}
-		#profile-img-container {
-			width: 90px;
-			height: 90px;
-			margin-top: 25px;
-			
-		}
-			#profile-photo {
-				object-fit: cover;
-				overflow: hidden;
-				width: 100%;
-				height: 100%;
-			}	
-		#name {
-		  font-size: 13pt;
-		  font-weight: 800;
-		  margin-top: 20px;
-		  letter-spacing: -1px;	  
-		  margin-left: -1px;
-		}	
-		#description {
-		margin-top: 5px;
-		  font-size: 9pt;
-		  line-height: 15px;
-		  width: 200px;
-		}	  
 		#copy-link {
 		  font-size: 8px;
 		  padding-top: 15px;
@@ -578,46 +419,11 @@ body {
 			#copy-link-icon {
 				width: 12px;
 			}
-		#profileline {
-		margin-top: 20px;
-		  width: 470px;
-		}	
-		#created-collected {
-			margin-top: 20px;
+			
+		#succinct-drop {		
 			align-items: center;
-			  width: 400px;
-		}  
-			#created {		
-			margin-right: 10px;
-			margin-left: 8px;
-			  font-size: 10px;
-			  padding-top: 10px;
-			  padding-bottom: 10px;
-			  padding-right: 15px;
-			  padding-left: 15.5px;	  
-			  letter-spacing: .5px;
-				
-			}  		
-			#collected {		
-			margin-left: 0px;
-			  font-size: 10px;
-			  padding-top: 10px;
-			  padding-bottom: 10px;
-			  padding-right: 15px;
-			  padding-left: 15.5px;	  
-			  letter-spacing: .5px;
-			}			
-	  #container {
-	    width: 660px;
-	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	    margin-top: 20px;
-	  }
-		#blue-orange, #beach-houses, #colour-glass,
-		#layers, #succint-drop, #paint-rain {		
-			margin: 5px;
-			align-items: center;
-			width: 130px;
-			height: 320px;
+			width: 500px;
+			height: 100%;
 			padding-top: 40px;
 			padding-left: 40px;
 			padding-right: 40px;
@@ -625,9 +431,11 @@ body {
 		     
 		}
 		#photo {
-			width: 100%;
-			height: 130px;
   			border-radius: 10px;		
+		}
+		#line {
+		 margin-top: 20px;
+		  width: 470px;
 		}
 			#PAP {
 			margin-top: 20px;
@@ -650,12 +458,8 @@ body {
 				font-size: 15px;
 				margin-bottom: 20px;	
 			}			
-			#blue-orange-add-to-cart, #beach-houses-add-to-cart, 
-			#colour-glass-add-to-cart, #layers-add-to-cart, 
-			#succint-drop-add-to-cart, #paint-rain-add-to-cart,
-			#blue-orange-add-to-cart-connected, #beach-houses-add-to-cart-connected, 
-			#colour-glass-add-to-cart-connected, #layers-add-to-cart-connected, 
-			#succint-drop-add-to-cart-connected, #paint-rain-add-to-cart-connected {
+			#succint-drop-add-to-cart, 
+			#succint-drop-add-to-cart-connected {
 				  font-weight: 200;
 				  font-size: 9px;
 				  padding-top: 20px;
@@ -666,9 +470,7 @@ body {
 				  letter-spacing: 1px;
 				  width: 120px;
 				}	  
-			#blue-orange-added, #beach-houses-added, 
-			#colour-glass-added, #layers-added, 
-			#succint-drop-added, #paint-rain-added {
+			 #succint-drop-added {
 				  font-weight: 200;
 				  font-size: 9px;
 				  padding-top: 20px;
@@ -702,10 +504,11 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  	
-			#profileline {
+	  
+	  #succinct-drop {
+		    width: 300px;
+		  }  
+			#line {
 			  width: 300px;
 			}		
-		  #container {
-		    width: 440px;
-		  }  
 }

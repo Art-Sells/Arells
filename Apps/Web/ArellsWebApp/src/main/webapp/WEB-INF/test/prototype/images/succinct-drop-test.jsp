@@ -161,13 +161,18 @@
 		<hr id="connected-line">
 	</div>
 
-  	<div id="succint-drop">
-  		<a href="/ethereum" target="_self" id="photo-link">
-  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
-  		</a>
-      	<h3 id="name">Succinct Drop</h3>  		
-     	<p>Created By: Abstract Kadabra</p>
-     	<p>Owned By: Abstract Kadabra</p>
+  	<div id="succinct-drop">
+      	<h3 id="name">Succinct Drop</h3>    	
+  		<img id="photo" src="/icons&images/prototype/5.jpg"/>		
+     	<p id="created-by">Created By: 
+     		<a href="/prototype-seller-created-test">Abstract Kadabra</a>
+     	</p>
+     	<p id="owned-by-creator" style="display: block;">Owned By: 
+     		<a href="/prototype-seller-created-test">Abstract Kadabra</a>
+     	</p>
+     	<p id="owned-by-buyer" style="display: none;">Owned By: 
+     		<a href="/prototype-seller-created-test">0x71C7656E...</a>
+     	</p>
 		<button id="copy-link"
 		onClick="copyLink()">
 		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
