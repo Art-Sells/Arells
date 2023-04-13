@@ -52,6 +52,7 @@
 
 #### Image
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
+- Created & Owned By (Character Limit Links)
 
 #### Wallet:
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
