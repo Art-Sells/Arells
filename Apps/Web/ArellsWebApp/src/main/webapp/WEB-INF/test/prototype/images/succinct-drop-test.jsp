@@ -162,8 +162,10 @@
 	</div>
 
   	<div id="succinct-drop">
-      	<h3 id="name">Succinct Drop</h3>    	
-  		<img id="photo" src="/icons&images/prototype/5.jpg"/>		
+  	    <h3 id="name">Succinct Drop</h3>  
+  		<a href="/ethereum" target="_self" id="photo-link">
+  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
+  		</a>		
      	<p id="created-by">Created By: 
      		<a href="/prototype-seller-created-test">Abstract Kadabra</a>
      	</p>
