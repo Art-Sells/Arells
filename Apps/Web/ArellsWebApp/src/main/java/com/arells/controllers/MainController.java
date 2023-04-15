@@ -45,11 +45,31 @@ public class MainController {
 	 "test/prototype/buyer-collected-test.jsp"; }
 	 
 	 
+	 
+	 //Images Test
+	 @GetMapping("/prototype-blue-orange-test") public String prototypeBlueOrangeTest() { return
+	 "test/prototype/images/blue-orange-created-test.jsp"; }
+	 
+	 @GetMapping("/prototype-beach-houses-test") public String prototypeBeachHousesTest() { return
+	 "test/prototype/images/beach-houses-test.jsp"; }
+	 
+	 @GetMapping("/prototype-colour-glass-test") public String prototypeColourGlassTest() { return
+	 "test/prototype/images/colour-glass-test.jsp"; }
+	 
+	 @GetMapping("/prototype-layers-test") public String prototypeLayersTest() { return
+	 "test/prototype/images/layers-test.jsp"; }	 
+	 
+	 @GetMapping("/prototype-succinct-drop-test") public String prototypeSuccinctDropTest() { return
+	 "test/prototype/images/succinct-drop-test.jsp"; }
+	 
+	 @GetMapping("/prototype-paint-rain-test") public String prototypePaintRainTest() { return
+	 "test/prototype/images/paint-rain-test.jsp"; }	
+	 
+	 
+	 
+	 
 	 // Cart Test
 	 @GetMapping("/prototype-cart-test") public String cartTest() { return
 	 "test/prototype/cart/cart-test.jsp"; }
 	 
-	 // Images Test
-	 @GetMapping("/prototype-succinct-drop-test") public String succinctDropTest() { return
-	 "test/prototype/images/succinct-drop-test.jsp"; }
 }
