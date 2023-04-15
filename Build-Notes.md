@@ -36,7 +36,9 @@
  5. Message to seller: "Your Art xxxx has been bought by xxxx for xxxx"
  6. If/Then messages corresponding to above messages. 
 
- #### MetaData Search Info (Google, etc): Use GPT4
+#### MetaData Search Info (Google, etc): Use GPT4
+ 
+#### LinkTree Links.
                                                 
 ## Fully integrated App
 
