@@ -89,8 +89,8 @@
 		
 		document.getElementById('cart-link-connected').style.display = "inline-block";
 		
-		document.getElementById('succint-drop-add-to-cart').style.display = "none";
-		document.getElementById('succint-drop-add-to-cart-connected').style.display = "block";
+		document.getElementById('succinct-drop-add-to-cart').style.display = "none";
+		document.getElementById('succinct-drop-add-to-cart-connected').style.display = "block";
 
 	 
 	}	
@@ -99,9 +99,9 @@
 
 <!--  Add To Cart script below-->
 
-	function addSuccintDropToCart() {
-		document.getElementById('succint-drop-add-to-cart-connected').style.display = "none";
-		document.getElementById('succint-drop-added').style.display = "block";
+	function addSuccinctDropToCart() {
+		document.getElementById('succinct-drop-add-to-cart-connected').style.display = "none";
+		document.getElementById('succinct-drop-added').style.display = "block";
 		  
 	}
 	
@@ -187,29 +187,29 @@
      		</a>
      	</div>
      	<hr id="line">
-		<div id="succint-drop-prices-before" style="display: block;">
+		<div id="succinct-drop-prices-before" style="display: block;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="price2">$5,000</p>
+	  		<p id="PAP-succinct-drop">$5,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price">$100</p>
+	     	<p id="price-succinct-drop">$100</p>
      	</div>
-     	<div id="succint-drop-prices-after" style="display: none;">
+     	<div id="succinct-drop-prices-after" style="display: none;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="price2">$250,000</p>
+	  		<p id="PAP-succinct-drop">$250,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price">$5,000</p>
+	     	<p id="price-succinct-droo">$5,000</p>
      	</div>
-    	<button id="succint-drop-add-to-cart" onClick="connectWallet()"
+    	<button id="succinct-drop-add-to-cart" onClick="connectWallet()"
     		style="display: block;">
     		ADD TO CART</button>
-    	<button id="succint-drop-add-to-cart-connected" onClick="addSuccintDropToCart()"
+    	<button id="succinct-drop-add-to-cart-connected" onClick="addSuccinctDropToCart()"
     		style="display: none;">
     		ADD TO CART</button>
-    	<button id="succint-drop-added" style="display: none;">
+    	<button id="succinct-drop-added" style="display: none;">
     		ADDED</button>	
-    	<button id="succint-drop-collected" style="display: none;">
+    	<button id="succinct-drop-collected" style="display: none;">
     		COLLECTED</button>				     	
     </div>
 

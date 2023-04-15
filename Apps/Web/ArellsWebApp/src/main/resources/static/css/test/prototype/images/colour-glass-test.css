@@ -269,7 +269,8 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}
-		#price2 {
+		#PAP-colour-glass-before,
+		#PAP-colour-glass-after {
 		margin-top: -7px;
 		text-align: center;
 			color: black;
@@ -298,7 +299,8 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}
-		#price {
+		#price-colour-glass-before,
+		#price-colour-glass-after {
 		margin-top: -10px;
 		text-align: center;
 			color: black;
@@ -546,7 +548,8 @@ body {
 		margin-top: 15px;
 			font-size: 12px;
 		}
-		#price2 {
+		#PAP-colour-glass-before,
+		#PAP-colour-glass-after {
 		margin-top: -8px;
 			font-size: 13px;
 		}
@@ -557,7 +560,8 @@ body {
 		margin-top: 20px;
 			font-size: 13px;
 		}
-		#price {
+		#price-colour-glass-before,
+		#price-colour-glass-after {
 		margin-top: -10px;
 			font-size: 15px;
 			margin-bottom: 20px;	

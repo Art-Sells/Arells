@@ -285,7 +285,7 @@ body {
 		}
 			
 			#blue-orange, #beach-houses, #colour-glass,
-			#layers, #succint-drop, #paint-rain{
+			#layers, #succinct-drop, #paint-rain{
 				margin-left: auto;
 			    margin-right: auto;
 			    margin-bottom: 10px;
@@ -344,7 +344,8 @@ body {
 					padding-left: 0px;
 					opacity: .4;
 				}
-				#price2 {
+				#PAP-blue-orange-after, #PAP-beach-houses-after, #PAP-colour-glass-after,
+				#PAP-layers-after, #PAP-succinct-drop-after, #PAP-paint-rain-after {
 				margin-top: -7px;
 					color: black;
 					font-weight: 300;
@@ -371,7 +372,8 @@ body {
 					padding-left: 0px;
 					opacity: .4;
 				}
-				#price {
+				#price-blue-orange-after, #price-beach-houses-after, #price-colour-glass-after,
+				#price-layers-after, #price-succinct-drop-after, #price-paint-rain-after {
 				margin-top: -10px;
 					color: black;
 					font-weight: 300;
@@ -550,7 +552,7 @@ body {
 		}
 			
 			#blue-orange, #beach-houses, #colour-glass,
-			#layers, #succint-drop, #paint-rain{
+			#layers, #succinct-drop, #paint-rain{
 				margin-left: auto;
 			    margin-right: auto;
 			    margin-bottom: 10px;
@@ -585,7 +587,8 @@ body {
 				margin-top: 20px;
 				font-size: 12px;
 			}
-			#price2 {
+			#PAP-blue-orange-after, #PAP-beach-houses-after, #PAP-colour-glass-after,
+			#PAP-layers-after, #PAP-succinct-drop-after, #PAP-paint-rain-after {
 				margin-top: -8px;
 				font-size: 12px;
 			}
@@ -596,7 +599,8 @@ body {
 				margin-top: 10px;
 				font-size: 13px;
 			}
-			#price {
+			#price-blue-orange-after, #price-beach-houses-after, #price-colour-glass-after,
+			#price-layers-after, #price-succinct-drop-after, #price-paint-rain-after {
 				margin-top: -10px;
 				font-size: 13px;
 				margin-bottom: 20px;	
@@ -631,7 +635,7 @@ body {
 		    width: 440px;
 		  }  
 		  	#blue-orange, #beach-houses, #colour-glass,
-			#layers, #succint-drop, #paint-rain{
+			#layers, #succinct-drop, #paint-rain{
 				width: 300px;
 			     
 			}

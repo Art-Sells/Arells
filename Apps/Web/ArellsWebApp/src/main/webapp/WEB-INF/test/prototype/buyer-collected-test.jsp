@@ -168,75 +168,81 @@
 	</div>
 	<div id="container">
 		  	<div id="blue-orange" style="display: flex;">
-		  		<a href="/ethereum" target="_self" id="photo-link">
+		  	<!-- Change below link after test -->
+		  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
 		  		</a>
-		  		<div id="prices">
+		  		<div id="blue-orange-prices-after">
 			  		<p id="PAP">Price After Purchase</p>
-			  		<p id="price2">$3,000,000</p>
+			  		<p id="PAP-blue-orange-after">$3,000,000</p>
 			  		<hr id="priceline">
 			  		<p id="yourprice">Price</p>
-			     	<p id="price">$60,000</p>
+			     	<p id="price-blue-orange-after">$60,000</p>
 		  		</div>			  		
 		    </div>
 		  	<div id="beach-houses" style="display: flex;">
-		  		<a href="/ethereum" target="_self" id="photo-link">
+		  	<!-- Change below link after test -->
+		  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
 		  		</a>
-		  		<div id="prices">
+		  		<div id="beach-houses-prices-after">
 			  		<p id="PAP">Price After Purchase</p>
-			  		<p id="price2">$500,000</p>
+			  		<p id="PAP-beach-houses-after">$500,000</p>
 			  		<hr id="priceline">
 			  		<p id="yourprice">Price</p>
-			     	<p id="price">$10,000</p>
+			     	<p id="price-beach-houses-after">$10,000</p>
 		     	</div>	     	
 		    </div>
 		     <div id="colour-glass" style="display: flex;">
-		  		<a href="/ethereum" target="_self" id="photo-link">
+		     <!-- Change below link after test -->
+		  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
 		  		</a>
-		  		<div id="prices">
+		  		<div id="colour-glass-prices-before">
 			  		<p id="PAP">Price After Purchase</p>
-			  		<p id="price2">$36,250,000</p>
+			  		<p id="PAP-colour-glass-after">$36,250,000</p>
 			  		<hr id="priceline">
 			  		<p id="yourprice">Price</p>
-			     	<p id="price">$725,000</p>
-		     	</div>	     	
+			     	<p id="price-colour-glass-after">$725,000</p>
+		     	</div>     	
 		    </div>
 		  	<div id="layers" style="display: flex;">
-		  		<a href="/ethereum" target="_self" id="photo-link">
+		  	<!-- Change below link after test -->
+		  		<a href="/prototype-layers-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
 		  		</a>
-		  		<div id="prices">
+		  		<div id="layers-prices-after">
 			  		<p id="PAP">Price After Purchase</p>
-			  		<p id="price2">$1,000,000,000</p>
+			  		<p id="PAP-layers-after">$1,000,000,000</p>
 			  		<hr id="priceline">
 			  		<p id="yourprice">Price</p>
-			     	<p id="price">$20,000,000</p>
+			     	<p id="price-layers-after">$20,000,000</p>
 		     	</div>
 		    </div>
-		  	<div id="succint-drop" style="display:flex;">
-		  		<a href="/ethereum" target="_self" id="photo-link">
+		  	<div id="succinct-drop" style="display:flex;">
+		  	<!-- Change below link after test -->
+		  		<a href="/prototype-succinct-drop-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
 		  		</a>
-		  		<div id="prices">
+		  		<div id="succinct-drop-prices-after">
 			  		<p id="PAP">Price After Purchase</p>
-			  		<p id="price2">$250,000</p>
+			  		<p id="PAP-succinct-drop">$250,000</p>
 			  		<hr id="priceline">
 			  		<p id="yourprice">Price</p>
-			     	<p id="price">$5,000</p>
+			     	<p id="price-succinct-droo">$5,000</p>
 		     	</div>		     	
 		    </div>
 		     <div id="paint-rain" style="display: flex;">
-		  		<a href="/ethereum" target="_self" id="photo-link">
+		     <!-- Change below link after test -->
+		  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
 		  		</a>
-		  		<div id="prices">
+		  		<div id="paint-rain-prices-after">
 			  		<p id="PAP">Price After Purchase</p>
-			  		<p id="price2">$30,000,000</p>
+			  		<p id="PAP-paint-rain-after">$30,000,000</p>
 			  		<hr id="priceline">
 			  		<p id="yourprice">Price</p>
-			     	<p id="price">$600,000</p>
+			     	<p id="price-paint-rain-after">$600,000</p>
 		     	</div>	     	
 		    </div>
 	</div>	

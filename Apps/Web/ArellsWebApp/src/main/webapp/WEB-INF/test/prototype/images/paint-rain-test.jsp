@@ -187,24 +187,24 @@
      		</a>
      	</div>
      	<hr id="line">
-		<div id="blue-orange-prices-before" style="display: block;">
+		<div id="paint-rain-prices-before" style="display: block;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="price2">$5,000</p>
+	  		<p id="PAP-paint-rain-before">$600,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price">$100</p>
+	     	<p id="price-paint-rain-before">$12,000</p>
      	</div>
-     	<div id="blue-orange-prices-after" style="display: none;">
+     	<div id="paint-rain-prices-after" style="display: none;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="price2">$250,000</p>
+	  		<p id="PAP-paint-rain-after">$30,000,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price">$5,000</p>
+	     	<p id="price-paint-rain-after">$600,000</p>
      	</div>
     	<button id="paint-rain-add-to-cart" onClick="connectWallet()"
     		style="display: block;">
     		ADD TO CART</button>
-    	<button id="paint-rain-add-to-cart-connected" onClick="addLayersToCart()"
+    	<button id="paint-rain-add-to-cart-connected" onClick="addPaintRainToCart()"
     		style="display: none;">
     		ADD TO CART</button>
     	<button id="paint-rain-added" style="display: none;">

@@ -189,17 +189,17 @@
      	<hr id="line">
 		<div id="beach-houses-prices-before" style="display: block;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="price2">$5,000</p>
+	  		<p id="PAP-beach-houses-before">$10,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price">$100</p>
+	     	<p id="price-beach-houses-before">$200</p>
      	</div>
      	<div id="beach-houses-prices-after" style="display: none;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="price2">$250,000</p>
+	  		<p id="PAP-beach-houses-after">$500,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price">$5,000</p>
+	     	<p id="price-beach-houses-after">$10,000</p>
      	</div>
     	<button id="beach-houses-add-to-cart" onClick="connectWallet()"
     		style="display: block;">

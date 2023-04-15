@@ -187,19 +187,19 @@
      		</a>
      	</div>
      	<hr id="line">
-		<div id="blue-orange-prices-before" style="display: block;">
+  		<div id="colour-glass-prices-before" style="display: block;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="price2">$5,000</p>
+	  		<p id="PAP-colour-glass-before">$725,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price">$100</p>
+	     	<p id="price-colour-class-before">$14,500</p>
      	</div>
-     	<div id="blue-orange-prices-after" style="display: none;">
+     	<div id="colour-glass-prices-before" style="display: none;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="price2">$250,000</p>
+	  		<p id="PAP-colour-glass-after">$36,250,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price">$5,000</p>
+	     	<p id="price-colour-glass-after">$725,000</p>
      	</div>
     	<button id="colour-glass-add-to-cart" onClick="connectWallet()"
     		style="display: block;">
