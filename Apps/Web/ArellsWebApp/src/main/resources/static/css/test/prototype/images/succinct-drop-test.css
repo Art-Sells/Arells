@@ -164,8 +164,8 @@ body {
 			object-fit: cover;
 			width: 400px;
 			height: 400px;
-  			border-radius: 10px;
-  			box-shadow: 0px 8px 12px -6px black; 		
+  			border-radius: 0px;
+  			box-shadow: 0px 8px 12px -6px white; 		
 		}
 				#photo-link:hover {
 				  opacity: .5;
@@ -184,10 +184,10 @@ body {
 		  font-weight: 800;
 		  opacity: 1;
 		  color: black;	
-		  margin-top: 20px;
+		  margin-top: 25px;
 		  letter-spacing: -1px;	  
 		  margin-left: -1px;
-		  margin-bottom: 20px;
+		  margin-bottom: 25px;
 		}
 		#copy-link {
 		  text-decoration: none;
@@ -206,6 +206,7 @@ body {
 		  opacity: 1;
 		  box-shadow: 0px 8px 12px -6px black;  
 			background: black;
+			margin-bottom: 15px;
 		}	  
 		#copy-link:hover,
 		#copy-link:focus {
@@ -216,42 +217,50 @@ body {
 			#copy-link-icon{
 				width: 15px;
 				margin-right: 5px;
-			}		
-		#line {
-		  margin-top: 25px;
-		  background-color: black;
-		  border: none;
-		  height: 4px;
-		  border-radius: 30px;
-		  width: 60%;
-		  opacity: .1;
-		}			
+			}				
 		
 		#creator-owner-desc {
 		margin-top: 15px;
 		text-align: center;
 			color: black;
 			font-weight: 300;
-			font-size: 15px;
+			font-size: 12px;
 			letter-spacing: 0px;
 			padding-left: 0px;
 			opacity: .4;
+			margin-bottom: 0px;
 		}
 		#creator-owner-link {
-		margin-top: -10px;
 		text-align: center;
-			color: blue;
+			color: #4d85cf;
 			font-weight: 300;
-			font-size: 20px;
+			font-size: 15px;
 			letter-spacing: 0px;
 			padding-left: 0px;
-			opacity: .7;
-			margin-bottom: 28px;
+			opacity: .8;
 			text-decoration: none;
 		}
+			#creator-owner-desc:hover,
+			#creator-owner-link:hover,
+			#creator-owner-desc:focus,
+			#creator-owner-link:focus {
+				  opacity: .4;
+				  transition: 1s;
+				  cursor: pointer;
+			}
+			
+		#line {
+		  margin-top: 30px;
+		  background-color: black;
+		  border: none;
+		  height: 4px;
+		  border-radius: 30px;
+		  width: 60%;
+		  opacity: .1;
+		}					
 				
 		#PAP {
-		margin-top: 30px;
+		margin-top: 15px;
 		text-align: center;
 			color: black;
 			font-weight: 300;
@@ -280,7 +289,7 @@ body {
 		  opacity: .1;
 		}	
 		#yourprice {
-		margin-top: 15px;
+		margin-top: 30px;
 		text-align: center;
 			color: black;
 			font-weight: 300;
@@ -441,66 +450,7 @@ body {
 				font-size: 8px;
 				letter-spacing: 0px;
 				margin-left: 0px; 
-			}
-		#copy-link {
-		  font-size: 8px;
-		  padding-top: 15px;
-		  padding-bottom: 15px;
-		  padding-right: 15px;
-		  padding-left: 15px;	  
-		  border: none;
-		  width: 120px;
-		  letter-spacing: 2px;
-		}	  	
-			#copy-link-icon {
-				width: 12px;
-			}
-		#line {
-		 margin-top: 20px;
-		}			
-		#PAP {
-		margin-top: 20px;
-			font-size: 12px;
-		}
-		#price2 {
-		margin-top: -8px;
-			font-size: 13px;
-		}
-		#priceline {
-		  margin-top: -2px;
-		}	
-		#yourprice {
-		margin-top: 10px;
-			font-size: 13px;
-		}
-		#price {
-		margin-top: -10px;
-			font-size: 15px;
-			margin-bottom: 20px;	
-		}			
-		#succint-drop-add-to-cart, 
-		#succint-drop-add-to-cart-connected {
-			  font-weight: 200;
-			  font-size: 9px;
-			  padding-top: 20px;
-			  padding-bottom: 20px;
-			  padding-right: 12px;
-			  padding-left: 15px;	  
-			  border: none;
-			  letter-spacing: 1px;
-			  width: 120px;
-			}	  
-		 #succint-drop-added {
-			  font-weight: 200;
-			  font-size: 9px;
-			  padding-top: 20px;
-			  padding-bottom: 20px;
-			  padding-right: 12px;
-			  padding-left: 15px;	  
-			  border: none;
-			  letter-spacing: 1px;
-			  width: 120px;
-			}						  
+			}					  
 }					
 	
 	
@@ -532,7 +482,88 @@ body {
 		  	width: 300px;
 		  	height: 300px;
 		  }
-			#line {
-			  width: 300px;
-			}		
+		#name {
+		  font-size: 13pt;
+		  font-weight: 800;
+		  margin-top: 20px;
+		  letter-spacing: -1px;	  
+		  margin-left: -1px;
+		  margin-bottom: 20px;
+		}		
+		#copy-link {
+		  font-size: 8px;
+		  padding-top: 15px;
+		  padding-bottom: 15px;
+		  padding-right: 15px;
+		  padding-left: 15px;	  
+		  border: none;
+		  width: 120px;
+		  letter-spacing: 2px;
+		  margin-bottom: 10px;
+		}	  	
+			#copy-link-icon {
+				width: 12px;
+			}
+		#creator-owner-desc {
+		margin-top: 15px;
+			font-weight: 300;
+			font-size: 12px;
+			letter-spacing: 0px;
+			padding-left: 0px;
+			margin-bottom: 0px;
+		}
+		#creator-owner-link {
+		text-align: center;
+			font-weight: 300;
+			font-size: 13px;
+			letter-spacing: 0px;
+			padding-left: 0px;
+
+		}			
+		#line {
+		 margin-top: 20px;
+		}			
+		#PAP {
+		margin-top: 15px;
+			font-size: 12px;
+		}
+		#price2 {
+		margin-top: -8px;
+			font-size: 13px;
+		}
+		#priceline {
+		  margin-top: 0px;
+		}	
+		#yourprice {
+		margin-top: 20px;
+			font-size: 13px;
+		}
+		#price {
+		margin-top: -10px;
+			font-size: 15px;
+			margin-bottom: 20px;	
+		}			
+		#succint-drop-add-to-cart, 
+		#succint-drop-add-to-cart-connected {
+			  font-weight: 200;
+			  font-size: 9px;
+			  padding-top: 20px;
+			  padding-bottom: 20px;
+			  padding-right: 12px;
+			  padding-left: 15px;	  
+			  border: none;
+			  letter-spacing: 1px;
+			  width: 120px;
+			}	  
+		 #succint-drop-added {
+			  font-weight: 200;
+			  font-size: 9px;
+			  padding-top: 20px;
+			  padding-bottom: 20px;
+			  padding-right: 12px;
+			  padding-left: 15px;	  
+			  border: none;
+			  letter-spacing: 1px;
+			  width: 120px;
+			}						
 }
