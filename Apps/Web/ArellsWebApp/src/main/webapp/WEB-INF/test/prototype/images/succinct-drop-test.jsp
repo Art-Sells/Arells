@@ -162,23 +162,33 @@
 	</div>
 
   	<div id="succinct-drop">
-  	    <h3 id="name">Succinct Drop</h3>  
   		<a href="/ethereum" target="_self" id="photo-link">
   			<img id="photo" src="/icons&images/prototype/5.jpg"/>
-  		</a>		
-     	<p id="created-by">Created By: 
-     		<a href="/prototype-seller-created-test">Abstract Kadabra</a>
-     	</p>
-     	<p id="owned-by-creator" style="display: block;">Owned By: 
-     		<a href="/prototype-seller-created-test">Abstract Kadabra</a>
-     	</p>
-     	<p id="owned-by-buyer" style="display: none;">Owned By: 
-     		<a href="/prototype-seller-created-test">0x71C7656E...</a>
-     	</p>
-		<button id="copy-link"
+  		</a>	
+  		<h3 id="name">Succinct Drop</h3> 
+  		<button id="copy-link"
 		onClick="copyLink()">
-		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
-		COPY LINK</button>	
+			<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+			COPY LINK
+		</button>	
+		<hr id="line"> 	
+     	<div id="created-by">
+     		<p id="creator-owner-desc">Created By</p>
+     		<a id="creator-ownner-link"href="/prototype-seller-created-test">
+     			Abstract Kadabra
+     		</a>
+     	</div>
+     	<div id="owned-by-creator" style="display: block;">
+     		<p id="creator-owner-desc">Owned By</p> 
+     		<a id="creator-ownner-link" href="/prototype-seller-created-test">
+     			Abstract Kadabra</a>
+     	</div>
+     	<div id="owned-by-buyer" style="display: none;">
+     		<p id="creator-owner-desc">Owned By</p> 
+     		<a id="creator-ownner-link" href="/prototype-seller-created-test">
+     			0x71C7656E...
+     		</a>
+     	</div>
 		<div id="succint-drop-prices-before" style="display: block;">
 	  		<p id="PAP">Price After Purchase</p>
 	  		<p id="price2">$5,000</p>
