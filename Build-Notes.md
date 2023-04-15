@@ -18,8 +18,6 @@
 - Minting [+] allows cropping for preview <Also for Profile Picture Upload
 
 #### Image (listed as an asset/blockchainaddress)
-- Expand Button next to image for full review.
-- Edit Button next to image for preview (JPEGs as high res as possible)
 - Proof-of-Creation
 - Proof-of-Ownership
 
