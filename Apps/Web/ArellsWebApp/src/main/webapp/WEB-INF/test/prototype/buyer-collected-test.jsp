@@ -94,6 +94,13 @@
 			 
 }	
 <!-- Connect Wallet script above-->
+
+
+<!-- Add To Cart scrips below -->	
+
+//Ensure that Image displays show as FLEX after adding, collected-items: block
+
+<!-- Add To Cart scrips above -->
 			
 		
 		</script>	
@@ -166,8 +173,12 @@
 		<a id="created" href="/prototype-buyer-created-test">Created</a>		
 		<a id="collected">Collected</a>	
 	</div>
-	<div id="container">
-		  	<div id="blue-orange" style="display: flex;">
+	<p id="no-art" style="display: block;">
+		no art collected
+		<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+	</p>
+	<div id="collected-items" style="display: none;">
+		  	<div id="blue-orange" style="display: none;">
 		  	<!-- Change below link after test -->
 		  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
@@ -182,7 +193,7 @@
 			  		</div>			  		
 		  		</div>		  		
 		    </div>
-		  	<div id="beach-houses" style="display: flex;">
+		  	<div id="beach-houses" style="display: none;">
 		  	<!-- Change below link after test -->
 		  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
@@ -197,7 +208,7 @@
 			     	</div>			  		
 		  		</div>     	
 		    </div>
-		     <div id="colour-glass" style="display: flex;">
+		     <div id="colour-glass" style="display: none;">
 		     <!-- Change below link after test -->
 		  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
@@ -212,7 +223,7 @@
 			     	</div>  		  		
 		  		</div>   	
 		    </div>
-		  	<div id="layers" style="display: flex;">
+		  	<div id="layers" style="display: none;">
 		  	<!-- Change below link after test -->
 		  		<a href="/prototype-layers-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
@@ -227,7 +238,7 @@
 			     	</div>		  		
 		  		</div>
 		    </div>
-		  	<div id="succinct-drop" style="display:flex;">
+		  	<div id="succinct-drop" style="display:none;">
 		  	<!-- Change below link after test -->
 		  		<a href="/prototype-succinct-drop-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
@@ -242,7 +253,7 @@
 			     	</div>				  		
 		  		</div>     	
 		    </div>
-		     <div id="paint-rain" style="display: flex;">
+		     <div id="paint-rain" style="display: none;">
 		     <!-- Change below link after test -->
 		  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link">
 		  			<img id="photo" src="/icons&images/prototype/6.jpg"/>

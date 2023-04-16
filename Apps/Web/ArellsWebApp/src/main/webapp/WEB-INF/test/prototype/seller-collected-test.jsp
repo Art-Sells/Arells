@@ -164,9 +164,9 @@
 		<a id="created" href="/prototype-seller-created-test">Created</a>	
 		<a id="collected">Collected</a>	
 	</div>
-		<p id="no-art">
-			no art collected
-			<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
-		</p>
+	<p id="no-art">
+		no art collected
+		<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+	</p>
 </body>
 </html>

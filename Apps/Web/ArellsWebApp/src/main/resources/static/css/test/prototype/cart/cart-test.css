@@ -107,7 +107,7 @@ body {
 				opacity: 1;
 			}	
 				
-		#totalprice {
+		#total {
 			text-align: center;
 			color: black;
 			font-weight: 300;
@@ -116,7 +116,7 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}	
-		#totalprice-price {
+		#total-price {
 		margin-top: -10px;
 		text-align: center;
 			color: black;
@@ -127,7 +127,7 @@ body {
 			opacity: .7;
 			margin-bottom: 30px;
 		}								
-		#checkout {
+		#purchase {
 		  text-decoration: none;
 		  color: white;
 		  font-weight: 200;
@@ -144,8 +144,8 @@ body {
 		  box-shadow: 0px 8px 12px -6px black;  
 			background: black;
 		}	  
-		#checkout:hover,
-		#checkout:focus {
+		#purchase:hover,
+		#purchase:focus {
 			  opacity: .4;
 			  transition: 1s;
 			  cursor: pointer;
@@ -405,15 +405,15 @@ body {
 				letter-spacing: 0px;
 				margin-left: 0px; 
 			}
-		#totalprice{
+		#total{
 			font-size: 13px;
 		}  
-		#totalprice-price {
+		#total-price {
 			margin-top: -10px;
 			font-size: 15px;
 			margin-bottom: 20px;
 		}	
-		#checkout {
+		#purchase {
 			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;

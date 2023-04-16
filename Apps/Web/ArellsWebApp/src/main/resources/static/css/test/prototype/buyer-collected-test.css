@@ -276,113 +276,131 @@ body {
 				
 		
 
-		#container {
-			margin-top: 35px;
-			  width: 900px;
-			  margin-left: auto;
-			  margin-right: auto;
-			  margin-bottom: 60px;		
-		}
-			
-			#blue-orange, #beach-houses, #colour-glass,
-			#layers, #succinct-drop, #paint-rain{
-				margin-left: auto;
-			    margin-right: auto;
-			    margin-bottom: 10px;
-			    align-items: center;
-				border-radius: 15px;
-				overflow: hidden;
-				box-shadow: 0px 5px 20px -6px silver; 
-				width: 450px;
-				height: 160px;
-				padding-top: 30px;
-				padding-left: 40px;
-				padding-right: 40px;
-				padding-bottom: 30px;			
-				text-decoration: none;
-				background: white;
-			     
-			}
-			
-			#photo-link {
-				display: inline-block;
-				text-decoration: none; 
-			}
-				#photo {
-					object-fit: cover;
-					width: 150px;
-					height: 150px;
-		  			border-radius: 10px;		
-		  			box-shadow: 0px 8px 12px -6px black; 
-				}
+	#collected-items {
+		margin-top: 35px;
+		  width: 900px;
+		  margin-left: auto;
+		  margin-right: auto;
+		  margin-bottom: 60px;		
+	}
 		
-				#photo-link:hover {
-				  opacity: .5;
-				  transition: 1s;
-				  box-shadow: none;
-				  cursor: pointer;
-				}
-				#photo-link:focus {
-				  opacity: .5;
-				  box-shadow: none;
-				  cursor: pointer;
-			}		
-			#prices {
-				display: inline-block;
-				margin-left: 20px;
-				margin-right: 20px;
-				text-align: left;
+		#blue-orange, #beach-houses, #colour-glass,
+		#layers, #succinct-drop, #paint-rain{
+			margin-left: auto;
+		    margin-right: auto;
+		    margin-bottom: 10px;
+		    align-items: center;
+			border-radius: 15px;
+			overflow: hidden;
+			box-shadow: 0px 5px 20px -6px silver; 
+			width: 450px;
+			height: 160px;
+			padding-top: 30px;
+			padding-left: 40px;
+			padding-right: 40px;
+			padding-bottom: 30px;			
+			text-decoration: none;
+			background: white;
+		     
+		}
+		
+		#photo-link {
+			display: inline-block;
+			text-decoration: none; 
+		}
+			#photo {
+				object-fit: cover;
+				width: 150px;
+				height: 150px;
+	  			border-radius: 10px;		
+	  			box-shadow: 0px 8px 12px -6px black; 
+			}
+	
+			#photo-link:hover {
+			  opacity: .5;
+			  transition: 1s;
+			  box-shadow: none;
+			  cursor: pointer;
+			}
+			#photo-link:focus {
+			  opacity: .5;
+			  box-shadow: none;
+			  cursor: pointer;
+		}		
+		#prices {
+			display: inline-block;
+			margin-left: 20px;
+			margin-right: 20px;
+			text-align: left;
+		}	
+		
+			#PAP {
+			width: 70px;
+			margin-top: 30px;
+				color: black;
+				font-weight: 300;
+				font-size: 12px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+			}
+			#PAP-blue-orange-after, #PAP-beach-houses-after, #PAP-colour-glass-after,
+			#PAP-layers-after, #PAP-succinct-drop-after, #PAP-paint-rain-after {
+			margin-top: -7px;
+				color: black;
+				font-weight: 300;
+				font-size: 17px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .5;
+			}
+			#priceline {
+			  margin-top: -5px;
+			  background-color: black;
+			  border: none;
+			  height: 4px;
+			  border-radius: 30px;
+			  width: 400px;
+			  opacity: .04;
 			}	
+			#yourprice {
+			margin-top: 13px;
+				color: black;
+				font-weight: 300;
+				font-size: 15px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+			}
+			#price-blue-orange-after, #price-beach-houses-after, #price-colour-glass-after,
+			#price-layers-after, #price-succinct-drop-after, #price-paint-rain-after {
+			margin-top: -10px;
+				color: black;
+				font-weight: 300;
+				font-size: 20px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .7;
+				margin-bottom: 28px;
+			}
 			
-				#PAP {
-				width: 70px;
-				margin-top: 30px;
-					color: black;
-					font-weight: 300;
-					font-size: 12px;
-					letter-spacing: 0px;
-					padding-left: 0px;
-					opacity: .4;
-				}
-				#PAP-blue-orange-after, #PAP-beach-houses-after, #PAP-colour-glass-after,
-				#PAP-layers-after, #PAP-succinct-drop-after, #PAP-paint-rain-after {
-				margin-top: -7px;
-					color: black;
-					font-weight: 300;
-					font-size: 17px;
-					letter-spacing: 0px;
-					padding-left: 0px;
-					opacity: .5;
-				}
-				#priceline {
-				  margin-top: -5px;
-				  background-color: black;
-				  border: none;
-				  height: 4px;
-				  border-radius: 30px;
-				  width: 400px;
-				  opacity: .04;
-				}	
-				#yourprice {
-				margin-top: 13px;
-					color: black;
-					font-weight: 300;
-					font-size: 15px;
-					letter-spacing: 0px;
-					padding-left: 0px;
-					opacity: .4;
-				}
-				#price-blue-orange-after, #price-beach-houses-after, #price-colour-glass-after,
-				#price-layers-after, #price-succinct-drop-after, #price-paint-rain-after {
-				margin-top: -10px;
-					color: black;
-					font-weight: 300;
-					font-size: 20px;
-					letter-spacing: 0px;
-					padding-left: 0px;
-					opacity: .7;
-					margin-bottom: 28px;
-				}
+	#no-art{
+		margin-top: 60px;
+		width: 500px;
+		  font-size: 12pt;
+		  font-weight: 800;
+		  opacity: .3;
+		  color: black;	
+		  letter-spacing: 0px;	 
+		  margin-left: 0px; 
+		  margin-right: auto;
+		  margin-left: auto;			
+	}	
+	#cart-icon-collected{
+		height: 25px;
+		margin-left: 10px;
+		opacity: 1;
+	}				
 			
 			
 			
@@ -546,7 +564,7 @@ body {
 			  padding-left: 15.5px;	  
 			  letter-spacing: .5px;
 			}	
-		#container {
+		#collected-items {
 			  width: 660px;
 			  margin-top: 25px;	
 		}
@@ -604,7 +622,16 @@ body {
 				margin-top: -10px;
 				font-size: 13px;
 				margin-bottom: 20px;	
-			}						  
+			}
+			#no-art{
+				margin-top: 50px;
+				width: 300px;
+				font-size: 13px;
+			}	
+			#cart-icon-collected{
+				height: 20px;
+				margin-left: 5px;
+			}									  
 }					
 	
 	
@@ -631,7 +658,7 @@ body {
 			#profileline {
 			  width: 300px;
 			}		
-		  #container {
+		  #collected-items {
 		    width: 440px;
 		  }  
 		  	#blue-orange, #beach-houses, #colour-glass,

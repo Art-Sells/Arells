@@ -45,6 +45,13 @@
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 		<script>
+		
+		
+<!-- Add To Cart scrips below -->	
+
+// Ensure that Image displays show as FLEX after adding, cart-full: block
+
+<!-- Add To Cart scrips above -->
 
 <!-- Remove scripts below-->
 
@@ -157,19 +164,29 @@
 		</p>
 	</div>
 	<div id="cart-full" style="display: block;">
-		<p id="totalprice">Total Price</p>
-	  	<p id="totalprice-price">$20,500</p>
-			<button id="checkout">
-			CHECKOUT</button>	
+		<p id="royalty">Creator Royalty</p>
+		<p id="royalty-price">$
+			<span id="royalty-price-value" style="display:inline">9,700</span>
+        </p>
+		<p id="fee">Fee</p>
+		<p id="fee-price">$
+			<span id="fee-price-value" style="display:inline">300</span>
+        </p>
+		<p id="total">Total Price</p>
+	  	<p id="total-price">$
+			<span id="total-price-value" style="display:inline">10,000</span>
+        </p>
+			<button id="purchase">
+			COMPLETE PURCHASE</button>	
 		<hr id="profileline"> 
 		<div id="container">
-			  	<div id="blue-orange" style="display: flex;">
+			  	<div id="blue-orange" style="display: none;">
 			  	<!-- Change below link after test -->
 			  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
 			  		</a>
 			  		<div id="prices">
-				  		<div id="blue-orange-prices-before" style="display: block;">
+				  		<div id="blue-orange-prices-before">
 					  		<p id="PAP">Price After Purchase</p>
 					  		<p id="PAP-blue-orange-before">$60,000</p>
 					  		<hr id="priceline">
@@ -181,13 +198,13 @@
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>
 			    </div>
-			  	<div id="beach-houses" style="display: flex;">
+			  	<div id="beach-houses" style="display: none;">
 			  	<!-- Change below link after test -->
 			  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
 			  		</a>
 			  		<div id="prices">
-				  		<div id="beach-houses-prices-before" style="display: block;">
+				  		<div id="beach-houses-prices-before">
 					  		<p id="PAP">Price After Purchase</p>
 					  		<p id="PAP-beach-houses-before">$10,000</p>
 					  		<hr id="priceline">
@@ -199,13 +216,13 @@
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>	     	
 			    </div>
-			     <div id="colour-glass" style="display: flex;">
+			     <div id="colour-glass" style="display: none;">
 			     <!-- Change below link after test -->
 			  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
 			  		</a>
 			  		<div id="prices">
-				  		<div id="colour-glass-prices-before" style="display: block;">
+				  		<div id="colour-glass-prices-before">
 					  		<p id="PAP">Price After Purchase</p>
 					  		<p id="PAP-colour-glass-before">$725,000</p>
 					  		<hr id="priceline">
@@ -217,13 +234,13 @@
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>		     	
 			    </div>
-			  	<div id="layers" style="display: flex;">
+			  	<div id="layers" style="display: none;">
 				<!-- Change below link after test -->
 			  		<a href="/prototype-layers-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
 			  		</a>
 			  		<div id="prices">
-				  		<div id="layers-prices-before" style="display: block;">
+				  		<div id="layers-prices-before">
 					  		<p id="PAP">Price After Purchase</p>
 					  		<p id="PAP-layers-before">$20,000,000</p>
 					  		<hr id="priceline">
@@ -235,13 +252,13 @@
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>
 			    </div>
-			  	<div id="succinct-drop" style="display:flex;">
+			  	<div id="succinct-drop" style="display:none;">
 			  	<!-- Change below link after test -->
 		  			<a href="/prototype-succinct-drop-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
 			  		</a>
 			  		<div id="prices">
-					  	<div id="succinct-drop-prices-before" style="display: block;">
+					  	<div id="succinct-drop-prices-before">
 					  		<p id="PAP">Price After Purchase</p>
 					  		<p id="PAP-succinct-drop-before">$5,000</p>
 					  		<hr id="priceline">
@@ -253,13 +270,13 @@
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>			     	
 			    </div>
-			     <div id="paint-rain" style="display: flex;">
+			     <div id="paint-rain" style="display: none;">
 				<!-- Change below link after test -->
 			  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
 			  		</a>
 			  		<div id="prices">
-				  		<div id="paint-rain-prices-before" style="display: block;">
+				  		<div id="paint-rain-prices-before">
 					  		<p id="PAP">Price After Purchase</p>
 					  		<p id="PAP-paint-rain-before">$600,000</p>
 					  		<hr id="priceline">
