@@ -72,7 +72,7 @@ body {
 			margin-left: 124px;
 			  text-decoration: none;
 			  padding-top: 12px;
-			  padding-bottom: 9px;
+			  padding-bottom: 8.5px;
 			  padding-right: 10px;
 			  padding-left: 10px;	  
 			  border: solid;
@@ -280,8 +280,8 @@ body {
 		margin-top: 60px;
 		width: 500px;
 		  font-size: 12pt;
-		  font-weight: 500;
-		  opacity: .4;
+		  font-weight: 800;
+		  opacity: .3;
 		  color: black;	
 		  letter-spacing: 0px;	 
 		  margin-left: 0px; 
@@ -351,7 +351,7 @@ body {
 			#cart-link-connected{
 				margin-left: 96px;
 				  padding-top: 10px;
-				  padding-bottom: 7px;
+				  padding-bottom: 6.5px;
 				  padding-right: 8px;
 				  padding-left: 8px;	
 				  border-radius: 12px;	
