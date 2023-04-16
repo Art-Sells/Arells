@@ -343,7 +343,7 @@ body {
 				opacity: .4;
 			}
 			#PAP-blue-orange-before, #PAP-beach-houses-before, #PAP-colour-glass-before,
-			#PAP-layers-beore, #PAP-succinct-drop-before, #PAP-paint-rain-before,
+			#PAP-layers-before, #PAP-succinct-drop-before, #PAP-paint-rain-before,
 			
 			
 			#PAP-blue-orange-after, #PAP-beach-houses-after, #PAP-colour-glass-after,
@@ -377,7 +377,7 @@ body {
 				opacity: .4;
 			}
 			#price-blue-orange-before, #price-beach-houses-before, #price-colour-glass-before,
-			#price-layers-beore, #price-succinct-drop-before, #price-paint-rain-before,
+			#price-layers-before, #price-succinct-drop-before, #price-paint-rain-before,
 			
 			#price-blue-orange-after, #price-beach-houses-after, #price-colour-glass-after,
 			#price-layers-after, #price-succinct-drop-after, #price-paint-rain-after {
@@ -417,6 +417,28 @@ body {
 				  box-shadow: 0px 8px 12px -6px black;  
 					background: black;
 				}	  
+			#blue-orange-add-to-cart-connected, #beach-houses-add-to-cart-connected, 
+			#colour-glass-add-to-cart-connected, #layers-add-to-cart-connected, 
+			#succinct-drop-add-to-cart-connected, #paint-rain-add-to-cart-connected  {
+				  text-decoration: none;
+				  color: white;
+				  margin-left: auto;
+				  margin-right: auto;
+				  font-weight: 200;
+				  font-size: 11px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 22px;
+				  padding-left: 25px;	  
+				  border: none;
+				  letter-spacing: 3px;
+				  border-radius: 5px;
+				  border-width: 0px;
+				  width: 170px;
+				  opacity: 1;
+				  box-shadow: 0px 8px 12px -6px black;  
+					background: black;
+				}		
 			#blue-orange-add-to-cart:hover, #beach-houses-add-to-cart:hover, 
 			#colour-glass-add-to-cart:hover, #layers-add-to-cart:hover, 
 			#succinct-drop-add-to-cart:hover, #paint-rain-add-to-cart:hover,
@@ -436,7 +458,11 @@ body {
 			}
 			#blue-orange-added, #beach-houses-added, 
 			#colour-glass-added, #layers-added, 
-			#succinct-drop-added, #paint-rain-added {
+			#succinct-drop-added, #paint-rain-added,
+			
+			#blue-orange-collected, #beach-houses-collected, 
+			#colour-glass-collected, #layers-collected, 
+			#succinct-drop-collected, #paint-rain-collected {
 				  text-decoration: none;
 				  margin-left: auto;
 				  margin-right: auto;
@@ -641,16 +667,16 @@ body {
   			border-radius: 10px;		
 		}
 			#PAP {
-			margin-top: 20px;
+				margin-top: 20px;
 				font-size: 12px;
 			}
 			#PAP-blue-orange-before, #PAP-beach-houses-before, #PAP-colour-glass-before,
-			#PAP-layers-beore, #PAP-succinct-drop-before, #PAP-paint-rain-before,
+			#PAP-layers-before, #PAP-succinct-drop-before, #PAP-paint-rain-before,
 			
 			
 			#PAP-blue-orange-after, #PAP-beach-houses-after, #PAP-colour-glass-after,
 			#PAP-layers-after, #PAP-succinct-drop-after, #PAP-paint-rain-after {
-			margin-top: -8px;
+				margin-top: -8px;
 				font-size: 13px;
 			}
 			#priceline {
@@ -662,11 +688,11 @@ body {
 				font-size: 13px;
 			}
 			#price-blue-orange-before, #price-beach-houses-before, #price-colour-glass-before,
-			#price-layers-beore, #price-succinct-drop-before, #price-paint-rain-before,
+			#price-layers-before, #price-succinct-drop-before, #price-paint-rain-before,
 			
 			#price-blue-orange-after, #price-beach-houses-after, #price-colour-glass-after,
 			#price-layers-after, #price-succinct-drop-after, #price-paint-rain-after {
-			margin-top: -10px;
+				margin-top: -10px;
 				font-size: 15px;
 				margin-bottom: 20px;	
 			}			
@@ -689,7 +715,11 @@ body {
 				}	  
 			#blue-orange-added, #beach-houses-added, 
 			#colour-glass-added, #layers-added, 
-			#succinct-drop-added, #paint-rain-added {
+			#succinct-drop-added, #paint-rain-added,
+			
+			#blue-orange-collected, #beach-houses-collected, 
+			#colour-glass-collected, #layers-collected, 
+			#succinct-drop-collected, #paint-rain-collected{
 				  font-weight: 200;
 				  font-size: 9px;
 				  padding-top: 20px;

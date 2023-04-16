@@ -101,7 +101,7 @@
 
 	function addColourGlassToCart() {
 		document.getElementById('colour-glass-add-to-cart-connected').style.display = "none";
-		document.getElementById('colour-glass-add-to-cart').style.display = "block";
+		document.getElementById('colour-glass-added').style.display = "block";
 		  
 	}
 	

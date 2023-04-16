@@ -101,7 +101,7 @@
 
 	function addLayersToCart() {
 		document.getElementById('layers-add-to-cart-connected').style.display = "none";
-		document.getElementById('layers-add-to-cart').style.display = "block";
+		document.getElementById('layers-added').style.display = "block";
 		  
 	}
 	

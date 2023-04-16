@@ -168,13 +168,15 @@
 			  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
 			  		</a>
-			  		<div id="blue-orange-prices-before" style="display: block;">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-blue-orange-before">$60,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-blue-orange-before">$1,200</p>
-			  		</div>			  		
+			  		<div id="prices">
+				  		<div id="blue-orange-prices-before" style="display: block;">
+					  		<p id="PAP">Price After Purchase</p>
+					  		<p id="PAP-blue-orange-before">$60,000</p>
+					  		<hr id="priceline">
+					  		<p id="yourprice">Price</p>
+					     	<p id="price-blue-orange-before">$1,200</p>
+				  		</div>					  		
+			  		</div>
 		  			<button id="remove" onClick="removeBlueOrange()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>
@@ -184,13 +186,15 @@
 			  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
 			  		</a>
-			  		<div id="beach-houses-prices-before" style="display: block;">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-beach-houses-before">$10,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-beach-houses-before">$200</p>
-			     	</div>
+			  		<div id="prices">
+				  		<div id="beach-houses-prices-before" style="display: block;">
+					  		<p id="PAP">Price After Purchase</p>
+					  		<p id="PAP-beach-houses-before">$10,000</p>
+					  		<hr id="priceline">
+					  		<p id="yourprice">Price</p>
+					     	<p id="price-beach-houses-before">$200</p>
+				     	</div>
+			  		</div>
 		  			<button id="remove" onClick="removeBeachHouses()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>	     	
@@ -200,13 +204,15 @@
 			  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
 			  		</a>
-			  		<div id="colour-glass-prices-before" style="display: block;">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-colour-glass-before">$725,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-colour-class-before">$14,500</p>
-			     	</div>
+			  		<div id="prices">
+				  		<div id="colour-glass-prices-before" style="display: block;">
+					  		<p id="PAP">Price After Purchase</p>
+					  		<p id="PAP-colour-glass-before">$725,000</p>
+					  		<hr id="priceline">
+					  		<p id="yourprice">Price</p>
+					     	<p id="price-colour-glass-before">$14,500</p>
+				     	</div>			  		
+			  		</div>
 		  			<button id="remove" onClick="removeColourGlass()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>		     	
@@ -216,29 +222,33 @@
 			  		<a href="/prototype-layers-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
 			  		</a>
-			  		<div id="layers-prices-before" style="display: block;">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-layers-before">$20,000,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-layers-before">$400,000</p>
-			     	</div>
+			  		<div id="prices">
+				  		<div id="layers-prices-before" style="display: block;">
+					  		<p id="PAP">Price After Purchase</p>
+					  		<p id="PAP-layers-before">$20,000,000</p>
+					  		<hr id="priceline">
+					  		<p id="yourprice">Price</p>
+					     	<p id="price-layers-before">$400,000</p>
+				     	</div>			  		
+			  		</div>
 		  			<button id="remove" onClick="removeLayers()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>
 			    </div>
-			  	<div id="succint-drop" style="display:flex;">
+			  	<div id="succinct-drop" style="display:flex;">
 			  	<!-- Change below link after test -->
 		  			<a href="/prototype-succinct-drop-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
 			  		</a>
-				  	<div id="succinct-drop-prices-before" style="display: block;">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-succinct-drop">$5,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-succinct-drop">$100</p>
-			     	</div>
+			  		<div id="prices">
+					  	<div id="succinct-drop-prices-before" style="display: block;">
+					  		<p id="PAP">Price After Purchase</p>
+					  		<p id="PAP-succinct-drop-before">$5,000</p>
+					  		<hr id="priceline">
+					  		<p id="yourprice">Price</p>
+					     	<p id="price-succinct-drop-before">$100</p>
+				     	</div>			  		
+			  		</div>
 		  			<button id="remove" onClick="removeSuccintDrop()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>			     	
@@ -248,13 +258,15 @@
 			  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
 			  		</a>
-			  		<div id="paint-rain-prices-before" style="display: block;">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-paint-rain-before">$600,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-paint-rain-before">$12,000</p>
-			     	</div>
+			  		<div id="prices">
+				  		<div id="paint-rain-prices-before" style="display: block;">
+					  		<p id="PAP">Price After Purchase</p>
+					  		<p id="PAP-paint-rain-before">$600,000</p>
+					  		<hr id="priceline">
+					  		<p id="yourprice">Price</p>
+					     	<p id="price-paint-rain-before">$12,000</p>
+				     	</div>			  		
+			  		</div>
 		  			<button id="remove" onClick="removePaintRain()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>		     	

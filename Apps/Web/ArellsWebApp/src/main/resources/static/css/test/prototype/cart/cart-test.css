@@ -192,7 +192,7 @@ body {
 		}
 			
 			#blue-orange, #beach-houses, #colour-glass,
-			#layers, #succint-drop, #paint-rain{
+			#layers, #succinct-drop, #paint-rain{
 				margin-left: auto;
 			    margin-right: auto;
 			    margin-bottom: 10px;
@@ -253,7 +253,7 @@ body {
 					opacity: .4;
 				}
 				#PAP-blue-orange-before, #PAP-beach-houses-before, #PAP-colour-glass-before,
-				#PAP-layers-beore, #PAP-succinct-drop-before, #PAP-paint-rain-before {
+				#PAP-layers-before, #PAP-succinct-drop-before, #PAP-paint-rain-before {
 				margin-top: -7px;
 					color: black;
 					font-weight: 300;
@@ -281,7 +281,7 @@ body {
 					opacity: .4;
 				}
 				#price-blue-orange-before, #price-beach-houses-before, #price-colour-glass-before,
-				#price-layers-beore, #price-succinct-drop-before, #price-paint-rain-before {
+				#price-layers-before, #price-succinct-drop-before, #price-paint-rain-before {
 				margin-top: -10px;
 					color: black;
 					font-weight: 300;
@@ -445,7 +445,7 @@ body {
 		}
 			
 			#blue-orange, #beach-houses, #colour-glass,
-			#layers, #succint-drop, #paint-rain{
+			#layers, #succinct-drop, #paint-rain{
 				margin-left: auto;
 			    margin-right: auto;
 			    margin-bottom: 10px;
@@ -475,44 +475,44 @@ body {
 				width: 300px;
 			}	
 			
-			#PAP {
-				width: 70px;
-				margin-top: 20px;
-				font-size: 12px;
-			}
-			#PAP-blue-orange-before, #PAP-beach-houses-before, #PAP-colour-glass-before,
-			#PAP-layers-beore, #PAP-succinct-drop-before, #PAP-paint-rain-before {
-				margin-top: -8px;
-				font-size: 12px;
-			}
-			#priceline {
-			  margin-top: -2px;
-			  width: 100%;
-			}	
-			#yourprice {
-				margin-top: 10px;
-				font-size: 13px;
-			}
-			#price-blue-orange-before, #price-beach-houses-before, #price-colour-glass-before,
-			#price-layers-beore, #price-succinct-drop-before, #price-paint-rain-before {
-				margin-top: -10px;
-				font-size: 13px;
-				margin-bottom: 20px;	
-			}	
-			#remove {
-				display: inline-block;
-				  padding-top: 6px;
-				  padding-bottom: 3px;
-				  border-radius: 7px;
-				  padding-right: 6px;
-				  padding-left: 6px;	  
-				  width: 30px;
-				  height: 30px;
-				}	  	
-					
-				#del{
-					height: 15px;
-				}			
+				#PAP {
+					width: 70px;
+					margin-top: 20px;
+					font-size: 12px;
+				}
+				#PAP-blue-orange-before, #PAP-beach-houses-before, #PAP-colour-glass-before,
+				#PAP-layers-before, #PAP-succinct-drop-before, #PAP-paint-rain-before {
+					margin-top: -8px;
+					font-size: 12px;
+				}
+				#priceline {
+				  margin-top: -2px;
+				  width: 100%;
+				}	
+				#yourprice {
+					margin-top: 10px;
+					font-size: 13px;
+				}
+				#price-blue-orange-before, #price-beach-houses-before, #price-colour-glass-before,
+				#price-layers-before, #price-succinct-drop-before, #price-paint-rain-before {
+					margin-top: -10px;
+					font-size: 13px;
+					margin-bottom: 20px;	
+				}	
+				#remove {
+					display: inline-block;
+					  padding-top: 6px;
+					  padding-bottom: 3px;
+					  border-radius: 7px;
+					  padding-right: 6px;
+					  padding-left: 6px;	  
+					  width: 30px;
+					  height: 30px;
+					}	  	
+						
+					#del{
+						height: 15px;
+					}			
 		
 				  				  
 }					

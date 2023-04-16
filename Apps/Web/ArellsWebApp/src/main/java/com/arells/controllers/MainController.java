@@ -48,7 +48,7 @@ public class MainController {
 	 
 	 //Images Test
 	 @GetMapping("/prototype-blue-orange-test") public String prototypeBlueOrangeTest() { return
-	 "test/prototype/images/blue-orange-created-test.jsp"; }
+	 "test/prototype/images/blue-orange-test.jsp"; }
 	 
 	 @GetMapping("/prototype-beach-houses-test") public String prototypeBeachHousesTest() { return
 	 "test/prototype/images/beach-houses-test.jsp"; }

@@ -101,7 +101,7 @@
 
 	function addPaintRainToCart() {
 		document.getElementById('paint-rain-add-to-cart-connected').style.display = "none";
-		document.getElementById('paint-rain-add-to-cart').style.display = "block";
+		document.getElementById('paint-rain-added').style.display = "block";
 		  
 	}
 	

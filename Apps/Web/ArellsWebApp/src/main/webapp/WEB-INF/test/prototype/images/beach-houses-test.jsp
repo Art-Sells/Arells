@@ -101,7 +101,7 @@
 
 	function addBeachHousesToCart() {
 		document.getElementById('beach-houses-add-to-cart-connected').style.display = "none";
-		document.getElementById('beach-houses-add-to-cart').style.display = "block";
+		document.getElementById('beach-houses-added').style.display = "block";
 		  
 	}
 	

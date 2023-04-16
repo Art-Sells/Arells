@@ -93,14 +93,14 @@
 		document.getElementById('beach-houses-add-to-cart').style.display = "none";
 		document.getElementById('colour-glass-add-to-cart').style.display = "none";
 		document.getElementById('layers-add-to-cart').style.display = "none";
-		document.getElementById('succint-drop-add-to-cart').style.display = "none";
+		document.getElementById('succinct-drop-add-to-cart').style.display = "none";
 		document.getElementById('paint-rain-add-to-cart').style.display = "none";
-		document.getElementById('blue-orange-add-to-cart-connected').style.display = "block";
+ 		document.getElementById('blue-orange-add-to-cart-connected').style.display = "block";
 		document.getElementById('beach-houses-add-to-cart-connected').style.display = "block";
 		document.getElementById('colour-glass-add-to-cart-connected').style.display = "block";
 		document.getElementById('layers-add-to-cart-connected').style.display = "block";
 		document.getElementById('succinct-drop-add-to-cart-connected').style.display = "block";
-		document.getElementById('paint-rain-add-to-cart-connected').style.display = "block";
+		document.getElementById('paint-rain-add-to-cart-connected').style.display = "block"; 
 	 
 	}	
 <!-- Connect Wallet script above-->
@@ -282,7 +282,7 @@
 			  		<p id="PAP-colour-glass-before">$725,000</p>
 			  		<hr id="priceline">
 			  		<p id="yourprice">Price</p>
-			     	<p id="price-colour-class-before">$14,500</p>
+			     	<p id="price-colour-glass-before">$14,500</p>
 		     	</div>
 		     	<div id="colour-glass-prices-before" style="display: none;">
 			  		<p id="PAP">Price After Purchase</p>
@@ -339,17 +339,17 @@
 		  		</a>
 		  		<div id="succinct-drop-prices-before" style="display: block;">
 			  		<p id="PAP">Price After Purchase</p>
-			  		<p id="PAP-succinct-drop">$5,000</p>
+			  		<p id="PAP-succinct-drop-before">$5,000</p>
 			  		<hr id="priceline">
 			  		<p id="yourprice">Price</p>
-			     	<p id="price-succinct-drop">$100</p>
+			     	<p id="price-succinct-drop-before">$100</p>
 		     	</div>
 		     	<div id="succinct-drop-prices-after" style="display: none;">
 			  		<p id="PAP">Price After Purchase</p>
-			  		<p id="PAP-succinct-drop">$250,000</p>
+			  		<p id="PAP-succinct-drop-after">$250,000</p>
 			  		<hr id="priceline">
 			  		<p id="yourprice">Price</p>
-			     	<p id="price-succinct-droo">$5,000</p>
+			     	<p id="price-succinct-drop-after">$5,000</p>
 		     	</div>
 	     		<button id="succinct-drop-add-to-cart" onClick="connectWallet()"
 	     		style="display: block;">
