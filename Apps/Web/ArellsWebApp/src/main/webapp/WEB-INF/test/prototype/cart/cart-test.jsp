@@ -51,6 +51,38 @@
 
 // Ensure that Image displays show as FLEX after adding, cart-full: block
 
+		function updatePrices(){
+	
+			var blueOrange = 1200;
+			var beachHouses = 200;
+			var colourGlass = 14500;
+			var layers = 400000;
+			var succinctDrop = 100;
+			var paintRain = 12000;
+			
+			var royalty = .9;
+			var fee = .03;
+			
+			var royalties;
+			var fees;
+			var total;
+			
+			if (document.getElementById('blue-orange').style.display == "flex"){
+				
+				royalties = (blueOrange * royalty);
+				fees = (blueOrange * fee);
+				total = blueOrange;
+				
+				document.getElementById('royalty-price-value').innerHTML = 
+					royalties;
+				document.getElementById('fee-price-value').innerHTML = 
+					fees;
+				document.getElementById('total-price-value').innerHTML = 
+					total;
+			}		
+			
+		}
+
 <!-- Add To Cart scrips above -->
 
 <!-- Remove scripts below-->
@@ -164,23 +196,23 @@
 		</p>
 	</div>
 	<div id="cart-full" style="display: block;">
-		<p id="royalty">Creator Royalty</p>
+		<p id="royalty">Creator Royalties</p>
 		<p id="royalty-price">$
-			<span id="royalty-price-value" style="display:inline">9,700</span>
+			<span id="royalty-price-value" style="display:inline"></span>
         </p>
-		<p id="fee">Fee</p>
+		<p id="fee">Fees</p>
 		<p id="fee-price">$
-			<span id="fee-price-value" style="display:inline">300</span>
+			<span id="fee-price-value" style="display:inline"></span>
         </p>
-		<p id="total">Total Price</p>
+		<p id="total">Total</p>
 	  	<p id="total-price">$
-			<span id="total-price-value" style="display:inline">10,000</span>
+			<span id="total-price-value" style="display:inline"></span>
         </p>
-			<button id="purchase">
+			<button id="purchase" onClick="updatePrices()">
 			COMPLETE PURCHASE</button>	
 		<hr id="profileline"> 
 		<div id="container">
-			  	<div id="blue-orange" style="display: none;">
+			  	<div id="blue-orange" style="display: flex;">
 			  	<!-- Change below link after test -->
 			  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
