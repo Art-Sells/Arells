@@ -192,7 +192,7 @@
 	  		<p id="PAP-colour-glass-before">$725,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price-colour-class-before">$14,500</p>
+	     	<p id="price-colour-glass-before">$14,500</p>
      	</div>
      	<div id="colour-glass-prices-before" style="display: none;">
 	  		<p id="PAP">Price After Purchase</p>

@@ -212,7 +212,7 @@ body {
 	  border: none;
 	  height: 4px;
 	  border-radius: 30px;
-	  width: 350px;
+	  width: 450px;
 	  opacity: .1;
 	}
 	#created-collected {
@@ -293,7 +293,7 @@ body {
 				border-radius: 15px;
 				overflow: hidden;
 				box-shadow: 0px 5px 20px -6px silver; 
-				width: 350px;
+				width: 450px;
 				height: 160px;
 				padding-top: 30px;
 				padding-left: 40px;
@@ -519,7 +519,7 @@ body {
 			}
 		#profileline {
 		margin-top: 20px;
-		  width: 250px;
+		  width: 400px;
 		}	
 		#created-collected {
 			margin-top: 20px;
@@ -558,9 +558,9 @@ body {
 			    margin-bottom: 10px;
 			    align-items: center;
 				border-radius: 15px;
+				width: 400px;
 				overflow: hidden;
 				box-shadow: 0px 5px 20px -6px silver; 
-				width: 250px;
 				height: 90px;
 				padding-top: 35px;
 				padding-left: 35px;

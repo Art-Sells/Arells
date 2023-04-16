@@ -189,17 +189,17 @@
      	<hr id="line">
 		<div id="succinct-drop-prices-before" style="display: block;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-succinct-drop">$5,000</p>
+	  		<p id="PAP-succinct-drop-after">$5,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price-succinct-drop">$100</p>
+	     	<p id="price-succinct-drop-after">$100</p>
      	</div>
      	<div id="succinct-drop-prices-after" style="display: none;">
 	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-succinct-drop">$250,000</p>
+	  		<p id="PAP-succinct-drop-before">$250,000</p>
 	  		<hr id="priceline">
 	  		<p id="yourprice">Price</p>
-	     	<p id="price-succinct-droo">$5,000</p>
+	     	<p id="price-succinct-drop-before">$5,000</p>
      	</div>
     	<button id="succinct-drop-add-to-cart" onClick="connectWallet()"
     		style="display: block;">

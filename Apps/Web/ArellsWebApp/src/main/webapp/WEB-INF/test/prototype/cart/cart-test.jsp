@@ -249,7 +249,7 @@
 					     	<p id="price-succinct-drop-before">$100</p>
 				     	</div>			  		
 			  		</div>
-		  			<button id="remove" onClick="removeSuccintDrop()">
+		  			<button id="remove" onClick="removeSuccinctDrop()">
 	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
 	     		    </button>			     	
 			    </div>
