@@ -7,8 +7,7 @@
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/test/prototype/cart/cart-test.css">	
-		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/copiedlink-test.css" />	
-		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/connect-wallet-test.css" />
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/purchase-complete-test.css" />
 			
 		<meta charset="UTF-8">
 		
@@ -156,6 +155,15 @@
 <!-- Remove scripts above-->	
 
 
+<!-- Complete Purchase scripts below-->	
+
+		function completePurchase() {
+			  document.getElementById('purchaseComplete').style.display = "block";			
+				
+
+<!-- Complete Purchase scripts above-->	
+
+
 
 		</script>	
 		
@@ -169,7 +177,15 @@
 
 	<!-- Modal/s below -->
 	
-
+		<div id="purchaseComplete" style="display: none;">
+		  <div class="purchase-complete-content">
+			<p>PURCHASE COMPLETE</p>
+			<!-- Change below link after test -->
+	    	<a class="close-purchase-complete" href="/prototype-buyer-collected-test">
+	    		VIEW COLLECTION</a>	
+		  </div>
+		</div>	
+		
 	<!-- Modal/s above -->	
 
 	<div id="header">
@@ -208,7 +224,7 @@
 	  	<p id="total-price">$
 			<span id="total-price-value" style="display:inline"></span>
         </p>
-			<button id="purchase" onClick="updatePrices()">
+			<button id="purchase" onClick="completePurchase()">
 			COMPLETE PURCHASE</button>	
 		<hr id="profileline"> 
 		<div id="container">
