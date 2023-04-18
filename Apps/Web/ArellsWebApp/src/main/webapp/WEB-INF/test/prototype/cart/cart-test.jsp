@@ -158,7 +158,11 @@
 <!-- Complete Purchase scripts below-->	
 
 		function completePurchase() {
-			  document.getElementById('purchaseComplete').style.display = "block";			
+			  document.getElementById('purchaseComplete').style.display = "block";
+		}	
+		function closePurchaseComplete() {
+			  document.getElementById('purchaseComplete').style.display = "none";
+		}	
 				
 
 <!-- Complete Purchase scripts above-->	
@@ -179,9 +183,10 @@
 	
 		<div id="purchaseComplete" style="display: none;">
 		  <div class="purchase-complete-content">
-			<p>PURCHASE COMPLETE</p>
+			<p id="purchase-complete-desc"> PURCHASE COMPLETE</p>
 			<!-- Change below link after test -->
-	    	<a class="close-purchase-complete" href="/prototype-buyer-collected-test">
+	    	<a class="close-purchase-complete" href="/prototype-buyer-collected-test"
+	    	onClick="closePurchaseComplete()">
 	    		VIEW COLLECTION</a>	
 		  </div>
 		</div>	

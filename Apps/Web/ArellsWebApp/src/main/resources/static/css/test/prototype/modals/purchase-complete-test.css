@@ -10,8 +10,8 @@
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0, 0, 0,0.9); /* Black w/ opacity */
+  background-color: rgb(255,255,255, .99); /* Fallback color */
+  background-color: rgba(255, 255, 255, .99); /* Black w/ opacity */
 }
 
 /* Modal Content */
@@ -19,7 +19,7 @@
 .purchase-complete-content {
   align-items: center;
   position: relative;
-  color: white;
+  color: gray;
   font-weight: 500;
   font-size: 13px;
   letter-spacing: 3px;
@@ -42,21 +42,29 @@
   to {center:0; opacity:1}
 }
 
+#purchase-complete-desc {
+	margin-bottom: 35px;
+	
+}
+
 
 .close-purchase-complete {
-  background: none;
+	text-decoration: none;
+  background: black;
   color: white;
-  margin-top: 10px;
   margin-left: auto;
   margin-right: auto;   
-  border: solid;
+  border: none;
   border-width: 1px;
-  font-weight: 500;
-  border-radius: 10px;
+  font-weight: 200;
+  border-radius: 5px;
   font-size: 15px;
-  padding: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 35px;
+  padding-right: 35px;
   letter-spacing: 1px;
-  width: 100px; 
+  box-shadow: 0px 8px 12px -6px black;   
 }
 .close-purchase-complete:hover,
 .close-purchase-complete:focus {
