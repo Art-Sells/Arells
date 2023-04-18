@@ -210,13 +210,13 @@
 		WALLET CONNECTED</p>
 		<hr id="connected-line">
 	</div>	
-	<div id="cart-empty" style="display: none;">
+	<div id="cart-empty" style="display: block;">
 			<p id="no-art">
 			cart empty
 			<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</p>
 	</div>
-	<div id="cart-full" style="display: block;">
+	<div id="cart-full" style="display: none;">
 		<p id="royalty">Creator Royalties</p>
 		<p id="royalty-price">$
 			<span id="royalty-price-value" style="display:inline"></span>
@@ -233,7 +233,7 @@
 			COMPLETE PURCHASE</button>	
 		<hr id="profileline"> 
 		<div id="container">
-			  	<div id="blue-orange" style="display: flex;">
+			  	<div id="blue-orange-cart" style="display: none;">
 			  	<!-- Change below link after test -->
 			  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link">
 			  			<img id="photo" src="/icons&images/prototype/1.jpg"/>

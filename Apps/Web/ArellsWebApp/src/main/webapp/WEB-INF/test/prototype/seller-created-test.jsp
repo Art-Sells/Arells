@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ include file="cart/cart-test.jsp" %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -108,9 +109,17 @@
 
 <!--  Add To Cart script below-->
 
+//Ensure that Image displays show as FLEX after adding, cart-full: block
+
 	function addBlueOrangeToCart() {
 		document.getElementById('blue-orange-add-to-cart-connected').style.display = "none";
-		document.getElementById('blue-orange-added').style.display = "block";	
+		document.getElementById('blue-orange-added').style.display = "block";
+		
+		//cart functions
+		document.getElementById('cart-full').style.display = "none";
+		document.getElementById('cart-full').style.display = "block";
+		document.getElementById('blue-orange-cart').style.display = "flex";
+		
 		  
 	}
 	function addBeachHousesToCart() {
