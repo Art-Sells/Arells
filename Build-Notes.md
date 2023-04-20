@@ -41,7 +41,7 @@
                                                 
 ## Fully integrated App
                                                 
-- Change all NFT words (WebApp/Twitter/Etc) into "Digital Asset".
+- Change all NFT words (WebApp/Twitter/Etc) into "Digital Asset"... Test Ads, if no restrictions, keep!
 - Use GPT-4?
 - Heavy KYC/AML [USDC -to-bank- transfers only]
 
