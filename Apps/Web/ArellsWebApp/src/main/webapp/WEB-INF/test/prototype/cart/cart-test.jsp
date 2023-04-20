@@ -199,7 +199,7 @@
 			<img id="arells-icon-cart" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
 		<button id="cart-link-cart">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+			<img id="cart-icon-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>	
 	</div>
 	<img id="word-logo-cart" src="/icons&images/Arells-Logo-Ebony.png">	

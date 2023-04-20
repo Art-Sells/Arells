@@ -284,7 +284,7 @@
 		     <div id="colour-glass-seller-connected">
 		     <!-- Change below link after test -->
 		  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link-seller-connected">
-		  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
+		  			<img id="photo-seller-connected" src="/icons&images/prototype/3.jpg"/>
 		  		</a>
 		  		<div id="colour-glass-prices-before-seller-connected" style="display: block;">
 			  		<p id="PAP-seller-connected">Price After Purchase</p>

@@ -33,7 +33,7 @@ public class ArellsWebAppApplication {
 	public ErrorViewResolver customErrorViewResolver() {
 	    return (request, status, model) -> {
 	        ModelAndView modelAndView = new ModelAndView();
-	        modelAndView.setViewName("error.html");
+	        modelAndView.setViewName("templates/error.html");
 	        return modelAndView;
 	    };
 	}
