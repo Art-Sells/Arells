@@ -40,7 +40,8 @@
 #### LinkTree Links.
                                                 
 ## Fully integrated App
-
+                                                
+- Change all NFT words (WebApp/Twitter/Etc) into "Digital Asset".
 - Use GPT-4?
 - Heavy KYC/AML [USDC -to-bank- transfers only]
 
