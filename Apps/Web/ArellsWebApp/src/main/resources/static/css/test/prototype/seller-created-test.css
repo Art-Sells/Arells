@@ -10,7 +10,7 @@ body {
   background: white;
 }
 
-	#header {
+	#header-seller-connected {
 			display: flex;
 			justify-content: center;
 			margin-top: 0px;
@@ -24,7 +24,7 @@ body {
 			margin-right: auto;
 			z-index: 100;
 		}
-		#icon-link{
+		#icon-link-seller-connected{
 			display: inline-block;
 			text-decoration: none;
 			margin-right: 128px;
@@ -41,17 +41,17 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#icon-link:hover,
-		#icon-link:focus {
+		#icon-link-seller-connected:hover,
+		#icon-link-seller-connected:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
 			  opacity: 1;
 			}		
-			#arells-icon {
+			#arells-icon-seller-connected {
 				height: 16px;
 			}	
-		#cart-link{
+		#cart-link-seller-connected{
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -67,7 +67,7 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#cart-link-connected{
+		#cart-link-connected-seller-connected{
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -83,24 +83,24 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#cart-link:hover,
-		#cart-link:focus, 
-		#cart-link-connected:hover,
-		#cart-link-connected:focus {
+		#cart-link-seller-connected:hover,
+		#cart-link-seller-connected:focus, 
+		#cart-link-connected-seller-connected:hover,
+		#cart-link-connected-seller-connected:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
 			  opacity: 1;	
 		}	
-			#cart-icon {
+			#cart-icon-seller-connected {
 				height: 18px;
 			}		
 			
-		#word-logo {
+		#word-logo-seller-connected {
 			margin-top: 37px;
 			width: 110px;	
 		}
-		#slogan {
+		#slogan-seller-connected {
 			margin-top: 0px;
 			font-size: 8px;
 			letter-spacing: 10px;
@@ -111,12 +111,12 @@ body {
 			word-spacing: -3px;
 		}	
 		
-		#wallet-connected-div{
+		#wallet-connected-div-seller-connected{
 			margin-top: 30px;
 			margin-left: auto;
 			margin-right: auto;
 		}
-			#connected-line {
+			#connected-line-seller-connected {
 			  margin-top: -5px;
 			  background-color: black;
 			  border: none;
@@ -125,7 +125,7 @@ body {
 			  width: 100px;
 			  opacity: .1;
 			}	
-			#wallet-connected {
+			#wallet-connected-seller-connected {
 				padding-bottom: 10px;
 				padding-top: 5px;
 				font-size: 9px;
@@ -136,7 +136,7 @@ body {
 				opacity: 1;
 			}							
 	
-	#profile-img-container {
+	#profile-img-container-seller-connected {
 	position: static;
 		width: 100px;
 		height: 100px;
@@ -150,13 +150,13 @@ body {
   		justify-content: center;
 		
 	}
-		#profile-photo {
+		#profile-photo-seller-connected {
 			object-fit: cover;
 			overflow: hidden;
 			width: 100%;
 			height: 100%;
 		}	
-	#name {
+	#name-seller-connected {
 	  font-size: 17pt;
 	  font-weight: 800;
 	  opacity: 1;
@@ -166,7 +166,7 @@ body {
 	  margin-left: -1px;
 	}	
 	
-	#description {
+	#description-seller-connected {
 	  font-size: 12pt;
 	  font-weight: 200;
 	  opacity: .5;
@@ -178,7 +178,7 @@ body {
 	  width: 420px;
 	  margin-bottom: 20px;
 	}
-	#copy-link {
+	#copy-link-seller-connected {
 	  text-decoration: none;
 	  color: white;
 	  font-weight: 200;
@@ -196,17 +196,17 @@ body {
 	  box-shadow: 0px 8px 12px -6px black;  
 		background: black;
 	}	  
-	#copy-link:hover,
-	#copy-link:focus {
+	#copy-link-seller-connected:hover,
+	#copy-link-seller-connected:focus {
 		  opacity: .4;
 		  transition: 1s;
 		  cursor: pointer;
 	}		
-		#copy-link-icon{
+		#copy-link-icon-seller-connected{
 			width: 15px;
 			margin-right: 5px;
 		}
-	#profileline {
+	#profileline-seller-connected {
 	margin-top: 25px;
 	  background-color: black;
 	  border: none;
@@ -215,7 +215,7 @@ body {
 	  width: 700px;
 	  opacity: .1;
 	}
-	#created-collected {
+	#created-collected-seller-connected {
 		margin-top: 30px;
 		flex-direction: column;
 		align-items: center;
@@ -223,7 +223,7 @@ body {
 		  margin-left: auto;
 		  margin-right: auto;	
 	}
-		#created {
+		#created-seller-connected {
 		flex: 1;			
 		margin-right: 10px;
 		align-items: center;	
@@ -245,7 +245,7 @@ body {
 		opacity: 1;
 			
 		}  		
-		#collected {
+		#collected-seller-connected {
 		flex: 1;			
 		margin-left: 10px;
 		align-items: center;	
@@ -266,8 +266,8 @@ body {
 		  opacity: 1;
 			background: none;
 		}	
-		#collected:hover,
-		#collected:focus {
+		#collected-seller-connected:hover,
+		#collected-seller-connected:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  color: black;
@@ -277,7 +277,7 @@ body {
 				
 		
 
-	#container {
+	#container-seller-connected {
 		margin-top: 30px;
 		flex-direction: column;
 		align-items: center;
@@ -290,8 +290,8 @@ body {
 		  margin-bottom: 60px;		
 	}
 		
-		#blue-orange, #beach-houses, #colour-glass,
-		#layers, #succinct-drop, #paint-rain {
+		#blue-orange-seller-connected, #beach-houses-seller-connected, #colour-glass-seller-connected,
+		#layers-seller-connected, #succinct-drop-seller-connected, #paint-rain-seller-connected {
 			flex: 1;			
 			margin: 10px;
 			border-radius: 15px;
@@ -309,30 +309,30 @@ body {
 		     
 		}
 		
-		#photo-link {
+		#photo-link-seller-connected {
 			text-decoration: none;
 		}
 
-		#photo-link:hover {
+		#photo-link-seller-connected:hover {
 		  opacity: .5;
 		  transition: 1s;
 		  box-shadow: none;
 		  cursor: pointer;
 		}
-		#photo-link:focus {
+		#photo-link-seller-connected:focus {
 		  opacity: .5;
 		  box-shadow: none;
 		  cursor: pointer;
 		}			
 		
-		#photo {
+		#photo-seller-connected {
 			object-fit: cover;
 			width: 100%;
 			height: 200px;
   			border-radius: 10px;		
   			box-shadow: 0px 8px 12px -6px black;  
 		}
-			#PAP {
+			#PAP-seller-connected {
 			margin-top: 30px;
 			text-align: center;
 				color: black;
@@ -342,12 +342,12 @@ body {
 				padding-left: 0px;
 				opacity: .4;
 			}
-			#PAP-blue-orange-before, #PAP-beach-houses-before, #PAP-colour-glass-before,
-			#PAP-layers-before, #PAP-succinct-drop-before, #PAP-paint-rain-before,
+			#PAP-blue-orange-before-seller-connected, #PAP-beach-houses-before-seller-connected, #PAP-colour-glass-before-seller-connected,
+			#PAP-layers-before-seller-connected, #PAP-succinct-drop-before-seller-connected, #PAP-paint-rain-before-seller-connected,
 			
 			
-			#PAP-blue-orange-after, #PAP-beach-houses-after, #PAP-colour-glass-after,
-			#PAP-layers-after, #PAP-succinct-drop-after, #PAP-paint-rain-after {
+			#PAP-blue-orange-after-seller-connected, #PAP-beach-houses-after-seller-connected, #PAP-colour-glass-after-seller-connected,
+			#PAP-layers-after-seller-connected, #PAP-succinct-drop-after-seller-connected, #PAP-paint-rain-after-seller-connected {
 			margin-top: -7px;
 			text-align: center;
 				color: black;
@@ -357,7 +357,7 @@ body {
 				padding-left: 0px;
 				opacity: .5;
 			}
-			#priceline {
+			#priceline-seller-connected {
 			  margin-top: -5px;
 			  background-color: black;
 			  border: none;
@@ -366,7 +366,7 @@ body {
 			  width: 60%;
 			  opacity: .1;
 			}	
-			#yourprice {
+			#yourprice-seller-connected {
 			margin-top: 15px;
 			text-align: center;
 				color: black;
@@ -376,11 +376,11 @@ body {
 				padding-left: 0px;
 				opacity: .4;
 			}
-			#price-blue-orange-before, #price-beach-houses-before, #price-colour-glass-before,
+			#price-blue-orange-before-seller-connected, #price-beach-houses-before-seller-connected, #price-colour-glass-before-seller-connected,
 			#price-layers-before, #price-succinct-drop-before, #price-paint-rain-before,
 			
-			#price-blue-orange-after, #price-beach-houses-after, #price-colour-glass-after,
-			#price-layers-after, #price-succinct-drop-after, #price-paint-rain-after {
+			#price-blue-orange-after-seller-connected, #price-beach-houses-after-seller-connected, #price-colour-glass-after-seller-connected,
+			#price-layers-after-seller-connected, #price-succinct-drop-after-seller-connected, #price-paint-rain-after-seller-connected {
 			margin-top: -10px;
 			text-align: center;
 				color: black;
@@ -391,13 +391,13 @@ body {
 				opacity: .7;
 				margin-bottom: 28px;
 			}
-			#blue-orange-add-to-cart, #beach-houses-add-to-cart, 
-			#colour-glass-add-to-cart, #layers-add-to-cart, 
-			#succinct-drop-add-to-cart, #paint-rain-add-to-cart,
+			#blue-orange-add-to-cart-seller-connected, #beach-houses-add-to-cart-seller-connected, 
+			#colour-glass-add-to-cart-seller-connected, #layers-add-to-cart-seller-connected, 
+			#succinct-drop-add-to-cart-seller-connected, #paint-rain-add-to-cart-seller-connected,
 			
-			#blue-orange-add-to-cart-connected, #beach-houses-add-to-cart-connected, 
-			#colour-glass-add-to-cart-connected, #layers-add-to-cart-connected, 
-			#succinct-drop-add-to-cart-connected, #paint-rain-add-to-cart-connected  {
+			#blue-orange-add-to-cart-connected-seller-connected, #beach-houses-add-to-cart-connected-seller-connected, 
+			#colour-glass-add-to-cart-connected-seller-connected, #layers-add-to-cart-connected-seller-connected, 
+			#succinct-drop-add-to-cart-connected-seller-connected, #paint-rain-add-to-cart-connected-seller-connected  {
 				  text-decoration: none;
 				  color: white;
 				  margin-left: auto;
@@ -417,9 +417,9 @@ body {
 				  box-shadow: 0px 8px 12px -6px black;  
 					background: black;
 				}	  
-			#blue-orange-add-to-cart-connected, #beach-houses-add-to-cart-connected, 
-			#colour-glass-add-to-cart-connected, #layers-add-to-cart-connected, 
-			#succinct-drop-add-to-cart-connected, #paint-rain-add-to-cart-connected  {
+			#blue-orange-add-to-cart-connected-seller-connected, #beach-houses-add-to-cart-connected-seller-connected, 
+			#colour-glass-add-to-cart-connected-seller-connected, #layers-add-to-cart-connected-seller-connected, 
+			#succinct-drop-add-to-cart-connected-seller-connected, #paint-rain-add-to-cart-connected-seller-connected  {
 				  text-decoration: none;
 				  color: white;
 				  margin-left: auto;
@@ -439,30 +439,30 @@ body {
 				  box-shadow: 0px 8px 12px -6px black;  
 					background: black;
 				}		
-			#blue-orange-add-to-cart:hover, #beach-houses-add-to-cart:hover, 
-			#colour-glass-add-to-cart:hover, #layers-add-to-cart:hover, 
-			#succinct-drop-add-to-cart:hover, #paint-rain-add-to-cart:hover,
-			#blue-orange-add-to-cart:focus, #beach-houses-add-to-cart:focus, 
-			#colour-glass-add-to-cart:focus, #layers-add-to-cart:focus, 
-			#succinct-drop-add-to-cart:focus, #paint-rain-add-to-cart:focus,
+			#blue-orange-add-to-cart-seller-connected:hover, #beach-houses-add-to-cart-seller-connected:hover, 
+			#colour-glass-add-to-cart-seller-connected:hover, #layers-add-to-cart-seller-connected:hover, 
+			#succinct-drop-add-to-cart-seller-connected:hover, #paint-rain-add-to-cart-seller-connected:hover,
+			#blue-orange-add-to-cart-seller-connected:focus, #beach-houses-add-to-cart-seller-connected:focus, 
+			#colour-glass-add-to-cart-seller-connected:focus, #layers-add-to-cart-seller-connected:focus, 
+			#succinct-drop-add-to-cart-seller-connected:focus, #paint-rain-add-to-cart-seller-connected:focus,
 			
-			#blue-orange-add-to-cart-connected:hover, #beach-houses-add-to-cart-connected:hover, 
-			#colour-glass-add-to-cart-connected:hover, #layers-add-to-cart-connected:hover, 
-			#succinct-drop-add-to-cart-connected:hover, #paint-rain-add-to-cart-connected:hover,
-			#blue-orange-add-to-cart-connected:focus, #beach-houses-add-to-cart-connected:focus, 
-			#colour-glass-add-to-cart-connected:focus, #layers-add-to-cart-connected:focus, 
-			#succinct-drop-add-to-cart-connected:focus, #paint-rain-add-to-cart-connected:focus {
+			#blue-orange-add-to-cart-connected-seller-connected:hover, #beach-houses-add-to-cart-connected-seller-connected:hover, 
+			#colour-glass-add-to-cart-connected-seller-connected:hover, #layers-add-to-cart-connected-seller-connected:hover, 
+			#succinct-drop-add-to-cart-connected-seller-connected:hover, #paint-rain-add-to-cart-connected-seller-connected:hover,
+			#blue-orange-add-to-cart-connected-seller-connected:focus, #beach-houses-add-to-cart-connected-seller-connected:focus, 
+			#colour-glass-add-to-cart-connected-seller-connected:focus, #layers-add-to-cart-connected:focus, 
+			#succinct-drop-add-to-cart-connected-seller-connected:focus, #paint-rain-add-to-cart-connected-seller-connected:focus {
 				  opacity: .4;
 				  transition: 1s;
 				  cursor: pointer;
 			}
-			#blue-orange-added, #beach-houses-added, 
-			#colour-glass-added, #layers-added, 
-			#succinct-drop-added, #paint-rain-added,
+			#blue-orange-added-seller-connected, #beach-houses-added-seller-connected, 
+			#colour-glass-added-seller-connected, #layers-added-seller-connected, 
+			#succinct-drop-added-seller-connected, #paint-rain-added-seller-connected,
 			
-			#blue-orange-collected, #beach-houses-collected, 
-			#colour-glass-collected, #layers-collected, 
-			#succinct-drop-collected, #paint-rain-collected {
+			#blue-orange-collected-seller-connected, #beach-houses-collected-seller-connected, 
+			#colour-glass-collected-seller-connected, #layers-collected-seller-connected, 
+			#succinct-drop-collected-seller-connected, #paint-rain-collected-seller-connected {
 				  text-decoration: none;
 				  margin-left: auto;
 				  margin-right: auto;
@@ -514,11 +514,11 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  
-		#header {
+		#header-seller-connected {
 				margin-top: 0px;
 				padding-top: 25px;			
 			}	
-			#icon-link{	
+			#icon-link-seller-connected{	
 				margin-right: 90px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -527,10 +527,10 @@ body {
 				  border-radius: 12px;
 				  width: 30px;		
 			}	
-			#arells-icon {
+			#arells-icon-seller-connected {
 					height: 15px;
 				}	    
-			#cart-link{
+			#cart-link-seller-connected{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -539,7 +539,7 @@ body {
 				  border-radius: 12px;	
 				  width: 45px;  					
 			}
-			#cart-link-connected{
+			#cart-link-connected-seller-connected{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 6.5px;
@@ -548,61 +548,61 @@ body {
 				  border-radius: 12px;	
 				  width: 27px;  					
 			}
-			#cart-icon {
+			#cart-icon-seller-connected {
 					height: 15px;
 				}
 			
 			  				
-		#word-logo {
+		#word-logo-seller-connected {
 			margin-top: 35px;
 			width: 90px;	
 		}
-		#slogan {
+		#slogan-seller-connected {
 			margin-top: -2px;
 			font-size: 7px;
 			letter-spacing: 8px;
 			margin-left: 8px; 
 			word-spacing: -3px;
 		}
-		#wallet-connected-div{
+		#wallet-connected-div-seller-connected{
 			margin-top: 25px;
 		}	
-			#connected-line {
+			#connected-line-seller-connected {
 			  width: 90px;
 			}				
-			#wallet-connected {
+			#wallet-connected-seller-connected {
 				padding-bottom: 12px;
 				padding-top: 7px;
 				font-size: 8px;
 				letter-spacing: 0px;
 				margin-left: 0px; 
 			}
-		#profile-img-container {
+		#profile-img-container-seller-connected {
 			width: 90px;
 			height: 90px;
 			margin-top: 25px;
 			
 		}
-			#profile-photo {
+			#profile-photo-seller-connected {
 				object-fit: cover;
 				overflow: hidden;
 				width: 100%;
 				height: 100%;
 			}	
-		#name {
+		#name-seller-connected {
 		  font-size: 13pt;
 		  font-weight: 800;
 		  margin-top: 20px;
 		  letter-spacing: -1px;	  
 		  margin-left: -1px;
 		}	
-		#description {
+		#description-seller-connected {
 		margin-top: 5px;
 		  font-size: 9pt;
 		  line-height: 15px;
 		  width: 200px;
 		}	  
-		#copy-link {
+		#copy-link-seller-connected {
 		  font-size: 8px;
 		  padding-top: 15px;
 		  padding-bottom: 15px;
@@ -612,19 +612,19 @@ body {
 		  width: 120px;
 		  letter-spacing: 2px;
 		}	  	
-			#copy-link-icon {
+			#copy-link-icon-seller-connected {
 				width: 12px;
 			}
-		#profileline {
+		#profileline-seller-connected {
 		margin-top: 20px;
 		  width: 470px;
 		}	
-		#created-collected {
+		#created-collected-seller-connected {
 			margin-top: 20px;
 			align-items: center;
 			  width: 400px;
 		}  
-			#created {		
+			#created-seller-connected {		
 			margin-right: 10px;
 			margin-left: 8px;
 			  font-size: 10px;
@@ -635,7 +635,7 @@ body {
 			  letter-spacing: .5px;
 				
 			}  		
-			#collected {		
+			#collected-seller-connected {		
 			margin-left: 0px;
 			  font-size: 10px;
 			  padding-top: 10px;
@@ -644,13 +644,13 @@ body {
 			  padding-left: 15.5px;	  
 			  letter-spacing: .5px;
 			}			
-	  #container {
+	  #container-seller-connected {
 	    width: 660px;
 	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	    margin-top: 20px;
 	  }
-		#blue-orange, #beach-houses, #colour-glass,
-		#layers, #succinct-drop, #paint-rain {		
+		#blue-orange-seller-connected, #beach-houses-seller-connected, #colour-glass-seller-connected,
+		#layers-seller-connected, #succinct-drop-seller-connected, #paint-rain-seller-connected {		
 			margin: 5px;
 			align-items: center;
 			width: 130px;
@@ -661,48 +661,48 @@ body {
 			padding-bottom: 40px;			
 		     
 		}
-		#photo {
+		#photo-seller-connected {
 			width: 100%;
 			height: 130px;
   			border-radius: 10px;		
 		}
-			#PAP {
+			#PAP-seller-connected {
 				margin-top: 20px;
 				font-size: 12px;
 			}
-			#PAP-blue-orange-before, #PAP-beach-houses-before, #PAP-colour-glass-before,
-			#PAP-layers-before, #PAP-succinct-drop-before, #PAP-paint-rain-before,
+			#PAP-blue-orange-before-seller-connected, #PAP-beach-houses-before-seller-connected, #PAP-colour-glass-before-seller-connected,
+			#PAP-layers-before-seller-connected, #PAP-succinct-drop-before-seller-connected, #PAP-paint-rain-before-seller-connected,
 			
 			
-			#PAP-blue-orange-after, #PAP-beach-houses-after, #PAP-colour-glass-after,
-			#PAP-layers-after, #PAP-succinct-drop-after, #PAP-paint-rain-after {
+			#PAP-blue-orange-after-seller-connected, #PAP-beach-houses-after-seller-connected, #PAP-colour-glass-after-seller-connected,
+			#PAP-layers-after-seller-connected, #PAP-succinct-drop-after-seller-connected, #PAP-paint-rain-after-seller-connected {
 				margin-top: -8px;
 				font-size: 13px;
 			}
-			#priceline {
+			#priceline-seller-connected {
 			  margin-top: -2px;
 			  width: 60%;
 			}	
-			#yourprice {
+			#yourprice-seller-connected {
 			margin-top: 10px;
 				font-size: 13px;
 			}
-			#price-blue-orange-before, #price-beach-houses-before, #price-colour-glass-before,
-			#price-layers-before, #price-succinct-drop-before, #price-paint-rain-before,
+			#price-blue-orange-before-seller-connected, #price-beach-houses-before-seller-connected, #price-colour-glass-before-seller-connected,
+			#price-layers-before-seller-connected, #price-succinct-drop-before-seller-connected, #price-paint-rain-before-seller-connected,
 			
-			#price-blue-orange-after, #price-beach-houses-after, #price-colour-glass-after,
-			#price-layers-after, #price-succinct-drop-after, #price-paint-rain-after {
+			#price-blue-orange-after-seller-connected, #price-beach-houses-after-seller-connected, #price-colour-glass-after-seller-connected,
+			#price-layers-after-seller-connected, #price-succinct-drop-after-seller-connected, #price-paint-rain-after-seller-connected {
 				margin-top: -10px;
 				font-size: 15px;
 				margin-bottom: 20px;	
 			}			
-			#blue-orange-add-to-cart, #beach-houses-add-to-cart, 
-			#colour-glass-add-to-cart, #layers-add-to-cart, 
-			#succinct-drop-add-to-cart, #paint-rain-add-to-cart,
+			#blue-orange-add-to-cart-seller-connected, #beach-houses-add-to-cart-seller-connected, 
+			#colour-glass-add-to-cart-seller-connected, #layers-add-to-cart-seller-connected, 
+			#succinct-drop-add-to-cart-seller-connected, #paint-rain-add-to-cart-seller-connected,
 			
-			#blue-orange-add-to-cart-connected, #beach-houses-add-to-cart-connected, 
-			#colour-glass-add-to-cart-connected, #layers-add-to-cart-connected, 
-			#succinct-drop-add-to-cart-connected, #paint-rain-add-to-cart-connected {
+			#blue-orange-add-to-cart-connected-seller-connected, #beach-houses-add-to-cart-connected-seller-connected, 
+			#colour-glass-add-to-cart-connected-seller-connected, #layers-add-to-cart-connected-seller-connected, 
+			#succinct-drop-add-to-cart-connected-seller-connected, #paint-rain-add-to-cart-connected-seller-connected {
 				  font-weight: 200;
 				  font-size: 9px;
 				  padding-top: 20px;
@@ -713,13 +713,13 @@ body {
 				  letter-spacing: 1px;
 				  width: 120px;
 				}	  
-			#blue-orange-added, #beach-houses-added, 
-			#colour-glass-added, #layers-added, 
-			#succinct-drop-added, #paint-rain-added,
+			#blue-orange-added-seller-connected, #beach-houses-added-seller-connected, 
+			#colour-glass-added-seller-connected, #layers-added-seller-connected, 
+			#succinct-drop-added-seller-connected, #paint-rain-added-seller-connected,
 			
-			#blue-orange-collected, #beach-houses-collected, 
-			#colour-glass-collected, #layers-collected, 
-			#succinct-drop-collected, #paint-rain-collected{
+			#blue-orange-collected-seller-connected, #beach-houses-collected-seller-connected, 
+			#colour-glass-collected-seller-connected, #layers-collected-seller-connected, 
+			#succinct-drop-collected-seller-connected, #paint-rain-collected-seller-connected{
 				  font-weight: 200;
 				  font-size: 9px;
 				  padding-top: 20px;
@@ -753,10 +753,10 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  	
-			#profileline {
+			#profileline-seller-connected {
 			  width: 300px;
 			}		
-		  #container {
+		  #container-seller-connected {
 		    width: 440px;
 		  }  
 }

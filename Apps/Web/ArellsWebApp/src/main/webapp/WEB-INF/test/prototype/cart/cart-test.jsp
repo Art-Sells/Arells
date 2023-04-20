@@ -66,17 +66,17 @@
 			var fees;
 			var total;
 			
-			if (document.getElementById('blue-orange').style.display == "flex"){
+			if (document.getElementById('blue-orange-cart').style.display == "flex"){
 				
 				royalties = (blueOrange * royalty);
 				fees = (blueOrange * fee);
 				total = blueOrange;
 				
-				document.getElementById('royalty-price-value').innerHTML = 
+				document.getElementById('royalty-price-value-cart').innerHTML = 
 					royalties;
-				document.getElementById('fee-price-value').innerHTML = 
+				document.getElementById('fee-price-value-cart').innerHTML = 
 					fees;
-				document.getElementById('total-price-value').innerHTML = 
+				document.getElementById('total-price-value-cart').innerHTML = 
 					total;
 			}		
 			
@@ -87,69 +87,69 @@
 <!-- Remove scripts below-->
 
 		function removeBlueOrange() {
-			document.getElementById('blue-orange').style.display = "none";	
-			if (document.getElementById('beach-houses').style.display == "none"
-				&& document.getElementById('colour-glass').style.display == "none" 
-				&& document.getElementById('layers').style.display == "none"
-				&& document.getElementById('succinct-drop').style.display == "none"
-				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display = "none";
-					document.getElementById('cart-empty').style.display = "block";
+			document.getElementById('blue-orange-cart').style.display = "none";	
+			if (document.getElementById('beach-houses-cart').style.display == "none"
+				&& document.getElementById('colour-glass-cart').style.display == "none" 
+				&& document.getElementById('layers-cart').style.display == "none"
+				&& document.getElementById('succinct-drop-cart').style.display == "none"
+				&& document.getElementById('paint-rain-cart').style.display == "none"){
+					document.getElementById('cart-full-cart').style.display = "none";
+					document.getElementById('cart-empty-cart').style.display = "block";
 				}
 		}	
 		function removeBeachHouses() {
-			document.getElementById('beach-houses').style.display = "none";	
-			if (document.getElementById('blue-orange').style.display == "none"
-				&& document.getElementById('colour-glass').style.display == "none" 
-				&& document.getElementById('layers').style.display == "none"
-				&& document.getElementById('succinct-drop').style.display == "none"
-				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display = "none";
-					document.getElementById('cart-empty').style.display = "block";
+			document.getElementById('beach-houses-cart').style.display = "none";	
+			if (document.getElementById('blue-orange-cart').style.display == "none"
+				&& document.getElementById('colour-glass-cart').style.display == "none" 
+				&& document.getElementById('layers-cart').style.display == "none"
+				&& document.getElementById('succinct-drop-cart').style.display == "none"
+				&& document.getElementById('paint-rain-cart').style.display == "none"){
+					document.getElementById('cart-full-cart').style.display = "none";
+					document.getElementById('cart-empty-cart').style.display = "block";
 				}			
 		}		
 		function removeColourGlass() {
-			document.getElementById('colour-glass').style.display = "none";	
-			if (document.getElementById('beach-houses').style.display = "none"
-				&& document.getElementById('blue-orange').style.display == "none" 
-				&& document.getElementById('layers').style.display == "none"
-				&& document.getElementById('succinct-drop').style.display == "none"
-				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display = "none";
-					document.getElementById('cart-empty').style.display = "block";
+			document.getElementById('colour-glass-cart').style.display = "none";	
+			if (document.getElementById('beach-houses-cart').style.display = "none"
+				&& document.getElementById('blue-orange-cart').style.display == "none" 
+				&& document.getElementById('layers-cart').style.display == "none"
+				&& document.getElementById('succinct-drop-cart').style.display == "none"
+				&& document.getElementById('paint-rain-cart').style.display == "none"){
+					document.getElementById('cart-full-cart').style.display = "none";
+					document.getElementById('cart-empty-cart').style.display = "block";
 				}			
 		}
 		function removeLayers() {
-			document.getElementById('layers').style.display = "none";
-			if (document.getElementById('beach-houses').style.display == "none"
-				&& document.getElementById('colour-glass').style.display == "none" 
-				&& document.getElementById('blue-orange').style.display == "none"
-				&& document.getElementById('succinct-drop').style.display == "none"
-				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display = "none";
-					document.getElementById('cart-empty').style.display = "block";
+			document.getElementById('layers-cart').style.display = "none";
+			if (document.getElementById('beach-houses-cart').style.display == "none"
+				&& document.getElementById('colour-glass-cart').style.display == "none" 
+				&& document.getElementById('blue-orange-cart').style.display == "none"
+				&& document.getElementById('succinct-drop-cart').style.display == "none"
+				&& document.getElementById('paint-rain-cart').style.display == "none"){
+					document.getElementById('cart-full-cart').style.display = "none";
+					document.getElementById('cart-empty-cart').style.display = "block";
 				}			
 		}
 		function removeSuccinctDrop() {
-			document.getElementById('succinct-drop').style.display = "none";
-			if (document.getElementById('beach-houses').style.display == "none"
-				&& document.getElementById('colour-glass').style.display == "none" 
-				&& document.getElementById('layers').style.display == "none"
-				&& document.getElementById('blue-orange').style.display == "none"
-				&& document.getElementById('paint-rain').style.display == "none"){
-					document.getElementById('cart-full').style.display = "none";
-					document.getElementById('cart-empty').style.display = "block";
+			document.getElementById('succinct-drop-cart').style.display = "none";
+			if (document.getElementById('beach-houses-cart').style.display == "none"
+				&& document.getElementById('colour-glass-cart').style.display == "none" 
+				&& document.getElementById('layers-cart').style.display == "none"
+				&& document.getElementById('blue-orange-cart').style.display == "none"
+				&& document.getElementById('paint-rain-cart').style.display == "none"){
+					document.getElementById('cart-full-cart').style.display = "none";
+					document.getElementById('cart-empty-cart').style.display = "block";
 				}			
 		}		
 		function removePaintRain() {
-			document.getElementById('paint-rain').style.display = "none";
-			if (document.getElementById('beach-houses').style.display == "none"
-				&& document.getElementById('colour-glass').style.display == "none" 
-				&& document.getElementById('layers').style.display == "none"
-				&& document.getElementById('succinct-drop').style.display == "none"
-				&& document.getElementById('blue-orange').style.display == "none"){
-					document.getElementById('cart-full').style.display = "none";
-					document.getElementById('cart-empty').style.display = "block";
+			document.getElementById('paint-rain-cart').style.display = "none";
+			if (document.getElementById('beach-houses-cart').style.display == "none"
+				&& document.getElementById('colour-glass-cart').style.display == "none" 
+				&& document.getElementById('layers-cart').style.display == "none"
+				&& document.getElementById('succinct-drop-cart').style.display == "none"
+				&& document.getElementById('blue-orange-cart').style.display == "none"){
+					document.getElementById('cart-full-cart').style.display = "none";
+					document.getElementById('cart-empty-cart').style.display = "block";
 				}			
 		}		
 <!-- Remove scripts above-->	
@@ -158,10 +158,10 @@
 <!-- Complete Purchase scripts below-->	
 
 		function completePurchase() {
-			  document.getElementById('purchaseComplete').style.display = "block";
+			  document.getElementById('purchaseComplete-cart').style.display = "block";
 		}	
 		function closePurchaseComplete() {
-			  document.getElementById('purchaseComplete').style.display = "none";
+			  document.getElementById('purchaseComplete-cart').style.display = "none";
 		}	
 				
 
@@ -193,152 +193,152 @@
 		
 	<!-- Modal/s above -->	
 
-	<div id="header">
+	<div id="header-cart">
 	
-		<a id="icon-link">
-			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-cart">
+			<img id="arells-icon-cart" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link">
+		<button id="cart-link-cart">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>	
 	</div>
-	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
-	<div id="wallet-connected-div">
-		<hr id="connected-line">
-		<p id="wallet-connected" >
+	<img id="word-logo-cart" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-cart">ART SELLS</p>
+	<div id="wallet-connected-div-cart">
+		<hr id="connected-line-cart">
+		<p id="wallet-connected-cart" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line">
+		<hr id="connected-line-cart">
 	</div>	
-	<div id="cart-empty" style="display: block;">
-			<p id="no-art">
+	<div id="cart-empty-cart" style="display: block;">
+			<p id="no-art-cart">
 			cart empty
-			<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+			<img id="cart-icon-collected-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</p>
 	</div>
-	<div id="cart-full" style="display: none;">
-		<p id="royalty">Creator Royalties</p>
-		<p id="royalty-price">$
-			<span id="royalty-price-value" style="display:inline"></span>
+	<div id="cart-full-cart" style="display: none;">
+		<p id="royalty-cart">Creator Royalties</p>
+		<p id="royalty-price-cart">$
+			<span id="royalty-price-value-cart" style="display:inline"></span>
         </p>
-		<p id="fee">Fees</p>
-		<p id="fee-price">$
-			<span id="fee-price-value" style="display:inline"></span>
+		<p id="fee-cart">Fees</p>
+		<p id="fee-price-cart">$
+			<span id="fee-price-value-cart" style="display:inline"></span>
         </p>
-		<p id="total">Total</p>
-	  	<p id="total-price">$
-			<span id="total-price-value" style="display:inline"></span>
+		<p id="total-cart">Total</p>
+	  	<p id="total-price-cart">$
+			<span id="total-price-value-cart" style="display:inline"></span>
         </p>
-			<button id="purchase" onClick="completePurchase()">
+			<button id="purchase-cart" onClick="completePurchase()">
 			COMPLETE PURCHASE</button>	
-		<hr id="profileline"> 
-		<div id="container">
-			  	<div id="blue-orange-cart" style="display: none;">
+		<hr id="profileline-cart"> 
+		<div id="container-cart">
+			  	<div id="blue-orange-cart-cart" style="display: none;">
 			  	<!-- Change below link after test -->
-			  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link">
-			  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
+			  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link-cart">
+			  			<img id="photo-cart" src="/icons&images/prototype/1.jpg"/>
 			  		</a>
-			  		<div id="prices">
-				  		<div id="blue-orange-prices-before">
-					  		<p id="PAP">Price After Purchase</p>
-					  		<p id="PAP-blue-orange-before">$60,000</p>
-					  		<hr id="priceline">
-					  		<p id="yourprice">Price</p>
-					     	<p id="price-blue-orange-before">$1,200</p>
+			  		<div id="prices-cart">
+				  		<div id="blue-orange-prices-before-cart">
+					  		<p id="PAP-cart">Price After Purchase</p>
+					  		<p id="PAP-blue-orange-before-cart">$60,000</p>
+					  		<hr id="priceline-cart">
+					  		<p id="yourprice-cart">Price</p>
+					     	<p id="price-blue-orange-before-cart">$1,200</p>
 				  		</div>					  		
 			  		</div>
-		  			<button id="remove" onClick="removeBlueOrange()">
-	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+		  			<button id="remove-cart" onClick="removeBlueOrange()">
+	     		    	<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 	     		    </button>
 			    </div>
-			  	<div id="beach-houses" style="display: none;">
+			  	<div id="beach-houses-cart" style="display: none;">
 			  	<!-- Change below link after test -->
-			  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link">
-			  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
+			  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link-cart">
+			  			<img id="photo-cart" src="/icons&images/prototype/2.jpg"/>
 			  		</a>
-			  		<div id="prices">
-				  		<div id="beach-houses-prices-before">
-					  		<p id="PAP">Price After Purchase</p>
-					  		<p id="PAP-beach-houses-before">$10,000</p>
-					  		<hr id="priceline">
-					  		<p id="yourprice">Price</p>
-					     	<p id="price-beach-houses-before">$200</p>
+			  		<div id="prices-cart">
+				  		<div id="beach-houses-prices-before-cart">
+					  		<p id="PAP-cart">Price After Purchase</p>
+					  		<p id="PAP-beach-houses-before-cart">$10,000</p>
+					  		<hr id="priceline-cart">
+					  		<p id="yourprice-cart">Price</p>
+					     	<p id="price-beach-houses-before-cart">$200</p>
 				     	</div>
 			  		</div>
-		  			<button id="remove" onClick="removeBeachHouses()">
-	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+		  			<button id="remove-cart" onClick="removeBeachHouses()">
+	     		    	<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 	     		    </button>	     	
 			    </div>
-			     <div id="colour-glass" style="display: none;">
+			     <div id="colour-glass-cart" style="display: none;">
 			     <!-- Change below link after test -->
-			  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link">
-			  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
+			  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link-cart">
+			  			<img id="photo-cart" src="/icons&images/prototype/3.jpg"/>
 			  		</a>
-			  		<div id="prices">
-				  		<div id="colour-glass-prices-before">
-					  		<p id="PAP">Price After Purchase</p>
-					  		<p id="PAP-colour-glass-before">$725,000</p>
-					  		<hr id="priceline">
-					  		<p id="yourprice">Price</p>
-					     	<p id="price-colour-glass-before">$14,500</p>
+			  		<div id="prices-cart">
+				  		<div id="colour-glass-prices-before-cart">
+					  		<p id="PAP-cart">Price After Purchase</p>
+					  		<p id="PAP-colour-glass-before-cart">$725,000</p>
+					  		<hr id="priceline-cart">
+					  		<p id="yourprice-cart">Price</p>
+					     	<p id="price-colour-glass-before-cart">$14,500</p>
 				     	</div>			  		
 			  		</div>
-		  			<button id="remove" onClick="removeColourGlass()">
-	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+		  			<button id="remove-cart" onClick="removeColourGlass()">
+	     		    	<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 	     		    </button>		     	
 			    </div>
-			  	<div id="layers" style="display: none;">
+			  	<div id="layers-cart" style="display: none;">
 				<!-- Change below link after test -->
-			  		<a href="/prototype-layers-test" target="_self" id="photo-link">
-			  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
+			  		<a href="/prototype-layers-test" target="_self" id="photo-link-cart">
+			  			<img id="photo-cart" src="/icons&images/prototype/4.jpg"/>
 			  		</a>
-			  		<div id="prices">
-				  		<div id="layers-prices-before">
-					  		<p id="PAP">Price After Purchase</p>
-					  		<p id="PAP-layers-before">$20,000,000</p>
-					  		<hr id="priceline">
-					  		<p id="yourprice">Price</p>
-					     	<p id="price-layers-before">$400,000</p>
+			  		<div id="prices-cart">
+				  		<div id="layers-prices-before-cart">
+					  		<p id="PAP-cart">Price After Purchase</p>
+					  		<p id="PAP-layers-before-cart">$20,000,000</p>
+					  		<hr id="priceline-cart">
+					  		<p id="yourprice-cart">Price</p>
+					     	<p id="price-layers-before-cart">$400,000</p>
 				     	</div>			  		
 			  		</div>
-		  			<button id="remove" onClick="removeLayers()">
-	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+		  			<button id="remove-cart" onClick="removeLayers()">
+	     		    	<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 	     		    </button>
 			    </div>
-			  	<div id="succinct-drop" style="display:none;">
+			  	<div id="succinct-drop-cart" style="display:none;">
 			  	<!-- Change below link after test -->
-		  			<a href="/prototype-succinct-drop-test" target="_self" id="photo-link">
+		  			<a href="/prototype-succinct-drop-test" target="_self" id="photo-link-cart">
 			  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
 			  		</a>
-			  		<div id="prices">
-					  	<div id="succinct-drop-prices-before">
-					  		<p id="PAP">Price After Purchase</p>
-					  		<p id="PAP-succinct-drop-before">$5,000</p>
-					  		<hr id="priceline">
-					  		<p id="yourprice">Price</p>
-					     	<p id="price-succinct-drop-before">$100</p>
+			  		<div id="prices-cart">
+					  	<div id="succinct-drop-prices-before-cart">
+					  		<p id="PAP-cart">Price After Purchase</p>
+					  		<p id="PAP-succinct-drop-before-cart">$5,000</p>
+					  		<hr id="priceline-cart">
+					  		<p id="yourprice-cart">Price</p>
+					     	<p id="price-succinct-drop-before-cart">$100</p>
 				     	</div>			  		
 			  		</div>
-		  			<button id="remove" onClick="removeSuccinctDrop()">
-	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+		  			<button id="remove-cart" onClick="removeSuccinctDrop()">
+	     		    	<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 	     		    </button>			     	
 			    </div>
-			     <div id="paint-rain" style="display: none;">
+			     <div id="paint-rain-cart" style="display: none;">
 				<!-- Change below link after test -->
-			  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link">
-			  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
+			  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link-cart">
+			  			<img id="photo-cart" src="/icons&images/prototype/6.jpg"/>
 			  		</a>
-			  		<div id="prices">
-				  		<div id="paint-rain-prices-before">
-					  		<p id="PAP">Price After Purchase</p>
-					  		<p id="PAP-paint-rain-before">$600,000</p>
-					  		<hr id="priceline">
-					  		<p id="yourprice">Price</p>
-					     	<p id="price-paint-rain-before">$12,000</p>
+			  		<div id="prices-cart">
+				  		<div id="paint-rain-prices-before-cart">
+					  		<p id="PAP-cart">Price After Purchase</p>
+					  		<p id="PAP-paint-rain-before-cart">$600,000</p>
+					  		<hr id="priceline-cart">
+					  		<p id="yourprice-cart">Price</p>
+					     	<p id="price-paint-rain-before-cart">$12,000</p>
 				     	</div>			  		
 			  		</div>
-		  			<button id="remove" onClick="removePaintRain()">
-	     		    	<img id="del" src="/icons&images/prototype/delete.png"/>
+		  			<button id="remove-cart" onClick="removePaintRain()">
+	     		    	<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 	     		    </button>		     	
 			    </div>
 		</div>	

@@ -10,7 +10,7 @@ body {
   background: white;
 }
 
-	#header {
+	#header-cart {
 			display: flex;
 			justify-content: center;
 			margin-top: 0px;
@@ -25,7 +25,7 @@ body {
 			z-index: 100;
 			margin-bottom: -80px;
 		}
-		#icon-link{
+		#icon-link-cart{
 			display: inline-block;
 			text-decoration: none;
 			margin-right: 128px;
@@ -42,10 +42,10 @@ body {
 			  opacity: .1;
 				background: rgba(255, 255, 255, 0.8);						
 		}	
-			#arells-icon {
+			#arells-icon-cart {
 				height: 16px;
 			}	
-		#cart-link{
+		#cart-link-cart{
 			display: inline-block;
 			text-decoration: none;
 			margin-left: 124px;
@@ -62,15 +62,15 @@ body {
 			  opacity: .1;
 				background: rgba(255, 255, 255, 0.8);						
 		}	
-			#cart-icon {
+			#cart-icon-cart {
 				height: 18px;
 			}		
 			
-		#word-logo {
+		#word-logo-cart {
 			margin-top: 37px;
 			width: 110px;	
 		}
-		#slogan {
+		#slogan-cart {
 			margin-top: 0px;
 			font-size: 8px;
 			letter-spacing: 10px;
@@ -81,13 +81,13 @@ body {
 			word-spacing: -3px;
 		}	
 		
-		#wallet-connected-div{
+		#wallet-connected-div-cart{
 			margin-top: 30px;
 			margin-left: auto;
 			margin-right: auto;
 			margin-bottom: 30px;
 		}
-			#connected-line {
+			#connected-line-cart {
 			  margin-top: -5px;
 			  background-color: black;
 			  border: none;
@@ -96,7 +96,7 @@ body {
 			  width: 100px;
 			  opacity: .1;
 			}	
-			#wallet-connected {
+			#wallet-connected-cart {
 				padding-bottom: 10px;
 				padding-top: 5px;
 				font-size: 9px;
@@ -106,7 +106,7 @@ body {
 				color: gray;
 				opacity: 1;
 			}
-		#royalty {
+		#royalty-cart {
 		text-align: center;
 		margin-top: 30px;
 			color: black;
@@ -116,7 +116,7 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}
-		#royalty-price {
+		#royalty-price-cart {
 		text-align: center;
 		margin-top: -7px;
 			color: black;
@@ -126,10 +126,10 @@ body {
 			padding-left: 0px;
 			opacity: .5;
 		}
-			#royalty-price-value{
+			#royalty-price-value-cart{
 				margin-left: -5px;
 			}						
-		#fee {
+		#fee-cart {
 		text-align: center;
 		margin-top: 20px;
 			color: black;
@@ -139,7 +139,7 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}
-		#fee-price {
+		-cart {
 		text-align: center;
 		margin-top: -10px;
 			color: black;
@@ -152,7 +152,7 @@ body {
 			#fee-price-value{
 				margin-left: -4px;
 			}	
-		#total {
+		#total-cart {
 			text-align: center;
 			color: black;
 			font-weight: 300;
@@ -161,7 +161,7 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}	
-		#total-price {
+		#total-price-cart {
 		margin-top: -10px;
 		text-align: center;
 			color: black;
@@ -172,10 +172,10 @@ body {
 			opacity: .7;
 			margin-bottom: 30px;
 		}
-			#total-price-value{
+			#total-price-value-cart{
 				margin-left: -6px;
 			}								
-		#purchase {
+		#purchase-cart {
 		  text-decoration: none;
 		  color: white;
 		  font-weight: 200;
@@ -192,13 +192,13 @@ body {
 		  box-shadow: 0px 8px 12px -6px black;  
 			background: black;
 		}	  
-		#purchase:hover,
-		#purchase:focus {
+		#purchase-cart:hover,
+		#purchase-cart:focus {
 			  opacity: .4;
 			  transition: 1s;
 			  cursor: pointer;
 		}		
-		#profileline {
+		#profileline-cart {
 		margin-top: 30px;
 		  background-color: black;
 		  border: none;
@@ -211,7 +211,7 @@ body {
 		
 		
 		
-		#no-art{
+		#no-art-cart{
 			margin-top: 60px;
 			width: 500px;
 			  font-size: 12pt;
@@ -223,7 +223,7 @@ body {
 			  margin-right: auto;
 			  margin-left: auto;			
 		}	
-		#cart-icon-collected{
+		#cart-icon-collected-cart{
 			height: 25px;
 			margin-left: 10px;
 			opacity: 1;
@@ -231,7 +231,7 @@ body {
 					
 			
 	
-		#container {
+		#container-cart {
 			margin-top: 30px;
 			  width: 900px;
 			  margin-left: auto;
@@ -239,8 +239,8 @@ body {
 			  margin-bottom: 60px;		
 		}
 			
-			#blue-orange-cart, #beach-houses, #colour-glass,
-			#layers, #succinct-drop, #paint-rain{
+			#blue-orange-cart, #beach-houses-cart, #colour-glass-cart,
+			#layers-cart, #succinct-drop-cart, #paint-rain-cart{
 				margin-left: auto;
 			    margin-right: auto;
 			    margin-bottom: 10px;
@@ -259,11 +259,11 @@ body {
 			     
 			}
 			
-			#photo-link {
+			#photo-link-cart {
 				display: inline-block;
 				text-decoration: none; 
 			}
-				#photo {
+				#photo-cart {
 					object-fit: cover;
 					width: 150px;
 					height: 150px;
@@ -271,18 +271,18 @@ body {
 		  			box-shadow: 0px 8px 12px -6px black; 
 				}
 		
-				#photo-link:hover {
+				#photo-link-cart:hover {
 				  opacity: .5;
 				  transition: 1s;
 				  box-shadow: none;
 				  cursor: pointer;
 				}
-				#photo-link:focus {
+				#photo-link-cart:focus {
 				  opacity: .5;
 				  box-shadow: none;
 				  cursor: pointer;
 			}		
-			#prices {
+			#prices-cart {
 				display: inline-block;
 				margin-left: 20px;
 				margin-right: 20px;
@@ -290,7 +290,7 @@ body {
 				width: 400px;
 			}	
 			
-				#PAP {
+				#PAP-cart {
 				width: 70px;
 				margin-top: 30px;
 					color: black;
@@ -300,8 +300,8 @@ body {
 					padding-left: 0px;
 					opacity: .4;
 				}
-				#PAP-blue-orange-before, #PAP-beach-houses-before, #PAP-colour-glass-before,
-				#PAP-layers-before, #PAP-succinct-drop-before, #PAP-paint-rain-before {
+				#PAP-blue-orange-before-cart, #PAP-beach-houses-before-cart, #PAP-colour-glass-before-cart,
+				#PAP-layers-before-cart, #PAP-succinct-drop-before-cart, #PAP-paint-rain-before-cart {
 				margin-top: -7px;
 					color: black;
 					font-weight: 300;
@@ -310,7 +310,7 @@ body {
 					padding-left: 0px;
 					opacity: .5;
 				}
-				#priceline {
+				#priceline-cart {
 				  margin-top: -5px;
 				  background-color: black;
 				  border: none;
@@ -319,7 +319,7 @@ body {
 				  width: 100%;
 				  opacity: .04;
 				}	
-				#yourprice {
+				#yourprice-cart {
 				margin-top: 13px;
 					color: black;
 					font-weight: 300;
@@ -328,8 +328,8 @@ body {
 					padding-left: 0px;
 					opacity: .4;
 				}
-				#price-blue-orange-before, #price-beach-houses-before, #price-colour-glass-before,
-				#price-layers-before, #price-succinct-drop-before, #price-paint-rain-before {
+				#price-blue-orange-before-cart, #price-beach-houses-before-cart, #price-colour-glass-before-cart,
+				#price-layers-before-cart, #price-succinct-drop-before-cart, #price-paint-rain-before-cart {
 				margin-top: -10px;
 					color: black;
 					font-weight: 300;
@@ -339,7 +339,7 @@ body {
 					opacity: .7;
 					margin-bottom: 28px;
 				}
-			#remove {
+			#remove-cart {
 				display: inline-block;
 				text-decoration: none;
 				  padding-top: 10px;
@@ -354,13 +354,13 @@ body {
 				  box-shadow: 0px 2px 10px -3px gray;  
 					background: white;
 				}	  
-			#remove:hover,
-			#remove:focus {
+			#remove-cart:hover,
+			#remove-cart:focus {
 				  opacity: 1;
 				  transition: 1s;
 				  cursor: pointer;
 			}		
-				#del {
+				#del-cart {
 					height: 20px;
 					opacity: 1;
 				}
@@ -397,12 +397,12 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  
-		#header {
+		#header-cart {
 				margin-top: 0px;
 				padding-top: 25px;	
 				margin-bottom: -75px;		
 			}	
-			#icon-link{	
+			#icon-link-cart{	
 				margin-right: 90px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -411,10 +411,10 @@ body {
 				  border-radius: 12px;
 				  width: 30px;		
 			}	
-			#arells-icon {
+			#arells-icon-cart {
 					height: 15px;
 				}	    
-			#cart-link{
+			#cart-link-cart{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -423,71 +423,71 @@ body {
 				  border-radius: 12px;	
 				  width: 45px;  					
 			}
-			#cart-icon {
+			#cart-icon-cart {
 					height: 15px;
 				}
 			
 			  				
-		#word-logo {
+		#word-logo-cart {
 			margin-top: 35px;
 			width: 90px;	
 		}
-		#slogan {
+		#slogan-cart {
 			margin-top: -2px;
 			font-size: 7px;
 			letter-spacing: 8px;
 			margin-left: 8px; 
 			word-spacing: -3px;
 		}
-		#wallet-connected-div{
+		#wallet-connected-div-cart{
 			margin-top: 25px;
 			margin-bottom: 20px;
 		}	
-			#connected-line {
+			#connected-line-cart {
 			  width: 90px;
 			}				
-			#wallet-connected {
+			#wallet-connected-cart {
 				padding-bottom: 12px;
 				padding-top: 7px;
 				font-size: 8px;
 				letter-spacing: 0px;
 				margin-left: 0px; 
 			}
-		#royalty {
+		#royalty-cart {
 			margin-top: 20px;
 			font-size: 11px;
 		}
-		#royalty-price {
+		#royalty-price-cart {
 			margin-top: -10px;
 			font-size: 12px;
 		}
-			#royalty-price-value{
+			#royalty-price-value-cart{
 				margin-left: -4px;
 			}	
-		#fee {
+		#fee-cart {
 			margin-top: 10px;
 			font-size: 11px;
 		}
-		#fee-price {
+		#fee-price-cart {
 			margin-top: -10px;
 			font-size: 12px;
 			margin-bottom: 10px;	
 		}	
-			#fee-price-value{
+			#fee-price-value-cart{
 				margin-left: -3px;
 			}	
-		#total{
+		#total-cart{
 			font-size: 13px;
 		}  
-		#total-price {
+		#total-price-cart {
 			margin-top: -10px;
 			font-size: 15px;
 			margin-bottom: 20px;
 		}	
-			#total-price-value{
+			#total-price-value-cart{
 				margin-left: -5px;
 			}	
-		#purchase {
+		#purchase-cart {
 			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
@@ -498,28 +498,28 @@ body {
 			  letter-spacing: 1px;
 			  width: 170px;
 		}	  	
-		#profileline {
+		#profileline-cart {
 		margin-top: 25px;
 		  width: 400px;
 		}	
 		
-		#no-art{
+		#no-art-cart{
 			margin-top: 50px;
 			width: 300px;
 			font-size: 13px;
 		}	
-		#cart-icon-collected{
+		#cart-icon-collected-cart{
 			height: 20px;
 			margin-left: 5px;
 		}		
 						
 				
-		#container {
+		#container-cart {
 			  width: 660px;	
 		}
 			
-			#blue-orange-cart, #beach-houses, #colour-glass,
-			#layers, #succinct-drop, #paint-rain{
+			#blue-orange-cart-cart, #beach-houses-cart, #colour-glass-cart,
+			#layers-cart, #succinct-drop-cart, #paint-rain-cart{
 				margin-left: auto;
 			    margin-right: auto;
 			    margin-bottom: 10px;
@@ -538,42 +538,42 @@ body {
 			     
 			}
 			
-				#photo {
+				#photo-cart {
 					width: 100px;
 					height: 100px;
 				}
 		
-			#prices {
+			#prices-cart {
 				margin-left: 20px;
 				margin-right: 20px;
 				width: 300px;
 			}	
 			
-				#PAP {
+				#PAP-cart {
 					width: 70px;
 					margin-top: 20px;
 					font-size: 12px;
 				}
-				#PAP-blue-orange-before, #PAP-beach-houses-before, #PAP-colour-glass-before,
-				#PAP-layers-before, #PAP-succinct-drop-before, #PAP-paint-rain-before {
+				#PAP-blue-orange-before-cart, #PAP-beach-houses-before-cart, #PAP-colour-glass-before-cart,
+				#PAP-layers-before-cart, #PAP-succinct-drop-before-cart, #PAP-paint-rain-before-cart {
 					margin-top: -8px;
 					font-size: 12px;
 				}
-				#priceline {
+				#priceline-cart {
 				  margin-top: -2px;
 				  width: 100%;
 				}	
-				#yourprice {
+				#yourprice-cart {
 					margin-top: 10px;
 					font-size: 13px;
 				}
-				#price-blue-orange-before, #price-beach-houses-before, #price-colour-glass-before,
-				#price-layers-before, #price-succinct-drop-before, #price-paint-rain-before {
+				#price-blue-orange-before-cart, #price-beach-houses-before-cart, #price-colour-glass-before-cart,
+				#price-layers-before-cart, #price-succinct-drop-before-cart, #price-paint-rain-before-cart {
 					margin-top: -10px;
 					font-size: 13px;
 					margin-bottom: 20px;	
 				}	
-				#remove {
+				#remove-cart {
 					display: inline-block;
 					  padding-top: 6px;
 					  padding-bottom: 3px;
@@ -584,7 +584,7 @@ body {
 					  height: 30px;
 					}	  	
 						
-					#del{
+					#del-cart{
 						height: 15px;
 					}			
 		

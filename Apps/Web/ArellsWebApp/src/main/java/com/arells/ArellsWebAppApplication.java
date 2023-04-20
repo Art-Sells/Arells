@@ -4,8 +4,10 @@ import org.apache.catalina.connector.Connector;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.arells.ArellsWebAppApplication;
 
@@ -26,6 +28,14 @@ public class ArellsWebAppApplication {
         ((AbstractAjpProtocol<?>)ajpConnector.getProtocolHandler()).setSecretRequired(false);
         tomcat.addAdditionalTomcatConnectors(ajpConnector);
         return tomcat;
-        }	
+        }
+	@Bean
+	public ErrorViewResolver customErrorViewResolver() {
+	    return (request, status, model) -> {
+	        ModelAndView modelAndView = new ModelAndView();
+	        modelAndView.setViewName("error.html");
+	        return modelAndView;
+	    };
+	}
 
 }
