@@ -16,8 +16,15 @@
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - (Art)(Sells)(+) buttons are Z-Indexed Sticky
 - Minting [+] allows cropping for preview <Also for Profile Picture Upload
+- - [Prices Not Shown for unlisted items, only Owner's name]
+  
+#### Buyer-Created/Collected
+- [Prices Not Shown for unlisted items, only Art Name]
 
-#### Image (listed as an asset/blockchainaddress)
+#### Image
+- Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
+- Created & Owned By (Character Limit Links)
+- [Prices Not Shown for unlisted items, only Creators/Owner's name]  
 - Proof-of-Creation
 - Proof-of-Ownership
 
@@ -45,16 +52,11 @@
 - Use GPT-4?
 - Heavy KYC/AML [USDC -to-bank- transfers only]
 
-#### Profile
+#### Seller-Created/Collected
 - Create Categories (General, Illustrations, etc)
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
 - - Proof-of-creation 70x PAP for Copyright Proven Artistic Works
 - - Proof-of-ownership for major assets.
-- - [Price Not Shown for unlisted items, only Owner's name]
-
-#### Image
-- Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
-- Created & Owned By (Character Limit Links)
 
 #### Wallet:
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
