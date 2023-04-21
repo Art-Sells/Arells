@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ include file="cart/cart-test.jsp" %>
+<!-- change below link after test -->
+<%@ include file="/cart/cart-test.jsp" %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -116,7 +117,7 @@
 		document.getElementById('blue-orange-added-seller-created').style.display = "block";
 		
 		//cart functions
-		document.getElementById('cart-full-cart').style.display = "none";
+		document.getElementById('cart-empty-cart').style.display = "none";
 		document.getElementById('cart-full-cart').style.display = "block";
 		document.getElementById('blue-orange-cart-cart').style.display = "flex";
 		
@@ -183,7 +184,7 @@
 		</div>	
 	<!-- Modal/s above -->	
 
-	<div id="header-seller-connected">
+	<div id="header-seller-created">
 	
 	<!-- Change below link after test -->
 		<a id="icon-link-seller-created" href="/test">
@@ -192,8 +193,8 @@
 		<button id="cart-link-seller-created" onClick="connectWallet()" style="display: inline-block;">
 			<img id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
-		<a id="cart-link-connected-seller-connected" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon-seller-connected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<a id="cart-link-connected-seller-created" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>	
 	</div>
 	<img id="word-logo-seller-created" src="/icons&images/Arells-Logo-Ebony.png">	

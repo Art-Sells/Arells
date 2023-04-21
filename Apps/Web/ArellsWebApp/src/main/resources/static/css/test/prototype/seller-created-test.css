@@ -377,7 +377,7 @@ body {
 				opacity: .4;
 			}
 			#price-blue-orange-before-seller-created, #price-beach-houses-before-seller-created, #price-colour-glass-before-seller-created,
-			#price-layers-before-created, #price-succinct-drop-before-created, #price-paint-rain-before-created,
+			#price-layers-before-seller-created, #price-succinct-drop-before-seller-created, #price-paint-rain-before-seller-created,
 			
 			#price-blue-orange-after-seller-created, #price-beach-houses-after-seller-created, #price-colour-glass-after-seller-created,
 			#price-layers-after-seller-created, #price-succinct-drop-after-seller-created, #price-paint-rain-after-seller-created {
@@ -688,7 +688,7 @@ body {
 				font-size: 13px;
 			}
 			#price-blue-orange-before-seller-created, #price-beach-houses-before-seller-created, #price-colour-glass-before-seller-created,
-			#price-layers-before-created, #price-succinct-drop-before-created, #price-paint-rain-before-created,
+			#price-layers-before-seller-created, #price-succinct-drop-before-seller-created, #price-paint-rain-before-seller-created,
 			
 			#price-blue-orange-after-seller-created, #price-beach-houses-after-seller-created, #price-colour-glass-after-seller-created,
 			#price-layers-after-seller-created, #price-succinct-drop-after-seller-created, #price-paint-rain-after-seller-created {
