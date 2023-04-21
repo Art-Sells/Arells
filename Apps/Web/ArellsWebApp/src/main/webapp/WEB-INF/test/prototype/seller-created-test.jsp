@@ -85,23 +85,23 @@
 	function walletConnected() {
 		document.getElementById('connectWalletBuy').style.display = "none";
 		
-		document.getElementById('cart-link-seller-connected').style.display = "none";
-		document.getElementById('wallet-connected-div-seller-connected').style.display = "block";
+		document.getElementById('cart-link-seller-created').style.display = "none";
+		document.getElementById('wallet-connected-div-seller-created').style.display = "block";
 		
-		document.getElementById('cart-link-connected-seller-connected').style.display = "inline-block";
+		document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
 		
-		document.getElementById('blue-orange-add-to-cart-seller-connected').style.display = "none";
-		document.getElementById('beach-houses-add-to-cart-seller-connected').style.display = "none";
-		document.getElementById('colour-glass-add-to-cart-seller-connected').style.display = "none";
-		document.getElementById('layers-add-to-cart-seller-connected').style.display = "none";
-		document.getElementById('succinct-drop-add-to-cart-seller-connected').style.display = "none";
-		document.getElementById('paint-rain-add-to-cart-seller-connected').style.display = "none";
- 		document.getElementById('blue-orange-add-to-cart-connected-seller-connected').style.display = "block";
-		document.getElementById('beach-houses-add-to-cart-connected-seller-connected').style.display = "block";
-		document.getElementById('colour-glass-add-to-cart-connected-seller-connected').style.display = "block";
-		document.getElementById('layers-add-to-cart-connected-seller-connected').style.display = "block";
-		document.getElementById('succinct-drop-add-to-cart-connected-seller-connected').style.display = "block";
-		document.getElementById('paint-rain-add-to-cart-connected-seller-connected').style.display = "block"; 
+		document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
+		document.getElementById('beach-houses-add-to-cart-seller-created').style.display = "none";
+		document.getElementById('colour-glass-add-to-cart-seller-created').style.display = "none";
+		document.getElementById('layers-add-to-cart-seller-created').style.display = "none";
+		document.getElementById('succinct-drop-add-to-cart-seller-created').style.display = "none";
+		document.getElementById('paint-rain-add-to-cart-seller-created').style.display = "none";
+ 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "block";
+		document.getElementById('beach-houses-add-to-cart-connected-seller-created').style.display = "block";
+		document.getElementById('colour-glass-add-to-cart-connected-seller-created').style.display = "block";
+		document.getElementById('layers-add-to-cart-connected-seller-created').style.display = "block";
+		document.getElementById('succinct-drop-add-to-cart-connected-seller-created').style.display = "block";
+		document.getElementById('paint-rain-add-to-cart-connected-seller-created').style.display = "block"; 
 	 
 	}	
 <!-- Connect Wallet script above-->
@@ -112,8 +112,8 @@
 //Ensure that Image displays show as FLEX after adding, cart-full: block
 
 	function addBlueOrangeToCart() {
-		document.getElementById('blue-orange-add-to-cart-connected-seller-connected').style.display = "none";
-		document.getElementById('blue-orange-added-seller-connected').style.display = "block";
+		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
+		document.getElementById('blue-orange-added-seller-created').style.display = "block";
 		
 		//cart functions
 		document.getElementById('cart-full-cart').style.display = "none";
@@ -123,29 +123,29 @@
 		  
 	}
 	function addBeachHousesToCart() {
-		document.getElementById('beach-houses-add-to-cart-connected-seller-connected').style.display = "none";
-		document.getElementById('beach-houses-added-seller-connected').style.display = "block";
+		document.getElementById('beach-houses-add-to-cart-connected-seller-created').style.display = "none";
+		document.getElementById('beach-houses-added-seller-created').style.display = "block";
 		  
 	}
 	function addColourGlassToCart() {
-		document.getElementById('colour-glass-add-to-cart-connected-seller-connected').style.display = "none";
-		document.getElementById('colour-glass-added-seller-connected').style.display = "block";
+		document.getElementById('colour-glass-add-to-cart-connected-seller-created').style.display = "none";
+		document.getElementById('colour-glass-added-seller-created').style.display = "block";
 		  
 	}
 	function addLayersToCart() {
-		document.getElementById('layers-add-to-cart-connected-seller-connected').style.display = "none";
-		document.getElementById('layers-added-seller-connected').style.display = "block";
+		document.getElementById('layers-add-to-cart-connected-seller-created').style.display = "none";
+		document.getElementById('layers-added-seller-created').style.display = "block";
 		
 		  
 	}
 	function addSuccinctDropToCart() {
-		document.getElementById('succinct-drop-add-to-cart-connected-seller-connected').style.display = "none";
-		document.getElementById('succinct-drop-added-seller-connected').style.display = "block";
+		document.getElementById('succinct-drop-add-to-cart-connected-seller-created').style.display = "none";
+		document.getElementById('succinct-drop-added-seller-created').style.display = "block";
 		  
 	}
 	function addPaintRainToCart() {
-		document.getElementById('paint-rain-add-to-cart-connected-seller-connected').style.display = "none";
-		document.getElementById('paint-rain-added-seller-connected').style.display = "block";
+		document.getElementById('paint-rain-add-to-cart-connected-seller-created').style.display = "none";
+		document.getElementById('paint-rain-added-seller-created').style.display = "block";
 		  
 	}
 	
@@ -186,219 +186,219 @@
 	<div id="header-seller-connected">
 	
 	<!-- Change below link after test -->
-		<a id="icon-link-seller-connected" href="/test">
-			<img id="arells-icon-seller-connected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-seller-created" href="/test">
+			<img id="arells-icon-seller-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link-seller-connected" onClick="connectWallet()" style="display: inline-block;">
-			<img id="cart-icon-seller-connected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<button id="cart-link-seller-created" onClick="connectWallet()" style="display: inline-block;">
+			<img id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
 		<a id="cart-link-connected-seller-connected" href="/prototype-cart-test" style="display: none;">
 			<img id="cart-icon-seller-connected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>	
 	</div>
-	<img id="word-logo-seller-connected" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan-seller-connected">ART SELLS</p>
-	<div id="wallet-connected-div-seller-connected" style="display: none;">
-		<hr id="connected-line-seller-connected">
-		<p id="wallet-connected-seller-connected" >
+	<img id="word-logo-seller-created" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-seller-created">ART SELLS</p>
+	<div id="wallet-connected-div-seller-created" style="display: none;">
+		<hr id="connected-line-seller-created">
+		<p id="wallet-connected-seller-created" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line-seller-connected">
+		<hr id="connected-line-seller-created">
 	</div>
-    <div id="profile-img-container-seller-connected">
-		<img id="profile-photo-seller-connected" src="/icons&images/prototype/proto-banner.jpg">
+    <div id="profile-img-container-seller-created">
+		<img id="profile-photo-seller-created" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
-	<h1 id="name-seller-connected">Abstract Kadabra</h1>  
-	<p id="description-seller-connected">Here rests life's abstractions captured in majestic endeavors.</p> 
-	<button id="copy-link-seller-connected"
+	<h1 id="name-seller-created">Abstract Kadabra</h1>  
+	<p id="description-seller-created">Here rests life's abstractions captured in majestic endeavors.</p> 
+	<button id="copy-link-seller-created"
 		onClick="copyLink()">
-		<img id="copy-link-icon-seller-connected" src="/icons&images/prototype/link.png"/>
+		<img id="copy-link-icon-seller-created" src="/icons&images/prototype/link.png"/>
 		COPY LINK</button>	
 	<br>
-	<hr id="profileline-seller-connected">
-	<div id="created-collected-seller-connected">
-		<a id="created-seller-connected">Created</a>	
+	<hr id="profileline-seller-created">
+	<div id="created-collected-seller-created">
+		<a id="created-seller-created">Created</a>	
 	<!-- Change below link after test -->		
-		<a id="collected-seller-connected" href="/prototype-seller-collected-test">Collected</a>	
+		<a id="collected-seller-created" href="/prototype-seller-collected-test">Collected</a>	
 	</div>
-	<div id="container-seller-connected">
-		  	<div id="blue-orange-seller-connected">
+	<div id="container-seller-created">
+		  	<div id="blue-orange-seller-created">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link-seller-connected">
-		  			<img id="photo-seller-connected" src="/icons&images/prototype/1.jpg"/>
+		  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link-seller-created">
+		  			<img id="photo-seller-created" src="/icons&images/prototype/1.jpg"/>
 		  		</a>
-		  		<div id="blue-orange-prices-before-seller-connected" style="display: block;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-blue-orange-before-seller-connected">$60,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-blue-orange-before-seller-connected">$1,200</p>
+		  		<div id="blue-orange-prices-before-seller-created" style="display: block;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-blue-orange-before-seller-created">$60,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-blue-orange-before-seller-created">$1,200</p>
 		  		</div>	
-		  		<div id="blue-orange-prices-after-seller-connected" style="display: none;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-blue-orange-after-seller-connected">$3,000,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-blue-orange-after-seller-connected">$60,000</p>
+		  		<div id="blue-orange-prices-after-seller-created" style="display: none;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-blue-orange-after-seller-created">$3,000,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-blue-orange-after-seller-created">$60,000</p>
 		  		</div>	
-		     	<button id="blue-orange-add-to-cart-seller-connected" onClick="connectWallet()"
+		     	<button id="blue-orange-add-to-cart-seller-created" onClick="connectWallet()"
 	     		style="display: block;">
 	     		ADD TO CART</button>
-	     		<button id="blue-orange-add-to-cart-connected-seller-connected" onClick="addBlueOrangeToCart()"
+	     		<button id="blue-orange-add-to-cart-connected-seller-created" onClick="addBlueOrangeToCart()"
 	     		style="display: none;">
 	     		ADD TO CART</button>
-	     		<button id="blue-orange-added-seller-connected" style="display: none;">
+	     		<button id="blue-orange-added-seller-created" style="display: none;">
 	     		ADDED</button>	
-	     		<button id="blue-orange-collected-seller-connected" style="display: none;">
+	     		<button id="blue-orange-collected-seller-created" style="display: none;">
 	     		COLLECTED</button>	
 		    </div>
-		  	<div id="beach-houses-seller-connected">
+		  	<div id="beach-houses-seller-created">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link-seller-connected">
-		  			<img id="photo-seller-connected" src="/icons&images/prototype/2.jpg"/>
+		  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link-seller-created">
+		  			<img id="photo-seller-created" src="/icons&images/prototype/2.jpg"/>
 		  		</a>
-		  		<div id="beach-houses-prices-before-seller-connected" style="display: block;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-beach-houses-before-seller-connected">$10,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-beach-houses-before-seller-connected">$200</p>
+		  		<div id="beach-houses-prices-before-seller-created" style="display: block;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-beach-houses-before-seller-created">$10,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-beach-houses-before-seller-created">$200</p>
 		     	</div>
-		     	<div id="beach-houses-prices-after-seller-connected" style="display: none;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-beach-houses-after-seller-connected">$500,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-beach-houses-after-seller-connected">$10,000</p>
+		     	<div id="beach-houses-prices-after-seller-created" style="display: none;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-beach-houses-after-seller-created">$500,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-beach-houses-after-seller-created">$10,000</p>
 		     	</div>
-	     		<button id="beach-houses-add-to-cart-seller-connected" onClick="connectWallet()" 
+	     		<button id="beach-houses-add-to-cart-seller-created" onClick="connectWallet()" 
 	     		style="display: block;">
 	     		ADD TO CART</button>
-	     		<button id="beach-houses-add-to-cart-connected-seller-connected" onClick="addBeachHousesToCart()" 
+	     		<button id="beach-houses-add-to-cart-connected-seller-created" onClick="addBeachHousesToCart()" 
 	     		style="display: none;">
 	     		ADD TO CART</button>
-	     		<button id="beach-houses-added-seller-connected" style="display: none;">
+	     		<button id="beach-houses-added-seller-created" style="display: none;">
 	     		ADDED</button>	
-	     		<button id="beach-houses-collected-seller-connected" style="display: none;">
+	     		<button id="beach-houses-collected-seller-created" style="display: none;">
 	     		COLLECTED</button>			     	
 		    </div>
-		     <div id="colour-glass-seller-connected">
+		     <div id="colour-glass-seller-created">
 		     <!-- Change below link after test -->
-		  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link-seller-connected">
-		  			<img id="photo-seller-connected" src="/icons&images/prototype/3.jpg"/>
+		  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link-seller-created">
+		  			<img id="photo-seller-created" src="/icons&images/prototype/3.jpg"/>
 		  		</a>
-		  		<div id="colour-glass-prices-before-seller-connected" style="display: block;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-colour-glass-before-seller-connected">$725,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-colour-glass-before-seller-connected">$14,500</p>
+		  		<div id="colour-glass-prices-before-seller-created" style="display: block;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-colour-glass-before-seller-created">$725,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-colour-glass-before-seller-created">$14,500</p>
 		     	</div>
-		     	<div id="colour-glass-prices-before-seller-connected" style="display: none;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-colour-glass-after-seller-connected">$36,250,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-colour-glass-after-seller-connected">$725,000</p>
+		     	<div id="colour-glass-prices-before-seller-created" style="display: none;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-colour-glass-after-seller-created">$36,250,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-colour-glass-after-seller-created">$725,000</p>
 		     	</div>
-	     		<button id="colour-glass-add-to-cart-seller-connected" onClick="connectWallet()"
+	     		<button id="colour-glass-add-to-cart-seller-created" onClick="connectWallet()"
 	     		style="display: block;">
 	     		ADD TO CART</button>
-	     		<button id="colour-glass-add-to-cart-connected-seller-connected" onClick="addColourGlassToCart()"
+	     		<button id="colour-glass-add-to-cart-connected-seller-created" onClick="addColourGlassToCart()"
 	     		style="display: none;">
 	     		ADD TO CART</button>
-	     		<button id="colour-glass-added-seller-connected" style="display: none;">
+	     		<button id="colour-glass-added-seller-created" style="display: none;">
 	     		ADDED</button>		
-	     		<button id="colour-glass-collected-seller-connected" style="display: none;">
+	     		<button id="colour-glass-collected-seller-created" style="display: none;">
 	     		COLLECTED</button>			     	
 		    </div>
-		  	<div id="layers-seller-connected">
+		  	<div id="layers-seller-created">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-layers-test" target="_self" id="photo-link-seller-connected">
-		  			<img id="photo-seller-connected" src="/icons&images/prototype/4.jpg"/>
+		  		<a href="/prototype-layers-test" target="_self" id="photo-link-seller-created">
+		  			<img id="photo-seller-created" src="/icons&images/prototype/4.jpg"/>
 		  		</a>
-		  		<div id="layers-prices-before-seller-connected" style="display: block;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-layers-before-seller-connected">$20,000,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-layers-before-seller-connected">$400,000</p>
+		  		<div id="layers-prices-before-seller-created" style="display: block;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-layers-before-seller-created">$20,000,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-layers-before-seller-created">$400,000</p>
 		     	</div>
-		     	<div id="layers-prices-after-seller-connected" style="display: none;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-layers-after-seller-connected">$1,000,000,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-layers-after-seller-connected">$20,000,000</p>
+		     	<div id="layers-prices-after-seller-created" style="display: none;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-layers-after-seller-created">$1,000,000,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-layers-after-seller-created">$20,000,000</p>
 		     	</div>
-	     		<button id="layers-add-to-cart-seller-connected" onClick="connectWallet()"
+	     		<button id="layers-add-to-cart-seller-created" onClick="connectWallet()"
 	     		style="display: block;">
 	     		ADD TO CART</button>
-	     		<button id="layers-add-to-cart-connected-seller-connected" onClick="addLayersToCart()"
+	     		<button id="layers-add-to-cart-connected-seller-created" onClick="addLayersToCart()"
 	     		style="display: none;">
 	     		ADD TO CART</button>	
-	     		<button id="layers-added-seller-connected" style="display: none;">
+	     		<button id="layers-added-seller-created" style="display: none;">
 	     		ADDED</button>	
-	     		<button id="layers-collected-seller-connected" style="display: none;">
+	     		<button id="layers-collected-seller-created" style="display: none;">
 	     		COLLECTED</button>	
 		    </div>
-		  	<div id="succinct-drop-seller-connected">
+		  	<div id="succinct-drop-seller-created">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-succinct-drop-test" target="_self" id="photo-link-seller-connected">
-		  			<img id="photo-seller-connected" src="/icons&images/prototype/5.jpg"/>
+		  		<a href="/prototype-succinct-drop-test" target="_self" id="photo-link-seller-created">
+		  			<img id="photo-seller-created" src="/icons&images/prototype/5.jpg"/>
 		  		</a>
-		  		<div id="succinct-drop-prices-before-seller-connected" style="display: block;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-succinct-drop-before-seller-connected">$5,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-succinct-drop-before-seller-connected">$100</p>
+		  		<div id="succinct-drop-prices-before-seller-created" style="display: block;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-succinct-drop-before-seller-created">$5,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-succinct-drop-before-seller-created">$100</p>
 		     	</div>
-		     	<div id="succinct-drop-prices-after-seller-connected" style="display: none;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-succinct-drop-after-seller-connected">$250,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-succinct-drop-after-seller-connected">$5,000</p>
+		     	<div id="succinct-drop-prices-after-seller-created" style="display: none;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-succinct-drop-after-seller-created">$250,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-succinct-drop-after-seller-created">$5,000</p>
 		     	</div>
-	     		<button id="succinct-drop-add-to-cart-seller-connected" onClick="connectWallet()"
+	     		<button id="succinct-drop-add-to-cart-seller-created" onClick="connectWallet()"
 	     		style="display: block;">
 	     		ADD TO CART</button>
-	     		<button id="succinct-drop-add-to-cart-connected-seller-connected" onClick="addSuccinctDropToCart()"
+	     		<button id="succinct-drop-add-to-cart-connected-seller-created" onClick="addSuccinctDropToCart()"
 	     		style="display: none;">
 	     		ADD TO CART</button>
-	     		<button id="succinct-drop-added-seller-connected" style="display: none;">
+	     		<button id="succinct-drop-added-seller-created" style="display: none;">
 	     		ADDED</button>	
-	     		<button id="succinct-drop-collected-seller-connected" style="display: none;">
+	     		<button id="succinct-drop-collected-seller-created" style="display: none;">
 	     		COLLECTED</button>				     	
 		    </div>
-		     <div id="paint-rain-seller-connected">
+		     <div id="paint-rain-seller-created">
 			<!-- Change below link after test -->
-		  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link-seller-connected">
-		  			<img id="photo-seller-connected" src="/icons&images/prototype/6.jpg"/>
+		  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link-seller-created">
+		  			<img id="photo-seller-created" src="/icons&images/prototype/6.jpg"/>
 		  		</a>
-		  		<div id="paint-rain-prices-before-seller-connected" style="display: block;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-paint-rain-before-seller-connected">$600,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-paint-rain-before-seller-connected">$12,000</p>
+		  		<div id="paint-rain-prices-before-seller-created" style="display: block;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-paint-rain-before-seller-created">$600,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-paint-rain-before-seller-created">$12,000</p>
 		     	</div>
-		     	<div id="paint-rain-prices-after-seller-connected" style="display: none;">
-			  		<p id="PAP-seller-connected">Price After Purchase</p>
-			  		<p id="PAP-paint-rain-after-seller-connected">$30,000,000</p>
-			  		<hr id="priceline-seller-connected">
-			  		<p id="yourprice-seller-connected">Price</p>
-			     	<p id="price-paint-rain-after-seller-connected">$600,000</p>
+		     	<div id="paint-rain-prices-after-seller-created" style="display: none;">
+			  		<p id="PAP-seller-created">Price After Purchase</p>
+			  		<p id="PAP-paint-rain-after-seller-created">$30,000,000</p>
+			  		<hr id="priceline-seller-created">
+			  		<p id="yourprice-seller-created">Price</p>
+			     	<p id="price-paint-rain-after-seller-created">$600,000</p>
 		     	</div>
-	     		<button id="paint-rain-add-to-cart-seller-connected" onClick="connectWallet()"
+	     		<button id="paint-rain-add-to-cart-seller-created" onClick="connectWallet()"
 	     		style="display: block;">
 	     		ADD TO CART</button>
-	     		<button id="paint-rain-add-to-cart-connected-seller-connected" onClick="addPaintRainToCart()"
+	     		<button id="paint-rain-add-to-cart-connected-seller-created" onClick="addPaintRainToCart()"
 	     		style="display: none;">
 	     		ADD TO CART</button>
-	     		<button id="paint-rain-added-seller-connected" style="display: none;">
+	     		<button id="paint-rain-added-seller-created" style="display: none;">
 	     		ADDED</button>	
-	     		<button id="paint-rain-collected-seller-connected" style="display: none;">
+	     		<button id="paint-rain-collected-seller-created" style="display: none;">
 	     		COLLECTED</button>				     	
 		    </div>
 	</div>

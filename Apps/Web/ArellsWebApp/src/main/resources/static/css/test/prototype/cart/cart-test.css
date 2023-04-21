@@ -625,17 +625,17 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  		
-		  #container {
+		  #container-cart {
 		    width: 440px;
 		  }  
 		  
-		#profileline {
+		#profileline-cart {
 		  width: 300px;
 		}	
 		
 			
-			#blue-orange, #beach-houses, #colour-glass,
-			#layers, #succinct-drop, #paint-rain{
+			#blue-orange-cart, #beach-houses-cart, #colour-glass-cart,
+			#layers-cart, #succinct-drop-cart, #paint-rain-cart{
 				width: 300px;
 				}
 			    		  
