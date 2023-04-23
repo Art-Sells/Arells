@@ -48,7 +48,7 @@
 
 		<script>
 
-<!-- Modal script below-->
+<!-- Modal script/s below-->
 			function copyLink() {
 			// Open copyLink
 			  document.getElementById('copiedLink').style.display = "block";			
@@ -74,11 +74,11 @@
 			function closeCopiedLink() {
 				document.getElementById('copiedLink').style.display = "none";
 			}			
-<!-- Modal script above-->	
+<!-- Modal script/s above-->	
 
 
 
-<!-- Connect Wallet script below-->
+<!-- Connect Wallet script/s below-->
 	function connectWallet() {
 		document.getElementById('connectWalletBuy').style.display = "block";			
 		  
@@ -105,14 +105,12 @@
 		document.getElementById('paint-rain-add-to-cart-connected-seller-created').style.display = "block"; 
 	 
 	}	
-<!-- Connect Wallet script above-->
+<!-- Connect Wallet script/s above-->
 
 
-<!--  Add To Cart script below-->
+<!--  Add To Cart script/s below-->
 
-//Ensure that Image displays show as FLEX after adding, cart-full: block
-	
-	
+		
 
 	function addBlueOrangeToCart() {
 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
@@ -148,7 +146,44 @@
 		  
 	}
 	
-<!--  Add To Cart script up-->	
+<!--  Add To Cart script/s up-->	
+
+<!-- Added/Completed-Purchase script/s down-->
+
+	function blueOrangeSellerFunc() {
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+	    if (blueOrangeAdded === 'true') {
+			document.getElementById('cart-link-seller-created').style.display = "none";
+			document.getElementById('wallet-connected-div-seller-created').style.display = "block";
+			
+			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
+			
+			document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
+	 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
+	 		document.getElementById('blue-orange-added-seller-created').style.display = "block";
+	 		 		
+	 	}
+	    const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+	    if (blueOrangePurchased === 'true') {
+			document.getElementById('cart-link-seller-created').style.display = "none";
+			document.getElementById('wallet-connected-div-seller-created').style.display = "block";	  
+			
+			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
+	    	
+	    	document.getElementById('blue-orange-prices-before-seller-created').style.display = "none";
+	    	document.getElementById('blue-orange-prices-after-seller-created').style.display = "block";
+		
+			document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
+			document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
+			document.getElementById('blue-orange-added-seller-created').style.display = "none";
+			document.getElementById('blue-orange-collected-seller-created').style.display = "block";
+			
+			sessionStorage.removeItem('blueOrangePurchased');
+	    }
+	}
+	document.addEventListener('DOMContentLoaded', blueOrangeSellerFunc);	
+
+<!-- Added/Completed-Purchase script/s up-->
 			
 		
 		</script>	
