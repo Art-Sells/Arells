@@ -39,7 +39,7 @@
 #### After Purchase:
  1. "Purchased... PAP: $, List For Sale? [List][DeList]{Both Open Modal} (On Buyer)... (Nothing Shows in Public Buyer)".
  2. If Yes, then "Add-to-Cart", if No then "Collected" (On Seller)
- 5. Message to seller: "Your Art xxxx has been bought by xxxx for xxxx"
+ 5. Message (notifications) to seller: "Congratulations xxxx! Art Sold to xxxx for xxxx, new PAP: xxxx"
  6. If/Then messages corresponding to above messages. 
 
 #### MetaData Search Info (Google, etc): Use GPT4
