@@ -2,7 +2,7 @@
 
 ## MVP
 
-- Use GPT-4 & Webflow?
+- Create Separate js.Components Folder
 
 #### Wallet: 
 - Coinbase/USDC Wallet only?
