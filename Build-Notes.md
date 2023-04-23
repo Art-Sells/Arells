@@ -28,6 +28,9 @@
 - Proof-of-Creation
 - Proof-of-Ownership
 
+ #### Cart
+- Created Cart Number Function (Custom)                                               
+                                                
 #### Creating Mechanics
 - PAP price calculated 50x from price listed by creator (After Sale: You Keep... 90%, Buyer Keeps... 7%, Fees... 3%)...
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer... prices in USDC
