@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<!-- change below links after test -->
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -46,43 +49,56 @@
 		<script>
 		
 		
-<!-- Add To Cart scrips below -->	
+<!-- Add To Cart & Purchase scrips below -->	
 
 // Ensure that Image displays show as FLEX after adding, cart-full: block
 
-		function updatePrices(){
-	
-			var blueOrange = 1200;
-			var beachHouses = 200;
-			var colourGlass = 14500;
-			var layers = 400000;
-			var succinctDrop = 100;
-			var paintRain = 12000;
-			
-			var royalty = .9;
-			var fee = .03;
-			
-			var royalties;
-			var fees;
-			var total;
-			
-			if (document.getElementById('blue-orange-cart').style.display == "flex"){
-				
-				royalties = (blueOrange * royalty);
-				fees = (blueOrange * fee);
-				total = blueOrange;
-				
-				document.getElementById('royalty-price-value-cart').innerHTML = 
-					royalties;
-				document.getElementById('fee-price-value-cart').innerHTML = 
-					fees;
-				document.getElementById('total-price-value-cart').innerHTML = 
-					total;
-			}		
-			
-		}
+		var blueOrange = 1200;
+		var beachHouses = 200;
+		var colourGlass = 14500;
+		var layers = 400000;
+		var succinctDrop = 100;
+		var paintRain = 12000;
+		
+		var royalty = .9;
+		var fee = .03;
+		
+		var royalties = 0;
+		var fees = 0;
+		var total = 0;
 
-<!-- Add To Cart scrips above -->
+
+ 		function blueOrangeAddedFunc() {
+	 	    const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+	 	    if (blueOrangeAdded === 'true') {
+	 			document.getElementById('cart-empty-cart').style.display = "none";
+	 			document.getElementById('cart-full-cart').style.display = "block";
+	 			document.getElementById('blue-orange-cart').style.display = "flex";
+	 	    }
+	 	    royalties = (royalty * blueOrange);
+	 	    fees = (fee * blueOrange);
+	 	    total = (total + blueOrange);
+	 	    	 	
+			
+			var royaltiesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(royalties);
+			var feesFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(fees);
+			var totalFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(total);
+			
+			document.getElementById('royalty-price-value-cart').innerHTML = 
+				royaltiesFormated;
+			document.getElementById('fee-price-value-cart').innerHTML = 
+				feesFormated;
+			document.getElementById('total-price-value-cart').innerHTML = 
+				totalFormated;
+ 		}
+ 		document.addEventListener('DOMContentLoaded', blueOrangeAddedFunc);
+<!-- Add To Cart & Purchase scrips above -->
 
 <!-- Remove scripts below-->
 
@@ -162,7 +178,7 @@
 		}	
 		function closePurchaseComplete() {
 			  document.getElementById('purchaseComplete-cart').style.display = "none";
-		}	
+		}	 
 				
 
 <!-- Complete Purchase scripts above-->	
@@ -176,7 +192,7 @@
 		<title>Prototype</title>
 	
 	</head>
-	
+
 <body>
 
 	<!-- Modal/s below -->
@@ -210,30 +226,32 @@
 		WALLET CONNECTED</p>
 		<hr id="connected-line-cart">
 	</div>	
-	<div id="cart-empty-cart" style="display: block;">
+	<div id="cart-empty-cart" style="display: block;">	
+	
 			<p id="no-art-cart">
 			cart empty
 			<img id="cart-icon-collected-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</p>
 	</div>
 	<div id="cart-full-cart" style="display: none;">
-		<p id="royalty-cart">Creator Royalties</p>
-		<p id="royalty-price-cart">$
-			<span id="royalty-price-value-cart" style="display:inline"></span>
-        </p>
-		<p id="fee-cart">Fees</p>
-		<p id="fee-price-cart">$
-			<span id="fee-price-value-cart" style="display:inline"></span>
-        </p>
-		<p id="total-cart">Total</p>
-	  	<p id="total-price-cart">$
-			<span id="total-price-value-cart" style="display:inline"></span>
-        </p>
-			<button id="purchase-cart" onClick="completePurchase()">
-			COMPLETE PURCHASE</button>	
-		<hr id="profileline-cart"> 
+		<div id="purchase-info-cart">
+			<p id="royalty-cart">Creator Royalties</p>
+			<p id="royalty-price-cart">$
+				<span id="royalty-price-value-cart" style="display:inline"></span>
+	        </p>
+			<p id="fee-cart">Fees</p>
+			<p id="fee-price-cart">$
+				<span id="fee-price-value-cart" style="display:inline"></span>
+	        </p>
+			<p id="total-cart">Total</p>
+		  	<p id="total-price-cart">$
+				<span id="total-price-value-cart" style="display:inline"></span>
+	        </p>
+				<button id="purchase-cart" onClick="completePurchase()">
+				COMPLETE PURCHASE</button>			
+		</div>
 		<div id="container-cart">
-			  	<div id="blue-orange-cart-cart" style="display: none;">
+			  	<div id="blue-orange-cart" style="display: none;">
 			  	<!-- Change below link after test -->
 			  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link-cart">
 			  			<img id="photo-cart" src="/icons&images/prototype/1.jpg"/>
@@ -345,4 +363,6 @@
 	</div>	
 
 </body>
+	
+
 </html>

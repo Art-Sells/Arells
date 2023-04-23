@@ -30,7 +30,7 @@ body {
 			margin-right: 128px;
 			  text-decoration: none;
 			  padding-top: 13px;
-			  padding-bottom: 10px;
+			  padding-bottom: 13px;
 			  padding-right: 8px;
 			  padding-left: 8px;	  	  
 			  border: solid;
@@ -55,8 +55,8 @@ body {
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
-			  padding-top: 12px;
-			  padding-bottom: 9px;
+			  padding-top: 14px;
+			  padding-bottom: 10px;
 			  padding-right: 10px;
 			  padding-left: 10px;	  
 			  border: solid;
@@ -71,8 +71,8 @@ body {
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
-			  padding-top: 12px;
-			  padding-bottom: 8.5px;
+			  padding-top: 14px;
+			  padding-bottom: 9.5px;
 			  padding-right: 10px;
 			  padding-left: 10px;	  
 			  border: solid;
@@ -93,7 +93,7 @@ body {
 			  opacity: 1;	
 		}	
 			#cart-icon {
-				height: 18px;
+				height: 16px;
 			}		
 			
 		#word-logo {

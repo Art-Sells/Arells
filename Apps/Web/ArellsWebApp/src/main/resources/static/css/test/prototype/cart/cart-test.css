@@ -106,98 +106,116 @@ body {
 				color: gray;
 				opacity: 1;
 			}
-		#royalty-cart {
-		text-align: center;
-		margin-top: 30px;
-			color: black;
-			font-weight: 300;
-			font-size: 12px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .4;
-		}
-		#royalty-price-cart {
-		text-align: center;
-		margin-top: -7px;
-			color: black;
-			font-weight: 300;
-			font-size: 17px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .5;
-		}
-			#royalty-price-value-cart{
-				margin-left: -5px;
-			}						
-		#fee-cart {
-		text-align: center;
-		margin-top: 20px;
-			color: black;
-			font-weight: 300;
-			font-size: 12px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .4;
-		}
-		-cart {
-		text-align: center;
-		margin-top: -10px;
-			color: black;
-			font-weight: 300;
-			font-size: 17px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .5;
-		}	
-			#fee-price-value{
-				margin-left: -4px;
-			}	
-		#total-cart {
-			text-align: center;
-			color: black;
-			font-weight: 300;
-			font-size: 15px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .4;
-		}	
-		#total-price-cart {
-		margin-top: -10px;
-		text-align: center;
-			color: black;
-			font-weight: 300;
-			font-size: 20px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .7;
-			margin-bottom: 30px;
-		}
-			#total-price-value-cart{
-				margin-left: -6px;
-			}								
-		#purchase-cart {
-		  text-decoration: none;
-		  color: white;
-		  font-weight: 200;
-		  font-size: 11px;
-		  letter-spacing: 1px;
-		  padding-top: 20px;
-		  padding-bottom: 20px;
-		  padding-right: 20px;
-		  padding-left: 21px;	  
-		  border-radius: 5px;
-		  border-width: 0px;
-		  width: 200px;
-		  opacity: 1;
-		  box-shadow: 0px 8px 12px -6px black;  
-			background: black;
-		}	  
-		#purchase-cart:hover,
-		#purchase-cart:focus {
-			  opacity: .4;
-			  transition: 1s;
-			  cursor: pointer;
+		#purchase-info-cart{
+			margin-left: auto;
+		    margin-right: auto;
+		    margin-bottom: 10px;
+		    margin-top: -200px;
+		    align-items: center;
+			border-radius: 15px;
+			box-shadow: 0px 5px 20px -6px silver; 
+			width: 360px;
+			height: 280px;
+			padding-top: 175px;
+			padding-left: 30px;
+			padding-right: 30px;
+			padding-bottom: 40px;			
+			text-decoration: none;
+			background: white;
+		     
 		}		
+			#royalty-cart {
+			text-align: center;
+			margin-top: 30px;
+				color: black;
+				font-weight: 300;
+				font-size: 12px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+			}
+			#royalty-price-cart {
+			text-align: center;
+			margin-top: -10px;
+				color: black;
+				font-weight: 300;
+				font-size: 17px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .5;
+			}
+				#royalty-price-value-cart{
+					margin-left: -5px;
+				}						
+			#fee-cart {
+			text-align: center;
+			margin-top: 15px;
+				color: black;
+				font-weight: 300;
+				font-size: 12px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+			}
+			#fee-price-cart {
+			text-align: center;
+			margin-top: -10px;
+				color: black;
+				font-weight: 300;
+				font-size: 17px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .5;
+			}	
+				#fee-price-value-cart{
+					margin-left: -4px;
+				}	
+			#total-cart {
+				text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 15px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+			}	
+			#total-price-cart {
+			margin-top: -12px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 20px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .7;
+				margin-bottom: 30px;
+			}
+				#total-price-value-cart{
+					margin-left: -6px;
+				}								
+			#purchase-cart {
+			  text-decoration: none;
+			  color: white;
+			  font-weight: 200;
+			  font-size: 11px;
+			  letter-spacing: 1px;
+			  padding-top: 20px;
+			  padding-bottom: 20px;
+			  padding-right: 20px;
+			  padding-left: 21px;	  
+			  border-radius: 5px;
+			  border-width: 0px;
+			  width: 200px;
+			  opacity: 1;
+			  box-shadow: 0px 8px 12px -6px black;  
+				background: black;
+			}	  
+			#purchase-cart:hover,
+			#purchase-cart:focus {
+				  opacity: .4;
+				  transition: 1s;
+				  cursor: pointer;
+			}		
 		#profileline-cart {
 		margin-top: 30px;
 		  background-color: black;
@@ -453,55 +471,60 @@ body {
 				letter-spacing: 0px;
 				margin-left: 0px; 
 			}
-		#royalty-cart {
-			margin-top: 20px;
-			font-size: 11px;
-		}
-		#royalty-price-cart {
-			margin-top: -10px;
-			font-size: 12px;
-		}
-			#royalty-price-value-cart{
-				margin-left: -4px;
+		#purchase-info-cart{
+			width: 300px;
+			height: 230px;
+			padding-top: 185px;
+			padding-left: 30px;
+			padding-right: 30px;
+			padding-bottom: 30px;			
+		     
+		}				
+			#royalty-cart {
+				margin-top: 20px;
+				font-size: 11px;
+			}
+			#royalty-price-cart {
+				margin-top: -10px;
+				font-size: 12px;
+			}
+				#royalty-price-value-cart{
+					margin-left: -4px;
+				}	
+			#fee-cart {
+				margin-top: 10px;
+				font-size: 11px;
+			}
+			#fee-price-cart {
+				margin-top: -10px;
+				font-size: 12px;
+				margin-bottom: 10px;	
 			}	
-		#fee-cart {
-			margin-top: 10px;
-			font-size: 11px;
-		}
-		#fee-price-cart {
-			margin-top: -10px;
-			font-size: 12px;
-			margin-bottom: 10px;	
-		}	
-			#fee-price-value-cart{
-				margin-left: -3px;
+				#fee-price-value-cart{
+					margin-left: -3px;
+				}	
+			#total-cart{
+				font-size: 13px;
+			}  
+			#total-price-cart {
+				margin-top: -10px;
+				font-size: 15px;
+				margin-bottom: 20px;
 			}	
-		#total-cart{
-			font-size: 13px;
-		}  
-		#total-price-cart {
-			margin-top: -10px;
-			font-size: 15px;
-			margin-bottom: 20px;
-		}	
-			#total-price-value-cart{
-				margin-left: -5px;
-			}	
-		#purchase-cart {
-			  font-weight: 200;
-			  font-size: 9px;
-			  padding-top: 20px;
-			  padding-bottom: 20px;
-			  padding-right: 20px;
-			  padding-left: 21px;	  
-			  border: none;
-			  letter-spacing: 1px;
-			  width: 170px;
-		}	  	
-		#profileline-cart {
-		margin-top: 25px;
-		  width: 400px;
-		}	
+				#total-price-value-cart{
+					margin-left: -5px;
+				}	
+			#purchase-cart {
+				  font-weight: 200;
+				  font-size: 9px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 20px;
+				  padding-left: 21px;	  
+				  border: none;
+				  letter-spacing: 1px;
+				  width: 170px;
+			}	  	
 		
 		#no-art-cart{
 			margin-top: 50px;
@@ -518,7 +541,7 @@ body {
 			  width: 660px;	
 		}
 			
-			#blue-orange-cart-cart, #beach-houses-cart, #colour-glass-cart,
+			#blue-orange-cart, #beach-houses-cart, #colour-glass-cart,
 			#layers-cart, #succinct-drop-cart, #paint-rain-cart{
 				margin-left: auto;
 			    margin-right: auto;

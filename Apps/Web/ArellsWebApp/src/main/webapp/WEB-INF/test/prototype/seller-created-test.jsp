@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!-- change below link after test -->
-<%@ include file="/cart/cart-test.jsp" %>
+	
+	
 <!DOCTYPE html>
 <html>
 	<head>
@@ -111,17 +111,15 @@
 <!--  Add To Cart script below-->
 
 //Ensure that Image displays show as FLEX after adding, cart-full: block
+	
+	
 
 	function addBlueOrangeToCart() {
 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('blue-orange-added-seller-created').style.display = "block";
 		
 		//cart functions
-		document.getElementById('cart-empty-cart').style.display = "none";
-		document.getElementById('cart-full-cart').style.display = "block";
-		document.getElementById('blue-orange-cart-cart').style.display = "flex";
-		
-		  
+		sessionStorage.setItem('blueOrangeAdded', 'true');
 	}
 	function addBeachHousesToCart() {
 		document.getElementById('beach-houses-add-to-cart-connected-seller-created').style.display = "none";
