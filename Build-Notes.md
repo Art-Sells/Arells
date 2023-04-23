@@ -2,7 +2,7 @@
 
 ## MVP
 
-- Use GPT-4?
+- Use GPT-4 & Webflow?
 
 #### Wallet: 
 - Coinbase/USDC Wallet only?
