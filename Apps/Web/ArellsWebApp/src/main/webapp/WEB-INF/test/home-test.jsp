@@ -43,6 +43,27 @@
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 
+		<script>
+
+
+
+<!-- Reset Prototype script/s down-->
+
+	function resetPrototype() {
+		sessionStorage.removeItem('blueOrangeAdded');
+		sessionStorage.removeItem('blueOrangePurchased');
+		
+		sessionStorage.removeItem('beachHousesAdded');
+		sessionStorage.removeItem('beachHousesPurchased');
+	}
+	document.addEventListener('DOMContentLoaded', resetPrototype);	
+
+<!-- Added/Completed-Purchase script/s up-->
+			
+		
+		</script>	
+
+
 		<title>Arells</title>
 	
 	</head>

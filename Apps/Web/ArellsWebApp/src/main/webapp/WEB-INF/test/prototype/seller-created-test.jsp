@@ -116,13 +116,15 @@
 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('blue-orange-added-seller-created').style.display = "block";
 		
-		//cart functions
+		//cart function
 		sessionStorage.setItem('blueOrangeAdded', 'true');
 	}
 	function addBeachHousesToCart() {
 		document.getElementById('beach-houses-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('beach-houses-added-seller-created').style.display = "block";
-		  
+		
+		//cart function
+		sessionStorage.setItem('beachHousesAdded', 'true'); 
 	}
 	function addColourGlassToCart() {
 		document.getElementById('colour-glass-add-to-cart-connected-seller-created').style.display = "none";
@@ -150,9 +152,15 @@
 
 <!-- Added/Completed-Purchase script/s down-->
 
-	function blueOrangeSellerFunc() {
-		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
-	    if (blueOrangeAdded === 'true') {
+	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+
+	function blueOrangeLoader() {
+		
+	    
+		//Add To Cart Functions
+		
+		if (blueOrangeAdded === 'true') {
 			document.getElementById('cart-link-seller-created').style.display = "none";
 			document.getElementById('wallet-connected-div-seller-created').style.display = "block";
 			
@@ -160,15 +168,17 @@
 			
 			document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
 	 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
-	 		document.getElementById('blue-orange-added-seller-created').style.display = "block";
-	 		 		
-	 	}
-	    const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+	 		document.getElementById('blue-orange-added-seller-created').style.display = "block";	
+	 		
+		}			    
+	    
+	    //Purchased Functions
+	
 	    if (blueOrangePurchased === 'true') {
 			document.getElementById('cart-link-seller-created').style.display = "none";
-			document.getElementById('wallet-connected-div-seller-created').style.display = "block";	  
+			document.getElementById('wallet-connected-div-seller-created').style.display = "block";
 			
-			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
+			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";	    	
 	    	
 	    	document.getElementById('blue-orange-prices-before-seller-created').style.display = "none";
 	    	document.getElementById('blue-orange-prices-after-seller-created').style.display = "block";
@@ -177,11 +187,47 @@
 			document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
 			document.getElementById('blue-orange-added-seller-created').style.display = "none";
 			document.getElementById('blue-orange-collected-seller-created').style.display = "block";
-			
-			sessionStorage.removeItem('blueOrangePurchased');
 	    }
 	}
-	document.addEventListener('DOMContentLoaded', blueOrangeSellerFunc);	
+	document.addEventListener('DOMContentLoaded', blueOrangeLoader);
+	
+	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+	const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
+	
+	function beachHousesLoader() {
+		
+	    
+		//Add To Cart Functions
+		
+	    if (beachHousesAdded === 'true') {
+			document.getElementById('cart-link-seller-created').style.display = "none";
+			document.getElementById('wallet-connected-div-seller-created').style.display = "block";
+			
+			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";	    	
+	    	
+	 		document.getElementById('beach-houses-add-to-cart-seller-created').style.display = "none";
+	 		document.getElementById('beach-houses-add-to-cart-connected-seller-created').style.display = "none";
+	 		document.getElementById('beach-houses-added-seller-created').style.display = "block";	 		
+	 	}		    
+	    
+	    //Purchased Function
+	    
+	    if (beachHousesPurchased === 'true') {
+			document.getElementById('cart-link-seller-created').style.display = "none";
+			document.getElementById('wallet-connected-div-seller-created').style.display = "block";
+			
+			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";	    	
+	    	
+	    	document.getElementById('beach-houses-prices-before-seller-created').style.display = "none";
+	    	document.getElementById('beach-houses-prices-after-seller-created').style.display = "block";
+		
+			document.getElementById('beach-houses-add-to-cart-connected-seller-created').style.display = "none";
+			document.getElementById('beach-houses-add-to-cart-seller-created').style.display = "none";
+			document.getElementById('beach-houses-added-seller-created').style.display = "none";
+			document.getElementById('beach-houses-collected-seller-created').style.display = "block";
+	    }
+	}
+	document.addEventListener('DOMContentLoaded', beachHousesLoader);
 
 <!-- Added/Completed-Purchase script/s up-->
 			

@@ -84,13 +84,13 @@
 	function walletConnected() {
 		document.getElementById('connectWalletBuy').style.display = "none";
 		
-		document.getElementById('cart-link').style.display = "none";
-		document.getElementById('wallet-connected-div').style.display = "block";
+		document.getElementById('cart-link-blue-orange').style.display = "none";
+		document.getElementById('wallet-connected-div-blue-orange').style.display = "block";
 		
-		document.getElementById('cart-link-connected').style.display = "inline-block";
+		document.getElementById('cart-link-connected-blue-orange').style.display = "inline-block";
 		
-		document.getElementById('blue-orange-add-to-cart').style.display = "none";
-		document.getElementById('blue-orange-add-to-cart-connected').style.display = "block";
+		document.getElementById('blue-orange-add-to-cart-blue-orange').style.display = "none";
+		document.getElementById('blue-orange-add-to-cart-connected-blue-orange').style.display = "block";
 
 	 
 	}	
@@ -99,13 +99,55 @@
 
 <!--  Add To Cart script below-->
 
-	function addBlueOrangeToCart() {
-		document.getElementById('blue-orange-add-to-cart-connected').style.display = "none";
-		document.getElementById('blue-orange-added').style.display = "block";
-		  
-	}
+		function addBlueOrangeToCart() {
+			document.getElementById('blue-orange-add-to-cart-connected-blue-orange').style.display = "none";
+			document.getElementById('blue-orange-added-blue-orange').style.display = "block";
+			
+			//cart functions
+			sessionStorage.setItem('blueOrangeAdded', 'true');
+		}
 	
 <!--  Add To Cart script up-->	
+
+<!-- Added/Completed-Purchase script/s down-->
+
+
+		function blueOrangeFunc() {
+			const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+		    if (blueOrangeAdded === 'true') {
+				document.getElementById('cart-link-blue-orange').style.display = "none";
+				document.getElementById('wallet-connected-div-blue-orange').style.display = "block";
+				
+				document.getElementById('cart-link-connected-blue-orange').style.display = "inline-block";
+				
+				document.getElementById('blue-orange-add-to-cart-blue-orange').style.display = "none";
+		 		document.getElementById('blue-orange-add-to-cart-connected-blue-orange').style.display = "none";
+		 		document.getElementById('blue-orange-added-blue-orange').style.display = "block";
+		 		 		
+		 	}
+		    const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+		    if (blueOrangePurchased === 'true') {
+				document.getElementById('cart-link-blue-orange').style.display = "none";
+				document.getElementById('wallet-connected-div-blue-orange').style.display = "block";	  
+				
+				document.getElementById('cart-link-connected-blue-orange').style.display = "inline-block";
+		    	
+		    	document.getElementById('blue-orange-prices-before-blue-orange').style.display = "none";
+		    	document.getElementById('blue-orange-prices-after-blue-orange').style.display = "block";
+		    	
+		    	document.getElementById('owned-by-creator-blue-orange').style.display = "none";
+		    	document.getElementById('owned-by-buyer-blue-orange').style.display = "block";
+			
+				document.getElementById('blue-orange-add-to-cart-connected-blue-orange').style.display = "none";
+				document.getElementById('blue-orange-add-to-cart-blue-orange').style.display = "none";
+				document.getElementById('blue-orange-added-blue-orange').style.display = "none";
+				document.getElementById('blue-orange-collected-blue-orange').style.display = "block";
+				
+		    }
+		}
+		document.addEventListener('DOMContentLoaded', blueOrangeFunc);	
+
+<!-- Added/Completed-Purchase script/s up-->
 			
 		
 		</script>	
@@ -139,77 +181,77 @@
 		</div>	
 	<!-- Modal/s above -->	
 
-	<div id="header">
+	<div id="header-blue-orange">
 	
 	<!-- Change below link after test -->
-		<a id="icon-link" href="/test">
-			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-blue-orange" href="/test">
+			<img id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<button id="cart-link-blue-orange" onClick="connectWallet()" style="display: inline-block;">
+			<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
-		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<a id="cart-link-connected-blue-orange" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>	
 	</div>
-	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
-	<div id="wallet-connected-div" style="display: none;">
-		<hr id="connected-line">
-		<p id="wallet-connected" >
+	<img id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-blue-orange">ART SELLS</p>
+	<div id="wallet-connected-div-blue-orange" style="display: none;">
+		<hr id="connected-line-blue-orange">
+		<p id="wallet-connected-blue-orange" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line">
+		<hr id="connected-line-blue-orange">
 	</div>
 
   	<div id="blue-orange">
-  		<img id="photo" src="/icons&images/prototype/1.jpg"/>
-  		<h3 id="name">Blue Orange</h3> 
-  		<button id="copy-link"
+  		<img id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
+  		<h3 id="name-blue-orange">Blue Orange</h3> 
+  		<button id="copy-link-blue-orange"
 		onClick="copyLink()">
-			<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+			<img id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
 			COPY LINK
 		</button>	
-     	<div id="created-by">
-     		<p id="creator-owner-desc">Created By</p>
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="created-by-blue-orange">
+     		<p id="creator-owner-desc-blue-orange">Created By</p>
+     		<a id="creator-owner-link-blue-orange" href="/prototype-seller-created-test">
      			Abstract Kadabra
      		</a>
      	</div>
-     	<div id="owned-by-creator" style="display: block;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="owned-by-creator-blue-orange" style="display: block;">
+     		<p id="creator-owner-desc-blue-orange">Owned By</p> 
+     		<a id="creator-owner-link-blue-orange" href="/prototype-seller-created-test">
      			Abstract Kadabra</a>
      	</div>
-     	<div id="owned-by-buyer" style="display: none;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-buyer-collected-test">
+     	<div id="owned-by-buyer-blue-orange" style="display: none;">
+     		<p id="creator-owner-desc-blue-orange">Owned By</p> 
+     		<a id="creator-owner-link-blue-orange" href="/prototype-buyer-collected-test">
      			0x71C7656E...
      		</a>
      	</div>
-     	<hr id="line">
-		<div id="blue-orange-prices-before" style="display: block;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-blue-orange-before">$60,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-blue-orange-before">$1,200</p>
+     	<hr id="line-blue-orange">
+		<div id="blue-orange-prices-before-blue-orange" style="display: block;">
+	  		<p id="PAP-blue-orange">Price After Purchase</p>
+	  		<p id="PAP-blue-orange-before-blue-orange">$60,000</p>
+	  		<hr id="priceline-blue-orange">
+	  		<p id="yourprice-blue-orange">Price</p>
+	     	<p id="price-blue-orange-before-blue-orange">$1,200</p>
   		</div>	
-  		<div id="blue-orange-prices-after" style="display: none;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-blue-orange-after">$3,000,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-blue-orange-after">$60,000</p>
+  		<div id="blue-orange-prices-after-blue-orange" style="display: none;">
+	  		<p id="PAP-blue-orange">Price After Purchase</p>
+	  		<p id="PAP-blue-orange-after-blue-orange">$3,000,000</p>
+	  		<hr id="priceline-blue-orange">
+	  		<p id="yourprice-blue-orange">Price</p>
+	     	<p id="price-blue-orange-after-blue-orange">$60,000</p>
   		</div>	
-    	<button id="blue-orange-add-to-cart" onClick="connectWallet()"
+    	<button id="blue-orange-add-to-cart-blue-orange" onClick="connectWallet()"
     		style="display: block;">
     		ADD TO CART</button>
-    	<button id="blue-orange-add-to-cart-connected" onClick="addBlueOrangeToCart()"
+    	<button id="blue-orange-add-to-cart-connected-blue-orange" onClick="addBlueOrangeToCart()"
     		style="display: none;">
     		ADD TO CART</button>
-    	<button id="blue-orange-added" style="display: none;">
+    	<button id="blue-orange-added-blue-orange" style="display: none;">
     		ADDED</button>	
-    	<button id="blue-orange-collected" style="display: none;">
+    	<button id="blue-orange-collected-blue-orange" style="display: none;">
     		COLLECTED</button>				     	
     </div>
 

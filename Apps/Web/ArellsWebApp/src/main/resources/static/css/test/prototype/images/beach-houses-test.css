@@ -10,7 +10,7 @@ body {
   background: white;
 }
 
-	#header {
+	#header-beach-houses {
 			display: flex;
 			justify-content: center;
 			margin-top: 0px;
@@ -24,7 +24,7 @@ body {
 			margin-right: auto;
 			z-index: 100;
 		}
-		#icon-link{
+		#icon-link-beach-houses{
 			display: inline-block;
 			text-decoration: none;
 			margin-right: 128px;
@@ -41,17 +41,17 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#icon-link:hover,
-		#icon-link:focus {
+		#icon-link-beach-houses:hover,
+		#icon-link-beach-houses:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
 			  opacity: 1;
 			}		
-			#arells-icon {
+			#arells-icon-beach-houses {
 				height: 16px;
 			}	
-		#cart-link{
+		#cart-link-beach-houses{
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -67,7 +67,7 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#cart-link-connected{
+		#cart-link-connected-beach-houses{
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -83,24 +83,24 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#cart-link:hover,
-		#cart-link:focus, 
-		#cart-link-connected:hover,
-		#cart-link-connected:focus {
+		#cart-link-beach-houses:hover,
+		#cart-link-beach-houses:focus, 
+		#cart-link-connected-beach-houses:hover,
+		#cart-link-connected-beach-houses:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
 			  opacity: 1;	
 		}	
-			#cart-icon {
+			#cart-icon-beach-houses {
 				height: 16px;
 			}
 			
-		#word-logo {
+		#word-logo-beach-houses {
 			margin-top: 37px;
 			width: 110px;	
 		}
-		#slogan {
+		#slogan-beach-houses {
 			margin-top: 0px;
 			font-size: 8px;
 			letter-spacing: 10px;
@@ -111,12 +111,12 @@ body {
 			word-spacing: -3px;
 		}	
 		
-		#wallet-connected-div{
+		#wallet-connected-div-beach-houses{
 			margin-top: 30px;
 			margin-left: auto;
 			margin-right: auto;
 		}
-			#connected-line {
+			#connected-line-beach-houses {
 			  margin-top: -5px;
 			  background-color: black;
 			  border: none;
@@ -125,7 +125,7 @@ body {
 			  width: 100px;
 			  opacity: .1;
 			}	
-			#wallet-connected {
+			#wallet-connected-beach-houses {
 				padding-bottom: 10px;
 				padding-top: 5px;
 				font-size: 9px;
@@ -157,10 +157,10 @@ body {
 		background: white;
 	}
 				
-		#photo-link {
+		#photo-link-beach-houses {
 				text-decoration: none; 
 			}
-		#photo {
+		#photo-beach-houses {
 			object-fit: cover;
 			width: 400px;
 			height: 400px;
@@ -168,19 +168,19 @@ body {
 			border-width: 1px;
 			border-color: silver;		
 		}
-				#photo-link:hover {
+				#photo-link-beach-houses:hover {
 				  opacity: .5;
 				  transition: 1s;
 				  box-shadow: none;
 				  cursor: pointer;
 				}
-				#photo-link:focus {
+				#photo-link-beach-houses:focus {
 				  opacity: .5;
 				  box-shadow: none;
 				  cursor: pointer;
 			}
 			
-		#name {
+		#name-beach-houses {
 		  font-size: 17pt;
 		  font-weight: 800;
 		  opacity: 1;
@@ -190,7 +190,7 @@ body {
 		  margin-left: -1px;
 		  margin-bottom: 25px;
 		}
-		#copy-link {
+		#copy-link-beach-houses {
 		  text-decoration: none;
 		  color: white;
 		  font-weight: 200;
@@ -209,18 +209,18 @@ body {
 			background: black;
 			margin-bottom: 15px;
 		}	  
-		#copy-link:hover,
-		#copy-link:focus {
+		#copy-link-beach-houses:hover,
+		#copy-link-beach-houses:focus {
 			  opacity: .4;
 			  transition: 1s;
 			  cursor: pointer;
 		}		
-			#copy-link-icon{
+			#copy-link-icon-beach-houses{
 				width: 15px;
 				margin-right: 5px;
 			}				
 		
-		#creator-owner-desc {
+		#creator-owner-desc-beach-houses {
 		margin-top: 15px;
 		text-align: center;
 			color: black;
@@ -231,7 +231,7 @@ body {
 			opacity: .4;
 			margin-bottom: 0px;
 		}
-		#creator-owner-link {
+		#creator-owner-link-beach-houses {
 		text-align: center;
 			color: #4d85cf;
 			font-weight: 300;
@@ -241,16 +241,16 @@ body {
 			opacity: .8;
 			text-decoration: none;
 		}
-			#creator-owner-desc:hover,
-			#creator-owner-link:hover,
-			#creator-owner-desc:focus,
-			#creator-owner-link:focus {
+			#creator-owner-desc-beach-houses:hover,
+			#creator-owner-link-beach-houses:hover,
+			#creator-owner-desc-beach-houses:focus,
+			#creator-owner-link-beach-houses:focus {
 				  opacity: .4;
 				  transition: 1s;
 				  cursor: pointer;
 			}
 			
-		#line {
+		#line-beach-houses {
 		  margin-top: 30px;
 		  background-color: black;
 		  border: none;
@@ -260,7 +260,7 @@ body {
 		  opacity: .1;
 		}					
 				
-		#PAP {
+		#PAP-beach-houses {
 		margin-top: 15px;
 		text-align: center;
 			color: black;
@@ -270,8 +270,8 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}
-		#PAP-beach-houses-before,
-		#PAP-beach-houses-after {
+		#PAP-beach-houses-before-beach-houses,
+		#PAP-beach-houses-after-beach-houses {
 		margin-top: -7px;
 		text-align: center;
 			color: black;
@@ -281,7 +281,7 @@ body {
 			padding-left: 0px;
 			opacity: .5;
 		}
-		#priceline {
+		#priceline-beach-houses {
 		  margin-top: -5px;
 		  background-color: black;
 		  border: none;
@@ -290,7 +290,7 @@ body {
 		  width: 60%;
 		  opacity: .1;
 		}	
-		#yourprice {
+		#yourprice-beach-houses {
 		margin-top: 30px;
 		text-align: center;
 			color: black;
@@ -300,8 +300,8 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}
-		#price-beach-houses-before,
-		#price-beach-houses-after {
+		#price-beach-houses-before-beach-houses,
+		#price-beach-houses-after-beach-houses {
 		margin-top: -10px;
 		text-align: center;
 			color: black;
@@ -312,8 +312,8 @@ body {
 			opacity: .7;
 			margin-bottom: 28px;
 		}
-	    #beach-houses-add-to-cart, 
-		#beach-houses-add-to-cart-connected  {
+	    #beach-houses-add-to-cart-beach-houses, 
+		#beach-houses-add-to-cart-connected-beach-houses  {
 			  text-decoration: none;
 			  color: white;
 			  margin-left: auto;
@@ -333,13 +333,13 @@ body {
 			  box-shadow: 0px 8px 12px -6px black;  
 				background: black;
 			}	  
-		#beach-houses-add-to-cart:hover, 
-		#beach-houses-add-to-cart-connected:focus {
+		#beach-houses-add-to-cart-beach-houses:hover, 
+		#beach-houses-add-to-cart-connected-beach-houses:focus {
 			  opacity: .4;
 			  transition: 1s;
 			  cursor: pointer;
 		} 
-		#beach-houses-added {
+		#beach-houses-added-beach-houses {
 			  text-decoration: none;
 			  margin-left: auto;
 			  margin-right: auto;
@@ -358,7 +358,7 @@ body {
 			  opacity: 1; 
 				background: silver;
 			}	
-		#beach-houses-collected {
+		#beach-houses-collected-beach-houses {
 			  text-decoration: none;
 			  margin-left: auto;
 			  margin-right: auto;
@@ -410,11 +410,11 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  
-		#header {
+		#header-beach-houses {
 				margin-top: 0px;
 				padding-top: 25px;			
 			}	
-			#icon-link{	
+			#icon-link-beach-houses{	
 				margin-right: 90px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -423,10 +423,10 @@ body {
 				  border-radius: 12px;
 				  width: 30px;		
 			}	
-			#arells-icon {
+			#arells-icon-beach-houses {
 					height: 15px;
 				}	    
-			#cart-link{
+			#cart-link-beach-houses{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -435,7 +435,7 @@ body {
 				  border-radius: 12px;	
 				  width: 45px;  					
 			}
-			#cart-link-connected{
+			#cart-link-connected-beach-houses{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 6.5px;
@@ -444,38 +444,38 @@ body {
 				  border-radius: 12px;	
 				  width: 27px;  					
 			}
-			#cart-icon {
+			#cart-icon-beach-houses {
 					height: 15px;
 				}
 			
 			  				
-		#word-logo {
+		#word-logo-beach-houses {
 			margin-top: 35px;
 			width: 90px;	
 		}
-		#slogan {
+		#slogan-beach-houses {
 			margin-top: -2px;
 			font-size: 7px;
 			letter-spacing: 8px;
 			margin-left: 8px; 
 			word-spacing: -3px;
 		}
-		#wallet-connected-div{
+		#wallet-connected-div-beach-houses{
 			margin-top: 25px;
 		}	
-			#connected-line {
+			#connected-line-beach-houses {
 			  width: 90px;
 			}				
-			#wallet-connected {
+			#wallet-connected-beach-houses {
 				padding-bottom: 12px;
 				padding-top: 7px;
 				font-size: 8px;
 				letter-spacing: 0px;
 				margin-left: 0px; 
 			}
-			#beach-houses {
-	          margin-top: 25px;
-		  }  					  
+		#beach-houses {
+	         margin-top: 25px;
+		}  					  
 }					
 	
 	
@@ -503,11 +503,11 @@ body {
 	  #beach-houses {
 		    width: 300px;
 		  }  
-		  #photo {
+		  #photo-beach-houses {
 		  	width: 300px;
 		  	height: 300px;
 		  }
-		#name {
+		#name-beach-houses {
 		  font-size: 13pt;
 		  font-weight: 800;
 		  margin-top: 20px;
@@ -515,7 +515,7 @@ body {
 		  margin-left: -1px;
 		  margin-bottom: 20px;
 		}		
-		#copy-link {
+		#copy-link-beach-houses {
 		  font-size: 8px;
 		  padding-top: 15px;
 		  padding-bottom: 15px;
@@ -526,10 +526,10 @@ body {
 		  letter-spacing: 2px;
 		  margin-bottom: 10px;
 		}	  	
-			#copy-link-icon {
+			#copy-link-icon-beach-houses {
 				width: 12px;
 			}
-		#creator-owner-desc {
+		#creator-owner-desc-beach-houses {
 		margin-top: 15px;
 			font-weight: 300;
 			font-size: 12px;
@@ -537,7 +537,7 @@ body {
 			padding-left: 0px;
 			margin-bottom: 0px;
 		}
-		#creator-owner-link {
+		#creator-owner-link-beach-houses {
 		text-align: center;
 			font-weight: 300;
 			font-size: 13px;
@@ -545,33 +545,33 @@ body {
 			padding-left: 0px;
 
 		}			
-		#line {
+		#line-beach-houses {
 		 margin-top: 20px;
 		}			
-		#PAP {
+		#PAP-beach-houses {
 		margin-top: 15px;
 			font-size: 12px;
 		}
-		#PAP-beach-houses-before,
-		#PAP-beach-houses-after {
+		#PAP-beach-houses-before-beach-houses,
+		#PAP-beach-houses-after-beach-houses {
 		margin-top: -8px;
 			font-size: 13px;
 		}
-		#priceline {
+		#priceline-beach-houses {
 		  margin-top: 0px;
 		}	
-		#yourprice {
+		#yourprice-beach-houses {
 		margin-top: 20px;
 			font-size: 13px;
 		}
-		#price-beach-houses-before,
-		#price-beach-houses-after {
+		#price-beach-houses-before-beach-houses,
+		#price-beach-houses-after-beach-houses {
 		margin-top: -10px;
 			font-size: 15px;
 			margin-bottom: 20px;	
 		}			
-		#beach-houses-add-to-cart, 
-		#beach-houses-add-to-cart-connected {
+		#beach-houses-add-to-cart-beach-houses, 
+		#beach-houses-add-to-cart-connected-beach-houses {
 			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
@@ -582,7 +582,7 @@ body {
 			  letter-spacing: 1px;
 			  width: 120px;
 			}	  
-		 #beach-houses-added {
+		 #beach-houses-added-beach-houses {
 			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
@@ -593,7 +593,7 @@ body {
 			  letter-spacing: 1px;
 			  width: 120px;
 			}	
-		#beach-houses-collected {
+		#beach-houses-collected-beach-houses {
 			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;

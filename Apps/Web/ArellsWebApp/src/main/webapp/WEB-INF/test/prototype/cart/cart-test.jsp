@@ -67,16 +67,17 @@
 		var fees = 0;
 		var total = 0;
 
-		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 		
+		//Blue Orange
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
  		function blueOrangeAddedFunc() {
 	 	    if (blueOrangeAdded === 'true') {
 	 			document.getElementById('cart-empty-cart').style.display = "none";
 	 			document.getElementById('cart-full-cart').style.display = "block";
 	 			document.getElementById('blue-orange-cart').style.display = "flex";
 	 	    }
-	 	    royalties = (royalty * blueOrange);
-	 	    fees = (fee * blueOrange);
+	 	    royalties = (royalty * blueOrange + royalties);
+	 	    fees = (fee * blueOrange + fees);
 	 	    total = (total + blueOrange);
 	 	    	 	
 			
@@ -100,9 +101,44 @@
  		document.addEventListener('DOMContentLoaded', blueOrangeAddedFunc);
  		
  		
+ 		
+ 		//Beach Houses
+		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+ 		function beachHousesAddedLoader() {
+	 	    if (beachHousesAdded === 'true') {
+	 			document.getElementById('cart-empty-cart').style.display = "none";
+	 			document.getElementById('cart-full-cart').style.display = "block";
+	 			document.getElementById('beach-houses-cart').style.display = "flex";
+	 	    }
+	 	    royalties = (royalty * beachHouses + royalties);
+	 	    fees = (fee * beachHouses + fees);
+	 	    total = (total + beachHouses);
+	 	    	 	
+			
+			var royaltiesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(royalties);
+			var feesFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(fees);
+			var totalFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(total);
+			
+			document.getElementById('royalty-price-value-cart').innerHTML = 
+				royaltiesFormated;
+			document.getElementById('fee-price-value-cart').innerHTML = 
+				feesFormated;
+			document.getElementById('total-price-value-cart').innerHTML = 
+				totalFormated;
+ 		}
+ 		document.addEventListener('DOMContentLoaded', beachHousesAddedLoader);
+ 		
+ 		
  // Purchase Completed Functions Below	
  
  		const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+ 		const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
  		
 		function completePurchase() {
 			  if (blueOrangeAdded === 'true') {
@@ -112,22 +148,40 @@
 		 			document.getElementById('blue-orange-cart').style.display = "none";
 				  document.getElementById('purchaseComplete').style.display = "block";
 			  }
+			  if (beachHousesAdded === 'true') {
+				  sessionStorage.setItem('beachHousesPurchased', 'true');
+		 			document.getElementById('cart-empty-cart').style.display = "block";
+		 			document.getElementById('cart-full-cart').style.display = "none";
+		 			document.getElementById('beach-houses-cart').style.display = "none";
+				  document.getElementById('purchaseComplete').style.display = "block";
+			  }			  
 		}	
 		
 		function closePurchaseComplete() {
-			  document.getElementById('purchaseComplete').style.display = "none";
-			  window.location.href = '/prototype-buyer-collected-test';
-			  sessionStorage.removeItem('blueOrangeAdded');
+			  if (blueOrangePurchased === 'true') {
+				  document.getElementById('purchaseComplete').style.display = "none";
+				  window.location.href = '/prototype-buyer-collected-test';
+				  sessionStorage.removeItem('blueOrangeAdded');
+			  }
+			  if (beachHousesPurchased === 'true') {
+				  document.getElementById('purchaseComplete').style.display = "none";
+				  window.location.href = '/prototype-buyer-collected-test';
+				  sessionStorage.removeItem('beachHousesAdded');
+			  }
 		}
 		
 		
-		function blueOrangePurchasedFunc() {
+		function ItemsPurchasedLoader() {
 	 	    if (blueOrangePurchased === 'true') {
 				document.getElementById('cart-full-cart').style.display = "none";
 				document.getElementById('cart-empty-cart').style.display = "block";	  		
 	 	    }
+	 	    if (beachHousesPurchased === 'true') {
+				document.getElementById('cart-full-cart').style.display = "none";
+				document.getElementById('cart-empty-cart').style.display = "block";	  		
+	 	    }	 	    
 		}
-		document.addEventListener('DOMContentLoaded', blueOrangePurchasedFunc);		
+		document.addEventListener('DOMContentLoaded', ItemsPurchasedLoader);		
 		
 		
  		
@@ -203,46 +257,7 @@
 					document.getElementById('cart-empty-cart').style.display = "block";
 				}			
 		}		
-<!-- Remove scripts above-->	
-
-<!-- Back buton scripts below-->
-
-		window.addEventListener('popstate', function(event) {
-		    // Your custom function to run when the back button is pressed
-		    backButtonPressed();
-		});
-		
-		function backButtonPressed() {
-			const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
-		    if (blueOrangeAdded === 'true') {
-				document.getElementById('cart-link-seller-created').style.display = "none";
-				document.getElementById('wallet-connected-div-seller-created').style.display = "block";
-				
-				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
-				
-				document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
-		 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
-		 		document.getElementById('blue-orange-added-seller-created').style.display = "block";
-		 		 		
-		 	}
-		    const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
-		    if (blueOrangePurchased === 'true') {
-				document.getElementById('cart-link-seller-created').style.display = "none";
-				document.getElementById('wallet-connected-div-seller-created').style.display = "block";	  
-				
-				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
-		    	
-		    	document.getElementById('blue-orange-prices-before-seller-created').style.display = "none";
-		    	document.getElementById('blue-orange-prices-after-seller-created').style.display = "block";
-			
-				document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
-				document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
-				document.getElementById('blue-orange-added-seller-created').style.display = "none";
-				document.getElementById('blue-orange-collected-seller-created').style.display = "block";
-		    }
-		}
-		
-<!-- Back buton scripts above-->			
+<!-- Remove scripts above-->			
 
 
 

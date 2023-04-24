@@ -86,22 +86,79 @@
 			function walletConnected() {
 				document.getElementById('connectWalletBuy').style.display = "none";
 				
-				document.getElementById('wallet-connected-div').style.display = "block";
+				document.getElementById('wallet-connected-div-buyer-collected').style.display = "block";
 				
-				document.getElementById('cart-link').style.display = "none";
-				document.getElementById('wallet-connected-div').style.display = "block";
+				document.getElementById('cart-link-buyer-collected').style.display = "none";
+				document.getElementById('wallet-connected-div-buyer-collected').style.display = "block";
 				
-				document.getElementById('cart-link-connected').style.display = "inline-block";
+				document.getElementById('cart-link-connected-buyer-collected').style.display = "inline-block";
 			 
 			}	
 <!-- Connect Wallet script above-->
 
 
-<!-- Add To Cart scrips below -->	
+<!-- Added/Completed-Purchase script/s down-->
 
-//Ensure that Image displays show as FLEX after adding, collected-items: block
+//Ensure that Image displays show as FLEX after adding, cart-full: block
 
-<!-- Add To Cart scrips above -->
+		function buyerCollectedLoader() {
+	
+			//Add To Cart Functions
+			const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+			const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+			
+		    if (blueOrangeAdded === 'true' && beachHousesAdded === 'true') {
+				document.getElementById('cart-link-seller-created').style.display = "none";
+				document.getElementById('wallet-connected-div-seller-created').style.display = "block";
+				
+				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
+			}				
+		    
+		    //Purchased Functions
+		    const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+		    const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
+		    
+		    if (blueOrangePurchased === 'true' && beachHousesPurchased === 'true') {
+				document.getElementById('cart-link-seller-created').style.display = "none";
+				document.getElementById('wallet-connected-div-seller-created').style.display = "block";
+				
+				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
+				
+		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
+				document.getElementById('blue-orange-buyer-collected').style.display = "flex";
+				
+		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
+				document.getElementById('buyer-collected-buyer-collected').style.display = "flex";				
+			}
+		   
+		    if (blueOrangePurchased === 'true') {
+				document.getElementById('cart-link-seller-created').style.display = "none";
+				document.getElementById('wallet-connected-div-seller-created').style.display = "block";
+				
+				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";		    	
+		    	
+		    	document.getElementById('no-art-buyer-collected').style.display = "none";
+		    	
+		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
+				document.getElementById('blue-orange-buyer-collected').style.display = "flex";
+		    }
+		    if (beachHousesPurchased === 'true') {	
+				document.getElementById('cart-link-seller-created').style.display = "none";
+				document.getElementById('wallet-connected-div-seller-created').style.display = "block";
+				
+				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
+				
+		    	document.getElementById('no-art-buyer-collected').style.display = "none";
+		    	
+		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
+				document.getElementById('buyer-collected-buyer-collected').style.display = "flex";
+		    }	
+	
+
+		}
+		document.addEventListener('DOMContentLoaded', buyerCollectedLoader);	
+
+<!-- Added/Completed-Purchase script/s up-->
 			
 		
 		</script>	
@@ -137,135 +194,135 @@
 	<!-- Modal/s above -->	
 	
 
-	<div id="header">
+	<div id="header-buyer-collected">
 	
 	<!-- Change below link after test -->
-		<a id="icon-link" href="/test">
-			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-buyer-collected" href="/test">
+			<img id="arells-icon-buyer-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<button id="cart-link-buyer-collected" onClick="connectWallet()" style="display: inline-block;">
+			<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
-		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<a id="cart-link-connected-buyer-collected" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>
 	</div>
-	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
-	<div id="wallet-connected-div" style="display: none;">
-		<hr id="connected-line">
-		<p id="wallet-connected" >
+	<img id="word-logo-buyer-collected" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-buyer-collected">ART SELLS</p>
+	<div id="wallet-connected-div-buyer-collected" style="display: none;">
+		<hr id="connected-line-buyer-collected">
+		<p id="wallet-connected-buyer-collected" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line">
+		<hr id="connected-line-buyer-collected">
 	</div>
-    <div id="profile-img-container">
-		<img id="profile-photo" src="/icons&images/prototype/Unnamed-Icon.jpg">
+    <div id="profile-img-container-buyer-collected">
+		<img id="profile-photo-buyer-collected" src="/icons&images/prototype/Unnamed-Icon.jpg">
 	</div>	 
-	<h1 id="name">Unnamed</h1>  
-	<p id="description">Creator & Collector</p> 
-	<button id="copy-link"
+	<h1 id="name-buyer-collected">Unnamed</h1>  
+	<p id="description-buyer-collected">Creator & Collector</p> 
+	<button id="copy-link-buyer-collected"
 		onClick="copyLink()">
-		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+		<img id="copy-link-icon-buyer-collected" src="/icons&images/prototype/link.png"/>
 		COPY LINK</button>	
 	<br>
-	<hr id="profileline">
-	<div id="created-collected">
+	<hr id="profileline-buyer-collected">
+	<div id="created-collected-buyer-collected">
 		<!-- Change below link after test -->
-		<a id="created" href="/prototype-buyer-created-test">Created</a>		
-		<a id="collected">Collected</a>	
+		<a id="created-buyer-collected" href="/prototype-buyer-created-test">Created</a>		
+		<a id="collected-buyer-collected">Collected</a>	
 	</div>
-	<p id="no-art" style="display: block;">
+	<p id="no-art-buyer-collected" style="display: block;">
 		no art collected
-		<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<img id="cart-icon-collected-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 	</p>
-	<div id="collected-items" style="display: none;">
-		  	<div id="blue-orange" style="display: none;">
+	<div id="collected-items-buyer-collected" style="display: none;">
+		  	<div id="blue-orange-buyer-collected" style="display: none;">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/1.jpg"/>
+		  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link-buyer-collected">
+		  			<img id="photo-buyer-collected" src="/icons&images/prototype/1.jpg"/>
 		  		</a>
-		  		<div id="prices">
-			  		<div id="blue-orange-prices-after">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-blue-orange-after">$3,000,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-blue-orange-after">$60,000</p>
+		  		<div id="prices-buyer-collected">
+			  		<div id="blue-orange-prices-after-buyer-collected">
+				  		<p id="PAP-buyer-collected">Price After Purchase</p>
+				  		<p id="PAP-blue-orange-after-buyer-collected">$3,000,000</p>
+				  		<hr id="priceline-buyer-collected">
+				  		<p id="yourprice-buyer-collected">Price</p>
+				     	<p id="price-blue-orange-after-buyer-collected">$60,000</p>
 			  		</div>			  		
 		  		</div>		  		
 		    </div>
-		  	<div id="beach-houses" style="display: none;">
+		  	<div id="beach-houses-buyer-collected" style="display: none;">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/2.jpg"/>
+		  		<a href="/prototype-beach-houses-test" target="_self" id="photo-link-buyer-collected">
+		  			<img id="photo-buyer-collected" src="/icons&images/prototype/2.jpg"/>
 		  		</a>
-		  		<div id="prices">
-			  		<div id="beach-houses-prices-after">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-beach-houses-after">$500,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-beach-houses-after">$10,000</p>
+		  		<div id="prices-buyer-collected">
+			  		<div id="beach-houses-prices-after-buyer-collected">
+				  		<p id="PAP-buyer-collected">Price After Purchase</p>
+				  		<p id="PAP-beach-houses-after-buyer-collected">$500,000</p>
+				  		<hr id="priceline-buyer-collected">
+				  		<p id="yourprice-buyer-collected">Price</p>
+				     	<p id="price-beach-houses-after-buyer-collected">$10,000</p>
 			     	</div>			  		
 		  		</div>     	
 		    </div>
-		     <div id="colour-glass" style="display: none;">
+		     <div id="colour-glass-buyer-collected" style="display: none;">
 		     <!-- Change below link after test -->
-		  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/3.jpg"/>
+		  		<a href="/prototype-colour-glass-test" target="_self" id="photo-link-buyer-collected">
+		  			<img id="photo-buyer-collected" src="/icons&images/prototype/3.jpg"/>
 		  		</a>
-		  		<div id="prices">
-			  		<div id="colour-glass-prices-after">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-colour-glass-after">$36,250,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-colour-glass-after">$725,000</p>
+		  		<div id="prices-buyer-collected">
+			  		<div id="colour-glass-prices-after-buyer-collected">
+				  		<p id="PAP-buyer-collected">Price After Purchase</p>
+				  		<p id="PAP-colour-glass-after-buyer-collected">$36,250,000</p>
+				  		<hr id="priceline-buyer-collected">
+				  		<p id="yourprice-buyer-collected">Price</p>
+				     	<p id="price-colour-glass-after-buyer-collected">$725,000</p>
 			     	</div>  		  		
 		  		</div>   	
 		    </div>
-		  	<div id="layers" style="display: none;">
+		  	<div id="layers-buyer-collected" style="display: none;">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-layers-test" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/4.jpg"/>
+		  		<a href="/prototype-layers-test-buyer-collected" target="_self" id="photo-link-buyer-collected">
+		  			<img id="photo-buyer-collected" src="/icons&images/prototype/4.jpg"/>
 		  		</a>
-		  		<div id="prices">
-			  		<div id="layers-prices-after">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-layers-after">$1,000,000,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-layers-after">$20,000,000</p>
+		  		<div id="prices-buyer-collected">
+			  		<div id="layers-prices-after-buyer-collected">
+				  		<p id="PAP-buyer-collected">Price After Purchase</p>
+				  		<p id="PAP-layers-after-buyer-collected">$1,000,000,000</p>
+				  		<hr id="priceline-buyer-collected">
+				  		<p id="yourprice-buyer-collected">Price</p>
+				     	<p id="price-layers-after-buyer-collected">$20,000,000</p>
 			     	</div>		  		
 		  		</div>
 		    </div>
-		  	<div id="succinct-drop" style="display:none;">
+		  	<div id="succinct-drop-buyer-collected" style="display:none;">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-succinct-drop-test" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
+		  		<a href="/prototype-succinct-drop-test" target="_self" id="photo-link-buyer-collected">
+		  			<img id="photo-buyer-collected" src="/icons&images/prototype/5.jpg"/>
 		  		</a>
-		  		<div id="prices">
-			  		<div id="succinct-drop-prices-after">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-succinct-drop-after">$250,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-succinct-drop-after">$5,000</p>
+		  		<div id="prices-buyer-collected">
+			  		<div id="succinct-drop-prices-after-buyer-collected">
+				  		<p id="PAP-buyer-collected">Price After Purchase</p>
+				  		<p id="PAP-succinct-drop-after-buyer-collected">$250,000</p>
+				  		<hr id="priceline-buyer-collected">
+				  		<p id="yourprice-buyer-collected">Price</p>
+				     	<p id="price-succinct-drop-after-buyer-collected">$5,000</p>
 			     	</div>				  		
 		  		</div>     	
 		    </div>
-		     <div id="paint-rain" style="display: none;">
+		     <div id="paint-rain-buyer-collected" style="display: none;">
 		     <!-- Change below link after test -->
-		  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link">
-		  			<img id="photo" src="/icons&images/prototype/6.jpg"/>
+		  		<a href="/prototype-paint-rain-test" target="_self" id="photo-link-buyer-collected">
+		  			<img id="photo-buyer-collected" src="/icons&images/prototype/6.jpg"/>
 		  		</a>
-		  		<div id="prices">
-			  		<div id="paint-rain-prices-after">
-				  		<p id="PAP">Price After Purchase</p>
-				  		<p id="PAP-paint-rain-after">$30,000,000</p>
-				  		<hr id="priceline">
-				  		<p id="yourprice">Price</p>
-				     	<p id="price-paint-rain-after">$600,000</p>
+		  		<div id="prices-buyer-collected">
+			  		<div id="paint-rain-prices-after-buyer-collected">
+				  		<p id="PAP-buyer-collected">Price After Purchase</p>
+				  		<p id="PAP-paint-rain-after-buyer-collected">$30,000,000</p>
+				  		<hr id="priceline-buyer-collected">
+				  		<p id="yourprice-buyer-collected">Price</p>
+				     	<p id="price-paint-rain-after-buyer-collected">$600,000</p>
 			     	</div>			  		
 		  		</div>     	
 		    </div>
