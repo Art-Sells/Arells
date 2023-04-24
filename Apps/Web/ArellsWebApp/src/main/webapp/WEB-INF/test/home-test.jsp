@@ -50,6 +50,9 @@
 <!-- Reset Prototype script/s down-->
 
 	function resetPrototype() {
+		
+		sessionStorage.removeItem('walletConnectedSession'); 
+		
 		sessionStorage.removeItem('blueOrangeAdded');
 		sessionStorage.removeItem('blueOrangePurchased');
 		
