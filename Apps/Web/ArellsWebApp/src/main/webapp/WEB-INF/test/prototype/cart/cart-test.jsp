@@ -173,18 +173,22 @@
 		}
 		
 		
-		function ItemsPurchasedLoader() {
+		function blueOrangePurchasedLoader() {
 	 	    if (blueOrangePurchased === 'true') {
 				document.getElementById('cart-full-cart').style.display = "none";
 				document.getElementById('cart-empty-cart').style.display = "block";	  		
-	 	    }
+	 	    } 	    
+		}
+		document.addEventListener('DOMContentLoaded', blueOrangePurchasedLoader);		
+			
+		
+		function beachHousesPurchasedLoader() {
 	 	    if (beachHousesPurchased === 'true') {
 				document.getElementById('cart-full-cart').style.display = "none";
 				document.getElementById('cart-empty-cart').style.display = "block";	  		
 	 	    }	 	    
 		}
-		document.addEventListener('DOMContentLoaded', ItemsPurchasedLoader);		
-		
+		document.addEventListener('DOMContentLoaded', beachHousesPurchasedLoader);	
 		
  		
  		

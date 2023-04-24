@@ -141,8 +141,9 @@
 
 <!--  Add To Cart script/s below-->
 
-		
 
+	
+	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 	function addBlueOrangeToCart() {
 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('blue-orange-added-seller-created').style.display = "block";
@@ -153,6 +154,8 @@
 		//cart function
 		sessionStorage.setItem('blueOrangeAdded', 'true');
 	}
+	
+	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 	function addBeachHousesToCart() {
 		document.getElementById('beach-houses-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('beach-houses-added-seller-created').style.display = "block";
@@ -163,6 +166,8 @@
 		//cart function
 		sessionStorage.setItem('beachHousesAdded', 'true'); 
 	}
+	
+	
 	function addColourGlassToCart() {
 		document.getElementById('colour-glass-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('colour-glass-added-seller-created').style.display = "block";
@@ -189,7 +194,6 @@
 
 <!-- Added/Completed-Purchase script/s down-->
 
-	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
 
 	function blueOrangeLoader() {
@@ -207,6 +211,9 @@
 	    
 	    //Purchased Functions
 	    if (blueOrangePurchased === 'true') {   	
+			document.getElementById('cart-link-connected-seller-created').style.display = "in-line";
+			document.getElementById('cart-link-full-seller-created').style.display = "none";	    	
+	    	
 	    	document.getElementById('blue-orange-prices-before-seller-created').style.display = "none";
 	    	document.getElementById('blue-orange-prices-after-seller-created').style.display = "block";
 		
@@ -220,7 +227,8 @@
 	
 	
 	
-	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+	
+	
 	const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
 	
 	function beachHousesLoader() {	
@@ -237,6 +245,9 @@
 		
 	    //Purchased Function
 	    if (beachHousesPurchased === 'true') {
+			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
+			document.getElementById('cart-link-full-seller-created').style.display = "none";	  	    	
+	    	
 	    	document.getElementById('beach-houses-prices-before-seller-created').style.display = "none";
 	    	document.getElementById('beach-houses-prices-after-seller-created').style.display = "block";
 		

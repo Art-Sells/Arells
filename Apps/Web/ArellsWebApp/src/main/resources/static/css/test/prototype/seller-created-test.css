@@ -93,6 +93,7 @@ body {
 			  opacity: 1;	
 		}
 		#cart-link-full-seller-created{
+			transition: 1s;
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -102,9 +103,8 @@ body {
 			  padding-left: 10px;	  
 			  border: none;
 			  width: 38px;
-			  border-radius: 5px;
+			  border-radius: 15px;
 			  opacity: 1;
-			  box-shadow: 0px 8px 12px -6px black;  
 				background: black;						
 		}
 		#cart-link-full-seller-created:hover,
@@ -561,22 +561,14 @@ body {
 				  border-radius: 12px;	
 				  width: 45px;  					
 			}
-			#cart-link-connected-seller-created {
+			#cart-link-connected-seller-created,
+			#cart-link-full-seller-created {
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 6.5px;
 				  padding-right: 8px;
 				  padding-left: 8px;	
 				  border-radius: 12px;	
-				  width: 27px;  					
-			}
-			#cart-link-full-seller-created{
-				margin-left: 96px;
-				  padding-top: 10px;
-				  padding-bottom: 6.5px;
-				  padding-right: 8px;
-				  padding-left: 8px;	
-				  border-radius: 5px;	
 				  width: 27px;  					
 			}
 			#cart-icon-seller-created,
