@@ -75,28 +75,29 @@
 	 			document.getElementById('cart-empty-cart').style.display = "none";
 	 			document.getElementById('cart-full-cart').style.display = "block";
 	 			document.getElementById('blue-orange-cart').style.display = "flex";
-	 	    }
-	 	    royalties = (royalty * blueOrange + royalties);
-	 	    fees = (fee * blueOrange + fees);
-	 	    total = (total + blueOrange);
-	 	    	 	
-			
-			var royaltiesFormated = new Intl.NumberFormat('en-US',
+	 			
+		 	    royalties = (royalty * blueOrange + royalties);
+		 	    fees = (fee * blueOrange + fees);
+		 	    total = (total + blueOrange);
+		 	    	 	
+				
+				var royaltiesFormated = new Intl.NumberFormat('en-US',
+			 				{ minimumFractionDigits: 0,
+							  maximumFractionDigits: 0,}).format(royalties);
+				var feesFormated = new Intl.NumberFormat('en-US',
 		 				{ minimumFractionDigits: 0,
-						  maximumFractionDigits: 0,}).format(royalties);
-			var feesFormated = new Intl.NumberFormat('en-US',
-	 				{ minimumFractionDigits: 0,
-					  maximumFractionDigits: 0,}).format(fees);
-			var totalFormated = new Intl.NumberFormat('en-US',
-	 				{ minimumFractionDigits: 0,
-					  maximumFractionDigits: 0,}).format(total);
-			
-			document.getElementById('royalty-price-value-cart').innerHTML = 
-				royaltiesFormated;
-			document.getElementById('fee-price-value-cart').innerHTML = 
-				feesFormated;
-			document.getElementById('total-price-value-cart').innerHTML = 
-				totalFormated;
+						  maximumFractionDigits: 0,}).format(fees);
+				var totalFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(total);
+				
+				document.getElementById('royalty-price-value-cart').innerHTML = 
+					royaltiesFormated;
+				document.getElementById('fee-price-value-cart').innerHTML = 
+					feesFormated;
+				document.getElementById('total-price-value-cart').innerHTML = 
+					totalFormated;	 			
+	 	    }
  		}
  		document.addEventListener('DOMContentLoaded', blueOrangeAddedFunc);
  		
@@ -109,28 +110,29 @@
 	 			document.getElementById('cart-empty-cart').style.display = "none";
 	 			document.getElementById('cart-full-cart').style.display = "block";
 	 			document.getElementById('beach-houses-cart').style.display = "flex";
-	 	    }
-	 	    royalties = (royalty * beachHouses + royalties);
-	 	    fees = (fee * beachHouses + fees);
-	 	    total = (total + beachHouses);
-	 	    	 	
-			
-			var royaltiesFormated = new Intl.NumberFormat('en-US',
+
+		 	    royalties = (royalty * beachHouses + royalties);
+		 	    fees = (fee * beachHouses + fees);
+		 	    total = (total + beachHouses);
+		 	    	 	
+				
+				var royaltiesFormated = new Intl.NumberFormat('en-US',
+			 				{ minimumFractionDigits: 0,
+							  maximumFractionDigits: 0,}).format(royalties);
+				var feesFormated = new Intl.NumberFormat('en-US',
 		 				{ minimumFractionDigits: 0,
-						  maximumFractionDigits: 0,}).format(royalties);
-			var feesFormated = new Intl.NumberFormat('en-US',
-	 				{ minimumFractionDigits: 0,
-					  maximumFractionDigits: 0,}).format(fees);
-			var totalFormated = new Intl.NumberFormat('en-US',
-	 				{ minimumFractionDigits: 0,
-					  maximumFractionDigits: 0,}).format(total);
-			
-			document.getElementById('royalty-price-value-cart').innerHTML = 
-				royaltiesFormated;
-			document.getElementById('fee-price-value-cart').innerHTML = 
-				feesFormated;
-			document.getElementById('total-price-value-cart').innerHTML = 
-				totalFormated;
+						  maximumFractionDigits: 0,}).format(fees);
+				var totalFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(total);
+				
+				document.getElementById('royalty-price-value-cart').innerHTML = 
+					royaltiesFormated;
+				document.getElementById('fee-price-value-cart').innerHTML = 
+					feesFormated;
+				document.getElementById('total-price-value-cart').innerHTML = 
+					totalFormated;
+	 	    }
  		}
  		document.addEventListener('DOMContentLoaded', beachHousesAddedLoader);
  		
@@ -192,7 +194,31 @@
 
 		function removeBlueOrange() {
 			document.getElementById('blue-orange-cart').style.display = "none";	
+			
 			sessionStorage.removeItem('blueOrangeAdded');
+			
+	 	    royalties = (royalties - (royalty * blueOrange));
+	 	    fees = (fees - (fee * blueOrange));
+	 	    total = (total - blueOrange);
+	 	    	 	
+			
+			var royaltiesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(royalties);
+			var feesFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(fees);
+			var totalFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(total);
+			
+			document.getElementById('royalty-price-value-cart').innerHTML = 
+				royaltiesFormated;
+			document.getElementById('fee-price-value-cart').innerHTML = 
+				feesFormated;
+			document.getElementById('total-price-value-cart').innerHTML = 
+				totalFormated;
+			
 			if (document.getElementById('beach-houses-cart').style.display == "none"
 				&& document.getElementById('colour-glass-cart').style.display == "none" 
 				&& document.getElementById('layers-cart').style.display == "none"
@@ -203,7 +229,31 @@
 				}
 		}	
 		function removeBeachHouses() {
-			document.getElementById('beach-houses-cart').style.display = "none";	
+			document.getElementById('beach-houses-cart').style.display = "none";
+			
+			sessionStorage.removeItem('beachHousesAdded');
+			
+	 	    royalties = (royalties - (royalty * beachHouses));
+	 	    fees = (fees - (fee * beachHouses));
+	 	    total = (total - beachHouses);
+	 	    	 	
+			
+			var royaltiesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(royalties);
+			var feesFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(fees);
+			var totalFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(total);
+			
+			document.getElementById('royalty-price-value-cart').innerHTML = 
+				royaltiesFormated;
+			document.getElementById('fee-price-value-cart').innerHTML = 
+				feesFormated;
+			document.getElementById('total-price-value-cart').innerHTML = 
+				totalFormated;
 			if (document.getElementById('blue-orange-cart').style.display == "none"
 				&& document.getElementById('colour-glass-cart').style.display == "none" 
 				&& document.getElementById('layers-cart').style.display == "none"
@@ -211,10 +261,12 @@
 				&& document.getElementById('paint-rain-cart').style.display == "none"){
 					document.getElementById('cart-full-cart').style.display = "none";
 					document.getElementById('cart-empty-cart').style.display = "block";
-				}			
+				}	
+			
 		}		
 		function removeColourGlass() {
-			document.getElementById('colour-glass-cart').style.display = "none";	
+			document.getElementById('colour-glass-cart').style.display = "none";
+			sessionStorage.removeItem('colourGlassAdded');
 			if (document.getElementById('beach-houses-cart').style.display = "none"
 				&& document.getElementById('blue-orange-cart').style.display == "none" 
 				&& document.getElementById('layers-cart').style.display == "none"
@@ -226,6 +278,7 @@
 		}
 		function removeLayers() {
 			document.getElementById('layers-cart').style.display = "none";
+			sessionStorage.removeItem('layersAdded');
 			if (document.getElementById('beach-houses-cart').style.display == "none"
 				&& document.getElementById('colour-glass-cart').style.display == "none" 
 				&& document.getElementById('blue-orange-cart').style.display == "none"
@@ -237,6 +290,7 @@
 		}
 		function removeSuccinctDrop() {
 			document.getElementById('succinct-drop-cart').style.display = "none";
+			sessionStorage.removeItem('succinctDropAdded');
 			if (document.getElementById('beach-houses-cart').style.display == "none"
 				&& document.getElementById('colour-glass-cart').style.display == "none" 
 				&& document.getElementById('layers-cart').style.display == "none"
@@ -248,6 +302,7 @@
 		}		
 		function removePaintRain() {
 			document.getElementById('paint-rain-cart').style.display = "none";
+			sessionStorage.removeItem('paintRainAdded');
 			if (document.getElementById('beach-houses-cart').style.display == "none"
 				&& document.getElementById('colour-glass-cart').style.display == "none" 
 				&& document.getElementById('layers-cart').style.display == "none"

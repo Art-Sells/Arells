@@ -92,8 +92,27 @@
 		document.getElementById('blue-orange-add-to-cart-blue-orange').style.display = "none";
 		document.getElementById('blue-orange-add-to-cart-connected-blue-orange').style.display = "block";
 
-	 
+		sessionStorage.setItem('walletConnectedSession', 'true'); 
 	}	
+	
+	const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');
+	
+	function walletConnectedLoader() {	
+	    
+		//Add To Cart Functions
+	    if (walletConnectedSession === 'true') {
+			document.getElementById('connectWalletBuy').style.display = "none";
+			
+			document.getElementById('cart-link-blue-orange').style.display = "none";
+			document.getElementById('wallet-connected-div-blue-orange').style.display = "block";
+			
+			document.getElementById('cart-link-connected-blue-orange').style.display = "inline-block";
+			
+			document.getElementById('blue-orange-add-to-cart-blue-orange').style.display = "none";
+			document.getElementById('blue-orange-add-to-cart-connected-blue-orange').style.display = "block";
+	 	}	
+	}
+	document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
 <!-- Connect Wallet script above-->
 
 
@@ -111,27 +130,16 @@
 
 <!-- Added/Completed-Purchase script/s down-->
 
-
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+	    const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
 		function blueOrangeFunc() {
-			const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 		    if (blueOrangeAdded === 'true') {
-				document.getElementById('cart-link-blue-orange').style.display = "none";
-				document.getElementById('wallet-connected-div-blue-orange').style.display = "block";
-				
-				document.getElementById('cart-link-connected-blue-orange').style.display = "inline-block";
-				
 				document.getElementById('blue-orange-add-to-cart-blue-orange').style.display = "none";
 		 		document.getElementById('blue-orange-add-to-cart-connected-blue-orange').style.display = "none";
 		 		document.getElementById('blue-orange-added-blue-orange').style.display = "block";
 		 		 		
 		 	}
-		    const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
-		    if (blueOrangePurchased === 'true') {
-				document.getElementById('cart-link-blue-orange').style.display = "none";
-				document.getElementById('wallet-connected-div-blue-orange').style.display = "block";	  
-				
-				document.getElementById('cart-link-connected-blue-orange').style.display = "inline-block";
-		    	
+		    if (blueOrangePurchased === 'true') {	
 		    	document.getElementById('blue-orange-prices-before-blue-orange').style.display = "none";
 		    	document.getElementById('blue-orange-prices-after-blue-orange').style.display = "block";
 		    	
@@ -193,6 +201,9 @@
 		<a id="cart-link-connected-blue-orange" href="/prototype-cart-test" style="display: none;">
 			<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>	
+		<a id="cart-link-full-blue-orange" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
+		</a>
 	</div>
 	<img id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan-blue-orange">ART SELLS</p>

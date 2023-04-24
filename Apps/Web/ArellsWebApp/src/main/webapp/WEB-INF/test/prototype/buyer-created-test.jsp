@@ -138,6 +138,9 @@
 		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
 			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>
+		<a id="cart-link-full" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-full" src="/icons&images/prototype/shopping-cart-full.png"/>
+		</a>
 	</div>
 	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan">ART SELLS</p>

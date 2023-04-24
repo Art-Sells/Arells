@@ -147,12 +147,18 @@
 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('blue-orange-added-seller-created').style.display = "block";
 		
+		document.getElementById('cart-link-connected-seller-created').style.display = "none";			
+    	document.getElementById('cart-link-full-seller-created').style.display = "inline-block";
+		
 		//cart function
 		sessionStorage.setItem('blueOrangeAdded', 'true');
 	}
 	function addBeachHousesToCart() {
 		document.getElementById('beach-houses-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('beach-houses-added-seller-created').style.display = "block";
+		
+		document.getElementById('cart-link-connected-seller-created').style.display = "none";			
+    	document.getElementById('cart-link-full-seller-created').style.display = "inline-block";		
 		
 		//cart function
 		sessionStorage.setItem('beachHousesAdded', 'true'); 
@@ -190,9 +196,12 @@
 	    
 		//Add To Cart Functions
 		if (blueOrangeAdded === 'true') {	
+			document.getElementById('cart-link-connected-seller-created').style.display = "none";
+			document.getElementById('cart-link-full-seller-created').style.display = "inline-block";
+			
 			document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
 	 		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
-	 		document.getElementById('blue-orange-added-seller-created').style.display = "block";	
+	 		document.getElementById('blue-orange-added-seller-created').style.display = "block";
 	 		
 		}	
 	    
@@ -218,6 +227,9 @@
 	    
 		//Add To Cart Functions
 	    if (beachHousesAdded === 'true') {    	
+			document.getElementById('cart-link-connected-seller-created').style.display = "none";
+			document.getElementById('cart-link-full-seller-created').style.display = "inline-block";
+	    	
 	 		document.getElementById('beach-houses-add-to-cart-seller-created').style.display = "none";
 	 		document.getElementById('beach-houses-add-to-cart-connected-seller-created').style.display = "none";
 	 		document.getElementById('beach-houses-added-seller-created').style.display = "block";	 		
@@ -282,6 +294,10 @@
 		<a id="cart-link-connected-seller-created" href="/prototype-cart-test" style="display: none;">
 			<img id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>	
+		
+		<a id="cart-link-full-seller-created" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-full.png"/>
+		</a>
 	</div>
 	<img id="word-logo-seller-created" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan-seller-created">ART SELLS</p>

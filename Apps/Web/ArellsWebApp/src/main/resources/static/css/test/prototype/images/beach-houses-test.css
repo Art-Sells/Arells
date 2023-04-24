@@ -92,7 +92,29 @@ body {
 			  border-color: gray;
 			  opacity: 1;	
 		}	
-			#cart-icon-beach-houses {
+		#cart-link-full-beach-houses{
+			text-decoration: none;
+			margin-left: 124px;
+			  text-decoration: none;
+			  padding-top: 14px;
+			  padding-bottom: 9.5px;
+			  padding-right: 10px;
+			  padding-left: 10px;	  
+			  border: none;
+			  width: 38px;
+			  border-radius: 15px;
+			  opacity: 1;
+			  box-shadow: 0px 8px 12px -6px black;  
+				background: black;						
+		}
+		#cart-link-full-beach-houses:hover,
+		#cart-link-full-beach-houses:focus  {
+			  transition: 1s;
+			  cursor: pointer;
+			  opacity: .4;	
+		}					
+			#cart-icon-beach-houses,
+			#cart-icon-full-beach-houses {
 				height: 16px;
 			}
 			
@@ -435,7 +457,8 @@ body {
 				  border-radius: 12px;	
 				  width: 45px;  					
 			}
-			#cart-link-connected-beach-houses{
+			#cart-link-connected-beach-houses,
+			#cart-link-full-beach-houses {
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 6.5px;
@@ -444,7 +467,8 @@ body {
 				  border-radius: 12px;	
 				  width: 27px;  					
 			}
-			#cart-icon-beach-houses {
+			#cart-icon-beach-houses,
+			#cart-icon-full-beach-houses {
 					height: 15px;
 				}
 			

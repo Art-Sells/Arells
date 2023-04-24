@@ -92,8 +92,27 @@
 		document.getElementById('beach-houses-add-to-cart-beach-houses').style.display = "none";
 		document.getElementById('beach-houses-add-to-cart-connected-beach-houses').style.display = "block";
 
-	 
+		sessionStorage.setItem('walletConnectedSession', 'true'); 
 	}	
+	
+	const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');
+	
+	function walletConnectedLoader() {	
+	    
+		//Add To Cart Functions
+	    if (walletConnectedSession === 'true') {
+			document.getElementById('connectWalletBuy').style.display = "none";
+			
+			document.getElementById('cart-link-beach-houses').style.display = "none";
+			document.getElementById('wallet-connected-div-beach-houses').style.display = "block";
+			
+			document.getElementById('cart-link-connected-beach-houses').style.display = "inline-block";
+			
+			document.getElementById('beach-houses-add-to-cart-beach-houses').style.display = "none";
+			document.getElementById('beach-houses-add-to-cart-connected-beach-houses').style.display = "block";
+	 	}	
+	}
+	document.addEventListener('DOMContentLoaded', walletConnectedLoader);		
 <!-- Connect Wallet script above-->
 
 
@@ -111,27 +130,16 @@
 
 <!-- Added/Completed-Purchase script/s down-->
 
-
+		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+	    const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
 		function beachHousesLoader() {
-			const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 		    if (beachHousesAdded === 'true') {
-				document.getElementById('cart-link-beach-houses').style.display = "none";
-				document.getElementById('wallet-connected-div-beach-houses').style.display = "block";
-				
-				document.getElementById('cart-link-connected-beach-houses').style.display = "inline-block";
-				
 				document.getElementById('beach-houses-add-to-cart-beach-houses').style.display = "none";
 		 		document.getElementById('beach-houses-add-to-cart-connected-beach-houses').style.display = "none";
-		 		document.getElementById('beach-houes-added-beach-houses').style.display = "block";
+		 		document.getElementById('beach-houses-added-beach-houses').style.display = "block";
 		 		 		
 		 	}
-		    const beachHousesLoader = sessionStorage.getItem('beachHousesPurchased');
 		    if (beachHousesPurchased === 'true') {
-				document.getElementById('cart-link-beach-houses').style.display = "none";
-				document.getElementById('wallet-connected-div-beach-houses').style.display = "block";	  
-				
-				document.getElementById('cart-link-connected-beach-houses').style.display = "inline-block";
-		    	
 		    	document.getElementById('beach-houses-prices-before-beach-houses').style.display = "none";
 		    	document.getElementById('beach-houses-prices-after-beach-houses').style.display = "block";
 		    	
@@ -192,6 +200,9 @@
 		</button>
 		<a id="cart-link-connected-beach-houses" href="/prototype-cart-test" style="display: none;">
 			<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		</a>
+		<a id="cart-link-full-beach-houses" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-full-beach-houses" src="/icons&images/prototype/shopping-cart-full.png"/>
 		</a>	
 	</div>
 	<img id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png">	
@@ -241,7 +252,7 @@
 	  		<p id="PAP-beach-houses-after-beach-houses">$500,000</p>
 	  		<hr id="priceline-beach-houses">
 	  		<p id="yourprice-beach-houses">Price</p>
-	     	<p id="price-beach-houses-after">$10,000</p>
+	     	<p id="price-beach-houses-after-beach-houses">$10,000</p>
      	</div>
     	<button id="beach-houses-add-to-cart-beach-houses" onClick="connectWallet()"
     		style="display: block;">

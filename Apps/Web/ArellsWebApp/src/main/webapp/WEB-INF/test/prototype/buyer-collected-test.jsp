@@ -93,7 +93,25 @@
 				
 				document.getElementById('cart-link-connected-buyer-collected').style.display = "inline-block";
 			 
+				sessionStorage.setItem('walletConnectedSession', 'true'); 
 			}	
+			
+			const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');
+			
+			function walletConnectedLoader() {	
+			    
+				//Add To Cart Functions
+			    if (walletConnectedSession === 'true') {
+					
+					document.getElementById('wallet-connected-div-buyer-collected').style.display = "block";
+					
+					document.getElementById('cart-link-buyer-collected').style.display = "none";
+					document.getElementById('wallet-connected-div-buyer-collected').style.display = "block";
+					
+					document.getElementById('cart-link-connected-buyer-collected').style.display = "inline-block";	
+			 	}	
+			}
+			document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
 <!-- Connect Wallet script above-->
 
 
@@ -101,62 +119,31 @@
 
 //Ensure that Image displays show as FLEX after adding, cart-full: block
 
-		function buyerCollectedLoader() {
-	
-			//Add To Cart Functions
-			const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
-			const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
-			
-		    if (blueOrangeAdded === 'true' && beachHousesAdded === 'true') {
-				document.getElementById('cart-link-seller-created').style.display = "none";
-				document.getElementById('wallet-connected-div-seller-created').style.display = "block";
-				
-				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
-			}				
+		const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+		function blueOrangePurchasedLoader(){	
 		    
-		    //Purchased Functions
-		    const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
-		    const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
-		    
-		    if (blueOrangePurchased === 'true' && beachHousesPurchased === 'true') {
-				document.getElementById('cart-link-seller-created').style.display = "none";
-				document.getElementById('wallet-connected-div-seller-created').style.display = "block";
-				
-				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
-				
-		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
-				document.getElementById('blue-orange-buyer-collected').style.display = "flex";
-				
-		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
-				document.getElementById('buyer-collected-buyer-collected').style.display = "flex";				
-			}
-		   
-		    if (blueOrangePurchased === 'true') {
-				document.getElementById('cart-link-seller-created').style.display = "none";
-				document.getElementById('wallet-connected-div-seller-created').style.display = "block";
-				
-				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";		    	
+		    if (blueOrangePurchased === 'true') {		    	
 		    	
 		    	document.getElementById('no-art-buyer-collected').style.display = "none";
 		    	
 		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
 				document.getElementById('blue-orange-buyer-collected').style.display = "flex";
 		    }
-		    if (beachHousesPurchased === 'true') {	
-				document.getElementById('cart-link-seller-created').style.display = "none";
-				document.getElementById('wallet-connected-div-seller-created').style.display = "block";
-				
-				document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
-				
+		}
+		document.addEventListener('DOMContentLoaded', blueOrangePurchasedLoader);	
+		
+		const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
+		function beachHousesPurchasedLoader(){		
+
+		    if (beachHousesPurchased === 'true') {			
 		    	document.getElementById('no-art-buyer-collected').style.display = "none";
 		    	
 		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
-				document.getElementById('buyer-collected-buyer-collected').style.display = "flex";
+				document.getElementById('beach-houses-buyer-collected').style.display = "flex";
 		    }	
 	
-
 		}
-		document.addEventListener('DOMContentLoaded', buyerCollectedLoader);	
+		document.addEventListener('DOMContentLoaded', beachHousesPurchasedLoader);	
 
 <!-- Added/Completed-Purchase script/s up-->
 			
@@ -206,6 +193,9 @@
 		<a id="cart-link-connected-buyer-collected" href="/prototype-cart-test" style="display: none;">
 			<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>
+		<a id="cart-link-full-buyer-collected" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
+		</a>		
 	</div>
 	<img id="word-logo-buyer-collected" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan-buyer-collected">ART SELLS</p>
