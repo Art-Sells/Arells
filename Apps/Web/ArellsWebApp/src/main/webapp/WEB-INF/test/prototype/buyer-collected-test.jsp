@@ -119,6 +119,19 @@
 
 //Ensure that Image displays show as FLEX after adding, cart-full: block
 
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+		
+		function itemsAddedLoader() {	
+			//Add To Cart Functions
+		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true') {    	
+				document.getElementById('cart-link-connected-buyer-collected').style.display = "none";
+				document.getElementById('cart-link-full-buyer-collected').style.display = "inline-block";		
+		 	}	
+		}
+		
+		document.addEventListener('DOMContentLoaded', itemsAddedLoader);
+
 		const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
 		function blueOrangePurchasedLoader(){	
 		    

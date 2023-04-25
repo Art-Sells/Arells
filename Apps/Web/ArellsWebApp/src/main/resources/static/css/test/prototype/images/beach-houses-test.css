@@ -103,12 +103,12 @@ body {
 			  padding-left: 10px;	  
 			  border: solid;
 			  width: 38px;
-			  border-color: black;
+			  border-color: gray;
 			  border-radius: 5px;
 			  border-width: 1px;
 			  opacity: 1;
 				background: rgba(0, 0, 0, 1);
-	  			box-shadow: 0px 8px 12px -6px black;						
+	  			box-shadow: 0px 5px 12px -6px black;						
 		}
 		#cart-link-full-beach-houses:hover,
 		#cart-link-full-beach-houses:focus  {

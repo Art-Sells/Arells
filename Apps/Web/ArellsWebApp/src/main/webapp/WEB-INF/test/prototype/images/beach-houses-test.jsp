@@ -130,8 +130,20 @@
 
 <!-- Added/Completed-Purchase script/s down-->
 
-		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 	    const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
+	    
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+		
+		function itemsAddedLoader() {	
+			//Add To Cart Functions
+		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true') {    	
+				document.getElementById('cart-link-connected-beach-houses').style.display = "none";
+				document.getElementById('cart-link-full-beach-houses').style.display = "inline-block";		
+		 	}	
+		}
+		document.addEventListener('DOMContentLoaded', itemsAddedLoader);	    
+	    
 		function beachHousesLoader() {
 		    if (beachHousesAdded === 'true') {
 				document.getElementById('beach-houses-add-to-cart-beach-houses').style.display = "none";

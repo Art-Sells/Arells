@@ -130,8 +130,20 @@
 
 <!-- Added/Completed-Purchase script/s down-->
 
-		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 	    const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+	    
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+		
+		function itemsAddedLoader() {	
+			//Add To Cart Functions
+		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true') {    	
+				document.getElementById('cart-link-connected-blue-orange').style.display = "none";
+				document.getElementById('cart-link-full-blue-orange').style.display = "inline-block";		
+		 	}	
+		}
+		document.addEventListener('DOMContentLoaded', itemsAddedLoader);	
+		
 		function blueOrangeFunc() {
 		    if (blueOrangeAdded === 'true') {
 				document.getElementById('blue-orange-add-to-cart-blue-orange').style.display = "none";
