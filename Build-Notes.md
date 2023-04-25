@@ -8,6 +8,7 @@
 - Coinbase/USDC Wallet only?
 
 #### Profile
+- Separate Divs for all hovering buttons.
 - Remove (wallet connected)
 - Register with Google/Apple/Facebook/Etc
 - Name & Description: Maximum Number of Characters.
