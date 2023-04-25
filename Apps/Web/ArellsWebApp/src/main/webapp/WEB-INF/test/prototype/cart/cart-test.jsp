@@ -162,14 +162,16 @@
 		function closePurchaseComplete() {
 			  if (blueOrangePurchased === 'true') {
 				  document.getElementById('purchaseComplete').style.display = "none";
+				  <!-- Change below link after test -->
 				  window.location.href = '/prototype-buyer-collected-test';
-				  sessionStorage.removeItem('blueOrangeAdded');
 			  }
+			  sessionStorage.removeItem('blueOrangeAdded');
 			  if (beachHousesPurchased === 'true') {
 				  document.getElementById('purchaseComplete').style.display = "none";
+				  <!-- Change below link after test -->
 				  window.location.href = '/prototype-buyer-collected-test';
-				  sessionStorage.removeItem('beachHousesAdded');
 			  }
+			  sessionStorage.removeItem('beachHousesAdded');
 		}
 		
 		
