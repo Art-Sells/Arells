@@ -173,23 +173,6 @@
 		}
 		
 		
-		function blueOrangePurchasedLoader() {
-	 	    if (blueOrangePurchased === 'true') {
-				document.getElementById('cart-full-cart').style.display = "none";
-				document.getElementById('cart-empty-cart').style.display = "block";	  		
-	 	    } 	    
-		}
-		document.addEventListener('DOMContentLoaded', blueOrangePurchasedLoader);		
-			
-		
-		function beachHousesPurchasedLoader() {
-	 	    if (beachHousesPurchased === 'true') {
-				document.getElementById('cart-full-cart').style.display = "none";
-				document.getElementById('cart-empty-cart').style.display = "block";	  		
-	 	    }	 	    
-		}
-		document.addEventListener('DOMContentLoaded', beachHousesPurchasedLoader);	
-		
  		
  		
 <!-- Add To Cart & Purchase scrips above -->

@@ -211,7 +211,7 @@
 	    
 	    //Purchased Functions
 	    if (blueOrangePurchased === 'true') {   	
-			document.getElementById('cart-link-connected-seller-created').style.display = "in-line";
+			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
 			document.getElementById('cart-link-full-seller-created').style.display = "none";	    	
 	    	
 	    	document.getElementById('blue-orange-prices-before-seller-created').style.display = "none";
