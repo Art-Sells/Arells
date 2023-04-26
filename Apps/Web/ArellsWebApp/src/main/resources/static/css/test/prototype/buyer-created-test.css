@@ -517,10 +517,10 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  	
-			#profileline {
+			#profileline-buyer-created {
 			  width: 300px;
 			}		
-		  #container {
+		  #container-buyer-created {
 		    width: 440px;
 		  }  
 }

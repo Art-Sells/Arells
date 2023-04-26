@@ -117,7 +117,6 @@
 
 <!-- Added/Completed-Purchase script/s down-->
 
-//Ensure that Image displays show as FLEX after adding, cart-full: block
 
 		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');

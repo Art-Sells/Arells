@@ -78,6 +78,7 @@
 
 
 <!-- Connect Wallet script below-->
+
 			function connectWallet() {
 				document.getElementById('connectWalletBuy').style.display = "block";			
 				  
@@ -85,15 +86,64 @@
 			function walletConnected() {
 				document.getElementById('connectWalletBuy').style.display = "none";
 				
-				document.getElementById('wallet-connected-div').style.display = "block";
+				document.getElementById('wallet-connected-div-seller-collected').style.display = "block";
 				
-				document.getElementById('cart-link').style.display = "none";
-				document.getElementById('wallet-connected-div').style.display = "block";
+				document.getElementById('cart-link-seller-collected').style.display = "none";
+				document.getElementById('wallet-connected-div-seller-collected').style.display = "block";
 				
-				document.getElementById('cart-link-connected').style.display = "inline-block";
+				document.getElementById('cart-link-connected-seller-collected').style.display = "inline-block";
 			 
-}	
+			}	
+			
+			const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');	
+			function walletConnectedLoader() {	
+			    
+				//Add To Cart Functions
+			    if (walletConnectedSession === 'true') {
+					document.getElementById('connectWalletBuy').style.display = "none";
+					
+					document.getElementById('cart-link-seller-collected').style.display = "none";
+					document.getElementById('wallet-connected-div-seller-collected').style.display = "block";
+					
+					document.getElementById('cart-link-connected-seller-collected').style.display = "inline-block";		
+			 	}	
+			}
+			document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
+			
 <!-- Connect Wallet script above-->
+			
+<!-- Added/Completed-Purchase script/s down-->
+
+			const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+			const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+			
+			function blueOrangeLoader() {
+			    
+				//Add To Cart Functions
+				if (blueOrangeAdded === 'true') {	
+					document.getElementById('cart-link-connected-seller-collected').style.display = "none";
+					document.getElementById('cart-link-full-seller-collected').style.display = "inline-block";
+				}	
+			}
+			document.addEventListener('DOMContentLoaded', blueOrangeLoader);
+			
+			
+			
+			
+			const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+			const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
+			
+			function beachHousesLoader() {	
+			    
+				//Add To Cart Functions
+			    if (beachHousesAdded === 'true') {    	
+					document.getElementById('cart-link-connected-seller-collected').style.display = "none";
+					document.getElementById('cart-link-full-seller-collected').style.display = "inline-block"; 		
+			 	}	
+			}
+			document.addEventListener('DOMContentLoaded', beachHousesLoader);
+
+<!-- Added/Completed-Purchase script/s up-->	
 			
 		
 		</script>	
@@ -127,49 +177,49 @@
 		</div>	
 	<!-- Modal/s above -->	
 
-	<div id="header">
+	<div id="header-seller-collected">
 	
 	<!-- Change below link after test -->
-		<a id="icon-link" href="/test">
-			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-seller-collected" href="/test">
+			<img id="arells-icon-seller-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<button id="cart-link-seller-collected" onClick="connectWallet()" style="display: inline-block;">
+			<img id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
-		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<a id="cart-link-connected-seller-collected" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>
-		<a id="cart-link-full" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon-full" src="/icons&images/prototype/shopping-cart-full.png"/>
+		<a id="cart-link-full-seller-collected" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-full-seller-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
 		</a>			
 	</div>
-	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
-	<div id="wallet-connected-div" style="display: none;">
-		<hr id="connected-line">
-		<p id="wallet-connected" >
+	<img id="word-logo-seller-collected" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-seller-collected">ART SELLS</p>
+	<div id="wallet-connected-div-seller-collected" style="display: none;">
+		<hr id="connected-line-seller-collected">
+		<p id="wallet-connected-seller-collected" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line">
+		<hr id="connected-line-seller-collected">
 	</div>
-    <div id="profile-img-container">
-		<img id="profile-photo" src="/icons&images/prototype/proto-banner.jpg">
+    <div id="profile-img-container-seller-collected">
+		<img id="profile-photo-seller-collected" src="/icons&images/prototype/proto-banner.jpg">
 	</div>	 
-	<h1 id="name">Abstract Kadabra</h1>  
-	<p id="description">Here rests life's abstractions captured in majestic endeavors.</p> 
-	<button id="copy-link"
+	<h1 id="name-seller-collected">Abstract Kadabra</h1>  
+	<p id="description-seller-collected">Here rests life's abstractions captured in majestic endeavors.</p> 
+	<button id="copy-link-seller-collected"
 		onClick="copyLink()">
-		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+		<img id="copy-link-icon-seller-collected" src="/icons&images/prototype/link.png"/>
 		COPY LINK</button>	
 	<br>
-	<hr id="profileline">
-	<div id="created-collected">
+	<hr id="profileline-seller-collected">
+	<div id="created-collected-seller-collected">
 <!-- Change below link after test -->
-		<a id="created" href="/prototype-seller-created-test">Created</a>	
-		<a id="collected">Collected</a>	
+		<a id="created-seller-collected" href="/prototype-seller-created-test">Created</a>	
+		<a id="collected-seller-collected">Collected</a>	
 	</div>
-	<p id="no-art">
+	<p id="no-art-seller-collected">
 		no art collected
-		<img id="cart-icon-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<img id="cart-icon-collected-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 	</p>
 </body>
 </html>
