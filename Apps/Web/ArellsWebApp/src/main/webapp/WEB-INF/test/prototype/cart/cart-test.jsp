@@ -316,7 +316,6 @@
 	 	    royalties = (royalties - (royalty * colourGlass));
 	 	    fees = (fees - (fee * colourGlass));
 	 	    total = (total - colourGlass);
-	 	    	 	
 			
 			var royaltiesFormated = new Intl.NumberFormat('en-US',
 		 				{ minimumFractionDigits: 0,
