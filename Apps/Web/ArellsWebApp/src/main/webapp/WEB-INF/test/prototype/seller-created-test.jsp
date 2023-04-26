@@ -211,9 +211,6 @@
 	    
 	    //Purchased Functions
 	    if (blueOrangePurchased === 'true') {   	
-			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
-			document.getElementById('cart-link-full-seller-created').style.display = "none";	    	
-	    	
 	    	document.getElementById('blue-orange-prices-before-seller-created').style.display = "none";
 	    	document.getElementById('blue-orange-prices-after-seller-created').style.display = "block";
 		
@@ -244,10 +241,7 @@
 	 	}	
 		
 	    //Purchased Function
-	    if (beachHousesPurchased === 'true') {
-			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
-			document.getElementById('cart-link-full-seller-created').style.display = "none";	  	    	
-	    	
+	    if (beachHousesPurchased === 'true') {  	    	
 	    	document.getElementById('beach-houses-prices-before-seller-created').style.display = "none";
 	    	document.getElementById('beach-houses-prices-after-seller-created').style.display = "block";
 		

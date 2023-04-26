@@ -129,7 +129,6 @@
 				document.getElementById('cart-link-full-buyer-collected').style.display = "inline-block";		
 		 	}	
 		}
-		
 		document.addEventListener('DOMContentLoaded', itemsAddedLoader);
 
 		const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');

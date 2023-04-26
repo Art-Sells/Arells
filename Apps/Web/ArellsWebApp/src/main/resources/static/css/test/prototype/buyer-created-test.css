@@ -10,7 +10,7 @@ body {
   background: white;
 }
 
-	#header {
+	#header-buyer-created {
 			display: flex;
 			justify-content: center;
 			margin-top: 0px;
@@ -24,7 +24,7 @@ body {
 			margin-right: auto;
 			z-index: 100;
 		}
-		#icon-link{
+		#icon-link-buyer-created{
 			display: inline-block;
 			text-decoration: none;
 			margin-right: 128px;
@@ -41,17 +41,17 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#icon-link:hover,
-		#icon-link:focus {
+		#icon-link-buyer-created:hover,
+		#icon-link-buyer-created:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
 			  opacity: 1;
 			}		
-			#arells-icon {
+			#arells-icon-buyer-created {
 				height: 16px;
 			}	
-		#cart-link{
+		#cart-link-buyer-created{
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -67,7 +67,7 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#cart-link-connected{
+		#cart-link-connected-buyer-created{
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -83,16 +83,16 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#cart-link:hover,
-		#cart-link:focus, 
-		#cart-link-connected:hover,
-		#cart-link-connected:focus {
+		#cart-link-buyer-created:hover,
+		#cart-link-buyer-created:focus, 
+		#cart-link-connected-buyer-created:hover,
+		#cart-link-connected-buyer-created:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
 			  opacity: 1;	
 		}	
-		#cart-link-full{
+		#cart-link-full-buyer-created{
 			transition: 1s;
 			text-decoration: none;
 			margin-left: 124px;
@@ -110,22 +110,22 @@ body {
 				background: rgba(0, 0, 0, 1);
 	  			box-shadow: 0px 5px 12px -6px black;					
 		}
-		#cart-link-full:hover,
-		#cart-link-full:focus  {
+		#cart-link-full-buyer-created:hover,
+		#cart-link-full-buyer-created:focus  {
 			  transition: 1s;
 			  cursor: pointer;
 			  opacity: .4;	
 		}						
-			#cart-icon,
-			#cart-icon-full {
+			#cart-icon-buyer-created,
+			#cart-icon-full-buyer-created {
 				height: 16px;
 			}		
 			
-		#word-logo {
+		#word-logo-buyer-created {
 			margin-top: 37px;
 			width: 110px;	
 		}
-		#slogan {
+		#slogan-buyer-created {
 			margin-top: 0px;
 			font-size: 8px;
 			letter-spacing: 10px;
@@ -136,12 +136,12 @@ body {
 			word-spacing: -3px;
 		}	
 		
-		#wallet-connected-div{
+		#wallet-connected-div-buyer-created{
 			margin-top: 30px;
 			margin-left: auto;
 			margin-right: auto;
 		}
-			#connected-line {
+			#connected-line-buyer-created {
 			  margin-top: -5px;
 			  background-color: black;
 			  border: none;
@@ -150,7 +150,7 @@ body {
 			  width: 100px;
 			  opacity: .1;
 			}	
-			#wallet-connected {
+			#wallet-connected-buyer-created {
 				padding-bottom: 10px;
 				padding-top: 5px;
 				font-size: 9px;
@@ -161,7 +161,7 @@ body {
 				opacity: 1;
 			}							
 	
-	#profile-img-container {
+	#profile-img-container-buyer-created {
 	position: static;
 		width: 100px;
 		height: 100px;
@@ -175,13 +175,13 @@ body {
   		justify-content: center;
 		
 	}
-		#profile-photo {
+		#profile-photo-buyer-created {
 			object-fit: cover;
 			overflow: hidden;
 			width: 100%;
 			height: 100%;
 		}	
-	#name {
+	#name-buyer-created {
 	  font-size: 17pt;
 	  font-weight: 800;
 	  opacity: 1;
@@ -191,7 +191,7 @@ body {
 	  margin-left: -1px;
 	}	
 	
-	#description {
+	#description-buyer-created {
 	  font-size: 12pt;
 	  font-weight: 200;
 	  opacity: .5;
@@ -203,7 +203,7 @@ body {
 	  width: 420px;
 	  margin-bottom: 20px;
 	}
-	#copy-link {
+	#copy-link-buyer-created {
 	  text-decoration: none;
 	  color: white;
 	  font-weight: 200;
@@ -221,17 +221,17 @@ body {
 	  box-shadow: 0px 8px 12px -6px black;  
 		background: black;
 	}	  
-	#copy-link:hover,
-	#copy-link:focus {
+	#copy-link-buyer-created:hover,
+	#copy-link-buyer-created:focus {
 		  opacity: .4;
 		  transition: 1s;
 		  cursor: pointer;
 	}		
-		#copy-link-icon{
+		#copy-link-icon-buyer-created{
 			width: 15px;
 			margin-right: 5px;
 		}
-	#profileline {
+	#profileline-buyer-created {
 	margin-top: 25px;
 	  background-color: black;
 	  border: none;
@@ -240,7 +240,7 @@ body {
 	  width: 700px;
 	  opacity: .1;
 	}
-	#created-collected {
+	#created-collected-buyer-created {
 		margin-top: 30px;
 		flex-direction: column;
 		align-items: center;
@@ -248,7 +248,7 @@ body {
 		  margin-left: auto;
 		  margin-right: auto;	
 	}	
-		#created {
+		#created-buyer-created {
 		flex: 1;			
 		margin-right: 10px;
 		align-items: center;	
@@ -270,7 +270,7 @@ body {
 		opacity: 1;
 			
 		}  		
-		#collected {
+		#collected-buyer-created {
 		flex: 1;			
 		margin-left: 10px;
 		align-items: center;	
@@ -291,8 +291,8 @@ body {
 		  opacity: 1;
 			background: none;
 		}	
-		#collected:hover,
-		#collected:focus {
+		#collected-buyer-created:hover,
+		#collected-buyer-created:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  color: black;
@@ -301,7 +301,7 @@ body {
 		}		
 	
 
-	#no-art{
+	#no-art-buyer-created{
 		margin-top: 60px;
 		width: 500px;
 		  font-size: 12pt;
@@ -313,7 +313,7 @@ body {
 		  margin-right: auto;
 		  margin-left: auto;			
 	}	
-	#cart-icon-collected{
+	#cart-icon-collected-buyer-created{
 		height: 25px;
 		margin-left: 10px;
 		opacity: 1;
@@ -346,11 +346,11 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  
-		#header {
+		#header-buyer-created {
 				margin-top: 0px;
 				padding-top: 25px;			
 			}	
-			#icon-link{	
+			#icon-link-buyer-created{	
 				margin-right: 90px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -359,10 +359,10 @@ body {
 				  border-radius: 12px;
 				  width: 30px;		
 			}	
-			#arells-icon {
+			#arells-icon-buyer-created {
 					height: 15px;
 				}	    
-			#cart-link{
+			#cart-link-buyer-created{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -371,7 +371,7 @@ body {
 				  border-radius: 12px;	
 				  width: 45px;  					
 			}
-			#cart-link-connected{
+			#cart-link-connected-buyer-created{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 6.5px;
@@ -380,7 +380,7 @@ body {
 				  border-radius: 12px;	
 				  width: 27px;  					
 			}
-			#cart-link-full{
+			#cart-link-full-buyer-created{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 6.5px;
@@ -388,62 +388,62 @@ body {
 				  padding-left: 8px;	
 				  width: 27px;  					
 			}
-			#cart-icon, 
-			#cart-icon-full {
+			#cart-icon-buyer-created, 
+			#cart-icon-full-buyer-created {
 					height: 15px;
 				}
 			
 			  				
-		#word-logo {
+		#word-logo-buyer-created {
 			margin-top: 35px;
 			width: 90px;	
 		}
-		#slogan {
+		#slogan-buyer-created {
 			margin-top: -2px;
 			font-size: 7px;
 			letter-spacing: 8px;
 			margin-left: 8px; 
 			word-spacing: -3px;
 		}
-		#wallet-connected-div{
+		#wallet-connected-div-buyer-created{
 			margin-top: 25px;
 		}	
-			#connected-line {
+			#connected-line-buyer-created {
 			  width: 90px;
 			}				
-			#wallet-connected {
+			#wallet-connected-buyer-created {
 				padding-bottom: 12px;
 				padding-top: 7px;
 				font-size: 8px;
 				letter-spacing: 0px;
 				margin-left: 0px; 
 			}
-		#profile-img-container {
+		#profile-img-container-buyer-created {
 			width: 90px;
 			height: 90px;
 			margin-top: 25px;
 			
 		}
-			#profile-photo {
+			#profile-photo-buyer-created {
 				object-fit: cover;
 				overflow: hidden;
 				width: 100%;
 				height: 100%;
 			}	
-		#name {
+		#name-buyer-created {
 		  font-size: 13pt;
 		  font-weight: 800;
 		  margin-top: 20px;
 		  letter-spacing: -1px;	  
 		  margin-left: -1px;
 		}	
-		#description {
+		#description-buyer-created {
 		margin-top: 5px;
 		  font-size: 9pt;
 		  line-height: 15px;
 		  width: 200px;
 		}	  
-		#copy-link {
+		#copy-link-buyer-created {
 		  font-size: 8px;
 		  padding-top: 15px;
 		  padding-bottom: 15px;
@@ -453,19 +453,19 @@ body {
 		  width: 120px;
 		  letter-spacing: 2px;
 		}	  	
-			#copy-link-icon {
+			#copy-link-icon-buyer-created {
 				width: 12px;
 			}
-		#profileline {
+		#profileline-buyer-created {
 		margin-top: 20px;
 		  width: 470px;
 		}	
-		#created-collected {
+		#created-collected-buyer-created {
 			margin-top: 20px;
 			align-items: center;
 			  width: 400px;
 		}	  
-			#created {		
+			#created-buyer-created {		
 			margin-right: 10px;
 			margin-left: 8px;
 			  font-size: 10px;
@@ -476,7 +476,7 @@ body {
 			  letter-spacing: .5px;
 				
 			}  		
-			#collected {		
+			#collected-buyer-created {		
 			margin-left: 0px;
 			  font-size: 10px;
 			  padding-top: 10px;
@@ -485,12 +485,12 @@ body {
 			  padding-left: 15.5px;	  
 			  letter-spacing: .5px;
 			}	
-			#no-art{
+			#no-art-buyer-created{
 				margin-top: 50px;
 				width: 300px;
 				font-size: 13px;
 			}	
-			#cart-icon-collected{
+			#cart-icon-collected-buyer-created{
 				height: 20px;
 				margin-left: 5px;
 			}			

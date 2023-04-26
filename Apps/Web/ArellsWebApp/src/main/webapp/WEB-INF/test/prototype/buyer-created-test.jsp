@@ -84,13 +84,63 @@
 	function walletConnected() {
 		document.getElementById('connectWalletBuy').style.display = "none";
 		
-		document.getElementById('cart-link').style.display = "none";
-		document.getElementById('wallet-connected-div').style.display = "block";
+		document.getElementById('cart-link-buyer-created').style.display = "none";
+		document.getElementById('wallet-connected-div-buyer-created').style.display = "block";
 		
-		document.getElementById('cart-link-connected').style.display = "inline-block";
+		document.getElementById('cart-link-connected-buyer-created').style.display = "inline-block";
 	 
 	}	
+	
+	const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');	
+	function walletConnectedLoader() {	
+	    
+		//Add To Cart Functions
+	    if (walletConnectedSession === 'true') {
+			document.getElementById('connectWalletBuy').style.display = "none";
+			
+			document.getElementById('cart-link-buyer-created').style.display = "none";
+			document.getElementById('wallet-connected-div-buyer-created').style.display = "block";
+			
+			document.getElementById('cart-link-connected-buyer-created').style.display = "inline-block";		
+	 	}	
+	}
+	document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
+		
+	
 	<!-- Connect Wallet script above-->
+	
+	<!-- Added/Completed-Purchase script/s down-->
+
+	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+	
+	function blueOrangeLoader() {
+	    
+		//Add To Cart Functions
+		if (blueOrangeAdded === 'true') {	
+			document.getElementById('cart-link-connected-buyer-created').style.display = "none";
+			document.getElementById('cart-link-full-buyer-created').style.display = "inline-block";
+		}	
+	}
+	document.addEventListener('DOMContentLoaded', blueOrangeLoader);
+	
+	
+	
+	
+	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+	const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
+	
+	function beachHousesLoader() {	
+	    
+		//Add To Cart Functions
+	    if (beachHousesAdded === 'true') {    	
+			document.getElementById('cart-link-connected-buyer-created').style.display = "none";
+			document.getElementById('cart-link-full-buyer-created').style.display = "inline-block"; 		
+	 	}	
+	}
+	document.addEventListener('DOMContentLoaded', beachHousesLoader);
+
+<!-- Added/Completed-Purchase script/s up-->	
 	
 	
 	</script>	
@@ -126,49 +176,49 @@
 	<!-- Modal/s above -->	
 	
 	
-	<div id="header">
+	<div id="header-buyer-created">
 	
 	<!-- Change below link after test -->
-		<a id="icon-link" href="/test">
-			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-buyer-created" href="/test">
+			<img id="arells-icon-buyer-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<button id="cart-link-buyer-created" onClick="connectWallet()" style="display: inline-block;">
+			<img id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
-		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<a id="cart-link-connected-buyer-created" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>
-		<a id="cart-link-full" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon-full" src="/icons&images/prototype/shopping-cart-full.png"/>
+		<a id="cart-link-full-buyer-created" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-full-buyer-created" src="/icons&images/prototype/shopping-cart-full.png"/>
 		</a>
 	</div>
-	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
-	<div id="wallet-connected-div" style="display: none;">
-		<hr id="connected-line">
-		<p id="wallet-connected" >
+	<img id="word-logo-buyer-created" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-buyer-created">ART SELLS</p>
+	<div id="wallet-connected-div-buyer-created" style="display: none;">
+		<hr id="connected-line-buyer-created">
+		<p id="wallet-connected-buyer-created" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line">
+		<hr id="connected-line-buyer-created">
 	</div>
-    <div id="profile-img-container">
-		<img id="profile-photo" src="/icons&images/prototype/Unnamed-Icon.jpg">
+    <div id="profile-img-container-buyer-created">
+		<img id="profile-photo-buyer-created" src="/icons&images/prototype/Unnamed-Icon.jpg">
 	</div>	 
-	<h1 id="name">Unnamed</h1>  
-	<p id="description">Creator & Collector</p> 
-	<button id="copy-link"
+	<h1 id="name-buyer-created">Unnamed</h1>  
+	<p id="description-buyer-created">Creator & Collector</p> 
+	<button id="copy-link-buyer-created"
 		onClick="copyLink()">
-		<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+		<img id="copy-link-icon-buyer-created" src="/icons&images/prototype/link.png"/>
 		COPY LINK</button>	
 	<br>
-	<hr id="profileline">
-	<div id="created-collected">
-		<a id="created">Created</a>	
+	<hr id="profileline-buyer-created">
+	<div id="created-collected-buyer-created">
+		<a id="created-buyer-created">Created</a>	
 	<!-- Change below link after test -->		
-		<a id="collected" href="/prototype-buyer-collected-test">Collected</a>	
+		<a id="collected-buyer-created" href="/prototype-buyer-collected-test">Collected</a>	
 	</div>
-	<p id="no-art">
+	<p id="no-art-buyer-created">
 		no art created
-		<img id="cart-icon-collected" src="/icons&images/prototype/Add.png"/>
+		<img id="cart-icon-collected-buyer-created" src="/icons&images/prototype/Add.png"/>
 	</p>
 </body>
 </html>
