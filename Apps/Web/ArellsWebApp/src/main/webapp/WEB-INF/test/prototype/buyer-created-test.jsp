@@ -112,10 +112,10 @@
 	<!-- Added/Completed-Purchase script/s down-->
 
 	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
-	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	
 	function blueOrangeLoader() {
-	    
 		//Add To Cart Functions
 		if (blueOrangeAdded === 'true') {	
 			document.getElementById('cart-link-connected-buyer-created').style.display = "none";
@@ -124,14 +124,7 @@
 	}
 	document.addEventListener('DOMContentLoaded', blueOrangeLoader);
 	
-	
-	
-	
-	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
-	const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
-	
 	function beachHousesLoader() {	
-	    
 		//Add To Cart Functions
 	    if (beachHousesAdded === 'true') {    	
 			document.getElementById('cart-link-connected-buyer-created').style.display = "none";
@@ -139,6 +132,15 @@
 	 	}	
 	}
 	document.addEventListener('DOMContentLoaded', beachHousesLoader);
+	
+	function colourGlassLoader() {	 
+		//Add To Cart Functions
+	    if (colourGlassAdded === 'true') {    	
+			document.getElementById('cart-link-connected-buyer-created').style.display = "none";
+			document.getElementById('cart-link-full-buyer-created').style.display = "inline-block"; 		
+	 	}	
+	}
+	document.addEventListener('DOMContentLoaded', colourGlassLoader);
 
 <!-- Added/Completed-Purchase script/s up-->	
 	

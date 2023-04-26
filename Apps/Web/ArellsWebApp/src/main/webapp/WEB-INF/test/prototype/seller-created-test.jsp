@@ -167,11 +167,16 @@
 		sessionStorage.setItem('beachHousesAdded', 'true'); 
 	}
 	
-	
+	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	function addColourGlassToCart() {
 		document.getElementById('colour-glass-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('colour-glass-added-seller-created').style.display = "block";
-		  
+		
+		document.getElementById('cart-link-connected-seller-created').style.display = "none";			
+    	document.getElementById('cart-link-full-seller-created').style.display = "inline-block";		
+		
+		//cart function
+		sessionStorage.setItem('colourGlassAdded', 'true'); 		
 	}
 	function addLayersToCart() {
 		document.getElementById('layers-add-to-cart-connected-seller-created').style.display = "none";
@@ -252,6 +257,37 @@
 	    }
 	}
 	document.addEventListener('DOMContentLoaded', beachHousesLoader);
+	
+	
+	
+	
+	
+	const colourGlassPurchased = sessionStorage.getItem('colourGlassPurchased');
+	
+	function colourGlassLoader() {	
+	    
+		//Add To Cart Functions
+	    if (colourGlassAdded === 'true') {    	
+			document.getElementById('cart-link-connected-seller-created').style.display = "none";
+			document.getElementById('cart-link-full-seller-created').style.display = "inline-block";
+	    	
+	 		document.getElementById('colour-glass-add-to-cart-seller-created').style.display = "none";
+	 		document.getElementById('colour-glass-add-to-cart-connected-seller-created').style.display = "none";
+	 		document.getElementById('colour-glass-added-seller-created').style.display = "block";	 		
+	 	}	
+		
+	    //Purchased Function
+	    if (colourGlassPurchased === 'true') {  	    	
+	    	document.getElementById('colour-glass-prices-before-seller-created').style.display = "none";
+	    	document.getElementById('colour-glass-prices-after-seller-created').style.display = "block";
+		
+			document.getElementById('colour-glass-add-to-cart-connected-seller-created').style.display = "none";
+			document.getElementById('colour-glass-add-to-cart-seller-created').style.display = "none";
+			document.getElementById('colour-glass-added-seller-created').style.display = "none";
+			document.getElementById('colour-glass-collected-seller-created').style.display = "block";
+	    }
+	}
+	document.addEventListener('DOMContentLoaded', colourGlassLoader);	
 
 <!-- Added/Completed-Purchase script/s up-->
 			

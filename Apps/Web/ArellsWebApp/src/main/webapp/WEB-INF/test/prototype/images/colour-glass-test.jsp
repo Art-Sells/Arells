@@ -77,35 +77,99 @@
 
 
 <!-- Connect Wallet script below-->
-	function connectWallet() {
-		document.getElementById('connectWalletBuy').style.display = "block";			
-		  
-	}	
-	function walletConnected() {
-		document.getElementById('connectWalletBuy').style.display = "none";
+		function connectWallet() {
+			document.getElementById('connectWalletBuy').style.display = "block";			
+			  
+		}	
+		function walletConnected() {
+			document.getElementById('connectWalletBuy').style.display = "none";
+			
+			document.getElementById('cart-link-colour-glass').style.display = "none";
+			document.getElementById('wallet-connected-div-colour-glass').style.display = "block";
+			
+			document.getElementById('cart-link-connected-colour-glass').style.display = "inline-block";
+			
+			document.getElementById('colour-glass-add-to-cart-colour-glass').style.display = "none";
+			document.getElementById('colour-gtlass-add-to-cart-connected-colour-glass').style.display = "block";
 		
-		document.getElementById('cart-link').style.display = "none";
-		document.getElementById('wallet-connected-div').style.display = "block";
+			sessionStorage.setItem('walletConnectedSession', 'true'); 
+		}	
 		
-		document.getElementById('cart-link-connected').style.display = "inline-block";
+		const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');
 		
-		document.getElementById('colour-glass-add-to-cart').style.display = "none";
-		document.getElementById('colour-glass-add-to-cart-connected').style.display = "block";
-
-	 
-	}	
+		function walletConnectedLoader() {	
+		    
+			//Add To Cart Functions
+		    if (walletConnectedSession === 'true') {
+				document.getElementById('connectWalletBuy').style.display = "none";
+				
+				document.getElementById('cart-link-colour-glass').style.display = "none";
+				document.getElementById('wallet-connected-div-colour-glass').style.display = "block";
+				
+				document.getElementById('cart-link-connected-colour-glass').style.display = "inline-block";
+				
+				document.getElementById('colour-glass-add-to-cart-colour-glass').style.display = "none";
+				document.getElementById('colour-glass-add-to-cart-connected-colour-glass').style.display = "block";
+		 	}	
+		}
+		document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
 <!-- Connect Wallet script above-->
 
 
 <!--  Add To Cart script below-->
 
 	function addColourGlassToCart() {
-		document.getElementById('colour-glass-add-to-cart-connected').style.display = "none";
-		document.getElementById('colour-glass-added').style.display = "block";
-		  
+		document.getElementById('colour-glass-add-to-cart-connected-colour-glass').style.display = "none";
+		document.getElementById('colour-glass-added-colour-glass').style.display = "block";
+		
+		//cart functions
+		sessionStorage.setItem('colourGlassAdded', 'true');
 	}
-	
+
 <!--  Add To Cart script up-->	
+
+<!-- Added/Completed-Purchase script/s down-->
+
+	    const colourGlassPurchased = sessionStorage.getItem('colourGlassPurchased');
+	    
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+		const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+		
+		function itemsAddedLoader() {	
+			//Add To Cart Functions
+		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
+		    	|| colourGlassAdded == 'true') {    	
+				document.getElementById('cart-link-connected-colour-glass').style.display = "none";
+				document.getElementById('cart-link-full-colour-glass').style.display = "inline-block";		
+		 	}	
+		}
+		document.addEventListener('DOMContentLoaded', itemsAddedLoader);	
+		
+		function colourGlassFunc() {
+		    if (colourGlassAdded === 'true') {
+				document.getElementById('colour-glass-add-to-cart-colour-glass').style.display = "none";
+		 		document.getElementById('colour-glass-add-to-cart-connected-colour-glass').style.display = "none";
+		 		document.getElementById('colour-glass-added-colour-glass').style.display = "block";
+		 		 		
+		 	}
+		    if (colourGlassPurchased === 'true') {	
+		    	document.getElementById('colour-glass-prices-before-colour-glass').style.display = "none";
+		    	document.getElementById('colour-glass-prices-after-colour-glass').style.display = "block";
+		    	
+		    	document.getElementById('owned-by-creator-colour-glass').style.display = "none";
+		    	document.getElementById('owned-by-buyer-colour-glass').style.display = "block";
+			
+				document.getElementById('colour-glass-add-to-cart-connected-colour-glass').style.display = "none";
+				document.getElementById('colour-glass-add-to-cart-colour-glass').style.display = "none";
+				document.getElementById('colour-glass-added-colour-glass').style.display = "none";
+				document.getElementById('colour-glass-collected-colour-glass').style.display = "block";
+				
+		    }
+		}
+		document.addEventListener('DOMContentLoaded', colourGlassFunc);	
+
+<!-- Added/Completed-Purchase script/s up-->
 			
 		
 		</script>	
@@ -139,80 +203,80 @@
 		</div>	
 	<!-- Modal/s above -->	
 
-	<div id="header">
+	<div id="header-colour-glass">
 	
 	<!-- Change below link after test -->
-		<a id="icon-link" href="/test">
-			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-colour-glass" href="/test">
+			<img id="arells-icon-colour-glass" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<button id="cart-link-colour-glass" onClick="connectWallet()" style="display: inline-block;">
+			<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
-		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<a id="cart-link-connected-colour-glass" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>
-		<a id="cart-link-full" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon-full" src="/icons&images/prototype/shopping-cart-full.png"/>
+		<a id="cart-link-full-colour-glass" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-full-colour-glass" src="/icons&images/prototype/shopping-cart-full.png"/>
 		</a>	
 	</div>
-	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
-	<div id="wallet-connected-div" style="display: none;">
-		<hr id="connected-line">
-		<p id="wallet-connected" >
+	<img id="word-logo-colour-glass" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-colour-glass">ART SELLS</p>
+	<div id="wallet-connected-div-colour-glass" style="display: none;">
+		<hr id="connected-line-colour-glass">
+		<p id="wallet-connected-colour-glass" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line">
+		<hr id="connected-line-colour-glass">
 	</div>
 
   	<div id="colour-glass">
-  		<img id="photo" src="/icons&images/prototype/3.jpg"/>
-  		<h3 id="name">Colour Glass</h3> 
-  		<button id="copy-link"
+  		<img id="photo-colour-glass" src="/icons&images/prototype/3.jpg"/>
+  		<h3 id="name-colour-glass">Colour Glass</h3> 
+  		<button id="copy-link-colour-glass"
 		onClick="copyLink()">
-			<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+			<img id="copy-link-icon-colour-glass" src="/icons&images/prototype/link.png"/>
 			COPY LINK
 		</button>	
-     	<div id="created-by">
-     		<p id="creator-owner-desc">Created By</p>
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="created-by-colour-glass">
+     		<p id="creator-owner-desc-colour-glass">Created By</p>
+     		<a id="creator-owner-link-colour-glass" href="/prototype-seller-created-test">
      			Abstract Kadabra
      		</a>
      	</div>
-     	<div id="owned-by-creator" style="display: block;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="owned-by-creator-colour-glass" style="display: block;">
+     		<p id="creator-owner-desc-colour-glass">Owned By</p> 
+     		<a id="creator-owner-link-colour-glass" href="/prototype-seller-created-test">
      			Abstract Kadabra</a>
      	</div>
-     	<div id="owned-by-buyer" style="display: none;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-buyer-collected-test">
+     	<div id="owned-by-buyer-colour-glass" style="display: none;">
+     		<p id="creator-owner-desc-colour-glass">Owned By</p> 
+     		<a id="creator-owner-link-colour-glass" href="/prototype-buyer-collected-test">
      			0x71C7656E...
      		</a>
      	</div>
      	<hr id="line">
-  		<div id="colour-glass-prices-before" style="display: block;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-colour-glass-before">$725,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-colour-glass-before">$14,500</p>
+  		<div id="colour-glass-prices-before-colour-glass" style="display: block;">
+	  		<p id="PAP-colour-glass">Price After Purchase</p>
+	  		<p id="PAP-colour-glass-before-colour-glass">$725,000</p>
+	  		<hr id="priceline-colour-glass">
+	  		<p id="yourprice-colour-glass">Price</p>
+	     	<p id="price-colour-glass-before-colour-glass">$14,500</p>
      	</div>
-     	<div id="colour-glass-prices-before" style="display: none;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-colour-glass-after">$36,250,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-colour-glass-after">$725,000</p>
+     	<div id="colour-glass-prices-before-colour-glass" style="display: none;">
+	  		<p id="PAP-colour-glass">Price After Purchase</p>
+	  		<p id="PAP-colour-glass-after-colour-glass">$36,250,000</p>
+	  		<hr id="priceline-colour-glass">
+	  		<p id="yourprice-colour-glass">Price</p>
+	     	<p id="price-colour-glass-after-colour-glass">$725,000</p>
      	</div>
-    	<button id="colour-glass-add-to-cart" onClick="connectWallet()"
+    	<button id="colour-glass-add-to-cart-colour-glass" onClick="connectWallet()"
     		style="display: block;">
     		ADD TO CART</button>
-    	<button id="colour-glass-add-to-cart-connected" onClick="addColourGlassToCart()"
+    	<button id="colour-glass-add-to-cart-connected-colour-glass" onClick="addColourGlassToCart()"
     		style="display: none;">
     		ADD TO CART</button>
-    	<button id="colour-glass-added" style="display: none;">
+    	<button id="colour-glass-added-colour-glass" style="display: none;">
     		ADDED</button>	
-    	<button id="colour-glass-collected" style="display: none;">
+    	<button id="colour-glass-collected-colour-glass" style="display: none;">
     		COLLECTED</button>				     	
     </div>
 

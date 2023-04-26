@@ -120,10 +120,12 @@
 
 		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+		const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 		
 		function itemsAddedLoader() {	
 			//Add To Cart Functions
-		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true') {    	
+		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
+		    	|| colourGlassAdded == 'true') {    	
 				document.getElementById('cart-link-connected-buyer-collected').style.display = "none";
 				document.getElementById('cart-link-full-buyer-collected').style.display = "inline-block";		
 		 	}	
@@ -155,6 +157,19 @@
 	
 		}
 		document.addEventListener('DOMContentLoaded', beachHousesPurchasedLoader);	
+		
+		const colourGlassPurchased = sessionStorage.getItem('colourGlassPurchased');
+		function colourGlassPurchasedLoader(){		
+
+		    if (colourGlassPurchased === 'true') {			
+		    	document.getElementById('no-art-buyer-collected').style.display = "none";
+		    	
+		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
+				document.getElementById('colour-glass-buyer-collected').style.display = "flex";
+		    }	
+	
+		}
+		document.addEventListener('DOMContentLoaded', colourGlassPurchasedLoader);
 
 <!-- Added/Completed-Purchase script/s up-->
 			

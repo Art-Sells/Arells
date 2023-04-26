@@ -10,7 +10,7 @@ body {
   background: white;
 }
 
-	#header {
+	#header-colour-glass {
 			display: flex;
 			justify-content: center;
 			margin-top: 0px;
@@ -24,7 +24,7 @@ body {
 			margin-right: auto;
 			z-index: 100;
 		}
-		#icon-link{
+		#icon-link-colour-glass{
 			display: inline-block;
 			text-decoration: none;
 			margin-right: 128px;
@@ -41,17 +41,17 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#icon-link:hover,
-		#icon-link:focus {
+		#icon-link-colour-glass:hover,
+		#icon-link-colour-glass:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
 			  opacity: 1;
 			}		
-			#arells-icon {
+			#arells-icon-colour-glass {
 				height: 16px;
 			}	
-		#cart-link{
+		#cart-link-colour-glass{
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -67,7 +67,7 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#cart-link-connected{
+		#cart-link-connected-colour-glass{
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -83,16 +83,16 @@ body {
 			  opacity: 1;
 				background: rgba(255, 255, 255, 0.8);						
 		}
-		#cart-link:hover,
-		#cart-link:focus, 
-		#cart-link-connected:hover,
-		#cart-link-connected:focus {
+		#cart-link-colour-glass:hover,
+		#cart-link-colour-glass:focus, 
+		#cart-link-connected-colour-glass:hover,
+		#cart-link-connected-colour-glass:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  border-color: gray;
 			  opacity: 1;	
 		}	
-		#cart-link-full{
+		#cart-link-full-colour-glass{
 			transition: 1s;
 			text-decoration: none;
 			margin-left: 124px;
@@ -110,22 +110,22 @@ body {
 				background: rgba(0, 0, 0, 1);
 	  			box-shadow: 0px 5px 12px -6px black;						
 		}
-		#cart-link-full:hover,
-		#cart-link-full:focus  {
+		#cart-link-full-colour-glass:hover,
+		#cart-link-full-colour-glass:focus  {
 			  transition: 1s;
 			  cursor: pointer;
 			  opacity: .4;	
 		}					
-			#cart-icon,
-			#cart-icon-full {
+			#cart-icon-colour-glass,
+			#cart-icon-full-colour-glass {
 				height: 16px;
 			}	
 			
-		#word-logo {
+		#word-logo-colour-glass {
 			margin-top: 37px;
 			width: 110px;	
 		}
-		#slogan {
+		#slogan-colour-glass {
 			margin-top: 0px;
 			font-size: 8px;
 			letter-spacing: 10px;
@@ -136,12 +136,12 @@ body {
 			word-spacing: -3px;
 		}	
 		
-		#wallet-connected-div{
+		#wallet-connected-div-colour-glass{
 			margin-top: 30px;
 			margin-left: auto;
 			margin-right: auto;
 		}
-			#connected-line {
+			#connected-line-colour-glass {
 			  margin-top: -5px;
 			  background-color: black;
 			  border: none;
@@ -150,7 +150,7 @@ body {
 			  width: 100px;
 			  opacity: .1;
 			}	
-			#wallet-connected {
+			#wallet-connected-colour-glass {
 				padding-bottom: 10px;
 				padding-top: 5px;
 				font-size: 9px;
@@ -182,10 +182,10 @@ body {
 		background: white;
 	}
 				
-		#photo-link {
+		#photo-link-colour-glass {
 				text-decoration: none; 
 			}
-		#photo {
+		#photo-colour-glass {
 			object-fit: cover;
 			width: 400px;
 			height: 400px;
@@ -193,19 +193,19 @@ body {
 			border-width: 1px;
 			border-color: silver;		
 		}
-				#photo-link:hover {
+				#photo-link-colour-glass:hover {
 				  opacity: .5;
 				  transition: 1s;
 				  box-shadow: none;
 				  cursor: pointer;
 				}
-				#photo-link:focus {
+				#photo-link-colour-glass:focus {
 				  opacity: .5;
 				  box-shadow: none;
 				  cursor: pointer;
 			}
 			
-		#name {
+		#name-colour-glass {
 		  font-size: 17pt;
 		  font-weight: 800;
 		  opacity: 1;
@@ -215,7 +215,7 @@ body {
 		  margin-left: -1px;
 		  margin-bottom: 25px;
 		}
-		#copy-link {
+		#copy-link-colour-glass {
 		  text-decoration: none;
 		  color: white;
 		  font-weight: 200;
@@ -234,18 +234,18 @@ body {
 			background: black;
 			margin-bottom: 15px;
 		}	  
-		#copy-link:hover,
-		#copy-link:focus {
+		#copy-link-colour-glass:hover,
+		#copy-link-colour-glass:focus {
 			  opacity: .4;
 			  transition: 1s;
 			  cursor: pointer;
 		}		
-			#copy-link-icon{
+			#copy-link-icon-colour-glass{
 				width: 15px;
 				margin-right: 5px;
 			}				
 		
-		#creator-owner-desc {
+		#creator-owner-desc-colour-glass {
 		margin-top: 15px;
 		text-align: center;
 			color: black;
@@ -256,7 +256,7 @@ body {
 			opacity: .4;
 			margin-bottom: 0px;
 		}
-		#creator-owner-link {
+		#creator-owner-link-colour-glass {
 		text-align: center;
 			color: #4d85cf;
 			font-weight: 300;
@@ -266,16 +266,16 @@ body {
 			opacity: .8;
 			text-decoration: none;
 		}
-			#creator-owner-desc:hover,
-			#creator-owner-link:hover,
-			#creator-owner-desc:focus,
-			#creator-owner-link:focus {
+			#creator-owner-desc-colour-glass:hover,
+			#creator-owner-link-colour-glass:hover,
+			#creator-owner-desc-colour-glass:focus,
+			#creator-owner-link-colour-glass:focus {
 				  opacity: .4;
 				  transition: 1s;
 				  cursor: pointer;
 			}
 			
-		#line {
+		#line-colour-glass {
 		  margin-top: 30px;
 		  background-color: black;
 		  border: none;
@@ -285,7 +285,7 @@ body {
 		  opacity: .1;
 		}					
 				
-		#PAP {
+		#PAP-colour-glass {
 		margin-top: 15px;
 		text-align: center;
 			color: black;
@@ -295,8 +295,8 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}
-		#PAP-colour-glass-before,
-		#PAP-colour-glass-after {
+		#PAP-colour-glass-before-colour-glass,
+		#PAP-colour-glass-after-colour-glass {
 		margin-top: -7px;
 		text-align: center;
 			color: black;
@@ -306,7 +306,7 @@ body {
 			padding-left: 0px;
 			opacity: .5;
 		}
-		#priceline {
+		#priceline-colour-glass {
 		  margin-top: -5px;
 		  background-color: black;
 		  border: none;
@@ -315,7 +315,7 @@ body {
 		  width: 60%;
 		  opacity: .1;
 		}	
-		#yourprice {
+		#yourprice-colour-glass {
 		margin-top: 30px;
 		text-align: center;
 			color: black;
@@ -325,8 +325,8 @@ body {
 			padding-left: 0px;
 			opacity: .4;
 		}
-		#price-colour-glass-before,
-		#price-colour-glass-after {
+		#price-colour-glass-before-colour-glass,
+		#price-colour-glass-after-colour-glass {
 		margin-top: -10px;
 		text-align: center;
 			color: black;
@@ -337,8 +337,8 @@ body {
 			opacity: .7;
 			margin-bottom: 28px;
 		}
-	    #colour-glass-add-to-cart, 
-		#colour-glass-add-to-cart-connected  {
+	    #colour-glass-add-to-cart-colour-glass, 
+		#colour-glass-add-to-cart-connected-colour-glass  {
 			  text-decoration: none;
 			  color: white;
 			  margin-left: auto;
@@ -358,13 +358,13 @@ body {
 			  box-shadow: 0px 8px 12px -6px black;  
 				background: black;
 			}	  
-		#colour-glass-add-to-cart:hover, 
-		#colour-glass-add-to-cart-connected:focus {
+		#colour-glass-add-to-cart-colour-glass:hover, 
+		#colour-glass-add-to-cart-connected-colour-glass:focus {
 			  opacity: .4;
 			  transition: 1s;
 			  cursor: pointer;
 		} 
-		#colour-glass-added {
+		#colour-glass-added-colour-glass {
 			  text-decoration: none;
 			  margin-left: auto;
 			  margin-right: auto;
@@ -383,7 +383,7 @@ body {
 			  opacity: 1; 
 				background: silver;
 			}	
-		#colour-glass-collected {
+		#colour-glass-collected-colour-glass {
 			  text-decoration: none;
 			  margin-left: auto;
 			  margin-right: auto;
@@ -435,11 +435,11 @@ body {
 	  body {
 	    -webkit-text-size-adjust: none;
 	  }  
-		#header {
+		#header-colour-glass {
 				margin-top: 0px;
 				padding-top: 25px;			
 			}	
-			#icon-link{	
+			#icon-link-colour-glass{	
 				margin-right: 90px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -448,10 +448,10 @@ body {
 				  border-radius: 12px;
 				  width: 30px;		
 			}	
-			#arells-icon {
+			#arells-icon-colour-glass {
 					height: 15px;
 				}	    
-			#cart-link{
+			#cart-link-colour-glass{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
@@ -460,7 +460,7 @@ body {
 				  border-radius: 12px;	
 				  width: 45px;  					
 			}
-			#cart-link-connected{
+			#cart-link-connected-colour-glass{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 6.5px;
@@ -469,7 +469,7 @@ body {
 				  border-radius: 12px;	
 				  width: 27px;  					
 			}
-			#cart-link-full{
+			#cart-link-full-colour-glass{
 				margin-left: 96px;
 				  padding-top: 10px;
 				  padding-bottom: 6.5px;
@@ -477,37 +477,37 @@ body {
 				  padding-left: 8px;	
 				  width: 27px;  					
 			}
-			#cart-icon, 
-			#cart-icon-full {
+			#cart-icon-colour-glass, 
+			#cart-icon-full-colour-glass {
 					height: 15px;
 				}
 			
 			  				
-		#word-logo {
+		#word-logo-colour-glass {
 			margin-top: 35px;
 			width: 90px;	
 		}
-		#slogan {
+		#slogan-colour-glass {
 			margin-top: -2px;
 			font-size: 7px;
 			letter-spacing: 8px;
 			margin-left: 8px; 
 			word-spacing: -3px;
 		}
-		#wallet-connected-div{
+		#wallet-connected-div-colour-glass{
 			margin-top: 25px;
 		}	
-			#connected-line {
+			#connected-line-colour-glass {
 			  width: 90px;
 			}				
-			#wallet-connected {
+			#wallet-connected-colour-glass {
 				padding-bottom: 12px;
 				padding-top: 7px;
 				font-size: 8px;
 				letter-spacing: 0px;
 				margin-left: 0px; 
 			}
-			#colour-glass {
+			#colour-glass-colour-glass {
 	          margin-top: 25px;
 		  }  					  
 }					
@@ -537,11 +537,11 @@ body {
 	  #colour-glass {
 		    width: 300px;
 		  }  
-		  #photo {
+		  #photo-colour-glass {
 		  	width: 300px;
 		  	height: 300px;
 		  }
-		#name {
+		#name-colour-glass {
 		  font-size: 13pt;
 		  font-weight: 800;
 		  margin-top: 20px;
@@ -549,7 +549,7 @@ body {
 		  margin-left: -1px;
 		  margin-bottom: 20px;
 		}		
-		#copy-link {
+		#copy-link-colour-glass {
 		  font-size: 8px;
 		  padding-top: 15px;
 		  padding-bottom: 15px;
@@ -560,10 +560,10 @@ body {
 		  letter-spacing: 2px;
 		  margin-bottom: 10px;
 		}	  	
-			#copy-link-icon {
+			#copy-link-icon-colour-glass {
 				width: 12px;
 			}
-		#creator-owner-desc {
+		#creator-owner-desc-colour-glass {
 		margin-top: 15px;
 			font-weight: 300;
 			font-size: 12px;
@@ -571,7 +571,7 @@ body {
 			padding-left: 0px;
 			margin-bottom: 0px;
 		}
-		#creator-owner-link {
+		#creator-owner-link-colour-glass {
 		text-align: center;
 			font-weight: 300;
 			font-size: 13px;
@@ -579,33 +579,33 @@ body {
 			padding-left: 0px;
 
 		}			
-		#line {
+		#line-colour-glass {
 		 margin-top: 20px;
 		}			
-		#PAP {
+		#PAP-colour-glass {
 		margin-top: 15px;
 			font-size: 12px;
 		}
-		#PAP-colour-glass-before,
-		#PAP-colour-glass-after {
+		#PAP-colour-glass-before-colour-glass,
+		#PAP-colour-glass-after-colour-glass {
 		margin-top: -8px;
 			font-size: 13px;
 		}
-		#priceline {
+		#priceline-colour-glass {
 		  margin-top: 0px;
 		}	
-		#yourprice {
+		#yourprice-colour-glass {
 		margin-top: 20px;
 			font-size: 13px;
 		}
-		#price-colour-glass-before,
-		#price-colour-glass-after {
+		#price-colour-glass-before-colour-glass,
+		#price-colour-glass-after-colour-glass {
 		margin-top: -10px;
 			font-size: 15px;
 			margin-bottom: 20px;	
 		}			
-		#colour-glass-add-to-cart, 
-		#colour-glass-add-to-cart-connected {
+		#colour-glass-add-to-cart-colour-glass, 
+		#colour-glass-add-to-cart-connected-colour-glass {
 			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
@@ -616,7 +616,7 @@ body {
 			  letter-spacing: 1px;
 			  width: 120px;
 			}	  
-		 #colour-glass-added {
+		 #colour-glass-added-colour-glass {
 			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
@@ -627,7 +627,7 @@ body {
 			  letter-spacing: 1px;
 			  width: 120px;
 			}	
-		#colour-glass-collected {
+		#colour-glass-collected-colour-glass {
 			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
