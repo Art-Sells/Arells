@@ -26,8 +26,6 @@
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
 - Created & Owned By (Character Limit Links)
 - [Prices Not Shown for unlisted items, only Creators/Owner's name]  
-- Proof-of-Creation
-- Proof-of-Ownership
 
  #### Cart
 - Created Cart Number Function (Custom)                                               
