@@ -101,11 +101,8 @@
 	    
 		//Add To Cart Functions
 	    if (walletConnectedSession === 'true') {
-			document.getElementById('connectWalletBuy').style.display = "none";
 			
-			document.getElementById('cart-link-beach-houses').style.display = "none";
-			document.getElementById('wallet-connected-div-beach-houses').style.display = "block";
-			
+			document.getElementById('cart-link-beach-houses').style.display = "none";		
 			document.getElementById('cart-link-connected-beach-houses').style.display = "inline-block";
 			
 			document.getElementById('beach-houses-add-to-cart-beach-houses').style.display = "none";

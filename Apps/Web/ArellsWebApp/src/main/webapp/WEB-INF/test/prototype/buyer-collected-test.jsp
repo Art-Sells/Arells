@@ -103,11 +103,7 @@
 				//Add To Cart Functions
 			    if (walletConnectedSession === 'true') {
 					
-					document.getElementById('wallet-connected-div-buyer-collected').style.display = "block";
-					
-					document.getElementById('cart-link-buyer-collected').style.display = "none";
-					document.getElementById('wallet-connected-div-buyer-collected').style.display = "block";
-					
+					document.getElementById('cart-link-buyer-collected').style.display = "none";				
 					document.getElementById('cart-link-connected-buyer-collected').style.display = "inline-block";	
 			 	}	
 			}
@@ -148,7 +144,8 @@
 		const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
 		function beachHousesPurchasedLoader(){		
 
-		    if (beachHousesPurchased === 'true') {			
+		    if (beachHousesPurchased === 'true') {		
+		    	
 		    	document.getElementById('no-art-buyer-collected').style.display = "none";
 		    	
 		    	document.getElementById('collected-items-buyer-collected').style.display = "block";

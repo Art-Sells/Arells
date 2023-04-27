@@ -58,6 +58,9 @@
 		
 		sessionStorage.removeItem('beachHousesAdded');
 		sessionStorage.removeItem('beachHousesPurchased');
+		
+		sessionStorage.removeItem('colourGlassAdded');
+		sessionStorage.removeItem('colourGlassPurchased');
 	}
 	document.addEventListener('DOMContentLoaded', resetPrototype);	
 

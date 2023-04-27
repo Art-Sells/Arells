@@ -90,7 +90,7 @@
 			document.getElementById('cart-link-connected-colour-glass').style.display = "inline-block";
 			
 			document.getElementById('colour-glass-add-to-cart-colour-glass').style.display = "none";
-			document.getElementById('colour-gtlass-add-to-cart-connected-colour-glass').style.display = "block";
+			document.getElementById('colour-glass-add-to-cart-connected-colour-glass').style.display = "block";
 		
 			sessionStorage.setItem('walletConnectedSession', 'true'); 
 		}	
@@ -100,12 +100,8 @@
 		function walletConnectedLoader() {	
 		    
 			//Add To Cart Functions
-		    if (walletConnectedSession === 'true') {
-				document.getElementById('connectWalletBuy').style.display = "none";
-				
+		    if (walletConnectedSession === 'true') {				
 				document.getElementById('cart-link-colour-glass').style.display = "none";
-				document.getElementById('wallet-connected-div-colour-glass').style.display = "block";
-				
 				document.getElementById('cart-link-connected-colour-glass').style.display = "inline-block";
 				
 				document.getElementById('colour-glass-add-to-cart-colour-glass').style.display = "none";
@@ -253,7 +249,7 @@
      			0x71C7656E...
      		</a>
      	</div>
-     	<hr id="line">
+     	<hr id="line-colour-glass">
   		<div id="colour-glass-prices-before-colour-glass" style="display: block;">
 	  		<p id="PAP-colour-glass">Price After Purchase</p>
 	  		<p id="PAP-colour-glass-before-colour-glass">$725,000</p>
@@ -261,7 +257,7 @@
 	  		<p id="yourprice-colour-glass">Price</p>
 	     	<p id="price-colour-glass-before-colour-glass">$14,500</p>
      	</div>
-     	<div id="colour-glass-prices-before-colour-glass" style="display: none;">
+     	<div id="colour-glass-prices-after-colour-glass" style="display: none;">
 	  		<p id="PAP-colour-glass">Price After Purchase</p>
 	  		<p id="PAP-colour-glass-after-colour-glass">$36,250,000</p>
 	  		<hr id="priceline-colour-glass">

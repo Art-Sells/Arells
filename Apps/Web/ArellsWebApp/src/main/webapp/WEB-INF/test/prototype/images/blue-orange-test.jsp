@@ -100,12 +100,8 @@
 	function walletConnectedLoader() {	
 	    
 		//Add To Cart Functions
-	    if (walletConnectedSession === 'true') {
-			document.getElementById('connectWalletBuy').style.display = "none";
-			
+	    if (walletConnectedSession === 'true') {			
 			document.getElementById('cart-link-blue-orange').style.display = "none";
-			document.getElementById('wallet-connected-div-blue-orange').style.display = "block";
-			
 			document.getElementById('cart-link-connected-blue-orange').style.display = "inline-block";
 			
 			document.getElementById('blue-orange-add-to-cart-blue-orange').style.display = "none";

@@ -112,12 +112,8 @@
 	function walletConnectedLoader() {	
 	    
 		//Add To Cart Functions
-	    if (walletConnectedSession === 'true') {
-			document.getElementById('connectWalletBuy').style.display = "none";
-			
+	    if (walletConnectedSession === 'true') {	
 			document.getElementById('cart-link-seller-created').style.display = "none";
-			document.getElementById('wallet-connected-div-seller-created').style.display = "block";
-			
 			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
 			
 			document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
@@ -437,7 +433,7 @@
 			  		<p id="yourprice-seller-created">Price</p>
 			     	<p id="price-colour-glass-before-seller-created">$14,500</p>
 		     	</div>
-		     	<div id="colour-glass-prices-before-seller-created" style="display: none;">
+		     	<div id="colour-glass-prices-after-seller-created" style="display: none;">
 			  		<p id="PAP-seller-created">Price After Purchase</p>
 			  		<p id="PAP-colour-glass-after-seller-created">$36,250,000</p>
 			  		<hr id="priceline-seller-created">

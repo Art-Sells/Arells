@@ -95,12 +95,8 @@
 	function walletConnectedLoader() {	
 	    
 		//Add To Cart Functions
-	    if (walletConnectedSession === 'true') {
-			document.getElementById('connectWalletBuy').style.display = "none";
-			
-			document.getElementById('cart-link-buyer-created').style.display = "none";
-			document.getElementById('wallet-connected-div-buyer-created').style.display = "block";
-			
+	    if (walletConnectedSession === 'true') {	
+			document.getElementById('cart-link-buyer-created').style.display = "none";		
 			document.getElementById('cart-link-connected-buyer-created').style.display = "inline-block";		
 	 	}	
 	}
