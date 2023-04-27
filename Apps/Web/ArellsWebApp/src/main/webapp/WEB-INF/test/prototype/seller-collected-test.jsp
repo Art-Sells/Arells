@@ -102,6 +102,8 @@
 			    if (walletConnectedSession === 'true') {	
 					document.getElementById('cart-link-seller-collected').style.display = "none";
 					document.getElementById('cart-link-connected-seller-collected').style.display = "inline-block";		
+					
+					document.getElementById('wallet-connected-div-seller-collected').style.display = "block";
 			 	}	
 			}
 			document.addEventListener('DOMContentLoaded', walletConnectedLoader);	

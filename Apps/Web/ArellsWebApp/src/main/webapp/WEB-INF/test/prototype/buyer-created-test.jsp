@@ -98,6 +98,8 @@
 	    if (walletConnectedSession === 'true') {	
 			document.getElementById('cart-link-buyer-created').style.display = "none";		
 			document.getElementById('cart-link-connected-buyer-created').style.display = "inline-block";		
+			
+			document.getElementById('wallet-connected-div-buyer-created').style.display = "block";
 	 	}	
 	}
 	document.addEventListener('DOMContentLoaded', walletConnectedLoader);	

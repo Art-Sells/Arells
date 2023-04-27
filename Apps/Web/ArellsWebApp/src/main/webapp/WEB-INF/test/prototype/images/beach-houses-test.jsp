@@ -105,6 +105,8 @@
 			document.getElementById('cart-link-beach-houses').style.display = "none";		
 			document.getElementById('cart-link-connected-beach-houses').style.display = "inline-block";
 			
+			document.getElementById('wallet-connected-div-beach-houses').style.display = "block";			
+			
 			document.getElementById('beach-houses-add-to-cart-beach-houses').style.display = "none";
 			document.getElementById('beach-houses-add-to-cart-connected-beach-houses').style.display = "block";
 	 	}	

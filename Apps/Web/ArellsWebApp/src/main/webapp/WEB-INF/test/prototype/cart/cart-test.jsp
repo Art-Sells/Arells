@@ -218,7 +218,7 @@
 				  <!-- Change below link after test -->
 				  window.location.href = '/prototype-buyer-collected-test';
 			  }
-			  sessionStorage.removeItem('colourGlassAdded');
+			  sessionStorage.removeItem('beachHousesAdded');
 			  
 			  if (colourGlassPurchased === 'true') {
 				  document.getElementById('purchaseComplete').style.display = "none";
@@ -243,7 +243,6 @@
 	 	    royalties = (royalties - (royalty * blueOrange));
 	 	    fees = (fees - (fee * blueOrange));
 	 	    total = (total - blueOrange);
-	 	    	 	
 			
 			var royaltiesFormated = new Intl.NumberFormat('en-US',
 		 				{ minimumFractionDigits: 0,
@@ -279,7 +278,6 @@
 	 	    royalties = (royalties - (royalty * beachHouses));
 	 	    fees = (fees - (fee * beachHouses));
 	 	    total = (total - beachHouses);
-	 	    	 	
 			
 			var royaltiesFormated = new Intl.NumberFormat('en-US',
 		 				{ minimumFractionDigits: 0,

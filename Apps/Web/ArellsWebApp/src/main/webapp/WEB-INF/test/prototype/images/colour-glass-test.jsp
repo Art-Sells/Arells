@@ -104,6 +104,8 @@
 				document.getElementById('cart-link-colour-glass').style.display = "none";
 				document.getElementById('cart-link-connected-colour-glass').style.display = "inline-block";
 				
+				document.getElementById('wallet-connected-div-colour-glass').style.display = "block";
+				
 				document.getElementById('colour-glass-add-to-cart-colour-glass').style.display = "none";
 				document.getElementById('colour-glass-add-to-cart-connected-colour-glass').style.display = "block";
 		 	}	

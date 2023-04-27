@@ -116,6 +116,8 @@
 			document.getElementById('cart-link-seller-created').style.display = "none";
 			document.getElementById('cart-link-connected-seller-created').style.display = "inline-block";
 			
+			document.getElementById('wallet-connected-div-seller-created').style.display = "block";
+			
 			document.getElementById('blue-orange-add-to-cart-seller-created').style.display = "none";
 			document.getElementById('beach-houses-add-to-cart-seller-created').style.display = "none";
 			document.getElementById('colour-glass-add-to-cart-seller-created').style.display = "none";

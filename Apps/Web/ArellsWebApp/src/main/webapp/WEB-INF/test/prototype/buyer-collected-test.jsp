@@ -102,6 +102,7 @@
 			    
 				//Add To Cart Functions
 			    if (walletConnectedSession === 'true') {
+			    	document.getElementById('wallet-connected-div-buyer-collected').style.display = "block";
 					
 					document.getElementById('cart-link-buyer-collected').style.display = "none";				
 					document.getElementById('cart-link-connected-buyer-collected').style.display = "inline-block";	
