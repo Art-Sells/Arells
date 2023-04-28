@@ -62,6 +62,7 @@
 
 #### Wallet:
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
+- Rarimo (CCTP) Circle?
 - Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
 
 #### Contact (discord/email/etc)
