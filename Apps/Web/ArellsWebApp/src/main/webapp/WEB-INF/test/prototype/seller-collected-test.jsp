@@ -141,6 +141,16 @@
 			 	}	
 			}
 			document.addEventListener('DOMContentLoaded', colourGlassLoader);
+			
+			const layersAdded = sessionStorage.getItem('layersAdded');
+			function layersLoader() {	
+				//Add To Cart Functions
+			    if (colourGlassesAdded === 'true') {    	
+					document.getElementById('cart-link-connected-seller-collected').style.display = "none";
+					document.getElementById('cart-link-full-seller-collected').style.display = "inline-block"; 		
+			 	}	
+			}
+			document.addEventListener('DOMContentLoaded', layersLoader);
 
 <!-- Added/Completed-Purchase script/s up-->	
 			

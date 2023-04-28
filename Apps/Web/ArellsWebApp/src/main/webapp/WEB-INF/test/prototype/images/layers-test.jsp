@@ -77,35 +77,98 @@
 
 
 <!-- Connect Wallet script below-->
-	function connectWallet() {
-		document.getElementById('connectWalletBuy').style.display = "block";			
-		  
-	}	
-	function walletConnected() {
-		document.getElementById('connectWalletBuy').style.display = "none";
-		
-		document.getElementById('cart-link').style.display = "none";
-		document.getElementById('wallet-connected-div').style.display = "block";
-		
-		document.getElementById('cart-link-connected').style.display = "inline-block";
-		
-		document.getElementById('layers-add-to-cart').style.display = "none";
-		document.getElementById('layers-add-to-cart-connected').style.display = "block";
-
-	 
-	}	
+			function connectWallet() {
+				document.getElementById('connectWalletBuy').style.display = "block";			
+				  
+			}	
+			function walletConnected() {
+				document.getElementById('connectWalletBuy').style.display = "none";
+				
+				document.getElementById('cart-link-layers').style.display = "none";
+				document.getElementById('wallet-connected-div-layers').style.display = "block";
+				
+				document.getElementById('cart-link-connected-layers').style.display = "inline-block";
+				
+				document.getElementById('colour-glass-add-to-cart-layers').style.display = "none";
+				document.getElementById('colour-glass-add-to-cart-connected-layers').style.display = "block";
+			
+				sessionStorage.setItem('walletConnectedSession', 'true'); 
+			}	
+			
+			const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');
+			
+			function walletConnectedLoader() {	
+			    
+				//Add To Cart Functions
+			    if (walletConnectedSession === 'true') {				
+					document.getElementById('cart-link-layers').style.display = "none";
+					document.getElementById('cart-link-connected-layers').style.display = "inline-block";
+					
+					document.getElementById('wallet-connected-div-layers').style.display = "block";
+					
+					document.getElementById('colour-glass-add-to-cart-layers').style.display = "none";
+					document.getElementById('colour-glass-add-to-cart-connected-layers').style.display = "block";
+			 	}	
+			}
+			document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
 <!-- Connect Wallet script above-->
 
 
 <!--  Add To Cart script below-->
 
-	function addLayersToCart() {
-		document.getElementById('layers-add-to-cart-connected').style.display = "none";
-		document.getElementById('layers-added').style.display = "block";
-		  
-	}
+			function addLayersToCart() {
+				document.getElementById('layers-add-to-cart-connected-layers').style.display = "none";
+				document.getElementById('layers-glass-added-layers').style.display = "block";
+				
+				//cart functions
+				sessionStorage.setItem('layersAdded', 'true');
+			}
 	
 <!--  Add To Cart script up-->	
+
+<!-- Added/Completed-Purchase script/s down-->
+
+			const layersPurchased = sessionStorage.getItem('layersPurchased');
+			
+			const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+			const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+			const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+			const layersAdded = sessionStorage.getItem('layersAdded');
+			
+			function itemsAddedLoader() {	
+				//Add To Cart Functions
+			    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
+			    	|| colourGlassAdded === 'true' || layersAdded === 'true') {    	
+					document.getElementById('cart-link-connected-layers').style.display = "none";
+					document.getElementById('cart-link-full-layers').style.display = "inline-block";		
+			 	}	
+			}
+			document.addEventListener('DOMContentLoaded', itemsAddedLoader);	
+			
+			function layersFunc() {
+			    if (layersAdded === 'true') {
+					document.getElementById('layers-add-to-cart-layers').style.display = "none";
+			 		document.getElementById('layers-add-to-cart-connected-layers').style.display = "none";
+			 		document.getElementById('layers-added-layers').style.display = "block";
+			 		 		
+			 	}
+			    if (colourGlassPurchased === 'true') {	
+			    	document.getElementById('layers-prices-before-layers').style.display = "none";
+			    	document.getElementById('layers-prices-after-layers').style.display = "block";
+			    	
+			    	document.getElementById('owned-by-creator-layers').style.display = "none";
+			    	document.getElementById('owned-by-buyer-layers').style.display = "block";
+				
+					document.getElementById('layers-add-to-cart-connected-layers').style.display = "none";
+					document.getElementById('layers-add-to-cart-layers').style.display = "none";
+					document.getElementById('layers-added-layers').style.display = "none";
+					document.getElementById('layers-collected-layers').style.display = "block";
+					
+			    }
+			}
+			document.addEventListener('DOMContentLoaded', layersFunc);	
+
+<!-- Added/Completed-Purchase script/s up-->
 			
 		
 		</script>	
@@ -139,80 +202,80 @@
 		</div>	
 	<!-- Modal/s above -->	
 
-	<div id="header">
+	<div id="header-layers">
 	
 	<!-- Change below link after test -->
-		<a id="icon-link" href="/test">
-			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-layers" href="/test">
+			<img id="arells-icon-layers" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<button id="cart-link-layers" onClick="connectWallet()" style="display: inline-block;">
+			<img id="cart-icon-layers" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
-		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<a id="cart-link-connected-layers" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-layers" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>	
-		<a id="cart-link-full" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon-full" src="/icons&images/prototype/shopping-cart-full.png"/>
+		<a id="cart-link-full-layers" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-full-layers" src="/icons&images/prototype/shopping-cart-full.png"/>
 		</a>
 	</div>
-	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
-	<div id="wallet-connected-div" style="display: none;">
-		<hr id="connected-line">
+	<img id="word-logo-layers" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-layers">ART SELLS</p>
+	<div id="wallet-connected-div-layers" style="display: none;">
+		<hr id="connected-line-layers">
 		<p id="wallet-connected" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line">
+		<hr id="connected-line-layers">
 	</div>
 
   	<div id="layers">
-  		<img id="photo" src="/icons&images/prototype/4.jpg"/>
-  		<h3 id="name">Layers</h3> 
-  		<button id="copy-link"
+  		<img id="photo-layers" src="/icons&images/prototype/4.jpg"/>
+  		<h3 id="name-layers">Layers</h3> 
+  		<button id="copy-link-layers"
 		onClick="copyLink()">
-			<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+			<img id="copy-link-icon-layers" src="/icons&images/prototype/link.png"/>
 			COPY LINK
 		</button>	
-     	<div id="created-by">
-     		<p id="creator-owner-desc">Created By</p>
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="created-by-layers">
+     		<p id="creator-owner-desc-layers">Created By</p>
+     		<a id="creator-owner-link-layers" href="/prototype-seller-created-test">
      			Abstract Kadabra
      		</a>
      	</div>
-     	<div id="owned-by-creator" style="display: block;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="owned-by-creator-layers" style="display: block;">
+     		<p id="creator-owner-desc-layers">Owned By</p> 
+     		<a id="creator-owner-link-layers" href="/prototype-seller-created-test">
      			Abstract Kadabra</a>
      	</div>
-     	<div id="owned-by-buyer" style="display: none;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-buyer-collected-test">
+     	<div id="owned-by-buyer-layers" style="display: none;">
+     		<p id="creator-owner-desc-layers">Owned By</p> 
+     		<a id="creator-owner-link-layers" href="/prototype-buyer-collected-test">
      			0x71C7656E...
      		</a>
      	</div>
-     	<hr id="line">
-		<div id="layers-prices-before" style="display: block;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-layers-before">$20,000,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-layers-before">$400,000</p>
+     	<hr id="line-layers">
+		<div id="layers-prices-before-layers" style="display: block;">
+	  		<p id="PAP-layers">Price After Purchase</p>
+	  		<p id="PAP-layers-before-layers">$20,000,000</p>
+	  		<hr id="priceline-layers">
+	  		<p id="yourprice-layers">Price</p>
+	     	<p id="price-layers-before-layers">$400,000</p>
      	</div>
-     	<div id="layers-prices-after" style="display: none;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-layers-after">$1,000,000,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-layers-after">$20,000,000</p>
+     	<div id="layers-prices-after-layers" style="display: none;">
+	  		<p id="PAP-layers">Price After Purchase</p>
+	  		<p id="PAP-layers-after-layers">$1,000,000,000</p>
+	  		<hr id="priceline-layers">
+	  		<p id="yourprice-layers">Price</p>
+	     	<p id="price-layers-after-layers">$20,000,000</p>
      	</div>
-    	<button id="layers-add-to-cart" onClick="connectWallet()"
+    	<button id="layers-add-to-cart-layers" onClick="connectWallet()"
     		style="display: block;">
     		ADD TO CART</button>
-    	<button id="layers-add-to-cart-connected" onClick="addLayersToCart()"
+    	<button id="layers-add-to-cart-connected-layers" onClick="addLayersToCart()"
     		style="display: none;">
     		ADD TO CART</button>
-    	<button id="layers-added" style="display: none;">
+    	<button id="layers-added-layers" style="display: none;">
     		ADDED</button>	
-    	<button id="layers-collected" style="display: none;">
+    	<button id="layers-collected-layers" style="display: none;">
     		COLLECTED</button>				     	
     </div>
 

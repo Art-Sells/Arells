@@ -133,11 +133,12 @@
 		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 		const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+		const layersAdded = sessionStorage.getItem('layersAdded');
 		
 		function itemsAddedLoader() {	
 			//Add To Cart Functions
 		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
-		    	|| colourGlassAdded == 'true') {    	
+		    	|| colourGlassAdded === 'true'|| layersAdded === 'true') {    	
 				document.getElementById('cart-link-connected-colour-glass').style.display = "none";
 				document.getElementById('cart-link-full-colour-glass').style.display = "inline-block";		
 		 	}	
