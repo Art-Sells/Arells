@@ -174,11 +174,45 @@
  		document.addEventListener('DOMContentLoaded', colourGlassAddedLoader);
  		
  		
+ 		//Layers
+		const layersAdded = sessionStorage.getItem('layersAdded');
+ 		function layersAddedLoader() {
+	 	    if (layersAdded === 'true') {
+	 			document.getElementById('cart-empty-cart').style.display = "none";
+	 			document.getElementById('cart-full-cart').style.display = "block";
+	 			document.getElementById('layers-cart').style.display = "flex";
+
+		 	    royalties = (royalty * layers + royalties);
+		 	    fees = (fee * layers + fees);
+		 	    total = (total + layers);
+				
+				var royaltiesFormated = new Intl.NumberFormat('en-US',
+			 				{ minimumFractionDigits: 0,
+							  maximumFractionDigits: 0,}).format(royalties);
+				var feesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(fees);
+				var totalFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(total);
+				
+				document.getElementById('royalty-price-value-cart').innerHTML = 
+					royaltiesFormated;
+				document.getElementById('fee-price-value-cart').innerHTML = 
+					feesFormated;
+				document.getElementById('total-price-value-cart').innerHTML = 
+					totalFormated;
+	 	    }
+ 		}
+ 		document.addEventListener('DOMContentLoaded', layersAddedLoader);
+ 		
+ 		
  // Purchase Completed Functions Below	
  
  		const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
  		const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
  		const colourGlassPurchased = sessionStorage.getItem('colourGlassPurchased');
+ 		const layersPurchased = sessionStorage.getItem('layersPurchased');
  		
 		function completePurchase() {
 			  if (blueOrangeAdded === 'true') {
@@ -197,7 +231,6 @@
 				  document.getElementById('purchaseComplete').style.display = "block";
 			  }	
 			  sessionStorage.removeItem('beachHousesAdded');
-			  sessionStorage.getItem('beachHousesPurchased');
 			  if (colourGlassAdded === 'true') {
 				  sessionStorage.setItem('colourGlassPurchased', 'true');
 		 			document.getElementById('cart-empty-cart').style.display = "block";
@@ -206,6 +239,14 @@
 				  document.getElementById('purchaseComplete').style.display = "block";
 			  }
 			  sessionStorage.removeItem('colourGlassAdded');
+			  if (layersAdded === 'true') {
+				  sessionStorage.setItem('layersPurchased', 'true');
+		 			document.getElementById('cart-empty-cart').style.display = "block";
+		 			document.getElementById('cart-full-cart').style.display = "none";
+		 			document.getElementById('layers-cart').style.display = "none";
+				  document.getElementById('purchaseComplete').style.display = "block";
+			  }
+			  sessionStorage.removeItem('layersAdded');
 		}	
 		
 		function closePurchaseComplete() {
@@ -329,7 +370,28 @@
 		}
 		function removeLayers() {
 			document.getElementById('layers-cart').style.display = "none";
-			sessionStorage.removeItem('layersAdded');
+			
+	 	    royalties = (royalties - (royalty * layers));
+	 	    fees = (fees - (fee * layers));
+	 	    total = (total - layers);
+			
+			var royaltiesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(royalties);
+			var feesFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(fees);
+			var totalFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(total);
+			
+			document.getElementById('royalty-price-value-cart').innerHTML = 
+				royaltiesFormated;
+			document.getElementById('fee-price-value-cart').innerHTML = 
+				feesFormated;
+			document.getElementById('total-price-value-cart').innerHTML = 
+				totalFormated;
+
 			if (document.getElementById('beach-houses-cart').style.display == "none"
 				&& document.getElementById('colour-glass-cart').style.display == "none" 
 				&& document.getElementById('blue-orange-cart').style.display == "none"
@@ -337,7 +399,9 @@
 				&& document.getElementById('paint-rain-cart').style.display == "none"){
 					document.getElementById('cart-full-cart').style.display = "none";
 					document.getElementById('cart-empty-cart').style.display = "block";
-				}			
+				}
+			sessionStorage.removeItem('layersAdded');
+			location.reload();
 		}
 		function removeSuccinctDrop() {
 			document.getElementById('succinct-drop-cart').style.display = "none";

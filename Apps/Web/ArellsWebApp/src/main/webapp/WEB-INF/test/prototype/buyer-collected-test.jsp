@@ -169,6 +169,20 @@
 	
 		}
 		document.addEventListener('DOMContentLoaded', colourGlassPurchasedLoader);
+		
+		const layersPurchased = sessionStorage.getItem('colourGlassPurchased');
+		function layersPurchasedLoader(){		
+
+		    if (layersPurchased === 'true') {			
+		    	document.getElementById('no-art-buyer-collected').style.display = "none";
+		    	
+		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
+				document.getElementById('colour-glass-buyer-collected').style.display = "flex";
+		    }	
+	
+		}
+		document.addEventListener('DOMContentLoaded', layersPurchasedLoader);
+
 
 <!-- Added/Completed-Purchase script/s up-->
 			

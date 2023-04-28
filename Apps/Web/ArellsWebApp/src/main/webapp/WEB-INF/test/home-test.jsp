@@ -61,6 +61,9 @@
 		
 		sessionStorage.removeItem('colourGlassAdded');
 		sessionStorage.removeItem('colourGlassPurchased');
+		
+		sessionStorage.removeItem('layersAdded');
+		sessionStorage.removeItem('layersPurchased');
 	}
 	document.addEventListener('DOMContentLoaded', resetPrototype);	
 

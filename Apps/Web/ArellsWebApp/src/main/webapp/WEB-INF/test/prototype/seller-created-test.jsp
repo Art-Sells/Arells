@@ -180,7 +180,11 @@
 		document.getElementById('layers-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('layers-added-seller-created').style.display = "block";
 		
-		  
+		document.getElementById('cart-link-connected-seller-created').style.display = "none";			
+    	document.getElementById('cart-link-full-seller-created').style.display = "inline-block";		
+		
+		//cart function
+		sessionStorage.setItem('layersAdded', 'true'); 		  
 	}
 	function addSuccinctDropToCart() {
 		document.getElementById('succinct-drop-add-to-cart-connected-seller-created').style.display = "none";
@@ -286,6 +290,34 @@
 	    }
 	}
 	document.addEventListener('DOMContentLoaded', colourGlassLoader);	
+	
+	
+	const layersPurchased = sessionStorage.getItem('colourGlassPurchased');
+	
+	function layersLoader() {	
+	    
+		//Add To Cart Functions
+	    if (layersAdded === 'true') {    	
+			document.getElementById('cart-link-connected-seller-created').style.display = "none";
+			document.getElementById('cart-link-full-seller-created').style.display = "inline-block";
+	    	
+	 		document.getElementById('layers-add-to-cart-seller-created').style.display = "none";
+	 		document.getElementById('layers-add-to-cart-connected-seller-created').style.display = "none";
+	 		document.getElementById('layers-added-seller-created').style.display = "block";	 		
+	 	}	
+		
+	    //Purchased Function
+	    if (layersPurchased === 'true') {  	    	
+	    	document.getElementById('layers-prices-before-seller-created').style.display = "none";
+	    	document.getElementById('layers-prices-after-seller-created').style.display = "block";
+		
+			document.getElementById('layers-add-to-cart-connected-seller-created').style.display = "none";
+			document.getElementById('layers-add-to-cart-seller-created').style.display = "none";
+			document.getElementById('layers-added-seller-created').style.display = "none";
+			document.getElementById('layers-collected-seller-created').style.display = "block";
+	    }
+	}
+	document.addEventListener('DOMContentLoaded', layersLoader);	
 
 <!-- Added/Completed-Purchase script/s up-->
 			
