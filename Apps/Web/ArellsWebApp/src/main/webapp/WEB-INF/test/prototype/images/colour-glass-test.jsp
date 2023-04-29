@@ -287,6 +287,6 @@
     	<button id="colour-glass-collected-colour-glass" style="display: none;">
     		COLLECTED</button>				     	
     </div>
-
+		<p id="prototype">PROTOTYPE</p>
 </body>
 </html>

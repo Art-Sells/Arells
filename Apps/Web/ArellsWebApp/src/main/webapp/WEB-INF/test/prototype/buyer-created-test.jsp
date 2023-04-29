@@ -255,5 +255,6 @@
 		no art created
 		<img id="cart-icon-collected-buyer-created" src="/icons&images/prototype/Add.png"/>
 	</p>
+			<p id="prototype">PROTOTYPE</p>
 </body>
 </html>

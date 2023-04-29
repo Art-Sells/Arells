@@ -253,5 +253,6 @@
 		no art collected
 		<img id="cart-icon-collected-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 	</p>
+			<p id="prototype">PROTOTYPE</p>
 </body>
 </html>

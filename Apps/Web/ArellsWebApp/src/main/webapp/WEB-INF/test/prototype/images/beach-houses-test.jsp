@@ -288,6 +288,6 @@
     	<button id="beach-houses-collected-beach-houses" style="display: none;">
     		COLLECTED</button>				     	
     </div>
-
+		<p id="prototype">PROTOTYPE</p>
 </body>
 </html>

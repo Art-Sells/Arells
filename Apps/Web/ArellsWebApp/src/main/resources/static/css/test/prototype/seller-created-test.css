@@ -135,15 +135,6 @@ body {
 			opacity: 1;
 			word-spacing: -3px;
 		}
-		#prototype {
-			margin-top: 20px;
-			font-size: 11px;
-			letter-spacing: 3px;
-			margin-left: 3px; 
-			font-weight: 200;
-			color: black;
-			opacity: .25;
-		}	
 		
 		#wallet-connected-div-seller-created{
 			margin-top: 30px;
@@ -538,7 +529,17 @@ body {
 				  width: 170px;
 				  opacity: 1; 
 					background: silver;
-				}		
+				}
+				
+		#prototype {
+			margin-top: -20px;
+			font-size: 8px;
+			letter-spacing: 3px;
+			margin-left: 3px; 
+			font-weight: 500;
+			color: black;
+			opacity: .3;
+		}		
 			
 			
 			
@@ -631,12 +632,6 @@ body {
 			margin-left: 8px; 
 			word-spacing: -3px;
 		}
-		#prototype {
-			margin-top: 15px;
-			font-size: 10px;
-			letter-spacing: 2px;
-			margin-left: 2px; 
-		}	
 		#wallet-connected-div-seller-created{
 			margin-top: 25px;
 		}	
@@ -818,7 +813,7 @@ body {
 				  border: none;
 				  letter-spacing: 1px;
 				  width: 120px;
-				}						  
+				}									  
 }					
 	
 	

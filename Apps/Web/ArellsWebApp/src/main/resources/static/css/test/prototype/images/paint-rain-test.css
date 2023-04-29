@@ -426,7 +426,17 @@ body {
 			  width: 170px;
 			  opacity: 1; 
 				background: silver;
-			}		
+			}	
+			
+		#prototype {
+			margin-top: 40px;
+			font-size: 8px;
+			letter-spacing: 3px;
+			margin-left: 3px; 
+			font-weight: 500;
+			color: black;
+			opacity: .3;
+		}							
 			
 			
 			

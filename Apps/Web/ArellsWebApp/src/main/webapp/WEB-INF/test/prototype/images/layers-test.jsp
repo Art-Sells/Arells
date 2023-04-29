@@ -287,6 +287,6 @@
     	<button id="layers-collected-layers" style="display: none;">
     		COLLECTED</button>				     	
     </div>
-
+		<p id="prototype">PROTOTYPE</p>
 </body>
 </html>

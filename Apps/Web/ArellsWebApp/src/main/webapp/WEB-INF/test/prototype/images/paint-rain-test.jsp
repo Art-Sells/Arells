@@ -289,6 +289,6 @@
     	<button id="paint-rain-collected-paint-rain" style="display: none;">
     		COLLECTED</button>				     	
     </div>
-
+		<p id="prototype">PROTOTYPE</p>
 </body>
 </html>

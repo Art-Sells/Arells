@@ -288,6 +288,6 @@
     	<button id="blue-orange-collected-blue-orange" style="display: none;">
     		COLLECTED</button>				     	
     </div>
-
+		<p id="prototype">PROTOTYPE</p>
 </body>
 </html>

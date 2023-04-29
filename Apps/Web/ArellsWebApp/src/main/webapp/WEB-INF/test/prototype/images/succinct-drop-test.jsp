@@ -289,6 +289,6 @@
     	<button id="succinct-drop-collected-succinct-drop" style="display: none;">
     		COLLECTED</button>				     	
     </div>
-
+		<p id="prototype">PROTOTYPE</p>
 </body>
 </html>

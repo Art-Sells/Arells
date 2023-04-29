@@ -254,7 +254,7 @@ body {
 			  width: 900px;
 			  margin-left: auto;
 			  margin-right: auto;
-			  margin-bottom: 60px;		
+			  margin-bottom: 40px;		
 		}
 			
 			#blue-orange-cart, #beach-houses-cart, #colour-glass-cart,
@@ -383,6 +383,15 @@ body {
 					opacity: 1;
 				}
 				
+		#prototype {
+			margin-top: 30px;
+			font-size: 8px;
+			letter-spacing: 3px;
+			margin-left: 3px; 
+			font-weight: 500;
+			color: black;
+			opacity: .3;
+		}						
 			
 			
 			
