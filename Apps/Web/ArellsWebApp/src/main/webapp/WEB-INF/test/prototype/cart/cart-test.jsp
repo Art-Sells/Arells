@@ -219,7 +219,7 @@
 	 	    if (paintRainAdded === 'true') {
 	 			document.getElementById('cart-empty-cart').style.display = "none";
 	 			document.getElementById('cart-full-cart').style.display = "block";
-	 			document.getElementById('layers-cart').style.display = "flex";
+	 			document.getElementById('paint-rain-cart').style.display = "flex";
 
 		 	    royalties = (royalty * paintRain + royalties);
 		 	    fees = (fee * paintRain + fees);
