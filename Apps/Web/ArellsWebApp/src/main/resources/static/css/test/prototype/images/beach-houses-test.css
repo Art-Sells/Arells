@@ -443,35 +443,34 @@ body {
 					  letter-spacing: 2px;
 					  margin-left: 2px;
 					  opacity: .4;	
-					  margin-bottom: 15px;
+					  margin-bottom: 10px;
 					  margin-top: 20px;
 				}
 				#fingerprints-button{
 					text-decoration: none;
-					margin-left: 5px;
-					margin-right: 5px;
+					margin-left: 3px;
+					margin-right: 3px;
 					  text-decoration: none;
-					  padding-top: 13px;
-					  padding-bottom: 10px;
-					  padding-right: 10px;
-					  padding-left: 10px;	  
+					  padding-top: 10px;
+					  padding-bottom: 7px;
+					  padding-right: 5px;
+					  padding-left: 5px;  
 					  border: solid;
 					  width: 50px;
-					  border-color: gray;
+					  border-color: silver;
 					  border-radius: 10px;
 					  border-width: 1px;
-					  opacity: .5;	
+					  opacity: .4;	
 					  background: none;				
 				}
 				#fingerprints-button:hover,
 				#fingerprints-button:focus {
 				  transition: 1s;
 				  cursor: pointer;
-				  border-color: gray;
 				  opacity: 1;	
 				}					
 					#fingerprints-icon{
-						height: 16px;
+						height: 25px;
 					}
 					
 				
@@ -741,7 +740,7 @@ body {
 			  width: 120px;
 			}
 		#fingerprints{
-			margin-top: 40px;
+			margin-top: 35px;
 			width: 300px;					
 		}
 			#digital-fingerprints{
@@ -753,13 +752,13 @@ body {
 			#fingerprints-button{
 				margin-left: 5px;
 				margin-right: 5px;
-				  padding-top: 13px;
-				  padding-bottom: 10px;
-				  padding-right: 10px;
-				  padding-left: 10px;	  
+				  padding-top: 8px;
+				  padding-bottom: 5px;
+				  padding-right: 5px;
+				  padding-left: 5px;	  
 				  width: 42px;			
 			}			
 				#fingerprints-icon{
-					height: 12px;
+					height: 20px;
 				}											
 }
