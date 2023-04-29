@@ -287,6 +287,28 @@
     		ADDED</button>	
     	<button id="beach-houses-collected-beach-houses" style="display: none;">
     		COLLECTED</button>				     	
+    		
+    	<div id="fingerprints">
+    		<p id="digital-fingerprints">DIGITAL FINGERPRINTS</p>
+    		<span>
+		  		<button id="fingerprints-button"
+				onClick="copyLink()">
+					<img id="fingerprints-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+				</button>	
+    		</span>
+    		<span>
+		  		<button id="fingerprints-button"
+				onClick="copyLink()">
+					<img id="fingerprints-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+				</button>	
+    		</span>
+    		<span>
+		  		<button id="fingerprints-button"
+				onClick="copyLink()">
+					<img id="fingerprints-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+				</button>	
+    		</span>
+    	</div>	
     </div>
 		<p id="prototype">PROTOTYPE</p>
 </body>

@@ -427,6 +427,56 @@ body {
 			  opacity: 1; 
 				background: silver;
 			}
+			#fingerprints{
+				margin-top: 40px;
+				border-radius: 15px;
+				align-items: center;
+				width: 300px;		
+				background: white;	
+				margin-left: auto;
+				margin-right: auto;				
+			}
+				#digital-fingerprints{
+					color: black;
+					  font-weight: 200;
+					  font-size: 11px;	
+					  letter-spacing: 2px;
+					  margin-left: 2px;
+					  opacity: .4;	
+					  margin-bottom: 15px;
+					  margin-top: 20px;
+				}
+				#fingerprints-button{
+					text-decoration: none;
+					margin-left: 5px;
+					margin-right: 5px;
+					  text-decoration: none;
+					  padding-top: 13px;
+					  padding-bottom: 10px;
+					  padding-right: 10px;
+					  padding-left: 10px;	  
+					  border: solid;
+					  width: 50px;
+					  border-color: gray;
+					  border-radius: 10px;
+					  border-width: 1px;
+					  opacity: .5;	
+					  background: none;				
+				}
+				#fingerprints-button:hover,
+				#fingerprints-button:focus {
+				  transition: 1s;
+				  cursor: pointer;
+				  border-color: gray;
+				  opacity: 1;	
+				}					
+					#fingerprints-icon{
+						height: 16px;
+					}
+					
+				
+			
+			
 		#prototype {
 			margin-top: 40px;
 			font-size: 8px;
@@ -435,7 +485,8 @@ body {
 			font-weight: 500;
 			color: black;
 			opacity: .3;
-		}							
+		}
+									
 			
 			
 			
@@ -543,7 +594,7 @@ body {
 			}
 		#beach-houses {
 	         margin-top: 25px;
-		}  					  
+		}	  					  
 }					
 	
 	
@@ -688,5 +739,27 @@ body {
 			  border: none;
 			  letter-spacing: 1px;
 			  width: 120px;
-			}							
+			}
+		#fingerprints{
+			margin-top: 40px;
+			width: 300px;					
+		}
+			#digital-fingerprints{
+				  font-size: 9px;	
+				  letter-spacing: 2px;
+				  margin-left: 2px;
+				  margin-bottom: 10px;
+			}
+			#fingerprints-button{
+				margin-left: 5px;
+				margin-right: 5px;
+				  padding-top: 13px;
+				  padding-bottom: 10px;
+				  padding-right: 10px;
+				  padding-left: 10px;	  
+				  width: 42px;			
+			}			
+				#fingerprints-icon{
+					height: 12px;
+				}											
 }
