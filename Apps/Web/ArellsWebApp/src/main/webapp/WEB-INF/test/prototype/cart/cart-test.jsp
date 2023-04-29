@@ -207,12 +207,52 @@
  		document.addEventListener('DOMContentLoaded', layersAddedLoader);
  		
  		
+ 		
+ 		
+ 		//Add Succinct Here...
+ 		
+ 		
+ 		
+ 		//Paint Rain
+		const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+ 		function paintRainAddedLoader() {
+	 	    if (paintRainAdded === 'true') {
+	 			document.getElementById('cart-empty-cart').style.display = "none";
+	 			document.getElementById('cart-full-cart').style.display = "block";
+	 			document.getElementById('layers-cart').style.display = "flex";
+
+		 	    royalties = (royalty * paintRain + royalties);
+		 	    fees = (fee * paintRain + fees);
+		 	    total = (total + paintRain);
+				
+				var royaltiesFormated = new Intl.NumberFormat('en-US',
+			 				{ minimumFractionDigits: 0,
+							  maximumFractionDigits: 0,}).format(royalties);
+				var feesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(fees);
+				var totalFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(total);
+				
+				document.getElementById('royalty-price-value-cart').innerHTML = 
+					royaltiesFormated;
+				document.getElementById('fee-price-value-cart').innerHTML = 
+					feesFormated;
+				document.getElementById('total-price-value-cart').innerHTML = 
+					totalFormated;
+	 	    }
+ 		}
+ 		document.addEventListener('DOMContentLoaded', paintRainAddedLoader);
+ 		
+ 		
  // Purchase Completed Functions Below	
  
  		const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
  		const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
  		const colourGlassPurchased = sessionStorage.getItem('colourGlassPurchased');
  		const layersPurchased = sessionStorage.getItem('layersPurchased');
+ 		const paintRainPurchased = sessionsStorage.getItem('paintRainPurchased');
  		
 		function completePurchase() {
 			  if (blueOrangeAdded === 'true') {
@@ -247,6 +287,14 @@
 				  document.getElementById('purchaseComplete').style.display = "block";
 			  }
 			  sessionStorage.removeItem('layersAdded');
+			  if (paintRainAdded === 'true') {
+				  sessionStorage.setItem('paintRainPurchased', 'true');
+		 			document.getElementById('cart-empty-cart').style.display = "block";
+		 			document.getElementById('cart-full-cart').style.display = "none";
+		 			document.getElementById('paint-rain-cart').style.display = "none";
+				  document.getElementById('purchaseComplete').style.display = "block";
+			  }
+			  sessionStorage.removeItem('paintRainAdded');
 		}	
 		
 		function closePurchaseComplete() {
@@ -296,6 +344,7 @@
 			sessionStorage.removeItem('blueOrangeAdded');
 		    location.reload();
 		}	
+		
 		function removeBeachHouses() {
 			document.getElementById('beach-houses-cart').style.display = "none";
 			
@@ -330,9 +379,9 @@
 				}	
 			
 			sessionStorage.removeItem('beachHousesAdded');
-		    location.reload();
-			
-		}		
+		    location.reload();	
+		}	
+		
 		function removeColourGlass() {
 			document.getElementById('colour-glass-cart').style.display = "none";
 			
@@ -368,6 +417,7 @@
 			sessionStorage.removeItem('colourGlassAdded');
 		    location.reload();
 		}
+		
 		function removeLayers() {
 			document.getElementById('layers-cart').style.display = "none";
 			
@@ -403,6 +453,7 @@
 			sessionStorage.removeItem('layersAdded');
 			location.reload();
 		}
+		
 		function removeSuccinctDrop() {
 			document.getElementById('succinct-drop-cart').style.display = "none";
 			sessionStorage.removeItem('succinctDropAdded');
@@ -414,10 +465,32 @@
 					document.getElementById('cart-full-cart').style.display = "none";
 					document.getElementById('cart-empty-cart').style.display = "block";
 				}			
-		}		
+		}	
+		
 		function removePaintRain() {
 			document.getElementById('paint-rain-cart').style.display = "none";
-			sessionStorage.removeItem('paintRainAdded');
+			
+	 	    royalties = (royalties - (royalty * paintRain));
+	 	    fees = (fees - (fee * paintRain));
+	 	    total = (total - paintRain);
+			
+			var royaltiesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(royalties);
+			var feesFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(fees);
+			var totalFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(total);
+			
+			document.getElementById('royalty-price-value-cart').innerHTML = 
+				royaltiesFormated;
+			document.getElementById('fee-price-value-cart').innerHTML = 
+				feesFormated;
+			document.getElementById('total-price-value-cart').innerHTML = 
+				totalFormated;
+			
 			if (document.getElementById('beach-houses-cart').style.display == "none"
 				&& document.getElementById('colour-glass-cart').style.display == "none" 
 				&& document.getElementById('layers-cart').style.display == "none"
@@ -425,7 +498,9 @@
 				&& document.getElementById('blue-orange-cart').style.display == "none"){
 					document.getElementById('cart-full-cart').style.display = "none";
 					document.getElementById('cart-empty-cart').style.display = "block";
-				}			
+				}
+			sessionStorage.removeItem('paintRainAdded');
+			location.reload();
 		}		
 <!-- Remove scripts above-->			
 

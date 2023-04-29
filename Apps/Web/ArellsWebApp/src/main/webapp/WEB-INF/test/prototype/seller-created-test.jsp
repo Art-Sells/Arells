@@ -176,6 +176,8 @@
 		//cart function
 		sessionStorage.setItem('colourGlassAdded', 'true'); 		
 	}
+	
+	const layersAdded = sessionStorage.getItem('layersAdded');
 	function addLayersToCart() {
 		document.getElementById('layers-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('layers-added-seller-created').style.display = "block";
@@ -186,15 +188,23 @@
 		//cart function
 		sessionStorage.setItem('layersAdded', 'true'); 		  
 	}
+	
 	function addSuccinctDropToCart() {
 		document.getElementById('succinct-drop-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('succinct-drop-added-seller-created').style.display = "block";
 		  
 	}
+	
+	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
 	function addPaintRainToCart() {
 		document.getElementById('paint-rain-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('paint-rain-added-seller-created').style.display = "block";
 		  
+		document.getElementById('cart-link-connected-seller-created').style.display = "none";			
+    	document.getElementById('cart-link-full-seller-created').style.display = "inline-block";		
+		
+		//cart function
+		sessionStorage.setItem('paintRainAdded', 'true'); 				
 	}
 	
 <!--  Add To Cart script/s up-->	
@@ -292,7 +302,7 @@
 	document.addEventListener('DOMContentLoaded', colourGlassLoader);	
 	
 	
-	const layersPurchased = sessionStorage.getItem('colourGlassPurchased');
+	const layersPurchased = sessionStorage.getItem('layersPurchased');
 	
 	function layersLoader() {	
 	    
@@ -318,6 +328,48 @@
 	    }
 	}
 	document.addEventListener('DOMContentLoaded', layersLoader);	
+	
+	
+	
+	
+	//Succinct Add Here...
+	
+	
+	
+	
+	
+	const paintRainPurchased = sessionStorage.getItem('paintRainPurchased');
+	
+	function paintRainLoader() {	
+	    
+		//Add To Cart Functions
+	    if (paintRainAdded === 'true') {    	
+			document.getElementById('cart-link-connected-seller-created').style.display = "none";
+			document.getElementById('cart-link-full-seller-created').style.display = "inline-block";
+	    	
+	 		document.getElementById('paint-rain-add-to-cart-seller-created').style.display = "none";
+	 		document.getElementById('paint-rain-add-to-cart-connected-seller-created').style.display = "none";
+	 		document.getElementById('paint-rain-added-seller-created').style.display = "block";	 		
+	 	}	
+		
+	    //Purchased Function
+	    if (paintRainPurchased === 'true') {  	    	
+	    	document.getElementById('paint-rain-prices-before-seller-created').style.display = "none";
+	    	document.getElementById('paint-rain-prices-after-seller-created').style.display = "block";
+		
+			document.getElementById('paint-rain-add-to-cart-connected-seller-created').style.display = "none";
+			document.getElementById('paint-rain-add-to-cart-seller-created').style.display = "none";
+			document.getElementById('paint-rain-added-seller-created').style.display = "none";
+			document.getElementById('paint-rain-collected-seller-created').style.display = "block";
+	    }
+	}
+	document.addEventListener('DOMContentLoaded', paintRainLoader);	
+	
+	
+	
+	
+	
+	
 
 <!-- Added/Completed-Purchase script/s up-->
 			

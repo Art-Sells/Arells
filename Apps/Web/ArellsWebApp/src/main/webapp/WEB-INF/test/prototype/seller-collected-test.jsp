@@ -145,12 +145,22 @@
 			const layersAdded = sessionStorage.getItem('layersAdded');
 			function layersLoader() {	
 				//Add To Cart Functions
-			    if (colourGlassesAdded === 'true') {    	
+			    if (layersAdded === 'true') {    	
 					document.getElementById('cart-link-connected-seller-collected').style.display = "none";
 					document.getElementById('cart-link-full-seller-collected').style.display = "inline-block"; 		
 			 	}	
 			}
 			document.addEventListener('DOMContentLoaded', layersLoader);
+			
+			const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+			function paintRainLoader() {	
+				//Add To Cart Functions
+			    if (layersAdded === 'true') {    	
+					document.getElementById('cart-link-connected-seller-collected').style.display = "none";
+					document.getElementById('cart-link-full-seller-collected').style.display = "inline-block"; 		
+			 	}	
+			}
+			document.addEventListener('DOMContentLoaded', paintRainLoader);
 
 <!-- Added/Completed-Purchase script/s up-->	
 			

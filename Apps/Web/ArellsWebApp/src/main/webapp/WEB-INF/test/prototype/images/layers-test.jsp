@@ -89,8 +89,8 @@
 				
 				document.getElementById('cart-link-connected-layers').style.display = "inline-block";
 				
-				document.getElementById('colour-glass-add-to-cart-layers').style.display = "none";
-				document.getElementById('colour-glass-add-to-cart-connected-layers').style.display = "block";
+				document.getElementById('layers-add-to-cart-layers').style.display = "none";
+				document.getElementById('layers-add-to-cart-connected-layers').style.display = "block";
 			
 				sessionStorage.setItem('walletConnectedSession', 'true'); 
 			}	
@@ -106,8 +106,8 @@
 					
 					document.getElementById('wallet-connected-div-layers').style.display = "block";
 					
-					document.getElementById('colour-glass-add-to-cart-layers').style.display = "none";
-					document.getElementById('colour-glass-add-to-cart-connected-layers').style.display = "block";
+					document.getElementById('layers-add-to-cart-layers').style.display = "none";
+					document.getElementById('layers-add-to-cart-connected-layers').style.display = "block";
 			 	}	
 			}
 			document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
@@ -118,7 +118,7 @@
 
 			function addLayersToCart() {
 				document.getElementById('layers-add-to-cart-connected-layers').style.display = "none";
-				document.getElementById('layers-glass-added-layers').style.display = "block";
+				document.getElementById('layers-added-layers').style.display = "block";
 				
 				//cart functions
 				sessionStorage.setItem('layersAdded', 'true');
@@ -134,16 +134,18 @@
 			const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 			const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 			const layersAdded = sessionStorage.getItem('layersAdded');
+			const paintRainAdded = sessionStorage.getItem('paintRainAdded');
 			
 			function itemsAddedLoader() {	
 				//Add To Cart Functions
 			    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
-			    	|| colourGlassAdded === 'true' || layersAdded === 'true') {    	
+			    	|| colourGlassAdded === 'true' || layersAdded === 'true'
+			    	|| paintRainAdded === 'true') {    	
 					document.getElementById('cart-link-connected-layers').style.display = "none";
 					document.getElementById('cart-link-full-layers').style.display = "inline-block";		
 			 	}	
 			}
-			document.addEventListener('DOMContentLoaded', itemsAddedLoader);	
+			document.addEventListener('DOMContentLoaded', itemsAddedLoader);		
 			
 			function layersFunc() {
 			    if (layersAdded === 'true') {
@@ -152,7 +154,7 @@
 			 		document.getElementById('layers-added-layers').style.display = "block";
 			 		 		
 			 	}
-			    if (colourGlassPurchased === 'true') {	
+			    if (layersPurchased === 'true') {	
 			    	document.getElementById('layers-prices-before-layers').style.display = "none";
 			    	document.getElementById('layers-prices-after-layers').style.display = "block";
 			    	
@@ -222,7 +224,7 @@
 	<p id="slogan-layers">ART SELLS</p>
 	<div id="wallet-connected-div-layers" style="display: none;">
 		<hr id="connected-line-layers">
-		<p id="wallet-connected" >
+		<p id="wallet-connected-layers" >
 		WALLET CONNECTED</p>
 		<hr id="connected-line-layers">
 	</div>

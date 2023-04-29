@@ -64,6 +64,9 @@
 		
 		sessionStorage.removeItem('layersAdded');
 		sessionStorage.removeItem('layersPurchased');
+		
+		sessionStorage.removeItem('paintRainAdded');
+		sessionStorage.removeItem('paintRainPurchased');
 	}
 	document.addEventListener('DOMContentLoaded', resetPrototype);	
 

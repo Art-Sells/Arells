@@ -77,35 +77,102 @@
 
 
 <!-- Connect Wallet script below-->
-	function connectWallet() {
-		document.getElementById('connectWalletBuy').style.display = "block";			
-		  
-	}	
-	function walletConnected() {
-		document.getElementById('connectWalletBuy').style.display = "none";
-		
-		document.getElementById('cart-link').style.display = "none";
-		document.getElementById('wallet-connected-div').style.display = "block";
-		
-		document.getElementById('cart-link-connected').style.display = "inline-block";
-		
-		document.getElementById('paint-rain-add-to-cart').style.display = "none";
-		document.getElementById('paint-rain-add-to-cart-connected').style.display = "block";
 
-	 
-	}	
+		function connectWallet() {
+			document.getElementById('connectWalletBuy').style.display = "block";			
+			  
+		}	
+		function walletConnected() {
+			document.getElementById('connectWalletBuy').style.display = "none";
+			
+			document.getElementById('cart-link-paint-rain').style.display = "none";
+			document.getElementById('wallet-connected-div-paint-rain').style.display = "block";
+			
+			document.getElementById('cart-link-connected-paint-rain').style.display = "inline-block";
+			
+			document.getElementById('paint-rain-add-to-cart-paint-rain').style.display = "none";
+			document.getElementById('paint-rain-add-to-cart-connected-paint-rain').style.display = "block";
+		
+			sessionStorage.setItem('walletConnectedSession', 'true'); 
+		}	
+		
+		const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');
+		
+		function walletConnectedLoader() {	
+		    
+			//Add To Cart Functions
+		    if (walletConnectedSession === 'true') {				
+				document.getElementById('cart-link-paint-rain').style.display = "none";
+				document.getElementById('cart-link-connected-paint-rain').style.display = "inline-block";
+				
+				document.getElementById('wallet-connected-div-paint-rain').style.display = "block";
+				
+				document.getElementById('paint-rain-add-to-cart-paint-rain').style.display = "none";
+				document.getElementById('paint-rain-add-to-cart-connected-paint-rain').style.display = "block";
+		 	}	
+		}
+		document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
+		
 <!-- Connect Wallet script above-->
 
 
 <!--  Add To Cart script below-->
 
-	function addPaintRainToCart() {
-		document.getElementById('paint-rain-add-to-cart-connected').style.display = "none";
-		document.getElementById('paint-rain-added').style.display = "block";
-		  
-	}
-	
+		function addPaintRainToCart() {
+			document.getElementById('paint-rain-add-to-cart-connected-paint-rain').style.display = "none";
+			document.getElementById('paint-rain-added-paint-rain').style.display = "block";
+			
+			//cart functions
+			sessionStorage.setItem('paintRainAdded', 'true');
+		}
+
 <!--  Add To Cart script up-->	
+
+<!-- Added/Completed-Purchase script/s down-->
+
+		const paintRainPurchased = sessionStorage.getItem('paintRainPurchased');
+		
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+		const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+		const layersAdded = sessionStorage.getItem('layersAdded');
+		const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+		
+		function itemsAddedLoader() {	
+			//Add To Cart Functions
+		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
+		    	|| colourGlassAdded === 'true' || layersAdded === 'true'
+		    	|| paintRainAdded === 'true') {    	
+				document.getElementById('cart-link-connected-layers').style.display = "none";
+				document.getElementById('cart-link-full-layers').style.display = "inline-block";		
+		 	}	
+		}
+		document.addEventListener('DOMContentLoaded', itemsAddedLoader);	
+		
+		function paintRainFunc() {
+		    if (paintRainAdded === 'true') {
+				document.getElementById('paint-rain-add-to-cart-paint-rain').style.display = "none";
+		 		document.getElementById('paint-rain-add-to-cart-connected-paint-rain').style.display = "none";
+		 		document.getElementById('paint-rain-added-paint-rain').style.display = "block";
+		 		 		
+		 	}
+		    if (paintRainPurchased === 'true') {	
+		    	document.getElementById('paint-rain-prices-before-paint-rain').style.display = "none";
+		    	document.getElementById('paint-rain-prices-after-paint-rain').style.display = "block";
+		    	
+		    	document.getElementById('owned-by-creator-paint-rain').style.display = "none";
+		    	document.getElementById('owned-by-buyer-paint-rain').style.display = "block";
+			
+				document.getElementById('paint-rain-add-to-cart-connected-paint-rain').style.display = "none";
+				document.getElementById('paint-rain-add-to-cart-paint-rain').style.display = "none";
+				document.getElementById('paint-rain-added-paint-rain').style.display = "none";
+				document.getElementById('paint-rain-collected-paint-rain').style.display = "block";
+				
+		    }
+		}
+		document.addEventListener('DOMContentLoaded', paintRainFunc);	
+
+<!-- Added/Completed-Purchase script/s up-->
 			
 		
 		</script>	
@@ -139,80 +206,80 @@
 		</div>	
 	<!-- Modal/s above -->	
 
-	<div id="header">
+	<div id="header-paint-rain">
 	
 	<!-- Change below link after test -->
-		<a id="icon-link" href="/test">
-			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-paint-rain" href="/test">
+			<img id="arells-icon-paint-rain" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<button id="cart-link-paint-rain" onClick="connectWallet()" style="display: inline-block;">
+			<img id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
-		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<a id="cart-link-connected-paint-rain" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>
-		<a id="cart-link-full" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon-full" src="/icons&images/prototype/shopping-cart-full.png"/>
+		<a id="cart-link-full-paint-rain" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-full-paint-rain" src="/icons&images/prototype/shopping-cart-full.png"/>
 		</a>			
 	</div>
-	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
-	<div id="wallet-connected-div" style="display: none;">
-		<hr id="connected-line">
-		<p id="wallet-connected" >
+	<img id="word-logo-paint-rain" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-paint-rain">ART SELLS</p>
+	<div id="wallet-connected-div-paint-rain" style="display: none;">
+		<hr id="connected-line-paint-rain">
+		<p id="wallet-connected-paint-rain" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line">
+		<hr id="connected-line-paint-rain">
 	</div>
 
   	<div id="paint-rain">
-  		<img id="photo" src="/icons&images/prototype/6.jpg"/>
-  		<h3 id="name">Paint Rain</h3> 
-  		<button id="copy-link"
+  		<img id="photo-paint-rain" src="/icons&images/prototype/6.jpg"/>
+  		<h3 id="name-paint-rain">Paint Rain</h3> 
+  		<button id="copy-link-paint-rain"
 		onClick="copyLink()">
-			<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+			<img id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
 			COPY LINK
 		</button>	
-     	<div id="created-by">
-     		<p id="creator-owner-desc">Created By</p>
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="created-by-paint-rain">
+     		<p id="creator-owner-desc-paint-rain">Created By</p>
+     		<a id="creator-owner-link-paint-rain" href="/prototype-seller-created-test">
      			Abstract Kadabra
      		</a>
      	</div>
-     	<div id="owned-by-creator" style="display: block;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="owned-by-creator-paint-rain" style="display: block;">
+     		<p id="creator-owner-desc-paint-rain">Owned By</p> 
+     		<a id="creator-owner-link-paint-rain" href="/prototype-seller-created-test">
      			Abstract Kadabra</a>
      	</div>
-     	<div id="owned-by-buyer" style="display: none;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-buyer-collected-test">
+     	<div id="owned-by-buyer-paint-rain" style="display: none;">
+     		<p id="creator-owner-desc-paint-rain">Owned By</p> 
+     		<a id="creator-owner-link-paint-rain" href="/prototype-buyer-collected-test">
      			0x71C7656E...
      		</a>
      	</div>
-     	<hr id="line">
-		<div id="paint-rain-prices-before" style="display: block;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-paint-rain-before">$600,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-paint-rain-before">$12,000</p>
+     	<hr id="line-paint-rain">
+		<div id="paint-rain-prices-before-paint-rain" style="display: block;">
+	  		<p id="PAP-paint-rain">Price After Purchase</p>
+	  		<p id="PAP-paint-rain-before-paint-rain">$600,000</p>
+	  		<hr id="priceline-paint-rain">
+	  		<p id="yourprice-paint-rain">Price</p>
+	     	<p id="price-paint-rain-before-paint-rain">$12,000</p>
      	</div>
-     	<div id="paint-rain-prices-after" style="display: none;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-paint-rain-after">$30,000,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-paint-rain-after">$600,000</p>
+     	<div id="paint-rain-prices-after-paint-rain" style="display: none;">
+	  		<p id="PAP-paint-rain">Price After Purchase</p>
+	  		<p id="PAP-paint-rain-after-paint-rain">$30,000,000</p>
+	  		<hr id="priceline-paint-rain">
+	  		<p id="yourprice-paint-rain">Price</p>
+	     	<p id="price-paint-rain-after-paint-rain">$600,000</p>
      	</div>
-    	<button id="paint-rain-add-to-cart" onClick="connectWallet()"
+    	<button id="paint-rain-add-to-cart-paint-rain" onClick="connectWallet()"
     		style="display: block;">
     		ADD TO CART</button>
-    	<button id="paint-rain-add-to-cart-connected" onClick="addPaintRainToCart()"
+    	<button id="paint-rain-add-to-cart-connected-paint-rain" onClick="addPaintRainToCart()"
     		style="display: none;">
     		ADD TO CART</button>
-    	<button id="paint-rain-added" style="display: none;">
+    	<button id="paint-rain-added-paint-rain" style="display: none;">
     		ADDED</button>	
-    	<button id="paint-rain-collected" style="display: none;">
+    	<button id="paint-rain-collected-paint-rain" style="display: none;">
     		COLLECTED</button>				     	
     </div>
 

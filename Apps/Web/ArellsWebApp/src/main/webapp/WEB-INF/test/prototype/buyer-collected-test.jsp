@@ -119,16 +119,18 @@
 		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 		const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 		const layersAdded = sessionStorage.getItem('layersAdded');
+		const paintRainAdded = sessionStorage.getItem('paintRainAdded');
 		
 		function itemsAddedLoader() {	
 			//Add To Cart Functions
 		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
-		    	|| colourGlassAdded === 'true' || layersAdded == 'true') {    	
-				document.getElementById('cart-link-connected-buyer-collected').style.display = "none";
-				document.getElementById('cart-link-full-buyer-collected').style.display = "inline-block";		
+		    	|| colourGlassAdded === 'true' || layersAdded === 'true'
+		    	|| paintRainAdded === 'true') {    	
+				document.getElementById('cart-link-connected-layers').style.display = "none";
+				document.getElementById('cart-link-full-layers').style.display = "inline-block";		
 		 	}	
 		}
-		document.addEventListener('DOMContentLoaded', itemsAddedLoader);
+		document.addEventListener('DOMContentLoaded', itemsAddedLoader);	
 
 		const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
 		function blueOrangePurchasedLoader(){	
@@ -170,18 +172,31 @@
 		}
 		document.addEventListener('DOMContentLoaded', colourGlassPurchasedLoader);
 		
-		const layersPurchased = sessionStorage.getItem('colourGlassPurchased');
+		const layersPurchased = sessionStorage.getItem('layersPurchased');
 		function layersPurchasedLoader(){		
 
 		    if (layersPurchased === 'true') {			
 		    	document.getElementById('no-art-buyer-collected').style.display = "none";
 		    	
 		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
-				document.getElementById('colour-glass-buyer-collected').style.display = "flex";
+				document.getElementById('layers-buyer-collected').style.display = "flex";
 		    }	
 	
 		}
 		document.addEventListener('DOMContentLoaded', layersPurchasedLoader);
+		
+		const paintRainPurchased = sessionStorage.getItem('paintRainPurchased');
+		function paintRainPurchasedLoader(){		
+
+		    if (paintRainPurchased === 'true') {			
+		    	document.getElementById('no-art-buyer-collected').style.display = "none";
+		    	
+		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
+				document.getElementById('paint-rain-buyer-collected').style.display = "flex";
+		    }	
+	
+		}
+		document.addEventListener('DOMContentLoaded', paintRainPurchasedLoader);		
 
 
 <!-- Added/Completed-Purchase script/s up-->
@@ -312,7 +327,7 @@
 		    </div>
 		  	<div id="layers-buyer-collected" style="display: none;">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-layers-test-buyer-collected" target="_self" id="photo-link-buyer-collected">
+		  		<a href="/prototype-layers-test" target="_self" id="photo-link-buyer-collected">
 		  			<img id="photo-buyer-collected" src="/icons&images/prototype/4.jpg"/>
 		  		</a>
 		  		<div id="prices-buyer-collected">
