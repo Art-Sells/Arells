@@ -9,6 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="css/test/prototype/images/blue-orange-test.css">	
 		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/copiedlink-test.css" />	
 		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/connect-wallet-test.css" />
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/coming-soon-test.css" />
 			
 		<meta charset="UTF-8">
 		
@@ -66,12 +67,17 @@
 			  // Remove the temporary input element
 			  document.body.removeChild(input);
 			  
-			}	
-			
-			
+			}		
 			function closeCopiedLink() {
 				document.getElementById('copiedLink').style.display = "none";
-			}			
+			}	
+			
+			function comingSoon() {
+				  document.getElementById('comingSoon').style.display = "block";			  
+			}	
+			function closeComingSoon() {
+				document.getElementById('comingSoon').style.display = "none";
+			}				
 <!-- Modal script above-->	
 
 
@@ -207,6 +213,14 @@
 		    </button>		
 		  </div>
 		</div>	
+		
+		<div id="comingSoon" style="display: none;">
+		  <div class="modal-content">
+			<p>COMING SOON</p>
+	    	<button class="close"
+		    	onClick="closeComingSoon()">OK</button>	
+		  </div>
+		</div>		
 	<!-- Modal/s above -->	
 
 	<div id="header-blue-orange">
@@ -286,7 +300,30 @@
     	<button id="blue-orange-added-blue-orange" style="display: none;">
     		ADDED</button>	
     	<button id="blue-orange-collected-blue-orange" style="display: none;">
-    		COLLECTED</button>				     	
+    		COLLECTED</button>
+    		
+    	<div id="fingerprints">
+    		<p id="digital-fingerprints">DIGITAL FINGERPRINTS</p>
+    		<span>
+		  		<button id="fingerprints-button"
+				onClick="comingSoon()">
+					<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+				</button>	
+    		</span>
+    		<span>
+		  		<button id="fingerprints-button"
+				onClick="comingSoon()">
+					<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+				</button>	
+    		</span>
+    		<span>
+		  		<button id="fingerprints-button"
+				onClick="comingSoon()">
+					<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+				</button>	
+    		</span>
+    	</div>	    		
+    						     	
     </div>
 		<p id="prototype">PROTOTYPE</p>
 </body>

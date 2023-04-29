@@ -9,6 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="css/test/prototype/images/colour-glass-test.css">	
 		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/copiedlink-test.css" />	
 		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/connect-wallet-test.css" />
+		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/coming-soon-test.css" />		
 			
 		<meta charset="UTF-8">
 		
@@ -71,7 +72,16 @@
 			
 			function closeCopiedLink() {
 				document.getElementById('copiedLink').style.display = "none";
-			}			
+			}
+			
+			
+			function comingSoon() {
+				  document.getElementById('comingSoon').style.display = "block";			
+				  
+			}	
+			function closeComingSoon() {
+				document.getElementById('comingSoon').style.display = "none";
+			}				
 <!-- Modal script above-->	
 
 
@@ -206,6 +216,14 @@
 		    </button>		
 		  </div>
 		</div>	
+		
+		<div id="comingSoon" style="display: none;">
+		  <div class="modal-content">
+			<p>COMING SOON</p>
+	    	<button class="close"
+		    	onClick="closeComingSoon()">OK</button>	
+		  </div>
+		</div>			
 	<!-- Modal/s above -->	
 
 	<div id="header-colour-glass">
@@ -285,7 +303,30 @@
     	<button id="colour-glass-added-colour-glass" style="display: none;">
     		ADDED</button>	
     	<button id="colour-glass-collected-colour-glass" style="display: none;">
-    		COLLECTED</button>				     	
+    		COLLECTED</button>	
+    		
+      	<div id="fingerprints">
+    		<p id="digital-fingerprints">DIGITAL FINGERPRINTS</p>
+    		<span>
+		  		<button id="fingerprints-button"
+				onClick="comingSoon()">
+					<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+				</button>	
+    		</span>
+    		<span>
+		  		<button id="fingerprints-button"
+				onClick="comingSoon()">
+					<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+				</button>	
+    		</span>
+    		<span>
+		  		<button id="fingerprints-button"
+				onClick="comingSoon()">
+					<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+				</button>	
+    		</span>
+    	</div>	  		
+    					     	
     </div>
 		<p id="prototype">PROTOTYPE</p>
 </body>
