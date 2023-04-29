@@ -456,6 +456,7 @@
 	</div>
 	<img id="word-logo-seller-created" src="/icons&images/Arells-Logo-Ebony.png">	
 	<p id="slogan-seller-created">ART SELLS</p>
+	<p id="prototype">prototype</p>
 	<div id="wallet-connected-div-seller-created" style="display: none;">
 		<hr id="connected-line-seller-created">
 		<p id="wallet-connected-seller-created" >

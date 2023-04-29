@@ -93,6 +93,7 @@
 				
 				document.getElementById('cart-link-connected-seller-collected').style.display = "inline-block";
 			 
+				sessionStorage.setItem('walletConnectedSession', 'true'); 
 			}	
 			
 			const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');	
