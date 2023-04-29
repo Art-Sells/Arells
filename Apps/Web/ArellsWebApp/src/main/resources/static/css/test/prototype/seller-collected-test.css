@@ -201,14 +201,13 @@ body {
 	  margin-left: auto;
 	  margin-right: auto;
 	  width: 420px;
-	  margin-bottom: 15px;
+	  margin-bottom: 0px;
 	}
 	#share-div{
 		border-radius: 5px;
 		align-items: center;
-		box-shadow: 0px 5px 20px -6px silver; 
 		width: 185px;
-		height: 90px;
+		height: 80px;
 		padding-top: 10px;
 		padding-left: 10px;
 		padding-right: 10px;
@@ -256,7 +255,7 @@ body {
 				margin-right: 5px;
 			}
 	#profileline-seller-collected {
-	margin-top: 25px;
+	margin-top: 0px;
 	  background-color: black;
 	  border: none;
 	  height: 4px;
@@ -508,11 +507,11 @@ body {
 					width: 12px;
 				}
 		#profileline-seller-collected {
-		margin-top: 25px;
+		margin-top: -10px;
 		  width: 400px;
 		}	
 		#created-collected-seller-collected {
-			margin-top: 25px;
+			margin-top: 20px;
 			align-items: center;
 			  width: 400px;
 		}
