@@ -97,7 +97,6 @@
 			}	
 			
 			const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');
-			
 			function walletConnectedLoader() {	
 			    
 				//Add To Cart Functions

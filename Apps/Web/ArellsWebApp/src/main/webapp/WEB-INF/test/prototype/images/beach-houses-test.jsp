@@ -121,6 +121,9 @@
 			document.getElementById('beach-houses-add-to-cart-connected-beach-houses').style.display = "none";
 			document.getElementById('beach-houses-added-beach-houses').style.display = "block";
 			
+			document.getElementById('cart-link-connected-beach-houses').style.display = "none";			
+			document.getElementById('cart-link-full-beach-houses').style.display = "inline-block";			
+			
 			//cart functions
 			sessionStorage.setItem('beachHousesAdded', 'true');
 		}

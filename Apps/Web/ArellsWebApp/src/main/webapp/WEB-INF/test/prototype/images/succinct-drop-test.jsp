@@ -105,7 +105,7 @@
 				document.getElementById('cart-link-succinct-drop').style.display = "none";
 				document.getElementById('cart-link-connected-succinct-drop').style.display = "inline-block";
 				
-				document.getElementById('wallet-connected-div-paint-rain').style.display = "block";
+				document.getElementById('wallet-connected-div-succinct-drop').style.display = "block";
 				
 				document.getElementById('succinct-drop-add-to-cart-succinct-drop').style.display = "none";
 				document.getElementById('succinct-drop-add-to-cart-connected-succinct-drop').style.display = "block";
@@ -121,6 +121,9 @@
 		function addSuccinctDropToCart() {
 			document.getElementById('succinct-drop-add-to-cart-connected-succinct-drop').style.display = "none";
 			document.getElementById('succinct-drop-added-succinct-drop').style.display = "block";
+			
+			document.getElementById('cart-link-connected-succinct-drop').style.display = "none";					
+			document.getElementById('cart-link-full-succinct-drop').style.display = "inline-block";
 			
 			//cart functions
 			sessionStorage.setItem('succinctDropAdded', 'true');
@@ -207,80 +210,80 @@
 		</div>	
 	<!-- Modal/s above -->	
 
-	<div id="header">
+	<div id="header-succinct-drop">
 	
 	<!-- Change below link after test -->
-		<a id="icon-link" href="/test">
-			<img id="arells-icon" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+		<a id="icon-link-succinct-drop" href="/test">
+			<img id="arells-icon-succinct-drop" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 		</a>		
-		<button id="cart-link" onClick="connectWallet()" style="display: inline-block;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<button id="cart-link-succinct-drop" onClick="connectWallet()" style="display: inline-block;">
+			<img id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</button>
-		<a id="cart-link-connected" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon" src="/icons&images/prototype/shopping-cart-empty.png"/>
+		<a id="cart-link-connected-succinct-drop" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
 		</a>
-		<a id="cart-link-full" href="/prototype-cart-test" style="display: none;">
-			<img id="cart-icon-full" src="/icons&images/prototype/shopping-cart-full.png"/>
+		<a id="cart-link-full-succinct-drop" href="/prototype-cart-test" style="display: none;">
+			<img id="cart-icon-full-succinct-drop" src="/icons&images/prototype/shopping-cart-full.png"/>
 		</a>			
 	</div>
-	<img id="word-logo" src="/icons&images/Arells-Logo-Ebony.png">	
-	<p id="slogan">ART SELLS</p>
-	<div id="wallet-connected-div" style="display: none;">
-		<hr id="connected-line">
-		<p id="wallet-connected" >
+	<img id="word-logo-succinct-drop" src="/icons&images/Arells-Logo-Ebony.png">	
+	<p id="slogan-succinct-drop">ART SELLS</p>
+	<div id="wallet-connected-div-succinct-drop" style="display: none;">
+		<hr id="connected-line-succinct-drop">
+		<p id="wallet-connected-succinct-drop" >
 		WALLET CONNECTED</p>
-		<hr id="connected-line">
+		<hr id="connected-line-succinct-drop">
 	</div>
 
   	<div id="succinct-drop">
-  		<img id="photo" src="/icons&images/prototype/5.jpg"/>
-  		<h3 id="name">Succinct Drop</h3> 
-  		<button id="copy-link"
+  		<img id="photo-succinct-drop" src="/icons&images/prototype/5.jpg"/>
+  		<h3 id="name-succinct-drop">Succinct Drop</h3> 
+  		<button id="copy-link-succinct-drop"
 		onClick="copyLink()">
-			<img id="copy-link-icon" src="/icons&images/prototype/link.png"/>
+			<img id="copy-link-icon-succinct-drop" src="/icons&images/prototype/link.png"/>
 			COPY LINK
 		</button>	
-     	<div id="created-by">
-     		<p id="creator-owner-desc">Created By</p>
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="created-by-succinct-drop">
+     		<p id="creator-owner-desc-succinct-drop">Created By</p>
+     		<a id="creator-owner-link-succinct-drop" href="/prototype-seller-created-test">
      			Abstract Kadabra
      		</a>
      	</div>
-     	<div id="owned-by-creator" style="display: block;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-seller-created-test">
+     	<div id="owned-by-creator-succinct-drop" style="display: block;">
+     		<p id="creator-owner-desc-succinct-drop">Owned By</p> 
+     		<a id="creator-owner-link-succinct-drop" href="/prototype-seller-created-test">
      			Abstract Kadabra</a>
      	</div>
-     	<div id="owned-by-buyer" style="display: none;">
-     		<p id="creator-owner-desc">Owned By</p> 
-     		<a id="creator-owner-link" href="/prototype-buyer-collected-test">
+     	<div id="owned-by-buyer-succinct-drop" style="display: none;">
+     		<p id="creator-owner-desc-succinct-drop">Owned By</p> 
+     		<a id="creator-owner-link-succinct-drop" href="/prototype-buyer-collected-test">
      			0x71C7656E...
      		</a>
      	</div>
-     	<hr id="line">
-		<div id="succinct-drop-prices-before" style="display: block;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-succinct-drop-after">$5,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-succinct-drop-after">$100</p>
+     	<hr id="line-succinct-drop">
+		<div id="succinct-drop-prices-before-succinct-drop" style="display: block;">
+	  		<p id="PAP-succinct-drop">Price After Purchase</p>
+	  		<p id="PAP-succinct-drop-after-succinct-drop">$5,000</p>
+	  		<hr id="priceline-succinct-drop">
+	  		<p id="yourprice-succinct-drop">Price</p>
+	     	<p id="price-succinct-drop-after-succinct-drop">$100</p>
      	</div>
-     	<div id="succinct-drop-prices-after" style="display: none;">
-	  		<p id="PAP">Price After Purchase</p>
-	  		<p id="PAP-succinct-drop-before">$250,000</p>
-	  		<hr id="priceline">
-	  		<p id="yourprice">Price</p>
-	     	<p id="price-succinct-drop-before">$5,000</p>
+     	<div id="succinct-drop-prices-after-succinct-drop" style="display: none;">
+	  		<p id="PAP-succinct-drop">Price After Purchase</p>
+	  		<p id="PAP-succinct-drop-before-succinct-drop">$250,000</p>
+	  		<hr id="priceline-succinct-drop">
+	  		<p id="yourprice-succinct-drop">Price</p>
+	     	<p id="price-succinct-drop-before-succinct-drop">$5,000</p>
      	</div>
-    	<button id="succinct-drop-add-to-cart" onClick="connectWallet()"
+    	<button id="succinct-drop-add-to-cart-succinct-drop" onClick="connectWallet()"
     		style="display: block;">
     		ADD TO CART</button>
-    	<button id="succinct-drop-add-to-cart-connected" onClick="addSuccinctDropToCart()"
+    	<button id="succinct-drop-add-to-cart-connected-succinct-drop" onClick="addSuccinctDropToCart()"
     		style="display: none;">
     		ADD TO CART</button>
-    	<button id="succinct-drop-added" style="display: none;">
+    	<button id="succinct-drop-added-succinct-drop" style="display: none;">
     		ADDED</button>	
-    	<button id="succinct-drop-collected" style="display: none;">
+    	<button id="succinct-drop-collected-succinct-drop" style="display: none;">
     		COLLECTED</button>				     	
     </div>
 

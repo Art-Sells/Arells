@@ -122,6 +122,9 @@
 			document.getElementById('paint-rain-add-to-cart-connected-paint-rain').style.display = "none";
 			document.getElementById('paint-rain-added-paint-rain').style.display = "block";
 			
+			document.getElementById('cart-link-connected-paint-rain').style.display = "none";
+			document.getElementById('cart-link-full-paint-rain').style.display = "inline-block";			
+			
 			//cart functions
 			sessionStorage.setItem('paintRainAdded', 'true');
 		}

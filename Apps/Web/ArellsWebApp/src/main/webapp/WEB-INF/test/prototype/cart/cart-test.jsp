@@ -317,6 +317,14 @@
 				  document.getElementById('purchaseComplete').style.display = "block";
 			  }
 			  sessionStorage.removeItem('layersAdded');
+			  if (succinctDropAdded === 'true') {
+				  sessionStorage.setItem('succinctDropPurchased', 'true');
+		 			document.getElementById('cart-empty-cart').style.display = "block";
+		 			document.getElementById('cart-full-cart').style.display = "none";
+		 			document.getElementById('succinct-drop-cart').style.display = "none";
+				  document.getElementById('purchaseComplete').style.display = "block";
+			  }
+			  sessionStorage.removeItem('succinctDropAdded');
 			  if (paintRainAdded === 'true') {
 				  sessionStorage.setItem('paintRainPurchased', 'true');
 		 			document.getElementById('cart-empty-cart').style.display = "block";
@@ -486,6 +494,29 @@
 		
 		function removeSuccinctDrop() {
 			document.getElementById('succinct-drop-cart').style.display = "none";
+			
+	 	    royalties = (royalties - (royalty * succinctDrop));
+	 	    fees = (fees - (fee * succinctDrop));
+	 	    total = (total - succinctDrop);
+			
+			var royaltiesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(royalties);
+			var feesFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(fees);
+			var totalFormated = new Intl.NumberFormat('en-US',
+	 				{ minimumFractionDigits: 0,
+					  maximumFractionDigits: 0,}).format(total);
+			
+			document.getElementById('royalty-price-value-cart').innerHTML = 
+				royaltiesFormated;
+			document.getElementById('fee-price-value-cart').innerHTML = 
+				feesFormated;
+			document.getElementById('total-price-value-cart').innerHTML = 
+				totalFormated;			
+			
+			document.getElementById('succinct-drop-cart').style.display = "none";
 			sessionStorage.removeItem('succinctDropAdded');
 			if (document.getElementById('beach-houses-cart').style.display == "none"
 				&& document.getElementById('colour-glass-cart').style.display == "none" 
@@ -494,7 +525,9 @@
 				&& document.getElementById('paint-rain-cart').style.display == "none"){
 					document.getElementById('cart-full-cart').style.display = "none";
 					document.getElementById('cart-empty-cart').style.display = "block";
-				}			
+				}
+			sessionStorage.removeItem('succinctDropAdded');
+			location.reload();
 		}	
 		
 		function removePaintRain() {
@@ -677,7 +710,7 @@
 			  	<div id="succinct-drop-cart" style="display:none;">
 			  	<!-- Change below link after test -->
 		  			<a href="/prototype-succinct-drop-test" target="_self" id="photo-link-cart">
-			  			<img id="photo" src="/icons&images/prototype/5.jpg"/>
+			  			<img id="photo-cart" src="/icons&images/prototype/5.jpg"/>
 			  		</a>
 			  		<div id="prices-cart">
 					  	<div id="succinct-drop-prices-before-cart">

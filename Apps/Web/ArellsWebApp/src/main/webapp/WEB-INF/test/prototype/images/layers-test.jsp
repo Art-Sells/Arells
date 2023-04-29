@@ -120,6 +120,9 @@
 				document.getElementById('layers-add-to-cart-connected-layers').style.display = "none";
 				document.getElementById('layers-added-layers').style.display = "block";
 				
+				document.getElementById('cart-link-connected-layers').style.display = "none";				
+				document.getElementById('cart-link-full-layers').style.display = "inline-block";					
+				
 				//cart functions
 				sessionStorage.setItem('layersAdded', 'true');
 			}

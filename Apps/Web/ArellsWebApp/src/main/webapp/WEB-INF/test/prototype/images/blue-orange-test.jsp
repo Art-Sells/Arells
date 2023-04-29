@@ -121,6 +121,9 @@
 			document.getElementById('blue-orange-add-to-cart-connected-blue-orange').style.display = "none";
 			document.getElementById('blue-orange-added-blue-orange').style.display = "block";
 			
+			document.getElementById('cart-link-connected-blue-orange').style.display = "none";			
+			document.getElementById('cart-link-full-blue-orange').style.display = "inline-block";
+			
 			//cart functions
 			sessionStorage.setItem('blueOrangeAdded', 'true');
 		}

@@ -120,6 +120,9 @@
 		document.getElementById('colour-glass-add-to-cart-connected-colour-glass').style.display = "none";
 		document.getElementById('colour-glass-added-colour-glass').style.display = "block";
 		
+		document.getElementById('cart-link-connected-colour-glass').style.display = "none";		
+		document.getElementById('cart-link-full-colour-glass').style.display = "inline-block";
+		
 		//cart functions
 		sessionStorage.setItem('colourGlassAdded', 'true');
 	}

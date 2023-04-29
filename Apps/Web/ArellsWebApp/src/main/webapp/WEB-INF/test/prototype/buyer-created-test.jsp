@@ -76,7 +76,7 @@
 
 
 
-	<!-- Connect Wallet script below-->
+<!-- Connect Wallet script below-->
 	function connectWallet() {
 		document.getElementById('connectWalletBuy').style.display = "block";			
 		  
@@ -84,12 +84,15 @@
 	function walletConnected() {
 		document.getElementById('connectWalletBuy').style.display = "none";
 		
+		document.getElementById('wallet-connected-div-buyer-created').style.display = "block";
+		
 		document.getElementById('cart-link-buyer-created').style.display = "none";
 		document.getElementById('wallet-connected-div-buyer-created').style.display = "block";
 		
 		document.getElementById('cart-link-connected-buyer-created').style.display = "inline-block";
 	 
-	}	
+		sessionStorage.setItem('walletConnectedSession', 'true'); 
+	}		
 	
 	const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');	
 	function walletConnectedLoader() {	
@@ -105,9 +108,9 @@
 	document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
 		
 	
-	<!-- Connect Wallet script above-->
+<!-- Connect Wallet script above-->
 	
-	<!-- Added/Completed-Purchase script/s down-->
+<!-- Added/Completed-Purchase script/s down-->
 
 	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
