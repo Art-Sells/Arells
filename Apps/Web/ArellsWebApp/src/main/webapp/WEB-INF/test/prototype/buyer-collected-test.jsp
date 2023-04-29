@@ -277,11 +277,13 @@
 	</div>	 
 	<h1 id="name-buyer-collected">Unnamed</h1>  
 	<p id="description-buyer-collected">Creator & Collector</p> 
-	<button id="copy-link-buyer-collected"
-		onClick="copyLink()">
-		<img id="copy-link-icon-buyer-collected" src="/icons&images/prototype/link.png"/>
-		COPY LINK</button>	
-	<br>
+	<div id="share-div">
+		<p id="share-div-desc">SHARE</p>
+		<button id="copy-link-buyer-collected"
+			onClick="copyLink()">
+			<img id="copy-link-icon-buyer-collected" src="/icons&images/prototype/link.png"/>
+			COPY LINK</button>	
+	</div>		
 	<hr id="profileline-buyer-collected">
 	<div id="created-collected-buyer-collected">
 		<!-- Change below link after test -->

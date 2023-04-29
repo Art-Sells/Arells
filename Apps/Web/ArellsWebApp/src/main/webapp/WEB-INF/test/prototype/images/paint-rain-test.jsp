@@ -238,11 +238,14 @@
   	<div id="paint-rain">
   		<img id="photo-paint-rain" src="/icons&images/prototype/6.jpg"/>
   		<h3 id="name-paint-rain">Paint Rain</h3> 
-  		<button id="copy-link-paint-rain"
-		onClick="copyLink()">
-			<img id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
-			COPY LINK
-		</button>	
+  		<div id="share-div">
+			<p id="share-div-desc">SHARE</p>		
+	  		<button id="copy-link-paint-rain"
+			onClick="copyLink()">
+				<img id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
+				COPY LINK
+			</button>	
+		</div>
      	<div id="created-by-paint-rain">
      		<p id="creator-owner-desc-paint-rain">Created By</p>
      		<a id="creator-owner-link-paint-rain" href="/prototype-seller-created-test">

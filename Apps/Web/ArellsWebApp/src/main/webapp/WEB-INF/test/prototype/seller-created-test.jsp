@@ -468,11 +468,13 @@
 	</div>	 
 	<h1 id="name-seller-created">Abstract Kadabra</h1>  
 	<p id="description-seller-created">Here rests life's abstractions captured in majestic endeavors.</p> 
-	<button id="copy-link-seller-created"
+	<div id="share-div">
+		<p id="share-div-desc">SHARE</p>
+		<button id="copy-link-seller-created"
 		onClick="copyLink()">
 		<img id="copy-link-icon-seller-created" src="/icons&images/prototype/link.png"/>
 		COPY LINK</button>	
-	<br>
+	</div>
 	<hr id="profileline-seller-created">
 	<div id="created-collected-seller-created">
 		<a id="created-seller-created">Created</a>	

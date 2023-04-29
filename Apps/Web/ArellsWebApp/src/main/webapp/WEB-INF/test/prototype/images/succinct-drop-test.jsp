@@ -238,11 +238,14 @@
   	<div id="succinct-drop">
   		<img id="photo-succinct-drop" src="/icons&images/prototype/5.jpg"/>
   		<h3 id="name-succinct-drop">Succinct Drop</h3> 
-  		<button id="copy-link-succinct-drop"
-		onClick="copyLink()">
-			<img id="copy-link-icon-succinct-drop" src="/icons&images/prototype/link.png"/>
-			COPY LINK
-		</button>	
+  		<div id="share-div">
+			<p id="share-div-desc">SHARE</p>
+	  		<button id="copy-link-succinct-drop"
+			onClick="copyLink()">
+				<img id="copy-link-icon-succinct-drop" src="/icons&images/prototype/link.png"/>
+				COPY LINK
+			</button>
+		</div>	
      	<div id="created-by-succinct-drop">
      		<p id="creator-owner-desc-succinct-drop">Created By</p>
      		<a id="creator-owner-link-succinct-drop" href="/prototype-seller-created-test">

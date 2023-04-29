@@ -236,11 +236,13 @@
 	</div>	 
 	<h1 id="name-seller-collected">Abstract Kadabra</h1>  
 	<p id="description-seller-collected">Here rests life's abstractions captured in majestic endeavors.</p> 
-	<button id="copy-link-seller-collected"
-		onClick="copyLink()">
-		<img id="copy-link-icon-seller-collected" src="/icons&images/prototype/link.png"/>
-		COPY LINK</button>	
-	<br>
+	<div id="share-div">
+		<p id="share-div-desc">SHARE</p>
+		<button id="copy-link-seller-collected"
+			onClick="copyLink()">
+			<img id="copy-link-icon-seller-collected" src="/icons&images/prototype/link.png"/>
+			COPY LINK</button>	
+	</div>
 	<hr id="profileline-seller-collected">
 	<div id="created-collected-seller-collected">
 <!-- Change below link after test -->

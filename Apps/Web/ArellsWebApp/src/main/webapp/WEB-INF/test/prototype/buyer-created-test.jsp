@@ -238,11 +238,13 @@
 	</div>	 
 	<h1 id="name-buyer-created">Unnamed</h1>  
 	<p id="description-buyer-created">Creator & Collector</p> 
-	<button id="copy-link-buyer-created"
-		onClick="copyLink()">
-		<img id="copy-link-icon-buyer-created" src="/icons&images/prototype/link.png"/>
-		COPY LINK</button>	
-	<br>
+	<div id="share-div">
+		<p id="share-div-desc">SHARE</p>
+		<button id="copy-link-buyer-created"
+			onClick="copyLink()">
+			<img id="copy-link-icon-buyer-created" src="/icons&images/prototype/link.png"/>
+			COPY LINK</button>	
+	</div>
 	<hr id="profileline-buyer-created">
 	<div id="created-collected-buyer-created">
 		<a id="created-buyer-created">Created</a>	

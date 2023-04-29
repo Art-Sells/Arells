@@ -237,11 +237,14 @@
   	<div id="beach-houses">
   		<img id="photo-beach-houses" src="/icons&images/prototype/2.jpg"/>
   		<h3 id="name-beach-houses">Beach Houses</h3> 
-  		<button id="copy-link-beach-houses"
-		onClick="copyLink()">
-			<img id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
-			COPY LINK
-		</button>	
+  		<div id="share-div">
+			<p id="share-div-desc">SHARE</p>
+	  		<button id="copy-link-beach-houses"
+			onClick="copyLink()">
+				<img id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
+				COPY LINK
+			</button>	
+		</div>
      	<div id="created-by-beach-houses">
      		<p id="creator-owner-desc-beach-houses">Created By</p>
      		<a id="creator-owner-link-beach-houses" href="/prototype-seller-created-test">

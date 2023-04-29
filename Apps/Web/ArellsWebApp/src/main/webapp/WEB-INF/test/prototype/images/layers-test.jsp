@@ -236,11 +236,14 @@
   	<div id="layers">
   		<img id="photo-layers" src="/icons&images/prototype/4.jpg"/>
   		<h3 id="name-layers">Layers</h3> 
-  		<button id="copy-link-layers"
-		onClick="copyLink()">
-			<img id="copy-link-icon-layers" src="/icons&images/prototype/link.png"/>
-			COPY LINK
-		</button>	
+  		<div id="share-div">
+			<p id="share-div-desc">SHARE</p>
+	  		<button id="copy-link-layers"
+			onClick="copyLink()">
+				<img id="copy-link-icon-layers" src="/icons&images/prototype/link.png"/>
+				COPY LINK
+			</button>	
+		</div>
      	<div id="created-by-layers">
      		<p id="creator-owner-desc-layers">Created By</p>
      		<a id="creator-owner-link-layers" href="/prototype-seller-created-test">

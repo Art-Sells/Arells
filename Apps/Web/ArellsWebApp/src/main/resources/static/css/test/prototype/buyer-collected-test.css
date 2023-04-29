@@ -203,34 +203,58 @@ body {
 	  width: 420px;
 	  margin-bottom: 20px;
 	}
-	#copy-link-buyer-collected {
-	  text-decoration: none;
-	  color: white;
-	  font-weight: 200;
-	  font-size: 10px;
-	  padding-top: 15px;
-	  padding-bottom: 15px;
-	  padding-right: 15px;
-	  padding-left: 15px;	  
-	  border: none;
-	  letter-spacing: 2px;
-	  border-radius: 5px;
-	  border-width: 0px;
-	  width: 145px;
-	  opacity: 1;
-	  box-shadow: 0px 8px 12px -6px black;  
-		background: black;
-	}	  
-	#copy-link-buyer-collected:hover,
-	#copy-link-buyer-collected:focus {
-		  opacity: .4;
-		  transition: 1s;
-		  cursor: pointer;
-	}		
-		#copy-link-icon-buyer-collected{
-			width: 15px;
-			margin-right: 5px;
-		}
+	#share-div{
+		border-radius: 15px;
+		align-items: center;
+		box-shadow: 0px 5px 20px -6px silver; 
+		width: 185px;
+		height: 90px;
+		padding-top: 10px;
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-bottom: 10px;			
+		background: white;	
+		margin-left: auto;
+		margin-right: auto;	
+	}
+		#share-div-desc{
+		  color: black;
+		  font-weight: 600;
+		  font-size: 11px;	
+		  letter-spacing: 0px;
+		  margin-left: 0px;
+		  opacity: .3;	
+		  margin-bottom: 5px;
+		  margin-top: 10px;
+		}	
+		#copy-link-buyer-collected {
+		  text-decoration: none;
+		  color: white;
+		  font-weight: 200;
+		  font-size: 10px;
+		  padding-top: 15px;
+		  padding-bottom: 15px;
+		  padding-right: 15px;
+		  padding-left: 15px;	  
+		  border: none;
+		  letter-spacing: 2px;
+		  border-radius: 5px;
+		  border-width: 0px;
+		  width: 145px;
+		  opacity: 1;
+		  box-shadow: 0px 8px 12px -6px black;  
+			background: black;
+		}	  
+		#copy-link-buyer-collected:hover,
+		#copy-link-buyer-collected:focus {
+			  opacity: .4;
+			  transition: 1s;
+			  cursor: pointer;
+		}		
+			#copy-link-icon-buyer-collected{
+				width: 15px;
+				margin-right: 5px;
+			}
 	#profileline-buyer-collected {
 	margin-top: 25px;
 	  background-color: black;
@@ -556,20 +580,36 @@ body {
 		  font-size: 9pt;
 		  line-height: 15px;
 		  width: 200px;
-		}	  
-		#copy-link-buyer-collected {
-		  font-size: 8px;
-		  padding-top: 15px;
-		  padding-bottom: 15px;
-		  padding-right: 15px;
-		  padding-left: 15px;	  
-		  border: none;
-		  width: 120px;
-		  letter-spacing: 2px;
-		}	  	
-			#copy-link-icon-buyer-collected {
-				width: 12px;
-			}
+		}
+		#share-div{
+			width: 150px;
+			height: 80px;
+			padding-top: 10px;
+			padding-left: 10px;
+			padding-right: 10px;
+			padding-bottom: 10px;			
+		}
+			#share-div-desc{
+			  font-weight: 600;
+			  font-size: 10px;	
+			  letter-spacing: 0px;
+			  margin-left: 0px;
+			  margin-bottom: 5px;
+			  margin-top: 8px;
+			}				  
+			#copy-link-buyer-collected {
+			  font-size: 8px;
+			  padding-top: 15px;
+			  padding-bottom: 15px;
+			  padding-right: 15px;
+			  padding-left: 15px;	  
+			  border: none;
+			  width: 120px;
+			  letter-spacing: 2px;
+			}	  	
+				#copy-link-icon-buyer-collected {
+					width: 12px;
+				}
 		#profileline-buyer-collected {
 		margin-top: 20px;
 		  width: 400px;

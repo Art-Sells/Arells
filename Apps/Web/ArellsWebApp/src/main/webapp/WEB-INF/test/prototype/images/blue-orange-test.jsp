@@ -237,11 +237,14 @@
   	<div id="blue-orange">
   		<img id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
   		<h3 id="name-blue-orange">Blue Orange</h3> 
-  		<button id="copy-link-blue-orange"
-		onClick="copyLink()">
-			<img id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
-			COPY LINK
-		</button>	
+  		<div id="share-div">
+			<p id="share-div-desc">SHARE</p>
+	  		<button id="copy-link-blue-orange"
+			onClick="copyLink()">
+				<img id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
+				COPY LINK
+			</button>	
+		</div>
      	<div id="created-by-blue-orange">
      		<p id="creator-owner-desc-blue-orange">Created By</p>
      		<a id="creator-owner-link-blue-orange" href="/prototype-seller-created-test">

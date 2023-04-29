@@ -235,12 +235,15 @@
 
   	<div id="colour-glass">
   		<img id="photo-colour-glass" src="/icons&images/prototype/3.jpg"/>
-  		<h3 id="name-colour-glass">Colour Glass</h3> 
-  		<button id="copy-link-colour-glass"
-		onClick="copyLink()">
-			<img id="copy-link-icon-colour-glass" src="/icons&images/prototype/link.png"/>
-			COPY LINK
-		</button>	
+  		<h3 id="name-colour-glass">Colour Glass</h3>
+  		<div id="share-div">
+			<p id="share-div-desc">SHARE</p> 
+	  		<button id="copy-link-colour-glass"
+			onClick="copyLink()">
+				<img id="copy-link-icon-colour-glass" src="/icons&images/prototype/link.png"/>
+				COPY LINK
+			</button>	
+		</div>
      	<div id="created-by-colour-glass">
      		<p id="creator-owner-desc-colour-glass">Created By</p>
      		<a id="creator-owner-link-colour-glass" href="/prototype-seller-created-test">
