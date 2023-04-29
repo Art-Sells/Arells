@@ -188,10 +188,17 @@
 		//cart function
 		sessionStorage.setItem('layersAdded', 'true'); 		  
 	}
-	
+
+	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 	function addSuccinctDropToCart() {
 		document.getElementById('succinct-drop-add-to-cart-connected-seller-created').style.display = "none";
 		document.getElementById('succinct-drop-added-seller-created').style.display = "block";
+		
+		document.getElementById('cart-link-connected-seller-created').style.display = "none";			
+    	document.getElementById('cart-link-full-seller-created').style.display = "inline-block";		
+		
+		//cart function
+		sessionStorage.setItem('succinctDropAdded', 'true'); 			
 		  
 	}
 	
@@ -332,7 +339,32 @@
 	
 	
 	
-	//Succinct Add Here...
+	const succinctDropPurchased = sessionStorage.getItem('succinctDropPurchased');
+	
+	function succinctDropLoader() {	
+	    
+		//Add To Cart Functions
+	    if (succinctDropAdded === 'true') {    	
+			document.getElementById('cart-link-connected-seller-created').style.display = "none";
+			document.getElementById('cart-link-full-seller-created').style.display = "inline-block";
+	    	
+	 		document.getElementById('succinct-drop-add-to-cart-seller-created').style.display = "none";
+	 		document.getElementById('succinct-drop-add-to-cart-connected-seller-created').style.display = "none";
+	 		document.getElementById('succinct-drop-added-seller-created').style.display = "block";	 		
+	 	}	
+		
+	    //Purchased Function
+	    if (succinctDropPurchased === 'true') {  	    	
+	    	document.getElementById('succinct-drop-prices-before-seller-created').style.display = "none";
+	    	document.getElementById('succinct-drop-prices-after-seller-created').style.display = "block";
+		
+			document.getElementById('succinct-drop-add-to-cart-connected-seller-created').style.display = "none";
+			document.getElementById('succinct-drop-add-to-cart-seller-created').style.display = "none";
+			document.getElementById('succinct-drop-added-seller-created').style.display = "none";
+			document.getElementById('succinct-drop-collected-seller-created').style.display = "block";
+	    }
+	}
+	document.addEventListener('DOMContentLoaded', succinctDropLoader);	
 	
 	
 	

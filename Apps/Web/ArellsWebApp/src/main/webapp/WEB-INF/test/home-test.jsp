@@ -65,6 +65,9 @@
 		sessionStorage.removeItem('layersAdded');
 		sessionStorage.removeItem('layersPurchased');
 		
+		sessionStorage.removeItem('succinctDropAdded');
+		sessionStorage.removeItem('succinctDropPurchased');
+		
 		sessionStorage.removeItem('paintRainAdded');
 		sessionStorage.removeItem('paintRainPurchased');
 	}

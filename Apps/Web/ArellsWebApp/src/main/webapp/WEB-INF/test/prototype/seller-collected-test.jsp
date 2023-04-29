@@ -152,10 +152,20 @@
 			}
 			document.addEventListener('DOMContentLoaded', layersLoader);
 			
+			const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+			function succinctDropLoader() {	
+				//Add To Cart Functions
+			    if (succinctDropAdded === 'true') {    	
+					document.getElementById('cart-link-connected-seller-collected').style.display = "none";
+					document.getElementById('cart-link-full-seller-collected').style.display = "inline-block"; 		
+			 	}	
+			}
+			document.addEventListener('DOMContentLoaded', succinctDropLoader);
+			
 			const paintRainAdded = sessionStorage.getItem('paintRainAdded');
 			function paintRainLoader() {	
 				//Add To Cart Functions
-			    if (layersAdded === 'true') {    	
+			    if (paintRainAdded === 'true') {    	
 					document.getElementById('cart-link-connected-seller-collected').style.display = "none";
 					document.getElementById('cart-link-full-seller-collected').style.display = "inline-block"; 		
 			 	}	

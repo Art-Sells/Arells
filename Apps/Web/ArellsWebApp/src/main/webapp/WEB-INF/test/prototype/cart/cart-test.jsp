@@ -209,7 +209,37 @@
  		
  		
  		
- 		//Add Succinct Here...
+ 		//Succinct Drop
+		const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+ 		function succinctDropAddedLoader() {
+	 	    if (succinctDropAdded === 'true') {
+	 			document.getElementById('cart-empty-cart').style.display = "none";
+	 			document.getElementById('cart-full-cart').style.display = "block";
+	 			document.getElementById('succinct-drop-cart').style.display = "flex";
+
+		 	    royalties = (royalty * succinctDrop + royalties);
+		 	    fees = (fee * succinctDrop + fees);
+		 	    total = (total + succinctDrop);
+				
+				var royaltiesFormated = new Intl.NumberFormat('en-US',
+			 				{ minimumFractionDigits: 0,
+							  maximumFractionDigits: 0,}).format(royalties);
+				var feesFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(fees);
+				var totalFormated = new Intl.NumberFormat('en-US',
+		 				{ minimumFractionDigits: 0,
+						  maximumFractionDigits: 0,}).format(total);
+				
+				document.getElementById('royalty-price-value-cart').innerHTML = 
+					royaltiesFormated;
+				document.getElementById('fee-price-value-cart').innerHTML = 
+					feesFormated;
+				document.getElementById('total-price-value-cart').innerHTML = 
+					totalFormated;
+	 	    }
+ 		}
+ 		document.addEventListener('DOMContentLoaded', succinctDropAddedLoader);
  		
  		
  		

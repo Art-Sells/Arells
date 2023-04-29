@@ -77,35 +77,103 @@
 
 
 <!-- Connect Wallet script below-->
-	function connectWallet() {
-		document.getElementById('connectWalletBuy').style.display = "block";			
-		  
-	}	
-	function walletConnected() {
-		document.getElementById('connectWalletBuy').style.display = "none";
-		
-		document.getElementById('cart-link').style.display = "none";
-		document.getElementById('wallet-connected-div').style.display = "block";
-		
-		document.getElementById('cart-link-connected').style.display = "inline-block";
-		
-		document.getElementById('succinct-drop-add-to-cart').style.display = "none";
-		document.getElementById('succinct-drop-add-to-cart-connected').style.display = "block";
 
-	 
-	}	
+		function connectWallet() {
+			document.getElementById('connectWalletBuy').style.display = "block";			
+			  
+		}	
+		function walletConnected() {
+			document.getElementById('connectWalletBuy').style.display = "none";
+			
+			document.getElementById('cart-link-succinct-drop').style.display = "none";
+			document.getElementById('wallet-connected-div-succinct-drop').style.display = "block";
+			
+			document.getElementById('cart-link-connected-succinct-drop').style.display = "inline-block";
+			
+			document.getElementById('succinct-drop-add-to-cart-succinct-drop').style.display = "none";
+			document.getElementById('succinct-drop-add-to-cart-connected-succinct-drop').style.display = "block";
+		
+			sessionStorage.setItem('walletConnectedSession', 'true'); 
+		}	
+		
+		const walletConnectedSession = sessionStorage.getItem('walletConnectedSession');
+		
+		function walletConnectedLoader() {	
+		    
+			//Add To Cart Functions
+		    if (walletConnectedSession === 'true') {				
+				document.getElementById('cart-link-succinct-drop').style.display = "none";
+				document.getElementById('cart-link-connected-succinct-drop').style.display = "inline-block";
+				
+				document.getElementById('wallet-connected-div-paint-rain').style.display = "block";
+				
+				document.getElementById('succinct-drop-add-to-cart-succinct-drop').style.display = "none";
+				document.getElementById('succinct-drop-add-to-cart-connected-succinct-drop').style.display = "block";
+		 	}	
+		}
+		document.addEventListener('DOMContentLoaded', walletConnectedLoader);	
+
 <!-- Connect Wallet script above-->
 
 
 <!--  Add To Cart script below-->
 
-	function addSuccinctDropToCart() {
-		document.getElementById('succinct-drop-add-to-cart-connected').style.display = "none";
-		document.getElementById('succinct-drop-added').style.display = "block";
-		  
-	}
-	
+		function addSuccinctDropToCart() {
+			document.getElementById('succinct-drop-add-to-cart-connected-succinct-drop').style.display = "none";
+			document.getElementById('succinct-drop-added-succinct-drop').style.display = "block";
+			
+			//cart functions
+			sessionStorage.setItem('succinctDropAdded', 'true');
+		}
+
 <!--  Add To Cart script up-->	
+
+<!-- Added/Completed-Purchase script/s down-->
+
+		const succinctDropPurchased = sessionStorage.getItem('succinctDropPurchased');
+		
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+		const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+		const layersAdded = sessionStorage.getItem('layersAdded');
+		const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+		const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+		
+		function itemsAddedLoader() {	
+			//Add To Cart Functions
+		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
+		    	|| colourGlassAdded === 'true' || layersAdded === 'true'
+		    	|| paintRainAdded === 'true' || succinctDropAdded == 'true') {    	
+				document.getElementById('cart-link-connected-succinct-drop').style.display = "none";
+				document.getElementById('cart-link-full-succinct-drop').style.display = "inline-block";		
+		 	}	
+		}
+		document.addEventListener('DOMContentLoaded', itemsAddedLoader);	
+		
+		function succinctDropFunc() {
+		    if (succinctDropAdded === 'true') {
+				document.getElementById('succinct-drop-add-to-cart-succinct-drop').style.display = "none";
+		 		document.getElementById('succinct-drop-add-to-cart-connected-succinct-drop').style.display = "none";
+		 		document.getElementById('succinct-drop-added-succinct-drop').style.display = "block";
+		 		 		
+		 	}
+		    if (succinctDropPurchased === 'true') {	
+		    	document.getElementById('succinct-drop-prices-before-succinct-drop').style.display = "none";
+		    	document.getElementById('succinct-drop-prices-after-succinct-drop').style.display = "block";
+		    	
+		    	document.getElementById('owned-by-creator-succinct-drop').style.display = "none";
+		    	document.getElementById('owned-by-buyer-succinct-drop').style.display = "block";
+			
+				document.getElementById('succinct-drop-add-to-cart-connected-succinct-drop').style.display = "none";
+				document.getElementById('succinct-drop-add-to-cart-succinct-drop').style.display = "none";
+				document.getElementById('succinct-drop-added-succinct-drop').style.display = "none";
+				document.getElementById('succinct-drop-collected-succinct-drop').style.display = "block";
+				
+		    }
+		}
+		document.addEventListener('DOMContentLoaded', succinctDropFunc);	
+
+<!-- Added/Completed-Purchase script/s up-->
 			
 		
 		</script>	

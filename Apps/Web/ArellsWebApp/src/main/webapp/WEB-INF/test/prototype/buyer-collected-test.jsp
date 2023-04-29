@@ -120,14 +120,15 @@
 		const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 		const layersAdded = sessionStorage.getItem('layersAdded');
 		const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+		const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 		
 		function itemsAddedLoader() {	
 			//Add To Cart Functions
 		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
 		    	|| colourGlassAdded === 'true' || layersAdded === 'true'
-		    	|| paintRainAdded === 'true') {    	
-				document.getElementById('cart-link-connected-layers').style.display = "none";
-				document.getElementById('cart-link-full-layers').style.display = "inline-block";		
+		    	|| paintRainAdded === 'true' || succinctDropAdded == 'true') {    	
+				document.getElementById('cart-link-connected-buyer-collected').style.display = "none";
+				document.getElementById('cart-link-full-buyer-collected').style.display = "inline-block";		
 		 	}	
 		}
 		document.addEventListener('DOMContentLoaded', itemsAddedLoader);	
@@ -184,6 +185,19 @@
 	
 		}
 		document.addEventListener('DOMContentLoaded', layersPurchasedLoader);
+		
+		const succinctDropPurchased = sessionStorage.getItem('succinctDropPurchased');
+		function succinctDropPurchasedLoader(){		
+
+		    if (succinctDropPurchased === 'true') {			
+		    	document.getElementById('no-art-buyer-collected').style.display = "none";
+		    	
+		    	document.getElementById('collected-items-buyer-collected').style.display = "block";
+				document.getElementById('succinct-drop-buyer-collected').style.display = "flex";
+		    }	
+	
+		}
+		document.addEventListener('DOMContentLoaded', succinctDropPurchasedLoader);			
 		
 		const paintRainPurchased = sessionStorage.getItem('paintRainPurchased');
 		function paintRainPurchasedLoader(){		

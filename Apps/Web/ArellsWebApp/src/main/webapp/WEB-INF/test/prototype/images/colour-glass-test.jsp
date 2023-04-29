@@ -135,17 +135,18 @@
 		const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 		const layersAdded = sessionStorage.getItem('layersAdded');
 		const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+		const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 		
 		function itemsAddedLoader() {	
 			//Add To Cart Functions
 		    if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
 		    	|| colourGlassAdded === 'true' || layersAdded === 'true'
-		    	|| paintRainAdded === 'true') {    	
-				document.getElementById('cart-link-connected-layers').style.display = "none";
-				document.getElementById('cart-link-full-layers').style.display = "inline-block";		
+		    	|| paintRainAdded === 'true' || succinctDropAdded == 'true') {    	
+				document.getElementById('cart-link-connected-colour-glass').style.display = "none";
+				document.getElementById('cart-link-full-colour-glass').style.display = "inline-block";		
 		 	}	
 		}
-		document.addEventListener('DOMContentLoaded', itemsAddedLoader);	
+		document.addEventListener('DOMContentLoaded', itemsAddedLoader);		
 		
 		function colourGlassFunc() {
 		    if (colourGlassAdded === 'true') {

@@ -113,6 +113,7 @@
 	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	const layersAdded = sessionStorage.getItem('layersAdded');
+	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
 	
 	function blueOrangeLoader() {
@@ -150,6 +151,15 @@
 	 	}	
 	}
 	document.addEventListener('DOMContentLoaded', layersLoader);
+	
+	function succinctDropLoader() {	 
+		//Add To Cart Functions
+	    if (succinctDropAdded === 'true') {    	
+			document.getElementById('cart-link-connected-buyer-created').style.display = "none";
+			document.getElementById('cart-link-full-buyer-created').style.display = "inline-block"; 		
+	 	}	
+	}
+	document.addEventListener('DOMContentLoaded', succinctDropLoader);
 	
 	function paintRainLoader() {	 
 		//Add To Cart Functions
