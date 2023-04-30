@@ -368,7 +368,7 @@ body {
 			  color: white;
 			  margin-left: auto;
 			  margin-right: auto;
-			  font-weight: 200;
+			  font-weight: 500;
 			  font-size: 11px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -394,7 +394,7 @@ body {
 			  margin-left: auto;
 			  margin-right: auto;
 			  color: white;
-			  font-weight: 200;
+			  font-weight: 500;
 			  font-size: 11px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -413,7 +413,7 @@ body {
 			  margin-left: auto;
 			  margin-right: auto;
 			  color: white;
-			  font-weight: 200;
+			  font-weight: 500;
 			  font-size: 11px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -480,7 +480,7 @@ body {
 			margin-left: 3px; 
 			font-weight: 500;
 			color: black;
-			opacity: .3;
+			opacity: .4;
 		}								
 			
 			
@@ -703,7 +703,6 @@ body {
 		}			
 		#succinct-drop-add-to-cart-succinct-drop, 
 		#succinct-drop-add-to-cart-connected-succinct-drop {
-			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -714,7 +713,6 @@ body {
 			  width: 120px;
 			}	  
 		 #succinct-drop-added-succinct-drop {
-			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -725,7 +723,6 @@ body {
 			  width: 120px;
 			}
 		#succinct-drop-collected-succinct-drop {
-			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;

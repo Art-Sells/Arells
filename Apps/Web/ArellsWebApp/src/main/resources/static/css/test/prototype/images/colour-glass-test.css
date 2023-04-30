@@ -368,7 +368,7 @@ body {
 			  color: white;
 			  margin-left: auto;
 			  margin-right: auto;
-			  font-weight: 200;
+			  font-weight: 500;
 			  font-size: 11px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -394,7 +394,7 @@ body {
 			  margin-left: auto;
 			  margin-right: auto;
 			  color: white;
-			  font-weight: 200;
+			  font-weight: 500;
 			  font-size: 11px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -413,7 +413,7 @@ body {
 			  margin-left: auto;
 			  margin-right: auto;
 			  color: white;
-			  font-weight: 200;
+			  font-weight: 500;
 			  font-size: 11px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -479,7 +479,7 @@ body {
 			margin-left: 3px; 
 			font-weight: 500;
 			color: black;
-			opacity: .3;
+			opacity: .4;
 		}							
 			
 			
@@ -702,7 +702,6 @@ body {
 		}			
 		#colour-glass-add-to-cart-colour-glass, 
 		#colour-glass-add-to-cart-connected-colour-glass {
-			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -713,7 +712,6 @@ body {
 			  width: 120px;
 			}	  
 		 #colour-glass-added-colour-glass {
-			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
@@ -724,7 +722,6 @@ body {
 			  width: 120px;
 			}	
 		#colour-glass-collected-colour-glass {
-			  font-weight: 200;
 			  font-size: 9px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;

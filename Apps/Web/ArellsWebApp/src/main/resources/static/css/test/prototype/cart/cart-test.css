@@ -196,7 +196,7 @@ body {
 			#purchase-cart {
 			  text-decoration: none;
 			  color: white;
-			  font-weight: 200;
+			  font-weight: 500;
 			  font-size: 11px;
 			  letter-spacing: 1px;
 			  padding-top: 20px;
@@ -390,7 +390,7 @@ body {
 			margin-left: 3px; 
 			font-weight: 500;
 			color: black;
-			opacity: .3;
+			opacity: .4;
 		}						
 			
 			

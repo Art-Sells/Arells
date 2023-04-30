@@ -229,7 +229,7 @@ body {
 		#copy-link-seller-collected {
 		  text-decoration: none;
 		  color: white;
-		  font-weight: 200;
+		  font-weight: 500;
 		  font-size: 10px;
 		  padding-top: 15px;
 		  padding-bottom: 15px;
@@ -348,7 +348,7 @@ body {
 			margin-left: 3px; 
 			font-weight: 500;
 			color: black;
-			opacity: .3;
+			opacity: .4;
 		}			
 			
 			
