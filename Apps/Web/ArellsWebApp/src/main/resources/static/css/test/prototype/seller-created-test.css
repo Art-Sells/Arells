@@ -728,7 +728,7 @@ body {
 			  letter-spacing: .5px;
 			}			
 	  #container-seller-created {
-	    width: 660px;
+	    width: 600px;
 	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	    margin-top: 20px;
 	  }
@@ -738,10 +738,10 @@ body {
 			align-items: center;
 			width: 130px;
 			height: 320px;
-			padding-top: 40px;
-			padding-left: 40px;
-			padding-right: 40px;
-			padding-bottom: 40px;			
+			padding-top: 30px;
+			padding-left: 30px;
+			padding-right: 30px;
+			padding-bottom: 30px;			
 		     
 		}
 		#photo-seller-created {
@@ -840,6 +840,6 @@ body {
 			  width: 300px;
 			}		
 		  #container-seller-created {
-		    width: 440px;
+		    width: 400px;
 		  }  
 }

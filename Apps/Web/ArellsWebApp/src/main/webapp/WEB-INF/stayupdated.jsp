@@ -7,7 +7,7 @@
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/stayupdated.css">	
-		<link rel="stylesheet" href="css/RWmodalani.css" />	
+		<link rel="stylesheet" href="css/stayupdated-modal.css" />	
 		
 		<meta charset="UTF-8">
 		
