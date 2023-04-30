@@ -53,10 +53,11 @@
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc)
                                                 
 ## Fully integrated App
-                                                
+                                                                                               
 - Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"... Test Ads, if no restrictions, keep (inform all users about new direction and why ["NFTs" have negative connotations, verbal expansion was necessary for the brand and users])!
 - Use GPT-4?
 - Heavy KYC/AML [USDC -to-bank- transfers only]
+- If someone buys an NFT before you (error message) 
 
 #### Seller-Created/Collected
 - Create Categories (General, Illustrations, etc)
