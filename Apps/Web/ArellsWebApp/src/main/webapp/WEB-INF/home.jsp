@@ -22,7 +22,7 @@
 				<!-- Change below link after test -->
 		<link rel="canonical" href="https://arells.com">
 		
-		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg">	
+		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
 		<meta property="og:title" content="Arells">
@@ -34,13 +34,49 @@
 		<meta property="og:image:height" content="400">
 		
 		<meta name="twitter:title" content="Art Sells">
-		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg">
+		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com">
 		<meta name="twitter:card" content="summary_large_image">
 		<meta name="twitter:description" content="Arells">
 		<meta name="description" content="Arells">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
+
+
+		<script>
+
+
+
+<!-- Reset Prototype script/s down-->
+
+	function resetPrototype() {
+		
+		sessionStorage.removeItem('walletConnectedSession'); 
+		
+		sessionStorage.removeItem('blueOrangeAdded');
+		sessionStorage.removeItem('blueOrangePurchased');
+		
+		sessionStorage.removeItem('beachHousesAdded');
+		sessionStorage.removeItem('beachHousesPurchased');
+		
+		sessionStorage.removeItem('colourGlassAdded');
+		sessionStorage.removeItem('colourGlassPurchased');
+		
+		sessionStorage.removeItem('layersAdded');
+		sessionStorage.removeItem('layersPurchased');
+		
+		sessionStorage.removeItem('succinctDropAdded');
+		sessionStorage.removeItem('succinctDropPurchased');
+		
+		sessionStorage.removeItem('paintRainAdded');
+		sessionStorage.removeItem('paintRainPurchased');
+	}
+	document.addEventListener('DOMContentLoaded', resetPrototype);	
+
+<!-- Added/Completed-Purchase script/s up-->
+			
+		
+		</script>	
 
 
 		<title>Arells</title>
@@ -55,7 +91,7 @@
 		
 			<br>
 			
-			<img id="word-logoo" src="/icons&images/Arells-Logo.png">	
+			<img id="word-logoo" src="/icons&images/Arells-Logo-Ebony.png">	
 			
 			<br>
 			
@@ -75,14 +111,20 @@
 			<a href="/stayupdated" 
 			id="updatess">
 	      		STAY UPDATED
-	        </a>
-		
+	        </a>			
+	        
+	        <div id="prototype-spacer">
+			<!-- Change below link after test -->
+			<a href="/prototype-seller-created" 
+			id="prototype">
+	      		PROTOTYPE
+	        </a>	        
+	        </div>
 		
 		</div>			
 		
 		
 		<div id="footerr">	
-<!--  			  <p id="follow-us">FOLLOW US</p> -->
 		  <a href="https://twitter.com/arellsofficial"
 		      target="_blank"
 		      id="contactt">

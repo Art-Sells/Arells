@@ -5,20 +5,18 @@ body {
   margin-left: 0%;
   margin-right: 0%;
   margin-bottom: 0%;
-	background: linear-gradient(90deg, 
+/* 	background: linear-gradient(90deg, 
 	rgba(255,0,0,1) 0%, 
 	rgba(178,179,2,1) 25%, 
 	rgba(1,187,1,1) 50%, 
 	rgba(33,0,255,1) 75%, 
 	rgba(187,1,158,1) 100%);    
      animation: gradients 20s ease infinite; 
-     background-size: 10000% 10000%;    
+     background-size: 10000% 10000%;     */
+     background-color: white;
 }
 
-#wrapper {
-	padding-top: 30px;    
-
-}
+/*
 @-webkit-keyframes gradients{
   0% {
     background-position: 0 50%;
@@ -46,35 +44,39 @@ body {
   body {
     -webkit-text-size-adjust: none;
   }
-}
+} */
+
+#wrapper {
+	padding-top: 30px; 
+	}   
 
 
 	#stay-updated {
-		color: white;
+		color: black;
 		margin-left: auto;	
 		margin-right: auto;	
-		font-weight: 800;	
-		font-size: 15px;
+		font-weight: 600;	
+		font-size: 12px;
 		margin-left: 10px;
 		letter-spacing: 10px;
 		word-spacing: 0px;
-		opacity: .8;			
-	}	
+		opacity: .5;			
+	}		
 
 	
 	#sign-up {
-		color: white;
+		color: black;
 		width: 500px;
 		height: 450px;
 		padding-top: 30px;
 		padding-left: 10px;
 		padding-right: 10px;
-		margin-top: 0px;
+		margin-top: 10px;
 		margin-left: auto;
 		margin-right: auto;
 		background: none;
 		border-radius: 15px;
-  		box-shadow: 0px 5px 25px -10px black;  				  	
+		box-shadow: 0px 5px 20px -6px silver; 			  	
 	}
 
 		#enter-content {
@@ -85,7 +87,7 @@ body {
 			font-size: 9px;
 			letter-spacing: 2px;
 			margin-left: 2px;
-			opacity: 1;
+			opacity: .8;
 		}
        	   input { 
        	   	    text-align: center;
@@ -110,7 +112,7 @@ body {
 			    cursor: pointer;
 			    outline: none;
 			    transition: 1s;
-       	   		opacity: .8;			    
+       	   		opacity: 1;			    
 			  }       	   
 		  .form-control:focus{
 		       border-width: 7px;
@@ -129,8 +131,8 @@ body {
 			  font-size: 11px;
 			  padding-top: 20px;
 			  padding-bottom: 20px;
-			  padding-right: 42px;
-			  padding-left: 45px;	  
+			  padding-right: 32px;
+			  padding-left: 35px;	  
 			  border: solid;
 			  letter-spacing: 3px;
 			  border-radius: 5px;
@@ -152,7 +154,7 @@ body {
 	}		
 
 		#contact {
-			opacity: .7;
+			opacity: .4;
 		}
 		#contact:hover,
 		#contact:focus {
@@ -179,7 +181,7 @@ body {
        	   		padding-right: 19px;       	   		
        	   		font-weight: 500;
        	   		font-size: 14px;
-       	   		width: 200px;
+       	   		width: 190px;
        	   		height: 15px;
 				letter-spacing: 1px;    	   		
        	   }			
