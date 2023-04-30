@@ -47,6 +47,8 @@
 #### MetaData Search Info (Google, etc): Use GPT4
  
 #### LinkTree Links.
+
+#### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc)
                                                 
 ## Fully integrated App
                                                 
