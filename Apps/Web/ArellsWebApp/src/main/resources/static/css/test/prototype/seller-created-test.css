@@ -229,7 +229,7 @@ body {
 		#copy-link-seller-created {
 		  text-decoration: none;
 		  color: white;
-		  font-weight: 200;
+		  font-weight: 500;
 		  font-size: 10px;
 		  padding-top: 15px;
 		  padding-bottom: 15px;
@@ -441,16 +441,12 @@ body {
 			}
 			#blue-orange-add-to-cart-seller-created, #beach-houses-add-to-cart-seller-created, 
 			#colour-glass-add-to-cart-seller-created, #layers-add-to-cart-seller-created, 
-			#succinct-drop-add-to-cart-seller-created, #paint-rain-add-to-cart-seller-created,
-			
-			#blue-orange-add-to-cart-connected-seller-created, #beach-houses-add-to-cart-connected-seller-created, 
-			#colour-glass-add-to-cart-connected-seller-created, #layers-add-to-cart-connected-seller-created, 
-			#succinct-drop-add-to-cart-connected-seller-created, #paint-rain-add-to-cart-connected-seller-created  {
+			#succinct-drop-add-to-cart-seller-created, #paint-rain-add-to-cart-seller-created {
 				  text-decoration: none;
 				  color: white;
 				  margin-left: auto;
 				  margin-right: auto;
-				  font-weight: 200;
+				  font-weight: 500;
 				  font-size: 11px;
 				  padding-top: 20px;
 				  padding-bottom: 20px;
@@ -472,7 +468,7 @@ body {
 				  color: white;
 				  margin-left: auto;
 				  margin-right: auto;
-				  font-weight: 200;
+				  font-weight: 500;
 				  font-size: 11px;
 				  padding-top: 20px;
 				  padding-bottom: 20px;
@@ -515,7 +511,7 @@ body {
 				  margin-left: auto;
 				  margin-right: auto;
 				  color: white;
-				  font-weight: 200;
+				  font-weight: 	500;
 				  font-size: 11px;
 				  padding-top: 20px;
 				  padding-bottom: 20px;
@@ -537,7 +533,7 @@ body {
 			margin-left: 3px; 
 			font-weight: 500;
 			color: black;
-			opacity: .3;
+			opacity: .4;
 		}		
 			
 			
@@ -786,7 +782,6 @@ body {
 			#blue-orange-add-to-cart-connected-seller-created, #beach-houses-add-to-cart-connected-seller-created, 
 			#colour-glass-add-to-cart-connected-seller-created, #layers-add-to-cart-connected-seller-created, 
 			#succinct-drop-add-to-cart-connected-seller-created, #paint-rain-add-to-cart-connected-seller-created {
-				  font-weight: 200;
 				  font-size: 9px;
 				  padding-top: 20px;
 				  padding-bottom: 20px;
@@ -803,7 +798,6 @@ body {
 			#blue-orange-collected-seller-created, #beach-houses-collected-seller-created, 
 			#colour-glass-collected-seller-created, #layers-collected-seller-created, 
 			#succinct-drop-collected-seller-created, #paint-rain-collected-seller-created{
-				  font-weight: 200;
 				  font-size: 9px;
 				  padding-top: 20px;
 				  padding-bottom: 20px;
