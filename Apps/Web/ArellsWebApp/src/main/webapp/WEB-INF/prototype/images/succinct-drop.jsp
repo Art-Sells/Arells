@@ -265,18 +265,18 @@
 		</div>	
      	<div id="created-by-succinct-drop">
      		<p id="creator-owner-desc-succinct-drop">Created By</p>
-     		<a id="creator-owner-link-succinct-drop" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-succinct-drop" href="/prototype-seller-created">
      			Abstract Kadabra
      		</a>
      	</div>
      	<div id="owned-by-creator-succinct-drop" style="display: block;">
      		<p id="creator-owner-desc-succinct-drop">Owned By</p> 
-     		<a id="creator-owner-link-succinct-drop" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-succinct-drop" href="/prototype-seller-created">
      			Abstract Kadabra</a>
      	</div>
      	<div id="owned-by-buyer-succinct-drop" style="display: none;">
      		<p id="creator-owner-desc-succinct-drop">Owned By</p> 
-     		<a id="creator-owner-link-succinct-drop" href="/prototype-buyer-collected-test">
+     		<a id="creator-owner-link-succinct-drop" href="/prototype-buyer-collected">
      			0x71C7656E...
      		</a>
      	</div>

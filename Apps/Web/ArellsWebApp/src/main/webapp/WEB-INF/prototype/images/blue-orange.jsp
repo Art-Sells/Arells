@@ -261,18 +261,18 @@
 		</div>
      	<div id="created-by-blue-orange">
      		<p id="creator-owner-desc-blue-orange">Created By</p>
-     		<a id="creator-owner-link-blue-orange" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
      			Abstract Kadabra
      		</a>
      	</div>
      	<div id="owned-by-creator-blue-orange" style="display: block;">
      		<p id="creator-owner-desc-blue-orange">Owned By</p> 
-     		<a id="creator-owner-link-blue-orange" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
      			Abstract Kadabra</a>
      	</div>
      	<div id="owned-by-buyer-blue-orange" style="display: none;">
      		<p id="creator-owner-desc-blue-orange">Owned By</p> 
-     		<a id="creator-owner-link-blue-orange" href="/prototype-buyer-collected-test">
+     		<a id="creator-owner-link-blue-orange" href="/prototype-buyer-collected">
      			0x71C7656E...
      		</a>
      	</div>

@@ -483,7 +483,7 @@
 	<div id="container-seller-created">
 		  	<div id="blue-orange-seller-created">
 		  	<!-- Change below link after test -->
-		  		<a href="/prototype-blue-orange-test" target="_self" id="photo-link-seller-created">
+		  		<a href="/prototype-blue-orange" target="_self" id="photo-link-seller-created">
 		  			<img id="photo-seller-created" src="/icons&images/prototype/1.jpg"/>
 		  		</a>
 		  		<div id="blue-orange-prices-before-seller-created" style="display: block;">

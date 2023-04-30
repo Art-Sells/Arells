@@ -264,18 +264,18 @@
 		</div>
      	<div id="created-by-layers">
      		<p id="creator-owner-desc-layers">Created By</p>
-     		<a id="creator-owner-link-layers" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-layers" href="/prototype-seller-created">
      			Abstract Kadabra
      		</a>
      	</div>
      	<div id="owned-by-creator-layers" style="display: block;">
      		<p id="creator-owner-desc-layers">Owned By</p> 
-     		<a id="creator-owner-link-layers" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-layers" href="/prototype-seller-created">
      			Abstract Kadabra</a>
      	</div>
      	<div id="owned-by-buyer-layers" style="display: none;">
      		<p id="creator-owner-desc-layers">Owned By</p> 
-     		<a id="creator-owner-link-layers" href="/prototype-buyer-collected-test">
+     		<a id="creator-owner-link-layers" href="/prototype-buyer-collected">
      			0x71C7656E...
      		</a>
      	</div>

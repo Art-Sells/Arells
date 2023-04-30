@@ -263,18 +263,18 @@
 		</div>
      	<div id="created-by-beach-houses">
      		<p id="creator-owner-desc-beach-houses">Created By</p>
-     		<a id="creator-owner-link-beach-houses" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-beach-houses" href="/prototype-seller-created">
      			Abstract Kadabra
      		</a>
      	</div>
      	<div id="owned-by-creator-beach-houses" style="display: block;">
      		<p id="creator-owner-desc-beach-houses">Owned By</p> 
-     		<a id="creator-owner-link-beach-houses" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-beach-houses" href="/prototype-seller-created">
      			Abstract Kadabra</a>
      	</div>
      	<div id="owned-by-buyer-beach-houses" style="display: none;">
      		<p id="creator-owner-desc-beach-houses">Owned By</p> 
-     		<a id="creator-owner-link-beach-houses" href="/prototype-buyer-collected-test">
+     		<a id="creator-owner-link-beach-houses" href="/prototype-buyer-collected">
      			0x71C7656E...
      		</a>
      	</div>

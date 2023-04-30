@@ -580,7 +580,7 @@
 		  <div class="purchase-complete-content">
 			<p id="purchase-complete-desc"> PURCHASE COMPLETE</p>
 			<!-- Change below link after test -->
-	    	<a class="close-purchase-complete" href="/prototype-buyer-collected-test">
+	    	<a class="close-purchase-complete" href="/prototype-buyer-collected">
 	    		VIEW COLLECTION</a>	
 		  </div>
 		</div>	

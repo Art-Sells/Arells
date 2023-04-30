@@ -265,18 +265,18 @@
 		</div>
      	<div id="created-by-paint-rain">
      		<p id="creator-owner-desc-paint-rain">Created By</p>
-     		<a id="creator-owner-link-paint-rain" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-paint-rain" href="/prototype-seller-created">
      			Abstract Kadabra
      		</a>
      	</div>
      	<div id="owned-by-creator-paint-rain" style="display: block;">
      		<p id="creator-owner-desc-paint-rain">Owned By</p> 
-     		<a id="creator-owner-link-paint-rain" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-paint-rain" href="/prototype-seller-created">
      			Abstract Kadabra</a>
      	</div>
      	<div id="owned-by-buyer-paint-rain" style="display: none;">
      		<p id="creator-owner-desc-paint-rain">Owned By</p> 
-     		<a id="creator-owner-link-paint-rain" href="/prototype-buyer-collected-test">
+     		<a id="creator-owner-link-paint-rain" href="/prototype-buyer-collected">
      			0x71C7656E...
      		</a>
      	</div>

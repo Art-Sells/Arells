@@ -264,18 +264,18 @@
 		</div>
      	<div id="created-by-colour-glass">
      		<p id="creator-owner-desc-colour-glass">Created By</p>
-     		<a id="creator-owner-link-colour-glass" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-colour-glass" href="/prototype-seller-created">
      			Abstract Kadabra
      		</a>
      	</div>
      	<div id="owned-by-creator-colour-glass" style="display: block;">
      		<p id="creator-owner-desc-colour-glass">Owned By</p> 
-     		<a id="creator-owner-link-colour-glass" href="/prototype-seller-created-test">
+     		<a id="creator-owner-link-colour-glass" href="/prototype-seller-created">
      			Abstract Kadabra</a>
      	</div>
      	<div id="owned-by-buyer-colour-glass" style="display: none;">
      		<p id="creator-owner-desc-colour-glass">Owned By</p> 
-     		<a id="creator-owner-link-colour-glass" href="/prototype-buyer-collected-test">
+     		<a id="creator-owner-link-colour-glass" href="/prototype-buyer-collected">
      			0x71C7656E...
      		</a>
      	</div>
