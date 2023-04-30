@@ -6,7 +6,7 @@
 	<head>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/homer.css">	
+		<link rel="stylesheet" type="text/css" href="css/homers.css">	
 			
 		<meta charset="UTF-8">
 		
