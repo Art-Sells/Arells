@@ -3,6 +3,7 @@
 ## MVP
 
 - Create Separate js.Components Folder
+- Add <Test> under every href.
 
 #### Wallet: 
 - Coinbase/USDC Wallet only?
