@@ -8,6 +8,7 @@
 - Coinbase/USDC Wallet only?
 
 #### Profile
+- Images here render small pixels
 - Separate Divs for all hovering buttons.
 - Remove (wallet connected)
 - Register with Google/Apple/Facebook/Etc
