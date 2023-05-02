@@ -10,6 +10,7 @@
 - Coinbase/USDC Wallet only?
 
 #### Profile
+-- {Latest/Best Sellers [automatically loads latest]) <Maybe integrate in full app?
 - Images here render small pixels
 - Separate Divs for all hovering buttons.
 - Remove (wallet connected)
@@ -47,13 +48,13 @@
  5. Message (notifications) to seller: "Congratulations xxxx! Art Sold to xxxx for xxxx, new PAP: xxxx"
  6. If/Then messages corresponding to above messages. 
 
-#### MetaData Search Info (Google, etc): Use GPT4
+#### MetaData Search Info (Google [desktop search right image?, etc): Use GPT4
  
 #### LinkTree Links.
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc)
                                                 
-## Fully integrated App
+## Fully integrated App [Need Android Phone]
                                                                                                
 - Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"... Test Ads, if no restrictions, keep (inform all users about new direction and why ["NFTs" have negative connotations, verbal expansion was necessary for the brand and users])!
 - Use GPT-4?
