@@ -2,6 +2,7 @@
 
 ## MVP
 
+- Build with Ethereum (USDC)
 - Create Separate js.Components Folder
 - Add "Change" over every href.
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
@@ -55,7 +56,8 @@
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc)
                                                 
 ## Fully integrated App [Need Android Phone]
-                                                                                               
+                                             
+- Build with Polygon (USDC)                                                  
 - Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"... Test Ads, if no restrictions, keep (inform all users about new direction and why ["NFTs" have negative connotations, verbal expansion was necessary for the brand and users])!
 - Use GPT-4?
 - Heavy KYC/AML [USDC -to-bank- transfers only]
