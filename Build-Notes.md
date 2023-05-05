@@ -2,7 +2,7 @@
 
 ## MVP
 
-- Build with Ethereum (USDC)
+- Build with Polygon (USDC) [use GPT4 as help]
 - Create Separate js.Components Folder
 - Add "Change" over every href.
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
