@@ -4,6 +4,7 @@
 
 - Start with ETH/Coinbase (USDC) [use GPT4 as help]
 - Create Separate js.Components Folder
+- Ensure Each Page has differing MetaDescriptions
 - Add "Change" over every href.
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
 
@@ -48,8 +49,6 @@
  2. If Yes, then "Add-to-Cart", if No then "Collected" (On Seller)
  5. Message (notifications) to seller: "Congratulations xxxx! Art Sold to xxxx for xxxx, new PAP: xxxx"
  6. If/Then messages corresponding to above messages. 
-
-#### MetaData Search Info (Google [desktop search right image?, etc): Use GPT4
  
 #### LinkTree Links.
 
@@ -62,6 +61,7 @@
 - Use GPT-4?
 - Heavy KYC/AML [USDC -to-bank- transfers only]
 - If someone buys an NFT before you (error message) 
+- Differing Languages (After 2 Engineers)
 
 #### Seller-Created/Collected
 - Create Categories (General, Illustrations, etc)
