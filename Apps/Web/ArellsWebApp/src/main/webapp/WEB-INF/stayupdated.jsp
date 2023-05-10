@@ -4,6 +4,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
+	
+	<meta name="robots" content="noimageindex"/>
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/stayupdated.css">	
@@ -13,7 +15,7 @@
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
 		<meta name="title" content="Arells">
-		<meta name="description" content="Art Sells">
+		<meta name="description" content="Stay Updated">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
@@ -29,18 +31,17 @@
 		<meta property="og:title" content="Arells">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/stayupdated">
-		<meta property="og:description" content="Art Sells">
+		<meta property="og:description" content="Stay Updated">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Art Sells">
+		<meta name="twitter:title" content="Arells">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/stayupdated">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:description" content="Arells">
-		<meta name="description" content="Arells">
+		<meta name="twitter:description" content="Stay Updated">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 

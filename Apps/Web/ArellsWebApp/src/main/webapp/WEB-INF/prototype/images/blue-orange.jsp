@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+	<meta name="robots" content="noimageindex"/>
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/prototype/images/blue-orange.css">	
@@ -15,7 +16,7 @@
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
 		<meta name="title" content="Arells">
-		<meta name="description" content="Art Sells">
+		<meta name="description" content="Prototype Blue Orange">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
@@ -31,18 +32,17 @@
 		<meta property="og:title" content="Arells">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/prototype-blue-orange">
-		<meta property="og:description" content="Art Sells">
+		<meta property="og:description" content="Prototype Blue Orange">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Art Sells">
+		<meta name="twitter:title" content="Arells">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/prototype-blue-orange">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:description" content="Arells">
-		<meta name="description" content="Arells">
+		<meta name="twitter:description" content="Prototype Blue Orange">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 		<script>
