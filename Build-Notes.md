@@ -2,7 +2,9 @@
 
 ## MVP
 
+- Start with ETH/Coinbase (USDC) [use GPT4 as help]
 - Create Separate js.Components Folder
+- Ensure Each Page has differing MetaDescriptions
 - Add "Change" over every href.
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
 
@@ -10,6 +12,7 @@
 - Coinbase/USDC Wallet only?
 
 #### Profile
+-- {Latest/Best Sellers [automatically loads latest]) <Maybe integrate in full app?
 - Images here render small pixels
 - Separate Divs for all hovering buttons.
 - Remove (wallet connected)
@@ -46,19 +49,19 @@
  2. If Yes, then "Add-to-Cart", if No then "Collected" (On Seller)
  5. Message (notifications) to seller: "Congratulations xxxx! Art Sold to xxxx for xxxx, new PAP: xxxx"
  6. If/Then messages corresponding to above messages. 
-
-#### MetaData Search Info (Google, etc): Use GPT4
  
 #### LinkTree Links.
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc)
                                                 
-## Fully integrated App
-                                                                                               
+## Fully integrated App [Need Android Phone]
+                                             
+- Build with Polygon (USDC) [use GPT4]                                                  
 - Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"... Test Ads, if no restrictions, keep (inform all users about new direction and why ["NFTs" have negative connotations, verbal expansion was necessary for the brand and users])!
 - Use GPT-4?
 - Heavy KYC/AML [USDC -to-bank- transfers only]
 - If someone buys an NFT before you (error message) 
+- Differing Languages (After 2 Engineers)
 
 #### Seller-Created/Collected
 - Create Categories (General, Illustrations, etc)
