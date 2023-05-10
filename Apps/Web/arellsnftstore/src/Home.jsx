@@ -1,5 +1,9 @@
-
-import './App.css';
+import React from "react";
+// Change below link after test
+import './css/Home.css';
+import { Link } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+import Favicon from "react-favicon";
 
 const App = () => {
   return (

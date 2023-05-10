@@ -27,7 +27,6 @@ export default function ErrorPage() {
 		<meta name="author" content="Arells"/>
 		<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
 	
-		<link rel="icon" type="image/x-icon" href="/icons&images/Arells-Ico.ico" sizes="156x156"/>
 				{/*<!-- Change below link after test -->*/}
 		<link rel="canonical" href="https://arells.com"/>
 		
