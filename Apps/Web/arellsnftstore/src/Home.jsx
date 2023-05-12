@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Favicon from "react-favicon";
 
-const App = () => {
+const Home = () => {
   return (
     <>
-        <Favicon url="favicon.ico"/>
-        <HelmetProvider>	
+      <Favicon url="favicon.ico"/>
+      <HelmetProvider>	
                                                         
         <meta name="robots" content="noimageindex"/>
 		
@@ -66,9 +66,55 @@ const App = () => {
           </style>        
 
 
-        </HelmetProvider>      
+      </HelmetProvider>    
+        <div id="overlayy">
+		
+          <img id="arells-iconn" src="/icons&images/Arells-Icon.png"/>
+        
+          <br/>
+          
+          <img id="word-logoo" src="/icons&images/Arells-Logo-Ebony.png"/>	
+          
+          <br/>
+          
+          <p id="slogann">ART SELLS</p>
+          
+          <hr id="black-liner"/>
+          
+          <p id="descriptioner">
+            AN NFT STORE THAT FINANCIALLY EMPOWERS ARTISTS
+          </p>
+          
+          <hr id="black-liner"/>
+          
+          <p id="coming-soonn">COMING SOON</p>
+      
+          {/*<!-- Change below link after test -->*/}
+          <a href="/stayupdated" 
+          id="updatess">
+                STAY UPDATED
+          </a>			
+          
+          <div id="prototype-spacer">
+            {/*<!-- Change below link after test -->*/}
+            <a href="/prototype-seller-created" 
+            id="prototype">
+                  PROTOTYPE
+            </a>	        
+          </div>
+      
+        </div>		
+      
+      
+        <div id="footerr">	
+          <a href="https://twitter.com/arellsofficial"
+              target="_blank"
+              id="contactt">
+              <img id="twitterr" src="/icons&images/Twitter.png"/>
+          </a>  		
+        </div>          
     </>
   );
 }
 
-export default App;
+export default Home;
