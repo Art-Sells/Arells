@@ -7,7 +7,7 @@
 	<meta name="robots" content="noimageindex"/>
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/prototype/seller-collected.css">	
+		<link rel="stylesheet" type="text/css" href="css/prototype/seller-collecteds.css">	
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/copiedlink.css" />	
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/connect-wallet.css" />
 			
