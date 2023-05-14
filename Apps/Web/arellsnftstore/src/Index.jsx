@@ -14,7 +14,6 @@ const Home = () => {
         <meta name="robots" content="noimageindex"/>
 		
         {/*<!-- Change below links after test -->*/}
-          <link rel="stylesheet" type="text/css" href="css/homers.css"/>	
             
           <meta charset="UTF-8"/>
 
