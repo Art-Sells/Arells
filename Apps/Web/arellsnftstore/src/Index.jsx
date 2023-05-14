@@ -92,7 +92,7 @@ const Home = () => {
           {/*<!-- Change below link after test -->*/}
           <a href="/stayupdated" 
           id="updatess">
-                STAY UPDATED
+                STAY UPDATEDn
           </a>			
           
           <div id="prototype-spacer">
