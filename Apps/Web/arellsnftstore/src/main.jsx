@@ -6,8 +6,8 @@ import {
 } from "react-router-dom";
 
 //Main components
-import Index from "./index.jsx";
-import ErrorPage from "./error-page.jsx";
+import Index from "index.jsx";
+import ErrorPage from "error-page.jsx";
 
 //Testing components
 // import HomeTest from "./test/HomeTest.jsx";

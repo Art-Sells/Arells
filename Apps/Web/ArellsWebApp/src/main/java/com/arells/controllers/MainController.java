@@ -15,7 +15,7 @@ public class MainController {
 
 	@GetMapping("")
 	public String home() {
-		return "home.jsp";
+		return "homer.jsp";
 	}
 	
 	@GetMapping("/stayupdated")
