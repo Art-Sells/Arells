@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 
 //Main components
-import Home from "./Home.jsx";
+import Index from "./Index.jsx";
 import ErrorPage from "./error-page.jsx";
 
 //Testing components
@@ -15,7 +15,7 @@ import ErrorPage from "./error-page.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home/>,
+    element: <Index/>,
     errorElement: <ErrorPage />,
   },
 
