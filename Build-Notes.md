@@ -56,7 +56,7 @@
                                                 
 ## Fully integrated App [Need Android Phone]
                                              
-- Build with Polygon (USDC) [use GPT4]                                                  
+- Build with Polygon or Near? (USDC) [use GPT4]                                                  
 - Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"... Test Ads, if no restrictions, keep (inform all users about new direction and why ["NFTs" have negative connotations, verbal expansion was necessary for the brand and users])!
 - Use GPT-4?
 - Heavy KYC/AML [USDC -to-bank- transfers only]
