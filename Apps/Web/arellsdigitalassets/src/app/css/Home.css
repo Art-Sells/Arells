@@ -1,5 +1,12 @@
 #overlayy {
 	  padding-top: 70px;
+	  text-align: center;
+	  font-family: Arial;
+	  margin-top: 0%;
+	  margin-left: 0%;
+	  margin-right: 0%;
+	  margin-bottom: 0%;
+		background: white;	  
   }
   @-webkit-keyframes gradients{
 	0% {
@@ -130,7 +137,7 @@
   #footerr {
 	  padding-top: 45px;
 	  padding-bottom: 80px;	
-  }	
+  	}	
 	  
 	  #contactt {
 		  opacity: .4;
@@ -190,7 +197,7 @@
 		  width: 27px;
 	  }	
 	  
-  }	
+}	
   
   
   

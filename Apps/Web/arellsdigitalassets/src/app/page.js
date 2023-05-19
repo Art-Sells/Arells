@@ -41,24 +41,7 @@ const Home = () => {
           <meta name="twitter:url" content="https://arells.com"/>
           <meta name="twitter:card" content="summary_large_image"/>
           <meta name="twitter:description" content="Art Sells"/>
-        {/*<!-- Above information for social media sharing and search-engine/browser optimization -->*/}	
-        
-        <title>Arells</title>
-
-        {/* body styling element */}
-          <style>
-          {`
-          body {
-            text-align: center;
-            font-family: Arial;
-            margin-top: 0%;
-            margin-left: 0%;
-            margin-right: 0%;
-            margin-bottom: 0%;
-              background: white;
-            }
-          `}
-          </style>        
+        {/*<!-- Above information for social media sharing and search-engine/browser optimization -->*/}	  
 
 
       </Head>    
@@ -97,17 +80,16 @@ const Home = () => {
                   PROTOTYPE
             </Link>	        
           </div>
+
+          <div id="footerr">	
+            <a href="https://twitter.com/arellsofficial"
+                target="_blank"
+                id="contactt">
+                <img id="twitterr" src="/icons&images/Twitter.png"/>
+            </a>  		
+          </div>             
       
-        </div>		
-      
-      
-        <div id="footerr">	
-          <a href="https://twitter.com/arellsofficial"
-              target="_blank"
-              id="contactt">
-              <img id="twitterr" src="/icons&images/Twitter.png"/>
-          </a>  		
-        </div>          
+        </div>		       
     </>
   );
 }
