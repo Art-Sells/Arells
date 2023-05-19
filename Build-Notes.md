@@ -75,3 +75,5 @@
 - Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
 
 #### Contact (discord/email/etc)
+                                                
+#### Custom 404 Page (Next.js)
