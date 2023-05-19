@@ -54,12 +54,12 @@
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc)
                                                 
-## Fully integrated App [Need Android Phone]
-                                             
+## Fully integrated Asset Store App [Need Android Phone] (After 2 Engineers)
+**NFTs = Digital Assets, Connect Wallet = Connect Store, Public Key = Address, Private Key = Key**
+
 - Build with Near? (USDC) [use GPT4]                                                  
-- Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"... Test Ads, if no restrictions, keep (inform all users about new direction and why ["NFTs" have negative connotations, verbal expansion was necessary for the brand and users])!
-- Use GPT-4?
-- Heavy KYC/AML [USDC -to-bank- transfers only]
+- Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"
+- Heavy KYC/AML [USDC -to-bank- transfers only] through Integrating Apple-Pay & Google Pay Credit Card with USDC "purchase".
 - If someone buys an NFT before you (error message) 
 - Differing Languages (After 2 Engineers)
 
