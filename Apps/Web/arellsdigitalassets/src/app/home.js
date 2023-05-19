@@ -1,7 +1,7 @@
 import React from "react";
 // Change below link after test
 import './css/Home.css';
-//import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { HelmetProvider } from 'react-helmet-async';
 import Favicon from "react-favicon";
 
