@@ -12,9 +12,6 @@ export default function ErrorPage() {
     <>
     <Favicon url="favicon.ico"/>
     <HelmetProvider>	
-              
-    {/*<!-- Change below links after test -->*/}
-		<link rel="stylesheet" type="text/css" href="css/homers.css"/>	
 			
 		<meta charset="UTF-8"/>
 		<meta name="robots" content="noimageindex"/>

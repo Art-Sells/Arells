@@ -1,0 +1,57 @@
+#welcome-section {
+  width: 100%;
+  padding-top: 20px;
+}
+
+#oops-img {
+  width: 20px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  opacity: 1;
+}
+#oops-img:hover {
+	cursor: pointer;
+	opacity: .2;
+	transition: 1s;
+}
+
+#oops {
+  font-size: 50pt;
+  font-weight: 900;
+  color: rgb(169, 166, 211);
+  opacity: 1;
+  letter-spacing: -10px;
+  margin-top: 5px;
+  margin-left: -10px;
+  z-index: 2;
+}
+
+#oops-name {
+  font-size: 12pt;
+  font-weight: 800;
+  color: rgb(169, 166, 211);
+  opacity: .7;
+  margin-top: -20px;
+  letter-spacing: -.5px;
+}
+
+#oops-message {
+  font-size: 10pt;
+  font-weight: 900;
+  color: rgb(169, 166, 211);
+  opacity: 1;
+  margin-top: -20px;
+  letter-spacing: 1px;
+}
+
+@font-face {
+  font-family: 'MyWebFont';
+  src: url('webfont.eot'); /* IE9 Compat Modes */
+  src: url('webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('webfont.woff2') format('woff2'), /* Super Modern Browsers */
+       url('webfont.woff') format('woff'), /* Pretty Modern Browsers */
+       url('webfont.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('webfont.svg#svgFontName') format('svg'); /* Legacy iOS */
+}
