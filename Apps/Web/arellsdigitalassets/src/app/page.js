@@ -1,15 +1,13 @@
-import React from "react";
+
 // Change below link after test
 import './css/Home.css';
-import { Link } from 'next/link';
-import { HelmetProvider } from 'react-helmet-async';
-import Favicon from "react-favicon";
+import Link from 'next/link';
+import Head from 'next/head';
 
 const Home = () => {
   return (
     <>
-      <Favicon url="favicon.ico"/>
-      <HelmetProvider>	
+      <Head>	
                                                         
         <meta name="robots" content="noimageindex"/>
             
@@ -45,7 +43,7 @@ const Home = () => {
           <meta name="twitter:description" content="Art Sells"/>
         {/*<!-- Above information for social media sharing and search-engine/browser optimization -->*/}	
         
-                <title>Arells</title>
+        <title>Arells</title>
 
         {/* body styling element */}
           <style>
@@ -63,7 +61,7 @@ const Home = () => {
           </style>        
 
 
-      </HelmetProvider>    
+      </Head>    
         <div id="overlayy">
 		
           <img id="arells-iconn" src="/icons&images/Arells-Icon.png"/>
@@ -89,7 +87,7 @@ const Home = () => {
           {/*<!-- Change below link after test -->*/}
           <Link href="/stayupdated" 
           id="updatess">
-                STAY UPDATEDn
+                STAY UPDATED
           </Link>			
           
           <div id="prototype-spacer">
