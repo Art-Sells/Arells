@@ -1,7 +1,7 @@
 import React from "react";
 // Change below link after test
 import './css/Home.css';
-import Link from 'next/link';
+import { Link } from 'next/link';
 import { HelmetProvider } from 'react-helmet-async';
 import Favicon from "react-favicon";
 
@@ -87,17 +87,17 @@ const Home = () => {
           <p id="coming-soonn">COMING SOON</p>
       
           {/*<!-- Change below link after test -->*/}
-          <a href="/stayupdated" 
+          <Link href="/stayupdated" 
           id="updatess">
                 STAY UPDATEDn
-          </a>			
+          </Link>			
           
           <div id="prototype-spacer">
             {/*<!-- Change below link after test -->*/}
-            <a href="/prototype-seller-created" 
+            <Link href="/prototype-seller-created" 
             id="prototype">
                   PROTOTYPE
-            </a>	        
+            </Link>	        
           </div>
       
         </div>		
