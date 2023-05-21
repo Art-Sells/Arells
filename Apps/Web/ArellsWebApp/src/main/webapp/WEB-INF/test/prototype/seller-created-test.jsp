@@ -7,16 +7,18 @@
 <html>
 	<head>
 		
+	<meta name="robots" content="noimageindex"/>
+		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/test/prototype/seller-created-test.css">	
-		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/copiedlink-test.css" />	
-		<link rel="stylesheet" type="text/css" href="css/test/prototype/modals/connect-wallet-test.css" />
+		<link rel="stylesheet" type="text/css" href="css/prototype/seller-created.css">	
+		<link rel="stylesheet" type="text/css" href="css/prototype/modals/copiedlink.css" />	
+		<link rel="stylesheet" type="text/css" href="css/prototype/modals/connect-wallet.css" />
 			
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
 		<meta name="title" content="Arells">
-		<meta name="description" content="Art Sells">
+		<meta name="description" content="Prototype for Seller Creations Test">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
@@ -24,26 +26,25 @@
 	
 		<link rel="icon" type="image/x-icon" href="/icons&images/Arells-Ico.ico" sizes="156x156">
 				<!-- Change below link after test -->
-		<link rel="canonical" href="https://arells.com/prototype-seller-created-test">
+		<link rel="canonical" href="https://arells.com/prototype-seller-created">
 		
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
 		<meta property="og:title" content="Arells">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/prototype-seller-created-test">
-		<meta property="og:description" content="Art Sells">
+		<meta propety="og:url" content="https://arells.com/prototype-seller-created">
+		<meta property="og:description" content="Prototype for Seller Creations Test">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Art Sells">
+		<meta name="twitter:title" content="Arells">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">
 				<!-- Change below link after test -->
-		<meta name="twitter:url" content="https://arells.com/prototype-seller-created-test">
+		<meta name="twitter:url" content="https://arells.com/prototype-seller-created">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:description" content="Arells">
-		<meta name="description" content="Arells">
+		<meta name="twitter:description" content="Prototype for Seller Creations Test">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 		<script>

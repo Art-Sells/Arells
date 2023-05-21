@@ -4,6 +4,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
+	
+		<meta name="robots" content="noimageindex">	
 		
 				<!-- Change below links after test -->
 		<link rel="stylesheet" type="text/css" href="css/test/home-test.css">	
@@ -12,7 +14,7 @@
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
 		<meta name="title" content="Arells">
-		<meta name="description" content="Art Sells">
+		<meta name="description" content="Art Sells Test">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
@@ -28,18 +30,17 @@
 		<meta property="og:title" content="Arells">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/test">
-		<meta property="og:description" content="Art Sells">
+		<meta property="og:description" content="Art Sells Test">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Art Sells">
+		<meta name="twitter:title" content="Arells">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/test">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:description" content="Arells">
-		<meta name="description" content="Arells">
+		<meta name="twitter:description" content="Art Sells Test">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 
