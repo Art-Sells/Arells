@@ -2,6 +2,7 @@
 // Change below link after test
 import './css/Home.css';
 import Link from 'next/link';
+import Head from 'next/head'
 
 const Home = () => {
   return (

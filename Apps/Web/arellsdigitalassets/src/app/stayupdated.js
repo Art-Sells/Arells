@@ -1,3 +1,6 @@
+import './css/stayupdated.css';
+import Head from 'next/head'
+
 const StayUpdated = () => {
     return (
         <>
@@ -53,4 +56,4 @@ const StayUpdated = () => {
     );
 }
 
-export default Home;
+export default StayUpdated;
