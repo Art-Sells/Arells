@@ -7,7 +7,10 @@
 		<meta name="robots" content="noimageindex">
 		
 				<!-- Change below links after test -->
-		<link rel="stylesheet" type="text/css" href="css/homers.css">	
+		<link rel="stylesheet" type="text/css" href="css/homers.css">
+		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">	
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 			
 		<meta charset="UTF-8">
 		

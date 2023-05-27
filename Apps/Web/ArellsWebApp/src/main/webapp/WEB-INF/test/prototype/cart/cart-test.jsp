@@ -13,11 +13,13 @@
 		<link rel="stylesheet" type="text/css" href="css/prototype/cart/cart.css">	
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/purchase-complete.css" />
 			
+				<meta http-equiv="X-UA-Compatible" content="IE=edge">	
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
-		<meta name="title" content="Arells">
-		<meta name="description" content="Cart Test">
+		<meta name="title" content="Cart Prototype Test">
+		<meta name="description" content="Prototype for Cart Test">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
@@ -30,7 +32,7 @@
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
-		<meta property="og:title" content="Arells">
+		<meta property="og:title" content="Cart Prototype Test">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/prototype-cart">
 		<meta property="og:description" content="Cart Test">
@@ -38,7 +40,7 @@
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Arells">
+		<meta name="twitter:title" content="Cart Prototype Test">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/prototype-cart">

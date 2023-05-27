@@ -11,11 +11,14 @@
 		<link rel="stylesheet" type="text/css" href="css/stayupdated.css">	
 		<link rel="stylesheet" href="css/stayupdated-modal.css" />	
 		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">	
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+		
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
-		<meta name="title" content="Arells">
-		<meta name="description" content="Stay Updated">
+		<meta name="title" content="Stay Updated">
+		<meta name="description" content="Stay updated on our development">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
@@ -28,20 +31,20 @@
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
-		<meta property="og:title" content="Arells">
+		<meta property="og:title" content="Stay Updated">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/stayupdated">
-		<meta property="og:description" content="Stay Updated">
+		<meta property="og:description" content="Stay updated on our development">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Arells">
+		<meta name="twitter:title" content="Stay Updated">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/stayupdated">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:description" content="Stay Updated">
+		<meta name="twitter:description" content="Stay updated on our development">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 

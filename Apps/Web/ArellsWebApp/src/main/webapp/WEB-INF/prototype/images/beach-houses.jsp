@@ -15,8 +15,8 @@
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
-		<meta name="title" content="Arells">
-		<meta name="description" content="Prototype Beach Houses">
+		<meta name="title" content="Beach Houses Prototype">
+		<meta name="description" content="Prototype for Beach Houses">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
@@ -29,20 +29,20 @@
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
-		<meta property="og:title" content="Arells">
+		<meta property="og:title" content="Beach Houses Prototype">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/prototype-beach-houses">
-		<meta property="og:description" content="Prototype Beach Houses">
+		<meta property="og:description" content="Prototype for Beach Houses">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Arells">
+		<meta name="twitter:title" content="Beach Houses Prototype">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/prototype-beach-houses">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:description" content="Prototype Beach Houses">
+		<meta name="twitter:description" content="Prototype for Beach Houses">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 		<script>

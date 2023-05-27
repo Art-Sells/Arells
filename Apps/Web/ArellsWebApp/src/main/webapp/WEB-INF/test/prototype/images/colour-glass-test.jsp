@@ -12,10 +12,12 @@
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/connect-wallet.css" />
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/coming-soon.css" />		
 			
+				<meta http-equiv="X-UA-Compatible" content="IE=edge">	
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
-		<meta name="title" content="Arells">
+		<meta name="title" content="Colour Glass Prototype Test">
 		<meta name="description" content="Prototype Colour Glass Test">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
@@ -29,7 +31,7 @@
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
-		<meta property="og:title" content="Arells">
+		<meta property="og:title" content="Colour Glass Prototype Test">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/prototype-colour-glass">
 		<meta property="og:description" content="Prototype Colour Glass Test">
@@ -37,7 +39,7 @@
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Arells">
+		<meta name="twitter:title" content="Colour Glass Prototype Test">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/prototype-colour-glass">

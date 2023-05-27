@@ -13,10 +13,12 @@
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/coming-soon.css" />
 			
 		<meta charset="UTF-8">
+				<meta http-equiv="X-UA-Compatible" content="IE=edge">	
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
-		<meta name="title" content="Arells">
-		<meta name="description" content="Prototype Blue Orange">
+		<meta name="title" content="Blue Orange Prototype">
+		<meta name="description" content="Prototype for Blue Orange">
 		<meta name="google" content="nositelinkssearchbox">
 		<meta name="keywords" content="Arells">
 		<meta name="author" content="Arells">
@@ -29,20 +31,20 @@
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">	
 		<meta property="og:site_name" content="Arells">	
 		<meta property="og:type" content="object">				
-		<meta property="og:title" content="Arells">
+		<meta property="og:title" content="Blue Orange Prototype">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/prototype-blue-orange">
-		<meta property="og:description" content="Prototype Blue Orange">
+		<meta property="og:description" content="Prototype for Blue Orange">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
 		<meta property="og:image:height" content="400">
 		
-		<meta name="twitter:title" content="Arells">
+		<meta name="twitter:title" content="Blue Orange Prototype">
 		<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">
 				<!-- Change below link after test -->
 		<meta name="twitter:url" content="https://arells.com/prototype-blue-orange">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:description" content="Prototype Blue Orange">
+		<meta name="twitter:description" content="Prototype for Blue Orange">
 <!-- Above information for social media sharing and search-engine/browser optimization -->	
 
 		<script>
