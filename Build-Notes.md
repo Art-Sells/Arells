@@ -16,7 +16,7 @@
 - Images here render small pixels
 - Separate Divs for all hovering buttons.
 - Remove (wallet connected)
-- Register with Google/Apple/Facebook/Etc
+- Sign Up with Google/Apple/Facebook/Etc
 - Name & Description: Maximum Number of Characters.
 - Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
 - Terms & Conditions Agreement
@@ -37,12 +37,13 @@
 - Created Cart Number Function (Custom)                                               
                                                 
 #### Creating Mechanics
+- Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase").
 - PAP price calculated 50x from price listed by creator (After Sale: You Keep... 90%, Buyer Keeps... 7%, Fees... 3%)...
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer... prices in USDC
                                                 
 #### Buying Mechanics:
 - Once an NFT is bought, the new price is 50xed from original price.
-- Implement PAP Algo (After Sale: You Keep... 7%, Creator Keeps... 90%, Fees... 3%)
+- Implement PAP Algo (After Sale: You Keep... 7%, Creator Keeps... 90%, Fees... 3% + Mint Fee)
 
 #### After Purchase:
  1. "Purchased... PAP: $, List For Sale? [List][DeList]{Both Open Modal} (On Buyer)... (Nothing Shows in Public Buyer)".
