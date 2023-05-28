@@ -1,7 +1,7 @@
 import './css/stayupdated.css';
 import Head from 'next/head'
 
-const StayUpdated = () => {
+const stayupdated = () => {
     return (
         <>
 		<Head>
@@ -95,4 +95,4 @@ const StayUpdated = () => {
     );
 }
 
-export default StayUpdated;
+export default stayupdated;
