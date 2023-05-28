@@ -43,7 +43,9 @@ const Home = () => {
       <meta name="twitter:url" content="https://arells.com"/>
       <meta name="twitter:card" content="summary_large_image"/>
       <meta name="twitter:description" content="Art Sells"/>
-      {/*<!-- Above information for social media sharing and search-engine/browser optimization -->*/}	          
+      {/*<!-- Above information for social media sharing and search-engine/browser optimization -->*/}	
+
+      <title>Arells</title>          
 
     </Head>
       <div id="overlayy">
