@@ -13,7 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="css/prototype/cart/cart.css">	
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/purchase-complete.css" />
 			
-				<meta http-equiv="X-UA-Compatible" content="IE=edge">	
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">	
 		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 		<meta charset="UTF-8">
 		
