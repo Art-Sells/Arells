@@ -71,16 +71,14 @@ const Home = () => {
         <p id="coming-soonn">COMING SOON</p>
     
         {/*<!-- Change below link after test -->*/}
-        <Link href="/stayupdated" 
-        id="updatess">
-              STAY UPDATED
+        <Link legacyBehavior href="/stayupdated" >
+          <a id="updatess">STAY UPDATED</a>
         </Link>			
         
         <div id="prototype-spacer">
           {/*<!-- Change below link after test -->*/}
-          <Link href="/prototype-seller-created" 
-          id="prototype">
-                PROTOTYPE
+          <Link legacyBehavior href="/prototype-seller-created">
+            <a id="prototype">PROTOTYPE</a>
           </Link>	        
         </div>
 
