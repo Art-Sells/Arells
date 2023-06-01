@@ -12,8 +12,7 @@
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/copiedlink.css" />	
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/connect-wallet.css" />
 			
-				<meta http-equiv="X-UA-Compatible" content="IE=edge">	
-		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">	
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
@@ -33,7 +32,7 @@
 		<meta property="og:type" content="website">				
 		<meta property="og:title" content="Buyer Collections Prototype Test">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/prototype-buyer-collected">
+		<meta property="og:url" content="https://arells.com/prototype-buyer-collected">
 		<meta property="og:description" content="Prototype for Buyer Collections Test">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">

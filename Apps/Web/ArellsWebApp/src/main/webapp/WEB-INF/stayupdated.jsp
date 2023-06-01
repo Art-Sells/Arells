@@ -12,7 +12,6 @@
 		<link rel="stylesheet" href="css/stayupdated-modal.css" />	
 		
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">	
-		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 		
 		<meta charset="UTF-8">
 		
@@ -33,7 +32,7 @@
 		<meta property="og:type" content="website">				
 		<meta property="og:title" content="Stay Updated">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/stayupdated">
+		<meta property="og:url" content="https://arells.com/stayupdated">
 		<meta property="og:description" content="Stay updated on our development">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">

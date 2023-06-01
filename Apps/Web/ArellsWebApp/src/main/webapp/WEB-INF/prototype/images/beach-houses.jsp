@@ -31,7 +31,7 @@
 		<meta property="og:type" content="website">				
 		<meta property="og:title" content="Beach Houses Prototype">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/prototype-beach-houses">
+		<meta property="og:url" content="https://arells.com/prototype-beach-houses">
 		<meta property="og:description" content="Prototype for Beach Houses">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">

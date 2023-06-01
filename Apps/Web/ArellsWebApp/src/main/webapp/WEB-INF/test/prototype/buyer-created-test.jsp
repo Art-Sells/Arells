@@ -12,7 +12,6 @@
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/connect-wallet.css" />
 	
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">	
-		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">	
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
@@ -32,7 +31,7 @@
 		<meta property="og:type" content="website">				
 		<meta property="og:title" content="Buyer Creations Prototype Test">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/prototype-buyer-created">
+		<meta property="og:url" content="https://arells.com/prototype-buyer-created">
 		<meta property="og:description" content="Prototype for Buyer Creations Test">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">

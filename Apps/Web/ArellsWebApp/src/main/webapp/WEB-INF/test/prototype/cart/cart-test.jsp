@@ -14,7 +14,6 @@
 		<link rel="stylesheet" type="text/css" href="css/prototype/modals/purchase-complete.css" />
 			
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">	
-		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 		<meta charset="UTF-8">
 		
 <!-- Below information for social media sharing and search-engine/browser optimization -->		
@@ -34,7 +33,7 @@
 		<meta property="og:type" content="website">				
 		<meta property="og:title" content="Cart Prototype Test">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/prototype-cart">
+		<meta property="og:url" content="https://arells.com/prototype-cart">
 		<meta property="og:description" content="Cart Test">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">

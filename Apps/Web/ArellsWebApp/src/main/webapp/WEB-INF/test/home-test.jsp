@@ -11,7 +11,6 @@
 		<link rel="stylesheet" type="text/css" href="css/test/home-test.css">	
 			
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">	
-		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">	
 		
 		<meta charset="UTF-8">
 		
@@ -32,7 +31,7 @@
 		<meta property="og:type" content="website">				
 		<meta property="og:title" content="Arells Test">
 				<!-- Change below link after test -->
-		<meta propety="og:url" content="https://arells.com/test">
+		<meta property="og:url" content="https://arells.com/test">
 		<meta property="og:description" content="Art Sells Test">
 		<meta property="og:image:type" content="image/jpg">
 		<meta property="og:image:width" content="700">
