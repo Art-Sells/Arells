@@ -30,7 +30,7 @@
 		
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg">	
 		<meta property="og:site_name" content="Arells">	
-		<meta property="og:type" content="object">				
+		<meta property="og:type" content="website">				
 		<meta property="og:title" content="Paint Rain Prototype Test">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/prototype-paint-rain">

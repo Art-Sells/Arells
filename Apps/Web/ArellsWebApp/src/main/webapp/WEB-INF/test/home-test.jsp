@@ -29,7 +29,7 @@
 		
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg">	
 		<meta property="og:site_name" content="Arells">	
-		<meta property="og:type" content="object">				
+		<meta property="og:type" content="website">				
 		<meta property="og:title" content="Arells Test">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/test">

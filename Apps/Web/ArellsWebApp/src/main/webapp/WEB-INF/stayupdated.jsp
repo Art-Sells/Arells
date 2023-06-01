@@ -30,7 +30,7 @@
 		
 		<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg">	
 		<meta property="og:site_name" content="Arells">	
-		<meta property="og:type" content="object">				
+		<meta property="og:type" content="website">				
 		<meta property="og:title" content="Stay Updated">
 				<!-- Change below link after test -->
 		<meta propety="og:url" content="https://arells.com/stayupdated">
