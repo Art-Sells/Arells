@@ -51,8 +51,11 @@
 - Created & Owned By (Character Limit Links)
 - [Prices Not Shown for unlisted items, only Creators/Owner's name]  
 
- #### Cart
-- Created Cart Number Function (Custom)                                               
+#### Cart
+- Created Cart Number Function (Custom)   
+  
+#### Cash Register
+- Notifications on who bought what at how much (Squared for sharing)  
                                                 
 #### Creating Mechanics
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
@@ -78,6 +81,9 @@ ________________________________________________________________________________
 ## Fully integrated Asset Store App [Need Android Phone] (After 2 Engineers)
 **NFTs = Digital Assets, Connect Wallet = Connect Store, Public Key = Address, Private Key = Key**
 
+## Store (Default)
+- Includes all Arells Website Components
+
 - If someone buys an NFT before you (error message) 
 - Differing Languages (After 2 Engineers)  
   
@@ -91,6 +97,10 @@ ________________________________________________________________________________
 - - Proof-of-creation 70x PAP for Copyright Proven Artistic Works
 - - Proof-of-ownership for major assets.
 
+## Vault (Slide-Up)
+- NFT Collections (Ability to Transfer & Receive)
+- USDC Transfer to Bank Account
+  
 #### Wallet:
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
 - Rarimo (CCTP) Circle?
