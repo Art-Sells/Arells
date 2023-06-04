@@ -11,19 +11,37 @@
 #### Wallet: 
 - Coinbase/USDC Wallet only?
 
-#### Profile
+#### Home
+- If logged in [About/Store/Contact]
+- If not logged in [About/Log-in/Sign-Up/Contact]
+- Contact (discord/email/etc)
+- Log-In with Google/Apple/Facebook/Etc
+
+#### Sign-Up
+- Sign Up with Google/Apple/Facebook/Etc
+- Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
+- Terms & Conditions Agreement
+
+#### Buying Profile
 -- {Latest/Best Sellers [automatically loads latest]) <Maybe integrate in full app?
+- Top-Left(Store)<Sign-Up/Log-In>, Top-Right(Cart)<Connect Wallet> Separate Divs for all hovering buttons.
 - Images here render small pixels
 - Separate Divs for all hovering buttons.
 - Remove (wallet connected)
-- Sign Up with Google/Apple/Facebook/Etc
 - Name & Description: Maximum Number of Characters.
-- Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
 - Terms & Conditions Agreement
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- (Art)(Sells)(+) buttons are Z-Indexed Sticky
-- Minting [+] allows cropping for preview <Also for Profile Picture Upload
 - - [Prices Not Shown for unlisted items, only Owner's name]
+  
+#### Selling Profile ((After Log-in Connected Wallet))
+-- {Latest/Best Sellers [automatically loads latest]) <Maybe integrate in full app?
+- Top-Left(Arells), Top-Right(Cart), Bottom-Left(Add), Bottom-Right(Cash-Register) are Z-Indexed Sticky/Separate Divs for all hovering buttons.
+- Minting [+] allows cropping for preview <Also for Profile Picture Upload                                                             
+- Images here render small pixels
+- Remove (wallet connected)
+- Name & Description: Maximum Number of Characters.
+- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
+- - [Prices Not Shown for unlisted items, only Owner's name]  
   
 #### Buyer-Created/Collected
 - [Prices Not Shown for unlisted items, only Art Name]
@@ -53,16 +71,19 @@
  
 #### LinkTree Links.
 
-#### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc)
+#### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
                                                 
+_____________________________________________________________________________________________________________________________
+  
 ## Fully integrated Asset Store App [Need Android Phone] (After 2 Engineers)
 **NFTs = Digital Assets, Connect Wallet = Connect Store, Public Key = Address, Private Key = Key**
 
+- If someone buys an NFT before you (error message) 
+- Differing Languages (After 2 Engineers)  
+  
 - Build with Near? (USDC) [use GPT4]                                                  
 - Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"
 - Heavy KYC/AML [USDC -to-bank- transfers only] through Integrating Apple-Pay & Google Pay Credit Card with USDC "purchase".
-- If someone buys an NFT before you (error message) 
-- Differing Languages (After 2 Engineers)
 
 #### Seller-Created/Collected
 - Create Categories (General, Illustrations, etc)
@@ -74,7 +95,5 @@
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
 - Rarimo (CCTP) Circle?
 - Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
-
-#### Contact (discord/email/etc)
                                                 
 #### Custom 404 Page (Next.js)
