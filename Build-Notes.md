@@ -5,8 +5,9 @@
 - Start with Polygon/Coinbase (USDC) [use GPT4 as help]
 - Create Separate js.Components Folder
 - Ensure Each Page has differing MetaDescriptions
-- Add "Change" over every href.
+- Add "Change-After-Test" over every href.
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
+- Don't Forget About SiteMap/s
 
 #### Wallet: 
 - Coinbase/USDC Wallet only?
