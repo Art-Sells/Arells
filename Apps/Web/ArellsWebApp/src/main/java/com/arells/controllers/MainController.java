@@ -9,9 +9,49 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Controller
 @RequestMapping("/")
 public class MainController {
+	
+    private final String[] pages = {
+            "/", "/stayupdated",
+            "/prototype-seller-created", "/prototype-seller-collected",
+            "/prototype-buyer-created", "/prototype-buyer-collected",
+            "/prototype-blue-orange", "/prototype-beach-houses",
+            "/prototype-colour-glass", "/prototype-layers",
+            "/prototype-succinct-drop", "/prototype-paint-rain",
+            "/prototype-cart"
+        };
+
+        @GetMapping(value = "/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)
+        public ResponseEntity<String> generateSitemap() {
+            StringBuilder sitemapXml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            sitemapXml.append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+
+            String baseUrl = "https://arells.com";  // Replace with your website's base URL
+            for (String page : pages) {
+                sitemapXml.append("<url>\n")
+                    .append("<loc>").append(baseUrl).append(page).append("</loc>\n")
+                    .append("<lastmod>").append(LocalDate.now().format(DateTimeFormatter.ISO_DATE)).append("</lastmod>\n")
+                    .append("<changefreq>monthly</changefreq>\n")
+                    .append("<priority>0.8</priority>\n")
+                    .append("</url>\n");
+            }
+
+            sitemapXml.append("</urlset>\n");
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_XML)
+                    .body(sitemapXml.toString());
+        }	
 
 	@GetMapping("")
 	public String home() {
