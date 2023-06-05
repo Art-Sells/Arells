@@ -1,4 +1,4 @@
-import './css/stayupdated.css';
+import '../css/stayupdated.css';
 import Head from 'next/head'
 
 const stayupdated = () => {

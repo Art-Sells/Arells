@@ -5,6 +5,12 @@ import './css/Home.css';
 import Link from 'next/link';
 import Head from 'next/head'
 
+import { Metadata } from 'next';
+ 
+export const metadata = {
+  title: 'Arells',
+};
+
 const Home = () => {
   return (
     <>
