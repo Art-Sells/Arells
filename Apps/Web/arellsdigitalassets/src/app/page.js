@@ -13,7 +13,6 @@ const Home = () => {
 
       <meta charset="UTF-8"/>
       <meta http-equiv="X-UA-Compatible" content="IE=edge"/>	
-			<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
 
       {/*<!-- Below information for social media sharing and search-engine/browser optimization -->*/}		
       <meta name="title" content="Arells"/>
