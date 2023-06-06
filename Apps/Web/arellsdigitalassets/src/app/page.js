@@ -22,7 +22,7 @@ export const metadata = {
     openGraph: {
       image: 'https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg',
       site_name: 'Arells',
-      type: 'object',
+      type: 'website',
       title: 'Arells',
       url: 'https://arells.com',
       description: 'Art Sells',
