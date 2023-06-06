@@ -7,7 +7,7 @@
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
-- Don't Forget About SiteMap/s
+- Don't Forget About SiteMap/s (only for pages to be shown)
 
 #### Wallet: 
 - Coinbase/USDC Wallet only?
