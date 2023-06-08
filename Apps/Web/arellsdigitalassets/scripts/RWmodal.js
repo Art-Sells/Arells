@@ -1,4 +1,6 @@
-let RWmodal = {
+import '../src/app/css/components/stayupdated-modal.css';
+
+const RWmodal = {
     closer: 0,
     init: function() {
       // Create elements
@@ -63,3 +65,5 @@ let RWmodal = {
       this.open(0, msg);
     }
   };
+
+  export default RWmodal;

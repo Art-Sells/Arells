@@ -1,7 +1,6 @@
 import '../css/stayupdated.css';
 import '../../../scripts/stayupdated.js';
-import '../../../scripts/RWmodal.js';
-import '../css/components/stayupdated-modal.css';
+
 
 export const metadata = {
 	title: 'Stay Updated',

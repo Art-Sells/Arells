@@ -1,4 +1,4 @@
-
+import './RWmodal.js';
 
 function signUp() {
     if (document.getElementById('email-input').value == "" &&
@@ -28,3 +28,5 @@ function signUp() {
             RWmodal.open(1, 'SUBMITTED');					
         }			
 }
+
+export default signUp;
