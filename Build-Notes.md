@@ -76,6 +76,8 @@
 #### LinkTree Links.
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
+  
+##### "Congratulations note and being a part of a historic moment. You may not realize this, but you are officially a pioneer of a revolutionary new sales system called "Price After Purchase". Before Arells, it was difficult for creators like you to financially benefit in the re-sale of your creations. Before Arells, it was difficult to reap most of the rewards. But now thanks to Arells's Price After Purchase system you will... 90% of every sale and resale of all your creations will go to you.  History will remember you as one of the first pioneers of this system, a system that changed our relationships with not just art, but changed our relationships with assets forever." 
                                                 
 _____________________________________________________________________________________________________________________________
   
@@ -108,3 +110,5 @@ ________________________________________________________________________________
 - Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
                                                 
 #### Custom 404 Page (Next.js)
+
+##### Expand Relationship-Building-Team Internationally (Asia/Africa/India)
