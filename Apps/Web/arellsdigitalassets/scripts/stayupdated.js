@@ -1,6 +1,6 @@
-import './RWmodal.js';
+import {RWmodal} from './RWmodal.js';
 
-function signUp() {
+export function signUp() {
     if (document.getElementById('email-input').value == "" &&
         document.getElementById('first-input').value == ""	&&
         document.getElementById('last-input').value == ""){
@@ -28,5 +28,3 @@ function signUp() {
             RWmodal.open(1, 'SUBMITTED');					
         }			
 }
-
-export default signUp;

@@ -1,5 +1,6 @@
 import '../css/stayupdated.css';
-import '../../../scripts/stayupdated.js';
+import { signUp} from '../../../scripts/stayupdated.js';
+
 
 
 export const metadata = {
@@ -39,6 +40,7 @@ export const metadata = {
   };
 
 const stayupdated = () => {
+	
     return (
         <>
 		<div id="wrapper">
@@ -75,7 +77,7 @@ const stayupdated = () => {
 					</div>														
 					<br/>
 				    <a id="submit"  
-				    onclick="signUp()">SUBMIT</a>
+				    onClick={signUp}>SUBMIT</a>
 				</form>
             </div>
             
