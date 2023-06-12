@@ -1,5 +1,6 @@
 import '../css/stayupdated.css';
-import { signUp} from '../../../scripts/stayupdated.js';
+import {signUp} from '../../../scripts/stayupdated.js';
+
 
 
 
@@ -77,7 +78,7 @@ const stayupdated = () => {
 					</div>														
 					<br/>
 				    <a id="submit"  
-				    onClick={signUp}>SUBMIT</a>
+				    onClick={signUp()}>SUBMIT</a>
 				</form>
             </div>
             
