@@ -1,11 +1,14 @@
 import {RWmodal} from './RWmodal.js';
+import React, { useState } from 'react';
+import axios from 'axios'; 
+
 import '../src/app/stayupdated/page.js';
 
 const [email, setEmail] = useState("");
 const [firstName, setFirstName] = useState("");
 const [lastName, setLastName] = useState("");
 
-import axios from 'axios'; // Assuming you have axios installed. If not, use npm install axios
+
   
     export const signUp = () => {
       if (email === "" || firstName === "" || lastName === "") {
