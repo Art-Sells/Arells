@@ -112,3 +112,5 @@ ________________________________________________________________________________
 #### Custom 404 Page (Next.js)
 
 ##### Expand Relationship-Building-Team Internationally (Asia/Africa/India)
+
+#### ERC-6551 (for Real-Estate (possible Ability to link previous NFTs into the asset))
