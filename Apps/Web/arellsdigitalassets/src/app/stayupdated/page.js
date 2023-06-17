@@ -41,6 +41,17 @@ export const metadata = {
   };
 
 const stayupdated = () => {
+
+	const [email, setEmail] = useState("");
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
+  
+	const handleSubmit = () => {
+	  signUp(email, firstName, lastName, RWmodal);
+	  setEmail("");
+	  setFirstName("");
+	  setLastName("");
+	};	
 	
     return (
         <>
@@ -60,21 +71,25 @@ const stayupdated = () => {
 						<br/>
 						<input name="email" type="email" 
 						id="email-input" 
-						class=".form-control"></input>
+						class=".form-control"
+						value={email} 
+						onChange={(e) => setEmail(e.target.value)}></input>
 					</div>	
 					<div id="enter-content">
 						<label id="label">FIRST NAME</label>
 						<br/>
 						<input name="first_name" type="text" 
 						id="first-input" 
-						class=".form-control"></input>
+						class=".form-control"
+						value={firstName} onChange={(e) => setFirstName(e.target.value)}></input>
 					</div>
 					<div id="enter-content">
 						<label id="label">LAST NAME</label>
 						<br/>
 						<input name="last_name" type="text" 
 						id="last-input" 
-						class=".form-control"></input>
+						class=".form-control"
+						value={lastName} onChange={(e) => setLastName(e.target.value)}></input>
 					</div>														
 					<br/>
 				    <a id="submit"  
