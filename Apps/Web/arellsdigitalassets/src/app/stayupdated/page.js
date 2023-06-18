@@ -1,8 +1,5 @@
 import '../css/stayupdated.css';
-import {RWmodal} from './RWmodal.js';
-import axios from 'axios'; 
-
-
+import { useState } from 'react';
 
 export const metadata = {
 	title: 'Stay Updated',
@@ -42,36 +39,55 @@ export const metadata = {
 
 const stayupdated = () => {
 
-	const [email, setEmail] = useState("");
-	const [firstName, setFirstName] = useState("");
-	const [lastName, setLastName] = useState("");
-  
+	const [showEnterInformation, setEnterInformation] = useState(false);
+	const [showSubmitted, setSubmitted] = useState(false);
+
 	const signUp = () => {
-	  if (email === "" || firstName === "" || lastName === "") {
-		RWmodal.open(1, 'ENTER INFORMATION');
-	  } else {
-		axios.post("https://api.apispreadsheets.com/data/uAv9KS8S9kojekky/", {
-		  email: email,
-		  first_name: firstName,
-		  last_name: lastName
-		}, {
-		  headers:{
-			accessKey: "c492c5cefcf9fdde44bbcd84a97465f1",
-			secretKey: "ac667f2902e4e472c82aff475a4a7a07"
+		if (typeof window !== 'undefined') {  // Check if we're in the browser
+		  const emailInput = document.getElementById('email-input').value;
+		  const firstNameInput = document.getElementById('first-input').value;
+		  const lastNameInput = document.getElementById('last-input').value;
+	  
+		  if (emailInput === "" || firstNameInput === "" || lastNameInput === "") {
+			setEnterInformation(true);
+		  } else {
+			$.ajax({
+				url:"https://api.apispreadsheets.com/data/uAv9KS8S9kojekky/",
+				type:"post",
+				data:$("#myForm").serializeArray(),
+				headers:{
+					accessKey: "c492c5cefcf9fdde44bbcd84a97465f1",
+					secretKey: "ac667f2902e4e472c82aff475a4a7a07"}
+			});					
+			document.getElementById('email-input').value = "";
+			document.getElementById('first-input').value = "";
+			document.getElementById('last-input').value = "";					
+			setSubmitted(true);	
 		  }
-		}).then(response => {
-		  // reset the input fields
-		  setEmail("");
-		  setFirstName("");
-		  setLastName("");
-		  // Open your modal here with message 'SUBMITTED'
-		  RWmodal.open(1, 'SUBMITTED');
-		});
-	  }
-	};
+		}
+	  };
 	
     return (
         <>
+
+		{showEnterInformation && (
+			<div id="enterInformation">
+				<div className="modal-content">
+					<p>ENTER INFORMATION</p>
+					<button className="close" onClick={closeEnterInformation}>OK</button>	
+				</div>
+			</div>
+		)}
+
+		{showSubmitted && (
+			<div id="submitted">
+				<div className="submitted-content">
+					<p id="submitted-words">SUBMITTED</p>
+					<button className="close" onClick={closeSubmitted}>OK</button>
+				</div>
+			</div>
+		)}
+
 		<div id="wrapper">
 			
 			<p id="stay-updated">STAY UPDATED</p> 
@@ -87,26 +103,19 @@ const stayupdated = () => {
 						<label id="label">EMAIL</label>		
 						<br/>
 						<input name="email" type="email" 
-						id="email-input" 
-						class=".form-control"
-						value={email} 
-						onChange={(e) => setEmail(e.target.value)}></input>
+						id="email-input" ></input>
 					</div>	
 					<div id="enter-content">
 						<label id="label">FIRST NAME</label>
 						<br/>
 						<input name="first_name" type="text" 
-						id="first-input" 
-						class=".form-control"
-						value={firstName} onChange={(e) => setFirstName(e.target.value)}></input>
+						id="first-input" ></input>
 					</div>
 					<div id="enter-content">
 						<label id="label">LAST NAME</label>
 						<br/>
 						<input name="last_name" type="text" 
-						id="last-input" 
-						class=".form-control"
-						value={lastName} onChange={(e) => setLastName(e.target.value)}></input>
+						id="last-input" ></input>
 					</div>														
 					<br/>
 				    <a id="submit"  
