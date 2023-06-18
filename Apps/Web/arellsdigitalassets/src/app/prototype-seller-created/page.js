@@ -18,12 +18,13 @@ const prototypeSellerCreated = () => {
 	
 	const [cartLinkSellerCreated, setCartLinkSellerCreated] = useState(true);
 	const [walletConnectedDivSellerCreated, setWalletConnectedDivSellerCreated] = useState(false);
+	const [cartLinkFullSellerCreated, setCartLinkFullSellerCreated] = useState(false);
 
 	const [cartLinkConnectedSellerCreated, setCartLinkConnectedSellerCreated] = useState(false);
 	
 	const [blueOrangeAddToCartSellerCreated, setBlueOrangeAddToCartSellerCreated] = useState(true);
 	const [beachHousesAddToCartSellerCreated, setBeachHousesAddToCartSellerCreated] = useState(true);
-	const [colourGlassAddToCartSellerCreated, setColourGlassAddedSellerCreated] = useState(true);
+	const [colourGlassAddToCartSellerCreated, setColourGlassAddToCartSellerCreated] = useState(true);
 	const [layersAddToCartSellerCreated, setLayersAddToCartSellerCreated] = useState(true);
 	const [succinctDropAddToCartSellerCreated, setSuccinctDropAddToCartSellerCreated] = useState(true);
 	const [paintRainAddToCartSellerCreated, setPaintRainAddToCartSellerCreated] = useState(true);
@@ -34,6 +35,27 @@ const prototypeSellerCreated = () => {
 	const[layersAddToCartConnectedSellerCreated, setLayersAddToCartConnectedSellerCreated] = useState(false);
 	const[succinctDropAddToCartConnectedSellerCreated, setSuccinctDropAddToCartConnectedSellerCreated] = useState(false);
 	const[paintRainAddToCartConnectedSellerCreated, setPaintRainAddToCartConnectedSellerCreated] = useState(false);
+
+	const [blueOrangeAddedSellerCreated, setBlueOrangeAddedSellerCreated] = useState(false);
+	const [beachHousesAddedSellerCreated, setBeachHousesAddedSellerCreated] = useState(false);
+	const [colourGlassAddedSellerCreated, setColourGlassAddedSellerCreated] = useState(false);
+	const [layersAddedSellerCreated, setLayersAddedSellerCreated] = useState(false);
+	const [succinctDropAddedSellerCreated, setSuccinctDropAddedSellerCreated] = useState(false);
+	const [paintRainAddedSellerCreated, setPaintRainAddedSellerCreated] = useState(false);
+	
+	const [blueOrangePricesBeforeSellerCreated, setBlueOrangePricesBeforeSellerCreated] = useState(true);
+	const [beachHousesPricesBeforeSellerCreated, setBeachHousesPricesBeforeSellerCreated] = useState(true);
+	const [colourGlassPricesBeforeSellerCreated, setColourGlassPricesBeforeSellerCreated] = useState(true);
+	const [layersPricesBeforeSellerCreated, setLayersPricesBeforeSellerCreated] = useState(true);
+	const [succinctDropPricesBeforeSellerCreated, setSuccinctDropPricesBeforeSellerCreated] = useState(true);
+	const [paintRainPricesBeforeSellerCreated, setPaintRainPricesBeforeSellerCreated] = useState(true);
+
+	const [blueOrangePricesAfterSellerCreated, setBlueOrangePricesAfterSellerCreated] = useState(true);
+	const [beachHousesPricesAfterSellerCreated, setBeachHousesPricesAfterSellerCreated] = useState(true);
+	const [colourGlassPricesAfterSellerCreated, setColourGlassPricesAfterSellerCreated] = useState(true);
+	const [layersPricesAfterSellerCreated, setLayersPricesAfterSellerCreated] = useState(true);
+	const [succinctDropPricesAfterSellerCreated, setSuccinctDropPricesAfterSellerCreated] = useState(true);
+	const [paintRainPricesAfterSellerCreated, setPaintRainPricesAfterSellerCreated] = useState(true);
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
@@ -67,7 +89,7 @@ const prototypeSellerCreated = () => {
 
 		setBlueOrangeAddToCartSellerCreated(false);
 		setBeachHousesAddToCartSellerCreated(false);
-		setColourGlassAddedSellerCreated(false);
+		setColourGlassAddToCartSellerCreated(false);
 		setLayersAddToCartSellerCreated(false);
 		setSuccinctDropAddToCartSellerCreated(false);
 		setPaintRainAddToCartSellerCreated(false);
@@ -99,7 +121,7 @@ const prototypeSellerCreated = () => {
 	
 			setBlueOrangeAddToCartSellerCreated(false);
 			setBeachHousesAddToCartSellerCreated(false);
-			setColourGlassAddedSellerCreated(false);
+			setColourGlassAddToCartSellerCreated(false);
 			setLayersAddToCartSellerCreated(false);
 			setSuccinctDropAddToCartSellerCreated(false);
 			setPaintRainAddToCartSellerCreated(false);
@@ -111,11 +133,36 @@ const prototypeSellerCreated = () => {
 			setSuccinctDropAddToCartConnectedSellerCreated(true);
 			setPaintRainAddToCartConnectedSellerCreated(true);
 		}
-	  }, [walletConnectedSession]);
+	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
 
+{/*<!-- Add To Cart function/s below -->*/}
 
 
+	// Read from sessionStorage when component mounts
+	useEffect(() => {
+	const storedValue = sessionStorage.getItem('blueOrangeAdded');
+	if (storedValue) {
+		setBlueOrangeAddedSellerCreated(true);
+	}
+	}, []);
+
+	function addBlueOrangeToCart() {
+
+		setBlueOrangeAddToCartSellerCreated(false);
+		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
+		setBlueOrangeAddedSellerCreated(true);
+		document.getElementById('blue-orange-added-seller-created').style.display = "block";
+		
+		document.getElementById('cart-link-connected-seller-created').style.display = "none";	
+		setCartLinkConnectedSellerCreated(false);		
+    	document.getElementById('cart-link-full-seller-created').style.display = "inline-block";
+		setCartLinkFullSellerCreated
+
+	sessionStorage.setItem('blueOrangeAdded', 'true');
+	}
+
+{/*<!-- Add To Cart function/s above -->*/}
 	
     return (
         <>
