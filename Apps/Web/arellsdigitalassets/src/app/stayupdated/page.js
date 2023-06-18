@@ -1,9 +1,11 @@
 "use client";
 
 import Head from 'next/head'
+// Change below link after test
 import '../css/stayupdated.css';
 import '../css/components/stayupdated-modal.css';
 import { useState } from 'react';
+import $ from 'jquery';
 
 const stayupdated = () => {
 
@@ -46,37 +48,42 @@ const stayupdated = () => {
     return (
         <>
 
-<Head>
-        <meta name="robots" content="noimageindex"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<Head>
+			<meta name="robots" content="noimageindex"/>
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
-        <meta charset="UTF-8"/>
+			<meta charset="UTF-8"/>
 
-        <meta name="title" content="Stay Updated"/>
-        <meta name="description" content="Stay updated on our development"/>
-        <meta name="google" content="nositelinkssearchbox"/>
-        <meta name="keywords" content="Arells"/>
-        <meta name="author" content="Arells"/>
-        <meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
+			<meta name="title" content="Stay Updated"/>
+			<meta name="description" content="Stay updated on our development"/>
+			<meta name="google" content="nositelinkssearchbox"/>
+			<meta name="keywords" content="Arells"/>
+			<meta name="author" content="Arells"/>
+			<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
+			{/*<!-- Change below link after test -->*/}
+			<link rel="canonical" href="https://arells.com/stayupdated"/>
 
-        <link rel="canonical" href="https://arells.com/stayupdated"/>
+			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
+			<meta property="og:site_name" content="Arells"/>
+			<meta property="og:type" content="website"/>
+			<meta property="og:title" content="Stay Updated"/>
 
-        <meta property="og:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
-        <meta property="og:site_name" content="Arells"/>
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Stay Updated"/>
-        <meta property="og:url" content="https://arells.com/stayupdated"/>
-        <meta property="og:description" content="Stay updated on our development"/>
-        <meta property="og:image:type" content="image/jpg"/>
-        <meta property="og:image:width" content="700"/>
-        <meta property="og:image:height" content="400"/>
+			{/*<!-- Change below link after test -->*/}
+			<meta property="og:url" content="https://arells.com/stayupdated"/>
+			<meta property="og:description" content="Stay updated on our development"/>
+			<meta property="og:image:type" content="image/jpg"/>
+			<meta property="og:image:width" content="700"/>
+			<meta property="og:image:height" content="400"/>
 
-        <meta name="twitter:title" content="Stay Updated"/>
-        <meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
-        <meta name="twitter:url" content="https://arells.com/stayupdated"/>
-        <meta name="twitter:card" content="summary_large_image"/>
-        <meta name="twitter:description" content="Stay updated on our development"/>
-      </Head>		
+			<meta name="twitter:title" content="Stay Updated"/>
+			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
+			{/*<!-- Change below link after test -->*/}
+			<meta name="twitter:url" content="https://arells.com/stayupdated"/>
+			<meta name="twitter:card" content="summary_large_image"/>
+			<meta name="twitter:description" content="Stay updated on our development"/>
+		</Head>	
+
+		<title>Stay Updated</title>	
 
 		{showEnterInformation && (
 			<div className="RWmodal">
