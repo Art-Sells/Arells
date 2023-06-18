@@ -50,12 +50,19 @@ const prototypeSellerCreated = () => {
 	const [succinctDropPricesBeforeSellerCreated, setSuccinctDropPricesBeforeSellerCreated] = useState(true);
 	const [paintRainPricesBeforeSellerCreated, setPaintRainPricesBeforeSellerCreated] = useState(true);
 
-	const [blueOrangePricesAfterSellerCreated, setBlueOrangePricesAfterSellerCreated] = useState(true);
-	const [beachHousesPricesAfterSellerCreated, setBeachHousesPricesAfterSellerCreated] = useState(true);
-	const [colourGlassPricesAfterSellerCreated, setColourGlassPricesAfterSellerCreated] = useState(true);
-	const [layersPricesAfterSellerCreated, setLayersPricesAfterSellerCreated] = useState(true);
-	const [succinctDropPricesAfterSellerCreated, setSuccinctDropPricesAfterSellerCreated] = useState(true);
-	const [paintRainPricesAfterSellerCreated, setPaintRainPricesAfterSellerCreated] = useState(true);
+	const [blueOrangePricesAfterSellerCreated, setBlueOrangePricesAfterSellerCreated] = useState(false);
+	const [beachHousesPricesAfterSellerCreated, setBeachHousesPricesAfterSellerCreated] = useState(false);
+	const [colourGlassPricesAfterSellerCreated, setColourGlassPricesAfterSellerCreated] = useState(false);
+	const [layersPricesAfterSellerCreated, setLayersPricesAfterSellerCreated] = useState(false);
+	const [succinctDropPricesAfterSellerCreated, setSuccinctDropPricesAfterSellerCreated] = useState(false);
+	const [paintRainPricesAfterSellerCreated, setPaintRainPricesAfterSellerCreated] = useState(false);
+
+	const[blueOrangeCollectedSellerCreated, setBlueOrangeCollectedSellerCreated] = useState(false);
+	const[beachHousesCollectedSellerCreated, setBeachHousesCollectedSellerCreated] = useState(false);
+	const[colourGlassCollectedSellerCreated, setColourGlassCollectedSellerCreated] = useState(false);
+	const[layersCollectedSellerCreated, setLayersCollectedSellerCreated] = useState(false);
+	const[succinctDropCollectedSellerCreated, setSuccinctDropCollectedSellerCreated] = useState(false);
+	const[paintRainCollectedSellerCreated, setPaintRainCollectedSellerCreated] = useState(false);
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
