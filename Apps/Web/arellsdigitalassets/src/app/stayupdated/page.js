@@ -3,7 +3,7 @@
 import Head from 'next/head'
 // Change below link after test
 import '../css/stayupdated.css';
-import '../css/components/stayupdated-modal.css';
+import '../css/modals/stayupdated-modal.css';
 import { useState } from 'react';
 import $ from 'jquery';
 

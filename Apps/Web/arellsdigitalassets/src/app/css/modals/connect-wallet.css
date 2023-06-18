@@ -4,6 +4,8 @@
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
   padding-top: 145px; /* Location of the box */
+  text-align: center;
+	font-family: Arial;
   left: 0;
   top: 0;
   width: 100%; /* Full width */
