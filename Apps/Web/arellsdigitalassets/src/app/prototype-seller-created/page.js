@@ -6,7 +6,7 @@ import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
 
 import Head from 'next/head'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
