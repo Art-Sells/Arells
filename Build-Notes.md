@@ -90,7 +90,7 @@ ________________________________________________________________________________
 - If someone buys an NFT before you (error message) 
 - Differing Languages (After 2 Engineers)  
   
-- Build with Near? (USDC) [use GPT4]                                                  
+- Build with Near? (USDC) [use GPT4] ***Connects to bank account once and automatically converts USDC with purchaxing***                                           
 - Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"
 - Heavy KYC/AML [USDC -to-bank- transfers only] through Integrating Apple-Pay & Google Pay Credit Card with USDC "purchase".
 
