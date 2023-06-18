@@ -22,6 +22,7 @@
     "express": "^4.18.2",
     "hardhat": "^2.14.0",
     "ipfs-http-client": "^60.0.0",
+    "jquery": "^3.7.0",
     "next": "13.4.2",
     "postcss": "8.4.23",
     "react": "^18.2.0",

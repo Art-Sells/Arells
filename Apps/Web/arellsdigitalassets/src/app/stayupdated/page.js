@@ -2,6 +2,7 @@
 
 import Head from 'next/head'
 import '../css/stayupdated.css';
+import '../css/components/stayupdated-modal.css';
 import { useState } from 'react';
 
 const stayupdated = () => {
@@ -78,19 +79,19 @@ const stayupdated = () => {
       </Head>		
 
 		{showEnterInformation && (
-			<div id="enterInformation">
-				<div className="modal-content">
+			<div className="RWmodal">
+				<div className="RWmodal-content">
 					<p>ENTER INFORMATION</p>
-					<button className="close" onClick={closeEnterInformation}>OK</button>	
+					<button className="RWclose" onClick={closeEnterInformation}>OK</button>	
 				</div>
 			</div>
 		)}
 
 		{showSubmitted && (
-			<div id="submitted">
-				<div className="submitted-content">
-					<p id="submitted-words">SUBMITTED</p>
-					<button className="close" onClick={closeSubmitted}>OK</button>
+			<div className="RWmodal">
+				<div className="RWmodal-content">
+					<p>SUBMITTED</p>
+					<button className="RWclose" onClick={closeSubmitted}>OK</button>
 				</div>
 			</div>
 		)}
@@ -126,7 +127,7 @@ const stayupdated = () => {
 					</div>														
 					<br/>
 				    <a id="submit"  
-				    onClick={signUp()}>SUBMIT</a>
+				    onClick={signUp}>SUBMIT</a>
 				</form>
             </div>
             
