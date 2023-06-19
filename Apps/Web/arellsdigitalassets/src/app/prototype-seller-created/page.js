@@ -113,12 +113,10 @@ const prototypeSellerCreated = () => {
 	}	
 	
 	const [walletConnectedSession, setWalletConnectedSession] = useState(null);
-
 	useEffect(() => {
 	  const sessionValue = sessionStorage.getItem('walletConnectedSession');
 	  setWalletConnectedSession(sessionValue);
 	}, []);
-
 	useEffect(() => {
 		if (walletConnectedSession === 'true') {
 			setCartLinkSellerCreated(false);
@@ -145,31 +143,131 @@ const prototypeSellerCreated = () => {
 
 {/*<!-- Add To Cart function/s below -->*/}
 
-
-	// Read from sessionStorage when component mounts
+	const [blueOrangeAdded, setBlueOrangeAdded] = useState(null);
 	useEffect(() => {
-	const storedValue = sessionStorage.getItem('blueOrangeAdded');
-	if (storedValue) {
-		setBlueOrangeAddedSellerCreated(true);
+		const storedValue = sessionStorage.getItem('blueOrangeAdded');
+		if (storedValue) {setBlueOrangeAdded(true);}
+		}, []);
+		function addBlueOrangeToCart() {
+
+			setBlueOrangeAddToCartSellerCreated(false);
+			setBlueOrangeAddedSellerCreated(true);
+
+			setCartLinkConnectedSellerCreated(false);		
+			setCartLinkFullSellerCreated(true);
+
+		sessionStorage.setItem('blueOrangeAdded', 'true');
 	}
-	}, []);
 
-	function addBlueOrangeToCart() {
+	const [beachHousesAdded, setBeachHousesAdded] = useState(null);
+	useEffect(() => {
+		const storedValue = sessionStorage.getItem('beachHousesAdded');
+		if (storedValue) {setBeachHousesAdded(true);}
+		}, []);
+		function addBeachHousesToCart() {
+	
+			setBeachHousesAddToCartSellerCreated(false);
+			setBeachHousesAddedSellerCreated(true);
 
-		setBlueOrangeAddToCartSellerCreated(false);
-		document.getElementById('blue-orange-add-to-cart-connected-seller-created').style.display = "none";
-		setBlueOrangeAddedSellerCreated(true);
-		document.getElementById('blue-orange-added-seller-created').style.display = "block";
-		
-		document.getElementById('cart-link-connected-seller-created').style.display = "none";	
-		setCartLinkConnectedSellerCreated(false);		
-    	document.getElementById('cart-link-full-seller-created').style.display = "inline-block";
-		setCartLinkFullSellerCreated
+			setCartLinkConnectedSellerCreated(false);		
+			setCartLinkFullSellerCreated(true);
+	
+		sessionStorage.setItem('beachHousesAdded', 'true');
+	}	
 
-	sessionStorage.setItem('blueOrangeAdded', 'true');
-	}
+	const [colourGlassAdded, setColourGlassAdded] = useState(null);
+	useEffect(() => {
+		const storedValue = sessionStorage.getItem('colourGlassAdded');
+		if (storedValue) {setColourGlassAdded(true);}
+		}, []);
+		function addColourGlassToCart() {
+	
+			setColourGlassAddToCartSellerCreated(false);
+			setColourGlassAddedSellerCreated(true);
+
+			setCartLinkConnectedSellerCreated(false);		
+			setCartLinkFullSellerCreated(true);
+	
+		sessionStorage.setItem('colourGlassAdded', 'true');
+	}	
+	
+	const [layersAdded, setLayersAdded] = useState(null);
+	useEffect(() => {
+		const storedValue = sessionStorage.getItem('layersAdded');
+		if (storedValue) {setLayersAdded(true);}
+		}, []);
+		function addLayersToCart() {
+	
+			setLayersAddToCartSellerCreated(false);
+			setLayersAddedSellerCreated(true);
+
+			setCartLinkConnectedSellerCreated(false);		
+			setCartLinkFullSellerCreated(true);
+	
+		sessionStorage.setItem('layersAdded', 'true');
+	}		
+
+	const [succinctDropAdded, setSuccinctDropAdded] = useState(null);
+	useEffect(() => {
+		const storedValue = sessionStorage.getItem('succinctDropAdded');
+		if (storedValue) {setSuccinctDropAdded(true);}
+		}, []);
+		function addSuccinctDropToCart() {
+	
+			setSuccinctDropAddToCartSellerCreated(false);
+			setSuccinctDropAddedSellerCreated(true);
+
+			setCartLinkConnectedSellerCreated(false);		
+			setCartLinkFullSellerCreated(true);
+	
+		sessionStorage.setItem('succinctDropAdded', 'true');
+	}	
+	
+	const [paintRainAdded, setPaintRainAdded] = useState(null);
+	useEffect(() => {
+		const storedValue = sessionStorage.getItem('paintRainAdded');
+		if (storedValue) {setPaintRainAdded(true);}
+		}, []);
+		function addPaintRainToCart() {
+	
+			setPaintRainAddToCartSellerCreated(false);
+			setPaintRainAddedSellerCreated(true);
+
+			setCartLinkConnectedSellerCreated(false);		
+			setCartLinkFullSellerCreated(true);
+	
+		sessionStorage.setItem('paintRainAdded', 'true');
+	}		
 
 {/*<!-- Add To Cart function/s above -->*/}
+
+
+{/*<!-- Added/Purchased To function/s below -->*/}
+	const [blueOrangePurchased, setBlueOrangePurchased] = useState(null);	
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('blueOrangePurchased');
+		setBlueOrangePurchased(sessionValue);
+	}, []);
+	useEffect(() => {
+		if (blueOrangeAdded === 'true') {
+			setCartLinkConnectedSellerCreated(false);
+			setCartLinkFullSellerCreated(true);
+	
+			setBlueOrangeAddToCartSellerCreated(false);		
+			setBlueOrangeAddToCartConnectedSellerCreated(false);
+			setBlueOrangeAddedSellerCreated(true);
+		}
+		if (blueOrangePurchased === 'true') {
+			setBlueOrangePricesBeforeSellerCreated(false);
+			setBlueOrangePricesAfterSellerCreated(true);
+
+			setBlueOrangeAddToCartSellerCreated(false);		
+			setBlueOrangeAddToCartConnectedSellerCreated(false);
+			setBlueOrangeAddedSellerCreated(false);
+			setBlueOrangeCollectedSellerCreated(true);
+		}
+	}, [blueOrangePurchased]);
+{/*<!-- Added/Purchased To function/s above -->*/}
 	
     return (
         <>
@@ -225,13 +323,13 @@ const prototypeSellerCreated = () => {
 		{showConnectWallet && (
 			<div id="connectWalletBuy">
 				<div class="connect-wallet-content">
-				<p id="connect-wallet-words">CONNECT WALLET</p>
-				<button id="connectWallet"
-					onClick={walletConnected}>
-					<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
-				</button>		
-			</div>
-		</div>	
+					<p id="connect-wallet-words">CONNECT WALLET</p>
+					<button id="connectWallet"
+						onClick={walletConnected}>
+						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+					</button>		
+				</div>
+			</div>	
 		)}
 {/*<!-- Modals Above -->*/}
 
