@@ -266,7 +266,132 @@ const prototypeSellerCreated = () => {
 			setBlueOrangeAddedSellerCreated(false);
 			setBlueOrangeCollectedSellerCreated(true);
 		}
-	}, [blueOrangePurchased]);
+	}, [blueOrangeAdded, blueOrangePurchased]);
+
+	const [beachHousesPurchased, setBeachHousesPurchased] = useState(null);	
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('beachHousesPurchased');
+		setBeachHousesPurchased(sessionValue);
+	}, []);
+	useEffect(() => {
+		if (beachHousesAdded === 'true') {
+			setCartLinkConnectedSellerCreated(false);
+			setCartLinkFullSellerCreated(true);
+	
+			setBeachHousesAddToCartSellerCreated(false);		
+			setBeachHousesAddToCartConnectedSellerCreated(false);
+			setBeachHousesAddedSellerCreated(true);
+		}
+		if (beachHousesPurchased === 'true') {
+			setBeachHousesPricesBeforeSellerCreated(false);
+			setBeachHousesPricesAfterSellerCreated(true);
+
+			setBeachHousesAddToCartSellerCreated(false);		
+			setBeachHousesAddToCartConnectedSellerCreated(false);
+			setBeachHousesAddedSellerCreated(false);
+			setBeachHousesCollectedSellerCreated(true);
+		}
+	}, [beachHousesAdded, beachHousesPurchased]);	
+
+	const [colourGlassPurchased, setColourGlassPurchased] = useState(null);	
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('colourGlassPurchased');
+		setColourGlassPurchased(sessionValue);
+	}, []);
+	useEffect(() => {
+		if (colourGlassAdded === 'true') {
+			setCartLinkConnectedSellerCreated(false);
+			setCartLinkFullSellerCreated(true);
+	
+			setColourGlassAddToCartSellerCreated(false);		
+			setColourGlassAddToCartConnectedSellerCreated(false);
+			setColourGlassAddedSellerCreated(true);
+		}
+		if (colourGlassPurchased === 'true') {
+			setColourGlassPricesBeforeSellerCreated(false);
+			setColourGlassPricesAfterSellerCreated(true);
+
+			setColourGlassAddToCartSellerCreated(false);		
+			setColourGlassAddToCartConnectedSellerCreated(false);
+			setColourGlassAddedSellerCreated(false);
+			setColourGlassCollectedSellerCreated(true);
+		}
+	}, [colourGlassAdded, colourGlassPurchased]);	
+
+	const [layersPurchased, setLayersPurchased] = useState(null);	
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('layersPurchased');
+		setLayersPurchased(sessionValue);
+	}, []);
+	useEffect(() => {
+		if (layersAdded === 'true') {
+			setCartLinkConnectedSellerCreated(false);
+			setCartLinkFullSellerCreated(true);
+	
+			setLayersAddToCartSellerCreated(false);		
+			setLayersAddToCartConnectedSellerCreated(false);
+			setLayersAddedSellerCreated(true);
+		}
+		if (layersPurchased === 'true') {
+			setLayersPricesBeforeSellerCreated(false);
+			setLayersPricesAfterSellerCreated(true);
+
+			setLayersAddToCartSellerCreated(false);		
+			setLayersAddToCartConnectedSellerCreated(false);
+			setLayersAddedSellerCreated(false);
+			setLayersCollectedSellerCreated(true);
+		}
+	}, [layersAdded, layersPurchased]);	
+	
+	const [succinctDropPurchased, setSuccinctDropPurchased] = useState(null);	
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('succinctDropPurchased');
+		setSuccinctDropPurchased(sessionValue);
+	}, []);
+	useEffect(() => {
+		if (succinctDropAdded === 'true') {
+			setCartLinkConnectedSellerCreated(false);
+			setCartLinkFullSellerCreated(true);
+	
+			setSuccinctDropAddToCartSellerCreated(false);		
+			setSuccinctDropAddToCartConnectedSellerCreated(false);
+			setSuccinctDropAddedSellerCreated(true);
+		}
+		if (succinctDropPurchased === 'true') {
+			setSuccinctDropPricesBeforeSellerCreated(false);
+			setSuccinctDropPricesAfterSellerCreated(true);
+
+			setSuccinctDropAddToCartSellerCreated(false);		
+			setSuccinctDropAddToCartConnectedSellerCreated(false);
+			setSuccinctDropAddedSellerCreated(false);
+			setSuccinctDropCollectedSellerCreated(true);
+		}
+	}, [succinctDropAdded, succinctDropPurchased]);	
+
+	const [paintRainPurchased, setPaintRainPurchased] = useState(null);	
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('paintRainPurchased');
+		setPaintRainPurchased(sessionValue);
+	}, []);
+	useEffect(() => {
+		if (paintRainAdded === 'true') {
+			setCartLinkConnectedSellerCreated(false);
+			setCartLinkFullSellerCreated(true);
+	
+			setPaintRainAddToCartSellerCreated(false);		
+			setPaintRainAddToCartConnectedSellerCreated(false);
+			setPaintRainAddedSellerCreated(true);
+		}
+		if (paintRainPurchased === 'true') {
+			setPaintRainPricesBeforeSellerCreated(false);
+			setPaintRainPricesAfterSellerCreated(true);
+
+			setPaintRainAddToCartSellerCreated(false);		
+			setPaintRainAddToCartConnectedSellerCreated(false);
+			setPaintRainAddedSellerCreated(false);
+			setPaintRainCollectedSellerCreated(true);
+		}
+	}, [paintRainAdded, paintRainPurchased]);		
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
     return (
