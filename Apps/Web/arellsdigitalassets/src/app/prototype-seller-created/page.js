@@ -66,10 +66,10 @@ const prototypeSellerCreated = () => {
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
+
+	const router = useRouter();
   
 	const copyLink = () => {
-		const router = useRouter();
-
 	  navigator.clipboard.writeText(router.asPath).then(() => {
 		setCopiedLink(true);
 	  });
