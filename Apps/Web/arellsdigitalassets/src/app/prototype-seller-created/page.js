@@ -68,12 +68,10 @@ const prototypeSellerCreated = () => {
 {/*<!-- Copy Links function/s below -->*/}
 
 	const router = useRouter();
-  
+	const fullUrl = `${window.location.origin}${router.asPath}`;
 	const copyLink = () => {
-		navigator.clipboard.writeText(router.asPath).then(() => {
+		navigator.clipboard.writeText(fullUrl).then(() => {
 			setCopiedLink(true);
-		  }).catch(err => {
-			console.error('Could not copy text: ', err);
 		  });
 	};
   
@@ -239,7 +237,10 @@ const prototypeSellerCreated = () => {
 			setCartLinkFullSellerCreated(true);
 	
 		sessionStorage.setItem('paintRainAdded', 'true');
-	}		
+	}	
+	
+	console.log(router);
+
 
 {/*<!-- Add To Cart function/s above -->*/}
 
