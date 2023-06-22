@@ -68,7 +68,7 @@ const prototypeSellerCreated = () => {
 {/*<!-- Copy Links function/s below -->*/}
 
 	const router = useRouter();
-	const fullUrl = `${window.location.origin}${router.asPath}`;
+	const fullUrl = `${window.location.origin}${'/prototype-seller-created'}`;
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
 			setCopiedLink(true);
@@ -237,10 +237,7 @@ const prototypeSellerCreated = () => {
 			setCartLinkFullSellerCreated(true);
 	
 		sessionStorage.setItem('paintRainAdded', 'true');
-	}	
-	
-	console.log(router);
-
+	}		
 
 {/*<!-- Add To Cart function/s above -->*/}
 
