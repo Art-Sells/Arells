@@ -7,7 +7,7 @@ import '../css/modals/connect-wallet.css';
 
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const prototypeSellerCreated = () => {
@@ -70,9 +70,11 @@ const prototypeSellerCreated = () => {
 	const router = useRouter();
   
 	const copyLink = () => {
-	  navigator.clipboard.writeText(router.asPath).then(() => {
-		setCopiedLink(true);
-	  });
+		navigator.clipboard.writeText(router.asPath).then(() => {
+			setCopiedLink(true);
+		  }).catch(err => {
+			console.error('Could not copy text: ', err);
+		  });
 	};
   
 	const closeCopiedLink = () => {
@@ -437,9 +439,9 @@ const prototypeSellerCreated = () => {
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
 			<div id="copiedLink">
-				<div class="modal-content">
+				<div className="modal-content">
 				<p>LINK COPIED</p>
-				<button class="close"
+				<button className="close"
 					onClick={closeCopiedLink}>OK</button>	
 				</div>
 			</div>	
@@ -447,7 +449,7 @@ const prototypeSellerCreated = () => {
 
 		{showConnectWallet && (
 			<div id="connectWalletBuy">
-				<div class="connect-wallet-content">
+				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
