@@ -803,7 +803,7 @@ const prototypeSellerCreated = () => {
 						)}			     	
 					</div>
 			</div>
-				<p id="prototype">PROTOTYPE</p>
+				<p id="prototypePage">PROTOTYPE</p>
 		</div>			
 		     
         </>
