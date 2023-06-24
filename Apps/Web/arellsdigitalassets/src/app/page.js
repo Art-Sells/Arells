@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
 
-const Home = () => {
+const index = () => {
   useEffect(() => {
     function resetPrototype() {
       sessionStorage.removeItem('walletConnectedSession'); 
@@ -117,4 +117,4 @@ const Home = () => {
   );
 }
 
-export default Home;
+export default index;
