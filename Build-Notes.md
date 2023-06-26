@@ -84,6 +84,7 @@ ________________________________________________________________________________
   
 ## Fully integrated Asset Store App [Need Android Phone] (After 2 Engineers)
 **NFTs = Digital Assets, Connect Wallet = Connect Store, Public Key = Address, Private Key = Key**
+***AUM(based off price listed) - Main Metrics [prices even after un-listed are back-logged]**
 
 ## Store (Default)
 - Includes all Arells Website Components
