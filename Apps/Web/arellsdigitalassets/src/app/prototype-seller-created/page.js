@@ -234,7 +234,7 @@ const prototypeSellerCreated = () => {
 	const [paintRainAdded, setPaintRainAdded] = useState(null);
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('paintRainAdded');
-		setSuccinctDropAdded(sessionValue);
+		setPaintRainAdded(sessionValue);
 		}, []);
 		function addPaintRainToCart() {
 	
