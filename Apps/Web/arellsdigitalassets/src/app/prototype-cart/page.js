@@ -4,10 +4,11 @@
 import '../css/prototype/cart/cart.css';
 import '../css/modals/purchase-complete.css';
 
-import Head from 'next/head'
+import Head from 'next/head';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-const prototypeSellerCreated = () => {
+const prototypeCart = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [purchaseComplete, setPurchaseComplete] = useState(false);
@@ -270,11 +271,11 @@ const prototypeSellerCreated = () => {
 				</div>					
 
 			)}			
-				<p id="prototypePage">PROTOTYPE</p>
+				<p id="prototype-cart-word">PROTOTYPE</p>
 		</div>			
 		     
         </>
     );
 }
 
-export default prototypeSellerCreated;
+export default prototypeCart;
