@@ -453,7 +453,7 @@ const prototypeSellerCreated = () => {
 			<meta name="twitter:description" content="Prototype for Seller Creations" />
 		</Head>
 
-		<title>Prototype</title>	
+		<title>Prototype Seller Created</title>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
