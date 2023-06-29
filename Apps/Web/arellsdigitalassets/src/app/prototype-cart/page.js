@@ -70,6 +70,24 @@ const prototypeCart = () => {
 
 
 {/*<!-- Remove function/s below -->*/}
+	function removeBlueOrange() {
+		setBlueOrangeCart(false);	
+
+		setRoyalties(royalties - (royalty * blueOrangePrice));
+		setFees(fees - (fee * blueOrangePrice));
+		setTotal(total - blueOrangePrice);
+
+		if(beachHousesCart == false
+			&& colourGlassCart == false
+			&& layersCart == false
+			&& succinctDropCart == false
+			&& paintRainCart == false){
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+		}
+
+		sessionStorage.setItem('blueOrangeAdded', 'false');
+	}
 	
 {/*<!-- Remove function/s above -->*/}
 	
@@ -198,7 +216,7 @@ const prototypeCart = () => {
 										<p id="price-blue-orange-before-cart">$1,200</p>
 									</div>					  		
 								</div>
-								<button id="remove-cart" onClick="removeBlueOrange()">
+								<button id="remove-cart" onClick={removeBlueOrange}>
 									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>
 							</div>
@@ -317,7 +335,7 @@ const prototypeCart = () => {
 				</div>					
 
 			)}			
-				<p id="prototypePage">PROTOTYPE</p>
+				<h3 id="prototype-cart-word">PROTOTYPE</h3>
 		</div>			
 		     
         </>

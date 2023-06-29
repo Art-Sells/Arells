@@ -150,14 +150,14 @@ const prototypeSellerCreated = () => {
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('blueOrangeAdded');
 		setBlueOrangeAdded(sessionValue);
-		}, []);
-		function addBlueOrangeToCart() {
+	}, []);
+	function addBlueOrangeToCart() {
 
-			setBlueOrangeAddToCartSellerCreated(false);
-			setBlueOrangeAddedSellerCreated(true);
+		setBlueOrangeAddToCartSellerCreated(false);
+		setBlueOrangeAddedSellerCreated(true);
 
-			setCartLinkConnectedSellerCreated(false);		
-			setCartLinkFullSellerCreated(true);
+		setCartLinkConnectedSellerCreated(false);		
+		setCartLinkFullSellerCreated(true);
 
 		sessionStorage.setItem('blueOrangeAdded', 'true');
 		setBlueOrangeAdded('true');
@@ -167,15 +167,15 @@ const prototypeSellerCreated = () => {
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('beachHousesAdded');
 		setBeachHousesAdded(sessionValue);
-		}, []);
-		function addBeachHousesToCart() {
-	
-			setBeachHousesAddToCartSellerCreated(false);
-			setBeachHousesAddedSellerCreated(true);
+	}, []);
+	function addBeachHousesToCart() {
 
-			setCartLinkConnectedSellerCreated(false);		
-			setCartLinkFullSellerCreated(true);
-	
+		setBeachHousesAddToCartSellerCreated(false);
+		setBeachHousesAddedSellerCreated(true);
+
+		setCartLinkConnectedSellerCreated(false);		
+		setCartLinkFullSellerCreated(true);
+
 		sessionStorage.setItem('beachHousesAdded', 'true');
 		setBeachHousesAdded('true');
 	}	
@@ -184,15 +184,15 @@ const prototypeSellerCreated = () => {
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('colourGlassAdded');
 		setColourGlassAdded(sessionValue);
-		}, []);
-		function addColourGlassToCart() {
-	
-			setColourGlassAddToCartSellerCreated(false);
-			setColourGlassAddedSellerCreated(true);
+	}, []);
+	function addColourGlassToCart() {
 
-			setCartLinkConnectedSellerCreated(false);		
-			setCartLinkFullSellerCreated(true);
-	
+		setColourGlassAddToCartSellerCreated(false);
+		setColourGlassAddedSellerCreated(true);
+
+		setCartLinkConnectedSellerCreated(false);		
+		setCartLinkFullSellerCreated(true);
+
 		sessionStorage.setItem('colourGlassAdded', 'true');
 		setColourGlassAdded('true');
 	}	
@@ -201,15 +201,15 @@ const prototypeSellerCreated = () => {
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('layersAdded');
 		setLayersAdded(sessionValue);
-		}, []);
-		function addLayersToCart() {
-	
-			setLayersAddToCartSellerCreated(false);
-			setLayersAddedSellerCreated(true);
+	}, []);
+	function addLayersToCart() {
 
-			setCartLinkConnectedSellerCreated(false);		
-			setCartLinkFullSellerCreated(true);
-	
+		setLayersAddToCartSellerCreated(false);
+		setLayersAddedSellerCreated(true);
+
+		setCartLinkConnectedSellerCreated(false);		
+		setCartLinkFullSellerCreated(true);
+
 		sessionStorage.setItem('layersAdded', 'true');
 		setLayersAdded('true');
 	}		
@@ -218,15 +218,15 @@ const prototypeSellerCreated = () => {
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('succinctDropAdded');
 		setSuccinctDropAdded(sessionValue);
-		}, []);
-		function addSuccinctDropToCart() {
-	
-			setSuccinctDropAddToCartSellerCreated(false);
-			setSuccinctDropAddedSellerCreated(true);
+	}, []);
+	function addSuccinctDropToCart() {
 
-			setCartLinkConnectedSellerCreated(false);		
-			setCartLinkFullSellerCreated(true);
-	
+		setSuccinctDropAddToCartSellerCreated(false);
+		setSuccinctDropAddedSellerCreated(true);
+
+		setCartLinkConnectedSellerCreated(false);		
+		setCartLinkFullSellerCreated(true);
+
 		sessionStorage.setItem('succinctDropAdded', 'true');
 		setSuccinctDropAdded('true');
 	}	
@@ -235,15 +235,15 @@ const prototypeSellerCreated = () => {
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('paintRainAdded');
 		setPaintRainAdded(sessionValue);
-		}, []);
-		function addPaintRainToCart() {
-	
-			setPaintRainAddToCartSellerCreated(false);
-			setPaintRainAddedSellerCreated(true);
+	}, []);
+	function addPaintRainToCart() {
 
-			setCartLinkConnectedSellerCreated(false);		
-			setCartLinkFullSellerCreated(true);
-	
+		setPaintRainAddToCartSellerCreated(false);
+		setPaintRainAddedSellerCreated(true);
+
+		setCartLinkConnectedSellerCreated(false);		
+		setCartLinkFullSellerCreated(true);
+
 		sessionStorage.setItem('paintRainAdded', 'true');
 		setPaintRainAdded('true');
 	}		
@@ -803,7 +803,7 @@ const prototypeSellerCreated = () => {
 						)}			     	
 					</div>
 			</div>
-				<p id="prototype-seller-created-word">PROTOTYPE</p>
+				<h3 id="prototype-seller-created-word">PROTOTYPE</h3>
 		</div>			
 		     
         </>
