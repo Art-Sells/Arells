@@ -150,7 +150,7 @@
 			}
 				#royalty-price-value-cart{
 					display: inline;
-					margin-left: -5px;
+					margin-left: 0px;
 				}						
 			#fee-cart {
 			text-align: center;
@@ -174,7 +174,7 @@
 			}	
 				#fee-price-value-cart{
 					display: inline;
-					margin-left: -4px;
+					margin-left: 0px;
 				}	
 			#total-cart {
 				text-align: center;
@@ -198,7 +198,7 @@
 			}
 				#total-price-value-cart{
 					display: inline;
-					margin-left: -6px;
+					margin-left: 0px;
 				}								
 			#purchase-cart {
 			  text-decoration: none;
@@ -268,7 +268,7 @@
 			
 			#blue-orange-cart, #beach-houses-cart, #colour-glass-cart,
 			#layers-cart, #succinct-drop-cart, #paint-rain-cart{
-				display: block;
+				display: flex;
 				margin-left: auto;
 			    margin-right: auto;
 			    margin-bottom: 10px;
@@ -393,7 +393,7 @@
 					opacity: 1;
 				}
 				
-		#prototype-Page {
+		#prototypePage {
 			margin-top: 30px;
 			font-size: 8px;
 			letter-spacing: 3px;
@@ -508,7 +508,7 @@
 				font-size: 12px;
 			}
 				#royalty-price-value-cart{
-					margin-left: -4px;
+					margin-left: 0px;
 				}	
 			#fee-cart {
 				margin-top: 10px;
@@ -520,7 +520,7 @@
 				margin-bottom: 10px;	
 			}	
 				#fee-price-value-cart{
-					margin-left: -3px;
+					margin-left: 0px;
 				}	
 			#total-cart{
 				font-size: 13px;
@@ -531,7 +531,7 @@
 				margin-bottom: 25px;
 			}	
 				#total-price-value-cart{
-					margin-left: -5px;
+					margin-left: 0px;
 				}	
 			#purchase-cart {
 				  font-size: 9px;

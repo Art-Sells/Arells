@@ -26,6 +26,46 @@ const prototypeCart = () => {
 
 {/*<!-- Add To Cart & Purchase function/s below -->*/}
 
+	// Function to format the numbers
+	const formatCurrency = (amount) => {
+		return new Intl.NumberFormat('en-US', {
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 0,
+		}).format(amount);
+	};
+
+	var blueOrangePrice = 1200;
+	var beachHousesPrice = 200;
+	var colourGlassPrice = 14500;
+	var layersPrice = 400000;
+	var succinctDropPrice = 100;
+	var paintRainPrice = 12000;
+
+	//royalty before purchase
+	var royalty = .97;
+	//royalty after purchase (.90)
+	//seller fee (.07)
+
+	var fee = .03;
+
+	const [royalties, setRoyalties] = useState(0);
+	const [fees, setFees] = useState(0);
+	const [total, setTotal] = useState(0);
+
+	useEffect(() => {
+		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+		if (blueOrangeAdded === 'true') {
+			setCartEmptyCart(false);
+			setCartFullCart(true);
+			setBlueOrangeCart(true);		
+
+			setRoyalties(royalty * blueOrangePrice + royalties);
+			setFees(fee * blueOrangePrice + fees);
+			setTotal(total + blueOrangePrice);
+		}
+	}, []);
+
+
 {/*<!-- Add To Cart & Purchase function/s above -->*/}
 
 
@@ -121,15 +161,21 @@ const prototypeCart = () => {
 					<div id="purchase-info-cart">
 						<p id="royalty-cart">Creator Royalties</p>
 						<p id="royalty-price-cart">$
-							<span id="royalty-price-value-cart"></span>
+							<span id="royalty-price-value-cart">
+							{formatCurrency(royalties)}
+							</span>
 						</p>
 						<p id="fee-cart">Fees</p>
 						<p id="fee-price-cart">$
-							<span id="fee-price-value-cart"></span>
+							<span id="fee-price-value-cart">
+							{formatCurrency(fees)}
+							</span>
 						</p>
 						<p id="total-cart">Total</p>
 						<p id="total-price-cart">$
-							<span id="total-price-value-cart"></span>
+							<span id="total-price-value-cart">
+							{formatCurrency(total)}
+							</span>
 						</p>
 							<button id="purchase-cart" onClick="completePurchase()">
 							COMPLETE PURCHASE</button>			
@@ -271,7 +317,7 @@ const prototypeCart = () => {
 				</div>					
 
 			)}			
-				<p id="prototype-Page">PROTOTYPE</p>
+				<p id="prototypePage">PROTOTYPE</p>
 		</div>			
 		     
         </>
