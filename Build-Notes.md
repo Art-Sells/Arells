@@ -78,7 +78,7 @@
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
   
-##### "Congratulations note on being a pioneer of a revolutionary new system for artists. Before Arells, it was difficult for artists like you to reap most of the financial benefits in the re-sale of your creations. But now thanks to Arells, 90% of every sale and resale will go to you... thanks to the Digital Fingerprints powering each artwork, your ancestors will be able to trace who bought and owned your art at what time, date, and place! If Arells existed when the Mona Lisa was created, we would have been able to trace who owned it at what time, place, and how much they bought it for... Now thanks to Arells, history will remember you as a pioneer of a system that changed our relationship with art forever." 
+##### "Congratulations note on being a pioneer of a revolutionary new financial system powering Arells: Price After Purchase. Before Arells, anyone could sell your art lower than the price they bought it. Before Arells, your artwork could be deleniated down $0. But now thanks to Arells, all this changes! History will remember you as a pioneer of a new financial system that changed our relationship with art forever." 
                                                 
 _____________________________________________________________________________________________________________________________
   
