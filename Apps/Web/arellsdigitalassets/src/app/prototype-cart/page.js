@@ -271,7 +271,7 @@ const prototypeCart = () => {
 				</div>					
 
 			)}			
-				<p id="prototype-cart-word">PROTOTYPE</p>
+				<p id="prototype-Page">PROTOTYPE</p>
 		</div>			
 		     
         </>
