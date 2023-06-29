@@ -803,7 +803,6 @@ const prototypeSellerCreated = () => {
 						)}			     	
 					</div>
 			</div>
-				<h3 id="prototype-seller-created-word">PROTOTYPE</h3>
 		</div>			
 		     
         </>

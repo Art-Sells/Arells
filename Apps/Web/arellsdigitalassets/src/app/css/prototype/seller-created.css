@@ -566,7 +566,7 @@
 			
 			
 @media screen and (max-width: 1000px) {
-	  body {
+	#prototype-seller-created-wrapper {
 	    -webkit-text-size-adjust: none;
 	  }  
 		#header-seller-created {
@@ -828,13 +828,13 @@
 	
 	
 @media screen and (max-width: 700px) {
-	  body {
-	    -webkit-text-size-adjust: none;
-	  }  	
-			#profileline-seller-created {
-			  width: 300px;
-			}		
-		  #container-seller-created {
-		    width: 400px;
-		  }  
+	#prototype-seller-created-wrapper {
+	-webkit-text-size-adjust: none;
+	}  	
+	#profileline-seller-created {
+		width: 300px;
+	}		
+	#container-seller-created {
+	width: 400px;
+	}  
 }

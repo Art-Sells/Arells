@@ -335,7 +335,6 @@ const prototypeCart = () => {
 				</div>					
 
 			)}			
-				<h3 id="prototype-cart-word">PROTOTYPE</h3>
 		</div>			
 		     
         </>
