@@ -114,11 +114,11 @@ const prototypeCart = () => {
 	function removeBeachHouses() {
 		setBeachHousesCart(false);	
 
-		setRoyalties(royalties - (royalty * blueOrangePrice));
-		setFees(fees - (fee * blueOrangePrice));
-		setTotal(total - blueOrangePrice);
+		setRoyalties(royalties - (royalty * beachHousesPrice));
+		setFees(fees - (fee * beachHousesPrice));
+		setTotal(total - beachHousesPrice);
 
-		if(beachHousesCart == false
+		if(blueOrangeCart == false
 			&& colourGlassCart == false
 			&& layersCart == false
 			&& succinctDropCart == false
@@ -127,7 +127,7 @@ const prototypeCart = () => {
 				setCartFullCart(false);
 		}
 
-		sessionStorage.setItem('blueOrangeAdded', 'false');
+		sessionStorage.setItem('beachHousesAdded', 'false');
 	}
 	
 {/*<!-- Remove function/s above -->*/}
@@ -279,7 +279,7 @@ const prototypeCart = () => {
 										<p id="price-beach-houses-before-cart">$200</p>
 									</div>
 								</div>
-								<button id="remove-cart" onClick="removeBeachHouses()">
+								<button id="remove-cart" onClick={removeBeachHouses}>
 									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>	     	
 							</div>
