@@ -84,7 +84,8 @@ ________________________________________________________________________________
   
 ## Fully integrated Asset Store App [Need Android Phone] (After 2 Engineers)
 **NFTs = Digital Assets, Connect Wallet = Connect Store, Public Key = Address, Private Key = Key**
-***AUM(based off price listed) - Main Metrics [prices even after un-listed are back-logged]**
+***AUM(based off price listed) - Main Metrics [prices even after un-listed are back-logged]***
+***A Stag Market (short for Stagnant Market) is a market in which no new assets are bought or sold during financially difficult times. This is based off the Price After Purchase system powering Arells in which no asset can be sold lower than the price it was previously listed or bought for. This changes our relationships with assets as bear markets within the Arells ecosystem are rendered obsolete.***
 
 ## Store (Default)
 - Includes all Arells Website Components
