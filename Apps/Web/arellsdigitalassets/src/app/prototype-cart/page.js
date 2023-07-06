@@ -79,7 +79,7 @@ const prototypeCart = () => {
 		if (beachHousesAdded === 'true') {
 			setCartEmptyCart(false);
 			setCartFullCart(true);
-			setBlueOrangeCart(true);		
+			setBeachHousesCart(true);		
 
 			setRoyalties(royalty * beachHousesPrice + royalties);
 			setFees(fee * beachHousesPrice + fees);
