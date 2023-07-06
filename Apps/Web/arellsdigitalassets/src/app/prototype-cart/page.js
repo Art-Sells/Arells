@@ -61,8 +61,8 @@ const prototypeCart = () => {
 	const [fees, setFees] = useState(0);
 	const [total, setTotal] = useState(0);
 
+	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 	useEffect(() => {
-		const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 		if (blueOrangeAdded === 'true') {
 			setCartEmptyCart(false);
 			setCartFullCart(true);
@@ -72,10 +72,11 @@ const prototypeCart = () => {
 			setFees(fee * blueOrangePrice + fees);
 			setTotal(total + blueOrangePrice);
 		}
+		
 	}, []);
 
+	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 	useEffect(() => {
-		const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 		if (beachHousesAdded === 'true') {
 			setCartEmptyCart(false);
 			setCartFullCart(true);
