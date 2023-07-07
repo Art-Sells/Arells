@@ -101,6 +101,19 @@ const prototypeCart = () => {
 		}
 	}, []);
 
+	const layersAdded = sessionStorage.getItem('layersAdded');
+	useEffect(() => {
+		if (layersAdded === 'true') {
+			setCartEmptyCart(false);
+			setCartFullCart(true);
+			setLayersCart(true);		
+
+			setRoyalties(prevRoyalties => royalty * layersPrice + prevRoyalties);
+			setFees(prevFees => fee * layersPrice + prevFees);
+			setTotal(prevTotal => layersPrice + prevTotal);
+		}
+	}, []);
+
 {/*<!-- Add To Cart & Purchase function/s above -->*/}
 
 
@@ -160,6 +173,25 @@ const prototypeCart = () => {
 		}
 
 		sessionStorage.setItem('colourGlassAdded', 'false');
+	}
+
+	function removeLayers() {
+		setLayersCart(false);	
+
+		setRoyalties(royalties - (royalty * layersPrice));
+		setFees(fees - (fee * layersPrice));
+		setTotal(total - layersPrice);
+
+		if(blueOrangeCart == false
+			&& beachHousesCart == false
+			&& colourGlassCart == false
+			&& succinctDropCart == false
+			&& paintRainCart == false){
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+		}
+
+		sessionStorage.setItem('layersAdded', 'false');
 	}
 	
 {/*<!-- Remove function/s above -->*/}
@@ -333,7 +365,7 @@ const prototypeCart = () => {
 										<p id="price-colour-glass-before-cart">$14,500</p>
 									</div>			  		
 								</div>
-								<button id="remove-cart" onClick="removeColourGlass()">
+								<button id="remove-cart" onClick={removeColourGlass}>
 									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>		     	
 							</div>
@@ -355,7 +387,7 @@ const prototypeCart = () => {
 										<p id="price-layers-before-cart">$400,000</p>
 									</div>			  		
 								</div>
-								<button id="remove-cart" onClick="removeLayers()">
+								<button id="remove-cart" onClick={removeLayers}>
 									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>
 							</div>
