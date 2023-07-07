@@ -68,9 +68,9 @@ const prototypeCart = () => {
 			setCartFullCart(true);
 			setBlueOrangeCart(true);		
 
-			setRoyalties(royalty * blueOrangePrice + royalties);
-			setFees(fee * blueOrangePrice + fees);
-			setTotal(total + blueOrangePrice);
+			setRoyalties(prevRoyalties => royalty * blueOrangePrice + prevRoyalties);
+			setFees(prevFees => fee * blueOrangePrice + prevFees);
+			setTotal(prevTotal => blueOrangePrice + prevTotal);
 		}
 		
 	}, []);
@@ -82,9 +82,9 @@ const prototypeCart = () => {
 			setCartFullCart(true);
 			setBeachHousesCart(true);		
 
-			setRoyalties(royalty * beachHousesPrice + royalties);
-			setFees(fee * beachHousesPrice + fees);
-			setTotal(total + beachHousesPrice);
+			setRoyalties(prevRoyalties => royalty * beachHousesPrice + prevRoyalties);
+			setFees(prevFees => fee * beachHousesPrice + prevFees);
+			setTotal(prevTotal => beachHousesPrice + prevTotal);
 		}
 	}, []);
 
