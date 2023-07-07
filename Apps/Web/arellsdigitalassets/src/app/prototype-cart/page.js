@@ -88,6 +88,18 @@ const prototypeCart = () => {
 		}
 	}, []);
 
+	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+	useEffect(() => {
+		if (colourGlassAdded === 'true') {
+			setCartEmptyCart(false);
+			setCartFullCart(true);
+			setColourGlassCart(true);		
+
+			setRoyalties(prevRoyalties => royalty * colourGlassPrice + prevRoyalties);
+			setFees(prevFees => fee * colourGlassPrice + prevFees);
+			setTotal(prevTotal => colourGlassPrice + prevTotal);
+		}
+	}, []);
 
 {/*<!-- Add To Cart & Purchase function/s above -->*/}
 
@@ -129,6 +141,25 @@ const prototypeCart = () => {
 		}
 
 		sessionStorage.setItem('beachHousesAdded', 'false');
+	}
+
+	function removeColourGlass() {
+		setColourGlassCart(false);	
+
+		setRoyalties(royalties - (royalty * colourGlassPrice));
+		setFees(fees - (fee * colourGlassPrice));
+		setTotal(total - colourGlassPrice);
+
+		if(blueOrangeCart == false
+			&& beachHousesCart == false
+			&& layersCart == false
+			&& succinctDropCart == false
+			&& paintRainCart == false){
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+		}
+
+		sessionStorage.setItem('colourGlassAdded', 'false');
 	}
 	
 {/*<!-- Remove function/s above -->*/}
