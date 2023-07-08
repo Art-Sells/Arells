@@ -114,6 +114,19 @@ const prototypeCart = () => {
 		}
 	}, []);
 
+	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+	useEffect(() => {
+		if (succinctDropAdded === 'true') {
+			setCartEmptyCart(false);
+			setCartFullCart(true);
+			setSuccinctDropCart(true);		
+
+			setRoyalties(prevRoyalties => royalty * succinctDropPrice + prevRoyalties);
+			setFees(prevFees => fee * succinctDropPrice + prevFees);
+			setTotal(prevTotal => succinctDropPrice + prevTotal);
+		}
+	}, []);
+
 {/*<!-- Add To Cart & Purchase function/s above -->*/}
 
 
@@ -192,6 +205,25 @@ const prototypeCart = () => {
 		}
 
 		sessionStorage.setItem('layersAdded', 'false');
+	}
+
+	function removeSuccinctDrop() {
+		setSuccinctDropCart(false);	
+
+		setRoyalties(royalties - (royalty * succinctDropPrice));
+		setFees(fees - (fee * succinctDropPrice));
+		setTotal(total - succinctDropPrice);
+
+		if(blueOrangeCart == false
+			&& beachHousesCart == false
+			&& colourGlassCart == false
+			&& layersCart == false
+			&& paintRainCart == false){
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+		}
+
+		sessionStorage.setItem('succinctDropAdded', 'false');
 	}
 	
 {/*<!-- Remove function/s above -->*/}
@@ -409,7 +441,7 @@ const prototypeCart = () => {
 										<p id="price-succinct-drop-before-cart">$100</p>
 									</div>			  		
 								</div>
-								<button id="remove-cart" onClick="removeSuccinctDrop()">
+								<button id="remove-cart" onClick={removeSuccinctDrop}>
 									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>			     	
 							</div>
@@ -431,7 +463,7 @@ const prototypeCart = () => {
 										<p id="price-paint-rain-before-cart">$12,000</p>
 									</div>			  		
 								</div>
-								<button id="remove-cart" onClick="removePaintRain()">
+								<button id="remove-cart" onClick={removePaintRain}>
 									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>		     	
 							</div>
