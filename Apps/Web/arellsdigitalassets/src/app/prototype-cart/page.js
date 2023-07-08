@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 const prototypeCart = () => {
+
+
 	const [elementId, setElementId] = useState('');
 
 	useEffect(() => {
@@ -32,6 +34,13 @@ const prototypeCart = () => {
 	const [succinctDropCart, setSuccinctDropCart] = useState(false);
 	const [paintRainCart, setPaintRainCart] = useState(false);
 {/*<!-- useState constants above -->*/}
+
+
+
+
+
+
+
 
 {/*<!-- Add To Cart & Purchase function/s below -->*/}
 
@@ -127,7 +136,25 @@ const prototypeCart = () => {
 		}
 	}, []);
 
+	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+	useEffect(() => {
+		if (paintRainAdded === 'true') {
+			setCartEmptyCart(false);
+			setCartFullCart(true);
+			setPaintRainCart(true);		
+
+			setRoyalties(prevRoyalties => royalty * paintRainPrice + prevRoyalties);
+			setFees(prevFees => fee * paintRainPrice + prevFees);
+			setTotal(prevTotal => paintRainPrice + prevTotal);
+		}
+	}, []);
+
 {/*<!-- Add To Cart & Purchase function/s above -->*/}
+
+
+
+
+
 
 
 {/*<!-- Remove function/s below -->*/}
@@ -225,8 +252,34 @@ const prototypeCart = () => {
 
 		sessionStorage.setItem('succinctDropAdded', 'false');
 	}
+
+	function removePaintRain() {
+		setPaintRainCart(false);	
+
+		setRoyalties(royalties - (royalty * paintRainPrice));
+		setFees(fees - (fee * paintRainPrice));
+		setTotal(total - paintRainPrice);
+
+		if(blueOrangeCart == false
+			&& beachHousesCart == false
+			&& colourGlassCart == false
+			&& layersCart == false
+			&& succinctDropCart == false){
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+		}
+
+		sessionStorage.setItem('removePaintRainAdded', 'false');
+	}
 	
 {/*<!-- Remove function/s above -->*/}
+
+
+
+
+
+
+
 	
     return (
         <>
