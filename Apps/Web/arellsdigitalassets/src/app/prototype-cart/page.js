@@ -158,7 +158,42 @@ const prototypeCart = () => {
 			setCartFullCart(false);
 			setBlueOrangeCart(false);	
 		}
-		sessionStorage.setItem('blueOrangeAdded');
+		sessionStorage.removeItem('blueOrangeAdded');
+		if(beachHousesAdded == true){
+			sessionStorage.setItem('beachHousesPurchased', 'true');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setBeachHousesCart(false);	
+		}
+		sessionStorage.removeItem('beachHousesAdded');
+		if(colourGlassAdded == true){
+			sessionStorage.setItem('colourGlassPurchased', 'true');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setColourGlassCart(false);	
+		}
+		sessionStorage.removeItem('colourGlassAdded');
+		if(layersAdded == true){
+			sessionStorage.setItem('layersPurchased', 'true');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setLayersCart(false);	
+		}
+		sessionStorage.removeItem('layersPurchased');
+		if(succinctDropAdded == true){
+			sessionStorage.setItem('succinctDropPurchased', 'true');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setSuccinctDropCart(false);	
+		}
+		sessionStorage.removeItem('succinctDropPurchased');
+		if(paintRainAdded == true){
+			sessionStorage.setItem('paintRainPurchased', 'true');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setPaintRainCart(false);	
+		}
+		sessionStorage.removeItem('paintRainPurchased');
 	}
 
 
@@ -398,7 +433,7 @@ const prototypeCart = () => {
 							{formatCurrency(total)}
 							</span>
 						</p>
-							<button id="purchase-cart" onClick="completePurchase()">
+							<button id="purchase-cart" onClick={completePurchase}>
 							COMPLETE PURCHASE</button>			
 					</div>
 					<div id="container-cart">
