@@ -149,6 +149,19 @@ const prototypeCart = () => {
 		}
 	}, []);
 
+
+	//Complete purchase
+	function completePurchase() {
+		if(blueOrangeAdded == true){
+			sessionStorage.setItem('blueOrangePurchased', 'true');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setBlueOrangeCart(false);	
+		}
+		sessionStorage.setItem('blueOrangeAdded');
+	}
+
+
 {/*<!-- Add To Cart & Purchase function/s above -->*/}
 
 
@@ -269,7 +282,7 @@ const prototypeCart = () => {
 				setCartFullCart(false);
 		}
 
-		sessionStorage.setItem('removePaintRainAdded', 'false');
+		sessionStorage.setItem('paintRainAdded', 'false');
 	}
 	
 {/*<!-- Remove function/s above -->*/}
