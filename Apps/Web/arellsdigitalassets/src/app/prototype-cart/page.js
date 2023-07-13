@@ -194,6 +194,8 @@ const prototypeCart = () => {
 			setPaintRainCart(false);	
 		}
 		sessionStorage.removeItem('paintRainPurchased');
+
+		setPurchaseComplete(true);
 	}
 
 
