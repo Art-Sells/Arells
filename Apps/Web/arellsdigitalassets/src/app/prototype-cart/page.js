@@ -151,6 +151,7 @@ const prototypeCart = () => {
 
 
 	//Complete purchase
+	const [blueOrangePurchased, setBlueOrangePurchased] = useState(null);	
 	function completePurchase() {
 		if(blueOrangeAdded == true){
 			sessionStorage.setItem('blueOrangePurchased', 'true');
@@ -377,7 +378,7 @@ const prototypeCart = () => {
 				<div className="purchase-complete-content">
 				<p id="purchase-complete-desc"> PURCHASE COMPLETE</p>
 				{/* Change below link after test */}
-				<Link legacyBehavior href="/prototype-buyer-collected">
+				<Link legacyBehavior href="/prototype-seller-created">
 					<a className="close-purchase-complete">
 						VIEW COLLECTION
 					</a>	
