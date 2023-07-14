@@ -263,7 +263,7 @@ const prototypeSellerCreated = () => {
 
 
 {/*<!-- Added/Purchased To function/s below -->*/}
-	const [blueOrangePurchased, setBlueOrangePurchased] = useState(null);	
+	const [blueOrangePurchased, setBlueOrangePurchased] = useState(false);	
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('blueOrangePurchased');
 		setBlueOrangePurchased(sessionValue);
@@ -290,7 +290,7 @@ const prototypeSellerCreated = () => {
 		}
 	}, [blueOrangeAdded]);
 
-	const [beachHousesPurchased, setBeachHousesPurchased] = useState(null);	
+	const [beachHousesPurchased, setBeachHousesPurchased] = useState(false);	
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('beachHousesPurchased');
 		setBeachHousesPurchased(sessionValue);
@@ -317,7 +317,7 @@ const prototypeSellerCreated = () => {
 		}
 	}, [beachHousesAdded]);
 
-	const [colourGlassPurchased, setColourGlassPurchased] = useState(null);	
+	const [colourGlassPurchased, setColourGlassPurchased] = useState(false);	
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('colourGlassPurchased');
 		setColourGlassPurchased(sessionValue);
@@ -344,7 +344,7 @@ const prototypeSellerCreated = () => {
 		}
 	}, [colourGlassAdded]);	
 
-	const [layersPurchased, setLayersPurchased] = useState(null);	
+	const [layersPurchased, setLayersPurchased] = useState(false);	
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('layersPurchased');
 		setLayersPurchased(sessionValue);
@@ -371,7 +371,7 @@ const prototypeSellerCreated = () => {
 		}
 	}, [layersAdded]);	
 	
-	const [succinctDropPurchased, setSuccinctDropPurchased] = useState(null);	
+	const [succinctDropPurchased, setSuccinctDropPurchased] = useState(false);	
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('succinctDropPurchased');
 		setSuccinctDropPurchased(sessionValue);
@@ -398,7 +398,7 @@ const prototypeSellerCreated = () => {
 		}
 	}, [succinctDropAdded]);	
 
-	const [paintRainPurchased, setPaintRainPurchased] = useState(null);	
+	const [paintRainPurchased, setPaintRainPurchased] = useState(false);	
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('paintRainPurchased');
 		setPaintRainPurchased(sessionValue);

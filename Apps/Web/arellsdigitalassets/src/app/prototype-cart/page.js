@@ -151,50 +151,49 @@ const prototypeCart = () => {
 
 
 	//Complete purchase
-	const [blueOrangePurchased, setBlueOrangePurchased] = useState(null);	
 	function completePurchase() {
-		if(blueOrangeAdded == true){
-			sessionStorage.setItem('blueOrangePurchased', 'true');
+		if(blueOrangeAdded === 'true'){
+			setBlueOrangePurchased(true);
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setBlueOrangeCart(false);	
 		}
 		sessionStorage.removeItem('blueOrangeAdded');
-		if(beachHousesAdded == true){
-			sessionStorage.setItem('beachHousesPurchased', 'true');
+		if(beachHousesAdded === 'true'){
+			setBeachHousesPurchased(true);
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setBeachHousesCart(false);	
 		}
 		sessionStorage.removeItem('beachHousesAdded');
-		if(colourGlassAdded == true){
-			sessionStorage.setItem('colourGlassPurchased', 'true');
+		if(colourGlassAdded === 'true'){
+			setColourGlassPurchased(true);
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setColourGlassCart(false);	
 		}
 		sessionStorage.removeItem('colourGlassAdded');
-		if(layersAdded == true){
-			sessionStorage.setItem('layersPurchased', 'true');
+		if(layersAdded === 'true'){
+			setLayersPurchased(true);
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setLayersCart(false);	
 		}
-		sessionStorage.removeItem('layersPurchased');
-		if(succinctDropAdded == true){
-			sessionStorage.setItem('succinctDropPurchased', 'true');
+		sessionStorage.removeItem('layersAdded');
+		if(succinctDropAdded === 'true'){
+			setSuccinctDropPurchased(true);
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setSuccinctDropCart(false);	
 		}
 		sessionStorage.removeItem('succinctDropPurchased');
-		if(paintRainAdded == true){
-			sessionStorage.setItem('paintRainPurchased', 'true');
+		if(paintRainAdded === 'true'){
+			setPaintRainPurchased(true);
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setPaintRainCart(false);	
 		}
-		sessionStorage.removeItem('paintRainPurchased');
+		sessionStorage.removeItem('paintRainAdded');
 
 		setPurchaseComplete(true);
 	}
