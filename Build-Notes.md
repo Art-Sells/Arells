@@ -116,6 +116,8 @@ ________________________________________________________________________________
 
 #### Sponsored/Featured
 
+#### Royalties: 90% = Real Art, 5% = AI Art (note every artist). Implement watermarks on every AI generated image.
+
 ##### Expand Relationship-Building-Team Internationally (Asia/Africa/India)
 
 #### ERC-6551 (for Real-Estate (possible Ability to link previous NFTs into the asset))
