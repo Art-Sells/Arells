@@ -151,12 +151,19 @@ const prototypeCart = () => {
 
 
 	//Complete purchase
+	const [blueOrangePurchased, setBlueOrangePurchased] = useState(false);	
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('blueOrangePurchased');
+		setBlueOrangePurchased(sessionValue);
+	}, []);
 	function completePurchase() {
-		if(blueOrangeAdded === 'true'){
-			setBlueOrangePurchased(true);
+		if(blueOrangeAdded === 'true' && blueOrangePurchased === 'false'){
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setBlueOrangeCart(false);	
+
+			sessionStorage.setItem('blueOrangePurchased', 'true');
+			setBlueOrangePurchased('true');
 		}
 		sessionStorage.removeItem('blueOrangeAdded');
 		if(beachHousesAdded === 'true'){
