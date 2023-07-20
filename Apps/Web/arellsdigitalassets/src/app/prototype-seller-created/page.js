@@ -263,11 +263,11 @@ const prototypeSellerCreated = () => {
 
 
 {/*<!-- Added/Purchased To function/s below -->*/}
-	// const [blueOrangePurchased, setBlueOrangePurchased] = useState(false);	
-	// useEffect(() => {
-	// 	const sessionValue = sessionStorage.getItem('blueOrangePurchased');
-	// 	setBlueOrangePurchased(sessionValue);
-	// }, []);
+	const [blueOrangePurchased, setBlueOrangePurchased] = useState(false);	
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('blueOrangePurchased');
+		setBlueOrangePurchased(sessionValue);
+	}, []);
 	useEffect(() => {
 		if (blueOrangePurchased === 'true') {
 			setBlueOrangePricesBeforeSellerCreated(false);
