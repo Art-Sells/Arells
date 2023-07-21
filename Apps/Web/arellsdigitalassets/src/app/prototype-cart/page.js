@@ -390,7 +390,7 @@ const prototypeCart = () => {
 				<div className="purchase-complete-content">
 				<p id="purchase-complete-desc"> PURCHASE COMPLETE</p>
 				{/* Change below link after test */}
-				<Link legacyBehavior href="/prototype-seller-created">
+				<Link legacyBehavior href="/prototype-buyer-collected">
 					<a className="close-purchase-complete">
 						VIEW COLLECTION
 					</a>	
