@@ -152,43 +152,46 @@ const prototypeCart = () => {
 
 	//Complete purchase
 	function completePurchase() {
-		if(blueOrangeAdded === 'true'){
-			setBlueOrangePurchased(true);
+		const blueOrangeOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+		if(blueOrangeAdded === 'true' && blueOrangeOrangePurchased == 'false'){
+			sessionStorage.setItem('blueOrangePurchased', 'true');
+			setBlueOrangePurchased('true');
+
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setBlueOrangeCart(false);	
 		}
 		sessionStorage.removeItem('blueOrangeAdded');
 		if(beachHousesAdded === 'true'){
-			setBeachHousesPurchased(true);
+			
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setBeachHousesCart(false);	
 		}
 		sessionStorage.removeItem('beachHousesAdded');
 		if(colourGlassAdded === 'true'){
-			setColourGlassPurchased(true);
+			
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setColourGlassCart(false);	
 		}
 		sessionStorage.removeItem('colourGlassAdded');
 		if(layersAdded === 'true'){
-			setLayersPurchased(true);
+			
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setLayersCart(false);	
 		}
 		sessionStorage.removeItem('layersAdded');
 		if(succinctDropAdded === 'true'){
-			setSuccinctDropPurchased(true);
+			
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setSuccinctDropCart(false);	
 		}
 		sessionStorage.removeItem('succinctDropPurchased');
 		if(paintRainAdded === 'true'){
-			setPaintRainPurchased(true);
+			
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setPaintRainCart(false);	
