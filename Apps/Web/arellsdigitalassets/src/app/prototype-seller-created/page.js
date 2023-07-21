@@ -263,7 +263,7 @@ const prototypeSellerCreated = () => {
 
 
 {/*<!-- Added/Purchased To function/s below -->*/}
-	const [blueOrangePurchased, setBlueOrangePurchased] = useState(false);	
+	const [blueOrangePurchased, setBlueOrangePurchased] = useState(null);	
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('blueOrangePurchased');
 		setBlueOrangePurchased(sessionValue);

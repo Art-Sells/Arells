@@ -151,73 +151,52 @@ const prototypeCart = () => {
 
 
 	//Complete purchase
-	function completePurchase() {
+	sessionStorage.getItem('blueOrangePurchased');
 
-		const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
-		if(blueOrangeAdded === 'true' && blueOrangePurchased == 'false'){
+	function completePurchase() {
+		if(blueOrangeAdded === 'true'){
 			sessionStorage.setItem('blueOrangePurchased', 'true');
-			setBlueOrangePurchased('true');
 
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setBlueOrangeCart(false);	
 		}
 		sessionStorage.removeItem('blueOrangeAdded');
-
-		const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
-		if(beachHousesAdded === 'true' && beachHousesPurchased === 'false'){
-			sessionStorage.setItem('beachHousesPurchased', 'true');
-			setBeachHousesPurchased('true');
+		if(beachHousesAdded === 'true'){
 			
 			setCartEmptyCart(true);
 			setCartFullCart(false);
 			setBeachHousesCart(false);	
 		}
 		sessionStorage.removeItem('beachHousesAdded');
-
-		// const colourGlassPurchased = sessionStorage.getItem('colourGlassPurchased');
-		// if(colourGlassAdded === 'true' && colourGlassPurchased === 'false'){
-		// 	sessionStorage.setItem('colourGlassPurchased', 'true');
-		// 	setColourGlassPurchased('true');
+		if(colourGlassAdded === 'true'){
 			
-		// 	setCartEmptyCart(true);
-		// 	setCartFullCart(false);
-		// 	setColourGlassCart(false);	
-		// }
-		// sessionStorage.removeItem('colourGlassAdded');
-
-		// const layersPurchased = sessionStorage.getItem('layersPurchased');
-		// if(layersAdded === 'true' && layersPurchased === 'false'){
-		// 	sessionStorage.setItem('layersPurchased', 'true');
-		// 	setLayersPurchased('true');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setColourGlassCart(false);	
+		}
+		sessionStorage.removeItem('colourGlassAdded');
+		if(layersAdded === 'true'){
 			
-		// 	setCartEmptyCart(true);
-		// 	setCartFullCart(false);
-		// 	setLayersCart(false);	
-		// }
-		// sessionStorage.removeItem('layersAdded');
-
-		// const succinctDropPurchased = sessionStorage.getItem('succinctDropPurchased');
-		// if(succinctDropAdded === 'true' && succinctDropPurchased === 'false'){
-		// 	sessionStorage.setItem('succinctDropPurchased', 'true');
-		// 	setSuccinctDropPurchased('true');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setLayersCart(false);	
+		}
+		sessionStorage.removeItem('layersAdded');
+		if(succinctDropAdded === 'true'){
 			
-		// 	setCartEmptyCart(true);
-		// 	setCartFullCart(false);
-		// 	setSuccinctDropCart(false);	
-		// }
-		// sessionStorage.removeItem('succinctDropAdded');
-
-		// const paintRainPurchased = sessionStorage.getItem('paintRainPurchased');
-		// if(paintRainAdded === 'true' && paintRainPurchased === 'false'){
-		// 	sessionStorage.setItem('paintRainPurchased', 'true');
-		// 	setPaintRainPurchased('true');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setSuccinctDropCart(false);	
+		}
+		sessionStorage.removeItem('succinctDropPurchased');
+		if(paintRainAdded === 'true'){
 			
-		// 	setCartEmptyCart(true);
-		// 	setCartFullCart(false);
-		// 	setPaintRainCart(false);	
-		// }
-		// sessionStorage.removeItem('paintRainAdded');
+			setCartEmptyCart(true);
+			setCartFullCart(false);
+			setPaintRainCart(false);	
+		}
+		sessionStorage.removeItem('paintRainAdded');
 
 		setPurchaseComplete(true);
 	}
