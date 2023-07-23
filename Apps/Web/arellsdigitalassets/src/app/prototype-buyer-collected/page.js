@@ -435,36 +435,36 @@ const prototypeBuyerCollected = () => {
 			<meta charset="UTF-8" />
 			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-			<meta name="title" content="Seller Creations Prototype" />
-			<meta name="description" content="Prototype for Seller Creations" />
-			<meta name="google" content="nositelinkssearchbox" />
-			<meta name="keywords" content="Arells" />
-			<meta name="author" content="Arells" />
-			<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
+			<meta name="title" content="Buyer Collections Prototype"/>
+			<meta name="description" content="Prototype for Buyer Collections"/>
+			<meta name="google" content="nositelinkssearchbox"/>
+			<meta name="keywords" content="Arells"/>
+			<meta name="author" content="Arells"/>
+			<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
 
 			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-seller-created" />
+			<link rel="canonical" href="https://arells.com/prototype-buyer-collected"/>
 
-			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg" />
-			<meta property="og:site_name" content="Arells" />
-			<meta property="og:type" content="website" />
-			<meta property="og:title" content="Seller Creations Prototype" />
+			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>	
+			<meta property="og:site_name" content="Arells"/>	
+			<meta property="og:type" content="website"/>				
+			<meta property="og:title" content="Buyer Collections Prototype"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-seller-created" />
-			<meta property="og:description" content="Prototype for Seller Creations" />
-			<meta property="og:image:type" content="image/jpg" />
-			<meta property="og:image:width" content="700" />
-			<meta property="og:image:height" content="400" />
+			<meta property="og:url" content="https://arells.com/prototype-buyer-collected"/>
+			<meta property="og:description" content="Prototype for Buyer Collections"/>
+			<meta property="og:image:type" content="image/jpg"/>
+			<meta property="og:image:width" content="700"/>
+			<meta property="og:image:height" content="400"/>
 
-			<meta name="twitter:title" content="Seller Creations Prototype" />
-			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg" />
+			<meta name="twitter:title" content="Buyer Collections Prototype"/>
+			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-seller-created" />
-			<meta name="twitter:card" content="summary_large_image" />
-			<meta name="twitter:description" content="Prototype for Seller Creations" />
+			<meta name="twitter:url" content="https://arells.com/prototype-buyer-collected"/>
+			<meta name="twitter:card" content="summary_large_image"/>
+			<meta name="twitter:description" content="Prototype for Buyer Collections"/>
 		</Head>
 
-		<title>Prototype Seller Created</title>	
+		<title>Prototype Buyer Collected</title>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
