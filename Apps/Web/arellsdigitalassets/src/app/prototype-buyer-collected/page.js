@@ -33,19 +33,15 @@ const prototypeBuyerCollected = () => {
 
 	const [cartLinkConnectedBuyerCollected, setCartLinkConnectedBuyerCollected] = useState(false);
 
-	const [blueOrangeAddedBuyerCollected, setBlueOrangeAddedBuyerCollected] = useState(false);
-	const [beachHousesAddedBuyerCollected, setBeachHousesAddedBuyerCollected] = useState(false);
-	const [colourGlassAddedBuyerCollected, setColourGlassAddedBuyerCollected] = useState(false);
-	const [layersAddedBuyerCollected, setLayersAddedBuyerCollected] = useState(false);
-	const [succinctDropAddedBuyerCollected, setSuccinctDropAddedBuyerCollected] = useState(false);
-	const [paintRainAddedBuyerCollected, setPaintRainAddedBuyerCollected] = useState(false);
+	const [noArtBuyerCollected, setNoArtBuyerCollected] = useState(true);
+	const [collectedItemsBuyerCollected, setCollectedItemsBuyerCollected] = useState(false);
 
-	const[blueOrangePurchasedBuyerCollected, setBlueOrangePurchasedBuyerCollected] = useState(false);
-	const[beachHousesPurchasedBuyerCollected, setBeachHousesPurchasedBuyerCollected] = useState(false);
-	const[colourGlassPurchasedBuyerCollected, setColourGlassPurchasedBuyerCollected] = useState(false);
-	const[layersPurchasedBuyerCollectedd, setLayersPurchasedBuyerCollected] = useState(false);
-	const[succinctDropPurchasedBuyerCollected, setSuccinctDropPurchasedBuyerCollected] = useState(false);
-	const[paintRainPurchasedBuyerCollectedd, setPaintRainPurchasedBuyerCollected] = useState(false);
+	const[blueOrangeBuyerCollected, setBlueOrangeBuyerCollected] = useState(false);
+	const[beachHousesBuyerCollected, setBeachHousesBuyerCollected] = useState(false);
+	const[colourGlassBuyerCollected, setColourGlassBuyerCollected] = useState(false);
+	const[layersBuyerCollected, setLayersBuyerCollected] = useState(false);
+	const[succinctDropBuyerCollected, setSuccinctBuyerCollected] = useState(false);
+	const[paintRainBuyerCollected, setPaintRainBuyerCollected] = useState(false);
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
@@ -75,24 +71,10 @@ const prototypeBuyerCollected = () => {
 	const walletConnected = () => {
 		setShowConnectWallet(false);
 		
-		setCartLinkSellerCreated(false);
-		setWalletConnectedDivSellerCreated(true);
+		setCartLinkBuyerCollected(false);
+		setWalletConnectedBuyerCollected(true);
 		
-		setCartLinkConnectedSellerCreated(true);
-
-		setBlueOrangeAddToCartSellerCreated(false);
-		setBeachHousesAddToCartSellerCreated(false);
-		setColourGlassAddToCartSellerCreated(false);
-		setLayersAddToCartSellerCreated(false);
-		setSuccinctDropAddToCartSellerCreated(false);
-		setPaintRainAddToCartSellerCreated(false);
-	
-		setBlueOrangeAddToCartConnectedSellerCreated(true);
-		setBeachHousesAddToCartConnectedSellerCreated(true);
-		setColourGlassAddToCartConnectedSellerCreated(true);
-		setLayersAddToCartConnectedSellerCreated(true);
-		setSuccinctDropAddToCartConnectedSellerCreated(true);
-		setPaintRainAddToCartConnectedSellerCreated(true);
+		setCartLinkConnectedBuyerCollected(true);
 		
 		sessionStorage.setItem('walletConnectedSession', 'true');
 		setWalletConnectedSession('true');
@@ -105,34 +87,88 @@ const prototypeBuyerCollected = () => {
 	}, []);
 	useEffect(() => {
 		if (walletConnectedSession === 'true') {
-			setCartLinkSellerCreated(false);
-			setWalletConnectedDivSellerCreated(true);
+			setCartLinkBuyerCollected(false);
+			setWalletConnectedDivBuyerCollected(true);
 			
-			setCartLinkConnectedSellerCreated(true);
-	
-			setBlueOrangeAddToCartSellerCreated(false);
-			setBeachHousesAddToCartSellerCreated(false);
-			setColourGlassAddToCartSellerCreated(false);
-			setLayersAddToCartSellerCreated(false);
-			setSuccinctDropAddToCartSellerCreated(false);
-			setPaintRainAddToCartSellerCreated(false);
-		
-			setBlueOrangeAddToCartConnectedSellerCreated(true);
-			setBeachHousesAddToCartConnectedSellerCreated(true);
-			setColourGlassAddToCartConnectedSellerCreated(true);
-			setLayersAddToCartConnectedSellerCreated(true);
-			setSuccinctDropAddToCartConnectedSellerCreated(true);
-			setPaintRainAddToCartConnectedSellerCreated(true);
+			setCartLinkConnectedBuyerCollected(true);
 		}
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
 
-{/*<!-- Add To Cart function/s below -->*/}	
-
-{/*<!-- Add To Cart function/s above -->*/}
-
-
 {/*<!-- Added/Purchased To function/s below -->*/}
+	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+	const layersAdded = sessionStorage.getItem('layersAdded');
+	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+
+	useEffect(() => {
+		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
+		|| colourGlassAdded === 'true' || layersAdded === 'true'
+		|| paintRainAdded === 'true' || succinctDropAdded == 'true') {
+			setCartLinkConnectedBuyerCollected(false);
+			setCartLinkFullBuyerCollected(true);
+		}
+	}, [blueOrangeAdded, beachHousesAdded,
+		colourGlassAdded, layersAdded, paintRainAdded,
+		succinctDropAdded]);
+
+	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+	const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
+	const colourGlassPurchased = sessionStorage.getItem('colourGlassPurchased');
+	const layersPurchased = sessionStorage.getItem('layersPurchased');
+	const paintRainPurchased = sessionStorage.getItem('paintRainPurchased');
+	const succinctDropPurchased = sessionStorage.getItem('succinctDropPurchased');	
+
+	useEffect(() => {
+		if (blueOrangePurchased === 'true') {
+			setNoArtBuyerCollected(false);
+
+			setCollectedItemsBuyerCollected(true);
+			setBlueOrangeBuyerCollected(true);
+		}
+	}, [blueOrangePurchased]);
+	useEffect(() => {
+		if (beachHousesPurchased === 'true') {
+			setNoArtBuyerCollected(false);
+
+			setCollectedItemsBuyerCollected(true);
+			setBeachHousesBuyerCollected(true);
+		}
+	}, [beachHousesPurchased]);
+	useEffect(() => {
+		if (colourGlassPurchased === 'true') {
+			setNoArtBuyerCollected(false);
+
+			setCollectedItemsBuyerCollected(true);
+			setColourGlassBuyerCollected(true);
+		}
+	}, [colourGlassPurchased]);
+	useEffect(() => {
+		if (layersPurchased === 'true') {
+			setNoArtBuyerCollected(false);
+
+			setCollectedItemsBuyerCollected(true);
+			setLayersBuyerCollected(true);
+		}
+	}, [layersPurchased]);
+	useEffect(() => {
+		if (paintRainPurchased === 'true') {
+			setNoArtBuyerCollected(false);
+
+			setCollectedItemsBuyerCollected(true);
+			setPaintRainBuyerCollected(true);
+		}
+	}, [paintRainPurchased]);
+	useEffect(() => {
+		if (succinctDropPurchased === 'true') {
+			setNoArtBuyerCollected(false);
+
+			setCollectedItemsBuyerCollected(true);
+			setSuccinctDropBuyerCollected(true);
+		}
+	}, [succinctDropPurchased]);
 	
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
