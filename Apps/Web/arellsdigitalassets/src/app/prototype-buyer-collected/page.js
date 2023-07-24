@@ -247,7 +247,7 @@ const prototypeBuyerCollected = () => {
 					</a>	
 				</Link>	
 				{cartLinkBuyerCollected && (
-					<button id="cart-link-buyer-collected" onClick="connectWallet()">
+					<button id="cart-link-buyer-collected" onClick={connectWallet}>
 						<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>					
 				)}
@@ -286,7 +286,7 @@ const prototypeBuyerCollected = () => {
 			<div id="share-div">
 				<p id="share-div-desc">SHARE</p>
 				<button id="copy-link-buyer-collected"
-					onClick="copyLink()">
+					onClick={copyLink}>
 					<img id="copy-link-icon-buyer-collected" src="/icons&images/prototype/link.png"/>
 					COPY LINK</button>	
 			</div>		
