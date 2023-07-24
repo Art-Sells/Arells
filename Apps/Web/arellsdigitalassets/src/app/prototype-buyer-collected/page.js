@@ -241,7 +241,7 @@ const prototypeBuyerCollected = () => {
 			<div id="header-buyer-collected">
 			
 			{/*<!-- Change Link Below After Test -->*/}
-				<Link legacuBehavior href="/">
+				<Link legacyBehavior href="/">
 					<a id="icon-link-buyer-collected">
 						<img id="arells-icon-buyer-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
