@@ -27,53 +27,25 @@ const prototypeBuyerCollected = () => {
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
-	const [cartLinkSellerCreated, setCartLinkSellerCreated] = useState(true);
-	const [walletConnectedDivSellerCreated, setWalletConnectedDivSellerCreated] = useState(false);
-	const [cartLinkFullSellerCreated, setCartLinkFullSellerCreated] = useState(false);
+	const [cartLinkBuyerCollected, setCartLinkBuyerCollected] = useState(true);
+	const [walletConnectedDivBuyerCollected, setWalletConnectedDivBuyerCollected] = useState(false);
+	const [cartLinkFullBuyerCollected, setCartLinkFullBuyerCollected] = useState(false);
 
-	const [cartLinkConnectedSellerCreated, setCartLinkConnectedSellerCreated] = useState(false);
-	
-	const [blueOrangeAddToCartSellerCreated, setBlueOrangeAddToCartSellerCreated] = useState(true);
-	const [beachHousesAddToCartSellerCreated, setBeachHousesAddToCartSellerCreated] = useState(true);
-	const [colourGlassAddToCartSellerCreated, setColourGlassAddToCartSellerCreated] = useState(true);
-	const [layersAddToCartSellerCreated, setLayersAddToCartSellerCreated] = useState(true);
-	const [succinctDropAddToCartSellerCreated, setSuccinctDropAddToCartSellerCreated] = useState(true);
-	const [paintRainAddToCartSellerCreated, setPaintRainAddToCartSellerCreated] = useState(true);
+	const [cartLinkConnectedBuyerCollected, setCartLinkConnectedBuyerCollected] = useState(false);
 
-	const[blueOrangeAddToCartConnectedSellerCreated, setBlueOrangeAddToCartConnectedSellerCreated] = useState(false);
-	const[beachHousesAddToCartConnectedSellerCreated, setBeachHousesAddToCartConnectedSellerCreated] = useState(false);
-	const[colourGlassAddToCartConnectedSellerCreated, setColourGlassAddToCartConnectedSellerCreated] = useState(false);
-	const[layersAddToCartConnectedSellerCreated, setLayersAddToCartConnectedSellerCreated] = useState(false);
-	const[succinctDropAddToCartConnectedSellerCreated, setSuccinctDropAddToCartConnectedSellerCreated] = useState(false);
-	const[paintRainAddToCartConnectedSellerCreated, setPaintRainAddToCartConnectedSellerCreated] = useState(false);
+	const [blueOrangeAddedBuyerCollected, setBlueOrangeAddedBuyerCollected] = useState(false);
+	const [beachHousesAddedBuyerCollected, setBeachHousesAddedBuyerCollected] = useState(false);
+	const [colourGlassAddedBuyerCollected, setColourGlassAddedBuyerCollected] = useState(false);
+	const [layersAddedBuyerCollected, setLayersAddedBuyerCollected] = useState(false);
+	const [succinctDropAddedBuyerCollected, setSuccinctDropAddedBuyerCollected] = useState(false);
+	const [paintRainAddedBuyerCollected, setPaintRainAddedBuyerCollected] = useState(false);
 
-	const [blueOrangeAddedSellerCreated, setBlueOrangeAddedSellerCreated] = useState(false);
-	const [beachHousesAddedSellerCreated, setBeachHousesAddedSellerCreated] = useState(false);
-	const [colourGlassAddedSellerCreated, setColourGlassAddedSellerCreated] = useState(false);
-	const [layersAddedSellerCreated, setLayersAddedSellerCreated] = useState(false);
-	const [succinctDropAddedSellerCreated, setSuccinctDropAddedSellerCreated] = useState(false);
-	const [paintRainAddedSellerCreated, setPaintRainAddedSellerCreated] = useState(false);
-	
-	const [blueOrangePricesBeforeSellerCreated, setBlueOrangePricesBeforeSellerCreated] = useState(true);
-	const [beachHousesPricesBeforeSellerCreated, setBeachHousesPricesBeforeSellerCreated] = useState(true);
-	const [colourGlassPricesBeforeSellerCreated, setColourGlassPricesBeforeSellerCreated] = useState(true);
-	const [layersPricesBeforeSellerCreated, setLayersPricesBeforeSellerCreated] = useState(true);
-	const [succinctDropPricesBeforeSellerCreated, setSuccinctDropPricesBeforeSellerCreated] = useState(true);
-	const [paintRainPricesBeforeSellerCreated, setPaintRainPricesBeforeSellerCreated] = useState(true);
-
-	const [blueOrangePricesAfterSellerCreated, setBlueOrangePricesAfterSellerCreated] = useState(false);
-	const [beachHousesPricesAfterSellerCreated, setBeachHousesPricesAfterSellerCreated] = useState(false);
-	const [colourGlassPricesAfterSellerCreated, setColourGlassPricesAfterSellerCreated] = useState(false);
-	const [layersPricesAfterSellerCreated, setLayersPricesAfterSellerCreated] = useState(false);
-	const [succinctDropPricesAfterSellerCreated, setSuccinctDropPricesAfterSellerCreated] = useState(false);
-	const [paintRainPricesAfterSellerCreated, setPaintRainPricesAfterSellerCreated] = useState(false);
-
-	const[blueOrangeCollectedSellerCreated, setBlueOrangeCollectedSellerCreated] = useState(false);
-	const[beachHousesCollectedSellerCreated, setBeachHousesCollectedSellerCreated] = useState(false);
-	const[colourGlassCollectedSellerCreated, setColourGlassCollectedSellerCreated] = useState(false);
-	const[layersCollectedSellerCreated, setLayersCollectedSellerCreated] = useState(false);
-	const[succinctDropCollectedSellerCreated, setSuccinctDropCollectedSellerCreated] = useState(false);
-	const[paintRainCollectedSellerCreated, setPaintRainCollectedSellerCreated] = useState(false);
+	const[blueOrangePurchasedBuyerCollected, setBlueOrangePurchasedBuyerCollected] = useState(false);
+	const[beachHousesPurchasedBuyerCollected, setBeachHousesPurchasedBuyerCollected] = useState(false);
+	const[colourGlassPurchasedBuyerCollected, setColourGlassPurchasedBuyerCollected] = useState(false);
+	const[layersPurchasedBuyerCollectedd, setLayersPurchasedBuyerCollected] = useState(false);
+	const[succinctDropPurchasedBuyerCollected, setSuccinctDropPurchasedBuyerCollected] = useState(false);
+	const[paintRainPurchasedBuyerCollectedd, setPaintRainPurchasedBuyerCollected] = useState(false);
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
@@ -81,7 +53,7 @@ const prototypeBuyerCollected = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-seller-created'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype-buyer-collected'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -155,275 +127,13 @@ const prototypeBuyerCollected = () => {
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
 
-{/*<!-- Add To Cart function/s below -->*/}
-
-	const [blueOrangeAdded, setBlueOrangeAdded] = useState(null);
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('blueOrangeAdded');
-		setBlueOrangeAdded(sessionValue);
-	}, []);
-	function addBlueOrangeToCart() {
-
-		setBlueOrangeAddToCartSellerCreated(false);
-		setBlueOrangeAddedSellerCreated(true);
-
-		setCartLinkConnectedSellerCreated(false);		
-		setCartLinkFullSellerCreated(true);
-
-		sessionStorage.setItem('blueOrangeAdded', 'true');
-		setBlueOrangeAdded('true');
-	}
-
-	const [beachHousesAdded, setBeachHousesAdded] = useState(null);
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('beachHousesAdded');
-		setBeachHousesAdded(sessionValue);
-	}, []);
-	function addBeachHousesToCart() {
-
-		setBeachHousesAddToCartSellerCreated(false);
-		setBeachHousesAddedSellerCreated(true);
-
-		setCartLinkConnectedSellerCreated(false);		
-		setCartLinkFullSellerCreated(true);
-
-		sessionStorage.setItem('beachHousesAdded', 'true');
-		setBeachHousesAdded('true');
-	}	
-
-	const [colourGlassAdded, setColourGlassAdded] = useState(null);
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('colourGlassAdded');
-		setColourGlassAdded(sessionValue);
-	}, []);
-	function addColourGlassToCart() {
-
-		setColourGlassAddToCartSellerCreated(false);
-		setColourGlassAddedSellerCreated(true);
-
-		setCartLinkConnectedSellerCreated(false);		
-		setCartLinkFullSellerCreated(true);
-
-		sessionStorage.setItem('colourGlassAdded', 'true');
-		setColourGlassAdded('true');
-	}	
-	
-	const [layersAdded, setLayersAdded] = useState(null);
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('layersAdded');
-		setLayersAdded(sessionValue);
-	}, []);
-	function addLayersToCart() {
-
-		setLayersAddToCartSellerCreated(false);
-		setLayersAddedSellerCreated(true);
-
-		setCartLinkConnectedSellerCreated(false);		
-		setCartLinkFullSellerCreated(true);
-
-		sessionStorage.setItem('layersAdded', 'true');
-		setLayersAdded('true');
-	}		
-
-	const [succinctDropAdded, setSuccinctDropAdded] = useState(null);
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('succinctDropAdded');
-		setSuccinctDropAdded(sessionValue);
-	}, []);
-	function addSuccinctDropToCart() {
-
-		setSuccinctDropAddToCartSellerCreated(false);
-		setSuccinctDropAddedSellerCreated(true);
-
-		setCartLinkConnectedSellerCreated(false);		
-		setCartLinkFullSellerCreated(true);
-
-		sessionStorage.setItem('succinctDropAdded', 'true');
-		setSuccinctDropAdded('true');
-	}	
-	
-	const [paintRainAdded, setPaintRainAdded] = useState(null);
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('paintRainAdded');
-		setPaintRainAdded(sessionValue);
-	}, []);
-	function addPaintRainToCart() {
-
-		setPaintRainAddToCartSellerCreated(false);
-		setPaintRainAddedSellerCreated(true);
-
-		setCartLinkConnectedSellerCreated(false);		
-		setCartLinkFullSellerCreated(true);
-
-		sessionStorage.setItem('paintRainAdded', 'true');
-		setPaintRainAdded('true');
-	}		
+{/*<!-- Add To Cart function/s below -->*/}	
 
 {/*<!-- Add To Cart function/s above -->*/}
 
 
 {/*<!-- Added/Purchased To function/s below -->*/}
-	const [blueOrangePurchased, setBlueOrangePurchased] = useState(null);	
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('blueOrangePurchased');
-		setBlueOrangePurchased(sessionValue);
-	}, []);
-	useEffect(() => {
-		if (blueOrangePurchased === 'true') {
-			setBlueOrangePricesBeforeSellerCreated(false);
-			setBlueOrangePricesAfterSellerCreated(true);
-
-			setBlueOrangeAddToCartSellerCreated(false);		
-			setBlueOrangeAddToCartConnectedSellerCreated(false);
-			setBlueOrangeAddedSellerCreated(false);
-			setBlueOrangeCollectedSellerCreated(true);
-		}
-	}, [blueOrangePurchased]);
-	useEffect(() => {
-		if (blueOrangeAdded === 'true') {
-			setCartLinkConnectedSellerCreated(false);
-			setCartLinkFullSellerCreated(true);
 	
-			setBlueOrangeAddToCartSellerCreated(false);		
-			setBlueOrangeAddToCartConnectedSellerCreated(false);
-			setBlueOrangeAddedSellerCreated(true);
-		}
-	}, [blueOrangeAdded]);
-
-	const [beachHousesPurchased, setBeachHousesPurchased] = useState(false);	
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('beachHousesPurchased');
-		setBeachHousesPurchased(sessionValue);
-	}, []);
-	useEffect(() => {
-		if (beachHousesPurchased === 'true') {
-			setBeachHousesPricesBeforeSellerCreated(false);
-			setBeachHousesPricesAfterSellerCreated(true);
-
-			setBeachHousesAddToCartSellerCreated(false);		
-			setBeachHousesAddToCartConnectedSellerCreated(false);
-			setBeachHousesAddedSellerCreated(false);
-			setBeachHousesCollectedSellerCreated(true);
-		}
-	}, [beachHousesPurchased]);	
-	useEffect(() => {
-		if (beachHousesAdded === 'true') {
-			setCartLinkConnectedSellerCreated(false);
-			setCartLinkFullSellerCreated(true);
-	
-			setBeachHousesAddToCartSellerCreated(false);		
-			setBeachHousesAddToCartConnectedSellerCreated(false);
-			setBeachHousesAddedSellerCreated(true);
-		}
-	}, [beachHousesAdded]);
-
-	const [colourGlassPurchased, setColourGlassPurchased] = useState(false);	
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('colourGlassPurchased');
-		setColourGlassPurchased(sessionValue);
-	}, []);
-	useEffect(() => {
-		if (colourGlassPurchased === 'true') {
-			setColourGlassPricesBeforeSellerCreated(false);
-			setColourGlassPricesAfterSellerCreated(true);
-
-			setColourGlassAddToCartSellerCreated(false);		
-			setColourGlassAddToCartConnectedSellerCreated(false);
-			setColourGlassAddedSellerCreated(false);
-			setColourGlassCollectedSellerCreated(true);
-		}
-	}, [colourGlassPurchased]);	
-	useEffect(() => {
-		if (colourGlassAdded === 'true') {
-			setCartLinkConnectedSellerCreated(false);
-			setCartLinkFullSellerCreated(true);
-	
-			setColourGlassAddToCartSellerCreated(false);		
-			setColourGlassAddToCartConnectedSellerCreated(false);
-			setColourGlassAddedSellerCreated(true);
-		}
-	}, [colourGlassAdded]);	
-
-	const [layersPurchased, setLayersPurchased] = useState(false);	
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('layersPurchased');
-		setLayersPurchased(sessionValue);
-	}, []);
-	useEffect(() => {
-		if (layersPurchased === 'true') {
-			setLayersPricesBeforeSellerCreated(false);
-			setLayersPricesAfterSellerCreated(true);
-
-			setLayersAddToCartSellerCreated(false);		
-			setLayersAddToCartConnectedSellerCreated(false);
-			setLayersAddedSellerCreated(false);
-			setLayersCollectedSellerCreated(true);
-		}
-	}, [layersPurchased]);	
-	useEffect(() => {
-		if (layersAdded === 'true') {
-			setCartLinkConnectedSellerCreated(false);
-			setCartLinkFullSellerCreated(true);
-	
-			setLayersAddToCartSellerCreated(false);		
-			setLayersAddToCartConnectedSellerCreated(false);
-			setLayersAddedSellerCreated(true);
-		}
-	}, [layersAdded]);	
-	
-	const [succinctDropPurchased, setSuccinctDropPurchased] = useState(false);	
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('succinctDropPurchased');
-		setSuccinctDropPurchased(sessionValue);
-	}, []);
-	useEffect(() => {
-		if (succinctDropPurchased === 'true') {
-			setSuccinctDropPricesBeforeSellerCreated(false);
-			setSuccinctDropPricesAfterSellerCreated(true);
-
-			setSuccinctDropAddToCartSellerCreated(false);		
-			setSuccinctDropAddToCartConnectedSellerCreated(false);
-			setSuccinctDropAddedSellerCreated(false);
-			setSuccinctDropCollectedSellerCreated(true);
-		}
-	}, [succinctDropPurchased]);	
-	useEffect(() => {
-		if (succinctDropAdded === 'true') {
-			setCartLinkConnectedSellerCreated(false);
-			setCartLinkFullSellerCreated(true);
-	
-			setSuccinctDropAddToCartSellerCreated(false);		
-			setSuccinctDropAddToCartConnectedSellerCreated(false);
-			setSuccinctDropAddedSellerCreated(true);
-		}
-	}, [succinctDropAdded]);	
-
-	const [paintRainPurchased, setPaintRainPurchased] = useState(false);	
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('paintRainPurchased');
-		setPaintRainPurchased(sessionValue);
-	}, []);
-	useEffect(() => {
-		if (paintRainPurchased === 'true') {
-			setPaintRainPricesBeforeSellerCreated(false);
-			setPaintRainPricesAfterSellerCreated(true);
-
-			setPaintRainAddToCartSellerCreated(false);		
-			setPaintRainAddToCartConnectedSellerCreated(false);
-			setPaintRainAddedSellerCreated(false);
-			setPaintRainCollectedSellerCreated(true);
-		}
-	}, [paintRainPurchased]);	
-	useEffect(() => {
-		if (paintRainAdded === 'true') {
-			setCartLinkConnectedSellerCreated(false);
-			setCartLinkFullSellerCreated(true);
-	
-			setPaintRainAddToCartSellerCreated(false);		
-			setPaintRainAddToCartConnectedSellerCreated(false);
-			setPaintRainAddedSellerCreated(true);
-		}
-	}, [paintRainAdded]);		
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
     return (
