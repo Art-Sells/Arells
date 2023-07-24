@@ -259,19 +259,25 @@ const prototypeBuyerCollected = () => {
 					</Link>
 				
 				)}
-
-				<a id="cart-link-full-buyer-collected" href="/prototype-cart">
-					<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
-				</a>		
+				{cartLinkFullBuyerCollected && (
+					<Link legacyBehavior href="/prototype-cart">
+						<a id="cart-link-full-buyer-collected">
+							<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
+						</a>
+					</Link>
+				
+				)}		
 			</div>
 			<img id="word-logo-buyer-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-buyer-collected">ART SELLS</p>
-			<div id="wallet-connected-div-buyer-collected">
-				<hr id="connected-line-buyer-collected"/>
-				<p id="wallet-connected-buyer-collected" >
-				WALLET CONNECTED</p>
-				<hr id="connected-line-buyer-collected"/>
-			</div>
+			{walletConnectedDivBuyerCollected && (
+				<div id="wallet-connected-div-buyer-collected">
+					<hr id="connected-line-buyer-collected"/>
+					<p id="wallet-connected-buyer-collected" >
+					WALLET CONNECTED</p>
+					<hr id="connected-line-buyer-collected"/>
+				</div>				
+			)}
 			<div id="profile-img-container-buyer-collected">
 				<img id="profile-photo-buyer-collected" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
 			</div>	 
@@ -287,105 +293,136 @@ const prototypeBuyerCollected = () => {
 			<hr id="profileline-buyer-collected"/>
 			<div id="created-collected-buyer-collected">
 				{/*<!-- Change Link Below After Test -->*/}
-				<a id="created-buyer-collected" href="/prototype-buyer-created">Created</a>		
+				<Link legacyBehavior href="/prototype-buyer-created">
+					<a id="created-buyer-collected">Created</a>		
+				</Link>
 				<a id="collected-buyer-collected">Collected</a>	
 			</div>
-			<p id="no-art-buyer-collected">
-				no art collected
-				<img id="cart-icon-collected-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
-			</p>
-			<div id="collected-items-buyer-collected">
-					<div id="blue-orange-buyer-collected">
-					{/*<!-- Change Link Below After Test -->*/}
-						<a href="/prototype-blue-orange" target="_self" id="photo-link-buyer-collected">
-							<img id="photo-buyer-collected" src="/icons&images/prototype/1.jpg"/>
-						</a>
-						<div id="prices-buyer-collected">
-							<div id="blue-orange-prices-after-buyer-collected">
-								<p id="PAP-buyer-collected">Price After Purchase</p>
-								<p id="PAP-blue-orange-after-buyer-collected">$3,000,000</p>
-								<hr id="priceline-buyer-collected"/>
-								<p id="yourprice-buyer-collected">Price</p>
-								<p id="price-blue-orange-after-buyer-collected">$60,000</p>
-							</div>			  		
-						</div>		  		
-					</div>
-					<div id="beach-houses-buyer-collected">
-					{/*<!-- Change Link Below After Test -->*/}
-						<a href="/prototype-beach-houses" target="_self" id="photo-link-buyer-collected">
-							<img id="photo-buyer-collected" src="/icons&images/prototype/2.jpg"/>
-						</a>
-						<div id="prices-buyer-collected">
-							<div id="beach-houses-prices-after-buyer-collected">
-								<p id="PAP-buyer-collected">Price After Purchase</p>
-								<p id="PAP-beach-houses-after-buyer-collected">$500,000</p>
-								<hr id="priceline-buyer-collected"/>
-								<p id="yourprice-buyer-collected">Price</p>
-								<p id="price-beach-houses-after-buyer-collected">$10,000</p>
-							</div>			  		
-						</div>     	
-					</div>
-					<div id="colour-glass-buyer-collected">
-					{/*<!-- Change Link Below After Test -->*/}
-						<a href="/prototype-colour-glass" target="_self" id="photo-link-buyer-collected">
-							<img id="photo-buyer-collected" src="/icons&images/prototype/3.jpg"/>
-						</a>
-						<div id="prices-buyer-collected">
-							<div id="colour-glass-prices-after-buyer-collected">
-								<p id="PAP-buyer-collected">Price After Purchase</p>
-								<p id="PAP-colour-glass-after-buyer-collected">$36,250,000</p>
-								<hr id="priceline-buyer-collected"/>
-								<p id="yourprice-buyer-collected">Price</p>
-								<p id="price-colour-glass-after-buyer-collected">$725,000</p>
-							</div>  		  		
-						</div>   	
-					</div>
-					<div id="layers-buyer-collected">
-					{/*<!-- Change Link Below After Test -->*/}
-						<a href="/prototype-layers" target="_self" id="photo-link-buyer-collected">
-							<img id="photo-buyer-collected" src="/icons&images/prototype/4.jpg"/>
-						</a>
-						<div id="prices-buyer-collected">
-							<div id="layers-prices-after-buyer-collected">
-								<p id="PAP-buyer-collected">Price After Purchase</p>
-								<p id="PAP-layers-after-buyer-collected">$1,000,000,000</p>
-								<hr id="priceline-buyer-collected"/>
-								<p id="yourprice-buyer-collected">Price</p>
-								<p id="price-layers-after-buyer-collected">$20,000,000</p>
+			{noArtBuyerCollected && (
+				<p id="no-art-buyer-collected">
+					no art collected
+					<img id="cart-icon-collected-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+				</p>
+			)}
+			{collectedItemsBuyerCollected && (
+				<div id="collected-items-buyer-collected">
+					{blueOrangeBuyerCollected && (
+						<div id="blue-orange-buyer-collected">
+						{/*<!-- Change Link Below After Test -->*/}
+							<Link legacyBehavior href="/prototype-blue-orange">
+								<a target="_self" id="photo-link-buyer-collected">
+									<img id="photo-buyer-collected" src="/icons&images/prototype/1.jpg"/>
+								</a>								
+							</Link>
+							<div id="prices-buyer-collected">
+								<div id="blue-orange-prices-after-buyer-collected">
+									<p id="PAP-buyer-collected">Price After Purchase</p>
+									<p id="PAP-blue-orange-after-buyer-collected">$3,000,000</p>
+									<hr id="priceline-buyer-collected"/>
+									<p id="yourprice-buyer-collected">Price</p>
+									<p id="price-blue-orange-after-buyer-collected">$60,000</p>
+								</div>			  		
 							</div>		  		
 						</div>
-					</div>
-					<div id="succinct-drop-buyer-collected">
-					{/*<!-- Change Link Below After Test -->*/}
-						<a href="/prototype-succinct-drop" target="_self" id="photo-link-buyer-collected">
-							<img id="photo-buyer-collected" src="/icons&images/prototype/5.jpg"/>
-						</a>
-						<div id="prices-buyer-collected">
-							<div id="succinct-drop-prices-after-buyer-collected">
-								<p id="PAP-buyer-collected">Price After Purchase</p>
-								<p id="PAP-succinct-drop-after-buyer-collected">$250,000</p>
-								<hr id="priceline-buyer-collected"/>
-								<p id="yourprice-buyer-collected">Price</p>
-								<p id="price-succinct-drop-after-buyer-collected">$5,000</p>
-							</div>				  		
-						</div>     	
-					</div>
-					<div id="paint-rain-buyer-collected">
-					{/*<!-- Change Link Below After Test -->*/}
-						<a href="/prototype-paint-rain" target="_self" id="photo-link-buyer-collected">
-							<img id="photo-buyer-collected" src="/icons&images/prototype/6.jpg"/>
-						</a>
-						<div id="prices-buyer-collected">
-							<div id="paint-rain-prices-after-buyer-collected">
-								<p id="PAP-buyer-collected">Price After Purchase</p>
-								<p id="PAP-paint-rain-after-buyer-collected">$30,000,000</p>
-								<hr id="priceline-buyer-collected"/>
-								<p id="yourprice-buyer-collected">Price</p>
-								<p id="price-paint-rain-after-buyer-collected">$600,000</p>
-							</div>			  		
-						</div>     	
-					</div>
-			</div>
+					)}
+					{beachHousesBuyerCollected && (
+						<div id="beach-houses-buyer-collected">
+						{/*<!-- Change Link Below After Test -->*/}
+							<Link legacyBehavior href="/prototype-beach-houses">
+								<a target="_self" id="photo-link-buyer-collected">
+									<img id="photo-buyer-collected" src="/icons&images/prototype/2.jpg"/>
+								</a>
+							</Link>
+							<div id="prices-buyer-collected">
+								<div id="beach-houses-prices-after-buyer-collected">
+									<p id="PAP-buyer-collected">Price After Purchase</p>
+									<p id="PAP-beach-houses-after-buyer-collected">$500,000</p>
+									<hr id="priceline-buyer-collected"/>
+									<p id="yourprice-buyer-collected">Price</p>
+									<p id="price-beach-houses-after-buyer-collected">$10,000</p>
+								</div>			  		
+							</div>     	
+						</div>
+					)}
+					{colourGlassBuyerCollected && (
+						<div id="colour-glass-buyer-collected">
+						{/*<!-- Change Link Below After Test -->*/}
+							<Link legacyBehavior href="/prototype-colour-glass">
+								<a target="_self" id="photo-link-buyer-collected">
+									<img id="photo-buyer-collected" src="/icons&images/prototype/3.jpg"/>
+								</a>								
+							</Link>
+							<div id="prices-buyer-collected">
+								<div id="colour-glass-prices-after-buyer-collected">
+									<p id="PAP-buyer-collected">Price After Purchase</p>
+									<p id="PAP-colour-glass-after-buyer-collected">$36,250,000</p>
+									<hr id="priceline-buyer-collected"/>
+									<p id="yourprice-buyer-collected">Price</p>
+									<p id="price-colour-glass-after-buyer-collected">$725,000</p>
+								</div>  		  		
+							</div>   	
+						</div>
+					)}
+					{layersBuyerCollected && (
+						<div id="layers-buyer-collected">
+						{/*<!-- Change Link Below After Test -->*/}
+							<Link legacyBehavior href="/prototype-layers">
+								<a target="_self" id="photo-link-buyer-collected">
+									<img id="photo-buyer-collected" src="/icons&images/prototype/4.jpg"/>
+								</a>
+							</Link>
+							<div id="prices-buyer-collected">
+								<div id="layers-prices-after-buyer-collected">
+									<p id="PAP-buyer-collected">Price After Purchase</p>
+									<p id="PAP-layers-after-buyer-collected">$1,000,000,000</p>
+									<hr id="priceline-buyer-collected"/>
+									<p id="yourprice-buyer-collected">Price</p>
+									<p id="price-layers-after-buyer-collected">$20,000,000</p>
+								</div>		  		
+							</div>
+						</div>
+					)}
+					{succinctDropBuyerCollected && (
+						<div id="succinct-drop-buyer-collected">
+						{/*<!-- Change Link Below After Test -->*/}
+							<Link legacyBehavior href="/prototype-succinct-drop">
+								<a target="_self" id="photo-link-buyer-collected">
+									<img id="photo-buyer-collected" src="/icons&images/prototype/5.jpg"/>
+								</a>
+							</Link>
+							<div id="prices-buyer-collected">
+								<div id="succinct-drop-prices-after-buyer-collected">
+									<p id="PAP-buyer-collected">Price After Purchase</p>
+									<p id="PAP-succinct-drop-after-buyer-collected">$250,000</p>
+									<hr id="priceline-buyer-collected"/>
+									<p id="yourprice-buyer-collected">Price</p>
+									<p id="price-succinct-drop-after-buyer-collected">$5,000</p>
+								</div>				  		
+							</div>     	
+						</div>
+					)}
+					{paintRainBuyerCollected && (
+						<div id="paint-rain-buyer-collected">
+						{/*<!-- Change Link Below After Test -->*/}
+							<Link legacyBehavior href="/prototype-paint-rain">
+								<a target="_self" id="photo-link-buyer-collected">
+									<img id="photo-buyer-collected" src="/icons&images/prototype/6.jpg"/>
+								</a>
+							</Link>
+							<div id="prices-buyer-collected">
+								<div id="paint-rain-prices-after-buyer-collected">
+									<p id="PAP-buyer-collected">Price After Purchase</p>
+									<p id="PAP-paint-rain-after-buyer-collected">$30,000,000</p>
+									<hr id="priceline-buyer-collected"/>
+									<p id="yourprice-buyer-collected">Price</p>
+									<p id="price-paint-rain-after-buyer-collected">$600,000</p>
+								</div>			  		
+							</div>     	
+						</div>
+					)}
+				</div>
+			)}
+
 				<p id={elementId}>PROTOTYPE</p>
 		</div>			
 		     

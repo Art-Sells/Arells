@@ -545,8 +545,10 @@ const prototypeSellerCreated = () => {
 			<hr id="profileline-seller-created"/>
 			<div id="created-collected-seller-created">
 				<a id="created-seller-created">Created</a>	
-			{/*<!-- Change below link after test -->*/}		
-				<a id="collected-seller-created" href="/prototype-seller-collected">Collected</a>	
+			{/*<!-- Change below link after test -->*/}	
+				<Link legacyBehavior href="/prototype-seller-collected">
+					<a id="collected-seller-created" >Collected</a>		
+				</Link>	
 			</div>
 			<div id="container-seller-created">
 					<div id="blue-orange-seller-created">
