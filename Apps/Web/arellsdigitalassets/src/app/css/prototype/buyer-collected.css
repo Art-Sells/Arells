@@ -52,6 +52,7 @@
 				height: 16px;
 			}		
 		#cart-link-buyer-collected{
+			display: inline-block;
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -68,6 +69,7 @@
 				background: rgba(255, 255, 255, 0.8);						
 		}
 		#cart-link-connected-buyer-collected{
+			display: inline-block;
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -93,6 +95,7 @@
 			  opacity: 1;	
 		}	
 		#cart-link-full-buyer-collected{
+			display: inline-block;
 			transition: 1s;
 			text-decoration: none;
 			margin-left: 124px;
@@ -137,6 +140,7 @@
 		}	
 		
 		#wallet-connected-div-buyer-collected{
+			display: block;
 			margin-top: 30px;
 			margin-left: auto;
 			margin-right: auto;
@@ -325,6 +329,7 @@
 		
 
 	#collected-items-buyer-collected {
+		display: block;
 		margin-top: 35px;
 		  width: 900px;
 		  margin-left: auto;
@@ -335,6 +340,7 @@
 		#blue-orange-buyer-collected, #beach-houses-buyer-collected, 
 		#colour-glass-buyer-collected, #layers-buyer-collected, 
 		#succinct-drop-buyer-collected, #paint-rain-buyer-collected{
+			display: flex;
 			margin-left: auto;
 		    margin-right: auto;
 		    margin-bottom: 10px;
