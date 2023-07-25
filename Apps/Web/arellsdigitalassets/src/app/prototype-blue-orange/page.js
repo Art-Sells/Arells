@@ -24,14 +24,13 @@ const blueOrange = () => {
 	
 
 {/*<!-- useState constants below -->*/}
-	const [showConnectWallet, setShowConnectWallet] = useState(false);
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
-	const [cartLinkBuyerCollected, setCartLinkBuyerCollected] = useState(true);
-	const [walletConnectedDivBuyerCollected, setWalletConnectedDivBuyerCollected] = useState(false);
-	const [cartLinkFullBuyerCollected, setCartLinkFullBuyerCollected] = useState(false);
+	const [cartLinkBlueOrange, setCartLinkBlueOrange] = useState(true);
+	const [cartLinkConnectedBlueOrange, setCartLinkConnectedBlueOrange] = useState(false);
+	const [cartLinkFullBlueOrange, setCartLinkFullBlueOrange] = useState(false);
 
-	const [cartLinkConnectedBuyerCollected, setCartLinkConnectedBuyerCollected] = useState(false);
+	const [walletConnectedDivBlueOrange, setWalletConnectedDivBlueOrange] = useState(false);
 
 	const [noArtBuyerCollected, setNoArtBuyerCollected] = useState(true);
 	const [collectedItemsBuyerCollected, setCollectedItemsBuyerCollected] = useState(false);
@@ -88,88 +87,21 @@ const blueOrange = () => {
 	useEffect(() => {
 		if (walletConnectedSession === 'true') {
 			setCartLinkBuyerCollected(false);
-			setWalletConnectedDivBuyerCollected(true);
+			setWalletConnectedDivBlueOrange(true);
 			
-			setCartLinkConnectedBuyerCollected(true);
+			setCartLinkConnectedBlueOrange(true);
 		}
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
 
-{/*<!-- Added/Purchased To function/s below -->*/}
-	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
-	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
-	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
-	const layersAdded = sessionStorage.getItem('layersAdded');
-	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
-	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 
-	useEffect(() => {
-		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
-		|| colourGlassAdded === 'true' || layersAdded === 'true'
-		|| paintRainAdded === 'true' || succinctDropAdded == 'true') {
-			setCartLinkConnectedBuyerCollected(false);
-			setCartLinkFullBuyerCollected(true);
-		}
-	}, [blueOrangeAdded, beachHousesAdded,
-		colourGlassAdded, layersAdded, paintRainAdded,
-		succinctDropAdded]);
-
-	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
-	const beachHousesPurchased = sessionStorage.getItem('beachHousesPurchased');
-	const colourGlassPurchased = sessionStorage.getItem('colourGlassPurchased');
-	const layersPurchased = sessionStorage.getItem('layersPurchased');
-	const paintRainPurchased = sessionStorage.getItem('paintRainPurchased');
-	const succinctDropPurchased = sessionStorage.getItem('succinctDropPurchased');	
-
-	useEffect(() => {
-		if (blueOrangePurchased === 'true') {
-			setNoArtBuyerCollected(false);
-
-			setCollectedItemsBuyerCollected(true);
-			setBlueOrangeBuyerCollected(true);
-		}
-	}, [blueOrangePurchased]);
-	useEffect(() => {
-		if (beachHousesPurchased === 'true') {
-			setNoArtBuyerCollected(false);
-
-			setCollectedItemsBuyerCollected(true);
-			setBeachHousesBuyerCollected(true);
-		}
-	}, [beachHousesPurchased]);
-	useEffect(() => {
-		if (colourGlassPurchased === 'true') {
-			setNoArtBuyerCollected(false);
-
-			setCollectedItemsBuyerCollected(true);
-			setColourGlassBuyerCollected(true);
-		}
-	}, [colourGlassPurchased]);
-	useEffect(() => {
-		if (layersPurchased === 'true') {
-			setNoArtBuyerCollected(false);
-
-			setCollectedItemsBuyerCollected(true);
-			setLayersBuyerCollected(true);
-		}
-	}, [layersPurchased]);
-	useEffect(() => {
-		if (paintRainPurchased === 'true') {
-			setNoArtBuyerCollected(false);
-
-			setCollectedItemsBuyerCollected(true);
-			setPaintRainBuyerCollected(true);
-		}
-	}, [paintRainPurchased]);
-	useEffect(() => {
-		if (succinctDropPurchased === 'true') {
-			setNoArtBuyerCollected(false);
-
-			setCollectedItemsBuyerCollected(true);
-			setSuccinctDropBuyerCollected(true);
-		}
-	}, [succinctDropPurchased]);
+{/*<!-- Add To Cart function/s below -->*/}
 	
+{/*<!-- Add To Cart function/s above -->*/}
+
+
+{/*<!-- Added/Purchased To function/s below -->*/}
+
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
     return (
