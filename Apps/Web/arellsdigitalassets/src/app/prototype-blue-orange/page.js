@@ -32,15 +32,6 @@ const blueOrange = () => {
 
 	const [walletConnectedDivBlueOrange, setWalletConnectedDivBlueOrange] = useState(false);
 
-	const [noArtBuyerCollected, setNoArtBuyerCollected] = useState(true);
-	const [collectedItemsBuyerCollected, setCollectedItemsBuyerCollected] = useState(false);
-
-	const[blueOrangeBuyerCollected, setBlueOrangeBuyerCollected] = useState(false);
-	const[beachHousesBuyerCollected, setBeachHousesBuyerCollected] = useState(false);
-	const[colourGlassBuyerCollected, setColourGlassBuyerCollected] = useState(false);
-	const[layersBuyerCollected, setLayersBuyerCollected] = useState(false);
-	const[succinctDropBuyerCollected, setSuccinctDropBuyerCollected] = useState(false);
-	const[paintRainBuyerCollected, setPaintRainBuyerCollected] = useState(false);
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
@@ -169,191 +160,109 @@ const blueOrange = () => {
 {/*<!-- Modals Above -->*/}
 
 
-		<div id="prototype-buyer-collected-wrapper">
-			<div id="header-buyer-collected">
+		<div id="blue-orange-wrapper">
+			<div id="header-blue-orange">
 			
-			{/*<!-- Change Link Below After Test -->*/}
-				<Link legacyBehavior href="/">
-					<a id="icon-link-buyer-collected">
-						<img id="arells-icon-buyer-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+				{/*<!-- Change below link after test -->*/}
+					<a id="icon-link-blue-orange" href="/">
+						<img id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+					</a>		
+					<button id="cart-link-blue-orange" onClick="connectWallet()" style="display: inline-block;">
+						<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+					</button>
+					<a id="cart-link-connected-blue-orange" href="/prototype-cart" style="display: none;">
+						<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</a>	
-				</Link>	
-				{cartLinkBuyerCollected && (
-					<button id="cart-link-buyer-collected" onClick={connectWallet}>
-						<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
-					</button>					
-				)}
-				{cartLinkConnectedBuyerCollected && (
-					<Link legacyBehavior href="/prototype-cart">
-						<a id="cart-link-connected-buyer-collected">
-							<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
-						</a>
-					</Link>
-				
-				)}
-				{cartLinkFullBuyerCollected && (
-					<Link legacyBehavior href="/prototype-cart">
-						<a id="cart-link-full-buyer-collected">
-							<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
-						</a>
-					</Link>
-				
-				)}		
-			</div>
-			<img id="word-logo-buyer-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
-			<p id="slogan-buyer-collected">ART SELLS</p>
-			{walletConnectedDivBuyerCollected && (
-				<div id="wallet-connected-div-buyer-collected">
-					<hr id="connected-line-buyer-collected"/>
-					<p id="wallet-connected-buyer-collected" >
-					WALLET CONNECTED</p>
-					<hr id="connected-line-buyer-collected"/>
-				</div>				
-			)}
-			<div id="profile-img-container-buyer-collected">
-				<img id="profile-photo-buyer-collected" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
-			</div>	 
-			<h1 id="name-buyer-collected">Unnamed</h1>  
-			<p id="description-buyer-collected">Creator & Collector</p> 
-			<div id="share-div">
-				<p id="share-div-desc">SHARE</p>
-				<button id="copy-link-buyer-collected"
-					onClick={copyLink}>
-					<img id="copy-link-icon-buyer-collected" src="/icons&images/prototype/link.png"/>
-					COPY LINK</button>	
-			</div>		
-			<hr id="profileline-buyer-collected"/>
-			<div id="created-collected-buyer-collected">
-				{/*<!-- Change Link Below After Test -->*/}
-				<Link legacyBehavior href="/prototype-buyer-created">
-					<a id="created-buyer-collected">Created</a>		
-				</Link>
-				<a id="collected-buyer-collected">Collected</a>	
-			</div>
-			{noArtBuyerCollected && (
-				<p id="no-art-buyer-collected">
-					no art collected
-					<img id="cart-icon-collected-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
-				</p>
-			)}
-			{collectedItemsBuyerCollected && (
-				<div id="collected-items-buyer-collected">
-					{blueOrangeBuyerCollected && (
-						<div id="blue-orange-buyer-collected">
-						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-blue-orange">
-								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/1.jpg"/>
-								</a>								
-							</Link>
-							<div id="prices-buyer-collected">
-								<div id="blue-orange-prices-after-buyer-collected">
-									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-blue-orange-after-buyer-collected">$3,000,000</p>
-									<hr id="priceline-buyer-collected"/>
-									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-blue-orange-after-buyer-collected">$60,000</p>
-								</div>			  		
-							</div>		  		
-						</div>
-					)}
-					{beachHousesBuyerCollected && (
-						<div id="beach-houses-buyer-collected">
-						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-beach-houses">
-								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/2.jpg"/>
-								</a>
-							</Link>
-							<div id="prices-buyer-collected">
-								<div id="beach-houses-prices-after-buyer-collected">
-									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-beach-houses-after-buyer-collected">$500,000</p>
-									<hr id="priceline-buyer-collected"/>
-									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-beach-houses-after-buyer-collected">$10,000</p>
-								</div>			  		
-							</div>     	
-						</div>
-					)}
-					{colourGlassBuyerCollected && (
-						<div id="colour-glass-buyer-collected">
-						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-colour-glass">
-								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/3.jpg"/>
-								</a>								
-							</Link>
-							<div id="prices-buyer-collected">
-								<div id="colour-glass-prices-after-buyer-collected">
-									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-colour-glass-after-buyer-collected">$36,250,000</p>
-									<hr id="priceline-buyer-collected"/>
-									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-colour-glass-after-buyer-collected">$725,000</p>
-								</div>  		  		
-							</div>   	
-						</div>
-					)} 
-					{layersBuyerCollected && (
-						<div id="layers-buyer-collected">
-						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-layers">
-								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/4.jpg"/>
-								</a>
-							</Link>
-							<div id="prices-buyer-collected">
-								<div id="layers-prices-after-buyer-collected">
-									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-layers-after-buyer-collected">$1,000,000,000</p>
-									<hr id="priceline-buyer-collected"/>
-									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-layers-after-buyer-collected">$20,000,000</p>
-								</div>		  		
-							</div>
-						</div>
-					)}
-					{succinctDropBuyerCollected && (
-						<div id="succinct-drop-buyer-collected">
-						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-succinct-drop">
-								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/5.jpg"/>
-								</a>
-							</Link>
-							<div id="prices-buyer-collected">
-								<div id="succinct-drop-prices-after-buyer-collected">
-									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-succinct-drop-after-buyer-collected">$250,000</p>
-									<hr id="priceline-buyer-collected"/>
-									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-succinct-drop-after-buyer-collected">$5,000</p>
-								</div>				  		
-							</div>     	
-						</div>
-					)}
-					{paintRainBuyerCollected && (
-						<div id="paint-rain-buyer-collected">
-						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-paint-rain">
-								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/6.jpg"/>
-								</a>
-							</Link>
-							<div id="prices-buyer-collected">
-								<div id="paint-rain-prices-after-buyer-collected">
-									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-paint-rain-after-buyer-collected">$30,000,000</p>
-									<hr id="priceline-buyer-collected"/>
-									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-paint-rain-after-buyer-collected">$600,000</p>
-								</div>			  		
-							</div>     	
-						</div>
-					)}
+					<a id="cart-link-full-blue-orange" href="/prototype-cart" style="display: none;">
+						<img id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
+					</a>
 				</div>
-			)}
+				<img id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<p id="slogan-blue-orange">ART SELLS</p>
+				<div id="wallet-connected-div-blue-orange" style="display: none;">
+					<hr id="connected-line-blue-orange"/>
+					<p id="wallet-connected-blue-orange" >
+					WALLET CONNECTED</p>
+					<hr id="connected-line-blue-orange"/>
+			</div>
+
+			<div id="blue-orange">
+				<img id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
+				<h3 id="name-blue-orange">Blue Orange</h3> 
+				<div id="share-div">
+					<p id="share-div-desc">SHARE</p>
+					<button id="copy-link-blue-orange"
+					onClick="copyLink()">
+						<img id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
+						COPY LINK
+					</button>	
+				</div>
+				<div id="created-by-blue-orange">
+					<p id="creator-owner-desc-blue-orange">Created By</p>
+					<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
+						Abstract Kadabra
+					</a>
+				</div>
+				<div id="owned-by-creator-blue-orange" style="display: block;">
+					<p id="creator-owner-desc-blue-orange">Owned By</p> 
+					<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
+						Abstract Kadabra</a>
+				</div>
+				<div id="owned-by-buyer-blue-orange" style="display: none;">
+					<p id="creator-owner-desc-blue-orange">Owned By</p> 
+					<a id="creator-owner-link-blue-orange" href="/prototype-buyer-collected">
+						0x71C7656E...
+					</a>
+				</div>
+				<hr id="line-blue-orange"/>
+				<div id="blue-orange-prices-before-blue-orange" style="display: block;">
+					<p id="PAP-blue-orange">Price After Purchase</p>
+					<p id="PAP-blue-orange-before-blue-orange">$60,000</p>
+					<hr id="priceline-blue-orange"/>
+					<p id="yourprice-blue-orange">Price</p>
+					<p id="price-blue-orange-before-blue-orange">$1,200</p>
+				</div>	
+				<div id="blue-orange-prices-after-blue-orange" style="display: none;">
+					<p id="PAP-blue-orange">Price After Purchase</p>
+					<p id="PAP-blue-orange-after-blue-orange">$3,000,000</p>
+					<hr id="priceline-blue-orange"/>
+					<p id="yourprice-blue-orange">Price</p>
+					<p id="price-blue-orange-after-blue-orange">$60,000</p>
+				</div>	
+				<button id="blue-orange-add-to-cart-blue-orange" onClick="connectWallet()"
+					style="display: block;">
+					ADD TO CART</button>
+				<button id="blue-orange-add-to-cart-connected-blue-orange" onClick="addBlueOrangeToCart()"
+					style="display: none;">
+					ADD TO CART</button>
+				<button id="blue-orange-added-blue-orange" style="display: none;">
+					ADDED</button>	
+				<button id="blue-orange-collected-blue-orange" style="display: none;">
+					COLLECTED</button>
+					
+				<div id="fingerprints">
+					<p id="digital-fingerprints">DIGITAL FINGERPRINTS</p>
+					<span>
+						<button id="fingerprints-button"
+							onClick="comingSoon()">
+							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+						</button>	
+					</span>
+					<span>
+						<button id="fingerprints-button"
+							onClick="comingSoon()">
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+						</button>	
+					</span>
+					<span>
+						<button id="fingerprints-button"
+							onClick="comingSoon()">
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+						</button>	
+					</span>
+				</div>	    		
+											
+			</div>
 
 				<p id={elementId}>PROTOTYPE</p>
 		</div>			
