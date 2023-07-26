@@ -39,6 +39,9 @@ const blueOrange = () => {
 	const [ownedByCreatorBlueOrange, setOwnedByCreatorBlueOrange] = useState(true);
 	const [ownedByBuyerBlueOrange, setOwnedByBuyerBlueOrange] = useState(false);
 
+	const [blueOrangePricesBeforeBlueOrange, setBlueOrangePricesBeforeBlueOrange] = useState(true);
+	const [blueOrangePricesAfterBlueOrange, setBlueOrangePricesAfterBlueOrange] = useState(false);
+
 	const [blueOrangeAddToCartBlueOrange, setBlueOrangeAddToCartBlueOrange] = useState(true);		
 	const [blueOrangeAddToCartConnectedBlueOrange, setBlueOrangeAddToCartConnectedBlueOrange] = useState(false);
 	const [blueOrangeAddedBlueOrange, setBlueOrangeAddedBlueOrange] = useState(false);
@@ -154,7 +157,7 @@ const blueOrange = () => {
 	}, [blueOrangeAdded]);
 	useEffect(() => {
 		if (blueOrangePurchased === 'true') {
-			setBlueOrangePricesBlueOrange(false);
+			setBlueOrangePricesBeforeBlueOrange(false);
 			setBlueOrangePricesAfterBlueOrange(true);
 
 			setBlueOrangeAddToCartBlueOrange(false);		
@@ -245,28 +248,42 @@ const blueOrange = () => {
 			<div id="header-blue-orange">
 			
 				{/*<!-- Change below link after test -->*/}
-					
-					<a id="icon-link-blue-orange" href="/">
-						<img id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
-					</a>		
-					<button id="cart-link-blue-orange" onClick="connectWallet()" style="display: inline-block;">
-						<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
-					</button>
-					<a id="cart-link-connected-blue-orange" href="/prototype-cart" style="display: none;">
-						<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
-					</a>	
-					<a id="cart-link-full-blue-orange" href="/prototype-cart" style="display: none;">
-						<img id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
-					</a>
+					<Link legacyBehavior href="/">
+						<a id="icon-link-blue-orange">
+							<img id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						</a>
+					</Link>	
+					{cartLinkBlueOrange && (
+						<button id="cart-link-blue-orange" onClick={connectWallet}>
+							<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						</button>
+					)}	
+					{cartLinkConnectedBlueOrange && (
+						<Link legacyBehavior href="/prototype-cart">
+							<a id="cart-link-connected-blue-orange">
+								<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							</a>	
+						</Link>
+					)}	
+
+					{cartLinkFullBlueOrange && (
+						<Link legacyBehavior href="/prototype-cart">
+							<a id="cart-link-full-blue-orange">
+								<img id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
+							</a>	
+						</Link>
+					)}	
 				</div>
 				<img id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-blue-orange">ART SELLS</p>
-				<div id="wallet-connected-div-blue-orange" style="display: none;">
-					<hr id="connected-line-blue-orange"/>
-					<p id="wallet-connected-blue-orange" >
-					WALLET CONNECTED</p>
-					<hr id="connected-line-blue-orange"/>
-			</div>
+				{walletConnectedDivBlueOrange && (
+					<div id="wallet-connected-div-blue-orange">
+						<hr id="connected-line-blue-orange"/>
+						<p id="wallet-connected-blue-orange" >
+						WALLET CONNECTED</p>
+						<hr id="connected-line-blue-orange"/>
+					</div>
+				)}
 
 			<div id="blue-orange">
 				<img id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
@@ -274,7 +291,7 @@ const blueOrange = () => {
 				<div id="share-div">
 					<p id="share-div-desc">SHARE</p>
 					<button id="copy-link-blue-orange"
-					onClick="copyLink()">
+					onClick={copyLink}>
 						<img id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
 						COPY LINK
 					</button>	
@@ -285,60 +302,80 @@ const blueOrange = () => {
 						Abstract Kadabra
 					</a>
 				</div>
-				<div id="owned-by-creator-blue-orange" style="display: block;">
-					<p id="creator-owner-desc-blue-orange">Owned By</p> 
-					<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
-						Abstract Kadabra</a>
-				</div>
-				<div id="owned-by-buyer-blue-orange" style="display: none;">
-					<p id="creator-owner-desc-blue-orange">Owned By</p> 
-					<a id="creator-owner-link-blue-orange" href="/prototype-buyer-collected">
-						0x71C7656E...
-					</a>
-				</div>
+				{ownedByCreatorBlueOrange && (
+					<div id="owned-by-creator-blue-orange">
+						<p id="creator-owner-desc-blue-orange">Owned By</p> 
+						<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
+							Abstract Kadabra</a>
+					</div>
+				)}
+				{ownedByBuyerBlueOrange && (
+					<div id="owned-by-buyer-blue-orange">
+						<p id="creator-owner-desc-blue-orange">Owned By</p> 
+						<a id="creator-owner-link-blue-orange" href="/prototype-buyer-collected">
+							0x71C7656E...
+						</a>
+					</div>
+				)}
 				<hr id="line-blue-orange"/>
-				<div id="blue-orange-prices-before-blue-orange" style="display: block;">
-					<p id="PAP-blue-orange">Price After Purchase</p>
-					<p id="PAP-blue-orange-before-blue-orange">$60,000</p>
-					<hr id="priceline-blue-orange"/>
-					<p id="yourprice-blue-orange">Price</p>
-					<p id="price-blue-orange-before-blue-orange">$1,200</p>
-				</div>	
-				<div id="blue-orange-prices-after-blue-orange" style="display: none;">
-					<p id="PAP-blue-orange">Price After Purchase</p>
-					<p id="PAP-blue-orange-after-blue-orange">$3,000,000</p>
-					<hr id="priceline-blue-orange"/>
-					<p id="yourprice-blue-orange">Price</p>
-					<p id="price-blue-orange-after-blue-orange">$60,000</p>
-				</div>	
-				<button id="blue-orange-add-to-cart-blue-orange" onClick="connectWallet()"
+				{blueOrangePricesBeforeBlueOrange && (
+					<div id="blue-orange-prices-before-blue-orange">
+						<p id="PAP-blue-orange">Price After Purchase</p>
+						<p id="PAP-blue-orange-before-blue-orange">$60,000</p>
+						<hr id="priceline-blue-orange"/>
+						<p id="yourprice-blue-orange">Price</p>
+						<p id="price-blue-orange-before-blue-orange">$1,200</p>
+					</div>	
+				)}
+				{blueOrangePricesAfterBlueOrange && (
+					<div id="blue-orange-prices-after-blue-orange">
+						<p id="PAP-blue-orange">Price After Purchase</p>
+						<p id="PAP-blue-orange-after-blue-orange">$3,000,000</p>
+						<hr id="priceline-blue-orange"/>
+						<p id="yourprice-blue-orange">Price</p>
+						<p id="price-blue-orange-after-blue-orange">$60,000</p>
+					</div>	
+				)}
+
+				{blueOrangeAddToCartBlueOrange && (
+					<button id="blue-orange-add-to-cart-blue-orange" onClick={connectWallet}
 					style="display: block;">
 					ADD TO CART</button>
-				<button id="blue-orange-add-to-cart-connected-blue-orange" onClick="addBlueOrangeToCart()"
+				)}
+				{blueOrangeAddToCartConnectedBlueOrange && (
+					<button id="blue-orange-add-to-cart-connected-blue-orange" onClick={addBlueOrangeToCart}
 					style="display: none;">
 					ADD TO CART</button>
-				<button id="blue-orange-added-blue-orange" style="display: none;">
+				)}
+				{blueOrangeAddedBlueOrange && (
+					<button id="blue-orange-added-blue-orange">
 					ADDED</button>	
-				<button id="blue-orange-collected-blue-orange" style="display: none;">
+				)}
+				{blueOrangeCollectedBlueOrange && (
+					<button id="blue-orange-collected-blue-orange">
 					COLLECTED</button>
+				)}
+
+
+
 					
 				<div id="fingerprints">
 					<p id="digital-fingerprints">DIGITAL FINGERPRINTS</p>
 					<span>
 						<button id="fingerprints-button"
-							onClick="comingSoon()">
+							onClick={comingSoon}>
 							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
-							onClick="comingSoon()">
+							onClick={comingSoon}>
 							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
-							onClick="comingSoon()">
+							onClick={comingSoon}>
 							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
