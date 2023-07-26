@@ -52,6 +52,7 @@
 				height: 16px;
 			}	
 		#cart-link-blue-orange{
+			display: inline-block;
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -68,6 +69,7 @@
 				background: rgba(255, 255, 255, 0.8);						
 		}
 		#cart-link-connected-blue-orange{
+			display: inline-block;
 			text-decoration: none;
 			margin-left: 124px;
 			  text-decoration: none;
@@ -93,6 +95,7 @@
 			  opacity: 1;	
 		}	
 		#cart-link-full-blue-orange{
+			display: inline-block;
 			transition: 1s;
 			text-decoration: none;
 			margin-left: 124px;
@@ -137,6 +140,7 @@
 		}	
 		
 		#wallet-connected-div-blue-orange{
+			display: block;
 			margin-top: 30px;
 			margin-left: auto;
 			margin-right: auto;
@@ -268,37 +272,48 @@
 				#copy-link-icon-blue-orange{
 					width: 15px;
 					margin-right: 5px;
-				}				
+				}
+
+		#owned-by-creator-blue-orange, 
+		#owned-by-buyer-blue-orange,
+		#blue-orange-prices-before-blue-orange, 
+		#blue-orange-prices-after-blue-orange,
+		#blue-orange-add-to-cart-blue-orange,
+		#blue-orange-add-to-cart-connected-blue-orange,
+		#blue-orange-added-blue-orange,
+		#blue-orange-collected-blue-orange {
+			display: block;
+		}		
 		
-		#creator-owner-desc-blue-orange {
-		margin-top: 15px;
-		text-align: center;
-			color: black;
-			font-weight: 300;
-			font-size: 12px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .4;
-			margin-bottom: 0px;
-		}
-		#creator-owner-link-blue-orange {
-		text-align: center;
-			color: #4d85cf;
-			font-weight: 300;
-			font-size: 15px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .8;
-			text-decoration: none;
-		}
-			#creator-owner-desc-blue-orange:hover,
-			#creator-owner-link-blue-orange:hover,
-			#creator-owner-desc-blue-orange:focus,
-			#creator-owner-link-blue-orange:focus {
-				  opacity: .4;
-				  transition: 1s;
-				  cursor: pointer;
+			#creator-owner-desc-blue-orange {
+			margin-top: 15px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 12px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+				margin-bottom: 0px;
 			}
+			#creator-owner-link-blue-orange {
+			text-align: center;
+				color: #4d85cf;
+				font-weight: 300;
+				font-size: 15px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .8;
+				text-decoration: none;
+			}
+				#creator-owner-desc-blue-orange:hover,
+				#creator-owner-link-blue-orange:hover,
+				#creator-owner-desc-blue-orange:focus,
+				#creator-owner-link-blue-orange:focus {
+					opacity: .4;
+					transition: 1s;
+					cursor: pointer;
+				}
 			
 		#line-blue-orange {
 		  margin-top: 30px;
@@ -310,58 +325,58 @@
 		  opacity: .1;
 		}					
 				
-		#PAP-blue-orange {
-		margin-top: 15px;
-		text-align: center;
-			color: black;
-			font-weight: 300;
-			font-size: 12px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .4;
-		}
-		#PAP-blue-orange-before-blue-orange,
-		#PAP-blue-orange-after-blue-orange {
-		margin-top: -7px;
-		text-align: center;
-			color: black;
-			font-weight: 300;
-			font-size: 17px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .5;
-		}
-		#priceline-blue-orange {
-		  margin-top: -5px;
-		  background-color: black;
-		  border: none;
-		  height: 4px;
-		  border-radius: 30px;
-		  width: 60%;
-		  opacity: .1;
-		}	
-		#yourprice-blue-orange {
-		margin-top: 30px;
-		text-align: center;
-			color: black;
-			font-weight: 300;
-			font-size: 15px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .4;
-		}
-		#price-blue-orange-before-blue-orange,
-		#price-blue-orange-after-blue-orange {
-		margin-top: -10px;
-		text-align: center;
-			color: black;
-			font-weight: 300;
-			font-size: 20px;
-			letter-spacing: 0px;
-			padding-left: 0px;
-			opacity: .7;
-			margin-bottom: 28px;
-		}
+			#PAP-blue-orange {
+			margin-top: 15px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 12px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+			}
+			#PAP-blue-orange-before-blue-orange,
+			#PAP-blue-orange-after-blue-orange {
+			margin-top: -7px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 17px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .5;
+			}
+			#priceline-blue-orange {
+			margin-top: -5px;
+			background-color: black;
+			border: none;
+			height: 4px;
+			border-radius: 30px;
+			width: 60%;
+			opacity: .1;
+			}	
+			#yourprice-blue-orange {
+			margin-top: 30px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 15px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+			}
+			#price-blue-orange-before-blue-orange,
+			#price-blue-orange-after-blue-orange {
+			margin-top: -10px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 20px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .7;
+				margin-bottom: 28px;
+			}
 	    #blue-orange-add-to-cart-blue-orange, 
 		#blue-orange-add-to-cart-connected-blue-orange  {
 			  text-decoration: none;

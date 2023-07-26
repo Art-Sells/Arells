@@ -4,6 +4,7 @@
 import '../css/prototype/images/blue-orange.css';
 import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
+import '../css/modals/coming-soon.css';
 
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
@@ -33,10 +34,19 @@ const blueOrange = () => {
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
 	const [walletConnectedDivBlueOrange, setWalletConnectedDivBlueOrange] = useState(false);
 
+	const [showComingSoon, setComingSoon] = useState(false);
+
+	const [ownedByCreatorBlueOrange, setOwnedByCreatorBlueOrange] = useState(true);
+	const [ownedByBuyerBlueOrange, setOwnedByBuyerBlueOrange] = useState(false);
+
+	const [blueOrangeAddToCartBlueOrange, setBlueOrangeAddToCartBlueOrange] = useState(true);		
+	const [blueOrangeAddToCartConnectedBlueOrange, setBlueOrangeAddToCartConnectedBlueOrange] = useState(false);
+	const [blueOrangeAddedBlueOrange, setBlueOrangeAddedBlueOrange] = useState(false);
+	const [blueOrangeCollectedBlueOrange, setBlueOrangeCollectedBlueOrange] = useState(false);
+
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
-
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
@@ -86,6 +96,16 @@ const blueOrange = () => {
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
 
+{/*<!-- Coming Soon function/s below -->*/}
+	const comingSoon = () => {
+		setComingSoon(true);
+	};
+
+	const closeComingSoon = () => {
+		setComingSoon(false);
+	};
+{/*<!-- Coming Soon function/s above -->*/}
+
 
 {/*<!-- Add To Cart function/s below -->*/}
 
@@ -111,6 +131,38 @@ const blueOrange = () => {
 	const layersAdded = sessionStorage.getItem('layersAdded');
 	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
 	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+
+	useEffect(() => {
+		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
+		|| colourGlassAdded === 'true' || layersAdded === 'true'
+		|| paintRainAdded === 'true' || succinctDropAdded == 'true') {
+			setCartLinkConnectedBlueOrange(false);
+			setCartLinkFullBlueOrange(true);
+		}
+	}, [blueOrangeAdded, beachHousesAdded,
+		colourGlassAdded, layersAdded, paintRainAdded,
+		succinctDropAdded]);
+	useEffect(() => {
+		if (blueOrangeAdded === 'true') {
+			setCartLinkConnectedBlueOrange(false);
+			setCartLinkFullBlueOrange(true);
+	
+			setBlueOrangeAddToCartBlueOrange(false);		
+			setBlueOrangeAddToCartConnectedBlueOrange(false);
+			setBlueOrangeAddedBlueOrange(true);
+		}
+	}, [blueOrangeAdded]);
+	useEffect(() => {
+		if (blueOrangePurchased === 'true') {
+			setBlueOrangePricesBlueOrange(false);
+			setBlueOrangePricesAfterBlueOrange(true);
+
+			setBlueOrangeAddToCartBlueOrange(false);		
+			setBlueOrangeAddToCartConnectedBlueOrange(false);
+			setBlueOrangeAddedBlueOrange(false);
+			setBlueOrangeCollectedBlueOrange(true);
+		}
+	}, [blueOrangePurchased]);
 
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
@@ -176,6 +228,16 @@ const blueOrange = () => {
 				</div>
 			</div>	
 		)}
+
+		{showComingSoon && (
+			<div id="comingSoon">
+				<div class="modal-content">
+				<p>COMING SOON</p>
+				<button className="close"
+					onClick={closeComingSoon}>OK</button>	
+				</div>
+			</div>	
+		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -183,6 +245,7 @@ const blueOrange = () => {
 			<div id="header-blue-orange">
 			
 				{/*<!-- Change below link after test -->*/}
+					
 					<a id="icon-link-blue-orange" href="/">
 						<img id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>		
