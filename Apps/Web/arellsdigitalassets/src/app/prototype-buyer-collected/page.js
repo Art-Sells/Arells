@@ -72,7 +72,7 @@ const prototypeBuyerCollected = () => {
 		setShowConnectWallet(false);
 		
 		setCartLinkBuyerCollected(false);
-		setWalletConnectedBuyerCollected(true);
+		setWalletConnectedDivBuyerCollected(true);
 		
 		setCartLinkConnectedBuyerCollected(true);
 		

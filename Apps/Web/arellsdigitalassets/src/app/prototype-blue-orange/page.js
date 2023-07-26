@@ -30,6 +30,7 @@ const blueOrange = () => {
 	const [cartLinkConnectedBlueOrange, setCartLinkConnectedBlueOrange] = useState(false);
 	const [cartLinkFullBlueOrange, setCartLinkFullBlueOrange] = useState(false);
 
+	const [showConnectWallet, setShowConnectWallet] = useState(false);
 	const [walletConnectedDivBlueOrange, setWalletConnectedDivBlueOrange] = useState(false);
 
 {/*<!-- useState constants above -->*/}
@@ -61,10 +62,10 @@ const blueOrange = () => {
 	const walletConnected = () => {
 		setShowConnectWallet(false);
 		
-		setCartLinkBuyerCollected(false);
-		setWalletConnectedBuyerCollected(true);
+		setCartLinkBlueOrange(false);
+		setWalletConnectedDivBlueOrange(true);
 		
-		setCartLinkConnectedBuyerCollected(true);
+		setCartLinkConnectedBlueOrange(true);
 		
 		sessionStorage.setItem('walletConnectedSession', 'true');
 		setWalletConnectedSession('true');
@@ -77,7 +78,7 @@ const blueOrange = () => {
 	}, []);
 	useEffect(() => {
 		if (walletConnectedSession === 'true') {
-			setCartLinkBuyerCollected(false);
+			setCartLinkBlueOrange(false);
 			setWalletConnectedDivBlueOrange(true);
 			
 			setCartLinkConnectedBlueOrange(true);
@@ -87,11 +88,29 @@ const blueOrange = () => {
 
 
 {/*<!-- Add To Cart function/s below -->*/}
+
+	const addBlueOrangeToCart = () => {
+		setBlueOrangeAddToCartBlueOrange(false);
+		setBlueOrangeAddedBlueOrange(true);
+
+		setCartLinkConnectedBlueOrange(false);		
+		setCartLinkFullBlueOrange(true);
+
+		sessionStorage.setItem('blueOrangeAdded', 'true');
+	}	
 	
 {/*<!-- Add To Cart function/s above -->*/}
 
 
 {/*<!-- Added/Purchased To function/s below -->*/}
+	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+
+	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+	const layersAdded = sessionStorage.getItem('layersAdded');
+	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
