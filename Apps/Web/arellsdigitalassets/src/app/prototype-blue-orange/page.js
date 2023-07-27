@@ -47,11 +47,10 @@ const blueOrange = () => {
 	const [blueOrangeAddedBlueOrange, setBlueOrangeAddedBlueOrange] = useState(false);
 	const [blueOrangeCollectedBlueOrange, setBlueOrangeCollectedBlueOrange] = useState(false);
 
-	const [blueOrangeAdded, setBlueOrangeAdded] = useState(null);
-
 	//Session Storage Getters below
 	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
 
+	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded')
 	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	const layersAdded = sessionStorage.getItem('layersAdded');
@@ -128,10 +127,6 @@ const blueOrange = () => {
 
 
 {/*<!-- Add To Cart function/s below -->*/}
-	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('blueOrangeAdded');
-		setBlueOrangeAdded(sessionValue);
-	}, []);
 	function addBlueOrangeToCart () {
 		setBlueOrangeAddToCartBlueOrange(false);
 		setBlueOrangeAddedBlueOrange(true);
@@ -140,7 +135,6 @@ const blueOrange = () => {
 		setCartLinkFullBlueOrange(true);
 
 		sessionStorage.setItem('blueOrangeAdded', 'true');
-		setBlueOrangeAdded('true');
 	}	
 	
 {/*<!-- Add To Cart function/s above -->*/}
