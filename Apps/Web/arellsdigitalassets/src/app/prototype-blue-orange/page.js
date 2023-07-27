@@ -47,11 +47,11 @@ const blueOrange = () => {
 	const [blueOrangeAddedBlueOrange, setBlueOrangeAddedBlueOrange] = useState(false);
 	const [blueOrangeCollectedBlueOrange, setBlueOrangeCollectedBlueOrange] = useState(false);
 
-	//Session Storage Getters below
+	const [blueOrangeAdded, setBlueOrangeAdded] = useState(null);
 
+	//Session Storage Getters below
 	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
 
-	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	const layersAdded = sessionStorage.getItem('layersAdded');
@@ -72,24 +72,27 @@ const blueOrange = () => {
 		  });
 	};
   
-	const closeCopiedLink = () => {
+	function closeCopiedLink () {
 	  setCopiedLink(false);
 	};
 {/*<!-- Copy Links function/s above -->*/}
 
 
 {/*<!-- Connect Wallet function/s below -->*/}
-	const connectWallet = () => {
+	function connectWallet () {
 		setShowConnectWallet(true);
 	};
 
-	const walletConnected = () => {
+	function walletConnected () {
 		setShowConnectWallet(false);
 		
 		setCartLinkBlueOrange(false);
 		setWalletConnectedDivBlueOrange(true);
 		
 		setCartLinkConnectedBlueOrange(true);
+
+		setBlueOrangeAddToCartBlueOrange(false);		
+		setBlueOrangeAddToCartConnectedBlueOrange(true);
 		
 		sessionStorage.setItem('walletConnectedSession', 'true');
 		setWalletConnectedSession('true');
@@ -106,24 +109,30 @@ const blueOrange = () => {
 			setWalletConnectedDivBlueOrange(true);
 			
 			setCartLinkConnectedBlueOrange(true);
+
+			setBlueOrangeAddToCartBlueOrange(false);		
+			setBlueOrangeAddToCartConnectedBlueOrange(true);
 		}
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
 
 {/*<!-- Coming Soon function/s below -->*/}
-	const comingSoon = () => {
+	function comingSoon () {
 		setComingSoon(true);
 	};
 
-	const closeComingSoon = () => {
+	function closeComingSoon () {
 		setComingSoon(false);
 	};
 {/*<!-- Coming Soon function/s above -->*/}
 
 
 {/*<!-- Add To Cart function/s below -->*/}
-
-	const addBlueOrangeToCart = () => {
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('blueOrangeAdded');
+		setBlueOrangeAdded(sessionValue);
+	}, []);
+	function addBlueOrangeToCart () {
 		setBlueOrangeAddToCartBlueOrange(false);
 		setBlueOrangeAddedBlueOrange(true);
 
@@ -131,6 +140,7 @@ const blueOrange = () => {
 		setCartLinkFullBlueOrange(true);
 
 		sessionStorage.setItem('blueOrangeAdded', 'true');
+		setBlueOrangeAdded('true');
 	}	
 	
 {/*<!-- Add To Cart function/s above -->*/}
