@@ -47,13 +47,24 @@ const blueOrange = () => {
 	const [blueOrangeAddedBlueOrange, setBlueOrangeAddedBlueOrange] = useState(false);
 	const [blueOrangeCollectedBlueOrange, setBlueOrangeCollectedBlueOrange] = useState(false);
 
+	//Session Storage Getters below
+
+	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
+
+	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+	const layersAdded = sessionStorage.getItem('layersAdded');
+	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-buyer-collected'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype-blue-orange'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -126,19 +137,11 @@ const blueOrange = () => {
 
 
 {/*<!-- Added/Purchased To function/s below -->*/}
-	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
-
-	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
-	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
-	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
-	const layersAdded = sessionStorage.getItem('layersAdded');
-	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
-	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 
 	useEffect(() => {
 		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
 		|| colourGlassAdded === 'true' || layersAdded === 'true'
-		|| paintRainAdded === 'true' || succinctDropAdded == 'true') {
+		|| paintRainAdded === 'true' || succinctDropAdded === 'true') {
 			setCartLinkConnectedBlueOrange(false);
 			setCartLinkFullBlueOrange(true);
 		}
@@ -338,13 +341,11 @@ const blueOrange = () => {
 				)}
 
 				{blueOrangeAddToCartBlueOrange && (
-					<button id="blue-orange-add-to-cart-blue-orange" onClick={connectWallet}
-					style="display: block;">
+					<button id="blue-orange-add-to-cart-blue-orange" onClick={connectWallet}>
 					ADD TO CART</button>
 				)}
 				{blueOrangeAddToCartConnectedBlueOrange && (
-					<button id="blue-orange-add-to-cart-connected-blue-orange" onClick={addBlueOrangeToCart}
-					style="display: none;">
+					<button id="blue-orange-add-to-cart-connected-blue-orange" onClick={addBlueOrangeToCart}>
 					ADD TO CART</button>
 				)}
 				{blueOrangeAddedBlueOrange && (
