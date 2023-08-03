@@ -121,3 +121,5 @@ ________________________________________________________________________________
 ##### Expand Relationship-Building-Team Internationally (Asia/Africa/India)
 
 #### ERC-6551 (for Real-Estate (possible Ability to link previous NFTs into the asset))
+- Step 1: Luggage(Jewelry) *(Lifting People out of Poverty *with PAP system* -- mission re-direction)*
+- Step 2: Real Estate *(Digital Asset Economy -- from Digital Asset Store)*
