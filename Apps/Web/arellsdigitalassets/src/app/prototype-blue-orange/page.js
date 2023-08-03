@@ -47,9 +47,6 @@ const blueOrange = () => {
 	const [blueOrangeAddedBlueOrange, setBlueOrangeAddedBlueOrange] = useState(false);
 	const [blueOrangeCollectedBlueOrange, setBlueOrangeCollectedBlueOrange] = useState(false);
 
-	//Session Storage Getters below
-	const blueOrangePurchased = sessionStorage.getItem('blueOrangePurchased');
-
 	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	const layersAdded = sessionStorage.getItem('layersAdded');
@@ -167,6 +164,12 @@ const blueOrange = () => {
 			setBlueOrangeAddedBlueOrange(true);
 		}
 	}, [blueOrangeAdded]);
+		//Session Storage Getters below
+	const [blueOrangePurchased, setBlueOrangePurchased] = useState(null);	
+	useEffect(() => {
+		const sessionValue = sessionStorage.getItem('blueOrangePurchased');
+		setBlueOrangePurchased(sessionValue);
+	}, []);
 	useEffect(() => {
 		if (blueOrangePurchased === 'true') {
 			setBlueOrangePricesBeforeBlueOrange(false);
