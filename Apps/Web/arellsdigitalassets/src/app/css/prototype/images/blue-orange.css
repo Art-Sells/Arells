@@ -527,7 +527,7 @@
 			
 			
 @media screen and (max-width: 1000px) {
-	  body {
+	#blue-orange-wrapper {
 	    -webkit-text-size-adjust: none;
 	  }  
 		#header-blue-orange {
@@ -625,7 +625,7 @@
 	
 	
 @media screen and (max-width: 700px) {
-	  body {
+	#blue-orange-wrapper {
 	    -webkit-text-size-adjust: none;
 	  }  	
 	  
