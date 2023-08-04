@@ -156,9 +156,6 @@ const beachHouses = () => {
 		succinctDropAdded]);
 	useEffect(() => {
 		if (beachHousesAdded === 'true') {
-			setCartLinkConnectedBeachHouses(false);
-			setCartLinkFullBeachHouses(true);
-	
 			setBeachHousesAddToCartBeachHouses(false);		
 			setBeachHousesAddToCartConnectedBeachHouses(false);
 			setBeachHousesAddedBeachHouses(true);
@@ -337,7 +334,7 @@ const beachHouses = () => {
 				)}
 				<hr id="line-beach-houses"/>
 				{beachHousesPricesBeforeBeachHouses && (
-					<div id="beach-houses-prices-before-beach-houses" style="display: block;">
+					<div id="beach-houses-prices-before-beach-houses">
 						<p id="PAP-beach-houses">Price After Purchase</p>
 						<p id="PAP-beach-houses-before-beach-houses">$10,000</p>
 						<hr id="priceline-beach-houses"/>
@@ -346,7 +343,7 @@ const beachHouses = () => {
 					</div>
 				)}
 				{beachHousesPricesAfterBeachHouses && (
-					<div id="beach-houses-prices-after-beach-houses" style="display: none;">
+					<div id="beach-houses-prices-after-beach-houses">
 						<p id="PAP-beach-houses">Price After Purchase</p>
 						<p id="PAP-beach-houses-after-beach-houses">$500,000</p>
 						<hr id="priceline-beach-houses"/>

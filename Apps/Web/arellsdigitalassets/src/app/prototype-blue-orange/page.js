@@ -156,9 +156,6 @@ const blueOrange = () => {
 		succinctDropAdded]);
 	useEffect(() => {
 		if (blueOrangeAdded === 'true') {
-			setCartLinkConnectedBlueOrange(false);
-			setCartLinkFullBlueOrange(true);
-	
 			setBlueOrangeAddToCartBlueOrange(false);		
 			setBlueOrangeAddToCartConnectedBlueOrange(false);
 			setBlueOrangeAddedBlueOrange(true);
