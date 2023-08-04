@@ -27,27 +27,27 @@ const beachHouses = () => {
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
-	const [cartLinkBlueOrange, setCartLinkBlueOrange] = useState(true);
-	const [cartLinkConnectedBlueOrange, setCartLinkConnectedBlueOrange] = useState(false);
-	const [cartLinkFullBlueOrange, setCartLinkFullBlueOrange] = useState(false);
+	const [cartLinkBeachHouses, setCartLinkBeachHouses] = useState(true);
+	const [cartLinkConnectedBeachHouses, setCartLinkConnectedBeachHouses] = useState(false);
+	const [cartLinkFullBeachHouses, setCartLinkFullBeachHouses] = useState(false);
 
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
-	const [walletConnectedDivBlueOrange, setWalletConnectedDivBlueOrange] = useState(false);
+	const [walletConnectedDivBeachHouses, setWalletConnectedDivBeachHouses] = useState(false);
 
 	const [showComingSoon, setComingSoon] = useState(false);
 
-	const [ownedByCreatorBlueOrange, setOwnedByCreatorBlueOrange] = useState(true);
-	const [ownedByBuyerBlueOrange, setOwnedByBuyerBlueOrange] = useState(false);
+	const [ownedByCreatorBeachHouses, setOwnedByCreatorBeachHouses] = useState(true);
+	const [ownedByBuyerBeachHouses, setOwnedByBuyerBeachHouses] = useState(false);
 
-	const [blueOrangePricesBeforeBlueOrange, setBlueOrangePricesBeforeBlueOrange] = useState(true);
-	const [blueOrangePricesAfterBlueOrange, setBlueOrangePricesAfterBlueOrange] = useState(false);
+	const [beachHousesPricesBeforeBeachHouses, setBeachHousesPricesBeforeBeachHouses] = useState(true);
+	const [beachHousesPricesAfterBeachHouses, setBeachHousesPricesAfterBeachHouses] = useState(false);
 
-	const [blueOrangeAddToCartBlueOrange, setBlueOrangeAddToCartBlueOrange] = useState(true);		
-	const [blueOrangeAddToCartConnectedBlueOrange, setBlueOrangeAddToCartConnectedBlueOrange] = useState(false);
-	const [blueOrangeAddedBlueOrange, setBlueOrangeAddedBlueOrange] = useState(false);
-	const [blueOrangeCollectedBlueOrange, setBlueOrangeCollectedBlueOrange] = useState(false);
+	const [beachHousesAddToCartBeachHouses, setBeachHousesAddToCartBeachHouses] = useState(true);		
+	const [beachHousesAddToCartConnectedBeachHouses, setBeachHousesAddToCartConnectedBeachHouses] = useState(false);
+	const [beachHousesAddedBeachHouses, setBeachHousesAddedBeachHouses] = useState(false);
+	const [beachHousesCollectedBeachHouses, setBeachHousesCollectedBeachHouses] = useState(false);
 
-	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	const layersAdded = sessionStorage.getItem('layersAdded');
 	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
@@ -59,7 +59,7 @@ const beachHouses = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-blue-orange'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype-beach-houses'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -81,13 +81,13 @@ const beachHouses = () => {
 	function walletConnected () {
 		setShowConnectWallet(false);
 		
-		setCartLinkBlueOrange(false);
-		setWalletConnectedDivBlueOrange(true);
+		setCartLinkBeachHouses(false);
+		setWalletConnectedDivBeachHouses(true);
 		
-		setCartLinkConnectedBlueOrange(true);
+		setCartLinkConnectedBeachHouses(true);
 
-		setBlueOrangeAddToCartBlueOrange(false);		
-		setBlueOrangeAddToCartConnectedBlueOrange(true);
+		setBeachHousesAddToCartBeachHouses(false);		
+		setBeachHousesAddToCartConnectedBeachHouses(true);
 		
 		sessionStorage.setItem('walletConnectedSession', 'true');
 		setWalletConnectedSession('true');
@@ -100,13 +100,13 @@ const beachHouses = () => {
 	}, []);
 	useEffect(() => {
 		if (walletConnectedSession === 'true') {
-			setCartLinkBlueOrange(false);
-			setWalletConnectedDivBlueOrange(true);
+			setCartLinkBeachHouses(false);
+			setWalletConnectedDivBeachHouses(true);
 			
-			setCartLinkConnectedBlueOrange(true);
+			setCartLinkConnectedBeachHouses(true);
 
-			setBlueOrangeAddToCartBlueOrange(false);		
-			setBlueOrangeAddToCartConnectedBlueOrange(true);
+			setBeachHousesAddToCartBeachHouses(false);		
+			setBeachHousesAddToCartConnectedBeachHouses(true);
 		}
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
@@ -123,20 +123,20 @@ const beachHouses = () => {
 
 
 {/*<!-- Add To Cart function/s below -->*/}
-	const [blueOrangeAdded, setBlueOrangeAdded] = useState(null);
+	const [beachHousesAdded, setBeachHousesAdded] = useState(null);
 	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('blueOrangeAdded');
-		setBlueOrangeAdded(sessionValue);
+		const sessionValue = sessionStorage.getItem('beachHousesAdded');
+		setBeachHousesAdded(sessionValue);
 	}, []);
-	function addBlueOrangeToCart() {
-		setBlueOrangeAddToCartBlueOrange(false);
-		setBlueOrangeAddedBlueOrange(true);
+	function addBeachHousesToCart() {
+		setBeachHousesAddToCartBeachHouses(false);
+		setBeachHousesAddedBeachHouses(true);
 
-		setCartLinkConnectedBlueOrange(false);		
-		setCartLinkFullBlueOrange(true);
+		setCartLinkConnectedBeachHouses(false);		
+		setCartLinkFullBeachHouses(true);
 
-		sessionStorage.setItem('blueOrangeAdded', 'true');
-		setBlueOrangeAdded('true');
+		sessionStorage.setItem('beachHousesAdded', 'true');
+		setBeachHousesAdded('true');
 	}	
 	
 {/*<!-- Add To Cart function/s above -->*/}
@@ -148,42 +148,42 @@ const beachHouses = () => {
 		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
 		|| colourGlassAdded === 'true' || layersAdded === 'true'
 		|| paintRainAdded === 'true' || succinctDropAdded === 'true') {
-			setCartLinkConnectedBlueOrange(false);
-			setCartLinkFullBlueOrange(true);
+			setCartLinkConnectedBeachHouses(false);
+			setCartLinkFullBeachHouses(true);
 		}
 	}, [blueOrangeAdded, beachHousesAdded,
 		colourGlassAdded, layersAdded, paintRainAdded,
 		succinctDropAdded]);
 	useEffect(() => {
-		if (blueOrangeAdded === 'true') {
-			setCartLinkConnectedBlueOrange(false);
-			setCartLinkFullBlueOrange(true);
+		if (beachHousesAdded === 'true') {
+			setCartLinkConnectedBeachHouses(false);
+			setCartLinkFullBeachHouses(true);
 	
-			setBlueOrangeAddToCartBlueOrange(false);		
-			setBlueOrangeAddToCartConnectedBlueOrange(false);
-			setBlueOrangeAddedBlueOrange(true);
+			setBeachHousesAddToCartBeachHouses(false);		
+			setBeachHousesAddToCartConnectedBeachHouses(false);
+			setBeachHousesAddedBeachHouses(true);
 		}
-	}, [blueOrangeAdded]);
+	}, [beachHousesAdded]);
 		//Session Storage Getters below
-	const [blueOrangePurchased, setBlueOrangePurchased] = useState(null);	
+	const [beachHousesPurchased, setBeachHousesPurchased] = useState(null);	
 	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('blueOrangePurchased');
-		setBlueOrangePurchased(sessionValue);
+		const sessionValue = sessionStorage.getItem('beachHousesPurchased');
+		setBeachHousesPurchased(sessionValue);
 	}, []);
 	useEffect(() => {
-		if (blueOrangePurchased === 'true') {
-			setBlueOrangePricesBeforeBlueOrange(false);
-			setBlueOrangePricesAfterBlueOrange(true);
+		if (beachHousesPurchased === 'true') {
+			setBeachHousesPricesBeforeBeachHouses(false);
+			setBeachHousesPricesAfterBeachHouses(true);
 
-			setOwnedByCreatorBlueOrange(false);
-			setOwnedByBuyerBlueOrange(true);
+			setOwnedByCreatorBeachHouses(false);
+			setOwnedByBuyerBeachHouses(true);
 
-			setBlueOrangeAddToCartBlueOrange(false);		
-			setBlueOrangeAddToCartConnectedBlueOrange(false);
-			setBlueOrangeAddedBlueOrange(false);
-			setBlueOrangeCollectedBlueOrange(true);
+			setBeachHousesAddToCartBeachHouses(false);		
+			setBeachHousesAddToCartConnectedBeachHouses(false);
+			setBeachHousesAddedBeachHouses(false);
+			setBeachHousesCollectedBeachHouses(true);
 		}
-	}, [blueOrangePurchased]);
+	}, [beachHousesPurchased]);
 
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
@@ -196,36 +196,36 @@ const beachHouses = () => {
 			<meta charset="UTF-8" />
 			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-			<meta name="title" content="Blue Orange Prototype"/>
-			<meta name="description" content="Prototype for Blue Orange"/>
+			<meta name="title" content="Beach Houses Prototype"/>
+			<meta name="description" content="Prototype for Beach Houses"/>
 			<meta name="google" content="nositelinkssearchbox"/>
 			<meta name="keywords" content="Arells"/>
 			<meta name="author" content="Arells"/>
 			<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
 
 			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-blue-orange"/>
+			<link rel="canonical" href="https://arells.com/prototype-beach-houses"/>
 
 			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>	
 			<meta property="og:site_name" content="Arells"/>	
 			<meta property="og:type" content="website"/>				
-			<meta property="og:title" content="Blue Orange Prototype"/>
+			<meta property="og:title" content="Beach Houses Prototype"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-blue-orange"/>
-			<meta property="og:description" content="Prototype for Blue Orange"/>
+			<meta property="og:url" content="https://arells.com/prototype-beach-houses"/>
+			<meta property="og:description" content="Prototype for Beach Houses"/>
 			<meta property="og:image:type" content="image/jpg"/>
 			<meta property="og:image:width" content="700"/>
 			<meta property="og:image:height" content="400"/>
 
-			<meta name="twitter:title" content="Blue Orange Prototype"/>
+			<meta name="twitter:title" content="Beach Houses Prototype"/>
 			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-blue-orange"/>
+			<meta name="twitter:url" content="https://arells.com/prototype-beach-houses"/>
 			<meta name="twitter:card" content="summary_large_image"/>
-			<meta name="twitter:description" content="Prototype for Blue Orange"/>
+			<meta name="twitter:description" content="Prototype for Beach Houses"/>
 		</Head>
 
-		<title>Prototype Blue Orange</title>	
+		<title>Prototype Beach Houses</title>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
@@ -262,113 +262,113 @@ const beachHouses = () => {
 {/*<!-- Modals Above -->*/}
 
 
-		<div id="blue-orange-wrapper">
-			<div id="header-blue-orange">
+		<div id="beach-houses-wrapper">
+			<div id="header-beach-houses">
 			
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
-						<a id="icon-link-blue-orange">
-							<img id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<a id="icon-link-beach-houses">
+							<img id="arells-icon-beach-houses" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
-					{cartLinkBlueOrange && (
-						<button id="cart-link-blue-orange" onClick={connectWallet}>
-							<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+					{cartLinkBeachHouses && (
+						<button id="cart-link-beach-houses" onClick={connectWallet}>
+							<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
-					{cartLinkConnectedBlueOrange && (
+					{cartLinkConnectedBeachHouses && (
 						<Link legacyBehavior href="/prototype-cart">
-							<a id="cart-link-connected-blue-orange">
-								<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<a id="cart-link-connected-beach-houses">
+								<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
 
-					{cartLinkFullBlueOrange && (
+					{cartLinkFullBeachHouses && (
 						<Link legacyBehavior href="/prototype-cart">
-							<a id="cart-link-full-blue-orange">
-								<img id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<a id="cart-link-full-beach-houses">
+								<img id="cart-icon-full-beach-houses" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<img id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-blue-orange">ART SELLS</p>
-				{walletConnectedDivBlueOrange && (
-					<div id="wallet-connected-div-blue-orange">
-						<hr id="connected-line-blue-orange"/>
-						<p id="wallet-connected-blue-orange" >
+				<img id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<p id="slogan-beach-houses">ART SELLS</p>
+				{walletConnectedDivBeachHouses && (
+					<div id="wallet-connected-div-beach-houses">
+						<hr id="connected-line-beach-houses"/>
+						<p id="wallet-connected-beach-houses" >
 						WALLET CONNECTED</p>
-						<hr id="connected-line-blue-orange"/>
+						<hr id="connected-line-beach-houses"/>
 					</div>
 				)}
 
-			<div id="blue-orange">
-				<img id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
-				<h3 id="name-blue-orange">Blue Orange</h3> 
+			<div id="beach-houses">
+				<img id="photo-beach-houses" src="/icons&images/prototype/2.jpg"/>
+				<h3 id="name-beach-houses">Beach Houses</h3> 
 				<div id="share-div">
 					<p id="share-div-desc">SHARE</p>
-					<button id="copy-link-blue-orange"
+					<button id="copy-link-beach-houses"
 					onClick={copyLink}>
-						<img id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
+						<img id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
 						COPY LINK
 					</button>	
 				</div>
-				<div id="created-by-blue-orange">
-					<p id="creator-owner-desc-blue-orange">Created By</p>
-					<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
+				<div id="created-by-beach-houses">
+					<p id="creator-owner-desc-beach-houses">Created By</p>
+					<a id="creator-owner-link-beach-houses" href="/prototype-seller-created">
 						Abstract Kadabra
 					</a>
 				</div>
-				{ownedByCreatorBlueOrange && (
-					<div id="owned-by-creator-blue-orange">
-						<p id="creator-owner-desc-blue-orange">Owned By</p> 
-						<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
+				{ownedByCreatorBeachHouses && (
+					<div id="owned-by-creator-beach-houses">
+						<p id="creator-owner-desc-beach-houses">Owned By</p> 
+						<a id="creator-owner-link-beach-houses" href="/prototype-seller-created">
 							Abstract Kadabra</a>
 					</div>
 				)}
-				{ownedByBuyerBlueOrange && (
-					<div id="owned-by-buyer-blue-orange">
-						<p id="creator-owner-desc-blue-orange">Owned By</p> 
-						<a id="creator-owner-link-blue-orange" href="/prototype-buyer-collected">
+				{ownedByBuyerBeachHouses && (
+					<div id="owned-by-buyer-beach-houses">
+						<p id="creator-owner-desc-beach-houses">Owned By</p> 
+						<a id="creator-owner-link-beach-houses" href="/prototype-buyer-collected">
 							0x71C7656E...
 						</a>
 					</div>
 				)}
-				<hr id="line-blue-orange"/>
-				{blueOrangePricesBeforeBlueOrange && (
-					<div id="blue-orange-prices-before-blue-orange">
-						<p id="PAP-blue-orange">Price After Purchase</p>
-						<p id="PAP-blue-orange-before-blue-orange">$60,000</p>
-						<hr id="priceline-blue-orange"/>
-						<p id="yourprice-blue-orange">Price</p>
-						<p id="price-blue-orange-before-blue-orange">$1,200</p>
-					</div>	
+				<hr id="line-beach-houses"/>
+				{beachHousesPricesBeforeBeachHouses && (
+					<div id="beach-houses-prices-before-beach-houses" style="display: block;">
+						<p id="PAP-beach-houses">Price After Purchase</p>
+						<p id="PAP-beach-houses-before-beach-houses">$10,000</p>
+						<hr id="priceline-beach-houses"/>
+						<p id="yourprice-beach-houses">Price</p>
+						<p id="price-beach-houses-before-beach-houses">$200</p>
+					</div>
 				)}
-				{blueOrangePricesAfterBlueOrange && (
-					<div id="blue-orange-prices-after-blue-orange">
-						<p id="PAP-blue-orange">Price After Purchase</p>
-						<p id="PAP-blue-orange-after-blue-orange">$3,000,000</p>
-						<hr id="priceline-blue-orange"/>
-						<p id="yourprice-blue-orange">Price</p>
-						<p id="price-blue-orange-after-blue-orange">$60,000</p>
-					</div>	
+				{beachHousesPricesAfterBeachHouses && (
+					<div id="beach-houses-prices-after-beach-houses" style="display: none;">
+						<p id="PAP-beach-houses">Price After Purchase</p>
+						<p id="PAP-beach-houses-after-beach-houses">$500,000</p>
+						<hr id="priceline-beach-houses"/>
+						<p id="yourprice-beach-houses">Price</p>
+						<p id="price-beach-houses-after-beach-houses">$10,000</p>
+					</div>
 				)}
 
-				{blueOrangeAddToCartBlueOrange && (
-					<button id="blue-orange-add-to-cart-blue-orange" onClick={connectWallet}>
+				{beachHousesAddToCartBeachHouses && (
+					<button id="beach-houses-add-to-cart-beach-houses" onClick={connectWallet}>
 					ADD TO CART</button>
 				)}
-				{blueOrangeAddToCartConnectedBlueOrange && (
-					<button id="blue-orange-add-to-cart-connected-blue-orange" onClick={addBlueOrangeToCart}>
+				{beachHousesAddToCartConnectedBeachHouses && (
+					<button id="beach-houses-add-to-cart-connected-beach-houses" onClick={addBeachHousesToCart}>
 					ADD TO CART</button>
 				)}
-				{blueOrangeAddedBlueOrange && (
-					<button id="blue-orange-added-blue-orange">
+				{beachHousesAddedBeachHouses && (
+					<button id="beach-houses-added-beach-houses">
 					ADDED</button>	
 				)}
-				{blueOrangeCollectedBlueOrange && (
-					<button id="blue-orange-collected-blue-orange">
+				{beachHousesCollectedBeachHouses && (
+					<button id="beach-houses-collected-beach-houses">
 					COLLECTED</button>
 				)}
 
