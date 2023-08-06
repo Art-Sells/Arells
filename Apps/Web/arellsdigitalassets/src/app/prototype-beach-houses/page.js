@@ -148,7 +148,6 @@ const beachHouses = () => {
 		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
 		|| colourGlassAdded === 'true' || layersAdded === 'true'
 		|| paintRainAdded === 'true' || succinctDropAdded === 'true') {
-			setCartLinkBeachHouses(false);
 			setCartLinkConnectedBeachHouses(false);
 			setCartLinkFullBeachHouses(true);
 		}
