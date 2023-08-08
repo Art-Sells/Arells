@@ -47,6 +47,12 @@ const beachHouses = () => {
 	const [beachHousesAddedBeachHouses, setBeachHousesAddedBeachHouses] = useState(false);
 	const [beachHousesCollectedBeachHouses, setBeachHousesCollectedBeachHouses] = useState(false);
 
+	// const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+	// const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+	// const layersAdded = sessionStorage.getItem('layersAdded');
+	// const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+	// const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
@@ -137,12 +143,6 @@ const beachHouses = () => {
 
 
 {/*<!-- Added/Purchased To function/s below -->*/}
-
-	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
-	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
-	const layersAdded = sessionStorage.getItem('layersAdded');
-	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
-	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 
 	useEffect(() => {
 		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
