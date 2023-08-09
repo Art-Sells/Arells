@@ -7,7 +7,19 @@
 Most Artists are living in poverty.
 
 #### Solution:
-Art + Sells = Arells: An NFT store that financially empowers artists. Arells plans on achieving this by offering each artist 90% royalties for each NFT sold.
+Art + Sells = Arells: An NFT store that financially empowers artists. Arells is working on achieving this through an innovation called **Price After Purchase** which introduces a new market called a Stag Market.
+
+_______________________________________________________________________
+
+#### Price Afer Purchase:
+Price After Purchase or PAP for short is a market system which assets cannot be sold lower than the price they were either listed or previously purchased for which introduces a new market...
+
+#### Stag Market:
+A market in which no new assets are bought or sold but rather stagnate rendering bear markets obsolete.
+
+<img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/Marketing/BeforeandAfterArells.jpg" width="800px"> 
+
+_______________________________________________________________________
 
 ## Roadmap
 
