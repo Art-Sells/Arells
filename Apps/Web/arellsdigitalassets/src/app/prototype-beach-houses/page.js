@@ -47,11 +47,12 @@ const beachHouses = () => {
 	const [beachHousesAddedBeachHouses, setBeachHousesAddedBeachHouses] = useState(false);
 	const [beachHousesCollectedBeachHouses, setBeachHousesCollectedBeachHouses] = useState(false);
 
-	// const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
-	// const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
-	// const layersAdded = sessionStorage.getItem('layersAdded');
-	// const paintRainAdded = sessionStorage.getItem('paintRainAdded');
-	// const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+	
+	sessionStorage.getItem('blueOrangeAdded');
+	sessionStorage.getItem('colourGlassAdded');
+	sessionStorage.getItem('layersAdded');
+	sessionStorage.getItem('paintRainAdded');
+	sessionStorage.getItem('succinctDropAdded');
 
 {/*<!-- useState constants above -->*/}
 
@@ -145,15 +146,13 @@ const beachHouses = () => {
 {/*<!-- Added/Purchased To function/s below -->*/}
 
 	useEffect(() => {
-		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
-		|| colourGlassAdded === 'true' || layersAdded === 'true'
-		|| paintRainAdded === 'true' || succinctDropAdded === 'true') {
+		if ('blueOrangeAdded' === 'true' || 'beachHousesAdded' === 'true'
+		|| 'colourGlassAdded' === 'true' || 'layersAdded' === 'true'
+		|| 'paintRainAdded' === 'true' || 'succinctDropAdded' === 'true') {
 			setCartLinkConnectedBeachHouses(false);
 			setCartLinkFullBeachHouses(true);
 		}
-	}, [blueOrangeAdded, beachHousesAdded,
-		colourGlassAdded, layersAdded, paintRainAdded,
-		succinctDropAdded]);
+	}, []);
 	useEffect(() => {
 		if (beachHousesAdded === 'true') {
 			setBeachHousesAddToCartBeachHouses(false);		
