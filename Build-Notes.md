@@ -118,6 +118,8 @@ ________________________________________________________________________________
 
 #### Royalties: 90% = Real Art, 5% = AI Art (note every artist). Implement watermarks on every AI generated image.
 
+#### market.arells.com: To show the market dynamics and show the "Stag Market" at work.
+
 ##### Expand Relationship-Building-Team Internationally (Asia/Africa/India)
 
 #### ERC-6551 (for Real-Estate (possible Ability to link previous NFTs into the asset))
