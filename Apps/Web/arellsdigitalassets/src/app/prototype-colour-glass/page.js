@@ -269,113 +269,113 @@ const colourGlass = () => {
 {/*<!-- Modals Above -->*/}
 
 
-		<div id="beach-houses-wrapper">
-			<div id="header-beach-houses">
+		<div id="colour-glass-wrapper">
+			<div id="header-colour-glass">
 			
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
-						<a id="icon-link-beach-houses">
-							<img id="arells-icon-beach-houses" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<a id="icon-link-colour-glass">
+							<img id="arells-icon-colour-glass" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkColourGlass && (
-						<button id="cart-link-beach-houses" onClick={connectWallet}>
-							<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<button id="cart-link-colour-glass" onClick={connectWallet}>
+							<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedColourGlass && (
 						<Link legacyBehavior href="/prototype-cart">
-							<a id="cart-link-connected-beach-houses">
-								<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<a id="cart-link-connected-colour-glass">
+								<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
 
 					{cartLinkFullColourGlass && (
 						<Link legacyBehavior href="/prototype-cart">
-							<a id="cart-link-full-beach-houses">
-								<img id="cart-icon-full-beach-houses" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<a id="cart-link-full-colour-glass">
+								<img id="cart-icon-full-colour-glass" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<img id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-beach-houses">ART SELLS</p>
+				<img id="word-logo-colour-glass" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<p id="slogan-colour-glass">ART SELLS</p>
 				{walletConnectedDivColourGlass && (
-					<div id="wallet-connected-div-beach-houses">
-						<hr id="connected-line-beach-houses"/>
-						<p id="wallet-connected-beach-houses" >
+					<div id="wallet-connected-div-colour-glass">
+						<hr id="connected-line-colour-glass"/>
+						<p id="wallet-connected-colour-glass" >
 						WALLET CONNECTED</p>
-						<hr id="connected-line-beach-houses"/>
+						<hr id="connected-line-colour-glass"/>
 					</div>
 				)}
 
-			<div id="beach-houses">
-				<img id="photo-beach-houses" src="/icons&images/prototype/2.jpg"/>
-				<h3 id="name-beach-houses">Beach Houses</h3> 
-				<div id="share-div">
-					<p id="share-div-desc">SHARE</p>
-					<button id="copy-link-beach-houses"
-					onClick={copyLink}>
-						<img id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
-						COPY LINK
-					</button>	
-				</div>
-				<div id="created-by-beach-houses">
-					<p id="creator-owner-desc-beach-houses">Created By</p>
-					<a id="creator-owner-link-beach-houses" href="/prototype-seller-created">
-						Abstract Kadabra
-					</a>
-				</div>
+            <div id="colour-glass">
+                <img id="photo-colour-glass" src="/icons&images/prototype/3.jpg"/>
+                <h3 id="name-colour-glass">Colour Glass</h3>
+                <div id="share-div">
+                    <p id="share-div-desc">SHARE</p> 
+                    <button id="copy-link-colour-glass"
+                    onClick={copyLink}>
+                        <img id="copy-link-icon-colour-glass" src="/icons&images/prototype/link.png"/>
+                        COPY LINK
+                    </button>	
+                </div>
+                <div id="created-by-colour-glass">
+                    <p id="creator-owner-desc-colour-glass">Created By</p>
+                    <a id="creator-owner-link-colour-glass" href="/prototype-seller-created">
+                        Abstract Kadabra
+                    </a>
+                </div>
 				{ownedByCreatorColourGlass && (
-					<div id="owned-by-creator-beach-houses">
-						<p id="creator-owner-desc-beach-houses">Owned By</p> 
-						<a id="creator-owner-link-beach-houses" href="/prototype-seller-created">
-							Abstract Kadabra</a>
-					</div>
+                    <div id="owned-by-creator-colour-glass" >
+                        <p id="creator-owner-desc-colour-glass">Owned By</p> 
+                        <a id="creator-owner-link-colour-glass" href="/prototype-seller-created">
+                            Abstract Kadabra</a>
+                    </div>
 				)}
 				{ownedByBuyerColourGlass && (
-					<div id="owned-by-buyer-beach-houses">
-						<p id="creator-owner-desc-beach-houses">Owned By</p> 
-						<a id="creator-owner-link-beach-houses" href="/prototype-buyer-collected">
-							0x71C7656E...
-						</a>
-					</div>
+                    <div id="owned-by-buyer-colour-glass">
+                        <p id="creator-owner-desc-colour-glass">Owned By</p> 
+                        <a id="creator-owner-link-colour-glass" href="/prototype-buyer-collected">
+                            0x71C7656E...
+                        </a>
+                    </div>
 				)}
-				<hr id="line-beach-houses"/>
+				<hr id="line-colour-glass"/>
 				{colourGlassPricesBeforeColourGlass && (
-					<div id="beach-houses-prices-before-beach-houses">
-						<p id="PAP-beach-houses">Price After Purchase</p>
-						<p id="PAP-beach-houses-before-beach-houses">$10,000</p>
-						<hr id="priceline-beach-houses"/>
-						<p id="yourprice-beach-houses">Price</p>
-						<p id="price-beach-houses-before-beach-houses">$200</p>
-					</div>
+                    <div id="colour-glass-prices-before-colour-glass">
+                        <p id="PAP-colour-glass">Price After Purchase</p>
+                        <p id="PAP-colour-glass-before-colour-glass">$725,000</p>
+                        <hr id="priceline-colour-glass"/>
+                        <p id="yourprice-colour-glass">Price</p>
+                        <p id="price-colour-glass-before-colour-glass">$14,500</p>
+                    </div>
 				)}
 				{colourGlassPricesAfterColourGlass && (
-					<div id="beach-houses-prices-after-beach-houses">
-						<p id="PAP-beach-houses">Price After Purchase</p>
-						<p id="PAP-beach-houses-after-beach-houses">$500,000</p>
-						<hr id="priceline-beach-houses"/>
-						<p id="yourprice-beach-houses">Price</p>
-						<p id="price-beach-houses-after-beach-houses">$10,000</p>
-					</div>
+                    <div id="colour-glass-prices-after-colour-glass">
+                        <p id="PAP-colour-glass">Price After Purchase</p>
+                        <p id="PAP-colour-glass-after-colour-glass">$36,250,000</p>
+                        <hr id="priceline-colour-glass"/>
+                        <p id="yourprice-colour-glass">Price</p>
+                        <p id="price-colour-glass-after-colour-glass">$725,000</p>
+                    </div>
 				)}
 
 				{colourGlassAddToCartColourGlass && (
-					<button id="beach-houses-add-to-cart-beach-houses" onClick={connectWallet}>
+					<button id="colour-glass-add-to-cart-colour-glass" onClick={connectWallet}>
 					ADD TO CART</button>
 				)}
 				{colourGlassAddToCartConnectedColourGlass && (
-					<button id="beach-houses-add-to-cart-connected-beach-houses" onClick={addColourGlassToCart}>
+					<button id="colour-glass-add-to-cart-connected-colour-glass" onClick={addColourGlassToCart}>
 					ADD TO CART</button>
 				)}
 				{colourGlassAddedColourGlass && (
-					<button id="beach-houses-added-beach-houses">
+					<button id="colour-glass-added-colour-glass">
 					ADDED</button>	
 				)}
 				{colourGlassCollectedColourGlass && (
-					<button id="beach-houses-collected-beach-houses">
+					<button id="bcolour-glass-collected-colour-glass">
 					COLLECTED</button>
 				)}
 
