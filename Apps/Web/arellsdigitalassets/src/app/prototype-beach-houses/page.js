@@ -47,12 +47,6 @@ const beachHouses = () => {
 	const [beachHousesAddedBeachHouses, setBeachHousesAddedBeachHouses] = useState(false);
 	const [beachHousesCollectedBeachHouses, setBeachHousesCollectedBeachHouses] = useState(false);
 
-	
-	sessionStorage.getItem('blueOrangeAdded');
-	sessionStorage.getItem('colourGlassAdded');
-	sessionStorage.getItem('layersAdded');
-	sessionStorage.getItem('paintRainAdded');
-	sessionStorage.getItem('succinctDropAdded');
 
 {/*<!-- useState constants above -->*/}
 
@@ -124,10 +118,25 @@ const beachHouses = () => {
 
 
 {/*<!-- Add To Cart function/s below -->*/}
+	const [blueOrangeAdded, setBlueOrangeAdded] = useState(null);
 	const [beachHousesAdded, setBeachHousesAdded] = useState(null);
+	const [colourGlassAdded, setColourGlassAdded] = useState(null);
+	const [layersAdded, setLayersAdded] = useState(null);
+	const [paintRainAdded, setPaintRainAdded] = useState(null);
+	const [succinctDropAdded, setSuccinctDropAdded] = useState(null);
 	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('beachHousesAdded');
-		setBeachHousesAdded(sessionValue);
+		const blueOrangeSession = sessionStorage.getItem('blueOrangeAdded');
+		const beachHousesSession = sessionStorage.getItem('beachHousesAdded');
+		const colourGlassSession = sessionStorage.getItem('colourGlassAdded');
+		const layersSession = sessionStorage.getItem('layersAdded');
+		const paintRainSession = sessionStorage.getItem('paintRainAdded');
+		const succinctDropSession = sessionStorage.getItem('succinctDropAdded');
+		setBlueOrangeAdded(blueOrangeSession);
+		setBeachHousesAdded(beachHousesSession);
+		setColourGlassAdded(colourGlassSession);
+		setLayersAdded(layersSession);
+		setPaintRainAdded(paintRainSession);
+		setSuccinctDropAdded(succinctDropSession);
 	}, []);
 	function addBeachHousesToCart() {
 		setBeachHousesAddToCartBeachHouses(false);
@@ -146,13 +155,15 @@ const beachHouses = () => {
 {/*<!-- Added/Purchased To function/s below -->*/}
 
 	useEffect(() => {
-		if ('blueOrangeAdded' === 'true' || 'beachHousesAdded' === 'true'
-		|| 'colourGlassAdded' === 'true' || 'layersAdded' === 'true'
-		|| 'paintRainAdded' === 'true' || 'succinctDropAdded' === 'true') {
+		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
+		|| colourGlassAdded === 'true' || layersAdded === 'true'
+		|| paintRainAdded === 'true' || succinctDropAdded === 'true') {
 			setCartLinkConnectedBeachHouses(false);
 			setCartLinkFullBeachHouses(true);
 		}
-	}, []);
+	}, [blueOrangeAdded, beachHousesAdded,
+		colourGlassAdded, layersAdded, paintRainAdded,
+		succinctDropAdded]);
 	useEffect(() => {
 		if (beachHousesAdded === 'true') {
 			setBeachHousesAddToCartBeachHouses(false);		

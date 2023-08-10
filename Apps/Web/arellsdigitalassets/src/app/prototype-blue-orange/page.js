@@ -47,12 +47,6 @@ const blueOrange = () => {
 	const [blueOrangeAddedBlueOrange, setBlueOrangeAddedBlueOrange] = useState(false);
 	const [blueOrangeCollectedBlueOrange, setBlueOrangeCollectedBlueOrange] = useState(false);
 
-	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
-	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
-	const layersAdded = sessionStorage.getItem('layersAdded');
-	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
-	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
-
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
@@ -124,9 +118,24 @@ const blueOrange = () => {
 
 {/*<!-- Add To Cart function/s below -->*/}
 	const [blueOrangeAdded, setBlueOrangeAdded] = useState(null);
+	const [beachHousesAdded, setBeachHousesAdded] = useState(null);
+	const [colourGlassAdded, setColourGlassAdded] = useState(null);
+	const [layersAdded, setLayersAdded] = useState(null);
+	const [paintRainAdded, setPaintRainAdded] = useState(null);
+	const [succinctDropAdded, setSuccinctDropAdded] = useState(null);
 	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('blueOrangeAdded');
-		setBlueOrangeAdded(sessionValue);
+		const blueOrangeSession = sessionStorage.getItem('blueOrangeAdded');
+		const beachHousesSession = sessionStorage.getItem('beachHousesAdded');
+		const colourGlassSession = sessionStorage.getItem('colourGlassAdded');
+		const layersSession = sessionStorage.getItem('layersAdded');
+		const paintRainSession = sessionStorage.getItem('paintRainAdded');
+		const succinctDropSession = sessionStorage.getItem('succinctDropAdded');
+		setBlueOrangeAdded(blueOrangeSession);
+		setBeachHousesAdded(beachHousesSession);
+		setColourGlassAdded(colourGlassSession);
+		setLayersAdded(layersSession);
+		setPaintRainAdded(paintRainSession);
+		setSuccinctDropAdded(succinctDropSession);
 	}, []);
 	function addBlueOrangeToCart() {
 		setBlueOrangeAddToCartBlueOrange(false);
