@@ -17,7 +17,7 @@ const colourGlass = () => {
 
 	useEffect(() => {
 		// Set the id prop here; this code will only execute on the client-side
-		setElementId('prototype-beach-houses-word');
+		setElementId('prototype-colour-glass-word');
 	}, []);
 
 
@@ -27,25 +27,25 @@ const colourGlass = () => {
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
-	const [cartLinkBeachHouses, setCartLinkBeachHouses] = useState(true);
-	const [cartLinkConnectedBeachHouses, setCartLinkConnectedBeachHouses] = useState(false);
-	const [cartLinkFullBeachHouses, setCartLinkFullBeachHouses] = useState(false);
+	const [cartLinkColourGlass, setCartLinkColourGlass] = useState(true);
+	const [cartLinkConnectedColourGlass, setCartLinkConnectedColourGlass] = useState(false);
+	const [cartLinkFullColourGlass, setCartLinkFullColourGlass] = useState(false);
 
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
-	const [walletConnectedDivBeachHouses, setWalletConnectedDivBeachHouses] = useState(false);
+	const [walletConnectedDivColourGlass, setWalletConnectedDivColourGlass] = useState(false);
 
 	const [showComingSoon, setComingSoon] = useState(false);
 
-	const [ownedByCreatorBeachHouses, setOwnedByCreatorBeachHouses] = useState(true);
-	const [ownedByBuyerBeachHouses, setOwnedByBuyerBeachHouses] = useState(false);
+	const [ownedByCreatorColourGlass, setOwnedByCreatorColourGlass] = useState(true);
+	const [ownedByBuyerColourGlass, setOwnedByBuyerColourGlass] = useState(false);
 
-	const [beachHousesPricesBeforeBeachHouses, setBeachHousesPricesBeforeBeachHouses] = useState(true);
-	const [beachHousesPricesAfterBeachHouses, setBeachHousesPricesAfterBeachHouses] = useState(false);
+	const [colourGlassPricesBeforeColourGlass, setColourGlassPricesBeforeColourGlass] = useState(true);
+	const [colourGlassPricesAfterColourGlass, setColourGlassPricesAfterColourGlass] = useState(false);
 
-	const [beachHousesAddToCartBeachHouses, setBeachHousesAddToCartBeachHouses] = useState(true);		
-	const [beachHousesAddToCartConnectedBeachHouses, setBeachHousesAddToCartConnectedBeachHouses] = useState(false);
-	const [beachHousesAddedBeachHouses, setBeachHousesAddedBeachHouses] = useState(false);
-	const [beachHousesCollectedBeachHouses, setBeachHousesCollectedBeachHouses] = useState(false);
+	const [colourGlassAddToCartColourGlass, setColourGlassAddToCartColourGlass] = useState(true);		
+	const [colourGlassAddToCartConnectedColourGlass, setColourGlassAddToCartConnectedColourGlass] = useState(false);
+	const [colourGlassAddedColourGlass, setColourGlassAddedColourGlass] = useState(false);
+	const [colourGlassCollectedColourGlass, setColourGlassCollectedColourGlass] = useState(false);
 
 
 {/*<!-- useState constants above -->*/}
@@ -54,7 +54,7 @@ const colourGlass = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-beach-houses'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype-colour-glasses'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -76,13 +76,13 @@ const colourGlass = () => {
 	function walletConnected () {
 		setShowConnectWallet(false);
 		
-		setCartLinkBeachHouses(false);
-		setWalletConnectedDivBeachHouses(true);
+		setCartLinkColourGlass(false);
+		setWalletConnectedDivColourGlass(true);
 		
-		setCartLinkConnectedBeachHouses(true);
+		setCartLinkConnectedColourGlass(true);
 
-		setBeachHousesAddToCartBeachHouses(false);		
-		setBeachHousesAddToCartConnectedBeachHouses(true);
+		setColourGlassAddToCartColourGlass(false);		
+		setColourGlassAddToCartConnectedColourGlass(true);
 		
 		sessionStorage.setItem('walletConnectedSession', 'true');
 		setWalletConnectedSession('true');
@@ -95,13 +95,13 @@ const colourGlass = () => {
 	}, []);
 	useEffect(() => {
 		if (walletConnectedSession === 'true') {
-			setCartLinkBeachHouses(false);
-			setWalletConnectedDivBeachHouses(true);
+			setCartLinkColourGlass(false);
+			setWalletConnectedDivColourGlass(true);
 			
-			setCartLinkConnectedBeachHouses(true);
+			setCartLinkConnectedColourGlass(true);
 
-			setBeachHousesAddToCartBeachHouses(false);		
-			setBeachHousesAddToCartConnectedBeachHouses(true);
+			setColourGlassAddToCartColourGlass(false);		
+			setColourGlassAddToCartConnectedColourGlass(true);
 		}
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
@@ -138,15 +138,15 @@ const colourGlass = () => {
 		setPaintRainAdded(paintRainSession);
 		setSuccinctDropAdded(succinctDropSession);
 	}, []);
-	function addBeachHousesToCart() {
-		setBeachHousesAddToCartBeachHouses(false);
-		setBeachHousesAddedBeachHouses(true);
+	function addColourGlassToCart() {
+		setColourGlassAddToCartColourGlass(false);
+		setColourGlassAddedColourGlass(true);
 
-		setCartLinkConnectedBeachHouses(false);		
-		setCartLinkFullBeachHouses(true);
+		setCartLinkConnectedColourGlass(false);		
+		setCartLinkFullColourGlass(true);
 
 		sessionStorage.setItem('beachHousesAdded', 'true');
-		setBeachHousesAdded('true');
+		setColourGlassAdded('true');
 	}	
 	
 {/*<!-- Add To Cart function/s above -->*/}
@@ -158,39 +158,39 @@ const colourGlass = () => {
 		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
 		|| colourGlassAdded === 'true' || layersAdded === 'true'
 		|| paintRainAdded === 'true' || succinctDropAdded === 'true') {
-			setCartLinkConnectedBeachHouses(false);
-			setCartLinkFullBeachHouses(true);
+			setCartLinkConnectedColourGlass(false);
+			setCartLinkFullColourGlass(true);
 		}
 	}, [blueOrangeAdded, beachHousesAdded,
 		colourGlassAdded, layersAdded, paintRainAdded,
 		succinctDropAdded]);
 	useEffect(() => {
-		if (beachHousesAdded === 'true') {
-			setBeachHousesAddToCartBeachHouses(false);		
-			setBeachHousesAddToCartConnectedBeachHouses(false);
-			setBeachHousesAddedBeachHouses(true);
+		if (colourGlassAdded === 'true') {
+			setColourGlassAddToCartColourGlass(false);		
+			setColourGlassAddToCartConnectedColourGlass(false);
+			setColourGlassAddedColourGlass(true);
 		}
-	}, [beachHousesAdded]);
+	}, [colourGlassAdded]);
 		//Session Storage Getters below
-	const [beachHousesPurchased, setBeachHousesPurchased] = useState(null);	
+	const [colourGlassPurchased, setColourGlassPurchased] = useState(null);	
 	useEffect(() => {
 		const sessionValue = sessionStorage.getItem('beachHousesPurchased');
-		setBeachHousesPurchased(sessionValue);
+		setColourGlassPurchased(sessionValue);
 	}, []);
 	useEffect(() => {
-		if (beachHousesPurchased === 'true') {
-			setBeachHousesPricesBeforeBeachHouses(false);
-			setBeachHousesPricesAfterBeachHouses(true);
+		if (colourGlassPurchased === 'true') {
+			setColourGlassPricesBeforeColourGlass(false);
+			setColourGlassPricesAfterColourGlass(true);
 
-			setOwnedByCreatorBeachHouses(false);
-			setOwnedByBuyerBeachHouses(true);
+			setOwnedByCreatorColourGlass(false);
+			setOwnedByBuyerColourGlass(true);
 
-			setBeachHousesAddToCartBeachHouses(false);		
-			setBeachHousesAddToCartConnectedBeachHouses(false);
-			setBeachHousesAddedBeachHouses(false);
-			setBeachHousesCollectedBeachHouses(true);
+			setColourGlassAddToCartColourGlass(false);		
+			setColourGlassAddToCartConnectedColourGlass(false);
+			setColourGlassAddedColourGlass(false);
+			setColourGlassCollectedColourGlass(true);
 		}
-	}, [beachHousesPurchased]);
+	}, [colourGlassPurchased]);
 
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
@@ -203,36 +203,36 @@ const colourGlass = () => {
 			<meta charset="UTF-8" />
 			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-			<meta name="title" content="Beach Houses Prototype"/>
-			<meta name="description" content="Prototype for Beach Houses"/>
+			<meta name="title" content="Colour Glass Prototype"/>
+			<meta name="description" content="Prototype for Colour Glass"/>
 			<meta name="google" content="nositelinkssearchbox"/>
 			<meta name="keywords" content="Arells"/>
 			<meta name="author" content="Arells"/>
 			<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
 
 			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-beach-houses"/>
+			<link rel="canonical" href="https://arells.com/prototype-colour-glass"/>
 
 			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>	
 			<meta property="og:site_name" content="Arells"/>	
 			<meta property="og:type" content="website"/>				
-			<meta property="og:title" content="Beach Houses Prototype"/>
+			<meta property="og:title" content="Colour Glass Prototype"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-beach-houses"/>
-			<meta property="og:description" content="Prototype for Beach Houses"/>
+			<meta property="og:url" content="https://arells.com/prototype-colour-glass"/>
+			<meta property="og:description" content="Prototype for Colour Glass"/>
 			<meta property="og:image:type" content="image/jpg"/>
 			<meta property="og:image:width" content="700"/>
 			<meta property="og:image:height" content="400"/>
 
-			<meta name="twitter:title" content="Beach Houses Prototype"/>
+			<meta name="twitter:title" content="Colour Glass Prototype"/>
 			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-beach-houses"/>
+			<meta name="twitter:url" content="https://arells.com/prototype-colour-glass"/>
 			<meta name="twitter:card" content="summary_large_image"/>
-			<meta name="twitter:description" content="Prototype for Beach Houses"/>
+			<meta name="twitter:description" content="Prototype for Colour Glass"/>
 		</Head>
 
-		<title>Prototype Beach Houses</title>	
+		<title>Prototype Colour Glass</title>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
@@ -278,12 +278,12 @@ const colourGlass = () => {
 							<img id="arells-icon-beach-houses" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
-					{cartLinkBeachHouses && (
+					{cartLinkColourGlass && (
 						<button id="cart-link-beach-houses" onClick={connectWallet}>
 							<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
-					{cartLinkConnectedBeachHouses && (
+					{cartLinkConnectedColourGlass && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-beach-houses">
 								<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
@@ -291,7 +291,7 @@ const colourGlass = () => {
 						</Link>
 					)}	
 
-					{cartLinkFullBeachHouses && (
+					{cartLinkFullColourGlass && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-beach-houses">
 								<img id="cart-icon-full-beach-houses" src="/icons&images/prototype/shopping-cart-full.png"/>
@@ -301,7 +301,7 @@ const colourGlass = () => {
 				</div>
 				<img id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-beach-houses">ART SELLS</p>
-				{walletConnectedDivBeachHouses && (
+				{walletConnectedDivColourGlass && (
 					<div id="wallet-connected-div-beach-houses">
 						<hr id="connected-line-beach-houses"/>
 						<p id="wallet-connected-beach-houses" >
@@ -327,14 +327,14 @@ const colourGlass = () => {
 						Abstract Kadabra
 					</a>
 				</div>
-				{ownedByCreatorBeachHouses && (
+				{ownedByCreatorColourGlass && (
 					<div id="owned-by-creator-beach-houses">
 						<p id="creator-owner-desc-beach-houses">Owned By</p> 
 						<a id="creator-owner-link-beach-houses" href="/prototype-seller-created">
 							Abstract Kadabra</a>
 					</div>
 				)}
-				{ownedByBuyerBeachHouses && (
+				{ownedByBuyerColourGlass && (
 					<div id="owned-by-buyer-beach-houses">
 						<p id="creator-owner-desc-beach-houses">Owned By</p> 
 						<a id="creator-owner-link-beach-houses" href="/prototype-buyer-collected">
@@ -343,7 +343,7 @@ const colourGlass = () => {
 					</div>
 				)}
 				<hr id="line-beach-houses"/>
-				{beachHousesPricesBeforeBeachHouses && (
+				{colourGlassPricesBeforeColourGlass && (
 					<div id="beach-houses-prices-before-beach-houses">
 						<p id="PAP-beach-houses">Price After Purchase</p>
 						<p id="PAP-beach-houses-before-beach-houses">$10,000</p>
@@ -352,7 +352,7 @@ const colourGlass = () => {
 						<p id="price-beach-houses-before-beach-houses">$200</p>
 					</div>
 				)}
-				{beachHousesPricesAfterBeachHouses && (
+				{colourGlassPricesAfterColourGlass && (
 					<div id="beach-houses-prices-after-beach-houses">
 						<p id="PAP-beach-houses">Price After Purchase</p>
 						<p id="PAP-beach-houses-after-beach-houses">$500,000</p>
@@ -362,19 +362,19 @@ const colourGlass = () => {
 					</div>
 				)}
 
-				{beachHousesAddToCartBeachHouses && (
+				{colourGlassAddToCartColourGlass && (
 					<button id="beach-houses-add-to-cart-beach-houses" onClick={connectWallet}>
 					ADD TO CART</button>
 				)}
-				{beachHousesAddToCartConnectedBeachHouses && (
-					<button id="beach-houses-add-to-cart-connected-beach-houses" onClick={addBeachHousesToCart}>
+				{colourGlassAddToCartConnectedColourGlass && (
+					<button id="beach-houses-add-to-cart-connected-beach-houses" onClick={addColourGlassToCart}>
 					ADD TO CART</button>
 				)}
-				{beachHousesAddedBeachHouses && (
+				{colourGlassAddedColourGlass && (
 					<button id="beach-houses-added-beach-houses">
 					ADDED</button>	
 				)}
-				{beachHousesCollectedBeachHouses && (
+				{colourGlassCollectedColourGlass && (
 					<button id="beach-houses-collected-beach-houses">
 					COLLECTED</button>
 				)}
