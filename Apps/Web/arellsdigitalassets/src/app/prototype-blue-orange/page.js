@@ -312,8 +312,8 @@ const blueOrange = () => {
 			<div id="blue-orange">
 				<img id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
 				<h3 id="name-blue-orange">Blue Orange</h3> 
-				<div id="share-div">
-					<p id="share-div-desc">SHARE</p>
+				<div id="share-div-blue-orange">
+					<p id="share-div-desc-blue-orange">SHARE</p>
 					<button id="copy-link-blue-orange"
 					onClick={copyLink}>
 						<img id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>

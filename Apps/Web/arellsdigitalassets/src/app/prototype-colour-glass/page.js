@@ -54,7 +54,7 @@ const colourGlass = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-colour-glasses'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype-colour-glass'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -145,7 +145,7 @@ const colourGlass = () => {
 		setCartLinkConnectedColourGlass(false);		
 		setCartLinkFullColourGlass(true);
 
-		sessionStorage.setItem('beachHousesAdded', 'true');
+		sessionStorage.setItem('colourGlassAdded', 'true');
 		setColourGlassAdded('true');
 	}	
 	
@@ -313,8 +313,8 @@ const colourGlass = () => {
             <div id="colour-glass">
                 <img id="photo-colour-glass" src="/icons&images/prototype/3.jpg"/>
                 <h3 id="name-colour-glass">Colour Glass</h3>
-                <div id="share-div">
-                    <p id="share-div-desc">SHARE</p> 
+                <div id="share-div-colour-glass">
+                    <p id="share-div-desc-colour-glass">SHARE</p> 
                     <button id="copy-link-colour-glass"
                     onClick={copyLink}>
                         <img id="copy-link-icon-colour-glass" src="/icons&images/prototype/link.png"/>

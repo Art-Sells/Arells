@@ -204,7 +204,7 @@
 	  width: 420px;
 	  margin-bottom: 0px;
 	}
-	#share-div{
+	#share-div-seller-created{
 		border-radius: 5px;
 		align-items: center;
 		width: 185px;
@@ -217,7 +217,7 @@
 		margin-left: auto;
 		margin-right: auto;	
 	}
-		#share-div-desc{
+		#share-div-desc-seller-created{
 		  color: black;
 		  font-weight: 600;
 		  font-size: 11px;	
@@ -666,7 +666,7 @@
 		  line-height: 15px;
 		  width: 200px;
 		}
-		#share-div{
+		#share-div-seller-created{
 			width: 150px;
 			height: 80px;
 			padding-top: 10px;
@@ -674,7 +674,7 @@
 			padding-right: 10px;
 			padding-bottom: 10px;			
 		}
-			#share-div-desc{
+			#share-div-desc-seller-created{
 			  font-weight: 600;
 			  font-size: 9px;	
 			  letter-spacing: 0px;

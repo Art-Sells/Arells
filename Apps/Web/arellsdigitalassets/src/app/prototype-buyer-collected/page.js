@@ -283,8 +283,8 @@ const prototypeBuyerCollected = () => {
 			</div>	 
 			<h1 id="name-buyer-collected">Unnamed</h1>  
 			<p id="description-buyer-collected">Creator & Collector</p> 
-			<div id="share-div">
-				<p id="share-div-desc">SHARE</p>
+			<div id="share-div-buyer-collected">
+				<p id="share-div-desc-buyer-collected">SHARE</p>
 				<button id="copy-link-buyer-collected"
 					onClick={copyLink}>
 					<img id="copy-link-icon-buyer-collected" src="/icons&images/prototype/link.png"/>

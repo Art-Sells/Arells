@@ -313,8 +313,8 @@ const beachHouses = () => {
 			<div id="beach-houses">
 				<img id="photo-beach-houses" src="/icons&images/prototype/2.jpg"/>
 				<h3 id="name-beach-houses">Beach Houses</h3> 
-				<div id="share-div">
-					<p id="share-div-desc">SHARE</p>
+				<div id="share-div-beach-houses">
+					<p id="share-div-desc-beach-houses">SHARE</p>
 					<button id="copy-link-beach-houses"
 					onClick={copyLink}>
 						<img id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
