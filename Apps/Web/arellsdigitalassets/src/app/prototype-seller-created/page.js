@@ -536,7 +536,7 @@ const prototypeSellerCreated = () => {
 			<h1 id="name-seller-created">Abstract Kadabra</h1>  
 			<p id="description-seller-created">Here rests life's abstractions captured in majestic endeavors.</p> 
 			<div id="share-div-seller-created">
-				<p id="share-div-desc-seller-created">SHAR</p>
+				<p id="share-div-desc-seller-created">SHARE</p>
 				<button id="copy-link-seller-created"
 				onClick={copyLink}>
 					<img id="copy-link-icon-seller-created" src="/icons&images/prototype/link.png"/>

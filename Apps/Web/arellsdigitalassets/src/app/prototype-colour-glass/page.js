@@ -174,7 +174,7 @@ const colourGlass = () => {
 		//Session Storage Getters below
 	const [colourGlassPurchased, setColourGlassPurchased] = useState(null);	
 	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('beachHousesPurchased');
+		const sessionValue = sessionStorage.getItem('colourGlassPurchased');
 		setColourGlassPurchased(sessionValue);
 	}, []);
 	useEffect(() => {
@@ -375,7 +375,7 @@ const colourGlass = () => {
 					ADDED</button>	
 				)}
 				{colourGlassCollectedColourGlass && (
-					<button id="bcolour-glass-collected-colour-glass">
+					<button id="colour-glass-collected-colour-glass">
 					COLLECTED</button>
 				)}
 
