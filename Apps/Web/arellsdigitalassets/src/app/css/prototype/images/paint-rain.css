@@ -1,4 +1,4 @@
-#succinct-drop-wrapper {
+#paint-rain-wrapper {
 	text-align: center;
 	font-family: Arial;
 	margin-top: 0%;
@@ -10,7 +10,7 @@
 	background: white;
   }
   
-	  #header-succinct-drop {
+	  #header-paint-rain {
 			  display: flex;
 			  justify-content: center;
 			  margin-top: 0px;
@@ -24,7 +24,7 @@
 			  margin-right: auto;
 			  z-index: 100;
 		  }
-		  #icon-link-succinct-drop{
+		  #icon-link-paint-rain{
 			  display: inline-block;
 			  text-decoration: none;
 			  margin-right: 124px;
@@ -41,17 +41,17 @@
 				opacity: 1;
 				  background: rgba(255, 255, 255, 0.8);						
 		  }
-		  #icon-link-succinct-drop:hover,
-		  #icon-link-succinct-drop:focus {
+		  #icon-link-paint-rain:hover,
+		  #icon-link-paint-rain:focus {
 				transition: 1s;
 				cursor: pointer;
 				border-color: gray;
 				opacity: 1;
 			  }		
-			  #arells-icon-succinct-drop {
+			  #arells-icon-paint-rain {
 				  height: 16px;
 			  }	
-		  #cart-link-succinct-drop{
+		  #cart-link-paint-rain{
 			  display: inline-block;
 			  text-decoration: none;
 			  margin-left: 124px;
@@ -68,7 +68,7 @@
 				opacity: 1;
 				  background: rgba(255, 255, 255, 0.8);						
 		  }
-		  #cart-link-connected-succinct-drop{
+		  #cart-link-connected-paint-rain{
 			  display: inline-block;
 			  text-decoration: none;
 			  margin-left: 124px;
@@ -85,16 +85,16 @@
 				opacity: 1;
 				  background: rgba(255, 255, 255, 0.8);						
 		  }
-		  #cart-link-succinct-drop:hover,
-		  #cart-link-succinct-drop:focus, 
-		  #cart-link-connected-succinct-drop:hover,
-		  #cart-link-connected-succinct-drop:focus {
+		  #cart-link-paint-rain:hover,
+		  #cart-link-paint-rain:focus, 
+		  #cart-link-connected-paint-rain:hover,
+		  #cart-link-connected-paint-rain:focus {
 				transition: 1s;
 				cursor: pointer;
 				border-color: gray;
 				opacity: 1;	
 		  }	
-		  #cart-link-full-succinct-drop{
+		  #cart-link-full-paint-rain{
 			  display: inline-block;
 			  transition: 1s;
 			  text-decoration: none;
@@ -113,22 +113,22 @@
 				  background: rgba(0, 0, 0, 1);
 					box-shadow: 0px 5px 12px -6px black;						
 		  }
-		  #cart-link-full-succinct-drop:hover,
-		  #cart-link-full-succinct-drop:focus  {
+		  #cart-link-full-paint-rain:hover,
+		  #cart-link-full-paint-rain:focus  {
 				transition: 1s;
 				cursor: pointer;
 				opacity: .4;	
 		  }					
-			  #cart-icon-succinct-drop,
-			  #cart-icon-full-succinct-drop {
+			  #cart-icon-paint-rain,
+			  #cart-icon-full-paint-rain {
 				  height: 16px;
 			  }	
 			  
-		  #word-logo-succinct-drop {
+		  #word-logo-paint-rain {
 			  margin-top: 37px;
 			  width: 110px;	
 		  }
-		  #slogan-succinct-drop {
+		  #slogan-paint-rain {
 			  margin-top: 0px;
 			  font-size: 8px;
 			  letter-spacing: 10px;
@@ -139,13 +139,13 @@
 			  word-spacing: -3px;
 		  }	
 		  
-		  #wallet-connected-div-succinct-drop{
+		  #wallet-connected-div-paint-rain{
 			  display: block;
 			  margin-top: 30px;
 			  margin-left: auto;
 			  margin-right: auto;
 		  }
-			  #connected-line-succinct-drop {
+			  #connected-line-paint-rain {
 				margin-top: -5px;
 				background-color: black;
 				border: none;
@@ -154,7 +154,7 @@
 				width: 100px;
 				opacity: .1;
 			  }	
-			  #wallet-connected-succinct-drop {
+			  #wallet-connected-paint-rain {
 				  padding-bottom: 10px;
 				  padding-top: 5px;
 				  font-size: 9px;
@@ -168,7 +168,7 @@
 					  
 				  
 		  
-	  #succinct-drop {	
+	  #paint-rain {	
 		  margin-top: 30px;
 		  margin-left: auto;
 		  margin-right: auto;
@@ -186,10 +186,10 @@
 		  background: white;
 	  }
 				  
-		  #photo-link-succinct-drop {
+		  #photo-link-paint-rain {
 				  text-decoration: none; 
 			  }
-		  #photo-succinct-drop {
+		  #photo-paint-rain {
 			  object-fit: cover;
 			  width: 400px;
 			  height: 400px;
@@ -197,19 +197,19 @@
 			  border-width: 1px;
 			  border-color: silver;			
 		  }
-				  #photo-link-succinct-drop:hover {
+				  #photo-link-paint-rain:hover {
 					opacity: .5;
 					transition: 1s;
 					box-shadow: none;
 					cursor: pointer;
 				  }
-				  #photo-link-succinct-drop:focus {
+				  #photo-link-paint-rain:focus {
 					opacity: .5;
 					box-shadow: none;
 					cursor: pointer;
 			  }
 			  
-		  #name-succinct-drop {
+		  #name-paint-rain {
 			font-size: 17pt;
 			font-weight: 800;
 			opacity: 1;
@@ -219,7 +219,7 @@
 			margin-left: -1px;
 			margin-bottom: 25px;
 		  }
-		  #share-div-succinct-drop{
+		  #share-div-paint-rain{
 			  border-radius: 5px;
 			  align-items: center;
 			  box-shadow: 0px 5px 20px -6px silver; 
@@ -234,7 +234,7 @@
 			  margin-right: auto;	
 			  margin-bottom: 35px;
 		  }
-			  #share-div-desc-succinct-drop{
+			  #share-div-desc-paint-rain{
 				color: black;
 				font-weight: 600;
 				font-size: 11px;	
@@ -244,7 +244,7 @@
 				margin-bottom: 5px;
 				margin-top: 15px;
 			  }				
-			  #copy-link-succinct-drop {
+			  #copy-link-paint-rain {
 				text-decoration: none;
 				color: white;
 				font-weight: 500;
@@ -263,29 +263,29 @@
 				  background: black;
 				  margin-bottom: 15px;
 			  }	  
-			  #copy-link-succinct-drop:hover,
-			  #copy-link-succinct-drop:focus {
+			  #copy-link-paint-rain:hover,
+			  #copy-link-paint-rain:focus {
 					opacity: .4;
 					transition: 1s;
 					cursor: pointer;
 			  }		
-				  #copy-link-icon-succinct-drop{
+				  #copy-link-icon-paint-rain{
 					  width: 15px;
 					  margin-right: 5px;
 				  }
   
-		  #owned-by-creator-succinct-drop, 
-		  #owned-by-buyer-succinct-drop,
-		  #succinct-drop-prices-before-succinct-drop, 
-		  #succinct-drop-prices-after-succinct-drop,
-		  #succinct-drop-add-to-cart-succinct-drop,
-		  #succinct-drop-add-to-cart-connected-succinct-drop,
-		  #succinct-drop-added-succinct-drop,
-		  #succinct-drop-collected-succinct-drop {
+		  #owned-by-creator-paint-rain, 
+		  #owned-by-buyer-paint-rain,
+		  #paint-rain-prices-before-paint-rain, 
+		  #paint-rain-prices-after-paint-rain,
+		  #paint-rain-add-to-cart-paint-rain,
+		  #paint-rain-add-to-cart-connected-paint-rain,
+		  #paint-rain-added-paint-rain,
+		  #paint-rain-collected-paint-rain {
 			  display: block;
 		  }		
 		  
-			  #creator-owner-desc-succinct-drop {
+			  #creator-owner-desc-paint-rain {
 			  margin-top: 15px;
 			  text-align: center;
 				  color: black;
@@ -296,7 +296,7 @@
 				  opacity: .4;
 				  margin-bottom: 0px;
 			  }
-			  #creator-owner-link-succinct-drop {
+			  #creator-owner-link-paint-rain {
 			  text-align: center;
 				  color: #4d85cf;
 				  font-weight: 300;
@@ -306,16 +306,16 @@
 				  opacity: .8;
 				  text-decoration: none;
 			  }
-				  #creator-owner-desc-succinct-drop:hover,
-				  #creator-owner-link-succinct-drop:hover,
-				  #creator-owner-desc-succinct-drop:focus,
-				  #creator-owner-link-succinct-drop:focus {
+				  #creator-owner-desc-paint-rain:hover,
+				  #creator-owner-link-paint-rain:hover,
+				  #creator-owner-desc-paint-rain:focus,
+				  #creator-owner-link-paint-rain:focus {
 					  opacity: .4;
 					  transition: 1s;
 					  cursor: pointer;
 				  }
 			  
-		  #line-succinct-drop {
+		  #line-paint-rain {
 			margin-top: 30px;
 			background-color: black;
 			border: none;
@@ -325,7 +325,7 @@
 			opacity: .1;
 		  }					
 				  
-			  #PAP-succinct-drop {
+			  #PAP-paint-rain {
 			  margin-top: 15px;
 			  text-align: center;
 				  color: black;
@@ -335,8 +335,8 @@
 				  padding-left: 0px;
 				  opacity: .4;
 			  }
-			  #PAP-succinct-drop-before-succinct-drop,
-			  #PAP-succinct-drop-after-succinct-drop {
+			  #PAP-paint-rain-before-paint-rain,
+			  #PAP-paint-rain-after-paint-rain {
 			  margin-top: -7px;
 			  text-align: center;
 				  color: black;
@@ -346,7 +346,7 @@
 				  padding-left: 0px;
 				  opacity: .5;
 			  }
-			  #priceline-succinct-drop {
+			  #priceline-paint-rain {
 			  margin-top: -5px;
 			  background-color: black;
 			  border: none;
@@ -355,7 +355,7 @@
 			  width: 60%;
 			  opacity: .1;
 			  }	
-			  #yourprice-succinct-drop {
+			  #yourprice-paint-rain {
 			  margin-top: 30px;
 			  text-align: center;
 				  color: black;
@@ -365,8 +365,8 @@
 				  padding-left: 0px;
 				  opacity: .4;
 			  }
-			  #price-succinct-drop-before-succinct-drop,
-			  #price-succinct-drop-after-succinct-drop {
+			  #price-paint-rain-before-paint-rain,
+			  #price-paint-rain-after-paint-rain {
 			  margin-top: -10px;
 			  text-align: center;
 				  color: black;
@@ -377,8 +377,8 @@
 				  opacity: .7;
 				  margin-bottom: 28px;
 			  }
-		  #succinct-drop-add-to-cart-succinct-drop, 
-		  #succinct-drop-add-to-cart-connected-succinct-drop  {
+		  #paint-rain-add-to-cart-paint-rain, 
+		  #paint-rain-add-to-cart-connected-paint-rain  {
 				text-decoration: none;
 				color: white;
 				margin-left: auto;
@@ -398,13 +398,13 @@
 				box-shadow: 0px 8px 12px -6px black;  
 				  background: black;
 			  }	  
-		  #succinct-drop-add-to-cart-succinct-drop:hover, 
-		  #succinct-drop-add-to-cart-connected-succinct-drop:focus {
+		  #paint-rain-add-to-cart-paint-rain:hover, 
+		  #paint-rain-add-to-cart-connected-paint-rain:focus {
 				opacity: .4;
 				transition: 1s;
 				cursor: pointer;
 		  } 
-		  #succinct-drop-added-succinct-drop {
+		  #paint-rain-added-paint-rain {
 				text-decoration: none;
 				margin-left: auto;
 				margin-right: auto;
@@ -423,7 +423,7 @@
 				opacity: 1; 
 				  background: silver;
 			  }	
-		  #succinct-drop-collected-succinct-drop {
+		  #paint-rain-collected-paint-rain {
 				text-decoration: none;
 				margin-left: auto;
 				margin-right: auto;
@@ -488,7 +488,7 @@
 						  height: 25px;
 					  }			
 				  
-		  #prototype-succinct-drop-word {
+		  #prototype-paint-rain-word {
 			  margin-top: 40px;
 			  font-size: 8px;
 			  letter-spacing: 3px;
@@ -527,14 +527,14 @@
 			  
 			  
   @media screen and (max-width: 1000px) {
-	#succinct-drop-wrapper {
+	#paint-rain-wrapper {
 		  -webkit-text-size-adjust: none;
 		}  
-		  #header-succinct-drop {
+		  #header-paint-rain {
 				  margin-top: 0px;
 				  padding-top: 25px;			
 			  }	
-			  #icon-link-succinct-drop{	
+			  #icon-link-paint-rain{	
 				  margin-right: 90px;
 					padding-top: 10px;
 					padding-bottom: 7px;
@@ -543,10 +543,10 @@
 					border-radius: 12px;
 					width: 30px;		
 			  }	
-			  #arells-icon-succinct-drop {
+			  #arells-icon-paint-rain {
 					  height: 15px;
 				  }	    
-			  #cart-link-succinct-drop{
+			  #cart-link-paint-rain{
 				  margin-left: 90px;
 					padding-top: 10px;
 					padding-bottom: 7px;
@@ -555,7 +555,7 @@
 					border-radius: 12px;	
 					width: 45px;  					
 			  }
-			  #cart-link-connected-succinct-drop{
+			  #cart-link-connected-paint-rain{
 				  margin-left: 90px;
 					padding-top: 10px;
 					padding-bottom: 6.5px;
@@ -564,7 +564,7 @@
 					border-radius: 12px;	
 					width: 27px;  					
 			  }
-			  #cart-link-full-succinct-drop{
+			  #cart-link-full-paint-rain{
 				  margin-left: 90px;
 					padding-top: 10px;
 					padding-bottom: 6.5px;
@@ -572,37 +572,37 @@
 					padding-left: 8px;		
 					width: 27px;  					
 			  }
-			  #cart-icon-succinct-drop,
-			  #cart-icon-full-succinct-drop  {
+			  #cart-icon-paint-rain,
+			  #cart-icon-full-paint-rain  {
 					  height: 15px;
 				  }
 			  
 								
-		  #word-logo-succinct-drop {
+		  #word-logo-paint-rain {
 			  margin-top: 35px;
 			  width: 90px;	
 		  }
-		  #slogan-succinct-drop {
+		  #slogan-paint-rain {
 			  margin-top: -2px;
 			  font-size: 7px;
 			  letter-spacing: 8px;
 			  margin-left: 8px; 
 			  word-spacing: -3px;
 		  }
-		  #wallet-connected-div-succinct-drop{
+		  #wallet-connected-div-paint-rain{
 			  margin-top: 25px;
 		  }	
-			  #connected-line-succinct-drop {
+			  #connected-line-paint-rain {
 				width: 90px;
 			  }				
-			  #wallet-connected-succinct-drop {
+			  #wallet-connected-paint-rain {
 				  padding-bottom: 12px;
 				  padding-top: 7px;
 				  font-size: 8px;
 				  letter-spacing: 0px;
 				  margin-left: 0px; 
 			  }
-			  #succinct-drop {
+			  #paint-rain {
 				margin-top: 25px;
 			}  					  
   }					
@@ -625,18 +625,18 @@
 	  
 	  
   @media screen and (max-width: 700px) {
-	#succinct-drop-wrapper {
+	#paint-rain-wrapper {
 		  -webkit-text-size-adjust: none;
 		}  	
 		
-		#succinct-drop {
+		#paint-rain {
 			  width: 300px;
 			}  
-			#photo-succinct-drop {
+			#photo-paint-rain {
 				width: 300px;
 				height: 300px;
 			}
-		  #name-succinct-drop {
+		  #name-paint-rain {
 			font-size: 13pt;
 			font-weight: 800;
 			margin-top: 20px;
@@ -644,7 +644,7 @@
 			margin-left: -1px;
 			margin-bottom: 20px;
 		  }
-		  #share-div-succinct-drop{
+		  #share-div-paint-rain{
 			  width: 150px;
 			  height: 80px;
 			  padding-top: 10px;
@@ -653,7 +653,7 @@
 			  padding-bottom: 10px;	
 			  margin-bottom: 30px;		
 		  }
-			  #share-div-desc-succinct-drop{
+			  #share-div-desc-paint-rain{
 				font-weight: 600;
 				font-size: 9px;	
 				letter-spacing: 0px;
@@ -661,7 +661,7 @@
 				margin-bottom: 5px;
 				margin-top: 7px;
 			  }								
-			  #copy-link-succinct-drop {
+			  #copy-link-paint-rain {
 				font-size: 8px;
 				padding-top: 15px;
 				padding-bottom: 15px;
@@ -672,10 +672,10 @@
 				letter-spacing: 2px;
 				margin-bottom: 10px;
 			  }	  	
-				  #copy-link-icon-succinct-drop {
+				  #copy-link-icon-paint-rain {
 					  width: 12px;
 				  }
-		  #creator-owner-desc-succinct-drop {
+		  #creator-owner-desc-paint-rain {
 		  margin-top: 15px;
 			  font-weight: 300;
 			  font-size: 12px;
@@ -683,7 +683,7 @@
 			  padding-left: 0px;
 			  margin-bottom: 0px;
 		  }
-		  #creator-owner-link-succinct-drop {
+		  #creator-owner-link-paint-rain {
 		  text-align: center;
 			  font-weight: 300;
 			  font-size: 13px;
@@ -691,33 +691,33 @@
 			  padding-left: 0px;
   
 		  }			
-		  #line-succinct-drop {
+		  #line-paint-rain {
 		   margin-top: 20px;
 		  }			
-		  #PAP-succinct-drop {
+		  #PAP-paint-rain {
 		  margin-top: 15px;
 			  font-size: 12px;
 		  }
-		  #PAP-succinct-drop-before-succinct-drop,
-		  #PAP-succinct-drop-after-succinct-drop {
+		  #PAP-paint-rain-before-paint-rain,
+		  #PAP-paint-rain-after-paint-rain {
 		  margin-top: -8px;
 			  font-size: 13px;
 		  }
-		  #priceline-succinct-drop {
+		  #priceline-paint-rain {
 			margin-top: 0px;
 		  }	
-		  #yourprice-succinct-drop {
+		  #yourprice-paint-rain {
 		  margin-top: 20px;
 			  font-size: 13px;
 		  }
-		  #price-succinct-drop-before-succinct-drop,
-		  #price-succinct-drop-after-succinct-drop {
+		  #price-paint-rain-before-paint-rain,
+		  #price-paint-rain-after-paint-rain {
 		  margin-top: -10px;
 			  font-size: 15px;
 			  margin-bottom: 20px;	
 		  }			
-		  #succinct-drop-add-to-cart-succinct-drop, 
-		  #succinct-drop-add-to-cart-connected-succinct-drop {
+		  #paint-rain-add-to-cart-paint-rain, 
+		  #paint-rain-add-to-cart-connected-paint-rain {
 				font-size: 9px;
 				padding-top: 20px;
 				padding-bottom: 20px;
@@ -727,7 +727,7 @@
 				letter-spacing: 1px;
 				width: 120px;
 			  }	  
-		   #succinct-drop-added-succinct-drop {
+		   #paint-rain-added-paint-rain {
 				font-size: 9px;
 				padding-top: 20px;
 				padding-bottom: 20px;
@@ -737,7 +737,7 @@
 				letter-spacing: 1px;
 				width: 120px;
 			  }	
-		  #succinct-drop-collected-succinct-drop {
+		  #paint-rain-collected-paint-rain {
 				font-size: 9px;
 				padding-top: 20px;
 				padding-bottom: 20px;
