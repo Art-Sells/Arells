@@ -1,13 +1,13 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## An NFT store that financially empowers artists.
+## An NFT store in which you can't lose money on any sale.
 
 #### Problem:
 Most Artists are living in poverty.
 
 #### Solution:
-Art + Sells = Arells: An NFT store that financially empowers artists. Arells is working on achieving this through an innovation called **Price After Purchase** which introduces a new market called a Stag Market.
+Art + Sells = Arells: An NFT store in which you can't lose money on any sale. Arells is working on achieving this through an innovation called **Price After Purchase** which introduces a new market called a Stag Market.
 
 _______________________________________________________________________
 
