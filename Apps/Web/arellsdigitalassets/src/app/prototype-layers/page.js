@@ -312,7 +312,7 @@ const layers = () => {
 
             <div id="layers">
                 <img id="photo-layers" src="/icons&images/prototype/4.jpg"/>
-                <h3 id="name-layers">Colour Glass</h3>
+                <h3 id="name-layers">Layers</h3>
                 <div id="share-div-layers">
                     <p id="share-div-desc-layers">SHARE</p> 
                     <button id="copy-link-layers"

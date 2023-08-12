@@ -17,7 +17,7 @@ const succinctDrop = () => {
 
 	useEffect(() => {
 		// Set the id prop here; this code will only execute on the client-side
-		setElementId('prototype-layers-word');
+		setElementId('prototype-succinct-drop-word');
 	}, []);
 
 
@@ -27,25 +27,25 @@ const succinctDrop = () => {
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
-	const [cartLinkLayers, setCartLinkLayers] = useState(true);
-	const [cartLinkConnectedLayers, setCartLinkConnectedLayers] = useState(false);
-	const [cartLinkFullLayers, setCartLinkFullLayers] = useState(false);
+	const [cartLinkSuccinctDrop, setCartLinkSuccinctDrop] = useState(true);
+	const [cartLinkConnectedSuccinctDrop, setCartLinkConnectedSuccinctDrop] = useState(false);
+	const [cartLinkFullSuccinctDrop, setCartLinkFullSuccinctDrop] = useState(false);
 
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
-	const [walletConnectedDivLayers, setWalletConnectedDivLayers] = useState(false);
+	const [walletConnectedDivSuccinctDrop, setWalletConnectedDivSuccinctDrop] = useState(false);
 
 	const [showComingSoon, setComingSoon] = useState(false);
 
-	const [ownedByCreatorLayers, setOwnedByCreatorLayers] = useState(true);
-	const [ownedByBuyerLayers, setOwnedByBuyerLayers] = useState(false);
+	const [ownedByCreatorSuccinctDrop, setOwnedByCreatorSuccinctDrop] = useState(true);
+	const [ownedByBuyerSuccinctDrop, setOwnedByBuyerSuccinctDrop] = useState(false);
 
-	const [layersPricesBeforeLayers, setLayersPricesBeforeLayers] = useState(true);
-	const [layersPricesAfterLayers, setLayersPricesAfterLayers] = useState(false);
+	const [succinctDropPricesBeforeSuccinctDrop, setSuccinctDropPricesBeforeSuccinctDrop] = useState(true);
+	const [succinctDropPricesAfterSuccinctDrop, setSuccinctDropPricesAfterSuccinctDrop] = useState(false);
 
-	const [layersAddToCartLayers, setLayersAddToCartLayers] = useState(true);		
-	const [layersAddToCartConnectedLayers, setLayersAddToCartConnectedLayers] = useState(false);
-	const [layersAddedLayers, setLayersAddedLayers] = useState(false);
-	const [layersCollectedLayers, setLayersCollectedLayers] = useState(false);
+	const [succinctDropAddToCartSuccinctDrop, setSuccinctDropAddToCartSuccinctDrop] = useState(true);		
+	const [succinctDropAddToCartConnectedSuccinctDrop, setSuccinctDropAddToCartConnectedSuccinctDrop] = useState(false);
+	const [succinctDropAddedSuccinctDrop, setSuccinctDropAddedSuccinctDrop] = useState(false);
+	const [succinctDropCollectedSuccinctDrop, setSuccinctDropCollectedSuccinctDrop] = useState(false);
 
 
 {/*<!-- useState constants above -->*/}
@@ -54,7 +54,7 @@ const succinctDrop = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-layers'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype-succinct-drop'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -76,13 +76,13 @@ const succinctDrop = () => {
 	function walletConnected () {
 		setShowConnectWallet(false);
 		
-		setCartLinkLayers(false);
-		setWalletConnectedDivLayers(true);
+		setCartLinkSuccinctDrop(false);
+		setWalletConnectedDivSuccinctDrop(true);
 		
-		setCartLinkConnectedLayers(true);
+		setCartLinkConnectedSuccinctDrop(true);
 
-		setLayersAddToCartLayers(false);		
-		setLayersAddToCartConnectedLayers(true);
+		setSuccinctDropAddToCartSuccinctDrop(false);		
+		setSuccinctDropAddToCartConnectedSuccinctDrop(true);
 		
 		sessionStorage.setItem('walletConnectedSession', 'true');
 		setWalletConnectedSession('true');
@@ -95,13 +95,13 @@ const succinctDrop = () => {
 	}, []);
 	useEffect(() => {
 		if (walletConnectedSession === 'true') {
-			setCartLinkLayers(false);
-			setWalletConnectedDivLayers(true);
+			setCartLinkSuccinctDrop(false);
+			setWalletConnectedDivSuccinctDrop(true);
 			
-			setCartLinkConnectedLayers(true);
+			setCartLinkConnectedSuccinctDrop(true);
 
-			setLayersAddToCartLayers(false);		
-			setLayersAddToCartConnectedLayers(true);
+			setSuccinctDropAddToCartSuccinctDrop(false);		
+			setSuccinctDropAddToCartConnectedSuccinctDrop(true);
 		}
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
@@ -138,15 +138,15 @@ const succinctDrop = () => {
 		setPaintRainAdded(paintRainSession);
 		setSuccinctDropAdded(succinctDropSession);
 	}, []);
-	function addLayersToCart() {
-		setLayersAddToCartLayers(false);
-		setLayersAddedLayers(true);
+	function addSuccinctDropToCart() {
+		setSuccinctDropAddToCartSuccinctDrop(false);
+		setSuccinctDropAddedSuccinctDrop(true);
 
-		setCartLinkConnectedLayers(false);		
-		setCartLinkFullLayers(true);
+		setCartLinkConnectedSuccinctDrop(false);		
+		setCartLinkFullSuccinctDrop(true);
 
-		sessionStorage.setItem('layersAdded', 'true');
-		setLayersAdded('true');
+		sessionStorage.setItem('succinctDropAdded', 'true');
+		setSuccinctDropAdded('true');
 	}	
 	
 {/*<!-- Add To Cart function/s above -->*/}
@@ -158,39 +158,39 @@ const succinctDrop = () => {
 		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
 		|| colourGlassAdded === 'true' || layersAdded === 'true'
 		|| paintRainAdded === 'true' || succinctDropAdded === 'true') {
-			setCartLinkConnectedLayers(false);
-			setCartLinkFullLayers(true);
+			setCartLinkConnectedSuccinctDrop(false);
+			setCartLinkFullSuccinctDrop(true);
 		}
 	}, [blueOrangeAdded, beachHousesAdded,
 		colourGlassAdded, layersAdded, paintRainAdded,
 		succinctDropAdded]);
 	useEffect(() => {
-		if (layersAdded === 'true') {
-			setLayersAddToCartLayers(false);		
-			setLayersAddToCartConnectedLayers(false);
-			setLayersAddedLayers(true);
+		if (succinctDropAdded === 'true') {
+			setSuccinctDropAddToCartSuccinctDrop(false);		
+			setSuccinctDropAddToCartConnectedSuccinctDrop(false);
+			setSuccinctDropAddedSuccinctDrop(true);
 		}
-	}, [layersAdded]);
+	}, [succinctDropAdded]);
 		//Session Storage Getters below
-	const [layersPurchased, setLayersPurchased] = useState(null);	
+	const [succinctDropPurchased, setSuccinctDropPurchased] = useState(null);	
 	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('layersPurchased');
-		setLayersPurchased(sessionValue);
+		const sessionValue = sessionStorage.getItem('succinctDropPurchased');
+		setSuccinctDropPurchased(sessionValue);
 	}, []);
 	useEffect(() => {
-		if (layersPurchased === 'true') {
-			setLayersPricesBeforeLayers(false);
-			setLayersPricesAfterLayers(true);
+		if (succinctDropPurchased === 'true') {
+			setSuccinctDropPricesBeforeSuccinctDrop(false);
+			setSuccinctDropPricesAfterSuccinctDrop(true);
 
-			setOwnedByCreatorLayers(false);
-			setOwnedByBuyerLayers(true);
+			setOwnedByCreatorSuccinctDrop(false);
+			setOwnedByBuyerSuccinctDrop(true);
 
-			setLayersAddToCartLayers(false);		
-			setLayersAddToCartConnectedLayers(false);
-			setLayersAddedLayers(false);
-			setLayersCollectedLayers(true);
+			setSuccinctDropAddToCartSuccinctDrop(false);		
+			setSuccinctDropAddToCartConnectedSuccinctDrop(false);
+			setSuccinctDropAddedSuccinctDrop(false);
+			setSuccinctDropCollectedSuccinctDrop(true);
 		}
-	}, [layersPurchased]);
+	}, [succinctDropPurchased]);
 
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
@@ -203,36 +203,36 @@ const succinctDrop = () => {
 			<meta charset="UTF-8" />
 			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-			<meta name="title" content="Layers Prototype"/>
-			<meta name="description" content="Prototype for Layers"/>
+			<meta name="title" content="Succinct Drop Prototype"/>
+			<meta name="description" content="Prototype for Succinct Drop"/>
 			<meta name="google" content="nositelinkssearchbox"/>
 			<meta name="keywords" content="Arells"/>
 			<meta name="author" content="Arells"/>
 			<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
 
 			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-layers"/>
+			<link rel="canonical" href="https://arells.com/prototype-succinct-drop"/>
 
 			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>	
 			<meta property="og:site_name" content="Arells"/>	
 			<meta property="og:type" content="website"/>				
-			<meta property="og:title" content="Layers Prototype"/>
+			<meta property="og:title" content="Succinct Drop Prototype"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-layers"/>
-			<meta property="og:description" content="Prototype for Layers"/>
+			<meta property="og:url" content="https://arells.com/prototype-succinct-drop"/>
+			<meta property="og:description" content="Prototype for Succinct Drop"/>
 			<meta property="og:image:type" content="image/jpg"/>
 			<meta property="og:image:width" content="700"/>
 			<meta property="og:image:height" content="400"/>
 
-			<meta name="twitter:title" content="Layers Prototype"/>
+			<meta name="twitter:title" content="Succinct Drop Prototype"/>
 			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-layers"/>
+			<meta name="twitter:url" content="https://arells.com/prototype-succinct-drop"/>
 			<meta name="twitter:card" content="summary_large_image"/>
-			<meta name="twitter:description" content="Prototype for Layers"/>
+			<meta name="twitter:description" content="Prototype for Succinct Drop"/>
 		</Head>
 
-		<title>Prototype Layers</title>	
+		<title>Prototype Succinct Drop</title>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
@@ -269,81 +269,81 @@ const succinctDrop = () => {
 {/*<!-- Modals Above -->*/}
 
 
-		<div id="layers-wrapper">
-			<div id="header-layers">
+		<div id="succinct-drop-wrapper">
+			<div id="header-succinct-drop">
 			
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
-						<a id="icon-link-layers">
-							<img id="arells-icon-layers" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<a id="icon-link-succinct-drop">
+							<img id="arells-icon-succinct-drop" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
-					{cartLinkLayers && (
-						<button id="cart-link-layers" onClick={connectWallet}>
-							<img id="cart-icon-layers" src="/icons&images/prototype/shopping-cart-empty.png"/>
+					{cartLinkSuccinctDrop && (
+						<button id="cart-link-succinct-drop" onClick={connectWallet}>
+							<img id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
-					{cartLinkConnectedLayers && (
+					{cartLinkConnectedSuccinctDrop && (
 						<Link legacyBehavior href="/prototype-cart">
-							<a id="cart-link-connected-layers">
-								<img id="cart-icon-layers" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<a id="cart-link-connected-succinct-drop">
+								<img id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
 
-					{cartLinkFullLayers && (
+					{cartLinkFullSuccinctDrop && (
 						<Link legacyBehavior href="/prototype-cart">
-							<a id="cart-link-full-layers">
-								<img id="cart-icon-full-layers" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<a id="cart-link-full-succinct-drop">
+								<img id="cart-icon-full-succinct-drop" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<img id="word-logo-layers" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-layers">ART SELLS</p>
-				{walletConnectedDivLayers && (
-					<div id="wallet-connected-div-layers">
-						<hr id="connected-line-layers"/>
-						<p id="wallet-connected-layers" >
+				<img id="word-logo-succinct-drop" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<p id="slogan-succinct-drop">ART SELLS</p>
+				{walletConnectedDivSuccinctDrop && (
+					<div id="wallet-connected-div-succinct-drop">
+						<hr id="connected-line-succinct-drop"/>
+						<p id="wallet-connected-succinct-drop" >
 						WALLET CONNECTED</p>
-						<hr id="connected-line-layers"/>
+						<hr id="connected-line-succinct-drop"/>
 					</div>
 				)}
 
-            <div id="layers">
-                <img id="photo-layers" src="/icons&images/prototype/4.jpg"/>
-                <h3 id="name-layers">Colour Glass</h3>
-                <div id="share-div-layers">
-                    <p id="share-div-desc-layers">SHARE</p> 
-                    <button id="copy-link-layers"
+            <div id="succinct-drop">
+                <img id="photo-succinct-drop" src="/icons&images/prototype/5.jpg"/>
+                <h3 id="name-succinct-drop">Succinct Drop</h3>
+                <div id="share-div-succinct-drop">
+                    <p id="share-div-desc-succinct-drop">SHARE</p> 
+                    <button id="copy-link-succinct-drop"
                     onClick={copyLink}>
-                        <img id="copy-link-icon-layers" src="/icons&images/prototype/link.png"/>
+                        <img id="copy-link-icon-succinct-drop" src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
-                <div id="created-by-layers">
-                    <p id="creator-owner-desc-layers">Created By</p>
-                    <a id="creator-owner-link-layers" href="/prototype-seller-created">
+                <div id="created-by-succinct-drop">
+                    <p id="creator-owner-desc-succinct-drop">Created By</p>
+                    <a id="creator-owner-link-succinct-drop" href="/prototype-seller-created">
                         Abstract Kadabra
                     </a>
                 </div>
-				{ownedByCreatorLayers && (
-                    <div id="owned-by-creator-layers" >
-                        <p id="creator-owner-desc-layers">Owned By</p> 
-                        <a id="creator-owner-link-layers" href="/prototype-seller-created">
+				{ownedByCreatorSuccinctDrop && (
+                    <div id="owned-by-creator-succinct-drop" >
+                        <p id="creator-owner-desc-succinct-drop">Owned By</p> 
+                        <a id="creator-owner-link-succinct-drop" href="/prototype-seller-created">
                             Abstract Kadabra</a>
                     </div>
 				)}
-				{ownedByBuyerLayers && (
-                    <div id="owned-by-buyer-layers">
-                        <p id="creator-owner-desc-layers">Owned By</p> 
-                        <a id="creator-owner-link-layers" href="/prototype-buyer-collected">
+				{ownedByBuyerSuccinctDrop && (
+                    <div id="owned-by-buyer-succinct-drop">
+                        <p id="creator-owner-desc-succinct-drop">Owned By</p> 
+                        <a id="creator-owner-link-succinct-drop" href="/prototype-buyer-collected">
                             0x71C7656E...
                         </a>
                     </div>
 				)}
-				<hr id="line-layers"/>
-				{layersPricesBeforeLayers && (
+				<hr id="line-succinct-drop"/>
+				{succinctDropPricesBeforeSuccinctDrop && (
 					<div id="succinct-drop-prices-before-succinct-drop">
 						<p id="PAP-succinct-drop">Price After Purchase</p>
 						<p id="PAP-succinct-drop-after-succinct-drop">$5,000</p>
@@ -352,7 +352,7 @@ const succinctDrop = () => {
 						<p id="price-succinct-drop-after-succinct-drop">$100</p>
 					</div>
 				)}
-				{layersPricesAfterLayers && (
+				{succinctDropPricesAfterSuccinctDrop && (
 					<div id="succinct-drop-prices-after-succinct-drop">
 						<p id="PAP-succinct-drop">Price After Purchase</p>
 						<p id="PAP-succinct-drop-before-succinct-drop">$250,000</p>
@@ -362,20 +362,20 @@ const succinctDrop = () => {
 					</div>
 				)}
 
-				{layersAddToCartLayers && (
-					<button id="layers-add-to-cart-layers" onClick={connectWallet}>
+				{succinctDropAddToCartSuccinctDrop && (
+					<button id="succinct-drop-add-to-cart-succinct-drop" onClick={connectWallet}>
 					ADD TO CART</button>
 				)}
-				{layersAddToCartConnectedLayers && (
-					<button id="layers-add-to-cart-connected-layers" onClick={addLayersToCart}>
+				{succinctDropAddToCartConnectedSuccinctDrop && (
+					<button id="succinct-drop-add-to-cart-connected-succinct-drop" onClick={addSuccinctDropToCart}>
 					ADD TO CART</button>
 				)}
-				{layersAddedLayers && (
-					<button id="layers-added-layers">
+				{succinctDropAddedSuccinctDrop && (
+					<button id="succinct-drop-added-succinct-drop">
 					ADDED</button>	
 				)}
-				{layersCollectedLayers && (
-					<button id="layers-collected-layers">
+				{succinctDropCollectedSuccinctDrop && (
+					<button id="succinct-drop-collected-succinct-drop">
 					COLLECTED</button>
 				)}
 
