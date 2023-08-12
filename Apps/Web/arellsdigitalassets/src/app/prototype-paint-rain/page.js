@@ -1,7 +1,7 @@
 "use client";
 
 // Change below link after test
-import '../css/prototype/images/colour-glass.css';
+import '../css/prototype/images/paint-rain.css';
 import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
 import '../css/modals/coming-soon.css';
@@ -11,13 +11,13 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-const colourGlass = () => {
+const paintRain = () => {
 
 	const [elementId, setElementId] = useState('');
 
 	useEffect(() => {
 		// Set the id prop here; this code will only execute on the client-side
-		setElementId('prototype-colour-glass-word');
+		setElementId('prototype-paint-rain-word');
 	}, []);
 
 
@@ -27,25 +27,25 @@ const colourGlass = () => {
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
-	const [cartLinkColourGlass, setCartLinkColourGlass] = useState(true);
-	const [cartLinkConnectedColourGlass, setCartLinkConnectedColourGlass] = useState(false);
-	const [cartLinkFullColourGlass, setCartLinkFullColourGlass] = useState(false);
+	const [cartLinkPaintRain, setCartLinkPaintRain] = useState(true);
+	const [cartLinkConnectedPaintRain, setCartLinkConnectedPaintRain] = useState(false);
+	const [cartLinkFullPaintRain, setCartLinkFullPaintRain] = useState(false);
 
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
-	const [walletConnectedDivColourGlass, setWalletConnectedDivColourGlass] = useState(false);
+	const [walletConnectedDivPaintRain, setWalletConnectedDivPaintRain] = useState(false);
 
 	const [showComingSoon, setComingSoon] = useState(false);
 
-	const [ownedByCreatorColourGlass, setOwnedByCreatorColourGlass] = useState(true);
-	const [ownedByBuyerColourGlass, setOwnedByBuyerColourGlass] = useState(false);
+	const [ownedByCreatorPaintRain, setOwnedByCreatorPaintRain] = useState(true);
+	const [ownedByBuyerPaintRain, setOwnedByBuyerPaintRain] = useState(false);
 
-	const [colourGlassPricesBeforeColourGlass, setColourGlassPricesBeforeColourGlass] = useState(true);
-	const [colourGlassPricesAfterColourGlass, setColourGlassPricesAfterColourGlass] = useState(false);
+	const [paintRainPricesBeforePaintRain, setPaintRainPricesBeforePaintRain] = useState(true);
+	const [paintRainPricesAfterPaintRain, setPaintRainPricesAfterPaintRain] = useState(false);
 
-	const [colourGlassAddToCartColourGlass, setColourGlassAddToCartColourGlass] = useState(true);		
-	const [colourGlassAddToCartConnectedColourGlass, setColourGlassAddToCartConnectedColourGlass] = useState(false);
-	const [colourGlassAddedColourGlass, setColourGlassAddedColourGlass] = useState(false);
-	const [colourGlassCollectedColourGlass, setColourGlassCollectedColourGlass] = useState(false);
+	const [paintRainAddToCartPaintRain, setPaintRainAddToCartPaintRain] = useState(true);		
+	const [paintRainAddToCartConnectedPaintRain, setPaintRainAddToCartConnectedPaintRain] = useState(false);
+	const [paintRainAddedPaintRain, setPaintRainAddedPaintRain] = useState(false);
+	const [paintRainCollectedPaintRain, setPaintRainCollectedPaintRain] = useState(false);
 
 
 {/*<!-- useState constants above -->*/}
@@ -54,7 +54,7 @@ const colourGlass = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-colour-glass'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype-paint-rain'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -76,13 +76,13 @@ const colourGlass = () => {
 	function walletConnected () {
 		setShowConnectWallet(false);
 		
-		setCartLinkColourGlass(false);
-		setWalletConnectedDivColourGlass(true);
+		setCartLinkPaintRain(false);
+		setWalletConnectedDivPaintRain(true);
 		
-		setCartLinkConnectedColourGlass(true);
+		setCartLinkConnectedPaintRain(true);
 
-		setColourGlassAddToCartColourGlass(false);		
-		setColourGlassAddToCartConnectedColourGlass(true);
+		setPaintRainAddToCartPaintRain(false);		
+		setPaintRainAddToCartConnectedPaintRain(true);
 		
 		sessionStorage.setItem('walletConnectedSession', 'true');
 		setWalletConnectedSession('true');
@@ -95,13 +95,13 @@ const colourGlass = () => {
 	}, []);
 	useEffect(() => {
 		if (walletConnectedSession === 'true') {
-			setCartLinkColourGlass(false);
-			setWalletConnectedDivColourGlass(true);
+			setCartLinkPaintRain(false);
+			setWalletConnectedDivPaintRain(true);
 			
-			setCartLinkConnectedColourGlass(true);
+			setCartLinkConnectedPaintRain(true);
 
-			setColourGlassAddToCartColourGlass(false);		
-			setColourGlassAddToCartConnectedColourGlass(true);
+			setPaintRainAddToCartPaintRain(false);		
+			setPaintRainAddToCartConnectedPaintRain(true);
 		}
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
@@ -138,14 +138,14 @@ const colourGlass = () => {
 		setPaintRainAdded(paintRainSession);
 		setSuccinctDropAdded(succinctDropSession);
 	}, []);
-	function addColourGlassToCart() {
-		setColourGlassAddToCartColourGlass(false);
-		setColourGlassAddedColourGlass(true);
+	function addPaintRainToCart() {
+		setPaintRainAddToCartPaintRain(false);
+		setPaintRainAddedPaintRain(true);
 
-		setCartLinkConnectedColourGlass(false);		
-		setCartLinkFullColourGlass(true);
+		setCartLinkConnectedPaintRain(false);		
+		setCartLinkFullPaintRain(true);
 
-		sessionStorage.setItem('colourGlassAdded', 'true');
+		sessionStorage.setItem('paintRainAdded', 'true');
 		setColourGlassAdded('true');
 	}	
 	
@@ -158,39 +158,39 @@ const colourGlass = () => {
 		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
 		|| colourGlassAdded === 'true' || layersAdded === 'true'
 		|| paintRainAdded === 'true' || succinctDropAdded === 'true') {
-			setCartLinkConnectedColourGlass(false);
-			setCartLinkFullColourGlass(true);
+			setCartLinkConnectedPaintRain(false);
+			setCartLinkFullPaintRain(true);
 		}
 	}, [blueOrangeAdded, beachHousesAdded,
 		colourGlassAdded, layersAdded, paintRainAdded,
 		succinctDropAdded]);
 	useEffect(() => {
-		if (colourGlassAdded === 'true') {
-			setColourGlassAddToCartColourGlass(false);		
-			setColourGlassAddToCartConnectedColourGlass(false);
-			setColourGlassAddedColourGlass(true);
+		if (paintRainAdded === 'true') {
+			setPaintRainAddToCartPaintRain(false);		
+			setPaintRainAddToCartConnectedPaintRain(false);
+			setPaintRainAddedPaintRain(true);
 		}
-	}, [colourGlassAdded]);
+	}, [paintRainAdded]);
 		//Session Storage Getters below
-	const [colourGlassPurchased, setColourGlassPurchased] = useState(null);	
+	const [paintRainPurchased, setPaintRainPurchased] = useState(null);	
 	useEffect(() => {
-		const sessionValue = sessionStorage.getItem('colourGlassPurchased');
-		setColourGlassPurchased(sessionValue);
+		const sessionValue = sessionStorage.getItem('paintRainPurchased');
+		setPaintRainPurchased(sessionValue);
 	}, []);
 	useEffect(() => {
-		if (colourGlassPurchased === 'true') {
-			setColourGlassPricesBeforeColourGlass(false);
-			setColourGlassPricesAfterColourGlass(true);
+		if (paintRainPurchased === 'true') {
+			setPaintRainPricesBeforePaintRain(false);
+			setPaintRainPricesAfterPaintRain(true);
 
-			setOwnedByCreatorColourGlass(false);
-			setOwnedByBuyerColourGlass(true);
+			setOwnedByCreatorPaintRain(false);
+			setOwnedByBuyerPaintRain(true);
 
-			setColourGlassAddToCartColourGlass(false);		
-			setColourGlassAddToCartConnectedColourGlass(false);
-			setColourGlassAddedColourGlass(false);
-			setColourGlassCollectedColourGlass(true);
+			setPaintRainAddToCartPaintRain(false);		
+			setPaintRainAddToCartConnectedPaintRain(false);
+			setPaintRainAddedPaintRain(false);
+			setPaintRainCollectedPaintRain(true);
 		}
-	}, [colourGlassPurchased]);
+	}, [paintRainPurchased]);
 
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
@@ -203,36 +203,36 @@ const colourGlass = () => {
 			<meta charset="UTF-8" />
 			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-			<meta name="title" content="Colour Glass Prototype"/>
-			<meta name="description" content="Prototype for Colour Glass"/>
+			<meta name="title" content="Paint Rain Prototype"/>
+			<meta name="description" content="Prototype for Paint Rain"/>
 			<meta name="google" content="nositelinkssearchbox"/>
 			<meta name="keywords" content="Arells"/>
 			<meta name="author" content="Arells"/>
 			<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
 
 			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-colour-glass"/>
+			<link rel="canonical" href="https://arells.com/prototype-paint-rain"/>
 
 			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>	
 			<meta property="og:site_name" content="Arells"/>	
 			<meta property="og:type" content="website"/>				
-			<meta property="og:title" content="Colour Glass Prototype"/>
+			<meta property="og:title" content="Paint Rain Prototype"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-colour-glass"/>
-			<meta property="og:description" content="Prototype for Colour Glass"/>
+			<meta property="og:url" content="https://arells.com/prototype-paint-rain"/>
+			<meta property="og:description" content="Prototype for Paint Rain"/>
 			<meta property="og:image:type" content="image/jpg"/>
 			<meta property="og:image:width" content="700"/>
 			<meta property="og:image:height" content="400"/>
 
-			<meta name="twitter:title" content="Colour Glass Prototype"/>
+			<meta name="twitter:title" content="Paint Rain Prototype"/>
 			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>
 			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-colour-glass"/>
+			<meta name="twitter:url" content="https://arells.com/prototype-paint-rain"/>
 			<meta name="twitter:card" content="summary_large_image"/>
-			<meta name="twitter:description" content="Prototype for Colour Glass"/>
+			<meta name="twitter:description" content="Prototype for Paint Rain"/>
 		</Head>
 
-		<title>Prototype Colour Glass</title>	
+		<title>Prototype Paint Rain</title>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
@@ -269,113 +269,113 @@ const colourGlass = () => {
 {/*<!-- Modals Above -->*/}
 
 
-		<div id="colour-glass-wrapper">
-			<div id="header-colour-glass">
+		<div id="paint-rain-wrapper">
+			<div id="header-paint-rain">
 			
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
-						<a id="icon-link-colour-glass">
-							<img id="arells-icon-colour-glass" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<a id="icon-link-paint-rain">
+							<img id="arells-icon-paint-rain" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
-					{cartLinkColourGlass && (
-						<button id="cart-link-colour-glass" onClick={connectWallet}>
-							<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
+					{cartLinkPaintRain && (
+						<button id="cart-link-paint-rain" onClick={connectWallet}>
+							<img id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
-					{cartLinkConnectedColourGlass && (
+					{cartLinkConnectedPaintRain && (
 						<Link legacyBehavior href="/prototype-cart">
-							<a id="cart-link-connected-colour-glass">
-								<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<a id="cart-link-connected-paint-rain">
+								<img id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
 
-					{cartLinkFullColourGlass && (
+					{cartLinkFullPaintRain && (
 						<Link legacyBehavior href="/prototype-cart">
-							<a id="cart-link-full-colour-glass">
-								<img id="cart-icon-full-colour-glass" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<a id="cart-link-full-paint-rain">
+								<img id="cart-icon-full-paint-rain" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<img id="word-logo-colour-glass" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-colour-glass">ART SELLS</p>
-				{walletConnectedDivColourGlass && (
-					<div id="wallet-connected-div-colour-glass">
-						<hr id="connected-line-colour-glass"/>
-						<p id="wallet-connected-colour-glass" >
+				<img id="word-logo-paint-rain" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<p id="slogan-paint-rain">ART SELLS</p>
+				{walletConnectedDivPaintRain && (
+					<div id="wallet-connected-div-paint-rain">
+						<hr id="connected-line-paint-rain"/>
+						<p id="wallet-connected-paint-rain" >
 						WALLET CONNECTED</p>
-						<hr id="connected-line-colour-glass"/>
+						<hr id="connected-line-paint-rain"/>
 					</div>
 				)}
 
-            <div id="colour-glass">
-                <img id="photo-colour-glass" src="/icons&images/prototype/3.jpg"/>
-                <h3 id="name-colour-glass">Colour Glass</h3>
-                <div id="share-div-colour-glass">
-                    <p id="share-div-desc-colour-glass">SHARE</p> 
-                    <button id="copy-link-colour-glass"
+            <div id="paint-rain">
+                <img id="photo-paint-rain" src="/icons&images/prototype/6.jpg"/>
+                <h3 id="name-paint-rain">Colour Glass</h3>
+                <div id="share-div-paint-rain">
+                    <p id="share-div-desc-paint-rain">SHARE</p> 
+                    <button id="copy-link-paint-rain"
                     onClick={copyLink}>
-                        <img id="copy-link-icon-colour-glass" src="/icons&images/prototype/link.png"/>
+                        <img id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
-                <div id="created-by-colour-glass">
-                    <p id="creator-owner-desc-colour-glass">Created By</p>
-                    <a id="creator-owner-link-colour-glass" href="/prototype-seller-created">
+                <div id="created-by-paint-rain">
+                    <p id="creator-owner-desc-paint-rain">Created By</p>
+                    <a id="creator-owner-link-paint-rain" href="/prototype-seller-created">
                         Abstract Kadabra
                     </a>
                 </div>
-				{ownedByCreatorColourGlass && (
-                    <div id="owned-by-creator-colour-glass" >
-                        <p id="creator-owner-desc-colour-glass">Owned By</p> 
-                        <a id="creator-owner-link-colour-glass" href="/prototype-seller-created">
+				{ownedByCreatorPaintRain && (
+                    <div id="owned-by-creator-paint-rain" >
+                        <p id="creator-owner-desc-paint-rain">Owned By</p> 
+                        <a id="creator-owner-link-paint-rain" href="/prototype-seller-created">
                             Abstract Kadabra</a>
                     </div>
 				)}
-				{ownedByBuyerColourGlass && (
-                    <div id="owned-by-buyer-colour-glass">
-                        <p id="creator-owner-desc-colour-glass">Owned By</p> 
-                        <a id="creator-owner-link-colour-glass" href="/prototype-buyer-collected">
+				{ownedByBuyerPaintRain && (
+                    <div id="owned-by-buyer-paint-rain">
+                        <p id="creator-owner-desc-paint-rain">Owned By</p> 
+                        <a id="creator-owner-link-paint-rain" href="/prototype-buyer-collected">
                             0x71C7656E...
                         </a>
                     </div>
 				)}
-				<hr id="line-colour-glass"/>
-				{colourGlassPricesBeforeColourGlass && (
-                    <div id="colour-glass-prices-before-colour-glass">
-                        <p id="PAP-colour-glass">Price After Purchase</p>
-                        <p id="PAP-colour-glass-before-colour-glass">$725,000</p>
-                        <hr id="priceline-colour-glass"/>
-                        <p id="yourprice-colour-glass">Price</p>
-                        <p id="price-colour-glass-before-colour-glass">$14,500</p>
-                    </div>
+				<hr id="line-paint-rain"/>
+				{paintRainPricesBeforePaintRain && (
+					<div id="paint-rain-prices-before-paint-rain">
+						<p id="PAP-paint-rain">Price After Purchase</p>
+						<p id="PAP-paint-rain-before-paint-rain">$600,000</p>
+						<hr id="priceline-paint-rain"/>
+						<p id="yourprice-paint-rain">Price</p>
+						<p id="price-paint-rain-before-paint-rain">$12,000</p>
+					</div>
 				)}
-				{colourGlassPricesAfterColourGlass && (
-                    <div id="colour-glass-prices-after-colour-glass">
-                        <p id="PAP-colour-glass">Price After Purchase</p>
-                        <p id="PAP-colour-glass-after-colour-glass">$36,250,000</p>
-                        <hr id="priceline-colour-glass"/>
-                        <p id="yourprice-colour-glass">Price</p>
-                        <p id="price-colour-glass-after-colour-glass">$725,000</p>
-                    </div>
+				{paintRainPricesAfterPaintRain && (
+					<div id="paint-rain-prices-after-paint-rain">
+						<p id="PAP-paint-rain">Price After Purchase</p>
+						<p id="PAP-paint-rain-after-paint-rain">$30,000,000</p>
+						<hr id="priceline-paint-rain"/>
+						<p id="yourprice-paint-rain">Price</p>
+						<p id="price-paint-rain-after-paint-rain">$600,000</p>
+					</div>
 				)}
 
-				{colourGlassAddToCartColourGlass && (
-					<button id="colour-glass-add-to-cart-colour-glass" onClick={connectWallet}>
+				{paintRainAddToCartPaintRain && (
+					<button id="paint-rain-add-to-cart-paint-rain" onClick={connectWallet}>
 					ADD TO CART</button>
 				)}
-				{colourGlassAddToCartConnectedColourGlass && (
-					<button id="colour-glass-add-to-cart-connected-colour-glass" onClick={addColourGlassToCart}>
+				{paintRainAddToCartConnectedPaintRain && (
+					<button id="paint-rain-add-to-cart-connected-paint-rain" onClick={addPaintRainToCart}>
 					ADD TO CART</button>
 				)}
-				{colourGlassAddedColourGlass && (
-					<button id="colour-glass-added-colour-glass">
+				{paintRainAddedPaintRain && (
+					<button id="paint-rain-added-paint-rain">
 					ADDED</button>	
 				)}
-				{colourGlassCollectedColourGlass && (
-					<button id="colour-glass-collected-colour-glass">
+				{paintRainCollectedPaintRain && (
+					<button id="paint-rain-collected-paint-rain">
 					COLLECTED</button>
 				)}
 
@@ -413,4 +413,4 @@ const colourGlass = () => {
     );
 }
 
-export default colourGlass;
+export default paintRain;
