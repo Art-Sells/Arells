@@ -1,7 +1,7 @@
 "use client";
 
 // Change below link after test
-import '../css/prototype/images/layers.css';
+import '../css/prototype/images/succinct-drop.css';
 import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
 import '../css/modals/coming-soon.css';
@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-const layers = () => {
+const succinctDrop = () => {
 
 	const [elementId, setElementId] = useState('');
 
@@ -344,21 +344,21 @@ const layers = () => {
 				)}
 				<hr id="line-layers"/>
 				{layersPricesBeforeLayers && (
-					<div id="layers-prices-before-layers">
-						<p id="PAP-layers">Price After Purchase</p>
-						<p id="PAP-layers-before-layers">$20,000,000</p>
-						<hr id="priceline-layers"/>
-						<p id="yourprice-layers">Price</p>
-						<p id="price-layers-before-layers">$400,000</p>
+					<div id="succinct-drop-prices-before-succinct-drop">
+						<p id="PAP-succinct-drop">Price After Purchase</p>
+						<p id="PAP-succinct-drop-after-succinct-drop">$5,000</p>
+						<hr id="priceline-succinct-drop"/>
+						<p id="yourprice-succinct-drop">Price</p>
+						<p id="price-succinct-drop-after-succinct-drop">$100</p>
 					</div>
 				)}
 				{layersPricesAfterLayers && (
-					<div id="layers-prices-after-layers">
-						<p id="PAP-layers">Price After Purchase</p>
-						<p id="PAP-layers-after-layers">$1,000,000,000</p>
-						<hr id="priceline-layers"/>
-						<p id="yourprice-layers">Price</p>
-						<p id="price-layers-after-layers">$20,000,000</p>
+					<div id="succinct-drop-prices-after-succinct-drop">
+						<p id="PAP-succinct-drop">Price After Purchase</p>
+						<p id="PAP-succinct-drop-before-succinct-drop">$250,000</p>
+						<hr id="priceline-succinct-drop"/>
+						<p id="yourprice-succinct-drop">Price</p>
+						<p id="price-succinct-drop-before-succinct-drop">$5,000</p>
 					</div>
 				)}
 
@@ -413,4 +413,4 @@ const layers = () => {
     );
 }
 
-export default layers;
+export default succinctDrop;

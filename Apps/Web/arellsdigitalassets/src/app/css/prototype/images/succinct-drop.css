@@ -1,4 +1,4 @@
-#layers-wrapper {
+#succinct-drop-wrapper {
 	text-align: center;
 	font-family: Arial;
 	margin-top: 0%;
@@ -10,7 +10,7 @@
 	background: white;
   }
   
-	  #header-layers {
+	  #header-succinct-drop {
 			  display: flex;
 			  justify-content: center;
 			  margin-top: 0px;
@@ -24,7 +24,7 @@
 			  margin-right: auto;
 			  z-index: 100;
 		  }
-		  #icon-link-layers{
+		  #icon-link-succinct-drop{
 			  display: inline-block;
 			  text-decoration: none;
 			  margin-right: 124px;
@@ -41,17 +41,17 @@
 				opacity: 1;
 				  background: rgba(255, 255, 255, 0.8);						
 		  }
-		  #icon-link-layers:hover,
-		  #icon-link-layers:focus {
+		  #icon-link-succinct-drop:hover,
+		  #icon-link-succinct-drop:focus {
 				transition: 1s;
 				cursor: pointer;
 				border-color: gray;
 				opacity: 1;
 			  }		
-			  #arells-icon-layers {
+			  #arells-icon-succinct-drop {
 				  height: 16px;
 			  }	
-		  #cart-link-layers{
+		  #cart-link-succinct-drop{
 			  display: inline-block;
 			  text-decoration: none;
 			  margin-left: 124px;
@@ -68,7 +68,7 @@
 				opacity: 1;
 				  background: rgba(255, 255, 255, 0.8);						
 		  }
-		  #cart-link-connected-layers{
+		  #cart-link-connected-succinct-drop{
 			  display: inline-block;
 			  text-decoration: none;
 			  margin-left: 124px;
@@ -85,16 +85,16 @@
 				opacity: 1;
 				  background: rgba(255, 255, 255, 0.8);						
 		  }
-		  #cart-link-layers:hover,
-		  #cart-link-layers:focus, 
-		  #cart-link-connected-layers:hover,
-		  #cart-link-connected-layers:focus {
+		  #cart-link-succinct-drop:hover,
+		  #cart-link-succinct-drop:focus, 
+		  #cart-link-connected-succinct-drop:hover,
+		  #cart-link-connected-succinct-drop:focus {
 				transition: 1s;
 				cursor: pointer;
 				border-color: gray;
 				opacity: 1;	
 		  }	
-		  #cart-link-full-layers{
+		  #cart-link-full-succinct-drop{
 			  display: inline-block;
 			  transition: 1s;
 			  text-decoration: none;
@@ -113,22 +113,22 @@
 				  background: rgba(0, 0, 0, 1);
 					box-shadow: 0px 5px 12px -6px black;						
 		  }
-		  #cart-link-full-layers:hover,
-		  #cart-link-full-layers:focus  {
+		  #cart-link-full-succinct-drop:hover,
+		  #cart-link-full-succinct-drop:focus  {
 				transition: 1s;
 				cursor: pointer;
 				opacity: .4;	
 		  }					
-			  #cart-icon-layers,
-			  #cart-icon-full-layers {
+			  #cart-icon-succinct-drop,
+			  #cart-icon-full-succinct-drop {
 				  height: 16px;
 			  }	
 			  
-		  #word-logo-layers {
+		  #word-logo-succinct-drop {
 			  margin-top: 37px;
 			  width: 110px;	
 		  }
-		  #slogan-layers {
+		  #slogan-succinct-drop {
 			  margin-top: 0px;
 			  font-size: 8px;
 			  letter-spacing: 10px;
@@ -139,13 +139,13 @@
 			  word-spacing: -3px;
 		  }	
 		  
-		  #wallet-connected-div-layers{
+		  #wallet-connected-div-succinct-drop{
 			  display: block;
 			  margin-top: 30px;
 			  margin-left: auto;
 			  margin-right: auto;
 		  }
-			  #connected-line-layers {
+			  #connected-line-succinct-drop {
 				margin-top: -5px;
 				background-color: black;
 				border: none;
@@ -154,7 +154,7 @@
 				width: 100px;
 				opacity: .1;
 			  }	
-			  #wallet-connected-layers {
+			  #wallet-connected-succinct-drop {
 				  padding-bottom: 10px;
 				  padding-top: 5px;
 				  font-size: 9px;
@@ -168,7 +168,7 @@
 					  
 				  
 		  
-	  #layers {	
+	  #succinct-drop {	
 		  margin-top: 30px;
 		  margin-left: auto;
 		  margin-right: auto;
@@ -186,10 +186,10 @@
 		  background: white;
 	  }
 				  
-		  #photo-link-layers {
+		  #photo-link-succinct-drop {
 				  text-decoration: none; 
 			  }
-		  #photo-layers {
+		  #photo-succinct-drop {
 			  object-fit: cover;
 			  width: 400px;
 			  height: 400px;
@@ -197,19 +197,19 @@
 			  border-width: 1px;
 			  border-color: silver;			
 		  }
-				  #photo-link-layers:hover {
+				  #photo-link-succinct-drop:hover {
 					opacity: .5;
 					transition: 1s;
 					box-shadow: none;
 					cursor: pointer;
 				  }
-				  #photo-link-layers:focus {
+				  #photo-link-succinct-drop:focus {
 					opacity: .5;
 					box-shadow: none;
 					cursor: pointer;
 			  }
 			  
-		  #name-layers {
+		  #name-succinct-drop {
 			font-size: 17pt;
 			font-weight: 800;
 			opacity: 1;
@@ -219,7 +219,7 @@
 			margin-left: -1px;
 			margin-bottom: 25px;
 		  }
-		  #share-div-layers{
+		  #share-div-succinct-drop{
 			  border-radius: 5px;
 			  align-items: center;
 			  box-shadow: 0px 5px 20px -6px silver; 
@@ -234,7 +234,7 @@
 			  margin-right: auto;	
 			  margin-bottom: 35px;
 		  }
-			  #share-div-desc-layers{
+			  #share-div-desc-succinct-drop{
 				color: black;
 				font-weight: 600;
 				font-size: 11px;	
@@ -244,7 +244,7 @@
 				margin-bottom: 5px;
 				margin-top: 15px;
 			  }				
-			  #copy-link-layers {
+			  #copy-link-succinct-drop {
 				text-decoration: none;
 				color: white;
 				font-weight: 500;
@@ -263,29 +263,29 @@
 				  background: black;
 				  margin-bottom: 15px;
 			  }	  
-			  #copy-link-layers:hover,
-			  #copy-link-layers:focus {
+			  #copy-link-succinct-drop:hover,
+			  #copy-link-succinct-drop:focus {
 					opacity: .4;
 					transition: 1s;
 					cursor: pointer;
 			  }		
-				  #copy-link-icon-layers{
+				  #copy-link-icon-succinct-drop{
 					  width: 15px;
 					  margin-right: 5px;
 				  }
   
-		  #owned-by-creator-layers, 
-		  #owned-by-buyer-layers,
-		  #layers-prices-before-layers, 
-		  #layers-prices-after-layers,
-		  #layers-add-to-cart-layers,
-		  #layers-add-to-cart-connected-layers,
-		  #layers-added-layers,
-		  #layers-collected-layers {
+		  #owned-by-creator-succinct-drop, 
+		  #owned-by-buyer-succinct-drop,
+		  #succinct-drop-prices-before-succinct-drop, 
+		  #succinct-drop-prices-after-succinct-drop,
+		  #succinct-drop-add-to-cart-succinct-drop,
+		  #succinct-drop-add-to-cart-connected-succinct-drop,
+		  #succinct-drop-added-succinct-drop,
+		  #succinct-drop-collected-succinct-drop {
 			  display: block;
 		  }		
 		  
-			  #creator-owner-desc-layers {
+			  #creator-owner-desc-succinct-drop {
 			  margin-top: 15px;
 			  text-align: center;
 				  color: black;
@@ -296,7 +296,7 @@
 				  opacity: .4;
 				  margin-bottom: 0px;
 			  }
-			  #creator-owner-link-layers {
+			  #creator-owner-link-succinct-drop {
 			  text-align: center;
 				  color: #4d85cf;
 				  font-weight: 300;
@@ -306,16 +306,16 @@
 				  opacity: .8;
 				  text-decoration: none;
 			  }
-				  #creator-owner-desc-layers:hover,
-				  #creator-owner-link-layers:hover,
-				  #creator-owner-desc-layers:focus,
-				  #creator-owner-link-layers:focus {
+				  #creator-owner-desc-succinct-drop:hover,
+				  #creator-owner-link-succinct-drop:hover,
+				  #creator-owner-desc-succinct-drop:focus,
+				  #creator-owner-link-succinct-drop:focus {
 					  opacity: .4;
 					  transition: 1s;
 					  cursor: pointer;
 				  }
 			  
-		  #line-layers {
+		  #line-succinct-drop {
 			margin-top: 30px;
 			background-color: black;
 			border: none;
@@ -325,7 +325,7 @@
 			opacity: .1;
 		  }					
 				  
-			  #PAP-layers {
+			  #PAP-succinct-drop {
 			  margin-top: 15px;
 			  text-align: center;
 				  color: black;
@@ -335,8 +335,8 @@
 				  padding-left: 0px;
 				  opacity: .4;
 			  }
-			  #PAP-layers-before-layers,
-			  #PAP-layers-after-layers {
+			  #PAP-succinct-drop-before-succinct-drop,
+			  #PAP-succinct-drop-after-succinct-drop {
 			  margin-top: -7px;
 			  text-align: center;
 				  color: black;
@@ -346,7 +346,7 @@
 				  padding-left: 0px;
 				  opacity: .5;
 			  }
-			  #priceline-layers {
+			  #priceline-succinct-drop {
 			  margin-top: -5px;
 			  background-color: black;
 			  border: none;
@@ -355,7 +355,7 @@
 			  width: 60%;
 			  opacity: .1;
 			  }	
-			  #yourprice-layers {
+			  #yourprice-succinct-drop {
 			  margin-top: 30px;
 			  text-align: center;
 				  color: black;
@@ -365,8 +365,8 @@
 				  padding-left: 0px;
 				  opacity: .4;
 			  }
-			  #price-layers-before-layers,
-			  #price-layers-after-layers {
+			  #price-succinct-drop-before-succinct-drop,
+			  #price-succinct-drop-after-succinct-drop {
 			  margin-top: -10px;
 			  text-align: center;
 				  color: black;
@@ -377,8 +377,8 @@
 				  opacity: .7;
 				  margin-bottom: 28px;
 			  }
-		  #layers-add-to-cart-layers, 
-		  #layers-add-to-cart-connected-layers  {
+		  #succinct-drop-add-to-cart-succinct-drop, 
+		  #succinct-drop-add-to-cart-connected-succinct-drop  {
 				text-decoration: none;
 				color: white;
 				margin-left: auto;
@@ -398,13 +398,13 @@
 				box-shadow: 0px 8px 12px -6px black;  
 				  background: black;
 			  }	  
-		  #layers-add-to-cart-layers:hover, 
-		  #layers-add-to-cart-connected-layers:focus {
+		  #succinct-drop-add-to-cart-succinct-drop:hover, 
+		  #succinct-drop-add-to-cart-connected-succinct-drop:focus {
 				opacity: .4;
 				transition: 1s;
 				cursor: pointer;
 		  } 
-		  #layers-added-layers {
+		  #succinct-drop-added-succinct-drop {
 				text-decoration: none;
 				margin-left: auto;
 				margin-right: auto;
@@ -423,7 +423,7 @@
 				opacity: 1; 
 				  background: silver;
 			  }	
-		  #layers-collected-layers {
+		  #succinct-drop-collected-succinct-drop {
 				text-decoration: none;
 				margin-left: auto;
 				margin-right: auto;
@@ -488,7 +488,7 @@
 						  height: 25px;
 					  }			
 				  
-		  #prototype-layers-word {
+		  #prototype-succinct-drop-word {
 			  margin-top: 40px;
 			  font-size: 8px;
 			  letter-spacing: 3px;
@@ -527,14 +527,14 @@
 			  
 			  
   @media screen and (max-width: 1000px) {
-	#layers-wrapper {
+	#succinct-drop-wrapper {
 		  -webkit-text-size-adjust: none;
 		}  
-		  #header-layers {
+		  #header-succinct-drop {
 				  margin-top: 0px;
 				  padding-top: 25px;			
 			  }	
-			  #icon-link-layers{	
+			  #icon-link-succinct-drop{	
 				  margin-right: 90px;
 					padding-top: 10px;
 					padding-bottom: 7px;
@@ -543,10 +543,10 @@
 					border-radius: 12px;
 					width: 30px;		
 			  }	
-			  #arells-icon-layers {
+			  #arells-icon-succinct-drop {
 					  height: 15px;
 				  }	    
-			  #cart-link-layers{
+			  #cart-link-succinct-drop{
 				  margin-left: 90px;
 					padding-top: 10px;
 					padding-bottom: 7px;
@@ -555,7 +555,7 @@
 					border-radius: 12px;	
 					width: 45px;  					
 			  }
-			  #cart-link-connected-layers{
+			  #cart-link-connected-succinct-drop{
 				  margin-left: 90px;
 					padding-top: 10px;
 					padding-bottom: 6.5px;
@@ -564,7 +564,7 @@
 					border-radius: 12px;	
 					width: 27px;  					
 			  }
-			  #cart-link-full-layers{
+			  #cart-link-full-succinct-drop{
 				  margin-left: 90px;
 					padding-top: 10px;
 					padding-bottom: 6.5px;
@@ -572,37 +572,37 @@
 					padding-left: 8px;		
 					width: 27px;  					
 			  }
-			  #cart-icon-layers,
-			  #cart-icon-full-layers  {
+			  #cart-icon-succinct-drop,
+			  #cart-icon-full-succinct-drop  {
 					  height: 15px;
 				  }
 			  
 								
-		  #word-logo-layers {
+		  #word-logo-succinct-drop {
 			  margin-top: 35px;
 			  width: 90px;	
 		  }
-		  #slogan-layers {
+		  #slogan-succinct-drop {
 			  margin-top: -2px;
 			  font-size: 7px;
 			  letter-spacing: 8px;
 			  margin-left: 8px; 
 			  word-spacing: -3px;
 		  }
-		  #wallet-connected-div-layers{
+		  #wallet-connected-div-succinct-drop{
 			  margin-top: 25px;
 		  }	
-			  #connected-line-layers {
+			  #connected-line-succinct-drop {
 				width: 90px;
 			  }				
-			  #wallet-connected-layers {
+			  #wallet-connected-succinct-drop {
 				  padding-bottom: 12px;
 				  padding-top: 7px;
 				  font-size: 8px;
 				  letter-spacing: 0px;
 				  margin-left: 0px; 
 			  }
-			  #layers {
+			  #succinct-drop {
 				margin-top: 25px;
 			}  					  
   }					
@@ -625,18 +625,18 @@
 	  
 	  
   @media screen and (max-width: 700px) {
-	#layers-wrapper {
+	#succinct-drop-wrapper {
 		  -webkit-text-size-adjust: none;
 		}  	
 		
-		#layers {
+		#succinct-drop {
 			  width: 300px;
 			}  
-			#photo-layers {
+			#photo-succinct-drop {
 				width: 300px;
 				height: 300px;
 			}
-		  #name-layers {
+		  #name-succinct-drop {
 			font-size: 13pt;
 			font-weight: 800;
 			margin-top: 20px;
@@ -644,7 +644,7 @@
 			margin-left: -1px;
 			margin-bottom: 20px;
 		  }
-		  #share-div-layers{
+		  #share-div-succinct-drop{
 			  width: 150px;
 			  height: 80px;
 			  padding-top: 10px;
@@ -653,7 +653,7 @@
 			  padding-bottom: 10px;	
 			  margin-bottom: 30px;		
 		  }
-			  #share-div-desc-layers{
+			  #share-div-desc-succinct-drop{
 				font-weight: 600;
 				font-size: 9px;	
 				letter-spacing: 0px;
@@ -661,7 +661,7 @@
 				margin-bottom: 5px;
 				margin-top: 7px;
 			  }								
-			  #copy-link-layers {
+			  #copy-link-succinct-drop {
 				font-size: 8px;
 				padding-top: 15px;
 				padding-bottom: 15px;
@@ -672,10 +672,10 @@
 				letter-spacing: 2px;
 				margin-bottom: 10px;
 			  }	  	
-				  #copy-link-icon-layers {
+				  #copy-link-icon-succinct-drop {
 					  width: 12px;
 				  }
-		  #creator-owner-desc-layers {
+		  #creator-owner-desc-succinct-drop {
 		  margin-top: 15px;
 			  font-weight: 300;
 			  font-size: 12px;
@@ -683,7 +683,7 @@
 			  padding-left: 0px;
 			  margin-bottom: 0px;
 		  }
-		  #creator-owner-link-layers {
+		  #creator-owner-link-succinct-drop {
 		  text-align: center;
 			  font-weight: 300;
 			  font-size: 13px;
@@ -691,33 +691,33 @@
 			  padding-left: 0px;
   
 		  }			
-		  #line-layers {
+		  #line-succinct-drop {
 		   margin-top: 20px;
 		  }			
-		  #PAP-layers {
+		  #PAP-succinct-drop {
 		  margin-top: 15px;
 			  font-size: 12px;
 		  }
-		  #PAP-layers-before-layers,
-		  #PAP-layers-after-layers {
+		  #PAP-succinct-drop-before-succinct-drop,
+		  #PAP-succinct-drop-after-succinct-drop {
 		  margin-top: -8px;
 			  font-size: 13px;
 		  }
-		  #priceline-layers {
+		  #priceline-succinct-drop {
 			margin-top: 0px;
 		  }	
-		  #yourprice-layers {
+		  #yourprice-succinct-drop {
 		  margin-top: 20px;
 			  font-size: 13px;
 		  }
-		  #price-layers-before-layers,
-		  #price-layers-after-layers {
+		  #price-succinct-drop-before-succinct-drop,
+		  #price-succinct-drop-after-succinct-drop {
 		  margin-top: -10px;
 			  font-size: 15px;
 			  margin-bottom: 20px;	
 		  }			
-		  #layers-add-to-cart-layers, 
-		  #layers-add-to-cart-connected-layers {
+		  #succinct-drop-add-to-cart-succinct-drop, 
+		  #succinct-drop-add-to-cart-connected-succinct-drop {
 				font-size: 9px;
 				padding-top: 20px;
 				padding-bottom: 20px;
@@ -727,7 +727,7 @@
 				letter-spacing: 1px;
 				width: 120px;
 			  }	  
-		   #layers-added-layers {
+		   #succinct-drop-added-succinct-drop {
 				font-size: 9px;
 				padding-top: 20px;
 				padding-bottom: 20px;
@@ -737,7 +737,7 @@
 				letter-spacing: 1px;
 				width: 120px;
 			  }	
-		  #layers-collected-layers {
+		  #succinct-drop-collected-succinct-drop {
 				font-size: 9px;
 				padding-top: 20px;
 				padding-bottom: 20px;
