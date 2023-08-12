@@ -1,7 +1,7 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## An NFT store in which you can't lose money on any sale.
+## Never lose money on NFT sales.
 
 #### Problem:
 Most Artists are living in poverty.
