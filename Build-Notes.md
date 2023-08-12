@@ -78,14 +78,14 @@
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
   
-##### "Congratulations note on being a pioneer of a revolutionary new financial system powering Arells: Price After Purchase. Before Arells, anyone could sell your art lower than the price they bought it. Before Arells, your artwork could be deleniated down $0. But now thanks to Arells, all this changes! History will remember you as a pioneer of a new financial system that changed our relationship with art forever." 
+##### "Welcome! You are now a pioneer of a store that will revolutionize everything. Before Arells, you could lose money on anything you sold, but thanks to our Price After Purchase system, all this changes. So congratulations, because after today, not just the artworld, but finance will change forever." 
                                                 
 _____________________________________________________________________________________________________________________________
   
 ## Fully integrated Asset Store App [Need Android Phone] (After 2 Engineers)
 **NFTs = Digital Assets, Connect Wallet = Connect Store, Public Key = Address, Private Key = Key**
 ***AUM(based off price listed) - Main Metrics [prices even after un-listed are back-logged]***
-***A Stag Market (short for Stagnant Market) is a market in which no new assets are bought or sold during financially difficult times. This is based off the Price After Purchase system powering Arells in which no asset can be sold lower than the price it was previously listed or bought for. This changes our relationships with assets as bear markets within the Arells ecosystem are rendered obsolete.***
+***Possibly lower Royalties to entice more buyers***
 
 ## Store (Default)
 - Includes all Arells Website Components
