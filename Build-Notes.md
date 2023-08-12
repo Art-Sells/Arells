@@ -78,7 +78,7 @@
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
   
-##### "Welcome! You are now a pioneer of a store that will revolutionize everything. Before Arells, you could lose money on anything you sold, but thanks to our Price After Purchase system, all this changes. So congratulations, because after today, not just the artworld, but finance will change forever." 
+##### "Welcome! You are now a pioneer of a store that will revolutionize everything. Before Arells, you could lose money on anything you sold, but thanks to our Price After Purchase system, all this changes. So congratulations, because after today, not just the artworld, but finance will change forever... Thanks to Arells, buyers of your artwork will never lose money if they ever choose to sell your artwork, this means more money not just for you, but for your prospective buyers!" 
                                                 
 _____________________________________________________________________________________________________________________________
   
