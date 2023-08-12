@@ -146,7 +146,7 @@ const paintRain = () => {
 		setCartLinkFullPaintRain(true);
 
 		sessionStorage.setItem('paintRainAdded', 'true');
-		setColourGlassAdded('true');
+		setPaintRainAdded('true');
 	}	
 	
 {/*<!-- Add To Cart function/s above -->*/}

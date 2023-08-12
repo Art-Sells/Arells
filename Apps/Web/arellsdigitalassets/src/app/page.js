@@ -85,7 +85,7 @@ const index = () => {
         <hr id="black-liner"/>
         
         <p id="descriptioner">
-          AN NFT STORE THAT FINANCIALLY EMPOWERS ARTISTS
+          YOU CAN'T LOSE MONEY ON ANY SALE
         </p>
         
         <hr id="black-liner"/>
