@@ -14,8 +14,8 @@ _______________________________________________________________________
 #### Price Afer Purchase:
 Price After Purchase or PAP for short is a market system which assets cannot be sold lower than the price they were either listed or previously purchased for which introduces a new market...
 
-#### Stag Market:
-A market in which no new assets are bought or sold but rather stagnate rendering bear markets obsolete.
+#### Snail Market:
+A market in which no new assets are bought or sold but rather slow down rendering bear markets obsolete.
 
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/Marketing/BeforeandAfterArells.jpg" width="800px"> 
 
