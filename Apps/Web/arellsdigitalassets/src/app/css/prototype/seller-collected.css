@@ -335,7 +335,8 @@
 		  letter-spacing: 0px;	 
 		  margin-left: 0px; 
 		  margin-right: auto;
-		  margin-left: auto;			
+		  margin-left: auto;
+          margin-bottom: 60px;			
 	}	
 	#cart-icon-collected-seller-collected{
 		height: 25px;

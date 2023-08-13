@@ -28,7 +28,7 @@ const prototypeSellerCollected = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-seller-created'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype-seller-collected'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -216,7 +216,7 @@ const prototypeSellerCollected = () => {
 			<div id="profile-img-container-seller-collected">
 				<img id="profile-photo-seller-collected" src="/icons&images/prototype/proto-banner.jpg"/>
 			</div>	 
-			<h1 id="name-seller-collections">Abstract Kadabra</h1>  
+			<h1 id="name-seller-collected">Abstract Kadabra</h1>  
 			<p id="description-seller-collected">Here rests life's abstractions captured in majestic endeavors.</p> 
 			<div id="share-div-seller-collected">
 				<p id="share-div-desc-seller-collected">SHARE</p>
