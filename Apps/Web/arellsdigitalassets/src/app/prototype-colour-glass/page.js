@@ -13,17 +13,6 @@ import Link from 'next/link';
 
 const colourGlass = () => {
 
-	const [elementId, setElementId] = useState('');
-
-	useEffect(() => {
-		// Set the id prop here; this code will only execute on the client-side
-		setElementId('prototype-colour-glass-word');
-	}, []);
-
-
-
-	
-
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
@@ -405,8 +394,6 @@ const colourGlass = () => {
 				</div>	    		
 											
 			</div>
-
-				<p id={elementId}>PROTOTYPE</p>
 		</div>			
 		     
         </>

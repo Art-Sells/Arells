@@ -12,17 +12,6 @@ import Link from 'next/link';
 
 const prototypeSellerCreated = () => {
 
-	const [elementId, setElementId] = useState('');
-
-	useEffect(() => {
-		// Set the id prop here; this code will only execute on the client-side
-		setElementId('prototype-seller-created-word');
-	}, []);
-
-
-
-	
-
 {/*<!-- useState constants below -->*/}
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -816,7 +805,6 @@ const prototypeSellerCreated = () => {
 						)}			     	
 					</div>
 			</div>
-				<p id={elementId}>PROTOTYPE</p>
 		</div>			
 		     
         </>

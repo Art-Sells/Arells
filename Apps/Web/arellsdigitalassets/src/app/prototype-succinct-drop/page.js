@@ -13,16 +13,6 @@ import Link from 'next/link';
 
 const succinctDrop = () => {
 
-	const [elementId, setElementId] = useState('');
-
-	useEffect(() => {
-		// Set the id prop here; this code will only execute on the client-side
-		setElementId('prototype-succinct-drop-word');
-	}, []);
-
-
-
-	
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -405,8 +395,6 @@ const succinctDrop = () => {
 				</div>	    		
 											
 			</div>
-
-				<p id={elementId}>PROTOTYPE</p>
 		</div>			
 		     
         </>

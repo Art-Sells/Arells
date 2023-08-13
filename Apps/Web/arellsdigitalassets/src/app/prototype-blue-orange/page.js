@@ -405,7 +405,7 @@ const blueOrange = () => {
 											
 			</div>
 
-				<p id={elementId}>PROTOTYPE</p>
+				{/* <p id={elementId}>PROTOTYPE</p> */}
 		</div>			
 		     
         </>

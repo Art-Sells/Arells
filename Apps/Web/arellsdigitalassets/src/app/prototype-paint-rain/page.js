@@ -13,17 +13,6 @@ import Link from 'next/link';
 
 const paintRain = () => {
 
-	const [elementId, setElementId] = useState('');
-
-	useEffect(() => {
-		// Set the id prop here; this code will only execute on the client-side
-		setElementId('prototype-paint-rain-word');
-	}, []);
-
-
-
-	
-
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
@@ -405,8 +394,6 @@ const paintRain = () => {
 				</div>	    		
 											
 			</div>
-
-				<p id={elementId}>PROTOTYPE</p>
 		</div>			
 		     
         </>

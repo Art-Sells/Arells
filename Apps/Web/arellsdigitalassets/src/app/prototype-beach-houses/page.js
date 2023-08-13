@@ -12,18 +12,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const beachHouses = () => {
-
-	const [elementId, setElementId] = useState('');
-
-	useEffect(() => {
-		// Set the id prop here; this code will only execute on the client-side
-		setElementId('prototype-beach-houses-word');
-	}, []);
-
-
-
-	
-
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
@@ -405,8 +393,6 @@ const beachHouses = () => {
 				</div>	    		
 											
 			</div>
-
-				<p id={elementId}>PROTOTYPE</p>
 		</div>			
 		     
         </>

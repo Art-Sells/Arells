@@ -9,18 +9,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 const prototypeCart = () => {
-
-
-	const [elementId, setElementId] = useState('');
-
-	useEffect(() => {
-		// Set the id prop here; this code will only execute on the client-side
-		setElementId('prototype-cart-word');
-	}, []);
-
-
-
-
 {/*<!-- useState constants below -->*/}
 	const [purchaseComplete, setPurchaseComplete] = useState(false);
 
@@ -588,7 +576,6 @@ const prototypeCart = () => {
 				</div>					
 
 			)}			
-				<p id={elementId}>PROTOTYPE</p>
 		</div>			
 		     
         </>
