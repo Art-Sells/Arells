@@ -242,7 +242,7 @@ const SuccinctDrop = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -277,7 +277,7 @@ const SuccinctDrop = () => {
 					{cartLinkConnectedSuccinctDrop && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-succinct-drop">
-								<Imagen alt="" id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image alt="" id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -302,7 +302,7 @@ const SuccinctDrop = () => {
 				)}
 
             <div id="succinct-drop">
-                <Image id="photo-succinct-drop" src="/icons&images/prototype/5.jpg"/>
+                <Image alt="" id="photo-succinct-drop" src="/icons&images/prototype/5.jpg"/>
                 <h3 id="name-succinct-drop">Succinct Drop</h3>
                 <div id="share-div-succinct-drop">
                     <p id="share-div-desc-succinct-drop">SHARE</p> 
