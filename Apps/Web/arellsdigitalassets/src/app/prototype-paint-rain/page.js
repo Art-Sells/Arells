@@ -10,9 +10,8 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 
-const paintRain = () => {
+const PaintRain = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -241,7 +240,7 @@ const paintRain = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -265,18 +264,18 @@ const paintRain = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-paint-rain">
-							<Image alt="" id="arells-icon-paint-rain" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<img id="arells-icon-paint-rain" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkPaintRain && (
 						<button id="cart-link-paint-rain" onClick={connectWallet}>
-							<Image alt="" id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<img id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedPaintRain && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-paint-rain">
-								<Image alt="" id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<img id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -284,12 +283,12 @@ const paintRain = () => {
 					{cartLinkFullPaintRain && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-paint-rain">
-								<Image alt="" id="cart-icon-full-paint-rain" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<img id="cart-icon-full-paint-rain" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<Image alt="" id="word-logo-paint-rain" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<img id="word-logo-paint-rain" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-paint-rain">ART SELLS</p>
 				{walletConnectedDivPaintRain && (
 					<div id="wallet-connected-div-paint-rain">
@@ -301,13 +300,13 @@ const paintRain = () => {
 				)}
 
             <div id="paint-rain">
-                <Image alt="" id="photo-paint-rain" src="/icons&images/prototype/6.jpg"/>
+                <img id="photo-paint-rain" src="/icons&images/prototype/6.jpg"/>
                 <h3 id="name-paint-rain">Colour Glass</h3>
                 <div id="share-div-paint-rain">
                     <p id="share-div-desc-paint-rain">SHARE</p> 
                     <button id="copy-link-paint-rain"
                     onClick={copyLink}>
-                        <Image alt="" id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
+                        <img id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -377,19 +376,19 @@ const paintRain = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		
@@ -401,4 +400,4 @@ const paintRain = () => {
     );
 }
 
-export default paintRain;
+export default PaintRain;

@@ -9,9 +9,8 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 
-const prototypeBuyerCreated = () => {
+const PrototypeBuyerCreated = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -167,7 +166,7 @@ const prototypeBuyerCreated = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -181,30 +180,30 @@ const prototypeBuyerCreated = () => {
 			{/*<!-- Change below link after test -->*/}
 				<Link legacyBehavior href="/">
 					<a id="icon-link-buyer-created">
-						<Image alt="" id="arells-icon-buyer-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<img id="arells-icon-buyer-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
 				{cartLinkBuyerCreated && (
 					<button id="cart-link-buyer-created" onClick={connectWallet}>
-						<Image alt="" id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<img id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
 				{cartLinkConnectedBuyerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-connected-buyer-created">
-							<Image alt="" id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<img id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
 				{cartLinkFullBuyerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-full-buyer-created">
-							<Image alt="" id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<img id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
 			</div>
-			<Image alt="" id="word-logo-buyer-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<img id="word-logo-buyer-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-buyer-created">ART SELLS</p>
 			{walletConnectedDivBuyerCreated && (
 				<div id="wallet-connected-div-buyer-created">
@@ -215,7 +214,7 @@ const prototypeBuyerCreated = () => {
 				</div>
 			)}	
 			<div id="profile-img-container-buyer-created">
-				<Image alt="" id="profile-photo-buyer-created" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
+				<img id="profile-photo-buyer-created" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
 			</div>	 
 			<h1 id="name-buyer-created">Unnamed</h1>  
 			<p id="description-buyer-created">Creator & Collector</p> 
@@ -223,7 +222,7 @@ const prototypeBuyerCreated = () => {
 				<p id="share-div-desc-buyer-created">SHARE</p>
 				<button id="copy-link-buyer-created"
 				onClick={copyLink}>
-					<Image alt="" id="copy-link-icon-buyer-created" src="/icons&images/prototype/link.png"/>
+					<img id="copy-link-icon-buyer-created" src="/icons&images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
 			<hr id="profileline-buyer-created"/>
@@ -236,7 +235,7 @@ const prototypeBuyerCreated = () => {
 			</div>
 			<p id="no-art-buyer-created">
 				no art created
-				<Image alt="" id="cart-icon-collected-buyer-created" src="/icons&images/prototype/Add.png"/>
+				<img id="cart-icon-collected-buyer-created" src="/icons&images/prototype/Add.png"/>
 			</p>
 
 		</div>			
@@ -245,4 +244,4 @@ const prototypeBuyerCreated = () => {
     );
 }
 
-export default prototypeBuyerCreated;
+export default PrototypeBuyerCreated;

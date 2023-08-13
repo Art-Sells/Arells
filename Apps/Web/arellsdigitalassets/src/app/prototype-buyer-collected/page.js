@@ -9,9 +9,8 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 
-const prototypeBuyerCollected = () => {
+const PrototypeBuyerCollected = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
@@ -219,7 +218,7 @@ const prototypeBuyerCollected = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -233,18 +232,18 @@ const prototypeBuyerCollected = () => {
 			{/*<!-- Change Link Below After Test -->*/}
 				<Link legacyBehavior href="/">
 					<a id="icon-link-buyer-collected">
-						<Image alt="" id="arells-icon-buyer-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<img id="arells-icon-buyer-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>	
 				{cartLinkBuyerCollected && (
 					<button id="cart-link-buyer-collected" onClick={connectWallet}>
-						<Image alt="" id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>					
 				)}
 				{cartLinkConnectedBuyerCollected && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-connected-buyer-collected">
-							<Image alt="" id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>
 				
@@ -252,13 +251,13 @@ const prototypeBuyerCollected = () => {
 				{cartLinkFullBuyerCollected && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-full-buyer-collected">
-							<Image alt="" id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>
 				
 				)}		
 			</div>
-			<Image alt="" id="word-logo-buyer-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<img id="word-logo-buyer-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-buyer-collected">ART SELLS</p>
 			{walletConnectedDivBuyerCollected && (
 				<div id="wallet-connected-div-buyer-collected">
@@ -269,7 +268,7 @@ const prototypeBuyerCollected = () => {
 				</div>				
 			)}
 			<div id="profile-img-container-buyer-collected">
-				<Image alt="" id="profile-photo-buyer-collected" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
+				<img id="profile-photo-buyer-collected" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
 			</div>	 
 			<h1 id="name-buyer-collected">Unnamed</h1>  
 			<p id="description-buyer-collected">Creator & Collector</p> 
@@ -277,7 +276,7 @@ const prototypeBuyerCollected = () => {
 				<p id="share-div-desc-buyer-collected">SHARE</p>
 				<button id="copy-link-buyer-collected"
 					onClick={copyLink}>
-					<Image alt="" id="copy-link-icon-buyer-collected" src="/icons&images/prototype/link.png"/>
+					<img id="copy-link-icon-buyer-collected" src="/icons&images/prototype/link.png"/>
 					COPY LINK</button>	
 			</div>		
 			<hr id="profileline-buyer-collected"/>
@@ -291,7 +290,7 @@ const prototypeBuyerCollected = () => {
 			{noArtBuyerCollected && (
 				<p id="no-art-buyer-collected">
 					no art collected
-					<Image alt="" id="cart-icon-collected-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+					<img id="cart-icon-collected-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 				</p>
 			)}
 			{collectedItemsBuyerCollected && (
@@ -301,7 +300,7 @@ const prototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-blue-orange">
 								<a target="_self" id="photo-link-buyer-collected">
-									<Image alt="" id="photo-buyer-collected" src="/icons&images/prototype/1.jpg"/>
+									<img id="photo-buyer-collected" src="/icons&images/prototype/1.jpg"/>
 								</a>								
 							</Link>
 							<div id="prices-buyer-collected">
@@ -320,7 +319,7 @@ const prototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-beach-houses">
 								<a target="_self" id="photo-link-buyer-collected">
-									<Image alt="" id="photo-buyer-collected" src="/icons&images/prototype/2.jpg"/>
+									<img id="photo-buyer-collected" src="/icons&images/prototype/2.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
@@ -339,7 +338,7 @@ const prototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-colour-glass">
 								<a target="_self" id="photo-link-buyer-collected">
-									<Image alt="" id="photo-buyer-collected" src="/icons&images/prototype/3.jpg"/>
+									<img id="photo-buyer-collected" src="/icons&images/prototype/3.jpg"/>
 								</a>								
 							</Link>
 							<div id="prices-buyer-collected">
@@ -358,7 +357,7 @@ const prototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-layers">
 								<a target="_self" id="photo-link-buyer-collected">
-									<Image alt="" id="photo-buyer-collected" src="/icons&images/prototype/4.jpg"/>
+									<img id="photo-buyer-collected" src="/icons&images/prototype/4.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
@@ -377,7 +376,7 @@ const prototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-succinct-drop">
 								<a target="_self" id="photo-link-buyer-collected">
-									<Image alt="" id="photo-buyer-collected" src="/icons&images/prototype/5.jpg"/>
+									<img id="photo-buyer-collected" src="/icons&images/prototype/5.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
@@ -396,7 +395,7 @@ const prototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-paint-rain">
 								<a target="_self" id="photo-link-buyer-collected">
-									<Image alt="" id="photo-buyer-collected" src="/icons&images/prototype/6.jpg"/>
+									<img id="photo-buyer-collected" src="/icons&images/prototype/6.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
@@ -418,4 +417,4 @@ const prototypeBuyerCollected = () => {
     );
 }
 
-export default prototypeBuyerCollected;
+export default PrototypeBuyerCollected;

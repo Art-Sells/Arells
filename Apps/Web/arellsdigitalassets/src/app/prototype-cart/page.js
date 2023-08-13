@@ -7,9 +7,8 @@ import '../css/modals/purchase-complete.css';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
-const prototypeCart = () => {
+const PrototypeCart = () => {
 {/*<!-- useState constants below -->*/}
 	const [purchaseComplete, setPurchaseComplete] = useState(false);
 
@@ -394,13 +393,13 @@ const prototypeCart = () => {
 			<div id="header-cart">
 		
 				<a id="icon-link-cart">
-					<Image alt="" id="arells-icon-cart" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+					<img id="arells-icon-cart" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 				</a>		
 				<button id="cart-link-cart">
-					<Image alt="" id="cart-icon-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
+					<img id="cart-icon-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
 				</button>	
 			</div>
-			<Image alt="" id="word-logo-cart" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<img id="word-logo-cart" src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-cart">ART SELLS</p>
 			<div id="wallet-connected-div-cart">
 				<hr id="connected-line-cart"/>
@@ -412,7 +411,7 @@ const prototypeCart = () => {
 				<div id="cart-empty-cart">	
 					<p id="no-art-cart">
 						cart empty
-						<Image alt="" id="cart-icon-collected-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<img id="cart-icon-collected-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</p>
 				</div>
 			)}
@@ -446,7 +445,7 @@ const prototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-blue-orange">
 									<a target="_self" id="photo-link-cart">
-										<Image alt="" id="photo-cart" src="/icons&images/prototype/1.jpg"/>
+										<img id="photo-cart" src="/icons&images/prototype/1.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -459,7 +458,7 @@ const prototypeCart = () => {
 									</div>					  		
 								</div>
 								<button id="remove-cart" onClick={removeBlueOrange}>
-									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -468,7 +467,7 @@ const prototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-beach-houses">
 									<a target="_self" id="photo-link-cart">
-										<Image alt="" id="photo-cart" src="/icons&images/prototype/2.jpg"/>
+										<img id="photo-cart" src="/icons&images/prototype/2.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -481,7 +480,7 @@ const prototypeCart = () => {
 									</div>
 								</div>
 								<button id="remove-cart" onClick={removeBeachHouses}>
-									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>	     	
 							</div>
 						)}
@@ -490,7 +489,7 @@ const prototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-colour-glass">
 									<a target="_self" id="photo-link-cart">
-										<Image alt="" id="photo-cart" src="/icons&images/prototype/3.jpg"/>
+										<img id="photo-cart" src="/icons&images/prototype/3.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -503,7 +502,7 @@ const prototypeCart = () => {
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removeColourGlass}>
-									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}
@@ -512,7 +511,7 @@ const prototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-layers">
 									<a target="_self" id="photo-link-cart">
-										<Image alt="" id="photo-cart" src="/icons&images/prototype/4.jpg"/>
+										<img id="photo-cart" src="/icons&images/prototype/4.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -525,7 +524,7 @@ const prototypeCart = () => {
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removeLayers}>
-									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -534,7 +533,7 @@ const prototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-succinct-drop">
 									<a target="_self" id="photo-link-cart">
-										<Image alt="" id="photo-cart" src="/icons&images/prototype/5.jpg"/>
+										<img id="photo-cart" src="/icons&images/prototype/5.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -547,7 +546,7 @@ const prototypeCart = () => {
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removeSuccinctDrop}>
-									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>			     	
 							</div>
 						)}
@@ -556,7 +555,7 @@ const prototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-paint-rain">
 									<a target="_self" id="photo-link-cart">
-										<Image alt="" id="photo-cart" src="/icons&images/prototype/6.jpg"/>
+										<img id="photo-cart" src="/icons&images/prototype/6.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -569,7 +568,7 @@ const prototypeCart = () => {
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removePaintRain}>
-									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<img id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}
@@ -583,4 +582,4 @@ const prototypeCart = () => {
     );
 }
 
-export default prototypeCart;
+export default PrototypeCart;

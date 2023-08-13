@@ -10,9 +10,8 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 
-const colourGlass = () => {
+const ColourGlass = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -241,7 +240,7 @@ const colourGlass = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -265,18 +264,18 @@ const colourGlass = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-colour-glass">
-							<Image alt="" id="arells-icon-colour-glass" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<img id="arells-icon-colour-glass" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkColourGlass && (
 						<button id="cart-link-colour-glass" onClick={connectWallet}>
-							<Image alt="" id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedColourGlass && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-colour-glass">
-								<Image alt="" id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -284,12 +283,12 @@ const colourGlass = () => {
 					{cartLinkFullColourGlass && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-colour-glass">
-								<Image alt="" id="cart-icon-full-colour-glass" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<img id="cart-icon-full-colour-glass" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<Image alt="" id="word-logo-colour-glass" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<img id="word-logo-colour-glass" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-colour-glass">ART SELLS</p>
 				{walletConnectedDivColourGlass && (
 					<div id="wallet-connected-div-colour-glass">
@@ -301,13 +300,13 @@ const colourGlass = () => {
 				)}
 
             <div id="colour-glass">
-                <Image alt="" id="photo-colour-glass" src="/icons&images/prototype/3.jpg"/>
+                <img id="photo-colour-glass" src="/icons&images/prototype/3.jpg"/>
                 <h3 id="name-colour-glass">Colour Glass</h3>
                 <div id="share-div-colour-glass">
                     <p id="share-div-desc-colour-glass">SHARE</p> 
                     <button id="copy-link-colour-glass"
                     onClick={copyLink}>
-                        <Image alt="" id="copy-link-icon-colour-glass" src="/icons&images/prototype/link.png"/>
+                        <img id="copy-link-icon-colour-glass" src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -377,19 +376,19 @@ const colourGlass = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		
@@ -401,4 +400,4 @@ const colourGlass = () => {
     );
 }
 
-export default colourGlass;
+export default ColourGlass;

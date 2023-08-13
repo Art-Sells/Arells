@@ -10,9 +10,8 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 
-const blueOrange = () => {
+const BlueOrange = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -240,7 +239,7 @@ const blueOrange = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -264,18 +263,18 @@ const blueOrange = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-blue-orange">
-							<Image alt="" id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<img id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkBlueOrange && (
 						<button id="cart-link-blue-orange" onClick={connectWallet}>
-							<Image alt="" id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedBlueOrange && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-blue-orange">
-								<Image alt="" id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -283,12 +282,12 @@ const blueOrange = () => {
 					{cartLinkFullBlueOrange && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-blue-orange">
-								<Image alt="" id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<img id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<Image alt="" id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<img id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-blue-orange">ART SELLS</p>
 				{walletConnectedDivBlueOrange && (
 					<div id="wallet-connected-div-blue-orange">
@@ -300,13 +299,13 @@ const blueOrange = () => {
 				)}
 
 			<div id="blue-orange">
-				<Image alt="" id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
+				<img id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
 				<h3 id="name-blue-orange">Blue Orange</h3> 
 				<div id="share-div-blue-orange">
 					<p id="share-div-desc-blue-orange">SHARE</p>
 					<button id="copy-link-blue-orange"
 					onClick={copyLink}>
-						<Image alt="" id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
+						<img id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
 						COPY LINK
 					</button>	
 				</div>
@@ -376,19 +375,19 @@ const blueOrange = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		
@@ -402,4 +401,4 @@ const blueOrange = () => {
     );
 }
 
-export default blueOrange;
+export default BlueOrange;

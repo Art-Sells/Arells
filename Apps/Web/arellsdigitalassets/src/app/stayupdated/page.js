@@ -6,9 +6,8 @@ import '../css/stayupdated.css';
 import '../css/modals/stayupdated-modal.css';
 import { useState } from 'react';
 import $ from 'jquery';
-import Image from 'next/image';
 
-const stayUpdated = () => {
+const StayUpdated = () => {
 
 	const [showEnterInformation, setEnterInformation] = useState(false);
 	const [showSubmitted, setSubmitted] = useState(false);
@@ -143,7 +142,7 @@ const stayUpdated = () => {
                 <a href="https://twitter.com/arellsofficial"
                     target="_blank"
                     id="contact">
-                    <Image alt="" id="twitter" src="/icons&images/Twitter.png"/>
+                    <img id="twitter" src="/icons&images/Twitter.png"/>
                 </a>  		
             </div>               
 		
@@ -153,4 +152,4 @@ const stayUpdated = () => {
     );
 }
 
-export default stayUpdated;
+export default StayUpdated;

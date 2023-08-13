@@ -10,9 +10,8 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 
-const beachHouses = () => {
+const BeachHouses = () => {
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
@@ -240,7 +239,7 @@ const beachHouses = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -264,18 +263,18 @@ const beachHouses = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-beach-houses">
-							<Image alt="" id="arells-icon-beach-houses" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<img id="arells-icon-beach-houses" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkBeachHouses && (
 						<button id="cart-link-beach-houses" onClick={connectWallet}>
-							<Image alt="" id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedBeachHouses && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-beach-houses">
-								<Image alt="" id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -283,12 +282,12 @@ const beachHouses = () => {
 					{cartLinkFullBeachHouses && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-beach-houses">
-								<Image alt="" id="cart-icon-full-beach-houses" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<img id="cart-icon-full-beach-houses" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<Image alt="" id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<img id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-beach-houses">ART SELLS</p>
 				{walletConnectedDivBeachHouses && (
 					<div id="wallet-connected-div-beach-houses">
@@ -300,13 +299,13 @@ const beachHouses = () => {
 				)}
 
 			<div id="beach-houses">
-				<Image alt="" id="photo-beach-houses" src="/icons&images/prototype/2.jpg"/>
+				<img id="photo-beach-houses" src="/icons&images/prototype/2.jpg"/>
 				<h3 id="name-beach-houses">Beach Houses</h3> 
 				<div id="share-div-beach-houses">
 					<p id="share-div-desc-beach-houses">SHARE</p>
 					<button id="copy-link-beach-houses"
 					onClick={copyLink}>
-						<Image alt="" id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
+						<img id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
 						COPY LINK
 					</button>	
 				</div>
@@ -376,19 +375,19 @@ const beachHouses = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		
@@ -400,4 +399,4 @@ const beachHouses = () => {
     );
 }
 
-export default beachHouses;
+export default BeachHouses;
