@@ -2,7 +2,7 @@
 
 ## MVP
 
-- Start with Polygon/Coinbase (USDC) [use GPT4 as help]
+- Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment Api]
 - Create Separate js.Components Folder
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
@@ -55,6 +55,7 @@
 
 #### Cart
 - Created Cart Number Function (Custom)   
+- Arells x Crossmint [Arells uses Crossmint as it's payment provider] info at bottom.
   
 #### Cash Register
 - Notifications on who bought what at how much (Squared for sharing)  
@@ -109,6 +110,7 @@ ________________________________________________________________________________
   
 #### Wallet:
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
+- Phase out Crossmint (if they won't include our own Logo/Name in Email/Payment info)
 - Rarimo (CCTP) Circle?
 - Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
                                                 
