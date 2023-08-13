@@ -1,7 +1,7 @@
 "use client";
 
 // Change below link after test
-import '../css/prototype/seller-collected.css';
+import '../css/prototype/buyer-created.css';
 import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
 
@@ -10,17 +10,17 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-const prototypeSellerCollected = () => {
+const prototypeBuyerCreated = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 		
-	const [cartLinkSellerCollected, setCartLinkSellerCollected] = useState(true);
-	const [cartLinkConnectedSellerCollected, setCartLinkConnectedSellerCollected] = useState(false);
-	const [cartLinkFullSellerCollected, setCartLinkFullSellerCollected] = useState(false);
+	const [cartLinkBuyerCreated, setCartLinkBuyerCreated] = useState(true);
+	const [cartLinkConnectedBuyerCreated, setCartLinkConnectedBuyerCreated] = useState(false);
+	const [cartLinkFullBuyerCreated, setCartLinkFullBuyerCreated] = useState(false);
 
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
-	const [walletConnectedDivSellerCollected, setWalletConnectedDivSellerCollected] = useState(false);
+	const [walletConnectedDivBuyerCreated, setWalletConnectedDivBuyerCreated] = useState(false);
 {/*<!-- useState constants above -->*/}
 
 {/*<!-- Copy Links function/s below -->*/}
@@ -28,7 +28,7 @@ const prototypeSellerCollected = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-seller-collected'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype-buyer-created'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -50,10 +50,10 @@ const prototypeSellerCollected = () => {
 	const walletConnected = () => {
 		setShowConnectWallet(false);
 		
-		setCartLinkSellerCollected(false);
-		setWalletConnectedDivSellerCollected(true);
+		setCartLinkBuyerCreated(false);
+		setWalletConnectedDivBuyerCreated(true);
 		
-		setCartLinkConnectedSellerCollected(true);
+		setCartLinkConnectedBuyerCreated(true);
 		
 		sessionStorage.setItem('walletConnectedSession', 'true');
 		setWalletConnectedSession('true');
@@ -66,10 +66,10 @@ const prototypeSellerCollected = () => {
 	}, []);
 	useEffect(() => {
 		if (walletConnectedSession === 'true') {
-			setCartLinkSellerCollected(false);
-			setWalletConnectedDivSellerCollected(true);
+			setCartLinkBuyerCreated(false);
+			setWalletConnectedDivBuyerCreated(true);
 			
-			setCartLinkConnectedSellerCollected(true);
+			setCartLinkConnectedBuyerCreated(true);
 		}
 	}, [walletConnectedSession]);
 {/*<!-- Connect Wallet function/s above -->*/}
@@ -100,8 +100,8 @@ const prototypeSellerCollected = () => {
 		if (blueOrangeAdded === 'true' || beachHousesAdded === 'true'
 		|| colourGlassAdded === 'true' || layersAdded === 'true'
 		|| paintRainAdded === 'true' || succinctDropAdded === 'true') {
-			setCartLinkConnectedSellerCollected(false);
-			setCartLinkFullSellerCollected(true);
+			setCartLinkConnectedBuyerCreated(false);
+			setCartLinkFullBuyerCreated(true);
 		}
 	}, [blueOrangeAdded, beachHousesAdded,
 		colourGlassAdded, layersAdded, paintRainAdded,
@@ -118,36 +118,36 @@ const prototypeSellerCollected = () => {
 			<meta charset="UTF-8" />
 			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-			<meta name="title" content="Seller Collections Prototype" />
-			<meta name="description" content="Prototype for Seller Collections" />
+			<meta name="title" content="Buyer Creations Prototype" />
+			<meta name="description" content="Prototype for Buyer Creations" />
 			<meta name="google" content="nositelinkssearchbox" />
 			<meta name="keywords" content="Arells" />
 			<meta name="author" content="Arells" />
 			<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
 
 			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-seller-collections" />
+			<link rel="canonical" href="https://arells.com/prototype-buyer-created" />
 
 			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg" />
 			<meta property="og:site_name" content="Arells" />
 			<meta property="og:type" content="website" />
-			<meta property="og:title" content="Seller Collections Prototype" />
+			<meta property="og:title" content="Buyer Creations Prototype" />
 			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-seller-collected" />
-			<meta property="og:description" content="Prototype for Seller Collections" />
+			<meta property="og:url" content="https://arells.com/prototype-buyer-created" />
+			<meta property="og:description" content="Prototype for Buyer Creations" />
 			<meta property="og:image:type" content="image/jpg" />
 			<meta property="og:image:width" content="700" />
 			<meta property="og:image:height" content="400" />
 
-			<meta name="twitter:title" content="Seller Collectionss Prototype" />
+			<meta name="twitter:title" content="Buyer Creations Prototype" />
 			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg" />
 			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-seller-collected" />
+			<meta name="twitter:url" content="https://arells.com/prototype-buyer-created" />
 			<meta name="twitter:card" content="summary_large_image" />
-			<meta name="twitter:description" content="Prototype for Seller Collections" />
+			<meta name="twitter:description" content="Prototype for Buyer Creations" />
 		</Head>
 
-		<title>Prototype Seller Collections</title>	
+		<title>Prototype Buyer Creations</title>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
@@ -174,68 +174,68 @@ const prototypeSellerCollected = () => {
 {/*<!-- Modals Above -->*/}
 
 
-		<div id="prototype-seller-collected-wrapper">
-				<div id="header-seller-collected">
+		<div id="prototype-buyer-created-wrapper">
+				<div id="header-buyer-created">
 			
 			{/*<!-- Change below link after test -->*/}
 				<Link legacyBehavior href="/">
-					<a id="icon-link-seller-collected">
-						<img id="arells-icon-seller-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+					<a id="icon-link-buyer-created">
+						<img id="arells-icon-buyer-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
-				{cartLinkSellerCollected && (
-					<button id="cart-link-seller-collected" onClick={connectWallet}>
-						<img id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+				{cartLinkBuyerCreated && (
+					<button id="cart-link-buyer-created" onClick={connectWallet}>
+						<img id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
-				{cartLinkConnectedSellerCollected && (
+				{cartLinkConnectedBuyerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
-						<a id="cart-link-connected-seller-collected">
-							<img id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<a id="cart-link-connected-buyer-created">
+							<img id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
-				{cartLinkFullSellerCollected && (
+				{cartLinkFullBuyerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
-						<a id="cart-link-full-seller-collected">
-							<img id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
+						<a id="cart-link-full-buyer-created">
+							<img id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
 			</div>
-			<img id="word-logo-seller-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
-			<p id="slogan-seller-collected">ART SELLS</p>
-			{walletConnectedDivSellerCollected && (
-				<div id="wallet-connected-div-seller-collected">
-					<hr id="connected-line-seller-collected"/>
-					<p id="wallet-connected-seller-collected" >
+			<img id="word-logo-buyer-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<p id="slogan-buyer-created">ART SELLS</p>
+			{walletConnectedDivBuyerCreated && (
+				<div id="wallet-connected-div-buyer-created">
+					<hr id="connected-line-buyer-created"/>
+					<p id="wallet-connected-buyer-created" >
 					WALLET CONNECTED</p>
-					<hr id="connected-line-seller-collected"/>
+					<hr id="connected-line-buyer-created"/>
 				</div>
 			)}	
-			<div id="profile-img-container-seller-collected">
-				<img id="profile-photo-seller-collected" src="/icons&images/prototype/proto-banner.jpg"/>
+			<div id="profile-img-container-buyer-created">
+				<img id="profile-photo-buyer-created" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
 			</div>	 
-			<h1 id="name-seller-collected">Abstract Kadabra</h1>  
-			<p id="description-seller-collected">Here rests life's abstractions captured in majestic endeavors.</p> 
-			<div id="share-div-seller-collected">
-				<p id="share-div-desc-seller-collected">SHARE</p>
-				<button id="copy-link-seller-collected"
+			<h1 id="name-buyer-created">Unnamed</h1>  
+			<p id="description-buyer-created">Creator & Collector</p> 
+			<div id="share-div-buyer-created">
+				<p id="share-div-desc-buyer-created">SHARE</p>
+				<button id="copy-link-buyer-created"
 				onClick={copyLink}>
-					<img id="copy-link-icon-seller-collected" src="/icons&images/prototype/link.png"/>
+					<img id="copy-link-icon-buyer-created" src="/icons&images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
-			<hr id="profileline-seller-collected"/>
-			<div id="created-collected-seller-collected">
+			<hr id="profileline-buyer-created"/>
+			<div id="created-collected-buyer-created">
+				<a id="created-buyer-created">Created</a>	
 				{/*<!-- Change below link after test -->*/}	
-				<Link legacyBehavior href="/prototype-seller-created">
-					<a id="created-seller-collected" >Created</a>		
+				<Link legacyBehavior href="/prototype-buyer-collected">
+					<a id="collected-buyer-created" >Collected</a>		
 				</Link>	
-				<a id="collected-seller-collected">Collected</a>	
 			</div>
-			<p id="no-art-seller-collected">
-				no art collected
-				<img id="cart-icon-collected-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+			<p id="no-art-buyer-created">
+				no art created
+				<img id="cart-icon-collected-buyer-created" src="/icons&images/prototype/Add.png"/>
 			</p>
 
 		</div>			
@@ -244,4 +244,4 @@ const prototypeSellerCollected = () => {
     );
 }
 
-export default prototypeSellerCollected;
+export default prototypeBuyerCreated;

@@ -139,7 +139,7 @@ const prototypeSellerCollected = () => {
 			<meta property="og:image:width" content="700" />
 			<meta property="og:image:height" content="400" />
 
-			<meta name="twitter:title" content="Seller Collectionss Prototype" />
+			<meta name="twitter:title" content="Seller Collections Prototype" />
 			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg" />
 			{/*<!-- Change below link after test -->*/}
 			<meta name="twitter:url" content="https://arells.com/prototype-seller-collected" />
