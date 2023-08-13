@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const PrototypeSellerCreated = () => {
+const prototypeSellerCreated = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
@@ -524,7 +524,7 @@ const PrototypeSellerCreated = () => {
 				<Image alt="" id="profile-photo-seller-created" src="/icons&images/prototype/proto-banner.jpg"/>
 			</div>	 
 			<h1 id="name-seller-created">Abstract Kadabra</h1>  
-			<p id="description-seller-created">Here rests life's abstractions captured in majestic endeavors.</p> 
+			<p id="description-seller-created">Here rests life&apos;s abstractions captured in majestic endeavors.</p> 
 			<div id="share-div-seller-created">
 				<p id="share-div-desc-seller-created">SHARE</p>
 				<button id="copy-link-seller-created"
@@ -812,4 +812,4 @@ const PrototypeSellerCreated = () => {
     );
 }
 
-export default PrototypeSellerCreated;
+export default prototypeSellerCreated;

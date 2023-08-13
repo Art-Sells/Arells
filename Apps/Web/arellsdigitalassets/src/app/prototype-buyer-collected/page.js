@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const PrototypeBuyerCollected = () => {
+const prototypeBuyerCollected = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
@@ -418,4 +418,4 @@ const PrototypeBuyerCollected = () => {
     );
 }
 
-export default PrototypeBuyerCollected;
+export default prototypeBuyerCollected;

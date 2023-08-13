@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const BeachHouses = () => {
+const beachHouses = () => {
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
@@ -400,4 +400,4 @@ const BeachHouses = () => {
     );
 }
 
-export default BeachHouses;
+export default beachHouses;

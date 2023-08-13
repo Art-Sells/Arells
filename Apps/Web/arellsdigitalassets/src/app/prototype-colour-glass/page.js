@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const ColourGlass = () => {
+const colourGlass = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -401,4 +401,4 @@ const ColourGlass = () => {
     );
 }
 
-export default ColourGlass;
+export default colourGlass;

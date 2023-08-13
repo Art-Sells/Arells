@@ -9,7 +9,7 @@ import Head from 'next/head'
 import Link from 'next/link';
 import Image from 'next/image';
 
-const Index = () => {
+const index = () => {
   useEffect(() => {
     function resetPrototype() {
       sessionStorage.removeItem('walletConnectedSession'); 
@@ -118,4 +118,4 @@ const Index = () => {
   );
 }
 
-export default Index;
+export default index;

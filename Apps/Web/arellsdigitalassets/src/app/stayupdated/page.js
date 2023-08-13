@@ -8,7 +8,7 @@ import { useState } from 'react';
 import $ from 'jquery';
 import Image from 'next/image';
 
-const StayUpdated = () => {
+const stayUpdated = () => {
 
 	const [showEnterInformation, setEnterInformation] = useState(false);
 	const [showSubmitted, setSubmitted] = useState(false);
@@ -153,4 +153,4 @@ const StayUpdated = () => {
     );
 }
 
-export default StayUpdated;
+export default stayUpdated;

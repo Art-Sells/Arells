@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const PrototypeCart = () => {
+const prototypeCart = () => {
 {/*<!-- useState constants below -->*/}
 	const [purchaseComplete, setPurchaseComplete] = useState(false);
 
@@ -84,7 +84,7 @@ const PrototypeCart = () => {
 			setFees(prevFees => fee * beachHousesPrice + prevFees);
 			setTotal(prevTotal => beachHousesPrice + prevTotal);
 		}
-	}, [blueOrangeAdded, royalty, blueOrangePrice, fee]);
+	}, [beachHousesAdded, royalty, beachHousesPrice, fee]);
 
 	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	useEffect(() => {
@@ -534,7 +534,7 @@ const PrototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-succinct-drop">
 									<a target="_self" id="photo-link-cart">
-										<Image id="photo-cart" src="/icons&images/prototype/5.jpg"/>
+										<Image alt="" id="photo-cart" src="/icons&images/prototype/5.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -583,4 +583,4 @@ const PrototypeCart = () => {
     );
 }
 
-export default PrototypeCart;
+export default prototypeCart;

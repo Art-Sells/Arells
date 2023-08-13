@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const SuccinctDrop = () => {
+const succinctDrop = () => {
 
 
 {/*<!-- useState constants below -->*/}
@@ -402,4 +402,4 @@ const SuccinctDrop = () => {
     );
 }
 
-export default SuccinctDrop;
+export default succinctDrop;

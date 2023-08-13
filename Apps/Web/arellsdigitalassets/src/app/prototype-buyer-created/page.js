@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const PrototypeBuyerCreated = () => {
+const prototypeBuyerCreated = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -245,4 +245,4 @@ const PrototypeBuyerCreated = () => {
     );
 }
 
-export default PrototypeBuyerCreated;
+export default prototypeBuyerCreated;

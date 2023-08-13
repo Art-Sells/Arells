@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const PaintRain = () => {
+const paintRain = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -401,4 +401,4 @@ const PaintRain = () => {
     );
 }
 
-export default PaintRain;
+export default paintRain;

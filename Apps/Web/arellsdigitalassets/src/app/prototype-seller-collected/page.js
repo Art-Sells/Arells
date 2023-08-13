@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const PrototypeSellerCollected = () => {
+const prototypeSellerCollected = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -218,7 +218,7 @@ const PrototypeSellerCollected = () => {
 				<Image alt="" id="profile-photo-seller-collected" src="/icons&images/prototype/proto-banner.jpg"/>
 			</div>	 
 			<h1 id="name-seller-collected">Abstract Kadabra</h1>  
-			<p id="description-seller-collected">Here rests life's abstractions captured in majestic endeavors.</p> 
+			<p id="description-seller-collected">Here rests life&apos;s abstractions captured in majestic endeavors.</p> 
 			<div id="share-div-seller-collected">
 				<p id="share-div-desc-seller-collected">SHARE</p>
 				<button id="copy-link-seller-collected"
@@ -245,4 +245,4 @@ const PrototypeSellerCollected = () => {
     );
 }
 
-export default PrototypeSellerCollected;
+export default prototypeSellerCollected;
