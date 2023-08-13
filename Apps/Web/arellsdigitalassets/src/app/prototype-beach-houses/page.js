@@ -240,7 +240,7 @@ const BeachHouses = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -264,18 +264,18 @@ const BeachHouses = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-beach-houses">
-							<Image id="arells-icon-beach-houses" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image alt="" id="arells-icon-beach-houses" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkBeachHouses && (
 						<button id="cart-link-beach-houses" onClick={connectWallet}>
-							<Image id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image alt="" id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedBeachHouses && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-beach-houses">
-								<Image id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image alt="" id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -283,12 +283,12 @@ const BeachHouses = () => {
 					{cartLinkFullBeachHouses && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-beach-houses">
-								<Image id="cart-icon-full-beach-houses" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image alt="" id="cart-icon-full-beach-houses" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<Image id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image alt="" id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-beach-houses">ART SELLS</p>
 				{walletConnectedDivBeachHouses && (
 					<div id="wallet-connected-div-beach-houses">
@@ -300,13 +300,13 @@ const BeachHouses = () => {
 				)}
 
 			<div id="beach-houses">
-				<Image id="photo-beach-houses" src="/icons&images/prototype/2.jpg"/>
+				<Image alt="" id="photo-beach-houses" src="/icons&images/prototype/2.jpg"/>
 				<h3 id="name-beach-houses">Beach Houses</h3> 
 				<div id="share-div-beach-houses">
 					<p id="share-div-desc-beach-houses">SHARE</p>
 					<button id="copy-link-beach-houses"
 					onClick={copyLink}>
-						<Image id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
+						<Image alt="" id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
 						COPY LINK
 					</button>	
 				</div>
@@ -376,19 +376,19 @@ const BeachHouses = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

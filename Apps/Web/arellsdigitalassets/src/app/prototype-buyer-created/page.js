@@ -167,7 +167,7 @@ const PrototypeBuyerCreated = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -181,30 +181,30 @@ const PrototypeBuyerCreated = () => {
 			{/*<!-- Change below link after test -->*/}
 				<Link legacyBehavior href="/">
 					<a id="icon-link-buyer-created">
-						<Image id="arells-icon-buyer-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<Image alt="" id="arells-icon-buyer-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
 				{cartLinkBuyerCreated && (
 					<button id="cart-link-buyer-created" onClick={connectWallet}>
-						<Image id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<Image alt="" id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
 				{cartLinkConnectedBuyerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-connected-buyer-created">
-							<Image id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image alt="" id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
 				{cartLinkFullBuyerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-full-buyer-created">
-							<Image id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<Image alt="" id="cart-icon-buyer-created" src="/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
 			</div>
-			<Image id="word-logo-buyer-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<Image alt="" id="word-logo-buyer-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-buyer-created">ART SELLS</p>
 			{walletConnectedDivBuyerCreated && (
 				<div id="wallet-connected-div-buyer-created">
@@ -215,7 +215,7 @@ const PrototypeBuyerCreated = () => {
 				</div>
 			)}	
 			<div id="profile-img-container-buyer-created">
-				<Image id="profile-photo-buyer-created" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
+				<Image alt="" id="profile-photo-buyer-created" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
 			</div>	 
 			<h1 id="name-buyer-created">Unnamed</h1>  
 			<p id="description-buyer-created">Creator & Collector</p> 
@@ -236,7 +236,7 @@ const PrototypeBuyerCreated = () => {
 			</div>
 			<p id="no-art-buyer-created">
 				no art created
-				<Image id="cart-icon-collected-buyer-created" src="/icons&images/prototype/Add.png"/>
+				<Image alt="" id="cart-icon-collected-buyer-created" src="/icons&images/prototype/Add.png"/>
 			</p>
 
 		</div>			

@@ -73,11 +73,11 @@ const Index = () => {
 
       <div id="overlayy">
   
-        <Image id="arells-iconn" src="/icons&images/Arells-Icon.png"/>
+        <Image alt="" id="arells-iconn" src="/icons&images/Arells-Icon.png"/>
       
         <br/>
         
-        <Image id="word-logoo" src="/icons&images/Arells-Logo-Ebony.png"/>	
+        <Image alt="" id="word-logoo" src="/icons&images/Arells-Logo-Ebony.png"/>	
         
         <br/>
         
@@ -109,7 +109,7 @@ const Index = () => {
           <a href="https://twitter.com/arellsofficial"
               target="_blank"
               id="contactt">
-              <Image id="twitterr" src="/icons&images/Twitter.png"/>
+              <Image alt="" id="twitterr" src="/icons&images/Twitter.png"/>
           </a>  		
         </div>             
     

@@ -143,7 +143,7 @@ const StayUpdated = () => {
                 <a href="https://twitter.com/arellsofficial"
                     target="_blank"
                     id="contact">
-                    <Image id="twitter" src="/icons&images/Twitter.png"/>
+                    <Image alt="" id="twitter" src="/icons&images/Twitter.png"/>
                 </a>  		
             </div>               
 		

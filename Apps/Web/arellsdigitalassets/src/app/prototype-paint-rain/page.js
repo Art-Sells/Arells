@@ -241,7 +241,7 @@ const PaintRain = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -265,18 +265,18 @@ const PaintRain = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-paint-rain">
-							<Image id="arells-icon-paint-rain" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image alt="" id="arells-icon-paint-rain" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkPaintRain && (
 						<button id="cart-link-paint-rain" onClick={connectWallet}>
-							<Image id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image alt="" id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedPaintRain && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-paint-rain">
-								<Image id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image alt="" id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -284,12 +284,12 @@ const PaintRain = () => {
 					{cartLinkFullPaintRain && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-paint-rain">
-								<Image id="cart-icon-full-paint-rain" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image alt="" id="cart-icon-full-paint-rain" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<Image id="word-logo-paint-rain" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image alt="" id="word-logo-paint-rain" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-paint-rain">ART SELLS</p>
 				{walletConnectedDivPaintRain && (
 					<div id="wallet-connected-div-paint-rain">
@@ -301,13 +301,13 @@ const PaintRain = () => {
 				)}
 
             <div id="paint-rain">
-                <Image id="photo-paint-rain" src="/icons&images/prototype/6.jpg"/>
+                <Image alt="" id="photo-paint-rain" src="/icons&images/prototype/6.jpg"/>
                 <h3 id="name-paint-rain">Colour Glass</h3>
                 <div id="share-div-paint-rain">
                     <p id="share-div-desc-paint-rain">SHARE</p> 
                     <button id="copy-link-paint-rain"
                     onClick={copyLink}>
-                        <Image id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
+                        <Image alt="" id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -377,19 +377,19 @@ const PaintRain = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

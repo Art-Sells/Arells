@@ -394,13 +394,13 @@ const PrototypeCart = () => {
 			<div id="header-cart">
 		
 				<a id="icon-link-cart">
-					<Image id="arells-icon-cart" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+					<Image alt="" id="arells-icon-cart" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 				</a>		
 				<button id="cart-link-cart">
-					<Image id="cart-icon-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
+					<Image alt="" id="cart-icon-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
 				</button>	
 			</div>
-			<Image id="word-logo-cart" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<Image alt="" id="word-logo-cart" src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-cart">ART SELLS</p>
 			<div id="wallet-connected-div-cart">
 				<hr id="connected-line-cart"/>
@@ -412,7 +412,7 @@ const PrototypeCart = () => {
 				<div id="cart-empty-cart">	
 					<p id="no-art-cart">
 						cart empty
-						<Image id="cart-icon-collected-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<Image alt="" id="cart-icon-collected-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</p>
 				</div>
 			)}
@@ -446,7 +446,7 @@ const PrototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-blue-orange">
 									<a target="_self" id="photo-link-cart">
-										<Image id="photo-cart" src="/icons&images/prototype/1.jpg"/>
+										<Image alt="" id="photo-cart" src="/icons&images/prototype/1.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -459,7 +459,7 @@ const PrototypeCart = () => {
 									</div>					  		
 								</div>
 								<button id="remove-cart" onClick={removeBlueOrange}>
-									<Image id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -468,7 +468,7 @@ const PrototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-beach-houses">
 									<a target="_self" id="photo-link-cart">
-										<Image id="photo-cart" src="/icons&images/prototype/2.jpg"/>
+										<Image alt="" id="photo-cart" src="/icons&images/prototype/2.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -481,7 +481,7 @@ const PrototypeCart = () => {
 									</div>
 								</div>
 								<button id="remove-cart" onClick={removeBeachHouses}>
-									<Image id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>	     	
 							</div>
 						)}
@@ -490,7 +490,7 @@ const PrototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-colour-glass">
 									<a target="_self" id="photo-link-cart">
-										<Image id="photo-cart" src="/icons&images/prototype/3.jpg"/>
+										<Image alt="" id="photo-cart" src="/icons&images/prototype/3.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -503,7 +503,7 @@ const PrototypeCart = () => {
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removeColourGlass}>
-									<Image id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}
@@ -512,7 +512,7 @@ const PrototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-layers">
 									<a target="_self" id="photo-link-cart">
-										<Image id="photo-cart" src="/icons&images/prototype/4.jpg"/>
+										<Image alt="" id="photo-cart" src="/icons&images/prototype/4.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -525,7 +525,7 @@ const PrototypeCart = () => {
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removeLayers}>
-									<Image id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -547,7 +547,7 @@ const PrototypeCart = () => {
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removeSuccinctDrop}>
-									<Image id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>			     	
 							</div>
 						)}
@@ -556,7 +556,7 @@ const PrototypeCart = () => {
 							{/* Change below link after test */}
 								<Link legacyBehavior href="/prototype-paint-rain">
 									<a target="_self" id="photo-link-cart">
-										<Image id="photo-cart" src="/icons&images/prototype/6.jpg"/>
+										<Image alt="" id="photo-cart" src="/icons&images/prototype/6.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -569,7 +569,7 @@ const PrototypeCart = () => {
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removePaintRain}>
-									<Image id="del-cart" src="/icons&images/prototype/delete.png"/>
+									<Image alt="" id="del-cart" src="/icons&images/prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}

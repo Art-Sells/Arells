@@ -266,18 +266,18 @@ const SuccinctDrop = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-succinct-drop">
-							<Image id="arells-icon-succinct-drop" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image alt="" id="arells-icon-succinct-drop" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkSuccinctDrop && (
 						<button id="cart-link-succinct-drop" onClick={connectWallet}>
-							<Image id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image alt="" id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedSuccinctDrop && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-succinct-drop">
-								<Image id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Imagen alt="" id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -285,12 +285,12 @@ const SuccinctDrop = () => {
 					{cartLinkFullSuccinctDrop && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-succinct-drop">
-								<Image id="cart-icon-full-succinct-drop" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image alt="" id="cart-icon-full-succinct-drop" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<Image id="word-logo-succinct-drop" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image alt="" id="word-logo-succinct-drop" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-succinct-drop">ART SELLS</p>
 				{walletConnectedDivSuccinctDrop && (
 					<div id="wallet-connected-div-succinct-drop">
@@ -308,7 +308,7 @@ const SuccinctDrop = () => {
                     <p id="share-div-desc-succinct-drop">SHARE</p> 
                     <button id="copy-link-succinct-drop"
                     onClick={copyLink}>
-                        <Image id="copy-link-icon-succinct-drop" src="/icons&images/prototype/link.png"/>
+                        <Image alt="" id="copy-link-icon-succinct-drop" src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -378,19 +378,19 @@ const SuccinctDrop = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

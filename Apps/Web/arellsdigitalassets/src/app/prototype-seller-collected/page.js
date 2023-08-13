@@ -167,7 +167,7 @@ const PrototypeSellerCollected = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -181,30 +181,30 @@ const PrototypeSellerCollected = () => {
 			{/*<!-- Change below link after test -->*/}
 				<Link legacyBehavior href="/">
 					<a id="icon-link-seller-collected">
-						<Image id="arells-icon-seller-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<Image alt="" id="arells-icon-seller-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
 				{cartLinkSellerCollected && (
 					<button id="cart-link-seller-collected" onClick={connectWallet}>
-						<Image id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<Image alt="" id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
 				{cartLinkConnectedSellerCollected && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-connected-seller-collected">
-							<Image id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image alt="" id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
 				{cartLinkFullSellerCollected && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-full-seller-collected">
-							<Image id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<Image alt="" id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
 			</div>
-			<Image id="word-logo-seller-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<Image alt="" id="word-logo-seller-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-seller-collected">ART SELLS</p>
 			{walletConnectedDivSellerCollected && (
 				<div id="wallet-connected-div-seller-collected">
@@ -215,7 +215,7 @@ const PrototypeSellerCollected = () => {
 				</div>
 			)}	
 			<div id="profile-img-container-seller-collected">
-				<Image id="profile-photo-seller-collected" src="/icons&images/prototype/proto-banner.jpg"/>
+				<Image alt="" id="profile-photo-seller-collected" src="/icons&images/prototype/proto-banner.jpg"/>
 			</div>	 
 			<h1 id="name-seller-collected">Abstract Kadabra</h1>  
 			<p id="description-seller-collected">Here rests life's abstractions captured in majestic endeavors.</p> 
@@ -223,7 +223,7 @@ const PrototypeSellerCollected = () => {
 				<p id="share-div-desc-seller-collected">SHARE</p>
 				<button id="copy-link-seller-collected"
 				onClick={copyLink}>
-					<Image id="copy-link-icon-seller-collected" src="/icons&images/prototype/link.png"/>
+					<Image alt="" id="copy-link-icon-seller-collected" src="/icons&images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
 			<hr id="profileline-seller-collected"/>
@@ -236,7 +236,7 @@ const PrototypeSellerCollected = () => {
 			</div>
 			<p id="no-art-seller-collected">
 				no art collected
-				<Image id="cart-icon-collected-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+				<Image alt="" id="cart-icon-collected-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 			</p>
 
 		</div>			

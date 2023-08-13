@@ -473,7 +473,7 @@ const PrototypeSellerCreated = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -487,30 +487,30 @@ const PrototypeSellerCreated = () => {
 			{/*<!-- Change below link after test -->*/}
 				<Link legacyBehavior href="/">
 					<a id="icon-link-seller-created">
-						<Image id="arells-icon-seller-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<Image alt="" id="arells-icon-seller-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
 				{cartLinkSellerCreated && (
 					<button id="cart-link-seller-created" onClick={connectWallet}>
-						<Image id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<Image alt="" id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
 				{cartLinkConnectedSellerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-connected-seller-created">
-							<Image id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image alt="" id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
 				{cartLinkFullSellerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-full-seller-created">
-							<Image id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<Image alt="" id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
 			</div>
-			<Image id="word-logo-seller-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<Image alt="" id="word-logo-seller-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-seller-created">ART SELLS</p>
 			{walletConnectedDivSellerCreated && (
 				<div id="wallet-connected-div-seller-created">
@@ -521,7 +521,7 @@ const PrototypeSellerCreated = () => {
 				</div>
 			)}	
 			<div id="profile-img-container-seller-created">
-				<Image id="profile-photo-seller-created" src="/icons&images/prototype/proto-banner.jpg"/>
+				<Image alt="" id="profile-photo-seller-created" src="/icons&images/prototype/proto-banner.jpg"/>
 			</div>	 
 			<h1 id="name-seller-created">Abstract Kadabra</h1>  
 			<p id="description-seller-created">Here rests life's abstractions captured in majestic endeavors.</p> 
@@ -529,7 +529,7 @@ const PrototypeSellerCreated = () => {
 				<p id="share-div-desc-seller-created">SHARE</p>
 				<button id="copy-link-seller-created"
 				onClick={copyLink}>
-					<Image id="copy-link-icon-seller-created" src="/icons&images/prototype/link.png"/>
+					<Image alt="" id="copy-link-icon-seller-created" src="/icons&images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
 			<hr id="profileline-seller-created"/>
@@ -545,7 +545,7 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-blue-orange">
 							<a target="_self" id="photo-link-seller-created">
-								<Image id="photo-seller-created" src="/icons&images/prototype/1.jpg"/>
+								<Image alt="" id="photo-seller-created" src="/icons&images/prototype/1.jpg"/>
 							</a>
 						</Link>	
 						{blueOrangePricesBeforeSellerCreated && (
@@ -589,7 +589,7 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-beach-houses">
 							<a target="_self" id="photo-link-seller-created">
-								<Image id="photo-seller-created" src="/icons&images/prototype/2.jpg"/>
+								<Image alt="" id="photo-seller-created" src="/icons&images/prototype/2.jpg"/>
 							</a>
 						</Link>	
 						{beachHousesPricesBeforeSellerCreated && (
@@ -633,7 +633,7 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-colour-glass">
 							<a target="_self" id="photo-link-seller-created">
-								<Image id="photo-seller-created" src="/icons&images/prototype/3.jpg"/>
+								<Image alt="" id="photo-seller-created" src="/icons&images/prototype/3.jpg"/>
 							</a>
 						</Link>	
 						{colourGlassPricesBeforeSellerCreated && (
@@ -677,7 +677,7 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-layers">
 							<a target="_self" id="photo-link-seller-created">
-								<Image id="photo-seller-created" src="/icons&images/prototype/4.jpg"/>
+								<Image alt="" id="photo-seller-created" src="/icons&images/prototype/4.jpg"/>
 							</a>
 						</Link>	
 						{layersPricesBeforeSellerCreated && (
@@ -721,7 +721,7 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-succinct-drop">
 							<a target="_self" id="photo-link-seller-created">
-								<Image id="photo-seller-created" src="/icons&images/prototype/5.jpg"/>
+								<Image alt="" id="photo-seller-created" src="/icons&images/prototype/5.jpg"/>
 							</a>
 						</Link>	
 						{succinctDropPricesBeforeSellerCreated && (
@@ -765,7 +765,7 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-paint-rain">
 							<a target="_self" id="photo-link-seller-created">
-								<Image id="photo-seller-created" src="/icons&images/prototype/6.jpg"/>
+								<Image alt="" id="photo-seller-created" src="/icons&images/prototype/6.jpg"/>
 							</a>
 						</Link>			
 						{paintRainPricesBeforeSellerCreated && (

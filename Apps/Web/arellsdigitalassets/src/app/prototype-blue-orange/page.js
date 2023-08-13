@@ -251,7 +251,7 @@ const BlueOrange = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -275,18 +275,18 @@ const BlueOrange = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-blue-orange">
-							<Image id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image alt="" id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkBlueOrange && (
 						<button id="cart-link-blue-orange" onClick={connectWallet}>
-							<Image id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image alt="" id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedBlueOrange && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-blue-orange">
-								<Image id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image alt="" id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -294,12 +294,12 @@ const BlueOrange = () => {
 					{cartLinkFullBlueOrange && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-blue-orange">
-								<Image id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image alt="" id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<Image id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image alt="" id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-blue-orange">ART SELLS</p>
 				{walletConnectedDivBlueOrange && (
 					<div id="wallet-connected-div-blue-orange">
@@ -311,13 +311,13 @@ const BlueOrange = () => {
 				)}
 
 			<div id="blue-orange">
-				<Image id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
+				<Image alt="" id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
 				<h3 id="name-blue-orange">Blue Orange</h3> 
 				<div id="share-div-blue-orange">
 					<p id="share-div-desc-blue-orange">SHARE</p>
 					<button id="copy-link-blue-orange"
 					onClick={copyLink}>
-						<Image id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
+						<Image alt="" id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
 						COPY LINK
 					</button>	
 				</div>
@@ -387,19 +387,19 @@ const BlueOrange = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

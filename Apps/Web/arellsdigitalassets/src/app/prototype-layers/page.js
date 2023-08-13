@@ -241,7 +241,7 @@ const Layers = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<Image id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image alt="" id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -265,18 +265,18 @@ const Layers = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-layers">
-							<Image id="arells-icon-layers" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image alt="" id="arells-icon-layers" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkLayers && (
 						<button id="cart-link-layers" onClick={connectWallet}>
-							<Image id="cart-icon-layers" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image alt="" id="cart-icon-layers" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedLayers && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-layers">
-								<Image id="cart-icon-layers" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image alt="" id="cart-icon-layers" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -284,12 +284,12 @@ const Layers = () => {
 					{cartLinkFullLayers && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-layers">
-								<Image id="cart-icon-full-layers" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image alt="" id="cart-icon-full-layers" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<Image id="word-logo-layers" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image alt="" id="word-logo-layers" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-layers">ART SELLS</p>
 				{walletConnectedDivLayers && (
 					<div id="wallet-connected-div-layers">
@@ -301,13 +301,13 @@ const Layers = () => {
 				)}
 
             <div id="layers">
-                <Image id="photo-layers" src="/icons&images/prototype/4.jpg"/>
+                <Image alt="" id="photo-layers" src="/icons&images/prototype/4.jpg"/>
                 <h3 id="name-layers">Layers</h3>
                 <div id="share-div-layers">
                     <p id="share-div-desc-layers">SHARE</p> 
                     <button id="copy-link-layers"
                     onClick={copyLink}>
-                        <Image id="copy-link-icon-layers" src="/icons&images/prototype/link.png"/>
+                        <Image alt="" id="copy-link-icon-layers" src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -377,19 +377,19 @@ const Layers = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<Image alt="" id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		
