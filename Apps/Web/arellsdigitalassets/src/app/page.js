@@ -85,7 +85,7 @@ const index = () => {
         <hr id="black-liner"/>
         
         <p id="descriptioner">
-          YOU CAN'T LOSE MONEY ON ANY SALE
+          NEVER LOSE MONEY ON NFT SALES
         </p>
         
         <hr id="black-liner"/>
