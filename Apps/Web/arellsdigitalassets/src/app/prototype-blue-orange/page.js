@@ -10,8 +10,9 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
-const blueOrange = () => {
+const BlueOrange = () => {
 
 	const [elementId, setElementId] = useState('');
 
@@ -250,7 +251,7 @@ const blueOrange = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -274,18 +275,18 @@ const blueOrange = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-blue-orange">
-							<img id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image id="arells-icon-blue-orange" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkBlueOrange && (
 						<button id="cart-link-blue-orange" onClick={connectWallet}>
-							<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedBlueOrange && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-blue-orange">
-								<img id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image id="cart-icon-blue-orange" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -293,12 +294,12 @@ const blueOrange = () => {
 					{cartLinkFullBlueOrange && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-blue-orange">
-								<img id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image id="cart-icon-full-blue-orange" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<img id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-blue-orange">ART SELLS</p>
 				{walletConnectedDivBlueOrange && (
 					<div id="wallet-connected-div-blue-orange">
@@ -310,13 +311,13 @@ const blueOrange = () => {
 				)}
 
 			<div id="blue-orange">
-				<img id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
+				<Image id="photo-blue-orange" src="/icons&images/prototype/1.jpg"/>
 				<h3 id="name-blue-orange">Blue Orange</h3> 
 				<div id="share-div-blue-orange">
 					<p id="share-div-desc-blue-orange">SHARE</p>
 					<button id="copy-link-blue-orange"
 					onClick={copyLink}>
-						<img id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
+						<Image id="copy-link-icon-blue-orange" src="/icons&images/prototype/link.png"/>
 						COPY LINK
 					</button>	
 				</div>
@@ -386,30 +387,30 @@ const blueOrange = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<Image id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<Image id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		
 											
 			</div>
 
-				{/* <p id={elementId}>PROTOTYPE</p> */}
+				
 		</div>			
 		     
         </>
     );
 }
 
-export default blueOrange;
+export default BlueOrange;

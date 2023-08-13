@@ -24,6 +24,7 @@
     "ipfs-http-client": "^60.0.0",
     "jquery": "^3.7.0",
     "next": "13.4.2",
+    "next-sitemap": "^4.2.2",
     "postcss": "8.4.23",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

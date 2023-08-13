@@ -10,8 +10,9 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
-const paintRain = () => {
+const PaintRain = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -264,18 +265,18 @@ const paintRain = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-paint-rain">
-							<img id="arells-icon-paint-rain" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image id="arells-icon-paint-rain" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkPaintRain && (
 						<button id="cart-link-paint-rain" onClick={connectWallet}>
-							<img id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedPaintRain && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-paint-rain">
-								<img id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image id="cart-icon-paint-rain" src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -283,12 +284,12 @@ const paintRain = () => {
 					{cartLinkFullPaintRain && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-paint-rain">
-								<img id="cart-icon-full-paint-rain" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image id="cart-icon-full-paint-rain" src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<img id="word-logo-paint-rain" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image id="word-logo-paint-rain" src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-paint-rain">ART SELLS</p>
 				{walletConnectedDivPaintRain && (
 					<div id="wallet-connected-div-paint-rain">
@@ -300,13 +301,13 @@ const paintRain = () => {
 				)}
 
             <div id="paint-rain">
-                <img id="photo-paint-rain" src="/icons&images/prototype/6.jpg"/>
+                <Image id="photo-paint-rain" src="/icons&images/prototype/6.jpg"/>
                 <h3 id="name-paint-rain">Colour Glass</h3>
                 <div id="share-div-paint-rain">
                     <p id="share-div-desc-paint-rain">SHARE</p> 
                     <button id="copy-link-paint-rain"
                     onClick={copyLink}>
-                        <img id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
+                        <Image id="copy-link-icon-paint-rain" src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -400,4 +401,4 @@ const paintRain = () => {
     );
 }
 
-export default paintRain;
+export default PaintRain;

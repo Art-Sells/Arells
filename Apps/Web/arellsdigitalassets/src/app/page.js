@@ -7,8 +7,9 @@ import './css/Home.css';
 import { useEffect } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
+import Image from 'next/image';
 
-const index = () => {
+const Index = () => {
   useEffect(() => {
     function resetPrototype() {
       sessionStorage.removeItem('walletConnectedSession'); 
@@ -72,11 +73,11 @@ const index = () => {
 
       <div id="overlayy">
   
-        <img id="arells-iconn" src="/icons&images/Arells-Icon.png"/>
+        <Image id="arells-iconn" src="/icons&images/Arells-Icon.png"/>
       
         <br/>
         
-        <img id="word-logoo" src="/icons&images/Arells-Logo-Ebony.png"/>	
+        <Image id="word-logoo" src="/icons&images/Arells-Logo-Ebony.png"/>	
         
         <br/>
         
@@ -108,7 +109,7 @@ const index = () => {
           <a href="https://twitter.com/arellsofficial"
               target="_blank"
               id="contactt">
-              <img id="twitterr" src="/icons&images/Twitter.png"/>
+              <Image id="twitterr" src="/icons&images/Twitter.png"/>
           </a>  		
         </div>             
     
@@ -117,4 +118,4 @@ const index = () => {
   );
 }
 
-export default index;
+export default Index;

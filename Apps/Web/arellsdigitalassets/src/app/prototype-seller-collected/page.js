@@ -9,8 +9,9 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
-const prototypeSellerCollected = () => {
+const PrototypeSellerCollected = () => {
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -166,7 +167,7 @@ const prototypeSellerCollected = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -180,30 +181,30 @@ const prototypeSellerCollected = () => {
 			{/*<!-- Change below link after test -->*/}
 				<Link legacyBehavior href="/">
 					<a id="icon-link-seller-collected">
-						<img id="arells-icon-seller-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<Image id="arells-icon-seller-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
 				{cartLinkSellerCollected && (
 					<button id="cart-link-seller-collected" onClick={connectWallet}>
-						<img id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<Image id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
 				{cartLinkConnectedSellerCollected && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-connected-seller-collected">
-							<img id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
 				{cartLinkFullSellerCollected && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-full-seller-collected">
-							<img id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<Image id="cart-icon-seller-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
 			</div>
-			<img id="word-logo-seller-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<Image id="word-logo-seller-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-seller-collected">ART SELLS</p>
 			{walletConnectedDivSellerCollected && (
 				<div id="wallet-connected-div-seller-collected">
@@ -214,7 +215,7 @@ const prototypeSellerCollected = () => {
 				</div>
 			)}	
 			<div id="profile-img-container-seller-collected">
-				<img id="profile-photo-seller-collected" src="/icons&images/prototype/proto-banner.jpg"/>
+				<Image id="profile-photo-seller-collected" src="/icons&images/prototype/proto-banner.jpg"/>
 			</div>	 
 			<h1 id="name-seller-collected">Abstract Kadabra</h1>  
 			<p id="description-seller-collected">Here rests life's abstractions captured in majestic endeavors.</p> 
@@ -222,7 +223,7 @@ const prototypeSellerCollected = () => {
 				<p id="share-div-desc-seller-collected">SHARE</p>
 				<button id="copy-link-seller-collected"
 				onClick={copyLink}>
-					<img id="copy-link-icon-seller-collected" src="/icons&images/prototype/link.png"/>
+					<Image id="copy-link-icon-seller-collected" src="/icons&images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
 			<hr id="profileline-seller-collected"/>
@@ -235,7 +236,7 @@ const prototypeSellerCollected = () => {
 			</div>
 			<p id="no-art-seller-collected">
 				no art collected
-				<img id="cart-icon-collected-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+				<Image id="cart-icon-collected-seller-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
 			</p>
 
 		</div>			
@@ -244,4 +245,4 @@ const prototypeSellerCollected = () => {
     );
 }
 
-export default prototypeSellerCollected;
+export default PrototypeSellerCollected;
