@@ -71,7 +71,7 @@ const PrototypeCart = () => {
 			setTotal(prevTotal => blueOrangePrice + prevTotal);
 		}
 		
-	});
+	}, [blueOrangeAdded, royalty, blueOrangePrice, fee]);
 
 	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 	useEffect(() => {
@@ -84,7 +84,7 @@ const PrototypeCart = () => {
 			setFees(prevFees => fee * beachHousesPrice + prevFees);
 			setTotal(prevTotal => beachHousesPrice + prevTotal);
 		}
-	});
+	}, [blueOrangeAdded, royalty, blueOrangePrice, fee]);
 
 	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	useEffect(() => {
@@ -97,7 +97,7 @@ const PrototypeCart = () => {
 			setFees(prevFees => fee * colourGlassPrice + prevFees);
 			setTotal(prevTotal => colourGlassPrice + prevTotal);
 		}
-	});
+	}, [colourGlassAdded, royalty, colourGlassPrice, fee]);
 
 	const layersAdded = sessionStorage.getItem('layersAdded');
 	useEffect(() => {
@@ -110,7 +110,7 @@ const PrototypeCart = () => {
 			setFees(prevFees => fee * layersPrice + prevFees);
 			setTotal(prevTotal => layersPrice + prevTotal);
 		}
-	});
+	}, [layersAdded, royalty, layersPrice, fee]);
 
 	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 	useEffect(() => {
@@ -123,7 +123,7 @@ const PrototypeCart = () => {
 			setFees(prevFees => fee * succinctDropPrice + prevFees);
 			setTotal(prevTotal => succinctDropPrice + prevTotal);
 		}
-	});
+	}, [succinctDropAdded, royalty, succinctDropPrice, fee]);
 
 	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
 	useEffect(() => {
@@ -136,7 +136,7 @@ const PrototypeCart = () => {
 			setFees(prevFees => fee * paintRainPrice + prevFees);
 			setTotal(prevTotal => paintRainPrice + prevTotal);
 		}
-	});
+	}, [paintRainAdded, royalty, paintRainPrice, fee]);
 
 
 	//Complete purchase
