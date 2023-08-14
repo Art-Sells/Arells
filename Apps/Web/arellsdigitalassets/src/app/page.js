@@ -43,7 +43,7 @@ const Index = () => {
         <meta charSet="UTF-8"/>
 
         <meta name="title" content="Arells"/>
-        <meta name="description" content="Art Sells"/>
+        <meta name="description" content="Never lose money selling art."/>
         <meta name="google" content="nositelinkssearchbox"/>
         <meta name="keywords" content="Arells"/>
         <meta name="author" content="Arells"/>
@@ -56,7 +56,7 @@ const Index = () => {
         <meta property="og:title" content="Arells"/>
         {/*<!-- Change below link after test -->*/}
         <meta property="og:url" content="https://arells.com"/>
-        <meta property="og:description" content="Art Sells"/>
+        <meta property="og:description" content="Never lose money selling art."/>
         <meta property="og:image:type" content="image/jpg"/>
         <meta property="og:image:width" content="700"/>
         <meta property="og:image:height" content="400"/>
@@ -66,7 +66,7 @@ const Index = () => {
         {/*<!-- Change below link after test -->*/}
         <meta name="twitter:url" content="https://arells.com"/>
         <meta name="twitter:card" content="summary_large_image"/>
-        <meta name="twitter:description" content="Art Sells"/>
+        <meta name="twitter:description" content="Never lose money selling art."/>
       </Head>    
 		  <title>Arells</title>	    
 
@@ -85,7 +85,7 @@ const Index = () => {
         <hr id="black-liner"/>
         
         <p id="descriptioner">
-          NEVER LOSE MONEY ON NFT SALES
+          NEVER LOSE MONEY SELLING ART
         </p>
         
         <hr id="black-liner"/>

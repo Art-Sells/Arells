@@ -204,7 +204,7 @@ const PrototypeBuyerCreated = () => {
 				)}	
 			</div>
 			<img id="word-logo-buyer-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
-			<p id="slogan-buyer-created">ART SELLS</p>
+			<p id="slogan-buyer-created">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivBuyerCreated && (
 				<div id="wallet-connected-div-buyer-created">
 					<hr id="connected-line-buyer-created"/>

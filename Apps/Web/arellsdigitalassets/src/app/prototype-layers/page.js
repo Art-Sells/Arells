@@ -289,7 +289,7 @@ const Layers = () => {
 					)}	
 				</div>
 				<img id="word-logo-layers" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-layers">ART SELLS</p>
+				<p id="slogan-layers">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivLayers && (
 					<div id="wallet-connected-div-layers">
 						<hr id="connected-line-layers"/>

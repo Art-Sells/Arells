@@ -204,7 +204,7 @@ const PrototypeSellerCollected = () => {
 				)}	
 			</div>
 			<img id="word-logo-seller-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
-			<p id="slogan-seller-collected">ART SELLS</p>
+			<p id="slogan-seller-collected">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivSellerCollected && (
 				<div id="wallet-connected-div-seller-collected">
 					<hr id="connected-line-seller-collected"/>

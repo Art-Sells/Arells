@@ -400,7 +400,7 @@ const PrototypeCart = () => {
 				</button>	
 			</div>
 			<img id="word-logo-cart" src="/icons&images/Arells-Logo-Ebony.png"/>	
-			<p id="slogan-cart">ART SELLS</p>
+			<p id="slogan-cart">NEVER LOSE MONEY SELLING ART</p>
 			<div id="wallet-connected-div-cart">
 				<hr id="connected-line-cart"/>
 				<p id="wallet-connected-cart" >

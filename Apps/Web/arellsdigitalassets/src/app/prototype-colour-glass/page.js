@@ -289,7 +289,7 @@ const ColourGlass = () => {
 					)}	
 				</div>
 				<img id="word-logo-colour-glass" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-colour-glass">ART SELLS</p>
+				<p id="slogan-colour-glass">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivColourGlass && (
 					<div id="wallet-connected-div-colour-glass">
 						<hr id="connected-line-colour-glass"/>

@@ -288,7 +288,7 @@ const BlueOrange = () => {
 					)}	
 				</div>
 				<img id="word-logo-blue-orange" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-blue-orange">ART SELLS</p>
+				<p id="slogan-blue-orange">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivBlueOrange && (
 					<div id="wallet-connected-div-blue-orange">
 						<hr id="connected-line-blue-orange"/>

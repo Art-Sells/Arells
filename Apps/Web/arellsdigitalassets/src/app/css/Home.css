@@ -46,7 +46,7 @@
 		  margin-left: 9px; 
 		  font-weight: 800;
 		  color: black;
-		  opacity: .3;
+		  opacity: .2;
 		  padding-bottom: -10px;
 	  }
 	  
@@ -62,12 +62,13 @@
 	  
 	  #descriptioner {
 		  margin-top: 30px;
-		  font-size: 8.5px;
-		  letter-spacing: 1px;
-		  margin-left: 1px;
+		  font-size: 9px;
+		  letter-spacing: 0px;
+		  margin-left: 0px;
 		  font-weight: 600;
 		  opacity: .5;
 		  color: black;
+		  word-spacing: 2px;
 	  }	
 	  #coming-soonn {
 		  margin-top: 30px;
@@ -77,7 +78,7 @@
 		  font-weight: 800;
 		  color: black;
 		  margin-bottom: 45px;
-		  opacity: .3;
+		  opacity: .2;
 	  }
 	  
 	  #updatess {
@@ -174,9 +175,8 @@
 	  }	
 	  
 	  #descriptioner {
-		  font-size: 7.5px;
-		  letter-spacing: 1px;
-		  margin-left: 1px;
+		  font-size: 8px;
+		  word-spacing: 1px;
 	  }		
 	  #coming-soonn {
 		  font-size: 9px;

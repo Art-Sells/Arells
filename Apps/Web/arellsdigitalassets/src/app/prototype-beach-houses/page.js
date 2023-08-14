@@ -288,7 +288,7 @@ const BeachHouses = () => {
 					)}	
 				</div>
 				<img id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-beach-houses">ART SELLS</p>
+				<p id="slogan-beach-houses">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivBeachHouses && (
 					<div id="wallet-connected-div-beach-houses">
 						<hr id="connected-line-beach-houses"/>

@@ -289,7 +289,7 @@ const PaintRain = () => {
 					)}	
 				</div>
 				<img id="word-logo-paint-rain" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-paint-rain">ART SELLS</p>
+				<p id="slogan-paint-rain">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivPaintRain && (
 					<div id="wallet-connected-div-paint-rain">
 						<hr id="connected-line-paint-rain"/>

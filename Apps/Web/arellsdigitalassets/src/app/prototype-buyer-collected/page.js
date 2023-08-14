@@ -258,7 +258,7 @@ const PrototypeBuyerCollected = () => {
 				)}		
 			</div>
 			<img id="word-logo-buyer-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
-			<p id="slogan-buyer-collected">ART SELLS</p>
+			<p id="slogan-buyer-collected">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivBuyerCollected && (
 				<div id="wallet-connected-div-buyer-collected">
 					<hr id="connected-line-buyer-collected"/>

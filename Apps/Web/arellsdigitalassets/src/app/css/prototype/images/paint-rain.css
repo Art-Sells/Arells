@@ -129,14 +129,14 @@
 			  width: 110px;	
 		  }
 		  #slogan-paint-rain {
-			  margin-top: 0px;
-			  font-size: 8px;
-			  letter-spacing: 10px;
-			  margin-left: 10px; 
-			  font-weight: 600;
-			  color: gray;
-			  opacity: 1;
-			  word-spacing: -3px;
+			margin-top: 23px;
+			font-size: 8px;
+			letter-spacing: 0px;
+			margin-left: 0px; 
+			font-weight: 600;
+			color: gray;
+			opacity: 1;
+			word-spacing: 1.5px;
 		  }	
 		  
 		  #wallet-connected-div-paint-rain{
@@ -583,11 +583,11 @@
 			  width: 90px;	
 		  }
 		  #slogan-paint-rain {
-			  margin-top: -2px;
-			  font-size: 7px;
-			  letter-spacing: 8px;
-			  margin-left: 8px; 
-			  word-spacing: -3px;
+			margin-top: 16px;
+			font-size: 7px;
+			letter-spacing: 0px;
+			margin-left: 0px; 
+			word-spacing: 1.5px;
 		  }
 		  #wallet-connected-div-paint-rain{
 			  margin-top: 25px;

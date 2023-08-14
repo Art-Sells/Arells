@@ -290,7 +290,7 @@ const SuccinctDrop = () => {
 					)}	
 				</div>
 				<img id="word-logo-succinct-drop" src="/icons&images/Arells-Logo-Ebony.png"/>	
-				<p id="slogan-succinct-drop">ART SELLS</p>
+				<p id="slogan-succinct-drop">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivSuccinctDrop && (
 					<div id="wallet-connected-div-succinct-drop">
 						<hr id="connected-line-succinct-drop"/>

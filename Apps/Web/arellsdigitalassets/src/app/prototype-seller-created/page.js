@@ -510,7 +510,7 @@ const PrototypeSellerCreated = () => {
 				)}	
 			</div>
 			<img id="word-logo-seller-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
-			<p id="slogan-seller-created">ART SELLS</p>
+			<p id="slogan-seller-created">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivSellerCreated && (
 				<div id="wallet-connected-div-seller-created">
 					<hr id="connected-line-seller-created"/>
