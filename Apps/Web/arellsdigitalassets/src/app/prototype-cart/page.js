@@ -58,145 +58,167 @@ const PrototypeCart = () => {
 	const [fees, setFees] = useState(0);
 	const [total, setTotal] = useState(0);
 
-	const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
 	useEffect(() => {
-		if (blueOrangeAdded === 'true') {
-			setCartEmptyCart(false);
-			setCartFullCart(true);
-			setBlueOrangeCart(true);		
-
-			setRoyalties(prevRoyalties => royalty * blueOrangePrice + prevRoyalties);
-			setFees(prevFees => fee * blueOrangePrice + prevFees);
-			setTotal(prevTotal => blueOrangePrice + prevTotal);
-		}
+		if (typeof window !== 'undefined') {
+			const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+			if (blueOrangeAdded === 'true') {
+				setCartEmptyCart(false);
+				setCartFullCart(true);
+				setBlueOrangeCart(true);		
+	
+				setRoyalties(prevRoyalties => royalty * blueOrangePrice + prevRoyalties);
+				setFees(prevFees => fee * blueOrangePrice + prevFees);
+				setTotal(prevTotal => blueOrangePrice + prevTotal);
+			}
+		  }
 		
-	}, [blueOrangeAdded, royalty, blueOrangePrice, fee]);
+	}, [royalty, blueOrangePrice, fee]);
 
-	const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
 	useEffect(() => {
-		if (beachHousesAdded === 'true') {
-			setCartEmptyCart(false);
-			setCartFullCart(true);
-			setBeachHousesCart(true);		
+		if (typeof window !== 'undefined') {
+			const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+			if (beachHousesAdded === 'true') {
+				setCartEmptyCart(false);
+				setCartFullCart(true);
+				setBeachHousesCart(true);		
+	
+				setRoyalties(prevRoyalties => royalty * beachHousesPrice + prevRoyalties);
+				setFees(prevFees => fee * beachHousesPrice + prevFees);
+				setTotal(prevTotal => beachHousesPrice + prevTotal);
+			}
+		  }
+	}, [royalty, beachHousesPrice, fee]);
 
-			setRoyalties(prevRoyalties => royalty * beachHousesPrice + prevRoyalties);
-			setFees(prevFees => fee * beachHousesPrice + prevFees);
-			setTotal(prevTotal => beachHousesPrice + prevTotal);
-		}
-	}, [beachHousesAdded, royalty, beachHousesPrice, fee]);
-
-	const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
 	useEffect(() => {
-		if (colourGlassAdded === 'true') {
-			setCartEmptyCart(false);
-			setCartFullCart(true);
-			setColourGlassCart(true);		
+		if (typeof window !== 'undefined') {
+			const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+			if (colourGlassAdded === 'true') {
+				setCartEmptyCart(false);
+				setCartFullCart(true);
+				setColourGlassCart(true);		
+	
+				setRoyalties(prevRoyalties => royalty * colourGlassPrice + prevRoyalties);
+				setFees(prevFees => fee * colourGlassPrice + prevFees);
+				setTotal(prevTotal => colourGlassPrice + prevTotal);
+			}
+		  }
+	}, [royalty, colourGlassPrice, fee]);
 
-			setRoyalties(prevRoyalties => royalty * colourGlassPrice + prevRoyalties);
-			setFees(prevFees => fee * colourGlassPrice + prevFees);
-			setTotal(prevTotal => colourGlassPrice + prevTotal);
-		}
-	}, [colourGlassAdded, royalty, colourGlassPrice, fee]);
-
-	const layersAdded = sessionStorage.getItem('layersAdded');
 	useEffect(() => {
-		if (layersAdded === 'true') {
-			setCartEmptyCart(false);
-			setCartFullCart(true);
-			setLayersCart(true);		
+		if (typeof window !== 'undefined') {
+			const layersAdded = sessionStorage.getItem('layersAdded');
+			if (layersAdded === 'true') {
+				setCartEmptyCart(false);
+				setCartFullCart(true);
+				setLayersCart(true);		
+	
+				setRoyalties(prevRoyalties => royalty * layersPrice + prevRoyalties);
+				setFees(prevFees => fee * layersPrice + prevFees);
+				setTotal(prevTotal => layersPrice + prevTotal);
+			}
+		  }
+	}, [royalty, layersPrice, fee]);
 
-			setRoyalties(prevRoyalties => royalty * layersPrice + prevRoyalties);
-			setFees(prevFees => fee * layersPrice + prevFees);
-			setTotal(prevTotal => layersPrice + prevTotal);
-		}
-	}, [layersAdded, royalty, layersPrice, fee]);
-
-	const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
 	useEffect(() => {
-		if (succinctDropAdded === 'true') {
-			setCartEmptyCart(false);
-			setCartFullCart(true);
-			setSuccinctDropCart(true);		
+		if (typeof window !== 'undefined') {
+			const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+			if (succinctDropAdded === 'true') {
+				setCartEmptyCart(false);
+				setCartFullCart(true);
+				setSuccinctDropCart(true);		
+	
+				setRoyalties(prevRoyalties => royalty * succinctDropPrice + prevRoyalties);
+				setFees(prevFees => fee * succinctDropPrice + prevFees);
+				setTotal(prevTotal => succinctDropPrice + prevTotal);
+			}
+		  }
+	}, [royalty, succinctDropPrice, fee]);
 
-			setRoyalties(prevRoyalties => royalty * succinctDropPrice + prevRoyalties);
-			setFees(prevFees => fee * succinctDropPrice + prevFees);
-			setTotal(prevTotal => succinctDropPrice + prevTotal);
-		}
-	}, [succinctDropAdded, royalty, succinctDropPrice, fee]);
-
-	const paintRainAdded = sessionStorage.getItem('paintRainAdded');
 	useEffect(() => {
-		if (paintRainAdded === 'true') {
-			setCartEmptyCart(false);
-			setCartFullCart(true);
-			setPaintRainCart(true);		
+		if (typeof window !== 'undefined') {
+			const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+			if (paintRainAdded === 'true') {
+				setCartEmptyCart(false);
+				setCartFullCart(true);
+				setPaintRainCart(true);		
+	
+				setRoyalties(prevRoyalties => royalty * paintRainPrice + prevRoyalties);
+				setFees(prevFees => fee * paintRainPrice + prevFees);
+				setTotal(prevTotal => paintRainPrice + prevTotal);
+			}
+		  }
+	}, [royalty, paintRainPrice, fee]);
 
-			setRoyalties(prevRoyalties => royalty * paintRainPrice + prevRoyalties);
-			setFees(prevFees => fee * paintRainPrice + prevFees);
-			setTotal(prevTotal => paintRainPrice + prevTotal);
-		}
-	}, [paintRainAdded, royalty, paintRainPrice, fee]);
 
-
-	//Complete purchase
-	sessionStorage.getItem('blueOrangePurchased');
-	sessionStorage.getItem('beachHousesPurchased');
-	sessionStorage.getItem('colourGlassPurchased');
-	sessionStorage.getItem('layersPurchased');
-	sessionStorage.getItem('succinctDropPurchased');
-	sessionStorage.getItem('paintRainPurchased');
 
 	function completePurchase() {
-		if(blueOrangeAdded === 'true'){
-			sessionStorage.setItem('blueOrangePurchased', 'true');
-			setCartEmptyCart(true);
-			setCartFullCart(false);
-			setBlueOrangeCart(false);	
-		}
-		sessionStorage.removeItem('blueOrangeAdded');
 
-		if(beachHousesAdded === 'true'){
-			sessionStorage.setItem('beachHousesPurchased', 'true');
-			setCartEmptyCart(true);
-			setCartFullCart(false);
-			setBeachHousesCart(false);	
-		}
-		sessionStorage.removeItem('beachHousesAdded');
-
-		if(colourGlassAdded === 'true'){
-			sessionStorage.setItem('colourGlassPurchased', 'true');
-			setCartEmptyCart(true);
-			setCartFullCart(false);
-			setColourGlassCart(false);	
-		}
-		sessionStorage.removeItem('colourGlassAdded');
-
-		if(layersAdded === 'true'){
-			sessionStorage.setItem('layersPurchased', 'true');
-			setCartEmptyCart(true);
-			setCartFullCart(false);
-			setLayersCart(false);	
-		}
-		sessionStorage.removeItem('layersAdded');
-
-		if(succinctDropAdded === 'true'){
-			sessionStorage.setItem('succinctDropPurchased', 'true');
-			setCartEmptyCart(true);
-			setCartFullCart(false);
-			setSuccinctDropCart(false);	
-		}
-		sessionStorage.removeItem('succinctDropAdded');
-
-		if(paintRainAdded === 'true'){
-			sessionStorage.setItem('paintRainPurchased', 'true');
+		if (typeof window !== 'undefined') {
+				//Complete purchase
+			sessionStorage.getItem('blueOrangePurchased');
+			sessionStorage.getItem('beachHousesPurchased');
+			sessionStorage.getItem('colourGlassPurchased');
+			sessionStorage.getItem('layersPurchased');
+			sessionStorage.getItem('succinctDropPurchased');
+			sessionStorage.getItem('paintRainPurchased');
 			
-			setCartEmptyCart(true);
-			setCartFullCart(false);
-			setPaintRainCart(false);	
+			const blueOrangeAdded = sessionStorage.getItem('blueOrangeAdded');
+			const beachHousesAdded = sessionStorage.getItem('beachHousesAdded');
+			const colourGlassAdded = sessionStorage.getItem('colourGlassAdded');
+			const layersAdded = sessionStorage.getItem('layersAdded');
+			const succinctDropAdded = sessionStorage.getItem('succinctDropAdded');
+			const paintRainAdded = sessionStorage.getItem('paintRainAdded');
+	
+			if(blueOrangeAdded === 'true'){
+				sessionStorage.setItem('blueOrangePurchased', 'true');
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+				setBlueOrangeCart(false);	
+			}
+			sessionStorage.removeItem('blueOrangeAdded');
+	
+			if(beachHousesAdded === 'true'){
+				sessionStorage.setItem('beachHousesPurchased', 'true');
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+				setBeachHousesCart(false);	
+			}
+			sessionStorage.removeItem('beachHousesAdded');
+	
+			if(colourGlassAdded === 'true'){
+				sessionStorage.setItem('colourGlassPurchased', 'true');
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+				setColourGlassCart(false);	
+			}
+			sessionStorage.removeItem('colourGlassAdded');
+	
+			if(layersAdded === 'true'){
+				sessionStorage.setItem('layersPurchased', 'true');
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+				setLayersCart(false);	
+			}
+			sessionStorage.removeItem('layersAdded');
+	
+			if(succinctDropAdded === 'true'){
+				sessionStorage.setItem('succinctDropPurchased', 'true');
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+				setSuccinctDropCart(false);	
+			}
+			sessionStorage.removeItem('succinctDropAdded');
+	
+			if(paintRainAdded === 'true'){
+				sessionStorage.setItem('paintRainPurchased', 'true');
+				
+				setCartEmptyCart(true);
+				setCartFullCart(false);
+				setPaintRainCart(false);	
+			}
+			sessionStorage.removeItem('paintRainAdded');
+			setPurchaseComplete(true);
 		}
-		sessionStorage.removeItem('paintRainAdded');
-
-		setPurchaseComplete(true);
 	}
 
 
@@ -210,6 +232,7 @@ const PrototypeCart = () => {
 
 {/*<!-- Remove function/s below -->*/}
 	function removeBlueOrange() {
+
 		setBlueOrangeCart(false);	
 
 		setRoyalties(royalties - (royalty * blueOrangePrice));
