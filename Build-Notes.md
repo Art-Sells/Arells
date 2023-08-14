@@ -2,7 +2,7 @@
 
 ## MVP
 
-- Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api]
+- Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements]
 - Create Separate js.Components Folder
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
