@@ -41,15 +41,15 @@ const PrototypeCart = () => {
 	};
 
 	var blueOrangePrice = 1200;
-	var beachHousesPrice = 200;
-	var colourGlassPrice = 14500;
-	var layersPrice = 400000;
+	var beachHousesPrice = 300;
+	var colourGlassPrice = 500;
+	var layersPrice = 1500;
 	var succinctDropPrice = 100;
 	var paintRainPrice = 12000;
 
 	//royalty before purchase
-	var royalty = .97;
-	//royalty after purchase (.90)
+	var royalty = .5;
+	//royalty after purchase (.50)
 	//seller fee (.07)
 
 	var fee = .03;
@@ -474,7 +474,7 @@ const PrototypeCart = () => {
 								<div id="prices-cart">
 									<div id="blue-orange-prices-before-cart">
 										<p id="PAP-cart">Price After Purchase</p>
-										<p id="PAP-blue-orange-before-cart">$60,000</p>
+										<p id="PAP-blue-orange-before-cart">$1,800</p>
 										<hr id="priceline-cart"/>
 										<p id="yourprice-cart">Price</p>
 										<p id="price-blue-orange-before-cart">$1,200</p>
@@ -496,7 +496,7 @@ const PrototypeCart = () => {
 								<div id="prices-cart">
 									<div id="beach-houses-prices-before-cart">
 										<p id="PAP-cart">Price After Purchase</p>
-										<p id="PAP-beach-houses-before-cart">$10,000</p>
+										<p id="PAP-beach-houses-before-cart">$2,000</p>
 										<hr id="priceline-cart"/>
 										<p id="yourprice-cart">Price</p>
 										<p id="price-beach-houses-before-cart">$200</p>
@@ -518,10 +518,10 @@ const PrototypeCart = () => {
 								<div id="prices-cart">
 									<div id="colour-glass-prices-before-cart">
 										<p id="PAP-cart">Price After Purchase</p>
-										<p id="PAP-colour-glass-before-cart">$725,000</p>
+										<p id="PAP-colour-glass-before-cart">$750</p>
 										<hr id="priceline-cart"/>
 										<p id="yourprice-cart">Price</p>
-										<p id="price-colour-glass-before-cart">$14,500</p>
+										<p id="price-colour-glass-before-cart">$500</p>
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removeColourGlass}>
@@ -540,10 +540,10 @@ const PrototypeCart = () => {
 								<div id="prices-cart">
 									<div id="layers-prices-before-cart">
 										<p id="PAP-cart">Price After Purchase</p>
-										<p id="PAP-layers-before-cart">$20,000,000</p>
+										<p id="PAP-layers-before-cart">$3,500</p>
 										<hr id="priceline-cart"/>
 										<p id="yourprice-cart">Price</p>
-										<p id="price-layers-before-cart">$400,000</p>
+										<p id="price-layers-before-cart">$1,500</p>
 									</div>			  		
 								</div>
 								<button id="remove-cart" onClick={removeLayers}>
@@ -562,7 +562,7 @@ const PrototypeCart = () => {
 								<div id="prices-cart">
 									<div id="succinct-drop-prices-before-cart">
 										<p id="PAP-cart">Price After Purchase</p>
-										<p id="PAP-succinct-drop-before-cart">$5,000</p>
+										<p id="PAP-succinct-drop-before-cart">$200</p>
 										<hr id="priceline-cart"/>
 										<p id="yourprice-cart">Price</p>
 										<p id="price-succinct-drop-before-cart">$100</p>
@@ -584,7 +584,7 @@ const PrototypeCart = () => {
 								<div id="prices-cart">
 									<div id="paint-rain-prices-before-cart">
 										<p id="PAP-cart">Price After Purchase</p>
-										<p id="PAP-paint-rain-before-cart">$600,000</p>
+										<p id="PAP-paint-rain-before-cart">$15,000</p>
 										<hr id="priceline-cart"/>
 										<p id="yourprice-cart">Price</p>
 										<p id="price-paint-rain-before-cart">$12,000</p>

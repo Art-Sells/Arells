@@ -296,10 +296,10 @@ const PrototypeBuyerCollected = () => {
 							<div id="prices-buyer-collected">
 								<div id="blue-orange-prices-after-buyer-collected">
 									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-blue-orange-after-buyer-collected">$3,000,000</p>
+									<p id="PAP-blue-orange-after-buyer-collected">$5,500</p>
 									<hr id="priceline-buyer-collected"/>
 									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-blue-orange-after-buyer-collected">$60,000</p>
+									<p id="price-blue-orange-after-buyer-collected">$1,800</p>
 								</div>			  		
 							</div>		  		
 						</div>
@@ -315,10 +315,10 @@ const PrototypeBuyerCollected = () => {
 							<div id="prices-buyer-collected">
 								<div id="beach-houses-prices-after-buyer-collected">
 									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-beach-houses-after-buyer-collected">$500,000</p>
+									<p id="PAP-beach-houses-after-buyer-collected">$2,500</p>
 									<hr id="priceline-buyer-collected"/>
 									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-beach-houses-after-buyer-collected">$10,000</p>
+									<p id="price-beach-houses-after-buyer-collected">$2,000</p>
 								</div>			  		
 							</div>     	
 						</div>
@@ -334,10 +334,10 @@ const PrototypeBuyerCollected = () => {
 							<div id="prices-buyer-collected">
 								<div id="colour-glass-prices-after-buyer-collected">
 									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-colour-glass-after-buyer-collected">$36,250,000</p>
+									<p id="PAP-colour-glass-after-buyer-collected">$2,750</p>
 									<hr id="priceline-buyer-collected"/>
 									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-colour-glass-after-buyer-collected">$725,000</p>
+									<p id="price-colour-glass-after-buyer-collected">$750</p>
 								</div>  		  		
 							</div>   	
 						</div>
@@ -353,10 +353,10 @@ const PrototypeBuyerCollected = () => {
 							<div id="prices-buyer-collected">
 								<div id="layers-prices-after-buyer-collected">
 									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-layers-after-buyer-collected">$1,000,000,000</p>
+									<p id="PAP-layers-after-buyer-collected">$4,000</p>
 									<hr id="priceline-buyer-collected"/>
 									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-layers-after-buyer-collected">$20,000,000</p>
+									<p id="price-layers-after-buyer-collected">$3,500</p>
 								</div>		  		
 							</div>
 						</div>
@@ -372,10 +372,10 @@ const PrototypeBuyerCollected = () => {
 							<div id="prices-buyer-collected">
 								<div id="succinct-drop-prices-after-buyer-collected">
 									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-succinct-drop-after-buyer-collected">$250,000</p>
+									<p id="PAP-succinct-drop-after-buyer-collected">$1,000</p>
 									<hr id="priceline-buyer-collected"/>
 									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-succinct-drop-after-buyer-collected">$5,000</p>
+									<p id="price-succinct-drop-after-buyer-collected">$200</p>
 								</div>				  		
 							</div>     	
 						</div>
@@ -391,10 +391,10 @@ const PrototypeBuyerCollected = () => {
 							<div id="prices-buyer-collected">
 								<div id="paint-rain-prices-after-buyer-collected">
 									<p id="PAP-buyer-collected">Price After Purchase</p>
-									<p id="PAP-paint-rain-after-buyer-collected">$30,000,000</p>
+									<p id="PAP-paint-rain-after-buyer-collected">$20,000</p>
 									<hr id="priceline-buyer-collected"/>
 									<p id="yourprice-buyer-collected">Price</p>
-									<p id="price-paint-rain-after-buyer-collected">$600,000</p>
+									<p id="price-paint-rain-after-buyer-collected">$15,000</p>
 								</div>			  		
 							</div>     	
 						</div>

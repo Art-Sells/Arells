@@ -334,7 +334,7 @@ const BlueOrange = () => {
 				{blueOrangePricesBeforeBlueOrange && (
 					<div id="blue-orange-prices-before-blue-orange">
 						<p id="PAP-blue-orange">Price After Purchase</p>
-						<p id="PAP-blue-orange-before-blue-orange">$60,000</p>
+						<p id="PAP-blue-orange-before-blue-orange">$1,800</p>
 						<hr id="priceline-blue-orange"/>
 						<p id="yourprice-blue-orange">Price</p>
 						<p id="price-blue-orange-before-blue-orange">$1,200</p>
@@ -343,10 +343,10 @@ const BlueOrange = () => {
 				{blueOrangePricesAfterBlueOrange && (
 					<div id="blue-orange-prices-after-blue-orange">
 						<p id="PAP-blue-orange">Price After Purchase</p>
-						<p id="PAP-blue-orange-after-blue-orange">$3,000,000</p>
+						<p id="PAP-blue-orange-after-blue-orange">$5,500</p>
 						<hr id="priceline-blue-orange"/>
 						<p id="yourprice-blue-orange">Price</p>
-						<p id="price-blue-orange-after-blue-orange">$60,000</p>
+						<p id="price-blue-orange-after-blue-orange">$1,800</p>
 					</div>	
 				)}
 

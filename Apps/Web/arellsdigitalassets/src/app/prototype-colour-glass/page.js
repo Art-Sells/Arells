@@ -335,19 +335,19 @@ const ColourGlass = () => {
 				{colourGlassPricesBeforeColourGlass && (
                     <div id="colour-glass-prices-before-colour-glass">
                         <p id="PAP-colour-glass">Price After Purchase</p>
-                        <p id="PAP-colour-glass-before-colour-glass">$725,000</p>
+                        <p id="PAP-colour-glass-before-colour-glass">$750</p>
                         <hr id="priceline-colour-glass"/>
                         <p id="yourprice-colour-glass">Price</p>
-                        <p id="price-colour-glass-before-colour-glass">$14,500</p>
+                        <p id="price-colour-glass-before-colour-glass">$500</p>
                     </div>
 				)}
 				{colourGlassPricesAfterColourGlass && (
                     <div id="colour-glass-prices-after-colour-glass">
                         <p id="PAP-colour-glass">Price After Purchase</p>
-                        <p id="PAP-colour-glass-after-colour-glass">$36,250,000</p>
+                        <p id="PAP-colour-glass-after-colour-glass">$2,750</p>
                         <hr id="priceline-colour-glass"/>
                         <p id="yourprice-colour-glass">Price</p>
-                        <p id="price-colour-glass-after-colour-glass">$725,000</p>
+                        <p id="price-colour-glass-after-colour-glass">$750</p>
                     </div>
 				)}
 

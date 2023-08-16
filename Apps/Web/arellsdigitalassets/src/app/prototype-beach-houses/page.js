@@ -334,19 +334,19 @@ const BeachHouses = () => {
 				{beachHousesPricesBeforeBeachHouses && (
 					<div id="beach-houses-prices-before-beach-houses">
 						<p id="PAP-beach-houses">Price After Purchase</p>
-						<p id="PAP-beach-houses-before-beach-houses">$10,000</p>
+						<p id="PAP-beach-houses-before-beach-houses">$2,000</p>
 						<hr id="priceline-beach-houses"/>
 						<p id="yourprice-beach-houses">Price</p>
-						<p id="price-beach-houses-before-beach-houses">$200</p>
+						<p id="price-beach-houses-before-beach-houses">$300</p>
 					</div>
 				)}
 				{beachHousesPricesAfterBeachHouses && (
 					<div id="beach-houses-prices-after-beach-houses">
 						<p id="PAP-beach-houses">Price After Purchase</p>
-						<p id="PAP-beach-houses-after-beach-houses">$500,000</p>
+						<p id="PAP-beach-houses-after-beach-houses">$2,500</p>
 						<hr id="priceline-beach-houses"/>
 						<p id="yourprice-beach-houses">Price</p>
-						<p id="price-beach-houses-after-beach-houses">$10,000</p>
+						<p id="price-beach-houses-after-beach-houses">$2,000</p>
 					</div>
 				)}
 

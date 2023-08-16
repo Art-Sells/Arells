@@ -335,19 +335,19 @@ const Layers = () => {
 				{layersPricesBeforeLayers && (
 					<div id="layers-prices-before-layers">
 						<p id="PAP-layers">Price After Purchase</p>
-						<p id="PAP-layers-before-layers">$20,000,000</p>
+						<p id="PAP-layers-before-layers">$3,500</p>
 						<hr id="priceline-layers"/>
 						<p id="yourprice-layers">Price</p>
-						<p id="price-layers-before-layers">$400,000</p>
+						<p id="price-layers-before-layers">$1,500</p>
 					</div>
 				)}
 				{layersPricesAfterLayers && (
 					<div id="layers-prices-after-layers">
 						<p id="PAP-layers">Price After Purchase</p>
-						<p id="PAP-layers-after-layers">$1,000,000,000</p>
+						<p id="PAP-layers-after-layers">$4,000</p>
 						<hr id="priceline-layers"/>
 						<p id="yourprice-layers">Price</p>
-						<p id="price-layers-after-layers">$20,000,000</p>
+						<p id="price-layers-after-layers">$3,500</p>
 					</div>
 				)}
 

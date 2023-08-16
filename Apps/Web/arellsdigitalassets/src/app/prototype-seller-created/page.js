@@ -550,7 +550,7 @@ const PrototypeSellerCreated = () => {
 						{blueOrangePricesBeforeSellerCreated && (
 							<div id="blue-orange-prices-before-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-blue-orange-before-seller-created">$60,000</p>
+								<p id="PAP-blue-orange-before-seller-created">1,800</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
 								<p id="price-blue-orange-before-seller-created">$1,200</p>
@@ -559,10 +559,10 @@ const PrototypeSellerCreated = () => {
 						{blueOrangePricesAfterSellerCreated && (
 							<div id="blue-orange-prices-after-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-blue-orange-after-seller-created">$3,000,000</p>
+								<p id="PAP-blue-orange-after-seller-created">$5,500</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
-								<p id="price-blue-orange-after-seller-created">$60,000</p>
+								<p id="price-blue-orange-after-seller-created">$1,800</p>
 							</div>	
 						)}							
 						{blueOrangeAddToCartSellerCreated && (
@@ -594,19 +594,19 @@ const PrototypeSellerCreated = () => {
 						{beachHousesPricesBeforeSellerCreated && (
 							<div id="beach-houses-prices-before-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-beach-houses-before-seller-created">$10,000</p>
+								<p id="PAP-beach-houses-before-seller-created">$2,000</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
-								<p id="price-beach-houses-before-seller-created">$200</p>
+								<p id="price-beach-houses-before-seller-created">$300</p>
 							</div>
 						)}	
 						{beachHousesPricesAfterSellerCreated && (
 							<div id="beach-houses-prices-after-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-beach-houses-after-seller-created">$500,000</p>
+								<p id="PAP-beach-houses-after-seller-created">$2,500</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
-								<p id="price-beach-houses-after-seller-created">$10,000</p>
+								<p id="price-beach-houses-after-seller-created">$2,000</p>
 							</div>
 						)}							
 						{beachHousesAddToCartSellerCreated && (
@@ -638,19 +638,19 @@ const PrototypeSellerCreated = () => {
 						{colourGlassPricesBeforeSellerCreated && (
 							<div id="colour-glass-prices-before-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-colour-glass-before-seller-created">$725,000</p>
+								<p id="PAP-colour-glass-before-seller-created">$750</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
-								<p id="price-colour-glass-before-seller-created">$14,500</p>
+								<p id="price-colour-glass-before-seller-created">500</p>
 							</div>
 						)}								
 						{colourGlassPricesAfterSellerCreated && (
 							<div id="colour-glass-prices-after-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-colour-glass-after-seller-created">$36,250,000</p>
+								<p id="PAP-colour-glass-after-seller-created">$2,750</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
-								<p id="price-colour-glass-after-seller-created">$725,000</p>
+								<p id="price-colour-glass-after-seller-created">$750</p>
 							</div>
 						)}								
 						{colourGlassAddToCartSellerCreated && (
@@ -682,19 +682,19 @@ const PrototypeSellerCreated = () => {
 						{layersPricesBeforeSellerCreated && (
 							<div id="layers-prices-before-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-layers-before-seller-created">$20,000,000</p>
+								<p id="PAP-layers-before-seller-created">$3,500</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
-								<p id="price-layers-before-seller-created">$400,000</p>
+								<p id="price-layers-before-seller-created">$1,500</p>
 							</div>
 						)}							
 						{layersPricesAfterSellerCreated && (
 							<div id="layers-prices-after-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-layers-after-seller-created">$1,000,000,000</p>
+								<p id="PAP-layers-after-seller-created">$3,500</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
-								<p id="price-layers-after-seller-created">$20,000,000</p>
+								<p id="price-layers-after-seller-created">$4,000</p>
 							</div>
 						)}							
 						{layersAddToCartSellerCreated && (
@@ -726,7 +726,7 @@ const PrototypeSellerCreated = () => {
 						{succinctDropPricesBeforeSellerCreated && (
 							<div id="succinct-drop-prices-before-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-succinct-drop-before-seller-created">$5,000</p>
+								<p id="PAP-succinct-drop-before-seller-created">$200</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
 								<p id="price-succinct-drop-before-seller-created">$100</p>
@@ -735,10 +735,10 @@ const PrototypeSellerCreated = () => {
 						{succinctDropPricesAfterSellerCreated && (
 							<div id="succinct-drop-prices-after-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-succinct-drop-after-seller-created">$250,000</p>
+								<p id="PAP-succinct-drop-after-seller-created">$1,000</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
-								<p id="price-succinct-drop-after-seller-created">$5,000</p>
+								<p id="price-succinct-drop-after-seller-created">$200</p>
 							</div>
 						)}	
 						{succinctDropAddToCartSellerCreated && (
@@ -770,7 +770,7 @@ const PrototypeSellerCreated = () => {
 						{paintRainPricesBeforeSellerCreated && (
 							<div id="paint-rain-prices-before-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-paint-rain-before-seller-created">$600,000</p>
+								<p id="PAP-paint-rain-before-seller-created">$15,000</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
 								<p id="price-paint-rain-before-seller-created">$12,000</p>
@@ -779,10 +779,10 @@ const PrototypeSellerCreated = () => {
 						{paintRainPricesAfterSellerCreated && (
 							<div id="paint-rain-prices-after-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-paint-rain-after-seller-created">$30,000,000</p>
+								<p id="PAP-paint-rain-after-seller-created">$20,000</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
-								<p id="price-paint-rain-after-seller-created">$600,000</p>
+								<p id="price-paint-rain-after-seller-created">$15,000</p>
 							</div>
 						)}	
 						{paintRainAddToCartSellerCreated && (

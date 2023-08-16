@@ -335,7 +335,7 @@ const PaintRain = () => {
 				{paintRainPricesBeforePaintRain && (
 					<div id="paint-rain-prices-before-paint-rain">
 						<p id="PAP-paint-rain">Price After Purchase</p>
-						<p id="PAP-paint-rain-before-paint-rain">$600,000</p>
+						<p id="PAP-paint-rain-before-paint-rain">$15,000</p>
 						<hr id="priceline-paint-rain"/>
 						<p id="yourprice-paint-rain">Price</p>
 						<p id="price-paint-rain-before-paint-rain">$12,000</p>
@@ -344,10 +344,10 @@ const PaintRain = () => {
 				{paintRainPricesAfterPaintRain && (
 					<div id="paint-rain-prices-after-paint-rain">
 						<p id="PAP-paint-rain">Price After Purchase</p>
-						<p id="PAP-paint-rain-after-paint-rain">$30,000,000</p>
+						<p id="PAP-paint-rain-after-paint-rain">$20,000</p>
 						<hr id="priceline-paint-rain"/>
 						<p id="yourprice-paint-rain">Price</p>
-						<p id="price-paint-rain-after-paint-rain">$600,000</p>
+						<p id="price-paint-rain-after-paint-rain">$15,000</p>
 					</div>
 				)}
 

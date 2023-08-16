@@ -336,7 +336,7 @@ const SuccinctDrop = () => {
 				{succinctDropPricesBeforeSuccinctDrop && (
 					<div id="succinct-drop-prices-before-succinct-drop">
 						<p id="PAP-succinct-drop">Price After Purchase</p>
-						<p id="PAP-succinct-drop-after-succinct-drop">$5,000</p>
+						<p id="PAP-succinct-drop-after-succinct-drop">$200</p>
 						<hr id="priceline-succinct-drop"/>
 						<p id="yourprice-succinct-drop">Price</p>
 						<p id="price-succinct-drop-after-succinct-drop">$100</p>
@@ -345,10 +345,10 @@ const SuccinctDrop = () => {
 				{succinctDropPricesAfterSuccinctDrop && (
 					<div id="succinct-drop-prices-after-succinct-drop">
 						<p id="PAP-succinct-drop">Price After Purchase</p>
-						<p id="PAP-succinct-drop-before-succinct-drop">$250,000</p>
+						<p id="PAP-succinct-drop-before-succinct-drop">$1,000</p>
 						<hr id="priceline-succinct-drop"/>
 						<p id="yourprice-succinct-drop">Price</p>
-						<p id="price-succinct-drop-before-succinct-drop">$5,000</p>
+						<p id="price-succinct-drop-before-succinct-drop">$200</p>
 					</div>
 				)}
 
