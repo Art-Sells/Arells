@@ -7,7 +7,7 @@
 Most Artists are living in poverty.
 
 #### Solution:
-Art + Sells = Arells: An NFT store in which you never lose money selling art. Arells is working on achieving this through an innovation called **Price After Purchase** which introduces a new market called a Stag Market.
+Art + Sells = Arells: An NFT store in which you never lose money selling art. Arells is working on achieving this through an innovation called **Price After Purchase** which introduces a new market called a Snail Market.
 
 _______________________________________________________________________
 
