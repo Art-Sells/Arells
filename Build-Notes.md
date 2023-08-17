@@ -55,7 +55,7 @@
 
 #### Cart
 - Created Cart Number Function (Custom)   
-- Arells x Crossmint [Arells uses Crossmint as it's payment provider] info at bottom.
+- Arells [Arells uses Crossmint as it's payment provider] info at bottom.
   
 #### Cash Register
 - Notifications on who bought what at how much (Squared for sharing)  
@@ -64,6 +64,7 @@
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
 - PAP price calculated 50x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer... prices in USDC
+- Create AUM Tracker (for all Current Prices)
                                                 
 #### Buying Mechanics:
 - Once an NFT is bought, the new price is 50xed from original price.
