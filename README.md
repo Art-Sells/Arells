@@ -12,7 +12,7 @@ Art + Sells = Arells: An NFT store in which you never lose money selling art. Ar
 _______________________________________________________________________
 
 #### Price Afer Purchase:
-Price After Purchase or PAP for short is a market system which assets cannot be sold lower than the price they were either listed or previously purchased for which introduces a new market...
+Price After Purchase or PAP for short is a market system which assets cannot be sold lower than the price they were either listed or previously purchased for.
 
 #### Snail Market:
 A market in which no new assets are bought or sold but rather slows rendering bear markets obsolete.
