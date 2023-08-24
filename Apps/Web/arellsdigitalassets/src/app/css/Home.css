@@ -33,11 +33,13 @@
   
 	  #arells-iconn {
 		  width: 80px;
+		  height: 85px;
 		  opacity: 1;
 	  }
 	  #word-logoo {
 		  margin-top: 15px;
 		  width: 120px;	
+		  height: 37px;
 	  }
 	  #slogann {
 		  margin-top: 25px;
@@ -151,6 +153,7 @@
 	  }
 	  #twitterr {
 		  width: 30px;
+		  height: 30px;
 	  }		
 	  
 	  
@@ -160,10 +163,12 @@
 	}  
 	  #arells-iconn {
 		  width: 65px;
+		  height: 70px;
 	  }
   
 	  #word-logoo {
 		  width: 100px;	
+		  height: 32px;
 	  }  
 		#slogann {
 		  font-size: 12px;
@@ -195,6 +200,7 @@
   
 	  #twitterr {
 		  width: 27px;
+		  height: 27px;
 	  }	
 	  
 }	

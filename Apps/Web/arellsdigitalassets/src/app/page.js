@@ -7,6 +7,7 @@ import './css/Home.css';
 import { useEffect } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Index = () => {
   useEffect(() => {
@@ -72,11 +73,21 @@ const Index = () => {
 
       <div id="overlayy">
   
-        <img id="arells-iconn" src="/icons&images/Arells-Icon.png"/>
+        <Image 
+        alt="" 
+        width={80}
+        height={85}
+        id="arells-iconn" 
+        src="/icons&images/Arells-Icon.png"/>
       
         <br/>
         
-        <img id="word-logoo" src="/icons&images/Arells-Logo-Ebony.png"/>	
+        <Image
+         alt=""
+         width={120}
+         height={40}
+         id="word-logoo" 
+         src="/icons&images/Arells-Logo-Ebony.png"/>	
         
         <br/>
         
@@ -108,7 +119,12 @@ const Index = () => {
           <a href="https://twitter.com/arellsofficial"
               target="_blank"
               id="contactt">
-              <img id="twitterr" src="/icons&images/Twitter.png"/>
+              <Image
+                alt=""
+                width={30}
+                height={30}
+               id="twitterr"
+                src="/icons&images/Twitter.png"/>
           </a>  		
         </div>             
     
