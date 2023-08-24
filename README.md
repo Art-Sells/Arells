@@ -1,7 +1,7 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Never lose money selling NFTs.
+## Never lose money selling art.
 
 #### Problem:
 Most Artists are living in poverty.
