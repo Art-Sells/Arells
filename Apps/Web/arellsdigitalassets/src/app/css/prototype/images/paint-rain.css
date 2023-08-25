@@ -49,7 +49,8 @@
 				opacity: 1;
 			  }		
 			  #arells-icon-paint-rain {
-				  height: 16px;
+				height: 16px;
+				width: 15px;
 			  }	
 		  #cart-link-paint-rain{
 			  display: inline-block;
@@ -121,12 +122,14 @@
 		  }					
 			  #cart-icon-paint-rain,
 			  #cart-icon-full-paint-rain {
-				  height: 16px;
+				height: 15px;
+				width: 16px;
 			  }	
 			  
 		  #word-logo-paint-rain {
 			  margin-top: 37px;
 			  width: 110px;	
+			  height: 35px;
 		  }
 		  #slogan-paint-rain {
 			margin-top: 23px;
@@ -270,7 +273,8 @@
 					cursor: pointer;
 			  }		
 				  #copy-link-icon-paint-rain{
-					  width: 15px;
+					width: 15px;
+					height: 8px;
 					  margin-right: 5px;
 				  }
   
@@ -485,7 +489,8 @@
 					opacity: 1;	
 				  }					
 					  #fingerprints-icon{
-						  height: 25px;
+						height: 25px;
+						width: 25px;
 					  }			
 				  
 		  #prototype-paint-rain-word {
@@ -544,7 +549,8 @@
 					width: 30px;		
 			  }	
 			  #arells-icon-paint-rain {
-					  height: 15px;
+				height: 15px;
+				width: 14px;
 				  }	    
 			  #cart-link-paint-rain{
 				  margin-left: 90px;
@@ -574,13 +580,15 @@
 			  }
 			  #cart-icon-paint-rain,
 			  #cart-icon-full-paint-rain  {
-					  height: 15px;
+				height: 14px;
+				width: 15px;
 				  }
 			  
 								
 		  #word-logo-paint-rain {
 			  margin-top: 35px;
 			  width: 90px;	
+			  height: 28px;	
 		  }
 		  #slogan-paint-rain {
 			margin-top: 16px;
@@ -673,7 +681,8 @@
 				margin-bottom: 10px;
 			  }	  	
 				  #copy-link-icon-paint-rain {
-					  width: 12px;
+					width: 12px;
+					height: 6px;
 				  }
 		  #creator-owner-desc-paint-rain {
 		  margin-top: 15px;
@@ -767,6 +776,7 @@
 					width: 42px;			
 			  }			
 				  #fingerprints-icon{
-					  height: 20px;
+					height: 20px;
+					width: 20px;
 				  }											
   }

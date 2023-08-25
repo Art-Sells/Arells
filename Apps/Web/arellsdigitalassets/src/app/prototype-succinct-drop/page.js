@@ -343,7 +343,12 @@ const SuccinctDrop = () => {
                     <p id="share-div-desc-succinct-drop">SHARE</p> 
                     <button id="copy-link-succinct-drop"
                     onClick={copyLink}>
-                        <img id="copy-link-icon-succinct-drop" src="/icons&images/prototype/link.png"/>
+                        <Image
+						alt=""
+						width={15}  
+						height={8}
+						id="copy-link-icon-succinct-drop" 
+						src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
