@@ -1,7 +1,6 @@
 "use client";
 
 import Head from 'next/head'
-import Image from 'next/image';
 // Change below link after test
 import '../css/stayupdated.css';
 import '../css/modals/stayupdated-modal.css';
