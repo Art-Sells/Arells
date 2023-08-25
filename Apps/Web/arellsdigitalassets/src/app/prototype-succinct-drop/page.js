@@ -10,6 +10,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const SuccinctDrop = () => {
 
@@ -241,7 +242,12 @@ const SuccinctDrop = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image 
+						id="wallet-icon"
+						alt=""
+						width={50}
+						height={50}
+						 src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -265,18 +271,33 @@ const SuccinctDrop = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-succinct-drop">
-							<img id="arells-icon-succinct-drop" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image
+							alt=""
+							height={16}
+							width={15}
+							id="arells-icon-succinct-drop"
+							src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkSuccinctDrop && (
 						<button id="cart-link-succinct-drop" onClick={connectWallet}>
-							<img id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image
+							alt=""
+							height={15}
+							width={16}
+							id="cart-icon-succinct-drop"
+							src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedSuccinctDrop && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-succinct-drop">
-								<img id="cart-icon-succinct-drop" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image
+								alt=""
+								height={15}
+								width={16}
+								id="cart-icon-succinct-drop"
+								src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -284,12 +305,22 @@ const SuccinctDrop = () => {
 					{cartLinkFullSuccinctDrop && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-succinct-drop">
-								<img id="cart-icon-full-succinct-drop" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image
+								alt=""
+								height={15}
+								width={16} 
+								id="cart-icon-full-succinct-drop" 
+								src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<img id="word-logo-succinct-drop" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image
+				alt=""
+				width={110}  
+				height={35}
+				id="word-logo-succinct-drop" 
+				src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-succinct-drop">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivSuccinctDrop && (
 					<div id="wallet-connected-div-succinct-drop">
@@ -301,7 +332,12 @@ const SuccinctDrop = () => {
 				)}
 
             <div id="succinct-drop">
-                <img id="photo-succinct-drop" src="/icons&images/prototype/5.jpg"/>
+                <Image
+				alt=""
+				width={400}  
+				height={400}
+				id="photo-succinct-drop"
+				src="/icons&images/prototype/5.jpg"/>
                 <h3 id="name-succinct-drop">Succinct Drop</h3>
                 <div id="share-div-succinct-drop">
                     <p id="share-div-desc-succinct-drop">SHARE</p> 
@@ -377,19 +413,34 @@ const SuccinctDrop = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<Image
+							alt=""
+							width={25}  
+							height={25}
+							id="fingerprints-icon" 
+							src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<Image
+							alt=""
+							width={25}  
+							height={25}
+							 id="fingerprints-icon"
+							  src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<Image
+							alt=""
+							width={25}  
+							height={23}
+							 id="fingerprints-icon"
+							  src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

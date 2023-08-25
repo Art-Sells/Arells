@@ -113,20 +113,7 @@ const Index = () => {
           <Link legacyBehavior href="/prototype-seller-created">
             <a id="prototype">PROTOTYPE</a>
           </Link>	        
-        </div>
-
-        <div id="footerr">	
-          <a href="https://twitter.com/arellsofficial"
-              target="_blank"
-              id="contactt">
-              <Image
-                alt=""
-                width={30}
-                height={30}
-               id="twitterr"
-                src="/icons&images/Twitter.png"/>
-          </a>  		
-        </div>             
+        </div>           
     
       </div>		       
     </>

@@ -1,6 +1,7 @@
 "use client";
 
 import Head from 'next/head'
+import Image from 'next/image';
 // Change below link after test
 import '../css/stayupdated.css';
 import '../css/modals/stayupdated-modal.css';
@@ -136,15 +137,7 @@ const StayUpdated = () => {
 				    <a id="submit"  
 				    onClick={signUp}>SUBMIT</a>
 				</form>
-            </div>
-            
-            <div id="footer">
-                <a href="https://twitter.com/arellsofficial"
-                    target="_blank"
-                    id="contact">
-                    <img id="twitter" src="/icons&images/Twitter.png"/>
-                </a>  		
-            </div>               
+            </div>           
 		
 		</div>			
 		     
