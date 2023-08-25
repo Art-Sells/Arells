@@ -107,7 +107,7 @@ ________________________________________________________________________________
 
 ## Vault (Slide-Up)
 - NFT Collections (Ability to Transfer & Receive)
-- USDC Transfer to Bank Account
+- USDC Transfer to Bank Account (Beam Cash Out API?)
   
 #### Wallet:
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
