@@ -49,6 +49,7 @@
 				opacity: 1;
 			  }		
 			  #arells-icon-succinct-drop {
+
 				  height: 16px;
 				  width: 15px;
 			  }	
@@ -122,11 +123,13 @@
 		  }					
 			  #cart-icon-succinct-drop,
 			  #cart-icon-full-succinct-drop {
+
 				  height: 15px;
 				  width: 16px;
 			  }	
 			  
 		  #word-logo-succinct-drop {
+
 			  margin-top: 37px;
 			  width: 110px;	
 			  height: 35px;
@@ -273,6 +276,7 @@
 					cursor: pointer;
 			  }		
 				  #copy-link-icon-succinct-drop{
+
 					  width: 15px;
 					  height: 8px;
 					  margin-right: 5px;
@@ -489,6 +493,7 @@
 					opacity: 1;	
 				  }					
 					  #fingerprints-icon{
+
 						  height: 25px;
 						  width: 25px;
 					  }			
@@ -549,6 +554,7 @@
 					width: 30px;		
 			  }	
 			  #arells-icon-succinct-drop {
+
 					  height: 15px;
 					  width: 14px;
 				  }	    
@@ -580,12 +586,14 @@
 			  }
 			  #cart-icon-succinct-drop,
 			  #cart-icon-full-succinct-drop  {
+
 					height: 14px;
 					width: 15px;
 				  }
 			  
 								
 		  #word-logo-succinct-drop {
+
 			  margin-top: 35px;
 			  width: 90px;	
 			  height: 28px;	
@@ -641,6 +649,7 @@
 			  width: 300px;
 			}  
 			#photo-succinct-drop {
+				
 				width: 300px;
 				height: 300px;
 			}
@@ -681,6 +690,7 @@
 				margin-bottom: 10px;
 			  }	  	
 				  #copy-link-icon-succinct-drop {
+
 					  width: 12px;
 					  height: 6px;
 				  }
@@ -776,6 +786,7 @@
 					width: 42px;			
 			  }			
 				  #fingerprints-icon{
+					
 					  height: 20px;
 					  width: 20px;
 				  }											

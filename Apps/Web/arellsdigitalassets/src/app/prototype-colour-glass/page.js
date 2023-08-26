@@ -10,6 +10,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const ColourGlass = () => {
 
@@ -240,7 +241,12 @@ const ColourGlass = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image 
+						id="wallet-icon"
+						alt=""
+						width={50}
+						height={50} 
+						 src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -264,18 +270,33 @@ const ColourGlass = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-colour-glass">
-							<img id="arells-icon-colour-glass" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image
+							alt=""
+							height={16}
+							width={15}
+							 id="arells-icon-colour-glass"
+							  src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkColourGlass && (
 						<button id="cart-link-colour-glass" onClick={connectWallet}>
-							<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image
+							alt=""
+							height={15}
+							width={16}
+							 id="cart-icon-colour-glass"
+							  src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedColourGlass && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-colour-glass">
-								<img id="cart-icon-colour-glass" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image
+								alt=""
+								height={15}
+								width={16}
+								 id="cart-icon-colour-glass"
+								  src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -283,12 +304,22 @@ const ColourGlass = () => {
 					{cartLinkFullColourGlass && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-colour-glass">
-								<img id="cart-icon-full-colour-glass" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image
+								alt=""
+								height={15}
+								width={16} 
+								 id="cart-icon-full-colour-glass"
+								  src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<img id="word-logo-colour-glass" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image
+				alt=""
+				width={110}  
+				height={35}
+				 id="word-logo-colour-glass"
+				  src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-colour-glass">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivColourGlass && (
 					<div id="wallet-connected-div-colour-glass">
@@ -300,13 +331,23 @@ const ColourGlass = () => {
 				)}
 
             <div id="colour-glass">
-                <img id="photo-colour-glass" src="/icons&images/prototype/3.jpg"/>
+                <Image
+				alt=""
+				width={400}  
+				height={400}
+				 id="photo-colour-glass"
+				  src="/icons&images/prototype/3.jpg"/>
                 <h3 id="name-colour-glass">Colour Glass</h3>
                 <div id="share-div-colour-glass">
                     <p id="share-div-desc-colour-glass">SHARE</p> 
                     <button id="copy-link-colour-glass"
                     onClick={copyLink}>
-                        <img id="copy-link-icon-colour-glass" src="/icons&images/prototype/link.png"/>
+                        <Image
+						alt=""
+						width={15}  
+						height={8}
+						id="copy-link-icon-colour-glass"
+						 src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -376,19 +417,34 @@ const ColourGlass = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<Image
+							alt=""
+							width={25}  
+							height={25}
+							 id="fingerprints-icon"
+							  src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<Image
+							alt=""
+							width={25}  
+							height={25}
+							 id="fingerprints-icon"
+							  src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<Image
+							alt=""
+							width={25}  
+							height={23}
+							 id="fingerprints-icon"
+							  src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		
