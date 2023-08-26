@@ -258,13 +258,12 @@ const PrototypeBuyerCreated = () => {
 				<p id="share-div-desc-buyer-created">SHARE</p>
 				<button id="copy-link-buyer-created"
 				onClick={copyLink}>
-
-
-{/*<!-- Continue Below -->*/}	
-
-
-
-					<img id="copy-link-icon-buyer-created" src="/icons&images/prototype/link.png"/>
+					<Image
+					alt=""
+					width={15}  
+					height={8} 
+					id="copy-link-icon-buyer-created" 
+					src="/icons&images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
 			<hr id="profileline-buyer-created"/>
@@ -277,7 +276,12 @@ const PrototypeBuyerCreated = () => {
 			</div>
 			<p id="no-art-buyer-created">
 				no art created
-				<img id="cart-icon-collected-buyer-created" src="/icons&images/prototype/Add.png"/>
+				<Image
+				alt=""
+				width={25}  
+				height={25}
+				id="cart-icon-collected-buyer-created" 
+				src="/icons&images/prototype/Add.png"/>
 			</p>
 
 		</div>			

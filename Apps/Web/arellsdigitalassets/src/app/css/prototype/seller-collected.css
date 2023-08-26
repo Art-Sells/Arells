@@ -256,6 +256,7 @@
           }		
               #copy-link-icon-seller-collected {
                   width: 15px;
+                  height: 8px;
                   margin-right: 5px;
               }
       #profileline-seller-collected {
@@ -343,6 +344,7 @@
 	}	
 	#cart-icon-collected-seller-collected{
 		height: 25px;
+    width: 27px;
 		margin-left: 10px;
 		opacity: 1;
 	}
@@ -518,6 +520,7 @@
               }	  	
                   #copy-link-icon-seller-collected {
                       width: 12px;
+                      height: 6px;
                   }
           #profileline-seller-collected {
           margin-top: -10px;
@@ -555,6 +558,7 @@
 			}	
 			#cart-icon-collected-seller-collected{
 				height: 20px;
+        width: 21px;
 				margin-left: 5px;
 			}	
   }					
