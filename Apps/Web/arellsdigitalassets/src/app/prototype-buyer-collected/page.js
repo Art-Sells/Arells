@@ -101,7 +101,7 @@ const PrototypeBuyerCollected = () => {
 				setCartLinkFullBuyerCollected(true);
 			}
 		  }
-	});
+	}, []);
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
@@ -148,7 +148,7 @@ const PrototypeBuyerCollected = () => {
 				setSuccinctDropBuyerCollected(true);
 			}
 		  }
-	});
+	}, []);
 	
 {/*<!-- Added/Purchased To function/s above -->*/}
 	
