@@ -10,6 +10,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const BeachHouses = () => {
 {/*<!-- useState constants below -->*/}
@@ -239,7 +240,12 @@ const BeachHouses = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image 
+						id="wallet-icon"
+						alt=""
+						width={50}
+						height={50}
+						src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -263,18 +269,33 @@ const BeachHouses = () => {
 				{/*<!-- Change below link after test -->*/}
 					<Link legacyBehavior href="/">
 						<a id="icon-link-beach-houses">
-							<img id="arells-icon-beach-houses" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							<Image
+							alt=""
+							height={16}
+							width={15}
+							id="arells-icon-beach-houses" 
+							src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkBeachHouses && (
 						<button id="cart-link-beach-houses" onClick={connectWallet}>
-							<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image
+							alt=""
+							height={15}
+							width={16} 
+							id="cart-icon-beach-houses" 
+							src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedBeachHouses && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-beach-houses">
-								<img id="cart-icon-beach-houses" src="/icons&images/prototype/shopping-cart-empty.png"/>
+								<Image
+								alt=""
+								height={15}
+								width={16}
+								id="cart-icon-beach-houses" 
+								src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -282,12 +303,22 @@ const BeachHouses = () => {
 					{cartLinkFullBeachHouses && (
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-beach-houses">
-								<img id="cart-icon-full-beach-houses" src="/icons&images/prototype/shopping-cart-full.png"/>
+								<Image
+								alt=""
+								height={15}
+								width={16} 
+								id="cart-icon-full-beach-houses" 
+								src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
 				</div>
-				<img id="word-logo-beach-houses" src="/icons&images/Arells-Logo-Ebony.png"/>	
+				<Image
+				alt=""
+				width={110}  
+				height={35} 
+				id="word-logo-beach-houses" 
+				src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-beach-houses">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivBeachHouses && (
 					<div id="wallet-connected-div-beach-houses">
@@ -299,13 +330,23 @@ const BeachHouses = () => {
 				)}
 
 			<div id="beach-houses">
-				<img id="photo-beach-houses" src="/icons&images/prototype/2.jpg"/>
+				<Image
+				alt=""
+				width={400}  
+				height={400}
+				id="photo-beach-houses" 
+				src="/icons&images/prototype/2.jpg"/>
 				<h3 id="name-beach-houses">Beach Houses</h3> 
 				<div id="share-div-beach-houses">
 					<p id="share-div-desc-beach-houses">SHARE</p>
 					<button id="copy-link-beach-houses"
 					onClick={copyLink}>
-						<img id="copy-link-icon-beach-houses" src="/icons&images/prototype/link.png"/>
+						<Image
+						alt=""
+						width={15}  
+						height={8}
+						id="copy-link-icon-beach-houses" 
+						src="/icons&images/prototype/link.png"/>
 						COPY LINK
 					</button>	
 				</div>
@@ -375,19 +416,34 @@ const BeachHouses = () => {
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/etherscan-logo.png"/>
+							<Image
+							alt=""
+							width={25}  
+							height={25}
+							id="fingerprints-icon" 
+							src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfs.png"/>
+							<Image
+							alt=""
+							width={25}  
+							height={25}
+							id="fingerprints-icon" 
+							src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
-							<img id="fingerprints-icon" src="/icons&images/prototype/ipfslite.png"/>
+							<Image
+							alt=""
+							width={25}  
+							height={23}
+							id="fingerprints-icon" 
+							src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

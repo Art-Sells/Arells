@@ -50,6 +50,7 @@
 			}		
 			#arells-icon-blue-orange {
 				height: 16px;
+				width: 15px;
 			}	
 		#cart-link-blue-orange{
 			display: inline-block;
@@ -121,7 +122,8 @@
 		}					
 			#cart-icon-blue-orange,
 			#cart-icon-full-blue-orange {
-				height: 16px;
+				height: 15px;
+				width: 16px;
 			}	
 			
 		#word-logo-blue-orange {
@@ -271,6 +273,7 @@
 			}		
 				#copy-link-icon-blue-orange{
 					width: 15px;
+					height: 8px;
 					margin-right: 5px;
 				}
 
@@ -486,6 +489,7 @@
 				}					
 					#fingerprints-icon{
 						height: 25px;
+						  width: 25px;
 					}			
 				
 		#prototype-blue-orange-word {
@@ -544,7 +548,8 @@
 				  width: 30px;		
 			}	
 			#arells-icon-blue-orange {
-					height: 15px;
+				height: 15px;
+				width: 14px;
 				}	    
 			#cart-link-blue-orange{
 				margin-left: 90px;
@@ -574,13 +579,15 @@
 			}
 			#cart-icon-blue-orange,
 			#cart-icon-full-blue-orange  {
-					height: 15px;
+				height: 14px;
+				width: 15px;
 				}
 			
 			  				
 		#word-logo-blue-orange {
 			margin-top: 35px;
 			width: 90px;	
+			  height: 28px;		
 		}
 		#slogan-blue-orange {
 			margin-top: 16px;
@@ -674,6 +681,7 @@
 			}	  	
 				#copy-link-icon-blue-orange {
 					width: 12px;
+					height: 6px;
 				}
 		#creator-owner-desc-blue-orange {
 		margin-top: 15px;
@@ -768,5 +776,6 @@
 			}			
 				#fingerprints-icon{
 					height: 20px;
+					width: 20px;
 				}											
 }

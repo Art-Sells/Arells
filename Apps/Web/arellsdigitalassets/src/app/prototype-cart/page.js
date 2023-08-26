@@ -7,6 +7,7 @@ import '../css/modals/purchase-complete.css';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const PrototypeCart = () => {
 {/*<!-- useState constants below -->*/}
@@ -416,13 +417,28 @@ const PrototypeCart = () => {
 			<div id="header-cart">
 		
 				<a id="icon-link-cart">
-					<img id="arells-icon-cart" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+					<Image
+					alt=""
+					height={16}
+					width={15} 
+					id="arells-icon-cart" 
+					src="/icons&images/prototype/Arells-Icon-Home.png"/>
 				</a>		
 				<button id="cart-link-cart">
-					<img id="cart-icon-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
+					<Image
+					alt=""
+					height={15}
+					width={16}
+					id="cart-icon-cart" 
+					src="/icons&images/prototype/shopping-cart-empty.png"/>
 				</button>	
 			</div>
-			<img id="word-logo-cart" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<Image
+			alt=""
+			width={110}  
+			height={35} 
+			id="word-logo-cart" 
+			src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-cart">NEVER LOSE MONEY SELLING ART</p>
 			<div id="wallet-connected-div-cart">
 				<hr id="connected-line-cart"/>
@@ -434,7 +450,12 @@ const PrototypeCart = () => {
 				<div id="cart-empty-cart">	
 					<p id="no-art-cart">
 						cart empty
-						<img id="cart-icon-collected-cart" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<Image
+						alt=""
+						width={30}  
+						height={25}
+						id="cart-icon-collected-cart" 
+						src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</p>
 				</div>
 			)}
