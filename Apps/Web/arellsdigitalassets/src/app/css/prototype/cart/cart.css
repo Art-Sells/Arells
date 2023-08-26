@@ -117,12 +117,12 @@
 			margin-left: auto;
 		    margin-right: auto;
 		    margin-bottom: 10px;
-		    margin-top: -200px;
+		    margin-top: -230px;
 		    align-items: center;
 			border-radius: 15px;
 			box-shadow: 0px 5px 20px -6px silver; 
 			width: 360px;
-			height: 280px;
+			height: 310px;
 			padding-top: 175px;
 			padding-left: 30px;
 			padding-right: 30px;
@@ -133,7 +133,7 @@
 		}		
 			#royalty-cart {
 			text-align: center;
-			margin-top: 30px;
+			margin-top: 50px;
 				color: black;
 				font-weight: 300;
 				font-size: 12px;
@@ -455,6 +455,7 @@
 			}	
 			#arells-icon-cart {
 					height: 15px;
+					width: 14px;
 				}	    
 			#cart-link-cart{
 				margin-left: 90px;
@@ -466,13 +467,15 @@
 				  width: 45px;  					
 			}
 			#cart-icon-cart {
-					height: 15px;
+					height: 14px;
+					width: 15px;
 				}
 			
 			  				
 		#word-logo-cart {
 			margin-top: 35px;
 			width: 90px;	
+			height: 28px;
 		}
 		#slogan-cart {
 			margin-top: 16px;
@@ -497,7 +500,7 @@
 			}
 		#purchase-info-cart{
 			width: 300px;
-			height: 230px;
+			height: 260px;
 			padding-top: 185px;
 			padding-left: 30px;
 			padding-right: 30px;
@@ -505,7 +508,7 @@
 		     
 		}				
 			#royalty-cart {
-				margin-top: 20px;
+				margin-top: 45px;
 				font-size: 11px;
 			}
 			#royalty-price-cart {
