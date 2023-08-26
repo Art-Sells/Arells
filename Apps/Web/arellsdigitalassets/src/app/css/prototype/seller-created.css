@@ -50,6 +50,7 @@
 			}		
 			#arells-icon-seller-created {
 				height: 16px;
+                width: 15px;
 			}	
 		#cart-link-seller-created{
 			display: inline-block;
@@ -119,12 +120,14 @@
 		}					
 			#cart-icon-seller-created,
 			#cart-icon-full-seller-created {
-				height: 16px;
+				height: 15px;
+                width: 16px;
 			}		
 			
 		#word-logo-seller-created {
 			margin-top: 37px;
 			width: 110px;	
+			height: 35px;	
 		}
 		#slogan-seller-created {
 			margin-top: 23px;
@@ -179,8 +182,8 @@
 		#profile-photo-seller-created {
 			object-fit: cover;
 			overflow: hidden;
-			width: 100%;
-			height: 100%;
+			width: 100px;
+            height: 100px;
 		}	
 	#name-seller-created {
 	  font-size: 17pt;
@@ -253,6 +256,7 @@
 		}		
 			#copy-link-icon-seller-created {
 				width: 15px;
+                height: 8px;
 				margin-right: 5px;
 			}
 	#profileline-seller-created {
@@ -583,7 +587,8 @@
 				  width: 30px;		
 			}	
 			#arells-icon-seller-created {
-					height: 15px;
+				height: 15px;
+                  width: 14px;
 				}	    
 			#cart-link-seller-created{
 				margin-left: 90px;
@@ -613,13 +618,15 @@
 			}
 			#cart-icon-seller-created,
 			#cart-icon-full-seller-created {
-					height: 15px;
+				height: 14px;
+				width: 15px;
 				}
 			
 			  				
 		#word-logo-seller-created {
 			margin-top: 35px;
 			width: 90px;	
+			height: 28px;		
 		}
 		#slogan-seller-created {
 			margin-top: 16px;
@@ -694,6 +701,7 @@
 			}	  	
 				#copy-link-icon-seller-created {
 					width: 12px;
+					height: 6px;
 				}
 		#profileline-seller-created {
 		margin-top: -10px;

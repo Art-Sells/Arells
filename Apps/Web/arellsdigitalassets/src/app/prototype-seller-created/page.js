@@ -9,6 +9,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const PrototypeSellerCreated = () => {
 
@@ -472,7 +473,12 @@ const PrototypeSellerCreated = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image 
+						id="wallet-icon"
+						alt=""
+						width={50}
+						height={50}  
+						src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -486,30 +492,55 @@ const PrototypeSellerCreated = () => {
 			{/*<!-- Change below link after test -->*/}
 				<Link legacyBehavior href="/">
 					<a id="icon-link-seller-created">
-						<img id="arells-icon-seller-created" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<Image
+						alt=""
+						height={16}
+						width={15}
+						id="arells-icon-seller-created" 
+						src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
 				{cartLinkSellerCreated && (
 					<button id="cart-link-seller-created" onClick={connectWallet}>
-						<img id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<Image
+						alt=""
+						height={15}
+						width={16} 
+						id="cart-icon-seller-created" 
+						src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
 				{cartLinkConnectedSellerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-connected-seller-created">
-							<img id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image
+							alt=""
+							height={15}
+							width={16}
+							id="cart-icon-seller-created" 
+							src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
 				{cartLinkFullSellerCreated && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-full-seller-created">
-							<img id="cart-icon-seller-created" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<Image
+							alt=""
+							height={15}
+							width={16} 
+							id="cart-icon-seller-created" 
+							src="/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
 			</div>
-			<img id="word-logo-seller-created" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<Image
+			alt=""
+			width={110}  
+			height={35} 
+			id="word-logo-seller-created" 
+			src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-seller-created">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivSellerCreated && (
 				<div id="wallet-connected-div-seller-created">
@@ -520,7 +551,12 @@ const PrototypeSellerCreated = () => {
 				</div>
 			)}	
 			<div id="profile-img-container-seller-created">
-				<img id="profile-photo-seller-created" src="/icons&images/prototype/proto-banner.jpg"/>
+				<Image
+				alt=""
+				width={100}  
+				height={100}
+				id="profile-photo-seller-created" 
+				src="/icons&images/prototype/proto-banner.jpg"/>
 			</div>	 
 			<h1 id="name-seller-created">Abstract Kadabra</h1>  
 			<p id="description-seller-created">Here rests life&apos;s abstractions captured in majestic endeavors.</p> 
@@ -528,7 +564,12 @@ const PrototypeSellerCreated = () => {
 				<p id="share-div-desc-seller-created">SHARE</p>
 				<button id="copy-link-seller-created"
 				onClick={copyLink}>
-					<img id="copy-link-icon-seller-created" src="/icons&images/prototype/link.png"/>
+					<Image
+					alt=""
+					width={15}  
+					height={8}
+					id="copy-link-icon-seller-created" 
+					src="/icons&images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
 			<hr id="profileline-seller-created"/>

@@ -245,7 +245,10 @@ const PrototypeSellerCollected = () => {
 				</div>
 			)}	
 			<div id="profile-img-container-seller-collected">
-				<img 
+				<Image
+				alt=""
+				width={100}  
+				height={100}
 				id="profile-photo-seller-collected" 
 				src="/icons&images/prototype/proto-banner.jpg"/>
 			</div>	 

@@ -9,6 +9,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const PrototypeBuyerCollected = () => {
 
@@ -208,7 +209,12 @@ const PrototypeBuyerCollected = () => {
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
 						onClick={walletConnected}>
-						<img id="wallet-icon" src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						<Image 
+						id="wallet-icon"
+						alt=""
+						width={50}
+						height={50}  
+						src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -222,18 +228,33 @@ const PrototypeBuyerCollected = () => {
 			{/*<!-- Change Link Below After Test -->*/}
 				<Link legacyBehavior href="/">
 					<a id="icon-link-buyer-collected">
-						<img id="arells-icon-buyer-collected" src="/icons&images/prototype/Arells-Icon-Home.png"/>
+						<Image
+						alt=""
+						height={16}
+						width={15}
+						id="arells-icon-buyer-collected" 
+						src="/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>	
 				{cartLinkBuyerCollected && (
 					<button id="cart-link-buyer-collected" onClick={connectWallet}>
-						<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+						<Image
+						alt=""
+						height={15}
+						width={16} 
+						id="cart-icon-buyer-collected" 
+						src="/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>					
 				)}
 				{cartLinkConnectedBuyerCollected && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-connected-buyer-collected">
-							<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+							<Image
+							alt=""
+							height={15}
+							width={16}
+							id="cart-icon-buyer-collected" 
+							src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>
 				
@@ -241,13 +262,23 @@ const PrototypeBuyerCollected = () => {
 				{cartLinkFullBuyerCollected && (
 					<Link legacyBehavior href="/prototype-cart">
 						<a id="cart-link-full-buyer-collected">
-							<img id="cart-icon-buyer-collected" src="/icons&images/prototype/shopping-cart-full.png"/>
+							<Image
+							alt=""
+							height={15}
+							width={16} 
+							id="cart-icon-buyer-collected" 
+							src="/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>
 				
 				)}		
 			</div>
-			<img id="word-logo-buyer-collected" src="/icons&images/Arells-Logo-Ebony.png"/>	
+			<Image
+			alt=""
+			width={110}  
+			height={35}  
+			id="word-logo-buyer-collected" 
+			src="/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-buyer-collected">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivBuyerCollected && (
 				<div id="wallet-connected-div-buyer-collected">
@@ -258,7 +289,12 @@ const PrototypeBuyerCollected = () => {
 				</div>				
 			)}
 			<div id="profile-img-container-buyer-collected">
-				<img id="profile-photo-buyer-collected" src="/icons&images/prototype/Unnamed-Icon.jpg"/>
+				<Image
+				alt=""
+				width={100}  
+				height={100}
+				id="profile-photo-buyer-collected" 
+				src="/icons&images/prototype/Unnamed-Icon.jpg"/>
 			</div>	 
 			<h1 id="name-buyer-collected">Unnamed</h1>  
 			<p id="description-buyer-collected">Creator & Collector</p> 
@@ -266,7 +302,12 @@ const PrototypeBuyerCollected = () => {
 				<p id="share-div-desc-buyer-collected">SHARE</p>
 				<button id="copy-link-buyer-collected"
 					onClick={copyLink}>
-					<img id="copy-link-icon-buyer-collected" src="/icons&images/prototype/link.png"/>
+					<Image
+					alt=""
+					width={15}  
+					height={8}
+					id="copy-link-icon-buyer-collected" 
+					src="/icons&images/prototype/link.png"/>
 					COPY LINK</button>	
 			</div>		
 			<hr id="profileline-buyer-collected"/>
