@@ -585,7 +585,12 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-blue-orange">
 							<a target="_self" id="photo-link-seller-created">
-								<img id="photo-seller-created" src="/icons&images/prototype/1.jpg"/>
+								<Image
+								alt=""
+								width={200}  
+								height={200}  
+								id="photo-seller-created" 
+								src="/icons&images/prototype/1.jpg"/>
 							</a>
 						</Link>	
 						{blueOrangePricesBeforeSellerCreated && (
@@ -629,7 +634,12 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-beach-houses">
 							<a target="_self" id="photo-link-seller-created">
-								<img id="photo-seller-created" src="/icons&images/prototype/2.jpg"/>
+								<Image
+								alt=""
+								width={200}  
+								height={200}  
+								id="photo-seller-created" 
+								src="/icons&images/prototype/2.jpg"/>
 							</a>
 						</Link>	
 						{beachHousesPricesBeforeSellerCreated && (
@@ -673,7 +683,12 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-colour-glass">
 							<a target="_self" id="photo-link-seller-created">
-								<img id="photo-seller-created" src="/icons&images/prototype/3.jpg"/>
+								<Image
+								alt=""
+								width={200}  
+								height={200}  
+								id="photo-seller-created" 
+								src="/icons&images/prototype/3.jpg"/>
 							</a>
 						</Link>	
 						{colourGlassPricesBeforeSellerCreated && (
@@ -717,7 +732,12 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-layers">
 							<a target="_self" id="photo-link-seller-created">
-								<img id="photo-seller-created" src="/icons&images/prototype/4.jpg"/>
+								<Image
+								alt=""
+								width={200}  
+								height={200}  
+								id="photo-seller-created" 
+								src="/icons&images/prototype/4.jpg"/>
 							</a>
 						</Link>	
 						{layersPricesBeforeSellerCreated && (
@@ -761,7 +781,12 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-succinct-drop">
 							<a target="_self" id="photo-link-seller-created">
-								<img id="photo-seller-created" src="/icons&images/prototype/5.jpg"/>
+								<Image
+								alt=""
+								width={200}  
+								height={200}  
+								id="photo-seller-created" 
+								src="/icons&images/prototype/5.jpg"/>
 							</a>
 						</Link>	
 						{succinctDropPricesBeforeSellerCreated && (
@@ -805,7 +830,12 @@ const PrototypeSellerCreated = () => {
 					{/*<!-- Change below link after test -->*/}
 						<Link legacyBehavior href="/prototype-paint-rain">
 							<a target="_self" id="photo-link-seller-created">
-								<img id="photo-seller-created" src="/icons&images/prototype/6.jpg"/>
+								<Image
+								alt=""
+								width={200}  
+								height={200}  
+								id="photo-seller-created" 
+								src="/icons&images/prototype/6.jpg"/>
 							</a>
 						</Link>			
 						{paintRainPricesBeforeSellerCreated && (

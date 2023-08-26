@@ -321,7 +321,12 @@ const PrototypeBuyerCollected = () => {
 			{noArtBuyerCollected && (
 				<p id="no-art-buyer-collected">
 					no art collected
-					<img id="cart-icon-collected-buyer-collected" src="/icons&images/prototype/shopping-cart-empty.png"/>
+					<Image
+					alt=""
+					width={27}  
+					height={25}  
+					id="cart-icon-collected-buyer-collected" 
+					src="/icons&images/prototype/shopping-cart-empty.png"/>
 				</p>
 			)}
 			{collectedItemsBuyerCollected && (
@@ -331,7 +336,12 @@ const PrototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-blue-orange">
 								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/1.jpg"/>
+									<Image
+									alt=""
+									width={150}  
+									height={150}  
+									id="photo-buyer-collected" 
+									src="/icons&images/prototype/1.jpg"/>
 								</a>								
 							</Link>
 							<div id="prices-buyer-collected">
@@ -350,7 +360,12 @@ const PrototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-beach-houses">
 								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/2.jpg"/>
+									<Image
+									alt=""
+									width={150}  
+									height={150}  
+									id="photo-buyer-collected" 
+									src="/icons&images/prototype/2.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
@@ -369,7 +384,12 @@ const PrototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-colour-glass">
 								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/3.jpg"/>
+									<Image
+									alt=""
+									width={150}  
+									height={150}  
+									id="photo-buyer-collected" 
+									src="/icons&images/prototype/3.jpg"/>
 								</a>								
 							</Link>
 							<div id="prices-buyer-collected">
@@ -388,7 +408,12 @@ const PrototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-layers">
 								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/4.jpg"/>
+									<Image
+									alt=""
+									width={150}  
+									height={150}  
+									id="photo-buyer-collected" 
+									src="/icons&images/prototype/4.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
@@ -407,7 +432,12 @@ const PrototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-succinct-drop">
 								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/5.jpg"/>
+									<Image
+									alt=""
+									width={150}  
+									height={150}  
+									id="photo-buyer-collected" 
+									src="/icons&images/prototype/5.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
@@ -426,7 +456,12 @@ const PrototypeBuyerCollected = () => {
 						{/*<!-- Change Link Below After Test -->*/}
 							<Link legacyBehavior href="/prototype-paint-rain">
 								<a target="_self" id="photo-link-buyer-collected">
-									<img id="photo-buyer-collected" src="/icons&images/prototype/6.jpg"/>
+									<Image
+									alt=""
+									width={150}  
+									height={150}  
+									id="photo-buyer-collected" 
+									src="/icons&images/prototype/6.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">

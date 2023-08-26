@@ -457,6 +457,7 @@
 	}	
 	#cart-icon-collected-buyer-collected{
 		height: 25px;
+		width: 27px;
 		margin-left: 10px;
 		opacity: 1;
 	}
@@ -729,6 +730,7 @@
 			}	
 			#cart-icon-collected-buyer-collected{
 				height: 20px;
+        		width: 21px;
 				margin-left: 5px;
 			}									  
 }					
