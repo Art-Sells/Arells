@@ -49,7 +49,8 @@
                 opacity: 1;
               }		
               #arells-icon-buyer-created {
-                  height: 16px;
+                height: 16px;
+                width: 15px;
               }	
           #cart-link-buyer-created{
               display: inline-block;
@@ -119,12 +120,14 @@
           }					
               #cart-icon-buyer-created,
               #cart-icon-full-buyer-created {
-                  height: 16px;
+                height: 15px;
+                width: 16px;
               }		
               
           #word-logo-buyer-created {
               margin-top: 37px;
               width: 110px;	
+              height: 35px;	
           }
           #slogan-buyer-created {
               margin-top: 23px;
@@ -179,8 +182,8 @@
           #profile-photo-buyer-created {
               object-fit: cover;
               overflow: hidden;
-              width: 100%;
-              height: 100%;
+              width: 100px;
+              height: 100px;
           }	
       #name-buyer-created {
         font-size: 17pt;
@@ -401,7 +404,8 @@
                     width: 30px;		
               }	
               #arells-icon-buyer-created {
-                      height: 15px;
+                  height: 15px;
+                  width: 14px;
                   }	    
               #cart-link-buyer-created{
                   margin-left: 90px;
@@ -431,13 +435,15 @@
               }
               #cart-icon-buyer-created,
               #cart-icon-full-buyer-created {
-                      height: 15px;
+                  height: 14px;
+                  width: 15px;
                   }
               
                                 
           #word-logo-buyer-created {
               margin-top: 35px;
               width: 90px;	
+			       height: 28px;	
           }
           #slogan-buyer-created {
             margin-top: 16px;
@@ -468,8 +474,8 @@
               #profile-photo-buyer-created {
                   object-fit: cover;
                   overflow: hidden;
-                  width: 100%;
-                  height: 100%;
+                  width: 90px;
+                  height: 90px;
               }	
           #name-buyer-created {
             font-size: 13pt;
