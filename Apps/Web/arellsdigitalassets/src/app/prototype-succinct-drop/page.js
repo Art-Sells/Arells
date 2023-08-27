@@ -6,6 +6,10 @@ import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
 import '../css/modals/coming-soon.css';
 
+//Loader Styles
+import './css/modals/loading/spinnerBackground.css';
+import styles from './css/modals/loading/spinner.module.css';
+
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -13,6 +17,30 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const SuccinctDrop = () => {
+
+	  //Loader Functions
+	  const [showLoading, setLoading] = useState(true);
+	  const [imagesLoaded, setImagesLoaded] = useState({
+		walletIcon: false,
+		arellsIconSuccinctDrop: false,
+		cartIconSuccinctDrop: false,
+		cartIconFullSuccinctDrop: false,
+		wordLogoSuccinctDrop: false,
+		photoSuccinctDrop: false,
+		copyLinkIconSuccinctDrop: false,
+		fingerprintsIcon: false,
+	  });
+	  const handleImageLoaded = (imageName) => {
+		setImagesLoaded(prevState => ({ 
+		  ...prevState, 
+		  [imageName]: true 
+		}));
+	  };
+	  useEffect(() => {
+		if (Object.values(imagesLoaded).every(Boolean)) {
+		  setLoading(false);
+		}
+	  }, [imagesLoaded]);
 
 
 {/*<!-- useState constants below -->*/}
@@ -225,7 +253,7 @@ const SuccinctDrop = () => {
 
 		<title>Prototype Succinct Drop</title>	
 
-{/*<!-- Modals below link after test -->*/}
+{/*<!-- Modals below -->*/}
 		{showCopiedLink && (
 			<div id="copiedLink">
 				<div className="modal-content">
@@ -243,6 +271,7 @@ const SuccinctDrop = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						onLoad={() => handleImageLoaded('walletIcon')}
 						id="wallet-icon"
 						alt=""
 						width={50}
@@ -262,6 +291,21 @@ const SuccinctDrop = () => {
 				</div>
 			</div>	
 		)}
+
+
+		{showLoading && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon-Ivory.png"/>        
+			</div>
+		)}
+		{showLoading && (
+			<div className={styles.spinner}></div>
+		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -272,6 +316,7 @@ const SuccinctDrop = () => {
 					<Link legacyBehavior href="/">
 						<a id="icon-link-succinct-drop">
 							<Image
+							onLoad={() => handleImageLoaded('arellsIconSuccinctDrop')}
 							alt=""
 							height={16}
 							width={15}
@@ -282,6 +327,7 @@ const SuccinctDrop = () => {
 					{cartLinkSuccinctDrop && (
 						<button id="cart-link-succinct-drop" onClick={connectWallet}>
 							<Image
+							onLoad={() => handleImageLoaded('cartIconSuccinctDrop')}
 							alt=""
 							height={15}
 							width={16}
@@ -293,6 +339,7 @@ const SuccinctDrop = () => {
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-succinct-drop">
 								<Image
+								onLoad={() => handleImageLoaded('cartIconSuccinctDrop')}
 								alt=""
 								height={15}
 								width={16}
@@ -306,6 +353,7 @@ const SuccinctDrop = () => {
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-succinct-drop">
 								<Image
+								onLoad={() => handleImageLoaded('cartIconFullSuccinctDrop')}
 								alt=""
 								height={15}
 								width={16} 
@@ -316,6 +364,7 @@ const SuccinctDrop = () => {
 					)}	
 				</div>
 				<Image
+				onLoad={() => handleImageLoaded('wordLogoSuccinctDrop')}
 				alt=""
 				width={110}  
 				height={35}
@@ -333,6 +382,7 @@ const SuccinctDrop = () => {
 
             <div id="succinct-drop">
                 <Image
+				onLoad={() => handleImageLoaded('photoSuccinctDrop')}
 				alt=""
 				width={400}  
 				height={400}
@@ -344,6 +394,7 @@ const SuccinctDrop = () => {
                     <button id="copy-link-succinct-drop"
                     onClick={copyLink}>
                         <Image
+						onLoad={() => handleImageLoaded('copyLinkIconSuccinctDrop')}
 						alt=""
 						width={15}  
 						height={8}
@@ -419,6 +470,7 @@ const SuccinctDrop = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							onLoad={() => handleImageLoaded('fingerprintsIcon')}
 							alt=""
 							width={25}  
 							height={25}
@@ -430,6 +482,7 @@ const SuccinctDrop = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							onLoad={() => handleImageLoaded('fingerprintsIcon')}
 							alt=""
 							width={25}  
 							height={25}
@@ -441,6 +494,7 @@ const SuccinctDrop = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							onLoad={() => handleImageLoaded('fingerprintsIcon')}
 							alt=""
 							width={25}  
 							height={23}

@@ -4,19 +4,20 @@
 // Change below link after test
 import './css/Home.css';
 import './css/modals/copiedlink.css';
-import './css/modals/loading/spinnerBackground.css';
 
+//Loader Styles
+import './css/modals/loading/spinnerBackground.css';
+import styles from './css/modals/loading/spinner.module.css';
 
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
 import Image from 'next/image';
-// import Spinner from '../app/Spinner/page';
-import styles from './css/modals/loading/spinner.module.css';
 
 const Index = () => {
 
+  //Loader Functions
   const [showLoading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState({
     arellsIcon: false,
