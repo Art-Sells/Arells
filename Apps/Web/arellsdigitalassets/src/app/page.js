@@ -4,6 +4,7 @@
 // Change below link after test
 import './css/Home.css';
 import './css/modals/copiedlink.css';
+import styles from './css/modals/loading/spinner.module.css';
 
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -85,9 +86,7 @@ const Index = () => {
 		  <title>Arells</title>	  
 
       {showLoading && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 1)' }}>
-          Loading...
-        </div>
+        <div className={styles.spinner}></div>
       )}  
 
       <div id="overlayy">
