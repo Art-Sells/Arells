@@ -6,9 +6,9 @@
   justify-content: center;
   align-items: center;
   z-index: 201; /* ensure it's on top of all other elements */
-  border: 3.5px solid rgba(255, 255, 255, 0.3);
+  border: 3.5px solid rgba(140, 140, 140, 0.3);
   border-radius: 50%;
-  border-top: 3.5px solid rgb(255, 255, 255);
+  border-top: 3.5px solid rgb(0, 0, 0);
   width: 50px;
   height: 50px;
   animation: spin 1s linear infinite;

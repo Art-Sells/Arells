@@ -6,8 +6,8 @@
     top: 0;
     width: 100%; /* Full width */
     height: 100%; /* Full height */
-    background-color: rgba(140, 140, 140, .985); /* Fallback color */
-    background-color: rgb(140, 140, 140, .985); /* Black w/ opacity */
+    background-color: rgba(255, 255, 255, 0.985); /* Fallback color */
+    background-color: rgba(255, 255, 255, 0.985); /* Black w/ opacity */
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.25s;
     animation-name: animatetop;
@@ -26,5 +26,5 @@
 
   #arells-loader-icon {
     margin-top: 150px;
-    opacity: .3;
+    opacity: .15;
   }

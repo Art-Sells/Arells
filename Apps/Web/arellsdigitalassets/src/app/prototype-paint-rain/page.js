@@ -7,8 +7,8 @@ import '../css/modals/connect-wallet.css';
 import '../css/modals/coming-soon.css';
 
 //Loader Styles
-import './css/modals/loading/spinnerBackground.css';
-import styles from './css/modals/loading/spinner.module.css';
+import '../css/modals/loading/spinnerBackground.css';
+import styles from '../css/modals/loading/spinner.module.css';
 
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
@@ -298,7 +298,7 @@ const PaintRain = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon-Ivory.png"/>        
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
