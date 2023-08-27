@@ -97,19 +97,19 @@ const Index = () => {
       </Head>    
 		  <title>Arells</title>	  
 
-      {/* {showLoading && <Spinner />}   */}
-
-      <div id="spinnerBackground">
-        <Image 
-          alt="" 
-          width={29}
-          height={30}
-          id="arells-loader-icon" 
-          src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon-Ivory.png"/>        
-      </div>
-      <div className={styles.spinner}></div>
-
-
+      {showLoading && (
+        <div id="spinnerBackground">
+          <Image 
+            alt="" 
+            width={29}
+            height={30}
+            id="arells-loader-icon" 
+            src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon-Ivory.png"/>        
+        </div>
+      )}
+      {showLoading && (
+        <div className={styles.spinner}></div>
+      )}
 
       <div id="overlayy">
 
@@ -124,7 +124,7 @@ const Index = () => {
         <br/>
         
         <Image
-        onLoad={() => handleImageLoaded('wordLogo')}
+         onLoad={() => handleImageLoaded('wordLogo')}
          alt=""
          width={120}
          height={40}

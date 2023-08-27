@@ -1,7 +1,6 @@
 #spinnerBackground {
     position: fixed; /* Stay in place */
     text-align: center;
-	font-family: Arial;
     z-index: 200; /* Sit on top */
     left: 0;
     top: 0;
