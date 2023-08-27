@@ -3,6 +3,7 @@
 
 // Change below link after test
 import './css/Home.css';
+import './css/modals/copiedlink.css';
 
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -12,11 +13,11 @@ import Image from 'next/image';
 
 const Index = () => {
 
-  const [showLoading, setLoading] = useState(false);
+  const [showLoading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
   useEffect(() => {
-    if (imageLoaded === 'false') {
-			setLoading(true);
+    if (imageLoaded === 'true') {
+			setLoading(false);
 		}
   }, [imageLoaded]);
 
@@ -84,15 +85,15 @@ const Index = () => {
 		  <title>Arells</title>	  
 
       {showLoading && (
-			<div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.8)' }}>
-        Loading...
-      </div>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 1)' }}>
+          Loading...
+        </div>
       )}  
 
       <div id="overlayy">
 
         <Image 
-        onLoad={() => setImageLoaded(true)} 
+        onLoad={() => setImageLoaded('true')} 
         alt="" 
         width={80}
         height={85}
@@ -102,7 +103,7 @@ const Index = () => {
         <br/>
         
         <Image
-        onLoad={() => setImageLoaded(true)} 
+        onLoad={() => setImageLoaded('true')} 
          alt=""
          width={120}
          height={40}
