@@ -247,7 +247,7 @@ const SuccinctDrop = () => {
 						alt=""
 						width={50}
 						height={50}
-						 src="/icons&images/prototype/coinbase-wallet-logo.png"/>
+						 src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -276,7 +276,7 @@ const SuccinctDrop = () => {
 							height={16}
 							width={15}
 							id="arells-icon-succinct-drop"
-							src="/icons&images/prototype/Arells-Icon-Home.png"/>
+							src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkSuccinctDrop && (
@@ -286,7 +286,7 @@ const SuccinctDrop = () => {
 							height={15}
 							width={16}
 							id="cart-icon-succinct-drop"
-							src="/icons&images/prototype/shopping-cart-empty.png"/>
+							src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedSuccinctDrop && (
@@ -297,7 +297,7 @@ const SuccinctDrop = () => {
 								height={15}
 								width={16}
 								id="cart-icon-succinct-drop"
-								src="/icons&images/prototype/shopping-cart-empty.png"/>
+								src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -310,7 +310,7 @@ const SuccinctDrop = () => {
 								height={15}
 								width={16} 
 								id="cart-icon-full-succinct-drop" 
-								src="/icons&images/prototype/shopping-cart-full.png"/>
+								src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -320,7 +320,7 @@ const SuccinctDrop = () => {
 				width={110}  
 				height={35}
 				id="word-logo-succinct-drop" 
-				src="/icons&images/Arells-Logo-Ebony.png"/>	
+				src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-succinct-drop">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivSuccinctDrop && (
 					<div id="wallet-connected-div-succinct-drop">
@@ -337,7 +337,7 @@ const SuccinctDrop = () => {
 				width={400}  
 				height={400}
 				id="photo-succinct-drop"
-				src="/icons&images/prototype/5.jpg"/>
+				src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/5.jpg"/>
                 <h3 id="name-succinct-drop">Succinct Drop</h3>
                 <div id="share-div-succinct-drop">
                     <p id="share-div-desc-succinct-drop">SHARE</p> 
@@ -348,7 +348,7 @@ const SuccinctDrop = () => {
 						width={15}  
 						height={8}
 						id="copy-link-icon-succinct-drop" 
-						src="/icons&images/prototype/link.png"/>
+						src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -423,7 +423,7 @@ const SuccinctDrop = () => {
 							width={25}  
 							height={25}
 							id="fingerprints-icon" 
-							src="/icons&images/prototype/etherscan-logo.png"/>
+							src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
@@ -434,7 +434,7 @@ const SuccinctDrop = () => {
 							width={25}  
 							height={25}
 							 id="fingerprints-icon"
-							  src="/icons&images/prototype/ipfs.png"/>
+							  src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
@@ -445,7 +445,7 @@ const SuccinctDrop = () => {
 							width={25}  
 							height={23}
 							 id="fingerprints-icon"
-							  src="/icons&images/prototype/ipfslite.png"/>
+							  src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

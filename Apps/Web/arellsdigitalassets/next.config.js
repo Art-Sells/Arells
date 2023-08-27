@@ -5,6 +5,6 @@ module.exports = nextConfig
 
 module.exports = {
     images: {
-      domains: ['dq3h9f5iniupb.cloudfront.net'],
+      domains: ['arellsimages.s3-us-west-1.amazonaws.com'],
     },
   };

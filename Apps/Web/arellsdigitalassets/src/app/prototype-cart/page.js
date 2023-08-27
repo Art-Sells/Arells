@@ -422,7 +422,7 @@ const PrototypeCart = () => {
 					height={16}
 					width={15} 
 					id="arells-icon-cart" 
-					src="/icons&images/prototype/Arells-Icon-Home.png"/>
+					src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/Arells-Icon-Home.png"/>
 				</a>		
 				<button id="cart-link-cart">
 					<Image
@@ -430,7 +430,7 @@ const PrototypeCart = () => {
 					height={15}
 					width={16}
 					id="cart-icon-cart" 
-					src="/icons&images/prototype/shopping-cart-empty.png"/>
+					src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/shopping-cart-empty.png"/>
 				</button>	
 			</div>
 			<Image
@@ -438,7 +438,7 @@ const PrototypeCart = () => {
 			width={110}  
 			height={35} 
 			id="word-logo-cart" 
-			src="/icons&images/Arells-Logo-Ebony.png"/>	
+			src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-cart">NEVER LOSE MONEY SELLING ART</p>
 			<div id="wallet-connected-div-cart">
 				<hr id="connected-line-cart"/>
@@ -455,7 +455,7 @@ const PrototypeCart = () => {
 						width={27}  
 						height={25}
 						id="cart-icon-collected-cart" 
-						src="/icons&images/prototype/shopping-cart-empty.png"/>
+						src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/shopping-cart-empty.png"/>
 					</p>
 				</div>
 			)}
@@ -494,7 +494,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/icons&images/prototype/1.jpg"/>
+										src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/1.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -512,7 +512,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/icons&images/prototype/delete.png"/>
+									src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -526,7 +526,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/icons&images/prototype/2.jpg"/>
+										src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/2.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -544,7 +544,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20}  
 									id="del-cart" 
-									src="/icons&images/prototype/delete.png"/>
+									src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/delete.png"/>
 								</button>	     	
 							</div>
 						)}
@@ -558,7 +558,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/icons&images/prototype/3.jpg"/>
+										src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/3.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -576,7 +576,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/icons&images/prototype/delete.png"/>
+									src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}
@@ -590,7 +590,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/icons&images/prototype/4.jpg"/>
+										src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/4.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -608,7 +608,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/icons&images/prototype/delete.png"/>
+									src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -622,7 +622,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/icons&images/prototype/5.jpg"/>
+										src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/5.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -640,7 +640,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/icons&images/prototype/delete.png"/>
+									src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/delete.png"/>
 								</button>			     	
 							</div>
 						)}
@@ -654,7 +654,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/icons&images/prototype/6.jpg"/>
+										src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/6.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -672,7 +672,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/icons&images/prototype/delete.png"/>
+									src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}
