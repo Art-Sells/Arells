@@ -29,9 +29,9 @@ const Index = () => {
     }));
   };
   useEffect(() => {
-  if (Object.values(imagesLoaded).every(Boolean)) {
-    setLoading(false);
-  }
+    if (Object.values(imagesLoaded).every(Boolean)) {
+      setLoading(false);
+    }
   }, [imagesLoaded]);
 
 
