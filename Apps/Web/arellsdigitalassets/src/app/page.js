@@ -4,6 +4,7 @@
 // Change below link after test
 import './css/Home.css';
 
+import { useState } from 'react';
 import { useEffect } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
@@ -11,7 +12,15 @@ import Image from 'next/image';
 
 const Index = () => {
 
+  const [showLoading, setLoading] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  useEffect(() => {
+    if (imageLoaded === 'false') {
+			setLoading(true);
+		}
+  }, [imageLoaded]);
+
+
 
   useEffect(() => {
     function resetPrototype() {
@@ -72,14 +81,18 @@ const Index = () => {
         <meta name="twitter:card" content="summary_large_image"/>
         <meta name="twitter:description" content="Never lose money selling art."/>
       </Head>    
-		  <title>Arells</title>	    
+		  <title>Arells</title>	  
+
+      {showLoading && (
+			<div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.8)' }}>
+        Loading...
+      </div>
+      )}  
 
       <div id="overlayy">
-  
-      {!imageLoaded && <Loading />}
+
         <Image 
         onLoad={() => setImageLoaded(true)} 
-        style={imageLoaded ? {} : { display: 'none' }}
         alt="" 
         width={80}
         height={85}
@@ -90,7 +103,6 @@ const Index = () => {
         
         <Image
         onLoad={() => setImageLoaded(true)} 
-        style={imageLoaded ? {} : { display: 'none' }}
          alt=""
          width={120}
          height={40}
