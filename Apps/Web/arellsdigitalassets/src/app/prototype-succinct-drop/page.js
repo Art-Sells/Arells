@@ -21,7 +21,6 @@ const SuccinctDrop = () => {
 	//Loader Functions
 	const [showLoading, setLoading] = useState(true);
 	const [imagesLoaded, setImagesLoaded] = useState({
-	walletIcon: false,
 	arellsIconSuccinctDrop: false,
 	cartIconSuccinctDrop: false,
 	cartIconFullSuccinctDrop: false,
@@ -41,6 +40,22 @@ const SuccinctDrop = () => {
 		setLoading(false);
 	}
 	}, [imagesLoaded]);
+
+	const [showWalletLoading, setWalletLoading] = useState(false);
+	const [walletLoaded, setWalletLoaded] = useState({
+		walletIcon: false,
+	});
+	const handleWalletLoaded = (walletName) => {
+		setWalletLoaded(prevState => ({ 
+			...prevState, 
+			[walletName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(walletLoaded).every(Boolean)) {
+			setWalletLoading(false);
+		}
+		}, [walletLoaded]);
 
 
 {/*<!-- useState constants below -->*/}
@@ -271,7 +286,7 @@ const SuccinctDrop = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
-						onLoad={() => handleImageLoaded('walletIcon')}
+						onLoad={() => handleWalletLoaded('walletIcon')}
 						id="wallet-icon"
 						alt=""
 						width={50}
