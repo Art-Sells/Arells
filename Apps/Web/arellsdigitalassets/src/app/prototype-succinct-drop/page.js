@@ -18,29 +18,29 @@ import Image from 'next/image';
 
 const SuccinctDrop = () => {
 
-	  //Loader Functions
-	  const [showLoading, setLoading] = useState(true);
-	  const [imagesLoaded, setImagesLoaded] = useState({
-		walletIcon: false,
-		arellsIconSuccinctDrop: false,
-		cartIconSuccinctDrop: false,
-		cartIconFullSuccinctDrop: false,
-		wordLogoSuccinctDrop: false,
-		photoSuccinctDrop: false,
-		copyLinkIconSuccinctDrop: false,
-		fingerprintsIcon: false,
-	  });
-	  const handleImageLoaded = (imageName) => {
-		setImagesLoaded(prevState => ({ 
-		  ...prevState, 
-		  [imageName]: true 
-		}));
-	  };
-	  useEffect(() => {
-		if (Object.values(imagesLoaded).every(Boolean)) {
-		  setLoading(false);
-		}
-	  }, [imagesLoaded]);
+	//Loader Functions
+	const [showLoading, setLoading] = useState(true);
+	const [imagesLoaded, setImagesLoaded] = useState({
+	walletIcon: false,
+	arellsIconSuccinctDrop: false,
+	cartIconSuccinctDrop: false,
+	cartIconFullSuccinctDrop: false,
+	wordLogoSuccinctDrop: false,
+	photoSuccinctDrop: false,
+	copyLinkIconSuccinctDrop: false,
+	fingerprintsIcon: false,
+	});
+	const handleImageLoaded = (imageName) => {
+	setImagesLoaded(prevState => ({ 
+		...prevState, 
+		[imageName]: true 
+	}));
+	};
+	useEffect(() => {
+	if (Object.values(imagesLoaded).every(Boolean)) {
+		setLoading(false);
+	}
+	}, [imagesLoaded]);
 
 
 {/*<!-- useState constants below -->*/}
