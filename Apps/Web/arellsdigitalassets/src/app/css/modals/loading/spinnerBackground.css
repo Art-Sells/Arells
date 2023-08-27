@@ -1,10 +1,32 @@
 #spinnerBackground {
     position: fixed; /* Stay in place */
+    text-align: center;
+	font-family: Arial;
     z-index: 200; /* Sit on top */
     left: 0;
     top: 0;
     width: 100%; /* Full width */
     height: 100%; /* Full height */
-    background-color: rgba(140, 140, 140, 0.70); /* Fallback color */
-    background-color: rgba(140, 140, 140, 0.70); /* Black w/ opacity */
+    background-color: rgba(140, 140, 140, .985); /* Fallback color */
+    background-color: rgb(140, 140, 140, .985); /* Black w/ opacity */
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.25s;
+    animation-name: animatetop;
+    animation-duration: 0.25s;
+  }
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+
+  #arells-loader-icon {
+    margin-top: 150px;
+    opacity: .3;
+
   }

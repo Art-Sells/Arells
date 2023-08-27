@@ -99,8 +99,17 @@ const Index = () => {
 
       {/* {showLoading && <Spinner />}   */}
 
-      <div id="spinnerBackground"></div>
+      <div id="spinnerBackground">
+        <Image 
+          alt="" 
+          width={29}
+          height={30}
+          id="arells-loader-icon" 
+          src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon-Ivory.png"/>        
+      </div>
       <div className={styles.spinner}></div>
+
+
 
       <div id="overlayy">
 
