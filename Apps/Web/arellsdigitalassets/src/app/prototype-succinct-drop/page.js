@@ -21,12 +21,12 @@ const SuccinctDrop = () => {
 	//Loader Functions
 	const [showLoading, setLoading] = useState(true);
 	const [imagesLoaded, setImagesLoaded] = useState({
-	arellsIconSuccinctDrop: false,
-	cartIconSuccinctDrop: false,
-	wordLogoSuccinctDrop: false,
+	// arellsIconSuccinctDrop: false,
+	// cartIconSuccinctDrop: false,
+	// wordLogoSuccinctDrop: false,
 	photoSuccinctDrop: false,
-	copyLinkIconSuccinctDrop: false,
-	fingerprintsIcon: false,
+	// copyLinkIconSuccinctDrop: false,
+	// fingerprintsIcon: false,
 	});
 	const handleImageLoaded = (imageName) => {
 	setImagesLoaded(prevState => ({ 
@@ -39,22 +39,6 @@ const SuccinctDrop = () => {
 		setLoading(false);
 	}
 	}, [imagesLoaded]);
-
-	const [showWalletLoading, setWalletLoading] = useState(false);
-	const [walletLoaded, setWalletLoaded] = useState({
-		walletIcon: false,
-	});
-	const handleWalletLoaded = (walletName) => {
-		setWalletLoaded(prevState => ({ 
-			...prevState, 
-			[walletName]: true 
-		}));
-		};
-		useEffect(() => {
-		if (Object.values(walletLoaded).every(Boolean)) {
-			setWalletLoading(false);
-		}
-	}, [walletLoaded]);
 
 
 {/*<!-- useState constants below -->*/}
@@ -321,20 +305,6 @@ const SuccinctDrop = () => {
 		{showLoading && (
 			<div className={styles.spinner}></div>
 		)}
-
-		{showWalletLoading && (
-			<div id="spinnerBackground">
-			<Image 
-				alt="" 
-				width={29}
-				height={30}
-				id="arells-loader-icon" 
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
-			</div>
-		)}
-		{showWalletLoading && (
-			<div className={styles.spinner}></div>
-		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -345,7 +315,7 @@ const SuccinctDrop = () => {
 					<Link legacyBehavior href="/">
 						<a id="icon-link-succinct-drop">
 							<Image
-							onLoad={() => handleImageLoaded('arellsIconSuccinctDrop')}
+							// onLoad={() => handleImageLoaded('arellsIconSuccinctDrop')}
 							alt=""
 							height={16}
 							width={15}
@@ -356,7 +326,7 @@ const SuccinctDrop = () => {
 					{cartLinkSuccinctDrop && (
 						<button id="cart-link-succinct-drop" onClick={connectWallet}>
 							<Image
-							onLoad={() => handleImageLoaded('cartIconSuccinctDrop')}
+							// onLoad={() => handleImageLoaded('cartIconSuccinctDrop')}
 							alt=""
 							height={15}
 							width={16}
@@ -368,7 +338,7 @@ const SuccinctDrop = () => {
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-succinct-drop">
 								<Image
-								onLoad={() => handleImageLoaded('cartIconSuccinctDrop')}
+								// onLoad={() => handleImageLoaded('cartIconSuccinctDrop')}
 								alt=""
 								height={15}
 								width={16}
@@ -498,7 +468,7 @@ const SuccinctDrop = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
-							onLoad={() => handleImageLoaded('fingerprintsIcon')}
+							// onLoad={() => handleImageLoaded('fingerprintsIcon')}
 							alt=""
 							width={25}  
 							height={25}
@@ -510,7 +480,7 @@ const SuccinctDrop = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
-							onLoad={() => handleImageLoaded('fingerprintsIcon')}
+							// onLoad={() => handleImageLoaded('fingerprintsIcon')}
 							alt=""
 							width={25}  
 							height={25}
@@ -522,7 +492,7 @@ const SuccinctDrop = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
-							onLoad={() => handleImageLoaded('fingerprintsIcon')}
+							// onLoad={() => handleImageLoaded('fingerprintsIcon')}
 							alt=""
 							width={25}  
 							height={23}
