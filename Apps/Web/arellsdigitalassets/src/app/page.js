@@ -10,6 +10,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const Index = () => {
+
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   useEffect(() => {
     function resetPrototype() {
       sessionStorage.removeItem('walletConnectedSession'); 
@@ -73,7 +76,10 @@ const Index = () => {
 
       <div id="overlayy">
   
+      {!imageLoaded && <Loading />}
         <Image 
+        onLoad={() => setImageLoaded(true)} 
+        style={imageLoaded ? {} : { display: 'none' }}
         alt="" 
         width={80}
         height={85}
@@ -83,6 +89,8 @@ const Index = () => {
         <br/>
         
         <Image
+        onLoad={() => setImageLoaded(true)} 
+        style={imageLoaded ? {} : { display: 'none' }}
          alt=""
          width={120}
          height={40}
