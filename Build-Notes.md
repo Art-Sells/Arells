@@ -9,9 +9,6 @@
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
 - Don't Forget About SiteMap/s (only for pages to be shown)
 
-##### Modals:
-Top 30%, etc, etc.
-
 #### Wallet: 
 - Coinbase/USDC Wallet only?
 
