@@ -172,7 +172,7 @@ const PrototypeSellerCollected = () => {
 						alt=""
 						width={50}
 						height={50}  
-						src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/coinbase-wallet-logo.png"/>
+						src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -191,7 +191,7 @@ const PrototypeSellerCollected = () => {
 						height={16}
 						width={15}
 						id="arells-icon-seller-collected" 
-						src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/Arells-Icon-Home.png"/>
+						src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
 				{cartLinkSellerCollected && (
@@ -201,7 +201,7 @@ const PrototypeSellerCollected = () => {
 						height={15}
 						width={16} 
 						id="cart-icon-seller-collected" 
-						src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/shopping-cart-empty.png"/>
+						src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
 				{cartLinkConnectedSellerCollected && (
@@ -212,7 +212,7 @@ const PrototypeSellerCollected = () => {
 							height={15}
 							width={16}
 							id="cart-icon-seller-collected" 
-							src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/shopping-cart-empty.png"/>
+							src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
@@ -224,7 +224,7 @@ const PrototypeSellerCollected = () => {
 							height={15}
 							width={16} 
 							id="cart-icon-seller-collected" 
-							src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/shopping-cart-full.png"/>
+							src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
@@ -234,7 +234,7 @@ const PrototypeSellerCollected = () => {
 			width={110}  
 			height={35} 
 			id="word-logo-seller-collected" 
-			src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/Arells-Logo-Ebony.png"/>	
+			src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-seller-collected">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivSellerCollected && (
 				<div id="wallet-connected-div-seller-collected">
@@ -250,7 +250,7 @@ const PrototypeSellerCollected = () => {
 				width={100}  
 				height={100}
 				id="profile-photo-seller-collected" 
-				src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/proto-banner.jpg"/>
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/proto-banner.jpg"/>
 			</div>	 
 			<h1 id="name-seller-collected">Abstract Kadabra</h1>  
 			<p id="description-seller-collected">Here rests life&apos;s abstractions captured in majestic endeavors.</p> 
@@ -263,7 +263,7 @@ const PrototypeSellerCollected = () => {
 					width={15}  
 					height={8}
 					id="copy-link-icon-seller-collected" 
-					src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/link.png"/>
+					src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
 			<hr id="profileline-seller-collected"/>
@@ -281,7 +281,7 @@ const PrototypeSellerCollected = () => {
 				width={27}  
 				height={25} 
 				id="cart-icon-collected-seller-collected" 
-				src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/prototype/shopping-cart-empty.png"/>
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/shopping-cart-empty.png"/>
 			</p>
 
 		</div>			

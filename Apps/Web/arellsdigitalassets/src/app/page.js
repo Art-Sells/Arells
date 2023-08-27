@@ -78,7 +78,7 @@ const Index = () => {
         width={80}
         height={85}
         id="arells-iconn" 
-        src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/Arells-Icon.png"/>
+        src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>
       
         <br/>
         
@@ -87,7 +87,7 @@ const Index = () => {
          width={120}
          height={40}
          id="word-logoo" 
-         src="https://arellsimages.s3-us-west-1.amazonaws.com/icons&images/Arells-Logo-Ebony.png"/>	
+         src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Logo-Ebony.png"/>	
         
         <br/>
         
