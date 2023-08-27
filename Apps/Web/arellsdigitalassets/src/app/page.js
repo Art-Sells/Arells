@@ -4,23 +4,35 @@
 // Change below link after test
 import './css/Home.css';
 import './css/modals/copiedlink.css';
-import styles from './css/modals/loading/spinner.module.css';
+import './css/modals/loading/spinnerBackground.css';
+
 
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Head from 'next/head'
 import Link from 'next/link';
 import Image from 'next/image';
+// import Spinner from '../app/Spinner/page';
+import styles from './css/modals/loading/spinner.module.css';
 
 const Index = () => {
 
   const [showLoading, setLoading] = useState(true);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState({
+    arellsIcon: false,
+    wordLogo: false,
+  });
+  const handleImageLoaded = (imageName) => {
+    setImagesLoaded(prevState => ({ 
+      ...prevState, 
+      [imageName]: true 
+    }));
+  };
   useEffect(() => {
-    if (imageLoaded === 'true') {
-			setLoading(false);
-		}
-  }, [imageLoaded]);
+  if (Object.values(imagesLoaded).every(Boolean)) {
+    setLoading(false);
+  }
+  }, [imagesLoaded]);
 
 
 
@@ -85,14 +97,15 @@ const Index = () => {
       </Head>    
 		  <title>Arells</title>	  
 
-      {showLoading && (
-        <div className={styles.spinner}></div>
-      )}  
+      {/* {showLoading && <Spinner />}   */}
+
+      <div id="spinnerBackground"></div>
+      <div className={styles.spinner}></div>
 
       <div id="overlayy">
 
         <Image 
-        onLoad={() => setImageLoaded('true')} 
+        onLoad={() => handleImageLoaded('arellsIcon')}
         alt="" 
         width={80}
         height={85}
@@ -102,7 +115,7 @@ const Index = () => {
         <br/>
         
         <Image
-        onLoad={() => setImageLoaded('true')} 
+        onLoad={() => handleImageLoaded('wordLogo')}
          alt=""
          width={120}
          height={40}

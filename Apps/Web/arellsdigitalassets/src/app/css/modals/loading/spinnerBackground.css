@@ -1,0 +1,10 @@
+#spinnerBackground {
+    position: fixed; /* Stay in place */
+    z-index: 200; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(140, 140, 140, 0.70); /* Fallback color */
+    background-color: rgba(140, 140, 140, 0.70); /* Black w/ opacity */
+  }
