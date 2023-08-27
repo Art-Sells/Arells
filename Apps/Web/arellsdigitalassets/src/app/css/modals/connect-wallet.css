@@ -68,6 +68,20 @@
   padding-bottom: 12px;
   width: 80px;  
   box-shadow: 0px 8px 12px -6px black;    
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 1.00s;
+  animation-name: animatetop;
+  animation-duration: 1.00s;
+}
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {center:0; opacity:0}
+  to {center:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {center:0; opacity:0}
+  to {center:0; opacity:1}
 }
 #connectWallet:hover,
 #connectWallet:focus {
