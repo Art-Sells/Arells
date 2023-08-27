@@ -123,10 +123,23 @@
 		  }					
 			  #cart-icon-succinct-drop,
 			  #cart-icon-full-succinct-drop {
-
 				  height: 15px;
 				  width: 16px;
-			  }	
+				  -webkit-animation-name: animatetop;
+				  -webkit-animation-duration: 1.00s;
+				  animation-name: animatetop;
+				  animation-duration: 1.00s;
+				}
+				/* Add Animation */
+				@-webkit-keyframes animatetop {
+				  from {center:0; opacity:0}
+				  to {center:0; opacity:1}
+				}
+				
+				@keyframes animatetop {
+				  from {center:0; opacity:0}
+				  to {center:0; opacity:1}
+				}
 			  
 		  #word-logo-succinct-drop {
 

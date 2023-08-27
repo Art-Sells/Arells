@@ -23,7 +23,6 @@ const SuccinctDrop = () => {
 	const [imagesLoaded, setImagesLoaded] = useState({
 	arellsIconSuccinctDrop: false,
 	cartIconSuccinctDrop: false,
-	cartIconFullSuccinctDrop: false,
 	wordLogoSuccinctDrop: false,
 	photoSuccinctDrop: false,
 	copyLinkIconSuccinctDrop: false,
@@ -55,7 +54,7 @@ const SuccinctDrop = () => {
 		if (Object.values(walletLoaded).every(Boolean)) {
 			setWalletLoading(false);
 		}
-		}, [walletLoaded]);
+	}, [walletLoaded]);
 
 
 {/*<!-- useState constants below -->*/}
@@ -105,6 +104,7 @@ const SuccinctDrop = () => {
 {/*<!-- Connect Wallet function/s below -->*/}
 	function connectWallet () {
 		setShowConnectWallet(true);
+		setWalletLoading(true);
 	};
 
 	function walletConnected () {
@@ -321,6 +321,20 @@ const SuccinctDrop = () => {
 		{showLoading && (
 			<div className={styles.spinner}></div>
 		)}
+
+		{showWalletLoading && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showWalletLoading && (
+			<div className={styles.spinner}></div>
+		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -368,7 +382,6 @@ const SuccinctDrop = () => {
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-succinct-drop">
 								<Image
-								onLoad={() => handleImageLoaded('cartIconFullSuccinctDrop')}
 								alt=""
 								height={15}
 								width={16} 
