@@ -21,12 +21,6 @@ const PrototypeBuyerCollected = () => {
 		const [showLoading, setLoading] = useState(true);
 		const [imagesLoaded, setImagesLoaded] = useState({
 		profilePhotoBuyerCollected: false,
-		photoBuyerCollectedOne: false,
-		photoBuyerCollectedTwo: false,
-		photoBuyerCollectedThree: false,
-		photoBuyerCollectedFour: false,
-		photoBuyerCollectedFive: false,
-		photoBuyerCollectedSix: false,
 		});
 		const handleImageLoaded = (imageName) => {
 		setImagesLoaded(prevState => ({ 
@@ -39,6 +33,102 @@ const PrototypeBuyerCollected = () => {
 			setLoading(false);
 		}
 		}, [imagesLoaded]);
+
+		const [showLoadingOneCollected, setLoadingOneCollected] = useState(false);
+		const [imagesOneLoaded, setImagesOneLoaded] = useState({
+			photoBuyerCollectedOne: false,
+		});
+		const handleImageOneLoaded = (imageName) => {
+		setImagesOneLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesOneLoaded).every(Boolean)) {
+			setLoadingOneCollected(false);
+		}
+		}, [imagesOneLoaded]);
+
+		const [showLoadingTwoCollected, setLoadingTwoCollected] = useState(false);
+		const [imagesTwoLoaded, setImagesTwoLoaded] = useState({
+			photoBuyerCollectedTwo: false,
+		});
+		const handleImageTwoLoaded = (imageName) => {
+		setImagesTwoLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesTwoLoaded).every(Boolean)) {
+			setLoadingTwoCollected(false);
+		}
+		}, [imagesTwoLoaded]);
+
+		const [showLoadingThreeCollected, setLoadingThreeCollected] = useState(false);
+		const [imagesThreeLoaded, setImagesThreeLoaded] = useState({
+			photoBuyerCollectedThree: false,
+		});
+		const handleImageThreeLoaded = (imageName) => {
+		setImagesThreeLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesThreeLoaded).every(Boolean)) {
+			setLoadingThreeCollected(false);
+		}
+		}, [imagesThreeLoaded]);
+
+		const [showLoadingFourCollected, setLoadingFourCollected] = useState(false);
+		const [imagesFourLoaded, setImagesFourLoaded] = useState({
+			photoBuyerCollectedFour: false,
+		});
+		const handleImageFourLoaded = (imageName) => {
+		setImagesFourLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesFourLoaded).every(Boolean)) {
+			setLoadingFourCollected(false);
+		}
+		}, [imagesFourLoaded]);
+
+		const [showLoadingFiveCollected, setLoadingFiveCollected] = useState(false);
+		const [imagesFiveLoaded, setImagesFiveLoaded] = useState({
+			photoBuyerCollectedFive: false,
+		});
+		const handleImageFiveLoaded = (imageName) => {
+		setImagesFiveLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesFiveLoaded).every(Boolean)) {
+			setLoadingFiveCollected(false);
+		}
+		}, [imagesFiveLoaded]);
+
+		const [showLoadingSixCollected, setLoadingSixCollected] = useState(false);
+		const [imagesSixLoaded, setImagesSixLoaded] = useState({
+			photoBuyerCollectedSix: false,
+		});
+		const handleImageSixLoaded = (imageName) => {
+		setImagesSixLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesSixLoaded).every(Boolean)) {
+			setLoadingSixCollected(false);
+		}
+		}, [imagesSixLoaded]);
 
 {/*<!-- useState constants below -->*/}
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
@@ -140,36 +230,42 @@ const PrototypeBuyerCollected = () => {
 			const succinctDropPurchased = sessionStorage.getItem('succinctDropPurchased');	
 			if (blueOrangePurchased === 'true') {
 				setNoArtBuyerCollected(false);
+				setLoadingOneCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setBlueOrangeBuyerCollected(true);
 			}
 			if (beachHousesPurchased === 'true') {
 				setNoArtBuyerCollected(false);
+				setLoadingTwoCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setBeachHousesBuyerCollected(true);
 			}
 			if (colourGlassPurchased === 'true') {
 				setNoArtBuyerCollected(false);
+				setLoadingThreeCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setColourGlassBuyerCollected(true);
 			}
 			if (layersPurchased === 'true') {
 				setNoArtBuyerCollected(false);
+				setLoadingFourCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setLayersBuyerCollected(true);
 			}
 			if (paintRainPurchased === 'true') {
 				setNoArtBuyerCollected(false);
+				setLoadingFiveCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setPaintRainBuyerCollected(true);
 			}
 			if (succinctDropPurchased === 'true') {
 				setNoArtBuyerCollected(false);
+				setLoadingSixCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setSuccinctDropBuyerCollected(true);
@@ -258,6 +354,84 @@ const PrototypeBuyerCollected = () => {
 			</div>
 		)}
 		{showLoading && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingOneCollected && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingOneCollected && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingTwoCollected && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingTwoCollected && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingThreeCollected && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingThreeCollected && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingFourCollected && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingFourCollected && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingFiveCollected && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingFiveCollected && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingSixCollected && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingSixCollected && (
 			<div className={styles.spinner}></div>
 		)}
 {/*<!-- Modals Above -->*/}
@@ -379,7 +553,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-blue-orange">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
-									onLoad={() => handleImageLoaded('photoBuyerCollectedOne')}
+									onLoad={() => handleImageOneLoaded('photoBuyerCollectedOne')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -404,7 +578,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-beach-houses">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
-									onLoad={() => handleImageLoaded('photoBuyerCollectedTwo')}
+									onLoad={() => handleImageTwoLoaded('photoBuyerCollectedTwo')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -429,7 +603,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-colour-glass">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
-									onLoad={() => handleImageLoaded('photoBuyerCollectedThree')}
+									onLoad={() => handleImageThreeLoaded('photoBuyerCollectedThree')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -454,7 +628,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-layers">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
-									onLoad={() => handleImageLoaded('photoBuyerCollectedFour')}
+									onLoad={() => handleImageFourLoaded('photoBuyerCollectedFour')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -479,7 +653,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-succinct-drop">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
-									onLoad={() => handleImageLoaded('photoBuyerCollectedFive')}
+									onLoad={() => handleImageFiveLoaded('photoBuyerCollectedFive')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -504,7 +678,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-paint-rain">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
-									onLoad={() => handleImageLoaded('photoBuyerCollectedSix')}
+									onLoad={() => handleImageSixLoaded('photoBuyerCollectedSix')}
 									alt=""
 									width={150}  
 									height={150}  
