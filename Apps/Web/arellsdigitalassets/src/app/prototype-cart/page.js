@@ -34,7 +34,7 @@ const PrototypeCart = () => {
 		}
 		}, [imagesLoaded]);
 
-		const [showLoadingCart, setLoadingCart] = useState(false);
+		const [showLoadingCart, setLoadingCart] = useState(true);
 		const [imagesCartLoaded, setImagesCartLoaded] = useState({
 			cartIconCollectedCart: false,	
 		});
@@ -202,6 +202,7 @@ const PrototypeCart = () => {
 				setCartFullCart(true);
 				setBlueOrangeCart(true);	
 				setLoadingOne(true);	
+				setLoadingCart(false);
 	
 				setRoyalties(prevRoyalties => royalty * blueOrangePrice + prevRoyalties);
 				setFees(prevFees => fee * blueOrangePrice + prevFees);
@@ -218,7 +219,8 @@ const PrototypeCart = () => {
 				setCartEmptyCart(false);
 				setCartFullCart(true);
 				setBeachHousesCart(true);	
-				setLoadingTwo(true);	
+				setLoadingTwo(true);
+				setLoadingCart(false);	
 	
 				setRoyalties(prevRoyalties => royalty * beachHousesPrice + prevRoyalties);
 				setFees(prevFees => fee * beachHousesPrice + prevFees);
@@ -235,6 +237,7 @@ const PrototypeCart = () => {
 				setCartFullCart(true);
 				setColourGlassCart(true);	
 				setLoadingThree(true);	
+				setLoadingCart(false);
 	
 				setRoyalties(prevRoyalties => royalty * colourGlassPrice + prevRoyalties);
 				setFees(prevFees => fee * colourGlassPrice + prevFees);
@@ -250,7 +253,8 @@ const PrototypeCart = () => {
 				setCartEmptyCart(false);
 				setCartFullCart(true);
 				setLayersCart(true);	
-				setLoadingFour(true);	
+				setLoadingFour(true);
+				setLoadingCart(false);	
 	
 				setRoyalties(prevRoyalties => royalty * layersPrice + prevRoyalties);
 				setFees(prevFees => fee * layersPrice + prevFees);
@@ -267,6 +271,7 @@ const PrototypeCart = () => {
 				setCartFullCart(true);
 				setSuccinctDropCart(true);	
 				setLoadingFive(true);	
+				setLoadingCart(false);
 	
 				setRoyalties(prevRoyalties => royalty * succinctDropPrice + prevRoyalties);
 				setFees(prevFees => fee * succinctDropPrice + prevFees);
@@ -283,6 +288,7 @@ const PrototypeCart = () => {
 				setCartFullCart(true);
 				setPaintRainCart(true);		
 				setLoadingSix(true);
+				setLoadingCart(false);
 	
 				setRoyalties(prevRoyalties => royalty * paintRainPrice + prevRoyalties);
 				setFees(prevFees => fee * paintRainPrice + prevFees);
