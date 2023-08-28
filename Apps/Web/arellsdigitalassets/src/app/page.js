@@ -1,13 +1,15 @@
-
 import Index from '../components/Index';
+import Head from 'next/head';
 
 
 const Home = () => {
 
   return (
-    <>  
+    <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      </Head>
       <Index/>
-      
     </>
   );
 }
