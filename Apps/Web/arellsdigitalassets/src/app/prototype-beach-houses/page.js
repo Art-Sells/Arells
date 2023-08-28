@@ -6,6 +6,10 @@ import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
 import '../css/modals/coming-soon.css';
 
+//Loader Styles
+import '../css/modals/loading/spinnerBackground.css';
+import styles from '../css/modals/loading/spinner.module.css';
+
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -13,6 +17,24 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const BeachHouses = () => {
+
+	//Loader Functions
+	const [showLoading, setLoading] = useState(true);
+	const [imagesLoaded, setImagesLoaded] = useState({
+	photoBeachHouses: false,
+	});
+	const handleImageLoaded = (imageName) => {
+	setImagesLoaded(prevState => ({ 
+		...prevState, 
+		[imageName]: true 
+	}));
+	};
+	useEffect(() => {
+	if (Object.values(imagesLoaded).every(Boolean)) {
+		setLoading(false);
+	}
+	}, [imagesLoaded]);
+
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
 	
@@ -260,6 +282,20 @@ const BeachHouses = () => {
 				</div>
 			</div>	
 		)}
+
+		{showLoading && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoading && (
+			<div className={styles.spinner}></div>
+		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -331,6 +367,7 @@ const BeachHouses = () => {
 
 			<div id="beach-houses">
 				<Image
+				onLoad={() => handleImageLoaded('photoBeachHouses')}
 				alt=""
 				width={400}  
 				height={400}
