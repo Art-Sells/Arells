@@ -8,6 +8,8 @@ const Home = () => {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta property="og:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
+        <meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
       </Head>
       <Index/>
     </>
