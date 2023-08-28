@@ -138,6 +138,7 @@
   
 	  #prototype-spacer{
 		  margin-top: 60px;
+		  margin-bottom: 100px;
 	  }
 		  #prototype {
 			background: none;
@@ -164,25 +165,7 @@
 			transition: 1s;
 			cursor: pointer;
 		  }	
-	  
-  #footerr {
-	  padding-top: 45px;
-	  padding-bottom: 80px;	
-  	}	
-	  
-	  #contactt {
-		  opacity: .4;
-	  }
-	  #contactt:hover,
-	  #contactt:focus {
-			opacity: .2;
-			transition: 1s;
-			cursor: pointer;
-	  }
-	  #twitterr {
-		  width: 30px;
-		  height: 30px;
-	  }		
+	  	
 	  
 	  
   @media screen and (max-width: 650px) {
@@ -224,11 +207,6 @@
 	  #prototype {
 		font-weight:400;
 		font-size: 9px;
-	  }	
-  
-	  #twitterr {
-		  width: 27px;
-		  height: 27px;
 	  }	
 	  
 }	
