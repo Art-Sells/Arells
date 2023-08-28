@@ -20,7 +20,7 @@ const PrototypeCart = () => {
 		const [imagesLoaded, setImagesLoaded] = useState({
 		arellsIconCart: false,
 		cartIconCart: false,
-		wordLogoCart: false,	
+		wordLogoCart: false,
 		});
 		const handleImageLoaded = (imageName) => {
 		setImagesLoaded(prevState => ({ 
@@ -33,6 +33,22 @@ const PrototypeCart = () => {
 			setLoading(false);
 		}
 		}, [imagesLoaded]);
+
+		const [showLoadingCart, setLoadingCart] = useState(false);
+		const [imagesCartLoaded, setImagesCartLoaded] = useState({
+			cartIconCollectedCart: false,	
+		});
+		const handleImageCartLoaded = (imageName) => {
+		setImagesCartLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesCartLoaded).every(Boolean)) {
+			setLoadingCart(false);
+		}
+		}, [imagesCartLoaded]);
 
 		const [showLoadingOne, setLoadingOne] = useState(false);
 		const [imagesOneLoaded, setImagesOneLoaded] = useState({
@@ -367,6 +383,7 @@ const PrototypeCart = () => {
 			&& paintRainCart == false){
 				setCartEmptyCart(true);
 				setCartFullCart(false);
+				setLoadingCart(true);
 		}
 
 		sessionStorage.setItem('blueOrangeAdded', 'false');
@@ -386,6 +403,7 @@ const PrototypeCart = () => {
 			&& paintRainCart == false){
 				setCartEmptyCart(true);
 				setCartFullCart(false);
+				setLoadingCart(true);
 		}
 
 		sessionStorage.setItem('beachHousesAdded', 'false');
@@ -405,6 +423,7 @@ const PrototypeCart = () => {
 			&& paintRainCart == false){
 				setCartEmptyCart(true);
 				setCartFullCart(false);
+				setLoadingCart(true);
 		}
 
 		sessionStorage.setItem('colourGlassAdded', 'false');
@@ -424,6 +443,7 @@ const PrototypeCart = () => {
 			&& paintRainCart == false){
 				setCartEmptyCart(true);
 				setCartFullCart(false);
+				setLoadingCart(true);
 		}
 
 		sessionStorage.setItem('layersAdded', 'false');
@@ -443,6 +463,7 @@ const PrototypeCart = () => {
 			&& paintRainCart == false){
 				setCartEmptyCart(true);
 				setCartFullCart(false);
+				setLoadingCart(true);
 		}
 
 		sessionStorage.setItem('succinctDropAdded', 'false');
@@ -462,6 +483,7 @@ const PrototypeCart = () => {
 			&& succinctDropCart == false){
 				setCartEmptyCart(true);
 				setCartFullCart(false);
+				setLoadingCart(true);
 		}
 
 		sessionStorage.setItem('paintRainAdded', 'false');
@@ -542,6 +564,20 @@ const PrototypeCart = () => {
 			</div>
 		)}
 		{showLoading && (
+			<div className={styles.spinner}></div>
+		)}
+
+		{showLoadingCart && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingCart && (
 			<div className={styles.spinner}></div>
 		)}
 
@@ -667,6 +703,7 @@ const PrototypeCart = () => {
 					<p id="no-art-cart">
 						cart empty
 						<Image
+						onLoad={() => handleImageCartLoaded('cartIconCollectedCart')}
 						alt=""
 						width={27}  
 						height={25}
