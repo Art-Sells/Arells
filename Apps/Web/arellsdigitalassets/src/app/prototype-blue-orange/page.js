@@ -21,7 +21,7 @@ const BlueOrange = () => {
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
 		const [imagesLoaded, setImagesLoaded] = useState({
-		photoBlueOrange: false,
+		   photoBlueOrange: false,
 		});
 		const handleImageLoaded = (imageName) => {
 		setImagesLoaded(prevState => ({ 
@@ -366,18 +366,18 @@ const BlueOrange = () => {
 
 			<div id="blue-orange">
 				<Image
+				onLoad={() => handleImageLoaded('photoBlueOrange')}
 				alt=""
 				width={400}  
 				height={400}
 				 id="photo-blue-orange"
-				  src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/1.jpg"/>
+				  src="/icons&images/prototype/1.jpg"/>
 				<h3 id="name-blue-orange">Blue Orange</h3> 
 				<div id="share-div-blue-orange">
 					<p id="share-div-desc-blue-orange">SHARE</p>
 					<button id="copy-link-blue-orange"
 					onClick={copyLink}>
 						<Image
-						onLoad={() => handleImageLoaded('photoBlueOrange')}
 						alt=""
 						width={15}  
 						height={8}
