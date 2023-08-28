@@ -21,7 +21,6 @@ const PrototypeCart = () => {
 		arellsIconCart: false,
 		cartIconCart: false,
 		wordLogoCart: false,	
-		photoCart: false,
 		});
 		const handleImageLoaded = (imageName) => {
 		setImagesLoaded(prevState => ({ 
@@ -34,6 +33,108 @@ const PrototypeCart = () => {
 			setLoading(false);
 		}
 		}, [imagesLoaded]);
+
+		const [showLoadingOne, setLoadingOne] = useState(false);
+		const [imagesOneLoaded, setImagesOneLoaded] = useState({
+		photoCartOne: false,
+		});
+		const handleImageOneLoaded = (imageName) => {
+		setImagesOneLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesOneLoaded).every(Boolean)) {
+			setLoadingOne(false);
+		}
+		}, [imagesOneLoaded]);
+
+		const [showLoadingTwo, setLoadingTwo] = useState(false);
+		const [imagesTwoLoaded, setImagesTwoLoaded] = useState({
+		photoCartTwo: false,
+		});
+		const handleImageTwoLoaded = (imageName) => {
+		setImagesTwoLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesTwoLoaded).every(Boolean)) {
+			setLoadingTwo(false);
+		}
+		}, [imagesTwoLoaded]);
+
+		const [showLoadingThree, setLoadingThree] = useState(false);
+		const [imagesThreeLoaded, setImagesThreeLoaded] = useState({
+		photoCartThree: false,
+		});
+		const handleImageThreeLoaded = (imageName) => {
+		setImagesThreeLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesThreeLoaded).every(Boolean)) {
+			setLoadingThree(false);
+		}
+		}, [imagesThreeLoaded]);
+
+		const [showLoadingFour, setLoadingFour] = useState(false);
+		const [imagesFourLoaded, setImagesFourLoaded] = useState({
+		photoCartFour: false,
+		});
+		const handleImageFourLoaded = (imageName) => {
+		setImagesFourLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesFourLoaded).every(Boolean)) {
+			setLoadingFour(false);
+		}
+		}, [imagesFourLoaded]);
+
+		const [showLoadingFive, setLoadingFive] = useState(false);
+		const [imagesFiveLoaded, setImagesFiveLoaded] = useState({
+		photoCartFive: false,
+		});
+		const handleImageFiveLoaded = (imageName) => {
+		setImagesFiveLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesFiveLoaded).every(Boolean)) {
+			setLoadingFive(false);
+		}
+		}, [imagesFiveLoaded]);
+
+		const [showLoadingSix, setLoadingSix] = useState(false);
+		const [imagesSixLoaded, setImagesSixLoaded] = useState({
+		photoCartSix: false,
+		});
+		const handleImageSixLoaded = (imageName) => {
+		setImagesSixLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesSixLoaded).every(Boolean)) {
+			setLoadingSix(false);
+		}
+		}, [imagesSixLoaded]);
+
+
+
+
+
+
 
 {/*<!-- useState constants below -->*/}
 	const [purchaseComplete, setPurchaseComplete] = useState(false);
@@ -83,7 +184,8 @@ const PrototypeCart = () => {
 			if (blueOrangeAdded === 'true') {
 				setCartEmptyCart(false);
 				setCartFullCart(true);
-				setBlueOrangeCart(true);		
+				setBlueOrangeCart(true);	
+				setLoadingOne(true);	
 	
 				setRoyalties(prevRoyalties => royalty * blueOrangePrice + prevRoyalties);
 				setFees(prevFees => fee * blueOrangePrice + prevFees);
@@ -99,7 +201,8 @@ const PrototypeCart = () => {
 			if (beachHousesAdded === 'true') {
 				setCartEmptyCart(false);
 				setCartFullCart(true);
-				setBeachHousesCart(true);		
+				setBeachHousesCart(true);	
+				setLoadingTwo(true);	
 	
 				setRoyalties(prevRoyalties => royalty * beachHousesPrice + prevRoyalties);
 				setFees(prevFees => fee * beachHousesPrice + prevFees);
@@ -114,7 +217,8 @@ const PrototypeCart = () => {
 			if (colourGlassAdded === 'true') {
 				setCartEmptyCart(false);
 				setCartFullCart(true);
-				setColourGlassCart(true);		
+				setColourGlassCart(true);	
+				setLoadingThree(true);	
 	
 				setRoyalties(prevRoyalties => royalty * colourGlassPrice + prevRoyalties);
 				setFees(prevFees => fee * colourGlassPrice + prevFees);
@@ -129,7 +233,8 @@ const PrototypeCart = () => {
 			if (layersAdded === 'true') {
 				setCartEmptyCart(false);
 				setCartFullCart(true);
-				setLayersCart(true);		
+				setLayersCart(true);	
+				setLoadingFour(true);	
 	
 				setRoyalties(prevRoyalties => royalty * layersPrice + prevRoyalties);
 				setFees(prevFees => fee * layersPrice + prevFees);
@@ -144,7 +249,8 @@ const PrototypeCart = () => {
 			if (succinctDropAdded === 'true') {
 				setCartEmptyCart(false);
 				setCartFullCart(true);
-				setSuccinctDropCart(true);		
+				setSuccinctDropCart(true);	
+				setLoadingFive(true);	
 	
 				setRoyalties(prevRoyalties => royalty * succinctDropPrice + prevRoyalties);
 				setFees(prevFees => fee * succinctDropPrice + prevFees);
@@ -160,6 +266,7 @@ const PrototypeCart = () => {
 				setCartEmptyCart(false);
 				setCartFullCart(true);
 				setPaintRainCart(true);		
+				setLoadingSix(true);
 	
 				setRoyalties(prevRoyalties => royalty * paintRainPrice + prevRoyalties);
 				setFees(prevFees => fee * paintRainPrice + prevFees);
@@ -437,6 +544,85 @@ const PrototypeCart = () => {
 		{showLoading && (
 			<div className={styles.spinner}></div>
 		)}
+
+		{showLoadingOne && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingOne && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingTwo && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingTwo && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingThree && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingThree && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingFour && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingFour && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingFive && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingFive && (
+			<div className={styles.spinner}></div>
+		)}
+		{showLoadingSix && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoadingSix && (
+			<div className={styles.spinner}></div>
+		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -520,7 +706,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-blue-orange">
 									<a target="_self" id="photo-link-cart">
 										<Image
-										onLoad={() => handleImageLoaded('photoCart')}
+										onLoad={() => handleImageOneLoaded('photoCartOne')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -553,7 +739,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-beach-houses">
 									<a target="_self" id="photo-link-cart">
 										<Image
-										onLoad={() => handleImageLoaded('photoCart')}
+										onLoad={() => handleImageTwoLoaded('photoCartTwo')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -586,7 +772,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-colour-glass">
 									<a target="_self" id="photo-link-cart">
 										<Image
-										onLoad={() => handleImageLoaded('photoCart')}
+										onLoad={() => handleImageThreeLoaded('photoCartThree')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -619,7 +805,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-layers">
 									<a target="_self" id="photo-link-cart">
 										<Image
-										onLoad={() => handleImageLoaded('photoCart')}
+										onLoad={() => handleImageFourLoaded('photoCartFour')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -652,7 +838,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-succinct-drop">
 									<a target="_self" id="photo-link-cart">
 										<Image
-										onLoad={() => handleImageLoaded('photoCart')}
+										onLoad={() => handleImageFiveLoaded('photoCartFive')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -685,7 +871,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-paint-rain">
 									<a target="_self" id="photo-link-cart">
 										<Image
-										onLoad={() => handleImageLoaded('photoCart')}
+										onLoad={() => handleImageSixLoaded('photoCartSix')}
 										alt=""
 										width={150}  
 										height={150} 
