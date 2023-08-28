@@ -70,6 +70,10 @@ const Index = () => {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge"/>
         <meta charSet="UTF-8"/>
 
+        <link rel="preload" href="/css/Home.css" as="style"></link>
+        <link rel="preload" href="/css/modals/copiedlink.css" as="style"></link>
+        <link rel="preload" href="/css/modals/loading/spinnerBackground.css" as="style"></link>
+
         <meta name="title" content="Arells"/>
         <meta name="description" content="Never lose money selling art."/>
         <meta name="google" content="nositelinkssearchbox"/>
