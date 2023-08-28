@@ -5,6 +5,10 @@ import '../css/prototype/seller-created.css';
 import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
 
+//Loader Styles
+import '../css/modals/loading/spinnerBackground.css';
+import styles from '../css/modals/loading/spinner.module.css';
+
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,6 +16,29 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const PrototypeSellerCreated = () => {
+
+		//Loader Functions
+		const [showLoading, setLoading] = useState(true);
+		const [imagesLoaded, setImagesLoaded] = useState({
+		profilePhotoSellerCreated: false,
+		photoSellerCreatedOne: false,
+		photoSellerCreatedTwo: false,
+		photoSellerCreatedThree: false,
+		photoSellerCreatedFour: false,
+		photoSellerCreatedFive: false,
+		photoSellerCreatedSix: false,
+		});
+		const handleImageLoaded = (imageName) => {
+		setImagesLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesLoaded).every(Boolean)) {
+			setLoading(false);
+		}
+		}, [imagesLoaded]);
 
 {/*<!-- useState constants below -->*/}
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
@@ -483,6 +510,21 @@ const PrototypeSellerCreated = () => {
 				</div>
 			</div>	
 		)}
+
+
+		{showLoading && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoading && (
+			<div className={styles.spinner}></div>
+		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -552,6 +594,7 @@ const PrototypeSellerCreated = () => {
 			)}	
 			<div id="profile-img-container-seller-created">
 				<Image
+				onLoad={() => handleImageLoaded('profilePhotoSellerCreated')}
 				alt=""
 				width={100}  
 				height={100}
@@ -586,6 +629,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype-blue-orange">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								onLoad={() => handleImageLoaded('photoSellerCreatedOne')}
 								alt=""
 								width={200}  
 								height={200}  
@@ -635,6 +679,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype-beach-houses">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								onLoad={() => handleImageLoaded('photoSellerCreatedTwo')}
 								alt=""
 								width={200}  
 								height={200}  
@@ -684,6 +729,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype-colour-glass">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								onLoad={() => handleImageLoaded('photoSellerCreatedThree')}
 								alt=""
 								width={200}  
 								height={200}  
@@ -733,6 +779,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype-layers">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								onLoad={() => handleImageLoaded('photoSellerCreatedFour')}
 								alt=""
 								width={200}  
 								height={200}  
@@ -782,6 +829,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype-succinct-drop">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								onLoad={() => handleImageLoaded('photoSellerCreatedFive')}
 								alt=""
 								width={200}  
 								height={200}  
@@ -831,6 +879,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype-paint-rain">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								onLoad={() => handleImageLoaded('photoSellerCreatedSix')}
 								alt=""
 								width={200}  
 								height={200}  

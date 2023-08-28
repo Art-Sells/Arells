@@ -4,12 +4,37 @@
 import '../css/prototype/cart/cart.css';
 import '../css/modals/purchase-complete.css';
 
+//Loader Styles
+import '../css/modals/loading/spinnerBackground.css';
+import styles from '../css/modals/loading/spinner.module.css';
+
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 const PrototypeCart = () => {
+
+		//Loader Functions
+		const [showLoading, setLoading] = useState(true);
+		const [imagesLoaded, setImagesLoaded] = useState({
+		arellsIconCart: false,
+		cartIconCart: false,
+		wordLogoCart: false,	
+		photoCart: false,
+		});
+		const handleImageLoaded = (imageName) => {
+		setImagesLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesLoaded).every(Boolean)) {
+			setLoading(false);
+		}
+		}, [imagesLoaded]);
+
 {/*<!-- useState constants below -->*/}
 	const [purchaseComplete, setPurchaseComplete] = useState(false);
 
@@ -23,13 +48,6 @@ const PrototypeCart = () => {
 	const [succinctDropCart, setSuccinctDropCart] = useState(false);
 	const [paintRainCart, setPaintRainCart] = useState(false);
 {/*<!-- useState constants above -->*/}
-
-
-
-
-
-
-
 
 {/*<!-- Add To Cart & Purchase function/s below -->*/}
 
@@ -226,11 +244,6 @@ const PrototypeCart = () => {
 {/*<!-- Add To Cart & Purchase function/s above -->*/}
 
 
-
-
-
-
-
 {/*<!-- Remove function/s below -->*/}
 	function removeBlueOrange() {
 
@@ -410,6 +423,20 @@ const PrototypeCart = () => {
 				</div>
 			</div>	
 		)}
+
+		{showLoading && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoading && (
+			<div className={styles.spinner}></div>
+		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -418,6 +445,7 @@ const PrototypeCart = () => {
 		
 				<a id="icon-link-cart">
 					<Image
+					onLoad={() => handleImageLoaded('arellsIconCart')}
 					alt=""
 					height={16}
 					width={15} 
@@ -426,6 +454,7 @@ const PrototypeCart = () => {
 				</a>		
 				<button id="cart-link-cart">
 					<Image
+					onLoad={() => handleImageLoaded('cartIconCart')}
 					alt=""
 					height={15}
 					width={16}
@@ -434,6 +463,7 @@ const PrototypeCart = () => {
 				</button>	
 			</div>
 			<Image
+			onLoad={() => handleImageLoaded('wordLogoCart')}
 			alt=""
 			width={110}  
 			height={35} 
@@ -490,6 +520,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-blue-orange">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										onLoad={() => handleImageLoaded('photoCart')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -522,6 +553,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-beach-houses">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										onLoad={() => handleImageLoaded('photoCart')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -554,6 +586,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-colour-glass">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										onLoad={() => handleImageLoaded('photoCart')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -586,6 +619,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-layers">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										onLoad={() => handleImageLoaded('photoCart')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -618,6 +652,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-succinct-drop">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										onLoad={() => handleImageLoaded('photoCart')}
 										alt=""
 										width={150}  
 										height={150} 
@@ -650,6 +685,7 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype-paint-rain">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										onLoad={() => handleImageLoaded('photoCart')}
 										alt=""
 										width={150}  
 										height={150} 

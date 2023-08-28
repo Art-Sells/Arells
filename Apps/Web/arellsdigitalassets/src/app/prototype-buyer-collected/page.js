@@ -5,6 +5,10 @@ import '../css/prototype/buyer-collected.css';
 import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
 
+//Loader Styles
+import '../css/modals/loading/spinnerBackground.css';
+import styles from '../css/modals/loading/spinner.module.css';
+
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,6 +16,29 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const PrototypeBuyerCollected = () => {
+
+			//Loader Functions
+		const [showLoading, setLoading] = useState(true);
+		const [imagesLoaded, setImagesLoaded] = useState({
+		profilePhotoBuyerCollected: false,
+		photoBuyerCollectedOne: false,
+		photoBuyerCollectedTwo: false,
+		photoBuyerCollectedThree: false,
+		photoBuyerCollectedFour: false,
+		photoBuyerCollectedFive: false,
+		photoBuyerCollectedSix: false,
+		});
+		const handleImageLoaded = (imageName) => {
+		setImagesLoaded(prevState => ({ 
+			...prevState, 
+			[imageName]: true 
+		}));
+		};
+		useEffect(() => {
+		if (Object.values(imagesLoaded).every(Boolean)) {
+			setLoading(false);
+		}
+		}, [imagesLoaded]);
 
 {/*<!-- useState constants below -->*/}
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
@@ -219,6 +246,20 @@ const PrototypeBuyerCollected = () => {
 				</div>
 			</div>	
 		)}
+
+		{showLoading && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoading && (
+			<div className={styles.spinner}></div>
+		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -290,6 +331,7 @@ const PrototypeBuyerCollected = () => {
 			)}
 			<div id="profile-img-container-buyer-collected">
 				<Image
+				onLoad={() => handleImageLoaded('profilePhotoBuyerCollected')}
 				alt=""
 				width={100}  
 				height={100}
@@ -337,6 +379,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-blue-orange">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									onLoad={() => handleImageLoaded('photoBuyerCollectedOne')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -361,6 +404,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-beach-houses">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									onLoad={() => handleImageLoaded('photoBuyerCollectedTwo')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -385,6 +429,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-colour-glass">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									onLoad={() => handleImageLoaded('photoBuyerCollectedThree')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -409,6 +454,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-layers">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									onLoad={() => handleImageLoaded('photoBuyerCollectedFour')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -433,6 +479,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-succinct-drop">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									onLoad={() => handleImageLoaded('photoBuyerCollectedFive')}
 									alt=""
 									width={150}  
 									height={150}  
@@ -457,6 +504,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype-paint-rain">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									onLoad={() => handleImageLoaded('photoBuyerCollectedSix')}
 									alt=""
 									width={150}  
 									height={150}  

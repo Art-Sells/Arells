@@ -5,6 +5,10 @@ import '../css/prototype/seller-collected.css';
 import '../css/modals/copiedlink.css';
 import '../css/modals/connect-wallet.css';
 
+//Loader Styles
+import '../css/modals/loading/spinnerBackground.css';
+import styles from '../css/modals/loading/spinner.module.css';
+
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,6 +16,23 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const PrototypeSellerCollected = () => {
+
+			//Loader Functions
+			const [showLoading, setLoading] = useState(true);
+			const [imagesLoaded, setImagesLoaded] = useState({
+			profilePhotoSellerCollected: false,
+			});
+			const handleImageLoaded = (imageName) => {
+			setImagesLoaded(prevState => ({ 
+				...prevState, 
+				[imageName]: true 
+			}));
+			};
+			useEffect(() => {
+			if (Object.values(imagesLoaded).every(Boolean)) {
+				setLoading(false);
+			}
+			}, [imagesLoaded]);
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -177,6 +198,20 @@ const PrototypeSellerCollected = () => {
 				</div>
 			</div>	
 		)}
+
+		{showLoading && (
+			<div id="spinnerBackground">
+			<Image 
+				alt="" 
+				width={29}
+				height={30}
+				id="arells-loader-icon" 
+				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+			</div>
+		)}
+		{showLoading && (
+			<div className={styles.spinner}></div>
+		)}
 {/*<!-- Modals Above -->*/}
 
 
@@ -246,6 +281,7 @@ const PrototypeSellerCollected = () => {
 			)}	
 			<div id="profile-img-container-seller-collected">
 				<Image
+				onLoad={() => handleImageLoaded('profilePhotoSellerCollected')}
 				alt=""
 				width={100}  
 				height={100}
