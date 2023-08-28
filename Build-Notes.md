@@ -1,7 +1,7 @@
 ## Arells Build Notes...
 
 ## MVP
-
+- Pages Load From Top Always "No matter what scrolling happens"
 - Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements]
 - Create Separate js.Components Folder
 - Ensure Each Page has differing MetaDescriptions
