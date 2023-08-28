@@ -128,7 +128,21 @@
 				opacity: 1;
 				  background: rgba(0, 0, 0, 1);
 					box-shadow: 0px 5px 12px -6px black;						
-		  }
+					-webkit-animation-name: animatetop;
+					-webkit-animation-duration: 1.00s;
+					animation-name: animatetop;
+					animation-duration: 1.00s;
+				  }
+				  /* Add Animation */
+				  @-webkit-keyframes animatetop {
+					from {center:0; opacity:0}
+					to {center:0; opacity:1}
+				  }
+				  
+				  @keyframes animatetop {
+					from {center:0; opacity:0}
+					to {center:0; opacity:1}
+				  }
 		  #cart-link-full-succinct-drop:hover,
 		  #cart-link-full-succinct-drop:focus  {
 				transition: 1s;

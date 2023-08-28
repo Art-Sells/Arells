@@ -45,7 +45,21 @@
 			#arells-icon-cart {
 				height: 16px;
 				width: 15px;
-			}	
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			  }
+			  /* Add Animation */
+			  @-webkit-keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }
+			  
+			  @keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }	
 		#cart-link-cart{
 			display: inline-block;
 			text-decoration: none;
@@ -66,13 +80,41 @@
 			#cart-icon-cart {
 				height: 15px;
 				width: 16px;
-			}		
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			  }
+			  /* Add Animation */
+			  @-webkit-keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }
+			  
+			  @keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }		
 			
 		#word-logo-cart {
 			margin-top: 37px;
 			width: 110px;	
 			height: 35px;
-		}
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 1.00s;
+			animation-name: animatetop;
+			animation-duration: 1.00s;
+		  }
+		  /* Add Animation */
+		  @-webkit-keyframes animatetop {
+			from {center:0; opacity:0}
+			to {center:0; opacity:1}
+		  }
+		  
+		  @keyframes animatetop {
+			from {center:0; opacity:0}
+			to {center:0; opacity:1}
+		  }
 		#slogan-cart {
 			margin-top: 23px;
 			font-size: 8px;
@@ -301,7 +343,21 @@
 					height: 150px;
 		  			border-radius: 10px;		
 		  			box-shadow: 0px 8px 12px -6px black; 
-				}
+					  -webkit-animation-name: animatetop;
+					  -webkit-animation-duration: 1.00s;
+					  animation-name: animatetop;
+					  animation-duration: 1.00s;
+					}
+					/* Add Animation */
+					@-webkit-keyframes animatetop {
+					  from {center:0; opacity:0}
+					  to {center:0; opacity:1}
+					}
+					
+					@keyframes animatetop {
+					  from {center:0; opacity:0}
+					  to {center:0; opacity:1}
+					}
 		
 				#photo-link-cart:hover {
 				  opacity: .5;
@@ -396,7 +452,21 @@
 					height: 20px;
 					width: 18px;
 					opacity: 1;
-				}
+					-webkit-animation-name: animatetop;
+					-webkit-animation-duration: 1.00s;
+					animation-name: animatetop;
+					animation-duration: 1.00s;
+				  }
+				  /* Add Animation */
+				  @-webkit-keyframes animatetop {
+					from {center:0; opacity:0}
+					to {center:0; opacity:1}
+				  }
+				  
+				  @keyframes animatetop {
+					from {center:0; opacity:0}
+					to {center:0; opacity:1}
+				  }
 				
 		#prototype-cart-word {
 			margin-top: 30px;

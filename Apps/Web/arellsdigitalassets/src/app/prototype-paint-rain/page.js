@@ -21,14 +21,7 @@ const PaintRain = () => {
 	//Loader Functions
 	const [showLoading, setLoading] = useState(true);
 	const [imagesLoaded, setImagesLoaded] = useState({
-	walletIcon: false,
-	arellsIconPaintRain: false,
-	cartIconPaintRain: false,
-	cartIconFullPaintRain: false,
-	wordLogoPaintRain: false,
 	photoPaintRain: false,
-	copyLinkIconPaintRain: false,
-	fingerprintsIcon: false,
 	});
 	const handleImageLoaded = (imageName) => {
 	setImagesLoaded(prevState => ({ 
@@ -40,7 +33,7 @@ const PaintRain = () => {
 	if (Object.values(imagesLoaded).every(Boolean)) {
 		setLoading(false);
 	}
-	}, [imagesLoaded]);	
+	}, [imagesLoaded]);
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -314,7 +307,6 @@ const PaintRain = () => {
 					<Link legacyBehavior href="/">
 						<a id="icon-link-paint-rain">
 							<Image
-							onLoad={() => handleImageLoaded('arellsIconPaintRain')}
 							alt=""
 							height={16}
 							width={15}
@@ -325,7 +317,6 @@ const PaintRain = () => {
 					{cartLinkPaintRain && (
 						<button id="cart-link-paint-rain" onClick={connectWallet}>
 							<Image
-							onLoad={() => handleImageLoaded('cartIconPaintRain')}
 							alt=""
 							height={16}
 							width={15}
@@ -337,7 +328,6 @@ const PaintRain = () => {
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-connected-paint-rain">
 								<Image
-								onLoad={() => handleImageLoaded('cartIconPaintRain')}
 								alt=""
 								height={15}
 								width={16}
@@ -351,7 +341,6 @@ const PaintRain = () => {
 						<Link legacyBehavior href="/prototype-cart">
 							<a id="cart-link-full-paint-rain">
 								<Image
-								onLoad={() => handleImageLoaded('cartIconFullPaintRain')}
 								alt=""
 								height={15}
 								width={16}
@@ -362,7 +351,6 @@ const PaintRain = () => {
 					)}	
 				</div>
 				<Image
-				onLoad={() => handleImageLoaded('wordLogoPaintRain')}
 				alt=""
 				width={110}  
 				height={35}
@@ -392,7 +380,6 @@ const PaintRain = () => {
                     <button id="copy-link-paint-rain"
                     onClick={copyLink}>
                         <Image
-						onLoad={() => handleImageLoaded('copyLinkIconPaintRain')}
 						alt=""
 						width={15}  
 						height={8}
@@ -468,7 +455,6 @@ const PaintRain = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
-							onLoad={() => handleImageLoaded('fingerprintsIcon')}
 							alt=""
 							width={25}  
 							height={25}
@@ -480,7 +466,6 @@ const PaintRain = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
-							onLoad={() => handleImageLoaded('fingerprintsIcon')}
 							alt=""
 							width={24}  
 							height={25}
@@ -492,7 +477,6 @@ const PaintRain = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
-							onLoad={() => handleImageLoaded('fingerprintsIcon')}
 							alt=""
 							width={25}  
 							height={23}

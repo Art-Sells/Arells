@@ -51,7 +51,21 @@
               #arells-icon-buyer-created {
                 height: 16px;
                 width: 15px;
-              }	
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 1.00s;
+                animation-name: animatetop;
+                animation-duration: 1.00s;
+              }
+              /* Add Animation */
+              @-webkit-keyframes animatetop {
+                from {center:0; opacity:0}
+                to {center:0; opacity:1}
+              }
+              
+              @keyframes animatetop {
+                from {center:0; opacity:0}
+                to {center:0; opacity:1}
+              }
           #cart-link-buyer-created{
               display: inline-block;
               text-decoration: none;
@@ -111,7 +125,21 @@
                 opacity: 1;
                   background: rgba(0, 0, 0, 1);
                     box-shadow: 0px 5px 12px -6px black;									
-          }
+                    -webkit-animation-name: animatetop;
+                    -webkit-animation-duration: 1.00s;
+                    animation-name: animatetop;
+                    animation-duration: 1.00s;
+                  }
+                  /* Add Animation */
+                  @-webkit-keyframes animatetop {
+                    from {center:0; opacity:0}
+                    to {center:0; opacity:1}
+                  }
+                  
+                  @keyframes animatetop {
+                    from {center:0; opacity:0}
+                    to {center:0; opacity:1}
+                  }
           #cart-link-full-buyer-created:hover,
           #cart-link-full-buyer-created:focus  {
                 transition: 1s;
@@ -122,13 +150,41 @@
               #cart-icon-full-buyer-created {
                 height: 15px;
                 width: 16px;
-              }		
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 1.00s;
+                animation-name: animatetop;
+                animation-duration: 1.00s;
+              }
+              /* Add Animation */
+              @-webkit-keyframes animatetop {
+                from {center:0; opacity:0}
+                to {center:0; opacity:1}
+              }
+              
+              @keyframes animatetop {
+                from {center:0; opacity:0}
+                to {center:0; opacity:1}
+              }	
               
           #word-logo-buyer-created {
               margin-top: 37px;
               width: 110px;	
               height: 35px;	
-          }
+              -webkit-animation-name: animatetop;
+              -webkit-animation-duration: 1.00s;
+              animation-name: animatetop;
+              animation-duration: 1.00s;
+            }
+            /* Add Animation */
+            @-webkit-keyframes animatetop {
+              from {center:0; opacity:0}
+              to {center:0; opacity:1}
+            }
+            
+            @keyframes animatetop {
+              from {center:0; opacity:0}
+              to {center:0; opacity:1}
+            }
           #slogan-buyer-created {
               margin-top: 23px;
               font-size: 8px;
@@ -184,7 +240,21 @@
               overflow: hidden;
               width: 100px;
               height: 100px;
-          }	
+              -webkit-animation-name: animatetop;
+              -webkit-animation-duration: 1.00s;
+              animation-name: animatetop;
+              animation-duration: 1.00s;
+            }
+            /* Add Animation */
+            @-webkit-keyframes animatetop {
+              from {center:0; opacity:0}
+              to {center:0; opacity:1}
+            }
+            
+            @keyframes animatetop {
+              from {center:0; opacity:0}
+              to {center:0; opacity:1}
+            }
       #name-buyer-created {
         font-size: 17pt;
         font-weight: 800;
@@ -258,7 +328,21 @@
                   width: 15px;
                   height: 8px;
                   margin-right: 5px;
-              }
+                  -webkit-animation-name: animatetop;
+                  -webkit-animation-duration: 1.00s;
+                  animation-name: animatetop;
+                  animation-duration: 1.00s;
+                }
+                /* Add Animation */
+                @-webkit-keyframes animatetop {
+                  from {center:0; opacity:0}
+                  to {center:0; opacity:1}
+                }
+                
+                @keyframes animatetop {
+                  from {center:0; opacity:0}
+                  to {center:0; opacity:1}
+                }
       #profileline-buyer-created {
       margin-top: 0px;
         background-color: black;
@@ -268,7 +352,7 @@
         width: 450px;
         opacity: .1;
       }
-      #created-collected-buyer-created {
+    #created-collected-buyer-created {
 		margin-top: 30px;
 		flex-direction: column;
 		align-items: center;
@@ -347,7 +431,21 @@
     width: 25px;
 		margin-left: 10px;
 		opacity: 1;
-	}
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 1.00s;
+    animation-name: animatetop;
+    animation-duration: 1.00s;
+  }
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
 
                   
           #prototype-seller-collected-word {

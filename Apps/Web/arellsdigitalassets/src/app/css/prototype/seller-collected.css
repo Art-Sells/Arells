@@ -51,7 +51,21 @@
               #arells-icon-seller-collected {
                 height: 16px;
                 width: 15px;
-              }	
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 1.00s;
+                animation-name: animatetop;
+                animation-duration: 1.00s;
+              }
+              /* Add Animation */
+              @-webkit-keyframes animatetop {
+                from {center:0; opacity:0}
+                to {center:0; opacity:1}
+              }
+              
+              @keyframes animatetop {
+                from {center:0; opacity:0}
+                to {center:0; opacity:1}
+              }
           #cart-link-seller-collected{
               display: inline-block;
               text-decoration: none;
@@ -111,7 +125,21 @@
                 opacity: 1;
                   background: rgba(0, 0, 0, 1);
                     box-shadow: 0px 5px 12px -6px black;									
-          }
+                    -webkit-animation-name: animatetop;
+                    -webkit-animation-duration: 1.00s;
+                    animation-name: animatetop;
+                    animation-duration: 1.00s;
+                  }
+                  /* Add Animation */
+                  @-webkit-keyframes animatetop {
+                    from {center:0; opacity:0}
+                    to {center:0; opacity:1}
+                  }
+                  
+                  @keyframes animatetop {
+                    from {center:0; opacity:0}
+                    to {center:0; opacity:1}
+                  }
           #cart-link-full-seller-collected:hover,
           #cart-link-full-seller-collected:focus  {
                 transition: 1s;
@@ -122,13 +150,41 @@
               #cart-icon-full-seller-collected {
                 height: 15px;
                 width: 16px;
-              }		
+                -webkit-animation-name: animatetop;
+                -webkit-animation-duration: 1.00s;
+                animation-name: animatetop;
+                animation-duration: 1.00s;
+              }
+              /* Add Animation */
+              @-webkit-keyframes animatetop {
+                from {center:0; opacity:0}
+                to {center:0; opacity:1}
+              }
+              
+              @keyframes animatetop {
+                from {center:0; opacity:0}
+                to {center:0; opacity:1}
+              }	
               
           #word-logo-seller-collected {
               margin-top: 37px;
               width: 110px;	
               height: 35px;		
-          }
+              -webkit-animation-name: animatetop;
+              -webkit-animation-duration: 1.00s;
+              animation-name: animatetop;
+              animation-duration: 1.00s;
+            }
+            /* Add Animation */
+            @-webkit-keyframes animatetop {
+              from {center:0; opacity:0}
+              to {center:0; opacity:1}
+            }
+            
+            @keyframes animatetop {
+              from {center:0; opacity:0}
+              to {center:0; opacity:1}
+            }
           #slogan-seller-collected {
               margin-top: 23px;
               font-size: 8px;
@@ -184,7 +240,21 @@
               overflow: hidden;
               width: 100%;
               height: 100%;
-          }	
+              -webkit-animation-name: animatetop;
+              -webkit-animation-duration: 1.00s;
+              animation-name: animatetop;
+              animation-duration: 1.00s;
+            }
+            /* Add Animation */
+            @-webkit-keyframes animatetop {
+              from {center:0; opacity:0}
+              to {center:0; opacity:1}
+            }
+            
+            @keyframes animatetop {
+              from {center:0; opacity:0}
+              to {center:0; opacity:1}
+            }
       #name-seller-collected {
         font-size: 17pt;
         font-weight: 800;
@@ -258,7 +328,21 @@
                   width: 15px;
                   height: 8px;
                   margin-right: 5px;
-              }
+                  -webkit-animation-name: animatetop;
+                  -webkit-animation-duration: 1.00s;
+                  animation-name: animatetop;
+                  animation-duration: 1.00s;
+                }
+                /* Add Animation */
+                @-webkit-keyframes animatetop {
+                  from {center:0; opacity:0}
+                  to {center:0; opacity:1}
+                }
+                
+                @keyframes animatetop {
+                  from {center:0; opacity:0}
+                  to {center:0; opacity:1}
+                }
       #profileline-seller-collected {
       margin-top: 0px;
         background-color: black;
@@ -347,7 +431,21 @@
     width: 27px;
 		margin-left: 10px;
 		opacity: 1;
-	}
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 1.00s;
+    animation-name: animatetop;
+    animation-duration: 1.00s;
+  }
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
 
                   
       #prototype-seller-collected-word {
