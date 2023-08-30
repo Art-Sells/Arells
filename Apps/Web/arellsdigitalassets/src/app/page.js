@@ -14,7 +14,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Head from 'next/head';
 
-const Index = () => {
+const Home = () => {
 
 
   //Loader Functions
@@ -139,7 +139,7 @@ const Index = () => {
   );
 }
 
-export default Index;
+export default Home;
 
 
 

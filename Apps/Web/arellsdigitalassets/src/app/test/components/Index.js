@@ -1,12 +1,12 @@
 "use client";
 
 // Change below link after test
-import '../css/Home.css';
-import '../css/modals/copiedlink.css';
+import '../../css/Home.css';
+import '../../css/modals/copiedlink.css';
 
 //Loader Styles
-import '../css/modals/loading/spinnerBackground.css';
-import styles from '../css/modals/loading/spinner.module.css';
+import '../../css/modals/loading/spinnerBackground.css';
+import styles from '../../css/modals/loading/spinner.module.css';
 
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -16,51 +16,52 @@ import Head from 'next/head';
 
 const Index = () => {
 
-    //Loader Functions
-    const [showLoading, setLoading] = useState(true);
-    const [imagesLoaded, setImagesLoaded] = useState({
-      arellsIcon: false,
-      wordLogo: false,
-    });
-    const handleImageLoaded = (imageName) => {
-      setImagesLoaded(prevState => ({ 
-        ...prevState, 
-        [imageName]: true 
-      }));
-    };
-    useEffect(() => {
-      if (Object.values(imagesLoaded).every(Boolean)) {
-        setLoading(false);
-      }
-    }, [imagesLoaded]);
-  
-  
-  
-    useEffect(() => {
-      function resetPrototype() {
-        sessionStorage.removeItem('walletConnectedSession'); 
-  
-        sessionStorage.removeItem('blueOrangeAdded');
-        sessionStorage.removeItem('blueOrangePurchased');
-  
-        sessionStorage.removeItem('beachHousesAdded');
-        sessionStorage.removeItem('beachHousesPurchased');
-  
-        sessionStorage.removeItem('colourGlassAdded');
-        sessionStorage.removeItem('colourGlassPurchased');
-  
-        sessionStorage.removeItem('layersAdded');
-        sessionStorage.removeItem('layersPurchased');
-  
-        sessionStorage.removeItem('succinctDropAdded');
-        sessionStorage.removeItem('succinctDropPurchased');
-  
-        sessionStorage.removeItem('paintRainAdded');
-        sessionStorage.removeItem('paintRainPurchased');
-      }
-      
-      resetPrototype();
-    }, []);
+
+  //Loader Functions
+  const [showLoading, setLoading] = useState(true);
+  const [imagesLoaded, setImagesLoaded] = useState({
+    arellsIcon: false,
+    wordLogo: false,
+  });
+  const handleImageLoaded = (imageName) => {
+    setImagesLoaded(prevState => ({ 
+      ...prevState, 
+      [imageName]: true 
+    }));
+  };
+  useEffect(() => {
+    if (Object.values(imagesLoaded).every(Boolean)) {
+      setLoading(false);
+    }
+  }, [imagesLoaded]);
+
+
+
+  useEffect(() => {
+    function resetPrototype() {
+      sessionStorage.removeItem('walletConnectedSession'); 
+
+      sessionStorage.removeItem('blueOrangeAdded');
+      sessionStorage.removeItem('blueOrangePurchased');
+
+      sessionStorage.removeItem('beachHousesAdded');
+      sessionStorage.removeItem('beachHousesPurchased');
+
+      sessionStorage.removeItem('colourGlassAdded');
+      sessionStorage.removeItem('colourGlassPurchased');
+
+      sessionStorage.removeItem('layersAdded');
+      sessionStorage.removeItem('layersPurchased');
+
+      sessionStorage.removeItem('succinctDropAdded');
+      sessionStorage.removeItem('succinctDropPurchased');
+
+      sessionStorage.removeItem('paintRainAdded');
+      sessionStorage.removeItem('paintRainPurchased');
+    }
+    
+    resetPrototype();
+  }, []);
 
   return (
     <>
