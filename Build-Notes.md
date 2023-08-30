@@ -77,7 +77,7 @@
  5. Message (notifications) to seller: "Congratulations xxxx! Art Sold to xxxx for xxxx, new PAP: xxxx"
  6. If/Then messages corresponding to above messages. 
  
-#### LinkTree Links.
+#### LinkTree Links... Social-sharing-images.. AWS Cloudfront/
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
   
