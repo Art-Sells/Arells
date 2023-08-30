@@ -389,21 +389,21 @@ const BeachHouses = () => {
 				</div>
 				<div id="created-by-beach-houses">
 					<p id="creator-owner-desc-beach-houses">Created By</p>
-					<a id="creator-owner-link-beach-houses" href="/prototype-seller-created">
+					<a id="creator-owner-link-beach-houses" href="/seller-created">
 						Abstract Kadabra
 					</a>
 				</div>
 				{ownedByCreatorBeachHouses && (
 					<div id="owned-by-creator-beach-houses">
 						<p id="creator-owner-desc-beach-houses">Owned By</p> 
-						<a id="creator-owner-link-beach-houses" href="/prototype-seller-created">
+						<a id="creator-owner-link-beach-houses" href="/seller-created">
 							Abstract Kadabra</a>
 					</div>
 				)}
 				{ownedByBuyerBeachHouses && (
 					<div id="owned-by-buyer-beach-houses">
 						<p id="creator-owner-desc-beach-houses">Owned By</p> 
-						<a id="creator-owner-link-beach-houses" href="/prototype-buyer-collected">
+						<a id="creator-owner-link-beach-houses" href="/buyer-collected">
 							0x71C7656E...
 						</a>
 					</div>
