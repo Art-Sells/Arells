@@ -2,6 +2,7 @@
 
 ## MVP
 - Pages Load From Top Always "No matter what scrolling happens"
+- Pages separated like so: main/asset/"asset-name", main/"profile-name"
 - Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements]
 - Create Separate js.Components Folder
 - Ensure Each Page has differing MetaDescriptions
