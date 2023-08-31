@@ -88,8 +88,6 @@ const Index = () => {
         <div className={styles.spinner}></div>
       )}
 
-      <div id="overlayy">
-
         <Image 
         onLoad={() => handleImageLoaded('arellsIcon')}
         alt="" 
@@ -132,9 +130,7 @@ const Index = () => {
           <Link legacyBehavior href="/prototype-seller-created">
             <a id="prototype">PROTOTYPE</a>
           </Link>	        
-        </div>           
-    
-      </div>		       
+        </div>           	       
     </>
   );
 }
