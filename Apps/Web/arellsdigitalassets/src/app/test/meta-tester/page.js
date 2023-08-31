@@ -1,7 +1,6 @@
 import '../../css/Home.css';
 
 import IndexTest from '../components/IndexTest';
-import Head from 'next/head';
 
 const HomeTest = () => {
 
@@ -27,11 +26,6 @@ export const metadata = {
   google: "nositelinkssearchbox",
   keywords: ["Arells"],
   author: "Arells",
-//   viewport: {
-//     content: "width=device-width,user-scalable=yes,initial-scale=1",
-//     id: "viewport"
-//   },
-// // Change below link after test  
   linkCanonical: "https://arells.com/test/meta-test",
   og: {
     image: [
