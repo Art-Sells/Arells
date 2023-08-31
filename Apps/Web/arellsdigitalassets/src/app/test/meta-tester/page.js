@@ -7,15 +7,6 @@ const HomeTest = () => {
 
   return (
     <>
-    <Head>
-      <meta name="robots" content="noimageindex"/>
-      <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-      <meta charset="UTF-8"/>
-      <meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
-      <meta property="og:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
-      <meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
-    </Head>
-
       <div id="overlayy">
        <IndexTest/>
       </div>
