@@ -27,11 +27,11 @@ export const metadata = {
   google: "nositelinkssearchbox",
   keywords: ["Arells"],
   author: "Arells",
-  viewport: {
-    content: "width=device-width,user-scalable=yes,initial-scale=1",
-    id: "viewport"
-  },
-// Change below link after test  
+//   viewport: {
+//     content: "width=device-width,user-scalable=yes,initial-scale=1",
+//     id: "viewport"
+//   },
+// // Change below link after test  
   linkCanonical: "https://arells.com/test/meta-test",
   og: {
     image: [
