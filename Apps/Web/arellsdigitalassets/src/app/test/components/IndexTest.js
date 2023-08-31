@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const Index = () => {
+const IndexTest = () => {
 
 
   //Loader Functions
@@ -125,4 +125,4 @@ const Index = () => {
   );
 }
 
-export default Index;
+export default IndexTest;

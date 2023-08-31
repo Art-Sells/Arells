@@ -1,9 +1,9 @@
 import '../../css/Home.css';
 
-import Index from '../components/Index';
+import IndexTest from '../components/IndexTest';
 import Head from 'next/head';
 
-const Home = () => {
+const HomeTest = () => {
 
   return (
     <>
@@ -17,13 +17,13 @@ const Home = () => {
     </Head>
 
       <div id="overlayy">
-       <Index/>
+       <IndexTest/>
       </div>
     </>
   );
 }
 
-export default Home;
+export default HomeTest;
 
 export const metadata = {
   robots: "noimageindex",
