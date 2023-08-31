@@ -1,4 +1,4 @@
-import '../../css/Base.css';
+import '../../css/Home.css';
 
 import Index from '../components/Index';
 
@@ -6,7 +6,7 @@ const Home = () => {
 
   return (
     <>
-      <div id="base">
+      <div id="overlayy">
        <Index/>
       </div>
     </>
