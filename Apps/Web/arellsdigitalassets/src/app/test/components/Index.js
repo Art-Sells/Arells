@@ -12,7 +12,6 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Head from 'next/head';
 
 const Index = () => {
 
@@ -65,15 +64,6 @@ const Index = () => {
 
   return (
     <>
-    <Head>
-        <meta name="robots" content="noimageindex"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta charset="UTF-8"/>
-        <meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
-        <meta property="og:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
-        <meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/223035337-47c28406-e5f5-4dcd-acb6-f3acd0646646.jpg"/>
-    </Head>
-
       {showLoading && (
         <div id="spinnerBackground">
           <Image 
@@ -87,6 +77,8 @@ const Index = () => {
       {showLoading && (
         <div className={styles.spinner}></div>
       )}
+
+      <div id="overlayy">
 
         <Image 
         onLoad={() => handleImageLoaded('arellsIcon')}
@@ -130,7 +122,9 @@ const Index = () => {
           <Link legacyBehavior href="/prototype-seller-created">
             <a id="prototype">PROTOTYPE</a>
           </Link>	        
-        </div>           	       
+        </div>           
+    
+      </div>		       
     </>
   );
 }

@@ -8,28 +8,6 @@
 	  margin-bottom: 0%;
 		background: white;	  
   }
-  @-webkit-keyframes gradients{
-	0% {
-	  background-position: 0 50%;
-	}
-	50% {
-	  background-position: 100% 50%;
-	}
-	100% {
-	   background-position: 0% 50%;
-	}
-  }
-  @keyframes gradients{
-	0% {
-	  background-position: 0 50%;
-	}
-	50% {
-	  background-position: 100% 50%;
-	}
-	100% {
-	   background-position: 0% 50%;
-	}
-  }
   
 	  #arells-iconn {
 		  width: 80px;
