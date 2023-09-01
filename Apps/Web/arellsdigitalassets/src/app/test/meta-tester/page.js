@@ -1,5 +1,6 @@
 import '../../css/Home.css';
 
+import { metadata } from 'next';
 import IndexTest from '../components/IndexTest';
 
 const HomeTest = () => {
