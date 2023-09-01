@@ -16,8 +16,6 @@ const SellerCreatedPage = () => {
 export default SellerCreatedPage;
 
 export const metadata = {
-    //change below link after test
-    metadataBase: new URL('https://jeremyakatsa.com/'),
     robots: "noimageindex",
     httpEquiv: {
       "X-UA-Compatible": "IE=edge"
