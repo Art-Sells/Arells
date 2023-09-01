@@ -29,13 +29,7 @@ export const metadata = {
   author: "Arells",
   linkCanonical: "https://arells.com/test/meta-test",
   og: {
-    image: [
-      {
-        url:"https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg",
-        width:700,
-        height:400,
-      }
-    ],
+    image: ["https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg"],
     site_name: "Arells",
     type: "website",
     title: "Arells",
@@ -45,13 +39,7 @@ export const metadata = {
   },
   twitter: {
     title: "Arells",
-    image: [
-      {
-        url:"https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg",
-        width:700,
-        height:400,
-      }
-    ],
+    image: ["https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg"],
 // Change below link after test
     url: "https://arells.com/test/meta-test",
     card: "summary_large_image",
