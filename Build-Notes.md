@@ -78,6 +78,7 @@
  6. If/Then messages corresponding to above messages. 
  
 #### LinkTree Links... 
+***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
 - MetaTags Social-sharing-images: AWS Cloudfront?
 - MetaTag Title: "Profile/Asset Name"
 - MetaTag Description: "Profile/Asset Description"
