@@ -16,6 +16,8 @@ const SellerCreatedPage = () => {
 export default SellerCreatedPage;
 
 export const metadata = {
+    //change below link after test
+    metadataBase: new URL('https://jeremyakatsa.com/'),
     robots: "noimageindex",
     httpEquiv: {
       "X-UA-Compatible": "IE=edge"
@@ -27,19 +29,19 @@ export const metadata = {
     keywords: ["Arells"],
     author: "Arells",
     // Change below link after test  
-    linkCanonical: "https://arells.com/prototype-seller-created",
+    linkCanonical: "https://jeremyakatsa.com/test/prototype",
     og: {
       site_name: "Arells",
       type: "website",
       title: "Seller Creations Prototype",
       // Change below link after test    
-      url: "https://arells.com/prototype-seller-created",
+      url: "https://jeremyakatsa.com/test/prototype",
       description: "Prototype for Seller Creations",
     },
     twitter: {
       title: "Seller Creations Prototype",
       // Change below link after test
-      url: "https://arells.com/prototype-seller-created",
+      url: "https://jeremyakatsa.com/test/prototype",
       card: "summary_large_image",
       description: "Prototype for Seller Creations"
     }

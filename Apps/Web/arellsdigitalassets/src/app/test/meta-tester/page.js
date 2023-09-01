@@ -16,6 +16,8 @@ const HomeTest = () => {
 export default HomeTest;
 
 export const metadata = {
+  //change below link after test
+  metadataBase: new URL('https://jeremyakatsa.com/'),
   robots: "noimageindex",
   httpEquiv: {
     "X-UA-Compatible": "IE=edge"
@@ -26,19 +28,21 @@ export const metadata = {
   google: "nositelinkssearchbox",
   keywords: ["Arells"],
   author: "Arells",
-  linkCanonical: "https://arells.com/test/meta-test",
+  //change below link after test
+  linkCanonical: "https://jeremyakatsa.com/test/meta-test",
   og: {
     site_name: "Arells",
     type: "website",
     title: "Arells",
-// Change below link after test    
-    url: "https://arells.com/test/meta-test",
+// Change below link after test   
+//change below link after test 
+    url: "https://jeremyakatsa.com/test/meta-test",
     description: "Never lose money selling art.",
   },
   twitter: {
     title: "Arells",
 // Change below link after test
-    url: "https://arells.com/test/meta-test",
+    url: "https://jeremyakatsa.com/test/meta-test",
     card: "summary_large_image",
     description: "Never lose money selling art."
   }
