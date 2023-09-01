@@ -16,6 +16,7 @@ const HomeTest = () => {
 export default HomeTest;
 
 export const metadata = {
+  metadataBase: new URL("https://user-images.githubusercontent.com/51394348/227811567-244af8ad-d592-40f9-9188-6d225fffe46f.jpg"),
   robots: "noimageindex",
   httpEquiv: {
     "X-UA-Compatible": "IE=edge"
