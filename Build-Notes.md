@@ -79,7 +79,7 @@
  
 #### LinkTree Links... 
 - MetaTags Social-sharing-images: AWS Cloudfront?
-- MetaTag Title: "Profile/Asset Name" | Arells
+- MetaTag Title: "Profile/Asset Name"
 - MetaTag Description: "Profile/Asset Description"
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
