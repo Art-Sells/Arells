@@ -1,6 +1,5 @@
 import '../../css/prototype/seller-created.css';
 
-import { metadata } from 'next';
 import PrototypeSellerCreated from '../components/prototype/SellerCreated';
 
 const SellerCreatedPage = () => {
