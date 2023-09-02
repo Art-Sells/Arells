@@ -1,11 +1,11 @@
 "use client";
 
 // Change below link after test
-import '../../app/css/error-style.css';
+import '../../../app/css/error-style.css';
 
 //Loader Styles
-import '../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../../app/css/modals/loading/spinner.module.css';
+import '../../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../../app/css/modals/loading/spinner.module.css';
 
 import { useState } from 'react';
 import { useEffect } from 'react';
