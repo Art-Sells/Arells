@@ -81,6 +81,9 @@ const PrototypeBuyerCollected = () => {
 		}
 		}, [imagesThreeLoaded]);
 
+
+
+		
 		const [showLoadingFourCollected, setLoadingFourCollected] = useState(false);
 		const [imagesFourLoaded, setImagesFourLoaded] = useState({
 			photoBuyerCollectedFour: false,
@@ -96,6 +99,9 @@ const PrototypeBuyerCollected = () => {
 			setLoadingFourCollected(false);
 		}
 		}, [imagesFourLoaded]);
+
+
+
 
 		const [showLoadingFiveCollected, setLoadingFiveCollected] = useState(false);
 		const [imagesFiveLoaded, setImagesFiveLoaded] = useState({
@@ -113,6 +119,10 @@ const PrototypeBuyerCollected = () => {
 		}
 		}, [imagesFiveLoaded]);
 
+
+
+
+
 		const [showLoadingSixCollected, setLoadingSixCollected] = useState(false);
 		const [imagesSixLoaded, setImagesSixLoaded] = useState({
 			photoBuyerCollectedSix: false,
@@ -128,6 +138,10 @@ const PrototypeBuyerCollected = () => {
 			setLoadingSixCollected(false);
 		}
 		}, [imagesSixLoaded]);
+
+
+
+
 
 {/*<!-- useState constants below -->*/}
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
