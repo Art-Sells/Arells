@@ -1,11 +1,22 @@
 import '../../css/prototype/seller-created.css';
 
 import PrototypeSellerCreated from '../../../components/prototype/SellerCreated';
+import Head from 'next/head';
 
 const SellerCreatedPage = () => {
 
   return (
     <>
+      <Head>
+        <meta property="og:image" content="<generated>" />
+        <meta property="og:image:type" content="<generated>" />
+        <meta property="og:image:width" content="<generated>" />
+        <meta property="og:image:height" content="<generated>" />
+        <meta name="twitter:image" content="<generated>" />
+        <meta name="twitter:image:type" content="<generated>" />
+        <meta name="twitter:image:width" content="<generated>" />
+        <meta name="twitter:image:height" content="<generated>" />
+      </Head>    
       <div id="prototype-seller-created-wrapper">
        <PrototypeSellerCreated/>
       </div>

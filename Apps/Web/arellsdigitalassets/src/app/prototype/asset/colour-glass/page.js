@@ -1,11 +1,22 @@
 import '../../../css/prototype/asset/colour-glass.css';
 
 import ColourGlass from '../../../../components/prototype/asset/ColourGlass';
+import Head from 'next/head';
 
 const ColourGlassPage = () => {
 
   return (
     <>
+      <Head>
+        <meta property="og:image" content="<generated>" />
+        <meta property="og:image:type" content="<generated>" />
+        <meta property="og:image:width" content="<generated>" />
+        <meta property="og:image:height" content="<generated>" />
+        <meta name="twitter:image" content="<generated>" />
+        <meta name="twitter:image:type" content="<generated>" />
+        <meta name="twitter:image:width" content="<generated>" />
+        <meta name="twitter:image:height" content="<generated>" />
+      </Head>
       <div id="colour-glass-wrapper">
        <ColourGlass/>
       </div>
@@ -40,6 +51,7 @@ export const metadata = {
       title: "Colour Glass Prototype",
       // Change below link after test
       url: "/prototype/asset/colour-glass",
+      card: "summary_large_image",
       description: "Prototype for Colour Glass"
     }
   };

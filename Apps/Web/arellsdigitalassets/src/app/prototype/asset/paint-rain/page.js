@@ -1,11 +1,22 @@
 import '../../../css/prototype/asset/paint-rain.css';
 
 import PaintRain from '../../../../components/prototype/asset/PaintRain';
+import Head from 'next/head';
 
 const PaintRainPage = () => {
 
   return (
     <>
+      <Head>
+        <meta property="og:image" content="<generated>" />
+        <meta property="og:image:type" content="<generated>" />
+        <meta property="og:image:width" content="<generated>" />
+        <meta property="og:image:height" content="<generated>" />
+        <meta name="twitter:image" content="<generated>" />
+        <meta name="twitter:image:type" content="<generated>" />
+        <meta name="twitter:image:width" content="<generated>" />
+        <meta name="twitter:image:height" content="<generated>" />
+      </Head>    
       <div id="paint-rain-wrapper">
        <PaintRain/>
       </div>
@@ -40,6 +51,7 @@ export const metadata = {
       title: "Paint Rain Prototype",
       // Change below link after test
       url: "/prototype/asset/paint-rain",
+      card: "summary_large_image",
       description: "Prototype for Paint Rain"
     }
   };

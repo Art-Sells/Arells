@@ -10,7 +10,6 @@ export default function Custom500() {
                 <title>Server Not Found</title>
                 <meta name="title" content="Server Not Found" />
                 <meta name="description" content="Server for this page not found." />
-                {/* Add other meta tags as needed */}
             </Head>
            <div id="error-overlay">
                <PageError/>
