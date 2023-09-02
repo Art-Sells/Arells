@@ -1,18 +1,18 @@
 "use client";
 
 // Change below link after test
-import '../../app/css/error-style.css';
+import '../../../app/css/error-style.css';
 
 //Loader Styles
-import '../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../../app/css/modals/loading/spinner.module.css';
+import '../../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../../app/css/modals/loading/spinner.module.css';
 
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const Error = () => {
+const ServerError = () => {
 
   //Loader Functions
   const [showLoading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ const Error = () => {
         
         <br/>
         
-        <p id="error-message">PAGE NOT FOUND</p>
+        <p id="error-message">SERVER NOT FOUND</p>
     
         {/*<!-- Change below link after test -->*/}
         <Link legacyBehavior href="https://arells.com" >
@@ -69,4 +69,4 @@ const Error = () => {
   );
 }
 
-export default Error;
+export default ServerError;

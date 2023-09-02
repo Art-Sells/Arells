@@ -1,7 +1,7 @@
 import '../app/css/error-style.css';
 
 import Head from 'next/head';
-import Error from '../components/error/500/Error';
+import PageError from '../components/error/500/ServerError';
 
 export default function Custom500() {
      return (
@@ -13,7 +13,7 @@ export default function Custom500() {
                 {/* Add other meta tags as needed */}
             </Head>
            <div id="error-overlay">
-               <Error/>
+               <PageError/>
            </div>
        </>
        );
