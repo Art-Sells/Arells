@@ -1,5 +1,5 @@
 // Change below link after test
-import './css/Home.css';
+import './css/error.css';
 
 import Error from '../components/error/Error';
 
@@ -7,7 +7,7 @@ const NotFound = () => {
 
   return (
     <>
-      <div id="overlayy">
+      <div id="error-overlay">
        <Error/>
       </div>
     </>

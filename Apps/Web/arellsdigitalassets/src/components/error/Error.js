@@ -53,20 +53,18 @@ const Error = () => {
         <Image 
         onLoad={() => handleImageLoaded('arellsIcon')}
         alt="" 
-        width={80}
-        height={85}
-        id="arells-iconn" 
+        width={40}
+        height={42}
+        id="arells-icon-error" 
         src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>
         
         <br/>
         
-        <p id="slogann">Page Cannot Be Found</p>
-        
-        <hr id="black-liner"/>
+        <p id="error-message">PAGE NOT FOUND</p>
     
         {/*<!-- Change below link after test -->*/}
         <Link legacyBehavior href="https://arells.com" >
-          <a id="updatess">BACK TO HOME</a>
+          <a id="back-to-home">BACK TO HOME</a>
         </Link>			
 
     </>
