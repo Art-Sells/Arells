@@ -1,44 +1,20 @@
 import '../app/css/error-style.css';
 
-import Error from '../components/error/Error';
+import Head from 'next/head';
+import Error from '../components/error/500/Error';
 
 export default function Custom500() {
      return (
        <>
+            <Head>
+                <title>Server Not Found</title>
+                <meta name="title" content="Server Not Found" />
+                <meta name="description" content="Server for this page not found." />
+                {/* Add other meta tags as needed */}
+            </Head>
            <div id="error-overlay">
                <Error/>
            </div>
        </>
        );
  }
-
-  
-const metadata = {
-    robots: "noimageindex",
-    httpEquiv: {
-        "X-UA-Compatible": "IE=edge"
-    },
-    charSet: "UTF-8",
-    title: "Page Not Found",
-    description: "This page doesn't exist.",
-    google: "nositelinkssearchbox",
-    keywords: ["Arells"],
-    author: "Arells",
-    //change below link after test
-    linkCanonical: "/",
-    og: {
-        site_name: "Arells",
-        type: "website",
-        title: "Page Not Found",
-    //change below link after test 
-        url: "/",
-        description: "This page doesn't exist.",
-    },
-    twitter: {
-        title: "Page Not Found",
-    // Change below link after test
-        url: "/",
-        card: "summary_large_image",
-        description: "This page doesn't exist.",
-    }
-};

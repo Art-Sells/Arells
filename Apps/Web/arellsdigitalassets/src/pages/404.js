@@ -1,48 +1,23 @@
  import '../app/css/error-style.css';
-
- import Error from '../components/error/Error';
+ 
+import Head from 'next/head';
+import Error from '../components/error/404/Error';
 
 export default function Custom404() {
       return (
         <>
+            <Head>
+                <title>Page Not Found</title>
+                <meta name="title" content="Page Not Found" />
+                <meta name="description" content="The page you're looking for was not found." />
+                {/* Add other meta tags as needed */}
+            </Head>
             <div id="error-overlay">
                 <Error/>
             </div>
         </>
         );
   }
-
-  
-const metadata = {
-    robots: "noimageindex",
-    httpEquiv: {
-        "X-UA-Compatible": "IE=edge"
-    },
-    charSet: "UTF-8",
-    title: "Page Not Found",
-    description: "This page doesn't exist.",
-    google: "nositelinkssearchbox",
-    keywords: ["Arells"],
-    author: "Arells",
-    //change below link after test
-    linkCanonical: "/",
-    og: {
-        site_name: "Arells",
-        type: "website",
-        title: "Page Not Found",
-    //change below link after test 
-        url: "/",
-        description: "This page doesn't exist.",
-    },
-    twitter: {
-        title: "Page Not Found",
-    // Change below link after test
-        url: "/",
-        card: "summary_large_image",
-        description: "This page doesn't exist.",
-    }
-};
-  
   
   
   
