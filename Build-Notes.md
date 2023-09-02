@@ -1,10 +1,8 @@
 ## Arells Build Notes...
 
 ## MVP
-- Pages Load From Top Always "No matter what scrolling happens"
 - Pages separated like so: main/asset/"asset-name", main/"profile-name"
 - Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements]
-- Create Separate js.Components Folder
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
@@ -16,7 +14,7 @@
 #### Home
 - If logged in [About/Store/Contact]
 - If not logged in [About/Log-in/Sign-Up/Contact]
-- Contact (discord/email/etc)
+- Contact (discord/email)
 - Log-In with Google/Apple/Facebook/Etc
 
 #### Sign-Up
