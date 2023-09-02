@@ -16,7 +16,7 @@ import Image from 'next/image';
 
 const PrototypeBuyerCollected = () => {
 
-			//Loader Functions
+		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
 		const [imagesLoaded, setImagesLoaded] = useState({
 		profilePhotoBuyerCollected: false,
@@ -33,7 +33,9 @@ const PrototypeBuyerCollected = () => {
 		}
 		}, [imagesLoaded]);
 
-		const [showLoadingOneCollected, setLoadingOneCollected] = useState(false);
+		//Asset Loading Functions Below
+		const [showLoadingAssetCollected, setLoadingAssetCollected] = useState(false);
+
 		const [imagesOneLoaded, setImagesOneLoaded] = useState({
 			photoBuyerCollectedOne: false,
 		});
@@ -45,11 +47,10 @@ const PrototypeBuyerCollected = () => {
 		};
 		useEffect(() => {
 		if (Object.values(imagesOneLoaded).every(Boolean)) {
-			setLoadingOneCollected(false);
+			setLoadingAssetCollected(false);
 		}
 		}, [imagesOneLoaded]);
 
-		const [showLoadingTwoCollected, setLoadingTwoCollected] = useState(false);
 		const [imagesTwoLoaded, setImagesTwoLoaded] = useState({
 			photoBuyerCollectedTwo: false,
 		});
@@ -61,11 +62,10 @@ const PrototypeBuyerCollected = () => {
 		};
 		useEffect(() => {
 		if (Object.values(imagesTwoLoaded).every(Boolean)) {
-			setLoadingTwoCollected(false);
+			setLoadingAssetCollected(false);
 		}
 		}, [imagesTwoLoaded]);
 
-		const [showLoadingThreeCollected, setLoadingThreeCollected] = useState(false);
 		const [imagesThreeLoaded, setImagesThreeLoaded] = useState({
 			photoBuyerCollectedThree: false,
 		});
@@ -77,14 +77,10 @@ const PrototypeBuyerCollected = () => {
 		};
 		useEffect(() => {
 		if (Object.values(imagesThreeLoaded).every(Boolean)) {
-			setLoadingThreeCollected(false);
+			setLoadingAssetCollected(false);
 		}
 		}, [imagesThreeLoaded]);
-
-
-
 		
-		const [showLoadingFourCollected, setLoadingFourCollected] = useState(false);
 		const [imagesFourLoaded, setImagesFourLoaded] = useState({
 			photoBuyerCollectedFour: false,
 		});
@@ -96,14 +92,10 @@ const PrototypeBuyerCollected = () => {
 		};
 		useEffect(() => {
 		if (Object.values(imagesFourLoaded).every(Boolean)) {
-			setLoadingFourCollected(false);
+			setLoadingAssetCollected(false);
 		}
 		}, [imagesFourLoaded]);
 
-
-
-
-		const [showLoadingFiveCollected, setLoadingFiveCollected] = useState(false);
 		const [imagesFiveLoaded, setImagesFiveLoaded] = useState({
 			photoBuyerCollectedFive: false,
 		});
@@ -115,15 +107,10 @@ const PrototypeBuyerCollected = () => {
 		};
 		useEffect(() => {
 		if (Object.values(imagesFiveLoaded).every(Boolean)) {
-			setLoadingFiveCollected(false);
+			setLoadingAssetCollected(false);
 		}
 		}, [imagesFiveLoaded]);
 
-
-
-
-
-		const [showLoadingSixCollected, setLoadingSixCollected] = useState(false);
 		const [imagesSixLoaded, setImagesSixLoaded] = useState({
 			photoBuyerCollectedSix: false,
 		});
@@ -135,7 +122,7 @@ const PrototypeBuyerCollected = () => {
 		};
 		useEffect(() => {
 		if (Object.values(imagesSixLoaded).every(Boolean)) {
-			setLoadingSixCollected(false);
+			setLoadingAssetCollected(false);
 		}
 		}, [imagesSixLoaded]);
 
@@ -243,42 +230,42 @@ const PrototypeBuyerCollected = () => {
 			const succinctDropPurchased = sessionStorage.getItem('succinctDropPurchased');	
 			if (blueOrangePurchased === 'true') {
 				setNoArtBuyerCollected(false);
-				setLoadingOneCollected(true);
+				setLoadingAssetCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setBlueOrangeBuyerCollected(true);
 			}
 			if (beachHousesPurchased === 'true') {
 				setNoArtBuyerCollected(false);
-				setLoadingTwoCollected(true);
+				setLoadingAssetCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setBeachHousesBuyerCollected(true);
 			}
 			if (colourGlassPurchased === 'true') {
 				setNoArtBuyerCollected(false);
-				setLoadingThreeCollected(true);
+				setLoadingAssetCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setColourGlassBuyerCollected(true);
 			}
 			if (layersPurchased === 'true') {
 				setNoArtBuyerCollected(false);
-				setLoadingFourCollected(true);
+				setLoadingAssetCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setLayersBuyerCollected(true);
 			}
 			if (paintRainPurchased === 'true') {
 				setNoArtBuyerCollected(false);
-				setLoadingFiveCollected(true);
+				setLoadingAssetCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setPaintRainBuyerCollected(true);
 			}
 			if (succinctDropPurchased === 'true') {
 				setNoArtBuyerCollected(false);
-				setLoadingSixCollected(true);
+				setLoadingAssetCollected(true);
 	
 				setCollectedItemsBuyerCollected(true);
 				setSuccinctDropBuyerCollected(true);
@@ -332,7 +319,7 @@ const PrototypeBuyerCollected = () => {
 		{showLoading && (
 			<div className={styles.spinner}></div>
 		)}
-		{showLoadingOneCollected && (
+		{showLoadingAssetCollected && (
 			<div id="spinnerBackground">
 			<Image 
 				alt="" 
@@ -342,10 +329,10 @@ const PrototypeBuyerCollected = () => {
 				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
 			</div>
 		)}
-		{showLoadingOneCollected && (
+		{showLoadingAssetCollected && (
 			<div className={styles.spinner}></div>
 		)}
-		{showLoadingTwoCollected && (
+		{/* {showLoadingTwoCollected && (
 			<div id="spinnerBackground">
 			<Image 
 				alt="" 
@@ -409,7 +396,7 @@ const PrototypeBuyerCollected = () => {
 		)}
 		{showLoadingSixCollected && (
 			<div className={styles.spinner}></div>
-		)}
+		)} */}
 {/*<!-- Modals Above -->*/}
 
 			<div id="header-buyer-collected">
