@@ -1,7 +1,7 @@
 "use client";
 
 // Change below link after test
-import '../../app/css/error.css';
+import '../../app/css/error-style.css';
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
@@ -13,7 +13,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const Error = () => {
-
 
   //Loader Functions
   const [showLoading, setLoading] = useState(true);
