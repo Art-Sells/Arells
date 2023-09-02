@@ -39,7 +39,7 @@ export const metadata = {
     twitter: {
       title: "Cart Prototype",
       // Change below link after test
-      url: "https://jeremyakatsa.com/prototype/asset/cart",
+      url: "https://jeremyakatsa.com/prototype/cart",
       description: "Prototype for Cart"
     }
   };
