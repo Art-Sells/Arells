@@ -29,19 +29,19 @@ export const metadata = {
   keywords: ["Arells"],
   author: "Arells",
   //change below link after test
-  linkCanonical: "https://jeremyakatsa.com",
+  linkCanonical: "/",
   og: {
     site_name: "Arells",
     type: "website",
     title: "Arells",
 //change below link after test 
-    url: "https://jeremyakatsa.com",
+    url: "/",
     description: "Never lose money selling art.",
   },
   twitter: {
     title: "Arells",
 // Change below link after test
-    url: "https://jeremyakatsa.com",
+    url: "/",
     card: "summary_large_image",
     description: "Never lose money selling art."
   }

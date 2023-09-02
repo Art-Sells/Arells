@@ -2,7 +2,6 @@
 import './css/error.css';
 
 import Error from '../components/error/Error';
-import { useNavigation } from 'next/navigation';
 
 const NotFound = () => {
 
@@ -17,12 +16,8 @@ const NotFound = () => {
 
 export default NotFound;
 
-const router = useNavigation();
-    
-  //change below link after test
-const currentURL = `https://jeremyakatsa.com${router.asPath}`;
-
 export const metadata = {
+
 
   robots: "noimageindex",
   httpEquiv: {
@@ -34,17 +29,17 @@ export const metadata = {
   google: "nositelinkssearchbox",
   keywords: ["Arells"],
   author: "Arells",
-  linkCanonical: currentURL,
+  linkCanonical: "/",
   og: {
     site_name: "Arells",
     type: "website",
     title: "Arells",
-    url: currentURL,
+    url: "/",
     description: "Never lose money selling art.",
   },
   twitter: {
     title: "Arells",
-    url: currentURL,
+    url: "/",
     card: "summary_large_image",
     description: "Never lose money selling art."
   }
