@@ -1,15 +1,14 @@
 "use client";
 
 // Change below link after test
-import '../css/prototype/seller-collected.css';
-import '../css/modals/copiedlink.css';
-import '../css/modals/connect-wallet.css';
+import '../../app/css/prototype/seller-collected.css';
+import '../../app/css/modals/copiedlink.css';
+import '../../app/css/modals/connect-wallet.css';
 
 //Loader Styles
-import '../css/modals/loading/spinnerBackground.css';
-import styles from '../css/modals/loading/spinner.module.css';
+import '../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../app/css/modals/loading/spinner.module.css';
 
-import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -50,7 +49,7 @@ const PrototypeSellerCollected = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-seller-collected'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype/seller-collected'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -134,43 +133,6 @@ const PrototypeSellerCollected = () => {
     return (
         <>
 
-		<Head>
-			<meta name="robots" content="noimageindex" />
-
-			<meta charset="UTF-8" />
-			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-			<meta name="title" content="Seller Collections Prototype" />
-			<meta name="description" content="Prototype for Seller Collections" />
-			<meta name="google" content="nositelinkssearchbox" />
-			<meta name="keywords" content="Arells" />
-			<meta name="author" content="Arells" />
-			<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
-
-			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-seller-collections" />
-
-			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg" />
-			<meta property="og:site_name" content="Arells" />
-			<meta property="og:type" content="website" />
-			<meta property="og:title" content="Seller Collections Prototype" />
-			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-seller-collected" />
-			<meta property="og:description" content="Prototype for Seller Collections" />
-			<meta property="og:image:type" content="image/jpg" />
-			<meta property="og:image:width" content="700" />
-			<meta property="og:image:height" content="400" />
-
-			<meta name="twitter:title" content="Seller Collections Prototype" />
-			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg" />
-			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-seller-collected" />
-			<meta name="twitter:card" content="summary_large_image" />
-			<meta name="twitter:description" content="Prototype for Seller Collections" />
-		</Head>
-
-		<title>Prototype Seller Collections</title>	
-
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
 			<div id="copiedLink">
@@ -215,7 +177,6 @@ const PrototypeSellerCollected = () => {
 {/*<!-- Modals Above -->*/}
 
 
-		<div id="prototype-seller-collected-wrapper">
 				<div id="header-seller-collected">
 			
 			{/*<!-- Change below link after test -->*/}
@@ -240,7 +201,7 @@ const PrototypeSellerCollected = () => {
 					</button>
 				)}	
 				{cartLinkConnectedSellerCollected && (
-					<Link legacyBehavior href="/prototype-cart">
+					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-connected-seller-collected">
 							<Image
 							alt=""
@@ -252,7 +213,7 @@ const PrototypeSellerCollected = () => {
 					</Link>	
 				)}		
 				{cartLinkFullSellerCollected && (
-					<Link legacyBehavior href="/prototype-cart">
+					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-full-seller-collected">
 							<Image
 							alt=""
@@ -305,7 +266,7 @@ const PrototypeSellerCollected = () => {
 			<hr id="profileline-seller-collected"/>
 			<div id="created-collected-seller-collected">
 				{/*<!-- Change below link after test -->*/}	
-				<Link legacyBehavior href="/prototype-seller-created">
+				<Link legacyBehavior href="/prototype/seller-created">
 					<a id="created-seller-collected" >Created</a>		
 				</Link>	
 				<a id="collected-seller-collected">Collected</a>	
@@ -318,9 +279,7 @@ const PrototypeSellerCollected = () => {
 				height={25} 
 				id="cart-icon-collected-seller-collected" 
 				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/shopping-cart-empty.png"/>
-			</p>
-
-		</div>			
+			</p>		
 		     
         </>
     );
