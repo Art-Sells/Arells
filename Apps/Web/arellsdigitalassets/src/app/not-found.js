@@ -2,6 +2,7 @@
 import './css/error.css';
 
 import Error from '../components/error/Error';
+import { useRouter } from 'next/router';
 
 const NotFound = () => {
 
@@ -16,7 +17,13 @@ const NotFound = () => {
 
 export default NotFound;
 
+const router = useRouter();
+    
+  //change below link after test
+const currentURL = `https://jeremyakatsa.com${router.asPath}`;
+
 export const metadata = {
+
   robots: "noimageindex",
   httpEquiv: {
     "X-UA-Compatible": "IE=edge"
@@ -27,20 +34,17 @@ export const metadata = {
   google: "nositelinkssearchbox",
   keywords: ["Arells"],
   author: "Arells",
-  //change below link after test
-  linkCanonical: "https://jeremyakatsa.com",
+  linkCanonical: currentURL,
   og: {
     site_name: "Arells",
     type: "website",
     title: "Arells",
-//change below link after test 
-    url: "https://jeremyakatsa.com",
+    url: currentURL,
     description: "Never lose money selling art.",
   },
   twitter: {
     title: "Arells",
-// Change below link after test
-    url: "https://jeremyakatsa.com",
+    url: currentURL,
     card: "summary_large_image",
     description: "Never lose money selling art."
   }
