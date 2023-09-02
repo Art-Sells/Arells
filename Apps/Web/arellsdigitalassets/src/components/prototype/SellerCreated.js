@@ -1,21 +1,20 @@
 "use client";
 
 // Change below link after test
-import '../css/prototype/seller-created.css';
-import '../css/modals/copiedlink.css';
-import '../css/modals/connect-wallet.css';
+import '../../../css/prototype/seller-created.css';
+import '../../../css/modals/copiedlink.css';
+import '../../../css/modals/connect-wallet.css';
 
 //Loader Styles
-import '../css/modals/loading/spinnerBackground.css';
-import styles from '../css/modals/loading/spinner.module.css';
+import '../../../css/modals/loading/spinnerBackground.css';
+import styles from '../../../css/modals/loading/spinner.module.css';
 
-import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const PrototypeSellerCreated = () => {
+const PrototypeSellerCreatedTest = () => {
 
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
@@ -98,7 +97,7 @@ const PrototypeSellerCreated = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-seller-created'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype/seller-created'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -446,43 +445,6 @@ const PrototypeSellerCreated = () => {
     return (
         <>
 
-		<Head>
-			<meta name="robots" content="noimageindex" />
-
-			<meta charset="UTF-8" />
-			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-			<meta name="title" content="Seller Creations Prototype" />
-			<meta name="description" content="Prototype for Seller Creations" />
-			<meta name="google" content="nositelinkssearchbox" />
-			<meta name="keywords" content="Arells" />
-			<meta name="author" content="Arells" />
-			<meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
-
-			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-seller-created" />
-
-			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg" />
-			<meta property="og:site_name" content="Arells" />
-			<meta property="og:type" content="website" />
-			<meta property="og:title" content="Seller Creations Prototype" />
-			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-seller-created" />
-			<meta property="og:description" content="Prototype for Seller Creations" />
-			<meta property="og:image:type" content="image/jpg" />
-			<meta property="og:image:width" content="700" />
-			<meta property="og:image:height" content="400" />
-
-			<meta name="twitter:title" content="Seller Creations Prototype" />
-			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg" />
-			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-seller-created" />
-			<meta name="twitter:card" content="summary_large_image" />
-			<meta name="twitter:description" content="Prototype for Seller Creations" />
-		</Head>
-
-		<title>Prototype Seller Created</title>	
-
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
 			<div id="copiedLink">
@@ -526,9 +488,6 @@ const PrototypeSellerCreated = () => {
 			<div className={styles.spinner}></div>
 		)}
 {/*<!-- Modals Above -->*/}
-
-
-		<div id="prototype-seller-created-wrapper">
 				<div id="header-seller-created">
 			
 			{/*<!-- Change below link after test -->*/}
@@ -553,7 +512,7 @@ const PrototypeSellerCreated = () => {
 					</button>
 				)}	
 				{cartLinkConnectedSellerCreated && (
-					<Link legacyBehavior href="/prototype-cart">
+					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-connected-seller-created">
 							<Image
 							alt=""
@@ -565,7 +524,7 @@ const PrototypeSellerCreated = () => {
 					</Link>	
 				)}		
 				{cartLinkFullSellerCreated && (
-					<Link legacyBehavior href="/prototype-cart">
+					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-full-seller-created">
 							<Image
 							alt=""
@@ -619,14 +578,14 @@ const PrototypeSellerCreated = () => {
 			<div id="created-collected-seller-created">
 				<a id="created-seller-created">Created</a>	
 			{/*<!-- Change below link after test -->*/}	
-				<Link legacyBehavior href="/prototype-seller-collected">
+				<Link legacyBehavior href="/prototype/seller-collected">
 					<a id="collected-seller-created" >Collected</a>		
 				</Link>	
 			</div>
 			<div id="container-seller-created">
 					<div id="blue-orange-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype-blue-orange">
+						<Link legacyBehavior href="/prototype/blue-orange">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedOne')}
@@ -676,7 +635,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="beach-houses-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype-beach-houses">
+						<Link legacyBehavior href="/prototype/beach-houses">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedTwo')}
@@ -726,7 +685,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="colour-glass-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype-colour-glass">
+						<Link legacyBehavior href="/prototype/colour-glass">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedThree')}
@@ -776,7 +735,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="layers-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype-layers">
+						<Link legacyBehavior href="/prototype/layers">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedFour')}
@@ -826,7 +785,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="succinct-drop-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype-succinct-drop">
+						<Link legacyBehavior href="/prototype/succinct-drop">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedFive')}
@@ -876,7 +835,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="paint-rain-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype-paint-rain">
+						<Link legacyBehavior href="/prototype/paint-rain">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedSix')}
@@ -924,11 +883,10 @@ const PrototypeSellerCreated = () => {
 							COLLECTED</button>	
 						)}			     	
 					</div>
-			</div>
-		</div>			
+			</div>		
 		     
         </>
     );
 }
 
-export default PrototypeSellerCreated;
+export default PrototypeSellerCreatedTest;

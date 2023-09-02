@@ -1,19 +1,19 @@
 import '../../css/prototype/seller-created.css';
 
-import PrototypeSellerCreatedTest from '../components/prototype/SellerCreatedTest';
+import PrototypeSellerCreated from '../components/prototype/SellerCreated';
 
-const SellerCreatedPageTest = () => {
+const SellerCreatedPage = () => {
 
   return (
     <>
       <div id="prototype-seller-created-wrapper">
-       <PrototypeSellerCreatedTest/>
+       <PrototypeSellerCreated/>
       </div>
     </>
   );
 }
 
-export default SellerCreatedPageTest;
+export default SellerCreatedPage;
 
 export const metadata = {
     robots: "noimageindex",
@@ -27,19 +27,19 @@ export const metadata = {
     keywords: ["Arells"],
     author: "Arells",
     // Change below link after test  
-    linkCanonical: "https://jeremyakatsa.com/test/prototype",
+    linkCanonical: "https://arells.com/prototype/seller-created",
     og: {
       site_name: "Arells",
       type: "website",
       title: "Seller Creations Prototype",
       // Change below link after test    
-      url: "https://jeremyakatsa.com/test/prototype",
+      url: "https://jeremyakatsa.com/prototype/seller-created",
       description: "Prototype for Seller Creations",
     },
     twitter: {
       title: "Seller Creations Prototype",
       // Change below link after test
-      url: "https://jeremyakatsa.com/test/prototype",
+      url: "https://jeremyakatsa.com/prototype/seller-created",
       card: "summary_large_image",
       description: "Prototype for Seller Creations"
     }
