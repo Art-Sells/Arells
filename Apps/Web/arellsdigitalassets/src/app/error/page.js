@@ -1,7 +1,7 @@
 // Change below link after test
-import './css/error-style.css';
+import '../css/error-style.css';
 
-import Error from '../components/error/Error';
+import Error from '../../components/error/Error';
 
 const NotFound = () => {
 
