@@ -27,19 +27,19 @@ export const metadata = {
     keywords: ["Arells"],
     author: "Arells",
     // Change below link after test  
-    linkCanonical: "https://arells.com/prototype/asset/succinct-drop",
+    linkCanonical: "https://jeremyakatsa.com/prototype/asset/succinct-drop",
     og: {
       site_name: "Arells",
       type: "website",
       title: "Succinct Drop Prototype",
       // Change below link after test    
-      url: "https://arells.com/prototype/asset/succinct-drop",
+      url: "https://jeremyakatsa.com/prototype/asset/succinct-drop",
       description: "Prototype for Succinct Drop",
     },
     twitter: {
       title: "Succinct Drop Prototype",
       // Change below link after test
-      url: "https://arells.com/prototype/asset/succinct-drop",
+      url: "https://jeremyakatsa.com/prototype/asset/succinct-drop",
       description: "Prototype for Succinct Drop"
     }
   };

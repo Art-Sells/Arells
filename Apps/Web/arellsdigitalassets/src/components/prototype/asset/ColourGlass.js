@@ -369,7 +369,7 @@ const ColourGlass = () => {
                     <div id="owned-by-buyer-colour-glass">
                         <p id="creator-owner-desc-colour-glass">Owned By</p> 
                         <Link legacyBehavior href="/prototype/buyer-collected">
-                            <a id="creator-owner-link-layers" >
+                            <a id="creator-owner-link-colour-glass" >
                                 0x71C7656E...
                             </a>
 					    </Link>

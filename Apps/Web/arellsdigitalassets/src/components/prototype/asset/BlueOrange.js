@@ -368,7 +368,7 @@ const BlueOrange = () => {
 					<div id="owned-by-buyer-blue-orange">
 						<p id="creator-owner-desc-blue-orange">Owned By</p> 
                         <Link legacyBehavior href="/prototype/buyer-collected">
-                            <a id="creator-owner-link-layers" >
+                            <a id="creator-owner-link-blue-orange" >
                                 0x71C7656E...
                             </a>
 					    </Link>

@@ -332,71 +332,7 @@ const PrototypeBuyerCollected = () => {
 		{showLoadingAssetCollected && (
 			<div className={styles.spinner}></div>
 		)}
-		{/* {showLoadingTwoCollected && (
-			<div id="spinnerBackground">
-			<Image 
-				alt="" 
-				width={29}
-				height={30}
-				id="arells-loader-icon" 
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
-			</div>
-		)}
-		{showLoadingTwoCollected && (
-			<div className={styles.spinner}></div>
-		)}
-		{showLoadingThreeCollected && (
-			<div id="spinnerBackground">
-			<Image 
-				alt="" 
-				width={29}
-				height={30}
-				id="arells-loader-icon" 
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
-			</div>
-		)}
-		{showLoadingThreeCollected && (
-			<div className={styles.spinner}></div>
-		)}
-		{showLoadingFourCollected && (
-			<div id="spinnerBackground">
-			<Image 
-				alt="" 
-				width={29}
-				height={30}
-				id="arells-loader-icon" 
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
-			</div>
-		)}
-		{showLoadingFourCollected && (
-			<div className={styles.spinner}></div>
-		)}
-		{showLoadingFiveCollected && (
-			<div id="spinnerBackground">
-			<Image 
-				alt="" 
-				width={29}
-				height={30}
-				id="arells-loader-icon" 
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
-			</div>
-		)}
-		{showLoadingFiveCollected && (
-			<div className={styles.spinner}></div>
-		)}
-		{showLoadingSixCollected && (
-			<div id="spinnerBackground">
-			<Image 
-				alt="" 
-				width={29}
-				height={30}
-				id="arells-loader-icon" 
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
-			</div>
-		)}
-		{showLoadingSixCollected && (
-			<div className={styles.spinner}></div>
-		)} */}
+
 {/*<!-- Modals Above -->*/}
 
 			<div id="header-buyer-collected">

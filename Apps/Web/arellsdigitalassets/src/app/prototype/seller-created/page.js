@@ -27,7 +27,7 @@ export const metadata = {
     keywords: ["Arells"],
     author: "Arells",
     // Change below link after test  
-    linkCanonical: "https://arells.com/prototype/seller-created",
+    linkCanonical: "https://jeremyakatsa.com/prototype/seller-created",
     og: {
       site_name: "Arells",
       type: "website",

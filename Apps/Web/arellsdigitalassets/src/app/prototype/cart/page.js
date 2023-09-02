@@ -1,6 +1,5 @@
 import '../../css/prototype/cart/cart.css';
 
-
 import PrototypeCart from '../../../components/prototype/cart/Cart';
 
 const CartPage = () => {
@@ -28,19 +27,19 @@ export const metadata = {
     keywords: ["Arells"],
     author: "Arells",
     // Change below link after test  
-    linkCanonical: "https://arells.com/prototype/cart",
+    linkCanonical: "https://jeremyakatsa.com/prototype/cart",
     og: {
       site_name: "Arells",
       type: "website",
       title: "Cart Prototype",
       // Change below link after test    
-      url: "https://arells.com/prototype/cart",
+      url: "https://jeremyakatsa.com/prototype/cart",
       description: "Prototype for Cart",
     },
     twitter: {
       title: "Cart Prototype",
       // Change below link after test
-      url: "https://arells.com/prototype/asset/cart",
+      url: "https://jeremyakatsa.com/prototype/asset/cart",
       description: "Prototype for Cart"
     }
   };
