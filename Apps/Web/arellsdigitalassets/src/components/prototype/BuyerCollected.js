@@ -1,15 +1,14 @@
 "use client";
 
 // Change below link after test
-import '../css/prototype/buyer-collected.css';
-import '../css/modals/copiedlink.css';
-import '../css/modals/connect-wallet.css';
+import '../../app/css/prototype/buyer-collected.css';
+import '../../app/css/modals/copiedlink.css';
+import '../../app/css/modals/connect-wallet.css';
 
 //Loader Styles
-import '../css/modals/loading/spinnerBackground.css';
-import styles from '../css/modals/loading/spinner.module.css';
+import '../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../app/css/modals/loading/spinner.module.css';
 
-import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -156,7 +155,7 @@ const PrototypeBuyerCollected = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-buyer-collected'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype/buyer-collected'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -277,43 +276,6 @@ const PrototypeBuyerCollected = () => {
 	
     return (
         <>
-
-		<Head>
-			<meta name="robots" content="noimageindex" />
-
-			<meta charset="UTF-8" />
-			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-			<meta name="title" content="Buyer Collections Prototype"/>
-			<meta name="description" content="Prototype for Buyer Collections"/>
-			<meta name="google" content="nositelinkssearchbox"/>
-			<meta name="keywords" content="Arells"/>
-			<meta name="author" content="Arells"/>
-			<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
-
-			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-buyer-collected"/>
-
-			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>	
-			<meta property="og:site_name" content="Arells"/>	
-			<meta property="og:type" content="website"/>				
-			<meta property="og:title" content="Buyer Collections Prototype"/>
-			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-buyer-collected"/>
-			<meta property="og:description" content="Prototype for Buyer Collections"/>
-			<meta property="og:image:type" content="image/jpg"/>
-			<meta property="og:image:width" content="700"/>
-			<meta property="og:image:height" content="400"/>
-
-			<meta name="twitter:title" content="Buyer Collections Prototype"/>
-			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>
-			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-buyer-collected"/>
-			<meta name="twitter:card" content="summary_large_image"/>
-			<meta name="twitter:description" content="Prototype for Buyer Collections"/>
-		</Head>
-
-		<title>Prototype Buyer Collected</title>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
@@ -436,8 +398,6 @@ const PrototypeBuyerCollected = () => {
 		)}
 {/*<!-- Modals Above -->*/}
 
-
-		<div id="prototype-buyer-collected-wrapper">
 			<div id="header-buyer-collected">
 			
 			{/*<!-- Change Link Below After Test -->*/}
@@ -462,7 +422,7 @@ const PrototypeBuyerCollected = () => {
 					</button>					
 				)}
 				{cartLinkConnectedBuyerCollected && (
-					<Link legacyBehavior href="/prototype-cart">
+					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-connected-buyer-collected">
 							<Image
 							alt=""
@@ -475,7 +435,7 @@ const PrototypeBuyerCollected = () => {
 				
 				)}
 				{cartLinkFullBuyerCollected && (
-					<Link legacyBehavior href="/prototype-cart">
+					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-full-buyer-collected">
 							<Image
 							alt=""
@@ -529,7 +489,7 @@ const PrototypeBuyerCollected = () => {
 			<hr id="profileline-buyer-collected"/>
 			<div id="created-collected-buyer-collected">
 				{/*<!-- Change Link Below After Test -->*/}
-				<Link legacyBehavior href="/prototype-buyer-created">
+				<Link legacyBehavior href="/prototype/buyer-created">
 					<a id="created-buyer-collected">Created</a>		
 				</Link>
 				<a id="collected-buyer-collected">Collected</a>	
@@ -550,7 +510,7 @@ const PrototypeBuyerCollected = () => {
 					{blueOrangeBuyerCollected && (
 						<div id="blue-orange-buyer-collected">
 						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-blue-orange">
+							<Link legacyBehavior href="/prototype/asset/blue-orange">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
 									onLoad={() => handleImageOneLoaded('photoBuyerCollectedOne')}
@@ -575,7 +535,7 @@ const PrototypeBuyerCollected = () => {
 					{beachHousesBuyerCollected && (
 						<div id="beach-houses-buyer-collected">
 						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-beach-houses">
+							<Link legacyBehavior href="/prototype/asset/beach-houses">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
 									onLoad={() => handleImageTwoLoaded('photoBuyerCollectedTwo')}
@@ -600,7 +560,7 @@ const PrototypeBuyerCollected = () => {
 					{colourGlassBuyerCollected && (
 						<div id="colour-glass-buyer-collected">
 						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-colour-glass">
+							<Link legacyBehavior href="/prototype/asset/colour-glass">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
 									onLoad={() => handleImageThreeLoaded('photoBuyerCollectedThree')}
@@ -625,7 +585,7 @@ const PrototypeBuyerCollected = () => {
 					{layersBuyerCollected && (
 						<div id="layers-buyer-collected">
 						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-layers">
+							<Link legacyBehavior href="/prototype/asset/layers">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
 									onLoad={() => handleImageFourLoaded('photoBuyerCollectedFour')}
@@ -650,7 +610,7 @@ const PrototypeBuyerCollected = () => {
 					{succinctDropBuyerCollected && (
 						<div id="succinct-drop-buyer-collected">
 						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-succinct-drop">
+							<Link legacyBehavior href="/prototype/asset/succinct-drop">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
 									onLoad={() => handleImageFiveLoaded('photoBuyerCollectedFive')}
@@ -675,7 +635,7 @@ const PrototypeBuyerCollected = () => {
 					{paintRainBuyerCollected && (
 						<div id="paint-rain-buyer-collected">
 						{/*<!-- Change Link Below After Test -->*/}
-							<Link legacyBehavior href="/prototype-paint-rain">
+							<Link legacyBehavior href="/prototype/asset/paint-rain">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
 									onLoad={() => handleImageSixLoaded('photoBuyerCollectedSix')}
@@ -698,8 +658,7 @@ const PrototypeBuyerCollected = () => {
 						</div>
 					)}
 				</div>
-			)}
-		</div>			
+			)}		
 		     
         </>
     );

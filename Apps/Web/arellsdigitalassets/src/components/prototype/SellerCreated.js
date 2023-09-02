@@ -635,7 +635,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="beach-houses-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype/beach-houses">
+						<Link legacyBehavior href="/prototype/asset/beach-houses">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedTwo')}
@@ -685,7 +685,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="colour-glass-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype/colour-glass">
+						<Link legacyBehavior href="/prototype/asset/colour-glass">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedThree')}
@@ -735,7 +735,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="layers-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype/layers">
+						<Link legacyBehavior href="/prototype/asset/layers">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedFour')}
@@ -785,7 +785,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="succinct-drop-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype/succinct-drop">
+						<Link legacyBehavior href="/prototype/asset/succinct-drop">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedFive')}
@@ -835,7 +835,7 @@ const PrototypeSellerCreated = () => {
 					</div>
 					<div id="paint-rain-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype/paint-rain">
+						<Link legacyBehavior href="/prototype/asset/paint-rain">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedSix')}

@@ -1,4 +1,7 @@
-import StayUpdated from '../components/StayUpdated';
+// Change below link after test
+import '../css/stayupdated.css';
+
+import StayUpdated from '../../components/StayUpdated';
 
 const StayUpdatedPage = () => {
 
