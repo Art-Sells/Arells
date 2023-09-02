@@ -1,14 +1,14 @@
 "use client";
 
 // Change below link after test
-import '../../../app/css/prototype/images/beach-houses.css';
+import '../../../app/css/prototype/asset/beach-houses.css';
 import '../../../app/css/modals/copiedlink.css';
 import '../../../app/css/modals/connect-wallet.css';
 import '../../../app/css/modals/coming-soon.css';
 
 //Loader Styles
 import '../../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../css/modals/loading/spinner.module.css';
+import styles from '../../../app/css/modals/loading/spinner.module.css';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';

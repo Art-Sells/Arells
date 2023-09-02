@@ -1,7 +1,7 @@
 "use client";
 
 // Change below link after test
-import '../../../app/css/prototype/images/blue-orange.css';
+import '../../../app/css/prototype/asset/blue-orange.css';
 import '../../../app/css/modals/copiedlink.css';
 import '../../../app/css/modals/connect-wallet.css';
 import '../../../app/css/modals/coming-soon.css';
@@ -283,7 +283,7 @@ const BlueOrange = () => {
 						</button>
 					)}	
 					{cartLinkConnectedBlueOrange && (
-						<Link legacyBehavior href="/prototype-cart">
+						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-connected-blue-orange">
 								<Image
 								alt=""
@@ -296,7 +296,7 @@ const BlueOrange = () => {
 					)}	
 
 					{cartLinkFullBlueOrange && (
-						<Link legacyBehavior href="/prototype-cart">
+						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-full-blue-orange">
 								<Image
 								alt=""

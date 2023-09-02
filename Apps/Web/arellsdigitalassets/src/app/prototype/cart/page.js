@@ -1,6 +1,7 @@
-import '../../../css/prototype/cart/cart.css';
+import '../../css/prototype/cart/cart.css';
 
-import PrototypeCart from '../../../../components/prototype/asset/Cart';
+
+import PrototypeCart from '../../../components/prototype/cart/Cart';
 
 const CartPage = () => {
 

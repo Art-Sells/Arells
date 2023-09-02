@@ -1,7 +1,7 @@
 "use client";
 
 // Change below link after test
-import '../../../app/css/prototype/images/layers.css';
+import '../../../app/css/prototype/asset/layers.css';
 import '../../../app/css/modals/copiedlink.css';
 import '../../../app/css/modals/connect-wallet.css';
 import '../../../app/css/modals/coming-soon.css';
@@ -297,7 +297,7 @@ const Layers = () => {
 					)}	
 
 					{cartLinkFullLayers && (
-						<Link legacyBehavior href="/prototype-cart">
+						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-full-layers">
 								<Image
 								alt=""

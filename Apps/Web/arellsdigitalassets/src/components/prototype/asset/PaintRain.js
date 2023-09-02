@@ -1,7 +1,7 @@
 "use client";
 
 // Change below link after test
-import '../../../app/css/prototype/images/paint-rain.css';
+import '../../../app/css/prototype/asset/paint-rain.css';
 import '../../../app/css/modals/copiedlink.css';
 import '../../../app/css/modals/connect-wallet.css';
 import '../../../app/css/modals/coming-soon.css';

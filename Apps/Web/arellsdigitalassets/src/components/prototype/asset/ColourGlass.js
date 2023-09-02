@@ -1,7 +1,7 @@
 "use client";
 
 // Change below link after test
-import '../../../app/css/prototype/images/colour-glass.css';
+import '../../../app/css/prototype/asset/colour-glass.css';
 import '../../../app/css/modals/copiedlink.css';
 import '../../../app/css/modals/connect-wallet.css';
 import '../../../app/css/modals/coming-soon.css';
@@ -284,7 +284,7 @@ const ColourGlass = () => {
 						</button>
 					)}	
 					{cartLinkConnectedColourGlass && (
-						<Link legacyBehavior href="/prototype-cart">
+						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-connected-colour-glass">
 								<Image
 								alt=""
@@ -297,7 +297,7 @@ const ColourGlass = () => {
 					)}	
 
 					{cartLinkFullColourGlass && (
-						<Link legacyBehavior href="/prototype-cart">
+						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-full-colour-glass">
 								<Image
 								alt=""

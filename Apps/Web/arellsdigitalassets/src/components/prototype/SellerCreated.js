@@ -585,7 +585,7 @@ const PrototypeSellerCreated = () => {
 			<div id="container-seller-created">
 					<div id="blue-orange-seller-created">
 					{/*<!-- Change below link after test -->*/}
-						<Link legacyBehavior href="/prototype/blue-orange">
+						<Link legacyBehavior href="/prototype/asset/blue-orange">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
 								onLoad={() => handleImageLoaded('photoSellerCreatedOne')}

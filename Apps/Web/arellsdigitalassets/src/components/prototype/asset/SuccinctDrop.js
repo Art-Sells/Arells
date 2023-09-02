@@ -82,7 +82,6 @@ const SuccinctDrop = () => {
 {/*<!-- Connect Wallet function/s below -->*/}
 	function connectWallet () {
 		setShowConnectWallet(true);
-		setWalletLoading(true);
 	};
 
 	function walletConnected () {

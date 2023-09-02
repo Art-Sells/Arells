@@ -618,7 +618,8 @@ const PrototypeBuyerCollected = () => {
 									width={150}  
 									height={150}  
 									id="photo-buyer-collected" 
-									src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/5.jpg"/>
+									src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/5.jpg"
+									/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
