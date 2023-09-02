@@ -1,12 +1,12 @@
 "use client";
 
 // Change below link after test
-import '../../css/Home.css';
-import '../../css/modals/copiedlink.css';
+import '../app/css/Home.css';
+import '../app/css/modals/copiedlink.css';
 
 //Loader Styles
-import '../../css/modals/loading/spinnerBackground.css';
-import styles from '../../css/modals/loading/spinner.module.css';
+import '../app/css/modals/loading/spinnerBackground.css';
+import styles from '../app/css/modals/loading/spinner.module.css';
 
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -117,7 +117,7 @@ const Index = () => {
         
         <div id="prototype-spacer">
           {/*<!-- Change below link after test -->*/}
-          <Link legacyBehavior href="/prototype-seller-created">
+          <Link legacyBehavior href="/prototype/seller-created">
             <a id="prototype">PROTOTYPE</a>
           </Link>	        
         </div>                 

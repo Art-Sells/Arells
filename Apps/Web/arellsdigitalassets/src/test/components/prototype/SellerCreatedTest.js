@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const PrototypeSellerCreated = () => {
+const PrototypeSellerCreatedTest = () => {
 
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
@@ -889,4 +889,4 @@ const PrototypeSellerCreated = () => {
     );
 }
 
-export default PrototypeSellerCreated;
+export default PrototypeSellerCreatedTest;

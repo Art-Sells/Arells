@@ -1,20 +1,20 @@
 "use client";
 
 // Change below link after test
-import '../../../css/prototype/seller-created.css';
-import '../../../css/modals/copiedlink.css';
-import '../../../css/modals/connect-wallet.css';
+import '../../app/css/prototype/seller-created.css';
+import '../../app/css/modals/copiedlink.css';
+import '../../app/css/modals/connect-wallet.css';
 
 //Loader Styles
-import '../../../css/modals/loading/spinnerBackground.css';
-import styles from '../../../css/modals/loading/spinner.module.css';
+import '../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../app/css/modals/loading/spinner.module.css';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const PrototypeSellerCreatedTest = () => {
+const PrototypeSellerCreated = () => {
 
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
@@ -889,4 +889,4 @@ const PrototypeSellerCreatedTest = () => {
     );
 }
 
-export default PrototypeSellerCreatedTest;
+export default PrototypeSellerCreated;

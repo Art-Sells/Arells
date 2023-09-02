@@ -1,6 +1,6 @@
 import '../../css/prototype/seller-created.css';
 
-import PrototypeSellerCreated from '../components/prototype/SellerCreated';
+import PrototypeSellerCreated from '../../../components/prototype/SellerCreated';
 
 const SellerCreatedPage = () => {
 
