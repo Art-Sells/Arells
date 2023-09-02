@@ -1,14 +1,13 @@
 "use client";
 
 // Change below link after test
-import '../css/prototype/cart/cart.css';
-import '../css/modals/purchase-complete.css';
+import '../../../app/css/prototype/cart/cart.css';
+import '../../../app/css/modals/purchase-complete.css';
 
 //Loader Styles
-import '../css/modals/loading/spinnerBackground.css';
-import styles from '../css/modals/loading/spinner.module.css';
+import '../../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../../app/css/modals/loading/spinner.module.css';
 
-import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -507,43 +506,6 @@ const PrototypeCart = () => {
     return (
         <>
 
-		<Head>
-			<meta name="robots" content="noimageindex" />
-
-			<meta charset="UTF-8" />
-			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-			<meta name="title" content="Cart Prototype"/>
-			<meta name="description" content="Prototype for Cart"/>
-			<meta name="google" content="nositelinkssearchbox"/>
-			<meta name="keywords" content="Arells"/>
-			<meta name="author" content="Arells"/>
-			<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
-
-			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-cart"/>
-
-			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>	
-			<meta property="og:site_name" content="Arells"/>	
-			<meta property="og:type" content="website"/>				
-			<meta property="og:title" content="Cart Prototype"/>
-			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-cart"/>
-			<meta property="og:description" content="Prototype for Cart"/>
-			<meta property="og:image:type" content="image/jpg"/>
-			<meta property="og:image:width" content="700"/>
-			<meta property="og:image:height" content="400"/>
-
-			<meta name="twitter:title" content="Cart Prototype"/>
-			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>
-			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-cart"/>
-			<meta name="twitter:card" content="summary_large_image"/>
-			<meta name="twitter:description" content="Prototype for Cart"/>
-		</Head>
-
-		<title>Prototype Cart</title>	
-
 {/*<!-- Modals below link after test -->*/}
 		{purchaseComplete && (
 			<div id="purchaseComplete">
@@ -667,8 +629,6 @@ const PrototypeCart = () => {
 		)}
 {/*<!-- Modals Above -->*/}
 
-
-		<div id="cart-wrapper">
 			<div id="header-cart">
 		
 				<a id="icon-link-cart">
@@ -746,7 +706,7 @@ const PrototypeCart = () => {
 						{blueOrangeCart && (
 							<div id="blue-orange-cart">
 							{/* Change below link after test */}
-								<Link legacyBehavior href="/prototype-blue-orange">
+								<Link legacyBehavior href="/prototype/asset/blue-orange">
 									<a target="_self" id="photo-link-cart">
 										<Image
 										onLoad={() => handleImageOneLoaded('photoCartOne')}
@@ -779,7 +739,7 @@ const PrototypeCart = () => {
 						{beachHousesCart && (
 							<div id="beach-houses-cart">
 							{/* Change below link after test */}
-								<Link legacyBehavior href="/prototype-beach-houses">
+								<Link legacyBehavior href="/prototype/asset/beach-houses">
 									<a target="_self" id="photo-link-cart">
 										<Image
 										onLoad={() => handleImageTwoLoaded('photoCartTwo')}
@@ -812,7 +772,7 @@ const PrototypeCart = () => {
 						{colourGlassCart && (
 							<div id="colour-glass-cart">
 							{/* Change below link after test */}
-								<Link legacyBehavior href="/prototype-colour-glass">
+								<Link legacyBehavior href="/prototype/asset/colour-glass">
 									<a target="_self" id="photo-link-cart">
 										<Image
 										onLoad={() => handleImageThreeLoaded('photoCartThree')}
@@ -845,7 +805,7 @@ const PrototypeCart = () => {
 						{layersCart && (
 							<div id="layers-cart">
 							{/* Change below link after test */}
-								<Link legacyBehavior href="/prototype-layers">
+								<Link legacyBehavior href="/prototype/asset/layers">
 									<a target="_self" id="photo-link-cart">
 										<Image
 										onLoad={() => handleImageFourLoaded('photoCartFour')}
@@ -878,7 +838,7 @@ const PrototypeCart = () => {
 						{succinctDropCart && (
 							<div id="succinct-drop-cart">
 							{/* Change below link after test */}
-								<Link legacyBehavior href="/prototype-succinct-drop">
+								<Link legacyBehavior href="/prototype/asset/succinct-drop">
 									<a target="_self" id="photo-link-cart">
 										<Image
 										onLoad={() => handleImageFiveLoaded('photoCartFive')}
@@ -911,7 +871,7 @@ const PrototypeCart = () => {
 						{paintRainCart && (
 							<div id="paint-rain-cart">
 							{/* Change below link after test */}
-								<Link legacyBehavior href="/prototype-paint-rain">
+								<Link legacyBehavior href="/prototype/asset/paint-rain">
 									<a target="_self" id="photo-link-cart">
 										<Image
 										onLoad={() => handleImageSixLoaded('photoCartSix')}
@@ -944,8 +904,7 @@ const PrototypeCart = () => {
 					</div>	
 				</div>					
 
-			)}			
-		</div>			
+			)}					
 		     
         </>
     );

@@ -1,16 +1,15 @@
 "use client";
 
 // Change below link after test
-import '../css/prototype/images/blue-orange.css';
-import '../css/modals/copiedlink.css';
-import '../css/modals/connect-wallet.css';
-import '../css/modals/coming-soon.css';
+import '../../../app/css/prototype/images/blue-orange.css';
+import '../../../app/css/modals/copiedlink.css';
+import '../../../app/css/modals/connect-wallet.css';
+import '../../../app/css/modals/coming-soon.css';
 
 //Loader Styles
-import '../css/modals/loading/spinnerBackground.css';
-import styles from '../css/modals/loading/spinner.module.css';
+import '../../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../../app/css/modals/loading/spinner.module.css';
 
-import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -64,7 +63,7 @@ const BlueOrange = () => {
 	const router = useRouter();
 	const [fullUrl, setFullUrl] = useState('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/prototype-blue-orange'}`);
+	  setFullUrl(`${window.location.origin}${'/prototype/asset/blue-orange'}`);
 	}, [router.asPath]);
 	const copyLink = () => {
 		navigator.clipboard.writeText(fullUrl).then(() => {
@@ -207,43 +206,6 @@ const BlueOrange = () => {
     return (
         <>
 
-		<Head>
-			<meta name="robots" content="noimageindex" />
-
-			<meta charset="UTF-8" />
-			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-			<meta name="title" content="Blue Orange Prototype"/>
-			<meta name="description" content="Prototype for Blue Orange"/>
-			<meta name="google" content="nositelinkssearchbox"/>
-			<meta name="keywords" content="Arells"/>
-			<meta name="author" content="Arells"/>
-			<meta name="viewport" id="viewport" content="width=device-width,user-scalable=yes,initial-scale=1" />
-
-			{/*<!-- Change below link after test -->*/}
-			<link rel="canonical" href="https://arells.com/prototype-blue-orange"/>
-
-			<meta property="og:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>	
-			<meta property="og:site_name" content="Arells"/>	
-			<meta property="og:type" content="website"/>				
-			<meta property="og:title" content="Blue Orange Prototype"/>
-			{/*<!-- Change below link after test -->*/}
-			<meta property="og:url" content="https://arells.com/prototype-blue-orange"/>
-			<meta property="og:description" content="Prototype for Blue Orange"/>
-			<meta property="og:image:type" content="image/jpg"/>
-			<meta property="og:image:width" content="700"/>
-			<meta property="og:image:height" content="400"/>
-
-			<meta name="twitter:title" content="Blue Orange Prototype"/>
-			<meta name="twitter:image" content="https://user-images.githubusercontent.com/51394348/230239850-3f9cf49a-4c5b-4775-b11c-649d5b37d73b.jpg"/>
-			{/*<!-- Change below link after test -->*/}
-			<meta name="twitter:url" content="https://arells.com/prototype-blue-orange"/>
-			<meta name="twitter:card" content="summary_large_image"/>
-			<meta name="twitter:description" content="Prototype for Blue Orange"/>
-		</Head>
-
-		<title>Prototype Blue Orange</title>	
-
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
 			<div id="copiedLink">
@@ -297,8 +259,6 @@ const BlueOrange = () => {
 		)}
 {/*<!-- Modals Above -->*/}
 
-
-		<div id="blue-orange-wrapper">
 			<div id="header-blue-orange">
 			
 				{/*<!-- Change below link after test -->*/}
@@ -388,23 +348,30 @@ const BlueOrange = () => {
 				</div>
 				<div id="created-by-blue-orange">
 					<p id="creator-owner-desc-blue-orange">Created By</p>
-					<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
-						Abstract Kadabra
-					</a>
+                    <Link legacyBehavior href="/prototype/seller-created">
+                        <a id="creator-owner-link-blue-orange">
+                            Abstract Kadabra
+                        </a>
+					</Link>
 				</div>
 				{ownedByCreatorBlueOrange && (
 					<div id="owned-by-creator-blue-orange">
 						<p id="creator-owner-desc-blue-orange">Owned By</p> 
-						<a id="creator-owner-link-blue-orange" href="/prototype-seller-created">
-							Abstract Kadabra</a>
+                        <Link legacyBehavior href="/prototype/seller-created">
+                        <a id="creator-owner-link-blue-orange">
+                            Abstract Kadabra
+                        </a>
+					</Link>
 					</div>
 				)}
 				{ownedByBuyerBlueOrange && (
 					<div id="owned-by-buyer-blue-orange">
 						<p id="creator-owner-desc-blue-orange">Owned By</p> 
-						<a id="creator-owner-link-blue-orange" href="/prototype-buyer-collected">
-							0x71C7656E...
-						</a>
+                        <Link legacyBehavior href="/prototype/buyer-collected">
+                            <a id="creator-owner-link-layers" >
+                                0x71C7656E...
+                            </a>
+					    </Link>
 					</div>
 				)}
 				<hr id="line-blue-orange"/>
@@ -484,10 +451,7 @@ const BlueOrange = () => {
 					</span>
 				</div>	    		
 											
-			</div>
-
-				
-		</div>			
+			</div>		
 		     
         </>
     );
