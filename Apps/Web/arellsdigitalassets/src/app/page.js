@@ -43,6 +43,7 @@ export const metadata = {
 // Change below link after test
     url: "/",
     card: "summary_large_image",
-    description: "Never lose money selling art."
+    description: "Never lose money selling art.",
+    image: "https://d2d7sp5ao0zph4.cloudfront.net/metadata-images/twitter-image.jpg",
   }
 };

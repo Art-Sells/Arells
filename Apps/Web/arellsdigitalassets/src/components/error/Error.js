@@ -1,8 +1,7 @@
 "use client";
 
 // Change below link after test
-import '../../app/css/Home.css';
-import '../../app/css/modals/copiedlink.css';
+import '../../app/css/error.css';
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
