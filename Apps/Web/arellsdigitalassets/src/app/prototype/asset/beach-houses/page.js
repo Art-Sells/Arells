@@ -51,6 +51,7 @@ export const metadata = {
       title: "Beach Houses Prototype",
       // Change below link after test
       url: "/prototype/asset/beach-houses",
+      card: "summary_large_image",
       description: "Prototype for Beach Houses"
     }
   };
