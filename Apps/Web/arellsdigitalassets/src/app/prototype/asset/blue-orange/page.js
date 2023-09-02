@@ -27,19 +27,19 @@ export const metadata = {
     keywords: ["Arells"],
     author: "Arells",
     // Change below link after test  
-    linkCanonical: "https://jeremyakatsa.com/prototype/asset/blue-orange",
+    linkCanonical: "/prototype/asset/blue-orange",
     og: {
       site_name: "Arells",
       type: "website",
       title: "Blue Orange Prototype",
       // Change below link after test    
-      url: "https://jeremyakatsa.com/prototype/asset/blue-orange",
+      url: "/prototype/asset/blue-orange",
       description: "Prototype for Blue Orange",
     },
     twitter: {
       title: "Blue Orange Prototype",
       // Change below link after test
-      url: "https://jeremyakatsa.com/prototype/asset/blue-orange",
+      url: "/prototype/asset/blue-orange",
       description: "Prototype for Blue Orange"
     }
   };

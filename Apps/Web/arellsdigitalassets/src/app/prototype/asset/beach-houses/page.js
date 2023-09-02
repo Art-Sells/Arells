@@ -27,19 +27,19 @@ export const metadata = {
     keywords: ["Arells"],
     author: "Arells",
     // Change below link after test  
-    linkCanonical: "https://jeremyakatsa.com/prototype/asset/beach-houses",
+    linkCanonical: "/prototype/asset/beach-houses",
     og: {
       site_name: "Arells",
       type: "website",
       title: "Beach Houses Prototype",
       // Change below link after test    
-      url: "https://jeremyakatsa.com/prototype/asset/beach-houses",
+      url: "/prototype/asset/beach-houses",
       description: "Prototype for Beach Houses",
     },
     twitter: {
       title: "Beach Houses Prototype",
       // Change below link after test
-      url: "https://jeremyakatsa.com/prototype/asset/beach-houses",
+      url: "/prototype/asset/beach-houses",
       description: "Prototype for Beach Houses"
     }
   };
