@@ -3,7 +3,7 @@ import './css/error.css';
 
 import Error from '../components/error/Error';
 
-const NotFound = () => {
+export default function Custom404() {
 
   return (
     <>
@@ -13,5 +13,3 @@ const NotFound = () => {
     </>
   );
 }
-
-export default NotFound;
