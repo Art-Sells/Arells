@@ -2,7 +2,7 @@
 import './css/error.css';
 
 import Error from '../components/error/Error';
-import { useRouter } from 'next/router';
+import { useNavigation } from 'next/navigation';
 
 const NotFound = () => {
 
@@ -17,7 +17,7 @@ const NotFound = () => {
 
 export default NotFound;
 
-const router = useRouter();
+const router = useNavigation();
     
   //change below link after test
 const currentURL = `https://jeremyakatsa.com${router.asPath}`;
