@@ -52,6 +52,7 @@
 - [Prices Not Shown for unlisted items, only Creators/Owner's name]  
 
 #### Cart
+- "Wallet Connected" doesn't show up if cart isn't connected.
 - Created Cart Number Function (Custom)   
 - Arells [Arells uses Crossmint as it's payment provider] info at bottom.
   
