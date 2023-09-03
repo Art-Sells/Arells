@@ -12,7 +12,7 @@
 - Coinbase/USDC Wallet only?
 
 #### Home
-- If logged in [Contact/Log-In]
+- If logged in [(View My Store), Contact, (Log-Out)]
 - If not logged in [Sign-Up/Log-In]
 - Log-In/Sign-up with Google/Apple/Facebook/Etc
 
@@ -67,12 +67,12 @@
                                                 
 #### After Purchase:
 - Buyer must list new PAP price (no lower than previous purchase price)[Calculate earnings: You Keep... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%].
+- Message (notifications) to seller: "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
 
 #### After PAP Set:
- 1. "List For Sale? [List][DeList]{Both Open Modal} (On Buyer)... (Nothing Shows in Public Buyer)".
+ 1. "List For Sale? [List][DeList]{Both Open Modal} (On Buyer)... (Nothing Shows in Public Buyer)". [PAP shows Rendering while editing price
  2. If Yes, then "Add-to-Cart", if No then "Collected" (On Seller)[Can Edit PAP anytime]
- 3. Message (notifications) to seller: "Congratulations xxxx! Art Sold to xxxx for xxxx, new PAP: xxxx"
- 4. If/Then messages corresponding to above messages. 
+ 3. If/Then messages corresponding to above messages. 
  
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
