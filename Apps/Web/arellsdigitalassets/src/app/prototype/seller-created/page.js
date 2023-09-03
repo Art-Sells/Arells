@@ -40,7 +40,8 @@ export function generateMetadata({}) {
       "X-UA-Compatible": "IE=edge"
     },
     charSet: "UTF-8",
-    linkCanonical: "/prototype/seller-created",
+    //change link below after test
+    linkCanonical: "https://jeremyakatsa.com/prototype/seller-created",
     title,
     description,
     openGraph,

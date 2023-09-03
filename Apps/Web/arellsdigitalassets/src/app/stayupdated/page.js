@@ -42,6 +42,7 @@ export function generateMetadata({}) {
       "X-UA-Compatible": "IE=edge"
     },
     charSet: "UTF-8",
+    // change below link after test
     linkCanonical: "https://jeremyakatsa.com/stayupdated",
     title,
     description,

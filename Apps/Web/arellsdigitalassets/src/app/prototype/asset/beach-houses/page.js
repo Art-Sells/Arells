@@ -12,7 +12,7 @@ export function generateMetadata({}) {
     title: title,
     description: description,
     // Change this link after testing
-    url: "/prototype/asset/beach-houses", 
+    url: "https://jeremyakatsa.com/prototype/asset/beach-houses", 
     type: "website",
     images: [
       {
@@ -24,7 +24,7 @@ export function generateMetadata({}) {
   let twitter = {
     title: title,
     // Change this link after testing
-    url: "/prototype/asset/beach-houses",
+    url: "https://jeremyakatsa.com/prototype/asset/beach-houses",
     card: "summary_large_image",
     description: description,
     images: [
@@ -40,7 +40,7 @@ export function generateMetadata({}) {
       "X-UA-Compatible": "IE=edge"
     },
     charSet: "UTF-8",
-    linkCanonical: "/prototype/asset/beach-houses",
+    linkCanonical: "https://jeremyakatsa.com/prototype/asset/beach-houses",
     title,
     description,
     openGraph,

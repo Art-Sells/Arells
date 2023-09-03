@@ -12,7 +12,7 @@ export function generateMetadata({}) {
     title: title,
     description: description,
     // Change this link after testing
-    url: "/prototype/buyer-collected", 
+    url: "https://jeremyakatsa.com/prototype/buyer-collected", 
     type: "website",
     images: [
       {
@@ -24,7 +24,7 @@ export function generateMetadata({}) {
   let twitter = {
     title: title,
     // Change this link after testing
-    url: "/prototype/buyer-collected",
+    url: "https://jeremyakatsa.com/prototype/buyer-collected",
     card: "summary_large_image",
     description: description,
     images: [
@@ -40,7 +40,7 @@ export function generateMetadata({}) {
       "X-UA-Compatible": "IE=edge"
     },
     charSet: "UTF-8",
-    linkCanonical: "/prototype/buyer-collected",
+    linkCanonical: "https://jeremyakatsa.com/prototype/buyer-collected",
     title,
     description,
     openGraph,
