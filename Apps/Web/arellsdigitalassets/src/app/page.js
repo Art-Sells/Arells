@@ -14,11 +14,11 @@ export function generateMetadata({}) {
       title: title,
       description: description,
       // Change this link after testing
-      url: "https://jeremyakatsa.com", 
+      url: "https://arells.com", 
       type: "website",
       images: [
         {
-          url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
+          url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner.jpg"
         }
       ]
     };
@@ -27,19 +27,18 @@ export function generateMetadata({}) {
       title: title,
       description: description,
       // Change this link after testing
-      domain :"https://jeremyakatsa.com",
-      url: "https://jeremyakatsa.com",
+      url: "https://arells.com",
       card: "summary_large_image",
       images: [
         {
-          url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
+          url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner.jpg"
         }
       ]
     };
   
     return {
       robots: "noimageindex",httpEquiv: {"X-UA-Compatible": "IE=edge"},
-      charSet: "UTF-8", linkCanonical: "https://jeremyakatsa.com", 
+      charSet: "UTF-8", linkCanonical: "https://arells.com", 
       title, description, 
       openGraph, twitter
     };
@@ -62,7 +61,6 @@ const Home = () => {
         <meta property="og:site_name" content={metadata.openGraph.site_name} />
         <meta property="og:title" content={metadata.openGraph.title} />
         <meta property="og:description" content={metadata.openGraph.description} />
-        <meta name="twitter:domain" content={metadata.twitter.domain} />
         <meta property="og:url" content={metadata.openGraph.url} />
         <meta property="og:type" content={metadata.openGraph.type} />
         {metadata.openGraph.images.map((image, index) => (

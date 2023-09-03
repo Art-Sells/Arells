@@ -12,11 +12,11 @@ export function generateMetadata({}) {
     title: title,
     description: description,
     // Change this link after testing
-    url: "https://jeremyakatsa.com/prototype/asset/layers", 
+    url: "https://arells.com/prototype/asset/layers", 
     type: "website",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
       }
     ]
   };
@@ -24,13 +24,12 @@ export function generateMetadata({}) {
   let twitter = {
     title: title,
     // Change this link after testing
-    domain: "https://jeremyakatsa.com/prototype/asset/layers",
-    url: "https://jeremyakatsa.com/prototype/asset/layers",
+    url: "https://arells.com/prototype/asset/layers",
     card: "summary_large_image",
     description: description,
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
       }
     ]
   };
@@ -41,7 +40,8 @@ export function generateMetadata({}) {
       "X-UA-Compatible": "IE=edge"
     },
     charSet: "UTF-8",
-    linkCanonical: "https://jeremyakatsa.com/prototype/asset/layers",
+    //change below link after test
+    linkCanonical: "https://arells.com/prototype/asset/layers",
     title,
     description,
     openGraph,
@@ -75,7 +75,6 @@ const LayersPage = () => {
         {/* Twitter Card Metadata */}
         <meta name="twitter:title" content={metadata.twitter.title} />
         <meta name="twitter:description" content={metadata.twitter.description} />
-        <meta name="twitter:domain" content={metadata.twitter.domain} />
         <meta name="twitter:url" content={metadata.twitter.url} />
         <meta name="twitter:card" content={metadata.twitter.card} />
         {metadata.twitter.images.map((image, index) => (

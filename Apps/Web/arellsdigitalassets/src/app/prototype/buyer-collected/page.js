@@ -12,11 +12,11 @@ export function generateMetadata({}) {
     title: title,
     description: description,
     // Change this link after testing
-    url: "https://jeremyakatsa.com/prototype/buyer-collected", 
+    url: "https://arells.com/prototype/buyer-collected", 
     type: "website",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
       }
     ]    
   };
@@ -24,13 +24,12 @@ export function generateMetadata({}) {
   let twitter = {
     title: title,
     // Change this link after testing
-    domain: "https://jeremyakatsa.com/prototype/buyer-collected",
-    url: "https://jeremyakatsa.com/prototype/buyer-collected",
+    url: "https://arells.com/prototype/buyer-collected",
     card: "summary_large_image",
     description: description,
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
+        url: "hhttps://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
       }
     ]    
   };
@@ -41,7 +40,8 @@ export function generateMetadata({}) {
       "X-UA-Compatible": "IE=edge"
     },
     charSet: "UTF-8",
-    linkCanonical: "https://jeremyakatsa.com/prototype/buyer-collected",
+    //change below link after test
+    linkCanonical: "https://arells.com/prototype/buyer-collected",
     title,
     description,
     openGraph,

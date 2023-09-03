@@ -13,11 +13,11 @@ export function generateMetadata({}) {
     title: title,
     description: description,
     // Change this link after testing
-    url: "https://jeremyakatsa.com/stayupdated", 
+    url: "https://arells.com/stayupdated", 
     type: "website",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner.jpg"
       }
     ]
   };
@@ -25,25 +25,21 @@ export function generateMetadata({}) {
   let twitter = {
     title: title,
     // Change this link after testing
-    domain: "https://jeremyakatsa.com/stayupdated",
-    url: "https://jeremyakatsa.com/stayupdated",
+    url: "https://arells.com/stayupdated",
     card: "summary_large_image",
     description: description,
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner.jpg"
       }
     ]
   };
 
   return {
-    robots: "noimageindex",
-    httpEquiv: {
-      "X-UA-Compatible": "IE=edge"
-    },
+    robots: "noimageindex", httpEquiv: {"X-UA-Compatible": "IE=edge"}, 
     charSet: "UTF-8",
     // change below link after test
-    linkCanonical: "https://jeremyakatsa.com/stayupdated",
+    linkCanonical: "https://arells.com/stayupdated",
     title,
     description,
     openGraph,
@@ -77,7 +73,6 @@ const StayUpdatedPage = () => {
         {/* Twitter Card Metadata */}
         <meta name="twitter:title" content={metadata.twitter.title} />
         <meta name="twitter:description" content={metadata.twitter.description} />
-        <meta name="twitter:domain" content={metadata.twitter.domain} />
         <meta name="twitter:url" content={metadata.twitter.url} />
         <meta name="twitter:card" content={metadata.twitter.card} />
         {metadata.twitter.images.map((image, index) => (
