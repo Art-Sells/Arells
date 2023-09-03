@@ -156,6 +156,7 @@ const PrototypeCart = () => {
 
 	const [cartEmptyCart, setCartEmptyCart] = useState(true);
 	const [cartFullCart, setCartFullCart] = useState(false);
+	const [walletConnectedDivCart, setWalletConnectedDivCart] = useState(false);
 
 	const [blueOrangeCart, setBlueOrangeCart] = useState(false);
 	const [beachHousesCart, setBeachHousesCart] = useState(false);
@@ -164,6 +165,21 @@ const PrototypeCart = () => {
 	const [succinctDropCart, setSuccinctDropCart] = useState(false);
 	const [paintRainCart, setPaintRainCart] = useState(false);
 {/*<!-- useState constants above -->*/}
+
+{/*<!-- Connect Wallet function/s below -->*/}
+
+	const [walletConnectedSession, setWalletConnectedSession] = useState(null);
+	useEffect(() => {
+	const sessionValue = sessionStorage.getItem('walletConnectedSession');
+	setWalletConnectedSession(sessionValue);
+	}, []);
+	useEffect(() => {
+		if (walletConnectedSession === 'true') {			
+			setWalletConnectedDivCart(true);
+		}
+	}, [walletConnectedSession]);
+
+{/*<!-- Connect Wallet function/s above -->*/}
 
 {/*<!-- Add To Cart & Purchase function/s below -->*/}
 
@@ -658,12 +674,14 @@ const PrototypeCart = () => {
 			id="word-logo-cart" 
 			src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-cart">NEVER LOSE MONEY SELLING ART</p>
-			<div id="wallet-connected-div-cart">
-				<hr id="connected-line-cart"/>
-				<p id="wallet-connected-cart" >
-				WALLET CONNECTED</p>
-				<hr id="connected-line-cart"/>
-			</div>	
+			{walletConnectedDivCart && (
+				<div id="wallet-connected-div-cart">
+					<hr id="connected-line-cart"/>
+					<p id="wallet-connected-cart" >
+					WALLET CONNECTED</p>
+					<hr id="connected-line-cart"/>
+				</div>				
+			)}
 			{cartEmptyCart && (
 				<div id="cart-empty-cart">	
 					<p id="no-art-cart">
