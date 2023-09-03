@@ -25,6 +25,7 @@ export function generateMetadata({}) {
     title: title,
     // Change this link after testing
     url: "https://jeremyakatsa.com/prototype/asset/beach-houses",
+    domain: "https://jeremyakatsa.com/prototype/asset/beach-houses",
     card: "summary_large_image",
     description: description,
     images: [
@@ -75,6 +76,7 @@ const BeachHousesPage = () => {
         <meta name="twitter:title" content={metadata.twitter.title} />
         <meta name="twitter:description" content={metadata.twitter.description} />
         <meta name="twitter:url" content={metadata.twitter.url} />
+        <meta name="twitter:domain" content={metadata.twitter.domain} />
         <meta name="twitter:card" content={metadata.twitter.card} />
         {metadata.twitter.images.map((image, index) => (
             <meta key={index} name="twitter:image" content={image.url} />
