@@ -84,7 +84,7 @@ const IndexTest = () => {
         width={80}
         height={85}
         id="arells-iconn" 
-        src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>
+        src="/icons&images/Arells-Icon.png"/>
       
         <br/>
         
@@ -94,7 +94,7 @@ const IndexTest = () => {
          width={120}
          height={40}
          id="word-logoo" 
-         src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Logo-Ebony.png"/>	
+         src="/icons&images/Arells-Logo-Ebony.png"/>	
         
         <br/>
         

@@ -16,7 +16,7 @@ export async function generateMetadata({}) {
     type: "website",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
       }
     ]
   };
@@ -29,7 +29,7 @@ export async function generateMetadata({}) {
     description: description,
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/twitter-image.jpg"
       }
     ]
   };

@@ -230,7 +230,7 @@ const SuccinctDrop = () => {
 						alt=""
 						width={50}
 						height={50}
-						 src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/coinbase-wallet-logo.png"/>
+						 src="/icons&images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -254,7 +254,7 @@ const SuccinctDrop = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+				src="/icons&images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
@@ -272,7 +272,7 @@ const SuccinctDrop = () => {
 							height={16}
 							width={15}
 							id="arells-icon-succinct-drop"
-							src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/Arells-Icon-Home.png"/>
+							src="/icons&images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkSuccinctDrop && (
@@ -282,7 +282,7 @@ const SuccinctDrop = () => {
 							height={15}
 							width={16}
 							id="cart-icon-succinct-drop"
-							src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/shopping-cart-empty.png"/>
+							src="/icons&images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedSuccinctDrop && (
@@ -293,7 +293,7 @@ const SuccinctDrop = () => {
 								height={15}
 								width={16}
 								id="cart-icon-succinct-drop"
-								src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/shopping-cart-empty.png"/>
+								src="/icons&images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -306,7 +306,7 @@ const SuccinctDrop = () => {
 								height={15}
 								width={16} 
 								id="cart-icon-full-succinct-drop" 
-								src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/shopping-cart-full.png"/>
+								src="/icons&images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -316,7 +316,7 @@ const SuccinctDrop = () => {
 				width={110}  
 				height={35}
 				id="word-logo-succinct-drop" 
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Logo-Ebony.png"/>	
+				src="/icons&images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-succinct-drop">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivSuccinctDrop && (
 					<div id="wallet-connected-div-succinct-drop">
@@ -334,7 +334,7 @@ const SuccinctDrop = () => {
 				width={400}  
 				height={400}
 				id="photo-succinct-drop"
-				src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/5.jpg"/>
+				src="/icons&images/prototype/5.jpg"/>
                 <h3 id="name-succinct-drop">Succinct Drop</h3>
                 <div id="share-div-succinct-drop">
                     <p id="share-div-desc-succinct-drop">SHARE</p> 
@@ -345,7 +345,7 @@ const SuccinctDrop = () => {
 						width={15}  
 						height={8}
 						id="copy-link-icon-succinct-drop" 
-						src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/link.png"/>
+						src="/icons&images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -427,7 +427,7 @@ const SuccinctDrop = () => {
 							width={25}  
 							height={25}
 							id="fingerprints-icon" 
-							src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/etherscan-logo.png"/>
+							src="/icons&images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
@@ -438,7 +438,7 @@ const SuccinctDrop = () => {
 							width={25}  
 							height={25}
 							 id="fingerprints-icon"
-							  src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/ipfs.png"/>
+							  src="/icons&images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
@@ -449,7 +449,7 @@ const SuccinctDrop = () => {
 							width={25}  
 							height={23}
 							 id="fingerprints-icon"
-							  src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/prototype/ipfslite.png"/>
+							  src="/icons&images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

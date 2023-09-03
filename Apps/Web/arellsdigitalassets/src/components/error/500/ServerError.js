@@ -41,7 +41,7 @@ const ServerError = () => {
             width={29}
             height={30}
             id="arells-loader-icon" 
-            src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>        
+            src="/icons&images/Arells-Icon.png"/>        
         </div>
       )}
       {showLoading && (
@@ -54,7 +54,7 @@ const ServerError = () => {
         width={40}
         height={42}
         id="arells-icon-error" 
-        src="https://d2d7sp5ao0zph4.cloudfront.net/icons&images/Arells-Icon.png"/>
+        src="/icons&images/Arells-Icon.png"/>
         
         <br/>
         
