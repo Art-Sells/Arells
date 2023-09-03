@@ -27,6 +27,7 @@ export function generateMetadata({}) {
       title: title,
       description: description,
       // Change this link after testing
+      domain :"https://jeremyakatsa.com",
       url: "https://jeremyakatsa.com",
       card: "summary_large_image",
       images: [
@@ -61,6 +62,7 @@ const Home = () => {
         <meta property="og:site_name" content={metadata.openGraph.site_name} />
         <meta property="og:title" content={metadata.openGraph.title} />
         <meta property="og:description" content={metadata.openGraph.description} />
+        <meta name="twitter:domain" content={metadata.twitter.domain} />
         <meta property="og:url" content={metadata.openGraph.url} />
         <meta property="og:type" content={metadata.openGraph.type} />
         {metadata.openGraph.images.map((image, index) => (
