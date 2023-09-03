@@ -12,7 +12,7 @@ export function generateMetadata({}) {
     title: title,
     description: description,
     // Change this link after testing
-    url: "/prototype/seller-created", 
+    url: "https://jeremyakatsa.com/prototype/seller-created", 
     type: "website",
     images: [
       {
@@ -24,7 +24,7 @@ export function generateMetadata({}) {
   let twitter = {
     title: title,
     // Change this link after testing
-    url: "/prototype/seller-created",
+    url: "https://jeremyakatsa.com/prototype/seller-created",
     card: "summary_large_image",
     description: description,
     images: [
