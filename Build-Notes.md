@@ -85,7 +85,7 @@
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
   
-##### "Welcome! You are now a pioneer of a store that will revolutionize everything. Before Arells, you could lose money on anything you sold, but thanks to our Price After Purchase system, all this changes. So congratulations, because after today, not just the artworld, but finance will change forever... *Thanks to Arells, buyers of your artwork will never lose money if they ever choose to sell your artwork, this means more money not just for you, but for your prospective buyers!*" 
+##### "Welcome! You are now a pioneer of a store that will revolutionize not just the art industry, but asset markets everywhere. Before Arells, anyone could lose money on anything they sold, but now *thanks to Arells, all this changes. Buyers of your artwork will never lose money if they choose to sell your artwork, this means more money not just for you, but for your prospective buyers forever.*" 
                                                 
 _____________________________________________________________________________________________________________________________
   
@@ -124,7 +124,7 @@ ________________________________________________________________________________
 
 #### Sponsored/Featured
 
-#### Royalties: 90% = Real Art, 5% = AI Art (note every artist). Implement watermarks on every AI generated image.
+#### Royalties: 50% = Real Art, 5% = AI Art (note every artist). Implement watermarks on every AI generated image.
 
 #### market.arells.com: To show the market dynamics and show the "Stag Market" at work.
 
