@@ -12,25 +12,24 @@
 - Coinbase/USDC Wallet only?
 
 #### Home
-- If logged in [About/Store/Contact]
-- If not logged in [About/Log-in/Sign-Up/Contact]
-- Contact (discord/email)
-- Log-In with Google/Apple/Facebook/Etc
+- If logged in [Contact/Log-In]
+- If not logged in [Sign-Up/Log-In]
+- Log-In/Sign-up with Google/Apple/Facebook/Etc
 
 #### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
 - Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
 - Terms & Conditions Agreement
-- ##### "Welcome! You are now a pioneer of a store that will revolutionize not just the art industry, but asset markets everywhere. Before Arells, anyone could lose money on anything they sold, but now *thanks to Arells, all this changes. Buyers of your artwork will never lose money if they choose to sell your artwork, this means more money not just for you, but for your prospective buyers forever.*" 
+- ##### "Welcome! You are now a pioneer of a store that will revolutionize not just the art industry, but asset markets everywhere. Before Arells, anyone could lose money on anything they sold, but now *thanks to Arells, all this changes. Buyers of your artwork will never lose money if they choose to sell your artwork, this means more money not just for you, but for your prospective buyers forever.*" For any questions, reach out to us on Discord or Email. [OK].
 
 #### Buying Profile
 -- {Latest/Best Sellers [automatically loads latest]) <Maybe integrate in full app?
-- Top-Left(Store)<Sign-Up/Log-In>, Top-Right(Cart)<Connect Wallet> Separate Divs for all hovering buttons.
+- Top-Left(See HOME section)
+- Top-Right(Cart)<Connect Wallet> Separate Divs for all hovering buttons.
 - Images here render small pixels
 - Separate Divs for all hovering buttons.
 - Remove (wallet connected)
 - Name & Description: Maximum Number of Characters.
-- Terms & Conditions Agreement
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - - [Prices Not Shown for unlisted items, only Owner's name]
   
