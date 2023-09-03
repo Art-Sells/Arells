@@ -14,7 +14,7 @@ export async function generateMetadata({}) {
       title: title,
       description: description,
       // Change this link after testing
-      url: "/", 
+      url: "https://jeremyakatsa.com", 
       type: "website",
       images: [
         {
@@ -27,7 +27,7 @@ export async function generateMetadata({}) {
       title: title,
       description: description,
       // Change this link after testing
-      url: "/",
+      url: "https://jeremyakatsa.com",
       card: "summary_large_image",
       images: [
         {
@@ -38,7 +38,8 @@ export async function generateMetadata({}) {
   
     return {
       robots: "noimageindex",httpEquiv: {"X-UA-Compatible": "IE=edge"},
-      charSet: "UTF-8", linkCanonical: "/", title, description, 
+      charSet: "UTF-8", linkCanonical: "https://jeremyakatsa.com", 
+      title, description, 
       openGraph, twitter
     };
   }
