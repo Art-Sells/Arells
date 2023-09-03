@@ -1,22 +1,56 @@
 import '../../css/prototype/seller-created.css';
 
 import PrototypeSellerCreated from '../../../components/prototype/SellerCreated';
-import Head from 'next/head';
+
+export async function generateMetadata({}) {
+  let title = "Seller Creations Prototype";
+  let description = "Prototype for Seller Creations";
+
+  let openGraph = {
+    site_name: "Arells",
+    title: title,
+    description: description,
+    // Change this link after testing
+    url: "/prototype/seller-created", 
+    type: "website",
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+      }
+    ]
+  };
+
+  let twitter = {
+    title: title,
+    // Change this link after testing
+    url: "/prototype/seller-created",
+    card: "summary_large_image",
+    description: description,
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+      }
+    ]
+  };
+
+  return {
+    robots: "noimageindex",
+    httpEquiv: {
+      "X-UA-Compatible": "IE=edge"
+    },
+    charSet: "UTF-8",
+    linkCanonical: "/prototype/seller-created",
+    title,
+    description,
+    openGraph,
+    twitter
+  };
+}
 
 const SellerCreatedPage = () => {
 
   return (
     <>
-      <Head>
-        <meta property="og:image" content="<generated>" />
-        <meta property="og:image:type" content="<generated>" />
-        <meta property="og:image:width" content="<generated>" />
-        <meta property="og:image:height" content="<generated>" />
-        <meta name="twitter:image" content="<generated>" />
-        <meta name="twitter:image:type" content="<generated>" />
-        <meta name="twitter:image:width" content="<generated>" />
-        <meta name="twitter:image:height" content="<generated>" />
-      </Head>    
       <div id="prototype-seller-created-wrapper">
        <PrototypeSellerCreated/>
       </div>
@@ -25,33 +59,3 @@ const SellerCreatedPage = () => {
 }
 
 export default SellerCreatedPage;
-
-export const metadata = {
-    robots: "noimageindex",
-    httpEquiv: {
-      "X-UA-Compatible": "IE=edge"
-    },
-    charSet: "UTF-8",
-    title: "Seller Creations Prototype",
-    description: "Prototype for Seller Creations",
-    google: "nositelinkssearchbox",
-    keywords: ["Arells"],
-    author: "Arells",
-    // Change below link after test  
-    linkCanonical: "/prototype/seller-created",
-    og: {
-      site_name: "Arells",
-      type: "website",
-      title: "Seller Creations Prototype",
-      // Change below link after test    
-      url: "/prototype/seller-created",
-      description: "Prototype for Seller Creations",
-    },
-    twitter: {
-      title: "Seller Creations Prototype",
-      // Change below link after test
-      url: "/prototype/seller-created",
-      card: "summary_large_image",
-      description: "Prototype for Seller Creations"
-    }
-  };

@@ -1,22 +1,56 @@
 import '../../css/prototype/cart/cart.css';
 
 import PrototypeCart from '../../../components/prototype/cart/Cart';
-import Head from 'next/head';
+
+export async function generateMetadata({}) {
+  let title = "Cart Prototype";
+  let description = "Prototype for Cart";
+
+  let openGraph = {
+    site_name: "Arells",
+    title: title,
+    description: description,
+    // Change this link after testing
+    url: "/prototype/cart", 
+    type: "website",
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+      }
+    ]
+  };
+
+  let twitter = {
+    title: title,
+    // Change this link after testing
+    url: "/prototype/cart",
+    card: "summary_large_image",
+    description: description,
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+      }
+    ]
+  };
+
+  return {
+    robots: "noimageindex",
+    httpEquiv: {
+      "X-UA-Compatible": "IE=edge"
+    },
+    charSet: "UTF-8",
+    linkCanonical: "/prototype/cart",
+    title,
+    description,
+    openGraph,
+    twitter
+  };
+}
 
 const CartPage = () => {
 
   return (
     <>
-      <Head>
-        <meta property="og:image" content="<generated>" />
-        <meta property="og:image:type" content="<generated>" />
-        <meta property="og:image:width" content="<generated>" />
-        <meta property="og:image:height" content="<generated>" />
-        <meta name="twitter:image" content="<generated>" />
-        <meta name="twitter:image:type" content="<generated>" />
-        <meta name="twitter:image:width" content="<generated>" />
-        <meta name="twitter:image:height" content="<generated>" />
-      </Head>    
       <div id="cart-wrapper">
        <PrototypeCart/>
       </div>
@@ -25,33 +59,3 @@ const CartPage = () => {
 }
 
 export default CartPage;
-
-export const metadata = {
-    robots: "noimageindex",
-    httpEquiv: {
-      "X-UA-Compatible": "IE=edge"
-    },
-    charSet: "UTF-8",
-    title: "Cart Prototype",
-    description: "Prototype for Cart",
-    google: "nositelinkssearchbox",
-    keywords: ["Arells"],
-    author: "Arells",
-    // Change below link after test  
-    linkCanonical: "/prototype/cart",
-    og: {
-      site_name: "Arells",
-      type: "website",
-      title: "Cart Prototype",
-      // Change below link after test    
-      url: "/prototype/cart",
-      description: "Prototype for Cart",
-    },
-    twitter: {
-      title: "Cart Prototype",
-      // Change below link after test
-      url: "/prototype/cart",
-      card: "summary_large_image",
-      description: "Prototype for Cart"
-    }
-  };

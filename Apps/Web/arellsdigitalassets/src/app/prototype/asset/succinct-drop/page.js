@@ -1,22 +1,56 @@
 import '../../../css/prototype/asset/succinct-drop.css';
 
 import SuccinctDrop from '../../../../components/prototype/asset/SuccinctDrop';
-import Head from 'next/head';
+
+export async function generateMetadata({}) {
+  let title = "Succinct Drop Prototype";
+  let description = "Prototype for Succinct Drop";
+
+  let openGraph = {
+    site_name: "Arells",
+    title: title,
+    description: description,
+    // Change this link after testing
+    url: "/prototype/asset/succinct-drop", 
+    type: "website",
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+      }
+    ]
+  };
+
+  let twitter = {
+    title: title,
+    // Change this link after testing
+    url: "/prototype/asset/succinct-drop",
+    card: "summary_large_image",
+    description: description,
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+      }
+    ]
+  };
+
+  return {
+    robots: "noimageindex",
+    httpEquiv: {
+      "X-UA-Compatible": "IE=edge"
+    },
+    charSet: "UTF-8",
+    linkCanonical: "/prototype/asset/succinct-drop",
+    title,
+    description,
+    openGraph,
+    twitter
+  };
+}
 
 const SuccinctDropPage = () => {
 
   return (
-    <>
-      <Head>
-        <meta property="og:image" content="<generated>" />
-        <meta property="og:image:type" content="<generated>" />
-        <meta property="og:image:width" content="<generated>" />
-        <meta property="og:image:height" content="<generated>" />
-        <meta name="twitter:image" content="<generated>" />
-        <meta name="twitter:image:type" content="<generated>" />
-        <meta name="twitter:image:width" content="<generated>" />
-        <meta name="twitter:image:height" content="<generated>" />
-      </Head>    
+    <> 
       <div id="succinct-drop-wrapper">
        <SuccinctDrop/>
       </div>
@@ -25,33 +59,3 @@ const SuccinctDropPage = () => {
 }
 
 export default SuccinctDropPage;
-
-export const metadata = {
-    robots: "noimageindex",
-    httpEquiv: {
-      "X-UA-Compatible": "IE=edge"
-    },
-    charSet: "UTF-8",
-    title: "Succinct Drop Prototype",
-    description: "Prototype for Succinct Drop",
-    google: "nositelinkssearchbox",
-    keywords: ["Arells"],
-    author: "Arells",
-    // Change below link after test  
-    linkCanonical: "/prototype/asset/succinct-drop",
-    og: {
-      site_name: "Arells",
-      type: "website",
-      title: "Succinct Drop Prototype",
-      // Change below link after test    
-      url: "/prototype/asset/succinct-drop",
-      description: "Prototype for Succinct Drop",
-    },
-    twitter: {
-      title: "Succinct Drop Prototype",
-      // Change below link after test
-      url: "/prototype/asset/succinct-drop",
-      card: "summary_large_image",
-      description: "Prototype for Succinct Drop"
-    }
-  };

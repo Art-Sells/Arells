@@ -1,22 +1,56 @@
 import '../../../css/prototype/asset/blue-orange.css';
 
 import BlueOrange from '../../../../components/prototype/asset/BlueOrange';
-import Head from 'next/head';
+
+export async function generateMetadata({}) {
+  let title = "Blue Orange Prototype";
+  let description = "Prototype for Blue Orange";
+
+  let openGraph = {
+    site_name: "Arells",
+    title: title,
+    description: description,
+    // Change this link after testing
+    url: "/prototype/asset/blue-orange", 
+    type: "website",
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+      }
+    ]
+  };
+
+  let twitter = {
+    title: title,
+    // Change this link after testing
+    url: "/prototype/asset/blue-orange",
+    card: "summary_large_image",
+    description: description,
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons%26images/metadata-images/twitter-image.jpg"
+      }
+    ]
+  };
+
+  return {
+    robots: "noimageindex",
+    httpEquiv: {
+      "X-UA-Compatible": "IE=edge"
+    },
+    charSet: "UTF-8",
+    linkCanonical: "/prototype/asset/blue-orange",
+    title,
+    description,
+    openGraph,
+    twitter
+  };
+}
 
 const BlueOrangePage = () => {
 
   return (
     <>
-      <Head>
-        <meta property="og:image" content="<generated>" />
-        <meta property="og:image:type" content="<generated>" />
-        <meta property="og:image:width" content="<generated>" />
-        <meta property="og:image:height" content="<generated>" />
-        <meta name="twitter:image" content="<generated>" />
-        <meta name="twitter:image:type" content="<generated>" />
-        <meta name="twitter:image:width" content="<generated>" />
-        <meta name="twitter:image:height" content="<generated>" />
-      </Head>    
       <div id="blue-orange-wrapper">
        <BlueOrange/>
       </div>
@@ -25,33 +59,3 @@ const BlueOrangePage = () => {
 }
 
 export default BlueOrangePage;
-
-export const metadata = {
-    robots: "noimageindex",
-    httpEquiv: {
-      "X-UA-Compatible": "IE=edge"
-    },
-    charSet: "UTF-8",
-    title: "Blue Orange Prototype",
-    description: "Prototype for Blue Orange",
-    google: "nositelinkssearchbox",
-    keywords: ["Arells"],
-    author: "Arells",
-    // Change below link after test  
-    linkCanonical: "/prototype/asset/blue-orange",
-    og: {
-      site_name: "Arells",
-      type: "website",
-      title: "Blue Orange Prototype",
-      // Change below link after test    
-      url: "/prototype/asset/blue-orange",
-      description: "Prototype for Blue Orange",
-    },
-    twitter: {
-      title: "Blue Orange Prototype",
-      // Change below link after test
-      url: "/prototype/asset/blue-orange",
-      card: "summary_large_image",
-      description: "Prototype for Blue Orange"
-    }
-  };
