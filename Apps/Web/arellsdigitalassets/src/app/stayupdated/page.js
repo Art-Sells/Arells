@@ -12,7 +12,7 @@ export async function generateMetadata({}) {
     title: title,
     description: description,
     // Change this link after testing
-    url: "/stayupdated", 
+    url: "https://jeremyakatsa.com/stayupdated", 
     type: "website",
     images: [
       {
@@ -24,7 +24,7 @@ export async function generateMetadata({}) {
   let twitter = {
     title: title,
     // Change this link after testing
-    url: "/stayupdated",
+    url: "https://jeremyakatsa.com/stayupdated",
     card: "summary_large_image",
     description: description,
     images: [
@@ -40,7 +40,7 @@ export async function generateMetadata({}) {
       "X-UA-Compatible": "IE=edge"
     },
     charSet: "UTF-8",
-    linkCanonical: "/stayupdated",
+    linkCanonical: "https://jeremyakatsa.com/stayupdated",
     title,
     description,
     openGraph,
