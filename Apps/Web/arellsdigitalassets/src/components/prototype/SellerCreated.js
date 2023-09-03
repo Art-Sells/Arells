@@ -793,7 +793,7 @@ const PrototypeSellerCreated = () => {
 								width={200}  
 								height={200}  
 								id="photo-seller-created" 
-								src="icons&images/prototype/5.jpg"/>
+								src="/icons&images/prototype/5.jpg"/>
 							</a>
 						</Link>	
 						{succinctDropPricesBeforeSellerCreated && (
