@@ -80,6 +80,7 @@
 - MetaTags Social-sharing-images: AWS Cloudfront?
 - MetaTag Title: "Profile/Asset Name"
 - MetaTag Description: "Profile/Asset Description"
+- generateMetadata must be async for dynamic changes
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
   
