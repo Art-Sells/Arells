@@ -3,7 +3,7 @@ import '../../../css/prototype/asset/layers.css';
 import Layers from '../../../../components/prototype/asset/Layers';
 import Head from 'next/head';
 
-export async function generateMetadata({}) {
+export function generateMetadata({}) {
   let title = "Layers Prototype";
   let description = "Prototype for Layers";
 

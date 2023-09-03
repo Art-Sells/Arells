@@ -3,7 +3,7 @@ import '../../css/prototype/cart/cart.css';
 import PrototypeCart from '../../../components/prototype/cart/Cart';
 import Head from 'next/head';
 
-export async function generateMetadata({}) {
+export function generateMetadata({}) {
   let title = "Cart Prototype";
   let description = "Prototype for Cart";
 

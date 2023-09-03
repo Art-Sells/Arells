@@ -3,7 +3,7 @@ import '../../css/prototype/buyer-created.css';
 import PrototypeBuyerCreated from '../../../components/prototype/BuyerCreated';
 import Head from 'next/head';
 
-export async function generateMetadata({}) {
+export function generateMetadata({}) {
   let title = "Buyer Creations Prototype";
   let description = "Prototype for Buyer Creations";
 

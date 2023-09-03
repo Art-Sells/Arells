@@ -3,7 +3,7 @@ import '../../../css/prototype/asset/succinct-drop.css';
 import SuccinctDrop from '../../../../components/prototype/asset/SuccinctDrop';
 import Head from 'next/head';
 
-export async function generateMetadata({}) {
+export function generateMetadata({}) {
   let title = "Succinct Drop Prototype";
   let description = "Prototype for Succinct Drop";
 

@@ -3,7 +3,7 @@ import '../../../css/prototype/asset/colour-glass.css';
 import ColourGlass from '../../../../components/prototype/asset/ColourGlass';
 import Head from 'next/head';
 
-export async function generateMetadata({}) {
+export function generateMetadata({}) {
   let title = "Colour Glass Prototype";
   let description = "Prototype for Colour Glass";
 

@@ -3,7 +3,7 @@ import '../../../css/prototype/asset/paint-rain.css';
 import PaintRain from '../../../../components/prototype/asset/PaintRain';
 import Head from 'next/head';
 
-export async function generateMetadata({}) {
+export function generateMetadata({}) {
   let title = "Paint Rain Prototype";
   let description = "Prototype for Paint Rain";
 

@@ -3,7 +3,7 @@ import '../../../css/prototype/asset/beach-houses.css';
 import BeachHouses from '../../../../components/prototype/asset/BeachHouses';
 import Head from 'next/head';
 
-export async function generateMetadata({}) {
+export function generateMetadata({}) {
   let title = "Beach Houses Prototype";
   let description = "Prototype for Beach Houses";
 

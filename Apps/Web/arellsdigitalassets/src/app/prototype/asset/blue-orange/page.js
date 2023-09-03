@@ -3,7 +3,7 @@ import '../../../css/prototype/asset/blue-orange.css';
 import BlueOrange from '../../../../components/prototype/asset/BlueOrange';
 import Head from 'next/head';
 
-export async function generateMetadata({}) {
+export function generateMetadata({}) {
   let title = "Blue Orange Prototype";
   let description = "Prototype for Blue Orange";
 
