@@ -26,9 +26,9 @@
 ### My Store
 -- ([automatically loads latest])
 - Top-Left[=]-(if connected),[/\]-(if not connected) (See HOME section) 
-- Top-Right[Cart]<Connect Wallet>if not connected
-- Bottom-Right[+]<black. <Connect Wallet>if not connected
-- Bottom-Left[Cash Register]<light. <Connect Wallet>if not connected. Separate Divs for all hovering buttons.
+- Top-Right[Cart][Connect Wallet]-if not connected
+- Bottom-Right[+]<black. [Connect Wallet]-if not connected
+- Bottom-Left[Cash Register]<light. [Connect Wallet]-if not connected. Separate Divs for all hovering buttons.
 - Name & Description: Maximum Number of Characters.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - [For Sale]-black line, [Not For Sale]-silver line, [Sold]greyed
@@ -41,9 +41,9 @@
  
 ### My Store Asset   
 - Top-Left[=]-(if connected),[/\]-(if not connected) (See HOME section) 
-- Top-Right[Cart]<Connect Wallet>if not connected
-- Bottom-Right[+]<black. <Connect Wallet>if not connected
-- Bottom-Left[Cash Register]<light. <Connect Wallet>if not connected. Separate Divs for all hovering buttons.
+- Top-Right[Cart][Connect Wallet]-if not connected
+- Bottom-Right[+]<black. [Connect Wallet]-if not connected
+- Bottom-Left[Cash Register]<light. [Connect Wallet]-if not connected. Separate Divs for all hovering buttons.
 - Images here render small pixels
 - Name & Description: Maximum Number of Characters.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
