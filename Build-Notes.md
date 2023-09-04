@@ -7,72 +7,83 @@
 - Add "Change-After-Test" over every href.
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
 - Don't Forget About SiteMap/s (only for pages to be shown)
+- Remove "Wallet ConnecteD"
 
-#### Wallet: 
+### Wallet: 
 - Coinbase/USDC Wallet only.
 
-#### Home
+### Home
 - If logged in [(View My Store), Contact, (Log-Out)]
 - If not logged in [Sign-Up/Log-In]
 - Log-In/Sign-up with Google/Apple/Facebook/Etc
 
-#### Sign-Up
+### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
 - Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
 - Terms & Conditions Agreement
 - ##### "Welcome! You are now a pioneer of a store that will revolutionize not just the art industry, but asset markets everywhere. Before Arells, anyone could lose money on anything they sold, but now *thanks to Arells, all this changes. Buyers of your artwork will never lose money if they choose to sell your artwork, this means more money not just for you, but for your prospective buyers forever.*" For any questions, reach out to us on Discord or Email. [OK].
 
-#### Buying Profile
--- {Latest/Best Sellers [automatically loads latest]) <Maybe integrate in full app?
-- Top-Left(See HOME section)
-- Top-Right(Cart)<Connect Wallet> Separate Divs for all hovering buttons.
-- Images here render small pixels
-- Separate Divs for all hovering buttons.
-- Remove (wallet connected)
+### My Store
+-- ([automatically loads latest])
+- Top-Left[=]-(if connected),[/\]-(if not connected) (See HOME section) 
+- Top-Right[Cart]<Connect Wallet>if not connected
+- Bottom-Right[+]<black. <Connect Wallet>if not connected
+- Bottom-Left[Cash Register]<light. <Connect Wallet>if not connected. Separate Divs for all hovering buttons.
 - Name & Description: Maximum Number of Characters.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- - [Prices Not Shown for unlisted items, only Owner's name]
-  
-#### Selling Profile ((After Log-in Connected Wallet))
--- {Latest/Best Sellers [automatically loads latest]) <Maybe integrate in full app?
-- Top-Left(Arells), Top-Right(Cart), Bottom-Left(Add), Bottom-Right(Cash-Register) are Z-Indexed Sticky/Separate Divs for all hovering buttons.
-- Minting [+] allows cropping for preview <Also for Profile Picture Upload                                                             
-- Images here render small pixels
-- Remove (wallet connected)
-- Name & Description: Maximum Number of Characters.
-- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- - [Prices Not Shown for unlisted items, only Owner's name]  
-  
-#### Buyer-Created/Collected
-- [Prices Not Shown for unlisted items, only Art Name]
-
-#### Image
-- Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
-- Created & Owned By (Character Limit Links)
-- [Prices Not Shown for unlisted items, only Creators/Owner's name]  
-
-#### Cart
-- "Wallet Connected" doesn't show up if cart isn't connected.
-- Created Cart Number Function (Custom)   
-- Arells [Arells uses Crossmint as it's payment provider] info at bottom.
-  
-#### Cash Register
-- Notifications on who bought what at how much (Squared for sharing)  
-                                                
+- [For Sale]-black line, [Not For Sale]-silver line, [Sold]greyed
+ 
 #### Creating Mechanics
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
 - PAP price calculated 50x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer... prices in USDC
 - Create AUM Tracker (for all Current Prices)
-                                                
+ 
+### My Store Asset   
+- Top-Left[=]-(if connected),[/\]-(if not connected) (See HOME section) 
+- Top-Right[Cart]<Connect Wallet>if not connected
+- Bottom-Right[+]<black. <Connect Wallet>if not connected
+- Bottom-Left[Cash Register]<light. <Connect Wallet>if not connected. Separate Divs for all hovering buttons.
+- Images here render small pixels
+- Name & Description: Maximum Number of Characters.
+- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
+- [For Sale]-black line, [Not For Sale]-silver line, [Sold]greyed
+
+### Cash Register
+- Notifications on who bought what at how much (Squared for sharing)
+- Send Email After Purchase 
+  
+### Other Store
+-- ([automatically loads latest])
+- Top-Left[/\]-([My-Store]if connected)([Home]if not connected)
+- Top-Right[Cart]
+- Bottom-Left & Right -- Nothing
+- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed
+
+### Other Store Asset       
+- Top-Left[/\]-([My-Store]if connected)([Home]if not connected)
+- Top-Right[Cart]
+- Bottom-Left & Right -- Nothing
+- Images here render small pixels
+- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed
+
+### Cart 
+- Arells [Arells uses Crossmint as it's payment provider] info at bottom.  
+
 #### After Purchase:
 - Buyer must list new PAP price (no lower than previous purchase price)[Calculate earnings: You Keep... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%].
-- Message (notifications) to seller: "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
+- Message (notifications-cash-register) to seller: "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
 
 #### After PAP Set:
- 1. "List For Sale? [List][DeList]{Both Open Modal} (On Buyer)... (Nothing Shows in Public Buyer)". [PAP shows Rendering while editing price
+ 1. "List For Sale? [List][DeList]{Both Open Modal} (On Buyer)... (Nothing Shows in Public Buyer)". [PAP in Seller/Buyer/Assets/Collected/Created shows Rendering while editing price]
  2. If Yes, then "Add-to-Cart", if No then "Collected" (On Seller)[Can Edit PAP anytime]
  3. If/Then messages corresponding to above messages. 
+
+#### Image/s
+- Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
+- Created & Owned By (Character Limit Links)
+- [Prices Not Shown for unlisted items, only Creators/Owner's name]  
+     
  
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
