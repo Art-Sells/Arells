@@ -84,5 +84,31 @@
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
 
-                                                
+## DIGITAL ASSET STORE
 
+- NFTs = Digital Assets, 
+- Connect Wallet = Connect Store, 
+- Public Key = Address, 
+- Private Key = Key
+
+#### Store (Default)
+- Includes all Arells Website Components
+- Build with Circle Wallet As A Service? (USDC) ***Connects to bank account once and automatically converts USDC with purchacing***                                           
+- Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"
+- Heavy KYC/AML [USDC -to-bank- transfers only] through Integrating Apple-Pay & Google Pay Credit Card with USDC "purchase".
+
+#### Seller-Created/Collected
+- Create Categories (General, Illustrations, etc)
+- Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
+- - Proof-of-creation 70x PAP for Copyright Proven Artistic Works
+- - Proof-of-ownership for major assets.
+
+#### Vault (Slide-Up)
+- NFT Collections (Ability to Transfer & Receive)
+- USDC Transfer to Bank Account (Beam Cash Out API?)
+  
+#### Wallet:
+- USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
+- Phase out Crossmint (if they won't include our own Logo/Name in Email/Payment info)
+- Rarimo (CCTP) Circle?
+- Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
