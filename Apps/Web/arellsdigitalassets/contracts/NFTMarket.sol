@@ -99,7 +99,68 @@ contract NFTMarket is ReentrancyGuard {
             _itemsSold.increment();
             payable(owner).transfer(listingPrice);
 
-            price == priceAfterPurchase;
+            price = priceAfterPurchase;
     }
+
+    function fetchMarketItems() public view returns (MarketItem[] memory) {
+        uint itemCount = itemIds.current();
+        uint unsoldItemCount = _itemIds.current() - _itemsSold.current();
+        uint currentIndex = 0;
+
+        MarketItem[] memory items = new MarketItem[](unsoldItemCount);
+        for (uint i = 0; i < itemCount; i++) {
+            if(idToMarketItem[i + 1].owner == address(0)){
+                uint currentId = idToMarketItem[i + 1].itemId;
+                MarketItem storage currentItem = idToMarkeItem[currentId];
+                items[curentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items;
+    }
+
+    function fetchMyNfts() public view returns (MarketItem[] memory) {
+        uint totalItemCount = itemIds.current();
+        uint itemCount = 0;
+        uint currentIndex = 0;
+
+        for (uint i = 0; i < totalItemCount; i++) {
+            if(idToMarketItem[i + 1].owner == msg.sender){
+                itemCount += 1;
+            }
+        }
+        MarketItem[] memory items = new MarketItem[](itemCount);
+        for (uint i = 0; i < totalItemCount; i++) {
+            if(idToMarketItem[i + 1].owner == msg.sender){
+                uint currentId = idToMarketItem[i + 1].itemId;
+                MarketItem storage currentItem = idToMarketItem[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items;
+    }
+
+    function fetchItemsCreated() public view returns (MarketItem[] memory) {
+        uint totalItemCount = itemIds.current();
+        uint itemCount = 0;
+        uint currentIndex = 0;
+
+        for (uint i = 0; i < totalItemCount; i++) {
+            if(idToMarketItem[i + 1].seller == msg.sender){
+                itemCount += 1;
+            }
+        }
+        MarketItem[] memory items = new MarketItem[](itemCount);
+        for (uint i = 0; i < totalItemCount; i++) {
+            if(idToMarketItem[i + 1].seller == msg.sender){
+                uint currentId = idToMarketItem[i + 1].itemId;
+                MarketItem storage currentItem = idToMarketItem[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items;
+    }    
 
 }
