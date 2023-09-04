@@ -9,7 +9,7 @@
 - Don't Forget About SiteMap/s (only for pages to be shown)
 
 #### Wallet: 
-- Coinbase/USDC Wallet only?
+- Coinbase/USDC Wallet only.
 
 #### Home
 - If logged in [(View My Store), Contact, (Log-Out)]
