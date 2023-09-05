@@ -24,7 +24,6 @@ contract NFTMarket is ReentrancyGuard {
         address payable seller;
         address payable owner;
         uint256 price;
-       // uint256 priceAfterPurchase;
         bool sold;
     }
 
@@ -50,7 +49,6 @@ contract NFTMarket is ReentrancyGuard {
         uint256 price
         ) public payable nonReentrant {
             require (price > 0, "Price must be at least 1 wei");
-           // require (priceAfterPurchase > price, "Price After Purchase must be greater than Price");
             require (msg.value == listingPrice, "Price must be equal to listing Price");
 
             _itemIds.increment();
@@ -63,7 +61,6 @@ contract NFTMarket is ReentrancyGuard {
                 payable(msg.sender),
                 payable(address(0)),
                 price,
-              //  priceAfterPurchase,
                 false
             );
 
@@ -76,7 +73,6 @@ contract NFTMarket is ReentrancyGuard {
                 msg.sender,
                 address(0),
                 price,
-              //  priceAfterPurchase,
                 false
             );
     }
@@ -87,7 +83,6 @@ contract NFTMarket is ReentrancyGuard {
         ) public payable nonReentrant {
             uint256 itemId = _itemIds.current();
             uint price = idToMarketItem[itemId].price;
-         //   uint priceAfterPurchase = idToMarketItem[itemId].priceAfterPurchase;
             tokenId = idToMarketItem[itemId].tokenId;
             require(msg.value == price, "Please submit the asking price in order to complete the purchase");
 
@@ -97,8 +92,6 @@ contract NFTMarket is ReentrancyGuard {
             idToMarketItem[itemId].sold = true;
             _itemsSold.increment();
             payable(owner).transfer(listingPrice);
-
-           // price = priceAfterPurchase;
     }
 
     function fetchMarketItems() public view returns (MarketItem[] memory) {
