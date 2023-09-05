@@ -31,7 +31,12 @@
 - Bottom-Left[Cash Register]<light. [Connect Wallet]-if not connected. Separate Divs for all hovering buttons.
 - Name & Description: Maximum Number of Characters.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- [For Sale]-black line, [Not For Sale]-silver line, [Sold]greyed
+- - **Created**:
+- Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
+- [For Sale]-black line, [Not For Sale]-silver line(if clicked it goes automatic to For Sale), [Sold]greyed
+- - **Collected**:
+- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- [For Sale]-black line, [Not For Sale]-silver line(if clicked and no PAP set, set PAP (Refer to ***After Purchase*** * ***After PAP Set*** sections) if PAP set, it goes automatic to For Sale)
  
 #### Creating Mechanics
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
@@ -47,7 +52,12 @@
 - Images here render small pixels
 - Name & Description: Maximum Number of Characters.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- [For Sale]-black line, [Not For Sale]-silver line, [Sold]greyed
+- - **Created**:
+- Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
+- [For Sale]-black line, [Not For Sale]-silver line(if clicked and no PAP set, set PAP (Refer to ***After Purchase*** * ***After PAP Set*** sections) if PAP set, it goes automatic to For Sale), [Sold]greyed
+- - **Collected**:
+- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- [For Sale]-black line, [Not For Sale]-silver line(if clicked and no PAP set, set PAP (Refer to ***After Purchase*** * ***After PAP Set*** sections) if PAP set, it goes automatic to For Sale)
 
 ### Cash Register
 - Notifications on who bought what at how much (Squared for sharing)
@@ -58,19 +68,30 @@
 - Top-Left[/\]-([My-Store]if connected)([Home]if not connected)
 - Top-Right[Cart]
 - Bottom-Left & Right -- Nothing
-- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed
+- - **Created**:
+- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed, [Collected]-greyed(if I'm the collector)
+- - **Collected**:
+- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
 
 ### Other Store Asset       
 - Top-Left[/\]-([My-Store]if connected)([Home]if not connected)
 - Top-Right[Cart]
 - Bottom-Left & Right -- Nothing
 - Images here render small pixels
-- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed
+- - **Created**:
+- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed, [Collected]-greyed(if I'm the collector)
+- - **Collected**:
+- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
 
 ### Cart 
 - Arells [Arells uses Crossmint as it's payment provider] info at bottom.  
 
 #### After Purchase:
+-- [If not Signed/logged in] = message: {Sign-up or Log-in to set new Price After Purchase so you can make money off your purchase}[dismiss]
 - Buyer must list new PAP price (no lower than previous purchase price)[Calculate earnings: You Keep... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%].
 - Message (notifications-cash-register) to seller: "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
 
@@ -93,7 +114,7 @@
 - generateMetadata must be async for dynamic changes
 - *clear Browsing/Cache Data before checking*
 
-#### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc))
+#### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc... WTF is wrong with Amplify after reloading browser?))
 
 ## DIGITAL ASSET STORE
 
