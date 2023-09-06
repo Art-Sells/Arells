@@ -113,6 +113,7 @@
 - MetaTag Description: "Profile/Asset Description"
 - generateMetadata must be async for dynamic changes
 - *clear Browsing/Cache Data before checking*
+- Google Search Console Index (with sitemap)
 
 #### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc... WTF is wrong with Amplify after reloading browser possibly add onLoad on entire pages?))
 
