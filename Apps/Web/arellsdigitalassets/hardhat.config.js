@@ -1,4 +1,4 @@
-require("@nomiclabs/hardhat-ethers");
+require("@nomicfoundation/hardhat-toolbox");
 
 const fs = require("fs")
 const privateKey = fs.readFileSync(".secret").toString()
