@@ -1,10 +1,10 @@
-const {expect} = require("chai");
+import {ethers} from "hatdhat";
 
-describe("NFTMarket", function (){
-    it("Should create and execute market sales", async function () {
-        const Market = await ethers.getContractFactory("NFTMarket")
+describe("NFTMarket", () => {
+    it("Should create and execute market sales", async () => {
+        const Market = await ethers.getContractFactory("NFT")
         const market = await Market.deploy()
-        const marketAddress = market.address
+        await market.deployed();
         console.log("Market Address:", marketAddress);
 
         const NFT = await ethers.getContractFactory("NFT")
