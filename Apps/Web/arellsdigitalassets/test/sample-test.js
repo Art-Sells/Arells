@@ -6,7 +6,7 @@ describe("NFT", function (){
         market.waitForDeployment();
 
         const tokenURI = "https://some-token.uri";
-        const transaction = await market.createNFT(tokenURI);
+        const transaction = await market.createToken(tokenURI);
         console.log(transaction);
 
     });
