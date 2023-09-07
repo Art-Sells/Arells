@@ -1,9 +1,8 @@
-const {ethers} = require("@nomicfoundation/hardhat-chai-matchers");
+const hre = require("hardhat");
 
 describe("NFT", function (){
     it("Should create and execute market sales", async function () {
-        const Market = await ethers.getContractFactory("NFT");
-        const market = await Market.deploy();
+        const market = await hre.ethers.deployContract("NFT");
         market.waitForDeployment();
 
         const tokenURI = "https://some-token.uri";
