@@ -1,4 +1,6 @@
-require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-ethers");
+require("dotenv").config();
 
 const fs = require("fs")
 const privateKey = fs.readFileSync(".secret").toString()
