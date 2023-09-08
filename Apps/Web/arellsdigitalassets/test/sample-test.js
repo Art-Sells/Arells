@@ -1,13 +1,18 @@
 const hre = require("hardhat");
 
-describe("NFT", function (){
+describe("AssetMarket", function (){
     it("Should create and execute market sales", async function () {
-        const market = await hre.ethers.deployContract("NFT");
-        market.waitForDeployment();
+        const market = await hre.ethers.getContractFactory("AssetMarket");
+        market.deploy();
 
+        // Call the create nft function
         const tokenURI = "https://some-token.uri";
-        const transaction = await market.createToken(tokenURI);
-        console.log(transaction);
+        const transaction = await market.createAsset(tokenURI);
+        const receipt = await transaction.wait();
+        //const args = receipt.event
+        console.log(receipt);
+
+        
 
     });
 });
