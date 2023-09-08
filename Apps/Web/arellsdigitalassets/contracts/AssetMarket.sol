@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
@@ -14,11 +13,14 @@ contract AssetMarket is ERC721URIStorage {
         ) ERC721("Arells Assets", "ASTS") {
     }
 
+    event TestEvent(uint256 testID);
+
     function createAsset(string calldata tokenURI) public returns (uint256) {
         _tokenIDs.increment();
         uint256 currentID = _tokenIDs.current();
         _safeMint(msg.sender, currentID);
         _setTokenURI(currentID, tokenURI);
+        emit TestEvent(123);
         return currentID;
     }
 }
