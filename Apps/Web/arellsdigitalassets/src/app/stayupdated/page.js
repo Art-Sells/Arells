@@ -4,8 +4,6 @@ import '../css/stayupdated.css';
 import StayUpdated from '../../components/StayUpdated';
 import Head from 'next/head';
 
-
-
 const StayUpdatedPage = () => {
 
   return (
