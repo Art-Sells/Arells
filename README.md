@@ -3,19 +3,30 @@
 # [Arells](https://arells.com)
 ## Never lose money selling art.
 
-#### Problem:
-Most Artists are living in poverty.
+### Problem:
+Most artists are struggling financially.
 
-#### Solution:
-Art + Sells = Arells: An NFT store in which you never lose money selling art. Arells is working on achieving this through an innovation called **Price After Purchase** which introduces a new market called a Snail Market.
-
-_______________________________________________________________________
+### Solution:
+Art + Sells = Arells: An NFT store in which you never lose money selling art. Arells is working on achieving this through an innovation called **Price After Purchase** which renders bear markets obsolete.
 
 #### Price Afer Purchase:
-Price After Purchase or PAP for short is a market system which assets cannot be sold lower than the price they were either listed or previously purchased for.
+Price After Purchase is a market system which assets cannot be sold lower than the price they were either listed or previously purchased for.
 
-#### Snail Market:
-A market in which no new assets are bought or sold but rather slows rendering bear markets obsolete.
+**Example:**
+
+Your created artwork sells for $500.
+
+- You keep: $485
+- Arells keeps: $15
+- Buyer owns: Your Artwork
+- Price After Purchase: $1,000
+
+Old Buyer sells your artwork for $1,000.
+- You keep: $500
+- Arells keeps: $30
+- Old Buyer keeps: $470
+- New Buyer gets: Your Artwork
+- Price After Purchase: $2,000
 
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/Marketing/BeforeandAfterArells.jpg" width="800px"> 
 
