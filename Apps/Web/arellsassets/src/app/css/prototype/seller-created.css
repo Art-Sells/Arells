@@ -1,0 +1,936 @@
+#prototype-seller-created-wrapper {
+  text-align: center;
+  font-family: Arial;
+  margin-top: 0%;
+  margin-left: 0%;
+  margin-right: 0%;
+  margin-bottom: 0%;
+  padding-top: 0px;
+  padding-bottom: 30px;
+  background: white;
+}
+
+	#header-seller-created {
+			display: flex;
+			justify-content: center;
+			margin-top: 0px;
+			align-items: center;
+			position: fixed;
+			padding-top: 30px;
+			background: none;
+			width: 100%;
+			height: 50px;
+			margin-left: -8px;
+			margin-right: auto;
+			z-index: 100;
+		}
+		#icon-link-seller-created{
+			display: inline-block;
+			text-decoration: none;
+			margin-right: 124px;
+			  text-decoration: none;
+			  padding-top: 13px;
+			  padding-bottom: 10px;
+			  padding-right: 8px;
+			  padding-left: 8px;	  	  
+			  border: solid;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  border-radius: 15px;
+			  border-width: 1px;
+			  width: 43px;
+			  opacity: 1;
+				background: rgba(255, 255, 255, 0.8);						
+		}
+		#icon-link-seller-created:hover,
+		#icon-link-seller-created:focus {
+			  transition: 1s;
+			  cursor: pointer;
+			  border-color: gray;
+			  opacity: 1;
+			}		
+			#arells-icon-seller-created {
+				height: 16px;
+                width: 15px;
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			  }
+			  /* Add Animation */
+			  @-webkit-keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }
+			  
+			  @keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }	
+		#cart-link-seller-created{
+			display: inline-block;
+			text-decoration: none;
+			margin-left: 124px;
+			  text-decoration: none;
+			  padding-top: 14px;
+			  padding-bottom: 10px;
+			  padding-right: 10px;
+			  padding-left: 10px;	  
+			  border: solid;
+			  width: 60px;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  border-radius: 15px;
+			  border-width: 1px;
+			  opacity: 1;
+				background: rgba(255, 255, 255, 0.8);						
+		}
+		#cart-link-connected-seller-created{
+			text-decoration: none;
+			margin-left: 124px;
+			  text-decoration: none;
+			  padding-top: 14px;
+			  padding-bottom: 9.5px;
+			  padding-right: 10px;
+			  padding-left: 10px;	  
+			  border: solid;
+			  width: 38px;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  border-radius: 15px;
+			  border-width: 1px;
+			  opacity: 1;
+				background: rgba(255, 255, 255, 0.8);						
+		}
+		#cart-link-seller-created:hover,
+		#cart-link-seller-created:focus, 
+		#cart-link-connected-seller-created:hover,
+		#cart-link-connected-seller-created:focus {
+			  transition: 1s;
+			  cursor: pointer;
+			  border-color: gray;
+			  opacity: 1;	
+		}
+		#cart-link-full-seller-created{
+			transition: 1s;
+			text-decoration: none;
+			margin-left: 124px;
+			  text-decoration: none;
+			  padding-top: 14px;
+			  padding-bottom: 9.5px;
+			  padding-right: 10px;
+			  padding-left: 10px;	  
+			  border: solid;
+			  width: 38px;
+			  border-color: gray;
+			  border-radius: 5px;
+			  border-width: 1px;
+			  opacity: 1;
+				background: rgba(0, 0, 0, 1);
+	  			box-shadow: 0px 5px 12px -6px black;									
+				  -webkit-animation-name: animatetop;
+				  -webkit-animation-duration: 1.00s;
+				  animation-name: animatetop;
+				  animation-duration: 1.00s;
+				}
+				/* Add Animation */
+				@-webkit-keyframes animatetop {
+				  from {center:0; opacity:0}
+				  to {center:0; opacity:1}
+				}
+				
+				@keyframes animatetop {
+				  from {center:0; opacity:0}
+				  to {center:0; opacity:1}
+				}
+		#cart-link-full-seller-created:hover,
+		#cart-link-full-seller-created:focus  {
+			  transition: 1s;
+			  cursor: pointer;
+			  opacity: .4;	
+		}					
+			#cart-icon-seller-created,
+			#cart-icon-full-seller-created {
+				height: 15px;
+                width: 16px;
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			  }
+			  /* Add Animation */
+			  @-webkit-keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }
+			  
+			  @keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }	
+			
+		#word-logo-seller-created {
+			margin-top: 37px;
+			width: 110px;	
+			height: 35px;	
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 1.00s;
+			animation-name: animatetop;
+			animation-duration: 1.00s;
+		  }
+		  /* Add Animation */
+		  @-webkit-keyframes animatetop {
+			from {center:0; opacity:0}
+			to {center:0; opacity:1}
+		  }
+		  
+		  @keyframes animatetop {
+			from {center:0; opacity:0}
+			to {center:0; opacity:1}
+		  }
+		#slogan-seller-created {
+			margin-top: 23px;
+			font-size: 8px;
+			letter-spacing: 0px;
+			margin-left: 0px; 
+			font-weight: 600;
+			color: gray;
+			opacity: 1;
+			word-spacing: 1.5px;
+		}
+		
+		#wallet-connected-div-seller-created{
+			margin-top: 30px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+			#connected-line-seller-created {
+			  margin-top: -5px;
+			  background-color: black;
+			  border: none;
+			  height: 4px;
+			  border-radius: 30px;
+			  width: 100px;
+			  opacity: .1;
+			}	
+			#wallet-connected-seller-created {
+				padding-bottom: 10px;
+				padding-top: 5px;
+				font-size: 9px;
+				letter-spacing: 0px;
+				margin-left: 0px; 
+				font-weight: 800;
+				color: gray;
+				opacity: 1;
+			}							
+	
+	#profile-img-container-seller-created {
+		position: static;
+		width: 100px;
+		height: 100px;
+		margin-top: 30px;
+		border-radius: 10px;
+		margin-left: auto;
+  		margin-right: auto;
+  		background-color: none;
+  		overflow: hidden;
+  		align-items: center;
+  		justify-content: center;
+		
+	}
+		#profile-photo-seller-created {
+			object-fit: cover;
+			overflow: hidden;
+			width: 100px;
+            height: 100px;
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 1.00s;
+			animation-name: animatetop;
+			animation-duration: 1.00s;
+		  }
+		  /* Add Animation */
+		  @-webkit-keyframes animatetop {
+			from {center:0; opacity:0}
+			to {center:0; opacity:1}
+		  }
+		  
+		  @keyframes animatetop {
+			from {center:0; opacity:0}
+			to {center:0; opacity:1}
+		  }
+	#name-seller-created {
+	  font-size: 17pt;
+	  font-weight: 800;
+	  opacity: 1;
+	  color: black;	
+	  margin-top: 20px;
+	  letter-spacing: -1px;	  
+	  margin-left: -1px;
+	}	
+	
+	#description-seller-created {
+	  font-size: 12pt;
+	  font-weight: 200;
+	  opacity: .5;
+	  color: black;	
+	  margin-top: 0px;
+	  letter-spacing: 0px;	  
+	  margin-left: auto;
+	  margin-right: auto;
+	  width: 420px;
+	  margin-bottom: 0px;
+	}
+	#share-div-seller-created{
+		border-radius: 5px;
+		align-items: center;
+		width: 185px;
+		height: 80px;
+		padding-top: 10px;
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-bottom: 10px;			
+		background: white;	
+		margin-left: auto;
+		margin-right: auto;	
+	}
+		#share-div-desc-seller-created{
+		  color: black;
+		  font-weight: 600;
+		  font-size: 11px;	
+		  letter-spacing: 0px;
+		  margin-left: 0px;
+		  opacity: .3;	
+		  margin-bottom: 5px;
+		  margin-top: 10px;
+		}
+		#copy-link-seller-created {
+		  text-decoration: none;
+		  color: white;
+		  font-weight: 500;
+		  font-size: 10px;
+		  padding-top: 15px;
+		  padding-bottom: 15px;
+		  padding-right: 15px;
+		  padding-left: 15px;	  
+		  border: none;
+		  letter-spacing: 2px;
+		  border-radius: 5px;
+		  border-width: 0px;
+		  width: 145px;
+		  opacity: 1;
+		  box-shadow: 0px 8px 12px -6px black;  
+			background: black;
+		}	  
+		#copy-link-seller-created:hover,
+		#copy-link-seller-created:focus {
+			  opacity: .4;
+			  transition: 1s;
+			  cursor: pointer;
+		}		
+			#copy-link-icon-seller-created {
+				width: 15px;
+                height: 8px;
+				margin-right: 5px;
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			  }
+			  /* Add Animation */
+			  @-webkit-keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }
+			  
+			  @keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			  }
+	#profileline-seller-created {
+	margin-top: 0px;
+	  background-color: black;
+	  border: none;
+	  height: 4px;
+	  border-radius: 30px;
+	  width: 700px;
+	  opacity: .1;
+	}
+	#created-collected-seller-created {
+		margin-top: 30px;
+		flex-direction: column;
+		align-items: center;
+		  width: 600px;
+		  margin-left: auto;
+		  margin-right: auto;	
+	}
+		#created-seller-created {
+		flex: 1;			
+		margin-right: 10px;
+		align-items: center;	
+		  text-decoration: none;
+		  color: black;
+		  font-weight: 300;
+		  font-size: 13px;
+		  padding-top: 12px;
+		  padding-bottom: 12px;
+		  padding-right: 25px;
+		  padding-left: 25.5px;	  
+		  border: solid;
+		  letter-spacing: .5px;
+		  border-radius: 10px;
+		  border-width: 1px;
+		  border-color: gray;
+		  width: 150px;
+		background: none;
+		opacity: 1;
+			
+		}  		
+		#collected-seller-created {
+		flex: 1;			
+		margin-left: 10px;
+		align-items: center;	
+		  text-decoration: none;
+		  color: gray;
+		  font-weight: 300;
+		  font-size: 13px;
+		  padding-top: 13px;
+		  padding-bottom: 13px;
+		  padding-right: 25px;
+		  padding-left: 25.5px;	  
+		  border: solid;
+		  letter-spacing: .5px;
+		  border-radius: 10px;
+		  border-width: 1px;
+		  border-color: rgba(215, 215, 215, 0.7);
+		  width: 150px;
+		  opacity: 1;
+			background: none;
+		}	
+		#collected-seller-created:hover,
+		#collected-seller-created:focus {
+			  transition: 1s;
+			  cursor: pointer;
+			  color: black;
+			  border-color: gray;
+			  opacity: 1;
+		}	
+				
+		
+
+	#container-seller-created {
+		margin-top: 30px;
+		flex-direction: column;
+		align-items: center;
+		  display: grid;
+		  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		  grid-gap: 0px;
+		  width: 950px;
+		  margin-left: auto;
+		  margin-right: auto;
+		  margin-bottom: 60px;		
+	}
+		
+		#blue-orange-seller-created, #beach-houses-seller-created, #colour-glass-seller-created,
+		#layers-seller-created, #succinct-drop-seller-created, #paint-rain-seller-created {
+			flex: 1;			
+			margin: 10px;
+			border-radius: 15px;
+			align-items: center;
+			overflow: hidden;
+			box-shadow: 0px 5px 20px -6px silver; 
+			width: 200px;
+			height: 420px;
+			padding-top: 50px;
+			padding-left: 50px;
+			padding-right: 50px;
+			padding-bottom: 60px;			
+			text-decoration: none;
+			background: white;
+		     
+		}
+		
+		#photo-link-seller-created {
+			text-decoration: none;
+		}
+
+		#photo-link-seller-created:hover {
+		  opacity: .5;
+		  transition: 1s;
+		  box-shadow: none;
+		  cursor: pointer;
+		}
+		#photo-link-seller-created:focus {
+		  opacity: .5;
+		  box-shadow: none;
+		  cursor: pointer;
+		}			
+		
+		#photo-seller-created {
+			object-fit: cover;
+			width: 200px;
+			height: 200px;
+  			border-radius: 10px;		
+  			box-shadow: 0px 8px 12px -6px black;  
+			  -webkit-animation-name: animatetop;
+			  -webkit-animation-duration: 1.00s;
+			  animation-name: animatetop;
+			  animation-duration: 1.00s;
+			}
+			/* Add Animation */
+			@-webkit-keyframes animatetop {
+			  from {center:0; opacity:0}
+			  to {center:0; opacity:1}
+			}
+			
+			@keyframes animatetop {
+			  from {center:0; opacity:0}
+			  to {center:0; opacity:1}
+			}
+			#PAP-seller-created {
+			margin-top: 30px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 12px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+			}
+			#PAP-blue-orange-before-seller-created, #PAP-beach-houses-before-seller-created, #PAP-colour-glass-before-seller-created,
+			#PAP-layers-before-seller-created, #PAP-succinct-drop-before-seller-created, #PAP-paint-rain-before-seller-created,
+			
+			
+			#PAP-blue-orange-after-seller-created, #PAP-beach-houses-after-seller-created, #PAP-colour-glass-after-seller-created,
+			#PAP-layers-after-seller-created, #PAP-succinct-drop-after-seller-created, #PAP-paint-rain-after-seller-created {
+			margin-top: -7px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 17px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .5;
+			}
+			#priceline-seller-created {
+			  margin-top: -5px;
+			  background-color: black;
+			  border: none;
+			  height: 4px;
+			  border-radius: 30px;
+			  width: 60%;
+			  opacity: .1;
+			}	
+			#yourprice-seller-created {
+			margin-top: 15px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 15px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .4;
+			}
+			#price-blue-orange-before-seller-created, #price-beach-houses-before-seller-created, #price-colour-glass-before-seller-created,
+			#price-layers-before-seller-created, #price-succinct-drop-before-seller-created, #price-paint-rain-before-seller-created,
+			
+			#price-blue-orange-after-seller-created, #price-beach-houses-after-seller-created, #price-colour-glass-after-seller-created,
+			#price-layers-after-seller-created, #price-succinct-drop-after-seller-created, #price-paint-rain-after-seller-created {
+			margin-top: -10px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 20px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .7;
+				margin-bottom: 28px;
+			}
+			#blue-orange-add-to-cart-seller-created, #beach-houses-add-to-cart-seller-created, 
+			#colour-glass-add-to-cart-seller-created, #layers-add-to-cart-seller-created, 
+			#succinct-drop-add-to-cart-seller-created, #paint-rain-add-to-cart-seller-created {
+				  text-decoration: none;
+				  color: white;
+				  margin-left: auto;
+				  margin-right: auto;
+				  font-weight: 500;
+				  font-size: 11px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 22px;
+				  padding-left: 25px;	  
+				  border: none;
+				  letter-spacing: 3px;
+				  border-radius: 5px;
+				  border-width: 0px;
+				  width: 170px;
+				  opacity: 1;
+				  box-shadow: 0px 8px 12px -6px black;  
+					background: black;
+				}	  
+			#blue-orange-add-to-cart-connected-seller-created, #beach-houses-add-to-cart-connected-seller-created, 
+			#colour-glass-add-to-cart-connected-seller-created, #layers-add-to-cart-connected-seller-created, 
+			#succinct-drop-add-to-cart-connected-seller-created, #paint-rain-add-to-cart-connected-seller-created  {
+				  text-decoration: none;
+				  color: white;
+				  margin-left: auto;
+				  margin-right: auto;
+				  font-weight: 500;
+				  font-size: 11px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 22px;
+				  padding-left: 25px;	  
+				  border: none;
+				  letter-spacing: 3px;
+				  border-radius: 5px;
+				  border-width: 0px;
+				  width: 170px;
+				  opacity: 1;
+				  box-shadow: 0px 8px 12px -6px black;  
+					background: black;
+				}		
+			#blue-orange-add-to-cart-seller-created:hover, #beach-houses-add-to-cart-seller-created:hover, 
+			#colour-glass-add-to-cart-seller-created:hover, #layers-add-to-cart-seller-created:hover, 
+			#succinct-drop-add-to-cart-seller-created:hover, #paint-rain-add-to-cart-seller-created:hover,
+			#blue-orange-add-to-cart-seller-created:focus, #beach-houses-add-to-cart-seller-created:focus, 
+			#colour-glass-add-to-cart-seller-created:focus, #layers-add-to-cart-seller-created:focus, 
+			#succinct-drop-add-to-cart-seller-created:focus, #paint-rain-add-to-cart-seller-created:focus,
+			
+			#blue-orange-add-to-cart-connected-seller-created:hover, #beach-houses-add-to-cart-connected-seller-created:hover, 
+			#colour-glass-add-to-cart-connected-seller-created:hover, #layers-add-to-cart-connected-seller-created:hover, 
+			#succinct-drop-add-to-cart-connected-seller-created:hover, #paint-rain-add-to-cart-connected-seller-created:hover,
+			#blue-orange-add-to-cart-connected-seller-created:focus, #beach-houses-add-to-cart-connected-seller-created:focus, 
+			#colour-glass-add-to-cart-connected-seller-created:focus, #layers-add-to-cart-created:focus, 
+			#succinct-drop-add-to-cart-connected-seller-created:focus, #paint-rain-add-to-cart-connected-seller-created:focus {
+				  opacity: .4;
+				  transition: 1s;
+				  cursor: pointer;
+			}
+			#blue-orange-added-seller-created, #beach-houses-added-seller-created, 
+			#colour-glass-added-seller-created, #layers-added-seller-created, 
+			#succinct-drop-added-seller-created, #paint-rain-added-seller-created,
+			
+			#blue-orange-collected-seller-created, #beach-houses-collected-seller-created, 
+			#colour-glass-collected-seller-created, #layers-collected-seller-created, 
+			#succinct-drop-collected-seller-created, #paint-rain-collected-seller-created {
+				  text-decoration: none;
+				  margin-left: auto;
+				  margin-right: auto;
+				  color: white;
+				  font-weight: 	500;
+				  font-size: 11px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 22px;
+				  padding-left: 25px;	  
+				  border: none;
+				  letter-spacing: 3px;
+				  border-radius: 5px;
+				  border-width: 0px;
+				  width: 170px;
+				  opacity: 1; 
+					background: silver;
+			}		
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+@media screen and (max-width: 1000px) {
+	#prototype-seller-created-wrapper {
+	    -webkit-text-size-adjust: none;
+	  }  
+		#header-seller-created {
+				margin-top: 0px;
+				padding-top: 25px;			
+			}	
+			#icon-link-seller-created{	
+				margin-right: 90px;
+				  padding-top: 10px;
+				  padding-bottom: 7px;
+				  padding-right: 6px;
+				  padding-left: 6px;	
+				  border-radius: 12px;
+				  width: 30px;		
+			}	
+			#arells-icon-seller-created {
+				height: 15px;
+                  width: 14px;
+				}	    
+			#cart-link-seller-created{
+				margin-left: 90px;
+				  padding-top: 10px;
+				  padding-bottom: 7px;
+				  padding-right: 8px;
+				  padding-left: 8px;	
+				  border-radius: 12px;	
+				  width: 45px;  					
+			}
+			#cart-link-connected-seller-created {
+				margin-left: 90px;
+				  padding-top: 10px;
+				  padding-bottom: 6.5px;
+				  padding-right: 8px;
+				  padding-left: 8px;	
+				  border-radius: 12px;	
+				  width: 27px;  					
+			}
+			#cart-link-full-seller-created {
+				margin-left: 90px;
+				  padding-top: 10px;
+				  padding-bottom: 6.5px;
+				  padding-right: 8px;
+				  padding-left: 8px;		
+				  width: 27px;  					
+			}
+			#cart-icon-seller-created,
+			#cart-icon-full-seller-created {
+				height: 14px;
+				width: 15px;
+				}
+			
+			  				
+		#word-logo-seller-created {
+			margin-top: 35px;
+			width: 90px;	
+			height: 28px;		
+		}
+		#slogan-seller-created {
+			margin-top: 16px;
+			font-size: 7px;
+			letter-spacing: 0px;
+			margin-left: 0px; 
+			word-spacing: 1.5px;
+		}
+		#wallet-connected-div-seller-created{
+			margin-top: 25px;
+		}	
+			#connected-line-seller-created {
+			  width: 90px;
+			}				
+			#wallet-connected-seller-created {
+				padding-bottom: 12px;
+				padding-top: 7px;
+				font-size: 8px;
+				letter-spacing: 0px;
+				margin-left: 0px; 
+			}
+		#profile-img-container-seller-created {
+			width: 90px;
+			height: 90px;
+			margin-top: 25px;
+			
+		}
+			#profile-photo-seller-created {
+				object-fit: cover;
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+			}	
+		#name-seller-created {
+		  font-size: 13pt;
+		  font-weight: 800;
+		  margin-top: 20px;
+		  letter-spacing: -1px;	  
+		  margin-left: -1px;
+		}	
+		#description-seller-created {
+		margin-top: 5px;
+		  font-size: 9pt;
+		  line-height: 15px;
+		  width: 200px;
+		}
+		#share-div-seller-created{
+			width: 150px;
+			height: 80px;
+			padding-top: 10px;
+			padding-left: 10px;
+			padding-right: 10px;
+			padding-bottom: 10px;			
+		}
+			#share-div-desc-seller-created{
+			  font-weight: 600;
+			  font-size: 9px;	
+			  letter-spacing: 0px;
+			  margin-left: 0px;
+			  margin-bottom: 5px;
+			  margin-top: 8px;
+			}			  
+			#copy-link-seller-created {
+			  font-size: 8px;
+			  padding-top: 15px;
+			  padding-bottom: 15px;
+			  padding-right: 15px;
+			  padding-left: 15px;	  
+			  border: none;
+			  width: 120px;
+			  letter-spacing: 2px;
+			}	  	
+				#copy-link-icon-seller-created {
+					width: 12px;
+					height: 6px;
+				}
+		#profileline-seller-created {
+		margin-top: -10px;
+		  width: 470px;
+		}	
+		#created-collected-seller-created {
+			margin-top: 20px;
+			align-items: center;
+			  width: 400px;
+		}  
+			#created-seller-created {		
+			margin-right: 10px;
+			margin-left: 8px;
+			  font-size: 10px;
+			  padding-top: 10px;
+			  padding-bottom: 10px;
+			  padding-right: 15px;
+			  padding-left: 15.5px;	  
+			  letter-spacing: .5px;
+				
+			}  		
+			#collected-seller-created {		
+			margin-left: 0px;
+			  font-size: 10px;
+			  padding-top: 10px;
+			  padding-bottom: 10px;
+			  padding-right: 15px;
+			  padding-left: 15.5px;	  
+			  letter-spacing: .5px;
+			}			
+	  #container-seller-created {
+	    width: 600px;
+	    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	    margin-top: 20px;
+	  }
+		#blue-orange-seller-created, #beach-houses-seller-created, #colour-glass-seller-created,
+		#layers-seller-created, #succinct-drop-seller-created, #paint-rain-seller-created {		
+			margin: 5px;
+			align-items: center;
+			width: 130px;
+			height: 320px;
+			padding-top: 30px;
+			padding-left: 30px;
+			padding-right: 30px;
+			padding-bottom: 30px;			
+		     
+		}
+		#photo-seller-created {
+			width: 130px;
+			height: 130px;
+  			border-radius: 10px;		
+		}
+			#PAP-seller-created {
+				margin-top: 20px;
+				font-size: 12px;
+			}
+			#PAP-blue-orange-before-seller-created, #PAP-beach-houses-before-seller-created, #PAP-colour-glass-before-seller-created,
+			#PAP-layers-before-seller-created, #PAP-succinct-drop-before-seller-created, #PAP-paint-rain-before-seller-created,
+			
+			
+			#PAP-blue-orange-after-seller-created, #PAP-beach-houses-after-seller-created, #PAP-colour-glass-after-seller-created,
+			#PAP-layers-after-seller-created, #PAP-succinct-drop-after-seller-created, #PAP-paint-rain-after-seller-created {
+				margin-top: -8px;
+				font-size: 13px;
+			}
+			#priceline-seller-created {
+			  margin-top: -2px;
+			  width: 60%;
+			}	
+			#yourprice-seller-created {
+			margin-top: 10px;
+				font-size: 13px;
+			}
+			#price-blue-orange-before-seller-created, #price-beach-houses-before-seller-created, #price-colour-glass-before-seller-created,
+			#price-layers-before-seller-created, #price-succinct-drop-before-seller-created, #price-paint-rain-before-seller-created,
+			
+			#price-blue-orange-after-seller-created, #price-beach-houses-after-seller-created, #price-colour-glass-after-seller-created,
+			#price-layers-after-seller-created, #price-succinct-drop-after-seller-created, #price-paint-rain-after-seller-created {
+				margin-top: -10px;
+				font-size: 15px;
+				margin-bottom: 20px;	
+			}			
+			#blue-orange-add-to-cart-seller-created, #beach-houses-add-to-cart-seller-created, 
+			#colour-glass-add-to-cart-seller-created, #layers-add-to-cart-seller-created, 
+			#succinct-drop-add-to-cart-seller-created, #paint-rain-add-to-cart-seller-created,
+			
+			#blue-orange-add-to-cart-connected-seller-created, #beach-houses-add-to-cart-connected-seller-created, 
+			#colour-glass-add-to-cart-connected-seller-created, #layers-add-to-cart-connected-seller-created, 
+			#succinct-drop-add-to-cart-connected-seller-created, #paint-rain-add-to-cart-connected-seller-created {
+				  font-size: 9px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 12px;
+				  padding-left: 15px;	  
+				  border: none;
+				  letter-spacing: 1px;
+				  width: 120px;
+				}	  
+			#blue-orange-added-seller-created, #beach-houses-added-seller-created, 
+			#colour-glass-added-seller-created, #layers-added-seller-created, 
+			#succinct-drop-added-seller-created, #paint-rain-added-seller-created,
+			
+			#blue-orange-collected-seller-created, #beach-houses-collected-seller-created, 
+			#colour-glass-collected-seller-created, #layers-collected-seller-created, 
+			#succinct-drop-collected-seller-created, #paint-rain-collected-seller-created{
+				  font-size: 9px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 12px;
+				  padding-left: 15px;	  
+				  border: none;
+				  letter-spacing: 1px;
+				  width: 120px;
+				}									  
+}					
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+@media screen and (max-width: 700px) {
+	#prototype-seller-created-wrapper {
+	-webkit-text-size-adjust: none;
+	}  	
+	#profileline-seller-created {
+		width: 300px;
+	}		
+	#container-seller-created {
+	width: 400px;
+	}  
+}
