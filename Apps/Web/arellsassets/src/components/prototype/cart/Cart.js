@@ -14,6 +14,10 @@ import Image from 'next/image';
 
 const PrototypeCart = () => {
 
+	const imageLoader = ({ src, width, quality }) => {
+		return `https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/${src}?w=${width}&q=${quality || 100}`
+	  }
+
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
 		const [imagesLoaded, setImagesLoaded] = useState({
@@ -540,11 +544,12 @@ const PrototypeCart = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+				loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
@@ -554,11 +559,12 @@ const PrototypeCart = () => {
 		{showLoadingCart && (
 			<div id="spinnerBackground">
 			<Image 
+				loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingCart && (
@@ -568,11 +574,12 @@ const PrototypeCart = () => {
 		{showLoadingOne && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingOne && (
@@ -581,11 +588,12 @@ const PrototypeCart = () => {
 		{showLoadingTwo && (
 			<div id="spinnerBackground">
 			<Image 
+				loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingTwo && (
@@ -594,11 +602,12 @@ const PrototypeCart = () => {
 		{showLoadingThree && (
 			<div id="spinnerBackground">
 			<Image 
+				loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingThree && (
@@ -607,11 +616,12 @@ const PrototypeCart = () => {
 		{showLoadingFour && (
 			<div id="spinnerBackground">
 			<Image 
+				loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingFour && (
@@ -620,11 +630,12 @@ const PrototypeCart = () => {
 		{showLoadingFive && (
 			<div id="spinnerBackground">
 			<Image 
+				loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingFive && (
@@ -633,11 +644,12 @@ const PrototypeCart = () => {
 		{showLoadingSix && (
 			<div id="spinnerBackground">
 			<Image 
+				loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingSix && (
@@ -649,30 +661,33 @@ const PrototypeCart = () => {
 		
 				<a id="icon-link-cart">
 					<Image
+					loader={imageLoader}
 					onLoad={() => handleImageLoaded('arellsIconCart')}
 					alt=""
 					height={16}
 					width={15} 
 					id="arells-icon-cart" 
-					src="/images/prototype/Arells-Icon-Home.png"/>
+					src="prototype/Arells-Icon-Home.png"/>
 				</a>		
 				<button id="cart-link-cart">
 					<Image
+					loader={imageLoader}
 					onLoad={() => handleImageLoaded('cartIconCart')}
 					alt=""
 					height={15}
 					width={16}
 					id="cart-icon-cart" 
-					src="/images/prototype/shopping-cart-empty.png"/>
+					src="prototype/shopping-cart-empty.png"/>
 				</button>	
 			</div>
 			<Image
+			loader={imageLoader}
 			onLoad={() => handleImageLoaded('wordLogoCart')}
 			alt=""
 			width={110}  
 			height={35} 
 			id="word-logo-cart" 
-			src="/images/Arells-Logo-Ebony.png"/>	
+			src="Arells-Logo-Ebony.png"/>	
 			<p id="slogan-cart">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivCart && (
 				<div id="wallet-connected-div-cart">
@@ -687,12 +702,13 @@ const PrototypeCart = () => {
 					<p id="no-art-cart">
 						cart empty
 						<Image
+						loader={imageLoader}
 						onLoad={() => handleImageCartLoaded('cartIconCollectedCart')}
 						alt=""
 						width={27}  
 						height={25}
 						id="cart-icon-collected-cart" 
-						src="/images/prototype/shopping-cart-empty.png"/>
+						src="prototype/shopping-cart-empty.png"/>
 					</p>
 				</div>
 			)}
@@ -727,12 +743,13 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype/asset/blue-orange">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										loader={imageLoader}
 										onLoad={() => handleImageOneLoaded('photoCartOne')}
 										alt=""
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/images/prototype/1.jpg"/>
+										src="prototype/1.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -746,11 +763,12 @@ const PrototypeCart = () => {
 								</div>
 								<button id="remove-cart" onClick={removeBlueOrange}>
 									<Image
+									loader={imageLoader}
 									alt=""
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/images/prototype/delete.png"/>
+									src="prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -760,12 +778,13 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype/asset/beach-houses">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										loader={imageLoader}
 										onLoad={() => handleImageTwoLoaded('photoCartTwo')}
 										alt=""
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/images/prototype/2.jpg"/>
+										src="prototype/2.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -779,11 +798,12 @@ const PrototypeCart = () => {
 								</div>
 								<button id="remove-cart" onClick={removeBeachHouses}>
 									<Image
+									loader={imageLoader}
 									alt=""
 									width={18}  
 									height={20}  
 									id="del-cart" 
-									src="/images/prototype/delete.png"/>
+									src="prototype/delete.png"/>
 								</button>	     	
 							</div>
 						)}
@@ -793,12 +813,13 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype/asset/colour-glass">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										loader={imageLoader}
 										onLoad={() => handleImageThreeLoaded('photoCartThree')}
 										alt=""
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/images/prototype/3.jpg"/>
+										src="prototype/3.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -812,11 +833,12 @@ const PrototypeCart = () => {
 								</div>
 								<button id="remove-cart" onClick={removeColourGlass}>
 									<Image
+									loader={imageLoader}
 									alt=""
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/images/prototype/delete.png"/>
+									src="prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}
@@ -826,12 +848,13 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype/asset/layers">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										loader={imageLoader}
 										onLoad={() => handleImageFourLoaded('photoCartFour')}
 										alt=""
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/images/prototype/4.jpg"/>
+										src="prototype/4.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -845,11 +868,12 @@ const PrototypeCart = () => {
 								</div>
 								<button id="remove-cart" onClick={removeLayers}>
 									<Image
+									loader={imageLoader}
 									alt=""
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/images/prototype/delete.png"/>
+									src="prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -859,12 +883,13 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype/asset/succinct-drop">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										loader={imageLoader}
 										onLoad={() => handleImageFiveLoaded('photoCartFive')}
 										alt=""
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/images/prototype/5.jpg"/>
+										src="prototype/5.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -878,11 +903,12 @@ const PrototypeCart = () => {
 								</div>
 								<button id="remove-cart" onClick={removeSuccinctDrop}>
 									<Image
+									loader={imageLoader}
 									alt=""
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/images/prototype/delete.png"/>
+									src="prototype/delete.png"/>
 								</button>			     	
 							</div>
 						)}
@@ -892,12 +918,13 @@ const PrototypeCart = () => {
 								<Link legacyBehavior href="/prototype/asset/paint-rain">
 									<a target="_self" id="photo-link-cart">
 										<Image
+										loader={imageLoader}
 										onLoad={() => handleImageSixLoaded('photoCartSix')}
 										alt=""
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="/images/prototype/6.jpg"/>
+										src="prototype/6.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -911,11 +938,12 @@ const PrototypeCart = () => {
 								</div>
 								<button id="remove-cart" onClick={removePaintRain}>
 									<Image
+									loader={imageLoader}
 									alt=""
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="/images/prototype/delete.png"/>
+									src="prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}
