@@ -114,7 +114,9 @@
 - generateMetadata must be async for dynamic changes
 - *clear Browsing/Cache Data before checking*
 
-#### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc... WTF is wrong with Amplify after reloading browser possibly add onLoad on entire pages?))
+#### Before AWS Upload (research how to reset server... or is it better to wait for server to reload (changing times of TTL, etc...))
+
+________________________________________________________________________________________________________________________________________
 
 ## DIGITAL ASSET STORE
 
@@ -144,3 +146,6 @@
 - Phase out Crossmint (if they won't include our own Logo/Name in Email/Payment info)
 - Rarimo (CCTP) Circle?
 - Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
+
+##### Other:
+-	`onError(event => fail()}` for failed images
