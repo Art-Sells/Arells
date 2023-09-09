@@ -1,5 +1,9 @@
 "use client";
 
+// images
+import'../../public/icons&images/Arells-Logo-Ebony.png';
+import'../../public/icons&images/Arells-Icon.png';
+
 // Change below link after test
 import '../app/css/Home.css';
 import '../app/css/modals/copiedlink.css';
@@ -67,7 +71,7 @@ const Index = () => {
             width={29}
             height={30}
             id="arells-loader-icon" 
-            src="/favicon.ico"/>        
+            src="/Arells-Icon.png"/>        
         </div>
       )}
       {showLoading && (
@@ -80,7 +84,7 @@ const Index = () => {
         width={80}
         height={85}
         id="arells-iconn" 
-        src="/favicon.ico"/>
+        src="/Arells-Icon.png"/>
       
         <br/>
         
@@ -90,7 +94,7 @@ const Index = () => {
          width={120}
          height={40}
          id="word-logoo" 
-         src="/favicon.ico"/>	
+         src="/Arells-Logo-Ebony.png"/>	
         
         <br/>
         
