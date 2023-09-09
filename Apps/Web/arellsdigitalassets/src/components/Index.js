@@ -32,11 +32,7 @@ const Index = () => {
     if (Object.values(imagesLoaded).every(Boolean)) {
       setLoading(false);
     }
-  }, [imagesLoaded]);
 
-
-
-  useEffect(() => {
     function resetPrototype() {
       sessionStorage.removeItem('walletConnectedSession'); 
 
@@ -60,7 +56,7 @@ const Index = () => {
     }
     
     resetPrototype();
-  }, []);
+  }, [imagesLoaded]);
 
   return (
     <>
