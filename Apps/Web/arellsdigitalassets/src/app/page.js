@@ -5,6 +5,45 @@ import './css/Home.css';
 import Index from '../components/Index';
 import Head from 'next/head';
 
+export function generateMetadata({}) {
+  let title = "Arells";
+  let description = "Never lose money selling art. With Arells, bear markets don't exist. Create and buy Digital Assets and always sell them at a profit.";
+
+  let openGraph = {
+    site_name: "Arells",
+    title: title,
+    description: description,
+    // Change this link after testing
+    url: "https://arells.com", 
+    type: "website",
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner.jpg"
+      }
+    ]
+  };
+
+  let twitter = {
+    title: title,
+    description: description,
+    // Change this link after testing
+    url: "https://arells.com",
+    card: "summary_large_image",
+    images: [
+      {
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner.jpg"
+      }
+    ]
+  };
+
+  return {
+    robots: "noimageindex",httpEquiv: {"X-UA-Compatible": "IE=edge"},
+    charSet: "UTF-8", linkCanonical: "https://arells.com", 
+    title, description, 
+    openGraph, twitter
+  };
+}
+
 const Home = () => {
   const metadata = generateMetadata({});
 
@@ -45,42 +84,3 @@ const Home = () => {
 }
 
 export default Home;
-
-export function generateMetadata({}) {
-  let title = "Arells";
-  let description = "Never lose money selling art. With Arells, bear markets don't exist. Create and buy Digital Assets and always sell them at a profit.";
-
-  let openGraph = {
-    site_name: "Arells",
-    title: title,
-    description: description,
-    // Change this link after testing
-    url: "https://arells.com", 
-    type: "website",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner.jpg"
-      }
-    ]
-  };
-
-  let twitter = {
-    title: title,
-    description: description,
-    // Change this link after testing
-    url: "https://arells.com",
-    card: "summary_large_image",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner.jpg"
-      }
-    ]
-  };
-
-  return {
-    robots: "noimageindex",httpEquiv: {"X-UA-Compatible": "IE=edge"},
-    charSet: "UTF-8", linkCanonical: "https://arells.com", 
-    title, description, 
-    openGraph, twitter
-  };
-}
