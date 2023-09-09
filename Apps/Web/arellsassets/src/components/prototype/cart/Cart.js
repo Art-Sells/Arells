@@ -908,7 +908,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="prototype/delete.png"/>
+									src="images/prototype/delete.png"/>
 								</button>			     	
 							</div>
 						)}
