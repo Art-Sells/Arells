@@ -344,7 +344,7 @@ const BeachHouses = () => {
 				width={400}  
 				height={400}
 				id="photo-beach-houses" 
-				src="/images/prototype/2.jpg"/>
+				src="images/prototype/2.jpg"/>
 				<h3 id="name-beach-houses">Beach Houses</h3> 
 				<div id="share-div-beach-houses">
 					<p id="share-div-desc-beach-houses">SHARE</p>
