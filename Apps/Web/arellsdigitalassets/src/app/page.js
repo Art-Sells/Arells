@@ -6,6 +6,7 @@ import Index from '../components/Index';
 import Head from 'next/head';
 
 const Home = () => {
+  const metadata = generateMetadata({});
 
   return (
     <>
@@ -44,8 +45,6 @@ const Home = () => {
 }
 
 export default Home;
-
-const metadata = generateMetadata({});
 
 export function generateMetadata({}) {
   let title = "Arells";
