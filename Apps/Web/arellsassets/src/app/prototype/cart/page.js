@@ -1,7 +1,8 @@
 import '../../css/prototype/cart/cart.css';
 
 import PrototypeCart from '../../../components/prototype/cart/Cart';
-import Head from 'next/head';
+// import Head from 'next/head';
+import Image from 'next/image';
 
 // export function generateMetadata({}) {
 //   let title = "Cart Prototype";
@@ -55,7 +56,6 @@ const CartPage = () => {
 
   return (
     <>
-      <Head>
         {/* <meta name="robots" content={metadata.robots} />
         <meta httpEquiv="X-UA-Compatible" content={metadata.httpEquiv} />
         <meta charSet={metadata.charSet} />
@@ -81,7 +81,7 @@ const CartPage = () => {
         {metadata.twitter.images.map((image, index) => (
             <meta key={index} name="twitter:image" content={image.url} />
         ))} */}
-      </Head>  
+
       <div id="cart-wrapper">
        <PrototypeCart/>
       </div>
