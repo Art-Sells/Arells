@@ -300,7 +300,7 @@ const Layers = () => {
 								height={15}
 								width={16} 
 								id="cart-icon-layers" 
-								src="icons&images/prototype/shopping-cart-empty.png"/>
+								src="images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -314,7 +314,7 @@ const Layers = () => {
 								height={15}
 								width={16} 
 								id="cart-icon-full-layers" 
-								src="icons&images/prototype/shopping-cart-full.png"/>
+								src="images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
