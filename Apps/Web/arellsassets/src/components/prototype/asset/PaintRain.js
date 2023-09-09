@@ -235,7 +235,7 @@ const PaintRain = () => {
 						alt=""
 						width={50}
 						height={50}
-						 src="/images/prototype/coinbase-wallet-logo.png"/>
+						 src="images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -259,7 +259,7 @@ const PaintRain = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
@@ -278,7 +278,7 @@ const PaintRain = () => {
 							height={16}
 							width={15}
 							id="arells-icon-paint-rain" 
-							src="/images/prototype/Arells-Icon-Home.png"/>
+							src="images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkPaintRain && (
@@ -289,7 +289,7 @@ const PaintRain = () => {
 							height={16}
 							width={15}
 							id="cart-icon-paint-rain" 
-							src="/images/prototype/shopping-cart-empty.png"/>
+							src="images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedPaintRain && (
@@ -301,7 +301,7 @@ const PaintRain = () => {
 								height={15}
 								width={16}
 								id="cart-icon-paint-rain" 
-								src="/images/prototype/shopping-cart-empty.png"/>
+								src="images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -315,7 +315,7 @@ const PaintRain = () => {
 								height={15}
 								width={16}
 								id="cart-icon-full-paint-rain" 
-								src="/images/prototype/shopping-cart-full.png"/>
+								src="images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -326,7 +326,7 @@ const PaintRain = () => {
 				width={110}  
 				height={35}
 				id="word-logo-paint-rain" 
-				src="/images/Arells-Logo-Ebony.png"/>	
+				src="images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-paint-rain">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivPaintRain && (
 					<div id="wallet-connected-div-paint-rain">
@@ -345,7 +345,7 @@ const PaintRain = () => {
 				width={400}  
 				height={400}
 				id="photo-paint-rain" 
-				src="/icons&images/prototype/6.jpg"/>
+				src="icons&images/prototype/6.jpg"/>
                 <h3 id="name-paint-rain">Colour Glass</h3>
                 <div id="share-div-paint-rain">
                     <p id="share-div-desc-paint-rain">SHARE</p> 
@@ -357,7 +357,7 @@ const PaintRain = () => {
 						width={15}  
 						height={8}
 						id="copy-link-icon-paint-rain" 
-						src="/images/prototype/link.png"/>
+						src="images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -440,7 +440,7 @@ const PaintRain = () => {
 							width={25}  
 							height={25}
 							id="fingerprints-icon" 
-							src="/images/prototype/etherscan-logo.png"/>
+							src="images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
@@ -452,7 +452,7 @@ const PaintRain = () => {
 							width={24}  
 							height={25}
 							id="fingerprints-icon" 
-							src="/images/prototype/ipfs.png"/>
+							src="images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
@@ -464,7 +464,7 @@ const PaintRain = () => {
 							width={25}  
 							height={23}
 							 id="fingerprints-icon"
-							  src="/images/prototype/ipfslite.png"/>
+							  src="images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

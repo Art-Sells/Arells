@@ -160,7 +160,7 @@ const PrototypeSellerCollected = () => {
 						alt=""
 						width={50}
 						height={50}  
-						src="/images/prototype/coinbase-wallet-logo.png"/>
+						src="images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -174,7 +174,7 @@ const PrototypeSellerCollected = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
@@ -194,7 +194,7 @@ const PrototypeSellerCollected = () => {
 						height={16}
 						width={15}
 						id="arells-icon-seller-collected" 
-						src="/images/prototype/Arells-Icon-Home.png"/>
+						src="images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
 				{cartLinkSellerCollected && (
@@ -205,7 +205,7 @@ const PrototypeSellerCollected = () => {
 						height={15}
 						width={16} 
 						id="cart-icon-seller-collected" 
-						src="/images/prototype/shopping-cart-empty.png"/>
+						src="images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
 				{cartLinkConnectedSellerCollected && (
@@ -217,7 +217,7 @@ const PrototypeSellerCollected = () => {
 							height={15}
 							width={16}
 							id="cart-icon-seller-collected" 
-							src="/images/prototype/shopping-cart-empty.png"/>
+							src="images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
@@ -230,7 +230,7 @@ const PrototypeSellerCollected = () => {
 							height={15}
 							width={16} 
 							id="cart-icon-seller-collected" 
-							src="/images/prototype/shopping-cart-full.png"/>
+							src="images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
@@ -241,7 +241,7 @@ const PrototypeSellerCollected = () => {
 			width={110}  
 			height={35} 
 			id="word-logo-seller-collected" 
-			src="/images/Arells-Logo-Ebony.png"/>	
+			src="images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-seller-collected">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivSellerCollected && (
 				<div id="wallet-connected-div-seller-collected">
@@ -259,7 +259,7 @@ const PrototypeSellerCollected = () => {
 				width={100}  
 				height={100}
 				id="profile-photo-seller-collected" 
-				src="/images/prototype/proto-banner.jpg"/>
+				src="images/prototype/proto-banner.jpg"/>
 			</div>	 
 			<h1 id="name-seller-collected">Abstract Kadabra</h1>  
 			<p id="description-seller-collected">Here rests life&apos;s abstractions captured in majestic endeavors.</p> 
@@ -273,7 +273,7 @@ const PrototypeSellerCollected = () => {
 					width={15}  
 					height={8}
 					id="copy-link-icon-seller-collected" 
-					src="/images/prototype/link.png"/>
+					src="images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
 			<hr id="profileline-seller-collected"/>
@@ -292,7 +292,7 @@ const PrototypeSellerCollected = () => {
 				width={27}  
 				height={25} 
 				id="cart-icon-collected-seller-collected" 
-				src="/images/prototype/shopping-cart-empty.png"/>
+				src="images/prototype/shopping-cart-empty.png"/>
 			</p>		
 		     
         </>

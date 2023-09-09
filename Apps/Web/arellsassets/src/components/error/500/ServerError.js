@@ -46,7 +46,7 @@ const ServerError = () => {
             width={29}
             height={30}
             id="arells-loader-icon" 
-            src="/images/Arells-Icon.png"/>        
+            src="images/Arells-Icon.png"/>        
         </div>
       )}
       {showLoading && (
@@ -60,7 +60,7 @@ const ServerError = () => {
         width={40}
         height={42}
         id="arells-icon-error" 
-        src="/images/Arells-Icon.png"/>
+        src="images/Arells-Icon.png"/>
         
         <br/>
         

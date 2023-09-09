@@ -305,7 +305,7 @@ const PrototypeBuyerCollected = () => {
 						alt=""
 						width={50}
 						height={50}  
-						src="/images/prototype/coinbase-wallet-logo.png"/>
+						src="images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -319,7 +319,7 @@ const PrototypeBuyerCollected = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
@@ -333,7 +333,7 @@ const PrototypeBuyerCollected = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingAssetCollected && (
@@ -353,7 +353,7 @@ const PrototypeBuyerCollected = () => {
 						height={16}
 						width={15}
 						id="arells-icon-buyer-collected" 
-						src="/images/prototype/Arells-Icon-Home.png"/>
+						src="images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>	
 				{cartLinkBuyerCollected && (
@@ -364,7 +364,7 @@ const PrototypeBuyerCollected = () => {
 						height={15}
 						width={16} 
 						id="cart-icon-buyer-collected" 
-						src="/images/prototype/shopping-cart-empty.png"/>
+						src="images/prototype/shopping-cart-empty.png"/>
 					</button>					
 				)}
 				{cartLinkConnectedBuyerCollected && (
@@ -376,7 +376,7 @@ const PrototypeBuyerCollected = () => {
 							height={15}
 							width={16}
 							id="cart-icon-buyer-collected" 
-							src="/images/prototype/shopping-cart-empty.png"/>
+							src="images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>
 				
@@ -390,7 +390,7 @@ const PrototypeBuyerCollected = () => {
 							height={15}
 							width={16} 
 							id="cart-icon-buyer-collected" 
-							src="/images/prototype/shopping-cart-full.png"/>
+							src="images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>
 				
@@ -402,7 +402,7 @@ const PrototypeBuyerCollected = () => {
 			width={110}  
 			height={35}  
 			id="word-logo-buyer-collected" 
-			src="/images/Arells-Logo-Ebony.png"/>	
+			src="images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-buyer-collected">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivBuyerCollected && (
 				<div id="wallet-connected-div-buyer-collected">
@@ -420,7 +420,7 @@ const PrototypeBuyerCollected = () => {
 				width={100}  
 				height={100}
 				id="profile-photo-buyer-collected" 
-				src="/images/prototype/Unnamed-Icon.jpg"/>
+				src="images/prototype/Unnamed-Icon.jpg"/>
 			</div>	 
 			<h1 id="name-buyer-collected">Unnamed</h1>  
 			<p id="description-buyer-collected">Creator & Collector</p> 
@@ -434,7 +434,7 @@ const PrototypeBuyerCollected = () => {
 					width={15}  
 					height={8}
 					id="copy-link-icon-buyer-collected" 
-					src="/images/prototype/link.png"/>
+					src="images/prototype/link.png"/>
 					COPY LINK</button>	
 			</div>		
 			<hr id="profileline-buyer-collected"/>
@@ -454,7 +454,7 @@ const PrototypeBuyerCollected = () => {
 					width={27}  
 					height={25}  
 					id="cart-icon-collected-buyer-collected" 
-					src="/images/prototype/shopping-cart-empty.png"/>
+					src="images/prototype/shopping-cart-empty.png"/>
 				</p>
 			)}
 			{collectedItemsBuyerCollected && (
@@ -471,7 +471,7 @@ const PrototypeBuyerCollected = () => {
 									width={150}  
 									height={150}  
 									id="photo-buyer-collected" 
-									src="/images/prototype/1.jpg"/>
+									src="images/prototype/1.jpg"/>
 								</a>								
 							</Link>
 							<div id="prices-buyer-collected">
@@ -497,7 +497,7 @@ const PrototypeBuyerCollected = () => {
 									width={150}  
 									height={150}  
 									id="photo-buyer-collected" 
-									src="/images/prototype/2.jpg"/>
+									src="images/prototype/2.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
@@ -523,7 +523,7 @@ const PrototypeBuyerCollected = () => {
 									width={150}  
 									height={150}  
 									id="photo-buyer-collected" 
-									src="/images/prototype/3.jpg"/>
+									src="images/prototype/3.jpg"/>
 								</a>								
 							</Link>
 							<div id="prices-buyer-collected">
@@ -549,7 +549,7 @@ const PrototypeBuyerCollected = () => {
 									width={150}  
 									height={150}  
 									id="photo-buyer-collected" 
-									src="/images/prototype/4.jpg"/>
+									src="images/prototype/4.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">
@@ -575,7 +575,7 @@ const PrototypeBuyerCollected = () => {
 									width={150}  
 									height={150}  
 									id="photo-buyer-collected" 
-									src="/images/prototype/5.jpg"
+									src="images/prototype/5.jpg"
 									/>
 								</a>
 							</Link>
@@ -602,7 +602,7 @@ const PrototypeBuyerCollected = () => {
 									width={150}  
 									height={150}  
 									id="photo-buyer-collected" 
-									src="/images/prototype/6.jpg"/>
+									src="images/prototype/6.jpg"/>
 								</a>
 							</Link>
 							<div id="prices-buyer-collected">

@@ -472,7 +472,7 @@ const PrototypeSellerCreated = () => {
 						alt=""
 						width={50}
 						height={50}  
-						src="/images/prototype/coinbase-wallet-logo.png"/>
+						src="images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -487,7 +487,7 @@ const PrototypeSellerCreated = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
@@ -505,7 +505,7 @@ const PrototypeSellerCreated = () => {
 						height={16}
 						width={15}
 						id="arells-icon-seller-created" 
-						src="/images/prototype/Arells-Icon-Home.png"/>
+						src="images/prototype/Arells-Icon-Home.png"/>
 					</a>	
 				</Link>							
 				{cartLinkSellerCreated && (
@@ -516,7 +516,7 @@ const PrototypeSellerCreated = () => {
 						height={15}
 						width={16} 
 						id="cart-icon-seller-created" 
-						src="/images/prototype/shopping-cart-empty.png"/>
+						src="images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
 				{cartLinkConnectedSellerCreated && (
@@ -528,7 +528,7 @@ const PrototypeSellerCreated = () => {
 							height={15}
 							width={16}
 							id="cart-icon-seller-created" 
-							src="/images/prototype/shopping-cart-empty.png"/>
+							src="images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
 				)}		
@@ -541,7 +541,7 @@ const PrototypeSellerCreated = () => {
 							height={15}
 							width={16} 
 							id="cart-icon-seller-created" 
-							src="/images/prototype/shopping-cart-full.png"/>
+							src="images/prototype/shopping-cart-full.png"/>
 						</a>
 					</Link>	
 				)}	
@@ -552,7 +552,7 @@ const PrototypeSellerCreated = () => {
 			width={110}  
 			height={35} 
 			id="word-logo-seller-created" 
-			src="/images/Arells-Logo-Ebony.png"/>	
+			src="images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-seller-created">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivSellerCreated && (
 				<div id="wallet-connected-div-seller-created">
@@ -570,7 +570,7 @@ const PrototypeSellerCreated = () => {
 				width={100}  
 				height={100}
 				id="profile-photo-seller-created" 
-				src="/images/prototype/proto-banner.jpg"/>
+				src="images/prototype/proto-banner.jpg"/>
 			</div>	 
 			<h1 id="name-seller-created">Abstract Kadabra</h1>  
 			<p id="description-seller-created">Here rests life&apos;s abstractions captured in majestic endeavors.</p> 
@@ -584,7 +584,7 @@ const PrototypeSellerCreated = () => {
 					width={15}  
 					height={8}
 					id="copy-link-icon-seller-created" 
-					src="/images/prototype/link.png"/>
+					src="images/prototype/link.png"/>
 				COPY LINK</button>	
 			</div>
 			<hr id="profileline-seller-created"/>
@@ -607,7 +607,7 @@ const PrototypeSellerCreated = () => {
 								width={200}  
 								height={200}  
 								id="photo-seller-created" 
-								src="/images/prototype/1.jpg"/>
+								src="images/prototype/1.jpg"/>
 							</a>
 						</Link>	
 						{blueOrangePricesBeforeSellerCreated && (
@@ -658,7 +658,7 @@ const PrototypeSellerCreated = () => {
 								width={200}  
 								height={200}  
 								id="photo-seller-created" 
-								src="/images/prototype/2.jpg"/>
+								src="images/prototype/2.jpg"/>
 							</a>
 						</Link>	
 						{beachHousesPricesBeforeSellerCreated && (
@@ -709,7 +709,7 @@ const PrototypeSellerCreated = () => {
 								width={200}  
 								height={200}  
 								id="photo-seller-created" 
-								src="/images/prototype/3.jpg"/>
+								src="images/prototype/3.jpg"/>
 							</a>
 						</Link>	
 						{colourGlassPricesBeforeSellerCreated && (
@@ -760,7 +760,7 @@ const PrototypeSellerCreated = () => {
 								width={200}  
 								height={200}  
 								id="photo-seller-created" 
-								src="/images/prototype/4.jpg"/>
+								src="images/prototype/4.jpg"/>
 							</a>
 						</Link>	
 						{layersPricesBeforeSellerCreated && (
@@ -811,7 +811,7 @@ const PrototypeSellerCreated = () => {
 								width={200}  
 								height={200}  
 								id="photo-seller-created" 
-								src="/images/prototype/5.jpg"/>
+								src="images/prototype/5.jpg"/>
 							</a>
 						</Link>	
 						{succinctDropPricesBeforeSellerCreated && (
@@ -862,7 +862,7 @@ const PrototypeSellerCreated = () => {
 								width={200}  
 								height={200}  
 								id="photo-seller-created" 
-								src="/images/prototype/6.jpg"/>
+								src="images/prototype/6.jpg"/>
 							</a>
 						</Link>			
 						{paintRainPricesBeforeSellerCreated && (

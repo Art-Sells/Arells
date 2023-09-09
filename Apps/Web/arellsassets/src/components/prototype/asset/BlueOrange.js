@@ -233,7 +233,7 @@ const BlueOrange = () => {
 						alt=""
 						width={50}
 						height={50} 
-						src="/images/prototype/coinbase-wallet-logo.png"/>
+						src="images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -257,7 +257,7 @@ const BlueOrange = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
@@ -276,7 +276,7 @@ const BlueOrange = () => {
 							height={16}
 							width={15}
 							 id="arells-icon-blue-orange" 
-							 src="/images/prototype/Arells-Icon-Home.png"/>
+							 src="images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkBlueOrange && (
@@ -287,7 +287,7 @@ const BlueOrange = () => {
 							height={15}
 							width={16}
 							id="cart-icon-blue-orange"
-							 src="/images/prototype/shopping-cart-empty.png"/>
+							 src="images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedBlueOrange && (
@@ -299,7 +299,7 @@ const BlueOrange = () => {
 								height={15}
 								width={16}
 								id="cart-icon-blue-orange" 
-								src="/images/prototype/shopping-cart-empty.png"/>
+								src="images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -313,7 +313,7 @@ const BlueOrange = () => {
 								height={15}
 								width={16}
 								 id="cart-icon-full-blue-orange"
-								  src="/images/prototype/shopping-cart-full.png"/>
+								  src="images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -324,7 +324,7 @@ const BlueOrange = () => {
 				width={110}  
 				height={35} 
 				id="word-logo-blue-orange" 
-				src="/images/Arells-Logo-Ebony.png"/>	
+				src="images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-blue-orange">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivBlueOrange && (
 					<div id="wallet-connected-div-blue-orange">
@@ -343,7 +343,7 @@ const BlueOrange = () => {
 				width={400}  
 				height={400}
 				 id="photo-blue-orange"
-				  src="/images/prototype/1.jpg"/>
+				  src="images/prototype/1.jpg"/>
 				<h3 id="name-blue-orange">Blue Orange</h3> 
 				<div id="share-div-blue-orange">
 					<p id="share-div-desc-blue-orange">SHARE</p>
@@ -355,7 +355,7 @@ const BlueOrange = () => {
 						width={15}  
 						height={8}
 						id="copy-link-icon-blue-orange"
-						 src="/images/prototype/link.png"/>
+						 src="images/prototype/link.png"/>
 						COPY LINK
 					</button>	
 				</div>
@@ -438,7 +438,7 @@ const BlueOrange = () => {
 							width={25}  
 							height={25}
 							 id="fingerprints-icon"
-							  src="/images/prototype/etherscan-logo.png"/>
+							  src="images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
@@ -450,7 +450,7 @@ const BlueOrange = () => {
 							width={24}  
 							height={25}
 							 id="fingerprints-icon"
-							  src="/images/prototype/ipfs.png"/>
+							  src="images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
@@ -462,7 +462,7 @@ const BlueOrange = () => {
 							width={25}  
 							height={23}
 							 id="fingerprints-icon"
-							  src="/images/prototype/ipfslite.png"/>
+							  src="images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		

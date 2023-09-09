@@ -234,7 +234,7 @@ const ColourGlass = () => {
 						alt=""
 						width={50}
 						height={50} 
-						 src="/images/prototype/coinbase-wallet-logo.png"/>
+						 src="images/prototype/coinbase-wallet-logo.png"/>
 					</button>		
 				</div>
 			</div>	
@@ -258,7 +258,7 @@ const ColourGlass = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="/images/Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
@@ -277,7 +277,7 @@ const ColourGlass = () => {
 							height={16}
 							width={15}
 							 id="arells-icon-colour-glass"
-							  src="/images/prototype/Arells-Icon-Home.png"/>
+							  src="images/prototype/Arells-Icon-Home.png"/>
 						</a>
 					</Link>	
 					{cartLinkColourGlass && (
@@ -288,7 +288,7 @@ const ColourGlass = () => {
 							height={15}
 							width={16}
 							 id="cart-icon-colour-glass"
-							  src="/images/prototype/shopping-cart-empty.png"/>
+							  src="images/prototype/shopping-cart-empty.png"/>
 						</button>
 					)}	
 					{cartLinkConnectedColourGlass && (
@@ -300,7 +300,7 @@ const ColourGlass = () => {
 								height={15}
 								width={16}
 								 id="cart-icon-colour-glass"
-								  src="/images/prototype/shopping-cart-empty.png"/>
+								  src="images/prototype/shopping-cart-empty.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -314,7 +314,7 @@ const ColourGlass = () => {
 								height={15}
 								width={16} 
 								 id="cart-icon-full-colour-glass"
-								  src="/images/prototype/shopping-cart-full.png"/>
+								  src="images/prototype/shopping-cart-full.png"/>
 							</a>	
 						</Link>
 					)}	
@@ -325,7 +325,7 @@ const ColourGlass = () => {
 				width={110}  
 				height={35}
 				 id="word-logo-colour-glass"
-				  src="/images/Arells-Logo-Ebony.png"/>	
+				  src="images/Arells-Logo-Ebony.png"/>	
 				<p id="slogan-colour-glass">NEVER LOSE MONEY SELLING ART</p>
 				{walletConnectedDivColourGlass && (
 					<div id="wallet-connected-div-colour-glass">
@@ -344,7 +344,7 @@ const ColourGlass = () => {
 				width={400}  
 				height={400}
 				 id="photo-colour-glass"
-				  src="/images/prototype/3.jpg"/>
+				  src="images/prototype/3.jpg"/>
                 <h3 id="name-colour-glass">Colour Glass</h3>
                 <div id="share-div-colour-glass">
                     <p id="share-div-desc-colour-glass">SHARE</p> 
@@ -356,7 +356,7 @@ const ColourGlass = () => {
 						width={15}  
 						height={8}
 						id="copy-link-icon-colour-glass"
-						 src="/images/prototype/link.png"/>
+						 src="images/prototype/link.png"/>
                         COPY LINK
                     </button>	
                 </div>
@@ -439,7 +439,7 @@ const ColourGlass = () => {
 							width={25}  
 							height={25}
 							 id="fingerprints-icon"
-							  src="/images/prototype/etherscan-logo.png"/>
+							  src="images/prototype/etherscan-logo.png"/>
 						</button>	
 					</span>
 					<span>
@@ -451,7 +451,7 @@ const ColourGlass = () => {
 							width={24}  
 							height={25}
 							 id="fingerprints-icon"
-							  src="/images/prototype/ipfs.png"/>
+							  src="images/prototype/ipfs.png"/>
 						</button>	
 					</span>
 					<span>
@@ -463,7 +463,7 @@ const ColourGlass = () => {
 							width={25}  
 							height={23}
 							 id="fingerprints-icon"
-							  src="/images/prototype/ipfslite.png"/>
+							  src="images/prototype/ipfslite.png"/>
 						</button>	
 					</span>
 				</div>	    		
