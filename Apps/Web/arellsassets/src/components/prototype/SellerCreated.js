@@ -613,7 +613,7 @@ const PrototypeSellerCreated = () => {
 						{blueOrangePricesBeforeSellerCreated && (
 							<div id="blue-orange-prices-before-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-blue-orange-before-seller-created">1,800</p>
+								<p id="PAP-blue-orange-before-seller-created">$1,800</p>
 								<hr id="priceline-seller-created"/>
 								<p id="yourprice-seller-created">Price</p>
 								<p id="price-blue-orange-before-seller-created">$1,200</p>
