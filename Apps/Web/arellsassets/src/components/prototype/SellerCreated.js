@@ -610,6 +610,7 @@ const PrototypeSellerCreated = () => {
 								src="images/prototype/1.jpg"/>
 							</a>
 						</Link>	
+						
 						{blueOrangePricesBeforeSellerCreated && (
 							<div id="blue-orange-prices-before-seller-created">
 								<p id="PAP-seller-created">Price After Purchase</p>
