@@ -16,6 +16,10 @@ import Image from 'next/image';
 
 const PrototypeBuyerCollected = () => {
 
+	const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
+
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
 		const [imagesLoaded, setImagesLoaded] = useState({
@@ -296,6 +300,7 @@ const PrototypeBuyerCollected = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						loader={imageLoader}
 						id="wallet-icon"
 						alt=""
 						width={50}
@@ -309,6 +314,7 @@ const PrototypeBuyerCollected = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -322,6 +328,7 @@ const PrototypeBuyerCollected = () => {
 		{showLoadingAssetCollected && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -341,6 +348,7 @@ const PrototypeBuyerCollected = () => {
 				<Link legacyBehavior href="/">
 					<a id="icon-link-buyer-collected">
 						<Image
+						loader={imageLoader}
 						alt=""
 						height={16}
 						width={15}
@@ -351,6 +359,7 @@ const PrototypeBuyerCollected = () => {
 				{cartLinkBuyerCollected && (
 					<button id="cart-link-buyer-collected" onClick={connectWallet}>
 						<Image
+						loader={imageLoader}
 						alt=""
 						height={15}
 						width={16} 
@@ -362,6 +371,7 @@ const PrototypeBuyerCollected = () => {
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-connected-buyer-collected">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16}
@@ -375,6 +385,7 @@ const PrototypeBuyerCollected = () => {
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-full-buyer-collected">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16} 
@@ -386,6 +397,7 @@ const PrototypeBuyerCollected = () => {
 				)}		
 			</div>
 			<Image
+			loader={imageLoader}
 			alt=""
 			width={110}  
 			height={35}  
@@ -402,6 +414,7 @@ const PrototypeBuyerCollected = () => {
 			)}
 			<div id="profile-img-container-buyer-collected">
 				<Image
+				loader={imageLoader}
 				onLoad={() => handleImageLoaded('profilePhotoBuyerCollected')}
 				alt=""
 				width={100}  
@@ -416,6 +429,7 @@ const PrototypeBuyerCollected = () => {
 				<button id="copy-link-buyer-collected"
 					onClick={copyLink}>
 					<Image
+					loader={imageLoader}
 					alt=""
 					width={15}  
 					height={8}
@@ -435,6 +449,7 @@ const PrototypeBuyerCollected = () => {
 				<p id="no-art-buyer-collected">
 					no art collected
 					<Image
+					loader={imageLoader}
 					alt=""
 					width={27}  
 					height={25}  
@@ -450,6 +465,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype/asset/blue-orange">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									loader={imageLoader}
 									onLoad={() => handleImageOneLoaded('photoBuyerCollectedOne')}
 									alt=""
 									width={150}  
@@ -475,6 +491,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype/asset/beach-houses">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									loader={imageLoader}
 									onLoad={() => handleImageTwoLoaded('photoBuyerCollectedTwo')}
 									alt=""
 									width={150}  
@@ -500,6 +517,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype/asset/colour-glass">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									loader={imageLoader}
 									onLoad={() => handleImageThreeLoaded('photoBuyerCollectedThree')}
 									alt=""
 									width={150}  
@@ -525,6 +543,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype/asset/layers">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									loader={imageLoader}
 									onLoad={() => handleImageFourLoaded('photoBuyerCollectedFour')}
 									alt=""
 									width={150}  
@@ -550,6 +569,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype/asset/succinct-drop">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									 loader={imageLoader}
 									onLoad={() => handleImageFiveLoaded('photoBuyerCollectedFive')}
 									alt=""
 									width={150}  
@@ -576,6 +596,7 @@ const PrototypeBuyerCollected = () => {
 							<Link legacyBehavior href="/prototype/asset/paint-rain">
 								<a target="_self" id="photo-link-buyer-collected">
 									<Image
+									loader={imageLoader}
 									onLoad={() => handleImageSixLoaded('photoBuyerCollectedSix')}
 									alt=""
 									width={150}  

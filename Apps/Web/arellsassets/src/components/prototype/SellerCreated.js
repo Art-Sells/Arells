@@ -16,6 +16,10 @@ import Image from 'next/image';
 
 const PrototypeSellerCreated = () => {
 
+	const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
+
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
 		const [imagesLoaded, setImagesLoaded] = useState({
@@ -463,6 +467,7 @@ const PrototypeSellerCreated = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						loader={imageLoader}
 						id="wallet-icon"
 						alt=""
 						width={50}
@@ -477,6 +482,7 @@ const PrototypeSellerCreated = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+				loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -494,6 +500,7 @@ const PrototypeSellerCreated = () => {
 				<Link legacyBehavior href="/">
 					<a id="icon-link-seller-created">
 						<Image
+						loader={imageLoader}
 						alt=""
 						height={16}
 						width={15}
@@ -504,6 +511,7 @@ const PrototypeSellerCreated = () => {
 				{cartLinkSellerCreated && (
 					<button id="cart-link-seller-created" onClick={connectWallet}>
 						<Image
+						loader={imageLoader}
 						alt=""
 						height={15}
 						width={16} 
@@ -515,6 +523,7 @@ const PrototypeSellerCreated = () => {
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-connected-seller-created">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16}
@@ -527,6 +536,7 @@ const PrototypeSellerCreated = () => {
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-full-seller-created">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16} 
@@ -537,6 +547,7 @@ const PrototypeSellerCreated = () => {
 				)}	
 			</div>
 			<Image
+			loader={imageLoader}
 			alt=""
 			width={110}  
 			height={35} 
@@ -553,6 +564,7 @@ const PrototypeSellerCreated = () => {
 			)}	
 			<div id="profile-img-container-seller-created">
 				<Image
+				loader={imageLoader}
 				onLoad={() => handleImageLoaded('profilePhotoSellerCreated')}
 				alt=""
 				width={100}  
@@ -567,6 +579,7 @@ const PrototypeSellerCreated = () => {
 				<button id="copy-link-seller-created"
 				onClick={copyLink}>
 					<Image
+					loader={imageLoader}
 					alt=""
 					width={15}  
 					height={8}
@@ -588,6 +601,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype/asset/blue-orange">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								loader={imageLoader}
 								onLoad={() => handleImageLoaded('photoSellerCreatedOne')}
 								alt=""
 								width={200}  
@@ -638,6 +652,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype/asset/beach-houses">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								loader={imageLoader}
 								onLoad={() => handleImageLoaded('photoSellerCreatedTwo')}
 								alt=""
 								width={200}  
@@ -688,6 +703,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype/asset/colour-glass">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								loader={imageLoader}
 								onLoad={() => handleImageLoaded('photoSellerCreatedThree')}
 								alt=""
 								width={200}  
@@ -738,6 +754,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype/asset/layers">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								loader={imageLoader}
 								onLoad={() => handleImageLoaded('photoSellerCreatedFour')}
 								alt=""
 								width={200}  
@@ -788,6 +805,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype/asset/succinct-drop">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								loader={imageLoader}
 								onLoad={() => handleImageLoaded('photoSellerCreatedFive')}
 								alt=""
 								width={200}  
@@ -838,6 +856,7 @@ const PrototypeSellerCreated = () => {
 						<Link legacyBehavior href="/prototype/asset/paint-rain">
 							<a target="_self" id="photo-link-seller-created">
 								<Image
+								loader={imageLoader}
 								onLoad={() => handleImageLoaded('photoSellerCreatedSix')}
 								alt=""
 								width={200}  

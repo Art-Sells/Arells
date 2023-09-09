@@ -17,6 +17,10 @@ import Image from 'next/image';
 
 const PaintRain = () => {
 
+	const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
+
 	//Loader Functions
 	const [showLoading, setLoading] = useState(true);
 	const [imagesLoaded, setImagesLoaded] = useState({
@@ -225,6 +229,7 @@ const PaintRain = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						loader={imageLoader}
 						onLoad={() => handleImageLoaded('walletIcon')}
 						id="wallet-icon"
 						alt=""
@@ -249,6 +254,7 @@ const PaintRain = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -267,6 +273,7 @@ const PaintRain = () => {
 					<Link legacyBehavior href="/">
 						<a id="icon-link-paint-rain">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={16}
 							width={15}
@@ -277,6 +284,7 @@ const PaintRain = () => {
 					{cartLinkPaintRain && (
 						<button id="cart-link-paint-rain" onClick={connectWallet}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={16}
 							width={15}
@@ -288,6 +296,7 @@ const PaintRain = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-connected-paint-rain">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16}
@@ -301,6 +310,7 @@ const PaintRain = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-full-paint-rain">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16}
@@ -311,6 +321,7 @@ const PaintRain = () => {
 					)}	
 				</div>
 				<Image
+				loader={imageLoader}
 				alt=""
 				width={110}  
 				height={35}
@@ -328,6 +339,7 @@ const PaintRain = () => {
 
             <div id="paint-rain">
                 <Image
+				loader={imageLoader}
 				onLoad={() => handleImageLoaded('photoPaintRain')}
 				alt=""
 				width={400}  
@@ -340,6 +352,7 @@ const PaintRain = () => {
                     <button id="copy-link-paint-rain"
                     onClick={copyLink}>
                         <Image
+						loader={imageLoader}
 						alt=""
 						width={15}  
 						height={8}
@@ -422,6 +435,7 @@ const PaintRain = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={25}
@@ -433,6 +447,7 @@ const PaintRain = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={24}  
 							height={25}
@@ -444,6 +459,7 @@ const PaintRain = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={23}

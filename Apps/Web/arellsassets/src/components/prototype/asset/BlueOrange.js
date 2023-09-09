@@ -16,6 +16,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const BlueOrange = () => {
+	
+	const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
 
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
@@ -224,6 +228,7 @@ const BlueOrange = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						loader={imageLoader}
 						id="wallet-icon"
 						alt=""
 						width={50}
@@ -247,6 +252,7 @@ const BlueOrange = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -265,6 +271,7 @@ const BlueOrange = () => {
 					<Link legacyBehavior href="/">
 						<a id="icon-link-blue-orange">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={16}
 							width={15}
@@ -275,6 +282,7 @@ const BlueOrange = () => {
 					{cartLinkBlueOrange && (
 						<button id="cart-link-blue-orange" onClick={connectWallet}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16}
@@ -286,6 +294,7 @@ const BlueOrange = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-connected-blue-orange">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16}
@@ -299,6 +308,7 @@ const BlueOrange = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-full-blue-orange">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16}
@@ -309,6 +319,7 @@ const BlueOrange = () => {
 					)}	
 				</div>
 				<Image
+				loader={imageLoader}
 				alt=""
 				width={110}  
 				height={35} 
@@ -326,6 +337,7 @@ const BlueOrange = () => {
 
 			<div id="blue-orange">
 				<Image
+				loader={imageLoader}
 				onLoad={() => handleImageLoaded('photoBlueOrange')}
 				alt=""
 				width={400}  
@@ -338,6 +350,7 @@ const BlueOrange = () => {
 					<button id="copy-link-blue-orange"
 					onClick={copyLink}>
 						<Image
+						loader={imageLoader}
 						alt=""
 						width={15}  
 						height={8}
@@ -420,6 +433,7 @@ const BlueOrange = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={25}
@@ -431,6 +445,7 @@ const BlueOrange = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={24}  
 							height={25}
@@ -442,6 +457,7 @@ const BlueOrange = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={23}

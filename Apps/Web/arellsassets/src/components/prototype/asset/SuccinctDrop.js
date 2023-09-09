@@ -17,6 +17,10 @@ import Image from 'next/image';
 
 const SuccinctDrop = () => {
 
+	const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
+
 	//Loader Functions
 	const [showLoading, setLoading] = useState(true);
 	const [imagesLoaded, setImagesLoaded] = useState({
@@ -226,6 +230,7 @@ const SuccinctDrop = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						loader={imageLoader}
 						id="wallet-icon"
 						alt=""
 						width={50}
@@ -250,6 +255,7 @@ const SuccinctDrop = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -268,6 +274,7 @@ const SuccinctDrop = () => {
 					<Link legacyBehavior href="/">
 						<a id="icon-link-succinct-drop">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={16}
 							width={15}
@@ -278,6 +285,7 @@ const SuccinctDrop = () => {
 					{cartLinkSuccinctDrop && (
 						<button id="cart-link-succinct-drop" onClick={connectWallet}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16}
@@ -289,6 +297,7 @@ const SuccinctDrop = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-connected-succinct-drop">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16}
@@ -302,6 +311,7 @@ const SuccinctDrop = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-full-succinct-drop">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16} 
@@ -312,6 +322,7 @@ const SuccinctDrop = () => {
 					)}	
 				</div>
 				<Image
+				loader={imageLoader}
 				alt=""
 				width={110}  
 				height={35}
@@ -329,6 +340,7 @@ const SuccinctDrop = () => {
 
             <div id="succinct-drop">
                 <Image
+				loader={imageLoader}
 				onLoad={() => handleImageLoaded('photoSuccinctDrop')}
 				alt=""
 				width={400}  
@@ -341,6 +353,7 @@ const SuccinctDrop = () => {
                     <button id="copy-link-succinct-drop"
                     onClick={copyLink}>
                         <Image
+						loader={imageLoader}
 						alt=""
 						width={15}  
 						height={8}
@@ -423,6 +436,7 @@ const SuccinctDrop = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={25}
@@ -434,6 +448,7 @@ const SuccinctDrop = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={25}
@@ -445,6 +460,7 @@ const SuccinctDrop = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={23}

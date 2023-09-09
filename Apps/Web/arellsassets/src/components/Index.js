@@ -15,6 +15,9 @@ import Image from 'next/image';
 
 const Index = () => {
 
+  const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
 
   //Loader Functions
   const [showLoading, setLoading] = useState(true);
@@ -63,6 +66,7 @@ const Index = () => {
       {showLoading && (
         <div id="spinnerBackground">
           <Image 
+           loader={imageLoader}
             alt="" 
             width={29}
             height={30}
@@ -75,6 +79,7 @@ const Index = () => {
       )}
 
         <Image 
+        loader={imageLoader}
         onLoad={() => handleImageLoaded('arellsIcon')}
         alt="" 
         width={80}
@@ -85,6 +90,7 @@ const Index = () => {
         <br/>
         
         <Image
+        loader={imageLoader}
          onLoad={() => handleImageLoaded('wordLogo')}
          alt=""
          width={120}

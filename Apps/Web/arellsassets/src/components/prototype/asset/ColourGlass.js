@@ -17,6 +17,10 @@ import Image from 'next/image';
 
 const ColourGlass = () => {
 
+	const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
+
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
 		const [imagesLoaded, setImagesLoaded] = useState({
@@ -225,6 +229,7 @@ const ColourGlass = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						loader={imageLoader}
 						id="wallet-icon"
 						alt=""
 						width={50}
@@ -248,6 +253,7 @@ const ColourGlass = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -266,6 +272,7 @@ const ColourGlass = () => {
 					<Link legacyBehavior href="/">
 						<a id="icon-link-colour-glass">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={16}
 							width={15}
@@ -276,6 +283,7 @@ const ColourGlass = () => {
 					{cartLinkColourGlass && (
 						<button id="cart-link-colour-glass" onClick={connectWallet}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16}
@@ -287,6 +295,7 @@ const ColourGlass = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-connected-colour-glass">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16}
@@ -300,6 +309,7 @@ const ColourGlass = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-full-colour-glass">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16} 
@@ -310,6 +320,7 @@ const ColourGlass = () => {
 					)}	
 				</div>
 				<Image
+				loader={imageLoader}
 				alt=""
 				width={110}  
 				height={35}
@@ -327,6 +338,7 @@ const ColourGlass = () => {
 
             <div id="colour-glass">
                 <Image
+				loader={imageLoader}
 				onLoad={() => handleImageLoaded('photoColourGlass')}
 				alt=""
 				width={400}  
@@ -339,6 +351,7 @@ const ColourGlass = () => {
                     <button id="copy-link-colour-glass"
                     onClick={copyLink}>
                         <Image
+						loader={imageLoader}
 						alt=""
 						width={15}  
 						height={8}
@@ -421,6 +434,7 @@ const ColourGlass = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={25}
@@ -432,6 +446,7 @@ const ColourGlass = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={24}  
 							height={25}
@@ -443,6 +458,7 @@ const ColourGlass = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={23}

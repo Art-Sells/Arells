@@ -16,6 +16,10 @@ import Image from 'next/image';
 
 const PrototypeBuyerCreated = () => {
 
+	const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
+
 			//Loader Functions
 			const [showLoading, setLoading] = useState(true);
 			const [imagesLoaded, setImagesLoaded] = useState({
@@ -151,6 +155,7 @@ const PrototypeBuyerCreated = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						loader={imageLoader}
 						id="wallet-icon"
 						alt=""
 						width={50}
@@ -164,6 +169,7 @@ const PrototypeBuyerCreated = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -184,6 +190,7 @@ const PrototypeBuyerCreated = () => {
 				<Link legacyBehavior href="/">
 					<a id="icon-link-buyer-created">
 						<Image
+						loader={imageLoader}
 						alt=""
 						height={16}
 						width={15}
@@ -194,6 +201,7 @@ const PrototypeBuyerCreated = () => {
 				{cartLinkBuyerCreated && (
 					<button id="cart-link-buyer-created" onClick={connectWallet}>
 						<Image
+						loader={imageLoader}
 						alt=""
 						height={15}
 						width={16} 
@@ -205,6 +213,7 @@ const PrototypeBuyerCreated = () => {
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-connected-buyer-created">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16}
@@ -217,6 +226,7 @@ const PrototypeBuyerCreated = () => {
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-full-buyer-created">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16} 
@@ -227,6 +237,7 @@ const PrototypeBuyerCreated = () => {
 				)}	
 			</div>
 			<Image
+			loader={imageLoader}
 			alt=""
 			width={110}  
 			height={35} 
@@ -243,6 +254,7 @@ const PrototypeBuyerCreated = () => {
 			)}	
 			<div id="profile-img-container-buyer-created">
 				<Image
+				loader={imageLoader}
 				onLoad={() => handleImageLoaded('profilePhotoBuyerCreated')}
 				alt=""
 				width={100}  
@@ -257,6 +269,7 @@ const PrototypeBuyerCreated = () => {
 				<button id="copy-link-buyer-created"
 				onClick={copyLink}>
 					<Image
+					loader={imageLoader}
 					alt=""
 					width={15}  
 					height={8} 
@@ -275,6 +288,7 @@ const PrototypeBuyerCreated = () => {
 			<p id="no-art-buyer-created">
 				no art created
 				<Image
+				loader={imageLoader}
 				alt=""
 				width={25}  
 				height={25}

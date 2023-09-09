@@ -15,7 +15,7 @@ import Image from 'next/image';
 const PrototypeCart = () => {
 
 	const imageLoader = ({ src, width, quality }) => {
-		return `https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/${src}?w=${width}&q=${quality || 100}`
+		return `/${src}?w=${width}&q=${quality || 100}`
 	  }
 
 		//Loader Functions
@@ -549,7 +549,7 @@ const PrototypeCart = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoading && (
@@ -564,7 +564,7 @@ const PrototypeCart = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingCart && (
@@ -579,7 +579,7 @@ const PrototypeCart = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingOne && (
@@ -593,7 +593,7 @@ const PrototypeCart = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingTwo && (
@@ -607,7 +607,7 @@ const PrototypeCart = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingThree && (
@@ -621,7 +621,7 @@ const PrototypeCart = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingFour && (
@@ -635,7 +635,7 @@ const PrototypeCart = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingFive && (
@@ -649,7 +649,7 @@ const PrototypeCart = () => {
 				width={29}
 				height={30}
 				id="arells-loader-icon" 
-				src="Arells-Icon.png"/>        
+				src="images/Arells-Icon.png"/>        
 			</div>
 		)}
 		{showLoadingSix && (
@@ -667,7 +667,7 @@ const PrototypeCart = () => {
 					height={16}
 					width={15} 
 					id="arells-icon-cart" 
-					src="prototype/Arells-Icon-Home.png"/>
+					src="images/prototype/Arells-Icon-Home.png"/>
 				</a>		
 				<button id="cart-link-cart">
 					<Image
@@ -677,7 +677,7 @@ const PrototypeCart = () => {
 					height={15}
 					width={16}
 					id="cart-icon-cart" 
-					src="prototype/shopping-cart-empty.png"/>
+					src="images/prototype/shopping-cart-empty.png"/>
 				</button>	
 			</div>
 			<Image
@@ -687,7 +687,7 @@ const PrototypeCart = () => {
 			width={110}  
 			height={35} 
 			id="word-logo-cart" 
-			src="Arells-Logo-Ebony.png"/>	
+			src="images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-cart">NEVER LOSE MONEY SELLING ART</p>
 			{walletConnectedDivCart && (
 				<div id="wallet-connected-div-cart">
@@ -708,7 +708,7 @@ const PrototypeCart = () => {
 						width={27}  
 						height={25}
 						id="cart-icon-collected-cart" 
-						src="prototype/shopping-cart-empty.png"/>
+						src="images/prototype/shopping-cart-empty.png"/>
 					</p>
 				</div>
 			)}
@@ -749,7 +749,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="prototype/1.jpg"/>
+										src="images/prototype/1.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -768,7 +768,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="prototype/delete.png"/>
+									src="images/prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -784,7 +784,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="prototype/2.jpg"/>
+										src="images/prototype/2.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -803,7 +803,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20}  
 									id="del-cart" 
-									src="prototype/delete.png"/>
+									src="images/prototype/delete.png"/>
 								</button>	     	
 							</div>
 						)}
@@ -819,7 +819,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="prototype/3.jpg"/>
+										src="images/prototype/3.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -838,7 +838,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="prototype/delete.png"/>
+									src="images/prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}
@@ -854,7 +854,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="prototype/4.jpg"/>
+										src="images/prototype/4.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -873,7 +873,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="prototype/delete.png"/>
+									src="images/prototype/delete.png"/>
 								</button>
 							</div>
 						)}
@@ -889,7 +889,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="prototype/5.jpg"/>
+										src="images/prototype/5.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -924,7 +924,7 @@ const PrototypeCart = () => {
 										width={150}  
 										height={150} 
 										id="photo-cart" 
-										src="prototype/6.jpg"/>
+										src="images/prototype/6.jpg"/>
 									</a>
 								</Link>	
 								<div id="prices-cart">
@@ -943,7 +943,7 @@ const PrototypeCart = () => {
 									width={18}  
 									height={20} 
 									id="del-cart" 
-									src="prototype/delete.png"/>
+									src="images/prototype/delete.png"/>
 								</button>		     	
 							</div>
 						)}

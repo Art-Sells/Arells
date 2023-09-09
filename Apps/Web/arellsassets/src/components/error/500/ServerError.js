@@ -14,6 +14,10 @@ import Image from 'next/image';
 
 const ServerError = () => {
 
+  const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
+
   //Loader Functions
   const [showLoading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState({
@@ -37,6 +41,7 @@ const ServerError = () => {
       {showLoading && (
         <div id="spinnerBackground">
           <Image 
+          loader={imageLoader}
             alt="" 
             width={29}
             height={30}
@@ -49,6 +54,7 @@ const ServerError = () => {
       )}
 
         <Image 
+        loader={imageLoader}
         onLoad={() => handleImageLoaded('arellsIcon')}
         alt="" 
         width={40}

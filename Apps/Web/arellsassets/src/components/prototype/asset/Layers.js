@@ -17,6 +17,10 @@ import Image from 'next/image';
 
 const Layers = () => {
 
+	const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
+
 		//Loader Functions
 		const [showLoading, setLoading] = useState(true);
 		const [imagesLoaded, setImagesLoaded] = useState({
@@ -225,6 +229,7 @@ const Layers = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						loader={imageLoader}
 						id="wallet-icon"
 						alt=""
 						width={50}
@@ -248,6 +253,7 @@ const Layers = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -266,6 +272,7 @@ const Layers = () => {
 					<Link legacyBehavior href="/">
 						<a id="icon-link-layers">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={16}
 							width={15}
@@ -276,6 +283,7 @@ const Layers = () => {
 					{cartLinkLayers && (
 						<button id="cart-link-layers" onClick={connectWallet}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16} 
@@ -287,6 +295,7 @@ const Layers = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-connected-layers">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16} 
@@ -300,6 +309,7 @@ const Layers = () => {
 						<Link legacyBehavior href="/prototype/cart">
 							<a id="cart-link-full-layers">
 								<Image
+								loader={imageLoader}
 								alt=""
 								height={15}
 								width={16} 
@@ -310,6 +320,7 @@ const Layers = () => {
 					)}	
 				</div>
 				<Image
+				loader={imageLoader}
 				alt=""
 				width={110}  
 				height={35}
@@ -327,6 +338,7 @@ const Layers = () => {
 
             <div id="layers">
                 <Image
+				loader={imageLoader}
 				onLoad={() => handleImageLoaded('photoLayers')}
 				alt=""
 				width={400}  
@@ -339,6 +351,7 @@ const Layers = () => {
                     <button id="copy-link-layers"
                     onClick={copyLink}>
                         <Image
+						loader={imageLoader}
 						alt=""
 						width={15}  
 						height={8}
@@ -421,6 +434,7 @@ const Layers = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={25}
@@ -432,6 +446,7 @@ const Layers = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={24}  
 							height={25}
@@ -443,6 +458,7 @@ const Layers = () => {
 						<button id="fingerprints-button"
 							onClick={comingSoon}>
 							<Image
+							loader={imageLoader}
 							alt=""
 							width={25}  
 							height={23}

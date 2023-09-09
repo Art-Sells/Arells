@@ -16,22 +16,26 @@ import Image from 'next/image';
 
 const PrototypeSellerCollected = () => {
 
-			//Loader Functions
-			const [showLoading, setLoading] = useState(true);
-			const [imagesLoaded, setImagesLoaded] = useState({
-			profilePhotoSellerCollected: false,
-			});
-			const handleImageLoaded = (imageName) => {
-			setImagesLoaded(prevState => ({ 
-				...prevState, 
-				[imageName]: true 
-			}));
-			};
-			useEffect(() => {
-			if (Object.values(imagesLoaded).every(Boolean)) {
-				setLoading(false);
-			}
-			}, [imagesLoaded]);
+	const imageLoader = ({ src, width, quality }) => {
+		return `/${src}?w=${width}&q=${quality || 100}`
+	  }
+
+	//Loader Functions
+	const [showLoading, setLoading] = useState(true);
+	const [imagesLoaded, setImagesLoaded] = useState({
+	profilePhotoSellerCollected: false,
+	});
+	const handleImageLoaded = (imageName) => {
+	setImagesLoaded(prevState => ({ 
+		...prevState, 
+		[imageName]: true 
+	}));
+	};
+	useEffect(() => {
+	if (Object.values(imagesLoaded).every(Boolean)) {
+		setLoading(false);
+	}
+	}, [imagesLoaded]);
 
 {/*<!-- useState constants below -->*/}
 	const [showCopiedLink, setCopiedLink] = useState(false);
@@ -151,6 +155,7 @@ const PrototypeSellerCollected = () => {
 					<button id="connectWallet"
 						onClick={walletConnected}>
 						<Image 
+						loader={imageLoader}
 						id="wallet-icon"
 						alt=""
 						width={50}
@@ -164,6 +169,7 @@ const PrototypeSellerCollected = () => {
 		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
+			loader={imageLoader}
 				alt="" 
 				width={29}
 				height={30}
@@ -183,6 +189,7 @@ const PrototypeSellerCollected = () => {
 				<Link legacyBehavior href="/">
 					<a id="icon-link-seller-collected">
 						<Image
+						loader={imageLoader}
 						alt=""
 						height={16}
 						width={15}
@@ -193,6 +200,7 @@ const PrototypeSellerCollected = () => {
 				{cartLinkSellerCollected && (
 					<button id="cart-link-seller-collected" onClick={connectWallet}>
 						<Image
+						loader={imageLoader}
 						alt=""
 						height={15}
 						width={16} 
@@ -204,6 +212,7 @@ const PrototypeSellerCollected = () => {
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-connected-seller-collected">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16}
@@ -216,6 +225,7 @@ const PrototypeSellerCollected = () => {
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-full-seller-collected">
 							<Image
+							loader={imageLoader}
 							alt=""
 							height={15}
 							width={16} 
@@ -226,6 +236,7 @@ const PrototypeSellerCollected = () => {
 				)}	
 			</div>
 			<Image
+			loader={imageLoader}
 			alt=""
 			width={110}  
 			height={35} 
@@ -242,6 +253,7 @@ const PrototypeSellerCollected = () => {
 			)}	
 			<div id="profile-img-container-seller-collected">
 				<Image
+				loader={imageLoader}
 				onLoad={() => handleImageLoaded('profilePhotoSellerCollected')}
 				alt=""
 				width={100}  
@@ -256,6 +268,7 @@ const PrototypeSellerCollected = () => {
 				<button id="copy-link-seller-collected"
 				onClick={copyLink}>
 					<Image
+					loader={imageLoader}
 					alt=""
 					width={15}  
 					height={8}
@@ -274,6 +287,7 @@ const PrototypeSellerCollected = () => {
 			<p id="no-art-seller-collected">
 				no art collected
 				<Image
+				loader={imageLoader}
 				alt=""
 				width={27}  
 				height={25} 
