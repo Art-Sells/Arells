@@ -345,7 +345,7 @@ const PaintRain = () => {
 				width={400}  
 				height={400}
 				id="photo-paint-rain" 
-				src="icons&images/prototype/6.jpg"/>
+				src="images/prototype/6.jpg"/>
                 <h3 id="name-paint-rain">Colour Glass</h3>
                 <div id="share-div-paint-rain">
                     <p id="share-div-desc-paint-rain">SHARE</p> 
