@@ -67,7 +67,7 @@ const Index = () => {
             width={29}
             height={30}
             id="arells-loader-icon" 
-            src="/icons&images/Arells-Icon.webp"/>        
+            src="/icons&images/Arells-Icon.jpg"/>        
         </div>
       )}
       {showLoading && (
@@ -80,7 +80,7 @@ const Index = () => {
         width={80}
         height={85}
         id="arells-iconn" 
-        src="/icons&images/Arells-Icon.webp"/>
+        src="/icons&images/Arells-Icon.jpg"/>
       
         <br/>
         
@@ -90,7 +90,7 @@ const Index = () => {
          width={120}
          height={40}
          id="word-logoo" 
-         src="/icons&images/Arells-Logo-Ebony.webp"/>	
+         src="/icons&images/Arells-Logo-Ebony.jpg"/>	
         
         <br/>
         
