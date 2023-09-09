@@ -346,7 +346,7 @@ const SuccinctDrop = () => {
 				width={400}  
 				height={400}
 				id="photo-succinct-drop"
-				src="icons&images/prototype/5.jpg"/>
+				src="images/prototype/5.jpg"/>
                 <h3 id="name-succinct-drop">Succinct Drop</h3>
                 <div id="share-div-succinct-drop">
                     <p id="share-div-desc-succinct-drop">SHARE</p> 
