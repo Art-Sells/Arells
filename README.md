@@ -28,7 +28,13 @@ Old Buyer sells your artwork for $1,000.
 - New Buyer gets: Your Artwork
 - Price After Purchase: $2,000
 
-For the first time in history, no one will ever sell any assets they acquire at a loss thanks to Arells.
+*For the first time in history, no one will ever sell any assets they acquire at a loss thanks to Arells.*
+
+This introduces a new market…
+
+#### Snail Market:
+
+A market in which no new assets are bought or sold but rather slows rendering bear markets obsolete.
 
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/Marketing/BeforeandAfterArells.jpg" width="800px"> 
 
