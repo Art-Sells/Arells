@@ -60,7 +60,7 @@ const Index = () => {
 
   return (
     <>
-      {showLoading && (
+      {/* {showLoading && (
         <div id="spinnerBackground">
           <Image 
             alt="" 
@@ -72,10 +72,10 @@ const Index = () => {
       )}
       {showLoading && (
         <div className={styles.spinner}></div>
-      )}
+      )} */}
 
         <Image 
-        onLoad={() => handleImageLoaded('arellsIcon')}
+        //onLoad={() => handleImageLoaded('arellsIcon')}
         alt="" 
         width={80}
         height={85}
@@ -85,7 +85,7 @@ const Index = () => {
         <br/>
         
         <Image
-         onLoad={() => handleImageLoaded('wordLogo')}
+         //onLoad={() => handleImageLoaded('wordLogo')}
          alt=""
          width={120}
          height={40}
