@@ -22,9 +22,9 @@ Your created artwork sells for $500.
 - Price After Purchase: $1,000
 
 Old Buyer sells your artwork for $1,000.
-- You keep: $500
+- You keep: $400
 - Arells keeps: $30
-- Old Buyer keeps: $470
+- Old Buyer keeps: $570
 - New Buyer gets: Your Artwork
 - Price After Purchase: $2,000
 
