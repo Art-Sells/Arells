@@ -52,9 +52,3 @@ _______________________________________________________________________
 
 - **Mar 2023 - May 2023**
   - [X] Prototype *[[Complete]](https://arells.com/prototype-seller-created)*----*arells.com/prototype-seller-created*
-
-- **May 2023 - Oct 2023**
-  - [ ] MVP *[[In-Development]](https://github.com/Art-Sells/Arells/tree/main/Apps/Web/ArellsWebApp)*
-
-- **Oct 2023 - indefinitely**
-  - [ ] Full iteration of product *[announced]*
