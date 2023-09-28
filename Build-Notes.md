@@ -55,7 +55,7 @@
 - Name & Description: Maximum Number of Characters.
 - Remove "Owned By" if not collected/bought/minted.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- - - Edit: (On-Off button for Price After Purchase, Listed-For-Sale/Public) [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: You Keep... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%].
+- - - Edit: Price (set)?: shows what you keep, creator keeps, fees, etc. (On-Off button for Price After Purchase, Listed-For-Sale/Public) [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%].
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
 - [For Sale]-dark-gray, [Not For Sale]-silver, [Sold]white
