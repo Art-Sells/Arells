@@ -131,7 +131,7 @@ ________________________________________________________________________________
 - NFTs = Digital Assets, 
 - Connect Wallet = Connect Store, 
 - Public Key = Address, 
-- Private Key = Key
+- Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks).
 - Make API Key Private
 
 ### Store (Default)
