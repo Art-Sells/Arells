@@ -1,6 +1,5 @@
 import { HardhatUserConfig } from "hardhat/config";
-import "@nomiclabs/hardhat-toolbox";
-import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
 import fs from 'fs';
 
 const privateKey: string = fs.readFileSync('.secret', 'utf-8');
