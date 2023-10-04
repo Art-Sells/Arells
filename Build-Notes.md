@@ -1,7 +1,7 @@
 ## Arells Build Notes...
 
 ## MVP
-- Pages separated like so: main/asset/"asset-name", main/"profile-name"
+- Pages separated like so: main/profile-name/asset-name
 - Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements]
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
@@ -128,10 +128,11 @@ ________________________________________________________________________________
 
 ## DIGITAL ASSET STORE
 
+- "Profile Name is Taken Error, and if Asset Name is taken"
 - NFTs = Digital Assets, 
 - Connect Wallet = Connect Store, 
 - Public Key = Address, 
-- Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks)
+- Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks).
 - Make API Key Private
 
 ### Store (Default)
