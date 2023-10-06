@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { Contract } from "ethers";
+import { constants as ethersConstants } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 describe("NFTMarket", function (){
@@ -14,13 +15,13 @@ describe("NFTMarket", function (){
         signers = await ethers.getSigners();
     })
 
-    const createNFT = async (tokenURI) => {
+    const createNFT = async (tokenURI: string) => {
         const transaction = await nftMarket.createNFT(tokenURI);
         const receipt = await transaction.wait();
         const tokenID = receipt.events[1].args.tokenID;
         return tokenID;
     }
-    const createAndListNFT = async (price) => {
+    const createAndListNFT = async (price: number) => {
         const tokenID = await createNFT('some token uri');
         const transaction = await nftMarket.listNFTCreator(tokenID, price);
         await transaction.wait();
@@ -52,7 +53,7 @@ describe("NFTMarket", function (){
             // Assert that the NFTTransfer event has the correct args
             const args = receipt.events[1].args; // Assuming the NFTTransfer event is the first event.
             expect(args.tokenID).to.equal(tokenID);
-            expect(args.from).to.equal(ethers.constants.AddressZero);
+            expect(args.from).to.equal(ethersConstants.AddressZero);
             expect(args.to).to.equal(creatorAddress);  // Since NFT is not minted, the `to` field should be the creator's address.
             expect(args.tokenURI).to.equal(tokenURI);
             expect(args.price).to.equal(0);
