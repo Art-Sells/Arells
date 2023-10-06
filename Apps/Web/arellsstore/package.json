@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.3",
+    "dotenv": "^16.3.1",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "web3modal": "^1.9.12"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.2.3",
