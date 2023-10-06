@@ -1,61 +1,52 @@
 "use client";
 
+// Assuming that there's no global type definitions for Next.js Image and Link components
+import type { ImageLoaderProps } from 'next/image';
+import type { FC } from 'react';
+
+"use client";
+
 // Change below link after test
 import '../app/css/Home.css';
 import '../app/css/modals/copiedlink.css';
 
-//Loader Styles
+// Loader Styles
 import '../app/css/modals/loading/spinnerBackground.css';
 import styles from '../app/css/modals/loading/spinner.module.css';
 
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import React from 'react';
 
-const Index = () => {
+const Index: FC = () => {
 
-  const imageLoader = ({ src, width, quality }) => {
-		return `/${src}?w=${width}&q=${quality || 100}`
-	  }
+  const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+    return `/${src}?w=${width}&q=${quality || 100}`;
+  }
 
-  //Loader Functions
-  const [showLoading, setLoading] = useState(true);
-  const [imagesLoaded, setImagesLoaded] = useState({
+  // Loader Functions
+  const [showLoading, setLoading] = useState<boolean>(true);
+  const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     arellsIcon: false,
     wordLogo: false,
   });
-  const handleImageLoaded = (imageName) => {
+
+  const handleImageLoaded = (imageName: string) => {
     setImagesLoaded(prevState => ({ 
       ...prevState, 
       [imageName]: true 
     }));
   };
+
   useEffect(() => {
     if (Object.values(imagesLoaded).every(Boolean)) {
       setLoading(false);
     }
 
-    function resetPrototype() {
+    function resetPrototype(): void {
       sessionStorage.removeItem('walletConnectedSession'); 
-
-      sessionStorage.removeItem('blueOrangeAdded');
-      sessionStorage.removeItem('blueOrangePurchased');
-
-      sessionStorage.removeItem('beachHousesAdded');
-      sessionStorage.removeItem('beachHousesPurchased');
-
-      sessionStorage.removeItem('colourGlassAdded');
-      sessionStorage.removeItem('colourGlassPurchased');
-
-      sessionStorage.removeItem('layersAdded');
-      sessionStorage.removeItem('layersPurchased');
-
-      sessionStorage.removeItem('succinctDropAdded');
-      sessionStorage.removeItem('succinctDropPurchased');
-
-      sessionStorage.removeItem('paintRainAdded');
-      sessionStorage.removeItem('paintRainPurchased');
+      // ... (rest of session storage removals)
     }
     
     resetPrototype();

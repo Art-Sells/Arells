@@ -10,11 +10,12 @@ import styles from '../../../app/css/modals/loading/spinner.module.css';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image, { ImageLoaderProps } from 'next/image';
+import React from 'react';
 
 const ServerError = () => {
 
-  const imageLoader = ({ src, width, quality }) => {
+  const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
 		return `/${src}?w=${width}&q=${quality || 100}`
 	  }
 
@@ -23,7 +24,7 @@ const ServerError = () => {
   const [imagesLoaded, setImagesLoaded] = useState({
     arellsIcon: false,
   });
-  const handleImageLoaded = (imageName) => {
+  const handleImageLoaded = (imageName: string) => {
     setImagesLoaded(prevState => ({ 
       ...prevState, 
       [imageName]: true 

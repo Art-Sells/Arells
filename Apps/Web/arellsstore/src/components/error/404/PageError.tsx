@@ -7,14 +7,13 @@ import '../../../app/css/error-style.css';
 import '../../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../../app/css/modals/loading/spinner.module.css';
 
-import { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image, { ImageLoaderProps } from 'next/image';
 
-const PageError = () => {
+const PageError: React.FC = () => {
 
-  const imageLoader = ({ src, width, quality }) => {
+  const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
 		return `/${src}?w=${width}&q=${quality || 100}`
 	  }
 
@@ -23,18 +22,19 @@ const PageError = () => {
   const [imagesLoaded, setImagesLoaded] = useState({
     arellsIcon: false,
   });
-  const handleImageLoaded = (imageName) => {
+  
+  const handleImageLoaded = (imageName: string) => {
     setImagesLoaded(prevState => ({ 
       ...prevState, 
       [imageName]: true 
     }));
   };
+
   useEffect(() => {
     if (Object.values(imagesLoaded).every(Boolean)) {
       setLoading(false);
     }
   }, [imagesLoaded]);
-
 
   return (
     <>
@@ -66,11 +66,10 @@ const PageError = () => {
         
         <p id="error-message">PAGE NOT FOUND</p>
     
-        {/*<!-- Change below link after test -->*/}
-        <Link legacyBehavior href="https://arells.com" >
+        {/* Change below link after test */}
+        <Link legacyBehavior href="https://arells.com">
           <a id="back-to-home">BACK TO HOME</a>
         </Link>			
-
     </>
   );
 }
