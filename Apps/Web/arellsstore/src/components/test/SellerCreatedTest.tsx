@@ -3,7 +3,7 @@
 import React from "react";
 
 // asset components (change below links after test)
-import useSigner from "../../../state/signer";
+import useSigner from "../../state/signer";
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
@@ -15,7 +15,6 @@ import '../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../app/css/modals/loading/spinner.module.css';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -28,18 +27,18 @@ const SellerCreatedTest = () => {
 
 {/*<!-- loader functions below -->*/}
     const [showLoading, setLoading] = useState(true);
-    const imageLoader = ({ src, width, quality }) => {
-        return `/${src}?w=${width}&q=${quality || 100}`
-    }
+    const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
+        return `/${src}?w=${width}&q=${quality || 100}`;
+    };
 	const [imagesLoaded, setImagesLoaded] = useState({
 		profilePhotoSellerCreated: false,
 	});
-	const handleImageLoaded = (imageName) => {
-		setImagesLoaded(prevState => ({ 
-			...prevState, 
-			[imageName]: true 
-		}));
-	};
+    const handleImageLoaded = (imageName: string) => {
+        setImagesLoaded(prevState => ({
+            ...prevState,
+            [imageName]: true 
+        }));
+    };
 	useEffect(() => {
 		if (Object.values(imagesLoaded).every(Boolean)) {
 			setLoading(false);
@@ -65,16 +64,10 @@ const SellerCreatedTest = () => {
 
 {/*<!-- Copy Links function/s below -->*/}
 
-	const router = useRouter();
-	const [fullUrl, setFullUrl] = useState('');
+	const [fullUrl, setFullUrl] = useState<string>('');
 	useEffect(() => {
-	  setFullUrl(`${window.location.origin}${'/test/seller-created'}`);
-	}, [router.asPath]);
-	const copyLink = () => {
-		navigator.clipboard.writeText(fullUrl).then(() => {
-			setCopiedLink(true);
-		});
-	};
+		setFullUrl(window.location.href);
+	}, []);
   
 	const closeCopiedLink = () => {
 	  setCopiedLink(false);
@@ -99,7 +92,7 @@ const SellerCreatedTest = () => {
         setWalletConnectedSession('true');    
     };
 
-    const [walletConnectedSession, setWalletConnectedSession] = useState(null);
+    const [walletConnectedSession, setWalletConnectedSession] = useState<string | null>(null);
     useEffect(() => {
     const sessionValue = sessionStorage.getItem('walletConnectedSession');
     setWalletConnectedSession(sessionValue);
@@ -288,11 +281,6 @@ const SellerCreatedTest = () => {
                                 {blueOrangeAddToCartSellerCreated && (
                                     <button id="blue-orange-add-to-cart-seller-created" 
                                     onClick={connectWallet}>
-                                    ADD TO CART</button>
-                                )}	
-                                {blueOrangeAddToCartConnectedSellerCreated && (
-                                    <button id="blue-orange-add-to-cart-connected-seller-created" 
-                                    onClick={addBlueOrangeToCart}>
                                     ADD TO CART</button>
                                 )}	
 								
