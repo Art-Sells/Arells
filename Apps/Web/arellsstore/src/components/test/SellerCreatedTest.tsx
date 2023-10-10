@@ -68,6 +68,11 @@ const SellerCreatedTest = () => {
 	useEffect(() => {
 		setFullUrl(window.location.href);
 	}, []);
+	const copyLink = () => {
+		navigator.clipboard.writeText(fullUrl).then(() => {
+			setCopiedLink(true);
+		});
+	};
   
 	const closeCopiedLink = () => {
 	  setCopiedLink(false);
@@ -253,11 +258,11 @@ const SellerCreatedTest = () => {
 					src="images/prototype/Add.png"/>
 				</p>
 			)}
-			{artCreatedSellerCreated && (
+			{/* {artCreatedSellerCreated && (
 				<div id="container-seller-created">
 					{assets.map((asset) => (
 						<div id="blue-orange-seller-created">
-							{/*<!-- Change below link after test -->*/}
+							// <!-- Change below link after test -->
 							<Link legacyBehavior href="/test/asset/test-asset">
 								<a target="_self" id="photo-link-seller-created">
 									<Image
@@ -288,7 +293,7 @@ const SellerCreatedTest = () => {
 						))
 					}	
 				</div>	
-			)}
+			)} */}
 		     
         </>
     );
