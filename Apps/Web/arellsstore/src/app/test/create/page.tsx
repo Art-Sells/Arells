@@ -2,23 +2,18 @@ import '../../css/prototype/asset/blue-orange.css';
 
 import React from "react";
 
+import type { Metadata } from 'next';
+
 import {SignerProvider} from "../../../../state/signer";
 
 import CreateArtTest from '../../../components/test/CreationPage/CreateArtTest';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Create Test",
   description: "Test for Creating",
   robots: "noimageindex",
-  httpEquiv: {
-    "X-UA-Compatible": "IE=edge"
-  },
-  charSet: "UTF-8",
-  //change link below after test
-  linkCanonical: "https://arells.com/test/create",
 
   openGraph: {
-    site_name: "Arells",
     title: "Create Test",
     description: "Test for Creating",
     // Change this link after testing
@@ -35,7 +30,6 @@ export const metadata = {
     title: "Create Test",
     description: "Test for Creating",
     // Change this link after testing
-    url: "https://arells.com/test/create",
     card: "summary_large_image",
     images: [
       {
