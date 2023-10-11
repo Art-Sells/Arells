@@ -2,7 +2,6 @@
 // Change below link after test
 import './css/Home.css';
 
-import { SignerProvider } from "../state/signer";
 import Index from '../components/Index';
 import React from 'react';
 import type { Metadata } from 'next';
@@ -38,11 +37,9 @@ const Home = () => {
 
   return (
     <>
-      <SignerProvider>
         <div id="overlayy">
           <Index/>
-        </div>
-      </SignerProvider>    
+        </div> 
     </>
   );
 }

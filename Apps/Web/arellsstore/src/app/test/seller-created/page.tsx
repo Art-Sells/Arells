@@ -4,7 +4,7 @@ import React from "react";
 
 import type { Metadata } from 'next';
 
-import {SignerProvider} from "../../../../state/signer";
+import {SignerProvider} from "../../../state/signer";
 
 import SellerCreatedTest from '../../../components/test/SellerCreatedTest';
 

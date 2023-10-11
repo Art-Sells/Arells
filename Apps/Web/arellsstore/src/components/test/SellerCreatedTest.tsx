@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from "react";
 
@@ -20,12 +20,12 @@ import Image from 'next/image';
 
 const SellerCreatedTest = () => {
 
-{/*<!-- asset functions below -->*/}
+// asset functions below
 	const {address, connectMetamask} = useSigner();
 
-{/*<!-- asset constants above -->*/}
+// asset constants above
 
-{/*<!-- loader functions below -->*/}
+//loader functions below 
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
@@ -44,10 +44,10 @@ const SellerCreatedTest = () => {
 			setLoading(false);
 		}
 	}, [imagesLoaded]);
-{/*<!-- loader functions above -->*/}
+// loader functions above
 
 
-{/*<!-- useState constants below -->*/}
+// useState constants below
     const [showConnectWallet, setShowConnectWallet] = useState(false);
 	const [showCopiedLink, setCopiedLink] = useState(false);
 
@@ -59,10 +59,9 @@ const SellerCreatedTest = () => {
 
     const [blueOrangeAddToCartSellerCreated, setBlueOrangeAddToCartSellerCreated] = useState(true);
 	const [blueOrangeAddToCartConnectedSellerCreated, setBlueOrangeAddToCartConnectedSellerCreated] = useState(false);
-{/*<!-- useState constants above -->*/}
+// useState constants above
 
-
-{/*<!-- Copy Links function/s below -->*/}
+// Copy Links function/s below
 
 	const [fullUrl, setFullUrl] = useState<string>('');
 	useEffect(() => {
@@ -77,15 +76,15 @@ const SellerCreatedTest = () => {
 	const closeCopiedLink = () => {
 	  setCopiedLink(false);
 	};
-{/*<!-- Copy Links function/s above -->*/}
+// Copy Links function/s above
 
-{/*<!-- Connect Wallet function/s below -->*/}
+// Connect Wallet function/s below 
     const connectWallet = () => {
         setShowConnectWallet(true);
     };
 
 	const connectWalletFunction = async () => {
-		await connectMetamask();
+		connectMetamask();
         setCartLinkSellerCreated(false);
         setCartLinkConnectedSellerCreated(true);
 		setShowConnectWallet(false);
@@ -99,10 +98,8 @@ const SellerCreatedTest = () => {
 
     const [walletConnectedSession, setWalletConnectedSession] = useState<string | null>(null);
     useEffect(() => {
-    const sessionValue = sessionStorage.getItem('walletConnectedSession');
-    setWalletConnectedSession(sessionValue);
-    }, []);
-    useEffect(() => {
+		const sessionValue = sessionStorage.getItem('walletConnectedSession');
+		setWalletConnectedSession(sessionValue);
         if (walletConnectedSession === 'true') {
             setCartLinkSellerCreated(false);
             setCartLinkConnectedSellerCreated(true);
@@ -114,7 +111,7 @@ const SellerCreatedTest = () => {
         }
     }, [walletConnectedSession]);
 
-{/*<!-- Connect Wallet function/s above -->*/}
+// Connect Wallet function/s above 
 
 	
     return (
@@ -191,7 +188,7 @@ const SellerCreatedTest = () => {
 						src="images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
-				{cartLinkConnectedSellerCreated && (
+				{/* {cartLinkConnectedSellerCreated && (
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-connected-seller-created">
 							<Image
@@ -203,7 +200,7 @@ const SellerCreatedTest = () => {
 							src="images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
-				)}	                						
+				)}	                						 */}
 			</div>
 			<Image
 			loader={imageLoader}

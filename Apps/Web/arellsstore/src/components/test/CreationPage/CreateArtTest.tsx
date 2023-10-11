@@ -44,13 +44,11 @@ const CreateArtTest = () => {
 	  };
   
 	const [walletConnectedSession, setWalletConnectedSession] = useState<string | null>(null);
+
   
 	useEffect(() => {
-	  const sessionValue = sessionStorage.getItem('walletConnectedSession');
-	  setWalletConnectedSession(sessionValue);
-	}, []);
-  
-	useEffect(() => {
+	const sessionValue = sessionStorage.getItem('walletConnectedSession');
+	setWalletConnectedSession(sessionValue);
 	  if (walletConnectedSession === 'true') {
 		setShowConnectWallet(false);
 		setCreateArtConnected(true);
@@ -61,7 +59,7 @@ const CreateArtTest = () => {
 	}, [walletConnectedSession]);
   
 	const connectWalletFunction = async () => {
-	  await connectMetamask();
+	  connectMetamask();
 	  setShowConnectWallet(false);
 	  setCreateArtConnected(true);
   
