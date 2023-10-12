@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
@@ -12,7 +12,6 @@ type SignerContextType = {
 }
 
 const SignerContext = createContext<SignerContextType>({} as any);
-
 
 const useSigner = () => useContext(SignerContext);
 

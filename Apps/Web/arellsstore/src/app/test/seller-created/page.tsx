@@ -1,4 +1,4 @@
-
+"use client"
 
 import '../../css/prototype/seller-created.css';
 
@@ -45,11 +45,11 @@ const SellerCreatedPageTest = () => {
 
   return (
     <>
+      <SignerProvider>  
         <div id="prototype-seller-created-wrapper">
-          <SignerProvider>  
             <SellerCreatedTest/>
-          </SignerProvider>  
         </div>
+      </SignerProvider>    
     </>
   );
 }
