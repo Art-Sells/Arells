@@ -43,6 +43,10 @@ const Index: FC = () => {
     if (Object.values(imagesLoaded).every(Boolean)) {
       setLoading(false);
     }
+    function resetPrototype() {
+      sessionStorage.removeItem('walletConnectedSession'); 
+    }
+    resetPrototype();
   }, [imagesLoaded]);
 
   return (

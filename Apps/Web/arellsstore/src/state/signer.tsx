@@ -41,6 +41,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             const addressValue = await signerInstance.getAddress();
             setSigner(signerInstance);
             setAddress(addressValue);
+            sessionStorage.setItem('walletConnectedSession', 'true');  
         } catch (e) {
             console.log(e);
         }

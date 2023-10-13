@@ -3,7 +3,7 @@
 import React from "react";
 
 // asset components (change below links after test)
-//import useSigner from "../../state/signer";
+import useSigner from "../../state/signer";
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
@@ -21,7 +21,7 @@ import Image from 'next/image';
 const SellerCreatedTest = () => {
 
 // asset functions below
-	//const {address, connectMetamask} = useSigner();
+	const {address, connectMetamask} = useSigner();
 
 // asset constants above
 
@@ -84,19 +84,18 @@ const SellerCreatedTest = () => {
     };
 
 	const connectWalletFunction = async () => {
-		//connectMetamask();
-        setCartLinkSellerCreated(false);
-        setCartLinkConnectedSellerCreated(true);
-		setShowConnectWallet(false);
-    
-        setBlueOrangeAddToCartSellerCreated(false);
-        setBlueOrangeAddToCartConnectedSellerCreated(true);    
+		await connectMetamask();
+        if (walletConnectedSession === 'true') {
+            setCartLinkSellerCreated(false);
+            setCartLinkConnectedSellerCreated(true);
+            
+            setCartLinkConnectedSellerCreated(true);
+            setBlueOrangeAddToCartSellerCreated(false);
         
-        sessionStorage.setItem('walletConnectedSession', 'true');
-        setWalletConnectedSession('true');    
+            setBlueOrangeAddToCartConnectedSellerCreated(true);
+        }  
     };
-
-    const [walletConnectedSession, setWalletConnectedSession] = useState<string | null>(null);
+	const [walletConnectedSession, setWalletConnectedSession] = useState<string | null>(null);
     useEffect(() => {
 		const sessionValue = sessionStorage.getItem('walletConnectedSession');
 		setWalletConnectedSession(sessionValue);
@@ -220,7 +219,7 @@ const SellerCreatedTest = () => {
 				id="profile-photo-seller-created" 
 				src="images/prototype/proto-banner.jpg"/>
 			</div>	 
-			{/* <h1 id="name-seller-created">{address}</h1>   */}
+			<h1 id="name-seller-created">{address}</h1>  
 			<p id="description-seller-created">Here rests life&apos;s abstractions captured in majestic endeavors.</p> 
 			<div id="share-div-seller-created">
 				<p id="share-div-desc-seller-created">SHARE</p>
