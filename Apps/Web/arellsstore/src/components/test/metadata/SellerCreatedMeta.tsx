@@ -1,15 +1,6 @@
-
-
-import '../../css/prototype/seller-created.css';
-
-import React from "react";
-import Head from 'next/head';
-import {SignerProvider} from "../../../state/signer";
 import type { Metadata } from 'next';
 
-import SellerCreatedTest from '../../../components/test/SellerCreatedTest';
-
-export const metadata: Metadata = {
+const sellerCreatedMeta: Metadata = {
   title: "Seller Creations Test",
   description: "Test for Seller Creations",
   robots: "noimageindex",
@@ -39,20 +30,3 @@ export const metadata: Metadata = {
     ]
   }
 }
-
-const SellerCreatedPageTest = () => {
-
-  return (
-    <>
-      <SignerProvider>  
-        <div id="prototype-seller-created-wrapper">
-            <SellerCreatedTest/>
-        </div>
-      </SignerProvider>    
-    </>
-  );
-}
-
-export default SellerCreatedPageTest;
-
-

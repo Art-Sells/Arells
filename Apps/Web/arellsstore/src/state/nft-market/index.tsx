@@ -1,30 +1,29 @@
-import { Contract } from "ethers";
+import { Contract, Signer } from "ethers";
 import useSigner from "../signer";
 
-// Ensure that NFT_MARKET is correctly typed
+// Assuming that the ABI is properly exported from the JSON
 import NFT_MARKET from "../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
 
-const NFT_MARKET_ADDRESS = String(process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS);
+const NFT_MARKET_ADDRESS: string = String(process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS);
 
 type CreateNFTValues = {
   name: string;
-  image: File | string; // Assuming the image is a File object or a string path. Modify as necessary.
+  image: string;
 }
 
 const useNFTMarket = () => {
   const { signer } = useSigner();
-  
   const nftMarket = new Contract(
     NFT_MARKET_ADDRESS, 
-    NFT_MARKET.abi as any,  // The ABI might need to be cast to any if TypeScript complains about types
-    signer
+    NFT_MARKET.abi,
+    signer as Signer
   );
 
   const createNFT = async (values: CreateNFTValues) => {
     try {
       const formData = new FormData();
       formData.append("name", values.name);
-      formData.append("image", values.image as string | Blob);  // If image is a File, FormData can accept it as a Blob
+      formData.append("image", values.image);
       
       const response = await fetch("/api/nft-storage", {
         method: "POST",
