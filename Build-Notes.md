@@ -81,6 +81,7 @@
 - - **Collected**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
+- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
 
 ### Other Store Asset       
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
@@ -93,6 +94,7 @@
 - - **Collected**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
+- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
 
 ### Cart 
 - Arells [Arells uses Crossmint as it's payment provider] info at bottom.  
