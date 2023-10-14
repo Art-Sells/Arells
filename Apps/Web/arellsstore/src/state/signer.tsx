@@ -25,7 +25,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     }, []);
     
     const [signer, setSigner] = useState<JsonRpcSigner>();
-    const [address, setAddress] = useState<string>("");
+    const [address, setAddress] = useState("");
 
     const web3ModalConfig = {
         cacheProvider: true, 
@@ -62,7 +62,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             const signerInstance = provider.getSigner();
             const addressValue = await signerInstance.getAddress();
 
-            console.log("Connected address for Signer:", addressValue);
             setSigner(signerInstance);
             setAddress(addressValue);
             sessionStorage.setItem('walletConnectedSession', 'true');

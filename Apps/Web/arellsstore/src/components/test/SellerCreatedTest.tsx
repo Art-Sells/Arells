@@ -18,14 +18,13 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+
+
 const SellerCreatedTest = () => {
 
 // asset functions below
-	const {address, connectMetamask} = useSigner();
-	useEffect(() => {
-		console.log("Connected address:", address);
-	}, [address]);
-	
+	const { address, connectMetamask} = useSigner();
+	console.log("Connected address:", address);
 
 // asset constants above
 
