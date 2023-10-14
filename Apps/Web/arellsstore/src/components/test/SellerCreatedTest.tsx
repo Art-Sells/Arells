@@ -22,6 +22,10 @@ const SellerCreatedTest = () => {
 
 // asset functions below
 	const {address, connectMetamask} = useSigner();
+	useEffect(() => {
+		console.log("Connected address:", address);
+	}, [address]);
+	
 
 // asset constants above
 

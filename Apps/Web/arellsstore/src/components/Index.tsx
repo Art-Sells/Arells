@@ -19,7 +19,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import React from 'react';
 
-const Index: FC = () => {
+const Index = () => {
 
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
@@ -33,6 +33,7 @@ const Index: FC = () => {
   });
 
   const handleImageLoaded = (imageName: string) => {
+    console.log(`Image loaded: ${imageName}`);
     setImagesLoaded(prevState => ({ 
       ...prevState, 
       [imageName]: true 
@@ -40,6 +41,7 @@ const Index: FC = () => {
   };
 
   useEffect(() => {
+    console.log('Images loaded state:', imagesLoaded);
     if (Object.values(imagesLoaded).every(Boolean)) {
       setLoading(false);
     }
