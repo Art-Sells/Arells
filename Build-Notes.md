@@ -10,7 +10,8 @@
 - Remove "Wallet ConnecteD"
 
 ### Wallet: 
-- Coinbase/USDC Wallet only.
+- Test with Metamask/Mumbai-USDC
+- Mainnet with Coinbase/Polygon-USDC
 - Loading Screen while connecting
 - Wallet Connected Modal after Success
 
@@ -120,11 +121,14 @@
 - MetaTags Social-sharing-images: AWS Cloudfront?
 - MetaTag Title: "Profile/Asset Name"
 - MetaTag Description: "Profile/Asset Description"
+- MetaTag Image(Profile): large-profile|image.name, small-profile|description
+- MetaTag Image(Asset): small-profile|image.name, large-asset|image.name
 - metadata const (upgrade from generateMetadata) must be async for dynamic changes
+- 
 - *clear Browsing/Cache Data before checking*
 - Google Search Console Index (with sitemap)
 
-#### After Testing and Before Launch: Store Private Key Cold, Uninstall and Re-install all dependencies (locally: hardhat, ethers, Web3), Help Artists find Buyers (Advertise?)[Add Featured Artists from everyone who Responded]
+#### After Testing and Before Launch: Store Private Key Cold, Delete Branched-Repo, Help Artists find Buyers [Add Featured Artists from everyone who Responded (After we launch our Wallet)]
 
 ________________________________________________________________________________________________________________________________________
 
@@ -134,7 +138,7 @@ ________________________________________________________________________________
 - NFTs = Digital Assets, 
 - Connect Wallet = Connect Store, 
 - Public Key = Address, 
-- Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks).
+- Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks [For Security purposes]).
 - Make API Key Private
 
 ### Store (Default)
