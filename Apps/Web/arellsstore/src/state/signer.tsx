@@ -8,6 +8,7 @@ import { ReactNode, createContext, useContext, useState, useEffect } from "react
 type SignerContextType = {
     signer?: JsonRpcSigner;   // The type can be more specific based on the signer object structure
     address?: string;
+    loadingWallet: boolean;
     connectMetamask: () => Promise<void>;
 }
 
@@ -16,71 +17,47 @@ const SignerContext = createContext<SignerContextType>({} as any);
 const useSigner = () => useContext(SignerContext);
 
 export const SignerProvider = ({ children }: { children: ReactNode }) => {
-    const [walletIsConnected, setWalletIsConnected] = useState<string | null>(null);
-    const [instance, setInstance] = useState<any>();
-
-    useEffect(() => {
-        const sessionValue = sessionStorage.getItem('walletConnectedSession');
-        setWalletIsConnected(sessionValue);
-    }, []);
-    
     const [signer, setSigner] = useState<JsonRpcSigner>();
     const [address, setAddress] = useState("");
+    const [loadingWallet, setLoadingWallet] = useState(false);
+
+    
+    useEffect(() => {
+        const web3modal = new Web3Modal();
+        if (web3modal.cachedProvider) {
+            connectMetamask();
+        }
+        window.ethereum.on("accountsChanged", connectMetamask);
+    }, []); 
 
     const web3ModalConfig = {
         cacheProvider: true, 
         network: "mumbai" 
     };
 
-    const disconnectWallet = () => {
-        sessionStorage.setItem('walletConnectedSession', 'false');
-        setWalletIsConnected('false');
-        setSigner(undefined);
-        setAddress("");
-        if (instance && instance.off) {
-            instance.off("accountsChanged");
-        }
-    };
-
     const connectMetamask = async () => {
-        console.log("connectMetamask function invoked");
+        setLoadingWallet(true);
         try {
             const web3modal = new Web3Modal(web3ModalConfig);
             const newInstance = await web3modal.connect();
-            setInstance(newInstance);
-
-            if (newInstance.on) {
-                newInstance.on("accountsChanged", (accounts: string[]) => {
-                    if (accounts.length === 0) {
-                        // Wallet is probably disconnected
-                        disconnectWallet();
-                    }
-                });
-            }
-
             const provider = new Web3Provider(newInstance);
-            const signerInstance = provider.getSigner();
-            const addressValue = await signerInstance.getAddress();
+            const signer = provider.getSigner();
+            const address = await signer.getAddress();
 
-            setSigner(signerInstance);
-            setAddress(addressValue);
-            sessionStorage.setItem('walletConnectedSession', 'true');
-            setWalletIsConnected('true');
+            setSigner(signer);
+            setAddress(address);
+
+            // if (typeof window !== 'undefined') {
+            //     window.location.reload();
+            // }
+            
         } catch (e) {
             console.log(e);
         }
+        setLoadingWallet(false);
     };
 
-    // useEffect to clean up event listeners when component unmounts
-    useEffect(() => {
-        return () => {
-            if (instance && instance.off) {
-                instance.off("accountsChanged");
-            }
-        };
-    }, [instance]);
-
-    const contextValue = { signer, address, connectMetamask };
+    const contextValue = { signer, address, loadingWallet, connectMetamask };
 
     return (
         <SignerContext.Provider value={ contextValue }>

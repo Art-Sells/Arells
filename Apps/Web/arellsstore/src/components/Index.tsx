@@ -2,7 +2,6 @@
 
 // Assuming that there's no global type definitions for Next.js Image and Link components
 import type { ImageLoaderProps } from 'next/image';
-import type { FC } from 'react';
 
 "use client";
 
@@ -45,10 +44,6 @@ const Index = () => {
     if (Object.values(imagesLoaded).every(Boolean)) {
       setLoading(false);
     }
-    function resetPrototype() {
-      sessionStorage.removeItem('walletConnectedSession'); 
-    }
-    resetPrototype();
   }, [imagesLoaded]);
 
   return (

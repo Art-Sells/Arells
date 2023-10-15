@@ -17,6 +17,7 @@ import '../../../app/css/modals/coming-soon.css';
 
 //Loader Styles
 import '../../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../../app/css/modals/loading/spinner.module.css';
 
 import { useEffect, useState } from 'react';
 
@@ -28,72 +29,101 @@ const CreateArtTest = () => {
 	};
   
 	const [showConnectWallet, setShowConnectWallet] = useState(false);
-	const [createArtConnected, setCreateArtConnected] = useState(true);
-  
-	const { connectMetamask } = useSigner();
+	const [createArtConnected, setCreateArtConnected] = useState(false);
+
+// asset functions below
+	const { address, loadingWallet, connectMetamask} = useSigner();
 	const { createNFT } = useNFTMarket();
+// asset constants above
   
+//Submit Nft functions below
 	const handleFormSubmit = async (values: CreationValues) => {
 		try {
-		  await createNFT(values);
-		  toast.success("You'll see your new NFT here shortly. Refresh the page.");
+			if (!address){
+				setCreateArtConnected(false);	
+				setShowConnectWallet(true);
+			}
+			else if (address) {
+				setShowConnectWallet(false);
+				setCreateArtConnected(true);
+				setLoadingWallet(false);
+				await createNFT(values);
+				toast.success("Asset created! Refresh page.");
+			}
 		} catch (e) {
-		  toast.warn("Something wrong!");
+		  toast.warn("Asset not created.");
 		  console.log(e);
 		}
 	  };
-  
-	const [walletConnectedSession, setWalletConnectedSession] = useState<string | null>(null);
+//Submit Nft functions above	  
 
-  
-	useEffect(() => {
-	const sessionValue = sessionStorage.getItem('walletConnectedSession');
-	setWalletConnectedSession(sessionValue);
-	  if (walletConnectedSession === 'true') {
-		setShowConnectWallet(false);
-		setCreateArtConnected(true);
-	  } else {
-		setShowConnectWallet(true);
-		setCreateArtConnected(false);
-	  }
-	}, [walletConnectedSession]);
-  
+// Connect Wallet function/s below 
+	const [showLoadingWallet, setLoadingWallet] = useState(false);
+
 	const connectWalletFunction = async () => {
-	  connectMetamask();
-	  setShowConnectWallet(false);
-	  setCreateArtConnected(true);
-  
-	  sessionStorage.setItem('walletConnectedSession', 'true');
-	  setWalletConnectedSession('true');
-	};
+		connectMetamask();
+		setLoadingWallet(true);
+		setShowConnectWallet(false);
+    };
+
+	useEffect(() => {
+		if (!address){
+			setCreateArtConnected(false);	
+			setShowConnectWallet(true);
+		}
+		else if (address) {
+			setShowConnectWallet(false);
+			setCreateArtConnected(true);
+			setLoadingWallet(false);
+		}
+	}, [address]);
+// Connect Wallet function/s above  
   
 	return (
 	  <>
-		{showConnectWallet && (
-		  <div id="connectWalletBuy">
-			<div className="connect-wallet-content">
-			  <p id="connect-wallet-words">CONNECT WALLET</p>
-			  <button id="connectWallet" onClick={connectWalletFunction}>
-				<Image
-				  loader={imageLoader}
-				  id="wallet-icon"
-				  alt=""
-				  width={50}
-				  height={50}
-				  src="images/prototype/coinbase-wallet-logo.png"
-				/>
-			  </button>
+		{showLoadingWallet && (
+			<div id="spinnerBackground">
+			<Image 
+				loader={imageLoader}
+				alt="" 
+				width={30}
+				height={30}
+				id="wallet-loader-icon" 
+				src="images/prototype/coinbase-wallet-logo.png"/>        
 			</div>
-		  </div>
 		)}
-  
-		<p id="stay-updated">CREATE</p>
-  
-		<br />
-  
-		<div id="blue-orange">
-		  {createArtConnected && <CreationForm onSubmit={handleFormSubmit} />}
-		</div>
+		{showLoadingWallet && (
+			<div className={styles.walletSpinner}></div>
+		)}
+
+        {showConnectWallet && (
+			<div id="connectWalletBuy">
+				<div className="connect-wallet-content">
+					<p id="connect-wallet-words">CONNECT WALLET</p>
+					<button id="connectWallet"
+						onClick={connectWalletFunction}
+						disabled={loadingWallet}>
+						<Image 
+						loader={imageLoader}
+						id="wallet-icon"
+						alt=""
+						width={50}
+						height={50}  
+						src="images/prototype/coinbase-wallet-logo.png"/>
+					</button>		
+				</div>
+			</div>	  
+		)}   
+
+		 {createArtConnected && (
+			<div>
+				<p id="stay-updated">CREATE</p>
+				<br />
+				<div id="blue-orange">
+		 		 <CreationForm onSubmit={handleFormSubmit} />
+				</div>
+			</div>
+		)}
 	  </>
 	);
   };

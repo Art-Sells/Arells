@@ -19,6 +19,25 @@
   margin-right: 50%;
 }
 
+.walletSpinner {
+  position: fixed;
+  display: block;
+  justify-content: center;
+  align-items: center;
+  z-index: 201; /* ensure it's on top of all other elements */
+  border: 7px solid rgba(77, 119, 255, 0.2);
+  border-radius: 50%;
+  border-top: 7px solid rgb(125, 155, 255);
+  width: 60px;
+  height: 60px;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  left: -36.8px;
+  margin-top: 190.5px;
+  margin-left: 50%;
+  margin-right: 50%;
+}
+
   @-webkit-keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

@@ -23,8 +23,7 @@ import Image from 'next/image';
 const SellerCreatedTest = () => {
 
 // asset functions below
-	const { address, connectMetamask} = useSigner();
-	console.log("Connected address:", address);
+	const { address, loadingWallet, connectMetamask} = useSigner();
 
 // asset constants above
 
@@ -82,36 +81,28 @@ const SellerCreatedTest = () => {
 // Copy Links function/s above
 
 // Connect Wallet function/s below 
+	const [showLoadingWallet, setLoadingWallet] = useState(false);
     const connectWallet = () => {
         setShowConnectWallet(true);
     };
 
 	const connectWalletFunction = async () => {
-		await connectMetamask();
-        if (walletConnectedSession === 'true') {
-            setCartLinkSellerCreated(false);
-            setCartLinkConnectedSellerCreated(true);
-            
-            setCartLinkConnectedSellerCreated(true);
-            setBlueOrangeAddToCartSellerCreated(false);
-        
-            setBlueOrangeAddToCartConnectedSellerCreated(true);
-        }  
+		connectMetamask();
+		setLoadingWallet(true);
+		setShowConnectWallet(false);
     };
-	const [walletConnectedSession, setWalletConnectedSession] = useState<string | null>(null);
     useEffect(() => {
-		const sessionValue = sessionStorage.getItem('walletConnectedSession');
-		setWalletConnectedSession(sessionValue);
-        if (walletConnectedSession === 'true') {
+        if (address) {
             setCartLinkSellerCreated(false);
             setCartLinkConnectedSellerCreated(true);
-            
-            setCartLinkConnectedSellerCreated(true);
-            setBlueOrangeAddToCartSellerCreated(false);
-        
-            setBlueOrangeAddToCartConnectedSellerCreated(true);
+
+			setLoadingWallet(false); 
         }
-    }, [walletConnectedSession]);
+		else if (!address){
+			setCartLinkSellerCreated(true);
+            setCartLinkConnectedSellerCreated(false);			
+		}
+    }, [address]);
 
 // Connect Wallet function/s above 
 
@@ -147,12 +138,29 @@ const SellerCreatedTest = () => {
 			<div className={styles.spinner}></div>
 		)}
 
+
+		{showLoadingWallet && (
+			<div id="spinnerBackground">
+			<Image 
+				loader={imageLoader}
+				alt="" 
+				width={30}
+				height={30}
+				id="wallet-loader-icon" 
+				src="images/prototype/coinbase-wallet-logo.png"/>        
+			</div>
+		)}
+		{showLoadingWallet && (
+			<div className={styles.walletSpinner}></div>
+		)}
+
         {showConnectWallet && (
 			<div id="connectWalletBuy">
 				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
-						onClick={connectWalletFunction}>
+						onClick={connectWalletFunction}
+						disabled={loadingWallet}>
 						<Image 
 						loader={imageLoader}
 						id="wallet-icon"
@@ -163,7 +171,8 @@ const SellerCreatedTest = () => {
 					</button>		
 				</div>
 			</div>	  
-		)}       
+		)}      
+
 {/*<!-- Modals Above -->*/}
 				<div id="header-seller-created">
 			
@@ -190,7 +199,7 @@ const SellerCreatedTest = () => {
 						src="images/prototype/shopping-cart-empty.png"/>
 					</button>
 				)}	
-				{/* {cartLinkConnectedSellerCreated && (
+				 {cartLinkConnectedSellerCreated && (
 					<Link legacyBehavior href="/prototype/cart">
 						<a id="cart-link-connected-seller-created">
 							<Image
@@ -202,7 +211,7 @@ const SellerCreatedTest = () => {
 							src="images/prototype/shopping-cart-empty.png"/>
 						</a>
 					</Link>	
-				)}	                						 */}
+				)}	                						 
 			</div>
 			<Image
 			loader={imageLoader}

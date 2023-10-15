@@ -28,3 +28,8 @@
     margin-top: 150px;
     opacity: .15;
   }
+
+  #wallet-loader-icon {
+    margin-top: 220px;
+    opacity: .8;
+  }
