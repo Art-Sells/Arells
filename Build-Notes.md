@@ -22,12 +22,7 @@
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
-- Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
-- Terms & Conditions Agreement
-- ##### "Welcome to Arells! How To Make Money {As A Collector: Buy, Set Price After Purchase (list profits), Share}{As A Creator: Create, Set Price and Price After Purchase, Share} [VIEW STORE]-(if no art collected (Created), else (Collected)).
-
-### About
-- Created by artists for artists. Arells was created from a deep frustration of how difficult it is to make a living as artists in a society that doesn't value art to the same degree as STEM (Science, Technology, Engineering and Math). But now thanks to the technology powering cryptocurrencies (blockchain), all this changes. Now for the first time in human history, neither you nor buyers of your artwork will ever lose money trading or selling art thanks to a revolutionary new financial system we're calling "Price After Purchase". With our Price After Purchase system, bear markets (markets in which people sell assets (Art, Jewelry, Real Estate, etc at a loss)) are made irrelevant hence our slogan "Never Lose Money Selling Art". And so as Arells grows, bear markets decline and this would have been impossible to create before blockchain technology. So pat yourself in the back. You are officially part of a revolution that will change not just the art industry, but asset markets everywhere.
+- ### Welcome to Arells! Never lose money selling art! [Start Selling]
 
 ### My Store
 -- ([automatically loads latest])
@@ -67,8 +62,7 @@
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [For Sale]-dark-gray, [Not For Sale]-silver,
 
-### Bell
-- Notifications on who bought what at how much (Squared for sharing)
+### Notifications
 - Send Email After Purchase 
   
 ### Other Store
@@ -122,7 +116,7 @@
 - *clear Browsing/Cache Data before checking*
 - Google Search Console Index (with sitemap)
 
-#### After Testing and Before Launch: Store Private Key Cold, Delete Branched-Repo, Help Artists find Buyers [Add Featured Artists from everyone who Responded (After we launch our Wallet)]
+#### After Testing and Before Launch: Store Private Key Cold, Delete Branched-Repo, Help Artists find Buyers and send 1 month - 2 week notifications on new Features to be added (Notifications Center/ etc) [Add Featured Artists from everyone who Responded (After we launch our Wallet)]
 
 ________________________________________________________________________________________________________________________________________
 
@@ -134,6 +128,18 @@ ________________________________________________________________________________
 - Public Key = Address, 
 - Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
 - Make API Key Private
+
+### Sign-up
+- Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
+- Terms & Conditions Agreement
+
+### Home
+
+#### How To Make Money:
+{As A Collector: Buy, Set Price After Purchase (list profits), Share}{As A Creator: Create, Set Price and Price After Purchase, Share} [VIEW STORE]-(if no art collected (Created), else (Collected)).
+
+#### About
+- Created by artists for artists. Arells was created from a deep frustration of how difficult it is to make a living as artists in a society that doesn't value art to the same degree as STEM (Science, Technology, Engineering and Math). But now thanks to the technology powering cryptocurrencies (blockchain), all this changes. Now for the first time in human history, neither you nor buyers of your artwork will ever lose money trading or selling art thanks to a revolutionary new financial system we're calling "Price After Purchase". With our Price After Purchase system, bear markets (markets in which people sell assets (Art, Jewelry, Real Estate, etc at a loss)) are made irrelevant hence our slogan "Never Lose Money Selling Art". And so as Arells grows, bear markets decline and this would have been impossible to create before blockchain technology. So pat yourself in the back. You are officially part of a revolution that will change not just the art industry, but asset markets everywhere.
 
 ### Store (Default)
 - Includes all Arells Website Components
