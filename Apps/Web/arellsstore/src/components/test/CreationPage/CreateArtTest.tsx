@@ -31,6 +31,7 @@ const CreateArtTest = () => {
 //Submit Nft functions below
 	const handleFormSubmit = async (values: CreationValues) => {
 		try {
+			console.log(values);
 
 		} catch (e) {
 		  toast.warn("Asset not created.");
