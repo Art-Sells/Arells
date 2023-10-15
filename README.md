@@ -54,5 +54,5 @@ _______________________________________________________________________
   - [X] Prototype *[[Complete]](https://arells.com/prototype-seller-created)*----*arells.com/prototype-seller-created*
  
 - **May 2023 - Dec 2023**
-    - [ ] MVP *[In-Development]*
+    - [ ] MVP *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
 
