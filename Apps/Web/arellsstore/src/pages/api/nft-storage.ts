@@ -43,9 +43,17 @@ const handler: NextApiHandler = async (req, res) => {
     // return tokenURI
     res.status(201).json({ uri: metadata.url });
   } catch (e) {
-    console.log(e);
-    return res.status(400).json(e);
-  }
+    console.error("Error in /api/nft-storage:", e);
+ 
+    if (e instanceof Error) {
+        // Handle known Error types
+        return res.status(400).json({ error: e.message });
+    } else {
+        // Handle any other type of error (string, number, etc.)
+        return res.status(400).json({ error: 'Unknown error' });
+    }
+ }
+ 
 };
 
 // Must disable bodyParser for formidable to work

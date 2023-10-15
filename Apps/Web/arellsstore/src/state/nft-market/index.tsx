@@ -1,49 +1,42 @@
-import { Contract, Signer } from "ethers";
-import useSigner from "../signer";
-
-// Assuming that the ABI is properly exported from the JSON
-import NFT_MARKET from "../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
-
-const NFT_MARKET_ADDRESS: string = String(process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS);
-
-type CreateNFTValues = {
-  name: string;
-  image: string;
-}
+import { CreationValues } from "../../components/test/CreationPage/CreationForm";
 
 const useNFTMarket = () => {
-  const { signer } = useSigner();
-  const nftMarket = new Contract(
-    NFT_MARKET_ADDRESS, 
-    NFT_MARKET.abi,
-    signer as Signer
-  );
-
-  const createNFT = async (values: CreateNFTValues) => {
+  const createNFT = async (values: CreationValues) => {
     try {
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("image", values.image);
-      
+      const data = new FormData();
+      data.append("name", values.name);
+      data.append("image", values.image);
+
+      // Logging the FormData content (for debugging)
+      for (let pair of data.entries()) {
+        console.log(pair[0] + ', ' + pair[1]); 
+      }
+
       const response = await fetch("/api/nft-storage", {
         method: "POST",
-        body: formData,
+        body: data,
       });
-      
-      if (response.status === 201) {
+
+      // Log the entire response for debugging
+      console.log("Full response:", response);
+
+      if (response.ok) { // check if response's status is okay
         const json = await response.json();
-        const transaction = await nftMarket.createNFT(json.uri);
-        await transaction.wait();
+        console.log("tokenURI: ", json.uri);
+      } else {
+        // Log error response
+        const errorData = await response.text();
+        console.error("Error from /api/nft-storage:", errorData);
       }
 
     } catch (e) {
-      console.error(e);
-      throw e;  // Throw the error to be handled by the calling function.
+      console.error("Exception while calling /api/nft-storage:", e);
+      throw e; 
     }
   };
 
   return {
-    createNFT,
+    createNFT
   };
 };
 

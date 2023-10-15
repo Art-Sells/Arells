@@ -64,17 +64,22 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                 const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
                 if (wasWalletConnected && window.ethereum.isConnected()) {
                     setConnected(true);
-    
+            
                     const provider = new Web3Provider(window.ethereum);
                     const signerInstance = provider.getSigner();
-    
+            
                     // Fetch the address only if savedAddress is not available
                     if (!savedAddress) {
                         const addressInstance = await signerInstance.getAddress();
-                        setAddress(addressInstance);
-                        localStorage.setItem("savedAddress", addressInstance);
+                        if (addressInstance) {
+                            setAddress(addressInstance);
+                            localStorage.setItem("savedAddress", addressInstance);
+                        } else {
+                            setCheckWallet(true); // Show the "REVIEW CONNECTION" modal
+                            localStorage.removeItem("walletConnected");
+                        }
                     }
-    
+            
                     setSigner(signerInstance);
                 }
             }
@@ -89,6 +94,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             }
         };
     }, []);
+    
     
 
     useEffect(() => {
