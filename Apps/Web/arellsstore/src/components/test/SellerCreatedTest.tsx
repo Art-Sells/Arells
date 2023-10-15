@@ -81,22 +81,18 @@ const SellerCreatedTest = () => {
 // Copy Links function/s above
 
 // Connect Wallet function/s below 
-	const [showLoadingWallet, setLoadingWallet] = useState(false);
     const connectWallet = () => {
         setShowConnectWallet(true);
     };
 
 	const connectWalletFunction = async () => {
 		connectMetamask();
-		setLoadingWallet(true);
 		setShowConnectWallet(false);
     };
     useEffect(() => {
         if (address) {
             setCartLinkSellerCreated(false);
             setCartLinkConnectedSellerCreated(true);
-
-			setLoadingWallet(false); 
         }
 		else if (!address){
 			setCartLinkSellerCreated(true);
@@ -136,22 +132,6 @@ const SellerCreatedTest = () => {
 		)}
 		{showLoading && (
 			<div className={styles.spinner}></div>
-		)}
-
-
-		{showLoadingWallet && (
-			<div id="spinnerBackground">
-			<Image 
-				loader={imageLoader}
-				alt="" 
-				width={30}
-				height={30}
-				id="wallet-loader-icon" 
-				src="images/prototype/coinbase-wallet-logo.png"/>        
-			</div>
-		)}
-		{showLoadingWallet && (
-			<div className={styles.walletSpinner}></div>
 		)}
 
         {showConnectWallet && (

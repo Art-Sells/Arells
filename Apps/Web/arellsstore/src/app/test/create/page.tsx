@@ -43,11 +43,11 @@ const CreateTest = () => {
 
   return (
     <>
-      <div id="blue-orange-wrapper">
-        <SignerProvider>
+      <SignerProvider>
+        <div id="blue-orange-wrapper">
           <CreateArtTest/>
-        </SignerProvider>
-      </div>
+        </div>  
+      </SignerProvider>
     </>
   );
 }
