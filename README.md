@@ -52,3 +52,7 @@ _______________________________________________________________________
 
 - **Mar 2023 - May 2023**
   - [X] Prototype *[[Complete]](https://arells.com/prototype-seller-created)*----*arells.com/prototype-seller-created*
+ 
+- **May 2023 - Dec 2023**
+    - [ ] MVP *[In-Development]*
+
