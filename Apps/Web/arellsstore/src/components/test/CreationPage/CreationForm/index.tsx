@@ -1,9 +1,11 @@
 import React from "react";
 
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import FormikInput from "./FormikInput";
 import ImagePicker from "./ImagePicker";
 import SubmitButton from "./SubmitButton";
+
+console.log("Rendering ImagePicker");
 
 export type CreationValues = {
   name: string;
@@ -30,8 +32,11 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
       validateOnMount={false}
       onSubmit={(values) => {
         if (selectedImage) {
+          console.log("Name:", values.name);
+          console.log("Image:", selectedImage);
           onSubmit({ ...values, image: selectedImage });
         } else {
+          console.log("Name:", values.name);
           console.log("Image not selected");
           // Handle the case where the image hasn't been selected if needed
         }

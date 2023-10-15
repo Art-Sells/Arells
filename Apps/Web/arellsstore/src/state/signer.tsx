@@ -23,9 +23,6 @@ const SignerContext = createContext<SignerContextType>({} as any);
 const useSigner = () => useContext(SignerContext);
 
 export const SignerProvider = ({ children }: { children: ReactNode }) => {
-    const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
-        return `/${src}?w=${width}&q=${quality || 100}`;
-    };
 
     const [signer, setSigner] = useState<JsonRpcSigner>();
     const [address, setAddress] = useState("");
@@ -44,9 +41,20 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         async function initialize() {
             if (window.ethereum) {
-                // Fetch and set the address from localStorage if it exists
+    
+                const currentAddress = window.ethereum.selectedAddress;
+    
+                if (!currentAddress) {
+                    console.error("No address available");
+                    return;
+                }
+    
                 const savedAddress = localStorage.getItem("savedAddress");
-                if (savedAddress) {
+    
+                // If savedAddress is not the same as currentAddress, remove it from localStorage
+                if (savedAddress && savedAddress !== currentAddress) {
+                    localStorage.removeItem("savedAddress");
+                } else if (savedAddress) {
                     setAddress(savedAddress);
                 }
     
@@ -59,27 +67,21 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                         localStorage.setItem("savedAddress", accounts[0]);
                     }
                 });
+    
                 window.ethereum.on("disconnect", handleDisconnect);
     
                 const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
                 if (wasWalletConnected && window.ethereum.isConnected()) {
                     setConnected(true);
-            
+    
                     const provider = new Web3Provider(window.ethereum);
                     const signerInstance = provider.getSigner();
-            
-                    // Fetch the address only if savedAddress is not available
+    
                     if (!savedAddress) {
-                        const addressInstance = await signerInstance.getAddress();
-                        if (addressInstance) {
-                            setAddress(addressInstance);
-                            localStorage.setItem("savedAddress", addressInstance);
-                        } else {
-                            setCheckWallet(true); // Show the "REVIEW CONNECTION" modal
-                            localStorage.removeItem("walletConnected");
-                        }
+                        setAddress(currentAddress);
+                        localStorage.setItem("savedAddress", currentAddress);
                     }
-            
+    
                     setSigner(signerInstance);
                 }
             }
@@ -94,6 +96,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             }
         };
     }, []);
+    
     
     
 
