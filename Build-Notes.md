@@ -119,7 +119,6 @@
 - MetaTag Image(Profile): large-profile|image.name, small-profile|description
 - MetaTag Image(Asset): small-profile|image.name, large-asset|image.name
 - metadata const (upgrade from generateMetadata) must be async for dynamic changes
-- 
 - *clear Browsing/Cache Data before checking*
 - Google Search Console Index (with sitemap)
 
