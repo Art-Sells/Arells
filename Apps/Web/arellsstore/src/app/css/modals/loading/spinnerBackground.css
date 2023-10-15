@@ -32,4 +32,18 @@
   #wallet-loader-icon {
     margin-top: 220px;
     opacity: .8;
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 1.00s;
+    animation-name: animatetop;
+    animation-duration: 1.00s;
+  }
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
   }

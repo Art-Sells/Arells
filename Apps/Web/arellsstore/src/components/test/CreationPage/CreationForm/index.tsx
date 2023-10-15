@@ -5,7 +5,7 @@ import FormikInput from "./FormikInput";
 import ImagePicker from "./ImagePicker";
 import SubmitButton from "./SubmitButton";
 
-import {useState, useEffect} from "react";
+console.log("Rendering ImagePicker");
 
 export type CreationValues = {
   name: string;
@@ -17,7 +17,12 @@ type CreationFormProps = {
 };
 
 const CreationForm = ({ onSubmit }: CreationFormProps) => { 
-  const InitialValues: CreationValues = { name: "", image: "" };
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+  const InitialValues: CreationValues = {
+    name: "",
+    image: selectedImage || ""
+  };
+  
 
   return (
     <Formik
@@ -25,12 +30,22 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
       validateOnBlur={false}
       validateOnChange={false}
       validateOnMount={false}
-      onSubmit={onSubmit}
+      onSubmit={(values) => {
+        if (selectedImage) {
+          console.log("Name:", values.name);
+          console.log("Image:", selectedImage);
+          onSubmit({ ...values, image: selectedImage });
+        } else {
+          console.log("Name:", values.name);
+          console.log("Image not selected");
+          // Handle the case where the image hasn't been selected if needed
+        }
+      }}
     >
       <Form>
-        <ImagePicker onFileChange={function (file: File): void {
-          throw new Error("no image");
-        } }/>
+      <ImagePicker onFileChange={(file: File) => {
+        setSelectedImage(file);
+      }}/>
         <div>
           <FormikInput name="name" placeholder="name" />
           <SubmitButton />

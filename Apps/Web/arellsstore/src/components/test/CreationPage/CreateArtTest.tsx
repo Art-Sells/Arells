@@ -47,8 +47,6 @@ const CreateArtTest = () => {
 				setShowConnectWallet(false);
 				setCreateArtConnected(true);
 				setLoadingWallet(false);
-				await createNFT(values);
-				toast.success("Asset created! Refresh page.");
 			}
 		} catch (e) {
 		  toast.warn("Asset not created.");
@@ -77,6 +75,7 @@ const CreateArtTest = () => {
 			setLoadingWallet(false);
 		}
 	}, [address]);
+	
 // Connect Wallet function/s above  
   
 	return (
