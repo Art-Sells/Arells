@@ -59,7 +59,7 @@
 - Name & Description: Maximum Number of Characters.
 - Remove "Owned By" if not collected/bought/minted.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- - - Edit: Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%].
+- - - Edit(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%]... [Save Changes]
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
 - [For Sale]-dark-gray, [Not For Sale]-silver, [Sold]white
@@ -98,23 +98,18 @@
 - *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
 
 ### Cart 
+- (Connect Wallet if not connected)
 - Arells [Arells uses Crossmint as it's payment provider] info at bottom.  
 
-#### After Purchase:
+#### After Purchase (Modal)
 -- [If not Signed/logged in] = message: {Congratulations on your Purchase! Sign-up or Log-in to Make Money from your Purchase}[dismiss]
-- - - Edit (View My Store Asset) 
+-- [If Signed/logged in] = Edit (View My Store Asset)
 - Message (notifications-cash-register) to seller: "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
 - Email Notifications (see cash register)
-
-#### After PAP Set:
- 1. "List For Sale? [List][DeList]{Both Open Modal} (On Buyer)... (Nothing Shows in Public Buyer)". [PAP in Seller/Buyer/Assets/Collected/Created shows Rendering while editing price]
- 2. If Yes, then "Add-to-Cart", if No then "Collected" (On Seller)[Can Edit PAP anytime]
- 3. If/Then messages corresponding to above messages. 
 
 #### Image/s
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
 - Created & Owned By (Character Limit Links)
-- [Prices Not Shown for unlisted items, only Creators/Owner's name]  
      
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
