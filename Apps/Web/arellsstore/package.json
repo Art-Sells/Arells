@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.3",
+    "@types/formidable": "2.0.4",
     "dotenv": "^16.3.1",
     "formik": "^2.4.5",
+    "formidable": "2.0.1",
     "next": "latest",
+    "nft.storage": "6.0.0",
     "react": "latest",
     "react-dom": "latest",
     "react-image-crop": "^10.1.8",
