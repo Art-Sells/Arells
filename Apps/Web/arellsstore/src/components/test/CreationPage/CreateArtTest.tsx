@@ -3,9 +3,8 @@
 import React from "react";
 
 // asset components
-import CreationForm, { CreationValues } from "./CreationForm";
+import CreationForm from "./CreationForm";
 import useNFTMarket from "../../../state/nft-market";
-import { toast } from "react-toastify";
 
 // Change below link after test
 import '../../../app/css/prototype/asset/blue-orange.css';

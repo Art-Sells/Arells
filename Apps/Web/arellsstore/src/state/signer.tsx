@@ -7,9 +7,6 @@ import { ReactNode, createContext, useContext, useState, useEffect } from "react
 
 import '../app/css/modals/walletConnected.css';
 import '../app/css/modals/loading/spinnerBackground.css';
-import styles from '../app/css/modals/loading/spinner.module.css';
-
-import Image from 'next/image';
 
 type SignerContextType = {
     signer?: JsonRpcSigner;   
@@ -41,49 +38,47 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         async function initialize() {
             if (window.ethereum) {
-    
-                const currentAddress = window.ethereum.selectedAddress;
-    
-                if (!currentAddress) {
-                    console.error("No address available");
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // Get accounts
+                
+                if (accounts.length === 0) {
+                    console.error("No account connected");
                     return;
                 }
-    
+                
+                const provider = new Web3Provider(window.ethereum);
+                const signerInstance = provider.getSigner();
+                setSigner(signerInstance);
+                
+                const currentAddress = await signerInstance.getAddress();
+                
+                setAddress(currentAddress);
+   
                 const savedAddress = localStorage.getItem("savedAddress");
     
-                // If savedAddress is not the same as currentAddress, remove it from localStorage
-                if (savedAddress && savedAddress !== currentAddress) {
-                    localStorage.removeItem("savedAddress");
-                } else if (savedAddress) {
-                    setAddress(savedAddress);
+                // If savedAddress is not the same as currentAddress, update it in localStorage
+                if (savedAddress !== currentAddress) {
+                    localStorage.setItem("savedAddress", currentAddress);
                 }
     
                 window.ethereum.on("accountsChanged", async (accounts: string[]) => {
                     if (accounts.length === 0) {
                         handleDisconnect();
+                        setSigner(undefined);  // Clear signer state
+                        setAddress("");  // Clear address state
                     } else {
-                        await connectMetamask();
-                        // Update savedAddress on account change
-                        localStorage.setItem("savedAddress", accounts[0]);
+                        const provider = new Web3Provider(window.ethereum);
+                        const signerInstance = provider.getSigner();
+                        setSigner(signerInstance);
+                        
+                        const newAddress = await signerInstance.getAddress();
+                        setAddress(newAddress);
                     }
-                });
+                });          
     
                 window.ethereum.on("disconnect", handleDisconnect);
     
                 const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
-                if (wasWalletConnected && window.ethereum.isConnected()) {
-                    setConnected(true);
-    
-                    const provider = new Web3Provider(window.ethereum);
-                    const signerInstance = provider.getSigner();
-    
-                    if (!savedAddress) {
-                        setAddress(currentAddress);
-                        localStorage.setItem("savedAddress", currentAddress);
-                    }
-    
-                    setSigner(signerInstance);
-                }
+                setConnected(wasWalletConnected);
             }
         }
     
@@ -91,13 +86,11 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     
         return () => {
             if (window.ethereum) {
-                window.ethereum.removeListener("accountsChanged", connectMetamask); // Remove listener
+                window.ethereum.removeListener("accountsChanged", connectMetamask);
                 window.ethereum.removeListener("disconnect", handleDisconnect);
             }
         };
-    }, []);
-    
-    
+    }, []);    
     
 
     useEffect(() => {
@@ -116,31 +109,38 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const connectMetamask = async () => {
+        if (window.ethereum && !(await window.ethereum.isConnected())) { // CHECK HERE
+            console.error("Ethereum provider is not connected");
+            return;
+        }
         setLoadingWallet(true);
         setLoadingWalletConnection(true);
         try {
             const web3modal = new Web3Modal(web3ModalConfig);
             const newInstance = await web3modal.connect();
+   
+            // Note: Here we are creating a new provider and signer. We could reuse 
+            // the previous ones if they were still valid.
             const provider = new Web3Provider(newInstance);
-            const signer = provider.getSigner();
-            const address = await signer.getAddress();
-
-            setSigner(signer);
-            setAddress(address);
-            localStorage.setItem("savedAddress", address); 
+            const signerInstance = provider.getSigner();
+            const currentAddress = await signerInstance.getAddress();
+   
+            setSigner(signerInstance);
             
-            setConnected(true); // Show the modal once connected
-            localStorage.setItem("walletConnected", "true"); // Store flag
-
+            localStorage.setItem("savedAddress", currentAddress);
+            setConnected(true);
+            localStorage.setItem("walletConnected", "true");
+   
         } catch (e) {
             console.log(e);
             setLoadingWalletConnection(false);
-            setCheckWallet(true); // Show the modal once connected
+            setCheckWallet(true);
             localStorage.removeItem("walletConnected");
         }
         setLoadingWallet(false);
         setLoadingWalletConnection(false);
     };
+   
 
     const closeProviderModals = () => {  // New function to close the modal
         setConnected(false);
