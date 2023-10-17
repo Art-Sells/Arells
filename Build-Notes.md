@@ -175,4 +175,5 @@ ________________________________________________________________________________
 
 ##### Other:
 -	`onError(event => fail()}` for failed images
+- When connecting to wallet if page loads, if still in limbo on connect wallet and you connect wallet "wallet connected" function will not show... It'll have you connect wallet again, ficx this.
 
