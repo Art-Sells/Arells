@@ -40,6 +40,7 @@
 - [For Sale]-dark-gray, [Not For Sale]-silver,
  
 #### Creating Mechanics
+- Once confirmed -> (My Store Asset Edit page) {Art Created Modal} {Item Automatically in Created Profile Page PAP & Price = Lines [[Not For Sale]}
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
 - PAP price calculated 50x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer... prices in USDC
@@ -116,7 +117,7 @@
 - *clear Browsing/Cache Data before checking*
 - Google Search Console Index (with sitemap)
 
-#### After Testing and Before Launch: Store Private Key Cold, Delete Branched-Repo, Help Artists find Buyers and send 1 month - 2 week notifications on new Features to be added (Notifications Center/ etc) [Add Featured Artists from everyone who Responded (After we launch our Wallet)]
+#### After Testing and Before Launch: Store Private Key Cold, Delete Branched-Repo, Help Artists find Buyers and send 1 month - 2 week notifications on new Features to be added (Public|Private Mode{First}/Notifications Center etc) [Add Featured Artists from everyone who Responded (After we launch our Wallet)]
 
 ________________________________________________________________________________________________________________________________________
 
@@ -155,7 +156,7 @@ ________________________________________________________________________________
 - - Proof-of-ownership for major assets.
  
 ### My Store Asset
-- Edit: On-Off button Listed-For-Sale/Public
+- Edit: On-Off button List-For-Sale/Public/Private
  
 ### Bell
 - Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
