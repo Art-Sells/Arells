@@ -14,6 +14,7 @@
 - Mainnet with Coinbase/Polygon-USDC
 - Loading Screen while connecting
 - Wallet Connected Modal after Success
+- Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 
 ### Home
 - If logged in [(View My Store), (How To Make Money), About, Contact, (Log-Out)]
@@ -177,4 +178,3 @@ ________________________________________________________________________________
 ##### Other:
 -	`onError(event => fail()}` for failed images
 - When connecting to wallet if page loads, if still in limbo on connect wallet and you connect wallet "wallet connected" function will not show... It'll have you connect wallet again, ficx this.
-
