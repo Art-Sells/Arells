@@ -1,7 +1,7 @@
 ## Arells Build Notes...
 
 ## MVP
-- Pages separated like so: main/profile-name/asset-name
+- Pages separated like so: main/market-name/asset-name
 - Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements]
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
@@ -23,15 +23,17 @@
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
+- Create Market
 - ### Welcome to Arells! Never lose money selling art! [Start Selling]
 
-### My Store
+### My Market
 -- ([automatically loads latest])
 - Top-Left[/\]- (See HOME section) 
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected
 - Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
-- Name & Description: Maximum Number of Characters.
+- Market Image: Default Market Image
+- Market Name & Market Description: Maximum Number of Characters.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
@@ -47,16 +49,16 @@
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer... prices in USDC
 - Create AUM Tracker (for all Current Prices)
  
-### My Store Asset   
+### My Market Asset   
 - Top-Left[/\]- (See HOME section)
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected
 - Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
 - Images here render small pixels
-- Name & Description: Maximum Number of Characters.
+- Art Name: Maximum Number of Characters.
 - Remove "Owned By" if not collected/bought/minted.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- - - Edit(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%]... [Save Changes]
+- - - Edit Art(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%]... [Save Changes]
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
 - [For Sale]-dark-gray, [Not For Sale]-silver, [Sold]white
@@ -67,7 +69,7 @@
 ### Notifications
 - Send Email After Purchase 
   
-### Other Store
+### Other Market
 -- ([automatically loads latest])
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - Top-Right[Cart]
@@ -80,7 +82,7 @@
 - [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
 - *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
 
-### Other Store Asset       
+### Other Market Asset       
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - Top-Right[Cart]
 - Bottom-Left & Right -- Nothing
@@ -112,7 +114,7 @@
 - MetaTags Social-sharing-images: AWS Cloudfront?
 - MetaTag Title: "Profile/Asset Name"
 - MetaTag Description: "Profile/Asset Description"
-- MetaTag Image(Profile): large-profile|image.name, small-profile|description
+- MetaTag Image(Market): large-profile|image.name, small-profile|description
 - MetaTag Image(Asset): small-profile|image.name, large-asset|image.name
 - metadata const (upgrade from generateMetadata) must be async for dynamic changes
 - *clear Browsing/Cache Data before checking*
@@ -124,7 +126,7 @@
 - Send 1 month - 2 week notifications on new Features to be added (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (After we launch our Wallet))
 
 ##### Misc Add-Ons (If enough time before launch)
-**My/Other Store Assets & Edit**
+**My/Other Market Assets & Edit**
 - PAP Logo Above Price After Purchase - links to Price After Purchase About Page with logo and Description
 **Price After Purchase About**
 - Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
@@ -135,19 +137,19 @@ ________________________________________________________________________________
 ### Price After Purchase About**
 - Create link to Individual GitHub Technical (Learn More)
 
-### My Store 
-- Connect Multiple Addresses to one Profile/Log-In (Feth connections on connection and Auto-Log-In) if connected. If address is already connected to store (Error Message)
+### My Market
+- Connect Multiple Store Addresses to one Market/Log-In (Feth connections on connection and Auto-Log-In) if connected. If address is already connected to store (Error Message)
 
 
 ________________________________________________________________________________________________________________________________________
 
-## DIGITAL ASSET STORE
+## DIGITAL ASSET MARKETPLACE
 
-- "Profile Name is Taken Error, and if Asset Name is taken"
+- "Market Name is Taken Error, and if Asset Name is taken"
 - NFTs = Digital Assets, 
-- Connect Wallet = Connect Store, 
-- Public Key = Address, 
-- Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
+- Connect Wallet = Connect Marketplace, 
+- Public Key = Store Address, 
+- Private Key = Store Key(Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
 - Make API Key Private
 
 ### Sign-up
@@ -160,9 +162,9 @@ ________________________________________________________________________________
 {As A Collector: Buy, Set Price After Purchase (list profits), Share}{As A Creator: Create, Set Price and Price After Purchase, Share} [VIEW STORE]-(if no art collected (Created), else (Collected)).
 
 #### About
-- Created by artists for artists. Arells was created from a deep frustration of how difficult it is to make a living as artists in a society that doesn't value art to the same degree as STEM (Science, Technology, Engineering and Math). But now thanks to the technology powering cryptocurrencies (blockchain), all this changes. Now for the first time in human history, neither you nor buyers of your artwork will ever lose money trading or selling art thanks to a revolutionary new financial system we're calling "Price After Purchase". With our Price After Purchase system (PAP Logo - link to PAP Description), bear markets (markets in which people sell assets (Art, Jewelry, Real Estate, etc at a loss)) are made irrelevant hence our slogan "Never Lose Money Selling Art". And so as Arells grows, bear markets decline and this would have been impossible to create before blockchain technology. So pat yourself in the back. You are officially part of a revolution that will change not just the art industry, but asset markets everywhere.
+- Created by artists for artists. Arells was created from a deep frustration of how difficult it is to make a living as artists in a society that doesn't value art to the same degree as STEM (Science, Technology, Engineering and Math). But now thanks to the technology powering cryptocurrencies (blockchain), all this changes. Now for the first time in human history, neither you nor buyers of your artwork will ever lose money trading or selling art thanks to a new pricing system we're calling "Price After Purchase". With our Price After Purchase system (PAP Logo - link to PAP Description), bear markets (markets in which people sell assets (Art, Jewelry, Real Estate, etc at a loss)) are obsolete hence our slogan "Never Lose Money Selling Art". And so as Arells grows, bear markets decline and this would have been impossible to create before blockchain technology. So pat yourself on the back. You are officially part of a revolution that will change not just the art industry, but asset markets everywhere.
 
-### My/Other Store
+### My/Other Market
 - Includes all Arells Website Components
 - Build with Circle Wallet As A Service? (USDC) ***Connects to bank account once and automatically converts USDC with purchacing***                                           
 - Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"
@@ -175,7 +177,7 @@ ________________________________________________________________________________
 - - Proof-of-creation 70x PAP for Copyright Proven Artistic Works
 - - Proof-of-ownership for major assets.
  
-### My Store Asset
+### My Market Asset
 - Edit: On-Off button List-For-Sale/Public/Private
  
 ### Bell
@@ -188,7 +190,7 @@ ________________________________________________________________________________
 ### Vault (Slide-Up)
 - NFT Collections (Ability to Transfer & Receive)
   
-#### Wallet(Store):
+#### Wallet(Market):
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
 - Phase out Crossmint (if they won't include our own Logo/Name in Email/Payment info)
 - Rarimo (CCTP) Circle?
