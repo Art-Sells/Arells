@@ -144,9 +144,6 @@ ________________________________________________________________________________
 - Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
 - Terms & Conditions Agreement
 
-### Wallet
-- Add "Install Wallet" Modal to check installed Modal and figure out a way to reload page twice, once after wallet is disconnected and again after wallet is uninstalled.
-
 ### Home
 
 #### How To Make Money:
