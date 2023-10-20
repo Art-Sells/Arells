@@ -125,7 +125,9 @@
 
 ##### Misc Add-Ons (If enough time before launch)
 **My/Other Store Assets & Edit**
-- PAP Logo Above Price After Purchase - links to Price After Purchase About Page with logo and Description - Create link to Individual GitHub Technical Descriptions
+- PAP Logo Above Price After Purchase - links to Price After Purchase About Page with logo and Description
+**Price After Purchase About**
+- Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
 
 ________________________________________________________________________________________________________________________________________
 
@@ -142,6 +144,9 @@ ________________________________________________________________________________
 - Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
 - Terms & Conditions Agreement
 
+### Wallet
+- Add "Install Wallet" Modal to check installed Modal and figure out a way to reload page twice, once after wallet is disconnected and again after wallet is uninstalled.
+
 ### Home
 
 #### How To Make Money:
@@ -149,6 +154,9 @@ ________________________________________________________________________________
 
 #### About
 - Created by artists for artists. Arells was created from a deep frustration of how difficult it is to make a living as artists in a society that doesn't value art to the same degree as STEM (Science, Technology, Engineering and Math). But now thanks to the technology powering cryptocurrencies (blockchain), all this changes. Now for the first time in human history, neither you nor buyers of your artwork will ever lose money trading or selling art thanks to a revolutionary new financial system we're calling "Price After Purchase". With our Price After Purchase system (PAP Logo - link to PAP Description), bear markets (markets in which people sell assets (Art, Jewelry, Real Estate, etc at a loss)) are made irrelevant hence our slogan "Never Lose Money Selling Art". And so as Arells grows, bear markets decline and this would have been impossible to create before blockchain technology. So pat yourself in the back. You are officially part of a revolution that will change not just the art industry, but asset markets everywhere.
+
+### Price After Purchase About**
+- Create link to Individual GitHub Technical (Learn More)
 
 ### Store (Default)
 - Includes all Arells Website Components
