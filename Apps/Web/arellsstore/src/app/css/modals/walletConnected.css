@@ -142,8 +142,27 @@
   box-shadow: 0px 8px 12px -6px rgb(173, 173, 173);  
 }
 
+#reloading-connection-close {
+  background: white;
+  color: rgb(173, 173, 173);
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;   
+  border: none;
+  border-width: 2px;
+  font-weight: 500;
+  border-radius: 10px;
+  font-size: 12px;
+  padding: 15.5px;
+  letter-spacing: 1px;
+  width: 100px; 
+  box-shadow: 0px 3px 12px -3px rgb(173, 173, 173);  
+}
+
 #wallet-connected-close:hover,
-#wallet-connected-close:focus {
+#wallet-connected-close:focus,
+#reloading-connection-close:hover,
+#reloading-connection-close:focus {
   cursor: pointer;
   opacity: .4;
   transition: 1s;

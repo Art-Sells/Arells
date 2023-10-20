@@ -216,10 +216,12 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 			</div>	  
 		    )}   
             {showLoadingWalletConnection && (
-                <div id="connectingBackground">
-                    <p id="connectingWalletWords">RELOADING CONNECTION</p>   
-                    <button id="wallet-connecting-close" onClick={closeProviderModals}>OK</button>                            
-                </div>
+                <div id="walletConnected">
+                    <div id="wallet-connected-modalGood">
+                        <p>RELOADING CONNECTION</p>
+                        <button id="reloading-connection-close" onClick={closeProviderModals}>OK</button>    
+                    </div>
+                </div>  
             )}
             {connected && (   // Display the modal if walletConnected is true
                 <div id="walletConnected">
@@ -232,7 +234,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             {checkWallet && (   // Display the modal if walletConnected is true
                 <div id="connectingBackground">
                     <div id="wallet-connected-modal">
-                        <p id="connectingWalletWords">CHECK CONNECTION</p>
+                        <p id="connectingWalletWords">CHECK OPEN WALLET</p>
                         <button id="wallet-connecting-close" onClick={closeProviderModals}>OK</button>    
                     </div>
                 </div>  
