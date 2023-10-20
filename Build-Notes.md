@@ -74,6 +74,9 @@
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - Top-Right[Cart]
 - Bottom-Left & Right -- Nothing
+- Image Default: Market Icon
+- Name Default: Unnamed Market
+- Description Default: Creator & Collector of Art
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
@@ -147,7 +150,8 @@ ________________________________________________________________________________
 
 - "Market Name is Taken Error, and if Asset Name is taken"
 - NFTs = Digital Assets, 
-- Connect Wallet = Connect Marketplace, 
+- Connect Wallet = Connect Marketplace,
+- Seed Phrase = Vault Code
 - Public Key = Store Address, 
 - Private Key = Store Key(Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
 - Make API Key Private
