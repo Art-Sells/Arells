@@ -23,13 +23,24 @@
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
-- Create Store
+- Account Created! (Create Store)
 - ### Welcome to Arells! Never lose money selling art! [Start Selling]
+
+### Create Store
+- Logo: Default Store Logo
+- Store Name & Store Description: Maximum Number of Characters.
+- (Save Changes)
+
+### Edit Store
+- Logo: Default Store Logo
+- Store Name & Store Description: Maximum Number of Characters.
+- (Save Changes)
 
 ### My Store
 -- ([automatically loads latest])
 - Top-Left[/\]- (See HOME section) 
 - Top-Right[Cart][Connect Wallet]-if not connected
+- Top-Center[Edit Store]
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected
 - Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
 - Logo: Default Store Logo
