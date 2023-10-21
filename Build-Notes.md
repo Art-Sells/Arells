@@ -142,12 +142,11 @@ ________________________________________________________________________________
 
 ### My Market
 - Connect Multiple Store Addresses to one Market/Log-In (Feth connections on connection and Auto-Log-In) if connected. If address is already connected to store (Error Message)
-
-
 ________________________________________________________________________________________________________________________________________
 
 ## DIGITAL ASSET MARKETPLACE
 
+- Rename Production Repo (Arells Market)
 - "Market Name is Taken Error, and if Asset Name is taken"
 - NFTs = Digital Assets, 
 - Connect Wallet = Connect Marketplace,
