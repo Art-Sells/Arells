@@ -32,7 +32,7 @@
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected
 - Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
-- Market Image: Default Market Image
+- Logo: Default Market Logo
 - Market Name & Market Description: Maximum Number of Characters.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - - **Created**:
@@ -126,7 +126,7 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete Branched-Repo,
-- Send 1 month - 2 week notifications on new Features to be added (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (After we launch our Wallet))
+- Send 1 month - 2 week notifications on new Features to be added (On Arells you won't be selling your art as a person, you'll be selling your art as a store so I'd highly recommend to think about a unique name and logo before you create your market on Arells {point to free AI logo creators}). (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (After we launch our Wallet))
 
 ##### Misc Add-Ons (If enough time before launch)
 **My/Other Market Assets & Edit**
