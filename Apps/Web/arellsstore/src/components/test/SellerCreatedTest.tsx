@@ -188,6 +188,7 @@ const SellerCreatedTest = () => {
 				<p id="share-div-desc-seller-created">SHARE</p>
 				<button id="copy-link-seller-created"
 				onClick={copyLink}>
+					
 					<Image
 					loader={imageLoader}
 					alt=""
