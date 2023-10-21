@@ -154,6 +154,7 @@ ________________________________________________________________________________
 - Public Key = Store Address, 
 - Private Key = Store Key(Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
 - Make API Key Private
+- Does Sitemap.xml need to be in public Directory for it to be read by Google?
 
 ### Sign-up
 - Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
