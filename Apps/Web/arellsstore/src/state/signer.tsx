@@ -7,15 +7,12 @@ import { ReactNode, createContext, useContext, useState, useEffect } from "react
 
 import '../app/css/modals/walletConnected.css';
 import '../app/css/modals/loading/spinnerBackground.css';
-import '../app/css/modals/connect-wallet.css';
-import Image from 'next/image';
 
 type SignerContextType = {
     signer?: JsonRpcSigner;   
     address?: string;
     loadingWallet: boolean;
-    connectWallet(): any;
-    
+    connectMetamask: () => Promise<void>;
 }
 
 const SignerContext = createContext<SignerContextType>({} as any);
@@ -23,12 +20,7 @@ const SignerContext = createContext<SignerContextType>({} as any);
 const useSigner = () => useContext(SignerContext);
 
 export const SignerProvider = ({ children }: { children: ReactNode }) => {
-    const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
-        return `/${src}?w=${width}&q=${quality || 100}`;
-    };
 
-    const [showDownloadWallet, setShowDownloadWallet] = useState(false);
-    const [showConnectWallet, setShowConnectWallet] = useState(false);
     const [signer, setSigner] = useState<JsonRpcSigner>();
     const [address, setAddress] = useState("");
     const [showLoadingWalletConnection, setLoadingWalletConnection] = useState(false);
@@ -36,26 +28,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     const [connected, setConnected] = useState(false);
     const [checkWallet, setCheckWallet] = useState(false);
     const [disconnected, setDisconnected] = useState(false);
-
-// Connect Wallet function/s below 
-    const connectWallet = () => {
-        if (!window.ethereum) {
-            setShowDownloadWallet(true);
-        } else {
-            setShowConnectWallet(true);
-        }
-    };
-    const downloadWalletFunction = () => {
-            // No Ethereum-compatible wallet detected, redirecting to MetaMask website
-            window.open('https://metamask.io/', '_blank');
-            setShowDownloadWallet(false);
-            setLoadingWalletConnection(true);
-    };
-	const connectWalletFunction = () => {
-            connectMetamask();
-            setShowConnectWallet(false);
-    };
-// Connect Wallet functions/s above
 
     const handleDisconnect = () => {
         setDisconnected(true);
@@ -137,29 +109,34 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const connectMetamask = async () => {
+        if (window.ethereum && !(await window.ethereum.isConnected())) { // CHECK HERE
+            console.error("Ethereum provider is not connected");
+            return;
+        }
         setLoadingWallet(true);
         setLoadingWalletConnection(true);
-    
         try {
             const web3modal = new Web3Modal(web3ModalConfig);
             const newInstance = await web3modal.connect();
-       
+   
+            // Note: Here we are creating a new provider and signer. We could reuse 
+            // the previous ones if they were still valid.
             const provider = new Web3Provider(newInstance);
             const signerInstance = provider.getSigner();
             const currentAddress = await signerInstance.getAddress();
-       
+   
             setSigner(signerInstance);
-                
+            
             localStorage.setItem("savedAddress", currentAddress);
             setConnected(true);
             localStorage.setItem("walletConnected", "true");
+   
         } catch (e) {
             console.log(e);
             setLoadingWalletConnection(false);
             setCheckWallet(true);
             localStorage.removeItem("walletConnected");
         }
-    
         setLoadingWallet(false);
         setLoadingWalletConnection(false);
     };
@@ -169,59 +146,18 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         setConnected(false);
         setCheckWallet(false);
         setDisconnected(false);
-        setLoadingWalletConnection(false);
         localStorage.removeItem("walletConnected"); // Clear the flag
         window.location.reload();
 
     };
 
     return (
-        <SignerContext.Provider value={{ 
-            signer, address, loadingWallet, connectWallet }}>
+        <SignerContext.Provider value={{ signer, address, loadingWallet, connectMetamask }}>
             {children}
-            {showDownloadWallet && (
-			<div id="connectWalletBuy">
-				<div className="connect-wallet-content">
-					<p id="connect-wallet-words">CONNECT WALLET</p>
-					<button id="connectWallet"
-						onClick={downloadWalletFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/coinbase-wallet-logo.png"/>
-					</button>		
-				</div>
-			</div>	  
-		    )}    
-            {showConnectWallet && (
-			<div id="connectWalletBuy">
-				<div className="connect-wallet-content">
-					<p id="connect-wallet-words">CONNECT WALLET</p>
-					<button id="connectWallet"
-						onClick={connectWalletFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/coinbase-wallet-logo.png"/>
-					</button>		
-				</div>
-			</div>	  
-		    )}   
             {showLoadingWalletConnection && (
-                <div id="walletConnected">
-                    <div id="wallet-connected-modalGood">
-                        <p>RELOADING CONNECTION</p>
-                        <button id="reloading-connection-close" onClick={closeProviderModals}>OK</button>    
-                    </div>
-                </div>  
+                <div id="connectingBackground">
+                    <p id="connectingWalletWords">CONNECTING</p>          
+                </div>
             )}
             {connected && (   // Display the modal if walletConnected is true
                 <div id="walletConnected">
@@ -234,7 +170,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             {checkWallet && (   // Display the modal if walletConnected is true
                 <div id="connectingBackground">
                     <div id="wallet-connected-modal">
-                        <p id="connectingWalletWords">CHECK OPEN WALLET</p>
+                        <p id="connectingWalletWords">REVIEW CONNECTION</p>
                         <button id="wallet-connecting-close" onClick={closeProviderModals}>OK</button>    
                     </div>
                 </div>  
