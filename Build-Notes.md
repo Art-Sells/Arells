@@ -118,13 +118,38 @@
 - *clear Browsing/Cache Data before checking*
 - Google Search Console Index (with sitemap)
 
+<<<<<<< HEAD
 #### After Testing and Before Launch: Store Private Key Cold, Delete Branched-Repo, Help Artists find Buyers and send 1 month - 2 week notifications on new Features to be added (Public|Private Mode{First}/Notifications Center etc) [Add Featured Artists from everyone who Responded (After we launch our Wallet)]
+=======
+#### After Testing and Before Launch: 
+- Store Private Key Cold
+- Delete Branched-Repo,
+- Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (After we launch our Wallet))
+
+##### Misc Add-Ons (If enough time before launch)
+**My/Other Store Assets & Edit**
+- PAP Logo Above Price After Purchase - links to Price After Purchase About Page with logo and Description
+**Price After Purchase About**
+- Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
+________________________________________________________________________________________________________________________________________
+
+## Transition to DIGITAL ASSET STORE
+
+### Price After Purchase About**
+- Create link to Individual GitHub Technical (Learn More)
+>>>>>>> 137f0e4531d847b241eb6f40da3a6c4696eb1dec
 
 ________________________________________________________________________________________________________________________________________
 
 ## DIGITAL ASSET STORE
 
+<<<<<<< HEAD
 - "Profile Name is Taken Error, and if Asset Name is taken"
+=======
+- Rename Production Repo (Arells Marketplace)
+- Wallet Logs you off After 10 minutes of innaction (review Bank Apps)
+- "Store Name is Taken Error, and if Asset Name is taken"
+>>>>>>> 137f0e4531d847b241eb6f40da3a6c4696eb1dec
 - NFTs = Digital Assets, 
 - Connect Wallet = Connect Store, 
 - Public Key = Address, 
