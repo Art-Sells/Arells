@@ -8,7 +8,6 @@ import useSigner from "../../state/signer";
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
 import '../../app/css/modals/copiedlink.css';
-import '../../app/css/modals/connect-wallet.css';
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
@@ -23,7 +22,7 @@ import Image from 'next/image';
 const SellerCreatedTest = () => {
 
 // asset functions below
-	const { address, loadingWallet, connectMetamask} = useSigner();
+	const { address, connectWallet} = useSigner();
 
 // asset constants above
 
@@ -50,7 +49,6 @@ const SellerCreatedTest = () => {
 
 
 // useState constants below
-    const [showConnectWallet, setShowConnectWallet] = useState(false);
 	const [showCopiedLink, setCopiedLink] = useState(false);
 
     const [cartLinkSellerCreated, setCartLinkSellerCreated] = useState(true);
@@ -80,15 +78,7 @@ const SellerCreatedTest = () => {
 	};
 // Copy Links function/s above
 
-// Connect Wallet function/s below 
-    const connectWallet = () => {
-        setShowConnectWallet(true);
-    };
-
-	const connectWalletFunction = async () => {
-		connectMetamask();
-		setShowConnectWallet(false);
-    };
+// Cart Changing function/s below 
     useEffect(() => {
         if (address) {
             setCartLinkSellerCreated(false);
@@ -100,11 +90,11 @@ const SellerCreatedTest = () => {
 		}
     }, [address]);
 
-// Connect Wallet function/s above 
+// Cart Changing function/s above 
 
 	
     return (
-        <>
+        <>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
@@ -132,26 +122,7 @@ const SellerCreatedTest = () => {
 		)}
 		{showLoading && (
 			<div className={styles.spinner}></div>
-		)}
-
-        {showConnectWallet && (
-			<div id="connectWalletBuy">
-				<div className="connect-wallet-content">
-					<p id="connect-wallet-words">CONNECT WALLET</p>
-					<button id="connectWallet"
-						onClick={connectWalletFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/coinbase-wallet-logo.png"/>
-					</button>		
-				</div>
-			</div>	  
-		)}      
+		)}  
 
 {/*<!-- Modals Above -->*/}
 				<div id="header-seller-created">
@@ -209,10 +180,10 @@ const SellerCreatedTest = () => {
 				width={100}  
 				height={100}
 				id="profile-photo-seller-created" 
-				src="images/prototype/proto-banner.jpg"/>
+				src="images/market/Market-Default-Icon.jpg"/>
 			</div>	 
-			<h1 id="name-seller-created">{address}</h1>  
-			<p id="description-seller-created">Here rests life&apos;s abstractions captured in majestic endeavors.</p> 
+			<h1 id="name-seller-created">Unnamed Store {address}</h1>  
+			<p id="description-seller-created">Creations and Collections</p> 
 			<div id="share-div-seller-created">
 				<p id="share-div-desc-seller-created">SHARE</p>
 				<button id="copy-link-seller-created"

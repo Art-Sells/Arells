@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "3.5.9",
     "@openzeppelin/contracts": "^4.9.3",
     "@types/formidable": "2.0.4",
     "dotenv": "^16.3.1",
@@ -30,6 +31,7 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "apollo": "^2.34.0",
     "chai": "^4.3.10",
     "ethereum-waffle": "^4.0.10",
     "ethers": "^5.5.4",
