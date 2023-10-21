@@ -94,7 +94,7 @@ const SellerCreatedTest = () => {
 
 	
     return (
-        <>
+        <>	
 
 {/*<!-- Modals below link after test -->*/}
 		{showCopiedLink && (
@@ -180,10 +180,10 @@ const SellerCreatedTest = () => {
 				width={100}  
 				height={100}
 				id="profile-photo-seller-created" 
-				src="images/prototype/proto-banner.jpg"/>
+				src="images/market/Market-Default-Icon.jpg"/>
 			</div>	 
-			<h1 id="name-seller-created">{address}</h1>  
-			<p id="description-seller-created">Here rests life&apos;s abstractions captured in majestic endeavors.</p> 
+			<h1 id="name-seller-created">Unnamed Market{address}</h1>  
+			<p id="description-seller-created">Creations and Collections</p> 
 			<div id="share-div-seller-created">
 				<p id="share-div-desc-seller-created">SHARE</p>
 				<button id="copy-link-seller-created"
