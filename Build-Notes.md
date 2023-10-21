@@ -158,6 +158,7 @@ ________________________________________________________________________________
 ## DIGITAL ASSET MARKETPLACE
 
 - Rename Production Repo (Arells Marketplace)
+- Wallet Logs you off After 10 minutes of innaction (review Bank Apps)
 - "Store Name is Taken Error, and if Asset Name is taken"
 - NFTs = Digital Assets, 
 - Connect Wallet = Connect Store,
