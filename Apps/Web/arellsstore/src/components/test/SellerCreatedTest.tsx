@@ -182,7 +182,7 @@ const SellerCreatedTest = () => {
 				id="profile-photo-seller-created" 
 				src="images/market/Market-Default-Icon.jpg"/>
 			</div>	 
-			<h1 id="name-seller-created">Unnamed Market{address}</h1>  
+			<h1 id="name-seller-created">{address}</h1>  
 			<p id="description-seller-created">Creations and Collections</p> 
 			<div id="share-div-seller-created">
 				<p id="share-div-desc-seller-created">SHARE</p>
