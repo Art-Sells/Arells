@@ -1,19 +1,16 @@
 ## Arells Build Notes...
 
 ## MVP
-- Pages separated like so: main/profile-name/asset-name
+- Pages separated like so: main/store-name/asset-name
 - Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements]
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
 - Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
-- Don't Forget About SiteMap/s (only for pages to be shown)
-- Remove "Wallet ConnecteD"
+- Don't Forget About SiteMap/s 
 
 ### Wallet: 
 - Test with Metamask/Mumbai-USDC
 - Mainnet with Coinbase/Polygon-USDC
-- Loading Screen while connecting
-- Wallet Connected Modal after Success
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 
 ### Home
@@ -23,15 +20,28 @@
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
+- Account Created! (Create Store)
 - ### Welcome to Arells! Never lose money selling art! [Start Selling]
+
+### Create Store
+- Logo: Default Store Logo
+- Store Name & Store Description: Maximum Number of Characters.
+- (Save Changes)
+
+### Edit Store
+- Logo: Default Store Logo
+- Store Name & Store Description: Maximum Number of Characters.
+- (Save Changes)
 
 ### My Store
 -- ([automatically loads latest])
-- Top-Left[/\]- (See HOME section) 
+- Top-Left[/]- (See HOME section)
 - Top-Right[Cart][Connect Wallet]-if not connected
+- Top-Center[Edit Store]
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected
 - Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
-- Name & Description: Maximum Number of Characters.
+- Logo: Default Store Logo
+- Store Name & Store Description: Maximum Number of Characters.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
@@ -52,11 +62,11 @@
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected
 - Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
-- Images here render small pixels
-- Name & Description: Maximum Number of Characters.
+- Images (Default Store Image) here render small pixels
+- Store Name & Store Description: Maximum Number of Characters.
 - Remove "Owned By" if not collected/bought/minted.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- - - Edit(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, *insert-creator-name* Keeps... 50%, Fees... 3%]... [Save Changes]
+- - - Edit Art(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
 - [For Sale]-dark-gray, [Not For Sale]-silver, [Sold]white
@@ -72,6 +82,8 @@
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - Top-Right[Cart]
 - Bottom-Left & Right -- Nothing
+- Image Default: Store Icon
+- Name Default: Unnamed Store
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
@@ -118,9 +130,6 @@
 - *clear Browsing/Cache Data before checking*
 - Google Search Console Index (with sitemap)
 
-<<<<<<< HEAD
-#### After Testing and Before Launch: Store Private Key Cold, Delete Branched-Repo, Help Artists find Buyers and send 1 month - 2 week notifications on new Features to be added (Public|Private Mode{First}/Notifications Center etc) [Add Featured Artists from everyone who Responded (After we launch our Wallet)]
-=======
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete Branched-Repo,
@@ -137,20 +146,16 @@ ________________________________________________________________________________
 
 ### Price After Purchase About**
 - Create link to Individual GitHub Technical (Learn More)
->>>>>>> 137f0e4531d847b241eb6f40da3a6c4696eb1dec
 
 ________________________________________________________________________________________________________________________________________
 
-## DIGITAL ASSET STORE
+## DIGITAL ASSET MARKET
 
-<<<<<<< HEAD
-- "Profile Name is Taken Error, and if Asset Name is taken"
-=======
 - Rename Production Repo (Arells Marketplace)
 - Wallet Logs you off After 10 minutes of innaction (review Bank Apps)
 - "Store Name is Taken Error, and if Asset Name is taken"
->>>>>>> 137f0e4531d847b241eb6f40da3a6c4696eb1dec
-- NFTs = Digital Assets, 
+- NFTs = Digital Assets,
+- Seed Phrase = Vault Code
 - Connect Wallet = Connect Store, 
 - Public Key = Address, 
 - Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
@@ -166,7 +171,7 @@ ________________________________________________________________________________
 {As A Collector: Buy, Set Price After Purchase (list profits), Share}{As A Creator: Create, Set Price and Price After Purchase, Share} [VIEW STORE]-(if no art collected (Created), else (Collected)).
 
 #### About
-- Created by artists for artists. Arells was created from a deep frustration of how difficult it is to make a living as artists in a society that doesn't value art to the same degree as STEM (Science, Technology, Engineering and Math). But now thanks to the technology powering cryptocurrencies (blockchain), all this changes. Now for the first time in human history, neither you nor buyers of your artwork will ever lose money trading or selling art thanks to a revolutionary new financial system we're calling "Price After Purchase". With our Price After Purchase system, bear markets (markets in which people sell assets (Art, Jewelry, Real Estate, etc at a loss)) are made irrelevant hence our slogan "Never Lose Money Selling Art". And so as Arells grows, bear markets decline and this would have been impossible to create before blockchain technology. So pat yourself in the back. You are officially part of a revolution that will change not just the art industry, but asset markets everywhere.
+- Created by artists for artists. Arells was created from a deep frustration of how difficult it is to make a living as artists in a society that doesn't value art to the same degree as other careers. But now thanks to the technology powering cryptocurrencies (blockchain), all this changes. Neither you nor buyers of your artwork will ever lose money selling art thanks to a new market system we're calling "Price After Purchase". With our Price After Purchase system (PAP Logo - link to PAP Description), bear markets (markets in which people sell assets at a loss) are obsolete. Arells would have been impossible to create before blockchain technology and so... This marks you as a pioneer of a revolution that will change not just the art industry, but asset markets everywhere.
 
 ### Store (Default)
 - Includes all Arells Website Components
@@ -192,7 +197,7 @@ ________________________________________________________________________________
 - USDC Transfer to Bank Account (Beam Cash Out API?)
 
 ### Vault (Slide-Up)
-- NFT Collections (Ability to Transfer & Receive)
+- NFT Collections (Ability to Receive ONLY [In-Bound]... No Outbound Transfers)
   
 #### Wallet(Store):
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
@@ -202,4 +207,3 @@ ________________________________________________________________________________
 
 ##### Other:
 -	`onError(event => fail()}` for failed images
-- When connecting to wallet if page loads, if still in limbo on connect wallet and you connect wallet "wallet connected" function will not show... It'll have you connect wallet again, ficx this.
