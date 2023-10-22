@@ -142,7 +142,7 @@
 - Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
 ________________________________________________________________________________________________________________________________________
 
-## Transition to DIGITAL ASSET STORE
+## Transition to DIGITAL ASSET MARKET
 
 ### Price After Purchase About**
 - Create link to Individual GitHub Technical (Learn More)
@@ -160,6 +160,9 @@ ________________________________________________________________________________
 - Public Key = Address, 
 - Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
 - Make API Key Private
+
+### Bug-fixes
+- Test to see if page-restart (after system restart) shows blank code page.
 
 ### Sign-up
 - Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
