@@ -4,6 +4,7 @@ import React from "react";
 
 // asset components (change below links after test)
 import useSigner from "../../state/signer";
+import useNFTMarket from "../../state/nft-market";
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
@@ -23,6 +24,8 @@ const SellerCreatedTest = () => {
 
 // asset functions below
 	const { address, connectWallet} = useSigner();
+	const {createdNFTs} = useNFTMarket();
+	console.log("Created: ", createdNFTs);
 
 // asset constants above
 

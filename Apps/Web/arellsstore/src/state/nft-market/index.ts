@@ -3,6 +3,7 @@ import {Contract} from "ethers";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
 import NFT_MARKET from '../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json';
 import useSigner from "../signer";
+import useCreatedNFTs from "./useCreatedNFTs";
 
 const NFT_MARKET_ADDRESS = process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS as string;
 
@@ -12,8 +13,10 @@ const useNFTMarket = () => {
   const nftMarket = new Contract(
     NFT_MARKET_ADDRESS,
     NFT_MARKET.abi,
-    signer);
-    
+    signer
+  );
+
+  const createdNFTs = useCreatedNFTs();
 
   const createNFT = async (values: CreationValues) => {
     try {
@@ -38,7 +41,8 @@ const useNFTMarket = () => {
   };
 
   return {
-    createNFT
+    createNFT,
+    createdNFTs
   };
 };
 

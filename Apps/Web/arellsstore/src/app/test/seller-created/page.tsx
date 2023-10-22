@@ -1,9 +1,7 @@
-
-
 import '../../css/prototype/seller-created.css';
 
 import React from "react";
-import Head from 'next/head';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import {SignerProvider} from "../../../state/signer";
 import type { Metadata } from 'next';
 
@@ -40,14 +38,24 @@ export const metadata: Metadata = {
   }
 }
 
+const GRAPH_URL = process.env.NEXT_PUBLIC_GRAPH_URL as string;
+console.log("GraphQL URL: ", GRAPH_URL);
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  uri: GRAPH_URL
+});
+
+
 const SellerCreatedPageTest = () => {
 
   return (
     <>
       <SignerProvider>  
-        <div id="prototype-seller-created-wrapper">
-            <SellerCreatedTest/>
-        </div>
+        <ApolloProvider client={client}>
+          <div id="prototype-seller-created-wrapper">
+              <SellerCreatedTest/>
+          </div>
+        </ApolloProvider>  
       </SignerProvider>    
     </>
   );
