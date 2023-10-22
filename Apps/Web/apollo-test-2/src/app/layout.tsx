@@ -1,6 +1,5 @@
 import React from 'react';
-import { ApolloProvider } from '@apollo/client';
-import client from '../lib/apolo'; // Adjust the path according to your file structure
+import { ApolloWrapper } from "../lib/apollo-provider";
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -18,10 +17,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ApolloProvider client={client}>
       <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          <ApolloWrapper>
+            {children}
+          </ApolloWrapper>
+        </body>
       </html>
-    </ApolloProvider>
   )
 }

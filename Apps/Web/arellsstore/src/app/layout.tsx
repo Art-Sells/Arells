@@ -1,5 +1,5 @@
 import {ReactNode} from "react"
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { ApolloWrapper } from "../lib/apollo-provider";
 import {SignerProvider} from "../state/signer";
 
 type LayoutProps = {
@@ -10,7 +10,9 @@ export default function RootLayout({ children }: LayoutProps) {
     <html lang="en">
       <body>
         <SignerProvider>
-          {children}
+          <ApolloWrapper>
+            {children}
+          </ApolloWrapper>
         </SignerProvider>
       </body>
     </html>
