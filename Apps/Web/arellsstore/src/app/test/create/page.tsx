@@ -4,8 +4,6 @@ import React from "react";
 
 import type { Metadata } from 'next';
 
-import {SignerProvider} from "../../../state/signer";
-
 import CreateArtTest from '../../../components/test/CreationPage/CreateArtTest';
 
 export const metadata: Metadata = {
@@ -43,11 +41,9 @@ const CreateTest = () => {
 
   return (
     <>
-      <SignerProvider>
         <div id="blue-orange-wrapper">
           <CreateArtTest/>
         </div>  
-      </SignerProvider>
     </>
   );
 }
