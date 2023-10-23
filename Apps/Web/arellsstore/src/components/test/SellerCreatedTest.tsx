@@ -8,6 +8,7 @@ import useNFTMarket from "../../state/nft-market";
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
+import '../../app/css/prototype/buyer-collected.css';
 import '../../app/css/modals/copiedlink.css';
 
 //Loader Styles
@@ -21,13 +22,6 @@ import Image from 'next/image';
 
 
 const SellerCreatedTest = () => {
-
-// asset functions below
-	const { address, connectWallet} = useSigner();
-	const {createdNFTs} = useNFTMarket();
-	console.log("Created: ", createdNFTs);
-
-// asset constants above
 
 //loader functions below 
     const [showLoading, setLoading] = useState(true);
@@ -65,7 +59,6 @@ const SellerCreatedTest = () => {
 // useState constants above
 
 // Copy Links function/s below
-
 	const [fullUrl, setFullUrl] = useState<string>('');
 	useEffect(() => {
 		setFullUrl(window.location.href);
@@ -81,6 +74,17 @@ const SellerCreatedTest = () => {
 	};
 // Copy Links function/s above
 
+// asset functions below
+	const { address, connectWallet} = useSigner();
+	const {createdNFTs} = useNFTMarket();
+	useEffect(() => {
+		if (createdNFTs) {
+			setNoArtCreatedSellerCreated(false);
+			setArtCreatedSellerCreated(true);
+		}
+	}, [createdNFTs]);
+// asset constants above
+
 // Cart Changing function/s below 
     useEffect(() => {
         if (address) {
@@ -92,7 +96,6 @@ const SellerCreatedTest = () => {
             setCartLinkConnectedSellerCreated(false);			
 		}
     }, [address]);
-
 // Cart Changing function/s above 
 
 	
@@ -221,42 +224,38 @@ const SellerCreatedTest = () => {
 					src="images/prototype/Add.png"/>
 				</p>
 			)}
-			{/* {artCreatedSellerCreated && (
+			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
-					{assets.map((asset) => (
-						<div id="blue-orange-seller-created">
-							// <!-- Change below link after test -->
-							<Link legacyBehavior href="/test/asset/test-asset">
-								<a target="_self" id="photo-link-seller-created">
-									<Image
-									loader={imageLoader}
-									onLoad={() => handleImageLoaded('photoSellerCreatedOne')}
-									alt=""
-									width={200}  
-									height={200}  
-									id="photo-seller-created" 
-									src={asset.image}/>
-								</a>
-								<h3 id="asset-name"></h3> 
-							</Link>	
-								<div id="blue-orange-prices-before-seller-created">
-									<p id="PAP-seller-created">Price After Purchase</p>
-									<p id="PAP-blue-orange-before-seller-created">$1,800</p>
-									<hr id="priceline-seller-created"/>
-									<p id="yourprice-seller-created">Price</p>
-									<p id="price-blue-orange-before-seller-created">${asset.price}</p>
-								</div>	
-                                {blueOrangeAddToCartSellerCreated && (
-                                    <button id="blue-orange-add-to-cart-seller-created" 
-                                    onClick={connectWallet}>
-                                    ADD TO CART</button>
-                                )}	
-								
-						</div>									
-						))
-					}	
+					<div id="blue-orange-seller-created">
+						{/*  Change below link after test  */}
+						<Link legacyBehavior href="">
+							<a target="_self" id="photo-link-seller-created">
+								<Image
+								loader={imageLoader}
+								onLoad={() => handleImageLoaded('photoSellerCreatedOne')}
+								alt=""
+								width={200}  
+								height={200}  
+								id="photo-seller-created" 
+								src={"me"}/>
+							</a>
+						</Link>	
+							<div id="blue-orange-prices-before-seller-created">
+								<p id="PAP-seller-created">Price After Purchase</p>
+								<p id="PAP-blue-orange-before-seller-created">$1,800</p>
+								<hr id="priceline-seller-created"/>
+								<p id="yourprice-seller-created">Price</p>
+								<p id="price-blue-orange-before-seller-created">$1,000</p>
+							</div>	
+							{blueOrangeAddToCartSellerCreated && (
+								<button id="blue-orange-add-to-cart-seller-created" 
+								onClick={connectWallet}>
+								ADD TO CART</button>
+							)}	
+							
+					</div>
 				</div>	
-			)} */}
+			)}
 		     
         </>
     );
