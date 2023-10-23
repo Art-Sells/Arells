@@ -24,7 +24,7 @@
 - ### Welcome to Arells! Never lose money selling art! [Start Selling]
 
 ### Create Store
-- Logo: Default Store Logo
+- Store Logo: Default Store Logo
 - Store Name & Store Description: Maximum Number of Characters.
 - (Save Changes)
 
