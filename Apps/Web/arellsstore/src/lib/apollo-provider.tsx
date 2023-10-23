@@ -1,4 +1,3 @@
-// lib/apollo-provider.js
 "use client";
 
 import { ApolloLink, HttpLink } from "@apollo/client";
@@ -9,9 +8,11 @@ import {
   SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support/ssr";
 
+const GRAPH_URL = process.env.NEXT_PUBLIC_GRAPH_URL as string;
+
 function makeClient() {
   const httpLink = new HttpLink({
-      uri: "https://main--time-pav6zq.apollographos.net/graphql",
+      uri: GRAPH_URL,
   });
 
   return new NextSSRApolloClient({
