@@ -5,6 +5,7 @@ import React from "react";
 // asset components (change below links after test)
 import useSigner from "../../state/signer";
 import useNFTMarket from "../../state/nft-market";
+import NFTCard from "./NFTCard";
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
@@ -53,9 +54,6 @@ const SellerCreatedTest = () => {
 
     const [noArtCreatedSellerCreated, setNoArtCreatedSellerCreated] = useState(true);
     const [artCreatedSellerCreated, setArtCreatedSellerCreated] = useState(false);
-
-    const [blueOrangeAddToCartSellerCreated, setBlueOrangeAddToCartSellerCreated] = useState(true);
-	const [blueOrangeAddToCartConnectedSellerCreated, setBlueOrangeAddToCartConnectedSellerCreated] = useState(false);
 // useState constants above
 
 // Copy Links function/s below
@@ -93,7 +91,7 @@ const SellerCreatedTest = () => {
         }
 		else if (!address){
 			setCartLinkSellerCreated(true);
-            setCartLinkConnectedSellerCreated(false);			
+            setCartLinkConnectedSellerCreated(false);	
 		}
     }, [address]);
 // Cart Changing function/s above 
@@ -226,34 +224,7 @@ const SellerCreatedTest = () => {
 			)}
 			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
-					<div id="blue-orange-seller-created">
-						{/*  Change below link after test  */}
-						<Link legacyBehavior href="">
-							<a target="_self" id="photo-link-seller-created">
-								<Image
-								loader={imageLoader}
-								onLoad={() => handleImageLoaded('photoSellerCreatedOne')}
-								alt=""
-								width={200}  
-								height={200}  
-								id="photo-seller-created" 
-								src={"me"}/>
-							</a>
-						</Link>	
-							<div id="blue-orange-prices-before-seller-created">
-								<p id="PAP-seller-created">Price After Purchase</p>
-								<p id="PAP-blue-orange-before-seller-created">$1,800</p>
-								<hr id="priceline-seller-created"/>
-								<p id="yourprice-seller-created">Price</p>
-								<p id="price-blue-orange-before-seller-created">$1,000</p>
-							</div>	
-							{blueOrangeAddToCartSellerCreated && (
-								<button id="blue-orange-add-to-cart-seller-created" 
-								onClick={connectWallet}>
-								ADD TO CART</button>
-							)}	
-							
-					</div>
+					{createdNFTs?.map(nft => <NFTcard nft={nft}/>)}
 				</div>	
 			)}
 		     
