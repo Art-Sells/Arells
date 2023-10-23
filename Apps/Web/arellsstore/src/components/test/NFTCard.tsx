@@ -73,6 +73,14 @@ const NFTCard = (props: NFTCardProps) => {
         };
         void fetchMetadata();
     }, [nft.tokenURI]);
+
+    const [artAddedToCart, setArtAddedToCart] = useState(false);
+    const [artAddToCart, setArtAddToCart] = useState(true);
+	function addArtToCart() {
+        setArtAddedToCart(true);
+		setArtAddToCart(false);
+	}
+
 // Asset Changing function/s above 
 
   return (
@@ -120,7 +128,7 @@ const NFTCard = (props: NFTCardProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">...</p>
                     </div>
-                    <button id="blue-orange-add-to-cart-seller-created">
+                    <button id="#not-for-sale-seller-created">
                         NOT FOR SALE
                     </button>
                 </>
@@ -134,7 +142,7 @@ const NFTCard = (props: NFTCardProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">{nft.price}</p>
                     </div>
-                    <button id="blue-orange-add-to-cart-seller-created">
+                    <button id="#for-sale-seller-created">
                         FOR SALE
                     </button>
                     <button id="blue-orange-add-to-cart-seller-created" 
@@ -151,14 +159,20 @@ const NFTCard = (props: NFTCardProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">{nft.price}</p>
                     </div>
-                    <button id="blue-orange-add-to-cart-seller-created">
+                    <button id="#for-sale-seller-created">
                         FOR SALE
                     </button>
-                    <button id="blue-orange-add-to-cart-seller-created" 
-                    // change below function after test
-                    // onClick={connectWallet}
-                    >
-                    ADD TO CART</button>
+                    {artAddToCart && (
+                        <button id="blue-orange-add-to-cart-seller-created" 
+                        // change below function after test
+                        onClick={addArtToCart}
+                        >
+                        ADD TO CART</button>
+                    )}
+                    {artAddedToCart && (
+                        <button id="asset-added-to-cart">
+                        ADDED</button>
+                    )}
                 </>
             )}	
             

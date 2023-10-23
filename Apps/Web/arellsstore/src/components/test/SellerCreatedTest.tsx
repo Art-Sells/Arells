@@ -224,7 +224,7 @@ const SellerCreatedTest = () => {
 			)}
 			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
-					{createdNFTs?.map(nft => <NFTcard nft={nft}/>)}
+					{createdNFTs?.map(nft => <NFTCard nft={nft}/>)}
 				</div>	
 			)}
 		     

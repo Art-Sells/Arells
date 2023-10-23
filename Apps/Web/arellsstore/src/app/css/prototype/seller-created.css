@@ -607,9 +607,26 @@
 			#colour-glass-added-seller-created, #layers-added-seller-created, 
 			#succinct-drop-added-seller-created, #paint-rain-added-seller-created,
 			
-			#blue-orange-collected-seller-created, #beach-houses-collected-seller-created, 
-			#colour-glass-collected-seller-created, #layers-collected-seller-created, 
-			#succinct-drop-collected-seller-created, #paint-rain-collected-seller-created {
+			#for-sale-seller-created {
+				  text-decoration: none;
+				  margin-left: auto;
+				  margin-right: auto;
+				  color: white;
+				  font-weight: 	500;
+				  font-size: 11px;
+				  padding-top: 20px;
+				  padding-bottom: 20px;
+				  padding-right: 22px;
+				  padding-left: 25px;	  
+				  border: none;
+				  letter-spacing: 3px;
+				  border-radius: 5px;
+				  border-width: 0px;
+				  width: 170px;
+				  opacity: 1; 
+					background: gray;
+			}	
+			#not-for-sale-seller-created {
 				  text-decoration: none;
 				  margin-left: auto;
 				  margin-right: auto;
