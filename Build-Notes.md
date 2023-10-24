@@ -138,10 +138,13 @@
 #### Misc Add-Ons (If enough time before launch)
 **My Store Asset**
 - Edit: On-Off button Public/Private
+
 **My Store**
 - (Private Art) (Public Art)
+
 **My/Other Store Assets & Edit**
 - PAP Logo Above Price After Purchase - links to Price After Purchase About Page with logo and Description
+
 **Price After Purchase About**
 - Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
 ________________________________________________________________________________________________________________________________________
