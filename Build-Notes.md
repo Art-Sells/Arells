@@ -133,9 +133,13 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete Branched-Repo,
-- Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (After we launch our Wallet))
+- Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (Instagram Account: Arells Artists))
 
-##### Misc Add-Ons (If enough time before launch)
+#### Misc Add-Ons (If enough time before launch)
+**My Store Asset**
+- Edit: On-Off button Public/Private
+**My Store**
+- (Private Art) (Public Art)
 **My/Other Store Assets & Edit**
 - PAP Logo Above Price After Purchase - links to Price After Purchase About Page with logo and Description
 **Price After Purchase About**
@@ -146,6 +150,9 @@ ________________________________________________________________________________
 
 ### Price After Purchase About**
 - Create link to Individual GitHub Technical (Learn More)
+
+### Memory based Art creation
+- We don't allow deleting due to our memory-based art creation method. Your life's memories are valuable because (no matter how good or bad they are) they can never be deleted. The same philosophy rings true with Arells. Memory based Art creations ensures no art (no matter how good or bad) can ever be deleted thus ensuring its overall sustained value-creation.
 
 ________________________________________________________________________________________________________________________________________
 
@@ -188,9 +195,6 @@ ________________________________________________________________________________
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
 - - Proof-of-creation 70x PAP for Copyright Proven Artistic Works
 - - Proof-of-ownership for major assets.
- 
-### My Store Asset
-- Edit: On-Off button List-For-Sale/Public/Private
  
 ### Bell
 - Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
