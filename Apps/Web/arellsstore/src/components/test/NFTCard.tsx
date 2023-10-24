@@ -4,14 +4,12 @@ import React from "react";
 
 // asset components (change below links after test)
 import useSigner from "../../state/signer";
-import useNFTMarket from "../../state/nft-market";
 import { ipfsToHTTPS } from "../../helpers";
 import { NFT } from "../../state/nft-market/interfaces"
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
 import '../../app/css/prototype/buyer-collected.css';
-import '../../app/css/modals/copiedlink.css';
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
@@ -110,7 +108,7 @@ const NFTCard = (props: NFTCardProps) => {
                 <a target="_self" id="photo-link-seller-created">
                     <Image
                     loader={imageLoader}
-                    onLoad={() => handleImageLoaded('photoSellerCreatedOne')}
+                    //onLoad={() => handleImageLoaded('photoSellerCreatedOne')}
                     alt=""
                     width={200}  
                     height={200}  

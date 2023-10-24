@@ -19,6 +19,7 @@ import styles from '../../app/css/modals/loading/spinner.module.css';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { NFT } from "../../state/nft-market/interfaces";
 
 
 
@@ -224,7 +225,9 @@ const SellerCreatedTest = () => {
 			)}
 			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
-					{createdNFTs?.map(nft => <NFTCard nft={nft}/>)}
+					{Array.isArray(createdNFTs) && createdNFTs.map((
+						nft: NFT
+						) => <NFTCard nft={nft} key={nft.id} />)}
 				</div>	
 			)}
 		     
