@@ -133,7 +133,7 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete Branched-Repo,
-- Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (Instagram Account: Arells Artists))
+- Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (Instagram/Discord Account: Arells Artists))
 
 #### Misc Add-Ons (If enough time before launch)
 **My Store Asset**
