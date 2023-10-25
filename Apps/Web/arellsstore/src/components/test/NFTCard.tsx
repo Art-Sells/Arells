@@ -29,6 +29,8 @@ type NFTCardProps = {
 
 const NFTCard = (props: NFTCardProps) => {
 
+    console.log("NFT Card info: ", props.nft);
+
 //loader functions below 
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
@@ -63,14 +65,22 @@ const NFTCard = (props: NFTCardProps) => {
     useEffect(() => {
         const fetchMetadata = async () => {
         const metadataResponse = await fetch(ipfsToHTTPS(nft.tokenURI));
-        if (metadataResponse.status != 200) return;
+        if (metadataResponse.status !== 200) {
+            console.error("Failed to fetch metadata:", metadataResponse.statusText);
+            return;
+        }
         const json = await metadataResponse.json();
         setMeta({
             imageURL: ipfsToHTTPS(json.image),
         });
         };
-        void fetchMetadata();
+        fetchMetadata();
     }, [nft.tokenURI]);
+    useEffect(() => {
+        console.log("Meta state updated:", meta);
+    }, [meta]);
+    
+  
 
     const [artAddedToCart, setArtAddedToCart] = useState(false);
     const [artAddToCart, setArtAddToCart] = useState(true);

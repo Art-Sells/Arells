@@ -76,12 +76,15 @@ const SellerCreatedTest = () => {
 // asset functions below
 	const { address, connectWallet} = useSigner();
 	const {createdNFTs} = useNFTMarket();
+	console.log("Immediate Check - Created NFTs:", createdNFTs);
+	console.log("Immediate Check - Art Created:", artCreatedSellerCreated);
 	useEffect(() => {
 		if (createdNFTs) {
 			setNoArtCreatedSellerCreated(false);
 			setArtCreatedSellerCreated(true);
 		}
 	}, [createdNFTs]);
+	
 // asset constants above
 
 // Cart Changing function/s below 
@@ -225,9 +228,10 @@ const SellerCreatedTest = () => {
 			)}
 			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
-					{Array.isArray(createdNFTs) && createdNFTs.map((
-						nft: NFT
-						) => <NFTCard nft={nft} key={nft.id} />)}
+					{Array.isArray(createdNFTs) && createdNFTs.map((nft: NFT) => {
+						console.log("Rendering NFTCard for:", nft);
+						return <NFTCard nft={nft} key={nft.id} />;
+					})}
 				</div>	
 			)}
 		     
