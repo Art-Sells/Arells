@@ -55,7 +55,6 @@
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
 - PAP price calculated 50x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer... prices in USDC
-- Create AUM Tracker (for all Current Prices)
  
 ### My Store Asset   
 - Top-Left[/\]- (See HOME section)
@@ -152,7 +151,8 @@ ________________________________________________________________________________
 ## Transition to DIGITAL ASSET MARKET
 
 ### Price After Purchase About**
-- Create link to Individual GitHub Technical (Learn More)
+- Create link to Individual PAP GitHub Technical (Learn More)
+- Create AUM Tracker (for all Current Prices)
 
 ### Memory based Art creation
 - We don't allow deleting due to our memory-based art creation method. Your life's memories are valuable because (no matter how good or bad they are) they can never be deleted. The same philosophy rings true with Arells. Memory based Art creations ensures no art (no matter how good or bad) can ever be deleted thus ensuring its overall sustained value-creation.
