@@ -1,20 +1,79 @@
 'use client'
 
-import React from "react";
+import React, {useState, useEffect} from "react";
 
 import { NFT } from "../../state/nft-market/interfaces"
+import { ipfsToHTTPS } from "../../helpers";
+import Image from 'next/image';
+
+
+// const NFTCard = () => {
+//     console.log("NFTCard component is rendering");
+//     return (
+//         <div>
+//             NFT Card Works.
+//         </div>
+//     )
+// }
+
+// export default NFTCard;
+
+
+type NFTMetadata = {
+    name: string;
+    imageURL: string;
+  };
 
 type NFTCardProps = {
     nft: NFT;
 };
 
 const NFTCard = (props: NFTCardProps) => {
-    console.log("NFTCard props:", props);
-    return <div>NFTCard is rendering</div>;
+    const {nft} = props;
+    const [meta, setMeta] = useState<NFTMetadata>();
+    console.log("NFTCard component is rendering", nft);
+
+    useEffect(() => {
+        const fetchMetadata = async () => {
+          const metadataResponse = await fetch(ipfsToHTTPS(nft.tokenURI));
+          console.log("Metadata Response: ", metadataResponse);
+          if (metadataResponse.status != 200) return;
+          const json = await metadataResponse.json();
+          setMeta({
+            name: json.name,
+            imageURL: ipfsToHTTPS(json.image),
+          });
+        };
+        void fetchMetadata();
+      }, [nft.tokenURI]);
+
+    return (
+        <div>
+            {meta ? (
+                <Image
+                width={300}
+                height={300}
+                src={meta?.imageURL}
+                alt={meta?.name}
+                />
+            ): (
+                <p>loading...</p>
+            )}
+            <p>{meta?.name ?? "..."}</p>
+        </div>
+    );
 };
 
 export default NFTCard;
   
+
+
+
+
+
+
+
+
 
 // // asset components (change below links after test)
 // import useSigner from "../../state/signer";

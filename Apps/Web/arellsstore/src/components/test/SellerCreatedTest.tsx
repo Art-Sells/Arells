@@ -24,6 +24,7 @@ import { NFT } from "../../state/nft-market/interfaces";
 
 
 const SellerCreatedTest = () => {
+	
 
 //loader functions below 
     const [showLoading, setLoading] = useState(true);
@@ -76,8 +77,8 @@ const SellerCreatedTest = () => {
 // asset functions below
 	const { address, connectWallet} = useSigner();
 	const {createdNFTs} = useNFTMarket();
-	console.log("Immediate Check - Created NFTs:", createdNFTs);
-	console.log("Immediate Check - Art Created:", artCreatedSellerCreated);
+	console.log("Created NFTs:", createdNFTs);
+	//console.log("Immediate Check - Art Created:", artCreatedSellerCreated);
 	useEffect(() => {
 		if (createdNFTs) {
 			setNoArtCreatedSellerCreated(false);
@@ -228,12 +229,22 @@ const SellerCreatedTest = () => {
 			)}
 			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
-					{Array.isArray(createdNFTs) && createdNFTs.map((nft: NFT) => {
-						console.log("Rendering NFTCard for:", nft);
-						return <NFTCard nft={nft} key={nft.id} />;
-					})}
+					{createdNFTs.createdNFTs ? (
+						createdNFTs.createdNFTs.length > 0 ? (
+							createdNFTs.createdNFTs.map((nft) => {
+								console.log('Rendering NFTCard for:', nft);
+								return <NFTCard nft={nft} key={nft.id} />;
+							})
+						) : null
+					) : (
+						<p>Loading...</p>
+					)}
 				</div>	
 			)}
+
+
+
+
 		     
         </>
     );
