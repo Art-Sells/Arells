@@ -44,7 +44,7 @@
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
-- [For Sale]-dark-gray, [Not For Sale]-silver, [Sold(if collector hasn't listed)]white, [Selling(if collector has listed)]white
+- [For Sale]-dark-gray, [Not For Sale]-silver, [Sold(if collector hasn't listed)]white, [Selling(if collector has listed)]white .... Both Sold and Selling are buttons that link to Collector
 - - **Collected**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [For Sale]-dark-gray, [Not For Sale]-silver,
