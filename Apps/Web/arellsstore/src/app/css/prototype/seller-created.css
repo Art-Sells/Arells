@@ -443,7 +443,10 @@
 			padding-bottom: 60px;			
 			text-decoration: none;
 			background: white;
-		     
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 1.00s;
+			animation-name: animatetop;
+			animation-duration: 1.00s;
 		}
 		
 		#photo-link-seller-created {
@@ -467,7 +470,7 @@
 			width: 200px;
 			height: 200px;
   			border-radius: 10px;		
-  			box-shadow: 0px 8px 12px -6px black;  
+  			box-shadow: 0px 3px 16px -6px gray;  
 			  -webkit-animation-name: animatetop;
 			  -webkit-animation-duration: 1.00s;
 			  animation-name: animatetop;
@@ -603,7 +606,7 @@
 				  transition: 1s;
 				  cursor: pointer;
 			}
-			#blue-orange-added-seller-created, #beach-houses-added-seller-created, 
+			#asset-added-to-cart, #beach-houses-added-seller-created, 
 			#colour-glass-added-seller-created, #layers-added-seller-created, 
 			#succinct-drop-added-seller-created, #paint-rain-added-seller-created,
 			
@@ -905,7 +908,7 @@
 				  letter-spacing: 1px;
 				  width: 120px;
 				}	  
-			#blue-orange-added-seller-created, #beach-houses-added-seller-created, 
+			#asset-added-to-cart, #beach-houses-added-seller-created, 
 			#colour-glass-added-seller-created, #layers-added-seller-created, 
 			#succinct-drop-added-seller-created, #paint-rain-added-seller-created,
 			

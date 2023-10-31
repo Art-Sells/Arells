@@ -229,15 +229,12 @@ const SellerCreatedTest = () => {
 			)}
 			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
-					{createdNFTs.createdNFTs ? (
+					{createdNFTs.createdNFTs && (
 						createdNFTs.createdNFTs.length > 0 ? (
 							createdNFTs.createdNFTs.map((nft) => {
-								console.log('Rendering NFTCard for:', nft);
 								return <NFTCard nft={nft} key={nft.id} />;
 							})
 						) : null
-					) : (
-						<p>Loading...</p>
 					)}
 				</div>	
 			)}
