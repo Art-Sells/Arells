@@ -1,7 +1,7 @@
 ## Arells Build Notes...
 
 ## MVP
-- Pages separated like so: main/store-name/asset-name
+- Pages separated like so: main/asset-name/asset-number, main/store-name
 - Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements]
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
