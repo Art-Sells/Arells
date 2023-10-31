@@ -34,7 +34,6 @@
 - (Save Changes)
 
 ### My Store
--- ([automatically loads latest])
 - Top-Left[/]- (See HOME section)
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Top-Center[Edit Store]
@@ -77,7 +76,6 @@
 - Send Email After Purchase 
   
 ### Other Store
--- ([automatically loads latest])
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - Top-Right[Cart]
 - Bottom-Left & Right -- Nothing
@@ -134,18 +132,19 @@
 - Delete Branched-Repo,
 - Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (Instagram/Discord Account: Arells Artists))
 
-#### Misc Add-Ons (If enough time before launch)
-**My Store Asset**
-- Edit: On-Off button Public/Private
-
-**My Store**
-- (Private Art) (Public Art)
-
-**My/Other Store Assets & Edit**
+#### Misc Add-Ons (If enough time before launch in (ordered by priority))
+**1. My/Other Store Assets & Edit**
 - PAP Logo Above Price After Purchase - links to Price After Purchase About Page with logo and Description
 
-**Price After Purchase About**
+**2. Price After Purchase About**
 - Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
+
+**3. My Store Asset**
+- Edit: On-Off button Public/Private
+
+**4. My/Other Store**
+-- ([automatically loads latest])
+- (Private Art) (Public Art)
 ________________________________________________________________________________________________________________________________________
 
 ## Transition to DIGITAL ASSET MARKET
