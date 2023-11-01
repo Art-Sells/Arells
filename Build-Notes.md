@@ -25,7 +25,8 @@
 
 ### Create Store
 - Store Logo: Default Store Logo
-- Store Name & Store Description: Maximum Number of Characters.
+- Store Name: Maximum Number of Characters.
+- Art Category: Abstracts, Photography, Illustrations (Icon for each)
 - (Save Changes)
 
 ### Edit Store
@@ -40,7 +41,8 @@
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected
 - Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
 - Logo: Default Store Logo
-- Store Name & Store Description: Maximum Number of Characters.
+- Store Name: Maximum Number of Characters.
+- Store Art Category
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
@@ -61,7 +63,6 @@
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected
 - Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
 - Images (Default Store Image) here render small pixels
-- Store Name & Store Description: Maximum Number of Characters.
 - Remove "Owned By" if not collected/bought/minted.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - - - Edit Art(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]
@@ -81,10 +82,12 @@
 - Bottom-Left & Right -- Nothing
 - Image Default: Store Icon
 - Name Default: Unnamed Store
+- Store Art Category Default: Creator & Collector
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
 - - **Collected**:
+- Art Category Logos on all Collecteds
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
 - *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
@@ -130,9 +133,12 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete Branched-Repo,
-- Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (Instagram/Discord Account: Arells Artists))
+- Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (Instagram/Discord Account: Arells Abstracts, Arells Photography, Arells Illustrations))
 
 #### Misc Add-Ons (If enough time before launch in (ordered by priority))
+**1. My/Other Store **
+- Category
+
 **1. My/Other Store Assets & Edit**
 - PAP Logo Above Price After Purchase - links to Price After Purchase About Page with logo and Description
 
