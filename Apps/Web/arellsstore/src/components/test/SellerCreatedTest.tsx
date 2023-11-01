@@ -5,7 +5,7 @@ import React from "react";
 // asset components (change below links after test)
 import useSigner from "../../state/signer";
 import useNFTMarket from "../../state/nft-market";
-import NFTCard from "./NFTCard";
+import AssetStoreHolder from "./Asset/AssetStoreHolder";
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
@@ -19,9 +19,6 @@ import styles from '../../app/css/modals/loading/spinner.module.css';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { NFT } from "../../state/nft-market/interfaces";
-
-
 
 const SellerCreatedTest = () => {
 	
@@ -77,8 +74,6 @@ const SellerCreatedTest = () => {
 // asset functions below
 	const { address, connectWallet} = useSigner();
 	const {createdNFTs} = useNFTMarket();
-	console.log("Created NFTs:", createdNFTs);
-	//console.log("Immediate Check - Art Created:", artCreatedSellerCreated);
 	useEffect(() => {
 		if (createdNFTs) {
 			setNoArtCreatedSellerCreated(false);
@@ -89,7 +84,6 @@ const SellerCreatedTest = () => {
 			setArtCreatedSellerCreated(false);
 		}
 	}, [createdNFTs]);
-	
 // asset constants above
 
 // Cart Changing function/s below 
@@ -234,7 +228,7 @@ const SellerCreatedTest = () => {
 			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
 					{createdNFTs?.map((nft) => {
-						return <NFTCard nft={nft} key={nft.id} />;
+						return <AssetStoreHolder nft={nft} key={nft.id} />;
 					})}
 				</div>	
 			)}

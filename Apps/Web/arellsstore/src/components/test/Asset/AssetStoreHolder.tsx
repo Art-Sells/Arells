@@ -1,9 +1,9 @@
 'use client'
 
 // asset components (change below links after test)
-import useSigner from "../../state/signer";
-import { ipfsToHTTPS } from "../../helpers";
-import { NFT } from "../../state/nft-market/interfaces"
+import useSigner from "../../../state/signer";
+import { ipfsToHTTPS } from "../../../helpers";
+import { NFT } from "../../../state/nft-market/interfaces"
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
@@ -17,16 +17,16 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-type NFTMetadata = {
+type AssetStoreMetadata = {
     name: string;
     imageURL: string;
 };
 
-type NFTCardProps = {
+type AssetStoreProps = {
     nft: NFT;
 };
 
-const NFTCard = (props: NFTCardProps) => {
+const AssetStoreHolder = (props: AssetStoreProps) => {
 //loader functions below 
     // const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
@@ -52,7 +52,7 @@ const NFTCard = (props: NFTCardProps) => {
     const { address, connectWallet} = useSigner();
 
     const { nft } = props;
-    const [meta, setMeta] = useState<NFTMetadata>();
+    const [meta, setMeta] = useState<AssetStoreMetadata>();
 
     const forSale = nft.price != "0";
 // asset constants above
@@ -128,7 +128,7 @@ const NFTCard = (props: NFTCardProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">...</p>
                     </div>
-                    <button id="#not-for-sale-seller-created">
+                    <button id="not-for-sale-seller-created">
                         NOT FOR SALE
                     </button>
                 </>
@@ -142,7 +142,7 @@ const NFTCard = (props: NFTCardProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">{nft.price}</p>
                     </div>
-                    <button id="#for-sale-seller-created">
+                    <button id="for-sale-seller-created">
                         FOR SALE
                     </button>
                     <button id="blue-orange-add-to-cart-seller-created" 
@@ -154,12 +154,12 @@ const NFTCard = (props: NFTCardProps) => {
                 <>
                     <div id="blue-orange-prices-before-seller-created">
                         <p id="PAP-seller-created">Price After Purchase</p>
-                        <p id="PAP-blue-orange-before-seller-created">{nft.price}</p>
+                        <p id="PAP-blue-orange-before-seller-created">${nft.price}</p>
                         <hr id="priceline-seller-created" />
                         <p id="yourprice-seller-created">Price</p>
-                        <p id="price-blue-orange-before-seller-created">{nft.price}</p>
+                        <p id="price-blue-orange-before-seller-created">${nft.price}</p>
                     </div>
-                    <button id="#for-sale-seller-created">
+                    <button id="for-sale-seller-created">
                         FOR SALE
                     </button>
                     {artAddToCart && (
@@ -181,4 +181,4 @@ const NFTCard = (props: NFTCardProps) => {
   );
 };
 
-export default NFTCard;
+export default AssetStoreHolder;
