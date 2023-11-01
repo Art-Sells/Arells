@@ -42,7 +42,7 @@ const useNFTMarket = () => {
 
   return {
     createNFT,
-    createdNFTs
+    ...createdNFTs
   };
 };
 

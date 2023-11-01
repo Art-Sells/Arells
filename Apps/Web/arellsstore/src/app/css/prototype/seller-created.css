@@ -864,7 +864,7 @@
 		}
 			#PAP-seller-created {
 				margin-top: 20px;
-				font-size: 12px;
+				font-size: 10px;
 			}
 			#PAP-blue-orange-before-seller-created, #PAP-beach-houses-before-seller-created, #PAP-colour-glass-before-seller-created,
 			#PAP-layers-before-seller-created, #PAP-succinct-drop-before-seller-created, #PAP-paint-rain-before-seller-created,
@@ -877,10 +877,10 @@
 			}
 			#priceline-seller-created {
 			  margin-top: -2px;
-			  width: 60%;
+			  width: 75%;
 			}	
 			#yourprice-seller-created {
-			margin-top: 10px;
+			margin-top: 12px;
 				font-size: 13px;
 			}
 			#price-blue-orange-before-seller-created, #price-beach-houses-before-seller-created, #price-colour-glass-before-seller-created,

@@ -54,7 +54,7 @@ const SellerCreatedTest = () => {
     const [cartLinkSellerCreated, setCartLinkSellerCreated] = useState(true);
 	const [cartLinkConnectedSellerCreated, setCartLinkConnectedSellerCreated] = useState(false);
 
-    const [noArtCreatedSellerCreated, setNoArtCreatedSellerCreated] = useState(true);
+    const [noArtCreatedSellerCreated, setNoArtCreatedSellerCreated] = useState(false);
     const [artCreatedSellerCreated, setArtCreatedSellerCreated] = useState(false);
 // useState constants above
 
@@ -83,6 +83,10 @@ const SellerCreatedTest = () => {
 		if (createdNFTs) {
 			setNoArtCreatedSellerCreated(false);
 			setArtCreatedSellerCreated(true);
+		}
+		else {
+			setNoArtCreatedSellerCreated(true);
+			setArtCreatedSellerCreated(false);
 		}
 	}, [createdNFTs]);
 	
@@ -191,7 +195,7 @@ const SellerCreatedTest = () => {
 				id="profile-photo-seller-created" 
 				src="images/market/Market-Default-Icon.jpg"/>
 			</div>	 
-			<h1 id="name-seller-created">Unnamed Store {address}</h1>  
+			<h1 id="name-seller-created">Unnamed Store</h1>  
 			<p id="description-seller-created">Creations and Collections</p> 
 			<div id="share-div-seller-created">
 				<p id="share-div-desc-seller-created">SHARE</p>
@@ -229,13 +233,9 @@ const SellerCreatedTest = () => {
 			)}
 			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
-					{createdNFTs.createdNFTs && (
-						createdNFTs.createdNFTs.length > 0 ? (
-							createdNFTs.createdNFTs.map((nft) => {
-								return <NFTCard nft={nft} key={nft.id} />;
-							})
-						) : null
-					)}
+					{createdNFTs?.map((nft) => {
+						return <NFTCard nft={nft} key={nft.id} />;
+					})}
 				</div>	
 			)}
 
