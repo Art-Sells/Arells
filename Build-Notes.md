@@ -147,7 +147,7 @@
 - (Private Art) (Public Art)
 ________________________________________________________________________________________________________________________________________
 
-## Transition to DIGITAL ASSET MARKET
+## Transition to DIGITAL ART MARKET
 
 ### Price After Purchase About**
 - Create link to Individual PAP GitHub Technical (Learn More)
@@ -158,12 +158,12 @@ ________________________________________________________________________________
 
 ________________________________________________________________________________________________________________________________________
 
-## DIGITAL ASSET MARKET
+## DIGITAL ART MARKET
 
 - Rename Production Repo (Arells Marketplace)
 - Wallet Logs you off After 10 minutes of innaction (review Bank Apps)
 - "Store Name is Taken Error, and if Asset Name is taken"
-- NFTs = Digital Assets,
+- NFTs = Digital Art,
 - Seed Phrase = Vault Code
 - Connect Wallet = Connect Store, 
 - Public Key = Address, 
@@ -188,7 +188,7 @@ ________________________________________________________________________________
 ### Store (Default)
 - Includes all Arells Website Components
 - Build with Circle Wallet As A Service? (USDC) ***Connects to bank account once and automatically converts USDC with purchacing***                                           
-- Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Asset"
+- Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Art"
 - Heavy KYC/AML [USDC -to-bank- transfers only] through Integrating Apple-Pay & Google Pay Credit Card with USDC "purchase".
 
 ### Seller-Created/Collected
