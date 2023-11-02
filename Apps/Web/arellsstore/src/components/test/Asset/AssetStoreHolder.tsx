@@ -72,15 +72,12 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
       void fetchMetadata();
     }, [nft.tokenURI]);
   
-
-
   const [artAddedToCart, setArtAddedToCart] = useState(false);
   const [artAddToCart, setArtAddToCart] = useState(true);
 	function addArtToCart() {
     setArtAddedToCart(true);
 		setArtAddToCart(false);
 	}
-
 // Asset Changing function/s above 
 
   return (
@@ -106,7 +103,7 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
         <div id="blue-orange-seller-created">
           {/*  Change below link after test  */}
           {meta && (
-            <Link legacyBehavior href="" passHref>
+            <Link legacyBehavior href={`/asset/[ownerId]/[nftId]`} passHref>
               <a target="_self" id="photo-link-seller-created">
                 <Image
                   loader={imageLoader}

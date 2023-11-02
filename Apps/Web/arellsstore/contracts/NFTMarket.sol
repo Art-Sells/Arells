@@ -97,6 +97,19 @@ contract NFTMarket is ERC721URIStorage, Ownable {
         emit NFTTransfer(tokenID, address(this), msg.sender, "", 0);
     }
 
+    function getNFTOwnerOrCreator(uint256 tokenId) public view returns (address ownerOrCreator, bool isMinted) {
+        if (_exists(tokenId)) {
+            // If the token has been minted, return the owner.
+            return (ownerOf(tokenId), true);
+        } else {
+            // If the token has not been minted, check if it has been created (and thus has a creator).
+            address creator = _creators[tokenId];
+            require(creator != address(0), "NFT does not exist");
+            return (creator, false);
+        }
+    }
+
+
     // cancelListingCreator
     function cancelListingCreator(uint256 tokenID) public {
         NFTListing memory listing = _listings[tokenID];

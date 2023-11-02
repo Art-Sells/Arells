@@ -12,11 +12,16 @@ import '../../../app/css/prototype/asset/asset.css';
 import '../../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../../app/css/modals/loading/spinner.module.css';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FC } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const AssetTest = () => {
+type AssetTestProps = {
+	ownerId?: string | string[];
+	nftId?: string | string[];
+};
+
+const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 	
 //loader functions below 
 	const [showLoading, setLoading] = useState(true);
@@ -51,12 +56,26 @@ const AssetTest = () => {
 // asset functions below
 	const { address, connectWallet} = useSigner();
 	const {createdNFTs} = useNFTMarket();
+	const specificNFT = createdNFTs?.find((nft) => nft.id === nftId);
 	useEffect(() => {
 		if (createdNFTs) {
 			setArtAsset(true);
 			setLoading(false);
 		}
 	}, [createdNFTs]);
+	const { getNFTOwner } = useNFTMarket();
+	const [ownerAddress, setOwnerAddress] = useState<string | undefined>(ownerId as string);
+  
+	useEffect(() => {
+	  const fetchOwnerAddress = async () => {
+		if (nftId) {
+		  const address = await getNFTOwner(nftId as string);
+		  setOwnerAddress(address);
+		}
+	  };
+  
+	  fetchOwnerAddress();
+	}, [nftId, getNFTOwner]);
 // asset constants above
 
 // Cart Changing function/s below 
@@ -160,13 +179,13 @@ const AssetTest = () => {
 				<p>Art Doesn't Exist
 				</p>
 			)}
-			{artAsset && (
-				<div id="container-seller-created">
-					{createdNFTs?.map((nft) => {
-						return <AssetHolder nft={nft} key={nft.id} />;
-					})}
-				</div>	
-			)}
+			{specificNFT && ownerAddress &&
+            <AssetHolder 
+              nft={specificNFT}
+              ownerId={ownerAddress} 
+              key={specificNFT.id}
+            />
+          }
         </>
     );
 }
