@@ -1,10 +1,8 @@
-import '../../css/prototype/asset/asset.css';
 
 import React from "react";
-import type { Metadata } from 'next';
-import { useRouter } from 'next/router';
 
-import AssetTest from '../../../../components/test/Asset/Asset';
+import AssetTest from '../../../../../components/test/Asset/Asset';
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Asset Test",
@@ -37,18 +35,19 @@ export const metadata: Metadata = {
   }
 }
 
-const AssetPageTest = () => {
-  const router = useRouter();
-  const { ownerId, nftId } = router.query;
+type AssetPageTestProps = {
+  ownerId: string;
+  nftId: string;
+};
 
+const AssetPageTest: React.FC<AssetPageTestProps> = ({ ownerId, nftId }) => {
+  console.log('Parent nftId:', nftId);
   return (
-    <>
-          <div id="asset-wrapper">
-            <AssetTest ownerId={ownerId} nftId={nftId} />
-          </div>
-    </>
+    <div id="asset-wrapper">
+      <AssetTest ownerId={ownerId} nftId={nftId} />
+    </div>
   );
-}
+};
 
 export default AssetPageTest;
 

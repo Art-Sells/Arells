@@ -10,8 +10,8 @@ import '../../../app/css/prototype/asset/asset.css';
 import '../../../app/css/modals/copiedlink.css';
 
 //Loader Styles
-import '../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../../app/css/modals/loading/spinner.module.css';
+import '../../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../../app/css/modals/loading/spinner.module.css';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
