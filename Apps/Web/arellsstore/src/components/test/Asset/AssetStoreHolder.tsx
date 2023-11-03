@@ -6,12 +6,12 @@ import { ipfsToHTTPS } from "../../../helpers";
 import { NFT } from "../../../state/nft-market/interfaces"
 
 // Change below link after test
-import '../../app/css/prototype/seller-created.css';
-import '../../app/css/prototype/buyer-collected.css';
+import '../../../app/css/prototype/seller-created.css';
+import '../../../app/css/prototype/buyer-collected.css';
 
 //Loader Styles
-import '../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../../app/css/modals/loading/spinner.module.css';
+import '../../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../../app/css/modals/loading/spinner.module.css';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -103,7 +103,7 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
         <div id="blue-orange-seller-created">
           {/*  Change below link after test  */}
           {meta && (
-            <Link legacyBehavior href={`/asset/[ownerId]/[nftId]`} passHref>
+            <Link legacyBehavior href={`/asset/${nft.owner}/${nft.id}`} passHref>
               <a target="_self" id="photo-link-seller-created">
                 <Image
                   loader={imageLoader}

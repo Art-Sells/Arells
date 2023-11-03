@@ -908,13 +908,9 @@
 				  letter-spacing: 1px;
 				  width: 120px;
 				}	  
-			#asset-added-to-cart, #beach-houses-added-seller-created, 
-			#colour-glass-added-seller-created, #layers-added-seller-created, 
-			#succinct-drop-added-seller-created, #paint-rain-added-seller-created,
-			
-			#blue-orange-collected-seller-created, #beach-houses-collected-seller-created, 
-			#colour-glass-collected-seller-created, #layers-collected-seller-created, 
-			#succinct-drop-collected-seller-created, #paint-rain-collected-seller-created{
+			#for-sale-seller-created,
+			#not-for-sale-seller-created
+			{
 				  font-size: 9px;
 				  padding-top: 20px;
 				  padding-bottom: 20px;
