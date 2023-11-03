@@ -63,19 +63,25 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 			setLoading(false);
 		}
 	}, [createdNFTs]);
-	const { getNFTOwner } = useNFTMarket();
-	const [ownerAddress, setOwnerAddress] = useState<string | undefined>(ownerId as string);
+	const { getCreatorOrCollector } = useNFTMarket();
+	const [creatorOrCollectorAddress, setCreatorOrCollectorAddress] = useState<string | undefined>();
   
 	useEffect(() => {
-	  const fetchOwnerAddress = async () => {
-		if (nftId) {
-		  const address = await getNFTOwner(nftId as string);
-		  setOwnerAddress(address);
-		}
-	  };
-  
-	  fetchOwnerAddress();
-	}, [nftId, getNFTOwner]);
+		const fetchCreatorOrCollector = async () => {
+		  if (nftId) {
+			try {
+			  const result = await getCreatorOrCollector(nftId as string);
+			  if (result) {
+				setCreatorOrCollectorAddress(result.address);
+			  }
+			} catch (error) {
+			  console.error("Failed to fetch the creator or collector address:", error);
+			}
+		  }
+		};
+	
+		fetchCreatorOrCollector();
+	}, [nftId, getCreatorOrCollector]);
 // asset constants above
 
 // Cart Changing function/s below 
@@ -179,13 +185,13 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 				<p>Art Doesn't Exist
 				</p>
 			)}
-			{specificNFT && ownerAddress &&
-            <AssetHolder 
-              nft={specificNFT}
-              ownerId={ownerAddress} 
-              key={specificNFT.id}
-            />
-          }
+			{specificNFT && creatorOrCollectorAddress &&
+				<AssetHolder 
+				nft={specificNFT}
+				ownerId={creatorOrCollectorAddress}
+				key={specificNFT.id}
+				/>
+			}
         </>
     );
 }

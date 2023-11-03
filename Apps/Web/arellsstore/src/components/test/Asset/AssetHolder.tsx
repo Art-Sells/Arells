@@ -24,6 +24,7 @@ type AssetMetadata = {
 
 type AssetProps = {
     nft: NFT;
+    ownerId: string;
 };
 
 const AssetHolder = (props: AssetProps) => {

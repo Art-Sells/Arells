@@ -40,8 +40,25 @@ const useNFTMarket = () => {
     }
   };
 
+  const getCreatorOrCollector = async (tokenId: string) => {
+    if (!signer) {
+      console.error('Signer is not available');
+      return;
+    }
+    
+    try {
+      // Assuming your contract has a function `getNFTCreatorOrCollector` that takes a tokenId
+      const [address, isCollector] = await nftMarket.getNFTCreatorOrCollector(tokenId);
+      return { address, isCollector };
+    } catch (e) {
+      console.error("Exception while getting creator or collector:", e);
+      throw e;
+    }
+  };
+
   return {
     createNFT,
+    getCreatorOrCollector,
     ...createdNFTs
   };
 };

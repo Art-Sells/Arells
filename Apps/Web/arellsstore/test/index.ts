@@ -60,6 +60,38 @@ describe("NFTMarket", function (){
     
         });
     });
+
+    describe("getNFTCreatorOrCollector", () => {
+        const tokenURI = 'unique token uri';
+    
+        it("Should return the creator and false before minting", async () => {
+            // Step 1: Create the NFT which has not been minted yet
+            const tokenID = await createNFT(tokenURI);
+            // Step 2: Get the creator address before minting
+            const [creatorOrCollector, isMinted] = await nftMarket.getNFTCreatorOrCollector(tokenID);
+            expect(creatorOrCollector).to.equal(signers[0].address); // The creator should be signers[0]
+            expect(isMinted).to.equal(false);
+        });
+    
+        it("Should return the owner and true after minting", async () => {
+            // Step 1: Create the NFT
+            const tokenID = await createNFT(tokenURI);
+        
+            // Step 2: List it for sale (as the creator)
+            const listTransaction = await nftMarket.listNFTCreator(tokenID, ethers.utils.parseEther("1"));
+            await listTransaction.wait();  // Make sure this transaction is confirmed
+        
+            // Step 3: Buy the NFT as signers[1]
+            const buyTransaction = await nftMarket.connect(signers[1]).buyNFT(tokenID, { value: ethers.utils.parseEther("1") });
+            await buyTransaction.wait();  // Make sure this transaction is confirmed
+        
+            // Step 4: Check the owner after minting
+            const [creatorOrCollector, isMinted] = await nftMarket.getNFTCreatorOrCollector(tokenID);
+            expect(creatorOrCollector).to.equal(signers[1].address);
+            expect(isMinted).to.equal(true);
+        });
+    });
+    
       
     describe("listNFT", () => {
         const tokenURI = 'some token uri';
