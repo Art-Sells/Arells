@@ -103,7 +103,7 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
         <div id="blue-orange-seller-created">
           {/*  Change below link after test  */}
           {meta && (
-            <Link legacyBehavior href={`/asset/${nft.owner}/${nft.id}`} passHref>
+            <Link legacyBehavior href={`/test/asset/${nft.owner}/${nft.id}`} passHref>
               <a target="_self" id="photo-link-seller-created">
                 <Image
                   loader={imageLoader}
