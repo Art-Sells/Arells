@@ -162,9 +162,6 @@ ________________________________________________________________________________
 ### Memory based Art creation
 - We don't allow deleting due to our memory-based art creation method. Your life's memories are valuable because (no matter how good or bad they are) they can never be deleted. The same philosophy rings true with Arells. Memory based Art creations ensures no art (no matter how good or bad) can ever be deleted thus ensuring its overall sustained value-creation.
 
-### X/Twitter Account
-- Description: "Arells is a Digital Asset market that renders bear markets obsolete. Follow us for tehcnical innovation and milestone updates!"
-
 ________________________________________________________________________________________________________________________________________
 
 ## DIGITAL ART MARKET
