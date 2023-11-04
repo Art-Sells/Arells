@@ -58,7 +58,6 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 	const {createdNFTs} = useNFTMarket();
 	const specificNFT = createdNFTs?.find((nft) => String(nft.id) === String(nftId));
 		// Add these console.log statements to check the values
-		console.log('nftId prop:', nftId);
 		console.log('Available NFT IDs:', createdNFTs?.map(nft => nft.id));
 
 	useEffect(() => {

@@ -41,10 +41,11 @@ type AssetPageTestProps = {
 };
 
 const AssetPageTest: React.FC<AssetPageTestProps> = ({ ownerId, nftId }) => {
-  console.log('Parent nftId:', nftId);
+  console.log('Parent nftId:', nftId || 'No nftId provided');
+
   return (
     <div id="asset-wrapper">
-      <AssetTest ownerId={ownerId} nftId={nftId} />
+      <AssetTest/>
     </div>
   );
 };
