@@ -1,7 +1,7 @@
 
 import React from "react";
 
-import AssetTest from '../../../../../components/test/Asset/Asset';
+import AssetTest from '../../../../components/test/Asset/Asset';
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -41,11 +41,10 @@ type AssetPageTestProps = {
 };
 
 const AssetPageTest: React.FC<AssetPageTestProps> = ({ ownerId, nftId }) => {
-  console.log('Parent nftId:', nftId || 'No nftId provided');
-
+  console.log('Parent nftId:', nftId);
   return (
     <div id="asset-wrapper">
-      <AssetTest/>
+      <AssetTest ownerId={ownerId} nftId={nftId} />
     </div>
   );
 };

@@ -505,23 +505,24 @@
                     border-radius: 12px;	
                     width: 45px;  					
               }
+              #cart-link-seller-collected{
+                margin-left: 90px;
+                  padding-top: 11px;
+                  padding-bottom: 7.5px;
+                  padding-right: 8px;
+                  padding-left: 8px;	
+                  border-radius: 12px;	
+                  width: 45px;  					
+              }
               #cart-link-connected-seller-collected {
-                  margin-left: 90px;
-                    padding-top: 10px;
-                    padding-bottom: 6.5px;
-                    padding-right: 8px;
-                    padding-left: 8px;	
-                    border-radius: 12px;	
-                    width: 27px;  					
-              }
-              #cart-link-full-seller-collected {
-                  margin-left: 90px;
-                    padding-top: 10px;
-                    padding-bottom: 6.5px;
-                    padding-right: 8px;
-                    padding-left: 8px;		
-                    width: 27px;  					
-              }
+                margin-left: 90px;
+                  padding-top: 10px;
+                  padding-bottom: 7.2px;
+                  padding-right: 8px;
+                  padding-left: 8px;	
+                  border-radius: 12px;	
+                  width: 27px;  
+                }
               #cart-icon-seller-collected,
               #cart-icon-full-seller-collected {
                   height: 14px;

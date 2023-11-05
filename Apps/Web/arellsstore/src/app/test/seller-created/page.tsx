@@ -37,7 +37,6 @@ export const metadata: Metadata = {
 }
 
 const SellerCreatedPageTest = () => {
-
   return (
     <>
           <div id="prototype-seller-created-wrapper">
