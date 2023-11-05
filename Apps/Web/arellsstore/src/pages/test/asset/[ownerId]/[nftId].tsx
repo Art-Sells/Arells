@@ -1,6 +1,7 @@
 
 import React from "react";
 
+import { useRouter } from 'next/router';
 import AssetTest from '../../../../components/test/Asset/Asset';
 import { Metadata } from "next";
 
@@ -35,16 +36,16 @@ export const metadata: Metadata = {
   }
 }
 
-type AssetPageTestProps = {
-  ownerId: string;
-  nftId: string;
-};
+const AssetPageTest = () => {
+  const router = useRouter();
+  const { ownerId, nftId } = router.query;
 
-const AssetPageTest: React.FC<AssetPageTestProps> = ({ ownerId, nftId }) => {
   console.log('Parent nftId:', nftId);
   return (
     <div id="asset-wrapper">
-      <AssetTest ownerId={ownerId} nftId={nftId} />
+     <AssetTest
+      //ownerId={ownerId} nftId={nftId} 
+      />
     </div>
   );
 };

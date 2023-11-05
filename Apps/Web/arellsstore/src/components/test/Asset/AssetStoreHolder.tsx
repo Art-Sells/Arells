@@ -139,9 +139,6 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">{nft.price}</p>
                     </div>
-                    <button id="for-sale-seller-created">
-                        FOR SALE
-                    </button>
                     <button id="blue-orange-add-to-cart-seller-created" 
                     onClick={connectWallet}>
                     ADD TO CART</button>
@@ -156,9 +153,6 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">${nft.price}</p>
                     </div>
-                    <button id="for-sale-seller-created">
-                        FOR SALE
-                    </button>
                     {artAddToCart && (
                         <button id="blue-orange-add-to-cart-seller-created" 
                         // change below function after test
