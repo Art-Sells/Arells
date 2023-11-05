@@ -46,10 +46,10 @@
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
-- [For Sale]-dark-gray, [Not For Sale]-silver, [Sold(if collector hasn't listed)]white, [Selling(if collector has listed)]white .... Both Sold and Selling are buttons that link to Collector
+- [Add To Cart]-share to sell Modal, [Not For Sale]-silver, [Sold(if collector hasn't listed)]white, [Selling(if collector has listed)]white .... Both Sold and Selling are buttons that link to Collector
 - - **Collected**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
-- [For Sale]-dark-gray, [Not For Sale]-silver,
+- [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
  
 #### Creating Mechanics
 - Once confirmed -> (My Store Asset Edit page) {Art Created Modal} {Item Automatically in Created Profile Page PAP & Price = Lines [[Not For Sale]}
@@ -68,10 +68,10 @@
 - - - Edit Art(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
-- [For Sale]-dark-gray, [Not For Sale]-silver, [Sold]white
+- [Add To Cart]-share to sell Modal, [Not For Sale]-silver, [Sold]white
 - - **Collected**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
-- [For Sale]-dark-gray, [Not For Sale]-silver,
+- [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
 
 ### Notifications
 - Send Email After Purchase 
