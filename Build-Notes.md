@@ -140,7 +140,7 @@
 - Category
 
 **1. My/Other Store Assets & Edit**
-- PAP Logo Above Price After Purchase - links to Price After Purchase About Page with logo and Description
+- PAP Logo Above Price After Purchase (Stores and Assets) (Asset links to Price After Purchase About Page with logo and Description)
 
 **2. Price After Purchase About**
 - Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
