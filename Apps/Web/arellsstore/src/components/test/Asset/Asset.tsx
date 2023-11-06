@@ -4,7 +4,7 @@
 import useSigner from "../../../state/signer";
 import useNFTMarket from "../../../state/nft-market";
 import AssetHolder from "./AssetHolder";
-import useCreatedNFT from "../../../state/nft-market/useCreatedNFT";
+import useCreatedNFTs from "../../../state/nft-market/useCreatedNFTs";
 
 // Change below link after test
 import '../../../app/css/prototype/asset/asset.css';
@@ -36,7 +36,6 @@ type AssetTestProps = {
 };
 
 const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
-	console.log('Child ownerId:', ownerId);
 	
 //loader functions below 
 	const [showLoading, setLoading] = useState(true);
@@ -70,20 +69,17 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 
 // asset functions below
 	const { address, connectWallet} = useSigner();
-	const { createdNFT } = useCreatedNFT(ownerId as string);
-	const specificNFT = createdNFT?.find((nft) => String(nft.id) === String(nftId));
+	const {createdNFTs} = useNFTMarket();
+	const specificNFT = createdNFTs?.find((nft) => String(nft.id) === String(nftId));
 		// Add these console.log statements to check the values
 		//console.log('Available NFT IDs:', createdNFTs?.map(nft => nft.id));
 
 	useEffect(() => {
-		if (specificNFT) {
+		if (createdNFTs) {
 			setArtAsset(true);
 			setLoading(false);
 		}
-		else {
-			setNoArtAsset(true); 
-		  }
-	}, [createdNFT]);
+	}, [createdNFTs]);
 	const { getCreatorOrCollector } = useNFTMarket();
 	const [creatorOrCollectorAddress, setCreatorOrCollectorAddress] = useState<string | undefined>();
   
@@ -209,7 +205,7 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 			{specificNFT && creatorOrCollectorAddress &&
 				<AssetHolder 
 				nft={specificNFT}
-				ownerId={specificNFT.owner}
+				ownerId={creatorOrCollectorAddress}
 				key={specificNFT.id}
 				/>
 			}
