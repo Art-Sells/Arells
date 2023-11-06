@@ -190,7 +190,7 @@ const SellerCreatedTest = () => {
 				src="images/market/Market-Default-Icon.jpg"/>
 			</div>	 
 			<h1 id="name-seller-created">Unnamed Store</h1>  
-			<p id="description-seller-created">Creations and Collections</p> 
+			<p id="description-seller-created">@ Abstracts</p> 
 			<div id="share-div-seller-created">
 				<p id="share-div-desc-seller-created">SHARE</p>
 				<button id="copy-link-seller-created"

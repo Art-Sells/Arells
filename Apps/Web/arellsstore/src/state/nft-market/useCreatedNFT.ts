@@ -17,19 +17,19 @@ const GET_CREATED_NFTS = gql`
     }
 `;
 
-const useCreatedNFTs = () => {
-    const { address } = useSigner();
+const useCreatedNFT = (ownerId: string) => {
 
-    // Now use the defined query in useQuery
-    const { data } = useQuery<GetCreatedNFTs, GetCreatedNFTsVariables>(
+    const { data, loading, error } = useQuery<GetCreatedNFTs, GetCreatedNFTsVariables>(
         GET_CREATED_NFTS, 
-        { variables: { creator: address ?? "" }, skip: !address }
+        { variables: { creator: ownerId }, skip: !ownerId }
     );
 
-    const createdNFTs = data?.nfts.map(parseRawNFT);
-    
+    if (error) {
+        console.error('Error fetching created NFTs:', error);
+    }
 
-    return { createdNFTs };
+    const createdNFT = data?.nfts.map(parseRawNFT);
+    return { createdNFT, loading, error };
 };
 
 const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
@@ -41,4 +41,4 @@ const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
     };
 };
 
-export default useCreatedNFTs;
+export default useCreatedNFT;

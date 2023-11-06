@@ -147,6 +147,14 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
             {forSale && address && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
+                        <Image
+                          loader={imageLoader}
+                          alt=""
+                          width={40}  
+                          height={8}  
+                          id="PAP-logo" 
+                          src="/images/PriceAfterPurchaseLogo.png"
+                        />
                         <p id="PAP-seller-created">Price After Purchase</p>
                         <p id="PAP-blue-orange-before-seller-created">${nft.price}</p>
                         <hr id="priceline-seller-created" />

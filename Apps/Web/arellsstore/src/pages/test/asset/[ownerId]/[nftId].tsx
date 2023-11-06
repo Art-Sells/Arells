@@ -40,12 +40,10 @@ const AssetPageTest = () => {
   const router = useRouter();
   const { ownerId, nftId } = router.query;
 
-  console.log('Parent nftId:', nftId);
+  console.log('Parent ownerId:', ownerId);
   return (
     <div id="asset-wrapper">
-     <AssetTest
-      //ownerId={ownerId} nftId={nftId} 
-      />
+     <AssetTest ownerId={ownerId} nftId={nftId}/>
     </div>
   );
 };

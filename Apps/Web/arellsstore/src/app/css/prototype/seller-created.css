@@ -436,7 +436,7 @@
 			overflow: hidden;
 			box-shadow: 0px 5px 20px -6px silver; 
 			width: 200px;
-			height: 420px;
+			height: 440px;
 			padding-top: 50px;
 			padding-left: 50px;
 			padding-right: 50px;
@@ -486,12 +486,30 @@
 			  from {center:0; opacity:0}
 			  to {center:0; opacity:1}
 			}
-			#PAP-seller-created {
-			margin-top: 30px;
-			text-align: center;
+			#PAP-logo {
+				margin-top: 20px;
+				opacity: .2;
+				-webkit-animation-name: pap;
+				-webkit-animation-duration: 1.00s;
+				animation-name: pap;
+				animation-duration: 1.00s;
+				}
+			/* Add Animation */
+			@-webkit-keyframes pap {
+				from {center:0; opacity:0}
+				to {center:0; opacity:.2}
+				}
+				
+				@keyframes pap {
+				from {center:0; opacity:0}
+				to {center:0; opacity:.2}
+				}	
+			#PAP-seller-created { 
+				margin-top: 6px;
+				text-align: center;
 				color: black;
 				font-weight: 300;
-				font-size: 12px;
+				font-size: 9px;
 				letter-spacing: 0px;
 				padding-left: 0px;
 				opacity: .4;
@@ -502,7 +520,7 @@
 			
 			#PAP-blue-orange-after-seller-created, #PAP-beach-houses-after-seller-created, #PAP-colour-glass-after-seller-created,
 			#PAP-layers-after-seller-created, #PAP-succinct-drop-after-seller-created, #PAP-paint-rain-after-seller-created {
-			margin-top: -7px;
+			margin-top: -2px;
 			text-align: center;
 				color: black;
 				font-weight: 300;
@@ -512,7 +530,7 @@
 				opacity: .5;
 			}
 			#priceline-seller-created {
-			  margin-top: -5px;
+			  margin-top: -2px;
 			  background-color: black;
 			  border: none;
 			  height: 4px;
@@ -521,7 +539,7 @@
 			  opacity: .1;
 			}	
 			#yourprice-seller-created {
-			margin-top: 15px;
+			margin-top: 20px;
 			text-align: center;
 				color: black;
 				font-weight: 300;
@@ -850,7 +868,7 @@
 			margin: 5px;
 			align-items: center;
 			width: 130px;
-			height: 320px;
+			height: 335px;
 			padding-top: 30px;
 			padding-left: 30px;
 			padding-right: 30px;
@@ -862,9 +880,14 @@
 			height: 130px;
   			border-radius: 10px;		
 		}
+			#PAP-logo {
+			margin-top: 17px;
+			height: 6px;
+			width: 30px;
+			}
 			#PAP-seller-created {
-				margin-top: 20px;
-				font-size: 10px;
+				margin-top: 5px;
+				font-size: 7px;
 			}
 			#PAP-blue-orange-before-seller-created, #PAP-beach-houses-before-seller-created, #PAP-colour-glass-before-seller-created,
 			#PAP-layers-before-seller-created, #PAP-succinct-drop-before-seller-created, #PAP-paint-rain-before-seller-created,
@@ -872,7 +895,7 @@
 			
 			#PAP-blue-orange-after-seller-created, #PAP-beach-houses-after-seller-created, #PAP-colour-glass-after-seller-created,
 			#PAP-layers-after-seller-created, #PAP-succinct-drop-after-seller-created, #PAP-paint-rain-after-seller-created {
-				margin-top: -8px;
+				margin-top: 0px;
 				font-size: 13px;
 			}
 			#priceline-seller-created {
