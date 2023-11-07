@@ -24,7 +24,7 @@
 
 ### Edit Store
 - Store Logo: Default Store Logo
-- Store Name: Maximum Number of Characters.
+- Store Name: No Maximum Characters
 - Art Category: Abstracts, Photography, Illustrations (Icon for each)
 - (Save Changes) {Connect Wallet} if wallet not connected and/or Home if not signed in.
 
@@ -34,8 +34,8 @@
 - Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - Logo: Default Store Logo
-- Store Name: Maximum Number of Characters.
-- Store Art Category
+- Store Name: Maximum Width if long name (Test)
+- Store Art Category (Creations & Collections - Default)
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
