@@ -4,6 +4,9 @@
 import useSigner from "../../../state/signer";
 import AssetHolder from "./AssetHolder";
 import useCreatedNFTs from "../../../state/nft-market/useCreatedNFTs";
+import {GET_CREATED_NFTS} from "../../../state/nft-market/useCreatedNFTs";
+import { getClient } from "../../../lib/client";
+
 
 // Change below link after test
 import '../../../app/css/prototype/asset/asset.css';
@@ -79,6 +82,35 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 			setLoading(false);
 		}
 	}, [createdNFTs]);
+	const client = getClient();
+	const [nfts, setNfts] = useState([]);
+  
+	useEffect(() => {
+	  const fetchNFTs = async () => {
+		try {
+		  const { data } = await client.query({
+			query: GET_CREATED_NFTS,
+			variables: { creator: ownerId },
+		  });
+  
+		  const matchedNFTs = data.nfts.filter((nft: { id: string | string[] | undefined; owner: string | string[] | undefined; }) => nft.id === nftId && nft.owner === ownerId);
+		  setNfts(matchedNFTs);
+		} catch (error) {
+		  console.error('Error fetching NFTs:', error);
+		  // Handle the error state appropriately...
+		} finally {
+		  setLoading(false);
+		}
+	  };
+  
+	  if (ownerId && nftId) {
+		fetchNFTs();
+	  }
+	}, [client, ownerId, nftId]);
+
+  
+	const matchedNFT = nfts[0]; // assuming only one match is expected
+  
 // asset constants above
 
 // Cart Changing function/s below 

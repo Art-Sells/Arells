@@ -1,53 +1,39 @@
-
-import React from "react";
-
+import React from 'react';
 import { useRouter } from 'next/router';
 import AssetTest from '../../../../components/test/Asset/Asset';
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Asset Test",
-  description: "Test for Asset",
-  robots: "noimageindex",
-
-  openGraph: {
-    title: "Asset Test",
-    description: "Test for Asset",
-    // Change this link after testing
-    url: "https://arells.com/test/asset", 
-    type: "website",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
-      }
-    ]
-  },
-
-  twitter: {
-    title: "Asset Test",
-    description: "Test for Asset",
-    // Change this link after testing
-    card: "summary_large_image",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
-      }
-    ]
-  }
-}
 
 const AssetPageTest = () => {
   const router = useRouter();
-  const { ownerId, nftId } = router.query;
+  const { id, to } = router.query;
 
-  console.log('Parent ownerId:', ownerId);
+  // Normally, you would fetch your data here using useEffect and then set it to state,
+  // but since we are not using useEffect, we'll need to make sure that
+  // the data is fetched elsewhere and passed in as props or context, or handled
+  // synchronously here, which is not typical for data fetching.
+  
+  // Placeholder values for matchedNFT
+  const matchedNFT = {
+    owner: to, // This is a guess based on your previous code; you'll need to get the actual owner
+    id: id,    // This is the NFT id from the URL
+  };
+
+  // It's important to consider that on the initial render, `router.query` might be empty,
+  // because useRouter does not guarantee the availability of the query on the first render.
+  // This means you may need to handle the case where `id` or `to` is undefined.
+
   return (
     <div id="asset-wrapper">
-     <AssetTest ownerId={ownerId} nftId={nftId}/>
+      {/* Make sure to handle the case when `id` or `to` is not available */}
+      {id && to ? (
+        <AssetTest ownerId={matchedNFT.owner} nftId={matchedNFT.id} />
+      ) : (
+        <div>Loading...</div> // You may need a loading state or some fallback UI here.
+      )}
     </div>
   );
 };
 
 export default AssetPageTest;
+
 
 

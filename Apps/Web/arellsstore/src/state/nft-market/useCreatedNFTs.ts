@@ -5,7 +5,7 @@ import { NFT } from "./interfaces";
 import { GetCreatedNFTs, GetCreatedNFTsVariables, GetCreatedNFTs_nfts } from "./__generated__/GetCreatedNFTs";
 
 // Define your GraphQL query first
-const GET_CREATED_NFTS = gql`
+export const GET_CREATED_NFTS = gql`
     query GetCreatedNFTs($creator: String!) {
         nfts(where: {to: $creator}) {
             id

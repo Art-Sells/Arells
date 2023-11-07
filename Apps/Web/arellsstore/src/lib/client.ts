@@ -1,3 +1,6 @@
+"use client";
+
+
 // lib/client.js
 import { HttpLink } from "@apollo/client";
 import {
