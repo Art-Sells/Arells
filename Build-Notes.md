@@ -1,7 +1,7 @@
 ## Arells Build Notes...
 
 ## MVP
-- Pages separated like so: main/asset-name/asset-number, main/store-name
+- Pages separated like so: store/address (if not signed up) store/store-name (if signed-up), asset/address/id (both)
 - Start with Polygon/Coinbase (USDC) [use GPT4 as help] [CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements]
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
@@ -17,29 +17,22 @@
 - If logged in [(View My Store), (How To Make Money), About, Contact, (Log-Out)]
 - If not logged in [Sign-Up/Log-In]
 - Log-In/Sign-up with Google/Apple/Facebook/Etc
+- **All Above {Connect Wallet} if wallet not connected**
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
-- Account Created! (Create Store)
-- ### Welcome to Arells! Never lose money selling art! [Start Selling]
 
-### Create Store
+### Edit Store
 - Store Logo: Default Store Logo
 - Store Name: Maximum Number of Characters.
 - Art Category: Abstracts, Photography, Illustrations (Icon for each)
-- (Save Changes)
-
-### Edit Store
-- Logo: Default Store Logo
-- Store Name & Store Description: Maximum Number of Characters.
-- (Save Changes)
+- (Save Changes) {Connect Wallet} if wallet not connected and/or Home if not signed in.
 
 ### My Store
 - Top-Left[/]- (See HOME section)
 - Top-Right[Cart][Connect Wallet]-if not connected
-- Top-Center[Edit Store]
-- Bottom-Right[+]<black. [Connect Wallet]-if not connected
-- Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
+- Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
+- Bottom-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - Logo: Default Store Logo
 - Store Name: Maximum Number of Characters.
 - Store Art Category
@@ -65,7 +58,7 @@
 - Images (Default Store Image) here render small pixels
 - Remove "Owned By" if not collected/bought/minted.
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- - - Edit Art(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]
+- - - Edit(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]-if wallet not connected (Connect Wallet)
 - - **Created**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver, [Sold]white
@@ -73,9 +66,6 @@
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
 
-### Notifications
-- Send Email After Purchase 
-  
 ### Other Store
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - Top-Right[Cart]
@@ -110,10 +100,7 @@
 - Arells [Arells uses Crossmint as it's payment provider] info at bottom.  
 
 #### After Purchase (Modal)
--- [If not Signed/logged in] = message: {Congratulations on your Purchase! Sign-up or Log-in to Make Money from your Purchase}[dismiss]
--- [If Signed/logged in] = Edit (View My Store Asset)
-- Message (notifications-cash-register) to seller: "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
-- Email Notifications (see cash register)
+-- Congratulations on your Purchase! Set new (PAP Logo) Price After Purchase to make money off your purchase[VIEW COLLECTION]-Takes you to EDIT Asset
 
 #### Image/s
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
@@ -154,6 +141,16 @@
 ________________________________________________________________________________________________________________________________________
 
 ## Transition to DIGITAL ART MARKET
+
+### Welcome to Arells! Never lose money selling art! [Start Selling]
+
+### Bell
+- "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
+- Email Notifications
+- Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
+
+### My Store
+- Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
 
 ### Price After Purchase About**
 - Create link to Individual PAP GitHub Technical (Learn More)
@@ -203,9 +200,6 @@ ________________________________________________________________________________
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
 - - Proof-of-creation 70x PAP for Copyright Proven Artistic Works
 - - Proof-of-ownership for major assets.
- 
-### Bell
-- Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
 
 ### Cash-Register (Slide-Up)
 -- Store dissapears on top left  replaced by Bell.
