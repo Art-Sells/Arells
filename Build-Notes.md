@@ -120,7 +120,7 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete Branched-Repo,
-- Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (Instagram/Discord Account: Arells Abstracts, Arells Photography, Arells Illustrations))
+- Send 1 month - 2 week notifications on new Features to be added. (Public|Private Mode{First}/Notifications Center etc, Help Artists Find Buyers/Add Featured Artists from everyone who Responded (Instagram/Discord Account: Arells Abstracts, Arells Photography, Arells Illustrations "Make Money by Buying & Selling The Best Abstracts/Illustrations/Photos from Arells" *buy and sell art hashtags*))
 
 #### Misc Add-Ons (If enough time before launch in (ordered by priority))
 **1. My/Other Store **
