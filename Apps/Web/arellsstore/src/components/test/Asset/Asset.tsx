@@ -2,7 +2,6 @@
 
 // asset components (change below links after test)
 import useSigner from "../../../state/signer";
-import useNFTMarket from "../../../state/nft-market";
 import AssetHolder from "./AssetHolder";
 import useCreatedNFTs from "../../../state/nft-market/useCreatedNFTs";
 
@@ -69,7 +68,7 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 
 // asset functions below
 	const { address, connectWallet} = useSigner();
-	const {createdNFTs} = useNFTMarket();
+	const {createdNFTs} = useCreatedNFTs();
 	const specificNFT = createdNFTs?.find((nft) => String(nft.id) === String(nftId));
 		// Add these console.log statements to check the values
 		//console.log('Available NFT IDs:', createdNFTs?.map(nft => nft.id));
@@ -80,25 +79,6 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 			setLoading(false);
 		}
 	}, [createdNFTs]);
-	const { getCreatorOrCollector } = useNFTMarket();
-	const [creatorOrCollectorAddress, setCreatorOrCollectorAddress] = useState<string | undefined>();
-  
-	useEffect(() => {
-		const fetchCreatorOrCollector = async () => {
-		  if (nftId) {
-			try {
-			  const result = await getCreatorOrCollector(nftId as string);
-			  if (result) {
-				setCreatorOrCollectorAddress(result.address);
-			  }
-			} catch (error) {
-			  console.error("Failed to fetch the creator or collector address:", error);
-			}
-		  }
-		};
-	
-		fetchCreatorOrCollector();
-	}, [nftId, getCreatorOrCollector]);
 // asset constants above
 
 // Cart Changing function/s below 
@@ -202,13 +182,13 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 				<p>Art Doesn't Exist
 				</p>
 			)}
-			{specificNFT && creatorOrCollectorAddress &&
-				<AssetHolder 
+			{specificNFT && (
+				<AssetHolder
 				nft={specificNFT}
-				ownerId={creatorOrCollectorAddress}
+				ownerId={specificNFT.owner}
 				key={specificNFT.id}
 				/>
-			}
+			)}
         </>
     );
 }
