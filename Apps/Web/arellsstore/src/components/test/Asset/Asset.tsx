@@ -5,7 +5,7 @@ import useSigner from "../../../state/signer";
 import AssetHolder from "./AssetHolder";
 import useCreatedNFTs from "../../../state/nft-market/useCreatedNFTs";
 import {GET_CREATED_NFTS} from "../../../state/nft-market/useCreatedNFTs";
-import { getClient } from "../../../lib/client";
+import { useApolloClient } from "@apollo/client";
 
 
 // Change below link after test
@@ -82,7 +82,7 @@ const AssetTest: FC<AssetTestProps> = ({ ownerId, nftId }) => {
 			setLoading(false);
 		}
 	}, [createdNFTs]);
-	const client = getClient();
+	const client = useApolloClient();
 	const [nfts, setNfts] = useState([]);
   
 	useEffect(() => {

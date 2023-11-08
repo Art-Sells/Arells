@@ -10,7 +10,7 @@ import {
 
 const GRAPH_URL = process.env.NEXT_PUBLIC_GRAPH_URL as string;
 
-function makeClient() {
+export function makeClient() {
   const httpLink = new HttpLink({
       uri: GRAPH_URL,
   });

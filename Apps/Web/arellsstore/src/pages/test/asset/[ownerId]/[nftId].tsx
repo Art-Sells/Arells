@@ -1,39 +1,57 @@
 import React from 'react';
-import { useRouter } from 'next/router';
+import { useQuery } from "@apollo/client";
 import AssetTest from '../../../../components/test/Asset/Asset';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { GET_CREATED_NFTS } from '../../../../state/nft-market/useCreatedNFTs';
 
-const AssetPageTest = () => {
-  const router = useRouter();
-  const { id, to } = router.query;
+type AssetPageTestProps = {
+  ownerId: string;
+  nftId: string;
+};
 
-  // Normally, you would fetch your data here using useEffect and then set it to state,
-  // but since we are not using useEffect, we'll need to make sure that
-  // the data is fetched elsewhere and passed in as props or context, or handled
-  // synchronously here, which is not typical for data fetching.
+const AssetPageTest: React.FC<AssetPageTestProps> = ({ ownerId, nftId }) => {
+  // Use the useQuery hook to fetch the NFT data on the client
+  const { loading, error, data } = useQuery(GET_CREATED_NFTS, {
+    variables: { creator: ownerId },
+    skip: typeof window === 'undefined', // skip the query on the server
+  });
+
+  // Find the specific NFT by ID if data is available
+  const nftData = data?.nfts.find((nft: { id: any; }) => String(nft.id) === String(nftId));
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  // Use nftData here or pass it to the AssetTest component if needed
+  // Assuming AssetTest is updated to not require nftData as a prop, since it's not included in the original problem statement
   
-  // Placeholder values for matchedNFT
-  const matchedNFT = {
-    owner: to, // This is a guess based on your previous code; you'll need to get the actual owner
-    id: id,    // This is the NFT id from the URL
-  };
-
-  // It's important to consider that on the initial render, `router.query` might be empty,
-  // because useRouter does not guarantee the availability of the query on the first render.
-  // This means you may need to handle the case where `id` or `to` is undefined.
-
   return (
     <div id="asset-wrapper">
-      {/* Make sure to handle the case when `id` or `to` is not available */}
-      {id && to ? (
-        <AssetTest ownerId={matchedNFT.owner} nftId={matchedNFT.id} />
-      ) : (
-        <div>Loading...</div> // You may need a loading state or some fallback UI here.
-      )}
+      <AssetTest ownerId={ownerId} nftId={nftId} />
     </div>
   );
 };
 
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+  // Correctly type params
+  const params = context.params as { ownerId: string; nftId: string } | undefined;
+
+  if (!params) {
+    // Return notFound or redirect as necessary
+    return {
+      notFound: true,
+    };
+  }
+
+  const { ownerId, nftId } = params;
+
+  // No NFT data is fetched here, only IDs are passed to the component
+  return {
+    props: {
+      ownerId,
+      nftId,
+    },
+  };
+};
+
 export default AssetPageTest;
-
-
-
