@@ -24,24 +24,24 @@ const SellerCreatedTest = () => {
 	
 
 //loader functions below 
-    const [showLoading, setLoading] = useState(true);
+    const [showLoading, setLoading] = useState(false);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
     };
-	const [imagesLoaded, setImagesLoaded] = useState({
-		profilePhotoSellerCreated: false,
-	});
-    const handleImageLoaded = (imageName: string) => {
-        setImagesLoaded(prevState => ({
-            ...prevState,
-            [imageName]: true 
-        }));
-    };
-	useEffect(() => {
-		if (Object.values(imagesLoaded).every(Boolean)) {
-			setLoading(false);
-		}
-	}, [imagesLoaded]);
+	// const [imagesLoaded, setImagesLoaded] = useState({
+	// 	arellLogoSelling: false,
+	// });
+    // const handleImageLoaded = (imageName: string) => {
+    //     setImagesLoaded(prevState => ({
+    //         ...prevState,
+    //         [imageName]: true 
+    //     }));
+    // };
+	// useEffect(() => {
+	// 	if (Object.values(imagesLoaded).every(Boolean)) {
+	// 		setLoading(false);
+	// 	}
+	// }, [imagesLoaded]);
 // loader functions above
 
 
@@ -173,24 +173,13 @@ const SellerCreatedTest = () => {
 			</div>
 			<Image
 			loader={imageLoader}
+			// onLoad={() => handleImageLoaded('arellsLogoSelling')}
 			alt=""
 			width={110}  
 			height={35} 
 			id="word-logo-seller-created" 
 			src="images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-seller-created">NEVER LOSE MONEY SELLING ART</p>
-			<div id="profile-img-container-seller-created">
-				<Image
-				loader={imageLoader}
-				onLoad={() => handleImageLoaded('profilePhotoSellerCreated')}
-				alt=""
-				width={100}  
-				height={100}
-				id="profile-photo-seller-created" 
-				src="images/market/Market-Default-Icon.jpg"/>
-			</div>	 
-			<h1 id="name-seller-created">Unnamed Store</h1>  
-			<p id="description-seller-created">@ Abstracts</p> 
 			<div id="share-div-seller-created">
 				<p id="share-div-desc-seller-created">SHARE</p>
 				<button id="copy-link-seller-created"
@@ -207,10 +196,10 @@ const SellerCreatedTest = () => {
 			</div>
 			<hr id="profileline-seller-created"/>
 			<div id="created-collected-seller-created">
-				<a id="created-seller-created">Created</a>	
+				<a id="created-seller-created">Selling</a>	
 			{/*<!-- Change below link after test -->*/}	
 				<Link legacyBehavior href="/test/seller-collected">
-					<a id="collected-seller-created" >Collected</a>		
+					<a id="collected-seller-created" >Owned</a>		
 				</Link>	
 			</div>
 			{noArtCreatedSellerCreated && (
