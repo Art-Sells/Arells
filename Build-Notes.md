@@ -15,9 +15,7 @@
 - [Launch Store] - takes you to "My Store" if not [Connect Wallet]
 
 ### My Store
-- Top-Left[/\]- (See HOME section)
-- Top-Right[Cart][Connect Wallet]-if not connected
-- Bottom-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
+- Bottom-Center[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - PAP Logo Above Price After Purchase
 - After setting Price and Price After Purchase for sale {Art Listed For Sale Modal takes you to "Selling"}
 - - **Selling**:
@@ -34,9 +32,7 @@
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
 
 ### Other Store
-- Top-Left([/\]
-- Top-Right[Cart]
-- Bottom-Left & Right -- Nothing
+- Bottom-Center -- Nothing
 - Image Default: Store Icon
 - Name Default: Unnamed Store
 - PAP Logo Above Price After Purchase 
@@ -82,6 +78,7 @@ ________________________________________________________________________________
 - If not logged in [Launch Store] - takes you to "My Store" if not [Connect Wallet]
 
 ### My Store
+- Top-Left[/\]- (See HOME section)
 - Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test)
@@ -127,6 +124,9 @@ ________________________________________________________________________________
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
 
 ### My Store
+- Top-Right[Cart][Connect Wallet]-if not connected
+- Bottom-Right[+]<black. [Connect Wallet]-if not connected
+- Bottom-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - - **Created**:
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
 - - **Collected**:
@@ -150,6 +150,8 @@ ________________________________________________________________________________
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
 
 ### Other Store
+- Top-Right[Cart][Connect Wallet]-if not connected
+- Bottom-Right[+]<black. [Connect Wallet]-if not connected
 - - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
