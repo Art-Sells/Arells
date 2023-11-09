@@ -62,7 +62,7 @@
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
-- Delete Branched-Repo,
+- Delete all Test/Branched/Component links
 - Send 1 month - 2 week notifications on new Features to be added. (Discuss "promotional campaign" to help you find mainstream buyers buyers who don't use Cryptocurrency) only with USDC/Credit-Card integration... Once our promotional campaign begins, we will be targeting 3 markets(Abstract Art, Illustrations & Photography) so I highly recommend creating your store (once we launch) with only 1 target market in mind. Features (Arells 1.0 (PaP Polygon) vs Arells 2.0 (USDC Credit Card))
 ________________________________________________________________________________________________________________________________________________
 
@@ -112,7 +112,7 @@ ________________________________________________________________________________
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
-- Delete Branched-Repo,
+- Delete all Test/Branched/Component links
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 ________________________________________________________________________________________________________________________________________________
 
@@ -177,7 +177,7 @@ ________________________________________________________________________________
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
-- Delete Branched-Repo,
+- Delete all Test/Branched/Component links
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 ________________________________________________________________________________________________________________________________________________
 
@@ -216,6 +216,8 @@ ________________________________________________________________________________
 - Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
 
 #### After Testing and Before Launch: 
+- Store Private Key Cold
+- Delete all Test/Branched/Component links
 - Send 1 - 2 week notification about new Features in next iteration
 ________________________________________________________________________________________________________________________________________
 
