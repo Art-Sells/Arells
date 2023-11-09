@@ -1,7 +1,7 @@
 ## Arells Build Notes...
 
-## Alpha
-- Pages separated like so: store/address (if not signed up) store/store-name (if signed-up), asset/address/id (both)
+## Arells 1.0
+- Pages separated like so: store/address
 - Start with Polygon/Coinbase
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
@@ -10,13 +10,90 @@
 ### Wallet: 
 - Test with Metamask/Mumbai
 - Mainnet with Coinbase/Polygon
-- Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
+
+### Home
+- [Launch Store] - takes you to "My Store" if not [Connect Wallet]
+
+### My Store
+- Top-Left[/\]- (See HOME section)
+- Top-Right[Cart][Connect Wallet]-if not connected
+- Bottom-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
+- PAP Logo Above Price After Purchase
+- - **Created**:
+- Price After Purchase - (if price not yet set purchased) = "Sold"
+- [BUY]-share to sell Modal, [Not For Sale]-silver, [Sold(if collector hasn't listed)]white, [Selling(if collector has listed)]white .... Both Sold and Selling are buttons that link to Collector
+- - **Collected**:
+- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- [BUY]-share to sell Modal, [Not For Sale]-silver,
+ 
+#### Creating Mechanics
+- Once confirmed -> {Art Created Modal} {Item Automatically in Created Profile Page PAP & Price = Lines [[Not For Sale]}
+- Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
+- PAP price calculated 2x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
+- 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
+
+### Other Store
+- Top-Left([/\]
+- Top-Right[Cart]
+- Bottom-Left & Right -- Nothing
+- Image Default: Store Icon
+- Name Default: Unnamed Store
+- PAP Logo Above Price After Purchase 
+- - **Created**:
+- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
+- [BUY]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
+- - **Collected**:
+- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
+- [BUY]-Use Prototype as Reference, [Not For Sale]-greyed,
+- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
+
+#### After Purchase (Modal)
+-- Congratulations on your Purchase! Set Price After Purchase to make money off your collection [VIEW COLLECTION]- Takes you to Collection
+     
+#### LinkTree Links... 
+***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
+- MetaTags Social-sharing-images: AWS Cloudfront?
+- MetaTag Title: "Arells Art" (character Limit)
+- MetaTag Image(Profile): 1st NFT Created
+- metadata const (upgrade from generateMetadata) must be async for dynamic changes
+- *clear Browsing/Cache Data before checking*
+- Google Search Console Index (with sitemap)
+
+#### After Testing and Before Launch: 
+- Store Private Key Cold
+- Delete Branched-Repo,
+- Send 1 month - 2 week notifications on new Features to be added. (Discuss "promotional campaign" to help you find mainstream buyers buyers who don't use Cryptocurrency) only with USDC/Credit-Card integration... Once our promotional campaign begins, we will be targeting 3 markets(Abstract Art, Illustrations & Photography) so I highly recommend creating your store (once we launch) with only 1 target market in mind. Features (Arells 1.0 (PaP Polygon) vs Arells 2.0 (USDC Credit Card))
+________________________________________________________________________________________________________________________________________________
+
+## Arells 2.0
+- SiteMap/s
+
+### Wallet
+- Test with Metamask/Mumbai-USDC
+- Mainnet with Coinbase/Polygon-USDC
+- CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements
+
+### Buying Provider
+- Arells [Arells uses Crossmint as it's payment provider] info at bottom.
 
 ### Home
 - If logged in [(View My Store), (Log-Out)]
-- If not logged in [Sign-Up/Log-In]
-- Log-In/Sign-up with Google/Apple/Facebook/Etc
-- **All Above {Connect Wallet} if wallet not connected**
+- If not logged in [Launch Store] - takes you to "My Store" if not [Connect Wallet]
+
+### My Store
+- Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
+- Logo: Default Store Logo
+- Store Name: Maximum Width if long name (Test)
+- Art Category: Abstracts, Photography, Illustrations (Icon for each) (Prepare Promotional Instagram/Discord Campaign) "Make Money by Buying & Selling The Best Abstracts/Illustrations/Photos from Arells" *buy and sell art hashtags*))
+- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
+
+### Other Store
+- Top-Left[||]-([My-Store]if connected)([/\]if not connected)
+- Image Default: Store Icon
+- Name Default: Unnamed Store
+- Category Default: Creator & Collector
+- - **Collected**:
+- Art Category Logos on all Collecteds
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
@@ -26,33 +103,39 @@
 - Store Name: No Maximum Characters
 - (Save Changes) {Connect Wallet} if wallet not connected and/or Home if not signed in.
 
-### My Store
-- Top-Left[/]- (See HOME section)
-- Top-Right[Cart][Connect Wallet]-if not connected
-- Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
-- Bottom-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
-- Logo: Default Store Logo
-- Store Name: Maximum Width if long name (Test)
-- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- PAP Logo Above Price After Purchase
-- - **Created**:
-- Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
-- [Add To Cart]-share to sell Modal, [Not For Sale]-silver, [Sold(if collector hasn't listed)]white, [Selling(if collector has listed)]white .... Both Sold and Selling are buttons that link to Collector
-- - **Collected**:
-- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
-- [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
- 
+#### LinkTree Links... 
+***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
+- MetaTag Title: "Profile/Asset Name" (character Limit)
+- MetaTag Image(Profile): large-profile|image.name, small-profile|category
+
+#### After Testing and Before Launch: 
+- Store Private Key Cold
+- Delete Branched-Repo,
+- Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
+________________________________________________________________________________________________________________________________________________
+
+## Arells 3.0
+- Pages separated like so: store/address (if not signed up) store/store-name (if signed-up), asset/address/id (both)
+- Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
+
 #### Creating Mechanics
-- Once confirmed -> (My Store Asset Edit page) {Art Created Modal} {Item Automatically in Created Profile Page PAP & Price = Lines [[Not For Sale]}
+- Once confirmed -> (My Store Asset Set Price After Purchase page) {Art Created Modal} {Item Automatically in Created Profile Page PAP & Price = Lines [[Not For Sale]}
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
 - PAP price calculated 50x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
- 
+
+### My Store
+- - **Created**:
+- [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
+- - **Collected**:
+- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
+- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
+- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
+
 ### My Store Asset   
 - Top-Left[/\]- (See HOME section)
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected
-- Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
 - Images (Default Store Image) here render small pixels
 - Remove "Owned By" if not collected/bought/minted.
 - PAP Logo Above Price After Purchase
@@ -65,18 +148,11 @@
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
 
 ### Other Store
-- Top-Left[||]-([My-Store]if connected)([/\]if not connected)
-- Top-Right[Cart]
-- Bottom-Left & Right -- Nothing
-- Image Default: Store Icon
-- Name Default: Unnamed Store
-- PAP Logo Above Price After Purchase 
 - - **Created**:
-- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
 - - **Collected**:
-- Art Category Logos on all Collecteds
-- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
 - *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
 
@@ -91,79 +167,19 @@
 - - **Collected**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
-- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
+- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver
 
-### Cart 
-- (Connect Wallet if not connected)
-
-#### After Purchase (Modal)
--- Congratulations on your Purchase! Set Price After Purchase to make money off your collection [VIEW COLLECTION]- Takes you to Collection
-     
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
-- MetaTags Social-sharing-images: AWS Cloudfront?
-- MetaTag Title: "Profile/Asset Name" (character Limit)
-- MetaTag Image(Profile): large-profile|image.name
 - MetaTag Image(Asset): small-profile|image.name, large-asset|image.name
-- metadata const (upgrade from generateMetadata) must be async for dynamic changes
-- *clear Browsing/Cache Data before checking*
-- Google Search Console Index (with sitemap)
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete Branched-Repo,
-- Send 1 month - 2 week notifications on new Features to be added. (Discuss "promotional campaign" to help you find mainstream buyers buyers who don't use Cryptocurrency) only with USDC/Credit-Card integration... Once our promotional campaign begins, we will be targeting 3 markets(Abstract Art, Illustrations & Photography) so I highly recommend creating your store (once we launch) with only 1 target market in mind. Features (Alpha (PaP Polygon) vs Beta (USDC Credit Card))
-
+- Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 ________________________________________________________________________________________________________________________________________________
 
-## Beta
-**(If enough time before Alpha launch build these (ordered by priority))**
-- SiteMap/s 
-
-### 1. Wallet
-- Test with Metamask/Mumbai-USDC
-- Mainnet with Coinbase/Polygon-USDC
-- CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements
-
-### 2. Cart
-- Arells [Arells uses Crossmint as it's payment provider] info at bottom.
-
-### 3. My/Other Store
-- Art Category: Abstracts, Photography, Illustrations (Icon for each) (Prepare Promotional Instagram/Discord Campaign) "Make Money by Buying & Selling The Best Abstracts/Illustrations/Photos from Arells" *buy and sell art hashtags*))
-- - **Edit Store**
-- Store Art Category
-
-### 4. My/Other Store Assets & Edit
-- PAP Logo Above Price After Purchase (Assets) (Asset links to Price After Purchase About Page with logo and Description)
-
-### 5. Price After Purchase About
-- Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
-
-### 6. My Store Asset
-- Edit: On-Off button Public/Private
-
-### 7. My/Other Store**
--- ([automatically loads latest])
-- Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
-- (Private Art) (Public Art)
-
-### 8. LinkTree Links... 
-- MetaTag Description: "Profile/Asset Category"
-- MetaTag Image(Profile): large-profile|image.name, small-profile|description
-
-### 9. Home
-- If logged in [(View My Store), (The Price After Purchase System), Contact (Instagram/Discord) by Category, (Log-Out)]
-
-### 10. Bell
-- "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
-- Email Notifications
-- Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
-
-#### After Testing and Before Launch: 
-- Send 1 - 2 week notification about promotional campaign to make sure you set your category so we can target who to sell your art to. Arells Abstracts, Arells Photography, Arells Illustrations. And talk about more features to be added in our own Wallet.
-________________________________________________________________________________________________________________________________________
-
-## Transition to DIGITAL ART MARKET
+## Arells 4.0
 
 ### Welcome to Arells! Never lose money selling art! [Start Selling]
 
@@ -174,9 +190,38 @@ ________________________________________________________________________________
 ### Memory based Art creation
 - We don't allow deleting due to our memory-based art creation method. Your life's memories are valuable because (no matter how good or bad they are) they can never be deleted. The same philosophy rings true with Arells. Memory based Art creations ensures no art (no matter how good or bad) can ever be deleted thus ensuring its overall sustained value-creation.
 
+### My/Other Store Assets
+- PAP Logo Above Price After Purchase (Assets) (Asset links to Price After Purchase About Page with logo and Description) [Even in Edit]
+- Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
+
+### Price After Purchase About
+- Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
+
+### My Store Asset
+- Edit: On-Off button Public/Private
+
+### My/Other Store**
+-- ([automatically loads latest])
+- Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
+- (Private Art) (Public Art)
+
+### LinkTree Links... 
+- MetaTag Description: "Profile/Asset Category"
+- MetaTag Image(Profile): large-profile|image.name, small-profile|description
+
+### Home
+- If logged in [(View My Store), (The Price After Purchase System), Contact (Instagram/Discord) by Category, (Log-Out)]
+
+### Bell
+- "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
+- Email Notifications
+- Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
+
+#### After Testing and Before Launch: 
+- Send 1 - 2 week notification about new Features in next iteration
 ________________________________________________________________________________________________________________________________________
 
-## DIGITAL ART MARKET
+## Arells 5.0 
 
 - Rename Production Repo (Arells Marketplace)
 - Wallet Logs you off After 10 minutes of innaction (review Bank Apps)
