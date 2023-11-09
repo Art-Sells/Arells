@@ -19,15 +19,16 @@
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Bottom-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - PAP Logo Above Price After Purchase
-- - **Created**:
+- After setting Price and Price After Purchase for sale {Art Listed For Sale Modal takes you to "Selling"}
+- - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Sold"
 - [BUY]-share to sell Modal, [Not For Sale]-silver, [Sold(if collector hasn't listed)]white, [Selling(if collector has listed)]white .... Both Sold and Selling are buttons that link to Collector
-- - **Collected**:
+- - **Owned**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [BUY]-share to sell Modal, [Not For Sale]-silver,
  
 #### Creating Mechanics
-- Once confirmed -> {Art Created Modal} {Item Automatically in Created Profile Page PAP & Price = Lines [[Not For Sale]}
+- Once confirmed -> {Art Created Modal} {Item Automatically in Owned Profile Page PAP & Price = Lines [[Not For Sale]}
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
 - PAP price calculated 2x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
@@ -39,10 +40,10 @@
 - Image Default: Store Icon
 - Name Default: Unnamed Store
 - PAP Logo Above Price After Purchase 
-- - **Created**:
+- - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [BUY]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
-- - **Collected**:
+- - **Owned**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [BUY]-Use Prototype as Reference, [Not For Sale]-greyed,
 - *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
@@ -141,18 +142,18 @@ ________________________________________________________________________________
 - Remove "Owned By" if not collected/bought/minted.
 - PAP Logo Above Price After Purchase
 - - - Set Price After Purchase(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]-if wallet not connected (Connect Wallet)
-- - **Created**:
-- Price After Purchase - To Be Set (if price not yet set purchased) = "Sold"
+- - **Selling**:
+- Price After Purchase - (if price not yet set purchased) = "Sold"
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver, [Sold]white
-- - **Collected**:
-- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
+- - **Owned**:
+- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
 
 ### Other Store
-- - **Created**:
+- - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
-- - **Collected**:
+- - **Owned**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
 - *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
@@ -163,9 +164,9 @@ ________________________________________________________________________________
 - Bottom-Left & Right -- Nothing
 - Images here render small pixels
 - PAP Logo Above Price After Purchase
-- - **Created**:
+- - **Selling**:
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
-- - **Collected**:
+- - **Owned**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
 - *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver
