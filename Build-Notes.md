@@ -106,7 +106,8 @@ ________________________________________________________________________________
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
 - MetaTag Title: "Profile/Asset Name" (character Limit)
-- MetaTag Image(Profile): large-profile|image.name, small-profile|category
+- MetaTag Description: "Profile/Asset Category"
+- MetaTag Image(Profile): large-profile|image.name, small-profile|description
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
@@ -204,10 +205,6 @@ ________________________________________________________________________________
 -- ([automatically loads latest])
 - Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
 - (Private Art) (Public Art)
-
-### LinkTree Links... 
-- MetaTag Description: "Profile/Asset Category"
-- MetaTag Image(Profile): large-profile|image.name, small-profile|description
 
 ### Home
 - If logged in [(View My Store), (The Price After Purchase System), Contact (Instagram/Discord) by Category, (Log-Out)]
