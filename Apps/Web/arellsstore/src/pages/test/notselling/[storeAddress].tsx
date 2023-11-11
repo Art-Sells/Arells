@@ -3,7 +3,7 @@ import '../../css/prototype/seller-created.css';
 import React from "react";
 import type { Metadata } from 'next';
 
-import SellerCreatedTest from '../../../components/test/SellerCreatedTest';
+import StoreNotSelling from '../../../components/test/StoreNotSelling';
 
 export const metadata: Metadata = {
   title: "Seller Creations Test",
@@ -36,16 +36,16 @@ export const metadata: Metadata = {
   }
 }
 
-const SellerCreatedPageTest = () => {
+const StoreNotSellingPage = () => {
   return (
     <>
           <div id="prototype-seller-created-wrapper">
-              <SellerCreatedTest/>
+              <StoreNotSelling/>
           </div>
     </>
   );
 }
 
-export default SellerCreatedPageTest;
+export default StoreNotSellingPage;
 
 

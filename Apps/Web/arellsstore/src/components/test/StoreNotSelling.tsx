@@ -1,11 +1,12 @@
 'use client'
 
 import React from "react";
+import router from 'next/router';
 
 // asset components (change below links after test)
 import useSigner from "../../state/signer";
 import useNFTMarket from "../../state/nft-market";
-import AssetStoreHolder from "./Asset/AssetStoreHolder";
+import AssetStoreHolder from "./Asset/StoreAssetHolder";
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
@@ -20,7 +21,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const SellerCreatedTest = () => {
+const StoreNotSelling = () => {
 	
 
 //loader functions below 
@@ -46,34 +47,22 @@ const SellerCreatedTest = () => {
 
 
 // useState constants below
-	const [showCopiedLink, setCopiedLink] = useState(false);
-
-    const [cartLinkSellerCreated, setCartLinkSellerCreated] = useState(true);
-	const [cartLinkConnectedSellerCreated, setCartLinkConnectedSellerCreated] = useState(false);
-
     const [noArtCreatedSellerCreated, setNoArtCreatedSellerCreated] = useState(false);
     const [artCreatedSellerCreated, setArtCreatedSellerCreated] = useState(false);
 // useState constants above
 
-// Copy Links function/s below
-	const [fullUrl, setFullUrl] = useState<string>('');
-	useEffect(() => {
-		setFullUrl(window.location.href);
-	}, []);
-	const copyLink = () => {
-		navigator.clipboard.writeText(fullUrl).then(() => {
-			setCopiedLink(true);
-		});
-	};
-  
-	const closeCopiedLink = () => {
-	  setCopiedLink(false);
-	};
-// Copy Links function/s above
-
 // asset functions below
 	const { address, connectWallet} = useSigner();
-	const {createdNFTs} = useNFTMarket();
+    const { createdNFTs } = useNFTMarket();
+
+    useEffect(() => {
+        if (createdNFTs && createdNFTs.length > 0) {
+            // Assuming the first NFT's storeAddress is what you need
+            const storeAddress = createdNFTs[0].storeAddress;
+            // Update the URL
+            router.push(`/${storeAddress}`);
+        }
+    }, [createdNFTs, router]);
 	useEffect(() => {
 		if (createdNFTs) {
 			setNoArtCreatedSellerCreated(false);
@@ -86,35 +75,11 @@ const SellerCreatedTest = () => {
 	}, [createdNFTs]);
 // asset constants above
 
-// Cart Changing function/s below 
-    useEffect(() => {
-        if (address) {
-            setCartLinkSellerCreated(false);
-            setCartLinkConnectedSellerCreated(true);
-        }
-		else if (!address){
-			setCartLinkSellerCreated(true);
-            setCartLinkConnectedSellerCreated(false);	
-		}
-    }, [address]);
-// Cart Changing function/s above 
-
 	
     return (
         <>	
 
 {/*<!-- Modals below link after test -->*/}
-		{showCopiedLink && (
-			<div id="copiedLink">
-				<div className="modal-content">
-				<p>LINK COPIED</p>
-				<button className="close"
-					onClick={closeCopiedLink}>OK</button>	
-				</div>
-			</div>	
-		)}
-
-
 
 		{showLoading && (
 			<div id="spinnerBackground">
@@ -132,45 +97,6 @@ const SellerCreatedTest = () => {
 		)}  
 
 {/*<!-- Modals Above -->*/}
-				<div id="header-seller-created">
-			
-			{/*<!-- Change below link after test -->*/}
-				<Link legacyBehavior href="/">
-					<a id="icon-link-seller-created">
-						<Image
-						loader={imageLoader}
-						alt=""
-						height={16}
-						width={15}
-						id="arells-icon-seller-created" 
-						src="images/prototype/Arells-Icon-Home.png"/>
-					</a>	
-				</Link>	
-				{cartLinkSellerCreated && (
-					<button id="cart-link-seller-created" onClick={connectWallet}>
-						<Image
-						loader={imageLoader}
-						alt=""
-						height={15}
-						width={16} 
-						id="cart-icon-seller-created" 
-						src="images/prototype/shopping-cart-empty.png"/>
-					</button>
-				)}	
-				 {cartLinkConnectedSellerCreated && (
-					<Link legacyBehavior href="/prototype/cart">
-						<a id="cart-link-connected-seller-created">
-							<Image
-							loader={imageLoader}
-							alt=""
-							height={15}
-							width={16}
-							id="cart-icon-seller-created" 
-							src="images/prototype/shopping-cart-empty.png"/>
-						</a>
-					</Link>	
-				)}	                						 
-			</div>
 			<Image
 			loader={imageLoader}
 			// onLoad={() => handleImageLoaded('arellsLogoSelling')}
@@ -208,12 +134,9 @@ const SellerCreatedTest = () => {
 				</div>	
 			)}
 
-
-
-
 		     
         </>
     );
 }
 
-export default SellerCreatedTest;
+export default StoreNotSelling;

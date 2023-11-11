@@ -26,7 +26,7 @@ type AssetStoreProps = {
     nft: NFT;
 };
 
-const AssetStoreHolder = (props: AssetStoreProps) => {
+const StoreAssetHolder = (props: AssetStoreProps) => {
 //loader functions below 
     // const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
@@ -50,11 +50,12 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
 
 // asset constants below
     const { address, connectWallet} = useSigner();
-
     const { nft } = props;
+    const storeAddress = nft.storeAddress;
+    const addressMatch = address == storeAddress;
+
     const [meta, setMeta] = useState<AssetStoreMetadata>();
 
-    const forSale = nft.price != "0";
 // asset constants above
 
 // Asset Changing function/s below 
@@ -72,12 +73,6 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
       void fetchMetadata();
     }, [nft.tokenURI]);
   
-  const [artAddedToCart, setArtAddedToCart] = useState(false);
-  const [artAddToCart, setArtAddToCart] = useState(true);
-	function addArtToCart() {
-    setArtAddedToCart(true);
-		setArtAddToCart(false);
-	}
 // Asset Changing function/s above 
 
   return (
@@ -103,7 +98,7 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
         <div id="blue-orange-seller-created">
           {/*  Change below link after test  */}
           {meta && (
-            <Link legacyBehavior href={`/test/asset/${nft.owner}/${nft.id}`} passHref>
+            <Link legacyBehavior href='/'>
               <a target="_self" id="photo-link-seller-created">
                 <Image
                   loader={imageLoader}
@@ -116,35 +111,48 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
               </a>
             </Link>
           )}
-            {!forSale && (
+            {!addressMatch && address && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
-                        <p id="PAP-seller-created">Price After Purchase</p>
-                        <p id="PAP-blue-orange-before-seller-created">...</p>
-                        <hr id="priceline-seller-created" />
-                        <p id="yourprice-seller-created">Price</p>
-                        <p id="price-blue-orange-before-seller-created">...</p>
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={40}  
+                        height={8}  
+                        id="PAP-logo" 
+                        src="/images/PriceAfterPurchaseLogo.png"
+                      />
+                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-blue-orange-before-seller-created">...</p>
+                      <hr id="priceline-seller-created" />
+                      <p id="yourprice-seller-created">Price</p>
+                      <p id="price-blue-orange-before-seller-created">...</p>
                     </div>
-                    <button id="not-for-sale-seller-created">
-                        NOT FOR SALE
-                    </button>
                 </>
             )}	
-            {forSale && !address && (
+            {!addressMatch && !address && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
-                        <p id="PAP-seller-created">Price After Purchase</p>
-                        <p id="PAP-blue-orange-before-seller-created">{nft.price}</p>
-                        <hr id="priceline-seller-created" />
-                        <p id="yourprice-seller-created">Price</p>
-                        <p id="price-blue-orange-before-seller-created">{nft.price}</p>
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={40}  
+                        height={8}  
+                        id="PAP-logo" 
+                        src="/images/PriceAfterPurchaseLogo.png"
+                      />
+                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-blue-orange-before-seller-created">{nft.price}</p>
+                      <hr id="priceline-seller-created" />
+                      <p id="yourprice-seller-created">Price</p>
+                      <p id="price-blue-orange-before-seller-created">{nft.price}</p>
                     </div>
                     <button id="blue-orange-add-to-cart-seller-created" 
                     onClick={connectWallet}>
-                    ADD TO CART</button>
+                    SELL</button>
                 </>
             )}	
-            {forSale && address && (
+            {addressMatch && address && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
                         <Image
@@ -161,17 +169,10 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">${nft.price}</p>
                     </div>
-                    {artAddToCart && (
-                        <button id="blue-orange-add-to-cart-seller-created" 
-                        // change below function after test
-                        onClick={addArtToCart}
-                        >
-                        ADD TO CART</button>
-                    )}
-                    {artAddedToCart && (
-                        <button id="asset-added-to-cart">
-                        ADDED</button>
-                    )}
+                    <button id="blue-orange-add-to-cart-seller-created" 
+                    //onClick={setPrices}
+                    >
+                    SELL</button>
                 </>
             )}	
             
@@ -180,4 +181,4 @@ const AssetStoreHolder = (props: AssetStoreProps) => {
   );
 };
 
-export default AssetStoreHolder;
+export default StoreAssetHolder;
