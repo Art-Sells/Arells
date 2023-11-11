@@ -1,7 +1,7 @@
 ## Arells Build Notes...
 
 ## Arells 1.0
-- Pages separated like so: store/address
+- Pages separated like so: arells/address/selling, arells/address/notselling
 - Start with Polygon/Coinbase
 - Ensure Each Page has differing MetaDescriptions
 - Add "Change-After-Test" over every href.
@@ -15,6 +15,7 @@
 - [Launch Store] - takes you to "My Store" if not [Connect Wallet]
 
 ### My Store
+- Modal that shows Large Image and Title once clicked.
 - Bottom-Center[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - PAP Logo Above Price After Purchase
 - After setting Price and Price After Purchase for sale {Art Listed For Sale Modal takes you to "Selling"}
@@ -32,10 +33,10 @@
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
 
 ### Other Store
+- Modal that shows Large Image and Title once clicked.
 - Bottom-Center -- Nothing
-- Image Default: Store Icon
-- Name Default: Unnamed Store
-- PAP Logo Above Price After Purchase 
+- PAP Logo Above Price After Purchase
+- no art to sell
 - - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [BUY]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
@@ -58,8 +59,8 @@
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
-- Delete all Test/Branched/Component links
-- Send 1 month - 2 week notifications on new Features to be added. (Discuss "promotional campaign" to help you find mainstream buyers buyers who don't use Cryptocurrency) only with USDC/Credit-Card integration... Once our promotional campaign begins, we will be targeting 3 markets(Abstract Art, Illustrations & Photography) so I highly recommend creating your store (once we launch) with only 1 target market in mind. Features (Arells 1.0 (PaP Polygon) vs Arells 2.0 (USDC Credit Card))
+- Delete all YouTube branched links
+- Send 1 month - 2 week notifications on new Features to be added. (Discuss "promotional campaign" to help you find mainstream buyers buyers who don't use Cryptocurrency) only with USDC/Credit-Card integration... Features (Arells 1.0 (PaP Polygon) vs Arells 2.0 (USDC Credit Card))
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 2.0
@@ -82,16 +83,12 @@ ________________________________________________________________________________
 - Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test)
-- Art Category: Abstracts, Photography, Illustrations (Icon for each) (Prepare Promotional Instagram/Discord Campaign) "Make Money by Buying & Selling The Best Abstracts/Illustrations/Photos from Arells" *buy and sell art hashtags*))
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 
 ### Other Store
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - Image Default: Store Icon
 - Name Default: Unnamed Store
-- Category Default: Creator & Collector
-- - **Collected**:
-- Art Category Logos on all Collecteds
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
@@ -105,7 +102,6 @@ ________________________________________________________________________________
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
 - MetaTag Title: "Profile/Asset Name" (character Limit)
 - MetaTag Description: "Profile/Asset Category"
-- MetaTag Image(Profile): large-profile|image.name, small-profile|description
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
@@ -115,13 +111,11 @@ ________________________________________________________________________________
 
 ## Arells 3.0
 - Pages separated like so: store/address (if not signed up) store/store-name (if signed-up), asset/address/id (both)
+- Prepare Promotional Instagram/Discord Campaign) "Make Money by Buying & Selling The Best Abstracts/Illustrations/Photos from Arells" *buy and sell art hashtags*)) arells.com/abstracts|illustrations|photography pages
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 
 #### Creating Mechanics
-- Once confirmed -> (My Store Asset Set Price After Purchase page) {Art Created Modal} {Item Automatically in Created Profile Page PAP & Price = Lines [[Not For Sale]}
-- Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
-- PAP price calculated 50x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
-- 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
+-  Art Category: Abstracts, Photography, Illustrations (Icon for each)
 
 ### My Store
 - Top-Right[Cart][Connect Wallet]-if not connected
@@ -175,7 +169,7 @@ ________________________________________________________________________________
 
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
-- MetaTag Image(Asset): small-profile|image.name, large-asset|image.name
+- MetaTag Image(Asset): large-image|name, small-|category
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
