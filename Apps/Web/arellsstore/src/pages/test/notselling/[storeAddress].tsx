@@ -1,4 +1,4 @@
-import '../../css/prototype/seller-created.css';
+import '../../../app/css/prototype/seller-created.css';
 
 import React from "react";
 import type { Metadata } from 'next';
