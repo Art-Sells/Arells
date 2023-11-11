@@ -180,20 +180,6 @@ const SellerCreatedTest = () => {
 			id="word-logo-seller-created" 
 			src="images/Arells-Logo-Ebony.png"/>	
 			<p id="slogan-seller-created">NEVER LOSE MONEY SELLING ART</p>
-			<div id="share-div-seller-created">
-				<p id="share-div-desc-seller-created">SHARE</p>
-				<button id="copy-link-seller-created"
-				onClick={copyLink}>
-					
-					<Image
-					loader={imageLoader}
-					alt=""
-					width={15}  
-					height={8}
-					id="copy-link-icon-seller-created" 
-					src="images/prototype/link.png"/>
-				COPY LINK</button>	
-			</div>
 			<hr id="profileline-seller-created"/>
 			<div id="created-collected-seller-created">
 				<a id="created-seller-created">Selling</a>	
@@ -204,7 +190,7 @@ const SellerCreatedTest = () => {
 			</div>
 			{noArtCreatedSellerCreated && (
 				<p id="no-art-buyer-collected">
-					no art created
+					no art to sell
 					<Image
 					loader={imageLoader}
 					alt=""
