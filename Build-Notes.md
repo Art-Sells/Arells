@@ -15,8 +15,9 @@
 - [Launch Store] - takes you to "My Store" if not [Connect Wallet]
 
 ### My Store
+- Top-Left[/\]- (See HOME section)
+- Top-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - Modal that shows Large Image and Title once clicked.
-- Bottom-Center[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - PAP Logo Above Price After Purchase
 - After setting Price and Price After Purchase for sale {Art Listed For Sale Modal takes you to "Selling"}
 - - **Selling**:
@@ -33,8 +34,9 @@
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
 
 ### Other Store
+- Top-Left[/\]- (See HOME section)
+- Top-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - Modal that shows Large Image and Title once clicked.
-- Bottom-Center -- Nothing
 - PAP Logo Above Price After Purchase
 - no art to sell
 - - **Selling**:
@@ -79,7 +81,6 @@ ________________________________________________________________________________
 - If not logged in [Launch Store] - takes you to "My Store" if not [Connect Wallet]
 
 ### My Store
-- Top-Left[/\]- (See HOME section)
 - Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test)
@@ -119,8 +120,7 @@ ________________________________________________________________________________
 
 ### My Store
 - Top-Right[Cart][Connect Wallet]-if not connected
-- Bottom-Right[+]<black. [Connect Wallet]-if not connected
-- Bottom-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
+- Bottom-Center[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
 - - **Created**:
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
 - - **Collected**:
@@ -131,7 +131,7 @@ ________________________________________________________________________________
 ### My Store Asset   
 - Top-Left[/\]- (See HOME section)
 - Top-Right[Cart][Connect Wallet]-if not connected
-- Bottom-Right[+]<black. [Connect Wallet]-if not connected
+- Bottom-Center[+]<black. [Connect Wallet]-if not connected
 - Images (Default Store Image) here render small pixels
 - Remove "Owned By" if not collected/bought/minted.
 - PAP Logo Above Price After Purchase
@@ -145,7 +145,7 @@ ________________________________________________________________________________
 
 ### Other Store
 - Top-Right[Cart][Connect Wallet]-if not connected
-- Bottom-Right[+]<black. [Connect Wallet]-if not connected
+- Bottom-Center[+]<black. [Connect Wallet]-if not connected
 - - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
