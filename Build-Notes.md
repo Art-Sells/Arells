@@ -82,12 +82,14 @@ ________________________________________________________________________________
 
 ### My Store
 - Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
+- no Logo or Slogan
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test)
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 
 ### Other Store
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
+- no Logo or Slogan
 - Image Default: Store Icon
 - Name Default: Unnamed Store
 
