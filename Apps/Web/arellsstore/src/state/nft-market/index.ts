@@ -7,8 +7,8 @@ import useCreatedNFTs from "./useCreatedNFTs";
 
 const NFT_MARKET_ADDRESS = process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS as string;
 
-const useNFTMarket = () => {
-  const{signer, address} = useSigner();
+const useNFTMarket = (storeAddress: string | null) => {
+  const{signer} = useSigner();
  // console.log("Retrieved signer:", signer);
   const nftMarket = new Contract(
     NFT_MARKET_ADDRESS,
@@ -16,7 +16,7 @@ const useNFTMarket = () => {
     signer
   );
 
-  const createdNFTs = useCreatedNFTs(address);
+  const createdNFTs = useCreatedNFTs(storeAddress);
 
   const createNFT = async (values: CreationValues) => {
     try {

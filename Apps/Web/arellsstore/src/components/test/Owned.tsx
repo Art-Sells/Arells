@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react";
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 
 // asset components (change below links after test)
 import useSigner from "../../state/signer";
@@ -56,18 +56,22 @@ const Owned = () => {
 
 // asset functions below
 	const { address, connectWallet } = useSigner();
-	useEffect(() => {
-		if (address) {
-			setCreate(false);
-			setCreateConnected(true);
-		}
-		else {
-			setCreate(true);
-			setCreateConnected(false);
-		}
-	}, [address]);
-	
-    const { createdNFTs } = useNFTMarket();
+    const router = useRouter();
+    const storeAddressFromURL = Array.isArray(
+		router.query.storeAddress) ? router.query.storeAddress[0]
+		 : router.query.storeAddress || null;
+
+    const { createdNFTs } = useNFTMarket(storeAddressFromURL); // passing storeAddress to the hook
+
+    useEffect(() => {
+        if (storeAddressFromURL) {
+            setCreate(false);
+            setCreateConnected(true);
+        } else {
+            setCreate(true);
+            setCreateConnected(false);
+        }
+    }, [storeAddressFromURL]);
 	useEffect(() => {
 		if (createdNFTs) {
 			setNoArtCreatedSellerCreated(false);

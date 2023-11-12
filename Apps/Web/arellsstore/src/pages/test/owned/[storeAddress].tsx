@@ -3,8 +3,7 @@ import '../../../app/css/prototype/seller-created.css';
 import React from "react";
 import type { Metadata } from 'next';
 
-import StoreNotSelling from '../../../components/test/Owned';
-import { useRouter } from 'next/router';
+//change link after testing
 import Owned from '../../../components/test/Owned';
 import { SignerProvider } from '../../../state/signer';
 import { ApolloWrapper } from '../../../lib/apollo-provider';
@@ -40,7 +39,7 @@ export const metadata: Metadata = {
   }
 }
 
-const StoreNotSellingPage = () => {
+const OwnedPage = () => {
   return (
     <>
           <div id="prototype-seller-created-wrapper">
@@ -54,6 +53,6 @@ const StoreNotSellingPage = () => {
   );
 }
 
-export default StoreNotSellingPage;
+export default OwnedPage;
 
 

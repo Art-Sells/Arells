@@ -11,7 +11,6 @@ import '../../../app/css/prototype/buyer-collected.css';
 
 //Loader Styles
 import '../../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../../../app/css/modals/loading/spinner.module.css';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
