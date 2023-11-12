@@ -22,10 +22,10 @@
 - After setting Price and Price After Purchase for sale {Art Listed For Sale Modal takes you to "Selling"}
 - - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Sold"
-- [BUY]-share to sell Modal, [Not For Sale]-silver, [Sold(if collector hasn't listed)]white, [Selling(if collector has listed)]white .... Both Sold and Selling are buttons that link to Collector
+- [BUY]-share to sell Modal
 - - **Owned**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
-- [BUY]-share to sell Modal, [Not For Sale]-silver,
+- [BUY]-share to sell Modal, [OWNED]-silver,
  
 #### Creating Mechanics
 - Once confirmed -> {Art Created Modal} {Item Automatically in Owned Profile Page PAP & Price = Lines [[Not For Sale]}
@@ -41,11 +41,10 @@
 - no art to sell
 - - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
-- [BUY]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
+- [BUY]-Use Prototype as Reference
 - - **Owned**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
-- [BUY]-Use Prototype as Reference, [Not For Sale]-greyed,
-- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
+- [Owned]-silver,
 
 #### After Purchase (Modal)
 -- Congratulations on your Purchase! Set Price After Purchase to make money off your collection [VIEW COLLECTION]- Takes you to Collection
@@ -63,6 +62,10 @@
 - Store Private Key Cold
 - Delete all YouTube branched links
 - Send 1 month - 2 week notifications on new Features to be added. (Discuss "promotional campaign" to help you find mainstream buyers buyers who don't use Cryptocurrency) only with USDC/Credit-Card integration... Features (Arells 1.0 (PaP Polygon) vs Arells 2.0 (USDC Credit Card))
+
+#### If more time found before launch:
+##### Home
+- If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 2.0
@@ -77,8 +80,8 @@ ________________________________________________________________________________
 - Arells [Arells uses Crossmint as it's payment provider] info at bottom.
 
 ### Home
-- If logged in [(View My Store), (Log-Out)]
-- If not logged in [Launch Store] - takes you to "My Store" if not [Connect Wallet]
+- If logged in [(Open Store), (Close Store)]
+- If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
 
 ### My Store
 - Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
