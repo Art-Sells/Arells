@@ -30,7 +30,8 @@ const Owned = () => {
         return `/${src}?w=${width}&q=${quality || 100}`;
     };
 	const [imagesLoaded, setImagesLoaded] = useState({
-		arellsLogoSelling: false,
+		arellsLogo: false,
+		arellsIcon: false,
 	});
     const handleImageLoaded = (imageName: string) => {
         setImagesLoaded(prevState => ({
@@ -128,9 +129,10 @@ const Owned = () => {
 					<button id="cart-link-seller-created" onClick={connectWallet}>
 						<Image
 						loader={imageLoader}
+						onLoad={() => handleImageLoaded('arellsIcon')}
 						alt=""
-						height={16}
-						width={16} 
+						height={18}
+						width={18} 
 						id="cart-icon-seller-created" 
 						src="images/prototype/Add-Ivory.png"/>
 					</button>
@@ -142,8 +144,8 @@ const Owned = () => {
 							<Image
 							loader={imageLoader}
 							alt=""
-							height={16}
-							width={16}
+							height={18}
+							width={18}
 							id="cart-icon-seller-created" 
 							src="images/prototype/Add-Ivory.png"/>
 						</a>
@@ -152,7 +154,7 @@ const Owned = () => {
 			</div>
 			<Image
 			loader={imageLoader}
-			onLoad={() => handleImageLoaded('arellsLogoSelling')}
+			onLoad={() => handleImageLoaded('arellsLogo')}
 			alt=""
 			width={110}  
 			height={35} 

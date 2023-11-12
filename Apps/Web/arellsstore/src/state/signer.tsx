@@ -9,6 +9,8 @@ import '../app/css/modals/walletConnected.css';
 import '../app/css/modals/loading/spinnerBackground.css';
 import '../app/css/modals/connect-wallet.css';
 import Image from 'next/image';
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 type SignerContextType = {
     signer?: JsonRpcSigner;   
@@ -23,6 +25,7 @@ const SignerContext = createContext<SignerContextType>({} as any);
 const useSigner = () => useContext(SignerContext);
 
 export const SignerProvider = ({ children }: { children: ReactNode }) => {
+
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
     };
@@ -170,9 +173,22 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         setCheckWallet(false);
         setDisconnected(false);
         setLoadingWalletConnection(false);
-        localStorage.removeItem("walletConnected"); // Clear the flag
+        localStorage.removeItem("walletConnected"); 
         window.location.reload();
 
+    };
+    const launchStore = () => {
+        const router = useRouter();
+
+        setConnected(false);
+        setCheckWallet(false);
+        setDisconnected(false);
+        setLoadingWalletConnection(false);
+        localStorage.removeItem("walletConnected");
+
+//change link after test
+        router.push(`/test/owned/${address}`);
+        window.location.reload();
     };
 
     return (
@@ -227,7 +243,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                 <div id="walletConnected">
                     <div id="wallet-connected-modalGood">
                         <p>CONNECTED</p>
-                        <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>    
+                        <button id="wallet-connected-close" onClick={launchStore}>OK</button>    
                     </div>
                 </div>  
             )}

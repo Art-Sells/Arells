@@ -17,6 +17,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import React from 'react';
+import useSigner from '../state/signer';
 
 const Index = () => {
 
@@ -24,7 +25,7 @@ const Index = () => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   }
 
-  // Loader Functions
+// Loader Functions
   const [showLoading, setLoading] = useState<boolean>(true);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     arellsIcon: false,
@@ -45,6 +46,23 @@ const Index = () => {
       setLoading(false);
     }
   }, [imagesLoaded]);
+
+
+
+// asset functions below
+    const [openStore, setOpenStore] = useState(true);
+    const [openStoreConnected, setOpenStoreConnected] = useState(false);
+    const { address, connectWallet } = useSigner();
+    useEffect(() => {
+      if (address) {
+        setOpenStore(false);
+        setOpenStoreConnected(true);
+      }
+      else if (!address) {
+        setOpenStore(true);
+        setOpenStoreConnected(false);
+      }
+    }, [address]);
 
   return (
     <>
@@ -85,8 +103,6 @@ const Index = () => {
         
         <br/>
         
-        <p id="slogann">ART SELLS</p>
-        
         <hr id="black-liner"/>
         
         <p id="descriptioner">
@@ -94,20 +110,19 @@ const Index = () => {
         </p>
         
         <hr id="black-liner"/>
-        
-        <p id="coming-soonn">COMING SOON</p>
-    
-        {/*<!-- Change below link after test -->*/}
-        <Link legacyBehavior href="/stayupdated" >
-          <a id="updatess">STAY UPDATED</a>
-        </Link>			
-        
-        <div id="prototype-spacer">
-          {/*<!-- Change below link after test -->*/}
-          <Link legacyBehavior href="/prototype/seller-created">
-            <a id="prototype">PROTOTYPE</a>
-          </Link>	        
-        </div>                 
+        {openStore && (
+          <button id="updatess" onClick={connectWallet}>
+            OPEN STORE
+          </button>     
+				)}	
+				{openStoreConnected && (
+// change below link after test
+					<Link legacyBehavior href={`/test/owned/${address}`} passHref>
+						<a id="updatess">
+            OPEN STORE
+						</a>
+					</Link>	
+				)}		  
     </>
   );
 }
