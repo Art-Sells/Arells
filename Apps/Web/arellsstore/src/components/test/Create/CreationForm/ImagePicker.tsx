@@ -3,7 +3,7 @@
 import React from "react";
 
 // Change below link after test
-import '../../../../app/css/prototype/asset/blue-orange.css';
+import '../../../../app/css/prototype/asset/asset.css';
 import '../../../../app/css/stayupdated.css';
 
 //Loader Styles

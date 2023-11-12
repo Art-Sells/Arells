@@ -20,7 +20,7 @@
 .connect-wallet-content {
   align-items: center;
   position: relative;
-  color: gray;
+  color: rgb(179, 179, 179);
   font-weight: 500;
   font-size: 13px;
   letter-spacing: 3px;

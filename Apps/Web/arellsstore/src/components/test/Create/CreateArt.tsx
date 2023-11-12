@@ -7,10 +7,10 @@ import CreationForm from "./CreationForm";
 import useNFTMarket from "../../../state/nft-market";
 
 // Change below link after test
-import '../../../app/css/prototype/asset/blue-orange.css';
+import '../../../app/css/prototype/asset/asset.css';
 import '../../../app/css/stayupdated.css';
 
-const CreateArtTest = () => {
+const CreateArt = () => {
 
 // asset functions below
 	const { createNFT } = useNFTMarket();
@@ -27,4 +27,4 @@ const CreateArtTest = () => {
 	);
   };
   
-  export default CreateArtTest;
+  export default CreateArt;

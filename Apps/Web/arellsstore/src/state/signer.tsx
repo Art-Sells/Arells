@@ -10,7 +10,6 @@ import '../app/css/modals/loading/spinnerBackground.css';
 import '../app/css/modals/connect-wallet.css';
 import Image from 'next/image';
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 type SignerContextType = {
     signer?: JsonRpcSigner;   
@@ -25,10 +24,9 @@ const SignerContext = createContext<SignerContextType>({} as any);
 const useSigner = () => useContext(SignerContext);
 
 export const SignerProvider = ({ children }: { children: ReactNode }) => {
-
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
-    };
+    }; 
 
     const [showDownloadWallet, setShowDownloadWallet] = useState(false);
     const [showConnectWallet, setShowConnectWallet] = useState(false);
@@ -49,7 +47,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         }
     };
     const downloadWalletFunction = () => {
-            // No Ethereum-compatible wallet detected, redirecting to MetaMask website
             window.open('https://metamask.io/', '_blank');
             setShowDownloadWallet(false);
             setLoadingWalletConnection(true);
@@ -168,7 +165,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
    
 
-    const closeProviderModals = () => {  // New function to close the modal
+    const closeProviderModals = () => {
         setConnected(false);
         setCheckWallet(false);
         setDisconnected(false);
@@ -177,20 +174,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         window.location.reload();
 
     };
-    const launchStore = () => {
-        const router = useRouter();
-
-        setConnected(false);
-        setCheckWallet(false);
-        setDisconnected(false);
-        setLoadingWalletConnection(false);
-        localStorage.removeItem("walletConnected");
-
-//change link after test
-        router.push(`/test/owned/${address}`);
-        window.location.reload();
-    };
-
     return (
         <SignerContext.Provider value={{ 
             signer, address, loadingWallet, connectWallet }}>
@@ -239,15 +222,16 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                     </div>
                 </div>  
             )}
-            {connected && (   // Display the modal if walletConnected is true
+            {connected && (   
                 <div id="walletConnected">
                     <div id="wallet-connected-modalGood">
                         <p>CONNECTED</p>
-                        <button id="wallet-connected-close" onClick={launchStore}>OK</button>    
+    {/* // change below link after test */}
+                        <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>   
                     </div>
                 </div>  
             )}
-            {checkWallet && (   // Display the modal if walletConnected is true
+            {checkWallet && (   
                 <div id="connectingBackground">
                     <div id="wallet-connected-modal">
                         <p id="connectingWalletWords">CHECK OPEN WALLET</p>
@@ -255,7 +239,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                     </div>
                 </div>  
             )}
-            {disconnected && (   // Display the modal if walletConnected is true
+            {disconnected && (   
                 <div id="walletConnected">
                     <div id="wallet-connected-modalGood">
                         <p>DISCONNECTED</p>

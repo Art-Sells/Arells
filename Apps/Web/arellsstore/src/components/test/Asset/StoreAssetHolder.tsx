@@ -123,11 +123,13 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
                       <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created">...</p>
+                      <p id="PAP-not-for-sale">...</p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
-                      <p id="price-blue-orange-before-seller-created">...</p>
+                      <p id="price-blue-orange-before-seller-created">{nft.price}</p>
                     </div>
+                    <button id="not-for-sale">
+                    OWNED</button>
                 </>
             )}	
             {!addressMatch && !address && (

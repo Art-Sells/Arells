@@ -1,10 +1,9 @@
-import '../../css/prototype/asset/blue-orange.css';
+import '../../css/prototype/asset/asset.css';
 
 import React from "react";
 
 import type { Metadata } from 'next';
 
-import CreateArtTest from '../../../components/test/Create/CreateArt';
 import CreateArt from '../../../components/test/Create/CreateArt';
 
 export const metadata: Metadata = {

@@ -68,15 +68,6 @@ const Owned = () => {
 	}, [address]);
 	
     const { createdNFTs } = useNFTMarket();
-
-    useEffect(() => {
-        if (createdNFTs && createdNFTs.length > 0) {
-            // Assuming the first NFT's storeAddress is what you need
-            const storeAddress = createdNFTs[0].storeAddress;
-            // Update the URL
-            router.push(`/test/owned/${storeAddress}`);
-        }
-    }, [createdNFTs, router]);
 	useEffect(() => {
 		if (createdNFTs) {
 			setNoArtCreatedSellerCreated(false);

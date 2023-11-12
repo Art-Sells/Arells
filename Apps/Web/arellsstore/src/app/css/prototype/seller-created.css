@@ -345,7 +345,17 @@
 				padding-left: 0px;
 				opacity: .4;
 			}
-			#PAP-blue-orange-before-seller-created, #PAP-beach-houses-before-seller-created, #PAP-colour-glass-before-seller-created,
+			#PAP-not-for-sale {
+			margin-top: -5px;
+			text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 17px;
+				letter-spacing: 0px;
+				padding-left: 0px;
+				opacity: .5;
+			}
+			#PAP-beach-houses-before-seller-created, #PAP-colour-glass-before-seller-created,
 			#PAP-layers-before-seller-created, #PAP-succinct-drop-before-seller-created, #PAP-paint-rain-before-seller-created,
 			
 			
@@ -478,7 +488,7 @@
 				  opacity: 1; 
 					background: gray;
 			}	
-			#not-for-sale-seller-created {
+			#not-for-sale {
 				  text-decoration: none;
 				  margin-left: auto;
 				  margin-right: auto;
@@ -645,6 +655,9 @@
 				margin-top: 5px;
 				font-size: 7px;
 			}
+			#PAP-not-for-sale {
+				font-size: 13px;
+			}
 			#PAP-blue-orange-before-seller-created, #PAP-beach-houses-before-seller-created, #PAP-colour-glass-before-seller-created,
 			#PAP-layers-before-seller-created, #PAP-succinct-drop-before-seller-created, #PAP-paint-rain-before-seller-created,
 			
@@ -654,6 +667,7 @@
 				margin-top: 0px;
 				font-size: 13px;
 			}
+
 			#priceline-seller-created {
 			  margin-top: -2px;
 			  width: 75%;
@@ -687,8 +701,8 @@
 				  letter-spacing: 1px;
 				  width: 120px;
 				}	  
-			#for-sale-seller-created,
-			#not-for-sale-seller-created
+			#for-sale,
+			#not-for-sale
 			{
 				  font-size: 9px;
 				  padding-top: 20px;

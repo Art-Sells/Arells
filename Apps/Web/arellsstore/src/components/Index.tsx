@@ -14,18 +14,16 @@ import '../app/css/modals/loading/spinnerBackground.css';
 import styles from '../app/css/modals/loading/spinner.module.css';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import React from 'react';
 import useSigner from '../state/signer';
+import Link from 'next/link';
 
 const Index = () => {
-
+// Loader Functions
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   }
-
-// Loader Functions
   const [showLoading, setLoading] = useState<boolean>(true);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     arellsIcon: false,
@@ -63,6 +61,7 @@ const Index = () => {
         setOpenStoreConnected(false);
       }
     }, [address]);
+// Asset functions anove    
 
   return (
     <>
@@ -117,11 +116,11 @@ const Index = () => {
 				)}	
 				{openStoreConnected && (
 // change below link after test
-					<Link legacyBehavior href={`/test/owned/${address}`} passHref>
-						<a id="updatess">
-            OPEN STORE
-						</a>
-					</Link>	
+        <Link href={`/test/owned/${address}`} passHref>
+          <button id="updatess">
+            ENTER STORE
+          </button>
+        </Link>   
 				)}		  
     </>
   );
