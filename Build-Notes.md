@@ -110,6 +110,10 @@ ________________________________________________________________________________
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
+
+##### Bugs
+- Solve Ethereum Address URL length issue.
+- 404 and Server Error Pages
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 3.0
