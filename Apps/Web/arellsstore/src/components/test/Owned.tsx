@@ -50,8 +50,8 @@ const Owned = () => {
 // useState constants below
 	const [create, setCreate] = useState(true);
 	const [createConnected, setCreateConnected] = useState(false);
-    const [noArtCreatedSellerCreated, setNoArtCreatedSellerCreated] = useState(true);
-    const [artCreatedSellerCreated, setArtCreatedSellerCreated] = useState(false);
+    const [noArtCreated, setNoArtCreated] = useState(false);
+    const [artCreated, setArtCreated] = useState(false);
 // useState constants above
 
 // asset functions below
@@ -64,24 +64,29 @@ const Owned = () => {
     const { createdNFTs } = useNFTMarket(storeAddressFromURL); // passing storeAddress to the hook
 
     useEffect(() => {
-        if (storeAddressFromURL) {
+        if (!address) {
+			setCreate(true);
+			setCreateConnected(false);
+        } else {
             setCreate(false);
             setCreateConnected(true);
-        } else {
-            setCreate(true);
-            setCreateConnected(false);
         }
-    }, [storeAddressFromURL]);
+    }, [address]);
 	useEffect(() => {
-		if (createdNFTs) {
-			setNoArtCreatedSellerCreated(false);
-			setArtCreatedSellerCreated(true);
+		if (createdNFTs && createdNFTs.length > 0) {
+			const isOwnerOfAnyNFT = createdNFTs.some(nft => {
+				return nft.storeAddress === storeAddressFromURL;
+			});
+	
+			if (isOwnerOfAnyNFT) {
+				setNoArtCreated(false);
+				setArtCreated(true);
+			} else if (!isOwnerOfAnyNFT){
+				setNoArtCreated(true);
+				setArtCreated(false);
+			}
 		}
-		else {
-			setNoArtCreatedSellerCreated(true);
-			setArtCreatedSellerCreated(false);
-		}
-	}, [createdNFTs]);
+	}, [createdNFTs, storeAddressFromURL]);
 // asset constants above
 
 	
@@ -164,19 +169,11 @@ const Owned = () => {
 				</Link>	
 				<a id="owned" >Owned</a>		
 			</div>
-			{noArtCreatedSellerCreated && (
-				<p id="no-art-buyer-collected">
-					no art to sell
-					<Image
-					loader={imageLoader}
-					alt=""
-					width={27}  
-					height={25}  
-					id="cart-icon-collected-buyer-collected" 
-					src="images/prototype/Add.png"/>
+			{noArtCreated && (
+				<p id="no-art">
 				</p>
 			)}
-			{artCreatedSellerCreated && (
+			{artCreated && (
 				<div id="container-seller-created">
 					{createdNFTs?.map((nft) => {
 						return <AssetStoreHolder nft={nft} key={nft.id} />;
