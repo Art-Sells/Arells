@@ -1,13 +1,11 @@
 import { gql, useQuery } from "@apollo/client";
 import { ethers } from "ethers";
-import useSigner from "../signer";
 import { NFT } from "./interfaces";
-import { GetCreatedNFTs, GetCreatedNFTsVariables, GetCreatedNFTs_nfts } from "./__generated__/GetCreatedNFTs";
-
+import { GetOwnedNfTsQuery, GetOwnedNfTsQueryVariables, Nft } from "./gqls/__generated__/graphql";
 // Define your GraphQL query first
-export const GET_CREATED_NFTS = gql`
-    query GetCreatedNFTs($creator: String!) {
-        nfts(where: {to: $creator}) {
+export const GET_OWNED_NFTS = gql`
+    query GetOwnedNFTs($owner: Bytes!) {
+        nfts(where: {to: $owner}) {
             id
             from
             to
@@ -19,9 +17,9 @@ export const GET_CREATED_NFTS = gql`
 
 const useCreatedNFTs = (storeAddress: any) => {
     // Use the provided creatorAddress in the query
-    const { data } = useQuery<GetCreatedNFTs, GetCreatedNFTsVariables>(
-        GET_CREATED_NFTS, 
-        { variables: { creator: storeAddress }, skip: !storeAddress }
+    const { data } = useQuery<GetOwnedNfTsQuery, GetOwnedNfTsQueryVariables>(
+        GET_OWNED_NFTS, 
+        { variables: { owner: storeAddress }, skip: !storeAddress }
     );
 
     const createdNFTs = data?.nfts.map(parseRawNFT);
@@ -29,7 +27,7 @@ const useCreatedNFTs = (storeAddress: any) => {
     return { createdNFTs };
 };
 
-const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
+const parseRawNFT = (raw: Nft): NFT => {
     return {
         id: raw.id,
         storeAddress: raw.to,

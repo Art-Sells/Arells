@@ -52,7 +52,6 @@ const StoreNotSelling = () => {
 // useState constants above
 
 // asset functions below
-	const { address, connectWallet} = useSigner();
     const { createdNFTs } = useNFTMarket();
 
     useEffect(() => {
