@@ -25,53 +25,53 @@ const StoreNotSelling = () => {
 	
 
 //loader functions below 
-    const [showLoading, setLoading] = useState(false);
+    const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
     };
-	// const [imagesLoaded, setImagesLoaded] = useState({
-	// 	arellLogoSelling: false,
-	// });
-    // const handleImageLoaded = (imageName: string) => {
-    //     setImagesLoaded(prevState => ({
-    //         ...prevState,
-    //         [imageName]: true 
-    //     }));
-    // };
-	// useEffect(() => {
-	// 	if (Object.values(imagesLoaded).every(Boolean)) {
-	// 		setLoading(false);
-	// 	}
-	// }, [imagesLoaded]);
+	const [imagesLoaded, setImagesLoaded] = useState({
+		arellsLogoSelling: false,
+	});
+    const handleImageLoaded = (imageName: string) => {
+        setImagesLoaded(prevState => ({
+            ...prevState,
+            [imageName]: true 
+        }));
+    };
+	useEffect(() => {
+		if (Object.values(imagesLoaded).every(Boolean)) {
+			setLoading(false);
+		}
+	}, [imagesLoaded]);
 // loader functions above
 
 
 // useState constants below
-    const [noArtCreatedSellerCreated, setNoArtCreatedSellerCreated] = useState(false);
+    const [noArtCreatedSellerCreated, setNoArtCreatedSellerCreated] = useState(true);
     const [artCreatedSellerCreated, setArtCreatedSellerCreated] = useState(false);
 // useState constants above
 
 // asset functions below
-    const { createdNFTs } = useNFTMarket();
+    // const { createdNFTs } = useNFTMarket();
 
-    useEffect(() => {
-        if (createdNFTs && createdNFTs.length > 0) {
-            // Assuming the first NFT's storeAddress is what you need
-            const storeAddress = createdNFTs[0].storeAddress;
-            // Update the URL
-            router.push(`/${storeAddress}`);
-        }
-    }, [createdNFTs, router]);
-	useEffect(() => {
-		if (createdNFTs) {
-			setNoArtCreatedSellerCreated(false);
-			setArtCreatedSellerCreated(true);
-		}
-		else {
-			setNoArtCreatedSellerCreated(true);
-			setArtCreatedSellerCreated(false);
-		}
-	}, [createdNFTs]);
+    // useEffect(() => {
+    //     if (createdNFTs && createdNFTs.length > 0) {
+    //         // Assuming the first NFT's storeAddress is what you need
+    //         const storeAddress = createdNFTs[0].storeAddress;
+    //         // Update the URL
+    //         router.push(`/test/notselling/${storeAddress}`);
+    //     }
+    // }, [createdNFTs, router]);
+	// useEffect(() => {
+	// 	if (createdNFTs) {
+	// 		setNoArtCreatedSellerCreated(false);
+	// 		setArtCreatedSellerCreated(true);
+	// 	}
+	// 	else {
+	// 		setNoArtCreatedSellerCreated(true);
+	// 		setArtCreatedSellerCreated(false);
+	// 	}
+	// }, [createdNFTs]);
 // asset constants above
 
 	
@@ -98,7 +98,7 @@ const StoreNotSelling = () => {
 {/*<!-- Modals Above -->*/}
 			<Image
 			loader={imageLoader}
-			// onLoad={() => handleImageLoaded('arellsLogoSelling')}
+			onLoad={() => handleImageLoaded('arellsLogoSelling')}
 			alt=""
 			width={110}  
 			height={35} 
@@ -107,11 +107,11 @@ const StoreNotSelling = () => {
 			<p id="slogan-seller-created">NEVER LOSE MONEY SELLING ART</p>
 			<hr id="profileline-seller-created"/>
 			<div id="created-collected-seller-created">
-				<a id="created-seller-created">Selling</a>	
 			{/*<!-- Change below link after test -->*/}	
-				<Link legacyBehavior href="/test/seller-collected">
-					<a id="collected-seller-created" >Owned</a>		
+				<Link legacyBehavior href="/test/selling">
+					<a id="selling">Selling</a>	
 				</Link>	
+				<a id="owned" >Owned</a>		
 			</div>
 			{noArtCreatedSellerCreated && (
 				<p id="no-art-buyer-collected">
@@ -125,13 +125,13 @@ const StoreNotSelling = () => {
 					src="images/prototype/Add.png"/>
 				</p>
 			)}
-			{artCreatedSellerCreated && (
+			{/* {artCreatedSellerCreated && (
 				<div id="container-seller-created">
 					{createdNFTs?.map((nft) => {
 						return <AssetStoreHolder nft={nft} key={nft.id} />;
 					})}
 				</div>	
-			)}
+			)} */}
 
 		     
         </>

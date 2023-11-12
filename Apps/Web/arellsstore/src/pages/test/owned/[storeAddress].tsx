@@ -4,6 +4,7 @@ import React from "react";
 import type { Metadata } from 'next';
 
 import StoreNotSelling from '../../../components/test/StoreNotSelling';
+import { useRouter } from 'next/router';
 
 export const metadata: Metadata = {
   title: "Seller Creations Test",
@@ -37,10 +38,12 @@ export const metadata: Metadata = {
 }
 
 const StoreNotSellingPage = () => {
+  const router = useRouter();
+  const { storeAddress } = router.query;
   return (
     <>
           <div id="prototype-seller-created-wrapper">
-              <StoreNotSelling/>
+            <StoreNotSelling/>
           </div>
     </>
   );

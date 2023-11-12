@@ -360,12 +360,12 @@
 		  margin-left: auto;
 		  margin-right: auto;	
 	}
-		#created-seller-created {
+		#selling {
 		flex: 1;			
 		margin-right: 10px;
 		align-items: center;	
 		  text-decoration: none;
-		  color: black;
+		  color: gray;
 		  font-weight: 300;
 		  font-size: 13px;
 		  padding-top: 12px;
@@ -376,18 +376,18 @@
 		  letter-spacing: .5px;
 		  border-radius: 10px;
 		  border-width: 1px;
-		  border-color: gray;
+		  border-color: rgba(215, 215, 215, 0.7);
 		  width: 150px;
 		background: none;
 		opacity: 1;
 			
 		}  		
-		#collected-seller-created {
+		#owned {
 		flex: 1;			
 		margin-left: 10px;
 		align-items: center;	
 		  text-decoration: none;
-		  color: gray;
+		  color: black;
 		  font-weight: 300;
 		  font-size: 13px;
 		  padding-top: 13px;
@@ -398,13 +398,13 @@
 		  letter-spacing: .5px;
 		  border-radius: 10px;
 		  border-width: 1px;
-		  border-color: rgba(215, 215, 215, 0.7);
+		  border-color: gray;
 		  width: 150px;
 		  opacity: 1;
 			background: none;
 		}	
-		#collected-seller-created:hover,
-		#collected-seller-created:focus {
+		#selling:hover,
+		#selling:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  color: black;
@@ -838,7 +838,7 @@
 			align-items: center;
 			  width: 400px;
 		}  
-			#created-seller-created {		
+			#selling {		
 			margin-right: 10px;
 			margin-left: 8px;
 			  font-size: 10px;
@@ -849,8 +849,9 @@
 			  letter-spacing: .5px;
 				
 			}  		
-			#collected-seller-created {		
+			#owned {		
 			margin-left: 0px;
+			margin-right: 10px;
 			  font-size: 10px;
 			  padding-top: 10px;
 			  padding-bottom: 10px;
