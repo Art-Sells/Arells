@@ -12,7 +12,7 @@
 - Mainnet with Coinbase/Polygon
 
 ### Home
-- [Launch Store] - takes you to "My Store" if not [Connect Wallet]
+- [Unlock Store] - takes you to "My Store" if not [Connect Wallet]
 
 ### My Store
 - Top-Left[/\]- (See HOME section)
@@ -22,10 +22,10 @@
 - After setting Price and Price After Purchase for sale {Art Listed For Sale Modal takes you to "Selling"}
 - - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Sold"
-- [BUY]-share to sell Modal
+- [BUY]-share store to sell Modal
 - - **Owned**:
 - Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
-- [BUY]-share to sell Modal, [OWNED]-silver,
+- [SELL]-Edit, [OWNED]-silver,
  
 #### Creating Mechanics
 - Once confirmed -> {Art Created Modal} {Item Automatically in Owned Profile Page PAP & Price = Lines [[Not For Sale]}
@@ -63,9 +63,6 @@
 - Delete all YouTube branched links
 - Send 1 month - 2 week notifications on new Features to be added. (Discuss "promotional campaign" to help you find mainstream buyers buyers who don't use Cryptocurrency) only with USDC/Credit-Card integration... Features (Arells 1.0 (PaP Polygon) vs Arells 2.0 (USDC Credit Card))
 
-#### If more time found before launch:
-##### Home
-- If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 2.0
