@@ -1,4 +1,4 @@
-import { CreationValues } from "../../components/test/CreationPage/CreationForm";
+import { CreationValues } from "../../components/test/Create/CreationForm";
 import {Contract} from "ethers";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
 import NFT_MARKET from '../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json';

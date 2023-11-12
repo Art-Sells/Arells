@@ -3,19 +3,22 @@ import '../../../app/css/prototype/seller-created.css';
 import React from "react";
 import type { Metadata } from 'next';
 
-import StoreNotSelling from '../../../components/test/StoreNotSelling';
+import StoreNotSelling from '../../../components/test/Owned';
 import { useRouter } from 'next/router';
+import Owned from '../../../components/test/Owned';
+import { SignerProvider } from '../../../state/signer';
+import { ApolloWrapper } from '../../../lib/apollo-provider';
 
 export const metadata: Metadata = {
-  title: "Seller Creations Test",
-  description: "Test for Seller Creations",
+  title: "Arells",
+  description: "Art For Sale",
   robots: "noimageindex",
 
   openGraph: {
-    title: "Seller Creations Test",
-    description: "Test for Seller Creations",
+    title: "Arells",
+    description: "Art For Sale",
     // Change this link after testing
-    url: "https://arells.com/test/seller-created", 
+    url: "https://arells.com/test/owned/[storeAddress]", 
     type: "website",
     images: [
       {
@@ -25,8 +28,8 @@ export const metadata: Metadata = {
   },
 
   twitter: {
-    title: "Seller Creations Test",
-    description: "Test for Seller Creations",
+    title: "Arells",
+    description: "Art For Sale",
     // Change this link after testing
     card: "summary_large_image",
     images: [
@@ -38,12 +41,14 @@ export const metadata: Metadata = {
 }
 
 const StoreNotSellingPage = () => {
-  const router = useRouter();
-  const { storeAddress } = router.query;
   return (
     <>
           <div id="prototype-seller-created-wrapper">
-            <StoreNotSelling/>
+            <SignerProvider>
+              <ApolloWrapper>
+                <Owned/>
+              </ApolloWrapper>      
+            </SignerProvider>
           </div>
     </>
   );

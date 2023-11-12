@@ -72,7 +72,7 @@
 			margin-left: 124px;
 			  text-decoration: none;
 			  padding-top: 14px;
-			  padding-bottom: 10px;
+			  padding-bottom: 14px;
 			  padding-right: 10px;
 			  padding-left: 10px;	  
 			  border: solid;
@@ -81,7 +81,7 @@
 			  border-radius: 15px;
 			  border-width: 1px;
 			  opacity: 1;
-				background: rgba(255, 255, 255, 0.8);						
+				background: rgba(0, 0, 0, .9);						
 		}
 		#cart-link-connected-seller-created{
 			text-decoration: none;
@@ -719,7 +719,7 @@
 			#cart-link-seller-created{
 				margin-left: 90px;
 				  padding-top: 11px;
-				  padding-bottom: 7.5px;
+				  padding-bottom: 8px;
 				  padding-right: 8px;
 				  padding-left: 8px;	
 				  border-radius: 12px;	

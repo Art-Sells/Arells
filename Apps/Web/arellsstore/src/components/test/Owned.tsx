@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const StoreNotSelling = () => {
+const Owned = () => {
 	
 
 //loader functions below 
@@ -47,31 +47,45 @@ const StoreNotSelling = () => {
 
 
 // useState constants below
+	const [create, setCreate] = useState(true);
+	const [createConnected, setCreateConnected] = useState(false);
     const [noArtCreatedSellerCreated, setNoArtCreatedSellerCreated] = useState(true);
     const [artCreatedSellerCreated, setArtCreatedSellerCreated] = useState(false);
 // useState constants above
 
 // asset functions below
-    // const { createdNFTs } = useNFTMarket();
+	const { address, connectWallet } = useSigner();
+	useEffect(() => {
+		if (address) {
+			setCreate(false);
+			setCreateConnected(true);
+		}
+		else {
+			setCreate(true);
+			setCreateConnected(false);
+		}
+	}, [address]);
+	
+    const { createdNFTs } = useNFTMarket();
 
-    // useEffect(() => {
-    //     if (createdNFTs && createdNFTs.length > 0) {
-    //         // Assuming the first NFT's storeAddress is what you need
-    //         const storeAddress = createdNFTs[0].storeAddress;
-    //         // Update the URL
-    //         router.push(`/test/notselling/${storeAddress}`);
-    //     }
-    // }, [createdNFTs, router]);
-	// useEffect(() => {
-	// 	if (createdNFTs) {
-	// 		setNoArtCreatedSellerCreated(false);
-	// 		setArtCreatedSellerCreated(true);
-	// 	}
-	// 	else {
-	// 		setNoArtCreatedSellerCreated(true);
-	// 		setArtCreatedSellerCreated(false);
-	// 	}
-	// }, [createdNFTs]);
+    useEffect(() => {
+        if (createdNFTs && createdNFTs.length > 0) {
+            // Assuming the first NFT's storeAddress is what you need
+            const storeAddress = createdNFTs[0].storeAddress;
+            // Update the URL
+            router.push(`/test/owned/${storeAddress}`);
+        }
+    }, [createdNFTs, router]);
+	useEffect(() => {
+		if (createdNFTs) {
+			setNoArtCreatedSellerCreated(false);
+			setArtCreatedSellerCreated(true);
+		}
+		else {
+			setNoArtCreatedSellerCreated(true);
+			setArtCreatedSellerCreated(false);
+		}
+	}, [createdNFTs]);
 // asset constants above
 
 	
@@ -96,6 +110,46 @@ const StoreNotSelling = () => {
 		)}  
 
 {/*<!-- Modals Above -->*/}
+<div id="header-seller-created">
+			
+			{/*<!-- Change below link after test -->*/}
+				<Link legacyBehavior href="/">
+					<a id="icon-link-seller-created">
+						<Image
+						loader={imageLoader}
+						alt=""
+						height={16}
+						width={15}
+						id="arells-icon-seller-created" 
+						src="images/prototype/Arells-Icon-Home.png"/>
+					</a>	
+				</Link>							
+				{create && (
+					<button id="cart-link-seller-created" onClick={connectWallet}>
+						<Image
+						loader={imageLoader}
+						alt=""
+						height={16}
+						width={16} 
+						id="cart-icon-seller-created" 
+						src="images/prototype/Add-Ivory.png"/>
+					</button>
+				)}	
+				{createConnected && (
+					// change below link after test
+					<Link legacyBehavior href="/test/create">
+						<a id="cart-link-connected-seller-created">
+							<Image
+							loader={imageLoader}
+							alt=""
+							height={16}
+							width={16}
+							id="cart-icon-seller-created" 
+							src="images/prototype/Add-Ivory.png"/>
+						</a>
+					</Link>	
+				)}		
+			</div>
 			<Image
 			loader={imageLoader}
 			onLoad={() => handleImageLoaded('arellsLogoSelling')}
@@ -125,17 +179,17 @@ const StoreNotSelling = () => {
 					src="images/prototype/Add.png"/>
 				</p>
 			)}
-			{/* {artCreatedSellerCreated && (
+			{artCreatedSellerCreated && (
 				<div id="container-seller-created">
 					{createdNFTs?.map((nft) => {
 						return <AssetStoreHolder nft={nft} key={nft.id} />;
 					})}
 				</div>	
-			)} */}
+			)}
 
 		     
         </>
     );
 }
 
-export default StoreNotSelling;
+export default Owned;

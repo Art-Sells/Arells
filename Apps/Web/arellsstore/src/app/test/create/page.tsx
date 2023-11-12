@@ -4,7 +4,8 @@ import React from "react";
 
 import type { Metadata } from 'next';
 
-import CreateArtTest from '../../../components/test/CreationPage/CreateArtTest';
+import CreateArtTest from '../../../components/test/Create/CreateArt';
+import CreateArt from '../../../components/test/Create/CreateArt';
 
 export const metadata: Metadata = {
   title: "Create Test",
@@ -42,7 +43,7 @@ const CreateTest = () => {
   return (
     <>
         <div id="blue-orange-wrapper">
-          <CreateArtTest/>
+          <CreateArt/>
         </div>  
     </>
   );
