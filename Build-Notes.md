@@ -259,7 +259,7 @@ ________________________________________________________________________________
 ### Vault (Slide-Up)
 - NFT Collections (Ability to Receive ONLY [In-Bound]... No Outbound Transfers)
   
-#### Wallet(Store):
+#### Connect Wallet(Open Market):
 - USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
 - Phase out Crossmint (if they won't include our own Logo/Name in Email/Payment info)
 - Rarimo (CCTP) Circle?
