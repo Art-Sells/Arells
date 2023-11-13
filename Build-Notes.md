@@ -111,7 +111,7 @@ ________________________________________________________________________________
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 
 ##### Bugs
-- Singular GQL find 1 NFT (More efficient work-around)
+- Handle NFT Error Fetching edge-cases...
 - Solve Ethereum Address URL length issue.
 - 404 and Server Error Pages
 ________________________________________________________________________________________________________________________________________________
