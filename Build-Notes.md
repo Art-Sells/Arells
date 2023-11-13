@@ -44,9 +44,6 @@
 - - **Owned**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Owned]-silver,
-
-#### After Purchase (Modal)
--- Congratulations on your Purchase! Set Price After Purchase to make money off your collection [VIEW COLLECTION]- Takes you to Collection
      
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
@@ -100,6 +97,9 @@ ________________________________________________________________________________
 - Store Name: No Maximum Characters
 - (Save Changes) {Connect Wallet} if wallet not connected and/or Home if not signed in.
 
+#### After Purchase (Modal)
+-- Congratulations on your Purchase! Set Price After Purchase to make money off your owned art [VIEW MY STORE]- Takes you to your Owned store
+
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
 - MetaTag Title: "Profile/Asset Name" (character Limit)
@@ -111,6 +111,7 @@ ________________________________________________________________________________
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 
 ##### Bugs
+- Singular GQL find 1 NFT (More efficient work-around)
 - Solve Ethereum Address URL length issue.
 - 404 and Server Error Pages
 ________________________________________________________________________________________________________________________________________________
