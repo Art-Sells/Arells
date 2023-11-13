@@ -17,7 +17,6 @@
 ### My Store
 - Top-Left[/\]- (See HOME section)
 - Top-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
-- Modal that shows Large Image and Title once clicked.
 - PAP Logo Above Price After Purchase
 - After setting Price and Price After Purchase for sale {Art Listed For Sale Modal takes you to "Selling"}
 - - **Selling**:
@@ -37,7 +36,6 @@
 ### Other Store
 - Top-Left[/\]- (See HOME section)
 - Top-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
-- Modal that shows Large Image and Title once clicked.
 - PAP Logo Above Price After Purchase
 - no art to sell
 - - **Selling**:
@@ -62,7 +60,7 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete all YouTube branched links
-- Send 1 month - 2 week notifications on new Features to be added. (Discuss "promotional campaign" to help you find mainstream buyers buyers who don't use Cryptocurrency) only with USDC/Credit-Card integration... Features (Arells 1.0 (PaP Polygon) vs Arells 2.0 (USDC Credit Card))
+- Send 1 month - 2 week notifications on new Features to be added. ("Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter. "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram)
 
 ________________________________________________________________________________________________________________________________________________
 
