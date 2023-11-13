@@ -299,10 +299,10 @@
 		#photo-asset {
 			width: 200px;
 			height: 200px;
-  			border-radius: 10px;		
+  			border-radius: 0px;		
   			border: solid; 
 			border-width: 1px;
-			border-color: rgb(233, 233, 233);
+			border-color: rgb(240, 240, 240);
 			  -webkit-animation-name: animatetop;
 			  -webkit-animation-duration: 1.00s;
 			  animation-name: animatetop;
