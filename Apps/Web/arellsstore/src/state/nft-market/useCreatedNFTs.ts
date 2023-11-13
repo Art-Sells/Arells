@@ -1,6 +1,6 @@
 "use client";
 
-import { gql, useSuspenseQuery } from "@apollo/client";
+import { gql, useQuery, useSuspenseQuery } from "@apollo/client";
 import { ethers } from "ethers";
 import { NFT } from "./interfaces";
 import { GetCreatedNFTs, GetCreatedNFTsVariables, GetCreatedNFTs_nfts } from "./__generated__/GetCreatedNFTs";
@@ -18,7 +18,20 @@ export const GET_CREATED_NFTS = gql`
     }
 `;
 
-const useCreatedNFTs = (storeAddress: any) => {
+export const GET_SINGLE_NFT = gql`
+    query GetSingleNFT($id: ID!) {
+        nft(id: $id) {
+            id
+            from
+            to
+            tokenURI
+            price
+        }
+    }
+`;
+
+
+export const useCreatedNFTs = (storeAddress: any) => {
     // Use the provided creatorAddress in the query
     const { data } = useSuspenseQuery<GetCreatedNFTs, GetCreatedNFTsVariables>(
         GET_CREATED_NFTS, 
@@ -30,6 +43,17 @@ const useCreatedNFTs = (storeAddress: any) => {
     return { createdNFTs };
 };
 
+export const useSingleNFT = (nftId: any) => {
+    const { data, loading, error } = useQuery(GET_SINGLE_NFT, {
+        variables: { id: nftId },
+        skip: !nftId
+    });
+
+    const nft = data ? parseRawNFT(data.nft) : null;
+
+    return { nft, loading, error };
+};
+
 const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
     return {
         id: raw.id,
@@ -39,5 +63,3 @@ const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
         tokenURI: raw.tokenURI,
     };
 };
-
-export default useCreatedNFTs;

@@ -90,18 +90,14 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
         <div id="blue-orange-seller-created">
           {/*  Change below link after test  */}
           {meta && (
-            <Link legacyBehavior href='/'>
-              <a target="_self" id="photo-link-seller-created">
                 <Image
                   loader={imageLoader}
                   alt=""
                   width={200}  
                   height={200}  
-                  id="photo-seller-created" 
+                  id="photo-asset" 
                   src={meta?.imageURL}
                 />
-              </a>
-            </Link>
           )}	
             {!addressMatch && !address && (
                 <>

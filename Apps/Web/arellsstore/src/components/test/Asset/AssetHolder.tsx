@@ -51,7 +51,7 @@ const AssetHolder = (props: AssetProps) => {
 
 // asset constants below
     const { address, connectWallet} = useSigner();
-    const { nft } = props;
+    const { nft, ownerId } = props; 
     const router = useRouter();
     const storeAddressFromURL = Array.isArray(router.query.storeAddress) 
     ? router.query.storeAddress[0]
@@ -116,7 +116,7 @@ const AssetHolder = (props: AssetProps) => {
                 alt=""
                 width={400}  
                 height={400}
-                id="photo-blue-orange"
+                id="photo-asset"
                 src={meta?.imageURL}/>
             )}
             <h3 id="name-blue-orange">{meta?.name}</h3> 

@@ -3,7 +3,7 @@ import {Contract} from "ethers";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
 import NFT_MARKET from '../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json';
 import useSigner from "../signer";
-import useCreatedNFTs from "./useCreatedNFTs";
+import {useCreatedNFTs} from "../nft-market/useCreatedNFTs";
 
 const NFT_MARKET_ADDRESS = process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS as string;
 

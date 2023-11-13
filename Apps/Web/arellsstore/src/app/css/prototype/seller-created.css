@@ -296,12 +296,13 @@
 		  cursor: pointer;
 		}			
 		
-		#photo-seller-created {
-			object-fit: cover;
+		#photo-asset {
 			width: 200px;
 			height: 200px;
   			border-radius: 10px;		
-  			box-shadow: 0px 3px 16px -6px gray;  
+  			border: solid; 
+			border-width: 1px;
+			border-color: rgb(233, 233, 233);
 			  -webkit-animation-name: animatetop;
 			  -webkit-animation-duration: 1.00s;
 			  animation-name: animatetop;
@@ -641,10 +642,9 @@
 			padding-bottom: 30px;			
 		     
 		}
-		#photo-seller-created {
+		#photo-asset {
 			width: 130px;
-			height: 130px;
-  			border-radius: 10px;		
+			height: 130px;	
 		}
 			#PAP-logo {
 			margin-top: 17px;

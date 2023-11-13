@@ -272,6 +272,30 @@
 			  animation-name: animatetop;
 			  animation-duration: 1.00s;
 			}
+			#photo-blue-orange {
+				object-fit: cover;
+				width: 400px;
+				height: 400px;
+				border:solid;
+				border-width: 1px;
+				border-color: rgb(233, 233, 233);		
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			  }
+			  #photo-asset{
+				object-fit: cover;
+				width: 400px;
+				height: 400px;
+				border:solid;
+				border-width: 1px;
+				border-color: silver;			
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			  }
 			/* Add Animation */
 			@-webkit-keyframes animatetop {
 			  from {center:0; opacity:0}

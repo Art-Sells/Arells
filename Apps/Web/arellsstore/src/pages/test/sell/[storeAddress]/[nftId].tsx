@@ -1,4 +1,4 @@
-import './../../../app/css/prototype/asset/asset.css';
+import '../../../../app/css/prototype/asset/asset.css';
 
 import React from "react";
 import type { Metadata } from 'next';
