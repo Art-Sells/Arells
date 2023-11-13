@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react";
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 // asset components (change below links after test)
 import useSigner from "../../state/signer";
@@ -95,7 +95,7 @@ const Owned = () => {
 
 {/*<!-- Modals below link after test -->*/}
 
-		{showLoading && (
+		{/* {showLoading && (
 			<div id="spinnerBackground">
 			<Image 
 				loader={imageLoader}
@@ -108,7 +108,7 @@ const Owned = () => {
 		)}
 		{showLoading && (
 			<div className={styles.spinner}></div>
-		)}  
+		)}   */}
 
 {/*<!-- Modals Above -->*/}
 <div id="header-seller-created">
