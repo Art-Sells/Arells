@@ -31,6 +31,7 @@
 - Once confirmed -> {Art Created Modal} {Item Automatically in Owned Profile Page PAP & Price = Lines [[Not For Sale]}
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
 - PAP price calculated 2x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
+- **PAP Connected to tokenURI and can be changed whenever... After NFT is sold, PAP connected to tokenURI == nft.price, PAP Connected to tokenURI is now null until changed, nft.price can never be changed. (AssetHolder = PaP & Price Can be Modified)(CollectedAssetHolder = PaP Can be Modified, Price == Old PaP)**
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
 
 ### Other Store
