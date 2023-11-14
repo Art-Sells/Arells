@@ -1,9 +1,18 @@
 "use client";
 
-import { gql, useQuery, useSuspenseQuery } from "@apollo/client";
+import { gql, useSuspenseQuery } from "@apollo/client";
 import { ethers } from "ethers";
 import { NFT } from "./interfaces";
-import { GetCreatedNFTs, GetCreatedNFTsVariables, GetCreatedNFTs_nfts } from "./__generated__/GetCreatedNFTs";
+import { 
+    GetCreatedNFTs, 
+    GetCreatedNFTsVariables, 
+    GetCreatedNFTs_nfts,
+} from "./__generated__/GetCreatedNFTs";
+import { 
+    GetSingleNFT, 
+    GetSingleNFTVariables, 
+    GetSingleNFT_nfts,
+} from "./__generated__/GetSingleNFT";
 
 // Define your GraphQL query first
 export const GET_CREATED_NFTS = gql`
@@ -19,8 +28,8 @@ export const GET_CREATED_NFTS = gql`
 `;
 
 export const GET_SINGLE_NFT = gql`
-    query GetSingleNFT($id: ID!) {
-        nft(id: $id) {
+    query GetSingleNFT($creator: String!, $id: String!) {
+        nfts(where:{to: $creator, id: $id}) {
             id
             from
             to
@@ -43,18 +52,29 @@ export const useCreatedNFTs = (storeAddress: any) => {
     return { createdNFTs };
 };
 
-export const useSingleNFT = (nftId: any) => {
-    const { data, loading, error } = useQuery(GET_SINGLE_NFT, {
-        variables: { id: nftId },
-        skip: !nftId
-    });
-
-    const nft = data ? parseRawNFT(data.nft) : null;
-
-    return { nft, loading, error };
+const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
+    return {
+        id: raw.id,
+        storeAddress: raw.to,
+        owner: raw.price === "0" ? raw.to : raw.from,
+        price: ethers.utils.formatEther(raw.price),
+        tokenURI: raw.tokenURI,
+    };
 };
 
-const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
+export const useSingleNFT = (storeAddress: any, nftId: any) => {
+    const { data } = useSuspenseQuery<GetSingleNFT, GetSingleNFTVariables>(
+        GET_SINGLE_NFT, 
+        { variables: { creator: storeAddress, id: nftId }, skip: !storeAddress || !nftId }
+    );
+
+    // Extract the first element from the array if it exists
+    const nft = data && data.nfts.length > 0 ? parseRawSingleNFT(data.nfts[0]) : null;
+
+    return { nft };
+};
+
+const parseRawSingleNFT = (raw: GetSingleNFT_nfts): NFT => {
     return {
         id: raw.id,
         storeAddress: raw.to,

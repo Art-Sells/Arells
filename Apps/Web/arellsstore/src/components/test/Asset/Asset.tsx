@@ -5,7 +5,6 @@ import useSigner from "../../../state/signer";
 import { useSingleNFT } from "../../../state/nft-market/useCreatedNFTs"; 
 import AssetHolder from "./AssetHolder";
 import '../../../app/css/prototype/asset/asset.css';
-import { useEffect } from 'react';
 
 const Asset = () => {
     const { address } = useSigner();
@@ -15,12 +14,12 @@ const Asset = () => {
         : router.query.storeAddress || null;
     const nftId = router.query.nftId;
 
-    const { nft } = useSingleNFT(nftId); 
+    const { nft } = useSingleNFT(storeAddressFromURL, nftId); 
 
     return (
         <>
-           {!address && <p id="no-art"></p>}
-            {address && nft && storeAddressFromURL && nft.storeAddress === storeAddressFromURL && (
+            {!address && <p id="no-art"></p>}
+            {address && nft && nft.storeAddress === storeAddressFromURL && (
                 <AssetHolder nft={nft} ownerId={storeAddressFromURL} />
             )}
         </>
