@@ -296,7 +296,7 @@
 		  cursor: pointer;
 		}			
 		
-		#photo-asset {
+		#photo-asset-owned {
 			width: 200px;
 			height: 200px;
   			border-radius: 0px;		
@@ -642,7 +642,7 @@
 			padding-bottom: 30px;			
 		     
 		}
-		#photo-asset {
+		#photo-asset-owned {
 			width: 130px;
 			height: 130px;	
 		}

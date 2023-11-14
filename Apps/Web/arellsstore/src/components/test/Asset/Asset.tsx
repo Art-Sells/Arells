@@ -5,23 +5,27 @@ import useSigner from "../../../state/signer";
 import { useSingleNFT } from "../../../state/nft-market/useCreatedNFTs"; 
 import AssetHolder from "./AssetHolder";
 import '../../../app/css/prototype/asset/asset.css';
+import { useMemo } from 'react';
 
 const Asset = () => {
     const { address } = useSigner();
     const router = useRouter();
-    const storeAddressFromURL = Array.isArray(router.query.storeAddress)
-        ? router.query.storeAddress[0]
-        : router.query.storeAddress || null;
+    const storeAddressFromURL = useMemo(() => {
+        const address = Array.isArray(router.query.storeAddress)
+            ? router.query.storeAddress[0]
+            : router.query.storeAddress;
+        return address ? address.toLowerCase() : null;
+    }, [router.query.storeAddress]);
     const nftId = router.query.nftId;
 
     const { nft } = useSingleNFT(storeAddressFromURL, nftId); 
 
+
+
     return (
         <>
             {!address && <p id="no-art"></p>}
-            {address && nft && nft.storeAddress === storeAddressFromURL && (
-                <AssetHolder nft={nft} ownerId={storeAddressFromURL} />
-            )}
+            {nft && <AssetHolder nft={nft} key={nft.id} ownerId={storeAddressFromURL} />}
         </>
     );
 };

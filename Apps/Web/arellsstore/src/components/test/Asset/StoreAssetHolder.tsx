@@ -13,7 +13,7 @@ import '../../../app/css/prototype/buyer-collected.css';
 import '../../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../../app/css/modals/loading/spinner.module.css';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";
@@ -53,9 +53,12 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     const { address, connectWallet} = useSigner();
     const { nft } = props;
     const router = useRouter();
-    const storeAddressFromURL = Array.isArray(router.query.storeAddress) 
-    ? router.query.storeAddress[0]
-    : router.query.storeAddress;
+    const storeAddressFromURL = useMemo(() => {
+      const address = Array.isArray(router.query.storeAddress)
+          ? router.query.storeAddress[0]
+          : router.query.storeAddress;
+      return address ? address.toLowerCase() : null;
+  }, [router.query.storeAddress]);
     const addressMatch = address?.toLowerCase() === storeAddressFromURL?.toLowerCase();
 
 
@@ -95,7 +98,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   alt=""
                   width={200}  
                   height={200}  
-                  id="photo-asset" 
+                  id="photo-asset-owned" 
                   src={meta?.imageURL}
                 />
           )}	

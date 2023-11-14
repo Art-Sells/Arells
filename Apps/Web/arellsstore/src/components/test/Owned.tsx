@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useRouter } from 'next/router';
 
 // asset components (change below links after test)
@@ -25,6 +25,7 @@ const Owned = () => {
 	
 
 //loader functions below 
+    const router = useRouter();
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
@@ -56,13 +57,19 @@ const Owned = () => {
 
 // asset functions below
 	const { address, connectWallet } = useSigner();
-    const router = useRouter();
-    const storeAddressFromURL = Array.isArray(
-		router.query.storeAddress) ? router.query.storeAddress[0]
-		 : router.query.storeAddress || null;
+    const storeAddressFromURL = useMemo(() => {
+        const address = Array.isArray(router.query.storeAddress)
+            ? router.query.storeAddress[0]
+            : router.query.storeAddress;
+        return address ? address.toLowerCase() : null;
+    }, [router.query.storeAddress]);
 
     const { createdNFTs } = useNFTMarket(storeAddressFromURL); // passing storeAddress to the hook
-
+	useEffect(() => {
+		if(createdNFTs) {
+			setLoading(false);
+		}
+    }, [createdNFTs]);
     useEffect(() => {
         if (!address) {
 			setCreate(true);
@@ -95,7 +102,7 @@ const Owned = () => {
 
 {/*<!-- Modals below link after test -->*/}
 
-		{/* {showLoading && (
+		{showLoading && (
 			<div id="spinnerBackground">
 			<Image 
 				loader={imageLoader}
@@ -108,7 +115,7 @@ const Owned = () => {
 		)}
 		{showLoading && (
 			<div className={styles.spinner}></div>
-		)}   */}
+		)}  
 
 {/*<!-- Modals Above -->*/}
 <div id="header-seller-created">

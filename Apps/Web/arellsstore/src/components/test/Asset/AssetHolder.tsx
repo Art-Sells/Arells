@@ -12,7 +12,7 @@ import '../../../app/css/prototype/asset/asset.css';
 import '../../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../../app/css/modals/loading/spinner.module.css';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";
@@ -50,20 +50,17 @@ const AssetHolder = (props: AssetProps) => {
 // loader functions above
 
 // asset constants below
-    const { address, connectWallet} = useSigner();
-    const { nft, ownerId } = props; 
-    const router = useRouter();
-    const storeAddressFromURL = Array.isArray(router.query.storeAddress) 
-    ? router.query.storeAddress[0]
-    : router.query.storeAddress;
-    const addressMatch = address?.toLowerCase() === storeAddressFromURL?.toLowerCase();
-
+    const { nft } = props; 
     const [meta, setMeta] = useState<AssetMetadata>();
+    const {address, connectWallet} = useSigner();
+    const router = useRouter();
+    const storeAddressFromURL = useMemo(() => {
+        const address = Array.isArray(router.query.storeAddress)
+            ? router.query.storeAddress[0]
+            : router.query.storeAddress;
+        return address ? address.toLowerCase() : null;
+    }, [router.query.storeAddress]);
 // asset constants above
-
-{/*<!-- useState constants below -->*/}
-
-{/*<!-- useState constants above -->*/}
 
 // Asset Changing function/s below 
     useEffect(() => {
@@ -81,7 +78,12 @@ const AssetHolder = (props: AssetProps) => {
     }, [nft.tokenURI]);
 
 	function listToSell() {
-
+        if (!address) {
+            connectWallet;
+        }
+        else if (address == storeAddressFromURL) {
+            router.push('/');
+        }
 	}
 // Asset Changing function/s above 
 
@@ -106,7 +108,7 @@ const AssetHolder = (props: AssetProps) => {
         )}  
 
 {/*<!-- Modals Above -->*/}
-        <p id="slogan-blue-orange">SET PRICES TO SELL</p>
+        <p id="slogan-blue-orange">SET PRICE TO SELL</p>
 
         <div id="blue-orange">
             {meta && (
