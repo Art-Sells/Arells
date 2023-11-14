@@ -112,6 +112,7 @@ ________________________________________________________________________________
 
 ##### Bugs
 - Handle NFT Error Fetching edge-cases...
+- Change "GET_CREATED_NFTs" query to owned nfts
 - Solve Ethereum Address URL length issue.
 - 404 and Server Error Pages
 ________________________________________________________________________________________________________________________________________________
