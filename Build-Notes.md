@@ -111,7 +111,7 @@ ________________________________________________________________________________
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 
 ##### Bugs
-- Handle NFT Error Fetching edge-cases...
+- Handle NFT Error Fetching edge-cases (if address !== storeAddress error modal, etc)...
 - Change "GET_CREATED_NFTs" query to owned nfts
 - Solve Ethereum Address URL length issue.
 - 404 and Server Error Pages
