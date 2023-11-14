@@ -20,18 +20,24 @@
 - PAP Logo Above Price After Purchase
 - After setting Price and Price After Purchase for sale {Art Listed For Sale Modal takes you to "Selling"}
 - - **Selling**:
-- Price After Purchase - (if price not yet set purchased) = "Sold"
+- Price After Purchase
+- Price
 - [BUY]-share store to sell Modal
 - - **Owned**:
-- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
-- [SELL]-Edit, [OWNED]-silver,
+- Meta.name (length limit)
+- Price - (if price not yet set purchased) = "Not For Sale"
+- [SELL]-Edit, [OWNED]-silver
  
-#### Creating Mechanics
-- Once confirmed -> {Art Created Modal} {Item Automatically in Owned Profile Page PAP & Price = Lines [[Not For Sale]}
+### Creating Mechanics
+- Once confirmed -> {Art Created Modal} {Item Automatically in Owned Profile Page PAP & Price}
 - Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
+- Name... (50 Character Limit)?
 - PAP price calculated 2x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
-- **PAP Connected to tokenURI and can be changed whenever... After NFT is sold, PAP connected to tokenURI == nft.price, PAP Connected to tokenURI is now null until changed, nft.price can never be changed. (AssetHolder = PaP & Price Can be Modified)(CollectedAssetHolder = PaP Can be Modified, Price == Old PaP)**
 - 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
+
+#### Sell
+- Meta.name (full)
+- **PAP Connected to tokenURI and can be changed whenever... After NFT is sold, PAP connected to tokenURI == nft.price, PAP Connected to tokenURI is now null until changed, nft.price can never be changed. (AssetHolder = PaP & Price Can be Modified)(CollectedAssetHolder = PaP Can be Modified, Price == Old PaP)**
 
 ### Other Store
 - Top-Left[/\]- (See HOME section)
@@ -39,11 +45,13 @@
 - PAP Logo Above Price After Purchase
 - no art to sell
 - - **Selling**:
-- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
-- [BUY]-Use Prototype as Reference
+- Price After Purchase
+- Price
+- [BUY]-share store to sell Modal (if addres match to url)
 - - **Owned**:
-- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
-- [Owned]-silver,
+- Meta.name (length limit)
+- Price - (if price not yet set purchased) = "Not For Sale"
+- [SELL]-Edit, [OWNED]-silver (if not address match to url)
      
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
