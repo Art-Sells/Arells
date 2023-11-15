@@ -72,6 +72,7 @@ ________________________________________________________________________________
 ## Arells 2.0
 - SiteMap/s
 - Change PUBLIC_NFT_MARKET_ADDRESS to PUBLIC_ARELLS_STORE_ADDRESS
+- Add PUBLIC_ARELLS_MARKET_ADDRESS for 3% Fee (Refactor SmartContract to Accept)
 
 ### Wallet
 - Test with Metamask/Mumbai-USDC
