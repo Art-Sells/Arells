@@ -542,18 +542,31 @@
 				  padding-left: 0px;
 				  opacity: .4;
 			  }
-			  #price-blue-orange-before-blue-orange,
-			  #price-blue-orange-after-blue-orange {
-			  margin-top: -10px;
-			  text-align: center;
-				  color: black;
-				  font-weight: 300;
-				  font-size: 20px;
-				  letter-spacing: 0px;
-				  padding-left: 0px;
-				  opacity: .7;
-				  margin-bottom: 28px;
-			  }
+				#price { 
+					text-align: center;
+					margin-top: 5px;     	   
+					padding-top: 20px;
+					padding-bottom: 20px;
+					padding-left: 21px;
+					padding-right: 19px;       	   		
+					color: white;
+					font-weight: 500;
+					border: none;
+					border-radius: 7px;
+					font-size: 13px;
+					width: 240px;
+					height: 15px;
+					letter-spacing: 0px;    	   		
+					background: black;
+					opacity: .4;
+			}
+
+			#price:focus {
+				cursor: pointer;
+				outline: none;
+				transition: 1s;
+						opacity: 1;			    
+				}  
 		  #blue-orange-add-to-cart-blue-orange, 
 		  #blue-orange-add-to-cart-connected-blue-orange  {
 				text-decoration: none;

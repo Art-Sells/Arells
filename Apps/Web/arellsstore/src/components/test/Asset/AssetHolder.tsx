@@ -1,7 +1,9 @@
 'use client'
 
 // asset components (change below links after test)
+import { BigNumber, ethers } from "ethers";
 import useSigner from "../../../state/signer";
+import useNFTMarket from "../../../state/nft-market";
 import { ipfsToHTTPS } from "../../../helpers";
 import { NFT } from "../../../state/nft-market/interfaces"
 
@@ -12,10 +14,12 @@ import '../../../app/css/prototype/asset/asset.css';
 import '../../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../../app/css/modals/loading/spinner.module.css';
 
-import { useEffect, useMemo, useState } from 'react';
+import { SetStateAction, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";
+import {Input} from "./PriceInputs/Input";
+import { toast } from "react-toastify";
 
 type AssetMetadata = {
     name: string;
@@ -76,16 +80,48 @@ const AssetHolder = (props: AssetProps) => {
       };
       void fetchMetadata();
     }, [nft.tokenURI]);
-
-	function listToSell() {
-        if (!address) {
-            connectWallet;
-        }
-        else if (address == storeAddressFromURL) {
-            router.push('/');
-        }
-	}
 // Asset Changing function/s above 
+
+
+//Price & Price Affter Purchase Systems Below
+    const [price, setPrice] = useState("");
+    const {listNFTCreator} = useNFTMarket(storeAddressFromURL);
+    const [error, setError] = useState<string>();
+    const onSellConfirmed = async (price: BigNumber) => {
+        try {
+          await listNFTCreator(nft.id, price);
+          toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
+        } catch (e) {
+          showErrorToast();
+          console.error(e);
+        }
+      };
+      
+      // Updated listToSell to call onSellConfirmed
+      async function listToSell() {
+        if (!address) {
+          connectWallet();
+          return;
+        }
+        if (address === storeAddressFromURL) {
+          setError(""); // Clear any previous errors
+          if (!price) {
+            setError("Price is required");
+            return;
+          }
+          const wei = ethers.utils.parseEther(price);
+          if (wei.lte(0)) {
+            setError("Price must be greater than 0");
+            return;
+          }
+          try {
+            await onSellConfirmed(wei);
+          } catch (e) {
+            console.error("Error in listing NFT:", e);
+          }
+        }
+      }
+//Price & Price Affter Purchase Systems Above
 
 
 
@@ -127,7 +163,12 @@ const AssetHolder = (props: AssetProps) => {
                 <p id="PAP-blue-orange-before-seller-created">{nft.price}</p>
                 <hr id="priceline-seller-created" />
                 <p id="yourprice-seller-created">Price</p>
-                <p id="price-blue-orange-before-seller-created">{nft.price}</p>
+                <Input
+                    name="price"
+                    id="price"
+                    type="number"
+                    onChange={(e: { target: { value: SetStateAction<string>; }; }) => setPrice(e.target.value)}
+                />
             </div>
             <button id="blue-orange-add-to-cart-connected-blue-orange" 
             // change below function after test
@@ -142,3 +183,7 @@ const AssetHolder = (props: AssetProps) => {
 };
 
 export default AssetHolder;
+
+function showErrorToast() {
+    throw new Error("Function not implemented.");
+}

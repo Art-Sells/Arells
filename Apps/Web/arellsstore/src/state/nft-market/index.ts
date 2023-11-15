@@ -1,5 +1,5 @@
 import { CreationValues } from "../../components/test/Create/CreationForm";
-import {Contract} from "ethers";
+import {BigNumber, Contract} from "ethers";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
 import NFT_MARKET from '../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json';
 import useSigner from "../signer";
@@ -56,9 +56,18 @@ const useNFTMarket = (storeAddress: string | null) => {
     }
   };
 
+  const listNFTCreator = async (tokenID: string, price: BigNumber) => {
+    const transaction: TransactionResponse = await nftMarket.listNFTCreator (
+      tokenID,
+      price
+    );
+    await transaction.wait();
+  }
+
   return {
     createNFT,
     getCreatorOrCollector,
+    listNFTCreator,
     ...createdNFTs
   };
 };
