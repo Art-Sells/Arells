@@ -91,6 +91,7 @@ const AssetHolder = (props: AssetProps) => {
         try {
           await listNFTCreator(nft.id, price);
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
+          router.push(`/owned/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);
@@ -166,8 +167,8 @@ const AssetHolder = (props: AssetProps) => {
                 <Input
                     name="price"
                     id="price"
-                    type="number"
-                    onChange={(e: { target: { value: SetStateAction<string>; }; }) => setPrice(e.target.value)}
+                    type="tel"
+                    onChange={(e) => setPrice(e.target.value)}
                 />
             </div>
             <button id="blue-orange-add-to-cart-connected-blue-orange" 
