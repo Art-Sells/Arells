@@ -71,6 +71,7 @@ ________________________________________________________________________________
 
 ## Arells 2.0
 - SiteMap/s
+- Change PUBLIC_NFT_MARKET_ADDRESS to PUBLIC_ARELLS_STORE_ADDRESS
 
 ### Wallet
 - Test with Metamask/Mumbai-USDC
