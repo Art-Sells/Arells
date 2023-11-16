@@ -52,6 +52,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 // asset constants below
     const { address, connectWallet} = useSigner();
     const { nft } = props;
+    const formattedPrice = nft.price ? parseFloat(nft.price).toFixed(5) : '0';
     const router = useRouter();
     const storeAddressFromURL = useMemo(() => {
       const address = Array.isArray(router.query.storeAddress)
@@ -117,7 +118,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       <p id="PAP-blue-orange-before-seller-created">...</p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
-                      <p id="price-blue-orange-before-seller-created">{nft.price}</p>
+                      <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
                     </div>
                     <button id="not-for-sale">
                     OWNED</button>
@@ -138,7 +139,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       <p id="PAP-blue-orange-before-seller-created">...</p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
-                      <p id="price-blue-orange-before-seller-created">{nft.price}</p>
+                      <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
                     </div>
                     <button id="not-for-sale">
                     OWNED</button>
@@ -159,7 +160,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         <p id="PAP-blue-orange-before-seller-created">...</p>
                         <hr id="priceline-seller-created" />
                         <p id="yourprice-seller-created">Price</p>
-                        <p id="price-blue-orange-before-seller-created">{nft.price}</p>
+                        <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
                     </div>
                     <Link legacyBehavior href={`/test/sell/${address}/${nft.id}`} passHref>
                       <button id="blue-orange-add-to-cart-seller-created" >

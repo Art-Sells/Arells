@@ -58,6 +58,7 @@ const AssetHolder = (props: AssetProps) => {
     const [meta, setMeta] = useState<AssetMetadata>();
     const {address, connectWallet} = useSigner();
     const router = useRouter();
+    const walletAddress = address ? address.toLowerCase() : null;
     const storeAddressFromURL = useMemo(() => {
         const address = Array.isArray(router.query.storeAddress)
             ? router.query.storeAddress[0]
@@ -70,7 +71,6 @@ const AssetHolder = (props: AssetProps) => {
     useEffect(() => {
       const fetchMetadata = async () => {
         const metadataResponse = await fetch(ipfsToHTTPS(nft.tokenURI));
-        console.log("Metadata Response: ", metadataResponse);
         if (metadataResponse.status != 200) return;
         const json = await metadataResponse.json();
         setMeta({
@@ -91,37 +91,43 @@ const AssetHolder = (props: AssetProps) => {
         try {
           await listNFTCreator(nft.id, price);
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
-          router.push(`/owned/${address}`);
+  //Change below link after test
+          router.push(`/test/owned/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);
         }
       };
       
-      // Updated listToSell to call onSellConfirmed
       async function listToSell() {
-        if (!address) {
-          connectWallet();
-          return;
-        }
-        if (address === storeAddressFromURL) {
-          setError(""); // Clear any previous errors
-          if (!price) {
-            setError("Price is required");
-            return;
-          }
-          const wei = ethers.utils.parseEther(price);
-          if (wei.lte(0)) {
-            setError("Price must be greater than 0");
-            return;
-          }
-          try {
-            await onSellConfirmed(wei);
-          } catch (e) {
+        try {
+            if (!address) {
+                await connectWallet(); 
+                return; 
+            }
+    
+            if (address && walletAddress == storeAddressFromURL) {
+                setError(""); // Clear any previous errors
+    
+                if (!price) {
+                    setError("Price is required");
+                    return;
+                }
+    
+                const wei = ethers.utils.parseEther(price);
+                if (wei.lte(0)) {
+                    setError("Price must be greater than 0");
+                    return;
+                }
+    
+                await onSellConfirmed(wei); // Ensure this is awaited
+            }
+        } catch (e) {
             console.error("Error in listing NFT:", e);
-          }
+            // Handle the error appropriately (e.g., set an error state, show a message, etc.)
         }
-      }
+    }
+    
 //Price & Price Affter Purchase Systems Above
 
 
