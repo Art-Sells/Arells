@@ -52,12 +52,12 @@ export const useCreatedNFTs = (storeAddress: any) => {
     return { createdNFTs };
 };
 
-const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
+export const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
     return {
         id: raw.id,
         storeAddress: raw.to,
         owner: raw.price === "0" ? raw.to : raw.from,
-        price: ethers.utils.formatEther(raw.price),
+        price: "0" ? "0" : ethers.utils.formatEther(raw.price),
         tokenURI: raw.tokenURI,
     };
 };
@@ -79,7 +79,7 @@ const parseRawSingleNFT = (raw: GetSingleNFT_nfts): NFT => {
         id: raw.id,
         storeAddress: raw.to,
         owner: raw.price === "0" ? raw.to : raw.from,
-        price: ethers.utils.formatEther(raw.price),
+        price: "0" ? "0" : ethers.utils.formatEther(raw.price),
         tokenURI: raw.tokenURI,
     };
 };

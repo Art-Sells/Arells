@@ -14,7 +14,7 @@ import '../../../app/css/prototype/asset/asset.css';
 import '../../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../../app/css/modals/loading/spinner.module.css';
 
-import { SetStateAction, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";

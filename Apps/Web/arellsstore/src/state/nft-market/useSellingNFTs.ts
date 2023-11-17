@@ -1,18 +1,35 @@
 "use client";
 
 import { gql, useSuspenseQuery } from "@apollo/client";
-import { ethers } from "ethers";
-import { NFT } from "./interfaces";
-import { 
-    GetCreatedNFTs, 
-    GetCreatedNFTsVariables, 
-    GetCreatedNFTs_nfts,
-} from "./__generated__/GetCreatedNFTs";
+import {parseRawNFT} from "./useCreatedNFTs";
+import { NFT_MARKET_ADDRESS } from "../nft-market/config";
+import { GetSellingNFTs, GetSellingNFTsVariables } from "./__generated__/GetSellingNFTs";
 
-// Define your GraphQL query first
+export const useSellingNFTs = (storeAddress: any) => {
+    // Use the provided creatorAddress in the query
+    const { data } = useSuspenseQuery<GetSellingNFTs, GetSellingNFTsVariables>(
+        GET_SELLING_NFTS, 
+        { variables: { 
+            owner: storeAddress,
+            marketAddress: NFT_MARKET_ADDRESS 
+        }, skip: !storeAddress }
+    );
+
+    const sellingNFTs = data?.nfts.map(parseRawNFT);
+    
+    return { sellingNFTs };
+};
+
 export const GET_SELLING_NFTS = gql`
-    query GetSellingNFTs($creator: String!) {
-        nfts(where: {to: $creator}) {
+    query GetSellingNFTs(
+        $owner: String!, 
+        $marketAddress: String!) {
+        nfts(
+            where: {
+            to: $marketAddress, 
+            from: $owner
+            }
+        ) {
             id
             from
             to
@@ -22,24 +39,3 @@ export const GET_SELLING_NFTS = gql`
     }
 `;
 
-export const useSellingNFTs = (storeAddress: any) => {
-    // Use the provided creatorAddress in the query
-    const { data } = useSuspenseQuery<GetCreatedNFTs, GetCreatedNFTsVariables>(
-        GET_SELLING_NFTS, 
-        { variables: { creator: storeAddress }, skip: !storeAddress }
-    );
-
-    const createdNFTs = data?.nfts.map(parseRawNFT);
-    
-    return { createdNFTs };
-};
-
-const parseRawNFT = (raw: GetCreatedNFTs_nfts): NFT => {
-    return {
-        id: raw.id,
-        storeAddress: raw.to,
-        owner: raw.price === "0" ? raw.to : raw.from,
-        price: ethers.utils.formatEther(raw.price),
-        tokenURI: raw.tokenURI,
-    };
-};

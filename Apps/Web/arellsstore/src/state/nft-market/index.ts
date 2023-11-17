@@ -4,8 +4,9 @@ import {TransactionResponse} from "@ethersproject/abstract-provider";
 import NFT_MARKET from '../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json';
 import useSigner from "../signer";
 import {useCreatedNFTs} from "../nft-market/useCreatedNFTs";
+import {useSellingNFTs} from "../nft-market/useSellingNFTs";
+import {NFT_MARKET_ADDRESS} from "../nft-market/config"
 
-const NFT_MARKET_ADDRESS = process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS as string;
 
 const useNFTMarket = (storeAddress: string | null) => {
   const{signer} = useSigner();
@@ -17,6 +18,7 @@ const useNFTMarket = (storeAddress: string | null) => {
   );
 
   const createdNFTs = useCreatedNFTs(storeAddress);
+  const sellingNFTs = useSellingNFTs(storeAddress);
 
   const createNFT = async (values: CreationValues) => {
     try {
@@ -68,7 +70,8 @@ const useNFTMarket = (storeAddress: string | null) => {
     createNFT,
     getCreatorOrCollector,
     listNFTCreator,
-    ...createdNFTs
+    ...createdNFTs,
+    ...sellingNFTs
   };
 };
 

@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";
+import { ethers } from "ethers";
 
 type AssetStoreMetadata = {
     name: string;
@@ -52,7 +53,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 // asset constants below
     const { address, connectWallet} = useSigner();
     const { nft } = props;
-    const formattedPrice = nft.price ? parseFloat(nft.price).toFixed(5) : '0';
+    const formattedPrice = ethers.utils.formatUnits(nft.price, 'ether');    
     const router = useRouter();
     const storeAddressFromURL = useMemo(() => {
       const address = Array.isArray(router.query.storeAddress)
@@ -71,7 +72,6 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     useEffect(() => {
       const fetchMetadata = async () => {
         const metadataResponse = await fetch(ipfsToHTTPS(nft.tokenURI));
-        console.log("Metadata Response: ", metadataResponse);
         if (metadataResponse.status != 200) return;
         const json = await metadataResponse.json();
         setMeta({

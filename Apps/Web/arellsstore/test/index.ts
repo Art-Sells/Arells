@@ -125,6 +125,7 @@ describe("NFTMarket", function (){
 
             // Get listing details
             const listing = await nftMarket.getListing(tokenID);
+            
             expect(listing.price).to.equal(price);
 
             // NFTTransfer event should have right args
@@ -134,6 +135,7 @@ describe("NFTMarket", function (){
             expect(args.to).to.equal(nftMarket.address);
             expect(args.tokenURI).to.equal(tokenURI);
             expect(args.price).to.equal(price);
+            console.log("Created NFT Price info: ", args);
         });
 
         it("Should allow collector to list the NFT for sale", async () => {

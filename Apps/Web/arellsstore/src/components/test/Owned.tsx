@@ -64,7 +64,13 @@ const Owned = () => {
         return address ? address.toLowerCase() : null;
     }, [router.query.storeAddress]);
 
-    const { createdNFTs } = useNFTMarket(storeAddressFromURL); // passing storeAddress to the hook
+    const { 
+		createdNFTs,
+		sellingNFTs 
+	} = useNFTMarket(storeAddressFromURL);
+	useEffect(() => {
+		console.log('Selling NFTs in Parent:', sellingNFTs);
+	}, [sellingNFTs]);
 	useEffect(() => {
 		if(createdNFTs) {
 			setLoading(false);
@@ -181,11 +187,17 @@ const Owned = () => {
 				</p>
 			)}
 			{artCreated && (
-				<div id="container-seller-created">
+				<><div id="container-seller-created">
 					{createdNFTs?.map((nft) => {
 						return <AssetStoreHolder nft={nft} key={nft.id} />;
 					})}
-				</div>	
+				</div>
+				<div id="container-seller-created">
+					{sellingNFTs?.map((nft) => {
+						return <AssetStoreHolder nft={nft} key={nft.id} />;
+					})}
+				</div>
+				</>	
 			)}
 
 		     
