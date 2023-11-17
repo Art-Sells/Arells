@@ -69,10 +69,16 @@
 
 ________________________________________________________________________________________________________________________________________________
 
+## Arells 1.5
+- AUM (Assets Under Management) system & # of New Wallets Created, system.
+
+________________________________________________________________________________________________________________________________________________
+
 ## Arells 2.0
 - SiteMap/s
 - Change PUBLIC_NFT_MARKET_ADDRESS to PUBLIC_ARELLS_STORE_ADDRESS
 - Add PUBLIC_ARELLS_MARKET_ADDRESS for 3% Fee (Refactor SmartContract to Accept)
+- AUM (Assets Under Management) system & # of New Wallets Created, system. 
 
 ### Wallet
 - Test with Metamask/Mumbai-USDC
