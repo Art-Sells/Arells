@@ -84,9 +84,63 @@ const AssetHolder = (props: AssetProps) => {
 
 
 //Price & Price Affter Purchase Systems Below
-    const [price, setPrice] = useState("");
     const {listNFTCreator} = useNFTMarket(storeAddressFromURL);
     const [error, setError] = useState<string>();
+    const [price, setPrice] = useState("0.00");
+    const [priceAfterPurchaseCreated, setPriceAfterPurchaseCreated] = useState("0.00");
+    const [youKeepAfterPurchase, setYouKeepAfterPurchase] = useState("0.00");
+    const [buyerKeepsAfterPurchase, setBuyerKeepsAfterPurchase] = useState("0.00");
+    const [feesAfterPurchase, setFeesAfterPurchase] = useState("0.00");
+    const [youKeep, setYouKeep] = useState("0.00");
+    const [fees, setFees] = useState("0.00");
+
+    const priceNum = parseFloat(price);
+
+    const formatNumber = (num: string | number) => {
+        // If the input is an empty string or exactly zero, format it directly
+        if (num === '' || num === '0' || num === 0) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'decimal',
+                minimumFractionDigits: 2, // Ensure that there are always two decimal places
+            }).format(0);
+        }
+    
+        // For non-zero numbers, parse and format them
+        const number = typeof num === 'string' ? parseFloat(num) : num;
+        if (!isNaN(number)) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'decimal',
+                maximumFractionDigits: 2,
+            }).format(number);
+        }
+    
+        return "0.00"; // Return a default value if the input is not a valid number
+    };
+    
+    useEffect(() => {
+        if (price.trim() !== "" && !isNaN(priceNum))  {
+            const doubledPrice = priceNum * 2;
+            setPriceAfterPurchaseCreated(doubledPrice.toString());
+        
+            // Calculating percentages for Price After Purchase
+            setYouKeepAfterPurchase((doubledPrice * 0.50).toFixed(2));
+            setBuyerKeepsAfterPurchase((doubledPrice * 0.47).toFixed(2));
+            setFeesAfterPurchase((doubledPrice * 0.03).toFixed(2));
+        
+            // Calculating percentages for Price
+            setYouKeep((priceNum * 0.97).toFixed(2));
+            setFees((priceNum * 0.03).toFixed(2));
+        } else {
+            setPriceAfterPurchaseCreated("0.00");
+            setYouKeepAfterPurchase("0.00");
+            setBuyerKeepsAfterPurchase("0.00");
+            setFeesAfterPurchase("0.00");
+            setYouKeep("0.00");
+            setFees("0.00");
+        }
+    }, [price]);
+    
+    
     const onSellConfirmed = async (price: BigNumber) => {
         try {
           await listNFTCreator(nft.id, price);
@@ -165,11 +219,23 @@ const AssetHolder = (props: AssetProps) => {
                 src={meta?.imageURL}/>
             )}
             <h3 id="name-blue-orange">{meta?.name}</h3> 
-            <div id="blue-orange-prices-before-seller-created">
-                <p id="PAP-seller-created">Price After Purchase</p>
-                <p id="PAP-blue-orange-before-seller-created">{nft.price}</p>
-                <hr id="priceline-seller-created" />
-                <p id="yourprice-seller-created">Price</p>
+            <div id="blue-orange-prices-before-blue-orange">
+                <p id="PAP-blue-orange">Price After Purchase</p>
+                <p id="PAP-blue-orange-before-blue-orange">{formatNumber(priceAfterPurchaseCreated)}</p>
+                <p id="PAP-blue-orange">You Keep</p>
+                <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(youKeepAfterPurchase))}</p>
+                <p id="PAP-blue-orange">Buyer Keeps</p>
+                <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(buyerKeepsAfterPurchase))}</p>
+                <p id="PAP-blue-orange">Fees</p>
+                <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(feesAfterPurchase))}</p>
+            <hr id="priceline-blue-orange" />
+                <p id="yourprice-blue-orange">Price</p>
+                <p id="price-blue-orange">{formatNumber(priceNum)}</p>
+                <p id="yourprice-blue-orange">You Keep</p>
+                <p id="price-blue-orange">{formatNumber(parseFloat(youKeep))}</p>
+                <p id="yourprice-blue-orange">Fees</p>
+                <p id="price-blue-orange">{formatNumber(parseFloat(fees))}</p>
+            <hr id="priceline-blue-orange" />    
                 <Input
                     name="price"
                     id="price"
