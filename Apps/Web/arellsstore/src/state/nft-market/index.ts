@@ -1,11 +1,13 @@
 import { CreationValues } from "../../components/test/Create/CreationForm";
-import {BigNumber, Contract} from "ethers";
+import {BigNumber, Contract, ethers} from "ethers";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
 import NFT_MARKET from '../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json';
 import useSigner from "../signer";
 import {useCreatedNFTs} from "../nft-market/useCreatedNFTs";
 import {useSellingNFTs} from "../nft-market/useSellingNFTs";
 import {NFT_MARKET_ADDRESS} from "../nft-market/config"
+import { useBuyNFTs } from "./useBuyNFTs";
+import { NFT } from "./interfaces";
 
 
 const useNFTMarket = (storeAddress: string | null) => {
@@ -19,6 +21,7 @@ const useNFTMarket = (storeAddress: string | null) => {
 
   const createdNFTs = useCreatedNFTs(storeAddress);
   const sellingNFTs = useSellingNFTs(storeAddress);
+  const buyNFTs = useBuyNFTs(storeAddress);
 
   const createNFT = async (values: CreationValues) => {
     try {
@@ -66,12 +69,22 @@ const useNFTMarket = (storeAddress: string | null) => {
     await transaction.wait();
   }
 
+  const buyNFT = async (nft: NFT) => {
+    const transaction: TransactionResponse = await nftMarket.buyNFT (
+      nft.id,
+      {value: ethers.utils.parseEther(nft.price)}
+    );
+    await transaction.wait();
+  }
+
   return {
     createNFT,
     getCreatorOrCollector,
     listNFTCreator,
+    buyNFT,
     ...createdNFTs,
-    ...sellingNFTs
+    ...sellingNFTs,
+    ...buyNFTs
   };
 };
 

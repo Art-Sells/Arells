@@ -18,6 +18,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";
 import { ethers } from "ethers";
+import useNFTMarket from "../../../state/nft-market";
+import { toast } from "react-toastify";
 
 type AssetStoreMetadata = {
     name: string;
@@ -86,6 +88,38 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     }, [nft.tokenURI]);
   
 // Asset Changing function/s above 
+
+//Buying functions Below
+  const {buyNFT} = useNFTMarket(address ?? null);
+  const [error, setError] = useState<string>();
+  const onBuyClicked = async () => {
+      try {
+        await buyNFT(nft);
+        toast.success("You bought this NFT. Changes will be reflected shortly.");
+  //Change below link after test
+        router.push(`/test/owned/${address}`);
+      } catch (e) {
+        showErrorToast();
+        console.error(e);
+      }
+    };
+    
+    async function buy() {
+      try {
+          if (!address) {
+              await connectWallet(); 
+              return; 
+          }
+          if (address) {
+              setError(""); 
+              await onBuyClicked(); 
+          }
+      } catch (e) {
+          console.error("Error in buying NFT:", e);
+      }
+  }
+
+//Buying Functions Above
 
   return (
     <>
@@ -193,8 +227,10 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
                     </div>         
-                    <Link legacyBehavior href={`/test/selling/${storeAddressFromURL}`} passHref>
-                      <button id="blue-orange-add-to-cart-seller-created" >
+                    <Link legacyBehavior href={`/test/owned/${address}`} passHref>
+                      <button id="blue-orange-add-to-cart-seller-created" 
+                      // change below function after test
+                      onClick={buy}>
                         BUY</button>
                     </Link>
                 </>
@@ -244,7 +280,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
                   </div>         
-                  <Link legacyBehavior href={`/test/selling/${storeAddressFromURL}`} passHref>
+                  <Link legacyBehavior href={`/test/sell/${address}/${nft.id}`} passHref>
                     <button id="blue-orange-add-to-cart-seller-created-selling" >
                       EDIT</button>
                   </Link>
@@ -258,3 +294,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 };
 
 export default StoreAssetHolder;
+
+function showErrorToast() {
+  throw new Error("Function not implemented.");
+}
