@@ -136,6 +136,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         network: "mumbai" 
     };
 
+    useEffect(() => {
+        window.ethereum.on("accountsChanged", connectWallet);
+     }, []);
+
     const connectMetamask = async () => {
         setLoadingWallet(true);
         setLoadingWalletConnection(true);

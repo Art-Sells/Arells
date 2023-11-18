@@ -318,7 +318,7 @@
 			  from {center:0; opacity:0}
 			  to {center:0; opacity:1}
 			}
-			#PAP-logo {
+			#PAP-logo, #PAP-logo-selling {
 				margin-top: 20px;
 				opacity: .2;
 				-webkit-animation-name: pap;
@@ -405,9 +405,7 @@
 				opacity: .7;
 				margin-bottom: 28px;
 			}
-			#blue-orange-add-to-cart-seller-created, #beach-houses-add-to-cart-seller-created, 
-			#colour-glass-add-to-cart-seller-created, #layers-add-to-cart-seller-created, 
-			#succinct-drop-add-to-cart-seller-created, #paint-rain-add-to-cart-seller-created {
+			#blue-orange-add-to-cart-seller-created {
 				  text-decoration: none;
 				  color: white;
 				  margin-left: auto;
@@ -426,7 +424,27 @@
 				  opacity: 1;
 				  box-shadow: 0px 8px 12px -6px black;  
 					background: black;
-				}	  
+				}	 
+			#blue-orange-add-to-cart-seller-created-selling {
+					text-decoration: none;
+					color: black;
+					margin-left: auto;
+					margin-right: auto;
+					font-weight: 500;
+					font-size: 11px;
+					padding-top: 20px;
+					padding-bottom: 20px;
+					padding-right: 22px;
+					padding-left: 25px;	  
+					border: none;
+					letter-spacing: 3px;
+					border-radius: 5px;
+					border-width: 0px;
+					width: 170px;
+					opacity: 1;
+					box-shadow: 0px 8px 12px -6px black;  
+					background: white;
+				}	 
 			#blue-orange-add-to-cart-connected-seller-created, #beach-houses-add-to-cart-connected-seller-created, 
 			#colour-glass-add-to-cart-connected-seller-created, #layers-add-to-cart-connected-seller-created, 
 			#succinct-drop-add-to-cart-connected-seller-created, #paint-rain-add-to-cart-connected-seller-created  {
@@ -449,7 +467,8 @@
 				  box-shadow: 0px 8px 12px -6px black;  
 					background: black;
 				}		
-			#blue-orange-add-to-cart-seller-created:hover, #beach-houses-add-to-cart-seller-created:hover, 
+			#blue-orange-add-to-cart-seller-created:hover, #blue-orange-add-to-cart-seller-created-selling:hover, 
+			#beach-houses-add-to-cart-seller-created:hover, 
 			#colour-glass-add-to-cart-seller-created:hover, #layers-add-to-cart-seller-created:hover, 
 			#succinct-drop-add-to-cart-seller-created:hover, #paint-rain-add-to-cart-seller-created:hover,
 			#blue-orange-add-to-cart-seller-created:focus, #beach-houses-add-to-cart-seller-created:focus, 
@@ -646,7 +665,7 @@
 			width: 130px;
 			height: 130px;	
 		}
-			#PAP-logo {
+			#PAP-logo, #PAP-logo-selling {
 			margin-top: 17px;
 			height: 6px;
 			width: 30px;
@@ -685,9 +704,7 @@
 				font-size: 15px;
 				margin-bottom: 20px;	
 			}			
-			#blue-orange-add-to-cart-seller-created, #beach-houses-add-to-cart-seller-created, 
-			#colour-glass-add-to-cart-seller-created, #layers-add-to-cart-seller-created, 
-			#succinct-drop-add-to-cart-seller-created, #paint-rain-add-to-cart-seller-created,
+			#blue-orange-add-to-cart-seller-created, #blue-orange-add-to-cart-seller-created-selling,
 			
 			#blue-orange-add-to-cart-connected-seller-created, #beach-houses-add-to-cart-connected-seller-created, 
 			#colour-glass-add-to-cart-connected-seller-created, #layers-add-to-cart-connected-seller-created, 

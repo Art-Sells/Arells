@@ -53,7 +53,10 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 // asset constants below
     const { address, connectWallet} = useSigner();
     const { nft } = props;
-    const formattedPrice = ethers.utils.formatUnits(nft.price, 'ether');    
+    const forSale = nft.price != "0";
+    const formattedPrice = nft.price.includes('.') 
+    ? nft.price 
+    : ethers.utils.formatUnits(ethers.BigNumber.from(nft.price), 'ether');  
     const router = useRouter();
     const storeAddressFromURL = useMemo(() => {
       const address = Array.isArray(router.query.storeAddress)
@@ -103,7 +106,8 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   src={meta?.imageURL}
                 />
           )}	
-            {!addressMatch && !address && (
+  {/* Below for users who are not owners of the Assets */}
+            {!addressMatch && !address && !forSale && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -124,7 +128,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     OWNED</button>
                 </>
             )}	
-            {!addressMatch && address && (
+            {!addressMatch && address && !forSale && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -144,8 +148,62 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     <button id="not-for-sale">
                     OWNED</button>
                 </>
-            )}	
-            {addressMatch && address && (
+            )}
+            {/* {!addressMatch && address && forSale (
+                <>
+                    <div id="blue-orange-prices-before-seller-created">
+                        <Image
+                          loader={imageLoader}
+                          alt=""
+                          width={40}  
+                          height={8}  
+                          id="PAP-logo" 
+                          src="/images/PriceAfterPurchaseLogo.png"
+                        />
+                        <p id="PAP-seller-created">Price After Purchase</p>
+                        <p id="PAP-blue-orange-before-seller-created">...</p>
+                        <hr id="priceline-seller-created" />
+                        <p id="yourprice-seller-created">Price</p>
+                        <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+                    </div>         
+                    <Link legacyBehavior href={`/test/selling/${storeAddressFromURL}`} passHref>
+                      <button id="blue-orange-add-to-cart-seller-created-selling" >
+                        SELLING</button>
+                    </Link>
+                </>
+            )}	 */}
+  {/* Above for users who are not owners of the Assets */}     
+
+
+ {/* Below for Buying/Selling Testing Purposes Only*/}     
+            {!addressMatch && address && forSale && (
+                <>
+                    <div id="blue-orange-prices-before-seller-created">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={40}  
+                        height={8}  
+                        id="PAP-logo" 
+                        src="/images/PriceAfterPurchaseLogo.png"
+                      />
+                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-blue-orange-before-seller-created">...</p>
+                      <hr id="priceline-seller-created" />
+                      <p id="yourprice-seller-created">Price</p>
+                      <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+                    </div>         
+                    <Link legacyBehavior href={`/test/selling/${storeAddressFromURL}`} passHref>
+                      <button id="blue-orange-add-to-cart-seller-created" >
+                        BUY</button>
+                    </Link>
+                </>
+            )}
+ {/* Above for Buying/Selling Testing Purposes Only*/}     
+
+
+{/* Below for owners of the Assets */}	
+            {addressMatch && address && !forSale && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
                         <Image
@@ -162,12 +220,37 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
                     </div>
+        {/* change below link after test */}                
                     <Link legacyBehavior href={`/test/sell/${address}/${nft.id}`} passHref>
                       <button id="blue-orange-add-to-cart-seller-created" >
                         SELL</button>
                     </Link>
                 </>
             )}	
+            {/* {addressMatch && address && forSale (
+              <>
+                  <div id="blue-orange-prices-before-seller-created">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={40}  
+                        height={8}  
+                        id="PAP-logo" 
+                        src="/images/PriceAfterPurchaseLogo.png"
+                      />
+                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-blue-orange-before-seller-created">...</p>
+                      <hr id="priceline-seller-created" />
+                      <p id="yourprice-seller-created">Price</p>
+                      <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+                  </div>         
+                  <Link legacyBehavior href={`/test/selling/${storeAddressFromURL}`} passHref>
+                    <button id="blue-orange-add-to-cart-seller-created-selling" >
+                      EDIT</button>
+                  </Link>
+              </>
+          )}	 */}          
+  {/* Above for users who are owners of the Assets */}          
             
         </div>    
     </>
