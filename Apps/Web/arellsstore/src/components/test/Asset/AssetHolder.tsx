@@ -224,7 +224,7 @@ const AssetHolder = (props: AssetProps) => {
                 <p id="PAP-blue-orange-before-blue-orange">{formatNumber(priceAfterPurchaseCreated)}</p>
                 <p id="PAP-blue-orange">You Keep</p>
                 <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(youKeepAfterPurchase))}</p>
-                <p id="PAP-blue-orange">Buyer Keeps</p>
+                <p id="PAP-blue-orange">Collector Keeps</p>
                 <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(buyerKeepsAfterPurchase))}</p>
                 <p id="PAP-blue-orange">Fees</p>
                 <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(feesAfterPurchase))}</p>
@@ -235,7 +235,8 @@ const AssetHolder = (props: AssetProps) => {
                 <p id="price-blue-orange">{formatNumber(parseFloat(youKeep))}</p>
                 <p id="yourprice-blue-orange">Fees</p>
                 <p id="price-blue-orange">{formatNumber(parseFloat(fees))}</p>
-            <hr id="priceline-blue-orange" />    
+            <hr id="priceline-blue-orange" />   
+                <p id="yourprice-blue-orange">SET PRICE</p> 
                 <Input
                     name="price"
                     id="price"

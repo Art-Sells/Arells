@@ -277,7 +277,7 @@
 				width: 400px;
 				height: 400px;
 				border:solid;
-				border-width: 1px;
+				border-width: 0px;
 			border-color: rgb(240, 240, 240);	
 				-webkit-animation-name: animatetop;
 				-webkit-animation-duration: 1.00s;
