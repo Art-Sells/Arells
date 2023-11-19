@@ -46,7 +46,8 @@ contract NFTMarket is ERC721URIStorage, Ownable {
 
     function listNFTCreator(uint256 tokenID, uint256 price, uint256 priceAfterPurchase) public {
         require(price > 0, "AssetMarket: Price must be more than 0");
-        require(priceAfterPurchase > 0, "AssetMarket: Price after purchase must be more than 0");
+        require(priceAfterPurchase > price, 
+        "AssetMarket: Price after purchase must be more than price");
         require(_creators[tokenID] == msg.sender, "AssetMarket: You're not the creator of this NFT");
 
         _listings[tokenID] = NFTListing(price, msg.sender);
@@ -59,7 +60,8 @@ contract NFTMarket is ERC721URIStorage, Ownable {
     function listNFTCollector(uint256 tokenID, uint256 newPriceAfterPurchase) public {
         uint256 oldPriceAfterPurchase = _priceAfterPurchase[tokenID];
         require(oldPriceAfterPurchase > 0, "AssetMarket: No valid old price after purchase set");
-        require(newPriceAfterPurchase > 0, "AssetMarket: New price after purchase must be more than 0");
+        require(newPriceAfterPurchase > oldPriceAfterPurchase, 
+        "AssetMarket: Price after purchase must be more than price");
         require(ownerOf(tokenID) == msg.sender, "AssetMarket: You're not the owner of this NFT");
 
         _listings[tokenID] = NFTListing(oldPriceAfterPurchase, msg.sender);
@@ -109,7 +111,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
         _listings[tokenID] = NFTListing(currentPriceAfterPurchase, address(0));
 
         emit PriceUpdated(tokenID, currentPriceAfterPurchase);
-        emit NFTTransfer(tokenID, address(this), msg.sender, "", listing.price);
+        emit NFTTransfer(tokenID, address(this), msg.sender, "", currentPriceAfterPurchase);
     }
 
     // New function to get the price after purchase
