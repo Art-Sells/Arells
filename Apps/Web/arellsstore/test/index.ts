@@ -113,149 +113,140 @@ describe("NFTMarket", function (){
             // Step 1: Mint the NFT to signers[0] by purchasing it
             const tokenID = await createNFT(tokenURI);
             await nftMarket.connect(signers[0]).listNFTCreator(tokenID, 12, 15);
-            try {
-                await nftMarket.connect(signers[1]).buyNFT(tokenID, { value: 12 });
-                console.log(`NFT with tokenID: ${tokenID} bought by signers[1]`);
-            } catch (error) {
-                console.error("Error buying NFT:", error);
-            }
-            console.log(`NFT with tokenID: ${tokenID} bought by signers[1]`);
-
-            // Check current owner of the NFT
-            const currentOwner = await nftMarket.ownerOf(tokenID);
-            console.log(`Current owner of NFT with tokenID: ${tokenID} is: ${currentOwner}`);
-
+            await nftMarket.connect(signers[1]).buyNFT(tokenID, { value: 12 });
             // Step 2: Try to list the NFT for sale from an account that isn't the collector
-            await expect(nftMarket.connect(signers[2]).listNFTCollector(tokenID, 15, 20))
+            await expect(nftMarket.connect(signers[2]).listNFTCollector(tokenID, 20))
             .to.be.revertedWith("AssetMarket: You're not the owner of this NFT");
         });
     
-        // it("Should allow creator to list the NFT for sale with price and priceAfterPurchase", async () => {
-        //     const price = 123;
-        //     const priceAfterPurchase = 150;
-        //     const tokenID = await createNFT(tokenURI);
-        //     const transaction = await nftMarket.listNFTCreator(tokenID, price, priceAfterPurchase);
-        //     const receipt = await transaction.wait();
+        it("Should allow creator to list the NFT for sale with price and priceAfterPurchase", async () => {
+            const price = 123;
+            const priceAfterPurchase = 150;
+            const tokenID = await createNFT(tokenURI);
+            const transaction = await nftMarket.listNFTCreator(tokenID, price, priceAfterPurchase);
+            const receipt = await transaction.wait();
         
-        //     // Get listing details
-        //     const listing = await nftMarket.getListing(tokenID);
-        //     expect(listing.price).to.equal(price);
+            // Get listing details
+            const listing = await nftMarket.getListing(tokenID);
+            expect(listing.price).to.equal(price);
         
-        //     // Check price after purchase
-        //     const listedPriceAfterPurchase = await nftMarket.getPriceAfterPurchase(tokenID);
-        //     expect(listedPriceAfterPurchase).to.equal(priceAfterPurchase);
+            // Check price after purchase
+            const listedPriceAfterPurchase = await nftMarket.getPriceAfterPurchase(tokenID);
+            expect(listedPriceAfterPurchase).to.equal(priceAfterPurchase);
         
-        //     // NFTTransfer event should have right args
-        //     const args = receipt.events[0].args; 
-        //     expect(args.tokenID).to.equal(tokenID);
-        //     expect(args.from).to.equal(signers[0].address);
-        //     expect(args.to).to.equal(nftMarket.address);
-        //     expect(args.tokenURI).to.equal(tokenURI);
-        //     expect(args.price).to.equal(price);
-        // });
+            // NFTTransfer event should have right args
+            const args = receipt.events[0].args; 
+            expect(args.tokenID).to.equal(tokenID);
+            expect(args.from).to.equal(signers[0].address);
+            expect(args.to).to.equal(nftMarket.address);
+            expect(args.tokenURI).to.equal(tokenURI);
+            expect(args.price).to.equal(price);
+        });
 
-        // it("Should allow collector to list the NFT for sale with newPriceAfterPurchase", async () => {
-        //     // Step 1: Create the NFT
-        //     const tokenID = await createNFT(tokenURI);
+        it("Should allow collector to list the NFT for sale with newPriceAfterPurchase", async () => {
+            // Step 1: Create the NFT
+            const tokenID = await createNFT(tokenURI);
         
-        //     // Step 2: List it for sale (as the creator)
-        //     const initialPrice = 100; // Using 100 for demonstration
-        //     await nftMarket.listNFTCreator(tokenID, initialPrice);
+            // Step 2: List it for sale (as the creator)
+            const price = 100; // Using 100 for demonstration
+            const priceAfterPurchase = 150;
+            await nftMarket.listNFTCreator(tokenID, price, priceAfterPurchase);
         
-        //     // Step 3: Purchase (mint) the NFT as the first buyer
-        //     await nftMarket.connect(signers[1]).buyNFT(tokenID, { value: initialPrice });
-        //     const newOwnerAddress = await nftMarket.ownerOf(tokenID);
-        //     expect(newOwnerAddress).to.equal(signers[1].address); // Confirming transfer
+            // Step 3: Purchase (mint) the NFT as the first buyer
+            await nftMarket.connect(signers[1]).buyNFT(tokenID, { value: price });
+            const newOwnerAddress = await nftMarket.ownerOf(tokenID);
+            expect(newOwnerAddress).to.equal(signers[1].address); // Confirming transfer
         
-        //     // Step 4: List it for sale by the first buyer
-        //     const newPriceAfterPurchase = 250;
-        //     const transaction = await nftMarket.connect(signers[1]).listNFTCollector(tokenID, 250);
-        //     const receipt = await transaction.wait();
+            // Step 4: List it for sale by the first buyer
+            const newPriceAfterPurchase = 250;
+            const transaction = await nftMarket.connect(signers[1]).listNFTCollector(tokenID, newPriceAfterPurchase);
+            const receipt = await transaction.wait();
         
-        //     // Check the listing price (should be old price after purchase)
-        //     const listing = await nftMarket.getListing(tokenID);
-        //     expect(listing.price).to.equal(initialPrice);
+            // Check the listing price (should be old price after purchase)
+            const listing = await nftMarket.getListing(tokenID);
+            expect(listing.price).to.equal(priceAfterPurchase);
         
-        //     // Check new price after purchase
-        //     const listedNewPriceAfterPurchase = await nftMarket.getPriceAfterPurchase(tokenID);
-        //     expect(listedNewPriceAfterPurchase).to.equal(newPriceAfterPurchase);
+            // Check new price after purchase
+            const listedNewPriceAfterPurchase = await nftMarket.getPriceAfterPurchase(tokenID);
+            expect(listedNewPriceAfterPurchase).to.equal(newPriceAfterPurchase);
         
-        //     // NFTTransfer event should have right args
-        //     const args = receipt.events[0].args; 
-        //     expect(args.tokenID).to.equal(tokenID);
-        //     expect(args.from).to.equal(signers[1].address);
-        //     expect(args.to).to.equal(nftMarket.address);
-        //     expect(args.tokenURI).to.equal("");
-        //     expect(args.price).to.equal(initialPrice);
-        // });
+            // NFTTransfer event should have right args
+            const args = receipt.events[0].args; 
+            expect(args.tokenID).to.equal(tokenID);
+            expect(args.from).to.equal(signers[1].address);
+            expect(args.to).to.equal(nftMarket.address);
+            expect(args.tokenURI).to.equal("");
+            expect(args.price).to.equal(priceAfterPurchase);
+        });
         
     });
     
 
     describe("buyNFT", () => {
-    //     it("Should revert if Asset is not listed for sale", async () => {
-    //         const transaction = nftMarket.buyNFT(9999);
-    //         await expect(transaction).to.be.revertedWith(
-    //             "AssetMarket: asset not listed for sale");
-    //     });
+        it("Should revert if Asset is not listed for sale", async () => {
+            const transaction = nftMarket.buyNFT(9999);
+            await expect(transaction).to.be.revertedWith(
+                "AssetMarket: asset not listed for sale");
+        });
     
-    //     it("Should revert if $ sent is not equal to the Asset price", async () => {
-    //         const tokenID = await createAndListNFT(123);
-    //         const transaction = nftMarket.buyNFT(tokenID, {value: 124});
-    //         await expect(transaction).to.be.revertedWith(
-    //             "AssetMarket: incorrect price");
-    //     });
+        it("Should revert if $ sent is not equal to the Asset price", async () => {
+            const tokenID = await createAndListNFT(123, 150);
+            const transaction = nftMarket.buyNFT(tokenID, {value: 124});
+            await expect(transaction).to.be.revertedWith(
+                "AssetMarket: incorrect price");
+        });
     
-    //     it("Should mint NFT and list owner as 1st collector and send 97% price to creator when after collector buys", async () => {
-    //         const price = 100;
-    //         const sellerProfit = Math.floor(price * 97 / 100);
-    //         const fee = price - sellerProfit;
-    //         const initialContractBalance = await nftMarket.provider.getBalance(
-    //             nftMarket.address
-    //         );
+        it("Should mint NFT and list owner as 1st collector and send 97% price to creator after collector buys", async () => {
+            const price = 100;
+            const priceAfterPurchase = 150;
+            const sellerProfit = Math.floor(price * 97 / 100);
+            const fee = price - sellerProfit;
+            const initialContractBalance = await nftMarket.provider.getBalance(
+                nftMarket.address
+            );
             
-    //         // Assuming the creator is signers[0]
-    //         const tokenID = await createAndListNFT(price);
-    //         // Check isFirstSale status before the buy
-    //         const beforeBuyIsFirstSale = await nftMarket._isFirstSale(tokenID);
-    //         expect(beforeBuyIsFirstSale).to.be.false; // It should be false before the first sale
-    //         const oldSellerBalance = await ethers.provider.getBalance(signers[0].address);
-    //         const transaction = await nftMarket.
-    //             connect(signers[1]).
-    //             buyNFT(tokenID, {value: price});
-    //         const receipt = await transaction.wait();
-    //         //97% of price added to seller balance
-    //         await new Promise((r) => setTimeout(r, 100));
-    //         const newSellerBalance = await ethers.provider.getBalance(signers[0].address);
-    //         const diff = newSellerBalance.sub(oldSellerBalance);
-    //         expect(diff).to.equal(sellerProfit);
+            // Assuming the creator is signers[0]
+            const tokenID = await createAndListNFT(price, priceAfterPurchase);
+            // Check isFirstSale status before the buy
+            const beforeBuyIsFirstSale = await nftMarket._isFirstSale(tokenID);
+            expect(beforeBuyIsFirstSale).to.be.false; // It should be false before the first sale
+            const oldSellerBalance = await ethers.provider.getBalance(signers[0].address);
+            const transaction = await nftMarket.
+                connect(signers[1]).
+                buyNFT(tokenID, {value: price});
+            const receipt = await transaction.wait();
+            //97% of price added to seller balance
+            await new Promise((r) => setTimeout(r, 100));
+            const newSellerBalance = await ethers.provider.getBalance(signers[0].address);
+            const diff = newSellerBalance.sub(oldSellerBalance);
+            expect(diff).to.equal(sellerProfit);
             
-    //         // 3% of price kept in contract balance
-    //         const newContractBalance = await nftMarket.provider.getBalance(
-    //             nftMarket.address
-    //         );
-    //         const contractBalanceDiff = newContractBalance.sub(
-    //             initialContractBalance
-    //         );
-    //         expect(contractBalanceDiff).to.equal(fee);
+            // 3% of price kept in contract balance
+            const newContractBalance = await nftMarket.provider.getBalance(
+                nftMarket.address
+            );
+            const contractBalanceDiff = newContractBalance.sub(
+                initialContractBalance
+            );
+            expect(contractBalanceDiff).to.equal(fee);
 
-    //         //Nft is Minted and collector is now Owner
-    //         const ownerAddress = await nftMarket.ownerOf(tokenID);
-    //         expect(ownerAddress).to.equal(signers[1].address);
+            //Nft is Minted and collector is now Owner
+            const ownerAddress = await nftMarket.ownerOf(tokenID);
+            expect(ownerAddress).to.equal(signers[1].address);
             
-    //         // Check isFirstSale status after the buy
-    //         const afterBuyIsFirstSale = await nftMarket._isFirstSale(tokenID);
-    //         expect(afterBuyIsFirstSale).to.be.true; // It should now be true since the asset has been bought once
+            // Check isFirstSale status after the buy
+            const afterBuyIsFirstSale = await nftMarket._isFirstSale(tokenID);
+            expect(afterBuyIsFirstSale).to.be.true; // It should now be true since the asset has been bought once
 
-    //         //NFTTransfer event should have right args
-    //         const args = receipt.events[2].args;
-    //         expect(args.tokenID).to.equal(tokenID);
-    //         expect(args.from).to.equal(nftMarket.address);
-    //         expect(args.to).equal(signers[1].address);
-    //         expect(args.tokenURI).to.equal("");
-    //         expect(args.price).to.equal(0);
+            //NFTTransfer event should have right args
+            const args = receipt.events[2].args;
+            expect(args.tokenID).to.equal(tokenID);
+            expect(args.from).to.equal(nftMarket.address);
+            expect(args.to).equal(signers[1].address);
+            expect(args.tokenURI).to.equal("");
+            expect(args.price).to.equal(priceAfterPurchase);
 
-    //     });
+        });
     
     //     it("Should transfer ownership to next collector, send 57% price to previous collector and 40% to creator after next collector buys", async () => {
     //         const price = 100; 

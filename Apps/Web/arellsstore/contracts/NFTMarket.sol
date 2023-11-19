@@ -81,8 +81,9 @@ contract NFTMarket is ERC721URIStorage, Ownable {
         require(msg.value == listing.price, "AssetMarket: incorrect price");
         address seller = _listings[tokenID].seller;
         address creator = _creators[tokenID];
-        
-        uint256 currentPriceAfterPurchase = _priceAfterPurchase[tokenID]; // Store the current price after purchase
+
+        // Preserve the current price after purchase for future sales
+        uint256 currentPriceAfterPurchase = _priceAfterPurchase[tokenID];
 
         // Clear listing before transferring funds
         clearListing(tokenID);
@@ -106,7 +107,6 @@ contract NFTMarket is ERC721URIStorage, Ownable {
 
         // Set the new listing price to the current price after purchase for future sales
         _listings[tokenID] = NFTListing(currentPriceAfterPurchase, address(0));
-        _priceAfterPurchase[tokenID] = 0; // Reset the price after purchase to 0
 
         emit PriceUpdated(tokenID, currentPriceAfterPurchase);
         emit NFTTransfer(tokenID, address(this), msg.sender, "", listing.price);
