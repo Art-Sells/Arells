@@ -119,6 +119,10 @@ contract NFTMarket is ERC721URIStorage, Ownable {
         return _priceAfterPurchase[tokenID];
     }
 
+    function isNFTMinted(uint256 tokenID) public view returns (bool) {
+        return _exists(tokenID);
+    }
+
     function getNFTCreatorOrCollector(uint256 tokenId) public view returns (address creatorOrCollector, bool isMinted) {
         if (_exists(tokenId)) {
             // If the token has been minted, return the creator.
