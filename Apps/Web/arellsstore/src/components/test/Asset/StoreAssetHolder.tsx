@@ -81,6 +81,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     useEffect(() => {
       const fetchMetadata = async () => {
         const metadataResponse = await fetch(ipfsToHTTPS(nft.tokenURI));
+        console.log("NFT Info: ", metadataResponse);
         if (metadataResponse.status != 200) return;
         const json = await metadataResponse.json();
         setMeta({
@@ -90,6 +91,18 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
       };
       void fetchMetadata();
     }, [nft.tokenURI]);
+
+    const [isNFTMinted, setIsNFTMinted] = useState(false);
+    const { checkIfNFTMinted } = useNFTMarket(storeAddressFromURL);
+
+    useEffect(() => {
+    const checkMintingStatus = async () => {
+        const minted = await checkIfNFTMinted(nft.id);
+        setIsNFTMinted(minted);
+    };
+
+    checkMintingStatus();
+    }, [nft.id, checkIfNFTMinted]);
   
 // Asset Changing function/s above 
 
@@ -214,7 +227,30 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 
 
  {/* Below for Buying/Selling Testing Purposes Only*/}     
-            {!addressMatch && address && forSale && (
+            {!addressMatch && address && forSale && !isNFTMinted && (
+                <>
+                    <div id="blue-orange-prices-before-seller-created">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={40}  
+                        height={8}  
+                        id="PAP-logo" 
+                        src="/images/PriceAfterPurchaseLogo.png"
+                      />
+                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-blue-orange-before-seller-created">{formattedPriceAfterPurchase}</p>
+                      <hr id="priceline-seller-created" />
+                      <p id="yourprice-seller-created">Price</p>
+                      <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+                    </div>         
+                    <button id="blue-orange-add-to-cart-seller-created" 
+                    // change below function after test
+                    onClick={buy}>
+                      BUY</button>
+                </>
+            )}
+            {!addressMatch && address && forSale && isNFTMinted && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
                       <Image

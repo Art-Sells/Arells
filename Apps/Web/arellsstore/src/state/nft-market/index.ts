@@ -61,6 +61,25 @@ const useNFTMarket = (storeAddress: string | null) => {
     }
   };
 
+  const checkIfNFTMinted = async (tokenId: string) => {
+    if (!signer) {
+      console.error('Signer is not available');
+      return false;
+    }
+
+    try {
+      // Convert tokenId to a number since the smart contract expects a uint256
+      const numericTokenId = BigNumber.from(tokenId);
+
+      // Call the isNFTMinted function from the smart contract
+      const minted = await nftMarket.isNFTMinted(numericTokenId);
+      return minted;
+    } catch (e) {
+      console.error("Exception while checking if NFT is minted:", e);
+      return false;
+    }
+  };
+
   const listNFTCreator = async (
     tokenID: string, 
     price: BigNumber,
@@ -97,6 +116,7 @@ const useNFTMarket = (storeAddress: string | null) => {
     listNFTCreator,
     listNFTCollector,
     buyNFT,
+    checkIfNFTMinted,
     ...createdNFTs,
     ...sellingNFTs,
     ...buyNFTs

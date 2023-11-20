@@ -20,12 +20,16 @@ const Asset = () => {
 
     const { nft } = useSingleNFT(storeAddressFromURL, nftId); 
 
+    console.log("nft info: ", nft);
+
 
 
     return (
         <>
             {!address && <p id="no-art"></p>}
-            {nft && <AssetHolder nft={nft} key={nft.id} ownerId={storeAddressFromURL} />}
+            {nft && 
+            <AssetHolder nft={nft} key={nft.id} ownerId={storeAddressFromURL} />
+            }
         </>
     );
 };

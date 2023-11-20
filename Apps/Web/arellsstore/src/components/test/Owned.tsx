@@ -182,27 +182,24 @@ const Owned = () => {
 			</Link>	
 			<a id="owned" >Owned</a>		
 		</div>
-		{noArtCreated && (
-			<p id="no-art">
-			</p>
-		)}
-		{artCreated && (
-			<>
-				{createdNFTs && createdNFTs.length > 0 ? (
-					<div id="container-seller-created">
-						{createdNFTs.map((nft) => (
-							<AssetStoreHolder nft={nft} key={nft.id} />
-						))}
-					</div>
-				) : sellingNFTs && sellingNFTs.length > 0 && (
-					<div id="container-seller-created">
-						{sellingNFTs.map((nft) => (
-							<AssetStoreHolder nft={nft} key={nft.id} />
-						))}
-					</div>
-				)}
-			</>
-		)}
+			{noArtCreated && (
+				<p id="no-art">
+				</p>
+			)}
+			{artCreated && (
+				<>
+				<div id="container-seller-created">
+					{createdNFTs?.map((nft) => {
+						return <AssetStoreHolder nft={nft} key={nft.id} />;
+					})}
+				</div>
+				<div id="container-seller-created">
+					{sellingNFTs?.map((nft) => {
+						return <AssetStoreHolder nft={nft} key={nft.id} />;
+					})}
+				</div>
+				</>	
+			)}
 
 		     
         </>

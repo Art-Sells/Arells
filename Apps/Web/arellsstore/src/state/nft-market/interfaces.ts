@@ -7,3 +7,8 @@ export type NFT = {
     price: string;
     tokenURI: string;
   };
+
+  export type PriceAfterPurchaseSet = {
+    id: string;
+    newPriceAfterPurchase: string;
+  };
