@@ -87,7 +87,7 @@ const AssetHolder = (props: AssetProps) => {
     const {listNFTCreator} = useNFTMarket(storeAddressFromURL);
     const [error, setError] = useState<string>();
     const [price, setPrice] = useState("0.00");
-    const [priceAfterPurchaseCreated, setPriceAfterPurchaseCreated] = useState("0.00");
+    const [priceAfterPurchase, setPriceAfterPurchase] = useState("0.00");
     const [youKeepAfterPurchase, setYouKeepAfterPurchase] = useState("0.00");
     const [buyerKeepsAfterPurchase, setBuyerKeepsAfterPurchase] = useState("0.00");
     const [feesAfterPurchase, setFeesAfterPurchase] = useState("0.00");
@@ -120,7 +120,7 @@ const AssetHolder = (props: AssetProps) => {
     useEffect(() => {
         if (price.trim() !== "" && !isNaN(priceNum))  {
             const doubledPrice = priceNum * 2;
-            setPriceAfterPurchaseCreated(doubledPrice.toString());
+            setPriceAfterPurchase(doubledPrice.toString());
         
             // Calculating percentages for Price After Purchase
             setYouKeepAfterPurchase((doubledPrice * 0.50).toFixed(2));
@@ -131,7 +131,7 @@ const AssetHolder = (props: AssetProps) => {
             setYouKeep((priceNum * 0.97).toFixed(2));
             setFees((priceNum * 0.03).toFixed(2));
         } else {
-            setPriceAfterPurchaseCreated("0.00");
+            setPriceAfterPurchase("0.00");
             setYouKeepAfterPurchase("0.00");
             setBuyerKeepsAfterPurchase("0.00");
             setFeesAfterPurchase("0.00");
@@ -141,9 +141,11 @@ const AssetHolder = (props: AssetProps) => {
     }, [price]);
     
     
-    const onSellConfirmed = async (price: BigNumber) => {
+    const onSellConfirmed = async (
+        price: BigNumber, 
+        priceAfterPurchase: BigNumber) => {
         try {
-          await listNFTCreator(nft.id, price);
+          await listNFTCreator(nft.id, price, priceAfterPurchase);
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
   //Change below link after test
           router.push(`/test/owned/${address}`);
@@ -167,14 +169,30 @@ const AssetHolder = (props: AssetProps) => {
                     setError("Price is required");
                     return;
                 }
-    
-                const wei = ethers.utils.parseEther(price);
-                if (wei.lte(0)) {
-                    setError("Price must be greater than 0");
+
+                if (!priceAfterPurchase) {
+                    setError("Price After Purchase is required");
                     return;
                 }
     
-                await onSellConfirmed(wei); // Ensure this is awaited
+                const weiPrice = ethers.utils.parseEther(price);
+                if (weiPrice.lte(0)) {
+                    setError("Price must be greater than 0");
+                    return;
+                }
+
+                const weiPriceAfterPurchase = ethers.utils.parseEther(
+                    priceAfterPurchase);
+                if (weiPriceAfterPurchase.lte(0)) {
+                    setError("Price After Purchase must be greater than 0");
+                    return;
+                }    
+                if (weiPriceAfterPurchase.lt(weiPrice)) {
+                    setError("Price After Purchase must be greater than or equal to the original price");
+                    return;
+                }
+    
+                await onSellConfirmed(weiPrice, weiPriceAfterPurchase); // Ensure this is awaited
             }
         } catch (e) {
             console.error("Error in listing NFT:", e);
@@ -221,7 +239,7 @@ const AssetHolder = (props: AssetProps) => {
             <h3 id="name-blue-orange">{meta?.name}</h3> 
             <div id="blue-orange-prices-before-blue-orange">
                 <p id="PAP-blue-orange">Price After Purchase</p>
-                <p id="PAP-blue-orange-before-blue-orange">{formatNumber(priceAfterPurchaseCreated)}</p>
+                <p id="PAP-blue-orange-before-blue-orange">{formatNumber(priceAfterPurchase)}</p>
                 <p id="PAP-blue-orange">You Keep</p>
                 <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(youKeepAfterPurchase))}</p>
                 <p id="PAP-blue-orange">Collector Keeps</p>

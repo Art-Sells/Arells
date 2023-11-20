@@ -124,7 +124,7 @@ const Owned = () => {
 		)}  
 
 {/*<!-- Modals Above -->*/}
-<div id="header-seller-created">
+		<div id="header-seller-created">
 			
 			{/*<!-- Change below link after test -->*/}
 				<Link legacyBehavior href="/">
@@ -164,41 +164,45 @@ const Owned = () => {
 						</a>
 					</Link>	
 				)}		
-			</div>
-			<Image
-			loader={imageLoader}
-			onLoad={() => handleImageLoaded('arellsLogo')}
-			alt=""
-			width={110}  
-			height={35} 
-			id="word-logo-seller-created" 
-			src="images/Arells-Logo-Ebony.png"/>	
-			<p id="slogan-seller-created">NEVER LOSE MONEY SELLING ART</p>
-			<hr id="profileline-seller-created"/>
-			<div id="created-collected-seller-created">
-			{/*<!-- Change below link after test -->*/}	
-				<Link legacyBehavior href="/test/selling">
-					<a id="selling">Selling</a>	
-				</Link>	
-				<a id="owned" >Owned</a>		
-			</div>
-			{noArtCreated && (
-				<p id="no-art">
-				</p>
-			)}
-			{artCreated && (
-				<><div id="container-seller-created">
-					{createdNFTs?.map((nft) => {
-						return <AssetStoreHolder nft={nft} key={nft.id} />;
-					})}
-				</div>
-				<div id="container-seller-created">
-					{sellingNFTs?.map((nft) => {
-						return <AssetStoreHolder nft={nft} key={nft.id} />;
-					})}
-				</div>
-				</>	
-			)}
+		</div>
+		<Image
+		loader={imageLoader}
+		onLoad={() => handleImageLoaded('arellsLogo')}
+		alt=""
+		width={110}  
+		height={35} 
+		id="word-logo-seller-created" 
+		src="images/Arells-Logo-Ebony.png"/>	
+		<p id="slogan-seller-created">NEVER LOSE MONEY SELLING ART</p>
+		<hr id="profileline-seller-created"/>
+		<div id="created-collected-seller-created">
+		{/*<!-- Change below link after test -->*/}	
+			<Link legacyBehavior href="/test/selling">
+				<a id="selling">Selling</a>	
+			</Link>	
+			<a id="owned" >Owned</a>		
+		</div>
+		{noArtCreated && (
+			<p id="no-art">
+			</p>
+		)}
+		{artCreated && (
+			<>
+				{createdNFTs && createdNFTs.length > 0 ? (
+					<div id="container-seller-created">
+						{createdNFTs.map((nft) => (
+							<AssetStoreHolder nft={nft} key={nft.id} />
+						))}
+					</div>
+				) : sellingNFTs && sellingNFTs.length > 0 && (
+					<div id="container-seller-created">
+						{sellingNFTs.map((nft) => (
+							<AssetStoreHolder nft={nft} key={nft.id} />
+						))}
+					</div>
+				)}
+			</>
+		)}
 
 		     
         </>

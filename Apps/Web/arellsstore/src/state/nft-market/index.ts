@@ -61,10 +61,24 @@ const useNFTMarket = (storeAddress: string | null) => {
     }
   };
 
-  const listNFTCreator = async (tokenID: string, price: BigNumber) => {
+  const listNFTCreator = async (
+    tokenID: string, 
+    price: BigNumber,
+    priceAfterPurchase: BigNumber) => {
     const transaction: TransactionResponse = await nftMarket.listNFTCreator (
       tokenID,
-      price
+      price,
+      priceAfterPurchase
+    );
+    await transaction.wait();
+  }
+
+  const listNFTCollector = async (
+    tokenID: string, 
+    newPriceAfterPurchase: BigNumber) => {
+    const transaction: TransactionResponse = await nftMarket.listNFTCollector (
+      tokenID,
+      newPriceAfterPurchase
     );
     await transaction.wait();
   }
@@ -81,6 +95,7 @@ const useNFTMarket = (storeAddress: string | null) => {
     createNFT,
     getCreatorOrCollector,
     listNFTCreator,
+    listNFTCollector,
     buyNFT,
     ...createdNFTs,
     ...sellingNFTs,

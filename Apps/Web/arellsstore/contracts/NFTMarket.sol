@@ -25,6 +25,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
     event TokenURICreated(uint256 indexed tokenID, string tokenURI);
     event NFTTransfer(uint256 tokenID, address from, address to, string tokenURI, uint256 price);
     event PriceUpdated(uint256 tokenID, uint256 newPrice); // New event for price update
+    event NewPriceAfterPurchaseSet(uint256 indexed tokenID, uint256 newPriceAfterPurchase);
 
     constructor() ERC721("Arells Assets", "ASAT") {}
 
@@ -69,6 +70,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
 
         emit NFTTransfer(tokenID, msg.sender, address(this), _intendedTokenURIs[tokenID], oldPriceAfterPurchase);
         emit PriceUpdated(tokenID, newPriceAfterPurchase);
+        emit NewPriceAfterPurchaseSet(tokenID, newPriceAfterPurchase);
     }
 
 

@@ -58,7 +58,11 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     const forSale = nft.price != "0";
     const formattedPrice = nft.price.includes('.') 
     ? nft.price 
-    : ethers.utils.formatUnits(ethers.BigNumber.from(nft.price), 'ether');  
+    : ethers.utils.formatUnits(ethers.BigNumber.from(nft.price), 'ether');
+    const priceAsBigNumber = ethers.utils.parseUnits(formattedPrice, 'ether');
+    const doublePrice = priceAsBigNumber.mul(2);
+    const formattedPriceAfterPurchase = ethers.utils.formatUnits(doublePrice, 'ether');
+
     const router = useRouter();
     const storeAddressFromURL = useMemo(() => {
       const address = Array.isArray(router.query.storeAddress)
@@ -156,7 +160,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       <p id="PAP-blue-orange-before-seller-created">...</p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
-                      <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+                      <p id="price-blue-orange-before-seller-created">...</p>
                     </div>
                     <button id="not-for-sale">
                     OWNED</button>
@@ -177,7 +181,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       <p id="PAP-blue-orange-before-seller-created">...</p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
-                      <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+                      <p id="price-blue-orange-before-seller-created">...</p>
                     </div>
                     <button id="not-for-sale">
                     OWNED</button>
@@ -195,7 +199,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
                         <p id="PAP-seller-created">Price After Purchase</p>
-                        <p id="PAP-blue-orange-before-seller-created">...</p>
+                        <p id="PAP-blue-orange-before-seller-created">{formattedPriceAfterPurchase}</p>
                         <hr id="priceline-seller-created" />
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
@@ -222,17 +226,15 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
                       <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created">...</p>
+                      <p id="PAP-blue-orange-before-seller-created">{formattedPriceAfterPurchase}</p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
                     </div>         
-                    <Link legacyBehavior href={`/test/owned/${address}`} passHref>
-                      <button id="blue-orange-add-to-cart-seller-created" 
-                      // change below function after test
-                      onClick={buy}>
-                        BUY</button>
-                    </Link>
+                    <button id="blue-orange-add-to-cart-seller-created" 
+                    // change below function after test
+                    onClick={buy}>
+                      BUY</button>
                 </>
             )}
  {/* Above for Buying/Selling Testing Purposes Only*/}     
@@ -254,7 +256,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         <p id="PAP-blue-orange-before-seller-created">...</p>
                         <hr id="priceline-seller-created" />
                         <p id="yourprice-seller-created">Price</p>
-                        <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+                        <p id="price-blue-orange-before-seller-created">...</p>
                     </div>
         {/* change below link after test */}                
                     <Link legacyBehavior href={`/test/sell/${address}/${nft.id}`} passHref>
@@ -263,7 +265,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </Link>
                 </>
             )}	
-            {/* {addressMatch && address && forSale (
+            {addressMatch && address && forSale && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -275,7 +277,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
                       <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created">...</p>
+                      <p id="PAP-blue-orange-before-seller-created">{formattedPriceAfterPurchase}</p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
@@ -285,7 +287,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       EDIT</button>
                   </Link>
               </>
-          )}	 */}          
+          )}	           
   {/* Above for users who are owners of the Assets */}          
             
         </div>    
