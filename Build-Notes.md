@@ -77,6 +77,7 @@ ________________________________________________________________________________
 
 ## Arells 2.0
 - SiteMap/s
+- Re-deploy test cases "Buy NFT" to "Buy Asset" and "Create Asset" within wallet interactions...
 - Change PUBLIC_NFT_MARKET_ADDRESS to PUBLIC_ARELLS_STORE_ADDRESS
 - Add PUBLIC_ARELLS_MARKET_ADDRESS for 3% Fee (Refactor SmartContract to Accept)
 - AUM (Assets Under Management) system & # of New Wallets Created, system. 
@@ -128,7 +129,7 @@ ________________________________________________________________________________
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 
 ##### Bugs
-- Handle NFT Error Fetching edge-cases (if address !== storeAddress error modal, etc)...
+- Handle NFT Error Fetching (Compiling issues) edge-cases (if address !== storeAddress error modal, etc)...
 - Change "GET_CREATED_NFTs" query to owned nfts
 - Solve Ethereum Address URL length issue.
 - 404 and Server Error Pages
