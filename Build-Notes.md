@@ -65,7 +65,8 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete all YouTube branched links
-- Send 1 month - 2 week notifications on new Features to be added. ("Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter. "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram)
+- Send 1 month - 2 week notifications on new Features to be added.
+- "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "A Polygon Digital Asset market that renders bear markets obsolete. never lose money selling art with Arells!". 
 
 ________________________________________________________________________________________________________________________________________________
 
@@ -127,6 +128,7 @@ ________________________________________________________________________________
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
+- Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
 
 ##### Bugs
 - Handle NFT Error Fetching (Compiling issues) edge-cases (if address !== storeAddress error modal, etc)...
@@ -137,7 +139,6 @@ ________________________________________________________________________________
 
 ## Arells 3.0
 - Pages separated like so: store/address (if not signed up) store/store-name (if signed-up), asset/address/id (both)
-- Prepare Promotional Instagram/Discord Campaign) "Make Money by Buying & Selling The Best Abstracts/Illustrations/Photos from Arells" *buy and sell art hashtags*)) arells.com/abstracts|illustrations|photography pages
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 
 #### Creating Mechanics
@@ -200,6 +201,7 @@ ________________________________________________________________________________
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
+- Prepare Promotional Instagram/Discords) Abstracts/Illustrations/Photos  hashtags*)) arells.com/abstracts|illustrations|photography pages
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 4.0
