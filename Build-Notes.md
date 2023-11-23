@@ -197,6 +197,9 @@ ________________________________________________________________________________
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
 - MetaTag Image(Asset): large-image|name, small-|category
 
+##### Bugs
+- Clean up if/else if Displays to make more efficient...
+
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
