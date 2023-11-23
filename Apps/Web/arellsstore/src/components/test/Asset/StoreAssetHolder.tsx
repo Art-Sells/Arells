@@ -20,6 +20,7 @@ import { useRouter } from "next/router";
 import { ethers } from "ethers";
 import useNFTMarket from "../../../state/nft-market";
 import { toast } from "react-toastify";
+import { usePriceAfterPurchaseSets } from "../../../state/nft-market/usePriceAfterPurchaseSets";
 
 type AssetStoreMetadata = {
     name: string;
@@ -103,6 +104,16 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 
     checkMintingStatus();
     }, [nft.id, checkIfNFTMinted]);
+
+    const { priceAfterPurchaseSets = [] } = usePriceAfterPurchaseSets(nft.id);
+    const [formattedNewPriceAfterPurchase, setFormattedNewPriceAfterPurchase] = useState("...");
+
+    useEffect(() => {
+      if (priceAfterPurchaseSets?.length > 0) {
+        const newPAP = priceAfterPurchaseSets[0].newPriceAfterPurchase;
+        setFormattedNewPriceAfterPurchase(newPAP !== "0" ? newPAP : "...");
+      }
+    }, [priceAfterPurchaseSets]);
   
 // Asset Changing function/s above 
 
@@ -262,7 +273,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
                       <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created">{formattedPriceAfterPurchase}</p>
+                      <p id="PAP-blue-orange-before-seller-created">{formattedNewPriceAfterPurchase}</p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
@@ -301,7 +312,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </Link>
                 </>
             )}	
-            {addressMatch && address && forSale && (
+            {addressMatch && address && forSale && isNFTMinted && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -313,7 +324,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
                       <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created">{formattedPriceAfterPurchase}</p>
+                      <p id="PAP-blue-orange-before-seller-created">{formattedNewPriceAfterPurchase}</p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
