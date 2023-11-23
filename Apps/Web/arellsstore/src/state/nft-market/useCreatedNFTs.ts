@@ -75,7 +75,7 @@ export const useSingleNFT = (storeAddress: any, nftId: any) => {
     return { nft };
 };
 
-const parseRawSingleNFT = (raw: GetSingleNFT_nfts): NFT => {
+export const parseRawSingleNFT = (raw: GetSingleNFT_nfts): NFT => {
     return {
         id: raw.id,
         storeAddress: raw.to,

@@ -21,6 +21,7 @@ import Image from 'next/image';
 import { useRouter } from "next/router";
 import {Input} from "./PriceInputs/Input";
 import { toast } from "react-toastify";
+import { usePriceAfterPurchaseSets } from "../../../state/nft-market/usePriceAfterPurchaseSets";
 
 type AssetMetadata = {
     name: string;
@@ -222,21 +223,32 @@ const AssetHolder = (props: AssetProps) => {
         setFeesAfterPurchaseMinted((formattedPrice * 0.03).toFixed(2));
     }, [nft.price]);
 
+    const { priceAfterPurchaseSets = [] } = usePriceAfterPurchaseSets(nft.id);
     const [priceAfterPurchaseNum, setPriceAfterPurchaseNum] = useState(0);
+
     const [youKeepAfterPurchaseNum, setYouKeepAfterPurchaseNum] = useState("0.00");
     const [buyerKeepsAfterPurchaseNum, setBuyerKeepsAfterPurchaseNum] = useState("0.00");
     const [feesAfterPurchaseNum, setFeesAfterPurchaseNum] = useState("0.00");
+    const [inputPriceAfterPurchase, setInputPriceAfterPurchase] = useState(0);
 
     useEffect(() => {
-        setPriceAfterPurchaseNum(formattedPrice * 2);
-    }, [formattedPrice]); 
-
+        if (priceAfterPurchaseSets?.length > 0) {
+            const newPAP = priceAfterPurchaseSets[0].newPriceAfterPurchase;
+            setPriceAfterPurchaseNum(parseFloat(newPAP !== "0" ? newPAP : "0"));
+        }
+    }, [priceAfterPurchaseSets]);
     useEffect(() => {
-        setYouKeepAfterPurchaseNum((priceAfterPurchaseNum * 0.50).toFixed(2));
-        setBuyerKeepsAfterPurchaseNum((priceAfterPurchaseNum * 0.47).toFixed(2));
-        setFeesAfterPurchaseNum((priceAfterPurchaseNum * 0.03).toFixed(2));
-    }, [priceAfterPurchaseNum]);
-
+        setYouKeepAfterPurchaseNum((inputPriceAfterPurchase * 0.50).toFixed(2));
+        setBuyerKeepsAfterPurchaseNum((inputPriceAfterPurchase * 0.47).toFixed(2));
+        setFeesAfterPurchaseNum((inputPriceAfterPurchase * 0.03).toFixed(2));
+    }, [inputPriceAfterPurchase]);
+    const handlePriceAfterPurchaseChange = (e: { target: { value: string; }; }) => {
+        const value = parseFloat(e.target.value);
+        if (!isNaN(value)) {
+            setInputPriceAfterPurchase(value);
+            console.log("New inputPriceAfterPurchase:", value); // Log to confirm the update
+        }
+    };
 
     const onSellConfirmedMinted = async (
         priceAfterPurchaseNum: BigNumber) => {
@@ -262,13 +274,17 @@ const AssetHolder = (props: AssetProps) => {
             if (address && walletAddress === storeAddressFromURL) {
                 setError(""); // Clear any previous errors
     
-                if (!priceAfterPurchaseNum) {
+                if (!inputPriceAfterPurchase) {
+                    setError("Price After Purchase is required");
+                    return;
+                }
+                if (inputPriceAfterPurchase == 0) {
                     setError("Price After Purchase is required");
                     return;
                 }
     
                 // Check if priceAfterPurchaseNum is less than formattedPrice
-                if (priceAfterPurchaseNum < formattedPrice) {
+                if (inputPriceAfterPurchase < formattedPrice) {
                     setError("Price After Purchase must be greater than or equal to the original price");
                     setCopiedLink(true); // Assuming this is the correct function to show the modal/message
                     return; // Exit the function early
@@ -276,13 +292,13 @@ const AssetHolder = (props: AssetProps) => {
 
                 else {
                                     // Ensure priceAfterPurchaseNum is a string before converting it to Wei
-                const etherPriceAfterPurchase = priceAfterPurchaseNum.toString();
+                const etherPriceAfterPurchase = inputPriceAfterPurchase.toString();
         
                 // Convert the string to Wei
-                const weiPriceAfterPurchaseNum = ethers.utils.parseEther(etherPriceAfterPurchase);
+                const weiInputPriceAfterPurchase = ethers.utils.parseEther(etherPriceAfterPurchase);
         
                 // Continue with the listing process...
-                await onSellConfirmedMinted(weiPriceAfterPurchaseNum); // Ensure this is awaited
+                await onSellConfirmedMinted(weiInputPriceAfterPurchase); // Ensure this is awaited
                 }
             }
         } catch (e) {
@@ -383,7 +399,7 @@ const AssetHolder = (props: AssetProps) => {
                             <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(feesAfterPurchaseMinted))}</p>
                         <hr id="priceline-blue-orange" />
                             <p id="PAP-blue-orange">Price After Purchase</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(priceAfterPurchaseNum)}</p>
+                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(inputPriceAfterPurchase)}</p>
                             <p id="PAP-blue-orange">Creator Keeps</p>
                             <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(youKeepAfterPurchaseNum))}</p>
                             <p id="PAP-blue-orange">Your Buyer Keeps</p>
@@ -396,7 +412,8 @@ const AssetHolder = (props: AssetProps) => {
                                 name="priceAfterPurchaseNum"
                                 id="price"
                                 type="tel"
-                                onChange={(e) => setPriceAfterPurchaseNum(parseFloat(e.target.value))}
+                                value={inputPriceAfterPurchase}
+                                onChange={handlePriceAfterPurchaseChange}                          
                             />
                         </div>
                         <button id="blue-orange-add-to-cart-connected-blue-orange" 

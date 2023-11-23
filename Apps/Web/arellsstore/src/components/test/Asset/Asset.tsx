@@ -3,6 +3,7 @@
 import { useRouter } from 'next/router';
 import useSigner from "../../../state/signer";
 import { useSingleNFT } from "../../../state/nft-market/useCreatedNFTs"; 
+import { useSingleSellingNFT } from "../../../state/nft-market/useSellingNFTs"; 
 import AssetHolder from "./AssetHolder";
 import '../../../app/css/prototype/asset/asset.css';
 import { useMemo } from 'react';
@@ -19,6 +20,7 @@ const Asset = () => {
     const nftId = router.query.nftId;
 
     const { nft } = useSingleNFT(storeAddressFromURL, nftId); 
+    const { nftSelling } = useSingleSellingNFT(storeAddressFromURL, nftId); 
 
     console.log("nft info: ", nft);
 
@@ -29,6 +31,9 @@ const Asset = () => {
             {!address && <p id="no-art"></p>}
             {nft && 
             <AssetHolder nft={nft} key={nft.id} ownerId={storeAddressFromURL} />
+            }
+            {nftSelling && 
+            <AssetHolder nft={nftSelling} key={nftSelling.id} ownerId={storeAddressFromURL} />
             }
         </>
     );
