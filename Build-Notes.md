@@ -161,13 +161,30 @@ ________________________________________________________________________________
 - Images (Default Store Image) here render small pixels
 - Remove "Owned By" if not collected/bought/minted.
 - PAP Logo Above Price After Purchase
-- - - Set Price After Purchase(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]-if wallet not connected (Connect Wallet)
+-  Set Price After Purchase(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]-if wallet not connected (Connect Wallet)
 - - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Sold"
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver, [Sold]white
 - - **Owned**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
+- Ability to Edit after Selling:
+```solidity
+function listNFTCollector(uint256 tokenID, uint256 listingPrice, uint256 newPriceAfterPurchase) public {
+    require(listingPrice > 0, "AssetMarket: Listing price must be more than 0");
+    require(newPriceAfterPurchase > listingPrice, "AssetMarket: Price after purchase must be greater than listing price");
+    require(ownerOf(tokenID) == msg.sender, "AssetMarket: You're not the owner of this NFT");
+
+    // Update the listing with the current listing price
+    _listings[tokenID] = NFTListing(listingPrice, msg.sender);
+
+    // Update the price after purchase but do not change the current listing price
+    _priceAfterPurchase[tokenID] = newPriceAfterPurchase;
+
+    emit NFTTransfer(tokenID, msg.sender, address(this), _intendedTokenURIs[tokenID], listingPrice);
+    emit NewPriceAfterPurchaseSet(tokenID, newPriceAfterPurchase);
+}
+```
 
 ### Other Store
 - Top-Right[Cart][Connect Wallet]-if not connected
