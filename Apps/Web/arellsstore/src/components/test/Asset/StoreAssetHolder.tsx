@@ -109,12 +109,13 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     const forSale = nft.price != "0";
     const forSaleMinted = formattedNewPriceAfterPurchase != "...";
 
+    const [isLoadingNewPrice, setIsLoadingNewPrice] = useState(true);
     useEffect(() => {
-      if (priceAfterPurchaseSets?.length > 0) {
-        const newPAP = priceAfterPurchaseSets[0].newPriceAfterPurchase;
-        console.log("New Price After Purchase: ", newPAP);
-        setFormattedNewPriceAfterPurchase(newPAP !== "0" ? newPAP : "...");
-      }
+        if (priceAfterPurchaseSets?.length > 0) {
+            const newPAP = priceAfterPurchaseSets[0].newPriceAfterPurchase;
+            setFormattedNewPriceAfterPurchase(newPAP !== "0" ? newPAP : "...");
+            setIsLoadingNewPrice(false); // Data is now ready, set loading to false
+        }
     }, [priceAfterPurchaseSets]);
   
 // Asset Changing function/s above 
@@ -349,7 +350,11 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
                       <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created">{formattedNewPriceAfterPurchase}</p>
+                      {!isLoadingNewPrice && ( // Only render if data is ready
+                        <p id="PAP-blue-orange-before-seller-created">
+                            {formattedNewPriceAfterPurchase}
+                        </p>
+                      )}
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
@@ -372,15 +377,19 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
                       <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created">{formattedNewPriceAfterPurchase}</p>
+                      {!isLoadingNewPrice && ( // Only render if data is ready
+                        <p id="PAP-blue-orange-before-seller-created">
+                            {formattedNewPriceAfterPurchase}
+                        </p>
+                      )}
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
                   </div>         
-                  <Link legacyBehavior href={`/test/selling/${storeAddressFromURL}`} passHref>
-                      <button id="blue-orange-add-to-cart-seller-created-selling" >
-                        SELLING</button>
-                    </Link>
+                  <Link legacyBehavior href={`/test/sell/${address}/${nft.id}`} passHref>
+                    <button id="blue-orange-add-to-cart-seller-created-selling" >
+                      EDIT</button>
+                  </Link>
               </>
           )}	       
   {/* Above for users who are owners of the Assets */}          
