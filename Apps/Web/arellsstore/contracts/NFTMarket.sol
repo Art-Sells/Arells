@@ -108,6 +108,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
             // Distribute funds to creator and seller
             payable(creator).transfer(listing.price.mul(40).div(100));
             payable(seller).transfer(listing.price.mul(57).div(100));
+            
         }
 
         // After the sale, set the new listing price for future sales
