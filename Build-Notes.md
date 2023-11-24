@@ -169,23 +169,6 @@ ________________________________________________________________________________
 - - **Owned**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
-- Ability to Edit after Selling (Upgrade Contract):
-```solidity
-function listNFTCollector(uint256 tokenID, uint256 listingPrice, uint256 newPriceAfterPurchase) public {
-    require(listingPrice > 0, "AssetMarket: Listing price must be more than 0");
-    require(newPriceAfterPurchase > listingPrice, "AssetMarket: Price after purchase must be greater than listing price");
-    require(ownerOf(tokenID) == msg.sender, "AssetMarket: You're not the owner of this NFT");
-
-    // Update the listing with the current listing price
-    _listings[tokenID] = NFTListing(listingPrice, msg.sender);
-
-    // Update the price after purchase but do not change the current listing price
-    _priceAfterPurchase[tokenID] = newPriceAfterPurchase;
-
-    emit NFTTransfer(tokenID, msg.sender, address(this), _intendedTokenURIs[tokenID], listingPrice);
-    emit NewPriceAfterPurchaseSet(tokenID, newPriceAfterPurchase);
-}
-```
 
 ### Other Store
 - Top-Right[Cart][Connect Wallet]-if not connected
