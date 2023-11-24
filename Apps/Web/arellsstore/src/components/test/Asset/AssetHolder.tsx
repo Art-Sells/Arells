@@ -229,7 +229,7 @@ const AssetHolder = (props: AssetProps) => {
     const [youKeepAfterPurchaseNum, setYouKeepAfterPurchaseNum] = useState("0.00");
     const [buyerKeepsAfterPurchaseNum, setBuyerKeepsAfterPurchaseNum] = useState("0.00");
     const [feesAfterPurchaseNum, setFeesAfterPurchaseNum] = useState("0.00");
-    const [inputPriceAfterPurchase, setInputPriceAfterPurchase] = useState(0);
+    const [inputPriceAfterPurchase, setInputPriceAfterPurchase] = useState(0.00);
 
     useEffect(() => {
         if (priceAfterPurchaseSets?.length > 0) {
@@ -284,21 +284,19 @@ const AssetHolder = (props: AssetProps) => {
                 }
     
                 // Check if priceAfterPurchaseNum is less than formattedPrice
-                if (inputPriceAfterPurchase < formattedPrice) {
-                    setError("Price After Purchase must be greater than or equal to the original price");
-                    setCopiedLink(true); // Assuming this is the correct function to show the modal/message
+                if (inputPriceAfterPurchase < formattedPrice || inputPriceAfterPurchase < (2 * formattedPrice)) {
+                    setError("Price After Purchase must be greater than or equal to the original price and less than twice the original price");
+                    setCopiedLink(true); // Set copiedLink to true as per the new condition
                     return; // Exit the function early
                 }
 
                 else {
-                                    // Ensure priceAfterPurchaseNum is a string before converting it to Wei
-                const etherPriceAfterPurchase = inputPriceAfterPurchase.toString();
-        
-                // Convert the string to Wei
-                const weiInputPriceAfterPurchase = ethers.utils.parseEther(etherPriceAfterPurchase);
-        
-                // Continue with the listing process...
-                await onSellConfirmedMinted(weiInputPriceAfterPurchase); // Ensure this is awaited
+                    // Ensure priceAfterPurchaseNum is a string before converting it to Wei
+                    const etherPriceAfterPurchase = inputPriceAfterPurchase.toString();
+                    // Convert the string to Wei
+                    const weiInputPriceAfterPurchase = ethers.utils.parseEther(etherPriceAfterPurchase);
+                    // Continue with the listing process...
+                    await onSellConfirmedMinted(weiInputPriceAfterPurchase); // Ensure this is awaited
                 }
             }
         } catch (e) {

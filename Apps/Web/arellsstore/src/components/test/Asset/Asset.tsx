@@ -22,8 +22,6 @@ const Asset = () => {
     const { nft } = useSingleNFT(storeAddressFromURL, nftId); 
     const { nftSelling } = useSingleSellingNFT(storeAddressFromURL, nftId); 
 
-    console.log("nft info: ", nft);
-
 
 
     return (

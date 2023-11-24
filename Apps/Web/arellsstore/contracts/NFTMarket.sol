@@ -59,18 +59,19 @@ contract NFTMarket is ERC721URIStorage, Ownable {
     }
 
     function listNFTCollector(uint256 tokenID, uint256 newPriceAfterPurchase) public {
-        uint256 oldPriceAfterPurchase = _priceAfterPurchase[tokenID];
-        require(oldPriceAfterPurchase > 0, "AssetMarket: No valid old price after purchase set");
-        require(newPriceAfterPurchase > oldPriceAfterPurchase, 
-        "AssetMarket: Price after purchase must be more than price");
+        _priceAfterPurchase[tokenID] = newPriceAfterPurchase;
+        
+        require(newPriceAfterPurchase > 0, "AssetMarket: No valid price after purchase set");
+        require(newPriceAfterPurchase > _listings[tokenID].price, "AssetMarket: New price after purchase must be more than price");
         require(ownerOf(tokenID) == msg.sender, "AssetMarket: You're not the owner of this NFT");
 
-        _listings[tokenID] = NFTListing(oldPriceAfterPurchase, msg.sender);
-        _priceAfterPurchase[tokenID] = newPriceAfterPurchase;
+        _listings[tokenID].seller = msg.sender;
 
-        emit NFTTransfer(tokenID, msg.sender, address(this), _intendedTokenURIs[tokenID], oldPriceAfterPurchase);
+        // Emit the events for updating the price after purchase
         emit PriceUpdated(tokenID, newPriceAfterPurchase);
         emit NewPriceAfterPurchaseSet(tokenID, newPriceAfterPurchase);
+        uint256 currentListingPrice = _listings[tokenID].price;
+        emit NFTTransfer(tokenID, msg.sender, address(this), _intendedTokenURIs[tokenID], currentListingPrice);
     }
 
 
@@ -109,12 +110,15 @@ contract NFTMarket is ERC721URIStorage, Ownable {
             payable(seller).transfer(listing.price.mul(57).div(100));
         }
 
-        // Set the new listing price to the current price after purchase for future sales
+        // After the sale, set the new listing price for future sales
         _listings[tokenID] = NFTListing(currentPriceAfterPurchase, address(0));
-
         emit PriceUpdated(tokenID, currentPriceAfterPurchase);
         emit NFTTransfer(tokenID, address(this), msg.sender, "", currentPriceAfterPurchase);
+
+        // Set the price after purchase for this tokenID to 0
+        _priceAfterPurchase[tokenID] = 0;
     }
+
 
     // New function to get the price after purchase
     function getPriceAfterPurchase(uint256 tokenID) public view returns (uint256) {

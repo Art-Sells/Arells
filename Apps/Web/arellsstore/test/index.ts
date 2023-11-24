@@ -137,11 +137,17 @@ describe("Arells Digital Assets", function (){
 
     describe("listNFTCollector", () => {
         const tokenURI = 'some token uri';   
+        it("Should revert if Price After Purchase = 0", async () => {
+            const tokenID = await createAndListNFT(10, 15);
+            await nftMarket.connect(signers[1]).buyNFT(tokenID, { value: 10 });
+            await expect(nftMarket.listNFTCollector(tokenID, 0))
+            .to.be.revertedWith("AssetMarket: No valid price after purchase set");    
+        });   
         it("Should revert if Price After Purchase < Price for Collector", async () => {
             const tokenID = await createAndListNFT(10, 15);
             await nftMarket.connect(signers[1]).buyNFT(tokenID, { value: 10 });
-            await expect(nftMarket.listNFTCollector(tokenID, 10))
-            .to.be.revertedWith("AssetMarket: Price after purchase must be more than price");    
+            await expect(nftMarket.listNFTCollector(tokenID, 14))
+            .to.be.revertedWith("AssetMarket: New price after purchase must be more than price");    
         });   
  
         it("Should revert if not called by the collector", async () => {
@@ -182,7 +188,7 @@ describe("Arells Digital Assets", function (){
             expect(listedNewPriceAfterPurchase).to.equal(newPriceAfterPurchase);
         
             // NFTTransfer event should have right args
-            const args = receipt.events[0].args; 
+            const args = receipt.events[2].args; 
             expect(args.tokenID).to.equal(tokenID);
             expect(args.from).to.equal(signers[1].address);
             expect(args.to).to.equal(nftMarket.address);
@@ -252,7 +258,6 @@ describe("Arells Digital Assets", function (){
 
             //NFTTransfer event should have right args
             const args = receipt.events[3].args;
-            console.log("Price After Purchase System (After 1st Purchase): ", args);
             expect(args.tokenID).to.equal(tokenID);
             expect(args.from).to.equal(nftMarket.address);
             expect(args.to).equal(signers[1].address);
@@ -302,11 +307,10 @@ describe("Arells Digital Assets", function (){
             );
 
             //signers[2] (New Collector) buys it from signers[1] (Old Collector)
-            const transaction = await nftMarket.
-                connect(signers[2]).
-                buyNFT(tokenID, {value: priceAfterPurchase});
+            const transaction = await 
+            nftMarket.connect(signers[2]).buyNFT(tokenID, {value: priceAfterPurchase});
             const receipt = await transaction.wait();
-            
+        
             ///57% of price added to Old Collector balance and 40% to Creator Balance
             const newSellerBalance = await ethers.provider.getBalance(signers[1].address);
             const newCreatorBalance = await ethers.provider.getBalance(signers[0].address);
@@ -331,7 +335,6 @@ describe("Arells Digital Assets", function (){
 
             //NFTTransfer event should have right args
             const args = receipt.events[2].args;
-            console.log("Price After Purchase System (After 2nd Purchase): ", args);
             expect(args.tokenID).to.equal(tokenID);
             expect(args.from).to.equal(nftMarket.address);
             expect(args.to).equal(signers[2].address);
