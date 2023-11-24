@@ -61,6 +61,7 @@
 - metadata const (upgrade from generateMetadata) must be async for dynamic changes
 - *clear Browsing/Cache Data before checking*
 - Google Search Console Index (with sitemap)
+- Test Wallet Connected/Not-Connected
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
