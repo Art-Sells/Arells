@@ -81,7 +81,8 @@ ________________________________________________________________________________
 - Re-deploy test cases "Buy NFT" to "Buy Asset" and "Create Asset" within wallet interactions...
 - Change PUBLIC_NFT_MARKET_ADDRESS to PUBLIC_ARELLS_STORE_ADDRESS
 - Add PUBLIC_ARELLS_MARKET_ADDRESS for 3% Fee (Refactor SmartContract to Accept)
-- AUM (Assets Under Management) system & # of New Wallets Created, system. 
+- AUM (Assets Under Management) system & # of New Wallets Created, system.
+- Research Upgradable SmartContracts (through OpenZeppelin)
 
 ### Wallet
 - Test with Metamask/Mumbai-USDC
@@ -168,7 +169,7 @@ ________________________________________________________________________________
 - - **Owned**:
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
-- Ability to Edit after Selling:
+- Ability to Edit after Selling (Upgrade Contract):
 ```solidity
 function listNFTCollector(uint256 tokenID, uint256 listingPrice, uint256 newPriceAfterPurchase) public {
     require(listingPrice > 0, "AssetMarket: Listing price must be more than 0");
