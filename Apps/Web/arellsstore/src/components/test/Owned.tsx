@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 // asset components (change below links after test)
 import useSigner from "../../state/signer";
 import useNFTMarket from "../../state/nft-market";
-import AssetStoreHolder from "./Asset/StoreAssetHolder";
+import StoreAssetHolder from "./Asset/StoreAssetHolder";
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
@@ -53,6 +53,7 @@ const Owned = () => {
 	const [createConnected, setCreateConnected] = useState(false);
     const [noArtCreated, setNoArtCreated] = useState(false);
     const [artCreated, setArtCreated] = useState(false);
+	const [artSelling, setArtSelling] = useState(false);
 // useState constants above
 
 // asset functions below
@@ -86,20 +87,12 @@ const Owned = () => {
         }
     }, [address]);
 	useEffect(() => {
-		if (createdNFTs && createdNFTs.length > 0) {
-			const isOwnerOfAnyNFT = createdNFTs.some(nft => {
-				return nft.storeAddress === storeAddressFromURL;
-			});
-	
-			if (isOwnerOfAnyNFT) {
-				setNoArtCreated(false);
-				setArtCreated(true);
-			} else if (!isOwnerOfAnyNFT){
-				setNoArtCreated(true);
-				setArtCreated(false);
-			}
-		}
-	}, [createdNFTs, storeAddressFromURL]);
+		const hasCreatedArt = !!createdNFTs && createdNFTs.length > 0;
+		const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
+		
+		setArtCreated(hasCreatedArt);
+		setArtSelling(hasSellingArt);
+	}, [createdNFTs, sellingNFTs]);
 // asset constants above
 
 	
@@ -187,18 +180,18 @@ const Owned = () => {
 				</p>
 			)}
 			{artCreated && (
-				<>
 				<div id="container-seller-created">
 					{createdNFTs?.map((nft) => {
-						return <AssetStoreHolder nft={nft} key={nft.id} />;
+						return <StoreAssetHolder nft={nft} key={nft.id} />;
 					})}
 				</div>
+			)}
+			{artSelling && (
 				<div id="container-seller-created">
-					{sellingNFTs?.map((nft) => {
-						return <AssetStoreHolder nft={nft} key={nft.id} />;
-					})}
+					{sellingNFTs?.map((nft) => (
+						<StoreAssetHolder nft={nft} key={nft.id} />
+					))}
 				</div>
-				</>	
 			)}
 
 		     

@@ -88,8 +88,10 @@ const AssetHolder = (props: AssetProps) => {
 //Price & Price Affter Purchase Front-End Systems Below
     // DELETE AFTER TEST (Modal As Well)
     const [showCopiedLink, setCopiedLink] = useState(false);
+    const [showCopiedLinkPrice, setCopiedLinkPrice] = useState(false);
     const closeCopiedLink = () => {
         setCopiedLink(false);
+        setCopiedLinkPrice(false);
     };
 
 
@@ -175,30 +177,26 @@ const AssetHolder = (props: AssetProps) => {
     
                 if (!price) {
                     setError("Price is required");
+                    setCopiedLinkPrice(true); 
                     return;
                 }
 
                 if (!priceAfterPurchase) {
                     setError("Price After Purchase is required");
+                    setCopiedLinkPrice(true); 
                     return;
                 }
     
                 const weiPrice = ethers.utils.parseEther(price);
                 if (weiPrice.lte(0)) {
                     setError("Price must be greater than 0");
+                    setCopiedLinkPrice(true); 
                     return;
                 }
 
                 const weiPriceAfterPurchase = ethers.utils.parseEther(
                     priceAfterPurchase);
-                if (weiPriceAfterPurchase.lte(0)) {
-                    setError("Price After Purchase must be greater than 0");
-                    return;
-                }    
-                if (weiPriceAfterPurchase.lt(weiPrice)) {
-                    setError("Price After Purchase must be greater than or equal to the original price");
-                    return;
-                }
+
                 await onSellConfirmed(weiPrice, weiPriceAfterPurchase); // Ensure this is awaited
             }
         } catch (e) {
@@ -276,18 +274,20 @@ const AssetHolder = (props: AssetProps) => {
     
                 if (!inputPriceAfterPurchase) {
                     setError("Price After Purchase is required");
+                    setCopiedLink(true); 
                     return;
                 }
                 if (inputPriceAfterPurchase == 0) {
                     setError("Price After Purchase is required");
+                    setCopiedLink(true); 
                     return;
                 }
     
                 // Check if priceAfterPurchaseNum is less than formattedPrice
                 if (inputPriceAfterPurchase < formattedPrice || inputPriceAfterPurchase < (2 * formattedPrice)) {
                     setError("Price After Purchase must be greater than or equal to the original price and less than twice the original price");
-                    setCopiedLink(true); // Set copiedLink to true as per the new condition
-                    return; // Exit the function early
+                    setCopiedLink(true); 
+                    return; 
                 }
 
                 else {
@@ -346,6 +346,17 @@ const AssetHolder = (props: AssetProps) => {
                     src="/images/PriceAfterPurchaseLogoIvory.png"/>  
 				<p>Price After Purchase</p>
                 <p>Must Be at least 2x of Price</p>
+				<button className="close"
+					onClick={closeCopiedLink}>OK</button>	
+				</div>
+			</div>	
+		)}
+
+        {showCopiedLinkPrice && (
+			<div id="copiedLink">
+
+				<div className="modal-content">
+				<p>Price Required</p>
 				<button className="close"
 					onClick={closeCopiedLink}>OK</button>	
 				</div>

@@ -56,6 +56,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 // asset constants below
     const { address, connectWallet} = useSigner();
     const { nft } = props;
+    console.log("NFT info: ", nft);
     const formattedPrice = nft.price.includes('.') 
     ? nft.price 
     : ethers.utils.formatUnits(ethers.BigNumber.from(nft.price), 'ether');
@@ -69,7 +70,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
           ? router.query.storeAddress[0]
           : router.query.storeAddress;
       return address ? address.toLowerCase() : null;
-  }, [router.query.storeAddress]);
+    }, [router.query.storeAddress]);
     const addressMatch = address?.toLowerCase() === storeAddressFromURL?.toLowerCase();
 
 
@@ -81,7 +82,6 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     useEffect(() => {
       const fetchMetadata = async () => {
         const metadataResponse = await fetch(ipfsToHTTPS(nft.tokenURI));
-        console.log("NFT Info: ", metadataResponse);
         if (metadataResponse.status != 200) return;
         const json = await metadataResponse.json();
         setMeta({
@@ -101,7 +101,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
         setIsNFTMinted(minted);
     };
 
-    checkMintingStatus();
+      checkMintingStatus();
     }, [nft.id, checkIfNFTMinted]);
 
     const { priceAfterPurchaseSets = [] } = usePriceAfterPurchaseSets(nft.id);
@@ -112,6 +112,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     useEffect(() => {
       if (priceAfterPurchaseSets?.length > 0) {
         const newPAP = priceAfterPurchaseSets[0].newPriceAfterPurchase;
+        console.log("New Price After Purchase: ", newPAP);
         setFormattedNewPriceAfterPurchase(newPAP !== "0" ? newPAP : "...");
       }
     }, [priceAfterPurchaseSets]);
@@ -133,7 +134,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
       }
     };
     
-    async function buy() {
+  async function buy() {
       try {
           if (!address) {
               await connectWallet(); 
@@ -336,7 +337,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   </Link>
               </>
           )}	      
-          {addressMatch && address && forSale && !forSaleMinted && isNFTMinted && (
+          {addressMatch && address && !forSaleMinted && isNFTMinted && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -359,7 +360,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   </Link>
               </>
           )}	   
-          {addressMatch && address && forSale && forSaleMinted && isNFTMinted && (
+          {addressMatch && address && forSaleMinted && isNFTMinted && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image

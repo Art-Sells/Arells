@@ -118,6 +118,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
 
         // Set the price after purchase for this tokenID to 0
         _priceAfterPurchase[tokenID] = 0;
+        emit NewPriceAfterPurchaseSet(tokenID, 0);
     }
 
 
@@ -153,7 +154,8 @@ contract NFTMarket is ERC721URIStorage, Ownable {
 
         clearListing(tokenID);
 
-        emit NFTTransfer(tokenID, address(this), msg.sender, "", 0); // Assuming NFTTransfer indicates a listing cancellation, not an actual NFT transfer
+        emit NFTTransfer(tokenID, address(this), msg.sender, "", 0);
+        emit NewPriceAfterPurchaseSet(tokenID, 0);
     }
 
     // cancelListingCollector
@@ -166,7 +168,8 @@ contract NFTMarket is ERC721URIStorage, Ownable {
 
         clearListing(tokenID);
 
-        emit NFTTransfer(tokenID, address(this), msg.sender, "", listing.price); // Assuming NFTTransfer indicates a listing cancellation, not an actual NFT transfer
+        emit NFTTransfer(tokenID, address(this), msg.sender, "", listing.price);
+        emit NewPriceAfterPurchaseSet(tokenID, 0);
     }
 
     function withdrawFunds() public onlyOwner{
