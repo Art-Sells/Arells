@@ -17,14 +17,18 @@
 - [SELL]-Edit, [OWNED]-silver
  
 ### Creating Mechanics
-- Add Store StockingModal "Your created Art is being stocked, please wait a few seconds for it to appear in your store."
+- Add PaintBrush Modal While Creating "Creating Art."
+- Add Broken Paint-Brush Modal "Art creation failed."
+- Add Forklift Modal After Successful Creation "Art Created! Your Art is now being received, please wait a few seconds for it to appear in your store."
 - Name... (50 Character Limit)?
 
 #### Sell
 - Meta.name (full)
 - Polygon Symbols
 - PAP Logo above Price After Purchase
-- Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
+- Add Price Tag Modal "Listing Art."
+- Add Price Tag Modal "Canceled Listing."
+- Add Price Tag on Item Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
 
 ### Other Store
 - Top-Left[/\]- (See HOME section)
@@ -34,7 +38,10 @@
 - - **Selling**:
 - Price After Purchase
 - Price
-- [BUY]-share store to sell Modal {Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store.}
+- [BUY]
+- - Add Cash Register Modal "Purchasing Art... Please Wait"
+- - Add Cash Register Modal "Canceled Purchase"
+- - Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store.
 - - **Owned**:
 - Meta.name (length limit)
 - Price - (if price not yet set purchased) = "Not For Sale"
@@ -51,7 +58,8 @@
 - Test Wallet Connected/Not-Connected
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
+- Add Icons to "Connecting, Review and Connected Modals"
+- Store Private Key Cold & Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
 - Send 1 month - 2 week notifications on new Features to be added.
 - "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "A Polygon Digital Asset market that renders bear markets obsolete. never lose money selling art with Arells!". 
@@ -114,7 +122,7 @@ ________________________________________________________________________________
 - MetaTag Description: "Profile/Asset Category"
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold & Make "ArellsStore" Code Private.
+- Store Private Key Cold
 - Delete all Test/Branched/Component links
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 - Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
