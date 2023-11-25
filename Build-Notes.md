@@ -126,7 +126,7 @@ ________________________________________________________________________________
 - MetaTag Description: "Profile/Asset Category"
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
+- Store Private Key Cold & Make "ArellsStore" Code Private.
 - Delete all Test/Branched/Component links
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 - Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
