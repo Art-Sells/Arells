@@ -119,7 +119,7 @@ const Owned = () => {
 {/*<!-- Modals Above -->*/}
 		<div id="header-seller-created">
 			
-			{/*<!-- Change below link after test -->*/}
+{/*<!-- Change below link after test -->*/}
 				<Link legacyBehavior href="/">
 					<a id="icon-link-seller-created">
 						<Image
@@ -144,7 +144,7 @@ const Owned = () => {
 					</button>
 				)}	
 				{createConnected && (
-					// change below link after test
+// change below link after test
 					<Link legacyBehavior href="/test/create">
 						<a id="cart-link-connected-seller-created">
 							<Image
@@ -169,7 +169,7 @@ const Owned = () => {
 		<p id="slogan-seller-created">SELL ART THAT OBSCURES BEAR MARKETS</p>
 		<hr id="profileline-seller-created"/>
 		<div id="created-collected-seller-created">
-		{/*<!-- Change below link after test -->*/}	
+{/*<!-- Change below link after test -->*/}	
 			<Link legacyBehavior href="/test/selling">
 				<a id="selling">Selling</a>	
 			</Link>	

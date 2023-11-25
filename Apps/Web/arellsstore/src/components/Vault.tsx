@@ -65,16 +65,16 @@ const Vault = () => {
 
   return (
     <>
-        {openVault && (
-          <button id="updatess" onClick={connectWallet}>
-            OPEN VAULT
-          </button>     
-		)}	
-		{openVaultConnected && (
-          <button id="updatess" onClick={withdrawFunds}>
-            ENTER VAULT
-          </button> 
-		)}		  
+      {openVault && (
+        <button id="updatess" onClick={connectWallet}>
+          OPEN VAULT
+        </button>     
+      )}	
+      {openVaultConnected && (
+            <button id="updatess" onClick={withdrawFunds}>
+              ENTER VAULT
+            </button> 
+      )}		  
     </>
   );
 }

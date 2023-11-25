@@ -227,7 +227,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                 <div id="walletConnected">
                     <div id="wallet-connected-modalGood">
                         <p>CONNECTED</p>
-    {/* // change below link after test */}
                         <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>   
                     </div>
                 </div>  

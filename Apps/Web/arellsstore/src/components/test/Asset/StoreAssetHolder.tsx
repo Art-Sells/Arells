@@ -127,7 +127,8 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
       try {
         await buyNFT(nft);
         toast.success("You bought this NFT. Changes will be reflected shortly.");
-  //Change below link after test
+//Change below link after test
+        //Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store."
         router.push(`/test/owned/${address}`);
       } catch (e) {
         showErrorToast();
@@ -230,7 +231,8 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         <hr id="priceline-seller-created" />
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
-                    </div>         
+                    </div>        
+// change below link after test                     
                     <Link legacyBehavior href={`/test/selling/${storeAddressFromURL}`} passHref>
                       <button id="blue-orange-add-to-cart-seller-created-selling" >
                         SELLING</button>
@@ -308,7 +310,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         <p id="yourprice-seller-created">Price</p>
                         <p id="price-blue-orange-before-seller-created">...</p>
                     </div>
-        {/* change below link after test */}                
+{/* change below link after test */}                
                     <Link legacyBehavior href={`/test/sell/${address}/${nft.id}`} passHref>
                       <button id="blue-orange-add-to-cart-seller-created" >
                         SELL</button>
@@ -331,7 +333,8 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
-                  </div>         
+                  </div>    
+{/* change below link after test */}                             
                   <Link legacyBehavior href={`/test/sell/${address}/${nft.id}`} passHref>
                     <button id="blue-orange-add-to-cart-seller-created-selling" >
                       EDIT</button>
@@ -358,7 +361,8 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
-                  </div>         
+                  </div>  
+{/* change below link after test */}                               
                   <Link legacyBehavior href={`/test/sell/${address}/${nft.id}`} passHref>
                     <button id="blue-orange-add-to-cart-seller-created-selling" >
                       EDIT</button>
@@ -385,7 +389,8 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
-                  </div>         
+                  </div>  
+{/* change below link after test */}                               
                   <Link legacyBehavior href={`/test/sell/${address}/${nft.id}`} passHref>
                     <button id="blue-orange-add-to-cart-seller-created-selling" >
                       EDIT</button>

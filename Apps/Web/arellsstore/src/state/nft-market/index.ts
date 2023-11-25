@@ -8,10 +8,11 @@ import {useSellingNFTs} from "../nft-market/useSellingNFTs";
 import {NFT_MARKET_ADDRESS} from "../nft-market/config"
 import { useBuyNFTs } from "./useBuyNFTs";
 import { NFT } from "./interfaces";
+import router from "next/router";
 
 
 const useNFTMarket = (storeAddress: string | null) => {
-  const{signer} = useSigner();
+  const{signer, address} = useSigner();
  // console.log("Retrieved signer:", signer);
   const nftMarket = new Contract(
     NFT_MARKET_ADDRESS,
@@ -38,6 +39,9 @@ const useNFTMarket = (storeAddress: string | null) => {
           json.uri
         );
         await transaction.wait();
+//Change below link after test
+    //Add Store StockingModal "Your created Art is being stocked, please wait a few seconds for it to appear in your store."
+            router.push(`/test/owned/${address}`);
       } 
     } catch (e) {
       console.error("Exception while calling /api/nft-storage:", e);

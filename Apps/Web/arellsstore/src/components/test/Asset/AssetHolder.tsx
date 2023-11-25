@@ -1,6 +1,6 @@
 'use client'
 
-// asset components (change below links after test)
+// asset components
 import { BigNumber, ethers } from "ethers";
 import useSigner from "../../../state/signer";
 import useNFTMarket from "../../../state/nft-market";
@@ -16,7 +16,6 @@ import styles from '../../../app/css/modals/loading/spinner.module.css';
 import "../../../app/css/modals/copiedlink.css"
 
 import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";
 import {Input} from "./PriceInputs/Input";
@@ -158,8 +157,9 @@ const AssetHolder = (props: AssetProps) => {
         try {
           await listNFTCreator(nft.id, price, priceAfterPurchase);
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
-  //Change below link after test
-          router.push(`/test/owned/${address}`);
+//Change below link after test
+            //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
+          router.push(`/test/selling/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);
@@ -253,8 +253,9 @@ const AssetHolder = (props: AssetProps) => {
         try {
           await listNFTCollector(nft.id, priceAfterPurchaseNum);
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
-  //Change below link after test
-          router.push(`/test/owned/${address}`);
+//Change below link after test
+            //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
+          router.push(`/test/selling/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);

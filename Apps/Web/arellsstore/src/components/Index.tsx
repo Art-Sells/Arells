@@ -7,7 +7,6 @@ import type { ImageLoaderProps } from 'next/image';
 
 // Change below link after test
 import '../app/css/Home.css';
-import '../app/css/modals/copiedlink.css';
 
 // Loader Styles
 import '../app/css/modals/loading/spinnerBackground.css';
@@ -51,14 +50,27 @@ const Index = () => {
     const [openStore, setOpenStore] = useState(true);
     const [openStoreConnected, setOpenStoreConnected] = useState(false);
     const { address, connectWallet } = useSigner();
-    useEffect(() => {
-      if (address) {
+    const [isConnecting, setIsConnecting] = useState(false);
+    const handleConnectWallet = async () => {
+      setIsConnecting(true);
+      try {
+        await connectWallet(); // Assuming connectWallet returns a Promise
+        // Update states to reflect successful connection
         setOpenStore(false);
         setOpenStoreConnected(true);
+      } catch (error) {
+        console.error("Error connecting wallet:", error);
       }
-      else if (!address) {
+      setIsConnecting(false);
+    };
+    useEffect(() => {
+      if (!address) {
         setOpenStore(true);
         setOpenStoreConnected(false);
+      }
+      else {
+        setOpenStore(false);
+        setOpenStoreConnected(true);
       }
     }, [address]);
 // Asset functions anove    
@@ -81,13 +93,13 @@ const Index = () => {
       )}
 
         <Image 
-        loader={imageLoader}
-        onLoad={() => handleImageLoaded('arellsIcon')}
-        alt="" 
-        width={80}
-        height={85}
-        id="arells-iconn" 
-        src="images/Arells-Icon.png"/>
+          loader={imageLoader}
+          onLoad={() => handleImageLoaded('arellsIcon')}
+          alt="" 
+          width={80}
+          height={85}
+          id="arells-iconn" 
+          src="images/Arells-Icon.png"/>
       
         <br/>
         
@@ -110,8 +122,12 @@ const Index = () => {
         
         <hr id="black-liner"/>
         {openStore && (
-          <button id="updatess" onClick={connectWallet}>
-            OPEN STORE
+          <button 
+          id="updatess" 
+          onClick={handleConnectWallet}
+          disabled={isConnecting} 
+          >
+               {isConnecting ? "OPENING..." : "OPEN STORE"}
           </button>     
 				)}	
 				{openStoreConnected && (
