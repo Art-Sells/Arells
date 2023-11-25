@@ -1,26 +1,14 @@
 ## Arells Build Notes...
 
 ## Arells 1.0
-- Pages separated like so: arells/address/selling, arells/address/notselling
-- Start with Polygon/Coinbase
-- Ensure Each Page has differing MetaDescriptions
-- Add "Change-After-Test" over every href.
-- Change Home.css everytime updloading (ask GPT4 About Metadate reloading)?
 
 ### Wallet: 
-- Test with Metamask/Mumbai
 - Mainnet with Coinbase/Polygon
 
-### Home
-- [Unlock Store] - takes you to "My Store" if not [Connect Wallet]
-
 ### My Store
-- Top-Left[/\]- (See HOME section)
-- Top-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
-- PAP Logo Above Price After Purchase
-- After setting Price and Price After Purchase for sale {Art Listed For Sale Modal takes you to "Selling"}
 - - **Selling**:
 - Price After Purchase
+- Polygon Symbols
 - Price
 - [BUY]-share store to sell Modal
 - - **Owned**:
@@ -29,15 +17,14 @@
 - [SELL]-Edit, [OWNED]-silver
  
 ### Creating Mechanics
-- Once confirmed -> {Art Created Modal} {Item Automatically in Owned Profile Page PAP & Price}
-- Images are not minted until images are purchased (Digital Fingerprints "Revealed After Purchase"). *Inform Users about Free NFT Creation/Minting process*
+- Add Store StockingModal "Your created Art is being stocked, please wait a few seconds for it to appear in your store."
 - Name... (50 Character Limit)?
-- PAP price calculated 2x from price listed by creator (After Sale: You Keep... 50%, Buyer Keeps... 47%, Fees... 3%)...
-- 1 Blockchain (Polygon)--- This is automatically chosen for buyer..
 
 #### Sell
 - Meta.name (full)
-- **PAP Connected to tokenURI and can be changed whenever... After NFT is sold, PAP connected to tokenURI == nft.price, PAP Connected to tokenURI is now null until changed, nft.price can never be changed. (AssetHolder = PaP & Price Can be Modified)(CollectedAssetHolder = PaP Can be Modified, Price == Old PaP)**
+- Polygon Symbols
+- PAP Logo above Price After Purchase
+- Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
 
 ### Other Store
 - Top-Left[/\]- (See HOME section)
@@ -47,7 +34,7 @@
 - - **Selling**:
 - Price After Purchase
 - Price
-- [BUY]-share store to sell Modal (if addres match to url)
+- [BUY]-share store to sell Modal {Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store.}
 - - **Owned**:
 - Meta.name (length limit)
 - Price - (if price not yet set purchased) = "Not For Sale"
@@ -99,6 +86,7 @@ ________________________________________________________________________________
 ### My Store
 - Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
 - no Logo or Slogan
+- Dollar Symbols
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test)
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
