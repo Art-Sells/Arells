@@ -4,7 +4,7 @@ import React from "react";
 
 import type { Metadata } from 'next';
 
-import CreateArt from '../../../components/test/Create/CreateArt';
+import CreateArt from '../../../components/Create/CreateArt';
 
 export const metadata: Metadata = {
   title: "Create Test",

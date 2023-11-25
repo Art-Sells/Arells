@@ -211,7 +211,27 @@
 		  width: 150px;
 		background: none;
 		opacity: 1;
-			
+		}  		
+		#selling-seller {
+			flex: 1;			
+			margin-right: 10px;
+			align-items: center;	
+			  text-decoration: none;
+			  color: black;
+			  font-weight: 300;
+			  font-size: 13px;
+			  padding-top: 12px;
+			  padding-bottom: 12px;
+			  padding-right: 25px;
+			  padding-left: 25.5px;	  
+			  border: solid;
+			  letter-spacing: .5px;
+			  border-radius: 10px;
+			  border-width: 1px;
+			  border-color: gray;
+			  width: 150px;
+			background: none;
+			opacity: 1;
 		}  		
 		#owned {
 		flex: 1;			
@@ -234,8 +254,31 @@
 		  opacity: 1;
 			background: none;
 		}	
+		#owned-seller {
+			flex: 1;			
+			margin-left: 10px;
+			align-items: center;	
+			  text-decoration: none;
+			  color: gray;
+			  font-weight: 300;
+			  font-size: 13px;
+			  padding-top: 13px;
+			  padding-bottom: 13px;
+			  padding-right: 25px;
+			  padding-left: 25.5px;	  
+			  border: solid;
+			  letter-spacing: .5px;
+			  border-radius: 10px;
+			  border-width: 1px;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  width: 150px;
+			  opacity: 1;
+				background: none;
+		}	
 		#selling:hover,
-		#selling:focus {
+		#selling:focus,
+		#owner-seller:hover,
+		#owned-seller:focus {
 			  transition: 1s;
 			  cursor: pointer;
 			  color: black;
@@ -356,6 +399,8 @@
 				padding-left: 0px;
 				opacity: .5;
 			}
+
+
 			#PAP-beach-houses-before-seller-created, #PAP-colour-glass-before-seller-created,
 			#PAP-layers-before-seller-created, #PAP-succinct-drop-before-seller-created, #PAP-paint-rain-before-seller-created,
 			
@@ -404,6 +449,18 @@
 				padding-left: 0px;
 				opacity: .7;
 				margin-bottom: 28px;
+			}
+			#polygon-logo {
+				width: 14px; 
+                height: 12px;
+				margin-right: 3px;
+				opacity: .4;
+			}
+			#polygon-logo-pap {
+				width: 14px; 
+                height: 12px;
+				margin-right: 3px;
+				opacity: .25;
 			}
 			#blue-orange-add-to-cart-seller-created {
 				  text-decoration: none;
@@ -623,7 +680,7 @@
 			align-items: center;
 			  width: 400px;
 		}  
-			#selling {		
+			#selling, #selling-seller {		
 			margin-right: 10px;
 			margin-left: 8px;
 			  font-size: 10px;
@@ -634,7 +691,7 @@
 			  letter-spacing: .5px;
 				
 			}  		
-			#owned {		
+			#owned, #owned-seller {		
 			margin-left: 0px;
 			margin-right: 7px;
 			  font-size: 10px;
@@ -680,12 +737,12 @@
 			#PAP-blue-orange-before-seller-created, #PAP-beach-houses-before-seller-created, #PAP-colour-glass-before-seller-created,
 			#PAP-layers-before-seller-created, #PAP-succinct-drop-before-seller-created, #PAP-paint-rain-before-seller-created,
 			
-			
 			#PAP-blue-orange-after-seller-created, #PAP-beach-houses-after-seller-created, #PAP-colour-glass-after-seller-created,
 			#PAP-layers-after-seller-created, #PAP-succinct-drop-after-seller-created, #PAP-paint-rain-after-seller-created {
 				margin-top: 0px;
 				font-size: 13px;
 			}
+
 
 			#priceline-seller-created {
 			  margin-top: -2px;
@@ -693,15 +750,15 @@
 			}	
 			#yourprice-seller-created {
 			margin-top: 12px;
-				font-size: 13px;
+				font-size: 10px;
 			}
 			#price-blue-orange-before-seller-created, #price-beach-houses-before-seller-created, #price-colour-glass-before-seller-created,
 			#price-layers-before-seller-created, #price-succinct-drop-before-seller-created, #price-paint-rain-before-seller-created,
 			
 			#price-blue-orange-after-seller-created, #price-beach-houses-after-seller-created, #price-colour-glass-after-seller-created,
 			#price-layers-after-seller-created, #price-succinct-drop-after-seller-created, #price-paint-rain-after-seller-created {
-				margin-top: -10px;
-				font-size: 15px;
+				margin-top: -6px;
+				font-size: 14px;
 				margin-bottom: 20px;	
 			}			
 			#blue-orange-add-to-cart-seller-created, #blue-orange-add-to-cart-seller-created-selling,
@@ -717,6 +774,16 @@
 				  border: none;
 				  letter-spacing: 1px;
 				  width: 120px;
+				}	
+				#polygon-logo {
+					width: 10px; 
+					height: 8px;
+					margin-right: 3px;
+				}
+				#polygon-logo-pap {
+					width: 10px; 
+					height: 8px;
+					margin-right: 3px;
 				}	  
 			#for-sale,
 			#not-for-sale

@@ -1,12 +1,12 @@
-import '../../../../app/css/prototype/asset/asset.css';
+import '../../app/css/prototype/seller-created.css';
 
 import React from "react";
 import type { Metadata } from 'next';
 
 //change link after testing
-import Asset from '../../../../components/test/Asset/Asset';
-import { SignerProvider } from '../../../../state/signer';
-import { ApolloWrapper } from '../../../../lib/apollo-provider';
+import Selling from '../../components/Selling';
+import { SignerProvider } from '../../state/signer';
+import { ApolloWrapper } from '../../lib/apollo-provider';
 
 export const metadata: Metadata = {
   title: "Arells",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "Arells",
     description: "Art For Sale",
     // Change this link after testing
-    url: "https://arells.com/test/sell/[storeAddress]/[nftId]", 
+    url: "https://arells.com/test/owned/[storeAddress]", 
     type: "website",
     images: [
       {
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
   }
 }
 
-const SellPage = () => {
+const SellingPage = () => {
   return (
     <>
-          <div id="asset-wrapper">
+          <div id="prototype-seller-created-wrapper">
             <SignerProvider>
               <ApolloWrapper>
-                <Asset/>
+                <Selling/>
               </ApolloWrapper>      
             </SignerProvider>
           </div>
@@ -53,6 +53,6 @@ const SellPage = () => {
   );
 }
 
-export default SellPage;
+export default SellingPage;
 
 

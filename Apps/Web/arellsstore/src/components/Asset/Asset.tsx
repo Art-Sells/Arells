@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from 'next/router';
-import useSigner from "../../../state/signer";
-import { useSingleNFT } from "../../../state/nft-market/useCreatedNFTs"; 
-import { useSingleSellingNFT } from "../../../state/nft-market/useSellingNFTs"; 
+import useSigner from "../../state/signer";
+import { useSingleNFT } from "../../state/nft-market/useCreatedNFTs"; 
+import { useSingleSellingNFT } from "../../state/nft-market/useSellingNFTs"; 
 import AssetHolder from "./AssetHolder";
 import '../../../app/css/prototype/asset/asset.css';
 import { useMemo } from 'react';

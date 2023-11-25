@@ -1,7 +1,7 @@
 import React, { InputHTMLAttributes } from "react";
 
 import { useField } from "formik";
-import useSigner from "../../../../state/signer";
+import useSigner from "../../../state/signer";
 
 type FormikInputProps = {
   name: string;

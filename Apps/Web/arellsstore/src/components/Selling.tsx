@@ -4,24 +4,24 @@ import React, { useMemo } from "react";
 import { useRouter } from 'next/router';
 
 // asset components (change below links after test)
-import useSigner from "../../state/signer";
-import useNFTMarket from "../../state/nft-market";
-import StoreAssetHolder from "./Asset/StoreAssetHolder";
+import useSigner from "../state/signer";
+import useNFTMarket from "../state/nft-market";
+import StoreAssetHolderSelling from "./Asset/StoreAssetHolderSelling";
 
 // Change below link after test
-import '../../app/css/prototype/seller-created.css';
-import '../../app/css/prototype/buyer-collected.css';
-import '../../app/css/modals/copiedlink.css';
+import '../app/css/prototype/seller-created.css';
+import '../app/css/prototype/buyer-collected.css';
+import '../app/css/modals/copiedlink.css';
 
 //Loader Styles
-import '../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../../app/css/modals/loading/spinner.module.css';
+import '../app/css/modals/loading/spinnerBackground.css';
+import styles from '../app/css/modals/loading/spinner.module.css';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const Owned = () => {
+const Selling = () => {
 	
 
 //loader functions below 
@@ -145,7 +145,7 @@ const Owned = () => {
 				)}	
 				{createConnected && (
 // change below link after test
-					<Link legacyBehavior href="/test/create">
+					<Link legacyBehavior href="/create">
 						<a id="cart-link-connected-seller-created">
 							<Image
 							loader={imageLoader}
@@ -170,26 +170,19 @@ const Owned = () => {
 		<hr id="profileline-seller-created"/>
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
-			<Link legacyBehavior href="/test/selling">
-				<a id="selling">Selling</a>	
-			</Link>	
-			<a id="owned" >Owned</a>		
+			<a id="selling-seller">Selling</a>	
+			<Link legacyBehavior href={`/owned/${storeAddressFromURL}`} passHref>
+				<a id="owned-seller" >Owned</a>
+			</Link>				
 		</div>
 			{noArtCreated && (
 				<p id="no-art">
 				</p>
 			)}
-			{artCreated && (
-				<div id="container-seller-created">
-					{createdNFTs?.map((nft) => {
-						return <StoreAssetHolder nft={nft} key={nft.id} />;
-					})}
-				</div>
-			)}
 			{artSelling && (
 				<div id="container-seller-created">
 					{sellingNFTs?.map((nft) => (
-						<StoreAssetHolder nft={nft} key={nft.id} />
+						<StoreAssetHolderSelling nft={nft} key={nft.id} />
 					))}
 				</div>
 			)}
@@ -199,4 +192,4 @@ const Owned = () => {
     );
 }
 
-export default Owned;
+export default Selling;

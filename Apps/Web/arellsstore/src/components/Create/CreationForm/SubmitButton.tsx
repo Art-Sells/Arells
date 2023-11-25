@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-import useSigner from "../../../../state/signer";
+import useSigner from "../../../state/signer";
 import { useFormikContext } from "formik";
 
 // Change below link after test

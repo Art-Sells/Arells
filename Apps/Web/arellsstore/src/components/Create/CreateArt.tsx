@@ -4,13 +4,13 @@ import React from "react";
 
 // asset components
 import CreationForm from "./CreationForm";
-import useNFTMarket from "../../../state/nft-market";
+import useNFTMarket from "../../state/nft-market";
 
 // Change below link after test
 import '../../../app/css/prototype/asset/asset.css';
 import '../../../app/css/stayupdated.css';
 import { useRouter } from "next/router";
-import useSigner from "../../../state/signer";
+import useSigner from "../../state/signer";
 
 const CreateArt = () => {
 

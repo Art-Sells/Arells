@@ -1,4 +1,4 @@
-import { CreationValues } from "../../components/test/Create/CreationForm";
+import { CreationValues } from "../../components/Create/CreationForm";
 import {BigNumber, Contract, ethers} from "ethers";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
 import NFT_MARKET from '../../../artifacts/contracts/NFTMarket.sol/NFTMarket.json';

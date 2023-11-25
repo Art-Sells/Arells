@@ -2,10 +2,10 @@
 
 // asset components
 import { BigNumber, ethers } from "ethers";
-import useSigner from "../../../state/signer";
-import useNFTMarket from "../../../state/nft-market";
-import { ipfsToHTTPS } from "../../../helpers";
-import { NFT } from "../../../state/nft-market/interfaces"
+import useSigner from "../../state/signer";
+import useNFTMarket from "../../state/nft-market";
+import { ipfsToHTTPS } from "../../helpers";
+import { NFT } from "../../state/nft-market/interfaces"
 
 // Change below link after test
 import '../../../app/css/prototype/asset/asset.css';
@@ -20,7 +20,7 @@ import Image from 'next/image';
 import { useRouter } from "next/router";
 import {Input} from "./PriceInputs/Input";
 import { toast } from "react-toastify";
-import { usePriceAfterPurchaseSets } from "../../../state/nft-market/usePriceAfterPurchaseSets";
+import { usePriceAfterPurchaseSets } from "../../state/nft-market/usePriceAfterPurchaseSets";
 
 type AssetMetadata = {
     name: string;
