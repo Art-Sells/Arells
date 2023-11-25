@@ -106,7 +106,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     const { priceAfterPurchaseSets = [] } = usePriceAfterPurchaseSets(nft.id);
     const [formattedNewPriceAfterPurchase, setFormattedNewPriceAfterPurchase] = useState("...");
     const forSale = nft.price != "0";
-    const forSaleMinted = formattedNewPriceAfterPurchase != "";
+    const forSaleMinted = formattedNewPriceAfterPurchase != "...";
 
     const [isLoadingNewPrice, setIsLoadingNewPrice] = useState(true);
     useEffect(() => {
@@ -204,7 +204,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         height={16}  
                         id="polygon-logo" 
                         src="/images/market/polygon.png"
-                      /> 
+                      />...
                       </p>
                     </div>
                     <button id="not-for-sale">
@@ -243,7 +243,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         height={16}  
                         id="polygon-logo" 
                         src="/images/market/polygon.png"
-                      /> 
+                      />...
                       </p>
                     </div>
                     <button id="not-for-sale">
@@ -516,7 +516,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 
 
 {/* Below for owners of the Assets */}	
-            {addressMatch && address && !forSale && !isNFTMinted && (
+            {addressMatch && address && !forSale && !forSaleMinted && !isNFTMinted && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
                         <Image
@@ -548,7 +548,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                           height={16}  
                           id="polygon-logo" 
                           src="/images/market/polygon.png"
-                        /> 
+                        />...
                         </p>
                     </div>
 {/* change below link after test */}                
@@ -558,7 +558,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </Link>
                 </>
             )}	
-            {addressMatch && address && forSale && !isNFTMinted && (
+            {addressMatch && address && forSale && !forSaleMinted &&!isNFTMinted && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -602,7 +602,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   </Link>
               </>
           )}	      
-          {addressMatch && address && !forSaleMinted && isNFTMinted && (
+          {addressMatch && address && forSale && !forSaleMinted && isNFTMinted && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -642,13 +642,13 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         </p>
                   </div>  
 {/* change below link after test */}                               
-                  <Link legacyBehavior href={`/sell/${address}/${nft.id}`} passHref>
-                    <button id="blue-orange-add-to-cart-seller-created-selling" >
-                      EDIT</button>
-                  </Link>
+                    <Link legacyBehavior href={`/sell/${address}/${nft.id}`} passHref>
+                      <button id="blue-orange-add-to-cart-seller-created" >
+                        SELL</button>
+                    </Link>
               </>
           )}	   
-          {addressMatch && address && forSaleMinted && isNFTMinted && (
+          {addressMatch && address && forSale && forSaleMinted && isNFTMinted && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image

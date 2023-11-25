@@ -205,10 +205,30 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
                 src="/images/PriceAfterPurchaseLogo.png"
               />
               <p id="PAP-seller-created">Price After Purchase</p>
-              <p id="PAP-blue-orange-before-seller-created">{formattedPriceAfterPurchase}</p>
+              <p id="PAP-blue-orange-before-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={18}  
+                height={16}  
+                id="polygon-logo-pap" 
+                src="/images/market/polygon.png"
+              />
+                {formattedPriceAfterPurchase}
+              </p>
               <hr id="priceline-seller-created" />
               <p id="yourprice-seller-created">Price</p>
-              <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+              <p id="price-blue-orange-before-seller-created">
+              <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo" 
+                  src="/images/market/polygon.png"
+                /> 
+                {formattedPrice}
+              </p>
             </div>         
             <button id="blue-orange-add-to-cart-seller-created" 
             // change below function after test
@@ -228,10 +248,30 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
                 src="/images/PriceAfterPurchaseLogo.png"
               />
               <p id="PAP-seller-created">Price After Purchase</p>
-              <p id="PAP-blue-orange-before-seller-created">{formattedNewPriceAfterPurchase}</p>
+              <p id="PAP-blue-orange-before-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={18}  
+                height={16}  
+                id="polygon-logo-pap" 
+                src="/images/market/polygon.png"
+              />
+                {formattedNewPriceAfterPurchase}
+                </p>
               <hr id="priceline-seller-created" />
               <p id="yourprice-seller-created">Price</p>
-              <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+              <p id="price-blue-orange-before-seller-created">
+              <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo" 
+                  src="/images/market/polygon.png"
+                /> 
+                {formattedPrice}
+              </p>
             </div>         
             <button id="blue-orange-add-to-cart-seller-created" 
             // change below function after test
@@ -255,10 +295,30 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
                 src="/images/PriceAfterPurchaseLogo.png"
               />
               <p id="PAP-seller-created">Price After Purchase</p>
-              <p id="PAP-blue-orange-before-seller-created">{formattedPriceAfterPurchase}</p>
+              <p id="PAP-blue-orange-before-seller-created">
+              <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo-pap" 
+                  src="/images/market/polygon.png"
+                />
+                {formattedPriceAfterPurchase}
+                </p>
               <hr id="priceline-seller-created" />
               <p id="yourprice-seller-created">Price</p>
-              <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+              <p id="price-blue-orange-before-seller-created">
+              <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo" 
+                  src="/images/market/polygon.png"
+                /> 
+                {formattedPrice}
+              </p>
             </div>         
             <button id="blue-orange-add-to-cart-seller-created" 
             // change below function after test
@@ -278,10 +338,30 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
                     src="/images/PriceAfterPurchaseLogo.png"
                   />
                   <p id="PAP-seller-created">Price After Purchase</p>
-                  <p id="PAP-blue-orange-before-seller-created">{formattedNewPriceAfterPurchase}</p>
+                  <p id="PAP-blue-orange-before-seller-created">
+                  <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={18}  
+                        height={16}  
+                        id="polygon-logo-pap" 
+                        src="/images/market/polygon.png"
+                      />
+                    {formattedNewPriceAfterPurchase}
+                  </p>
                   <hr id="priceline-seller-created" />
                   <p id="yourprice-seller-created">Price</p>
-                  <p id="price-blue-orange-before-seller-created">{formattedPrice}</p>
+                  <p id="price-blue-orange-before-seller-created">
+                  <Image
+                      loader={imageLoader}
+                      alt=""
+                      width={18}  
+                      height={16}  
+                      id="polygon-logo" 
+                      src="/images/market/polygon.png"
+                    /> 
+                    {formattedPrice}
+                  </p>
                 </div>         
                 <button id="blue-orange-add-to-cart-seller-created" 
                 // change below function after test

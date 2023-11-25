@@ -27,7 +27,7 @@
 		#icon-link-seller-created{
 			display: inline-block;
 			text-decoration: none;
-			margin-right: 124px;
+			margin-right: 150px;
 			  text-decoration: none;
 			  padding-top: 13px;
 			  padding-bottom: 10px;
@@ -69,7 +69,7 @@
 		#cart-link-seller-created{
 			display: inline-block;
 			text-decoration: none;
-			margin-left: 124px;
+			margin-left: 150px;
 			  text-decoration: none;
 			  padding-top: 14px;
 			  padding-bottom: 10px;
@@ -484,7 +484,7 @@
 				}	 
 			#blue-orange-add-to-cart-seller-created-selling {
 					text-decoration: none;
-					color: black;
+					color: gray;
 					margin-left: auto;
 					margin-right: auto;
 					font-weight: 500;
@@ -499,7 +499,7 @@
 					border-width: 0px;
 					width: 170px;
 					opacity: 1;
-					box-shadow: 0px 8px 12px -6px black;  
+					box-shadow: 0px 4px 12px -2px silver;  
 					background: white;
 				}	 
 			#blue-orange-add-to-cart-connected-seller-created, #beach-houses-add-to-cart-connected-seller-created, 
@@ -622,7 +622,7 @@
 				padding-top: 25px;			
 			}	
 			#icon-link-seller-created{	
-				margin-right: 90px;
+				margin-right: 120px;
 				  padding-top: 10px;
 				  padding-bottom: 7px;
 				  padding-right: 6px;
@@ -635,7 +635,7 @@
                   width: 14px;
 				}	    
 			#cart-link-seller-created{
-				margin-left: 90px;
+				margin-left: 120px;
 				  padding-top: 11px;
 				  padding-bottom: 8px;
 				  padding-right: 8px;
