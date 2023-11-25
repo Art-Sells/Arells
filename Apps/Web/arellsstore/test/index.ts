@@ -305,6 +305,7 @@ describe("Arells Digital Assets", function (){
             const oldContractBalance = await nftMarket.provider.getBalance(
                 nftMarket.address
             );
+            console.log("old Arells Market Balance: ", oldContractBalance);
 
             //signers[2] (New Collector) buys it from signers[1] (Old Collector)
             const transaction = await 
@@ -321,6 +322,7 @@ describe("Arells Digital Assets", function (){
             const newContractBalance = await nftMarket.provider.getBalance(
                 nftMarket.address
             );
+            console.log("new Arells Market Balance: ", newContractBalance);
             
             const contractBalanceDiff = newContractBalance.sub(
                 oldContractBalance

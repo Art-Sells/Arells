@@ -105,7 +105,7 @@ const Index = () => {
         <hr id="black-liner"/>
         
         <p id="descriptioner">
-          NEVER LOSE MONEY SELLING ART
+        SELL ART THAT OBSCURES BEAR MARKETS
         </p>
         
         <hr id="black-liner"/>

@@ -110,6 +110,22 @@ const useNFTMarket = (storeAddress: string | null) => {
     await transaction.wait();
   }
 
+  const withdrawFunds = async () => {
+    if (!signer) {
+      console.error('Signer is not available');
+      return;
+    }
+
+    try {
+      const transaction: TransactionResponse = await nftMarket.withdrawFunds();
+      await transaction.wait();
+      console.log("Funds withdrawn successfully");
+    } catch (e) {
+      console.error("Exception while withdrawing funds:", e);
+      throw e;
+    }
+  };
+
   return {
     createNFT,
     getCreatorOrCollector,
@@ -117,6 +133,7 @@ const useNFTMarket = (storeAddress: string | null) => {
     listNFTCollector,
     buyNFT,
     checkIfNFTMinted,
+    withdrawFunds,
     ...createdNFTs,
     ...sellingNFTs,
     ...buyNFTs
