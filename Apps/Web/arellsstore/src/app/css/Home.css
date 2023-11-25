@@ -31,7 +31,7 @@
 		  to {center:0; opacity:1}
 		}
 	  #word-logoo {
-		  margin-top: 15px;
+		  margin-top: 10px;
 		  width: 120px;	
 		  height: 37px;
 		  -webkit-animation-name: animatetop;
@@ -51,29 +51,29 @@
 		}
 	  
 	  #black-liner {
-		margin-top: 30px;
+		margin-top: 10px;
 		background-color: black;
 		border: none;
-		height: 4px;
+		height: 2px;
 		border-radius: 30px;
-		width: 220px;
+		width: 300px;
 		opacity: .1;
 	  }	
 	  
 	  #descriptioner {
-		  margin-top: 30px;
-		  font-size: 9px;
+		  margin-top: 25px;
+		  font-size: 10px;
 		  letter-spacing: 0px;
 		  margin-left: 0px;
 		  font-weight: 600;
-		  opacity: .3;
+		  opacity: .5;
 		  color: black;
 		  word-spacing: 2px;
 	  }	
 
 	  
 	  #updatess {
-		margin-top: 30px;
+		margin-top: 20px;
 		background: black;
 		text-decoration: none;
 		color: white;
@@ -87,7 +87,7 @@
 		letter-spacing: 3px;
 		border-radius: 5px;
 		border-width: 0px;
-		width: 180px;
+		width: 198px;
 		opacity: 1;
 		box-shadow: 0px 8px 12px -6px black;  
 	  }
@@ -144,7 +144,7 @@
 		  height: 32px;
 	  }  
 	  #black-liner {
-		width: 190px;
+		width: 230px;
 	  }	
 	  
 	  #descriptioner {

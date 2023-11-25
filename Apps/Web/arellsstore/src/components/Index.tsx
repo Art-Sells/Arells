@@ -114,13 +114,12 @@ const Index = () => {
         
         <br/>
         
-        <hr id="black-liner"/>
-        
         <p id="descriptioner">
         SELL ART THAT OBSCURES BEAR MARKETS
         </p>
-        
+
         <hr id="black-liner"/>
+        
         {openStore && (
           <button 
           id="updatess" 
