@@ -26,6 +26,7 @@ const Selling = () => {
 
 //loader functions below 
     const router = useRouter();
+	const [isDataFetched, setIsDataFetched] = useState(false);
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
@@ -45,6 +46,19 @@ const Selling = () => {
 			setLoading(false);
 		}
 	}, [imagesLoaded]);
+	// Adjusted useEffect for loading state with router events
+	useEffect(() => {
+		const handleStart = () => setLoading(true);
+		const handleComplete = () => setLoading(false);
+
+		router.events.on('routeChangeStart', handleStart);
+		router.events.on('routeChangeComplete', handleComplete);
+
+		return () => {
+			router.events.off('routeChangeStart', handleStart);
+			router.events.off('routeChangeComplete', handleComplete);
+		};
+	}, [router]);
 // loader functions above
 
 
@@ -92,30 +106,25 @@ const Selling = () => {
 		setArtSelling(hasSellingArt);
 	}, [createdNFTs, sellingNFTs]);
 
-
 	const nftCount = sellingNFTs?.length || 0;
 
     const containerClass = nftCount > 2 ? "three-items" : "two-items";
-    const [isAddressCheckComplete, setIsAddressCheckComplete] = useState(false);
-    useEffect(() => {
-        if (address !== undefined && storeAddressFromURL !== null) {
-            setIsAddressCheckComplete(true);
-        } else {
-            setIsAddressCheckComplete(false);
-        }
-    }, [address, storeAddressFromURL]);
+    const addressMatch = useMemo(() => (
+        address && storeAddressFromURL && address.toLowerCase() === storeAddressFromURL
+    ), [address, storeAddressFromURL]);
 
     useEffect(() => {
-        if (sellingNFTs && isAddressCheckComplete) {
+		const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
+        setArtSelling(hasSellingArt);
+        if (addressMatch !== undefined && sellingNFTs !== undefined) {
             setLoading(false);
+            // Update artSelling state based on sellingNFTs data
+            setArtSelling(!!sellingNFTs && sellingNFTs.length > 0);
         } else {
             setLoading(true);
         }
-    }, [sellingNFTs, isAddressCheckComplete]);
+    }, [addressMatch, sellingNFTs]);
 
-    const addressMatch = useMemo(() => {
-        return address?.toLowerCase() === storeAddressFromURL;
-    }, [address, storeAddressFromURL]);
 // asset constants above
 
 	
@@ -192,39 +201,14 @@ const Selling = () => {
 		height={35} 
 		id="word-logo-seller-created" 
 		src="images/Arells-Logo-Ebony.png"/>	
-		{!showLoading && (
-			<>
-				{addressMatch && (
-					<p id="slogan-seller-created">SELL ART THAT OBSCURES BEAR MARKETS</p>
-				)}
-				{!addressMatch && (
-					<p id="slogan-seller-created">BUY ART THAT OBSCURES BEAR MARKETS</p>
-				)}
-			</>
-		)}
+		<p id="slogan-seller-created">BUY ART THAT OBSCURES BEAR MARKETS</p>
 		<hr id="profileline-seller-created"/>
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
-		{!showLoading && (
-			<>
-				{addressMatch && (
-					<>
-						<a id="selling-seller">Selling</a>	
-						<Link legacyBehavior href={`/inventory/${storeAddressFromURL}`} passHref>
-							<a id="owned-seller" >Owned</a>
-						</Link>				
-					</>	
-				)}
-				{!addressMatch && (
-					<>
-						<a id="selling-seller">Buy</a>	
-						<Link legacyBehavior href={`/inventory/${storeAddressFromURL}`} passHref>
-							<a id="owned-seller" >Browse</a>
-						</Link>				
-					</>	
-				)}	
-			</>
-		)}		
+			<a id="selling-seller">Buy</a>	
+			<Link legacyBehavior href={`/own/${storeAddressFromURL}`} passHref>
+				<a id="owned-seller" >Own</a>
+			</Link>				
 		</div>
 			{noArtCreated && (
 				<p id="no-art">

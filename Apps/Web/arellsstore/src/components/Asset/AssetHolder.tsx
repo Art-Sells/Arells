@@ -159,7 +159,7 @@ const AssetHolder = (props: AssetProps) => {
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
 //Change below link after test
             //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
-          router.push(`/sales/${address}`);
+          router.push(`/buy/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);
@@ -255,7 +255,7 @@ const AssetHolder = (props: AssetProps) => {
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
 //Change below link after test
             //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
-          router.push(`/sales/${address}`);
+          router.push(`/buy/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);
@@ -372,7 +372,7 @@ const AssetHolder = (props: AssetProps) => {
                 alt="" 
                 width={29}
                 height={30}
-                id="arells-loader-icon" 
+                id="arells-loader-icon-asset" 
                 src="/images/Arells-Icon.png"/>        
             </div>
         )}
@@ -394,10 +394,11 @@ const AssetHolder = (props: AssetProps) => {
                 id="photo-asset"
                 src={meta?.imageURL}/>
             )}
-            {
-                isNFTMinted ? (
+            {isNFTMinted ? (
                     <div>
-                        <h3 id="name-blue-orange">{meta?.name}</h3> 
+                        <div id="asset-name-wrapper">
+                            <h3 id="name-blue-orange">{meta?.name}</h3> 
+                        </div>
                         <div id="blue-orange-prices-before-blue-orange">
                             <p id="yourprice-blue-orange">Price</p>
                             <p id="price-blue-orange">{formatNumber(formattedPrice)}</p>
@@ -434,7 +435,9 @@ const AssetHolder = (props: AssetProps) => {
                     </div>
                 ) : (
                     <div>
-                        <h3 id="name-blue-orange">{meta?.name}</h3> 
+                        <div id="asset-name-wrapper">
+                            <h3 id="name-blue-orange">{meta?.name}</h3> 
+                        </div>
                         <div id="blue-orange-prices-before-blue-orange">
                             <p id="PAP-blue-orange">Price After Purchase</p>
                             <p id="PAP-blue-orange-before-blue-orange">{formatNumber(priceAfterPurchase)}</p>

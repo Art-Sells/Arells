@@ -62,13 +62,13 @@
 	  
 	  #descriptioner {
 		  margin-top: 25px;
-		  font-size: 10px;
+		  font-size: 9px;
 		  letter-spacing: 0px;
 		  margin-left: 0px;
 		  font-weight: 600;
 		  opacity: .5;
 		  color: black;
-		  word-spacing: 2px;
+		  word-spacing: 0px;
 	  }	
 
 	  
@@ -87,7 +87,7 @@
 		letter-spacing: 3px;
 		border-radius: 5px;
 		border-width: 0px;
-		width: 198px;
+		width: 205px;
 		opacity: 1;
 		box-shadow: 0px 8px 12px -6px black;  
 	  }
@@ -148,11 +148,10 @@
 	  }	
 	  
 	  #descriptioner {
-		  font-size: 8px;
-		  word-spacing: 1px;
+		  font-size: 7.5px;
 	  }		
 	  #updatess {
-		width: 160px;
+		width: 175px;
 		font-weight:400;
 		font-size: 9px;
 		border-width: 1px;	   

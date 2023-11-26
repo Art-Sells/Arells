@@ -115,7 +115,7 @@ const Index = () => {
         <br/>
         
         <p id="descriptioner">
-        SELL ART THAT OBSCURES BEAR MARKETS
+        BUY ART THAT OBSCURES BEAR MARKETS
         </p>
 
         <hr id="black-liner"/>
@@ -131,7 +131,7 @@ const Index = () => {
 				)}	
 				{openStoreConnected && (
 // change below link after test
-        <Link href={`/inventory/${address}`} passHref>
+        <Link href={`/own/${address}`} passHref>
           <button id="updatess">
             ENTER STORE
           </button>

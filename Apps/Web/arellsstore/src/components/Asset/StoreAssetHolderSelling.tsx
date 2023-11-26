@@ -130,7 +130,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
         toast.success("You bought this NFT. Changes will be reflected shortly.");
 //Change below link after test
         //Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store."
-        router.push(`/inventory/${address}`);
+        router.push(`/own/${address}`);
       } catch (e) {
         showErrorToast();
         console.error(e);
@@ -170,7 +170,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
       {shareToSellModal && (
         <div id="copiedLink">
           <div className="modal-content">
-          <p>SHARE STORE TO SELL</p>
+          <p>SHARE TO SELL</p>
           <button className="close"
             onClick={closeShareToSellModal}>OK</button>	
           </div>

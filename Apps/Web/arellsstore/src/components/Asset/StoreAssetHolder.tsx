@@ -214,7 +214,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       </p>
                     </div>
                     <button id="not-for-sale">
-                    OWNS</button>
+                    OWNED</button>
                 </>
             )}	
             {!addressMatch && forSale && !forSaleMinted && isNFTMinted && !address &&  (
@@ -254,7 +254,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       </p>
                     </div>
                     <button id="not-for-sale">
-                    OWNS</button>
+                    OWNED</button>
                 </>
             )}	  
             {!addressMatch && forSale && !forSaleMinted && isNFTMinted && address &&  (
@@ -294,7 +294,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       </p>
                     </div>
                     <button id="not-for-sale">
-                    OWNS</button>
+                    OWNED</button>
                 </>
             )}	
             {!addressMatch && forSale && !forSaleMinted && !isNFTMinted && !address &&  (
@@ -334,7 +334,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   </p>
                 </div>
                 <button id="not-for-sale">
-                OWNS</button>
+                OWNED</button>
               </>  
             )}	
 
@@ -378,7 +378,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </p>
                 </div>        
 {/* change below link after test */}                      
-                <Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
+                <Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
                   <button id="blue-orange-add-to-cart-seller-created-selling" >
                     SELLING</button>
                 </Link>
@@ -422,7 +422,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </p>
                 </div>        
 {/* change below link after test */}                      
-                <Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
+                <Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
                   <button id="blue-orange-add-to-cart-seller-created-selling" >
                     SELLING</button>
                 </Link>
@@ -466,7 +466,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </p>
                 </div>        
 {/* change below link after test */}                      
-                <Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
+                <Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
                   <button id="blue-orange-add-to-cart-seller-created-selling" >
                     SELLING</button>
                 </Link>
@@ -510,7 +510,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </p>
                 </div>        
 {/* change below link after test */}                      
-                <Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
+                <Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
                   <button id="blue-orange-add-to-cart-seller-created-selling" >
                     SELLING</button>
                 </Link>
