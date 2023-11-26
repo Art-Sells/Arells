@@ -1,10 +1,10 @@
-import '../../css/prototype/asset/asset.css';
+import '../css/prototype/asset/asset.css';
 
 import React from "react";
 
 import type { Metadata } from 'next';
 
-import CreateArt from '../../../components/Create/CreateArt';
+import CreateArt from '../../components/Create/CreateArt';
 
 export const metadata: Metadata = {
   title: "Create Test",

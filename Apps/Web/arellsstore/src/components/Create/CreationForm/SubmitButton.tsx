@@ -4,7 +4,7 @@ import useSigner from "../../../state/signer";
 import { useFormikContext } from "formik";
 
 // Change below link after test
-import '../../../../app/css/modals/connect-wallet.css';
+import '../../../app/css/modals/connect-wallet.css';
 
 import Image from 'next/image';
 

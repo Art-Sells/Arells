@@ -87,12 +87,15 @@ const Selling = () => {
         }
     }, [address]);
 	useEffect(() => {
-		const hasCreatedArt = !!createdNFTs && createdNFTs.length > 0;
 		const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
 		
-		setArtCreated(hasCreatedArt);
 		setArtSelling(hasSellingArt);
 	}, [createdNFTs, sellingNFTs]);
+
+
+	const nftCount = sellingNFTs?.length || 0;
+
+    const containerClass = nftCount > 2 ? "three-items" : "two-items";
 // asset constants above
 
 	
@@ -180,7 +183,8 @@ const Selling = () => {
 				</p>
 			)}
 			{artSelling && (
-				<div id="container-seller-created">
+				<div id="container-seller-created"
+				className={containerClass}>
 					{sellingNFTs?.map((nft) => (
 						<StoreAssetHolderSelling nft={nft} key={nft.id} />
 					))}

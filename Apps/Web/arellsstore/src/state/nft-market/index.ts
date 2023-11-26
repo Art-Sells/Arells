@@ -41,7 +41,7 @@ const useNFTMarket = (storeAddress: string | null) => {
         await transaction.wait();
 //Change below link after test
     //Add Store StockingModal "Your created Art is being stocked, please wait a few seconds for it to appear in your store."
-            router.push(`/test/owned/${address}`);
+            router.push(`/owned/${address}`);
       } 
     } catch (e) {
       console.error("Exception while calling /api/nft-storage:", e);

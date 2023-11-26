@@ -93,6 +93,10 @@ const Owned = () => {
 		setArtCreated(hasCreatedArt);
 		setArtSelling(hasSellingArt);
 	}, [createdNFTs, sellingNFTs]);
+
+	const nftCount = (createdNFTs?.length || 0) + (sellingNFTs?.length || 0);
+
+    const containerClass = nftCount > 2 ? "three-items" : "two-items";
 // asset constants above
 
 	
@@ -180,14 +184,14 @@ const Owned = () => {
 				</p>
 			)}
 			{artCreated && (
-				<div id="container-seller-created">
+				<div id="container-seller-created" className={containerClass}>
 					{createdNFTs?.map((nft) => {
 						return <StoreAssetHolder nft={nft} key={nft.id} />;
 					})}
 				</div>
 			)}
 			{artSelling && (
-				<div id="container-seller-created">
+				<div id="container-seller-created" className={containerClass}>
 					{sellingNFTs?.map((nft) => (
 						<StoreAssetHolder nft={nft} key={nft.id} />
 					))}

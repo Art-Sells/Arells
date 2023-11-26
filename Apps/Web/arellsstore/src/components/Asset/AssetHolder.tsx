@@ -8,12 +8,12 @@ import { ipfsToHTTPS } from "../../helpers";
 import { NFT } from "../../state/nft-market/interfaces"
 
 // Change below link after test
-import '../../../app/css/prototype/asset/asset.css';
+import '../../app/css/prototype/asset/asset.css';
 
 //Loader Styles
-import '../../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../../../app/css/modals/loading/spinner.module.css';
-import "../../../app/css/modals/copiedlink.css"
+import '../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../app/css/modals/loading/spinner.module.css';
+import "../../app/css/modals/copiedlink.css"
 
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
@@ -159,7 +159,7 @@ const AssetHolder = (props: AssetProps) => {
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
 //Change below link after test
             //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
-          router.push(`/test/selling/${address}`);
+          router.push(`/selling/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);
@@ -255,7 +255,7 @@ const AssetHolder = (props: AssetProps) => {
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
 //Change below link after test
             //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
-          router.push(`/test/selling/${address}`);
+          router.push(`/selling/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);

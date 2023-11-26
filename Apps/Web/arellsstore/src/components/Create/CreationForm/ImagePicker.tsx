@@ -3,11 +3,11 @@
 import React from "react";
 
 // Change below link after test
-import '../../../../app/css/prototype/asset/asset.css';
-import '../../../../app/css/stayupdated.css';
+import '../../../app/css/prototype/asset/asset.css';
+import '../../../app/css/stayupdated.css';
 
 //Loader Styles
-import '../../../../app/css/modals/loading/spinnerBackground.css';
+import '../../../app/css/modals/loading/spinnerBackground.css';
 
 import { useState, ChangeEvent } from "react";
 
