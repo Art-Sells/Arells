@@ -130,7 +130,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
         toast.success("You bought this NFT. Changes will be reflected shortly.");
 //Change below link after test
         //Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store."
-        router.push(`/test/owned/${address}`);
+        router.push(`/inventory/${address}`);
       } catch (e) {
         showErrorToast();
         console.error(e);
@@ -193,6 +193,92 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
           />
         )}	
 {/* Below for users who are not owners of the Assets */} 
+        {!addressMatch && !address && forSale && !isNFTMinted && (
+          <>
+            <div id="blue-orange-prices-before-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={40}  
+                height={8}  
+                id="PAP-logo" 
+                src="/images/PriceAfterPurchaseLogo.png"
+              />
+              <p id="PAP-seller-created">Price After Purchase</p>
+              <p id="PAP-blue-orange-before-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={18}  
+                height={16}  
+                id="polygon-logo-pap" 
+                src="/images/market/polygon.png"
+              />
+                {formattedPriceAfterPurchase}
+              </p>
+              <hr id="priceline-seller-created" />
+              <p id="yourprice-seller-created">Price</p>
+              <p id="price-blue-orange-before-seller-created">
+              <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo" 
+                  src="/images/market/polygon.png"
+                /> 
+                {formattedPrice}
+              </p>
+            </div>         
+            <button id="blue-orange-add-to-cart-seller-created" 
+            // change below function after test
+            onClick={buy}>
+              BUY</button>
+          </>
+        )}
+        {!addressMatch && !address && forSale && isNFTMinted && (
+          <>
+            <div id="blue-orange-prices-before-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={40}  
+                height={8}  
+                id="PAP-logo" 
+                src="/images/PriceAfterPurchaseLogo.png"
+              />
+              <p id="PAP-seller-created">Price After Purchase</p>
+              <p id="PAP-blue-orange-before-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={18}  
+                height={16}  
+                id="polygon-logo-pap" 
+                src="/images/market/polygon.png"
+              />
+                {formattedNewPriceAfterPurchase}
+                </p>
+              <hr id="priceline-seller-created" />
+              <p id="yourprice-seller-created">Price</p>
+              <p id="price-blue-orange-before-seller-created">
+              <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo" 
+                  src="/images/market/polygon.png"
+                /> 
+                {formattedPrice}
+              </p>
+            </div>         
+            <button id="blue-orange-add-to-cart-seller-created" 
+            // change below function after test
+            onClick={buy}>
+              BUY</button>
+          </>
+        )}
         {!addressMatch && address && forSale && !isNFTMinted && (
           <>
             <div id="blue-orange-prices-before-seller-created">

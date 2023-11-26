@@ -23,6 +23,10 @@
 			margin-left: -8px;
 			margin-right: auto;
 			z-index: 100;
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 1.00s;
+			animation-name: animatetop;
+			animation-duration: 1.00s;
 		}
 		#icon-link-seller-created{
 			display: inline-block;
@@ -39,7 +43,11 @@
 			  border-width: 1px;
 			  width: 43px;
 			  opacity: 1;
-				background: rgba(255, 255, 255, 0.8);						
+				background: rgba(255, 255, 255, 0.8);	
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;					
 		}
 		#icon-link-seller-created:hover,
 		#icon-link-seller-created:focus {
@@ -81,7 +89,11 @@
 			  border-radius: 8px;
 			  border-width: 1px;
 			  opacity: 1;
-				background: rgba(0, 0, 0, .9);						
+				background: rgba(0, 0, 0, .9);
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;					
 		}
 		#cart-link-connected-seller-created{
 			text-decoration: none;
@@ -172,6 +184,10 @@
 			color: gray;
 			opacity: 1;
 			word-spacing: 1.5px;
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 1.00s;
+			animation-name: animatetop;
+			animation-duration: 1.00s;
 		}
 		
 	#profileline-seller-created {
@@ -211,6 +227,10 @@
 		  width: 150px;
 		background: none;
 		opacity: 1;
+		-webkit-animation-name: animatetop;
+		-webkit-animation-duration: 1.00s;
+		animation-name: animatetop;
+		animation-duration: 1.00s;
 		}  		
 		#selling-seller {
 			flex: 1;			
@@ -232,6 +252,10 @@
 			  width: 150px;
 			background: none;
 			opacity: 1;
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 1.00s;
+			animation-name: animatetop;
+			animation-duration: 1.00s;
 		}  		
 		#owned {
 		flex: 1;			
@@ -253,6 +277,10 @@
 		  width: 150px;
 		  opacity: 1;
 			background: none;
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 1.00s;
+			animation-name: animatetop;
+			animation-duration: 1.00s;
 		}	
 		#owned-seller {
 			flex: 1;			
@@ -274,6 +302,10 @@
 			  width: 150px;
 			  opacity: 1;
 				background: none;
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
 		}	
 		#selling:hover,
 		#selling:focus,
@@ -597,7 +629,28 @@
 				  width: 170px;
 				  opacity: 1; 
 					background: silver;
-			}		
+			}	
+
+			#inventory-line {
+				margin-top: 0px;
+				  background-color: white;
+				  border: none;
+				  height: 2px;
+				  border-radius: 30px;
+				  width: 500px;
+				  opacity: .1;
+				margin-bottom: -65px;  
+				}
+			
+			#selling-line {
+				margin-top: 35px;
+				  background-color: black;
+				  border: none;
+				  height: 2px;
+				  border-radius: 30px;
+				  width: 500px;
+				  opacity: .1;
+				}
 			
 			
 			
@@ -814,7 +867,17 @@
 				  border: none;
 				  letter-spacing: 1px;
 				  width: 120px;
-				}									  
+				}
+
+		#inventory-line {
+			margin-bottom: -65px;
+			}		
+				
+		#selling-line {
+			margin-top: 25px;
+				height: 2px;
+				width: 250px;
+			}		
 }					
 	
 	
@@ -841,7 +904,10 @@
 	#profileline-seller-created {
 		width: 300px;
 	}		
-	#container-seller-created {
-	width: 400px;
-	}  
+	#container-seller-created.two-items {
+		width: 400px;
+		}					
+	  #container-seller-created.three-items {
+	    width: 400px;
+	  }
 }

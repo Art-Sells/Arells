@@ -73,10 +73,10 @@ const Owned = () => {
 		console.log('Selling NFTs in Parent:', sellingNFTs);
 	}, [sellingNFTs]);
 	useEffect(() => {
-		if(createdNFTs) {
+		if(address && (createdNFTs || sellingNFTs)) {
 			setLoading(false);
 		}
-    }, [createdNFTs]);
+    }, [address, createdNFTs, sellingNFTs]);
     useEffect(() => {
         if (!address) {
 			setCreate(true);
@@ -94,9 +94,31 @@ const Owned = () => {
 		setArtSelling(hasSellingArt);
 	}, [createdNFTs, sellingNFTs]);
 
-	const nftCount = (createdNFTs?.length || 0) + (sellingNFTs?.length || 0);
+	const nftCount = createdNFTs?.length || 0;
+	const nftCountSelling = sellingNFTs?.length || 0;
 
     const containerClass = nftCount > 2 ? "three-items" : "two-items";
+	const containerClassTwo = nftCountSelling > 2 ? "three-items" : "two-items";
+    const [isAddressCheckComplete, setIsAddressCheckComplete] = useState(false);
+    useEffect(() => {
+        if (address !== undefined && storeAddressFromURL !== null) {
+            setIsAddressCheckComplete(true);
+        } else {
+            setIsAddressCheckComplete(false);
+        }
+    }, [address, storeAddressFromURL]);
+
+    useEffect(() => {
+        if (sellingNFTs && isAddressCheckComplete) {
+            setLoading(false);
+        } else {
+            setLoading(true);
+        }
+    }, [sellingNFTs, isAddressCheckComplete]);
+
+    const addressMatch = useMemo(() => {
+        return address?.toLowerCase() === storeAddressFromURL;
+    }, [address, storeAddressFromURL]);
 // asset constants above
 
 	
@@ -121,47 +143,49 @@ const Owned = () => {
 		)}  
 
 {/*<!-- Modals Above -->*/}
-		<div id="header-seller-created">
-			
-{/*<!-- Change below link after test -->*/}
-				<Link legacyBehavior href="/">
-					<a id="icon-link-seller-created">
-						<Image
-						loader={imageLoader}
-						alt=""
-						height={16}
-						width={15}
-						id="arells-icon-seller-created" 
-						src="images/prototype/Arells-Icon-Home.png"/>
-					</a>	
-				</Link>							
-				{create && (
-					<button id="cart-link-seller-created" onClick={connectWallet}>
-						<Image
-						loader={imageLoader}
-						onLoad={() => handleImageLoaded('arellsIcon')}
-						alt=""
-						height={18}
-						width={18} 
-						id="cart-icon-seller-created" 
-						src="images/prototype/Add-Ivory.png"/>
-					</button>
-				)}	
-				{createConnected && (
-// change below link after test
-					<Link legacyBehavior href="/create">
-						<a id="cart-link-connected-seller-created">
-							<Image
-							loader={imageLoader}
-							alt=""
-							height={18}
-							width={18}
-							id="cart-icon-seller-created" 
-							src="images/prototype/Add-Ivory.png"/>
-						</a>
-					</Link>	
-				)}		
-		</div>
+{!showLoading && (
+			<>
+				<div id="header-seller-created">
+					
+		{/*<!-- Change below link after test -->*/}
+						<Link href="/" id="icon-link-seller-created">
+								<Image
+								loader={imageLoader}
+								alt=""
+								height={16}
+								width={15}
+								id="arells-icon-seller-created" 
+								src="images/prototype/Arells-Icon-Home.png"/>
+						</Link>							
+						{create && (
+							<button id="cart-link-seller-created" onClick={connectWallet}>
+								<Image
+								loader={imageLoader}
+								onLoad={() => handleImageLoaded('arellsIcon')}
+								alt=""
+								height={18}
+								width={18} 
+								id="cart-icon-seller-created" 
+								src="images/prototype/Add-Ivory.png"/>
+							</button>
+						)}	
+						{createConnected && (
+		// change below link after test
+							<Link legacyBehavior href="/create">
+								<a id="cart-link-connected-seller-created">
+									<Image
+									loader={imageLoader}
+									alt=""
+									height={18}
+									width={18}
+									id="cart-icon-seller-created" 
+									src="images/prototype/Add-Ivory.png"/>
+								</a>
+							</Link>	
+						)}		
+				</div>
+			</>
+		)}
 		<Image
 		loader={imageLoader}
 		onLoad={() => handleImageLoaded('arellsLogo')}
@@ -169,33 +193,65 @@ const Owned = () => {
 		width={110}  
 		height={35} 
 		id="word-logo-seller-created" 
-		src="images/Arells-Logo-Ebony.png"/>	
-		<p id="slogan-seller-created">SELL ART THAT OBSCURES BEAR MARKETS</p>
+		src="images/Arells-Logo-Ebony.png"/>
+		{!showLoading && (
+			<>
+				{addressMatch && (
+					<p id="slogan-seller-created">SELL ART THAT OBSCURES BEAR MARKETS</p>
+				)}
+				{!addressMatch && (
+					<p id="slogan-seller-created">BUY ART THAT OBSCURES BEAR MARKETS</p>
+				)}
+			</>
+		)}
 		<hr id="profileline-seller-created"/>
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
-			<Link legacyBehavior href={`/selling/${storeAddressFromURL}`} passHref>
-				<a id="selling">Selling</a>	
-			</Link>	
-			<a id="owned" >Owned</a>		
+
+		{!showLoading && (
+			<>
+				{addressMatch && (
+					<>
+						<Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
+							<a id="selling">Selling</a>	
+						</Link>	
+						<a id="owned" >Owned</a>			
+					</>
+				)}
+				{!addressMatch && (
+					<>
+						<Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
+							<a id="selling">Buy</a>	
+						</Link>
+						<a id="owned" >Browse</a>				
+					</>
+				)}	
+			</>
+		)}	
 		</div>
 			{noArtCreated && (
 				<p id="no-art">
 				</p>
 			)}
 			{artCreated && (
-				<div id="container-seller-created" className={containerClass}>
-					{createdNFTs?.map((nft) => {
-						return <StoreAssetHolder nft={nft} key={nft.id} />;
-					})}
-				</div>
+				<>
+					<div id="container-seller-created" className={containerClass}>
+						{createdNFTs?.map((nft) => {
+							return <StoreAssetHolder nft={nft} key={nft.id} />;
+						})}
+					</div>
+					<hr id="inventory-line"/>				
+				</>
 			)}
 			{artSelling && (
-				<div id="container-seller-created" className={containerClass}>
-					{sellingNFTs?.map((nft) => (
-						<StoreAssetHolder nft={nft} key={nft.id} />
-					))}
-				</div>
+				<>
+					<hr id="selling-line"/>
+					<div id="container-seller-created" className={containerClassTwo}>
+						{sellingNFTs?.map((nft) => (
+							<StoreAssetHolder nft={nft} key={nft.id} />
+						))}
+					</div>
+				</>
 			)}
 
 		     

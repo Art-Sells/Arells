@@ -159,7 +159,7 @@ const AssetHolder = (props: AssetProps) => {
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
 //Change below link after test
             //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
-          router.push(`/selling/${address}`);
+          router.push(`/sales/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);
@@ -255,7 +255,7 @@ const AssetHolder = (props: AssetProps) => {
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
 //Change below link after test
             //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
-          router.push(`/selling/${address}`);
+          router.push(`/sales/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);

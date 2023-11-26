@@ -1,3 +1,4 @@
+
 import { CreationValues } from "../../components/Create/CreationForm";
 import {BigNumber, Contract, ethers} from "ethers";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
@@ -39,9 +40,6 @@ const useNFTMarket = (storeAddress: string | null) => {
           json.uri
         );
         await transaction.wait();
-//Change below link after test
-    //Add Store StockingModal "Your created Art is being stocked, please wait a few seconds for it to appear in your store."
-            router.push(`/owned/${address}`);
       } 
     } catch (e) {
       console.error("Exception while calling /api/nft-storage:", e);

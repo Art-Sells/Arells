@@ -119,39 +119,6 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
   
 // Asset Changing function/s above 
 
-//Buying functions Below
-  const {buyNFT} = useNFTMarket(address ?? null);
-  const [error, setError] = useState<string>();
-  const onBuyClicked = async () => {
-      try {
-        await buyNFT(nft);
-        toast.success("You bought this NFT. Changes will be reflected shortly.");
-//Change below link after test
-        //Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store."
-        router.push(`/test/owned/${address}`);
-      } catch (e) {
-        showErrorToast();
-        console.error(e);
-      }
-    };
-    
-  async function buy() {
-      try {
-          if (!address) {
-              await connectWallet(); 
-              return; 
-          }
-          if (address) {
-              setError(""); 
-              await onBuyClicked(); 
-          }
-      } catch (e) {
-          console.error("Error in buying NFT:", e);
-      }
-  }
-
-//Buying Functions Above
-
   return (
     <>
         {/*<!-- Modals below link after test -->*/}
@@ -208,7 +175,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       </p>
                     </div>
                     <button id="not-for-sale">
-                    OWNED</button>
+                    OWNS</button>
                 </>
             )}	
             {!addressMatch && !forSale && !forSaleMinted && !isNFTMinted && address &&  (
@@ -247,7 +214,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       </p>
                     </div>
                     <button id="not-for-sale">
-                    OWNED</button>
+                    OWNS</button>
                 </>
             )}	
             {!addressMatch && forSale && !forSaleMinted && isNFTMinted && !address &&  (
@@ -287,7 +254,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       </p>
                     </div>
                     <button id="not-for-sale">
-                    OWNED</button>
+                    OWNS</button>
                 </>
             )}	  
             {!addressMatch && forSale && !forSaleMinted && isNFTMinted && address &&  (
@@ -327,13 +294,53 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                       </p>
                     </div>
                     <button id="not-for-sale">
-                    OWNED</button>
+                    OWNS</button>
                 </>
-            )}	  
+            )}	
+            {!addressMatch && forSale && !forSaleMinted && !isNFTMinted && !address &&  (
+              <>
+                <div id="blue-orange-prices-before-seller-created">
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={40}  
+                    height={8}  
+                    id="PAP-logo" 
+                    src="/images/PriceAfterPurchaseLogo.png"
+                  />
+                  <p id="PAP-seller-created">Price After Purchase</p>
+                  <p id="PAP-blue-orange-before-seller-created"> 
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={18}  
+                    height={16}  
+                    id="polygon-logo-pap" 
+                    src="/images/market/polygon.png"
+                  />...
+                  </p>
+                  <hr id="priceline-seller-created" />
+                  <p id="yourprice-seller-created">Price</p>
+                  <p id="price-blue-orange-before-seller-created">
+                    <Image
+                      loader={imageLoader}
+                      alt=""
+                      width={18}  
+                      height={16}  
+                      id="polygon-logo" 
+                      src="/images/market/polygon.png"
+                    /> 
+                    {formattedPrice}
+                  </p>
+                </div>
+                <button id="not-for-sale">
+                OWNS</button>
+              </>  
+            )}	
 
 
       {/* for sale functions below  */}   
-            {!addressMatch && forSale && !forSaleMinted && !isNFTMinted && !address &&  (
+            {!addressMatch && forSale && !forSaleMinted && isNFTMinted && !address &&  (
               <>
                 <div id="blue-orange-prices-before-seller-created">
                     <Image
@@ -371,7 +378,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </p>
                 </div>        
 {/* change below link after test */}                      
-                <Link legacyBehavior href={`/selling/${storeAddressFromURL}`} passHref>
+                <Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
                   <button id="blue-orange-add-to-cart-seller-created-selling" >
                     SELLING</button>
                 </Link>
@@ -415,7 +422,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </p>
                 </div>        
 {/* change below link after test */}                      
-                <Link legacyBehavior href={`/selling/${storeAddressFromURL}`} passHref>
+                <Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
                   <button id="blue-orange-add-to-cart-seller-created-selling" >
                     SELLING</button>
                 </Link>
@@ -459,7 +466,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </p>
                 </div>        
 {/* change below link after test */}                      
-                <Link legacyBehavior href={`/selling/${storeAddressFromURL}`} passHref>
+                <Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
                   <button id="blue-orange-add-to-cart-seller-created-selling" >
                     SELLING</button>
                 </Link>
@@ -503,7 +510,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </p>
                 </div>        
 {/* change below link after test */}                      
-                <Link legacyBehavior href={`/selling/${storeAddressFromURL}`} passHref>
+                <Link legacyBehavior href={`/sales/${storeAddressFromURL}`} passHref>
                   <button id="blue-orange-add-to-cart-seller-created-selling" >
                     SELLING</button>
                 </Link>

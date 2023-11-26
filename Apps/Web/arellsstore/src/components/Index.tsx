@@ -131,7 +131,7 @@ const Index = () => {
 				)}	
 				{openStoreConnected && (
 // change below link after test
-        <Link href={`/owned/${address}`} passHref>
+        <Link href={`/inventory/${address}`} passHref>
           <button id="updatess">
             ENTER STORE
           </button>
