@@ -58,11 +58,14 @@
 - Test Wallet Connected/Not-Connected
 
 #### After Testing and Before Launch: 
-- Add Icons to "Connecting, Review and Connected Modals"
 - Store Private Key Cold & Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
 - Send 1 month - 2 week notifications on new Features to be added.
-- "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "A Polygon Digital Asset market that renders bear markets obsolete. never lose money selling art with Arells!". 
+- "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "A Polygon Digital Asset market that renders bear markets obsolete. never lose money selling art with Arells!".
+
+#### If Time Allows:
+- Resolve "Price Aftger Purchase Collector loading pop-up issue"
+- Add Icons to "Connecting, Review and Connected Modals"
 
 ________________________________________________________________________________________________________________________________________________
 
