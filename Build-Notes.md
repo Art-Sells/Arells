@@ -4,54 +4,34 @@
 
 ### Wallet: 
 - Mainnet with Coinbase/Polygon
-
-### My Store
-- - **Selling**:
-- Price After Purchase
-- Polygon Symbols
-- Price
-- [BUY]-share store to sell Modal
-- - **Owned**:
-- Meta.name (length limit)
-- Price - (if price not yet set purchased) = "Not For Sale"
-- [SELL]-Edit, [OWNED]-silver
  
 ### Creating Mechanics
+- Test Large Names...?
 - Add PaintBrush Modal While Creating "Creating Art."
 - Add Broken Paint-Brush Modal "Art creation failed."
 - Add Forklift Modal After Successful Creation "Art Created! Your Art is now being received, please wait a few seconds for it to appear in your store."
-- Name... (50 Character Limit)?
+- Create Art button becomes unavailable when clicked.
 
 #### Sell
-- Meta.name (full)
+- Meta.name (full) {Test large names}
 - Polygon Symbols
 - PAP Logo above Price After Purchase
 - Add Price Tag Modal "Listing Art."
 - Add Price Tag Modal "Canceled Listing."
 - Add Price Tag on Item Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
+- [List To Sell] button becomes unavailable when clicked.
 
 ### Other Store
-- Top-Left[/\]- (See HOME section)
-- Top-Right[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
-- PAP Logo Above Price After Purchase
-- no art to sell
-- - **Selling**:
-- Price After Purchase
-- Price
-- [BUY]
+- [BUY] becomes unavailable when clicked.
 - - Add Cash Register Modal "Purchasing Art... Please Wait"
 - - Add Cash Register Modal "Canceled Purchase"
 - - Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store.
-- - **Owned**:
-- Meta.name (length limit)
-- Price - (if price not yet set purchased) = "Not For Sale"
-- [SELL]-Edit, [OWNED]-silver (if not address match to url)
      
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
 - MetaTags Social-sharing-images: AWS Cloudfront?
-- MetaTag Title: "Arells Art" (character Limit)
-- MetaTag Image(Profile): 1st NFT Created
+- MetaTag Title: Last NFT URI Name from: address
+- MetaTag Image(Profile): Last NFT URI from: address
 - metadata const (upgrade from generateMetadata) must be async for dynamic changes
 - *clear Browsing/Cache Data before checking*
 - Google Search Console Index (with sitemap)
