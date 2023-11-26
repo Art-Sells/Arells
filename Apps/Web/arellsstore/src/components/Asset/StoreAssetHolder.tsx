@@ -104,10 +104,9 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
     }, [nft.id, checkIfNFTMinted]);
 
     const { priceAfterPurchaseSets = [] } = usePriceAfterPurchaseSets(nft.id);
+    console.log("PAP Sets: ", priceAfterPurchaseSets);
     const [formattedNewPriceAfterPurchase, setFormattedNewPriceAfterPurchase] = useState("...");
     const forSale = nft.price != "0";
-    const forSaleMinted = formattedNewPriceAfterPurchase != "...";
-
     const [isLoadingNewPrice, setIsLoadingNewPrice] = useState(true);
     useEffect(() => {
         if (priceAfterPurchaseSets?.length > 0) {
@@ -116,7 +115,31 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
             setIsLoadingNewPrice(false); // Data is now ready, set loading to false
         }
     }, [priceAfterPurchaseSets]);
-  
+    const forSaleMinted = formattedNewPriceAfterPurchase != "...";
+
+
+    const notConnectedNotListed = 
+    !addressMatch && !address && !forSale; 
+    const notConnectedListed = 
+    !addressMatch && !address && forSale; 
+
+    const connectedBuyerNotListedNotMintedNotRelisted = 
+    !addressMatch && address && !forSale && !isNFTMinted && !forSaleMinted; 
+    const connectedBuyerListedNotMintedNotRelisted = 
+    !addressMatch && address && forSale && !isNFTMinted && !forSaleMinted; 
+    const connectedBuyerListedMintedNotRelisted = 
+    !addressMatch && address && forSale && isNFTMinted && !forSaleMinted; 
+    const connectedBuyerListedMintedRelisted = 
+    !addressMatch && address && forSale && isNFTMinted && forSaleMinted; 
+
+    const connectedOwnerNotListedNotMintedNotRelisted = 
+    addressMatch && address && !forSale && !isNFTMinted && !forSaleMinted; 
+    const connectedOwnerListedNotMintedNotRelisted = 
+    addressMatch && address && forSale && !isNFTMinted && !forSaleMinted; 
+    const connectedOwnerListedMintedNotRelisted = 
+    addressMatch && address && forSale && isNFTMinted && !forSaleMinted; 
+    const connectedOwnerListedMintedRelisted = 
+    addressMatch && address && forSale && isNFTMinted && forSaleMinted; 
 // Asset Changing function/s above 
 
   return (
@@ -138,47 +161,15 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   src={meta?.imageURL}
                 />
           )}	
-  {/* Below for users who are not owners of the Assets */}
-            {!addressMatch && !forSale && !forSaleMinted && !isNFTMinted && !address &&  (
-                <>
-                    <div id="blue-orange-prices-before-seller-created">
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={40}  
-                        height={8}  
-                        id="PAP-logo" 
-                        src="/images/PriceAfterPurchaseLogo.png"
-                      />
-                      <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created">
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={18}  
-                        height={16}  
-                        id="polygon-logo-pap" 
-                        src="/images/market/polygon.png"
-                      />...
-                      </p>
-                      <hr id="priceline-seller-created" />
-                      <p id="yourprice-seller-created">Price</p>
-                      <p id="price-blue-orange-before-seller-created">
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={18}  
-                        height={16}  
-                        id="polygon-logo" 
-                        src="/images/market/polygon.png"
-                      />...
-                      </p>
-                    </div>
-                    <button id="not-for-sale">
-                    OWNS</button>
-                </>
-            )}	
-            {!addressMatch && !forSale && !forSaleMinted && !isNFTMinted && address &&  (
+
+
+
+
+
+
+
+  {/* Below for users not connected */}        
+            {notConnectedNotListed &&  (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -217,130 +208,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     OWNED</button>
                 </>
             )}	
-            {!addressMatch && forSale && !forSaleMinted && isNFTMinted && !address &&  (
-                <>
-                    <div id="blue-orange-prices-before-seller-created">
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={40}  
-                        height={8}  
-                        id="PAP-logo" 
-                        src="/images/PriceAfterPurchaseLogo.png"
-                      />
-                      <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created">
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={18}  
-                        height={16}  
-                        id="polygon-logo-pap" 
-                        src="/images/market/polygon.png"
-                      />...
-                      </p>
-                      <hr id="priceline-seller-created" />
-                      <p id="yourprice-seller-created">Price</p>
-                      <p id="price-blue-orange-before-seller-created">
-                        <Image
-                          loader={imageLoader}
-                          alt=""
-                          width={18}  
-                          height={16}  
-                          id="polygon-logo" 
-                          src="/images/market/polygon.png"
-                        /> 
-                        {formattedPrice}
-                      </p>
-                    </div>
-                    <button id="not-for-sale">
-                    OWNED</button>
-                </>
-            )}	  
-            {!addressMatch && forSale && !forSaleMinted && isNFTMinted && address &&  (
-                <>
-                    <div id="blue-orange-prices-before-seller-created">
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={40}  
-                        height={8}  
-                        id="PAP-logo" 
-                        src="/images/PriceAfterPurchaseLogo.png"
-                      />
-                      <p id="PAP-seller-created">Price After Purchase</p>
-                      <p id="PAP-blue-orange-before-seller-created"> 
-                      <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={18}  
-                        height={16}  
-                        id="polygon-logo-pap" 
-                        src="/images/market/polygon.png"
-                      />...
-                      </p>
-                      <hr id="priceline-seller-created" />
-                      <p id="yourprice-seller-created">Price</p>
-                      <p id="price-blue-orange-before-seller-created">
-                        <Image
-                          loader={imageLoader}
-                          alt=""
-                          width={18}  
-                          height={16}  
-                          id="polygon-logo" 
-                          src="/images/market/polygon.png"
-                        /> 
-                        {formattedPrice}
-                      </p>
-                    </div>
-                    <button id="not-for-sale">
-                    OWNED</button>
-                </>
-            )}	
-            {!addressMatch && forSale && !forSaleMinted && !isNFTMinted && !address &&  (
-              <>
-                <div id="blue-orange-prices-before-seller-created">
-                  <Image
-                    loader={imageLoader}
-                    alt=""
-                    width={40}  
-                    height={8}  
-                    id="PAP-logo" 
-                    src="/images/PriceAfterPurchaseLogo.png"
-                  />
-                  <p id="PAP-seller-created">Price After Purchase</p>
-                  <p id="PAP-blue-orange-before-seller-created"> 
-                  <Image
-                    loader={imageLoader}
-                    alt=""
-                    width={18}  
-                    height={16}  
-                    id="polygon-logo-pap" 
-                    src="/images/market/polygon.png"
-                  />...
-                  </p>
-                  <hr id="priceline-seller-created" />
-                  <p id="yourprice-seller-created">Price</p>
-                  <p id="price-blue-orange-before-seller-created">
-                    <Image
-                      loader={imageLoader}
-                      alt=""
-                      width={18}  
-                      height={16}  
-                      id="polygon-logo" 
-                      src="/images/market/polygon.png"
-                    /> 
-                    {formattedPrice}
-                  </p>
-                </div>
-                <button id="not-for-sale">
-                OWNED</button>
-              </>  
-            )}	
-
-
-      {/* for sale functions below  */}   
-            {!addressMatch && forSale && !forSaleMinted && isNFTMinted && !address &&  (
+            {notConnectedListed  &&  (
               <>
                 <div id="blue-orange-prices-before-seller-created">
                     <Image
@@ -361,7 +229,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         id="polygon-logo-pap" 
                         src="/images/market/polygon.png"
                       /> 
-                      {formattedPriceAfterPurchase}
+                      ...
                       </p>
                     <hr id="priceline-seller-created" />
                     <p id="yourprice-seller-created">Price</p>
@@ -378,13 +246,63 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </p>
                 </div>        
 {/* change below link after test */}                      
-                <Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
-                  <button id="blue-orange-add-to-cart-seller-created-selling" >
-                    SELLING</button>
-                </Link>
+                  <button id="not-for-sale">
+                    OWNED</button> 
               </>
             )}	
-            {!addressMatch && forSale && !forSaleMinted && !isNFTMinted && address &&  (
+  {/* Above for users who are not connected */}
+
+
+
+
+
+
+
+
+
+
+  {/* Below for users who are not owners of the Assets */}
+            {connectedBuyerNotListedNotMintedNotRelisted &&  (
+                <>
+                    <div id="blue-orange-prices-before-seller-created">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={40}  
+                        height={8}  
+                        id="PAP-logo" 
+                        src="/images/PriceAfterPurchaseLogo.png"
+                      />
+                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-blue-orange-before-seller-created">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={18}  
+                        height={16}  
+                        id="polygon-logo-pap" 
+                        src="/images/market/polygon.png"
+                      />...
+                      </p>
+                      <hr id="priceline-seller-created" />
+                      <p id="yourprice-seller-created">Price</p>
+                      <p id="price-blue-orange-before-seller-created">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={18}  
+                        height={16}  
+                        id="polygon-logo" 
+                        src="/images/market/polygon.png"
+                      />...
+                      </p>
+                    </div>
+                    <button id="not-for-sale">
+                    OWNED</button>
+                </>
+            )}	
+
+            {connectedBuyerListedNotMintedNotRelisted &&  (
               <>
                 <div id="blue-orange-prices-before-seller-created">
                     <Image
@@ -428,51 +346,48 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                 </Link>
               </>
             )}	
-            {!addressMatch && forSale && forSaleMinted && isNFTMinted && !address &&  (
-              <>
-                <div id="blue-orange-prices-before-seller-created">
-                    <Image
-                      loader={imageLoader}
-                      alt=""
-                      width={40}  
-                      height={8}  
-                      id="PAP-logo" 
-                      src="/images/PriceAfterPurchaseLogo.png"
-                    />
-                    <p id="PAP-seller-created">Price After Purchase</p>
-                    <p id="PAP-blue-orange-before-seller-created">
-                    <Image
+
+            {connectedBuyerListedMintedNotRelisted &&  (
+                <>
+                    <div id="blue-orange-prices-before-seller-created">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={40}  
+                        height={8}  
+                        id="PAP-logo" 
+                        src="/images/PriceAfterPurchaseLogo.png"
+                      />
+                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-blue-orange-before-seller-created"> 
+                      <Image
                         loader={imageLoader}
                         alt=""
                         width={18}  
                         height={16}  
                         id="polygon-logo-pap" 
                         src="/images/market/polygon.png"
-                      /> 
-                      {formattedNewPriceAfterPurchase}
-                    </p>
-                    <hr id="priceline-seller-created" />
-                    <p id="yourprice-seller-created">Price</p>
-                    <p id="price-blue-orange-before-seller-created">
-                    <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={18}  
-                        height={16}  
-                        id="polygon-logo" 
-                        src="/images/market/polygon.png"
-                      /> 
-                      {formattedPrice}
-                    </p>
-                </div>        
-{/* change below link after test */}                      
-                <Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
-                  <button id="blue-orange-add-to-cart-seller-created-selling" >
-                    SELLING</button>
-                </Link>
-              </>
-            )}	
-            {!addressMatch && forSale && forSaleMinted && isNFTMinted && address &&  (
+                      />...
+                      </p>
+                      <hr id="priceline-seller-created" />
+                      <p id="yourprice-seller-created">Price</p>
+                      <p id="price-blue-orange-before-seller-created">
+                        <Image
+                          loader={imageLoader}
+                          alt=""
+                          width={18}  
+                          height={16}  
+                          id="polygon-logo" 
+                          src="/images/market/polygon.png"
+                        /> 
+                        {formattedPrice}
+                      </p>
+                    </div>
+                    <button id="not-for-sale">
+                    OWNED</button>
+                </>
+            )}	            
+            {connectedBuyerListedMintedRelisted &&  (
               <>
                 <div id="blue-orange-prices-before-seller-created">
                     <Image
@@ -522,8 +437,16 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 {/* Above for users who are not owners of the Assets */}     
 
 
+
+
+
+
+
+
+
+
 {/* Below for owners of the Assets */}	
-            {addressMatch && address && !forSale && !forSaleMinted && !isNFTMinted && (
+            {connectedOwnerNotListedNotMintedNotRelisted && (
                 <>
                     <div id="blue-orange-prices-before-seller-created">
                         <Image
@@ -565,7 +488,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </Link>
                 </>
             )}	
-            {addressMatch && address && forSale && !forSaleMinted &&!isNFTMinted && (
+            {connectedOwnerListedNotMintedNotRelisted && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -609,7 +532,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   </Link>
               </>
           )}	      
-          {addressMatch && address && forSale && !forSaleMinted && isNFTMinted && (
+          {connectedOwnerListedMintedNotRelisted && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -621,7 +544,6 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
                       <p id="PAP-seller-created">Price After Purchase</p>
-                      {!isLoadingNewPrice && ( // Only render if data is ready
                         <p id="PAP-blue-orange-before-seller-created">
                         <Image
                           loader={imageLoader}
@@ -630,10 +552,8 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                           height={16}  
                           id="polygon-logo-pap" 
                           src="/images/market/polygon.png"
-                        /> 
-                            {formattedNewPriceAfterPurchase}
+                        />...
                         </p>
-                      )}
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
                       <p id="price-blue-orange-before-seller-created">
@@ -655,7 +575,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                     </Link>
               </>
           )}	   
-          {addressMatch && address && forSale && forSaleMinted && isNFTMinted && (
+          {connectedOwnerListedMintedRelisted && (
               <>
                   <div id="blue-orange-prices-before-seller-created">
                       <Image
@@ -701,7 +621,12 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   </Link>
               </>
           )}	       
-  {/* Above for users who are owners of the Assets */}          
+  {/* Above for users who are owners of the Assets */}     
+
+
+
+
+
             
         </div>    
     </>
@@ -709,7 +634,3 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 };
 
 export default StoreAssetHolder;
-
-function showErrorToast() {
-  throw new Error("Function not implemented.");
-}

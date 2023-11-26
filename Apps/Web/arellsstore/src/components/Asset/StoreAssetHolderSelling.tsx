@@ -108,8 +108,6 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
     const { priceAfterPurchaseSets = [] } = usePriceAfterPurchaseSets(nft.id);
     const [formattedNewPriceAfterPurchase, setFormattedNewPriceAfterPurchase] = useState("...");
     const forSale = nft.price != "0";
-    const forSaleMinted = formattedNewPriceAfterPurchase != "...";
-
     const [isLoadingNewPrice, setIsLoadingNewPrice] = useState(true);
     useEffect(() => {
         if (priceAfterPurchaseSets?.length > 0) {
@@ -118,7 +116,22 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
             setIsLoadingNewPrice(false); // Data is now ready, set loading to false
         }
     }, [priceAfterPurchaseSets]);
-  
+    const forSaleMinted = formattedNewPriceAfterPurchase != "...";
+
+    const notConnectedListedNotMintedNotRelisted = 
+    !addressMatch && !address && forSale && !isNFTMinted; 
+    const notConnectedListedMintedRelisted = 
+    !addressMatch && !address && forSale && isNFTMinted; 
+ 
+    const connectedBuyerListedNotMintedNotRelisted = 
+    !addressMatch && address && forSale && !isNFTMinted && !forSaleMinted; 
+    const connectedBuyerListedMintedRelisted = 
+    !addressMatch && address && forSale && isNFTMinted && forSaleMinted; 
+
+    const connectedOwnerListedNotMintedNotRelisted = 
+    addressMatch && address && forSale && !isNFTMinted && !forSaleMinted; 
+    const connectedOwnerListedMintedRelisted = 
+    addressMatch && address && forSale && isNFTMinted && forSaleMinted; 
 // Asset Changing function/s above 
 
 //Buying functions Below
@@ -193,7 +206,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
           />
         )}	
 {/* Below for users who are not owners of the Assets */} 
-        {!addressMatch && !address && forSale && !isNFTMinted && (
+        {notConnectedListedNotMintedNotRelisted && (
           <>
             <div id="blue-orange-prices-before-seller-created">
               <Image
@@ -236,7 +249,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
               BUY</button>
           </>
         )}
-        {!addressMatch && !address && forSale && isNFTMinted && (
+        {notConnectedListedMintedRelisted && (
           <>
             <div id="blue-orange-prices-before-seller-created">
               <Image
@@ -279,7 +292,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
               BUY</button>
           </>
         )}
-        {!addressMatch && address && forSale && !isNFTMinted && (
+        {connectedBuyerListedNotMintedNotRelisted && (
           <>
             <div id="blue-orange-prices-before-seller-created">
               <Image
@@ -322,7 +335,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
               BUY</button>
           </>
         )}
-        {!addressMatch && address && forSale && isNFTMinted && (
+        {connectedBuyerListedMintedRelisted && (
           <>
             <div id="blue-orange-prices-before-seller-created">
               <Image
@@ -369,7 +382,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
 
 
 {/* Below for owners of the Assets */}	
-        {addressMatch && address && forSale && !isNFTMinted && (
+        {connectedOwnerListedNotMintedNotRelisted && (
           <>
             <div id="blue-orange-prices-before-seller-created">
               <Image
@@ -412,7 +425,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
               BUY</button>
           </>
         )}
-        {addressMatch && address && forSale && isNFTMinted && (
+        {connectedOwnerListedMintedRelisted && (
             <>
                 <div id="blue-orange-prices-before-seller-created">
                   <Image

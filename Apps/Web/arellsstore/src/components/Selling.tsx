@@ -46,19 +46,6 @@ const Selling = () => {
 			setLoading(false);
 		}
 	}, [imagesLoaded]);
-	// Adjusted useEffect for loading state with router events
-	useEffect(() => {
-		const handleStart = () => setLoading(true);
-		const handleComplete = () => setLoading(false);
-
-		router.events.on('routeChangeStart', handleStart);
-		router.events.on('routeChangeComplete', handleComplete);
-
-		return () => {
-			router.events.off('routeChangeStart', handleStart);
-			router.events.off('routeChangeComplete', handleComplete);
-		};
-	}, [router]);
 // loader functions above
 
 
@@ -66,7 +53,6 @@ const Selling = () => {
 	const [create, setCreate] = useState(true);
 	const [createConnected, setCreateConnected] = useState(false);
     const [noArtCreated, setNoArtCreated] = useState(false);
-    const [artCreated, setArtCreated] = useState(false);
 	const [artSelling, setArtSelling] = useState(false);
 // useState constants above
 
@@ -80,7 +66,6 @@ const Selling = () => {
     }, [router.query.storeAddress]);
 
     const { 
-		createdNFTs,
 		sellingNFTs 
 	} = useNFTMarket(storeAddressFromURL);
 	useEffect(() => {
@@ -88,14 +73,14 @@ const Selling = () => {
 	}, [sellingNFTs]);
 	useEffect(() => {
 		if(address && sellingNFTs) {
-			setLoading(false);
+			setTimeout(() => setLoading(false), 2000);
 		}
     }, [address, sellingNFTs]);
     useEffect(() => {
         if (!address) {
 			setCreate(true);
 			setCreateConnected(false);
-        } else {
+        } else if (address) {
             setCreate(false);
             setCreateConnected(true);
         }
@@ -104,7 +89,7 @@ const Selling = () => {
 		const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
 		
 		setArtSelling(hasSellingArt);
-	}, [createdNFTs, sellingNFTs]);
+	}, [sellingNFTs]);
 
 	const nftCount = sellingNFTs?.length || 0;
 
@@ -162,34 +147,18 @@ const Selling = () => {
 								width={15}
 								id="arells-icon-seller-created" 
 								src="images/prototype/Arells-Icon-Home.png"/>
-								
 						</Link>							
-						{create && (
-							<button id="cart-link-seller-created" onClick={connectWallet}>
+						<Link legacyBehavior href="/create">
+							<a id="cart-link-connected-seller-created">
 								<Image
 								loader={imageLoader}
-								onLoad={() => handleImageLoaded('arellsIcon')}
 								alt=""
 								height={18}
-								width={18} 
+								width={18}
 								id="cart-icon-seller-created" 
 								src="images/prototype/Add-Ivory.png"/>
-							</button>
-						)}	
-						{createConnected && (
-		// change below link after test
-							<Link legacyBehavior href="/create">
-								<a id="cart-link-connected-seller-created">
-									<Image
-									loader={imageLoader}
-									alt=""
-									height={18}
-									width={18}
-									id="cart-icon-seller-created" 
-									src="images/prototype/Add-Ivory.png"/>
-								</a>
-							</Link>	
-						)}		
+							</a>
+						</Link>	
 				</div>
 			</>
 		)}
@@ -216,7 +185,7 @@ const Selling = () => {
 			)}
 			{artSelling && (
 				<div id="container-seller-created"
-				className={containerClass}>
+					className={containerClass}>
 					{sellingNFTs?.map((nft) => (
 						<StoreAssetHolderSelling nft={nft} key={nft.id} />
 					))}

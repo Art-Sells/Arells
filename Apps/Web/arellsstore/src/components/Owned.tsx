@@ -26,7 +26,6 @@ const Owned = () => {
 
 //loader functions below 
     const router = useRouter();
-	const [isDataFetched, setIsDataFetched] = useState(false);
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
@@ -46,19 +45,6 @@ const Owned = () => {
 			setLoading(false);
 		}
 	}, [imagesLoaded]);
-	// Adjusted useEffect for loading state with router events
-	useEffect(() => {
-		const handleStart = () => setLoading(true);
-		const handleComplete = () => setLoading(false);
-
-		router.events.on('routeChangeStart', handleStart);
-		router.events.on('routeChangeComplete', handleComplete);
-
-		return () => {
-			router.events.off('routeChangeStart', handleStart);
-			router.events.off('routeChangeComplete', handleComplete);
-		};
-	}, [router]);
 // loader functions above
 
 
@@ -154,7 +140,7 @@ const Owned = () => {
 		)}  
 
 {/*<!-- Modals Above -->*/}
-{!showLoading && (
+		{!showLoading && (
 			<>
 				<div id="header-seller-created">
 					
@@ -168,32 +154,17 @@ const Owned = () => {
 								id="arells-icon-seller-created" 
 								src="images/prototype/Arells-Icon-Home.png"/>
 						</Link>							
-						{create && (
-							<button id="cart-link-seller-created" onClick={connectWallet}>
+						<Link legacyBehavior href="/create">
+							<a id="cart-link-connected-seller-created">
 								<Image
 								loader={imageLoader}
-								onLoad={() => handleImageLoaded('arellsIcon')}
 								alt=""
 								height={18}
-								width={18} 
+								width={18}
 								id="cart-icon-seller-created" 
 								src="images/prototype/Add-Ivory.png"/>
-							</button>
-						)}	
-						{createConnected && (
-		// change below link after test
-							<Link legacyBehavior href="/create">
-								<a id="cart-link-connected-seller-created">
-									<Image
-									loader={imageLoader}
-									alt=""
-									height={18}
-									width={18}
-									id="cart-icon-seller-created" 
-									src="images/prototype/Add-Ivory.png"/>
-								</a>
-							</Link>	
-						)}		
+							</a>
+						</Link>	
 				</div>
 			</>
 		)}
