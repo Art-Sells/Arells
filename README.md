@@ -1,7 +1,7 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Buy art that obscured bear markets.
+## Buy art that obscures bear markets.
 
 ### Problem:
 Most artists are struggling financially.
