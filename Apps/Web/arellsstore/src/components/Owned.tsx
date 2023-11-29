@@ -176,7 +176,7 @@ const Owned = () => {
 		height={35} 
 		id="word-logo-seller-created" 
 		src="images/Arells-Logo-Ebony.png"/>
-		<p id="slogan-seller-created">BUY ART THAT OBSCURES BEAR MARKETS</p>
+		<p id="slogan-seller-created">BUY ART THAT NEVER LOSES VALUE</p>
 		<hr id="profileline-seller-created"/>
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	

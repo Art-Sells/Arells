@@ -1,5 +1,5 @@
 #asset-wrapper {
-	padding-top: 0px;
+	padding-top: 10px;
 	padding-bottom: 30px;
 	  text-align: center;
 	  font-family: Arial;
@@ -228,7 +228,7 @@
 				  
 		  
 	  #blue-orange {	
-		  margin-top: 30px;
+		  margin-top: -5px;
 		  margin-left: auto;
 		  margin-right: auto;
 		  border-radius: 15px;

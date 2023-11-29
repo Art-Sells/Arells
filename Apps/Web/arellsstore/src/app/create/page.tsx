@@ -41,7 +41,7 @@ const CreateTest = () => {
 
   return (
     <>
-        <div id="blue-orange-wrapper">
+        <div id="asset-wrapper">
           <CreateArt/>
         </div>  
     </>

@@ -115,7 +115,7 @@ const Index = () => {
         <br/>
         
         <p id="descriptioner">
-        BUY ART THAT OBSCURES BEAR MARKETS
+        BUY ART THAT NEVER LOSES VALUE
         </p>
 
         <hr id="black-liner"/>

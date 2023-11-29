@@ -177,9 +177,9 @@
 		  }
 		#slogan-seller-created {
 			margin-top: 23px;
-			font-size: 9px;
-			letter-spacing: 0px;
-			margin-left: 0px; 
+			font-size: 8px;
+			letter-spacing: 1px;
+			margin-left: 1px; 
 			font-weight: 600;
 			color: gray;
 			opacity: 1;
@@ -732,7 +732,6 @@
 		#slogan-seller-created {
 			margin-top: 16px;
 			font-size: 6.5px;
-			margin-left: 0px; 
 		}
 		#profileline-seller-created {
 		margin-top: 20px;
