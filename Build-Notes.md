@@ -6,16 +6,16 @@
 - Mainnet with Coinbase/Polygon
  
 ### Creating Mechanics
-- Test Large Names...?
+- If no Art or Name "Error Modals"
 - Add PaintBrush Modal While Creating "Creating Art."
 - Add Broken Paint-Brush Modal "Art creation failed."
 - Add Forklift Modal After Successful Creation "Art Created! Your Art is now being received, please wait a few seconds for it to appear in your store."
 - Create Art button becomes unavailable when clicked.
 
 #### Sell
-- Meta.name (full) {Test large names}
 - Polygon Symbols
 - PAP Logo above Price After Purchase
+- If no Price or PAP "Error modals"
 - Add Price Tag Modal "Listing Art."
 - Add Price Tag Modal "Canceled Listing."
 - Add Price Tag on Item Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
@@ -40,8 +40,8 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold & Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
-- Send 1 month - 2 week notifications on new Features to be added.
-- "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "A Polygon Digital Asset market that renders bear markets obsolete. never lose money selling art with Arells!".
+- Send 5 day week notifications on 2.0 profile creation on top of USDC (which Wallet to download before launch day, creating a polygon account, etc).
+- "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "Buy art that never loses value! Arells is a polygon digital asset (NFT) marketplace that obscures bear markets.".
 
 #### If Time Allows:
 - Resolve "Price Aftger Purchase Collector loading pop-up issue"
