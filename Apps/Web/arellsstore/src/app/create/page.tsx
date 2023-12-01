@@ -7,15 +7,15 @@ import type { Metadata } from 'next';
 import CreateArt from '../../components/Create/CreateArt';
 
 export const metadata: Metadata = {
-  title: "Create Test",
-  description: "Test for Creating",
+  title: "Create Art",
+  description: "Create Art To Sell",
   robots: "noimageindex",
 
   openGraph: {
-    title: "Create Test",
-    description: "Test for Creating",
+    title: "Create Art",
+    description: "Create Art To Sell",
     // Change this link after testing
-    url: "https://arells.com/test/create", 
+    url: "https://arells.com/create", 
     type: "website",
     images: [
       {
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
   },
 
   twitter: {
-    title: "Create Test",
-    description: "Test for Creating",
+    title: "Create Art",
+    description: "Create Art To Sell",
     // Change this link after testing
     card: "summary_large_image",
     images: [

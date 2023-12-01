@@ -12,14 +12,14 @@ import { ApolloWrapper } from '../../../lib/apollo-provider';
 
 export const metadata: Metadata = {
   title: "Arells",
-  description: "Create art to sell.",
+  description: "Buy art that never loses value. With Arells bear markets are obsolete.",
   robots: "noimageindex",
 
   openGraph: {
     title: "Arells",
-    description: "Create art to sell.",
+    description: "Buy art that never loses value. With Arells bear markets are obsolete.",
     // Change this link after testing
-    url: "https://arells.com/test/sell/[storeAddress]/[nftId]", 
+    url: "https://arells.com/sell/[storeAddress]/[nftId]", 
     type: "website",
     images: [
       {
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
   twitter: {
     title: "Arells",
-    description: "Create art to sell.",
+    description: "Buy art that never loses value. With Arells bear markets are obsolete.",
     // Change this link after testing
     card: "summary_large_image",
     images: [
