@@ -183,7 +183,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
       {shareToSellModal && (
         <div id="copiedLink">
           <div className="modal-content">
-          <p>SHARE TO SELL</p>
+          <p>OWNER CANNOT BUY</p>
           <button className="close"
             onClick={closeShareToSellModal}>OK</button>	
           </div>

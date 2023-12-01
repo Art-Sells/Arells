@@ -16,6 +16,7 @@ type ImagePickerProps = {
 
 const ImagePicker = ({ onFileChange }: ImagePickerProps) => {
     const [previewURL, setPreviewURL] = useState<string>('');
+    const [uploadCount, setUploadCount] = useState(0);
 
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
@@ -59,16 +60,19 @@ const ImagePicker = ({ onFileChange }: ImagePickerProps) => {
                 }, 'image/png');
             };
         };
+        setUploadCount(count => count + 1);
     };
 
     return (
         <>
             <div id="photo-div">
-                <div id="photo-no-upload">
+                <div id="photo-no-upload"
+                key={uploadCount}>
                     {previewURL && (
                         <Image
                             loader={imageLoader}
                             src={previewURL}
+                            id="photo-upload"
                             alt=""
                             width={400}
                             height={400}
@@ -76,7 +80,9 @@ const ImagePicker = ({ onFileChange }: ImagePickerProps) => {
                         />
                     )}
                 </div>
-                <label htmlFor="uploader" style={{ cursor: 'pointer' }}>
+                <label 
+                htmlFor="uploader" 
+                style={{ cursor: 'pointer' }}>
                     <Image
                         loader={imageLoader}
                         id="add-art-icon"

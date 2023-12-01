@@ -47,7 +47,7 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
         setSelectedImage(file);
       }}/>
         <div>
-          <FormikInput name="name" placeholder="name" />
+          <FormikInput name="name" placeholder="Name" />
           <SubmitButton />
         </div>
       </Form>

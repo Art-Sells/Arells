@@ -88,7 +88,7 @@
 			margin-left: 2px;
 			opacity: .8;
 		}
-       	   input { 
+       	   #input-update { 
        	   	    text-align: center;
        	   		margin-top: 5px;     	   
        	   		padding-top: 20px;
@@ -107,7 +107,7 @@
        	   		opacity: .4;
        	   }
  	   
-			input:focus {
+			#input-update:focus {
 			    cursor: pointer;
 			    outline: none;
 			    transition: 1s;
@@ -168,12 +168,18 @@
 
 
 
-@media screen and (max-width: 650px){
+@media screen and (max-width: 700px){
+
+	#stay-updated {
+		font-size: 8px;
+		letter-spacing: 1px;
+		word-spacing: 1px;			
+	}	
 
 	#sign-up {
 		width: 350px;			  	
 	}	
-       	  input { 
+       	  #input-update { 
 			margin-top: 5px;     	   
 			padding-top: 20px;
 			padding-bottom: 20px;
