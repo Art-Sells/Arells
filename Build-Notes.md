@@ -32,7 +32,7 @@
 - MetaTags Social-sharing-images: AWS Cloudfront?
 - MetaTag Title: Last NFT URI Name from: address
 - MetaTag Image(Profile): Last NFT URI from: address
-- metadata const (upgrade from generateMetadata) must be async for dynamic changes
+- metadata const (upgrade from generateMetadata) must be async for dynamic changes ensure ${} are places in URLs
 - *clear Browsing/Cache Data before checking*
 - Google Search Console Index (with sitemap)
 - Test Wallet Connected/Not-Connected
@@ -256,6 +256,7 @@ ________________________________________________________________________________
 - Created by artists for artists. Arells was created from a deep frustration of how difficult it is to make a living as artists in a society that doesn't value art to the same degree as other careers. But now thanks to the technology powering cryptocurrencies (blockchain), all this changes. Neither you nor buyers of your artwork will ever lose money selling art thanks to a new market system we're calling "Price After Purchase". With our Price After Purchase system (PAP Logo - link to PAP Description), bear markets (markets in which people sell assets at a loss) are obsolete. Arells would have been impossible to create before blockchain technology and so... This marks you as a pioneer of a revolution that will change not just the art industry, but asset markets everywhere.
 
 ### Seller-Created/Collected
+- Addresses section (based on Blockchains(incorporate SOL USDC?)
 - Private and Not-For-Sale items automatically show on bottom of pack
 - Create Categories (General, Illustrations, etc)
 - Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
