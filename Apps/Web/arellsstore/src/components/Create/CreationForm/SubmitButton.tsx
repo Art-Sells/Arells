@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import useSigner from "../../../state/signer";
 import { useFormikContext } from "formik";
@@ -7,27 +7,18 @@ import { useFormikContext } from "formik";
 import '../../../app/css/prototype/asset/asset.css';
 import '../../../app/css/modals/connect-wallet.css';
 
-import Image from 'next/image';
-
 const SubmitButton = () => {
   const { isSubmitting, submitForm } = useFormikContext();
-	const { address, connectWallet} = useSigner();
 
-  const handleCreateArt = () => {
-    if (!address) {
-      connectWallet();
-    } else {
-      submitForm();
-    }
-  };
 
   return (
     <>
       <button 
           type="button"
           id="post-created-art"
+          disabled={isSubmitting}
           data-loading={isSubmitting} 
-          onClick={handleCreateArt}>
+          onClick={submitForm}>
         CREATE ART
       </button>
     </>

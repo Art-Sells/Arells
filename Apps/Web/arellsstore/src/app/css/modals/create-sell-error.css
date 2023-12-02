@@ -1,10 +1,10 @@
  /* modal.css source */
 /* The Modal (background) */
 
-#copiedLink {
+#create-sell-error-wrapper {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 145px; /* Location of the box */
+  padding-top: 100px; /* Location of the box */
   text-align: center;
 	font-family: Arial;
   left: 0;
@@ -18,14 +18,19 @@
 
 /* Modal Content */
 
-.modal-content {
+#create-sell-error-content {
+  padding-top: 45px;
+  width: 220px;
+  height: 180px;
+  background-color: gray;
+  border-radius: 30px;
   align-items: center;
   position: relative;
-  color: white;
+  color: silver;
   font-weight: 500;
-  font-size: 13px;
-  letter-spacing: 3px;
-  margin-left: 3px;  
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-left: 2px;  
   margin-left: auto;
   margin-right: auto;  
   -webkit-animation-name: animatetop;
@@ -44,29 +49,39 @@
   to {center:0; opacity:1}
 }
 
+#error-image{
+  opacity: .5;
+}
+
+#error-name-image{
+  margin-top: 8px;
+  opacity: .5;
+}
+
 #needed-word {
-  margin-top: -5px;
+  margin-top: 20px;
   margin-bottom: 30px;
 }
 
 
-.close {
-  background: none;
-  color: white;
-  margin-top: 10px;
+#create-sell-error-close {
+  background: gray;
+  color: silver;
+  margin-top: -10px;
   margin-left: auto;
   margin-right: auto;   
-  border: solid;
-  border-width: 1px;
+  border: none;
+  border-width: 2px;
   font-weight: 500;
   border-radius: 10px;
-  font-size: 15px;
-  padding: 15px;
+  font-size: 10px;
+  padding: 15.5px;
   letter-spacing: 1px;
-  width: 100px; 
+  width: 80px; 
+  box-shadow: 0px 5px 12px -2px rgb(83, 83, 83);  
 }
-.close:hover,
-.close:focus {
+#create-sell-error-close:hover,
+#create-sell-error-close:focus {
   cursor: pointer;
   opacity: .4;
   transition: 1s;

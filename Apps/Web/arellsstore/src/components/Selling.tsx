@@ -140,13 +140,13 @@ const Selling = () => {
 					
 		{/*<!-- Change below link after test -->*/}
 						<Link href="/" id="icon-link-seller-created">
-								<Image
-								loader={imageLoader}
-								alt=""
-								height={16}
-								width={15}
-								id="arells-icon-seller-created" 
-								src="images/prototype/Arells-Icon-Home.png"/>
+							<Image
+							loader={imageLoader}
+							alt=""
+							height={16}
+							width={15}
+							id="arells-icon-seller-created" 
+							src="images/prototype/Arells-Icon-Home.png"/>
 						</Link>							
 						<Link legacyBehavior href="/create">
 							<a id="cart-link-connected-seller-created">

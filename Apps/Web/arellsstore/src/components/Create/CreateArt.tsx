@@ -15,7 +15,7 @@ const CreateArt = () => {
 
 // asset functions below
 const { address } = useSigner();
-const safeAddress = address || null; // Fallback to null if address is undefined
+const safeAddress = address || null;
 const { createNFT } = useNFTMarket(safeAddress);
 // asset constants above	  
   
