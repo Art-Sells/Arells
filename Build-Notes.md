@@ -25,7 +25,7 @@
 - [BUY] becomes unavailable when clicked.
 - - Add Cash Register Modal "Purchasing Art... Please Wait"
 - - Add Cash Register Modal "Canceled Purchase"
-- - Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store.
+- - Add Truck Modal "ART PURCHASED It'll take a few moments for it to be delivered to your store (Deliver Art).
      
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
