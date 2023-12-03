@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import {Input} from "./PriceInputs/Input";
 import { toast } from "react-toastify";
 import { usePriceAfterPurchaseSets } from "../../state/nft-market/usePriceAfterPurchaseSets";
+import Link from "next/link";
 
 type AssetMetadata = {
     name: string;
@@ -55,6 +56,30 @@ const AssetHolder = (props: AssetProps) => {
 // loader functions above
 
 // asset constants below
+    const [showPriceErrorModal, setPriceErrorModal] = useState<boolean>(false);
+    const [showPAPErrorModal, setPAPErrorModal] = useState<boolean>(false);
+
+    const [showListingModal, setListingModal] = useState<boolean>(false);
+    const [showListingErrorModal, setListingErrorModal] = useState<boolean>(false);
+
+    const [showListedModal, setListedModal] = useState<boolean>(false);
+
+    const closePriceErrorModal = () => {
+        setPriceErrorModal(false);
+        window.location.reload();
+    };
+    
+    const closePAPErrorModal = () => {
+        setPAPErrorModal(false);
+        window.location.reload();
+
+    };
+    
+    const closeListingErrorModal = () => {
+        setListingErrorModal(false);
+        window.location.reload();
+    };
+      
     const { nft } = props; 
     const [meta, setMeta] = useState<AssetMetadata>();
     const {address, connectWallet} = useSigner();
@@ -85,13 +110,6 @@ const AssetHolder = (props: AssetProps) => {
 
 
 //Price & Price Affter Purchase Front-End Systems Below
-    // DELETE AFTER TEST (Modal As Well)
-    const [showCopiedLink, setCopiedLink] = useState(false);
-    const [showCopiedLinkPrice, setCopiedLinkPrice] = useState(false);
-    const closeCopiedLink = () => {
-        setCopiedLink(false);
-        setCopiedLinkPrice(false);
-    };
 
 
     const {listNFTCreator, listNFTCollector} = useNFTMarket(storeAddressFromURL);
@@ -157,16 +175,15 @@ const AssetHolder = (props: AssetProps) => {
         try {
           await listNFTCreator(nft.id, price, priceAfterPurchase);
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
-//Change below link after test
-            //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
-          router.push(`/buy/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);
         }
       };
+      const [isListing, setIsListing] = useState(false);  
       async function listToSell() {
         try {
+            setIsListing(true);
             if (!address) {
                 await connectWallet(); 
                 return; 
@@ -177,31 +194,27 @@ const AssetHolder = (props: AssetProps) => {
     
                 if (!price) {
                     setError("Price is required");
-                    setCopiedLinkPrice(true); 
-                    return;
-                }
-
-                if (!priceAfterPurchase) {
-                    setError("Price After Purchase is required");
-                    setCopiedLinkPrice(true); 
+                    setPriceErrorModal(true); 
                     return;
                 }
     
                 const weiPrice = ethers.utils.parseEther(price);
                 if (weiPrice.lte(0)) {
                     setError("Price must be greater than 0");
-                    setCopiedLinkPrice(true); 
+                    setPriceErrorModal(true); 
                     return;
                 }
 
                 const weiPriceAfterPurchase = ethers.utils.parseEther(
                     priceAfterPurchase);
 
-                await onSellConfirmed(weiPrice, weiPriceAfterPurchase); // Ensure this is awaited
+                await onSellConfirmed(weiPrice, weiPriceAfterPurchase);
+                setListingModal(true);
             }
         } catch (e) {
             console.error("Error in listing NFT:", e);
-            // Handle the error appropriately (e.g., set an error state, show a message, etc.)
+            setListingModal(false);
+            setListingErrorModal(true);
         }
     }
 
@@ -263,8 +276,8 @@ const AssetHolder = (props: AssetProps) => {
     };
 
     async function listToSellMinted() {
-        console.log("on Sell function clicked");
         try {
+            setIsListing(true);
             if (!address) {
                 await connectWallet(); 
                 return; 
@@ -275,34 +288,33 @@ const AssetHolder = (props: AssetProps) => {
     
                 if (!inputPriceAfterPurchase) {
                     setError("Price After Purchase is required");
-                    setCopiedLink(true); 
+                    setPAPErrorModal(true); 
                     return;
                 }
                 if (inputPriceAfterPurchase == 0) {
                     setError("Price After Purchase is required");
-                    setCopiedLink(true); 
+                    setPAPErrorModal(true); 
                     return;
                 }
     
                 // Check if priceAfterPurchaseNum is less than formattedPrice
                 if (inputPriceAfterPurchase < formattedPrice || inputPriceAfterPurchase < (2 * formattedPrice)) {
                     setError("Price After Purchase must be greater than or equal to the original price and less than twice the original price");
-                    setCopiedLink(true); 
+                    setPAPErrorModal(true); 
                     return; 
                 }
 
                 else {
-                    // Ensure priceAfterPurchaseNum is a string before converting it to Wei
                     const etherPriceAfterPurchase = inputPriceAfterPurchase.toString();
-                    // Convert the string to Wei
                     const weiInputPriceAfterPurchase = ethers.utils.parseEther(etherPriceAfterPurchase);
-                    // Continue with the listing process...
-                    await onSellConfirmedMinted(weiInputPriceAfterPurchase); // Ensure this is awaited
+                    setListingModal(true);
+                    await onSellConfirmedMinted(weiInputPriceAfterPurchase);
                 }
             }
         } catch (e) {
             console.error("Error in listing NFT:", e);
-            // Handle the error appropriately
+            setListingModal(false);
+            setListingErrorModal(true);
         }
     };
 
@@ -334,35 +346,95 @@ const AssetHolder = (props: AssetProps) => {
   return (
     <>
 {/*<!-- Modals below link after test -->*/} 
-        {showCopiedLink && (
-			<div id="copiedLink">
+    {showPriceErrorModal && (
+        <div id="create-sell-error-wrapper">
+          <div id="create-sell-error-content">
+          <Image 
+            // loader={imageLoader}
+            alt="" 
+            width={30}
+            height={30}
+            id="error-image" 
+            src="/images/market/polygonIvory.png"/>  
+          <p id="needed-word">SET PRICE</p>
+          <button id="create-sell-error-close"
+            onClick={closePriceErrorModal}>OK</button>	
+          </div>
+        </div>	
+      )}
 
-				<div className="modal-content">
-                <Image 
-                    loader={imageLoader}
-                    alt="" 
-                    width={100}
-                    height={20}
-                    id="price-after-purchase-modal" 
-                    src="/images/PriceAfterPurchaseLogoIvory.png"/>  
-				<p>Price After Purchase</p>
-                <p>Must Be at least 2x of Price</p>
-				<button className="close"
-					onClick={closeCopiedLink}>OK</button>	
-				</div>
-			</div>	
-		)}
+      {showPAPErrorModal && (
+        <div id="create-sell-error-wrapper">
+          <div id="create-sell-error-content">
+          <Image 
+              // loader={imageLoader}
+              alt="" 
+              width={80}
+              height={25}
+              id="error-name-image" 
+              src="/images/PriceAfterPurchaseLogoIvory.png"/>    
+            <p id="pap-error-words">PRICE AFTER PURCHASE</p>
+            <p id="pap-error-paragraph">Must be at least twice</p>
+            <p id="pap-error-paragraph">as much as the price.</p>
+          <button id="create-sell-error-close"
+              onClick={closePAPErrorModal}>OK</button>	
+          </div>
+        </div>	
+      )}
 
-        {showCopiedLinkPrice && (
-			<div id="copiedLink">
+      {showListingModal && (
+        <div id="create-art-modal-wrapper">
+          <div id="create-art-modal-content">
+          <Image 
+            // loader={imageLoader}
+            alt="" 
+            width={50}
+            height={50}
+            id="create-art-image" 
+            src="/images/prototype/creatingArt.png"/>  
+          <p id="create-art-words">LISTING ART</p>
+          <div className={styles.loader}></div>
+          </div>
+        </div>	
+      )}
 
-				<div className="modal-content">
-				<p>Price Required</p>
-				<button className="close"
-					onClick={closeCopiedLink}>OK</button>	
-				</div>
-			</div>	
-		)}
+      {showListingErrorModal && (
+        <div id="creation-error-wrapper">
+          <div id="creation-error-content">
+          <Image 
+            // loader={imageLoader}
+            alt="" 
+            width={35}
+            height={35}
+            id="creation-error-image" 
+            src="/images/prototype/cancelled.png"/>  
+          <p id="creation-error-words">CANCELED</p>
+          <button id="creation-error-close"
+            onClick={closeListingErrorModal}>OK</button>	
+          </div>
+        </div>	
+      )}
+
+      {showListedModal && (
+        <div id="created-art-modal-wrapper">
+          <div id="created-art-modal-content">
+          <Image 
+            // loader={imageLoader}
+            alt="" 
+            width={50}
+            height={50}
+            id="created-art-image" 
+            src="/images/prototype/createdArt.png"/>  
+          <p id="created-art-words">ART LISTED</p>
+          <p id="created-art-paragraph">It'll take a few moments</p>
+          <p id="created-art-paragraph">for your prices to appear.</p>
+          <Link href={`/buy/${address}`} passHref>
+            <button id="created-art-modal-close">VIEW LISTINGS</button>	
+          </Link>   
+
+          </div>
+        </div>	
+      )}
 
 
         {showLoading && (
@@ -430,6 +502,7 @@ const AssetHolder = (props: AssetProps) => {
                         <button id="blue-orange-add-to-cart-connected-blue-orange" 
                         // change below function after test
                         onClick={listToSellMinted}
+                        disabled={isListing}
                         >
                         LIST TO SELL</button>   
                     </div>
@@ -464,7 +537,7 @@ const AssetHolder = (props: AssetProps) => {
                             />
                         </div>
                         <button id="blue-orange-add-to-cart-connected-blue-orange" 
-                        // change below function after test
+                        disabled={isListing}
                         onClick={listToSell}
                         >
                         LIST TO SELL</button>   
