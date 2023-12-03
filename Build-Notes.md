@@ -37,9 +37,8 @@
 - "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "Buy art that never loses value! Arells is a polygon digital asset (NFT) marketplace that obscures bear markets.".
 
 #### If Time Allows:
-- Resolve "Price Aftger Purchase Collector loading pop-up issue"
-- Resolve "Enter Name" wallet loading issue
-
+- Resolve "Price After Purchase Collector loading pop-up issue"
+- Polish "Add" button edges
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.5
