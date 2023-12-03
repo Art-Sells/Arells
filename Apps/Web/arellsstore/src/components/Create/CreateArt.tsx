@@ -21,6 +21,8 @@ const { createNFT } = useNFTMarket(safeAddress);
   
 	return (
 	  <>
+		<p id="stay-updated">CREATE TO SELL</p>
+		<br />
 		<div id="blue-orange">
 			<CreationForm onSubmit={createNFT} />
 		</div>
