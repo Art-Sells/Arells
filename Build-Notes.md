@@ -4,13 +4,6 @@
 
 ### Wallet: 
 - Mainnet with Coinbase/Polygon
- 
-### Creating Mechanics
-- If no Art or Name "Error Modals"
-- Add PaintBrush Modal While Creating "Creating Art."
-- Add Broken Paint-Brush Modal "Art creation failed."
-- Add Forklift Modal After Successful Creation "Art Created! Your Art is now being received, please wait a few seconds for it to appear in your store."
-- Create Art button becomes unavailable when clicked.
 
 #### Sell
 - Polygon Symbols
@@ -113,10 +106,8 @@ ________________________________________________________________________________
 - Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
 
 ##### Bugs
-- Handle NFT Error Fetching (Compiling issues) edge-cases (if address !== storeAddress error modal, etc)...
-- Change "GET_CREATED_NFTs" query to owned nfts
-- Solve Ethereum Address URL length issue.
 - 404 and Server Error Pages
+- Polish "Add" button edges
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 3.0
