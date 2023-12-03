@@ -45,7 +45,7 @@
 
 #### If Time Allows:
 - Resolve "Price Aftger Purchase Collector loading pop-up issue"
-- Add Icons to "Connecting, Review and Connected Modals"
+- Resolve "Enter Name" wallet loading issue
 
 ________________________________________________________________________________________________________________________________________________
 
