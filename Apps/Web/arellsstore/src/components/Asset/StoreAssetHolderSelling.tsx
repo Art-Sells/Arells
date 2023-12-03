@@ -12,7 +12,9 @@ import '../../app/css/prototype/buyer-collected.css';
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../app/css/modals/loading/spinner.module.css';
-import "../../app/css/modals/copiedlink.css";
+import "../../app/css/modals/create-sell-error.css";
+import "../../app/css/modals/create-art-modal.css";
+import "../../app/css/modals/created-art-modal.css";
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -170,6 +172,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
   const [shareToSellModal, setShareToSellModal] = useState(false);
   const closeShareToSellModal = () => {
     setShareToSellModal(false);
+    window.location.reload();
   };
   function shareToSell() {
     setShareToSellModal(true);
@@ -181,10 +184,17 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
       {/*<!-- Modals below link after test -->*/}
 
       {shareToSellModal && (
-        <div id="copiedLink">
-          <div className="modal-content">
-          <p>OWNER CANNOT BUY</p>
-          <button className="close"
+        <div id="owner-error-wrapper">
+          <div id="owner-error-content">
+          <Image 
+            // loader={imageLoader}
+            alt="" 
+            width={30}
+            height={30}
+            id="owner-error-image" 
+            src="/images/market/prohibited.png"/>  
+          <p id="owner-error-word">OWNER CANNOT BUY</p>
+          <button id="owner-error-close"
             onClick={closeShareToSellModal}>OK</button>	
           </div>
         </div>	

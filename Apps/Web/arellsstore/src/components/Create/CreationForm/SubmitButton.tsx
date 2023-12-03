@@ -10,15 +10,18 @@ import '../../../app/css/modals/connect-wallet.css';
 const SubmitButton = () => {
   const { isSubmitting, submitForm } = useFormikContext();
 
+  const handleSubmit = () => {
+    submitForm();
+  };
 
   return (
     <>
       <button 
-          type="button"
+          type="submit"
           id="post-created-art"
           disabled={isSubmitting}
           data-loading={isSubmitting} 
-          onClick={submitForm}>
+          onClick={handleSubmit}>
         CREATE ART
       </button>
     </>

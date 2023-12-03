@@ -11,6 +11,7 @@ import '../../app/css/prototype/buyer-collected.css';
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../app/css/modals/loading/photoloader.module.css';
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -144,14 +145,10 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 
   return (
     <>
-        {/*<!-- Modals below link after test -->*/}
-
-
-        {/*<!-- Modals Above -->*/}
 
         <div id="blue-orange-seller-created">
           {/*  Change below link after test  */}
-          {meta && (
+          {meta ? (
                 <Image
                   loader={imageLoader}
                   alt=""
@@ -160,13 +157,23 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   id="photo-asset-owned" 
                   src={meta?.imageURL}
                 />
-          )}	
-
-
-
-
-
-
+          ) : (
+            (
+              <div id="photo-asset-loading">
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={50}  
+                    height={50}  
+                    id="receiving-image" 
+                    src="/images/market/receiving.png"
+                  />
+                <div className={styles.photoloader}></div>  
+                <p id="receiving-word">RECEIVING</p>
+              </div>
+            )
+          )}
+          
 
   {/* Below for users not connected */}        
             {notConnectedNotListed &&  (

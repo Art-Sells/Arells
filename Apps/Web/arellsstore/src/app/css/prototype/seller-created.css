@@ -383,7 +383,8 @@
 		  cursor: pointer;
 		}			
 		
-		#photo-asset-owned {
+		#photo-asset-owned,
+		#photo-asset-loading {
 			width: 200px;
 			height: 200px;
   			border-radius: 0px;		
@@ -405,7 +406,25 @@
 			  from {center:0; opacity:0}
 			  to {center:0; opacity:1}
 			}
-			#PAP-logo, #PAP-logo-selling {
+
+			#receiving-image {
+				margin-top: 60px;
+				width: 50px; 
+                height: 50px;
+				opacity: .2;
+			}
+			#receiving-word { 
+				margin-top: 20px;
+				text-align: center;
+				color: black;
+				font-weight: 300;
+				font-size: 10px;
+				letter-spacing: 1px;
+				padding-left: 1px;
+				opacity: .4;
+			}	
+			#PAP-logo, 
+			#PAP-logo-selling {
 				margin-top: 20px;
 				opacity: .2;
 				-webkit-animation-name: pap;
@@ -423,6 +442,7 @@
 				from {center:0; opacity:0}
 				to {center:0; opacity:.2}
 				}	
+				
 			#PAP-seller-created { 
 				margin-top: 6px;
 				text-align: center;
@@ -786,10 +806,22 @@
 			padding-bottom: 30px;			
 		     
 		}
-		#photo-asset-owned {
+		#photo-asset-owned,
+		#photo-asset-loading {
 			width: 130px;
 			height: 130px;	
 		}
+		#receiving-image {
+			margin-top:40px;
+			width: 35px; 
+			height: 35px;
+		}
+		#receiving-word { 
+			margin-top: 10px;
+			font-size: 5px;
+			letter-spacing: 1px;
+			padding-left: 1px;
+		}	
 			#PAP-logo, #PAP-logo-selling {
 			margin-top: 17px;
 			height: 6px;
