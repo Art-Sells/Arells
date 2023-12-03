@@ -59,7 +59,8 @@ ________________________________________________________________________________
 - Re-deploy test cases "Buy NFT" to "Buy Asset" and "Create Asset" within wallet interactions...
 - Change PUBLIC_NFT_MARKET_ADDRESS to PUBLIC_ARELLS_STORE_ADDRESS
 - Add PUBLIC_ARELLS_MARKET_ADDRESS for 3% Fee (Refactor SmartContract to Accept)
-- AUM (Assets Under Management) system & # of New Wallets Created, system.
+- Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up),
+- Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 - Research Upgradable SmartContracts (through OpenZeppelin)
 
 ### Wallet
@@ -81,6 +82,7 @@ ________________________________________________________________________________
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test)
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
+- (Address(with Blockchain Logo)) section
 
 ### Other Store
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
@@ -118,8 +120,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 3.0
-- Pages separated like so: store/address (if not signed up) store/store-name (if signed-up), asset/address/id (both)
-- Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
+- Pages separated like so: store-name/asset/address
 
 #### Creating Mechanics
 -  Art Category: Abstracts, Photography, Illustrations (Icon for each)
