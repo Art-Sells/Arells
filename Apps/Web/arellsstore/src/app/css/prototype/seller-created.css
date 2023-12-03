@@ -6,8 +6,14 @@
   margin-right: 0%;
   margin-bottom: 0%;
   padding-top: 0px;
-  padding-bottom: 30px;
-  background: white;
+  border-radius: 115px;
+  padding-bottom: 50px;
+  background: rgb(255, 255, 255);
+  box-shadow: 0px 0px 12px 0px rgb(192, 192, 192, 0.2); 
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 1.00s;
+  animation-name: animatetop;
+  animation-duration: 1.00s;
 }
 
 	#header-seller-created {

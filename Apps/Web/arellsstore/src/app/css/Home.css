@@ -1,14 +1,20 @@
 #overlayy {
+	text-align: center;
+	font-family: Arial;
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
 	padding-top: 0px;
-	padding-bottom: 30px;
-	  text-align: center;
-	  font-family: Arial;
-	  margin-top: 0%;
-	  margin-left: 0%;
-	  margin-right: 0%;
-	  margin-bottom: 0%;
-		background: white;	  
-  }
+	border-radius: 115px;
+	padding-bottom: 120px;
+	background: rgb(255, 255, 255);
+	box-shadow: 0px 0px 12px 0px rgb(192, 192, 192, 0.2); 
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 1.00s;
+	animation-name: animatetop;
+	animation-duration: 1.00s;
+}
   
 	  #arells-iconn {
 		margin-top: 70px;
@@ -66,7 +72,7 @@
 		  letter-spacing: 1px;
 		  margin-left: 1px; 
 		  font-weight: 600;
-		  opacity: .5;
+		  opacity: .4;
 		  color: black;
 		  word-spacing: 0px;
 	  }	

@@ -6,10 +6,20 @@ import { useSingleNFT } from "../../state/nft-market/useCreatedNFTs";
 import { useSingleSellingNFT } from "../../state/nft-market/useSellingNFTs"; 
 import AssetHolder from "./AssetHolder";
 import '../../app/css/prototype/asset/asset.css';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+import Image from 'next/image';
+
+//Loader Styles
+import '../../app/css/modals/loading/spinnerBackground.css';
+import styles from '../../app/css/modals/loading/spinner.module.css';
 
 const Asset = () => {
-    const { address } = useSigner();
+    const [showLoading, setLoading] = useState(true);
+    const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
+        return `${src}?w=${width}&q=${quality || 100}`;
+      };
+
     const router = useRouter();
     const storeAddressFromURL = useMemo(() => {
         const address = Array.isArray(router.query.storeAddress)
@@ -22,11 +32,28 @@ const Asset = () => {
     const { nft } = useSingleNFT(storeAddressFromURL, nftId); 
     const { nftSelling } = useSingleSellingNFT(storeAddressFromURL, nftId); 
 
-
+    useEffect(() => {
+        if (nft) {
+            setLoading(false);
+        }
+    }, [nft]);
 
     return (
         <>
-            {!address && <p id="no-art"></p>}
+        {showLoading && (
+            <div id="spinnerBackground">
+            <Image 
+                loader={imageLoader}
+                alt="" 
+                width={29}
+                height={30}
+                id="arells-loader-icon-asset" 
+                src="/images/Arells-Icon.png"/>        
+            </div>
+        )}
+        {showLoading && (
+            <div className={styles.spinner}></div>
+        )}  
             {nft && 
             <AssetHolder nft={nft} key={nft.id} ownerId={storeAddressFromURL} />
             }

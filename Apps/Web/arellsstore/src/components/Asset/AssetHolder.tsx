@@ -9,11 +9,13 @@ import { NFT } from "../../state/nft-market/interfaces"
 
 // Change below link after test
 import '../../app/css/prototype/asset/asset.css';
+import "../../app/css/modals/create-sell-error.css";
+import "../../app/css/modals/create-art-modal.css";
+import "../../app/css/modals/created-art-modal.css";
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../app/css/modals/loading/spinner.module.css';
-import "../../app/css/modals/copiedlink.css"
 
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
@@ -354,7 +356,7 @@ const AssetHolder = (props: AssetProps) => {
             alt="" 
             width={30}
             height={30}
-            id="error-image" 
+            id="error-price-image" 
             src="/images/market/polygonIvory.png"/>  
           <p id="needed-word">SET PRICE</p>
           <button id="create-sell-error-close"
@@ -371,7 +373,7 @@ const AssetHolder = (props: AssetProps) => {
               alt="" 
               width={80}
               height={25}
-              id="error-name-image" 
+              id="error-pap-image" 
               src="/images/PriceAfterPurchaseLogoIvory.png"/>    
             <p id="pap-error-words">PRICE AFTER PURCHASE</p>
             <p id="pap-error-paragraph">Must be at least twice</p>
@@ -436,26 +438,8 @@ const AssetHolder = (props: AssetProps) => {
         </div>	
       )}
 
-
-        {showLoading && (
-            <div id="spinnerBackground">
-            <Image 
-                loader={imageLoader}
-                alt="" 
-                width={29}
-                height={30}
-                id="arells-loader-icon-asset" 
-                src="/images/Arells-Icon.png"/>        
-            </div>
-        )}
-        {showLoading && (
-            <div className={styles.spinner}></div>
-        )}  
-
 {/*<!-- Modals Above -->*/}
-        <p id="slogan-blue-orange">SET PRICE TO SELL</p>
-
-        <div id="blue-orange">
+        <div id="asset-component">
             {meta && (
                 <Image
                 loader={imageLoader}
@@ -472,29 +456,110 @@ const AssetHolder = (props: AssetProps) => {
                             <h3 id="name-blue-orange">{meta?.name}</h3> 
                         </div>
                         <div id="blue-orange-prices-before-blue-orange">
-                            <p id="yourprice-blue-orange">Price</p>
-                            <p id="price-blue-orange">{formatNumber(formattedPrice)}</p>
+                            <p id="PAP-blue-orange">Price</p>
+                            <p id="PAP-blue-orange-before-blue-orange">
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={18}  
+                                    height={16}  
+                                    id="pap-polygon-logo-sell" 
+                                    src="/images/market/polygon.png"
+                                /> 
+                                {formatNumber(formattedPrice)}
+                                </p>
                             <p id="PAP-blue-orange">Creator Keeps</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(youKeepAfterPurchaseMinted))}</p>
+                            <p id="PAP-blue-orange-before-blue-orange">
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={18}  
+                                    height={16}  
+                                    id="pap-polygon-logo-sell" 
+                                    src="/images/market/polygon.png"
+                                /> 
+                                {formatNumber(parseFloat(youKeepAfterPurchaseMinted))}</p>
                             <p id="PAP-blue-orange">You Keep</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(buyerKeepsAfterPurchaseMinted))}</p>
+                            <p id="PAP-blue-orange-before-blue-orange">
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={18}  
+                                    height={16}  
+                                    id="pap-polygon-logo-sell" 
+                                    src="/images/market/polygon.png"
+                                /> 
+                                {formatNumber(parseFloat(buyerKeepsAfterPurchaseMinted))}</p>
                             <p id="PAP-blue-orange">Fees</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(feesAfterPurchaseMinted))}</p>
+                            <p id="PAP-blue-orange-before-blue-orange">
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={18}  
+                                    height={16}  
+                                    id="pap-polygon-logo-sell" 
+                                    src="/images/market/polygon.png"
+                                /> 
+                                {formatNumber(parseFloat(feesAfterPurchaseMinted))}</p>
                         <hr id="priceline-blue-orange" />
                             <p id="PAP-blue-orange">Price After Purchase</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(inputPriceAfterPurchase)}</p>
-                            <p id="PAP-blue-orange">Creator Keeps</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(youKeepAfterPurchaseNum))}</p>
-                            <p id="PAP-blue-orange">Your Buyer Keeps</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(buyerKeepsAfterPurchaseNum))}</p>
-                            <p id="PAP-blue-orange">Fees</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(feesAfterPurchaseNum))}</p>
+                            <Image
+                            loader={imageLoader}
+                            alt=""
+                            width={40}  
+                            height={8}  
+                            id="PAP-logo-list" 
+                            src="/images/PriceAfterPurchaseLogo.png"
+                            />
+                            <p id="price-blue-orange-before-blue-orange">
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={18}  
+                                    height={16}  
+                                    id="polygon-logo-sell" 
+                                    src="/images/market/polygon.png"
+                                /> 
+                                {formatNumber(inputPriceAfterPurchase)}</p>
+                            <p id="yourprice-blue-orange">Creator Keeps</p>
+                            <p id="price-blue-orange">
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={18}  
+                                    height={16}  
+                                    id="polygon-logo-sell" 
+                                    src="/images/market/polygon.png"
+                                /> 
+                                {formatNumber(parseFloat(youKeepAfterPurchaseNum))}</p>
+                            <p id="yourprice-blue-orange">Your Buyer Keeps</p>
+                            <p id="price-blue-orange">
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={18}  
+                                    height={16}  
+                                    id="polygon-logo-sell" 
+                                    src="/images/market/polygon.png"
+                                /> 
+                                {formatNumber(parseFloat(buyerKeepsAfterPurchaseNum))}</p>
+                            <p id="yourprice-blue-orange">Fees</p>
+                            <p id="price-blue-orange">
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={18}  
+                                    height={16}  
+                                    id="polygon-logo-sell" 
+                                    src="/images/market/polygon.png"
+                                /> 
+                                {formatNumber(parseFloat(feesAfterPurchaseNum))}</p>
                         <hr id="priceline-blue-orange" />   
-                            <p id="yourprice-blue-orange">SET PRICE AFTER PURCHASE</p> 
                             <Input
                                 name="priceAfterPurchaseNum"
                                 id="price"
                                 type="tel"
+                                placeholder="Price After Purchase"
                                 value={inputPriceAfterPurchase}
                                 onChange={handlePriceAfterPurchaseChange}                          
                             />
@@ -512,35 +577,115 @@ const AssetHolder = (props: AssetProps) => {
                             <h3 id="name-blue-orange">{meta?.name}</h3> 
                         </div>
                         <div id="blue-orange-prices-before-blue-orange">
-                            <p id="PAP-blue-orange">Price After Purchase</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(priceAfterPurchase)}</p>
-                            <p id="PAP-blue-orange">You Keep</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(youKeepAfterPurchase))}</p>
-                            <p id="PAP-blue-orange">Your Buyer Keeps</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(buyerKeepsAfterPurchase))}</p>
-                            <p id="PAP-blue-orange">Fees</p>
-                            <p id="PAP-blue-orange-before-blue-orange">{formatNumber(parseFloat(feesAfterPurchase))}</p>
-                        <hr id="priceline-blue-orange" />
-                            <p id="yourprice-blue-orange">Price</p>
-                            <p id="price-blue-orange">{formatNumber(priceNum)}</p>
-                            <p id="yourprice-blue-orange">You Keep</p>
-                            <p id="price-blue-orange">{formatNumber(parseFloat(youKeep))}</p>
-                            <p id="yourprice-blue-orange">Fees</p>
-                            <p id="price-blue-orange">{formatNumber(parseFloat(fees))}</p>
-                        <hr id="priceline-blue-orange" />   
-                            <p id="yourprice-blue-orange">SET PRICE</p> 
-                            <Input
-                                name="price"
-                                id="price"
-                                type="tel"
-                                onChange={(e) => setPrice(e.target.value)}
-                            />
-                        </div>
-                        <button id="blue-orange-add-to-cart-connected-blue-orange" 
-                        disabled={isListing}
-                        onClick={listToSell}
-                        >
-                        LIST TO SELL</button>   
+                            <div id="asset-price-after-purchase-wrapper">
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={40}  
+                                    height={8}  
+                                    id="PAP-logo-list" 
+                                    src="/images/PriceAfterPurchaseLogo.png"
+                                />
+                                <p id="PAP-blue-orange">Price After Purchase</p>
+                                <p id="PAP-blue-orange-before-blue-orange">
+                                    <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={18}  
+                                        height={16}  
+                                        id="pap-polygon-logo-sell" 
+                                        src="/images/market/polygon.png"
+                                    /> 
+                                    {formatNumber(priceAfterPurchase)}</p>
+                                <p id="PAP-blue-orange">You Keep</p>
+                                <p id="PAP-blue-orange-before-blue-orange">
+                                    <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={18}  
+                                        height={16}  
+                                        id="pap-polygon-logo-sell" 
+                                        src="/images/market/polygon.png"
+                                    /> 
+                                    {formatNumber(parseFloat(youKeepAfterPurchase))}
+                                </p>
+                                <p id="PAP-blue-orange">Your Buyer Keeps</p>
+                                <p id="PAP-blue-orange-before-blue-orange">
+                                    <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={18}  
+                                        height={16}  
+                                        id="pap-polygon-logo-sell" 
+                                        src="/images/market/polygon.png"
+                                    /> 
+                                    {formatNumber(parseFloat(buyerKeepsAfterPurchase))}
+                                </p>
+                                <p id="PAP-blue-orange">Fees</p>
+                                <p id="PAP-blue-orange-before-blue-orange">
+                                    <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={18}  
+                                        height={16}  
+                                        id="pap-polygon-logo-sell" 
+                                        src="/images/market/polygon.png"
+                                    /> 
+                                    {formatNumber(parseFloat(feesAfterPurchase))}
+                                </p>
+                            </div>
+                            <div id="asset-price-wrapper">
+                                    <p id="yourprice-blue-orange">Price</p>
+                                    <p id="price-blue-orange">
+                                        <Image
+                                            loader={imageLoader}
+                                            alt=""
+                                            width={18}  
+                                            height={16}  
+                                            id="polygon-logo-sell" 
+                                            src="/images/market/polygon.png"
+                                        /> 
+                                        {formatNumber(priceNum)}
+                                    </p>
+                                    <p id="yourprice-blue-orange">You Keep</p>
+                                    <p id="price-blue-orange">
+                                        <Image
+                                            loader={imageLoader}
+                                            alt=""
+                                            width={18}  
+                                            height={16}  
+                                            id="polygon-logo-sell" 
+                                            src="/images/market/polygon.png"
+                                        /> 
+                                        {formatNumber(parseFloat(youKeep))}
+                                    </p>
+                                    <p id="yourprice-blue-orange">Fees</p>
+                                    <p id="price-blue-orange">
+                                        <Image
+                                            loader={imageLoader}
+                                            alt=""
+                                            width={18}  
+                                            height={16}  
+                                            id="polygon-logo-sell" 
+                                            src="/images/market/polygon.png"
+                                        /> 
+                                        {formatNumber(parseFloat(fees))}
+                                    </p>
+                                </div>
+                                <Input
+                                    name="price"
+                                    id="price"
+                                    type="tel"
+                                    placeholder="Price"
+                                    onChange={(e) => setPrice(e.target.value)}
+                                />                              
+                            </div> 
+                            <button id="blue-orange-add-to-cart-connected-blue-orange" 
+                                disabled={isListing}
+                                onClick={listToSell}
+                                >
+                                LIST TO SELL
+                            </button>    
                     </div>
                 )
             } 
