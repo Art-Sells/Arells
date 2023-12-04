@@ -54,6 +54,11 @@
   opacity: .25;
 }
 
+#error-price-image{
+  margin-top: 4px;
+  opacity: .25;
+}
+
 #error-name-image{
   margin-top: 3px;
   opacity: .25;

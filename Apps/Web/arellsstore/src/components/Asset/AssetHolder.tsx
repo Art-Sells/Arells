@@ -58,7 +58,7 @@ const AssetHolder = (props: AssetProps) => {
 // loader functions above
 
 // asset constants below
-    const [showPriceErrorModal, setPriceErrorModal] = useState<boolean>(false);
+    const [showPriceErrorModal, setPriceErrorModal] = useState<boolean>(true);
     const [showPAPErrorModal, setPAPErrorModal] = useState<boolean>(false);
 
     const [showListingModal, setListingModal] = useState<boolean>(false);
@@ -355,7 +355,7 @@ const AssetHolder = (props: AssetProps) => {
             // loader={imageLoader}
             alt="" 
             width={30}
-            height={30}
+            height={26}
             id="error-price-image" 
             src="/images/market/polygonIvory.png"/>  
           <p id="needed-word">SET PRICE</p>
