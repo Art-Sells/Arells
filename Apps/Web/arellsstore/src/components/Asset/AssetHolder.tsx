@@ -642,38 +642,39 @@ const AssetHolder = (props: AssetProps) => {
                                 </p>
                             </div>
                             <div id="asset-price-wrapper">
-                                    <p id="yourprice-blue-orange">Price</p>
-                                    <p id="price-blue-orange">
+                                    <p id="price-not-minted-word">Price</p>
+                                    <p id="price-not-minted-price">
                                         <Image
                                             loader={imageLoader}
                                             alt=""
-                                            width={18}  
-                                            height={16}  
-                                            id="polygon-logo-sell" 
+                                            width={15}  
+                                            height={13}  
+                                            id="price-polygon-logo-sell" 
                                             src="/images/market/polygon.png"
                                         /> 
                                         {formatNumber(priceNum)}
                                     </p>
-                                    <p id="yourprice-blue-orange">You Keep</p>
-                                    <p id="price-blue-orange">
+                                    <hr id="line-price"></hr>
+                                    <p id="price-not-minted-other-word">You Keep</p>
+                                    <p id="price-not-minted-price-other-price">
                                         <Image
                                             loader={imageLoader}
                                             alt=""
-                                            width={18}  
-                                            height={16}  
-                                            id="polygon-logo-sell" 
+                                            width={12}  
+                                            height={10}  
+                                            id="price-polygon-logo-sell-other" 
                                             src="/images/market/polygon.png"
                                         /> 
                                         {formatNumber(parseFloat(youKeep))}
                                     </p>
-                                    <p id="yourprice-blue-orange">Fees</p>
-                                    <p id="price-blue-orange">
+                                    <p id="price-not-minted-other-word">Fees</p>
+                                    <p id="price-not-minted-price-other-price">
                                         <Image
                                             loader={imageLoader}
                                             alt=""
-                                            width={18}  
-                                            height={16}  
-                                            id="polygon-logo-sell" 
+                                            width={12}  
+                                            height={10}  
+                                            id="price-polygon-logo-sell-other" 
                                             src="/images/market/polygon.png"
                                         /> 
                                         {formatNumber(parseFloat(fees))}

@@ -280,7 +280,7 @@
 		  padding-top: 10px;
 		  padding-left: 10px;
 		  padding-right: 10px;
-		  padding-bottom: 45px;			
+		  padding-bottom: 25px;			
 		  background: rgb(255, 255, 255);
 
 	  }			  
@@ -288,7 +288,7 @@
 			margin-top: 10px;
 			margin-left: auto;
 			margin-right: auto;
-			border-radius: 15px;
+			border-radius: 10px;
 			align-items: center;
 			overflow: hidden;
 			box-shadow: 0px 5px 20px -6px rgb(202, 202, 202, 0.5); 
@@ -301,15 +301,15 @@
 			background: rgb(255, 255, 255);
 		}
 		#asset-price-wrapper{
-			margin-top: 30px;
+			margin-top: 20px;
 			margin-left: auto;
 			margin-right: auto;
-			border-radius: 15px;
+			border-radius: 10px;
 			align-items: center;
 			overflow: hidden;
 			box-shadow: 0px 5px 20px -6px rgb(202, 202, 202, 0.5); 
-			width: 235px;
-			height: 280px;
+			width: 190px;
+			height: 190px;
 			padding-top: 20px;
 			padding-left: 20px;
 			padding-right: 20px;
@@ -645,6 +645,8 @@
 			  #PAP-logo-list {
 				margin-top: 10px;
 				opacity: .2;
+				width: 60px;
+                height: 11px;
 			  }
 
 			  #line-pap-top {
@@ -666,9 +668,11 @@
 					font-size: 10px;
 					letter-spacing: 0px;
 					padding-left: 0px;
-					opacity: .3;
+					opacity: .4;
 				}
 				#pap-polygon-logo-sell{
+					width: 15px;
+					height: 13px;
 					margin-right: 4.5px;
 					margin-left: -5px;
 				}
@@ -706,6 +710,8 @@
 				}
 				#pap-polygon-logo-sell-other{
 					margin-right: 4px;
+					width: 12px;
+					height: 10px;
 				}
 				#PAP-not-minted-price-other-price {
 				margin-top: -5px;
@@ -718,6 +724,70 @@
 					opacity: .5;
 				}
 
+
+				#price-not-minted-word {
+					margin-top: 23px;
+					text-align: center;
+						color: black;
+						font-weight: 300;
+						font-size: 10px;
+						letter-spacing: 0px;
+						padding-left: 0px;
+						opacity: .6;
+					}
+					#price-polygon-logo-sell{
+						margin-right: 4.5px;
+						margin-left: -5px;
+						width: 15px;
+						height: 13px;
+					}
+					#price-not-minted-price {
+					margin-top: -5px;
+					text-align: center;
+						color: black;
+						font-weight: 300;
+						font-size: 20px;
+						letter-spacing: 0px;
+						padding-left: 0px;
+						opacity: .7;
+						margin-bottom: 10px;
+					}
+	
+					#line-price {
+						background-color: black;
+						border: none;
+						height: 1.2px;
+						border-radius: 30px;
+						width: 70px;
+						opacity: .1;
+						margin-bottom: 20px;
+					  }	
+	
+					#price-not-minted-other-word {
+					margin-top: -5px;
+					text-align: center;
+						color: black;
+						font-weight: 300;
+						font-size: 10px;
+						letter-spacing: 0px;
+						padding-left: 0px;
+						opacity: .6;
+					}
+					#price-polygon-logo-sell-other{
+						margin-right: 4px;
+						width: 12px;
+						height: 10px;
+					}
+					#price-not-minted-price-other-price {
+					margin-top: -5px;
+					text-align: center;
+						color: black;
+						font-weight: 300;
+						font-size: 14px;
+						letter-spacing: 0px;
+						padding-left: 0px;
+						opacity: .7;
+					}
 
 
 
@@ -763,21 +833,21 @@
 			  }
 				#price { 
 					text-align: center;
-					margin-top: 30px;     	   
+					margin-top: 20px;     	   
 					padding-top: 20px;
 					padding-bottom: 20px;
 					padding-left: 20px;
 					padding-right: 20px;       	   		
-					color: white;
+					color: black;
 					font-weight: 600;
 					border: none;
-					border-radius: 10px;
-					font-size: 13px;
-					width: 220px;
+					border-radius: 5px;
+					font-size: 14px;
+					width: 160px;
 					height: 15px;
 					letter-spacing: 0px;    	   		
-					background: black;
-					opacity: .3;
+					background: silver;
+					opacity: .5;
 			}
 
 			#price:focus {
@@ -974,12 +1044,136 @@
 		#asset-component {
 			margin-top: 25px;
 			width: 300px;
-			}  	
+			} 
+			#owned-by-creator-blue-orange, 
+			#owned-by-buyer-blue-orange,
+			#blue-orange-prices-before-blue-orange, 
+			#blue-orange-prices-after-blue-orange,
+			#blue-orange-add-to-cart-blue-orange,
+			#blue-orange-add-to-cart-connected-blue-orange,
+			#blue-orange-added-blue-orange,
+			#blue-orange-collected-blue-orange {
+				width: 280px;
+			}			  
+			  #asset-price-after-purchase-wrapper{
+				padding-top: 27px;
+				  width: 220px;
+				  height: 240px;
+			  }
+			  #asset-price-wrapper{
+				  padding-top: 10px;
+				  width: 170px;
+				  height: 155px;
+
+			  }	 	
 			#photo-asset,
 			#photo-asset-loading-sell {
 				width: 300px;
 				height: 300px;
 			}
+
+
+
+
+
+
+
+
+
+			#PAP-logo-list {
+				margin-top: 0px;
+				width: 45px;  
+                height: 9px;
+			  }
+
+			  #line-pap-top {
+				margin-top: 10px;
+				width: 60px;
+				margin-bottom: 20px;
+			  }	
+
+			  #PAP-not-minted-word {
+				margin-top: 20px;
+					font-size: 9px;
+					opacity: .4;
+				}
+				#pap-polygon-logo-sell{
+					margin-right: 4px;
+					margin-left: -3px;
+					width: 13px;
+					height: 11px;
+				}
+				#PAP-not-minted-price {
+					font-size: 16px;
+				}
+
+				#line-pap {
+					margin-top: 10px;
+					width: 60px;
+					margin-bottom: 15px;
+				  }	
+
+				#PAP-not-minted-other-word {
+				margin-top: 10px;
+					font-size: 8px;
+				}
+				#pap-polygon-logo-sell-other{
+					margin-right: 4px;
+					width: 11px;
+					height: 9px;
+				}
+				#PAP-not-minted-price-other-price {
+				margin-top: -5px;
+					font-size: 13px;
+				}
+
+
+				#price-not-minted-word {
+					margin-top: 23px;
+						font-size: 9px;
+					}
+					#price-polygon-logo-sell{
+						margin-right: 4px;
+						margin-left: -3px;
+						width: 13px;
+						height: 11px;
+					}
+					#price-not-minted-price {
+					margin-top: -5px;
+						font-size: 16px;
+						margin-bottom: 10px;
+					}
+	
+					#line-price {
+						width: 60px;
+						margin-bottom: 20px;
+					  }	
+	
+					#price-not-minted-other-word {
+					margin-top: -5px;
+						font-size: 8px;
+					}
+					#price-polygon-logo-sell-other{
+						margin-right: 4px;
+						width: 11px;
+						height: 9px;
+					}
+					#price-not-minted-price-other-price {
+					margin-top: -5px;
+						font-size: 13px;
+					}
+
+
+
+
+
+
+
+
+
+
+
+
 
 		#photo-no-upload {
 			width: 300px;
@@ -1076,6 +1270,10 @@
 		  	margin-top: -8px;
 			  font-size: 13px;
 		  }
+		  #price { 
+				font-size: 12px;
+				width: 120px;
+		}
 		  #priceline-blue-orange {
 			margin-top: 0px;
 		  }	
@@ -1105,11 +1303,11 @@
 				font-size: 9px;
 				padding-top: 20px;
 				padding-bottom: 20px;
-				padding-right: 12px;
+				padding-right: 14px;
 				padding-left: 15px;	  
 				border: none;
-				letter-spacing: 1px;
-				width: 120px;
+				letter-spacing: 2px;
+				width: 140px;
 			  }	  
 		   #blue-orange-added-blue-orange {
 				font-size: 9px;
