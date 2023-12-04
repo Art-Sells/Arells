@@ -38,6 +38,7 @@
 
 #### If Time Allows:
 - Resolve "Price After Purchase Collector loading pop-up issue"
+- Resolve "Price After Purchase Price after Zeroing out price in listing issue"
 - Polish "Add" button edges
 ________________________________________________________________________________________________________________________________________________
 
