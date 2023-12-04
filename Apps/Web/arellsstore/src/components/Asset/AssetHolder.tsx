@@ -15,7 +15,7 @@ import "../../app/css/modals/created-art-modal.css";
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../../app/css/modals/loading/spinner.module.css';
+import styles from '../../app/css/modals/loading/photoloaderasset.module.css';
 
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
@@ -440,7 +440,7 @@ const AssetHolder = (props: AssetProps) => {
 
 {/*<!-- Modals Above -->*/}
         <div id="asset-component">
-            {meta && (
+            {meta ? (
                 <Image
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('nftImage')}
@@ -449,6 +449,11 @@ const AssetHolder = (props: AssetProps) => {
                 height={400}
                 id="photo-asset"
                 src={meta?.imageURL}/>
+            ): (
+                <div id="photo-asset-loading-sell">
+                <div className={styles.photoloaderasset}></div>  
+                </div>
+                
             )}
             {isNFTMinted ? (
                     <div>
@@ -509,7 +514,7 @@ const AssetHolder = (props: AssetProps) => {
                             width={40}  
                             height={8}  
                             id="PAP-logo-list" 
-                            src="/images/PriceAfterPurchaseLogo.png"
+                            src="/images/PriceAfterPurchaseLogoIvory.png"
                             />
                             <p id="price-blue-orange-before-blue-orange">
                                 <Image
@@ -581,54 +586,56 @@ const AssetHolder = (props: AssetProps) => {
                                 <Image
                                     loader={imageLoader}
                                     alt=""
-                                    width={40}  
-                                    height={8}  
+                                    width={60}  
+                                    height={11}  
                                     id="PAP-logo-list" 
                                     src="/images/PriceAfterPurchaseLogo.png"
                                 />
-                                <p id="PAP-blue-orange">Price After Purchase</p>
-                                <p id="PAP-blue-orange-before-blue-orange">
+                                <hr id="line-pap-top"></hr>
+                                <p id="PAP-not-minted-word">Price After Purchase</p>
+                                <p id="PAP-not-minted-price">
                                     <Image
                                         loader={imageLoader}
                                         alt=""
-                                        width={18}  
-                                        height={16}  
+                                        width={15}  
+                                        height={13}  
                                         id="pap-polygon-logo-sell" 
                                         src="/images/market/polygon.png"
                                     /> 
                                     {formatNumber(priceAfterPurchase)}</p>
-                                <p id="PAP-blue-orange">You Keep</p>
-                                <p id="PAP-blue-orange-before-blue-orange">
+                                <hr id="line-pap"></hr>
+                                <p id="PAP-not-minted-other-word">You Keep</p>
+                                <p id="PAP-not-minted-price-other-price">
                                     <Image
                                         loader={imageLoader}
                                         alt=""
-                                        width={18}  
-                                        height={16}  
-                                        id="pap-polygon-logo-sell" 
+                                        width={12}  
+                                        height={10}  
+                                        id="pap-polygon-logo-sell-other" 
                                         src="/images/market/polygon.png"
                                     /> 
                                     {formatNumber(parseFloat(youKeepAfterPurchase))}
                                 </p>
-                                <p id="PAP-blue-orange">Your Buyer Keeps</p>
-                                <p id="PAP-blue-orange-before-blue-orange">
+                                <p id="PAP-not-minted-other-word">Your Buyer Keeps</p>
+                                <p id="PAP-not-minted-price-other-price">
                                     <Image
                                         loader={imageLoader}
                                         alt=""
-                                        width={18}  
-                                        height={16}  
-                                        id="pap-polygon-logo-sell" 
+                                        width={12}  
+                                        height={10}  
+                                        id="pap-polygon-logo-sell-other" 
                                         src="/images/market/polygon.png"
                                     /> 
                                     {formatNumber(parseFloat(buyerKeepsAfterPurchase))}
                                 </p>
-                                <p id="PAP-blue-orange">Fees</p>
-                                <p id="PAP-blue-orange-before-blue-orange">
+                                <p id="PAP-not-minted-other-word">Fees</p>
+                                <p id="PAP-not-minted-price-other-price">
                                     <Image
                                         loader={imageLoader}
                                         alt=""
-                                        width={18}  
-                                        height={16}  
-                                        id="pap-polygon-logo-sell" 
+                                        width={12}  
+                                        height={10}  
+                                        id="pap-polygon-logo-sell-other" 
                                         src="/images/market/polygon.png"
                                     /> 
                                     {formatNumber(parseFloat(feesAfterPurchase))}

@@ -9,6 +9,10 @@
 	border-radius: 0px;
 	padding-bottom: 120px;
 	background: rgb(255, 255, 255);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 1.00s;
+	animation-name: animatetop;
+	animation-duration: 1.00s;
 }
   
 	  #arells-iconn {

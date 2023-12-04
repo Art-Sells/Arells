@@ -102,6 +102,7 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
         setArtCreationModal(false);
         setWalletConnectionAttempted(true);
         await connectWallet();
+        return; 
       }
       await onSubmit({ ...values, image: selectedImage });
       setArtCreationModal(false);
