@@ -51,6 +51,11 @@
   opacity: .4;
 }
 
+#listed-art-image{
+  opacity: .4;
+  margin-right: 15px;
+}
+
 #created-art-words {
   margin-top: 20px;
   margin-bottom: 20px;

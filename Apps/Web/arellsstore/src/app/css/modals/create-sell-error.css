@@ -38,6 +38,28 @@
   animation-name: animatetop;
   animation-duration: 1.00s;
 }
+
+#pap-error-content {
+  margin-top: -20px;
+  padding-top: 50px;
+  width: 290px;
+  height: 250px;
+  background-color: rgba(128,128, 128 ,0.9);
+  border-radius: 30px;
+  align-items: center;
+  position: relative;
+  color: silver;
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-left: 2px;  
+  margin-left: auto;
+  margin-right: auto;  
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 1.00s;
+  animation-name: animatetop;
+  animation-duration: 1.00s;
+}
 /* Add Animation */
 @-webkit-keyframes animatetop {
   from {center:0; opacity:0}
@@ -54,27 +76,72 @@
   opacity: .25;
 }
 
-#error-price-image{
-  margin-top: 4px;
-  opacity: .25;
-}
-
 #error-name-image{
   margin-top: 3px;
   opacity: .25;
 }
 
-#needed-word {
-  margin-top: 20px;
-  margin-bottom: 30px;
-  opacity: .8;
+#error-price-image{
+  margin-top: 3px;
+  opacity: .25;
 }
 
-#needed-name-word {
-  margin-top: 25px;
-  margin-bottom: 30px;
-  opacity: .8;
+#error-pap-image{
+  opacity: .25;
 }
+
+
+
+
+
+    #needed-word {
+      margin-top: 20px;
+      margin-bottom: 30px;
+      margin-left: 2px; 
+      opacity: .8;
+    }
+
+    #needed-name-word {
+      margin-top: 25px;
+      margin-bottom: 30px;
+      margin-left: 2px; 
+      opacity: .8;
+    }
+
+    #pap-error-line-top {
+      margin-top: 15px;
+      height: 1px;
+      width: 180px;
+      background-color: white;
+      opacity: .1;
+      border-radius: 30px;
+    }
+    #pap-error-line-bottom {
+      height: 1px;
+      width: 120px;
+      background-color: white;
+      opacity: .1;
+      border-radius: 30px;
+      margin-bottom: 20px;
+    }
+    #pap-error-words {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+      margin-left: 2px;
+      opacity: .8;
+    }
+
+    #pap-error-paragraph {
+        margin-top: 0px;
+        margin-bottom: 3px;
+        letter-spacing: 1px;
+        margin-left: 1px; 
+        opacity: .8;
+      }
+
+
+
 
 
 #create-sell-error-close {
@@ -93,8 +160,27 @@
   width: 80px; 
   box-shadow: 0px 5px 12px -2px rgb(99, 99, 99);  
 }
+
+#pap-error-close {
+  background-color: rgba(128,128, 128, 0.2);
+  color: rgb(166, 166, 166);
+  margin-top: 25px;
+  margin-left: auto;
+  margin-right: auto;   
+  border: none;
+  border-width: 2px;
+  font-weight: 500;
+  border-radius: 10px;
+  font-size: 10px;
+  padding: 15.5px;
+  letter-spacing: 1px;
+  width: 80px; 
+  box-shadow: 0px 5px 12px -2px rgb(99, 99, 99);  
+}
 #create-sell-error-close:hover,
-#create-sell-error-close:focus {
+#create-sell-error-close:focus,
+#pap-error-close:hover,
+#pap-error-close:focus {
   cursor: pointer;
   opacity: .4;
   transition: 1s;
@@ -157,6 +243,7 @@
       margin-top: 20px;
       margin-bottom: 30px;
       opacity: .8;
+      margin-left: 2px; 
     }
 
 

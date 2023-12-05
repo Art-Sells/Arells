@@ -15,6 +15,7 @@ import "../../app/css/modals/created-art-modal.css";
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
+import styling from '../../app/css/modals/loading/loader.module.css';
 import styles from '../../app/css/modals/loading/photoloaderasset.module.css';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -58,7 +59,7 @@ const AssetHolder = (props: AssetProps) => {
 // loader functions above
 
 // asset constants below
-    const [showPriceErrorModal, setPriceErrorModal] = useState<boolean>(true);
+    const [showPriceErrorModal, setPriceErrorModal] = useState<boolean>(false);
     const [showPAPErrorModal, setPAPErrorModal] = useState<boolean>(false);
 
     const [showListingModal, setListingModal] = useState<boolean>(false);
@@ -367,18 +368,20 @@ const AssetHolder = (props: AssetProps) => {
 
       {showPAPErrorModal && (
         <div id="create-sell-error-wrapper">
-          <div id="create-sell-error-content">
+          <div id="pap-error-content">
           <Image 
               // loader={imageLoader}
               alt="" 
-              width={80}
-              height={25}
+              width={55}
+              height={11}
               id="error-pap-image" 
-              src="/images/PriceAfterPurchaseLogoIvory.png"/>    
+              src="/images/PriceAfterPurchaseLogoIvory.png"/> 
+            <hr id="pap-error-line-top"></hr>  
             <p id="pap-error-words">PRICE AFTER PURCHASE</p>
+            <hr id="pap-error-line-bottom"></hr>  
             <p id="pap-error-paragraph">Must be at least twice</p>
-            <p id="pap-error-paragraph">as much as the price.</p>
-          <button id="create-sell-error-close"
+            <p id="pap-error-paragraph">as much as price.</p>
+          <button id="pap-error-close"
               onClick={closePAPErrorModal}>OK</button>	
           </div>
         </div>	
@@ -392,10 +395,10 @@ const AssetHolder = (props: AssetProps) => {
             alt="" 
             width={50}
             height={50}
-            id="create-art-image" 
-            src="/images/prototype/creatingArt.png"/>  
-          <p id="create-art-words">LISTING ART</p>
-          <div className={styles.loader}></div>
+            id="list-art-image" 
+            src="/images/market/listingArtTagImage.png"/>  
+          <p id="list-art-words">LISTING ART</p>
+          <div className={styling.loader}></div>
           </div>
         </div>	
       )}
@@ -425,8 +428,8 @@ const AssetHolder = (props: AssetProps) => {
             alt="" 
             width={50}
             height={50}
-            id="created-art-image" 
-            src="/images/prototype/createdArt.png"/>  
+            id="listed-art-image" 
+            src="/images/market/listedArtTag.png"/>  
           <p id="created-art-words">ART LISTED</p>
           <p id="created-art-paragraph">It'll take a few moments</p>
           <p id="created-art-paragraph">for your prices to appear.</p>

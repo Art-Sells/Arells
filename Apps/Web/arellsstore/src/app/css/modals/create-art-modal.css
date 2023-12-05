@@ -59,6 +59,16 @@
   margin-bottom: 30px;
 }
 
+#list-art-image{
+  opacity: .2;
+  margin-left: 26px;
+}
+
+#list-art-words {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
 
 #create-art-modal-close {
   background-color: rgba(255, 255, 255, 0.1);
