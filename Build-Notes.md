@@ -33,7 +33,7 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold & Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
-- Send 5 day week notifications on 2.0 profile creation on top of USDC (which Wallet to download before launch day, creating a polygon account, etc).
+- Send 5 day week notifications on 2.0 profile creation (you won't have to create new art when creating your profile, you'll be able to link as many wallet(addresses) to your store(profile) on top of USDC (which Wallet to download before launch day, creating a polygon account, etc).
 - "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "Buy art that never loses value! Arells is a polygon digital asset (NFT) marketplace that obscures bear markets.".
 
 #### If Time Allows:
