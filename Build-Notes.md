@@ -36,11 +36,11 @@
 - Send 5 day week notifications on which wallet to download and which network to connect to, to prepare...
 - - Arells is the marketplace and your store is your digital store meaning (just like Grocery and Convenience stores), to create, list, and sell your art digitally, it also has to go through the same process as creating, listing and selling items in the real-world.  
 
-On Arells, this will be the process:
+On Arells, this will be the selling process:
 
-1. Create (creating your art)
-2. Receive (receiving the art into your store) 
-3. list (listing the prices for your art) 
+1. Create Art (creating your art)
+2. Receive Art (receiving the art into your store) 
+3. Set Price (setting prices for your art) 
 4. List to sell (listing your art to sell)
 
 ...Just like creating, receiving and listing items to sell in the real world.
