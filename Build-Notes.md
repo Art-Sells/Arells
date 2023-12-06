@@ -5,15 +5,6 @@
 ### Wallet: 
 - Mainnet with Coinbase/Polygon
 
-#### Sell
-- Polygon Symbols
-- PAP Logo above Price After Purchase
-- If no Price or PAP "Error modals"
-- Add Price Tag Modal "Listing Art."
-- Add Price Tag Modal "Canceled Listing."
-- Add Price Tag on Item Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
-- [List To Sell] button becomes unavailable when clicked.
-
 ### Other Store
 - [BUY] becomes unavailable when clicked.
 - - Add Cash Register Modal "Buying Art... Please Wait"
@@ -34,18 +25,21 @@
 - Store Private Key Cold & Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
 - Send 5 day week notifications on which wallet to download and which network to connect to, to prepare...
-- - Arells is the marketplace and your store is your digital store meaning (just like Grocery and Convenience stores), to create, list, and sell your art digitally, it also has to go through the same process as creating, listing and selling items in the real-world.  
+- - Arells is the marketplace and your store is your digital store meaning (just like Grocery and Convenience stores), to create, list, and sell your art digitally, it also has to go through the same process as creating, listing and selling and delivering items in the real-world.  
 
-On Arells, this will be the selling process:
+On Arells, this will be the selling/buying process:
 
+Selling:
 1. Create Art (creating your art)
 2. Receive Art (receiving the art into your store) 
 3. Set Price (setting prices for your art) 
 4. List to sell (listing your art to sell)
+Buying:
+1. Buy (Collector Buys Your Art)
+2. Deliver Art (Collector Agrees for art to be delivered to their store)
+3. Your art is delivered (dissapears) out of your store and into theirs.
 
-...Just like creating, receiving and listing items to sell in the real world.
-
-After someone buys your art, (just as in the real world) your art will be delivered out of your store and into the stock of the new owner's store. This means any art that has been purchased from your store, you will no longer see available (just like in the real world, if someone were to buy your art, you would no longer hold it... This same principle functions within Arells).
+After someone buys your art, (just as in the real world) your art will be delivered out of your store and into the stock of the collector's store. This means any art that has been purchased from your store, you will no longer see available (just like in the real world, if someone were to buy your art, you would no longer hold it... This same principle functions within Arells).
 
 The major difference now is that you'll always be able to retain a massive royalty for your art after its sale (40%+) royalty on all secondary sales forever and the price of your art will never decline in value thanks to our Price After Purchase system. We'll experiment with different royalty percentages in the future (possibly raising it to 90%).
 
