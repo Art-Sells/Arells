@@ -211,8 +211,10 @@ const AssetHolder = (props: AssetProps) => {
                 const weiPriceAfterPurchase = ethers.utils.parseEther(
                     priceAfterPurchase);
 
-                await onSellConfirmed(weiPrice, weiPriceAfterPurchase);
                 setListingModal(true);
+                await onSellConfirmed(weiPrice, weiPriceAfterPurchase);
+                setListingModal(false);
+                setListedModal(true);
             }
         } catch (e) {
             console.error("Error in listing NFT:", e);
@@ -432,9 +434,9 @@ const AssetHolder = (props: AssetProps) => {
             src="/images/market/listedArtTag.png"/>  
           <p id="created-art-words">ART LISTED</p>
           <p id="created-art-paragraph">It'll take a few moments</p>
-          <p id="created-art-paragraph">for your prices to appear.</p>
+          <p id="created-art-paragraph">for your art to be stocked.</p>
           <Link href={`/buy/${address}`} passHref>
-            <button id="created-art-modal-close">VIEW LISTINGS</button>	
+            <button id="created-art-modal-close">VIEW LISTING</button>	
           </Link>   
 
           </div>
@@ -443,7 +445,7 @@ const AssetHolder = (props: AssetProps) => {
 
 {/*<!-- Modals Above -->*/}
         <div id="asset-component">
-            {meta ? (
+            {meta && (
                 <Image
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('nftImage')}
@@ -452,7 +454,8 @@ const AssetHolder = (props: AssetProps) => {
                 height={400}
                 id="photo-asset"
                 src={meta?.imageURL}/>
-            ): (
+            )} 
+            {!meta && (
                 <div id="photo-asset-loading-sell">
                 <div className={styles.photoloaderasset}></div>  
                 </div>
@@ -464,7 +467,7 @@ const AssetHolder = (props: AssetProps) => {
                             <h3 id="name-blue-orange">{meta?.name}</h3> 
                         </div>
                         <div id="blue-orange-prices-before-blue-orange">
-                            <div id="asset-price-wrapper">
+                            <div id="asset-price-minted-wrapper">
                                 <p id="PAP-not-minted-word">Price</p>
                                 <p id="PAP-not-minted-price">
                                     <Image
@@ -512,16 +515,16 @@ const AssetHolder = (props: AssetProps) => {
                                     /> 
                                     {formatNumber(parseFloat(feesAfterPurchaseMinted))}</p>
                             </div>
-                            <div id="asset-price-after-purchase-wrapper">
+                            <div id="asset-price-after-purchase-minted-wrapper">
                                 <Image
                                     loader={imageLoader}
                                     alt=""
                                     width={60}  
                                     height={11}  
-                                    id="PAP-logo-list" 
+                                    id="PAP-logo-list-minted" 
                                     src="/images/PriceAfterPurchaseLogo.png"
                                 />
-                                <hr id="line-pap-top"></hr>
+                                <hr id="line-pap-minted-top"></hr>
                                 <p id="price-not-minted-word">Price After Purchase</p>
                                 <p id="price-not-minted-price">
                                     <Image
@@ -570,7 +573,7 @@ const AssetHolder = (props: AssetProps) => {
                             </div> 
                             <Input
                                 name="priceAfterPurchaseNum"
-                                id="price"
+                                id="price-after-purchase-price"
                                 type="tel"
                                 placeholder="Price After Purchase"
                                 value={inputPriceAfterPurchase}

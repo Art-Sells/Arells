@@ -313,9 +313,58 @@
 			padding-top: 20px;
 			padding-left: 20px;
 			padding-right: 20px;
-			padding-bottom: 20px;			
+			padding-bottom: 15px;			
 			background: rgb(255, 255, 255);
 		}
+
+
+
+
+
+
+
+		#asset-price-minted-wrapper{
+			margin-top: 30px;
+			margin-left: auto;
+			margin-right: auto;
+			border-radius: 10px;
+			align-items: center;
+			overflow: hidden;
+			box-shadow: 0px 5px 20px -6px rgb(202, 202, 202, 0.5); 
+			width: 190px;
+			height: 250px;
+			padding-top: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+			padding-bottom: 15px;			
+			background: rgb(255, 255, 255);
+		}
+		#asset-price-after-purchase-minted-wrapper{
+			margin-top: 20px;
+			margin-left: auto;
+			margin-right: auto;
+			border-radius: 10px;
+			align-items: center;
+			overflow: hidden;
+			box-shadow: 0px 5px 20px -6px rgb(202, 202, 202, 0.5); 
+			width: 235px;
+			height: 300px;
+			padding-top: 26px;
+			padding-left: 20px;
+			padding-right: 20px;
+			padding-bottom: 5px;			
+			background: rgb(255, 255, 255);
+		}
+
+
+
+
+
+
+
+
+
+
 		#photo-div {	
 			margin-left: auto;
 			margin-right: auto;
@@ -641,13 +690,27 @@
 
 
 
-
+			  #PAP-logo-list-minted {
+				margin-top: 30px;
+				opacity: .2;
+				width: 60px;
+                height: 11px;
+			  }
 			  #PAP-logo-list {
 				margin-top: 10px;
 				opacity: .2;
 				width: 60px;
                 height: 11px;
 			  }
+
+
+
+
+
+
+
+
+
 
 			  #line-pap-top {
 				margin-top: 20px;
@@ -658,6 +721,17 @@
 				width: 150px;
 				opacity: .1;
 				margin-bottom: 20px;
+			  }	
+
+			  #line-pap-minted-top {
+				margin-top: 10px;
+				background-color: black;
+				border: none;
+				height: 1.2px;
+				border-radius: 30px;
+				width: 150px;
+				opacity: .1;
+				margin-bottom: -10px;
 			  }	
 
 			  #PAP-not-minted-word {
@@ -848,6 +922,25 @@
 					letter-spacing: 0px;    	   		
 					background: silver;
 					opacity: .5;
+			}
+
+			#price-after-purchase-price { 
+				text-align: center;
+				margin-top: 20px;     	   
+				padding-top: 20px;
+				padding-bottom: 20px;
+				padding-left: 20px;
+				padding-right: 20px;       	   		
+				color: black;
+				font-weight: 600;
+				border: none;
+				border-radius: 5px;
+				font-size: 14px;
+				width: 180px;
+				height: 15px;
+				letter-spacing: 0px;    	   		
+				background: silver;
+				opacity: .5;
 			}
 
 			#price:focus {
@@ -1061,11 +1154,26 @@
 				  height: 240px;
 			  }
 			  #asset-price-wrapper{
-				  padding-top: 10px;
+				  padding-top: 5px;
+				  padding-bottom: 20px;
 				  width: 170px;
 				  height: 155px;
 
 			  }	 	
+
+
+			  #asset-price-minted-wrapper{
+				padding-top: 20px;
+				padding-bottom: 20px;
+				width: 170px;
+				height: 220px;
+
+			}	 
+			  #asset-price-after-purchase-minted-wrapper{
+				padding-top: 20px;
+				  width: 220px;
+				  height: 270px;
+			  }	
 			#photo-asset,
 			#photo-asset-loading-sell {
 				width: 290px;
@@ -1090,6 +1198,12 @@
 				margin-top: 10px;
 				width: 60px;
 				margin-bottom: 20px;
+			  }	
+
+			  #line-pap-minted-top {
+				margin-top: 10px;
+				width: 120px;
+				margin-bottom: -10px;
 			  }	
 
 			  #PAP-not-minted-word {
@@ -1273,6 +1387,10 @@
 		  #price { 
 				font-size: 12px;
 				width: 120px;
+		}
+		#price-after-purchase-price { 
+				font-size: 12px;
+				width: 160px;
 		}
 		  #priceline-blue-orange {
 			margin-top: 0px;

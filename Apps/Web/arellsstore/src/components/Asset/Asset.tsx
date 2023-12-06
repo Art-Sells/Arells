@@ -33,10 +33,10 @@ const Asset = () => {
     const { nftSelling } = useSingleSellingNFT(storeAddressFromURL, nftId); 
 
     useEffect(() => {
-        if (nft) {
+        if (nft || nftSelling) {
             setLoading(false);
         }
-    }, [nft]);
+    }, [nft, nftSelling]);
 
     return (
         <>

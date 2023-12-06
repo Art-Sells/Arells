@@ -148,7 +148,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 
         <div id="blue-orange-seller-created">
           {/*  Change below link after test  */}
-          {meta ? (
+          {meta && (
                 <Image
                   loader={imageLoader}
                   alt=""
@@ -157,7 +157,8 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
                   id="photo-asset-owned" 
                   src={meta?.imageURL}
                 />
-          ) : (
+          )} 
+          {!meta && (
             (
               <div id="photo-asset-loading">
                   <Image
@@ -491,7 +492,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 {/* change below link after test */}                
                     <Link legacyBehavior href={`/sell/${address}/${nft.id}`} passHref>
                       <button id="blue-orange-add-to-cart-seller-created" >
-                        SELL</button>
+                        SET PRICE</button>
                     </Link>
                 </>
             )}	
@@ -578,7 +579,7 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 {/* change below link after test */}                               
                     <Link legacyBehavior href={`/sell/${address}/${nft.id}`} passHref>
                       <button id="blue-orange-add-to-cart-seller-created" >
-                        SELL</button>
+                        SET PRICE</button>
                     </Link>
               </>
           )}	   
