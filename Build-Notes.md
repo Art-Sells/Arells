@@ -34,12 +34,13 @@ Selling:
 2. Receive Art (receiving the art into your store) 
 3. Set Price (setting prices for your art) 
 4. List to sell (listing your art to sell)
+
 Buying:
 1. Buy (Collector Buys Your Art)
 2. Deliver Art (Collector Agrees for art to be delivered to their store)
-3. Your art is delivered (dissapears) out of your store and into theirs.
+3. Your art is delivered (dissapears) out of your store and into theirs... Just like in the real world.
 
-After someone buys your art, (just as in the real world) your art will be delivered out of your store and into the stock of the collector's store. This means any art that has been purchased from your store, you will no longer see available (just like in the real world, if someone were to buy your art, you would no longer hold it... This same principle functions within Arells).
+This is what makes the Art you'll sell on Arells very exciting because every art you create will act as a digital version of a real world object. 
 
 The major difference now is that you'll always be able to retain a massive royalty for your art after its sale (40%+) royalty on all secondary sales forever and the price of your art will never decline in value thanks to our Price After Purchase system. We'll experiment with different royalty percentages in the future (possibly raising it to 90%).
 
