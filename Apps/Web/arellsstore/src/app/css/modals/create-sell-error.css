@@ -40,10 +40,10 @@
 }
 
 #pap-error-content {
-  margin-top: -20px;
+  margin-top: -15px;
   padding-top: 50px;
-  width: 290px;
-  height: 250px;
+  width: 260px;
+  height: 240px;
   background-color: rgba(128,128, 128 ,0.9);
   border-radius: 30px;
   align-items: center;
@@ -111,33 +111,34 @@
     #pap-error-line-top {
       margin-top: 15px;
       height: 1px;
-      width: 180px;
+      margin-left: -30px;
+      width: 330px;
       background-color: white;
       opacity: .1;
       border-radius: 30px;
     }
     #pap-error-line-bottom {
       height: 1px;
-      width: 120px;
+      width: 145px;
       background-color: white;
       opacity: .1;
       border-radius: 30px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     #pap-error-words {
       margin-top: 20px;
       margin-bottom: 20px;
-      letter-spacing: 2px;
-      margin-left: 2px;
-      opacity: .8;
+      letter-spacing: 1px;
+      margin-left: 1px;
+      opacity: .6;
     }
 
     #pap-error-paragraph {
         margin-top: 0px;
         margin-bottom: 3px;
-        letter-spacing: 1px;
-        margin-left: 1px; 
-        opacity: .8;
+        letter-spacing: 0px;
+        margin-left: 0px; 
+        opacity: .6;
       }
 
 
@@ -163,7 +164,7 @@
 
 #pap-error-close {
   background-color: rgba(128,128, 128, 0.2);
-  color: rgb(166, 166, 166);
+  color: rgb(163, 163, 163);
   margin-top: 25px;
   margin-left: auto;
   margin-right: auto;   

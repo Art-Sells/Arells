@@ -271,9 +271,6 @@ const AssetHolder = (props: AssetProps) => {
         try {
           await listNFTCollector(nft.id, priceAfterPurchaseNum);
           toast.success("You listed this NFT for sale. Changes will be reflected shortly.");
-//Change below link after test
-            //Add Listing Modal "Your Art is being listed to sell. Please wait a few seconds for it to appear in your store."
-          router.push(`/buy/${address}`);
         } catch (e) {
           showErrorToast();
           console.error(e);
@@ -314,6 +311,8 @@ const AssetHolder = (props: AssetProps) => {
                     const weiInputPriceAfterPurchase = ethers.utils.parseEther(etherPriceAfterPurchase);
                     setListingModal(true);
                     await onSellConfirmedMinted(weiInputPriceAfterPurchase);
+                    setListingModal(false);
+                    setListedModal(true);
                 }
             }
         } catch (e) {
