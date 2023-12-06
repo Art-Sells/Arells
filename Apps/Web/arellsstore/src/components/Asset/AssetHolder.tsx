@@ -60,7 +60,7 @@ const AssetHolder = (props: AssetProps) => {
 
 // asset constants below
     const [showPriceErrorModal, setPriceErrorModal] = useState<boolean>(false);
-    const [showPAPErrorModal, setPAPErrorModal] = useState<boolean>(false);
+    const [showPAPErrorModal, setPAPErrorModal] = useState<boolean>(true);
 
     const [showListingModal, setListingModal] = useState<boolean>(false);
     const [showListingErrorModal, setListingErrorModal] = useState<boolean>(false);
@@ -368,7 +368,7 @@ const AssetHolder = (props: AssetProps) => {
       )}
 
       {showPAPErrorModal && (
-        <div id="create-sell-error-wrapper">
+        <div id="pap-error-wrapper">
           <div id="pap-error-content">
           <Image 
               // loader={imageLoader}
