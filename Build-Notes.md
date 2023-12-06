@@ -48,8 +48,8 @@ The major difference now is that you'll always be able to retain a massive royal
 - "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "Buy art that never loses value! Arells is a polygon digital asset (NFT) marketplace that obscures bear markets.".
 
 #### If Time Allows:
+- Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector loading pop-up issue"
-- Resolve "Price After Purchase Price after Zeroing out price in listing issue"
 - Polish "Add" button edges
 ________________________________________________________________________________________________________________________________________________
 
