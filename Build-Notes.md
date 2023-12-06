@@ -34,6 +34,23 @@
 - Store Private Key Cold & Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
 - Send 5 day week notifications on 2.0 profile creation (you won't have to create new art when creating your profile, you'll be able to link as many wallet(addresses) to your store(profile) on top of USDC (which Wallet to download before launch day, creating a polygon account, etc).
+- - Arells is the marketplace and your store is your digital store meaning (just like Grocery and Convenience stores), to create, list, and sell your art digitally, it also has to go through the same process as creating, listing and selling items in the real-world.  
+
+On Arells, this will be the process:
+
+1. Create (creating your art)
+2. Receive (receiving the art into your store) 
+3. Sell (preparing the prices to sell your art) 
+4. List (listing prices to your art)
+5. Stock (stocking your art for sale)
+
+...Just like receiving, listing, and stocking items for sale in stores in the real world.
+
+After someone buys your art, (just as in the real world) your art will be delivered out of your store and into the stock of the new owner's store. This means any art that has been purchased from your store, you will no longer see available (just like in the real world, if someone were to buy your art, you would no longer hold it... This same principle functions within Arells).
+
+The major difference now is that you'll always be able to retain a massive royalty for your art after its sale (40%+) royalty on all secondary sales forever and it will never decline in value thanks to our Price After Purchase system. We'll experiment with different royalty percentages in the future (possibly raising it to 90%).
+
+*It was 90% in the beginning, but after talking to some buyers, many were hesitant in paying the 90% royalty and without anyone to buy your art, our mission to help you financially fails, so we had to lower it to 40% (which is the highest royalty payment for artists compared to any other online store)... This, coupled with our Price After Purchase system makes Arells the best online marketplace for Artists not just today, but the best that has ever existed...*
 - "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "Buy art that never loses value! Arells is a polygon digital asset (NFT) marketplace that obscures bear markets.".
 
 #### If Time Allows:
