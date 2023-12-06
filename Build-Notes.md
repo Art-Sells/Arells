@@ -40,11 +40,10 @@ On Arells, this will be the process:
 
 1. Create (creating your art)
 2. Receive (receiving the art into your store) 
-3. Sell (preparing the prices to sell your art) 
-4. List (listing prices to your art)
-5. Stock (stocking your art for sale)
+3. list (listing the prices for your art) 
+4. List to sell (listing your art to sell)
 
-...Just like receiving, listing, and stocking items for sale in stores in the real world.
+...Just like creating, receiving and listing items to sell in the real world.
 
 After someone buys your art, (just as in the real world) your art will be delivered out of your store and into the stock of the new owner's store. This means any art that has been purchased from your store, you will no longer see available (just like in the real world, if someone were to buy your art, you would no longer hold it... This same principle functions within Arells).
 
