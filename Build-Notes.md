@@ -24,7 +24,7 @@
 #### After Testing and Before Launch: 
 - Store Private Key Cold & Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
-- Send 5 day week notifications on which wallet to download and which network to connect to, to prepare...
+- Send 5 day week notifications on which wallet to download and which network to connect to, to prepare... December 17th (Pacific Standard Time)
 - - Arells is the marketplace and your store is your digital store meaning (just like Grocery and Convenience stores), to create, list, and sell your art digitally, it also has to go through the same process as creating, listing and selling and delivering items in the real-world.  
 
 On Arells, this will be the selling/buying process:
