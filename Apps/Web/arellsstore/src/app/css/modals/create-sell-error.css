@@ -88,21 +88,21 @@
 
 #error-image{
   margin-top: 4px;
-  opacity: .25;
+  opacity: .45;
 }
 
 #error-name-image{
   margin-top: 3px;
-  opacity: .25;
+  opacity: .45;
 }
 
 #error-price-image{
   margin-top: 3px;
-  opacity: .25;
+  opacity: .45;
 }
 
 #error-pap-image{
-  opacity: .35;
+  opacity: .45;
 }
 
 
@@ -113,21 +113,21 @@
       margin-top: 20px;
       margin-bottom: 30px;
       margin-left: 2px; 
-      opacity: .8;
+      opacity: .5;
     }
 
     #needed-name-word {
       margin-top: 25px;
       margin-bottom: 30px;
       margin-left: 2px; 
-      opacity: .8;
+      opacity: .5;
     }
 
     #price-error-word {
       margin-top: 20px;
       margin-bottom: 30px;
       margin-left: 2px; 
-      opacity: .8;
+      opacity: .5;
     }
 
     #pap-error-line-top {
@@ -136,7 +136,7 @@
       width: 115px;
       background-color: rgba(255, 255, 255, 0.4);
       border: none;
-      opacity: .2;
+      opacity: .3;
       border-radius: 30px;
     }
     #pap-error-line-bottom {
@@ -144,7 +144,7 @@
       width: 115px;
       border: none;
       background-color: rgba(255, 255, 255, 0.4);
-      opacity: .2;
+      opacity: .3;
       border-radius: 30px;
       margin-bottom: 10px;
     }
@@ -154,7 +154,7 @@
       margin-bottom: 9px;
       letter-spacing: 0.5px;
       margin-left: 0.5px;
-      opacity: .25;
+      opacity: .35;
     }
 
     #pap-error-paragraph {
@@ -162,7 +162,7 @@
         margin-bottom: 3px;
         letter-spacing: 0px;
         margin-left: 0px; 
-        opacity: .35;
+        opacity: .45;
       }
 
 
@@ -170,8 +170,8 @@
 
 
 #create-sell-error-close {
-  background-color: rgba(128,128, 128, 0.2);
-  color: rgb(166, 166, 166);
+  background-color: rgba(0, 0, 0, 0.2);
+  color: rgb(182, 182, 182);
   margin-top: -5px;
   margin-left: auto;
   margin-right: auto;   
@@ -187,8 +187,8 @@
 }
 
 #pap-error-close {
-  background-color: rgba(128,128, 128, 0.2);
-  color: rgb(90, 90, 90);
+  background-color: rgba(0, 0, 0, 0.2);
+  color: rgb(182, 182, 182);
   margin-top: 25px;
   margin-left: auto;
   margin-right: auto;   
@@ -273,8 +273,8 @@
 
 
     #owner-error-close {
-      background-color: rgba(128,128, 128, 0.2);
-      color: rgb(166, 166, 166);
+      background-color: rgba(0, 0, 0, 0.2);
+      color: rgb(182, 182, 182);
       margin-top: -5px;
       margin-left: auto;
       margin-right: auto;   
