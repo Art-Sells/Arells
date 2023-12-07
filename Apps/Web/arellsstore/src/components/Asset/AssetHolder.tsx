@@ -60,7 +60,7 @@ const AssetHolder = (props: AssetProps) => {
 
 // asset constants below
     const [showPriceErrorModal, setPriceErrorModal] = useState<boolean>(false);
-    const [showPAPErrorModal, setPAPErrorModal] = useState<boolean>(true);
+    const [showPAPErrorModal, setPAPErrorModal] = useState<boolean>(false);
 
     const [showListingModal, setListingModal] = useState<boolean>(false);
     const [showListingErrorModal, setListingErrorModal] = useState<boolean>(false);
@@ -360,7 +360,7 @@ const AssetHolder = (props: AssetProps) => {
             height={26}
             id="error-price-image" 
             src="/images/market/polygonIvory.png"/>  
-          <p id="needed-word">SET PRICE</p>
+          <p id="price-error-word">SET PRICE</p>
           <button id="create-sell-error-close"
             onClick={closePriceErrorModal}>OK</button>	
           </div>
@@ -373,10 +373,10 @@ const AssetHolder = (props: AssetProps) => {
           <Image 
               // loader={imageLoader}
               alt="" 
-              width={55}
-              height={11}
+              width={85}
+              height={16}
               id="error-pap-image" 
-              src="/images/PriceAfterPurchaseLogoIvory.png"/> 
+              src="/images/PriceAfterPurchaseLogo.png"/> 
             <hr id="pap-error-line-top"></hr>  
             <p id="pap-error-words">PRICE AFTER PURCHASE</p>
             <hr id="pap-error-line-bottom"></hr>  
