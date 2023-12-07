@@ -376,7 +376,7 @@ const AssetHolder = (props: AssetProps) => {
               width={85}
               height={16}
               id="error-pap-image" 
-              src="/images/PriceAfterPurchaseLogo.png"/> 
+              src="/images/PriceAfterPurchaseLogoIvory.png"/> 
             <hr id="pap-error-line-top"></hr>  
             <p id="pap-error-words">PRICE AFTER PURCHASE</p>
             <hr id="pap-error-line-bottom"></hr>  
