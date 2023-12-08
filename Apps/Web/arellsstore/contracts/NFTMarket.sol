@@ -87,7 +87,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
         address seller = _listings[tokenID].seller;
         address creator = _creators[tokenID];
 
-        // Preserve the current price after purchase for future sales
+        require(msg.sender != creator, "AssetMarket: Creator cannot buy their own NFT");
         uint256 currentPriceAfterPurchase = _priceAfterPurchase[tokenID];
 
         // Clear listing before transferring funds

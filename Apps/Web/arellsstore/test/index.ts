@@ -212,6 +212,14 @@ describe("Arells Digital Assets", function (){
             await expect(transaction).to.be.revertedWith(
                 "AssetMarket: incorrect price");
         });
+
+        it("Should revert if creator is purchaser", async () => {
+            const tokenID = await createAndListNFT(123, 150);
+            // Ensure the transaction is made by the creator (e.g., signers[0])
+            const transaction = nftMarket.connect(signers[0]).buyNFT(tokenID, {value: 123});
+            await expect(transaction).to.be.revertedWith(
+                "AssetMarket: Creator cannot buy their own NFT");
+        });
     
         it("Should mint NFT and list owner as 1st collector and send 97% price to creator after collector buys", async () => {
             const price = 100;
