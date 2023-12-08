@@ -11,7 +11,6 @@ import StoreAssetHolderSelling from "./Asset/StoreAssetHolderSelling";
 // Change below link after test
 import '../app/css/prototype/seller-created.css';
 import '../app/css/prototype/buyer-collected.css';
-import '../app/css/modals/copiedlink.css';
 
 //Loader Styles
 import '../app/css/modals/loading/spinnerBackground.css';

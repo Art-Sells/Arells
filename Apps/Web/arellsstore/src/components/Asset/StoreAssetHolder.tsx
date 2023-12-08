@@ -7,7 +7,6 @@ import { NFT } from "../../state/nft-market/interfaces"
 
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
-import '../../app/css/prototype/buyer-collected.css';
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';

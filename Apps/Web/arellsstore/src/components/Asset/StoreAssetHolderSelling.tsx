@@ -5,16 +5,20 @@ import useSigner from "../../state/signer";
 import { ipfsToHTTPS } from "../../helpers";
 import { NFT } from "../../state/nft-market/interfaces"
 
+
 // Change below link after test
 import '../../app/css/prototype/seller-created.css';
-import '../../app/css/prototype/buyer-collected.css';
-
-//Loader Styles
-import '../../app/css/modals/loading/spinnerBackground.css';
-import styles from '../../app/css/modals/loading/spinner.module.css';
 import "../../app/css/modals/create-sell-error.css";
 import "../../app/css/modals/create-art-modal.css";
 import "../../app/css/modals/created-art-modal.css";
+
+//Loader Styles
+import '../../app/css/modals/loading/spinnerBackground.css';
+import styling from '../../app/css/modals/loading/loader.module.css';
+import styles from '../../app/css/modals/loading/photoloader.module.css';
+
+
+
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -55,6 +59,25 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
         }
     }, [imagesLoaded]);
 // loader functions above
+
+//Modal Functions below
+  const [shareToSellModal, setShareToSellModal] = useState<boolean>(false);
+  const [showBuyingModal, setBuyingModal] = useState<boolean>(false);
+  const [showBuyingErrorModal, setBuyingErrorModal] = useState<boolean>(false);
+  const [showPurchasedModal, setPurchasedModal] = useState<boolean>(false);
+
+  const closeShareToSellModal = () => {
+    setShareToSellModal(false);
+  };
+  function shareToSell() {
+    setShareToSellModal(true);
+  };
+
+  const closeBuyingErrorModal = () => {
+    setBuyingErrorModal(false);
+    window.location.reload();
+  };
+//Modal Functions Above
 
 // asset constants below
     const { address, connectWallet} = useSigner();
@@ -136,16 +159,19 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
     addressMatch && address && forSale && isNFTMinted && forSaleMinted; 
 // Asset Changing function/s above 
 
+
+
+
 //Buying functions Below
   const {buyNFT} = useNFTMarket(address ?? null);
   const [error, setError] = useState<string>();
+
+  const [isBuying, setIsBuying] = useState(false);
   const onBuyClicked = async () => {
       try {
         await buyNFT(nft);
         toast.success("You bought this NFT. Changes will be reflected shortly.");
-//Change below link after test
-        //Add Truck Modal "Congratulations on your purchase! Your Art is being delivered, please wait a few seconds for it to appear in your store."
-        router.push(`/own/${address}`);
+        
       } catch (e) {
         showErrorToast();
         console.error(e);
@@ -154,30 +180,28 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
     
   async function buy() {
       try {
+        setIsBuying(true);
+        const delay = (ms: number | undefined) => 
+        new Promise(resolve => setTimeout(resolve, ms));
           if (!address) {
               await connectWallet(); 
               return; 
           }
           if (address) {
-              setError(""); 
-              await onBuyClicked(); 
+              setBuyingModal(true);
+              await delay(1000);
+              await onBuyClicked();
+              setBuyingModal(false);
+              setPurchasedModal(true);
           }
       } catch (e) {
+          setBuyingModal(false);
+          setBuyingErrorModal(true);
           console.error("Error in buying NFT:", e);
       }
   }
 //Buying Functions Above
 
-//Modal Functions below
-  const [shareToSellModal, setShareToSellModal] = useState(false);
-  const closeShareToSellModal = () => {
-    setShareToSellModal(false);
-    window.location.reload();
-  };
-  function shareToSell() {
-    setShareToSellModal(true);
-  };
-//Modal Functions Above
 
   return (
     <>
@@ -195,10 +219,66 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
             src="/images/market/prohibited.png"/>  
           <p id="owner-error-word">OWNER CANNOT BUY</p>
           <button id="owner-error-close"
-            onClick={closeShareToSellModal}>OK</button>	
+            onClick={closeShareToSellModal}>OK</button> 
           </div>
-        </div>	
-      )}      
+        </div>  
+      )}  
+
+
+
+      {showBuyingModal && (
+        <div id="create-art-modal-wrapper">
+          <div id="create-art-modal-content">
+          <Image 
+            // loader={imageLoader}
+            alt="" 
+            width={50}
+            height={50}
+            id="list-art-image" 
+            src="/images/market/listingArtTagImage.png"/>  
+          <p id="list-art-words">LISTING ART</p>
+          <div className={styling.loader}></div>
+          </div>
+        </div>  
+      )}
+
+      {showBuyingErrorModal && (
+        <div id="creation-error-wrapper">
+          <div id="buying-error-content">
+          <Image 
+            // loader={imageLoader}
+            alt="" 
+            width={35}
+            height={35}
+            id="creation-error-image" 
+            src="/images/market/wallet.png"/>  
+          <p id="creation-error-words">CHECK WALLET</p>
+          <button id="creation-error-close"
+            onClick={closeBuyingErrorModal}>OK</button> 
+          </div>
+        </div>  
+      )}
+
+      {showPurchasedModal && (
+        <div id="created-art-modal-wrapper">
+          <div id="created-art-modal-content">
+          <Image 
+            // loader={imageLoader}
+            alt="" 
+            width={50}
+            height={50}
+            id="listed-art-image" 
+            src="/images/market/listedArtTag.png"/>  
+          <p id="created-art-words">ART LISTED</p>
+          <p id="created-art-paragraph">It'll take a few moments</p>
+          <p id="created-art-paragraph">for your art to be stocked.</p>
+          <Link href={`/own/${address}`} passHref>
+            <button id="created-art-modal-close">VIEW LISTING</button>  
+          </Link>   
+
+          </div>
+        </div>  
+      )}    
 
 
       {/*<!-- Modals Above -->*/}
@@ -214,7 +294,23 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
             id="photo-asset-owned" 
             src={meta?.imageURL}
           />
-        )}	
+        )}
+        {!meta && (
+            (
+              <div id="photo-asset-loading">
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={50}  
+                    height={50}  
+                    id="receiving-image" 
+                    src="/images/market/receiving.png"
+                  />
+                <div className={styles.photoloader}></div>  
+                <p id="receiving-word">RECEIVING</p>
+              </div>
+            )
+          )}  
 {/* Below for users who are not owners of the Assets */} 
         {notConnectedListedNotMintedNotRelisted && (
           <>
@@ -254,7 +350,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
               </p>
             </div>         
             <button id="blue-orange-add-to-cart-seller-created" 
-            // change below function after test
+            disabled={isBuying}
             onClick={buy}>
               BUY</button>
           </>
@@ -297,7 +393,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
               </p>
             </div>         
             <button id="blue-orange-add-to-cart-seller-created" 
-            // change below function after test
+            disabled={isBuying}
             onClick={buy}>
               BUY</button>
           </>
@@ -340,7 +436,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
               </p>
             </div>         
             <button id="blue-orange-add-to-cart-seller-created" 
-            // change below function after test
+            disabled={isBuying}
             onClick={buy}>
               BUY</button>
           </>
@@ -383,7 +479,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
               </p>
             </div>         
             <button id="blue-orange-add-to-cart-seller-created" 
-            // change below function after test
+            disabled={isBuying}
             onClick={buy}>
               BUY</button>
           </>
@@ -391,7 +487,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
   {/* Above for users who are not owners of the Assets */}      
 
 
-{/* Below for owners of the Assets */}	
+{/* Below for owners of the Assets */}  
         {connectedOwnerListedNotMintedNotRelisted && (
           <>
             <div id="blue-orange-prices-before-seller-created">
