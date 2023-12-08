@@ -36,6 +36,25 @@
   animation-name: animatetop;
   animation-duration: 1.00s;
 }
+
+#purchased-art-modal-content {
+  padding-top: 45px;
+  width: 220px;
+  height: 260px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 30px;
+  align-items: center;
+  position: relative;
+  font-weight: 500;
+  font-size: 10px; 
+  margin-left: auto;
+  margin-right: auto;  
+  box-shadow: 0px 5px 20px -6px silver; 
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 1.00s;
+  animation-name: animatetop;
+  animation-duration: 1.00s;
+}
 /* Add Animation */
 @-webkit-keyframes animatetop {
   from {center:0; opacity:0}
@@ -56,7 +75,20 @@
   margin-right: 15px;
 }
 
+#purchased-art-image{
+  opacity: .4;
+}
+
 #created-art-words {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+  margin-left: 2px; 
+  color: gray;
+  opacity: .75;
+}
+
+#purchased-art-words {
   margin-top: 20px;
   margin-bottom: 20px;
   letter-spacing: 2px;

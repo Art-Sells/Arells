@@ -64,6 +64,10 @@
   margin-left: 26px;
 }
 
+#buy-art-image{
+  opacity: .2;
+}
+
 #list-art-words {
   margin-top: 20px;
   margin-bottom: 30px;

@@ -183,7 +183,9 @@ const AssetHolder = (props: AssetProps) => {
           console.error(e);
         }
       };
-      const [isListing, setIsListing] = useState(false);  
+      const [isListing, setIsListing] = useState(false); 
+      const delay = (ms: number | undefined) => 
+        new Promise(resolve => setTimeout(resolve, ms)); 
       async function listToSell() {
         try {
             setIsListing(true);
@@ -212,6 +214,7 @@ const AssetHolder = (props: AssetProps) => {
                     priceAfterPurchase);
 
                 setListingModal(true);
+                await delay(1000);
                 await onSellConfirmed(weiPrice, weiPriceAfterPurchase);
                 setListingModal(false);
                 setListedModal(true);
@@ -310,6 +313,7 @@ const AssetHolder = (props: AssetProps) => {
                     const etherPriceAfterPurchase = inputPriceAfterPurchase.toString();
                     const weiInputPriceAfterPurchase = ethers.utils.parseEther(etherPriceAfterPurchase);
                     setListingModal(true);
+                    await delay(1000);
                     await onSellConfirmedMinted(weiInputPriceAfterPurchase);
                     setListingModal(false);
                     setListedModal(true);

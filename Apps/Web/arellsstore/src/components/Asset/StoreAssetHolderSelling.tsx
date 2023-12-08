@@ -234,9 +234,9 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
             alt="" 
             width={50}
             height={50}
-            id="list-art-image" 
-            src="/images/market/listingArtTagImage.png"/>  
-          <p id="list-art-words">LISTING ART</p>
+            id="buy-art-image" 
+            src="/images/market/cash-register.png"/>  
+          <p id="list-art-words">BUYING ART</p>
           <div className={styling.loader}></div>
           </div>
         </div>  
@@ -261,19 +261,20 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
 
       {showPurchasedModal && (
         <div id="created-art-modal-wrapper">
-          <div id="created-art-modal-content">
+          <div id="purchased-art-modal-content">
           <Image 
             // loader={imageLoader}
             alt="" 
-            width={50}
+            width={63}
             height={50}
-            id="listed-art-image" 
-            src="/images/market/listedArtTag.png"/>  
-          <p id="created-art-words">ART LISTED</p>
+            id="purchased-art-image" 
+            src="/images/market/deliver.png"/>  
+          <p id="purchased-art-words">ART PURCHASED</p>
           <p id="created-art-paragraph">It'll take a few moments</p>
-          <p id="created-art-paragraph">for your art to be stocked.</p>
+          <p id="created-art-paragraph">for your art to be delivered</p>
+          <p id="created-art-paragraph">to your store.</p>
           <Link href={`/own/${address}`} passHref>
-            <button id="created-art-modal-close">VIEW LISTING</button>  
+            <button id="created-art-modal-close">DELIVER ART</button>  
           </Link>   
 
           </div>
