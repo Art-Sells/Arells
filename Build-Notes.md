@@ -12,6 +12,7 @@
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold & Make "ArellsStore" Code Private.
+- Create new API Key and store in cold place.
 - Delete all YouTube branched links
 ##### Send 5 day week notifications 
 - inform on which wallet to download and which network to connect to, to prepare... December 17th (Pacific Standard Time)
