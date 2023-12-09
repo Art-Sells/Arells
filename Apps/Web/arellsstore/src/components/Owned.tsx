@@ -154,8 +154,9 @@ const Owned = () => {
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
 			<Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
-				<a id="selling">VIEW SELLING</a>	
+				<a id="selling">Buy</a>	
 			</Link>
+			<a id="owned" >Own</a>
 		</div>
 			{noArtCreated && (
 				<p id="no-art">

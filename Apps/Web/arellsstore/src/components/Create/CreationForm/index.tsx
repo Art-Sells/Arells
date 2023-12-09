@@ -96,7 +96,11 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
     setArtCreationModal(true); 
     console.log("Activated creation");
 
+    
+
     try {
+      const delay = (ms: number | undefined) => 
+        new Promise(resolve => setTimeout(resolve, ms));
       if (!address) {
         setShowImageErrorModal(false);
         setShowNameErrorModal(false);
@@ -105,9 +109,8 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
         await connectWallet();
         return; 
       }
-      console.log("Handling creation");
+      await delay(1000);
       await onSubmit({ ...values, image: selectedImage });
-      console.log("Handled creation");
       setArtCreationModal(false);
       setArtCreatedModal(true);
     } catch (error) {

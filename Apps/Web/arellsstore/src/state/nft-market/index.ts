@@ -29,20 +29,21 @@ const useNFTMarket = (storeAddress: string | null) => {
   const createNFT = async (values: CreationValues) => {
     if (!(values.image instanceof File)) {
       console.error('Provided image is not a file');
-      // Handle this error appropriately
-      // For example, you could throw an error or return from the function
       return;
     }
     try {
       // Call the handler to upload the image to IPFS and get the URI
       const ipfsResponse = await handler(values.image, values.name);
+      console.log ("ipfs Response: ", ipfsResponse);
   
       // Check if the response from the handler is successful and contains the necessary data
-      if (ipfsResponse.status === 201 && ipfsResponse.data && ipfsResponse.data.IpfsHash) {
+      if (ipfsResponse.status === 200 && ipfsResponse.data && ipfsResponse.data.IpfsHash) {
         const ipfsUri = `ipfs://${ipfsResponse.data.IpfsHash}`; // Construct the IPFS URI
-  
+        console.log ("ipfs Uri: ", ipfsUri);
+
         // Proceed with creating the NFT using the received IPFS URI
         const transaction: TransactionResponse = await nftMarket.createNFT(ipfsUri);
+        console.log ("transaction : ", transaction);
         await transaction.wait();
         // Additional code for after successful NFT creation
       } else {
