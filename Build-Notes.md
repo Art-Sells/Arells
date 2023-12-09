@@ -49,6 +49,7 @@ The major difference now is that you'll always be able to retain a massive royal
 - - 2.0 profile creation (you won't have to create new art when creating your profile, you'll be able to link as many wallet(addresses) to your store(profile) on top of USDC (which Wallet to download before launch day, creating a polygon account, etc)
 
 #### If Time Allows:
+- Try/Catch Apollo Connection Error...
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
 - Polish "Add" button edges
@@ -130,7 +131,6 @@ ________________________________________________________________________________
 
 ##### Bugs
 - 404 and Server Error Pages
-- Try/Catch Apollo Connection Error...
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
 - Polish "Add" button edges
