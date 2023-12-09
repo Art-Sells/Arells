@@ -6,14 +6,7 @@
 - Mainnet with Coinbase/Polygon
 
 #### LinkTree Links... 
-***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
-- MetaTags Social-sharing-images: AWS Cloudfront?
-- MetaTag Title: Last NFT URI Name from: address
-- MetaTag Image(Profile): Last NFT URI from: address
-- metadata const (upgrade from generateMetadata) must be async for dynamic changes ensure ${} are places in URLs
 - *clear Browsing/Cache Data before checking*
-- Google Search Console Index (with sitemap)
-- Test Wallet Connected/Not-Connected
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold & Make "ArellsStore" Code Private.
@@ -114,8 +107,9 @@ ________________________________________________________________________________
 
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
-- MetaTag Title: "Profile/Asset Name" (character Limit)
-- MetaTag Description: "Profile/Asset Category"
+- MetaTag Title: "Store Name" (character Limit)
+- MetaTag Description: "Slogan"
+- MetaTag Image: Last Meta.image
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
@@ -188,6 +182,10 @@ ________________________________________________________________________________
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
 - MetaTag Image(Asset): large-image|name, small-|category
+- MetaTag Title: "Store/Asset Name" (character Limit)
+- MetaTag Description: "Slogan"
+- MetaTag Image: "Store/Asset Image"
+- Google Search Console Index (with sitemap) Log-In/Sign-Up
 
 ##### Bugs
 - Clean up if/else if Displays to make more efficient...
