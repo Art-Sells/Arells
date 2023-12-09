@@ -190,10 +190,8 @@ const Selling = () => {
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
 			<a id="selling-seller">Buy</a>	
-			<Link href={`/own/${storeAddressFromURL}`} 
-				passHref
-				id="owned-seller">
-				Own
+			<Link legacyBehavior href={`/own/${storeAddressFromURL}`} passHref>
+				<a id="owned-seller" >Own</a>
 			</Link>				
 		</div>
 			{noArtCreated && (
