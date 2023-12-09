@@ -68,29 +68,20 @@ const Owned = () => {
 		createdNFTs,
 		sellingNFTs 
 	} = useNFTMarket(storeAddressFromURL);
-	useEffect(() => {
-		console.log('Selling NFTs in Parent:', sellingNFTs);
-	}, [sellingNFTs]);
+
+	const hasCreatedArt = !!createdNFTs && createdNFTs.length > 0;
+	const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
+
 	useEffect(() => {
 		if(address && (createdNFTs || sellingNFTs)) {
 			setLoading(false);
 		}
     }, [address, createdNFTs, sellingNFTs]);
-    useEffect(() => {
-        if (!address) {
-			setCreate(true);
-			setCreateConnected(false);
-        } else {
-            setCreate(false);
-            setCreateConnected(true);
-        }
-    }, [address]);
 	useEffect(() => {
-		const hasCreatedArt = !!createdNFTs && createdNFTs.length > 0;
-		const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
 		
 		setArtCreated(hasCreatedArt);
 		setArtSelling(hasSellingArt);
+
 	}, [createdNFTs, sellingNFTs]);
 
 	const nftCount = createdNFTs?.length || 0;
@@ -99,21 +90,6 @@ const Owned = () => {
     const containerClass = nftCount > 2 ? "three-items" : "two-items";
 	const containerClassTwo = nftCountSelling > 2 ? "three-items" : "two-items";
 
-    const addressMatch = useMemo(() => (
-        address && storeAddressFromURL && address.toLowerCase() === storeAddressFromURL
-    ), [address, storeAddressFromURL]);
-
-    useEffect(() => {
-		const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
-        setArtSelling(hasSellingArt);
-        if (addressMatch !== undefined && sellingNFTs !== undefined) {
-            setLoading(false);
-            // Update artSelling state based on sellingNFTs data
-            setArtSelling(!!sellingNFTs && sellingNFTs.length > 0);
-        } else {
-            setLoading(true);
-        }
-    }, [addressMatch, sellingNFTs]);
 
 // asset constants above
 
@@ -178,9 +154,8 @@ const Owned = () => {
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
 			<Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
-				<a id="selling">Buy</a>	
+				<a id="selling">VIEW SELLING</a>	
 			</Link>
-			<a id="owned" >Own</a>
 		</div>
 			{noArtCreated && (
 				<p id="no-art">

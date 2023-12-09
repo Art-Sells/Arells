@@ -187,13 +187,6 @@ const Selling = () => {
 		src="images/Arells-Logo-Ebony.png"/>	
 		<p id="slogan-seller-created">BUY ART THAT NEVER LOSES VALUE</p>
 		<hr id="profileline-seller-created"/>
-		<div id="created-collected-seller-created">
-{/*<!-- Change below link after test -->*/}	
-			<a id="selling-seller">Buy</a>	
-			<Link legacyBehavior href={`/own/${storeAddressFromURL}`} passHref>
-				<a id="owned-seller" >Own</a>
-			</Link>				
-		</div>
 			{noArtCreated && (
 				<p id="no-art">
 				</p>

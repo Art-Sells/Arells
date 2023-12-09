@@ -1,66 +1,30 @@
-import formidable from "formidable";
-import { readFileSync, unlinkSync } from "fs";
-import { NextApiHandler } from "next";
-import { File, NFTStorage } from "nft.storage";
-import { tmpdir } from "os";
+// Assuming this function is now a regular function and not a Next.js API route handler
+import axios from 'axios';
 
-const DEFAULT_DESCRIPTION = "Arells Digital Asset";
+const JWT: string = process.env.NFT_STORAGE_KEY || "Your_Fallback_Token";
 
-const client = new NFTStorage({ token: `${process.env.NFT_STORAGE_KEY}` });
+const handler = async (file: File, fileName: string) => {
+  const formData = new FormData();
+  formData.append('file', file);
 
-const handler: NextApiHandler = async (req, res) => {
-  if (req.method != "POST") {
-    return res.status(403).json({ error: `Unsupported method ${req.method}` });
-  }
+  const pinataMetadata = JSON.stringify({ name: fileName });
+  formData.append('pinataMetadata', pinataMetadata);
+
+  const pinataOptions = JSON.stringify({ cidVersion: 0 });
+  formData.append('pinataOptions', pinataOptions);
+
   try {
-    // Parse req body and save image in /tmp
-    const data: any = await new Promise((res, rej) => {
-      const form = formidable({ multiples: true, uploadDir: tmpdir() });
-      form.parse(req, (err, fields, files) => {
-        if (err) rej(err);
-        res({ ...fields, ...files });
-      });
+    const response = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+      headers: {
+        'Authorization': `Bearer ${JWT}`
+      }
     });
-    // Read image from /tmp
-    const {
-      filepath,
-      originalFilename = "image",
-      mimetype = "image",
-    } = data.image;
-    const buffer = readFileSync(filepath);
-    const arraybuffer = Uint8Array.from(buffer).buffer;
-    const file = new File([arraybuffer], originalFilename, {
-      type: mimetype,
-    });
-    // Upload data to nft.storage
-    const metadata = await client.store({
-      name: data.name,
-      description: data.description || DEFAULT_DESCRIPTION,
-      image: file,
-    });
-    // Delete tmp image
-    unlinkSync(filepath);
-    // return tokenURI
-    res.status(201).json({ uri: metadata.url });
-  } catch (e) {
-    console.error("Error in /api/nft-storage:", e);
- 
-    if (e instanceof Error) {
-        // Handle known Error types
-        return res.status(400).json({ error: e.message });
-    } else {
-        // Handle any other type of error (string, number, etc.)
-        return res.status(400).json({ error: 'Unknown error' });
-    }
- }
- 
-};
 
-// Must disable bodyParser for formidable to work
-export const config = {
-  api: {
-    bodyParser: false,
-  },
+    return response; // Return the Axios response
+  } catch (error) {
+    console.error(error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
 };
 
 export default handler;

@@ -94,6 +94,7 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
     }
 
     setArtCreationModal(true); 
+    console.log("Activated creation");
 
     try {
       if (!address) {
@@ -104,7 +105,9 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
         await connectWallet();
         return; 
       }
+      console.log("Handling creation");
       await onSubmit({ ...values, image: selectedImage });
+      console.log("Handled creation");
       setArtCreationModal(false);
       setArtCreatedModal(true);
     } catch (error) {

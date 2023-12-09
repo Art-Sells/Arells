@@ -40,7 +40,9 @@ const Index = () => {
   useEffect(() => {
     console.log('Images loaded state:', imagesLoaded);
     if (Object.values(imagesLoaded).every(Boolean)) {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     }
   }, [imagesLoaded]);
 
@@ -115,7 +117,7 @@ const Index = () => {
         <br/>
         
         <p id="descriptioner">
-        SELL ART THAT NEVER LOSES VALUE
+        BUY ART THAT NEVER LOSES VALUE
         </p>
 
         <hr id="black-liner"/>

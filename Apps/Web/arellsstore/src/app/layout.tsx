@@ -1,6 +1,7 @@
 import {ReactNode} from "react"
 import { ApolloWrapper } from "../lib/apollo-provider";
 import {SignerProvider} from "../state/signer";
+require('dotenv').config();
 
 type LayoutProps = {
   children: ReactNode;

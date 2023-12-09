@@ -16,6 +16,7 @@
     "@apollo/experimental-nextjs-app-support": "^0.5.1",
     "@openzeppelin/contracts": "^4.9.3",
     "@types/formidable": "2.0.4",
+    "axios": "^1.6.2",
     "dotenv": "^16.3.1",
     "formidable": "2.0.1",
     "formik": "^2.4.5",
@@ -47,4 +48,3 @@
     "typescript": "^5.2.2"
   }
 }
-

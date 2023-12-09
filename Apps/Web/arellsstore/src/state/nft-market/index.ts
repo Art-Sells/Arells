@@ -10,6 +10,7 @@ import {NFT_MARKET_ADDRESS} from "../nft-market/config"
 import { useBuyNFTs } from "./useBuyNFTs";
 import { NFT } from "./interfaces";
 import router from "next/router";
+import handler from "../../pages/api/nft-storage";
 
 
 const useNFTMarket = (storeAddress: string | null) => {
@@ -26,24 +27,31 @@ const useNFTMarket = (storeAddress: string | null) => {
   const buyNFTs = useBuyNFTs(storeAddress);
 
   const createNFT = async (values: CreationValues) => {
+    if (!(values.image instanceof File)) {
+      console.error('Provided image is not a file');
+      // Handle this error appropriately
+      // For example, you could throw an error or return from the function
+      return;
+    }
     try {
-      const data = new FormData();
-      data.append("name", values.name);
-      data.append("image", values.image);
-      const response = await fetch("/api/nft-storage", {
-        method: "POST",
-        body: data,
-      });
-      if (response.status == 201) { // check if response's status is okay
-        const json = await response.json();
-        const transaction: TransactionResponse = await nftMarket.createNFT(
-          json.uri
-        );
+      // Call the handler to upload the image to IPFS and get the URI
+      const ipfsResponse = await handler(values.image, values.name);
+  
+      // Check if the response from the handler is successful and contains the necessary data
+      if (ipfsResponse.status === 201 && ipfsResponse.data && ipfsResponse.data.IpfsHash) {
+        const ipfsUri = `ipfs://${ipfsResponse.data.IpfsHash}`; // Construct the IPFS URI
+  
+        // Proceed with creating the NFT using the received IPFS URI
+        const transaction: TransactionResponse = await nftMarket.createNFT(ipfsUri);
         await transaction.wait();
-      } 
+        // Additional code for after successful NFT creation
+      } else {
+        // Handle the case where the IPFS upload is not successful
+        console.error('Failed to upload file to IPFS');
+      }
     } catch (e) {
-      console.error("Exception while calling /api/nft-storage:", e);
-      throw e; 
+      console.error('Exception while creating NFT:', e);
+      throw e;
     }
   };
 
