@@ -62,6 +62,7 @@ ________________________________________________________________________________
 
 ## Arells 2.0
 - SiteMap/s
+- Switch NFT.Storage to AWS (Everything is centralized [Centralization = Efficiency/Reliability])
 - Re-deploy test cases "Buy NFT" to "Buy Asset" and "Create Asset" within wallet interactions...
 - Change PUBLIC_NFT_MARKET_ADDRESS to PUBLIC_ARELLS_STORE_ADDRESS
 - Add PUBLIC_ARELLS_MARKET_ADDRESS for 3% Fee (Refactor SmartContract to Accept)
@@ -149,6 +150,7 @@ ________________________________________________________________________________
 - Images (Default Store Image) here render small pixels
 - Remove "Owned By" if not collected/bought/minted.
 - PAP Logo Above Price After Purchase
+- Certificates of Ownership
 -  Set Price After Purchase(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]-if wallet not connected (Connect Wallet)
 - - **Selling**:
 - Price After Purchase - (if price not yet set purchased) = "Sold"
