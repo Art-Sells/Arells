@@ -38,6 +38,9 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     const [checkWallet, setCheckWallet] = useState(false);
     const [disconnected, setDisconnected] = useState(false);
 
+    const delay = (ms: number | undefined) => 
+        new Promise(resolve => setTimeout(resolve, ms));
+
 // Connect Wallet function/s below 
     const connectWallet = () => {
         if (!window.ethereum) {
@@ -157,6 +160,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         } catch (e) {
             console.log(e);
             setLoadingWalletConnection(false);
+            await delay(1000);
             setCheckWallet(true);
             localStorage.removeItem("walletConnected");
         }
