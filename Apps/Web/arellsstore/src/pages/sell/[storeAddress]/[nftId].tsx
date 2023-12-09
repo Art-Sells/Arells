@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     title: "Arells",
     description: "Buy art that never loses value. With Arells bear markets are obsolete.",
     // Change this link after testing
-    url: "https://arells.com/sell/[storeAddress]/[nftId]", 
+    url: "https://arells.com", 
     type: "website",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Home-Banner.jpg"
       }
     ]
   },
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Home-Banner.jpg"
       }
     ]
   }
@@ -44,13 +44,14 @@ export const metadata: Metadata = {
 const SellPage = () => {
   return (
     <>
-          <div id="asset-wrapper">
-            <SignerProvider>
-              <ApolloWrapper>
-                <Asset/>
-              </ApolloWrapper>      
-            </SignerProvider>
-          </div>
+      <title>Sell Art</title>
+      <div id="asset-wrapper">
+        <SignerProvider>
+          <ApolloWrapper>
+            <Asset/>
+          </ApolloWrapper>      
+        </SignerProvider>
+      </div>
     </>
   );
 }

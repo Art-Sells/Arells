@@ -35,10 +35,19 @@ type AssetStoreMetadata = {
 };
 
 type AssetStoreProps = {
+    onImageUpdate(updateInfo: { imageUrl: string; timestamp: number; }): unknown;
     nft: NFT;
 };
 
+interface ImageUpdateInfo {
+  imageUrl: string;
+  timestamp: number;
+}
+
+
 const StoreAssetHolderSelling = (props: AssetStoreProps) => {
+
+
 //loader functions below 
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
@@ -104,6 +113,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
 
 // asset constants above
 
+
 // Asset Changing function/s below 
     useEffect(() => {
       const fetchMetadata = async () => {
@@ -160,7 +170,17 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
 // Asset Changing function/s above 
 
 
-
+//metadata function below
+  useEffect(() => {
+    if (meta?.imageURL) {
+      const updateInfo: ImageUpdateInfo = {
+        imageUrl: meta.imageURL,
+        timestamp: new Date().getTime(),
+      };
+      props.onImageUpdate(updateInfo);
+    }
+  }, [meta, props.onImageUpdate]);
+//metadata functions above
 
 //Buying functions Below
   const {buyNFT} = useNFTMarket(address ?? null);

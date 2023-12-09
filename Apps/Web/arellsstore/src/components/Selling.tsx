@@ -20,6 +20,11 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+interface ImageUpdateInfo {
+	imageUrl: string;
+	timestamp: number;
+  }
+
 const Selling = () => {
 	
 
@@ -111,6 +116,19 @@ const Selling = () => {
 
 // asset constants above
 
+
+// metadata functions below
+
+	const [latestImageUpdate, setLatestImageUpdate] = useState<ImageUpdateInfo>({ imageUrl: "", timestamp: 0 });
+
+	const handleImageUpdate = (updateInfo: ImageUpdateInfo) => {
+	if (updateInfo.timestamp > latestImageUpdate.timestamp) {
+		setLatestImageUpdate(updateInfo);
+	}
+	};
+
+// metadata functions above
+
 	
     return (
         <>	
@@ -184,7 +202,10 @@ const Selling = () => {
 				<div id="container-seller-created"
 					className={containerClass}>
 					{sellingNFTs?.map((nft) => (
-						<StoreAssetHolderSelling nft={nft} key={nft.id} />
+						<StoreAssetHolderSelling 
+						nft={nft} 
+						key={nft.id} 
+						onImageUpdate={handleImageUpdate}/>
 					))}
 				</div>
 			)}
