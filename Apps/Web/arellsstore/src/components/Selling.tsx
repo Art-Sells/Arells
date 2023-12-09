@@ -147,8 +147,7 @@ const Selling = () => {
 							id="arells-icon-seller-created" 
 							src="images/prototype/Arells-Icon-Home.png"/>
 						</Link>							
-						<Link legacyBehavior href="/create">
-							<a id="cart-link-connected-seller-created">
+						<Link href="/create" id="cart-link-connected-seller-created">
 								<Image
 								loader={imageLoader}
 								alt=""
@@ -156,7 +155,6 @@ const Selling = () => {
 								width={18}
 								id="cart-icon-seller-created" 
 								src="images/prototype/Add-Ivory.png"/>
-							</a>
 						</Link>	
 				</div>
 			</>
