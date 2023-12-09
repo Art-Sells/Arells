@@ -22,6 +22,10 @@ type SignerContextType = {
 const SignerContext = createContext<SignerContextType>({} as any);
 
 const useSigner = () => useContext(SignerContext);
+const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
 
 export const SignerProvider = ({ children }: { children: ReactNode }) => {
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
@@ -54,10 +58,17 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             setShowDownloadWallet(false);
             setLoadingWalletConnection(true);
     };
-	const connectWalletFunction = () => {
+    const connectWalletFunction = () => {
+        if (window.ethereum) {
             connectMetamask();
-            setShowConnectWallet(false);
+        } else if (isMobileDevice()) {
+            window.location.href = "metamask://";
+        } else {
+            connectMetamask();
+        }
+        setShowConnectWallet(false);
     };
+    
 // Connect Wallet functions/s above
 
     const handleDisconnect = () => {

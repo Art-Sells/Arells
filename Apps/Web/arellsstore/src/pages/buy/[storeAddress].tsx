@@ -57,7 +57,7 @@ const SellingPage = () => {
         ogUrl.setAttribute("content", `https://arells.com/buy/${storeAddressFromURL}`);
       }
       if (ogImage) {
-        ogImage.setAttribute("content", "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Home-Banner.jpg");
+        ogImage.setAttribute("content", "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Banner.jpg");
       }
   
       // Updating Twitter metadata
@@ -72,7 +72,7 @@ const SellingPage = () => {
         twitterDescription.setAttribute("content", "Buy art that never loses value.");
       }
       if (twitterImage) {
-        twitterImage.setAttribute("content", "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Home-Banner.jpg");
+        twitterImage.setAttribute("content", "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Banner.jpg");
       }
     }
   }, [storeAddressFromURL]);
@@ -90,13 +90,13 @@ const SellingPage = () => {
         <meta property="og:type" content="website" />
         <meta property="og:image" content={
           latestImageUpdate.imageUrl 
-          || "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Home-Banner.jpg"} />
+          || "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Banner.jpg"} />
         <meta name="twitter:title" content="Buy Art" />
         <meta name="twitter:description" content="Buy art that never loses value." />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={
           latestImageUpdate.imageUrl 
-          || "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Home-Banner.jpg"} />
+          || "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Banner.jpg"} />
         {/* Add more meta tags as needed */}
       </Head>
 
