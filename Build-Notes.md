@@ -5,12 +5,6 @@
 ### Wallet: 
 - Mainnet with Coinbase/Polygon
 
-### Other Store
-- [BUY] becomes unavailable when clicked.
-- - Add Cash Register Modal "Buying Art... Please Wait"
-- - Add Cash Register Modal "Canceled Purchase"
-- - Add Truck Modal "PURCHASED AND READY TO DELIVER It'll take a few moments for your art to be delivered to your store (Deliver Art).
-     
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
 - MetaTags Social-sharing-images: AWS Cloudfront?
