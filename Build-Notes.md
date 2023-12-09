@@ -4,6 +4,8 @@
 
 ### Wallet: 
 - Mainnet with Coinbase/Polygon
+- Create/List button on mobile (other networks)?
+- Switch Network to Polygon?
 
 #### LinkTree Links... 
 - *clear Browsing/Cache Data before checking*
