@@ -177,8 +177,11 @@ const Owned = () => {
 		<hr id="profileline-seller-created"/>
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
-			<Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
-				<a id="selling">Buy</a>	
+			<Link 
+			href={`/buy/${storeAddressFromURL}`} 
+			id="selling"
+			passHref>
+				Buy	
 			</Link>
 			<a id="owned" >Own</a>
 		</div>
