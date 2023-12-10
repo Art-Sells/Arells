@@ -15,6 +15,7 @@ interface ImageUpdateInfo {
 
 const SellingPage = () => {
   const router = useRouter();
+  const { storeAddress, v } = router.query;
   const storeAddressFromURL = useMemo(() => {
     const address = Array.isArray(router.query.storeAddress)
         ? router.query.storeAddress[0]
@@ -22,66 +23,23 @@ const SellingPage = () => {
     return address ? address.toLowerCase() : null;
   }, [router.query.storeAddress]);
 
+
   const [latestImageUpdate, setLatestImageUpdate] = useState<ImageUpdateInfo>({ imageUrl: "", timestamp: 0 });
-  
 
   const handleImageUpdate = (updateInfo: ImageUpdateInfo) => {
     if (updateInfo.timestamp > latestImageUpdate.timestamp) {
       setLatestImageUpdate(updateInfo);
+      const newVersion = new Date().getTime();
+      router.replace(`/buy/${storeAddress}?v=${newVersion}`, undefined, { shallow: true });
     }
   };
 
   useEffect(() => {
-    if (storeAddressFromURL) {
-      // Updating the document title
-      document.title = "Buy Art";
+    const fetchedImageUrl = latestImageUpdate.imageUrl ;
+    setLatestImageUpdate((prev) => ({ ...prev, imageUrl: fetchedImageUrl }));
+  }, [v, storeAddress]);
   
-      // Updating meta description
-      const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription) {
-        metaDescription.setAttribute("content", "Buy art that never loses value");
-      }
-  
-      // Updating Open Graph metadata
-      const ogTitle = document.querySelector('meta[property="og:title"]');
-      const ogDescription = document.querySelector('meta[property="og:description"]');
-      const ogUrl = document.querySelector('meta[property="og:url"]');
-      const ogImage = document.querySelector('meta[property="og:image"]');
-
-      const imageUrl = latestImageUpdate.imageUrl;
-
-  
-      if (ogTitle) {
-        ogTitle.setAttribute("content", "Buy Art");
-      }
-      if (ogDescription) {
-        ogDescription.setAttribute("content", "Buy art that never loses value.");
-      }
-      if (ogUrl) {
-        ogUrl.setAttribute("content", `https://arells.com/buy/${storeAddressFromURL}`);
-      }
-      if (ogImage) {
-        ogImage.setAttribute("content", imageUrl);
-      }
-  
-      // Updating Twitter metadata
-      const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-      const twitterDescription = document.querySelector('meta[name="twitter:description"]');
-      const twitterImage = document.querySelector('meta[name="twitter:image"]');
-  
-      if (twitterTitle) {
-        twitterTitle.setAttribute("content", "Buy Art");
-      }
-      if (twitterDescription) {
-        twitterDescription.setAttribute("content", "Buy art that never loses value.");
-      }
-      if (twitterImage) {
-        twitterImage.setAttribute("content", imageUrl);
-      }
-    }
-  }, [storeAddressFromURL, latestImageUpdate]);
-  
-  console.log("image URL :", latestImageUpdate.imageUrl);
+  console.log("Fetched Image: ", latestImageUpdate.imageUrl);
   return (
     <>
       {/* Using Next.js Head for metadata (Solution #5) */}
@@ -92,13 +50,13 @@ const SellingPage = () => {
         <meta property="og:description" content="Buy art that never loses value." />
         <meta property="og:url" content={`https://arells.com/buy/${storeAddressFromURL}`} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content={
-          latestImageUpdate.imageUrl} />
+        <meta property="og:image" content={latestImageUpdate.imageUrl} 
+        />
         <meta name="twitter:title" content="Buy Art" />
         <meta name="twitter:description" content="Buy art that never loses value." />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={
-          latestImageUpdate.imageUrl} />
+        <meta name="twitter:image" content={latestImageUpdate.imageUrl} 
+      />
         {/* Add more meta tags as needed */}
       </Head>
 
