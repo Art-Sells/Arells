@@ -20,6 +20,7 @@ import { ethers } from "ethers";
 import useNFTMarket from "../../state/nft-market";
 import { toast } from "react-toastify";
 import { usePriceAfterPurchaseSets } from "../../state/nft-market/usePriceAfterPurchaseSets";
+import React from "react";
 
 type AssetStoreMetadata = {
     name: string;
@@ -30,7 +31,7 @@ type AssetStoreProps = {
     nft: NFT;
 };
 
-const StoreAssetHolder = (props: AssetStoreProps) => {
+const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
 //loader functions below 
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
@@ -648,6 +649,6 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
         </div>    
     </>
   );
-};
+});
 
 export default StoreAssetHolder;

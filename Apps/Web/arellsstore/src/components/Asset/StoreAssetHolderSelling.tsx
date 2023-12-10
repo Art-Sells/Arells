@@ -20,7 +20,7 @@ import styles from '../../app/css/modals/loading/photoloader.module.css';
 
 
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";
@@ -28,6 +28,7 @@ import { ethers } from "ethers";
 import useNFTMarket from "../../state/nft-market";
 import { toast } from "react-toastify";
 import { usePriceAfterPurchaseSets } from "../../state/nft-market/usePriceAfterPurchaseSets";
+import React from "react";
 
 type AssetStoreMetadata = {
     name: string;
@@ -39,13 +40,8 @@ type AssetStoreProps = {
     nft: NFT;
 };
 
-interface ImageUpdateInfo {
-  imageUrl: string;
-  timestamp: number;
-}
 
-
-const StoreAssetHolderSelling = (props: AssetStoreProps) => {
+const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
 
 
 //loader functions below 
@@ -115,6 +111,9 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
 
 
 // Asset Changing function/s below 
+  const lastFetchedURL = useRef(""); // Add a useRef to keep track of the last URL
+
+  // Update the fetchMetadata useEffect
   useEffect(() => {
     const fetchMetadata = async () => {
       const metadataResponse = await fetch(nft.tokenURI);
@@ -124,16 +123,28 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
       }
 
       const json = await metadataResponse.json();
-      setMeta({
-        name: json.name,
-        imageURL: json.image, // assuming 'image' contains the full HTTP URL
-      });
+      if (json.image !== lastFetchedURL.current) { // Check if the fetched URL is different
+        lastFetchedURL.current = json.image; // Update the ref
+        setMeta({
+          name: json.name,
+          imageURL: json.image,
+        });
+      }
     };
 
     if (nft.tokenURI) {
       fetchMetadata();
     }
   }, [nft.tokenURI]);
+  useEffect(() => {
+    if (meta?.imageURL && meta.imageURL !== lastFetchedURL.current) {
+      const updateInfo = {
+        imageUrl: meta.imageURL,
+        timestamp: new Date().getTime(),
+      };
+      props.onImageUpdate(updateInfo);
+    }
+  }, [meta, props.onImageUpdate]);
 
 
     const [isNFTMinted, setIsNFTMinted] = useState(false);
@@ -176,19 +187,6 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
     const connectedOwnerListedMintedRelisted = 
     addressMatch && address && forSale && isNFTMinted && forSaleMinted; 
 // Asset Changing function/s above 
-
-
-//metadata function below
-  useEffect(() => {
-    if (meta?.imageURL) {
-      const updateInfo: ImageUpdateInfo = {
-        imageUrl: meta.imageURL,
-        timestamp: new Date().getTime(),
-      };
-      props.onImageUpdate(updateInfo);
-    }
-  }, [meta, props.onImageUpdate]);
-//metadata functions above
 
 //Buying functions Below
   const {buyNFT} = useNFTMarket(address ?? null);
@@ -608,7 +606,7 @@ const StoreAssetHolderSelling = (props: AssetStoreProps) => {
       </div>    
     </>
   );
-};
+});
 
 export default StoreAssetHolderSelling;
 

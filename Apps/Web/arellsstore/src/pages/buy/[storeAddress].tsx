@@ -46,6 +46,8 @@ const SellingPage = () => {
       const ogDescription = document.querySelector('meta[property="og:description"]');
       const ogUrl = document.querySelector('meta[property="og:url"]');
       const ogImage = document.querySelector('meta[property="og:image"]');
+
+      const imageUrl = latestImageUpdate.imageUrl || "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg";
   
       if (ogTitle) {
         ogTitle.setAttribute("content", "Buy Art");
@@ -57,7 +59,7 @@ const SellingPage = () => {
         ogUrl.setAttribute("content", `https://arells.com/buy/${storeAddressFromURL}`);
       }
       if (ogImage) {
-        ogImage.setAttribute("content", "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg");
+        ogImage.setAttribute("content", imageUrl);
       }
   
       // Updating Twitter metadata
@@ -72,10 +74,10 @@ const SellingPage = () => {
         twitterDescription.setAttribute("content", "Buy art that never loses value.");
       }
       if (twitterImage) {
-        twitterImage.setAttribute("content", "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg");
+        twitterImage.setAttribute("content", imageUrl);
       }
     }
-  }, [storeAddressFromURL]);
+  }, [storeAddressFromURL, latestImageUpdate]);
   
 
   return (
@@ -103,7 +105,7 @@ const SellingPage = () => {
       <div id="prototype-seller-created-wrapper">
         <SignerProvider>
           <ApolloWrapper>
-            <Selling />
+            <Selling onImageUpdate={handleImageUpdate}/>
           </ApolloWrapper>
         </SignerProvider>
       </div>

@@ -49,8 +49,6 @@ const Owned = () => {
 
 // useState constants below
     const [noArtCreated, setNoArtCreated] = useState(false);
-    const [artCreated, setArtCreated] = useState(false);
-	const [artSelling, setArtSelling] = useState(false);
 // useState constants above
 
 // asset functions below
@@ -67,20 +65,17 @@ const Owned = () => {
 		sellingNFTs 
 	} = useNFTMarket(storeAddressFromURL);
 
-	const hasCreatedArt = !!createdNFTs && createdNFTs.length > 0;
-	const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
+	const memoizedCreatedNFTs = useMemo(() => createdNFTs || [], [createdNFTs]);
+	const memoizedSellingNFTs = useMemo(() => sellingNFTs || [], [sellingNFTs]);
+
+	const artCreated = memoizedCreatedNFTs.length > 0;
+	const artSelling = memoizedSellingNFTs.length > 0;
 
 	useEffect(() => {
 		if(createdNFTs || sellingNFTs) {
 			setLoading(false);
 		}
     }, [createdNFTs, sellingNFTs]);
-	useEffect(() => {
-		
-		setArtCreated(hasCreatedArt);
-		setArtSelling(hasSellingArt);
-
-	}, [createdNFTs, sellingNFTs]);
 
 	const nftCount = createdNFTs?.length || 0;
 	const nftCountSelling = sellingNFTs?.length || 0;
@@ -163,7 +158,7 @@ const Owned = () => {
 			{artCreated && (
 				<>
 					<div id="container-seller-created" className={containerClass}>
-						{createdNFTs?.map((nft) => {
+						{memoizedCreatedNFTs.map((nft) => {
 							return <StoreAssetHolder nft={nft} key={nft.id} />;
 						})}
 					</div>
@@ -174,7 +169,7 @@ const Owned = () => {
 				<>
 					<hr id="selling-line"/>
 					<div id="container-seller-created" className={containerClassTwo}>
-						{sellingNFTs?.map((nft) => (
+						{memoizedSellingNFTs.map((nft) => (
 							<StoreAssetHolder nft={nft} key={nft.id} />
 						))}
 					</div>

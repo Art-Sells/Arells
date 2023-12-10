@@ -537,7 +537,7 @@
 			width: 360px;
 			height: 15px;
 			letter-spacing: 0px;    	   		
-			background: silver;
+			background: rgb(220, 220, 220);
 			box-shadow: 0px 3px 15px -6px gray; 
 			opacity: .8;
 		}
@@ -920,7 +920,7 @@
 					width: 160px;
 					height: 15px;
 					letter-spacing: 0px;    	   		
-					background: silver;
+					background: rgb(220, 220, 220);
 					opacity: .8;
 			}
 
@@ -939,11 +939,12 @@
 				width: 180px;
 				height: 15px;
 				letter-spacing: 0px;    	   		
-				background: silver;
+				background: rgb(220, 220, 220);
 				opacity: .8;
 			}
 
-			#price:focus {
+			#price:focus,
+			#price-after-purchase-price:focus {
 				cursor: pointer;
 				outline: none;
 				transition: 1s;

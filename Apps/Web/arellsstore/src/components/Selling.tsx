@@ -25,7 +25,11 @@ interface ImageUpdateInfo {
 	timestamp: number;
   }
 
-const Selling = () => {
+  interface SellingProps {
+	onImageUpdate: (updateInfo: ImageUpdateInfo) => void;
+  }
+
+const Selling = ({ onImageUpdate }: SellingProps) => {
 	
 
 //loader functions below 
@@ -57,7 +61,6 @@ const Selling = () => {
 	const [create, setCreate] = useState(true);
 	const [createConnected, setCreateConnected] = useState(false);
     const [noArtCreated, setNoArtCreated] = useState(false);
-	const [artSelling, setArtSelling] = useState(false);
 // useState constants above
 
 // asset functions below
@@ -89,11 +92,9 @@ const Selling = () => {
             setCreateConnected(true);
         }
     }, [address]);
-	useEffect(() => {
-		const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
-		
-		setArtSelling(hasSellingArt);
-	}, [sellingNFTs]);
+
+	const memoizedSellingNFTs = useMemo(() => sellingNFTs || [], [sellingNFTs]);
+	const artSelling = memoizedSellingNFTs.length > 0;
 
 	const nftCount = sellingNFTs?.length || 0;
 
@@ -102,30 +103,12 @@ const Selling = () => {
         address && storeAddressFromURL && address.toLowerCase() === storeAddressFromURL
     ), [address, storeAddressFromURL]);
 
-    useEffect(() => {
-		const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
-        setArtSelling(hasSellingArt);
-        if (addressMatch !== undefined && sellingNFTs !== undefined) {
-            setLoading(false);
-            // Update artSelling state based on sellingNFTs data
-            setArtSelling(!!sellingNFTs && sellingNFTs.length > 0);
-        } else {
-            setLoading(true);
-        }
-    }, [addressMatch, sellingNFTs]);
-
 // asset constants above
 
 
 // metadata functions below
 
-	const [latestImageUpdate, setLatestImageUpdate] = useState<ImageUpdateInfo>({ imageUrl: "", timestamp: 0 });
 
-	const handleImageUpdate = (updateInfo: ImageUpdateInfo) => {
-	if (updateInfo.timestamp > latestImageUpdate.timestamp) {
-		setLatestImageUpdate(updateInfo);
-	}
-	};
 
 // metadata functions above
 
@@ -205,7 +188,7 @@ const Selling = () => {
 						<StoreAssetHolderSelling 
 						nft={nft} 
 						key={nft.id} 
-						onImageUpdate={handleImageUpdate}/>
+						onImageUpdate={onImageUpdate}/>
 					))}
 				</div>
 			)}
