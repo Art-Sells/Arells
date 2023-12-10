@@ -77,6 +77,8 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
 
 // asset constants above
 
+  console.log("NFT token URI: ", nft.tokenURI);
+
 // Asset Changing function/s below 
     useEffect(() => {
       const fetchMetadata = async () => {
