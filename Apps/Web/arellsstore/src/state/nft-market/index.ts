@@ -28,8 +28,7 @@ const useNFTMarket = (storeAddress: string | null) => {
   
   const createNFT = async (values: CreationValues) => {
     if (!(values.image instanceof File)) {
-      console.error('Provided image is not a file');
-      return;
+      throw new Error('Provided image is not a file');
     }
   
     try {
@@ -41,6 +40,7 @@ const useNFTMarket = (storeAddress: string | null) => {
 
     } catch (error) {
       console.error('Error creating NFT:', error);
+      throw error;
     }
   };
 
@@ -142,7 +142,4 @@ const useNFTMarket = (storeAddress: string | null) => {
 };
 
 export default useNFTMarket;
-function uploadToIPFS(image: File) {
-  throw new Error("Function not implemented.");
-}
 

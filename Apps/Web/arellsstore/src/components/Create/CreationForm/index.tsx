@@ -93,10 +93,7 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
       return; 
     }
 
-    setArtCreationModal(true); 
-    console.log("Activated creation");
-
-    
+    setArtCreationModal(true);     
 
     try {
       const delay = (ms: number | undefined) => 
@@ -113,6 +110,7 @@ const CreationForm = ({ onSubmit }: CreationFormProps) => {
       await onSubmit({ ...values, image: selectedImage });
       setArtCreationModal(false);
       setArtCreatedModal(true);
+      console.log("Submission successful");
     } catch (error) {
       setArtCreationModal(false); 
       setCreationErrorModal(true);
