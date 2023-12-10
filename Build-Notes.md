@@ -48,7 +48,7 @@ The major difference now is that you'll always be able to retain a massive royal
 - Marketing Rotation on X/Twitter rotation/schedule (inform and give store URL) No notifications in purchases (until next few releases of Arells_ so to keep track of any purchases, check Polygon(Matic) balance weekly to notice any balance increases on your wallet until we allow profile creations on Arells)
 
 ##### After Launch:
-- Create/Prepare Discord & Twitter Page "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "Buy art that never loses value! Arells is a polygon digital asset (NFT) marketplace that obscures bear markets.".
+- Create/Prepare Discord & Twitter Page "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "(No More Bear Markets Banner) Arells is a Polygon (NFT) marketplace that renders bear markets obsolete. Buy art that never loses value!".
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.5
