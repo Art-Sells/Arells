@@ -4,7 +4,6 @@
 
 ### Wallet: 
 - Mainnet with Coinbase/Polygon
-- Switch Network to Polygon?
 
 #### Other Checks... 
 - *clear Browsing/Cache Data before checking*
@@ -40,6 +39,7 @@ The major difference now is that you'll always be able to retain a massive royal
 
 #### If Time Allows:
 - Try/Catch Apollo Connection Error...
+- Switch Network to Polygon?
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
 - Polish "Add" button edges
