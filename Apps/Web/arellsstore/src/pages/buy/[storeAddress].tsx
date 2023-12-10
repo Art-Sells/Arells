@@ -48,8 +48,7 @@ const SellingPage = () => {
       const ogUrl = document.querySelector('meta[property="og:url"]');
       const ogImage = document.querySelector('meta[property="og:image"]');
 
-      const imageUrl = latestImageUpdate.imageUrl || "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg";
-      console.log("image URL: ", imageUrl);
+      const imageUrl = latestImageUpdate.imageUrl;
 
   
       if (ogTitle) {
@@ -82,7 +81,7 @@ const SellingPage = () => {
     }
   }, [storeAddressFromURL, latestImageUpdate]);
   
-
+  console.log("image URL :", latestImageUpdate.imageUrl);
   return (
     <>
       {/* Using Next.js Head for metadata (Solution #5) */}
@@ -94,14 +93,12 @@ const SellingPage = () => {
         <meta property="og:url" content={`https://arells.com/buy/${storeAddressFromURL}`} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content={
-          latestImageUpdate.imageUrl 
-          || "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"} />
+          latestImageUpdate.imageUrl} />
         <meta name="twitter:title" content="Buy Art" />
         <meta name="twitter:description" content="Buy art that never loses value." />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={
-          latestImageUpdate.imageUrl 
-          || "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"} />
+          latestImageUpdate.imageUrl} />
         {/* Add more meta tags as needed */}
       </Head>
 
