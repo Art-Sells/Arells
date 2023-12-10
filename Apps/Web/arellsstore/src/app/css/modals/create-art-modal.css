@@ -4,7 +4,7 @@
 #create-art-modal-wrapper {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 150px; /* Location of the box */
+  padding-top: 180px; /* Location of the box */
   text-align: center;
 	font-family: Arial;
   left: 0;
@@ -16,7 +16,7 @@
   background-color: rgba(255, 255, 255, 0.9); /* Black w/ opacity */
 }
 
-@media screen and (max-height: 500px) {
+@media screen and (max-height: 550px) {
   #create-art-modal-wrapper {
     padding-top: 30px; 
   }

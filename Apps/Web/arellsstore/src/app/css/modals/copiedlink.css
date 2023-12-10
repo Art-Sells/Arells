@@ -4,7 +4,7 @@
 #copiedLink {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 145px; /* Location of the box */
+  padding-top: 180px; /* Location of the box */
   text-align: center;
 	font-family: Arial;
   left: 0;
@@ -14,6 +14,11 @@
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0, 0, 0,0.9); /* Black w/ opacity */
+}
+@media screen and (max-height: 420px) {
+  #copiedLink {
+    padding-top: 80px; 
+  }
 }
 
 /* Modal Content */
@@ -32,6 +37,7 @@
   -webkit-animation-duration: 1.00s;
   animation-name: animatetop;
   animation-duration: 1.00s;
+  margin-bottom: 50px;
 }
 /* Add Animation */
 @-webkit-keyframes animatetop {

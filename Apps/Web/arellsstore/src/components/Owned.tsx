@@ -71,10 +71,10 @@ const Owned = () => {
 	const hasSellingArt = !!sellingNFTs && sellingNFTs.length > 0;
 
 	useEffect(() => {
-		if(address && (createdNFTs || sellingNFTs)) {
+		if(createdNFTs || sellingNFTs) {
 			setLoading(false);
 		}
-    }, [address, createdNFTs, sellingNFTs]);
+    }, [createdNFTs, sellingNFTs]);
 	useEffect(() => {
 		
 		setArtCreated(hasCreatedArt);

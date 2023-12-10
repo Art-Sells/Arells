@@ -4,7 +4,7 @@
 #create-sell-error-wrapper {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 150px; /* Location of the box */
+  padding-top: 180px; /* Location of the box */
   text-align: center;
 	font-family: Arial;
   left: 0;
@@ -19,7 +19,7 @@
 #pap-error-wrapper {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 140px; /* Location of the box */
+  padding-top: 170px; /* Location of the box */
   text-align: center;
 	font-family: Arial;
   left: 0;
@@ -31,12 +31,12 @@
   background-color: rgba(128,128, 128 ,0.9); /* Black w/ opacity */
 }
 
-@media screen and (max-height: 500px) {
+@media screen and (max-height: 550px) {
   #create-sell-error-wrapper {
     padding-top: 30px; 
   }
   #pap-error-wrapper {
-    padding-top: 30px; 
+    padding-top: 20px; 
   }
 }
 
@@ -227,7 +227,7 @@
     #owner-error-wrapper {
       position: fixed; 
       z-index: 200; 
-      padding-top: 150px; 
+      padding-top: 180px; 
       text-align: center;
       font-family: Arial;
       left: 0;
@@ -238,7 +238,7 @@
       background-color: rgba(128,128, 128 ,0.9); 
       background-color: rgba(128,128, 128 ,0.9); 
     }
-    @media screen and (max-height: 500px) {
+    @media screen and (max-height: 550px) {
       #owner-error-wrapper {
         padding-top: 30px; 
       }
@@ -317,7 +317,7 @@
       #creation-error-wrapper {
         position: fixed; 
         z-index: 200; 
-        padding-top: 100px; 
+        padding-top: 180px; 
         text-align: center;
         font-family: Arial;
         left: 0;
@@ -329,7 +329,7 @@
         background-color: rgba(192, 192, 192, 0.9);
       }
 
-      @media screen and (max-height: 500px) {
+      @media screen and (max-height: 550px) {
         #creation-error-wrapper {
           padding-top: 30px; 
         }
