@@ -48,8 +48,6 @@ const Owned = () => {
 
 
 // useState constants below
-	const [create, setCreate] = useState(true);
-	const [createConnected, setCreateConnected] = useState(false);
     const [noArtCreated, setNoArtCreated] = useState(false);
     const [artCreated, setArtCreated] = useState(false);
 	const [artSelling, setArtSelling] = useState(false);

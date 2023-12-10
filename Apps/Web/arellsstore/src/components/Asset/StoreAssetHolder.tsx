@@ -80,18 +80,26 @@ const StoreAssetHolder = (props: AssetStoreProps) => {
   console.log("NFT token URI: ", nft.tokenURI);
 
 // Asset Changing function/s below 
-    useEffect(() => {
-      const fetchMetadata = async () => {
-        const metadataResponse = await fetch(ipfsToHTTPS(nft.tokenURI));
-        if (metadataResponse.status != 200) return;
-        const json = await metadataResponse.json();
-        setMeta({
-          name: json.name,
-          imageURL: ipfsToHTTPS(json.image),
-        });
-      };
-      void fetchMetadata();
-    }, [nft.tokenURI]);
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      const metadataResponse = await fetch(nft.tokenURI);
+      if (metadataResponse.status !== 200) {
+        console.error('Failed to fetch metadata');
+        return;
+      }
+
+      const json = await metadataResponse.json();
+      setMeta({
+        name: json.name,
+        imageURL: json.image,
+      });
+    };
+
+    if (nft.tokenURI) {
+      fetchMetadata();
+    }
+  }, [nft.tokenURI]);
+
 
     const [isNFTMinted, setIsNFTMinted] = useState(false);
     const { checkIfNFTMinted } = useNFTMarket(storeAddressFromURL);

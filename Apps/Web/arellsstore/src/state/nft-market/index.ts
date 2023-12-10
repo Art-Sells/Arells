@@ -25,36 +25,26 @@ const useNFTMarket = (storeAddress: string | null) => {
   const createdNFTs = useCreatedNFTs(storeAddress);
   const sellingNFTs = useSellingNFTs(storeAddress);
   const buyNFTs = useBuyNFTs(storeAddress);
-
+  
   const createNFT = async (values: CreationValues) => {
     if (!(values.image instanceof File)) {
       console.error('Provided image is not a file');
       return;
     }
-    try {
-      // Call the handler to upload the image to IPFS and get the URI
-      const ipfsResponse = await handler(values.image, values.name);
-      console.log ("ipfs Response: ", ipfsResponse);
   
-      // Check if the response from the handler is successful and contains the necessary data
-      if (ipfsResponse.status === 200 && ipfsResponse.data && ipfsResponse.data.IpfsHash) {
-        const ipfsUri = `https://yellow-able-heron-877.mypinata.cloud/ipfs/${ipfsResponse.data.IpfsHash}`; // Construct the IPFS URI
-        console.log ("ipfs Uri: ", ipfsUri);
+    try {
 
-        // Proceed with creating the NFT using the received IPFS URI
-        const transaction: TransactionResponse = await nftMarket.createNFT(ipfsUri);
-        console.log ("transaction : ", transaction);
-        await transaction.wait();
-        // Additional code for after successful NFT creation
-      } else {
-        // Handle the case where the IPFS upload is not successful
-        console.error('Failed to upload file to IPFS');
-      }
-    } catch (e) {
-      console.error('Exception while creating NFT:', e);
-      throw e;
+      const metadataUri = await handler(values.image, values.name);
+  
+      const transaction = await nftMarket.createNFT(metadataUri);
+      await transaction.wait();
+
+    } catch (error) {
+      console.error('Error creating NFT:', error);
     }
   };
+
+  
 
   const getCreatorOrCollector = async (tokenId: string) => {
     if (!signer) {
@@ -152,3 +142,7 @@ const useNFTMarket = (storeAddress: string | null) => {
 };
 
 export default useNFTMarket;
+function uploadToIPFS(image: File) {
+  throw new Error("Function not implemented.");
+}
+

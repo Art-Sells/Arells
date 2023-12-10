@@ -98,17 +98,25 @@ const AssetHolder = (props: AssetProps) => {
 
 // Asset Changing function/s below 
     useEffect(() => {
-      const fetchMetadata = async () => {
-        const metadataResponse = await fetch(ipfsToHTTPS(nft.tokenURI));
-        if (metadataResponse.status != 200) return;
+        const fetchMetadata = async () => {
+        const metadataResponse = await fetch(nft.tokenURI);
+        if (metadataResponse.status !== 200) {
+            console.error('Failed to fetch metadata');
+            return;
+        }
+    
         const json = await metadataResponse.json();
         setMeta({
-          name: json.name,
-          imageURL: ipfsToHTTPS(json.image),
+            name: json.name,
+            imageURL: json.image, // assuming 'image' contains the full HTTP URL
         });
-      };
-      void fetchMetadata();
+        };
+    
+        if (nft.tokenURI) {
+        fetchMetadata();
+        }
     }, [nft.tokenURI]);
+    
 // Asset Changing function/s above 
 
 
