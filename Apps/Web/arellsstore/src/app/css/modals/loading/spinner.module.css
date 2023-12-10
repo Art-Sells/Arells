@@ -14,9 +14,15 @@
   -webkit-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
   left: -28.5px;
-  margin-top: 130.5px;
+  margin-top: 160.5px;
   margin-left: 50%;
   margin-right: 50%;
+}
+
+@media screen and (max-height: 550px) {
+  .spinner{
+    margin-top: 100.5px;
+  }
 }
 
   @-webkit-keyframes spin {

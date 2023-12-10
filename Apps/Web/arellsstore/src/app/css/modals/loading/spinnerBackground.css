@@ -26,11 +26,20 @@
   }
 
   #arells-loader-icon {
-    margin-top: 150px;
+    margin-top: 180px;
     opacity: .15;
   }
   #arells-loader-icon-asset {
-    margin-top: 160px;
+    margin-top: 190px;
     opacity: .15;
+  }
+
+  @media screen and (max-height: 550px) {
+    #arells-loader-icon {
+      margin-top: 120px;
+    }
+    #arells-loader-icon-asset {
+      margin-top: 130px;
+    }
   }
 

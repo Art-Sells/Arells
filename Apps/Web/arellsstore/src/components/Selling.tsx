@@ -76,10 +76,10 @@ const Selling = () => {
 		console.log('Selling NFTs in Parent:', sellingNFTs);
 	}, [sellingNFTs]);
 	useEffect(() => {
-		if(address && sellingNFTs) {
+		if(sellingNFTs) {
 			setTimeout(() => setLoading(false), 2000);
 		}
-    }, [address, sellingNFTs]);
+    }, [sellingNFTs]);
     useEffect(() => {
         if (!address) {
 			setCreate(true);
