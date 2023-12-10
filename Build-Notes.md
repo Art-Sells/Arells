@@ -4,11 +4,11 @@
 
 ### Wallet: 
 - Mainnet with Coinbase/Polygon
-- Create/List button on mobile (other networks)?
 - Switch Network to Polygon?
 
-#### LinkTree Links... 
+#### Other Checks... 
 - *clear Browsing/Cache Data before checking*
+- Connect Wallet Mobile functionalities
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold & Make "ArellsStore" Code Private.
