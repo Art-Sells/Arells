@@ -4,7 +4,7 @@
 #create-art-modal-wrapper {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  padding-top: 150px; /* Location of the box */
   text-align: center;
 	font-family: Arial;
   left: 0;
@@ -14,6 +14,12 @@
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(255, 255, 255, 0.9); /* Fallback color */
   background-color: rgba(255, 255, 255, 0.9); /* Black w/ opacity */
+}
+
+@media screen and (max-height: 500px) {
+  #create-art-modal-wrapper {
+    padding-top: 30px; 
+  }
 }
 
 /* Modal Content */
@@ -38,6 +44,7 @@
   -webkit-animation-duration: 1.00s;
   animation-name: animatetop;
   animation-duration: 1.00s;
+  margin-bottom:50px;
 }
 /* Add Animation */
 @-webkit-keyframes animatetop {

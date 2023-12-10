@@ -921,7 +921,7 @@
 					height: 15px;
 					letter-spacing: 0px;    	   		
 					background: silver;
-					opacity: .5;
+					opacity: .8;
 			}
 
 			#price-after-purchase-price { 
@@ -940,7 +940,7 @@
 				height: 15px;
 				letter-spacing: 0px;    	   		
 				background: silver;
-				opacity: .5;
+				opacity: .8;
 			}
 
 			#price:focus {
