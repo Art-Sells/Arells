@@ -38,7 +38,7 @@ const useNFTMarket = (storeAddress: string | null) => {
   
       // Check if the response from the handler is successful and contains the necessary data
       if (ipfsResponse.status === 200 && ipfsResponse.data && ipfsResponse.data.IpfsHash) {
-        const ipfsUri = `ipfs://${ipfsResponse.data.IpfsHash}`; // Construct the IPFS URI
+        const ipfsUri = `https://yellow-able-heron-877.mypinata.cloud/ipfs/${ipfsResponse.data.IpfsHash}`; // Construct the IPFS URI
         console.log ("ipfs Uri: ", ipfsUri);
 
         // Proceed with creating the NFT using the received IPFS URI
