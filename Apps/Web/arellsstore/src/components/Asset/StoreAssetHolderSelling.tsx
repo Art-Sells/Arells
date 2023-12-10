@@ -87,7 +87,6 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
 // asset constants below
     const { address, connectWallet} = useSigner();
     const { nft } = props;
-    console.log("NFT info: ", nft);
     const formattedPrice = nft.price.includes('.') 
     ? nft.price 
     : ethers.utils.formatUnits(ethers.BigNumber.from(nft.price), 'ether');
@@ -118,7 +117,6 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
     const fetchMetadata = async () => {
       const metadataResponse = await fetch(nft.tokenURI);
       if (metadataResponse.status !== 200) {
-        console.error('Failed to fetch metadata');
         return;
       }
 
@@ -136,15 +134,18 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
       fetchMetadata();
     }
   }, [nft.tokenURI]);
+  const [lastProcessedURL, setLastProcessedURL] = useState('');
+
   useEffect(() => {
-    if (meta?.imageURL && meta.imageURL !== lastFetchedURL.current) {
-      const updateInfo = {
-        imageUrl: meta.imageURL,
-        timestamp: new Date().getTime(),
-      };
-      props.onImageUpdate(updateInfo);
-    }
-  }, [meta, props.onImageUpdate]);
+      if (meta?.imageURL && meta.imageURL !== lastProcessedURL) {
+          const updateInfo = {
+              imageUrl: meta.imageURL,
+              timestamp: new Date().getTime(),
+          };
+          props.onImageUpdate(updateInfo);
+          setLastProcessedURL(meta.imageURL);
+      }
+  }, [meta?.imageURL, props.onImageUpdate]);
 
 
     const [isNFTMinted, setIsNFTMinted] = useState(false);

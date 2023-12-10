@@ -76,7 +76,6 @@ const Selling = ({ onImageUpdate }: SellingProps) => {
 		sellingNFTs 
 	} = useNFTMarket(storeAddressFromURL);
 	useEffect(() => {
-		console.log('Selling NFTs in Parent:', sellingNFTs);
 	}, [sellingNFTs]);
 	useEffect(() => {
 		if(sellingNFTs) {

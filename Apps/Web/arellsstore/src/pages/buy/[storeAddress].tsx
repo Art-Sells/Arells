@@ -23,6 +23,7 @@ const SellingPage = () => {
   }, [router.query.storeAddress]);
 
   const [latestImageUpdate, setLatestImageUpdate] = useState<ImageUpdateInfo>({ imageUrl: "", timestamp: 0 });
+  
 
   const handleImageUpdate = (updateInfo: ImageUpdateInfo) => {
     if (updateInfo.timestamp > latestImageUpdate.timestamp) {
@@ -48,6 +49,8 @@ const SellingPage = () => {
       const ogImage = document.querySelector('meta[property="og:image"]');
 
       const imageUrl = latestImageUpdate.imageUrl || "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg";
+      console.log("image URL: ", imageUrl);
+
   
       if (ogTitle) {
         ogTitle.setAttribute("content", "Buy Art");
