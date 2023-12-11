@@ -56,7 +56,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
     const downloadWalletFunction = () => {
         setShowDownloadWallet(false);
-        setLoadingWalletConnection(true);
         if (isMobileDevice()) {
             if (isIOSDevice()) {
                 window.location.href = "https://apps.apple.com/app/metamask/id1438144202";
