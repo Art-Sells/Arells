@@ -14,17 +14,13 @@
 - Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
 ##### Send 5 day week notifications (5 more days)
-- Hello, we are less than 5 days away from launch and I'm happy to announce that Arells 1.0 is complete and ready to launch December 17th (Pacific Standard Time). In order to prepare for launch day, inform on which wallet to download and which network to connect to, to prepare... 
+- Hello, we are less than 5 days away from launch and I'm happy to announce that Arells 1.0 is complete and ready to launch December 17th (Pacific Standard Time). In order to prepare for launch day, inform on which wallet to download and which network to connect to, to prepare (We're in the process of creating a how-to-sell step-by-step process to help guide you, your buyers and sellers on how to buy and sell Art on Arells [this which will include a guide on how to set up your Coinbase Wallet & Account]... 
 
-I started Arells because I believed the time for all Artists (both small and big) to make a modest living has come. Though I will never know how much you earn, I messaged you because I believed that I could help you fulfill your financial dreams as an artist and I believe that time has also come.
-
-Arells isn't just a technology company, it is a movement of people who believe the days of all artists living in poverty must end so all I ask of you is one thing after Arells launches... To keep creating art... Do not stop, do not quit, do not ever give up because we will not give up on you! 
+We couldn't be more excited to help you financially as an artist. Once we launch, full marketing will begin by reaching out to influencers, buyers, etc so all we ask once we launch is for you to keep creating art. Do not stop, do not quit, do not ever give up as an artists because we will not give up on you! 
 
 So long as you continue creating art on Arells, we will not stop promoting you.
 
 5 more days till launch day... I'll be here if you have any questions.
-
-Keep creating Art.
 
 #### If Time Allows:
 - Try/Catch Apollo Connection Error...
