@@ -14,13 +14,13 @@
 - Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
 ##### Send 5 day week notifications (5 more days)
-- Hello, we are less than 5 days away from launch and I'm happy to announce that Arells 1.0 is complete and ready to launch December 17th (Pacific Standard Time). In order to prepare for launch day, inform on which wallet to download and which network to connect to, to prepare (We're in the process of creating a how-to-sell step-by-step process to help guide you, your buyers and sellers on how to buy and sell Art on Arells [this which will include a guide on how to set up your Coinbase Wallet & Account]... 
+- Hello, we are less than 5 days away from launch and I'm happy to announce that Arells 1.0 is complete and ready to launch December 17th (Pacific Standard Time). In order to prepare for launch day, inform on which wallet to download and which network to connect to, to prepare (We're in the process of creating a how-to-sell step-by-step process to help guide you, your buyers and sellers on how to buy and sell Art on Arells [this which will include a guide on how to set up your Coinbase Wallet & Account]) (In the future, we're going to release our own Arells App (so you won't have to use Coinbase or other 3rd party Wallers to make the buying/selling process 10x easier for you and your buyers/sellers)... 
 
-We couldn't be more excited to help you financially as an artist. Once we launch, full marketing will begin by reaching out to influencers, buyers, etc so all we ask once we launch is for you to keep creating art. Do not stop, do not quit, do not ever give up as an artists because we will not give up on you! 
+Once we launch, full marketing will begin by reaching out to influencers, buyers, etc so all we ask once we launch is for you to keep creating art!
 
-So long as you continue creating art on Arells, we will not stop promoting you.
+Do not stop, do not quit! So long as you continue creating art, we will not stop promoting you.
 
-5 more days till launch day... I'll be here if you have any questions.
+5 more days till launch day. I'll be here if you have any questions.
 
 #### If Time Allows:
 - Try/Catch Apollo Connection Error...
