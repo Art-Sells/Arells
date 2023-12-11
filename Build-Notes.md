@@ -7,15 +7,15 @@
 
 #### Other Checks... 
 - *clear Browsing/Cache Data before checking*
-- Connect Wallet Mobile functionalities
+- Connect Wallet Mobile functionalities links to App Store Link, if app is downloaded, links to App
 
 #### After Testing and Before Launch: 
+- Set Up environment variables in Arells.com Amplify and prepare to push code to main for storeAsset
 - Delete .Secret and store .Env in a cold area
 - Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
-##### Send 5 day week notifications 
-- inform on which wallet to download and which network to connect to, to prepare... December 17th (Pacific Standard Time)
-- - Arells is the marketplace and your store is your digital store meaning (just like Grocery and Convenience stores), to create, list, and sell your art digitally, it also has to go through the same process as creating, listing and selling and delivering items in the real-world.  
+##### Send 5 day week notifications (5 more days)
+- Hello, we are less than 5 days away from launch and I'm happy to announce that Arells 1.0 is complete and ready to launch December 17th (Pacific Standard Time). In order to prepare for launch day, inform on which wallet to download and which network to connect to, to prepare... 
 
 On Arells, this will be the selling/buying process:
 
@@ -30,12 +30,7 @@ Buying:
 2. Deliver Art (Collector Agrees for art to be delivered to their store)
 3. Your art is delivered (dissapears) out of your store and into theirs... Just like in the real world.
 
-This is what makes the Art you'll sell on Arells very exciting because every art you create will act as a digital version of a real world object. 
-
-The major difference now is that you'll always be able to retain a massive royalty for your art after its sale (40%+) royalty on all secondary sales forever and the price of your art will never decline in value thanks to our Price After Purchase system. We'll experiment with different royalty percentages in the future (possibly raising it to 90%).
-
-*It was 90% in the beginning, but after talking to some buyers, many were hesitant in paying the 90% royalty and without anyone to buy your art, our mission to help you financially fails, so we had to lower it to 40% (which is the highest royalty payment for artists compared to any other online store)... This, coupled with our Price After Purchase system makes Arells the best online marketplace for Artists not just today, but the best that has ever existed...*
-- - 2.0 profile creation (you won't have to create new art when creating your profile, you'll be able to link as many wallet(addresses) to your store(profile) on top of USDC (which Wallet to download before launch day, creating a polygon account, etc)
+I'll be available to discuss more if any questions arise, otherwise, I look forward to connecting back with you on launch day.
 
 #### If Time Allows:
 - Try/Catch Apollo Connection Error...
@@ -45,7 +40,9 @@ The major difference now is that you'll always be able to retain a massive royal
 - Polish "Add" button edges
 
 ##### Launch Day E-mail:
+- Possibly send them all 1 Polygon (Matic) so they can create their Art.
 - Marketing Rotation on X/Twitter rotation/schedule (inform and give store URL) No notifications in purchases (until next few releases of Arells_ so to keep track of any purchases, check Polygon(Matic) balance weekly to notice any balance increases on your wallet until we allow profile creations on Arells)
+- We've now started the process of building Arells 2.0 (which will include profile creation for your store) 
 
 ##### After Launch:
 - Create/Prepare Discord & Twitter Page "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "(No More Bear Markets Banner) Arells is a Polygon (NFT) marketplace that renders bear markets obsolete. Buy art that never loses value!".
