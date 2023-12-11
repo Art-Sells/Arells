@@ -49,24 +49,31 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     const connectWallet = () => {
         if (!window.ethereum) {
             setShowDownloadWallet(true);
-        } else {
+        } 
+        else {
             setShowConnectWallet(true);
         }
     };
     const downloadWalletFunction = () => {
+        setShowDownloadWallet(false);
+        setLoadingWalletConnection(true);
+        if (isMobileDevice()) {
+            if (isIOSDevice()) {
+                window.location.href = "https://apps.apple.com/app/metamask/id1438144202";
+            } else if (isAndroidDevice()) {
+                window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
+            }
+        } else {
             window.open('https://metamask.io/', '_blank');
-            setShowDownloadWallet(false);
-            setLoadingWalletConnection(true);
+        }
     };
     const connectWalletFunction = () => {
         if (window.ethereum) {
             connectMetamask();
         } else if (isMobileDevice()) {
             if (isIOSDevice()) {
-                // Redirect to Apple App Store for MetaMask
                 window.location.href = "https://apps.apple.com/app/metamask/id1438144202";
             } else if (isAndroidDevice()) {
-                // Redirect to Google Play Store for MetaMask
                 window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
             }
         } else {
