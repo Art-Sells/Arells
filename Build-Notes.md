@@ -45,6 +45,7 @@ I'll be available to discuss more if any questions arise, otherwise, I look forw
 
 ##### After Launch:
 - Create/Prepare Discord & Twitter Page "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "(No More Bear Markets Banner) Arells is a Polygon (NFT) marketplace that renders bear markets obsolete. Buy art that never loses value!".
+- Update Google Sitemap
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.5
@@ -118,6 +119,9 @@ ________________________________________________________________________________
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
 - Polish "Add" button edges
+
+#### After Launch
+- Google Sitemap Update
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 3.0
