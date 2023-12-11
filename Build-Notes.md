@@ -6,7 +6,6 @@
 - Mainnet with Coinbase/Polygon
 
 #### Other Checks... 
-- *clear Browsing/Cache Data before checking*
 - Connect Wallet Mobile functionalities links to App Store Link, if app is downloaded, links to App
 
 #### After Testing and Before Launch: 
@@ -60,10 +59,6 @@ ________________________________________________________________________________
 
 ## Arells 2.0
 - SiteMap/s
-- Switch NFT.Storage to AWS (Everything is centralized [Centralization = Efficiency/Reliability])
-- Re-deploy test cases "Buy NFT" to "Buy Asset" and "Create Asset" within wallet interactions...
-- Change PUBLIC_NFT_MARKET_ADDRESS to PUBLIC_ARELLS_STORE_ADDRESS
-- Add PUBLIC_ARELLS_MARKET_ADDRESS for 3% Fee (Refactor SmartContract to Accept)
 - Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up),
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 - Research Upgradable SmartContracts (through OpenZeppelin)
@@ -110,12 +105,12 @@ ________________________________________________________________________________
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
 - MetaTag Title: "Store Name" (character Limit)
 - MetaTag Description: "Slogan"
-- MetaTag Image: Last Meta.image
+- MetaTag Image: Logo Image centered (use created AWS SDK)
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
-- Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
+- Send 1 month - 2 week notifications on new Features (show what sharing page will look like) to be added in Arells 3.0
 - Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
 
 ##### Bugs
