@@ -2,48 +2,43 @@
 //change link after testing
 import '../../app/css/prototype/seller-created.css';
 
-import React from "react";
-import type { Metadata } from 'next';
+import React, { useMemo } from "react";
 
 //change link after testing
 import Owned from '../../components/Owned';
 import { SignerProvider } from '../../state/signer';
 import { ApolloWrapper } from '../../lib/apollo-provider';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 
-export const metadata: Metadata = {
-  title: "Arells",
-  description: "Buy art that never loses value. With Arells bear markets are obsolete.",
-  robots: "noimageindex",
-
-  openGraph: {
-    title: "Arells",
-    description: "Buy art that never loses value. With Arells bear markets are obsolete.",
-    // Change this link after testing
-    url: "https://arells.com/test/owned/[storeAddress]", 
-    type: "website",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
-      }
-    ]
-  },
-
-  twitter: {
-    title: "Arells",
-    description: "Buy art that never loses value. With Arells bear markets are obsolete.",
-    // Change this link after testing
-    card: "summary_large_image",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/banner-prototype.jpg"
-      }
-    ]
-  }
-}
 
 const OwnedPage = () => {
+  const router = useRouter();
+  const storeAddressFromURL = useMemo(() => {
+    const address = Array.isArray(router.query.storeAddress)
+        ? router.query.storeAddress[0]
+        : router.query.storeAddress;
+    return address ? address.toLowerCase() : null;
+  }, [router.query.storeAddress]);
+  
+
   return (
     <>
+      <Head>
+        <title>Owned Art</title>
+        <meta name="description" content="Own art that never loses value." />
+        <meta property="og:title" content="Owned Art" />
+        <meta property="og:description" content="Own art that never loses value." />
+        <meta property="og:url" content={`https://arells.com/own/${storeAddressFromURL}`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={"https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"} 
+        />
+        <meta name="twitter:title" content="Owned Art" />
+        <meta name="twitter:description" content="Own art that never loses value." />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={"https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"} 
+      />
+      </Head>
           <div id="prototype-seller-created-wrapper">
             <SignerProvider>
               <ApolloWrapper>

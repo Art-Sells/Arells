@@ -36,7 +36,6 @@ type AssetStoreMetadata = {
 };
 
 type AssetStoreProps = {
-    onImageUpdate(updateInfo: { imageUrl: string; timestamp: number; }): unknown;
     nft: NFT;
 };
 
@@ -134,19 +133,6 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
       fetchMetadata();
     }
   }, [nft.tokenURI]);
-  const [lastProcessedURL, setLastProcessedURL] = useState('');
-
-  useEffect(() => {
-      if (meta?.imageURL && meta.imageURL !== lastProcessedURL) {
-          const updateInfo = {
-              imageUrl: meta.imageURL,
-              timestamp: new Date().getTime(),
-          };
-          props.onImageUpdate(updateInfo);
-          setLastProcessedURL(meta.imageURL);
-      }
-  }, [meta?.imageURL, props.onImageUpdate]);
-
 
     const [isNFTMinted, setIsNFTMinted] = useState(false);
     const { checkIfNFTMinted } = useNFTMarket(storeAddressFromURL);

@@ -2,49 +2,35 @@
 //change link after testing
 import '../../../app/css/prototype/asset/asset.css';
 
-import React from "react";
-import type { Metadata } from 'next';
+import React, { useMemo } from "react";
 
 //change link after testing
 import Asset from '../../../components/Asset/Asset';
 import { SignerProvider } from '../../../state/signer';
 import { ApolloWrapper } from '../../../lib/apollo-provider';
+import Head from 'next/head';
 
-export const metadata: Metadata = {
-  title: "Arells",
-  description: "Buy art that never loses value. With Arells bear markets are obsolete.",
-  robots: "noimageindex",
 
-  openGraph: {
-    title: "Arells",
-    description: "Buy art that never loses value. With Arells bear markets are obsolete.",
-    // Change this link after testing
-    url: "https://arells.com", 
-    type: "website",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"
-      }
-    ]
-  },
-
-  twitter: {
-    title: "Arells",
-    description: "Buy art that never loses value. With Arells bear markets are obsolete.",
-    // Change this link after testing
-    card: "summary_large_image",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"
-      }
-    ]
-  }
-}
 
 const SellPage = () => {
+
   return (
     <>
-      <title>Sell Art</title>
+      <Head>
+        <title>Sell</title>
+        <meta name="description" content="Buy art that never loses value." />
+        <meta property="og:title" content="Buy Art" />
+        <meta property="og:description" content="Buy art that never loses value." />
+        <meta property="og:url" content={"https://arells.com"} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={"https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"} 
+        />
+        <meta name="twitter:title" content="Buy Art" />
+        <meta name="twitter:description" content="Buy art that never loses value." />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={"https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"} 
+      />
+      </Head>
       <div id="asset-wrapper">
         <SignerProvider>
           <ApolloWrapper>

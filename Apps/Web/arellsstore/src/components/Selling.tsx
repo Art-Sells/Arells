@@ -20,16 +20,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-interface ImageUpdateInfo {
-	imageUrl: string;
-	timestamp: number;
-  }
 
-  interface SellingProps {
-	onImageUpdate: (updateInfo: ImageUpdateInfo) => void;
-  }
-
-const Selling = ({ onImageUpdate }: SellingProps) => {
+const Selling = () => {
 	
 
 //loader functions below 
@@ -106,8 +98,6 @@ const Selling = ({ onImageUpdate }: SellingProps) => {
 
 
 // metadata functions below
-
-
 
 // metadata functions above
 
@@ -186,8 +176,7 @@ const Selling = ({ onImageUpdate }: SellingProps) => {
 					{sellingNFTs?.map((nft) => (
 						<StoreAssetHolderSelling 
 						nft={nft} 
-						key={nft.id} 
-						onImageUpdate={onImageUpdate}/>
+						key={nft.id}/>
 					))}
 				</div>
 			)}
