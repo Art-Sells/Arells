@@ -62,12 +62,27 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         if (window.ethereum) {
             connectMetamask();
         } else if (isMobileDevice()) {
-            window.location.href = "metamask://";
+            if (isIOSDevice()) {
+                // Redirect to Apple App Store for MetaMask
+                window.location.href = "https://apps.apple.com/app/metamask/id1438144202";
+            } else if (isAndroidDevice()) {
+                // Redirect to Google Play Store for MetaMask
+                window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
+            }
         } else {
             connectMetamask();
         }
         setShowConnectWallet(false);
     };
+    
+    const isIOSDevice = () => {
+        return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    };
+    
+    const isAndroidDevice = () => {
+        return /Android/i.test(navigator.userAgent);
+    };
+    
     
 // Connect Wallet functions/s above
 

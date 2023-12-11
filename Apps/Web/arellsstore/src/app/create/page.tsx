@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description: "Create art that never loses value.",
   robots: "noimageindex",
   openGraph: {
-    title: "Create Art",
-    description: "Create art that never loses value.",
+    title: "Create Art That Never Loses Value.",
+    description: "Render bear markets obsolete with Arells.",
     url: "https://arells.com/create",
     type: "website",
     images: [
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     ]
   },
   twitter: {
-    title: "Create Art",
-    description: "Create art that never loses value.",
+    title: "Create Art That Never Loses Value.",
+    description: "Render bear markets obsolete with Arells.",
     card: "summary_large_image",
     images: [
       {
