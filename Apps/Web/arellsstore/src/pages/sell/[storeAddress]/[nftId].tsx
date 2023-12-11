@@ -23,12 +23,12 @@ const SellPage = () => {
         <meta property="og:description" content="Render bear markets obsolete with Arells." />
         <meta property="og:url" content={"https://arells.com"} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content={"https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"} 
+        <meta property="og:image" content={"https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Spread.jpg"} 
         />
         <meta name="twitter:title" content="Sell Art" />
         <meta name="twitter:description" content="Render bear markets obsolete with Arells." />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={"https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default.jpg"} 
+        <meta name="twitter:image" content={"https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Spread.jpg"} 
       />
       </Head>
       <div id="asset-wrapper">
