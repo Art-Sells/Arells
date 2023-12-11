@@ -16,20 +16,15 @@
 ##### Send 5 day week notifications (5 more days)
 - Hello, we are less than 5 days away from launch and I'm happy to announce that Arells 1.0 is complete and ready to launch December 17th (Pacific Standard Time). In order to prepare for launch day, inform on which wallet to download and which network to connect to, to prepare... 
 
-On Arells, this will be the selling/buying process:
+I started Arells because I believed the time for all Artists (both small and big) to make a modest living has come. Though I will never know how much you earn, I messaged you because I believed that I could help you fulfill your financial dreams as an artist and I believe that time has also come.
 
-Selling:
-1. Create Art (creating your art)
-2. Receive Art (receiving the art into your store) 
-3. Set Price (setting prices for your art) 
-4. List to sell (listing your art to sell)
+Arells isn't just a technology company, it is a movement of people who believe the days of all artists living in poverty must end so all I ask of you is one thing after Arells launches... To keep creating art... Do not stop, do not quit, do not ever give up because we will not give up on you! 
 
-Buying:
-1. Buy (Collector Buys Your Art)
-2. Deliver Art (Collector Agrees for art to be delivered to their store)
-3. Your art is delivered (dissapears) out of your store and into theirs... Just like in the real world.
+So long as you continue creating art on Arells, we will not stop promoting you.
 
-I'll be available to discuss more if any questions arise, otherwise, I look forward to connecting back with you on launch day.
+5 more days till launch day... I'll be here if you have any questions.
+
+Keep creating Art.
 
 #### If Time Allows:
 - Try/Catch Apollo Connection Error...
