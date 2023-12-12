@@ -420,8 +420,8 @@
 			  }
 			  #photo-asset-loading-sell{
 				object-fit: cover;
-				width: 400px;
-				height: 400px;
+				width: 404px;
+				height: 404px;
 				border:solid;
 				border-radius: 10px;
 				border-width: 1px;
@@ -1175,10 +1175,13 @@
 				  width: 220px;
 				  height: 270px;
 			  }	
-			#photo-asset,
-			#photo-asset-loading-sell {
+			#photo-asset{
 				width: 290px;
 				height: 290px;
+			}
+			#photo-asset-loading-sell {
+				width: 294px;
+				height: 294px;
 			}
 
 
