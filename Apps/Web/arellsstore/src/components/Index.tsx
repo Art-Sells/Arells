@@ -38,13 +38,10 @@ const Index = () => {
   };
 
   useEffect(() => {
-    console.log('Images loaded state:', imagesLoaded);
     if (Object.values(imagesLoaded).every(Boolean)) {
-      setTimeout(() => {
         setLoading(false);
-      }, 2000);
     }
-  }, [imagesLoaded]);
+}, [imagesLoaded]);
 
 
 
