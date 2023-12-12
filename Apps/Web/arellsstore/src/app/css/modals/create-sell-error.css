@@ -4,7 +4,7 @@
 #create-sell-error-wrapper {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 180px; /* Location of the box */
+  padding-top: 190px; /* Location of the box */
   text-align: center;
 	font-family: Arial;
   left: 0;
@@ -19,7 +19,7 @@
 #pap-error-wrapper {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 170px; /* Location of the box */
+  padding-top: 190px; /* Location of the box */
   text-align: center;
 	font-family: Arial;
   left: 0;
@@ -227,7 +227,7 @@
     #owner-error-wrapper {
       position: fixed; 
       z-index: 200; 
-      padding-top: 180px; 
+      padding-top: 190px; 
       text-align: center;
       font-family: Arial;
       left: 0;
@@ -317,7 +317,7 @@
       #creation-error-wrapper {
         position: fixed; 
         z-index: 200; 
-        padding-top: 180px; 
+        padding-top: 190px; 
         text-align: center;
         font-family: Arial;
         left: 0;

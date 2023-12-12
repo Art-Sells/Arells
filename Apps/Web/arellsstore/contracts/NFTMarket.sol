@@ -27,7 +27,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
     event PriceUpdated(uint256 tokenID, uint256 newPrice); // New event for price update
     event NewPriceAfterPurchaseSet(uint256 indexed tokenID, uint256 newPriceAfterPurchase);
 
-    constructor() ERC721("Arells", "ARLLS") {}
+    constructor() ERC721("Arells Digital Assets", "ASET") {}
 
     function createNFT(string memory tokenURI) public {
         _tokenIDs.increment();
