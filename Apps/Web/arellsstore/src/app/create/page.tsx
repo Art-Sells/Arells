@@ -4,6 +4,7 @@ import React from "react";
 import CreateArt from '../../components/Create/CreateArt';
 
 import type { Metadata } from 'next';
+import Head from 'next/head';
 
 export const metadata: Metadata = {
   title: "Create Art",
@@ -36,6 +37,9 @@ const CreateTest = () => {
 
   return (
     <>
+          <Head>
+              <link rel="icon" href="/favicon.ico" /> 
+          </Head>
         <div id="asset-wrapper">
           <CreateArt/>
         </div>  

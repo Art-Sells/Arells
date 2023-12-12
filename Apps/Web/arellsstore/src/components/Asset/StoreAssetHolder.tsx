@@ -56,7 +56,6 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
 // asset constants below
     const { address, connectWallet} = useSigner();
     const { nft } = props;
-    console.log("NFT info: ", nft);
     const formattedPrice = nft.price.includes('.') 
     ? nft.price 
     : ethers.utils.formatUnits(ethers.BigNumber.from(nft.price), 'ether');
@@ -77,8 +76,6 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
     const [meta, setMeta] = useState<AssetStoreMetadata>();
 
 // asset constants above
-
-  console.log("NFT token URI: ", nft.tokenURI);
 
 // Asset Changing function/s below 
   useEffect(() => {
@@ -115,7 +112,6 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
     }, [nft.id, checkIfNFTMinted]);
 
     const { priceAfterPurchaseSets = [] } = usePriceAfterPurchaseSets(nft.id);
-    console.log("PAP Sets: ", priceAfterPurchaseSets);
     const [formattedNewPriceAfterPurchase, setFormattedNewPriceAfterPurchase] = useState("...");
     const forSale = nft.price != "0";
     const [isLoadingNewPrice, setIsLoadingNewPrice] = useState(true);

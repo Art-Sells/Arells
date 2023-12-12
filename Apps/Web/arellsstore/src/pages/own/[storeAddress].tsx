@@ -38,6 +38,7 @@ const OwnedPage = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={"https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Spread.jpg"} 
       />
+      <link rel="icon" href="/favicon.ico" />
       </Head>
           <div id="prototype-seller-created-wrapper">
             <SignerProvider>
