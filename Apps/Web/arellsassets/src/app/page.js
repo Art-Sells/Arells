@@ -7,7 +7,7 @@ import Head from 'next/head';
 
 export function generateMetadata({}) {
   let title = "Arells";
-  let description = "Never lose money selling art. With Arells, bear markets don't exist. Create and buy Digital Assets and always sell them at a profit.";
+  let description = "Buy art that never loses value. Arells is a digital asset marketplace that obscures bear markets.";
 
   let openGraph = {
     site_name: "Arells",
