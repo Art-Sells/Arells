@@ -150,6 +150,32 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
 // Connect Wallet functions/s above
 
+    const switchToPolygonNetwork = async () => {
+        try {
+            // Check if Ethereum provider is available
+            if (window.ethereum) {
+                // Request to switch to the Polygon network
+                await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [polygonNetwork]
+                });
+            } else {
+                console.log('Ethereum provider is not available');
+                // Handle the absence of an Ethereum provider
+                // e.g., Notify the user to install a wallet extension
+            }
+        } catch (error) {
+            console.error('Error switching to Polygon network:', error);
+            // Handle any errors that occur during the switch
+        }
+    };
+
+    useEffect(() => {
+        switchToPolygonNetwork();
+    }, []);
+    
+
+
     useEffect(() => {
         if (typeof window !== 'undefined' && CoinbaseWalletSDK) {
             const wallet = new CoinbaseWalletSDK({
