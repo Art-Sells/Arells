@@ -1,4 +1,5 @@
 import '../../../css/prototype/asset/colour-glass.css';
+import React from 'react';
 
 import ColourGlass from '../../../../components/prototype/asset/ColourGlass';
 import Head from 'next/head';

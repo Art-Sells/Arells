@@ -1,3 +1,4 @@
+import React from 'react';
 
 // Change below link after test
 import './css/Home.css';

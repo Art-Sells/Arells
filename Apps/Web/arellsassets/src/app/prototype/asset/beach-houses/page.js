@@ -1,4 +1,5 @@
 import '../../../css/prototype/asset/beach-houses.css';
+import React from 'react';
 
 import BeachHouses from '../../../../components/prototype/asset/BeachHouses';
 import Head from 'next/head';

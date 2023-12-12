@@ -1,5 +1,6 @@
 // Change below link after test
 import '../css/stayupdated.css';
+import React from 'react';
 
 import StayUpdated from '../../components/StayUpdated';
 import Head from 'next/head';

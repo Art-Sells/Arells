@@ -1,5 +1,7 @@
 "use client";
 
+import React from 'react';
+
 // Change below link after test
 import '../../../app/css/prototype/asset/layers.css';
 import '../../../app/css/modals/copiedlink.css';

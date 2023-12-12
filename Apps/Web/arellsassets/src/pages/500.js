@@ -1,5 +1,8 @@
 import '../app/css/error-style.css';
 
+import React from 'react';
+
+
 import PageError from '../components/error/500/ServerError';
 
 

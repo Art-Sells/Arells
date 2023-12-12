@@ -1,4 +1,5 @@
 import '../../../css/prototype/asset/layers.css';
+import React from 'react';
 
 import Layers from '../../../../components/prototype/asset/Layers';
 import Head from 'next/head';

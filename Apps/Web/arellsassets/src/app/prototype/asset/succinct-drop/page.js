@@ -1,4 +1,5 @@
 import '../../../css/prototype/asset/succinct-drop.css';
+import React from 'react';
 
 import SuccinctDrop from '../../../../components/prototype/asset/SuccinctDrop';
 import Head from 'next/head';

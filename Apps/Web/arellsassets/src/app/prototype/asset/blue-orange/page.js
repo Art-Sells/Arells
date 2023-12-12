@@ -1,4 +1,5 @@
 import '../../../css/prototype/asset/blue-orange.css';
+import React from 'react';
 
 import BlueOrange from '../../../../components/prototype/asset/BlueOrange';
 import Head from 'next/head';
