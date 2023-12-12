@@ -3,7 +3,6 @@
 ## Arells 1.0
 
 #### After Testing and Before Launch: 
-- Set Up environment variables in Arells.com Amplify and prepare to push code to main for storeAsset
 - Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
 
