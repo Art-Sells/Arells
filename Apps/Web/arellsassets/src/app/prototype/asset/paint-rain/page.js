@@ -1,4 +1,5 @@
 import '../../../css/prototype/asset/paint-rain.css';
+import React from 'react';
 
 import PaintRain from '../../../../components/prototype/asset/PaintRain';
 import Head from 'next/head';

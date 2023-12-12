@@ -1,13 +1,13 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Never lose money selling art.
+## Buy art that never loses value.
 
 ### Problem:
 Most artists are struggling financially.
 
 ### Solution:
-Art + Sells = Arells: An NFT market in which you never lose money selling art. Arells is working on achieving this through an innovation called **Price After Purchase** which renders bear markets obsolete.
+Art + Sells = Arells: A digital asset marketplace that obscures bear markets. Arells is working on achieving this through an innovation called **Price After Purchase** which renders bear markets obsolete.
 
 #### Price Afer Purchase:
 Price After Purchase is a market system which assets cannot be sold lower than the price they were either listed or previously purchased for.
@@ -52,6 +52,7 @@ _______________________________________________________________________
 
 - **Mar 2023 - May 2023**
   - [X] Prototype *[[Complete]](https://arells.com/prototype-seller-created)*----*arells.com/prototype-seller-created*
-
+ 
 - **May 2023 - Dec 2023**
     - [ ] MVP *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
+

@@ -1,4 +1,5 @@
 import '../../css/prototype/buyer-collected.css';
+import React from 'react';
 
 import PrototypeBuyerCollected from '../../../components/prototype/BuyerCollected';
 import Head from 'next/head';

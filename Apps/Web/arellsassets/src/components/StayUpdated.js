@@ -1,5 +1,8 @@
 "use client";
 
+import React from 'react';
+
+
 // Change below link after test
 import '../app/css/stayupdated.css';
 import '../app/css/modals/stayupdated-modal.css';

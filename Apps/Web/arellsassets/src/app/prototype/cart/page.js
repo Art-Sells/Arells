@@ -1,4 +1,5 @@
 import '../../css/prototype/cart/cart.css';
+import React from 'react';
 
 import PrototypeCart from '../../../components/prototype/cart/Cart';
 import Head from 'next/head';

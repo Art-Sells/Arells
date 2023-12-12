@@ -1,4 +1,6 @@
 "use client";
+import React from 'react';
+
 
 // Change below link after test
 import '../../../app/css/prototype/asset/succinct-drop.css';

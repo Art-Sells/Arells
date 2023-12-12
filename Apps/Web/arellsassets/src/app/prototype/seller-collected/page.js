@@ -1,4 +1,5 @@
 import '../../css/prototype/seller-collected.css';
+import React from 'react';
 
 import PrototypeSellerCollected from '../../../components/prototype/SellerCollected';
 import Head from 'next/head';
