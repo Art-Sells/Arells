@@ -2,15 +2,8 @@
 
 ## Arells 1.0
 
-### Wallet: 
-- Mainnet with Coinbase/Polygon
-
-#### Other Checks... 
-- Connect Wallet Mobile functionalities links to App Store Link, if app is downloaded, links to App
-
 #### After Testing and Before Launch: 
 - Set Up environment variables in Arells.com Amplify and prepare to push code to main for storeAsset
-- Delete .Secret and store .Env in a cold area
 - Make "ArellsStore" Code Private.
 - Delete all YouTube branched links
 ##### Send 5 day week notifications (5 more days)
