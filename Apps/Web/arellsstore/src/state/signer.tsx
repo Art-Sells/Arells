@@ -10,6 +10,20 @@ import '../app/css/modals/loading/spinnerBackground.css';
 import '../app/css/modals/connect-wallet.css';
 import Image from 'next/image';
 
+
+const polygonNetwork = {
+    chainId: `0x${Number(137).toString(16)}`, // Polygon Mainnet chain ID in hexadecimal
+    chainName: 'Polygon Mainnet',
+    nativeCurrency: {
+        name: 'MATIC',
+        symbol: 'MATIC',
+        decimals: 18
+    },
+    rpcUrls: ['https://polygon-rpc.com/'],
+    blockExplorerUrls: ['https://polygonscan.com/']
+};
+
+
 type SignerContextType = {
     signer?: JsonRpcSigner;   
     address?: string;
@@ -233,16 +247,26 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         try {
             const web3modal = new Web3Modal(web3ModalConfig);
             const newInstance = await web3modal.connect();
-       
+    
             const provider = new Web3Provider(newInstance);
             const signerInstance = provider.getSigner();
             const currentAddress = await signerInstance.getAddress();
-       
+    
             setSigner(signerInstance);
-                
             localStorage.setItem("savedAddress", currentAddress);
             setConnected(true);
             localStorage.setItem("walletConnected", "true");
+
+            // Get the current network
+            const network = await provider.getNetwork();
+
+            // Check if the current network is Polygon, if not, prompt to switch
+            if (network.chainId !== 137) {
+                await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [polygonNetwork]
+                });
+            }
         } catch (e) {
             console.log(e);
             setLoadingWalletConnection(false);
@@ -254,6 +278,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         setLoadingWallet(false);
         setLoadingWalletConnection(false);
     };
+    
    
 
     const closeProviderModals = () => {
