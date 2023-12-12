@@ -9,7 +9,6 @@ import '../app/css/modals/walletConnected.css';
 import '../app/css/modals/loading/spinnerBackground.css';
 import '../app/css/modals/connect-wallet.css';
 import Image from 'next/image';
-import Link from "next/link";
 
 type SignerContextType = {
     signer?: JsonRpcSigner;   
@@ -17,6 +16,12 @@ type SignerContextType = {
     loadingWallet: boolean;
     connectWallet(): any;
     
+}
+
+let CoinbaseWalletSDK: any;
+
+if (typeof window !== 'undefined') {
+    CoinbaseWalletSDK = require('@coinbase/wallet-sdk').CoinbaseWalletSDK;
 }
 
 const SignerContext = createContext<SignerContextType>({} as any);
@@ -28,6 +33,7 @@ const isMobileDevice = () => {
 
 
 export const SignerProvider = ({ children }: { children: ReactNode }) => {
+
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
     }; 
@@ -58,25 +64,26 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         setShowDownloadWallet(false);
         if (isMobileDevice()) {
             if (isIOSDevice()) {
-                window.location.href = "https://apps.apple.com/app/metamask/id1438144202";
+                window.location.href = "https://apps.apple.com/us/app/coinbase-wallet/id1278383455";
             } else if (isAndroidDevice()) {
-                window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
+                window.location.href = "https://play.google.com/store/apps/details?id=org.toshi";
             }
         } else {
-            window.open('https://metamask.io/', '_blank');
+            window.open('https://www.coinbase.com/wallet', '_blank');
         }
     };
+    
     const connectWalletFunction = () => {
         if (window.ethereum) {
-            connectMetamask();
+            connectCoinbase();
         } else if (isMobileDevice()) {
             if (isIOSDevice()) {
-                window.location.href = "https://apps.apple.com/app/metamask/id1438144202";
+                window.location.href = "https://apps.apple.com/us/app/coinbase-wallet/id1278383455";
             } else if (isAndroidDevice()) {
-                window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
+                window.location.href = "https://play.google.com/store/apps/details?id=org.toshi";
             }
         } else {
-            connectMetamask();
+            connectCoinbase();
         }
         setShowConnectWallet(false);
     };
@@ -88,9 +95,56 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     const isAndroidDevice = () => {
         return /Android/i.test(navigator.userAgent);
     };
-    
-    
+
+
+    // Below for Testing Purposes (check hardhat.config.ts)
+        // const connectWallet = () => {
+        //     if (!window.ethereum) {
+        //         setShowDownloadWallet(true);
+        //     } 
+        //     else {
+        //         setShowConnectWallet(true);
+        //     }
+        // };
+        // const downloadWalletFunction = () => {
+        //     setShowDownloadWallet(false);
+        //     if (isMobileDevice()) {
+        //         if (isIOSDevice()) {
+        //             window.location.href = "https://apps.apple.com/app/metamask/id1438144202";
+        //         } else if (isAndroidDevice()) {
+        //             window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
+        //         }
+        //     } else {
+        //         window.open('https://metamask.io/', '_blank');
+        //     }
+        // };
+        // const connectWalletFunction = () => {
+        //     if (window.ethereum) {
+        //         connectMetamask();
+        //     } else if (isMobileDevice()) {
+        //         if (isIOSDevice()) {
+        //             window.location.href = "https://apps.apple.com/app/metamask/id1438144202";
+        //         } else if (isAndroidDevice()) {
+        //             window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
+        //         }
+        //     } else {
+        //         connectMetamask();
+        //     }
+        //     setShowConnectWallet(false);
+        // };
+    // Above for Testing Purposes (check hardhat.config.ts)    
+
 // Connect Wallet functions/s above
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && CoinbaseWalletSDK) {
+            const wallet = new CoinbaseWalletSDK({
+                appName: 'Arells',
+                appLogoUrl: 'https://arells.com/favicon.ico',
+                darkMode: false
+            });
+        }
+    }, []);
 
     const handleDisconnect = () => {
         setDisconnected(true);
@@ -149,7 +203,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     
         return () => {
             if (window.ethereum) {
-                window.ethereum.removeListener("accountsChanged", connectMetamask);
+                window.ethereum.removeListener("accountsChanged", connectCoinbase);
                 window.ethereum.removeListener("disconnect", handleDisconnect);
             }
         };
@@ -172,7 +226,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
 
 
-    const connectMetamask = async () => {
+    const connectCoinbase = async () => {
         setLoadingWallet(true);
         setLoadingWalletConnection(true);
     

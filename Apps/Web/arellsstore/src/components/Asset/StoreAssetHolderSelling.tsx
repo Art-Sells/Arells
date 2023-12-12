@@ -72,6 +72,7 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
 
   const closeShareToSellModal = () => {
     setShareToSellModal(false);
+    window.location.reload();
   };
   function shareToSell() {
     setShareToSellModal(true);
