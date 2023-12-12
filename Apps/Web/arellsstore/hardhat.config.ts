@@ -1,8 +1,9 @@
 import "@nomiclabs/hardhat-waffle";
 import fs from "fs";
 import { HardhatUserConfig } from "hardhat/config";
+import 'dotenv/config';
 
-const privateKey: string = fs.readFileSync(".secret", "utf-8");
+const privateKey = process.env.ARELLS_PRIVATE_KEY || "";
 const projectId: string = "4885ed01637e4a6f91c2c7fcd1714f68";
 
 const config: HardhatUserConfig = {
