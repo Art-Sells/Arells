@@ -1,21 +1,21 @@
-// import "@nomiclabs/hardhat-waffle";
-// import fs from "fs";
-// import { HardhatUserConfig } from "hardhat/config";
+import "@nomiclabs/hardhat-waffle";
+import fs from "fs";
+import { HardhatUserConfig } from "hardhat/config";
 
-// const privateKey: string = fs.readFileSync(".secret", "utf-8");
-// const projectId: string = "4885ed01637e4a6f91c2c7fcd1714f68";
+const privateKey: string = fs.readFileSync(".secret", "utf-8");
+const projectId: string = "4885ed01637e4a6f91c2c7fcd1714f68";
 
-// const config: HardhatUserConfig = {
-//   solidity: "0.8.19",
-//   networks: {
-//     matic: {
-//       url: `https://polygon-mainnet.infura.io/v3/${projectId}`,
-//       accounts: [privateKey]
-//     },
-//   }
-// };
+const config: HardhatUserConfig = {
+  solidity: "0.8.19",
+  networks: {
+    matic: {
+      url: `https://polygon-mainnet.infura.io/v3/${projectId}`,
+      accounts: [privateKey]
+    },
+  }
+};
 
-// export default config;
+export default config;
 
 
 // Below for testing purposes (check signer.tsx)
