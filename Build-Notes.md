@@ -95,7 +95,6 @@ ________________________________________________________________________________
 - Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
 
 ##### Bugs
-- Test to see if You Send Asset to another person, will it break Arells? If So, new Smart Contract...
 - Try/Catch Apollo Connection Error...
 - 404 and Server Error Pages
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
