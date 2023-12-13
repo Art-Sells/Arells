@@ -66,7 +66,7 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
 
 //Modal Functions below
   const [shareToSellModal, setShareToSellModal] = useState<boolean>(false);
-  const [showBuyingModal, setBuyingModal] = useState<boolean>(true);
+  const [showBuyingModal, setBuyingModal] = useState<boolean>(false);
   const [showBuyingErrorModal, setBuyingErrorModal] = useState<boolean>(false);
   const [showPurchasedModal, setPurchasedModal] = useState<boolean>(false);
 
