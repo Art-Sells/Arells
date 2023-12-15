@@ -12,7 +12,9 @@
 - We've now started the process of building Arells 2.0 (which will include profile creation for your store) 
 
 ##### After Launch:
-- Create/Prepare Discord & Twitter Page "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "(No More Bear Markets Banner) Arells is a Polygon (NFT) marketplace that renders bear markets obsolete. Buy art that never loses value!".
+- Create/Prepare Discord, Instagram (ArellsDigitalAssets) Twitter(ArellsAssets)
+- Twitter/Instagram Profile Description: Rendering bear markets obsoslete one art piece at a time. No more bear markets with arells.
+- Individual Posts: Buy art that obscures bear markets with Arells! Art by etc on Arells. Hashtags (Asset/Assets/Art/Investing/Invest/Finance) 
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.5
