@@ -54,16 +54,7 @@
 		  from {center:0; opacity:0}
 		  to {center:0; opacity:1}
 		}
-	  
-	  #black-liner {
-		margin-top: 10px;
-		background-color: black;
-		border: none;
-		height: 2px;
-		border-radius: 30px;
-		width: 300px;
-		opacity: .2;
-	  }	
+	
 	  
 	  #descriptioner {
 		  margin-top: 25px;
@@ -75,15 +66,25 @@
 		  color: black;
 		  word-spacing: 0px;
 	  }	
-	  #ada-description {
+
+	  #black-liner {
 		margin-top: 10px;
-		font-size: 9px;
+		background-color: black;
+		border: none;
+		height: 2px;
+		border-radius: 30px;
+		width: 300px;
+		opacity: .2;
+	  }	
+	  #bear-markets-description {
+		margin-top: 10px;
+		font-size: 8px;
 		letter-spacing: 1px;
 		margin-left: 1px; 
-		word-spacing: 1px;
-		font-weight: 500;
-		opacity: .6;
+		font-weight: 600;
+		opacity: .5;
 		color: black;
+		word-spacing: .5px;
 	}
 
 	#black-liner-bottom-home {
@@ -95,16 +96,18 @@
 		width: 200px;
 		opacity: .1;
 	  }	
-	#bear-markets-description {
+
+	  #ada-description {
 		margin-top: 10px;
 		font-size: 8px;
 		letter-spacing: .5px;
-		margin-left: .5px; 
-		font-weight: 600;
-		opacity: .4;
-		color: black;
+		margin-left: 1px; 
 		word-spacing: .5px;
-	}		
+		font-weight: 500;
+		opacity: .5;
+		color: black;
+	}
+		
 
 	  
 	  #updatess {
@@ -178,32 +181,37 @@
 		  width: 100px;	
 		  height: 32px;
 	  }  
-	  #black-liner {
-		width: 230px;
-	  }	
+
 	  
 	  #descriptioner {
 		  font-size: 7.5px;
 		  letter-spacing: .5px;
 		  margin-left: .5px; 
 	  }	
+
+	  #black-liner {
+		width: 230px;
+	  }	
+
+	  #bear-markets-description {
+		font-size: 7.2px;
+		letter-spacing: .5px;
+		margin-left: .5px; 
+		word-spacing: .5px;
+	}	
+	#black-liner-bottom-home {
+		width: 170px;
+		opacity: .1;
+	  }	
 	  #ada-description {
-		font-size: 8.2px;
+		font-size: 7px;
 		letter-spacing: .5px;
 		margin-left: 1px; 
 		word-spacing: .5px;
 	}
 
-	#black-liner-bottom-home {
-		width: 170px;
-		opacity: .1;
-	  }	
-	#bear-markets-description {
-		font-size: 6.4px;
-		letter-spacing: .5px;
-		margin-left: .5px; 
-		word-spacing: .5px;
-	}		
+
+	
 	  #updatess {
 		width: 175px;
 		font-weight:400;
