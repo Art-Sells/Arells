@@ -118,6 +118,16 @@ const Index = () => {
         </p>
 
         <hr id="black-liner"/>
+
+        <p id="ada-description">
+        ARELLS DIGITAL ASSETS
+        </p>
+
+        <hr id="black-liner-bottom-home"/>
+
+        <p id="bear-markets-description">
+        NO MORE BEAR MARKETS
+        </p>
         
         {openStore && (
           <button 
