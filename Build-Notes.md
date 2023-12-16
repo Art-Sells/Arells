@@ -26,7 +26,8 @@ ________________________________________________________________________________
 
 ## Arells 2.0
 - SiteMap/s
-- Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up),
+- Connect NFTs <-> NFTs Function
+- Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up), store-name/asset/address
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 - Research Upgradable SmartContracts (through OpenZeppelin)
 
@@ -49,13 +50,19 @@ ________________________________________________________________________________
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test)
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- (Address(with Blockchain Logo)) section
+- Clickable Assets
+
+### Asset
+- Name
+- Evolutions Section
+- Mimick Set Price Section and Buy Button for List to Sell
 
 ### Other Store
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - no Logo or Slogan
 - Image Default: Store Icon
 - Name Default: Unnamed Store
+- Clickable Assets
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
@@ -92,10 +99,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 3.0
-- Pages separated like so: store-name/asset/address
-
-#### Creating Mechanics
--  Art Category: Abstracts, Photography, Illustrations (Icon for each)
 
 ### My Store
 - Top-Right[Cart][Connect Wallet]-if not connected
