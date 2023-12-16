@@ -181,19 +181,49 @@
 			  to {center:0; opacity:1}
 			}
 		  #slogan-seller-created {
-			  margin-top: 23px;
+			  margin-top: 7px;
 			  font-size: 8px;
 			  letter-spacing: 1px;
 			  margin-left: 1px; 
 			  font-weight: 600;
-			  color: gray;
-			  opacity: 1;
+			  color: black;
 			  word-spacing: 0px;
-			  opacity: 1;
+			  opacity: .7;
 		  }
+		  #black-liner-bottom-owned-buy {
+			margin-top: 0px;
+			background-color: black;
+			border: none;
+			height: 2px;
+			border-radius: 30px;
+			width: 380px;
+			opacity: .1;
+		  }	
+		  #ada-description-owned-buy {
+			margin-top: 10px;
+			font-size: 6px;
+			color: black;
+			font-weight: 500;
+			letter-spacing: 4.8px;
+			margin-left: 4.8px; 
+			word-spacing: 2px;
+			opacity: .5;
+		}
+		  #bear-markets-description-owned-buy {
+				margin-top: 35px;
+				font-size: 7px;
+				letter-spacing: 15px;
+				margin-left: 15px; 
+				font-weight: 600;
+				color: black;
+				opacity: .2;
+			}
+		  
+		  
+
 		  
 	  #profileline-seller-created {
-	  margin-top: 30px;
+	  margin-top: 5px;
 		background-color: black;
 		border: none;
 		height: 2px;
@@ -693,7 +723,7 @@
 					border: none;
 					height: 2px;
 					border-radius: 30px;
-					width: 500px;
+					width: 100px;
 					opacity: .1;
 				  }
 			  
@@ -777,11 +807,28 @@
 			  height: 28px;		
 		  }
 		  #slogan-seller-created {
-			  margin-top: 16px;
+			  margin-top: 10px;
 			  font-size: 6.5px;
 		  }
+		  #black-liner-bottom-owned-buy {
+			margin-top: 0px;
+			width: 290px;
+		  }	
+		  #ada-description-owned-buy {
+			margin-top: 0px;
+			font-size: 5.2px;
+			letter-spacing: 4px;
+			margin-left: 4px; 
+			word-spacing: 2px;
+		}
+		  #bear-markets-description-owned-buy {
+				margin-top: 27px;
+				font-size: 5px;
+				letter-spacing: 11.5px;
+				margin-left: 11.5px; 
+			}
 		  #profileline-seller-created {
-		  margin-top: 20px;
+		  margin-top: 5px;
 			width: 470px;
 		  }	
 		  #created-collected-seller-created {
@@ -934,7 +981,7 @@
 		  #selling-line {
 			  margin-top: 25px;
 				  height: 2px;
-				  width: 250px;
+				  width: 100px;
 			  }		
   }					
 	  
