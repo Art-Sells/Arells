@@ -2,11 +2,7 @@
 
 ## Arells 1.0
 
-##### Lead-up to Launch:
-- HOW TO GUIDE (For Buyers & Sellers)
-
 ##### Launch Day E-mail:
-- Possibly send them all 1 Polygon (Matic) so they can create their Art.
 - How To Guide
 - Marketing Rotation on X/Twitter rotation/schedule (inform and give store URL) No notifications in purchases (until next few releases of Arells_ so to keep track of any purchases, check Polygon(Matic) balance weekly to notice any balance increases on your wallet until we allow profile creations on Arells)
 - We've now started the process of building Arells 2.0 (which will include profile creation for your store) 
@@ -19,6 +15,7 @@ ________________________________________________________________________________
 
 ## Arells 1.5
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
+- HOW TO GUIDE (For Buyers & Sellers)
 
 ________________________________________________________________________________________________________________________________________________
 
