@@ -88,7 +88,7 @@ ________________________________________________________________________________
 - Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
 
 ##### Bugs
-- Try/Catch Apollo Connection Error...
+- Try/Catch Apollo Connection/Address Error...
 - 404 and Server Error Pages
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
