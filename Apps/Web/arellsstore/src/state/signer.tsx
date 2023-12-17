@@ -313,6 +313,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     const connectCoinbase = async () => {
         setLoadingWallet(true);
         setLoadingWalletConnection(true);
+        
 
         try {
             // Initialize Coinbase Wallet provider
