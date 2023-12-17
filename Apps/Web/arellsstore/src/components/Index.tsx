@@ -53,21 +53,24 @@ const Index = () => {
     const handleConnectWallet = async () => {
       setIsConnecting(true);
       try {
-        await connectWallet(); // Assuming connectWallet returns a Promise
-        // Update states to reflect successful connection
-        setOpenStore(false);
-        setOpenStoreConnected(true);
+        await connectWallet();
+        if (address) {
+          // If address is set, it means wallet is connected
+          setOpenStore(false);
+          setOpenStoreConnected(true);
+        }
       } catch (error) {
         console.error("Error connecting wallet:", error);
+      } finally {
+        setIsConnecting(false);
       }
-      setIsConnecting(false);
     };
     useEffect(() => {
       if (!address) {
         setOpenStore(true);
         setOpenStoreConnected(false);
       }
-      else {
+      else if (address) {
         setOpenStore(false);
         setOpenStoreConnected(true);
       }

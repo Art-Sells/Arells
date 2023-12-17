@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react";
+import React, { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import { ReactNode, createContext, useContext, useState, useEffect } from "react";
@@ -9,6 +9,7 @@ import '../app/css/modals/walletConnected.css';
 import '../app/css/modals/loading/spinnerBackground.css';
 import '../app/css/modals/connect-wallet.css';
 import Image from 'next/image';
+import { ethers } from "ethers";
 
 
 const polygonNetwork = {
@@ -22,6 +23,7 @@ const polygonNetwork = {
     rpcUrls: ['https://polygon-rpc.com/'],
     blockExplorerUrls: ['https://polygonscan.com/']
 };
+
 
 
 type SignerContextType = {
@@ -47,6 +49,7 @@ const isMobileDevice = () => {
 
 
 export const SignerProvider = ({ children }: { children: ReactNode }) => {
+    
 
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
@@ -74,7 +77,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             setShowConnectWallet(true);
         }
     };
-    const downloadWalletFunction = () => {
+    const downloadCoinbaseFunction = () => {
         setShowDownloadWallet(false);
         if (isMobileDevice()) {
             if (isIOSDevice()) {
@@ -86,18 +89,50 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             window.open('https://www.coinbase.com/wallet', '_blank');
         }
     };
+
+    const downloadMetaMaskFunction = () => {
+        setShowDownloadWallet(false);
+        if (isMobileDevice()) {
+            if (isIOSDevice()) {
+                window.location.href = "https://apps.apple.com/us/app/metamask/id1438144202";
+            } else if (isAndroidDevice()) {
+                window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
+            }
+        } else {
+            window.open('https://metamask.io/download.html', '_blank');
+        }
+    };
     
-    const connectWalletFunction = () => {
+    const connectCoinbaseFunction = () => {
         if (window.ethereum) {
             connectCoinbase();
         } else if (isMobileDevice()) {
-            if (isIOSDevice()) {
-                window.location.href = "https://apps.apple.com/us/app/coinbase-wallet/id1278383455";
+            if (isIOSDevice()) { 
+                window.location.href = "cbwallet://dapp?cb_url=https%3A%2F%2Farells.com";
             } else if (isAndroidDevice()) {
-                window.location.href = "https://play.google.com/store/apps/details?id=org.toshi";
+                window.location.href = "https://go.cb-w.com/dapp?cb_url=https%3A%2F%2Farells.com";
             }
         } else {
             connectCoinbase();
+        }
+        setShowConnectWallet(false);
+    };
+
+    const connectMetaMaskFunction = () => {
+        if (window.ethereum) {
+            connectMetaMask();
+        } else if (isMobileDevice()) {
+            if (isIOSDevice()) {
+                const dappUrl = 'https://arells.com'; // Replace with your dapp URL
+                const deepLinkUrl = `https://metamask.app.link/dapp/${dappUrl}`;
+                window.location.href = deepLinkUrl;
+            } else if (isAndroidDevice()) {
+                const dappUrl = 'https://arells.com'; // Replace with your dapp URL
+                const deepLinkUrl = `https://metamask.app.link/dapp/${dappUrl}`;
+                window.location.href = deepLinkUrl;
+            }
+        } else {
+            connectMetaMask();
         }
         setShowConnectWallet(false);
     };
@@ -146,23 +181,32 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         //     }
         //     setShowConnectWallet(false);
         // };
+
+        //For Testing Purposes
+    // const web3ModalConfig = {
+    //     cacheProvider: true, 
+    //     network: "mumbai" 
+    // };
     // Above for Testing Purposes (check hardhat.config.ts)    
 
 // Connect Wallet functions/s above
 
     const switchToPolygonNetwork = async () => {
         try {
-            // Check if Ethereum provider is available
             if (window.ethereum) {
-                // Request to switch to the Polygon network
-                await window.ethereum.request({
-                    method: 'wallet_addEthereumChain',
-                    params: [polygonNetwork]
-                });
+                // Get the current network's chain ID
+                const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+
+                // Only request a network switch if the current chain ID is not Polygon's
+                if (currentChainId !== polygonNetwork.chainId) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [polygonNetwork],
+                    });
+                }
             } else {
                 console.log('Ethereum provider is not available');
                 // Handle the absence of an Ethereum provider
-                // e.g., Notify the user to install a wallet extension
             }
         } catch (error) {
             console.error('Error switching to Polygon network:', error);
@@ -173,6 +217,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         switchToPolygonNetwork();
     }, []);
+
     
 
 
@@ -262,48 +307,152 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     const web3ModalConfig = {
         cacheProvider: true, 
-        network: "mumbai" 
+        network: "matic" 
     };
+
+
+
+
+// Connect Functions below
 
 
     const connectCoinbase = async () => {
         setLoadingWallet(true);
         setLoadingWalletConnection(true);
-    
+        
+
         try {
-            const web3modal = new Web3Modal(web3ModalConfig);
-            const newInstance = await web3modal.connect();
-    
-            const provider = new Web3Provider(newInstance);
-            const signerInstance = provider.getSigner();
-            const currentAddress = await signerInstance.getAddress();
-    
-            setSigner(signerInstance);
-            localStorage.setItem("savedAddress", currentAddress);
+            // Initialize Coinbase Wallet provider
+            const coinbaseWallet = new CoinbaseWalletSDK({
+                appName: 'Arells',
+                appLogoUrl: 'https://arells.com/ArellsIcoIcon.png',
+                darkMode: false
+            });
+
+            const ethereum = 
+                coinbaseWallet.makeWeb3Provider('https://polygon-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68', 1); 
+            await ethereum.enable();
+
+            const provider = new Web3Provider(ethereum);
+            const signer = provider.getSigner();
+            const address = await signer.getAddress();
+
+            setSigner(signer);
+            setAddress(address);
+            localStorage.setItem("savedAddress", address);
             setConnected(true);
             localStorage.setItem("walletConnected", "true");
 
-            // Get the current network
+            // Handle network check and switch
             const network = await provider.getNetwork();
-
-            // Check if the current network is Polygon, if not, prompt to switch
             if (network.chainId !== 137) {
-                await window.ethereum.request({
+                await ethereum.request({
                     method: 'wallet_addEthereumChain',
                     params: [polygonNetwork]
                 });
             }
         } catch (e) {
-            console.log(e);
+            console.error(e);
             setLoadingWalletConnection(false);
-            await delay(1000);
             setCheckWallet(true);
             localStorage.removeItem("walletConnected");
         }
-    
+
         setLoadingWallet(false);
         setLoadingWalletConnection(false);
     };
+
+      
+    const connectMetaMask = async () => {
+        setLoadingWallet(true);
+        setLoadingWalletConnection(true);
+    
+        try {
+            // Check for mobile devices
+            if (isIOSDevice() || isAndroidDevice()) {
+                // Use window.ethereum directly for mobile devices
+                if (window.ethereum) {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                    const accounts = await provider.send("eth_requestAccounts", []);
+    
+                    if (accounts.length === 0) {
+                        throw new Error("No accounts found.");
+                    }
+    
+                    const signer = provider.getSigner();
+                    const address = await signer.getAddress();
+                    setSigner(signer);
+                    setAddress(address);
+                    setConnected(true);
+    
+                    localStorage.setItem("walletConnected", "Generic");
+                    localStorage.setItem("savedAddress", address);
+    
+                    const network = await provider.getNetwork();
+                    if (network.chainId !== 137) {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [polygonNetwork]
+                        });
+                    }
+                } else {
+                    throw new Error("Ethereum provider is not available.");
+                }
+            } else {
+                // Use MetaMask provider for non-mobile devices
+                const metamaskProvider = window.ethereum.providers?.find((provider: { isMetaMask: any; }) => provider.isMetaMask);
+    
+                if (metamaskProvider) {
+                    const provider = new ethers.providers.Web3Provider(metamaskProvider, "any");
+                    const accounts = await provider.send("eth_requestAccounts", []);
+    
+                    if (accounts.length === 0) {
+                        throw new Error("No accounts found in MetaMask.");
+                    }
+    
+                    const signer = provider.getSigner();
+                    const address = await signer.getAddress();
+                    setSigner(signer);
+                    setAddress(address);
+                    setConnected(true);
+    
+                    localStorage.setItem("walletConnected", "MetaMask");
+                    localStorage.setItem("savedAddress", address);
+    
+                    const network = await provider.getNetwork();
+                    if (network.chainId !== 137) {
+                        await metamaskProvider.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [polygonNetwork]
+                        });
+                    }
+                } else {
+                    throw new Error("MetaMask is not installed.");
+                }
+            }
+        } catch (e) {
+            console.error(e);
+            setCheckWallet(true);
+            setConnected(false);
+            localStorage.removeItem("walletConnected");
+            localStorage.removeItem("savedAddress");
+        } finally {
+            setLoadingWallet(false);
+            setLoadingWalletConnection(false);
+        }
+    };
+    
+      
+    
+    
+    
+    
+
+    
+    
+
+
+ // Connect Functions Above   
     
    
 
@@ -325,7 +474,19 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
 					<button id="connectWallet"
-						onClick={downloadWalletFunction}
+						onClick={downloadMetaMaskFunction}
+						disabled={loadingWallet}>
+						<Image 
+						loader={imageLoader}
+						id="wallet-icon"
+						alt=""
+						width={50}
+						height={50}  
+						src="images/prototype/metamask-icon.png"/>
+					</button>
+                    <span id="wallet-spacing"></span>	
+                    <button id="connectWallet"
+						onClick={downloadCoinbaseFunction}
 						disabled={loadingWallet}>
 						<Image 
 						loader={imageLoader}
@@ -342,8 +503,20 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 			<div id="connectWalletBuy">
 				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
+                    <button id="connectWallet"
+						onClick={connectMetaMaskFunction}
+						disabled={loadingWallet}>
+						<Image 
+						loader={imageLoader}
+						id="wallet-icon"
+						alt=""
+						width={50}
+						height={50}  
+						src="images/prototype/metamask-icon.png"/>
+					</button>	
+                    <span id="wallet-spacing"></span>	
 					<button id="connectWallet"
-						onClick={connectWalletFunction}
+						onClick={connectCoinbaseFunction}
 						disabled={loadingWallet}>
 						<Image 
 						loader={imageLoader}
