@@ -121,9 +121,13 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             connectMetaMask();
         } else if (isMobileDevice()) {
             if (isIOSDevice()) {
-                window.location.href = "https://apps.apple.com/us/app/metamask/id1438144202";
+                const dappUrl = 'https://arells.com'; // Replace with your dapp URL
+                const deepLinkUrl = `https://metamask.app.link/dapp/${dappUrl}`;
+                window.location.href = deepLinkUrl;
             } else if (isAndroidDevice()) {
-                window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
+                const dappUrl = 'https://arells.com'; // Replace with your dapp URL
+                const deepLinkUrl = `https://metamask.app.link/dapp/${dappUrl}`;
+                window.location.href = deepLinkUrl;
             }
         } else {
             connectMetaMask();
@@ -362,10 +366,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
           setLoadingWalletConnection(true);
       
           try {
-
-            const dappUrl = 'https://arells.com'; // Replace with your dapp URL
-            const deepLinkUrl = `https://metamask.app.link/dapp/${dappUrl}`;
-            window.location.href = deepLinkUrl;
               // Check if the device is not a mobile device
                 // Fallback to generic provider for mobile devices
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
