@@ -14,7 +14,7 @@ import "../../app/css/modals/created-art-modal.css";
 
 //Loader Styles
 import '../../app/css/modals/loading/spinnerBackground.css';
-import styling from '../../app/css/modals/loading/loader.module.css';
+import stylings from '../../app/css/modals/loading/loading.module.css';
 import styles from '../../app/css/modals/loading/photoloader.module.css';
 
 
@@ -242,7 +242,7 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
 
       {showBuyingModal && (
         <div id="create-art-modal-wrapper">
-          <div id="create-art-modal-content">
+          <div id="buying-art-modal-content">
           <Image 
             // loader={imageLoader}
             alt="" 
@@ -250,8 +250,15 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
             height={50}
             id="buy-art-image" 
             src="/images/market/cash-register.png"/>  
-          <p id="list-art-words">BUYING ART</p>
-          <div className={styling.loader}></div>
+          <p id="buying-art-words">BUYING</p>
+          <p id="arells-digital-asset">Arells Digital Asset</p>
+          <div className={stylings.loading}></div>
+          <Image 
+            alt="" 
+            width={9}
+            height={9}
+            id="arells-digital-asset-icon" 
+            src="/images/Arells-Icon.png"/>
           </div>
         </div>  
       )}

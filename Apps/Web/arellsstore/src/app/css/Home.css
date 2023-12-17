@@ -54,16 +54,7 @@
 		  from {center:0; opacity:0}
 		  to {center:0; opacity:1}
 		}
-	  
-	  #black-liner {
-		margin-top: 10px;
-		background-color: black;
-		border: none;
-		height: 2px;
-		border-radius: 30px;
-		width: 300px;
-		opacity: .1;
-	  }	
+	
 	  
 	  #descriptioner {
 		  margin-top: 25px;
@@ -71,10 +62,53 @@
 		  letter-spacing: 1px;
 		  margin-left: 1px; 
 		  font-weight: 600;
-		  opacity: .4;
+		  opacity: .7;
 		  color: black;
 		  word-spacing: 0px;
 	  }	
+
+	  #black-liner {
+		margin-top: 10px;
+		background-color: black;
+		border: none;
+		height: 2px;
+		border-radius: 30px;
+		width: 250px;
+		opacity: .1;
+	  }	
+
+	  #ada-description {
+		margin-top: 10px;
+		font-size: 8px;
+		letter-spacing: 6px;
+		margin-left: 6px; 
+		word-spacing: 2px;
+		font-weight: 500;
+		opacity: .5;
+		color: black;
+	}
+
+	#black-liner-bottom-home {
+		margin-top: 10px;
+		background-color: black;
+		border: none;
+		height: 2px;
+		border-radius: 30px;
+		width: 350px;
+		opacity: .1;
+	  }	
+
+	  #bear-markets-description {
+		margin-top: 20px;
+		font-size: 7px;
+		letter-spacing: 9px;
+		margin-left: 9px; 
+		font-weight: 600;
+		opacity: .3;
+		color: black;
+		word-spacing: 0px;
+	}
+		
 
 	  
 	  #updatess {
@@ -148,15 +182,36 @@
 		  width: 100px;	
 		  height: 32px;
 	  }  
-	  #black-liner {
-		width: 230px;
-	  }	
+
 	  
 	  #descriptioner {
 		  font-size: 7.5px;
 		  letter-spacing: .5px;
 		  margin-left: .5px; 
-	  }		
+	  }	
+
+	  #black-liner {
+		width: 230px;
+	  }	
+
+	  #ada-description {
+		font-size: 7px;
+		letter-spacing: 5px;
+		margin-left: 5px; 
+		word-spacing: 2px;
+	}
+	#black-liner-bottom-home {
+		width: 300px;
+		opacity: .1;
+	  }	
+	  #bear-markets-description {
+		font-size: 6px;
+		letter-spacing: 8px;
+		margin-left: 8px; 
+	}	
+
+
+	
 	  #updatess {
 		width: 175px;
 		font-weight:400;

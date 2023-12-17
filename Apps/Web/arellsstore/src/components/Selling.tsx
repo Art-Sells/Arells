@@ -158,7 +158,9 @@ const Selling = () => {
 		id="word-logo-seller-created" 
 		src="images/Arells-Logo-Ebony.png"/>	
 		<p id="slogan-seller-created">BUY ART THAT NEVER LOSES VALUE</p>
-		<hr id="profileline-seller-created"/>
+		<hr id="black-liner-bottom-owned-buy"/>
+		<p id="ada-description-owned-buy">ARELLS DIGITAL ASSETS</p>
+		{/* <hr id="profileline-seller-created"/> */}
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
 			<a id="selling-seller">Buy</a>	
@@ -181,7 +183,9 @@ const Selling = () => {
 				</div>
 			)}
 
-		     
+		<p id="bear-markets-description-owned-buy">
+						NO MORE BEAR MARKETS
+				</p>  
         </>
     );
 }

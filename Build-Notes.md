@@ -2,38 +2,20 @@
 
 ## Arells 1.0
 
-#### After Testing and Before Launch: 
-- Make "ArellsStore" Code Private.
-- Delete all YouTube branched links
-
-##### Send 5 day week notifications (5 more days)
-- Hello, we are less than 5 days away from launch and I'm happy to announce that Arells 1.0 is complete and ready to launch December 17th (Pacific Standard Time). In order to prepare for launch day, inform on which wallet to download. In regards to the cost of creating/minting an NFT... We tried finding a work-around to minting "creating NFTs" for free but due to time constraints (since launch day is only a few days away), we didn't have enough time. NFTs represent digital formats of Real World Assets meaning to create an NFT will cost money (just like creating a piece of Art in the real-world.. buying the canvas, the paint, pencils, paper, etc, all costs money). But, we promised that creating NFTs on Arells will be *free* so in order to honor our promise, I'm going to send you 1 MATIC ~ $1 USD to your Wallet Address (after you create your Wallet). With 1 MATIC, you'll be able to create at least ~100 pieces of Art on Arells (this is why we chose Polygon(MATIC) because it's extremely cheap to create NFTs)! After Arells launches, we can find a work-around to ensure creating NFTs are free or if not, we're going to integrate even cheaper Blockchains to create NFTs. So from now till next Sunday, I highly recommend to download Coinbase Wallet (familiarize yourself with it), switch to the Polygon Network and send me your address so I can send you some MATIC for preparation. We're in the process of creating a how-to-sell step-by-step process to help guide you, your buyers and sellers on how to buy and sell Art on Arells [this will include a guide on how you and your buyers can set up your Coinbase Wallet & Account]) (In the future, we're going to release our own Arells App (so neither you nor your buyers will have to use Coinbase or other 3rd party Wallets. 
-
-NFTs (like dial-up internet in the 1990s) are a new technological innovation which means the buying/selling process is still a bit cumbersome. Nevertheles, once Arells releases its own App (with USDC and Credit-Cart Buying) we're going to make the buying/selling process 10x easier for you and your buyers/sellers... 
-
-But we have to start somewhere, and we're starting with Coinbase Wallet and Polygon (for now).
-
-Once we launch, full marketing will begin by promoting your art out to influencers, buyers, etc so all we ask is that you do not stop creating Art on Arells!
-
-So long as you continue creating art, we will not stop promoting you!
-
-I'll be here if you have any questions.
-
-##### Lead-up to Launch:
-- HOW TO GUIDE (For Buyers & Sellers)
-
 ##### Launch Day E-mail:
-- Possibly send them all 1 Polygon (Matic) so they can create their Art.
 - How To Guide
-- Marketing Rotation on X/Twitter rotation/schedule (inform and give store URL) No notifications in purchases (until next few releases of Arells_ so to keep track of any purchases, check Polygon(Matic) balance weekly to notice any balance increases on your wallet until we allow profile creations on Arells)
-- We've now started the process of building Arells 2.0 (which will include profile creation for your store) 
+- Marketing Rotation (we plan on marketing your art to investors (buyers) who were burned by bear markets). Most artists aren't paid well, so we plan on solving this problem by going after a big problem in the market: bear markets. And investors who lose lots of money in bear markets are the buyers Arells is going to target. On X/Twitter rotation/schedule (inform and give store URL) No notifications in purchases (until next few releases of Arells_ so to keep track of any purchases, check Polygon(Matic) balance weekly to notice any balance increases on your wallet until we allow profile creations on Arells)
+- We've now started the process of building Arells 2.0 (which will include profile creation for your store and a section of "Evolutions" where you'll be able to connect future art works to one artwork so people who bought your artwork can easily buy new versions of your artwork, kind of like releasing new versions of watches, shoes, etc, you'll be able to link new versions of your artwork to your old artwork [I'm available to answer questions about this]) 
 
 ##### After Launch:
-- Create/Prepare Discord & Twitter Page "Promotional campaign" for Arells 1.0 = Polygon/Matic (Niche) Audience on X/Twitter "(No More Bear Markets Banner) Arells is a Polygon (NFT) marketplace that renders bear markets obsolete. Buy art that never loses value!".
+- Create/Prepare Discord, Instagram (ArellsDigitalAssets) Twitter(ArellsAssets)
+- Twitter/Instagram Profile Description: Rendering bear markets obsoslete one art piece at a time. No more bear markets with arells.
+- Individual Posts: Buy art that obscures bear markets with Arells! Art by etc on Arells. Hashtags (Asset/Assets/Art/Investing/Invest/Finance) 
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.5
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
+- HOW TO GUIDE (For Buyers & Sellers)
 
 ________________________________________________________________________________________________________________________________________________
 
@@ -44,7 +26,8 @@ ________________________________________________________________________________
 
 ## Arells 2.0
 - SiteMap/s
-- Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up),
+- Connect NFTs <-> NFTs Function
+- Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up), store-name/asset/address
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 - Research Upgradable SmartContracts (through OpenZeppelin)
 
@@ -67,13 +50,19 @@ ________________________________________________________________________________
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test)
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-- (Address(with Blockchain Logo)) section
+- Clickable Assets
+
+### Asset
+- Name
+- Evolutions Section
+- Mimick Set Price Section and Buy Button for List to Sell
 
 ### Other Store
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - no Logo or Slogan
 - Image Default: Store Icon
 - Name Default: Unnamed Store
+- Clickable Assets
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
@@ -99,7 +88,7 @@ ________________________________________________________________________________
 - Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
 
 ##### Bugs
-- Try/Catch Apollo Connection Error...
+- Try/Catch Apollo Connection/Address Error...
 - 404 and Server Error Pages
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
@@ -110,10 +99,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 3.0
-- Pages separated like so: store-name/asset/address
-
-#### Creating Mechanics
--  Art Category: Abstracts, Photography, Illustrations (Icon for each)
 
 ### My Store
 - Top-Right[Cart][Connect Wallet]-if not connected

@@ -5,7 +5,6 @@ import './css/Home.css';
 import Index from '../components/Index';
 import React from 'react';
 import type { Metadata } from 'next';
-import Head from 'next/head';
 
 export const metadata: Metadata = {
   title: "Arells",
@@ -38,9 +37,6 @@ const Home = () => {
 
   return (
     <>
-          <Head>
-              <link rel="icon" href="/favicon.ico" /> 
-          </Head>
         <div id="overlayy">
           <Index/>
         </div> 

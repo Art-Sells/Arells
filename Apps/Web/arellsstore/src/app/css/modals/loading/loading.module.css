@@ -1,14 +1,14 @@
 
 
-.loader {
+.loading {
   position: fixed;
   display: block;
   justify-content: center;
   align-items: center;
   z-index: 201; /* ensure it's on top of all other elements */
-  border: 10px solid rgba(140, 140, 140, 0.1);
+  border: 10px solid rgba(140, 140, 140, 0.2);
   border-radius: 50%;
-  border-top: 10px solid rgb(0, 0, 0, 0.2);
+  border-top: 10px solid rgb(0, 0, 0, 0.3);
   width: 20px;
   height: 20px;
   -webkit-animation: spin 1s linear infinite;
