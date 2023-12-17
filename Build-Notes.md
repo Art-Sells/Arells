@@ -2,11 +2,6 @@
 
 ## Arells 1.0
 
-##### Launch Day E-mail:
-- How To Guide
-- Marketing Rotation (we plan on marketing your art to investors (buyers) who were burned by bear markets). Most artists aren't paid well, so we plan on solving this problem by going after a big problem in the market: bear markets. And investors who lose lots of money in bear markets are the buyers Arells is going to target. On X/Twitter rotation/schedule (inform and give store URL) No notifications in purchases (until next few releases of Arells_ so to keep track of any purchases, check Polygon(Matic) balance weekly to notice any balance increases on your wallet until we allow profile creations on Arells)
-- We've now started the process of building Arells 2.0 (which will include profile creation for your store and a section of "Evolutions" where you'll be able to connect future art works to one artwork so people who bought your artwork can easily buy new versions of your artwork, kind of like releasing new versions of watches, shoes, etc, you'll be able to link new versions of your artwork to your old artwork [I'm available to answer questions about this]) 
-
 ##### After Launch:
 - Create/Prepare Discord, Instagram (ArellsDigitalAssets) Twitter(ArellsAssets)
 - Twitter/Instagram Profile Description: Rendering bear markets obsoslete one art piece at a time. No more bear markets with arells.
