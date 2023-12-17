@@ -2,11 +2,6 @@
 
 ## Arells 1.0
 
-##### Launch Day E-mail:
-- How To Guide
-- Marketing Rotation (we plan on marketing your art to investors (buyers) who were burned by bear markets). Most artists aren't paid well, so we plan on solving this problem by going after a big problem in the market: bear markets. And investors who lose lots of money in bear markets are the buyers Arells is going to target. On X/Twitter rotation/schedule (inform and give store URL) No notifications in purchases (until next few releases of Arells_ so to keep track of any purchases, check Polygon(Matic) balance weekly to notice any balance increases on your wallet until we allow profile creations on Arells)
-- We've now started the process of building Arells 2.0 (which will include profile creation for your store and a section of "Evolutions" where you'll be able to connect future art works to one artwork so people who bought your artwork can easily buy new versions of your artwork, kind of like releasing new versions of watches, shoes, etc, you'll be able to link new versions of your artwork to your old artwork [I'm available to answer questions about this]) 
-
 ##### After Launch:
 - Create/Prepare Discord, Instagram (ArellsDigitalAssets) Twitter(ArellsAssets)
 - Twitter/Instagram Profile Description: Rendering bear markets obsoslete one art piece at a time. No more bear markets with arells.
@@ -14,8 +9,33 @@
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.5
+- Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
 - HOW TO GUIDE (For Buyers & Sellers)
+
+### Sign-Up
+- Sign Up with Google/Apple/Facebook/Etc
+
+### Edit Store
+- Store Logo: Default Store Logo
+- Store Name: No Maximum Characters
+
+### My Store
+- Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
+- small Logo or Slogan
+- Dollar Symbols
+- Logo: Default Store Logo
+- Store Name: Maximum Width if long name (Test)
+- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
+
+### Other Store
+- Top-Left[||]-([My-Store]if connected)([/\]if not connected)
+- small Logo or Slogan
+- Image Default: Store Icon
+- Name Default: Unnamed Store
+
+### If Time Permits
+- Hide Assets in store.
 
 ________________________________________________________________________________________________________________________________________________
 
@@ -27,7 +47,7 @@ ________________________________________________________________________________
 ## Arells 2.0
 - SiteMap/s
 - Connect NFTs <-> NFTs Function
-- Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up), store-name/asset/address
+- Pages separated like so: store-name/asset/address
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 - Research Upgradable SmartContracts (through OpenZeppelin)
 
@@ -44,12 +64,6 @@ ________________________________________________________________________________
 - If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
 
 ### My Store
-- Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
-- no Logo or Slogan
-- Dollar Symbols
-- Logo: Default Store Logo
-- Store Name: Maximum Width if long name (Test)
-- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 - Clickable Assets
 
 ### Asset
@@ -58,18 +72,8 @@ ________________________________________________________________________________
 - Mimick Set Price Section and Buy Button for List to Sell
 
 ### Other Store
-- Top-Left[||]-([My-Store]if connected)([/\]if not connected)
-- no Logo or Slogan
-- Image Default: Store Icon
-- Name Default: Unnamed Store
 - Clickable Assets
 
-### Sign-Up
-- Sign Up with Google/Apple/Facebook/Etc
-
-### Edit Store
-- Store Logo: Default Store Logo
-- Store Name: No Maximum Characters
 - (Save Changes) {Connect Wallet} if wallet not connected and/or Home if not signed in.
 
 #### After Purchase (Modal)

@@ -54,10 +54,13 @@ _______________________________________________________________________
   - [X] Prototype *[[Complete]](https://arells.com/prototype-seller-created)*----*arells.com/prototype-seller-created*
  
 - **May 2023 - Dec 2023**
-    - [ ] Arells 1.0 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
+  - [X] Arells 1.0 *[[Complete]](https://arells.com)*
  
-- **Dec 2023 - June 2024**
-    - [ ] Arells 2.0 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
+- **Dec 2023 - Feb 2024**
+  - [ ] Arells 1.5 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
  
-- **June 2024 - TBD(To-Be-Determined)**
-    - [ ] Arells 3.0 *[Announced]*
+- **Feb 2024 - Oct 2024**
+  - [ ] Arells 2.0 *[Announced]*
+ 
+- **Oct 2024 - TBD(To-Be-Determined)**
+  - [ ] Arells 3.0 *[Announced]*
