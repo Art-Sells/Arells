@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react";
+import React, { useMemo } from "react";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import { ReactNode, createContext, useContext, useState, useEffect } from "react";
@@ -23,6 +23,7 @@ const polygonNetwork = {
     rpcUrls: ['https://polygon-rpc.com/'],
     blockExplorerUrls: ['https://polygonscan.com/']
 };
+
 
 
 type SignerContextType = {
@@ -48,6 +49,7 @@ const isMobileDevice = () => {
 
 
 export const SignerProvider = ({ children }: { children: ReactNode }) => {
+    
 
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
@@ -361,51 +363,85 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
 
       
-      const connectMetaMask = async () => {
-          setLoadingWallet(true);
-          setLoadingWalletConnection(true);
-      
-          try {
-              // Check if the device is not a mobile device
-                // Fallback to generic provider for mobile devices
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-            
-                const accounts = await provider.listAccounts();
-            
-                if (accounts.length === 0) {
-                    throw new Error("No accounts found.");
+    const connectMetaMask = async () => {
+        setLoadingWallet(true);
+        setLoadingWalletConnection(true);
+    
+        try {
+            // Check for mobile devices
+            if (isIOSDevice() || isAndroidDevice()) {
+                // Use window.ethereum directly for mobile devices
+                if (window.ethereum) {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                    const accounts = await provider.send("eth_requestAccounts", []);
+    
+                    if (accounts.length === 0) {
+                        throw new Error("No accounts found.");
+                    }
+    
+                    const signer = provider.getSigner();
+                    const address = await signer.getAddress();
+                    setSigner(signer);
+                    setAddress(address);
+                    setConnected(true);
+    
+                    localStorage.setItem("walletConnected", "Generic");
+                    localStorage.setItem("savedAddress", address);
+    
+                    const network = await provider.getNetwork();
+                    if (network.chainId !== 137) {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [polygonNetwork]
+                        });
+                    }
+                } else {
+                    throw new Error("Ethereum provider is not available.");
                 }
-            
-                const signer = provider.getSigner();
-                const address = await signer.getAddress();
-            
-                setSigner(signer);
-                setAddress(address);
-                setConnected(true);
-            
-                localStorage.setItem("walletConnected", "Generic");
-                localStorage.setItem("savedAddress", address);
-            
-                // Check the network and switch if not Polygon
-                const network = await provider.getNetwork();
-                if (network.chainId !== 137) {
-                    await window.ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [polygonNetwork]
-                    });
+            } else {
+                // Use MetaMask provider for non-mobile devices
+                const metamaskProvider = window.ethereum.providers?.find((provider: { isMetaMask: any; }) => provider.isMetaMask);
+    
+                if (metamaskProvider) {
+                    const provider = new ethers.providers.Web3Provider(metamaskProvider, "any");
+                    const accounts = await provider.send("eth_requestAccounts", []);
+    
+                    if (accounts.length === 0) {
+                        throw new Error("No accounts found in MetaMask.");
+                    }
+    
+                    const signer = provider.getSigner();
+                    const address = await signer.getAddress();
+                    setSigner(signer);
+                    setAddress(address);
+                    setConnected(true);
+    
+                    localStorage.setItem("walletConnected", "MetaMask");
+                    localStorage.setItem("savedAddress", address);
+    
+                    const network = await provider.getNetwork();
+                    if (network.chainId !== 137) {
+                        await metamaskProvider.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [polygonNetwork]
+                        });
+                    }
+                } else {
+                    throw new Error("MetaMask is not installed.");
                 }
-                      
-          } catch (e) {
-              console.error(e);
-              setCheckWallet(true); // Show error message or handle error
-              setConnected(false);
-              localStorage.removeItem("walletConnected");
-              localStorage.removeItem("savedAddress");
-          } finally {
-              setLoadingWallet(false);
-              setLoadingWalletConnection(false);
-          }
-      };
+            }
+        } catch (e) {
+            console.error(e);
+            setCheckWallet(true);
+            setConnected(false);
+            localStorage.removeItem("walletConnected");
+            localStorage.removeItem("savedAddress");
+        } finally {
+            setLoadingWallet(false);
+            setLoadingWalletConnection(false);
+        }
+    };
+    
       
     
     
