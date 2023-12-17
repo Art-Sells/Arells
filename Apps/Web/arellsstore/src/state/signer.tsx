@@ -185,32 +185,32 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
 // Connect Wallet functions/s above
 
-    const switchToPolygonNetwork = async () => {
-        try {
-            if (window.ethereum) {
-                // Get the current network's chain ID
-                const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+    // const switchToPolygonNetwork = async () => {
+    //     try {
+    //         if (window.ethereum) {
+    //             // Get the current network's chain ID
+    //             const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
 
-                // Only request a network switch if the current chain ID is not Polygon's
-                if (currentChainId !== polygonNetwork.chainId) {
-                    await window.ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [polygonNetwork],
-                    });
-                }
-            } else {
-                console.log('Ethereum provider is not available');
-                // Handle the absence of an Ethereum provider
-            }
-        } catch (error) {
-            console.error('Error switching to Polygon network:', error);
-            // Handle any errors that occur during the switch
-        }
-    };
+    //             // Only request a network switch if the current chain ID is not Polygon's
+    //             if (currentChainId !== polygonNetwork.chainId) {
+    //                 await window.ethereum.request({
+    //                     method: 'wallet_addEthereumChain',
+    //                     params: [polygonNetwork],
+    //                 });
+    //             }
+    //         } else {
+    //             console.log('Ethereum provider is not available');
+    //             // Handle the absence of an Ethereum provider
+    //         }
+    //     } catch (error) {
+    //         console.error('Error switching to Polygon network:', error);
+    //         // Handle any errors that occur during the switch
+    //     }
+    // };
 
-    useEffect(() => {
-        switchToPolygonNetwork();
-    }, []);
+    // useEffect(() => {
+    //     switchToPolygonNetwork();
+    // }, []);
 
     
 
@@ -313,7 +313,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     const connectCoinbase = async () => {
         setLoadingWallet(true);
         setLoadingWalletConnection(true);
-        
+
 
         try {
             // Initialize Coinbase Wallet provider

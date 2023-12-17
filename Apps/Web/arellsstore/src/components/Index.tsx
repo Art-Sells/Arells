@@ -67,7 +67,7 @@ const Index = () => {
         setOpenStore(true);
         setOpenStoreConnected(false);
       }
-      else {
+      else if (address) {
         setOpenStore(false);
         setOpenStoreConnected(true);
       }
