@@ -185,32 +185,32 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
 // Connect Wallet functions/s above
 
-    // const switchToPolygonNetwork = async () => {
-    //     try {
-    //         if (window.ethereum) {
-    //             // Get the current network's chain ID
-    //             const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
+    const switchToPolygonNetwork = async () => {
+        try {
+            if (window.ethereum) {
+                // Get the current network's chain ID
+                const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
 
-    //             // Only request a network switch if the current chain ID is not Polygon's
-    //             if (currentChainId !== polygonNetwork.chainId) {
-    //                 await window.ethereum.request({
-    //                     method: 'wallet_addEthereumChain',
-    //                     params: [polygonNetwork],
-    //                 });
-    //             }
-    //         } else {
-    //             console.log('Ethereum provider is not available');
-    //             // Handle the absence of an Ethereum provider
-    //         }
-    //     } catch (error) {
-    //         console.error('Error switching to Polygon network:', error);
-    //         // Handle any errors that occur during the switch
-    //     }
-    // };
+                // Only request a network switch if the current chain ID is not Polygon's
+                if (currentChainId !== polygonNetwork.chainId) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [polygonNetwork],
+                    });
+                }
+            } else {
+                console.log('Ethereum provider is not available');
+                // Handle the absence of an Ethereum provider
+            }
+        } catch (error) {
+            console.error('Error switching to Polygon network:', error);
+            // Handle any errors that occur during the switch
+        }
+    };
 
-    // useEffect(() => {
-    //     switchToPolygonNetwork();
-    // }, []);
+    useEffect(() => {
+        switchToPolygonNetwork();
+    }, []);
 
     
 
@@ -313,7 +313,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     const connectCoinbase = async () => {
         setLoadingWallet(true);
         setLoadingWalletConnection(true);
-
+        
 
         try {
             // Initialize Coinbase Wallet provider
@@ -362,15 +362,40 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         setLoadingWalletConnection(true);
     
         try {
-            // Find MetaMask provider from ethereum.providers
-            const metamaskProvider = window.ethereum.providers?.find((provider: { isMetaMask: any; }) => provider.isMetaMask);
+            // Check if the device is not a mobile device
+            if (!isIOSDevice() && !isAndroidDevice()) {
+                // Find MetaMask provider from ethereum.providers
+                const metamaskProvider = window.ethereum.providers?.find((provider: { isMetaMask: any; }) => provider.isMetaMask);
     
-            if (metamaskProvider) {
-                const provider = new Web3Provider(metamaskProvider);
-                const accounts = await provider.send("eth_requestAccounts", []);
+                if (metamaskProvider) {
+                    const provider = new Web3Provider(metamaskProvider);
+                    const accounts = await provider.send("eth_requestAccounts", []);
+    
+                    if (accounts.length === 0) {
+                        throw new Error("No accounts found in MetaMask.");
+                    }
+    
+                    const signer = provider.getSigner();
+                    const address = await signer.getAddress();
+    
+                    setSigner(signer);
+                    setAddress(address);
+                    setConnected(true);
+    
+                    localStorage.setItem("walletConnected", "MetaMask");
+                    localStorage.setItem("savedAddress", address);
+                } else {
+                    // MetaMask is not installed
+                    throw new Error("MetaMask is not installed.");
+                }
+            } else if (window.ethereum) {
+                // Fallback to generic provider for mobile devices
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+    
+                const accounts = await provider.listAccounts();
     
                 if (accounts.length === 0) {
-                    throw new Error("No accounts found in MetaMask.");
+                    throw new Error("No accounts found.");
                 }
     
                 const signer = provider.getSigner();
@@ -380,11 +405,8 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                 setAddress(address);
                 setConnected(true);
     
-                localStorage.setItem("walletConnected", "MetaMask");
+                localStorage.setItem("walletConnected", "Generic");
                 localStorage.setItem("savedAddress", address);
-            } else {
-                // MetaMask is not installed
-                throw new Error("MetaMask is not installed.");
             }
         } catch (e) {
             console.error(e);
@@ -397,6 +419,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             setLoadingWalletConnection(false);
         }
     };
+    
     
     
     
