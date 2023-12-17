@@ -173,6 +173,7 @@ const Selling = () => {
 				</p>
 			)}
 			{artSelling && (
+				<>
 				<div id="container-seller-created"
 					className={containerClass}>
 					{sellingNFTs?.map((nft) => (
@@ -181,6 +182,8 @@ const Selling = () => {
 						key={nft.id}/>
 					))}
 				</div>
+				<hr id="inventory-line"/>				
+				</>
 			)}
 
 		<p id="bear-markets-description-owned-buy">

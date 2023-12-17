@@ -175,6 +175,7 @@ const Owned = () => {
 							<StoreAssetHolder nft={nft} key={nft.id} />
 						))}
 					</div>
+					<hr id="inventory-line"/>
 				</>
 			)}
 
