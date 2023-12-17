@@ -105,10 +105,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         if (window.ethereum) {
             connectCoinbase();
         } else if (isMobileDevice()) {
-            if (isIOSDevice()) {
-                window.location.href = "https://apps.apple.com/us/app/coinbase-wallet/id1278383455";
+            if (isIOSDevice()) { 
+                window.location.href = "cbwallet://dapp?cb_url=https%3A%2F%2Farells.com";
             } else if (isAndroidDevice()) {
-                window.location.href = "https://play.google.com/store/apps/details?id=org.toshi";
+                window.location.href = "https://go.cb-w.com/dapp?cb_url=https%3A%2F%2Farells.com";
             }
         } else {
             connectCoinbase();
