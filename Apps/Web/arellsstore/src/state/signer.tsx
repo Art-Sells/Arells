@@ -356,69 +356,57 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         setLoadingWalletConnection(false);
     };
 
+      
+      const connectMetaMask = async () => {
+          setLoadingWallet(true);
+          setLoadingWalletConnection(true);
+      
+          try {
 
-    const connectMetaMask = async () => {
-        setLoadingWallet(true);
-        setLoadingWalletConnection(true);
-    
-        try {
-            // Check if the device is not a mobile device
-            if (!isIOSDevice() && !isAndroidDevice()) {
-                // Find MetaMask provider from ethereum.providers
-                const metamaskProvider = window.ethereum.providers?.find((provider: { isMetaMask: any; }) => provider.isMetaMask);
-    
-                if (metamaskProvider) {
-                    const provider = new Web3Provider(metamaskProvider);
-                    const accounts = await provider.send("eth_requestAccounts", []);
-    
-                    if (accounts.length === 0) {
-                        throw new Error("No accounts found in MetaMask.");
-                    }
-    
-                    const signer = provider.getSigner();
-                    const address = await signer.getAddress();
-    
-                    setSigner(signer);
-                    setAddress(address);
-                    setConnected(true);
-    
-                    localStorage.setItem("walletConnected", "MetaMask");
-                    localStorage.setItem("savedAddress", address);
-                } else {
-                    // MetaMask is not installed
-                    throw new Error("MetaMask is not installed.");
-                }
-            } else if (window.ethereum) {
+            const dappUrl = 'https://arells.com'; // Replace with your dapp URL
+            const deepLinkUrl = `https://metamask.app.link/dapp/${dappUrl}`;
+            window.location.href = deepLinkUrl;
+              // Check if the device is not a mobile device
                 // Fallback to generic provider for mobile devices
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
-    
+            
                 const accounts = await provider.listAccounts();
-    
+            
                 if (accounts.length === 0) {
                     throw new Error("No accounts found.");
                 }
-    
+            
                 const signer = provider.getSigner();
                 const address = await signer.getAddress();
-    
+            
                 setSigner(signer);
                 setAddress(address);
                 setConnected(true);
-    
+            
                 localStorage.setItem("walletConnected", "Generic");
                 localStorage.setItem("savedAddress", address);
-            }
-        } catch (e) {
-            console.error(e);
-            setCheckWallet(true); // Show error message or handle error
-            setConnected(false);
-            localStorage.removeItem("walletConnected");
-            localStorage.removeItem("savedAddress");
-        } finally {
-            setLoadingWallet(false);
-            setLoadingWalletConnection(false);
-        }
-    };
+            
+                // Check the network and switch if not Polygon
+                const network = await provider.getNetwork();
+                if (network.chainId !== 137) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [polygonNetwork]
+                    });
+                }
+                      
+          } catch (e) {
+              console.error(e);
+              setCheckWallet(true); // Show error message or handle error
+              setConnected(false);
+              localStorage.removeItem("walletConnected");
+              localStorage.removeItem("savedAddress");
+          } finally {
+              setLoadingWallet(false);
+              setLoadingWalletConnection(false);
+          }
+      };
+      
     
     
     
