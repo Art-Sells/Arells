@@ -119,14 +119,14 @@ const Index = () => {
 
         <hr id="black-liner"/>
 
-        <p id="bear-markets-description">
-        NO MORE BEAR MARKETS
+        <p id="ada-description">
+        ARELLS DIGITAL ASSETS
         </p>
 
         <hr id="black-liner-bottom-home"/>
 
-        <p id="ada-description">
-        ARELLS DIGITAL ASSETS
+        <p id="bear-markets-description">
+        NO MORE BEAR MARKETS
         </p>
 
 
