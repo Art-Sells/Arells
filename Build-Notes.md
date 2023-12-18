@@ -55,6 +55,7 @@ ________________________________________________________________________________
 - Pages separated like so: store-name/asset/address
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 - Research Upgradable SmartContracts (through OpenZeppelin)
+- Web3 Modal
 
 ### Wallet
 - Test with Metamask/Mumbai-USDC
