@@ -11,31 +11,36 @@ ________________________________________________________________________________
 ## Arells 1.5
 - Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
-- HOW TO GUIDE (For Buyers & Sellers)
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
 
 ### Edit Store
-- Store Logo: Default Store Logo
-- Store Name: No Maximum Characters
+- Logo: Default Store Logo
+- Name: No Maximum Characters
+- Addresses:
+0x74348347 - (Claimed)
+"Unnamed Store" Address - (Claim Address)
+{Must Claim All Addresses}
 
 ### My Store
-- Top-Center[Edit Store]-(SignUp/LogIn to Create/Edit {if not logged in})
+- Top-Center[EDIT]-(SignUp/LogIn to Create/Edit {if not logged in}) (You are not the owner of this Address)
 - small Logo or Slogan
 - Dollar Symbols
 - Logo: Default Store Logo
-- Store Name: Maximum Width if long name (Test)
+- Store Name: Maximum Width if long name (Test) Unnamed Store
+- Store Address: Address
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 
 ### Other Store
 - Top-Left[||]-([My-Store]if connected)([/\]if not connected)
 - small Logo or Slogan
 - Image Default: Store Icon
-- Name Default: Unnamed Store
+- Name Default: Unclaimed Store Address
 
 ### If Time Permits
 - Hide Assets in store.
+- HOW TO GUIDE (For Buyers & Sellers)
 
 ________________________________________________________________________________________________________________________________________________
 
