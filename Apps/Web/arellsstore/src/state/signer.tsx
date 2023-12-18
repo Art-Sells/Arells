@@ -57,6 +57,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     const [showDownloadWallet, setShowDownloadWallet] = useState(false);
     const [showConnectWallet, setShowConnectWallet] = useState(false);
+    const [showMetaMask, setShowMetaMask] = useState(false);
     const [signer, setSigner] = useState<JsonRpcSigner>();
     const [address, setAddress] = useState("");
     const [showLoadingWalletConnection, setLoadingWalletConnection] = useState(false);
@@ -82,14 +83,11 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         if (isMobileDevice()) {
             if (isIOSDevice()) {
                 window.location.href = "https://apps.apple.com/us/app/coinbase-wallet/id1278383455";
-                window.location.reload();
             } else if (isAndroidDevice()) {
                 window.location.href = "https://play.google.com/store/apps/details?id=org.toshi";
-                window.location.reload();
             }
         } else {
             window.open('https://www.coinbase.com/wallet', '_blank');
-            window.location.reload();
         }
     };
 
@@ -98,10 +96,8 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         if (isMobileDevice()) {
             if (isIOSDevice()) {
                 window.location.href = "https://apps.apple.com/us/app/metamask/id1438144202";
-                window.location.reload();
             } else if (isAndroidDevice()) {
                 window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
-                window.location.reload();
             }
         } else {
             window.open('https://metamask.io/download.html', '_blank');
@@ -112,14 +108,12 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     const connectCoinbaseFunction = () => {
         if (window.ethereum) {
             connectCoinbase();
-        } else if (!window.ethereum && isMobileDevice()) {
-            if (isIOSDevice()) {
-                connectCoinbase();
-                window.location.href = "https://apps.apple.com/us/app/coinbase-wallet/id1278383455";
+        } else if (isMobileDevice()) {
+            if (isIOSDevice()) { 
+                window.location.href = "cbwallet://dapp?cb_url=https%3A%2F%2Farells.com";
                 window.location.reload();
             } else if (isAndroidDevice()) {
-                connectCoinbase();
-                window.location.href = "https://play.google.com/store/apps/details?id=org.toshi";
+                window.location.href = "https://go.cb-w.com/dapp?cb_url=https%3A%2F%2Farells.com";
                 window.location.reload();
             }
         } else {
@@ -129,15 +123,17 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const connectMetaMaskFunction = () => {
-        if (window.ethereum && window.ethereum.isMetaMask) {
+        if (window.ethereum) {
             connectMetaMask();
-        } else if (!window.ethereum && isMobileDevice()) {
+        } else if (isMobileDevice()) {
             if (isIOSDevice()) {
-                window.location.href = "https://apps.apple.com/us/app/metamask/id1438144202";
-                window.location.reload();
+                const dappUrl = 'https://arells.com'; // Replace with your dapp URL
+                const deepLinkUrl = `https://metamask.app.link/dapp/${dappUrl}`;
+                window.location.href = deepLinkUrl;
             } else if (isAndroidDevice()) {
-                window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
-                window.location.reload();
+                const dappUrl = 'https://arells.com'; // Replace with your dapp URL
+                const deepLinkUrl = `https://metamask.app.link/dapp/${dappUrl}`;
+                window.location.href = deepLinkUrl;
             }
         } else {
             connectMetaMask();
@@ -223,6 +219,9 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
+        if(isMobileDevice()){
+            setShowMetaMask(true);
+        }
         switchToPolygonNetwork();
     }, []);
 
@@ -248,54 +247,59 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         async function initialize() {
             if (window.ethereum) {
-                // Check if any accounts are already connected
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // Get accounts
+                
+                if (accounts.length === 0) {
+                    console.error("No account connected");
+                    return;
+                }
+                
+                const provider = new Web3Provider(window.ethereum);
+                const signerInstance = provider.getSigner();
+                setSigner(signerInstance);
+                
+                const currentAddress = await signerInstance.getAddress();
+                
+                setAddress(currentAddress);
+   
+                const savedAddress = localStorage.getItem("savedAddress");
     
-                if (accounts.length > 0) {
-                    // Initialize signer and address if an account is already connected
-                    const provider = new Web3Provider(window.ethereum);
-                    const signerInstance = provider.getSigner();
-                    setSigner(signerInstance);
-                    
-                    const currentAddress = await signerInstance.getAddress();
-                    setAddress(currentAddress);
-                    localStorage.setItem("walletConnected", "true");
+                // If savedAddress is not the same as currentAddress, update it in localStorage
+                if (savedAddress !== currentAddress) {
                     localStorage.setItem("savedAddress", currentAddress);
                 }
     
-                // Listen for account changes
-                window.ethereum.on("accountsChanged", async (accounts: string | any[]) => {
+                window.ethereum.on("accountsChanged", async (accounts: string[]) => {
                     if (accounts.length === 0) {
-                        // Handle case where user disconnects all accounts
                         handleDisconnect();
+                        setSigner(undefined);  // Clear signer state
+                        setAddress("");  // Clear address state
                     } else {
-                        // Handle account change
                         const provider = new Web3Provider(window.ethereum);
                         const signerInstance = provider.getSigner();
                         setSigner(signerInstance);
                         
                         const newAddress = await signerInstance.getAddress();
                         setAddress(newAddress);
-                        setConnected(true);
-                        localStorage.setItem("savedAddress", newAddress);
                     }
-                });
+                });          
     
-                // Listen for disconnect
                 window.ethereum.on("disconnect", handleDisconnect);
+    
+                const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
+                setConnected(wasWalletConnected);
             }
         }
     
         initialize();
     
         return () => {
-            // Clean up listeners when the component unmounts
             if (window.ethereum) {
-                window.ethereum.removeListener("accountsChanged", handleDisconnect);
+                window.ethereum.removeListener("accountsChanged", connectCoinbase);
                 window.ethereum.removeListener("disconnect", handleDisconnect);
             }
         };
-    }, []);  
+    }, []);    
     
 
     useEffect(() => {
@@ -403,8 +407,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                 }
             } else {
                 // Use MetaMask provider for non-mobile devices
-                if (window.ethereum && window.ethereum.isMetaMask) {
-                    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+                const metamaskProvider = window.ethereum.providers?.find((provider: { isMetaMask: any; }) => provider.isMetaMask);
+    
+                if (metamaskProvider) {
+                    const provider = new ethers.providers.Web3Provider(metamaskProvider, "any");
                     const accounts = await provider.send("eth_requestAccounts", []);
     
                     if (accounts.length === 0) {
@@ -422,7 +428,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     
                     const network = await provider.getNetwork();
                     if (network.chainId !== 137) {
-                        await window.ethereum.request({
+                        await metamaskProvider.request({
                             method: 'wallet_addEthereumChain',
                             params: [polygonNetwork]
                         });
@@ -474,18 +480,22 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 			<div id="connectWalletBuy">
 				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
-					<button id="connectWallet"
-						onClick={downloadMetaMaskFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/metamask-icon.png"/>
-					</button>
-                    <span id="wallet-spacing"></span>	
+                    {showMetaMask && (
+                        <>
+                            <button id="connectWallet"
+                            onClick={downloadMetaMaskFunction}
+                            disabled={loadingWallet}>
+                            <Image 
+                            loader={imageLoader}
+                            id="wallet-icon"
+                            alt=""
+                            width={50}
+                            height={50}  
+                            src="images/prototype/metamask-icon.png"/>
+                        </button>
+                        <span id="wallet-spacing"></span>	
+                        </>
+                    )}
                     <button id="connectWallet"
 						onClick={downloadCoinbaseFunction}
 						disabled={loadingWallet}>
@@ -504,18 +514,22 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 			<div id="connectWalletBuy">
 				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
-                    <button id="connectWallet"
-						onClick={connectMetaMaskFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/metamask-icon.png"/>
-					</button>	
-                    <span id="wallet-spacing"></span>	
+                    {showMetaMask && (
+                        <>
+                            <button id="connectWallet"
+                                onClick={connectMetaMaskFunction}
+                                disabled={loadingWallet}>
+                                <Image 
+                                loader={imageLoader}
+                                id="wallet-icon"
+                                alt=""
+                                width={50}
+                                height={50}  
+                                src="images/prototype/metamask-icon.png"/>
+                            </button>	
+                            <span id="wallet-spacing"></span>		
+                        </>
+                    )}
 					<button id="connectWallet"
 						onClick={connectCoinbaseFunction}
 						disabled={loadingWallet}>
