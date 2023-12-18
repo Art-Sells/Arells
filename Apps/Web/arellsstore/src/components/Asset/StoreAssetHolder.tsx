@@ -149,6 +149,22 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
     addressMatch && address && forSale && isNFTMinted && forSaleMinted; 
 // Asset Changing function/s above 
 
+
+//Formatted Price 
+    const formatPriceWithCommasAndDecimals = (price: string) => {
+      return parseFloat(price).toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+      });
+    };
+
+    const formattedPriceWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPrice);
+    const formattedPriceAfterPurchaseWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPriceAfterPurchase);
+    const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAfterPurchase === "..." 
+      ? "..." 
+      : formatPriceWithCommasAndDecimals(formattedNewPriceAfterPurchase);
+//Formatted Price
+
   return (
     <>
 
@@ -256,7 +272,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="polygon-logo" 
                         src="/images/market/polygon.png"
                       /> 
-                      {formattedPrice}
+                      {formattedPriceWithCommasAndDecimals}
                     </p>
                 </div>        
 {/* change below link after test */}                      
@@ -337,7 +353,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="polygon-logo-pap" 
                         src="/images/market/polygon.png"
                       /> 
-                      {formattedPriceAfterPurchase}
+                      {formattedPriceAfterPurchaseWithCommasAndDecimals}
                     </p>
                     <hr id="priceline-seller-created" />
                     <p id="yourprice-seller-created">Price</p>
@@ -350,7 +366,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="polygon-logo" 
                         src="/images/market/polygon.png"
                       />   
-                      {formattedPrice}
+                      {formattedPriceWithCommasAndDecimals}
                     </p>
                 </div>        
 {/* change below link after test */}                      
@@ -394,7 +410,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="polygon-logo" 
                           src="/images/market/polygon.png"
                         /> 
-                        {formattedPrice}
+                        {formattedPriceWithCommasAndDecimals}
                       </p>
                     </div>
                     <button id="not-for-sale">
@@ -422,7 +438,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="polygon-logo-pap" 
                         src="/images/market/polygon.png"
                       /> 
-                      {formattedNewPriceAfterPurchase}
+                      {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
                     </p>
                     <hr id="priceline-seller-created" />
                     <p id="yourprice-seller-created">Price</p>
@@ -435,7 +451,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="polygon-logo" 
                         src="/images/market/polygon.png"
                       /> 
-                      {formattedPrice}
+                      {formattedPriceWithCommasAndDecimals}
                     </p>
                 </div>        
 {/* change below link after test */}                      
@@ -523,7 +539,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="polygon-logo-pap" 
                         src="/images/market/polygon.png"
                       /> 
-                        {formattedPriceAfterPurchase}
+                        {formattedPriceAfterPurchaseWithCommasAndDecimals}
                         </p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
@@ -536,7 +552,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="polygon-logo" 
                         src="/images/market/polygon.png"
                       /> 
-                        {formattedPrice}
+                        {formattedPriceWithCommasAndDecimals}
                         </p>
                   </div>    
 {/* change below link after test */}                             
@@ -579,7 +595,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="polygon-logo" 
                         src="/images/market/polygon.png"
                       /> 
-                        {formattedPrice}
+                        {formattedPriceWithCommasAndDecimals}
                         </p>
                   </div>  
 {/* change below link after test */}                               
@@ -611,7 +627,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="polygon-logo-pap" 
                           src="/images/market/polygon.png"
                         /> 
-                            {formattedNewPriceAfterPurchase}
+                            {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
                         </p>
                       )}
                       <hr id="priceline-seller-created" />
@@ -625,7 +641,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="polygon-logo" 
                         src="/images/market/polygon.png"
                       /> 
-                        {formattedPrice}
+                        {formattedPriceWithCommasAndDecimals}
                       </p>
                   </div>  
 {/* change below link after test */}                               
