@@ -57,6 +57,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     const [showDownloadWallet, setShowDownloadWallet] = useState(false);
     const [showConnectWallet, setShowConnectWallet] = useState(false);
+    const [showMetaMask, setShowMetaMask] = useState(false);
     const [signer, setSigner] = useState<JsonRpcSigner>();
     const [address, setAddress] = useState("");
     const [showLoadingWalletConnection, setLoadingWalletConnection] = useState(false);
@@ -100,6 +101,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             }
         } else {
             window.open('https://metamask.io/download.html', '_blank');
+            window.location.reload();
         }
     };
     
@@ -109,8 +111,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         } else if (isMobileDevice()) {
             if (isIOSDevice()) { 
                 window.location.href = "cbwallet://dapp?cb_url=https%3A%2F%2Farells.com";
+                window.location.reload();
             } else if (isAndroidDevice()) {
                 window.location.href = "https://go.cb-w.com/dapp?cb_url=https%3A%2F%2Farells.com";
+                window.location.reload();
             }
         } else {
             connectCoinbase();
@@ -215,6 +219,9 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
+        if(isMobileDevice()){
+            setShowMetaMask(true);
+        }
         switchToPolygonNetwork();
     }, []);
 
@@ -473,18 +480,22 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 			<div id="connectWalletBuy">
 				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
-					<button id="connectWallet"
-						onClick={downloadMetaMaskFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/metamask-icon.png"/>
-					</button>
-                    <span id="wallet-spacing"></span>	
+                    {showMetaMask && (
+                        <>
+                            <button id="connectWallet"
+                            onClick={downloadMetaMaskFunction}
+                            disabled={loadingWallet}>
+                            <Image 
+                            loader={imageLoader}
+                            id="wallet-icon"
+                            alt=""
+                            width={50}
+                            height={50}  
+                            src="images/prototype/metamask-icon.png"/>
+                        </button>
+                        <span id="wallet-spacing"></span>	
+                        </>
+                    )}
                     <button id="connectWallet"
 						onClick={downloadCoinbaseFunction}
 						disabled={loadingWallet}>
@@ -503,18 +514,22 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 			<div id="connectWalletBuy">
 				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
-                    <button id="connectWallet"
-						onClick={connectMetaMaskFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/metamask-icon.png"/>
-					</button>	
-                    <span id="wallet-spacing"></span>	
+                    {showMetaMask && (
+                        <>
+                            <button id="connectWallet"
+                                onClick={connectMetaMaskFunction}
+                                disabled={loadingWallet}>
+                                <Image 
+                                loader={imageLoader}
+                                id="wallet-icon"
+                                alt=""
+                                width={50}
+                                height={50}  
+                                src="images/prototype/metamask-icon.png"/>
+                            </button>	
+                            <span id="wallet-spacing"></span>		
+                        </>
+                    )}
 					<button id="connectWallet"
 						onClick={connectCoinbaseFunction}
 						disabled={loadingWallet}>

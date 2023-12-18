@@ -17,6 +17,7 @@
     "@coinbase/wallet-sdk": "^3.7.2",
     "@openzeppelin/contracts": "^4.9.3",
     "@types/formidable": "2.0.4",
+    "@walletconnect/web3-provider": "^1.8.0",
     "aws-sdk": "^2.1515.0",
     "axios": "^1.6.2",
     "dotenv": "^16.3.1",
