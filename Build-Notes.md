@@ -8,10 +8,18 @@
 - Individual Posts: Buy art that obscures bear markets with Arells! Art by etc on Arells. Hashtags (Asset/Assets/Art/Investing/Invest/Finance) 
 ________________________________________________________________________________________________________________________________________________
 
+## Arells 1.2
+
+### My/Other Stores
+- When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
+
+________________________________________________________________________________________________________________________________________________
+
 ## Arells 1.5
 - Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
 - Coinbase SDK (Image) Test
+- Change AUM to Revenue. Automatic Token Confirmations
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
@@ -21,7 +29,7 @@ ________________________________________________________________________________
 - Name: No Maximum Characters
 - Addresses:
 0x74348347 - (Claimed)
-"Unnamed Store" Address - (Claim Address)
+"Unclaimed Store Address" - (Claim Address)
 {Must Claim All Addresses}
 
 ### My Store
@@ -29,7 +37,7 @@ ________________________________________________________________________________
 - small Logo or Slogan
 - Dollar Symbols
 - Logo: Default Store Logo
-- Store Name: Maximum Width if long name (Test) Unnamed Store
+- Store Name: Maximum Width if long name (Test) Unclaimed Store Address
 - Store Address: Address
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 
