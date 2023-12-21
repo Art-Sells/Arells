@@ -242,7 +242,8 @@ ________________________________________________________________________________
 - NFTs = Digital Art,
 - Seed Phrase = Vault Code
 - Connect Wallet = Connect Store, 
-- Public Key = Address, 
+- Public Key = Address,
+- Creating on one new address (if we switch blockchains) automatically bridges all funds from one address to another… Users don’t have to manually change addresses. All polygon prices switch to USDC (auto)
 - Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
 - Make API Key Private
 - Build with Circle Wallet As A Service? (USDC) ***Connects to bank account once and automatically converts USDC with purchacing***                                           
