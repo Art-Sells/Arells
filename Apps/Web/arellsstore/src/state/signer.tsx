@@ -231,7 +231,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         if (typeof window !== 'undefined' && CoinbaseWalletSDK) {
             const wallet = new CoinbaseWalletSDK({
                 appName: 'Arells',
-                appLogoUrl: 'https://arells.com/favicon.ico',
+                appLogoUrl: 'https://arells.com/ArellsIcoIcon.png',
                 darkMode: false
             });
         }
@@ -295,6 +295,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         return () => {
             if (window.ethereum) {
                 window.ethereum.removeListener("accountsChanged", connectCoinbase);
+                window.ethereum.removeListener("accountsChanged", connectMetaMask);
                 window.ethereum.removeListener("disconnect", handleDisconnect);
             }
         };
