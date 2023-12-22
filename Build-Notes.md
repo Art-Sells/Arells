@@ -19,7 +19,7 @@ ________________________________________________________________________________
 - Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
 - Coinbase SDK (Image) Test
-- Change AUM to Revenue. Automatic Token Confirmations
+- Emphasize Revenue while including AUM... arells(dot)com/metrics
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
@@ -243,6 +243,7 @@ ________________________________________________________________________________
 - Seed Phrase = Vault Code
 - Connect Wallet = Connect Store, 
 - Public Key = Address,
+- Automatic Token Confirmations when listing, creating, and buying Art.
 - Creating on one new address (if we switch blockchains) automatically bridges all funds from one address to another… Users don’t have to manually change addresses. All polygon prices switch to USDC (auto)
 - Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
 - Make API Key Private
