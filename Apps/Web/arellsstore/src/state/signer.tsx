@@ -218,10 +218,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        // if(isMobileDevice()){
-        //     setShowMetaMask(true);
-        // }
-        switchToPolygonNetwork();
+        const initNetwork = async () => {
+            await switchToPolygonNetwork();
+        };
+        initNetwork();
     }, []);
 
     
