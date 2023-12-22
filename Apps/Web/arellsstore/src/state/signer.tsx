@@ -57,7 +57,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     const [showDownloadWallet, setShowDownloadWallet] = useState(false);
     const [showConnectWallet, setShowConnectWallet] = useState(false);
-    const [showMetaMask, setShowMetaMask] = useState(false);
+    const [showMetaMask, setShowMetaMask] = useState(true);
     const [signer, setSigner] = useState<JsonRpcSigner>();
     const [address, setAddress] = useState("");
     const [showLoadingWalletConnection, setLoadingWalletConnection] = useState(false);
@@ -93,13 +93,12 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     const downloadMetaMaskFunction = () => {
         setShowDownloadWallet(false);
-        if (isMobileDevice()) {
-            if (isIOSDevice()) {
-                window.location.href = "https://apps.apple.com/us/app/metamask/id1438144202";
-            } else if (isAndroidDevice()) {
-                window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
-            }
-        } else {
+        if (isIOSDevice()) {
+            window.location.href = "https://apps.apple.com/us/app/metamask/id1438144202";
+        } else if (isAndroidDevice()) {
+            window.location.href = "https://play.google.com/store/apps/details?id=io.metamask";
+        }
+        else {
             window.open('https://metamask.io/download.html', '_blank');
             window.location.reload();
         }
@@ -219,9 +218,9 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        if(isMobileDevice()){
-            setShowMetaMask(true);
-        }
+        // if(isMobileDevice()){
+        //     setShowMetaMask(true);
+        // }
         switchToPolygonNetwork();
     }, []);
 
@@ -514,7 +513,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 			<div id="connectWalletBuy">
 				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
-                    {showMetaMask && (
+                    {/* {showMetaMask && (
                         <>
                             <button id="connectWallet"
                                 onClick={connectMetaMaskFunction}
@@ -529,7 +528,19 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                             </button>	
                             <span id="wallet-spacing"></span>		
                         </>
-                    )}
+                    )} */}
+                    <button id="connectWallet"
+                        onClick={connectMetaMaskFunction}
+                        disabled={loadingWallet}>
+                        <Image 
+                        loader={imageLoader}
+                        id="wallet-icon"
+                        alt=""
+                        width={50}
+                        height={50}  
+                        src="images/prototype/metamask-icon.png"/>
+                    </button>
+                    <span id="wallet-spacing"></span>		
 					<button id="connectWallet"
 						onClick={connectCoinbaseFunction}
 						disabled={loadingWallet}>
