@@ -18,7 +18,6 @@ ________________________________________________________________________________
 ## Arells 1.5
 - Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
-- Coinbase SDK (Image) Test
 - Emphasize Revenue while including AUM... arells(dot)com/metrics
 
 ### Sign-Up
@@ -48,6 +47,7 @@ ________________________________________________________________________________
 
 ### If Time Permits
 - Hide Assets in store.
+- Coinbase SDK (Image) Test
 - HOW TO GUIDE (For Buyers & Sellers)
 
 ________________________________________________________________________________________________________________________________________________
