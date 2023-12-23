@@ -153,7 +153,10 @@ const Index = () => {
 				)}	
         <br></br>
 
-        <Link href="https://discord.gg/6UUJxepDx7 " passHref>
+        <Link 
+        href="https://discord.gg/6UUJxepDx7" 
+        passHref
+        id="discord-wrapper">
           <Image 
             loader={imageLoader}
             onLoad={() => handleImageLoaded('arellsIcon')}
