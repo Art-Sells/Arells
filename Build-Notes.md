@@ -12,6 +12,12 @@ ________________________________________________________________________________
 
 ### My/Other Stores
 - When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
+- Hide Assets in store.
+
+#### After Testing and Before Launch: 
+- Store Private Key Cold
+- Delete all Test/Branched/Component links
+- Inform of Arells 1.5 release (and features).
 
 ________________________________________________________________________________________________________________________________________________
 
@@ -45,19 +51,17 @@ ________________________________________________________________________________
 - Image Default: Store Icon
 - Name Default: Unclaimed Store Address
 
+#### After Testing and Before Launch: 
+- Store Private Key Cold
+- Delete all Test/Branched/Component links
+- Inform of Arells 1.7 release (and features including clickable pictures).
+
 ### If Time Permits
-- Hide Assets in store.
 - Coinbase SDK (Image) Test
-- HOW TO GUIDE (For Buyers & Sellers)
 
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.7
-- Hide Assets in store.
-
-________________________________________________________________________________________________________________________________________________
-
-## Arells 2.0
 
 ### My Store
 - Images clickable
@@ -96,7 +100,7 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________________________________________________________
 
 
-## Arells 3.0
+## Arells 2.0
 - SiteMap/s
 - Connect NFTs <-> NFTs Function
 - Pages separated like so: store-name/asset/address
@@ -194,7 +198,7 @@ ________________________________________________________________________________
 - Google Sitemap Update
 ________________________________________________________________________________________________________________________________________________
 
-## Arells 4.0
+## Arells 3.0
 
 ### Welcome to Arells! Never lose money selling art! [Start Selling]
 
@@ -234,7 +238,7 @@ ________________________________________________________________________________
 - Send 1 - 2 week notification about new Features in next iteration
 ________________________________________________________________________________________________________________________________________
 
-## Arells 5.0 
+## Arells 4.0 
 
 - Rename Production Repo (Arells Marketplace)
 - Wallet Logs you off After 10 minutes of innaction (review Bank Apps)
