@@ -150,7 +150,19 @@ const Index = () => {
             ENTER STORE
           </button>
         </Link>   
-				)}		  
+				)}	
+        <br></br>
+
+        <Link href="https://discord.gg/6UUJxepDx7 " passHref>
+          <Image 
+            loader={imageLoader}
+            onLoad={() => handleImageLoaded('arellsIcon')}
+            alt="" 
+            width={35}
+            height={35}
+            id="discord-icon" 
+            src="images/discord.png"/>	
+        </Link>     
     </>
   );
 }
