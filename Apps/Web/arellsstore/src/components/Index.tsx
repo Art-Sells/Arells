@@ -161,8 +161,8 @@ const Index = () => {
             loader={imageLoader}
             onLoad={() => handleImageLoaded('arellsIcon')}
             alt="" 
-            width={30}
-            height={30}
+            width={25}
+            height={25}
             id="discord-icon" 
             src="images/discord.png"/>	
         </Link>     
