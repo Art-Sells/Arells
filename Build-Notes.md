@@ -121,7 +121,6 @@ ________________________________________________________________________________
 - If logged in [(Open Store), (Close Store)]
 - If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
 
-
 ### My Store
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Bottom-Center[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
@@ -246,7 +245,7 @@ ________________________________________________________________________________
 - "Store Name is Taken Error, and if Asset Name is taken"
 - NFTs = Digital Art,
 - Seed Phrase = Vault Code
-- Connect Wallet = Connect Store, 
+- Connect Wallet = Connect Application (Application needed to Buy & Sell Arells Digital Assets), 
 - Public Key = Address,
 - Automatic Token Confirmations when listing, creating, and buying Art.
 - Creating on one new address (if we switch blockchains) automatically bridges all funds from one address to another… Users don’t have to manually change addresses. All polygon prices switch to USDC (auto)
