@@ -8,7 +8,7 @@
 - Individual Posts: Buy art that obscures bear markets with Arells! Art by etc on Arells. Hashtags (Asset/Assets/Art/Investing/Invest/Finance) 
 ________________________________________________________________________________________________________________________________________________
 
-## Arells 1.2
+## Arells 1.2 & 1.3
 
 ### My/Other Stores
 - When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
@@ -19,6 +19,23 @@ ________________________________________________________________________________
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
 - Inform of Arells 1.5 release (and features).
+________________________________________________________________________________________________________________________________________________
+
+## Arells 1.4
+
+### My Store
+- Images clickable
+
+### My Store Asset (See Asset Modal)
+- Images (Default Store Image) here render small pixels
+- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+
+### Other Store
+- Images clickable
+
+### Other Store Asset (See Asset Modal)     
+- Images (Default Store Image) here render small pixels
+- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
 ________________________________________________________________________________________________________________________________________________
 
@@ -63,20 +80,6 @@ ________________________________________________________________________________
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.7
-
-### My Store
-- Images clickable
-
-### My Store Asset (See Asset Modal)
-- Images (Default Store Image) here render small pixels
-- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
-
-### Other Store
-- Images clickable
-
-### Other Store Asset (See Asset Modal)     
-- Images (Default Store Image) here render small pixels
-- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
