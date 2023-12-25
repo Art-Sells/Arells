@@ -58,7 +58,7 @@ ________________________________________________________________________________
 - Inform of Arells 1.7 release (and features including clickable pictures).
 
 ### If Time Permits
-- Coinbase SDK (Image) Test
+- Coinbase SDK (Image) Test (do i need to clear cache)?
 
 ________________________________________________________________________________________________________________________________________________
 
