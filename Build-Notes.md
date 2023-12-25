@@ -13,6 +13,7 @@ ________________________________________________________________________________
 ### My/Other Stores
 - When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
 - Hide Assets in store.
+- Add Phantom Wallet
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
