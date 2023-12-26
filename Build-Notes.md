@@ -4,6 +4,7 @@
 
 ##### After Launch:
 - Create/Prepare Discord, Instagram (ArellsDigitalAssets) Twitter(ArellsAssets)
+- Solve Homepage Connection issue if Time Permits.
 ________________________________________________________________________________________________
 
 ## Arells 1.2
