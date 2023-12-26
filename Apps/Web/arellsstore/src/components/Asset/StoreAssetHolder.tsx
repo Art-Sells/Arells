@@ -167,89 +167,56 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
 
 // Hide and show assets below
 
-    const tokenURI = nft.tokenURI; 
+const tokenURI = nft.tokenURI; 
     const getLocalStorageKey = (tokenURI: string) => `assetVisibility-${tokenURI}`;
 
     // Function to initialize the visibility state for each NFT
     const initialVisibilityState = (tokenURI: string) => {
-        if (addressMatch) {
-            const key = getLocalStorageKey(tokenURI);
-            return localStorage.getItem(key) === 'visible';
-        }
-        return false;
+        const key = getLocalStorageKey(tokenURI);
+        return localStorage.getItem(key) === 'visible';
     };
-    const initialHideVisibilityState = (tokenURI: string) => {
-      if (addressMatch) {
-          const hideKey = getLocalStorageKey(tokenURI);
-          return localStorage.getItem(hideKey) === 'hidden';
-      }
-      return false;
-  };
 
-    const [hiddenAssetOwner, setHiddenAssetOwner] = useState(() => initialHideVisibilityState(props.nft.tokenURI));
+    const [hiddenAssetOwner, setHiddenAssetOwner] = useState(() => !initialVisibilityState(props.nft.tokenURI));
     const [shownAssetOwner, setShownAssetOwner] = useState(() => initialVisibilityState(props.nft.tokenURI));
-    const [shownAssetNotOwner, setShownAssetNotOwner] = useState(() => initialVisibilityState(props.nft.tokenURI));
+    const [shownAssetNotOwner, setShownAssetNotOwner] = useState(() => false);
 
-
+    // Function to hide an NFT
     const hideAsset = (tokenURI: string) => {
-        if (addressMatch) {
-            const key = getLocalStorageKey(tokenURI);
-            const hideKey = getLocalStorageKey(tokenURI);
-            setHiddenAssetOwner(true);
-            setShownAssetOwner(false);
-            setShownAssetNotOwner(false);
-            localStorage.setItem(key, 'hidden');
-            localStorage.setItem(hideKey, 'visible');
-        }
+        const key = getLocalStorageKey(tokenURI);
+        localStorage.setItem(key, 'hidden');
+        setHiddenAssetOwner(true);
+        setShownAssetOwner(false);
+        setShownAssetNotOwner(false);
     };
 
-
+    // Function to show an NFT
     const showAsset = (tokenURI: string) => {
-        if (addressMatch) {
-            const key = getLocalStorageKey(tokenURI);
-            const hideKey = getLocalStorageKey(tokenURI);
-            setHiddenAssetOwner(false);
-            setShownAssetOwner(true);
-            setShownAssetNotOwner(true);
-            localStorage.setItem(key, 'visible');
-            localStorage.setItem(hideKey, 'hidden');
-        }
+        const key = getLocalStorageKey(tokenURI);
+        localStorage.setItem(key, 'visible');
+        setHiddenAssetOwner(false);
+        setShownAssetOwner(true);
+        setShownAssetNotOwner(false);
     };
 
-
     useEffect(() => {
-      // Automatically hide the asset if the initial state is set to hidden
-      if (hiddenAssetOwner) {
-          hideAsset(props.nft.tokenURI);
-          if (addressMatch) {
-            setHiddenAssetOwner(true);
-            setShownAssetNotOwner(false);
-            setShownAssetOwner(false);
-          }
-          else if (!addressMatch) {
+        if (addressMatch) {
+            // User is the owner
+            if (!initialVisibilityState(props.nft.tokenURI)) {
+                setHiddenAssetOwner(true);
+                setShownAssetOwner(false);
+                setShownAssetNotOwner(false);
+            } else {
+                setHiddenAssetOwner(false);
+                setShownAssetOwner(true);
+                setShownAssetNotOwner(false);
+            }
+        } else {
+            // User is not the owner
             setHiddenAssetOwner(false);
-            setShownAssetNotOwner(false);
             setShownAssetOwner(false);
-          }
-      }
-    }, [address, hiddenAssetOwner, props.nft.tokenURI]); // Depend on hiddenAssetOwner and tokenURI
-    
-    useEffect(() => {
-        // Automatically show the asset if the initial state is set to shown
-        if (shownAssetOwner) {
-            showAsset(props.nft.tokenURI);
-            if (addressMatch) {
-              setHiddenAssetOwner(false);
-              setShownAssetNotOwner(false);
-              setShownAssetOwner(true);
-            }
-            else if (!addressMatch) {
-              setHiddenAssetOwner(false);
-              setShownAssetNotOwner(true);
-              setShownAssetOwner(false);
-            }
+            setShownAssetNotOwner(initialVisibilityState(props.nft.tokenURI));
         }
-    }, [shownAssetOwner, props.nft.tokenURI]); 
+    }, [addressMatch, props.nft.tokenURI]);
 // Hide and show assets above  
 
   return (
