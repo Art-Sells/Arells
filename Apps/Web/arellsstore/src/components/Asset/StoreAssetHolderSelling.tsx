@@ -323,15 +323,15 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
       <div id="blue-orange-seller-created">
         {/*  Change below link after test  */}
         {meta && (
-          <Image
-            loader={imageLoader}
-            alt=""
-            width={200}  
-            height={200}  
-            id="photo-asset-owned" 
-            src={meta?.imageURL}
-          />
-        )}
+            <Image
+              loader={imageLoader}
+              alt=""
+              width={200}  
+              height={200}  
+              id="photo-asset-owned" 
+              src={meta.imageURL}
+            />
+          )}
         {!meta && (
             (
               <div id="photo-asset-loading">

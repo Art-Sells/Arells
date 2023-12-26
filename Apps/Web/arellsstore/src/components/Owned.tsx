@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useRouter } from 'next/router';
 
 // asset components (change below links after test)
@@ -20,8 +20,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+const ITEMS_PER_PAGE = 6;
+
 const Owned = () => {
-	
 
 //loader functions below 
     const router = useRouter();
@@ -65,8 +66,34 @@ const Owned = () => {
 		sellingNFTs 
 	} = useNFTMarket(storeAddressFromURL);
 
-	const memoizedCreatedNFTs = useMemo(() => createdNFTs || [], [createdNFTs]);
-	const memoizedSellingNFTs = useMemo(() => sellingNFTs || [], [sellingNFTs]);
+	const [visibleItemCount, setVisibleItemCount] = useState(ITEMS_PER_PAGE);
+
+    const memoizedCreatedNFTs = useMemo(() => {
+        return createdNFTs?.slice(0, visibleItemCount) || [];
+    }, [createdNFTs, visibleItemCount]);
+
+    const memoizedSellingNFTs = useMemo(() => {
+        return sellingNFTs?.slice(0, visibleItemCount) || [];
+    }, [sellingNFTs, visibleItemCount]);
+
+    const loadMoreItems = useCallback(() => {
+        setVisibleItemCount(prevCount => prevCount + ITEMS_PER_PAGE);
+    }, []);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                loadMoreItems();
+            }
+        }, { threshold: 1.0 });
+
+        const footer = document.getElementById('footer');
+        if (footer) observer.observe(footer);
+
+        return () => {
+            if (footer) observer.unobserve(footer);
+        };
+    }, [loadMoreItems]);
 
 	const artCreated = memoizedCreatedNFTs.length > 0;
 	const artSelling = memoizedSellingNFTs.length > 0;
@@ -181,7 +208,8 @@ const Owned = () => {
 
 		<p id="bear-markets-description-owned-buy">
 				NO MORE BEAR MARKETS
-		</p>     
+		</p>  
+		<div id="footer"></div>   
         </>
     );
 }
