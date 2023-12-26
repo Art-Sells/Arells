@@ -4,9 +4,7 @@
 
 ##### After Launch:
 - Create/Prepare Discord, Instagram (ArellsDigitalAssets) Twitter(ArellsAssets)
-- Twitter/Instagram Profile Description: Rendering bear markets obsoslete one art piece at a time. No more bear markets with arells.
-- Individual Posts: Buy art that obscures bear markets with Arells! Art by etc on Arells. Hashtags (Asset/Assets/Art/Investing/Invest/Finance) 
-________________________________________________________________________________________________________________________________________________
+________________________________________________________________________________________________
 
 ## Arells 1.2
 
