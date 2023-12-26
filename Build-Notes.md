@@ -4,20 +4,44 @@
 
 ##### After Launch:
 - Create/Prepare Discord, Instagram (ArellsDigitalAssets) Twitter(ArellsAssets)
-- Twitter/Instagram Profile Description: Rendering bear markets obsoslete one art piece at a time. No more bear markets with arells.
-- Individual Posts: Buy art that obscures bear markets with Arells! Art by etc on Arells. Hashtags (Asset/Assets/Art/Investing/Invest/Finance) 
-________________________________________________________________________________________________________________________________________________
+- Solve Homepage Connection issue if Time Permits.
+________________________________________________________________________________________________
 
 ## Arells 1.2
 
 ### My/Other Stores
-- When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
 - Hide Assets in store.
+- Add Phantom Wallet ?
+
+________________________________________________________________________________________________________________________________________________
+
+## Arells 1.3
+
+### My/Other Stores
+- When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
+- Add Phantom Wallet
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
 - Inform of Arells 1.5 release (and features).
+________________________________________________________________________________________________________________________________________________
+
+## Arells 1.4
+
+### My Store
+- Images clickable
+
+### My Store Asset (See Asset Modal)
+- Images (Default Store Image) here render small pixels
+- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+
+### Other Store
+- Images clickable
+
+### Other Store Asset (See Asset Modal)     
+- Images (Default Store Image) here render small pixels
+- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
 ________________________________________________________________________________________________________________________________________________
 
@@ -57,25 +81,11 @@ ________________________________________________________________________________
 - Inform of Arells 1.7 release (and features including clickable pictures).
 
 ### If Time Permits
-- Coinbase SDK (Image) Test
+- Coinbase SDK (Image) Test (do i need to clear cache)?
 
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.7
-
-### My Store
-- Images clickable
-
-### My Store Asset (See Asset Modal)
-- Images (Default Store Image) here render small pixels
-- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
-
-### Other Store
-- Images clickable
-
-### Other Store Asset (See Asset Modal)     
-- Images (Default Store Image) here render small pixels
-- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
@@ -119,7 +129,6 @@ ________________________________________________________________________________
 ### Home
 - If logged in [(Open Store), (Close Store)]
 - If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
-
 
 ### My Store
 - Top-Right[Cart][Connect Wallet]-if not connected
@@ -245,7 +254,7 @@ ________________________________________________________________________________
 - "Store Name is Taken Error, and if Asset Name is taken"
 - NFTs = Digital Art,
 - Seed Phrase = Vault Code
-- Connect Wallet = Connect Store, 
+- Connect Wallet = Connect Application (Application needed to Buy & Sell Arells Digital Assets), 
 - Public Key = Address,
 - Automatic Token Confirmations when listing, creating, and buying Art.
 - Creating on one new address (if we switch blockchains) automatically bridges all funds from one address to another… Users don’t have to manually change addresses. All polygon prices switch to USDC (auto)
