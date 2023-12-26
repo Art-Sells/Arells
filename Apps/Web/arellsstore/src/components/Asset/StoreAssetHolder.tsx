@@ -224,22 +224,48 @@ const tokenURI = nft.tokenURI;
 
         {hiddenAssetOwner && (
           <>
-            <div id="blue-orange-seller-created">
-                <button 
+            <div id="blue-orange-seller-created-owner">
+                <button id="hide-show-button"
                   onClick={() => 
                     showAsset(props.nft.tokenURI)}>
                       SHOW
                 </button>
+                {meta && (
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={200}  
+                    height={200}  
+                    id="photo-asset-owned" 
+                    src={meta?.imageURL}
+                  />
+                )} 
+                {!meta && (
+                  (
+                    <div id="photo-asset-loading">
+                        <Image
+                          loader={imageLoader}
+                          alt=""
+                          width={50}  
+                          height={50}  
+                          id="receiving-image" 
+                          src="/images/market/receiving.png"
+                        />
+                      <div className={styles.photoloader}></div>  
+                      <p id="receiving-word">RECEIVING</p>
+                    </div>
+                  )
+                )} 
                 <div id="hidden-from-public">
                   Hidden From Public
-                </div>  
+                </div> 
             </div>
           </>
         )}
         {shownAssetOwner && (
           <>
-          <div id="blue-orange-seller-created">
-          <button 
+          <div id="blue-orange-seller-created-owner">
+              <button id="hide-show-button"
                 onClick={() => 
                   hideAsset(props.nft.tokenURI)}>
                     HIDE
