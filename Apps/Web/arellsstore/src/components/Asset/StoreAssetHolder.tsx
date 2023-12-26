@@ -190,7 +190,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
     const [shownAssetOwner, setShownAssetOwner] = useState(() => initialVisibilityState(props.nft.tokenURI));
     const [shownAssetNotOwner, setShownAssetNotOwner] = useState(() => initialVisibilityState(props.nft.tokenURI));
 
-// Function to hide an NFT
+
     const hideAsset = (tokenURI: string) => {
         if (addressMatch) {
             const key = getLocalStorageKey(tokenURI);
@@ -203,7 +203,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
         }
     };
 
-// Function to show an NFT
+
     const showAsset = (tokenURI: string) => {
         if (addressMatch) {
             const key = getLocalStorageKey(tokenURI);
@@ -218,16 +218,38 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
 
 
     useEffect(() => {
-      if (addressMatch) {
-        setShownAssetNotOwner(false);
-        setShownAssetOwner(true);
+      // Automatically hide the asset if the initial state is set to hidden
+      if (hiddenAssetOwner) {
+          hideAsset(props.nft.tokenURI);
+          if (addressMatch) {
+            setHiddenAssetOwner(true);
+            setShownAssetNotOwner(false);
+            setShownAssetOwner(false);
+          }
+          else if (!addressMatch) {
+            setHiddenAssetOwner(false);
+            setShownAssetNotOwner(false);
+            setShownAssetOwner(false);
+          }
       }
-      else if (!addressMatch) {
-        setHiddenAssetOwner(false);
-        setShownAssetNotOwner(true);
-        setShownAssetOwner(false);
-      }
-    }, [addressMatch]); 
+    }, [address, hiddenAssetOwner, props.nft.tokenURI]); // Depend on hiddenAssetOwner and tokenURI
+    
+    useEffect(() => {
+        // Automatically show the asset if the initial state is set to shown
+        if (shownAssetOwner) {
+            showAsset(props.nft.tokenURI);
+            if (addressMatch) {
+              setHiddenAssetOwner(false);
+              setShownAssetNotOwner(false);
+              setShownAssetOwner(true);
+            }
+            else if (!addressMatch) {
+              setHiddenAssetOwner(false);
+              setShownAssetNotOwner(true);
+              setShownAssetOwner(false);
+            }
+        }
+    }, [shownAssetOwner, props.nft.tokenURI]); 
 // Hide and show assets above  
 
   return (
@@ -466,6 +488,24 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
           </div>           
         </>           
         )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         {shownAssetNotOwner && (
           <>
           <div id="blue-orange-seller-created">
