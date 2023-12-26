@@ -390,7 +390,7 @@
 		  box-shadow: 0px 5px 20px -6px silver; 
 		  width: 200px;
 		  height: 500px;
-		  padding-top: 40px;
+		  padding-top: 35px;
 		  padding-left: 50px;
 		  padding-right: 50px;
 		  padding-bottom: 60px;			
@@ -411,19 +411,64 @@
 			margin-right: auto;
 			font-weight: 500;
 			font-size: 10px;
-			padding-top: 15px;
-			padding-bottom: 15px;
+			padding-top: 13px;
+			padding-bottom: 13px;
 			padding-right: 22px;
-			padding-left: 25px;	  
+			padding-left: 24.5px;	  
 			border: none;
-			letter-spacing: 3px;
+			letter-spacing: 2.5px;
 			border-radius: 5px;
 			border-width: 0px;
-			width: 90px;
+			width: 80px;
 			opacity: .7;
 			box-shadow: 0px 8px 12px -6px silver;  
 				background: white;
 		}
+		#hide-show-button:hover,
+		#hide-show-button:focus {
+			  transition: 1s;
+			  cursor: pointer;
+			  opacity: .4;
+			}
+			#hidden-from-public {
+				margin-top: 30px;
+				padding-top: 45px;
+				height: 155px;
+				width: 200px;
+				font-weight: 600px;
+				border-radius: 20px;
+				color: silver;
+				background-color: white;
+				box-shadow: 0px 8px 12px -6px silver;  
+				opacity: .6;
+				
+			}	
+			#hidden-words {
+				margin-top: -15px;
+				
+			}	
+			#photo-asset-owned-hidden {
+				width: 200px;
+				height: 200px;
+				  border-radius: 0px;		
+				  border: solid; 
+				border-width: 1px;
+				border-color: rgb(240, 240, 240);
+				opacity: .3;
+				  -webkit-animation-name: animatetophide;
+				  -webkit-animation-duration: 1.00s;
+				  animation-name: animatetophide;
+				  animation-duration: 1.00s;
+				}
+				@-webkit-keyframes animatetop {
+					from {center:0; opacity:0}
+					to {center:0; opacity:.3}
+				  }
+				  
+				  @keyframes animatetop {
+					from {center:0; opacity:0}
+					to {center:0; opacity:.5}
+				  }
 		  #blue-orange-seller-created, #beach-houses-seller-created, #colour-glass-seller-created,
 		  #layers-seller-created, #succinct-drop-seller-created, #paint-rain-seller-created {
 			  flex: 1;			
@@ -930,7 +975,7 @@
 			  padding-right: 12px;
 			  padding-left: 13px;	  
 			  letter-spacing: 1px;
-			  width: 70px;
+			  width: 60px;
 			  box-shadow: 0px 8px 12px -6px silver;  
 		  }
   
