@@ -8,11 +8,18 @@
 - Individual Posts: Buy art that obscures bear markets with Arells! Art by etc on Arells. Hashtags (Asset/Assets/Art/Investing/Invest/Finance) 
 ________________________________________________________________________________________________________________________________________________
 
-## Arells 1.2 & 1.3
+## Arells 1.2
+
+### My/Other Stores
+- Hide Assets in store.
+- Add Phantom Wallet ?
+
+________________________________________________________________________________________________________________________________________________
+
+## Arells 1.3
 
 ### My/Other Stores
 - When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
-- Hide Assets in store.
 - Add Phantom Wallet
 
 #### After Testing and Before Launch: 
