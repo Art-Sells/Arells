@@ -413,8 +413,8 @@
 			font-size: 10px;
 			padding-top: 13px;
 			padding-bottom: 13px;
-			padding-right: 22px;
-			padding-left: 24.5px;	  
+			padding-right: 12px;
+			padding-left: 14.5px;	  
 			border: none;
 			letter-spacing: 2.5px;
 			border-radius: 5px;
@@ -431,30 +431,33 @@
 			  opacity: .4;
 			}
 			#hidden-from-public {
-				margin-top: 30px;
+				margin-top: -206px;
 				padding-top: 45px;
-				height: 155px;
-				width: 200px;
-				font-weight: 600px;
-				border-radius: 20px;
-				color: silver;
-				background-color: white;
-				box-shadow: 0px 8px 12px -6px silver;  
-				opacity: .6;
+				height: 405px;
+				width: 202px;
+				font-weight: 600;
+				border-radius: 10px;
+				color: rgb(183, 183, 183);
+				background-color: rgb(255, 255, 255);
+				box-shadow: 0px 5px 20px -10px silver;  
+				opacity: .95;
 				
 			}	
-			#hidden-words {
-				margin-top: -15px;
+			#hidden-word-one {
+				margin-top: 45px;
+				font-size: 20px;;
+				letter-spacing: -1.5px;
+				margin-left: -1.5px;
 				
 			}	
 			#photo-asset-owned-hidden {
 				width: 200px;
 				height: 200px;
-				  border-radius: 0px;		
+				  border-radius: 10px;		
 				  border: solid; 
 				border-width: 1px;
 				border-color: rgb(240, 240, 240);
-				opacity: .3;
+				opacity: 1;
 				  -webkit-animation-name: animatetophide;
 				  -webkit-animation-duration: 1.00s;
 				  animation-name: animatetophide;

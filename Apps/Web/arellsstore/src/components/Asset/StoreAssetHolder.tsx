@@ -234,8 +234,8 @@ const tokenURI = nft.tokenURI;
                   <Image
                     loader={imageLoader}
                     alt=""
-                    width={200}  
-                    height={200}  
+                    width={195}  
+                    height={195}  
                     id="photo-asset-owned-hidden" 
                     src={meta?.imageURL}
                   />
@@ -257,9 +257,7 @@ const tokenURI = nft.tokenURI;
                   )
                 )} 
                 <div id="hidden-from-public">
-                  <p id="hidden-words">Hidden</p>
-                  <p id="hidden-words">From</p>
-                  <p id="hidden-words">Public</p>
+                  <p id="hidden-word-one">Hidden from public</p>
                 </div> 
             </div>
           </>
