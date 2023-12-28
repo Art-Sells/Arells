@@ -234,15 +234,15 @@ const tokenURI = nft.tokenURI;
                   <Image
                     loader={imageLoader}
                     alt=""
-                    width={195}  
-                    height={195}  
+                    width={200}  
+                    height={200}  
                     id="photo-asset-owned-hidden" 
                     src={meta?.imageURL}
                   />
                 )} 
                 {!meta && (
                   (
-                    <div id="photo-asset-loading">
+                    <div id="photo-asset-loading-hidden">
                         <Image
                           loader={imageLoader}
                           alt=""
@@ -257,7 +257,7 @@ const tokenURI = nft.tokenURI;
                   )
                 )} 
                 <div id="hidden-from-public">
-                  <p id="hidden-word-one">Hidden from public</p>
+                  <p id="hidden-word-one">hidden from public</p>
                 </div> 
             </div>
           </>

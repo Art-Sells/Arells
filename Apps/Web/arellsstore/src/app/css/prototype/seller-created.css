@@ -433,10 +433,10 @@
 			#hidden-from-public {
 				margin-top: -206px;
 				padding-top: 45px;
-				height: 405px;
+				height: 402px;
 				width: 202px;
 				font-weight: 600;
-				border-radius: 10px;
+				border-radius: 15px;
 				color: rgb(183, 183, 183);
 				background-color: rgb(255, 255, 255);
 				box-shadow: 0px 5px 20px -10px silver;  
@@ -444,8 +444,8 @@
 				
 			}	
 			#hidden-word-one {
-				margin-top: 45px;
-				font-size: 20px;;
+				margin-top: 40px;
+				font-size: 22px;;
 				letter-spacing: -1.5px;
 				margin-left: -1.5px;
 				
@@ -453,7 +453,7 @@
 			#photo-asset-owned-hidden {
 				width: 200px;
 				height: 200px;
-				  border-radius: 10px;		
+				  border-radius: 15px;		
 				  border: solid; 
 				border-width: 1px;
 				border-color: rgb(240, 240, 240);
@@ -463,12 +463,24 @@
 				  animation-name: animatetophide;
 				  animation-duration: 1.00s;
 				}
-				@-webkit-keyframes animatetop {
+				#photo-asset-loading-hidden {
+					width: 200px;
+					height: 200px;
+						border-radius: 15px;		
+						border: solid; 
+					border-width: 1px;
+					border-color: rgb(240, 240, 240);
+						-webkit-animation-name: animatetophide;
+						-webkit-animation-duration: 1.00s;
+						animation-name: animatetophide;
+						animation-duration: 1.00s;
+					}	
+				@-webkit-keyframes animatetophide {
 					from {center:0; opacity:0}
 					to {center:0; opacity:.3}
 				  }
 				  
-				  @keyframes animatetop {
+				  @keyframes animatetophide {
 					from {center:0; opacity:0}
 					to {center:0; opacity:.5}
 				  }
