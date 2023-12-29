@@ -5,7 +5,7 @@
 ### Home
 - {(Connect Wallet)--Wallet Needed to Buy, Sell & Create Art}
 - {Modal Connect Wallet--()--Wallet Needed to Buy, Sell & Create Arells Digital Assets}
----{Wallet Connected... (Enter Store)}
+- **After Connection** {Wallet Connected... (Enter Store)}
 - Add Phantom Wallet?
 
 #### After Testing and Before Launch: 
@@ -24,7 +24,8 @@ ________________________________________________________________________________
 #### After Testing and Before Launch:
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
-- Inform of Arells 1.5 release (and features).
+- Inform of Arells 1.4 release (and features).
+________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.4
 
@@ -41,6 +42,13 @@ ________________________________________________________________________________
 ### Other Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+
+#### After Testing and Before Launch: 
+- Store Private Key Cold
+- Delete all Test/Branched/Component links
+- Inform of Arells 1.5 release (and features).
+
+________________________________________________________________________________________________________________________________________________
 
 
 ## Arells 1.5
