@@ -256,9 +256,8 @@ const tokenURI = nft.tokenURI;
                     </div>
                   )
                 )} 
-                <div id="hidden-from-public">
-                  <p id="hidden-word-one">hidden from public</p>
-                </div> 
+                <div id="hidden-from-public"></div> 
+                <p id="hidden-word-one">Hidden From Public</p>
             </div>
           </>
         )}
