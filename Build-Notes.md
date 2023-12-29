@@ -1,15 +1,10 @@
-## Arells Build Notes...
-
-## Arells 1.0
-
-##### After Launch:
-- Solve Homepage Connection issue if Time Permits.
-________________________________________________________________________________________________
+# Arells Build Notes...
 
 ## Arells 1.2
 
 ### My/Other Stores
 - Hide Assets in store.
+- Home—(Connect Wallet…Wallet Needed to Enter Your Store) Modal—Connect Wallet…(Wallet Needed to Buy, Sell & Create Arells Digital Assets) Home—(A…Wallet Connected…Enter Store…)-Discord
 - Add Phantom Wallet ?
 
 ________________________________________________________________________________________________________________________________________________
