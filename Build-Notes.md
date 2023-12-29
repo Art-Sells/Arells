@@ -1,25 +1,47 @@
-## Arells Build Notes...
-
-## Arells 1.0
-
-##### After Launch:
-- Create/Prepare Discord, Instagram (ArellsDigitalAssets) Twitter(ArellsAssets)
-- Twitter/Instagram Profile Description: Rendering bear markets obsoslete one art piece at a time. No more bear markets with arells.
-- Individual Posts: Buy art that obscures bear markets with Arells! Art by etc on Arells. Hashtags (Asset/Assets/Art/Investing/Invest/Finance) 
-________________________________________________________________________________________________________________________________________________
+# Arells Build Notes...
 
 ## Arells 1.2
 
-### My/Other Stores
-- When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
-- Hide Assets in store.
+### Home
+- {(Connect Wallet)--Wallet Needed to Buy, Sell & Create Art}
+- {Modal Connect Wallet--()--Wallet Needed to Buy, Sell & Create Arells Digital Assets}
+---{Wallet Connected... (Enter Store)}
+- Add Phantom Wallet?
 
 #### After Testing and Before Launch: 
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
-- Inform of Arells 1.5 release (and features).
+- Inform of Arells 1.3 release (and features).
 
 ________________________________________________________________________________________________________________________________________________
+
+## Arells 1.3
+
+### My/Other Stores
+- When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
+- Add Phantom Wallet
+
+#### After Testing and Before Launch:
+- Store Private Key Cold
+- Delete all Test/Branched/Component links
+- Inform of Arells 1.5 release (and features).
+
+## Arells 1.4
+
+### My Store
+- Images clickable
+
+### My Store Asset (See Asset Modal)
+- Images (Default Store Image) here render small pixels
+- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+
+### Other Store
+- Images clickable
+
+### Other Store Asset (See Asset Modal)
+- Images (Default Store Image) here render small pixels
+- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+
 
 ## Arells 1.5
 - Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
@@ -55,9 +77,6 @@ ________________________________________________________________________________
 - Store Private Key Cold
 - Delete all Test/Branched/Component links
 - Inform of Arells 1.7 release (and features including clickable pictures).
-
-### If Time Permits
-- Coinbase SDK (Image) Test
 
 ________________________________________________________________________________________________________________________________________________
 
