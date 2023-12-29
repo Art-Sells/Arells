@@ -5,7 +5,7 @@
 ### Home
 - {(Connect Wallet)--Wallet Needed to Buy, Sell & Create Art}
 - {Modal Connect Wallet--()--Wallet Needed to Buy, Sell & Create Arells Digital Assets}
----{Wallet Connected... (Enter Store)}
+- {Wallet Connected... (Enter Store)}
 - Add Phantom Wallet?
 
 #### After Testing and Before Launch: 
