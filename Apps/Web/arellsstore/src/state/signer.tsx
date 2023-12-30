@@ -508,7 +508,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 						src="images/prototype/coinbase-wallet-logo.png"/>
 					</button>	
                     <p id="connect-wallet-description">
-                    Connect Wallet to Buy, Sell & Create</p>
+                    You need a wallet to Buy, Sell & Create</p>
                     <hr id="connect-desc-line"></hr>		
 				</div>
 			</div>	  
@@ -542,7 +542,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 						src="images/prototype/coinbase-wallet-logo.png"/>
 					</button>
                     <p id="connect-wallet-description">
-                    Connect Wallet to Buy, Sell & Create</p>
+                    You need a wallet to Buy, Sell & Create</p>
                     <hr id="connect-desc-line"></hr>		
 				</div>
 			</div>	  
