@@ -506,7 +506,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 						width={50}
 						height={50}  
 						src="images/prototype/coinbase-wallet-logo.png"/>
-					</button>		
+					</button>	
+                    <p id="connect-wallet-description">
+                    Connect Wallet to Buy, Sell & Create</p>
+                    <hr id="connect-desc-line"></hr>		
 				</div>
 			</div>	  
 		    )}    
@@ -514,22 +517,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 			<div id="connectWalletBuy">
 				<div className="connect-wallet-content">
 					<p id="connect-wallet-words">CONNECT WALLET</p>
-                    {/* {showMetaMask && (
-                        <>
-                            <button id="connectWallet"
-                                onClick={connectMetaMaskFunction}
-                                disabled={loadingWallet}>
-                                <Image 
-                                loader={imageLoader}
-                                id="wallet-icon"
-                                alt=""
-                                width={50}
-                                height={50}  
-                                src="images/prototype/metamask-icon.png"/>
-                            </button>	
-                            <span id="wallet-spacing"></span>		
-                        </>
-                    )} */}
+                    <div id="connect-wallet-wrapper"></div>
                     <button id="connectWallet"
                         onClick={connectMetaMaskFunction}
                         disabled={loadingWallet}>
@@ -552,7 +540,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 						width={50}
 						height={50}  
 						src="images/prototype/coinbase-wallet-logo.png"/>
-					</button>		
+					</button>
+                    <p id="connect-wallet-description">
+                    Connect Wallet to Buy, Sell & Create</p>
+                    <hr id="connect-desc-line"></hr>		
 				</div>
 			</div>	  
 		    )}   
