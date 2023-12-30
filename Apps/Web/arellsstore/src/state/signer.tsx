@@ -241,7 +241,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                 if (accounts.length > 0) {
                     return accounts;
                 }
-                await delay(2000); // Wait for 2 seconds before the next attempt
+                await delay(400); // Wait for 2 seconds before the next attempt
                 attempts++;
             }
             return [];
