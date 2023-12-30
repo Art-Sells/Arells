@@ -238,10 +238,13 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
   const getLocalStorageKey = (tokenURI: string) => `assetVisibility-${tokenURI}`;
 
   // Function to initialize the visibility state for each NFT
-  const initialVisibilityState = (tokenURI: string) => {
-      const key = getLocalStorageKey(tokenURI);
-      return localStorage.getItem(key) !== 'hidden';
-  };
+const initialVisibilityState = (tokenURI: string) => {
+    const key = getLocalStorageKey(tokenURI);
+    const storedValue = localStorage.getItem(key);
+    console.log(`Initial local storage value for ${tokenURI}: ${storedValue}`);
+    return storedValue !== 'hidden';
+};
+
 
   const [hiddenAssetOwner, setHiddenAssetOwner] = useState(() => !initialVisibilityState(props.nft.tokenURI));
   const [shownAssetOwner, setShownAssetOwner] = useState(() => initialVisibilityState(props.nft.tokenURI));
@@ -254,6 +257,7 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
       setHiddenAssetOwner(true);
       setShownAssetOwner(false);
       setShownAssetNotOwner(false);
+      console.log(`Hiding asset with tokenURI: ${tokenURI}`);
   };
 
   // Function to show an NFT
@@ -263,9 +267,11 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
       setHiddenAssetOwner(false);
       setShownAssetOwner(true);
       setShownAssetNotOwner(false);
+      console.log(`Showing asset with tokenURI: ${tokenURI}`);
   };
 
   useEffect(() => {
+    console.log(`Effect triggered for tokenURI: ${props.nft.tokenURI}`);
       if (addressMatch) {
           // User is the owner
           if (!initialVisibilityState(props.nft.tokenURI)) {
@@ -284,6 +290,8 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
           setShownAssetNotOwner(initialVisibilityState(props.nft.tokenURI));
       }
   }, [addressMatch, props.nft.tokenURI]);
+  console.log(`Rendering with states - hiddenAssetOwner: ${hiddenAssetOwner}, shownAssetOwner: ${shownAssetOwner}, shownAssetNotOwner: ${shownAssetNotOwner}`);
+
 // Hide and show assets above 
 
 

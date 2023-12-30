@@ -136,25 +136,18 @@ const AssetHolder = (props: AssetProps) => {
     const priceNum = parseFloat(price);
 
     const formatNumber = (num: string | number) => {
-        // If the input is an empty string or exactly zero, format it directly
-        if (num === '' || num === '0' || num === 0) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'decimal',
-                minimumFractionDigits: 2, // Ensure that there are always two decimal places
-            }).format(0);
-        }
-    
-        // For non-zero numbers, parse and format them
         const number = typeof num === 'string' ? parseFloat(num) : num;
         if (!isNaN(number)) {
             return new Intl.NumberFormat('en-US', {
                 style: 'decimal',
+                minimumFractionDigits: 2, // Always show two decimal places
                 maximumFractionDigits: 2,
             }).format(number);
         }
     
         return "0.00"; // Return a default value if the input is not a valid number
     };
+    
     
     useEffect(() => {
         if (price.trim() !== "" && !isNaN(priceNum))  {
