@@ -10,6 +10,7 @@ export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en">
       <head>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
         <link rel="shortcut icon" href="https://arells.com/ArellsIcoIcon.png" />
       </head>
       <body>

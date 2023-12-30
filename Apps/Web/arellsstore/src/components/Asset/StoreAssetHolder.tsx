@@ -257,7 +257,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                   )
                 )} 
                 <div id="hidden-from-public"></div> 
-                <p id="hidden-word-one">Hidden From Public</p>
+                <p id="hidden-word-one">Hidden</p>
             </div>
           </>
         )}
