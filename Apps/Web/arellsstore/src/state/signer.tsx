@@ -228,8 +228,25 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     
 
-
     useEffect(() => {
+        // Function to delay execution for a given number of milliseconds
+        const delay = (ms: number | undefined) => new Promise(res => setTimeout(res, ms));
+    
+        // Function to poll for Ethereum accounts
+        async function pollForAccounts() {
+            const maxAttempts = 5;
+            let attempts = 0;
+            while (attempts < maxAttempts) {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    return accounts;
+                }
+                await delay(2000); // Wait for 2 seconds before the next attempt
+                attempts++;
+            }
+            return [];
+        }
+    
         async function initialize() {
             setLoading(true); // Start loading
     
@@ -240,7 +257,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             }
     
             if (window.ethereum) {
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // Get accounts
+                const accounts = await pollForAccounts(); // Poll for accounts
     
                 if (accounts.length === 0) {
                     console.error("No account connected");
@@ -253,7 +270,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                     setAddress(currentAddress);
     
                     const savedAddress = localStorage.getItem("savedAddress");
-                    // If savedAddress is not the same as currentAddress, update it in localStorage
+                    // Update localStorage if necessary
                     if (savedAddress !== currentAddress) {
                         localStorage.setItem("savedAddress", currentAddress);
                     }
@@ -272,14 +289,13 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                 const provider = new Web3Provider(window.ethereum);
                 const signerInstance = provider.getSigner();
                 setSigner(signerInstance);
-    
+        
                 const newAddress = await signerInstance.getAddress();
                 setAddress(newAddress);
             }
         }
     
         function handleDisconnect() {
-            // Implement disconnect logic
             setDisconnected(true);
             localStorage.removeItem("walletConnected");
             localStorage.removeItem("savedAddress");
@@ -299,6 +315,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             }
         };
     }, []);
+    
       
 
 
