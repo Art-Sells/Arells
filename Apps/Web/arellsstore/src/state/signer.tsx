@@ -6,8 +6,8 @@ import Web3Modal from "web3modal";
 import { ReactNode, createContext, useContext, useState, useEffect } from "react";
 
 // Loader Styles
-import styles from '../app/css/modals/loading/spinner.module.css';
 import '../app/css/modals/walletConnected.css';
+import connectspinnerstyle from '../app/css/modals/loading/connectspinner.module.css';
 import '../app/css/modals/loading/spinnerBackground.css';
 import '../app/css/modals/connect-wallet.css';
 import Image from 'next/image';
@@ -540,68 +540,32 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     };
     return (
-        <SignerContext.Provider value={{ 
-            signer, address, loadingWallet, connectWallet }}>
-            {children}
+        <>
             {showLoading && (
-                <div id="spinnerBackground">
+                <div id="spinnerBackgroundConnect">
                 <Image 
                 loader={imageLoader}
                     alt="" 
                     width={29}
                     height={30}
-                    id="arells-loader-icon" 
+                    id="arells-loader-icon-connect" 
                     src="images/Arells-Icon.png"/>        
-                </div>
+                </div>            
             )}
             {showLoading && (
-                <div className={styles.spinner}></div>
+                <div className={connectspinnerstyle.connectSpinner}></div>  
             )}
-            {showDownloadWallet && (
-			<div id="connectWalletBuy">
-				<div className="connect-wallet-content">
-					<p id="connect-wallet-words">CONNECT WALLET</p>
-                    {showMetaMask && (
-                        <>
-                            <button id="connectWallet"
-                            onClick={downloadMetaMaskFunction}
-                            disabled={loadingWallet}>
-                            <Image 
-                            loader={imageLoader}
-                            id="wallet-icon"
-                            alt=""
-                            width={50}
-                            height={50}  
-                            src="images/prototype/metamask-icon.png"/>
-                        </button>
-                        <span id="wallet-spacing"></span>	
-                        </>
-                    )}
-                    <button id="connectWallet"
-						onClick={downloadCoinbaseFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/coinbase-wallet-logo.png"/>
-					</button>	
-                    <p id="connect-wallet-description">
-                    You need a wallet to Buy, Sell & Create</p>
-                    <hr id="connect-desc-line"></hr>		
-				</div>
-			</div>	  
-		    )}    
-            {showConnectWallet && (
-			<div id="connectWalletBuy">
-				<div className="connect-wallet-content">
-					<p id="connect-wallet-words">CONNECT WALLET</p>
-                    {showMetaMask && (
-                        <>
-                            <button id="connectWallet"
-                                onClick={connectMetaMaskFunction}
+            <SignerContext.Provider value={{ 
+                signer, address, loadingWallet, connectWallet }}>
+                {children}
+                {showDownloadWallet && (
+                <div id="connectWalletBuy">
+                    <div className="connect-wallet-content">
+                        <p id="connect-wallet-words">CONNECT WALLET</p>
+                        {showMetaMask && (
+                            <>
+                                <button id="connectWallet"
+                                onClick={downloadMetaMaskFunction}
                                 disabled={loadingWallet}>
                                 <Image 
                                 loader={imageLoader}
@@ -612,59 +576,97 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                                 src="images/prototype/metamask-icon.png"/>
                             </button>
                             <span id="wallet-spacing"></span>	
-                        </>
-                    )}	
-					<button id="connectWallet"
-						onClick={connectCoinbaseFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/coinbase-wallet-logo.png"/>
-					</button>
-                    <p id="connect-wallet-description">
-                    You need a wallet to Buy, Sell & Create</p>
-                    <hr id="connect-desc-line"></hr>		
-				</div>
-			</div>	  
-		    )}   
-            {showLoadingWalletConnection && (
-                <div id="walletConnected">
-                    <div id="wallet-connected-modalGood">
-                        <p>RELOADING CONNECTION</p>
-                        <button id="reloading-connection-close" onClick={closeProviderModals}>OK</button>    
+                            </>
+                        )}
+                        <button id="connectWallet"
+                            onClick={downloadCoinbaseFunction}
+                            disabled={loadingWallet}>
+                            <Image 
+                            loader={imageLoader}
+                            id="wallet-icon"
+                            alt=""
+                            width={50}
+                            height={50}  
+                            src="images/prototype/coinbase-wallet-logo.png"/>
+                        </button>	
+                        <p id="connect-wallet-description">
+                        You need a wallet to Buy, Sell & Create</p>
+                        <hr id="connect-desc-line"></hr>		
                     </div>
-                </div>  
-            )}
-            {connected && (   
-                <div id="walletConnected">
-                    <div id="wallet-connected-modalGood">
-                        <p>CONNECTED</p>
-                        <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>   
+                </div>	  
+                )}    
+                {showConnectWallet && (
+                <div id="connectWalletBuy">
+                    <div className="connect-wallet-content">
+                        <p id="connect-wallet-words">CONNECT WALLET</p>
+                        {showMetaMask && (
+                            <>
+                                <button id="connectWallet"
+                                    onClick={connectMetaMaskFunction}
+                                    disabled={loadingWallet}>
+                                    <Image 
+                                    loader={imageLoader}
+                                    id="wallet-icon"
+                                    alt=""
+                                    width={50}
+                                    height={50}  
+                                    src="images/prototype/metamask-icon.png"/>
+                                </button>
+                                <span id="wallet-spacing"></span>	
+                            </>
+                        )}	
+                        <button id="connectWallet"
+                            onClick={connectCoinbaseFunction}
+                            disabled={loadingWallet}>
+                            <Image 
+                            loader={imageLoader}
+                            id="wallet-icon"
+                            alt=""
+                            width={50}
+                            height={50}  
+                            src="images/prototype/coinbase-wallet-logo.png"/>
+                        </button>
+                        <p id="connect-wallet-description">
+                        You need a wallet to Buy, Sell & Create</p>
+                        <hr id="connect-desc-line"></hr>		
                     </div>
-                </div>  
-            )}
-            {checkWallet && (   
-                <div id="connectingBackground">
-                    <div id="wallet-connected-modal">
-                        <p id="connectingWalletWords">CHECK OPEN WALLET</p>
-                        <button id="wallet-connecting-close" onClick={closeProviderModals}>OK</button>    
-                    </div>
-                </div>  
-            )}
-            {disconnected && (   
-                <div id="walletConnected">
-                    <div id="wallet-connected-modalGood">
-                        <p>DISCONNECTED</p>
-                        <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>    
-                    </div>
-                </div>  
-            )}
+                </div>	  
+                )}   
+                {showLoadingWalletConnection && (
+                    <div id="walletConnected">
+                        <div id="wallet-connected-modalGood">
+                            <p>RELOADING CONNECTION</p>
+                            <button id="reloading-connection-close" onClick={closeProviderModals}>OK</button>    
+                        </div>
+                    </div>  
+                )}
+                {connected && (   
+                    <div id="walletConnected">
+                        <div id="wallet-connected-modalGood">
+                            <p>CONNECTED</p>
+                            <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>   
+                        </div>
+                    </div>  
+                )}
+                {checkWallet && (   
+                    <div id="connectingBackground">
+                        <div id="wallet-connected-modal">
+                            <p id="connectingWalletWords">CHECK OPEN WALLET</p>
+                            <button id="wallet-connecting-close" onClick={closeProviderModals}>OK</button>    
+                        </div>
+                    </div>  
+                )}
+                {disconnected && (   
+                    <div id="walletConnected">
+                        <div id="wallet-connected-modalGood">
+                            <p>DISCONNECTED</p>
+                            <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>    
+                        </div>
+                    </div>  
+                )}
 
-        </SignerContext.Provider>
+            </SignerContext.Provider>
+        </>
     );
 };
 
