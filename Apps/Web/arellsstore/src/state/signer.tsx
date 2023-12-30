@@ -232,66 +232,74 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         async function initialize() {
             setLoading(true); // Start loading
-
+    
             // Reconnect logic
             const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
             if (wasWalletConnected) {
                 await reconnectMetaMask();
             }
+    
             if (window.ethereum) {
                 const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // Get accounts
-                
+    
                 if (accounts.length === 0) {
                     console.error("No account connected");
-                    return;
+                } else {
+                    const provider = new Web3Provider(window.ethereum);
+                    const signerInstance = provider.getSigner();
+                    setSigner(signerInstance);
+                    
+                    const currentAddress = await signerInstance.getAddress();
+                    setAddress(currentAddress);
+    
+                    const savedAddress = localStorage.getItem("savedAddress");
+                    // If savedAddress is not the same as currentAddress, update it in localStorage
+                    if (savedAddress !== currentAddress) {
+                        localStorage.setItem("savedAddress", currentAddress);
+                    }
                 }
-                
+            }
+    
+            setLoading(false); // End loading
+        }
+    
+        async function handleAccountsChanged(accounts: string | any[]) {
+            if (accounts.length === 0) {
+                handleDisconnect();
+                setSigner(undefined); // Clear signer state
+                setAddress(""); // Clear address state
+            } else {
                 const provider = new Web3Provider(window.ethereum);
                 const signerInstance = provider.getSigner();
                 setSigner(signerInstance);
-                
-                const currentAddress = await signerInstance.getAddress();
-                
-                setAddress(currentAddress);
-
-                const savedAddress = localStorage.getItem("savedAddress");
-
-                // If savedAddress is not the same as currentAddress, update it in localStorage
-                if (savedAddress !== currentAddress) {
-                    localStorage.setItem("savedAddress", currentAddress);
-                }
-
-                window.ethereum.on("accountsChanged", async (accounts: string[]) => {
-                    if (accounts.length === 0) {
-                        handleDisconnect();
-                        setSigner(undefined);  // Clear signer state
-                        setAddress("");  // Clear address state
-                    } else {
-                        const provider = new Web3Provider(window.ethereum);
-                        const signerInstance = provider.getSigner();
-                        setSigner(signerInstance);
-                        
-                        const newAddress = await signerInstance.getAddress();
-                        setAddress(newAddress);
-                    }
-                });          
-
-                window.ethereum.on("disconnect", handleDisconnect);
-
+    
+                const newAddress = await signerInstance.getAddress();
+                setAddress(newAddress);
             }
-            setLoading(false);
         }
-
+    
+        function handleDisconnect() {
+            // Implement disconnect logic
+            setDisconnected(true);
+            localStorage.removeItem("walletConnected");
+            localStorage.removeItem("savedAddress");
+        }
+    
         initialize();
-
+    
+        if (window.ethereum) {
+            window.ethereum.on("accountsChanged", handleAccountsChanged);
+            window.ethereum.on("disconnect", handleDisconnect);
+        }
+    
         return () => {
             if (window.ethereum) {
-                window.ethereum.removeListener("accountsChanged", connectCoinbase);
-                window.ethereum.removeListener("accountsChanged", connectMetaMask);
+                window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
                 window.ethereum.removeListener("disconnect", handleDisconnect);
             }
         };
-    }, []);    
+    }, []);
+      
 
 
     useEffect(() => {
