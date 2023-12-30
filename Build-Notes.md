@@ -49,6 +49,7 @@ ________________________________________________________________________________
 - Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
 - Emphasize Revenue while including AUM... arells(dot)com/metrics
+- Hidden From Public (full feature)
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
