@@ -25,14 +25,12 @@ ________________________________________________________________________________
 
 ### My Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
-- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
 ### Other Store
 - Images clickable
 
 ### Other Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
-- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -79,18 +77,10 @@ ________________________________________________________________________________
 
 ## Arells 1.7
 
-### My Store
-- Images clickable
-
 ### My Store Asset (See Asset Modal)
-- Images (Default Store Image) here render small pixels
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
-### Other Store
-- Images clickable
-
 ### Other Store Asset (See Asset Modal)     
-- Images (Default Store Image) here render small pixels
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
 #### LinkTree Links... 
