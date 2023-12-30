@@ -4,7 +4,7 @@
 
 #### After Testing and Before Launch: 
 - Delete all important variables
-- Inform of Arells 1.3 release (and features).
+- Inform of 1.2 hide feature (including new wallet-connection interactions that will hopefuly resolve the issue many have been having of initially "connecting" to either Metamask or Coinbase Wallet)... Inform of Arells 1.3 release (and features).
 
 ________________________________________________________________________________________________________________________________________________
 
