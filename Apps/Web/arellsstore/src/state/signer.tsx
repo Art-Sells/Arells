@@ -61,7 +61,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     const [showDownloadWallet, setShowDownloadWallet] = useState(false);
     const [showConnectWallet, setShowConnectWallet] = useState(false);
-    const [showMetaMask, setShowMetaMask] = useState(false);
+    const [showMetaMask, setShowMetaMask] = useState(true);
     const [signer, setSigner] = useState<JsonRpcSigner>();
     const [address, setAddress] = useState("");
     const [showLoadingWalletConnection, setLoadingWalletConnection] = useState(false);
@@ -125,9 +125,15 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         setShowConnectWallet(false);
     };
 
-    const connectMetaMaskFunction = () => {
+
+    const connectMetaMaskFunction = async () => {
         if (window.ethereum) {
-            connectMetaMask();
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' }); // Request account access
+                connectMetaMask(); // Call your connectMetaMask function as before
+            } catch (error) {
+                console.error('Error connecting with MetaMask:', error);
+            }
         } else if (isMobileDevice()) {
             if (isIOSDevice()) {
                 const dappUrl = 'https://arells.com'; // Replace with your dapp URL
@@ -143,6 +149,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         }
         setShowConnectWallet(false);
     };
+
     
     const isIOSDevice = () => {
         return /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -297,13 +304,13 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         initNetwork();
     }, []);
 
-    useEffect(() => {
-        if (!isMobileDevice()) {
-            setShowMetaMask(true);
-        } else if (isMobileDevice()) {
-            setShowMetaMask(true);
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (!isMobileDevice()) {
+    //         setShowMetaMask(false);
+    //     } else if (isMobileDevice()) {
+    //         setShowMetaMask(true);
+    //     }
+    // }, []);
 
     
 
