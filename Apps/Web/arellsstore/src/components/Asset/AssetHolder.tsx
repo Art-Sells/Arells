@@ -162,8 +162,8 @@ const AssetHolder = (props: AssetProps) => {
             setPriceAfterPurchase(doubledPrice.toString());
         
             // Calculating percentages for Price After Purchase
-            setYouKeepAfterPurchase((doubledPrice * 0.50).toFixed(2));
-            setBuyerKeepsAfterPurchase((doubledPrice * 0.47).toFixed(2));
+            setYouKeepAfterPurchase((doubledPrice * 0.40).toFixed(2));
+            setBuyerKeepsAfterPurchase((doubledPrice * 0.57).toFixed(2));
             setFeesAfterPurchase((doubledPrice * 0.03).toFixed(2));
         
             // Calculating percentages for Price
