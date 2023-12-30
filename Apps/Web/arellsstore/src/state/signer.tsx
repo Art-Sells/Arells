@@ -445,7 +445,35 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     
     
     
+    useEffect(() => {
+        async function restoreConnection() {
+            // Check if there was a previous wallet connection
+            const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
+            if (wasWalletConnected && window.ethereum) {
+                try {
+                    setLoadingWallet(true);
 
+                    const provider = new Web3Provider(window.ethereum);
+                    const signerInstance = provider.getSigner();
+
+                    // Request accounts from wallet
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        setSigner(signerInstance);
+                        const currentAddress = await signerInstance.getAddress();
+                        setAddress(currentAddress);
+                        setConnected(true);
+                    }
+                } catch (error) {
+                    console.error("Error reconnecting to the wallet:", error);
+                } finally {
+                    setLoadingWallet(false);
+                }
+            }
+        }
+
+        restoreConnection();
+    }, []);
     
     
 
