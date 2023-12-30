@@ -238,8 +238,8 @@ const AssetHolder = (props: AssetProps) => {
 
     useEffect(() => {
         // Set the state values based on the formatted price
-        setYouKeepAfterPurchaseMinted((formattedPrice * 0.50).toFixed(2));
-        setBuyerKeepsAfterPurchaseMinted((formattedPrice * 0.47).toFixed(2));
+        setYouKeepAfterPurchaseMinted((formattedPrice * 0.40).toFixed(2));
+        setBuyerKeepsAfterPurchaseMinted((formattedPrice * 0.57).toFixed(2));
         setFeesAfterPurchaseMinted((formattedPrice * 0.03).toFixed(2));
     }, [nft.price]);
 
@@ -258,8 +258,8 @@ const AssetHolder = (props: AssetProps) => {
         }
     }, [priceAfterPurchaseSets]);
     useEffect(() => {
-        setYouKeepAfterPurchaseNum((inputPriceAfterPurchase * 0.50).toFixed(2));
-        setBuyerKeepsAfterPurchaseNum((inputPriceAfterPurchase * 0.47).toFixed(2));
+        setYouKeepAfterPurchaseNum((inputPriceAfterPurchase * 0.40).toFixed(2));
+        setBuyerKeepsAfterPurchaseNum((inputPriceAfterPurchase * 0.57).toFixed(2));
         setFeesAfterPurchaseNum((inputPriceAfterPurchase * 0.03).toFixed(2));
     }, [inputPriceAfterPurchase]);
     const handlePriceAfterPurchaseChange = (e: { target: { value: string; }; }) => {
