@@ -94,6 +94,7 @@ ________________________________________________________________________________
 ##### Bugs
 - Try/Catch Apollo Connection/Address Error...
 - 404 and Server Error Pages
+- Resolve overextending numbers listing issue
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
 - Polish "Add" button edges
