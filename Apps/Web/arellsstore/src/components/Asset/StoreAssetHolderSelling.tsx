@@ -240,7 +240,7 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
   // Function to initialize the visibility state for each NFT
   const initialVisibilityState = (tokenURI: string) => {
       const key = getLocalStorageKey(tokenURI);
-      return localStorage.getItem(key) === 'visible';
+      return localStorage.getItem(key) !== 'hidden';
   };
 
   const [hiddenAssetOwner, setHiddenAssetOwner] = useState(() => !initialVisibilityState(props.nft.tokenURI));
