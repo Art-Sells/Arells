@@ -1,7 +1,3 @@
-
-
-
-
 "use client"
 
 import React, { useMemo } from "react";
@@ -9,6 +5,8 @@ import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import { ReactNode, createContext, useContext, useState, useEffect } from "react";
 
+// Loader Styles
+import styles from '../app/css/modals/loading/spinner.module.css';
 import '../app/css/modals/walletConnected.css';
 import '../app/css/modals/loading/spinnerBackground.css';
 import '../app/css/modals/connect-wallet.css';
@@ -59,6 +57,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
     }; 
 
+    const [showLoading, setLoading] = useState<boolean>(false);
     const [showDownloadWallet, setShowDownloadWallet] = useState(false);
     const [showConnectWallet, setShowConnectWallet] = useState(false);
     const [showMetaMask, setShowMetaMask] = useState(false);
@@ -197,27 +196,42 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     // Above for Testing Purposes (check hardhat.config.ts)    
 
 // Connect Wallet functions/s above
-    const reconnectMetaMask = async () => {
-        if (!window.ethereum || !window.ethereum.isMetaMask) {
-            return;
-        }
-
-        try {
-            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-            if (accounts.length > 0) {
-                const provider = new Web3Provider(window.ethereum);
-                const signerInstance = provider.getSigner();
-                setSigner(signerInstance);
-                setAddress(accounts[0]);
-                setConnected(true);
-            } else {
-                // Handle the case where MetaMask is disconnected
-                handleDisconnect();
+        const reconnectMetaMask = async () => {
+            if (window.ethereum && window.ethereum.isMetaMask) {
+                setLoading(true);
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) { // Start loading
+                        const provider = new Web3Provider(window.ethereum);
+                        const signerInstance = provider.getSigner();
+                        setSigner(signerInstance);
+                        setAddress(accounts[0]);
+                        setConnected(true); // End loading
+                    } else {
+                        // Handle case where MetaMask is disconnected
+                        setConnected(false);
+                    }
+                } catch (error) {
+                    console.error('Error reconnecting MetaMask:', error);
+                    setConnected(false);
+                }
+                setLoading(false);
             }
-        } catch (error) {
-            console.error('Error reconnecting MetaMask:', error);
-        }
-    };
+
+        };
+
+        useEffect(() => {
+            const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
+            if (wasWalletConnected) {
+                reconnectMetaMask();
+            }
+
+            // ... (existing event listeners and other logic)
+
+            return () => {
+                // ... (cleanup logic)
+            };
+        }, []);
 
 
     useEffect(() => {
@@ -324,7 +338,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         if (!isMobileDevice()) {
-            setShowMetaMask(false);
+            setShowMetaMask(true);
         } else if (isMobileDevice()) {
             setShowMetaMask(true);
         }
@@ -506,6 +520,20 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         <SignerContext.Provider value={{ 
             signer, address, loadingWallet, connectWallet }}>
             {children}
+            {showLoading && (
+                <div id="spinnerBackground">
+                <Image 
+                loader={imageLoader}
+                    alt="" 
+                    width={29}
+                    height={30}
+                    id="arells-loader-icon" 
+                    src="images/Arells-Icon.png"/>        
+                </div>
+            )}
+            {showLoading && (
+                <div className={styles.spinner}></div>
+            )}
             {showDownloadWallet && (
 			<div id="connectWalletBuy">
 				<div className="connect-wallet-content">
