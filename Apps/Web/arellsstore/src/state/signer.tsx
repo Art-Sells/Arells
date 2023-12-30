@@ -197,6 +197,28 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     // Above for Testing Purposes (check hardhat.config.ts)    
 
 // Connect Wallet functions/s above
+    const reconnectMetaMask = async () => {
+        if (!window.ethereum || !window.ethereum.isMetaMask) {
+            return;
+        }
+
+        try {
+            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            if (accounts.length > 0) {
+                const provider = new Web3Provider(window.ethereum);
+                const signerInstance = provider.getSigner();
+                setSigner(signerInstance);
+                setAddress(accounts[0]);
+                setConnected(true);
+            } else {
+                // Handle the case where MetaMask is disconnected
+                handleDisconnect();
+            }
+        } catch (error) {
+            console.error('Error reconnecting MetaMask:', error);
+        }
+    };
+
 
     useEffect(() => {
         async function initialize() {
@@ -242,6 +264,9 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
                 const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
                 setConnected(wasWalletConnected);
+                if (wasWalletConnected) {
+                    await reconnectMetaMask();
+                }
             }
         }
 
@@ -299,7 +324,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         if (!isMobileDevice()) {
-            setShowMetaMask(false);
+            setShowMetaMask(true);
         } else if (isMobileDevice()) {
             setShowMetaMask(true);
         }
