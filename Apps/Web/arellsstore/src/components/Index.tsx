@@ -46,7 +46,7 @@ const Index = () => {
 
 
 // asset functions below
-    const [openStore, setOpenStore] = useState(true);
+    const [openStore, setOpenStore] = useState(false);
     const [openStoreConnected, setOpenStoreConnected] = useState(false);
     const { address, connectWallet } = useSigner();
     const [isConnecting, setIsConnecting] = useState(false);
@@ -70,11 +70,12 @@ const Index = () => {
         setOpenStore(true);
         setOpenStoreConnected(false);
       }
-      else if (address) {
+      else {
         setOpenStore(false);
         setOpenStoreConnected(true);
       }
     }, [address]);
+    
 // Asset functions anove    
 
   return (
