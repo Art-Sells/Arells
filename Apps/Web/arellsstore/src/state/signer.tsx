@@ -324,7 +324,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         if (!isMobileDevice()) {
-            setShowMetaMask(true);
+            setShowMetaMask(false);
         } else if (isMobileDevice()) {
             setShowMetaMask(true);
         }
@@ -397,7 +397,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
         setLoadingWallet(false);
         setLoadingWalletConnection(false);
-        
     };
 
       
@@ -478,9 +477,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             setLoadingWallet(false);
             setLoadingWalletConnection(false);
         }
-        localStorage.setItem("walletConnected", "true");
-        localStorage.setItem("savedAddress", address);
-        setConnected(true);
     };
     
       
