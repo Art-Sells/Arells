@@ -226,17 +226,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     
 
-
-    useEffect(() => {
-        if (typeof window !== 'undefined' && CoinbaseWalletSDK) {
-            const wallet = new CoinbaseWalletSDK({
-                appName: 'Arells',
-                appLogoUrl: 'https://arells.com/ArellsIcoIcon.png',
-                darkMode: false
-            });
-        }
-    }, []);
-
     const handleDisconnect = () => {
         setDisconnected(true);
         localStorage.removeItem("walletConnected");
@@ -333,8 +322,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             const coinbaseWallet = new CoinbaseWalletSDK({
                 appName: 'Arells',
                 appLogoUrl: 'https://arells.com/ArellsIcoIcon.png',
-                darkMode: false
+                enableMobileWalletLink: true
             });
+            coinbaseWallet.setAppInfo('Arells', 'https://arells.com/ArellsIcoIcon.png');
+            console.log("Coinbase Wallet SDK: ", coinbaseWallet);
 
             const ethereum = 
                 coinbaseWallet.makeWeb3Provider('https://polygon-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68', 1); 
