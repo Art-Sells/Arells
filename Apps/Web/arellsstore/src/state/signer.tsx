@@ -397,6 +397,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
         setLoadingWallet(false);
         setLoadingWalletConnection(false);
+        
     };
 
       
@@ -477,6 +478,9 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             setLoadingWallet(false);
             setLoadingWalletConnection(false);
         }
+        localStorage.setItem("walletConnected", "true");
+        localStorage.setItem("savedAddress", address);
+        setConnected(true);
     };
     
       
