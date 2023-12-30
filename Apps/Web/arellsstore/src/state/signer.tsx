@@ -196,46 +196,48 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     // Above for Testing Purposes (check hardhat.config.ts)    
 
 // Connect Wallet functions/s above
-        const reconnectMetaMask = async () => {
-            if (window.ethereum && window.ethereum.isMetaMask) {
-                setLoading(true);
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                    if (accounts.length > 0) { // Start loading
-                        const provider = new Web3Provider(window.ethereum);
-                        const signerInstance = provider.getSigner();
-                        setSigner(signerInstance);
-                        setAddress(accounts[0]);
-                        setConnected(true); // End loading
-                    } else {
-                        // Handle case where MetaMask is disconnected
-                        setConnected(false);
-                    }
-                } catch (error) {
-                    console.error('Error reconnecting MetaMask:', error);
+    const reconnectMetaMask = async () => {
+        setLoading(true); // Start loading
+        if (window.ethereum && window.ethereum.isMetaMask) {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    const provider = new Web3Provider(window.ethereum);
+                    const signerInstance = provider.getSigner();
+                    setSigner(signerInstance);
+                    setAddress(accounts[0]);
+                    setConnected(true);
+                    localStorage.setItem("walletConnected", "true"); // Update localStorage
+                } else {
+                    // Handle case where MetaMask is connected but no accounts found
                     setConnected(false);
+                    localStorage.removeItem("walletConnected"); // Update localStorage
                 }
-                setLoading(false);
+            } catch (error) {
+                console.error('Error reconnecting MetaMask:', error);
+                setConnected(false);
+                localStorage.removeItem("walletConnected"); // Update localStorage
             }
+        } else {
+            // MetaMask is not available
+            setConnected(false);
+            localStorage.removeItem("walletConnected"); // Update localStorage
+        }
+        setLoading(false); // End loading
+    };
 
-        };
-
-        useEffect(() => {
-            const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
-            if (wasWalletConnected) {
-                reconnectMetaMask();
-            }
-
-            // ... (existing event listeners and other logic)
-
-            return () => {
-                // ... (cleanup logic)
-            };
-        }, []);
+    
 
 
     useEffect(() => {
         async function initialize() {
+            setLoading(true); // Start loading
+
+            // Reconnect logic
+            const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
+            if (wasWalletConnected) {
+                await reconnectMetaMask();
+            }
             if (window.ethereum) {
                 const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // Get accounts
                 
@@ -276,12 +278,8 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
                 window.ethereum.on("disconnect", handleDisconnect);
 
-                const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
-                setConnected(wasWalletConnected);
-                if (wasWalletConnected) {
-                    await reconnectMetaMask();
-                }
             }
+            setLoading(false);
         }
 
         initialize();
