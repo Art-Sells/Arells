@@ -57,7 +57,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     const [showDownloadWallet, setShowDownloadWallet] = useState(false);
     const [showConnectWallet, setShowConnectWallet] = useState(false);
-    const [showMetaMask, setShowMetaMask] = useState(false);
+    const [showMetaMask, setShowMetaMask] = useState(true);
     const [signer, setSigner] = useState<JsonRpcSigner>();
     const [address, setAddress] = useState("");
     const [showLoadingWalletConnection, setLoadingWalletConnection] = useState(false);
@@ -222,14 +222,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             await switchToPolygonNetwork();
         };
         initNetwork();
-    }, []);
-
-    useEffect(() => {
-        if (!isMobileDevice()) {
-            setShowMetaMask(false);
-        } else if (isMobileDevice()) {
-            setShowMetaMask(true);
-        }
     }, []);
 
     
@@ -448,16 +440,6 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         }
     };
     
-      
-    
-    
-    
-    
-
-    
-    
-
-
  // Connect Functions Above   
     
    
@@ -471,6 +453,43 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         window.location.reload();
 
     };
+
+
+
+    useEffect(() => {
+        async function restoreConnection() {
+          if (window.ethereum && localStorage.getItem("walletConnected") === "true") {
+            try {
+              setLoadingWallet(true);
+              const provider = new Web3Provider(window.ethereum);
+              const accounts = await provider.send("eth_requestAccounts", []);
+              if (accounts.length > 0) {
+                const signerInstance = provider.getSigner();
+                setSigner(signerInstance);
+                const currentAddress = await signerInstance.getAddress();
+                setAddress(currentAddress);
+                setConnected(true);
+              }
+            } catch (error) {
+              console.error("Error reconnecting to the wallet:", error);
+            } finally {
+              setLoadingWallet(false);
+            }
+          }
+        }
+      
+        // Wait for the window to load to ensure window.ethereum is available
+        if (document.readyState === 'complete') {
+          restoreConnection();
+        } else {
+          window.addEventListener('load', restoreConnection);
+          return () => window.removeEventListener('load', restoreConnection);
+        }
+      }, []);
+      
+
+
+
     return (
         <SignerContext.Provider value={{ 
             signer, address, loadingWallet, connectWallet }}>
@@ -529,9 +548,9 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                                 height={50}  
                                 src="images/prototype/metamask-icon.png"/>
                             </button>
-                            <span id="wallet-spacing"></span>	
+                            <span id="wallet-spacing"></span>
                         </>
-                    )}	
+                    )}		
 					<button id="connectWallet"
 						onClick={connectCoinbaseFunction}
 						disabled={loadingWallet}>
