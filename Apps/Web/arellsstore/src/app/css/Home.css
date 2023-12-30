@@ -14,6 +14,9 @@
 	animation-name: animatetop;
 	animation-duration: 1.00s;
 }
+	#connected-spacing {
+		padding-top: 70px;
+	}
   
 	  #arells-iconn {
 		margin-top: 70px;
@@ -108,9 +111,6 @@
 		color: black;
 		word-spacing: 0px;
 	}
-		
-
-	  
 	  #updatess {
 		margin-top: 20px;
 		background: black;
@@ -120,22 +120,83 @@
 		font-size: 11px;
 		padding-top: 20px;
 		padding-bottom: 20px;
-		padding-right: 32px;
-		padding-left: 35px;	  
+		padding-right: 22px;
+		padding-left: 25px;	  
 		border: none;
 		letter-spacing: 3px;
 		border-radius: 5px;
 		border-width: 0px;
-		width: 205px;
+		width: 215px;
 		opacity: 1;
 		box-shadow: 0px 8px 12px -6px black;  
 	  }
-	  #updatess:hover,
-	  #updatess:focus {
-		opacity: .4;
-		transition: 1s;
-		cursor: pointer;
+
+
+	#connecting-wallet-wrapper {
+		margin-left: auto;
+		margin-right: auto;			
+		margin-top: 0px;
+		border-radius: 20px;
+		align-items: center;
+		margin-bottom: 0px;
+		overflow: hidden;
+		box-shadow: 0px 10px 9px -6px rgb(200, 200, 200); 
+		width: 250px;
+		height: 90px;
+		padding-top: 20px;
+		padding-left: 20px;
+		padding-right: 20px;
+		padding-bottom: 60px;			
+		text-decoration: none;
+		background: white;
+	}
+	#ada-connected {
+		margin-top: 5px;
+		font-size: 8px;
+		letter-spacing: 3.3px;
+		margin-left: 3.3px; 
+		word-spacing: 0px;
+		font-weight: 500;
+		opacity: .3;
+		color: black;
+	}
+	#updatess-connected {
+		margin-top: 20px;
+		background: black;
+		text-decoration: none;
+		color: white;
+		font-weight: 200;
+		font-size: 11px;
+		padding-top: 20px;
+		padding-bottom: 20px;
+		padding-right: 22px;
+		padding-left: 25px;	  
+		border: none;
+		letter-spacing: 3px;
+		border-radius: 5px;
+		border-width: 0px;
+		width: 180px;
+		opacity: 1;
+		box-shadow: 0px 8px 12px -6px black;  
 	  }
+		#updatess:hover,
+		#updatess:focus,
+		#updatess-connected:hover,
+		#updatess-connected:focus {
+			opacity: .4;
+			transition: 1s;
+			cursor: pointer;
+		}
+		#wallet-needed-words{
+			margin-top: 10px;
+			font-size: 9px;
+			letter-spacing: 0px;
+			margin-left: 0px; 
+			font-weight: 500;
+			opacity: 1;
+			color: black;
+			word-spacing: 0px;			
+		}
   
 	  #prototype-spacer{
 		  margin-top: 60px;
@@ -193,13 +254,22 @@
 				opacity: .4;	
 			}
 				#discord-icon {
-					margin-top: 60px;
+					margin-top: 40px;
 					opacity: .9;
 					width: 30px;
             		height: 30px;
 				}
 	  	
 	  
+
+	@media screen and (max-height: 600px) {
+		#connected-spacing {
+			padding-top: 0px;
+		}
+		#arells-iconn {
+			margin-top: 100px;
+		}  
+	}
 	  
   @media screen and (max-width: 650px) {
 	#overlayy {
@@ -245,17 +315,49 @@
 
 	
 	  #updatess {
-		width: 175px;
+		width: 185px;
 		font-weight:400;
 		font-size: 9px;
 		border-width: 1px;	   
 		padding-right: 22px;
 		padding-left: 25px;	 
 	  }	
+	  #wallet-needed-words{
+		margin-top: 10px;
+		font-size: 8px;
+		letter-spacing: 0px;
+		margin-left: 0px; 		
+	}
 	  #prototype {
 		font-weight:400;
 		font-size: 9px;
 	  }	
+
+	  #connecting-wallet-wrapper {	
+		margin-top: 0px;
+		margin-bottom: -15px;
+		width: 200px;
+		height: 85px;
+		padding-top: 20px;
+		padding-left: 20px;
+		padding-right: 20px;
+		padding-bottom: 40px;			
+	}
+	  #ada-connected {
+		margin-top: -3px;
+		font-size: 7px;
+		letter-spacing: 2.5px;
+		margin-left: 2.5px; 
+		}
+		#updatess-connected {
+			margin-top: 15px;
+			width: 155px;
+			font-weight:400;
+			font-size: 9px;
+			border-width: 1px;	   
+			padding-right: 22px;
+			padding-left: 25px;	 
+			}
 	  
 	  #discord-wrapper{
 		  padding-top: 13px;
@@ -272,7 +374,7 @@
 		height: 20px;
 	  }
 	  
-}	
+	}	
   
   
   

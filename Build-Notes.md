@@ -1,30 +1,55 @@
-## Arells Build Notes...
-
-## Arells 1.0
-
-##### After Launch:
-- Create/Prepare Discord, Instagram (ArellsDigitalAssets) Twitter(ArellsAssets)
-- Twitter/Instagram Profile Description: Rendering bear markets obsoslete one art piece at a time. No more bear markets with arells.
-- Individual Posts: Buy art that obscures bear markets with Arells! Art by etc on Arells. Hashtags (Asset/Assets/Art/Investing/Invest/Finance) 
-________________________________________________________________________________________________________________________________________________
+# Arells Build Notes...
 
 ## Arells 1.2
 
+#### After Testing and Before Launch: 
+- Delete all important variables
+
+##### Arells 1.2 Features
+- **Hide/Show Art (Mock-Up):**  We've in-built a feature that will allow you to hide any artpiece you don't want to be revealed to the public (i.e) and artpiece you accidentally create and upload into your store. This is just the mock-up and is not fully integrated into Arells. In order for us to fully integrate the hide/show feature, we need to incorporate it into your own individual store profile and this won't be implemented until Arells 1.5 (slated to launch on 2/18/23). So from now till then, I highly recommend not creating/uploading any art into your store that you do not want shown to the public, at least not until Arells 1.5.
+- **New Open/Enter-Store/Connect Wallet UX:** Some people were having trouble initially connecting to MetaMask and Coinbase from the Arells homepage so we streamlined and simplified the connection process to hopefully ensure no-one gets confused during the initial Wallet Connection process. We hope that this will ensure less confusion, we're very open to feedback so we can better improve the user experience.
+- All in all, we're focused on getting you sales first and foremost so every product iteration we release, is focused on ensuring that the buying/selling process for your art is as easy and as seamless as possible (this includes ensuring your art loads as quickly as possible)... With Arells 1.3, we're hoping to have the "high quality art loading issue" resolved once it releases next week. So far, it's been only one week of free minimal marketing and we already have a potentially interested buyer (show RareFinds Instagram)... This is before our large marketing push begins next February so we are on the right track!
+
+Arells 1.3 (which will resolve the high quality image loading issue) releases next week 1/7/24. 2 weeks later Arells 1.4 with clickable images, then 2 weeks after that 1.5 with profiles and the fully integrated hide art feature.
+
+________________________________________________________________________________________________________________________________________________
+
+## Arells 1.3
+
 ### My/Other Stores
 - When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
-- Hide Assets in store.
+
+#### After Testing and Before Launch:
+- Delete all important variables
+- Inform of Arells 1.4 release (and features).
+________________________________________________________________________________________________________________________________________________
+
+## Arells 1.4
+
+### My Store
+- Images clickable
+
+### My Store Asset (See Asset Modal)
+- Images (Default Store Image) here render small pixels
+
+### Other Store
+- Images clickable
+
+### Other Store Asset (See Asset Modal)
+- Images (Default Store Image) here render small pixels
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Inform of Arells 1.5 release (and features).
 
 ________________________________________________________________________________________________________________________________________________
+
 
 ## Arells 1.5
 - Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
 - Emphasize Revenue while including AUM... arells(dot)com/metrics
+- Hidden From Public (full feature)
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
@@ -52,29 +77,17 @@ ________________________________________________________________________________
 - Name Default: Unclaimed Store Address
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Inform of Arells 1.7 release (and features including clickable pictures).
-
-### If Time Permits
-- Coinbase SDK (Image) Test
 
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 1.7
 
-### My Store
-- Images clickable
-
 ### My Store Asset (See Asset Modal)
-- Images (Default Store Image) here render small pixels
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
-### Other Store
-- Images clickable
-
 ### Other Store Asset (See Asset Modal)     
-- Images (Default Store Image) here render small pixels
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
 #### LinkTree Links... 
@@ -87,14 +100,15 @@ ________________________________________________________________________________
 
 ##### Bugs
 - Try/Catch Apollo Connection/Address Error...
+- Fix Desktop Metamask Issue...
 - 404 and Server Error Pages
+- Resolve overextending numbers listing issue
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
 - Polish "Add" button edges
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 - Prepare Promotional Instagram/Discords) Abstracts/Illustrations/Photos  hashtags*)) arells.com/abstracts|illustrations|photography pages
 ________________________________________________________________________________________________________________________________________________
@@ -233,8 +247,7 @@ ________________________________________________________________________________
 - Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Send 1 - 2 week notification about new Features in next iteration
 ________________________________________________________________________________________________________________________________________
 

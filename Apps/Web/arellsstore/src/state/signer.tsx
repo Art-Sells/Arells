@@ -5,7 +5,9 @@ import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import { ReactNode, createContext, useContext, useState, useEffect } from "react";
 
+// Loader Styles
 import '../app/css/modals/walletConnected.css';
+import connectspinnerstyle from '../app/css/modals/loading/connectspinner.module.css';
 import '../app/css/modals/loading/spinnerBackground.css';
 import '../app/css/modals/connect-wallet.css';
 import Image from 'next/image';
@@ -55,9 +57,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
     }; 
 
+    const [showLoading, setLoading] = useState<boolean>(false);
     const [showDownloadWallet, setShowDownloadWallet] = useState(false);
     const [showConnectWallet, setShowConnectWallet] = useState(false);
-    const [showMetaMask, setShowMetaMask] = useState(true);
+    const [showMetaMask, setShowMetaMask] = useState(false);
     const [signer, setSigner] = useState<JsonRpcSigner>();
     const [address, setAddress] = useState("");
     const [showLoadingWalletConnection, setLoadingWalletConnection] = useState(false);
@@ -193,6 +196,138 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     // Above for Testing Purposes (check hardhat.config.ts)    
 
 // Connect Wallet functions/s above
+    const reconnectMetaMask = async () => {
+        setLoading(true); // Start loading
+        if (window.ethereum && window.ethereum.isMetaMask) {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    const provider = new Web3Provider(window.ethereum);
+                    const signerInstance = provider.getSigner();
+                    setSigner(signerInstance);
+                    setAddress(accounts[0]);
+                    setConnected(true);
+                    localStorage.setItem("walletConnected", "true"); // Update localStorage
+                } else {
+                    // Handle case where MetaMask is connected but no accounts found
+                    setConnected(false);
+                    localStorage.removeItem("walletConnected"); // Update localStorage
+                }
+            } catch (error) {
+                console.error('Error reconnecting MetaMask:', error);
+                setConnected(false);
+                localStorage.removeItem("walletConnected"); // Update localStorage
+            }
+        } else {
+            // MetaMask is not available
+            setConnected(false);
+            localStorage.removeItem("walletConnected"); // Update localStorage
+        }
+        setLoading(false); // End loading
+    };
+
+    
+
+    useEffect(() => {
+        // Function to delay execution for a given number of milliseconds
+        const delay = (ms: number | undefined) => new Promise(res => setTimeout(res, ms));
+    
+        // Function to poll for Ethereum accounts
+        async function pollForAccounts() {
+            const maxAttempts = 5;
+            let attempts = 0;
+            while (attempts < maxAttempts) {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    return accounts;
+                }
+                await delay(400); // Wait for 2 seconds before the next attempt
+                attempts++;
+            }
+            return [];
+        }
+    
+        async function initialize() {
+            setLoading(true); // Start loading
+    
+            // Reconnect logic
+            const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
+            if (wasWalletConnected) {
+                await reconnectMetaMask();
+            }
+    
+            if (window.ethereum) {
+                const accounts = await pollForAccounts(); // Poll for accounts
+    
+                if (accounts.length === 0) {
+                    console.error("No account connected");
+                } else {
+                    const provider = new Web3Provider(window.ethereum);
+                    const signerInstance = provider.getSigner();
+                    setSigner(signerInstance);
+                    
+                    const currentAddress = await signerInstance.getAddress();
+                    setAddress(currentAddress);
+    
+                    const savedAddress = localStorage.getItem("savedAddress");
+                    // Update localStorage if necessary
+                    if (savedAddress !== currentAddress) {
+                        localStorage.setItem("savedAddress", currentAddress);
+                    }
+                }
+            }
+    
+            setLoading(false); // End loading
+        }
+    
+        async function handleAccountsChanged(accounts: string | any[]) {
+            if (accounts.length === 0) {
+                handleDisconnect();
+                setSigner(undefined); // Clear signer state
+                setAddress(""); // Clear address state
+            } else {
+                const provider = new Web3Provider(window.ethereum);
+                const signerInstance = provider.getSigner();
+                setSigner(signerInstance);
+        
+                const newAddress = await signerInstance.getAddress();
+                setAddress(newAddress);
+            }
+        }
+    
+        function handleDisconnect() {
+            setDisconnected(true);
+            localStorage.removeItem("walletConnected");
+            localStorage.removeItem("savedAddress");
+        }
+    
+        initialize();
+    
+        if (window.ethereum) {
+            window.ethereum.on("accountsChanged", handleAccountsChanged);
+            window.ethereum.on("disconnect", handleDisconnect);
+        }
+    
+        return () => {
+            if (window.ethereum) {
+                window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+                window.ethereum.removeListener("disconnect", handleDisconnect);
+            }
+        };
+    }, []);
+    
+      
+
+
+    useEffect(() => {
+    if (signer && !address) {
+        const getAddress = async () => {
+            const retrievedAddress = await signer.getAddress();
+            setAddress(retrievedAddress);
+        };
+        getAddress();
+    }
+    }, [signer]);
 
     const switchToPolygonNetwork = async () => {
         try {
@@ -224,18 +359,15 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         initNetwork();
     }, []);
 
-    
-
-
     useEffect(() => {
-        if (typeof window !== 'undefined' && CoinbaseWalletSDK) {
-            const wallet = new CoinbaseWalletSDK({
-                appName: 'Arells',
-                appLogoUrl: 'https://arells.com/ArellsIcoIcon.png',
-                darkMode: false
-            });
+        if (!isMobileDevice()) {
+            setShowMetaMask(true);
+        } else if (isMobileDevice()) {
+            setShowMetaMask(true);
         }
     }, []);
+
+    
 
     const handleDisconnect = () => {
         setDisconnected(true);
@@ -243,74 +375,7 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
         localStorage.removeItem("savedAddress");
     };
     
-    useEffect(() => {
-        async function initialize() {
-            if (window.ethereum) {
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // Get accounts
-                
-                if (accounts.length === 0) {
-                    console.error("No account connected");
-                    return;
-                }
-                
-                const provider = new Web3Provider(window.ethereum);
-                const signerInstance = provider.getSigner();
-                setSigner(signerInstance);
-                
-                const currentAddress = await signerInstance.getAddress();
-                
-                setAddress(currentAddress);
-   
-                const savedAddress = localStorage.getItem("savedAddress");
-    
-                // If savedAddress is not the same as currentAddress, update it in localStorage
-                if (savedAddress !== currentAddress) {
-                    localStorage.setItem("savedAddress", currentAddress);
-                }
-    
-                window.ethereum.on("accountsChanged", async (accounts: string[]) => {
-                    if (accounts.length === 0) {
-                        handleDisconnect();
-                        setSigner(undefined);  // Clear signer state
-                        setAddress("");  // Clear address state
-                    } else {
-                        const provider = new Web3Provider(window.ethereum);
-                        const signerInstance = provider.getSigner();
-                        setSigner(signerInstance);
-                        
-                        const newAddress = await signerInstance.getAddress();
-                        setAddress(newAddress);
-                    }
-                });          
-    
-                window.ethereum.on("disconnect", handleDisconnect);
-    
-                const wasWalletConnected = localStorage.getItem("walletConnected") === "true";
-                setConnected(wasWalletConnected);
-            }
-        }
-    
-        initialize();
-    
-        return () => {
-            if (window.ethereum) {
-                window.ethereum.removeListener("accountsChanged", connectCoinbase);
-                window.ethereum.removeListener("accountsChanged", connectMetaMask);
-                window.ethereum.removeListener("disconnect", handleDisconnect);
-            }
-        };
-    }, []);    
-    
 
-    useEffect(() => {
-       if (signer && !address) {
-           const getAddress = async () => {
-               const retrievedAddress = await signer.getAddress();
-               setAddress(retrievedAddress);
-           };
-           getAddress();
-       }
-    }, [signer]);
 
     const web3ModalConfig = {
         cacheProvider: true, 
@@ -333,8 +398,10 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
             const coinbaseWallet = new CoinbaseWalletSDK({
                 appName: 'Arells',
                 appLogoUrl: 'https://arells.com/ArellsIcoIcon.png',
-                darkMode: false
+                enableMobileWalletLink: true
             });
+            coinbaseWallet.setAppInfo('Arells', 'https://arells.com/ArellsIcoIcon.png');
+            console.log("Coinbase Wallet SDK: ", coinbaseWallet);
 
             const ethereum = 
                 coinbaseWallet.makeWeb3Provider('https://polygon-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68', 1); 
@@ -473,51 +540,32 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
 
     };
     return (
-        <SignerContext.Provider value={{ 
-            signer, address, loadingWallet, connectWallet }}>
-            {children}
-            {showDownloadWallet && (
-			<div id="connectWalletBuy">
-				<div className="connect-wallet-content">
-					<p id="connect-wallet-words">CONNECT WALLET</p>
-                    {showMetaMask && (
-                        <>
-                            <button id="connectWallet"
-                            onClick={downloadMetaMaskFunction}
-                            disabled={loadingWallet}>
-                            <Image 
-                            loader={imageLoader}
-                            id="wallet-icon"
-                            alt=""
-                            width={50}
-                            height={50}  
-                            src="images/prototype/metamask-icon.png"/>
-                        </button>
-                        <span id="wallet-spacing"></span>	
-                        </>
-                    )}
-                    <button id="connectWallet"
-						onClick={downloadCoinbaseFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/coinbase-wallet-logo.png"/>
-					</button>		
-				</div>
-			</div>	  
-		    )}    
-            {showConnectWallet && (
-			<div id="connectWalletBuy">
-				<div className="connect-wallet-content">
-					<p id="connect-wallet-words">CONNECT WALLET</p>
-                    {/* {showMetaMask && (
-                        <>
-                            <button id="connectWallet"
-                                onClick={connectMetaMaskFunction}
+        <>
+            {showLoading && (
+                <div id="spinnerBackgroundConnect">
+                <Image 
+                loader={imageLoader}
+                    alt="" 
+                    width={29}
+                    height={30}
+                    id="arells-loader-icon-connect" 
+                    src="images/Arells-Icon.png"/>        
+                </div>            
+            )}
+            {showLoading && (
+                <div className={connectspinnerstyle.connectSpinner}></div>  
+            )}
+            <SignerContext.Provider value={{ 
+                signer, address, loadingWallet, connectWallet }}>
+                {children}
+                {showDownloadWallet && (
+                <div id="connectWalletBuy">
+                    <div className="connect-wallet-content">
+                        <p id="connect-wallet-words">CONNECT WALLET</p>
+                        {showMetaMask && (
+                            <>
+                                <button id="connectWallet"
+                                onClick={downloadMetaMaskFunction}
                                 disabled={loadingWallet}>
                                 <Image 
                                 loader={imageLoader}
@@ -526,70 +574,99 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
                                 width={50}
                                 height={50}  
                                 src="images/prototype/metamask-icon.png"/>
-                            </button>	
-                            <span id="wallet-spacing"></span>		
-                        </>
-                    )} */}
-                    <button id="connectWallet"
-                        onClick={connectMetaMaskFunction}
-                        disabled={loadingWallet}>
-                        <Image 
-                        loader={imageLoader}
-                        id="wallet-icon"
-                        alt=""
-                        width={50}
-                        height={50}  
-                        src="images/prototype/metamask-icon.png"/>
-                    </button>
-                    <span id="wallet-spacing"></span>		
-					<button id="connectWallet"
-						onClick={connectCoinbaseFunction}
-						disabled={loadingWallet}>
-						<Image 
-						loader={imageLoader}
-						id="wallet-icon"
-						alt=""
-						width={50}
-						height={50}  
-						src="images/prototype/coinbase-wallet-logo.png"/>
-					</button>		
-				</div>
-			</div>	  
-		    )}   
-            {showLoadingWalletConnection && (
-                <div id="walletConnected">
-                    <div id="wallet-connected-modalGood">
-                        <p>RELOADING CONNECTION</p>
-                        <button id="reloading-connection-close" onClick={closeProviderModals}>OK</button>    
+                            </button>
+                            <span id="wallet-spacing"></span>	
+                            </>
+                        )}
+                        <button id="connectWallet"
+                            onClick={downloadCoinbaseFunction}
+                            disabled={loadingWallet}>
+                            <Image 
+                            loader={imageLoader}
+                            id="wallet-icon"
+                            alt=""
+                            width={50}
+                            height={50}  
+                            src="images/prototype/coinbase-wallet-logo.png"/>
+                        </button>	
+                        <p id="connect-wallet-description">
+                        You need a wallet to Buy, Sell & Create</p>
+                        <hr id="connect-desc-line"></hr>		
                     </div>
-                </div>  
-            )}
-            {connected && (   
-                <div id="walletConnected">
-                    <div id="wallet-connected-modalGood">
-                        <p>CONNECTED</p>
-                        <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>   
+                </div>	  
+                )}    
+                {showConnectWallet && (
+                <div id="connectWalletBuy">
+                    <div className="connect-wallet-content">
+                        <p id="connect-wallet-words">CONNECT WALLET</p>
+                        {showMetaMask && (
+                            <>
+                                <button id="connectWallet"
+                                    onClick={connectMetaMaskFunction}
+                                    disabled={loadingWallet}>
+                                    <Image 
+                                    loader={imageLoader}
+                                    id="wallet-icon"
+                                    alt=""
+                                    width={50}
+                                    height={50}  
+                                    src="images/prototype/metamask-icon.png"/>
+                                </button>
+                                <span id="wallet-spacing"></span>	
+                            </>
+                        )}	
+                        <button id="connectWallet"
+                            onClick={connectCoinbaseFunction}
+                            disabled={loadingWallet}>
+                            <Image 
+                            loader={imageLoader}
+                            id="wallet-icon"
+                            alt=""
+                            width={50}
+                            height={50}  
+                            src="images/prototype/coinbase-wallet-logo.png"/>
+                        </button>
+                        <p id="connect-wallet-description">
+                        You need a wallet to Buy, Sell & Create</p>
+                        <hr id="connect-desc-line"></hr>		
                     </div>
-                </div>  
-            )}
-            {checkWallet && (   
-                <div id="connectingBackground">
-                    <div id="wallet-connected-modal">
-                        <p id="connectingWalletWords">CHECK OPEN WALLET</p>
-                        <button id="wallet-connecting-close" onClick={closeProviderModals}>OK</button>    
-                    </div>
-                </div>  
-            )}
-            {disconnected && (   
-                <div id="walletConnected">
-                    <div id="wallet-connected-modalGood">
-                        <p>DISCONNECTED</p>
-                        <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>    
-                    </div>
-                </div>  
-            )}
+                </div>	  
+                )}   
+                {showLoadingWalletConnection && (
+                    <div id="walletConnected">
+                        <div id="wallet-connected-modalGood">
+                            <p>RELOADING CONNECTION</p>
+                            <button id="reloading-connection-close" onClick={closeProviderModals}>OK</button>    
+                        </div>
+                    </div>  
+                )}
+                {connected && (   
+                    <div id="walletConnected">
+                        <div id="wallet-connected-modalGood">
+                            <p>CONNECTED</p>
+                            <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>   
+                        </div>
+                    </div>  
+                )}
+                {checkWallet && (   
+                    <div id="connectingBackground">
+                        <div id="wallet-connected-modal">
+                            <p id="connectingWalletWords">CHECK OPEN WALLET</p>
+                            <button id="wallet-connecting-close" onClick={closeProviderModals}>OK</button>    
+                        </div>
+                    </div>  
+                )}
+                {disconnected && (   
+                    <div id="walletConnected">
+                        <div id="wallet-connected-modalGood">
+                            <p>DISCONNECTED</p>
+                            <button id="wallet-connected-close" onClick={closeProviderModals}>OK</button>    
+                        </div>
+                    </div>  
+                )}
 
-        </SignerContext.Provider>
+            </SignerContext.Provider>
+        </>
     );
 };
 

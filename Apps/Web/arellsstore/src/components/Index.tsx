@@ -46,7 +46,7 @@ const Index = () => {
 
 
 // asset functions below
-    const [openStore, setOpenStore] = useState(true);
+    const [openStore, setOpenStore] = useState(false);
     const [openStoreConnected, setOpenStoreConnected] = useState(false);
     const { address, connectWallet } = useSigner();
     const [isConnecting, setIsConnecting] = useState(false);
@@ -70,11 +70,12 @@ const Index = () => {
         setOpenStore(true);
         setOpenStoreConnected(false);
       }
-      else if (address) {
+      else {
         setOpenStore(false);
         setOpenStoreConnected(true);
       }
     }, [address]);
+    
 // Asset functions anove    
 
   return (
@@ -93,79 +94,87 @@ const Index = () => {
       {showLoading && (
         <div className={styles.spinner}></div>
       )}
-
-        <Image 
+      {openStoreConnected && (
+        <div id="connected-spacing"></div>
+      )}
+          <Image 
+            loader={imageLoader}
+            onLoad={() => handleImageLoaded('arellsIcon')}
+            alt="" 
+            width={80}
+            height={85}
+            id="arells-iconn" 
+            src="images/Arells-Icon.png"/>
+        
+          <br/>
+          
+          <Image
           loader={imageLoader}
-          onLoad={() => handleImageLoaded('arellsIcon')}
-          alt="" 
-          width={80}
-          height={85}
-          id="arells-iconn" 
-          src="images/Arells-Icon.png"/>
-      
-        <br/>
+          onLoad={() => handleImageLoaded('wordLogo')}
+          alt=""
+          width={120}
+          height={40}
+          id="word-logoo" 
+          src="images/Arells-Logo-Ebony.png"/>	
+          
+          <br/>
         
-        <Image
-        loader={imageLoader}
-         onLoad={() => handleImageLoaded('wordLogo')}
-         alt=""
-         width={120}
-         height={40}
-         id="word-logoo" 
-         src="images/Arells-Logo-Ebony.png"/>	
-        
-        <br/>
-        
-        <p id="descriptioner">
-        BUY ART THAT NEVER LOSES VALUE
-        </p>
+      {openStore && (
+        <div>          
+          <p id="descriptioner">
+          BUY ART THAT NEVER LOSES VALUE
+          </p>
 
-        <hr id="black-liner"/>
+          <hr id="black-liner"/>
 
-        <p id="ada-description">
-        ARELLS DIGITAL ASSETS
-        </p>
+          <p id="ada-description">
+          ARELLS DIGITAL ASSETS
+          </p>
 
-        <hr id="black-liner-bottom-home"/>
+          <hr id="black-liner-bottom-home"/>
 
-        <p id="bear-markets-description">
-        NO MORE BEAR MARKETS
-        </p>
-
-
-        
-        {openStore && (
+          <p id="bear-markets-description">
+          NO MORE BEAR MARKETS
+          </p>            
           <button 
           id="updatess" 
           onClick={handleConnectWallet}
           disabled={isConnecting} 
           >
-               {isConnecting ? "OPENING..." : "OPEN STORE"}
-          </button>     
-				)}	
-				{openStoreConnected && (
-// change below link after test
-        <Link href={`/own/${address}`} passHref>
-          <button id="updatess">
-            ENTER STORE
-          </button>
-        </Link>   
-				)}	
-        <br></br>
+            {isConnecting ? "CONNECTING..." : "CONNECT WALLET"}
+          </button> 
+          <p id="wallet-needed-words">Connect Wallet to Enter Your Store</p>
+        </div>
+  
+      )}	
+      {openStoreConnected && (
+        <div id="connecting-wallet-wrapper">
+          <p id="ada-connected">
+          WALLET CONNECTED
+          </p>
+          {/* change below link after test */}
+          <Link href={`/own/${address}`} passHref>
+            <button id="updatess-connected">
+              ENTER STORE
+            </button>
+          </Link> 
+        </div>  
+      )}	
+      <br></br>
 
-        <Link 
-        href="https://discord.gg/6UUJxepDx7" 
-        passHref
-        id="discord-wrapper">
-          <Image 
-            loader={imageLoader}
-            onLoad={() => handleImageLoaded('arellsIcon')}
-            alt="" 
-            width={25}
-            height={25}
-            id="discord-icon" 
-            src="images/discord.png"/>	
-        </Link>     
+      <Link 
+      href="https://discord.gg/6UUJxepDx7" 
+      passHref
+      id="discord-wrapper">
+        <Image 
+          loader={imageLoader}
+          onLoad={() => handleImageLoaded('arellsIcon')}
+          alt="" 
+          width={25}
+          height={25}
+          id="discord-icon" 
+          src="images/discord.png"/>	
+      </Link>     
     </>
   );
 }

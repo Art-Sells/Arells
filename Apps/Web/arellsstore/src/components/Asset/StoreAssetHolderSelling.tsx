@@ -232,6 +232,69 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
 //Formatted Price
 
 
+// Hide and show assets below
+
+  const tokenURI = nft.tokenURI; 
+  const getLocalStorageKey = (tokenURI: string) => `assetVisibility-${tokenURI}`;
+
+  // Function to initialize the visibility state for each NFT
+const initialVisibilityState = (tokenURI: string) => {
+    const key = getLocalStorageKey(tokenURI);
+    const storedValue = localStorage.getItem(key);
+    console.log(`Initial local storage value for ${tokenURI}: ${storedValue}`);
+    return storedValue !== 'hidden';
+};
+
+
+  const [hiddenAssetOwner, setHiddenAssetOwner] = useState(() => !initialVisibilityState(props.nft.tokenURI));
+  const [shownAssetOwner, setShownAssetOwner] = useState(() => initialVisibilityState(props.nft.tokenURI));
+  const [shownAssetNotOwner, setShownAssetNotOwner] = useState(() => false);
+
+  // Function to hide an NFT
+  const hideAsset = (tokenURI: string) => {
+      const key = getLocalStorageKey(tokenURI);
+      localStorage.setItem(key, 'hidden');
+      setHiddenAssetOwner(true);
+      setShownAssetOwner(false);
+      setShownAssetNotOwner(false);
+      console.log(`Hiding asset with tokenURI: ${tokenURI}`);
+  };
+
+  // Function to show an NFT
+  const showAsset = (tokenURI: string) => {
+      const key = getLocalStorageKey(tokenURI);
+      localStorage.setItem(key, 'visible');
+      setHiddenAssetOwner(false);
+      setShownAssetOwner(true);
+      setShownAssetNotOwner(false);
+      console.log(`Showing asset with tokenURI: ${tokenURI}`);
+  };
+
+  useEffect(() => {
+    console.log(`Effect triggered for tokenURI: ${props.nft.tokenURI}`);
+      if (addressMatch) {
+          // User is the owner
+          if (!initialVisibilityState(props.nft.tokenURI)) {
+              setHiddenAssetOwner(true);
+              setShownAssetOwner(false);
+              setShownAssetNotOwner(false);
+          } else {
+              setHiddenAssetOwner(false);
+              setShownAssetOwner(true);
+              setShownAssetNotOwner(false);
+          }
+      } else {
+          // User is not the owner
+          setHiddenAssetOwner(false);
+          setShownAssetOwner(false);
+          setShownAssetNotOwner(initialVisibilityState(props.nft.tokenURI));
+      }
+  }, [addressMatch, props.nft.tokenURI]);
+  console.log(`Rendering with states - hiddenAssetOwner: ${hiddenAssetOwner}, shownAssetOwner: ${shownAssetOwner}, shownAssetNotOwner: ${shownAssetNotOwner}`);
+
+// Hide and show assets above 
+
+
   return (
     <>
       {/*<!-- Modals below link after test -->*/}
@@ -320,7 +383,65 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
 
       {/*<!-- Modals Above -->*/}
 
-      <div id="blue-orange-seller-created">
+      {hiddenAssetOwner && (
+          <>
+            <div id="blue-orange-seller-created-owner">
+                <button id="hide-show-button"
+                  onClick={() => 
+                    showAsset(props.nft.tokenURI)}>
+                      SHOW
+                </button>
+                {meta && (
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={200}  
+                    height={200}  
+                    id="photo-asset-owned-hidden" 
+                    src={meta?.imageURL}
+                  />
+                )} 
+                {!meta && (
+                  (
+                    <div id="photo-asset-loading-hidden">
+                        <Image
+                          loader={imageLoader}
+                          alt=""
+                          width={50}  
+                          height={50}  
+                          id="receiving-image" 
+                          src="/images/market/receiving.png"
+                        />
+                      <div className={styles.photoloader}></div>  
+                      <p id="receiving-word">RECEIVING</p>
+                    </div>
+                  )
+                )} 
+                <div id="hidden-from-public"></div> 
+                <p id="hidden-word-one">Hidden</p>
+            </div>
+          </>
+        )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+      {shownAssetOwner && (
+        <div id="blue-orange-seller-created-owner">
+          <button id="hide-show-button"
+            onClick={() => 
+              hideAsset(props.nft.tokenURI)}>
+                HIDE
+          </button>
         {/*  Change below link after test  */}
         {meta && (
           <Image
@@ -348,182 +469,6 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
               </div>
             )
           )}  
-{/* Below for users who are not owners of the Assets */} 
-        {notConnectedListedNotMintedNotRelisted && (
-          <>
-            <div id="blue-orange-prices-before-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={40}  
-                height={8}  
-                id="PAP-logo" 
-                src="/images/PriceAfterPurchaseLogo.png"
-              />
-              <p id="PAP-seller-created">Price After Purchase</p>
-              <p id="PAP-blue-orange-before-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={18}  
-                height={16}  
-                id="polygon-logo-pap" 
-                src="/images/market/polygon.png"
-              />
-                {formattedPriceAfterPurchaseWithCommasAndDecimals}
-              </p>
-              <hr id="priceline-seller-created" />
-              <p id="yourprice-seller-created">Price</p>
-              <p id="price-blue-orange-before-seller-created">
-              <Image
-                  loader={imageLoader}
-                  alt=""
-                  width={18}  
-                  height={16}  
-                  id="polygon-logo" 
-                  src="/images/market/polygon.png"
-                /> 
-                {formattedPriceWithCommasAndDecimals}
-              </p>
-            </div>         
-            <button id="blue-orange-add-to-cart-seller-created" 
-            disabled={isBuying}
-            onClick={buy}>
-              BUY</button>
-          </>
-        )}
-        {notConnectedListedMintedRelisted && (
-          <>
-            <div id="blue-orange-prices-before-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={40}  
-                height={8}  
-                id="PAP-logo" 
-                src="/images/PriceAfterPurchaseLogo.png"
-              />
-              <p id="PAP-seller-created">Price After Purchase</p>
-              <p id="PAP-blue-orange-before-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={18}  
-                height={16}  
-                id="polygon-logo-pap" 
-                src="/images/market/polygon.png"
-              />
-                {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
-                </p>
-              <hr id="priceline-seller-created" />
-              <p id="yourprice-seller-created">Price</p>
-              <p id="price-blue-orange-before-seller-created">
-              <Image
-                  loader={imageLoader}
-                  alt=""
-                  width={18}  
-                  height={16}  
-                  id="polygon-logo" 
-                  src="/images/market/polygon.png"
-                /> 
-                {formattedPriceWithCommasAndDecimals}
-              </p>
-            </div>         
-            <button id="blue-orange-add-to-cart-seller-created" 
-            disabled={isBuying}
-            onClick={buy}>
-              BUY</button>
-          </>
-        )}
-        {connectedBuyerListedNotMintedNotRelisted && (
-          <>
-            <div id="blue-orange-prices-before-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={40}  
-                height={8}  
-                id="PAP-logo" 
-                src="/images/PriceAfterPurchaseLogo.png"
-              />
-              <p id="PAP-seller-created">Price After Purchase</p>
-              <p id="PAP-blue-orange-before-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={18}  
-                height={16}  
-                id="polygon-logo-pap" 
-                src="/images/market/polygon.png"
-              />
-                {formattedPriceAfterPurchaseWithCommasAndDecimals}
-              </p>
-              <hr id="priceline-seller-created" />
-              <p id="yourprice-seller-created">Price</p>
-              <p id="price-blue-orange-before-seller-created">
-              <Image
-                  loader={imageLoader}
-                  alt=""
-                  width={18}  
-                  height={16}  
-                  id="polygon-logo" 
-                  src="/images/market/polygon.png"
-                /> 
-                {formattedPriceWithCommasAndDecimals}
-              </p>
-            </div>         
-            <button id="blue-orange-add-to-cart-seller-created" 
-            disabled={isBuying}
-            onClick={buy}>
-              BUY</button>
-          </>
-        )}
-        {connectedBuyerListedMintedRelisted && (
-          <>
-            <div id="blue-orange-prices-before-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={40}  
-                height={8}  
-                id="PAP-logo" 
-                src="/images/PriceAfterPurchaseLogo.png"
-              />
-              <p id="PAP-seller-created">Price After Purchase</p>
-              <p id="PAP-blue-orange-before-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={18}  
-                height={16}  
-                id="polygon-logo-pap" 
-                src="/images/market/polygon.png"
-              />
-                {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
-                </p>
-              <hr id="priceline-seller-created" />
-              <p id="yourprice-seller-created">Price</p>
-              <p id="price-blue-orange-before-seller-created">
-              <Image
-                  loader={imageLoader}
-                  alt=""
-                  width={18}  
-                  height={16}  
-                  id="polygon-logo" 
-                  src="/images/market/polygon.png"
-                /> 
-                {formattedPriceWithCommasAndDecimals}
-              </p>
-            </div>         
-            <button id="blue-orange-add-to-cart-seller-created" 
-            disabled={isBuying}
-            onClick={buy}>
-              BUY</button>
-          </>
-        )}
-  {/* Above for users who are not owners of the Assets */}      
-
-
 {/* Below for owners of the Assets */}  
         {connectedOwnerListedNotMintedNotRelisted && (
           <>
@@ -614,6 +559,222 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
   {/* Above for users who are owners of the Assets */}          
             
       </div>    
+      )}  
+
+
+
+
+
+
+
+
+
+
+      {shownAssetNotOwner && (
+        <div id="blue-orange-seller-created">
+          {/*  Change below link after test  */}
+          {meta && (
+            <Image
+              loader={imageLoader}
+              alt=""
+              width={200}  
+              height={200}  
+              id="photo-asset-owned" 
+              src={meta?.imageURL}
+            />
+          )}
+          {!meta && (
+              (
+                <div id="photo-asset-loading">
+                    <Image
+                      loader={imageLoader}
+                      alt=""
+                      width={50}  
+                      height={50}  
+                      id="receiving-image" 
+                      src="/images/market/receiving.png"
+                    />
+                  <div className={styles.photoloader}></div>  
+                  <p id="receiving-word">RECEIVING</p>
+                </div>
+              )
+            )}  
+  {/* Below for users who are not owners of the Assets */} 
+          {notConnectedListedNotMintedNotRelisted && (
+            <>
+              <div id="blue-orange-prices-before-seller-created">
+                <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={40}  
+                  height={8}  
+                  id="PAP-logo" 
+                  src="/images/PriceAfterPurchaseLogo.png"
+                />
+                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-blue-orange-before-seller-created">
+                <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo-pap" 
+                  src="/images/market/polygon.png"
+                />
+                  {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                </p>
+                <hr id="priceline-seller-created" />
+                <p id="yourprice-seller-created">Price</p>
+                <p id="price-blue-orange-before-seller-created">
+                <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={18}  
+                    height={16}  
+                    id="polygon-logo" 
+                    src="/images/market/polygon.png"
+                  /> 
+                  {formattedPriceWithCommasAndDecimals}
+                </p>
+              </div>         
+              <button id="blue-orange-add-to-cart-seller-created" 
+              disabled={isBuying}
+              onClick={buy}>
+                BUY</button>
+            </>
+          )}
+          {notConnectedListedMintedRelisted && (
+            <>
+              <div id="blue-orange-prices-before-seller-created">
+                <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={40}  
+                  height={8}  
+                  id="PAP-logo" 
+                  src="/images/PriceAfterPurchaseLogo.png"
+                />
+                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-blue-orange-before-seller-created">
+                <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo-pap" 
+                  src="/images/market/polygon.png"
+                />
+                  {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                  </p>
+                <hr id="priceline-seller-created" />
+                <p id="yourprice-seller-created">Price</p>
+                <p id="price-blue-orange-before-seller-created">
+                <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={18}  
+                    height={16}  
+                    id="polygon-logo" 
+                    src="/images/market/polygon.png"
+                  /> 
+                  {formattedPriceWithCommasAndDecimals}
+                </p>
+              </div>         
+              <button id="blue-orange-add-to-cart-seller-created" 
+              disabled={isBuying}
+              onClick={buy}>
+                BUY</button>
+            </>
+          )}
+          {connectedBuyerListedNotMintedNotRelisted && (
+            <>
+              <div id="blue-orange-prices-before-seller-created">
+                <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={40}  
+                  height={8}  
+                  id="PAP-logo" 
+                  src="/images/PriceAfterPurchaseLogo.png"
+                />
+                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-blue-orange-before-seller-created">
+                <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo-pap" 
+                  src="/images/market/polygon.png"
+                />
+                  {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                </p>
+                <hr id="priceline-seller-created" />
+                <p id="yourprice-seller-created">Price</p>
+                <p id="price-blue-orange-before-seller-created">
+                <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={18}  
+                    height={16}  
+                    id="polygon-logo" 
+                    src="/images/market/polygon.png"
+                  /> 
+                  {formattedPriceWithCommasAndDecimals}
+                </p>
+              </div>         
+              <button id="blue-orange-add-to-cart-seller-created" 
+              disabled={isBuying}
+              onClick={buy}>
+                BUY</button>
+            </>
+          )}
+          {connectedBuyerListedMintedRelisted && (
+            <>
+              <div id="blue-orange-prices-before-seller-created">
+                <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={40}  
+                  height={8}  
+                  id="PAP-logo" 
+                  src="/images/PriceAfterPurchaseLogo.png"
+                />
+                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-blue-orange-before-seller-created">
+                <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={18}  
+                  height={16}  
+                  id="polygon-logo-pap" 
+                  src="/images/market/polygon.png"
+                />
+                  {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                  </p>
+                <hr id="priceline-seller-created" />
+                <p id="yourprice-seller-created">Price</p>
+                <p id="price-blue-orange-before-seller-created">
+                <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={18}  
+                    height={16}  
+                    id="polygon-logo" 
+                    src="/images/market/polygon.png"
+                  /> 
+                  {formattedPriceWithCommasAndDecimals}
+                </p>
+              </div>         
+              <button id="blue-orange-add-to-cart-seller-created" 
+              disabled={isBuying}
+              onClick={buy}>
+                BUY</button>
+            </>
+          )}
+    {/* Above for users who are not owners of the Assets */}     
+        </div>
+      )}
     </>
   );
 });

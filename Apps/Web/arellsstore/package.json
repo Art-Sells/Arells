@@ -29,6 +29,7 @@
     "react-dom": "latest",
     "react-image-crop": "^10.1.8",
     "react-toastify": "^9.1.3",
+    "web3": "^4.3.0",
     "web3modal": "^1.9.12"
   },
   "devDependencies": {

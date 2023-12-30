@@ -1,3 +1,5 @@
+
+
 #prototype-seller-created-wrapper {
 	text-align: center;
 	font-family: Arial;
@@ -381,7 +383,112 @@
 	  }
   
   
-		  
+	  #blue-orange-seller-created-owner {
+		  flex: 1;			
+		  margin: 10px;
+		  border-radius: 15px;
+		  align-items: center;
+		  overflow: hidden;
+		  box-shadow: 0px 5px 20px -6px silver; 
+		  width: 200px;
+		  height: 510px;
+		  padding-top: 35px;
+		  padding-left: 50px;
+		  padding-right: 50px;
+		  padding-bottom: 60px;			
+		  text-decoration: none;
+		  background: white;
+		  -webkit-animation-name: animatetop;
+		  -webkit-animation-duration: 1.00s;
+		  animation-name: animatetop;
+		  animation-duration: 1.00s;
+	  }
+
+		#hide-show-button {
+			margin-top: -20px;
+			margin-bottom: 30px;
+			text-decoration: none;
+			color: gray;
+			margin-left: auto;
+			margin-right: auto;
+			font-weight: 500;
+			font-size: 10px;
+			padding-top: 13px;
+			padding-bottom: 13px;
+			padding-right: 12px;
+			padding-left: 14.5px;	  
+			border: none;
+			letter-spacing: 2.5px;
+			border-radius: 5px;
+			border-width: 0px;
+			width: 80px;
+			opacity: .7;
+			box-shadow: 0px 8px 12px -6px silver;  
+				background: white;
+		}
+		#hide-show-button:hover,
+		#hide-show-button:focus {
+			  transition: 1s;
+			  cursor: pointer;
+			  opacity: .4;
+			}
+			#hidden-from-public {
+				margin-top: -206px;
+				padding-top: 45px;
+				height: 320px;
+				width: 202px;
+				font-weight: 600;
+				border-radius: 5px;
+				color: rgb(183, 183, 183);
+				background-color: rgb(255, 255, 255);
+				box-shadow: 0px 5px 20px -10px silver;  
+				opacity: .7;
+				
+			}	
+			#hidden-word-one {
+				font-weight: 600;
+				color: silver;
+				margin-top: 45px;
+				font-size: 13px;;
+				letter-spacing:0px;
+				margin-left: 0px;
+				opacity: .7;
+				
+			}	
+			#photo-asset-owned-hidden {
+				width: 200px;
+				height: 200px;
+				  border-radius: 5px;		
+				  border: solid; 
+				border-width: 1px;
+				border-color: rgb(240, 240, 240);
+				opacity: 1;
+				  -webkit-animation-name: animatetophide;
+				  -webkit-animation-duration: 1.00s;
+				  animation-name: animatetophide;
+				  animation-duration: 1.00s;
+				}
+				#photo-asset-loading-hidden {
+					width: 200px;
+					height: 200px;
+						border-radius: 5px;		
+						border: solid; 
+					border-width: 1px;
+					border-color: rgb(240, 240, 240);
+						-webkit-animation-name: animatetophide;
+						-webkit-animation-duration: 1.00s;
+						animation-name: animatetophide;
+						animation-duration: 1.00s;
+					}	
+				@-webkit-keyframes animatetophide {
+					from {center:0; opacity:0}
+					to {center:0; opacity:1}
+				  }
+				  
+				  @keyframes animatetophide {
+					from {center:0; opacity:0}
+					to {center:0; opacity:1}
+				  }
 		  #blue-orange-seller-created, #beach-houses-seller-created, #colour-glass-seller-created,
 		  #layers-seller-created, #succinct-drop-seller-created, #paint-rain-seller-created {
 			  flex: 1;			
@@ -414,6 +521,7 @@
 		  #photo-link-seller-created {
 			  text-decoration: none;
 		  }
+
   
 		  #photo-link-seller-created:hover {
 			opacity: .5;
@@ -867,6 +975,29 @@
 		  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 		  margin-top: 20px;
 		}
+		#blue-orange-seller-created-owner {
+			margin: 5px;
+			align-items: center;
+			width: 130px;
+			height: 385px;
+			padding-top: 20px;
+			padding-left: 30px;
+			padding-right: 30px;
+			padding-bottom: 30px;	
+		}
+  
+		  #hide-show-button {
+			  margin-top: -10px;
+			  margin-bottom: 20px;
+			  font-size: 8px;
+			  padding-top: 10px;
+			  padding-bottom: 10px;
+			  padding-right: 12px;
+			  padding-left: 13px;	  
+			  letter-spacing: 1px;
+			  width: 60px;
+			  box-shadow: 0px 8px 12px -6px silver;  
+		  }
   
 		  #blue-orange-seller-created, #beach-houses-seller-created, #colour-glass-seller-created,
 		  #layers-seller-created, #succinct-drop-seller-created, #paint-rain-seller-created {		
@@ -880,6 +1011,30 @@
 			  padding-bottom: 30px;			
 			   
 		  }
+		  #hidden-from-public {
+			margin-top: -137px;
+			padding-top: 45px;
+			height: 208px;
+			width: 132px;
+			
+		}	
+		#hidden-word-one {
+			font-weight: 600;
+			color: silver;
+			margin-top: 45px;
+			font-size: 9px;;
+			letter-spacing:0px;
+			margin-left: 0px;
+			
+		}	
+		#photo-asset-owned-hidden {
+			width: 130px;
+			height: 130px;	
+			}
+			#photo-asset-loading-hidden {
+				width: 132px;
+				height: 132px;
+				}	
 		  #photo-asset-owned {
 			  width: 130px;
 			  height: 130px;	

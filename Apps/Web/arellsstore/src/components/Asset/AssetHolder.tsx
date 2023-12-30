@@ -136,19 +136,11 @@ const AssetHolder = (props: AssetProps) => {
     const priceNum = parseFloat(price);
 
     const formatNumber = (num: string | number) => {
-        // If the input is an empty string or exactly zero, format it directly
-        if (num === '' || num === '0' || num === 0) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'decimal',
-                minimumFractionDigits: 2, // Ensure that there are always two decimal places
-            }).format(0);
-        }
-    
-        // For non-zero numbers, parse and format them
         const number = typeof num === 'string' ? parseFloat(num) : num;
         if (!isNaN(number)) {
             return new Intl.NumberFormat('en-US', {
                 style: 'decimal',
+                minimumFractionDigits: 2, // Always show two decimal places
                 maximumFractionDigits: 2,
             }).format(number);
         }
@@ -156,14 +148,15 @@ const AssetHolder = (props: AssetProps) => {
         return "0.00"; // Return a default value if the input is not a valid number
     };
     
+    
     useEffect(() => {
         if (price.trim() !== "" && !isNaN(priceNum))  {
             const doubledPrice = priceNum * 2;
             setPriceAfterPurchase(doubledPrice.toString());
         
             // Calculating percentages for Price After Purchase
-            setYouKeepAfterPurchase((doubledPrice * 0.50).toFixed(2));
-            setBuyerKeepsAfterPurchase((doubledPrice * 0.47).toFixed(2));
+            setYouKeepAfterPurchase((doubledPrice * 0.40).toFixed(2));
+            setBuyerKeepsAfterPurchase((doubledPrice * 0.57).toFixed(2));
             setFeesAfterPurchase((doubledPrice * 0.03).toFixed(2));
         
             // Calculating percentages for Price
@@ -245,8 +238,8 @@ const AssetHolder = (props: AssetProps) => {
 
     useEffect(() => {
         // Set the state values based on the formatted price
-        setYouKeepAfterPurchaseMinted((formattedPrice * 0.50).toFixed(2));
-        setBuyerKeepsAfterPurchaseMinted((formattedPrice * 0.47).toFixed(2));
+        setYouKeepAfterPurchaseMinted((formattedPrice * 0.40).toFixed(2));
+        setBuyerKeepsAfterPurchaseMinted((formattedPrice * 0.57).toFixed(2));
         setFeesAfterPurchaseMinted((formattedPrice * 0.03).toFixed(2));
     }, [nft.price]);
 
@@ -265,8 +258,8 @@ const AssetHolder = (props: AssetProps) => {
         }
     }, [priceAfterPurchaseSets]);
     useEffect(() => {
-        setYouKeepAfterPurchaseNum((inputPriceAfterPurchase * 0.50).toFixed(2));
-        setBuyerKeepsAfterPurchaseNum((inputPriceAfterPurchase * 0.47).toFixed(2));
+        setYouKeepAfterPurchaseNum((inputPriceAfterPurchase * 0.40).toFixed(2));
+        setBuyerKeepsAfterPurchaseNum((inputPriceAfterPurchase * 0.57).toFixed(2));
         setFeesAfterPurchaseNum((inputPriceAfterPurchase * 0.03).toFixed(2));
     }, [inputPriceAfterPurchase]);
     const handlePriceAfterPurchaseChange = (e: { target: { value: string; }; }) => {
