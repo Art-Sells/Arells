@@ -2,14 +2,8 @@
 
 ## Arells 1.2
 
-### Home
-- {Modal Connect Wallet--()--Wallet Needed to Buy, Sell & Create Arells Digital Assets}
-- **After Connection** {Wallet Connected... (Enter Store)}
-- Add Phantom Wallet?
-
 #### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Inform of Arells 1.3 release (and features).
 
 ________________________________________________________________________________________________________________________________________________
@@ -18,11 +12,9 @@ ________________________________________________________________________________
 
 ### My/Other Stores
 - When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
-- Add Phantom Wallet
 
 #### After Testing and Before Launch:
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Inform of Arells 1.4 release (and features).
 ________________________________________________________________________________________________________________________________________________
 
@@ -43,8 +35,7 @@ ________________________________________________________________________________
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Inform of Arells 1.5 release (and features).
 
 ________________________________________________________________________________________________________________________________________________
@@ -81,8 +72,7 @@ ________________________________________________________________________________
 - Name Default: Unclaimed Store Address
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Inform of Arells 1.7 release (and features including clickable pictures).
 
 ________________________________________________________________________________________________________________________________________________
@@ -119,8 +109,7 @@ ________________________________________________________________________________
 - Polish "Add" button edges
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
 - Prepare Promotional Instagram/Discords) Abstracts/Illustrations/Photos  hashtags*)) arells.com/abstracts|illustrations|photography pages
 ________________________________________________________________________________________________________________________________________________
@@ -259,8 +248,7 @@ ________________________________________________________________________________
 - Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
 
 #### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
+- Delete all important variables
 - Send 1 - 2 week notification about new Features in next iteration
 ________________________________________________________________________________________________________________________________________
 
