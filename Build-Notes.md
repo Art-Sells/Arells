@@ -31,12 +31,14 @@ ________________________________________________________________________________
 
 ### My Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
+- PAP, You Keep, Price
 
 ### Other Store
 - Images clickable
 
 ### Other Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
+- PAP, You Keep, Price
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -57,8 +59,8 @@ ________________________________________________________________________________
 ### Edit Store
 - Logo: Default Store Logo
 - Name: No Maximum Characters
-- Addresses:
-0x74348347 - (Claimed)
+- Addresses | Locations:
+0x74348347 - [Enter Store]
 "Unclaimed Store Address" - (Claim Address)
 {Must Claim All Addresses}
 
@@ -100,7 +102,6 @@ ________________________________________________________________________________
 
 ##### Bugs
 - Try/Catch Apollo Connection/Address Error...
-- Fix Desktop Metamask Issue...
 - 404 and Server Error Pages
 - Resolve overextending numbers listing issue
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
@@ -133,6 +134,7 @@ ________________________________________________________________________________
 ### Home
 - If logged in [(Open Store), (Close Store)]
 - If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
+- List of Addresses | Locations
 
 
 ### My Store
@@ -153,6 +155,7 @@ ________________________________________________________________________________
 - Name
 - Evolutions Section
 - Mimick Set Price Section and Buy Button for List to Sell
+- Created by (Signer 0 (if addressClaimed then Store Name)), Owned by (Signer 1 (if addressClaimed then Store Name))
 - PAP Logo Above Price After Purchase
 - Certificates of Ownership
 -  Set Price After Purchase(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]-if wallet not connected (Connect Wallet)
@@ -167,6 +170,7 @@ ________________________________________________________________________________
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Bottom-Center[+]<black. [Connect Wallet]-if not connected
 - - **Selling**:
+- Created by (Signer 0 (if addressClaimed then Store Name)), Owned by (Signer 1 (if addressClaimed then Store Name))
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
 - - **Owned**:
