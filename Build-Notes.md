@@ -57,8 +57,8 @@ ________________________________________________________________________________
 - Sign Up with Google/Apple/Facebook/Etc
 
 ### Edit Store
-- Logo: Default Store Logo
-- Name: No Maximum Characters
+- Store|Brand Logo: Default Store Logo
+- Store|Brand Name: No Maximum Characters
 - Addresses | Locations:
 0x74348347 - [Enter Store]
 "Unclaimed Store Address" - (Claim Address)
