@@ -1,19 +1,5 @@
 # Arells Build Notes...
 
-## Arells 1.2
-
-#### After Testing and Before Launch: 
-- Delete all important variables
-
-##### Arells 1.2 Features
-- **Hide/Show Art (Mock-Up):**  We've in-built a feature that will allow you to hide any artpiece you don't want to be revealed to the public (i.e) and artpiece you accidentally create and upload into your store. This is just the mock-up and is not fully integrated into Arells. In order for us to fully integrate the hide/show feature, we need to incorporate it into your own individual store profile and this won't be implemented until Arells 1.5 (slated to launch on 2/18/23). So from now till then, I highly recommend not creating/uploading any art into your store that you do not want shown to the public, at least not until Arells 1.5.
-- **New Open/Enter-Store/Connect Wallet UX:** Some people were having trouble initially connecting to MetaMask and Coinbase from the Arells homepage so we streamlined and simplified the connection process to hopefully ensure no-one gets confused during the initial Wallet Connection process. We hope that this will ensure less confusion, we're very open to feedback so we can better improve the user experience.
-- All in all, we're focused on getting you sales first and foremost so every product iteration we release, is focused on ensuring that the buying/selling process for your art is as easy and as seamless as possible (this includes ensuring your art loads as quickly as possible)... With Arells 1.3, we're hoping to have the "high quality art loading issue" resolved once it releases next week. So far, it's been only one week of free minimal marketing and we already have a potentially interested buyer (show RareFinds Instagram)... This is before our large marketing push begins next February so we are on the right track!
-
-Arells 1.3 (which will resolve the high quality image loading issue) releases next week 1/7/24. 2 weeks later Arells 1.4 with clickable images, then 2 weeks after that 1.5 with profiles and the fully integrated hide art feature.
-
-________________________________________________________________________________________________________________________________________________
-
 ## Arells 1.3
 
 ### My/Other Stores
