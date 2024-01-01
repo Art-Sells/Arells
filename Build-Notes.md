@@ -3,7 +3,7 @@
 ## Arells 1.3
 
 ### My/Other Stores
-- When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
+- Delete NFT Id, Delete Deployed arellsnftcdb, refactor graphql, and .ts then redeploy... Then Match Token URI and show AWS Versions.
 
 #### After Testing and Before Launch:
 - Delete all important variables
