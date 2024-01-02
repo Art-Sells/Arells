@@ -1,12 +1,13 @@
 "use strict";
 require("dotenv/config");
 const AWS = require("aws-sdk");
-const sharp_1 = __importDefault(require("sharp"));
+const sharp = require("sharp");
 
 // Dynamic import for node-fetch
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const GRAPH_URL = process.env.NEXT_PUBLIC_GRAPH_URL;
+
 // AWS S3 Configuration
 AWS.config.update({ region: 'us-west-1' });
 const s3 = new AWS.S3();
@@ -28,7 +29,6 @@ async function fetchNFTs() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: QUERY })
         });
-        // Use the GraphQLResponse interface to assert the type of the JSON response
         const json = await response.json();
         return json.data.nfts;
     } catch (error) {
@@ -37,26 +37,40 @@ async function fetchNFTs() {
     }
 }
 
+// Function to extract the unique part of the token URI
+function extractTokenId(tokenURI) {
+    const parts = tokenURI.split('/');
+    return parts[parts.length - 1]; // Returns the last part of the URI
+}
+
 // Function to process and upload each image
-async function processAndUploadImage(imageUrl) {
+async function processAndUploadImage(tokenURI) {
     try {
-        const response = await fetch(imageUrl);
+        let response = await fetch(tokenURI);
         if (!response.ok) {
-            throw new Error(`Failed to fetch image: ${response.statusText}`);
+            throw new Error(`Failed to fetch token metadata: ${response.statusText}`);
         }
-        const contentType = response.headers.get('content-type');
-        if (!contentType.includes('image')) {
-            throw new Error(`URL did not point to an image: ${contentType}`);
+
+        const metadata = await response.json();
+        const imageUrl = metadata.image;
+
+        if (typeof imageUrl !== 'string') {
+            throw new Error('Invalid image URL in metadata');
+        }
+
+        response = await fetch(imageUrl);
+        if (!response.ok || !response.headers.get('content-type').includes('image')) {
+            throw new Error(`URL did not point to an image: ${response.statusText}`);
         }
 
         const imageBuffer = await response.buffer();
-        // Process the image with sharp
         const processedImage = await sharp(imageBuffer)
             .resize(800, 800)
             .toBuffer();
-        // Generate a unique key for S3
-        const imageKey = `image-${Date.now()}.jpg`;
-        // Upload to S3
+
+        const tokenId = extractTokenId(tokenURI);
+        const imageKey = `image-${tokenId}.jpg`;
+
         await s3.upload({
             Bucket: S3_BUCKET,
             Key: imageKey,
@@ -65,24 +79,19 @@ async function processAndUploadImage(imageUrl) {
         }).promise();
         console.log(`Uploaded image with key: ${imageKey}`);
     } catch (error) {
-        console.error(`Error processing image from ${imageUrl}:`, error);
+        console.error(`Error processing image from ${tokenURI}:`, error);
     }
 }
-
 
 // Main function to start the process
 async function startProcessing() {
     const nfts = await fetchNFTs();
     if (nfts) {
-        nfts.forEach(nft => {
-            processAndUploadImage(nft.tokenURI);
-        });
+        for (const nft of nfts) {
+            await processAndUploadImage(nft.tokenURI);
+        }
     }
 }
 
 // Call the function to start processing
 startProcessing();
-
-function __importDefault(mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
