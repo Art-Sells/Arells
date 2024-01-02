@@ -75,7 +75,8 @@ async function processAndUploadImage(tokenURI) {
             Bucket: S3_BUCKET,
             Key: imageKey,
             Body: processedImage,
-            ContentType: 'image/jpeg'
+            ContentType: 'image/jpeg',
+            ACL: 'public-read'
         }).promise();
         console.log(`Uploaded image with key: ${imageKey}`);
     } catch (error) {
@@ -93,5 +94,13 @@ async function startProcessing() {
     }
 }
 
-// Call the function to start processing
-startProcessing();
+// Infinite loop to keep processing
+async function continuousProcessing() {
+    while (true) {
+        await startProcessing();
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 1-second delay
+    }
+}
+
+// Start the continuous processing
+continuousProcessing();
