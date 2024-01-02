@@ -46,6 +46,18 @@ function extractTokenId(tokenURI) {
 // Function to process and upload each image
 async function processAndUploadImage(tokenURI) {
     try {
+        const tokenId = extractTokenId(tokenURI);
+        const imageKey = `image-${tokenId}.jpg`;
+
+        // Check if the image already exists in S3
+        try {
+            await s3.headObject({ Bucket: S3_BUCKET, Key: imageKey }).promise();
+            console.log(`Image already exists with key: ${imageKey}`);
+            return; // Skip upload if image exists
+        } catch (error) {
+            // Image does not exist, proceed with upload
+        }
+
         let response = await fetch(tokenURI);
         if (!response.ok) {
             throw new Error(`Failed to fetch token metadata: ${response.statusText}`);
@@ -67,9 +79,6 @@ async function processAndUploadImage(tokenURI) {
         const processedImage = await sharp(imageBuffer)
             .resize(800, 800)
             .toBuffer();
-
-        const tokenId = extractTokenId(tokenURI);
-        const imageKey = `image-${tokenId}.jpg`;
 
         await s3.upload({
             Bucket: S3_BUCKET,
