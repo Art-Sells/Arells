@@ -75,7 +75,8 @@ async function processAndUploadImage(tokenURI) {
             throw new Error(`URL did not point to an image: ${response.statusText}`);
         }
 
-        const imageBuffer = await response.buffer();
+        const imageBuffer = Buffer.from(await response.arrayBuffer());
+
         const processedImage = await sharp(imageBuffer)
             .resize(800, 800)
             .toBuffer();
@@ -84,8 +85,7 @@ async function processAndUploadImage(tokenURI) {
             Bucket: S3_BUCKET,
             Key: imageKey,
             Body: processedImage,
-            ContentType: 'image/jpeg',
-            ACL: 'public-read'
+            ContentType: 'image/jpeg'
         }).promise();
         console.log(`Uploaded image with key: ${imageKey}`);
     } catch (error) {
