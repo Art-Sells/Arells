@@ -113,23 +113,30 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
   const lastFetchedURL = useRef(""); // Add a useRef to keep track of the last URL
 
   // Update the fetchMetadata useEffect
+  function extractTokenId(tokenURI: string) {
+    const parts = tokenURI.split('/');
+    return parts[parts.length - 1]; // Returns the last part of the URI
+  }
   useEffect(() => {
     const fetchMetadata = async () => {
       const metadataResponse = await fetch(nft.tokenURI);
       if (metadataResponse.status !== 200) {
         return;
       }
-
+  
       const json = await metadataResponse.json();
-      if (json.image !== lastFetchedURL.current) { // Check if the fetched URL is different
-        lastFetchedURL.current = json.image; // Update the ref
+      const tokenId = extractTokenId(nft.tokenURI);
+      const expectedS3ImageUrl = `https://arellsnftcdn.s3.us-west-1.amazonaws.com/image-${tokenId}.jpg`;
+  
+      if (expectedS3ImageUrl !== lastFetchedURL.current) {
+        lastFetchedURL.current = expectedS3ImageUrl;
         setMeta({
           name: json.name,
-          imageURL: json.image,
+          imageURL: expectedS3ImageUrl,
         });
       }
     };
-
+  
     if (nft.tokenURI) {
       fetchMetadata();
     }

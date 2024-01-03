@@ -85,7 +85,7 @@ async function processAndUploadImage(tokenURI) {
             Bucket: S3_BUCKET,
             Key: imageKey,
             Body: processedImage,
-            ContentType: 'image/jpeg'
+            ContentType: 'image/jpeg',
         }).promise();
         console.log(`Uploaded image with key: ${imageKey}`);
     } catch (error) {
