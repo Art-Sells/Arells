@@ -7,6 +7,7 @@
 
 #### After Testing and Before Launch:
 - Delete all important variables
+- Pivot to "own this today" words for marketing
 - Inform of Arells 1.4 release (and features).
 ________________________________________________________________________________________________________________________________________________
 
