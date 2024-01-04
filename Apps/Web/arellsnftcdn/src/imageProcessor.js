@@ -115,7 +115,7 @@ async function startProcessing() {
 async function continuousProcessing() {
     while (true) {
         await startProcessing();
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 60-second delay to reduce API calls
+        await new Promise(resolve => setTimeout(resolve, 60000)); // 60-second delay to reduce API calls
     }
 }
 

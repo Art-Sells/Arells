@@ -18,7 +18,7 @@ import '../../app/css/modals/loading/spinnerBackground.css';
 import styling from '../../app/css/modals/loading/loader.module.css';
 import styles from '../../app/css/modals/loading/photoloaderasset.module.css';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from "next/router";
 import {Input} from "./PriceInputs/Input";
@@ -97,25 +97,38 @@ const AssetHolder = (props: AssetProps) => {
 // asset constants above
 
 // Asset Changing function/s below 
+    const lastFetchedURL = useRef(""); // Add a useRef to keep track of the last URL
+
+    // Update the fetchMetadata useEffect
+    function extractTokenId(tokenURI: string) {
+    const parts = tokenURI.split('/');
+    return parts[parts.length - 1]; // Returns the last part of the URI
+    }
     useEffect(() => {
-        const fetchMetadata = async () => {
+    const fetchMetadata = async () => {
         const metadataResponse = await fetch(nft.tokenURI);
         if (metadataResponse.status !== 200) {
-            console.error('Failed to fetch metadata');
-            return;
+        return;
         }
-    
+
         const json = await metadataResponse.json();
+        const tokenId = extractTokenId(nft.tokenURI);
+        const expectedS3ImageUrl = `https://arellsnftcdn.s3.us-west-1.amazonaws.com/image-${tokenId}.jpg`;
+
+        if (expectedS3ImageUrl !== lastFetchedURL.current) {
+        lastFetchedURL.current = expectedS3ImageUrl;
         setMeta({
             name: json.name,
-            imageURL: json.image, // assuming 'image' contains the full HTTP URL
+            imageURL: expectedS3ImageUrl,
         });
-        };
-    
-        if (nft.tokenURI) {
-        fetchMetadata();
         }
+    };
+
+    if (nft.tokenURI) {
+        fetchMetadata();
+    }
     }, [nft.tokenURI]);
+
     
 // Asset Changing function/s above 
 
