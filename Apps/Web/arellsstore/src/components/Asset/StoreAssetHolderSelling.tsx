@@ -17,9 +17,6 @@ import '../../app/css/modals/loading/spinnerBackground.css';
 import stylings from '../../app/css/modals/loading/loading.module.css';
 import styles from '../../app/css/modals/loading/photoloader.module.css';
 
-
-
-
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
