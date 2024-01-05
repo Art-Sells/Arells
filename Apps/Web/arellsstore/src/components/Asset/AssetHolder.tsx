@@ -97,39 +97,53 @@ const AssetHolder = (props: AssetProps) => {
 // asset constants above
 
 // Asset Changing function/s below 
-    const lastFetchedURL = useRef(""); // Add a useRef to keep track of the last URL
-
-    // Update the fetchMetadata useEffect
-    function extractTokenId(tokenURI: string) {
+      // Function to extract the token ID from the URI
+  function extractTokenId(tokenURI: string) {
     const parts = tokenURI.split('/');
-    return parts[parts.length - 1]; // Returns the last part of the URI
+    return parts[parts.length - 1];
+  }
+
+  // Function to check if an image exists at a given URL
+  const checkImageExists = async (url: string): Promise<boolean> => {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.status === 200;
+    } catch {
+      return false;
     }
-    useEffect(() => {
-    const fetchMetadata = async () => {
-        const metadataResponse = await fetch(nft.tokenURI);
-        if (metadataResponse.status !== 200) {
-        return;
-        }
+  };
 
-        const json = await metadataResponse.json();
-        const tokenId = extractTokenId(nft.tokenURI);
-        const expectedS3ImageUrl = `https://arellsnftcdn.s3.us-west-1.amazonaws.com/image-${tokenId}.jpg`;
-
-        if (expectedS3ImageUrl !== lastFetchedURL.current) {
-        lastFetchedURL.current = expectedS3ImageUrl;
-        setMeta({
-            name: json.name,
-            imageURL: expectedS3ImageUrl,
-        });
-        }
-    };
-
+  // Function to update the metadata
+  const updateMetadata = async () => {
     if (nft.tokenURI) {
-        fetchMetadata();
-    }
-    }, [nft.tokenURI]);
+      const tokenId = extractTokenId(nft.tokenURI);
+      const expectedS3ImageUrl = `https://arellsnftcdn.s3.us-west-1.amazonaws.com/image-${tokenId}.jpg`;
 
-    
+      const s3ImageExists = await checkImageExists(expectedS3ImageUrl);
+      if (s3ImageExists) {
+        setMeta(prevMeta => ({
+          ...prevMeta,
+          imageURL: expectedS3ImageUrl,
+          name: prevMeta?.name ?? 'Default Name'
+        }));
+      } else {
+        const metadataResponse = await fetch(nft.tokenURI);
+        if (metadataResponse.status === 200) {
+          const json = await metadataResponse.json();
+          setMeta({
+            name: json.name,
+            imageURL: json.image,
+          });
+        }
+      }
+    }
+  };
+
+  // useEffect hook
+  useEffect(() => {
+    updateMetadata();
+  }, [nft.tokenURI]);
+      
 // Asset Changing function/s above 
 
 
