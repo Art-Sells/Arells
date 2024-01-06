@@ -118,23 +118,29 @@ const AssetHolder = (props: AssetProps) => {
     if (nft.tokenURI) {
       const tokenId = extractTokenId(nft.tokenURI);
       const expectedS3ImageUrl = `https://arellsnftcdn.s3.us-west-1.amazonaws.com/image-${tokenId}.jpg`;
-
+  
+      // Fetch metadata from tokenURI to get the name and image URL
+      let nameFromMetadata;
+      let imageURLFromMetadata;
+      const metadataResponse = await fetch(nft.tokenURI);
+      if (metadataResponse.status === 200) {
+        const json = await metadataResponse.json();
+        nameFromMetadata = json.name;
+        imageURLFromMetadata = json.image;
+      }
+  
       const s3ImageExists = await checkImageExists(expectedS3ImageUrl);
       if (s3ImageExists) {
-        setMeta(prevMeta => ({
-          ...prevMeta,
+        setMeta({
+          name: nameFromMetadata, // Use the name from the JSON metadata
           imageURL: expectedS3ImageUrl,
-          name: prevMeta?.name ?? 'Default Name'
-        }));
+        });
       } else {
-        const metadataResponse = await fetch(nft.tokenURI);
-        if (metadataResponse.status === 200) {
-          const json = await metadataResponse.json();
-          setMeta({
-            name: json.name,
-            imageURL: json.image,
-          });
-        }
+        // If the S3 image does not exist, use the image URL from the tokenURI JSON
+        setMeta({
+          name: nameFromMetadata,
+          imageURL: imageURLFromMetadata,
+        });
       }
     }
   };
