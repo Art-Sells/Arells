@@ -12,7 +12,7 @@ import '../../app/css/prototype/seller-created.css';
 import '../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../app/css/modals/loading/photoloader.module.css';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from "next/router";
@@ -78,25 +78,59 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
 // asset constants above
 
 // Asset Changing function/s below 
-  useEffect(() => {
-    const fetchMetadata = async () => {
-      const metadataResponse = await fetch(nft.tokenURI);
-      if (metadataResponse.status !== 200) {
-        console.error('Failed to fetch metadata');
-        return;
-      }
-
-      const json = await metadataResponse.json();
-      setMeta({
-        name: json.name,
-        imageURL: json.image,
-      });
-    };
-
-    if (nft.tokenURI) {
-      fetchMetadata();
+    // Function to extract the token ID from the URI
+    function extractTokenId(tokenURI: string) {
+      const parts = tokenURI.split('/');
+      return parts[parts.length - 1];
     }
-  }, [nft.tokenURI]);
+  
+    // Function to check if an image exists at a given URL
+    const checkImageExists = async (url: string): Promise<boolean> => {
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.status === 200;
+      } catch {
+        return false;
+      }
+    };
+  
+    // Function to update the metadata
+    const updateMetadata = async () => {
+      if (nft.tokenURI) {
+        const tokenId = extractTokenId(nft.tokenURI);
+        const expectedS3ImageUrl = `https://arellsnftcdn.s3.us-west-1.amazonaws.com/image-${tokenId}.jpg`;
+    
+        // Fetch metadata from tokenURI to get the name and image URL
+        let nameFromMetadata;
+        let imageURLFromMetadata;
+        const metadataResponse = await fetch(nft.tokenURI);
+        if (metadataResponse.status === 200) {
+          const json = await metadataResponse.json();
+          nameFromMetadata = json.name;
+          imageURLFromMetadata = json.image;
+        }
+    
+        const s3ImageExists = await checkImageExists(expectedS3ImageUrl);
+        if (s3ImageExists) {
+          setMeta({
+            name: nameFromMetadata, // Use the name from the JSON metadata
+            imageURL: expectedS3ImageUrl,
+          });
+        } else {
+          // If the S3 image does not exist, use the image URL from the tokenURI JSON
+          setMeta({
+            name: nameFromMetadata,
+            imageURL: imageURLFromMetadata,
+          });
+        }
+      }
+    };
+  
+    // useEffect hook
+    useEffect(() => {
+      updateMetadata();
+    }, [nft.tokenURI]);
+  
 
 
     const [isNFTMinted, setIsNFTMinted] = useState(false);

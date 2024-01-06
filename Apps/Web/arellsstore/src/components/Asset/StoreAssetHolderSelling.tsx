@@ -17,9 +17,6 @@ import '../../app/css/modals/loading/spinnerBackground.css';
 import stylings from '../../app/css/modals/loading/loading.module.css';
 import styles from '../../app/css/modals/loading/photoloader.module.css';
 
-
-
-
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -103,37 +100,64 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
     }, [router.query.storeAddress]);
     const addressMatch = address?.toLowerCase() === storeAddressFromURL?.toLowerCase();
 
-
-    const [meta, setMeta] = useState<AssetStoreMetadata>();
-
 // asset constants above
 
 
 // Asset Changing function/s below 
-  const lastFetchedURL = useRef(""); // Add a useRef to keep track of the last URL
+  const [meta, setMeta] = useState<AssetStoreMetadata>({ name: '', imageURL: '' });
 
-  // Update the fetchMetadata useEffect
-  useEffect(() => {
-    const fetchMetadata = async () => {
-      const metadataResponse = await fetch(nft.tokenURI);
-      if (metadataResponse.status !== 200) {
-        return;
-      }
-
-      const json = await metadataResponse.json();
-      if (json.image !== lastFetchedURL.current) { // Check if the fetched URL is different
-        lastFetchedURL.current = json.image; // Update the ref
-        setMeta({
-          name: json.name,
-          imageURL: json.image,
-        });
+    // Function to extract the token ID from the URI
+    function extractTokenId(tokenURI: string) {
+      const parts = tokenURI.split('/');
+      return parts[parts.length - 1];
+    }
+  
+    // Function to check if an image exists at a given URL
+    const checkImageExists = async (url: string): Promise<boolean> => {
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.status === 200;
+      } catch {
+        return false;
       }
     };
-
-    if (nft.tokenURI) {
-      fetchMetadata();
-    }
-  }, [nft.tokenURI]);
+  
+    // Function to update the metadata
+    const updateMetadata = async () => {
+      if (nft.tokenURI) {
+        const tokenId = extractTokenId(nft.tokenURI);
+        const expectedS3ImageUrl = `https://arellsnftcdn.s3.us-west-1.amazonaws.com/image-${tokenId}.jpg`;
+    
+        // Fetch metadata from tokenURI to get the name and image URL
+        let nameFromMetadata;
+        let imageURLFromMetadata;
+        const metadataResponse = await fetch(nft.tokenURI);
+        if (metadataResponse.status === 200) {
+          const json = await metadataResponse.json();
+          nameFromMetadata = json.name;
+          imageURLFromMetadata = json.image;
+        }
+    
+        const s3ImageExists = await checkImageExists(expectedS3ImageUrl);
+        if (s3ImageExists) {
+          setMeta({
+            name: nameFromMetadata, // Use the name from the JSON metadata
+            imageURL: expectedS3ImageUrl,
+          });
+        } else {
+          // If the S3 image does not exist, use the image URL from the tokenURI JSON
+          setMeta({
+            name: nameFromMetadata,
+            imageURL: imageURLFromMetadata,
+          });
+        }
+      }
+    };
+  
+    // useEffect hook
+    useEffect(() => {
+      updateMetadata();
+    }, [nft.tokenURI]);
 
     const [isNFTMinted, setIsNFTMinted] = useState(false);
     const { checkIfNFTMinted } = useNFTMarket(storeAddressFromURL);
@@ -397,26 +421,26 @@ const initialVisibilityState = (tokenURI: string) => {
                     alt=""
                     width={200}  
                     height={200}  
-                    id="photo-asset-owned-hidden" 
+                    id="photo-asset-owned" 
                     src={meta?.imageURL}
                   />
-                )} 
+                )}
                 {!meta && (
-                  (
-                    <div id="photo-asset-loading-hidden">
-                        <Image
-                          loader={imageLoader}
-                          alt=""
-                          width={50}  
-                          height={50}  
-                          id="receiving-image" 
-                          src="/images/market/receiving.png"
-                        />
-                      <div className={styles.photoloader}></div>  
-                      <p id="receiving-word">RECEIVING</p>
-                    </div>
-                  )
-                )} 
+                    (
+                      <div id="photo-asset-loading">
+                          <Image
+                            loader={imageLoader}
+                            alt=""
+                            width={50}  
+                            height={50}  
+                            id="receiving-image" 
+                            src="/images/market/receiving.png"
+                          />
+                        <div className={styles.photoloader}></div>  
+                        <p id="receiving-word">RECEIVING</p>
+                      </div>
+                    )
+                  )}  
                 <div id="hidden-from-public"></div> 
                 <p id="hidden-word-one">Hidden</p>
             </div>

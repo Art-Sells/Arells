@@ -1,26 +1,8 @@
 # Arells Build Notes...
 
-## Arells 1.2
-
-#### After Testing and Before Launch: 
-- Delete all important variables
-
-##### Arells 1.2 Features
-- **Hide/Show Art (Mock-Up):**  We've in-built a feature that will allow you to hide any artpiece you don't want to be revealed to the public (i.e) and artpiece you accidentally create and upload into your store. This is just the mock-up and is not fully integrated into Arells. In order for us to fully integrate the hide/show feature, we need to incorporate it into your own individual store profile and this won't be implemented until Arells 1.5 (slated to launch on 2/18/23). So from now till then, I highly recommend not creating/uploading any art into your store that you do not want shown to the public, at least not until Arells 1.5.
-- **New Open/Enter-Store/Connect Wallet UX:** Some people were having trouble initially connecting to MetaMask and Coinbase from the Arells homepage so we streamlined and simplified the connection process to hopefully ensure no-one gets confused during the initial Wallet Connection process. We hope that this will ensure less confusion, we're very open to feedback so we can better improve the user experience.
-- All in all, we're focused on getting you sales first and foremost so every product iteration we release, is focused on ensuring that the buying/selling process for your art is as easy and as seamless as possible (this includes ensuring your art loads as quickly as possible)... With Arells 1.3, we're hoping to have the "high quality art loading issue" resolved once it releases next week. So far, it's been only one week of free minimal marketing and we already have a potentially interested buyer (show RareFinds Instagram)... This is before our large marketing push begins next February so we are on the right track!
-
-Arells 1.3 (which will resolve the high quality image loading issue) releases next week 1/7/24. 2 weeks later Arells 1.4 with clickable images, then 2 weeks after that 1.5 with profiles and the fully integrated hide art feature.
-
-________________________________________________________________________________________________________________________________________________
-
 ## Arells 1.3
 
-### My/Other Stores
-- When loading images. Load only 10 images at a time and resolution to 1000x1000… Why do images stay on white before loading?
-
 #### After Testing and Before Launch:
-- Delete all important variables
 - Inform of Arells 1.4 release (and features).
 ________________________________________________________________________________________________________________________________________________
 
@@ -31,12 +13,14 @@ ________________________________________________________________________________
 
 ### My Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
+- PAP, You Keep, Price
 
 ### Other Store
 - Images clickable
 
 ### Other Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
+- PAP, You Keep, Price
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -55,10 +39,10 @@ ________________________________________________________________________________
 - Sign Up with Google/Apple/Facebook/Etc
 
 ### Edit Store
-- Logo: Default Store Logo
-- Name: No Maximum Characters
-- Addresses:
-0x74348347 - (Claimed)
+- Store|Brand Logo: Default Store Logo
+- Store|Brand Name: No Maximum Characters
+- Addresses | Locations:
+0x74348347 - [Enter Store]
 "Unclaimed Store Address" - (Claim Address)
 {Must Claim All Addresses}
 
@@ -100,7 +84,6 @@ ________________________________________________________________________________
 
 ##### Bugs
 - Try/Catch Apollo Connection/Address Error...
-- Fix Desktop Metamask Issue...
 - 404 and Server Error Pages
 - Resolve overextending numbers listing issue
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
@@ -133,6 +116,7 @@ ________________________________________________________________________________
 ### Home
 - If logged in [(Open Store), (Close Store)]
 - If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
+- List of Addresses | Locations
 
 
 ### My Store
@@ -153,6 +137,7 @@ ________________________________________________________________________________
 - Name
 - Evolutions Section
 - Mimick Set Price Section and Buy Button for List to Sell
+- Created by (Signer 0 (if addressClaimed then Store Name)), Owned by (Signer 1 (if addressClaimed then Store Name))
 - PAP Logo Above Price After Purchase
 - Certificates of Ownership
 -  Set Price After Purchase(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]-if wallet not connected (Connect Wallet)
@@ -167,6 +152,7 @@ ________________________________________________________________________________
 - Top-Right[Cart][Connect Wallet]-if not connected
 - Bottom-Center[+]<black. [Connect Wallet]-if not connected
 - - **Selling**:
+- Created by (Signer 0 (if addressClaimed then Store Name)), Owned by (Signer 1 (if addressClaimed then Store Name))
 - Price After Purchase - (if price not yet set purchased) = "Not For Sale"
 - [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
 - - **Owned**:
