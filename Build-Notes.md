@@ -8,15 +8,9 @@ ________________________________________________________________________________
 
 ## Arells 1.4
 
-### My Store
-- Images clickable
-
 ### My Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
 - PAP, You Keep, Price
-
-### Other Store
-- Images clickable
 
 ### Other Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
