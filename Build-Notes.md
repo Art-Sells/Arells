@@ -38,17 +38,16 @@ ________________________________________________________________________________
 ### Edit Store
 - Store|Brand Logo: Default Store Logo
 - Store|Brand Name: No Maximum Characters
-- Addresses | Locations:
-0x74348347 - [Enter Store]
-"Unclaimed Store Address" - (Claim Address)
-{Must Claim All Addresses}
+- Store Addresses|Locations:
+- - Claimed: 0x74348347 [Enter Store]
+- - Unclaimed: 0x74348347 [Enter Store] |Save Changes to Claim Address|
 
 ### My Store
-- Top-Center[EDIT]-(SignUp/LogIn to Create/Edit {if not logged in}) (You are not the owner of this Address)
+- Top-Center[EDIT]-(SignUp/LogIn to Create/Edit {if not logged in})
 - small Logo or Slogan
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test) Unclaimed Store Address
-- Store Address: Address
+- Store Address|Location: Address
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 
 ### Other Store
@@ -56,6 +55,7 @@ ________________________________________________________________________________
 - small Logo or Slogan
 - Image Default: Store Icon
 - Name Default: Unclaimed Store Address
+- Store Address|Location: Address
 
 #### If time permits: 
 - Created By & Owned By
