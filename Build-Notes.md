@@ -8,15 +8,9 @@ ________________________________________________________________________________
 
 ## Arells 1.4
 
-### My Store
-- Images clickable
-
 ### My Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
 - PAP, You Keep, Price
-
-### Other Store
-- Images clickable
 
 ### Other Store Asset (See Asset Modal)
 - Images (Default Store Image) here render small pixels
@@ -77,9 +71,17 @@ ________________________________________________________________________________
 
 ### My Store Asset (See Asset Modal)
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+- Asset Name in title
+
+### My Store
+- Store Name in title
 
 ### Other Store Asset (See Asset Modal)     
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+- Asset Name in title
+
+### My Store
+- Store Name in title
 
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
