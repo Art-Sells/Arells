@@ -22,6 +22,9 @@ ________________________________________________________________________________
 - Images (Default Store Image) here render small pixels
 - PAP, You Keep, Price
 
+#### If time permits: 
+- Digital Certificates.
+
 #### After Testing and Before Launch: 
 - Delete all important variables
 - Inform of Arells 1.5 release (and features).
@@ -59,6 +62,10 @@ ________________________________________________________________________________
 - small Logo or Slogan
 - Image Default: Store Icon
 - Name Default: Unclaimed Store Address
+
+#### If time permits: 
+- Created By & Owned By
+- Socials
 
 #### After Testing and Before Launch: 
 - Delete all important variables
