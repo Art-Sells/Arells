@@ -305,6 +305,10 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
               </button>
             {/*  Change below link after test  */}
             {meta && (
+              <Link legacyBehavior 
+                href={`/sell/${address}/${nft.id}`} 
+                passHref>
+                <a id="photo-link-seller-created">
                   <Image
                     loader={imageLoader}
                     alt=""
@@ -313,6 +317,8 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                     id="photo-asset-owned" 
                     src={meta?.imageURL}
                   />
+                </a>
+              </Link>
             )} 
             {!meta && (
               (
@@ -537,6 +543,10 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
           <div id="blue-orange-seller-created">
             {/*  Change below link after test  */}
             {meta && (
+              <Link legacyBehavior 
+                href={`/sell/${address}/${nft.id}`} 
+                passHref>
+                <a id="photo-link-seller-created">
                   <Image
                     loader={imageLoader}
                     alt=""
@@ -545,6 +555,8 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                     id="photo-asset-owned" 
                     src={meta?.imageURL}
                   />
+                </a>
+              </Link>
             )} 
             {!meta && (
               (

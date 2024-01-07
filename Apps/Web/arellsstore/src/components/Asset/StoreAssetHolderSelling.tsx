@@ -468,14 +468,20 @@ const initialVisibilityState = (tokenURI: string) => {
           </button>
         {/*  Change below link after test  */}
         {meta && (
-          <Image
-            loader={imageLoader}
-            alt=""
-            width={200}  
-            height={200}  
-            id="photo-asset-owned" 
-            src={meta?.imageURL}
-          />
+          <Link legacyBehavior 
+            href={`/sell/${address}/${nft.id}`} 
+            passHref>
+            <a id="photo-link-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={200}  
+                height={200}  
+                id="photo-asset-owned" 
+                src={meta?.imageURL}
+              />
+            </a>
+          </Link>
         )}
         {!meta && (
             (
@@ -598,14 +604,20 @@ const initialVisibilityState = (tokenURI: string) => {
         <div id="blue-orange-seller-created">
           {/*  Change below link after test  */}
           {meta && (
-            <Image
-              loader={imageLoader}
-              alt=""
-              width={200}  
-              height={200}  
-              id="photo-asset-owned" 
-              src={meta?.imageURL}
-            />
+            <Link legacyBehavior 
+              href={`/sell/${address}/${nft.id}`} 
+              passHref>
+              <a id="photo-link-seller-created">
+                <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={200}  
+                  height={200}  
+                  id="photo-asset-owned" 
+                  src={meta?.imageURL}
+                />
+              </a>
+            </Link>
           )}
           {!meta && (
               (

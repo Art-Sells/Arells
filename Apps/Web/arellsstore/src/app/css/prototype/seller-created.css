@@ -455,13 +455,27 @@
 				opacity: .7;
 				
 			}	
+			#photo-link-seller-created {
+				text-decoration: none;
+			}
+	
+			#photo-link-seller-created:hover {
+			  opacity: .5;
+			  transition: 1s;
+			  box-shadow: none;
+			  cursor: pointer;
+			}
+			#photo-link-seller-created:focus {
+			  opacity: .5;
+			  box-shadow: none;
+			  cursor: pointer;
+			}			
 			#photo-asset-owned-hidden {
 				width: 200px;
 				height: 200px;
-				  border-radius: 5px;		
-				  border: solid; 
-				border-width: 1px;
-				border-color: rgb(240, 240, 240);
+				border-radius: 10px;		
+				box-shadow: 0px 8px 12px -6px black; 	
+				  border: none; 
 				opacity: 1;
 				  -webkit-animation-name: animatetophide;
 				  -webkit-animation-duration: 1.00s;
@@ -471,10 +485,9 @@
 				#photo-asset-loading-hidden {
 					width: 200px;
 					height: 200px;
-						border-radius: 5px;		
-						border: solid; 
-					border-width: 1px;
-					border-color: rgb(240, 240, 240);
+					border-radius: 10px;		
+					box-shadow: 0px 8px 12px -6px black; 	
+						border: none; 
 						-webkit-animation-name: animatetophide;
 						-webkit-animation-duration: 1.00s;
 						animation-name: animatetophide;
@@ -538,10 +551,8 @@
 		  #photo-asset-owned {
 			  width: 200px;
 			  height: 200px;
-				border-radius: 0px;		
-				border: solid; 
-			  border-width: 1px;
-			  border-color: rgb(240, 240, 240);
+			  border-radius: 10px;		
+			  box-shadow: 0px 5px 10px -4px gray; 
 				-webkit-animation-name: animatetop;
 				-webkit-animation-duration: 1.00s;
 				animation-name: animatetop;
@@ -549,11 +560,9 @@
 			  }
 		  #photo-asset-loading {
 			  width: 204px;
-			  height: 204px;
-				  border-radius: 0px;		
-				  border: solid; 
-			  border-width: 1px;
-			  border-color: rgb(240, 240, 240);
+			  height: 204px;	
+			  border-radius: 10px;		
+			  box-shadow: 0px 5px 10px -4px rgb(255, 255, 255); 
 				  -webkit-animation-name: animatetop;
 				  -webkit-animation-duration: 1.00s;
 				  animation-name: animatetop;
