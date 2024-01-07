@@ -77,9 +77,17 @@ ________________________________________________________________________________
 
 ### My Store Asset (See Asset Modal)
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+- Asset Name in title
+
+### My Store
+- Store Name in title
 
 ### Other Store Asset (See Asset Modal)     
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+- Asset Name in title
+
+### My Store
+- Store Name in title
 
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
