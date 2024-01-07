@@ -306,7 +306,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
             {/*  Change below link after test  */}
             {meta && (
               <Link legacyBehavior 
-                href={`/sell/${address}/${nft.id}`} 
+                href={`/asset/${address}/${nft.id}`} 
                 passHref>
                 <a id="photo-link-seller-created">
                   <Image
@@ -544,7 +544,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
             {/*  Change below link after test  */}
             {meta && (
               <Link legacyBehavior 
-                href={`/sell/${address}/${nft.id}`} 
+                href={`/asset/${address}/${nft.id}`} 
                 passHref>
                 <a id="photo-link-seller-created">
                   <Image

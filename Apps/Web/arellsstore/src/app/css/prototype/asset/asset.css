@@ -9,6 +9,17 @@
 	  margin-bottom: 0%;
 		background: white;	  
   }
+  #asset-view-wrapper {
+	padding-top: 10px;
+	padding-bottom: 30px;
+	  text-align: center;
+	  font-family: Arial;
+	  margin-top: 0%;
+	  margin-left: 0%;
+	  margin-right: 0%;
+	  margin-bottom: 0%;
+		background: white;	  
+  }
   
 	  #header-blue-orange {
 			  display: flex;

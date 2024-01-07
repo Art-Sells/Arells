@@ -419,15 +419,15 @@ const initialVisibilityState = (tokenURI: string) => {
                   <Image
                     loader={imageLoader}
                     alt=""
-                    width={200}  
-                    height={200}  
-                    id="photo-asset-owned" 
+                    width={202}  
+                    height={202}  
+                    id="photo-asset-owned-hidden" 
                     src={meta?.imageURL}
                   />
                 )}
                 {!meta && (
                     (
-                      <div id="photo-asset-loading">
+                      <div id="photo-asset-loading-hidden">
                           <Image
                             loader={imageLoader}
                             alt=""
@@ -469,14 +469,14 @@ const initialVisibilityState = (tokenURI: string) => {
         {/*  Change below link after test  */}
         {meta && (
           <Link legacyBehavior 
-            href={`/sell/${address}/${nft.id}`} 
+            href={`/asset/${address}/${nft.id}`} 
             passHref>
             <a id="photo-link-seller-created">
               <Image
                 loader={imageLoader}
                 alt=""
-                width={200}  
-                height={200}  
+                width={202}  
+                height={202}  
                 id="photo-asset-owned" 
                 src={meta?.imageURL}
               />
@@ -605,14 +605,14 @@ const initialVisibilityState = (tokenURI: string) => {
           {/*  Change below link after test  */}
           {meta && (
             <Link legacyBehavior 
-              href={`/sell/${address}/${nft.id}`} 
+              href={`/asset/${address}/${nft.id}`} 
               passHref>
               <a id="photo-link-seller-created">
                 <Image
                   loader={imageLoader}
                   alt=""
-                  width={200}  
-                  height={200}  
+                  width={202}  
+                  height={202}  
                   id="photo-asset-owned" 
                   src={meta?.imageURL}
                 />

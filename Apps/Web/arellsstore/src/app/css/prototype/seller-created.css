@@ -172,6 +172,15 @@
 			  animation-name: animatetop;
 			  animation-duration: 1.00s;
 			}
+			#word-logo-seller-created-asset {
+				margin-top: 15px;
+				width: 78px;	
+				height: 25px;	
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			  }
 			/* Add Animation */
 			@-webkit-keyframes animatetop {
 			  from {center:0; opacity:0}
@@ -192,6 +201,16 @@
 			  word-spacing: 0px;
 			  opacity: .7;
 		  }
+		  #slogan-seller-created-asset {
+			margin-top: 15px;
+			font-size: 8px;
+			letter-spacing: 1px;
+			margin-left: 1px; 
+			font-weight: 600;
+			color: black;
+			word-spacing: 0px;
+			opacity: .7;
+		}
 		  #black-liner-bottom-owned-buy {
 			margin-top: 0px;
 			background-color: black;
@@ -201,7 +220,26 @@
 			width: 380px;
 			opacity: .1;
 		  }	
+		  #black-liner-bottom-owned-buy-asset {
+			margin-top: 0px;
+			background-color: black;
+			border: none;
+			height: 2px;
+			border-radius: 30px;
+			width: 250px;
+			opacity: .1;
+		  }	
 		  #ada-description-owned-buy {
+			margin-top: 10px;
+			font-size: 6px;
+			color: black;
+			font-weight: 500;
+			letter-spacing: 4.8px;
+			margin-left: 4.8px; 
+			word-spacing: 2px;
+			opacity: .5;
+		}
+		#ada-description-owned-buy-asset {
 			margin-top: 10px;
 			font-size: 6px;
 			color: black;
@@ -438,7 +476,7 @@
 				height: 320px;
 				width: 202px;
 				font-weight: 600;
-				border-radius: 5px;
+				border-radius: 10px;
 				color: rgb(183, 183, 183);
 				background-color: rgb(255, 255, 255);
 				box-shadow: 0px 5px 20px -10px silver;  
@@ -471,10 +509,10 @@
 			  cursor: pointer;
 			}			
 			#photo-asset-owned-hidden {
-				width: 200px;
-				height: 200px;
+				width: 202px;
+				height: 202px;
 				border-radius: 10px;		
-				box-shadow: 0px 8px 12px -6px black; 	
+				box-shadow: 0px 5px 10px -4px white; 	
 				  border: none; 
 				opacity: 1;
 				  -webkit-animation-name: animatetophide;
@@ -483,10 +521,10 @@
 				  animation-duration: 1.00s;
 				}
 				#photo-asset-loading-hidden {
-					width: 200px;
-					height: 200px;
+					width: 204px;
+					height: 204px;
 					border-radius: 10px;		
-					box-shadow: 0px 8px 12px -6px black; 	
+					box-shadow: 0px 5px 10px -4px white; 	
 						border: none; 
 						-webkit-animation-name: animatetophide;
 						-webkit-animation-duration: 1.00s;
@@ -549,8 +587,8 @@
 		  }			
 		  
 		  #photo-asset-owned {
-			  width: 200px;
-			  height: 200px;
+			  width: 202px;
+			  height: 202px;
 			  border-radius: 10px;		
 			  box-shadow: 0px 5px 10px -4px gray; 
 				-webkit-animation-name: animatetop;
@@ -1037,16 +1075,16 @@
 			
 		}	
 		#photo-asset-owned-hidden {
-			width: 130px;
-			height: 130px;	
+			width: 132px;
+			height: 132px;	
 			}
 			#photo-asset-loading-hidden {
-				width: 132px;
-				height: 132px;
+				width: 134px;
+				height: 134px;
 				}	
 		  #photo-asset-owned {
-			  width: 130px;
-			  height: 130px;	
+			  width: 132px;
+			  height: 132px;	
 		  }
 		  #photo-asset-loading {
 			  width: 134px;
@@ -1173,6 +1211,26 @@
 	  #profileline-seller-created {
 		  width: 300px;
 	  }		
+	  #word-logo-seller-created-asset {
+			margin-top: 10px;
+			width: 60px;	
+			height: 20px;		
+		}
+		#slogan-seller-created-asset {
+			margin-top: 10px;
+			font-size: 6.5px;
+		}
+		#black-liner-bottom-owned-buy-asset {
+			margin-top: 0px;
+			width: 200px;
+		}
+		#ada-description-owned-buy-asset {
+			margin-top: 0px;
+			font-size: 5.2px;
+			letter-spacing: 4px;
+			margin-left: 4px; 
+			word-spacing: 2px;
+		}	
 	  #container-seller-created.two-items {
 		  width: 400px;
 		  }					
