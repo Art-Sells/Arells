@@ -1075,16 +1075,16 @@
 			
 		}	
 		#photo-asset-owned-hidden {
-			width: 132px;
-			height: 132px;	
+			width: 130px;
+			height: 130px;	
 			}
 			#photo-asset-loading-hidden {
 				width: 134px;
 				height: 134px;
 				}	
 		  #photo-asset-owned {
-			  width: 132px;
-			  height: 132px;	
+			  width: 130px;
+			  height: 130px;	
 		  }
 		  #photo-asset-loading {
 			  width: 134px;
@@ -1214,7 +1214,7 @@
 	  #word-logo-seller-created-asset {
 			margin-top: 10px;
 			width: 60px;	
-			height: 20px;		
+			height: 19px;		
 		}
 		#slogan-seller-created-asset {
 			margin-top: 10px;

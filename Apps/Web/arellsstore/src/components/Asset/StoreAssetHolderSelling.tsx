@@ -241,18 +241,18 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
 //Buying Functions Above
 
 //Formatted Price 
-const formatPriceWithCommasAndDecimals = (price: string) => {
-  return parseFloat(price).toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-  });
-};
+  const formatPriceWithCommasAndDecimals = (price: string) => {
+    return parseFloat(price).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+  };
 
-const formattedPriceWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPrice);
-const formattedPriceAfterPurchaseWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPriceAfterPurchase);
-const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAfterPurchase === "..." 
-  ? "..." 
-  : formatPriceWithCommasAndDecimals(formattedNewPriceAfterPurchase);
+  const formattedPriceWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPrice);
+  const formattedPriceAfterPurchaseWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPriceAfterPurchase);
+  const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAfterPurchase === "..." 
+    ? "..." 
+    : formatPriceWithCommasAndDecimals(formattedNewPriceAfterPurchase);
 //Formatted Price
 
 
@@ -586,7 +586,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   BUY</button>
             </>
         )}    
-  {/* Above for users who are owners of the Assets */}          
+{/* Above for users who are owners of the Assets */}          
             
       </div>    
       )}  
@@ -808,7 +808,7 @@ const initialVisibilityState = (tokenURI: string) => {
                 BUY</button>
             </>
           )}
-    {/* Above for users who are not owners of the Assets */}     
+  {/* Above for users who are not owners of the Assets */}     
         </div>
       )}
     </>
