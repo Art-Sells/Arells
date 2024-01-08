@@ -17,7 +17,7 @@ ________________________________________________________________________________
 - PAP, You Keep, Price
 
 #### If time permits: 
-- Digital Certificates.
+- Certificates Of Ownership (Metadata Info).
 
 #### After Testing and Before Launch: 
 - Delete all important variables
