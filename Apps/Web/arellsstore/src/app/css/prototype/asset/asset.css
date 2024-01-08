@@ -1,24 +1,25 @@
 #asset-wrapper {
-	padding-top: 10px;
+	text-align: center;
+	font-family: Arial;
+	  background: white;	 
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+	padding-top: 0px;
 	padding-bottom: 30px;
-	  text-align: center;
-	  font-family: Arial;
-	  margin-top: 0%;
-	  margin-left: 0%;
-	  margin-right: 0%;
-	  margin-bottom: 0%;
-		background: white;	  
+
   }
   #asset-view-wrapper {
-	padding-top: 10px;
-	padding-bottom: 30px;
-	  text-align: center;
-	  font-family: Arial;
-	  margin-top: 0%;
-	  margin-left: 0%;
-	  margin-right: 0%;
-	  margin-bottom: 0%;
-		background: white;	  
+	text-align: center;
+	font-family: Arial;
+	  background: white;	
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+	padding-top: 0px;
+	padding-bottom: 30px;  
   }
   
 	  #header-blue-orange {
@@ -739,13 +740,13 @@
 
 			  #PAP-logo-list-minted {
 				margin-top: 30px;
-				opacity: .2;
+				opacity: .35;
 				width: 60px;
                 height: 11px;
 			  }
 			  #PAP-logo-list {
 				margin-top: 10px;
-				opacity: .2;
+				opacity: .35;
 				width: 60px;
                 height: 11px;
 			  }

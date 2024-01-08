@@ -88,11 +88,9 @@ const Index = () => {
             width={29}
             height={30}
             id="arells-loader-icon" 
-            src="images/Arells-Icon.png"/>        
+            src="images/Arells-Icon.png"/>    
+            <div className={styles.spinner}></div>    
         </div>
-      )}
-      {showLoading && (
-        <div className={styles.spinner}></div>
       )}
       {openStoreConnected && (
         <div id="connected-spacing"></div>

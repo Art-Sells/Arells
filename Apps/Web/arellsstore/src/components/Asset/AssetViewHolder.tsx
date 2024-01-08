@@ -191,8 +191,8 @@ const AssetViewHolder = (props: AssetProps) => {
     
     const notConnectedNotListed = 
     !addressMatch && !address && !forSale; 
-    const notConnectedListed = 
-    !addressMatch && !address && forSale; 
+    const notConnectedNotListedMinted = 
+    !addressMatch && !address && !forSale && isNFTMinted; 
 
     const notConnectedListedNotMintedNotRelisted = 
     !addressMatch && !address && forSale && !isNFTMinted; 
@@ -710,7 +710,7 @@ const AssetViewHolder = (props: AssetProps) => {
                 </div>  
             </>
         )}	
-        {notConnectedListed  &&  (
+        {notConnectedNotListedMinted  &&  (
         <>
             <div id="blue-orange-prices-before-blue-orange">
                 <div id="asset-price-after-purchase-wrapper-asset">

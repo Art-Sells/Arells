@@ -253,6 +253,19 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
   const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAfterPurchase === "..." 
     ? "..." 
     : formatPriceWithCommasAndDecimals(formattedNewPriceAfterPurchase);
+
+    const calculateFiftySevenPercent = (price: string) => {
+      return (parseFloat(price) * 0.57).toString();
+  };
+  // Calculating and formatting the prices
+  const fiftySevenPercentOfFormattedPriceAfterPurchase = calculateFiftySevenPercent(formattedPriceAfterPurchase);
+  const formattedPriceAfterPurchaseYouKeep = formatPriceWithCommasAndDecimals(fiftySevenPercentOfFormattedPriceAfterPurchase);
+
+  let formattedNewPriceAfterPurchaseYouKeep = "...";
+  if (formattedNewPriceAfterPurchaseWithCommasAndDecimals !== "...") {
+      const fiftySevenPercentOfFormattedNewPriceAfterPurchase = calculateFiftySevenPercent(formattedNewPriceAfterPurchaseWithCommasAndDecimals);
+      formattedNewPriceAfterPurchaseYouKeep = formatPriceWithCommasAndDecimals(fiftySevenPercentOfFormattedNewPriceAfterPurchase);
+  }    
 //Formatted Price
 
 
@@ -469,7 +482,7 @@ const initialVisibilityState = (tokenURI: string) => {
         {/*  Change below link after test  */}
         {meta && (
           <Link legacyBehavior 
-            href={`/asset/${address}/${nft.id}`} 
+            href={`/asset/${storeAddressFromURL}/${nft.id}`} 
             passHref>
             <a id="photo-link-seller-created">
               <Image
@@ -511,7 +524,7 @@ const initialVisibilityState = (tokenURI: string) => {
                 id="PAP-logo" 
                 src="/images/PriceAfterPurchaseLogo.png"
               />
-              <p id="PAP-seller-created">Price After Purchase</p>
+              <p id="PAP-seller-created">You Keep</p>
               <p id="PAP-blue-orange-before-seller-created">
               <Image
                   loader={imageLoader}
@@ -521,7 +534,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                {formattedPriceAfterPurchaseYouKeep}
                 </p>
               <hr id="priceline-seller-created" />
               <p id="yourprice-seller-created">Price</p>
@@ -554,7 +567,7 @@ const initialVisibilityState = (tokenURI: string) => {
                     id="PAP-logo" 
                     src="/images/PriceAfterPurchaseLogo.png"
                   />
-                  <p id="PAP-seller-created">Price After Purchase</p>
+                  <p id="PAP-seller-created">You Keep</p>
                   <p id="PAP-blue-orange-before-seller-created">
                   <Image
                         loader={imageLoader}
@@ -564,7 +577,7 @@ const initialVisibilityState = (tokenURI: string) => {
                         id="polygon-logo-pap" 
                         src="/images/market/polygon.png"
                       />
-                    {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                    {formattedNewPriceAfterPurchaseYouKeep}
                   </p>
                   <hr id="priceline-seller-created" />
                   <p id="yourprice-seller-created">Price</p>
@@ -605,7 +618,7 @@ const initialVisibilityState = (tokenURI: string) => {
           {/*  Change below link after test  */}
           {meta && (
             <Link legacyBehavior 
-              href={`/asset/${address}/${nft.id}`} 
+              href={`/asset/${storeAddressFromURL}/${nft.id}`} 
               passHref>
               <a id="photo-link-seller-created">
                 <Image
@@ -647,7 +660,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="PAP-logo" 
                   src="/images/PriceAfterPurchaseLogo.png"
                 />
-                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-seller-created">You Keep</p>
                 <p id="PAP-blue-orange-before-seller-created">
                 <Image
                   loader={imageLoader}
@@ -657,7 +670,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                  {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                  {formattedPriceAfterPurchaseYouKeep}
                 </p>
                 <hr id="priceline-seller-created" />
                 <p id="yourprice-seller-created">Price</p>
@@ -690,7 +703,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="PAP-logo" 
                   src="/images/PriceAfterPurchaseLogo.png"
                 />
-                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-seller-created">You Keep</p>
                 <p id="PAP-blue-orange-before-seller-created">
                 <Image
                   loader={imageLoader}
@@ -700,7 +713,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                  {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                  {formattedNewPriceAfterPurchaseYouKeep}
                   </p>
                 <hr id="priceline-seller-created" />
                 <p id="yourprice-seller-created">Price</p>
@@ -733,7 +746,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="PAP-logo" 
                   src="/images/PriceAfterPurchaseLogo.png"
                 />
-                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-seller-created">You Keep</p>
                 <p id="PAP-blue-orange-before-seller-created">
                 <Image
                   loader={imageLoader}
@@ -743,7 +756,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                  {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                  {formattedPriceAfterPurchaseYouKeep}
                 </p>
                 <hr id="priceline-seller-created" />
                 <p id="yourprice-seller-created">Price</p>
@@ -776,7 +789,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="PAP-logo" 
                   src="/images/PriceAfterPurchaseLogo.png"
                 />
-                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-seller-created">You Keep</p>
                 <p id="PAP-blue-orange-before-seller-created">
                 <Image
                   loader={imageLoader}
@@ -786,7 +799,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                  {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                  {formattedNewPriceAfterPurchaseYouKeep}
                   </p>
                 <hr id="priceline-seller-created" />
                 <p id="yourprice-seller-created">Price</p>

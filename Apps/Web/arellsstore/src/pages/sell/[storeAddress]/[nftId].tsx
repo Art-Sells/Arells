@@ -32,7 +32,7 @@ const SellPage = () => {
       />
       <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div id="asset-wrapper">
+      <div id="asset-view-wrapper">
         <SignerProvider>
           <ApolloWrapper>
             <Asset/>

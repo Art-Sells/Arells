@@ -6,9 +6,10 @@ import Web3Modal from "web3modal";
 import { ReactNode, createContext, useContext, useState, useEffect } from "react";
 
 // Loader Styles
-import '../app/css/modals/walletConnected.css';
 import connectspinnerstyle from '../app/css/modals/loading/connectspinner.module.css';
 import '../app/css/modals/loading/spinnerBackground.css';
+
+import '../app/css/modals/walletConnected.css';
 import '../app/css/modals/connect-wallet.css';
 import Image from 'next/image';
 import { ethers } from "ethers";
@@ -542,18 +543,16 @@ export const SignerProvider = ({ children }: { children: ReactNode }) => {
     return (
         <>
             {showLoading && (
-                <div id="spinnerBackgroundConnect">
+                <div id="spinnerBackground">
                 <Image 
                 loader={imageLoader}
                     alt="" 
                     width={29}
                     height={30}
                     id="arells-loader-icon-connect" 
-                    src="images/Arells-Icon.png"/>        
+                    src="images/Arells-Icon.png"/> 
+                    <div className={connectspinnerstyle.connectSpinner}></div>         
                 </div>            
-            )}
-            {showLoading && (
-                <div className={connectspinnerstyle.connectSpinner}></div>  
             )}
             <SignerContext.Provider value={{ 
                 signer, address, loadingWallet, connectWallet }}>
