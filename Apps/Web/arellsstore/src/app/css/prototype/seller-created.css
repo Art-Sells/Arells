@@ -860,6 +860,26 @@
 					opacity: 1; 
 					  background: silver;
 			  }	
+			  #not-for-sale-asset {
+				margin-top: 10px;
+				text-decoration: none;
+				margin-left: auto;
+				margin-right: auto;
+				color: white;
+				font-weight: 	500;
+				font-size: 11px;
+				padding-top: 20px;
+				padding-bottom: 20px;
+				padding-right: 22px;
+				padding-left: 24px;	  
+				border: none;
+				letter-spacing: 2px;
+				border-radius: 5px;
+				border-width: 0px;
+				width: 100px;
+				opacity: 1; 
+				  background: silver;
+		  }	
   
 			  #inventory-line {
 				  margin-top: 0px;
@@ -1169,11 +1189,12 @@
 					padding-top: 20px;
 					padding-bottom: 20px;
 					padding-right: 12px;
-					padding-left: 15px;	  
+					padding-left: 13px;	  
 					border: none;
 					letter-spacing: 1px;
 					width: 120px;
 				  }
+
   
 		  #inventory-line {
 			  width: 200px;
@@ -1237,4 +1258,15 @@
 		#container-seller-created.three-items {
 		  width: 400px;
 		}
+		#not-for-sale-asset
+		{
+			font-size: 9px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-right: 12px;
+			padding-left: 14px;	  
+			border: none;
+			letter-spacing: 2px;
+			width: 90px;
+			}  
   }

@@ -160,6 +160,7 @@ const AssetViewHolder = (props: AssetProps) => {
     const { checkIfNFTMinted } = useNFTMarket(storeAddressFromURL);
 
     useEffect(() => {
+        console.log("store Address from URL: ", storeAddressFromURL);
     const checkMintingStatus = async () => {
         const minted = await checkIfNFTMinted(nft.id);
         setIsNFTMinted(minted);
@@ -188,16 +189,14 @@ const AssetViewHolder = (props: AssetProps) => {
 
     const forSaleMinted = formattedNewPriceAfterPurchase != "...";
 
-    
-    const notConnectedNotListed = 
-    !addressMatch && !address && !forSale; 
-    const notConnectedNotListedMinted = 
-    !addressMatch && !address && !forSale && isNFTMinted; 
-
+    const notConnectedNotListedNotMintedNotRelisted  = 
+    !address && !forSale && !isNFTMinted && !forSaleMinted; 
     const notConnectedListedNotMintedNotRelisted = 
-    !addressMatch && !address && forSale && !isNFTMinted; 
+    !address && forSale && !isNFTMinted && !forSaleMinted; 
+    const notConnectedListedMintedNotRelisted = 
+    !address && forSale && isNFTMinted && !forSaleMinted;
     const notConnectedListedMintedRelisted = 
-    !addressMatch && !address && forSale && isNFTMinted; 
+    !address && forSale && isNFTMinted && forSaleMinted;  
 
     const connectedBuyerNotListedNotMintedNotRelisted = 
     !addressMatch && address && !forSale && !isNFTMinted && !forSaleMinted; 
@@ -653,7 +652,7 @@ const AssetViewHolder = (props: AssetProps) => {
 
 
 {/* Below for users not connected */}        
-        {notConnectedNotListed &&  (
+        {notConnectedNotListedNotMintedNotRelisted &&  (
             <>
                 <div id="blue-orange-prices-before-blue-orange">
                     <div id="asset-price-after-purchase-wrapper-asset">
@@ -704,69 +703,11 @@ const AssetViewHolder = (props: AssetProps) => {
                             /> 
                             ...
                         </p>
-                        <button id="not-for-sale">
+                        <button id="not-for-sale-asset">
                             OWNED</button>
                     </div> 
                 </div>  
             </>
-        )}	
-        {notConnectedNotListedMinted  &&  (
-        <>
-            <div id="blue-orange-prices-before-blue-orange">
-                <div id="asset-price-after-purchase-wrapper-asset">
-                    <Image
-                        loader={imageLoader}
-                        alt=""
-                        width={60}  
-                        height={11}  
-                        id="PAP-logo-list" 
-                        src="/images/PriceAfterPurchaseLogo.png"
-                    />
-                    <hr id="line-pap-top"></hr>
-                    <p id="PAP-not-minted-word">Price After Purchase</p>
-                    <p id="PAP-not-minted-price">
-                        <Image
-                            loader={imageLoader}
-                            alt=""
-                            width={15}  
-                            height={13}  
-                            id="pap-polygon-logo-sell" 
-                            src="/images/market/polygon.png"
-                        /> 
-                        ...</p>
-                    <hr id="line-pap"></hr>
-                    <p id="PAP-not-minted-other-word">You Keep</p>
-                    <p id="PAP-not-minted-price-other-price">
-                        <Image
-                            loader={imageLoader}
-                            alt=""
-                            width={12}  
-                            height={10}  
-                            id="pap-polygon-logo-sell-other" 
-                            src="/images/market/polygon.png"
-                        /> 
-                        ...
-                    </p>
-                </div>
-                <div id="asset-price-wrapper-asset">
-                    <p id="price-not-minted-word">Price</p>
-                    <p id="price-not-minted-price">
-                        <Image
-                            loader={imageLoader}
-                            alt=""
-                            width={15}  
-                            height={13}  
-                            id="price-polygon-logo-sell" 
-                            src="/images/market/polygon.png"
-                        /> 
-                        {formattedPriceWithCommasAndDecimals}
-                    </p>
-                    {/* change below link after test */}                      
-                    <button id="not-for-sale">
-                        OWNED</button> 
-                </div> 
-            </div>        
-        </>
         )}	
         {notConnectedListedNotMintedNotRelisted && (
         <>
@@ -827,6 +768,64 @@ const AssetViewHolder = (props: AssetProps) => {
             </div>              
         </>
         )}
+        {notConnectedListedMintedNotRelisted  &&  (
+        <>
+            <div id="blue-orange-prices-before-blue-orange">
+                <div id="asset-price-after-purchase-wrapper-asset">
+                    <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={60}  
+                        height={11}  
+                        id="PAP-logo-list" 
+                        src="/images/PriceAfterPurchaseLogo.png"
+                    />
+                    <hr id="line-pap-top"></hr>
+                    <p id="PAP-not-minted-word">Price After Purchase</p>
+                    <p id="PAP-not-minted-price">
+                        <Image
+                            loader={imageLoader}
+                            alt=""
+                            width={15}  
+                            height={13}  
+                            id="pap-polygon-logo-sell" 
+                            src="/images/market/polygon.png"
+                        /> 
+                        ...</p>
+                    <hr id="line-pap"></hr>
+                    <p id="PAP-not-minted-other-word">You Keep</p>
+                    <p id="PAP-not-minted-price-other-price">
+                        <Image
+                            loader={imageLoader}
+                            alt=""
+                            width={12}  
+                            height={10}  
+                            id="pap-polygon-logo-sell-other" 
+                            src="/images/market/polygon.png"
+                        /> 
+                        ...
+                    </p>
+                </div>
+                <div id="asset-price-wrapper-asset">
+                    <p id="price-not-minted-word">Price</p>
+                    <p id="price-not-minted-price">
+                        <Image
+                            loader={imageLoader}
+                            alt=""
+                            width={15}  
+                            height={13}  
+                            id="price-polygon-logo-sell" 
+                            src="/images/market/polygon.png"
+                        /> 
+                        {formattedPriceWithCommasAndDecimals}
+                    </p>
+                    {/* change below link after test */}                      
+                    <button id="not-for-sale-asset">
+                        OWNED</button> 
+                </div> 
+            </div>        
+        </>
+        )}	
         {notConnectedListedMintedRelisted && (
         <>
             <div id="blue-orange-prices-before-blue-orange">
@@ -941,7 +940,7 @@ const AssetViewHolder = (props: AssetProps) => {
                         /> 
                         ...
                     </p>
-                    <button id="not-for-sale">
+                    <button id="not-for-sale-asset">
                     OWNED</button>
                 </div> 
             </div>  
@@ -1057,7 +1056,7 @@ const AssetViewHolder = (props: AssetProps) => {
                         /> 
                         {formattedPriceWithCommasAndDecimals}
                     </p>
-                    <button id="not-for-sale">
+                    <button id="not-for-sale-asset">
                     OWNED</button>
                 </div> 
             </div>        

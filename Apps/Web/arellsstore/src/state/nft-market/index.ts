@@ -12,6 +12,7 @@ import { NFT } from "./interfaces";
 import router from "next/router";
 import handler from "../../pages/api/nft-storage";
 
+const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
 
 const useNFTMarket = (storeAddress: string | null) => {
   const{signer, address} = useSigner();
@@ -19,7 +20,7 @@ const useNFTMarket = (storeAddress: string | null) => {
   const nftMarket = new Contract(
     NFT_MARKET_ADDRESS,
     NFT_MARKET.abi,
-    signer
+    signer || provider
   );
 
   const createdNFTs = useCreatedNFTs(storeAddress);
@@ -63,23 +64,24 @@ const useNFTMarket = (storeAddress: string | null) => {
   };
 
   const checkIfNFTMinted = async (tokenId: string) => {
-    if (!signer) {
-      console.error('Signer is not available');
-      return false;
-    }
-
+    console.log("Provider: ", provider); // Log the provider
+    console.log("Signer: ", signer); // Log the signer
+  
     try {
       // Convert tokenId to a number since the smart contract expects a uint256
       const numericTokenId = BigNumber.from(tokenId);
-
+  
       // Call the isNFTMinted function from the smart contract
       const minted = await nftMarket.isNFTMinted(numericTokenId);
+  
+      console.log("Minted Status: ", minted); // Log the result
       return minted;
     } catch (e) {
       console.error("Exception while checking if NFT is minted:", e);
       return false;
     }
   };
+  
 
   const listNFTCreator = async (
     tokenID: string, 
