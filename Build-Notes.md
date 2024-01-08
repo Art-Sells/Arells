@@ -89,6 +89,7 @@ ________________________________________________________________________________
 
 ##### Bugs
 - Try/Catch Apollo Connection/Address Error...
+- Remove All Console.logs
 - 404 and Server Error Pages
 - Resolve overextending numbers listing issue
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
