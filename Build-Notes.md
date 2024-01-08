@@ -17,7 +17,7 @@ ________________________________________________________________________________
 - PAP, You Keep, Price
 
 #### If time permits: 
-- Digital Certificates.
+- Certificates Of Ownership (Metadata Info).
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -38,7 +38,7 @@ ________________________________________________________________________________
 ### Edit Store
 - Store|Brand Logo: Default Store Logo
 - Store|Brand Name: No Maximum Characters
-- Store Addresses|Locations:
+- Store Addresses & Locations:
 - - Claimed: 0x74348347 [Enter Store]
 - - Unclaimed: 0x74348347 [Enter Store] |Save Changes to Claim Address|
 
@@ -47,7 +47,7 @@ ________________________________________________________________________________
 - small Logo or Slogan
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test) Unclaimed Store Address
-- Store Address|Location: Address
+- Store Address: 0x74348347
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 
 ### Other Store
@@ -55,7 +55,7 @@ ________________________________________________________________________________
 - small Logo or Slogan
 - Image Default: Store Icon
 - Name Default: Unclaimed Store Address
-- Store Address|Location: Address
+- Store Address: Address
 
 #### If time permits: 
 - Created By & Owned By
