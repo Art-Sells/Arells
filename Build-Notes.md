@@ -1,20 +1,16 @@
 # Arells Build Notes...
 
-## Arells 1.3
-
-#### After Testing and Before Launch:
-- Inform of Arells 1.4 release (and features).
-________________________________________________________________________________________________________________________________________________
-
 ## Arells 1.4
+- New RPC URL Variable
 
-### My Store Asset (See Asset Modal)
-- Images (Default Store Image) here render small pixels
-- PAP, You Keep, Price
+### My Store
+- Add New Check for notConnected {Check and double check all instances...}
 
-### Other Store Asset (See Asset Modal)
-- Images (Default Store Image) here render small pixels
-- PAP, You Keep, Price
+### Other Store
+- Add New Check for notConnected {Check and double check all instances...}
+
+### Asset
+- Add New Check for notConnected {Check and double check all instances...}
 
 #### If time permits: 
 - Certificates Of Ownership (Metadata Info).
