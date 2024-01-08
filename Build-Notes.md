@@ -56,6 +56,7 @@ ________________________________________________________________________________
 #### If time permits: 
 - Created By & Owned By
 - Socials
+- Remove all Console.logs
 
 #### After Testing and Before Launch: 
 - Delete all important variables
