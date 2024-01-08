@@ -14,6 +14,7 @@
 
 #### If time permits: 
 - Certificates Of Ownership (Metadata Info).
+- Resolve Pre-Render Image Loading Issue
 
 #### After Testing and Before Launch: 
 - Delete all important variables
