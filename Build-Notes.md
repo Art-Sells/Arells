@@ -111,7 +111,7 @@ ________________________________________________________________________________
 - Pages separated like so: store-name/asset/address
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 - Research Upgradable SmartContracts (through OpenZeppelin)
-- Web3 Modal
+- Hard Code SmartContract External Transfers for delisting an nft (if minted, transfer price & Signer (1) to new signer (1) automatically delisting, if not minted, transfer non-price)
 
 ### Wallet
 - Test with Metamask/Mumbai-USDC
