@@ -1,17 +1,5 @@
 # Arells Build Notes...
 
-## Arells 1.4
-- New RPC URL Variable
-
-### My Store
-- Add New Check for notConnected {Check and double check all instances...}
-
-### Other Store
-- Add New Check for notConnected {Check and double check all instances...}
-
-### Asset
-- Add New Check for notConnected {Check and double check all instances...}
-
 #### If time permits: 
 - Certificates Of Ownership (Metadata Info).
 - Resolve Pre-Render Image Loading Issue
