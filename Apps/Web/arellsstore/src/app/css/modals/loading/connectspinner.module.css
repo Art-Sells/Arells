@@ -1,5 +1,5 @@
 .connectSpinner {
-    margin-top: 200.5px;
+    margin-top: -45px;
     position: fixed;
     display: block;
     justify-content: center;
@@ -19,7 +19,7 @@
   
   @media screen and (max-height: 550px) {
     .connectSpinner{
-      margin-top: 100.5px;
+      margin-top: -45px;
     }
   }
   

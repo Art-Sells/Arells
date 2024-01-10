@@ -1,26 +1,8 @@
 # Arells Build Notes...
 
-## Arells 1.3
-
-#### After Testing and Before Launch:
-- Inform of Arells 1.4 release (and features).
-________________________________________________________________________________________________________________________________________________
-
-## Arells 1.4
-
-### My Store
-- Images clickable
-
-### My Store Asset (See Asset Modal)
-- Images (Default Store Image) here render small pixels
-- PAP, You Keep, Price
-
-### Other Store
-- Images clickable
-
-### Other Store Asset (See Asset Modal)
-- Images (Default Store Image) here render small pixels
-- PAP, You Keep, Price
+#### If time permits: 
+- Certificates Of Ownership (Metadata Info).
+- Resolve Pre-Render Image Loading Issue
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -41,17 +23,16 @@ ________________________________________________________________________________
 ### Edit Store
 - Store|Brand Logo: Default Store Logo
 - Store|Brand Name: No Maximum Characters
-- Addresses | Locations:
-0x74348347 - [Enter Store]
-"Unclaimed Store Address" - (Claim Address)
-{Must Claim All Addresses}
+- Store Addresses & Locations:
+- - Claimed: 0x74348347 [Enter Store]
+- - Unclaimed: 0x74348347 [Enter Store] |Save Changes to Claim Address|
 
 ### My Store
-- Top-Center[EDIT]-(SignUp/LogIn to Create/Edit {if not logged in}) (You are not the owner of this Address)
+- Top-Center[EDIT]-(SignUp/LogIn to Create/Edit {if not logged in})
 - small Logo or Slogan
 - Logo: Default Store Logo
 - Store Name: Maximum Width if long name (Test) Unclaimed Store Address
-- Store Address: Address
+- Store Address: 0x74348347
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 
 ### Other Store
@@ -59,6 +40,12 @@ ________________________________________________________________________________
 - small Logo or Slogan
 - Image Default: Store Icon
 - Name Default: Unclaimed Store Address
+- Store Address: Address
+
+#### If time permits: 
+- Created By & Owned By
+- Socials
+- Remove all Console.logs
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -70,9 +57,17 @@ ________________________________________________________________________________
 
 ### My Store Asset (See Asset Modal)
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+- Asset Name in title
+
+### My Store
+- Store Name in title
 
 ### Other Store Asset (See Asset Modal)     
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
+- Asset Name in title
+
+### My Store
+- Store Name in title
 
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
@@ -84,6 +79,7 @@ ________________________________________________________________________________
 
 ##### Bugs
 - Try/Catch Apollo Connection/Address Error...
+- Remove All Console.logs
 - 404 and Server Error Pages
 - Resolve overextending numbers listing issue
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
@@ -103,7 +99,7 @@ ________________________________________________________________________________
 - Pages separated like so: store-name/asset/address
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 - Research Upgradable SmartContracts (through OpenZeppelin)
-- Web3 Modal
+- Hard Code SmartContract External Transfers for delisting an nft (if minted, transfer price & Signer (1) to new signer (1) automatically delisting, if not minted, transfer non-price)
 
 ### Wallet
 - Test with Metamask/Mumbai-USDC

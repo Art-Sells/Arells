@@ -41,6 +41,8 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
 
 
 //loader functions below 
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
       return `${src}?w=${width}&q=${quality || 100}`;
@@ -241,18 +243,31 @@ const StoreAssetHolderSelling = React.memo((props: AssetStoreProps) => {
 //Buying Functions Above
 
 //Formatted Price 
-const formatPriceWithCommasAndDecimals = (price: string) => {
-  return parseFloat(price).toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-  });
-};
+  const formatPriceWithCommasAndDecimals = (price: string) => {
+    return parseFloat(price).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+  };
 
-const formattedPriceWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPrice);
-const formattedPriceAfterPurchaseWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPriceAfterPurchase);
-const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAfterPurchase === "..." 
-  ? "..." 
-  : formatPriceWithCommasAndDecimals(formattedNewPriceAfterPurchase);
+  const formattedPriceWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPrice);
+  const formattedPriceAfterPurchaseWithCommasAndDecimals = formatPriceWithCommasAndDecimals(formattedPriceAfterPurchase);
+  const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAfterPurchase === "..." 
+    ? "..." 
+    : formatPriceWithCommasAndDecimals(formattedNewPriceAfterPurchase);
+
+    const calculateFiftySevenPercent = (price: string) => {
+      return (parseFloat(price) * 0.57).toString();
+  };
+  // Calculating and formatting the prices
+  const fiftySevenPercentOfFormattedPriceAfterPurchase = calculateFiftySevenPercent(formattedPriceAfterPurchase);
+  const formattedPriceAfterPurchaseYouKeep = formatPriceWithCommasAndDecimals(fiftySevenPercentOfFormattedPriceAfterPurchase);
+
+  let formattedNewPriceAfterPurchaseYouKeep = "...";
+  if (formattedNewPriceAfterPurchaseWithCommasAndDecimals !== "...") {
+      const fiftySevenPercentOfFormattedNewPriceAfterPurchase = calculateFiftySevenPercent(formattedNewPriceAfterPurchaseWithCommasAndDecimals);
+      formattedNewPriceAfterPurchaseYouKeep = formatPriceWithCommasAndDecimals(fiftySevenPercentOfFormattedNewPriceAfterPurchase);
+  }    
 //Formatted Price
 
 
@@ -265,7 +280,6 @@ const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAft
 const initialVisibilityState = (tokenURI: string) => {
     const key = getLocalStorageKey(tokenURI);
     const storedValue = localStorage.getItem(key);
-    console.log(`Initial local storage value for ${tokenURI}: ${storedValue}`);
     return storedValue !== 'hidden';
 };
 
@@ -281,7 +295,6 @@ const initialVisibilityState = (tokenURI: string) => {
       setHiddenAssetOwner(true);
       setShownAssetOwner(false);
       setShownAssetNotOwner(false);
-      console.log(`Hiding asset with tokenURI: ${tokenURI}`);
   };
 
   // Function to show an NFT
@@ -291,11 +304,9 @@ const initialVisibilityState = (tokenURI: string) => {
       setHiddenAssetOwner(false);
       setShownAssetOwner(true);
       setShownAssetNotOwner(false);
-      console.log(`Showing asset with tokenURI: ${tokenURI}`);
   };
 
   useEffect(() => {
-    console.log(`Effect triggered for tokenURI: ${props.nft.tokenURI}`);
       if (addressMatch) {
           // User is the owner
           if (!initialVisibilityState(props.nft.tokenURI)) {
@@ -314,8 +325,6 @@ const initialVisibilityState = (tokenURI: string) => {
           setShownAssetNotOwner(initialVisibilityState(props.nft.tokenURI));
       }
   }, [addressMatch, props.nft.tokenURI]);
-  console.log(`Rendering with states - hiddenAssetOwner: ${hiddenAssetOwner}, shownAssetOwner: ${shownAssetOwner}, shownAssetNotOwner: ${shownAssetNotOwner}`);
-
 // Hide and show assets above 
 
 
@@ -415,32 +424,31 @@ const initialVisibilityState = (tokenURI: string) => {
                     showAsset(props.nft.tokenURI)}>
                       SHOW
                 </button>
-                {meta && (
+                {meta ? (
                   <Image
-                    loader={imageLoader}
-                    alt=""
-                    width={200}  
-                    height={200}  
-                    id="photo-asset-owned" 
-                    src={meta?.imageURL}
-                  />
+                  loader={imageLoader}
+                  alt=""
+                  width={202}  
+                  height={202}  
+                  id="photo-asset-owned-hidden" 
+                  src={meta?.imageURL}
+                  style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                   onLoad={() => setIsImageLoaded(true)}
+                />
+                ) : (
+                  <div id="photo-asset-loading-hidden">
+                    <Image
+                      loader={imageLoader}
+                      alt=""
+                      width={50}  
+                      height={50}  
+                      id="receiving-image" 
+                      src="/images/market/receiving.png"
+                    />
+                  <div className={styles.photoloader}></div>  
+                  <p id="receiving-word">RECEIVING</p>
+                </div>
                 )}
-                {!meta && (
-                    (
-                      <div id="photo-asset-loading">
-                          <Image
-                            loader={imageLoader}
-                            alt=""
-                            width={50}  
-                            height={50}  
-                            id="receiving-image" 
-                            src="/images/market/receiving.png"
-                          />
-                        <div className={styles.photoloader}></div>  
-                        <p id="receiving-word">RECEIVING</p>
-                      </div>
-                    )
-                  )}  
                 <div id="hidden-from-public"></div> 
                 <p id="hidden-word-one">Hidden</p>
             </div>
@@ -467,18 +475,25 @@ const initialVisibilityState = (tokenURI: string) => {
                 HIDE
           </button>
         {/*  Change below link after test  */}
-        {meta && (
-          <Image
-            loader={imageLoader}
-            alt=""
-            width={200}  
-            height={200}  
-            id="photo-asset-owned" 
-            src={meta?.imageURL}
-          />
-        )}
-        {!meta && (
-            (
+
+          {meta ? (
+            <Link legacyBehavior 
+            href={`/asset/${storeAddressFromURL}/${nft.id}`} 
+            passHref>
+            <a id="photo-link-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={202}  
+                height={202}  
+                id="photo-asset-owned" 
+                src={meta?.imageURL}
+                style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                onLoad={() => setIsImageLoaded(true)}
+              />
+            </a>
+          </Link>
+            ) : (
               <div id="photo-asset-loading">
                   <Image
                     loader={imageLoader}
@@ -491,8 +506,7 @@ const initialVisibilityState = (tokenURI: string) => {
                 <div className={styles.photoloader}></div>  
                 <p id="receiving-word">RECEIVING</p>
               </div>
-            )
-          )}  
+            )}
 {/* Below for owners of the Assets */}  
         {connectedOwnerListedNotMintedNotRelisted && (
           <>
@@ -505,7 +519,7 @@ const initialVisibilityState = (tokenURI: string) => {
                 id="PAP-logo" 
                 src="/images/PriceAfterPurchaseLogo.png"
               />
-              <p id="PAP-seller-created">Price After Purchase</p>
+              <p id="PAP-seller-created">You Keep</p>
               <p id="PAP-blue-orange-before-seller-created">
               <Image
                   loader={imageLoader}
@@ -515,7 +529,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                {formattedPriceAfterPurchaseYouKeep}
                 </p>
               <hr id="priceline-seller-created" />
               <p id="yourprice-seller-created">Price</p>
@@ -548,7 +562,7 @@ const initialVisibilityState = (tokenURI: string) => {
                     id="PAP-logo" 
                     src="/images/PriceAfterPurchaseLogo.png"
                   />
-                  <p id="PAP-seller-created">Price After Purchase</p>
+                  <p id="PAP-seller-created">You Keep</p>
                   <p id="PAP-blue-orange-before-seller-created">
                   <Image
                         loader={imageLoader}
@@ -558,7 +572,7 @@ const initialVisibilityState = (tokenURI: string) => {
                         id="polygon-logo-pap" 
                         src="/images/market/polygon.png"
                       />
-                    {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                    {formattedNewPriceAfterPurchaseYouKeep}
                   </p>
                   <hr id="priceline-seller-created" />
                   <p id="yourprice-seller-created">Price</p>
@@ -580,7 +594,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   BUY</button>
             </>
         )}    
-  {/* Above for users who are owners of the Assets */}          
+{/* Above for users who are owners of the Assets */}          
             
       </div>    
       )}  
@@ -597,32 +611,37 @@ const initialVisibilityState = (tokenURI: string) => {
       {shownAssetNotOwner && (
         <div id="blue-orange-seller-created">
           {/*  Change below link after test  */}
-          {meta && (
-            <Image
-              loader={imageLoader}
-              alt=""
-              width={200}  
-              height={200}  
-              id="photo-asset-owned" 
-              src={meta?.imageURL}
-            />
-          )}
-          {!meta && (
-              (
-                <div id="photo-asset-loading">
-                    <Image
-                      loader={imageLoader}
-                      alt=""
-                      width={50}  
-                      height={50}  
-                      id="receiving-image" 
-                      src="/images/market/receiving.png"
-                    />
-                  <div className={styles.photoloader}></div>  
-                  <p id="receiving-word">RECEIVING</p>
-                </div>
-              )
-            )}  
+          {meta ? (
+            <Link legacyBehavior 
+            href={`/asset/${storeAddressFromURL}/${nft.id}`} 
+            passHref>
+            <a id="photo-link-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={202}  
+                height={202}  
+                id="photo-asset-owned" 
+                src={meta?.imageURL}
+                style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                onLoad={() => setIsImageLoaded(true)}
+              />
+            </a>
+          </Link>
+            ) : (
+              <div id="photo-asset-loading">
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={50}  
+                    height={50}  
+                    id="receiving-image" 
+                    src="/images/market/receiving.png"
+                  />
+                <div className={styles.photoloader}></div>  
+                <p id="receiving-word">RECEIVING</p>
+              </div>
+            )}
   {/* Below for users who are not owners of the Assets */} 
           {notConnectedListedNotMintedNotRelisted && (
             <>
@@ -635,7 +654,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="PAP-logo" 
                   src="/images/PriceAfterPurchaseLogo.png"
                 />
-                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-seller-created">You Keep</p>
                 <p id="PAP-blue-orange-before-seller-created">
                 <Image
                   loader={imageLoader}
@@ -645,7 +664,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                  {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                  {formattedPriceAfterPurchaseYouKeep}
                 </p>
                 <hr id="priceline-seller-created" />
                 <p id="yourprice-seller-created">Price</p>
@@ -678,7 +697,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="PAP-logo" 
                   src="/images/PriceAfterPurchaseLogo.png"
                 />
-                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-seller-created">You Keep</p>
                 <p id="PAP-blue-orange-before-seller-created">
                 <Image
                   loader={imageLoader}
@@ -688,7 +707,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                  {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                  {formattedNewPriceAfterPurchaseYouKeep}
                   </p>
                 <hr id="priceline-seller-created" />
                 <p id="yourprice-seller-created">Price</p>
@@ -721,7 +740,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="PAP-logo" 
                   src="/images/PriceAfterPurchaseLogo.png"
                 />
-                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-seller-created">You Keep</p>
                 <p id="PAP-blue-orange-before-seller-created">
                 <Image
                   loader={imageLoader}
@@ -731,7 +750,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                  {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                  {formattedPriceAfterPurchaseYouKeep}
                 </p>
                 <hr id="priceline-seller-created" />
                 <p id="yourprice-seller-created">Price</p>
@@ -764,7 +783,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="PAP-logo" 
                   src="/images/PriceAfterPurchaseLogo.png"
                 />
-                <p id="PAP-seller-created">Price After Purchase</p>
+                <p id="PAP-seller-created">You Keep</p>
                 <p id="PAP-blue-orange-before-seller-created">
                 <Image
                   loader={imageLoader}
@@ -774,7 +793,7 @@ const initialVisibilityState = (tokenURI: string) => {
                   id="polygon-logo-pap" 
                   src="/images/market/polygon.png"
                 />
-                  {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                  {formattedNewPriceAfterPurchaseYouKeep}
                   </p>
                 <hr id="priceline-seller-created" />
                 <p id="yourprice-seller-created">Price</p>
@@ -796,7 +815,7 @@ const initialVisibilityState = (tokenURI: string) => {
                 BUY</button>
             </>
           )}
-    {/* Above for users who are not owners of the Assets */}     
+  {/* Above for users who are not owners of the Assets */}     
         </div>
       )}
     </>

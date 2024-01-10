@@ -33,6 +33,7 @@ type AssetStoreProps = {
 
 const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
 //loader functions below 
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
       return `${src}?w=${width}&q=${quality || 100}`;
@@ -131,6 +132,8 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
       updateMetadata();
     }, [nft.tokenURI]);
   
+  
+  
 
 
     const [isNFTMinted, setIsNFTMinted] = useState(false);
@@ -197,6 +200,19 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
     const formattedNewPriceAfterPurchaseWithCommasAndDecimals = formattedNewPriceAfterPurchase === "..." 
       ? "..." 
       : formatPriceWithCommasAndDecimals(formattedNewPriceAfterPurchase);
+
+      const calculateFiftySevenPercent = (price: string) => {
+        return (parseFloat(price) * 0.57).toString();
+    };
+    // Calculating and formatting the prices
+    const fiftySevenPercentOfFormattedPriceAfterPurchase = calculateFiftySevenPercent(formattedPriceAfterPurchase);
+    const formattedPriceAfterPurchaseYouKeep = formatPriceWithCommasAndDecimals(fiftySevenPercentOfFormattedPriceAfterPurchase);
+
+    let formattedNewPriceAfterPurchaseYouKeep = "...";
+    if (formattedNewPriceAfterPurchaseWithCommasAndDecimals !== "...") {
+        const fiftySevenPercentOfFormattedNewPriceAfterPurchase = calculateFiftySevenPercent(formattedNewPriceAfterPurchaseWithCommasAndDecimals);
+        formattedNewPriceAfterPurchaseYouKeep = formatPriceWithCommasAndDecimals(fiftySevenPercentOfFormattedNewPriceAfterPurchase);
+    }  
 //Formatted Price
 
 // Hide and show assets below
@@ -264,32 +280,32 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                     showAsset(props.nft.tokenURI)}>
                       SHOW
                 </button>
-                {meta && (
+                {meta ? (
                   <Image
-                    loader={imageLoader}
-                    alt=""
-                    width={200}  
-                    height={200}  
-                    id="photo-asset-owned-hidden" 
-                    src={meta?.imageURL}
-                  />
-                )} 
-                {!meta && (
-                  (
-                    <div id="photo-asset-loading-hidden">
-                        <Image
-                          loader={imageLoader}
-                          alt=""
-                          width={50}  
-                          height={50}  
-                          id="receiving-image" 
-                          src="/images/market/receiving.png"
-                        />
-                      <div className={styles.photoloader}></div>  
-                      <p id="receiving-word">RECEIVING</p>
-                    </div>
-                  )
-                )} 
+                  loader={imageLoader}
+                  alt=""
+                  width={202}  
+                  height={202}  
+                  id="photo-asset-owned-hidden" 
+                  src={meta?.imageURL}
+                  style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                   onLoad={() => setIsImageLoaded(true)}
+
+                />
+                ) : (
+                  <div id="photo-asset-loading-hidden">
+                    <Image
+                      loader={imageLoader}
+                      alt=""
+                      width={50}  
+                      height={50}  
+                      id="receiving-image" 
+                      src="/images/market/receiving.png"
+                    />
+                  <div className={styles.photoloader}></div>  
+                  <p id="receiving-word">RECEIVING</p>
+                </div>
+                )}
                 <div id="hidden-from-public"></div> 
                 <p id="hidden-word-one">Hidden</p>
             </div>
@@ -304,31 +320,37 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                     HIDE
               </button>
             {/*  Change below link after test  */}
-            {meta && (
+            {meta ? (
+            <Link legacyBehavior 
+            href={`/asset/${storeAddressFromURL}/${nft.id}`} 
+            passHref>
+            <a id="photo-link-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={202}  
+                height={202}  
+                id="photo-asset-owned" 
+                src={meta?.imageURL}
+                style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                onLoad={() => setIsImageLoaded(true)}
+
+              />
+            </a>
+          </Link>
+            ) : (
+              <div id="photo-asset-loading">
                   <Image
                     loader={imageLoader}
                     alt=""
-                    width={200}  
-                    height={200}  
-                    id="photo-asset-owned" 
-                    src={meta?.imageURL}
+                    width={50}  
+                    height={50}  
+                    id="receiving-image" 
+                    src="/images/market/receiving.png"
                   />
-            )} 
-            {!meta && (
-              (
-                <div id="photo-asset-loading">
-                    <Image
-                      loader={imageLoader}
-                      alt=""
-                      width={50}  
-                      height={50}  
-                      id="receiving-image" 
-                      src="/images/market/receiving.png"
-                    />
-                  <div className={styles.photoloader}></div>  
-                  <p id="receiving-word">RECEIVING</p>
-                </div>
-              )
+                <div className={styles.photoloader}></div>  
+                <p id="receiving-word">RECEIVING</p>
+              </div>
             )}
 
 
@@ -344,7 +366,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                             id="PAP-logo" 
                             src="/images/PriceAfterPurchaseLogo.png"
                           />
-                          <p id="PAP-seller-created">Price After Purchase</p>
+                          <p id="PAP-seller-created">Buyer Keeps</p>
                           <p id="PAP-blue-orange-before-seller-created">
                             <Image
                             loader={imageLoader}
@@ -386,7 +408,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="PAP-logo" 
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
-                        <p id="PAP-seller-created">Price After Purchase</p>
+                        <p id="PAP-seller-created">Buyer Keeps</p>
                         <p id="PAP-blue-orange-before-seller-created">
                         <Image
                           loader={imageLoader}
@@ -396,7 +418,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="polygon-logo-pap" 
                           src="/images/market/polygon.png"
                         /> 
-                          {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                          {formattedPriceAfterPurchaseYouKeep}
                           </p>
                         <hr id="priceline-seller-created" />
                         <p id="yourprice-seller-created">Price</p>
@@ -430,7 +452,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="PAP-logo" 
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
-                        <p id="PAP-seller-created">Price After Purchase</p>
+                        <p id="PAP-seller-created">Your Buyer Keeps</p>
                           <p id="PAP-blue-orange-before-seller-created">
                           <Image
                             loader={imageLoader}
@@ -473,7 +495,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="PAP-logo" 
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
-                        <p id="PAP-seller-created">Price After Purchase</p>
+                        <p id="PAP-seller-created">Buyer Keeps</p>
                         {!isLoadingNewPrice && (
                           <p id="PAP-blue-orange-before-seller-created">
                           <Image
@@ -484,7 +506,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                             id="polygon-logo-pap" 
                             src="/images/market/polygon.png"
                           /> 
-                              {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                              {formattedNewPriceAfterPurchaseYouKeep}
                           </p>
                         )}
                         <hr id="priceline-seller-created" />
@@ -536,31 +558,36 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
           <>
           <div id="blue-orange-seller-created">
             {/*  Change below link after test  */}
-            {meta && (
+            {meta ? (
+            <Link legacyBehavior 
+            href={`/asset/${storeAddressFromURL}/${nft.id}`} 
+            passHref>
+            <a id="photo-link-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={202}  
+                height={202}  
+                id="photo-asset-owned" 
+                src={meta?.imageURL}
+                style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                onLoad={() => setIsImageLoaded(true)}
+              />
+            </a>
+          </Link>
+            ) : (
+              <div id="photo-asset-loading">
                   <Image
                     loader={imageLoader}
                     alt=""
-                    width={200}  
-                    height={200}  
-                    id="photo-asset-owned" 
-                    src={meta?.imageURL}
+                    width={50}  
+                    height={50}  
+                    id="receiving-image" 
+                    src="/images/market/receiving.png"
                   />
-            )} 
-            {!meta && (
-              (
-                <div id="photo-asset-loading">
-                    <Image
-                      loader={imageLoader}
-                      alt=""
-                      width={50}  
-                      height={50}  
-                      id="receiving-image" 
-                      src="/images/market/receiving.png"
-                    />
-                  <div className={styles.photoloader}></div>  
-                  <p id="receiving-word">RECEIVING</p>
-                </div>
-              )
+                <div className={styles.photoloader}></div>  
+                <p id="receiving-word">RECEIVING</p>
+              </div>
             )}
             
 
@@ -576,7 +603,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="PAP-logo" 
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
-                        <p id="PAP-seller-created">Price After Purchase</p>
+                        <p id="PAP-seller-created">You Keep</p>
                         <p id="PAP-blue-orange-before-seller-created">
                         <Image
                           loader={imageLoader}
@@ -615,7 +642,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="PAP-logo" 
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
-                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-seller-created">You Keep</p>
                       <p id="PAP-blue-orange-before-seller-created">
                       <Image
                           loader={imageLoader}
@@ -661,7 +688,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="PAP-logo" 
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
-                        <p id="PAP-seller-created">Price After Purchase</p>
+                        <p id="PAP-seller-created">You Keep</p>
                         <p id="PAP-blue-orange-before-seller-created">
                         <Image
                           loader={imageLoader}
@@ -701,7 +728,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="PAP-logo" 
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
-                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-seller-created">You Keep</p>
                       <p id="PAP-blue-orange-before-seller-created">
                       <Image
                           loader={imageLoader}
@@ -711,7 +738,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="polygon-logo-pap" 
                           src="/images/market/polygon.png"
                         /> 
-                        {formattedPriceAfterPurchaseWithCommasAndDecimals}
+                        {formattedPriceAfterPurchaseYouKeep}
                       </p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>
@@ -746,7 +773,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="PAP-logo" 
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
-                        <p id="PAP-seller-created">Price After Purchase</p>
+                        <p id="PAP-seller-created">You Keep</p>
                         <p id="PAP-blue-orange-before-seller-created"> 
                         <Image
                           loader={imageLoader}
@@ -786,7 +813,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                         id="PAP-logo" 
                         src="/images/PriceAfterPurchaseLogo.png"
                       />
-                      <p id="PAP-seller-created">Price After Purchase</p>
+                      <p id="PAP-seller-created">You Keep</p>
                       <p id="PAP-blue-orange-before-seller-created">
                       <Image
                           loader={imageLoader}
@@ -796,7 +823,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="polygon-logo-pap" 
                           src="/images/market/polygon.png"
                         /> 
-                        {formattedNewPriceAfterPurchaseWithCommasAndDecimals}
+                        {formattedNewPriceAfterPurchaseYouKeep}
                       </p>
                       <hr id="priceline-seller-created" />
                       <p id="yourprice-seller-created">Price</p>

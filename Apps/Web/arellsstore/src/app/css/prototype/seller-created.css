@@ -17,6 +17,10 @@
 	animation-duration: 1.00s;
   }
   
+  .hidden-image {
+    display: none;
+}
+
 	  #header-seller-created {
 			  display: flex;
 			  justify-content: center;
@@ -172,6 +176,15 @@
 			  animation-name: animatetop;
 			  animation-duration: 1.00s;
 			}
+			#word-logo-seller-created-asset {
+				margin-top: 20px;
+				width: 78px;	
+				height: 25px;	
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			  }
 			/* Add Animation */
 			@-webkit-keyframes animatetop {
 			  from {center:0; opacity:0}
@@ -192,6 +205,16 @@
 			  word-spacing: 0px;
 			  opacity: .7;
 		  }
+		  #slogan-seller-created-asset {
+			margin-top: 15px;
+			font-size: 8px;
+			letter-spacing: 1px;
+			margin-left: 1px; 
+			font-weight: 600;
+			color: black;
+			word-spacing: 0px;
+			opacity: .7;
+		}
 		  #black-liner-bottom-owned-buy {
 			margin-top: 0px;
 			background-color: black;
@@ -201,7 +224,26 @@
 			width: 380px;
 			opacity: .1;
 		  }	
+		  #black-liner-bottom-owned-buy-asset {
+			margin-top: 0px;
+			background-color: black;
+			border: none;
+			height: 2px;
+			border-radius: 30px;
+			width: 250px;
+			opacity: .1;
+		  }	
 		  #ada-description-owned-buy {
+			margin-top: 10px;
+			font-size: 6px;
+			color: black;
+			font-weight: 500;
+			letter-spacing: 4.8px;
+			margin-left: 4.8px; 
+			word-spacing: 2px;
+			opacity: .5;
+		}
+		#ada-description-owned-buy-asset {
 			margin-top: 10px;
 			font-size: 6px;
 			color: black;
@@ -438,7 +480,7 @@
 				height: 320px;
 				width: 202px;
 				font-weight: 600;
-				border-radius: 5px;
+				border-radius: 10px;
 				color: rgb(183, 183, 183);
 				background-color: rgb(255, 255, 255);
 				box-shadow: 0px 5px 20px -10px silver;  
@@ -455,13 +497,27 @@
 				opacity: .7;
 				
 			}	
+			#photo-link-seller-created {
+				text-decoration: none;
+			}
+	
+			#photo-link-seller-created:hover {
+			  opacity: .5;
+			  transition: 1s;
+			  box-shadow: none;
+			  cursor: pointer;
+			}
+			#photo-link-seller-created:focus {
+			  opacity: .5;
+			  box-shadow: none;
+			  cursor: pointer;
+			}			
 			#photo-asset-owned-hidden {
-				width: 200px;
-				height: 200px;
-				  border-radius: 5px;		
-				  border: solid; 
-				border-width: 1px;
-				border-color: rgb(240, 240, 240);
+				width: 202px;
+				height: 202px;
+				border-radius: 10px;		
+				box-shadow: 0px 5px 10px -4px white; 	
+				  border: none; 
 				opacity: 1;
 				  -webkit-animation-name: animatetophide;
 				  -webkit-animation-duration: 1.00s;
@@ -469,12 +525,11 @@
 				  animation-duration: 1.00s;
 				}
 				#photo-asset-loading-hidden {
-					width: 200px;
-					height: 200px;
-						border-radius: 5px;		
-						border: solid; 
-					border-width: 1px;
-					border-color: rgb(240, 240, 240);
+					width: 204px;
+					height: 204px;
+					border-radius: 10px;		
+					box-shadow: 0px 5px 10px -4px white; 	
+						border: none; 
 						-webkit-animation-name: animatetophide;
 						-webkit-animation-duration: 1.00s;
 						animation-name: animatetophide;
@@ -536,12 +591,10 @@
 		  }			
 		  
 		  #photo-asset-owned {
-			  width: 200px;
-			  height: 200px;
-				border-radius: 0px;		
-				border: solid; 
-			  border-width: 1px;
-			  border-color: rgb(240, 240, 240);
+			  width: 202px;
+			  height: 202px;
+			  border-radius: 10px;		
+			  box-shadow: 0px 5px 10px -4px gray; 
 				-webkit-animation-name: animatetop;
 				-webkit-animation-duration: 1.00s;
 				animation-name: animatetop;
@@ -549,11 +602,9 @@
 			  }
 		  #photo-asset-loading {
 			  width: 204px;
-			  height: 204px;
-				  border-radius: 0px;		
-				  border: solid; 
-			  border-width: 1px;
-			  border-color: rgb(240, 240, 240);
+			  height: 204px;	
+			  border-radius: 10px;		
+			  box-shadow: 0px 5px 10px -4px rgb(255, 255, 255); 
 				  -webkit-animation-name: animatetop;
 				  -webkit-animation-duration: 1.00s;
 				  animation-name: animatetop;
@@ -589,7 +640,7 @@
 			  #PAP-logo, 
 			  #PAP-logo-selling {
 				  margin-top: 20px;
-				  opacity: .2;
+				  opacity: .5;
 				  -webkit-animation-name: pap;
 				  -webkit-animation-duration: 1.00s;
 				  animation-name: pap;
@@ -611,7 +662,7 @@
 				  text-align: center;
 				  color: black;
 				  font-weight: 300;
-				  font-size: 9px;
+				  font-size: 12px;
 				  letter-spacing: 0px;
 				  padding-left: 0px;
 				  opacity: .4;
@@ -634,7 +685,7 @@
 			  
 			  #PAP-blue-orange-after-seller-created, #PAP-beach-houses-after-seller-created, #PAP-colour-glass-after-seller-created,
 			  #PAP-layers-after-seller-created, #PAP-succinct-drop-after-seller-created, #PAP-paint-rain-after-seller-created {
-			  margin-top: 0px;
+			  margin-top: -5px;
 			  text-align: center;
 				  color: black;
 				  font-weight: 300;
@@ -813,6 +864,26 @@
 					opacity: 1; 
 					  background: silver;
 			  }	
+			  #not-for-sale-asset {
+				margin-top: 10px;
+				text-decoration: none;
+				margin-left: auto;
+				margin-right: auto;
+				color: white;
+				font-weight: 	500;
+				font-size: 11px;
+				padding-top: 20px;
+				padding-bottom: 20px;
+				padding-right: 22px;
+				padding-left: 24px;	  
+				border: none;
+				letter-spacing: 2px;
+				border-radius: 5px;
+				border-width: 0px;
+				width: 100px;
+				opacity: 1; 
+				  background: silver;
+		  }	
   
 			  #inventory-line {
 				  margin-top: 0px;
@@ -1032,8 +1103,8 @@
 			height: 130px;	
 			}
 			#photo-asset-loading-hidden {
-				width: 132px;
-				height: 132px;
+				width: 134px;
+				height: 134px;
 				}	
 		  #photo-asset-owned {
 			  width: 130px;
@@ -1061,7 +1132,7 @@
 			  }
 			  #PAP-seller-created {
 				  margin-top: 5px;
-				  font-size: 7px;
+				  font-size: 9px;
 			  }
 			  #PAP-not-for-sale {
 				  font-size: 13px;
@@ -1071,7 +1142,7 @@
 			  
 			  #PAP-blue-orange-after-seller-created, #PAP-beach-houses-after-seller-created, #PAP-colour-glass-after-seller-created,
 			  #PAP-layers-after-seller-created, #PAP-succinct-drop-after-seller-created, #PAP-paint-rain-after-seller-created {
-				  margin-top: 0px;
+				  margin-top: -4px;
 				  font-size: 13px;
 			  }
   
@@ -1081,7 +1152,7 @@
 				width: 75%;
 			  }	
 			  #yourprice-seller-created {
-			  margin-top: 12px;
+			  margin-top: 15px;
 				  font-size: 10px;
 			  }
 			  #price-blue-orange-before-seller-created, #price-beach-houses-before-seller-created, #price-colour-glass-before-seller-created,
@@ -1122,11 +1193,12 @@
 					padding-top: 20px;
 					padding-bottom: 20px;
 					padding-right: 12px;
-					padding-left: 15px;	  
+					padding-left: 13px;	  
 					border: none;
 					letter-spacing: 1px;
 					width: 120px;
 				  }
+
   
 		  #inventory-line {
 			  width: 200px;
@@ -1164,10 +1236,41 @@
 	  #profileline-seller-created {
 		  width: 300px;
 	  }		
+	  #word-logo-seller-created-asset {
+			margin-top: 20px;
+			width: 60px;	
+			height: 19px;		
+		}
+		#slogan-seller-created-asset {
+			margin-top: 10px;
+			font-size: 6.5px;
+		}
+		#black-liner-bottom-owned-buy-asset {
+			margin-top: 0px;
+			width: 200px;
+		}
+		#ada-description-owned-buy-asset {
+			margin-top: 0px;
+			font-size: 5.2px;
+			letter-spacing: 4px;
+			margin-left: 4px; 
+			word-spacing: 2px;
+		}	
 	  #container-seller-created.two-items {
 		  width: 400px;
 		  }					
 		#container-seller-created.three-items {
 		  width: 400px;
 		}
+		#not-for-sale-asset
+		{
+			font-size: 9px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-right: 12px;
+			padding-left: 14px;	  
+			border: none;
+			letter-spacing: 2px;
+			width: 90px;
+			}  
   }

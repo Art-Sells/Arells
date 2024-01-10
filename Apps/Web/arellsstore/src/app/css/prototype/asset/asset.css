@@ -1,13 +1,25 @@
 #asset-wrapper {
-	padding-top: 10px;
+	text-align: center;
+	font-family: Arial;
+	  background: white;	 
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+	padding-top: 0px;
 	padding-bottom: 30px;
-	  text-align: center;
-	  font-family: Arial;
-	  margin-top: 0%;
-	  margin-left: 0%;
-	  margin-right: 0%;
-	  margin-bottom: 0%;
-		background: white;	  
+
+  }
+  #asset-view-wrapper {
+	text-align: center;
+	font-family: Arial;
+	  background: white;	
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+	padding-top: 0px;
+	padding-bottom: 30px;  
   }
   
 	  #header-blue-orange {
@@ -304,6 +316,22 @@
 			padding-bottom: 20px;			
 			background: rgb(255, 255, 255);
 		}
+		#asset-price-after-purchase-wrapper-asset{
+			margin-top: 10px;
+			margin-left: auto;
+			margin-right: auto;
+			border-radius: 10px;
+			align-items: center;
+			overflow: hidden;
+			box-shadow: 0px 5px 20px -6px rgb(202, 202, 202, 0.5); 
+			width: 235px;
+			height: 190px;
+			padding-top: 35px;
+			padding-left: 20px;
+			padding-right: 20px;
+			padding-bottom: 20px;			
+			background: rgb(255, 255, 255);
+		}
 		#asset-price-wrapper{
 			margin-top: 20px;
 			margin-left: auto;
@@ -315,6 +343,22 @@
 			width: 190px;
 			height: 190px;
 			padding-top: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+			padding-bottom: 15px;			
+			background: rgb(255, 255, 255);
+		}
+		#asset-price-wrapper-asset{
+			margin-top: 20px;
+			margin-left: auto;
+			margin-right: auto;
+			border-radius: 10px;
+			align-items: center;
+			overflow: hidden;
+			box-shadow: 0px -5px 20px -6px rgb(202, 202, 202, 0.5); 
+			width: 190px;
+			height: 155px;
+			padding-top: 10px;
 			padding-left: 20px;
 			padding-right: 20px;
 			padding-bottom: 15px;			
@@ -696,13 +740,13 @@
 
 			  #PAP-logo-list-minted {
 				margin-top: 30px;
-				opacity: .2;
+				opacity: .35;
 				width: 60px;
                 height: 11px;
 			  }
 			  #PAP-logo-list {
 				margin-top: 10px;
-				opacity: .2;
+				opacity: .35;
 				width: 60px;
                 height: 11px;
 			  }
@@ -977,6 +1021,75 @@
 				box-shadow: 0px 8px 12px -6px black;  
 				  background: black;
 			  }	  
+			  #blue-orange-add-to-cart-connected-blue-orange-set  {
+					text-decoration: none;
+					margin-top: 10px;
+					margin-bottom: 0px;
+					color: white;
+					margin-left: auto;
+					margin-right: auto;
+					font-weight: 500;
+					font-size: 11px;
+					height: 55px;
+					padding-top: 20px;
+					padding-bottom: 20px;
+					padding-right: 22px;
+					padding-left: 25px;	  
+					border: none;
+					letter-spacing: 3px;
+					border-radius: 5px;
+					border-width: 0px;
+					width: 150px;
+					opacity: 1;
+					box-shadow: 0px 8px 12px -6px black;  
+					  background: black;
+				  }	  
+				  #blue-orange-add-to-cart-connected-blue-orange-buy  {
+					text-decoration: none;
+					margin-top: 10px;
+					margin-bottom: 0px;
+					color: white;
+					margin-left: auto;
+					margin-right: auto;
+					font-weight: 500;
+					font-size: 11px;
+					height: 55px;;
+					padding-top: 20px;
+					padding-bottom: 20px;
+					padding-right: 22px;
+					padding-left: 25px;	  
+					border: none;
+					letter-spacing: 3px;
+					border-radius: 5px;
+					border-width: 0px;
+					width: 110px;
+					opacity: 1;
+					box-shadow: 0px 8px 12px -6px black;  
+					  background: black;
+				  }	 
+				  #blue-orange-add-to-cart-connected-blue-orange-set  {
+					text-decoration: none;
+					margin-top: 10px;
+					margin-bottom: 0px;
+					color: white;
+					margin-left: auto;
+					margin-right: auto;
+					font-weight: 500;
+					font-size: 11px;
+					height: 55px;;
+					padding-top: 20px;
+					padding-bottom: 20px;
+					padding-right: 22px;
+					padding-left: 25px;	  
+					border: none;
+					letter-spacing: 3px;
+					border-radius: 5px;
+					border-width: 0px;
+					width: 150px;
+					opacity: 1;
+					box-shadow: 0px 8px 12px -6px black;  
+					  background: black;
+				  }	
 			  #post-created-art {
 					text-decoration: none;
 					color: white;
@@ -1001,7 +1114,11 @@
 		#post-created-art:hover, 
 		#post-created-art:focus,		  
 		  #blue-orange-add-to-cart-connected-blue-orange:hover, 
-		  #blue-orange-add-to-cart-connected-blue-orange:focus {
+		  #blue-orange-add-to-cart-connected-blue-orange:focus,
+		  #blue-orange-add-to-cart-connected-blue-orange-buy:hover, 
+		  #blue-orange-add-to-cart-connected-blue-orange-buy:focus,
+		  #blue-orange-add-to-cart-connected-blue-orange-set:hover, 
+		  #blue-orange-add-to-cart-connected-blue-orange-set:focus {
 				opacity: .4;
 				transition: 1s;
 				cursor: pointer;
@@ -1158,6 +1275,11 @@
 				  width: 220px;
 				  height: 245px;
 			  }
+			  #asset-price-after-purchase-wrapper-asset{
+				padding-top: 27px;
+				  width: 220px;
+				  height: 150px;
+			  }
 			  #asset-price-wrapper{
 				  padding-top: 5px;
 				  padding-bottom: 20px;
@@ -1165,6 +1287,13 @@
 				  height: 160px;
 
 			  }	 	
+			  #asset-price-wrapper-asset{
+				padding-top: 5px;
+				padding-bottom: 20px;
+				width: 170px;
+				height: 135px;
+
+			}	 
 
 
 			  #asset-price-minted-wrapper{
@@ -1435,6 +1564,42 @@
 				letter-spacing: 2px;
 				width: 140px;
 			  }	  
+			  #blue-orange-add-to-cart-connected-blue-orange-set {
+					margin-top: 5px;
+					font-size: 9px;
+					height: 50px;
+					padding-top: 20px;
+					padding-bottom: 20px;
+					padding-right: 14px;
+					padding-left: 15px;	  
+					border: none;
+					letter-spacing: 2px;
+					width: 135px;
+				  }	 
+				#blue-orange-add-to-cart-connected-blue-orange-buy {
+				margin-top: 5px;
+				font-size: 9px;
+				padding-top: 20px;
+				height: 50px;
+				padding-bottom: 20px;
+				padding-right: 14px;
+				padding-left: 15px;	  
+				border: none;
+				letter-spacing: 2px;
+				width: 100px;
+				}	 	
+				#blue-orange-add-to-cart-connected-blue-orange-set {
+					margin-top: 5px;
+					font-size: 9px;
+					padding-top: 20px;
+					height: 50px;
+					padding-bottom: 20px;
+					padding-right: 14px;
+					padding-left: 15px;	  
+					border: none;
+					letter-spacing: 2px;
+					width: 110px;
+					}	   
 		   #blue-orange-added-blue-orange {
 				font-size: 9px;
 				padding-top: 20px;
