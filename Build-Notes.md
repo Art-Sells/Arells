@@ -14,6 +14,7 @@
 
 #### If time permits: 
 - Certificates Of Ownership (Metadata Info).
+- Resolve Pre-Render Image Loading Issue
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -56,6 +57,7 @@ ________________________________________________________________________________
 #### If time permits: 
 - Created By & Owned By
 - Socials
+- Remove all Console.logs
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -89,6 +91,7 @@ ________________________________________________________________________________
 
 ##### Bugs
 - Try/Catch Apollo Connection/Address Error...
+- Remove All Console.logs
 - 404 and Server Error Pages
 - Resolve overextending numbers listing issue
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
@@ -108,7 +111,7 @@ ________________________________________________________________________________
 - Pages separated like so: store-name/asset/address
 - Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
 - Research Upgradable SmartContracts (through OpenZeppelin)
-- Web3 Modal
+- Hard Code SmartContract External Transfers for delisting an nft (if minted, transfer price & Signer (1) to new signer (1) automatically delisting, if not minted, transfer non-price)
 
 ### Wallet
 - Test with Metamask/Mumbai-USDC
