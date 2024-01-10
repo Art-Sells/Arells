@@ -428,8 +428,8 @@ const initialVisibilityState = (tokenURI: string) => {
                   <Image
                   loader={imageLoader}
                   alt=""
-                  width={202}  
-                  height={202}  
+                  width={200}  
+                  height={200}  
                   id="photo-asset-owned-hidden" 
                   src={meta?.imageURL}
                   style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
@@ -484,10 +484,13 @@ const initialVisibilityState = (tokenURI: string) => {
               <Image
                 loader={imageLoader}
                 alt=""
-                width={202}  
-                height={202}  
+                width={200}  
+                height={200}  
                 id="photo-asset-owned" 
-                src={meta?.imageURL}
+                src={
+                  //`asset/`
+                  meta?.imageURL
+                }
                 style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
                 onLoad={() => setIsImageLoaded(true)}
               />
@@ -619,8 +622,8 @@ const initialVisibilityState = (tokenURI: string) => {
               <Image
                 loader={imageLoader}
                 alt=""
-                width={202}  
-                height={202}  
+                width={200}  
+                height={200}  
                 id="photo-asset-owned" 
                 src={meta?.imageURL}
                 style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
