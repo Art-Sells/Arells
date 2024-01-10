@@ -17,6 +17,10 @@
 	animation-duration: 1.00s;
   }
   
+  .hidden-image {
+    display: none;
+}
+
 	  #header-seller-created {
 			  display: flex;
 			  justify-content: center;

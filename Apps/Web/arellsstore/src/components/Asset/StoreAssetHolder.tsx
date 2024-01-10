@@ -33,6 +33,7 @@ type AssetStoreProps = {
 
 const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
 //loader functions below 
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
       return `${src}?w=${width}&q=${quality || 100}`;
@@ -130,6 +131,8 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
     useEffect(() => {
       updateMetadata();
     }, [nft.tokenURI]);
+  
+  
   
 
 
@@ -277,32 +280,32 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                     showAsset(props.nft.tokenURI)}>
                       SHOW
                 </button>
-                {meta && (
+                {meta ? (
                   <Image
-                    loader={imageLoader}
-                    alt=""
-                    width={202}  
-                    height={202}  
-                    id="photo-asset-owned-hidden" 
-                    src={meta?.imageURL}
-                  />
-                )} 
-                {!meta && (
-                  (
-                    <div id="photo-asset-loading-hidden">
-                        <Image
-                          loader={imageLoader}
-                          alt=""
-                          width={50}  
-                          height={50}  
-                          id="receiving-image" 
-                          src="/images/market/receiving.png"
-                        />
-                      <div className={styles.photoloader}></div>  
-                      <p id="receiving-word">RECEIVING</p>
-                    </div>
-                  )
-                )} 
+                  loader={imageLoader}
+                  alt=""
+                  width={202}  
+                  height={202}  
+                  id="photo-asset-owned-hidden" 
+                  src={meta?.imageURL}
+                  style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                   onLoad={() => setIsImageLoaded(true)}
+
+                />
+                ) : (
+                  <div id="photo-asset-loading-hidden">
+                    <Image
+                      loader={imageLoader}
+                      alt=""
+                      width={50}  
+                      height={50}  
+                      id="receiving-image" 
+                      src="/images/market/receiving.png"
+                    />
+                  <div className={styles.photoloader}></div>  
+                  <p id="receiving-word">RECEIVING</p>
+                </div>
+                )}
                 <div id="hidden-from-public"></div> 
                 <p id="hidden-word-one">Hidden</p>
             </div>
@@ -317,37 +320,37 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                     HIDE
               </button>
             {/*  Change below link after test  */}
-            {meta && (
-              <Link legacyBehavior 
-                href={`/asset/${storeAddressFromURL}/${nft.id}`} 
-                passHref>
-                <a id="photo-link-seller-created">
+            {meta ? (
+            <Link legacyBehavior 
+            href={`/asset/${storeAddressFromURL}/${nft.id}`} 
+            passHref>
+            <a id="photo-link-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={202}  
+                height={202}  
+                id="photo-asset-owned" 
+                src={meta?.imageURL}
+                style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                onLoad={() => setIsImageLoaded(true)}
+
+              />
+            </a>
+          </Link>
+            ) : (
+              <div id="photo-asset-loading">
                   <Image
                     loader={imageLoader}
                     alt=""
-                    width={202}  
-                    height={202}  
-                    id="photo-asset-owned" 
-                    src={meta?.imageURL}
+                    width={50}  
+                    height={50}  
+                    id="receiving-image" 
+                    src="/images/market/receiving.png"
                   />
-                </a>
-              </Link>
-            )} 
-            {!meta && (
-              (
-                <div id="photo-asset-loading">
-                    <Image
-                      loader={imageLoader}
-                      alt=""
-                      width={50}  
-                      height={50}  
-                      id="receiving-image" 
-                      src="/images/market/receiving.png"
-                    />
-                  <div className={styles.photoloader}></div>  
-                  <p id="receiving-word">RECEIVING</p>
-                </div>
-              )
+                <div className={styles.photoloader}></div>  
+                <p id="receiving-word">RECEIVING</p>
+              </div>
             )}
 
 
@@ -363,7 +366,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                             id="PAP-logo" 
                             src="/images/PriceAfterPurchaseLogo.png"
                           />
-                          <p id="PAP-seller-created">You Keep</p>
+                          <p id="PAP-seller-created">Buyer Keeps</p>
                           <p id="PAP-blue-orange-before-seller-created">
                             <Image
                             loader={imageLoader}
@@ -405,7 +408,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="PAP-logo" 
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
-                        <p id="PAP-seller-created">You Keep</p>
+                        <p id="PAP-seller-created">Buyer Keeps</p>
                         <p id="PAP-blue-orange-before-seller-created">
                         <Image
                           loader={imageLoader}
@@ -449,7 +452,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="PAP-logo" 
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
-                        <p id="PAP-seller-created">You Keep</p>
+                        <p id="PAP-seller-created">Your Buyer Keeps</p>
                           <p id="PAP-blue-orange-before-seller-created">
                           <Image
                             loader={imageLoader}
@@ -492,7 +495,7 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                           id="PAP-logo" 
                           src="/images/PriceAfterPurchaseLogo.png"
                         />
-                        <p id="PAP-seller-created">You Keep</p>
+                        <p id="PAP-seller-created">Buyer Keeps</p>
                         {!isLoadingNewPrice && (
                           <p id="PAP-blue-orange-before-seller-created">
                           <Image
@@ -555,37 +558,36 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
           <>
           <div id="blue-orange-seller-created">
             {/*  Change below link after test  */}
-            {meta && (
-              <Link legacyBehavior 
-                href={`/asset/${storeAddressFromURL}/${nft.id}`} 
-                passHref>
-                <a id="photo-link-seller-created">
+            {meta ? (
+            <Link legacyBehavior 
+            href={`/asset/${storeAddressFromURL}/${nft.id}`} 
+            passHref>
+            <a id="photo-link-seller-created">
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={202}  
+                height={202}  
+                id="photo-asset-owned" 
+                src={meta?.imageURL}
+                style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                onLoad={() => setIsImageLoaded(true)}
+              />
+            </a>
+          </Link>
+            ) : (
+              <div id="photo-asset-loading">
                   <Image
                     loader={imageLoader}
                     alt=""
-                    width={202}  
-                    height={202}  
-                    id="photo-asset-owned" 
-                    src={meta?.imageURL}
+                    width={50}  
+                    height={50}  
+                    id="receiving-image" 
+                    src="/images/market/receiving.png"
                   />
-                </a>
-              </Link>
-            )} 
-            {!meta && (
-              (
-                <div id="photo-asset-loading">
-                    <Image
-                      loader={imageLoader}
-                      alt=""
-                      width={50}  
-                      height={50}  
-                      id="receiving-image" 
-                      src="/images/market/receiving.png"
-                    />
-                  <div className={styles.photoloader}></div>  
-                  <p id="receiving-word">RECEIVING</p>
-                </div>
-              )
+                <div className={styles.photoloader}></div>  
+                <p id="receiving-word">RECEIVING</p>
+              </div>
             )}
             
 

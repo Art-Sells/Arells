@@ -462,7 +462,7 @@ const AssetViewHolder = (props: AssetProps) => {
                     </p>
                     {/* change below link after test */}                
                     <Link legacyBehavior href={`/sell/${address}/${nft.id}`} passHref>
-                    <button id="blue-orange-add-to-cart-connected-blue-orange-buy" >
+                    <button id="blue-orange-add-to-cart-connected-blue-orange-set" >
                         SET PRICE</button>
                     </Link>
                 </div> 
@@ -581,7 +581,7 @@ const AssetViewHolder = (props: AssetProps) => {
                         </p>
                         {/* change below link after test */}                               
                         <Link legacyBehavior href={`/sell/${address}/${nft.id}`} passHref>
-                        <button id="blue-orange-add-to-cart-connected-blue-orange-buy" >
+                        <button id="blue-orange-add-to-cart-connected-blue-orange-set" >
                             SET PRICE</button>
                         </Link>
                     </div> 

@@ -64,8 +64,6 @@ const useNFTMarket = (storeAddress: string | null) => {
   };
 
   const checkIfNFTMinted = async (tokenId: string) => {
-    console.log("Provider: ", provider); // Log the provider
-    console.log("Signer: ", signer); // Log the signer
   
     try {
       // Convert tokenId to a number since the smart contract expects a uint256
@@ -73,8 +71,6 @@ const useNFTMarket = (storeAddress: string | null) => {
   
       // Call the isNFTMinted function from the smart contract
       const minted = await nftMarket.isNFTMinted(numericTokenId);
-  
-      console.log("Minted Status: ", minted); // Log the result
       return minted;
     } catch (e) {
       console.error("Exception while checking if NFT is minted:", e);
