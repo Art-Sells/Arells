@@ -284,8 +284,8 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
                   <Image
                   loader={imageLoader}
                   alt=""
-                  width={202}  
-                  height={202}  
+                  width={200}  
+                  height={200}  
                   id="photo-asset-owned-hidden" 
                   src={meta?.imageURL}
                   style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
@@ -328,8 +328,8 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
               <Image
                 loader={imageLoader}
                 alt=""
-                width={202}  
-                height={202}  
+                width={200}  
+                height={200}  
                 id="photo-asset-owned" 
                 src={meta?.imageURL}
                 style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
@@ -566,8 +566,8 @@ const StoreAssetHolder = React.memo((props: AssetStoreProps) => {
               <Image
                 loader={imageLoader}
                 alt=""
-                width={202}  
-                height={202}  
+                width={200}  
+                height={200}  
                 id="photo-asset-owned" 
                 src={meta?.imageURL}
                 style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}

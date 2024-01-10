@@ -478,7 +478,7 @@
 				margin-top: -206px;
 				padding-top: 45px;
 				height: 320px;
-				width: 202px;
+				width: 200px;
 				font-weight: 600;
 				border-radius: 10px;
 				color: rgb(183, 183, 183);
@@ -513,8 +513,8 @@
 			  cursor: pointer;
 			}			
 			#photo-asset-owned-hidden {
-				width: 202px;
-				height: 202px;
+				width: 200px;
+				height: 200px;
 				border-radius: 10px;		
 				box-shadow: 0px 5px 10px -4px white; 	
 				  border: none; 
@@ -591,8 +591,8 @@
 		  }			
 		  
 		  #photo-asset-owned {
-			  width: 202px;
-			  height: 202px;
+			  width: 200px;
+			  height: 200px;
 			  border-radius: 10px;		
 			  box-shadow: 0px 5px 10px -4px gray; 
 				-webkit-animation-name: animatetop;
@@ -1086,7 +1086,7 @@
 			margin-top: -137px;
 			padding-top: 45px;
 			height: 208px;
-			width: 132px;
+			width: 130px;
 			
 		}	
 		#hidden-word-one {
