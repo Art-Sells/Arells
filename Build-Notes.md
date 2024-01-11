@@ -2,6 +2,7 @@
 
 #### If time permits: 
 - Certificates Of Ownership (Metadata Info).
+- Resolve "description pop up issue" before loading
 
 #### After Testing and Before Launch: 
 - Delete all important variables
