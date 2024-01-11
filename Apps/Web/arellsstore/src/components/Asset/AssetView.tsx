@@ -42,7 +42,7 @@ const AssetView = () => {
 
     return (
         <>
-        {/* {showLoading && (
+        {showLoading && (
             <div id="spinnerBackground">
             <Image 
                 loader={imageLoader}
@@ -53,7 +53,7 @@ const AssetView = () => {
                 src="/images/Arells-Icon.png"/>   
                 <div className={styles.spinner}></div>    
             </div>
-        )} */}
+        )}
             {nft && 
             <AssetViewHolder nft={nft} key={nft.id} ownerId={storeAddressFromURL} />
             }
