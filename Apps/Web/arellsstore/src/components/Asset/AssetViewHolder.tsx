@@ -45,6 +45,7 @@ const AssetViewHolder = (props: AssetProps) => {
     };
     const [imagesLoaded, setImagesLoaded] = useState({
         nftImage: false,
+        arellsImage: false,
     });
     const handleImageLoaded = (imageName: string) => {
         setImagesLoaded(prevState => ({
@@ -287,10 +288,10 @@ const AssetViewHolder = (props: AssetProps) => {
 
 //Asset Loading Function
     useEffect(() => {
-        if (meta) {
+        if (meta && Object.values(imagesLoaded).every(Boolean)) {
             setLoading(false);
         }
-    }, [meta]);
+    }, [imagesLoaded, meta]);
 
 //Asset Loading Function
 
@@ -401,6 +402,7 @@ const AssetViewHolder = (props: AssetProps) => {
 {/*<!-- Modals Above -->*/}
         <Image
             loader={imageLoader}
+            onLoad={() => handleImageLoaded('nftImage')}
             alt=""
             width={78}  
             height={25} 
@@ -414,7 +416,7 @@ const AssetViewHolder = (props: AssetProps) => {
             {meta && (
                 <Image
                 loader={imageLoader}
-                onLoad={() => handleImageLoaded('nftImage')}
+                onLoad={() => handleImageLoaded('arellsImage')}
                 alt=""
                 width={400}  
                 height={400}

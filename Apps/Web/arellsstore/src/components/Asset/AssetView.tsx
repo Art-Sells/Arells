@@ -35,8 +35,6 @@ const AssetView = () => {
     const { nftSelling } = useSingleSellingNFT(storeAddressFromURL, nftId); 
 
     useEffect(() => {
-        console.log("nft not selling: ", nft);
-        console.log("nft selling: ", nftSelling);
         if (nft || nftSelling) {
             setLoading(false);
         }
