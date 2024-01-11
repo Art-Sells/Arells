@@ -17,6 +17,7 @@ import "../../app/css/modals/created-art-modal.css";
 import '../../app/css/modals/loading/spinnerBackground.css';
 import stylings from '../../app/css/modals/loading/loading.module.css';
 import styles from '../../app/css/modals/loading/photoloaderasset.module.css';
+import stylese from '../../app/css/modals/loading/spinner.module.css';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -51,11 +52,6 @@ const AssetViewHolder = (props: AssetProps) => {
             [imageName]: true 
         }));
     };
-    useEffect(() => {
-        if (Object.values(imagesLoaded).every(Boolean)) {
-            setLoading(false);
-        }
-    }, [imagesLoaded]);
 // loader functions above
 
 //Modal Functions below
@@ -289,11 +285,40 @@ const AssetViewHolder = (props: AssetProps) => {
 //Buying Functions Above
 
 
+//Asset Loading Function
+    useEffect(() => {
+        if (meta) {
+            setLoading(false);
+        }
+    }, [meta]);
+
+//Asset Loading Function
+
+
 
 
 
   return (
     <>
+
+
+
+
+        {showLoading && (
+            <div id="spinnerBackground">
+            <Image 
+                loader={imageLoader}
+                alt="" 
+                width={29}
+                height={30}
+                id="arells-loader-icon-asset" 
+                src="/images/Arells-Icon.png"/>   
+                <div className={stylese.spinner}></div>     
+            </div>
+        )}
+
+
+
 {/*<!-- Modals below link after test -->*/} 
     {shareToSellModal && (
         <div id="owner-error-wrapper">
