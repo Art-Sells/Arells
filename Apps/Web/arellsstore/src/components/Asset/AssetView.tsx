@@ -35,8 +35,6 @@ const AssetView = () => {
     const { nftSelling } = useSingleSellingNFT(storeAddressFromURL, nftId); 
 
     useEffect(() => {
-        console.log("nft not selling: ", nft);
-        console.log("nft selling: ", nftSelling);
         if (nft || nftSelling) {
             setLoading(false);
         }
@@ -44,7 +42,18 @@ const AssetView = () => {
 
     return (
         <>
-
+        {showLoading && (
+            <div id="spinnerBackground">
+            <Image 
+                loader={imageLoader}
+                alt="" 
+                width={29}
+                height={30}
+                id="arells-loader-icon-asset" 
+                src="/images/Arells-Icon.png"/>   
+                <div className={styles.spinner}></div>    
+            </div>
+        )}
             {nft && 
             <AssetViewHolder nft={nft} key={nft.id} ownerId={storeAddressFromURL} />
             }
