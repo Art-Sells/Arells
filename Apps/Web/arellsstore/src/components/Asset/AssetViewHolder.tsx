@@ -612,6 +612,44 @@ const AssetViewHolder = (props: AssetProps) => {
                             SET PRICE</button>
                         </Link>
                     </div> 
+                    <div id="certificates-of-ownership-wrapper">
+                            <p id="digital-fingerprints">
+                                Certificates Of Ownership
+                            </p>
+                            <span>
+                                <Link 
+                                    legacyBehavior href={`/sell/${address}/${nft.id}`} 
+                                    passHref
+                                    id="fingerprints-button">
+                                        <a id="fingerprints-button">
+                                            <Image
+                                            loader={imageLoader}
+                                            alt=""
+                                            width={25}  
+                                            height={23}
+                                            id="fingerprints-icon" 
+                                            src="/images/prototype/ipfslite.png"/>  
+                                        </a>      
+                                </Link>
+                            </span>    
+                            <span>
+                                <Link 
+                                    legacyBehavior href={`/sell/${address}/${nft.id}`} 
+                                    passHref
+                                    >
+                                    <a id="fingerprints-buttonn">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+       
+                                </Link>
+                            </span>
+                        </div>
                 </div>  
             </>
         )}
