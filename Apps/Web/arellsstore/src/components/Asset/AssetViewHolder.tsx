@@ -418,18 +418,22 @@ const AssetViewHolder = (props: AssetProps) => {
       )}  
 
 {/*<!-- Modals Above -->*/}
-        <Image
-            loader={imageLoader}
-            onLoad={() => handleImageLoaded('nftImage')}
-            alt=""
-            width={78}  
-            height={25} 
-            id="word-logo-seller-created-asset" 
-            src="/images/Arells-Logo-Ebony.png"
-        />	
-        <p id="slogan-seller-created-asset">BUY ART THAT NEVER LOSES VALUE</p>
-        <hr id="black-liner-bottom-owned-buy-asset"/>
-        <p id="ada-description-owned-buy-asset">ARELLS DIGITAL ASSETS</p> 
+        {meta && (
+            <>
+                 <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('nftImage')}
+                    alt=""
+                    width={78}  
+                    height={25} 
+                    id="word-logo-seller-created-asset" 
+                    src="/images/Arells-Logo-Ebony.png"
+                />	
+                <p id="slogan-seller-created-asset">BUY ART THAT NEVER LOSES VALUE</p>
+                <hr id="black-liner-bottom-owned-buy-asset"/>
+                <p id="ada-description-owned-buy-asset">ARELLS DIGITAL ASSETS</p> 
+            </>
+        )} 
         <div id="asset-component">
             {meta && (
                 <Image
