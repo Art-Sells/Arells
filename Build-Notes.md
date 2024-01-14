@@ -32,7 +32,7 @@
 - Store Address: Address
 
 #### If time permits: 
-- Created By & Owned By
+- Created By & Owned By (Store|Brand Logo next to Address|Name)
 - Socials
 - Remove all Console.logs
 
