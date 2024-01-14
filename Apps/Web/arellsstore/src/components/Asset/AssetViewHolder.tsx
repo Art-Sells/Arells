@@ -619,8 +619,7 @@ const AssetViewHolder = (props: AssetProps) => {
                             <span>
                                 <Link 
                                     legacyBehavior href={`/sell/${address}/${nft.id}`} 
-                                    passHref
-                                    id="fingerprints-button">
+                                    passHref>
                                         <a id="fingerprints-button">
                                             <Image
                                             loader={imageLoader}
@@ -635,8 +634,7 @@ const AssetViewHolder = (props: AssetProps) => {
                             <span>
                                 <Link 
                                     legacyBehavior href={`/sell/${address}/${nft.id}`} 
-                                    passHref
-                                    >
+                                    passHref>
                                     <a id="fingerprints-buttonn">
                                         <Image
                                         loader={imageLoader}
