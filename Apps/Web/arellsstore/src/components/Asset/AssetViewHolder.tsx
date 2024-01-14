@@ -511,6 +511,47 @@ const AssetViewHolder = (props: AssetProps) => {
                         SET PRICE</button>
                     </Link>
                 </div> 
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
             </div>  
             </>
         )}	
@@ -570,6 +611,47 @@ const AssetViewHolder = (props: AssetProps) => {
                         onClick={shareToSell}>
                         BUY</button>
                 </div> 
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
             </div>       
           </>
         )}
@@ -631,47 +713,46 @@ const AssetViewHolder = (props: AssetProps) => {
                         </Link>
                     </div> 
                     <div id="certificates-of-ownership-wrapper">
-                            <p id="digital-fingerprints">
-                                Certificates Of Ownership
-                            </p>
-                            <span>
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
                                 <Link 
-                                    legacyBehavior href={nft.tokenURI} 
+                                    legacyBehavior href={certificateMeta.imageURL} 
                                     passHref>
-                                        <a id="fingerprints-button"
-                                        target="_blank" 
-                                        rel="noopener noreferrer">
-                                            <Image
-                                            loader={imageLoader}
-                                            alt=""
-                                            width={25}  
-                                            height={23}
-                                            id="fingerprints-icon" 
-                                            src="/images/prototype/ipfslite.png"/>  
-                                        </a>      
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
                                 </Link>
-                            </span>    
-                            <span>
-                                {certificateMeta && (
-                                    <Link 
-                                        legacyBehavior href={certificateMeta.imageURL} 
-                                        passHref>
-                                        <a id="fingerprints-buttonn"
-                                        target="_blank" 
-                                        rel="noopener noreferrer">
-                                            <Image
-                                            loader={imageLoader}
-                                            alt=""
-                                            width={25}  
-                                            height={23}
-                                            id="fingerprints-iconn" 
-                                            src="/images/prototype/ipfs.png"/> 
-                                        </a>
-        
-                                    </Link>
-                                )}
-                            </span>
-                        </div>
+                            )}
+                        </span>
+                    </div>
                 </div>  
             </>
         )}
@@ -731,6 +812,47 @@ const AssetViewHolder = (props: AssetProps) => {
                     onClick={shareToSell}>
                         BUY</button>
                 </div> 
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
             </div>       
             </>
         )}    
@@ -793,6 +915,47 @@ const AssetViewHolder = (props: AssetProps) => {
                         <button id="not-for-sale-asset">
                             OWNED</button>
                     </div> 
+                    <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
                 </div>  
             </>
         )}	
@@ -852,6 +1015,47 @@ const AssetViewHolder = (props: AssetProps) => {
                     onClick={buy}>
                     BUY</button>
                 </div> 
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
             </div>              
         </>
         )}
@@ -910,6 +1114,47 @@ const AssetViewHolder = (props: AssetProps) => {
                     <button id="not-for-sale-asset">
                         OWNED</button> 
                 </div> 
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
             </div>        
         </>
         )}	
@@ -968,7 +1213,48 @@ const AssetViewHolder = (props: AssetProps) => {
                     disabled={isBuying}
                     onClick={buy}>
                     BUY</button>
-                </div> 
+                </div>
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div> 
             </div>         
         </>
         )}
@@ -1030,6 +1316,47 @@ const AssetViewHolder = (props: AssetProps) => {
                     <button id="not-for-sale-asset">
                     OWNED</button>
                 </div> 
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
             </div>  
         </>
         )}	
@@ -1089,6 +1416,47 @@ const AssetViewHolder = (props: AssetProps) => {
                         onClick={buy}>
                         BUY</button>
                 </div> 
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
             </div>        
         </>
         )}
@@ -1146,6 +1514,47 @@ const AssetViewHolder = (props: AssetProps) => {
                     <button id="not-for-sale-asset">
                     OWNED</button>
                 </div> 
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
             </div>        
         </>
         )}
@@ -1205,6 +1614,47 @@ const AssetViewHolder = (props: AssetProps) => {
                     onClick={buy}>
                         BUY</button>
                 </div> 
+                <div id="certificates-of-ownership-wrapper">
+                        <p id="digital-fingerprints">
+                            Certificates Of Ownership
+                        </p>
+                        <span>
+                            <Link 
+                                legacyBehavior href={nft.tokenURI} 
+                                passHref>
+                                    <a id="fingerprints-button"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-icon" 
+                                        src="/images/prototype/ipfslite.png"/>  
+                                    </a>      
+                            </Link>
+                        </span>    
+                        <span>
+                            {certificateMeta && (
+                                <Link 
+                                    legacyBehavior href={certificateMeta.imageURL} 
+                                    passHref>
+                                    <a id="fingerprints-buttonn"
+                                    target="_blank" 
+                                    rel="noopener noreferrer">
+                                        <Image
+                                        loader={imageLoader}
+                                        alt=""
+                                        width={25}  
+                                        height={23}
+                                        id="fingerprints-iconn" 
+                                        src="/images/prototype/ipfs.png"/> 
+                                    </a>
+                                </Link>
+                            )}
+                        </span>
+                    </div>
             </div>         
         </>
         )}
