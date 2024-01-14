@@ -532,7 +532,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -548,9 +548,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -632,7 +632,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -648,9 +648,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -733,7 +733,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -749,9 +749,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -833,7 +833,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -849,9 +849,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -936,7 +936,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -952,9 +952,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -1036,7 +1036,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -1052,9 +1052,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -1135,7 +1135,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -1151,9 +1151,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -1235,7 +1235,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -1251,9 +1251,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -1337,7 +1337,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -1353,9 +1353,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -1437,7 +1437,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -1453,9 +1453,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -1535,7 +1535,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -1551,9 +1551,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
@@ -1635,7 +1635,7 @@ const AssetViewHolder = (props: AssetProps) => {
                                         width={25}  
                                         height={23}
                                         id="fingerprints-icon" 
-                                        src="/images/prototype/ipfslite.png"/>  
+                                        src="/images/prototype/certificate.png"/>  
                                     </a>      
                             </Link>
                         </span>    
@@ -1651,9 +1651,9 @@ const AssetViewHolder = (props: AssetProps) => {
                                         loader={imageLoader}
                                         alt=""
                                         width={25}  
-                                        height={23}
+                                        height={25}
                                         id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
+                                        src="/images/prototype/certificatelite.png"/> 
                                     </a>
                                 </Link>
                             )}
