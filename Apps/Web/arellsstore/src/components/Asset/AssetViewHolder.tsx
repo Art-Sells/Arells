@@ -117,6 +117,23 @@ const AssetViewHolder = (props: AssetProps) => {
 
   // Function to update the metadata
   const [meta, setMeta] = useState<AssetMetadata>();
+  const [certificateMeta, setCertificateMeta] = useState<AssetMetadata>();
+  const updateCertificateMetadata = async () => {
+    if (nft.tokenURI) {
+        // Fetch metadata from tokenURI
+        const metadataResponse = await fetch(nft.tokenURI);
+        if (metadataResponse.status === 200) {
+            const metadata = await metadataResponse.json();
+            const nameCertificateFromMetadata = metadata.name;
+            const imageCertificateURLFromMetadata = metadata.image; // Extracting image URL from metadata
+
+            setCertificateMeta({
+                name: nameCertificateFromMetadata,
+                imageURL: imageCertificateURLFromMetadata, // Using the image URL from the tokenURI JSON
+            });
+        }
+    }
+};
   const updateMetadata = async () => {
     if (nft.tokenURI) {
       const tokenId = extractTokenId(nft.tokenURI);
@@ -150,6 +167,7 @@ const AssetViewHolder = (props: AssetProps) => {
     // useEffect hook
     useEffect(() => {
         updateMetadata();
+        updateCertificateMetadata();
       }, [nft.tokenURI]);
 
 // Display Changing functions below
@@ -618,9 +636,11 @@ const AssetViewHolder = (props: AssetProps) => {
                             </p>
                             <span>
                                 <Link 
-                                    legacyBehavior href={`/sell/${address}/${nft.id}`} 
+                                    legacyBehavior href={nft.tokenURI} 
                                     passHref>
-                                        <a id="fingerprints-button">
+                                        <a id="fingerprints-button"
+                                        target="_blank" 
+                                        rel="noopener noreferrer">
                                             <Image
                                             loader={imageLoader}
                                             alt=""
@@ -632,20 +652,24 @@ const AssetViewHolder = (props: AssetProps) => {
                                 </Link>
                             </span>    
                             <span>
-                                <Link 
-                                    legacyBehavior href={`/sell/${address}/${nft.id}`} 
-                                    passHref>
-                                    <a id="fingerprints-buttonn">
-                                        <Image
-                                        loader={imageLoader}
-                                        alt=""
-                                        width={25}  
-                                        height={23}
-                                        id="fingerprints-iconn" 
-                                        src="/images/prototype/ipfs.png"/> 
-                                    </a>
-       
-                                </Link>
+                                {certificateMeta && (
+                                    <Link 
+                                        legacyBehavior href={certificateMeta.imageURL} 
+                                        passHref>
+                                        <a id="fingerprints-buttonn"
+                                        target="_blank" 
+                                        rel="noopener noreferrer">
+                                            <Image
+                                            loader={imageLoader}
+                                            alt=""
+                                            width={25}  
+                                            height={23}
+                                            id="fingerprints-iconn" 
+                                            src="/images/prototype/ipfs.png"/> 
+                                        </a>
+        
+                                    </Link>
+                                )}
                             </span>
                         </div>
                 </div>  
