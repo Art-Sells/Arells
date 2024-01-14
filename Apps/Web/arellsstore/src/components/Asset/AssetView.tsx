@@ -42,7 +42,7 @@ const AssetView = () => {
 
     return (
         <>
-        {showLoading && (
+         {showLoading && (
             <div id="spinnerBackground">
             <Image 
                 loader={imageLoader}
