@@ -1,17 +1,5 @@
 # Arells Build Notes...
 
-#### If time permits: 
-- Certificates Of Ownership (Metadata Info).
-- Resolve "description pop up issue" before loading
-
-#### After Testing and Before Launch: 
-- Delete all important variables
-- Inform of Arells 1.5 release (and features).
-- Re-adjust marketing (Price:...  You Keep:... After Selling).
-
-________________________________________________________________________________________________________________________________________________
-
-
 ## Arells 1.5
 - Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
 - AUM (Assets Under Management) system & # of New Wallets Created, system.
