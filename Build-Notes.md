@@ -31,8 +31,11 @@
 - Name Default: Unclaimed Store Address
 - Store Address: Address
 
+#### Test
+- All broken Images (Hidden or not) on mobile, etc///
+
 #### If time permits: 
-- Created By & Owned By
+- Created By & Owned By (Store|Brand Logo next to Address|Name)
 - Socials
 - Remove all Console.logs
 
