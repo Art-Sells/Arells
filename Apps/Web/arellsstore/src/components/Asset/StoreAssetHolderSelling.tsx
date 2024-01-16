@@ -328,6 +328,18 @@ const initialVisibilityState = (tokenURI: string) => {
 // Hide and show assets above 
 
 
+    const [imageSrc, setImageSrc] = useState<string>();
+
+    // Update imageSrc when meta changes
+    useEffect(() => {
+        setImageSrc(meta?.imageURL);
+    }, [meta]);
+
+    const handleImageError = () => {
+        setImageSrc('/images/fallback.jpg'); // Set to fallback image URL on error
+    };
+
+
   return (
     <>
       {/*<!-- Modals below link after test -->*/}
@@ -427,11 +439,12 @@ const initialVisibilityState = (tokenURI: string) => {
                 {meta ? (
                   <Image
                   loader={imageLoader}
+                  onError={handleImageError}
                   alt=""
                   width={200}  
                   height={200}  
                   id="photo-asset-owned-hidden" 
-                  src={meta?.imageURL}
+                  src={imageSrc || '/images/fallback.jpg'}
                   style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
                    onLoad={() => setIsImageLoaded(true)}
                 />
@@ -481,18 +494,16 @@ const initialVisibilityState = (tokenURI: string) => {
             href={`/asset/${storeAddressFromURL}/${nft.id}`} 
             passHref>
             <a id="photo-link-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={200}  
-                height={200}  
-                id="photo-asset-owned" 
-                src={
-                  //`asset/`
-                  meta?.imageURL
-                }
-                style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
-                onLoad={() => setIsImageLoaded(true)}
+            <Image
+                  loader={imageLoader}
+                  onError={handleImageError}
+                  alt=""
+                  width={200}  
+                  height={200}  
+                  id="photo-asset-owned" 
+                  src={imageSrc || '/images/fallback.jpg'}
+                  style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                   onLoad={() => setIsImageLoaded(true)}
               />
             </a>
           </Link>
@@ -619,15 +630,16 @@ const initialVisibilityState = (tokenURI: string) => {
             href={`/asset/${storeAddressFromURL}/${nft.id}`} 
             passHref>
             <a id="photo-link-seller-created">
-              <Image
-                loader={imageLoader}
-                alt=""
-                width={200}  
-                height={200}  
-                id="photo-asset-owned" 
-                src={meta?.imageURL}
-                style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
-                onLoad={() => setIsImageLoaded(true)}
+                  <Image
+                  loader={imageLoader}
+                  onError={handleImageError}
+                  alt=""
+                  width={200}  
+                  height={200}  
+                  id="photo-asset-owned" 
+                  src={imageSrc || '/images/fallback.jpg'}
+                  style={{ visibility: isImageLoaded ? 'visible' : 'hidden' }}
+                   onLoad={() => setIsImageLoaded(true)}
               />
             </a>
           </Link>

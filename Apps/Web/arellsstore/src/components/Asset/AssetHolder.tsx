@@ -381,6 +381,17 @@ const AssetHolder = (props: AssetProps) => {
         checkMintingStatus();
         }, [nft.id, checkIfNFTMinted]);
 
+        const [imageSrc, setImageSrc] = useState<string>();
+
+        // Update imageSrc when meta changes
+        useEffect(() => {
+            setImageSrc(meta?.imageURL);
+        }, [meta]);
+    
+        const handleImageError = () => {
+            setImageSrc('/images/fallback.jpg'); // Set to fallback image URL on error
+        };
+
 // Display Changing functions above
 
 
@@ -486,11 +497,12 @@ const AssetHolder = (props: AssetProps) => {
                 <Image
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('nftImage')}
+                onError={handleImageError}
                 alt=""
                 width={400}  
                 height={400}
                 id="photo-asset"
-                src={meta?.imageURL}/>
+                src={imageSrc || '/images/fallback.jpg'}/>
             )} 
             {!meta && (
                 <div id="photo-asset-loading-sell">

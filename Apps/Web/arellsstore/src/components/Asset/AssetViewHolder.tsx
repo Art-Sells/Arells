@@ -310,6 +310,16 @@ const AssetViewHolder = (props: AssetProps) => {
             setLoading(false);
         }
     }, [imagesLoaded, meta]);
+    const [imageSrc, setImageSrc] = useState<string>();
+
+    // Update imageSrc when meta changes
+    useEffect(() => {
+        setImageSrc(meta?.imageURL);
+    }, [meta]);
+
+    const handleImageError = () => {
+        setImageSrc('/images/fallback.jpg'); // Set to fallback image URL on error
+    };
 
 //Asset Loading Function
 
@@ -440,10 +450,11 @@ const AssetViewHolder = (props: AssetProps) => {
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('arellsImage')}
                 alt=""
+                onError={handleImageError}
                 width={400}  
                 height={400}
                 id="photo-asset"
-                src={meta?.imageURL}/>
+                src={imageSrc || '/images/fallback.jpg'}/>
             )} 
             {!meta && (
                 <div id="photo-asset-loading-sell">
