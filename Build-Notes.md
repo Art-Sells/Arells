@@ -17,18 +17,21 @@
 - - Unclaimed: 0x74348347 [Enter Store] |Save Changes to Claim Address|
 
 ### My Store
+**(address && addressMatch)**
+- Top-Right[+]
 - Top-Center[EDIT]-(SignUp/LogIn to Create/Edit {if not logged in})
 - small Logo or Slogan
 - Logo: Default Store Logo
-- Store Name: Maximum Width if long name (Test) Unclaimed Store Address
+- Store Name: Maximum Width if long name (Test) New Store
 - Store Address: 0x74348347
 - Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
 
 ### Other Store
-- Top-Left[||]-([My-Store]if connected)([/\]if not connected)
+**(address && !addressMatch || !address && !addressMatch)**
+- Top-Right[||]-([connect-wallet] if not connected, [my-store] if connected)
 - small Logo or Slogan
 - Image Default: Store Icon
-- Name Default: Unclaimed Store Address
+- Name Default: New Store
 - Store Address: Address
 
 #### Test
