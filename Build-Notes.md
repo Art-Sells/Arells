@@ -113,6 +113,7 @@ ________________________________________________________________________________
 ### Market
 - Store|Brand Name
 - AUM (Assets Under Management) {listed by}
+***Ability to hide any store|brand content we deem innapropriate (NSFW, etc)***
 
 ### Market-Brand-Name
 - Store|Locations
