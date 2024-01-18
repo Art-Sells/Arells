@@ -108,7 +108,16 @@ ________________________________________________________________________________
 - If logged in [(Open Store), (Close Store)]
 - If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
 - List of Addresses | Locations
+- (BROWSE STORES)
 
+### Market
+- Store|Brand Name
+- AUM (Assets Under Management) {listed by}
+
+### Market-Brand-Name
+- Store|Locations
+- - Address: [Enter Store]
+- - Address: [Enter Store]
 
 ### My Store
 - Top-Right[Cart][Connect Wallet]-if not connected
@@ -187,6 +196,26 @@ ________________________________________________________________________________
 
 #### After Launch
 - Google Sitemap Update
+________________________________________________________________________________________________________________________________________________
+
+## Arells 2.1
+
+### Market
+- Assets (Art-Pieces)
+- Average Price
+
+#### After Testing and Before Launch: 
+- Store Private Key Cold
+- Delete all Test/Branched/Component links
+- Send 1 month - 2 week notifications on new Features (show what sharing page will look like) to be added in Arells 3.0
+- Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
+
+##### Bugs
+- Clean up if/else if Displays to make more efficient...
+
+#### After Launch
+- Google Sitemap Update
+
 ________________________________________________________________________________________________________________________________________________
 
 ## Arells 3.0
