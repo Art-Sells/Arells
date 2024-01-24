@@ -1,8 +1,7 @@
 # Arells Build Notes...
 
 ## Arells 1.5
-- Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
-- AUM (Assets Under Management) system & # of New Wallets Created, system.
+- AUM (Assets Under Management) & sales system.
 - Emphasize Revenue while including AUM... arells(dot)com/metrics
 - Hidden From Public (full feature)
 
