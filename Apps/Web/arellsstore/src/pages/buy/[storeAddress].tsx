@@ -7,6 +7,7 @@ import '../../app/css/prototype/seller-created.css';
 import Selling from '../../components/Selling';
 import { SignerProvider } from '../../state/signer';
 import { ApolloWrapper } from '../../lib/apollo-provider';
+import { SessionProvider } from 'next-auth/react';
 
 
 
@@ -42,7 +43,9 @@ const SellingPage = () => {
       <div id="prototype-seller-created-wrapper">
         <SignerProvider>
           <ApolloWrapper>
-            <Selling/>
+            <SessionProvider>
+              <Selling/>
+            </SessionProvider>
           </ApolloWrapper>
         </SignerProvider>
       </div>

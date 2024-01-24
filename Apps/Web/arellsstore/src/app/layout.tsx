@@ -1,6 +1,7 @@
 import {ReactNode} from "react"
 import { ApolloWrapper } from "../lib/apollo-provider";
 import {SignerProvider} from "../state/signer";
+import { SessionProvider } from "next-auth/react";
 require('dotenv').config();
 
 type LayoutProps = {
@@ -15,7 +16,9 @@ export default function RootLayout({ children }: LayoutProps) {
       <body>
         <SignerProvider>
           <ApolloWrapper>
+            <SessionProvider>
             {children}
+            </SessionProvider>
           </ApolloWrapper>
         </SignerProvider>
       </body>

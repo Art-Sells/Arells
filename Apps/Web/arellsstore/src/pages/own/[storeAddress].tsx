@@ -10,6 +10,7 @@ import { SignerProvider } from '../../state/signer';
 import { ApolloWrapper } from '../../lib/apollo-provider';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { SessionProvider } from 'next-auth/react';
 
 
 const OwnedPage = () => {
@@ -43,7 +44,9 @@ const OwnedPage = () => {
           <div id="prototype-seller-created-wrapper">
             <SignerProvider>
               <ApolloWrapper>
-                <Owned/>
+                <SessionProvider>
+                  <Owned/>
+                </SessionProvider>
               </ApolloWrapper>      
             </SignerProvider>
           </div>
