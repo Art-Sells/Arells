@@ -14,18 +14,17 @@ Price After Purchase is a market system which assets cannot be sold lower than t
 
 **Example:**
 
-Your created artwork sells for $500.
-
-- You keep: $485
+Created artwork sells for $500.
+- Artist keeps: $485
 - Arells keeps: $15
-- Buyer owns: Your Artwork
+- Buyer owns: The Artwork
 - Price After Purchase: $1,000
 
-Old Buyer sells your artwork for $1,000.
-- You keep: $400
+Old Buyer sells the artwork for $1,000.
+- Artist keeps: $400
 - Arells keeps: $30
 - Old Buyer keeps: $570
-- New Buyer gets: Your Artwork
+- New Buyer gets: The Artwork
 - Price After Purchase: $2,000
 
 This introduces a new market…
