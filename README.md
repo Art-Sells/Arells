@@ -53,7 +53,7 @@ _______________________________________________________________________
   - [X] Arells 1.0 *[[Complete]](https://arells.com)*
  
 - **Dec 2023 - Feb 2024**
-  - [ ] Arells 1.5 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
+  - [ ] Arells 1.5 *[[In-Development]](https://github.com/Art-Sells/Arells/blob/test/Build-Notes.md)*
  
 - **Feb 2024 - Oct 2024**
   - [ ] Arells 2.0 *[Announced]*
