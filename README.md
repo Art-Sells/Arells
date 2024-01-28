@@ -4,7 +4,7 @@
 ## Buy art that never loses value.
 
 ### Problem:
-Most artists are struggling financially.
+Most artists & collectors are struggling financially.
 
 ### Solution:
 Art + Sells = Arells: A digital asset marketplace that obscures bear markets. Arells is working on achieving this through an innovation called **Price After Purchase** which renders bear markets obsolete.
@@ -14,23 +14,18 @@ Price After Purchase is a market system which assets cannot be sold lower than t
 
 **Example:**
 
-Your created artwork sells for $500.
-
-- You keep: $485
+Created artwork sells for $500.
+- Artist keeps: $485
 - Arells keeps: $15
-- Buyer owns: Your Artwork
+- Buyer owns: The Artwork
 - Price After Purchase: $1,000
 
-Old Buyer sells your artwork for $1,000.
-- You keep: $400
+Old Buyer sells the artwork for $1,000.
+- Artist keeps: $400
 - Arells keeps: $30
 - Old Buyer keeps: $570
-- New Buyer gets: Your Artwork
+- New Buyer gets: The Artwork
 - Price After Purchase: $2,000
-
-Prototype: [arells.com/prototype/seller-created](https://arells.com/prototype/seller-created)
-
-*For the first time in history, no one will ever sell any assets they acquire at a loss thanks to Arells.*
 
 This introduces a new market…
 
@@ -57,7 +52,7 @@ _______________________________________________________________________
   - [X] Arells 1.0 *[[Complete]](https://arells.com)*
  
 - **Dec 2023 - Feb 2024**
-  - [ ] Arells 1.5 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
+  - [ ] Arells 1.5 *[[In-Development]](https://github.com/Art-Sells/Arells/blob/test/Build-Notes.md)*
  
 - **Feb 2024 - Oct 2024**
   - [ ] Arells 2.0 *[Announced]*
