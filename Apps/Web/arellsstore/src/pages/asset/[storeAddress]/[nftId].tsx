@@ -9,7 +9,6 @@ import AssetView from '../../../components/Asset/AssetView';
 import { SignerProvider } from '../../../state/signer';
 import { ApolloWrapper } from '../../../lib/apollo-provider';
 import Head from 'next/head';
-import { SessionProvider } from 'next-auth/react';
 
 
 
@@ -36,9 +35,7 @@ const AssetPage = () => {
       <div id="asset-view-wrapper">
         <SignerProvider>
           <ApolloWrapper>
-            <SessionProvider>
               <AssetView/>
-            </SessionProvider>
           </ApolloWrapper>      
         </SignerProvider>
       </div>

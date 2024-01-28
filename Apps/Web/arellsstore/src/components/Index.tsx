@@ -3,8 +3,6 @@
 // Assuming that there's no global type definitions for Next.js Image and Link components
 import type { ImageLoaderProps } from 'next/image';
 
-"use client";
-
 // Change below link after test
 import '../app/css/Home.css';
 
@@ -80,6 +78,7 @@ const Index = () => {
 
   return (
     <>
+
       {showLoading && (
         <div id="spinnerBackground">
           <Image 

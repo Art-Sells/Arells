@@ -1,8 +1,13 @@
 import {ReactNode} from "react"
 import { ApolloWrapper } from "../lib/apollo-provider";
 import {SignerProvider} from "../state/signer";
-import { SessionProvider } from "next-auth/react";
 require('dotenv').config();
+import dynamic from 'next/dynamic';
+
+const ClientSideComponent = dynamic(
+  () => import('./client-components/ClientSideComponent'),
+  { ssr: false }
+);
 
 type LayoutProps = {
   children: ReactNode;
@@ -16,9 +21,9 @@ export default function RootLayout({ children }: LayoutProps) {
       <body>
         <SignerProvider>
           <ApolloWrapper>
-            <SessionProvider>
+            <ClientSideComponent>
             {children}
-            </SessionProvider>
+            </ClientSideComponent>
           </ApolloWrapper>
         </SignerProvider>
       </body>
