@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import { useRouter } from 'next/router';
+import { signIn ,useSession } from "next-auth/react";
 
 // asset components (change below links after test)
 import useSigner from "../state/signer";
@@ -21,6 +22,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const Owned = () => {
+
+// Sign in/out
+	const { data: session, status } = useSession();
+// Sign in/out
 	
 
 //loader functions below 
@@ -46,7 +51,6 @@ const Owned = () => {
 	}, [imagesLoaded]);
 // loader functions above
 
-
 // useState constants below
     const [noArtCreated, setNoArtCreated] = useState(false);
 // useState constants above
@@ -59,6 +63,7 @@ const Owned = () => {
             : router.query.storeAddress;
         return address ? address.toLowerCase() : null;
     }, [router.query.storeAddress]);
+	const addressMatch = address?.toLowerCase() === storeAddressFromURL?.toLowerCase();
 
     const { 
 		createdNFTs,
@@ -83,7 +88,10 @@ const Owned = () => {
     const containerClass = nftCount > 2 ? "three-items" : "two-items";
 	const containerClassTwo = nftCountSelling > 2 ? "three-items" : "two-items";
 
-
+	const owner = addressMatch; 
+	const ownerSignedIn = addressMatch && session;
+	const notOwner = !addressMatch && !address;
+	const notOwnerConnected = !addressMatch && address;
 // asset constants above
 
 	
@@ -110,17 +118,47 @@ const Owned = () => {
 				<div id="header-seller-created">
 					
 		{/*<!-- Change below link after test -->*/}
-						<Link href="/" id="icon-link-seller-created">
-								<Image
+					<Link href="/" id="icon-link-seller-created">
+						<Image
+						loader={imageLoader}
+						alt=""
+						height={16}
+						width={15}
+						id="arells-icon-seller-created" 
+						src="images/prototype/Arells-Icon-Home.png"/>
+					</Link>	
+					{notOwnerConnected && (
+						<Link 
+							legacyBehavior 
+							href={`/own/${address}`} passHref
+							id="icon-link-seller-created">
+							<Image
 								loader={imageLoader}
 								alt=""
-								height={16}
-								width={15}
-								id="arells-icon-seller-created" 
-								src="images/prototype/Arells-Icon-Home.png"/>
-						</Link>							
-						<Link href="/create" id="cart-link-connected-seller-created">
-								<Image
+								height={18}
+								width={18}
+								id="cart-icon-seller-created" 
+								src="images/market/store.png"/>
+						</Link>	
+					)}	
+					{notOwner && (
+						<button 
+							onClick={connectWallet}
+							id="cart-link-connected-seller-created">
+							<Image
+								loader={imageLoader}
+								alt=""
+								height={18}
+								width={18}
+								id="cart-icon-seller-created" 
+								src="images/market/wallet.png"/>
+						</button>	
+					)}	
+					{owner && (
+						<Link 
+							href="/create" 
+							id="cart-link-connected-seller-created">
+							<Image
 								loader={imageLoader}
 								alt=""
 								height={18}
@@ -128,21 +166,67 @@ const Owned = () => {
 								id="cart-icon-seller-created" 
 								src="images/prototype/Add-Ivory.png"/>
 						</Link>	
+					)}					
 				</div>
 			</>
 		)}
 		<Image
-		loader={imageLoader}
-		onLoad={() => handleImageLoaded('arellsLogo')}
-		alt=""
-		width={110}  
-		height={35} 
-		id="word-logo-seller-created" 
-		src="images/Arells-Logo-Ebony.png"/>
+			loader={imageLoader}
+			onLoad={() => handleImageLoaded('arellsLogo')}
+			alt=""
+			width={110}  
+			height={35} 
+			id="word-logo-seller-created" 
+			src="images/Arells-Logo-Ebony.png"/>
 		<p id="slogan-seller-created">BUY ART THAT NEVER LOSES VALUE</p>
 		<hr id="black-liner-bottom-owned-buy"/>
 		<p id="ada-description-owned-buy">ARELLS DIGITAL ASSETS</p>
 		{/* <hr id="profileline-seller-created"/> */}
+		{ownerSignedIn && (
+			<Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
+				<button id="blue-orange-add-to-cart-seller-created-selling">
+					EDIT</button>	
+			</Link>
+		)}
+		{owner && (
+			<button 
+			id="blue-orange-add-to-cart-seller-created-selling" 
+			onClick={() => signIn('google')}>
+				SIGN IN TO EDIT</button>
+		)}
+
+		<div id="profile-img-container-buyer-collected">
+			<Image
+				loader={imageLoader}
+				alt=""
+				width={100}  
+				height={100}
+				id="profile-photo-buyer-collected" 
+				src="images/market/Market-Default-Icon.jpg"/>
+		</div>	
+		{owner && (
+			<h1 id="name-buyer-collected">My Store</h1>
+		)}  
+		{!owner && (
+			<h1 id="name-buyer-collected">New Store</h1>
+		)} 
+		<p id="description-seller-created">
+			<span>
+				<Image
+					loader={imageLoader}
+					alt=""
+					width={20}  
+					height={40}
+					id="location" 
+					src="images/market/location.png"/>
+			</span>
+			<span>
+				Store Address|Location
+			</span>
+		</p> 
+		<p id="description-seller-created">
+			{storeAddressFromURL}
+		</p> 
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
 			<Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
