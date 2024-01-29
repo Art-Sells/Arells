@@ -88,19 +88,19 @@
 		  #cart-link-seller-created{
 			  display: inline-block;
 			  text-decoration: none;
-			  margin-left: 150px;
+			  margin-left: 114px;
 				text-decoration: none;
-				padding-top: 14px;
-				padding-bottom: 10px;
+				padding-top: 12.5px;
+				padding-bottom: 9px;
 				padding-right: 8px;
 				padding-left: 8px;	  
 				border: solid;
-				width: 60px;
+				width: 48px;
 				border-color: rgba(215, 215, 215, 0.7);
-				border-radius: 8px;
+				border-radius: 15px;
 				border-width: 1px;
 				opacity: 1;
-				  background: rgba(0, 0, 0, .9);
+				  background: rgba(255, 255, 255, .8);
 				  -webkit-animation-name: animatetop;
 				  -webkit-animation-duration: 1.00s;
 				  animation-name: animatetop;
@@ -123,13 +123,17 @@
 				  background: rgba(0, 0, 0, .9);							
 		  }
 		  #cart-link-seller-created:hover,
-		  #cart-link-seller-created:focus, 
-		  #cart-link-connected-seller-created:hover,
-		  #cart-link-connected-seller-created:focus {
+		  #cart-link-seller-created:focus {
 				transition: 1s;
 				cursor: pointer;
 				border-color: gray;
 				opacity: 1;	
+		  }
+		  #cart-link-connected-seller-created:hover,
+		  #cart-link-connected-seller-created:focus {
+				transition: 1s;
+				cursor: pointer;
+				opacity: .4;	
 		  }
 				  /* Add Animation */
 				  @-webkit-keyframes animatetop {
@@ -169,8 +173,8 @@
 			  
 		  #word-logo-seller-created {
 			  margin-top: 37px;
-			  width: 110px;	
-			  height: 35px;	
+			  width: 90px;	
+			  height: 28px;	
 			  -webkit-animation-name: animatetop;
 			  -webkit-animation-duration: 1.00s;
 			  animation-name: animatetop;
@@ -262,6 +266,36 @@
 				color: black;
 				opacity: .2;
 			}
+
+
+
+			#edit-profile {
+				margin-top: 20px;
+				text-decoration: none;
+				color: gray;
+				margin-left: auto;
+				margin-right: auto;
+				font-weight: 500;
+				font-size: 11px;
+				padding-top: 20px;
+				padding-bottom: 20px;
+				padding-right: 22px;
+				padding-left: 25px;	  
+				border: none;
+				letter-spacing: 3px;
+				border-radius: 5px;
+				border-width: 0px;
+				width: 200px;
+				opacity: 1;
+				box-shadow: 0px 4px 12px -2px silver;  
+				background: white;
+			}	
+			#edit-profile:hover, 
+			#edit-profile:focus {
+				opacity: .4;
+				transition: 1s;
+				cursor: pointer;
+		  }
 		  
 		  
 
@@ -276,7 +310,7 @@
 		opacity: .1;
 	  }
 	  #created-collected-seller-created {
-		  margin-top: 30px;
+		  margin-top: 50px;
 		  flex-direction: column;
 		  align-items: center;
 			width: 600px;
@@ -956,13 +990,13 @@
 					width: 14px;
 				  }	    
 			  #cart-link-seller-created{
-				  margin-left: 120px;
-					padding-top: 11px;
-					padding-bottom: 8px;
+				  margin-left: 91px;
+					padding-top: 10.5px;
+					padding-bottom: 7.5px;
 					padding-right: 8px;
 					padding-left: 8px;	
-					border-radius: 8px;	
-					width: 45px;  					
+					border-radius: 11.5px;	
+					width: 26px;  					
 			  }
 			  #cart-link-connected-seller-created {
 				  margin-left: 90px;
@@ -982,11 +1016,11 @@
 								
 		  #word-logo-seller-created {
 			  margin-top: 35px;
-			  width: 90px;	
-			  height: 28px;		
+			  width: 75px;	
+			  height: 23px;		
 		  }
 		  #slogan-seller-created {
-			  margin-top: 10px;
+			  margin-top: 5px;
 			  font-size: 6.5px;
 		  }
 		  #black-liner-bottom-owned-buy {
@@ -1006,12 +1040,24 @@
 				letter-spacing: 11.5px;
 				margin-left: 11.5px; 
 			}
+
+
+		#edit-profile {
+			font-size: 9px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-right: 12px;
+			padding-left: 15px;	  
+			border: none;
+			letter-spacing: 1px;
+			width: 140px;
+		}	
 		  #profileline-seller-created {
 		  margin-top: 5px;
 			width: 470px;
 		  }	
 		  #created-collected-seller-created {
-			  margin-top: 20px;
+			  margin-top: 30px;
 			  align-items: center;
 				width: 400px;
 		  }  

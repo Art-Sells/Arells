@@ -130,8 +130,8 @@ const OwnedModule = () => {
 					{notOwnerConnected && (
 						<Link 
 							legacyBehavior 
-							href={`/own/${address}`} passHref
-							id="icon-link-seller-created">
+							href={`/own/${address}`} passHref>
+							<a id="cart-link-seller-created">
 							<Image
 								loader={imageLoader}
 								alt=""
@@ -139,19 +139,20 @@ const OwnedModule = () => {
 								width={18}
 								id="cart-icon-seller-created" 
 								src="images/market/store.png"/>
+							</a>
 						</Link>	
 					)}	
 					{notOwner && (
 						<button 
 							onClick={connectWallet}
-							id="cart-link-connected-seller-created">
+							id="cart-link-seller-created">
 							<Image
 								loader={imageLoader}
 								alt=""
 								height={18}
 								width={18}
 								id="cart-icon-seller-created" 
-								src="images/market/wallet.png"/>
+								src="images/market/wallet-icon.png"/>
 						</button>	
 					)}	
 					{owner && (
@@ -174,8 +175,8 @@ const OwnedModule = () => {
 			loader={imageLoader}
 			onLoad={() => handleImageLoaded('arellsLogo')}
 			alt=""
-			width={110}  
-			height={35} 
+			width={90}  
+			height={28} 
 			id="word-logo-seller-created" 
 			src="images/Arells-Logo-Ebony.png"/>
 		<p id="slogan-seller-created">BUY ART THAT NEVER LOSES VALUE</p>
@@ -184,13 +185,13 @@ const OwnedModule = () => {
 		{/* <hr id="profileline-seller-created"/> */}
 		{ownerSignedIn && (
 			<Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
-				<button id="blue-orange-add-to-cart-seller-created-selling">
+				<button id="edit-profile">
 					EDIT</button>	
 			</Link>
 		)}
 		{owner && (
 			<button 
-			id="blue-orange-add-to-cart-seller-created-selling" 
+			id="edit-profile" 
 			onClick={() => signIn('google')}>
 				SIGN IN TO EDIT</button>
 		)}
@@ -204,29 +205,31 @@ const OwnedModule = () => {
 				id="profile-photo-buyer-collected" 
 				src="images/market/Market-Default-Icon.jpg"/>
 		</div>	
-		{owner && (
-			<h1 id="name-buyer-collected">My Store</h1>
-		)}  
-		{!owner && (
-			<h1 id="name-buyer-collected">New Store</h1>
-		)} 
-		<p id="description-seller-created">
+		<div id="name-div">
+			{owner && (
+				<h1 id="name-buyer-collected">My Store</h1>
+			)}  
+			{!owner && (
+				<h1 id="name-buyer-collected">New Store</h1>
+			)} 
+		</div>
+		<div id="store-address-wrapper">
 			<span>
 				<Image
 					loader={imageLoader}
 					alt=""
-					width={20}  
-					height={40}
+					width={13}  
+					height={20}
 					id="location" 
-					src="images/market/location.png"/>
+					src="images/market/location-ebony.png"/>
 			</span>
-			<span>
-				Store Address|Location
+			<span id="store-location">
+				Store Address | Location
 			</span>
-		</p> 
-		<p id="description-seller-created">
-			{storeAddressFromURL}
-		</p> 
+			<p id="store-address">
+				{storeAddressFromURL}
+			</p> 
+		</div> 
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	
 			<Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
