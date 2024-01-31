@@ -3,7 +3,7 @@
 ## Arells 1.5
 - AUM (Assets Under Management) & sales system.
 - Emphasize Revenue while including AUM... arells(dot)com/metrics
-- Hidden From Public (full feature)
+- Hidden From Public (full feature) {Shows only after signed in}
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
@@ -34,10 +34,11 @@
 - Store Address: Address
 
 #### Test
-- All broken Images (Hidden or not) on mobile, etc///
+- All broken Images (Hidden or not) on mobile, etc.
 
 #### If time permits: 
 - Created By & Owned By (Store|Brand Logo next to Address|Name)
+- Remove (Arells top logo in Assets and add "Arells Digital Assets" below "Buy" button)
 - Socials
 - Remove all Console.logs
 
