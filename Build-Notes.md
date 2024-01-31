@@ -40,6 +40,7 @@
 - Created By & Owned By (Store|Brand Logo next to Address|Name)
 - Remove (Arells top logo in Assets and add "Arells Digital Assets" below "Buy" button)
 - Socials
+- lessen space between two top buttons
 - Remove all Console.logs
 
 #### After Testing and Before Launch: 
