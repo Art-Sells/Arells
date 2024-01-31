@@ -106,6 +106,48 @@
 				  animation-name: animatetop;
 				  animation-duration: 1.00s;					
 		  }
+		  #cart-link-seller-created{
+			display: inline-block;
+			text-decoration: none;
+			margin-left: 114px;
+			  text-decoration: none;
+			  padding-top: 12.5px;
+			  padding-bottom: 9px;
+			  padding-right: 8px;
+			  padding-left: 8px;	  
+			  border: solid;
+			  width: 48px;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  border-radius: 15px;
+			  border-width: 1px;
+			  opacity: 1;
+				background: rgba(255, 255, 255, .8);
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;					
+		}
+		#cart-link-seller-created-wallet{
+			display: inline-block;
+			text-decoration: none;
+			margin-left: 122px;
+			  text-decoration: none;
+			  padding-top: 12px;
+			  padding-bottom: 9.5px;
+			  padding-right: 8px;
+			  padding-left: 8px;	  
+			  border: solid;
+			  width: 58px;
+			  border-color: rgba(215, 215, 215, 0.7);
+			  border-radius: 15px;
+			  border-width: 1px;
+			  opacity: 1;
+				background: rgba(255, 255, 255, .8);
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;					
+		}
 		  #cart-link-connected-seller-created{
 			  text-decoration: none;
 			  margin-left: 124px;
@@ -124,6 +166,13 @@
 		  }
 		  #cart-link-seller-created:hover,
 		  #cart-link-seller-created:focus {
+				transition: 1s;
+				cursor: pointer;
+				border-color: gray;
+				opacity: 1;	
+		  }
+		  #cart-link-seller-created-wallet:hover,
+		  #cart-link-seller-created-wallet:focus {
 				transition: 1s;
 				cursor: pointer;
 				border-color: gray;
@@ -225,7 +274,7 @@
 			border: none;
 			height: 2px;
 			border-radius: 30px;
-			width: 380px;
+			width: 410px;
 			opacity: .1;
 		  }	
 		  #black-liner-bottom-owned-buy-asset {
@@ -997,7 +1046,16 @@
 					padding-left: 8px;	
 					border-radius: 11.5px;	
 					width: 26px;  					
-			  }
+			  	}
+			  #cart-link-seller-created-wallet{
+				margin-left: 91px;
+				  padding-top: 10px;
+				  padding-bottom: 8px;
+				  padding-right: 8px;
+				  padding-left: 8px;	
+				  border-radius: 11.5px;	
+				  width: 43px;  					
+				}
 			  #cart-link-connected-seller-created {
 				  margin-left: 90px;
 					padding-top: 10.5px;
@@ -1025,7 +1083,7 @@
 		  }
 		  #black-liner-bottom-owned-buy {
 			margin-top: 0px;
-			width: 290px;
+			width: 310px;
 		  }	
 		  #ada-description-owned-buy {
 			margin-top: 0px;

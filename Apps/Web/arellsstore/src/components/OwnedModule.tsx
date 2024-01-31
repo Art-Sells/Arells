@@ -127,7 +127,9 @@ const OwnedModule = () => {
 						id="arells-icon-seller-created" 
 						src="images/prototype/Arells-Icon-Home.png"/>
 					</Link>	
-					{notOwnerConnected && (
+					{
+					notOwnerConnected && 
+					(
 						<Link 
 							legacyBehavior 
 							href={`/own/${address}`} passHref>
@@ -145,7 +147,7 @@ const OwnedModule = () => {
 					{notOwner && (
 						<button 
 							onClick={connectWallet}
-							id="cart-link-seller-created">
+							id="cart-link-seller-created-wallet">
 							<Image
 								loader={imageLoader}
 								alt=""
@@ -155,7 +157,9 @@ const OwnedModule = () => {
 								src="images/market/wallet-icon.png"/>
 						</button>	
 					)}	
-					{owner && (
+					{
+					owner && 
+					(
 						<Link 
 							href="/create" 
 							id="cart-link-connected-seller-created">
@@ -235,7 +239,7 @@ const OwnedModule = () => {
 			<Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
 				<a id="selling">Buy</a>	
 			</Link>
-			<a id="owned" >Own</a>
+			<a id="owned" >Owned</a>
 		</div>
 			{noArtCreated && (
 				<p id="no-art">

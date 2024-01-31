@@ -163,7 +163,7 @@ const SellingModule = () => {
 {/*<!-- Change below link after test -->*/}	
 			<a id="selling-seller">Buy</a>	
 			<Link legacyBehavior href={`/own/${storeAddressFromURL}`} passHref>
-				<a id="owned-seller" >Own</a>
+				<a id="owned-seller" >Owned</a>
 			</Link>				
 		</div>
 			{noArtCreated && (
