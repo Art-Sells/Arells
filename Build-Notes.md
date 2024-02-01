@@ -21,7 +21,7 @@
 #### If time permits: 
 - Created By & Owned By (Store|Brand Logo next to Address|Name)
 - Remove (Arells top logo in Assets and add "Arells Digital Assets" below "Buy" button)
-- Socials
+- Contact: Email, Instagram, DeviantArt, X/Twitter, Website
 - lessen space between two top buttons
 - Remove all Console.logs
 
