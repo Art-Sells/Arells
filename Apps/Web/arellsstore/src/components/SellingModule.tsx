@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import { useRouter } from 'next/router';
+import { signIn ,useSession } from "next-auth/react";
 
 // asset components (change below links after test)
 import useSigner from "../state/signer";
@@ -22,6 +23,10 @@ import Image from 'next/image';
 
 
 const SellingModule = () => {
+
+// Sign in/out
+	const { data: session, status } = useSession();
+// Sign in/out
 	
 
 //loader functions below 
@@ -94,6 +99,11 @@ const SellingModule = () => {
         address && storeAddressFromURL && address.toLowerCase() === storeAddressFromURL
     ), [address, storeAddressFromURL]);
 
+	const owner = addressMatch; 
+	const ownerSignedIn = addressMatch && session;
+	const notOwner = !addressMatch && !address;
+	const notOwnerConnected = !addressMatch && address;
+
 // asset constants above
 
 
@@ -126,17 +136,52 @@ const SellingModule = () => {
 				<div id="header-seller-created">
 					
 		{/*<!-- Change below link after test -->*/}
-						<Link href="/" id="icon-link-seller-created">
+					<Link href="/" id="icon-link-seller-created">
+						<Image
+						loader={imageLoader}
+						alt=""
+						height={16}
+						width={15}
+						id="arells-icon-seller-created" 
+						src="images/prototype/Arells-Icon-Home.png"/>
+					</Link>	
+					{
+					notOwnerConnected && 
+					(
+						<Link 
+							legacyBehavior 
+							href={`/own/${address}`} passHref>
+							<a id="cart-link-seller-created">
 							<Image
-							loader={imageLoader}
-							alt=""
-							height={16}
-							width={15}
-							id="arells-icon-seller-created" 
-							src="images/prototype/Arells-Icon-Home.png"/>
-						</Link>							
-						<Link href="/create" id="cart-link-connected-seller-created">
-								<Image
+								loader={imageLoader}
+								alt=""
+								height={18}
+								width={18}
+								id="cart-icon-seller-created" 
+								src="images/market/store.png"/>
+							</a>
+						</Link>	
+					)}	
+					{notOwner && (
+						<button 
+							onClick={connectWallet}
+							id="cart-link-seller-created-wallet">
+							<Image
+								loader={imageLoader}
+								alt=""
+								height={18}
+								width={18}
+								id="cart-icon-seller-created" 
+								src="images/market/wallet-icon.png"/>
+						</button>	
+					)}	
+					{
+					owner && 
+					(
+						<Link 
+							href="/create" 
+							id="cart-link-connected-seller-created">
+							<Image
 								loader={imageLoader}
 								alt=""
 								height={18}
@@ -144,6 +189,7 @@ const SellingModule = () => {
 								id="cart-icon-seller-created" 
 								src="images/prototype/Add-Ivory.png"/>
 						</Link>	
+					)}					
 				</div>
 			</>
 		)}
@@ -158,6 +204,54 @@ const SellingModule = () => {
 		<p id="slogan-seller-created">BUY ART THAT NEVER LOSES VALUE</p>
 		<hr id="black-liner-bottom-owned-buy"/>
 		<p id="ada-description-owned-buy">ARELLS DIGITAL ASSETS</p>
+				{/* <hr id="profileline-seller-created"/> */}
+		{ownerSignedIn && (
+			<Link legacyBehavior href={`/edit/${storeAddressFromURL}`} passHref>
+				<button id="edit-profile">
+					EDIT STORE</button>	
+			</Link>
+		)}
+		{owner && (
+			<button 
+			id="edit-profile" 
+			onClick={() => signIn('google')}>
+				SIGN IN TO EDIT</button>
+		)}
+
+		<div id="profile-img-container-buyer-collected">
+			<Image
+				loader={imageLoader}
+				alt=""
+				width={100}  
+				height={100}
+				id="profile-photo-buyer-collected" 
+				src="images/market/Market-Default-Icon.jpg"/>
+		</div>	
+		<div id="name-div">
+			{owner && (
+				<h1 id="name-buyer-collected">My Store</h1>
+			)}  
+			{!owner && (
+				<h1 id="name-buyer-collected">New Store</h1>
+			)} 
+		</div>
+		<div id="store-address-wrapper">
+			<span>
+				<Image
+					loader={imageLoader}
+					alt=""
+					width={13}  
+					height={20}
+					id="location" 
+					src="images/market/location-ebony.png"/>
+			</span>
+			<span id="store-location">
+				Store Address | Location
+			</span>
+			<p id="store-address">
+				{storeAddressFromURL}
+			</p> 
+		</div> 
 		{/* <hr id="profileline-seller-created"/> */}
 		<div id="created-collected-seller-created">
 {/*<!-- Change below link after test -->*/}	

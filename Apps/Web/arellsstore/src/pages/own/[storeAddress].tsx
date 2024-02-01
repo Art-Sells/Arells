@@ -25,7 +25,7 @@ const OwnedPage = () => {
   return (
     <>
       <Head>
-        <title>Own Art</title>
+        <title>Owned Art</title>
         <meta name="description" content="Own art that never loses value." />
         <meta property="og:title" content="Own art that never loses value." />
         <meta property="og:description" content="Render bear markets obsolete with Arells." />

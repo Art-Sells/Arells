@@ -188,9 +188,9 @@ const OwnedModule = () => {
 		<p id="ada-description-owned-buy">ARELLS DIGITAL ASSETS</p>
 		{/* <hr id="profileline-seller-created"/> */}
 		{ownerSignedIn && (
-			<Link legacyBehavior href={`/buy/${storeAddressFromURL}`} passHref>
+			<Link legacyBehavior href={`/edit/${storeAddressFromURL}`} passHref>
 				<button id="edit-profile">
-					EDIT</button>	
+					EDIT STORE</button>	
 			</Link>
 		)}
 		{owner && (
