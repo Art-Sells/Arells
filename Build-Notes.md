@@ -15,31 +15,14 @@
 - - Claimed: 0x74348347 [Enter Store]
 - - Unclaimed: 0x74348347 [Enter Store] |Save Changes to Claim Address|
 
-### My Store
-**(address && addressMatch)**
-- Top-Right[+]
-- Top-Center[EDIT]-(SignUp/LogIn to Create/Edit {if not logged in})
-- small Logo or Slogan
-- Logo: Default Store Logo
-- Store Name: Maximum Width if long name (Test) New Store
-- Store Address: 0x74348347
-- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
-
-### Other Store
-**(address && !addressMatch || !address && !addressMatch)**
-- Top-Right[||]-([connect-wallet] if not connected, [my-store] if connected)
-- small Logo or Slogan
-- Image Default: Store Icon
-- Name Default: New Store
-- Store Address: Address
-
 #### Test
 - All broken Images (Hidden or not) on mobile, etc.
 
 #### If time permits: 
 - Created By & Owned By (Store|Brand Logo next to Address|Name)
 - Remove (Arells top logo in Assets and add "Arells Digital Assets" below "Buy" button)
-- Socials
+- Contact: Email, Instagram, DeviantArt, X/Twitter, Website
+- lessen space between two top buttons
 - Remove all Console.logs
 
 #### After Testing and Before Launch: 
