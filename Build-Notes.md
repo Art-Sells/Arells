@@ -87,19 +87,19 @@ ________________________________________________________________________________
 ### Buying Provider
 - Arells [Arells uses Crossmint as it's payment provider] info at bottom.
 
-### Home
-- If logged in [(Open Store), (Close Store)]
-- If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
-- List of Addresses | Locations
-- (BROWSE STORES)
-
-### Market
+### Home (Market)
+- Arells: A Digital Asset Marketplace that renders bear markets obsolete.
+- If not logged in [Connect Wallet] - if logged in [Enter Store]
 - Store|Brand Name
 - AUM (Assets Under Management) {listed by}
 ***Ability to hide any store|brand content we deem innapropriate (NSFW, etc)***
 
-### Market-Brand-Name
-- Store|Locations
+### Edit Store
+- Username (automatically generated) can be edited
+
+### Market-Brand-Name arells.com/@username
+- if addressMatch & logged in [Edit Brand Name], else if addressMatch and not logged in [Sign In To Edit Brand Name]... takes you to "Edit Store"
+- Store Locations
 - - Address: [Enter Store]
 - - Address: [Enter Store]
 
