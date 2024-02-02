@@ -1,0 +1,93 @@
+#error-overlay {
+	padding-top: 0px;
+	padding-bottom: 100px;
+  text-align: center;
+  font-family: Arial;
+  margin-top: 0%;
+  margin-left: 0%;
+  margin-right: 0%;
+  margin-bottom: 0%;
+  background: white;	  
+}
+
+  #arells-icon-error {
+    margin-top: 150px;
+    width: 40px;
+    height: 42px;
+    opacity: 1;
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 1.00s;
+    animation-name: animatetop;
+    animation-duration: 1.00s;
+  }
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+  #error-message {
+    margin-top: 35px;
+    font-size: 11px;
+    letter-spacing: .5px;
+    margin-left: .5px; 
+    font-weight: 800;
+    color: black;
+    opacity: .4;
+    padding-bottom: -10px;
+    margin-bottom: 50px;
+  }
+  
+  #back-to-home {
+  background: black;
+  text-decoration: none;
+  color: white;
+  font-weight: 200;
+  font-size: 11px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-right: 32px;
+  padding-left: 35px;	  
+  border: none;
+  letter-spacing: 3px;
+  border-radius: 5px;
+  border-width: 0px;
+  width: 200px;
+  opacity: 1;
+  box-shadow: 0px 8px 12px -6px black;  
+  }
+  #back-to-home:hover,
+  #back-to-home:focus {
+  opacity: .4;
+  transition: 1s;
+  cursor: pointer;
+  }
+    
+  
+  
+@media screen and (max-width: 650px) {
+#error-overlay {
+  -webkit-text-size-adjust: none;
+}  
+  #arells-icon-error {
+    width: 35px;
+    height: 37px;
+  }
+
+  #error-message {
+    font-size: 9px;
+  }
+
+  #back-to-home {
+  font-weight:400;
+  font-size: 9px;
+  border-width: 1px;	    
+  }	
+  
+}	
+
+
