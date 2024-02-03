@@ -100,8 +100,8 @@ ________________________________________________________________________________
 ### Market-Brand-Name arells.com/@username
 - if addressMatch & logged in [Edit Brand Name], else if addressMatch and not logged in [Sign In To Edit Brand Name]... takes you to "Edit Store"
 - Store Locations
-- - Address: [Enter Store]
-- - Address: [Enter Store]
+- - Address: [Visit Store]
+- - Address: [Visit Store]
 
 ### My Store
 - Top-Right[Cart][Connect Wallet]-if not connected
