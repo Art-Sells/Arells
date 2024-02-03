@@ -8,8 +8,7 @@ import { useSession } from "next-auth/react";
 import Image from 'next/image';
 
 // Change below link after test
-import '../../../app/css/prototype/seller-created.css';
-import '../../../app/css/prototype/buyer-collected.css';
+import '../../../app/css/edit/edit.css';
 
 //Loader Styles
 import '../../../app/css/modals/loading/spinnerBackground.css';
@@ -59,32 +58,43 @@ const EditModule = () => {
         {/* {!session && (
             <p>RETURN HOME</p>
         )} */}
-        		<div id="profile-img-container-buyer-collected">
-			<Image
-				loader={imageLoader}
-				alt=""
-				width={100}  
-				height={100}
-				id="profile-photo-buyer-collected" 
-				src="/images/market/Market-Default-Icon.jpg"/>
+        <p id="edit-store-title">
+            EDIT</p>
+        <p id="edit-store-brand-words">
+            Store | Brand Logo</p>
+        <div id="edit-profile-img-container">
+        <Image
+            loader={imageLoader}
+            alt=""
+            width={100}  
+            height={100}
+            id="edit-profile-photo" 
+            src="/images/market/Market-Default-Icon.jpg"/>
 		</div>	
-		<div id="name-div">
-			<h1 id="name-buyer-collected">My Store</h1>
+		<div id="edit-name-div">
+            <p id="edit-store-brand-words">
+               Store | Brand Name</p>
+            <p id="edit-name">My Store</p>
+            <input
+                id="edit-input"
+                type="text"
+                placeholder="My Store"                     
+            />   
 		</div>
-		<div id="store-address-wrapper">
+		<div id="edit-store-address-wrapper">
 			<span>
 				<Image
 					loader={imageLoader}
 					alt=""
 					width={13}  
 					height={20}
-					id="location" 
+					id="edit-location" 
 					src="/images/market/location-ebony.png"/>
 			</span>
-			<span id="store-location">
-				Store Address | Location
+			<span id="edit-store-location">
+				Store Addresses | Locations
 			</span>
-			<p id="store-address">
+			<p id="edit-store-address">
 				{storeAddressFromURL}
 			</p> 
 		</div> 
