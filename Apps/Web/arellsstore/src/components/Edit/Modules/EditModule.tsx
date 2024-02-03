@@ -13,6 +13,7 @@ import '../../../app/css/edit/edit.css';
 //Loader Styles
 import '../../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../../app/css/modals/loading/spinner.module.css';
+import Link from 'next/link';
 
 const EditModule = () => {
     // Sign in/out
@@ -82,21 +83,30 @@ const EditModule = () => {
             />   
 		</div>
 		<div id="edit-store-address-wrapper">
-			<span>
-				<Image
-					loader={imageLoader}
-					alt=""
-					width={13}  
-					height={20}
-					id="edit-location" 
-					src="/images/market/location-ebony.png"/>
-			</span>
-			<span id="edit-store-location">
+			<p id="edit-store-location">
 				Store Addresses | Locations
-			</span>
-			<p id="edit-store-address">
-				{storeAddressFromURL}
-			</p> 
+			</p>
+            <div id="edit-store-location-wrapper">
+                <span>
+                    <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={12}  
+                        height={19}
+                        id="edit-location" 
+                        src="/images/market/location-ebony.png"/>
+                </span>
+                <span id="edit-store-address">
+                    {storeAddressFromURL}
+                </span> 
+                <hr id="edit-black-liner"></hr>
+                <button id="claim-address" >
+                    CLAIM ADDRESS</button>
+                <Link legacyBehavior href={`/own/${storeAddressFromURL}`} passHref>
+                <button id="visit-location" >
+                    VISIT LOCATION</button>
+                </Link>
+            </div>
 		</div> 
 
         </>
