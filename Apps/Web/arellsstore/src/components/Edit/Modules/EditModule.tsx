@@ -108,6 +108,8 @@ const EditModule = () => {
                 </Link>
             </div>
 		</div> 
+        <button id="save-changes" >
+            SAVE CHANGES</button>
 
         </>
     );
