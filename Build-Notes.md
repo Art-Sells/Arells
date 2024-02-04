@@ -3,23 +3,39 @@
 ## Arells 1.5
 - AUM (Assets Under Management) & sales system.
 - Emphasize Revenue while including AUM... arells(dot)com/metrics
-- Hidden From Public (full feature) {Shows only after signed in}
 
 ### Sign-Up
 - Sign Up with Google/Apple/Facebook/Etc
+- storeEdited = matchedAddressToProfile
 
 ### Edit Store
-- Store|Brand Logo: Default Store Logo
-- Store|Brand Name: No Maximum Characters
-- Store Addresses & Locations:
-- - Claimed: 0x74348347 [Enter Store]
-- - Unclaimed: 0x74348347 [Enter Store] |Save Changes to Claim Address|
+- session && !address && !addressMatch = Cannot Edit, Your Wallet is Not Connected [Connect Wallet] (connect wallet) 
+- session && address && !addressMatch = Cannot Edit, You Are Not the Owner of this Store, [Edit My Store] (takes you to edit/{address}) 
+- session && address && addressMatch = [Save Changes] (activates) 
+- session && address && addressMatch && storeEdited = Image & Name(input) (get info from AWS)
+- session && address && addressMatch && !storeEdited = Default Image & Name(input) 
+- - claimAddress = matchedAddressToProfile
+- matchedAddressToProfile = "Claimed Address Location"
+- !matchedAddressToProfile - "Claim Address Location"
+
+### My/Other Stores
+- storeEdited = Image & Name (get info from AWS) 
+- !storeEdited = Default Image & Name 
+- create session for Edit button
+- session = Hidden From Public (full feature) shows
 
 #### Test
 - All broken Images (Hidden or not) on mobile, etc.
 
 #### If time permits: 
-- Created By & Owned By (Store|Brand Logo next to Address|Name)
+- Created By
+- - storeEdited = Image & Add (get info from AWS) 
+- - !storeEdited = Default Image & AddressFromSigner(0)
+- Owned By
+- - !storeEdited && !minted = Default Image & AddressFromSigner(0)
+- - !storeEdited && minted = Image & Add (get info from AWS) AddressFromSigner(1)
+- - storeEdited && !minted = Default Image & AddressFromSigner(0)
+- - storeEdited && minted = Default Image & AddressFromSigner(1)
 - Remove (Arells top logo in Assets and add "Arells Digital Assets" below "Buy" button)
 - Contact: Email, Instagram, DeviantArt, X/Twitter, Website
 - lessen space between two top buttons
