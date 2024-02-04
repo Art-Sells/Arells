@@ -9,9 +9,11 @@
 - storeEdited = matchedAddressToProfile
 
 ### Edit Store
+- !session = Cannot Edit, You are not Signed In [Sign In to Edit] (connect wallet) 
 - session && !address && !addressMatch = Cannot Edit, Your Wallet is Not Connected [Connect Wallet] (connect wallet) 
 - session && address && !addressMatch = Cannot Edit, You Are Not the Owner of this Store, [Edit My Store] (takes you to edit/{address}) 
-- session && address && addressMatch = [Save Changes] (activates) 
+- [Claim Address] (activates) 
+- [Save Changes] (activates) 
 - session && address && addressMatch && storeEdited = Image & Name(input) (get info from AWS)
 - session && address && addressMatch && !storeEdited = Default Image & Name(input) 
 - - claimAddress = matchedAddressToProfile
