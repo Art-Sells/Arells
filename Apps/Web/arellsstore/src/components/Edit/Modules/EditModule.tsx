@@ -53,8 +53,6 @@ const EditModule = () => {
         };
     //Modal Functions Above
 
-    const [selectedImage, setSelectedImage] = useState<string | File>("");
-
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `${src}?w=${width}&q=${quality || 100}`;
@@ -74,6 +72,11 @@ const EditModule = () => {
             setLoading(false);
         }
     }, [storeAddressFromURL]);
+
+    //Edit Store Functions Below
+        const [selectedImage, setSelectedImage] = useState<string | File>("");
+        const [storeName, setStoreName] = useState('My Store');
+    // Edit Store Functions Above    
 
     return (
         <>
@@ -162,12 +165,14 @@ const EditModule = () => {
 		<div id="edit-name-div">
             <p id="edit-store-brand-words">
                Store | Brand Name</p>
-            <p id="edit-name">My Store</p>
+            <p id="edit-name">{storeName}</p> 
             <input
                 id="edit-input"
                 type="text"
-                placeholder="My Store"                     
-            />   
+                placeholder="My Store"
+                value={storeName} 
+                onChange={(e) => setStoreName(e.target.value)}  
+            />
 		</div>
 		<div id="edit-store-address-wrapper">
 			<p id="edit-store-location">

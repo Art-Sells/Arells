@@ -46,43 +46,44 @@ const ProfileImagePicker = ({ onFileChange }: ImagePickerProps) => {
 
                 canvas.toBlob((blob) => {
                     if (blob) {
-                        const newFile = new File([blob], file.name, {
-                            type: 'image/png',
-                        });
-                        const newURL = URL.createObjectURL(newFile);
-                        setPreviewURL(newURL);
-                        onFileChange(newFile);
+                        setTimeout(() => { // Add a delay
+                            const newFile = new File([blob], file.name, { type: 'image/png' });
+                            const newURL = URL.createObjectURL(newFile);
+                            setUploadCount(count => count + 1);
+                            setPreviewURL(newURL);
+                            onFileChange(newFile);
+                        }, 100); // 100 milliseconds delay
                     }
                 }, 'image/png');
             };
         };
-        setUploadCount(count => count + 1);
     };
 
     return (
         <>
-            {/* <div id="edit-profile-img-container">
-                <Image
-                   loader={imageLoader}
-                    alt=""
-                    width={100}  
-                    height={100}
-                    id="edit-profile-photo" 
-                    src="images/market/Market-Default-Icon.jpg"
-                />
-            </div> */}
             <div id="edit-profile-img-container">
                 <div id="edit-profile-photo-no-upload"
                 key={uploadCount}>
-                    {previewURL && (
+                    {previewURL ? (
+                        <div id="edit-profile-photo-no-upload">
+                            <Image
+                                loader={imageLoader}
+                                src={previewURL}
+                                id="edit-profile-photo"
+                                alt=""
+                                width={100}
+                                height={100}
+                                key={uploadCount}
+                            />
+                        </div>
+                    ) : (
                         <Image
                             loader={imageLoader}
-                            src={previewURL}
-                            id="edit-profile-photo"
+                            src="images/market/Market-Default-Icon.jpg"
                             alt=""
                             width={100}
                             height={100}
-                            key={previewURL}
+                            id="edit-profile-photo"
                         />
                     )}
                 </div>
