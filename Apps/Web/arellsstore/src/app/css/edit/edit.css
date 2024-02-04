@@ -50,6 +50,10 @@
         justify-content: center;
             
     }
+    #edit-profile-photo-no-upload {
+        width: 100px;
+        height: 100px;
+        }
     #edit-profile-photo {
         object-fit: cover;
         overflow: hidden;
@@ -70,7 +74,45 @@
         from {center:0; opacity:0}
         to {center:0; opacity:1}
       }
+
+      #edit-profile-photo-icon {
+        margin-top: -20px;
+        display: inline-block;
+        text-decoration: none;  
+          border: solid;
+          padding: 5px;
+          border-width: 2px;
+          border-color: rgb(206, 206, 206);
+          border-radius: 7px;
+          opacity: 1;
+            background: rgb(255, 255, 255);	
+            box-shadow: 0px 4px 12px -5px silver;  	
+        height: 20px;
+        width: 20px;
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 1.00s;
+        animation-name: animatetop;
+        animation-duration: 1.00s;
+        margin-bottom: 10px;
+    }
+    /* Add Animation */
+    @-webkit-keyframes animatetop {
+        from {center:0; opacity:0}
+        to {center:0; opacity:1}
+    }
+    
+    @keyframes animatetop {
+        from {center:0; opacity:0}
+        to {center:0; opacity:1}
+    }	
+    #edit-profile-photo-icon:hover,
+    #edit-profile-photo-icon:hover {
+      opacity: .4;
+      transition: 1s;
+      cursor: pointer;
+    }	    
       #edit-name-div {
+        margin-top: -10px;
             display: inline-block;
             width: 350px;
         }	
@@ -154,6 +196,13 @@
                 opacity: .2;
                 margin-bottom: -3px;
             }
+            #edit-location-unclaimed {
+                width: 12px;  
+                height: 18px;
+                margin-right: 11px;
+                opacity: .4;
+                margin-bottom: -3px;
+            }
             #edit-store-address {
                 font-size: 8.5pt;
                 font-weight: 500;
@@ -179,7 +228,7 @@
                 text-decoration: none;
                 color: rgb(150, 150, 150);
                 margin-left: auto;
-                margin-right: 7px;
+                margin-right: 14px;
                 font-weight: 500;
                 font-size: 11px;
                 padding-top: 20px;
@@ -199,7 +248,6 @@
           #visit-location {
                 text-decoration: none;
                 color: rgb(150, 150, 150);
-                margin-left: 7px;
                 margin-right: auto;
                 font-weight: 500;
                 font-size: 11px;
@@ -282,13 +330,25 @@
             height: 90px;
             margin-top: 5px;
         }
+        #edit-profile-photo-no-upload {
+            width: 90px;
+            height: 90px;
+            }
         #edit-profile-photo {
             object-fit: cover;
             overflow: hidden;
             width: 100%;
             height: 100%;
         }
+        #edit-profile-photo-icon {
+			margin-top: -20px;
+			  padding: 5px;
+			height: 15px;
+			width: 15px;
+            margin-bottom: 20px;
+		}	
         #edit-name-div {
+            margin-top: -20px;
 			display: inline-block;
 			width: 250px;
 		}	
@@ -309,6 +369,12 @@
             margin-top: 20px;
         }
 		#edit-location {
+			width: 10px;  
+			height: 15px;
+			margin-right: 7px;
+            margin-bottom: -3px;
+		  }
+          #edit-location-unclaimed {
 			width: 10px;  
 			height: 15px;
 			margin-right: 7px;
@@ -339,7 +405,7 @@
 
                 #claim-address {
                     font-size: 9px;
-                    margin-right: 5px;
+                    margin-right: 10px;
                     padding-top: 20px;
                     padding-bottom: 20px;
                     padding-right: 12px;
@@ -349,7 +415,6 @@
                 }	        
                 #visit-location {
                     font-size: 9px;
-                    margin-left: 5px;
                     padding-top: 20px;
                     padding-bottom: 20px;
                     padding-right: 12px;

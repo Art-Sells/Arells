@@ -1,14 +1,17 @@
 "use client";
 
 import { useRouter } from 'next/router';
-import '../../../app/css/prototype/asset/asset.css';
 import { useEffect, useMemo, useState } from 'react';
 import { useSession } from "next-auth/react";
 
 import Image from 'next/image';
 
+import ProfileImagePicker from './ProfileImagePicker';
+
 // Change below link after test
+import '../../../app/css/prototype/asset/asset.css';
 import '../../../app/css/edit/edit.css';
+import '../../../app/css/modals/edit-modals.css';
 
 //Loader Styles
 import '../../../app/css/modals/loading/spinnerBackground.css';
@@ -17,8 +20,40 @@ import Link from 'next/link';
 
 const EditModule = () => {
     // Sign in/out
-	const { data: session } = useSession();
+	    const { data: session } = useSession();
     // Sign in/out
+
+    //Modal Functions below
+        const [showClaimAddressModal, setClaimAddressModal] = useState<boolean>(false);
+        const [showClaimedAddressModal, setClaimedAddressModal] = useState<boolean>(false);
+        const [showChangesSavedModal, setChangesSavedModal] = useState<boolean>(false);
+
+        const closeClaimAddressModal = () => {
+            setClaimAddressModal(false);
+            window.location.reload();
+        };
+        function openClaimedAddressModal() {
+            setClaimedAddressModal(true);
+        };
+
+        const closeClaimedAddressModal = () => {
+            setClaimAddressModal(false);
+            window.location.reload();
+        };
+        function openClaimAddressModal() {
+            setClaimAddressModal(true);
+        };
+
+        const closeChangesSavedModal = () => {
+            setChangesSavedModal(false);
+            window.location.reload();
+        };
+        function openChangesSavedModal() {
+            setChangesSavedModal(true);
+        };
+    //Modal Functions Above
+
+    const [selectedImage, setSelectedImage] = useState<string | File>("");
 
     const [showLoading, setLoading] = useState(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
@@ -42,6 +77,8 @@ const EditModule = () => {
 
     return (
         <>
+
+        
         {showLoading && (
             <div id="spinnerBackground">
             <Image 
@@ -54,6 +91,62 @@ const EditModule = () => {
                 <div className={styles.spinner}></div>     
             </div>
         )}
+
+        {showClaimAddressModal && (
+            <div id="claim-address-wrapper">
+                <div id="claim-address-content">
+                <Image 
+                    // loader={imageLoader}
+                    alt="" 
+                    width={22}
+                    height={35}
+                    id="claim-address-image" 
+                    src="/images/market/location.png"/>  
+                <p id="claim-address-words">CLAIM ADDRESS</p>
+                <button id="claim-address-close"
+                    onClick={closeClaimAddressModal}>OK</button> 
+                </div>
+            </div>  
+        )}
+
+        {showClaimedAddressModal && (
+            <div id="edit-modal-wrapper">
+                <div id="edit-modal-content">
+                <Image 
+                    // loader={imageLoader}
+                    alt="" 
+                    width={22}
+                    height={35}
+                    id="claim-address-image" 
+                    src="/images/market/location-ebony.png"/>  
+                <p id="edit-modal-words">CLAIMED</p>
+                <button id="edit-modal-close"
+                    onClick={closeClaimedAddressModal}>OK</button> 
+                </div>
+            </div>  
+        )}
+        {showChangesSavedModal && (
+            <div id="edit-modal-wrapper">
+                <div id="edit-modal-content">
+                <Image 
+                    // loader={imageLoader}
+                    alt="" 
+                    width={35}
+                    height={35}
+                    id="changes-saved-image" 
+                    src="/images/market/check-mark.png"/>  
+                <p id="edit-modal-words">CHANGES SAVED</p>
+                <button id="edit-modal-close"
+                    onClick={closeChangesSavedModal}>OK</button> 
+                </div>
+            </div>  
+        )}
+
+
+
+
+
+
         {/* {session && (
         )} */}
         {/* {!session && (
@@ -63,15 +156,9 @@ const EditModule = () => {
             EDIT</p>
         <p id="edit-store-brand-words">
             Store | Brand Logo</p>
-        <div id="edit-profile-img-container">
-        <Image
-            loader={imageLoader}
-            alt=""
-            width={100}  
-            height={100}
-            id="edit-profile-photo" 
-            src="/images/market/Market-Default-Icon.jpg"/>
-		</div>	
+            <ProfileImagePicker onFileChange={(file: File) => {
+                setSelectedImage(file);
+            }}/>
 		<div id="edit-name-div">
             <p id="edit-store-brand-words">
                Store | Brand Name</p>
@@ -93,8 +180,8 @@ const EditModule = () => {
                         alt=""
                         width={12}  
                         height={19}
-                        id="edit-location" 
-                        src="/images/market/location-ebony.png"/>
+                        id="edit-location-unclaimed" 
+                        src="/images/market/location.png"/>
                 </span>
                 <span id="edit-store-address">
                     {storeAddressFromURL}
@@ -107,10 +194,28 @@ const EditModule = () => {
                     VISIT LOCATION</button>
                 </Link>
             </div>
+            <div id="edit-store-location-wrapper">
+                <span>
+                    <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={12}  
+                        height={19}
+                        id="edit-location" 
+                        src="/images/market/location-ebony.png"/>
+                </span>
+                <span id="edit-store-address">
+                    {storeAddressFromURL}
+                </span> 
+                <hr id="edit-black-liner"></hr>
+                <Link legacyBehavior href={`/own/${storeAddressFromURL}`} passHref>
+                <button id="visit-location" >
+                    VISIT LOCATION</button>
+                </Link>
+            </div>
 		</div> 
         <button id="save-changes" >
             SAVE CHANGES</button>
-
         </>
     );
 };
