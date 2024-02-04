@@ -15,8 +15,8 @@
 - session && address && addressMatch && storeEdited = Image & Name(input) (get info from AWS)
 - session && address && addressMatch && !storeEdited = Default Image & Name(input) 
 - - claimAddress = matchedAddressToProfile
-- matchedAddressToProfile = "Claimed Address Location"
 - !matchedAddressToProfile - "Claim Address Location"
+- matchedAddressToProfile = "Claimed Address Location {pull Address from Profile} place in Visit Location & edit-store-address"
 
 ### My/Other Stores
 - storeEdited = Image & Name (get info from AWS) 
