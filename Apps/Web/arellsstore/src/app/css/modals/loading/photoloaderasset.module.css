@@ -1,0 +1,38 @@
+
+
+.photoloaderasset {
+    position: static;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    border: 10px solid rgba(140, 140, 140, 0.1);
+    border-radius: 50%;
+    border-top: 10px solid rgb(0, 0, 0, 0.2);
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+    margin-top: 145px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+    @-webkit-keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media screen and (max-width: 700px) {
+        .photoloaderasset {
+            border: 7px solid rgba(140, 140, 140, 0.1);
+            border-top: 7px solid rgb(0, 0, 0, 0.2);
+            margin-top: 115px;
+            width: 55px;
+            height: 55px;
+          }        
+    }
