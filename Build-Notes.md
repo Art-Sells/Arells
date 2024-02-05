@@ -6,16 +6,20 @@
 - Email
 - Password
 - Confirm Password
+- - Modal: Password Needs at least 8 characters,  with one number and 1 special character
+- - Modal: Invalid Email
+- - Modal: Passwords don't match
 
 ### Sign-In
 - Email
 - Password
 - Forgot Password
+- - Modal: Invalid Email/ Password Combo....
 - storeEdited = matchedAddressToProfile
 
 ### AWS Dynamo Tables:
       email: email,
-      password: hashedPassword,
+      password: hashedPassword {one Capital Letter, one small letter, 8 characters, 1 number and 1 special character}
       storeBrandName: '',
       storeAddresses: [],
       shownNFTs: [],
@@ -66,6 +70,9 @@ ________________________________________________________________________________
 - Emphasize Revenue while including AUM... arells(dot)com/metrics
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 - Asset Name in title
+
+### Sign-In
+- Modal: After 10 Tries (Lock Account, Try again after 1 hour)
 
 ### Edit
 - Contact: Email, Instagram, DeviantArt, X/Twitter, Website
