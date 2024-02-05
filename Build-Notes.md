@@ -39,7 +39,6 @@
 - - storeEdited && !minted = Default Image & AddressFromSigner(0)
 - - storeEdited && minted = Default Image & AddressFromSigner(1)
 - Remove (Arells top logo in Assets and add "Arells Digital Assets" below "Buy" button)
-- Sign-Out (HomePage)
 - Contact: Email, Instagram, DeviantArt, X/Twitter, Website
 - lessen space between two top buttons
 - Remove all Console.logs
