@@ -1,17 +1,36 @@
 # Arells Build Notes...
 
 ## Arells 1.5
-- AUM (Assets Under Management) & sales system.
-- Emphasize Revenue while including AUM... arells(dot)com/metrics
 
 ### Sign-Up
-- Sign Up with Google/Apple/Facebook/Etc
+- Email
+- Password
+- Confirm Password
+- - Modal: Password Needs at least 8 characters,  with one number and 1 special character
+- - Modal: Invalid Email
+- - Modal: Passwords don't match
+
+### Sign-In
+- Email
+- Password
+- Forgot Password
+- - Modal: Invalid Email/ Password Combo....
 - storeEdited = matchedAddressToProfile
 
+### AWS Dynamo Tables:
+      email: email,
+      password: hashedPassword {one Capital Letter, one small letter, 8 characters, 1 number and 1 special character}
+      storeBrandName: '',
+      storeAddresses: [],
+      shownNFTs: [],
+      hiddenNFTs: []
+
 ### Edit Store
+- !session = Cannot Edit, You are not Signed In [Sign In to Edit] (connect wallet) 
 - session && !address && !addressMatch = Cannot Edit, Your Wallet is Not Connected [Connect Wallet] (connect wallet) 
 - session && address && !addressMatch = Cannot Edit, You Are Not the Owner of this Store, [Edit My Store] (takes you to edit/{address}) 
-- session && address && addressMatch = [Save Changes] (activates) 
+- [Claim Address] (activates) 
+- [Save Changes] (activates... if !matchedAddressToProfile, claimAddress modal) 
 - session && address && addressMatch && storeEdited = Image & Name(input) (get info from AWS)
 - session && address && addressMatch && !storeEdited = Default Image & Name(input) 
 - - claimAddress = matchedAddressToProfile
@@ -37,9 +56,6 @@
 - - storeEdited && !minted = Default Image & AddressFromSigner(0)
 - - storeEdited && minted = Default Image & AddressFromSigner(1)
 - Remove (Arells top logo in Assets and add "Arells Digital Assets" below "Buy" button)
-- Contact: Email, Instagram, DeviantArt, X/Twitter, Website
-- lessen space between two top buttons
-- Remove all Console.logs
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -50,18 +66,26 @@ ________________________________________________________________________________
 ## Arells 1.7
 
 ### My Store Asset (See Asset Modal)
+- AUM (Assets Under Management) & sales system.
+- Emphasize Revenue while including AUM... arells(dot)com/metrics
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 - Asset Name in title
 
-### My Store
+### Sign-In
+- Modal: After 10 Tries (Lock Account, Try again after 1 hour)
+
+### Edit
+- Contact: Email, Instagram, DeviantArt, X/Twitter, Website
+
+### My/Other Store
 - Store Name in title
+- Contact: Email, Instagram, DeviantArt, X/Twitter, Website
+- lessen space between two top buttons
+- Remove all Console.logs
 
 ### Other Store Asset (See Asset Modal)     
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 - Asset Name in title
-
-### My Store
-- Store Name in title
 
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
