@@ -1,12 +1,25 @@
 # Arells Build Notes...
 
 ## Arells 1.5
-- AUM (Assets Under Management) & sales system.
-- Emphasize Revenue while including AUM... arells(dot)com/metrics
 
 ### Sign-Up
-- Sign Up with Google/Apple/Facebook/Etc
+- Email
+- Password
+- Confirm Password
+
+### Sign-In
+- Email
+- Password
+- Forgot Password
 - storeEdited = matchedAddressToProfile
+
+### AWS Dynamo Tables:
+      email: email,
+      password: hashedPassword,
+      storeBrandName: '',
+      storeAddresses: [],
+      shownNFTs: [],
+      hiddenNFTs: []
 
 ### Edit Store
 - !session = Cannot Edit, You are not Signed In [Sign In to Edit] (connect wallet) 
@@ -39,9 +52,6 @@
 - - storeEdited && !minted = Default Image & AddressFromSigner(0)
 - - storeEdited && minted = Default Image & AddressFromSigner(1)
 - Remove (Arells top logo in Assets and add "Arells Digital Assets" below "Buy" button)
-- Contact: Email, Instagram, DeviantArt, X/Twitter, Website
-- lessen space between two top buttons
-- Remove all Console.logs
 
 #### After Testing and Before Launch: 
 - Delete all important variables
@@ -52,18 +62,23 @@ ________________________________________________________________________________
 ## Arells 1.7
 
 ### My Store Asset (See Asset Modal)
+- AUM (Assets Under Management) & sales system.
+- Emphasize Revenue while including AUM... arells(dot)com/metrics
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 - Asset Name in title
 
-### My Store
+### Edit
+- Contact: Email, Instagram, DeviantArt, X/Twitter, Website
+
+### My/Other Store
 - Store Name in title
+- Contact: Email, Instagram, DeviantArt, X/Twitter, Website
+- lessen space between two top buttons
+- Remove all Console.logs
 
 ### Other Store Asset (See Asset Modal)     
 - PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
 - Asset Name in title
-
-### My Store
-- Store Name in title
 
 #### LinkTree Links... 
 ***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
