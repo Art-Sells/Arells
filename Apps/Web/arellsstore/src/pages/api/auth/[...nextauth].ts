@@ -1,63 +1,69 @@
-import NextAuth from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
-import { db } from '../../../../firebaseConfig'; // Adjust the path as necessary
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import NextAuth, { User } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import bcrypt from 'bcrypt';
+import AWS from 'aws-sdk';
 
-// Define the User interface
-interface User {
+// AWS and DynamoDB configuration
+AWS.config.update({
+  region: 'your-region',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
+
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const TABLE_NAME = 'users';
+
+export interface AppUser {
   email: string;
-  id?: string;
+  id: string;
+  password?: string; // Make the password optional
 }
 
-// Function to find a user
-async function findUser(email: string): Promise<User | null> {
-  const usersRef = collection(db, "users");
-  const q = query(usersRef, where("email", "==", email));
-  const querySnapshot = await getDocs(q);
 
-  if (querySnapshot.empty) {
-    return null;
+
+export default NextAuth({
+  providers: [
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password:  { label: "Password", type: "password" }
+      },
+      authorize: async (credentials) => {
+        if (!credentials || !credentials.email) {
+          throw new Error('Missing credentials');
+        }
+      
+        const user = await findUser(credentials.email);
+        if (user && credentials.password && bcrypt.compareSync(credentials.password, user.password)) {
+          return user;
+        } else {
+          throw new Error('Invalid email or password');
+        }
+      }
+      
+    }),
+  ],
+  // ... other next-auth configuration
+});
+
+// DynamoDB functions (findUser and createUser)
+export async function findUser(email: string): Promise<AppUser | null> {
+  const params = {
+    TableName: TABLE_NAME,
+    KeyConditionExpression: 'email = :email',
+    ExpressionAttributeValues: { ':email': email },
+  };
+
+  const result = await dynamoDb.query(params).promise();
+
+  if (result.Items && result.Items.length > 0) {
+    // Return the user if found
+    return { email: result.Items[0].email, id: result.Items[0].id };
   } else {
-    const userDoc = querySnapshot.docs[0];
-    return { email: userDoc.data().email, id: userDoc.id } as User;
+    // Return null if no user is found
+    return null;
   }
 }
 
-// Function to create a user
-async function createUser({ email }: { email: string }): Promise<User> {
-  const usersRef = collection(db, "users");
-  const newUserRef = await addDoc(usersRef, { email });
-  return { email, id: newUserRef.id };
-}
 
-// NextAuth configuration
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
-
-if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-    throw new Error('Google client ID and secret must be defined');
-}
-
-export default NextAuth({
-    providers: [
-        GoogleProvider({
-            clientId: GOOGLE_CLIENT_ID,
-            clientSecret: GOOGLE_CLIENT_SECRET,
-        }),
-    ],
-    callbacks: {
-        async signIn({ user }) {
-            if (!user.email) {
-                return false;
-            }
-    
-            const existingUser = await findUser(user.email);
-            if (existingUser) {
-                return true; // User exists
-            } else {
-                const newUser = await createUser({ email: user.email });
-                return newUser ? true : false; // New user created
-            }
-        },
-    },
-});
