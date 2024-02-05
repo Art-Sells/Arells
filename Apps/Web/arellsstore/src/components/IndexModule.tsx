@@ -2,9 +2,12 @@
 
 // Assuming that there's no global type definitions for Next.js Image and Link components
 import type { ImageLoaderProps } from 'next/image';
+import { signOut ,useSession } from "next-auth/react";
 
 // Change below link after test
 import '../app/css/Home.css';
+import '../app/css/prototype/seller-created.css';
+
 
 // Loader Styles
 import '../app/css/modals/loading/spinnerBackground.css';
@@ -17,6 +20,10 @@ import useSigner from '../state/signer';
 import Link from 'next/link';
 
 const IndexModule = () => {
+  // Sign in/out
+	  const { data: session, status } = useSession();
+  // Sign in/out
+
 // Loader Functions
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
@@ -74,7 +81,9 @@ const IndexModule = () => {
       }
     }, [address]);
     
-// Asset functions anove    
+// Asset functions above
+
+  const ownerSignedIn = session && address;
 
   return (
     <>
@@ -157,6 +166,12 @@ const IndexModule = () => {
           </Link> 
         </div>  
       )}	
+      {ownerSignedIn && (
+        <button 
+        id="sign-out" 
+        onClick={() => signOut()}>
+          SIGN OUT</button>
+      )}
       <br></br>
 
       <Link 

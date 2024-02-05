@@ -35,6 +35,7 @@ const EditModule = () => {
         const [showChangesSavedModal, setChangesSavedModal] = useState<boolean>(false);
         const [showWalletNotConnectedModal, setWalletNotConnectedModal] = useState<boolean>(false);
         const [showNotOwnerModal, setNotOwnerModal] = useState<boolean>(false);
+        const [showNotSignedInModal, setNotSignedInModal] = useState<boolean>(false);
 
         const closeClaimAddressModal = () => {
             setClaimAddressModal(false);
@@ -165,7 +166,16 @@ const EditModule = () => {
 
 
 
-
+        {showNotSignedInModal && (
+            <div id="cannot-edit-modal-wrapper">
+                <div id="cannot-edit-modal-content">
+                <p id="cannot-edit-title">CANNOT EDIT</p>
+                <p id="cannot-edit-words">You're Not Signed In</p>
+                <button id="cannot-edit-modal-close"
+                    onClick={connectWallet}>SIGN IN TO EDIT</button> 
+                </div>
+            </div>  
+        )}
         {showWalletNotConnectedModal && (
             <div id="cannot-edit-modal-wrapper">
                 <div id="cannot-edit-modal-content">

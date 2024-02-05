@@ -193,7 +193,7 @@ const OwnedModule = () => {
 					EDIT STORE</button>	
 			</Link>
 		)}
-		{owner && (
+		{owner && !ownerSignedIn && (
 			<button 
 			id="edit-profile" 
 			onClick={() => signIn('google')}>
