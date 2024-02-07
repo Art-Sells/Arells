@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { useRouter } from 'next/router';
-import { signIn ,useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 // asset components (change below links after test)
 import useSigner from "../state/signer";
@@ -162,7 +162,9 @@ const SellingModule = () => {
 							</a>
 						</Link>	
 					)}	
-					{notOwner && (
+					{
+					notOwner && 
+					(
 						<button 
 							onClick={connectWallet}
 							id="cart-link-seller-created-wallet">
@@ -212,10 +214,11 @@ const SellingModule = () => {
 			</Link>
 		)}
 		{owner && (
+			<Link legacyBehavior href={`/signin`} passHref>
 			<button 
-			id="edit-profile" 
-			onClick={() => signIn('google')}>
+			id="edit-profile" >
 				SIGN IN TO EDIT</button>
+		</Link>
 		)}
 
 		<div id="profile-img-container-buyer-collected">

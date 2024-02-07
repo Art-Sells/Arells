@@ -88,7 +88,7 @@
 		  #cart-link-seller-created{
 			  display: inline-block;
 			  text-decoration: none;
-			  margin-left: 114px;
+			  margin-left: 100px;
 				text-decoration: none;
 				padding-top: 12.5px;
 				padding-bottom: 9px;
@@ -109,7 +109,7 @@
 		  #cart-link-seller-created{
 			display: inline-block;
 			text-decoration: none;
-			margin-left: 114px;
+			margin-left: 100px;
 			  text-decoration: none;
 			  padding-top: 12.5px;
 			  padding-bottom: 9px;
@@ -130,7 +130,7 @@
 		#cart-link-seller-created-wallet{
 			display: inline-block;
 			text-decoration: none;
-			margin-left: 122px;
+			margin-left: 108px;
 			  text-decoration: none;
 			  padding-top: 12px;
 			  padding-bottom: 9.5px;
@@ -150,7 +150,7 @@
 		}
 		  #cart-link-connected-seller-created{
 			  text-decoration: none;
-			  margin-left: 124px;
+			  margin-left: 110px;
 				text-decoration: none;
 				padding-top: 14px;
 				padding-bottom: 9.5px;
@@ -274,7 +274,7 @@
 			border: none;
 			height: 2px;
 			border-radius: 30px;
-			width: 420px;
+			width: 450px;
 			opacity: .1;
 		  }	
 		  #black-liner-bottom-owned-buy-asset {
@@ -380,8 +380,8 @@
 			font-size: 13px;
 			padding-top: 12px;
 			padding-bottom: 12px;
-			padding-right: 25px;
-			padding-left: 25.5px;	  
+			padding-right: 32px;
+			padding-left: 32.5px;	  
 			border: solid;
 			letter-spacing: .5px;
 			border-radius: 10px;
@@ -405,8 +405,8 @@
 				font-size: 13px;
 				padding-top: 12px;
 				padding-bottom: 12px;
-				padding-right: 25px;
-				padding-left: 25.5px;	  
+				padding-right: 32px;
+				padding-left: 32.5px;	  
 				border: solid;
 				letter-spacing: .5px;
 				border-radius: 10px;
@@ -1042,7 +1042,7 @@
 					width: 14px;
 				  }	    
 			  #cart-link-seller-created{
-				  margin-left: 91px;
+				  margin-left: 76px;
 					padding-top: 10.5px;
 					padding-bottom: 7.5px;
 					padding-right: 8px;
@@ -1051,7 +1051,7 @@
 					width: 26px;  					
 			  	}
 			  #cart-link-seller-created-wallet{
-				margin-left: 91px;
+				margin-left: 76px;
 				  padding-top: 10px;
 				  padding-bottom: 8px;
 				  padding-right: 8px;
@@ -1060,7 +1060,7 @@
 				  width: 43px;  					
 				}
 			  #cart-link-connected-seller-created {
-				  margin-left: 90px;
+				  margin-left: 75px;
 					padding-top: 10.5px;
 					padding-bottom: 7px;
 					padding-right: 8px;
@@ -1086,7 +1086,7 @@
 		  }
 		  #black-liner-bottom-owned-buy {
 			margin-top: 0px;
-			width: 330px;
+			width: 320px;
 		  }	
 		  #ada-description-owned-buy {
 			margin-top: 0px;
@@ -1127,8 +1127,8 @@
 				font-size: 10px;
 				padding-top: 10px;
 				padding-bottom: 10px;
-				padding-right: 15px;
-				padding-left: 15.5px;	  
+				padding-right: 21px;
+				padding-left: 21.5px;	  
 				letter-spacing: .5px;
 				  
 			  }  		

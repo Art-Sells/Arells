@@ -19,7 +19,7 @@
     "@types/firebase": "^3.2.1",
     "@types/formidable": "2.0.4",
     "@walletconnect/web3-provider": "^1.8.0",
-    "aws-sdk": "^2.1550.0",
+    "aws-sdk": "^2.1552.0",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.3.1",

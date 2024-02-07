@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { useRouter } from 'next/router';
-import { signIn ,useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 // asset components (change below links after test)
 import useSigner from "../state/signer";
@@ -194,10 +194,11 @@ const OwnedModule = () => {
 			</Link>
 		)}
 		{owner && !ownerSignedIn && (
-			<button 
-			id="edit-profile" 
-			onClick={() => signIn('google')}>
-				SIGN IN TO EDIT</button>
+			<Link legacyBehavior href={`/signin`} passHref>
+				<button 
+				id="edit-profile" >
+					SIGN IN TO EDIT</button>
+			</Link>
 		)}
 
 		<div id="profile-img-container-buyer-collected">

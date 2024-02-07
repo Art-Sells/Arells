@@ -44,7 +44,9 @@ export default NextAuth({
       
     }),
   ],
-  // ... other next-auth configuration
+  pages: {
+    signIn: '/auth/signin',  // Specify the path to your custom sign-in page
+  },
 });
 
 // DynamoDB functions (findUser and createUser)
