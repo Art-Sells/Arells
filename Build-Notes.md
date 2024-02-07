@@ -5,7 +5,6 @@
 ### Sign-In
 - Email
 - Password
-- Forgot Password
 - - Modal: Invalid Email/ Password Combo....
 - - Modal: Email doesn't exist
 - (Sign Up)
@@ -76,7 +75,8 @@ ________________________________________________________________________________
 - Asset Name in title
 
 ### Sign-In
-- Modal: After 10 Tries (Lock Account, Try again after 1 hour)
+- Forgot Password (5-10 tries?)
+- - Modal: After 10 Tries (Lock Account, Try again after 1 hour)
 
 ### Edit
 - Contact: Email, Instagram, DeviantArt, X/Twitter, Website
