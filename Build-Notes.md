@@ -2,6 +2,14 @@
 
 ## Arells 1.5
 
+### Sign-In
+- Email
+- Password
+- - Modal: Invalid Email/ Password Combo....
+- - Modal: Email doesn't exist
+- (Sign Up)
+- storeEdited = matchedAddressToProfile
+
 ### Sign-Up
 - Email
 - Password
@@ -9,13 +17,7 @@
 - - Modal: Password Needs at least 8 characters,  with one number and 1 special character
 - - Modal: Invalid Email
 - - Modal: Passwords don't match
-
-### Sign-In
-- Email
-- Password
-- Forgot Password
-- - Modal: Invalid Email/ Password Combo....
-- storeEdited = matchedAddressToProfile
+- - Modal: Email already exists
 
 ### AWS Dynamo Tables:
       email: email,
@@ -73,7 +75,8 @@ ________________________________________________________________________________
 - Asset Name in title
 
 ### Sign-In
-- Modal: After 10 Tries (Lock Account, Try again after 1 hour)
+- Forgot Password (5-10 tries?)
+- - Modal: After 10 Tries (Lock Account, Try again after 1 hour)
 
 ### Edit
 - Contact: Email, Instagram, DeviantArt, X/Twitter, Website
@@ -104,6 +107,10 @@ ________________________________________________________________________________
 - Resolve "Price After Purchase Price after not 0.00ing in listing issue"
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
 - Polish "Add" button edges
+
+##### If Time Permits
+- Metamask Wallet Browser Mobile Loading (if installed)
+- SignIn/SignUp Modals covering page if User is already Signed In
 
 #### After Testing and Before Launch: 
 - Delete all important variables
