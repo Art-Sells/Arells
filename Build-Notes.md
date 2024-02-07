@@ -2,6 +2,15 @@
 
 ## Arells 1.5
 
+### Sign-In
+- Email
+- Password
+- Forgot Password
+- - Modal: Invalid Email/ Password Combo....
+- - Modal: Email doesn't exist
+- (Sign Up)
+- storeEdited = matchedAddressToProfile
+
 ### Sign-Up
 - Email
 - Password
@@ -10,12 +19,6 @@
 - - Modal: Invalid Email
 - - Modal: Passwords don't match
 
-### Sign-In
-- Email
-- Password
-- Forgot Password
-- - Modal: Invalid Email/ Password Combo....
-- storeEdited = matchedAddressToProfile
 
 ### AWS Dynamo Tables:
       email: email,
