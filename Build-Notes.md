@@ -18,7 +18,7 @@
 - - Modal: Password Needs at least 8 characters,  with one number and 1 special character
 - - Modal: Invalid Email
 - - Modal: Passwords don't match
-- - Modal: This Email already exists
+- - Modal: Email already exists
 
 ### AWS Dynamo Tables:
       email: email,
@@ -110,6 +110,7 @@ ________________________________________________________________________________
 
 ##### If Time Permits
 - Metamask Wallet Browser Mobile Loading (if installed)
+- SignIn/SignUp Modals covering page if User is already Signed In
 
 #### After Testing and Before Launch: 
 - Delete all important variables
