@@ -105,6 +105,9 @@ ________________________________________________________________________________
 - Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
 - Polish "Add" button edges
 
+##### If Time Permits
+- Metamask Wallet Browser Mobile Loading (if installed)
+
 #### After Testing and Before Launch: 
 - Delete all important variables
 - Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
