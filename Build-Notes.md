@@ -23,8 +23,9 @@
       email: email,
       password: hashedPassword, {one Capital Letter, one small letter, 8 characters, 1 number and 1 special character}
       storeBrandName: '', {this is created when user Enters Store Name (only after they are signed in)}
+      profileImage: 'image/edit-profile.pns'-default, else add other images
       storeAddresses: [], {this is created when user Claims a Store Address and that Address is input into an array (only after they are signed in)}
-      shownNFTs: [], {this array pulls every tokenURI attached to the storeAddresses, every tokenURI is shown as visible initially.}
+      shownNFTs: [], {this array pulls every tokenURI attached to the storeAddresses once ClaimAddress is hit, every tokenURI is shown as visible initially (calls API every second?)}
       hiddenNFTs: [], {this is created when user hides a tokenURI and that tokenURI is input into an array (only after they are signed in) that tokenURI is then removed from the shownNFTs array... when a user wants to show a tokenURI, that tokenURI is re-integrated into the shownNFTs array, that tokenURI is then removed from the hiddenNFTs array}
 
 
@@ -32,7 +33,7 @@
 - !session = Cannot Edit, You are not Signed In [Sign In to Edit] (connect wallet) 
 - session && !address && !addressMatch = Cannot Edit, Your Wallet is Not Connected [Connect Wallet] (connect wallet) 
 - session && address && !addressMatch = Cannot Edit, You Are Not the Owner of this Store, [Edit My Store] (takes you to edit/{address}) 
-- [Claim Address] (activates) 
+- [Claim Address] (activates {Pulls all tokenURIs from Address and saves them) 
 - [Save Changes] (activates... if !matchedAddressToProfile, claimAddress modal) 
 - session && address && addressMatch && storeEdited = Image & Name(input) (get info from AWS)
 - session && address && addressMatch && !storeEdited = Default Image & Name(input) 
@@ -44,7 +45,7 @@
 - storeEdited = Image & Name (get info from AWS) 
 - !storeEdited = Default Image & Name 
 - create session for Edit button
-- session = Hidden From Public (full feature) shows
+- claimedAddress = Hidden From Public (full feature) shows
 
 #### Test
 - All broken Images (Hidden or not) on mobile, etc.
