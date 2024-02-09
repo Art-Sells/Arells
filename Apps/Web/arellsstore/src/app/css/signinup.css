@@ -10,20 +10,41 @@
 	padding-bottom: 30px;  
   }
 
+  #arells-signupin-icon {
+    margin-top: 80px;
+      width: 20px;
+      height: 21px;
+      -webkit-animation-name: animatesignup;
+      -webkit-animation-duration: 1.00s;
+      animation-name: animatesignup;
+      animation-duration: 1.00s;
+      opacity: .2;
+    }
+    /* Add Animation */
+    @-webkit-keyframes animatesignup {
+      from {center:0; opacity:0}
+      to {center:0; opacity:.2}
+    }
+    
+    @keyframes animatesignup {
+      from {center:0; opacity:0}
+      to {center:0; opacity:.2}
+    }
+
 
     #signinup-title {
-        font-size: 15pt;
+        font-size: 12pt;
         font-weight: 600;
-        opacity: .3;
+        opacity: .4;
         color: black;	
-        margin-top: 40px;
-        letter-spacing: 0px;	  
-        margin-left: 0px;
-        padding-bottom: 5px;
+        margin-top: 20px;
+        letter-spacing: 2px;	  
+        margin-left: 2px;
+        margin-bottom: 15px;
     }  
 
     #signinup-word {
-        margin-top: 20px;
+        margin-top: 10px;
         text-align: center;
         color: black;
         font-weight: 300;
@@ -35,7 +56,7 @@
 
     #signinup-input { 
         text-align: center;
-        margin-top: 20px;     	   
+        margin-top: -5px;     	   
         padding-top: 20px;
         padding-bottom: 20px;
         padding-left: 20px;
@@ -45,12 +66,18 @@
         border: none;
         border-radius: 5px;
         font-size: 14px;
-        width: 160px;
+        width: 250px;
         height: 15px;
         letter-spacing: 0px;    	   		
         background: rgb(220, 220, 220);
         opacity: .8;
     }
+    #signinup-input:focus {
+        cursor: pointer;
+        outline: none;
+        transition: 1s;
+        opacity: 1;			    
+        }  
     #signinup-register {
         margin-top: 30px;
         text-decoration: none;
@@ -73,6 +100,7 @@
             background: black;
     }	
     #signup-button {
+        margin-top: 30px;
         text-decoration: none;
         color: rgb(150, 150, 150);
         margin-right: auto;
@@ -105,9 +133,13 @@
 
     @media screen and (max-width: 700px) {
 
+        #arells-signupin-icon {
+            width: 17px;
+            height: 18px;
+        }
+
         #signinup-title {
-            font-size: 12pt;
-            padding-bottom: 10px;
+            font-size: 10pt;
         } 
         
         #signinup-word {
@@ -117,7 +149,7 @@
         }
         #signinup-input { 
             font-size: 12px;
-            width: 120px;
+            width: 200px;
         }
         #signinup-register {
             font-size: 9px;

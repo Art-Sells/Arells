@@ -1,29 +1,47 @@
 "use client";
 
 import { signIn, ClientSafeProvider } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import useSigner from '../../../state/signer';
 
 import '../../../app/css/signinup.css';
-import { useState } from 'react';
-
-import Image from 'next/image';
+import '../../../app/css/modals/signupin-modals.css';
 
 //Loader Styles
 import '../../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../../app/css/modals/loading/spinner.module.css';
-import Link from 'next/link';
 
 type SignInModuleProps = {
-    providers: Record<string, ClientSafeProvider>; 
+    providers?: Record<string, ClientSafeProvider>; 
 };
   
-const SignInModule: React.FC<SignInModuleProps> = ({ providers }) => {
+const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const [showLoading, setLoading] = useState(false);
+    const [showLoading, setLoading] = useState<boolean>(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
         return `${src}?w=${width}&q=${quality || 100}`;
       };
+      const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
+        arellsIcon: false,
+      });
+    
+      const handleImageLoaded = (imageName: string) => {
+        console.log(`Image loaded: ${imageName}`);
+        setImagesLoaded(prevState => ({ 
+          ...prevState, 
+          [imageName]: true 
+        }));
+      };
+    
+      useEffect(() => {
+        if (Object.values(imagesLoaded).every(Boolean)) {
+            setLoading(false);
+        }
+    }, [imagesLoaded]);  
 
     return (
         <>
@@ -39,8 +57,16 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers }) => {
                     <div className={styles.spinner}></div>     
                 </div>
             )}
-            {Object.values(providers).map((provider) => (
+
             <div>
+                <Image 
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('arellsIcon')}
+                    alt="" 
+                    width={20}
+                    height={21}
+                    id="arells-signupin-icon" 
+                    src="/images/Arells-Icon.png"/>
                 <p id="signinup-title">
                     SIGN IN</p>
                 <p id="signinup-word">
@@ -75,7 +101,7 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers }) => {
                         SIGN UP</button>
                 </Link>
             </div>            
-        ))}
+        
         </>
     );
 };
