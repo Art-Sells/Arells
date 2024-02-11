@@ -18,6 +18,8 @@ type SignInModuleProps = {
 };
   
 const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
+    const { address } = useSigner();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -43,6 +45,43 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
         }
     }, [imagesLoaded]);  
 
+//Modal functions below
+
+    const [showInvalidEmailModal, setInvalidEmailModal] = useState<boolean>(false);
+    const [showEmailExistsModal, setEmailExistsModal] = useState<boolean>(false);
+    const [showSignedUpModal, setSignedUpModal] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (showInvalidEmailModal == true &&
+            showEmailExistsModal == true) {
+            setEmailExistsModal(false);
+        }
+    }, [showInvalidEmailModal, 
+        showEmailExistsModal]);  
+
+    const closeInvalidEmailModal = () => {
+        setInvalidEmailModal(false);
+    };
+    function openInvalidEmailModal() {
+        setInvalidEmailModal(true);
+    };
+
+    const closeEmailExistsModal = () => {
+        setEmailExistsModal(false);
+        window.location.reload();
+    };
+    function openEmailExistsModal() {
+        setEmailExistsModal(true);
+    };
+
+    function openSignedUpModal() {
+        setSignedUpModal(true);
+    };
+
+//Modal Functions Above    
+
+
+
     return (
         <>
             {showLoading && (
@@ -57,6 +96,66 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
                     <div className={styles.spinner}></div>     
                 </div>
             )}
+
+
+
+
+    
+        {showInvalidEmailModal && (
+            <div id="signinup-error-wrapper">
+                <div id="signinup-combo-error-content">
+                <Image 
+                    // loader={imageLoader}
+                    alt="" 
+                    width={35}
+                    height={35}
+                    id="signinup-error-image" 
+                    src="/images/market/error.png"/>  
+                <p id="signinup-combo-top-error-words">Invalid Email/Password</p>
+                <p id="signinup-combo-bottom-error-words">combo</p>
+                <button id="signinup-error-close"
+                    onClick={closeInvalidEmailModal}>OK</button> 
+                </div>
+            </div>  
+        )}
+        {showEmailExistsModal && (
+            <div id="signinup-error-wrapper">
+                <div id="signinup-error-content">
+                <Image 
+                    // loader={imageLoader}
+                    alt="" 
+                    width={35}
+                    height={35}
+                    id="signinup-error-image" 
+                    src="/images/market/error.png"/>  
+                <p id="signinup-error-words">Email doesn't exit</p>
+                <button id="signinup-error-close"
+                    onClick={closeEmailExistsModal}>OK</button> 
+                </div>
+            </div>  
+        )}
+
+
+
+
+        {showSignedUpModal && (
+            <div id="signinup-success-wrapper">
+                <div id="signinup-success-content">
+                <Image 
+                    // loader={imageLoader}
+                    alt="" 
+                    width={35}
+                    height={35}
+                    id="signinup-success-image" 
+                    src="/images/market/check-mark.png"/>  
+                <p id="signinup-success-words">SIGNED IN</p>
+                <Link legacyBehavior href={`/own/${address}`} passHref>
+                        <button id="signinup-success-close"
+                            >ENTER STORE</button> 
+                </Link>
+                </div>
+            </div>  
+        )}
 
             <div>
                 <Image 

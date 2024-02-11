@@ -49,32 +49,46 @@ const SignUpModule: React.FC<SignUpModuleProps> = ({ providers = {}}) => {
     }, [imagesLoaded]);  
 
 
-    //Modal functions below
-    const [showPasswordsNeedModal, setPasswordsNeedModal] = useState<boolean>(false);
+//Modal functions below
+
     const [showInvalidEmailModal, setInvalidEmailModal] = useState<boolean>(false);
-    const [showPasswordsUnmatchedModal, setPasswordsUnmatchedModal] = useState<boolean>(false);
     const [showEmailExistsModal, setEmailExistsModal] = useState<boolean>(false);
+    const [showPasswordsNeedModal, setPasswordsNeedModal] = useState<boolean>(false);
+    const [showPasswordsUnmatchedModal, setPasswordsUnmatchedModal] = useState<boolean>(false);
     const [showSignedUpModal, setSignedUpModal] = useState<boolean>(false);
 
-    const closePasswordsNeedModal = () => {
-        setPasswordsNeedModal(false);
-    };
-    function openPasswordsNeedModal() {
-        setPasswordsNeedModal(true);
-    };
+    useEffect(() => {
+        if (showInvalidEmailModal == true &&
+            showEmailExistsModal == true &&
+            showPasswordsNeedModal == true &&
+            showPasswordsUnmatchedModal == true) {
+            setEmailExistsModal(false);
+            setPasswordsNeedModal(false);
+            setPasswordsUnmatchedModal(false);
+        }
+        if (showInvalidEmailModal == false &&
+            showEmailExistsModal == true &&
+            showPasswordsNeedModal == true &&
+            showPasswordsUnmatchedModal == true) {
+            setPasswordsNeedModal(false);
+            setPasswordsUnmatchedModal(false);
+        }
+        if (showInvalidEmailModal == false &&
+            showEmailExistsModal == false &&
+            showPasswordsNeedModal == true &&
+            showPasswordsUnmatchedModal == true) {
+            setPasswordsUnmatchedModal(false);
+        }
+    }, [showInvalidEmailModal, 
+        showEmailExistsModal,
+        showPasswordsNeedModal,
+        showPasswordsUnmatchedModal]);  
 
     const closeInvalidEmailModal = () => {
         setInvalidEmailModal(false);
     };
     function openInvalidEmailModal() {
         setInvalidEmailModal(true);
-    };
-
-    const closePasswordsUnmatchedModal = () => {
-        setPasswordsUnmatchedModal(false);
-    };
-    function openPasswordsUnmatchedModal() {
-        setPasswordsUnmatchedModal(true);
     };
 
     const closeEmailExistsModal = () => {
@@ -85,13 +99,27 @@ const SignUpModule: React.FC<SignUpModuleProps> = ({ providers = {}}) => {
         setEmailExistsModal(true);
     };
 
-    const closeSignedUpModal = () => {
-        setSignedUpModal(false);
+    const closePasswordsNeedModal = () => {
+        setPasswordsNeedModal(false);
     };
+    function openPasswordsNeedModal() {
+        setPasswordsNeedModal(true);
+    };
+
+    const closePasswordsUnmatchedModal = () => {
+        setPasswordsUnmatchedModal(false);
+    };
+    function openPasswordsUnmatchedModal() {
+        setPasswordsUnmatchedModal(true);
+    };
+
     function openSignedUpModal() {
         setSignedUpModal(true);
     };
+
 //Modal Functions Above    
+
+
 
     return (
         <>
@@ -111,85 +139,90 @@ const SignUpModule: React.FC<SignUpModuleProps> = ({ providers = {}}) => {
 
 
 
-            {showPasswordsNeedModal && (
-                <div id="claim-address-wrapper">
-                    <div id="claim-address-content">
-                    <Image 
-                        // loader={imageLoader}
-                        alt="" 
-                        width={22}
-                        height={35}
-                        id="claim-address-image" 
-                        src="/images/market/location.png"/>  
-                    <p id="claim-address-words">Password needs at least eight characters total.</p>
-                    <p id="claim-address-words">one capital letter(A-Z), one lowercase letter(a-z),</p>
-                    <p id="claim-address-words">one number(0-9) and one special character(!-%).</p>
-                    <button id="claim-address-close"
-                        onClick={closePasswordsNeedModal}>OK</button> 
-                    </div>
-                </div>  
-            )}            
+        
             {showInvalidEmailModal && (
-                <div id="claim-address-wrapper">
-                    <div id="claim-address-content">
-                    <Image 
-                        // loader={imageLoader}
-                        alt="" 
-                        width={22}
-                        height={35}
-                        id="claim-address-image" 
-                        src="/images/market/location.png"/>  
-                    <p id="claim-address-words">Invalid Email</p>
-                    <button id="claim-address-close"
-                        onClick={closeInvalidEmailModal}>OK</button> 
-                    </div>
-                </div>  
-            )}
-            {showPasswordsUnmatchedModal && (
-                <div id="claim-address-wrapper">
-                    <div id="claim-address-content">
-                    <Image 
-                        // loader={imageLoader}
-                        alt="" 
-                        width={22}
-                        height={35}
-                        id="claim-address-image" 
-                        src="/images/market/location.png"/>  
-                    <p id="claim-address-words">Passwords don't match</p>
-                    <button id="claim-address-close"
-                        onClick={closePasswordsUnmatchedModal}>OK</button> 
-                    </div>
-                </div>  
-            )}
-            {showEmailExistsModal && (
-                <div id="claim-address-wrapper">
-                    <div id="claim-address-content">
-                    <Image 
-                        // loader={imageLoader}
-                        alt="" 
-                        width={22}
-                        height={35}
-                        id="claim-address-image" 
-                        src="/images/market/location.png"/>  
-                    <p id="claim-address-words">Email already exits</p>
-                    <button id="claim-address-close"
-                        onClick={closeEmailExistsModal}>OK</button> 
-                    </div>
-                </div>  
-            )}
-            {showSignedUpModal && (
-                <div id="edit-modal-wrapper">
-                    <div id="edit-modal-content">
+                <div id="signinup-error-wrapper">
+                    <div id="signinup-error-content">
                     <Image 
                         // loader={imageLoader}
                         alt="" 
                         width={35}
                         height={35}
-                        id="changes-saved-image" 
+                        id="signinup-error-image" 
+                        src="/images/market/error.png"/>  
+                    <p id="signinup-error-words">Invalid Email</p>
+                    <button id="signinup-error-close"
+                        onClick={closeInvalidEmailModal}>OK</button> 
+                    </div>
+                </div>  
+            )}
+            {showEmailExistsModal && (
+                <div id="signinup-error-wrapper">
+                    <div id="signinup-error-content">
+                    <Image 
+                        // loader={imageLoader}
+                        alt="" 
+                        width={35}
+                        height={35}
+                        id="signinup-error-image" 
+                        src="/images/market/error.png"/>  
+                    <p id="signinup-error-words">Email already exits</p>
+                    <button id="signinup-error-close"
+                        onClick={closeEmailExistsModal}>OK</button> 
+                    </div>
+                </div>  
+            )}
+            {showPasswordsNeedModal && (
+                <div id="signinup-password-error-wrapper">
+                    <div id="signinup-password-error-content">
+                    <Image 
+                        // loader={imageLoader}
+                        alt="" 
+                        width={35}
+                        height={35}
+                        id="signinup-password-error-image" 
+                        src="/images/market/error.png"/>  
+                    <p id="signinup-password-top-error-words">Password needs at least eight characters total.</p>
+                    <p id="signinup-password-error-words">One capital letter(A-Z), one lowercase letter(a-z),</p>
+                    <p id="signinup-password-bottom-error-words">one number(0-9) and one special character(!-%).</p>
+                    <button id="signinup-password-error-close"
+                        onClick={closePasswordsNeedModal}>OK</button> 
+                    </div>
+                </div>  
+            )}    
+            {showPasswordsUnmatchedModal && (
+                <div id="signinup-error-wrapper">
+                    <div id="signinup-error-content">
+                    <Image 
+                        // loader={imageLoader}
+                        alt="" 
+                        width={35}
+                        height={35}
+                        id="signinup-error-image" 
+                        src="/images/market/error.png"/>  
+                    <p id="signinup-error-words">Passwords don't match.</p>
+                    <button id="signinup-error-close"
+                        onClick={closePasswordsUnmatchedModal}>OK</button> 
+                    </div>
+                </div>  
+            )}
+
+
+
+
+            {showSignedUpModal && (
+                <div id="signinup-success-wrapper">
+                    <div id="signinup-success-content">
+                    <Image 
+                        // loader={imageLoader}
+                        alt="" 
+                        width={35}
+                        height={35}
+                        id="signinup-success-image" 
                         src="/images/market/check-mark.png"/>  
-                    <p id="edit-modal-words">SIGNED UP</p>
+                    <p id="signinup-success-words">SIGNED UP</p>
                     <Link legacyBehavior href={`/own/${address}`} passHref>
-                            <button id="edit-modal-close"
+                            <button id="signinup-success-close"
                                 >ENTER STORE</button> 
                     </Link>
                     </div>
