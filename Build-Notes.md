@@ -2,17 +2,6 @@
 
 ## Arells 1.5
 
-### Sign-Up
-- - Modal: Password Needs at least 8 characters,  with one number and 1 special character
-- - Modal: Invalid Email
-- - Modal: Passwords don't match
-- - Modal: Email already exists
-
-### Sign-In
-- - Modal: Invalid Email/ Password Combo....
-- - Modal: Email doesn't exist
-- (Sign Up)
-
 ### AWS Dynamo Tables:
       email: email,
       password: hashedPassword, {one Capital Letter, one small letter, 8 characters, 1 number and 1 special character}
@@ -22,15 +11,24 @@
       shownNFTs: [], {this array pulls every tokenURI attached to the storeAddresses once ClaimAddress is hit, every tokenURI is shown as visible initially (calls API every second?)}
       hiddenNFTs: [], {this is created when user hides a tokenURI and that tokenURI is input into an array (only after they are signed in) that tokenURI is then removed from the shownNFTs array... when a user wants to show a tokenURI, that tokenURI is re-integrated into the shownNFTs array, that tokenURI is then removed from the hiddenNFTs array}
 
+### Sign-Up
+- Modal: Password Needs at least 8 characters,  with one number and 1 special character
+- Modal: Invalid Email
+- Modal: Passwords don't match
+- Modal: Email already exists
+
+### Sign-In
+- Modal: Invalid Email/ Password Combo....
+- Modal: Email doesn't exist
 
 ### Edit Store
-- storeEdited = Image & Name (get info from AWS) 
-- !storeEdited = Default Image & Name 
+- storeEdited = newImage & newName (get info from AWS) 
+- !storeEdited = defaultImage & defaultName 
 - !session = Cannot Edit, You are not Signed In [Sign In to Edit] (connect wallet) 
 - session && !address && !addressMatch = Cannot Edit, Your Wallet is Not Connected [Connect Wallet] (connect wallet) 
 - session && address && !addressMatch = Cannot Edit, You Are Not the Owner of this Store, [Edit My Store] (takes you to edit/{address}) 
 - [Claim Address] (activates {Pulls all tokenURIs from Address and saves them) 
-- [Save Changes] (activates... if !matchedAddressToProfile, claimAddress modal) 
+- [Save Changes] (activates...,  if !matchedAddressToProfile = claimAddress modal, if !newImaga && !newName, newImage/newName = defaultImage/default/Name) 
 - session && address && addressMatch && storeEdited = Image & Name(input) (get info from AWS)
 - session && address && addressMatch && !storeEdited = Default Image & Name(input) 
 - - claimAddress = matchedAddressToProfile
