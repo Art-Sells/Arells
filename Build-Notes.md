@@ -2,22 +2,16 @@
 
 ## Arells 1.5
 
-### Sign-In
-- Email
-- Password
-- - Modal: Invalid Email/ Password Combo....
-- - Modal: Email doesn't exist
-- (Sign Up)
-- storeEdited = matchedAddressToProfile
-
 ### Sign-Up
-- Email
-- Password
-- Confirm Password
 - - Modal: Password Needs at least 8 characters,  with one number and 1 special character
 - - Modal: Invalid Email
 - - Modal: Passwords don't match
 - - Modal: Email already exists
+
+### Sign-In
+- - Modal: Invalid Email/ Password Combo....
+- - Modal: Email doesn't exist
+- (Sign Up)
 
 ### AWS Dynamo Tables:
       email: email,
@@ -30,6 +24,8 @@
 
 
 ### Edit Store
+- storeEdited = Image & Name (get info from AWS) 
+- !storeEdited = Default Image & Name 
 - !session = Cannot Edit, You are not Signed In [Sign In to Edit] (connect wallet) 
 - session && !address && !addressMatch = Cannot Edit, Your Wallet is Not Connected [Connect Wallet] (connect wallet) 
 - session && address && !addressMatch = Cannot Edit, You Are Not the Owner of this Store, [Edit My Store] (takes you to edit/{address}) 
@@ -52,7 +48,7 @@
 
 #### If time permits: 
 - Created By
-- - storeEdited = Image & Add (get info from AWS) 
+- - storeEdited = Image & Name (get info from AWS) 
 - - !storeEdited = Default Image & AddressFromSigner(0)
 - Owned By
 - - !storeEdited && !minted = Default Image & AddressFromSigner(0)
