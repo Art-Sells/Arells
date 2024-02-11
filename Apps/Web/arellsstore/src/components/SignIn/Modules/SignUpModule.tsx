@@ -25,6 +25,8 @@ const SignUpModule: React.FC<SignUpModuleProps> = ({ providers = {}}) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
 
     const [showLoading, setLoading] = useState<boolean>(true);
     const imageLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
@@ -51,38 +53,19 @@ const SignUpModule: React.FC<SignUpModuleProps> = ({ providers = {}}) => {
 
 //Modal functions below
 
+    const [showFillEmptyFieldsModal, setFillEmptyFieldsModal] = useState<boolean>(false);
     const [showInvalidEmailModal, setInvalidEmailModal] = useState<boolean>(false);
     const [showEmailExistsModal, setEmailExistsModal] = useState<boolean>(false);
     const [showPasswordsNeedModal, setPasswordsNeedModal] = useState<boolean>(false);
     const [showPasswordsUnmatchedModal, setPasswordsUnmatchedModal] = useState<boolean>(false);
-    const [showSignedUpModal, setSignedUpModal] = useState<boolean>(false);
+    const [showSignedUpModal, setSignedUpModal] = useState<boolean>(false);  
 
-    useEffect(() => {
-        if (showInvalidEmailModal == true &&
-            showEmailExistsModal == true &&
-            showPasswordsNeedModal == true &&
-            showPasswordsUnmatchedModal == true) {
-            setEmailExistsModal(false);
-            setPasswordsNeedModal(false);
-            setPasswordsUnmatchedModal(false);
-        }
-        if (showInvalidEmailModal == false &&
-            showEmailExistsModal == true &&
-            showPasswordsNeedModal == true &&
-            showPasswordsUnmatchedModal == true) {
-            setPasswordsNeedModal(false);
-            setPasswordsUnmatchedModal(false);
-        }
-        if (showInvalidEmailModal == false &&
-            showEmailExistsModal == false &&
-            showPasswordsNeedModal == true &&
-            showPasswordsUnmatchedModal == true) {
-            setPasswordsUnmatchedModal(false);
-        }
-    }, [showInvalidEmailModal, 
-        showEmailExistsModal,
-        showPasswordsNeedModal,
-        showPasswordsUnmatchedModal]);  
+    const closeFillEmptyFieldsModal = () => {
+        setFillEmptyFieldsModal(false);
+    };
+    function openFillEmptyFieldsModal() {
+        setFillEmptyFieldsModal(true);
+    };
 
     const closeInvalidEmailModal = () => {
         setInvalidEmailModal(false);
@@ -121,6 +104,79 @@ const SignUpModule: React.FC<SignUpModuleProps> = ({ providers = {}}) => {
 
 
 
+// Sign Up Function below
+    const validateInputs = () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+            openInvalidEmailModal();
+            return false;
+        } else if (!emailRegex.test(email)) {
+            openInvalidEmailModal(); // Consider a specific modal for format issues
+            return false;
+        } else if (password !== confirmPassword) {
+            openPasswordsUnmatchedModal();
+            return false;
+        }
+        return true;
+    };
+
+    const signUpUser = async () => {
+        const response = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
+        const data = await response.json();
+        return { success: response.ok, data };
+    };
+
+    const handleSignUpResponse = async (response: { success: boolean; data: any; }) => {
+        if (response.success) {
+            try {
+                const signInResponse = await signIn('credentials', {
+                    redirect: false, 
+                    email: email, 
+                    password: password, 
+                });
+
+                if (signInResponse?.error) {
+                    openInvalidEmailModal(); 
+                } else {
+                    openSignedUpModal();
+                }
+            } catch (error) {
+                console.error('Error during automatic sign-in:', error);
+                alert('An error occurred during automatic sign-in.');
+            }
+        } else {
+            // Handle sign-up errors as before
+            const { error } = response.data;
+            if (error.includes('exists')) {
+                openEmailExistsModal();
+            } else if (error.includes('criteria')) {
+                openPasswordsNeedModal();
+            } else {
+                openFillEmptyFieldsModal();
+            }
+        }
+    };
+    
+
+    const handleSignUp = async () => {
+        if (!validateInputs()) return;
+
+        try {
+            const response = await signUpUser();
+            handleSignUpResponse(response);
+        } catch (error) {
+            console.error('SignUp Error:', error);
+            alert('An error occurred during sign up.');
+        }
+    };
+//Sign up Functions Above
+
+
+
     return (
         <>
             {showLoading && (
@@ -138,8 +194,22 @@ const SignUpModule: React.FC<SignUpModuleProps> = ({ providers = {}}) => {
 
 
 
-
-        
+            {showFillEmptyFieldsModal && (
+                <div id="signinup-error-wrapper">
+                    <div id="signinup-error-content">
+                    <Image 
+                        // loader={imageLoader}
+                        alt="" 
+                        width={35}
+                        height={35}
+                        id="signinup-error-image" 
+                        src="/images/market/error.png"/>  
+                    <p id="signinup-error-words">Fill empty fields</p>
+                    <button id="signinup-error-close"
+                        onClick={closeFillEmptyFieldsModal}>OK</button> 
+                    </div>
+                </div>  
+            )}
             {showInvalidEmailModal && (
                 <div id="signinup-error-wrapper">
                     <div id="signinup-error-content">
@@ -268,18 +338,15 @@ const SignUpModule: React.FC<SignUpModuleProps> = ({ providers = {}}) => {
                 <p id="signinup-word">
                     Confirm Password</p>
                 <input
-                    id="signinup-input"
+                    id="confirm-signinup-input" // Ensure IDs are unique
                     type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}   
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+
                 <br></br>
                 <button 
-                    onClick={() => signIn('credentials', { 
-                        redirect: false,
-                        email, 
-                        password 
-                    })}
+                    onClick={handleSignUp} // Update this line to use the new handleSignUp function
                     id="signinup-register">
                     SIGN UP
                 </button>

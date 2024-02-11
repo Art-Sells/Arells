@@ -47,17 +47,17 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
 
 //Modal functions below
 
+    const [showFillEmptyFieldsModal, setFillEmptyFieldsModal] = useState<boolean>(false);
     const [showInvalidEmailModal, setInvalidEmailModal] = useState<boolean>(false);
     const [showEmailExistsModal, setEmailExistsModal] = useState<boolean>(false);
     const [showSignedUpModal, setSignedUpModal] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (showInvalidEmailModal == true &&
-            showEmailExistsModal == true) {
-            setEmailExistsModal(false);
-        }
-    }, [showInvalidEmailModal, 
-        showEmailExistsModal]);  
+    const closeFillEmptyFieldsModal = () => {
+        setFillEmptyFieldsModal(false);
+    };
+    function openFillEmptyFieldsModal() {
+        setFillEmptyFieldsModal(true);
+    };
 
     const closeInvalidEmailModal = () => {
         setInvalidEmailModal(false);
@@ -80,6 +80,37 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
 
 //Modal Functions Above    
 
+//Sign in functions below
+    const handleSignIn = async () => {
+        if (!email || !password) {
+            openFillEmptyFieldsModal();
+            return;
+        }
+
+        try {
+
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false, 
+            });
+
+            if (result && result.error) {
+                if (result.error === 'CredentialsSignin') {
+                    openInvalidEmailModal();
+                } else {
+                    openFillEmptyFieldsModal(); 
+                }
+            } else {
+                openSignedUpModal();
+            }
+        } catch (error) {
+            console.error('Sign-In Error:', error);
+            alert('An error occurred during sign-in.');
+        }
+    };
+//Sign In functions above
+
 
 
     return (
@@ -100,7 +131,22 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
 
 
 
-    
+        {showFillEmptyFieldsModal && (
+            <div id="signinup-error-wrapper">
+                <div id="signinup-error-content">
+                <Image 
+                    // loader={imageLoader}
+                    alt="" 
+                    width={35}
+                    height={35}
+                    id="signinup-error-image" 
+                    src="/images/market/error.png"/>  
+                <p id="signinup-error-words">Fill empty fields</p>
+                <button id="signinup-error-close"
+                    onClick={closeFillEmptyFieldsModal}>OK</button> 
+                </div>
+            </div>  
+        )}
         {showInvalidEmailModal && (
             <div id="signinup-error-wrapper">
                 <div id="signinup-combo-error-content">
@@ -185,12 +231,8 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
                     onChange={(e) => setPassword(e.target.value)}   
                 />
                 <br></br>
-                <button 
-                    onClick={() => signIn('credentials', { 
-                        redirect: false,
-                        email, 
-                        password 
-                    })}
+                <button
+                    onClick={handleSignIn} 
                     id="signinup-register">
                     SIGN IN
                 </button>

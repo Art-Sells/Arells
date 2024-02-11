@@ -16,11 +16,18 @@ export default async function signup(req: NextApiRequest, res: NextApiResponse) 
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Password validation
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    // Password validation remains the same
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
       return res.status(400).json({ error: 'Password does not meet criteria' });
     }
+
 
     const existingUser = await findUser(email);
     if (existingUser) {

@@ -15,7 +15,7 @@ export default async function signin(req: NextApiRequest, res: NextApiResponse) 
         const user = await findUser(email);
 
         if (!user) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'Email not found' });
         }
         
         const match = await bcrypt.compare(password, user.password || '');
