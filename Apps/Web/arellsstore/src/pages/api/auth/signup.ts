@@ -12,25 +12,35 @@ export default async function signup(req: NextApiRequest, res: NextApiResponse) 
   try {
     const { email, password } = req.body;
 
-    // Validate the input
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Check if user already exists
+    // Password validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ error: 'Password does not meet criteria' });
+    }
+
     const existingUser = await findUser(email);
     if (existingUser) {
       return res.status(409).json({ error: 'User already exists' });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
+    // Create a new user with default values for new fields
     const newUser: AppUser = {
-        email, password: hashedPassword,
-        id: ''
+      email, 
+      password: hashedPassword,
+      id: uuidv4(), // Use the UUID as the user ID directly
+      storeBrandName: 'New Store', // Default store name
+      profileImage: '/images/market/Market-Default-Icon.jpg', // Default profile image
+      storeAddresses: [],
+      shownNFTs: [],
+      hiddenNFTs: [],
     };
+
     await createUser(newUser);
 
     res.status(200).json({ message: 'User created successfully' });
@@ -39,6 +49,7 @@ export default async function signup(req: NextApiRequest, res: NextApiResponse) 
     res.status(500).json({ error: 'Internal server error' });
   }
 }
+
 
 
 export async function createUser(user: Omit<AppUser, 'id'>): Promise<AppUser> {
