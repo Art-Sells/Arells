@@ -69,6 +69,8 @@ ________________________________________________________________________________
 
 ## Arells 1.7
 
+- Confirm Email Message
+
 ### My Store Asset (See Asset Modal)
 - AUM (Assets Under Management) & sales system.
 - Emphasize Revenue while including AUM... arells(dot)com/metrics
