@@ -4,7 +4,7 @@
 ## Buy art that never loses value.
 
 ### Problem:
-Most people are struggling financially.
+Bear markets destroy lots of financial value.
 
 ### Solution:
 Arells: A digital asset marketplace that obscures bear markets. Arells is working on achieving this through an innovation called **Price After Purchase** which renders bear markets obsolete.
