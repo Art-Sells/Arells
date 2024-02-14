@@ -29,11 +29,11 @@ Old Buyer sells the artwork for $1,000.
 
 This introduces a new market…
 
-#### Snail Market:
+#### Sloth Market:
 
-A market in which no new assets are bought or sold but rather slows rendering bear markets obsolete.
+A market in which no new assets are bought or sold but rather stagnates rendering bear markets obsolete.
 
-<img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/Marketing/BeforeandAfterArells.jpg" width="800px"> 
+<img src="https://github.com/Art-Sells/Arells/assets/51394348/49591992-3d46-4200-80c6-b0656d741c1c" width="800px"> 
 
 _______________________________________________________________________
 
