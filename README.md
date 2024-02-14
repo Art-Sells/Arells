@@ -4,10 +4,10 @@
 ## Buy art that never loses value.
 
 ### Problem:
-Most artists & collectors are struggling financially.
+Bear markets destroy lots of financial value.
 
 ### Solution:
-Art + Sells = Arells: A digital asset marketplace that obscures bear markets. Arells is working on achieving this through an innovation called **Price After Purchase** which renders bear markets obsolete.
+Arells: A digital asset marketplace that obscures bear markets. Arells is working on achieving this through an innovation called **Price After Purchase** which renders bear markets obsolete.
 
 #### Price Afer Purchase:
 Price After Purchase is a market system which assets cannot be sold lower than the price they were either listed or previously purchased for.
