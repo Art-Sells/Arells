@@ -45,6 +45,7 @@ ________________________________________________________________________________
 ## Arells 1.7
 
 - Confirm Email Message
+- s3 Profile Image render to 500x500px.
 
 ### My Store Asset (See Asset Modal)
 - AUM (Assets Under Management) & sales system.
