@@ -1,9 +1,9 @@
 // pages/api/auth/signup.ts
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { findUser } from './[...nextauth]';
+import { findUser } from '../../../lib/auth-helpers';
 import bcrypt from 'bcrypt';
-import { AppUser } from './[...nextauth]';
+import { AppUser } from '../../../lib/auth-helpers';
 import { v4 as uuidv4 } from 'uuid';
 import { dynamoDb } from '../../../../aws-config';
 
