@@ -9,7 +9,7 @@
 - session && !address && !addressMatch = Cannot Edit, Your Wallet is Not Connected [Connect Wallet] (connect wallet) 
 - session && address && !addressMatch = Cannot Edit, You Are Not the Owner of this Store, [Edit My Store] (takes you to edit/{address}) 
 - [Claim Address] (activates {Pulls all tokenURIs from Address and saves them) 
-- [Save Changes] (activates...,  if !matchedAddressToProfile = claimAddress modal, if !newImaga && !newName, newImage/newName = defaultImage/default/Name) 
+- [Save Changes] (activates..., check first if !addressMatch && !address and activate modals...  if !matchedAddressToProfile = claimAddress modal, if !newImaga && !newName, newImage/newName = defaultImage/default/Name) 
 - session && address && addressMatch && storeEdited = Image & Name(input) (get info from AWS)
 - session && address && addressMatch && !storeEdited = Default Image & Name(input) 
 - - claimAddress = matchedAddressToProfile
