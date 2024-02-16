@@ -96,7 +96,7 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
             });
 
             if (result && result.error) {
-                if (result.error === 'CredentialsSignin') {
+                if (result.error === 'Invalid email or password') {
                     openInvalidEmailModal();
                 } else {
                     openFillEmptyFieldsModal(); 

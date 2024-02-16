@@ -33,9 +33,6 @@ const EditModule = () => {
         const [showClaimAddressModal, setClaimAddressModal] = useState<boolean>(false);
         const [showClaimedAddressModal, setClaimedAddressModal] = useState<boolean>(false);
         const [showChangesSavedModal, setChangesSavedModal] = useState<boolean>(false);
-        const [showWalletNotConnectedModal, setWalletNotConnectedModal] = useState<boolean>(false);
-        const [showNotOwnerModal, setNotOwnerModal] = useState<boolean>(false);
-        const [showNotSignedInModal, setNotSignedInModal] = useState<boolean>(false);
 
         const closeClaimAddressModal = () => {
             setClaimAddressModal(false);
@@ -75,6 +72,7 @@ const EditModule = () => {
             : router.query.storeAddress;
         return address ? address.toLowerCase() : null;
     }, [router.query.storeAddress]);
+    const addressMatch = address?.toLowerCase() === storeAddressFromURL?.toLowerCase();
 
 
     useEffect(() => {
@@ -87,6 +85,10 @@ const EditModule = () => {
         const [selectedImage, setSelectedImage] = useState<string | File>("");
         const [storeName, setStoreName] = useState('My Store');
     // Edit Store Functions Above    
+
+    const showNotSignedInModal = !session
+    const showNotOwnerModal = !addressMatch && !address && session;
+	const showWalletNotConnectedModal = !addressMatch && address && session;
 
     return (
         <>
@@ -171,8 +173,10 @@ const EditModule = () => {
                 <div id="cannot-edit-modal-content">
                 <p id="cannot-edit-title">CANNOT EDIT</p>
                 <p id="cannot-edit-words">You're Not Signed In</p>
-                <button id="cannot-edit-modal-close"
-                    onClick={connectWallet}>SIGN IN TO EDIT</button> 
+                <Link legacyBehavior href={`/signin`} passHref>
+                    <button id="cannot-edit-modal-close">
+                        SIGN IN TO EDIT</button>  
+                </Link>
                 </div>
             </div>  
         )}
@@ -265,6 +269,7 @@ const EditModule = () => {
             {showClaimedAddress && (
                 <div id="edit-store-location-wrapper">
                     <span>
+
                         <Image
                             loader={imageLoader}
                             alt=""
