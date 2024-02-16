@@ -87,8 +87,8 @@ const EditModule = () => {
     // Edit Store Functions Above    
 
     const showNotSignedInModal = !session
-    const showNotOwnerModal = !addressMatch && !address && session;
-	const showWalletNotConnectedModal = !addressMatch && address && session;
+    const showWalletNotConnectedModal = !addressMatch && !address && session;
+	const showNotOwnerModal = !addressMatch && address && session;
 
     return (
         <>
