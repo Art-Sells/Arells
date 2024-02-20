@@ -224,8 +224,8 @@ const EditModule = () => {
             EDIT</p>
         <p id="edit-store-brand-words">
             Store | Brand Logo</p>
-            <ProfileImagePicker onFileChange={(file: File) => {
-                setSelectedImage(file);
+            <ProfileImagePicker onFileChange={(url: String) => {
+                setSelectedImage(String);
             }}/>
 		<div id="edit-name-div">
             <p id="edit-store-brand-words">
