@@ -10,8 +10,8 @@ const s3 = new AWS.S3({
 });
 
 type ImagePickerProps = {
-  onFileChange: (url: string) => void;
-};
+    onFileChange: (url: string) => void;
+  };
 
 const ProfileImagePicker: React.FC<ImagePickerProps> = ({ onFileChange }) => {
   const [previewURL, setPreviewURL] = useState<string>('');
@@ -21,71 +21,62 @@ const ProfileImagePicker: React.FC<ImagePickerProps> = ({ onFileChange }) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   };
 
-  const cropImage = async (file: File): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const img = new Image();
-        img.src = reader.result as string;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const maxSize = Math.min(img.width, img.height);
-          canvas.width = maxSize;
-          canvas.height = maxSize;
-          const ctx = canvas.getContext('2d');
-          if (!ctx) { // Check if ctx is null
-            reject(new Error("Failed to get canvas context"));
-            return; // Exit the function if no context
-          }
-          ctx.drawImage(img, (img.width - maxSize) / 2, (img.height - maxSize) / 2, maxSize, maxSize, 0, 0, maxSize, maxSize);
-          canvas.toBlob(blob => {
-            if (!blob) {
-              reject(new Error('Canvas to Blob conversion failed'));
-              return;
-            }
-            resolve(blob);
-          }, 'image/png');
-        };
-      };
-      reader.onerror = error => reject(error);
-      reader.readAsDataURL(file);
-    });
-  };
-  
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null;
-    if (!file) return;
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
-    try {
-      const croppedBlob = await cropImage(file);
-      const croppedFile = new File([croppedBlob], `cropped-${file.name}`, { type: 'image/png' });
-      const uploadResult = await uploadImageToS3(croppedFile);
-      if (uploadResult) {
-        setPreviewURL(uploadResult);
-        onFileChange(uploadResult);
-        setUploadCount(count => count + 1); // Ensure the component updates with the new preview
-      }
-    } catch (error) {
-      console.error("Error processing image:", error);
-    }
+    const file = files[0];
+    const objectURL = URL.createObjectURL(file);
+
+    const imgElement = document.createElement('img');
+    imgElement.src = objectURL;
+
+    imgElement.onload = async () => {
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      canvas.width = imgElement.width;
+      canvas.height = imgElement.height;
+
+      ctx.drawImage(imgElement, 0, 0);
+      canvas.toBlob(async (blob) => {
+        if (!blob) return;
+        const croppedFile = new File([blob], `cropped-${file.name}`, { type: 'image/png' });
+
+        const uploadResult = await uploadImageToS3(croppedFile);
+        if (uploadResult) {
+          setPreviewURL(uploadResult);
+          onFileChange(uploadResult);
+          setUploadCount(count => count + 1); 
+        }
+      }, 'image/png');
+
+      URL.revokeObjectURL(objectURL);
+    };
   };
+
 
   const uploadImageToS3 = async (file: File): Promise<string> => {
     const fileName = `profile-images/${file.name}-${Date.now()}`;
+    console.log('S3_BUCKET_NAME from env:', process.env.NEXT_PUBLIC_S3_BUCKET_NAME);
     const params = {
-      Bucket: process.env.S3_BUCKET_NAME!,
+      Bucket: process.env.NEXT_PUBLIC_S3_BUCKET_NAME!,
       Key: fileName,
       Body: file,
-      ContentType: 'image/png', // Since we're converting all images to PNG
+      ContentType: 'image/png',
       ACL: 'public-read',
     };
 
     try {
+      console.log('Uploading with params:', params);
       const { Location } = await s3.upload(params).promise();
-      return Location; // URL of the uploaded image
+      return Location; 
     } catch (error) {
       console.error("Error uploading image to S3:", error);
+      console.log("Detailed error:", error);
       throw new Error('Failed to upload image');
     }
   };

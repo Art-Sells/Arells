@@ -2,7 +2,7 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
-import { findUser } from './[...nextauth]'; // Adjust path as necessary
+import { findUser } from '../../../lib/auth-helpers'; // Adjust path as necessary
 
 export default async function signin(req: NextApiRequest, res: NextApiResponse) {
     try {

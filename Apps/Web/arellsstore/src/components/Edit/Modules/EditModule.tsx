@@ -38,24 +38,15 @@ const EditModule = () => {
             setClaimAddressModal(false);
             window.location.reload();
         };
-        function openClaimedAddressModal() {
-            setClaimedAddressModal(true);
-        };
 
         const closeClaimedAddressModal = () => {
             setClaimAddressModal(false);
             window.location.reload();
         };
-        function openClaimAddressModal() {
-            setClaimAddressModal(true);
-        };
 
         const closeChangesSavedModal = () => {
             setChangesSavedModal(false);
             window.location.reload();
-        };
-        function openChangesSavedModal() {
-            setChangesSavedModal(true);
         };
     //Modal Functions Above
 
@@ -76,10 +67,10 @@ const EditModule = () => {
 
 
     useEffect(() => {
-        if (storeAddressFromURL) {
+        if (session) {
             setLoading(false);
         }
-    }, [storeAddressFromURL]);
+    }, [session]);
 
     //Edit Store Functions Below
         const [selectedImage, setSelectedImage] = useState<string | File>("");

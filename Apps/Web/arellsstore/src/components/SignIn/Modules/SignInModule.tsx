@@ -82,7 +82,9 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
 
 //Sign in functions below
     const handleSignIn = async () => {
-        if (!email || !password) {
+        if ((!email || !password)
+            || (!email && password)
+            || (email && !password)) {
             openFillEmptyFieldsModal();
             return;
         }
@@ -99,7 +101,7 @@ const SignInModule: React.FC<SignInModuleProps> = ({ providers = {} }) => {
                 if (result.error === 'Invalid email or password') {
                     openInvalidEmailModal();
                 } else {
-                    openFillEmptyFieldsModal(); 
+                    openInvalidEmailModal();
                 }
             } else {
                 openSignedUpModal();

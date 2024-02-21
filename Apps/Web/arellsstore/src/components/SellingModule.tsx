@@ -107,9 +107,6 @@ const SellingModule = () => {
 // asset constants above
 
 
-// metadata functions below
-
-// metadata functions above
 
 	
     return (
@@ -213,7 +210,7 @@ const SellingModule = () => {
 					EDIT STORE</button>	
 			</Link>
 		)}
-		{owner && (
+		{owner && !ownerSignedIn && (
 			<Link legacyBehavior href={`/signin`} passHref>
 			<button 
 			id="edit-profile" >
