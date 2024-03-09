@@ -6,8 +6,8 @@ import 'dotenv/config';
 AWS.config.update({
   region: 'us-west-1', // Replace with your desired AWS region
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+    accessKeyId: process.env.DYNAMODB_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.DYNAMODB_SECRET_ACCESS_KEY || '',
   },
 });
 
