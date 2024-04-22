@@ -1,7 +1,7 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Buy art that never loses value.
+## Buy assets that never loses value.
 
 ### Problem:
 Bear markets destroy lots of financial value.
@@ -51,11 +51,11 @@ _______________________________________________________________________
 - **May 2023 - Dec 2023**
   - [X] Arells 1.0 *[[Complete]](https://arells.com)*
  
-- **Dec 2023 - Feb 2024**
+- **Dec 2023 - TBD(To-Be-Determined)**
   - [ ] Arells 1.5 *[[In-Development]](https://github.com/Art-Sells/Arells/blob/test/Build-Notes.md)*
  
-- **Feb 2024 - Oct 2024**
+- **TBD(To-Be-Determined)**
   - [ ] Arells 2.0 *[Announced]*
  
-- **Oct 2024 - TBD(To-Be-Determined)**
+- **TBD(To-Be-Determined)**
   - [ ] Arells 3.0 *[Announced]*
