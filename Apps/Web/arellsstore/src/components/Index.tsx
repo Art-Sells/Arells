@@ -120,7 +120,7 @@ const Index = () => {
       {openStore && (
         <div>          
           <p id="descriptioner">
-          BUY ART THAT NEVER LOSES VALUE
+          BUY ASSETS THAT NEVER LOSE VALUE
           </p>
 
           <hr id="black-liner"/>
