@@ -1,7 +1,7 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Sell items that never lose value.
+## Sell art that never loses value.
 
 ### Problem:
 Bear markets destroy lots of financial value.
@@ -14,17 +14,17 @@ Price After Purchase is a market system which assets cannot be sold lower than t
 
 **Example:**
 
-Created item sells for $500.
-- Store keeps: $485
+Created Art sells for $500.
+- Gallery keeps: $485
 - Arells keeps: $15
-- Buyer owns: The Item
+- Buyer owns: The Art
 - Price After Purchase: $1,000
 
-Old Buyer sells the item for $1,000.
+Old Buyer sells the Art for $1,000.
 - Store keeps: $400
 - Arells keeps: $30
 - Old Buyer keeps: $570
-- New Buyer gets: The Item
+- New Buyer gets: The Art
 - Price After Purchase: $2,000
 
 This introduces a new market…
