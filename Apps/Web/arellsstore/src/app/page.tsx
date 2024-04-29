@@ -8,11 +8,11 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Arells",
-  description: "Sell items that never lose value. With Arells bear markets are obsolete.",
+  description: "Sell art that never loses value. With Arells bear markets are obsolete.",
   robots: "noimageindex",
   openGraph: {
     title: "Arells",
-    description: "Sell items that never lose value. With Arells bear markets are obsolete.",
+    description: "Sell art that never loses value. With Arells bear markets are obsolete.",
     url: "https://arells.com",
     type: "website",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Arells",
-    description: "Sell items that never lose value. With Arells bear markets are obsolete.",
+    description: "Sell art that never loses value. With Arells bear markets are obsolete.",
     card: "summary_large_image",
     images: [
       {
