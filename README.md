@@ -1,39 +1,44 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Sell art that never loses value.
+## Never lose money selling cryptocurrencies.
 
 ### Problem:
 Bear markets destroy lots of financial value.
 
 ### Solution:
-Arells: A marketplace that obscures bear markets. Arells is working on achieving this through an innovation called **Price After Purchase** which renders bear markets obsolete.
+Arells: A cryptocurrency marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **Holding Price** which limits the erasure of a token's value from selling pressure.
 
-#### Price Afer Purchase:
-Price After Purchase is a market system which assets cannot be sold lower than the price they were either listed or previously purchased for.
+#### Holding Price:
+Holding Price is a market system which holds the price of a token as it loses value.
 
-**Example:**
+**Example Scenario:**
 
-Created Art sells for $500.
-- Gallery keeps: $485
-- Arells keeps: $15
-- Buyer owns: The Art
-- Price After Purchase: $1,000
-
-Old Buyer sells the Art for $1,000.
-- Store keeps: $400
-- Arells keeps: $30
-- Old Buyer keeps: $570
-- New Buyer gets: The Art
-- Price After Purchase: $2,000
+A Token at the Price of $10 is bought with an investment of $500.
+- Token Price falls to $9 and the investment to $450.
+- Holding Price implemented, investor cannot sell.
+- Token Price is held $10 and the investment at $500.
+- Token Price rises to $11 and the investment to $550.
+- Holding Price is revoked, investor can sell.
+- Investor sells token and gains $50 in profits.
 
 This introduces a new market…
 
 #### Sloth Market:
 
-A market in which no new items are bought or sold but rather stagnates rendering bear markets obsolete.
+A market in which token prices stagnate rendering bear markets obsolete.
 
 <img src="https://github.com/Art-Sells/Arells/assets/51394348/49591992-3d46-4200-80c6-b0656d741c1c" width="800px"> 
+
+_______________________________________________________________________
+
+## FAQ:
+
+**What if I'd like to sell my investment regardless of price?**
+You'll be able to transfer your investment out of Arells and into other marketplaces and exchanges.
+
+**How would transferring my finances out of Arells impact my investment?**
+If the token price (outside the parameters of the Holding Price) decreases, the value of your investment will also decrease. The transfer fees of the network (whether it be Bitcoin, Ethereum or any other cryptocurrency) will be also be evident.
 
 _______________________________________________________________________
 
