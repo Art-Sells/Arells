@@ -34,10 +34,10 @@ _______________________________________________________________________
 
 ## FAQ:
 
-**What if I'd like to sell my investment regardless of price?**
+***What if I'd like to sell my investment regardless of price?***
 You'll be able to transfer your investment out of Arells and into other marketplaces and exchanges.
 
-**How would transferring my finances out of Arells impact my investment?**
+***How would transferring my finances out of Arells impact my investment?***
 If the token price (outside the parameters of the Holding Price) decreases, the value of your investment will also decrease. The transfer fees of the network (whether it be Bitcoin, Ethereum or any other cryptocurrency) will be also be evident.
 
 _______________________________________________________________________
