@@ -24,6 +24,8 @@ const Index = () => {
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     arellsIcon: false,
     wordLogo: false,
+    beforeArells: false,
+    afterArells: false,
   });
 
   const handleImageLoaded = (imageName: string) => {
@@ -82,21 +84,60 @@ const Index = () => {
           <p id="descriptioner">
           NEVER LOSE MONEY SELLING
           </p>
-
           <hr id="black-liner"/>
-
           <p id="ada-description">
-          CRYPTOCURRENCIES
+            CRYPTOCURRENCIES
           </p>
+          <div id="crypto-images-wrapper">
+            <span>
+              <div id="before-arells">
+                <Image 
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('beforeArells')}
+                  alt="" 
+                  width={80}
+                  height={80}
+                  id="before-arells-image" 
+                  src="images/market/BitcoinBefore.jpg"/>
+              </div>
+            </span>
+            <span>
+              <div id="after-arells">
+                <Image 
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('afterArells')}
+                  alt="" 
+                  width={80}
+                  height={80}
+                  id="after-arells-image" 
+                  src="images/market/BitcoinAfter.jpg"/>
+              </div>
+            </span>
+          </div>
+          
+          <div id="before-after-words">
+            <span id="before-word">BEFORE</span>
+            <span id="after-word">AFTER</span>
+          </div>
+          
 
-          <hr id="black-liner-bottom-home"/>
+
+          
   
 
           <Link href="/" passHref>
             <button id="updatess">
               SIGN UP FOR EARLY ACCESS
             </button>
-          </Link>         
+          </Link>    
+
+          {/* <hr id="black-liner-bottom"/>
+
+          <Link href="/" passHref>
+            <button id="howitworks">
+              HOW IT WORKS
+            </button>
+          </Link>         */}
         </div>
    
     </>
