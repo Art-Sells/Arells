@@ -124,11 +124,14 @@
 				padding-bottom: 5px;			
 				background: rgb(255, 255, 255);
 			}
+			#before-after-words {
+				margin-left:auto;
+				margin-right:auto;
+			}
 			#before-word {
 				margin-top: 10px;
 				font-size: 8px;
 				letter-spacing: 1px;
-				margin-left: 5px;
 				margin-right: 60px; 
 				font-weight: 800;
 				opacity: .7;
@@ -139,7 +142,6 @@
 				font-size: 8px;
 				letter-spacing: 1px;
 				margin-left: 60px; 
-				margin-right: 6px;
 				font-weight: 800;
 				opacity: .7;
 				color: rgb(216, 151, 65);
