@@ -88,6 +88,7 @@ const Index = () => {
           <p id="ada-description">
             CRYPTOCURRENCIES
           </p>
+          <hr id="black-liner"/>
           <div id="crypto-images-wrapper">
             <span>
               <div id="before-arells">

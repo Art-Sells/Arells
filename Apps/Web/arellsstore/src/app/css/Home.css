@@ -60,13 +60,13 @@
 	
 	  
 	  #descriptioner {
-		  margin-top: 15px;
+		  margin-top: 30px;
 		  font-size: 8px;
 		  letter-spacing: 1px;
 		  margin-left: 1px; 
 		  font-weight: 600;
-		  opacity: .7;
-		  color: black;
+		  opacity: .8;
+		  color: rgb(193, 130, 49);
 		  word-spacing: 0px;
 	  }	
 
@@ -77,12 +77,12 @@
 			margin-left: 6px; 
 			word-spacing: 2px;
 			font-weight: 800;
-			opacity: .5;
-			color: rgb(149, 85, 0);
+			opacity: 1;
+			color: rgb(216, 151, 65);
 		}
 		#crypto-images-wrapper {
-			margin-top: 5px;
-			margin-bottom: 7px;
+			margin-top: 35px;
+			margin-bottom: 0px;
 			display: flex;
 			justify-content: center; 
 			align-items: center;
@@ -95,13 +95,18 @@
 				align-items: center;
 				overflow: hidden;
 				box-shadow: 0px 5px 20px -6px rgba(204, 116, 0, 0.5); 
-				width: 120px;
+				width: 130px;
 				height: 85px;
 				padding-top: 10px;
 				padding-left: 5px;
 				padding-right: 5px;
 				padding-bottom: 5px;			
 				background: rgb(255, 255, 255);
+			}
+			#after-arells-image,
+			#before-arells-image{
+				width: 80px;
+				height: 80px;
 			}
 			#after-arells {
 				margin-top: 5px;
@@ -111,7 +116,7 @@
 				align-items: center;
 				overflow: hidden;
 				box-shadow: 0px 5px 20px -6px rgba(204, 116, 0, 0.5); 
-				width: 120px;
+				width: 130px;
 				height: 85px;
 				padding-top: 10px;
 				padding-left: 5px;
@@ -122,20 +127,22 @@
 			#before-word {
 				margin-top: 10px;
 				font-size: 8px;
-				letter-spacing: 5px;
-				margin-right: 45px; 
+				letter-spacing: 1px;
+				margin-left: 5px;
+				margin-right: 60px; 
 				font-weight: 800;
-				opacity: .5;
-				color: rgb(149, 85, 0);
+				opacity: .7;
+				color: rgb(216, 151, 65);
 			}
 			#after-word {
 				margin-top: 10px;
 				font-size: 8px;
-				letter-spacing: 5px;
-				margin-left: 45px; 
+				letter-spacing: 1px;
+				margin-left: 60px; 
+				margin-right: 6px;
 				font-weight: 800;
-				opacity: .5;
-				color: rgb(149, 85, 0);
+				opacity: .7;
+				color: rgb(216, 151, 65);
 			}
 
 	  #black-liner {
@@ -144,8 +151,8 @@
 		border: none;
 		height: 2px;
 		border-radius: 30px;
-		width: 280px;
-		opacity: .5;
+		width: 185px;
+		opacity: .3;
 	  }	
 
 	  #black-liner-bottom {
@@ -159,13 +166,13 @@
 	  }	
 
 	#black-liner-bottom-home {
-		margin-top: 10px;
-		background-color: black;
+		margin-top: 15px;
+		background-color: rgba(204, 116, 0, 0.5); 
 		border: none;
 		height: 2px;
 		border-radius: 30px;
-		width: 350px;
-		opacity: .1;
+		width: 300px;
+		opacity: .8;
 	  }	
 
 	  #bear-markets-description {
@@ -179,21 +186,21 @@
 		word-spacing: 0px;
 	}
 	  #updatess {
-		margin-top: 10px;
+		margin-top: 5px;
 		background: rgba(204, 116, 0);
 		text-decoration: none;
 		color: white;
-		font-weight: 200;
+		font-weight:500;
 		font-size: 11px;
 		padding-top: 20px;
 		padding-bottom: 20px;
 		padding-right: 12px;
-		padding-left: 14px;	  
+		padding-left: 15px;	  
 		border: none;
-		letter-spacing: 2px;
+		letter-spacing: 3px;
 		border-radius: 5px;
 		border-width: 0px;
-		width: 280px;
+		width: 300px;
 		opacity: 1;
 		box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  
 	  }
@@ -355,7 +362,7 @@
 			padding-top: 0px;
 		}
 		#arells-iconn {
-			margin-top: 100px;
+			margin-top: 50px;
 		}  
 	}
 	  
@@ -364,6 +371,7 @@
 	  -webkit-text-size-adjust: none;
 	}  
 	  #arells-iconn {
+		margin-top: 90px;
 		  width: 65px;
 		  height: 70px;
 	  }
@@ -381,7 +389,7 @@
 	  }	
 
 	  #black-liner {
-		width: 230px;
+		width: 160px;
 	  }	
 
 	  #ada-description {
@@ -390,6 +398,37 @@
 		margin-left: 5px; 
 		word-spacing: 2px;
 	}
+	#crypto-images-wrapper {
+		margin-top: 35px;
+	  }
+		#before-arells {
+			width: 110px;
+			height: 73px;
+		}
+		#after-arells-image,
+		#before-arells-image{
+			width: 70px;
+			height: 70px;
+		}
+		#after-arells {
+			width: 110px;
+			height: 73px;
+		}
+		#before-word {
+			font-size: 7px;
+			letter-spacing: 1px;
+			margin-left: 5px;
+			margin-right: 53px; 
+			opacity: .7;
+		}
+		#after-word {
+			font-size: 7px;
+			letter-spacing: 1px;
+			margin-left: 53px; 
+			margin-right: 6px;
+			font-weight: 800;
+			opacity: .7;
+		}
 	#black-liner-bottom-home {
 		width: 300px;
 		opacity: .1;
@@ -403,12 +442,10 @@
 
 	
 	  #updatess {
-		width: 185px;
+		width: 260px;
 		font-weight:400;
 		font-size: 9px;
-		border-width: 1px;	   
-		padding-right: 22px;
-		padding-left: 25px;	 
+		border-width: 1px;	    
 	  }	
 	  #wallet-needed-words{
 		margin-top: 10px;
