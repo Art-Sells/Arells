@@ -24,8 +24,6 @@ const Index = () => {
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     arellsIcon: false,
     wordLogo: false,
-    beforeArells: false,
-    afterArells: false,
   });
 
   const handleImageLoaded = (imageName: string) => {
@@ -94,7 +92,6 @@ const Index = () => {
               <div id="before-arells">
                 <Image 
                   loader={imageLoader}
-                  onLoad={() => handleImageLoaded('beforeArells')}
                   alt="" 
                   width={80}
                   height={80}
@@ -106,7 +103,6 @@ const Index = () => {
               <div id="after-arells">
                 <Image 
                   loader={imageLoader}
-                  onLoad={() => handleImageLoaded('afterArells')}
                   alt="" 
                   width={80}
                   height={80}
