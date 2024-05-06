@@ -66,7 +66,7 @@
 		  margin-left: 1px; 
 		  font-weight: 600;
 		  opacity: .8;
-		  color: rgb(193, 130, 49);
+		  color: rgb(143, 78, 0);
 		  word-spacing: 0px;
 	  }	
 
@@ -78,7 +78,7 @@
 			word-spacing: 2px;
 			font-weight: 800;
 			opacity: 1;
-			color: rgb(216, 151, 65);
+			color: rgb(143, 78, 0);
 		}
 		#crypto-images-wrapper {
 			margin-top: 35px;
@@ -138,7 +138,7 @@
 				margin-left: 0px;
 				font-weight: 800;
 				opacity: .7;
-				color: rgb(216, 151, 65);
+				color: rgb(143, 78, 0);
 			}
 			#after-word {
 				font-size: 8px;
@@ -147,12 +147,12 @@
 				margin-right: 0px; 
 				font-weight: 800;
 				opacity: .7;
-				color: rgb(216, 151, 65);
+				color: rgb(143, 78, 0);
 			}
 
 	  #black-liner {
 		margin-top: 15px;
-		background-color: rgba(204, 116, 0, 0.5); 
+		background-color: rgba(204, 116, 0, 1);
 		border: none;
 		height: 2px;
 		border-radius: 30px;
@@ -172,7 +172,7 @@
 
 	#black-liner-bottom-home {
 		margin-top: 15px;
-		background-color: rgba(204, 116, 0, 0.5); 
+		background-color: rgba(204, 116, 0);
 		border: none;
 		height: 2px;
 		border-radius: 30px;
