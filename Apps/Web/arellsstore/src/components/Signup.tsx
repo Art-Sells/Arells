@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import '../app/css/stayupdated.css';
 import '../app/css/modals/stayupdated-modal.css';
@@ -75,11 +77,17 @@ const Signup: React.FC = () => {
                             id="email-input" ></input>
                     </div>
                     <div id="enter-content">
-                        <label id="label">NAME</label>
+                        <label id="label">FIRST NAME</label>
                         <br />
                         <input name="first_name" type="text"
                             id="first-input" ></input>
                     </div>
+                    <div id="enter-content">
+						<label id="label">LAST NAME</label>
+						<br/>
+						<input name="last_name" type="text" 
+						id="last-input" ></input>
+					</div>
                     <br />
                     <a id="submit"
                         onClick={signUp}>SUBMIT</a>

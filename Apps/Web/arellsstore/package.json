@@ -12,8 +12,9 @@
     "watch": "graphql-codegen -w"
   },
   "dependencies": {
-    "@apollo/client": "^3.8.0-rc.2",
+    "@apollo/client": "3.10.2",
     "@apollo/experimental-nextjs-app-support": "^0.5.1",
+    "@apollo/federation": "latest",
     "@coinbase/wallet-sdk": "^3.7.2",
     "@openzeppelin/contracts": "^4.9.3",
     "@types/formidable": "2.0.4",
@@ -46,7 +47,6 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "apollo": "^2.34.0",
     "aws-lambda": "^1.0.7",
     "chai": "^4.3.10",
     "ethereum-waffle": "^4.0.10",

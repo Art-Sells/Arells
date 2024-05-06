@@ -122,7 +122,7 @@ const Index = () => {
           
   
 
-          <Link href="/" passHref>
+          <Link href="/signup" passHref>
             <button id="updatess">
               SIGN UP FOR EARLY ACCESS
             </button>
