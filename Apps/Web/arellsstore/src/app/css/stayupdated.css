@@ -52,7 +52,7 @@
 
 	#stay-updated {
 		margin-top: 10px;
-		color: rgb(216, 151, 65);
+		color: rgb(143, 78, 0);
 		margin-left: auto;	
 		margin-right: auto;	
 		font-weight: 600;	
@@ -60,12 +60,12 @@
 		margin-left: 2px;
 		letter-spacing: 2px;
 		word-spacing: 2px;
-		opacity: 1;			
+		opacity: .7;			
 	}		
 
 	
 	#sign-up {
-		color: rgb(165, 114, 48);
+		color: rgb(143, 78, 0);
 		width: 500px;
 		height: 435px;
 		padding-top: 30px;
@@ -87,7 +87,7 @@
 			font-size: 8px;
 			letter-spacing: 1px;
 			margin-left: 1px;
-			opacity: .5;
+			opacity: .6;
 		}
        	   #email-input,
 		   #first-input,
