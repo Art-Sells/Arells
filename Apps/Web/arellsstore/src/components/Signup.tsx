@@ -1,11 +1,20 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
+import type { ImageLoaderProps } from 'next/image';
 import '../app/css/stayupdated.css';
 import '../app/css/modals/stayupdated-modal.css';
 import $ from 'jquery';
 
 const Signup: React.FC = () => {
+    //Loader Function/s
+    const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+        return `/${src}?w=${width}&q=${quality || 100}`;
+      }
+    //Loader Function/s
+
+
     const [showEnterInformation, setEnterInformation] = useState<boolean>(false);
     const [showSubmitted, setSubmitted] = useState<boolean>(false);
 
@@ -57,7 +66,42 @@ const Signup: React.FC = () => {
             {showSubmitted && (
                 <div className="RWmodal">
                     <div className="RWmodal-content">
-                        <p>SUBMITTED</p>
+                        <p>SUBMISSION SUCCESSFUL</p>
+                        <p>We'll be in touch.</p>
+                        <div id="contact-submit">
+                            <p>Questions?</p>
+                            <div>
+                                <span>Email us:</span>
+                                <span>    
+                                    <a href="mailto:info@arells.com">
+                                        <Image 
+                                        loader={imageLoader}
+                                        alt="" 
+                                        width={80}
+                                        height={85}
+                                        id="arells-iconn" 
+                                        src="images/Arells-Icon.png"/>
+                                    </a>      
+                                </span>
+                                <span>          
+                                    info@arells.com
+                                </span>
+                            </div>
+                            <div>
+                                <span>Follow us:</span>
+                                <span>                                
+                                    <Image 
+                                    loader={imageLoader}
+                                    alt="" 
+                                    width={80}
+                                    height={85}
+                                    id="arells-iconn" 
+                                    src="images/Arells-Icon.png"/>
+                                </span>
+                            </div>
+                            
+                            <span></span>
+                        </div>
                         <button className="RWclose" onClick={closeSubmitted}>OK</button>
                     </div>
                 </div>
