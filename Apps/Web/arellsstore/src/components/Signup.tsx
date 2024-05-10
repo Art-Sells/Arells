@@ -6,6 +6,7 @@ import type { ImageLoaderProps } from 'next/image';
 import '../app/css/stayupdated.css';
 import '../app/css/modals/stayupdated-modal.css';
 import $ from 'jquery';
+import Link from 'next/link';
 
 const Signup: React.FC = () => {
     //Loader Function/s
@@ -16,7 +17,7 @@ const Signup: React.FC = () => {
 
 
     const [showEnterInformation, setEnterInformation] = useState<boolean>(false);
-    const [showSubmitted, setSubmitted] = useState<boolean>(false);
+    const [showSubmitted, setSubmitted] = useState<boolean>(true);
 
     const signUp = () => {
         if (typeof window !== 'undefined') {
@@ -57,52 +58,55 @@ const Signup: React.FC = () => {
             {showEnterInformation && (
                 <div className="RWmodal">
                     <div className="RWmodal-content">
-                        <p>ENTER INFORMATION</p>
+                        <p className="enter-info">ENTER INFORMATION</p>
                         <button className="RWclose" onClick={closeEnterInformation}>OK</button>
                     </div>
                 </div>
             )}
 
             {showSubmitted && (
-                <div className="RWmodal">
-                    <div className="RWmodal-content">
-                        <p>SUBMISSION SUCCESSFUL</p>
-                        <p>We'll be in touch.</p>
-                        <div id="contact-submit">
-                            <p>Questions?</p>
+                <div className="RWmodal-submitted">
+                    <div className="RWmodal-content-submitted">
+                        <p className="submission-successful">SUBMISSION SUCCESSFUL</p>
+                        <p className="submission-successful-words">We'll be in touch.</p>
+                        <div className="contact-submit">
+                            <p className="contact-submit-question">Questions?</p>
                             <div>
-                                <span>Email us:</span>
+                                <span className="contact-submit-title">
+                                    Email us:
+                                </span>
                                 <span>    
                                     <a href="mailto:info@arells.com">
                                         <Image 
                                         loader={imageLoader}
                                         alt="" 
-                                        width={80}
-                                        height={85}
-                                        id="arells-iconn" 
-                                        src="images/Arells-Icon.png"/>
+                                        width={30}
+                                        height={30}
+                                        id="email-contact" 
+                                        src="images/signup/email-ivory.png"/>
                                     </a>      
                                 </span>
-                                <span>          
+                                <p className="contact-submit-email">          
                                     info@arells.com
-                                </span>
+                                </p>
                             </div>
                             <div>
-                                <span>Follow us:</span>
-                                <span>                                
-                                    <Image 
-                                    loader={imageLoader}
-                                    alt="" 
-                                    width={80}
-                                    height={85}
-                                    id="arells-iconn" 
-                                    src="images/Arells-Icon.png"/>
+                                <span className="contact-submit-title">
+                                    Follow us:
+                                </span>
+                                <span>
+                                    <Link href="https://twitter.com/arellsofficial" passHref>
+                                        <Image 
+                                        loader={imageLoader}
+                                        alt="" 
+                                        width={30}
+                                        height={30}
+                                        id="twitter-contact" 
+                                        src="/images/signup/twitter-ivory.png"/>
+                                    </Link>  
                                 </span>
                             </div>
-                            
-                            <span></span>
                         </div>
-                        <button className="RWclose" onClick={closeSubmitted}>OK</button>
                     </div>
                 </div>
             )}
