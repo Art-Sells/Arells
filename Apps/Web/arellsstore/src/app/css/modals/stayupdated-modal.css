@@ -18,7 +18,7 @@
 .RWmodal-submitted {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 130px; /* Location of the box */
+  padding-top: 200px; /* Location of the box */
 	text-align: center;
 	font-family: Arial;
   left: 0;
@@ -109,63 +109,54 @@
         margin-right: auto;  
       }
 
-        .contact-submit-question {
-          color: white;
-          font-weight: 500;
-          font-size: 10px;
-          letter-spacing: 1px;
-          margin-left: 1px;  
-        }
 
-          .contact-submit-title {
+          .contact-submit-question {
             color: white;
             font-weight: 200;
             font-size: 9px;
             letter-spacing: 1px;
             margin-left: 1px; 
-          }
-          .contact-submit-email {
-            color: white;
-            font-weight: 200;
-            font-size: 9px;
-            letter-spacing: 1px;
-            margin-left: 1px; 
+            margin-top: 30px;
+            margin-bottom: 15px;
+            opacity: .9;
           }
 
             .email-contacts {
               background: none;
-              color: white;
-              margin-left: auto;
-              margin-right: auto;   
+              color: black;
+              margin-right: 3px;   
               border: solid;
-              border-width: 1.5px;
-              border-radius: 7px;
-              padding-top: 20px;
-              padding-right: 5px;
-              padding-left: 5px;
-              padding-bottom: 2px;
-              width: 80px; 
-              height: 80px
+              border-width: .5px;
+              border-radius: 10px;
+              padding-top: 23.5px;
+              padding-right:7px;
+              padding-left: 7px;
+              padding-bottom: 1px;
+              opacity: .8;
+              box-shadow: 0px 8px 12px -6px rgb(0, 0, 0, 0.5); 
             }
-            #email-contact,
+            #email-contact {
+              width: 33px; 
+              height: 33px;
+            }
+           
             #twitter-contact {
-              width: 30px; 
-              height: 30px
+              width: 33px; 
+              height: 33px;
             }
             .twitter-contacts {
               background: none;
-              color: white;
-              margin-left: auto;
-              margin-right: auto;   
+              color: black;
+              margin-left: 3px;
               border: solid;
-              border-width: 1.5px;
-              border-radius: 7px;
-              padding-top: 20px;
-              padding-right: 5px;
-              padding-left: 5px;
-              padding-bottom: 2px;
-              width: 80px; 
-              height: 80px
+              border-width: .5px;
+              border-radius: 10px;
+              padding-top: 23.5px;
+              padding-right: 7px;
+              padding-left: 7px;
+              padding-bottom: 1px;
+              opacity: .8;
+              box-shadow: 0px 8px 12px -6px rgb(0, 0, 0, 0.5);
             }
 
 

@@ -17,7 +17,7 @@ const Signup: React.FC = () => {
 
 
     const [showEnterInformation, setEnterInformation] = useState<boolean>(false);
-    const [showSubmitted, setSubmitted] = useState<boolean>(true);
+    const [showSubmitted, setSubmitted] = useState<boolean>(false);
 
     const signUp = () => {
         if (typeof window !== 'undefined') {
@@ -69,44 +69,31 @@ const Signup: React.FC = () => {
                     <div className="RWmodal-content-submitted">
                         <p className="submission-successful">SUBMITTED</p>
                         <div className="contact-submit">
-                            <p className="contact-submit-question">Questions?</p>
-                            <p className="contact-submit-title">
-                                Email us:
-                            </p>
-                            <p>    
-                                <a href="mailto:info@arells.com"
-                                    className="email-contacts" >
-                                    <Image 
-                                    loader={imageLoader}
-                                    alt="" 
-                                    width={30}
-                                    height={30}
-                                    id="email-contact" 
-                                    src="images/signup/email-ivory.png"/>
-                                </a>      
-                            </p>
-                            <p className="contact-submit-email">          
-                                info@arells.com
-                            </p>
+                            <p className="contact-submit-question">Questions? Contact us:</p>
 
-                            
-                            <p className="contact-submit-title">
-                                Follow us:
-                            </p>
-                            <p>
-                                <Link href="https://twitter.com/arellsofficial" 
-                                    passHref
-                                    className="twitter-contacts">
-                                    <Image 
-                                    loader={imageLoader}
-                                    alt="" 
-                                    width={30}
-                                    height={30}
-                                    id="twitter-contact" 
-                                    src="/images/signup/twitter-ivory.png"/>
-                                </Link>  
-                            </p>
-                            
+                            <a href="mailto:info@arells.com"
+                                className="email-contacts" >
+                                <Image 
+                                loader={imageLoader}
+                                alt="" 
+                                width={33}
+                                height={33}
+                                id="email-contact" 
+                                src="images/signup/email-ebony.png"/>
+                            </a>      
+
+                            <Link href="https://twitter.com/arellsofficial" 
+                                passHref
+                                className="twitter-contacts">
+                                <Image 
+                                loader={imageLoader}
+                                alt="" 
+                                width={33}
+                                height={33}
+                                id="twitter-contact" 
+                                src="images/signup/twitter-ebony.png"/>
+                            </Link>  
+
                         </div>
                         <p className="contact-title-description">
                             NEVER LOSE MONEY SELLING CRYPTOCURRENCIES
