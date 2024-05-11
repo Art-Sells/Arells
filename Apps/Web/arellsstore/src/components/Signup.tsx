@@ -29,12 +29,12 @@ const Signup: React.FC = () => {
                 setEnterInformation(true);
             } else {
                 $.ajax({
-                    url: "https://api.apispreadsheets.com/data/uAv9KS8S9kojekky/",
+                    url: "https://api.apispreadsheets.com/data/6T0aVzc5FSPAbNSH/",
                     type: "post",
                     data: $("#myForm").serializeArray(),
                     headers: {
-                        accessKey: "c492c5cefcf9fdde44bbcd84a97465f1",
-                        secretKey: "ac667f2902e4e472c82aff475a4a7a07"
+                        accessKey:"6dc5c76c0cd9a9ab87f5bd2e8a9b57e2", 
+                        secretKey:"4a6ce35719e814296ef47d5d90b85bf8"
                     }
                 });
                 (document.getElementById('email-input') as HTMLInputElement).value = "";
@@ -47,10 +47,6 @@ const Signup: React.FC = () => {
 
     const closeEnterInformation = () => {
         setEnterInformation(false);
-    };
-
-    const closeSubmitted = () => {
-        setSubmitted(false);
     };
 
     return (
