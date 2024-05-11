@@ -17,7 +17,7 @@ const Signup: React.FC = () => {
 
 
     const [showEnterInformation, setEnterInformation] = useState<boolean>(false);
-    const [showSubmitted, setSubmitted] = useState<boolean>(true);
+    const [showSubmitted, setSubmitted] = useState<boolean>(false);
 
     const signUp = () => {
         if (typeof window !== 'undefined') {
@@ -72,8 +72,8 @@ const Signup: React.FC = () => {
                                 <Image 
                                 loader={imageLoader}
                                 alt="" 
-                                width={33}
-                                height={33}
+                                width={25}
+                                height={25}
                                 id="email-contact" 
                                 src="images/signup/email-ebony.png"/>
                             </a>      
@@ -84,8 +84,8 @@ const Signup: React.FC = () => {
                                 <Image 
                                 loader={imageLoader}
                                 alt="" 
-                                width={33}
-                                height={33}
+                                width={25}
+                                height={25}
                                 id="twitter-contact" 
                                 src="images/signup/twitter-ebony.png"/>
                             </Link>  

@@ -113,55 +113,55 @@
           .contact-submit-question {
             color: white;
             font-weight: 200;
-            font-size: 9px;
+            font-size: 8px;
             letter-spacing: 1px;
             margin-left: 1px; 
             margin-top: 30px;
-            margin-bottom: 15px;
-            opacity: .9;
+            margin-bottom: 22px;
+            opacity: .8;
           }
 
             .email-contacts {
               background: none;
               color: black;
-              margin-right: 3px;   
+              margin-right: 8px;   
               border: solid;
               border-width: .5px;
               border-radius: 10px;
-              padding-top: 23.5px;
-              padding-right:7px;
-              padding-left: 7px;
-              padding-bottom: 1px;
+              padding-top: 18px;
+              padding-right:10px;
+              padding-left: 10px;
+              padding-bottom: 4px;
               opacity: 1;
-              box-shadow: 0px 8px 12px -6px rgb(0, 0, 0, 0.5); 
+              box-shadow: 0px 5px 20px -3px rgb(0, 0, 0, 0.3);
             }
             #email-contact {
-              width: 33px; 
-              height: 33px;
+              width: 25px; 
+              height: 25px;
             }
            
             #twitter-contact {
-              width: 33px; 
-              height: 33px;
+              width: 25px; 
+              height: 25px;
             }
             .twitter-contacts {
               background: none;
               color: black;
-              margin-left: 3px;
+              margin-left: 8px;
               border: solid;
               border-width: .5px;
               border-radius: 10px;
-              padding-top: 23.5px;
-              padding-right: 7px;
-              padding-left: 7px;
-              padding-bottom: 1px;
+              padding-top: 18px;
+              padding-right:10px;
+              padding-left: 10px;
+              padding-bottom: 4px;
               opacity: 1;
-              box-shadow: 0px 8px 12px -6px rgb(0, 0, 0, 0.5);
+              box-shadow: 0px 5px 20px -3px rgb(0, 0, 0, 0.3);
             }
 
 
             .contact-title-description {
-              margin-top: 50px;
+              margin-top: 45px;
               color: white;
               font-weight: 500;
               font-size: 5px;
