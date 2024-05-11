@@ -17,7 +17,7 @@ const Signup: React.FC = () => {
 
 
     const [showEnterInformation, setEnterInformation] = useState<boolean>(false);
-    const [showSubmitted, setSubmitted] = useState<boolean>(false);
+    const [showSubmitted, setSubmitted] = useState<boolean>(true);
 
     const signUp = () => {
         if (typeof window !== 'undefined') {
