@@ -8,26 +8,26 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Arells",
-  description: "Sell art that never loses value. With Arells bear markets are obsolete.",
+  description: "Never lose money selling cryptocurrencies.",
   robots: "noimageindex",
   openGraph: {
     title: "Arells",
-    description: "Sell art that never loses value. With Arells bear markets are obsolete.",
+    description: "Never lose money selling cryptocurrencies.",
     url: "https://arells.com",
     type: "website",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Spread.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Spread-Pivot.jpg"
       }
     ]
   },
   twitter: {
     title: "Arells",
-    description: "Sell art that never loses value. With Arells bear markets are obsolete.",
+    description: "Never lose money selling cryptocurrencies.",
     card: "summary_large_image",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Spread.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Spread-Pivot.jpg"
       }
     ]
   }

@@ -31,7 +31,7 @@
 } */
 
 #wrapper {
-	padding-top: 30px; 
+	padding-top: 20px; 
 	text-align: center;
 	font-family: Arial;
 	margin-top: 0%;
@@ -51,8 +51,8 @@
 
 
 	#stay-updated {
-		margin-top: 30px;
-		color: black;
+		margin-top: 10px;
+		color: rgb(143, 78, 0);
 		margin-left: auto;	
 		margin-right: auto;	
 		font-weight: 600;	
@@ -60,14 +60,14 @@
 		margin-left: 2px;
 		letter-spacing: 2px;
 		word-spacing: 2px;
-		opacity: .3;			
+		opacity: .7;			
 	}		
 
 	
 	#sign-up {
-		color: black;
+		color: rgb(143, 78, 0);
 		width: 500px;
-		height: 450px;
+		height: 435px;
 		padding-top: 30px;
 		padding-left: 10px;
 		padding-right: 10px;
@@ -75,40 +75,44 @@
 		margin-left: auto;
 		margin-right: auto;
 		background: none;
-		border-radius: 15px;
-		box-shadow: 0px 5px 20px -6px silver; 			  	
+		border-radius: 5px;
+		box-shadow: 0px 5px 30px -6px rgba(204, 116, 0, 0.5); 		  	
 	}
 
 		#enter-content {
 			margin-top: 20px;
 		}
 		#label{
-			font-weight: 500;
-			font-size: 9px;
-			letter-spacing: 2px;
-			margin-left: 2px;
-			opacity: .8;
+			font-weight: 600;
+			font-size: 8px;
+			letter-spacing: 1px;
+			margin-left: 1px;
+			opacity: .6;
 		}
-       	   #input-update { 
+       	   #email-input,
+		   #first-input,
+		   #last-input { 
        	   	    text-align: center;
-       	   		margin-top: 5px;     	   
+       	   		margin-top: 0px;     	   
        	   		padding-top: 20px;
        	   		padding-bottom: 20px;
        	   		padding-left: 21px;
        	   		padding-right: 19px;       	   		
        	   		color: white;
-       	   		font-weight: 500;
+       	   		font-weight: 800;
        	   		border: none;
-       	   		border-radius: 7px;
-       	   		font-size: 13px;
+       	   		border-radius: 5px;
+       	   		font-size: 10px;
        	   		width: 240px;
        	   		height: 15px;
 				letter-spacing: 1px;    	   		
-       	   		background: black;
+				background: rgb(192, 133, 57);
        	   		opacity: .4;
        	   }
  	   
-			#input-update:focus {
+			  #email-input:focus,
+			  #first-input:focus,
+			  #last-input:focus {
 			    cursor: pointer;
 			    outline: none;
 			    transition: 1s;
@@ -124,7 +128,7 @@
 			  margin-bottom: 35px;           
            }     	   
 			#submit {
-			  background: black;
+			  background: rgba(204, 116, 0);
 			  text-decoration: none;
 			  color: white;
 			  font-weight: 500;
@@ -139,7 +143,7 @@
 			  border-width: 0px;
 			  width: 200px;
 			  opacity: 1;
-	  		  box-shadow: 0px 8px 12px -6px black; 			  
+			  box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
 			}
 			#submit:hover,
 			#submit:focus {
@@ -169,29 +173,34 @@
 
 
 
-@media screen and (max-width: 700px){
+@media screen and (max-width: 650px){
 
 	#stay-updated {
-		font-size: 8px;
-		letter-spacing: 1px;
-		word-spacing: 1px;			
+		font-size: 8px;		
 	}	
 
 	#sign-up {
 		width: 350px;			  	
 	}	
-       	  #input-update { 
-			margin-top: 5px;     	   
+	#label{
+		font-size: 7px;
+	}
+	#email-input,
+	#first-input,
+	#last-input {    	   
+		
 			padding-top: 20px;
 			padding-bottom: 20px;
 			padding-left: 21px;
-			padding-right: 19px;       	   		
-			font-weight: 500;
-			font-size: 14px;
+			padding-right: 19px; 
+			font-size: 9px;     	   		
 			width: 190px;
-			height: 15px;
-			letter-spacing: 1px;    	   		
-       	   }			
+			height: 15px; 	   		
+       	   }
+		   
+		#submit {
+			font-size: 9px; 			  
+			}
 
 
 	#twitter {

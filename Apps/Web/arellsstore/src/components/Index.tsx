@@ -3,8 +3,6 @@
 // Assuming that there's no global type definitions for Next.js Image and Link components
 import type { ImageLoaderProps } from 'next/image';
 
-"use client";
-
 // Change below link after test
 import '../app/css/Home.css';
 
@@ -15,7 +13,6 @@ import styles from '../app/css/modals/loading/spinner.module.css';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import React from 'react';
-import useSigner from '../state/signer';
 import Link from 'next/link';
 
 const Index = () => {
@@ -43,40 +40,7 @@ const Index = () => {
     }
 }, [imagesLoaded]);
 
-
-
-// asset functions below
-    const [openStore, setOpenStore] = useState(false);
-    const [openStoreConnected, setOpenStoreConnected] = useState(false);
-    const { address, connectWallet } = useSigner();
-    const [isConnecting, setIsConnecting] = useState(false);
-    const handleConnectWallet = async () => {
-      setIsConnecting(true);
-      try {
-        await connectWallet();
-        if (address) {
-          // If address is set, it means wallet is connected
-          setOpenStore(false);
-          setOpenStoreConnected(true);
-        }
-      } catch (error) {
-        console.error("Error connecting wallet:", error);
-      } finally {
-        setIsConnecting(false);
-      }
-    };
-    useEffect(() => {
-      if (!address) {
-        setOpenStore(true);
-        setOpenStoreConnected(false);
-      }
-      else {
-        setOpenStore(false);
-        setOpenStoreConnected(true);
-      }
-    }, [address]);
-    
-// Asset functions anove    
+  
 
   return (
     <>
@@ -91,9 +55,6 @@ const Index = () => {
             src="images/Arells-Icon.png"/>    
             <div className={styles.spinner}></div>    
         </div>
-      )}
-      {openStoreConnected && (
-        <div id="connected-spacing"></div>
       )}
           <Image 
             loader={imageLoader}
@@ -117,62 +78,65 @@ const Index = () => {
           
           <br/>
         
-      {openStore && (
         <div>          
           <p id="descriptioner">
-          SELL ART THAT NEVER LOSES VALUE
+          NEVER LOSE MONEY SELLING
           </p>
-
           <hr id="black-liner"/>
-
           <p id="ada-description">
-          ARELLS DIGITAL ASSETS
+            CRYPTOCURRENCIES
           </p>
+          <hr id="black-liner"/>
+          <div id="crypto-images-wrapper">
+            <span>
+              <div id="before-arells">
+                <Image 
+                  loader={imageLoader}
+                  alt="" 
+                  width={80}
+                  height={80}
+                  id="before-arells-image" 
+                  src="images/market/BitcoinBefore.jpg"/>
+              </div>
+            </span>
+            <span>
+              <div id="after-arells">
+                <Image 
+                  loader={imageLoader}
+                  alt="" 
+                  width={80}
+                  height={80}
+                  id="after-arells-image" 
+                  src="images/market/BitcoinAfter.jpg"/>
+              </div>
+            </span>
+          </div>
+          
+          <div id="before-after-words">
+            <span id="before-word">BEFORE</span>
+            <span id="after-word">AFTER</span>
+          </div>
+          
 
-          <hr id="black-liner-bottom-home"/>
 
-          <p id="bear-markets-description">
-          NO MORE BEAR MARKETS
-          </p>            
-          <button 
-          id="updatess" 
-          onClick={handleConnectWallet}
-          disabled={isConnecting} 
-          >
-            {isConnecting ? "CONNECTING..." : "CONNECT WALLET"}
-          </button> 
-          <p id="wallet-needed-words">Connect Wallet to Enter Your Store</p>
-        </div>
+          
   
-      )}	
-      {openStoreConnected && (
-        <div id="connecting-wallet-wrapper">
-          <p id="ada-connected">
-          WALLET CONNECTED
-          </p>
-          {/* change below link after test */}
-          <Link href={`/own/${address}`} passHref>
-            <button id="updatess-connected">
-              ENTER STORE
-            </button>
-          </Link> 
-        </div>  
-      )}	
-      <br></br>
 
-      <Link 
-      href="https://discord.gg/6UUJxepDx7" 
-      passHref
-      id="discord-wrapper">
-        <Image 
-          loader={imageLoader}
-          onLoad={() => handleImageLoaded('arellsIcon')}
-          alt="" 
-          width={25}
-          height={25}
-          id="discord-icon" 
-          src="images/discord.png"/>	
-      </Link>     
+          <Link href="/signup" passHref>
+            <button id="updatess">
+              SIGN UP FOR EARLY ACCESS
+            </button>
+          </Link>    
+
+          {/* <hr id="black-liner-bottom"/>
+
+          <Link href="/" passHref>
+            <button id="howitworks">
+              HOW IT WORKS
+            </button>
+          </Link>         */}
+        </div>
+   
     </>
   );
 }
