@@ -1,6 +1,6 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
-# [Arells](https://arells.com)
+# Arells
 ## Never lose money selling cryptocurrencies.
 
 ### Problem:
