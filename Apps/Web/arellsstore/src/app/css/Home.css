@@ -60,25 +60,25 @@
 	
 	  
 	  #descriptioner {
-		  margin-top: 30px;
-		  font-size: 8px;
-		  letter-spacing: 1px;
-		  margin-left: 1px; 
+		  margin-top: 25px;
+		  font-size: 11px;
+		  letter-spacing: 0px;
+		  margin-left: 0px; 
 		  font-weight: 600;
 		  opacity: 1;
-		  color: rgb(143, 78, 0);
+		  color: black;
 		  word-spacing: 0px;
 	  }	
 
 		#ada-description {
 			margin-top: 15px;
-			font-size: 8px;
+			font-size: 9.2px;
 			letter-spacing: 6px;
 			margin-left: 6px; 
 			word-spacing: 2px;
 			font-weight: 800;
 			opacity: 1;
-			color: rgb(143, 78, 0);
+			color: black;
 		}
 		#crypto-images-wrapper {
 			margin-top: 35px;
@@ -151,12 +151,12 @@
 			}
 
 	  #black-liner {
-		margin-top: 15px;
-		background-color: rgba(204, 116, 0, 1);
+		margin-top: 10px;
+		background-color: rgba(204, 116, 0, .6);
 		border: none;
 		height: 2px;
 		border-radius: 30px;
-		width: 185px;
+		width: 450px;
 		opacity: .3;
 	  }	
 

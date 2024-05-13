@@ -9,6 +9,9 @@ import '../app/css/Home.css';
 // Loader Styles
 import '../app/css/modals/loading/spinnerBackground.css';
 import styles from '../app/css/modals/loading/spinner.module.css';
+import '../app/css/stayupdated.css';
+import '../app/css/modals/stayupdated-modal.css';
+import $ from 'jquery';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -38,7 +41,37 @@ const Index = () => {
     if (Object.values(imagesLoaded).every(Boolean)) {
         setLoading(false);
     }
-}, [imagesLoaded]);
+  }, [imagesLoaded]);
+
+
+  const [showEnterInformation, setEnterInformation] = useState<boolean>(false);
+  const [showSubmitted, setSubmitted] = useState<boolean>(false);
+
+  const signUp = () => {
+    if (typeof window !== 'undefined') {
+        const emailInput = (document.getElementById('email-input') as HTMLInputElement).value;
+
+        if (emailInput === "" ) {
+            setEnterInformation(true);
+        } else {
+            $.ajax({
+                url: "https://api.apispreadsheets.com/data/6T0aVzc5FSPAbNSH/",
+                type: "post",
+                data: $("#myForm").serializeArray(),
+                headers: {
+                    accessKey:"6dc5c76c0cd9a9ab87f5bd2e8a9b57e2", 
+                    secretKey:"4a6ce35719e814296ef47d5d90b85bf8"
+                }
+            });
+            (document.getElementById('email-input') as HTMLInputElement).value = "";
+            setSubmitted(true);
+        }
+    }
+  };
+
+  const closeEnterInformation = () => {
+    setEnterInformation(false);
+  };
 
   
 
@@ -56,6 +89,59 @@ const Index = () => {
             <div className={styles.spinner}></div>    
         </div>
       )}
+
+
+
+            {showEnterInformation && (
+                <div className="RWmodal">
+                    <div className="RWmodal-content">
+                        <p className="enter-info">ENTER EMAIL</p>
+                        <button className="RWclose" onClick={closeEnterInformation}>OK</button>
+                    </div>
+                </div>
+            )}
+
+            {showSubmitted && (
+                <div className="RWmodal-submitted">
+                    <div className="RWmodal-content-submitted">
+                        <p className="submission-successful">SUBMITTED</p>
+                        <div className="contact-submit">
+                            <p className="contact-submit-question">Questions? Contact us:</p>
+
+                            <a href="mailto:info@arells.com"
+                                className="email-contacts" >
+                                <Image 
+                                loader={imageLoader}
+                                alt="" 
+                                width={25}
+                                height={25}
+                                id="email-contact" 
+                                src="images/signup/email-ebony.png"/>
+                            </a>      
+
+                            {/* <Link href="https://twitter.com/arellsofficial" 
+                                passHref
+                                className="twitter-contacts">
+                                <Image 
+                                loader={imageLoader}
+                                alt="" 
+                                width={25}
+                                height={25}
+                                id="twitter-contact" 
+                                src="images/signup/twitter-ebony.png"/>
+                            </Link>   */}
+
+                        </div>
+                        <p className="contact-title-description">
+                            NEVER LOSE MONEY SELLING CRYPTOCURRENCIES
+                        </p>
+                        <p className="contact-coming-soon">
+                            COMING SOON
+                        </p>
+                    </div>
+                </div>
+            )}
+
           <Image 
             loader={imageLoader}
             onLoad={() => handleImageLoaded('arellsIcon')}
@@ -86,8 +172,7 @@ const Index = () => {
           <p id="ada-description">
             CRYPTOCURRENCIES
           </p>
-          <hr id="black-liner"/>
-          <div id="crypto-images-wrapper">
+          {/* <div id="crypto-images-wrapper">
             <span>
               <div id="before-arells">
                 <Image 
@@ -115,26 +200,34 @@ const Index = () => {
           <div id="before-after-words">
             <span id="before-word">BEFORE</span>
             <span id="after-word">AFTER</span>
-          </div>
-          
+          </div> */}
+          <div id="sign-up">
+                <p id="stay-updated">JOIN FOR MORE INFORMATION</p>
 
+                <form id="myForm">
+                    <div id="enter-content">
+                        <label id="label">EMAIL</label>
+                        <br />
+                        <input name="email" type="email"
+                            id="email-input" ></input>
+                    </div>
+                    <br />
+                    <a id="submit"
+                        onClick={signUp}>JOIN</a>
+                </form>
+            </div>
 
           
   
 
-          <Link href="/signup" passHref>
+
+
+          {/* <Link href="/signup" passHref>
             <button id="updatess">
               SIGN UP FOR EARLY ACCESS
             </button>
-          </Link>    
+          </Link>     */}
 
-          {/* <hr id="black-liner-bottom"/>
-
-          <Link href="/" passHref>
-            <button id="howitworks">
-              HOW IT WORKS
-            </button>
-          </Link>         */}
         </div>
    
     </>
