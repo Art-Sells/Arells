@@ -65,8 +65,8 @@
 		  letter-spacing: 0px;
 		  margin-left: 0px; 
 		  font-weight: 600;
-		  opacity: 1;
-		  color: black;
+		  opacity: .6;
+		  color: rgb(115, 65, 0); 
 		  word-spacing: 0px;
 	  }	
 
@@ -156,7 +156,7 @@
 		border: none;
 		height: 2px;
 		border-radius: 30px;
-		width: 450px;
+		width: 350px;
 		opacity: .3;
 	  }	
 
@@ -388,19 +388,17 @@
 
 	  
 	  #descriptioner {
-		  font-size: 7.5px;
-		  letter-spacing: .5px;
-		  margin-left: .5px; 
+		  font-size: 9.5px; 
 	  }	
 
 	  #black-liner {
-		width: 160px;
+		width: 250px;
 	  }	
 
 	  #ada-description {
-		font-size: 7px;
-		letter-spacing: 5px;
-		margin-left: 5px; 
+		font-size: 8px;
+		letter-spacing: 6px;
+		margin-left: 6px; 
 		word-spacing: 2px;
 	}
 	#crypto-images-wrapper {

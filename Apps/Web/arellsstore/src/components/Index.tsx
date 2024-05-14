@@ -104,7 +104,7 @@ const Index = () => {
             {showSubmitted && (
                 <div className="RWmodal-submitted">
                     <div className="RWmodal-content-submitted">
-                        <p className="submission-successful">SUBMITTED</p>
+                        <p className="submission-successful">JOINED</p>
                         <div className="contact-submit">
                             <p className="contact-submit-question">Questions? Contact us:</p>
 
@@ -116,7 +116,7 @@ const Index = () => {
                                 width={25}
                                 height={25}
                                 id="email-contact" 
-                                src="images/signup/email-ebony.png"/>
+                                src="images/signup/email-ivory.png"/>
                             </a>      
 
                             {/* <Link href="https://twitter.com/arellsofficial" 
@@ -206,10 +206,8 @@ const Index = () => {
 
                 <form id="myForm">
                     <div id="enter-content">
-                        <label id="label">EMAIL</label>
-                        <br />
                         <input name="email" type="email"
-                            id="email-input" ></input>
+                            id="email-input" placeholder='e-mail'></input>
                     </div>
                     <br />
                     <a id="submit"
