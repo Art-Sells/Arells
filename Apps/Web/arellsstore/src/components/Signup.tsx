@@ -78,7 +78,7 @@ const Signup: React.FC = () => {
                                 src="images/signup/email-ebony.png"/>
                             </a>      
 
-                            <Link href="https://twitter.com/arellsofficial" 
+                            <Link href="https://twitter.com/arellsassets" 
                                 passHref
                                 className="twitter-contacts">
                                 <Image 

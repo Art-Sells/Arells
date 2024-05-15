@@ -6,9 +6,9 @@
 	margin-right: 0%;
 	margin-bottom: 0%;
 	padding-top: 0px;
-	border-radius: 30px;
-	padding-bottom: 90px;
-	background: rgb(255, 251, 245);
+	border-radius: 0px;
+	padding-bottom: 120px;
+	background: rgb(255, 255, 255);
 	-webkit-animation-name: animatetop;
 	-webkit-animation-duration: 1.00s;
 	animation-name: animatetop;
@@ -60,25 +60,25 @@
 	
 	  
 	  #descriptioner {
-		  margin-top: 25px;
-		  font-size: 11px;
-		  letter-spacing: 0px;
-		  margin-left: 0px; 
+		  margin-top: 30px;
+		  font-size: 8px;
+		  letter-spacing: 1px;
+		  margin-left: 1px; 
 		  font-weight: 600;
-		  opacity: .6;
-		  color: rgb(115, 65, 0); 
+		  opacity: 1;
+		  color: rgb(143, 78, 0);
 		  word-spacing: 0px;
 	  }	
 
 		#ada-description {
 			margin-top: 15px;
-			font-size: 9.2px;
+			font-size: 8px;
 			letter-spacing: 6px;
 			margin-left: 6px; 
 			word-spacing: 2px;
 			font-weight: 800;
 			opacity: 1;
-			color: black;
+			color: rgb(143, 78, 0);
 		}
 		#crypto-images-wrapper {
 			margin-top: 35px;
@@ -151,12 +151,12 @@
 			}
 
 	  #black-liner {
-		margin-top: 10px;
-		background-color: rgba(204, 116, 0, .6);
+		margin-top: 15px;
+		background-color: rgba(204, 116, 0, 1);
 		border: none;
 		height: 2px;
 		border-radius: 30px;
-		width: 350px;
+		width: 185px;
 		opacity: .3;
 	  }	
 
@@ -388,17 +388,19 @@
 
 	  
 	  #descriptioner {
-		  font-size: 9.5px; 
+		  font-size: 7.5px;
+		  letter-spacing: .5px;
+		  margin-left: .5px; 
 	  }	
 
 	  #black-liner {
-		width: 250px;
+		width: 160px;
 	  }	
 
 	  #ada-description {
-		font-size: 8px;
-		letter-spacing: 6px;
-		margin-left: 6px; 
+		font-size: 7px;
+		letter-spacing: 5px;
+		margin-left: 5px; 
 		word-spacing: 2px;
 	}
 	#crypto-images-wrapper {
