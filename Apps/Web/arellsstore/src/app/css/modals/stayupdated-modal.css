@@ -1,10 +1,24 @@
- /* modal.css source */
+/* modal.css source */
 /* The Modal (background) */
 
 .RWmodal {
   position: fixed; /* Stay in place */
   z-index: 200; /* Sit on top */
-  padding-top: 200px; /* Location of the box */
+  padding-top: 250px; /* Location of the box */
+	text-align: center;
+	font-family: Arial;
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(141, 107, 63, 0.9); /* Fallback color */
+  background-color: rgba(141, 107, 63, 0.9); /* Black w/ opacity */
+}
+.RWmodal-submitted {
+  position: fixed; /* Stay in place */
+  z-index: 200; /* Sit on top */
+  padding-top: 250px; /* Location of the box */
 	text-align: center;
 	font-family: Arial;
   left: 0;
@@ -13,20 +27,6 @@
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgba(141, 107, 63, 0.98); /* Fallback color */
-  background-color: rgba(141, 107, 63, 0.98); /* Black w/ opacity */
-}
-.RWmodal-submitted {
-  position: fixed; /* Stay in place */
-  z-index: 200; /* Sit on top */
-  padding-top: 200px; /* Location of the box */
-	text-align: center;
-	font-family: Arial;
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(136, 91, 32, 0.98); /* Fallback color */
   background-color: rgba(141, 107, 63, 0.98); /* Black w/ opacity */
 }
 
@@ -86,7 +86,7 @@
     .enter-info {
       color: white;
       font-weight: 500;
-      font-size: 12px;
+      font-size: 10px;
       letter-spacing: 2px;
       margin-left: 2px;  
     }
@@ -95,14 +95,14 @@
     .submission-successful {
       color: white;
       font-weight: 500;
-      font-size: 12px;
+      font-size: 11px;
       letter-spacing: 2px;
       margin-left: 2px;  
     }
 
 
       .contact-submit {
-        margin-top: -18px;
+        margin-top: 50px;
         align-items: center;
         position: relative;
         margin-left: auto;
@@ -112,8 +112,8 @@
 
           .contact-submit-question {
             color: white;
-            font-weight: 500;
-            font-size: 9.5px;
+            font-weight: 200;
+            font-size: 8px;
             letter-spacing: 1px;
             margin-left: 1px; 
             margin-top: 30px;
@@ -123,10 +123,10 @@
 
             .email-contacts {
               background: none;
-              color: rgb(224, 224, 224, 0.3);
-              margin-right: 0px;   
+              color: black;
+              margin-right: 8px;   
               border: solid;
-              border-width: 1.5px;
+              border-width: .5px;
               border-radius: 10px;
               padding-top: 18px;
               padding-right:10px;
@@ -147,7 +147,7 @@
             .twitter-contacts {
               background: none;
               color: black;
-              margin-left: 0px;
+              margin-left: 8px;
               border: solid;
               border-width: .5px;
               border-radius: 10px;
@@ -161,22 +161,22 @@
 
 
             .contact-title-description {
-              margin-top: 100px;
+              margin-top: 45px;
               color: white;
               font-weight: 500;
-              font-size: 7px;
+              font-size: 5px;
               letter-spacing: 2px;
               margin-left: 2px; 
-              opacity: .8;
+              opacity: 1;
             }
             .contact-coming-soon {
               margin-top: -3px;
               color: white;
               font-weight: 200;
-              font-size: 9px;
-              letter-spacing: 19.3px;
-              margin-left: 17.8px;
-              opacity: .8; 
+              font-size: 7px;
+              letter-spacing: 15.7px;
+              margin-left: 15.7px;
+              opacity: 1; 
               margin-bottom: 100px;
             }
 
