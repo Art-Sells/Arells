@@ -1,0 +1,68 @@
+#spinnerBackground {
+    position: fixed; /* Stay in place */
+    text-align: center;
+    z-index: 200; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(255, 255, 255, 0.985); /* Fallback color */
+    background-color: rgba(255, 255, 255, 0.985); /* Black w/ opacity */
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.25s;
+    animation-name: animatetop;
+    animation-duration: 0.25s;
+    padding-bottom: 30px;
+  }
+  #spinnerBackgroundConnect {
+    position: fixed; /* Stay in place */
+    text-align: center;
+    z-index: 200; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(255, 255, 255, 0.985); /* Fallback color */
+    background-color: rgba(255, 255, 255, 0.985); /* Black w/ opacity */
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.25s;
+    animation-name: animatetop;
+    animation-duration: 0.25s;
+    padding-bottom: 30px;
+  }
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+
+  #arells-loader-icon {
+    margin-top: 220px;
+    opacity: .15;
+  }
+  #arells-loader-icon-connect {
+    margin-top: 220px;
+    opacity: .15;
+  }
+  #arells-loader-icon-asset {
+    margin-top: 220px;
+    opacity: .15;
+  }
+
+  @media screen and (max-height: 550px) {
+    #arells-loader-icon {
+      margin-top: 120px;
+    }
+    #arells-loader-icon-connect {
+      margin-top: 120px;
+    }
+    #arells-loader-icon-asset {
+      margin-top: 120px;
+    }
+  }
+
