@@ -16,10 +16,10 @@ Holding Price is a market system which holds the price of a token as it loses va
 
 A Token at the Price of $10 is bought with an investment of $500.
 - Token Price falls to $9 and the investment to $450.
-- Holding Price implemented, investor cannot sell.
+- Holding Price implemented and token selling locked.
 - Token Price is held $10 and the investment at $500.
 - Token Price rises to $11 and the investment to $550.
-- Holding Price is revoked, investor can sell.
+- Holding Price is revoked and token selling unlocked.
 - Investor sells token and gains $50 in profits.
 
 This introduces a new market…
