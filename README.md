@@ -56,11 +56,5 @@ _______________________________________________________________________
 - **May 2023 - Dec 2023**
   - [X] Arells 1.0 *[[Complete]](https://arells.com)*
  
-- **Dec 2023 - TBD(To-Be-Determined)**
-  - [ ] Arells 1.5 *[[In-Development]](https://github.com/Art-Sells/Arells/blob/test/Build-Notes.md)*
- 
-- **TBD(To-Be-Determined)**
-  - [ ] Arells 2.0 *[Announced]*
- 
-- **TBD(To-Be-Determined)**
-  - [ ] Arells 3.0 *[Announced]*
+- **May 2024 - TBD(To-Be-Determined)**
+  - [ ] Arells Cryptocurrency Marketplace MVP *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
