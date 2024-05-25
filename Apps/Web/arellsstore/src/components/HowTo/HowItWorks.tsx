@@ -192,7 +192,7 @@ const HowItWorks: React.FC = () => {
                             </div>
                         </span>
                         <span id="holding-price-how">Holding Price:</span>
-                        <span id="price-number-how">$54,000</span>
+                        <span id="price-number-how">$60,000</span>
                     </div>
                     <p id="your-wallet">Your Wallet: $500</p>
 
