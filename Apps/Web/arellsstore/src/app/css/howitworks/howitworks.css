@@ -1,15 +1,17 @@
 
 
 #how-it-works-wrapper {
-	padding-top: 20px; 
+	padding-top: 30px; 
 	text-align: center;
 	font-family: Arial;
-	margin-top: -10px;
-	margin-left: -10px;
-	margin-right: -10px;
-	margin-bottom: -10px;
+	margin-top: -4px;
+	margin-left: -4px;
+	margin-right: -4px;
+	margin-bottom: -4px;
+	border-radius: 5px;
 	padding-bottom: 20px;
-	   background-color: rgb(188, 147, 93);	
+	   background-color: rgb(184, 138, 79);
+	   box-shadow: 0px 5px 50px -6px rgba(127, 72, 0); 	
 	}   
 
 
@@ -24,7 +26,7 @@
 		border: none;
 		height: 1px;
 		border-radius: 30px;
-		width: 370px;
+		width: 420px;
 		opacity: .4;
 	  }	
 
@@ -32,18 +34,47 @@
 		color: white;
 		font-weight: 200;
 		opacity: .8;
-		margin-left: 3px;
+		margin-left: 4px;
 		font-size: 9px; 
-		letter-spacing: 2px;
+		letter-spacing: 1px;
+	}	
+	#descriptioner-how-crypto {
+		margin-left: 1px;
+		font-weight: 800;
+		letter-spacing: 3px;
 	}	
 	#how-it-works-words {
-		margin-top: 5px;
+		margin-top: 20px;
 		color: white;
 		font-weight: 600;
-		opacity: .6;
+		opacity: .9;
 		font-size: 18px; 
 		letter-spacing: -1px;
 	}
+
+	#how-it-works-guide-wrapper {
+		padding: 20px;
+		margin-top: 20px;
+		margin-left: auto;
+		margin-right: auto;
+		height: 800px;
+		width: 380px;
+		background-color: rgb(255, 255, 255, 0.8);
+		border-radius: 10px;
+		box-shadow: 0px 5px 50px -6px rgba(127, 72, 0); 
+	}
+
+		#transfer-buy-how {
+			margin-top: 10px;
+			padding: 20px;
+			margin-left: auto;
+			margin-right: auto;
+			height: 150px;
+			width: 250px;
+			background-color: rgb(255, 255, 255, 0.4);
+			border-radius: 10px;
+			box-shadow: 0px 5px 30px -6px rgb(127, 72, 0); 
+		}
 
 
 

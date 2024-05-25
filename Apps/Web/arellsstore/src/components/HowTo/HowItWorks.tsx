@@ -62,7 +62,8 @@ const HowItWorks: React.FC = () => {
 
             <hr id="black-liner-how"/>
             <p id="descriptioner-how">
-                NEVER LOSE MONEY SELLING CRYPTOCURRENCIES
+                NEVER LOSE MONEY SELLING 
+                <span id="descriptioner-how-crypto"> CRYPTOCURRENCIES</span>
                 </p>
             <hr id="black-liner-how"/>    
             <p id="how-it-works-words">HOW IT WORKS</p> 
