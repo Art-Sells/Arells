@@ -40,32 +40,32 @@ const HowItWorks: React.FC = () => {
         <>
 
         {showLoading && (
-            <div id="spinnerBackground">
+            <div id="spinnerBackgroundHow">
             <Image 
                 loader={imageLoader}
                 alt="" 
                 width={29}
                 height={30}
-                id="arells-loader-icon" 
-                src="images/Arells-Icon.png"/>    
-                <div className={styles.spinner}></div>    
+                id="arells-loader-icon-how" 
+                src="images/Arells-Icon-Ivory.png"/>    
+                <div className={styles.spinnerHow}></div>    
             </div>
         )}
             <Image
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('wordLogo')}
                 alt=""
-                width={120}
-                height={40}
-                id="word-logoo" 
-                src="images/Arells-Logo-Ebony.png"/>	
+                width={60}
+                height={19}
+                id="word-logo-how" 
+                src="images/Arells-Logo.png"/>	
 
-            <hr id="black-liner"/>
-            <p id="descriptioner">
+            <hr id="black-liner-how"/>
+            <p id="descriptioner-how">
                 NEVER LOSE MONEY SELLING CRYPTOCURRENCIES
                 </p>
-            <hr id="black-liner"/>    
-            <p id="stay-updated">HOW IT WORKS</p> 
+            <hr id="black-liner-how"/>    
+            <p id="how-it-works-words">HOW IT WORKS</p> 
 
 
             <div id="how-it-works-guide-wrapper">
@@ -265,29 +265,7 @@ const HowItWorks: React.FC = () => {
 
             </div>
 
-            <div id="faq-transfer-wrapper">
 
-                <button id="transfer-out-how">
-                    TRANSFER OUT
-                </button>
-
-                <div id="faq-transfer-example">
-                    <p id="faq-two-transfer-one">
-                        Transferring $450 out of Arells
-                    </p>
-                    <p id="faq-two-transfer-two">
-                        will incur you a $50 loss.
-                    </p>
-                    <p id="faq-two-transfer-three">
-                        Are you sure?
-                    </p>
-                </div>
-
-                <button id="transfer-out-cancel-how">
-                    CANCEL
-                </button>  
-
-            </div>
 
             <div id="faq-wrapper">
 
@@ -308,9 +286,42 @@ const HowItWorks: React.FC = () => {
                     will also decrease.
                 </p>
 
+                <div id="faq-transfer-wrapper">
+
+                    <button id="transfer-out-how">
+                        TRANSFER OUT
+                    </button>
+
+                    <div id="faq-transfer-example">
+                        <p id="faq-two-transfer-one">
+                            Transferring $450 out of Arells
+                        </p>
+                        <p id="faq-two-transfer-two">
+                            will incur you a $50 loss.
+                        </p>
+                        <p id="faq-two-transfer-three">
+                            Are you sure?
+                        </p>
+                    </div>
+
+                    <div id="faq-cancel-proceed">
+                        <span>
+                            <button id="cancel-how">
+                                CANCEL
+                            </button>
+                        </span>
+                        <span>
+                            <button id="proceed-how">
+                                PROCEED
+                            </button>
+                        </span>
+                    </div>
+
+                </div>
+
             </div>
 
-            <p className="contact-submit-question">Got more questions? Contact us:</p>
+            <p className="contact-submit-question-how">Got more questions? Contact us:</p>
 
             <a href="mailto:info@arells.com"
                 className="email-contacts" >
