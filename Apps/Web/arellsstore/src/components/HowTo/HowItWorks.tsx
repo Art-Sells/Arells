@@ -11,14 +11,13 @@ import '../../app/css/modals/stayupdated-modal.css';
 import '../../app/css/modals/loading/spinnerBackground.css';
 import styles from '../../app/css/modals/loading/spinner.module.css';
 
-const Signup: React.FC = () => {
+const HowItWorks: React.FC = () => {
     //Loader Function/s
     const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
       }
       const [showLoading, setLoading] = useState<boolean>(true);
       const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
-        arellsIcon: false,
         wordLogo: false,
       });
     
@@ -43,7 +42,7 @@ const Signup: React.FC = () => {
         {showLoading && (
             <div id="spinnerBackground">
             <Image 
-            loader={imageLoader}
+                loader={imageLoader}
                 alt="" 
                 width={29}
                 height={30}
@@ -52,38 +51,266 @@ const Signup: React.FC = () => {
                 <div className={styles.spinner}></div>    
             </div>
         )}
+            <Image
+                loader={imageLoader}
+                onLoad={() => handleImageLoaded('wordLogo')}
+                alt=""
+                width={120}
+                height={40}
+                id="word-logoo" 
+                src="images/Arells-Logo-Ebony.png"/>	
 
-            <p id="stay-updated">SIGN UP FOR EARLY ACCESS</p>
+            <hr id="black-liner"/>
+            <p id="descriptioner">
+                NEVER LOSE MONEY SELLING CRYPTOCURRENCIES
+                </p>
+            <hr id="black-liner"/>    
+            <p id="stay-updated">HOW IT WORKS</p> 
 
 
-            <br />
+            <div id="how-it-works-guide-wrapper">
 
-            <div id="sign-up">
-                <form id="myForm">
-                    <div id="enter-content">
-                        <label id="label">EMAIL</label>
-                        <br />
-                        <input name="email" type="email"
-                            id="email-input" ></input>
+
+
+                <div id="b-price-how">
+                    <span>
+                        <div id="b-how-wrapper">
+                            <Image
+                            loader={imageLoader}
+                            onLoad={() => handleImageLoaded('wordLogo')}
+                            alt=""
+                            width={20}
+                            height={20}
+                            id="bitcoin-how" 
+                            src="images/howitworks/Bitcoin.png"/>
+                        </div>
+                    </span>
+                    <span id="price-how">Price:</span>
+                    <span id="price-number-how">$60,000</span>
+                </div>
+
+                <div id="transfer-buy">
+                    <span>
+                        <button id="transfer-how">
+                            TRANSFER IN
+                        </button>
+                    </span>
+                    <span>
+                        <button id="buy-how">
+                            BUY
+                        </button>
+                    </span>
+                </div>
+
+                <div id="transfer-buy-how">
+                    <div id="b-price-how">
+                        <span>
+                            <div id="b-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="bitcoin-how" 
+                                src="images/howitworks/Bitcoin.png"/>
+                            </div>
+                        </span>
+                        <span>
+                            <div id="a-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="arells-how" 
+                                src="images/howitworks/ArellsBitcoin.png"/>
+                            </div>
+                        </span>
+                        <span id="price-how">Price:</span>
+                        <span id="price-number-how">$60,000</span>
                     </div>
-                    <div id="enter-content">
-                        <label id="label">FIRST NAME</label>
-                        <br />
-                        <input name="first_name" type="text"
-                            id="first-input" ></input>
+                    <p id="your-wallet">Your Wallet: $500</p>
+
+                </div>
+
+
+
+
+
+
+
+                <hr id="how-it-works-line"/>
+
+                <div id="b-price-how">
+                    <span>
+                        <div id="b-how-wrapper">
+                            <Image
+                            loader={imageLoader}
+                            onLoad={() => handleImageLoaded('wordLogo')}
+                            alt=""
+                            width={20}
+                            height={20}
+                            id="bitcoin-how" 
+                            src="images/howitworks/Bitcoin.png"/>
+                        </div>
+                    </span>
+                    <span id="price-how">Price:</span>
+                    <span id="price-number-how">$54,000</span>
+                </div>
+
+                <button id="holding-how">
+                    HOLDING
+                </button>
+
+                <div id="holding-wrapper-how">
+
+                    <div id="b-price-how">
+                        <span>
+                            <div id="b-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="bitcoin-how" 
+                                src="images/howitworks/Bitcoin.png"/>
+                            </div>
+                        </span>
+                        <span>
+                            <div id="a-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="arells-how" 
+                                src="images/howitworks/ArellsBitcoin.png"/>
+                            </div>
+                        </span>
+                        <span id="holding-price-how">Holding Price:</span>
+                        <span id="price-number-how">$54,000</span>
                     </div>
-                    <div id="enter-content">
-						<label id="label">LAST NAME</label>
-						<br/>
-						<input name="last_name" type="text" 
-						id="last-input" ></input>
-					</div>
-                    <br />
-                    <a id="submit">SUBMIT</a>
-                </form>
+                    <p id="your-wallet">Your Wallet: $500</p>
+
+                </div>
+
+
+
+
+
+                <hr id="how-it-works-line"/>
+
+                <div id="b-price-how">
+                    <span>
+                        <div id="b-how-wrapper">
+                            <Image
+                            loader={imageLoader}
+                            onLoad={() => handleImageLoaded('wordLogo')}
+                            alt=""
+                            width={20}
+                            height={20}
+                            id="bitcoin-how" 
+                            src="images/howitworks/Bitcoin.png"/>
+                        </div>
+                    </span>
+                    <span id="price-how">Price:</span>
+                    <span id="price-number-how">$75,000</span>
+                </div>
+
+                <button id="sell-how">
+                    SELL
+                </button>
+
+                <div id="sell-wrapper-how">
+
+                    <div id="b-price-how">
+                        <span>
+                            <div id="b-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="bitcoin-how" 
+                                src="images/howitworks/Bitcoin.png"/>
+                            </div>
+                        </span>
+                        <span>
+                            <div id="a-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="arells-how" 
+                                src="images/howitworks/ArellsBitcoin.png"/>
+                            </div>
+                        </span>
+                        <span id="holding-price-how">Price:</span>
+                        <span id="price-number-how">$75,000</span>
+                    </div>
+                    <p id="your-wallet">Your Wallet: $625</p>
+
+                    <hr id="profits-line"/>
+
+                    <p id="your-wallet">Profits: $125</p>
+
+                </div>
+
             </div>
 
-            <p className="contact-submit-question">Questions? Contact us:</p>
+            <div id="faq-transfer-wrapper">
+
+                <button id="transfer-out-how">
+                    TRANSFER OUT
+                </button>
+
+                <div id="faq-transfer-example">
+                    <p id="faq-two-transfer-one">
+                        Transferring $450 out of Arells
+                    </p>
+                    <p id="faq-two-transfer-two">
+                        will incur you a $50 loss.
+                    </p>
+                    <p id="faq-two-transfer-three">
+                        Are you sure?
+                    </p>
+                </div>
+
+                <button id="transfer-out-cancel-how">
+                    CANCEL
+                </button>  
+
+            </div>
+
+            <div id="faq-wrapper">
+
+                <p id="faq-how">Frequently Asked Questions</p>
+
+                <p id="faq-one-how">
+                    Will I be able to override the Holding Price and sell?
+                </p>
+                <p id="faq-one-how">
+                    Yes, by transferring your Bitcoin out of Arells.
+                </p>
+
+                <p id="faq-two-how">
+                    How will transfering my Bitcoin out of Arells affect my investment?
+                </p>
+                <p id="faq-two-how">
+                    If the Bitcoin price decreases, the value of your investment 
+                    will also decrease.
+                </p>
+
+            </div>
+
+            <p className="contact-submit-question">Got more questions? Contact us:</p>
 
             <a href="mailto:info@arells.com"
                 className="email-contacts" >
@@ -92,7 +319,7 @@ const Signup: React.FC = () => {
                 alt="" 
                 width={25}
                 height={25}
-                id="email-contact" 
+                id="email-contact-how" 
                 src="images/signup/email-ivory.png"/>
             </a>   
 
@@ -100,4 +327,4 @@ const Signup: React.FC = () => {
     );
 }
 
-export default Signup;
+export default HowItWorks;
