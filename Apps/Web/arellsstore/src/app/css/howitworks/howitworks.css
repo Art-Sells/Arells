@@ -9,7 +9,7 @@
 	margin-right: -10px;
 	margin-bottom: -10px;
 	border-radius: 0px;
-	padding-bottom: 40px;
+	padding-bottom: 50px;
 	   background-color: rgb(184, 138, 79);
 	   box-shadow: 0px 5px 50px -6px rgba(127, 72, 0); 	
 	}   
@@ -551,5 +551,5 @@
 				opacity: .5;
 				font-size: 18px; 
 				letter-spacing: -1px;
-				margin-bottom: 30px;
+				margin-bottom: 40px;
 			}				
