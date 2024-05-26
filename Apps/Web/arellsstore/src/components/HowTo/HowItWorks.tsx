@@ -7,6 +7,7 @@ import '../../app/css/howitworks/howitworks.css';
 import '../../app/css/modals/stayupdated-modal.css';
 
 
+
 // Loader Styles
 import '../../app/css/modals/loading/loader/spinnerBackgroundHow.css';
 import styles from '../../app/css/modals/loading/loader/howspinner.module.css';
