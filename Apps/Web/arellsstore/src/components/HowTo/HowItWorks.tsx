@@ -7,9 +7,10 @@ import '../../app/css/howitworks/howitworks.css';
 import '../../app/css/modals/stayupdated-modal.css';
 
 
+
 // Loader Styles
-import '../../app/css/modals/loading/spinnerBackgroundHow.css';
-import styles from '../../app/css/modals/loading/howspinner.module.css';
+import '../../app/css/modals/loader/binnerbackgroundhow.css';
+import styles from '../../app/css/modals/loader/howbin.module.css';
 
 const HowItWorks: React.FC = () => {
     //Loader Function/s
@@ -18,7 +19,7 @@ const HowItWorks: React.FC = () => {
       }
       const [showLoading, setLoading] = useState<boolean>(true);
       const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
-        wordLogo: false,
+        howlogo: false,
       });
     
       const handleImageLoaded = (imageName: string) => {
@@ -40,7 +41,7 @@ const HowItWorks: React.FC = () => {
         <>
 
         {showLoading && (
-            <div id="spinnerBackgroundHow">
+            <div id="binnerbackgroundhow">
             <Image 
                 loader={imageLoader}
                 alt="" 
@@ -48,12 +49,12 @@ const HowItWorks: React.FC = () => {
                 height={30}
                 id="arells-loader-icon-how" 
                 src="images/Arells-Icon-Ivory.png"/>    
-                <div className={styles.spinnerHow}></div>    
+                <div id={styles.binnerhow}></div>    
             </div>
         )}
             <Image
                 loader={imageLoader}
-                onLoad={() => handleImageLoaded('wordLogo')}
+                onLoad={() => handleImageLoaded('howlogo')}
                 alt=""
                 width={50}
                 height={16}
@@ -78,7 +79,7 @@ const HowItWorks: React.FC = () => {
                         <div id="b-how-wrapper">
                             <Image
                             loader={imageLoader}
-                            onLoad={() => handleImageLoaded('wordLogo')}
+                            onLoad={() => handleImageLoaded('howlogo')}
                             alt=""
                             width={20}
                             height={20}
@@ -111,7 +112,7 @@ const HowItWorks: React.FC = () => {
                             <div id="a-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -123,7 +124,7 @@ const HowItWorks: React.FC = () => {
                             <div id="b-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -142,7 +143,7 @@ const HowItWorks: React.FC = () => {
                             <div id="w-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -171,7 +172,7 @@ const HowItWorks: React.FC = () => {
                         <div id="b-how-wrapper">
                             <Image
                             loader={imageLoader}
-                            onLoad={() => handleImageLoaded('wordLogo')}
+                            onLoad={() => handleImageLoaded('howlogo')}
                             alt=""
                             width={20}
                             height={20}
@@ -196,7 +197,7 @@ const HowItWorks: React.FC = () => {
                             <div id="a-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -208,7 +209,7 @@ const HowItWorks: React.FC = () => {
                             <div id="b-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -227,7 +228,7 @@ const HowItWorks: React.FC = () => {
                             <div id="w-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -254,7 +255,7 @@ const HowItWorks: React.FC = () => {
                         <div id="b-how-wrapper">
                             <Image
                             loader={imageLoader}
-                            onLoad={() => handleImageLoaded('wordLogo')}
+                            onLoad={() => handleImageLoaded('howlogo')}
                             alt=""
                             width={20}
                             height={20}
@@ -279,7 +280,7 @@ const HowItWorks: React.FC = () => {
                             <div id="a-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -291,7 +292,7 @@ const HowItWorks: React.FC = () => {
                             <div id="b-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -310,7 +311,7 @@ const HowItWorks: React.FC = () => {
                             <div id="w-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -331,7 +332,7 @@ const HowItWorks: React.FC = () => {
                             <div id="w-how-wrapper">
                                 <Image
                                 loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
+                                onLoad={() => handleImageLoaded('howlogo')}
                                 alt=""
                                 width={20}
                                 height={20}
@@ -372,71 +373,71 @@ const HowItWorks: React.FC = () => {
                     If the Bitcoin price decreases, so will the value of your investment.
                 </p>
 
-                <div id="faq-transfer-wrapper">
+            </div>
 
-                    <div id="b-price-how">
-                        <span>
-                            <div id="b-how-wrapper">
-                                <Image
-                                loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
-                                alt=""
-                                width={20}
-                                height={20}
-                                id="bitcoin-how" 
-                                src="images/howitworks/Bitcoin.png"/>
-                            </div>
-                        </span>
-                        <span id="price-how">Price:</span>
-                        <span id="price-number-how">$
-                            <span id="price-number-how-num">54,000</span>
-                        </span>
-                    </div>
+            <div id="faq-transfer-wrapper">
 
-                    <button id="transfer-out-how">
-                        EXPORT
-                    </button>
-
-                    <div id="faq-transfer-example">
-                        <p id="faq-two-transfer-one">
-                            <span id="wallet-how-export">Exporting</span>
-                            <span id="wallet-number-how-export">$
-                                <span id="wallet-number-how-num-export">450</span>
-                            </span>
-                        </p>
-                        <p id="faq-two-transfer-two">
-                            <span id="wallet-how-suffer">You will lose</span>
-                            <span id="wallet-number-how-suffer">$
-                                <span id="wallet-number-how-num-suffer">50</span>
-                            </span>
-                        </p>
-                        <hr id="black-liner-wallet"/>  
-                        <p id="faq-two-transfer-three">
-                            Are you sure?
-                        </p>
-                        <div id="faq-cancel-proceed">
-                            <span>
-                                <button id="cancel-how">
-                                    CANCEL
-                                </button>
-                            </span>
-                            <span>
-                                <button id="proceed-how">
-                                    PROCEED
-                                </button>
-                            </span>
+                <div id="b-price-how">
+                    <span>
+                        <div id="b-how-wrapper">
+                            <Image
+                            loader={imageLoader}
+                            onLoad={() => handleImageLoaded('howlogo')}
+                            alt=""
+                            width={20}
+                            height={20}
+                            id="bitcoin-how" 
+                            src="images/howitworks/Bitcoin.png"/>
                         </div>
-                    </div>
-
-
-
+                    </span>
+                    <span id="price-how">Price:</span>
+                    <span id="price-number-how">$
+                        <span id="price-number-how-num">54,000</span>
+                    </span>
                 </div>
+
+                <button id="transfer-out-how">
+                    EXPORT
+                </button>
+
+                <div id="faq-transfer-example">
+                    <p id="faq-two-transfer-one">
+                        <span id="wallet-how-export">Exporting</span>
+                        <span id="wallet-number-how-export">$
+                            <span id="wallet-number-how-num-export">450</span>
+                        </span>
+                    </p>
+                    <p id="faq-two-transfer-two">
+                        <span id="wallet-how-suffer">You will lose</span>
+                        <span id="wallet-number-how-suffer">$
+                            <span id="wallet-number-how-num-suffer">50</span>
+                        </span>
+                    </p>
+                    <hr id="black-liner-wallet"/>  
+                    <p id="faq-two-transfer-three">
+                        Are you sure?
+                    </p>
+                    <div id="faq-cancel-proceed">
+                        <span>
+                            <button id="cancel-how">
+                                CANCEL
+                            </button>
+                        </span>
+                        <span>
+                            <button id="proceed-how">
+                                PROCEED
+                            </button>
+                        </span>
+                    </div>
+                </div>
+
+
 
             </div>
 
             <hr id="black-liner-how-bottom"/>  
 
-            <p id="faq-how">Email us for more</p>
+            <p id="faq-how-email">Email us for more</p>
 
             <a href="mailto:info@arells.com"
                 className="email-contacts" >
