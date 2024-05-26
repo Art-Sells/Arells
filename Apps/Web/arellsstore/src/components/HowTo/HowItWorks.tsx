@@ -127,16 +127,34 @@ const HowItWorks: React.FC = () => {
                                 alt=""
                                 width={20}
                                 height={20}
-                                id="bitcoin-how" 
+                                id="bitcoin-how-wallet" 
                                 src="images/howitworks/Bitcoin.png"/>
                             </div>
                         </span>
-                        <span id="price-how">Price:</span>
-                        <span id="price-number-how">$
-                            <span id="price-number-how-num">60,000</span>
+                        <span id="holding-price-how">Price:</span>
+                        <span id="wallet-price-number-how">$
+                            <span id="wallet-price-number-how-num">60,000</span>
                         </span>
                     </div>
-                    <p id="your-wallet">Your Wallet: $500</p>
+                    <hr id="black-liner-wallet"/>  
+                    <div id="b-price-how">
+                        <span>
+                            <div id="w-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="wallet-icon-how" 
+                                src="images/market/wallet-ivory.png"/>
+                            </div>
+                        </span>
+                        <span id="wallet-how">Wallet:</span>
+                        <span id="wallet-number-how">$
+                            <span id="wallet-number-how-num">500</span>
+                        </span>
+                    </div>
 
                 </div>
 
@@ -146,7 +164,7 @@ const HowItWorks: React.FC = () => {
 
 
 
-                <hr id="how-it-works-line"/>
+                <hr id="how-it-works-liner"/>
 
                 <div id="b-price-how">
                     <span>
@@ -171,7 +189,7 @@ const HowItWorks: React.FC = () => {
                     HOLDING
                 </button>
 
-                <div id="holding-wrapper-how">
+                <div id="transfer-buy-how">
 
                     <div id="b-price-how">
                         <span>
@@ -194,16 +212,34 @@ const HowItWorks: React.FC = () => {
                                 alt=""
                                 width={20}
                                 height={20}
-                                id="bitcoin-how" 
+                                id="bitcoin-how-wallet" 
                                 src="images/howitworks/Bitcoin.png"/>
                             </div>
                         </span>
-                        <span id="holding-price-how">Holding Price:</span>
-                        <span id="price-number-how">$
-                            <span id="price-number-how-num">60,000</span>
+                        <span id="holding-price-how">Price:</span>
+                        <span id="wallet-price-number-how">$
+                            <span id="wallet-price-number-how-num">60,000</span>
                         </span>
                     </div>
-                    <p id="your-wallet">Your Wallet: $500</p>
+                    <hr id="black-liner-wallet"/>  
+                    <div id="b-price-how">
+                        <span>
+                            <div id="w-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="wallet-icon-how" 
+                                src="images/market/wallet-ivory.png"/>
+                            </div>
+                        </span>
+                        <span id="wallet-how">Wallet:</span>
+                        <span id="wallet-number-how">$
+                            <span id="wallet-number-how-num">500</span>
+                        </span>
+                    </div>
 
                 </div>
 
@@ -211,7 +247,7 @@ const HowItWorks: React.FC = () => {
 
 
 
-                <hr id="how-it-works-line"/>
+                <hr id="how-it-works-liner"/>
 
                 <div id="b-price-how">
                     <span>
@@ -259,20 +295,56 @@ const HowItWorks: React.FC = () => {
                                 alt=""
                                 width={20}
                                 height={20}
-                                id="bitcoin-how" 
+                                id="bitcoin-how-wallet" 
                                 src="images/howitworks/Bitcoin.png"/>
                             </div>
                         </span>
-                        <span id="price-how">Price:</span>
-                        <span id="price-number-how">$
-                            <span id="price-number-how-num">75,000</span>
+                        <span id="holding-price-how">Price:</span>
+                        <span id="wallet-price-number-how">$
+                            <span id="wallet-price-number-how-num">75,000</span>
                         </span>
                     </div>
-                    <p id="your-wallet">Your Wallet: $625</p>
+                    <hr id="black-liner-wallet"/>  
+                    <div id="b-price-how">
+                        <span>
+                            <div id="w-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="wallet-icon-how" 
+                                src="images/market/wallet-ivory.png"/>
+                            </div>
+                        </span>
+                        <span id="wallet-how">Wallet:</span>
+                        <span id="wallet-number-how">$
+                            <span id="wallet-number-how-num">625</span>
+                        </span>
+                    </div>
 
-                    <hr id="profits-line"/>
+                    <hr id="black-liner-wallet-profits"/>  
 
-                    <p id="your-wallet">Profits: $125</p>
+                    <div id="b-price-how">
+                        <span>
+                            <div id="w-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="profits-icon-how" 
+                                src="images/howitworks/up-arrow.png"/>
+                            </div>
+                        </span>
+                        <span id="wallet-how-profits">Profits:</span>
+                        <span id="wallet-number-profits-how">$
+                            <span id="wallet-number-profits-how-num">125</span>
+                        </span>
+                    </div>
+
 
                 </div>
 
@@ -285,18 +357,17 @@ const HowItWorks: React.FC = () => {
                 <p id="faq-how">Frequently Asked Questions</p>
 
                 <p id="faq-one-how">
-                    Will I be able to override the Holding Price and sell?
+                    Will I be able to override Holding and sell?
                 </p>
                 <p id="faq-one-how">
                     Yes, by exporting your Bitcoin out of Arells.
                 </p>
 
                 <p id="faq-two-how">
-                    How will exporting my Bitcoin out of Arells affect my investment?
+                    How will exporting my Bitcoin while Holding affect my investment?
                 </p>
                 <p id="faq-two-how">
-                    If the Bitcoin price decreases, the value of your investment 
-                    will also decrease.
+                    The value of your investment will decrease.
                 </p>
 
                 <div id="faq-transfer-wrapper">
@@ -307,10 +378,10 @@ const HowItWorks: React.FC = () => {
 
                     <div id="faq-transfer-example">
                         <p id="faq-two-transfer-one">
-                            Exporting $450 out of Arells
+                            Exporting $450 out of Arells.
                         </p>
                         <p id="faq-two-transfer-two">
-                            will incur you a $50 loss.
+                            You will suffer a $50 loss.
                         </p>
                         <p id="faq-two-transfer-three">
                             Are you sure?
