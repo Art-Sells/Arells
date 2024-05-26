@@ -8,8 +8,8 @@ import '../../app/css/modals/stayupdated-modal.css';
 
 
 // Loader Styles
-import '../../app/css/modals/loading/spinnerBackgroundHow.css';
-import styles from '../../app/css/modals/loading/howspinner.module.css';
+import '../../app/css/modals/loading/loader/spinnerBackgroundHow.css';
+import styles from '../../app/css/modals/loading/loader/howspinner.module.css';
 
 const HowItWorks: React.FC = () => {
     //Loader Function/s
