@@ -372,71 +372,71 @@ const HowItWorks: React.FC = () => {
                     If the Bitcoin price decreases, so will the value of your investment.
                 </p>
 
-                <div id="faq-transfer-wrapper">
+            </div>
 
-                    <div id="b-price-how">
-                        <span>
-                            <div id="b-how-wrapper">
-                                <Image
-                                loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
-                                alt=""
-                                width={20}
-                                height={20}
-                                id="bitcoin-how" 
-                                src="images/howitworks/Bitcoin.png"/>
-                            </div>
-                        </span>
-                        <span id="price-how">Price:</span>
-                        <span id="price-number-how">$
-                            <span id="price-number-how-num">54,000</span>
-                        </span>
-                    </div>
+            <div id="faq-transfer-wrapper">
 
-                    <button id="transfer-out-how">
-                        EXPORT
-                    </button>
-
-                    <div id="faq-transfer-example">
-                        <p id="faq-two-transfer-one">
-                            <span id="wallet-how-export">Exporting</span>
-                            <span id="wallet-number-how-export">$
-                                <span id="wallet-number-how-num-export">450</span>
-                            </span>
-                        </p>
-                        <p id="faq-two-transfer-two">
-                            <span id="wallet-how-suffer">You will lose</span>
-                            <span id="wallet-number-how-suffer">$
-                                <span id="wallet-number-how-num-suffer">50</span>
-                            </span>
-                        </p>
-                        <hr id="black-liner-wallet"/>  
-                        <p id="faq-two-transfer-three">
-                            Are you sure?
-                        </p>
-                        <div id="faq-cancel-proceed">
-                            <span>
-                                <button id="cancel-how">
-                                    CANCEL
-                                </button>
-                            </span>
-                            <span>
-                                <button id="proceed-how">
-                                    PROCEED
-                                </button>
-                            </span>
+                <div id="b-price-how">
+                    <span>
+                        <div id="b-how-wrapper">
+                            <Image
+                            loader={imageLoader}
+                            onLoad={() => handleImageLoaded('wordLogo')}
+                            alt=""
+                            width={20}
+                            height={20}
+                            id="bitcoin-how" 
+                            src="images/howitworks/Bitcoin.png"/>
                         </div>
-                    </div>
-
-
-
+                    </span>
+                    <span id="price-how">Price:</span>
+                    <span id="price-number-how">$
+                        <span id="price-number-how-num">54,000</span>
+                    </span>
                 </div>
+
+                <button id="transfer-out-how">
+                    EXPORT
+                </button>
+
+                <div id="faq-transfer-example">
+                    <p id="faq-two-transfer-one">
+                        <span id="wallet-how-export">Exporting</span>
+                        <span id="wallet-number-how-export">$
+                            <span id="wallet-number-how-num-export">450</span>
+                        </span>
+                    </p>
+                    <p id="faq-two-transfer-two">
+                        <span id="wallet-how-suffer">You will lose</span>
+                        <span id="wallet-number-how-suffer">$
+                            <span id="wallet-number-how-num-suffer">50</span>
+                        </span>
+                    </p>
+                    <hr id="black-liner-wallet"/>  
+                    <p id="faq-two-transfer-three">
+                        Are you sure?
+                    </p>
+                    <div id="faq-cancel-proceed">
+                        <span>
+                            <button id="cancel-how">
+                                CANCEL
+                            </button>
+                        </span>
+                        <span>
+                            <button id="proceed-how">
+                                PROCEED
+                            </button>
+                        </span>
+                    </div>
+                </div>
+
+
 
             </div>
 
             <hr id="black-liner-how-bottom"/>  
 
-            <p id="faq-how">Email us for more</p>
+            <p id="faq-how-email">Email us for more</p>
 
             <a href="mailto:info@arells.com"
                 className="email-contacts" >

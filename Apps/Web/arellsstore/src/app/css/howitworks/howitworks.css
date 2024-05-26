@@ -342,7 +342,7 @@
 	#faq-wrapper {
 		margin-left: auto;
 		margin-right: auto;
-		width: 350px;
+		width: 280px;
 	}
 	
 		#faq-how {
@@ -357,7 +357,7 @@
 		#faq-one-how {
 			color: rgb(236, 236, 236);
 			font-weight: 600;
-			opacity: .8;
+			opacity: .6;
 			margin-left: 0px;
 			font-size: 12px; 
 			letter-spacing: 0px;
@@ -367,11 +367,8 @@
 			color: rgb(236, 236, 236);
 			font-weight: 600;
 			opacity: .8;
-			margin-left: auto;
-			margin-right: auto;
 			font-size: 15px; 
 			letter-spacing: 0px;
-			width: 300px;
 			line-height: 15px;
 		}	
 
@@ -379,9 +376,9 @@
 			margin-top: 20px;
 			background-color: rgba(255, 255, 255);
 			border: none;
-			height: 3px;
+			height: 5px;
 			border-radius: 30px;
-			width: 300px;
+			width: 250px;
 			opacity: .2;
 			margin-bottom: 20px;
 			}	
@@ -389,7 +386,7 @@
 		#faq-two-how {
 			color: rgb(236, 236, 236);
 			font-weight: 600;
-			opacity: .8;
+			opacity: .6;
 			margin-left: 0px;
 			font-size: 12px; 
 			letter-spacing: 0px;
@@ -399,18 +396,15 @@
 			color: rgb(236, 236, 236);
 			font-weight: 600;
 			opacity: .8;
-			margin-left: auto;
-			margin-right: auto;
 			font-size: 15px; 
 			letter-spacing: 0px;
-			width: 300px;
 			line-height: 15px;
 		}	
 
 		#faq-transfer-wrapper {
 			padding-top: 30px;
 			padding-bottom: 35px;
-			margin-top: 25px;
+			margin-top: 40px;
 			margin-left: auto;
 			margin-right: auto;
 			height: 300px;
@@ -549,3 +543,13 @@
 						width: 85px;
 						opacity: 1;	 			  
 					}	
+
+			#faq-how-email {
+				margin-top: 20px;
+				color: white;
+				font-weight: 800;
+				opacity: .5;
+				font-size: 18px; 
+				letter-spacing: -1px;
+				margin-bottom: 30px;
+			}				
