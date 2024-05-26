@@ -350,7 +350,7 @@ const HowItWorks: React.FC = () => {
 
             </div>
 
-
+            <hr id="black-liner-how-bottom"/>  
 
             <div id="faq-wrapper">
 
@@ -359,15 +359,17 @@ const HowItWorks: React.FC = () => {
                 <p id="faq-one-how">
                     Will I be able to override Holding and sell?
                 </p>
-                <p id="faq-one-how">
+                <p id="faq-one-how-one">
                     Yes, by exporting your Bitcoin out of Arells.
                 </p>
 
+                <hr id="black-liner-how-bottom-faq"/>  
+
                 <p id="faq-two-how">
-                    How will exporting my Bitcoin while Holding affect my investment?
+                    How will exporting my Bitcoin affect my investment?
                 </p>
-                <p id="faq-two-how">
-                    The value of your investment will decrease.
+                <p id="faq-two-how-two">
+                    If the Bitcoin price decreases, so will the value of your investment.
                 </p>
 
                 <div id="faq-transfer-wrapper">
@@ -405,7 +407,9 @@ const HowItWorks: React.FC = () => {
 
             </div>
 
-            <p className="contact-submit-question-how">Got more questions? Contact us:</p>
+            <hr id="black-liner-how-bottom"/>  
+
+            <p id="faq-how">Email us for more</p>
 
             <a href="mailto:info@arells.com"
                 className="email-contacts" >
