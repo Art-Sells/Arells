@@ -374,34 +374,61 @@ const HowItWorks: React.FC = () => {
 
                 <div id="faq-transfer-wrapper">
 
+                    <div id="b-price-how">
+                        <span>
+                            <div id="b-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="bitcoin-how" 
+                                src="images/howitworks/Bitcoin.png"/>
+                            </div>
+                        </span>
+                        <span id="price-how">Price:</span>
+                        <span id="price-number-how">$
+                            <span id="price-number-how-num">54,000</span>
+                        </span>
+                    </div>
+
                     <button id="transfer-out-how">
                         EXPORT
                     </button>
 
                     <div id="faq-transfer-example">
                         <p id="faq-two-transfer-one">
-                            Exporting $450 out of Arells.
+                            <span id="wallet-how-export">Exporting</span>
+                            <span id="wallet-number-how-export">$
+                                <span id="wallet-number-how-num-export">450</span>
+                            </span>
                         </p>
                         <p id="faq-two-transfer-two">
-                            You will suffer a $50 loss.
+                            <span id="wallet-how-suffer">You will lose</span>
+                            <span id="wallet-number-how-suffer">- $
+                                <span id="wallet-number-how-num-suffer">50</span>
+                            </span>
                         </p>
+                        <hr id="black-liner-wallet"/>  
                         <p id="faq-two-transfer-three">
                             Are you sure?
                         </p>
+                        <div id="faq-cancel-proceed">
+                            <span>
+                                <button id="cancel-how">
+                                    CANCEL
+                                </button>
+                            </span>
+                            <span>
+                                <button id="proceed-how">
+                                    PROCEED
+                                </button>
+                            </span>
+                        </div>
                     </div>
 
-                    <div id="faq-cancel-proceed">
-                        <span>
-                            <button id="cancel-how">
-                                CANCEL
-                            </button>
-                        </span>
-                        <span>
-                            <button id="proceed-how">
-                                PROCEED
-                            </button>
-                        </span>
-                    </div>
+
 
                 </div>
 
