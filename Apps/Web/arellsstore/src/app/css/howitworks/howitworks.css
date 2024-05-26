@@ -18,7 +18,7 @@
 	#word-logo-how {
 		width: 50px;
 		height: 16px;
-		opacity: .8;
+		opacity: .5;
 	}
 	#black-liner-how {
 		margin-top: 5px;
@@ -363,13 +363,15 @@
 			letter-spacing: 0px;
 		}	
 		#faq-one-how-one {
-			margin-top: -10px;
+			margin-top: -12px;
 			color: rgb(236, 236, 236);
 			font-weight: 600;
 			opacity: .8;
-			margin-left: 0px;
+			margin-left: auto;
+			margin-right: auto;
 			font-size: 15px; 
 			letter-spacing: 0px;
+			width: 300px;
 		}	
 
 		#black-liner-how-bottom-faq {
@@ -392,13 +394,15 @@
 			letter-spacing: 0px;
 		}	
 		#faq-two-how-two {
-			margin-top: -10px;
+			margin-top: -12px;
 			color: rgb(236, 236, 236);
 			font-weight: 600;
 			opacity: .8;
-			margin-left: 0px;
+			margin-left: auto;
+			margin-right: auto;
 			font-size: 15px; 
 			letter-spacing: 0px;
+			width: 300px;
 		}	
 
 		#faq-transfer-wrapper {
