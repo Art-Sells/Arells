@@ -342,7 +342,7 @@
 	#faq-wrapper {
 		margin-left: auto;
 		margin-right: auto;
-		width: 280px;
+		width: 250px;
 	}
 	
 		#faq-how {
@@ -380,7 +380,7 @@
 			border-radius: 30px;
 			width: 250px;
 			opacity: .1;
-			margin-bottom: 20px;
+			margin-bottom: 25px;
 			}	
 
 		#faq-two-how {
@@ -401,155 +401,155 @@
 			line-height: 15px;
 		}	
 
-		#faq-transfer-wrapper {
-			padding-top: 30px;
-			padding-bottom: 35px;
-			margin-top: 40px;
-			margin-left: auto;
-			margin-right: auto;
-			height: 300px;
-			width: 340px;
-			background-color: rgb(255, 255, 255, 0.1);
-			border-radius: 10px;
-			box-shadow: 0px 5px 50px -6px rgb(89, 56, 13, 0.0); 
-		}
-			#transfer-out-how {
-				margin-top: 10px;
-				background: none;
-				text-decoration: none;
-				color: rgb(255, 222, 177);
-				font-weight: 500;
-				font-size: 10px;
-				padding-top: 10px;
-				padding-bottom: 10px;
-				padding-right: 12px;
-				padding-left: 13px;	  
-				border: solid;
-				letter-spacing: 1px;
-				border-radius: 5px;
-				border-width: 1px;
-				border-color: rgb(232, 202, 161);
-				width: 85px;
-				opacity: 1;				  
-				}	
-
-
-			#faq-transfer-example {
-				margin-top: 20px;
-				padding-top: 10px;
-				padding-bottom: 20px;
-				margin-left: auto;
-				margin-right: auto;
-				height: 170px;
-				width: 240px;
-				background-color: rgb(255, 255, 255, 0.15);
-				border-radius: 10px;
-				box-shadow: 0px 5px 20px -6px rgb(90, 51, 0, 0.0); 
+	#faq-transfer-wrapper {
+		padding-top: 30px;
+		padding-bottom: 35px;
+		margin-top: 40px;
+		margin-left: auto;
+		margin-right: auto;
+		height: 300px;
+		width: 340px;
+		background-color: rgb(255, 255, 255, 0.1);
+		border-radius: 10px;
+		box-shadow: 0px 5px 50px -6px rgb(89, 56, 13, 0.0); 
+	}
+		#transfer-out-how {
+			margin-top: 10px;
+			background: none;
+			text-decoration: none;
+			color: rgb(255, 222, 177);
+			font-weight: 500;
+			font-size: 10px;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			padding-right: 12px;
+			padding-left: 13px;	  
+			border: solid;
+			letter-spacing: 1px;
+			border-radius: 5px;
+			border-width: 1px;
+			border-color: rgb(232, 202, 161);
+			width: 85px;
+			opacity: 1;				  
 			}	
 
-				#wallet-how-export {
+
+		#faq-transfer-example {
+			margin-top: 20px;
+			padding-top: 10px;
+			padding-bottom: 20px;
+			margin-left: auto;
+			margin-right: auto;
+			height: 170px;
+			width: 240px;
+			background-color: rgb(255, 255, 255, 0.15);
+			border-radius: 10px;
+			box-shadow: 0px 5px 20px -6px rgb(90, 51, 0, 0.0); 
+		}	
+
+			#wallet-how-export {
+				color: white;
+				font-size: 12px;
+				font-weight: 200;
+				margin-left: 4px;
+				opacity: .6;
+
+			}	
+			#wallet-number-how-export {
+				color: white;
+				font-size: 13px;
+				font-weight: 200;
+				margin-left: 4px;
+
+			}
+			#wallet-number-how-num-export {
+				font-size: 14px;
+				font-weight: 600;
+				margin-left: 2px;
+
+			}	
+
+			#faq-two-transfer-two {
+				margin-top: -15px;
+			}
+
+				#wallet-how-suffer {
 					color: white;
-					font-size: 12px;
+					font-size: 13px;
 					font-weight: 200;
 					margin-left: 4px;
 					opacity: .6;
 	
 				}	
-				#wallet-number-how-export {
+				#wallet-number-how-suffer {
 					color: white;
-					font-size: 13px;
+					font-size: 14px;
 					font-weight: 200;
-					margin-left: 4px;
+					margin-left: 5px;
 	
 				}
-				#wallet-number-how-num-export {
-					font-size: 14px;
+				#wallet-number-how-num-suffer {
+					font-size: 17px;
 					font-weight: 600;
 					margin-left: 2px;
 	
+				}
+			#faq-two-transfer-three {
+				color: white;
+				font-size: 12px;
+				font-weight: 600;
+				opacity: 1;
+
+			}				
+
+
+			#faq-cancel-proceed{
+				margin-top: 20px;
+			}
+				#cancel-how {
+					background: black;
+					text-decoration: none;
+					color: white;
+					font-weight: 500;
+					font-size: 10px;
+					padding-top: 10px;
+					padding-bottom: 10px;
+					padding-right: 12px;
+					padding-left: 13px;	  
+					border: solid;
+					letter-spacing: 1px;
+					border-radius: 5px;
+					border-width: 0px;
+					width: 75px;
+					opacity: 1;
+					box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  			  
+				}
+				#proceed-how {
+					background: none;
+					text-decoration: none;
+					color: rgb(255, 222, 177);
+					font-weight: 500;
+					font-size: 10px;
+					padding-top: 10px;
+					margin-left: 10px;
+					padding-bottom: 10px;
+					padding-right: 12px;
+					padding-left: 13px;	  
+					border: solid;
+					letter-spacing: 1px;
+					border-radius: 5px;
+					border-width: 1px;
+					border-color: rgb(232, 202, 161);
+					width: 85px;
+					opacity: 1;	 			  
 				}	
 
-				#faq-two-transfer-two {
-					margin-top: -15px;
-				}
-
-					#wallet-how-suffer {
-						color: white;
-						font-size: 13px;
-						font-weight: 200;
-						margin-left: 4px;
-						opacity: .6;
-		
-					}	
-					#wallet-number-how-suffer {
-						color: white;
-						font-size: 14px;
-						font-weight: 200;
-						margin-left: 5px;
-		
-					}
-					#wallet-number-how-num-suffer {
-						font-size: 17px;
-						font-weight: 600;
-						margin-left: 2px;
-		
-					}
-				#faq-two-transfer-three {
-					color: white;
-					font-size: 12px;
-					font-weight: 600;
-					opacity: 1;
-	
-				}				
-
-
-				#faq-cancel-proceed{
-					margin-top: 20px;
-				}
-					#cancel-how {
-						background: black;
-						text-decoration: none;
-						color: white;
-						font-weight: 500;
-						font-size: 10px;
-						padding-top: 10px;
-						padding-bottom: 10px;
-						padding-right: 12px;
-						padding-left: 13px;	  
-						border: solid;
-						letter-spacing: 1px;
-						border-radius: 5px;
-						border-width: 0px;
-						width: 75px;
-						opacity: 1;
-						box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  			  
-					}
-					#proceed-how {
-						background: none;
-						text-decoration: none;
-						color: rgb(255, 222, 177);
-						font-weight: 500;
-						font-size: 10px;
-						padding-top: 10px;
-						margin-left: 10px;
-						padding-bottom: 10px;
-						padding-right: 12px;
-						padding-left: 13px;	  
-						border: solid;
-						letter-spacing: 1px;
-						border-radius: 5px;
-						border-width: 1px;
-						border-color: rgb(232, 202, 161);
-						width: 85px;
-						opacity: 1;	 			  
-					}	
-
-			#faq-how-email {
-				margin-top: 20px;
-				color: white;
-				font-weight: 800;
-				opacity: .5;
-				font-size: 18px; 
-				letter-spacing: -1px;
-				margin-bottom: 35px;
-			}				
+		#faq-how-email {
+			margin-top: 20px;
+			color: white;
+			font-weight: 800;
+			opacity: .5;
+			font-size: 18px; 
+			letter-spacing: -1px;
+			margin-bottom: 35px;
+		}				
