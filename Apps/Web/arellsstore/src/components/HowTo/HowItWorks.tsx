@@ -55,8 +55,8 @@ const HowItWorks: React.FC = () => {
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('wordLogo')}
                 alt=""
-                width={60}
-                height={19}
+                width={50}
+                height={16}
                 id="word-logo-how" 
                 src="images/Arells-Logo.png"/>	
 
@@ -87,13 +87,15 @@ const HowItWorks: React.FC = () => {
                         </div>
                     </span>
                     <span id="price-how">Price:</span>
-                    <span id="price-number-how">$60,000</span>
+                    <span id="price-number-how">$
+                        <span id="price-number-how-num">60,000</span>
+                    </span>
                 </div>
 
                 <div id="transfer-buy">
                     <span>
                         <button id="transfer-how">
-                            TRANSFER IN
+                            IMPORT
                         </button>
                     </span>
                     <span>
@@ -106,6 +108,18 @@ const HowItWorks: React.FC = () => {
                 <div id="transfer-buy-how">
                     <div id="b-price-how">
                         <span>
+                            <div id="a-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="arells-how" 
+                                src="images/howitworks/ArellsBitcoinIvory.png"/>
+                            </div>
+                        </span>
+                        <span>
                             <div id="b-how-wrapper">
                                 <Image
                                 loader={imageLoader}
@@ -117,20 +131,10 @@ const HowItWorks: React.FC = () => {
                                 src="images/howitworks/Bitcoin.png"/>
                             </div>
                         </span>
-                        <span>
-                            <div id="a-how-wrapper">
-                                <Image
-                                loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
-                                alt=""
-                                width={20}
-                                height={20}
-                                id="arells-how" 
-                                src="images/howitworks/ArellsBitcoin.png"/>
-                            </div>
-                        </span>
                         <span id="price-how">Price:</span>
-                        <span id="price-number-how">$60,000</span>
+                        <span id="price-number-how">$
+                            <span id="price-number-how-num">60,000</span>
+                        </span>
                     </div>
                     <p id="your-wallet">Your Wallet: $500</p>
 
@@ -158,7 +162,9 @@ const HowItWorks: React.FC = () => {
                         </div>
                     </span>
                     <span id="price-how">Price:</span>
-                    <span id="price-number-how">$54,000</span>
+                    <span id="price-number-how">$
+                        <span id="price-number-how-num">54,000</span>
+                    </span>
                 </div>
 
                 <button id="holding-how">
@@ -169,6 +175,18 @@ const HowItWorks: React.FC = () => {
 
                     <div id="b-price-how">
                         <span>
+                            <div id="a-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="arells-how" 
+                                src="images/howitworks/ArellsBitcoinIvory.png"/>
+                            </div>
+                        </span>
+                        <span>
                             <div id="b-how-wrapper">
                                 <Image
                                 loader={imageLoader}
@@ -180,20 +198,10 @@ const HowItWorks: React.FC = () => {
                                 src="images/howitworks/Bitcoin.png"/>
                             </div>
                         </span>
-                        <span>
-                            <div id="a-how-wrapper">
-                                <Image
-                                loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
-                                alt=""
-                                width={20}
-                                height={20}
-                                id="arells-how" 
-                                src="images/howitworks/ArellsBitcoin.png"/>
-                            </div>
-                        </span>
                         <span id="holding-price-how">Holding Price:</span>
-                        <span id="price-number-how">$60,000</span>
+                        <span id="price-number-how">$
+                            <span id="price-number-how-num">60,000</span>
+                        </span>
                     </div>
                     <p id="your-wallet">Your Wallet: $500</p>
 
@@ -219,7 +227,9 @@ const HowItWorks: React.FC = () => {
                         </div>
                     </span>
                     <span id="price-how">Price:</span>
-                    <span id="price-number-how">$75,000</span>
+                    <span id="price-number-how">$
+                        <span id="price-number-how-num">75,000</span>
+                    </span>
                 </div>
 
                 <button id="sell-how">
@@ -229,6 +239,18 @@ const HowItWorks: React.FC = () => {
                 <div id="sell-wrapper-how">
 
                     <div id="b-price-how">
+                        <span>
+                            <div id="a-how-wrapper">
+                                <Image
+                                loader={imageLoader}
+                                onLoad={() => handleImageLoaded('wordLogo')}
+                                alt=""
+                                width={20}
+                                height={20}
+                                id="arells-how" 
+                                src="images/howitworks/ArellsBitcoinIvory.png"/>
+                            </div>
+                        </span>
                         <span>
                             <div id="b-how-wrapper">
                                 <Image
@@ -241,20 +263,10 @@ const HowItWorks: React.FC = () => {
                                 src="images/howitworks/Bitcoin.png"/>
                             </div>
                         </span>
-                        <span>
-                            <div id="a-how-wrapper">
-                                <Image
-                                loader={imageLoader}
-                                onLoad={() => handleImageLoaded('wordLogo')}
-                                alt=""
-                                width={20}
-                                height={20}
-                                id="arells-how" 
-                                src="images/howitworks/ArellsBitcoin.png"/>
-                            </div>
+                        <span id="price-how">Price:</span>
+                        <span id="price-number-how">$
+                            <span id="price-number-how-num">75,000</span>
                         </span>
-                        <span id="holding-price-how">Price:</span>
-                        <span id="price-number-how">$75,000</span>
                     </div>
                     <p id="your-wallet">Your Wallet: $625</p>
 
@@ -276,11 +288,11 @@ const HowItWorks: React.FC = () => {
                     Will I be able to override the Holding Price and sell?
                 </p>
                 <p id="faq-one-how">
-                    Yes, by transferring your Bitcoin out of Arells.
+                    Yes, by exporting your Bitcoin out of Arells.
                 </p>
 
                 <p id="faq-two-how">
-                    How will transfering my Bitcoin out of Arells affect my investment?
+                    How will exporting my Bitcoin out of Arells affect my investment?
                 </p>
                 <p id="faq-two-how">
                     If the Bitcoin price decreases, the value of your investment 
@@ -290,12 +302,12 @@ const HowItWorks: React.FC = () => {
                 <div id="faq-transfer-wrapper">
 
                     <button id="transfer-out-how">
-                        TRANSFER OUT
+                        EXPORT
                     </button>
 
                     <div id="faq-transfer-example">
                         <p id="faq-two-transfer-one">
-                            Transferring $450 out of Arells
+                            Exporting $450 out of Arells
                         </p>
                         <p id="faq-two-transfer-two">
                             will incur you a $50 loss.
