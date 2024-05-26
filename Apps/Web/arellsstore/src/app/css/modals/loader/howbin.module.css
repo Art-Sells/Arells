@@ -1,7 +1,7 @@
 
 
 
-#spinnerHow {
+#binnerhow {
   position: fixed;
   display: block;
   justify-content: center;
@@ -21,7 +21,7 @@
 }
 
 @media screen and (max-height: 550px) {
-  .spinnerHow{
+  #binnerhow{
     margin-top: -45px;
   }
 }
