@@ -14,6 +14,7 @@
     animation-duration: 0.25s;
     padding-bottom: 30px;
   }
+
   #spinnerBackgroundConnect {
     position: fixed; /* Stay in place */
     text-align: center;
@@ -45,6 +46,7 @@
     margin-top: 220px;
     opacity: .15;
   }
+
   #arells-loader-icon-connect {
     margin-top: 220px;
     opacity: .15;
@@ -58,6 +60,7 @@
     #arells-loader-icon {
       margin-top: 120px;
     }
+
     #arells-loader-icon-connect {
       margin-top: 120px;
     }

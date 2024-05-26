@@ -19,10 +19,12 @@
   margin-right: 50%;
 }
 
+
 @media screen and (max-height: 550px) {
   .spinner{
     margin-top: -45px;
   }
+
 }
 
   @-webkit-keyframes spin {
