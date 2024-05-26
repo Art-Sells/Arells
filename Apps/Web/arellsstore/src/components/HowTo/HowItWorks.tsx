@@ -9,8 +9,8 @@ import '../../app/css/modals/stayupdated-modal.css';
 
 
 // Loader Styles
-import '../../app/css/modals/loading/loader/spinnerBackgroundHow.css';
-import styles from '../../app/css/modals/loading/loader/howspinner.module.css';
+import '../../app/css/modals/loader/spinnerBackgroundHow.css';
+import styles from '../../app/css/modals/loader/howspinner.module.css';
 
 const HowItWorks: React.FC = () => {
     //Loader Function/s
@@ -49,7 +49,7 @@ const HowItWorks: React.FC = () => {
                 height={30}
                 id="arells-loader-icon-how" 
                 src="images/Arells-Icon-Ivory.png"/>    
-                <div className={styles.spinnerHow}></div>    
+                <div id={styles.spinnerHow}></div>    
             </div>
         )}
             <Image
