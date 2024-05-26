@@ -406,7 +406,7 @@ const HowItWorks: React.FC = () => {
                         </p>
                         <p id="faq-two-transfer-two">
                             <span id="wallet-how-suffer">You will lose</span>
-                            <span id="wallet-number-how-suffer">- $
+                            <span id="wallet-number-how-suffer">$
                                 <span id="wallet-number-how-num-suffer">50</span>
                             </span>
                         </p>

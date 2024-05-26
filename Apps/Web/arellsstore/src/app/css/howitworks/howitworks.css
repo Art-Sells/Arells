@@ -465,7 +465,7 @@
 				#wallet-number-how-num-export {
 					font-size: 14px;
 					font-weight: 600;
-					margin-left: 0px;
+					margin-left: 2px;
 	
 				}	
 
@@ -475,7 +475,7 @@
 
 					#wallet-how-suffer {
 						color: white;
-						font-size: 14px;
+						font-size: 13px;
 						font-weight: 200;
 						margin-left: 4px;
 						opacity: .6;
@@ -483,7 +483,7 @@
 					}	
 					#wallet-number-how-suffer {
 						color: white;
-						font-size: 15px;
+						font-size: 14px;
 						font-weight: 200;
 						margin-left: 5px;
 		
@@ -491,7 +491,7 @@
 					#wallet-number-how-num-suffer {
 						font-size: 17px;
 						font-weight: 600;
-						margin-left: 0px;
+						margin-left: 2px;
 		
 					}
 				#faq-two-transfer-three {
