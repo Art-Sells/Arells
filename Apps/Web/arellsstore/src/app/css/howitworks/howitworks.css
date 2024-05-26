@@ -4,11 +4,11 @@
 	padding-top: 30px; 
 	text-align: center;
 	font-family: Arial;
-	margin-top: -4px;
-	margin-left: -4px;
-	margin-right: -4px;
-	margin-bottom: -4px;
-	border-radius: 5px;
+	margin-top: 10px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: 10px;
+	border-radius: 10px;
 	padding-bottom: 40px;
 	   background-color: rgb(184, 138, 79);
 	   box-shadow: 0px 5px 50px -6px rgba(127, 72, 0); 	
@@ -363,7 +363,7 @@
 			letter-spacing: 0px;
 		}	
 		#faq-one-how-one {
-			margin-top: -12px;
+			margin-top: -10px;
 			color: rgb(236, 236, 236);
 			font-weight: 600;
 			opacity: .8;
@@ -372,6 +372,7 @@
 			font-size: 15px; 
 			letter-spacing: 0px;
 			width: 300px;
+			line-height: 15px;
 		}	
 
 		#black-liner-how-bottom-faq {
@@ -394,7 +395,7 @@
 			letter-spacing: 0px;
 		}	
 		#faq-two-how-two {
-			margin-top: -12px;
+			margin-top: -10px;
 			color: rgb(236, 236, 236);
 			font-weight: 600;
 			opacity: .8;
@@ -403,12 +404,13 @@
 			font-size: 15px; 
 			letter-spacing: 0px;
 			width: 300px;
+			line-height: 15px;
 		}	
 
 		#faq-transfer-wrapper {
 			padding-top: 30px;
 			padding-bottom: 35px;
-			margin-top: 30px;
+			margin-top: 40px;
 			margin-left: auto;
 			margin-right: auto;
 			height: 300px;
