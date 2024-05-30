@@ -13,11 +13,12 @@ export default function RootLayout({ children }: LayoutProps) {
         <link rel="shortcut icon" href="https://arells.com/ArellsIcoIcon.png" />
       </head>
       <body>
-        <SignerProvider>
+        
+        
           <ApolloWrapper>
             {children}
           </ApolloWrapper>
-        </SignerProvider>
+        
       </body>
     </html>
   )
