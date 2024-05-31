@@ -7,7 +7,7 @@ import axios from 'axios';
 const ECPair = ECPairFactory(ecc);
 
 // Use the correct network
-const network = bitcoin.networks.bitcoin; // Use bitcoin.networks.testnet for testnet
+const network = bitcoin.networks.testnet; // Use bitcoin.networks.testnet for testnet
 
 export const generateWallet = () => {
   const keyPair = ECPair.makeRandom({ network });
