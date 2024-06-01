@@ -62,5 +62,8 @@ _______________________________________________________________________
 
 ## Core Beliefs:
 
-Arells believes...in empowering investors more than itself...and money isn't the root to all evil, the *love of money is the root to all evil*.
+Arells believes:
+1. It's wrong for investors to lose money selling assets.
+2. In empowering investors more than itself.
+3. Money isn't the root to all evil, the *love of money is the root to all evil*.
 - This will keep Arells' away from selfish ambition and towards creating innovations that will help empower people everywhere.
