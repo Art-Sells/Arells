@@ -3,11 +3,10 @@
 # [Arells](https://arells.com)
 ## Never lose money selling cryptocurrencies.
 
-### Problem:
-Bear markets destroy lots of financial value.
+Arells exists because it believes ***it's wrong for investors to lose money selling their cryptocurrencies, especially during Bear Markets.***
 
 ### Solution:
-Arells: A cryptocurrency marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **Holding Price** which limits the erasure of a token's value from selling pressure.
+A cryptocurrency marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **Holding Price** which limits the erasure of a token's value from selling pressure.
 
 #### Holding Price:
 Holding Price is a market system which holds the price of a token as it loses value.
@@ -58,3 +57,11 @@ _______________________________________________________________________
  
 - **May 2024 - July 2024**
   - [ ] Arells Cryptocurrency Marketplace MVP *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
+
+_______________________________________________________________________
+
+## Core Beliefs:
+
+***Arells believes...***
+...in empowering investors more than itself ...and money isn't the root to all evil, the *love of money is the root to all evil*.
+- This will keep Arells' away from selfish ambition and towards creating innovations that will help empower people everywhere.
