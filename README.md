@@ -29,6 +29,7 @@ A market in which token prices stagnate rendering bear markets obsolete.
 
 <img src="https://github.com/Art-Sells/Arells/assets/51394348/49591992-3d46-4200-80c6-b0656d741c1c" width="800px"> 
 
+### How It Works: https://arells.com/howitworks
 _______________________________________________________________________
 
 ## FAQ:
