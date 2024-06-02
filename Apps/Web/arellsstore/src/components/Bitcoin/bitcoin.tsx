@@ -146,7 +146,7 @@ const Bitcoin: React.FC = () => {
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
             />
-            <p>Fee: {formatFee(stableFee)} BTC</p>
+            <p>Network Fee: {formatFee(stableFee)} BTC</p>
             <button onClick={sendBitcoin}>Send Bitcoin</button>
           </div>
         </div>
