@@ -133,7 +133,7 @@ const Bitcoin: React.FC = () => {
           <p>Private Key: {loadedWallet.privateKey}</p>
           <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
           <div>
-            <h2>Send Testnet Bitcoin</h2>
+            <h2>Send Bitcoin</h2>
             <input
               type="text"
               placeholder="Recipient Address"
