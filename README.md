@@ -29,6 +29,7 @@ A market in which token prices stagnate rendering bear markets obsolete.
 
 <img src="https://github.com/Art-Sells/Arells/assets/51394348/49591992-3d46-4200-80c6-b0656d741c1c" width="800px"> 
 
+### How It Works: https://arells.com/howitworks
 _______________________________________________________________________
 
 ## FAQ:
@@ -62,6 +63,8 @@ _______________________________________________________________________
 
 ## Core Beliefs:
 
-***Arells believes...***
-...in empowering investors more than itself ...and money isn't the root to all evil, the *love of money is the root to all evil*.
-- This will keep Arells' away from selfish ambition and towards creating innovations that will help empower people everywhere.
+Arells believes:
+1. It's wrong for investors to lose money selling assets.
+2. In empowering investors more than itself.
+3. Money isn't the root to all evil, the *love of money is the root to all evil*.
+- This will keep Arells away from selfish ambition and towards creating innovations that will help empower investors everywhere.

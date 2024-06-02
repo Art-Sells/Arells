@@ -7,13 +7,13 @@ const Bitcoin: React.FC = () => {
   const [loadedWallet, setLoadedWallet] = useState<{ address: string; privateKey: string } | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
-  const [amount, setAmount] = useState<number>(0);
-  const [fee, setFee] = useState<number>(10000);
+  const [amount, setAmount] = useState<number>(0); // amount in satoshis
+  const stableFee = 0.0001 * 100000000; // 0.0001 BTC in satoshis
   const [address, setAddress] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
 
   useEffect(() => {
-    const walletAddress = createdWallet?.address || loadedWallet?.address;
+    const walletAddress = loadedWallet?.address;
     if (walletAddress) {
       const fetchBalance = async () => {
         const res = await fetch(`/api/balance?address=${walletAddress}`);
@@ -22,7 +22,7 @@ const Bitcoin: React.FC = () => {
       };
       fetchBalance();
     }
-  }, [createdWallet, loadedWallet]);
+  }, [loadedWallet]);
 
   const createWallet = async () => {
     const res = await fetch('/api/wallet');
@@ -47,21 +47,55 @@ const Bitcoin: React.FC = () => {
   };
 
   const sendBitcoin = async () => {
-    const wallet = createdWallet || loadedWallet;
-    if (!wallet) return;
-    const res = await fetch('/api/transaction', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        senderPrivateKey: wallet.privateKey,
-        recipientAddress,
-        amount,
-        fee,
-      }),
-    });
-    if (res.ok) {
-      alert('Transaction sent successfully!');
+    if (!loadedWallet) {
+      alert('Please load a wallet to send Bitcoin.');
+      return;
     }
+
+    const totalAmount = amount + stableFee;
+
+    if (balance === null || totalAmount > balance) {
+      alert('Insufficient balance to cover the amount and the fee.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/transaction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderPrivateKey: loadedWallet.privateKey,
+          recipientAddress,
+          amount: Math.round(amount), // Convert amount to an integer
+          fee: Math.round(stableFee), // Use the stable fee
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(`Transaction sent successfully! TX ID: ${data.txId}`);
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(`Error: ${error.message}`);
+      } else {
+        alert('An unknown error occurred');
+      }
+    }
+  };
+
+  const formatBalance = (balanceInSatoshis: number | null) => {
+    if (balanceInSatoshis === null) return 'Loading...';
+    if (balanceInSatoshis === 0) return '0';
+    const balanceInBTC = balanceInSatoshis / 100000000;
+    return balanceInBTC.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
+  };
+
+  const formatFee = (feeInSatoshis: number) => {
+    const feeInBTC = feeInSatoshis / 100000000;
+    return feeInBTC.toFixed(8).replace(/\.?0+$/, '');
   };
 
   return (
@@ -73,25 +107,9 @@ const Bitcoin: React.FC = () => {
           <h2>Created Wallet</h2>
           <p>Address: {createdWallet.address}</p>
           <p>Private Key: {createdWallet.privateKey}</p>
-          <p>Balance: {balance !== null ? balance : 'Loading...'} BTC</p>
+          <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
         </div>
       )}
-      <div>
-        <h2>Send Testnet Bitcoin</h2>
-        <input
-          type="text"
-          placeholder="Recipient Address"
-          value={recipientAddress}
-          onChange={(e) => setRecipientAddress(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Amount in Satoshis"
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
-        />
-        <button onClick={sendBitcoin}>Send Bitcoin</button>
-      </div>
       <div>
         <h2>Access Existing Testnet Wallet</h2>
         <input
@@ -113,7 +131,24 @@ const Bitcoin: React.FC = () => {
           <h2>Loaded Wallet</h2>
           <p>Address: {loadedWallet.address}</p>
           <p>Private Key: {loadedWallet.privateKey}</p>
-          <p>Balance: {balance !== null ? balance : 'Loading...'} BTC</p>
+          <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
+          <div>
+            <h2>Send Testnet Bitcoin</h2>
+            <input
+              type="text"
+              placeholder="Recipient Address"
+              value={recipientAddress}
+              onChange={(e) => setRecipientAddress(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Amount in Satoshis"
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+            />
+            <p>Fee: {formatFee(stableFee)} BTC</p>
+            <button onClick={sendBitcoin}>Send Bitcoin</button>
+          </div>
         </div>
       )}
     </div>
