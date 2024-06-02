@@ -100,8 +100,8 @@ const Bitcoin: React.FC = () => {
 
   return (
     <div>
-      <h1>Bitcoin Testnet Marketplace</h1>
-      <button onClick={createWallet}>Create Testnet Wallet</button>
+      <h1>Bitcoin  Marketplace</h1>
+      <button onClick={createWallet}>Create Bitcoin Wallet</button>
       {createdWallet && (
         <div>
           <h2>Created Wallet</h2>
