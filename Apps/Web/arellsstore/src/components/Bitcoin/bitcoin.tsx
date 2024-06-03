@@ -8,7 +8,7 @@ const Bitcoin: React.FC = () => {
   const [balance, setBalance] = useState<number | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [amount, setAmount] = useState<number>(0); // amount in satoshis
-  const stableFee = 0.0001 * 100000000; // 0.0001 BTC in satoshis
+  const stableFee = 0.00006 * 100000000; // 0.00006 BTC in satoshis
   const [address, setAddress] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
 
@@ -16,33 +16,50 @@ const Bitcoin: React.FC = () => {
     const walletAddress = loadedWallet?.address;
     if (walletAddress) {
       const fetchBalance = async () => {
-        const res = await fetch(`/api/balance?address=${walletAddress}`);
-        const data = await res.json();
-        setBalance(data.balance);
+        try {
+          const res = await fetch(`/api/balance?address=${walletAddress}`);
+          if (!res.ok) {
+            throw new Error(`Failed to fetch balance: ${res.statusText}`);
+          }
+          const data = await res.json();
+          console.log('Fetched balance:', data);
+          setBalance(data);
+        } catch (error) {
+          console.error('Error fetching balance:', error);
+          setBalance(null);
+        }
       };
       fetchBalance();
     }
   }, [loadedWallet]);
 
   const createWallet = async () => {
-    const res = await fetch('/api/wallet');
-    const data = await res.json();
-    setCreatedWallet(data);
-    setLoadedWallet(null); // Clear loaded wallet if any
+    try {
+      const res = await fetch('/api/wallet');
+      const data = await res.json();
+      setCreatedWallet(data);
+      setLoadedWallet(null); // Clear loaded wallet if any
+    } catch (error) {
+      console.error('Error creating wallet:', error);
+    }
   };
 
   const loadWallet = async () => {
-    const res = await fetch('/api/load-wallet', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ address, privateKey }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setLoadedWallet(data);
-      setCreatedWallet(null); // Clear created wallet if any
-    } else {
-      alert(data.error);
+    try {
+      const res = await fetch('/api/load-wallet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address, privateKey }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setLoadedWallet(data);
+        setCreatedWallet(null); // Clear created wallet if any
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      console.error('Error loading wallet:', error);
     }
   };
 
@@ -53,11 +70,16 @@ const Bitcoin: React.FC = () => {
     }
 
     const totalAmount = amount + stableFee;
-
     if (balance === null || totalAmount > balance) {
       alert('Insufficient balance to cover the amount and the fee.');
       return;
     }
+
+    console.log("Sending with the following data:");
+    console.log("Private Key:", loadedWallet.privateKey);
+    console.log("Recipient Address:", recipientAddress);
+    console.log("Amount:", amount);
+    console.log("Fee:", stableFee);
 
     try {
       const res = await fetch('/api/transaction', {
@@ -66,8 +88,8 @@ const Bitcoin: React.FC = () => {
         body: JSON.stringify({
           senderPrivateKey: loadedWallet.privateKey,
           recipientAddress,
-          amount: Math.round(amount), // Convert amount to an integer
-          fee: Math.round(stableFee), // Use the stable fee
+          amount: Math.round(amount),
+          fee: Math.round(stableFee),
         }),
       });
 
@@ -75,14 +97,12 @@ const Bitcoin: React.FC = () => {
       if (res.ok) {
         alert(`Transaction sent successfully! TX ID: ${data.txId}`);
       } else {
+        console.error("Response data on error:", data);
         alert(`Error: ${data.error}`);
       }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        alert(`Error: ${error.message}`);
-      } else {
-        alert('An unknown error occurred');
-      }
+    } catch (error) {
+      console.error("Error in sending transaction:", error);
+      alert('An unknown error occurred');
     }
   };
 
@@ -100,7 +120,7 @@ const Bitcoin: React.FC = () => {
 
   return (
     <div>
-      <h1>Bitcoin  Marketplace</h1>
+      <h1>Bitcoin Marketplace</h1>
       <button onClick={createWallet}>Create Bitcoin Wallet</button>
       {createdWallet && (
         <div>
@@ -111,7 +131,7 @@ const Bitcoin: React.FC = () => {
         </div>
       )}
       <div>
-        <h2>Access Existing Testnet Wallet</h2>
+        <h2>Access Existing Bitcoin Wallet</h2>
         <input
           type="text"
           placeholder="Address"

@@ -17,8 +17,8 @@ export const generateWallet = () => {
 };
 
 export const getBalance = async (address: string) => {
-  const response = await axios.get(`https://blockchain.info/q/addressbalance/${address}`);
-  return response.data;
+  const response = await axios.get(`https://blockchain.info/q/addressbalance/${address}?confirmations=6`);
+  return Number(response.data); // Ensure the balance is returned as a number
 };
 
 export const loadWallet = (address: string, privateKey: string) => {
