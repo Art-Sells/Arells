@@ -8,58 +8,56 @@ const Bitcoin: React.FC = () => {
   const [balance, setBalance] = useState<number | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [amount, setAmount] = useState<number>(0); // amount in satoshis
-  const stableFee = 0.00006 * 100000000; // 0.00006 BTC in satoshis
+  const [feeRate, setFeeRate] = useState<number>(10); // Fee rate in satoshis per byte
   const [address, setAddress] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const walletAddress = loadedWallet?.address;
     if (walletAddress) {
       const fetchBalance = async () => {
-        try {
-          const res = await fetch(`/api/balance?address=${walletAddress}`);
-          if (!res.ok) {
-            throw new Error(`Failed to fetch balance: ${res.statusText}`);
-          }
-          const data = await res.json();
-          console.log('Fetched balance:', data);
-          setBalance(data);
-        } catch (error) {
-          console.error('Error fetching balance:', error);
-          setBalance(null);
-        }
+        const res = await fetch(`/api/balance?address=${walletAddress}`);
+        const data = await res.json();
+        setBalance(data);
       };
       fetchBalance();
     }
   }, [loadedWallet]);
 
+  useEffect(() => {
+    const fetchFeeRate = async () => {
+      try {
+        const res = await fetch('https://mempool.space/api/v1/fees/recommended');
+        const data = await res.json();
+        setFeeRate(data.fastestFee); // Use the fastest fee rate for the example
+      } catch (error) {
+        console.error('Error fetching fee rate:', error);
+        setFeeRate(10); // Fallback to 10 satoshis per byte if the fetch fails
+      }
+    };
+    fetchFeeRate();
+  }, []);
+
   const createWallet = async () => {
-    try {
-      const res = await fetch('/api/wallet');
-      const data = await res.json();
-      setCreatedWallet(data);
-      setLoadedWallet(null); // Clear loaded wallet if any
-    } catch (error) {
-      console.error('Error creating wallet:', error);
-    }
+    const res = await fetch('/api/wallet');
+    const data = await res.json();
+    setCreatedWallet(data);
+    setLoadedWallet(null); // Clear loaded wallet if any
   };
 
   const loadWallet = async () => {
-    try {
-      const res = await fetch('/api/load-wallet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address, privateKey }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setLoadedWallet(data);
-        setCreatedWallet(null); // Clear created wallet if any
-      } else {
-        alert(data.error);
-      }
-    } catch (error) {
-      console.error('Error loading wallet:', error);
+    const res = await fetch('/api/load-wallet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address, privateKey }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setLoadedWallet(data);
+      setCreatedWallet(null); // Clear created wallet if any
+    } else {
+      alert(data.error);
     }
   };
 
@@ -69,19 +67,23 @@ const Bitcoin: React.FC = () => {
       return;
     }
 
-    const totalAmount = amount + stableFee;
-    if (balance === null || totalAmount > balance) {
-      alert('Insufficient balance to cover the amount and the fee.');
+    const minAmount = 10000; // Minimum amount in satoshis (0.0001 BTC)
+
+    if (amount < minAmount) {
+      alert(`The amount is too low. Minimum amount is ${minAmount} satoshis (0.0001 BTC).`);
       return;
     }
 
-    console.log("Sending with the following data:");
-    console.log("Private Key:", loadedWallet.privateKey);
-    console.log("Recipient Address:", recipientAddress);
-    console.log("Amount:", amount);
-    console.log("Fee:", stableFee);
-
     try {
+      const transactionSize = 200; // Rough estimate of transaction size in bytes
+      const fee = transactionSize * feeRate;
+      const totalAmount = amount + fee;
+
+      if (balance === null || totalAmount > balance) {
+        alert('Insufficient balance to cover the amount and the fee.');
+        return;
+      }
+
       const res = await fetch('/api/transaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,7 +91,7 @@ const Bitcoin: React.FC = () => {
           senderPrivateKey: loadedWallet.privateKey,
           recipientAddress,
           amount: Math.round(amount),
-          fee: Math.round(stableFee),
+          fee,
         }),
       });
 
@@ -113,11 +115,6 @@ const Bitcoin: React.FC = () => {
     return balanceInBTC.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
   };
 
-  const formatFee = (feeInSatoshis: number) => {
-    const feeInBTC = feeInSatoshis / 100000000;
-    return feeInBTC.toFixed(8).replace(/\.?0+$/, '');
-  };
-
   return (
     <div>
       <h1>Bitcoin Marketplace</h1>
@@ -131,7 +128,7 @@ const Bitcoin: React.FC = () => {
         </div>
       )}
       <div>
-        <h2>Access Existing Bitcoin Wallet</h2>
+        <h2>Access Existing Wallet</h2>
         <input
           type="text"
           placeholder="Address"
@@ -166,8 +163,8 @@ const Bitcoin: React.FC = () => {
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
             />
-            <p>Network Fee: {formatFee(stableFee)} BTC</p>
             <button onClick={sendBitcoin}>Send Bitcoin</button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
           </div>
         </div>
       )}

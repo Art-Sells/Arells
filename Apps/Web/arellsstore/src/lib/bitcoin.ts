@@ -4,21 +4,21 @@ import * as ecc from 'tiny-secp256k1';
 import axios from 'axios';
 
 const ECPair = ECPairFactory(ecc);
-const network = bitcoin.networks.bitcoin;  // Use the correct network for mainnet
+const network = bitcoin.networks.bitcoin;
 
 export const generateWallet = () => {
   const keyPair = ECPair.makeRandom({ network });
   const payment = bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey, network });
   const privateKey = keyPair.toWIF();
   return {
-    address: payment.address || '', // Ensure this is always a string
+    address: payment.address || '',
     privateKey
   };
 };
 
 export const getBalance = async (address: string) => {
-  const response = await axios.get(`https://blockchain.info/q/addressbalance/${address}?confirmations=6`);
-  return Number(response.data); // Ensure the balance is returned as a number
+  const response = await axios.get(`https://blockchain.info/q/addressbalance/${address}`);
+  return response.data;
 };
 
 export const loadWallet = (address: string, privateKey: string) => {
@@ -33,7 +33,7 @@ export const loadWallet = (address: string, privateKey: string) => {
   }
 };
 
-export const createTransaction = async (senderPrivateKey: string, recipientAddress: string, amount: number, fee: number) => {
+export const createTransaction = async (senderPrivateKey: string, recipientAddress: string, amount: number, feeRate: number) => {
   const keyPair = ECPair.fromWIF(senderPrivateKey, network);
   const payment = bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey, network });
 
@@ -69,7 +69,10 @@ export const createTransaction = async (senderPrivateKey: string, recipientAddre
   }
 
   psbt.addOutput({ address: recipientAddress, value: amount });
+  const transactionSize = psbt.data.inputs.length * 148 + psbt.data.outputs.length * 34 + 10; // Rough estimate of transaction size in bytes
+  const fee = transactionSize * feeRate;
   const change = inputAmount - amount - fee;
+
   if (change > 0) {
     psbt.addOutput({ address, value: change });
   }

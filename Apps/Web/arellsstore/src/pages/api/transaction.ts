@@ -5,24 +5,31 @@ import axios from 'axios';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { senderPrivateKey, recipientAddress, amount, fee } = req.body;
 
-  if (!senderPrivateKey || !recipientAddress || typeof amount !== 'number' || typeof fee !== 'number') {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
-
   try {
+    if (!senderPrivateKey || !recipientAddress || amount === undefined || fee === undefined) {
+      throw new Error('Missing required fields');
+    }
+
+    // Define the minimum amount in satoshis (0.0001 BTC)
+    const minAmount = 10000; // Minimum amount in satoshis
+
+    // Ensure amount is not below the minimum amount
+    if (amount < minAmount) {
+      return res.status(400).json({ error: `Amount is too low. Minimum amount is ${minAmount} satoshis (0.0001 BTC).` });
+    }
+
     const txHex = await createTransaction(senderPrivateKey, recipientAddress, amount, fee);
 
     // Broadcast the transaction
-    const broadcastResponse = await axios.post('https://api.blockcypher.com/v1/btc/test3/txs/push', { tx: txHex });
-    const txId = broadcastResponse.data.tx.hash;
+    const broadcastResponse = await axios.post('https://blockchain.info/pushtx', `tx=${txHex}`, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
 
-    res.status(200).json({ txId });
-  } catch (error: unknown) {
+    res.status(200).json({ txId: broadcastResponse.data });
+  } catch (error) {
     console.error('Error in handler:', error);
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'An unknown error occurred' });
-    }
+    res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
   }
 }
