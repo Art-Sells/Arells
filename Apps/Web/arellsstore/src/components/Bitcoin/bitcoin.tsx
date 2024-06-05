@@ -7,7 +7,7 @@ const Bitcoin: React.FC = () => {
   const [loadedWallet, setLoadedWallet] = useState<{ address: string; privateKey: string } | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
-  const [amount, setAmount] = useState<number>(0); // amount in satoshis
+  const [amount, setAmount] = useState<string>(''); // amount in BTC
   const [feeRate, setFeeRate] = useState<number>(10); // Fee rate in satoshis per byte
   const [address, setAddress] = useState<string>('');
   const [privateKey, setPrivateKey] = useState<string>('');
@@ -67,17 +67,19 @@ const Bitcoin: React.FC = () => {
       return;
     }
 
-    const minAmount = 10000; // Minimum amount in satoshis (0.0001 BTC)
+    const minAmountInBTC = 0.0001; // Minimum amount in BTC
+    const amountInBTC = parseFloat(amount);
+    const amountInSatoshis = Math.round(amountInBTC * 100000000); // Convert BTC to satoshis
 
-    if (amount < minAmount) {
-      alert(`The amount is too low. Minimum amount is ${minAmount} satoshis (0.0001 BTC).`);
+    if (amountInBTC < minAmountInBTC) {
+      alert(`The amount is too low. Minimum amount is ${minAmountInBTC} BTC.`);
       return;
     }
 
     try {
       const transactionSize = 200; // Rough estimate of transaction size in bytes
       const fee = transactionSize * feeRate;
-      const totalAmount = amount + fee;
+      const totalAmount = amountInSatoshis + fee;
 
       if (balance === null || totalAmount > balance) {
         alert('Insufficient balance to cover the amount and the fee.');
@@ -90,7 +92,7 @@ const Bitcoin: React.FC = () => {
         body: JSON.stringify({
           senderPrivateKey: loadedWallet.privateKey,
           recipientAddress,
-          amount: Math.round(amount),
+          amount: Math.round(amountInSatoshis),
           fee,
         }),
       });
@@ -159,9 +161,9 @@ const Bitcoin: React.FC = () => {
             />
             <input
               type="number"
-              placeholder="Amount in Satoshis"
+              placeholder="Amount in BTC"
               value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
+              onChange={(e) => setAmount(e.target.value)}
             />
             <button onClick={sendBitcoin}>Send Bitcoin</button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
