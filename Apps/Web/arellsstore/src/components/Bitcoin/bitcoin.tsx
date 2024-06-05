@@ -67,17 +67,16 @@ const Bitcoin: React.FC = () => {
       return;
     }
 
-    const minAmountInBTC = 0.0001; // Minimum amount in BTC
-    const amountInBTC = parseFloat(amount);
-    const amountInSatoshis = Math.round(amountInBTC * 100000000); // Convert BTC to satoshis
+    const minAmount = 0.0001; // Minimum amount in BTC
+    const amountInSatoshis = parseFloat(amount) * 100000000;
 
-    if (amountInBTC < minAmountInBTC) {
-      alert(`The amount is too low. Minimum amount is ${minAmountInBTC} BTC.`);
+    if (isNaN(amountInSatoshis) || amountInSatoshis < minAmount * 100000000) {
+      alert(`The amount is too low. Minimum amount is ${minAmount} BTC.`);
       return;
     }
 
     try {
-      const transactionSize = 200; // Rough estimate of transaction size in bytes
+      const transactionSize = 250; // Estimated transaction size in bytes
       const fee = transactionSize * feeRate;
       const totalAmount = amountInSatoshis + fee;
 
