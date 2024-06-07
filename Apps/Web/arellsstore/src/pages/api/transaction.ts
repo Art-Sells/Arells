@@ -15,21 +15,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Ensure amount is not below the minimum amount
     if (amount < minAmount) {
-      console.log(`Amount too low: ${amount}. Minimum amount is ${minAmount}`);
       return res.status(400).json({ error: `Amount is too low. Minimum amount is ${minAmount} satoshis (0.0001 BTC).` });
     }
 
-    // Log the received values
-    console.log(`Sender Private Key: ${senderPrivateKey}`);
-    console.log(`Recipient Address: ${recipientAddress}`);
-    console.log(`Amount in Satoshis: ${amount}`);
-    console.log(`Fee in Satoshis: ${fee}`);
-
-    // Create the transaction
     const txHex = await createTransaction(senderPrivateKey, recipientAddress, amount, fee);
-
-    // Log the transaction hex
-    console.log(`Transaction Hex: ${txHex}`);
 
     // Broadcast the transaction
     const broadcastResponse = await axios.post('https://blockchain.info/pushtx', `tx=${txHex}`, {
@@ -37,9 +26,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
-
-    // Log the broadcast response
-    console.log(`Broadcast Response: ${JSON.stringify(broadcastResponse.data)}`);
 
     res.status(200).json({ txId: broadcastResponse.data });
   } catch (error) {

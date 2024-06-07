@@ -67,24 +67,23 @@ const Bitcoin: React.FC = () => {
       return;
     }
 
-    const minAmount = 0.0001; // Minimum amount in BTC
-    const amountInSatoshis = parseFloat(amount) * 100000000;
+    const minAmount = 0.0001; // Minimum amount in BTC (0.0001 BTC)
 
-    if (isNaN(amountInSatoshis) || amountInSatoshis < minAmount * 100000000) {
+    if (parseFloat(amount) < minAmount) {
       alert(`The amount is too low. Minimum amount is ${minAmount} BTC.`);
       return;
     }
 
     try {
-      const transactionSize = 250; // Estimated transaction size in bytes
+      const amountInSatoshis = Math.round(parseFloat(amount) * 100000000); // Convert amount to satoshis
+      const transactionSize = 100; // Estimate of transaction size in bytes
       const fee = transactionSize * feeRate;
       const totalAmount = amountInSatoshis + fee;
 
-      // Log the values being checked
-      console.log(`Amount: ${amountInSatoshis} satoshis`);
-      console.log(`Fee: ${fee} satoshis`);
-      console.log(`Total amount needed: ${totalAmount} satoshis`);
-      console.log(`Balance: ${balance} satoshis`);
+      console.log('Amount:', amountInSatoshis, 'satoshis');
+      console.log('Fee:', fee, 'satoshis');
+      console.log('Total amount needed:', totalAmount, 'satoshis');
+      console.log('Balance:', balance, 'satoshis');
 
       if (balance === null || totalAmount > balance) {
         alert('Insufficient balance to cover the amount and the fee.');
@@ -97,7 +96,7 @@ const Bitcoin: React.FC = () => {
         body: JSON.stringify({
           senderPrivateKey: loadedWallet.privateKey,
           recipientAddress,
-          amount: Math.round(amountInSatoshis),
+          amount: amountInSatoshis,
           fee,
         }),
       });
@@ -106,11 +105,11 @@ const Bitcoin: React.FC = () => {
       if (res.ok) {
         alert(`Transaction sent successfully! TX ID: ${data.txId}`);
       } else {
-        console.error("Response data on error:", data);
+        console.error('Response data on error:', data);
         alert(`Error: ${data.error}`);
       }
     } catch (error) {
-      console.error("Error in sending transaction:", error);
+      console.error('Error in sending transaction:', error);
       alert('An unknown error occurred');
     }
   };
