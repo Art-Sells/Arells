@@ -80,6 +80,12 @@ const Bitcoin: React.FC = () => {
       const fee = transactionSize * feeRate;
       const totalAmount = amountInSatoshis + fee;
 
+      // Log the values being checked
+      console.log(`Amount: ${amountInSatoshis} satoshis`);
+      console.log(`Fee: ${fee} satoshis`);
+      console.log(`Total amount needed: ${totalAmount} satoshis`);
+      console.log(`Balance: ${balance} satoshis`);
+
       if (balance === null || totalAmount > balance) {
         alert('Insufficient balance to cover the amount and the fee.');
         return;
@@ -159,7 +165,7 @@ const Bitcoin: React.FC = () => {
               onChange={(e) => setRecipientAddress(e.target.value)}
             />
             <input
-              type="number"
+              type="text"
               placeholder="Amount in BTC"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
