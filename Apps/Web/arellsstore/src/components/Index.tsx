@@ -26,12 +26,10 @@ const Index = () => {
   }
   const [showLoading, setLoading] = useState<boolean>(true);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
-    arellsIcon: false,
     wordLogo: false,
   });
 
   const handleImageLoaded = (imageName: string) => {
-    console.log(`Image loaded: ${imageName}`);
     setImagesLoaded(prevState => ({ 
       ...prevState, 
       [imageName]: true 
@@ -91,56 +89,6 @@ const Index = () => {
         </div>
       )}
 
-
-
-            {showEnterInformation && (
-                <div className="RWmodal">
-                    <div className="RWmodal-content">
-                        <p className="enter-info">ENTER EMAIL</p>
-                        <button className="RWclose" onClick={closeEnterInformation}>OK</button>
-                    </div>
-                </div>
-            )}
-
-            {showSubmitted && (
-                <div className="RWmodal-submitted">
-                    <div className="RWmodal-content-submitted">
-                        <p className="submission-successful">JOINED</p>
-                        <div className="contact-submit">
-                            <p className="contact-submit-question">Questions? Contact us:</p>
-
-                            <a href="mailto:info@arells.com"
-                                className="email-contacts" >
-                                <Image 
-                                loader={imageLoader}
-                                alt="" 
-                                width={25}
-                                height={25}
-                                id="email-contact" 
-                                src="images/signup/email-ivory.png"/>
-                            </a>      
-
-                        </div>
-                        <p className="contact-title-description">
-                            NEVER LOSE MONEY SELLING CRYPTOCURRENCIES
-                        </p>
-                        <p className="contact-coming-soon">
-                            COMING SOON
-                        </p>
-                    </div>
-                </div>
-            )}
-
-          <Image 
-            loader={imageLoader}
-            onLoad={() => handleImageLoaded('arellsIcon')}
-            alt="" 
-            width={80}
-            height={85}
-            id="arells-iconn" 
-            src="images/Arells-Icon.png"/>
-        
-          <br/>
           
           <Image
           loader={imageLoader}

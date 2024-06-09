@@ -23,6 +23,8 @@
     "axios": "^1.7.2",
     "bitcoinjs-lib": "^6.1.5",
     "chart.js": "^4.4.3",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "date-fns": "^3.6.0",
     "dotenv": "^16.3.1",
     "ecpair": "^2.1.0",
     "formidable": "2.0.1",

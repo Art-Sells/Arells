@@ -1,0 +1,28 @@
+/* BitcoinChart.module.css */
+.chartContainer {
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 30px;
+    background: none;
+    border-radius: 5px;
+    box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25);
+  }
+  
+  .chartWrapper {
+    padding: 20px;
+    background: none;
+    border-radius: 5px;
+    box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25);
+  }
+  
+  .priceList {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .priceItem {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: rgba(204, 116, 0, 0.8);
+  }

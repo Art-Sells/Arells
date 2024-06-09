@@ -80,76 +80,7 @@
 			opacity: .6;
 			color: black;
 		}
-		
-		#crypto-images-wrapper {
-			margin-top: 35px;
-			margin-bottom: 0px;
-			display: flex;
-			justify-content: center; 
-			align-items: center;
-		  }
-			#before-arells {
-				margin-top: 5px;
-				margin-left: 0px;
-				margin-right: 10px;
-				border-radius: 5px;
-				align-items: center;
-				overflow: hidden;
-				box-shadow: 0px 5px 20px -6px rgba(204, 116, 0, 0.5); 
-				width: 130px;
-				height: 85px;
-				padding-top: 10px;
-				padding-left: 5px;
-				padding-right: 5px;
-				padding-bottom: 5px;			
-				background: rgb(255, 255, 255);
-			}
-			#after-arells-image,
-			#before-arells-image{
-				width: 80px;
-				height: 80px;
-			}
-			#after-arells {
-				margin-top: 5px;
-				margin-left: 10px;
-				margin-right: 0px;
-				border-radius: 5px;
-				align-items: center;
-				overflow: hidden;
-				box-shadow: 0px 5px 20px -6px rgba(204, 116, 0, 0.5); 
-				width: 130px;
-				height: 85px;
-				padding-top: 10px;
-				padding-left: 5px;
-				padding-right: 5px;
-				padding-bottom: 5px;			
-				background: rgb(255, 255, 255);
-			}
-			#before-after-words {
-				display: flex;
-				justify-content: center; 
-				align-items: center;
-				margin-left: 0px;
-				margin-top: 5px;
-			}
-			#before-word {
-				font-size: 8px;
-				letter-spacing: 1px;
-				margin-right: 60px; 
-				margin-left: 0px;
-				font-weight: 800;
-				opacity: .7;
-				color: rgb(143, 78, 0);
-			}
-			#after-word {
-				font-size: 8px;
-				letter-spacing: 1px;
-				margin-left: 60px;
-				margin-right: 0px; 
-				font-weight: 800;
-				opacity: .7;
-				color: rgb(143, 78, 0);
-			}
+
 
 	  #black-liner {
 		margin-top: 10px;
@@ -402,37 +333,6 @@
 		margin-left: 6px; 
 		word-spacing: 2px;
 	}
-	#crypto-images-wrapper {
-		margin-top: 35px;
-	  }
-		#before-arells {
-			width: 110px;
-			height: 73px;
-		}
-		#after-arells-image,
-		#before-arells-image{
-			width: 70px;
-			height: 70px;
-		}
-		#after-arells {
-			width: 110px;
-			height: 73px;
-		}
-		#before-word {
-			font-size: 7px;
-			letter-spacing: 1px;
-			margin-left: 5px;
-			margin-right: 53px; 
-			opacity: .7;
-		}
-		#after-word {
-			font-size: 7px;
-			letter-spacing: 1px;
-			margin-left: 53px; 
-			margin-right: 6px;
-			font-weight: 800;
-			opacity: .7;
-		}
 	#black-liner-bottom-home {
 		width: 300px;
 		opacity: .1;

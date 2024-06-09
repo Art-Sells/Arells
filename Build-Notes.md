@@ -8,11 +8,20 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Home Page
 - Title
-- Bitcoin Price (Bull and Sloth Market)
+- Bitcoin Price (Bull and Sloth Market)(Purchase CoinGecko API)
 - Log In to Buy & Sell
-- - Home Page Becomes Account after Log-In/Sign-Up
 
-### Account
+### Sign Up
+- Email
+- Password
+- Password Confirmation
+
+### Bitcoin Wallet Created
+- Address
+- Private Key (copy this private key and save it offline [and do not lose it], you will need it to export and send your bitcoin, if you lose your private key, you will be unable to export and send your Bitcoin)
+- Click continue only after you've copied and saved your private key (Continue)--- Account
+
+### Account(Home)
 - Refer to (How It Works)
 
  #### Import
