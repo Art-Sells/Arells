@@ -14,9 +14,9 @@ interface PricePoint {
 // Register necessary components with Chart.js
 Chart.register(...registerables);
 
-// Custom plugin to add a box shadow to the line chart
-const shadowPlugin = {
-  id: 'shadowPlugin',
+// Custom plugin to add a box shadow to the line chart and round the line caps
+const customPlugin = {
+  id: 'customPlugin',
   beforeDatasetsDraw: (chart: any) => {
     const ctx = chart.ctx;
     ctx.save();
@@ -28,6 +28,10 @@ const shadowPlugin = {
   afterDatasetsDraw: (chart: any) => {
     const ctx = chart.ctx;
     ctx.restore();
+  },
+  beforeDatasetDraw: (chart: any, args: any) => {
+    const { ctx } = chart;
+    ctx.lineCap = 'round'; // Round the line caps
   },
 };
 
@@ -68,6 +72,7 @@ const BitcoinChart: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData<'line', PricePoint[]>>({
     datasets: [],
   });
+  const [prices, setPrices] = useState<number[]>([]);
   const [minDate, setMinDate] = useState<number | undefined>(undefined);
   const [maxDate, setMaxDate] = useState<number | undefined>(undefined);
 
@@ -101,8 +106,15 @@ const BitcoinChart: React.FC = () => {
       // Filter the data to include only the last 30 days
       filteredPrices = filteredPrices.filter(price => price.x.getTime() >= minDate);
 
+      // Extract prices for display, removing duplicates
+      const uniquePrices = Array.from(new Set(filteredPrices.map(price => price.y)));
+
+      // Limit to 7 evenly spaced prices
+      const displayedPrices = uniquePrices.filter((_, index) => index % Math.ceil(uniquePrices.length / 7) === 0).slice(0, 7);
+
       setMinDate(minDate);
       setMaxDate(maxDate);
+      setPrices(displayedPrices.reverse()); // Reverse to show newest prices at the top
 
       setChartData({
         datasets: [{
@@ -116,7 +128,7 @@ const BitcoinChart: React.FC = () => {
           cubicInterpolationMode: 'monotone', // Smooth out the line
           tension: 0.4, // Adjust the tension to further smooth the line (range 0-1)
           fill: false,
-          borderWidth: 10, // Increase line width
+          borderWidth: 5, // Increase line width
         }]
       });
     };
@@ -158,12 +170,7 @@ const BitcoinChart: React.FC = () => {
       y: {
         beginAtZero: false,
         ticks: {
-          color: 'rgba(204, 116, 0, 0.5)', // Customize y-axis tick color
-          font: {
-            size: 10, // Set font size
-            weight: 800, // Set font weight
-          },
-          callback: (value) => `$${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`, // Add $ sign and comma separators
+          display: false, // Hide the ticks
         },
         grid: {
           display: false, // Remove y-axis grid lines
@@ -192,7 +199,16 @@ const BitcoinChart: React.FC = () => {
     <div className={styles.chartContainer}>
       <p style={{ textAlign: 'center', color: 'rgba(204, 116, 0, 0.8)' }}>Last 30 Days</p>
       <div className={styles.chartWrapper}>
-        <Line data={chartData} options={options} plugins={[shadowPlugin]} />
+        <div className={styles.pricesContainer}>
+          {prices.map((price, index) => (
+            <div key={index} className={styles.priceLabel}>
+              {`$${price.toLocaleString()}`}
+            </div>
+          ))}
+        </div>
+        <div className={styles.lineChartWrapper}>
+          <Line data={chartData} options={options} plugins={[customPlugin]} />
+        </div>
       </div>
     </div>
   );

@@ -3,26 +3,43 @@
     width: 500px;
     margin-left: auto;
     margin-right: auto;
-    padding: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 40px;
+    padding-left: 40px;
     background: none;
     border-radius: 5px;
     box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25);
   }
   
   .chartWrapper {
-    padding: 20px;
-    background: none;
-    border-radius: 5px;
-    box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25);
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-right: -20px;
+    padding-left: -20px;
+    position: relative;
+    display: flex;
+    align-items: center;
   }
   
-  .priceList {
-    margin-top: 20px;
-    text-align: center;
+  .lineChartWrapper {
+    position: relative;
+    box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25); /* Box shadow for the line wrapper */
+    border-radius: 5px; /* Rounded corners for the wrapper */
+    padding: 10px; /* Add padding to ensure the shadow doesn't get cut off */
+    background: #fff; /* Add a background color if needed */
+    flex-grow: 1; /* Allow the line chart to grow */
   }
   
-  .priceItem {
-    margin-bottom: 5px;
-    font-size: 14px;
+  .pricesContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-right: 10px; /* Adjust margin to place prices on the left */
+  }
+  
+  .priceLabel {
     color: rgba(204, 116, 0, 0.8);
+    font-size: 12px;
+    font-weight: bold;
   }
