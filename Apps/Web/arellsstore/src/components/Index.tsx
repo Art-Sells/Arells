@@ -5,6 +5,7 @@ import type { ImageLoaderProps } from 'next/image';
 
 // Change below link after test
 import '../app/css/Home.css';
+import BitcoinChart from '../components/Bitcoin/BitcoinChart';
 
 // Loader Styles
 import '../app/css/modals/loading/spinnerBackground.css';
@@ -119,18 +120,6 @@ const Index = () => {
                                 src="images/signup/email-ivory.png"/>
                             </a>      
 
-                            {/* <Link href="https://twitter.com/arellsofficial" 
-                                passHref
-                                className="twitter-contacts">
-                                <Image 
-                                loader={imageLoader}
-                                alt="" 
-                                width={25}
-                                height={25}
-                                id="twitter-contact" 
-                                src="images/signup/twitter-ebony.png"/>
-                            </Link>   */}
-
                         </div>
                         <p className="contact-title-description">
                             NEVER LOSE MONEY SELLING CRYPTOCURRENCIES
@@ -172,35 +161,7 @@ const Index = () => {
           <p id="ada-description">
             CRYPTOCURRENCIES
           </p>
-          {/* <div id="crypto-images-wrapper">
-            <span>
-              <div id="before-arells">
-                <Image 
-                  loader={imageLoader}
-                  alt="" 
-                  width={80}
-                  height={80}
-                  id="before-arells-image" 
-                  src="images/market/BitcoinBefore.jpg"/>
-              </div>
-            </span>
-            <span>
-              <div id="after-arells">
-                <Image 
-                  loader={imageLoader}
-                  alt="" 
-                  width={80}
-                  height={80}
-                  id="after-arells-image" 
-                  src="images/market/BitcoinAfter.jpg"/>
-              </div>
-            </span>
-          </div>
-          
-          <div id="before-after-words">
-            <span id="before-word">BEFORE</span>
-            <span id="after-word">AFTER</span>
-          </div> */}
+          <BitcoinChart />
           <div id="sign-up">
                 <p id="stay-updated">JOIN FOR MORE INFORMATION</p>
 
