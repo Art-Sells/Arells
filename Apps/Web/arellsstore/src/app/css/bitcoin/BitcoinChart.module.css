@@ -1,5 +1,6 @@
 /* BitcoinChart.module.css */
 .chartContainer {
+  margin-top: 30px;
     width: 356.5px;
     height: 214px;
     margin-left: auto;

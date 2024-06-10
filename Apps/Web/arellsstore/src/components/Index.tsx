@@ -72,11 +72,8 @@ const Index = () => {
         
         <div>          
           <p id="descriptioner">
-          NEVER LOSE MONEY SELLING
-          </p>
-          <hr id="black-liner"/>
-          <p id="ada-description">
-            CRYPTOCURRENCIES
+          NEVER LOSE MONEY SELLING 
+          <span id="ada-description">CRYPTOCURRENCIES</span>
           </p>
           <BitcoinChart />
           <br/>
