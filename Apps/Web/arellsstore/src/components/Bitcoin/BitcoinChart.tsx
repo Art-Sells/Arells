@@ -25,8 +25,8 @@ const customPlugin = {
     const ctx = chart.ctx;
     ctx.save();
     ctx.shadowColor = 'rgba(204, 116, 0, 0.0)'; // Customize the shadow color
-    ctx.shadowBlur = 15; // Customize the shadow blur
-    ctx.shadowOffsetX = 0; // Customize the shadow offset X
+    ctx.shadowBlur = 10; // Customize the shadow blur
+    ctx.shadowOffsetX = 5; // Customize the shadow offset X
     ctx.shadowOffsetY = 5; // Customize the shadow offset Y
   },
   afterDatasetsDraw: (chart: any) => {
@@ -80,7 +80,7 @@ const BitcoinChart: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData<'line', PricePoint[]>>({
     datasets: [],
   });
-  const [prices, setPrices] = useState<number[]>([]);
+  const [percentageIncrease, setPercentageIncrease] = useState<number | null>(null);
   const [minDate, setMinDate] = useState<number | undefined>(undefined);
   const [maxDate, setMaxDate] = useState<number | undefined>(undefined);
 
@@ -116,19 +116,20 @@ const BitcoinChart: React.FC = () => {
       setMinDate(minDate);
       setMaxDate(maxDate);
 
-      // Extract prices for display, removing duplicates
-      const uniquePrices = Array.from(new Set(filteredPrices.map(price => price.y)));
+      // Calculate the min and max prices for the y-axis
+      const minPrice = Math.min(...filteredPrices.map(price => price.y));
+      const maxPrice = Math.max(...filteredPrices.map(price => price.y));
 
-      // Limit to 7 evenly spaced prices
-      const displayedPrices = uniquePrices.filter((_, index) => index % Math.ceil(uniquePrices.length / 7) === 0).slice(0, 7);
+      // Calculate percentage increase
+      const percentageIncrease = ((maxPrice - minPrice) / minPrice) * 100;
 
-      setPrices(displayedPrices.reverse()); // Reverse to show newest prices at the top
+      setPercentageIncrease(percentageIncrease);
 
       setChartData({
         datasets: [{
           label: 'Bitcoin',
           data: filteredPrices,
-          borderColor: 'rgb(248, 141, 0, .7)',
+          borderColor: 'rgb(248, 141, 0, 0.7)',
           backgroundColor: 'rgba(75,192,192, 1)',
           pointRadius: 0, // Remove points
           pointHoverRadius: 0, // Remove points on hover
@@ -211,8 +212,8 @@ const BitcoinChart: React.FC = () => {
                 <Image
                 loader={imageLoader}
                 alt=""
-                width={20}
-                height={20}
+                width={25}
+                height={25}
                 id="arells-b-home" 
                 src="images/howitworks/ArellsBitcoin.png"/>
             </div>
@@ -222,29 +223,27 @@ const BitcoinChart: React.FC = () => {
                 <Image
                 loader={imageLoader}
                 alt=""
-                width={20}
-                height={20}
+                width={25}
+                height={25}
                 id="bitcoin-b-home" 
                 src="images/howitworks/Bitcoin.png"/>
             </div>
         </span>
       </div>
-      <p className={styles.lastThirtyDays}>LAST 30 DAYS</p>
-      <div className={styles.chartWrapper}>
-        <div className={styles.pricesContainer}>
-          {prices.map((price, index) => (
-            <div key={index} className={styles.priceLabel}>
-              {`$${price.toLocaleString()}`}
+      <div className={styles.percentageContainer}>
+          {percentageIncrease !== null && (
+            <div className={styles.percentageLabel}>
+              {`${percentageIncrease.toFixed(2)}%`}
             </div>
-          ))}
-        </div>
-        <div className={styles.lineChartWrapper}>
-          <Line id="bitcoinChart" 
-          className={styles.line}
-          data={chartData} 
-          options={options} 
-          plugins={[customPlugin]} />
-        </div>
+          )}
+      </div>
+      <p className={styles.lastThirtyDays}>LAST 30 DAYS</p>
+      <div className={styles.lineChartWrapper}>
+        <Line id="bitcoinChart" 
+        className={styles.line}
+        data={chartData} 
+        options={options} 
+        plugins={[customPlugin]} />
       </div>
     </div>
   );

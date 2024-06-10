@@ -1,7 +1,7 @@
 /* BitcoinChart.module.css */
 .chartContainer {
     width: 356.5px;
-    height: 245px;
+    height: 214px;
     margin-left: auto;
     margin-right: auto;
     padding-top: 30px;
@@ -12,21 +12,14 @@
     border-radius: 10px;
     box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25);
   }
-  
-  .chartWrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 250px;
-  }
+
   
   .lineChartWrapper {
-    margin-top: -110px;
-    margin-bottom: -80px;
-    margin-left: -5px;
+    margin-top: -206px;
+    margin-left: 105px;
     position: relative;
     width: 250px;
-    height: 230px;
+    height: 200px;
     box-shadow: 0px 5px 20px -6px rgba(204, 116, 0, 0.0); 
     border-radius: 10px; /* Rounded corners for the wrapper */
     padding-top: 35px;
@@ -42,35 +35,32 @@
   .line {
     margin-left: -8px;
     margin-right: -5.5px;
-    margin-top: 70px;
+    margin-top: 35px;
   }
   
-  .pricesContainer {
-    margin-top: 50px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    margin-right: 27px; /* Adjust margin to place prices on the left */
-    margin-left: 13px;
-  }
-  
-  .priceLabel {
-    color: rgb(219, 124, 0);
-    font-size: 10px;
-    font-weight: 200;
-    margin-left: -11px;
-    margin-right: 20px;
-    opacity: .7;
-    line-height: 18px;
-    letter-spacing: .5px;
-  }
+    .percentageContainer {
+      margin-top: -15px;
+      position: relative;
+      display: flex;
+      align-items: left;
+      margin-left: 5px;
+    }
+    
+    .percentageLabel {
+      color: black;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: .5;
+      letter-spacing: 0px;
+    }
 
-  .lastThirtyDays {
-    margin-bottom: -30px;
-    text-align: left;
-    color: rgb(219, 124, 0);
-    font-size: 9px;
-    letter-spacing: 1px;
-    font-weight: 800;
-    opacity: .3;
-  }
+    .lastThirtyDays {
+      text-align: left;
+      color: black;
+      font-size: 7px;
+      letter-spacing: 0px;
+      font-weight: 800;
+      opacity: .3;
+      margin-top: 50px;
+      margin-left: 4px;
+    }
