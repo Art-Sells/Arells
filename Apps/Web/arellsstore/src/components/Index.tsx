@@ -1,6 +1,5 @@
 "use client";
 
-// Assuming that there's no global type definitions for Next.js Image and Link components
 import type { ImageLoaderProps } from 'next/image';
 
 // Change below link after test
@@ -42,36 +41,6 @@ const Index = () => {
     }
   }, [imagesLoaded]);
 
-
-  const [showEnterInformation, setEnterInformation] = useState<boolean>(false);
-  const [showSubmitted, setSubmitted] = useState<boolean>(false);
-
-  const signUp = () => {
-    if (typeof window !== 'undefined') {
-        const emailInput = (document.getElementById('email-input') as HTMLInputElement).value;
-
-        if (emailInput === "" ) {
-            setEnterInformation(true);
-        } else {
-            $.ajax({
-                url: "https://api.apispreadsheets.com/data/6T0aVzc5FSPAbNSH/",
-                type: "post",
-                data: $("#myForm").serializeArray(),
-                headers: {
-                    accessKey:"6dc5c76c0cd9a9ab87f5bd2e8a9b57e2", 
-                    secretKey:"4a6ce35719e814296ef47d5d90b85bf8"
-                }
-            });
-            (document.getElementById('email-input') as HTMLInputElement).value = "";
-            setSubmitted(true);
-        }
-    }
-  };
-
-  const closeEnterInformation = () => {
-    setEnterInformation(false);
-  };
-
   
 
   return (
@@ -110,30 +79,13 @@ const Index = () => {
             CRYPTOCURRENCIES
           </p>
           <BitcoinChart />
-          <div id="sign-up">
-                <p id="stay-updated">JOIN FOR MORE INFORMATION</p>
-
-                <form id="myForm">
-                    <div id="enter-content">
-                        <input name="email" type="email"
-                            id="email-input" placeholder='e-mail'></input>
-                    </div>
-                    <br />
-                    <a id="submit"
-                        onClick={signUp}>JOIN</a>
-                </form>
-            </div>
-
-          
-  
-
-
-
-          {/* <Link href="/signup" passHref>
-            <button id="updatess">
-              SIGN UP FOR EARLY ACCESS
+          <p id="stay-updated">LOGIN TO BUY & SELL</p>
+          <br/>
+          <Link href="/login" passHref>
+            <button id="submit">
+              LOGIN
             </button>
-          </Link>     */}
+          </Link> 
 
         </div>
    

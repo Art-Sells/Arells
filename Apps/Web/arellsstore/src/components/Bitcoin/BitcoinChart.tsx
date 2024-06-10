@@ -4,7 +4,11 @@ import { Line } from 'react-chartjs-2';
 import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
-import styles from '../../app/css/bitcoin/BitcoinChart.module.css'; // Import CSS module
+import styles from '../../app/css/bitcoin/BitcoinChart.module.css';
+import '../../app/css/bitcoin/bitcoinchart.css';
+
+import type { ImageLoaderProps } from 'next/image';
+import Image from 'next/image';
 
 interface PricePoint {
   x: Date;
@@ -20,9 +24,9 @@ const customPlugin = {
   beforeDatasetsDraw: (chart: any) => {
     const ctx = chart.ctx;
     ctx.save();
-    ctx.shadowColor = 'rgba(204, 116, 0, 0.5)'; // Customize the shadow color
-    ctx.shadowBlur = 10; // Customize the shadow blur
-    ctx.shadowOffsetX = 5; // Customize the shadow offset X
+    ctx.shadowColor = 'rgba(204, 116, 0, 0.0)'; // Customize the shadow color
+    ctx.shadowBlur = 15; // Customize the shadow blur
+    ctx.shadowOffsetX = 0; // Customize the shadow offset X
     ctx.shadowOffsetY = 5; // Customize the shadow offset Y
   },
   afterDatasetsDraw: (chart: any) => {
@@ -69,6 +73,10 @@ const filterPriceData = (prices: PricePoint[]): PricePoint[] => {
 };
 
 const BitcoinChart: React.FC = () => {
+  const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+    return `/${src}?w=${width}&q=${quality || 100}`;
+  }
+
   const [chartData, setChartData] = useState<ChartData<'line', PricePoint[]>>({
     datasets: [],
   });
@@ -83,7 +91,6 @@ const BitcoinChart: React.FC = () => {
 
       // Ensure the latest date is included in the dataset
       const latestDate = new Date(); // Today's date
-      console.log('Latest Date:', latestDate);
 
       // Combine historical and latest prices
       let allPrices = [...historicalPrices];
@@ -106,29 +113,30 @@ const BitcoinChart: React.FC = () => {
       // Filter the data to include only the last 30 days
       filteredPrices = filteredPrices.filter(price => price.x.getTime() >= minDate);
 
+      setMinDate(minDate);
+      setMaxDate(maxDate);
+
       // Extract prices for display, removing duplicates
       const uniquePrices = Array.from(new Set(filteredPrices.map(price => price.y)));
 
       // Limit to 7 evenly spaced prices
       const displayedPrices = uniquePrices.filter((_, index) => index % Math.ceil(uniquePrices.length / 7) === 0).slice(0, 7);
 
-      setMinDate(minDate);
-      setMaxDate(maxDate);
       setPrices(displayedPrices.reverse()); // Reverse to show newest prices at the top
 
       setChartData({
         datasets: [{
           label: 'Bitcoin',
           data: filteredPrices,
-          borderColor: 'rgba(204, 116, 0, 0.5)',
-          backgroundColor: 'rgba(75,192,192,0.0)',
+          borderColor: 'rgb(248, 141, 0, .7)',
+          backgroundColor: 'rgba(75,192,192, 1)',
           pointRadius: 0, // Remove points
           pointHoverRadius: 0, // Remove points on hover
           pointBorderWidth: 1.5,
           cubicInterpolationMode: 'monotone', // Smooth out the line
           tension: 0.4, // Adjust the tension to further smooth the line (range 0-1)
           fill: false,
-          borderWidth: 5, // Increase line width
+          borderWidth: 7, // Increase line width
         }]
       });
     };
@@ -197,7 +205,31 @@ const BitcoinChart: React.FC = () => {
 
   return (
     <div className={styles.chartContainer}>
-      <p style={{ textAlign: 'center', color: 'rgba(204, 116, 0, 0.8)' }}>Last 30 Days</p>
+      <div id="b-logo-home">
+        <span>
+            <div id="a-how-wrapper">
+                <Image
+                loader={imageLoader}
+                alt=""
+                width={20}
+                height={20}
+                id="arells-b-home" 
+                src="images/howitworks/ArellsBitcoin.png"/>
+            </div>
+        </span>
+        <span>
+            <div id="b-how-wrapper">
+                <Image
+                loader={imageLoader}
+                alt=""
+                width={20}
+                height={20}
+                id="bitcoin-b-home" 
+                src="images/howitworks/Bitcoin.png"/>
+            </div>
+        </span>
+      </div>
+      <p className={styles.lastThirtyDays}>LAST 30 DAYS</p>
       <div className={styles.chartWrapper}>
         <div className={styles.pricesContainer}>
           {prices.map((price, index) => (
@@ -207,7 +239,11 @@ const BitcoinChart: React.FC = () => {
           ))}
         </div>
         <div className={styles.lineChartWrapper}>
-          <Line data={chartData} options={options} plugins={[customPlugin]} />
+          <Line id="bitcoinChart" 
+          className={styles.line}
+          data={chartData} 
+          options={options} 
+          plugins={[customPlugin]} />
         </div>
       </div>
     </div>

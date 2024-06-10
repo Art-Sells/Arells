@@ -1,45 +1,76 @@
 /* BitcoinChart.module.css */
 .chartContainer {
-    width: 500px;
+    width: 356.5px;
+    height: 245px;
     margin-left: auto;
     margin-right: auto;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-right: 40px;
-    padding-left: 40px;
+    padding-top: 30px;
+    padding-bottom: 0px;
+    padding-right: 0px;
+    padding-left: 50px;
     background: none;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25);
   }
   
   .chartWrapper {
-    padding-top: 30px;
-    padding-bottom: 30px;
-    padding-right: -20px;
-    padding-left: -20px;
     position: relative;
     display: flex;
     align-items: center;
+    width: 250px;
   }
   
   .lineChartWrapper {
+    margin-top: -110px;
+    margin-bottom: -80px;
+    margin-left: -5px;
     position: relative;
-    box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25); /* Box shadow for the line wrapper */
-    border-radius: 5px; /* Rounded corners for the wrapper */
-    padding: 10px; /* Add padding to ensure the shadow doesn't get cut off */
-    background: #fff; /* Add a background color if needed */
+    width: 250px;
+    height: 230px;
+    box-shadow: 0px 5px 20px -6px rgba(204, 116, 0, 0.0); 
+    border-radius: 10px; /* Rounded corners for the wrapper */
+    padding-top: 35px;
+    padding-bottom: 10px;
+    padding-right: 2px;
+    padding-left: 0px;
+    background: rgb(253, 244, 234); /* Add a background color if needed */
     flex-grow: 1; /* Allow the line chart to grow */
+    opacity: 1;
+    
+  }
+
+  .line {
+    margin-left: -8px;
+    margin-right: -5.5px;
+    margin-top: 70px;
   }
   
   .pricesContainer {
+    margin-top: 50px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    margin-right: 10px; /* Adjust margin to place prices on the left */
+    margin-right: 27px; /* Adjust margin to place prices on the left */
+    margin-left: 13px;
   }
   
   .priceLabel {
-    color: rgba(204, 116, 0, 0.8);
-    font-size: 12px;
-    font-weight: bold;
+    color: rgb(219, 124, 0);
+    font-size: 10px;
+    font-weight: 200;
+    margin-left: -11px;
+    margin-right: 20px;
+    opacity: .7;
+    line-height: 18px;
+    letter-spacing: .5px;
+  }
+
+  .lastThirtyDays {
+    margin-bottom: -30px;
+    text-align: left;
+    color: rgb(219, 124, 0);
+    font-size: 9px;
+    letter-spacing: 1px;
+    font-weight: 800;
+    opacity: .3;
   }

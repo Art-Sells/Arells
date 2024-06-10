@@ -51,16 +51,16 @@
 
 
 	#stay-updated {
-		margin-top: 10px;
+		margin-top: 35px;
 		color: rgb(115, 65, 0); 
 		margin-left: auto;	
 		margin-right: auto;	
 		font-weight: 600;	
-		font-size: 10px;
+		font-size: 9px;
 		margin-left: 3px;
 		letter-spacing: 3px;
-		word-spacing: 2px;
-		opacity: .6;			
+		word-spacing: 1px;
+		opacity: .4;			
 	}		
 
 	
@@ -133,7 +133,7 @@
 			  margin-bottom: 35px;           
            }     	   
 			#submit {
-				margin-top: 50px;
+				margin-top: 0px;
 			  background: rgba(204, 116, 0);
 			  text-decoration: none;
 			  color: white;
@@ -147,7 +147,7 @@
 			  letter-spacing: 2px;
 			  border-radius: 5px;
 			  border-width: 0px;
-			  width: 200px;
+			  width: 250px;
 			  opacity: 1;
 			  box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
 			}
