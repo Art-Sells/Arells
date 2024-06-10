@@ -79,7 +79,6 @@ const Index = () => {
             CRYPTOCURRENCIES
           </p>
           <BitcoinChart />
-          <p id="stay-updated">LOGIN TO BUY & SELL</p>
           <br/>
           <Link href="/login" passHref>
             <button id="submit">

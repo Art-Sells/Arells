@@ -133,7 +133,7 @@
 			  margin-bottom: 35px;           
            }     	   
 			#submit {
-				margin-top: 0px;
+				margin-top: 30px;
 			  background: rgba(204, 116, 0);
 			  text-decoration: none;
 			  color: white;
@@ -147,7 +147,7 @@
 			  letter-spacing: 2px;
 			  border-radius: 5px;
 			  border-width: 0px;
-			  width: 250px;
+			  width: 150px;
 			  opacity: 1;
 			  box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
 			}
