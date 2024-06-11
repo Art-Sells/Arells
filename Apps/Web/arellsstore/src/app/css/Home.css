@@ -60,36 +60,33 @@
 	
 	  
 	  #descriptioner {
-		  margin-top: 25px;
-		  font-size: 11px;
-		  letter-spacing: 0px;
-		  margin-left: 0px; 
+		  margin-top: 20px;
+		  font-size: 8px;
+		  letter-spacing: 3px;
+		  margin-left: 3px; 
 		  font-weight: 600;
-		  opacity: .6;
-		  color: rgb(115, 65, 0); 
+		  opacity: 1;
+		  color: rgb(255, 145, 0, 0.8);
 		  word-spacing: 0px;
 	  }	
 
 		#ada-description {
-			margin-top: 15px;
-			font-size: 9.2px;
-			letter-spacing: 6px;
-			margin-left: 6px; 
-			word-spacing: 2px;
-			font-weight: 800;
-			opacity: .6;
+			font-size: 8px;
+			letter-spacing: 7px;
+			margin-left: 20px; 
+			opacity: 1;
 			color: black;
 		}
 
 
 	  #black-liner {
-		margin-top: 10px;
-		background-color: rgba(204, 116, 0, .6);
+		margin-top: 20px;
+		background-color: rgb(255, 145, 0);
 		border: none;
-		height: 2px;
+		height: 5px;
 		border-radius: 30px;
-		width: 350px;
-		opacity: .3;
+		width: 410px;
+		opacity: .1;
 	  }	
 
 	  #black-liner-bottom {

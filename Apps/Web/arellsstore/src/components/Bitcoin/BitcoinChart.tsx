@@ -212,8 +212,8 @@ const BitcoinChart: React.FC = () => {
                 <Image
                 loader={imageLoader}
                 alt=""
-                width={25}
-                height={25}
+                width={30}
+                height={30}
                 id="arells-b-home" 
                 src="images/howitworks/ArellsBitcoin.png"/>
             </div>
@@ -223,19 +223,31 @@ const BitcoinChart: React.FC = () => {
                 <Image
                 loader={imageLoader}
                 alt=""
-                width={25}
-                height={25}
+                width={30}
+                height={30}
                 id="bitcoin-b-home" 
                 src="images/howitworks/Bitcoin.png"/>
             </div>
         </span>
       </div>
       <div className={styles.percentageContainer}>
-          {percentageIncrease !== null && (
-            <div className={styles.percentageLabel}>
-              {`${percentageIncrease.toFixed(2)}%`}
-            </div>
-          )}
+            {percentageIncrease !== null && (
+              <div className={styles.percentageLabel}>
+                <span>                
+                  {`${percentageIncrease.toFixed(2)}`}
+                </span>
+                <span id="percentage-home">%</span>
+              </div>
+            )}
+              <div id="w-how-wrapper">
+                  <Image
+                  loader={imageLoader}
+                  alt=""
+                  width={35}
+                  height={35}
+                  id="profits-icon-home" 
+                  src="images/howitworks/up-arrow-ebony.png"/>
+              </div>
       </div>
       <p className={styles.lastThirtyDays}>LAST 30 DAYS</p>
       <div className={styles.lineChartWrapper}>

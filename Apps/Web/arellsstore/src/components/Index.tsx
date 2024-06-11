@@ -11,7 +11,6 @@ import '../app/css/modals/loading/spinnerBackground.css';
 import styles from '../app/css/modals/loading/spinner.module.css';
 import '../app/css/stayupdated.css';
 import '../app/css/modals/stayupdated-modal.css';
-import $ from 'jquery';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -66,24 +65,23 @@ const Index = () => {
           width={120}
           height={40}
           id="word-logoo" 
-          src="images/Arells-Logo-Ebony.png"/>	
-          
-          <br/>
-        
-        <div>          
+          src="images/Arells-Logo-Ebony.png"/>	        
+
+
           <p id="descriptioner">
-          NEVER LOSE MONEY SELLING 
-          <span id="ada-description">CRYPTOCURRENCIES</span>
+            NEVER LOSE MONEY SELLING
+            <span id="ada-description">CRYPTOCURRENCIES</span>
           </p>
+
+
+
           <BitcoinChart />
-          <br/>
+
           <Link href="/login" passHref>
             <button id="submit">
               LOGIN
             </button>
           </Link> 
-
-        </div>
    
     </>
   );

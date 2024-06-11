@@ -68,3 +68,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Export Status
 - Pending (View on Block Explorer): Blockchain.com
 - Completed (View on Block Explorer)...
+
+
+## Arells Cryptocurrency Marketplace 1.5
+
+### Home Page (without login)
+10 years, 5 years, 1 year, 6 months, 90 days, 30 days, 7 days, 24 hours, 6 hours, 1 hours (load whichever time frame has the largest percentage increase, then load the 2nd largest, etc)
