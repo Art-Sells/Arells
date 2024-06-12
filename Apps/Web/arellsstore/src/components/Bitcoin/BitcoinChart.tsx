@@ -40,7 +40,7 @@ const customPlugin = {
 };
 
 const fetchHistoricalData = async (): Promise<PricePoint[]> => {
-  const response = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30');
+  const response = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365');
   const data = await response.json();
 
   return data.prices.map((price: [number, number]) => ({
@@ -93,7 +93,7 @@ const BitcoinChart: React.FC = () => {
       const latestDate = new Date(); // Today's date
 
       // Combine historical and latest prices
-      let allPrices = [...historicalPrices];
+      let allPrices = [...historicalPrices, latestPrice];
 
       // Filter out any negative price changes
       let filteredPrices = filterPriceData(allPrices);
@@ -108,9 +108,9 @@ const BitcoinChart: React.FC = () => {
 
       // Calculate the min and max dates based on the calendar
       const maxDate = latestDate.getTime();
-      const minDate = new Date(maxDate - 29 * 24 * 60 * 60 * 1000).getTime(); // Last 30 days
+      const minDate = new Date(maxDate - 364 * 24 * 60 * 60 * 1000).getTime(); // Last 365 days
 
-      // Filter the data to include only the last 30 days
+      // Filter the data to include only the last 365 days
       filteredPrices = filteredPrices.filter(price => price.x.getTime() >= minDate);
 
       setMinDate(minDate);
@@ -233,6 +233,7 @@ const BitcoinChart: React.FC = () => {
       <div className={styles.percentageContainer}>
             {percentageIncrease !== null && (
               <div className={styles.percentageLabel}>
+                <span id="plus-home">+</span>
                 <span>                
                   {`${percentageIncrease.toFixed(2)}`}
                 </span>
@@ -247,9 +248,9 @@ const BitcoinChart: React.FC = () => {
                   height={35}
                   id="profits-icon-home" 
                   src="images/howitworks/up-arrow-ebony.png"/>
-              </div>
+              </div> 
       </div>
-      <p className={styles.lastThirtyDays}>LAST 30 DAYS</p>
+      <p className={styles.lastThirtyDays}>1 YEAR</p> {/* Updated label to reflect 365 days */}
       <div className={styles.lineChartWrapper}>
         <Line id="bitcoinChart" 
         className={styles.line}

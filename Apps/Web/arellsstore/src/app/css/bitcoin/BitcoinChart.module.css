@@ -64,5 +64,21 @@
       letter-spacing: -1px;
       font-weight: 800;
       margin-top: -13px;
-      margin-left: 0px;
+      margin-left: 3px;
     }
+
+
+@media screen and (max-width: 650px) {
+  .chartContainer {
+      width: 300px;
+    }
+  
+    
+    .lineChartWrapper {
+      width: 194px;
+    }
+  
+      .lastThirtyDays {
+        margin-left: 5px;
+      } 
+}

@@ -25,10 +25,22 @@
 
     #profits-icon-home {
         opacity: .1;
-        margin-left: -70px;
+        margin-left: -90px;
         margin-top: 40px;
+    }
+    #plus-home {
+        opacity: .7;
+        margin-left: 0px;
     }
     #percentage-home {
         opacity: .7;
         margin-left: -1px;
     }
+
+
+
+@media screen and (max-width: 650px) {
+    #profits-icon-home {
+        margin-left: -85px;
+    }
+}

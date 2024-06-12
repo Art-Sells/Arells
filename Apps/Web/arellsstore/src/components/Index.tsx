@@ -62,8 +62,8 @@ const Index = () => {
           loader={imageLoader}
           onLoad={() => handleImageLoaded('wordLogo')}
           alt=""
-          width={120}
-          height={40}
+          width={100}
+          height={32}
           id="word-logoo" 
           src="images/Arells-Logo-Ebony.png"/>	        
 

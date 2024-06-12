@@ -7,7 +7,7 @@
 	margin-bottom: 0%;
 	padding-top: 0px;
 	border-radius: 30px;
-	padding-bottom: 90px;
+	padding-bottom: 110px;
 	background: rgb(255, 251, 245);
 	-webkit-animation-name: animatetop;
 	-webkit-animation-duration: 1.00s;
@@ -40,8 +40,8 @@
 		}
 	  #word-logoo {
 		  margin-top: 80px;
-		  width: 120px;	
-		  height: 37px;
+		  width: 100px;	
+		  height: 32px;
 		  -webkit-animation-name: animatetop;
 		  -webkit-animation-duration: 1.00s;
 		  animation-name: animatetop;
@@ -62,8 +62,8 @@
 	  #descriptioner {
 		  margin-top: 20px;
 		  font-size: 8px;
-		  letter-spacing: 3px;
-		  margin-left: 3px; 
+		  letter-spacing: .5px;
+		  margin-left: .5px; 
 		  font-weight: 600;
 		  opacity: 1;
 		  color: rgb(255, 145, 0, 0.8);
@@ -72,8 +72,8 @@
 
 		#ada-description {
 			font-size: 8px;
-			letter-spacing: 7px;
-			margin-left: 20px; 
+			letter-spacing: 4px;
+			margin-left: 10px; 
 			opacity: 1;
 			color: black;
 		}
@@ -295,8 +295,8 @@
 		#connected-spacing {
 			padding-top: 0px;
 		}
-		#arells-iconn {
-			margin-top: 50px;
+		#word-logoo {
+			margin-top: 40px;
 		}  
 	}
 	  
@@ -311,25 +311,26 @@
 	  }
   
 	  #word-logoo {
-		  width: 100px;	
-		  height: 32px;
+		  width: 95px;	
+		  height: 30px;
 	  }  
 
 	  
 	  #descriptioner {
-		  font-size: 9.5px; 
-	  }	
+		font-size: 7.5px;
+		letter-spacing: .5px;
+		margin-left: 10px; 
+	}	
+
+	  #ada-description {
+		font-size: 7.5px;
+		  letter-spacing: 4px;
+		  margin-left: 10px; 
+	  }
 
 	  #black-liner {
 		width: 250px;
 	  }	
-
-	  #ada-description {
-		font-size: 8px;
-		letter-spacing: 6px;
-		margin-left: 6px; 
-		word-spacing: 2px;
-	}
 	#black-liner-bottom-home {
 		width: 300px;
 		opacity: .1;
