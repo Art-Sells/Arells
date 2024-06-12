@@ -133,7 +133,7 @@
 			  margin-bottom: 35px;           
            }     	   
 			#submit {
-				margin-top: 30px;
+				margin-top: 65px;
 			  background: rgba(204, 116, 0);
 			  text-decoration: none;
 			  color: white;
@@ -212,7 +212,8 @@
 		   
 		#submit {
 			width: 200px;
-			font-size: 11px; 			  
+			font-size: 11px; 
+			margin-top: 60px;			  
 			}
 
 

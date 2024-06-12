@@ -1,6 +1,6 @@
 /* BitcoinChart.module.css */
 .chartContainer {
-  margin-top: 25px;
+  margin-top: 10px;
     width: 356.5px;
     height: 214px;
     margin-left: auto;
@@ -12,6 +12,20 @@
     background: none;
     border-radius: 10px;
     box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 2.00s;
+    animation-name: animatetop;
+    animation-duration: 2.00s;
+  }
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
   }
 
   
@@ -71,12 +85,30 @@
 @media screen and (max-width: 650px) {
   .chartContainer {
       width: 300px;
+		  -webkit-animation-name: animatetop;
+		  -webkit-animation-duration: 2.00s;
+		  animation-name: animatetop;
+		  animation-duration: 2.00s;
+		}
+		/* Add Animation */
+		@-webkit-keyframes animatetop {
+		  from {center:0; opacity:0}
+		  to {center:0; opacity:1}
+		}
+		
+		@keyframes animatetop {
+		  from {center:0; opacity:0}
+		  to {center:0; opacity:1}
     }
   
     
     .lineChartWrapper {
       width: 194px;
-    }
+		  -webkit-animation-name: animatetop;
+		  -webkit-animation-duration: 2.00s;
+		  animation-name: animatetop;
+		  animation-duration: 2.00s;
+		}
   
       .lastThirtyDays {
         margin-left: 5px;
