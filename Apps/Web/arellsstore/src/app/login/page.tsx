@@ -5,16 +5,15 @@ import React, { useEffect, useMemo, useState } from 'react';
 import '../css/loginsignup/loginsignup';
 
 
-import Login from '../../components/LoginSignup/SignUp';
+import Login from '../../components/LoginSignup/Login';
 
 import type { Metadata } from 'next';
-import Signup from '../../components/Signup';
 export const metadata: Metadata = {
-    title: "Sign Up",
+    title: "Log In",
     description: "Never lose money selling cryptocurrencies.",
     robots: "noimageindex",
     openGraph: {
-      title: "Arells",
+      title: "Log In",
       description: "Never lose money selling cryptocurrencies.",
       url: "https://arells.com/login",
       type: "website",
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
       ]
     },
     twitter: {
-      title: "Sign Up",
+      title: "Log In",
       description: "Never lose money selling cryptocurrencies.",
       card: "summary_large_image",
       images: [
@@ -36,17 +35,17 @@ export const metadata: Metadata = {
     }
   };
 
-const SignUpPage = () => {
+const LogInPage = () => {
   
 
   return (
     <>
 
       <div id="wrapper">
-            <Signup/>
+            <Login/>
       </div>
     </>
   );
 }
 
-export default SignUpPage;
+export default LogInPage;

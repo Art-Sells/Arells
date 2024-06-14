@@ -1,35 +1,5 @@
 
 
-/*
-@-webkit-keyframes gradients{
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-     background-position: 0% 50%;
-  }
-}
-@keyframes gradients{
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-     background-position: 0% 50%;
-  }
-}
-
-@media screen and (max-width: 650px) {
-  body {
-    -webkit-text-size-adjust: none;
-  }
-} */
-
 #wrapper {
 	padding-top: 20px; 
 	text-align: center;
@@ -38,14 +8,6 @@
 	margin-left: 0%;
 	margin-right: 0%;
 	margin-bottom: 0%;
-  /* 	background: linear-gradient(90deg, 
-	  rgba(255,0,0,1) 0%, 
-	  rgba(178,179,2,1) 25%, 
-	  rgba(1,187,1,1) 50%, 
-	  rgba(33,0,255,1) 75%, 
-	  rgba(187,1,158,1) 100%);    
-	   animation: gradients 20s ease infinite; 
-	   background-size: 10000% 10000%;     */
 	   background-color: white;	
 	}   
 

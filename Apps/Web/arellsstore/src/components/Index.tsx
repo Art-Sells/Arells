@@ -9,8 +9,6 @@ import BitcoinChart from '../components/Bitcoin/BitcoinChart';
 // Loader Styles
 import '../app/css/modals/loading/spinnerBackground.css';
 import styles from '../app/css/modals/loading/spinner.module.css';
-import '../app/css/stayupdated.css';
-import '../app/css/modals/stayupdated-modal.css';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';

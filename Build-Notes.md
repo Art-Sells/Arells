@@ -7,9 +7,7 @@ Test Address: bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6
 Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Home Page
-- Title
-- Bitcoin Price (Bull and Sloth Market)(Purchase CoinGecko API)
-- Log In to Buy & Sell
+- Purchase CoinGecko API
 
 ### Log In
 - Email

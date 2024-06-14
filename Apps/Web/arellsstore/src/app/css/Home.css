@@ -187,6 +187,31 @@
 		opacity: .3;
 		color: black;
 	}
+	#login {
+		margin-top: 65px;
+	  background: rgba(204, 116, 0);
+	  text-decoration: none;
+	  color: white;
+	  font-weight: 500;
+	  font-size: 12px;
+	  padding-top: 20px;
+	  padding-bottom: 20px;
+	  padding-right: 32px;
+	  padding-left: 34px;	  
+	  border: solid;
+	  letter-spacing: 2px;
+	  border-radius: 5px;
+	  border-width: 0px;
+	  width: 250px;
+	  opacity: 1;
+	  box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
+	}
+	#login:hover,
+	#login:focus {
+	  opacity: .4;
+	  transition: 1s;
+	  cursor: pointer;
+	}   
 	#updatess-connected {
 		margin-top: 20px;
 		background: black;
@@ -227,35 +252,6 @@
 			word-spacing: 0px;			
 		}
   
-	  #prototype-spacer{
-		  margin-top: 60px;
-		  margin-bottom: 100px;
-	  }
-		  #prototype {
-			background: none;
-			text-decoration: none;
-			color: gray;
-			font-weight: 300;
-			font-size: 11px;
-			padding-top: 17px;
-			padding-bottom: 17px;
-			padding-right: 33px;
-			padding-left: 35px;	  
-			border: solid;
-			letter-spacing: 1px;
-			border-radius: 10px;
-			border-width: 1px;
-			border-color: rgba(215, 215, 215, 0.7);
-			width: 200px;
-			opacity: 1;
-		  }
-		  #prototype:hover,
-		  #prototype:focus {
-			border-color: gray;
-			color: black;
-			transition: 1s;
-			cursor: pointer;
-		  }	
 		  #discord-wrapper{
 			text-decoration: none;
 			margin-left: auto;
@@ -343,6 +339,12 @@
 	}	
 
 
+	#login {
+		width: 200px;
+		font-size: 11px; 
+		margin-top: 60px;			  
+		}
+
 	
 	  #updatess {
 		width: 260px;
@@ -356,10 +358,6 @@
 		letter-spacing: 0px;
 		margin-left: 0px; 		
 	}
-	  #prototype {
-		font-weight:400;
-		font-size: 9px;
-	  }	
 
 	  #connecting-wallet-wrapper {	
 		margin-top: 0px;
