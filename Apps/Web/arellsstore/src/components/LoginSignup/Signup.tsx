@@ -20,29 +20,6 @@ const Signup: React.FC = () => {
     const [showSubmitted, setSubmitted] = useState<boolean>(false);
 
     const signUp = () => {
-        if (typeof window !== 'undefined') {
-            const emailInput = (document.getElementById('email-input') as HTMLInputElement).value;
-            const firstNameInput = (document.getElementById('first-input') as HTMLInputElement).value;
-            const lastNameInput = (document.getElementById('last-input') as HTMLInputElement).value;
-
-            if (emailInput === "" || firstNameInput === "" || lastNameInput === "") {
-                setEnterInformation(true);
-            } else {
-                $.ajax({
-                    url: "https://api.apispreadsheets.com/data/6T0aVzc5FSPAbNSH/",
-                    type: "post",
-                    data: $("#myForm").serializeArray(),
-                    headers: {
-                        accessKey:"6dc5c76c0cd9a9ab87f5bd2e8a9b57e2", 
-                        secretKey:"4a6ce35719e814296ef47d5d90b85bf8"
-                    }
-                });
-                (document.getElementById('email-input') as HTMLInputElement).value = "";
-                (document.getElementById('first-input') as HTMLInputElement).value = "";
-                (document.getElementById('last-input') as HTMLInputElement).value = "";
-                setSubmitted(true);
-            }
-        }
     };
 
     const closeEnterInformation = () => {
