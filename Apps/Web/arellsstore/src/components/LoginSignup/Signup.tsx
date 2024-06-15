@@ -7,19 +7,41 @@ import '../app/css/loginsignup/loginsignup.css';
 import '../app/css/modals/loginsignup/loginsignup-modal.css';
 import $ from 'jquery';
 import Link from 'next/link';
+import Amplify, { Auth } from 'aws-amplify';
+import awsconfig from '../../aws-exports';
+
+Amplify.configure(awsconfig);
 
 const Signup: React.FC = () => {
     //Loader Function/s
     const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
-      }
-    //Loader Function/s
+    };
 
-
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [showEnterInformation, setEnterInformation] = useState<boolean>(false);
     const [showSubmitted, setSubmitted] = useState<boolean>(false);
 
-    const signUp = () => {
+    const signUp = async () => {
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+
+        try {
+            await Auth.signUp({
+                username: email,
+                password,
+                attributes: {
+                    email
+                }
+            });
+            setSubmitted(true);
+        } catch (error) {
+            console.log('Error signing up:', error);
+        }
     };
 
     const closeEnterInformation = () => {
@@ -46,26 +68,26 @@ const Signup: React.FC = () => {
 
                             <a href="mailto:info@arells.com"
                                 className="email-contacts" >
-                                <Image 
-                                loader={imageLoader}
-                                alt="" 
-                                width={25}
-                                height={25}
-                                id="email-contact" 
-                                src="images/signup/email-ebony.png"/>
-                            </a>      
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={25}
+                                    height={25}
+                                    id="email-contact"
+                                    src="images/signup/email-ebony.png" />
+                            </a>
 
-                            <Link href="https://twitter.com/arellsofficial" 
+                            <Link href="https://twitter.com/arellsofficial"
                                 passHref
                                 className="twitter-contacts">
-                                <Image 
-                                loader={imageLoader}
-                                alt="" 
-                                width={25}
-                                height={25}
-                                id="twitter-contact" 
-                                src="images/signup/twitter-ebony.png"/>
-                            </Link>  
+                                <Image
+                                    loader={imageLoader}
+                                    alt=""
+                                    width={25}
+                                    height={25}
+                                    id="twitter-contact"
+                                    src="images/signup/twitter-ebony.png" />
+                            </Link>
 
                         </div>
                         <p className="contact-title-description">
@@ -80,7 +102,6 @@ const Signup: React.FC = () => {
 
             <p id="stay-updated">SIGN UP</p>
 
-
             <br />
 
             <div id="sign-up">
@@ -89,26 +110,31 @@ const Signup: React.FC = () => {
                         <label id="label">Email</label>
                         <br />
                         <input name="email" type="email"
-                            id="email-input" ></input>
+                            id="email-input"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div id="enter-content">
                         <label id="label">Password</label>
                         <br />
-                        <input name="first_name" type="text"
-                            id="first-input" ></input>
+                        <input name="password" type="password"
+                            id="password-input"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     <div id="enter-content">
-						<label id="label">Confirm Password</label>
-						<br/>
-						<input name="last_name" type="text" 
-						id="last-input" ></input>
-					</div>
+                        <label id="label">Confirm Password</label>
+                        <br />
+                        <input name="confirm_password" type="password"
+                            id="confirm-password-input"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)} />
+                    </div>
                     <br />
                     <a id="submit"
                         onClick={signUp}>SIGN UP</a>
                 </form>
             </div>
-
         </>
     );
 }
