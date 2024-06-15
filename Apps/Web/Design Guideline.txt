@@ -1,0 +1,4 @@
+#Security# Signs Out Automatically After 5-10 minutes of no action
+#Message# Hi *name*, you've been inactive for 15 minutes so we've signed you out for your financial security.
+
+****************REFER TO DESIGN MOBILE APP**********************
