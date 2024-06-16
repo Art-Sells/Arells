@@ -18,7 +18,7 @@ const Signup: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState<string>('');
 
     const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
-    const [showPasswordsError, setPasswordsError] = useState<boolean>(true);
+    const [showPasswordsError, setPasswordsError] = useState<boolean>(false);
     const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
 
     const closeEmailExistsError = () => {

@@ -19,7 +19,6 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Email
 - Password
 - Password Confirmation
-- 8 characters in length, one letter, one number, and one chatacter (back-end)
 
 ### Bitcoin Wallet Created
 - Address
@@ -51,25 +50,53 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  #### Profits
  - **only based on the amount imported/purchased at**
 
+ #### Amount Sold
+ - shows $amount
+ - (Withdraw)
+
  #### Log Out (Redirects to Home)
+
+### Import
+- (A) -> Account Page (B) ->Buy Page
+- Import & Receive Bitcoin to Address: ...
+
+### Buy
+- Input amount, fees, bitcoin price, etc.
+- (BUY) -> Modals
+- Modals: 
+- - Confirming Purchase
+- - Purchase Complete (View Portfolio)-> Account, 
+- - Transaction Failed (OK)
 
 ### Sell
 - Explains amount to sell, profits, fees, etc
 - **can only sell all the amount imported/purchased if profitable**
-- (Confirm Sale)
-
-### Buy
-- Input amount, fees, bitcoin price, etc.
+- (Confirm Sale) -> Modals
+- Modals: 
+- - Confirming Sale
+- - Sale Complete (View Portfolio)-> Account 
+- - Transaction Failed (OK)
 
 ### Export
+- (A) -> Account Page (B) ->Buy Page
 - Input Privat Key
 - Send Bitcoin to Address: ...
 - Review "How It Works" if Bitcoin Export price is lower than holding price
+- (CANCEL) -> Account Page, 
+- (SEND) -> Transactions Page
 
-### Export Status
-- Pending (View on Block Explorer): Blockchain.com
-- Completed (View on Block Explorer)...
+### Transactions
+- (A) -> Account Page (B) ->Buy Page
+- Sold "amount of Bitcoin" for "dollar amount"
+- Bought "amount of Bitcoin" for "dollar amount"
+- Withdrew "amount of Bitcoin" to "bank account"
+- Sending "amount of Bitcoin" Pending (View on Block Explorer): Blockchain.com, instantly becomes Completed (View on Block Explorer)...
 
+### Withdraw
+- (A) -> Account Page (B) ->Buy Page
+- shows $amount
+- Are you sure you'd like to withdraw this to your bank account?
+- (PROCEED) -> Transactions Page
 
 ## Arells Cryptocurrency Marketplace 1.5
 
