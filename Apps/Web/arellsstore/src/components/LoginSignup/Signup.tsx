@@ -5,9 +5,7 @@ import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
-import $ from 'jquery';
 import { signUp } from 'aws-amplify/auth';
-import awsmobile from '../../aws-exports';
 
 const Signup: React.FC = () => {
     // Loader Function/s
@@ -18,10 +16,16 @@ const Signup: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
-    const [showEmailExistsError, setEmailExistsError] = useState<boolean>(true);
+
+    const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
+    const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(true);
 
     const closeEmailExistsError = () => {
         setEmailExistsError(false);
+    };
+
+    const closePasswordsDontMatchError = () => {
+        setPasswordsDontMatchError(false);
     };
 
     const handleSignUp = async () => {
@@ -61,9 +65,25 @@ const Signup: React.FC = () => {
                             id="signup-error-image"
                             src="/images/market/prohibited.png"
                         />
-                        <p id="account-exists-words">account</p>
+                        <p id="account-exists-words">email account</p>
                         <p id="account-exists-wordsss">already exists</p>
                         <button id="signup-error-close" onClick={closeEmailExistsError}>OK</button>
+                    </div>
+                </div>
+            )}
+            {showPasswordsDontMatchError && (
+                <div id="login-error-wrapper">
+                    <div id="account-exists-content">
+                        <Image
+                            alt=""
+                            width={35}
+                            height={35}
+                            id="signup-error-image"
+                            src="/images/market/prohibited.png"
+                        />
+                        <p id="account-exists-words">passwords</p>
+                        <p id="account-exists-wordsss">don't match</p>
+                        <button id="signup-error-close" onClick={closePasswordsDontMatchError}>OK</button>
                     </div>
                 </div>
             )}
