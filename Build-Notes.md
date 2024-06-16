@@ -19,6 +19,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Email
 - Password
 - Password Confirmation
+- 8 characters in length, one letter, one number, and one chatacter (back-end)
 
 ### Bitcoin Wallet Created
 - Address

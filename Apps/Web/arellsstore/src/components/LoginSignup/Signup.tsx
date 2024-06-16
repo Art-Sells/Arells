@@ -18,7 +18,8 @@ const Signup: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState<string>('');
 
     const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
-    const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(true);
+    const [showPasswordsError, setPasswordsError] = useState<boolean>(true);
+    const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
 
     const closeEmailExistsError = () => {
         setEmailExistsError(false);
@@ -26,6 +27,10 @@ const Signup: React.FC = () => {
 
     const closePasswordsDontMatchError = () => {
         setPasswordsDontMatchError(false);
+    };
+
+    const closePasswordsError = () => {
+        setPasswordsError(false);
     };
 
     const handleSignUp = async () => {
@@ -84,6 +89,23 @@ const Signup: React.FC = () => {
                         <p id="account-exists-words">passwords</p>
                         <p id="account-exists-wordsss">don't match</p>
                         <button id="signup-error-close" onClick={closePasswordsDontMatchError}>OK</button>
+                    </div>
+                </div>
+            )}
+            {showPasswordsError && (
+                <div id="login-error-wrapper">
+                    <div id="passwords-error-content">
+                        <Image
+                            alt=""
+                            width={35}
+                            height={35}
+                            id="signup-error-image"
+                            src="/images/market/prohibited.png"
+                        />
+                        <p id="passwords-error-words">password needs at least 8 characters with</p>
+                        <p id="passwordss-error-words">one letter(A - Z), one number (0-9)</p>
+                        <p id="passwordssss-error-words">and one character (! - *)</p>
+                        <button id="signup-error-close" onClick={closePasswordsError}>OK</button>
                     </div>
                 </div>
             )}
