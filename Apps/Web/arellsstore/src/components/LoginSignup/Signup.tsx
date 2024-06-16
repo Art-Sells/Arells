@@ -18,8 +18,7 @@ const Signup: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
-    const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
-    const [showSubmitted, setSubmitted] = useState<boolean>(false);
+    const [showEmailExistsError, setEmailExistsError] = useState<boolean>(true);
 
     const closeEmailExistsError = () => {
         setEmailExistsError(false);
@@ -54,17 +53,17 @@ const Signup: React.FC = () => {
         <>
             {showEmailExistsError && (
                 <div id="login-error-wrapper">
-                    <div id="login-error-content">
+                    <div id="account-exists-content">
                         <Image
                             alt=""
                             width={35}
                             height={35}
-                            id="login-error-image"
+                            id="signup-error-image"
                             src="/images/market/prohibited.png"
                         />
-                        <p id="login-error-words">Email</p>
-                        <p id="login-error-wordsss">already exists</p>
-                        <button id="login-error-close" onClick={closeEmailExistsError}>OK</button>
+                        <p id="account-exists-words">account</p>
+                        <p id="account-exists-wordsss">already exists</p>
+                        <button id="signup-error-close" onClick={closeEmailExistsError}>OK</button>
                     </div>
                 </div>
             )}
