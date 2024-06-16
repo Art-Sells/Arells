@@ -99,12 +99,12 @@ const Signup: React.FC = () => {
                             alt=""
                             width={35}
                             height={35}
-                            id="signup-error-image"
-                            src="/images/market/prohibited.png"
+                            id="passwords-error-image"
+                            src="/images/market/password-ivory.png"
                         />
-                        <p id="passwords-error-words">password needs at least 8 characters with</p>
-                        <p id="passwordss-error-words">one letter(A - Z), one number (0-9)</p>
-                        <p id="passwordssss-error-words">and one character (! - *)</p>
+                        <p id="passwords-error-words">password needs at least 8 characters</p>
+                        <p id="passwordss-error-words">one letter ( A - Z ), one number ( 0 - 9 )</p>
+                        <p id="passwordssss-error-words">and one character  ( ! - * )</p>
                         <button id="signup-error-close" onClick={closePasswordsError}>OK</button>
                     </div>
                 </div>
