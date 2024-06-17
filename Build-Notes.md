@@ -23,7 +23,10 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Bitcoin Wallet Created
 - Address
 - Private Key (copy this private key and save it offline [and do not lose it], you will need it to export and send your bitcoin, if you lose your private key, you will be unable to export and send your Bitcoin)
-- Click continue only after you've copied and saved your private key (Continue)--- (Modal, Wallet Created, ready to buy, sell and import) OK--->Account
+- Click continue only after you've copied and saved your private key 
+- (Continue)-> Modal
+- Modal
+- - Have you copied and saved your private key? (YES)->Account, (NO)->Close
 
 ### Home(redirects to Account if logged in)
 - Refer to (How It Works)

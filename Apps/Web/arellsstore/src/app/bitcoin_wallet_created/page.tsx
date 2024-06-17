@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 
 // Import other necessary components and hooks
-import '../css/howitworks/howitworks.css';
+import '../css/bitcoin/BitcoinWalletCreated.css';
 
 import type { Metadata } from 'next';
 import BitcoinWalletCreated from '../../components/BitcoinWallet/BitcoinWallet';
@@ -39,7 +39,7 @@ const BitcoinWalletCreatedPage = () => {
   return (
     <>
 
-      <div id="how-it-works-wrapper">
+      <div id="bitcoinwalletcreated-wrapper">
             <BitcoinWalletCreated/>
       </div>
     </>

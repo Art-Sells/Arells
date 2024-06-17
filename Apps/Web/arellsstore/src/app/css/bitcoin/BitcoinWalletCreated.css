@@ -1,555 +1,260 @@
 
 
-#how-it-works-wrapper {
-	padding-top: 30px; 
+#bitcoinwalletcreated-wrapper {
+	padding-top: 20px; 
 	text-align: center;
 	font-family: Arial;
-	margin-top: -10px;
-	margin-left: -10px;
-	margin-right: -10px;
-	margin-bottom: -10px;
-	border-radius: 0px;
-	padding-bottom: 50px;
-	   background-color: rgb(184, 138, 79);
-	   box-shadow: 0px 5px 50px -6px rgba(127, 72, 0); 	
-	}   
-
-
-	#word-logo-how {
-		width: 50px;
-		height: 16px;
-		opacity: .5;
-	}
-	#black-liner-how {
-		margin-top: 5px;
-		background-color: rgba(255, 255, 255);
-		border: none;
-		height: 2px;
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+		background-color: rgb(255, 251, 245);
 		border-radius: 30px;
-		width: 350px;
-		opacity: .2;
-	  }	
+		padding-bottom: 0px;
+		-webkit-animation-name: animatetop;
+		-webkit-animation-duration: 1.00s;
+		animation-name: animatetop;
+		animation-duration: 1.00s;
+		padding-bottom: 100px; 
+   }
+   
+	   @-webkit-keyframes animatetop {
+	   from {center:0; opacity:0}
+	   to {center:0; opacity:1}
+	 }
+	 
+	 @keyframes animatetop {
+	   from {center:0; opacity:0}
+	   to {center:0; opacity:1}
+	 }
+	
 
-	  #descriptioner-how {
-		color: rgb(236, 236, 236);
-		font-weight: 200;
-		opacity: .8;
-		margin-left: 4px;
-		font-size: 9px; 
-		letter-spacing: 1px;
-	}	
-	#descriptioner-how-crypto {
-		margin-left: 1px;
-		font-weight: 800;
-		letter-spacing: 3px;
-	}	
-	#how-it-works-words {
-		margin-top: 20px;
-		color: white;
-		font-weight: 800;
-		opacity: .5;
-		font-size: 18px; 
-		letter-spacing: -1px;
-	}
+ 
+	#bitcoinwalletcreated-title {
+		margin-top: 50px;
+		color: rgb(115, 65, 0); 
+		margin-left: auto;	
+		margin-right: auto;	
+		font-weight: 600;	
+		font-size: 20px;
+		margin-left: 0px;
+		letter-spacing: 0px;
+		opacity: .3;			
+	}		
 
-	#how-it-works-guide-wrapper {
-		padding-top: 50px;
-		padding-bottom: 35px;
-		margin-top: 20px;
+	
+	#sign-up {
+		color: rgb(115, 65, 0); 
+		width: 400px;
+		height: 350px;
+		padding-top: 40px;
+		padding-left: 10px;
+		padding-right: 10px;
+		margin-top: -20px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 1020px;
-		width: 350px;
-		background-color: rgb(255, 255, 255, 0.1);
-		border-radius: 10px;
-		box-shadow: 0px 5px 50px -6px rgb(89, 56, 13, 0.0); 
+		background: transparent;
+		border-radius: 15px;
+		box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.0); 		  	
+	}
+	#log-in {
+		color: rgb(115, 65, 0); 
+		width: 400px;
+		height: 250px;
+		padding-top: 40px;
+		padding-left: 10px;
+		padding-right: 10px;
+		margin-top: 100px;
+		margin-left: auto;
+		margin-right: auto;
+		background: none;
+		border-radius: 15px;
+		box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25); 		  	
 	}
 
-		#b-price-how{
-			display: flex;
-			justify-content: center; 
-			align-items: center;
+		#enter-content {
+			margin-top: 5px;
 		}
-			#bitcoin-how{
-				width: 20px;
-				height: 20px;
-				border-radius: 100px;
-				box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.7);
-				opacity: .7; 
-
-			}
-			#price-how {
-				color: white;
-				font-size: 12px;
-				font-weight: 200;
-				margin-left: 5px;
-				opacity: .6;
-
-			}
-				#holding-price-how {
-					color: white;
-					font-size: 12px;
-					font-weight: 200;
-					margin-left: 5px;
-					opacity: .6;
-
-				}
-			#price-number-how {
-				color: white;
-				font-size: 13px;
-				font-weight: 200;
-				margin-left: 3px;
-				opacity: .7;
-
-			}
-			#price-number-how-num {
-				font-size: 14px;
-				font-weight: 600;
-				margin-left: 2px;
-
-			}
-				#transfer-buy{
-					margin-top: 10px;
-				}
-					#transfer-how {
-						background: rgba(204, 116, 0);
-						text-decoration: none;
-						color: white;
-						font-weight: 500;
-						font-size: 10px;
-						padding-top: 10px;
-						padding-bottom: 10px;
-						padding-right: 12px;
-						padding-left: 13px;	  
-						border: solid;
-						letter-spacing: 1px;
-						border-radius: 5px;
-						border-width: 0px;
-						width: 75px;
-						opacity: 1;
-						box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
-					}
-					#buy-how {
-						margin-left: 10px;
-						background: rgba(204, 116, 0);
-						text-decoration: none;
-						color: white;
-						font-weight: 500;
-						font-size: 10px;
-						padding-top: 10px;
-						padding-bottom: 10px;
-						padding-right: 12px;
-						padding-left: 13px;	  
-						border: solid;
-						letter-spacing: 1px;
-						border-radius: 5px;
-						border-width: 0px;
-						width: 50px;
-						opacity: 1;
-						box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
-					}
-
-					#arells-how{
-						margin-left: 1.5px;
-						width: 20px;
-						height: 20px;
-		
-					}
-
-					#bitcoin-how-wallet{
-						margin-left: -1.5px;
-						width: 20px;
-						height: 20px;
-						border-radius: 100px;
-						box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.7); 
-		
-					}
-
-				#holding-how {
-					margin-top: 10px;
-					background: rgb(205, 174, 132);
-						text-decoration: none;
-						color: rgb(240, 237, 233);
-						font-weight: 500;
-						font-size: 10px;
-						padding-top: 10px;
-						padding-bottom: 10px;
-						padding-right: 12px;
-						padding-left: 13px;	  
-						border: solid;
-						letter-spacing: 1px;
-						border-radius: 5px;
-						border-width: 0px;
-						width: 90px;
-						opacity: 1;
-						box-shadow: 0px 8px 12px -6px rgba(204, 116, 0, 0);  			  
-					}
-			#transfer-buy-how {
-				margin-top: 20px;
-				padding-top: 40px;
-				padding-bottom: 40px;
-				margin-left: auto;
-				margin-right: auto;
-				height: 75px;
-				width: 230px;
-				background-color: rgb(255, 255, 255, 0.15);
-				border-radius: 10px;
-				box-shadow: 0px 5px 20px -6px rgb(90, 51, 0, 0.0); 
-			}
-				#wallet-price-number-how {
-					color: white;
-					font-size: 13px;
-					font-weight: 200;
-					margin-left: 3px;
-
-				}
-				#wallet-price-number-how-num {
-					font-size: 14px;
-					font-weight: 600;
-					margin-left: 2px;
-
-				}	
-				#black-liner-wallet {
-					margin-top: 15px;
-					background-color: rgba(255, 255, 255);
-					border: none;
-					height: 2px;
-					border-radius: 30px;
-					width: 130px;
-					opacity: .2;
-					margin-bottom: 15px;
-				}
-					#wallet-icon-how {
-						opacity: .6;
-					}
-				#wallet-how {
-					color: white;
-					font-size: 12px;
-					font-weight: 200;
-					margin-left: 4px;
-					opacity: .6;
-	
-				}	
-				#wallet-number-how {
-					color: white;
-					font-size: 13px;
-					font-weight: 200;
-					margin-left: 3px;
-	
-				}
-				#wallet-number-how-num {
-					font-size: 14px;
-					font-weight: 600;
-					margin-left: 2px;
-	
-				}	
-
-			#sell-wrapper-how {
-				margin-top: 20px;
-				padding-top: 40px;
-				padding-bottom: 40px;
-				margin-left: auto;
-				margin-right: auto;
-				height: 135px;
-				width: 230px;
-				background-color: rgb(255, 255, 255, 0.15);
-				border-radius: 10px;
-				box-shadow: 0px 5px 20px -6px rgb(90, 51, 0, 0.0); 
-			}	
-
-
-				#sell-how {
-					margin-top: 10px;
-					background: rgba(204, 116, 0);
-					text-decoration: none;
-					color: white;
-					font-weight: 500;
-					font-size: 10px;
-					padding-top: 10px;
-					padding-bottom: 10px;
-					padding-right: 12px;
-					padding-left: 13px;	  
-					border: solid;
-					letter-spacing: 1px;
-					border-radius: 5px;
-					border-width: 0px;
-					width: 80px;
-					opacity: 1;
-					box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  				  
-					}	
-
-						#black-liner-wallet-profits {
-							margin-top: 15px;
-							background-color: rgba(255, 255, 255);
-							border: none;
-							height: 2px;
-							border-radius: 30px;
-							width: 130px;
-							opacity: .2;
-							margin-bottom: 15px;
-						}
-							#profits-icon-how {
-								opacity: .5;
-							}
-						#wallet-how-profits {
-							color: white;
-							font-size: 12px;
-							font-weight: 200;
-							margin-left: 0px;
-							margin-top: 3px;
-							opacity: .6;
-			
-						}	
-						#wallet-number-profits-how {
-							color: white;
-							font-size: 17px;
-							font-weight: 200;
-							margin-left: 3px;
-							opacity: .6;
-			
-						}
-						#wallet-number-profits-how-num {
-							font-size: 17px;
-							font-weight: 600;
-							margin-left: 1px;
-			
-						}	
-
-
-
-			#how-it-works-liner {
-				margin-top: 50px;
-				background-color: rgba(255, 255, 255);
-				border: none;
-				height: 7px;
-				border-radius: 30px;
-				width: 230px;
-				opacity: .1;
-				margin-bottom: 45px;
-			}	
-			
-	#black-liner-how-bottom {
-		margin-top: 30px;
-		background-color: rgba(255, 255, 255);
-		border: none;
-		height: 2px;
-		border-radius: 30px;
-		width: 340px;
-		opacity: .2;
-		margin-bottom: 30px;
-		}	
-
-	#faq-wrapper {
-		margin-left: auto;
-		margin-right: auto;
-		width: 250px;
-	}
-	
-		#faq-how {
-			margin-top: 20px;
-			color: white;
-			font-weight: 800;
-			opacity: .5;
-			font-size: 18px; 
-			letter-spacing: -1px;
-		}
-
-		#faq-one-how {
-			color: rgb(236, 236, 236);
-			font-weight: 600;
-			opacity: .6;
-			margin-left: 0px;
-			font-size: 12px; 
-			letter-spacing: 0px;
-		}	
-		#faq-one-how-one {
-			margin-top: -10px;
-			color: rgb(236, 236, 236);
-			font-weight: 600;
-			opacity: .8;
-			font-size: 15px; 
-			letter-spacing: 0px;
-			line-height: 15px;
-		}	
-
-		#black-liner-how-bottom-faq {
-			margin-top: 20px;
-			background-color: rgba(255, 255, 255);
-			border: none;
-			height: 10px;
-			border-radius: 30px;
-			width: 250px;
-			opacity: .1;
-			margin-bottom: 25px;
-			}	
-
-		#faq-two-how {
-			color: rgb(236, 236, 236);
-			font-weight: 600;
-			opacity: .6;
-			margin-left: 0px;
-			font-size: 12px; 
-			letter-spacing: 0px;
-		}	
-		#faq-two-how-two {
-			margin-top: -10px;
-			color: rgb(236, 236, 236);
-			font-weight: 600;
-			opacity: .8;
-			font-size: 15px; 
-			letter-spacing: 0px;
-			line-height: 15px;
-		}	
-
-	#faq-transfer-wrapper {
-		padding-top: 30px;
-		padding-bottom: 35px;
-		margin-top: 40px;
-		margin-left: auto;
-		margin-right: auto;
-		height: 300px;
-		width: 340px;
-		background-color: rgb(255, 255, 255, 0.1);
-		border-radius: 10px;
-		box-shadow: 0px 5px 50px -6px rgb(89, 56, 13, 0.0); 
-	}
-		#transfer-out-how {
-			margin-top: 10px;
-			background: none;
-			text-decoration: none;
-			color: rgb(255, 222, 177);
+		#label{
 			font-weight: 500;
 			font-size: 10px;
-			padding-top: 10px;
-			padding-bottom: 10px;
-			padding-right: 12px;
-			padding-left: 13px;	  
-			border: solid;
+			letter-spacing: 0px;
+			margin-left: 0px;
+			opacity: .4;
+		}
+       	   #email-input,
+		   #password-input,
+		   #confirm-password-input { 
+       	   	    text-align: center;
+       	   		margin-top: 5px;     	   
+       	   		padding-top: 20px;
+       	   		padding-bottom: 20px;
+       	   		padding-left: 20px;
+       	   		padding-right: 20px;       	   		
+       	   		color: white;
+       	   		font-weight: 800;
+       	   		border: none;
+       	   		border-radius: 10px;
+       	   		font-size: 15px;
+       	   		width: 260px;
+       	   		height: 15px;
+				letter-spacing: 0px;    	   		
+				background: rgb(192, 133, 57);
+       	   		opacity: .4;
+				margin-bottom: 10px;  
+       	   }
+			  #email-input::placeholder,
+			  #password-input::placeholder,
+			  #confirm-password-input::placeholder { 
+				color: white; /* Change the placeholder text color */
+				font-size: 15px; /* Change the font size */
+				 }
+ 	   
+			  #email-input:focus,
+			  #password-input:focus,
+			  #confirm-password-input:focus {
+			    cursor: pointer;
+			    outline: none;
+			    transition: 1s;
+       	   		opacity: 1;			    
+			  }       	   
+		  .form-control:focus{
+		       border-width: 7px;
+               -webkit-box-shadow: none !important;
+               -moz-box-shadow: none !important;
+               box-shadow: none !important;
+           }  
+           #invisible-line{
+			opacity: 0;
+			  height: 10px;           
+           }     	   
+			#login-button {
+			  background-color: none;
+			  border-color: rgba(204, 116, 0);
+			  text-decoration: none;
+			  color: rgba(204, 116, 0);
+			  font-weight: 500;
+			  font-size: 12px;
+			  padding-top: 15px;
+			  padding-bottom: 15px;
+			  padding-right: 32px;
+			  padding-left: 34px;	  
+			  border: solid;
+			  letter-spacing: 2px;
+			  border-radius: 10px;
+			  border-width: 1px;
+			  width: 250px;
+			  opacity: .8;		  
+			}
+			#login-button:hover,
+			#login-button:focus {
+			  opacity: .4;
+			  transition: 1s;
+			  cursor: pointer;
+			} 
+			
+		#no-account {
+			margin-top: 30px;
+			color: rgb(115, 65, 0); 
+			margin-left: auto;	
+			margin-right: auto;	
+			font-weight: 600;	
+			font-size: 10px;
+			margin-left: 1px;
+			margin-bottom: -30px;
 			letter-spacing: 1px;
-			border-radius: 5px;
-			border-width: 1px;
-			border-color: rgb(232, 202, 161);
-			width: 85px;
-			opacity: 1;				  
-			}	
-
-
-		#faq-transfer-example {
-			margin-top: 20px;
-			padding-top: 10px;
-			padding-bottom: 20px;
-			margin-left: auto;
-			margin-right: auto;
-			height: 170px;
-			width: 240px;
-			background-color: rgb(255, 255, 255, 0.15);
-			border-radius: 10px;
-			box-shadow: 0px 5px 20px -6px rgb(90, 51, 0, 0.0); 
+			opacity: .4;			
 		}	
 
-			#wallet-how-export {
-				color: white;
-				font-size: 12px;
-				font-weight: 200;
-				margin-left: 4px;
-				opacity: .6;
+		#invisible-line-signup{
+			opacity: 0;
+			  height: 0px;           
+           }  
 
-			}	
-			#wallet-number-how-export {
-				color: white;
-				font-size: 13px;
-				font-weight: 200;
-				margin-left: 4px;
-
+			
+			#signup-button {
+			  margin-top: 35px;
+			  background-color: rgba(204, 116, 0);
+			  text-decoration: none;
+			  color: white;
+			  font-weight: 500;
+			  font-size: 12px;
+			  padding-top: 20px;
+			  padding-bottom: 20px;
+			  padding-right: 32px;
+			  padding-left: 32px;	  
+			  border: none;
+			  letter-spacing: 1px;
+			  border-radius: 5px;
+			  border-width: 0px;
+			  width: 250px;
+			  opacity: 1;
+			  box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
 			}
-			#wallet-number-how-num-export {
-				font-size: 14px;
-				font-weight: 600;
-				margin-left: 2px;
+			#signup-button:hover,
+			#signup-button:focus {
+			  opacity: .4;
+			  transition: 1s;
+			  cursor: pointer;
+			}  
+			
+			
 
-			}	
 
-			#faq-two-transfer-two {
-				margin-top: -15px;
+
+@media screen and (max-height: 600px){
+	#sign-up {
+		margin-top: 30px;	  	
+	}
+	#log-in {
+		margin-top: 30px;		  	
+	}
+}
+
+
+
+@media screen and (max-width: 650px){
+
+	#bitcoinwalletcreated-title {
+		font-size: 18px;		
+	}	
+
+	#sign-up {
+		width: 330px;	  	
+	}	
+
+	#log-in {
+		width: 330px;  	
+	}
+	#label{
+		font-size: 7px;
+	}
+	#email-input,
+	#password-input,
+	#confirm-password-input {    	   
+		
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 21px;
+			padding-right: 19px; 
+			font-size: 14px;     	   		
+			width: 200px;
+			height: 15px; 		
+       	   }
+			  #email-input::placeholder { 
+				color: white; /* Change the placeholder text color */
+				font-size: 14px; /* Change the font size */
+				 }
+		   
+		#login-button {
+			width: 150px;
+			font-size: 11px; 
+			margin-top: 60px;			  
 			}
 
-				#wallet-how-suffer {
-					color: white;
-					font-size: 13px;
-					font-weight: 200;
-					margin-left: 4px;
-					opacity: .6;
-	
-				}	
-				#wallet-number-how-suffer {
-					color: white;
-					font-size: 14px;
-					font-weight: 200;
-					margin-left: 5px;
-	
-				}
-				#wallet-number-how-num-suffer {
-					font-size: 17px;
-					font-weight: 600;
-					margin-left: 2px;
-	
-				}
-			#faq-two-transfer-three {
-				color: white;
-				font-size: 12px;
-				font-weight: 600;
-				opacity: 1;
-
-			}				
-
-
-			#faq-cancel-proceed{
-				margin-top: 20px;
+		#signup-button {
+			width: 180px;
+			font-size: 11px; 		  
 			}
-				#cancel-how {
-					background: black;
-					text-decoration: none;
-					color: white;
-					font-weight: 500;
-					font-size: 10px;
-					padding-top: 10px;
-					padding-bottom: 10px;
-					padding-right: 12px;
-					padding-left: 13px;	  
-					border: solid;
-					letter-spacing: 1px;
-					border-radius: 5px;
-					border-width: 0px;
-					width: 75px;
-					opacity: 1;
-					box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  			  
-				}
-				#proceed-how {
-					background: none;
-					text-decoration: none;
-					color: rgb(255, 222, 177);
-					font-weight: 500;
-					font-size: 10px;
-					padding-top: 10px;
-					margin-left: 10px;
-					padding-bottom: 10px;
-					padding-right: 12px;
-					padding-left: 13px;	  
-					border: solid;
-					letter-spacing: 1px;
-					border-radius: 5px;
-					border-width: 1px;
-					border-color: rgb(232, 202, 161);
-					width: 85px;
-					opacity: 1;	 			  
-				}	
 
-		#faq-how-email {
-			margin-top: 20px;
-			color: white;
-			font-weight: 800;
-			opacity: .5;
-			font-size: 18px; 
-			letter-spacing: -1px;
-			margin-bottom: 35px;
-		}				
+}
