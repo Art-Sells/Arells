@@ -19,33 +19,38 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Email
 - Password
 - Password Confirmation
+- (Continue) -> Account Page
 
 ### Bitcoin Wallet Created
+- **Backend - If Email is already connected to a Bitcoin Wallet and/or if not signedup/signedin, this page automatically takes you to the account page or homepage**
+- "You're gonna need this wallet to buy, sell, import and export your Bitcoin"
 - Address
 - Private Key (copy this private key and save it offline [and do not lose it], you will need it to export and send your bitcoin, if you lose your private key, you will be unable to export and send your Bitcoin)
 - Click continue only after you've copied and saved your private key 
 - (Continue)-> Modal
 - Modal
-- - Have you copied and saved your private key? (YES)->Account, (NO)->Close
+- - Have you copied and saved your private key? (YES)-> Ready Modal, (NO)->Close
+- Ready Modal
+- - Your account is now ready to buy, sell, import and export Bitcoin  (OK)-> Account Page
 
 ### Home(redirects to Account if logged in)
 - Refer to (How It Works)
 
  #### Import
- - Bitcoin Wallet Created only after Profile’s first time clicking buy and import. checks if Wallet Address connected, if not (Bitcoin Wallet Created Page)
- - Receive Bitcoin to Address: (Modal (ok))
+ - "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email. If Bitcoin address connected: Modal.
+ - - Modal
+ - - - Copy Address Button
+ - - - Import & Receive Your Bitcoin to Address:
 
  #### Buy
- - Bitcoin Wallet Created only after Profile’s first time clicking buy and import. checks if Wallet Address connected, if not (Bitcoin Wallet Created Page)
- - Connects to Plaid (if not connected)
+ - Connects to Plaid First, (if not connected) then takes you to "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email.
 
  #### Sell
- - Connects to Plaid (if not connected)
+ - Connects to Plaid First, (if not connected) then takes you to "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email.
  - **can only sell all the amount imported/purchased if profitable**
 
  #### Export
- - Send Bitcoin to Address: ...
- - Review "How It Works" if Bitcoin Export price is lower than holding price
+ - "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email. If Bitcoin wallet created: Export page.
 
  #### Holding
  - Refer to notes
