@@ -19,37 +19,42 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Email
 - Password
 - Password Confirmation
-- (Continue) -> Account Page
+- (Continue) -> Modal
+- - Modal:
+- - Account Created (OK)-> Account Page
 
-### Bitcoin Wallet Created
+### (A)(B)Wallet Created
 - **Backend - If Email is already connected to a Bitcoin Wallet and/or if not signedup/signedin, this page automatically takes you to the account page or homepage**
-- "You're gonna need this wallet to buy, sell, import and export your Bitcoin"
-- Address
-- Private Key (copy this private key and save it offline [and do not lose it], you will need it to export and send your bitcoin, if you lose your private key, you will be unable to export and send your Bitcoin)
-- Click continue only after you've copied and saved your private key 
+- Store Address within Account Email Database & Do Not Reveal Address here 
+- Private Key (copy/save your private key offline, you will need it to export and send your bitcoin, [do not lose it])
+- For security reasons, we do not save your private key online so before you hit continue, copy/save this private key offline.
 - (Continue)-> Modal
 - Modal
-- - Have you copied and saved your private key? (YES)-> Ready Modal, (NO)->Close
+- - Have you copied and saved your private key? Without it, you will be unable to export and send your Bitcoin(YES)-> Ready Modal, (NO)->Close
 - Ready Modal
 - - Your account is now ready to buy, sell, import and export Bitcoin  (OK)-> Account Page
 
 ### Home(redirects to Account if logged in)
 - Refer to (How It Works)
 
- #### Import
- - "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email. If Bitcoin address connected: Modal.
+ #### Import (Page)
+ - - Modal: Create (A)(B) Wallet
+ - - - You need a wallet to Import/Receive Bitcoin (Create)-> (A)(B) Wallet Created Page
  - - Modal
- - - - Copy Address Button
- - - - Import & Receive Your Bitcoin to Address:
+ - - - Copy Address Button 
+ - - - Import & Receive Your Bitcoin to Address: Address pulled from Database
 
- #### Buy
- - Connects to Plaid First, (if not connected) then takes you to "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email.
+ #### Buy (Page)
+ - **Possibly A Wrapper including the modal** Connects to Plaid First, (if not connected), then Modal: Create Bitcoin Address if no Bitcoin Address is connected to Email.
+ - - Modal: Create (A)(B) Wallet
+ - - - You need a wallet to Buy & Sell Bitcoin (Create)-> (A)(B) Wallet Created Page
 
- #### Sell
- - Connects to Plaid First, (if not connected) then takes you to "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email.
- - **can only sell all the amount imported/purchased if profitable**
+ #### Sell (Page)
+ - **Possibly A Wrapper including the modal** Connects to Plaid First, (if not connected), then Modal: Create Bitcoin Address if no Bitcoin Address is connected to Email.
+ - - Modal: Create (A)(B) Wallet
+ - - - You need a wallet to Buy & Sell Bitcoin (Create)-> (A)(B) Wallet Created Page
 
- #### Export
+ #### Export (Page)
  - "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email. If Bitcoin wallet created: Export page.
 
  #### Holding
@@ -60,16 +65,16 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
  #### Amount Sold
  - shows $amount
- - (Withdraw)
+ - (Withdraw)-> Withdraw Page
 
  #### Log Out (Redirects to Home)
 
 ### Import
 - (A) -> Account Page (B) ->Buy Page
-- Import & Receive Bitcoin to Address: ...
+- Import & Receive Bitcoin to Address: Address pulled from Database
 
 ### Buy
-- Input amount, fees, bitcoin price, etc.
+- Input (B) amount, fees, bitcoin price, etc.
 - (BUY) -> Modals
 - Modals: 
 - - Confirming Purchase
@@ -77,12 +82,12 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Transaction Failed (OK)
 
 ### Sell
-- Explains amount to sell, profits, fees, etc
+- Explains amount (A)(B) to sell, profits, fees, etc
 - **can only sell all the amount imported/purchased if profitable**
 - (Confirm Sale) -> Modals
 - Modals: 
 - - Confirming Sale
-- - Sale Complete (View Portfolio)-> Account 
+- - Sale Complete (View Account)-> Account 
 - - Transaction Failed (OK)
 
 ### Export

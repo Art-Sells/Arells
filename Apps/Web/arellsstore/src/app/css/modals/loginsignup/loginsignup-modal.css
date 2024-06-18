@@ -15,9 +15,26 @@
   background-color: rgba(181, 134, 73, 0.9);
 }
 
+#account-created-wrapper {
+  position: fixed; /* Stay in place */
+  z-index: 200; /* Sit on top */
+  padding-top: 190px; /* Location of the box */
+  text-align: center;
+	font-family: Arial;
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(255, 251, 245, 1);
+}
+
 
 @media screen and (max-height: 550px) {
   #login-error-wrapper {
+    padding-top: 30px; 
+  }
+  #account-created-wrapper {
     padding-top: 30px; 
   }
 }
@@ -78,6 +95,24 @@
   margin-bottom: 50px;
 }
 
+#account-created-content {
+  padding-top: 45px;
+  width: 270px;
+  height: 200px;
+  background: none; 
+  border-radius: 20px;
+  align-items: center;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;  
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 1.00s;
+  animation-name: animatetop;
+  animation-duration: 1.00s;
+  box-shadow: 0px 1px 5px 0px rgba(204, 116, 0, 0.25);
+  margin-bottom: 50px;
+}
+
 /* Add Animation */
 @-webkit-keyframes animatetop {
   from {center:0; opacity:0}
@@ -91,7 +126,7 @@
 
 #login-error-image{
   margin-top: 4px;
-  opacity: .6;
+  opacity: .5;
 }
 
 #signup-error-image{
@@ -103,6 +138,12 @@
   margin-top: 3px;
   opacity: .4;
 }
+
+#account-created-image{
+  margin-top: 3px;
+  opacity: .4;
+}
+
 
 
     #login-error-words {
@@ -133,6 +174,7 @@
       margin-left: 0px; 
       opacity: .65;
     }
+
 
 
     #account-exists-words {
@@ -189,6 +231,19 @@
 
 
 
+    #account-created-words {
+      color: black;
+      font-weight: 500;
+      font-size: 11px;
+      margin-top: 15px;
+      letter-spacing: 0px;
+      margin-left: 0px; 
+      opacity: .4;
+      margin-bottom: 30px;
+    }
+
+
+
 
 
 #login-error-close {
@@ -235,6 +290,31 @@
 
 #signup-error-close:hover,
 #signup-error-close:focus {
+  cursor: pointer;
+  opacity: .4;
+  transition: 1s;
+  
+}
+
+#account-created-close {
+  background-color: rgba(204, 116, 0, 0.9);
+  color: white;
+  margin-top: -5px;
+  margin-left: auto;
+  margin-right: auto;   
+  border: none;
+  border-width: 2px;
+  font-weight: 500;
+  border-radius: 5px;
+  font-size: 10px;
+  padding: 15.5px;
+  letter-spacing: 1px;
+  width: 150px; 
+  box-shadow: 0px 8px 12px -6px rgba(204, 116, 0); 
+}
+
+#account-created-close:hover,
+#account-created-close:focus {
   cursor: pointer;
   opacity: .4;
   transition: 1s;

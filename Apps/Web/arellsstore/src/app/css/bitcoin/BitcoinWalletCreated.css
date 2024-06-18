@@ -1,21 +1,17 @@
 
 
 #bitcoinwalletcreated-wrapper {
-	padding-top: 20px; 
+	position: fixed; /* Stay in place */
+	z-index: 200; /* Sit on top */
+	padding-top: 80px; /* Location of the box */
 	text-align: center;
-	font-family: Arial;
-	margin-top: 0%;
-	margin-left: 0%;
-	margin-right: 0%;
-	margin-bottom: 0%;
-		background-color: rgb(255, 251, 245);
-		border-radius: 30px;
-		padding-bottom: 0px;
-		-webkit-animation-name: animatetop;
-		-webkit-animation-duration: 1.00s;
-		animation-name: animatetop;
-		animation-duration: 1.00s;
-		padding-bottom: 100px; 
+	  font-family: Arial;
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgba(255, 251, 245, 1);
    }
    
 	   @-webkit-keyframes animatetop {

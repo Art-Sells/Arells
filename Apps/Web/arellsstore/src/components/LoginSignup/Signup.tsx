@@ -20,6 +20,7 @@ const Signup: React.FC = () => {
     const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
     const [showPasswordsError, setPasswordsError] = useState<boolean>(false);
     const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
+    const [showSignedUp, setSignedUp] = useState<boolean>(false);
 
     const closeEmailExistsError = () => {
         setEmailExistsError(false);
@@ -31,6 +32,10 @@ const Signup: React.FC = () => {
 
     const closePasswordsError = () => {
         setPasswordsError(false);
+    };
+
+    const closeSignedUp = () => {
+        setSignedUp(false);
     };
 
     const handleSignUp = async () => {
@@ -109,6 +114,22 @@ const Signup: React.FC = () => {
                     </div>
                 </div>
             )}
+            {showSignedUp && (
+                <div id="account-created-wrapper">
+                    <div id="account-created-content">
+                        <Image
+                            alt=""
+                            width={35}
+                            height={35}
+                            id="account-created-image"
+                            src="/images/market/checkmark-ebony.png"
+                        />
+                        <p id="account-created-words">Account Created</p>
+                        <button id="account-created-close" onClick={closeSignedUp}>VIEW ACCOUNT</button>
+                    </div>
+                </div>
+            )}
+
 
             <p id="signup-title">SIGN UP</p>
             <div id="sign-up">
