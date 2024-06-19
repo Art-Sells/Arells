@@ -3,7 +3,6 @@
 #bitcoinwalletcreated-wrapper {
 	position: fixed; /* Stay in place */
 	z-index: 200; /* Sit on top */
-	padding-top: 80px; /* Location of the box */
 	text-align: center;
 	  font-family: Arial;
 	left: 0;
@@ -12,6 +11,10 @@
 	height: 100%; /* Full height */
 	overflow: auto; /* Enable scroll if needed */
 	background-color: rgba(255, 251, 245, 1);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 1.00s;
+	animation-name: animatetop;
+	animation-duration: 1.00s;
    }
    
 	   @-webkit-keyframes animatetop {
@@ -23,49 +26,71 @@
 	   from {center:0; opacity:0}
 	   to {center:0; opacity:1}
 	 }
-	
+		
 
- 
-	#bitcoinwalletcreated-title {
-		margin-top: 50px;
-		color: rgb(115, 65, 0); 
-		margin-left: auto;	
-		margin-right: auto;	
-		font-weight: 600;	
-		font-size: 20px;
-		margin-left: 0px;
-		letter-spacing: 0px;
-		opacity: .3;			
-	}		
-
-	
-	#sign-up {
-		color: rgb(115, 65, 0); 
-		width: 400px;
-		height: 350px;
-		padding-top: 40px;
-		padding-left: 10px;
-		padding-right: 10px;
-		margin-top: -20px;
-		margin-left: auto;
-		margin-right: auto;
-		background: transparent;
-		border-radius: 15px;
-		box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.0); 		  	
+	 #wallet-created-title-wrapper{
+		margin-top: 60px;
+		display: flex;
+		justify-content: center; 
+		align-items: center;
+		margin-left: 15px;
 	}
-	#log-in {
-		color: rgb(115, 65, 0); 
-		width: 400px;
-		height: 250px;
-		padding-top: 40px;
-		padding-left: 10px;
-		padding-right: 10px;
-		margin-top: 100px;
+
+		#bitcoinwalletcreated-title-left {
+			color: rgb(0, 0, 0); 
+			font-weight: 400;	
+			font-size: 9px;
+			margin-right: 10px;
+			letter-spacing: 15px;
+			opacity: .35;			
+		}	
+		#wallet-created-icons-wrapper{
+			display: flex;
+			justify-content: center; 
+			align-items: center;
+			margin-right: 10px;
+		}
+			#arells-wallet-created-icon{
+				margin-left: 1.5px;
+				width: 30px;
+				height: 30px;
+
+			}
+			#bitcoin-wallet-created-icon{
+				margin-left: -1.5px;
+				width: 30px;
+				height: 30px;
+				border-radius: 100px;
+				box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.7); 
+
+			}
+		#bitcoinwalletcreated-title-right {
+			color: rgb(207, 117, 0); 
+			font-weight: 400;	
+			font-size: 9px;
+			margin-left: 10px;
+			letter-spacing: 15px;
+			opacity: .6;			
+		}	
+
+	
+	#wallet-wrapper {
+		margin-top: 50px;
+		padding: 45px;
+		width: 300px;
+		height: 280px;
+		background: none; 
+		border-radius: 20px;
+		align-items: center;
+		position: relative;
 		margin-left: auto;
-		margin-right: auto;
-		background: none;
-		border-radius: 15px;
-		box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25); 		  	
+		margin-right: auto;  
+		-webkit-animation-name: animatetop;
+		-webkit-animation-duration: 1.00s;
+		animation-name: animatetop;
+		animation-duration: 1.00s;
+		box-shadow: 0px 5px 20px 0px rgba(204, 116, 0, 0.25);
+		margin-bottom: 50px;	  	
 	}
 
 		#enter-content {
@@ -199,58 +224,10 @@
 
 
 @media screen and (max-height: 600px){
-	#sign-up {
+	#wallet-created-title-wrapper {
 		margin-top: 30px;	  	
 	}
-	#log-in {
-		margin-top: 30px;		  	
+	#wallet-wrapper {
+		margin-top: 30px;	  	
 	}
-}
-
-
-
-@media screen and (max-width: 650px){
-
-	#bitcoinwalletcreated-title {
-		font-size: 18px;		
-	}	
-
-	#sign-up {
-		width: 330px;	  	
-	}	
-
-	#log-in {
-		width: 330px;  	
-	}
-	#label{
-		font-size: 7px;
-	}
-	#email-input,
-	#password-input,
-	#confirm-password-input {    	   
-		
-			padding-top: 20px;
-			padding-bottom: 20px;
-			padding-left: 21px;
-			padding-right: 19px; 
-			font-size: 14px;     	   		
-			width: 200px;
-			height: 15px; 		
-       	   }
-			  #email-input::placeholder { 
-				color: white; /* Change the placeholder text color */
-				font-size: 14px; /* Change the font size */
-				 }
-		   
-		#login-button {
-			width: 150px;
-			font-size: 11px; 
-			margin-top: 60px;			  
-			}
-
-		#signup-button {
-			width: 180px;
-			font-size: 11px; 		  
-			}
-
 }

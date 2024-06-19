@@ -24,8 +24,11 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Account Created (OK)-> Account Page
 
 ### (A)(B)Wallet Created
-- **Backend - If Email is already connected to a Bitcoin Wallet and/or if not signedup/signedin, this page automatically takes you to the account page or homepage**
-- Store Address within Account Email Database & Do Not Reveal Address here 
+- **Backend** 
+- - If Email is already connected to a Bitcoin Wallet and/or if not signedup/signedin, this page automatically takes you to the account page or homepage**
+- - Store Address within Account Email Database & Do Not Reveal Address here 
+- - (YES) button from Modal saves Bitcoin Addres to Account Email
+- **Frontend**
 - Private Key (copy/save your private key offline, you will need it to export and send your bitcoin, [do not lose it])
 - For security reasons, we do not save your private key online so before you hit continue, copy/save this private key offline.
 - (Continue)-> Modal
