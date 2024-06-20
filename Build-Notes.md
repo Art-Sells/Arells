@@ -33,7 +33,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - For security reasons, we do not save your private key online so before you hit continue, copy/save this private key offline.
 - (Continue)-> Modal
 - Modal
-- - Have you copied and saved your private key? Without it, you will be unable to export and send your Bitcoin(YES)-> Ready Modal, (NO)->Close
+- - Have you copied and saved your private key? Without it, you will be unable to export and send your Bitcoin(My Key is Copied & Saved)-> Ready Modal, (Go Back)->Close
 - Ready Modal
 - - Your account is now ready to buy, sell, import and export Bitcoin  (OK)-> Account Page
 
@@ -125,3 +125,5 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Log In
 - Forgot Password 
+
+### Add 2FA for Buying/Selling

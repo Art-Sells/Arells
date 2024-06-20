@@ -95,7 +95,7 @@ const BitcoinWalletCreated: React.FC = () => {
               width={35}
               height={35}
               id="copied-image" 
-              src="/images/market/key.png"
+              src="images/market/key.png"
             />  
             <p id="copied-words">copied</p>
             <button id="copied-close" onClick={closeCopied}>OK</button> 
@@ -136,23 +136,26 @@ const BitcoinWalletCreated: React.FC = () => {
               <span id="bitcoinwalletcreated-title-right">CREATED</span>
           </div>
           <div id="wallet-wrapper">
-            <p>Copy/Save your private key offline, 
-              you will need it to export and send your Bitcoin. 
+            <p id="arells-second-core-belief">we believe in empowering you as an investor 
+              so we do not save your Bitcoin Private Key online
             </p>
-            <p>
-            (DO NOT LOSE IT)
+            <hr id="second-belief-line"/>
+            <p id="arells-second-core-belief-instruction">so before you continue, 
+                copy & save your Bitcoin Private Key offline, 
+                you will need it to export and send your Bitcoin
             </p>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <p>Private Key:</p>
+            <p id="bitcoin-private-key-title">BITCOIN PRIVATE KEY</p>
+            <div id="copy-bitcoin-input-wrapper">
               <input 
+                id="copy-bitcoin-input"
                 type="text" 
                 value={createdWallet.privateKey} 
                 readOnly 
-                style={{ flexGrow: 1, marginRight: '8px' }}
               />
-              <button onClick={copyToClipboard}>Copy</button>
+              <button 
+              id="copy-bitcoin-button"
+              onClick={copyToClipboard}>COPY</button>
             </div>
-            <p>For security, we do not save your key in our database so before you continue, ensure you have copied and saved your key offline.</p>
           </div>
           <button id="bitcoin-wallet-created-continue">
             CONTINUE
