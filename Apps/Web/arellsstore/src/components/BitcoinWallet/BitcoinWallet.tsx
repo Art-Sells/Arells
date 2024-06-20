@@ -90,6 +90,7 @@ const BitcoinWalletCreated: React.FC = () => {
         <div id="copied-wrapper">
           <div id="copied-content">
             <Image 
+              loader={imageLoader}
               alt="" 
               width={35}
               height={35}
@@ -151,7 +152,7 @@ const BitcoinWalletCreated: React.FC = () => {
               />
               <button onClick={copyToClipboard}>Copy</button>
             </div>
-            <p>For security, we do not save your private key in our database so before you continue, ensure you have copied and saved your private key offline.</p>
+            <p>For security, we do not save your key in our database so before you continue, ensure you have copied and saved your key offline.</p>
           </div>
           <button id="bitcoin-wallet-created-continue">
             CONTINUE

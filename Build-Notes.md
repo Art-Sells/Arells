@@ -56,6 +56,8 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  - **Possibly A Wrapper including the modal** Connects to Plaid First, (if not connected), then Modal: Create Bitcoin Address if no Bitcoin Address is connected to Email.
  - - Modal: Create (A)(B) Wallet
  - - - You need a wallet to Buy & Sell Bitcoin (Create)-> (A)(B) Wallet Created Page
+ - (A)(B) price only displays Highest Token Purchased Price (HTPP) if (B) price decreases. 
+ - The holding stops only once any Vatop + (Vatop * 3%) > Value At Current Time (Vact) (give chat GPT calculation example and apply to sell page)…
 
  #### Export (Page)
  - "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email. If Bitcoin wallet created: Export page.
@@ -85,13 +87,15 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Transaction Failed (OK)
 
 ### Sell
-- Explains amount (A)(B) to sell, profits, fees, etc
-- **can only sell all the amount imported/purchased if profitable**
-- (Confirm Sale) -> Modals
-- Modals: 
-- - Confirming Sale
-- - Sale Complete (View Account)-> Account 
-- - Transaction Failed (OK)
+- "Amount Holding" displays and combines all the Vatops + (Vatops * 3%) if the Vatops + (Vatops * 3%) < Values At Current Time (Vact), otherwise it is hidden.
+- "Amount Available To Sell" displays and combines all the Vatops + (Vatops * 3%) if the Vatops + (Vatops * 3%) > Values At Current Time (Vact), otherwise everything below is hidden.
+- - Profits
+- - Sell (Input Amount To Sell)
+- - (Confirm Sale) -> Modals
+- - - Modals: 
+- - - - Confirming Sale... Amount To Sell - Arells Fees
+- - - - Sale Complete (View Transactions)-> Account 
+- - - - Transaction Failed (OK)
 
 ### Export
 - (A) -> Account Page (B) ->Buy Page
@@ -103,9 +107,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Transactions
 - (A) -> Account Page (B) ->Buy Page
-- Sold "amount of Bitcoin" for "dollar amount"
+- Sold "amount of Bitcoin" for "dollar amount" with "profits"
 - Bought "amount of Bitcoin" for "dollar amount"
-- Withdrew "amount of Bitcoin" to "bank account"
+- Withdrew "dollar amount" to "bank account"
 - Sending "amount of Bitcoin" Pending (View on Block Explorer): Blockchain.com, instantly becomes Completed (View on Block Explorer)...
 
 ### Withdraw
