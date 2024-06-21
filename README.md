@@ -6,14 +6,10 @@
 Arells exists because it believes ***it's wrong for investors to lose money selling their cryptocurrencies, especially during Bear Markets.***
 
 ### Solution:
-A cryptocurrency marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **Holding Price** which limits the erasure of a token's value from selling pressure.
+A cryptocurrency marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **Holding Price**.
 
-#### Holding Price:
-Holding Price is a market system which holds the price of a token as it loses value.
-
-## Holding Price Mechanism:
-
-### HTPPD = Highest Token Price Purchase Displayed
+## Holding Price (Mechanism):
+Holds a token's price after purchase limiting the erasure of its value.
 
 ### Vatop = Value At Time of Purchase
 - **cVatop** = Corresponding Vatop
@@ -27,7 +23,7 @@ Holding Price is a market system which holds the price of a token as it loses va
 
 1. Bitcoin Price: $60,000
  - $500 worth of Bitcoin is purchased
- - HTPPD = $60,000
+ - Holding Price = $60,000
  - - cVatop 1 = $500
  - - cVact 1 = $500
  - - - acVatops = $500
@@ -35,7 +31,7 @@ Holding Price is a market system which holds the price of a token as it loses va
 
 2. Bitcoin Price: $54,000
  - $600 worth of Bitcoin is purchased
- - HTPPD = $60,000
+ - Holding Price = $60,000
  - - cVatop 1 = $500
  - - cVact 1 = $450 
  - - cVatop 2 = $600
@@ -44,7 +40,7 @@ Holding Price is a market system which holds the price of a token as it loses va
  - - - acVacts = $1050
 
 3. Bitcoin Price: $55,000
- - HTPPD = $60,000
+ - Holding Price = $60,000
  - - cVatop 1 = $500
  - - cVact 1 = $458
  - - cVatop 2 = $600
@@ -54,7 +50,7 @@ Holding Price is a market system which holds the price of a token as it loses va
 
 4. Bitcoin Price: $65,000
  - $200 worth of Bitcoin is purchased
- - HTPPD = $65,000
+ - Holding Price = $65,000
  - - cVatop 1 = $500
  - - cVact 1 = $542
  - - cVatop 2 = $600
@@ -63,6 +59,16 @@ Holding Price is a market system which holds the price of a token as it loses va
  - - cVact 3 = $200
  - - - acVatops = $1300
  - - - acVacts = $1464
+
+5. Bitcoin Price: $63,000
+ - $650 worth of Bitcoin is sold
+ - Holding Price = $65,000
+ - - cVatop 2 = $450
+ - - cVact 2 = $575
+ - - cVatop 3 = $200
+ - - cVact 3 = $194
+ - - - acVatops = $650
+ - - - acVacts = $769
 
 This introduces a new market…
 

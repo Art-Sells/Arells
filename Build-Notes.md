@@ -37,7 +37,8 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  #### Holding (replaces Sell button)
  - displayed once a cVatop + (cVatop * .03) < the cVact, othersie hidden
 
- #### (A)(B) Price (HTPPD)
+ #### (A)(B) Price = Holding Price
+ - Holding Price dependent on highest cVatop
 
  #### (A)(B) Value
  - Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
@@ -73,7 +74,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - (Confirm Sale) -> Modals
 - - - Modals: 
 - - - - Confirming Sale... Amount To Sell - Arells Fees
-- - - - Sale Complete (subtracts from first cVact available to sell, once that is depleted, subtracts from the next cVact and deletes those cVacts & cVatops from database)(View Transactions) -> Transactions
+- - - - Sale Complete (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database)(View Transactions) -> Transactions
 - - - - Transaction Failed (OK)
 
 ### Export
