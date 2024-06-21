@@ -195,7 +195,8 @@
 				#copy-bitcoin-button:hover,
 				#copy-bitcoin-button:focus {
 					background-color: gray;
-					box-shadow: 0px 8px 12px -6px gray;  	
+					box-shadow: 0px 8px 12px -6px gray;  
+					color: silver;	
 					transition: 1s;
 					cursor: pointer;
 				}  

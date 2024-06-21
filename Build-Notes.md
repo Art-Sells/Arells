@@ -13,7 +13,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Email
 - Password
 - No Account? Sign Up
-- - (automatically connects to your prior wallet created during buy/import wallet creation initiation)
+- **Possibly a connect wallet wrapper** that automatically connects to your prior wallet with Address and Private Key pulled from backend.
 
 ### Sign Up
 - Email
@@ -21,46 +21,25 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Password Confirmation
 - (Continue) -> Modal
 - - Modal:
-- - Account Created (OK)-> Account Page
-
-### (A)(B)Wallet Created
-- **Backend** 
-- - If Email is already connected to a Bitcoin Wallet and/or if not signedup/signedin, this page automatically takes you to the account page or homepage**
-- - Store Address within Account Email Database & Do Not Reveal Address here 
-- - (YES) button from Modal saves Bitcoin Addres to Account Email
-- **Frontend**
-- Private Key (copy/save your private key offline, you will need it to export and send your bitcoin, [do not lose it])
-- For security reasons, we do not save your private key online so before you hit continue, copy/save this private key offline.
-- (Continue)-> Modal
-- Modal
-- - Have you copied and saved your private key? Without it, you will be unable to export and send your Bitcoin(My Key is Copied & Saved)-> Ready Modal, (Go Back)->Close
-- Ready Modal
-- - Your account is now ready to buy, sell, import and export Bitcoin  (OK)-> Account Page
+- - Account Created (OK)-> Creates Bitcoin Wallet **Backend: saves Address to Email and encrypts private key and saves it on backend** then takes you to Homepage with wallet connected **connect wallet wrapper initiated**
+- - Account Exists (OK)
 
 ### Home(redirects to Account if logged in)
 - Refer to (How It Works)
 
  #### Import (Page)
- - - Modal: Create (A)(B) Wallet
- - - - You need a wallet to Import/Receive Bitcoin (Create)-> (A)(B) Wallet Created Page
  - - Modal
  - - - Copy Address Button 
  - - - Import & Receive Your Bitcoin to Address: Address pulled from Database
 
  #### Buy (Page)
- - **Possibly A Wrapper including the modal** Connects to Plaid First, (if not connected), then Modal: Create Bitcoin Address if no Bitcoin Address is connected to Email.
- - - Modal: Create (A)(B) Wallet
- - - - You need a wallet to Buy & Sell Bitcoin (Create)-> (A)(B) Wallet Created Page
+ - **Possibly a plaid connect wrapper including the modal** Connects to Plaid First, (if not connected)
 
  #### Sell (Page)
- - **Possibly A Wrapper including the modal** Connects to Plaid First, (if not connected), then Modal: Create Bitcoin Address if no Bitcoin Address is connected to Email.
- - - Modal: Create (A)(B) Wallet
- - - - You need a wallet to Buy & Sell Bitcoin (Create)-> (A)(B) Wallet Created Page
- - (A)(B) price only displays Highest Token Purchased Price (HTPP) if (B) price decreases. 
+ - **Possibly a plaid connect rapper including the modal** Connects to Plaid First, (if not connected)
  - The holding stops only once any Vatop + (Vatop * 3%) > Value At Current Time (Vact) (give chat GPT calculation example and apply to sell page)…
 
  #### Export (Page)
- - "Create Bitcoin Wallet Page" if no Bitcoin Address is connected to Email. If Bitcoin wallet created: Export page.
 
  #### Holding
  - Refer to notes
@@ -99,7 +78,6 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Export
 - (A) -> Account Page (B) ->Buy Page
-- Input Privat Key
 - Send Bitcoin to Address: ...
 - Review "How It Works" if Bitcoin Export price is lower than holding price
 - (CANCEL) -> Account Page, 
@@ -126,4 +104,4 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Log In
 - Forgot Password 
 
-### Add 2FA for Buying/Selling
+### Add 2FA for Buying/Selling and first Logging In.
