@@ -18,7 +18,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Account Created (View Account)-> Creates Bitcoin Wallet **Backend: saves Address to Email and encrypts private key and saves it on backend** then takes you to Homepage with wallet connected **connect wallet wrapper initiated**
 
 ### Home(redirects to Account if logged in)
-- Refer to (How It Works)
+- if holding, sell display none, holding display true.
+
+ #### (B) Price
 
  #### Import (Modal)
  - - Modal
@@ -30,15 +32,28 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
  #### Sell (Page)
  - **Possibly a plaid connect rapper including the modal** Connects to Plaid First, (if not connected)
- - The holding stops only once any Vatop + (Vatop * 3%) > Value At Current Time (Vact) (give chat GPT calculation example and apply to sell page)…
+
+  #### Holding (replaces Sell button)
+ - The holding is initiated only once a corresponding Vatop + (Vatop * 3%) <> the corresponding Vact
+ - Vatop = Value At Time of Purchase
+ - - Example:
+ - - - $500 worth of Bitcoin at $60,000 is purchased: Vatop #1 = $500
+ - - - $600 worth of Bitcoin at $54,000 is purchased: Vatop #2 = $600
+ - Vact = Value At Current Time
+ - - Example:
+ - - - $500 worth of Bitcoin at $60,000 falls to $450 as Bitcoin falls to $54,000: Vact #1 = $450
+ - - - $600 worth of Bitcoin at $54,000 rises to $611 as Bitcoin rises to $55,000: Vact #2 = $611
+
+ #### (A)(B) Price
+ - Only displays Highest Token Purchased Price (HTPP) if (B) price decreases.
+
+  #### (A)(B) Value
+ - Combines and displays all Vatops.
 
  #### Export (Page)
 
- #### Holding
- - Refer to notes
-
  #### Profits
- - **only based on the amount imported/purchased at**
+ - Vact - Vatop = Profits (Only displays if positive)
 
  #### Amount Sold
  - shows $amount
@@ -59,9 +74,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 
 ### Sell
-- "Amount Holding" displays and combines all the Vatops + (Vatops * 3%) if the Vatops + (Vatops * 3%) < Values At Current Time (Vact), otherwise it is hidden.
-- "Amount Available To Sell" displays and combines all the Vatops + (Vatops * 3%) if the Vatops + (Vatops * 3%) > Values At Current Time (Vact), otherwise everything below is hidden.
-- - Profits
+- "Amount Holding" displays and combines the Vatops + (Vatops * 3%) if the Vatops + (Vatops * 3%) < Vacts, otherwise it is hidden.
+- "Amount Available To Sell" displays and combines the Vatops + (Vatops * 3%) if the Vatops + (Vatops * 3%) > Vacts, otherwise everything below is hidden.
+- - Profits: Vact - Vatop = Profits (Only displays if positive)
 - - Sell (Input Amount To Sell)
 - - (Confirm Sale) -> Modals
 - - - Modals: 
