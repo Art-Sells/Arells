@@ -75,7 +75,7 @@ Holds a token's price after purchase limiting the erasure of its value.
 - **Solid Marketplace: an illiquid marketplace**
 - **Sloth Market: a market in which asset prices stagnate thus helping to render bear markets obsolete.**
 
-<img src="https://github.com/Art-Sells/Arells/blob/a7137a4a639de15d11a026e220832635d14af554/Art/Marketing/BeforeandAfterArells.jpg" width="800px"> 
+<img src="https://github.com/Art-Sells/Arells/blob/a7137a4a639de15d11a026e220832635d14af554/Art/Marketing/BeforeandAfterArellss.jpg" width="800px"> 
 
 ### How It Works: https://arells.com/howitworks
 _______________________________________________________________________
