@@ -32,28 +32,20 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
  #### Sell (Page)
  - **Possibly a plaid connect rapper including the modal** Connects to Plaid First, (if not connected)
+ - displayed once a cVatop + (cVatop * .03) > the cVact, othersie hidden
 
-  #### Holding (replaces Sell button)
- - The holding is initiated only once a corresponding Vatop + (Vatop * 3%) <> the corresponding Vact
- - Vatop = Value At Time of Purchase
- - - Example:
- - - - $500 worth of Bitcoin at $60,000 is purchased: Vatop #1 = $500
- - - - $600 worth of Bitcoin at $54,000 is purchased: Vatop #2 = $600
- - Vact = Value At Current Time
- - - Example:
- - - - $500 worth of Bitcoin at $60,000 falls to $450 as Bitcoin falls to $54,000: Vact #1 = $450
- - - - $600 worth of Bitcoin at $54,000 rises to $611 as Bitcoin rises to $55,000: Vact #2 = $611
+ #### Holding (replaces Sell button)
+ - displayed once a cVatop + (cVatop * .03) < the cVact, othersie hidden
 
- #### (A)(B) Price
- - Only displays Highest Token Purchased Price (HTPP) if (B) price decreases.
+ #### (A)(B) Price (HTPPD)
 
-  #### (A)(B) Value
- - Combines and displays all Vatops.
+ #### (A)(B) Value
+ - Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
 
  #### Export (Page)
 
  #### Profits
- - Vact - Vatop = Profits (Only displays if positive)
+ - acVacts - acVatops = Profits (Only displays if positive)
 
  #### Amount Sold
  - shows $amount
@@ -74,14 +66,14 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 
 ### Sell
-- "Amount Holding" displays and combines the Vatops + (Vatops * 3%) if the Vatops + (Vatops * 3%) < Vacts, otherwise it is hidden.
-- "Amount Available To Sell" displays and combines the Vatops + (Vatops * 3%) if the Vatops + (Vatops * 3%) > Vacts, otherwise everything below is hidden.
-- - Profits: Vact - Vatop = Profits (Only displays if positive)
+- "Amount Holding" displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise it is hidden.
+- "Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
+- - Profits: acVacts - acVatops = Profits
 - - Sell (Input Amount To Sell)
 - - (Confirm Sale) -> Modals
 - - - Modals: 
 - - - - Confirming Sale... Amount To Sell - Arells Fees
-- - - - Sale Complete (View Transactions)-> Transactions
+- - - - Sale Complete (subtracts from first cVact available to sell, once that is depleted, subtracts from the next cVact and deletes those cVacts & cVatops from database)(View Transactions) -> Transactions
 - - - - Transaction Failed (OK)
 
 ### Export

@@ -11,21 +11,64 @@ A cryptocurrency marketplace that helps render bear markets obsolete. Arells is 
 #### Holding Price:
 Holding Price is a market system which holds the price of a token as it loses value.
 
-**Example Scenario:**
+## Holding Price Mechanism:
 
-A Token at the Price of $10 is bought with an investment of $500.
-- Token Price falls to $9 and the investment to $450.
-- Holding Price implemented and token selling locked.
-- Token Price is held $10 and the investment at $500.
-- Token Price rises to $11 and the investment to $550.
-- Holding Price is revoked and token selling unlocked.
-- Investor sells token and gains $50 in profits.
+### HTPPD = Highest Token Price Purchase Displayed
+
+### Vatop = Value At Time of Purchase
+- **cVatop** = Corresponding Vatop
+- **acVatops** = All cVatops
+
+### Vact = Value At Current Time
+- **cVact** = Corresponding Vact
+- **acVatops** = All cVatops
+
+### Example:
+
+1. Bitcoin Price: $60,000
+ - $500 worth of Bitcoin is purchased
+ - HTPPD = $60,000
+ - - cVatop 1 = $500
+ - - cVact 1 = $500
+ - - - acVatops = $500
+ - - - acVacts = $500
+
+2. Bitcoin Price: $54,000
+ - $600 worth of Bitcoin is purchased
+ - HTPPD = $60,000
+ - - cVatop 1 = $500
+ - - cVact 1 = $450 
+ - - cVatop 2 = $600
+ - - cVact 2 = $600
+ - - - acVatops = $1100
+ - - - acVacts = $1050
+
+3. Bitcoin Price: $55,000
+ - HTPPD = $60,000
+ - - cVatop 1 = $500
+ - - cVact 1 = $458
+ - - cVatop 2 = $600
+ - - cVact 2 = $611
+ - - - acVatops = $1100
+ - - - acVacts = $1069
+
+4. Bitcoin Price: $65,000
+ - $200 worth of Bitcoin is purchased
+ - HTPPD = $65,000
+ - - cVatop 1 = $500
+ - - cVact 1 = $542
+ - - cVatop 2 = $600
+ - - cVact 2 = $722
+ - - cVatop 3 = $200
+ - - cVact 3 = $200
+ - - - acVatops = $1300
+ - - - acVacts = $1464
 
 This introduces a new market…
 
 #### Sloth Market:
 
-A market in which token prices stagnate rendering bear markets obsolete.
+A market in which token prices stagnate thus helping to render bear markets obsolete.
 
 <img src="https://github.com/Art-Sells/Arells/assets/51394348/49591992-3d46-4200-80c6-b0656d741c1c" width="800px"> 
 
