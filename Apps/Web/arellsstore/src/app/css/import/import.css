@@ -1,3 +1,22 @@
+/* <div id="account-wallet-wrapper">
+<p id="bitcoin-private-key-title">BITCOIN PRIVATE KEY</p>
+<div id="copy-bitcoin-input-wrapper">
+  <input 
+	id="copy-bitcoin-input"
+	type="text" 
+	value={createdWallet.privateKey} 
+	readOnly 
+  />
+  <button 
+  id="copy-bitcoin-button"
+  onClick={copyToClipboard}>COPY</button>
+</div>
+</div>
+<button id="account-continue">
+CONTINUE
+</button> */
+
+
 
 
 #bitcoinwalletcreated-wrapper {

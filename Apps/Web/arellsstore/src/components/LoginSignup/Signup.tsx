@@ -8,6 +8,9 @@ import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import { signUp } from 'aws-amplify/auth';
 
 const Signup: React.FC = () => {
+
+    const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
+
     // Loader Function/s
     const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
@@ -54,6 +57,7 @@ const Signup: React.FC = () => {
                     }
                 }
             });
+            createWallet();
         } catch (error: any) {
             if (error.code === 'UsernameExistsException') {
                 setEmailExistsError(true);
@@ -62,6 +66,20 @@ const Signup: React.FC = () => {
             }
         }
     };
+
+    const createWallet = async () => {
+        try {
+          const res = await fetch('/api/wallet');
+          if (!res.ok) {
+          }
+          const data = await res.json();
+          console.log("Wallet created:", data);
+          setCreatedWallet(data);
+        } catch (error) {
+          console.error("Error in createWallet:", error);
+        }
+    };
+
 
     return (
         <>

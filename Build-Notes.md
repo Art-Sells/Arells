@@ -8,26 +8,19 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Home Page
 - Purchase CoinGecko API
+- If Log In = true, go to /Account
 
 ### Log In
-- Email
-- Password
-- No Account? Sign Up
 - **Possibly a connect wallet wrapper** that automatically connects to your prior wallet with Address and Private Key pulled from backend.
 
 ### Sign Up
-- Email
-- Password
-- Password Confirmation
-- (Continue) -> Modal
-- - Modal:
-- - Account Created (OK)-> Creates Bitcoin Wallet **Backend: saves Address to Email and encrypts private key and saves it on backend** then takes you to Homepage with wallet connected **connect wallet wrapper initiated**
-- - Account Exists (OK)
+- Modal:
+- - Account Created (View Account)-> Creates Bitcoin Wallet **Backend: saves Address to Email and encrypts private key and saves it on backend** then takes you to Homepage with wallet connected **connect wallet wrapper initiated**
 
 ### Home(redirects to Account if logged in)
 - Refer to (How It Works)
 
- #### Import (Page)
+ #### Import (Modal)
  - - Modal
  - - - Copy Address Button 
  - - - Import & Receive Your Bitcoin to Address: Address pulled from Database
@@ -63,7 +56,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Modals: 
 - - Confirming Purchase
 - - Purchase Complete (View Portfolio)-> Account, 
-- - Transaction Failed (OK)
+- - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 
 ### Sell
 - "Amount Holding" displays and combines all the Vatops + (Vatops * 3%) if the Vatops + (Vatops * 3%) < Values At Current Time (Vact), otherwise it is hidden.
@@ -73,7 +66,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - (Confirm Sale) -> Modals
 - - - Modals: 
 - - - - Confirming Sale... Amount To Sell - Arells Fees
-- - - - Sale Complete (View Transactions)-> Account 
+- - - - Sale Complete (View Transactions)-> Transactions
 - - - - Transaction Failed (OK)
 
 ### Export
@@ -82,6 +75,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Review "How It Works" if Bitcoin Export price is lower than holding price
 - (CANCEL) -> Account Page, 
 - (SEND) -> Transactions Page
+- - Modal:
+- - - Bitcoin Successfuly Exported (View Transactions)-> Transactions-
+- - - Export Failed (OK)
 
 ### Transactions
 - (A) -> Account Page (B) ->Buy Page
@@ -95,6 +91,13 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - shows $amount
 - Are you sure you'd like to withdraw this to your bank account?
 - (PROCEED) -> Transactions Page
+- - Modal:
+- - - Withdraw Complete (View Transactions)-> Transactions
+- - - Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
+
+### Bank Account
+- (A) -> Account Page (B) ->Buy Page
+- Plaid info?
 
 ## Arells Cryptocurrency Marketplace 1.5
 
