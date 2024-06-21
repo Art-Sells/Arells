@@ -6,10 +6,10 @@
 Arells exists because it believes ***it's wrong for investors to lose money selling their cryptocurrencies, especially during Bear Markets.***
 
 ### Solution:
-A cryptocurrency marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **Holding Price**.
+A cryptocurrency marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **HPM (Holding Price Mechanism)**.
 
-## Holding Price (Mechanism):
-Holds a token's price after purchase limiting the erasure of its value.
+## HPM
+Holds the highest token's price after purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat:
 
 ### Vatop = Value At Time of Purchase
 - **cVatop** = Corresponding Vatop
@@ -19,11 +19,11 @@ Holds a token's price after purchase limiting the erasure of its value.
 - **cVact** = Corresponding Vact
 - **acVacts** = All cVacts
 
-### Example:
+#### Example:
 
 1. Bitcoin Price: $60,000
  - $500 worth of Bitcoin is purchased
- - Holding Price = $60,000
+ - HPM = $60,000
  - - cVatop 1 = $500
  - - cVact 1 = $500
  - - - acVatops = $500
@@ -31,7 +31,7 @@ Holds a token's price after purchase limiting the erasure of its value.
 
 2. Bitcoin Price: $54,000
  - $600 worth of Bitcoin is purchased
- - Holding Price = $60,000
+ - HPM = $60,000
  - - cVatop 1 = $500
  - - cVact 1 = $450 
  - - cVatop 2 = $600
@@ -40,7 +40,7 @@ Holds a token's price after purchase limiting the erasure of its value.
  - - - acVacts = $1050
 
 3. Bitcoin Price: $55,000
- - Holding Price = $60,000
+ - HPM = $60,000
  - - cVatop 1 = $500
  - - cVact 1 = $458
  - - cVatop 2 = $600
@@ -50,7 +50,7 @@ Holds a token's price after purchase limiting the erasure of its value.
 
 4. Bitcoin Price: $65,000
  - $200 worth of Bitcoin is purchased
- - Holding Price = $65,000
+ - HPM = $65,000
  - - cVatop 1 = $500
  - - cVact 1 = $542
  - - cVatop 2 = $600
@@ -62,7 +62,7 @@ Holds a token's price after purchase limiting the erasure of its value.
 
 5. Bitcoin Price: $63,000
  - $650 worth of Bitcoin is sold
- - Holding Price = $65,000
+ - HPM = $65,000
  - - cVatop 2 = $450
  - - cVact 2 = $575
  - - cVatop 3 = $200
