@@ -17,7 +17,7 @@ Holds a token's price after purchase limiting the erasure of its value.
 
 ### Vact = Value At Current Time
 - **cVact** = Corresponding Vact
-- **acVatops** = All cVatops
+- **acVacts** = All cVacts
 
 ### Example:
 
