@@ -70,11 +70,11 @@ Holds a token's price after purchase limiting the erasure of its value.
  - - - acVatops = $650
  - - - acVacts = $769
 
-This introduces a new market…
+This introduces new market dynamics and marketplaces…
 
-#### Sloth Market:
+#### Solid Marketplace: an illiquid marketplace.
 
-A market in which token prices stagnate thus helping to render bear markets obsolete.
+#### Sloth Market: a market in which asset prices stagnate thus helping to render bear markets obsolete.
 
 <img src="https://github.com/Art-Sells/Arells/assets/51394348/49591992-3d46-4200-80c6-b0656d741c1c" width="800px"> 
 
