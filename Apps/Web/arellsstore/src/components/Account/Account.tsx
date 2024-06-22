@@ -17,7 +17,7 @@ const Account: React.FC = () => {
     }
     const [showLoading, setLoading] = useState<boolean>(true);
     const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
-      arellsWalletLogo: false,
+      accountLogo: false,
     });
   
     const handleImageLoaded = (imageName: string) => {
@@ -48,7 +48,7 @@ const Account: React.FC = () => {
             alt="" 
             width={29}
             height={30}
-            id="arells-loader-icon-how" 
+            id="arells-loader-icon-account" 
             src="images/Arells-Icon.png"
           />    
           <div id={styles.accountloader}></div>    
@@ -57,21 +57,18 @@ const Account: React.FC = () => {
 
       <Image
           loader={imageLoader}
-          onLoad={() => handleImageLoaded('howlogo')}
+          onLoad={() => handleImageLoaded('accountLogo')}
           alt=""
           width={50}
           height={16}
           id="word-logo-account" 
-          src="images/Arells-Logo.png"/>	
+          src="images/Arells-Logo-Ebony.png"/>	
 
-      <hr id="black-liner-account"/>
+
       <p id="descriptioner-account">
           NEVER LOSE MONEY SELLING 
           <span id="descriptioner-account-crypto"> CRYPTOCURRENCIES</span>
-          </p>
-      <hr id="black-liner-account"/>   
-
-
+      </p>
       <div id="wallet-account-wrapper">
 
         <div id="b-price-account">
@@ -79,7 +76,7 @@ const Account: React.FC = () => {
                 <div id="b-account-wrapper">
                     <Image
                     loader={imageLoader}
-                    onLoad={() => handleImageLoaded('howlogo')}
+                    onLoad={() => handleImageLoaded('accountLogo')}
                     alt=""
                     width={20}
                     height={20}
@@ -95,13 +92,13 @@ const Account: React.FC = () => {
 
         <div id="transfer-buy-account">
           <span>
-            <button id="transfer-account">
-                IMPORT
+            <button id="buy-account">
+                BUY
             </button>
           </span>
           <span>
-            <button id="buy-account">
-                BUY
+            <button id="transfer-account">
+                IMPORT
             </button>
           </span>
           <span>
@@ -124,7 +121,7 @@ const Account: React.FC = () => {
                     <div id="a-account-wrapper">
                         <Image
                         loader={imageLoader}
-                        onLoad={() => handleImageLoaded('howlogo')}
+                        onLoad={() => handleImageLoaded('accountLogo')}
                         alt=""
                         width={20}
                         height={20}
@@ -136,7 +133,7 @@ const Account: React.FC = () => {
                     <div id="b-account-wrapper">
                         <Image
                         loader={imageLoader}
-                        onLoad={() => handleImageLoaded('howlogo')}
+                        onLoad={() => handleImageLoaded('accountLogo')}
                         alt=""
                         width={20}
                         height={20}
@@ -155,7 +152,7 @@ const Account: React.FC = () => {
                     <div id="w-account-wrapper">
                         <Image
                         loader={imageLoader}
-                        onLoad={() => handleImageLoaded('howlogo')}
+                        onLoad={() => handleImageLoaded('accountLogo')}
                         alt=""
                         width={20}
                         height={20}
@@ -176,7 +173,7 @@ const Account: React.FC = () => {
                 <div id="w-account-wrapper">
                   <Image
                   loader={imageLoader}
-                  onLoad={() => handleImageLoaded('howlogo')}
+                  onLoad={() => handleImageLoaded('accountLogo')}
                   alt=""
                   width={20}
                   height={20}
@@ -189,10 +186,12 @@ const Account: React.FC = () => {
                   <span id="wallet-number-profits-account-num">125</span>
               </span>
             </div>
-
         </div>
-
+        <button id="export-account">
+            EXPORT
+        </button>
       </div>
+
       <button id="log-out-account">
         LOG OUT
       </button>

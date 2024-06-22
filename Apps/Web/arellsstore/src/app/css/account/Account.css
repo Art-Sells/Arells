@@ -7,6 +7,7 @@
 	  font-family: Arial;
 	left: 0;
 	top: 0;
+	padding-top: 40px;
 	width: 100%; /* Full width */
 	height: 100%; /* Full height */
 	overflow: auto; /* Enable scroll if needed */
@@ -31,7 +32,7 @@
 	 #word-logo-account {
 		width: 50px;
 		height: 16px;
-		opacity: .5;
+		opacity: 1;
 	}
 	#black-liner-account {
 		margin-top: 5px;
@@ -44,30 +45,36 @@
 	  }	
 
 	  #descriptioner-account {
-		color: black;
-		font-weight: 200;
-		opacity: .7;
-		margin-left: 4px;
-		font-size: 9px; 
-		letter-spacing: 1px;
-	}	
-	#descriptioner-account-crypto {
-		margin-left: 1px;
-		font-weight: 800;
-		letter-spacing: 3px;
+		margin-top: 10px;
+		font-size: 8px;
+		letter-spacing: .5px;
+		margin-left: .5px; 
+		font-weight: 600;
+		opacity: 1;
+		color: rgb(255, 145, 0, 0.8);
+		word-spacing: 0px;
 	}	
 
+	  #descriptioner-account-crypto {
+		  font-size: 8px;
+		  letter-spacing: 4px;
+		  margin-left: 0px; 
+		  opacity: 1;
+		  color: black;
+	  }
+
+
+
 	#wallet-account-wrapper {
-		padding-top: 50px;
-		padding-bottom: 35px;
+		padding-top: 40px;
+		padding-bottom: 40px;
 		margin-top: 20px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 1020px;
+		height: 410px;
 		width: 350px;
-		background: none;
-		border-radius: 10px;
-		box-shadow: 0px 5px 20px 0px rgba(204, 116, 0, 0.25);
+		background-color: white;
+		border-radius: 30px;
 	}
 
 		#b-price-account{
@@ -79,16 +86,15 @@
 				width: 20px;
 				height: 20px;
 				border-radius: 100px;
-				box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.7);
-				opacity: .7; 
-
+				box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.0);
+				opacity: 1; 
 			}
 			#price-account {
 				color: black;
 				font-size: 12px;
 				font-weight: 200;
 				margin-left: 5px;
-				opacity: .6;
+				opacity: 1;
 
 			}
 				#holding-price-account {
@@ -96,15 +102,15 @@
 					font-size: 12px;
 					font-weight: 200;
 					margin-left: 5px;
-					opacity: .6;
+					opacity: 1;
 
 				}
 			#price-number-account {
-				color: white;
+				color: black;
 				font-size: 13px;
 				font-weight: 200;
 				margin-left: 3px;
-				opacity: .7;
+				opacity: 1;
 
 			}
 			#price-number-account-num {
@@ -114,9 +120,9 @@
 
 			}
 				#transfer-buy-account{
-					margin-top: 10px;
+					margin-top: 20px;
 				}
-					#transfer-account {
+					#buy-account {
 						background: rgba(204, 116, 0);
 						text-decoration: none;
 						color: white;
@@ -130,13 +136,35 @@
 						letter-spacing: 1px;
 						border-radius: 5px;
 						border-width: 0px;
+						width: 60px;
+						opacity: 1;
+						box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
+					}
+
+					#transfer-account {
+						margin-left: 10px;
+						background: none;
+						text-decoration: none;
+						color: rgba(204, 116, 0);
+						font-weight: 500;
+						font-size: 10px;
+						padding-top: 10px;
+						padding-bottom: 10px;
+						padding-right: 12px;
+						padding-left: 13px;	  
+						border: solid;
+						border-color: rgba(204, 116, 0, 0.5);
+						letter-spacing: 1px;
+						border-radius: 5px;
+						border-width: 1px;
 						width: 75px;
 						opacity: 1;
-						box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
+						box-shadow: 0px 8px 12px -6px rgba(204, 116, 0, 0);  			  
 					}
-					#buy-account {
+
+					#sell-account {
 						margin-left: 10px;
-						background: rgba(204, 116, 0);
+						background: black;
 						text-decoration: none;
 						color: white;
 						font-weight: 500;
@@ -144,15 +172,15 @@
 						padding-top: 10px;
 						padding-bottom: 10px;
 						padding-right: 12px;
-						padding-left: 13px;	  
+						padding-left: 16px;	  
 						border: solid;
 						letter-spacing: 1px;
 						border-radius: 5px;
 						border-width: 0px;
-						width: 50px;
+						width: 60px;
 						opacity: 1;
-						box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
-					}
+						box-shadow: 0px 8px 12px -6px rgba(0, 0, 0, .8);  				  
+						}	
 
 					#arells-account{
 						margin-left: 1.5px;
@@ -166,7 +194,7 @@
 						width: 20px;
 						height: 20px;
 						border-radius: 100px;
-						box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.7); 
+						box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.0); 
 		
 					}
 
@@ -190,7 +218,7 @@
 						box-shadow: 0px 8px 12px -6px rgba(204, 116, 0, 0);  			  
 					}
 				#wallet-price-number-account {
-					color: white;
+					color: black;
 					font-size: 13px;
 					font-weight: 200;
 					margin-left: 3px;
@@ -204,27 +232,27 @@
 				}	
 				#black-liner-wallet {
 					margin-top: 15px;
-					background-color: rgba(255, 255, 255);
+					background-color: rgb(204, 116, 0);
 					border: none;
-					height: 2px;
+					height: 3px;
 					border-radius: 30px;
 					width: 130px;
 					opacity: .2;
 					margin-bottom: 15px;
 				}
 					#wallet-icon-account {
-						opacity: .6;
+						opacity: 1;
 					}
 				#wallet-account {
 					color: black;
 					font-size: 12px;
 					font-weight: 200;
 					margin-left: 4px;
-					opacity: .6;
+					opacity:1;
 	
 				}	
 				#wallet-number-account {
-					color: white;
+					color: black;
 					font-size: 13px;
 					font-weight: 200;
 					margin-left: 3px;
@@ -238,24 +266,58 @@
 				}	
 
 			#sell-wrapper-account {
-				margin-top: 20px;
+				margin-top: 40px;
 				padding-top: 40px;
 				padding-bottom: 40px;
 				margin-left: auto;
 				margin-right: auto;
 				height: 135px;
 				width: 230px;
-				background-color: rgb(255, 255, 255, 0.15);
-				border-radius: 10px;
-				box-shadow: 0px 5px 20px -6px rgb(90, 51, 0, 0.0); 
+				background-color: rgba(255, 251, 245, 1);
+				border-radius: 30px;
+				box-shadow: 0px 5px 0px 0.5px rgba(204, 116, 0, 0.2);
 			}	
 
+						#black-liner-wallet-profits {
+							margin-top: 15px;
+							background-color: rgb(204, 116, 0);
+							border: none;
+							height: 3px;
+							border-radius: 30px;
+							width: 130px;
+							opacity: .2;
+							margin-bottom: 15px;
+						}
+							#profits-icon-account {
+								opacity: 1;
+							}
+						#wallet-account-profits {
+							color: black;
+							font-size: 12px;
+							font-weight: 200;
+							margin-left: 0px;
+							margin-top: 0px;
+							opacity: 1;
+			
+						}	
+						#wallet-number-profits-account {
+							color: black;
+							font-size: 13px;
+							font-weight: 200;
+							margin-left: 3px;
+							opacity: 1;
+			
+						}
+						#wallet-number-profits-account-num {
+							font-size: 14px;
+							font-weight: 600;
+							margin-left: 2px;
+						}	
 
-				#sell-account {
-					margin-top: 10px;
-					background: rgba(204, 116, 0);
+				#export-account {
+					margin-top: 40px;
+					background: none;
 					text-decoration: none;
-					color: white;
 					font-weight: 500;
 					font-size: 10px;
 					padding-top: 10px;
@@ -263,70 +325,46 @@
 					padding-right: 12px;
 					padding-left: 13px;	  
 					border: solid;
+					color: rgba(204, 116, 0);
+					border-color: rgba(204, 116, 0, 0.5);
 					letter-spacing: 1px;
 					border-radius: 5px;
-					border-width: 0px;
-					width: 80px;
+					border-width: 1px;
+					width: 90px;
 					opacity: 1;
-					box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  				  
-					}	
-
-						#black-liner-wallet-profits {
-							margin-top: 15px;
-							background-color: black;
-							border: none;
-							height: 2px;
-							border-radius: 30px;
-							width: 130px;
-							opacity: .2;
-							margin-bottom: 15px;
-						}
-							#profits-icon-account {
-								opacity: .5;
-							}
-						#wallet-account-profits {
-							color: black;
-							font-size: 12px;
-							font-weight: 200;
-							margin-left: 0px;
-							margin-top: 3px;
-							opacity: .6;
-			
-						}	
-						#wallet-number-profits-account {
-							color: white;
-							font-size: 17px;
-							font-weight: 200;
-							margin-left: 3px;
-							opacity: .6;
-			
-						}
-						#wallet-number-profits-account-num {
-							font-size: 17px;
-							font-weight: 600;
-							margin-left: 1px;
-			
-						}	
+					box-shadow: 0px 8px 12px -6px rgba(204, 116, 0, 0);  			  
+				}
+				
+				
+		#black-liner-account-bottom {
+			margin-top: 35px;
+			background-color: rgb(0, 0, 0);
+			border: none;
+			height: 3px;
+			border-radius: 30px;
+			width: 350px;
+			opacity: .05;
+			}				
 
 
 
 	#log-out-account {
-		margin-top: 10px;
+		margin-top: 50px;
 		background: none;
 		text-decoration: none;
-		color: rgb(25, 22, 18);
+		color: rgb(0, 0, 0, 0.4);
 		font-weight: 500;
 		font-size: 10px;
-		padding-top: 10px;
-		padding-bottom: 10px;
+		padding-top: 15px;
+		padding-bottom: 15px;
 		padding-right: 12px;
 		padding-left: 13px;	  
 		border: solid;
 		letter-spacing: 1px;
 		border-radius: 5px;
 		border-width: 1px;
-		border-color: rgb(37, 32, 26);
-		width: 85px;
+		border-color: rgba(0, 0, 0, 0.2);
+		width: 100px;
 		opacity: 1;				  
 		}	
 		#log-out-account:hover,

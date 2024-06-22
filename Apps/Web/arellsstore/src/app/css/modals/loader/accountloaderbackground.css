@@ -28,7 +28,7 @@
   }
 
 
-  #arells-loader-icon-how {
+  #arells-loader-icon-account {
     margin-top: 220px;
     opacity: .3;
   }
@@ -36,7 +36,7 @@
 
   @media screen and (max-height: 550px) {
 
-    #arells-loader-icon-how {
+    #arells-loader-icon-account {
       margin-top: 120px;
     }
 
