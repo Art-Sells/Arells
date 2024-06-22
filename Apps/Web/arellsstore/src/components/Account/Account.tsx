@@ -55,35 +55,144 @@ const Account: React.FC = () => {
         </div>
       )}
 
-      <div id="account-title-wrapper">
-          <span id="account-title-left">WALLET</span>
-          <span id="account-icons-wrapper">
+      <Image
+          loader={imageLoader}
+          onLoad={() => handleImageLoaded('howlogo')}
+          alt=""
+          width={50}
+          height={16}
+          id="word-logo-account" 
+          src="images/Arells-Logo.png"/>	
+
+      <hr id="black-liner-account"/>
+      <p id="descriptioner-account">
+          NEVER LOSE MONEY SELLING 
+          <span id="descriptioner-account-crypto"> CRYPTOCURRENCIES</span>
+          </p>
+      <hr id="black-liner-account"/>   
+
+
+      <div id="how-it-works-guide-wrapper">
+
+        <div id="b-price-how">
             <span>
-                <div>
-                    <Image
-                    loader={imageLoader}
-                    onLoad={() => handleImageLoaded('arellsWalletLogo')}
-                    alt=""
-                    width={30}
-                    height={30}
-                    id="arells-account-icon" 
-                    src="images/howitworks/ArellsBitcoin.png"/>
-                </div>
-            </span>
-            <span>
-                <div>
+                <div id="b-how-wrapper">
                     <Image
                     loader={imageLoader}
                     onLoad={() => handleImageLoaded('howlogo')}
                     alt=""
-                    width={30}
-                    height={30}
-                    id="bitcoin-account-icon" 
+                    width={20}
+                    height={20}
+                    id="bitcoin-how" 
                     src="images/howitworks/Bitcoin.png"/>
                 </div>
             </span>
+            <span id="price-how">Price:</span>
+            <span id="price-number-how">$
+                <span id="price-number-how-num">60,000</span>
+            </span>
+        </div>
+
+        <div id="transfer-buy">
+          <span>
+            <button id="transfer-how">
+                IMPORT
+            </button>
           </span>
-          <span id="account-title-right">CREATED</span>
+          <span>
+            <button id="buy-how">
+                BUY
+            </button>
+          </span>
+          <span>
+            <button id="sell-how">
+                SELL
+            </button>
+          </span>
+          {/* <span>
+            <button id="holding-how">
+                HOLDING
+            </button>
+          </span> */}
+        </div>
+
+
+        <div id="sell-wrapper-how">
+
+            <div id="b-price-how">
+                <span>
+                    <div id="a-how-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('howlogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="arells-how" 
+                        src="images/howitworks/ArellsBitcoinIvory.png"/>
+                    </div>
+                </span>
+                <span>
+                    <div id="b-how-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('howlogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="bitcoin-how-wallet" 
+                        src="images/howitworks/Bitcoin.png"/>
+                    </div>
+                </span>
+                <span id="holding-price-how">Price:</span>
+                <span id="wallet-price-number-how">$
+                    <span id="wallet-price-number-how-num">75,000</span>
+                </span>
+            </div>
+            <hr id="black-liner-wallet"/>  
+            <div id="b-price-how">
+                <span>
+                    <div id="w-how-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('howlogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="wallet-icon-how" 
+                        src="images/market/wallet-ivory.png"/>
+                    </div>
+                </span>
+                <span id="wallet-how">Wallet:</span>
+                <span id="wallet-number-how">$
+                    <span id="wallet-number-how-num">625</span>
+                </span>
+            </div>
+
+            <hr id="black-liner-wallet-profits"/>  
+
+            <div id="b-price-how">
+                <span>
+                    <div id="w-how-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('howlogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="profits-icon-how" 
+                        src="images/howitworks/up-arrow.png"/>
+                    </div>
+                </span>
+                <span id="wallet-how-profits">Profits:</span>
+                <span id="wallet-number-profits-how">$
+                    <span id="wallet-number-profits-how-num">125</span>
+                </span>
+            </div>
+
+
+        </div>
+
       </div>
       <div id="account-wallet-wrapper">
       </div>

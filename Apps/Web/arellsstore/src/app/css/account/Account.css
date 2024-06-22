@@ -28,50 +28,34 @@
 	 }
 		
 
-	 #account-title-wrapper{
-		margin-top: 60px;
-		display: flex;
-		justify-content: center; 
-		align-items: center;
-		margin-left: 15px;
+	 #word-logo-account {
+		width: 50px;
+		height: 16px;
+		opacity: .5;
 	}
+	#black-liner-account {
+		margin-top: 5px;
+		background-color: black;
+		border: none;
+		height: 2px;
+		border-radius: 30px;
+		width: 350px;
+		opacity: .2;
+	  }	
 
-		#account-title-left {
-			color: rgb(0, 0, 0); 
-			font-weight: 400;	
-			font-size: 9px;
-			margin-right: 10px;
-			letter-spacing: 15px;
-			opacity: .35;			
-		}	
-		#account-icons-wrapper{
-			display: flex;
-			justify-content: center; 
-			align-items: center;
-			margin-right: 13px;
-		}
-			#arells-account-icon{
-				margin-left: 1.5px;
-				width: 30px;
-				height: 30px;
-
-			}
-			#bitcoin-account-icon{
-				margin-left: -1.5px;
-				width: 30px;
-				height: 30px;
-				border-radius: 100px;
-				box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.7); 
-
-			}
-		#account-title-right {
-			color: rgb(207, 117, 0); 
-			font-weight: 400;	
-			font-size: 9px;
-			margin-left: 10px;
-			letter-spacing: 15px;
-			opacity: .6;			
-		}	
+	  #descriptioner-account {
+		color: black;
+		font-weight: 200;
+		opacity: .7;
+		margin-left: 4px;
+		font-size: 9px; 
+		letter-spacing: 1px;
+	}	
+	#descriptioner-account-crypto {
+		margin-left: 1px;
+		font-weight: 800;
+		letter-spacing: 3px;
+	}	
 
 	
 	#account-wallet-wrapper {

@@ -72,8 +72,8 @@ Holds the highest token's price after purchase limiting the erasure of its value
 
 ## This introduces a new kind of marketplace and market dynamics…
 
-- **Solid Marketplace: an illiquid marketplace**
-- **Sloth Market: a market in which asset prices stagnate thus helping to render bear markets obsolete.**
+- **Solid Marketplace: an illiquid marketplace that constrains the flexibilities of buying and selling assets.**
+- **Sloth Market: a market in which asset prices stagnate.**
 
 <img src="https://github.com/Art-Sells/Arells/blob/3651d2883b9a4fce7076a4d14f89aae2d6a1be0e/Art/Marketing/BeforeandAfterArellss.jpg" width="800px"> 
 
