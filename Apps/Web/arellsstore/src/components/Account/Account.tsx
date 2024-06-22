@@ -72,132 +72,129 @@ const Account: React.FC = () => {
       <hr id="black-liner-account"/>   
 
 
-      <div id="how-it-works-guide-wrapper">
+      <div id="wallet-account-wrapper">
 
-        <div id="b-price-how">
+        <div id="b-price-account">
             <span>
-                <div id="b-how-wrapper">
+                <div id="b-account-wrapper">
                     <Image
                     loader={imageLoader}
                     onLoad={() => handleImageLoaded('howlogo')}
                     alt=""
                     width={20}
                     height={20}
-                    id="bitcoin-how" 
+                    id="bitcoin-account" 
                     src="images/howitworks/Bitcoin.png"/>
                 </div>
             </span>
-            <span id="price-how">Price:</span>
-            <span id="price-number-how">$
-                <span id="price-number-how-num">60,000</span>
+            <span id="price-account">Price:</span>
+            <span id="price-number-account">$
+                <span id="price-number-account-num">60,000</span>
             </span>
         </div>
 
-        <div id="transfer-buy">
+        <div id="transfer-buy-account">
           <span>
-            <button id="transfer-how">
+            <button id="transfer-account">
                 IMPORT
             </button>
           </span>
           <span>
-            <button id="buy-how">
+            <button id="buy-account">
                 BUY
             </button>
           </span>
           <span>
-            <button id="sell-how">
+            <button id="sell-account">
                 SELL
             </button>
           </span>
           {/* <span>
-            <button id="holding-how">
+            <button id="holding-account">
                 HOLDING
             </button>
           </span> */}
         </div>
 
 
-        <div id="sell-wrapper-how">
+        <div id="sell-wrapper-account">
 
-            <div id="b-price-how">
+            <div id="b-price-account">
                 <span>
-                    <div id="a-how-wrapper">
+                    <div id="a-account-wrapper">
                         <Image
                         loader={imageLoader}
                         onLoad={() => handleImageLoaded('howlogo')}
                         alt=""
                         width={20}
                         height={20}
-                        id="arells-how" 
-                        src="images/howitworks/ArellsBitcoinIvory.png"/>
+                        id="arells-account" 
+                        src="images/howitworks/ArellsBitcoin.png"/>
                     </div>
                 </span>
                 <span>
-                    <div id="b-how-wrapper">
+                    <div id="b-account-wrapper">
                         <Image
                         loader={imageLoader}
                         onLoad={() => handleImageLoaded('howlogo')}
                         alt=""
                         width={20}
                         height={20}
-                        id="bitcoin-how-wallet" 
+                        id="bitcoin-account-wallet" 
                         src="images/howitworks/Bitcoin.png"/>
                     </div>
                 </span>
-                <span id="holding-price-how">Price:</span>
-                <span id="wallet-price-number-how">$
-                    <span id="wallet-price-number-how-num">75,000</span>
+                <span id="holding-price-account">Price:</span>
+                <span id="wallet-price-number-account">$
+                    <span id="wallet-price-number-account-num">75,000</span>
                 </span>
             </div>
             <hr id="black-liner-wallet"/>  
-            <div id="b-price-how">
+            <div id="b-price-account">
                 <span>
-                    <div id="w-how-wrapper">
+                    <div id="w-account-wrapper">
                         <Image
                         loader={imageLoader}
                         onLoad={() => handleImageLoaded('howlogo')}
                         alt=""
                         width={20}
                         height={20}
-                        id="wallet-icon-how" 
-                        src="images/market/wallet-ivory.png"/>
+                        id="wallet-icon-account" 
+                        src="images/market/wallet.png"/>
                     </div>
                 </span>
-                <span id="wallet-how">Wallet:</span>
-                <span id="wallet-number-how">$
-                    <span id="wallet-number-how-num">625</span>
+                <span id="wallet-account">Wallet:</span>
+                <span id="wallet-number-account">$
+                    <span id="wallet-number-account-num">625</span>
                 </span>
             </div>
 
             <hr id="black-liner-wallet-profits"/>  
 
-            <div id="b-price-how">
-                <span>
-                    <div id="w-how-wrapper">
-                        <Image
-                        loader={imageLoader}
-                        onLoad={() => handleImageLoaded('howlogo')}
-                        alt=""
-                        width={20}
-                        height={20}
-                        id="profits-icon-how" 
-                        src="images/howitworks/up-arrow.png"/>
-                    </div>
-                </span>
-                <span id="wallet-how-profits">Profits:</span>
-                <span id="wallet-number-profits-how">$
-                    <span id="wallet-number-profits-how-num">125</span>
-                </span>
+            <div id="b-price-account">
+              <span>
+                <div id="w-account-wrapper">
+                  <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('howlogo')}
+                  alt=""
+                  width={20}
+                  height={20}
+                  id="profits-icon-account" 
+                  src="images/howitworks/up-arrow-ebony.png"/>
+                </div>
+              </span>
+              <span id="wallet-account-profits">Profits:</span>
+              <span id="wallet-number-profits-account">$
+                  <span id="wallet-number-profits-account-num">125</span>
+              </span>
             </div>
-
 
         </div>
 
       </div>
-      <div id="account-wallet-wrapper">
-      </div>
-      <button id="account-continue">
-        CONTINUE
+      <button id="log-out-account">
+        LOG OUT
       </button>
     </>
   );
