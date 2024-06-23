@@ -69,6 +69,7 @@ const Account: React.FC = () => {
           NEVER LOSE MONEY SELLING 
           <span id="descriptioner-account-crypto"> CRYPTOCURRENCIES</span>
       </p>
+      
       <div id="wallet-account-wrapper">
 
         <div id="b-price-account">
@@ -101,22 +102,22 @@ const Account: React.FC = () => {
                 IMPORT
             </button>
           </span>
-          <span>
+          {/* <span>
             <button id="sell-account">
                 SELL
             </button>
-          </span>
-          {/* <span>
+          </span> */}
+          <span>
             <button id="holding-account">
                 HOLDING
             </button>
-          </span> */}
+          </span>
         </div>
 
 
         <div id="sell-wrapper-account">
 
-            <div id="b-price-account">
+            <div id="a-price-account">
                 <span>
                     <div id="a-account-wrapper">
                         <Image
@@ -142,12 +143,11 @@ const Account: React.FC = () => {
                     </div>
                 </span>
                 <span id="holding-price-account">Price:</span>
-                <span id="wallet-price-number-account">$
-                    <span id="wallet-price-number-account-num">75,000</span>
+                <span id="holding-price-number-account">$
+                    <span id="holding-price-number-account-num">75,000</span>
                 </span>
             </div>
-            <hr id="black-liner-wallet"/>  
-            <div id="b-price-account">
+            <div id="b-price-account-wallet">
                 <span>
                     <div id="w-account-wrapper">
                         <Image
@@ -166,9 +166,7 @@ const Account: React.FC = () => {
                 </span>
             </div>
 
-            <hr id="black-liner-wallet-profits"/>  
-
-            <div id="b-price-account">
+            <div id="b-profits-account">
               <span>
                 <div id="w-account-wrapper">
                   <Image
@@ -190,11 +188,40 @@ const Account: React.FC = () => {
         <button id="export-account">
             EXPORT
         </button>
+        <div id="amount-sold-account-wrapper">
+          <div id="amount-sold-num-wrap">
+          <span>
+                <div id="w-account-wrapper">
+                    <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="wallet-icon-account" 
+                    src="images/market/cash-register.png"/>
+                </div>
+            </span>
+            <span id="amount-sold-account-title">Sold: </span>
+            <span id="amount-sold-number-account">$</span>
+            <span id="amount-sold-number-account-num">60,000</span>
+          </div>
+          <button id="withdraw-account">
+              WITHDRAW
+          </button>
+        </div>
       </div>
 
-      <button id="log-out-account">
-        LOG OUT
-      </button>
+
+
+
+      <div id="footer">
+
+        <button id="log-out-account">
+          LOGOUT
+        </button>
+
+      </div>
     </>
   );
 };

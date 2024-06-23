@@ -54,10 +54,6 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
  #### Log Out (Redirects to Home)
 
-### Import
-- (A) -> Account Page (B) ->Buy Page
-- Import & Receive Bitcoin to Address: Address pulled from Database
-
 ### Buy
 - Input (B) amount, fees, bitcoin price, etc.
 - (BUY) -> Modals
