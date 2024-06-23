@@ -20,12 +20,6 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Home(redirects to Account if logged in)
 - if holding, sell display none, holding display true.
 
- #### (B) Price
-
- #### Import (Modal)
- - - Modal
- - - - Copy Address Button 
- - - - Import & Receive Your Bitcoin to Address: Address pulled from Database
 
  #### Buy (Page)
  - **Possibly a plaid connect wrapper including the modal** Connects to Plaid First, (if not connected)
@@ -54,6 +48,24 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
  #### Log Out (Redirects to Home)
 
+
+### Import
+- (A) -> Account Page (B) ->Buy Page
+- Import & Send your Bitcoin to Address: (Copy) button
+- - Modal:
+- - - Bitcoin Address Copied (OK)
+
+### Export
+- (A) -> Account Page (B) ->Buy Page
+- Enter Address to Export & Send your Bitcoin: ...
+- Review "How It Works" if Bitcoin Export price is lower than holding price
+- (CANCEL) -> Account Page, 
+- (SEND) -> Transactions Page
+- - Modal:
+- - - Bitcoin Successfuly Exported (View Transactions)-> Transactions-
+- - - Export Failed (OK)
+
+
 ### Buy
 - Input (B) amount, fees, bitcoin price, etc.
 - (BUY) -> Modals
@@ -73,15 +85,6 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - - - Sale Complete (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database)(View Transactions) -> Transactions
 - - - - Transaction Failed (OK)
 
-### Export
-- (A) -> Account Page (B) ->Buy Page
-- Send Bitcoin to Address: ...
-- Review "How It Works" if Bitcoin Export price is lower than holding price
-- (CANCEL) -> Account Page, 
-- (SEND) -> Transactions Page
-- - Modal:
-- - - Bitcoin Successfuly Exported (View Transactions)-> Transactions-
-- - - Export Failed (OK)
 
 ### Transactions
 - (A) -> Account Page (B) ->Buy Page
