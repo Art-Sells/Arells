@@ -1,19 +1,20 @@
 
 #import-wrapper {
-	position: fixed; /* Stay in place */
-	z-index: 200; /* Sit on top */
+	padding-top: 20px; 
 	text-align: center;
-	  font-family: Arial;
-	left: 0;
-	top: 0;
-	width: 100%; /* Full width */
-	height: 100%; /* Full height */
-	overflow: auto; /* Enable scroll if needed */
-	background-color: rgba(255, 251, 245, 1);
-	-webkit-animation-name: animatetop;
-	-webkit-animation-duration: 1.00s;
-	animation-name: animatetop;
-	animation-duration: 1.00s;
+	font-family: Arial;
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+		background-color: rgb(255, 251, 245);
+		border-radius: 30px;
+		padding-bottom: 0px;
+		-webkit-animation-name: animatetop;
+		-webkit-animation-duration: 1.00s;
+		animation-name: animatetop;
+		animation-duration: 1.00s;
+		padding-bottom: 100px; 
    }
    
 	   @-webkit-keyframes animatetop {
@@ -25,61 +26,118 @@
 	   from {center:0; opacity:0}
 	   to {center:0; opacity:1}
 	 }
-		
 
-	 #import-title-wrapper{
-		margin-top: 60px;
+	 #header {
 		display: flex;
-		justify-content: center; 
+		justify-content: center;
+		margin-top: 0px;
 		align-items: center;
-		margin-left: 15px;
+		position: fixed;
+		padding-top: 30px;
+		background: none;
+		width: 100%;
+		height: 50px;
+		margin-left: -8px;
+		margin-right: auto;
+		z-index: 100;
 	}
 
-		#import-title-left {
-			color: rgb(0, 0, 0); 
-			font-weight: 400;	
-			font-size: 9px;
-			margin-right: 10px;
-			letter-spacing: 15px;
-			opacity: .35;			
-		}	
-		#import-icons-wrapper{
-			display: flex;
-			justify-content: center; 
-			align-items: center;
-			margin-right: 13px;
+		#home-link{
+			display: inline-block;
+			text-decoration: none;
+			margin-right: 124px;
+			text-decoration: none;
+			padding-top: 13px;
+			padding-bottom: 10px;
+			padding-right: 8px;
+			padding-left: 8px;	  	  
+			border: solid;
+			border-color: rgba(215, 215, 215, 0.7);
+			border-radius: 15px;
+			border-width: 1px;
+			width: 43px;
+			opacity: 1;
+				background: rgba(255, 255, 255, 0.8);						
 		}
-			#arells-import-icon{
-				margin-left: 1.5px;
-				width: 30px;
-				height: 30px;
-
+		#home-link:hover,
+		#home-link:focus {
+			transition: 1s;
+			cursor: pointer;
+			border-color: gray;
+			opacity: 1;
+			}		
+			#arells-home-icon {
+				height: 16px;
+				width: 15px;
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
 			}
-			#bitcoin-import-icon{
-				margin-left: -1.5px;
-				width: 30px;
-				height: 30px;
-				border-radius: 100px;
-				box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.7); 
-
+			/* Add Animation */
+			@-webkit-keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
 			}
-		#import-title-right {
-			color: rgb(207, 117, 0); 
-			font-weight: 400;	
-			font-size: 9px;
-			margin-left: 10px;
-			letter-spacing: 15px;
-			opacity: .6;			
-		}	
+			
+			@keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			}
+		#cart-link{
+			display: inline-block;
+			text-decoration: none;
+			margin-left: 124px;
+			text-decoration: none;
+			padding-top: 14px;
+			padding-bottom: 10px;
+			padding-right: 10px;
+			padding-left: 10px;	  
+			border: solid;
+			width: 43px;
+			border-color: rgba(215, 215, 215, 0.7);
+			border-radius: 15px;
+			border-width: 1px;
+			opacity: 1;
+				background: rgba(255, 255, 255, 0.8);						
+		}
+			#cart-icon {
+				height: 15px;
+				width: 16px;
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			}
+			#cart-link:hover,
+			#cart-link:focus {
+				transition: 1s;
+				cursor: pointer;
+				border-color: gray;
+				opacity: 1;
+				}	
+		
+
+	 #import-title {
+		margin-top: 50px;
+		color: rgb(115, 65, 0); 
+		margin-left: auto;	
+		margin-right: auto;	
+		font-weight: 600;	
+		font-size: 20px;
+		margin-left: 0px;
+		letter-spacing: 0px;
+		opacity: .3;			
+	}	
 
 	
 	#import-wallet-wrapper {
 		margin-top: 50px;
-		padding: 45px;
-		width: 300px;
-		height: 280px;
+		padding-top: 30px;
+		width: 270px;
+		height: 350px;
 		background: none; 
-		border-radius: 20px;
+		border-radius: 30px;
 		align-items: center;
 		position: relative;
 		margin-left: auto;
@@ -88,60 +146,56 @@
 		-webkit-animation-duration: 1.00s;
 		animation-name: animatetop;
 		animation-duration: 1.00s;
-		box-shadow: 0px 5px 20px 0px rgba(204, 116, 0, 0.25);
+		box-shadow: 0px 5px 80px -6px rgba(204, 116, 0, 0.25);
 		margin-bottom: 50px;	  	
 	}
 
-		#arells-second-core-belief {
-			width: 250px;
+		#import-instructions {
+			width: 200px;
 			color: rgb(115, 65, 0); 
 			margin-left: auto;	
 			margin-right: auto;	
-			font-weight: 600;	
-			font-size: 15px;
+			font-weight: 800;	
+			font-size: 12px;
 			margin-bottom: 0px;
 			letter-spacing: 0px;
-			opacity: .4;			
-		}	
-
-		#second-belief-line{
-			margin-top: 20px;
-			background-color: rgb(115, 65, 0); 
-			border: none;
+			opacity: .3;			
+		}
+		
+		#import-instructions-bottom {
+			width: 130px;
+			color: rgb(115, 65, 0); 
+			margin-left: auto;	
+			margin-right: auto;	
+			font-weight: 800;	
+			font-size: 12px;
+			margin-top: 50px;
+			letter-spacing: 0px;
+			opacity: .3;			
+		}
+		
+		#bitcoin-address-wrapper {
+			margin-top: 30px;
+			padding-top: 30px;
+			background-color: rgb(255, 251, 245, .9);
+			margin-left: -40px;
+			width: 350px;
+			height: 100px;
 			border-radius: 30px;
-			opacity: .1;
-			  height: 5px;   
-			  width: 250px;        
-           }  
+			box-shadow: 0px 5px 20px 0px rgba(204, 116, 0, 0.1);
+		}
 
-
-		#arells-second-core-belief-instruction {
-			width: 250px;
-			color: rgb(115, 65, 0); 
-			margin-left: auto;	
-			margin-right: auto;	
-			font-weight: 600;	
-			font-size: 15px;
-			margin-bottom: 0px;
-			letter-spacing: 0px;
-			opacity: .4;			
-		}	
-
-			#bitcoin-private-key-title {
+			#bitcoin-address-title {
 				color: black; 
-				margin-left: auto;	
-				margin-right: auto;	
-				margin-top: 30px;
-				font-weight: 200;	
-				font-size: 12px;
-				margin-left: 5px;
-				letter-spacing: 5px;
-				opacity: .3;			
+				font-weight: 600;	
+				font-size: 10px;
+				margin-left: 10px;
+				letter-spacing: 10px;
+				opacity: .2;	
+				word-spacing: 20px;		
 			}	
-
-
 			#copy-bitcoin-input-wrapper {
-				margin-top: -5px;
+				margin-top: 10px;
 			}
 				#copy-bitcoin-input { 
 					text-align: center;  	   

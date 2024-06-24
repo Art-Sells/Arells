@@ -1,4 +1,3 @@
-// components/BitcoinChart.tsx
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
@@ -15,19 +14,17 @@ interface PricePoint {
   y: number;
 }
 
-// Register necessary components with Chart.js
 Chart.register(...registerables);
 
-// Custom plugin to add a box shadow to the line chart and round the line caps
 const customPlugin = {
   id: 'customPlugin',
   beforeDatasetsDraw: (chart: any) => {
     const ctx = chart.ctx;
     ctx.save();
-    ctx.shadowColor = 'rgba(204, 116, 0, 0.0)'; // Customize the shadow color
-    ctx.shadowBlur = 10; // Customize the shadow blur
-    ctx.shadowOffsetX = 5; // Customize the shadow offset X
-    ctx.shadowOffsetY = 5; // Customize the shadow offset Y
+    ctx.shadowColor = 'rgba(204, 116, 0, 0.0)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 5;
+    ctx.shadowOffsetY = 5;
   },
   afterDatasetsDraw: (chart: any) => {
     const ctx = chart.ctx;
@@ -35,14 +32,13 @@ const customPlugin = {
   },
   beforeDatasetDraw: (chart: any, args: any) => {
     const { ctx } = chart;
-    ctx.lineCap = 'round'; // Round the line caps
+    ctx.lineCap = 'round';
   },
 };
 
 const fetchHistoricalData = async (): Promise<PricePoint[]> => {
   const response = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365');
   const data = await response.json();
-
   return data.prices.map((price: [number, number]) => ({
     x: new Date(price[0]),
     y: price[1],
@@ -52,7 +48,6 @@ const fetchHistoricalData = async (): Promise<PricePoint[]> => {
 const fetchLatestPrice = async (): Promise<PricePoint> => {
   const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
   const data = await response.json();
-
   return { x: new Date(), y: data.bitcoin.usd };
 };
 
@@ -75,7 +70,7 @@ const filterPriceData = (prices: PricePoint[]): PricePoint[] => {
 const BitcoinChart: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
-  }
+  };
 
   const [chartData, setChartData] = useState<ChartData<'line', PricePoint[]>>({
     datasets: [],
@@ -83,69 +78,67 @@ const BitcoinChart: React.FC = () => {
   const [percentageIncrease, setPercentageIncrease] = useState<number | null>(null);
   const [minDate, setMinDate] = useState<number | undefined>(undefined);
   const [maxDate, setMaxDate] = useState<number | undefined>(undefined);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     const updateChartData = async () => {
-      const historicalPrices = await fetchHistoricalData();
-      const latestPrice = await fetchLatestPrice();
+      try {
+        const historicalPrices = await fetchHistoricalData();
+        const latestPrice = await fetchLatestPrice();
 
-      // Ensure the latest date is included in the dataset
-      const latestDate = new Date(); // Today's date
+        const latestDate = new Date();
+        let allPrices = [...historicalPrices, latestPrice];
 
-      // Combine historical and latest prices
-      let allPrices = [...historicalPrices, latestPrice];
+        let filteredPrices = filterPriceData(allPrices);
 
-      // Filter out any negative price changes
-      let filteredPrices = filterPriceData(allPrices);
+        const lastValidPrice = filteredPrices[filteredPrices.length - 1]?.y;
+        if (latestPrice.y < lastValidPrice) {
+          filteredPrices.push({ x: latestDate, y: lastValidPrice });
+        } else {
+          filteredPrices.push({ x: latestDate, y: latestPrice.y });
+        }
 
-      // Ensure the latest date is included and stagnant line on price drop
-      const lastValidPrice = filteredPrices[filteredPrices.length - 1]?.y;
-      if (latestPrice.y < lastValidPrice) {
-        filteredPrices.push({ x: latestDate, y: lastValidPrice });
-      } else {
-        filteredPrices.push({ x: latestDate, y: latestPrice.y });
+        const maxDate = latestDate.getTime();
+        const minDate = new Date(maxDate - 364 * 24 * 60 * 60 * 1000).getTime();
+
+        filteredPrices = filteredPrices.filter(price => price.x.getTime() >= minDate);
+
+        setMinDate(minDate);
+        setMaxDate(maxDate);
+
+        const minPrice = Math.min(...filteredPrices.map(price => price.y));
+        const maxPrice = Math.max(...filteredPrices.map(price => price.y));
+
+        const percentageIncrease = ((maxPrice - minPrice) / minPrice) * 100;
+
+        setPercentageIncrease(percentageIncrease);
+
+        setChartData({
+          datasets: [{
+            label: 'Bitcoin',
+            data: filteredPrices,
+            borderColor: 'rgb(248, 141, 0, 0.7)',
+            backgroundColor: 'rgba(75,192,192, 1)',
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            pointBorderWidth: 1.5,
+            cubicInterpolationMode: 'monotone',
+            tension: 0.4,
+            fill: false,
+            borderWidth: 7,
+          }]
+        });
+        setError(false); // Reset error state if successful
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError(true); // Set error state if there's an error
       }
-
-      // Calculate the min and max dates based on the calendar
-      const maxDate = latestDate.getTime();
-      const minDate = new Date(maxDate - 364 * 24 * 60 * 60 * 1000).getTime(); // Last 365 days
-
-      // Filter the data to include only the last 365 days
-      filteredPrices = filteredPrices.filter(price => price.x.getTime() >= minDate);
-
-      setMinDate(minDate);
-      setMaxDate(maxDate);
-
-      // Calculate the min and max prices for the y-axis
-      const minPrice = Math.min(...filteredPrices.map(price => price.y));
-      const maxPrice = Math.max(...filteredPrices.map(price => price.y));
-
-      // Calculate percentage increase
-      const percentageIncrease = ((maxPrice - minPrice) / minPrice) * 100;
-
-      setPercentageIncrease(percentageIncrease);
-
-      setChartData({
-        datasets: [{
-          label: 'Bitcoin',
-          data: filteredPrices,
-          borderColor: 'rgb(248, 141, 0, 0.7)',
-          backgroundColor: 'rgba(75,192,192, 1)',
-          pointRadius: 0, // Remove points
-          pointHoverRadius: 0, // Remove points on hover
-          pointBorderWidth: 1.5,
-          cubicInterpolationMode: 'monotone', // Smooth out the line
-          tension: 0.4, // Adjust the tension to further smooth the line (range 0-1)
-          fill: false,
-          borderWidth: 7, // Increase line width
-        }]
-      });
     };
 
-    updateChartData(); // Initial fetch
-    const intervalId = setInterval(updateChartData, 60000); // Fetch data every minute
+    updateChartData();
+    const intervalId = setInterval(updateChartData, 60000);
 
-    return () => clearInterval(intervalId); // Cleanup on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   const options: ChartOptions<'line'> = {
@@ -165,13 +158,13 @@ const BitcoinChart: React.FC = () => {
           },
         },
         ticks: {
-          display: false, // Hide the ticks
+          display: false,
         },
         grid: {
-          display: false, // Remove x-axis grid lines
+          display: false,
         },
         border: {
-          display: false, // Remove x-axis border
+          display: false,
         },
         min: minDate,
         max: maxDate,
@@ -179,22 +172,22 @@ const BitcoinChart: React.FC = () => {
       y: {
         beginAtZero: false,
         ticks: {
-          display: false, // Hide the ticks
+          display: false,
         },
         grid: {
-          display: false, // Remove y-axis grid lines
+          display: false,
         },
         border: {
-          display: false, // Remove y-axis border
+          display: false,
         },
       },
     },
     plugins: {
       legend: {
-        display: false, // Disable the legend
+        display: false,
       },
       tooltip: {
-        enabled: false, // Disable the tooltip
+        enabled: false,
       },
     },
     interaction: {
@@ -208,55 +201,62 @@ const BitcoinChart: React.FC = () => {
     <div className={styles.chartContainer}>
       <div id="b-logo-home">
         <span>
-            <div id="a-how-wrapper">
-                <Image
-                loader={imageLoader}
-                alt=""
-                width={30}
-                height={30}
-                id="arells-b-home" 
-                src="images/howitworks/ArellsBitcoin.png"/>
-            </div>
+          <div id="a-how-wrapper">
+            <Image
+              loader={imageLoader}
+              alt=""
+              width={30}
+              height={30}
+              id="arells-b-home"
+              src="images/howitworks/ArellsBitcoin.png"
+            />
+          </div>
         </span>
         <span>
-            <div id="b-how-wrapper">
-                <Image
-                loader={imageLoader}
-                alt=""
-                width={30}
-                height={30}
-                id="bitcoin-b-home" 
-                src="images/howitworks/Bitcoin.png"/>
-            </div>
+          <div id="b-how-wrapper">
+            <Image
+              loader={imageLoader}
+              alt=""
+              width={30}
+              height={30}
+              id="bitcoin-b-home"
+              src="images/howitworks/Bitcoin.png"
+            />
+          </div>
         </span>
       </div>
-      <div className={styles.percentageContainer}>
-            {percentageIncrease !== null && (
-              <div className={styles.percentageLabel}>
-                <span id="plus-home">+</span>
-                <span>                
-                  {`${percentageIncrease.toFixed(2)}`}
-                </span>
-                <span id="percentage-home">%</span>
-              </div>
-            )}
-              <div id="w-how-wrapper">
-                  <Image
-                  loader={imageLoader}
-                  alt=""
-                  width={35}
-                  height={35}
-                  id="profits-icon-home" 
-                  src="images/howitworks/up-arrow-ebony.png"/>
-              </div> 
+      <div id="spacer-if-error" style={{ display: percentageIncrease === null ? 'block' : 'none' }}>
       </div>
-      <p className={styles.lastThirtyDays}>1 YEAR</p> {/* Updated label to reflect 365 days */}
+      <div className={styles.percentageContainer}>
+        {percentageIncrease !== null && (
+          <div className={styles.percentageLabel}>
+            <span id="plus-home">+</span>
+            <span>
+              {`${percentageIncrease.toFixed(2)}`}
+            </span>
+            <span id="percentage-home">%</span>
+          </div>
+        )}
+      </div>
+      <div id="w-how-wrapper">
+        <Image
+          loader={imageLoader}
+          alt=""
+          width={35}
+          height={35}
+          id="profits-icon-home"
+          src="images/howitworks/up-arrow-ebony.png"
+        />
+      </div>
+      <p className={styles.lastThirtyDays}>1 YEAR</p>
       <div className={styles.lineChartWrapper}>
-        <Line id="bitcoinChart" 
-        className={styles.line}
-        data={chartData} 
-        options={options} 
-        plugins={[customPlugin]} />
+        <Line
+          id="bitcoinChart"
+          className={styles.line}
+          data={chartData}
+          options={options}
+          plugins={[customPlugin]}
+        />
       </div>
     </div>
   );

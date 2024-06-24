@@ -21,7 +21,8 @@ const Import: React.FC = () => {
     }
     const [showLoading, setLoading] = useState<boolean>(true);
     const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
-      arellsWalletLogo: false,
+      accountLogo: false,
+      cartLogo: false,
     });
   
     const handleImageLoaded = (imageName: string) => {
@@ -57,7 +58,7 @@ const Import: React.FC = () => {
             alt="" 
             width={29}
             height={30}
-            id="arells-loader-icon-how" 
+            id="arells-loader-icon-account" 
             src="images/Arells-Icon.png"
           />    
           <div id={styles.accountloader}></div>    
@@ -81,60 +82,51 @@ const Import: React.FC = () => {
         </div>
       )}
 
-        <div>
-          <div id="import-title-wrapper">
-              <span id="import-title-left">WALLET</span>
-              <span id="import-icons-wrapper">
-                <span>
-                    <div>
-                        <Image
-                        loader={imageLoader}
-                        onLoad={() => handleImageLoaded('arellsWalletLogo')}
-                        alt=""
-                        width={30}
-                        height={30}
-                        id="arells-import-icon" 
-                        src="images/howitworks/ArellsBitcoin.png"/>
-                    </div>
-                </span>
-                <span>
-                    <div>
-                        <Image
-                        loader={imageLoader}
-                        onLoad={() => handleImageLoaded('howlogo')}
-                        alt=""
-                        width={30}
-                        height={30}
-                        id="bitcoin-import-icon" 
-                        src="images/howitworks/Bitcoin.png"/>
-                    </div>
-                </span>
-              </span>
-              <span id="import-title-right">CREATED</span>
-          </div>
-          <div id="import-wrapper">
-            <p id="arells-second-core-belief">we believe in empowering you as an investor 
-              so we do not save your Bitcoin Private Key online
-            </p>
-            <hr id="second-belief-line"/>
-            <p id="arells-second-core-belief-instruction">so before you continue, 
-                copy & save your Bitcoin Private Key offline, 
-                you will need it to export and send your Bitcoin
-            </p>
-            <p id="bitcoin-private-key-title">BITCOIN PRIVATE KEY</p>
-            <div id="copy-bitcoin-input-wrapper">
-              <input 
-                id="copy-bitcoin-input"
-                type="text" 
-                value="bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6" 
-                readOnly 
-              />
-              <button 
-              id="copy-bitcoin-button"
-              onClick={copyToClipboard}>COPY</button>
-            </div>
-          </div>
+        <div id="header">
+            <Link href="/" id="home-link">
+                <Image
+                loader={imageLoader}
+                onLoad={() => handleImageLoaded('accountLogo')}
+                alt=""
+                height={16}
+                width={15}
+                id="home-icon" 
+                src="images/prototype/Arells-Icon-Home.png"/>
+            </Link>							
+            <Link href="/buy" id="cart-link">
+                <Image
+                loader={imageLoader}
+                onLoad={() => handleImageLoaded('cartLogo')}
+                alt=""
+                height={18}
+                width={18}
+                id="cart-icon" 
+                src="images/prototype/shopping-cart-empty.png"/>
+            </Link>	
         </div>
+                        
+        <p id="import-title">IMPORT & RECEIVE</p>
+          <div id="import-wallet-wrapper">
+            <p id="import-instructions">Copy Bitcoin Address
+            </p>
+            <div id="bitcoin-address-wrapper">
+                <div id="copy-bitcoin-input-wrapper">
+                <input 
+                    id="copy-bitcoin-input"
+                    type="text" 
+                    value="bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6" 
+                    readOnly 
+                />
+                <button 
+                id="copy-bitcoin-button"
+                onClick={copyToClipboard}>COPY</button>
+                </div>
+            </div>
+            <p id="import-instructions-bottom">then paste it 
+            into the "send Bitcoin to" box in another exchange to import 
+            into Arells.
+            </p>
+          </div>
     </>
   );
 };

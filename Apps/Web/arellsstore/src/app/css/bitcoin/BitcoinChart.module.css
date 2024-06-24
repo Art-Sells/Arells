@@ -50,7 +50,7 @@
   .line {
     margin-left: -8px;
     margin-right: -6px;
-    margin-top: 35px;
+    margin-top: 20px;
   }
   
     .percentageContainer {
@@ -109,6 +109,10 @@
 		  animation-name: animatetop;
 		  animation-duration: 2.00s;
 		}
+
+    .line {
+      margin-top: 30px;
+    }
   
       .lastThirtyDays {
         margin-left: 5px;
