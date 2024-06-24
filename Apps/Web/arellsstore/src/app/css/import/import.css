@@ -1,25 +1,5 @@
-/* <div id="account-wallet-wrapper">
-<p id="bitcoin-private-key-title">BITCOIN PRIVATE KEY</p>
-<div id="copy-bitcoin-input-wrapper">
-  <input 
-	id="copy-bitcoin-input"
-	type="text" 
-	value={createdWallet.privateKey} 
-	readOnly 
-  />
-  <button 
-  id="copy-bitcoin-button"
-  onClick={copyToClipboard}>COPY</button>
-</div>
-</div>
-<button id="account-continue">
-CONTINUE
-</button> */
 
-
-
-
-#bitcoinwalletcreated-wrapper {
+#import-wrapper {
 	position: fixed; /* Stay in place */
 	z-index: 200; /* Sit on top */
 	text-align: center;
@@ -47,7 +27,7 @@ CONTINUE
 	 }
 		
 
-	 #wallet-created-title-wrapper{
+	 #import-title-wrapper{
 		margin-top: 60px;
 		display: flex;
 		justify-content: center; 
@@ -55,7 +35,7 @@ CONTINUE
 		margin-left: 15px;
 	}
 
-		#bitcoinwalletcreated-title-left {
+		#import-title-left {
 			color: rgb(0, 0, 0); 
 			font-weight: 400;	
 			font-size: 9px;
@@ -63,19 +43,19 @@ CONTINUE
 			letter-spacing: 15px;
 			opacity: .35;			
 		}	
-		#wallet-created-icons-wrapper{
+		#import-icons-wrapper{
 			display: flex;
 			justify-content: center; 
 			align-items: center;
 			margin-right: 13px;
 		}
-			#arells-wallet-created-icon{
+			#arells-import-icon{
 				margin-left: 1.5px;
 				width: 30px;
 				height: 30px;
 
 			}
-			#bitcoin-wallet-created-icon{
+			#bitcoin-import-icon{
 				margin-left: -1.5px;
 				width: 30px;
 				height: 30px;
@@ -83,7 +63,7 @@ CONTINUE
 				box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.7); 
 
 			}
-		#bitcoinwalletcreated-title-right {
+		#import-title-right {
 			color: rgb(207, 117, 0); 
 			font-weight: 400;	
 			font-size: 9px;
@@ -93,7 +73,7 @@ CONTINUE
 		}	
 
 	
-	#wallet-wrapper {
+	#import-wallet-wrapper {
 		margin-top: 50px;
 		padding: 45px;
 		width: 300px;
@@ -220,42 +200,17 @@ CONTINUE
 					cursor: pointer;
 				}  
 
-			
-		#bitcoin-wallet-created-continue {
-			margin-top: 20px;
-			background-color: rgba(204, 116, 0);
-			text-decoration: none;
-			color: white;
-			font-weight: 500;
-			font-size: 12px;
-			padding-top: 20px;
-			padding-bottom: 20px;
-			padding-right: 32px;
-			padding-left: 32px;	  
-			border: none;
-			letter-spacing: 1px;
-			border-radius: 5px;
-			border-width: 0px;
-			width: 390px;
-			opacity: 1;
-			box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
-		}
-		#bitcoin-wallet-created-continue:hover,
-		#bitcoin-wallet-created-continue:focus {
-			opacity: .4;
-			transition: 1s;
-			cursor: pointer;
-		}  
+		
 			
 			
 
 
 
 @media screen and (max-height: 600px){
-	#wallet-created-title-wrapper {
+	#import-title-wrapper {
 		margin-top: 30px;	  	
 	}
-	#wallet-wrapper {
+	#import-wallet-wrapper {
 		margin-top: 30px;	  	
 	}
 }

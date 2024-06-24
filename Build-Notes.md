@@ -6,12 +6,16 @@ Test Address: bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6
 
 Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
+### Wrappers
+- **CoinGecko API wrapper** purchase CoinGecko API?
+- **Possibly a connect wallet & log in/sign up account wrapper** that automatically connects to your prior wallet with Address and Private Key pulled from backend once logged in.
+- **Possibly a plaid wraper**
+
 ### Home Page
-- Purchase CoinGecko API
 - If Log In = true, go to /Account
 
 ### Log In
-- **Possibly a connect wallet wrapper** that automatically connects to your prior wallet with Address and Private Key pulled from backend.
+- **connect wallet wrapper initiated**
 
 ### Sign Up
 - Modal:
@@ -19,13 +23,14 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Home(redirects to Account if logged in)
 - if holding, sell display none, holding display true.
+- Reloads modules every 5 minutes (create price, wallet, and profits animation css) from coin gecko API wrapper?
 
 
  #### Buy (Page)
- - **Possibly a plaid connect wrapper including the modal** Connects to Plaid First, (if not connected)
+ - Connects to Plaid First, (if not connected)
 
  #### Sell (Page)
- - **Possibly a plaid connect rapper including the modal** Connects to Plaid First, (if not connected)
+ - Connects to Plaid First, (if not connected)
  - displayed once a cVatop + (cVatop * .03) > the cVact, othersie hidden
 
  #### Holding (replaces Sell button)
@@ -64,7 +69,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Modal:
 - - - Bitcoin Successfuly Exported (View Transactions)-> Transactions-
 - - - Export Failed (OK)
-
+- Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
 
 ### Buy
 - Input (B) amount, fees, bitcoin price, etc.
@@ -73,6 +78,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Confirming Purchase
 - - Purchase Complete (View Portfolio)-> Account, 
 - - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
+- Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 
 ### Sell
 - "Amount Holding" displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise it is hidden.
@@ -84,6 +90,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - - - Confirming Sale... Amount To Sell - Arells Fees
 - - - - Sale Complete (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database)(View Transactions) -> Transactions
 - - - - Transaction Failed (OK)
+- Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
 
 
 ### Transactions
@@ -109,9 +116,17 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ## Arells Cryptocurrency Marketplace 1.5
 
 ### Home Page (without login)
-10 years, 5 years, 1 year, 6 months, 90 days, 30 days, 7 days, 24 hours, 6 hours, 1 hours (load whichever time frame from 24 hours first, to 7 days, prioritize days then months then years in regards to the highest percentage increase).
+
+### Sign Up
+- Verify Email *important*
 
 ### Log In
 - Forgot Password 
+- Add 2FA for Buying/Selling and first Logging In.
 
-### Add 2FA for Buying/Selling and first Logging In.
+#### Misc
+
+##### Home Page:
+10 years, 5 years, 1 year, 6 months, 90 days, 30 days, 7 days, 24 hours, 6 hours, 1 hours (load whichever time frame from 24 hours first, to 7 days, prioritize days then months then years in regards to the highest percentage increase).
+
+
