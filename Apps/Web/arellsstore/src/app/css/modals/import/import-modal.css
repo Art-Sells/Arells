@@ -25,7 +25,7 @@
   /* Modal Content */
   
   #copied-content {
-    padding-top: 45px;
+    padding-top: 55px;
     width: 230px;
     height: 200px;
     background-color: rgba(180, 134, 73, 0.9); 
@@ -45,7 +45,7 @@
   
   #copied-image{
     margin-top: 4px;
-    opacity: .7;
+    opacity: .65;
   }
   
       #copied-words {

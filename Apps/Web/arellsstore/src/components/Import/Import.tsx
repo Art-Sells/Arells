@@ -74,7 +74,7 @@ const Import: React.FC = () => {
               width={35}
               height={35}
               id="copied-image" 
-              src="images/market/key.png"
+              src="images/market/address-ivory.png"
             />  
             <p id="copied-words">copied</p>
             <button id="copied-close" onClick={closeCopied}>OK</button> 
@@ -105,9 +105,9 @@ const Import: React.FC = () => {
             </Link>	
         </div>
                         
-        <p id="import-title">IMPORT & RECEIVE</p>
+        <p id="import-title">IMPORT</p>
           <div id="import-wallet-wrapper">
-            <p id="import-instructions">Copy Bitcoin Address
+            <p id="import-instructions">Bitcoin Address
             </p>
             <div id="bitcoin-address-wrapper">
                 <div id="copy-bitcoin-input-wrapper">
@@ -122,8 +122,8 @@ const Import: React.FC = () => {
                 onClick={copyToClipboard}>COPY</button>
                 </div>
             </div>
-            <p id="import-instructions-bottom">then paste it 
-            into the "send Bitcoin to" box in another exchange to import 
+            <p id="import-instructions-bottom">copy address then paste it 
+            into the "send Bitcoin to" box in another exchange to import Bitcoin
             into Arells.
             </p>
           </div>
