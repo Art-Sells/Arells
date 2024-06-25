@@ -219,8 +219,6 @@ const Account: React.FC = () => {
         <BitcoinChartAccount/>
       </div>    
 
-      <hr id="account-line-bottom"/>
-
 
       <div id="footer">
 

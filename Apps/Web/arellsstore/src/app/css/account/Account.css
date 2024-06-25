@@ -462,19 +462,19 @@
 		width: 100%;
 		background-color: rgba(255, 251, 245, 1);
 		border-radius: 0px;
-		box-shadow: 0px 20px 40px -25px rgba(204, 116, 0, 0.4);
+		box-shadow: 0px 20px 40px -25px rgba(204, 116, 0, 0.0);
 	}	
 
 	#bitcoin-chart-account-wrapper-footer{
-		margin-top: 20px;
-		padding-top: 140px;
-		height: 330px;
+		margin-top: 60px;
+		padding-top: 50px;
+		height: 300px;
 		width: 100%;
 		background-color: white;
 	}
 
 	#footer {
-		margin-top: 400px;
+		margin-top: 0px;
 		height: 25px;
 		padding-top: 0px;
 		padding-bottom: 100px;
