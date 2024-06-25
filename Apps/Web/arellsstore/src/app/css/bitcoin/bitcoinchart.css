@@ -28,6 +28,11 @@
         margin-top: 24px;
         margin-left: -330px;
     }
+    #profits-icon-home-account {
+        opacity: .1;
+        margin-top: 24px;
+        margin-left: -270px;
+    }
     #plus-home {
         opacity: .7;
         margin-left: 0px;
@@ -41,6 +46,8 @@
         margin-top: 0px;
         height: 17px;
     }
+
+    
 
 
 

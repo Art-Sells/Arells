@@ -5,6 +5,8 @@ import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
 import Link from 'next/link';
 
+import BitcoinChartAccount from '../../components/Bitcoin/BitcoinChartAccount';
+
 import '../../app/css/account/Account.css';
 import '../../app/css/modals/account/account-modal.css';
 import '../../app/css/modals/loader/accountloaderbackground.css';
@@ -213,6 +215,11 @@ const Account: React.FC = () => {
       </div>
 
 
+      <div id="bitcoin-chart-account-wrapper-footer">
+        <BitcoinChartAccount/>
+      </div>    
+
+      <hr id="account-line-bottom"/>
 
 
       <div id="footer">

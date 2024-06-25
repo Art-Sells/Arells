@@ -55,13 +55,13 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 
 ### Import
-- (A) -> Account Page (B) ->Buy Page
+- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - Import & Send your Bitcoin to Address: (Copy) button
 - - Modal:
 - - - Bitcoin Address Copied (OK)
 
 ### Export
-- (A) -> Account Page (B) ->Buy Page
+- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - Enter Address to Export & Send your Bitcoin: ...
 - Review "How It Works" if Bitcoin Export price is lower than holding price
 - (CANCEL) -> Account Page, 
@@ -94,14 +94,14 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 
 ### Transactions
-- (A) -> Account Page (B) ->Buy Page
+- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - Sold "amount of Bitcoin" for "dollar amount" with "profits"
 - Bought "amount of Bitcoin" for "dollar amount"
 - Withdrew "dollar amount" to "bank account"
 - Sending "amount of Bitcoin" Pending (View on Block Explorer): Blockchain.com, instantly becomes Completed (View on Block Explorer)...
 
 ### Withdraw
-- (A) -> Account Page (B) ->Buy Page
+- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - shows $amount
 - Are you sure you'd like to withdraw this to your bank account?
 - (PROCEED) -> Transactions Page

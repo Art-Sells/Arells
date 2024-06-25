@@ -17,6 +17,24 @@
     animation-name: animatetop;
     animation-duration: 2.00s;
   }
+  .chartContainerAccount {
+    margin-top: 10px;
+    width: 300px;
+      height: 214px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 30px;
+      padding-bottom: 0px;
+      padding-right: 10px;
+      padding-left: 50px;
+      background: none;
+      border-radius: 5px;
+      box-shadow: 0px 0px 50px -15px rgba(204, 116, 0, 0.2);
+      -webkit-animation-name: animatetop;
+      -webkit-animation-duration: 2.00s;
+      animation-name: animatetop;
+      animation-duration: 2.00s;
+    }
   /* Add Animation */
   @-webkit-keyframes animatetop {
     from {center:0; opacity:0}
@@ -46,11 +64,34 @@
     opacity: 1;
     
   }
+  .lineChartWrapperAccount {
+    margin-top: -215px;
+    margin-left: 115px;
+    position: relative;
+    width: 195px;
+    height: 200px;
+    box-shadow: 0px 5px 20px -6px rgba(204, 116, 0, 0.0); 
+    border-radius: 5px; /* Rounded corners for the wrapper */
+    padding-top: 35px;
+    padding-bottom: 10px;
+    padding-right: 0px;
+    padding-left: 0px;
+    background: rgb(253, 244, 234); /* Add a background color if needed */
+    flex-grow: 1; /* Allow the line chart to grow */
+    opacity: 1;
+    
+  }
+
 
   .line {
     margin-left: -8px;
     margin-right: -6px;
     margin-top: 20px;
+  }
+  .lineAccount {
+    margin-left: -8px;
+    margin-top: 30px;
+    opacity: 1;
   }
   
     .percentageContainer {
@@ -71,6 +112,7 @@
       margin-left: 2px;
     }
 
+
     .lastThirtyDays {
       text-align: left;
       color: silver;
@@ -80,7 +122,19 @@
       margin-top: -13px;
       margin-left: 3px;
     }
+    .lastThirtyDaysAccount {
+      text-align: left;
+      color: silver;
+      font-size: 11px;
+      letter-spacing: -1px;
+      font-weight: 800;
+      margin-top: -13px;
+      margin-left: 5px;
+    }
 
+
+
+      
 
 @media screen and (max-width: 650px) {
   .chartContainer {
