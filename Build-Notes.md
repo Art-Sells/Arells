@@ -55,10 +55,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 
 ### Import
-- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- Import & Send your Bitcoin to Address: (Copy) button
-- - Modal:
-- - - Bitcoin Address Copied (OK)
+- Pull Bitcoin Address From Backend
 
 ### Export
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page

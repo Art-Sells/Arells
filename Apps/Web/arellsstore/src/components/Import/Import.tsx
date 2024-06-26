@@ -22,7 +22,7 @@ const Import: React.FC = () => {
     const [showLoading, setLoading] = useState<boolean>(true);
     const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
       accountLogo: false,
-      cartLogo: false,
+      buyLogo: false,
     });
   
     const handleImageLoaded = (imageName: string) => {
@@ -82,51 +82,51 @@ const Import: React.FC = () => {
         </div>
       )}
 
-        <div id="header">
+        <div id="header-navigation">
             <Link href="/" id="home-link">
-                <Image
+              <Image
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('accountLogo')}
                 alt=""
-                height={16}
-                width={15}
-                id="home-icon" 
-                src="images/prototype/Arells-Icon-Home.png"/>
+                width={23}
+                height={23}
+                id="account-navigation"
+                src="images/howitworks/ArellsBitcoin.png"
+              />
             </Link>							
             <Link href="/buy" id="cart-link">
-                <Image
-                loader={imageLoader}
-                onLoad={() => handleImageLoaded('cartLogo')}
-                alt=""
-                height={18}
-                width={18}
-                id="cart-icon" 
-                src="images/prototype/shopping-cart-empty.png"/>
+              <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('buyLogo')}
+                  alt=""
+                  width={23}
+                  height={23}
+                  id="buy-navigation"
+                  src="images/howitworks/Bitcoin.png"
+                />
             </Link>	
         </div>
                         
         <p id="import-title">IMPORT</p>
-          <div id="import-wallet-wrapper">
-            <p id="import-instructions">Bitcoin Address
-            </p>
-            <div id="bitcoin-address-wrapper">
-                <div id="copy-bitcoin-input-wrapper">
-                <input 
-                    id="copy-bitcoin-input"
-                    type="text" 
-                    value="bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6" 
-                    readOnly 
-                />
-                <button 
-                id="copy-bitcoin-button"
-                onClick={copyToClipboard}>COPY</button>
-                </div>
+        <div id="import-instructions-wrapper">
+          <p id="import-instructions">Copy address. Paste it 
+          into the "send Bitcoin to" address box in another exchange to import Bitcoin
+          into Arells.
+          </p>
+        </div>
+        <div id="bitcoin-address-wrapper">
+            <div id="copy-bitcoin-input-wrapper">
+            <input 
+                id="copy-bitcoin-input"
+                type="text" 
+                value="bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6" 
+                readOnly 
+            />
+            <button 
+            id="copy-bitcoin-button"
+            onClick={copyToClipboard}>COPY</button>
             </div>
-            <p id="import-instructions-bottom">copy address then paste it 
-            into the "send Bitcoin to" box in another exchange to import Bitcoin
-            into Arells.
-            </p>
-          </div>
+        </div>
     </>
   );
 };

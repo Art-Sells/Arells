@@ -219,7 +219,7 @@ const BitcoinChart: React.FC = () => {
               alt=""
               width={30}
               height={30}
-              id="bitcoin-b-home"
+              id="bitcoin-b-home-account"
               src="images/howitworks/Bitcoin.png"
             />
           </div>
