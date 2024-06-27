@@ -13,6 +13,8 @@ import styles from '../../app/css/modals/loader/accountloader.module.css';
 const Export: React.FC = () => {
 
   const [showExportFailed, setExportFailed] = useState<boolean>(false);
+  const [showExportSuccess, setExportSuccess] = useState<boolean>(false);
+  const [showExporting, setExporting] = useState<boolean>(false);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
 
     //Loader Function/s
@@ -45,6 +47,10 @@ const Export: React.FC = () => {
     setExportFailed(false);
   };
 
+  const closeExportSuccess = () => {
+    setExportSuccess(false);
+  };
+
   return (
     <>
       {showLoading && (
@@ -60,6 +66,43 @@ const Export: React.FC = () => {
           <div id={styles.accountloader}></div>    
         </div>
       )}
+
+      {/* {showExporting && (
+        <div id="export-failed-wrapper">
+          <div id="export-failed-content">
+            <Image 
+              loader={imageLoader}
+              alt="" 
+              width={35}
+              height={35}
+              id="export-failed-image" 
+              src="images/market/cancelled-ivory.png"
+            />  
+            <p id="export-failed-words">exporting</p>
+          </div>
+        </div>
+      )}
+
+    {showExportSuccess && (
+        <div id="export-failed-wrapper">
+          <div id="export-failed-content">
+            <Image 
+              loader={imageLoader}
+              alt="" 
+              width={35}
+              height={35}
+              id="export-failed-image" 
+              src="images/market/cancelled-ivory.png"
+            />  
+            <p id="export-failed-words">export successful</p>
+            <Link href="/transactions" passHref>
+                <button id="account-created-close" onClick={closeExportSuccess}>
+                    VIEW TRANSACTIONS
+                </button>
+            </Link>
+          </div>
+        </div>
+      )} */}
 
       {showExportFailed && (
         <div id="export-failed-wrapper">

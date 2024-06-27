@@ -67,7 +67,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Exporting: 0.00998 
 - You will lose "$": combines and displays Export Amount Inputs of the cVacts - cVatops = Losses, otherwise, display none.
 - (CANCEL) -> Account Page, 
-- (SEND) -> Transactions Page
+- (EXPORT) -> Modal
 - - Modal:
 - - - Exporting (2 second delay) back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and delete the cVatops/cVacts if needed (see Readme)
 - - - Successfuly Exported (View Transactions)-> Transactions-

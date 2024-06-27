@@ -6,6 +6,7 @@ import type { ImageLoaderProps } from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import { signUp } from 'aws-amplify/auth';
+import Link from 'next/link';
 
 const Signup: React.FC = () => {
 
@@ -143,7 +144,9 @@ const Signup: React.FC = () => {
                             src="/images/market/checkmark-ebony.png"
                         />
                         <p id="account-created-words">Account Created</p>
-                        <button id="account-created-close" onClick={closeSignedUp}>VIEW ACCOUNT</button>
+                        <Link href="/account" passHref>
+                            <button id="account-created-close" onClick={closeSignedUp}>VIEW ACCOUNT</button>
+                        </Link>
                     </div>
                 </div>
             )}
