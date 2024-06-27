@@ -70,14 +70,16 @@ const Export: React.FC = () => {
       {/* {showExporting && (
         <div id="export-failed-wrapper">
           <div id="export-failed-content">
-            <Image 
-              loader={imageLoader}
-              alt="" 
-              width={35}
-              height={35}
-              id="export-failed-image" 
-              src="images/market/cancelled-ivory.png"
-            />  
+            <div className={stylings.loading}>
+                <Image 
+                // loader={imageLoader}
+                alt="" 
+                width={35}
+                height={35}
+                id="export-failed-image" 
+                src="images/market/cancelled-ivory.png"
+                />  
+            </div>
             <p id="export-failed-words">exporting</p>
           </div>
         </div>
