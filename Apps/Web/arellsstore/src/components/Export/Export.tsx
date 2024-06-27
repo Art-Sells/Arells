@@ -105,23 +105,77 @@ const Export: React.FC = () => {
                         
         <p id="export-title">EXPORT</p>
 
-        <div id="bitcoin-address-wrapper">
-            <div id="copy-bitcoin-input-wrapper">
-            <input 
-                id="copy-bitcoin-input"
-                type="text" 
-                value="bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6" 
-                readOnly 
-            />
+        <div></div>
+
+        <div id="export-amount-wrapper">
+            <div id="a-wallet-export">
+                <span>
+                    <div id="a-export-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('accountLogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="arells-export" 
+                        src="images/howitworks/ArellsBitcoin.png"/>
+                    </div>
+                </span>
+                <span>
+                    <div id="b-export-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('accountLogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="bitcoin-export-wallet" 
+                        src="images/howitworks/Bitcoin.png"/>
+                    </div>
+                </span>
+                <span id="export-wallet-word">Wallet:</span>
+                <span id="export-wallet-number">$
+                    <span id="export-wallet-num">2,000</span>
+                </span>
             </div>
+            <div id="b-wallet-export">
+                <span>
+                    <div id="b-wallet-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('accountLogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="bitcoin-export" 
+                        src="images/howitworks/Bitcoin.png"/>
+                    </div>
+                </span>
+                <span id="bitcoin-amount-export">Amount:</span>
+                <span id="bitcoin-amount-number">0.0005454</span>
+            </div>
+            <p id="export-amount-title">
+                Export Amount
+            </p>
+            <input 
+                id="export-input"
+                type="num" 
+            />
+            <p id="export-amount-title">
+                Address
+            </p>
+            <input 
+                id="address-input"
+                type="text" 
+            />
         </div>
 
         <p id="exporting-title">
-            Exporting Amount
+            Exporting
         </p>
 
         <p id="exporting-amount">
-            $1,200.50
+            0.08786
         </p>
         {/* <div id="fill-in">
         </div> */}

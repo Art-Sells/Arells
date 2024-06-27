@@ -60,21 +60,24 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Export
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- (A)(B) Value: Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
-- Export Amount Input: takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
+- (A)(B) Wallet: Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
+- (B) Amount: Displays all Bitcoin available.
+- Export Amount Input: back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and deletes the cVatops/cVacts if needed (see Readme)
 - Export Address Input:
-- Exporting "$": 
-- You will lose "$": combines inputs of cVacts - cVatops = Losses, otherwise, display none.
+- Exporting: 0.00998 
+- You will lose "$": combines and displays Export Amount Inputs of the cVacts - cVatops = Losses, otherwise, display none.
 - (CANCEL) -> Account Page, 
 - (SEND) -> Transactions Page
 - - Modal:
-- - - Exporting (2 second delay)
+- - - Exporting (2 second delay) back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and delete the cVatops/cVacts if needed (see Readme)
 - - - Successfuly Exported (View Transactions)-> Transactions-
 - - - Export Failed (OK)
 - Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
 
 ### Buy
-- Input (B) amount, fees, bitcoin price, etc.
+- (B) Price
+- Amount Input (in $)
+- fees
 - (BUY) -> Modals
 - Modals: 
 - - Confirming Purchase
