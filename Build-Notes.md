@@ -25,6 +25,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - if holding, sell display none, holding display true.
 - Reloads modules every 5 minutes (create price, wallet, and profits animation css) from coin gecko API wrapper?
 
+ #### Price = Bitcoin Price API 
 
  #### Buy (Page)
  - Connects to Plaid First, (if not connected)
@@ -37,7 +38,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  - displayed once a cVatop + (cVatop * .03) < the cVact, othersie hidden
 
  #### (A)(B) Price = Holding Price
- - Holding Price dependent on highest cVatop
+ - Holding Price dependent on highest cpVatop
 
  #### (A)(B) Value
  - Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
@@ -59,6 +60,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Export
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
+- (A)(B) Value: Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
 - Export Amount Input: takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
 - Export Address Input:
 - Exporting "$": 
@@ -128,5 +130,11 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ##### Home Page:
 10 years, 5 years, 1 year, 6 months, 90 days, 30 days, 7 days, 24 hours, 6 hours, 1 hours (load whichever time frame from 24 hours first, to 7 days, prioritize days then months then years in regards to the highest percentage increase).
+
+## Code Name: Project Omega
+
+### Problem: AI is on track to displace many jobs.
+
+### Solution: A marketplace that creates new jobs for people in a AI job displacing world.
 
 

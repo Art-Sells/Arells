@@ -9,7 +9,9 @@ Arells exists because it believes ***it's wrong for investors to lose money sell
 A cryptocurrency marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **HPM (Holding Price Mechanism)**.
 
 ## HPM
-Holds the highest token's price after purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat:
+Holds the highest price after purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat:
+
+### HPAP = = Highest Price After Purchase
 
 ### Vatop = Value At Time of Purchase
 - **cVatop** = Corresponding Vatop
@@ -24,7 +26,7 @@ Holds the highest token's price after purchase limiting the erasure of its value
 
 1. Bitcoin Price: $60,000
  - $500 worth of Bitcoin is purchased
- - HPM = $60,000
+ - HPAP = $60,000
  - - cVatop 1 = $500
  - - cpVatop 1 = $60,000
  - - cVact 1 = $500
@@ -33,7 +35,7 @@ Holds the highest token's price after purchase limiting the erasure of its value
 
 2. Bitcoin Price: $54,000
  - $600 worth of Bitcoin is purchased
- - HPM = $60,000
+ - HPAP = $60,000
  - - cVatop 1 = $500
  - - cpVatop 1 = $60,000
  - - cVact 1 = $450 
@@ -45,7 +47,7 @@ Holds the highest token's price after purchase limiting the erasure of its value
 
 3. Bitcoin Price: $55,000
  - No Bitcoin is purchased
- - HPM = $60,000
+ - HPAP = $60,000
  - - cVatop 1 = $500
  - - cpVatop 1 = $60,000
  - - cVact 1 = $458
@@ -57,7 +59,7 @@ Holds the highest token's price after purchase limiting the erasure of its value
 
 4. Bitcoin Price: $65,000
  - $200 worth of Bitcoin is purchased
- - HPM = $65,000
+ - HPAP = $65,000
  - - cVatop 1 = $500
  - - cpVatop 1 = $60,000
  - - cVact 1 = $542
@@ -72,7 +74,7 @@ Holds the highest token's price after purchase limiting the erasure of its value
 
 5. Bitcoin Price: $63,000
  - $650 worth of Bitcoin is sold
- - HPM = $65,000
+ - HPAP = $65,000
  - - cVatop 1 = $0
  - - cpVatop 1 = $0
  - - cVact 1 = $0
