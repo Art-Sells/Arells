@@ -59,12 +59,15 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Export
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- Enter Address to Export & Send your Bitcoin: ...
-- Review "How It Works" if Bitcoin Export price is lower than holding price
+- Export Amount Input: takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
+- Export Address Input:
+- Exporting "$": 
+- You will lose "$": combines inputs of cVacts - cVatops = Losses, otherwise, display none.
 - (CANCEL) -> Account Page, 
 - (SEND) -> Transactions Page
 - - Modal:
-- - - Bitcoin Successfuly Exported (View Transactions)-> Transactions-
+- - - Exporting (2 second delay)
+- - - Successfuly Exported (View Transactions)-> Transactions-
 - - - Export Failed (OK)
 - Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
 
@@ -81,7 +84,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - "Amount Holding" displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise it is hidden.
 - "Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
 - - Profits: acVacts - acVatops = Profits
-- - Sell (Input Amount To Sell)
+- - Sell: takes from lowest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
 - - (Confirm Sale) -> Modals
 - - - Modals: 
 - - - - Confirming Sale... Amount To Sell - Arells Fees

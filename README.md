@@ -13,6 +13,7 @@ Holds the highest token's price after purchase limiting the erasure of its value
 
 ### Vatop = Value At Time of Purchase
 - **cVatop** = Corresponding Vatop
+- **cpVatop** = Corresponding Price Vatop
 - **acVatops** = All cVatops
 
 ### Vact = Value At Current Time
@@ -25,6 +26,7 @@ Holds the highest token's price after purchase limiting the erasure of its value
  - $500 worth of Bitcoin is purchased
  - HPM = $60,000
  - - cVatop 1 = $500
+ - - cpVatop 1 = $60,000
  - - cVact 1 = $500
  - - - acVatops = $500
  - - - acVacts = $500
@@ -33,17 +35,22 @@ Holds the highest token's price after purchase limiting the erasure of its value
  - $600 worth of Bitcoin is purchased
  - HPM = $60,000
  - - cVatop 1 = $500
+ - - cpVatop 1 = $60,000
  - - cVact 1 = $450 
  - - cVatop 2 = $600
+ - - cpVatop 2 = $54,000
  - - cVact 2 = $600
  - - - acVatops = $1100
  - - - acVacts = $1050
 
 3. Bitcoin Price: $55,000
+ - No Bitcoin is purchased
  - HPM = $60,000
  - - cVatop 1 = $500
+ - - cpVatop 1 = $60,000
  - - cVact 1 = $458
  - - cVatop 2 = $600
+ - - cpVatop 2 = $54,000
  - - cVact 2 = $611
  - - - acVatops = $1100
  - - - acVacts = $1069
@@ -52,10 +59,13 @@ Holds the highest token's price after purchase limiting the erasure of its value
  - $200 worth of Bitcoin is purchased
  - HPM = $65,000
  - - cVatop 1 = $500
+ - - cpVatop 1 = $60,000
  - - cVact 1 = $542
  - - cVatop 2 = $600
+ - - cpVatop 2 = $54,000
  - - cVact 2 = $722
  - - cVatop 3 = $200
+ - - cpVatop 3 = $65,000
  - - cVact 3 = $200
  - - - acVatops = $1300
  - - - acVacts = $1464
@@ -63,9 +73,14 @@ Holds the highest token's price after purchase limiting the erasure of its value
 5. Bitcoin Price: $63,000
  - $650 worth of Bitcoin is sold
  - HPM = $65,000
+ - - cVatop 1 = $0
+ - - cpVatop 1 = $0
+ - - cVact 1 = $0
  - - cVatop 2 = $450
+ - - cpVatop 2 = $54,000
  - - cVact 2 = $575
  - - cVatop 3 = $200
+ - - cpVatop 3 = $65,000
  - - cVact 3 = $194
  - - - acVatops = $650
  - - - acVacts = $769
