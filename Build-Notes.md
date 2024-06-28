@@ -65,7 +65,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Export Amount Input: back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and deletes the cVatops/cVacts if needed (see Readme)
 - Export Address Input:
 - Exporting
-- (B) 0.00998 
+- (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page))
 - Total exported wallet value: "$" = combines cVacts from input
 - You will lose "$": combines and displays Export Amount Inputs of the cVacts - cVatops = Losses, otherwise, display none.
 - (CANCEL) -> Account Page, 
@@ -78,7 +78,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Buy
 - (B) Price
-- Amount Input (in $)
+- Amount Input (in $) format tel with no * or # 
 - fees
 - total
 - (BUY) -> Modals
@@ -95,7 +95,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - (W) Wallet: displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise it is hidden.
 - (B) Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
 - - Profits: acVacts - acVatops = Profits
-- - Sell Amount Input: $
+- - Sell Amount Input: $ format tel with no * or # 
 - - Sell: takes from lowest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
 - - (Confirm Sale) -> Modals
 - - - Modals: 

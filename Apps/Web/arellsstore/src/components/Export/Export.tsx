@@ -15,6 +15,7 @@ import stylings from '../../app/css/modals/loading/marketplaceloader.module.css'
 const Export: React.FC = () => {
 
   const [showExportFailed, setExportFailed] = useState<boolean>(false);
+  const [showExportMore, setExportMore] = useState<boolean>(false);
   const [showExportSuccess, setExportSuccess] = useState<boolean>(false);
   const [showExporting, setExporting] = useState<boolean>(false);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
@@ -47,6 +48,10 @@ const Export: React.FC = () => {
 
   const closeExportFailed = () => {
     setExportFailed(false);
+  };
+
+  const closeExportMore = () => {
+    setExportMore(false);
   };
 
   const closeExportSuccess = () => {
@@ -118,6 +123,23 @@ const Export: React.FC = () => {
             />  
             <p id="export-failed-words">failed export</p>
             <button id="export-failed-close" onClick={closeExportFailed}>OK</button> 
+          </div>
+        </div>
+      )}
+
+      {showExportMore && (
+        <div id="export-failed-wrapper">
+          <div id="export-more-content">
+            <Image 
+              loader={imageLoader}
+              alt="" 
+              width={35}
+              height={35}
+              id="export-failed-image" 
+              src="images/market/cancelled-ivory.png"
+            />  
+            <p id="export-failed-words">export more Bitcoin</p>
+            <button id="export-failed-close" onClick={closeExportMore}>OK</button> 
           </div>
         </div>
       )}
@@ -198,7 +220,7 @@ const Export: React.FC = () => {
               </p>
               <input 
                   id="export-input"
-                  type="num" 
+                  type="tel" 
               />
               <p id="export-amount-title">
                   Export Address
