@@ -60,11 +60,13 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Export
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- (A)(B) Wallet: Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
+- (W) Wallet: Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
 - (B) Amount: Displays all Bitcoin available.
 - Export Amount Input: back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and deletes the cVatops/cVacts if needed (see Readme)
 - Export Address Input:
-- Exporting: 0.00998 
+- Exporting
+- (B) 0.00998 
+- Total exported wallet value: "$" = combines cVacts from input
 - You will lose "$": combines and displays Export Amount Inputs of the cVacts - cVatops = Losses, otherwise, display none.
 - (CANCEL) -> Account Page, 
 - (EXPORT) -> Modal
@@ -78,6 +80,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (B) Price
 - Amount Input (in $)
 - fees
+- total
 - (BUY) -> Modals
 - Modals: 
 - - Confirming Purchase
@@ -86,9 +89,13 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 
 ### Sell
-- "Amount Holding" displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise it is hidden.
-- "Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
+- - (A)(B) Total Amount 
+- - (W) Wallet: displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise displays acVacts.
+- (A)(B) Amount Holding
+- - (W) Wallet: displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise it is hidden.
+- (B) Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
 - - Profits: acVacts - acVatops = Profits
+- - Sell Amount Input: $
 - - Sell: takes from lowest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
 - - (Confirm Sale) -> Modals
 - - - Modals: 

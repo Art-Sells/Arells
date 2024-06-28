@@ -11,9 +11,9 @@ A cryptocurrency marketplace that helps render bear markets obsolete. Arells is 
 ## HPM
 Holds the highest price after purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat:
 
-### HPAP = = Highest Price After Purchase
+### HPAP = Highest Price After Purchase
 
-### Vatop = Value At Time of Purchase
+### Vatop = Value At Time Of Purchase
 - **cVatop** = Corresponding Vatop
 - **cpVatop** = Corresponding Price Vatop
 - **acVatops** = All cVatops
@@ -42,8 +42,8 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cVatop 2 = $600
  - - cpVatop 2 = $54,000
  - - cVact 2 = $600
- - - - acVatops = $1100
- - - - acVacts = $1050
+ - - - acVatops = $1,100
+ - - - acVacts = $1,050
 
 3. Bitcoin Price: $55,000
  - No Bitcoin is purchased
@@ -54,8 +54,8 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cVatop 2 = $600
  - - cpVatop 2 = $54,000
  - - cVact 2 = $611
- - - - acVatops = $1100
- - - - acVacts = $1069
+ - - - acVatops = $1,100
+ - - - acVacts = $1,069
 
 4. Bitcoin Price: $65,000
  - $200 worth of Bitcoin is purchased
@@ -69,8 +69,8 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cVatop 3 = $200
  - - cpVatop 3 = $65,000
  - - cVact 3 = $200
- - - - acVatops = $1300
- - - - acVacts = $1464
+ - - - acVatops = $1,300
+ - - - acVacts = $1,464
 
 5. Bitcoin Price: $63,000
  - $650 worth of Bitcoin is sold

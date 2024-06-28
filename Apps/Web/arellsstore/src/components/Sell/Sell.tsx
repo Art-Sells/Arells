@@ -12,7 +12,7 @@ import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import styles from '../../app/css/modals/loader/accountloader.module.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 
-const Export: React.FC = () => {
+const Sell: React.FC = () => {
 
   const [showExportFailed, setExportFailed] = useState<boolean>(false);
   const [showExportSuccess, setExportSuccess] = useState<boolean>(false);
@@ -154,15 +154,27 @@ const Export: React.FC = () => {
         <div id="export-amount-wrapper">
             <div id="a-wallet-export">
                 <span>
-                    <div id="w-account-wrapper">
+                    <div id="a-export-wrapper">
                         <Image
                         loader={imageLoader}
                         onLoad={() => handleImageLoaded('accountLogo')}
                         alt=""
                         width={20}
                         height={20}
-                        id="wallet-icon-export" 
-                        src="images/market/wallet.png"/>
+                        id="arells-export" 
+                        src="images/howitworks/ArellsBitcoin.png"/>
+                    </div>
+                </span>
+                <span>
+                    <div id="b-export-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('accountLogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="bitcoin-export-wallet" 
+                        src="images/howitworks/Bitcoin.png"/>
                     </div>
                 </span>
                 <span id="export-wallet-word">Wallet:</span>
@@ -237,4 +249,4 @@ const Export: React.FC = () => {
   );
 };
 
-export default Export;
+export default Sell;

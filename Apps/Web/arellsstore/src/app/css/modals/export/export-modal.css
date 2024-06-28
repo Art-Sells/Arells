@@ -41,6 +41,24 @@
     box-shadow: rgba(69, 51, 27, 1);
     margin-bottom: 50px;
   }
+
+  #exporting-content {
+    padding-top: 55px;
+    width: 230px;
+    height: 180px;
+    background-color: rgba(180, 134, 73, 0.9); 
+    border-radius: 20px;
+    align-items: center;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;  
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 1.00s;
+    animation-name: animatetop;
+    animation-duration: 1.00s;
+    box-shadow: rgba(69, 51, 27, 1);
+    margin-bottom: 50px;
+  }
   
   
   #export-failed-image{
