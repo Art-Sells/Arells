@@ -92,9 +92,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Sell
 - (A)(B) Total Amount 
-- - (W) Wallet: displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise displays acVacts.
+- - (W) displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise displays acVacts.
 - (A)(B) Amount Holding
-- - (W) Wallet: displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise it is hidden.
+- - (W) displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise it is hidden.
 - (B) Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
 - - Profits: acVacts - acVatops = Profits
 - - Sell Amount Input: $ format tel with no * or # 

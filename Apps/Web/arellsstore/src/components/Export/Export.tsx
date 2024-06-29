@@ -208,114 +208,114 @@ const Export: React.FC = () => {
               <span id="bitcoin-amount-number">0.0005454</span>
           </div>
 
-          
-        </div>
+          <div id="export-amount-wrapper">
 
-        <div id="export-amount-wrapper">
+            <div id="export-input-wrapper">
 
-          <div id="export-input-wrapper">
-
-            <p id="export-amount-title">
-                  Export Amount
-              </p>
-              <input 
-                  id="export-input"
-                  type="tel" 
-              />
               <p id="export-amount-title">
-                  Export Address
-              </p>
-              <input 
-                  id="address-input"
-                  type="text" 
-              />  
-          </div>
+                    Export Amount
+                </p>
+                <input 
+                    id="export-input"
+                    type="tel" 
+                />
+                <p id="export-amount-title">
+                    Export Address
+                </p>
+                <input 
+                    id="address-input"
+                    type="text" 
+                />  
+            </div>
 
-          <p id="exporting-title">
-              Exporting
-          </p>
+            <p id="exporting-title">
+                Exporting
+            </p>
 
-          <div id="b-wallet-export">
-              <span>
-                  <div id="b-wallet-wrapper">
-                      <Image
-                      loader={imageLoader}
-                      onLoad={() => handleImageLoaded('accountLogo')}
-                      alt=""
-                      width={20}
-                      height={20}
-                      id="bitcoin-export" 
-                      src="images/howitworks/Bitcoin.png"/>
+            <div id="b-wallet-export">
+                <span>
+                    <div id="b-wallet-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('accountLogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="bitcoin-export" 
+                        src="images/howitworks/Bitcoin.png"/>
+                    </div>
+                </span>
+                <span id="bitcoin-amount-export">Amount:</span>
+                <span id="bitcoin-amount-number">0.0005454</span>
+            </div>
+
+            <p id="exporting-amount">
+                Total Exporting Value
+            </p>
+
+            <div id="a-wallet-export">
+                <span>
+                    <div id="w-account-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('accountLogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="wallet-icon-export" 
+                        src="images/market/wallet.png"/>
+                    </div>
+                </span>
+                <span id="export-wallet-word">Wallet:</span>
+                <span id="export-wallet-number">$
+                    <span id="export-wallet-num">2,000</span>
+                </span>
+            </div>
+
+
+            {/* <div id="fill-in">
+            </div> */}
+
+            <div id="a-losses-export">
+                <span>
+                  <div id="w-losses-wrapper">
+                    <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="losses-icon-export" 
+                    src="images/howitworks/down-arrow-ebony.png"/>
                   </div>
-              </span>
-              <span id="bitcoin-amount-export">Amount:</span>
-              <span id="bitcoin-amount-number">0.0005454</span>
+                </span>
+                <span id="wallet-account-losses">You will lose:</span>
+                <span id="#wallet-number-losses">$
+                    <span id="#wallet-number-losses-num">2,000</span>
+                </span>
+            </div>
+
+            <p id="losses-title">
+              Are You Sure?
+            </p>
+
+            <div id="cancel-proceed-wrapper">
+                <span>
+                    <button id="cancel-export">
+                        CANCEL
+                    </button>
+                </span>
+                <span>
+                    <button id="proceed-export">
+                        EXPORT
+                    </button>
+                </span>
+            </div>
+
           </div>
-
-          <p id="exporting-amount">
-              Total Exporting Value
-          </p>
-
-          <div id="a-wallet-export">
-              <span>
-                  <div id="w-account-wrapper">
-                      <Image
-                      loader={imageLoader}
-                      onLoad={() => handleImageLoaded('accountLogo')}
-                      alt=""
-                      width={20}
-                      height={20}
-                      id="wallet-icon-export" 
-                      src="images/market/wallet.png"/>
-                  </div>
-              </span>
-              <span id="export-wallet-word">Wallet:</span>
-              <span id="export-wallet-number">$
-                  <span id="export-wallet-num">2,000</span>
-              </span>
-          </div>
-
-
-          {/* <div id="fill-in">
-          </div> */}
-
-          <div id="a-losses-export">
-              <span>
-                <div id="w-losses-wrapper">
-                  <Image
-                  loader={imageLoader}
-                  onLoad={() => handleImageLoaded('accountLogo')}
-                  alt=""
-                  width={20}
-                  height={20}
-                  id="losses-icon-export" 
-                  src="images/howitworks/down-arrow-ebony.png"/>
-                </div>
-              </span>
-              <span id="wallet-account-losses">You will lose:</span>
-              <span id="#wallet-number-losses">$
-                  <span id="#wallet-number-losses-num">2,000</span>
-              </span>
-          </div>
-
-          <p id="losses-title">
-            Are You Sure?
-          </p>
-
-          <div id="cancel-proceed-wrapper">
-              <span>
-                  <button id="cancel-export">
-                      CANCEL
-                  </button>
-              </span>
-              <span>
-                  <button id="proceed-export">
-                      EXPORT
-                  </button>
-              </span>
-          </div>
-
         </div>
+
+        
     </>
   );
 };
