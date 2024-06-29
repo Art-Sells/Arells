@@ -14,10 +14,9 @@ import stylings from '../../app/css/modals/loading/marketplaceloader.module.css'
 
 const Buy: React.FC = () => {
 
-  const [showExportFailed, setExportFailed] = useState<boolean>(false);
-  const [showExportMore, setExportMore] = useState<boolean>(false);
-  const [showExportSuccess, setExportSuccess] = useState<boolean>(false);
-  const [showExporting, setExporting] = useState<boolean>(false);
+  const [showPurchaseFailed, setPurchaseFailed] = useState<boolean>(false);
+  const [showBuyingSuccess, setBuyingSuccess] = useState<boolean>(false);
+  const [showBuying, setBuying] = useState<boolean>(false);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
 
     //Loader Function/s
@@ -46,16 +45,12 @@ const Buy: React.FC = () => {
   //Loader Function/s
 
 
-  const closeExportFailed = () => {
-    setExportFailed(false);
+  const closePurchaseFailed = () => {
+    setPurchaseFailed(false);
   };
 
-  const closeExportMore = () => {
-    setExportMore(false);
-  };
-
-  const closeExportSuccess = () => {
-    setExportSuccess(false);
+  const closeBuyingSuccess = () => {
+    setBuyingSuccess(false);
   };
 
   return (
@@ -74,25 +69,25 @@ const Buy: React.FC = () => {
         </div>
       )}
 
-      {showExporting && (
-        <div id="export-failed-wrapper">
-          <div id="export-content">
+      {showBuying && (
+        <div id="buying-wrapper">
+          <div id="buying-content">
             <div className={stylings.marketplaceloader}>
                 <Image 
                 // loader={imageLoader}
                 alt="" 
                 width={35}
                 height={35}
-                id="export-failed-image" 
-                src="images/market/export.png"
+                id="buying-image" 
+                src="images/market/cash-register-icory.png"
                 />  
             </div>
-            <p id="export-failed-words">exporting</p>
+            <p id="buying-words">confirming purchase</p>
           </div>
         </div>
       )}
 
-    {showExportSuccess && (
+    {showBuyingSuccess && (
       <div id="account-created-wrapper">
         <div id="account-created-content">
             <Image
@@ -102,93 +97,84 @@ const Buy: React.FC = () => {
                 id="account-created-image"
                 src="/images/market/checkmark-ebony.png"
             />
-            <p id="account-created-words">Export Complete</p>
+            <p id="account-created-words">Purchase Complete</p>
             <Link href="/transactions" passHref>
-                <button id="account-created-close" onClick={closeExportSuccess}>VIEW TRANSACTIONS</button>
+                <button id="account-created-close" onClick={closeBuyingSuccess}>VIEW TRANSACTIONS</button>
             </Link>
         </div>
       </div>
       )}
 
-      {showExportFailed && (
-        <div id="export-failed-wrapper">
-          <div id="export-failed-content">
+      {showPurchaseFailed && (
+        <div id="buying-wrapper">
+          <div id="buying-failed-content">
             <Image 
               loader={imageLoader}
               alt="" 
               width={35}
               height={35}
-              id="export-failed-image" 
+              id="buying-image" 
               src="images/market/cancelled-ivory.png"
             />  
-            <p id="export-failed-words">failed export</p>
-            <button id="export-failed-close" onClick={closeExportFailed}>OK</button> 
+            <p id="buying-failed-words-one">purchase failed</p>
+            <p id="buying-failed-words-two">Check Bank Account</p>
+            <p id="buying-failed-words-three">for sufficient funds</p>
+            <Link href="/bank_account" passHref>
+
+            </Link>
+            <button id="buying-failed-close" onClick={closePurchaseFailed}>VIEW CONNECTED BANK ACCOUNT</button> 
           </div>
         </div>
       )}
-
-      {showExportMore && (
-        <div id="export-failed-wrapper">
-          <div id="export-more-content">
-            <Image 
-              loader={imageLoader}
-              alt="" 
-              width={35}
-              height={35}
-              id="export-failed-image" 
-              src="images/market/cancelled-ivory.png"
-            />  
-            <p id="export-failed-words">export more Bitcoin</p>
-            <button id="export-failed-close" onClick={closeExportMore}>OK</button> 
-          </div>
-        </div>
-      )}
-
                         
-        <p id="export-title">BUY</p>
+        <p id="buy-title">BUY</p>
 
-        <div id="a-wallet-export">
-            <span>
-                <div id="w-account-wrapper">
-                    <Image
-                    loader={imageLoader}
-                    onLoad={() => handleImageLoaded('accountLogo')}
-                    alt=""
-                    width={20}
-                    height={20}
-                    id="wallet-icon-export" 
-                    src="images/market/wallet.png"/>
-                </div>
-            </span>
-            <span id="export-wallet-word">Price:</span>
-            <span id="export-wallet-number">$
-                <span id="export-wallet-num">2,000</span>
-            </span>
-        </div>
-        <p id="amount-input-word">Amount</p>
-        <div id="bitcoin-address-wrapper">
-            <div id="copy-bitcoin-input-wrapper">
+        <div id="buy-info-wrapper">
+
+          <div id="a-wallet-buy">
+              <span>
+                  <div id="w-account-wrapper">
+                      <Image
+                      loader={imageLoader}
+                      onLoad={() => handleImageLoaded('accountLogo')}
+                      alt=""
+                      width={20}
+                      height={20}
+                      id="wallet-icon-buy" 
+                      src="images/market/wallet.png"/>
+                  </div>
+              </span>
+              <span id="buy-wallet-word">Price:</span>
+              <span id="buy-wallet-number">$
+                  <span id="buy-wallet-num">2,000.00</span>
+              </span>
+          </div>
+
+          <div id="buy-input-wrapper">
+            <p id="amount-input-word">Amount</p>
             <input 
-                id="copy-bitcoin-input"
+                id="amount-input"
                 type="tel" 
             />
+            <div id="a-wallet-buy-wrapper">
+              <span id="fees-total-word">Fees:</span>
+              <span id="fees-total-number">$
+                  <span id="fees-total-num">0.00</span>
+              </span>
             </div>
+            <div id="a-wallet-buy-wrapper">
+              <span id="fees-total-word">Total:</span>
+              <span id="fees-total-number">$
+                  <span id="fees-total-num">2,000.00</span>
+              </span>
+            </div>
+            <button id="buy-button">
+                BUY
+            </button>
+
+          </div>
         </div>
-        <div id="a-wallet-export">
-            <span id="export-wallet-word">Fees:</span>
-            <span id="export-wallet-number">$
-                <span id="export-wallet-num">0.00</span>
-            </span>
-        </div>
-        <div id="a-wallet-export">
-            <span id="export-wallet-word">Total:</span>
-            <span id="export-wallet-number">$
-                <span id="export-wallet-num">2,000</span>
-            </span>
-        </div>
-        <button id="cancel-export">
-            BUY
-        </button>
+
     </>
   );
 };

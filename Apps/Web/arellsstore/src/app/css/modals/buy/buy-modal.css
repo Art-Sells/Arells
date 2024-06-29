@@ -1,7 +1,7 @@
  /* modal.css source */
 /* The Modal (background) */
 
-#export-failed-wrapper {
+#buying-wrapper {
     position: fixed; /* Stay in place */
     z-index: 200; /* Sit on top */
     padding-top: 190px; /* Location of the box */
@@ -17,14 +17,14 @@
   
   
   @media screen and (max-height: 550px) {
-    #export-failed-wrapper {
+    #buying-wrapper {
       padding-top: 30px; 
     }
   }
   
   /* Modal Content */
   
-  #export-failed-content {
+  #buying-content {
     padding-top: 55px;
     width: 230px;
     height: 200px;
@@ -42,28 +42,10 @@
     margin-bottom: 50px;
   }
 
-  #exporting-content {
+  #buying-failed-content {
     padding-top: 55px;
     width: 230px;
-    height: 180px;
-    background-color: rgba(180, 134, 73, 0.9); 
-    border-radius: 20px;
-    align-items: center;
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;  
-    -webkit-animation-name: animatetop;
-    -webkit-animation-duration: 1.00s;
-    animation-name: animatetop;
-    animation-duration: 1.00s;
-    box-shadow: rgba(69, 51, 27, 1);
-    margin-bottom: 50px;
-  }
-
-  #exporting-more-content {
-    padding-top: 55px;
-    width: 250px;
-    height: 180px;
+    height: 200px;
     background-color: rgba(180, 134, 73, 0.9); 
     border-radius: 20px;
     align-items: center;
@@ -79,12 +61,42 @@
   }
   
   
-  #export-failed-image{
+  #buying-image{
     margin-top: 4px;
     opacity: .65;
   }
   
-      #export-failed-words {
+      #buying-words {
+        color: rgb(255, 255, 255);
+        font-weight: 500;
+        font-size: 11px;
+        margin-top: 15px;
+        margin-bottom: 30px;
+        letter-spacing: 0px;
+        margin-left: 0px; 
+        opacity: .65;
+      }
+      #buying-failed-words-one {
+        color: rgb(255, 255, 255);
+        font-weight: 500;
+        font-size: 11px;
+        margin-top: 15px;
+        margin-bottom: 30px;
+        letter-spacing: 0px;
+        margin-left: 0px; 
+        opacity: .65;
+      }
+      #buying-failed-words-two {
+        color: rgb(255, 255, 255);
+        font-weight: 500;
+        font-size: 11px;
+        margin-top: 15px;
+        margin-bottom: 30px;
+        letter-spacing: 0px;
+        margin-left: 0px; 
+        opacity: .65;
+      }
+      #buying-failed-words-three {
         color: rgb(255, 255, 255);
         font-weight: 500;
         font-size: 11px;
@@ -98,7 +110,7 @@
   
   
   
-  #export-failed-close {
+  #buying-failed-close {
     background-color: rgba(0, 0, 0, 0.9);
     color: white;
     margin-top: -5px;
@@ -115,8 +127,8 @@
     box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  
   }
   
-  #export-failed-close:hover,
-  #export-failed-close:focus {
+  #buying-failed-close:hover,
+  #buying-failed-close:focus {
     cursor: pointer;
     opacity: .4;
     transition: 1s;

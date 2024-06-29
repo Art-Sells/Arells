@@ -75,6 +75,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - - Successfuly Exported (View Transactions)-> Transactions-
 - - - Export Failed (OK)
 - Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
+- all prices and wallet values structured like so: 1,000,000.00
 
 ### Buy
 - (B) Price
@@ -87,6 +88,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Purchase Complete (View Portfolio)-> Account, 
 - - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
+- all prices and wallet values structured like so: 1,000,000.00
 
 ### Sell
 - - (A)(B) Total Amount 
@@ -103,6 +105,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - - - Sale Complete (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database)(View Transactions) -> Transactions
 - - - - Transaction Failed (OK)
 - Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
+- all prices and wallet values structured like so: 1,000,000.00
 
 
 ### Transactions
@@ -111,6 +114,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Bought "amount of Bitcoin" for "dollar amount"
 - Withdrew "dollar amount" to "bank account"
 - Sending "amount of Bitcoin" Pending (View on Block Explorer): Blockchain.com, instantly becomes Completed (View on Block Explorer)...
+- all values structured like so: 1,000,000.00
 
 ### Withdraw
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
@@ -120,6 +124,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Modal:
 - - - Withdraw Complete (View Transactions)-> Transactions
 - - - Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
+- all values structured like so: 1,000,000.00
 
 ### Bank Account
 - (A) -> Account Page (B) ->Buy Page
