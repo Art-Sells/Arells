@@ -15,9 +15,11 @@ import stylings from '../../app/css/modals/loading/marketplaceloader.module.css'
 const Export: React.FC = () => {
 
   const [showExportFailed, setExportFailed] = useState<boolean>(false);
+  const [showCheckAddress, setCheckAddress] = useState<boolean>(false);
+  const [showMissingFields, setMissingfields] = useState<boolean>(false);
   const [showExportMore, setExportMore] = useState<boolean>(false);
   const [showExportSuccess, setExportSuccess] = useState<boolean>(false);
-  const [showExporting, setExporting] = useState<boolean>(true);
+  const [showExporting, setExporting] = useState<boolean>(false);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
 
     //Loader Function/s
@@ -48,6 +50,14 @@ const Export: React.FC = () => {
 
   const closeExportFailed = () => {
     setExportFailed(false);
+  };
+
+  const closeCheckAddress = () => {
+    setCheckAddress(false);
+  };
+
+  const closeMissingFields = () => {
+    setMissingfields(false);
   };
 
   const closeExportMore = () => {
@@ -127,6 +137,40 @@ const Export: React.FC = () => {
         </div>
       )}
 
+      {showCheckAddress && (
+        <div id="export-failed-wrapper">
+          <div id="export-failed-content">
+            <Image 
+              loader={imageLoader}
+              alt="" 
+              width={35}
+              height={35}
+              id="export-failed-image" 
+              src="images/market/address-ivory.png"
+            />  
+            <p id="export-failed-words">check address</p>
+            <button id="export-failed-close" onClick={closeCheckAddress}>OK</button> 
+          </div>
+        </div>
+      )}
+
+      {showMissingFields && (
+        <div id="export-failed-wrapper">
+          <div id="missing-fields-content">
+            <Image 
+              loader={imageLoader}
+              alt="" 
+              width={35}
+              height={11}
+              id="missing-fields-image" 
+              src="images/prototype/EnterNameErrorImage.png"
+            />  
+            <p id="missing-fields-words">enter information</p>
+            <button id="export-failed-close" onClick={closeMissingFields}>OK</button> 
+          </div>
+        </div>
+      )}
+
       {showExportMore && (
         <div id="export-failed-wrapper">
           <div id="export-more-content">
@@ -188,7 +232,7 @@ const Export: React.FC = () => {
               </span>
               <span id="export-wallet-word">Wallet:</span>
               <span id="export-wallet-number">$
-                  <span id="export-wallet-num">2,000</span>
+                  <span id="export-wallet-num">2,000.08</span>
               </span>
           </div>
           <div id="b-wallet-export">
@@ -212,7 +256,7 @@ const Export: React.FC = () => {
 
             <div id="export-input-wrapper">
 
-              <p id="export-amount-title">
+                <p id="export-amount-title">
                     Export Amount
                 </p>
                 <input 
@@ -232,7 +276,7 @@ const Export: React.FC = () => {
                 Exporting
             </p>
 
-            <div id="b-wallet-export">
+            <div id="b-wallet-export-two">
                 <span>
                     <div id="b-wallet-wrapper">
                         <Image
@@ -245,14 +289,14 @@ const Export: React.FC = () => {
                         src="images/howitworks/Bitcoin.png"/>
                     </div>
                 </span>
-                <span id="bitcoin-amount-number-two">0.0005454</span>
+                <span id="bitcoin-amount-number-two">0.0</span>
             </div>
 
             <p id="exporting-amount">
                 Total Exporting Value
             </p>
 
-            <div id="a-wallet-export">
+            <div id="a-wallet-export-two">
                 <span>
                     <div id="w-account-wrapper">
                         <Image
@@ -266,7 +310,7 @@ const Export: React.FC = () => {
                     </div>
                 </span>
                 <span id="export-wallet-number-two">$
-                    <span id="export-wallet-num-two">2,000</span>
+                    <span id="export-wallet-num-two">0.00</span>
                 </span>
             </div>
 
@@ -274,7 +318,7 @@ const Export: React.FC = () => {
             {/* <div id="fill-in">
             </div> */}
 
-            <div id="exporting-amount">You will lose</div>
+            <div id="losses-amount">You will lose</div>
 
             <div id="a-losses-export">
                 <span>
@@ -289,26 +333,25 @@ const Export: React.FC = () => {
                     src="images/howitworks/down-arrow-ebony.png"/>
                   </div>
                 </span>
-                <span id="#wallet-number-losses">$
-                    <span id="wallet-number-losses-num">2,000</span>
+                <span id="wallet-number-losses">$
+                    <span id="wallet-number-losses-num">0.00</span>
                 </span>
             </div>
 
-            <p id="losses-title">
-              Are You Sure?
-            </p>
+            {/* <p id="losses-title">
+              Proceed?
+            </p> */}
 
             <div id="cancel-proceed-wrapper">
-                <span>
-                    <button id="cancel-export">
-                        CANCEL
-                    </button>
-                </span>
-                <span>
-                    <button id="proceed-export">
-                        EXPORT
-                    </button>
-                </span>
+              <button id="cancel-export">
+                  CANCEL
+              </button>
+
+              <br/>
+
+              <button id="proceed-export">
+                  EXPORT
+              </button>
             </div>
 
           </div>

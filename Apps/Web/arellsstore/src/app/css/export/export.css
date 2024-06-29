@@ -129,12 +129,12 @@
 
 
 	#export-wallet-wrapper {
-		padding-top: 40px;
+		padding-top: 27px;
 		padding-bottom: 40px;
-		margin-top: 20px;
+		margin-top: 45px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 650px;
+		height: 830px;
 		width: 380px;
 		background-color: white;
 		border-radius: 30px;
@@ -143,12 +143,12 @@
 
 
 		#export-amount-wrapper {
-			margin-top: 30px;
-			padding-top: 40px;
+			margin-top: 20px;
+			padding-top: 20px;
 			padding-bottom: 40px;
 			margin-left: auto;
 			margin-right: auto;
-			height: 155px;
+			height: 625px;
 			width: 260px;
 			background-color: rgba(255, 251, 245, 1);
 			border-radius: 30px;
@@ -156,12 +156,9 @@
 		}
 
 			#export-input-wrapper{
-				padding-top: 25px;
-				display: flex;
-				justify-content: center; 
-				align-items: center;
-				padding-bottom: 20px;
-				box-shadow: 0px 5px 15px -5px rgba(204, 116, 0, 0.15);
+				padding-top: 0px;
+				padding-bottom: 43px;
+				box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
 
 			}
 
@@ -170,13 +167,33 @@
 					padding-top: 0px;
 					display: flex;
 					justify-content: center; 
+					width: 320px;
+					align-items: center;
+					margin-left: auto;
+					margin-right: auto;
+					padding-bottom: 20px;
+					box-shadow: 0px 17px 14px -20px rgb(0, 0, 0, 0.2);
+				}
+
+				#a-wallet-export-two{
+					padding-top: 0px;
+					display: flex;
+					justify-content: center; 
 					align-items: center;
 					padding-bottom: 25px;
-					box-shadow: 0px 5px 15px -5px rgba(204, 116, 0, 0.15);
+					box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
 				}
+
+					#arells-icon-export{
+						margin-left: 1.5px;
+						width: 20px;
+						height: 20px;
+
+					}
 
 					#wallet-icon-export {
 						opacity: .3;
+						margin-left: -6px;
 					}
 					#export-wallet-word {
 						color: black;
@@ -217,11 +234,20 @@
 						}
 
 				#b-wallet-export{
+					margin-top: 24px;
 					display: flex;
 					justify-content: center; 
 					align-items: center;
 				}	
 
+				#b-wallet-export-two{
+					display: flex;
+					justify-content: center; 
+					align-items: center;
+					padding-bottom: 25px;
+					box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
+					margin-left: -4px;
+				}	
 					#bitcoin-export{
 						width: 20px;
 						height: 20px;
@@ -259,14 +285,13 @@
 					color: black;
 					margin-left: auto;	
 					margin-right: auto;	
-					line-height: 20px;
-					font-weight: 800;	
-					font-size: 13px;
-					letter-spacing: -0.5px;		
+					font-weight: 200;	
+					font-size: 11px;
+					opacity: .4;		
 				}
 
 				#export-input { 
-					margin-top: 10px;
+					margin-top: 0px;
 					text-align: center;  	   
 					padding-top: 20px;
 					padding-bottom: 20px;
@@ -277,12 +302,12 @@
 					border: none;
 					border-radius: 10px;
 					font-size: 12px;
-					width: 150px;
+					width: 110px;
 					height: 5px;
 					letter-spacing: 0px;    	   		
 					background: rgba(0, 0, 0, 0.2);
 					opacity: 1;
-					margin-bottom: 10px;  
+					margin-bottom: 5px;  
 				}
 
 				#export-input:focus {
@@ -290,19 +315,10 @@
 					transition: 1s;
 					background: rgba(0, 0, 0, 0.4);			    
 				}   
-					
-				#export-address-title {
-					color: black;
-					margin-left: auto;	
-					margin-right: auto;	
-					line-height: 20px;
-					font-weight: 800;	
-					font-size: 13px;
-					letter-spacing: -0.5px;		
-				}			
+							
 
 				#address-input { 
-					margin-top: 10px;
+					margin-top: 0px;
 					text-align: center;  	   
 					padding-top: 20px;
 					padding-bottom: 20px;
@@ -313,12 +329,11 @@
 					border: none;
 					border-radius: 10px;
 					font-size: 12px;
-					width: 150px;
+					width: 110px;
 					height: 5px;
 					letter-spacing: 0px;    	   		
 					background: rgba(0, 0, 0, 0.2);
 					opacity: 1;
-					margin-bottom: 10px;  
 				}
 
 				#address-input:focus {
@@ -330,49 +345,58 @@
 
 
 		#exporting-title {
+			margin-top: 30px;
 			color: black;
 			margin-left: auto;	
 			margin-right: auto;	
-			line-height: 20px;
-			font-weight: 800;	
-			font-size: 13px;
-			letter-spacing: -0.5px;		
+			font-weight: 200;	
+			font-size: 10px;
+			opacity: .4;	
+			margin-bottom: 7px;
 		}
 		#exporting-amount {
+			margin-top: 30px;
 			color: black;
 			margin-left: auto;	
 			margin-right: auto;	
-			line-height: 20px;
-			font-weight: 800;	
-			font-size: 13px;
-			letter-spacing: -0.5px;		
+			font-weight: 200;	
+			font-size: 10px;
+			opacity: .4;	
+			margin-bottom: 5px;
+		}
+		#losses-amount {
+			margin-top: 30px;
+			color: black;
+			margin-left: auto;	
+			margin-right: auto;	
+			font-weight: 200;	
+			font-size: 10px;
+			opacity: .4;	
+			margin-bottom: 5px;
 		}
 
 		#fill-in {
 			height: 200px;
 		}
 
-		#losses-wrapper {
-			height: 200px;
+		#a-losses-export{
+			padding-top: 0px;
+			display: flex;
+			justify-content: center; 
+			align-items: center;
+			padding-bottom: 25px;
+			box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
 		}
-			#loss-amount {
-				color: black;
-				margin-left: auto;	
-				margin-right: auto;	
-				line-height: 20px;
-				font-weight: 800;	
-				font-size: 13px;
-				letter-spacing: -0.5px;		
-			}
 			#losses-icon-export {
 				opacity: .2;
+				margin-bottom: -3.5px;
+				margin-right: -2px;
 			}
 			#wallet-account-losses {
 				color: black;
 				font-size: 12px;
 				font-weight: 200;
 				margin-left: 0px;
-				margin-top: 0px;
 				opacity: .5;
 
 			}	
@@ -393,17 +417,17 @@
 
 
 		#losses-title {
+			margin-top: 30px;
 			color: black;
 			margin-left: auto;	
 			margin-right: auto;	
-			line-height: 20px;
 			font-weight: 800;	
 			font-size: 13px;
-			letter-spacing: -0.5px;		
+			opacity: .3;	
 		}
 
 		#cancel-proceed-wrapper{
-			margin-top: 20px;
+			margin-top: 40px;
 		}
 			#cancel-export {
 				background: black;
@@ -424,13 +448,13 @@
 				box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  			  
 			}
 			#proceed-export {
+				margin-top: 20px;
 				background: none;
 				text-decoration: none;
-				color: rgb(255, 222, 177);
+				color: black;
 				font-weight: 500;
 				font-size: 10px;
 				padding-top: 10px;
-				margin-left: 10px;
 				padding-bottom: 10px;
 				padding-right: 12px;
 				padding-left: 13px;	  
@@ -438,9 +462,24 @@
 				letter-spacing: 1px;
 				border-radius: 5px;
 				border-width: 1px;
-				border-color: rgb(232, 202, 161);
-				width: 85px;
-				opacity: 1;	 			  
-			}		
+				border-color: gray;
+				width: 75px;
+				opacity: .5;	 			  
+			}	
+			
+			#cancel-export:hover,
+			#cancel-export:focus {
+			  cursor: pointer;
+			  opacity: .4;
+			  transition: 1s;
+			  
+			}
+			#proceed-export:hover,
+			#proceed-export:focus {
+			  cursor: pointer;
+			  opacity: .2;
+			  transition: 1s;
+			  
+			}
 	
 

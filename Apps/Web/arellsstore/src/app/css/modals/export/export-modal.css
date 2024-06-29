@@ -42,9 +42,27 @@
     margin-bottom: 50px;
   }
 
+  #missing-fields-content {
+    padding-top: 55px;
+    width: 250px;
+    height: 200px;
+    background-color: rgba(180, 134, 73, 0.9); 
+    border-radius: 20px;
+    align-items: center;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;  
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 1.00s;
+    animation-name: animatetop;
+    animation-duration: 1.00s;
+    box-shadow: rgba(69, 51, 27, 1);
+    margin-bottom: 50px;
+  }
+
   #export-content {
     padding-top: 55px;
-    width: 200px;
+    width: 190px;
     height: 135px;
     background-color: rgba(180, 134, 73, 0.9); 
     border-radius: 20px;
@@ -84,6 +102,11 @@
     opacity: .65;
   }
 
+  #missing-fields-image{
+    margin-top: 16px;
+    opacity: .65;
+  }
+
   #exporting-image{
     margin-top: 16.5px;
     opacity: .65;
@@ -94,6 +117,16 @@
         font-weight: 500;
         font-size: 11px;
         margin-top: 15px;
+        margin-bottom: 30px;
+        letter-spacing: 0px;
+        margin-left: 0px; 
+        opacity: .65;
+      }
+      #missing-fields-words {
+        color: rgb(255, 255, 255);
+        font-weight: 500;
+        font-size: 11px;
+        margin-top: 20px;
         margin-bottom: 30px;
         letter-spacing: 0px;
         margin-left: 0px; 

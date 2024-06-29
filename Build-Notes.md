@@ -71,9 +71,11 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (CANCEL) -> Account Page, 
 - (EXPORT) -> Modal
 - - Modal:
-- - - Exporting (2 second delay) back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and delete the cVatops/cVacts if needed (see Readme)
+- - - Exporting (3 second delay) back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and delete the cVatops/cVacts if needed (see Readme)
 - - - Successfuly Exported (View Transactions)-> Transactions-
 - - - Export Failed (OK)
+- - - Check Address
+- - - Enter information
 - Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
 - all prices and wallet values structured like so: 1,000,000.00
 
@@ -84,7 +86,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - total
 - (BUY) -> Modals
 - Modals: 
-- - Confirming Purchase
+- - Confirming Purchase 3 Second delay
 - - Purchase Complete (View Portfolio)-> Account, 
 - - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
@@ -101,7 +103,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Sell: takes from lowest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
 - - (Confirm Sale) -> Modals
 - - - Modals: 
-- - - - Confirming Sale... Amount To Sell - Arells Fees
+- - - - Confirming Sale...3 Second delay Amount To Sell - Arells Fees
 - - - - Sale Complete (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database)(View Transactions) -> Transactions
 - - - - Transaction Failed (OK)
 - Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
