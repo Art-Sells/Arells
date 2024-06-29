@@ -17,7 +17,7 @@ const Export: React.FC = () => {
   const [showExportFailed, setExportFailed] = useState<boolean>(false);
   const [showExportMore, setExportMore] = useState<boolean>(false);
   const [showExportSuccess, setExportSuccess] = useState<boolean>(false);
-  const [showExporting, setExporting] = useState<boolean>(false);
+  const [showExporting, setExporting] = useState<boolean>(true);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
 
     //Loader Function/s
@@ -78,16 +78,16 @@ const Export: React.FC = () => {
         <div id="export-failed-wrapper">
           <div id="export-content">
             <div className={stylings.marketplaceloader}>
-                <Image 
+            </div>
+            <Image 
                 // loader={imageLoader}
                 alt="" 
-                width={35}
-                height={35}
-                id="export-failed-image" 
-                src="images/market/export.png"
+                width={22}
+                height={22}
+                id="exporting-image" 
+                src="/images/market/export.png"
                 />  
-            </div>
-            <p id="export-failed-words">exporting</p>
+            <p id="exporting-words">exporting</p>
           </div>
         </div>
       )}
@@ -104,7 +104,7 @@ const Export: React.FC = () => {
             />
             <p id="account-created-words">Export Complete</p>
             <Link href="/transactions" passHref>
-                <button id="account-created-close" onClick={closeExportSuccess}>VIEW TRANSACTIONS</button>
+                <button id="account-created-close-two" onClick={closeExportSuccess}>VIEW TRANSACTIONS</button>
             </Link>
         </div>
       </div>
@@ -138,14 +138,14 @@ const Export: React.FC = () => {
               id="export-failed-image" 
               src="images/market/cancelled-ivory.png"
             />  
-            <p id="export-failed-words">export more Bitcoin</p>
+            <p id="export-failed-words">Export more Bitcoin</p>
             <button id="export-failed-close" onClick={closeExportMore}>OK</button> 
           </div>
         </div>
       )}
 
         <div id="header-navigation">
-            <Link href="/" id="home-link">
+            <Link href="/account" id="home-link">
               <Image
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('accountLogo')}
@@ -245,8 +245,7 @@ const Export: React.FC = () => {
                         src="images/howitworks/Bitcoin.png"/>
                     </div>
                 </span>
-                <span id="bitcoin-amount-export">Amount:</span>
-                <span id="bitcoin-amount-number">0.0005454</span>
+                <span id="bitcoin-amount-number-two">0.0005454</span>
             </div>
 
             <p id="exporting-amount">
@@ -266,15 +265,16 @@ const Export: React.FC = () => {
                         src="images/market/wallet.png"/>
                     </div>
                 </span>
-                <span id="export-wallet-word">Wallet:</span>
-                <span id="export-wallet-number">$
-                    <span id="export-wallet-num">2,000</span>
+                <span id="export-wallet-number-two">$
+                    <span id="export-wallet-num-two">2,000</span>
                 </span>
             </div>
 
 
             {/* <div id="fill-in">
             </div> */}
+
+            <div id="exporting-amount">You will lose</div>
 
             <div id="a-losses-export">
                 <span>
@@ -289,9 +289,8 @@ const Export: React.FC = () => {
                     src="images/howitworks/down-arrow-ebony.png"/>
                   </div>
                 </span>
-                <span id="wallet-account-losses">You will lose:</span>
                 <span id="#wallet-number-losses">$
-                    <span id="#wallet-number-losses-num">2,000</span>
+                    <span id="wallet-number-losses-num">2,000</span>
                 </span>
             </div>
 

@@ -3,10 +3,10 @@
 	padding-top: 20px; 
 	text-align: center;
 	font-family: Arial;
-	margin-top: 0%;
-	margin-left: 0%;
-	margin-right: 0%;
-	margin-bottom: 0%;
+	margin-top: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: -10px;
 		background-color: rgb(255, 251, 245);
 		border-radius: 30px;
 		padding-bottom: 0px;
@@ -30,7 +30,7 @@
 	 #header-navigation {
 		display: flex;
 		justify-content: center;
-		margin-left: -8px;
+		margin-left: 1px;
 		align-items: center;
 		position: fixed;
 		padding-top: 10px;
@@ -122,7 +122,8 @@
 		margin-right: auto;	
 		font-weight: 600;	
 		font-size: 20px;
-		letter-spacing: 0px;		
+		letter-spacing: 0px;	
+		opacity: .2;	
 	}	
 
 
@@ -200,6 +201,21 @@
 
 					}
 
+						#export-wallet-number-two {
+							color: gray;
+							font-size: 13px;
+							font-weight: 200;
+							margin-left: 3px;
+
+						}
+						#export-wallet-num-two {
+							color: black;
+							font-size: 14px;
+							font-weight: 600;
+							margin-left: 2px;
+
+						}
+
 				#b-wallet-export{
 					display: flex;
 					justify-content: center; 
@@ -229,6 +245,14 @@
 						margin-left: 2px;
 
 					}
+
+						#bitcoin-amount-number-two {
+							color: black;
+							font-size: 14px;
+							font-weight: 600;
+							margin-left: 4px;
+
+						}
 
 					
 				#export-amount-title {

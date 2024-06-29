@@ -83,7 +83,7 @@ const Import: React.FC = () => {
       )}
 
         <div id="header-navigation">
-            <Link href="/" id="home-link">
+            <Link href="/account" id="home-link">
               <Image
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('accountLogo')}

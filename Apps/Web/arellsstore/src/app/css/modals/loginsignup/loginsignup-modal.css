@@ -321,3 +321,28 @@
   
 }
 
+  #account-created-close-two {
+    background-color: rgba(204, 116, 0, 0.9);
+    color: white;
+    margin-top: -5px;
+    margin-left: auto;
+    margin-right: auto;   
+    border: none;
+    border-width: 2px;
+    font-weight: 500;
+    border-radius: 5px;
+    font-size: 10px;
+    padding: 15.5px;
+    letter-spacing: 1px;
+    width: 170px; 
+    box-shadow: 0px 8px 12px -6px rgba(204, 116, 0); 
+  }
+
+  #account-created-close:hover,
+  #account-created-close:focus {
+    cursor: pointer;
+    opacity: .4;
+    transition: 1s;
+    
+  }
+
