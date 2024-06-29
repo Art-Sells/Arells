@@ -188,10 +188,11 @@
 				opacity: 1;
 				box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  			  
 			}
-			#-input:focus {
-				outline: none;
+			#buy-button:hover,
+			#buy-button:focus {
+				opacity: .4;
 				transition: 1s;
-				background: rgba(0, 0, 0, 0.4);			    
-			}   
+				cursor: pointer;
+			}  
 	
 

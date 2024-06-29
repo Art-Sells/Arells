@@ -46,7 +46,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  #### Export (Page)
 
  #### Profits
- - acVacts - acVatops = Profits (Only displays if positive)
+ - displays acdVatops if positive, else ...
 
  #### Amount Sold
  - shows $amount
@@ -67,7 +67,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Exporting
 - (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page))
 - Total exported wallet value: "$" = combines cVacts from input
-- You will lose "$": combines and displays Export Amount Inputs of the cVacts - cVatops = Losses, otherwise, display none.
+- You will lose "$": combines and displays Export Amount Inputs of the cdVatops if negative, otherwise, display none.
 - (CANCEL) -> Account Page, 
 - (EXPORT) -> Modal
 - - Modal:
@@ -94,9 +94,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (A)(B) Total Amount 
 - - (W) displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise displays acVacts.
 - (A)(B) Amount Holding
-- - (W) displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise it is hidden.
+- - (W) displays acVatops if the acVatops + (acVatops * .03) < acVacts, else ...
 - (B) Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
-- - Profits: acVacts - acVatops = Profits
+- - Profits: displays acdVatops if positive, else ...
 - - Sell Amount Input: $ format tel with no * or # 
 - - Sell: takes from lowest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
 - - (Confirm Sale) -> Modals

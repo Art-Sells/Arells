@@ -174,102 +174,102 @@ const Sell: React.FC = () => {
                   </span>
               </div>
 
-            </div>
+          </div>
+
+          <div id="a-price-sell-holding">
+              <span>
+                <div id="a-sell-wrapper">
+                    <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="arells-sell" 
+                    src="images/howitworks/ArellsBitcoin.png"/>
+                </div>
+              </span>
+              <span>
+                  <div id="b-sell-wrapper">
+                      <Image
+                      loader={imageLoader}
+                      onLoad={() => handleImageLoaded('accountLogo')}
+                      alt=""
+                      width={20}
+                      height={20}
+                      id="bitcoin-sell-wallet" 
+                      src="images/howitworks/Bitcoin.png"/>
+                  </div>
+              </span>
+              <span id="amount-holding-title">AMOUNT HOLDING</span>
+          </div>
+
             
-            <div id="export-amount-wrapper">
-                <div id="a-wallet-export">
-                    <span>
-                        <div id="a-export-wrapper">
-                            <Image
-                            loader={imageLoader}
-                            onLoad={() => handleImageLoaded('accountLogo')}
-                            alt=""
-                            width={20}
-                            height={20}
-                            id="arells-export" 
-                            src="images/howitworks/ArellsBitcoin.png"/>
-                        </div>
-                    </span>
-                    <span>
-                        <div id="b-export-wrapper">
-                            <Image
-                            loader={imageLoader}
-                            onLoad={() => handleImageLoaded('accountLogo')}
-                            alt=""
-                            width={20}
-                            height={20}
-                            id="bitcoin-export-wallet" 
-                            src="images/howitworks/Bitcoin.png"/>
-                        </div>
-                    </span>
-                    <span id="export-wallet-word">Wallet:</span>
-                    <span id="export-wallet-number">$
-                        <span id="export-wallet-num">2,000</span>
-                    </span>
-                </div>
-                <div id="b-wallet-export">
-                    <span>
-                        <div id="b-wallet-wrapper">
-                            <Image
-                            loader={imageLoader}
-                            onLoad={() => handleImageLoaded('accountLogo')}
-                            alt=""
-                            width={20}
-                            height={20}
-                            id="bitcoin-export" 
-                            src="images/howitworks/Bitcoin.png"/>
-                        </div>
-                    </span>
-                    <span id="bitcoin-amount-export">Amount:</span>
-                    <span id="bitcoin-amount-number">0.0005454</span>
-                </div>
-                <p id="export-amount-title">
-                    Export Amount
-                </p>
-                <input 
-                    id="export-input"
-                    type="num" 
-                />
-                <p id="export-amount-title">
-                    Address
-                </p>
-                <input 
-                    id="address-input"
-                    type="text" 
-                />
-            </div>
+          <div id="sell-wrapper-sell-sell">
 
-            <p id="exporting-title">
-                Exporting
-            </p>
-
-            <p id="exporting-amount">
-                0.08786
-            </p>
-            {/* <div id="fill-in">
-            </div> */}
-
-            <div id="losses-wrapper">
-                <p id="losses-title">
-                    You will lose
-                </p>
-                <p id="loss-amount">
-                    $500.23
-                </p>
-            </div>
-
-            <div id="cancel-proceed-wrapper">
+            <div id="b-price-sell-holding">
                 <span>
-                    <button id="cancel-export">
-                        CANCEL
-                    </button>
+                    <div id="w-sell-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('accountLogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="wallet-icon-sell" 
+                        src="images/market/wallet.png"/>
+                    </div>
                 </span>
+                <span id="amount-holding-title">AMOUNT AVAILABLE TO SELL</span>
+            </div>
+
+            <div id="b-price-sell-wallet">
                 <span>
-                    <button id="proceed-export">
-                        EXPORT
-                    </button>
+                    <div id="w-sell-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('accountLogo')}
+                        alt=""
+                        width={20}
+                        height={20}
+                        id="wallet-icon-sell" 
+                        src="images/market/wallet.png"/>
+                    </div>
+                </span>
+                <span id="wallet-number-sell">$
+                    <span id="wallet-number-sell-num">625</span>
                 </span>
             </div>
+
+            <div id="b-profits-sell">
+              <span>
+                <div id="w-sell-wrapper">
+                  <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={20}
+                  height={20}
+                  id="profits-icon-sell" 
+                  src="images/howitworks/up-arrow-ebony.png"/>
+                </div>
+              </span>
+              <span id="wallet-sell-profits">Profits:</span>
+              <span id="wallet-number-profits-sell">$
+                  <span id="wallet-number-profits-sell-num">125</span>
+              </span>
+            </div>
+            <p id="sell-amount-title">
+                  Sell Amount
+            </p>
+            <input 
+                id="sell-input"
+                type="tel" 
+            />
+            <button id="sell-button">
+                SELL
+            </button>
+          </div>
         </div>
     </>
   );

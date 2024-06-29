@@ -16,7 +16,9 @@ Holds the highest price after purchase limiting the erasure of its value thus in
 ### Vatop = Value At Time Of Purchase
 - **cVatop** = Corresponding Vatop
 - **cpVatop** = Corresponding Price Vatop
+- **cdVatop** = Corresponding Difference Vatop
 - **acVatops** = All cVatops
+- **acdVatops** = All cdVatops
 
 ### Vact = Value At Current Time
 - **cVact** = Corresponding Vact
@@ -30,8 +32,10 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cVatop 1 = $500
  - - cpVatop 1 = $60,000
  - - cVact 1 = $500
+ - - cdVatop 1 = $0
  - - - acVatops = $500
  - - - acVacts = $500
+ - - - acdVatops = $0
 
 2. Bitcoin Price: $54,000
  - $600 worth of Bitcoin is purchased
@@ -39,11 +43,14 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cVatop 1 = $500
  - - cpVatop 1 = $60,000
  - - cVact 1 = $450 
+ - - cdVatop 1 = -$50
  - - cVatop 2 = $600
  - - cpVatop 2 = $54,000
  - - cVact 2 = $600
+ - - cdVatop 2 = $0
  - - - acVatops = $1,100
  - - - acVacts = $1,050
+ - - - acdVatops = -$50
 
 3. Bitcoin Price: $55,000
  - No Bitcoin is purchased
@@ -51,11 +58,14 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cVatop 1 = $500
  - - cpVatop 1 = $60,000
  - - cVact 1 = $458
+ - - cdVatop 1 = -$42
  - - cVatop 2 = $600
  - - cpVatop 2 = $54,000
  - - cVact 2 = $611
+ - - cdVatop 2 = $11
  - - - acVatops = $1,100
  - - - acVacts = $1,069
+ - - - acdVatops = -$31
 
 4. Bitcoin Price: $65,000
  - $200 worth of Bitcoin is purchased
@@ -63,14 +73,18 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cVatop 1 = $500
  - - cpVatop 1 = $60,000
  - - cVact 1 = $542
+ - - cdVatop 1 = $42
  - - cVatop 2 = $600
  - - cpVatop 2 = $54,000
  - - cVact 2 = $722
+ - - cdVatop 1 = $122
  - - cVatop 3 = $200
  - - cpVatop 3 = $65,000
  - - cVact 3 = $200
+ - - cdVatop 3 = $0
  - - - acVatops = $1,300
  - - - acVacts = $1,464
+ - - - acdVatops = $164 
 
 5. Bitcoin Price: $63,000
  - $650 worth of Bitcoin is sold
@@ -78,14 +92,18 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cVatop 1 = $0
  - - cpVatop 1 = $0
  - - cVact 1 = $0
+ - - cdVatop 1 = $0 
  - - cVatop 2 = $450
  - - cpVatop 2 = $54,000
  - - cVact 2 = $575
+ - - cdVatop 2 = $125  
  - - cVatop 3 = $200
  - - cpVatop 3 = $65,000
  - - cVact 3 = $194
+ - - cdVatop 3 = -$6  
  - - - acVatops = $650
  - - - acVacts = $769
+ - - - acdVatops = $119  
 
 ## This introduces a new kind of marketplace and market dynamics…
 
