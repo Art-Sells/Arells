@@ -1,9 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-
 // Import other necessary components and hooks
 import '../css/loginsignup/loginsignup.css';
-
 
 import Sell from '../../components/Sell/Sell';
 
@@ -24,7 +22,7 @@ export const metadata: Metadata = {
       ]
     },
     twitter: {
-      title: "Log In",
+      title: "Sell",
       description: "Never lose money selling cryptocurrencies.",
       card: "summary_large_image",
       images: [
