@@ -26,7 +26,6 @@ const Sell: React.FC = () => {
     const [showLoading, setLoading] = useState<boolean>(true);
     const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
       accountLogo: false,
-      buyLogo: false,
     });
   
     const handleImageLoaded = (imageName: string) => {
@@ -72,16 +71,16 @@ const Sell: React.FC = () => {
       {showSelling && (
         <div id="selling-failed-wrapper">
           <div id="selling-content">
-            <div className={stylings.marketplaceloader}>
-                <Image 
+            <div className={stylings.marketplaceloader}> 
+            </div>
+            <Image 
                 // loader={imageLoader}
                 alt="" 
-                width={35}
-                height={35}
+                width={22}
+                height={22}
                 id="selling-image" 
-                src="images/market/cash-register-ivory.png"
-                />  
-            </div>
+                src="/images/market/cash-register-ivory.png"
+                /> 
             <p id="selling-words">confirming sale</p>
           </div>
         </div>
@@ -99,7 +98,7 @@ const Sell: React.FC = () => {
             />
             <p id="account-created-words">Sale Complete</p>
             <Link href="/transactions" passHref>
-                <button id="account-created-close" 
+                <button id="account-created-close-two" 
                 onClick={closeSellSuccess}>VIEW TRANSACTIONS
                 </button>
             </Link>
@@ -109,7 +108,7 @@ const Sell: React.FC = () => {
 
       {showSellFailed && (
         <div id="selling-failed-wrapper">
-          <div id="selloing-failed-content">
+          <div id="selling-failed-content">
             <Image 
               loader={imageLoader}
               alt="" 
@@ -118,7 +117,7 @@ const Sell: React.FC = () => {
               id="selling-image" 
               src="images/market/cancelled-ivory.png"
             />  
-            <p id="selling-words">failed export</p>
+            <p id="selling-failed-words">transaction failed</p>
             <button id="selling-failed-close" onClick={closeSellFailed}>OK</button> 
           </div>
         </div>
@@ -208,19 +207,19 @@ const Sell: React.FC = () => {
           <div id="sell-wrapper-sell-sell">
 
             <div id="b-price-sell-holding">
-                <span>
-                    <div id="w-sell-wrapper">
-                        <Image
-                        loader={imageLoader}
-                        onLoad={() => handleImageLoaded('accountLogo')}
-                        alt=""
-                        width={20}
-                        height={20}
-                        id="wallet-icon-sell" 
-                        src="images/market/wallet.png"/>
-                    </div>
-                </span>
-                <span id="amount-holding-title">AMOUNT AVAILABLE TO SELL</span>
+            <span>
+                  <div id="b-sell-wrapper">
+                      <Image
+                      loader={imageLoader}
+                      onLoad={() => handleImageLoaded('accountLogo')}
+                      alt=""
+                      width={20}
+                      height={20}
+                      id="bitcoin-sell" 
+                      src="images/howitworks/Bitcoin.png"/>
+                  </div>
+              </span>
+                <span id="amount-holding-title">Amount Available to Sell</span>
             </div>
 
             <div id="b-price-sell-wallet">
