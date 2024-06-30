@@ -149,7 +149,7 @@ const Buy: React.FC = () => {
           </div>
 
           <div id="buy-input-wrapper">
-            <p id="amount-input-word">Amount</p>
+            <p id="amount-input-word">Buy Amount</p>
             <div id="b-price-buy">
               <span>
                 <input 
