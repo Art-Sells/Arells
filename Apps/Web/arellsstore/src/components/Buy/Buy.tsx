@@ -170,10 +170,10 @@ const Buy: React.FC = () => {
                   <span id="fees-total-num">0.00</span>
               </span>
             </div>
-            <div id="a-wallet-buy-wrapper">
-              <span id="fees-total-word">Total:</span>
-              <span id="fees-total-number">$
-                  <span id="fees-total-num">2,000.00</span>
+            <div id="a-wallet-buy-wrapper-bottom">
+              <span id="total-word">Total:</span>
+              <span id="total-number">$
+                  <span id="total-num">2,000.00</span>
               </span>
             </div>
 
