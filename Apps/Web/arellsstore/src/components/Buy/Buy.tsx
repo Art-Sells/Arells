@@ -14,7 +14,7 @@ import stylings from '../../app/css/modals/loading/marketplaceloader.module.css'
 
 const Buy: React.FC = () => {
 
-  const [showPurchaseFailed, setPurchaseFailed] = useState<boolean>(false);
+  const [showPurchaseFailed, setPurchaseFailed] = useState<boolean>(true);
   const [showBuyingSuccess, setBuyingSuccess] = useState<boolean>(false);
   const [showBuying, setBuying] = useState<boolean>(false);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
@@ -71,16 +71,16 @@ const Buy: React.FC = () => {
       {showBuying && (
         <div id="buying-wrapper">
           <div id="buying-content">
-            <div className={stylings.marketplaceloader}>
-                <Image 
+            <div className={stylings.marketplaceloader}> 
+            </div>
+            <Image 
                 // loader={imageLoader}
                 alt="" 
-                width={35}
-                height={35}
+                width={22}
+                height={22}
                 id="buying-image" 
-                src="images/market/cash-register-icon.png"
-                />  
-            </div>
+                src="/images/market/cash-register-ivory.png"
+                /> 
             <p id="buying-words">confirming purchase</p>
           </div>
         </div>
@@ -98,7 +98,7 @@ const Buy: React.FC = () => {
             />
             <p id="account-created-words">Purchase Complete</p>
             <Link href="/transactions" passHref>
-                <button id="account-created-close" onClick={closeBuyingSuccess}>VIEW TRANSACTIONS</button>
+                <button id="account-created-close-two" onClick={closeBuyingSuccess}>VIEW TRANSACTIONS</button>
             </Link>
         </div>
       </div>
@@ -115,13 +115,12 @@ const Buy: React.FC = () => {
               id="buying-image" 
               src="images/market/cancelled-ivory.png"
             />  
-            <p id="buying-failed-words-one">purchase failed</p>
+            <p id="buying-failed-words-one">Purchase Failed</p>
             <p id="buying-failed-words-two">Check Bank Account</p>
-            <p id="buying-failed-words-three">for sufficient funds</p>
             <Link href="/bank_account" passHref>
 
             </Link>
-            <button id="buying-failed-close" onClick={closePurchaseFailed}>VIEW CONNECTED BANK ACCOUNT</button> 
+            <button id="buying-failed-close" onClick={closePurchaseFailed}>VIEW CONNECTED BANK</button> 
           </div>
         </div>
       )}
@@ -169,7 +168,7 @@ const Buy: React.FC = () => {
             </div>
 
             <p id="buy-info-buy">Buy small amounts of Bitcoin and always sell them for profits.</p>
-            
+
             <button id="buy-button">
                 BUY
             </button>
