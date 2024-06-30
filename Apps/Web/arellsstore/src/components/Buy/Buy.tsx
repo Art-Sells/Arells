@@ -25,8 +25,7 @@ const Buy: React.FC = () => {
     }
     const [showLoading, setLoading] = useState<boolean>(true);
     const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
-      accountLogo: false,
-      buyLogo: false,
+      accountLogo: false
     });
   
     const handleImageLoaded = (imageName: string) => {
@@ -79,7 +78,7 @@ const Buy: React.FC = () => {
                 width={35}
                 height={35}
                 id="buying-image" 
-                src="images/market/cash-register-icory.png"
+                src="images/market/cash-register-icon.png"
                 />  
             </div>
             <p id="buying-words">confirming purchase</p>
@@ -132,17 +131,17 @@ const Buy: React.FC = () => {
         <div id="buy-info-wrapper">
 
           <div id="a-wallet-buy">
-              <span>
-                  <div id="w-account-wrapper">
-                      <Image
-                      loader={imageLoader}
-                      onLoad={() => handleImageLoaded('accountLogo')}
-                      alt=""
-                      width={20}
-                      height={20}
-                      id="wallet-icon-buy" 
-                      src="images/market/wallet.png"/>
-                  </div>
+            <span>
+              <div id="b-buy-wrapper">
+                  <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={20}
+                  height={20}
+                  id="bitcoin-buy" 
+                  src="images/howitworks/Bitcoin.png"/>
+              </div>
               </span>
               <span id="buy-wallet-word">Price:</span>
               <span id="buy-wallet-number">$
@@ -168,6 +167,9 @@ const Buy: React.FC = () => {
                   <span id="fees-total-num">2,000.00</span>
               </span>
             </div>
+
+            <p id="buy-info-buy">Buy small amounts of Bitcoin and always sell them for profits.</p>
+            
             <button id="buy-button">
                 BUY
             </button>

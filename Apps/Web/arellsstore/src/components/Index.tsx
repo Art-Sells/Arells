@@ -71,9 +71,11 @@ const Index = () => {
             <span id="ada-description">CRYPTOCURRENCIES</span>
           </p>
 
-
-
           <BitcoinChart />
+
+
+
+          <p id="buy-info-home">Buy small amounts of Bitcoin and always sell them for profits.</p>
 
           <Link href="/login" passHref>
             <button id="login">
