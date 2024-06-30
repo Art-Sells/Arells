@@ -83,8 +83,8 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Buy
 - (B) Price
 - Amount Input (in $) format tel with no * or # 
-- fees
-- total
+- fees (total * .03 goes to our Arells Bitcoin Wallet)
+- total (from input)
 - (BUY) -> Modals
 - Modals: 
 - - Confirming Purchase 3 Second delay
