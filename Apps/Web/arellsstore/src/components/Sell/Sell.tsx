@@ -127,87 +127,8 @@ const Sell: React.FC = () => {
 
         <div id='sell-wallet-wrapper'>
 
-          <div id="sell-wrapper-sell">
-              <div id="a-price-sell">
-                  <span>
-                    <div id="a-sell-wrapper">
-                        <Image
-                        loader={imageLoader}
-                        onLoad={() => handleImageLoaded('accountLogo')}
-                        alt=""
-                        width={20}
-                        height={20}
-                        id="arells-sell" 
-                        src="images/howitworks/ArellsBitcoin.png"/>
-                    </div>
-                  </span>
-                  <span>
-                      <div id="b-sell-wrapper">
-                          <Image
-                          loader={imageLoader}
-                          onLoad={() => handleImageLoaded('accountLogo')}
-                          alt=""
-                          width={20}
-                          height={20}
-                          id="bitcoin-sell-wallet" 
-                          src="images/howitworks/Bitcoin.png"/>
-                      </div>
-                  </span>
-                  <span id="amount-holding-title">TOTAL AMOUNT</span>
-              </div>
-              <div id="b-price-sell-wallet">
-                  <span>
-                      <div id="w-sell-wrapper">
-                          <Image
-                          loader={imageLoader}
-                          onLoad={() => handleImageLoaded('accountLogo')}
-                          alt=""
-                          width={20}
-                          height={20}
-                          id="wallet-icon-sell" 
-                          src="images/market/wallet.png"/>
-                      </div>
-                  </span>
-                  <span id="wallet-number-sell">$
-                      <span id="wallet-number-sell-num">625</span>
-                  </span>
-              </div>
-
-          </div>
-
-          <div id="a-price-sell-holding">
+            <div id="b-amount-available">
               <span>
-                <div id="a-sell-wrapper">
-                    <Image
-                    loader={imageLoader}
-                    onLoad={() => handleImageLoaded('accountLogo')}
-                    alt=""
-                    width={20}
-                    height={20}
-                    id="arells-sell" 
-                    src="images/howitworks/ArellsBitcoin.png"/>
-                </div>
-              </span>
-              <span>
-                  <div id="b-sell-wrapper">
-                      <Image
-                      loader={imageLoader}
-                      onLoad={() => handleImageLoaded('accountLogo')}
-                      alt=""
-                      width={20}
-                      height={20}
-                      id="bitcoin-sell-wallet" 
-                      src="images/howitworks/Bitcoin.png"/>
-                  </div>
-              </span>
-              <span id="amount-holding-title">AMOUNT HOLDING</span>
-          </div>
-
-            
-          <div id="sell-wrapper-sell-sell">
-
-            <div id="b-price-sell-holding">
-            <span>
                   <div id="b-sell-wrapper">
                       <Image
                       loader={imageLoader}
@@ -219,7 +140,7 @@ const Sell: React.FC = () => {
                       src="images/howitworks/Bitcoin.png"/>
                   </div>
               </span>
-                <span id="amount-holding-title">Amount Available to Sell</span>
+              <span id="amount-holding-title">Amount Available to Sell</span>
             </div>
 
             <div id="b-price-sell-wallet">
@@ -235,6 +156,7 @@ const Sell: React.FC = () => {
                         src="images/market/wallet.png"/>
                     </div>
                 </span>
+                <span id="sell-wallet-word">Wallet:</span>
                 <span id="wallet-number-sell">$
                     <span id="wallet-number-sell-num">625</span>
                 </span>
@@ -258,18 +180,31 @@ const Sell: React.FC = () => {
                   <span id="wallet-number-profits-sell-num">125</span>
               </span>
             </div>
+            
+          <div id="sell-wrapper-sell-sell">
+
             <p id="sell-amount-title">
                   Sell Amount
             </p>
-            <input 
-                id="sell-input"
-                type="tel" 
-            />
-            <button id="sell-button">
-                SELL
-            </button>
+            <div id="b-price-sell">
+              <span>
+                <input 
+                    id="sell-input"
+                    type="tel" 
+                />
+              </span>
+              <span>
+                <div 
+                    id="cash-input">
+                  $  
+                  </div>
+              </span>
+            </div>
           </div>
         </div>
+        <button id="sell-button">
+            SELL
+        </button>
     </>
   );
 };

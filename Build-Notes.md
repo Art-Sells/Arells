@@ -95,10 +95,6 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - all prices and wallet values structured like so: 1,000,000.00
 
 ### Sell
-- (A)(B) Total Amount 
-- - (W) displays acVatops if the acVatops + (acVatops * .03) < acVacts, otherwise displays acVacts.
-- (A)(B) Amount Holding
-- - (W) displays acVatops if the acVatops + (acVatops * .03) < acVacts, else ...
 - (B) Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
 - - Profits: displays acdVatops if positive, else ...
 - - Sell Amount Input: $ format tel with no * or # 
