@@ -140,7 +140,7 @@ const Sell: React.FC = () => {
                       src="images/howitworks/Bitcoin.png"/>
                   </div>
               </span>
-              <span id="amount-holding-title">Amount Available to Sell</span>
+              <span id="amount-holding-title">Amount Available To Sell</span>
             </div>
 
             <div id="b-price-sell-wallet">
