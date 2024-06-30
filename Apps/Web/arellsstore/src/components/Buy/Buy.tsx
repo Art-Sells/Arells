@@ -14,7 +14,7 @@ import stylings from '../../app/css/modals/loading/marketplaceloader.module.css'
 
 const Buy: React.FC = () => {
 
-  const [showPurchaseFailed, setPurchaseFailed] = useState<boolean>(true);
+  const [showPurchaseFailed, setPurchaseFailed] = useState<boolean>(false);
   const [showBuyingSuccess, setBuyingSuccess] = useState<boolean>(false);
   const [showBuying, setBuying] = useState<boolean>(false);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
@@ -150,10 +150,20 @@ const Buy: React.FC = () => {
 
           <div id="buy-input-wrapper">
             <p id="amount-input-word">Amount</p>
-            <input 
-                id="amount-input"
-                type="tel" 
-            />
+            <div id="b-price-buy">
+              <span>
+                <input 
+                    id="buy-input"
+                    type="tel" 
+                />
+              </span>
+              <span>
+                <div 
+                    id="cash-input-buy">
+                  $  
+                  </div>
+              </span>
+            </div>
             <div id="a-wallet-buy-wrapper">
               <span id="fees-total-word">Fees:</span>
               <span id="fees-total-number">$
@@ -167,14 +177,15 @@ const Buy: React.FC = () => {
               </span>
             </div>
 
-            <p id="buy-info-buy">Buy small amounts of Bitcoin and always sell them for profits.</p>
-
-            <button id="buy-button">
-                BUY
-            </button>
-
           </div>
         </div>
+
+
+        <p id="buy-info-buy">Buy small pieces of Bitcoin and always sell them for profits.</p>
+
+        <button id="buy-button">
+            BUY
+        </button>
 
     </>
   );

@@ -75,7 +75,7 @@ const Index = () => {
 
 
 
-          <p id="buy-info-home">Buy small amounts of Bitcoin and always sell them for profits.</p>
+          <p id="buy-info-home">Buy small pieces of Bitcoin and always sell them for profits.</p>
 
           <Link href="/login" passHref>
             <button id="login">
