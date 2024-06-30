@@ -14,7 +14,7 @@
 		-webkit-animation-duration: 1.00s;
 		animation-name: animatetop;
 		animation-duration: 1.00s;
-		padding-bottom: 80px; 
+		padding-bottom: 60px; 
    }
    
 	   @-webkit-keyframes animatetop {
@@ -48,7 +48,7 @@
 		margin-top: 35px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 360px;
+		height: 600px;
 		width: 380px;
 		background-color: white;
 		border-radius: 30px;
@@ -70,12 +70,12 @@
                 padding-top: 25px;
                 display: flex;
                 justify-content: center; 
-                width: 320px;
+                width: 250px;
                 align-items: center;
                 margin-left: auto;
                 margin-right: auto;
                 padding-bottom: 20px;
-                box-shadow: 0px 17px 14px -20px rgb(0, 0, 0, 0.2);
+                box-shadow: 0px 17px 14px -20px rgb(0, 0, 0, 0.15);
             }
 
 
@@ -140,7 +140,7 @@
             padding-bottom: 40px;
             margin-left: auto;
             margin-right: auto;
-            height: 95px;
+            height: 335px;
             width: 260px;
             background-color: rgba(255, 251, 245, 1);
             border-radius: 30px;
@@ -150,6 +150,8 @@
                 display: flex;
                 justify-content: center; 
                 align-items: center;
+                padding-bottom: 40px;
+                box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
             }  
             #bitcoin-sell{
 				width: 20px;
@@ -239,31 +241,93 @@
                 outline: none;
                 transition: 1s;	
                 opacity: 1;	    
-            }    
-            #sell-button {
-                background: rgba(204, 116, 0);
-                text-decoration: none;
-                color: white;
-                font-weight: 200;
-                font-size: 10px;
-                padding-top: 20px;
-                padding-bottom: 20px;
-                padding-right: 12px;
-                padding-left: 13px;	  
-                border: solid;
-                letter-spacing: 1px;
-                border-radius: 5px;
-                border-width: 0px;
-                margin-top: 60px;
-                width: 380px;
-                opacity: 1;
-                box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
+            }   
+            
+            #a-wallet-sell-wrapper{
+                padding-top: 30px;
+                display: flex;
+                justify-content: center; 
+                align-items: center;
+                padding-bottom: 25px;
+                box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
 			}
 
-			#sell-button:hover,
-			#sell-button:focus {
-				opacity: .4;
-				transition: 1s;
-				cursor: pointer;
-			}    
+				#fees-total-word-sell {
+                    color: rgb(172, 146, 111); 
+                    font-size: 12px;
+                    font-weight: 200;
+                    opacity: 1;
+
+				}
+				#fees-total-number-sell {
+                    color: rgb(203, 176, 138); 
+					font-size: 13px;
+					font-weight: 200;
+					margin-left: 3px;
+                    opacity: 1;
+
+				}
+				#fees-total-num-sell {
+                    color: rgb(172, 146, 111); 
+					font-size: 14px;
+					font-weight: 600;
+					margin-left: 2px;
+
+				}
+
+			#a-wallet-sell-wrapper-bottom{
+				padding-top: 35px;
+				display: flex;
+				justify-content: center; 
+				align-items: center;
+			}
+
+
+				#total-word-sell {
+                    color: rgb(172, 146, 111); 
+                    font-size: 12px;
+                    font-weight: 200;
+                    opacity: 1;
+				}
+				#total-number-sell {
+                    color: rgb(203, 176, 138); 
+					font-size: 13px;
+					font-weight: 200;
+					margin-left: 3px;
+                    opacity: 1;
+
+				}
+				#total-num-sell {
+                    color: rgb(172, 146, 111); 
+					font-size: 14px;
+					font-weight: 600;
+					margin-left: 2px;
+
+				}
+    #sell-button {
+        background: rgba(204, 116, 0);
+        text-decoration: none;
+        color: white;
+        font-weight: 200;
+        font-size: 10px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-right: 12px;
+        padding-left: 13px;	  
+        border: solid;
+        letter-spacing: 1px;
+        border-radius: 5px;
+        border-width: 0px;
+        margin-top: 30px;
+        width: 150px;
+        opacity: 1;
+        box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
+    }
+
+    #sell-button:hover,
+    #sell-button:focus {
+        opacity: .4;
+        transition: 1s;
+        cursor: pointer;
+    }    
 		

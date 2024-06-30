@@ -200,11 +200,23 @@ const Sell: React.FC = () => {
                   </div>
               </span>
             </div>
+            <div id="a-wallet-sell-wrapper">
+              <span id="fees-total-word-sell">Fees:</span>
+              <span id="fees-total-number-sell">$
+                  <span id="fees-total-num-sell">0.00</span>
+              </span>
+            </div>
+            <div id="a-wallet-sell-wrapper-bottom">
+              <span id="total-word-sell">Total:</span>
+              <span id="total-number-sell">$
+                  <span id="total-num-sell">0.00</span>
+              </span>
+            </div>
+            <button id="sell-button">
+                SELL
+            </button>
           </div>
         </div>
-        <button id="sell-button">
-            SELL
-        </button>
     </>
   );
 };

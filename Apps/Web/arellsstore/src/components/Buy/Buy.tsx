@@ -181,7 +181,7 @@ const Buy: React.FC = () => {
         </div>
 
 
-        <p id="buy-info-buy">Buy small pieces of Bitcoin and always sell them for profits.</p>
+        <p id="buy-info-buy">Buy small amounts of Bitcoin and always sell them for profits.</p>
 
         <button id="buy-button">
             BUY
