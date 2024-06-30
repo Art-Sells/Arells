@@ -88,8 +88,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (BUY) -> Modals
 - Modals: 
 - - Confirming Purchase 3 Second delay
-- - Purchase Complete (rtfolio)-> Account, 
-- - Purchase Failed (View Portfolio)-> Account, 
+- - Purchase Complete (View Transactions)-> Transactions, 
 - - Purchase Failed (confirming purchase modal = false), check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 - all prices and wallet values structured like so: 1,000,000.00
