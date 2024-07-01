@@ -10,6 +10,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - **CoinGecko API wrapper** purchase CoinGecko API?
 - **Possibly a connect wallet & log in/sign up account wrapper** that automatically connects to your prior wallet with Address and Private Key pulled from backend once logged in.
 - **Possibly a plaid wraper**
+- **HPM Wrapper (see Readme for building mechanisms example)**
 
 ### Home Page
 - If Log In = true, go to /Account
@@ -109,20 +110,26 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Transactions
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- Sold "amount of Bitcoin" for "dollar amount" with "profits"
-- Bought "amount of Bitcoin" for "dollar amount"
-- Withdrew "dollar amount" to "bank account"
-- Sending "amount of Bitcoin" Pending (View on Block Explorer): Blockchain.com, instantly becomes Completed (View on Block Explorer)...
+- (Calendar) 06/21/24 (mm/dd/yr)
+- (B) Sold: 0.0087
+- - (Cash Register) for: $ 
+- (B) Bought: 0.0087
+- - (Cash Register) for: $
+- (Vault) Withdrew: $
+- - (Bank) to: (Plaid Bank Logo Button?)->Bank Account
+- (^-circle) Exporting: 0.00043 (if loading useEffect from Block Explorer)| (B) Exported: 0.00323 (if completed useEffect)
+- - (App) To: (View On Block Explorer)-> Block Explorer Link
 - all values structured like so: 1,000,000.00
 
 ### Withdraw
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- shows $amount
-- Are you sure you'd like to withdraw this to your bank account?
-- (PROCEED) -> Transactions Page
+- (Cash Register) Amount $
+- (Bank) to: (Plaid Bank Logo Button?)->Bank Account
+- (Withdraw) -> Modal
 - - Modal:
-- - - Withdraw Complete (View Transactions)-> Transactions
-- - - Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
+- - - (Bank) Withdrawing 
+- - -  (Check) Withdraw Complete (View Transactions)-> Transactions
+- - - (X) Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
 - all values structured like so: 1,000,000.00
 
 ### Bank Account
