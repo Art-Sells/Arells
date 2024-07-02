@@ -243,14 +243,15 @@
 				color: black;
 				font-size: 9px;
 				font-weight: 200;
-				margin-top: 50px;
-				opacity: .5;
+				margin-top: 40px;
+				opacity: .7;
 				letter-spacing: 0.05px;
 		
 			}
 					
 				
 			#buy-button {
+				margin-top: 25px;
 				background: black;
 				text-decoration: none;
 				color: white;

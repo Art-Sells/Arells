@@ -39,7 +39,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  - displayed once a cVatop + (cVatop * .03) < the cVact, othersie hidden
 
  #### (A)(B) Price = Holding Price
- - Holding Price dependent on highest cpVatop
+ - Holding Price = HPAP, if the Bitcoin price rises above the HPAP, then Holding Price = Bitcoin Price
 
  #### (A)(B) Value
  - Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
@@ -102,7 +102,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - (Confirm Sale) -> Modals
 - - - Modals: 
 - - - - Confirming Sale...3 Second delay Amount To Sell - Arells Fees
-- - - - Sale Complete (confirming sale modal = false) (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database)(View Transactions) -> Transactions
+- - - - Sale Complete (confirming sale modal = false) (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database, adds to "Withdraw Amount")(View Transactions) -> Transactions
 - - - - Transaction Failed (confirming sale modal = false) (OK)
 - Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
 - all prices and wallet values structured like so: 1,000,000.00

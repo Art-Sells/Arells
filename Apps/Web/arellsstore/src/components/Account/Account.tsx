@@ -116,8 +116,6 @@ const Account: React.FC = () => {
           </span>
         </div>
 
-        <p id="buy-info-account">Buy small pieces of Bitcoin and sell them for profits.</p>
-
         <div id="sell-wrapper-account">
 
             <div id="a-price-account">

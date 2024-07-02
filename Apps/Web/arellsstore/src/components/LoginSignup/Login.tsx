@@ -45,7 +45,7 @@ const Login: React.FC = () => {
                     </div>
                 </div>  
             )}
-
+            <p id="login-title">LOGIN</p>
             <div id="log-in">
                 <form id="myForm">
                     <div id="enter-content">

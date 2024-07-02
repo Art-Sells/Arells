@@ -192,15 +192,15 @@
 	
 	#buy-info-home {
 		color: black;
-		font-size: 10px;
-		font-weight: 200;
+		font-size: 9px;
+		font-weight: 800;
 		margin-top: 50px;
-		opacity: .5;
+		opacity: .7;
 		letter-spacing: .5px;
 
 	}
 	#login {
-		margin-top: 0px;
+		margin-top: 40px;
 	  background: rgba(204, 116, 0);
 	  text-decoration: none;
 	  color: white;
@@ -224,78 +224,7 @@
 	  transition: 1s;
 	  cursor: pointer;
 	}   
-	#updatess-connected {
-		margin-top: 20px;
-		background: black;
-		text-decoration: none;
-		color: white;
-		font-weight: 200;
-		font-size: 11px;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		padding-right: 22px;
-		padding-left: 25px;	  
-		border: none;
-		letter-spacing: 3px;
-		border-radius: 5px;
-		border-width: 0px;
-		width: 180px;
-		opacity: 1;
-		box-shadow: 0px 8px 12px -6px black;  
-	  }
-		#updatess:hover,
-		#updatess:focus,
-		#updatess-connected:hover,
-		#updatess-connected:focus,
-		#howitworks:hover,
-		#howitworks:focus {
-			opacity: .4;
-			transition: 1s;
-			cursor: pointer;
-		}
-		#wallet-needed-words{
-			margin-top: 10px;
-			font-size: 9px;
-			letter-spacing: 0px;
-			margin-left: 0px; 
-			font-weight: 500;
-			opacity: 1;
-			color: black;
-			word-spacing: 0px;			
-		}
-  
-		  #discord-wrapper{
-			text-decoration: none;
-			margin-left: auto;
-			margin-right: auto;
-			  text-decoration: none;
-			  padding-top: 25px;
-			  padding-bottom: 4px;
-			  padding-right: 10px;
-			  padding-left: 10px;	  
-			  border: solid;
-			  width: 50px;
-			  height: 50px;
-			  border-color: rgb(211, 211, 211);
-			  border-radius: 12px;
-			  border-width: 1px;
-			  opacity: 1;
-				background: white;	
-				box-shadow: 0px 3px 3px -3px rgb(175, 175, 175); 					
-			}
-			#discord-wrapper:hover,
-			#discord-wrapper:focus {
-				transition: 1s;
-				cursor: pointer;
-				border-color: gray;
-				opacity: .4;	
-			}
-				#discord-icon {
-					margin-top: 40px;
-					opacity: .9;
-					width: 30px;
-            		height: 30px;
-				}
+
 	  	
 	  
 
@@ -337,83 +266,15 @@
 		  margin-left: 10px; 
 	  }
 
-	  #black-liner {
-		width: 250px;
-	  }	
-	#black-liner-bottom-home {
-		width: 300px;
-		opacity: .1;
-	  }	
-	  #bear-markets-description {
-		font-size: 6px;
-		letter-spacing: 8px;
-		margin-left: 8px; 
-	}	
 
 	#buy-info-home {
-		font-size: 9px;
+		font-size: 8px;
 	}
 
 	#login {
 		width: 290px;
-		font-size: 11px; 
-		margin-top: 0px;			  
+		font-size: 11px; 			  
 		}
-
-	
-	  #updatess {
-		width: 260px;
-		font-weight:500;
-		font-size: 9px;
-		border-width: 1px;	    
-	  }	
-	  #wallet-needed-words{
-		margin-top: 10px;
-		font-size: 8px;
-		letter-spacing: 0px;
-		margin-left: 0px; 		
-	}
-
-	  #connecting-wallet-wrapper {	
-		margin-top: 0px;
-		margin-bottom: -15px;
-		width: 200px;
-		height: 85px;
-		padding-top: 20px;
-		padding-left: 20px;
-		padding-right: 20px;
-		padding-bottom: 40px;			
-	}
-	  #ada-connected {
-		margin-top: -3px;
-		font-size: 7px;
-		letter-spacing: 2.5px;
-		margin-left: 2.5px; 
-		}
-		#updatess-connected {
-			margin-top: 15px;
-			width: 155px;
-			font-weight:400;
-			font-size: 9px;
-			border-width: 1px;	   
-			padding-right: 22px;
-			padding-left: 25px;	 
-			}
-	  
-	  #discord-wrapper{
-		  padding-top: 13px;
-		  padding-bottom: 3px;
-		  padding-right: 8px;
-		  padding-left: 8px;	
-		  border-radius: 10px;
-		  box-shadow: 0px 3px 3px -3px rgb(175, 175, 175);  				
-		}
-
-	  #discord-icon {
-		margin-top: 40px;
-		width: 20px;
-		height: 20px;
-	  }
 	  
 	}	
   
