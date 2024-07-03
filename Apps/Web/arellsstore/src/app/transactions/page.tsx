@@ -1,51 +1,49 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-
 // Import other necessary components and hooks
-import '../css/export/export.css';
+import '../css/transactions/transactions.css';
 
-
-import Export from '../../components/Export/Export';
+import Transactions from '../../components/Transactions/Transactions';
 
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
-  title: "Export",
+  title: "Transactions",
   description: "Never lose money selling cryptocurrencies.",
   robots: "noimageindex",
   openGraph: {
-    title: "Export",
+    title: "Transactions",
     description: "Never lose money selling cryptocurrencies.",
-    url: "https://arells.com/export",
+    url: "https://arells.com/transactions",
     type: "website",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/HowItWorksBanner.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Spread-Pivot.jpg"
       }
     ]
   },
   twitter: {
-    title: "Export",
+    title: "Transactions",
     description: "Never lose money selling cryptocurrencies.",
     card: "summary_large_image",
     images: [
       {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/HowItWorksBanner.jpg"
+        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/Default-Spread-Pivot.jpg"
       }
     ]
   }
 };
 
-const ExportPage = () => {
+const TransactionsPage = () => {
   
 
   return (
     <>
 
-      <div id="export-wrapper">
-            <Export/>
+      <div id="transactions-wrapper">
+            <Transactions/>
       </div>
     </>
   );
 }
 
-export default ExportPage;
+export default TransactionsPage;
