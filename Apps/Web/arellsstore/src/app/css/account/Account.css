@@ -1,5 +1,5 @@
 #account-wrapper {
-	padding-top: 40px;
+	padding-top: 45px;
 	text-align: center;
 	  font-family: Arial;
 	  margin-top: -10px;
@@ -31,7 +31,7 @@
 	}
 
 	  #descriptioner-account {
-		margin-top: 10px;
+		margin-top: 20px;
 		font-size: 8px;
 		letter-spacing: .5px;
 		margin-left: .5px; 
@@ -54,7 +54,7 @@
 	#wallet-account-wrapper {
 		padding-top: 40px;
 		padding-bottom: 40px;
-		margin-top: 20px;
+		margin-top: 15px;
 		margin-left: auto;
 		margin-right: auto;
 		height: 660px;
