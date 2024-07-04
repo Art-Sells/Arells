@@ -100,14 +100,15 @@ const Transactions: React.FC = () => {
                     loader={imageLoader}
                     onLoad={() => handleImageLoaded('accountLogo')}
                     alt=""
-                    width={20}
-                    height={20}
-                    id="exporting-image" 
+                    width={12}
+                    height={12}
+                    id="calendar-image" 
                     src="images/market/calendar.png"/>
                 </div>
               </span>
               <span id="calendar-date">06/21/24</span>
-              <span id="calendar-date-fromat">(mm/dd/yr)</span>
+              <span id="calendar-date-format">mm/dd/yy</span>
+
             </div>             
           )}
 
@@ -222,7 +223,7 @@ const Transactions: React.FC = () => {
                       alt=""
                       width={20}
                       height={20}
-                      id="bitcoin-transactions" 
+                      id="wallet-icon-transactions" 
                       src="images/market/bank.png"/>
                   </div>
                 </span>
