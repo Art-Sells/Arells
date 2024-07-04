@@ -39,10 +39,11 @@ const Transactions: React.FC = () => {
     }, [imagesLoaded]);
   //Loader Function/s
 
+  const [withdrawCalendar, withdrawCalendarSet] = useState<boolean>(true);
   const [sold, soldSet] = useState<boolean>(true);
   const [bought, boughtSet] = useState<boolean>(true);
   const [withdrew, withdrewSet] = useState<boolean>(true);
-  const [exported, exportedSet] = useState<boolean>(true);
+  const [exported, exportedSet] = useState<boolean>(false);
   const [exportingLoader, exportingLoaderSet] = useState<boolean>(false);
   const [exportComplete, exportCompleteSet] = useState<boolean>(true);
 
@@ -90,6 +91,25 @@ const Transactions: React.FC = () => {
         <p id="transactions-title">TRANSACTIONS</p>
 
         <div id="transactions-wallet-wrapper">
+
+          {withdrawCalendar && (
+            <div id="withdraw-calendar-wrapper">
+              <span>
+                <div id="b-wallet-wrapper">
+                    <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="exporting-image" 
+                    src="images/market/calendar.png"/>
+                </div>
+              </span>
+              <span id="calendar-date">06/21/24</span>
+              <span id="calendar-date-fromat">(mm/dd/yr)</span>
+            </div>             
+          )}
 
           {sold && (
             <div id="transactions-amount-wrapper">

@@ -141,6 +141,25 @@
 		/* box-shadow: 0px 5px 40px -15px rgba(215, 181, 138, 1); */
 	}
 
+		#withdraw-calender-wrapper {
+			margin-top: 40px;
+			margin-bottom: 20px;
+		}
+			#calendar-date {
+				color: black;
+				font-size: 13px;
+				font-weight: 200;
+				margin-left: 5px;
+				opacity: .5;
+			}	
+			#calendar-date-format {
+				color: black;
+				font-size: 12px;
+				font-weight: 600;
+				margin-left: 2px;
+				opacity: .3;
+			}
+
 
 		#transactions-amount-wrapper {
 			margin-top: 20px;
@@ -165,9 +184,7 @@
 					box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
 				}	
 				#b-wallet-wrapper-exporting,
-				#b-wallet-wrapper-exported,
-				#bitcoin-amount-exporting,
-				#bitcoin-amount-exported {
+				#b-wallet-wrapper-exported {
 					-webkit-animation-name: animatetop;
 					-webkit-animation-duration: 1.00s;
 					animation-name: animatetop;
@@ -195,6 +212,18 @@
 						opacity: .5;
 
 					}
+					#bitcoin-amount-exporting,
+					#bitcoin-amount-exported {
+						color: black;
+						font-size: 12px;
+						font-weight: 200;
+						margin-left: 5px;
+						opacity: .5;
+						-webkit-animation-name: animatetop;
+						-webkit-animation-duration: 1.00s;
+						animation-name: animatetop;
+						animation-duration: 1.00s;
+					}	
 
 					#bitcoin-amount-number-sold,
 					#bitcoin-amount-number-bought,
