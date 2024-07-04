@@ -43,9 +43,9 @@ const Transactions: React.FC = () => {
   const [sold, soldSet] = useState<boolean>(true);
   const [bought, boughtSet] = useState<boolean>(true);
   const [withdrew, withdrewSet] = useState<boolean>(true);
-  const [exported, exportedSet] = useState<boolean>(false);
-  const [exportingLoader, exportingLoaderSet] = useState<boolean>(false);
-  const [exportComplete, exportCompleteSet] = useState<boolean>(true);
+  const [exported, exportedSet] = useState<boolean>(true);
+  const [exportingLoader, exportingLoaderSet] = useState<boolean>(true);
+  const [exportComplete, exportCompleteSet] = useState<boolean>(false);
 
   return (
     <>
@@ -122,8 +122,8 @@ const Transactions: React.FC = () => {
                           loader={imageLoader}
                           onLoad={() => handleImageLoaded('accountLogo')}
                           alt=""
-                          width={20}
-                          height={20}
+                          width={15}
+                          height={15}
                           id="bitcoin-transactions" 
                           src="images/howitworks/Bitcoin.png"/>
                       </div>
@@ -138,8 +138,8 @@ const Transactions: React.FC = () => {
                           loader={imageLoader}
                           onLoad={() => handleImageLoaded('accountLogo')}
                           alt=""
-                          width={20}
-                          height={20}
+                          width={15}
+                          height={15}
                           id="wallet-icon-transactions" 
                           src="images/market/cash-register.png"/>
                       </div>
@@ -163,8 +163,8 @@ const Transactions: React.FC = () => {
                           loader={imageLoader}
                           onLoad={() => handleImageLoaded('accountLogo')}
                           alt=""
-                          width={20}
-                          height={20}
+                          width={15}
+                          height={15}
                           id="bitcoin-transactions" 
                           src="images/howitworks/Bitcoin.png"/>
                       </div>
@@ -179,8 +179,8 @@ const Transactions: React.FC = () => {
                           loader={imageLoader}
                           onLoad={() => handleImageLoaded('accountLogo')}
                           alt=""
-                          width={20}
-                          height={20}
+                          width={15}
+                          height={15}
                           id="wallet-icon-transactions" 
                           src="images/market/cash-register.png"/>
                       </div>
@@ -194,7 +194,7 @@ const Transactions: React.FC = () => {
           )}
 
           {withdrew && (
-            <div id="transactions-amount-wrapper">
+            <div id="transactions-button-wrapper">
 
               <div id="b-wallet-transactions">
                 <span>
@@ -203,9 +203,9 @@ const Transactions: React.FC = () => {
                       loader={imageLoader}
                       onLoad={() => handleImageLoaded('accountLogo')}
                       alt=""
-                      width={20}
-                      height={20}
-                      id="wallet-icon-transactions" 
+                      width={15}
+                      height={15}
+                      id="wallet-icon-vault" 
                       src="images/market/vault.png"/>
                   </div>
                 </span>
@@ -221,8 +221,8 @@ const Transactions: React.FC = () => {
                       loader={imageLoader}
                       onLoad={() => handleImageLoaded('accountLogo')}
                       alt=""
-                      width={20}
-                      height={20}
+                      width={15}
+                      height={15}
                       id="wallet-icon-transactions" 
                       src="images/market/bank.png"/>
                   </div>
@@ -230,7 +230,7 @@ const Transactions: React.FC = () => {
                 <span id="bitcoin-amount-transactions">To:</span>
                 <span>
                   <button id="withdrew-export">
-                      CHASE BANK...? 
+                      CHASE BANK 
                   </button>
                 </span>
               </div>
@@ -239,7 +239,7 @@ const Transactions: React.FC = () => {
           )}
 
           {exported && (
-            <div id="transactions-amount-wrapper">
+            <div id="transactions-button-wrapper">
 
               <div id="b-wallet-transactions">
                   {exportingLoader && (
@@ -255,10 +255,10 @@ const Transactions: React.FC = () => {
                           width={15}
                           height={15}
                           id="exporting-image" 
-                          src="/images/market/export.png"/>
+                          src="images/market/export-ebony.png"/>
                       </div>
                     </span>
-                    <span id="bitcoin-amount-exporting">Exporting:</span>
+                    <span id="bitcoin-amount-transactions">Exporting:</span>
                     <span id="bitcoin-amount-number-exported">0.0005454</span>             
                     </>    
                   )}
@@ -270,13 +270,13 @@ const Transactions: React.FC = () => {
                           loader={imageLoader}
                           onLoad={() => handleImageLoaded('accountLogo')}
                           alt=""
-                          width={20}
-                          height={20}
+                          width={15}
+                          height={15}
                           id="bitcoin-transactions" 
                           src="images/howitworks/Bitcoin.png"/>
                       </div>
                     </span>
-                    <span id="bitcoin-amount-exported">Exported:</span>
+                    <span id="bitcoin-amount-transactions">Exported:</span>
                     <span id="bitcoin-amount-number-exported">0.0005454</span>             
                     </>       
                   )}
@@ -288,16 +288,16 @@ const Transactions: React.FC = () => {
                       loader={imageLoader}
                       onLoad={() => handleImageLoaded('accountLogo')}
                       alt=""
-                      width={20}
-                      height={20}
-                      id="bitcoin-transactions" 
-                      src="images/market/bank.png"/>
+                      width={15}
+                      height={15}
+                      id="wallet-icon-exported" 
+                      src="images/market/export-ebony.png"/>
                   </div>
                 </span>
-                <span id="bitcoin-amount-transactions">To:</span>
+                <span id="transactions-exported-to">To:</span>
                 <span>
                   <button id="view-export">
-                      VIEW ON BLOCK EXPLORER
+                      VIEW EXPLORER
                   </button>
                 </span>
               </div>

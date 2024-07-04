@@ -139,6 +139,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ## Arells Cryptocurrency Marketplace 1.5
 
 ### Home Page (without login)
+- Add transactions button
 
 ### Sign Up
 - Verify Email *important*

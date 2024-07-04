@@ -156,8 +156,8 @@
 			}
 			#calendar-date {
 				color: black;
-				font-size: 13px;
-				font-weight: 600;
+				font-size: 12px;
+				font-weight: 800;
 				margin-left: 3px;
 				opacity: 1;
 			}	
@@ -166,7 +166,7 @@
 				font-size: 9px;
 				font-weight: 200;
 				margin-left: 3px;
-				opacity: .4;
+				opacity: .3;
 				margin-top: 0px;
 			}
 
@@ -174,10 +174,20 @@
 		#transactions-amount-wrapper {
 			margin-top: 20px;
 			padding-top: 20px;
-			padding-bottom: 40px;
 			margin-left: auto;
 			margin-right: auto;
-			height: 200px;
+			height: 92px;
+			width: 260px;
+			background-color: rgba(255, 251, 245, 1);
+			border-radius: 30px;
+			box-shadow: 0px 10px 25px -11px rgba(204, 116, 0, 0.25);
+		}
+		#transactions-button-wrapper {
+			margin-top: 20px;
+			padding-top: 20px;
+			margin-left: auto;
+			margin-right: auto;
+			height: 100px;
 			width: 260px;
 			background-color: rgba(255, 251, 245, 1);
 			border-radius: 30px;
@@ -186,11 +196,11 @@
 
 
 				#b-wallet-transactions{
-					margin-top: 24px;
+					margin-top: 0px;
 					display: flex;
 					justify-content: center; 
 					align-items: center;
-					padding-bottom: 25px;
+					padding-bottom: 15px;
 					box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
 				}	
 				#b-wallet-wrapper-exporting,
@@ -203,24 +213,24 @@
 
 
 					#bitcoin-transactions{
-						width: 20px;
-						height: 20px;
+						width: 15px;
+						height: 15px;
 						border-radius: 100px;
 						box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.0);
 						opacity: 1; 
+						margin-top: 2px;
 					}
 						#exporting-image{
-							width: 15px;
-							height: 15px;
+							width: 10px;
+							height: 10px;
 							opacity: .3; 
 						}
 					#bitcoin-amount-transactions {
 						color: black;
-						font-size: 12px;
+						font-size: 10px;
 						font-weight: 200;
-						margin-left: 5px;
-						opacity: .5;
-
+						margin-left: 4px;
+						opacity: .3;
 					}
 					#bitcoin-amount-exporting,
 					#bitcoin-amount-exported {
@@ -239,34 +249,50 @@
 					#bitcoin-amount-number-bought,
 					#bitcoin-amount-number-exported {
 						color: black;
-						font-size: 14px;
+						font-size: 12px;
 						font-weight: 600;
 						margin-left: 2px;
 
 					}
 					
 				#a-wallet-transactions{
+					padding-top: 18px;
 					display: flex;
 					justify-content: center; 
 					align-items: center;
-					padding-bottom: 25px;
-					box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
+					padding-bottom: 20px;
 				}
 
 					#wallet-icon-transactions {
 						opacity: .3;
 					}
+
+					#wallet-icon-exported {
+						opacity: .3;
+						margin-top: 1.5px;
+					}
+					#wallet-icon-vault {
+						margin-top: 1.5px;
+						opacity: .3;
+					}
+					#transactions-exported-to {
+						color: black;
+						font-size: 10px;
+						font-weight: 200;
+						margin-left: 1px;
+						opacity: .3;
+					}
 					#transactions-wallet-word {
 						color: black;
-						font-size: 12px;
+						font-size: 10px;
 						font-weight: 200;
-						margin-left: 5px;
-						opacity: .5;
+						margin-left: 4px;
+						opacity: .3;
 
 					}
 					#transactions-wallet-number {
 						color: gray;
-						font-size: 13px;
+						font-size: 12px;
 						font-weight: 200;
 						margin-left: 3px;
 
@@ -275,7 +301,7 @@
 					#transactions-wallet-num-sold,
 					#transactions-wallet-num-withdrew {
 						color: black;
-						font-size: 14px;
+						font-size: 12px;
 						font-weight: 600;
 						margin-left: 2px;
 
@@ -284,41 +310,43 @@
 				
 
 
-			#view-export {
-				background: black;
-				text-decoration: none;
-				color: white;
-				font-weight: 500;
-				font-size: 10px;
-				padding-top: 10px;
-				padding-bottom: 10px;
-				padding-right: 12px;
-				padding-left: 13px;	  
-				border: solid;
-				letter-spacing: 1px;
-				border-radius: 5px;
-				border-width: 0px;
-				width: 170px;
-				opacity: 1;
-				box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  			  
-			}
 			#withdrew-export {
+				margin-left: 5px;
+				background: rgb(0, 0, 0, 0.1);
+				text-decoration: none;
+				color: black;
+				font-weight: 800;
+				font-size: 9px;
+				padding-top: 8px;
+				padding-bottom: 8px;
+				padding-right: 8px;
+				padding-left: 8px;	  
+				border: solid;
+				letter-spacing: 0px;
+				border-radius: 5px;
+				border-width: 0px;
+				width: 100px;
+				opacity: 1;
+				box-shadow: 0px 6px 8px -6px rgb(0, 0, 0, 0);  			  
+			}
+			#view-export {
+				margin-left: 5px;
 				background: black;
 				text-decoration: none;
 				color: white;
 				font-weight: 500;
-				font-size: 10px;
-				padding-top: 10px;
-				padding-bottom: 10px;
-				padding-right: 12px;
-				padding-left: 13px;	  
+				font-size: 7px;
+				padding-top: 8px;
+				padding-bottom: 8px;
+				padding-right: 8px;
+				padding-left: 8px;	  
 				border: solid;
 				letter-spacing: 1px;
 				border-radius: 5px;
 				border-width: 0px;
-				width: 150px;
+				width: 95px;
 				opacity: 1;
-				box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  			  
+				box-shadow: 0px 6px 8px -6px rgb(0, 0, 0, 0);  			  
 			}
 			
 			#view-export:hover,
