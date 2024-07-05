@@ -7,6 +7,7 @@ import Link from 'next/link';
 
 import '../../app/css/withdraw/withdraw.css';
 import '../../app/css/modals/withdraw/withdraw-modal.css';
+import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import '../../app/css/modals/loader/accountloaderbackground.css';
 import styles from '../../app/css/modals/loader/accountloader.module.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
@@ -42,7 +43,7 @@ const Withdraw: React.FC = () => {
   //Loader Function/s
 
 
-  const [showWithdrawing, setWithdrawing] = useState<boolean>(true);
+  const [showWithdrawing, setWithdrawing] = useState<boolean>(false);
   const [showWithdrawn, setWithdrawn] = useState<boolean>(false);
   const [showWithdrawFailed, setWithdrawFailed] = useState<boolean>(false);
 
@@ -151,45 +152,16 @@ const Withdraw: React.FC = () => {
                         
         <p id="withdraw-title">WITHDRAW</p>           
 
-        <div id="withdraw-wrapper">
+        <div id="withdraw-to-wrapper">
 
             <div id="b-wallet-withdraw">
-                <span>
-                    <div id="w-account-wrapper">
-                        <Image
-                        loader={imageLoader}
-                        onLoad={() => handleImageLoaded('accountLogo')}
-                        alt=""
-                        width={15}
-                        height={15}
-                        id="wallet-icon-withdraw" 
-                        src="images/market/bank.png"/>
-                    </div>
-                </span>
-                <span id="withdraw-wallet-word">Amount:</span>
-                <span id="withdraw-wallet-number">$
-                    <span id="withdraw-wallet-num-withdrew">2,000.08</span>
-                </span>
+              <span id="withdraw-wallet-number">$</span>
+              <span id="withdraw-wallet-num-withdraw">2,000.08</span>
             </div>
             <div id="a-wallet-withdraw">
-            <span>
-                <div id="b-wallet-wrapper">
-                    <Image
-                    loader={imageLoader}
-                    onLoad={() => handleImageLoaded('accountLogo')}
-                    alt=""
-                    width={15}
-                    height={15}
-                    id="wallet-icon-withdraw-bottom" 
-                    src="images/market/bank.png"/>
-                </div>
-            </span>
-            <span id="withdraw-amount-to">To:</span>
-            <span>
-                <button id="withdrew-export">
-                    CHASE BANK 
-                </button>
-            </span>
+              <button id="withdraw-export">
+                  CHASE BANK 
+              </button>
             </div>
 
             <button id="withdraw-button">

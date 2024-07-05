@@ -7,6 +7,7 @@
 	margin-left: 0%;
 	margin-right: 0%;
 	margin-bottom: 0%;
+	height: 580px;
 		background-color: rgb(255, 251, 245);
 		border-radius: 30px;
 		padding-bottom: 0px;
@@ -123,16 +124,15 @@
 	}	
 
 
-	#withdraw-wrapper {
-		margin-top: 20px;
-		padding-top: 20px;
+	#withdraw-to-wrapper {
+		margin-top: 170px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 100px;
-		width: 260px;
+		height: 155px;
+		width: 100%;
 		background-color: rgba(255, 251, 245, 1);
 		border-radius: 30px;
-		box-shadow: 0px 10px 25px -11px rgba(204, 116, 0, 0.25);
+		box-shadow: 0px -12px 30px 0px rgba(204, 116, 0, 0.0);
 	}
 
 
@@ -141,36 +141,21 @@
 				display: flex;
 				justify-content: center; 
 				align-items: center;
-				padding-bottom: 15px;
-				box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
+				padding-bottom: 20px;
+				box-shadow: 0px 10px 30px -15px rgba(204, 116, 0, 0.3);
 			}	
-
-
-				#wallet-icon-withdraw {
-					opacity: .3;
-				}
-
-				#withdraw-wallet-word {
-					color: black;
-					font-size: 10px;
-					font-weight: 200;
-					margin-left: 4px;
-					opacity: .3;
-
-				}
 				#withdraw-wallet-number {
-					color: gray;
-					font-size: 12px;
-					font-weight: 200;
-					margin-left: 3px;
-
-				}
-				#withdraw-wallet-num-withdrew {
 					color: black;
-					font-size: 12px;
+					font-size: 25px;
 					font-weight: 600;
-					margin-left: 2px;
+					opacity: .2;
+				}
 
+				#withdraw-wallet-num-withdraw {
+					color: black;
+					font-size: 25px;
+					font-weight: 800;
+					margin-left: 4px;
 				}
 
 
@@ -178,56 +163,37 @@
 
 				
 			#a-wallet-withdraw{
-				padding-top: 18px;
-				display: flex;
-				justify-content: center; 
-				align-items: center;
-				padding-bottom: 20px;
+				padding-top: 30px;
 			}
 
-				#wallet-icon-withdraw-bottom {
-					opacity: .3;
-				}
-				#withdraw-amount-to {
+			
+				#withdraw-export {
+					background: rgb(0, 0, 0, 0.1);
+					text-decoration: none;
 					color: black;
-					font-size: 10px;
-					font-weight: 200;
-					margin-left: 4px;
-					opacity: .3;
-
+					font-weight: 800;
+					font-size: 9px;
+					padding-top: 15px;
+					padding-bottom: 15px;
+					padding-right: 15px;
+					padding-left: 15px;	  
+					border: solid;
+					letter-spacing: 0px;
+					border-radius: 5px;
+					border-width: 0px;
+					width: 120px;
+					opacity: 1;
+					box-shadow: 0px 6px 8px -6px rgb(0, 0, 0, 0);  			  
 				}
-
-			
-
-
-		#withdrew-export {
-			margin-left: 5px;
-			background: rgb(0, 0, 0, 0.1);
-			text-decoration: none;
-			color: black;
-			font-weight: 800;
-			font-size: 9px;
-			padding-top: 8px;
-			padding-bottom: 8px;
-			padding-right: 8px;
-			padding-left: 8px;	  
-			border: solid;
-			letter-spacing: 0px;
-			border-radius: 5px;
-			border-width: 0px;
-			width: 100px;
-			opacity: 1;
-			box-shadow: 0px 6px 8px -6px rgb(0, 0, 0, 0);  			  
-		}
-		
-		#withdrew-export:hover,
-		#withdrew-export:focus
-			{
-			cursor: pointer;
-			opacity: .4;
-			transition: 1s;
-			
-		}
+				
+				#withdraw-export:hover,
+				#withdraw-export:focus
+					{
+					cursor: pointer;
+					opacity: .4;
+					transition: 1s;
+					
+				}
 
 
 	#withdraw-button {
@@ -244,8 +210,8 @@
 		letter-spacing: 1px;
 		border-radius: 5px;
 		border-width: 0px;
-		margin-top: 30px;
-		width: 150px;
+		margin-top: 160px;
+		width: 250px;
 		opacity: 1;
 		box-shadow: 0px 8px 12px -6px black;  			  
 	}
@@ -258,4 +224,16 @@
 	}    
 				
 	
+@media screen and (max-height: 600px) {
+	#withdraw-wrapper {
+		padding-top: 20px; 
+		height: 280px;
+	   }
+		#withdraw-to-wrapper {
+			margin-top: 40px;
+		}
+		#withdraw-button {
+			margin-top: 40px;			  
+		}
+}
 

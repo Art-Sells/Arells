@@ -50,7 +50,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  - displays acdVatops if positive, else ...
 
  #### Amount Sold
- - shows $amount
+ - Displays "Sold Amount" from Database $
  - (Withdraw)-> Withdraw Page
 
  #### Log Out (Redirects to Home)
@@ -123,7 +123,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Withdraw
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- (Cash Register) Amount $
+- Displays "Sold Amount" from Database $
 - (Bank) to: (Plaid Bank Logo Button?)->Bank Account
 - (Withdraw) -> Modal
 - - Modal:
