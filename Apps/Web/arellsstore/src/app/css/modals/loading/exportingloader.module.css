@@ -1,20 +1,18 @@
 
 
 .exportingloader {
-    position: fixed;
+  position: absolute;
     display: block;
-    justify-content: center;
-    align-items: center;
-    z-index: 201; /* ensure it's on top of all other elements */
-    border: 10px solid rgba(0, 0, 0, 0.5);
+    justify-content: left;
+    border: 2px solid rgba(255, 170, 60);
     border-radius: 50%;
-    border-top: 10px solid rgba(0, 0, 0, 0.7);
-    width: 40px;
-    height: 40px;
+    border-top: 2px solid rgba(255, 170, 60, 0.0);
+    width: 20px;
+    height: 20px;
     -webkit-animation: spin 1s linear infinite;
     animation: spin 1s linear infinite;
-    left: -30px;
-    margin-top: -2px;
+    left: -67.5px;
+    margin-top: -2.5px;
     margin-left: 50%;
     margin-right: 50%;
   }

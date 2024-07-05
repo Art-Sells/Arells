@@ -66,10 +66,6 @@
 			#account-navigation {
 				height: 23px;
 				width: 23px;
-				-webkit-animation-name: animatetop;
-				-webkit-animation-duration: 1.00s;
-				animation-name: animatetop;
-				animation-duration: 1.00s;
 			}
 			/* Add Animation */
 			@-webkit-keyframes animatetop {
@@ -206,9 +202,9 @@
 				#b-wallet-wrapper-exporting,
 				#b-wallet-wrapper-exported {
 					-webkit-animation-name: animatetop;
-					-webkit-animation-duration: 1.00s;
+					-webkit-animation-duration: 1.50s;
 					animation-name: animatetop;
-					animation-duration: 1.00s;
+					animation-duration: 1.50s;
 				}	
 
 
@@ -220,11 +216,13 @@
 						opacity: 1; 
 						margin-top: 2px;
 					}
-						#exporting-image{
-							width: 10px;
-							height: 10px;
-							opacity: .3; 
-						}
+					#exporting-image{
+						margin-top: 2px;
+						width: 15px;
+						height: 15px;
+						opacity: 1; 
+						margin-right: 3px;
+					}
 					#bitcoin-amount-transactions {
 						color: black;
 						font-size: 10px;
@@ -232,26 +230,45 @@
 						margin-left: 4px;
 						opacity: .3;
 					}
-					#bitcoin-amount-exporting,
-					#bitcoin-amount-exported {
+					#bitcoin-amount-transactions-exported {
 						color: black;
-						font-size: 12px;
+						font-size: 10px;
 						font-weight: 200;
-						margin-left: 5px;
-						opacity: .5;
-						-webkit-animation-name: animatetop;
+						margin-left: 4px;
+						opacity: .3;
+						-webkit-animation-name: animateexport;
 						-webkit-animation-duration: 1.00s;
-						animation-name: animatetop;
+						animation-name: animateexport;
 						animation-duration: 1.00s;
-					}	
+					}
+					@-webkit-keyframes animateexport {
+						from {center:0; opacity:0}
+						to {center:0; opacity:.3}
+					}
+					
+					@keyframes animateexport {
+						from {center:0; opacity:0}
+						to {center:0; opacity:.3}
+					}
+					
 
 					#bitcoin-amount-number-sold,
-					#bitcoin-amount-number-bought,
+					#bitcoin-amount-number-bought {
+						color: black;
+						font-size: 12px;
+						font-weight: 600;
+						margin-left: 2px;
+
+					}
 					#bitcoin-amount-number-exported {
 						color: black;
 						font-size: 12px;
 						font-weight: 600;
 						margin-left: 2px;
+						-webkit-animation-name: animatetop;
+						-webkit-animation-duration: 1.50s;
+						animation-name: animatetop;
+						animation-duration: 1.50s;
 
 					}
 					

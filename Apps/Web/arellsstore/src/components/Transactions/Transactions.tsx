@@ -255,10 +255,10 @@ const Transactions: React.FC = () => {
                           width={15}
                           height={15}
                           id="exporting-image" 
-                          src="images/market/export-ebony.png"/>
+                          src="images/howitworks/Bitcoin.png"/>
                       </div>
                     </span>
-                    <span id="bitcoin-amount-transactions">Exporting:</span>
+                    <span id="bitcoin-amount-transactions-exported">Exporting:</span>
                     <span id="bitcoin-amount-number-exported">0.0005454</span>             
                     </>    
                   )}
@@ -276,7 +276,7 @@ const Transactions: React.FC = () => {
                           src="images/howitworks/Bitcoin.png"/>
                       </div>
                     </span>
-                    <span id="bitcoin-amount-transactions">Exported:</span>
+                    <span id="bitcoin-amount-transactions-exported">Exported:</span>
                     <span id="bitcoin-amount-number-exported">0.0005454</span>             
                     </>       
                   )}
