@@ -5,14 +5,16 @@ import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
 import Link from 'next/link';
 
-import '../../app/css/transactions/transactions.css';
+import '../../app/css/withdraw/withdraw.css';
+import '../../app/css/modals/withdraw/withdraw-modal.css';
 import '../../app/css/modals/loader/accountloaderbackground.css';
 import styles from '../../app/css/modals/loader/accountloader.module.css';
-import stylings from '../../app/css/modals/loading/exportingloader.module.css';
+import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 
 const Withdraw: React.FC = () => {
 
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
+
 
     //Loader Function/s
     const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -39,13 +41,17 @@ const Withdraw: React.FC = () => {
     }, [imagesLoaded]);
   //Loader Function/s
 
-  const [withdrawCalendar, withdrawCalendarSet] = useState<boolean>(true);
-  const [sold, soldSet] = useState<boolean>(true);
-  const [bought, boughtSet] = useState<boolean>(true);
-  const [withdrew, withdrewSet] = useState<boolean>(true);
-  const [exported, exportedSet] = useState<boolean>(true);
-  const [exportingLoader, exportingLoaderSet] = useState<boolean>(true);
-  const [exportComplete, exportCompleteSet] = useState<boolean>(false);
+
+  const [showWithdrawing, setWithdrawing] = useState<boolean>(true);
+  const [showWithdrawn, setWithdrawn] = useState<boolean>(false);
+  const [showWithdrawFailed, setWithdrawFailed] = useState<boolean>(false);
+
+  const closeWithdrawFailed = () => {
+    setWithdrawFailed(false);
+  };
+  const closeWithdrawn = () => {
+    setWithdrawn(false);
+  };
 
   return (
     <>
@@ -60,6 +66,61 @@ const Withdraw: React.FC = () => {
             src="images/Arells-Icon.png"
           />    
           <div id={styles.accountloader}></div>    
+        </div>
+      )}
+
+    {showWithdrawing && (
+        <div id="withdrawing-wrapper">
+          <div id="withdrawing-content">
+            <div className={stylings.marketplaceloader}> 
+            </div>
+            <Image 
+                // loader={imageLoader}
+                alt="" 
+                width={22}
+                height={22}
+                id="withdrawing-image" 
+                src="/images/market/bank-ivory.png"
+                /> 
+            <p id="withdrawing-words">withdrawing</p>
+          </div>
+        </div>
+      )}
+
+    {showWithdrawn && (
+      <div id="account-created-wrapper">
+        <div id="account-created-content">
+            <Image
+                alt=""
+                width={35}
+                height={35}
+                id="account-created-image"
+                src="/images/market/checkmark-ebony.png"
+            />
+            <p id="account-created-words">Withdraw Complete</p>
+            <Link href="/transactions" passHref>
+                <button id="account-created-close-two" 
+                onClick={closeWithdrawn}>VIEW TRANSACTIONS
+                </button>
+            </Link>
+        </div>
+      </div>
+      )}
+
+      {showWithdrawFailed && (
+        <div id="withdrawing-wrapper">
+          <div id="withdraw-failed-content">
+            <Image 
+              loader={imageLoader}
+              alt="" 
+              width={35}
+              height={35}
+              id="withdrawing-image" 
+              src="images/market/cancelled-ivory.png"
+            />  
+            <p id="withdrawing-failed-words">withdraw failed</p>
+            <button id="withdrawing-failed-close" onClick={closeWithdrawFailed}>OK</button> 
+          </div>
         </div>
       )}
 
@@ -88,225 +149,54 @@ const Withdraw: React.FC = () => {
             </Link>	
         </div>
                         
-        <p id="transactions-title">TRANSACTIONS</p>
+        <p id="withdraw-title">WITHDRAW</p>           
 
-        <div id="transactions-wallet-wrapper">
+        <div id="withdraw-wrapper">
 
-          {withdrawCalendar && (
-            <div id="withdraw-calendar-wrapper">
-              <span>
+            <div id="b-wallet-withdraw">
+                <span>
+                    <div id="w-account-wrapper">
+                        <Image
+                        loader={imageLoader}
+                        onLoad={() => handleImageLoaded('accountLogo')}
+                        alt=""
+                        width={15}
+                        height={15}
+                        id="wallet-icon-withdraw" 
+                        src="images/market/bank.png"/>
+                    </div>
+                </span>
+                <span id="withdraw-wallet-word">Amount:</span>
+                <span id="withdraw-wallet-number">$
+                    <span id="withdraw-wallet-num-withdrew">2,000.08</span>
+                </span>
+            </div>
+            <div id="a-wallet-withdraw">
+            <span>
                 <div id="b-wallet-wrapper">
                     <Image
                     loader={imageLoader}
                     onLoad={() => handleImageLoaded('accountLogo')}
                     alt=""
-                    width={12}
-                    height={12}
-                    id="calendar-image" 
-                    src="images/market/calendar.png"/>
+                    width={15}
+                    height={15}
+                    id="wallet-icon-withdraw-bottom" 
+                    src="images/market/bank.png"/>
                 </div>
-              </span>
-              <span id="calendar-date">06/21/24</span>
-              <span id="calendar-date-format">mm/dd/yy</span>
-
-            </div>             
-          )}
-
-          {sold && (
-            <div id="transactions-amount-wrapper">
-
-              <div id="b-wallet-transactions">
-                  <span>
-                      <div id="b-wallet-wrapper">
-                          <Image
-                          loader={imageLoader}
-                          onLoad={() => handleImageLoaded('accountLogo')}
-                          alt=""
-                          width={15}
-                          height={15}
-                          id="bitcoin-transactions" 
-                          src="images/howitworks/Bitcoin.png"/>
-                      </div>
-                  </span>
-                  <span id="bitcoin-amount-transactions">Sold:</span>
-                  <span id="bitcoin-amount-number-sold">0.0005454</span>
-              </div>
-              <div id="a-wallet-transactions">
-                  <span>
-                      <div id="w-account-wrapper">
-                          <Image
-                          loader={imageLoader}
-                          onLoad={() => handleImageLoaded('accountLogo')}
-                          alt=""
-                          width={15}
-                          height={15}
-                          id="wallet-icon-transactions" 
-                          src="images/market/cash-register.png"/>
-                      </div>
-                  </span>
-                  <span id="transactions-wallet-word">For:</span>
-                  <span id="transactions-wallet-number">$
-                      <span id="transactions-wallet-num-sold">2,000.08</span>
-                  </span>
-              </div>
-
+            </span>
+            <span id="withdraw-amount-to">To:</span>
+            <span>
+                <button id="withdrew-export">
+                    CHASE BANK 
+                </button>
+            </span>
             </div>
-          )}
 
-          {bought && (
-            <div id="transactions-amount-wrapper">
-
-              <div id="b-wallet-transactions">
-                  <span>
-                      <div id="b-wallet-wrapper">
-                          <Image
-                          loader={imageLoader}
-                          onLoad={() => handleImageLoaded('accountLogo')}
-                          alt=""
-                          width={15}
-                          height={15}
-                          id="bitcoin-transactions" 
-                          src="images/howitworks/Bitcoin.png"/>
-                      </div>
-                  </span>
-                  <span id="bitcoin-amount-transactions">Bought:</span>
-                  <span id="bitcoin-amount-number-bought">0.0005454</span>
-              </div>
-              <div id="a-wallet-transactions">
-                  <span>
-                      <div id="w-account-wrapper">
-                          <Image
-                          loader={imageLoader}
-                          onLoad={() => handleImageLoaded('accountLogo')}
-                          alt=""
-                          width={15}
-                          height={15}
-                          id="wallet-icon-transactions" 
-                          src="images/market/cash-register.png"/>
-                      </div>
-                  </span>
-                  <span id="transactions-wallet-word">For:</span>
-                  <span id="transactions-wallet-number">$
-                      <span id="transactions-wallet-num-bought">2,000.08</span>
-                  </span>
-              </div>
-            </div>
-          )}
-
-          {withdrew && (
-            <div id="transactions-button-wrapper">
-
-              <div id="b-wallet-transactions">
-                <span>
-                  <div id="w-account-wrapper">
-                      <Image
-                      loader={imageLoader}
-                      onLoad={() => handleImageLoaded('accountLogo')}
-                      alt=""
-                      width={15}
-                      height={15}
-                      id="wallet-icon-vault" 
-                      src="images/market/vault.png"/>
-                  </div>
-                </span>
-                <span id="transactions-wallet-word">Withdrew:</span>
-                <span id="transactions-wallet-number">$
-                    <span id="transactions-wallet-num-withdrew">2,000.08</span>
-                </span>
-              </div>
-              <div id="a-wallet-transactions">
-                <span>
-                  <div id="b-wallet-wrapper">
-                      <Image
-                      loader={imageLoader}
-                      onLoad={() => handleImageLoaded('accountLogo')}
-                      alt=""
-                      width={15}
-                      height={15}
-                      id="wallet-icon-transactions" 
-                      src="images/market/bank.png"/>
-                  </div>
-                </span>
-                <span id="bitcoin-amount-transactions">To:</span>
-                <span>
-                  <button id="withdrew-export">
-                      CHASE BANK 
-                  </button>
-                </span>
-              </div>
-
-            </div>
-          )}
-
-          {exported && (
-            <div id="transactions-button-wrapper">
-
-              <div id="b-wallet-transactions">
-                  {exportingLoader && (
-                    <>
-                    <span>
-                      <div id="b-wallet-wrapper-exporting">
-                        <div className={stylings.exportingloader}>
-                        </div>
-                          <Image
-                          loader={imageLoader}
-                          onLoad={() => handleImageLoaded('accountLogo')}
-                          alt=""
-                          width={15}
-                          height={15}
-                          id="exporting-image" 
-                          src="images/howitworks/Bitcoin.png"/>
-                      </div>
-                    </span>
-                    <span id="bitcoin-amount-transactions-exported">Exporting:</span>
-                    <span id="bitcoin-amount-number-exported">0.0005454</span>             
-                    </>    
-                  )}
-                  {exportComplete && (
-                    <>
-                    <span>
-                      <div id="b-wallet-wrapper-exported">
-                          <Image
-                          loader={imageLoader}
-                          onLoad={() => handleImageLoaded('accountLogo')}
-                          alt=""
-                          width={15}
-                          height={15}
-                          id="bitcoin-transactions" 
-                          src="images/howitworks/Bitcoin.png"/>
-                      </div>
-                    </span>
-                    <span id="bitcoin-amount-transactions-exported">Exported:</span>
-                    <span id="bitcoin-amount-number-exported">0.0005454</span>             
-                    </>       
-                  )}
-              </div>
-              <div id="a-wallet-transactions">
-                <span>
-                  <div id="b-wallet-wrapper">
-                      <Image
-                      loader={imageLoader}
-                      onLoad={() => handleImageLoaded('accountLogo')}
-                      alt=""
-                      width={15}
-                      height={15}
-                      id="wallet-icon-exported" 
-                      src="images/market/export-ebony.png"/>
-                  </div>
-                </span>
-                <span id="transactions-exported-to">To:</span>
-                <span>
-                  <button id="view-export">
-                      VIEW EXPLORER
-                  </button>
-                </span>
-              </div>
-
-            </div>
-          )}
+            <button id="withdraw-button">
+                WITHDRAW
+            </button>
 
         </div>
-
         
     </>
   );
