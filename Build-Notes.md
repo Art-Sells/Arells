@@ -73,13 +73,13 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (EXPORT) -> Modal
 - - Modal:
 - - - Exporting (3 second delay) back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and delete the cVatops/cVacts if needed (see Readme)
-- - - Successfuly Exported (exporting modal = false) (View Transactions)-> Transactions-
+- - - Successfuly Exported (exporting modal = false, adds Date (logs new Date in "Transaction Dates" database), (B) and link to Block Exporer to "Exported Amount in Database") (View Transactions)-> Transactions-
 - - - Export Failed (exporting modal = false)(OK) (if export amount isn't lesser or equal to Bitcoin Wallet amount or other address)
 - - - Check Address (exporting modal = false)(if Bitcoin Address is not in right format (refer to Bitcoin Page))
 - - - Enter information (exporting modal = false) (if one or more fields are empty)
 - - - Send more Bitcoin (exporting modal = false) (refer to Bitcoin Page for fee limit)
 - Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
-- all prices and wallet values structured like so: 1,000,000.00
+- all prices and wallet values structured like so: 1,000,000.00, Bitcoin Amount based on how many Sats?
 
 ### Buy
 - (B) Price
@@ -90,7 +90,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Modals: 
 - - Confirming Purchase 3 Second delay
 - - Purchase Complete (View Transactions)-> Transactions, 
-- - Purchase Failed (confirming purchase modal = false), check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
+- - Purchase Failed (confirming purchase modal = false, adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Bought Amount in Database"), check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 - all prices and wallet values structured like so: 1,000,000.00
 
@@ -101,25 +101,25 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Sell: takes from lowest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
 - - (Confirm Sale) -> Modals
 - - - Modals: 
-- - - - Confirming Sale...3 Second delay Amount To Sell - Arells Fees
-- - - - Sale Complete (confirming sale modal = false) (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database, adds to "Withdraw Amount")(View Transactions) -> Transactions
+- - - - Confirming Sale...3 Second delay
+- - - - Sale Complete (confirming sale modal = false) (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database, adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Sold Amount in Database") (View Transactions) -> Transactions
 - - - - Transaction Failed (confirming sale modal = false) (OK)
 - Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
-- all prices and wallet values structured like so: 1,000,000.00
+- all prices and wallet values structured like so: 1,000,000.00 Bitcoin Amount based on how many Sats?
 
 
 ### Transactions
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- (Calendar) 06/21/24 (mm/dd/yr)
-- (B) Sold: 0.0087
+- (Calendar) 06/21/24 (mm/dd/yr) (pulls from "Transactions Dates" from Database)
+- (B) Sold: 0.0087 (pulls from "Sold Amount" database) 
 - - (Cash Register) for: $ 
-- (B) Bought: 0.0087
+- (B) Bought: 0.0087 (pulls from "Bought Amount" database) 
 - - (Cash Register) for: $
-- (Vault) Withdrew: $
+- (Vault) Withdrew: $ (pulls from "Withdrew Amount" database) 
 - - (Bank) to: (Plaid Bank Logo Button?)->Bank Account
-- (^-circle) Exporting: 0.00043 (if loading useEffect from Block Explorer)| (B) Exported: 0.00323 (if completed useEffect)
+- (^-circle) Exporting: 0.00043 (if loading useEffect from Block Explorer)| (B) Exported: 0.00323 (if completed useEffect) (pulls from "Exported Amount" database) 
 - - (App) To: (View On Block Explorer)-> Block Explorer Link
-- all values structured like so: 1,000,000.00
+- all values structured like so: 1,000,000.00, Bitcoin Amount based on how many Sats?
 
 ### Withdraw
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
@@ -128,7 +128,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (Withdraw) -> Modal
 - - Modal:
 - - - (Bank) Withdrawing 
-- - -  (Check) Withdraw Complete (View Transactions)-> Transactions
+- - -  (Check) Withdraw Complete (View Transactions adds Date (logs new Date in "Transaction Dates" database), (B) and link to Bank Account to "Withdrew Amount in Database")-> Transactions
 - - - (X) Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
 - all values structured like so: 1,000,000.00
 
