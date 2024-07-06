@@ -15,8 +15,6 @@
     "@apollo/client": "3.10.2",
     "@apollo/experimental-nextjs-app-support": "^0.5.1",
     "@apollo/federation": "latest",
-    "@aws-amplify/adapter-nextjs": "^1.2.4",
-    "@aws-amplify/ui-react": "^6.1.12",
     "@coinbase/wallet-sdk": "^3.7.2",
     "@openzeppelin/contracts": "^4.9.3",
     "@types/formidable": "2.0.4",

@@ -7,7 +7,7 @@
 	margin-left: 0%;
 	margin-right: 0%;
 	margin-bottom: 0%;
-	height: 650px;
+	height: 620px;
 	background-color: rgb(255, 251, 245);
 	border-radius: 30px;
 	-webkit-animation-name: animatetop;
@@ -110,7 +110,7 @@
 				}	
 		
 
-	 #withdraw-title {
+	 #bankaccount-title {
 		margin-top: 25px;
 		color: black; 
 		margin-left: auto;	
@@ -122,11 +122,10 @@
 	}	
 
 
-	#withdraw-to-wrapper {
-		margin-top: 170px;
+	#bankaccount-to-wrapper {
+		margin-top: 190px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 155px;
 		width: 100%;
 		background-color: rgba(255, 251, 245, 1);
 		border-radius: 30px;
@@ -134,112 +133,73 @@
 	}
 
 
-			#b-wallet-withdraw{
-				margin-top: 0px;
-				display: flex;
-				justify-content: center; 
-				align-items: center;
-				padding-bottom: 20px;
-				box-shadow: 0px 10px 30px -15px rgba(204, 116, 0, 0.3);
-			}	
-				#withdraw-wallet-word {
-					color: black;
-					font-size: 18px;
-					font-weight: 600;
-					opacity: .15;
-				}
-				#withdraw-wallet-number {
-					color: black;
-					font-size: 25px;
-					font-weight: 600;
-					opacity: .2;
-					margin-left: 6px;
-				}
-
-				#withdraw-wallet-num-withdraw {
-					color: black;
-					font-size: 25px;
-					font-weight: 800;
-					margin-left: 4px;
-				}
-
-
-
-
-				
-			#a-wallet-withdraw{
-				padding-top: 30px;
-			}
-
 			
-				#withdraw-export {
-					margin-left: 6px;
-					background: rgb(0, 0, 0, 0.1);
-					text-decoration: none;
-					color: black;
-					font-weight: 800;
-					font-size: 10px;
-					padding-top: 15px;
-					padding-bottom: 15px;
-					padding-right: 15px;
-					padding-left: 15px;	  
-					border: solid;
-					letter-spacing: 0px;
-					border-radius: 5px;
-					border-width: 0px;
-					width: 150px;
-					opacity: 1;
-					box-shadow: 0px 6px 8px -6px rgb(0, 0, 0, 0);  			  
-				}
-				
-				#withdraw-export:hover,
-				#withdraw-export:focus
-					{
-					cursor: pointer;
-					opacity: .4;
-					transition: 1s;
-					
-				}
+        #withdraw-bankaccount {
+            background: rgb(0, 0, 0, 0.1);
+            text-decoration: none;
+            color: black;
+            font-weight: 800;
+            font-size: 20px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            padding-right: 15px;
+            padding-left: 15px;	  
+            border: solid;
+            letter-spacing: 0px;
+            border-radius: 5px;
+            border-width: 0px;
+            width: 250px;
+            opacity: 1;
+            box-shadow: 0px 6px 8px -6px rgb(0, 0, 0, 0);  			  
+        }
+        
+        #withdraw-bankaccount:hover,
+        #withdraw-bankaccount:focus
+            {
+            cursor: pointer;
+            opacity: .4;
+            transition: 1s;
+            
+        }
 
+    #change-bank-button {
+        background: none;
+        text-decoration: none;
+        color: black;
+        font-weight: 200;
+        font-size: 10px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-right: 12px;
+        padding-left: 13px;	  
+        border: solid;
+        border-color: rgb(0, 0, 0, 0.5);
+        letter-spacing: 1px;
+        border-radius: 5px;
+        border-width: 1px;
+        margin-top: 180px;
+        width: 220px;
+        opacity: 1; 			  
+    }
 
-	#withdraw-button {
-		background: black;
-		text-decoration: none;
-		color: white;
-		font-weight: 200;
-		font-size: 10px;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		padding-right: 12px;
-		padding-left: 13px;	  
-		border: solid;
-		letter-spacing: 1px;
-		border-radius: 5px;
-		border-width: 0px;
-		margin-top: 160px;
-		width: 250px;
-		opacity: 1;
-		box-shadow: 0px 8px 12px -6px black;  			  
-	}
-
-	#withdraw-button:hover,
-	#withdraw-button:focus {
-		opacity: .4;
-		transition: 1s;
-		cursor: pointer;
-	}    
+    #change-bank-button:hover,
+    #change-bank-button:focus {
+        opacity: .4;
+        transition: 1s;
+        cursor: pointer;
+                } 
+  
 				
 	
 @media screen and (max-height: 600px) {
-	#withdraw-wrapper {
-		padding-top: 20px; 
-		height: 400px;
-	   }
-		#withdraw-to-wrapper {
-			margin-top: 60px;
-		}
-		#withdraw-button {
-			margin-top: 60px;			  
-		}
+    #bankaccount-wrapper {
+        height: 380px;
+       }
+        #bankaccount-to-wrapper {
+            margin-top: 80px; 
+        }
+        #change-bank-button {
+            margin-top: 70px;		  
+        }   
 }
 

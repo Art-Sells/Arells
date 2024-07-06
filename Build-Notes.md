@@ -116,7 +116,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (B) Bought: 0.0087 (pulls from "Bought Amount" database) 
 - - (Cash Register) for: $
 - (Vault) Withdrew: $ (pulls from "Withdrew Amount" database) 
-- - (Bank) to: (Plaid Bank Logo Button?)->Bank Account
+- - (Bank) to: (Plaid Bank Logo Button? from Plaid Wrapper?)->Bank Account
 - (^-circle) Exporting: 0.00043 (if loading useEffect from Block Explorer)| (B) Exported: 0.00323 (if completed useEffect) (pulls from "Exported Amount" database) 
 - - (App) To: (View On Block Explorer)-> Block Explorer Link
 - all values structured like so: 1,000,000.00, Bitcoin Amount based on how many Sats?
@@ -124,7 +124,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Withdraw
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - Displays "Sold Amount" from Database $
-- (Bank) to: (Plaid Bank Logo Button?)->Bank Account
+- (Bank) to: (Plaid Bank Logo Button? from Plaid Wrapper?)->Bank Account
 - (Withdraw) -> Modal
 - - Modal:
 - - - (Bank) Withdrawing 
@@ -134,7 +134,8 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Bank Account
 - (A) -> Account Page (B) ->Buy Page
-- Plaid info?
+- Plaid info from Plaid Wrapper?
+- Change Bank Account (Plaid Connect? from Plaid Wrapper?)
 
 ## Arells Cryptocurrency Marketplace 1.5
 
