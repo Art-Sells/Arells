@@ -155,13 +155,17 @@ const Withdraw: React.FC = () => {
         <div id="withdraw-to-wrapper">
 
             <div id="b-wallet-withdraw">
+            <span id="withdraw-wallet-word">Amount:</span>
               <span id="withdraw-wallet-number">$</span>
-              <span id="withdraw-wallet-num-withdraw">2,000.08</span>
+              <span id="withdraw-wallet-num-withdraw">60,000.08</span>
             </div>
             <div id="a-wallet-withdraw">
-              <button id="withdraw-export">
-                  CHASE BANK 
-              </button>
+              <span id="withdraw-wallet-word">To:</span>
+              <span>
+                <button id="withdraw-export">
+                    CHASE BANK 
+                </button>
+              </span>
             </div>
 
             <button id="withdraw-button">

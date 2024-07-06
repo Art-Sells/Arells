@@ -7,15 +7,13 @@
 	margin-left: 0%;
 	margin-right: 0%;
 	margin-bottom: 0%;
-	height: 580px;
-		background-color: rgb(255, 251, 245);
-		border-radius: 30px;
-		padding-bottom: 0px;
-		-webkit-animation-name: animatetop;
-		-webkit-animation-duration: 1.00s;
-		animation-name: animatetop;
-		animation-duration: 1.00s;
-		padding-bottom: 80px; 
+	height: 650px;
+	background-color: rgb(255, 251, 245);
+	border-radius: 30px;
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 1.00s;
+	animation-name: animatetop;
+	animation-duration: 1.00s;
    }
    
 	   @-webkit-keyframes animatetop {
@@ -144,11 +142,18 @@
 				padding-bottom: 20px;
 				box-shadow: 0px 10px 30px -15px rgba(204, 116, 0, 0.3);
 			}	
+				#withdraw-wallet-word {
+					color: black;
+					font-size: 18px;
+					font-weight: 600;
+					opacity: .15;
+				}
 				#withdraw-wallet-number {
 					color: black;
 					font-size: 25px;
 					font-weight: 600;
 					opacity: .2;
+					margin-left: 6px;
 				}
 
 				#withdraw-wallet-num-withdraw {
@@ -168,6 +173,7 @@
 
 			
 				#withdraw-export {
+					margin-left: 6px;
 					background: rgb(0, 0, 0, 0.1);
 					text-decoration: none;
 					color: black;
@@ -227,13 +233,13 @@
 @media screen and (max-height: 600px) {
 	#withdraw-wrapper {
 		padding-top: 20px; 
-		height: 280px;
+		height: 400px;
 	   }
 		#withdraw-to-wrapper {
-			margin-top: 40px;
+			margin-top: 60px;
 		}
 		#withdraw-button {
-			margin-top: 40px;			  
+			margin-top: 60px;			  
 		}
 }
 
