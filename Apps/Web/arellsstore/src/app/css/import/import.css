@@ -233,7 +233,7 @@
 			}  
 
 
-@media screen and (max-height: 550px) {
+@media screen and (max-height: 620px) {
 	#import-instructions-wrapper {
 		margin-top: 50px;
 	}
