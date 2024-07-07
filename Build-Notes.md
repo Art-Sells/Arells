@@ -7,7 +7,7 @@ Test Address: bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6
 Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Wrappers
-- **CoinGecko API wrapper** purchase CoinGecko API?
+- **Purchase CoinGecko API?**
 - **Possibly a connect wallet & log in/sign up account wrapper** that automatically connects to your prior wallet with Address and Private Key pulled from backend once logged in.
 - **Possibly a plaid wraper**
 - **HPM Wrapper (see Readme for building mechanisms example)**
@@ -79,7 +79,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - - Enter information (exporting modal = false) (if one or more fields are empty)
 - - - Send more Bitcoin (exporting modal = false) (refer to Bitcoin Page for fee limit)
 - Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
-- all prices and wallet values structured like so: 1,000,000.00, Bitcoin Amount based on how many Sats?
+- all prices and wallet values structured like so: 1,000,000, Bitcoin Amount based on how many Sats?
 
 ### Buy
 - (B) Price
@@ -92,7 +92,8 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Purchase Complete (View Transactions)-> Transactions, 
 - - Purchase Failed (confirming purchase modal = false, adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Bought Amount in Database"), check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
-- all prices and wallet values structured like so: 1,000,000.00
+- all prices and wallet values structured like so: 1,000,000
+- all fees and totality values structured like so: 1,000,000.00
 
 ### Sell
 - (B) Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
@@ -105,7 +106,8 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - - - Sale Complete (confirming sale modal = false) (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database, adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Sold Amount in Database") (View Transactions) -> Transactions
 - - - - Transaction Failed (confirming sale modal = false) (OK)
 - Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
-- all prices and wallet values structured like so: 1,000,000.00 Bitcoin Amount based on how many Sats?
+- all prices and wallet values structured like so: 1,000,000 Bitcoin Amount based on how many Sats?
+- all fees and totality values structured like so: 1,000,000.00
 
 
 ### Transactions
@@ -119,7 +121,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - (Bank) to: (Plaid Bank Logo Button? from Plaid Wrapper?)->Bank Account
 - (^-circle) Exporting: 0.00043 (if loading useEffect from Block Explorer)| (B) Exported: 0.00323 (if completed useEffect) (pulls from "Exported Amount" database) 
 - - (App) To: (View On Block Explorer)-> Block Explorer Link
-- all values structured like so: 1,000,000.00, Bitcoin Amount based on how many Sats?
+- all values structured like so: 1,000,000, Bitcoin Amount based on how many Sats?
 
 ### Withdraw
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
@@ -130,7 +132,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - - (Bank) Withdrawing 
 - - -  (Check) Withdraw Complete (View Transactions adds Date (logs new Date in "Transaction Dates" database), (B) and link to Bank Account to "Withdrew Amount in Database")-> Transactions
 - - - (X) Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
-- all values structured like so: 1,000,000.00
+- all values structured like so: 1,000,000
 
 ### Bank Account
 - (A) -> Account Page (B) ->Buy Page
