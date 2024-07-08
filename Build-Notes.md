@@ -12,15 +12,17 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - **Possibly a plaid wraper**
 - **HPM Wrapper (see Readme for building mechanisms example)**
 
-### Home Page
-- If Log In = true, go to /Account
+### Sign Up
+- Modal:
+- - Account Created (View Account)-> Creates Bitcoin Wallet **Backend: saves Address to Email and encrypts private key and saves it on backend** then takes you to Homepage with wallet connected **connect wallet wrapper initiated**
 
 ### Log In
 - **connect wallet wrapper initiated**
 
-### Sign Up
-- Modal:
-- - Account Created (View Account)-> Creates Bitcoin Wallet **Backend: saves Address to Email and encrypts private key and saves it on backend** then takes you to Homepage with wallet connected **connect wallet wrapper initiated**
+
+### Home Page
+- If Log In = true, go to /Account
+
 
 ### Home(redirects to Account if logged in)
 - if holding, sell display none, holding display true.

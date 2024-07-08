@@ -1,15 +1,13 @@
 // pages/_app.tsx or wherever your RootLayout is used
 import { ReactNode } from 'react';
-import { ApolloWrapper } from '../lib/apollo-provider';
-import { SignerProvider } from '../state/signer';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
-require('dotenv').config();
-
+import '../app/css/global.css';
+import '../app/css/reset.css';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
-import config from '../aws-exports';
+import awsmobile from '../aws-exports';
 
-Amplify.configure({ ...config }, { ssr: true });
+Amplify.configure(awsmobile);
 
 type LayoutProps = {
   children: ReactNode;
@@ -30,3 +28,4 @@ export default function RootLayout({ children }: LayoutProps) {
     </html>
   );
 }
+

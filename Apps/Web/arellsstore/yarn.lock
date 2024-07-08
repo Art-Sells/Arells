@@ -173,7 +173,7 @@
     "@aws-amplify/api-rest" "4.0.36"
     tslib "^2.5.0"
 
-"@aws-amplify/auth@6.3.7":
+"@aws-amplify/auth@6.3.7", "@aws-amplify/auth@^6.3.7":
   version "6.3.7"
   resolved "https://registry.yarnpkg.com/@aws-amplify/auth/-/auth-6.3.7.tgz#c443ea2bb9b9df7e72daf0aff897f522acaa1fc1"
   integrity sha512-C+9IIyOKtb89l4ptPLu/9wPfVeEnEgZ/oAOytnLAedu/uheDeDX7QEwpL35nW6y9i4+G05DIlGwph9SK1gEHEw==
@@ -4322,7 +4322,7 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-aws-amplify@^6.3.6:
+aws-amplify@^6.3.8:
   version "6.3.8"
   resolved "https://registry.yarnpkg.com/aws-amplify/-/aws-amplify-6.3.8.tgz#c9864676c44ee0a38bdcfd606dafcf3b830ea2dc"
   integrity sha512-eplilc+XBr9lcJk9L4eNYEgTj5osBOIgeAuVMi+HEOUa8lh0ngf9NIbNjnJSo8F74OgVXnKCoiQPmV3z4B6Fgw==
