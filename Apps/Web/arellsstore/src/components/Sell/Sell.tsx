@@ -17,6 +17,8 @@ const Sell: React.FC = () => {
   const [showSellFailed, setSellFailed] = useState<boolean>(false);
   const [showSellSuccess, setSellSuccess] = useState<boolean>(false);
   const [showSelling, setSelling] = useState<boolean>(false);
+  const [showSellAvailable, setSellAvailable] = useState<boolean>(false);
+  const [showSellUnavailable, setSellUnavailable] = useState<boolean>(true);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
 
     //Loader Function/s
@@ -37,10 +39,10 @@ const Sell: React.FC = () => {
     };
   
     useEffect(() => {
-      if (Object.values(imagesLoaded).every(Boolean)) {
-          setLoading(false);
+      if (showSellUnavailable || Object.values(imagesLoaded).every(Boolean)) {
+        setLoading(false);
       }
-    }, [imagesLoaded]);
+    }, [imagesLoaded, showSellUnavailable]);
   //Loader Function/s
 
 
@@ -127,94 +129,129 @@ const Sell: React.FC = () => {
 
         <div id='sell-wallet-wrapper'>
 
-            <div id="b-amount-available">
-              <span>
-                  <div id="b-sell-wrapper">
-                      <Image
-                      loader={imageLoader}
-                      onLoad={() => handleImageLoaded('accountLogo')}
-                      alt=""
-                      width={20}
-                      height={20}
-                      id="bitcoin-sell" 
-                      src="images/howitworks/Bitcoin.png"/>
-                  </div>
-              </span>
-              <span id="amount-holding-title">Amount Available To Sell</span>
-            </div>
+            {showSellUnavailable && (
+              <>
+              <div id="instructions-wallet-sell-wrapper">
+                <p id="buy-instructions">
+                  You have no Bitcoin available to sell.
+                </p>
+              </div>        
+              </>
+            )}
 
-            <div id="b-price-sell-wallet">
+            {showSellAvailable && (
+              <>
+              <div id="b-amount-available">
                 <span>
-                    <div id="w-sell-wrapper">
+                    <div id="b-sell-wrapper">
                         <Image
                         loader={imageLoader}
                         onLoad={() => handleImageLoaded('accountLogo')}
                         alt=""
                         width={20}
                         height={20}
-                        id="wallet-icon-sell" 
-                        src="images/market/wallet.png"/>
+                        id="bitcoin-sell" 
+                        src="images/howitworks/Bitcoin.png"/>
                     </div>
                 </span>
-                <span id="sell-wallet-word">Wallet:</span>
-                <span id="wallet-number-sell">$
-                    <span id="wallet-number-sell-num">625</span>
-                </span>
-            </div>
+                <span id="amount-holding-title">Amount Available To Sell</span>
+              </div>
 
-            <div id="b-profits-sell">
-              <span>
-                <div id="w-sell-wrapper">
-                  <Image
-                  loader={imageLoader}
-                  onLoad={() => handleImageLoaded('accountLogo')}
-                  alt=""
-                  width={20}
-                  height={20}
-                  id="profits-icon-sell" 
-                  src="images/howitworks/up-arrow-ebony.png"/>
-                </div>
-              </span>
-              <span id="wallet-sell-profits">Profits:</span>
-              <span id="wallet-number-profits-sell">$
-                  <span id="wallet-number-profits-sell-num">125</span>
-              </span>
-            </div>
+              <div id="b-price-sell-wallet">
+                  <span>
+                      <div id="w-sell-wrapper">
+                          <Image
+                          loader={imageLoader}
+                          onLoad={() => handleImageLoaded('accountLogo')}
+                          alt=""
+                          width={20}
+                          height={20}
+                          id="wallet-icon-sell" 
+                          src="images/market/coin-stacks.png"/>
+                      </div>
+                  </span>
+                  <span id="sell-wallet-word">Amount:</span>
+                  <span id="wallet-number-sell">$
+                      <span id="wallet-number-sell-num">0</span>
+                  </span>
+              </div>
+
+              <div id="b-profits-sell">
+                <span>
+                  <div id="w-sell-wrapper">
+                    <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="profits-icon-sell" 
+                    src="images/howitworks/up-arrow-ebony.png"/>
+                  </div>
+                </span>
+                <span id="wallet-sell-profits">Profits:</span>
+                <span id="wallet-number-profits-sell">$
+                    <span id="wallet-number-profits-sell-num">0</span>
+                </span>
+              </div>        
+              </>
+            )}
             
+
           <div id="sell-wrapper-sell-sell">
 
-            <p id="sell-amount-title">
-                  Sell Amount
-            </p>
-            <div id="b-price-sell">
-              <span>
-                <input 
-                    id="sell-input"
-                    type="tel" 
-                />
-              </span>
-              <span>
-                <div 
-                    id="cash-input">
-                  $  
-                  </div>
-              </span>
-            </div>
-            <div id="a-wallet-sell-wrapper">
-              <span id="fees-total-word-sell">Fees:</span>
-              <span id="fees-total-number-sell">$
-                  <span id="fees-total-num-sell">0.00</span>
-              </span>
-            </div>
-            <div id="a-wallet-sell-wrapper-bottom">
-              <span id="total-word-sell">Total:</span>
-              <span id="total-number-sell">$
-                  <span id="total-num-sell">0.00</span>
-              </span>
-            </div>
-            <button id="sell-button">
-                SELL
-            </button>
+            {showSellUnavailable && (
+              <>
+              <div id="instructions-wallet-sell-wrapper-bottom">
+                <p id="buy-instructions-bottom">
+                  Buy small amounts of Bitcoin and always sell them for Profits.
+                </p>
+              </div>
+              <Link href="/buy" passHref>
+                <button id="sell-buy-button">
+                    BUY
+                </button>   
+              </Link>           
+              </>
+            )}
+
+            {showSellAvailable && (
+              <>
+              <p id="sell-amount-title">
+                Sell Amount
+              </p>
+              <div id="b-price-sell">
+                <span>
+                  <input 
+                      id="sell-input"
+                      type="tel" 
+                  />
+                </span>
+                <span>
+                  <div 
+                      id="cash-input">
+                    $  
+                    </div>
+                </span>
+              </div>
+              <div id="a-wallet-sell-wrapper">
+                <span id="fees-total-word-sell">Fees:</span>
+                <span id="fees-total-number-sell">$
+                    <span id="fees-total-num-sell">0.00</span>
+                </span>
+              </div>
+              <div id="a-wallet-sell-wrapper-bottom">
+                <span id="total-word-sell">Total:</span>
+                <span id="total-number-sell">$
+                    <span id="total-num-sell">0.00</span>
+                </span>
+              </div>
+              <button id="sell-button">
+                  SELL
+              </button>              
+              </>
+            )}
+
           </div>
         </div>
     </>

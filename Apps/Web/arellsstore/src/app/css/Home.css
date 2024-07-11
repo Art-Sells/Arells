@@ -62,8 +62,8 @@
 	  #descriptioner {
 		  margin-top: 50px;
 		  font-size: 11px;
-		  letter-spacing: 1px;
-		  margin-left: 1px; 
+		  letter-spacing: 0px;
+		  margin-left: 0px; 
 		  font-weight: 600;
 		  opacity: 1;
 		  color: black;
@@ -80,124 +80,12 @@
 			opacity: 1;
 			color: black;
 		}
-
-
-	  #black-liner {
-		margin-top: 20px;
-		background-color: rgb(255, 145, 0);
-		border: none;
-		height: 5px;
-		border-radius: 30px;
-		width: 410px;
-		opacity: .1;
-	  }	
-
-	  #black-liner-bottom {
-		margin-top: 30px;
-		background-color: black;
-		border: none;
-		height: 2px;
-		border-radius: 30px;
-		width: 200px;
-		opacity: .1;
-	  }	
-
-	#black-liner-bottom-home {
-		margin-top: 15px;
-		background-color: rgba(204, 116, 0);
-		border: none;
-		height: 2px;
-		border-radius: 30px;
-		width: 300px;
-		opacity: .8;
-	  }	
-
-	  #bear-markets-description {
-		margin-top: 20px;
-		font-size: 7px;
-		letter-spacing: 9px;
-		margin-left: 9px; 
-		font-weight: 600;
-		opacity: .3;
-		color: black;
-		word-spacing: 0px;
-	}
-	  #updatess {
-		margin-top: 5px;
-		background: rgba(204, 116, 0);
-		text-decoration: none;
-		color: white;
-		font-weight:500;
-		font-size: 11px;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		padding-right: 11px;
-		padding-left: 14px;	  
-		border: none;
-		letter-spacing: 3px;
-		border-radius: 5px;
-		border-width: 0px;
-		width: 300px;
-		opacity: 1;
-		box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  
-	  }
-	  #howitworks {
-		margin-top: 20px;
-		background: rgba(204, 116, 0);
-		text-decoration: none;
-		color: white;
-		font-weight: 200;
-		font-size: 11px;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		padding-right: 12px;
-		padding-left: 14px;	  
-		border: none;
-		letter-spacing: 2px;
-		border-radius: 5px;
-		border-width: 0px;
-		width: 200px;
-		opacity: 1;
-		box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  
-	  }
-
-
-	#connecting-wallet-wrapper {
-		margin-left: auto;
-		margin-right: auto;			
-		margin-top: 0px;
-		border-radius: 20px;
-		align-items: center;
-		margin-bottom: 0px;
-		overflow: hidden;
-		box-shadow: 0px 10px 9px -6px rgb(200, 200, 200); 
-		width: 250px;
-		height: 90px;
-		padding-top: 20px;
-		padding-left: 20px;
-		padding-right: 20px;
-		padding-bottom: 60px;			
-		text-decoration: none;
-		background: white;
-	}
-	#ada-connected {
-		margin-top: 5px;
-		font-size: 8px;
-		letter-spacing: 3.3px;
-		margin-left: 3.3px; 
-		word-spacing: 0px;
-		font-weight: 500;
-		opacity: .3;
-		color: black;
-	}
-
-
 	
 	#buy-info-home {
 		color: black;
 		font-size: 10.5px;
 		font-weight: 600;
-		margin-top: 20px;
+		margin-top: 17px;
 		opacity: 1;
 		letter-spacing: 0px;
 		margin-left: 0px;
@@ -272,7 +160,7 @@
 
 
 	#buy-info-home {
-		margin-top: 18px;
+		margin-top: 17px;
 		font-size: 9px;
 	}
 

@@ -8,11 +8,11 @@ import Withdraw from '../../components/Withdraw/Withdraw';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Withdraw",
-  description: "Never lose money selling cryptocurrencies.",
+  description: "Always sell Bitcoin for profits. Buy small amounts of bitcoin and always sell them for profits.",
   robots: "noimageindex",
   openGraph: {
     title: "Withdraw",
-    description: "Never lose money selling cryptocurrencies.",
+    description: "Always sell Bitcoin for profits. Buy small amounts of bitcoin and always sell them for profits.",
     url: "https://arells.com/withdraw",
     type: "website",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Withdraw",
-    description: "Never lose money selling cryptocurrencies.",
+    description: "Always sell Bitcoin for profits. Buy small amounts of bitcoin and always sell them for profits.",
     card: "summary_large_image",
     images: [
       {

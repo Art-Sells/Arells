@@ -10,11 +10,11 @@ import Signup from '../../components/LoginSignup/Signup';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
     title: "Sign Up",
-    description: "Always sell bitcoin for profits.",
+    description: "Always sell Bitcoin for profits. Buy small amounts of bitcoin and always sell them for profits.",
     robots: "noimageindex",
     openGraph: {
       title: "Sign Up",
-      description: "Always sell bitcoin for profits.",
+      description: "Always sell Bitcoin for profits. Buy small amounts of bitcoin and always sell them for profits.",
       url: "https://arells.com/signup",
       type: "website",
       images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     },
     twitter: {
       title: "Sign Up",
-      description: "Always sell bitcoin for profits.",
+      description: "Always sell Bitcoin for profits. Buy small amounts of bitcoin and always sell them for profits.",
       card: "summary_large_image",
       images: [
         {

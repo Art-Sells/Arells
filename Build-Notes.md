@@ -28,7 +28,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - if holding, sell display none, holding display true.
 - Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) every 5 seconds from coin gecko API wrapper?
 
- #### Price = Bitcoin Price API 
+ #### (B) Price = Bitcoin Price API 
 
  #### Buy (Page)
  - Connects to Plaid First, (if not connected)
@@ -43,16 +43,16 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  #### (A)(B) Price = Holding Price
  - Holding Price = HPAP, if the Bitcoin price rises above the HPAP, then Holding Price = Bitcoin Price
 
- #### (A)(B) Value
- - Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
+ #### Wallet
+ - Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops. else "$0"
+
+ #### Profits
+ - displays acdVatops if positive, else "$0"
 
  #### Export (Page)
 
- #### Profits
- - displays acdVatops if positive, else ...
-
  #### Amount Sold
- - Displays "Sold Amount" from Database $
+ - Displays "Sold Amount" from Database $, else, "$0"
  - (Withdraw)-> Withdraw Page
 
  #### Log Out (Redirects to Home)
@@ -98,8 +98,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - all fees and totality values structured like so: 1,000,000.00
 
 ### Sell
-- (B) Amount Available To Sell" displays acVactsAts, otherwise everything below is hidden.
-- - Profits: displays acdVatops if >= 1, else ...
+- (B) Amount Available To Sell
+- - Wallet: displays acVactsAts(see Readme acVactsAts section), if > 0 otherwise display "$ 0" while hiding everything below with: No Amount Available to Sell (Buy)-> Buy Page
+- - Profits: displays acdVatops if >= 1, else "$0"
 - - Sell Amount Input: $ format tel with no * or # 
 - - Sell: takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme).
 - - (Confirm Sale) -> Modals
@@ -140,6 +141,8 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (A) -> Account Page (B) ->Buy Page
 - Plaid info from Plaid Wrapper?
 - Change Bank Account (Plaid Connect? from Plaid Wrapper?)
+
+##### Change Metadata Sharing Wrapper Slogan: "Always Sell Bitcoin For Profits"
 
 ## Arells Cryptocurrency Marketplace 1.5
 
