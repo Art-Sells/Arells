@@ -1,8 +1,6 @@
 // pages/_app.tsx or wherever your RootLayout is used
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
-import '../app/css/global.css';
-import '../app/css/reset.css';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';

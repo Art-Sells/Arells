@@ -10,11 +10,11 @@ import Export from '../../components/Export/Export';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Export",
-  description: "Never lose money selling cryptocurrencies.",
+  description: "Always sell bitcoin for profits.",
   robots: "noimageindex",
   openGraph: {
     title: "Export",
-    description: "Never lose money selling cryptocurrencies.",
+    description: "Always sell bitcoin for profits.",
     url: "https://arells.com/export",
     type: "website",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Export",
-    description: "Never lose money selling cryptocurrencies.",
+    description: "Always sell bitcoin for profits.",
     card: "summary_large_image",
     images: [
       {

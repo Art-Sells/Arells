@@ -67,15 +67,18 @@ const Index = () => {
 
 
           <p id="descriptioner">
-            NEVER LOSE MONEY SELLING
-            <span id="ada-description">CRYPTOCURRENCIES</span>
+            ALWAYS SELL
+            <span id="ada-description">BITCOIN</span>
+            <span id="ada-descriptioner">FOR PROFITS</span>
           </p>
 
           <BitcoinChart />
 
 
 
-          <p id="buy-info-home">Buy small pieces of Bitcoin and always sell them for profits.</p>
+          <p id="buy-info-home">    Buy small amounts of Bitcoin.
+          <span id="buy-info-homer">Always sell them for Profits.</span>
+          </p>
 
           <Link href="/login" passHref>
             <button id="login">

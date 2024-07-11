@@ -26,7 +26,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Home(redirects to Account if logged in)
 - if holding, sell display none, holding display true.
-- Reloads modules every 5 minutes (create price, wallet, and profits animation css) from coin gecko API wrapper?
+- Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) every 5 seconds from coin gecko API wrapper?
 
  #### Price = Bitcoin Price API 
 
@@ -35,10 +35,10 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
  #### Sell (Page)
  - Connects to Plaid First, (if not connected)
- - displayed once a cVatop + (cVatop * .03) > the cVact, othersie hidden
+ - displayed if acVacts == 0 or if acVactsAts > 0, otherwise hidden 
 
  #### Holding (replaces Sell button)
- - displayed once a cVatop + (cVatop * .03) < the cVact, othersie hidden
+ - displayed once acVactsAts = 0, othersie hidden
 
  #### (A)(B) Price = Holding Price
  - Holding Price = HPAP, if the Bitcoin price rises above the HPAP, then Holding Price = Bitcoin Price
@@ -64,8 +64,8 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Export
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - (W) Wallet: Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
-- (B) Amount: Displays all Bitcoin available.
-- Export Amount Input: back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and deletes the cVatops/cVacts if needed (see Readme)
+- (B) Amount: Displays acVatopTas.
+- Export Amount Input: back-end takes cVactTa from the Vatop Group with the highest cpVatop, otherwise starts from the lowest Vatop Group #, delete the Vatop Group if its cVact = 0 
 - Export Address Input:
 - Exporting
 - (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page))
@@ -74,7 +74,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (CANCEL) -> Account Page, 
 - (EXPORT) -> Modal
 - - Modal:
-- - - Exporting (3 second delay) back-end takes from highest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc and delete the cVatops/cVacts if needed (see Readme)
+- - - Exporting (3 second delay) back-end takes cVactTa from the Vatop Group with the highest cpVatop, otherwise starts from the lowest Vatop Group #, delete the Vatop Group if its cVact = 0 
 - - - Successfuly Exported (exporting modal = false, adds Date (logs new Date in "Transaction Dates" database), (B) and link to Block Exporer to "Exported Amount in Database") (View Transactions)-> Transactions-
 - - - Export Failed (exporting modal = false)(OK) (if export amount isn't lesser or equal to Bitcoin Wallet amount or other address)
 - - - Check Address (exporting modal = false)(if Bitcoin Address is not in right format (refer to Bitcoin Page))
@@ -91,21 +91,21 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (BUY) -> Modals
 - Modals: 
 - - Confirming Purchase 3 Second delay
-- - Purchase Complete (View Transactions)-> Transactions, 
-- - Purchase Failed (confirming purchase modal = false, adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Bought Amount in Database"), check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
+- - Purchase Complete (creates new Vatop Group with all corresponding info)(confirming purchase modal = false, adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Bought Amount in Database") -> View Transactions
+- - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 - all prices and wallet values structured like so: 1,000,000
 - all fees and totality values structured like so: 1,000,000.00
 
 ### Sell
-- (B) Amount Available To Sell" displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise everything below is hidden.
-- - Profits: displays acdVatops if positive, else ...
+- (B) Amount Available To Sell" displays acVactsAts, otherwise everything below is hidden.
+- - Profits: displays acdVatops if >= 1, else ...
 - - Sell Amount Input: $ format tel with no * or # 
-- - Sell: takes from lowest cVact(cpVatop), if cpVatop(cpVact)1 matches cpVatop(cpVact)2, then take from cpVatop1 first then cpVatop2, etc.
+- - Sell: takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme).
 - - (Confirm Sale) -> Modals
 - - - Modals: 
 - - - - Confirming Sale...3 Second delay
-- - - - Sale Complete (confirming sale modal = false) (subtracts first from cVact 1, then 2, 3, etc and deletes those cVacts & cVatops from the database, adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Sold Amount in Database") (View Transactions) -> Transactions
+- - - - Sale Complete (confirming sale modal = false) (takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme), adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Sold Amount in Database") (View Transactions) -> Transactions
 - - - - Transaction Failed (confirming sale modal = false) (OK)
 - Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
 - all prices and wallet values structured like so: 1,000,000 Bitcoin Amount based on how many Sats?

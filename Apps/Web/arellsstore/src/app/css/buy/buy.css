@@ -14,7 +14,7 @@
 		-webkit-animation-duration: 1.00s;
 		animation-name: animatetop;
 		animation-duration: 1.00s;
-		padding-bottom: 80px; 
+		padding-bottom: 70px; 
    }
    
 	   @-webkit-keyframes animatetop {
@@ -44,11 +44,10 @@
 
 	#buy-info-wrapper {
 		padding-top: 30px;
-		padding-bottom: 40px;
 		margin-top: 35px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 370px;
+		height: 515px;
 		width: 380px;
 		background-color: white;
 		border-radius: 30px;
@@ -98,7 +97,7 @@
 			padding-bottom: 40px;
 			margin-left: auto;
 			margin-right: auto;
-			height: 240px;
+			height: 340px;
 			width: 260px;
 			background-color: rgba(255, 251, 245, 1);
 			border-radius: 30px;
@@ -212,7 +211,6 @@
 				align-items: center;
 				margin-left: auto;
 				margin-right: auto;
-				padding-bottom: 25px;
 			}
 
 
@@ -237,21 +235,10 @@
 					margin-left: 2px;
 
 				}
-
-
-			#buy-info-buy {
-				color: black;
-				font-size: 9px;
-				font-weight: 200;
-				margin-top: 40px;
-				opacity: .7;
-				letter-spacing: 0.05px;
-		
-			}
 					
 				
 			#buy-button {
-				margin-top: 25px;
+				margin-top: 35px;
 				background: black;
 				text-decoration: none;
 				color: white;
@@ -265,7 +252,7 @@
 				letter-spacing: 1px;
 				border-radius: 5px;
 				border-width: 0px;
-				width: 260px;
+				width: 150px;
 				opacity: 1;
 				box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  			  
 			}

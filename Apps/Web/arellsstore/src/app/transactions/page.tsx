@@ -8,11 +8,11 @@ import Transactions from '../../components/Transactions/Transactions';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Transactions",
-  description: "Never lose money selling cryptocurrencies.",
+  description: "Always sell Bitcoin for Profits.",
   robots: "noimageindex",
   openGraph: {
     title: "Transactions",
-    description: "Never lose money selling cryptocurrencies.",
+    description: "Always sell Bitcoin for Profits.",
     url: "https://arells.com/transactions",
     type: "website",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Transactions",
-    description: "Never lose money selling cryptocurrencies.",
+    description: "Always sell Bitcoin for Profits.",
     card: "summary_large_image",
     images: [
       {

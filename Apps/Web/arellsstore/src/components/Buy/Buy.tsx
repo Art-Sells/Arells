@@ -167,12 +167,9 @@ const Buy: React.FC = () => {
             <span id="total-word">Total:</span>
             <span id="total-number">$<span id="total-num">2,000.00</span></span>
           </div>
+          <button id="buy-button">BUY</button>
         </div>
       </div>
-
-      <p id="buy-info-buy">Buy small amounts of Bitcoin and always sell them for profits.</p>
-
-      <button id="buy-button">BUY</button>
     </>
   );
 };

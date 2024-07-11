@@ -65,8 +65,9 @@ const Account: React.FC = () => {
       />
 
       <p id="descriptioner-account">
-        NEVER LOSE MONEY SELLING
-        <span id="descriptioner-account-crypto"> CRYPTOCURRENCIES</span>
+        ALWAYS SELL
+        <span id="descriptioner-account-crypto">BITCOIN</span>
+        <span id="descriptioner-account-cryptor">FOR PROFITS</span>
       </p>
 
       <div id="wallet-account-wrapper">
