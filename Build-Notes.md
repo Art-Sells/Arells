@@ -7,28 +7,8 @@ Test Address: bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6
 Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Wrappers
-- **Purchase CoinGecko API?**
-- **Possibly a connect wallet & log in/sign up account wrapper** that automatically connects to your prior wallet with Address and Private Key pulled from backend once logged in.
 - **Possibly a plaid wraper**
 - **HPM Wrapper (see Readme for building mechanisms example)**
-
-### Sign Up
-- Modal:
-- - Account Created (View Account)-> Creates Bitcoin Wallet **Backend: saves Address to Email and encrypts private key and saves it on backend** then takes you to Homepage with wallet connected **connect wallet wrapper initiated**
-- - Enter information (if one or more fields are empty)
-- - Creating Account (3 second delay)
-- - - Test to see if "Confirmation Code Exists" error works...
-
-### Confirm
-- - - Ensure Private Key is Encrypted (if successful)
-- - - HPM Vatop Groups saved as tables within api/user?
-
-### Log In
-- **connect wallet wrapper initiated**
-- Modal:
-- - Enter information (if one or more fields are empty)
-- - if email already exists but is unconfirmed -> Confirm Page
-- - Logging In (3 second delay)
 
 ### Home Page
 - If Log In = true, go to /Account
@@ -152,20 +132,31 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Plaid info from Plaid Wrapper?
 - Change Bank Account (Plaid Connect? from Plaid Wrapper?)
 
-##### Change Metadata Sharing Wrapper Slogan: "Always Sell Bitcoin For Profits"
-
-### If Time Commits:
+### Other
+- Change Metadata Sharing Wrapper Slogan: "Always Sell Bitcoin For Profits"
+- Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
+
+### If time permits:
+- Clean up Console errors and all Console Logs...
 
 ## Arells Cryptocurrency Marketplace 1.5
 
 ### Home Page (without login)
 - Add transactions button
 
+
 ### Sign Up
 - Verify Email *important*
+- Add noreply@arells.com to Amazon SES Identities
+- - - Test to see if "Confirmation Code Exists" error works...
+
+### Confirm
+- - - Ensure Private Key is Encrypted (if successful)
+- - - HPM Vatop Groups saved as tables within api/user?
 
 ### Log In
+- - if email already exists but is unconfirmed -> Confirm Page
 - Forgot Password 
 - Add 2FA for Buying/Selling and first Logging In.
 

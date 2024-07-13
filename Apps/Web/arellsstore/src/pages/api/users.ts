@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 // Simulate a database for storing users
-const users: Array<{ email: string; password: string; address: string; privateKey: string }> = [];
+const users: Array<{ email: string; password: string; bitcoinAddress: string; bitcoinPrivateKey: string }> = [];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { email, password, address, privateKey } = req.body;
+    const { email, password, bitcoinAddress, bitcoinPrivateKey } = req.body;
 
-    if (!email || !password || !address || !privateKey) {
+    if (!email || !password || !bitcoinAddress || !bitcoinPrivateKey) {
       return res.status(400).json({ error: 'Missing fields' });
     }
 
@@ -18,7 +18,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Save the new user
-    users.push({ email, password, address, privateKey });
+    users.push({ email, password, bitcoinAddress, bitcoinPrivateKey });
     return res.status(201).json({ message: 'User created successfully' });
   } else {
     return res.status(405).json({ error: 'Method not allowed' });

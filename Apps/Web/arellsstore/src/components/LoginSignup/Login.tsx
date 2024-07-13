@@ -2,23 +2,78 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import type { ImageLoaderProps } from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
-import $ from 'jquery';
+import '../../app/css/modals/buy/buy-modal.css';
+import '../../app/css/modals/export/export-modal.css';
+import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 import Link from 'next/link';
+import { signIn, signOut, fetchUserAttributes } from 'aws-amplify/auth';
+import { useRouter } from 'next/navigation';
+import { useUser } from '../../context/UserContext';
+
+interface Attribute {
+    Name: string;
+    Value: string;
+}
 
 const Login: React.FC = () => {
-    //Loader Function/s
-    const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
+    const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
         return `/${src}?w=${width}&q=${quality || 100}`;
-      }
-    //Loader Function/s
+    };
 
-
+    const router = useRouter();
+    const { setEmail, setBitcoinAddress, setBitcoinPrivateKey } = useUser();
+    const [email, setEmailState] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [showLoggingIn, setLoggingIn] = useState<boolean>(false);
     const [showLoginError, setLoginError] = useState<boolean>(false);
 
-    const logIn = () => {
+    const logIn = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        setLoggingIn(true);
+        setLoginError(false);
+
+        try {
+            // Sign out any existing user
+            await signOut();
+
+            const user = await signIn({ username: email, password });
+            console.log('User logged in:', user);
+
+            // Fetch user attributes
+            const attributesResponse = await fetchUserAttributes();
+            console.log('Fetched attributes:', attributesResponse);
+
+            // Convert attributes object to array format and handle undefined values
+            const attributesArray: Attribute[] = Object.keys(attributesResponse).map(key => ({
+                Name: key,
+                Value: attributesResponse[key] || ''
+            }));
+
+            const bitcoinAddress = attributesArray.find((attr: Attribute) => attr.Name === 'custom:bitcoinAddress')?.Value;
+            const bitcoinPrivateKey = attributesArray.find((attr: Attribute) => attr.Name === 'custom:bitcoinPrivateKey')?.Value;
+
+            if (bitcoinAddress && bitcoinPrivateKey) {
+                console.log('Bitcoin Address:', bitcoinAddress);
+                console.log('Bitcoin Private Key:', bitcoinPrivateKey);
+                setEmail(email);
+                setBitcoinAddress(bitcoinAddress);
+                setBitcoinPrivateKey(bitcoinPrivateKey);
+            } else {
+                console.log('Bitcoin attributes not found');
+            }
+
+            setTimeout(() => {
+                setLoggingIn(false);
+                router.push('/account');
+            }, 3000);
+        } catch (error) {
+            console.log('Error logging in:', error);
+            setLoggingIn(false);
+            setLoginError(true);
+        }
     };
 
     const closeLoginError = () => {
@@ -30,48 +85,67 @@ const Login: React.FC = () => {
             {showLoginError && (
                 <div id="login-error-wrapper">
                     <div id="login-error-content">
-                    <Image 
-                        // loader={imageLoader}
-                        alt="" 
-                        width={35}
-                        height={35}
-                        id="login-error-image" 
-                        src="/images/market/prohibited.png"/>  
-                    <p id="login-error-words">wrong</p>
-                    <p id="login-error-wordss">email and/or password</p>
-                    <p id="login-error-wordsss">combo</p>
-                    <button id="login-error-close"
-                        onClick={closeLoginError}>OK</button> 
+                        <Image 
+                            alt="" 
+                            width={35}
+                            height={35}
+                            id="login-error-image" 
+                            src="/images/market/prohibited.png"
+                        />  
+                        <p id="login-error-words">wrong</p>
+                        <p id="login-error-wordss">email and/or password</p>
+                        <p id="login-error-wordsss">combo</p>
+                        <button id="login-error-close" onClick={closeLoginError}>OK</button> 
                     </div>
                 </div>  
             )}
+            {showLoggingIn && (
+                <div id="buying-wrapper">
+                    <div id="buying-content">
+                        <div className={stylings.marketplaceloader}></div>
+                        <Image
+                            alt=""
+                            width={22}
+                            height={22}
+                            id="buying-image"
+                            src="/images/market/open-door.png"
+                        />
+                        <p id="buying-words">logging in</p>
+                    </div>
+                </div>
+            )}
             <p id="login-title">LOGIN</p>
             <div id="log-in">
-                <form id="myForm">
+                <form id="myForm" onSubmit={logIn}>
                     <div id="enter-content">
-                        <input name="email" type="email"
-                        placeholder='email'
-                            id="email-input" ></input>
+                        <input 
+                            name="email" 
+                            type="email" 
+                            placeholder="email"
+                            id="email-input"
+                            value={email}
+                            onChange={(e) => setEmailState(e.target.value)}
+                        />
                     </div>
                     <div id="enter-content">
-                        <input name="first_name" type="password"
-                         placeholder='password'
-                            id="password-input" ></input>
+                        <input 
+                            name="password" 
+                            type="password" 
+                            placeholder="password"
+                            id="password-input"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
                     </div>
-                    <hr id="invisible-line"/>
-                    <a id="login-button"
-                        onClick={logIn}>LOGIN</a>
+                    <button id="login-button" type="submit">LOGIN</button>
                 </form>
             </div>
 
             <p id="no-account">NO ACCOUNT? SIGN UP</p>
 
             <Link href="/signup" passHref>
-                <button id="signup-button">
-                SIGN UP
-                </button>
+                <button id="signup-button">SIGN UP</button>
             </Link> 
-
         </>
     );
 }

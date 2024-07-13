@@ -213,10 +213,11 @@
 			  height: 10px;           
            }     	   
 			#login-button {
-			  background-color: none;
-			  border-color: rgba(204, 116, 0);
-			  text-decoration: none;
-			  color: rgba(204, 116, 0);
+			margin-top: 20px;
+			background: none;
+			border-color: rgba(204, 116, 0);
+			text-decoration: none;
+			color: rgba(204, 116, 0);
 			  font-weight: 500;
 			  font-size: 12px;
 			  padding-top: 15px;
@@ -227,7 +228,7 @@
 			  letter-spacing: 2px;
 			  border-radius: 10px;
 			  border-width: 1px;
-			  width: 250px;
+			  width: 150px;
 			  opacity: .8;		  
 			}
 			#login-button:hover,
@@ -361,8 +362,7 @@
 		   
 		#login-button {
 			width: 150px;
-			font-size: 11px; 
-			margin-top: 60px;			  
+			font-size: 11px; 		  
 			}
 
 		#signup-button {

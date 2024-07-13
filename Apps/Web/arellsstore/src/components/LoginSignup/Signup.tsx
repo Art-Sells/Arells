@@ -8,9 +8,8 @@ import '../../app/css/modals/buy/buy-modal.css';
 import '../../app/css/modals/export/export-modal.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 import Link from 'next/link';
-import { signUp, resendSignUpCode } from 'aws-amplify/auth';
+import { signUp } from 'aws-amplify/auth';
 import { generateWallet } from '../../lib/bitcoin';
-import { useRouter } from 'next/router';
 
 const Signup: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -18,15 +17,17 @@ const Signup: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [showPasswordsError, setPasswordsError] = useState<boolean>(false);
   const [showEmailError, setEmailError] = useState<boolean>(false);
-  const [showSigningUp, setSigningUp] = useState<boolean>(false);
   const [showMissingFields, setMissingFields] = useState<boolean>(false);
+  const [showSigningUp, setSigningUp] = useState<boolean>(false);
   const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
   const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
+  const [showSignedUp, setSignedUp] = useState<boolean>(false);
 
   const closeEmailExistsError = () => setEmailExistsError(false);
   const closePasswordsDontMatchError = () => setPasswordsDontMatchError(false);
   const closePasswordsError = () => setPasswordsError(false);
   const closeEmailError = () => setEmailError(false);
+  const closeSignedUp = () => setSignedUp(false);
   const closeMissingFields = () => setMissingFields(false);
 
   const validateEmail = (email: string) => {
@@ -44,7 +45,6 @@ const Signup: React.FC = () => {
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
-    const router = useRouter();
     e.preventDefault();
 
     setEmailExistsError(false);
@@ -74,36 +74,35 @@ const Signup: React.FC = () => {
     }
 
     try {
-      const { nextStep } = await signUp({
+      setSigningUp(true);
+
+      const wallet = await generateWallet();
+      console.log('Wallet generated:', wallet);
+
+      const { isSignUpComplete } = await signUp({
         username: email,
         password,
         options: {
-          userAttributes: { email },
+          userAttributes: {
+            email,
+            'custom:bitcoinAddress': wallet.address,
+            'custom:bitcoinPrivateKey': wallet.privateKey,
+          },
         },
       });
 
-      setTimeout(async () => {
-        setSigningUp(true);
-      }, 3000);
+      if (isSignUpComplete) {
+        // Simulate successful user creation without making an API call
+        console.log('User creation successful.');
 
-      if (nextStep && nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
-        console.log('Confirmation code needed to complete sign up.');
-        router.push('/confirm');
-      } 
+        setTimeout(() => {
+          setSigningUp(false);
+          setSignedUp(true);
+        }, 3000);
+      }
     } catch (error: any) {
       if (error.name === 'UsernameExistsException' || error.code === 'UsernameExistsException') {
-        try {
-          resendSignUpCode;
-          console.log('Resent confirmation code for existing but unconfirmed account.');
-          router.push('/confirm');
-        } catch (resendError: any) {
-          if (resendError.name === 'UserNotConfirmedException' || resendError.code === 'UserNotConfirmedException') {
-            router.push('/confirm');
-          } else {
-            setEmailExistsError(true);
-            console.log('Error resending confirmation code:', resendError);
-          }
-        }
+        setEmailExistsError(true);
       } else {
         console.log('Error signing up:', error);
       }
@@ -113,21 +112,6 @@ const Signup: React.FC = () => {
 
   return (
     <>
-      {showSigningUp && (
-        <div id="buying-wrapper">
-          <div id="buying-content">
-            <div className={stylings.marketplaceloader}></div>
-            <Image
-              alt=""
-              width={22}
-              height={22}
-              id="buying-image"
-              src="/images/market/-ivory.png"
-            />
-            <p id="buying-words">creating account</p>
-          </div>
-        </div>
-      )}
       {showEmailExistsError && (
         <div id="login-error-wrapper">
           <div id="account-exists-content">
@@ -141,6 +125,21 @@ const Signup: React.FC = () => {
             <p id="account-exists-words">email account</p>
             <p id="account-exists-wordsss">already exists</p>
             <button id="signup-error-close" onClick={closeEmailExistsError}>OK</button>
+          </div>
+        </div>
+      )}
+      {showSigningUp && (
+        <div id="buying-wrapper">
+          <div id="buying-content">
+            <div className={stylings.marketplaceloader}></div>
+            <Image
+              alt=""
+              width={22}
+              height={22}
+              id="buying-image"
+              src="/images/market/profile-ivory.png"
+            />
+            <p id="buying-words">creating account</p>
           </div>
         </div>
       )}
@@ -205,6 +204,17 @@ const Signup: React.FC = () => {
             <p id="passwordss-error-words">a letter ( a-z | A-Z ), a number ( 0 - 9 )</p>
             <p id="passwordssss-error-words">and a character  ( ! - * )</p>
             <button id="signup-error-close" onClick={closePasswordsError}>OK</button>
+          </div>
+        </div>
+      )}
+      {showSignedUp && (
+        <div id="account-created-wrapper">
+          <div id="account-created-content">
+            <Image alt="" width={35} height={35} id="account-created-image" src="/images/market/checkmark-ebony.png" />
+            <p id="account-created-words">Account Created</p>
+            <Link href="/account" passHref>
+              <button id="account-created-close">VIEW ACCOUNT</button>
+            </Link>
           </div>
         </div>
       )}

@@ -1,6 +1,8 @@
 // pages/_app.tsx or wherever your RootLayout is used
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
+import { EmailProvider } from '../context/EmailContext';
+import { UserProvider } from '../context/UserContext'; // Import UserProvider
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
@@ -19,11 +21,14 @@ export default function RootLayout({ children }: LayoutProps) {
       </head>
       <body>
         <ConfigureAmplifyClientSide />
-        <BitcoinPriceProvider>
-          {children}
-        </BitcoinPriceProvider>
+        <EmailProvider>
+          <BitcoinPriceProvider>
+            <UserProvider>
+              {children}
+            </UserProvider>
+          </BitcoinPriceProvider>
+        </EmailProvider>
       </body>
     </html>
   );
 }
-
