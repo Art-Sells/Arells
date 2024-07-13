@@ -68,6 +68,17 @@
 		letter-spacing: 0px;
 		opacity: .3;			
 	}	
+	#confirm-title {
+		margin-top: 50px;
+		color: rgb(115, 65, 0); 
+		margin-left: auto;	
+		margin-right: auto;	
+		font-weight: 600;	
+		font-size: 20px;
+		margin-left: 0px;
+		letter-spacing: 0px;
+		opacity: .3;			
+	}
 
 	
 	#sign-up {
@@ -98,6 +109,32 @@
 		border-radius: 15px;
 		box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25); 		  	
 	}
+	#confirm {
+		color: rgb(115, 65, 0); 
+		width: 220px;
+		height: 300px;
+		padding-top: 60px;
+		padding-left: 10px;
+		padding-right: 10px;
+		margin-top: 60px;
+		margin-left: auto;
+		margin-right: auto;
+		background: none;
+		border-radius: 15px;
+		box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25); 		  	
+	}
+
+		#confirm-instructions {
+			width: 180px;
+			color: rgb(115, 65, 0); 
+			margin-left: auto;	
+			margin-right: auto;	
+			line-height: 20px;
+			font-weight: 800;	
+			font-size: 20px;
+			letter-spacing: -1px;
+			opacity: .25;			
+		}
 
 		#enter-content {
 			margin-top: 5px;
@@ -130,16 +167,36 @@
        	   		opacity: .4;
 				margin-bottom: 10px;  
        	   }
+			#confirmation-input { 
+				text-align: center;
+				margin-top: 5px;     	   
+				padding-top: 20px;
+				padding-bottom: 20px;
+				padding-left: 20px;
+				padding-right: 20px;       	   		
+				color: white;
+				font-weight: 800;
+				border: none;
+				border-radius: 10px;
+				font-size: 15px;
+				width: 130px;
+				height: 15px;
+				letter-spacing: 0px;    	   		
+				background: rgb(192, 133, 57);
+				opacity: .4;
+				}
 			  #email-input::placeholder,
 			  #password-input::placeholder,
-			  #confirm-password-input::placeholder { 
+			  #confirm-password-input::placeholder,
+			  #confirmation-input::placeholder { 
 				color: white; /* Change the placeholder text color */
 				font-size: 15px; /* Change the font size */
 				 }
  	   
 			  #email-input:focus,
 			  #password-input:focus,
-			  #confirm-password-input:focus {
+			  #confirm-password-input:focus,
+			  #confirmation-input:focus {
 			    cursor: pointer;
 			    outline: none;
 			    transition: 1s;
@@ -224,6 +281,32 @@
 			  transition: 1s;
 			  cursor: pointer;
 			}  
+
+		#confirm-button {
+			margin-top: 25px;
+			background: none;
+			border-color: rgba(204, 116, 0);
+			text-decoration: none;
+			color: rgba(204, 116, 0);
+			font-weight: 500;
+			font-size: 12px;
+			padding-top: 15px;
+			padding-bottom: 15px;
+			padding-right: 12px;
+			padding-left: 14px;	  
+			border: solid;
+			letter-spacing: 2px;
+			border-radius: 10px;
+			border-width: 1px;
+			width: 100px;
+			opacity: .8;		  
+			}
+			#confirm-button:hover,
+			#confirm-button:focus {
+			opacity: .4;
+			transition: 1s;
+			cursor: pointer;
+			} 			
 			
 			
 
@@ -234,7 +317,11 @@
 	#log-in {
 		margin-top: 30px;		  	
 	}
+	#confirm{
+		margin-top: 30px;
+	}
 }
+
 
 
 

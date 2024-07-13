@@ -1,19 +1,19 @@
 import * as bitcoin from 'bitcoinjs-lib';
-import ECPairFactory from 'ecpair';
-import * as ecc from 'tiny-secp256k1';
 import axios from 'axios';
 
-const ECPair = ECPairFactory(ecc);
-const network = bitcoin.networks.bitcoin;
+const loadTinySecp256k1 = async () => {
+  const tinySecp256k1 = await import('tiny-secp256k1');
+  return tinySecp256k1;
+};
 
-export const generateWallet = () => {
-  const keyPair = ECPair.makeRandom({ network });
-  const payment = bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey, network });
+export const generateWallet = async () => {
+  const tinySecp256k1 = await loadTinySecp256k1();
+  const ECPairFactory = (await import('ecpair')).default;
+  const ECPair = ECPairFactory(tinySecp256k1);
+  const keyPair = ECPair.makeRandom();
+  const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey });
   const privateKey = keyPair.toWIF();
-  return {
-    address: payment.address || '',
-    privateKey
-  };
+  return { address, privateKey };
 };
 
 export const getBalance = async (address: string) => {
@@ -21,63 +21,16 @@ export const getBalance = async (address: string) => {
   return response.data;
 };
 
-export const loadWallet = (address: string, privateKey: string) => {
+export const loadWallet = async (address: string, privateKey: string) => {
+  const tinySecp256k1 = await loadTinySecp256k1();
+  const ECPairFactory = (await import('ecpair')).default;
+  const ECPair = ECPairFactory(tinySecp256k1);
   try {
-    const keyPair = ECPair.fromWIF(privateKey, network);
-    const { pubkey } = bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey, network });
-    const derivedAddress = bitcoin.payments.p2wpkh({ pubkey, network }).address;
+    const keyPair = ECPair.fromWIF(privateKey);
+    const derivedAddress = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey }).address;
     return address === derivedAddress ? { address, privateKey } : null;
   } catch (error) {
     console.error('Error loading wallet:', error);
     return null;
   }
-};
-
-export const createTransaction = async (senderPrivateKey: string, recipientAddress: string, amount: number, feeRate: number) => {
-  const keyPair = ECPair.fromWIF(senderPrivateKey, network);
-  const payment = bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey, network });
-
-  if (!payment.address) {
-    throw new Error('Failed to derive address');
-  }
-  const address = payment.address;
-
-  const response = await axios.get(`https://blockchain.info/unspent?active=${address}`);
-  const utxos = response.data.unspent_outputs || [];
-
-  if (utxos.length === 0) {
-    throw new Error('No UTXOs available for the address');
-  }
-
-  const psbt = new bitcoin.Psbt({ network });
-  let inputAmount = 0;
-
-  for (const utxo of utxos) {
-    if (!utxo.script || utxo.tx_output_n === undefined) {
-      throw new Error(`Missing data for UTXO with transaction hash: ${utxo.tx_hash_big_endian}`);
-    }
-
-    psbt.addInput({
-      hash: utxo.tx_hash_big_endian,
-      index: utxo.tx_output_n,
-      witnessUtxo: {
-        script: Buffer.from(utxo.script, 'hex'),
-        value: utxo.value,
-      },
-    });
-    inputAmount += utxo.value;
-  }
-
-  psbt.addOutput({ address: recipientAddress, value: amount });
-  const transactionSize = psbt.data.inputs.length * 148 + psbt.data.outputs.length * 34 + 10; // Rough estimate of transaction size in bytes
-  const fee = transactionSize * feeRate;
-  const change = inputAmount - amount - fee;
-
-  if (change > 0) {
-    psbt.addOutput({ address, value: change });
-  }
-
-  psbt.signAllInputs(keyPair);
-  psbt.finalizeAllInputs();
-  return psbt.extractTransaction().toHex();
 };

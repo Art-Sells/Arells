@@ -15,14 +15,23 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Sign Up
 - Modal:
 - - Account Created (View Account)-> Creates Bitcoin Wallet **Backend: saves Address to Email and encrypts private key and saves it on backend** then takes you to Homepage with wallet connected **connect wallet wrapper initiated**
+- - Enter information (if one or more fields are empty)
+- - Creating Account (3 second delay)
+- - - Test to see if "Confirmation Code Exists" error works...
+
+### Confirm
+- - - Ensure Private Key is Encrypted (if successful)
+- - - HPM Vatop Groups saved as tables within api/user?
 
 ### Log In
 - **connect wallet wrapper initiated**
-
+- Modal:
+- - Enter information (if one or more fields are empty)
+- - if email already exists but is unconfirmed -> Confirm Page
+- - Logging In (3 second delay)
 
 ### Home Page
 - If Log In = true, go to /Account
-
 
 ### Home(redirects to Account if logged in)
 - if holding, sell display none, holding display true.
@@ -35,10 +44,10 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
  #### Sell (Page)
  - Connects to Plaid First, (if not connected)
- - displayed if acVacts == 0 or if acVactsAts > 0, otherwise hidden 
+ - displayed if acVacts == 0 or if acVactsAts(see Readme acVactsAts section) > 0, otherwise hidden 
 
  #### Holding (replaces Sell button)
- - displayed once acVactsAts = 0, othersie hidden
+ - displayed once acVactsAts(see Readme acVactsAts section) = 0, othersie hidden
 
  #### (A)(B) Price = Holding Price
  - Holding Price = HPAP, if the Bitcoin price rises above the HPAP, then Holding Price = Bitcoin Price
@@ -56,7 +65,6 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  - (Withdraw)-> Withdraw Page
 
  #### Log Out (Redirects to Home)
-
 
 ### Import
 - Pull Bitcoin Address From Backend
@@ -93,6 +101,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - Confirming Purchase 3 Second delay
 - - Purchase Complete (creates new Vatop Group with all corresponding info)(confirming purchase modal = false, adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Bought Amount in Database") -> View Transactions
 - - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
+- - Enter information (if one or more fields are empty)
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 - all prices and wallet values structured like so: 1,000,000
 - all fees and totality values structured like so: 1,000,000.00
@@ -108,6 +117,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - - - Confirming Sale...3 Second delay
 - - - - Sale Complete (confirming sale modal = false) (takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme), adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Sold Amount in Database") (View Transactions) -> Transactions
 - - - - Transaction Failed (confirming sale modal = false) (OK)
+- - - - Enter information (if one or more fields are empty)
 - Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
 - all prices and wallet values structured like so: 1,000,000 Bitcoin Amount based on how many Sats?
 - all fees and totality values structured like so: 1,000,000.00
@@ -143,6 +153,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - Change Bank Account (Plaid Connect? from Plaid Wrapper?)
 
 ##### Change Metadata Sharing Wrapper Slogan: "Always Sell Bitcoin For Profits"
+
+### If Time Commits:
+- Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
 
 ## Arells Cryptocurrency Marketplace 1.5
 

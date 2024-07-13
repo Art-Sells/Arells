@@ -16,6 +16,7 @@
     "@apollo/experimental-nextjs-app-support": "^0.5.1",
     "@apollo/federation": "latest",
     "@aws-amplify/auth": "^6.3.7",
+    "@babel/plugin-transform-runtime": "^7.24.7",
     "@coinbase/wallet-sdk": "^3.7.2",
     "@openzeppelin/contracts": "^4.9.3",
     "@swc/helpers": "^0.5.11",

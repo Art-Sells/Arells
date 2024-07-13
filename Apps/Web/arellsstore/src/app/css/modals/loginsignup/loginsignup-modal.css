@@ -131,12 +131,12 @@
 
 #signup-error-image{
   margin-top: 4px;
-  opacity: .5;
+  opacity: .6;
 }
 
 #passwords-error-image{
   margin-top: 3px;
-  opacity: .4;
+  opacity: .6;
 }
 
 #account-created-image{
@@ -184,7 +184,7 @@
       margin-top: 15px;
       letter-spacing: 0px;
       margin-left: 0px; 
-      opacity: .5;
+      opacity: .65;
     }
     #account-exists-wordsss {
       color: rgb(255, 255, 255);
@@ -194,7 +194,7 @@
       margin-bottom: 30px;
       letter-spacing: 0px;
       margin-left: 0px; 
-      opacity: .5;
+      opacity: .65;
     }
 
 
@@ -207,7 +207,7 @@
       margin-top: 15px;
       letter-spacing: 0px;
       margin-left: 0px; 
-      opacity: .4;
+      opacity: .65;
     }
     #passwordss-error-words {
       color: rgb(255, 255, 255);
@@ -216,7 +216,7 @@
       margin-top: -7px;
       letter-spacing: 0px;
       margin-left: 0px; 
-      opacity: .4;
+      opacity: .65;
     }
     #passwordssss-error-words {
       color: rgb(255, 255, 255);
@@ -226,7 +226,7 @@
       margin-bottom: 30px;
       letter-spacing: 0px;
       margin-left: 0px; 
-      opacity: .4;
+      opacity: .65;
     }
 
 
