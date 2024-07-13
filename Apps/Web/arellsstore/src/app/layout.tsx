@@ -17,7 +17,7 @@ export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en">
       <head>
-        <link rel="shortcut icon" href="https://arells.com/ArellsIcoIcon.png" />
+        <link rel="shortcut icon" href="/ArellsBitcoin.png" />
       </head>
       <body>
         <ConfigureAmplifyClientSide />

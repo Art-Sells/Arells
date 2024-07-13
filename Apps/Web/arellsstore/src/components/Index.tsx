@@ -7,8 +7,8 @@ import '../app/css/Home.css';
 import BitcoinChart from '../components/Bitcoin/BitcoinChart';
 
 // Loader Styles
-import '../app/css/modals/loading/spinnerBackground.css';
-import styles from '../app/css/modals/loading/spinner.module.css';
+import '../app/css/modals/loader/accountloaderbackground.css';
+import styles from '../app/css/modals/loader/accountloader.module.css';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -43,15 +43,16 @@ const Index = () => {
   return (
     <>
       {showLoading && (
-        <div id="spinnerBackground">
-          <Image 
-           loader={imageLoader}
-            alt="" 
+        <div id="accountloaderbackground">
+          <Image
+            loader={imageLoader}
+            alt=""
             width={29}
             height={30}
-            id="arells-loader-icon" 
-            src="images/Arells-Icon.png"/>    
-            <div className={styles.spinner}></div>    
+            id="arells-loader-icon-account"
+            src="images/Arells-Icon.png"
+          />
+          <div id={styles.accountloader}></div>
         </div>
       )}
 
