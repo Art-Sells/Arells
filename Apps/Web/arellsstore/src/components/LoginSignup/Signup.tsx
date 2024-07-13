@@ -8,107 +8,151 @@ import '../../app/css/modals/buy/buy-modal.css';
 import '../../app/css/modals/export/export-modal.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 import Link from 'next/link';
-import { signUp } from 'aws-amplify/auth';
+import { signUp, signIn, fetchUserAttributes, signOut } from 'aws-amplify/auth';
+import { useRouter } from 'next/navigation';
+import { useUser } from '../../context/UserContext';
 import { generateWallet } from '../../lib/bitcoin';
 
+interface Attribute {
+    Name: string;
+    Value: string;
+}
+
 const Signup: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [showPasswordsError, setPasswordsError] = useState<boolean>(false);
-  const [showEmailError, setEmailError] = useState<boolean>(false);
-  const [showMissingFields, setMissingFields] = useState<boolean>(false);
-  const [showSigningUp, setSigningUp] = useState<boolean>(false);
-  const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
-  const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
-  const [showSignedUp, setSignedUp] = useState<boolean>(false);
+    const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
+        return `/${src}?w=${width}&q=${quality || 100}`;
+    };
 
-  const closeEmailExistsError = () => setEmailExistsError(false);
-  const closePasswordsDontMatchError = () => setPasswordsDontMatchError(false);
-  const closePasswordsError = () => setPasswordsError(false);
-  const closeEmailError = () => setEmailError(false);
-  const closeSignedUp = () => setSignedUp(false);
-  const closeMissingFields = () => setMissingFields(false);
+    const router = useRouter();
+    const { setEmail, setBitcoinAddress, setBitcoinPrivateKey } = useUser();
+    const [email, setEmailState] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [confirmPassword, setConfirmPassword] = useState<string>('');
+    const [showPasswordsError, setPasswordsError] = useState<boolean>(false);
+    const [showEmailError, setEmailError] = useState<boolean>(false);
+    const [showMissingFields, setMissingFields] = useState<boolean>(false);
+    const [showSigningUp, setSigningUp] = useState<boolean>(false);
+    const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
+    const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
+    const [showSignedUp, setSignedUp] = useState<boolean>(false);
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+    const closeEmailExistsError = () => setEmailExistsError(false);
+    const closePasswordsDontMatchError = () => setPasswordsDontMatchError(false);
+    const closePasswordsError = () => setPasswordsError(false);
+    const closeEmailError = () => setEmailError(false);
+    const closeSignedUp = () => setSignedUp(false);
+    const closeMissingFields = () => setMissingFields(false);
 
-  const validatePassword = (password: string) => {
-    const minLength = 8;
-    const hasLetter = /[a-zA-Z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const validateEmail = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
-    return password.length >= minLength && hasLetter && hasNumber && hasSpecialChar;
-  };
+    const validatePassword = (password: string) => {
+        const minLength = 8;
+        const hasLetter = /[a-zA-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+        return password.length >= minLength && hasLetter && hasNumber && hasSpecialChar;
+    };
 
-    setEmailExistsError(false);
-    setPasswordsDontMatchError(false);
-    setPasswordsError(false);
-    setMissingFields(false);
-    setEmailError(false);
+    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
-    if (!email || !password || !confirmPassword) {
-      setMissingFields(true);
-      return;
-    }
+        setEmailExistsError(false);
+        setPasswordsDontMatchError(false);
+        setPasswordsError(false);
+        setMissingFields(false);
+        setEmailError(false);
 
-    if (!validateEmail(email)) {
-      setEmailError(true);
-      return;
-    }
+        if (!email || !password || !confirmPassword) {
+            setMissingFields(true);
+            return;
+        }
 
-    if (!validatePassword(password)) {
-      setPasswordsError(true);
-      return;
-    }
+        if (!validateEmail(email)) {
+            setEmailError(true);
+            return;
+        }
 
-    if (password !== confirmPassword) {
-      setPasswordsDontMatchError(true);
-      return;
-    }
+        if (!validatePassword(password)) {
+            setPasswordsError(true);
+            return;
+        }
 
-    try {
-      setSigningUp(true);
+        if (password !== confirmPassword) {
+            setPasswordsDontMatchError(true);
+            return;
+        }
 
-      const wallet = await generateWallet();
-      console.log('Wallet generated:', wallet);
+        try {
+            await signOut();
+            setSigningUp(true);
 
-      const { isSignUpComplete } = await signUp({
-        username: email,
-        password,
-        options: {
-          userAttributes: {
-            email,
-            'custom:bitcoinAddress': wallet.address,
-            'custom:bitcoinPrivateKey': wallet.privateKey,
-          },
-        },
-      });
+            const wallet = await generateWallet();
+            console.log('Wallet generated:', wallet);
 
-      if (isSignUpComplete) {
-        // Simulate successful user creation without making an API call
-        console.log('User creation successful.');
+            const { isSignUpComplete } = await signUp({
+                username: email,
+                password,
+                options: {
+                    userAttributes: {
+                        email,
+                        'custom:bitcoinAddress': wallet.address,
+                        'custom:bitcoinPrivateKey': wallet.privateKey,
+                    },
+                },
+            });
 
-        setTimeout(() => {
-          setSigningUp(false);
-          setSignedUp(true);
-        }, 3000);
-      }
-    } catch (error: any) {
-      if (error.name === 'UsernameExistsException' || error.code === 'UsernameExistsException') {
-        setEmailExistsError(true);
-      } else {
-        console.log('Error signing up:', error);
-      }
-      setSigningUp(false);
-    }
-  };
+            if (isSignUpComplete) {
+                console.log('User creation successful.');
+
+                try {
+                    const user = await signIn({ username: email, password });
+                    console.log('User logged in:', user);
+
+                    // Fetch user attributes
+                    const attributesResponse = await fetchUserAttributes();
+                    console.log('Fetched attributes:', attributesResponse);
+
+                    // Convert attributes object to array format and handle undefined values
+                    const attributesArray: Attribute[] = Object.keys(attributesResponse).map(key => ({
+                        Name: key,
+                        Value: attributesResponse[key] || ''
+                    }));
+
+                    const bitcoinAddress = attributesArray.find((attr: Attribute) => attr.Name === 'custom:bitcoinAddress')?.Value;
+                    const bitcoinPrivateKey = attributesArray.find((attr: Attribute) => attr.Name === 'custom:bitcoinPrivateKey')?.Value;
+
+                    if (bitcoinAddress && bitcoinPrivateKey) {
+                        console.log('Bitcoin Address:', bitcoinAddress);
+                        console.log('Bitcoin Private Key:', bitcoinPrivateKey);
+                        setEmail(email);
+                        setBitcoinAddress(bitcoinAddress);
+                        setBitcoinPrivateKey(bitcoinPrivateKey);
+                    } else {
+                        console.log('Bitcoin attributes not found');
+                    }
+
+                    setTimeout(() => {
+                        setSigningUp(false);
+                        setSignedUp(true);
+                    }, 3000);
+                } catch (error) {
+                    console.log('Error logging in:', error);
+                    setSigningUp(false);
+                }
+            }
+        } catch (error: any) {
+            if (error.name === 'UsernameExistsException' || error.code === 'UsernameExistsException') {
+                setEmailExistsError(true);
+            } else {
+                console.log('Error signing up:', error);
+            }
+            setSigningUp(false);
+        }
+    };
 
   return (
     <>
@@ -229,7 +273,7 @@ const Signup: React.FC = () => {
               id="email-input"
               placeholder="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmailState(e.target.value)}
             />
           </div>
           <div id="enter-content">

@@ -7,7 +7,7 @@ Test Address: bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6
 Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Wrappers
-- **Possibly a plaid wraper**
+- **Possibly a plaid wraper (saves bank account/plaid info if connected)**
 - **HPM Wrapper (see Readme for building mechanisms example)**
 
 ### Home Page
@@ -130,7 +130,6 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Bank Account
 - (A) -> Account Page (B) ->Buy Page
 - Plaid info from Plaid Wrapper?
-- Change Bank Account (Plaid Connect? from Plaid Wrapper?)
 
 ### Other
 - Change Metadata Sharing Wrapper Slogan: "Always Sell Bitcoin For Profits"
@@ -159,6 +158,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - - if email already exists but is unconfirmed -> Confirm Page
 - Forgot Password 
 - Add 2FA for Buying/Selling and first Logging In.
+
+### Bank Account
+- Change Bank Account (Plaid Connect? from Plaid Wrapper?)
 
 #### Misc
 
