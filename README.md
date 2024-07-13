@@ -12,20 +12,22 @@ A Bitcoin marketplace that helps render bear markets obsolete. Arells is working
 Holds the highest price after purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat:
 
 ### HPAP = Highest Price After Purchase
+- Changes based on the highest cpVatop, otherwise 0
 
 ### Vatop = Value At Time Of Purchase
-- **cVatop** = Corresponding Vatop
-- **cVatopTa** = cVatop Token Amount
-- **cpVatop** = Corresponding Price Vatop
-- **cdVatop** = Corresponding Difference Vatop
-- **acVatops** = All cVatops
-- **acVatopTas** = All cVatopTas
-- **acdVatops** = All cdVatops
+- **cVatop** = Corresponding Vatop (the value of your Bitcoin investment at time of purchase)
+- **cVatopTa** = cVatop Token Amount (the amount of Bitcoin at time of purchase)
+- **cpVatop** = Corresponding Price Vatop (the price of Bitcoin at time of purchase)
+- **cdVatop** = Corresponding Difference Vatop (cVact - cVatop = cdVatop)
+- **acVatops** = All cVatops (Combines all cVatops)
+- **acVatopTas** = All cVatopTas (combines all cVatopTas)
+- **acdVatops** = All cdVatops (combines all cdVatops only if positive)
 
 ### Vact = Value At Current Time
-- **cVact** = Corresponding Vact
-- **acVacts** = All cVacts
-- **acVactsAts** = acVacts Available To Sell (combines cVacts only if the cVacts + (cVacts * .03 (or fee of Marketplace)))
+- **cVact** = Corresponding Vact (the value of your Bitcoin investment based on the current Bitcoin price, this is updated consistently based on the current Bitcoin price)
+- **acVacts** = All cVacts (combines all cVacts)
+- **acVactTaAts** = acVactTa Available To Sell (combines all cVatopTas cdVatops > 0)
+- **acVactsAts** = acVacts Available To Sell (combines cVacts only if the cdVatops > 0)
 
 #### Example:
 
@@ -38,10 +40,11 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cpVatop 1 = $60,000
  - - cVact 1 = $500
  - - cdVatop 1 = $0
- - - - acVatops = $500
- - - - acVacts = $500
- - - - acdVatops = $0
- - - - AATS = $0
+ - Vatop Group Combinations
+ - - acVatops = $500
+ - - acVacts = $500
+ - - acdVatops = $0
+ - - AATS = $0
 
 2. Bitcoin Price: $54,000
  - $600 worth of Bitcoin is purchased
@@ -58,10 +61,11 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cpVatop 2 = $54,000
  - - cVact 2 = $600
  - - cdVatop 2 = $0
- - - - acVatops = $1,100
- - - - acVacts = $1,050
- - - - acdVatops = -$50
- - - - acVactsAts = $0
+ - Vatop Group Combinations
+ - - acVatops = $1,100
+ - - acVacts = $1,050
+ - - acdVatops = -$50
+ - - acVactsAts = $0
 
 3. Bitcoin Price: $55,000
  - No Bitcoin is purchased
@@ -78,11 +82,12 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cpVatop 2 = $54,000
  - - cVact 2 = $611
  - - cdVatop 2 = $11
- - - - acVatops = $1,100
- - - - acVatopTas = 0.01941
- - - - acVacts = $1,069
- - - - acdVatops = -$31
- - - - acVactsAts = $611
+ - Vatop Group Combinations
+ - - acVatops = $1,100
+ - - acVatopTas = 0.01941
+ - - acVacts = $1,069
+ - - acdVatops = -$31
+ - - acVactsAts = $611
 
 4. Bitcoin Price: $65,000
  - $200 worth of Bitcoin is purchased
@@ -105,11 +110,12 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cpVatop 3 = $65,000
  - - cVact 3 = $200
  - - cdVatop 3 = $0
- - - - acVatops = $1,300
- - - - acVatopTas = 0.02249
- - - - acVacts = $1,464
- - - - acdVatops = $164 
- - - - acVactsAts = $1,264
+ - Vatop Group Combinations
+ - - acVatops = $1,300
+ - - acVatopTas = 0.02249
+ - - acVacts = $1,464
+ - - acdVatops = $164 
+ - - acVactsAts = $1,264
 
 5. Bitcoin Price: $63,000
  - $650 worth of Bitcoin is sold
@@ -132,11 +138,12 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - cpVatop 3 = $65,000
  - - cVact 3 = $194
  - - cdVatop 3 = -$6  
- - - - acVatops = $650
- - - - acVatopTas = 0.00506
- - - - acVacts = $769
- - - - acdVatops = $119 
- - - - acVactsAts = $575 
+ - Vatop Group Combinations
+ - - acVatops = $650
+ - - acVatopTas = 0.00506
+ - - acVacts = $769
+ - - acdVatops = $119 
+ - - acVactsAts = $575 
 
 ## This introduces a new kind of marketplace and market dynamics…
 

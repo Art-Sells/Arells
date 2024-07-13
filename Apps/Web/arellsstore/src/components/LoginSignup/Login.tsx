@@ -32,12 +32,12 @@ const Login: React.FC = () => {
     const logIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        setLoggingIn(true);
         setLoginError(false);
 
         try {
             // Sign out any existing user
-            await signOut();
+            signOut();
+            setLoggingIn(true);
 
             const user = await signIn({ username: email, password });
             console.log('User logged in:', user);

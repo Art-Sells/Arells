@@ -29,8 +29,9 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  #### Holding (replaces Sell button)
  - displayed once acVactsAts(see Readme acVactsAts section) = 0, othersie hidden
 
- #### (A)(B) Price = Holding Price
- - Holding Price = HPAP, if the Bitcoin price rises above the HPAP, then Holding Price = Bitcoin Price
+ #### (A)(B) Price = HPAP || Bitcoin Price
+ - Arells Bitcoin Price = HPAP if Bitcoin Price < HPAP.
+ - Else if the Bitcoin price >= HPAP, then Arells Bitcoin Price = Bitcoin Price
 
  #### Wallet
  - Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops. else "$0"
@@ -88,8 +89,8 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Sell
 - (B) Amount Available To Sell
-- - Wallet: displays acVactsAts(see Readme acVactsAts section), if > 0 otherwise display "$ 0" while hiding everything below with: No Amount Available to Sell (Buy)-> Buy Page
-- - Profits: displays acdVatops if >= 1, else "$0"
+- - Wallet: displays acVactsAts(see Readme acVactsAts section), if > 0, if 0, hide everything below with: No Amount Available to Sell (Buy)-> Buy Page
+- - Profits: displays acdVatops
 - - Sell Amount Input: $ format tel with no * or # 
 - - Sell: takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme).
 - - (Confirm Sale) -> Modals
@@ -131,9 +132,12 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (A) -> Account Page (B) ->Buy Page
 - Plaid info from Plaid Wrapper?
 
-### Other
+### Important
 - Change Metadata Sharing Wrapper Slogan: "Always Sell Bitcoin For Profits"
+- Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export
 - Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
+
+### Other
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
 
 ### If time permits:
