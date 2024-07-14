@@ -7,8 +7,13 @@ Test Address: bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6
 Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Wrappers
-- **Possibly a plaid wraper (saves bank account/plaid info if connected)**
 - **HPM Wrapper (see Readme for building mechanisms example)**
+- - **Mock Up:**
+- - - Coin Gecko Wrapper: Bitcoin Price Updated from Code... and takens as "Real Bitcoin Price"
+- - - HPM Wrapper takes Bitcoin Price from Coin Gecko and implements it...
+- - - User Attributes updated when sold, etc... Transactions implemented
+- **Possibly a plaid wraper (saves bank account/plaid info if connected)**
+- **Possibly a Kraken Wrapper to pull Bitcoin to Buy & Sell?**
 
 ### Home Page
 - If Log In = true, go to /Account
@@ -30,8 +35,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
  - displayed once acVactsAts(see Readme acVactsAts section) = 0, othersie hidden
 
  #### (A)(B) Price = HPAP || Bitcoin Price
- - Arells Bitcoin Price = HPAP if Bitcoin Price < HPAP.
- - Else if the Bitcoin price >= HPAP, then Arells Bitcoin Price = Bitcoin Price
+ - HPAP system from HPM wrapper
 
  #### Wallet
  - Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops. else "$0"
@@ -64,7 +68,7 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 - (EXPORT) -> Modal
 - - Modal:
 - - - Exporting (3 second delay) back-end takes cVactTa from the Vatop Group with the highest cpVatop, otherwise starts from the lowest Vatop Group #, delete the Vatop Group if its cVact = 0 
-- - - Successfuly Exported (exporting modal = false, adds Date (logs new Date in "Transaction Dates" database), (B) and link to Block Exporer to "Exported Amount in Database") (View Transactions)-> Transactions-
+- - - Successfuly Exported (exporting modal = false, adds Date (logs new Date in "Transaction Dates" database), cVactTas exported to "Exported Amount" and link to Block Exporer to "Exported Link" in Database) (View Transactions)-> Transactions-
 - - - Export Failed (exporting modal = false)(OK) (if export amount isn't lesser or equal to Bitcoin Wallet amount or other address)
 - - - Check Address (exporting modal = false)(if Bitcoin Address is not in right format (refer to Bitcoin Page))
 - - - Enter information (exporting modal = false) (if one or more fields are empty)
@@ -89,14 +93,14 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 
 ### Sell
 - (B) Amount Available To Sell
-- - Wallet: displays acVactsAts(see Readme acVactsAts section), if > 0, if 0, hide everything below with: No Amount Available to Sell (Buy)-> Buy Page
+- - Wallet: displays acVactsAts if acVactsAts > 0, if acVactsAts <= 0, display "holding amount" while hiding everything below, othwerwise if acVatops = 0, hide everything below with: "No Amount Available to Sell"
 - - Profits: displays acdVatops
 - - Sell Amount Input: $ format tel with no * or # 
 - - Sell: takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme).
 - - (Confirm Sale) -> Modals
 - - - Modals: 
 - - - - Confirming Sale...3 Second delay
-- - - - Sale Complete (confirming sale modal = false) (takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme), adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Sold Amount in Database") (View Transactions) -> Transactions
+- - - - Sale Complete (confirming sale modal = false) (selling takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme), adds Date (logs new Date in "Transaction Dates" database), $, and cVactTas sold to "Sold Amount in Database") (View Transactions) -> Transactions
 - - - - Transaction Failed (confirming sale modal = false) (OK)
 - - - - Enter information (if one or more fields are empty)
 - Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
