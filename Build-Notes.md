@@ -2,21 +2,14 @@
 
 ## Arells Cryptocurrency Marketplace MVP
 
-Test Address: bc1qhxg00ztzgplpaj2774g73ct9padcyczhn8f5g6
-
-Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
-
 ### Wrappers
-- **HPM Wrapper (see Readme for building mechanisms example)**
+- **HPM Wrapper**
 - - **Mock Up:**
-- - - Coin Gecko Wrapper: Bitcoin Price Updated from Code... and takens as "Real Bitcoin Price"
+- - - Coin Gecko Wrapper: Bitcoin Price Updated from Code... and takes as "Real Bitcoin Price"
 - - - HPM Wrapper takes Bitcoin Price from Coin Gecko and implements it...
 - - - User Attributes updated when sold, etc... Transactions implemented
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
 - **Possibly a Kraken Wrapper to pull Bitcoin to Buy & Sell?**
-
-### Home Page
-- If Log In = true, go to /Account
 
 ### Home(redirects to Account if logged in)
 - if holding, sell display none, holding display true.
@@ -135,6 +128,10 @@ Test Address 2: bc1qltdmeghfnxhaqr63q76lq5nldwzl3lamd2vjtj
 ### Bank Account
 - (A) -> Account Page (B) ->Buy Page
 - Plaid info from Plaid Wrapper?
+
+### After Mock-up Testing
+- Implement CoinGecko Real Bitcoin Price within Bitcoin API
+- Test Entire Buying, Selling, Exporting, Importing, and Withdrawing process...
 
 ### Important
 - Change Metadata Sharing Wrapper Slogan: "Always Sell Bitcoin For Profits"

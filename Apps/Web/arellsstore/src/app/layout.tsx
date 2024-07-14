@@ -2,7 +2,8 @@
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { EmailProvider } from '../context/EmailContext';
-import { UserProvider } from '../context/UserContext'; // Import UserProvider
+import { UserProvider } from '../context/UserContext';
+import { HPMProvider } from '../context/HPMContext';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
@@ -21,13 +22,16 @@ export default function RootLayout({ children }: LayoutProps) {
       </head>
       <body>
         <ConfigureAmplifyClientSide />
-        <EmailProvider>
           <BitcoinPriceProvider>
-            <UserProvider>
-              {children}
-            </UserProvider>
+            <EmailProvider>
+              <UserProvider>
+                <HPMProvider>
+                  {children}
+                </HPMProvider>
+              </UserProvider>
+            </EmailProvider>
           </BitcoinPriceProvider>
-        </EmailProvider>
+
       </body>
     </html>
   );

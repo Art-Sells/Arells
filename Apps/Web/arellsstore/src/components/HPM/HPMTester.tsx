@@ -1,12 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useHPM } from '../../context/HPMContext';
 
-import '../../app/css/import/import.css';
-import '../../app/css/modals/import/import-modal.css';
-import '../../app/css/modals/loader/accountloaderbackground.css';
-import styles from '../../app/css/modals/loader/accountloader.module.css';
-
+// Define the VatopGroup type
 interface VatopGroup {
     cVatop: number;
     cpVatop: number;
@@ -15,6 +12,7 @@ interface VatopGroup {
     cdVatop: number;
 }
 
+// Define the VatopCombinations type
 interface VatopCombinations {
     acVatops: number;
     acVacts: number;
@@ -24,56 +22,19 @@ interface VatopCombinations {
     acVactTaAts: number;
 }
 
-const initialVatopGroup: VatopGroup = {
-    cVatop: 0,
-    cpVatop: 0,
-    cVact: 0,
-    cVactTa: 0,
-    cdVatop: 0,
-};
-
-const initialVatopCombinations: VatopCombinations = {
-    acVatops: 0,
-    acVacts: 0,
-    acVactTas: 0,
-    acdVatops: 0,
-    acVactsAts: 0,
-    acVactTaAts: 0,
-};
-
 const HPMTester: React.FC = () => {
-    const [bitcoinPrice, setBitcoinPrice] = useState<number>(60000);
-    const [buyAmount, setBuyAmount] = useState<number>(0);
-    const [sellAmount, setSellAmount] = useState<number>(0);
-    const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
-    const [vatopCombinations, setVatopCombinations] = useState<VatopCombinations>(initialVatopCombinations);
-    const [hpap, setHpap] = useState<number>(60000);
-
-    useEffect(() => {
-        // Update cVact and cdVatop for each vatop group when bitcoinPrice changes
-        const updatedVatopGroups = vatopGroups.map(group => ({
-            ...group,
-            cVact: group.cVactTa * bitcoinPrice,
-            cdVatop: (group.cVactTa * bitcoinPrice) - group.cVatop
-        }));
-
-        setVatopGroups(updatedVatopGroups);
-        updateVatopCombinations(updatedVatopGroups);
-    }, [bitcoinPrice]);
-
-    useEffect(() => {
-        // Update HPAP logic
-        const highestCpVatop = Math.max(...vatopGroups.map(group => group.cpVatop), 0);
-        if (bitcoinPrice > highestCpVatop) {
-            setHpap(bitcoinPrice);
-        } else {
-            setHpap(highestCpVatop);
-        }
-    }, [vatopGroups, bitcoinPrice]);
-
-    const handleBitcoinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setBitcoinPrice(Number(e.target.value));
-    };
+    const {
+        bitcoinPrice,
+        vatopGroups,
+        vatopCombinations,
+        hpap,
+        buyAmount,
+        setBuyAmount,
+        sellAmount,
+        setSellAmount,
+        handleBuy,
+        handleSell
+    } = useHPM();
 
     const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setBuyAmount(Number(e.target.value));
@@ -83,84 +44,13 @@ const HPMTester: React.FC = () => {
         setSellAmount(Number(e.target.value));
     };
 
-    const handleBuy = (amount: number) => {
-        const newVatop: VatopGroup = {
-            cVatop: amount,
-            cpVatop: bitcoinPrice,
-            cVact: amount,
-            cVactTa: amount / bitcoinPrice,
-            cdVatop: 0,
-        };
-
-        const updatedVatopGroups = [...vatopGroups, newVatop];
-        setVatopGroups(updatedVatopGroups);
-        updateVatopCombinations(updatedVatopGroups);
-    };
-
-    const handleSell = (amount: number) => {
-        if (amount > vatopCombinations.acVactsAts) {
-            return; // Prevent the sale if the amount exceeds acVactsAts
-        }
-
-        let remainingAmount = amount;
-        const updatedVatopGroups = [...vatopGroups];
-
-        // Sort the vatop groups by cpVatop, then by index if cpVatop is the same
-        updatedVatopGroups.sort((a, b) => a.cpVatop - b.cpVatop);
-
-        for (let i = 0; i < updatedVatopGroups.length && remainingAmount > 0; i++) {
-            const group = updatedVatopGroups[i];
-            const sellAmount = Math.min(group.cVact, remainingAmount);
-            remainingAmount -= sellAmount;
-
-            group.cVatop -= sellAmount;
-            group.cVact -= sellAmount;
-            group.cVactTa -= sellAmount / bitcoinPrice;
-            group.cdVatop = group.cVact - group.cVatop;
-
-            if (group.cVatop <= 0) {
-                group.cVatop = 0;
-            }
-
-            if (group.cVact <= 0) {
-                group.cVact = 0;
-                group.cVactTa = 0;
-                group.cdVatop = 0;
-                updatedVatopGroups.splice(i, 1);
-                i--; // Adjust index after removal
-            }
-        }
-
-        setVatopGroups(updatedVatopGroups);
-        updateVatopCombinations(updatedVatopGroups);
-    };
-
-    const updateVatopCombinations = (groups: VatopGroup[]) => {
-        const acVatops = groups.reduce((acc, group) => acc + group.cVatop, 0);
-        const acVacts = groups.reduce((acc, group) => acc + group.cVact, 0);
-        const acVactTas = groups.reduce((acc, group) => acc + group.cVactTa, 0);
-        const acdVatops = groups.reduce((acc, group) => {
-            return group.cdVatop > 0 ? acc + group.cdVatop : acc;
-        }, 0);
-
-        const acVactsAts = groups.reduce((acc, group) => {
-            return group.cdVatop > 0 ? acc + group.cVact : acc;
-        }, 0);
-
-        const acVactTaAts = groups.reduce((acc, group) => {
-            return group.cdVatop > 0 ? acc + group.cVactTa : acc;
-        }, 0);
-
-        setVatopCombinations({ acVatops, acVacts, acVactTas, acdVatops: acdVatops > 0 ? acdVatops : 0, acVactsAts, acVactTaAts });
-    };
-
     return (
         <div>
             <h1>HPM Tester</h1>
             <div>
                 <label>
-                    Bitcoin Price:
-                    <input type="number" value={bitcoinPrice} onChange={handleBitcoinPriceChange} />
+                    Bitcoin Price: $
+                    {bitcoinPrice}
                 </label>
             </div>
             <div>
@@ -180,7 +70,7 @@ const HPMTester: React.FC = () => {
             <div>
                 <h2>HPAP: ${hpap}</h2>
                 <h2>Vatop Groups:</h2>
-                {vatopGroups.map((group, index) => (
+                {vatopGroups.map((group: VatopGroup, index: number) => (
                     <div key={index}>
                         <h3>Vatop Group {index + 1}</h3>
                         <p>cVatop: ${group.cVatop}</p>

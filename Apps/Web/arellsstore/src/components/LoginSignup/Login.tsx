@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+// components/Login.tsx
 import React, { useState } from 'react';
 import Image from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
@@ -23,7 +24,7 @@ const Login: React.FC = () => {
     };
 
     const router = useRouter();
-    const { setEmail, setBitcoinAddress, setBitcoinPrivateKey } = useUser();
+    const { setEmail } = useUser();
     const [email, setEmailState] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [showLoggingIn, setLoggingIn] = useState<boolean>(false);
@@ -46,7 +47,6 @@ const Login: React.FC = () => {
             const attributesResponse = await fetchUserAttributes();
             console.log('Fetched attributes:', attributesResponse);
 
-            // Convert attributes object to array format and handle undefined values
             const attributesArray: Attribute[] = Object.keys(attributesResponse).map(key => ({
                 Name: key,
                 Value: attributesResponse[key] || ''
@@ -58,9 +58,7 @@ const Login: React.FC = () => {
             if (bitcoinAddress && bitcoinPrivateKey) {
                 console.log('Bitcoin Address:', bitcoinAddress);
                 console.log('Bitcoin Private Key:', bitcoinPrivateKey);
-                setEmail(email);
-                setBitcoinAddress(bitcoinAddress);
-                setBitcoinPrivateKey(bitcoinPrivateKey);
+                setEmail(email);  // Set the email in UserContext
             } else {
                 console.log('Bitcoin attributes not found');
             }
