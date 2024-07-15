@@ -1,7 +1,6 @@
 // pages/_app.tsx or wherever your RootLayout is used
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
-import { EmailProvider } from '../context/EmailContext';
 import { UserProvider } from '../context/UserContext';
 import { HPMProvider } from '../context/HPMContext';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
@@ -23,13 +22,11 @@ export default function RootLayout({ children }: LayoutProps) {
       <body>
         <ConfigureAmplifyClientSide />
           <BitcoinPriceProvider>
-            <EmailProvider>
               <UserProvider>
                 <HPMProvider>
                   {children}
                 </HPMProvider>
               </UserProvider>
-            </EmailProvider>
           </BitcoinPriceProvider>
 
       </body>

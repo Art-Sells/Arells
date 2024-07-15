@@ -35,9 +35,10 @@ const Login: React.FC = () => {
 
         setLoginError(false);
 
+        signOut();
+
         try {
             // Sign out any existing user
-            signOut();
             setLoggingIn(true);
 
             const user = await signIn({ username: email, password });

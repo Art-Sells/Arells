@@ -1,0 +1,36 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+import AWS from 'aws-sdk';
+
+const cognito = new AWS.CognitoIdentityServiceProvider();
+
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email query parameter is required' });
+  }
+
+  const params = {
+    UserPoolId: process.env.COGNITO_USER_POOL_ID!,
+    Username: email as string,
+  };
+
+  try {
+    const data = await cognito.adminGetUser(params).promise();
+    const vatopGroupsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:vatopGroups');
+    
+    let vatopGroups = [];
+    if (vatopGroupsAttr) {
+      vatopGroups = JSON.parse(vatopGroupsAttr.Value || '[]');
+    }
+
+    return res.status(200).json({ vatopGroups });
+  } catch (error) {
+    console.error('Error fetching user attributes:', error);
+    return res.status(500).json({ error: 'Could not fetch vatop groups' });
+  }
+};

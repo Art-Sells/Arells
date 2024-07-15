@@ -1,9 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { fetchBitcoinPrice, setManualBitcoinPrice as setManualBitcoinPriceApi } from '../lib/coingecko-api';
-import { useEmail } from './EmailContext';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 interface VatopGroup {
   cVatop: number;
@@ -33,6 +33,7 @@ interface HPMContextType {
   setSellAmount: (amount: number) => void;
   handleBuy: (amount: number) => void;
   handleSell: (amount: number) => void;
+  fetchVatopGroups: () => void;
   setManualBitcoinPrice: (price: number) => void;
 }
 
@@ -52,7 +53,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     acVactTaAts: 0,
   });
   const [hpap, setHpap] = useState<number>(0);
-  const { email } = useEmail();
+  const [email, setEmail] = useState<string>('');
+  const [refreshData, setRefreshData] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchPrice = async () => {
@@ -63,16 +65,43 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   useEffect(() => {
-    const fetchVatopGroups = async () => {
+    const fetchEmail = async () => {
       try {
-        const response = await axios.post('/api/fetchVatopGroups', { email });
-        setVatopGroups(response.data.vatopGroups || []);
+        const attributesResponse = await fetchUserAttributes();
+        const emailAttribute = attributesResponse.email;
+        if (emailAttribute) {
+          setEmail(emailAttribute);
+        }
       } catch (error) {
-        console.error('Error fetching vatop groups:', error);
+        console.error('Error fetching user attributes:', error);
       }
     };
-    fetchVatopGroups();
+    fetchEmail();
+  }, []);
+
+  const fetchVatopGroups = useCallback(async () => {
+    try {
+      if (!email) {
+        console.warn('No email provided, skipping fetchVatopGroups');
+        return;
+      }
+
+      console.log('Fetching vatop groups for email:', email);
+      const response = await axios.get('/api/fetchVatopGroups', {
+        params: { email }
+      });
+      setVatopGroups(response.data.vatopGroups || []);
+    } catch (error) {
+      console.error('Error fetching vatop groups:', error);
+    }
   }, [email]);
+
+  useEffect(() => {
+    if (refreshData) {
+      fetchVatopGroups();
+      setRefreshData(false); // Reset the flag after fetching data
+    }
+  }, [refreshData, fetchVatopGroups]);
 
   useEffect(() => {
     const updatedVatopGroups = vatopGroups.map(group => ({
@@ -109,6 +138,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       console.log('Attempting to save vatop groups:', updatedVatopGroups);
       await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups });
+      setRefreshData(true); // Set flag to refresh data
     } catch (error) {
       console.error('Error saving vatop groups:', error);
     }
@@ -152,6 +182,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       console.log('Attempting to save vatop groups:', updatedVatopGroups);
       await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups });
+      setRefreshData(true); // Set flag to refresh data
     } catch (error) {
       console.error('Error saving vatop groups:', error);
     }
@@ -188,6 +219,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setSellAmount,
       handleBuy,
       handleSell,
+      fetchVatopGroups,
       setManualBitcoinPrice: setManualBitcoinPriceApi
     }}>
       {children}
