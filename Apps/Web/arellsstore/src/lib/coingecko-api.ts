@@ -37,4 +37,4 @@ export const updateManualBitcoinPrice = (price: number): void => {
 };
 
 // Manually set the Bitcoin price
-updateManualBitcoinPrice(62000); // Set the manual price to 50,000
+updateManualBitcoinPrice(50000); // Set the manual price to 50,000

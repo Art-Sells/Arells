@@ -5,9 +5,15 @@
 ### Wrappers
 - **HPM Wrapper**
 - - **Mock Up:**
-- - - Coin Gecko Wrapper: Bitcoin Price Updated from Code... and takes as "Real Bitcoin Price"
-- - - HPM Wrapper takes Bitcoin Price from Coin Gecko and implements it...
-- - - User Attributes updated when sold, etc... Transactions implemented
+- - - Work on Importing/Exporting functionalieies 
+- - - - importAmount works essentially she same as "Buying" except we're adding to VactTa instead of Vatop/Vact a button is not triggered but rather, the system (or importAmount reloads every 30 seconds?) (can the system/api be able to tell once more Bitcoin has been added and set a new Vatop Group?) possibly create a button to import, but the action is not triggered immidiately, only read from the "importAmount" reload?
+- - - - exportAmount works essentially the same as "Selling" except we're taking from VactTa instead of Vatop/Vact
+- - - Transactions Attribute
+- - - - Sold Amount (Date: mm/dd/yr, Bitcoin Amount, $ Amount)
+- - - - Bought Amount (Date: mm/dd/yr, Bitcoin Amount, $ Amount)
+- - - - Withdrew Amount (Date: mm/dd/yr, $ Amount, "arells.com/bankaccount")
+- - - - Exported Amount (Date: mm/dd/yr, Bitcoin Amount, Link)
+- - Test Entire Mock-Up Before completing the below Wrappers
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
 - **Possibly a Kraken Wrapper to pull Bitcoin to Buy & Sell?**
 
@@ -22,10 +28,10 @@
 
  #### Sell (Page)
  - Connects to Plaid First, (if not connected)
- - displayed if acVacts == 0 or if acVactsAts(see Readme acVactsAts section) > 0, otherwise hidden 
+ - displayed if acVacts == 0 or if acVactsAts > 0, otherwise hidden 
 
  #### Holding (replaces Sell button)
- - displayed once acVactsAts(see Readme acVactsAts section) = 0, othersie hidden
+ - displayed once acVactsAts <= 0, otherwsie hidden
 
  #### (A)(B) Price = HPAP || Bitcoin Price
  - HPAP system from HPM wrapper
@@ -51,7 +57,7 @@
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - (W) Wallet: Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
 - (B) Amount: Displays acVatopTas.
-- Export Amount Input: back-end takes cVactTa from the Vatop Group with the highest cpVatop, otherwise starts from the lowest Vatop Group #, delete the Vatop Group if its cVact = 0 
+- Export Amount Input: back-end takes cVactTa from the Vatop Group with the highest cpVatop, otherwise starts from the lowest Vatop Group #
 - Export Address Input:
 - Exporting
 - (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page))
@@ -67,7 +73,6 @@
 - - - Enter information (exporting modal = false) (if one or more fields are empty)
 - - - Send more Bitcoin (exporting modal = false) (refer to Bitcoin Page for fee limit)
 - Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
-- all prices and wallet values structured like so: 1,000,000, Bitcoin Amount based on how many Sats?
 
 ### Buy
 - (B) Price
@@ -81,8 +86,6 @@
 - - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 - - Enter information (if one or more fields are empty)
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
-- all prices and wallet values structured like so: 1,000,000
-- all fees and totality values structured like so: 1,000,000.00
 
 ### Sell
 - (B) Amount Available To Sell
@@ -97,9 +100,6 @@
 - - - - Transaction Failed (confirming sale modal = false) (OK)
 - - - - Enter information (if one or more fields are empty)
 - Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
-- all prices and wallet values structured like so: 1,000,000 Bitcoin Amount based on how many Sats?
-- all fees and totality values structured like so: 1,000,000.00
-
 
 ### Transactions
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
@@ -112,7 +112,6 @@
 - - (Bank) to: (Plaid Bank Logo Button? from Plaid Wrapper?)->Bank Account
 - (^-circle) Exporting: 0.00043 (if loading useEffect from Block Explorer)| (B) Exported: 0.00323 (if completed useEffect) (pulls from "Exported Amount" database) 
 - - (App) To: (View On Block Explorer)-> Block Explorer Link
-- all values structured like so: 1,000,000, Bitcoin Amount based on how many Sats?
 
 ### Withdraw
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
@@ -123,7 +122,6 @@
 - - - (Bank) Withdrawing 
 - - -  (Check) Withdraw Complete (View Transactions adds Date (logs new Date in "Transaction Dates" database), (B) and link to Bank Account to "Withdrew Amount in Database")-> Transactions
 - - - (X) Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
-- all values structured like so: 1,000,000
 
 ### Bank Account
 - (A) -> Account Page (B) ->Buy Page
@@ -132,23 +130,20 @@
 ### After Mock-up Testing
 - Implement CoinGecko Real Bitcoin Price within Bitcoin API
 - Test Entire Buying, Selling, Exporting, Importing, and Withdrawing process...
+- - acVacts: Entire Wallet (stripe?) amount (export|sell/import/buy takes/adds here)
+- - acVactTas: Entire Bitcoin amount (export|sell/import/buy takes/adds here)
+- - acVactsAts: Subtracts from Entire Wallet amount
+- - acVactTaAts: Subtracts from Entire Bitcoin amount
 
 ### Important
-- Change Metadata Sharing Wrapper Slogan: "Always Sell Bitcoin For Profits"
-- Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export
+- Create separate Wallet to handle where we get our 3% fee... (Stripe?)
+- Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/HPMContext
 - Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
 
 ### Other
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
 
-### If time permits:
-- Clean up Console errors and all Console Logs...
-
 ## Arells Cryptocurrency Marketplace 1.5
-
-### Home Page (without login)
-- Add transactions button
-
 
 ### Sign Up
 - Verify Email *important*

@@ -22,13 +22,27 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const data = await cognito.adminGetUser(params).promise();
     const vatopGroupsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:vatopGroups');
-    
+    const vatopCombinationsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:vatopCombinations');
+
     let vatopGroups = [];
+    let vatopCombinations = {
+      acVatops: 0,
+      acVacts: 0,
+      acVactTas: 0,
+      acdVatops: 0,
+      acVactsAts: 0,
+      acVactTaAts: 0,
+    };
+    
     if (vatopGroupsAttr) {
       vatopGroups = JSON.parse(vatopGroupsAttr.Value || '[]');
     }
 
-    return res.status(200).json({ vatopGroups });
+    if (vatopCombinationsAttr) {
+      vatopCombinations = JSON.parse(vatopCombinationsAttr.Value || '{}');
+    }
+
+    return res.status(200).json({ vatopGroups, vatopCombinations });
   } catch (error) {
     console.error('Error fetching user attributes:', error);
     return res.status(500).json({ error: 'Could not fetch vatop groups' });

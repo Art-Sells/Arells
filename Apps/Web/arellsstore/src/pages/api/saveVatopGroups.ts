@@ -1,29 +1,17 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
-import { APIGatewayProxyHandler } from 'aws-lambda';
 
 const cognito = new AWS.CognitoIdentityServiceProvider();
 
-export const handler: APIGatewayProxyHandler = async (event) => {
-  console.log('Received event:', JSON.stringify(event, null, 2));
-  
-  const body = event.body ? JSON.parse(event.body) : null;
-
-  if (!body) {
-    console.log('Invalid request body:', event.body);
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid request body' }),
-    };
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, vatopGroups } = body;
+  const { email, vatopGroups, vatopCombinations } = req.body;
 
-  if (!email || !vatopGroups) {
-    console.log('Missing email or vatopGroups in request body');
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Missing email or vatopGroups' }),
-    };
+  if (!email || !vatopGroups || !vatopCombinations) {
+    return res.status(400).json({ error: 'Missing email, vatopGroups, or vatopCombinations' });
   }
 
   const userParams = {
@@ -34,25 +22,20 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         Name: 'custom:vatopGroups',
         Value: JSON.stringify(vatopGroups),
       },
+      {
+        Name: 'custom:vatopCombinations',
+        Value: JSON.stringify(vatopCombinations),
+      },
     ],
   };
 
-  console.log('Updating user attributes for:', email);
-  console.log('Vatop Groups:', vatopGroups);
-  console.log('User Params:', JSON.stringify(userParams, null, 2));
-
   try {
     await cognito.adminUpdateUserAttributes(userParams).promise();
-    console.log('Attributes updated successfully');
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Attributes updated successfully' }),
-    };
+    return res.status(200).json({ message: 'Attributes updated successfully' });
   } catch (error) {
     console.error('Error updating user attributes:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to update user attributes' }),
-    };
+    return res.status(500).json({ error: 'Failed to update user attributes' });
   }
 };
+
+export default handler;

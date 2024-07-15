@@ -3,23 +3,6 @@
 import React, { useEffect } from 'react';
 import { useHPM } from '../../context/HPMContext';
 
-interface VatopGroup {
-  cVatop: number;
-  cpVatop: number;
-  cVact: number;
-  cVactTa: number;
-  cdVatop: number;
-}
-
-interface VatopCombinations {
-  acVatops: number;
-  acVacts: number;
-  acVactTas: number;
-  acdVatops: number;
-  acVactsAts: number;
-  acVactTaAts: number;
-}
-
 const HPMTester: React.FC = () => {
   const {
     bitcoinPrice,
@@ -32,7 +15,7 @@ const HPMTester: React.FC = () => {
     setSellAmount,
     handleBuy,
     handleSell,
-    fetchVatopGroups
+    fetchVatopGroups,
   } = useHPM();
 
   const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,17 +53,17 @@ const HPMTester: React.FC = () => {
         <button onClick={() => handleSell(sellAmount)}>Sell</button>
       </div>
       <div>
-        <h2>HPAP: ${hpap}</h2>
+        <h2>HPAP: {hpap}</h2>
         <h2>Vatop Groups:</h2>
         {vatopGroups.length > 0 ? (
-          vatopGroups.map((group: VatopGroup, index: number) => (
+          vatopGroups.map((group, index) => (
             <div key={index}>
               <h3>Vatop Group {index + 1}</h3>
-              <p>cVatop: ${group.cVatop}</p>
-              <p>cpVatop: ${group.cpVatop}</p>
-              <p>cVact: ${group.cVact}</p>
+              <p>cVatop: {group.cVatop}</p>
+              <p>cpVatop: {group.cpVatop}</p>
+              <p>cVact: {group.cVact}</p>
               <p>cVactTa: {group.cVactTa}</p>
-              <p>cdVatop: ${group.cdVatop}</p>
+              <p>cdVatop: {group.cdVatop}</p>
             </div>
           ))
         ) : (
@@ -89,11 +72,11 @@ const HPMTester: React.FC = () => {
       </div>
       <div>
         <h2>Vatop Group Combinations:</h2>
-        <p>acVatops: ${vatopCombinations.acVatops}</p>
-        <p>acVacts: ${vatopCombinations.acVacts}</p>
+        <p>acVatops: {vatopCombinations.acVatops}</p>
+        <p>acVacts: {vatopCombinations.acVacts}</p>
         <p>acVactTas: {vatopCombinations.acVactTas}</p>
-        <p>acdVatops: ${vatopCombinations.acdVatops}</p>
-        <p>acVactsAts: ${vatopCombinations.acVactsAts}</p>
+        <p>acdVatops: {vatopCombinations.acdVatops}</p>
+        <p>acVactsAts: {vatopCombinations.acVactsAts}</p>
         <p>acVactTaAts: {vatopCombinations.acVactTaAts}</p>
       </div>
     </div>
