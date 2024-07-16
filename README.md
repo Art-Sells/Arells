@@ -88,7 +88,7 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - acVatops = $1,100
  - - acVacts = $1,069
  - - acVactTas = 0.01941
- - - acdVatops = -$31
+ - - acdVatops = 11
  - - acVactsAts = $611
 
 4. Bitcoin Price: $65,000

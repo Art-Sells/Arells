@@ -211,42 +211,42 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     setVatopGroups(updatedVatopGroups);
-const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
-try {
-  console.log('Attempting to save vatop groups:', updatedVatopGroups);
-  await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
-  setRefreshData(true); // Set flag to refresh data
-} catch (error) {
-  console.error('Error saving vatop groups:', error);
-}};
+    const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
 
-const updateVatopCombinations = (groups: VatopGroup[]) => {
-const acVatops = groups.reduce((acc, group) => acc + parseCurrency(group.cVatop), 0);
-const acVacts = groups.reduce((acc, group) => acc + parseCurrency(group.cVact), 0);
-const acVactTas = groups.reduce((acc, group) => acc + parseNumber(group.cVactTa), 0);
-const acdVatops = groups.reduce((acc, group) => {
-return parseCurrency(group.cdVatop) > 0 ? acc + parseCurrency(group.cdVatop) : acc;
-}, 0);
-const acVactsAts = groups.reduce((acc, group) => {
-    return parseCurrency(group.cdVatop) > 0 ? acc + parseCurrency(group.cVact) : acc;
-  }, 0);
+    try {
+      console.log('Attempting to save vatop groups:', updatedVatopGroups);
+      await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
+      setRefreshData(true); // Set flag to refresh data
+    } catch (error) {
+      console.error('Error saving vatop groups:', error);
+    }};
 
-  const acVactTaAts = groups.reduce((acc, group) => {
-    return parseCurrency(group.cdVatop) > 0 ? acc + parseNumber(group.cVactTa) : acc;
-  }, 0);
+    const updateVatopCombinations = (groups: VatopGroup[]) => {
+    const acVatops = groups.reduce((acc, group) => acc + Math.max(parseCurrency(group.cVatop), parseCurrency(group.cVact)), 0);
+    const acVacts = groups.reduce((acc, group) => acc + parseCurrency(group.cVact), 0);
+    const acVactTas = groups.reduce((acc, group) => acc + parseNumber(group.cVactTa), 0);
+    const acdVatops = groups.reduce((acc, group) => {
+    return parseCurrency(group.cdVatop) > 0 ? acc + parseCurrency(group.cdVatop) : acc;
+    }, 0);
 
-  const updatedCombinations = {
-    acVatops: formatCurrency(acVatops),
-    acVacts: formatCurrency(acVacts),
-    acVactTas: formatNumber(acVactTas),
-    acdVatops: formatCurrency(acdVatops > 0 ? acdVatops : 0),
-    acVactsAts: formatCurrency(acVactsAts),
-    acVactTaAts: formatNumber(acVactTaAts)
-  };
-  setVatopCombinations(updatedCombinations);
-  return updatedCombinations;
-
-};
+    const acVactsAts = groups.reduce((acc, group) => {
+      return parseCurrency(group.cdVatop) > 0 ? acc + parseCurrency(group.cVact) : acc;
+    }, 0);
+    
+    const acVactTaAts = groups.reduce((acc, group) => {
+      return parseCurrency(group.cdVatop) > 0 ? acc + parseNumber(group.cVactTa) : acc;
+    }, 0);
+    
+    const updatedCombinations = {
+      acVatops: formatCurrency(acVatops),
+      acVacts: formatCurrency(acVacts),
+      acVactTas: formatNumber(acVactTas),
+      acdVatops: formatCurrency(acdVatops > 0 ? acdVatops : 0),
+      acVactsAts: formatCurrency(acVactsAts),
+      acVactTaAts: formatNumber(acVactTaAts)
+    };
+    setVatopCombinations(updatedCombinations);
+    return updatedCombinations; };
 
 return (
   <HPMContext.Provider value={{

@@ -244,9 +244,11 @@ const Signup: React.FC = () => {
               id="passwords-error-image"
               src="/images/market/password-ivory.png"
             />
-            <p id="passwords-error-words">password needs at least 8 characters</p>
-            <p id="passwordss-error-words">a letter ( a-z | A-Z ), a number ( 0 - 9 )</p>
-            <p id="passwordssss-error-words">and a character  ( ! - * )</p>
+            <p id="password-error-words">password needs</p>
+            <p id="passwords-error-words">8 characters minimum</p>
+            <p id="passwordss-error-words">one letter ( a-z | A-Z )</p>
+            <p id="passwordssss-error-words">one number ( 0 - 9 )</p>
+            <p id="passwordsssss-error-words">one special ( ! - * )</p>
             <button id="signup-error-close" onClick={closePasswordsError}>OK</button>
           </div>
         </div>

@@ -37,10 +37,10 @@
  - HPAP system from HPM wrapper
 
  #### Wallet
- - Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops. else "$0"
+ - Displays $ acVatops
 
  #### Profits
- - displays acdVatops if positive, else "$0"
+ - displays $ acdVatops
 
  #### Export (Page)
 
@@ -128,7 +128,7 @@
 - Plaid info from Plaid Wrapper?
 
 ### After Mock-up Testing
-- Implement CoinGecko Real Bitcoin Price within Bitcoin API
+- Implement CoinGecko Real Bitcoin Price within Bitcoin API (Check Bitcoin Chart Home and Account (load/reload quickly))
 - Test Entire Buying, Selling, Exporting, Importing, and Withdrawing process...
 - - acVacts: Entire Wallet (stripe?) amount (export|sell/import/buy takes/adds here)
 - - acVactTas: Entire Bitcoin amount (export|sell/import/buy takes/adds here)

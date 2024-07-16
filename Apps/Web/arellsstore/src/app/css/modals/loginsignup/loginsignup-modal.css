@@ -79,8 +79,8 @@
 
 #passwords-error-content {
   padding-top: 45px;
-  width: 350px;
-  height: 220px;
+  width: 230px;
+  height: 260px;
   background-color: rgba(180, 134, 73, 0.9); 
   border-radius: 20px;
   align-items: center;
@@ -199,12 +199,20 @@
 
 
 
-
-    #passwords-error-words {
+    #password-error-words {
       color: rgb(255, 255, 255);
       font-weight: 500;
       font-size: 11px;
       margin-top: 15px;
+      letter-spacing: 0px;
+      margin-left: 0px; 
+      opacity: .65;
+    }
+    #passwords-error-words {
+      color: rgb(255, 255, 255);
+      font-weight: 500;
+      font-size: 11px;
+      margin-top: -7px;
       letter-spacing: 0px;
       margin-left: 0px; 
       opacity: .65;
@@ -219,6 +227,15 @@
       opacity: .65;
     }
     #passwordssss-error-words {
+      color: rgb(255, 255, 255);
+      font-weight: 500;
+      font-size: 11px;
+      margin-top: -7px;
+      letter-spacing: 0px;
+      margin-left: 0px; 
+      opacity: .65;
+    }
+    #passwordsssss-error-words {
       color: rgb(255, 255, 255);
       font-weight: 500;
       font-size: 11px;
