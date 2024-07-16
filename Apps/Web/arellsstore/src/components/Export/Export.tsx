@@ -318,7 +318,7 @@ const Export: React.FC = () => {
             {/* <div id="fill-in">
             </div> */}
 
-            <div id="losses-amount">You will lose</div>
+            <div id="losses-amount">You Will Lose</div>
 
             <div id="a-losses-export">
                 <span>
@@ -334,7 +334,7 @@ const Export: React.FC = () => {
                   </div>
                 </span>
                 <span id="wallet-number-losses">$
-                    <span id="wallet-number-losses-num">0.00</span>
+                    <span id="wallet-number-losses-num">500</span>
                 </span>
             </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHPM } from '../../context/HPMContext';
 
 const HPMTester: React.FC = () => {
@@ -13,10 +13,17 @@ const HPMTester: React.FC = () => {
     setBuyAmount,
     sellAmount,
     setSellAmount,
+    exportAmount,
+    setExportAmount,
     handleBuy,
     handleSell,
+    handleExport,
     fetchVatopGroups,
   } = useHPM();
+
+  const [localExportAmount, setLocalExportAmount] = useState<number>(0);
+  const [localTotalExportedWalletValue, setLocalTotalExportedWalletValue] = useState<string>('$0');
+  const [localYouWillLose, setLocalYouWillLose] = useState<string>('$0');
 
   const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBuyAmount(Number(e.target.value));
@@ -26,9 +33,45 @@ const HPMTester: React.FC = () => {
     setSellAmount(Number(e.target.value));
   };
 
+  const handleExportAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalExportAmount(Number(e.target.value));
+  };
+
   useEffect(() => {
     fetchVatopGroups(); // Fetch vatop groups when component mounts
   }, [fetchVatopGroups]);
+
+  useEffect(() => {
+    // Update local state for real-time calculations
+    const updateExportCalculations = () => {
+      let remainingAmount = localExportAmount;
+      const updatedGroups = [...vatopGroups].sort((a, b) => parseCurrency(b.cpVatop) - parseCurrency(a.cpVatop));
+      let totalValue = 0;
+      let totalLoss = 0;
+
+      for (let i = 0; i < updatedGroups.length && remainingAmount > 0; i++) {
+        const group = updatedGroups[i];
+        const exportAmount = Math.min(parseNumber(group.cVactTa), remainingAmount);
+        remainingAmount -= exportAmount;
+
+        const originalCdVatop = parseCurrency(group.cdVatop);
+        const originalCVactTa = parseNumber(group.cVactTa);
+        const lossFraction = exportAmount / originalCVactTa;
+
+        const newCdVatop = originalCdVatop * lossFraction;
+
+        totalValue += exportAmount * bitcoinPrice;
+        if (newCdVatop < 0) {
+          totalLoss += newCdVatop;
+        }
+      }
+
+      setLocalTotalExportedWalletValue(formatCurrency(totalValue));
+      setLocalYouWillLose(formatCurrency(Math.abs(totalLoss)));
+    };
+
+    updateExportCalculations();
+  }, [localExportAmount, vatopGroups, bitcoinPrice]);
 
   return (
     <div>
@@ -51,6 +94,17 @@ const HPMTester: React.FC = () => {
           <input type="number" value={sellAmount} onChange={handleSellAmountChange} />
         </label>
         <button onClick={() => handleSell(sellAmount)}>Sell</button>
+      </div>
+      <div>
+        <label>
+          Export Amount:
+          <input type="number" value={localExportAmount} onChange={handleExportAmountChange} />
+        </label>
+        <button onClick={() => handleExport(localExportAmount)}>Export</button>
+      </div>
+      <div>
+        <h2>Total Exported Wallet Value: {localTotalExportedWalletValue}</h2>
+        <h2>You Will Lose: {localYouWillLose}</h2>
       </div>
       <div>
         <h2>HPAP: {hpap}</h2>
@@ -81,6 +135,20 @@ const HPMTester: React.FC = () => {
       </div>
     </div>
   );
+};
+
+const formatCurrency = (value: number): string => {
+  return `$${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+};
+
+const parseCurrency = (value: string | number): number => {
+  if (typeof value === 'number') return value;
+  return parseFloat(value.replace(/[$,]/g, ''));
+};
+
+const parseNumber = (value: string | number): number => {
+  if (typeof value === 'number') return value;
+  return parseFloat(value);
 };
 
 export default HPMTester;

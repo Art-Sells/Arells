@@ -17,8 +17,8 @@ const Sell: React.FC = () => {
   const [showSellFailed, setSellFailed] = useState<boolean>(false);
   const [showSellSuccess, setSellSuccess] = useState<boolean>(false);
   const [showSelling, setSelling] = useState<boolean>(false);
-  const [showSellAvailable, setSellAvailable] = useState<boolean>(false);
-  const [showSellUnavailable, setSellUnavailable] = useState<boolean>(true);
+  const [showSellAvailable, setSellAvailable] = useState<boolean>(true);
+  const [showSellUnavailable, setSellUnavailable] = useState<boolean>(false);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
 
     //Loader Function/s
@@ -190,7 +190,7 @@ const Sell: React.FC = () => {
                   </div>
                 </span>
                 <span id="wallet-sell-profits">Profits:</span>
-                <span id="wallet-number-profits-sell">$
+                <span id="wallet-number-profits-sell">+$
                     <span id="wallet-number-profits-sell-num">0</span>
                 </span>
               </div>        

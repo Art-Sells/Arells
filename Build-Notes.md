@@ -55,10 +55,10 @@
 
 ### Export
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- (W) Wallet: Displays acVacts if the acVacts + (acVacts * .03) > acVatops, otherwise displays acVatops.
-- (B) Amount: Displays acVatopTas.
-- Export Amount Input: back-end takes cVactTa from the Vatop Group with the highest cpVatop, otherwise starts from the lowest Vatop Group #
-- Export Address Input:
+- (W) Wallet: Displays acVatops.
+- (B) Amount: Displays acVactTas.
+- Export Amount Input: (tel) back-end takes cVactTa from the Vatop Group with the highest cpVatop, otherwise starts from the lowest Vatop Group #
+- Export Address Input: (tel)
 - Exporting
 - (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page))
 - Total exported wallet value: "$" = combines cVacts from input
@@ -140,10 +140,14 @@
 - Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/HPMContext
 - Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
 
-### Other
+### Other (if Time Permits)
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
+- Contact us (Account/Home): Email
 
 ## Arells Cryptocurrency Marketplace 1.5
+
+### Home/Account
+- Contact us: Email
 
 ### Sign Up
 - Verify Email *important*
