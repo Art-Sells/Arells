@@ -190,7 +190,7 @@ const Sell: React.FC = () => {
                   </div>
                 </span>
                 <span id="wallet-sell-profits">Profits:</span>
-                <span id="wallet-number-profits-sell">+$
+                <span id="wallet-number-profits-sell">$
                     <span id="wallet-number-profits-sell-num">0</span>
                 </span>
               </div>        

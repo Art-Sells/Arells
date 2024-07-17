@@ -179,7 +179,7 @@ const Account: React.FC = () => {
               </div>
             </span>
             <span id="wallet-account-profits">Profits:</span>
-            <span id="wallet-number-profits-account">+$
+            <span id="wallet-number-profits-account">$
               <span id="wallet-number-profits-account-num">
                 0
               </span>

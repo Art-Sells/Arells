@@ -6,20 +6,28 @@
 - **HPM Wrapper**
 - - **Mock Up:**
 - - - Work on Importing/Exporting functionalieies 
-- - - - importAmount works essentially she same as "Buying" except we're adding to VactTa instead of Vatop/Vact a button is not triggered but rather, the system (or importAmount reloads every 30 seconds?) (can the system/api be able to tell once more Bitcoin has been added and set a new Vatop Group?) possibly create a button to import, but the action is not triggered immidiately, only read from the "importAmount" reload?
-- - - - exportAmount works essentially the same as "Selling" except we're taking from VactTa instead of Vatop/Vact
+- - - - importAmount works essentially the same as "Buying" except, it loads every 10 seconds to see if any Bitcoin Amount has been imported (I guess we need to set a method to see if the acVactTas increases without the buyAmount triggered, if so, then this is an importAmount, if acVactTas increases with buttonAmount triggered, this is not importAmount)... importAmount obviously is an exterior catching method so maybe we need to enture it reloads every 10 seconds? 
+- - - Set Manual Date (within the coinGecko Api),
 - - - Transactions Attribute
-- - - - Sold Amount (Date: mm/dd/yr, Bitcoin Amount, $ Amount)
-- - - - Bought Amount (Date: mm/dd/yr, Bitcoin Amount, $ Amount)
-- - - - Withdrew Amount (Date: mm/dd/yr, $ Amount, "arells.com/bankaccount")
-- - - - Exported Amount (Date: mm/dd/yr, Bitcoin Amount, Link)
+- - - - Sold Amount (Date: mm/dd/yr, Bitcoin-Amount-Sold(stamps from bitcoinSellAmount), $ Sold-Amount(stamps from sellAmount))
+- - - - Bought Amount (Date: mm/dd/yr, Bitcoin-Amount-Bought(stamps from bitcoinBuyAmount), $ Bought-Amount(stamps from buyAmount))
+- - - - Withdrew Amount (Date: mm/dd/yr, $ Withdrew-Amount(stamps from withdrawAmount), "arells.com/bankaccount")
+- - - - Exported Amount (Date: mm/dd/yr, Exported Amount(stamps from exportAmount), Link)
 - - Test Entire Mock-Up Before completing the below Wrappers
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
+- - Bank Account Attribute
+- - - Plaid Info?
 - **Possibly a Kraken Wrapper to pull Bitcoin to Buy & Sell?**
+- Test Entire Exporting, Importing, Buying, Selling and Withdrawing process (change manualBitcoinPrice and manualDate in coinGeckoApi/HPMContext to automated)
+- - Buy/Sell buttons connect to plaid (if not connected)
+- - acVacts: Entire Wallet (stripe?) amount (export|sell/import/buy takes/adds here)
+- - acVactTas: Entire Bitcoin amount (export|sell/import/buy takes/adds here)
+- - acVactsAts: Subtracts from Entire Wallet amount
+- - acVactTaAts: Subtracts from Entire Bitcoin amount
 
 ### Home(redirects to Account if logged in)
-- if holding, sell display none, holding display true.
-- Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) every 5 seconds from coin gecko API wrapper?
+- if acVactsAts = 0 sell display none, holding display true, else opposite
+- Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) every 10 seconds from coin gecko API wrapper?
 
  #### (B) Price = Bitcoin Price API 
 
@@ -57,18 +65,18 @@
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - (W) Wallet: Displays acVatops.
 - (B) Amount: Displays acVactTas.
-- Export Amount Input: (tel) back-end takes cVactTa from the Vatop Group with the highest cpVatop, otherwise starts from the lowest Vatop Group #
-- Export Address Input: (tel)
+- Export Amount Input: (tel no * or #) see HPMTester
+- Export Address Input: (tel no * or #) see HPMTester
 - Exporting
 - (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page))
-- Total exported wallet value: "$" = combines cVacts from input
-- You will lose "$": combines and displays Export Amount Inputs of the cdVatops if negative, otherwise, display none.
+- Total exported wallet value: see HPMTester
+- You will lose: see HPMTester
 - (CANCEL) -> Account Page, 
 - (EXPORT) -> Modal
 - - Modal:
-- - - Exporting (3 second delay) back-end takes cVactTa from the Vatop Group with the highest cpVatop, otherwise starts from the lowest Vatop Group #, delete the Vatop Group if its cVact = 0 
+- - - Exporting (3 second delay) see HPMTester 
 - - - Successfuly Exported (exporting modal = false, adds Date (logs new Date in "Transaction Dates" database), cVactTas exported to "Exported Amount" and link to Block Exporer to "Exported Link" in Database) (View Transactions)-> Transactions-
-- - - Export Failed (exporting modal = false)(OK) (if export amount isn't lesser or equal to Bitcoin Wallet amount or other address)
+- - - Export Failed (exporting modal = false)(OK) (if export fails (see HPMTester))
 - - - Check Address (exporting modal = false)(if Bitcoin Address is not in right format (refer to Bitcoin Page))
 - - - Enter information (exporting modal = false) (if one or more fields are empty)
 - - - Send more Bitcoin (exporting modal = false) (refer to Bitcoin Page for fee limit)
@@ -76,30 +84,36 @@
 
 ### Buy
 - (B) Price
-- Amount Input (in $) format tel with no * or # 
-- fees (total * .03 goes to our Arells Bitcoin Wallet)
-- total (from input)
+- Amount Input (in $) (tel no * or #) see HPMTester
+- fees (total * .03 goes to our Arells Stripe Account?)
+- total (from input) see HPMTester
 - (BUY) -> Modals
 - Modals: 
 - - Confirming Purchase 3 Second delay
-- - Purchase Complete (creates new Vatop Group with all corresponding info)(confirming purchase modal = false, adds Date (logs new Date in "Transaction Dates" database), $, and (B) to "Bought Amount in Database") -> View Transactions
+- - Purchase Complete (confirming purchase modal = false, (see HPMTester)) -> View Transactions
 - - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
 - - Enter information (if one or more fields are empty)
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 
 ### Sell
+if acVactsAts < or = 0 && acVatops > 0 display:
+- (B) Holding Amount
+- - Wallet: acVatops
+if acVatops < or = 0:
+- No Amount Available to Sell
+else:
 - (B) Amount Available To Sell
-- - Wallet: displays acVactsAts if acVactsAts > 0, if acVactsAts <= 0, display "holding amount" while hiding everything below, othwerwise if acVatops = 0, hide everything below with: "No Amount Available to Sell"
+- - Wallet: displays acVactsAts
 - - Profits: displays acdVatops
-- - Sell Amount Input: $ format tel with no * or # 
-- - Sell: takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme).
+- - Sell Amount Input: (tel no * or #) see HPMTester
+- - Sell: see HPMTester
 - - (Confirm Sale) -> Modals
 - - - Modals: 
 - - - - Confirming Sale...3 Second delay
-- - - - Sale Complete (confirming sale modal = false) (selling takes cVact amount from the Vatop Group with the lowest cpVatop, if more than 1 Vatop Group has similar cpVatops, take from the cVact from the lowest Vatop Group #, deletes the Vatop Group if its cVact = 0 (see Readme), adds Date (logs new Date in "Transaction Dates" database), $, and cVactTas sold to "Sold Amount in Database") (View Transactions) -> Transactions
+- - - - Sale Complete (confirming sale modal = false) (see HPMTester) (View Transactions) -> Transactions
 - - - - Transaction Failed (confirming sale modal = false) (OK)
 - - - - Enter information (if one or more fields are empty)
-- Reloads modules every 5 minutes (price, wallet, and profits animation css) from coin gecko API wrapper?
+- Reloads modules every 10 seconds (price, wallet, and profits animation css) from coin gecko API wrapper?
 
 ### Transactions
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
@@ -127,13 +141,8 @@
 - (A) -> Account Page (B) ->Buy Page
 - Plaid info from Plaid Wrapper?
 
-### After Mock-up Testing
+### After Full API/Wrapper Testing
 - Implement CoinGecko Real Bitcoin Price within Bitcoin API (Check Bitcoin Chart Home and Account (load/reload quickly))
-- Test Entire Buying, Selling, Exporting, Importing, and Withdrawing process...
-- - acVacts: Entire Wallet (stripe?) amount (export|sell/import/buy takes/adds here)
-- - acVactTas: Entire Bitcoin amount (export|sell/import/buy takes/adds here)
-- - acVactsAts: Subtracts from Entire Wallet amount
-- - acVactTaAts: Subtracts from Entire Bitcoin amount
 
 ### Important
 - Create separate Wallet to handle where we get our 3% fee... (Stripe?)

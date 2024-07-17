@@ -15,13 +15,19 @@ const HPMTester: React.FC = () => {
     setSellAmount,
     exportAmount,
     setExportAmount,
+    importAmount,
+    setImportAmount,
     handleBuy,
     handleSell,
     handleExport,
+    handleImport,
+    totalExportedWalletValue,
+    youWillLose,
     fetchVatopGroups,
   } = useHPM();
 
   const [localExportAmount, setLocalExportAmount] = useState<number>(0);
+  const [localImportAmount, setLocalImportAmount] = useState<number>(0);
   const [localTotalExportedWalletValue, setLocalTotalExportedWalletValue] = useState<string>('$0');
   const [localYouWillLose, setLocalYouWillLose] = useState<string>('$0');
 
@@ -35,6 +41,14 @@ const HPMTester: React.FC = () => {
 
   const handleExportAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalExportAmount(Number(e.target.value));
+  };
+
+  const handleImportAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalImportAmount(Number(e.target.value));
+  };
+
+  const handleImportClick = () => {
+    handleImport();
   };
 
   useEffect(() => {
@@ -101,6 +115,13 @@ const HPMTester: React.FC = () => {
           <input type="number" value={localExportAmount} onChange={handleExportAmountChange} />
         </label>
         <button onClick={() => handleExport(localExportAmount)}>Export</button>
+      </div>
+      <div>
+        <label>
+          Import Amount:
+          <input type="number" value={localImportAmount} onChange={handleImportAmountChange} />
+        </label>
+        <button onClick={handleImportClick}>Import</button>
       </div>
       <div>
         <h2>Total Exported Wallet Value: {localTotalExportedWalletValue}</h2>
