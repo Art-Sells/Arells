@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
@@ -42,7 +42,7 @@ interface HPMContextType {
   handleExport: (amount: number) => void;
   setManualBitcoinPrice: (price: number) => void;
   updateVatopCombinations: (groups: VatopGroup[]) => void;
-  email: string; // Add email to the context type
+  email: string;
 }
 
 const HPMContext = createContext<HPMContextType | undefined>(undefined);
@@ -88,34 +88,34 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateVatopCombinations = (groups: VatopGroup[]) => {
     console.log('Updating Vatop Combinations with groups:', groups);
-  
+
     const acVatops = groups.reduce((acc: number, group: VatopGroup) => acc + Math.max(parseCurrency(group.cVatop), parseCurrency(group.cVact)), 0);
     console.log('Calculated acVatops:', acVatops);
-  
+
     const acVacts = groups.reduce((acc: number, group: VatopGroup) => acc + parseCurrency(group.cVact), 0);
     console.log('Calculated acVacts:', acVacts);
-  
+
     const acVactTas = groups.reduce((acc: number, group: VatopGroup) => acc + parseNumber(group.cVactTa), 0);
     console.log('Calculated acVactTas:', acVactTas);
-  
+
     const acdVatops = groups.reduce((acc: number, group: VatopGroup) => {
       const cdVatop = parseCurrency(group.cdVatop);
       return cdVatop > 0 ? acc + cdVatop : acc;
     }, 0);
     console.log('Calculated acdVatops:', acdVatops);
-  
+
     const acVactsAts = groups.reduce((acc: number, group: VatopGroup) => {
       const cdVatop = parseCurrency(group.cdVatop);
       return cdVatop > 0 ? acc + parseCurrency(group.cVact) : acc;
     }, 0);
     console.log('Calculated acVactsAts:', acVactsAts);
-  
+
     const acVactTaAts = groups.reduce((acc: number, group: VatopGroup) => {
       const cdVatop = parseCurrency(group.cdVatop);
       return cdVatop > 0 ? acc + parseNumber(group.cVactTa) : acc;
     }, 0);
     console.log('Calculated acVactTaAts:', acVactTaAts);
-  
+
     const updatedCombinations = {
       acVatops: formatCurrency(acVatops),
       acVacts: formatCurrency(acVacts),
@@ -124,9 +124,9 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       acVactsAts: formatCurrency(acVactsAts),
       acVactTaAts: formatNumber(acVactTaAts)
     };
-  
+
     console.log('Calculated Updated Vatop Combinations:', updatedCombinations);
-  
+
     setVatopCombinations(updatedCombinations);
     return updatedCombinations;
   };
@@ -151,148 +151,218 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         console.error('Error fetching user attributes:', error);
       }
     };
-    
+
     fetchEmail();
   }, []);
 
-  useEffect(() => {
-    const fetchAndSetVatopGroups = async () => {
-      try {
-        if (!email) {
-          console.warn('No email provided, skipping fetchVatopGroups');
-          return;
-        }
-        
-        console.log('Fetching vatop groups for email:', email);
-        const response = await axios.get('/api/fetchVatopGroups', {
-          params: { email }
-        });
-        
-        const fetchedVatopGroups = response.data.vatopGroups || [];
-        const fetchedVatopCombinations = response.data.vatopCombinations || {};
-  
-        console.log('Fetched Vatop Groups:', fetchedVatopGroups);
-        console.log('Fetched Vatop Combinations:', fetchedVatopCombinations);
-  
-        const updatedVatopGroups = fetchedVatopGroups.map((group: { cVactTa: string | number; cVatop: string | number; cpVatop: string | number; }) => ({
+  const fetchVatopGroups = useCallback(async () => {
+    try {
+      if (!email) {
+        console.warn('No email provided, skipping fetchVatopGroups');
+        return;
+      }
+      console.log('Fetching vatop groups for email:', email);
+      const response = await axios.get('/api/fetchVatopGroups', {
+        params: { email }
+      });
+      const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
+      const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || {};
+
+      console.log('Fetched Vatop Groups:', fetchedVatopGroups);
+      console.log('Fetched Vatop Combinations:', fetchedVatopCombinations);
+
+      const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
+        const newCVact = formatCurrency(parseNumber(group.cVactTa) * bitcoinPrice);
+        const newCdVatop = formatCurrency((parseNumber(group.cVactTa) * bitcoinPrice) - parseCurrency(group.cVatop));
+
+        console.log(`Updated cVact: ${newCVact}, Updated cdVatop: ${newCdVatop} for group: ${JSON.stringify(group)}`);
+
+        return {
           ...group,
-          cVact: formatCurrency(parseNumber(group.cVactTa) * bitcoinPrice),
-          cdVatop: formatCurrency((parseNumber(group.cVactTa) * bitcoinPrice) - parseCurrency(group.cVatop)),
+          cVact: newCVact,
+          cdVatop: newCdVatop,
           cVatop: formatCurrency(parseCurrency(group.cVatop)),
           cpVatop: formatCurrency(parseCurrency(group.cpVatop)),
           cVactTa: formatNumber(parseNumber(group.cVactTa))
-        })).filter((group: { cVact: string | number; cVatop: string | number; }) => parseCurrency(group.cVact) > 0 && parseCurrency(group.cVatop) > 0);
-  
-        setVatopGroups(updatedVatopGroups);
-  
-        const currentCombinations = updateVatopCombinations(updatedVatopGroups);
-        console.log('Current Vatop Combinations:', currentCombinations);
-  
-        if (JSON.stringify(fetchedVatopCombinations) !== JSON.stringify(currentCombinations)) {
-          console.log('Discrepancy found, updating vatop combinations');
-          setVatopCombinations(currentCombinations);
-        } else {
-          console.log('No discrepancy found in fetched vatop combinations');
-        }
-      } catch (error) {
-        console.error('Error fetching vatop groups:', error);
-      }
-    };
-  
-    // Fetch data initially when component mounts
-    fetchAndSetVatopGroups();
-  
-    // Setup interval to fetch data every 10 seconds
-    const interval = setInterval(fetchAndSetVatopGroups, 10000);
-  
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
-  }, [email, bitcoinPrice, updateVatopCombinations]);
-  
-  useEffect(() => {
-    console.log('Updated Vatop Groups:', vatopGroups);
-    console.log('Updated Vatop Combinations:', vatopCombinations);
-  }, [vatopGroups, vatopCombinations]);
+        };
+      }).filter(group => parseCurrency(group.cVact) > 0 && parseCurrency(group.cVatop) > 0);
 
-  useEffect(() => {
-    const updatedVatopGroups = vatopGroups
-      .map(group => ({
-        ...group,
-        cVact: formatCurrency(parseNumber(group.cVactTa) * bitcoinPrice),
-        cdVatop: formatCurrency((parseNumber(group.cVactTa) * bitcoinPrice) - parseCurrency(group.cVatop)),
-      }))
-      .filter(group => parseCurrency(group.cVact) > 0 && parseCurrency(group.cVatop) > 0); // Remove groups with cVact and cVatop both = 0
-    setVatopGroups(updatedVatopGroups);
-    updateVatopCombinations(updatedVatopGroups);
-  }, [bitcoinPrice]);
-
-  useEffect(() => {
-    const highestCpVatop = Math.max(...vatopGroups.map(group => parseCurrency(group.cpVatop)), 0);
-    if (bitcoinPrice > highestCpVatop) {
-      setHpap(formatCurrency(bitcoinPrice));
-    } else {
-      setHpap(formatCurrency(highestCpVatop));
-    }
-  }, [vatopGroups, bitcoinPrice]);
-
-  const handleBuy = async (amount: number) => {
-    const newVatop: VatopGroup = {
-      cVatop: formatCurrency(amount),
-      cpVatop: formatCurrency(bitcoinPrice),
-      cVact: formatCurrency(amount),
-      cVactTa: formatNumber(amount / bitcoinPrice),
-      cdVatop: formatCurrency(0),
-      };
-      const updatedVatopGroups = [...vatopGroups, newVatop];
       setVatopGroups(updatedVatopGroups);
-      const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
-      
-      try {
-      console.log('Attempting to save vatop groups:', updatedVatopGroups);
+
+      const currentCombinations = updateVatopCombinations(updatedVatopGroups);
+      console.log('Current Vatop Combinations:', currentCombinations);
+
+      if (JSON.stringify(fetchedVatopCombinations) !== JSON.stringify(currentCombinations)) {
+        console.log('Discrepancy found, updating vatop combinations');
+        setVatopCombinations(currentCombinations);
+      } else {
+        console.log('No discrepancy found in fetched vatop combinations');
+      }
+    } catch (error) {
+      console.error('Error fetching vatop groups:', error);
+    }
+  }, [email, bitcoinPrice, updateVatopCombinations]);
+
+  const checkForImports = useCallback(async () => {
+  try {
+  if (!email) {
+  console.warn('No email provided, skipping import check');
+  return;
+  }   console.log('Fetching vatop groups for email:', email);
+  const response = await axios.get('/api/fetchVatopGroups', {
+    params: { email }
+  });
+
+  const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
+  const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || vatopCombinations;
+
+  console.log('Fetched Vatop Groups:', fetchedVatopGroups);
+  console.log('Fetched Vatop Combinations:', fetchedVatopCombinations);
+
+  // Calculate total cVactTa from fetched Vatop Groups
+  const totalCVactTas = fetchedVatopGroups.reduce((acc, group) => acc + parseNumber(group.cVactTa), 0);
+  console.log('Total cVactTa from fetched Vatop Groups:', totalCVactTas);
+
+  const fetchedAcVactTas = parseNumber(fetchedVatopCombinations.acVactTas);
+  console.log('Fetched acVactTas:', fetchedAcVactTas);
+
+  // Check for discrepancies
+  if (fetchedAcVactTas > totalCVactTas) {
+    const remainingAmount = fetchedAcVactTas - totalCVactTas;
+    console.log('Discrepancy found, remaining amount to correct:', remainingAmount);
+
+    const newVatopGroup: VatopGroup = {
+      cVatop: formatCurrency(remainingAmount * bitcoinPrice),
+      cpVatop: formatCurrency(bitcoinPrice),
+      cVact: formatCurrency(remainingAmount * bitcoinPrice),
+      cVactTa: formatNumber(remainingAmount),
+      cdVatop: formatCurrency(0),
+    };
+
+    console.log('New Vatop Group to be added:', newVatopGroup);
+
+    // Update vatop groups state
+    const updatedVatopGroups = [...fetchedVatopGroups, newVatopGroup];
+    setVatopGroups(updatedVatopGroups);
+
+    // Wait for state update before continuing
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    // Update vatop combinations after updating groups
+    const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
+
+    try {
+      console.log('Attempting to save vatop groups with import:', updatedVatopGroups);
       await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
       setRefreshData(true); // Set flag to refresh data
-      } catch (error) {
+    } catch (error) {
       console.error('Error saving vatop groups:', error);
-      }};
-      
-      const handleSell = async (amount: number) => {
-      if (amount > parseCurrency(vatopCombinations.acVactsAts)) {
-      return;
-      }let remainingAmount = amount;
-      const updatedVatopGroups = [...vatopGroups];
-      updatedVatopGroups.sort((a, b) => parseCurrency(a.cpVatop) - parseCurrency(b.cpVatop));
-      
-      for (let i = 0; i < updatedVatopGroups.length && remainingAmount > 0; i++) {
-      const group = updatedVatopGroups[i];
-      const sellAmount = Math.min(parseCurrency(group.cVact), remainingAmount);
-      remainingAmount -= sellAmount;
-      
-      group.cVatop = formatCurrency(parseCurrency(group.cVatop) - sellAmount);
-      group.cVact = formatCurrency(parseCurrency(group.cVact) - sellAmount);
-      group.cVactTa = formatNumber(parseNumber(group.cVactTa) - (sellAmount / bitcoinPrice));
-      group.cdVatop = formatCurrency(parseCurrency(group.cVact) - parseCurrency(group.cVatop));
-      if (parseCurrency(group.cVatop) <= 0 && parseCurrency(group.cVact) <= 0) {
-      // Find the group with the largest cVactTa
-      const largestCactTaGroup = updatedVatopGroups.reduce((maxGroup, currentGroup) => {
-      return parseNumber(currentGroup.cVactTa) > parseNumber(maxGroup.cVactTa) ? currentGroup : maxGroup;
-      }, updatedVatopGroups[0]);
-      // Add cVactTa to the group with the largest cVactTa
-      largestCactTaGroup.cVactTa = formatNumber(parseNumber(largestCactTaGroup.cVactTa) + parseNumber(group.cVactTa));
-      // Remove the group with cVatop and cVact both = 0
-updatedVatopGroups.splice(i, 1);
-i--; // Adjust index after removal
+    }
+  } else {
+    console.log('No discrepancy found in acVactTas');
+  }
+} catch (error) {
+  console.error('Error checking for imports:', error);
+}}, [email, vatopCombinations.acVactTas, bitcoinPrice, updateVatopCombinations]);
+
+useEffect(() => {
+  const fetchData = async () => {
+    await fetchVatopGroups();
+  };
+
+  fetchData();
+
+  const interval = setInterval(() => {
+    fetchData();
+    checkForImports();
+  }, 20000); // Set the interval to 20 seconds
+
+  // Cleanup function to clear the interval
+  return () => clearInterval(interval);
+}, [fetchVatopGroups, checkForImports]);
+
+useEffect(() => {
+console.log('Updated Vatop Groups:', vatopGroups);
+console.log('Updated Vatop Combinations:', vatopCombinations);
+}, [vatopGroups, vatopCombinations]);
+
+useEffect(() => {
+const updatedVatopGroups = vatopGroups
+.map(group => ({...group,
+cVact: formatCurrency(parseNumber(group.cVactTa) * bitcoinPrice),
+cdVatop: formatCurrency((parseNumber(group.cVactTa) * bitcoinPrice) - parseCurrency(group.cVatop)),
+}))
+.filter(group => parseCurrency(group.cVact) > 0 && parseCurrency(group.cVatop) > 0); // Remove groups with cVact and cVatop both = 0
+setVatopGroups(updatedVatopGroups);
+updateVatopCombinations(updatedVatopGroups);
+}, [bitcoinPrice]);
+
+useEffect(() => {
+const highestCpVatop = Math.max(...vatopGroups.map(group => parseCurrency(group.cpVatop)), 0);
+if (bitcoinPrice > highestCpVatop) {
+setHpap(formatCurrency(bitcoinPrice));
+} else {
+setHpap(formatCurrency(highestCpVatop));
 }
+}, [vatopGroups, bitcoinPrice]);
+
+const handleBuy = async (amount: number) => {
+const newVatop: VatopGroup = {
+cVatop: formatCurrency(amount),
+cpVatop: formatCurrency(bitcoinPrice),
+cVact: formatCurrency(amount),
+cVactTa: formatNumber(amount / bitcoinPrice),
+cdVatop: formatCurrency(0),
+};
+const updatedVatopGroups = [...vatopGroups, newVatop];
+setVatopGroups(updatedVatopGroups);
+const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
+try {
+  console.log('Attempting to save vatop groups:', updatedVatopGroups);
+  await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
+  setRefreshData(true); // Set flag to refresh data
+} catch (error) {
+  console.error('Error saving vatop groups:', error);
+}};
+
+const handleSell = async (amount: number) => {
+if (amount > parseCurrency(vatopCombinations.acVactsAts)) {
+return;
+}
+let remainingAmount = amount;
+const updatedVatopGroups = [...vatopGroups];
+updatedVatopGroups.sort((a, b) => parseCurrency(a.cpVatop) - parseCurrency(b.cpVatop));
+for (let i = 0; i < updatedVatopGroups.length && remainingAmount > 0; i++) {
+  const group = updatedVatopGroups[i];
+  const sellAmount = Math.min(parseCurrency(group.cVact), remainingAmount);
+  remainingAmount -= sellAmount;
+
+  group.cVatop = formatCurrency(parseCurrency(group.cVatop) - sellAmount);
+  group.cVact = formatCurrency(parseCurrency(group.cVact) - sellAmount);
+  group.cVactTa = formatNumber(parseNumber(group.cVactTa) - (sellAmount / bitcoinPrice));
+  group.cdVatop = formatCurrency(parseCurrency(group.cVact) - parseCurrency(group.cVatop));
+  if (parseCurrency(group.cVatop) <= 0 && parseCurrency(group.cVact) <= 0) {
+    // Find the group with the largest cVactTa
+    const largestCactTaGroup = updatedVatopGroups.reduce((maxGroup, currentGroup) => {
+      return parseNumber(currentGroup.cVactTa) > parseNumber(maxGroup.cVactTa) ? currentGroup : maxGroup;
+    }, updatedVatopGroups[0]);
+    // Add cVactTa to the group with the largest cVactTa
+    largestCactTaGroup.cVactTa = formatNumber(parseNumber(largestCactTaGroup.cVactTa) + parseNumber(group.cVactTa));
+    // Remove the group with cVatop and cVact both = 0
+    updatedVatopGroups.splice(i, 1);
+    i--; // Adjust index after removal
+  }
 }
 
 setVatopGroups(updatedVatopGroups);
 const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
 
 try {
-console.log('Attempting to save vatop groups:', updatedVatopGroups);
-await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
-setRefreshData(true); // Set flag to refresh data
+  console.log('Attempting to save vatop groups:', updatedVatopGroups);
+  await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
+  setRefreshData(true); // Set flag to refresh data
 } catch (error) {
-console.error('Error saving vatop groups:', error);
+  console.error('Error saving vatop groups:', error);
 }};
 
 const handleExport = async (amount: number) => {
@@ -304,40 +374,39 @@ const updatedVatopGroups = [...vatopGroups];
 updatedVatopGroups.sort((a, b) => parseCurrency(b.cpVatop) - parseCurrency(a.cpVatop)); // Start from the highest cpVatop
 let totalValue = 0;
 let totalLoss = 0;
-
 for (let i = 0; i < updatedVatopGroups.length && remainingAmount > 0; i++) {
-const group = updatedVatopGroups[i];
-const exportAmount = Math.min(parseNumber(group.cVactTa), remainingAmount);
-remainingAmount -= exportAmount;
+  const group = updatedVatopGroups[i];
+  const exportAmount = Math.min(parseNumber(group.cVactTa), remainingAmount);
+  remainingAmount -= exportAmount;
 
-const originalCdVatop = parseCurrency(group.cdVatop);
-const originalCVactTa = parseNumber(group.cVactTa);
-const lossFraction = exportAmount / originalCVactTa;
+  const originalCdVatop = parseCurrency(group.cdVatop);
+  const originalCVactTa = parseNumber(group.cVactTa);
+  const lossFraction = exportAmount / originalCVactTa;
 
-const newCdVatop = originalCdVatop * lossFraction;
+  const newCdVatop = originalCdVatop * lossFraction;
 
-totalValue += exportAmount * bitcoinPrice;
-if (newCdVatop < 0) {
-totalLoss += newCdVatop;
-}
+  totalValue += exportAmount * bitcoinPrice;
+  if (newCdVatop < 0) {
+    totalLoss += newCdVatop;
+  }
 
-group.cVatop = formatCurrency(parseCurrency(group.cVatop) - exportAmount * bitcoinPrice);
-group.cVact = formatCurrency(parseCurrency(group.cVact) - exportAmount * bitcoinPrice);
-group.cVactTa = formatNumber(parseNumber(group.cVactTa) - exportAmount);
-group.cdVatop = formatCurrency(parseCurrency(group.cVact) - parseCurrency(group.cVatop));
+  group.cVatop = formatCurrency(parseCurrency(group.cVatop) - exportAmount * bitcoinPrice);
+  group.cVact = formatCurrency(parseCurrency(group.cVact) - exportAmount * bitcoinPrice);
+  group.cVactTa = formatNumber(parseNumber(group.cVactTa) - exportAmount);
+  group.cdVatop = formatCurrency(parseCurrency(group.cVact) - parseCurrency(group.cVatop));
 
-if (parseCurrency(group.cVatop) <= 0 && parseCurrency(group.cVact) <= 0) {
-// Find the group with the largest cVactTa
-const largestCactTaGroup = updatedVatopGroups.reduce((maxGroup, currentGroup) => {
-return parseNumber(currentGroup.cVactTa) > parseNumber(maxGroup.cVactTa) ? currentGroup : maxGroup;
-}, updatedVatopGroups[0]);
-// Add cVactTa to the group with the largest cVactTa
-largestCactTaGroup.cVactTa = formatNumber(parseNumber(largestCactTaGroup.cVactTa) + parseNumber(group.cVactTa));
+  if (parseCurrency(group.cVatop) <= 0 && parseCurrency(group.cVact) <= 0) {
+    // Find the group with the largest cVactTa
+    const largestCactTaGroup = updatedVatopGroups.reduce((maxGroup, currentGroup) => {
+      return parseNumber(currentGroup.cVactTa) > parseNumber(maxGroup.cVactTa) ? currentGroup : maxGroup;
+    }, updatedVatopGroups[0]);
+    // Add cVactTa to the group with the largest cVactTa
+    largestCactTaGroup.cVactTa = formatNumber(parseNumber(largestCactTaGroup.cVactTa) + parseNumber(group.cVactTa));
 
-// Remove the group with cVatop and cVact both = 0
-updatedVatopGroups.splice(i, 1);
-i--; // Adjust index after removal
-}
+    // Remove the group with cVatop and cVact both = 0
+    updatedVatopGroups.splice(i, 1);
+    i--; // Adjust index after removal
+  }
 }
 
 setVatopGroups(updatedVatopGroups);
@@ -347,117 +416,45 @@ setTotalExportedWalletValue(formatCurrency(totalValue));
 setYouWillLose(formatCurrency(Math.abs(totalLoss)));
 
 try {
-console.log('Attempting to save vatop groups:', updatedVatopGroups);
-await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
-setRefreshData(true); // Set flag to refresh data
+  console.log('Attempting to save vatop groups:', updatedVatopGroups);
+  await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
+  setRefreshData(true); // Set flag to refresh data
 } catch (error) {
-console.error('Error saving vatop groups:', error);
-}
+  console.error('Error saving vatop groups:', error);
+}};
+
+return (
+<HPMContext.Provider value={{
+bitcoinPrice,
+vatopGroups,
+vatopCombinations,
+hpap,
+buyAmount,
+sellAmount,
+exportAmount,
+importAmount,
+totalExportedWalletValue,
+youWillLose,
+setBuyAmount,
+setSellAmount,
+setExportAmount,
+setImportAmount,
+handleBuy,
+handleSell,
+handleExport,
+setManualBitcoinPrice: setManualBitcoinPriceApi,
+updateVatopCombinations,
+email
+}}>
+{children}
+</HPMContext.Provider>
+);
 };
 
-const checkForImports = useCallback(async () => {
-  try {
-    if (!email) {
-      console.warn('No email provided, skipping import check');
-      return;
-    }
-
-    console.log('Fetching vatop groups for email:', email);
-    const response = await axios.get('/api/fetchVatopGroups', {
-      params: { email }
-    });
-
-    const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
-    const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || vatopCombinations;
-
-    console.log('Fetched Vatop Groups:', fetchedVatopGroups);
-    console.log('Fetched Vatop Combinations:', fetchedVatopCombinations);
-
-    // Calculate total cVactTa from fetched Vatop Groups
-    const totalCVactTas = fetchedVatopGroups.reduce((acc, group) => acc + parseNumber(group.cVactTa), 0);
-    console.log('Total cVactTa from fetched Vatop Groups:', totalCVactTas);
-
-    const fetchedAcVactTas = parseNumber(fetchedVatopCombinations.acVactTas);
-    console.log('Fetched acVactTas:', fetchedAcVactTas);
-
-    // Check for discrepancies
-    if (fetchedAcVactTas > totalCVactTas) {
-      const remainingAmount = fetchedAcVactTas - totalCVactTas;
-      console.log('Discrepancy found, remaining amount to correct:', remainingAmount);
-
-      const newVatopGroup: VatopGroup = {
-        cVatop: formatCurrency(remainingAmount * bitcoinPrice),
-        cpVatop: formatCurrency(bitcoinPrice),
-        cVact: formatCurrency(remainingAmount * bitcoinPrice),
-        cVactTa: formatNumber(remainingAmount),
-        cdVatop: formatCurrency(0),
-      };
-
-      console.log('New Vatop Group to be added:', newVatopGroup);
-
-      // Update vatop groups state
-      const updatedVatopGroups = [...fetchedVatopGroups, newVatopGroup];
-      setVatopGroups(updatedVatopGroups);
-
-      // Wait for state update before continuing
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      // Update vatop combinations after updating groups
-      const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
-
-      try {
-        console.log('Attempting to save vatop groups with import:', updatedVatopGroups);
-        await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
-        setRefreshData(true); // Set flag to refresh data
-      } catch (error) {
-        console.error('Error saving vatop groups:', error);
-      }
-    } else {
-      console.log('No discrepancy found in acVactTas');
-    }
-  } catch (error) {
-    console.error('Error checking for imports:', error);
-  }
-}, [email, vatopCombinations.acVactTas, bitcoinPrice, updateVatopCombinations]);
-
-useEffect(() => {
-  const interval = setInterval(checkForImports, 10000); // Check every 10 seconds
-  return () => clearInterval(interval); // Cleanup interval on unmount
-}, [checkForImports]);
-  
-  
-  return (
-  <HPMContext.Provider value={{
-  bitcoinPrice,
-  vatopGroups,
-  vatopCombinations,
-  hpap,
-  buyAmount,
-  sellAmount,
-  exportAmount,
-  importAmount,
-  totalExportedWalletValue,
-  youWillLose,
-  setBuyAmount,
-  setSellAmount,
-  setExportAmount,
-  setImportAmount,
-  handleBuy,
-  handleSell,
-  handleExport,
-  setManualBitcoinPrice: setManualBitcoinPriceApi,
-  updateVatopCombinations, // Ensure the function is passed here
-  email
-  }}>
-  {children}
-  </HPMContext.Provider>
-  );
-  };
-  
-  export const useHPM = () => {
-  const context = useContext(HPMContext);
-  if (context === undefined) {
-  throw new Error('useHPM must be used within an HPMProvider');
-  }
-  return context;
-  };
+export const useHPM = () => {
+const context = useContext(HPMContext);
+if (context === undefined) {
+throw new Error('useHPM must be used within an HPMProvider');
+}
+return context;
+};
