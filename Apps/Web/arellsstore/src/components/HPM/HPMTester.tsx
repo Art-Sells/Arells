@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useHPM } from '../../context/HPMContext';
 
 const HPMTester: React.FC = () => {
@@ -13,17 +14,12 @@ const HPMTester: React.FC = () => {
     setBuyAmount,
     sellAmount,
     setSellAmount,
-    exportAmount,
-    setExportAmount,
-    importAmount,
     setImportAmount,
     handleBuy,
     handleSell,
     handleExport,
-    handleImport,
-    totalExportedWalletValue,
-    youWillLose,
-    fetchVatopGroups,
+    updateVatopCombinations,
+    email
   } = useHPM();
 
   const [localExportAmount, setLocalExportAmount] = useState<number>(0);
@@ -47,13 +43,24 @@ const HPMTester: React.FC = () => {
     setLocalImportAmount(Number(e.target.value));
   };
 
-  const handleImportClick = () => {
-    handleImport();
-  };
+  const handleImportClick = async () => {
+    setImportAmount(localImportAmount);
+    const newAcVactTas = parseNumber(vatopCombinations.acVactTas) + localImportAmount;
+    const updatedCombinations = {
+      ...vatopCombinations,
+      acVactTas: formatNumber(newAcVactTas),
+    };
+    console.log('Updating acVactTas:', updatedCombinations.acVactTas);
 
-  useEffect(() => {
-    fetchVatopGroups(); // Fetch vatop groups when component mounts
-  }, [fetchVatopGroups]);
+    try {
+      console.log('Attempting to save updated vatop combinations:', updatedCombinations);
+      const response = await axios.post('/api/saveVatopGroups', { email, vatopGroups, vatopCombinations: updatedCombinations });
+      console.log('Response from server:', response.data);
+      updateVatopCombinations(vatopGroups); // Ensure the local state is also updated
+    } catch (error) {
+      console.error('Error saving updated vatop combinations:', error);
+    }
+  };
 
   useEffect(() => {
     // Update local state for real-time calculations
@@ -170,6 +177,10 @@ const parseCurrency = (value: string | number): number => {
 const parseNumber = (value: string | number): number => {
   if (typeof value === 'number') return value;
   return parseFloat(value);
+};
+
+const formatNumber = (value: number): string => {
+  return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 7 });
 };
 
 export default HPMTester;

@@ -6,22 +6,22 @@
 - **HPM Wrapper**
 - - **Mock Up:**
 - - - Work on Importing/Exporting functionalieies 
-- - - - importAmount works essentially the same as "Buying" except, it loads every 10 seconds to see if any Bitcoin Amount has been imported (I guess we need to set a method to see if the acVactTas increases without the buyAmount triggered, if so, then this is an importAmount, if acVactTas increases with buttonAmount triggered, this is not importAmount)... importAmount obviously is an exterior catching method so maybe we need to enture it reloads every 10 seconds? 
+- - - Sold Amount Attribute (sellAmount publishes info to Sold Amount Context)
+- - - - $ Amount of Bitcoin Sold (pulls from Sold Amount Context)
 - - - Set Manual Date (within the coinGecko Api),
-- - - Transactions Attribute
-- - - - Sold Amount (Date: mm/dd/yr, Bitcoin-Amount-Sold(stamps from bitcoinSellAmount), $ Sold-Amount(stamps from sellAmount))
-- - - - Bought Amount (Date: mm/dd/yr, Bitcoin-Amount-Bought(stamps from bitcoinBuyAmount), $ Bought-Amount(stamps from buyAmount))
-- - - - Withdrew Amount (Date: mm/dd/yr, $ Withdrew-Amount(stamps from withdrawAmount), "arells.com/bankaccount")
-- - - - Exported Amount (Date: mm/dd/yr, Exported Amount(stamps from exportAmount), Link)
-- - Test Entire Mock-Up Before completing the below Wrappers
+- - - Transactions Attribute (only if transactions successful):
+- - - - Sold Amount (Date: mm/dd/yr, Bitcoin-Amount-Sold(stamps from bitcoinSellAmount), $ Sold-Amount) (pulls from Sold Amount Context)
+- - - - Bought Amount (Date: mm/dd/yr, Bitcoin-Amount-Bought(stamps from bitcoinBuyAmount), $ Bought-Amount(stamps from buyAmount)) (pulls from Bought Amount Context)
+- - - - Withdrew Amount (Date: mm/dd/yr, $ Withdrew-Amount(stamps from withdrawAmount), "arells.com/bankaccount") (pulls from Withdrawn Amount Context)
+- - - - Exported Amount (Date: mm/dd/yr, Exported Amount(stamps from exportAmount) (pulls from Export Amount Context), Link)
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
 - - Bank Account Attribute
 - - - Plaid Info?
 - **Possibly a Kraken Wrapper to pull Bitcoin to Buy & Sell?**
-- Test Entire Exporting, Importing, Buying, Selling and Withdrawing process (change manualBitcoinPrice and manualDate in coinGeckoApi/HPMContext to automated)
+- Test Entire Exporting, Importing, Buying, Selling and Withdrawing process (change manualBitcoinPrice and manualDate in coinGeckoApi/HPMContext to automated) (possibly just segments out from Vatop Combinations as Vatop Combinations are Real Numbers and Vatop Groups Fake)
 - - Buy/Sell buttons connect to plaid (if not connected)
 - - acVacts: Entire Wallet (stripe?) amount (export|sell/import/buy takes/adds here)
-- - acVactTas: Entire Bitcoin amount (export|sell/import/buy takes/adds here)
+- - acVactTas: Entire Bitcoin Wallet amount (export|sell/import/buy takes/adds here)
 - - acVactsAts: Subtracts from Entire Wallet amount
 - - acVactTaAts: Subtracts from Entire Bitcoin amount
 
@@ -174,6 +174,9 @@ else:
 
 ### Bank Account
 - Change Bank Account (Plaid Connect? from Plaid Wrapper?)
+
+### Transactions
+- Add Imported
 
 #### Misc
 
