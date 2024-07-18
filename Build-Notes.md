@@ -5,7 +5,6 @@
 ### Wrappers
 - **HPM Wrapper**
 - - **Mock Up:**
-- - - Work on Importing/Exporting functionalieies 
 - - - Sold Amount Attribute (sellAmount publishes info to Sold Amount Context)
 - - - - $ Amount of Bitcoin Sold (pulls from Sold Amount Context)
 - - - Set Manual Date (within the coinGecko Api),
@@ -18,7 +17,7 @@
 - - Bank Account Attribute
 - - - Plaid Info?
 - **Possibly a Kraken Wrapper to pull Bitcoin to Buy & Sell?**
-- Test Entire Exporting, Importing, Buying, Selling and Withdrawing process (change manualBitcoinPrice and manualDate in coinGeckoApi/HPMContext to automated) (possibly just segments out from Vatop Combinations as Vatop Combinations are Real Numbers and Vatop Groups Fake)
+- Test Entire Exporting, Importing, Buying, Selling and Withdrawing process (change manualBitcoinPrice and manualDate in coinGeckoApi/HPMContext to automated) (possibly just segments out from Vatop Combinations as Vatop Combinations are Real Numbers and Vatop Groups Fake ask Gpt?)
 - - Buy/Sell buttons connect to plaid (if not connected)
 - - acVacts: Entire Wallet (stripe?) amount (export|sell/import/buy takes/adds here)
 - - acVactTas: Entire Bitcoin Wallet amount (export|sell/import/buy takes/adds here)
@@ -62,6 +61,7 @@
 - Pull Bitcoin Address From Backend
 
 ### Export
+**Pull handleExport from HPMContext for success and error modal handling.**
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - (W) Wallet: Displays acVatops.
 - (B) Amount: Displays acVactTas.
@@ -83,6 +83,7 @@
 - Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
 
 ### Buy
+**Pull handleBuy from HPMContext & BoughtAmountContext for success and error modal handling.**
 - (B) Price
 - Amount Input (in $) (tel no * or #) see HPMTester
 - fees (total * .03 goes to our Arells Stripe Account?)
@@ -96,6 +97,7 @@
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 
 ### Sell
+**Pull handleSell from HPMContext SellAmountContext or success and error modal handling.**
 if acVactsAts < or = 0 && acVatops > 0 display:
 - (B) Holding Amount
 - - Wallet: acVatops
@@ -116,6 +118,7 @@ else:
 - Reloads modules every 10 seconds (price, wallet, and profits animation css) from coin gecko API wrapper?
 
 ### Transactions
+**From Transactions Attribute (API)**
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - (Calendar) 06/21/24 (mm/dd/yr) (pulls from "Transactions Dates" from Database)
 - (B) Sold: 0.0087 (pulls from "Sold Amount" database) 
@@ -128,6 +131,7 @@ else:
 - - (App) To: (View On Block Explorer)-> Block Explorer Link
 
 ### Withdraw
+**From Sold Amount Attribute (API)**
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - Displays "Sold Amount" from Database $
 - (Bank) to: (Plaid Bank Logo Button? from Plaid Wrapper?)->Bank Account
@@ -142,7 +146,7 @@ else:
 - Plaid info from Plaid Wrapper?
 
 ### After Full API/Wrapper Testing
-- Implement CoinGecko Real Bitcoin Price within Bitcoin API (Check Bitcoin Chart Home and Account (load/reload quickly))
+- Buy CoinGecko API and implement 10 second interval for Bitcoin Price checking maybe through HPM Context?
 
 ### Important
 - Create separate Wallet to handle where we get our 3% fee... (Stripe?)
@@ -152,6 +156,7 @@ else:
 ### Other (if Time Permits)
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
 - Contact us (Account/Home): Email
+- resolve endless useEffectLoads (from HPMContext)
 
 ## Arells Cryptocurrency Marketplace 1.5
 

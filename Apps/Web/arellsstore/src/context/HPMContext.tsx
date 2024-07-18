@@ -87,34 +87,27 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [refreshData, setRefreshData] = useState<boolean>(false);
 
   const updateVatopCombinations = (groups: VatopGroup[]) => {
-    console.log('Updating Vatop Combinations with groups:', groups);
 
     const acVatops = groups.reduce((acc: number, group: VatopGroup) => acc + Math.max(parseCurrency(group.cVatop), parseCurrency(group.cVact)), 0);
-    console.log('Calculated acVatops:', acVatops);
 
     const acVacts = groups.reduce((acc: number, group: VatopGroup) => acc + parseCurrency(group.cVact), 0);
-    console.log('Calculated acVacts:', acVacts);
 
     const acVactTas = groups.reduce((acc: number, group: VatopGroup) => acc + parseNumber(group.cVactTa), 0);
-    console.log('Calculated acVactTas:', acVactTas);
 
     const acdVatops = groups.reduce((acc: number, group: VatopGroup) => {
       const cdVatop = parseCurrency(group.cdVatop);
       return cdVatop > 0 ? acc + cdVatop : acc;
     }, 0);
-    console.log('Calculated acdVatops:', acdVatops);
 
     const acVactsAts = groups.reduce((acc: number, group: VatopGroup) => {
       const cdVatop = parseCurrency(group.cdVatop);
       return cdVatop > 0 ? acc + parseCurrency(group.cVact) : acc;
     }, 0);
-    console.log('Calculated acVactsAts:', acVactsAts);
 
     const acVactTaAts = groups.reduce((acc: number, group: VatopGroup) => {
       const cdVatop = parseCurrency(group.cdVatop);
       return cdVatop > 0 ? acc + parseNumber(group.cVactTa) : acc;
     }, 0);
-    console.log('Calculated acVactTaAts:', acVactTaAts);
 
     const updatedCombinations = {
       acVatops: formatCurrency(acVatops),
@@ -124,8 +117,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       acVactsAts: formatCurrency(acVactsAts),
       acVactTaAts: formatNumber(acVactTaAts)
     };
-
-    console.log('Calculated Updated Vatop Combinations:', updatedCombinations);
 
     setVatopCombinations(updatedCombinations);
     return updatedCombinations;
@@ -161,21 +152,15 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         console.warn('No email provided, skipping fetchVatopGroups');
         return;
       }
-      console.log('Fetching vatop groups for email:', email);
       const response = await axios.get('/api/fetchVatopGroups', {
         params: { email }
       });
       const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
       const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || {};
 
-      console.log('Fetched Vatop Groups:', fetchedVatopGroups);
-      console.log('Fetched Vatop Combinations:', fetchedVatopCombinations);
-
       const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
         const newCVact = formatCurrency(parseNumber(group.cVactTa) * bitcoinPrice);
         const newCdVatop = formatCurrency((parseNumber(group.cVactTa) * bitcoinPrice) - parseCurrency(group.cVatop));
-
-        console.log(`Updated cVact: ${newCVact}, Updated cdVatop: ${newCdVatop} for group: ${JSON.stringify(group)}`);
 
         return {
           ...group,
@@ -190,13 +175,11 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setVatopGroups(updatedVatopGroups);
 
       const currentCombinations = updateVatopCombinations(updatedVatopGroups);
-      console.log('Current Vatop Combinations:', currentCombinations);
 
       if (JSON.stringify(fetchedVatopCombinations) !== JSON.stringify(currentCombinations)) {
-        console.log('Discrepancy found, updating vatop combinations');
         setVatopCombinations(currentCombinations);
       } else {
-        console.log('No discrepancy found in fetched vatop combinations');
+        console.log('(^.^)');
       }
     } catch (error) {
       console.error('Error fetching vatop groups:', error);
@@ -216,20 +199,14 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
   const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || vatopCombinations;
 
-  console.log('Fetched Vatop Groups:', fetchedVatopGroups);
-  console.log('Fetched Vatop Combinations:', fetchedVatopCombinations);
-
   // Calculate total cVactTa from fetched Vatop Groups
   const totalCVactTas = fetchedVatopGroups.reduce((acc, group) => acc + parseNumber(group.cVactTa), 0);
-  console.log('Total cVactTa from fetched Vatop Groups:', totalCVactTas);
 
   const fetchedAcVactTas = parseNumber(fetchedVatopCombinations.acVactTas);
-  console.log('Fetched acVactTas:', fetchedAcVactTas);
 
   // Check for discrepancies
   if (fetchedAcVactTas > totalCVactTas) {
     const remainingAmount = fetchedAcVactTas - totalCVactTas;
-    console.log('Discrepancy found, remaining amount to correct:', remainingAmount);
 
     const newVatopGroup: VatopGroup = {
       cVatop: formatCurrency(remainingAmount * bitcoinPrice),
@@ -238,9 +215,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cVactTa: formatNumber(remainingAmount),
       cdVatop: formatCurrency(0),
     };
-
-    console.log('New Vatop Group to be added:', newVatopGroup);
-
     // Update vatop groups state
     const updatedVatopGroups = [...fetchedVatopGroups, newVatopGroup];
     setVatopGroups(updatedVatopGroups);
@@ -252,7 +226,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
 
     try {
-      console.log('Attempting to save vatop groups with import:', updatedVatopGroups);
       await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
       setRefreshData(true); // Set flag to refresh data
     } catch (error) {
@@ -266,25 +239,17 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 }}, [email, vatopCombinations.acVactTas, bitcoinPrice, updateVatopCombinations]);
 
 useEffect(() => {
-  const fetchData = async () => {
-    await fetchVatopGroups();
-  };
 
-  fetchData();
+  fetchVatopGroups();
 
   const interval = setInterval(() => {
-    fetchData();
+    fetchVatopGroups();
     checkForImports();
-  }, 20000); // Set the interval to 20 seconds
+  }, 10000); // Set the interval to 20 seconds
 
   // Cleanup function to clear the interval
   return () => clearInterval(interval);
 }, [fetchVatopGroups, checkForImports]);
-
-useEffect(() => {
-console.log('Updated Vatop Groups:', vatopGroups);
-console.log('Updated Vatop Combinations:', vatopCombinations);
-}, [vatopGroups, vatopCombinations]);
 
 useEffect(() => {
 const updatedVatopGroups = vatopGroups
@@ -318,7 +283,6 @@ const updatedVatopGroups = [...vatopGroups, newVatop];
 setVatopGroups(updatedVatopGroups);
 const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
 try {
-  console.log('Attempting to save vatop groups:', updatedVatopGroups);
   await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
   setRefreshData(true); // Set flag to refresh data
 } catch (error) {
@@ -358,7 +322,6 @@ setVatopGroups(updatedVatopGroups);
 const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
 
 try {
-  console.log('Attempting to save vatop groups:', updatedVatopGroups);
   await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
   setRefreshData(true); // Set flag to refresh data
 } catch (error) {
@@ -416,7 +379,6 @@ setTotalExportedWalletValue(formatCurrency(totalValue));
 setYouWillLose(formatCurrency(Math.abs(totalLoss)));
 
 try {
-  console.log('Attempting to save vatop groups:', updatedVatopGroups);
   await axios.post('/api/saveVatopGroups', { email, vatopGroups: updatedVatopGroups, vatopCombinations: updatedVatopCombinations });
   setRefreshData(true); // Set flag to refresh data
 } catch (error) {
