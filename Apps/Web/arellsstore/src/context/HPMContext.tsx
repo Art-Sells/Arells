@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import axios from 'axios';
 import { fetchBitcoinPrice, setManualBitcoinPrice as setManualBitcoinPriceApi } from '../lib/coingecko-api';
 import { fetchUserAttributes } from 'aws-amplify/auth';
+import { createBoughtAmountTransaction, createExportedAmountTransaction, createSoldAmountTransaction } from '../lib/transactions';
 
 interface VatopGroup {
   cVatop: number;
@@ -268,6 +269,16 @@ setHpap(highestCpVatop);
 }
 }, [vatopGroups, bitcoinPrice]);
 
+
+
+
+
+
+
+
+
+
+
 const handleBuy = async (amount: number) => {
   const newVatop: VatopGroup = {
     cVatop: amount,
@@ -281,12 +292,21 @@ const handleBuy = async (amount: number) => {
 
   const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
 
+  // Create bought amount transaction
+  const boughtTransaction = await createBoughtAmountTransaction(amount / bitcoinPrice, amount);
+
   // Prepare payload without converting acVactTas to string
   const payload = {
     email,
     vatopGroups: updatedVatopGroups,
     vatopCombinations: updatedVatopCombinations,
     soldAmounts,
+    transactions: {
+      soldAmount: '',
+      boughtAmount: boughtTransaction,
+      withdrewAmount: '',
+      exportedAmount: ''
+    }
   };
 
   try {
@@ -351,12 +371,21 @@ const handleSell = async (amount: number) => {
   const newSoldAmounts = soldAmounts + amount;
   console.log('New soldAmounts before state update:', newSoldAmounts);
 
+  // Create sold amount transaction
+  const soldTransaction = await createSoldAmountTransaction(amount / bitcoinPrice, amount);
+
   // Prepare payload
   const payload = {
     email,
     vatopGroups: updatedVatopGroups,
     vatopCombinations: updatedVatopCombinations,
     soldAmounts: newSoldAmounts, // Ensure the accumulated sold amounts are sent
+    transactions: {
+      soldAmount: soldTransaction,
+      boughtAmount: '',
+      withdrewAmount: '',
+      exportedAmount: ''
+    }
   };
 
   console.log('Payload:', payload);
@@ -437,6 +466,12 @@ const handleExport = async (amount: number) => {
     vatopGroups: updatedVatopGroups,
     vatopCombinations: updatedVatopCombinations,
     soldAmounts,
+    transactions: {
+      soldAmount: '',
+      boughtAmount: '',
+      withdrewAmount: '',
+      exportedAmount: '' // This will be updated after successful export
+    }
   };
 
   setTotalExportedWalletValue(totalValue);
@@ -445,6 +480,26 @@ const handleExport = async (amount: number) => {
   try {
     const response = await axios.post('/api/saveVatopGroups', payload);
     console.log('Response from server:', response.data);
+    
+    // If the export is successful, create the transaction hash
+    const transactionHash = "dskjfdslkfj5tdfDFGdfg"; // Manually added transaction hash
+    const exportedTransaction = await createExportedAmountTransaction(amount, transactionHash);
+    
+    // Update the transactions payload with the new exported amount transaction
+    const transactionsPayload = {
+      email,
+      transactions: {
+        soldAmount: '',
+        boughtAmount: '',
+        withdrewAmount: '',
+        exportedAmount: exportedTransaction
+      }
+    };
+
+    // Send the updated transactions payload
+    const updateResponse = await axios.post('/api/updateTransactions', transactionsPayload);
+    console.log('Response from server after updating transactions:', updateResponse.data);
+    
     setRefreshData(true); // Set flag to refresh data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -454,6 +509,14 @@ const handleExport = async (amount: number) => {
     }
   }
 };
+
+
+
+
+
+
+
+
 
 return (
 <HPMContext.Provider value={{

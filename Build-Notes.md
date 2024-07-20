@@ -5,12 +5,10 @@
 ### Wrappers
 - **HPM Wrapper**
 - - **Mock Up:**
-- - - Set Manual Date (within the coinGecko Api)
-- - - Transactions Attribute (only if transactions successful):
-- - - - Sold Amount (Date: mm/dd/yr, Bitcoin-Amount-Sold, $ Sold-Amount) (retrieves from fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "SoldAmount" sub attribute)
-- - - - Bought Amount (Date: mm/dd/yr, Bitcoin-Amount-Bought, $ Bought-Amount) (retrieves from fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "BoughtAmount" sub attribute)
-- - - - Withdrew Amount (Date: mm/dd/yr, $ Withdrew-Amount(stamps from withdrawAmount), "arells.com/bankaccount") (retrives/saves Withdrawn Amount Helper)
-- - - - Exported Amount (Date: mm/dd/yr, Exported Amount, Link) (retrieves from fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "SoldAmount" sub attribute)
+- - - - Sold Amount (Date: mm/dd/yr, Bitcoin-Amount-Sold, $ Sold-Amount) (handleSell retrieves from TransactionsHelper fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "soldAmount" sub attribute)
+- - - - Bought Amount (Date: mm/dd/yr, Bitcoin-Amount-Bought, $ Bought-Amount) (handleBuy retrieves from TransactionsHelper retrieves from fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "boughtAmount" sub attribute)
+- - - - Withdrew Amount (Date: mm/dd/yr, $ Withdrew-Amount, Bank Account "arells.com/bankaccount") (handleWithdraw retrieves from TransactionsHelper, "withdrawnAmount" sub attribute)
+- - - - Exported Amount (Date: mm/dd/yr, Exported Amount, Link) (handleExported retrieves from TransactionsHelper  & saves to saveVatopGroups "Transactions" custom attribute, "exportedAmount" sub attribute)
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
 - - Bank Account Attribute
 - - - Plaid Info?
@@ -61,7 +59,7 @@
 - Pull Bitcoin Address From Backend
 
 ### Export
-**Pull handleExport from HPMContext for success and error modal handling.**
+**Pull handleExport from HPMContext and edit saveVatopGroups import for success and error modal handling.**
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - (W) Wallet: Displays acVatops.
 - (B) Amount: Displays acVactTas.
@@ -83,7 +81,7 @@
 - Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
 
 ### Buy
-**Pull handleBuy from HPMContext & BoughtAmountContext for success and error modal handling.**
+**Pull handleBuy from HPMContext & BoughtAmountContext and edit saveVatopGroups import for success and error modal handling.**
 - (B) Price
 - Amount Input (in $) (tel no * or #) see HPMTester
 - fees (total * .03 goes to our Arells Stripe Account?)
@@ -97,7 +95,7 @@
 - Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 
 ### Sell
-**Pull handleSell from HPMContext SellAmountContext or success and error modal handling.**
+**Pull handleSell from HPMContext sellAmountContext and edit saveVatopGroups import for success and error modal handling.**
 if acVactsAts < or = 0 && acVatops > 0 display:
 - (B) Holding Amount
 - - Wallet: acVatops

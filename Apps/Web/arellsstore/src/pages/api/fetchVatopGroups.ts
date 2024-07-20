@@ -23,7 +23,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const data = await cognito.adminGetUser(params).promise();
     const vatopGroupsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:vatopGroups');
     const vatopCombinationsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:vatopCombinations');
-    const soldAmountsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:soldAmounts');// Add this line
+    const soldAmountsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:soldAmounts');
+    const transactionsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:Transactions');
 
     let vatopGroups = [];
     let vatopCombinations = {
@@ -34,7 +35,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       acVactsAts: 0,
       acVactTaAts: 0,
     };
-    let soldAmounts = 0;  // Add this line
+    let soldAmounts = 0;
+    let transactions = {};
 
     if (vatopGroupsAttr) {
       vatopGroups = JSON.parse(vatopGroupsAttr.Value || '[]');
@@ -44,11 +46,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       vatopCombinations = JSON.parse(vatopCombinationsAttr.Value || '{}');
     }
 
-    if (soldAmountsAttr) {  // Add this line
-      soldAmounts = parseFloat(soldAmountsAttr.Value || '0');  // Add this line
+    if (soldAmountsAttr) {
+      soldAmounts = parseFloat(soldAmountsAttr.Value || '0');
     }
 
-    return res.status(200).json({ vatopGroups, vatopCombinations, soldAmounts });  // Add soldAmount to response
+    if (transactionsAttr) {
+      transactions = JSON.parse(transactionsAttr.Value || '{}');
+    }
+
+    return res.status(200).json({ vatopGroups, vatopCombinations, soldAmounts, transactions });
   } catch (error) {
     console.error('Error fetching user attributes:', error);
     return res.status(500).json({ error: 'Could not fetch vatop groups' });

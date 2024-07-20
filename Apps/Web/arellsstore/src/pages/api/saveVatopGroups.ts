@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   console.log('Received request body:', req.body);
 
-  const { email, vatopGroups, vatopCombinations, soldAmounts, acVactTas } = req.body;
+  const { email, vatopGroups, vatopCombinations, soldAmounts, acVactTas, transactions } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: 'Missing email' });
@@ -67,6 +67,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       {
         Name: 'custom:soldAmounts',
         Value: String(currentSoldAmounts),
+      },
+      {
+        Name: 'custom:Transactions',
+        Value: JSON.stringify(transactions),
       },
     ],
   };

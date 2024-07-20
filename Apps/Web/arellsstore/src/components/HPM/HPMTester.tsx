@@ -3,6 +3,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useHPM } from '../../context/HPMContext';
+import { createWithdrewAmountTransaction } from '../../lib/transactions';
+
+interface Transaction {
+  date: string;
+  soldAmount?: {
+    bitcoinAmount: number;
+    soldAmount: number;
+  };
+  boughtAmount?: {
+    bitcoinAmount: number;
+    boughtAmount: number;
+  };
+  withdrewAmount?: {
+    withdrewAmount: number;
+    bankAccountLink: string;
+  };
+  exportedAmount?: {
+    exportedAmount: number;
+    transactionLink: string;
+  };
+}
 
 const HPMTester: React.FC = () => {
   const {
@@ -28,6 +49,7 @@ const HPMTester: React.FC = () => {
   const [localImportAmount, setLocalImportAmount] = useState<number>(0);
   const [localTotalExportedWalletValue, setLocalTotalExportedWalletValue] = useState<number>(0);
   const [localYouWillLose, setLocalYouWillLose] = useState<number>(0);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBuyAmount(Number(e.target.value));
@@ -72,17 +94,32 @@ const HPMTester: React.FC = () => {
     }
   };
 
+
+
+
+
   const handleWithdraw = async () => {
+    const withdrawAmount = soldAmounts;
+  
+    // Create withdrew amount transaction
+    const withdrewTransaction = await createWithdrewAmountTransaction(withdrawAmount);
+  
     try {
       const newSoldAmount = 0; // Ensure soldAmount is numeric and reset to zero
-  
       console.log('Sending withdraw request with payload:', { email, soldAmounts: newSoldAmount });
   
-      const response = await axios.post('/api/saveVatopGroups', {
+      const payload = {
         email,
         soldAmounts: newSoldAmount,
-      });
+        transactions: {
+          soldAmount: '',
+          boughtAmount: '',
+          withdrewAmount: withdrewTransaction,
+          exportedAmount: ''
+        }
+      };
   
+      const response = await axios.post('/api/saveVatopGroups', payload);
       console.log('Withdraw response:', response.data);
   
       // Update local state
@@ -92,6 +129,10 @@ const HPMTester: React.FC = () => {
       console.error('Error withdrawing sold amount:', error);
     }
   };
+
+
+
+  
 
   useEffect(() => {
     // Update local state for real-time calculations
@@ -124,6 +165,63 @@ const HPMTester: React.FC = () => {
 
     updateExportCalculations();
   }, [localExportAmount, vatopGroups, bitcoinPrice]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await axios.get(`/api/fetchVatopGroups?email=${email}`);
+        setTransactions(response.data.transactions);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    fetchTransactions();
+    const interval = setInterval(fetchTransactions, 2000); // Check every 2 seconds
+
+    return () => clearInterval(interval);
+  }, [email]);
+
+  const renderTransactions = () => {
+    const groupedTransactions = transactions.reduce((acc, transaction) => {
+      const date = transaction.date;
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(transaction);
+      return acc;
+    }, {} as Record<string, Transaction[]>);
+
+    return Object.entries(groupedTransactions).map(([date, transactions]) => (
+      <div key={date}>
+        <h3>Date: {date}</h3>
+        {transactions.map((transaction, index) => (
+          <div key={index}>
+            {transaction.soldAmount && (
+              <p>
+                Sold: Bitcoin Amount: {transaction.soldAmount.bitcoinAmount}, For: ${transaction.soldAmount.soldAmount}
+              </p>
+            )}
+            {transaction.boughtAmount && (
+              <p>
+                Bought: Bitcoin Amount: {transaction.boughtAmount.bitcoinAmount}, For: ${transaction.boughtAmount.boughtAmount}
+              </p>
+            )}
+            {transaction.withdrewAmount && (
+              <p>
+                Withdrew: Amount: ${transaction.withdrewAmount.withdrewAmount}, To: {transaction.withdrewAmount.bankAccountLink}
+              </p>
+            )}
+            {transaction.exportedAmount && (
+              <p>
+                Exported: Bitcoin Amount: {transaction.exportedAmount.exportedAmount}, To: {transaction.exportedAmount.transactionLink}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    ));
+  };
 
   return (
     <div>
@@ -195,6 +293,10 @@ const HPMTester: React.FC = () => {
       <div>
         <h2>Sold Amount: {formatCurrency(soldAmounts)}</h2>
         <button onClick={handleWithdraw}>Withdraw</button>
+      </div>
+      <div>
+        <h2>Transactions</h2>
+        {renderTransactions()}
       </div>
     </div>
   );
