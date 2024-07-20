@@ -8,7 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, vatopGroups, vatopCombinations } = req.body;
+  const { email, vatopGroups, vatopCombinations, soldAmount } = req.body;
 
   if (!email || !vatopGroups || !vatopCombinations) {
     return res.status(400).json({ error: 'Missing email, vatopGroups, or vatopCombinations' });
@@ -25,6 +25,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       {
         Name: 'custom:vatopCombinations',
         Value: JSON.stringify(vatopCombinations),
+      },
+      {
+        Name: 'custom:soldAmount',
+        Value: soldAmount,  // Add this line
       },
     ],
   };

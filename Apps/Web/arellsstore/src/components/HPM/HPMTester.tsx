@@ -19,7 +19,8 @@ const HPMTester: React.FC = () => {
     handleSell,
     handleExport,
     updateVatopCombinations,
-    email
+    email,
+    soldAmount,
   } = useHPM();
 
   const [localExportAmount, setLocalExportAmount] = useState<number>(0);
@@ -160,6 +161,10 @@ const HPMTester: React.FC = () => {
         <p>acdVatops: {vatopCombinations.acdVatops}</p>
         <p>acVactsAts: {vatopCombinations.acVactsAts}</p>
         <p>acVactTaAts: {vatopCombinations.acVactTaAts}</p>
+      </div>
+      <div>
+        <h2>Sold Amount</h2>
+        <p>Wallet: {soldAmount} </p>
       </div>
     </div>
   );

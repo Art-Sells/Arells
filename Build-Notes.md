@@ -5,14 +5,15 @@
 ### Wrappers
 - **HPM Wrapper**
 - - **Mock Up:**
-- - - Sold Amount Attribute (sellAmount publishes info to Sold Amount Context)
-- - - - $ Amount of Bitcoin Sold (pulls from Sold Amount Context)
-- - - Set Manual Date (within the coinGecko Api),
+- - - Sold Amount Attribute (sellAmount publishes/adds info to saveSoldAmount API "SoldAmount" custom attribute)
+- - - - $ Amount of Bitcoin Sold (retrieves from fetchVatopGroups "SoldAmount" custom attribute)
+- - - - Withdraw(subtracts entire amount from "SoldAmount" attribute and saves to saveVatopGroups "SoldAmount" custom attribute)
+- - - Set Manual Date (within the coinGecko Api)
 - - - Transactions Attribute (only if transactions successful):
-- - - - Sold Amount (Date: mm/dd/yr, Bitcoin-Amount-Sold(stamps from bitcoinSellAmount), $ Sold-Amount) (pulls from Sold Amount Context)
-- - - - Bought Amount (Date: mm/dd/yr, Bitcoin-Amount-Bought(stamps from bitcoinBuyAmount), $ Bought-Amount(stamps from buyAmount)) (pulls from Bought Amount Context)
-- - - - Withdrew Amount (Date: mm/dd/yr, $ Withdrew-Amount(stamps from withdrawAmount), "arells.com/bankaccount") (pulls from Withdrawn Amount Context)
-- - - - Exported Amount (Date: mm/dd/yr, Exported Amount(stamps from exportAmount) (pulls from Export Amount Context), Link)
+- - - - Sold Amount (Date: mm/dd/yr, Bitcoin-Amount-Sold, $ Sold-Amount) (retrieves from fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "SoldAmount" sub attribute)
+- - - - Bought Amount (Date: mm/dd/yr, Bitcoin-Amount-Bought, $ Bought-Amount) (retrieves from fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "BoughtAmount" sub attribute)
+- - - - Withdrew Amount (Date: mm/dd/yr, $ Withdrew-Amount(stamps from withdrawAmount), "arells.com/bankaccount") (retrives/saves Withdrawn Amount Helper)
+- - - - Exported Amount (Date: mm/dd/yr, Exported Amount, Link) (retrieves from fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "SoldAmount" sub attribute)
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
 - - Bank Account Attribute
 - - - Plaid Info?

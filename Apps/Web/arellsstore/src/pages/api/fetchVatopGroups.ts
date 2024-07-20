@@ -23,6 +23,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const data = await cognito.adminGetUser(params).promise();
     const vatopGroupsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:vatopGroups');
     const vatopCombinationsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:vatopCombinations');
+    const soldAmountAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:soldAmount');  // Add this line
 
     let vatopGroups = [];
     let vatopCombinations = {
@@ -33,7 +34,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       acVactsAts: 0,
       acVactTaAts: 0,
     };
-    
+    let soldAmount = '$0';  // Add this line
+
     if (vatopGroupsAttr) {
       vatopGroups = JSON.parse(vatopGroupsAttr.Value || '[]');
     }
@@ -42,7 +44,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       vatopCombinations = JSON.parse(vatopCombinationsAttr.Value || '{}');
     }
 
-    return res.status(200).json({ vatopGroups, vatopCombinations });
+    if (soldAmountAttr) {  // Add this line
+      soldAmount = soldAmountAttr.Value || '$0';  // Add this line
+    }
+
+    return res.status(200).json({ vatopGroups, vatopCombinations, soldAmount });  // Add soldAmount to response
   } catch (error) {
     console.error('Error fetching user attributes:', error);
     return res.status(500).json({ error: 'Could not fetch vatop groups' });
