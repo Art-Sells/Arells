@@ -20,7 +20,7 @@ const HPMTester: React.FC = () => {
     handleExport,
     updateVatopCombinations,
     email,
-    soldAmount,
+    soldAmounts,
   } = useHPM();
 
   const [localExportAmount, setLocalExportAmount] = useState<number>(0);
@@ -49,17 +49,34 @@ const HPMTester: React.FC = () => {
     const newAcVactTas = parseNumber(vatopCombinations.acVactTas) + localImportAmount;
     const updatedCombinations = {
       ...vatopCombinations,
-      acVactTas: formatNumber(newAcVactTas),
+      acVactTas: newAcVactTas, // Ensure it remains a number
     };
     console.log('Updating acVactTas:', updatedCombinations.acVactTas);
-
+  
     try {
       console.log('Attempting to save updated vatop combinations:', updatedCombinations);
-      const response = await axios.post('/api/saveVatopGroups', { email, vatopGroups, vatopCombinations: updatedCombinations });
+      const payload = { email, vatopGroups, vatopCombinations: updatedCombinations };
+      console.log('Payload being sent:', payload);
+      const response = await axios.post('/api/saveVatopGroups', payload);
       console.log('Response from server:', response.data);
       updateVatopCombinations(vatopGroups); // Ensure the local state is also updated
     } catch (error) {
       console.error('Error saving updated vatop combinations:', error);
+    }
+  };
+  const handleWithdraw = async () => {
+    try {
+      const newSoldAmount = 0; // Ensure soldAmount is numeric
+      const response = await axios.post('/api/saveVatopGroups', {
+        email,
+        vatopGroups,
+        vatopCombinations,
+        soldAmounts: newSoldAmount,
+      });
+      console.log('Withdraw response:', response.data);
+      updateVatopCombinations(vatopGroups); // Trigger update to fetch new state
+    } catch (error) {
+      console.error('Error withdrawing sold amount:', error);
     }
   };
 
@@ -163,8 +180,8 @@ const HPMTester: React.FC = () => {
         <p>acVactTaAts: {vatopCombinations.acVactTaAts}</p>
       </div>
       <div>
-        <h2>Sold Amount</h2>
-        <p>Wallet: {soldAmount} </p>
+        <h2>Sold Amount: {soldAmounts}</h2>
+        <button onClick={handleWithdraw}>Withdraw</button>
       </div>
     </div>
   );

@@ -5,8 +5,6 @@
 ### Wrappers
 - **HPM Wrapper**
 - - **Mock Up:**
-- - - Sold Amount Attribute (sellAmount publishes/adds info to saveSoldAmount API "SoldAmount" custom attribute)
-- - - - $ Amount of Bitcoin Sold (retrieves from fetchVatopGroups "SoldAmount" custom attribute)
 - - - - Withdraw(subtracts entire amount from "SoldAmount" attribute and saves to saveVatopGroups "SoldAmount" custom attribute)
 - - - Set Manual Date (within the coinGecko Api)
 - - - Transactions Attribute (only if transactions successful):

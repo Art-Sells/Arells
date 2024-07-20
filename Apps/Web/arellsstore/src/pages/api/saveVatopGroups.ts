@@ -8,10 +8,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, vatopGroups, vatopCombinations, soldAmount } = req.body;
+  console.log('Received request body:', req.body);
 
-  if (!email || !vatopGroups || !vatopCombinations) {
-    return res.status(400).json({ error: 'Missing email, vatopGroups, or vatopCombinations' });
+  const { email, vatopGroups, vatopCombinations, soldAmounts } = req.body;
+
+  if (!email || !vatopGroups || !vatopCombinations || soldAmounts === undefined) {
+    return res.status(400).json({ error: 'Missing email, vatopGroups, vatopCombinations, or soldAmounts' });
+  }
+
+  // Validate and parse vatopGroups
+  for (const group of vatopGroups) {
+    if (typeof group.cVactTa === 'string') {
+      group.cVactTa = parseFloat(group.cVactTa).toString(); // Ensure it remains a string
+    }
+    // Add any other necessary conversions and validations here
+  }
+
+  // Ensure acVactTas remains a string and validate it
+  if (typeof vatopCombinations.acVactTas !== 'string' || isNaN(parseFloat(vatopCombinations.acVactTas))) {
+    console.error('acVactTas must be a valid number in string format');
+    return res.status(400).json({ error: 'acVactTas must be a valid number in string format' });
   }
 
   const userParams = {
@@ -27,13 +43,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         Value: JSON.stringify(vatopCombinations),
       },
       {
-        Name: 'custom:soldAmount',
-        Value: soldAmount,  // Add this line
+        Name: 'custom:soldAmounts',
+        Value: String(soldAmounts), // Convert to string to store in Cognito
       },
     ],
   };
 
   try {
+    console.log('Attempting to update user attributes with params:', userParams);
     await cognito.adminUpdateUserAttributes(userParams).promise();
     return res.status(200).json({ message: 'Attributes updated successfully' });
   } catch (error) {
