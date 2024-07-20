@@ -5,7 +5,6 @@
 ### Wrappers
 - **HPM Wrapper**
 - - **Mock Up:**
-- - - - Withdraw(subtracts entire amount from "SoldAmount" attribute and saves to saveVatopGroups "SoldAmount" custom attribute)
 - - - Set Manual Date (within the coinGecko Api)
 - - - Transactions Attribute (only if transactions successful):
 - - - - Sold Amount (Date: mm/dd/yr, Bitcoin-Amount-Sold, $ Sold-Amount) (retrieves from fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "SoldAmount" sub attribute)
@@ -16,7 +15,8 @@
 - - Bank Account Attribute
 - - - Plaid Info?
 - **Possibly a Kraken Wrapper to pull Bitcoin to Buy & Sell?**
-- Test Entire Exporting, Importing, Buying, Selling and Withdrawing process (change manualBitcoinPrice and manualDate in coinGeckoApi/HPMContext to automated) (possibly just segments out from Vatop Combinations as Vatop Combinations are Real Numbers and Vatop Groups Fake ask Gpt?)
+- Change manualBitcoinPrice and manualDate in coinGeckoApi/HPMContext to automated
+- Test Entire Exporting(replaceEmailwithBitcoinAddressinAPI(FrontEnd/Lambda)), Importing(replaceEmailwithBitcoinAddressinAPI(FrontEnd/Lambda)), Buying(addEmail,BitcoinAddress,PrivateKeyinAPI(FrontEnd/Lambda)), Selling(addEmail,BitcoinAddress,PrivateKeyinAPI(FrontEnd/Lambda)) and Withdrawing(addEmail,BitcoinAddress,PrivateKeyinAPI(FrontEnd/Lambda)) process  (possibly just segments out from Vatop Combinations as Vatop Combinations are Real Numbers and Vatop Groups Fake ask Gpt?)
 - - Buy/Sell buttons connect to plaid (if not connected)
 - - acVacts: Entire Wallet (stripe?) amount (export|sell/import/buy takes/adds here)
 - - acVactTas: Entire Bitcoin Wallet amount (export|sell/import/buy takes/adds here)
@@ -26,6 +26,7 @@
 ### Home(redirects to Account if logged in)
 - if acVactsAts = 0 sell display none, holding display true, else opposite
 - Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) every 10 seconds from coin gecko API wrapper?
+- 1 second loader for all pages
 
  #### (B) Price = Bitcoin Price API 
 

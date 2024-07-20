@@ -10,48 +10,71 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   console.log('Received request body:', req.body);
 
-  const { email, vatopGroups, vatopCombinations, soldAmounts } = req.body;
+  const { email, vatopGroups, vatopCombinations, soldAmounts, acVactTas } = req.body;
 
-  if (!email || !vatopGroups || !vatopCombinations || soldAmounts === undefined) {
-    return res.status(400).json({ error: 'Missing email, vatopGroups, vatopCombinations, or soldAmounts' });
+  if (!email) {
+    return res.status(400).json({ error: 'Missing email' });
   }
 
-  // Validate and parse vatopGroups
-  for (const group of vatopGroups) {
-    if (typeof group.cVactTa === 'string') {
-      group.cVactTa = parseFloat(group.cVactTa).toString(); // Ensure it remains a string
-    }
-    // Add any other necessary conversions and validations here
+  let currentVatopCombinations = vatopCombinations;
+  let currentSoldAmounts = 0;
+
+  // Fetch existing user attributes if vatopCombinations or soldAmounts are not provided
+  if (!vatopCombinations || soldAmounts === undefined) {
+    console.log('Fetching existing user attributes');
+    const userAttributes = await cognito.adminGetUser({
+      UserPoolId: process.env.COGNITO_USER_POOL_ID!,
+      Username: email,
+    }).promise();
+
+    const vatopCombinationsAttribute = userAttributes.UserAttributes?.find(attr => attr.Name === 'custom:vatopCombinations');
+    currentVatopCombinations = vatopCombinationsAttribute?.Value ? JSON.parse(vatopCombinationsAttribute.Value) : {};
+
+    const soldAmountsAttribute = userAttributes.UserAttributes?.find(attr => attr.Name === 'custom:soldAmounts');
+    currentSoldAmounts = soldAmountsAttribute?.Value ? parseFloat(soldAmountsAttribute.Value) : 0;
+    console.log('Fetched currentSoldAmounts:', currentSoldAmounts);
   }
 
-  // Ensure acVactTas remains a string and validate it
-  if (typeof vatopCombinations.acVactTas !== 'string' || isNaN(parseFloat(vatopCombinations.acVactTas))) {
-    console.error('acVactTas must be a valid number in string format');
-    return res.status(400).json({ error: 'acVactTas must be a valid number in string format' });
+  // Update only the acVactTas field if provided
+  if (acVactTas !== undefined) {
+    currentVatopCombinations.acVactTas = acVactTas;
   }
 
+  // Reset or add to the existing sold amounts
+  if (soldAmounts === 0) {
+    console.log('Resetting currentSoldAmounts to zero');
+    currentSoldAmounts = 0;
+  } else if (soldAmounts !== undefined) {
+    console.log('Adding soldAmounts:', soldAmounts, 'to currentSoldAmounts:', currentSoldAmounts);
+    currentSoldAmounts += soldAmounts;
+  }
+
+  console.log('Final currentSoldAmounts:', currentSoldAmounts);
+
+  // Prepare user attributes for update
   const userParams = {
     UserPoolId: process.env.COGNITO_USER_POOL_ID!,
     Username: email,
     UserAttributes: [
-      {
+      ...(vatopGroups ? [{
         Name: 'custom:vatopGroups',
         Value: JSON.stringify(vatopGroups),
-      },
+      }] : []),
       {
         Name: 'custom:vatopCombinations',
-        Value: JSON.stringify(vatopCombinations),
+        Value: JSON.stringify(currentVatopCombinations),
       },
       {
         Name: 'custom:soldAmounts',
-        Value: String(soldAmounts), // Convert to string to store in Cognito
+        Value: String(currentSoldAmounts),
       },
     ],
   };
 
   try {
-    console.log('Attempting to update user attributes with params:', userParams);
+    console.log('Attempting to update user attributes with params:', JSON.stringify(userParams, null, 2));
     await cognito.adminUpdateUserAttributes(userParams).promise();
+    console.log('Update successful');
     return res.status(200).json({ message: 'Attributes updated successfully' });
   } catch (error) {
     console.error('Error updating user attributes:', error);
