@@ -184,6 +184,7 @@ else:
 - Add Imported
 
 #### Misc
+- fix "bitcoinAmount" API misswording issue within Withdraw Amount JSON.
 
 ##### Home Page:
 10 years, 5 years, 1 year, 6 months, 90 days, 30 days, 7 days, 24 hours, 6 hours, 1 hours (load whichever time frame from 24 hours first, to 7 days, prioritize days then months then years in regards to the highest percentage increase).

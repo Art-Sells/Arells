@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useHPM } from '../../context/HPMContext';
 import { Transactions, createWithdrewAmountTransaction, ParsedTransaction } from '../../lib/transactions';
-import { VatopGroup } from '../../lib/db';
 
 const HPMTester: React.FC = () => {
   const {
@@ -52,7 +51,7 @@ const HPMTester: React.FC = () => {
 
 
 
-
+// Export Losses Calculations
   useEffect(() => {
     setLocalTotalExportedWalletValue(localExportAmount * bitcoinPrice);
   }, [localExportAmount, bitcoinPrice]);
@@ -63,43 +62,15 @@ const HPMTester: React.FC = () => {
         return;
       }
   
-      // Log the vatopGroups
-      console.log('vatopGroups:', vatopGroups);
-  
-      // Find the group with the highest cpVatop that has a negative cdVatop
-      const highestCpVatopGroup = vatopGroups
+      // Calculate the combined loss for all negative cdVatop groups
+      const totalLoss = vatopGroups
         .filter(group => group.cdVatop < 0)
-        .reduce((prev, curr) => {
-          if (curr.cpVatop > prev.cpVatop) return curr;
-          if (curr.cpVatop === prev.cpVatop && vatopGroups.indexOf(curr) > vatopGroups.indexOf(prev)) return curr;
-          return prev;
-        }, {
-          cVatop: 0,
-          cpVatop: -Infinity,
-          cVact: 0,
-          cVactTa: 0,
-          cdVatop: 0
-        } as VatopGroup);
-  
-      // Log the highestCpVatopGroup
-      console.log('highestCpVatopGroup:', highestCpVatopGroup);
-  
-      if (highestCpVatopGroup.cpVatop === -Infinity) {
-        setLocalYouWillLose(0);
-        return;
-      }
-  
-      const { cdVatop, cVactTa } = highestCpVatopGroup;
-      const lossFraction = Math.min(localExportAmount / cVactTa, 1);
-      const youWillLose = cdVatop * lossFraction;
-  
-      // Log the calculation details
-      console.log('cdVatop:', cdVatop);
-      console.log('cVactTa:', cVactTa);
-      console.log('lossFraction:', lossFraction);
-      console.log('youWillLose:', youWillLose);
-  
-      setLocalYouWillLose(Math.abs(youWillLose));
+        .reduce((acc, group) => {
+          const lossFraction = Math.min(localExportAmount / group.cVactTa, 1);
+          const groupLoss = group.cdVatop * lossFraction;
+          return acc + groupLoss;
+        }, 0); 
+      setLocalYouWillLose(Math.abs(totalLoss));
     };
   
     calculateYouWillLose();
@@ -310,7 +281,7 @@ const HPMTester: React.FC = () => {
             )}
             {transaction.parsedWithdrewAmount && (
               <p>
-                Withdrew: Amount: ${transaction.parsedWithdrewAmount.amount}, To: {transaction.parsedWithdrewAmount.link}
+                Withdrew: Amount: ${transaction.parsedWithdrewAmount.bitcoinAmount}, To: {transaction.parsedWithdrewAmount.link}
               </p>
             )}
             {transaction.parsedExportedAmount && (
