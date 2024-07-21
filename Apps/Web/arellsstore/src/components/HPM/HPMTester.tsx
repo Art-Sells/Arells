@@ -3,27 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useHPM } from '../../context/HPMContext';
-import { createWithdrewAmountTransaction } from '../../lib/transactions';
-
-interface Transaction {
-  date: string;
-  soldAmount?: {
-    bitcoinAmount: number;
-    soldAmount: number;
-  };
-  boughtAmount?: {
-    bitcoinAmount: number;
-    boughtAmount: number;
-  };
-  withdrewAmount?: {
-    withdrewAmount: number;
-    bankAccountLink: string;
-  };
-  exportedAmount?: {
-    exportedAmount: number;
-    transactionLink: string;
-  };
-}
+import { Transactions, createWithdrewAmountTransaction, ParsedTransaction } from '../../lib/transactions';
+import { VatopGroup } from '../../lib/db';
 
 const HPMTester: React.FC = () => {
   const {
@@ -49,7 +30,7 @@ const HPMTester: React.FC = () => {
   const [localImportAmount, setLocalImportAmount] = useState<number>(0);
   const [localTotalExportedWalletValue, setLocalTotalExportedWalletValue] = useState<number>(0);
   const [localYouWillLose, setLocalYouWillLose] = useState<number>(0);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<Transactions[]>([]);
 
   const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBuyAmount(Number(e.target.value));
@@ -66,15 +47,75 @@ const HPMTester: React.FC = () => {
   const handleImportAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalImportAmount(Number(e.target.value));
   };
-  const handleImportClick = async () => {
+
+
+
+
+
+
+  useEffect(() => {
+    setLocalTotalExportedWalletValue(localExportAmount * bitcoinPrice);
+  }, [localExportAmount, bitcoinPrice]);
+  useEffect(() => {
+    const calculateYouWillLose = () => {
+      if (vatopGroups.length === 0 || localExportAmount === 0) {
+        setLocalYouWillLose(0);
+        return;
+      }
   
+      // Log the vatopGroups
+      console.log('vatopGroups:', vatopGroups);
+  
+      // Find the group with the highest cpVatop that has a negative cdVatop
+      const highestCpVatopGroup = vatopGroups
+        .filter(group => group.cdVatop < 0)
+        .reduce((prev, curr) => {
+          if (curr.cpVatop > prev.cpVatop) return curr;
+          if (curr.cpVatop === prev.cpVatop && vatopGroups.indexOf(curr) > vatopGroups.indexOf(prev)) return curr;
+          return prev;
+        }, {
+          cVatop: 0,
+          cpVatop: -Infinity,
+          cVact: 0,
+          cVactTa: 0,
+          cdVatop: 0
+        } as VatopGroup);
+  
+      // Log the highestCpVatopGroup
+      console.log('highestCpVatopGroup:', highestCpVatopGroup);
+  
+      if (highestCpVatopGroup.cpVatop === -Infinity) {
+        setLocalYouWillLose(0);
+        return;
+      }
+  
+      const { cdVatop, cVactTa } = highestCpVatopGroup;
+      const lossFraction = Math.min(localExportAmount / cVactTa, 1);
+      const youWillLose = cdVatop * lossFraction;
+  
+      // Log the calculation details
+      console.log('cdVatop:', cdVatop);
+      console.log('cVactTa:', cVactTa);
+      console.log('lossFraction:', lossFraction);
+      console.log('youWillLose:', youWillLose);
+  
+      setLocalYouWillLose(Math.abs(youWillLose));
+    };
+  
+    calculateYouWillLose();
+  }, [vatopGroups, localExportAmount]);
+
+
+
+
+
+
+
+
+
+  const handleImportClick = async () => {
     setImportAmount(localImportAmount);
     const newAcVactTas = vatopCombinations.acVactTas + localImportAmount;
-    const updatedCombinations = {
-      ...vatopCombinations,
-      acVactTas: newAcVactTas,
-    };
-
   
     // Prepare payload to update only acVactTas
     const payload = {
@@ -83,8 +124,8 @@ const HPMTester: React.FC = () => {
     };
   
     try {
-      const response = await axios.post('/api/saveVatopGroups', payload);
-      setRefreshData(true); // Set flag to refresh data
+      await axios.post('/api/saveVatopGroups', payload);
+      // No need to refresh data
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Error updating acVactTas:', error.response?.data || error.message, 'Full response:', error.response);
@@ -98,33 +139,49 @@ const HPMTester: React.FC = () => {
 
 
 
+
+
+
+
+
+
   const handleWithdraw = async () => {
-    const withdrawAmount = soldAmounts;
+    console.log('Withdrawing sold amount:', soldAmounts);
   
-    // Create withdrew amount transaction
-    const withdrewTransaction = await createWithdrewAmountTransaction(withdrawAmount);
+    // Create Withdraw Transaction
+    let withdrewTransaction;
+    try {
+      withdrewTransaction = await createWithdrewAmountTransaction(email, soldAmounts); // Await the result
+      console.log('Withdrew transaction: ', withdrewTransaction); // Log the result
+    } catch (error) {
+      console.error('Error creating withdrew amount transaction:', error);
+      return; // Exit if transaction creation fails
+    }
   
     try {
-      const newSoldAmount = 0; // Ensure soldAmount is numeric and reset to zero
+      const newSoldAmount = 0; 
       console.log('Sending withdraw request with payload:', { email, soldAmounts: newSoldAmount });
+  
+      const updatedVatopCombinations = updateVatopCombinations(vatopGroups);
+  
+      // Fetch updated transactions
+      const responseTransactions = await axios.get(`/api/fetchVatopGroups?email=${email}`);
+      const updatedTransactions = responseTransactions.data.transactions || [];
   
       const payload = {
         email,
-        soldAmounts: newSoldAmount,
-        transactions: {
-          soldAmount: '',
-          boughtAmount: '',
-          withdrewAmount: withdrewTransaction,
-          exportedAmount: ''
-        }
+        vatopGroups,
+        vatopCombinations: updatedVatopCombinations,
+        soldAmounts: newSoldAmount, // Reset the sold amounts
       };
+  
+      console.log('Payload:', payload);
   
       const response = await axios.post('/api/saveVatopGroups', payload);
       console.log('Withdraw response:', response.data);
   
-      // Update local state
-      setSoldAmount(newSoldAmount);
-      updateVatopCombinations(vatopGroups); // Trigger update to fetch new state
+      setSoldAmount(newSoldAmount); // Update the state after the API call succeeds
+      updateVatopCombinations(vatopGroups); // Update the combinations
     } catch (error) {
       console.error('Error withdrawing sold amount:', error);
     }
@@ -132,89 +189,133 @@ const HPMTester: React.FC = () => {
 
 
 
-  
 
-  useEffect(() => {
-    // Update local state for real-time calculations
-    const updateExportCalculations = () => {
-      let remainingAmount = localExportAmount;
-      const updatedGroups = [...vatopGroups].sort((a, b) => b.cpVatop - a.cpVatop);
-      let totalValue = 0;
-      let totalLoss = 0;
 
-      for (let i = 0; i < updatedGroups.length && remainingAmount > 0; i++) {
-        const group = updatedGroups[i];
-        const exportAmount = Math.min(group.cVactTa, remainingAmount);
-        remainingAmount -= exportAmount;
 
-        const originalCdVatop = group.cdVatop;
-        const originalCVactTa = group.cVactTa;
-        const lossFraction = exportAmount / originalCVactTa;
 
-        const newCdVatop = originalCdVatop * lossFraction;
 
-        totalValue += exportAmount * bitcoinPrice;
-        if (newCdVatop < 0) {
-          totalLoss += newCdVatop;
-        }
-      }
 
-      setLocalTotalExportedWalletValue(totalValue);
-      setLocalYouWillLose(Math.abs(totalLoss));
-    };
 
-    updateExportCalculations();
-  }, [localExportAmount, vatopGroups, bitcoinPrice]);
+
+
+
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(`/api/fetchVatopGroups?email=${email}`);
-        setTransactions(response.data.transactions);
+        const response = await axios.get<{ transactions: Transactions[] }>(`/api/fetchVatopGroups?email=${email}`);
+        const fetchedTransactions = response.data.transactions || [];
+        setTransactions(fetchedTransactions);
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
     };
-
+  
     fetchTransactions();
     const interval = setInterval(fetchTransactions, 2000); // Check every 2 seconds
-
+  
     return () => clearInterval(interval);
   }, [email]);
 
+
+
+
+
+
+
+
+
+
+  
   const renderTransactions = () => {
-    const groupedTransactions = transactions.reduce((acc, transaction) => {
-      const date = transaction.date;
+    if (!Array.isArray(transactions)) {
+      console.error('transactions is not an array:', transactions);
+      return null;
+    }
+  
+    const parseJSON = (jsonString: string | undefined) => {
+      if (!jsonString) return undefined;
+      try {
+        return JSON.parse(jsonString) as ParsedTransaction;
+      } catch (error) {
+        console.error('Error parsing JSON:', error, jsonString);
+        return undefined;
+      }
+    };
+  
+    const formatBitcoinAmount = (amount: number) => {
+      const decimalPlaces = 7; 
+      return Number(amount.toFixed(decimalPlaces)); 
+    };
+  
+    const groupedTransactions = transactions.reduce((acc: Record<string, (Transactions & ParsedProperties)[]>, transaction: Transactions) => {
+      // Parse transaction amounts
+      const parsedSoldAmount = typeof transaction.soldAmount === 'string' ? parseJSON(transaction.soldAmount) : undefined;
+      const parsedBoughtAmount = typeof transaction.boughtAmount === 'string' ? parseJSON(transaction.boughtAmount) : undefined;
+      const parsedWithdrewAmount = typeof transaction.withdrewAmount === 'string' ? parseJSON(transaction.withdrewAmount) : undefined;
+      const parsedExportedAmount = typeof transaction.exportedAmount === 'string' ? parseJSON(transaction.exportedAmount) : undefined;
+  
+      // Determine the transaction date
+      const date =
+        parsedBoughtAmount?.date ||
+        parsedSoldAmount?.date ||
+        parsedWithdrewAmount?.date ||
+        parsedExportedAmount?.date ||
+        transaction.timestamp; // Use the timestamp if available
+  
+      if (!date) {
+        console.error('No date found for transaction:', transaction);
+        return acc; // Skip transactions without a valid date
+      }
+  
       if (!acc[date]) {
         acc[date] = [];
       }
-      acc[date].push(transaction);
+  
+      acc[date].push({
+        ...transaction,
+        parsedSoldAmount,
+        parsedBoughtAmount,
+        parsedWithdrewAmount,
+        parsedExportedAmount,
+      });
+  
       return acc;
-    }, {} as Record<string, Transaction[]>);
-
-    return Object.entries(groupedTransactions).map(([date, transactions]) => (
+    }, {} as Record<string, (Transactions & ParsedProperties)[]>);
+  
+    // Sort dates in reverse order (most recent date first)
+    const sortedDates = Object.keys(groupedTransactions).sort((a, b) => {
+      const dateA = new Date(a).getTime();
+      const dateB = new Date(b).getTime();
+      return dateB - dateA; // Sort dates in descending order
+    });
+  
+    return sortedDates.map(date => (
       <div key={date}>
         <h3>Date: {date}</h3>
-        {transactions.map((transaction, index) => (
+        {/* Sort transactions for each date from latest to earliest */}
+        {groupedTransactions[date].sort((a, b) => {
+          return (b.timestamp ? new Date(b.timestamp).getTime() : 0) - (a.timestamp ? new Date(a.timestamp).getTime() : 0); // Sort by timestamp in descending order
+        }).map((transaction, index) => (
           <div key={index}>
-            {transaction.soldAmount && (
+            {transaction.parsedSoldAmount && (
               <p>
-                Sold: Bitcoin Amount: {transaction.soldAmount.bitcoinAmount}, For: ${transaction.soldAmount.soldAmount}
+                Sold: Bitcoin Amount: {formatBitcoinAmount(transaction.parsedSoldAmount.bitcoinAmount)}, For: ${transaction.parsedSoldAmount.amount}
               </p>
             )}
-            {transaction.boughtAmount && (
+            {transaction.parsedBoughtAmount && (
               <p>
-                Bought: Bitcoin Amount: {transaction.boughtAmount.bitcoinAmount}, For: ${transaction.boughtAmount.boughtAmount}
+                Bought: Bitcoin Amount: {formatBitcoinAmount(transaction.parsedBoughtAmount.bitcoinAmount)}, For: ${transaction.parsedBoughtAmount.amount}
               </p>
             )}
-            {transaction.withdrewAmount && (
+            {transaction.parsedWithdrewAmount && (
               <p>
-                Withdrew: Amount: ${transaction.withdrewAmount.withdrewAmount}, To: {transaction.withdrewAmount.bankAccountLink}
+                Withdrew: Amount: ${transaction.parsedWithdrewAmount.amount}, To: {transaction.parsedWithdrewAmount.link}
               </p>
             )}
-            {transaction.exportedAmount && (
+            {transaction.parsedExportedAmount && (
               <p>
-                Exported: Bitcoin Amount: {transaction.exportedAmount.exportedAmount}, To: {transaction.exportedAmount.transactionLink}
+                Exported: Bitcoin Amount: {formatBitcoinAmount(transaction.parsedExportedAmount.bitcoinAmount)}, To: {transaction.parsedExportedAmount.link}
               </p>
             )}
           </div>
@@ -222,6 +323,22 @@ const HPMTester: React.FC = () => {
       </div>
     ));
   };
+  // Additional type to include parsed properties
+  interface ParsedProperties {
+    parsedSoldAmount?: ParsedTransaction;
+    parsedBoughtAmount?: ParsedTransaction;
+    parsedWithdrewAmount?: ParsedTransaction;
+    parsedExportedAmount?: ParsedTransaction;
+  }
+
+
+
+
+
+
+
+
+
 
   return (
     <div>

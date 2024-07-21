@@ -16,6 +16,7 @@
 - Change manualBitcoinPrice and manualDate in coinGeckoApi/HPMContext to automated
 - Test Entire Exporting(replaceEmailwithBitcoinAddressinAPI(FrontEnd/Lambda)), Importing(replaceEmailwithBitcoinAddressinAPI(FrontEnd/Lambda)), Buying(addEmail,BitcoinAddress,PrivateKeyinAPI(FrontEnd/Lambda)), Selling(addEmail,BitcoinAddress,PrivateKeyinAPI(FrontEnd/Lambda)) and Withdrawing(addEmail,BitcoinAddress,PrivateKeyinAPI(FrontEnd/Lambda)) process  (possibly just segments out from Vatop Combinations as Vatop Combinations are Real Numbers and Vatop Groups Fake ask Gpt?)
 - - Buy/Sell buttons connect to plaid (if not connected)
+- - handleBuy/handleSell/handleExport/handleWithdraw (add try, awaits and catch to ensure the entire process is successful before updating backend information)
 - - acVacts: Entire Wallet (stripe?) amount (export|sell/import/buy takes/adds here)
 - - acVactTas: Entire Bitcoin Wallet amount (export|sell/import/buy takes/adds here)
 - - acVactsAts: Subtracts from Entire Wallet amount
@@ -62,11 +63,11 @@
 **Pull handleExport from HPMContext and edit saveVatopGroups import for success and error modal handling.**
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - (W) Wallet: Displays acVatops.
-- (B) Amount: Displays acVactTas.
+- (B) Amount: Displays acVactTas 7 decimals long maximum
 - Export Amount Input: (tel no * or #) see HPMTester
 - Export Address Input: (tel no * or #) see HPMTester
 - Exporting
-- (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page))
+- (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page) 7 decimals long maximum)
 - Total exported wallet value: see HPMTester
 - You will lose: see HPMTester
 - (CANCEL) -> Account Page, 
@@ -152,6 +153,7 @@ else:
 - Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
 
 ### Other (if Time Permits)
+- Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
 - Contact us (Account/Home): Email
 - resolve endless useEffectLoads (from HPMContext)

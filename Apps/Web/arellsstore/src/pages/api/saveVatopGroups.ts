@@ -1,14 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 
-const cognito = new AWS.CognitoIdentityServiceProvider();
+const s3 = new AWS.S3();
+const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
-  console.log('Received request body:', req.body);
 
   const { email, vatopGroups, vatopCombinations, soldAmounts, acVactTas, transactions } = req.body;
 
@@ -16,73 +15,66 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ error: 'Missing email' });
   }
 
-  let currentVatopCombinations = vatopCombinations;
+  let currentVatopCombinations = vatopCombinations || {};
   let currentSoldAmounts = 0;
 
-  // Fetch existing user attributes if vatopCombinations or soldAmounts are not provided
-  if (!vatopCombinations || soldAmounts === undefined) {
-    console.log('Fetching existing user attributes');
-    const userAttributes = await cognito.adminGetUser({
-      UserPoolId: process.env.COGNITO_USER_POOL_ID!,
-      Username: email,
+  try {
+    // Fetch existing data from S3 if vatopCombinations or soldAmounts are not provided
+    const key = `${email}/vatop-data.json`;
+    let existingData: any = {};
+
+    try {
+      const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+      existingData = JSON.parse(data.Body!.toString());
+    } catch (err: any) {
+      if (err.code !== 'NoSuchKey') {
+        throw err; // Re-throw unexpected errors
+      }
+      // No existing data found, proceed with default empty values
+    }
+
+    if (!vatopCombinations) {
+      currentVatopCombinations = existingData.vatopCombinations || {};
+    }
+
+    // Reset or add to the existing sold amounts
+    if (soldAmounts === 0) {
+      console.log('Resetting currentSoldAmounts to zero');
+      currentSoldAmounts = 0;
+    } else if (soldAmounts !== undefined) {
+      console.log('Adding soldAmounts:', soldAmounts, 'to currentSoldAmounts:', existingData.soldAmounts || 0);
+      currentSoldAmounts = (existingData.soldAmounts || 0) + soldAmounts;
+    } else {
+      currentSoldAmounts = existingData.soldAmounts || 0;
+    }
+
+    // Update only the acVactTas field if provided
+    if (acVactTas !== undefined) {
+      currentVatopCombinations.acVactTas = acVactTas;
+    }
+
+    // Prepare the data to be saved in S3
+    const newData = {
+      vatopGroups: vatopGroups || existingData.vatopGroups || [],
+      vatopCombinations: currentVatopCombinations,
+      soldAmounts: currentSoldAmounts,
+      transactions: transactions || existingData.transactions || [],
+    };
+
+    // Upload to S3
+    await s3.putObject({
+      Bucket: BUCKET_NAME,
+      Key: key,
+      Body: JSON.stringify(newData),
+      ContentType: 'application/json',
+      ACL: 'private',
     }).promise();
 
-    const vatopCombinationsAttribute = userAttributes.UserAttributes?.find(attr => attr.Name === 'custom:vatopCombinations');
-    currentVatopCombinations = vatopCombinationsAttribute?.Value ? JSON.parse(vatopCombinationsAttribute.Value) : {};
-
-    const soldAmountsAttribute = userAttributes.UserAttributes?.find(attr => attr.Name === 'custom:soldAmounts');
-    currentSoldAmounts = soldAmountsAttribute?.Value ? parseFloat(soldAmountsAttribute.Value) : 0;
-    console.log('Fetched currentSoldAmounts:', currentSoldAmounts);
-  }
-
-  // Update only the acVactTas field if provided
-  if (acVactTas !== undefined) {
-    currentVatopCombinations.acVactTas = acVactTas;
-  }
-
-  // Reset or add to the existing sold amounts
-  if (soldAmounts === 0) {
-    console.log('Resetting currentSoldAmounts to zero');
-    currentSoldAmounts = 0;
-  } else if (soldAmounts !== undefined) {
-    console.log('Adding soldAmounts:', soldAmounts, 'to currentSoldAmounts:', currentSoldAmounts);
-    currentSoldAmounts += soldAmounts;
-  }
-
-  console.log('Final currentSoldAmounts:', currentSoldAmounts);
-
-  // Prepare user attributes for update
-  const userParams = {
-    UserPoolId: process.env.COGNITO_USER_POOL_ID!,
-    Username: email,
-    UserAttributes: [
-      ...(vatopGroups ? [{
-        Name: 'custom:vatopGroups',
-        Value: JSON.stringify(vatopGroups),
-      }] : []),
-      {
-        Name: 'custom:vatopCombinations',
-        Value: JSON.stringify(currentVatopCombinations),
-      },
-      {
-        Name: 'custom:soldAmounts',
-        Value: String(currentSoldAmounts),
-      },
-      {
-        Name: 'custom:Transactions',
-        Value: JSON.stringify(transactions),
-      },
-    ],
-  };
-
-  try {
-    console.log('Attempting to update user attributes with params:', JSON.stringify(userParams, null, 2));
-    await cognito.adminUpdateUserAttributes(userParams).promise();
-    console.log('Update successful');
-    return res.status(200).json({ message: 'Attributes updated successfully' });
+    return res.status(200).json({ message: 'Data saved successfully' });
   } catch (error) {
-    console.error('Error updating user attributes:', error);
-    return res.status(500).json({ error: 'Failed to update user attributes' });
+    const errorMessage = (error as Error).message || 'Failed to save data';
+    console.error('Error saving data:', errorMessage);
+    return res.status(500).json({ error: errorMessage });
   }
 };
 

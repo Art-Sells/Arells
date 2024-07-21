@@ -77,8 +77,15 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const acVacts = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVact, 0);
     const acVactTas = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVactTa, 0);
     const acdVatops = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cdVatop : acc, 0);
-    const acVactsAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVact : acc, 0);
-    const acVactTaAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVactTa : acc, 0);
+    
+    let acVactsAts = 0;
+    let acVactTaAts = 0;
+  
+    // Only calculate acVactsAts and acVactTaAts if acdVatops is greater than 0
+    if (acdVatops > 0) {
+      acVactsAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVact : acc, 0);
+      acVactTaAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVactTa : acc, 0);
+    }
   
     const updatedCombinations: VatopCombinations = {
       acVatops,
@@ -133,9 +140,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         console.warn('No email provided, skipping fetchVatopGroups');
         return;
       }
-      const response = await axios.get('/api/fetchVatopGroups', {
-        params: { email }
-      });
+  
+      const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
       const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
       const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || {};
       const fetchedSoldAmounts: number = response.data.soldAmounts || 0;
@@ -158,20 +164,16 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
       setVatopGroups(updatedVatopGroups);
   
-      // Update soldAmounts state correctly
-      setSoldAmount(fetchedSoldAmounts);
-  
-      const currentCombinations = updateVatopCombinations(updatedVatopGroups);
-  
-      if (JSON.stringify(fetchedVatopCombinations) !== JSON.stringify(currentCombinations)) {
-        setVatopCombinations(currentCombinations);
-      } else {
-        console.log('(^.^)');
+      if (fetchedSoldAmounts !== soldAmounts) {
+        setSoldAmount(fetchedSoldAmounts);
       }
+  
+      setVatopCombinations(fetchedVatopCombinations);
+  
     } catch (error) {
       console.error('Error fetching vatop groups:', error);
     }
-  }, [email, bitcoinPrice, updateVatopCombinations]);
+  }, [email, bitcoinPrice, soldAmounts]);
   
 
 
@@ -280,6 +282,15 @@ setHpap(highestCpVatop);
 
 
 const handleBuy = async (amount: number) => {
+
+  try {
+
+    // Add Plaid/Bank Account Transaction completion here first
+
+
+    await createBoughtAmountTransaction(email, amount / bitcoinPrice, amount);
+
+  // Step 1: Update local VatopGroups and VatopCombinations
   const newVatop: VatopGroup = {
     cVatop: amount,
     cpVatop: bitcoinPrice,
@@ -292,25 +303,23 @@ const handleBuy = async (amount: number) => {
 
   const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
 
-  // Create bought amount transaction
-  const boughtTransaction = await createBoughtAmountTransaction(amount / bitcoinPrice, amount);
+    // Step 3: Fetch updated transactions
+    const responseTransactions = await axios.get(`/api/fetchVatopGroups?email=${email}`);
+    const updatedTransactions = responseTransactions.data.transactions || [];
 
-  // Prepare payload without converting acVactTas to string
-  const payload = {
-    email,
-    vatopGroups: updatedVatopGroups,
-    vatopCombinations: updatedVatopCombinations,
-    soldAmounts,
-    transactions: {
-      soldAmount: '',
-      boughtAmount: boughtTransaction,
-      withdrewAmount: '',
-      exportedAmount: ''
-    }
-  };
+    // Step 4: Prepare payload
+    const payload = {
+      email,
+      vatopGroups: updatedVatopGroups,
+      vatopCombinations: updatedVatopCombinations,
+      soldAmounts,
+      transactions: updatedTransactions, // Ensure transactions is the updated list
+    };
 
-  try {
+    console.log('Payload being sent to the server:', payload);
+
     const response = await axios.post('/api/saveVatopGroups', payload);
+    console.log('Response from server:', response.data);
     setRefreshData(true); // Set flag to refresh data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -364,28 +373,26 @@ const handleSell = async (amount: number) => {
     }
   }
 
-  setVatopGroups(updatedVatopGroups);
   const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
 
   // Accumulate sold amounts correctly
   const newSoldAmounts = soldAmounts + amount;
   console.log('New soldAmounts before state update:', newSoldAmounts);
 
-  // Create sold amount transaction
-  const soldTransaction = await createSoldAmountTransaction(amount / bitcoinPrice, amount);
+  // Create Sold Transaction
+  try {
+    await createSoldAmountTransaction(email, amount / bitcoinPrice, amount);
+  } catch (error) {
+    console.error('Error creating sold amount transaction:', error);
+    return; // Exit if transaction creation fails
+  }
 
   // Prepare payload
   const payload = {
     email,
     vatopGroups: updatedVatopGroups,
     vatopCombinations: updatedVatopCombinations,
-    soldAmounts: newSoldAmounts, // Ensure the accumulated sold amounts are sent
-    transactions: {
-      soldAmount: soldTransaction,
-      boughtAmount: '',
-      withdrewAmount: '',
-      exportedAmount: ''
-    }
+    soldAmounts: newSoldAmounts, // Use updated sold amounts
   };
 
   console.log('Payload:', payload);
@@ -394,7 +401,9 @@ const handleSell = async (amount: number) => {
     const response = await axios.post('/api/saveVatopGroups', payload);
     console.log('Response from server:', response.data);
     setSoldAmount(newSoldAmounts); // Update the state only after the API call succeeds
-    setRefreshData(true); // Set flag to refresh data
+
+    // Fetch updated vatop groups and combinations to ensure consistency
+    await fetchVatopGroups(); // Ensure fetch operation is awaited
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       console.error('Error saving vatop groups:', error.response?.data || error.message, 'Full response:', error.response);
@@ -411,14 +420,14 @@ const handleSell = async (amount: number) => {
 
 
 
-
-
-
-
 const handleExport = async (amount: number) => {
+  console.log('handleExport called with amount:', amount);
+
   if (amount > vatopCombinations.acVactTas) {
+    console.log('Amount exceeds acVactTas');
     return;
   }
+
   let remainingAmount = amount;
   const updatedVatopGroups = [...vatopGroups];
   updatedVatopGroups.sort((a, b) => b.cpVatop - a.cpVatop);
@@ -457,53 +466,53 @@ const handleExport = async (amount: number) => {
     }
   }
 
+  // Set state
   setVatopGroups(updatedVatopGroups);
   const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
-
-  // Prepare payload without converting acVactTas to string
-  const payload = {
-    email,
-    vatopGroups: updatedVatopGroups,
-    vatopCombinations: updatedVatopCombinations,
-    soldAmounts,
-    transactions: {
-      soldAmount: '',
-      boughtAmount: '',
-      withdrewAmount: '',
-      exportedAmount: '' // This will be updated after successful export
-    }
-  };
 
   setTotalExportedWalletValue(totalValue);
   setYouWillLose(Math.abs(totalLoss));
 
   try {
-    const response = await axios.post('/api/saveVatopGroups', payload);
-    console.log('Response from server:', response.data);
-    
-    // If the export is successful, create the transaction hash
-    const transactionHash = "dskjfdslkfj5tdfDFGdfg"; // Manually added transaction hash
-    const exportedTransaction = await createExportedAmountTransaction(amount, transactionHash);
-    
-    // Update the transactions payload with the new exported amount transaction
-    const transactionsPayload = {
+    // Fetch updated transactions
+    const responseTransactions = await axios.get(`/api/fetchVatopGroups?email=${email}`);
+    const updatedTransactions = responseTransactions.data.transactions || [];
+
+    console.log('Fetched Updated Transactions:', updatedTransactions);
+
+    // Create export transaction
+    const transactionHash = "dskjfdslkfj5tdfDFGdfg"; // Replace with actual transaction hash
+    await createExportedAmountTransaction(email, amount, transactionHash);
+
+    // Prepare payload
+    const payload = {
       email,
-      transactions: {
-        soldAmount: '',
-        boughtAmount: '',
-        withdrewAmount: '',
-        exportedAmount: exportedTransaction
-      }
+      vatopGroups: updatedVatopGroups,
+      vatopCombinations: updatedVatopCombinations,
+      soldAmounts,
+      transactions: [
+        ...updatedTransactions,
+        {
+          type: 'export',
+          amount,
+          timestamp: new Date().toISOString(),
+          transactionHash,
+        },
+      ],
     };
 
-    // Send the updated transactions payload
-    const updateResponse = await axios.post('/api/updateTransactions', transactionsPayload);
-    console.log('Response from server after updating transactions:', updateResponse.data);
-    
-    setRefreshData(true); // Set flag to refresh data
+    console.log('Payload for /api/saveVatopGroups:', payload);
+
+    // Save updated vatop groups and transactions
+    const response = await axios.post('/api/saveVatopGroups', payload);
+    console.log('Response from server:', response.data);
+
+    // Ensure data is refreshed
+    setRefreshData(true);
+
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      console.error('Error saving vatop groups:', error.response?.data || error.message);
+      console.error('Error handling export:', error.response?.data || error.message);
     } else {
       console.error('Unexpected error:', error);
     }

@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 
-const cognito = new AWS.CognitoIdentityServiceProvider();
+const s3 = new AWS.S3();
+const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
@@ -14,49 +15,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ error: 'Email query parameter is required' });
   }
 
-  const params = {
-    UserPoolId: process.env.COGNITO_USER_POOL_ID!,
-    Username: email as string,
-  };
+  const key = `${email}/vatop-data.json`;
 
   try {
-    const data = await cognito.adminGetUser(params).promise();
-    const vatopGroupsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:vatopGroups');
-    const vatopCombinationsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:vatopCombinations');
-    const soldAmountsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:soldAmounts');
-    const transactionsAttr = data.UserAttributes?.find(attr => attr.Name === 'custom:Transactions');
+    const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+    const userData = JSON.parse(data.Body!.toString());
 
-    let vatopGroups = [];
-    let vatopCombinations = {
-      acVatops: 0,
-      acVacts: 0,
-      acVactTas: 0,
-      acdVatops: 0,
-      acVactsAts: 0,
-      acVactTaAts: 0,
-    };
-    let soldAmounts = 0;
-    let transactions = {};
-
-    if (vatopGroupsAttr) {
-      vatopGroups = JSON.parse(vatopGroupsAttr.Value || '[]');
-    }
-
-    if (vatopCombinationsAttr) {
-      vatopCombinations = JSON.parse(vatopCombinationsAttr.Value || '{}');
-    }
-
-    if (soldAmountsAttr) {
-      soldAmounts = parseFloat(soldAmountsAttr.Value || '0');
-    }
-
-    if (transactionsAttr) {
-      transactions = JSON.parse(transactionsAttr.Value || '{}');
-    }
-
-    return res.status(200).json({ vatopGroups, vatopCombinations, soldAmounts, transactions });
+    return res.status(200).json(userData);
   } catch (error) {
-    console.error('Error fetching user attributes:', error);
-    return res.status(500).json({ error: 'Could not fetch vatop groups' });
+    const errorMessage = (error as Error).message || 'Could not fetch user data';
+    console.error('Error fetching data:', errorMessage);
+    return res.status(500).json({ error: errorMessage });
   }
 };

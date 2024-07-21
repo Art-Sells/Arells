@@ -2,18 +2,14 @@ import axios from 'axios';
 
 const DATE_API_URL = 'http://worldtimeapi.org/api/timezone/America/Los_Angeles';
 
-// Variable to set the manual date manually
 let manualDate: string | null = null;
 
-// Function to set the manual date
 export const setManualDate = (date: string): void => {
   manualDate = date;
 };
 
-// Function to fetch the current date in PST
 export const fetchCurrentDatePST = async (): Promise<string> => {
   try {
-    // If a manual date is set, return it
     if (manualDate !== null) {
       return manualDate;
     }
@@ -28,51 +24,107 @@ export const fetchCurrentDatePST = async (): Promise<string> => {
   }
 };
 
-// Function to manually update the date for testing
 export const updateManualDate = (date: string): void => {
   setManualDate(date);
 };
 
-// Define the Transactions interface
 export interface Transactions {
-  soldAmount: string;
-  boughtAmount: string;
-  withdrewAmount: string;
-  exportedAmount: string;
+  soldAmount?: string | number;
+  boughtAmount?: string | number;
+  withdrewAmount?: string | number;
+  exportedAmount?: string | number;
+  parsedSoldAmount?: ParsedTransaction;
+  parsedBoughtAmount?: ParsedTransaction;
+  parsedWithdrewAmount?: ParsedTransaction;
+  parsedExportedAmount?: ParsedTransaction;
+  timestamp?: number; // Add timestamp field
 }
 
-// Helper function to create transaction strings
-const createTransactionString = (date: string, amount1: number, amount2: number, link?: string): string => {
-  if (link) {
-    return JSON.stringify({ date, amount1, amount2, link });
+export interface ParsedTransaction {
+  date: string;
+  bitcoinAmount: number;
+  amount: number;
+  link?: string;
+}
+
+const createTransactionString = (date: string, amount1: number, amount2: number): string => {
+  return JSON.stringify({ date, bitcoinAmount: amount1, amount: amount2 });
+};
+const createTransactionStringTwo = (date: string, amount: number, link: string): string => {
+  return JSON.stringify({ date, bitcoinAmount: amount, link });
+};
+
+const appendTransaction = async (email: string, newTransaction: Transactions): Promise<void> => {
+  try {
+    const response = await axios.get(`/api/fetchVatopGroups?email=${email}`);
+    const currentTransactions = response.data.transactions || [];
+    const transactionsArray: Transactions[] = Array.isArray(currentTransactions) ? currentTransactions : [];
+    const updatedTransactions = [...transactionsArray, newTransaction];
+    const payload = {
+      email,
+      transactions: updatedTransactions,
+    };
+    await axios.post('/api/saveVatopGroups', payload);
+  } catch (error) {
+    console.error('Error appending transaction:', error);
+    throw new Error('Could not append transaction');
   }
-  return JSON.stringify({ date, amount1, amount2 });
 };
 
-// Function to create a sold amount transaction
-export const createSoldAmountTransaction = async (bitcoinAmount: number, soldAmount: number): Promise<string> => {
+export const createSoldAmountTransaction = async (email: string, bitcoinAmount: number, soldAmount: number): Promise<void> => {
   const date = await fetchCurrentDatePST();
-  return createTransactionString(date, bitcoinAmount, soldAmount);
+  const transactionString = createTransactionString(date, bitcoinAmount, soldAmount);
+  const newTransaction: Transactions = {
+    soldAmount: transactionString,
+    boughtAmount: '',
+    withdrewAmount: '',
+    exportedAmount: '',
+    timestamp: Date.now(), // Add timestamp
+  };
+  await appendTransaction(email, newTransaction);
 };
 
-// Function to create a bought amount transaction
-export const createBoughtAmountTransaction = async (bitcoinAmount: number, boughtAmount: number): Promise<string> => {
+export const createBoughtAmountTransaction = async (email: string, bitcoinAmount: number, boughtAmount: number): Promise<void> => {
   const date = await fetchCurrentDatePST();
-  return createTransactionString(date, bitcoinAmount, boughtAmount);
+  const transactionString = createTransactionString(date, bitcoinAmount, boughtAmount);
+  const newTransaction: Transactions = {
+    soldAmount: '',
+    boughtAmount: transactionString,
+    withdrewAmount: '',
+    exportedAmount: '',
+    timestamp: Date.now(), // Add timestamp
+  };
+  await appendTransaction(email, newTransaction);
 };
 
-// Function to create a withdrew amount transaction
-export const createWithdrewAmountTransaction = async (withdrewAmount: number): Promise<string> => {
+export const createWithdrewAmountTransaction = async (email: string, withdrewAmount: number): Promise<Transactions> => {
   const date = await fetchCurrentDatePST();
   const bankAccountLink = 'https://arells.com/bankaccount';
-  return createTransactionString(date, withdrewAmount, 0, bankAccountLink);
+  const transactionString = createTransactionStringTwo(date, withdrewAmount, bankAccountLink);
+  const newTransaction: Transactions = {
+    soldAmount: '',
+    boughtAmount: '',
+    withdrewAmount: transactionString,
+    exportedAmount: '',
+    timestamp: Date.now(), // Add timestamp
+  };
+  await appendTransaction(email, newTransaction);
+  return newTransaction; // Return the created transaction
 };
 
-// Function to create an exported amount transaction
-export const createExportedAmountTransaction = async (exportedAmount: number, transactionHash: string): Promise<string> => {
+export const createExportedAmountTransaction = async (email: string, exportedAmount: number, transactionHash: string): Promise<Transactions> => {
   const date = await fetchCurrentDatePST();
   const transactionLink = `https://www.blockchain.com/explorer/transactions/btc/${transactionHash}`;
-  return createTransactionString(date, exportedAmount, 0, transactionLink);
+  const transactionString = createTransactionStringTwo(date, exportedAmount, transactionLink);
+  const newTransaction: Transactions = {
+    soldAmount: '',
+    boughtAmount: '',
+    withdrewAmount: '',
+    exportedAmount: transactionString,
+    timestamp: Date.now(), // Add timestamp
+  };
+  await appendTransaction(email, newTransaction);
+  return newTransaction; // Return the created transaction
 };
-  // Manually set the date
-  updateManualDate('07/20/24'); // Set the manual date to 07/20/24
+
+updateManualDate('07/21/24');
