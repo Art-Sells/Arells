@@ -390,12 +390,18 @@ const HPMTester: React.FC = () => {
   );
 };
 
-const formatCurrency = (value: number): string => {
-  return `$${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+const formatCurrency = (value: number | null | undefined): string => {
+  if (value === null || value === undefined) {
+    return '0';
+  }
+  return `${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 };
 
-const formatNumber = (value: number): string => {
-  return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 7 });
+const formatNumber = (value: number | null | undefined, decimals: number = 8): string => {
+  if (value === null || value === undefined) {
+    return '0.00';
+  }
+  return value.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 export default HPMTester;

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 const Bitcoin: React.FC = () => {
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
@@ -9,21 +10,40 @@ const Bitcoin: React.FC = () => {
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [amount, setAmount] = useState<string>(''); // amount in BTC
   const [feeRate, setFeeRate] = useState<number>(10); // Fee rate in satoshis per byte
-  const [address, setAddress] = useState<string>('');
-  const [privateKey, setPrivateKey] = useState<string>('');
+  const [bitcoinAddress, setBitcoinAddress] = useState<string>('');
+  const [bitcoinPrivateKey, setBitcoinPrivateKey] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const walletAddress = loadedWallet?.address;
-    if (walletAddress) {
+    const fetchAttributes = async () => {
+      try {
+        const attributesResponse = await fetchUserAttributes();
+        const emailAttribute = attributesResponse.email;
+        const bitcoinAddressAttribute = attributesResponse['custom:bitcoinAddress'];
+        const bitcoinPrivateKeyAttribute = attributesResponse['custom:bitcoinPrivateKey'];
+  
+        if (emailAttribute) setEmail(emailAttribute);
+        if (bitcoinAddressAttribute) setBitcoinAddress(bitcoinAddressAttribute);
+        if (bitcoinPrivateKeyAttribute) setBitcoinPrivateKey(bitcoinPrivateKeyAttribute);
+      } catch (error) {
+        console.error('Error fetching user attributes:', error);
+      }
+    };
+  
+    fetchAttributes();
+  }, [setEmail, setBitcoinAddress, setBitcoinPrivateKey]);
+
+  useEffect(() => {
+    if (bitcoinAddress) {
       const fetchBalance = async () => {
-        const res = await fetch(`/api/balance?address=${walletAddress}`);
+        const res = await fetch(`/api/balance?address=${bitcoinAddress}`);
         const data = await res.json();
         setBalance(data);
       };
       fetchBalance();
     }
-  }, [loadedWallet]);
+  }, [bitcoinAddress]);
 
   useEffect(() => {
     const fetchFeeRate = async () => {
@@ -39,31 +59,9 @@ const Bitcoin: React.FC = () => {
     fetchFeeRate();
   }, []);
 
-  const createWallet = async () => {
-    const res = await fetch('/api/wallet');
-    const data = await res.json();
-    setCreatedWallet(data);
-    setLoadedWallet(null); // Clear loaded wallet if any
-  };
-
-  const loadWallet = async () => {
-    const res = await fetch('/api/load-wallet', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ address, privateKey }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setLoadedWallet(data);
-      setCreatedWallet(null); // Clear created wallet if any
-    } else {
-      alert(data.error);
-    }
-  };
-
   const sendBitcoin = async () => {
-    if (!loadedWallet) {
-      alert('Please load a wallet to send Bitcoin.');
+    if (!bitcoinAddress || !bitcoinPrivateKey) {
+      alert('Please sign in to send Bitcoin.');
       return;
     }
 
@@ -94,7 +92,7 @@ const Bitcoin: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          senderPrivateKey: loadedWallet.privateKey,
+          senderPrivateKey: bitcoinPrivateKey,
           recipientAddress,
           amount: amountInSatoshis,
           fee,
@@ -123,37 +121,10 @@ const Bitcoin: React.FC = () => {
 
   return (
     <div>
-      <h1>Bitcoin Marketplace</h1>
-      <button onClick={createWallet}>Create Bitcoin Wallet</button>
-      {createdWallet && (
         <div>
-          <h2>Created Wallet</h2>
-          <p>Address: {createdWallet.address}</p>
-          <p>Private Key: {createdWallet.privateKey}</p>
-          <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
-        </div>
-      )}
-      <div>
-        <h2>Access Existing Wallet</h2>
-        <input
-          type="text"
-          placeholder="Address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Private Key"
-          value={privateKey}
-          onChange={(e) => setPrivateKey(e.target.value)}
-        />
-        <button onClick={loadWallet}>Load Wallet</button>
-      </div>
-      {loadedWallet && (
-        <div>
-          <h2>Loaded Wallet</h2>
-          <p>Address: {loadedWallet.address}</p>
-          <p>Private Key: {loadedWallet.privateKey}</p>
+          <h2>Bitcoin Wallet</h2>
+          <p>Address</p>
+          <p>{bitcoinAddress}</p>
           <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
           <div>
             <h2>Send Bitcoin</h2>
@@ -163,17 +134,18 @@ const Bitcoin: React.FC = () => {
               value={recipientAddress}
               onChange={(e) => setRecipientAddress(e.target.value)}
             />
+            <br/>
             <input
               type="text"
               placeholder="Amount in BTC"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
+            <br/>
             <button onClick={sendBitcoin}>Send Bitcoin</button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
           </div>
         </div>
-      )}
     </div>
   );
 };

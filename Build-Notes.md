@@ -2,27 +2,23 @@
 
 ## Arells Cryptocurrency Marketplace MVP
 
-### Wrappers
-- **HPM Wrapper**
-- - **Mock Up:**
-- - - - Sold Amount (Date: mm/dd/yr, Bitcoin-Amount-Sold, $ Sold-Amount) (handleSell retrieves from TransactionsHelper fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "soldAmount" sub attribute)
-- - - - Bought Amount (Date: mm/dd/yr, Bitcoin-Amount-Bought, $ Bought-Amount) (handleBuy retrieves from TransactionsHelper retrieves from fetchVatopGroups & saves to saveVatopGroups "Transactions" custom attribute, "boughtAmount" sub attribute)
-- - - - Withdrew Amount (Date: mm/dd/yr, $ Withdrew-Amount, Bank Account "arells.com/bankaccount") (handleWithdraw retrieves from TransactionsHelper, "withdrawnAmount" sub attribute)
-- - - - Exported Amount (Date: mm/dd/yr, Exported Amount, Link) (handleExported retrieves from TransactionsHelper  & saves to saveVatopGroups "Transactions" custom attribute, "exportedAmount" sub attribute)
+### Testing
+- Test Import process... 
+- - acVactTas = amount of Bitcoin
+- Test Export process... 
+- - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information)
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
-- - Bank Account Attribute
-- - - Plaid Info?
+- - Bank Account Json Info? (pending approval)
+- - - Plaid Info (pending approval)
 - **Possibly a Kraken Wrapper to pull Bitcoin to Buy & Sell?**
-- Change manualBitcoinPrice and manualDate in coinGeckoApi/HPMContext to automated
-- Test Entire Exporting(replaceEmailwithBitcoinAddressinAPI(FrontEnd/Lambda)), Importing(replaceEmailwithBitcoinAddressinAPI(FrontEnd/Lambda)), Buying(addEmail,BitcoinAddress,PrivateKeyinAPI(FrontEnd/Lambda)), Selling(addEmail,BitcoinAddress,PrivateKeyinAPI(FrontEnd/Lambda)) and Withdrawing(addEmail,BitcoinAddress,PrivateKeyinAPI(FrontEnd/Lambda)) process  (possibly just segments out from Vatop Combinations as Vatop Combinations are Real Numbers and Vatop Groups Fake ask Gpt?)
+- Test Buying, Selling and Withdrawing process... 
 - - Buy/Sell buttons connect to plaid (if not connected)
-- - handleBuy/handleSell/handleExport/handleWithdraw (add try, awaits and catch to ensure the entire process is successful before updating backend information)
-- - acVacts: Entire Wallet (stripe?) amount (export|sell/import/buy takes/adds here)
-- - acVactTas: Entire Bitcoin Wallet amount (export|sell/import/buy takes/adds here)
-- - acVactsAts: Subtracts from Entire Wallet amount
-- - acVactTaAts: Subtracts from Entire Bitcoin amount
+- - Separate Bitcoin Wallet Page where handleBuy, handleSell and handleExport pages handle changes from and to first.
+- - handleBuy/handleSell/handleWithdraw (add try, awaits and catch to ensures the entire process is successful before updating backend information)
+- - acVactTas <- add a useEffect that constantly updates based on Total Bitcoin Amount from Bitcoin Wallet
 
-### Home(redirects to Account if logged in)
+
+### Account
 - if acVactsAts = 0 sell display none, holding display true, else opposite
 - Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) every 10 seconds from coin gecko API wrapper?
 - 1 second loader for all pages
@@ -97,10 +93,10 @@
 
 ### Sell
 **Pull handleSell from HPMContext sellAmountContext and edit saveVatopGroups import for success and error modal handling.**
-if acVactsAts < or = 0 && acVatops > 0 display:
-- (B) Holding Amount
+if acVactsAts <= 0 && acVatops > 0 display:
+-  (A)(B) Holding Amount
 - - Wallet: acVatops
-if acVatops < or = 0:
+if acVatops <= 0:
 - No Amount Available to Sell
 else:
 - (B) Amount Available To Sell
@@ -125,7 +121,7 @@ else:
 - (B) Bought: 0.0087 (pulls from "Bought Amount" database) 
 - - (Cash Register) for: $
 - (Vault) Withdrew: $ (pulls from "Withdrew Amount" database) 
-- - (Bank) to: (Plaid Bank Logo Button? from Plaid Wrapper?)->Bank Account
+- - (Bank) to: (Plaid Bank Logo Button? from Plaid Wrapper?)(long bank words have maximum display length of ?)->Bank Account
 - (^-circle) Exporting: 0.00043 (if loading useEffect from Block Explorer)| (B) Exported: 0.00323 (if completed useEffect) (pulls from "Exported Amount" database) 
 - - (App) To: (View On Block Explorer)-> Block Explorer Link
 
@@ -149,6 +145,7 @@ else:
 
 ### Important
 - Create separate Wallet to handle where we get our 3% fee... (Stripe?)
+- Resolve "HPMContext" errors that show "cannot find email, Error fetching Bitcoin Price, etc etc" from console.log if pages don't need them...
 - Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/HPMContext
 - Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
 
@@ -156,9 +153,14 @@ else:
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
 - Contact us (Account/Home): Email
-- resolve endless useEffectLoads (from HPMContext)
 
 ## Arells Cryptocurrency Marketplace 1.5
+
+### KYC/AML
+- Add this to Plaid API
+
+### UserContextWrapped
+- if logged in for more than 5 minutes without use, automatically sign out and take to homepage.
 
 ### Home/Account
 - Contact us: Email
@@ -178,7 +180,7 @@ else:
 - Add 2FA for Buying/Selling and first Logging In.
 
 ### Bank Account
-- Change Bank Account (Plaid Connect? from Plaid Wrapper?)
+- Change Bank Account (Plaid Connect? from Plaid Wrapper?) (long bank words have maximum display length of ?)
 
 ### Transactions
 - Add Imported

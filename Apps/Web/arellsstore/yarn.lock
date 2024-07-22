@@ -5424,7 +5424,7 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.13.0.tgz#d9b802e9bb9c248d7be5f7f5ef178dc3684e9dcc"
   integrity sha512-3AungXC4I8kKsS9PuS4JH2nc+0bVY/mjgrephHTIi8fpEeGsTHBUJeosp0Wc1myYMElmD0B3Oc4XL/HVJ4PV2g==
 
-axios@^1.7.2:
+axios@^1.6.2, axios@^1.7.2:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.7.2.tgz#b625db8a7051fbea61c35a3cbb3a1daa7b9c7621"
   integrity sha512-2A8QhOMrbomlDuiLeK9XibIBzuHeRcqqNOHp0Cyp5EoJ1IFDh+XZH3A6BkXtv0K4gFGCI0Y4BM7B1wOEi0Rmgw==
@@ -9658,6 +9658,13 @@ pify@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-5.0.0.tgz#1f5eca3f5e87ebec28cc6d54a0e4aaf00acc127f"
   integrity sha512-eW/gHNMlxdSP6dmG6uJip6FXN0EQBwm2clYYd8Wul42Cwu/DK8HEftzsapcNdYe2MfLiIwZqsDk2RDEsTE79hA==
+
+plaid@^26.0.0:
+  version "26.0.0"
+  resolved "https://registry.yarnpkg.com/plaid/-/plaid-26.0.0.tgz#fede254ffa37b96117dc857ab7d4d8d34b83943d"
+  integrity sha512-idAQTSmLm5C0WieSRBWrkF8ur2T5UGjRja+6/Owl9m9YjlD1PjOkD9A9s+l95sJiIhjWLs7HR9Ti3f06dvnrPg==
+  dependencies:
+    axios "^1.6.2"
 
 pngjs@^3.3.0:
   version "3.4.0"

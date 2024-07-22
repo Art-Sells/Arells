@@ -69,13 +69,16 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [totalExportedWalletValue, setTotalExportedWalletValue] = useState<number>(0);
   const [youWillLose, setYouWillLose] = useState<number>(0);
   const [email, setEmail] = useState<string>('');
+  const [balance, setBalance] = useState<number | null>(null);
+  const [bitcoinAddress, setBitcoinAddress] = useState<string>('');
+  const [bitcoinPrivateKey, setBitcoinPrivateKey] = useState<string>('');
   const [soldAmounts, setSoldAmount] = useState<number>(0);
   const [refreshData, setRefreshData] = useState<boolean>(false);
 
   const updateVatopCombinations = (groups: VatopGroup[]): VatopCombinations => {
     const acVatops = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVatop, 0);
     const acVacts = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVact, 0);
-    const acVactTas = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVactTa, 0);
+    const acVactTas = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVactTa, 0).toFixed(8);
     const acdVatops = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cdVatop : acc, 0);
     
     let acVactsAts = 0;
@@ -84,7 +87,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Only calculate acVactsAts and acVactTaAts if acdVatops is greater than 0
     if (acdVatops > 0) {
       acVactsAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVact : acc, 0);
-      acVactTaAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVactTa : acc, 0);
+      acVactTaAts = Number(groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVactTa : acc, 0).toFixed(8));
     }
   
     const updatedCombinations: VatopCombinations = {
@@ -93,7 +96,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       acVactTas: Number(acVactTas), // Ensure this is a number
       acdVatops,
       acVactsAts,
-      acVactTaAts,
+      acVactTaAts: Number(acVactTaAts), // Ensure this is a number
     };
   
     setVatopCombinations(updatedCombinations);
@@ -109,20 +112,32 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   useEffect(() => {
-    const fetchEmail = async () => {
+    const fetchAttributes = async () => {
       try {
         const attributesResponse = await fetchUserAttributes();
         const emailAttribute = attributesResponse.email;
-        if (emailAttribute) {
-          setEmail(emailAttribute);
+        const bitcoinAddressAttribute = attributesResponse['custom:bitcoinAddress'];
+        const bitcoinPrivateKeyAttribute = attributesResponse['custom:bitcoinPrivateKey'];
+    
+        if (emailAttribute) setEmail(emailAttribute);
+        if (bitcoinAddressAttribute) setBitcoinAddress(bitcoinAddressAttribute);
+        if (bitcoinPrivateKeyAttribute) setBitcoinPrivateKey(bitcoinPrivateKeyAttribute);
+  
+        if (bitcoinAddressAttribute) {
+          const fetchBalance = async () => {
+            const res = await fetch(`/api/balance?address=${bitcoinAddressAttribute}`);
+            const data = await res.json();
+            setBalance(data);
+          };
+          fetchBalance();
         }
       } catch (error) {
         console.error('Error fetching user attributes:', error);
       }
     };
-
-    fetchEmail();
-  }, []);
+  
+    fetchAttributes();
+  }, [setEmail, setBitcoinAddress, setBitcoinPrivateKey]);
 
 
 
@@ -197,16 +212,14 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const response = await axios.get('/api/fetchVatopGroups', {
         params: { email },
       });
-
   
       const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
       const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || vatopCombinations;
-
   
       // Calculate total cVactTa from fetched Vatop Groups
       const totalCVactTas = fetchedVatopGroups.reduce((acc, group) => acc + group.cVactTa, 0);
   
-      const fetchedAcVactTas = fetchedVatopCombinations.acVactTas;
+      const fetchedAcVactTas = balance || 0;
   
       // Check for discrepancies
       if (fetchedAcVactTas > totalCVactTas) {
@@ -241,35 +254,36 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (error) {
       console.error('Error checking for imports:', error);
     }
-  }, [email, vatopCombinations.acVactTas, bitcoinPrice, updateVatopCombinations]);
+  }, [email, vatopCombinations.acVactTas, bitcoinPrice, updateVatopCombinations, balance]);
 
-    useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
     fetchVatopGroups();
     checkForImports();
     }, 1000); // Set the interval to 10 seconds
     // Cleanup function to clear the interval
-return () => clearInterval(interval);}, [fetchVatopGroups, checkForImports]);
+    return () => clearInterval(interval);
+  }, [fetchVatopGroups, checkForImports]);
 
-useEffect(() => {
-const updatedVatopGroups = vatopGroups
-.map((group) => ({...group,
-cVact: group.cVactTa * bitcoinPrice,
-cdVatop: (group.cVactTa * bitcoinPrice) - group.cVatop,
-}))
-.filter((group) => group.cVact > 0 && group.cVatop > 0); // Remove groups with cVact and cVatop both = 0
-setVatopGroups(updatedVatopGroups);
-updateVatopCombinations(updatedVatopGroups);
-}, [bitcoinPrice]);
+  useEffect(() => {
+  const updatedVatopGroups = vatopGroups
+  .map((group) => ({...group,
+  cVact: group.cVactTa * bitcoinPrice,
+  cdVatop: (group.cVactTa * bitcoinPrice) - group.cVatop,
+  }))
+  .filter((group) => group.cVact > 0 && group.cVatop > 0); // Remove groups with cVact and cVatop both = 0
+  setVatopGroups(updatedVatopGroups);
+  updateVatopCombinations(updatedVatopGroups);
+  }, [bitcoinPrice]);
 
-useEffect(() => {
-const highestCpVatop = Math.max(...vatopGroups.map((group) => group.cpVatop), 0);
-if (bitcoinPrice > highestCpVatop) {
-setHpap(bitcoinPrice);
-} else {
-setHpap(highestCpVatop);
-}
-}, [vatopGroups, bitcoinPrice]);
+  useEffect(() => {
+  const highestCpVatop = Math.max(...vatopGroups.map((group) => group.cpVatop), 0);
+  if (bitcoinPrice > highestCpVatop) {
+  setHpap(bitcoinPrice);
+  } else {
+  setHpap(highestCpVatop);
+  }
+  }, [vatopGroups, bitcoinPrice]);
 
 
 

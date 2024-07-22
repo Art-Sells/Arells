@@ -32,9 +32,13 @@ export const fetchBitcoinPrice = async (): Promise<number> => {
 };
 
 // Function to manually update the Bitcoin price for testing
-export const updateManualBitcoinPrice = (price: number): void => {
+export const updateManualBitcoinPrice = async (): Promise<number> => {
+  const price = await fetchBitcoinPrice();
   setManualBitcoinPrice(price);
+  return price;
 };
 
-// Manually set the Bitcoin price
-updateManualBitcoinPrice(60000); // Set the manual price to 50,000
+// Example usage: Manually set the Bitcoin price without logging
+(async () => {
+  await updateManualBitcoinPrice();
+})();

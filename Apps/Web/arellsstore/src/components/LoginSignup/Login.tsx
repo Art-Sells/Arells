@@ -24,18 +24,19 @@ const Login: React.FC = () => {
     };
 
     const router = useRouter();
-    const { setEmail } = useUser();
+    const { setEmail, setBitcoinAddress, setBitcoinPrivateKey } = useUser();
     const [email, setEmailState] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [showLoggingIn, setLoggingIn] = useState<boolean>(false);
     const [showLoginError, setLoginError] = useState<boolean>(false);
 
+
+    signOut();
+
     const logIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setLoginError(false);
-
-        signOut();
 
         try {
             // Sign out any existing user
@@ -48,13 +49,13 @@ const Login: React.FC = () => {
             const attributesResponse = await fetchUserAttributes();
             console.log('Fetched attributes:', attributesResponse);
 
-            const attributesArray: Attribute[] = Object.keys(attributesResponse).map(key => ({
-                Name: key,
-                Value: attributesResponse[key] || ''
-            }));
+            const emailAttribute = attributesResponse['email'];
+            const bitcoinAddress = attributesResponse['custom:bitcoinAddress'];
+            const bitcoinPrivateKey = attributesResponse['custom:bitcoinPrivateKey'];
 
-            const bitcoinAddress = attributesArray.find((attr: Attribute) => attr.Name === 'custom:bitcoinAddress')?.Value;
-            const bitcoinPrivateKey = attributesArray.find((attr: Attribute) => attr.Name === 'custom:bitcoinPrivateKey')?.Value;
+            if (emailAttribute) setEmail(emailAttribute);
+            if (bitcoinAddress) setBitcoinAddress(bitcoinAddress);
+            if (bitcoinPrivateKey) setBitcoinPrivateKey(bitcoinPrivateKey);
 
             if (bitcoinAddress && bitcoinPrivateKey) {
                 console.log('Bitcoin Address:', bitcoinAddress);

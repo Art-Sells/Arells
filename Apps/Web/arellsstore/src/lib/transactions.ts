@@ -24,8 +24,10 @@ export const fetchCurrentDatePST = async (): Promise<string> => {
   }
 };
 
-export const updateManualDate = (date: string): void => {
-  setManualDate(date);
+export const updateManualDate = async (): Promise<string> => {
+  const currentDate = await fetchCurrentDatePST();
+  setManualDate(currentDate);
+  return currentDate;
 };
 
 export interface Transactions {
@@ -50,6 +52,7 @@ export interface ParsedTransaction {
 const createTransactionString = (date: string, amount1: number, amount2: number): string => {
   return JSON.stringify({ date, bitcoinAmount: amount1, amount: amount2 });
 };
+
 const createTransactionStringTwo = (date: string, amount: number, link: string): string => {
   return JSON.stringify({ date, bitcoinAmount: amount, link });
 };
@@ -127,4 +130,7 @@ export const createExportedAmountTransaction = async (email: string, exportedAmo
   return newTransaction; // Return the created transaction
 };
 
-updateManualDate('07/21/24');
+// Example usage: Fetch and set the current date in PST without logging
+(async () => {
+  await updateManualDate();
+})();
