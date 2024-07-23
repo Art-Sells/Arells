@@ -8,6 +8,7 @@ import '../../app/css/bitcoin/bitcoinchart.css';
 
 import type { ImageLoaderProps } from 'next/image';
 import Image from 'next/image';
+import { fetchBitcoinPriceData, fetchHistoricalData, filterPriceData } from '../../lib/coingecko-api';
 
 interface PricePoint {
   x: Date;
@@ -36,37 +37,6 @@ const customPlugin = {
   },
 };
 
-const fetchHistoricalData = async (): Promise<PricePoint[]> => {
-  const response = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365');
-  const data = await response.json();
-  return data.prices.map((price: [number, number]) => ({
-    x: new Date(price[0]),
-    y: price[1],
-  }));
-};
-
-const fetchLatestPrice = async (): Promise<PricePoint> => {
-  const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-  const data = await response.json();
-  return { x: new Date(), y: data.bitcoin.usd };
-};
-
-const filterPriceData = (prices: PricePoint[]): PricePoint[] => {
-  const filteredPrices: PricePoint[] = [];
-  let lastValidPrice = prices[0]?.y;
-
-  for (const price of prices) {
-    if (price.y >= lastValidPrice) {
-      filteredPrices.push(price);
-      lastValidPrice = price.y;
-    } else {
-      filteredPrices.push({ x: price.x, y: lastValidPrice });
-    }
-  }
-
-  return filteredPrices;
-};
-
 const BitcoinChart: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
@@ -84,7 +54,7 @@ const BitcoinChart: React.FC = () => {
     const updateChartData = async () => {
       try {
         const historicalPrices = await fetchHistoricalData();
-        const latestPrice = await fetchLatestPrice();
+        const latestPrice = await fetchBitcoinPriceData();
 
         const latestDate = new Date();
         let allPrices = [...historicalPrices, latestPrice];
@@ -198,7 +168,7 @@ const BitcoinChart: React.FC = () => {
   };
 
   return (
-    <div className={styles.chartContainerAccount}>
+    <div className={styles.chartContainer}>
       <div id="b-logo-home">
         <span>
           <div id="a-how-wrapper">
@@ -219,7 +189,7 @@ const BitcoinChart: React.FC = () => {
               alt=""
               width={30}
               height={30}
-              id="bitcoin-b-home-account"
+              id="bitcoin-b-home"
               src="images/howitworks/Bitcoin.png"
             />
           </div>
@@ -244,15 +214,15 @@ const BitcoinChart: React.FC = () => {
           alt=""
           width={35}
           height={35}
-          id="profits-icon-home-account"
+          id="profits-icon-home"
           src="images/howitworks/up-arrow-ebony.png"
         />
       </div>
-      <p className={styles.lastThirtyDaysAccount}>1 YEAR</p>
-      <div className={styles.lineChartWrapperAccount}>
+      <p className={styles.lastThirtyDays}>1 YEAR</p>
+      <div className={styles.lineChartWrapper}>
         <Line
           id="bitcoinChart"
-          className={styles.lineAccount}
+          className={styles.line}
           data={chartData}
           options={options}
           plugins={[customPlugin]}

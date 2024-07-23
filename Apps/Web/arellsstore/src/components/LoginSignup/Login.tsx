@@ -1,7 +1,7 @@
 'use client';
 
 // components/Login.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
@@ -32,7 +32,6 @@ const Login: React.FC = () => {
 
 
     const logIn = async (e: React.FormEvent<HTMLFormElement>) => {
-        signOut();
         e.preventDefault();
 
         setLoginError(false);
@@ -74,6 +73,9 @@ const Login: React.FC = () => {
             setLoginError(true);
         }
     };
+    useEffect(() => {
+        signOut();
+      }, []);
 
     const closeLoginError = () => {
         setLoginError(false);

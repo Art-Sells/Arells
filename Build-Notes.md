@@ -3,8 +3,6 @@
 ## Arells Cryptocurrency Marketplace MVP
 
 ### Testing
-- Test Import process... 
-- - acVactTas = amount of Bitcoin
 - Test Export process... 
 - - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information)
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
@@ -141,7 +139,6 @@ else:
 
 ### After Full API/Wrapper Testing
 - Update Blockchain.info API to Amplify (IP) API
-- Delete/Cancel CoinGecko API and implement 10 second interval for Bitcoin Price checking maybe through HPM Context?
 
 ### Important
 - Create separate Wallet to handle where we get our 3% fee... (Stripe?)

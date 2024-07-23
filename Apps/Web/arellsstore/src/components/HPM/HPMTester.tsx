@@ -394,18 +394,16 @@ const formatCurrency = (value: number | null | undefined): string => {
   if (value === null || value === undefined) {
     return '0';
   }
-  return `${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+  const valueInBTC = value / 100000000; // Convert from satoshis to bitcoins
+  return valueInBTC.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Format as currency
 };
 
-const formatNumber = (value: number | null | undefined, decimals: number = 8): string => {
+const formatNumber = (value: number | null | undefined, decimals: number = 7): string => {
   if (value === null || value === undefined) {
-    return '0.00';
+    return '0.0000000';
   }
-  return value.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const valueInBTC = value / 100000000; // Convert from satoshis to bitcoins
+  return valueInBTC.toFixed(decimals); // Format with specified decimals
 };
 
 export default HPMTester;
-
-function setRefreshData(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}

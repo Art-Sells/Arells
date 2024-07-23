@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const currentTime = Date.now();
 
   if (cachedPrice && cacheTimestamp && currentTime - cacheTimestamp < CACHE_DURATION) {
-    res.status(200).json({ bitcoin: { usd: cachedPrice } });
+    res.status(200).json({ x: new Date(cacheTimestamp), y: cachedPrice });
     return;
   }
 
@@ -28,9 +28,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     cachedPrice = response.data.bitcoin.usd;
     cacheTimestamp = currentTime;
 
-    res.status(200).json(response.data);
+    res.status(200).json({ x: new Date(), y: cachedPrice });
   } catch (error) {
-    console.error('Error fetching Bitcoin price:', error);
-    res.status(500).json({ error: 'Error fetching Bitcoin price' });
+    console.error('Error fetching Bitcoin price data:', error);
+    res.status(500).json({ error: 'Could not fetch Bitcoin price data' });
   }
 }

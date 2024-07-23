@@ -75,28 +75,41 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [soldAmounts, setSoldAmount] = useState<number>(0);
   const [refreshData, setRefreshData] = useState<boolean>(false);
 
+  const formatCurrency = (value: number | null | undefined): string => {
+    if (value === null || value === undefined) {
+      return '0';
+    }
+    return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+  
+  const formatBalance = (balanceInSatoshis: number | null): string => {
+    if (balanceInSatoshis === null) return 'Loading...';
+    if (balanceInSatoshis === 0) return '0.0000000';
+    const balanceInBTC = balanceInSatoshis / 100000000;
+    return balanceInBTC.toFixed(7); // Ensure 7 decimal places with no grouping
+  };
+
   const updateVatopCombinations = (groups: VatopGroup[]): VatopCombinations => {
     const acVatops = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVatop, 0);
     const acVacts = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVact, 0);
-    const acVactTas = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVactTa, 0).toFixed(8);
+    const acVactTas = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVactTa, 0);
     const acdVatops = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cdVatop : acc, 0);
-    
+  
     let acVactsAts = 0;
     let acVactTaAts = 0;
   
-    // Only calculate acVactsAts and acVactTaAts if acdVatops is greater than 0
     if (acdVatops > 0) {
       acVactsAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVact : acc, 0);
-      acVactTaAts = Number(groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVactTa : acc, 0).toFixed(8));
+      acVactTaAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVactTa : acc, 0);
     }
   
     const updatedCombinations: VatopCombinations = {
       acVatops,
       acVacts,
-      acVactTas: Number(acVactTas), // Ensure this is a number
+      acVactTas,
       acdVatops,
       acVactsAts,
-      acVactTaAts: Number(acVactTaAts), // Ensure this is a number
+      acVactTaAts,
     };
   
     setVatopCombinations(updatedCombinations);
@@ -183,7 +196,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSoldAmount(fetchedSoldAmounts);
       }
   
-      setVatopCombinations(fetchedVatopCombinations);
+      const updatedCombinations = updateVatopCombinations(updatedVatopGroups);
+      setVatopCombinations(updatedCombinations);
   
     } catch (error) {
       console.error('Error fetching vatop groups:', error);
