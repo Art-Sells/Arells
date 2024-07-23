@@ -10,13 +10,12 @@
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
 - - Bank Account Json Info? (pending approval)
 - - - Plaid Info (pending approval)
-- **Possibly a Kraken Wrapper to pull Bitcoin to Buy & Sell?**
+- **Possibly a Blockchain Info (with API) to pull Bitcoin to Buy & Sell?**
 - Test Buying, Selling and Withdrawing process... 
 - - Buy/Sell buttons connect to plaid (if not connected)
 - - Separate Bitcoin Wallet Page where handleBuy, handleSell and handleExport pages handle changes from and to first.
 - - handleBuy/handleSell/handleWithdraw (add try, awaits and catch to ensures the entire process is successful before updating backend information)
 - - acVactTas <- add a useEffect that constantly updates based on Total Bitcoin Amount from Bitcoin Wallet
-
 
 ### Account
 - if acVactsAts = 0 sell display none, holding display true, else opposite
@@ -141,7 +140,8 @@ else:
 - Plaid info from Plaid Wrapper?
 
 ### After Full API/Wrapper Testing
-- Buy CoinGecko API and implement 10 second interval for Bitcoin Price checking maybe through HPM Context?
+- Update Blockchain.info API to Amplify (IP) API
+- Delete/Cancel CoinGecko API and implement 10 second interval for Bitcoin Price checking maybe through HPM Context?
 
 ### Important
 - Create separate Wallet to handle where we get our 3% fee... (Stripe?)
@@ -150,6 +150,7 @@ else:
 - Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
 
 ### Other (if Time Permits)
+- Fix (signOut log-in issue)
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
 - Contact us (Account/Home): Email

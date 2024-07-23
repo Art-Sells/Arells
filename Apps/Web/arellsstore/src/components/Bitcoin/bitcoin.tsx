@@ -4,8 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 
 const Bitcoin: React.FC = () => {
-  const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
-  const [loadedWallet, setLoadedWallet] = useState<{ address: string; privateKey: string } | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [amount, setAmount] = useState<string>(''); // amount in BTC
@@ -118,6 +116,7 @@ const Bitcoin: React.FC = () => {
     const balanceInBTC = balanceInSatoshis / 100000000;
     return balanceInBTC.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
   };
+  console.log('bitcoinAddress', bitcoinAddress)
 
   return (
     <div>

@@ -31,9 +31,8 @@ const Login: React.FC = () => {
     const [showLoginError, setLoginError] = useState<boolean>(false);
 
 
-    signOut();
-
     const logIn = async (e: React.FormEvent<HTMLFormElement>) => {
+        signOut();
         e.preventDefault();
 
         setLoginError(false);

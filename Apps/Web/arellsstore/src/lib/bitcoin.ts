@@ -1,5 +1,8 @@
 import * as bitcoin from 'bitcoinjs-lib';
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
+
+axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 const loadTinySecp256k1 = async () => {
   const tinySecp256k1 = await import('tiny-secp256k1');

@@ -16,6 +16,16 @@ const nextConfig = {
 
     return config;
   },
+
+  // Add rewrites to proxy API requests to avoid CORS issues during development
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `https://api.coingecko.com/api/v3/:path*`, // Proxy to external API
+      },
+    ];
+  },
 };
 
 export default nextConfig;

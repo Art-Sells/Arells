@@ -1,6 +1,12 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 
-const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
+// Configure axios to retry on failure
+axiosRetry(axios, {
+  retries: 2,
+  retryDelay: (retryCount) => axiosRetry.exponentialDelay(retryCount),
+  retryCondition: (error) => axios.isAxiosError(error) && error.response?.status === 429,
+});
 
 // Variable to set the Bitcoin price manually
 let manualBitcoinPrice: number | null = null;
@@ -12,18 +18,12 @@ export const setManualBitcoinPrice = (price: number): void => {
 
 // Function to fetch the Bitcoin price
 export const fetchBitcoinPrice = async (): Promise<number> => {
-  try {
-    // If a manual price is set, return it
-    if (manualBitcoinPrice !== null) {
-      return manualBitcoinPrice;
-    }
+  if (manualBitcoinPrice !== null) {
+    return manualBitcoinPrice;
+  }
 
-    const response = await axios.get(`${COINGECKO_API_URL}/simple/price`, {
-      params: {
-        ids: 'bitcoin',
-        vs_currencies: 'usd',
-      },
-    });
+  try {
+    const response = await axios.get('/api/fetchBitcoinPrice');
     return response.data.bitcoin.usd;
   } catch (error) {
     console.error('Error fetching Bitcoin price:', error);
@@ -40,5 +40,9 @@ export const updateManualBitcoinPrice = async (): Promise<number> => {
 
 // Example usage: Manually set the Bitcoin price without logging
 (async () => {
-  await updateManualBitcoinPrice();
+  try {
+    await updateManualBitcoinPrice();
+  } catch (error) {
+    console.error('Error updating manual Bitcoin price:', error);
+  }
 })();
