@@ -142,42 +142,42 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
 
-const fetchVatopGroups = useCallback(async () => {
-  try {
-    if (!email) {
-      console.warn('No email provided, skipping fetchVatopGroups');
-      return;
+  const fetchVatopGroups = useCallback(async () => {
+    try {
+      if (!email) {
+        console.warn('No email provided, skipping fetchVatopGroups');
+        return;
+      }
+  
+      const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
+      const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
+      const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || {};
+      const fetchedSoldAmounts: number = response.data.soldAmounts || 0;
+  
+      const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
+        const initialCost = group.cVactTa * group.cpVatop;
+        const currentValue = group.cVactTa * bitcoinPrice;
+        const profit = currentValue - initialCost;
+  
+        return {
+          ...group,
+          cVact: group.cVactTa * bitcoinPrice,
+          cdVatop: profit,
+        };
+      });
+  
+      setVatopGroups(updatedVatopGroups);
+  
+      if (fetchedSoldAmounts !== soldAmounts) {
+        setSoldAmount(fetchedSoldAmounts);
+      }
+  
+      updateVatopCombinations(updatedVatopGroups);
+  
+    } catch (error) {
+      console.error('Error fetching vatop groups:', error);
     }
-
-    const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
-    const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
-    const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || {};
-    const fetchedSoldAmounts: number = response.data.soldAmounts || 0;
-
-    const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
-      const initialCost = group.cVactTa * group.cpVatop;
-      const currentValue = group.cVactTa * bitcoinPrice;
-      const profit = currentValue - initialCost;
-
-      return {
-        ...group,
-        cVact: group.cVactTa * bitcoinPrice,
-        cdVatop: profit,
-      };
-    }).filter(group => group.cVact > 0 && group.cVatop > 0);
-
-    setVatopGroups(updatedVatopGroups);
-
-    if (fetchedSoldAmounts !== soldAmounts) {
-      setSoldAmount(fetchedSoldAmounts);
-    }
-
-    updateVatopCombinations(updatedVatopGroups);
-
-  } catch (error) {
-    console.error('Error fetching vatop groups:', error);
-  }
-}, [email, bitcoinPrice, soldAmounts]);
+  }, [email, bitcoinPrice, soldAmounts]);
   
 
 
@@ -273,21 +273,22 @@ return () => clearInterval(interval);}, [fetchVatopGroups,
 
 useEffect(() => {
   const updatedVatopGroups = vatopGroups
-  .map((group) => ({...group,
-  cVact: group.cVactTa * bitcoinPrice,
-  cdVatop: (group.cVactTa * bitcoinPrice) - group.cVatop,
-  }))
-  .filter((group) => group.cVact > 0 && group.cVatop > 0); 
+    .map((group) => ({
+      ...group,
+      cVact: group.cVactTa * bitcoinPrice,
+      cdVatop: (group.cVactTa * bitcoinPrice) - group.cVatop,
+    }))
+    .filter((group) => group.cVact > 0); 
   setVatopGroups(updatedVatopGroups);
   updateVatopCombinations(updatedVatopGroups);
-  }, [bitcoinPrice]);
+}, [bitcoinPrice]);
 
-  useEffect(() => {
+useEffect(() => {
   const highestCpVatop = Math.max(...vatopGroups.map((group) => group.cpVatop), 0);
   if (bitcoinPrice > highestCpVatop) {
-  setHpap(bitcoinPrice);
+    setHpap(bitcoinPrice);
   } else {
-  setHpap(highestCpVatop);
+    setHpap(highestCpVatop);
   }
 }, [vatopGroups, bitcoinPrice]);
 
@@ -380,7 +381,7 @@ const handleSell = async (amount: number) => {
     group.cVactTa -= sellAmount / bitcoinPrice;
     group.cdVatop = group.cVact - group.cVatop;
 
-    if (group.cVatop <= 0 && group.cVact <= 0) {
+    if (group.cVactTa < 0.0000001) {
       const largestCactTaGroup = updatedVatopGroups.reduce((maxGroup, currentGroup) => {
         return currentGroup.cVactTa > maxGroup.cVactTa ? currentGroup : maxGroup;
       }, updatedVatopGroups[0]);
@@ -393,7 +394,6 @@ const handleSell = async (amount: number) => {
   const updatedVatopCombinations = updateVatopCombinations(updatedVatopGroups);
 
   console.log('New soldAmounts before state update:', soldAmounts);
-
 
   // Prepare payload
   const payload = {
