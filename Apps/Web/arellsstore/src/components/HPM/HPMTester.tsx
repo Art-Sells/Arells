@@ -40,45 +40,66 @@ const HPMTester: React.FC = () => {
   };
 
   const handleExportAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalExportAmount(Number(e.target.value));
+    const value = Number(e.target.value);
+    setLocalExportAmount(value);
   };
 
   const handleImportAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalImportAmount(Number(e.target.value));
   };
 
+  const [recipientAddress, setRecipientAddress] = useState<string>('');
 
 
 
 
-// Export Losses Calculations
+
+  // Export Losses Calculations
+  // Calculate total exported wallet value
+  // Calculate total exported wallet value
   useEffect(() => {
+    const totalValue = Math.min(localExportAmount, vatopCombinations.acVactTas) * bitcoinPrice;
+
+    if (localExportAmount > vatopCombinations.acVactTas) {
+      setLocalTotalExportedWalletValue(0);
+      setLocalYouWillLose(0);
+    } else {
+      setLocalTotalExportedWalletValue(totalValue);
+    }
+  }, [localExportAmount, bitcoinPrice, vatopCombinations.acVactTas]);
+
+// Total Exported Wallet Value Calculation
+useEffect(() => {
+  if (localExportAmount > vatopCombinations.acVactTas) {
+    setLocalTotalExportedWalletValue(vatopCombinations.acVactTas * bitcoinPrice);
+  } else {
     setLocalTotalExportedWalletValue(localExportAmount * bitcoinPrice);
-  }, [localExportAmount, bitcoinPrice]);
-  useEffect(() => {
-    const calculateYouWillLose = () => {
-      if (vatopGroups.length === 0 || localExportAmount === 0) {
-        setLocalYouWillLose(0);
-        return;
-      }
-  
-      // Calculate the combined loss for all negative cdVatop groups
-      const totalLoss = vatopGroups
-        .filter(group => group.cdVatop < 0)
-        .reduce((acc, group) => {
-          const lossFraction = Math.min(localExportAmount / group.cVactTa, 1);
-          const groupLoss = group.cdVatop * lossFraction;
-          return acc + groupLoss;
-        }, 0); 
-      setLocalYouWillLose(Math.abs(totalLoss));
-    };
-  
-    calculateYouWillLose();
-  }, [vatopGroups, localExportAmount]);
+  }
+}, [localExportAmount, bitcoinPrice, vatopCombinations.acVactTas]);
+
+  // Calculate losses
+// You Will Lose Calculation
+useEffect(() => {
+  if (localExportAmount > vatopCombinations.acVactTas) {
+    setLocalYouWillLose(vatopGroups.reduce((acc, group) => {
+      const lossFraction = Math.min(vatopCombinations.acVactTas / group.cVactTa, 1);
+      const groupLoss = group.cdVatop * lossFraction;
+      return acc + groupLoss;
+    }, 0));
+  } else {
+    setLocalYouWillLose(vatopGroups.reduce((acc, group) => {
+      const lossFraction = Math.min(localExportAmount / group.cVactTa, 1);
+      const groupLoss = group.cdVatop * lossFraction;
+      return acc + groupLoss;
+    }, 0));
+  }
+}, [vatopGroups, localExportAmount, vatopCombinations.acVactTas]);
 
 
 
-
+console.log('vatopGroups: ', vatopGroups);
+console.log('vatopCombinations:', vatopCombinations);
+console.log('transactions: ', transactions);
 
 
 
@@ -110,7 +131,10 @@ const HPMTester: React.FC = () => {
 
 
 
-
+  const handleExportClick = () => {
+    const maxExportableAmount = Math.min(localExportAmount);
+    handleExport(maxExportableAmount, recipientAddress);
+  };
 
 
 
@@ -214,11 +238,6 @@ const HPMTester: React.FC = () => {
       }
     };
   
-    const formatBitcoinAmount = (amount: number) => {
-      const decimalPlaces = 7; 
-      return Number(amount.toFixed(decimalPlaces)); 
-    };
-  
     const groupedTransactions = transactions.reduce((acc: Record<string, (Transactions & ParsedProperties)[]>, transaction: Transactions) => {
       // Parse transaction amounts
       const parsedSoldAmount = typeof transaction.soldAmount === 'string' ? parseJSON(transaction.soldAmount) : undefined;
@@ -271,22 +290,22 @@ const HPMTester: React.FC = () => {
           <div key={index}>
             {transaction.parsedSoldAmount && (
               <p>
-                Sold: Bitcoin Amount: {formatBitcoinAmount(transaction.parsedSoldAmount.bitcoinAmount)}, For: ${transaction.parsedSoldAmount.amount}
+                Sold: Bitcoin Amount: {formatNumber(transaction.parsedSoldAmount.bitcoinAmount)}, For: ${formatCurrency(transaction.parsedSoldAmount.amount)}
               </p>
             )}
             {transaction.parsedBoughtAmount && (
               <p>
-                Bought: Bitcoin Amount: {formatBitcoinAmount(transaction.parsedBoughtAmount.bitcoinAmount)}, For: ${transaction.parsedBoughtAmount.amount}
+                Bought: Bitcoin Amount: {formatNumber(transaction.parsedBoughtAmount.bitcoinAmount)}, For: ${formatCurrency(transaction.parsedBoughtAmount.amount)}
               </p>
             )}
             {transaction.parsedWithdrewAmount && (
               <p>
-                Withdrew: Amount: ${transaction.parsedWithdrewAmount.bitcoinAmount}, To: {transaction.parsedWithdrewAmount.link}
+                Withdrew: Amount: ${formatCurrency(transaction.parsedWithdrewAmount.bitcoinAmount)}, To: {transaction.parsedWithdrewAmount.link}
               </p>
             )}
             {transaction.parsedExportedAmount && (
               <p>
-                Exported: Bitcoin Amount: {formatBitcoinAmount(transaction.parsedExportedAmount.bitcoinAmount)}, To: {transaction.parsedExportedAmount.link}
+                Exported: Bitcoin Amount: {transaction.parsedExportedAmount.bitcoinAmount}, To: {transaction.parsedExportedAmount.link}
               </p>
             )}
           </div>
@@ -305,41 +324,49 @@ const HPMTester: React.FC = () => {
 
 
 
-
-
-
-
-
-
   return (
     <div>
       <h1>HPM Tester</h1>
       <div>
         <label>
-          Bitcoin Price: ${bitcoinPrice}
+          Bitcoin Price: ${formatBitcoinCurrency(bitcoinPrice)}
         </label>
       </div>
       <div>
         <label>
           Buy Amount:
-          <input type="number" value={buyAmount} onChange={handleBuyAmountChange} />
+          <input type="number" value={
+            buyAmount
+            } onChange={
+              handleBuyAmountChange
+              } />
         </label>
         <button onClick={() => handleBuy(buyAmount)}>Buy</button>
       </div>
       <div>
         <label>
           Sell Amount:
-          <input type="number" value={sellAmount} onChange={handleSellAmountChange} />
+          <input type="number" value={
+            sellAmount
+            } onChange={
+              handleSellAmountChange
+              } />
         </label>
         <button onClick={() => handleSell(sellAmount)}>Sell</button>
       </div>
       <div>
-        <label>
-          Export Amount:
-          <input type="number" value={localExportAmount} onChange={handleExportAmountChange} />
-        </label>
-        <button onClick={() => handleExport(localExportAmount)}>Export</button>
-      </div>
+      <label>
+        Export Amount:
+        <input type="number" value={localExportAmount} onChange={handleExportAmountChange} />
+      </label>
+      <button onClick={handleExportClick}>Export</button>
+    </div>
+    <div>
+      <label>
+        Recipient Address:
+        <input type="text" value={recipientAddress} onChange={(e) => setRecipientAddress(e.target.value)} />
+      </label>
+    </div>
       <div>
         <label>
           Import Amount:
@@ -348,18 +375,18 @@ const HPMTester: React.FC = () => {
         <button onClick={handleImportClick}>Import</button>
       </div>
       <div>
-        <h2>Total Exported Wallet Value: {formatCurrency(localTotalExportedWalletValue)}</h2>
-        <h2>You Will Lose: {formatCurrency(localYouWillLose)}</h2>
+        <h2>Total Exported Wallet Value: {formatBitcoinCurrencyInput(localTotalExportedWalletValue)}</h2>
+        <h2>You Will Lose: {formatBitcoinCurrencyInput(localYouWillLose)}</h2>
       </div>
       <div>
-        <h2>HPAP: {formatCurrency(hpap)}</h2>
+        <h2>HPAP: {formatBitcoinCurrency(hpap)}</h2>
         <h2>Vatop Groups:</h2>
         {vatopGroups.length > 0 ? (
           vatopGroups.map((group, index) => (
             <div key={index}>
               <h3>Vatop Group {index + 1}</h3>
               <p>cVatop: {formatCurrency(group.cVatop)}</p>
-              <p>cpVatop: {formatCurrency(group.cpVatop)}</p>
+              <p>cpVatop: {formatBitcoinCurrency(group.cpVatop)}</p>
               <p>cVact: {formatCurrency(group.cVact)}</p>
               <p>cVactTa: {formatNumber(group.cVactTa)}</p>
               <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
@@ -398,12 +425,27 @@ const formatCurrency = (value: number | null | undefined): string => {
   return valueInBTC.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Format as currency
 };
 
+const formatBitcoinCurrencyInput = (value: number | null | undefined): string => {
+  if (value === null || value === undefined) {
+    return '0.00';
+  }
+  return value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Limit to 2 decimals and format with commas
+};
+
+const formatBitcoinCurrency = (value: number | null | undefined): string => {
+  if (value === null || value === undefined) {
+    return '0';
+  }
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Format with commas
+};
+
 const formatNumber = (value: number | null | undefined, decimals: number = 7): string => {
   if (value === null || value === undefined) {
-    return '0.0000000';
+    return '0.00';
   }
   const valueInBTC = value / 100000000; // Convert from satoshis to bitcoins
   return valueInBTC.toFixed(decimals); // Format with specified decimals
 };
+
 
 export default HPMTester;

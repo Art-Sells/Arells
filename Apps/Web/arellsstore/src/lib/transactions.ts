@@ -117,7 +117,7 @@ export const createWithdrewAmountTransaction = async (email: string, withdrewAmo
 
 export const createExportedAmountTransaction = async (email: string, exportedAmount: number, transactionHash: string): Promise<Transactions> => {
   const date = await fetchCurrentDatePST();
-  const transactionLink = `https://www.blockchain.com/explorer/transactions/btc/${transactionHash}`;
+  const transactionLink = `${transactionHash}`;
   const transactionString = createTransactionStringTwo(date, exportedAmount, transactionLink);
   const newTransaction: Transactions = {
     soldAmount: '',

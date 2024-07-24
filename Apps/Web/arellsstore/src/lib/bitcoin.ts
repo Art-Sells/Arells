@@ -43,27 +43,34 @@ export const createTransaction = async (
   recipientAddress: string,
   amount: number,
   fee: number
-): Promise<string> => {
+): Promise<{ txHex: string, txId: string }> => {
   const tinySecp256k1 = await loadTinySecp256k1();
   const ECPairFactory = (await import('ecpair')).default;
   const ECPair = ECPairFactory(tinySecp256k1);
 
   const keyPair = ECPair.fromWIF(senderPrivateKey);
-
-  // Get unspent transaction outputs (UTXOs) for the sender's address
   const senderAddress = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey }).address!;
+  
+  // Get unspent transaction outputs (UTXOs) for the sender's address
   const utxosResponse = await axios.get(`https://blockchain.info/unspent?active=${senderAddress}`);
   const utxos = utxosResponse.data.unspent_outputs;
+
+  // Log UTXOs for debugging
+  console.log('Fetched UTXOs:', utxos);
 
   const psbt = new bitcoin.Psbt({ network: bitcoin.networks.bitcoin });
 
   let inputSum = 0;
   for (const utxo of utxos) {
+    const utxoTxResponse = await axios.get(`https://blockchain.info/rawtx/${utxo.tx_hash_big_endian}?format=hex`);
+    const utxoTxHex = utxoTxResponse.data;
+
     psbt.addInput({
       hash: utxo.tx_hash_big_endian,
       index: utxo.tx_output_n,
-      nonWitnessUtxo: Buffer.from(utxo.script, 'hex'),
+      nonWitnessUtxo: Buffer.from(utxoTxHex, 'hex'),
     });
+
     inputSum += utxo.value;
     if (inputSum >= amount + fee) break;
   }
@@ -88,7 +95,15 @@ export const createTransaction = async (
   psbt.signAllInputs(keyPair);
   psbt.finalizeAllInputs();
 
-  return psbt.extractTransaction().toHex();
+  const tx = psbt.extractTransaction();
+  const txHex = tx.toHex();
+  const txId = tx.getId(); // Extract txid from the transaction
+
+  // Log the final transaction hex for debugging
+  console.log('Created transaction hex:', txHex);
+  console.log('Transaction ID:', txId);
+
+  return { txHex, txId };
 };
 
 export default { getBalance, loadWallet, createTransaction };

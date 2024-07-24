@@ -15,9 +15,13 @@
 - - handleBuy/handleSell/handleWithdraw (add try, awaits and catch to ensures the entire process is successful before updating backend information)
 - - acVactTas <- add a useEffect that constantly updates based on Total Bitcoin Amount from Bitcoin Wallet
 
+### login
+- loading stays true forever... add "await"?
+
 ### Account
+- Test with "manualBitcoinPrice" editing from CoinGecko API for selling/holding and selling page functionaliries.
 - if acVactsAts = 0 sell display none, holding display true, else opposite
-- Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) every 10 seconds from coin gecko API wrapper?
+- Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) with Sell/Hold button 10 second intervals from coin gecko API wrapper?
 - 1 second loader for all pages
 
  #### (B) Price = Bitcoin Price API 
@@ -166,11 +170,13 @@ else:
 ### Sign Up
 - Verify Email *important*
 - Add noreply@arells.com to Amazon SES Identities
-- - - Test to see if "Confirmation Code Exists" error works...
+- - Test to see if "Confirmation Code Exists" error works...
 
 ### Confirm
 - - - Ensure Private Key is Encrypted (if successful)
-- - - HPM Vatop Groups saved as tables within api/user?
+
+### Export
+- Increase fees for faster exports
 
 ### Log In
 - - if email already exists but is unconfirmed -> Confirm Page
