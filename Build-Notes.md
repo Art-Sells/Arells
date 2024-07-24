@@ -3,8 +3,6 @@
 ## Arells Cryptocurrency Marketplace MVP
 
 ### Testing
-- Test Export process... 
-- - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information)
 - **Possibly a plaid wraper (saves bank account/plaid info if connected)**
 - - Bank Account Json Info? (pending approval)
 - - - Plaid Info (pending approval)
@@ -13,10 +11,6 @@
 - - Buy/Sell buttons connect to plaid (if not connected)
 - - Separate Bitcoin Wallet Page where handleBuy, handleSell and handleExport pages handle changes from and to first.
 - - handleBuy/handleSell/handleWithdraw (add try, awaits and catch to ensures the entire process is successful before updating backend information)
-- - acVactTas <- add a useEffect that constantly updates based on Total Bitcoin Amount from Bitcoin Wallet
-
-### login
-- loading stays true forever... add "await"?
 
 ### Account
 - Test with "manualBitcoinPrice" editing from CoinGecko API for selling/holding and selling page functionaliries.
@@ -45,38 +39,16 @@
  #### Profits
  - displays $ acdVatops
 
- #### Export (Page)
-
  #### Amount Sold
  - Displays "Sold Amount" from Database $, else, "$0"
- - (Withdraw)-> Withdraw Page
+ - (Withdraw)-> Modal
+ - - Modal:
+    - - - (Bank) Withdrawing 
+    - - -  (Check) Withdraw Complete (View Transactions adds Date (logs new Date in "Transaction Dates" database), (B) and link to Bank Account to "Withdrew Amount in Database")-> Transactions
+    - - - (X) Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
 
  #### Log Out (Redirects to Home)
 
-### Import
-- Pull Bitcoin Address From Backend
-
-### Export
-**Pull handleExport from HPMContext and edit saveVatopGroups import for success and error modal handling.**
-- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- (W) Wallet: Displays acVatops.
-- (B) Amount: Displays acVactTas 7 decimals long maximum
-- Export Amount Input: (tel no * or #) see HPMTester
-- Export Address Input: (tel no * or #) see HPMTester
-- Exporting
-- (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page) 7 decimals long maximum)
-- Total exported wallet value: see HPMTester
-- You will lose: see HPMTester
-- (CANCEL) -> Account Page, 
-- (EXPORT) -> Modal
-- - Modal:
-- - - Exporting (3 second delay) see HPMTester 
-- - - Successfuly Exported (exporting modal = false, adds Date (logs new Date in "Transaction Dates" database), cVactTas exported to "Exported Amount" and link to Block Exporer to "Exported Link" in Database) (View Transactions)-> Transactions-
-- - - Export Failed (exporting modal = false)(OK) (if export fails (see HPMTester))
-- - - Check Address (exporting modal = false)(if Bitcoin Address is not in right format (refer to Bitcoin Page))
-- - - Enter information (exporting modal = false) (if one or more fields are empty)
-- - - Send more Bitcoin (exporting modal = false) (refer to Bitcoin Page for fee limit)
-- Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
 
 ### Buy
 **Pull handleBuy from HPMContext & BoughtAmountContext and edit saveVatopGroups import for success and error modal handling.**
@@ -113,6 +85,77 @@ else:
 - - - - Enter information (if one or more fields are empty)
 - Reloads modules every 10 seconds (price, wallet, and profits animation css) from coin gecko API wrapper?
 
+
+### After Full API/Wrapper Testing
+- Update Blockchain.info API to Amplify (IP) API
+
+### Important
+- Create separate Wallet to handle where we get our 3% fee... (Stripe?)
+- Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
+
+### Other (if Time Permits)
+- Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
+- Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
+- Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
+- Contact us (Account/Home): Email
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Arells Cryptocurrency Marketplace 1.5 - 2
+
+### Important:
+- Resolve "HPMContext" errors that show "cannot find email, Error fetching Bitcoin Price, etc etc" from console.log if pages don't need them...
+- Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/HPMContext
+
+### Testing
+- Test Export process... 
+- - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information)
+
+### Account
+- Import
+- Export
+
+### Testing
+- Test Export process... 
+- - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information)
+
 ### Transactions
 **From Transactions Attribute (API)**
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
@@ -141,22 +184,31 @@ else:
 - (A) -> Account Page (B) ->Buy Page
 - Plaid info from Plaid Wrapper?
 
-### After Full API/Wrapper Testing
-- Update Blockchain.info API to Amplify (IP) API
+### Import
+- Pull Bitcoin Address From Backend
+- - acVactTas <- add a useEffect that constantly updates based on Total Bitcoin Amount from Bitcoin Wallet
 
-### Important
-- Create separate Wallet to handle where we get our 3% fee... (Stripe?)
-- Resolve "HPMContext" errors that show "cannot find email, Error fetching Bitcoin Price, etc etc" from console.log if pages don't need them...
-- Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/HPMContext
-- Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
-
-### Other (if Time Permits)
-- Fix (signOut log-in issue)
-- Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
-- Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
-- Contact us (Account/Home): Email
-
-## Arells Cryptocurrency Marketplace 1.5
+### Export
+**Pull handleExport from HPMContext and edit saveVatopGroups import for success and error modal handling.**
+- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
+- (W) Wallet: Displays acVatops.
+- (B) Amount: Displays acVactTas 7 decimals long maximum
+- Export Amount Input: (tel no * or #) see HPMTester
+- Export Address Input: (tel no * or #) see HPMTester
+- Exporting
+- (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page) 7 decimals long maximum)
+- Total exported wallet value: see HPMTester
+- You will lose: see HPMTester
+- (CANCEL) -> Account Page, 
+- (EXPORT) -> Modal
+- - Modal:
+- - - Exporting (3 second delay) see HPMTester 
+- - - Successfuly Exported (exporting modal = false, adds Date (logs new Date in "Transaction Dates" database), cVactTas exported to "Exported Amount" and link to Block Exporer to "Exported Link" in Database) (View Transactions)-> Transactions-
+- - - Export Failed (exporting modal = false)(OK) (if export fails (see HPMTester))
+- - - Check Address (exporting modal = false)(if Bitcoin Address is not in right format (refer to Bitcoin Page))
+- - - Enter information (exporting modal = false) (if one or more fields are empty)
+- - - Send more Bitcoin (exporting modal = false) (refer to Bitcoin Page for fee limit)
+- Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
 
 ### KYC/AML
 - Add this to Plaid API

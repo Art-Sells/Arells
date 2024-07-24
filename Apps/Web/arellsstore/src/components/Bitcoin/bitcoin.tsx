@@ -117,6 +117,7 @@ const Bitcoin: React.FC = () => {
     return balanceInBTC.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
   };
   console.log('bitcoinAddress', bitcoinAddress)
+  console.log('balance: ', balance );
 
   return (
     <div>
