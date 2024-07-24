@@ -12,7 +12,7 @@ axiosRetry(axios, {
 let manualBitcoinPrice: number | null = null;
 
 // Function to set the manual Bitcoin price
-export const setManualBitcoinPrice = (price: number): void => {
+export const setManualBitcoinPrice = (price: number | null): void => {
   manualBitcoinPrice = price;
 };
 
@@ -80,10 +80,20 @@ export const updateManualBitcoinPrice = async (): Promise<number> => {
   return price;
 };
 
-// Example usage: Manually set the Bitcoin price without logging
+// Example usage: Manually set the Bitcoin price
 (async () => {
   try {
-    await updateManualBitcoinPrice();
+    // Set manual Bitcoin price to 70000
+    setManualBitcoinPrice(60000);
+
+    // Fetch current price (should return 70000)
+    let currentPrice = await fetchBitcoinPrice();
+
+    // // Reset to live price
+    // setManualBitcoinPrice(null);
+
+    // // Fetch current price (should fetch live price)
+    // currentPrice = await fetchBitcoinPrice();
   } catch (error) {
     console.error('Error updating manual Bitcoin price:', error);
   }

@@ -171,26 +171,22 @@ const HPMTester: React.FC = () => {
 
 
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await axios.get<{ transactions: Transactions[] }>(`/api/fetchVatopGroups?email=${email}`);
-        const fetchedTransactions = response.data.transactions || [];
-        setTransactions(fetchedTransactions);
-      } catch (error) {
-        console.error('Error fetching transactions:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchTransactions = async () => {
+  //     try {
+  //       const response = await axios.get<{ transactions: Transactions[] }>(`/api/fetchVatopGroups?email=${email}`);
+  //       const fetchedTransactions = response.data.transactions || [];
+  //       setTransactions(fetchedTransactions);
+  //     } catch (error) {
+  //       console.error('Error fetching transactions:', error);
+  //     }
+  //   };
   
-    fetchTransactions();
-    const interval = setInterval(fetchTransactions, 2000); // Check every 2 seconds
+  //   fetchTransactions();
+  //   const interval = setInterval(fetchTransactions, 2000); // Check every 2 seconds
   
-    return () => clearInterval(interval);
-  }, [email]);
-
-
-
-
+  //   return () => clearInterval(interval);
+  // }, [email]);
 
 
 
