@@ -73,15 +73,27 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [refreshData, setRefreshData] = useState<boolean>(false);
 
   const updateVatopCombinations = (groups: VatopGroup[]): VatopCombinations => {
-  
     const acVatops = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVatop, 0);
     const acVacts = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVact, 0);
     const acVactTas = groups.reduce((acc: number, group: VatopGroup) => acc + group.cVactTa, 0);
     const acdVatops = groups.reduce((acc: number, group: VatopGroup) => {
-      return group.cdVatop > 0 ? acc + group.cdVatop : acc;
+      const initialCost = group.cVactTa * group.cpVatop;
+      const currentValue = group.cVactTa * bitcoinPrice;
+      const profit = currentValue - initialCost;
+      return profit > 0 ? acc + profit : acc;
     }, 0);
-    const acVactsAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVact : acc, 0);
-    const acVactTaAts = groups.reduce((acc: number, group: VatopGroup) => group.cdVatop > 0 ? acc + group.cVactTa : acc, 0);
+    const acVactsAts = groups.reduce((acc: number, group: VatopGroup) => {
+      const initialCost = group.cVactTa * group.cpVatop;
+      const currentValue = group.cVactTa * bitcoinPrice;
+      const profit = currentValue - initialCost;
+      return profit > 0 ? acc + group.cVact : acc;
+    }, 0);
+    const acVactTaAts = groups.reduce((acc: number, group: VatopGroup) => {
+      const initialCost = group.cVactTa * group.cpVatop;
+      const currentValue = group.cVactTa * bitcoinPrice;
+      const profit = currentValue - initialCost;
+      return profit > 0 ? acc + group.cVactTa : acc;
+    }, 0);
   
     const updatedCombinations: VatopCombinations = {
       acVatops,
@@ -130,45 +142,42 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
 
-  const fetchVatopGroups = useCallback(async () => {
-    try {
-      if (!email) {
-        console.warn('No email provided, skipping fetchVatopGroups');
-        return;
-      }
-  
-      const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
-      const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
-      const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || {};
-      const fetchedSoldAmounts: number = response.data.soldAmounts || 0;
-  
-      const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
-        const newCVact = group.cVactTa * bitcoinPrice;
-        const newCdVatop = (group.cVactTa * bitcoinPrice) - group.cVatop;
-  
-        return {
-          ...group,
-          cVact: newCVact,
-          cdVatop: newCdVatop,
-          cVatop: group.cVatop,
-          cpVatop: group.cpVatop,
-          cVactTa: group.cVactTa,
-        };
-      }).filter(group => group.cVact > 0 && group.cVatop > 0);
-
-  
-      setVatopGroups(updatedVatopGroups);
-  
-      if (fetchedSoldAmounts !== soldAmounts) {
-        setSoldAmount(fetchedSoldAmounts);
-      }
-  
-      updateVatopCombinations(updatedVatopGroups);
-  
-    } catch (error) {
-      console.error('Error fetching vatop groups:', error);
+const fetchVatopGroups = useCallback(async () => {
+  try {
+    if (!email) {
+      console.warn('No email provided, skipping fetchVatopGroups');
+      return;
     }
-  }, [email, bitcoinPrice, soldAmounts]);
+
+    const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
+    const fetchedVatopGroups: VatopGroup[] = response.data.vatopGroups || [];
+    const fetchedVatopCombinations: VatopCombinations = response.data.vatopCombinations || {};
+    const fetchedSoldAmounts: number = response.data.soldAmounts || 0;
+
+    const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
+      const initialCost = group.cVactTa * group.cpVatop;
+      const currentValue = group.cVactTa * bitcoinPrice;
+      const profit = currentValue - initialCost;
+
+      return {
+        ...group,
+        cVact: group.cVactTa * bitcoinPrice,
+        cdVatop: profit,
+      };
+    }).filter(group => group.cVact > 0 && group.cVatop > 0);
+
+    setVatopGroups(updatedVatopGroups);
+
+    if (fetchedSoldAmounts !== soldAmounts) {
+      setSoldAmount(fetchedSoldAmounts);
+    }
+
+    updateVatopCombinations(updatedVatopGroups);
+
+  } catch (error) {
+    console.error('Error fetching vatop groups:', error);
+  }
+}, [email, bitcoinPrice, soldAmounts]);
   
 
 
