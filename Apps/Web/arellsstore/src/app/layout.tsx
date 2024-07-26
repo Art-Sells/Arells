@@ -20,6 +20,7 @@ export default function RootLayout({ children }: LayoutProps) {
     <html lang="en">
       <head>
         <link rel="shortcut icon" href="/ArellsBitcoin.png" />
+        <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
       </head>
       <body>
         <ConfigureAmplifyClientSide />

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import React, { useCallback, useEffect, useState } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { usePlaidLink } from 'react-plaid-link';
 
@@ -14,7 +15,9 @@ const Bitcoin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [linkToken, setLinkToken] = useState<string | null>(null);
+  const [tokenCreated, setTokenCreated] = useState<boolean>(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [bankAccount, setBankAccount] = useState<string>('');
 
   useEffect(() => {
     const fetchAttributes = async () => {
@@ -59,21 +62,6 @@ const Bitcoin: React.FC = () => {
     };
     fetchFeeRate();
   }, []);
-
-  useEffect(() => {
-    const createLinkToken = async () => {
-      if (email) {
-        const res = await fetch('/api/create-link-token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-        const data = await res.json();
-        setLinkToken(data.link_token);
-      }
-    };
-    createLinkToken();
-  }, [email]);
 
   const sendBitcoin = async () => {
     if (!bitcoinAddress || !bitcoinPrivateKey) {
@@ -135,82 +123,113 @@ const Bitcoin: React.FC = () => {
     return balanceInBTC.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
   };
 
-  const onSuccess = async (public_token: string) => {
-    const res = await fetch('/api/exchange-public-token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ public_token }),
-    });
-    const data = await res.json();
-    setAccessToken(data.access_token);
-  };
-
-  const config = {
-    token: linkToken!,
-    onSuccess,
-  };
-
-  const { open, ready } = usePlaidLink(config);
-
-  const buyBitcoin = async () => {
-    if (!accessToken) {
-      open();
-      return;
-    }
-
+  const fetchBankAccountStatus = async () => {
     try {
-      const res = await fetch('/api/kraken/buy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
-      });
-
+      const res = await fetch(`/api/fetch-bank-account?email=${email}`);
       const data = await res.json();
-      if (res.ok) {
-        alert(`Buy order placed successfully! TX ID: ${data.result.txid}`);
-      } else {
-        console.error('Response data on error:', data);
-        alert(`Error: ${data.error}`);
-      }
+      setBankAccount(data.bankAccount || '');
     } catch (error) {
-      console.error('Error in placing buy order:', error);
-      alert('An unknown error occurred');
+      console.error('Error fetching bank account status:', error);
     }
   };
 
-  const sellBitcoin = async () => {
-    if (!accessToken) {
-      open();
-      return;
-    }
+  useEffect(() => {
+    fetchBankAccountStatus();
+  }, [email]);
 
-    try {
-      const res = await fetch('/api/kraken/sell', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        alert(`Sell order placed successfully! TX ID: ${data.result.txid}`);
-      } else {
-        console.error('Response data on error:', data);
-        alert(`Error: ${data.error}`);
+  const createLinkToken = async () => {
+    if (email) {
+      try {
+        const res = await fetch('/api/create-link-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        if (!res.ok) {
+          throw new Error(`Error creating link token: ${res.statusText}`);
+        }
+        const data = await res.json();
+        setLinkToken(data.link_token);
+        console.log('Link token fetched from API:', data.link_token);
+      } catch (error: any) {
+        console.error('Error creating link token:', error);
+        setError('Failed to create link token');
       }
-    } catch (error) {
-      console.error('Error in placing sell order:', error);
-      alert('An unknown error occurred');
     }
   };
+
+  const connectBank = async () => {
+    if (!bankAccount) {
+      await createLinkToken();
+  
+      return; // Exit the function and let the useEffect handle the rest
+    }
+  };
+  useEffect(() => {
+    const initializePlaidLink = () => {
+      if (linkToken) {
+        const handler = (window as any).Plaid.create({
+          token: linkToken,
+          onSuccess: async (public_token: string, metadata: any) => {
+            console.log('Public Token:', public_token);
+  
+            // Set bankAccount to public_token
+            setBankAccount(public_token);
+  
+            // Update the bank account attribute with the public_token
+            await fetch('/api/update-bank-account', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, bankAccount: public_token }),
+            });
+  
+            // Fetch the updated bank account status
+            fetchBankAccountStatus();
+
+          },
+          onExit: (err: any, metadata: any) => {
+            // Open blank out back Modal here
+          },
+          onEvent: (eventName: string, metadata: any) => {
+            // handle event
+          }
+        });
+        handler.open();
+      }
+    };
+  
+    if (!bankAccount && linkToken) {
+      initializePlaidLink();
+    }
+  }, [linkToken, bankAccount]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div>
       <div>
-        <h2>Bitcoin Wallet</h2>
         <p>Address</p>
         <p>{bitcoinAddress}</p>
         <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
+        
         <div>
           <h2>Send Bitcoin</h2>
           <input
@@ -231,11 +250,7 @@ const Bitcoin: React.FC = () => {
           {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
       </div>
-      <div>
-        <button onClick={() => open()} disabled={!ready}>
-          Connect Bank Account
-        </button>
-      </div>
+      
       <div>
         <h2>Buy/Sell Bitcoin</h2>
         <input
@@ -245,12 +260,10 @@ const Bitcoin: React.FC = () => {
           onChange={(e) => setAmount(e.target.value)}
         />
         <br />
-        <button onClick={buyBitcoin}>Buy Bitcoin</button>
-        <button onClick={sellBitcoin}>Sell Bitcoin</button>
+        <button onClick={connectBank}>CONNECT BANK ACCOUNT</button>
       </div>
     </div>
   );
- 
 };
 
 export default Bitcoin;

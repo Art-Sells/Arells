@@ -14,16 +14,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!email) {
     return res.status(400).json({ error: 'Missing email' });
   }
-
+  
+  const key = `${email}/bank-account.json`;
+  
   try {
-    const key = `${email}/bank-account.json`;
     const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
     const bankAccountData = JSON.parse(data.Body!.toString());
-
+  
     return res.status(200).json(bankAccountData);
-  } catch (error) {
-    const errorMessage = (error as Error).message || 'Failed to fetch bank account status';
-    console.error('Error fetching bank account status:', errorMessage);
+  } catch (error: any) {
+    console.error('Error fetching bank account:', error);
+    const errorMessage = (error as Error).message || 'Failed to fetch bank account';
     return res.status(500).json({ error: errorMessage });
   }
 };

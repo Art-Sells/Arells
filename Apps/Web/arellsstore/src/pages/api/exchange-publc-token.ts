@@ -1,4 +1,3 @@
-// /pages/api/exchange-public-token.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
 

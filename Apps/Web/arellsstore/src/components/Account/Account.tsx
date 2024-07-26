@@ -16,6 +16,8 @@ const Account: React.FC = () => {
   };
 
   const [showLoading, setLoading] = useState<boolean>(true);
+  const [walletConnected, setWalletConnected] = useState<boolean>(false);
+  const [walletNotConnected, setWalletNotConnected] = useState<boolean>(true);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     accountLogo: false,
   });
@@ -70,7 +72,10 @@ const Account: React.FC = () => {
         <span id="descriptioner-account-cryptor">FOR PROFITS</span>
       </p>
 
-      <div id="wallet-account-wrapper">
+      {walletNotConnected && (
+        <div id="wallet-account-wrapper-null">
+
+
         <div id="b-price-account">
           <span>
             <div id="b-account-wrapper">
@@ -92,36 +97,20 @@ const Account: React.FC = () => {
           </span></span>
         </div>
 
-        <div id="transfer-buy-account">
-          <span>
-            <button id="buy-account">BUY</button>
-          </span>
-          <span>
-            <button id="transfer-account">IMPORT</button>
-          </span>
-          {/* <span>
-            <button id="sell-account">SELL</button>
-          </span> */}
-          <span>
-            <button id="holding-account">HOLDING</button>
-          </span>
-        </div>
 
-        <div id="sell-wrapper-account">
-          <div id="a-price-account">
-            <span>
-              <div id="a-account-wrapper">
-                <Image
-                  loader={imageLoader}
-                  onLoad={() => handleImageLoaded('accountLogo')}
-                  alt=""
-                  width={20}
-                  height={20}
-                  id="arells-account"
-                  src="images/howitworks/ArellsBitcoin.png"
-                />
-              </div>
-            </span>
+        <div id="amount-sold-account-wrapper-null">
+          <button id="withdraw-account-null">CONNECT BANK</button>
+          <p id="amount-sold-number-account-num-null">
+            Buy small amounts 
+            of Bitcoin. Always 
+            sell them for Profits.
+          </p>
+        </div>
+      </div>
+        )}
+        {walletConnected && (
+          <div id="wallet-account-wrapper">
+          <div id="b-price-account">
             <span>
               <div id="b-account-wrapper">
                 <Image
@@ -130,85 +119,137 @@ const Account: React.FC = () => {
                   alt=""
                   width={20}
                   height={20}
-                  id="bitcoin-account-wallet"
+                  id="bitcoin-account"
                   src="images/howitworks/Bitcoin.png"
                 />
               </div>
             </span>
-            <span id="holding-price-account">Price:</span>
-            <span id="holding-price-number-account">$
-              <span id="holding-price-number-account-num">
+            <span id="price-account">Price:</span>
+            <span id="price-number-account">$
+              <span id="price-number-account-num">
               {formattedPrice}
-              </span>
-            </span>
+            </span></span>
           </div>
-          <div id="b-price-account-wallet">
-            <span>
-              <div id="w-account-wrapper">
-                <Image
-                  loader={imageLoader}
-                  onLoad={() => handleImageLoaded('accountLogo')}
-                  alt=""
-                  width={20}
-                  height={20}
-                  id="wallet-icon-account"
-                  src="images/market/wallet.png"
-                />
-              </div>
-            </span>
-            <span id="wallet-account">Wallet:</span>
-            <span id="wallet-number-account">$
-              <span id="wallet-number-account-num">
-                0
+            <div id="transfer-buy-account">
+              <span>
+                <button id="buy-account">BUY</button>
               </span>
-            </span>
-          </div>
+              {/* <span>
+                <button id="transfer-account">IMPORT</button>
+              </span> */}
+              {/* <span>
+                <button id="sell-account">SELL</button>
+              </span> */}
+              <span>
+                <button id="holding-account">HOLDING</button>
+              </span>
+            </div>
 
-          <div id="b-profits-account">
-            <span>
-              <div id="w-account-wrapper">
-                <Image
-                  loader={imageLoader}
-                  onLoad={() => handleImageLoaded('accountLogo')}
-                  alt=""
-                  width={20}
-                  height={20}
-                  id="profits-icon-account"
-                  src="images/howitworks/up-arrow-ebony.png"
-                />
-              </div>
-            </span>
-            <span id="wallet-account-profits">Profits:</span>
-            <span id="wallet-number-profits-account">$
-              <span id="wallet-number-profits-account-num">
-                0
+
+          <div id="sell-wrapper-account">
+            <div id="a-price-account">
+              <span>
+                <div id="a-account-wrapper">
+                  <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="arells-account"
+                    src="images/howitworks/ArellsBitcoin.png"
+                  />
+                </div>
               </span>
-            </span>
+              <span>
+                <div id="b-account-wrapper">
+                  <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="bitcoin-account-wallet"
+                    src="images/howitworks/Bitcoin.png"
+                  />
+                </div>
+              </span>
+              <span id="holding-price-account">Price:</span>
+              <span id="holding-price-number-account">$
+                <span id="holding-price-number-account-num">
+                {formattedPrice}
+                </span>
+              </span>
+            </div>
+            <div id="b-price-account-wallet">
+              <span>
+                <div id="w-account-wrapper">
+                  <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="wallet-icon-account"
+                    src="images/market/wallet.png"
+                  />
+                </div>
+              </span>
+              <span id="wallet-account">Wallet:</span>
+              <span id="wallet-number-account">$
+                <span id="wallet-number-account-num">
+                  0
+                </span>
+              </span>
+            </div>
+
+            <div id="b-profits-account">
+              <span>
+                <div id="w-account-wrapper">
+                  <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="profits-icon-account"
+                    src="images/howitworks/up-arrow-ebony.png"
+                  />
+                </div>
+              </span>
+              <span id="wallet-account-profits">Profits:</span>
+              <span id="wallet-number-profits-account">$
+                <span id="wallet-number-profits-account-num">
+                  0
+                </span>
+              </span>
+            </div>
+          </div>
+          {/* <button id="export-account">EXPORT</button> */}
+
+          <div id="amount-sold-account-wrapper">
+            <div id="amount-sold-num-wrap">
+              <span>
+                <div id="w-account-wrapper">
+                  <Image
+                    loader={imageLoader}
+                    onLoad={() => handleImageLoaded('accountLogo')}
+                    alt=""
+                    width={20}
+                    height={20}
+                    id="wallet-icon-account"
+                    src="images/market/cash-register.png"
+                  />
+                </div>
+              </span>
+              <span id="amount-sold-account-title">Sold: </span>
+              <span id="amount-sold-number-account">$</span>
+              <span id="amount-sold-number-account-num">0</span>
+            </div>
+            <button id="withdraw-account">WITHDRAW</button>
           </div>
         </div>
-        <button id="export-account">EXPORT</button>
-        <div id="amount-sold-account-wrapper">
-          <div id="amount-sold-num-wrap">
-            <span>
-              <div id="w-account-wrapper">
-                <Image
-                  loader={imageLoader}
-                  onLoad={() => handleImageLoaded('accountLogo')}
-                  alt=""
-                  width={20}
-                  height={20}
-                  id="wallet-icon-account"
-                  src="images/market/cash-register.png"
-                />
-              </div>
-            </span>
-            <span id="amount-sold-account-title">Sold: </span>
-            <span id="amount-sold-number-account">$</span>
-            <span id="amount-sold-number-account-num">0</span>
-          </div>
-          <button id="withdraw-account">WITHDRAW</button>
-        </div>
-      </div>
+        )}
 
       <div id="bitcoin-chart-account-wrapper-footer">
         <BitcoinChartAccount />

@@ -60,7 +60,19 @@
 		margin-top: 15px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 660px;
+		height: 585px;
+		width: 380px;
+		background-color: white;
+		border-radius: 30px;
+		/* box-shadow: 0px 5px 40px -15px rgba(215, 181, 138, 1); */
+	}
+	#wallet-account-wrapper-null {
+		padding-top: 40px;
+		padding-bottom: 40px;
+		margin-top: 15px;
+		margin-left: auto;
+		margin-right: auto;
+		height: 240px;
 		width: 380px;
 		background-color: white;
 		border-radius: 30px;
@@ -111,15 +123,15 @@
 						color: white;
 						font-weight: 500;
 						font-size: 10px;
-						padding-top: 10px;
-						padding-bottom: 10px;
+						padding-top: 13px;
+						padding-bottom: 13px;
 						padding-right: 12px;
 						padding-left: 13px;	  
 						border: solid;
 						letter-spacing: 1px;
 						border-radius: 5px;
 						border-width: 0px;
-						width: 80px;
+						width: 90px;
 						opacity: 1;
 						box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
 					}
@@ -160,21 +172,21 @@
 						
 
 					#sell-account {
-						margin-left: 10px;
+						margin-left: 22px;
 						background: black;
 						text-decoration: none;
 						color: white;
 						font-weight: 500;
 						font-size: 10px;
-						padding-top: 10px;
-						padding-bottom: 10px;
+						padding-top: 13px;
+						padding-bottom: 13px;
 						padding-right: 12px;
 						padding-left: 13px;	  
 						border: solid;
 						letter-spacing: 1px;
 						border-radius: 5px;
 						border-width: 0px;
-						width: 80px;
+						width: 90px;
 						opacity: 1;
 						box-shadow: 0px 8px 12px -6px rgba(0, 0, 0, .8); 
 						-webkit-animation-name: animatetop;
@@ -190,20 +202,20 @@
 					}  
 					
 					#holding-account {
-						margin-left: 10px;
+						margin-left: 22px;
 						background-color: rgba(255, 251, 245, 1);
 							text-decoration: none;
 							font-weight: 200;
 							font-size: 10px;
-							padding-top: 10px;
-							padding-bottom: 10px;
+							padding-top: 13px;
+							padding-bottom: 13px;
 							padding-right: 12px;
 							padding-left: 13px;	  
 							border: none;
 							letter-spacing: 1px;
 							border-radius: 5px;
 							border-width: 0px;
-							width: 80px;
+							width: 90px;
 							opacity: 1;
 							color: rgba(112, 63, 0, 0.2); 	
 							box-shadow: 0px 3px 15px 0px rgba(204, 116, 0, 0.2);
@@ -396,6 +408,18 @@
 			box-shadow: 0px 10px 25px -11px rgba(204, 116, 0, 0.25);
 		}		
 
+		#amount-sold-account-wrapper-null {
+			margin-top: 30px;
+			padding-top: 30px;
+			margin-left: auto;
+			margin-right: auto;
+			height: 130px;
+			width: 250px;
+			background-color: rgba(255, 251, 245, 1);
+			border-radius: 30px;
+			box-shadow: 0px 10px 25px -11px rgba(204, 116, 0, 0);
+		}	
+
 
 			#amount-sold-num-wrap {
 				margin-top: -6px;
@@ -431,6 +455,18 @@
 					margin-left: 2px;
 					opacity: 1;
 				}
+				#amount-sold-number-account-num-null {
+					margin-top: 20px;
+					width: 120px;
+					margin-left: auto;
+					margin-right: auto;
+					color: black;
+					font-size: 7px;
+					line-height: 10px;
+					font-weight: 600;
+					letter-spacing: 0px;
+					opacity: 1;
+				}
 
 			#withdraw-account {
 				margin-top: 15px;
@@ -451,8 +487,29 @@
 				opacity: 1;
 				box-shadow: 0px 8px 12px -6px rgba(0, 0, 0, .8);  				  
 				}
+				#withdraw-account-null {
+					margin-top: 15px;
+					background: black;
+					text-decoration: none;
+					color: white;
+					font-weight: 500;
+					font-size: 10px;
+					padding-top: 15px;
+					padding-bottom:15px;
+					padding-right: 13px;
+					padding-left: 14px;	  
+					border: solid;
+					letter-spacing: 1px;
+					border-radius: 5px;
+					border-width: 0px;
+					width: 140px;
+					opacity: 1;
+					box-shadow: 0px 8px 12px -6px rgba(0, 0, 0, .8);  				  
+					}
 				#withdraw-account:hover,
-				#withdraw-account:focus {
+				#withdraw-account:focus,
+				#withdraw-account-null:hover,
+				#withdraw-account-null:focus {
 					opacity: .4;
 					transition: 1s;
 					cursor: pointer;
