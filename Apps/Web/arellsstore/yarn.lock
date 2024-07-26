@@ -4658,6 +4658,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-plaid-link@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-plaid-link/-/react-plaid-link-2.0.0.tgz#4197d764fa4b91bdb52188b8d17c55c6058a0f61"
+  integrity sha512-PgW4TTHslBqtsvJfZiPo8DoTK0aGhN0revxi0/GFntBX7dx5XVAEbbrOO3sfLIGJ6uFtcti8hAlFsIcYvyfYLw==
+  dependencies:
+    react-plaid-link "*"
+
 "@types/react@*", "@types/react@^18.3.3":
   version "18.3.3"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.3.3.tgz#9679020895318b0915d7a3ab004d92d33375c45f"
@@ -10171,6 +10178,19 @@ react-native-fetch-api@^3.0.0:
   integrity sha512-g2rtqPjdroaboDKTsJCTlcmtw54E25OjyaunUP0anOZn4Fuo2IKs8BVfe02zVggA/UysbmfSnRJIqtNkAgggNA==
   dependencies:
     p-defer "^3.0.0"
+
+react-plaid-link@*, react-plaid-link@^3.5.2:
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/react-plaid-link/-/react-plaid-link-3.5.2.tgz#bd553be08d1eca987694367fb54c3323ab0c0e28"
+  integrity sha512-/Eex/MydNg9UjSXV/1181NNRWT23N1sMq8Nyl9u5Ef89mH45YYWtOiNrA/lY7NeZkls92bP97cihFf0tsKOCkA==
+  dependencies:
+    prop-types "^15.7.2"
+    react-script-hook "^1.6.0"
+
+react-script-hook@^1.6.0:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/react-script-hook/-/react-script-hook-1.7.2.tgz#ec130d67f9a25fcde57fbfd1faa87e5b97521948"
+  integrity sha512-fhyCEfXb94fag34UPRF0zry1XGwmVY+79iibWwTqAoOiCzYJQOYTiWJ7CnqglA9tMSV8g45cQpHCMcBwr7dwhA==
 
 react-toastify@^9.1.3:
   version "9.1.3"

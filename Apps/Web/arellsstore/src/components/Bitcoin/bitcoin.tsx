@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
+import { usePlaidLink } from 'react-plaid-link';
 
 const Bitcoin: React.FC = () => {
   const [balance, setBalance] = useState<number | null>(null);
@@ -10,8 +11,10 @@ const Bitcoin: React.FC = () => {
   const [feeRate, setFeeRate] = useState<number>(10); // Fee rate in satoshis per byte
   const [bitcoinAddress, setBitcoinAddress] = useState<string>('');
   const [bitcoinPrivateKey, setBitcoinPrivateKey] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [linkToken, setLinkToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAttributes = async () => {
@@ -20,7 +23,7 @@ const Bitcoin: React.FC = () => {
         const emailAttribute = attributesResponse.email;
         const bitcoinAddressAttribute = attributesResponse['custom:bitcoinAddress'];
         const bitcoinPrivateKeyAttribute = attributesResponse['custom:bitcoinPrivateKey'];
-  
+
         if (emailAttribute) setEmail(emailAttribute);
         if (bitcoinAddressAttribute) setBitcoinAddress(bitcoinAddressAttribute);
         if (bitcoinPrivateKeyAttribute) setBitcoinPrivateKey(bitcoinPrivateKeyAttribute);
@@ -28,7 +31,7 @@ const Bitcoin: React.FC = () => {
         console.error('Error fetching user attributes:', error);
       }
     };
-  
+
     fetchAttributes();
   }, [setEmail, setBitcoinAddress, setBitcoinPrivateKey]);
 
@@ -56,6 +59,21 @@ const Bitcoin: React.FC = () => {
     };
     fetchFeeRate();
   }, []);
+
+  useEffect(() => {
+    const createLinkToken = async () => {
+      if (email) {
+        const res = await fetch('/api/create-link-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        setLinkToken(data.link_token);
+      }
+    };
+    createLinkToken();
+  }, [email]);
 
   const sendBitcoin = async () => {
     if (!bitcoinAddress || !bitcoinPrivateKey) {
@@ -116,38 +134,123 @@ const Bitcoin: React.FC = () => {
     const balanceInBTC = balanceInSatoshis / 100000000;
     return balanceInBTC.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
   };
-  console.log('bitcoinAddress', bitcoinAddress)
-  console.log('balance: ', balance );
+
+  const onSuccess = async (public_token: string) => {
+    const res = await fetch('/api/exchange-public-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ public_token }),
+    });
+    const data = await res.json();
+    setAccessToken(data.access_token);
+  };
+
+  const config = {
+    token: linkToken!,
+    onSuccess,
+  };
+
+  const { open, ready } = usePlaidLink(config);
+
+  const buyBitcoin = async () => {
+    if (!accessToken) {
+      open();
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/kraken/buy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(`Buy order placed successfully! TX ID: ${data.result.txid}`);
+      } else {
+        console.error('Response data on error:', data);
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error in placing buy order:', error);
+      alert('An unknown error occurred');
+    }
+  };
+
+  const sellBitcoin = async () => {
+    if (!accessToken) {
+      open();
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/kraken/sell', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(`Sell order placed successfully! TX ID: ${data.result.txid}`);
+      } else {
+        console.error('Response data on error:', data);
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error in placing sell order:', error);
+      alert('An unknown error occurred');
+    }
+  };
 
   return (
     <div>
+      <div>
+        <h2>Bitcoin Wallet</h2>
+        <p>Address</p>
+        <p>{bitcoinAddress}</p>
+        <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
         <div>
-          <h2>Bitcoin Wallet</h2>
-          <p>Address</p>
-          <p>{bitcoinAddress}</p>
-          <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
-          <div>
-            <h2>Send Bitcoin</h2>
-            <input
-              type="text"
-              placeholder="Recipient Address"
-              value={recipientAddress}
-              onChange={(e) => setRecipientAddress(e.target.value)}
-            />
-            <br/>
-            <input
-              type="text"
-              placeholder="Amount in BTC"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
-            <br/>
-            <button onClick={sendBitcoin}>Send Bitcoin</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-          </div>
+          <h2>Send Bitcoin</h2>
+          <input
+            type="text"
+            placeholder="Recipient Address"
+            value={recipientAddress}
+            onChange={(e) => setRecipientAddress(e.target.value)}
+          />
+          <br />
+          <input
+            type="text"
+            placeholder="Amount in BTC"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          <br />
+          <button onClick={sendBitcoin}>Send Bitcoin</button>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
+      </div>
+      <div>
+        <button onClick={() => open()} disabled={!ready}>
+          Connect Bank Account
+        </button>
+      </div>
+      <div>
+        <h2>Buy/Sell Bitcoin</h2>
+        <input
+          type="text"
+          placeholder="Amount in BTC"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+        <br />
+        <button onClick={buyBitcoin}>Buy Bitcoin</button>
+        <button onClick={sellBitcoin}>Sell Bitcoin</button>
+      </div>
     </div>
   );
+ 
 };
 
 export default Bitcoin;
