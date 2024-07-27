@@ -356,7 +356,10 @@
   }
 
   #account-created-close:hover,
-  #account-created-close:focus {
+  #account-created-close:focus,
+  #account-created-close-two:hover,
+  #account-created-close-two:focus
+   {
     cursor: pointer;
     opacity: .4;
     transition: 1s;

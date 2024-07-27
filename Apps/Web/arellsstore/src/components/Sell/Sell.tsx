@@ -15,7 +15,7 @@ import stylings from '../../app/css/modals/loading/marketplaceloader.module.css'
 const Sell: React.FC = () => {
 
   const [showSellFailed, setSellFailed] = useState<boolean>(false);
-  const [showSellSuccess, setSellSuccess] = useState<boolean>(false);
+  const [showSellSuccess, setSellSuccess] = useState<boolean>(true);
   const [showSelling, setSelling] = useState<boolean>(false);
   const [showSellAvailable, setSellAvailable] = useState<boolean>(true);
   const [showSellUnavailable, setSellUnavailable] = useState<boolean>(false);
@@ -81,9 +81,9 @@ const Sell: React.FC = () => {
                 width={22}
                 height={22}
                 id="selling-image" 
-                src="/images/market/cash-register-ivory.png"
+                src="/images/market/bank-ivory.png"
                 /> 
-            <p id="selling-words">confirming sale</p>
+            <p id="selling-words">selling | depositing</p>
           </div>
         </div>
       )}
@@ -98,10 +98,10 @@ const Sell: React.FC = () => {
                 id="account-created-image"
                 src="/images/market/checkmark-ebony.png"
             />
-            <p id="account-created-words">Sale Complete</p>
-            <Link href="/transactions" passHref>
-                <button id="account-created-close-two" 
-                onClick={closeSellSuccess}>VIEW TRANSACTIONS
+            <p id="account-created-words">Sold | Deposited</p>
+            <Link href="/account" passHref>
+                <button id="account-created-close-two">
+                  GO BACK
                 </button>
             </Link>
         </div>
@@ -154,7 +154,7 @@ const Sell: React.FC = () => {
                         src="images/howitworks/Bitcoin.png"/>
                     </div>
                 </span>
-                <span id="amount-holding-title">Amount Available To Sell</span>
+                <span id="amount-holding-title">Amount Available To Sell | Deposit</span>
               </div>
 
               <div id="b-price-sell-wallet">
@@ -218,7 +218,7 @@ const Sell: React.FC = () => {
             {showSellAvailable && (
               <>
               <p id="sell-amount-title">
-                Sell Amount
+                Sell | Deposit Amount
               </p>
               <div id="b-price-sell">
                 <span>
@@ -247,8 +247,11 @@ const Sell: React.FC = () => {
                 </span>
               </div>
               <button id="sell-button">
-                  SELL
-              </button>              
+                  SELL | DEPOSIT
+              </button>      
+              <p id="sell-instructions-bottom">
+                  TO YOUR BANK
+                </p>        
               </>
             )}
 

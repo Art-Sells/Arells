@@ -99,7 +99,7 @@ const Account: React.FC = () => {
 
 
         <div id="amount-sold-account-wrapper-null">
-          <button id="withdraw-account-null">CONNECT BANK</button>
+          <button id="withdraw-account-null">START BUYING</button>
           <p id="amount-sold-number-account-num-null">
             Buy small amounts 
             of Bitcoin. Always 
