@@ -1,18 +1,20 @@
 version: 1.0
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - nvm install 18.18.2
-        - nvm use 18.18.2
-        - yarn install
-    build:
-      commands:
-        - yarn build
-  artifacts:
-    baseDirectory: out
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
+applications:
+  - appRoot: arellsstore
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - nvm install 18.18.2
+            - nvm use 18.18.2
+            - yarn install
+        build:
+          commands:
+            - yarn build
+      artifacts:
+        baseDirectory: out
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
