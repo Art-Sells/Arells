@@ -60,7 +60,7 @@
 		margin-top: 15px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 585px;
+		height: 375px;
 		width: 380px;
 		background-color: white;
 		border-radius: 30px;
@@ -72,7 +72,7 @@
 		margin-top: 15px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 240px;
+		height: 222px;
 		width: 380px;
 		background-color: white;
 		border-radius: 30px;
@@ -413,7 +413,7 @@
 			padding-top: 30px;
 			margin-left: auto;
 			margin-right: auto;
-			height: 130px;
+			height: 110px;
 			width: 250px;
 			background-color: rgba(255, 251, 245, 1);
 			border-radius: 30px;
@@ -456,16 +456,15 @@
 					opacity: 1;
 				}
 				#amount-sold-number-account-num-null {
-					margin-top: 15px;
-					width: 130px;
+					margin-top: 0px;
 					margin-left: auto;
 					margin-right: auto;
 					color: black;
-					font-size: 8.5px;
-					line-height: 13px;
+					font-size: 9.5px;
 					font-weight: 600;
 					letter-spacing: 0px;
 					opacity: 1;
+					margin-bottom: 50px;
 				}
 
 			#withdraw-account {
@@ -488,7 +487,7 @@
 				box-shadow: 0px 8px 12px -6px rgba(0, 0, 0, .8);  				  
 				}
 				#withdraw-account-null {
-					margin-top: 17px;
+					margin-top: 15px;
 					background: black;
 					text-decoration: none;
 					color: white;
@@ -528,7 +527,7 @@
 	#bitcoin-chart-account-wrapper-footer{
 		margin-top: 60px;
 		padding-top: 50px;
-		height: 300px;
+		height: 360px;
 		width: 100%;
 		background-color: white;
 	}
@@ -537,7 +536,7 @@
 		margin-top: 0px;
 		height: 25px;
 		padding-top: 0px;
-		padding-bottom: 100px;
+		padding-bottom: 130px;
 		width: 100%;
 		background-color: white;
 	}

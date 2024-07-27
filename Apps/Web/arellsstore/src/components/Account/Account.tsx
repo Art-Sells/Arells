@@ -16,8 +16,8 @@ const Account: React.FC = () => {
   };
 
   const [showLoading, setLoading] = useState<boolean>(true);
-  const [walletConnected, setWalletConnected] = useState<boolean>(false);
-  const [walletNotConnected, setWalletNotConnected] = useState<boolean>(true);
+  const [walletConnected, setWalletConnected] = useState<boolean>(true);
+  const [walletNotConnected, setWalletNotConnected] = useState<boolean>(false);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     accountLogo: false,
   });
@@ -100,11 +100,6 @@ const Account: React.FC = () => {
 
         <div id="amount-sold-account-wrapper-null">
           <button id="withdraw-account-null">START BUYING</button>
-          <p id="amount-sold-number-account-num-null">
-            Buy small amounts 
-            of Bitcoin. Always 
-            sell them for Profits.
-          </p>
         </div>
       </div>
         )}
@@ -227,7 +222,7 @@ const Account: React.FC = () => {
           </div>
           {/* <button id="export-account">EXPORT</button> */}
 
-          <div id="amount-sold-account-wrapper">
+          {/* <div id="amount-sold-account-wrapper">
             <div id="amount-sold-num-wrap">
               <span>
                 <div id="w-account-wrapper">
@@ -247,11 +242,19 @@ const Account: React.FC = () => {
               <span id="amount-sold-number-account-num">0</span>
             </div>
             <button id="withdraw-account">WITHDRAW</button>
-          </div>
+          </div> */}
         </div>
         )}
 
       <div id="bitcoin-chart-account-wrapper-footer">
+
+      {walletNotConnected && (
+          <p id="amount-sold-number-account-num-null">
+          Buy small amounts of Bitcoin. 
+          Always sell them for Profits.
+        </p>    
+      )}
+
         <BitcoinChartAccount />
       </div>
 
