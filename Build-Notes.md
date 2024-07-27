@@ -2,29 +2,36 @@
 
 ## Arells Cryptocurrency Marketplace MVP
 
+## Arells 1.0
+
+- emailConfirmed attribute
+- - if null, emailUnConfirmed(true){}, emailConfirmed(false){};
+- - if true, opposite
+
+### Confirm Email 
+- Send Confirmation (Link)
+
 ### Testing
-- **Possibly a plaid wraper (saves bank account/plaid info if connected)**
-- - Bank Account Json Info? (pending approval)
 - - - Plaid Info (pending approval)
 - **Possibly a Blockchain Info (with API) to pull Bitcoin to Buy & Sell?**
-- Test Buying, Selling and Withdrawing process... 
-- - Buy/Sell buttons connect to plaid (if not connected)
+- Test Buying, Selling | Depositing process... 
 - - Separate Bitcoin Wallet Page where handleBuy, handleSell and handleExport pages handle changes from and to first.
 - - handleBuy/handleSell/handleWithdraw (add try, awaits and catch to ensures the entire process is successful before updating backend information)
 
 ### Account
 - Test with "manualBitcoinPrice" editing from CoinGecko API for selling/holding and selling page functionaliries.
 - if acVactsAts = 0 sell display none, holding display true, else opposite
-- Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) with Sell/Hold button 10 second intervals from coin gecko API wrapper?
-- 1 second loader for all pages
+- Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) with Sell/Hold button 10 second intervals from coin gecko API wrapper instead of entire page?
 
  #### (B) Price = Bitcoin Price API 
 
- #### Buy (Page)
+  #### Connect Bank (Page)
  - Connects to Plaid First, (if not connected)
+ - - Bottom showed after connection
+
+ #### Buy (Page)
 
  #### Sell (Page)
- - Connects to Plaid First, (if not connected)
  - displayed if acVacts == 0 or if acVactsAts > 0, otherwise hidden 
 
  #### Holding (replaces Sell button)
@@ -34,7 +41,7 @@
  - HPAP system from HPM wrapper
 
  #### Wallet
- - Displays $ acVatops
+ - Displays $ acVatops, if acVatops <= 0, displays acVacts
 
  #### Profits
  - displays $ acdVatops
@@ -66,12 +73,6 @@
 
 ### Sell
 **Pull handleSell from HPMContext sellAmountContext and edit saveVatopGroups import for success and error modal handling.**
-if acVactsAts <= 0 && acVatops > 0 display:
--  (A)(B) Holding Amount
-- - Wallet: acVatops
-if acVatops <= 0:
-- No Amount Available to Sell
-else:
 - (B) Amount Available To Sell
 - - Wallet: displays acVactsAts
 - - Profits: displays acdVatops
@@ -86,18 +87,12 @@ else:
 - Reloads modules every 10 seconds (price, wallet, and profits animation css) from coin gecko API wrapper?
 
 
-### After Full API/Wrapper Testing
-- Update Blockchain.info API to Amplify (IP) API
-
 ### Important
 - Create separate Wallet to handle where we get our 3% fee... (Stripe?)
-- Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
 
 ### Other (if Time Permits)
 - Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
-- Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
-- Contact us (Account/Home): Email
 
 
 
@@ -137,10 +132,11 @@ else:
 
 
 
-
-## Arells Cryptocurrency Marketplace 1.5 - 2
+## Arells 1.5 - 2
 
 ### Important:
+- Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
+- Update Blockchain.info API to Amplify (IP) API
 - Resolve "HPMContext" errors that show "cannot find email, Error fetching Bitcoin Price, etc etc" from console.log if pages don't need them...
 - Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/HPMContext
 
@@ -152,9 +148,14 @@ else:
 - Import
 - Export
 
-### Testing
-- Test Export process... 
-- - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information)
+### Sell
+**Pull handleSell from HPMContext sellAmountContext and edit saveVatopGroups import for success and error modal handling.**
+if acVactsAts <= 0 && acVatops > 0 display:
+-  (A)(B) Holding Amount
+- - Wallet: acVatops
+if acVatops <= 0:
+- No Amount Available to Sell
+else:
 
 ### Transactions
 **From Transactions Attribute (API)**
@@ -217,6 +218,9 @@ else:
 - if logged in for more than 5 minutes without use, automatically sign out and take to homepage.
 
 ### Home/Account
+- Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
+- Contact us (Account/Home): Email
+- Clean up Lagging Pages
 - Contact us: Email
 
 ### Sign Up

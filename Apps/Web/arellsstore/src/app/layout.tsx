@@ -7,15 +7,15 @@ import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyCl
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
 import dotenv from 'dotenv';
-dotenv.config();
 
+dotenv.config();
 Amplify.configure(awsmobile);
 
 type LayoutProps = {
   children: ReactNode;
 };
 
-export default function RootLayout({ children }: LayoutProps) {
+const RootLayout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
       <head>
@@ -24,15 +24,16 @@ export default function RootLayout({ children }: LayoutProps) {
       </head>
       <body>
         <ConfigureAmplifyClientSide />
-          <BitcoinPriceProvider>
-              <UserProvider>
-                <HPMProvider>
-                  {children}
-                </HPMProvider>
-              </UserProvider>
-          </BitcoinPriceProvider>
-
+        <BitcoinPriceProvider>
+          <UserProvider>
+            <HPMProvider>
+              {children}
+            </HPMProvider>
+          </UserProvider>
+        </BitcoinPriceProvider>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

@@ -116,7 +116,11 @@
 	  border-width: 0px;
 	  width: 300px;
 	  opacity: 1;
-	  box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  			  
+	  box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  
+	  -webkit-animation-name: animatetop;
+	  -webkit-animation-duration: 1.00s;
+	  animation-name: animatetop;
+	  animation-duration: 1.00s;			  
 	}
 	#login:hover,
 	#login:focus {

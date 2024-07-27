@@ -9,7 +9,6 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
-import { useUser } from '../context/UserContext';
 
 const Index = () => {
   // Loader Functions
@@ -22,21 +21,6 @@ const Index = () => {
     wordLogo: false,
   });
 
-  const { email } = useUser();
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
-  const [loggedOut, setLoggedOut] = useState<boolean>(true);
-
-  useEffect(() => {
-    console.log('Email:', email);
-    if (email) {
-      setLoggedIn(true);
-      setLoggedOut(false);
-    } else {
-      setLoggedIn(false);
-      setLoggedOut(true);
-    }
-    console.log('LoggedIn:', loggedIn, 'LoggedOut:', loggedOut);
-  }, [email]);
 
   const handleImageLoaded = (imageName: string) => {
     setImagesLoaded(prevState => ({ 
@@ -89,17 +73,9 @@ const Index = () => {
         Buy small amounts of Bitcoin.
         <span id="buy-info-homer">Always sell them for Profits.</span>
       </p>
-
-      {loggedIn && (
-        <Link href="/account" passHref>
-          <button id="login">VIEW ACCOUNT</button>
-        </Link>
-      )}
-      {loggedOut && (
-        <Link href="/login" passHref>
-          <button id="login">LOGIN</button>
-        </Link>
-      )}
+      <Link href="/login" passHref>
+        <button id="login">LOGIN</button>
+      </Link>
     </>
   );
 }

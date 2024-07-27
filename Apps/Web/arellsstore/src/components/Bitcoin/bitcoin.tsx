@@ -4,8 +4,19 @@ import { v4 as uuidv4 } from 'uuid';
 import React, { useCallback, useEffect, useState } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { usePlaidLink } from 'react-plaid-link';
+import { useHPM } from '../../context/HPMContext';
+import CryptoJS from 'crypto-js';
 
 const Bitcoin: React.FC = () => {
+  const {
+    bitcoinPrice,
+    buyAmount,
+    setBuyAmount,
+    sellAmount,
+    setSellAmount,
+    handleBuy,
+    handleSell
+  } = useHPM();
   const [balance, setBalance] = useState<number | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [amount, setAmount] = useState<string>(''); // amount in BTC
@@ -18,25 +29,34 @@ const Bitcoin: React.FC = () => {
   const [tokenCreated, setTokenCreated] = useState<boolean>(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [bankAccount, setBankAccount] = useState<string>('');
+  const [krakenResult, setKrakenResult] = useState<any>(null);
+  const [krakenLoading, setKrakenLoading] = useState<boolean>(false);
+  const [krakenError, setKrakenError] = useState<string | null>(null);
+  const [dollarAmount, setDollarAmount] = useState<string>('');
 
   useEffect(() => {
     const fetchAttributes = async () => {
-      try {
-        const attributesResponse = await fetchUserAttributes();
-        const emailAttribute = attributesResponse.email;
-        const bitcoinAddressAttribute = attributesResponse['custom:bitcoinAddress'];
-        const bitcoinPrivateKeyAttribute = attributesResponse['custom:bitcoinPrivateKey'];
+        try {
+            const attributesResponse = await fetchUserAttributes();
+            const emailAttribute = attributesResponse.email;
+            const bitcoinAddressAttribute = attributesResponse['custom:bitcoinAddress'];
+            const bitcoinPrivateKeyAttribute = attributesResponse['custom:bitcoinPrivateKey'];
 
-        if (emailAttribute) setEmail(emailAttribute);
-        if (bitcoinAddressAttribute) setBitcoinAddress(bitcoinAddressAttribute);
-        if (bitcoinPrivateKeyAttribute) setBitcoinPrivateKey(bitcoinPrivateKeyAttribute);
-      } catch (error) {
-        console.error('Error fetching user attributes:', error);
-      }
+            if (emailAttribute) setEmail(emailAttribute);
+            if (bitcoinAddressAttribute) setBitcoinAddress(bitcoinAddressAttribute);
+
+            // Decrypt the private key
+            if (bitcoinPrivateKeyAttribute) {
+                const decryptedPrivateKey = CryptoJS.AES.decrypt(bitcoinPrivateKeyAttribute).toString(CryptoJS.enc.Utf8);
+                setBitcoinPrivateKey(decryptedPrivateKey);
+            }
+        } catch (error) {
+            console.error('Error fetching user attributes:', error);
+        }
     };
 
     fetchAttributes();
-  }, [setEmail, setBitcoinAddress, setBitcoinPrivateKey]);
+}, [setEmail, setBitcoinAddress, setBitcoinPrivateKey]);
 
   useEffect(() => {
     if (bitcoinAddress) {
@@ -161,10 +181,11 @@ const Bitcoin: React.FC = () => {
   const connectBank = async () => {
     if (!bankAccount) {
       await createLinkToken();
-  
+
       return; // Exit the function and let the useEffect handle the rest
     }
   };
+
   useEffect(() => {
     const initializePlaidLink = () => {
       if (linkToken) {
@@ -172,20 +193,19 @@ const Bitcoin: React.FC = () => {
           token: linkToken,
           onSuccess: async (public_token: string, metadata: any) => {
             console.log('Public Token:', public_token);
-  
+
             // Set bankAccount to public_token
             setBankAccount(public_token);
-  
+
             // Update the bank account attribute with the public_token
             await fetch('/api/update-bank-account', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, bankAccount: public_token }),
             });
-  
+
             // Fetch the updated bank account status
             fetchBankAccountStatus();
-
           },
           onExit: (err: any, metadata: any) => {
             // Open blank out back Modal here
@@ -197,11 +217,47 @@ const Bitcoin: React.FC = () => {
         handler.open();
       }
     };
-  
+
     if (!bankAccount && linkToken) {
       initializePlaidLink();
     }
   }, [linkToken, bankAccount]);
+
+
+
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const calculateBitcoinAmount = (dollarAmount: string) => {
+    if (bitcoinPrice === null || dollarAmount === '') return '';
+    const amountInBTC = parseFloat(dollarAmount) / bitcoinPrice;
+    return amountInBTC.toFixed(8); // 8 decimal places for Bitcoin
+  };
+
+  const handleKrakenAPI = async (type: 'buy' | 'sell') => {
+    const volume = calculateBitcoinAmount(dollarAmount);
+    if (volume === '') {
+      setKrakenError('Invalid dollar amount');
+      return;
+    }
+  
+    setKrakenLoading(true);
+    setKrakenError(null);
+  
+    try {
+      const response = await fetch('/api/kraken-api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, volume }),
+      });
+      const data = await response.json();
+      setKrakenResult(data);
+    } catch (err) {
+      setKrakenError('Error executing Kraken API');
+    } finally {
+      setKrakenLoading(false);
+    }
+  };
 
 
 
@@ -250,19 +306,32 @@ const Bitcoin: React.FC = () => {
           {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
       </div>
-      
+  
+
       <div>
-        <h2>Buy/Sell Bitcoin</h2>
+        <h2>Connect Bank</h2>
+        <br />
+        <button onClick={connectBank}>CONNECT BANK</button>
+      </div>
+
+      <div>
+        <label>
+          Bitcoin Price: ${bitcoinPrice.toFixed(2)}
+        </label>
         <input
           type="text"
-          placeholder="Amount in BTC"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Dollar Amount"
+          value={dollarAmount}
+          onChange={(e) => setDollarAmount(e.target.value)}
         />
-        <br />
-        <button onClick={connectBank}>CONNECT BANK ACCOUNT</button>
+        <button onClick={() => handleKrakenAPI('buy')} disabled={krakenLoading}>
+          {krakenLoading ? 'Processing...' : 'Buy Bitcoin'}
+        </button>
+        <button onClick={() => handleKrakenAPI('sell')} disabled={krakenLoading}>
+          {krakenLoading ? 'Processing...' : 'Sell Bitcoin'}
+        </button>
       </div>
-    </div>
+</div>
   );
 };
 

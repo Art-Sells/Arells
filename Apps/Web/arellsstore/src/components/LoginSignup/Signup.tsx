@@ -5,7 +5,6 @@ import Image from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import '../../app/css/modals/buy/buy-modal.css';
-import '../../app/css/modals/export/export-modal.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 import Link from 'next/link';
 import { signUp, signIn, fetchUserAttributes, signOut } from 'aws-amplify/auth';
@@ -13,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
 import { generateWallet } from '../../lib/bitcoin';
 import { createS3Folder } from '../../aws-config';
+import CryptoJS from 'crypto-js';
 
 interface Attribute {
     Name: string;
@@ -58,100 +58,110 @@ const Signup: React.FC = () => {
         return password.length >= minLength && hasLetter && hasNumber && hasSpecialChar;
     };
 
-    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    const decryptPrivateKey = (encryptedPrivateKey: string, password: string) => {
+      try {
+          const bytes = CryptoJS.AES.decrypt(encryptedPrivateKey, password);
+          const originalPrivateKey = bytes.toString(CryptoJS.enc.Utf8);
+          return originalPrivateKey;
+      } catch (error) {
+          console.error('Error decrypting private key:', error);
+          return null;
+      }
+  };
+  
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-    
+  
       setEmailExistsError(false);
       setPasswordsDontMatchError(false);
       setPasswordsError(false);
       setMissingFields(false);
       setEmailError(false);
-    
+  
       if (!email || !password || !confirmPassword) {
-        setMissingFields(true);
-        return;
+          setMissingFields(true);
+          return;
       }
-    
+  
       if (!validateEmail(email)) {
-        setEmailError(true);
-        return;
+          setEmailError(true);
+          return;
       }
-    
+  
       if (!validatePassword(password)) {
-        setPasswordsError(true);
-        return;
+          setPasswordsError(true);
+          return;
       }
-    
+  
       if (password !== confirmPassword) {
-        setPasswordsDontMatchError(true);
-        return;
+          setPasswordsDontMatchError(true);
+          return;
       }
-    
+  
       try {
-        await signOut();
-        setSigningUp(true);
-    
-        const wallet = await generateWallet();
-        console.log('Wallet generated:', wallet);
-    
-        const { isSignUpComplete } = await signUp({
-          username: email,
-          password,
-          options: {
-            userAttributes: {
-              email,
-              'custom:bitcoinAddress': wallet.address,
-              'custom:bitcoinPrivateKey': wallet.privateKey,
-            },
-          },
-        });
-    
-        if (isSignUpComplete) {
-          console.log('User creation successful.');
-    
-          try {
-            const user = await signIn({ username: email, password });
-            console.log('User logged in:', user);
-    
-            // Fetch user attributes
-            const attributesResponse = await fetchUserAttributes();
-            console.log('Fetched attributes:', attributesResponse);
-    
-            const bitcoinAddress = attributesResponse['custom:bitcoinAddress'];
-            const bitcoinPrivateKey = attributesResponse['custom:bitcoinPrivateKey'];
-    
-            if (bitcoinAddress && bitcoinPrivateKey) {
-              console.log('Bitcoin Address:', bitcoinAddress);
-              console.log('Bitcoin Private Key:', bitcoinPrivateKey);
-              setEmail(email);
-              setBitcoinAddress(bitcoinAddress);
-              setBitcoinPrivateKey(bitcoinPrivateKey);
-            } else {
-              console.log('Bitcoin attributes not found');
-            }
-    
-            // Create an empty JSON file in the S3 bucket
-            await createS3Folder(email);
-            console.log(`S3 folder and file created for ${email}`);
-    
-            setTimeout(() => {
-              setSigningUp(false);
-              setSignedUp(true);
-            }, 3000);
-          } catch (error) {
-            console.log('Error logging in:', error);
-            setSigningUp(false);
+          await signOut();
+          setSigningUp(true);
+  
+          const wallet = await generateWallet();
+  
+          // Encrypt the private key
+          const encryptedPrivateKey = CryptoJS.AES.encrypt(wallet.privateKey, password).toString();
+  
+          const { isSignUpComplete } = await signUp({
+              username: email,
+              password,
+              options: {
+                  userAttributes: {
+                      email,
+                      'custom:bitcoinAddress': wallet.address,
+                      'custom:bitcoinPrivateKey': encryptedPrivateKey,
+                  },
+              },
+          });
+  
+          if (isSignUpComplete) {
+  
+              try {
+                  const user = await signIn({ username: email, password });
+  
+                  // Fetch user attributes
+                  const attributesResponse = await fetchUserAttributes();
+  
+                  const bitcoinAddress = attributesResponse['custom:bitcoinAddress'];
+                  const encryptedBitcoinPrivateKey: string | undefined = attributesResponse['custom:bitcoinPrivateKey'];
+  
+                  // Decrypt the private key
+                  if (encryptedBitcoinPrivateKey) {
+                      const bitcoinPrivateKey = decryptPrivateKey(encryptedBitcoinPrivateKey, password);
+                      if (bitcoinAddress && bitcoinPrivateKey) {
+                          setEmail(email);
+                          setBitcoinAddress(bitcoinAddress);
+                          setBitcoinPrivateKey(bitcoinPrivateKey);
+                      } else {
+                          console.log('Bitcoin attributes not found or decryption failed');
+                      }
+                  }
+  
+                  // Create an empty JSON file in the S3 bucket
+                  await createS3Folder(email);
+  
+                  setTimeout(() => {
+                      setSigningUp(false);
+                      setSignedUp(true);
+                  });
+              } catch (error) {
+                  setSigningUp(false);
+              }
           }
-        }
       } catch (error: any) {
-        if (error.name === 'UsernameExistsException' || error.code === 'UsernameExistsException') {
-          setEmailExistsError(true);
-        } else {
-          console.log('Error signing up:', error);
-        }
-        setSigningUp(false);
+          if (error.name === 'UsernameExistsException' || error.code === 'UsernameExistsException') {
+              setEmailExistsError(true);
+          } else {
+              console.log('Error signing up:', error);
+          }
+          setSigningUp(false);
       }
-    };
+  };
 
   return (
     <>
@@ -268,7 +278,7 @@ const Signup: React.FC = () => {
       <div id="sign-up">
         <form id="myForm" onSubmit={handleSignUp} noValidate>
           <div id="enter-content">
-            <input
+          <input
               name="email"
               type="email"
               id="email-input"

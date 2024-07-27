@@ -1,6 +1,3 @@
-
-
-
 {
   "compilerOptions": {
     "jsx": "preserve",
@@ -21,6 +18,10 @@
     "incremental": true,
     "moduleResolution": "node",
     "isolatedModules": true,
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ],
     "plugins": [
       {
         "name": "next"

@@ -455,6 +455,20 @@
 					margin-left: 2px;
 					opacity: 1;
 				}
+				#amount-sold-number-account-num-approvals {
+					margin-top: 11px;
+					width: 180px;
+					margin-left: auto;
+					margin-right: auto;
+					color: black;
+					font-size: 16px;
+					font-weight: 600;
+					line-height:14px;
+					letter-spacing: -0.5px;
+					opacity: .65;
+					margin-bottom: 50px;
+				}
+
 				#amount-sold-number-account-num-null {
 					margin-top: 0px;
 					margin-left: auto;
@@ -466,7 +480,6 @@
 					opacity: 1;
 					margin-bottom: 50px;
 				}
-
 			#withdraw-account {
 				margin-top: 15px;
 				background: black;

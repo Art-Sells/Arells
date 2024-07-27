@@ -9,6 +9,9 @@ import '../../app/css/account/Account.css';
 import '../../app/css/modals/account/account-modal.css';
 import '../../app/css/modals/loader/accountloaderbackground.css';
 import styles from '../../app/css/modals/loader/accountloader.module.css';
+import { signOut } from 'aws-amplify/auth';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const Account: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -16,7 +19,8 @@ const Account: React.FC = () => {
   };
 
   const [showLoading, setLoading] = useState<boolean>(true);
-  const [walletConnected, setWalletConnected] = useState<boolean>(true);
+  const [walletConnected, setWalletConnected] = useState<boolean>(false);
+  const [awaitingApprovals, setAwaitingApprovals] = useState<boolean>(true);
   const [walletNotConnected, setWalletNotConnected] = useState<boolean>(false);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     accountLogo: false,
@@ -39,6 +43,16 @@ const Account: React.FC = () => {
   const bitcoinPrice = useBitcoinPrice();
 
   const formattedPrice = bitcoinPrice ? Math.round(bitcoinPrice).toLocaleString('en-US') : '...';
+
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+      try {
+          signOut();
+      } catch (error) {
+          console.log('Error signing out:', error);
+      }
+  };
 
   return (
     <>
@@ -72,6 +86,38 @@ const Account: React.FC = () => {
         <span id="descriptioner-account-cryptor">FOR PROFITS</span>
       </p>
 
+      {awaitingApprovals && (
+        <div id="wallet-account-wrapper-null">
+        <div id="b-price-account">
+          <span>
+            <div id="b-account-wrapper">
+              <Image
+                loader={imageLoader}
+                onLoad={() => handleImageLoaded('accountLogo')}
+                alt=""
+                width={20}
+                height={20}
+                id="bitcoin-account"
+                src="images/howitworks/Bitcoin.png"
+              />
+            </div>
+          </span>
+          <span id="price-account">Price:</span>
+          <span id="price-number-account">$
+            <span id="price-number-account-num">
+            {formattedPrice}
+          </span></span>
+        </div>
+
+
+        <div id="amount-sold-account-wrapper-null">
+          <p id="amount-sold-number-account-num-approvals">
+            Pending Liquidity Provider Approval.
+            Thank you for your patience.
+          </p>   
+        </div>
+      </div>
+        )}
       {walletNotConnected && (
         <div id="wallet-account-wrapper-null">
 
@@ -255,11 +301,23 @@ const Account: React.FC = () => {
         </p>    
       )}
 
+      {awaitingApprovals && (
+          <p id="amount-sold-number-account-num-null">
+          Buy small amounts of Bitcoin. 
+          Always sell them for Profits.
+        </p>    
+      )}
+
         <BitcoinChartAccount />
       </div>
 
       <div id="footer">
-        <button id="log-out-account">LOGOUT</button>
+      <Link href="/">
+        <button id="log-out-account"
+          onClick={handleSignOut}
+          >
+            LOGOUT</button>
+        </Link>	
       </div>
     </>
   );

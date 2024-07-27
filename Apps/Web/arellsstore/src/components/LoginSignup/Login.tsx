@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { signIn, signOut, fetchUserAttributes } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
+import CryptoJS from 'crypto-js';
 
 interface Attribute {
     Name: string;
@@ -30,7 +31,6 @@ const Login: React.FC = () => {
     const [showLoggingIn, setLoggingIn] = useState<boolean>(false);
     const [showLoginError, setLoginError] = useState<boolean>(false);
 
-
     const logIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -39,25 +39,26 @@ const Login: React.FC = () => {
         try {
             // Sign out any existing user
             setLoggingIn(true);
+            
 
             const user = await signIn({ username: email, password });
-            console.log('User logged in:', user);
 
             // Fetch user attributes
             const attributesResponse = await fetchUserAttributes();
-            console.log('Fetched attributes:', attributesResponse);
 
             const emailAttribute = attributesResponse['email'];
             const bitcoinAddress = attributesResponse['custom:bitcoinAddress'];
-            const bitcoinPrivateKey = attributesResponse['custom:bitcoinPrivateKey'];
+            const encryptedBitcoinPrivateKey = attributesResponse['custom:bitcoinPrivateKey'];
 
             if (emailAttribute) setEmail(emailAttribute);
             if (bitcoinAddress) setBitcoinAddress(bitcoinAddress);
-            if (bitcoinPrivateKey) setBitcoinPrivateKey(bitcoinPrivateKey);
+            if (encryptedBitcoinPrivateKey) {
+                const bytes = CryptoJS.AES.decrypt(encryptedBitcoinPrivateKey, password);
+                const decryptedPrivateKey = bytes.toString(CryptoJS.enc.Utf8);
+                setBitcoinPrivateKey(decryptedPrivateKey);
+            }
 
-            if (bitcoinAddress && bitcoinPrivateKey) {
-                console.log('Bitcoin Address:', bitcoinAddress);
-                console.log('Bitcoin Private Key:', bitcoinPrivateKey);
+            if (bitcoinAddress && encryptedBitcoinPrivateKey) {
                 setEmail(email);  // Set the email in UserContext
             } else {
                 console.log('Bitcoin attributes not found');
@@ -66,7 +67,7 @@ const Login: React.FC = () => {
             setTimeout(() => {
                 setLoggingIn(false);
                 router.push('/account');
-            }, 3000);
+            });
         } catch (error) {
             console.log('Error logging in:', error);
             setLoggingIn(false);
@@ -75,7 +76,7 @@ const Login: React.FC = () => {
     };
     useEffect(() => {
         signOut();
-      }, []);
+    }, []);
 
     const closeLoginError = () => {
         setLoginError(false);
