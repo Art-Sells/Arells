@@ -63,7 +63,7 @@
 			margin-top: 35px;
 			margin-left: auto;
 			margin-right: auto;
-			font-size: 11px;
+			font-size: 9px;
 			font-weight: 600;
 			margin-bottom: -5px;
 		}
@@ -77,13 +77,13 @@
 			}	
 
 			#ada-description {
-				margin-left: 5px; 
+				margin-left: 17px; 
 				opacity: 1;
 				color: rgb(255, 145, 0, 1);
 				display: inline-block;
 			}
 			#ada-descriptioner {
-				margin-left: 6px; 
+				margin-left: 18px; 
 				opacity: 1;
 				color: black;
 				display: inline-block;
@@ -93,7 +93,7 @@
 		#buy-info-wrapper {
 			margin-left:auto;
 			margin-right: auto;
-			margin-top: 20px;
+			margin-top: 17px;
 			font-size: 9px;
 			font-weight: 600;
 		}
@@ -174,8 +174,21 @@
 	  
 	  #descriptioner-wrapper {
 		margin-top: 30px;
-		font-size: 9px;
+		font-size: 8px;
 	  }
+
+		#ada-description {
+			margin-left: 17px; 
+			opacity: 1;
+			color: rgb(255, 145, 0, 1);
+			display: inline-block;
+		}
+		#ada-descriptioner {
+			margin-left: 18px; 
+			opacity: 1;
+			color: black;
+			display: inline-block;
+		}
 
 
 	#buy-info-wrapper {
