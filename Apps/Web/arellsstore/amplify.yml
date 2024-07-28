@@ -2,20 +2,22 @@ version: 1.0
 applications:
   - appRoot: Apps/Web/arellsstore
     frontend:
-      phases:
-        preBuild:
-          commands:
-            - curl https://get.volta.sh | bash
-            - volta install node@18.18.2
-            - volta install yarn
-            - yarn install
-        build:
-          commands:
-            - yarn build
-      artifacts:
-        baseDirectory: out
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
+  phases:
+    preBuild:
+      commands:
+        - curl https://get.volta.sh | bash
+        - export VOLTA_HOME="$HOME/.volta"
+        - export PATH="$VOLTA_HOME/bin:$PATH"
+        - volta install node@18.18.2
+        - volta install yarn
+        - yarn install
+    build:
+      commands:
+        - yarn build
+  artifacts:
+    baseDirectory: out
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
