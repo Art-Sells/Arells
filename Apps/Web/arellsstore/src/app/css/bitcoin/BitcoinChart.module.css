@@ -47,12 +47,12 @@
 
   
   .lineChartWrapper {
-    margin-top: -220px;
+    margin-top: -225px;
     margin-left: 115px;
     position: relative;
     width: 250px;
-    height: 200px;
-    box-shadow: -15px 0px 20px -10px rgba(204, 116, 0, 0.0);
+    height: 205px;
+    box-shadow: -15px 0px 30px -10px rgba(204, 116, 0, 0.05);
     border-radius: 10px; /* Rounded corners for the wrapper */
     padding-top: 45px;
     padding-bottom: 10px;
