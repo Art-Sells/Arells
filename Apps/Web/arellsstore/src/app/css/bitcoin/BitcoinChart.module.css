@@ -1,0 +1,173 @@
+/* BitcoinChart.module.css */
+.chartContainer {
+  margin-top: 13px;
+    width: 356.5px;
+    height: 214px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 30px;
+    padding-bottom: 0px;
+    padding-right: 10px;
+    padding-left: 50px;
+    background: none;
+    border-radius: 10px;
+    box-shadow: 0px 5px 50px -6px rgba(204, 116, 0, 0.25);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 2.00s;
+    animation-name: animatetop;
+    animation-duration: 2.00s;
+  }
+  .chartContainerAccount {
+    width: 300px;
+      height: 214px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 30px;
+      padding-bottom: 0px;
+      padding-right: 10px;
+      padding-left: 50px;
+      background: none;
+      border-radius: 5px;
+      box-shadow: 0px 0px 50px -15px rgba(204, 116, 0, 0.2);
+      -webkit-animation-name: animatetop;
+      -webkit-animation-duration: 2.00s;
+      animation-name: animatetop;
+      animation-duration: 2.00s;
+    }
+  /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+  
+  @keyframes animatetop {
+    from {center:0; opacity:0}
+    to {center:0; opacity:1}
+  }
+
+  
+  .lineChartWrapper {
+    margin-top: -230px;
+    margin-left: 115px;
+    position: relative;
+    width: 250px;
+    height: 205px;
+    box-shadow: -15px 0px 30px -10px rgba(204, 116, 0, 0.05);
+    border-radius: 10px; /* Rounded corners for the wrapper */
+    padding-top: 45px;
+    padding-bottom: 10px;
+    padding-right: 2px;
+    padding-left: 0px;
+    background: rgb(253, 244, 234); /* Add a background color if needed */
+    flex-grow: 1; /* Allow the line chart to grow */
+    opacity: 1;
+    
+  }
+  .lineChartWrapperAccount {
+    margin-top: -215px;
+    margin-left: 115px;
+    position: relative;
+    width: 195px;
+    height: 200px;
+    box-shadow: 0px 5px 20px -6px rgba(204, 116, 0, 0.0); 
+    border-radius: 5px; /* Rounded corners for the wrapper */
+    padding-top: 35px;
+    padding-bottom: 10px;
+    padding-right: 0px;
+    padding-left: 0px;
+    background: rgb(253, 244, 234); /* Add a background color if needed */
+    flex-grow: 1; /* Allow the line chart to grow */
+    opacity: 1;
+  }
+
+
+  .line {
+    margin-left: -8px;
+    margin-right: -6px;
+    margin-top: 20px;
+  }
+  .lineAccount {
+    margin-left: -8px;
+    margin-top: 30px;
+    opacity: 1;
+  }
+  
+    .percentageContainer {
+      margin-top: -20px;
+      position: relative;
+      display: flex;
+      align-items: left;
+      margin-left: 0px;
+    }
+    
+    .percentageLabel {
+      margin-top: 0px;
+      color: black;
+      font-size: 15px;
+      font-weight: 600;
+      opacity: .6;
+      letter-spacing: -1px;
+      margin-left: 2px;
+    }
+
+
+    .lastThirtyDays {
+      text-align: left;
+      color: silver;
+      font-size: 11px;
+      letter-spacing: -1px;
+      font-weight: 800;
+      margin-top: -13px;
+      margin-left: 3px;
+    }
+    .lastThirtyDaysAccount {
+      text-align: left;
+      color: silver;
+      font-size: 11px;
+      letter-spacing: -1px;
+      font-weight: 800;
+      margin-top: -13px;
+      margin-left: 5px;
+    }
+
+
+
+      
+
+@media screen and (max-width: 650px) {
+  .chartContainer {
+      width: 280px;
+		  -webkit-animation-name: animatetop;
+		  -webkit-animation-duration: 2.00s;
+		  animation-name: animatetop;
+		  animation-duration: 2.00s;
+		}
+		/* Add Animation */
+		@-webkit-keyframes animatetop {
+		  from {center:0; opacity:0}
+		  to {center:0; opacity:1}
+		}
+		
+		@keyframes animatetop {
+		  from {center:0; opacity:0}
+		  to {center:0; opacity:1}
+    }
+  
+    
+    .lineChartWrapper {
+      margin-left: 105px;
+      width: 184px;
+		  -webkit-animation-name: animatetop;
+		  -webkit-animation-duration: 2.00s;
+		  animation-name: animatetop;
+		  animation-duration: 2.00s;
+		}
+
+    .line {
+      margin-top: 30px;
+    }
+  
+      .lastThirtyDays {
+        margin-left: 5px;
+      } 
+}

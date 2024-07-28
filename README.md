@@ -1,33 +1,158 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Never lose money selling cryptocurrencies.
+## Always sell Bitcoin for Profits.
 
-Arells exists because it believes ***it's wrong for investors to lose money selling their cryptocurrencies, especially during Bear Markets.***
+Arells exists because it believes ***investors should always make profits selling assets***, especially during Bear Markets.
 
 ### Solution:
-A cryptocurrency marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **Holding Price** which limits the erasure of a token's value from selling pressure.
+A Bitcoin marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **HPM (Holding Price Mechanism)**.
 
-#### Holding Price:
-Holding Price is a market system which holds the price of a token as it loses value.
+## HPM
+Holds the highest price after purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat:
 
-**Example Scenario:**
+### HPAP = Highest Price After Purchase
+- Changes based on the highest cpVatop, otherwise 0
 
-A Token at the Price of $10 is bought with an investment of $500.
-- Token Price falls to $9 and the investment to $450.
-- Holding Price implemented and token selling locked.
-- Token Price is held $10 and the investment at $500.
-- Token Price rises to $11 and the investment to $550.
-- Holding Price is revoked and token selling unlocked.
-- Investor sells token and gains $50 in profits.
+### Vatop = Value At Time Of Purchase
+- **cVatop** = Corresponding Vatop (the value of your Bitcoin investment at time of purchase)
+- **cpVatop** = Corresponding Price Vatop (the price of Bitcoin at time of purchase)
+- **cdVatop** = Corresponding Difference Vatop (cVact - cVatop = cdVatop)
+- **acVatops** = All cVatops (Combines all cVatops)
+- **acdVatops** = All cdVatops (combines all cdVatops only if positive, otherwise 0)
 
-This introduces a new market…
+### Vact = Value At Current Time
+- **cVact** = Corresponding Vact (the value of your Bitcoin investment based on the current Bitcoin price, this is updated consistently based on the current Bitcoin price)
+- **cVactTa** = cVact Token Amount (reflects the amount of Bitcoin at time of purchase)
+- **acVacts** = All cVacts (combines all cVacts)
+- **acVactTas** = All cVactTas (combines all cVactTas)
+- **acVactTaAts** = acVactTa Available To Sell (combines all cVactTas if acVactsAts > 0)
+- **acVactsAts** = acVacts Available To Sell (combines cVacts only if the cdVatops > 0)
 
-#### Sloth Market:
+#### Example:
 
-A market in which token prices stagnate rendering bear markets obsolete.
+1. Bitcoin Price: $60,000
+ - $500 worth of Bitcoin is purchased
+ - HPAP = $60,000
+ - Vatop Group 1
+ - - cVatop 1 = $500
+ - - cpVatop 1 = $60,000
+ - - cVact 1 = $500
+ - - cVactTa 1 = 0.00833 
+ - - cdVatop 1 = $0
+ - Vatop Group Combinations
+ - - acVatops = $500
+ - - acVacts = $500
+ - - acVactTas = 0.00833
+ - - acdVatops = $0
+ - - acVactsAts = $0
 
-<img src="https://github.com/Art-Sells/Arells/assets/51394348/49591992-3d46-4200-80c6-b0656d741c1c" width="800px"> 
+2. Bitcoin Price: $54,000
+ - $600 worth of Bitcoin is purchased
+ - HPAP = $60,000
+ - Vatop Group 1
+ - - cVatop 1 = $500
+ - - cpVatop 1 = $60,000
+ - - cVact 1 = $450 
+ - - cVactTa 1 = 0.00833 
+ - - cdVatop 1 = -$50
+ - Vatop Group 2
+ - - cVatop 2 = $600
+ - - cpVatop 2 = $54,000
+ - - cVact 2 = $600
+ - - cVactTa 2 = 0.01111
+ - - cdVatop 2 = $0
+ - Vatop Group Combinations
+ - - acVatops = $1,100
+ - - acVacts = $1,050
+ - - acVactTas = 0.03052
+ - - acdVatops = -$50
+ - - acVactsAts = $0
+
+3. Bitcoin Price: $55,000
+ - No Bitcoin is purchased
+ - HPAP = $60,000
+ - Vatop Group 1
+ - - cVatop 1 = $500
+ - - cpVatop 1 = $60,000
+ - - cVact 1 = $458
+ - - cVactTa 1 = 0.00833 
+ - - cdVatop 1 = -$42
+ - Vatop Group 2
+ - - cVatop 2 = $600
+ - - cpVatop 2 = $54,000
+ - - cVact 2 = $611
+ - - cVactTa 2 = 0.01111
+ - - cdVatop 2 = $11
+ - Vatop Group Combinations
+ - - acVatops = $1,100
+ - - acVacts = $1,069
+ - - acVactTas = 0.01941
+ - - acdVatops = 11
+ - - acVactsAts = $611
+
+4. Bitcoin Price: $65,000
+ - $200 worth of Bitcoin is purchased
+ - HPAP = $65,000
+ - Vatop Group 1
+ - - cVatop 1 = $500
+ - - cpVatop 1 = $60,000
+ - - cVact 1 = $542
+ - - cVactTa 1 = 0.00833 
+ - - cdVatop 1 = $42
+ - Vatop Group 2
+ - - cVatop 2 = $600
+ - - cpVatop 2 = $54,000
+ - - cVact 2 = $722
+ - - cVactTa 2 = 0.01111
+ - - cdVatop 2 = $122
+ - Vatop Group 3
+ - - cVatop 3 = $200
+ - - cVatopTa 3 = 0.00308
+ - - cpVatop 3 = $65,000
+ - - cVact 3 = $200
+ - - cdVatop 3 = $0
+ - Vatop Group Combinations
+ - - acVatops = $1,300
+ - - acVacts = $1,464
+ - - acVatopTas = 0.02249
+ - - acdVatops = $164 
+ - - acVactsAts = $1,264
+
+5. Bitcoin Price: $63,000
+ - $650 worth of Bitcoin is sold
+ - HPAP = $65,000
+ - Vatop Group 1
+ - - cVatop 1 = $0
+ - - cpVatop 1 = $0
+ - - cVact 1 = $0
+ - - cVactTa 1 = 0
+ - - cdVatop 1 = $0 
+ - Vatop Group 2
+ - - cVatop 2 = $450
+ - - cpVatop 2 = $54,000
+ - - cVact 2 = $575
+ - - cVactTa 2 = 0.00198
+ - - cdVatop 2 = $125 
+ - Vatop Group 3 
+ - - cVatop 3 = $200
+ - - cpVatop 3 = $65,000
+ - - cVact 3 = $194
+ - - cVactTa 3 = 0.00308
+ - - cdVatop 3 = -$6  
+ - Vatop Group Combinations
+ - - acVatops = $650
+ - - acVacts = $769
+ - - acVactTas = 0.00506
+ - - acdVatops = $119 
+ - - acVactsAts = $575 
+
+## This introduces a new kind of marketplace and market dynamics…
+
+- **Solid Marketplace: an illiquid marketplace that constrains the flexibilities of buying and selling assets.**
+- **Sloth Market: a market in which asset prices stagnate.**
+
+<img src="https://github.com/Art-Sells/Arells/blob/3651d2883b9a4fce7076a4d14f89aae2d6a1be0e/Art/Marketing/BeforeandAfterArellss.jpg" width="800px"> 
 
 ### How It Works: https://arells.com/howitworks
 _______________________________________________________________________
@@ -64,7 +189,7 @@ _______________________________________________________________________
 ## Core Beliefs:
 
 Arells believes:
-1. It's wrong for investors to lose money selling assets.
+1. Investors should always make profits selling assets.
 2. In empowering investors more than itself.
-3. Money isn't the root to all evil, the *love of money is the root to all evil*.
-- This will keep Arells away from selfish ambition and towards creating innovations that will help empower investors everywhere.
+3. The love of money is the root to all evil, not money.
+- This will keep Arells away from selfish ambition and towards creating innovations that will help empower investors more than itself.

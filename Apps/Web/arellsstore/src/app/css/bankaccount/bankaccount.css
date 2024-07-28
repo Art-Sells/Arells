@@ -1,0 +1,205 @@
+
+#bankaccount-wrapper {
+	padding-top: 20px; 
+	text-align: center;
+	font-family: Arial;
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+	height: 620px;
+	background-color: rgb(255, 251, 245);
+	border-radius: 30px;
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 1.00s;
+	animation-name: animatetop;
+	animation-duration: 1.00s;
+   }
+   
+	   @-webkit-keyframes animatetop {
+	   from {center:0; opacity:0}
+	   to {center:0; opacity:1}
+	 }
+	 
+	 @keyframes animatetop {
+	   from {center:0; opacity:0}
+	   to {center:0; opacity:1}
+	 }
+
+	 #header-navigation {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: fixed;
+		padding-top: 10px;
+		margin-left: -8px;
+		background: none;
+		width: 100%;
+		height: 50px;
+		z-index: 100;
+	}
+
+		#home-link{
+			display: inline-block;
+			text-decoration: none;
+			margin-right: 100px;
+			text-decoration: none;
+			padding-top: 9px;
+			padding-bottom: 5.5px;
+			padding-right: 9px;
+			padding-left: 9px;		  
+			border: solid;
+			border-color: rgb(0, 0, 0, 0.2);
+			border-radius: 30px;
+			border-width: 1.5px;
+			opacity: .9;
+				background: white;					
+		}
+		#home-link:hover,
+		#home-link:focus {
+			transition: 1s;
+			cursor: pointer;
+			border-color: rgb(0, 0, 0, 0.05);
+			box-shadow: none;
+			}		
+			#account-navigation {
+				height: 23px;
+				width: 23px;
+			}
+			/* Add Animation */
+			@-webkit-keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			}
+			
+			@keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			}
+		#cart-link{
+			display: inline-block;
+			text-decoration: none;
+			text-decoration: none;
+			padding-top: 9px;
+			margin-left: 100px;
+			padding-bottom: 5.5px;
+			padding-right: 9px;
+			padding-left: 9px;	  	  
+			border: solid;
+			border-color: rgb(255, 170, 60, 1);
+			border-radius: 30px;
+			border-width: 1.5px;
+			opacity: .9;
+			background: white;	
+			box-shadow: 0px 5px 20px -8px rgb(198, 112, 0, 1); 	 						
+		}
+			#bitcoin-navigation {
+				height: 23px;
+				width: 23px;
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			}
+			#cart-link:hover,
+			#cart-link:focus {
+				transition: 1s;
+				cursor: pointer;
+				border-color: rgb(255, 170, 60, 0.2);
+				box-shadow: none; 
+				}	
+		
+
+	 #bankaccount-title {
+		margin-top: 25px;
+		color: black; 
+		margin-left: auto;	
+		margin-right: auto;	
+		font-weight: 600;	
+		font-size: 20px;
+		letter-spacing: 0px;	
+		opacity: .2;	
+	}	
+
+
+	#bankaccount-to-wrapper {
+		margin-top: 190px;
+		margin-left: auto;
+		margin-right: auto;
+		width: 100%;
+		background-color: rgba(255, 251, 245, 1);
+		border-radius: 30px;
+		box-shadow: 0px -12px 30px 0px rgba(204, 116, 0, 0.0);
+	}
+
+
+			
+        #withdraw-bankaccount {
+            background: rgb(0, 0, 0, 0.1);
+            text-decoration: none;
+            color: black;
+            font-weight: 800;
+            font-size: 20px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            padding-right: 15px;
+            padding-left: 15px;	  
+            border: solid;
+            letter-spacing: 0px;
+            border-radius: 5px;
+            border-width: 0px;
+            width: 250px;
+            opacity: 1;
+            box-shadow: 0px 6px 8px -6px rgb(0, 0, 0, 0);  			  
+        }
+        
+        #withdraw-bankaccount:hover,
+        #withdraw-bankaccount:focus
+            {
+            cursor: pointer;
+            opacity: .4;
+            transition: 1s;
+            
+        }
+
+    #change-bank-button {
+        background: none;
+        text-decoration: none;
+        color: black;
+        font-weight: 200;
+        font-size: 10px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-right: 12px;
+        padding-left: 13px;	  
+        border: solid;
+        border-color: rgb(0, 0, 0, 0.5);
+        letter-spacing: 1px;
+        border-radius: 5px;
+        border-width: 1px;
+        margin-top: 180px;
+        width: 220px;
+        opacity: 1; 			  
+    }
+
+    #change-bank-button:hover,
+    #change-bank-button:focus {
+        opacity: .4;
+        transition: 1s;
+        cursor: pointer;
+                } 
+  
+				
+	
+@media screen and (max-height: 600px) {
+    #bankaccount-wrapper {
+        height: 380px;
+       }
+        #bankaccount-to-wrapper {
+            margin-top: 80px; 
+        }
+        #change-bank-button {
+            margin-top: 70px;		  
+        }   
+}
+

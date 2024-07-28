@@ -1,0 +1,382 @@
+
+#sell-wrapper {
+	padding-top: 20px; 
+	text-align: center;
+	font-family: Arial;
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+		background-color: rgb(255, 251, 245);
+		border-radius: 30px;
+		padding-bottom: 0px;
+		-webkit-animation-name: animatetop;
+		-webkit-animation-duration: 1.00s;
+		animation-name: animatetop;
+		animation-duration: 1.00s;
+		padding-bottom: 60px; 
+   }
+   
+	   @-webkit-keyframes animatetop {
+	   from {center:0; opacity:0}
+	   to {center:0; opacity:1}
+	 }
+	 
+	 @keyframes animatetop {
+	   from {center:0; opacity:0}
+	   to {center:0; opacity:1}
+	 }
+
+
+	 #sell-title {
+        margin-top: 20px;
+		color: black; 
+		margin-left: auto;	
+		margin-right: auto;	
+		font-weight: 600;	
+		font-size: 20px;
+		margin-left: 0px;
+		letter-spacing: 0px;
+		opacity: 1;		
+	}	
+
+
+
+	#sell-wallet-wrapper {
+		padding-top: 30px;
+		margin-top: 35px;
+		margin-left: auto;
+		margin-right: auto;
+		height: 680px;
+		width: 380px;
+		background-color: white;
+		border-radius: 30px;
+		/* box-shadow: 0px 5px 40px -15px rgba(215, 181, 138, 1); */
+	}
+
+        #instructions-wallet-sell-wrapper{
+            padding-top: 36px;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            padding-bottom: 36px;
+        }
+            #buy-instructions {
+                width: 150px;
+                color: rgb(0, 0, 0);
+                margin-left: auto;	
+                margin-right: auto;	
+                line-height: 18px;
+                font-weight: 800;	
+                font-size: 18px;
+                letter-spacing: -.5px;
+                opacity: 1;			
+            }
+
+            #b-amount-available{
+                padding-top: 0px;
+                display: flex;
+                justify-content: center; 
+                width: 320px;
+                align-items: center;
+                margin-left: auto;
+                margin-right: auto;
+                padding-bottom: 20px;
+                box-shadow: 0px 17px 14px -20px rgba(0, 0, 0, 0.2);
+            }
+            #b-price-sell-wallet{
+                padding-top: 25px;
+                display: flex;
+                justify-content: center; 
+                width: 250px;
+                align-items: center;
+                margin-left: auto;
+                margin-right: auto;
+                padding-bottom: 20px;
+                box-shadow: 0px 17px 14px -20px rgba(0, 0, 0, 0.2);
+            }
+
+
+                #amount-holding-title {
+                    color: black; 
+                    font-size: 12px;
+                    font-weight: 200;
+                    margin-left: 5px;
+                    opacity: .5;
+
+                }
+
+                #wallet-icon-sell {
+                    opacity: .3;
+                }
+
+                #sell-wallet-word {
+                    color: black; 
+                    font-size: 12px;
+                    font-weight: 200;
+                    margin-left: 5px;
+                    opacity: .5;
+
+                }
+
+                #wallet-number-sell {
+                    color: gray; 
+					font-size: 13px;
+					font-weight: 200;
+					margin-left: 3px;
+                    opacity: 1;
+	
+				}
+				#wallet-number-sell-num {
+                    color: black; 
+					font-size: 14px;
+					font-weight: 600;
+					margin-left: 2px;
+	
+				}
+
+        #sell-wrapper-sell-sell {
+            margin-top: 20px;
+            padding-top: 20px;
+            padding-bottom: 40px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 380px;
+            width: 260px;
+            background-color: rgba(255, 251, 245, 1);
+            border-radius: 30px;
+            box-shadow: 0px 10px 25px -11px rgba(0, 0, 0, 0.15);
+        }	
+            #b-price-sell{
+                display: flex;
+                justify-content: center; 
+                align-items: center;
+                padding-bottom: 40px;
+                box-shadow: 0px 17px 14px -20px rgb(0, 0, 0, 0.2);
+            }  
+            #b-profits-sell{
+                margin-top: 25px;
+                display: flex;
+                justify-content: center; 
+                align-items: center;
+            }	  
+                #profits-icon-sell {
+                    opacity: .2;
+                }  
+            #wallet-sell-profits {
+                color: black; 
+                font-size: 12px;
+                font-weight: 200;
+                margin-left: 0px;
+                margin-top: 0px;
+                opacity: .5;
+
+            }	
+            #wallet-number-profits-sell {
+                color: gray; 
+                font-size: 13px;
+                font-weight: 200;
+                margin-left: 3px;
+                opacity: 1;
+
+            }
+            #wallet-number-profits-sell-num {
+                color: black; 
+                font-size: 14px;
+                font-weight: 600;
+                margin-left: 2px;
+            }	
+            #sell-amount-title {
+                color: black;
+                margin-left: auto;	
+                margin-right: auto;	
+                font-weight: 200;	
+                font-size: 11px;
+                opacity: .4;		
+            } 
+            #cash-input { 
+                text-align: center;  	   
+                padding-top: 15px;
+                padding-bottom: 26px;
+                padding-left: 10px;
+                padding-right: 5px;       	   		
+                color: gray;
+                font-weight: 200;
+                border: none;
+                border-radius: 0px;
+                font-size: 14px;
+                width: 20px;
+                height: 5px;
+                letter-spacing: 0px;    	   		
+                background: rgb(255, 251, 245);
+                opacity: .7; 
+                margin-left: -165px;
+
+            }  
+            #sell-input { 
+                text-align:left;  	   
+                padding-top: 20px;
+                padding-bottom: 20px;
+                padding-left: 40px;
+                padding-right: 20px;       	   		
+                color: white;
+                font-weight: 800;
+                border: none;
+                border-radius: 10px;
+                font-size: 18px;
+                width: 100px;
+                margin-left: 0px;
+                height: 5px;
+                letter-spacing: 0px;    	   		
+				background: rgb(0, 0, 0);
+       	   		opacity: .4;
+            }  
+            #sell-input:focus {
+                outline: none;
+                transition: 1s;	
+                opacity: 1;	    
+            }   
+            
+            #a-wallet-sell-wrapper{
+                padding-top: 30px;
+                display: flex;
+                justify-content: center; 
+                align-items: center;
+                padding-bottom: 25px;
+                box-shadow: 0px 17px 14px -20px rgb(0, 0, 0, 0.2);
+			}
+
+				#fees-total-word-sell {
+                    color: black; 
+                    font-size: 12px;
+                    font-weight: 200;
+                    opacity: .3;
+
+				}
+				#fees-total-number-sell {
+                    color: gray; 
+					font-size: 13px;
+					font-weight: 200;
+					margin-left: 3px;
+                    opacity: 1;
+
+				}
+				#fees-total-num-sell {
+                    color: black; 
+					font-size: 14px;
+					font-weight: 600;
+					margin-left: 2px;
+
+				}
+
+			#a-wallet-sell-wrapper-bottom{
+				padding-top: 35px;
+				display: flex;
+				justify-content: center; 
+				align-items: center;
+			}
+            #instructions-wallet-sell-wrapper-bottom{
+				padding-top: 80px;
+				display: flex;
+				justify-content: center; 
+				align-items: center;
+			}
+                    #buy-instructions-bottom {
+                        width: 80px;
+                        color: rgb(0, 0, 0);
+                        margin-left: auto;	
+                        margin-right: auto;	
+                        line-height: 14px;
+                        font-weight: 800;	
+                        font-size: 14px;
+                        letter-spacing: -.5px;
+                        opacity: 1;			
+                    }
+
+                    #sell-instructions-bottom {
+                        margin-top: 35px;
+                        color: rgb(0, 0, 0);
+                        margin-left: auto;	
+                        margin-right: auto;	
+                        font-weight: 800;	
+                        font-size: 20px;
+                        letter-spacing: -1px;
+                        opacity: .2;			
+                    }
+
+                    #sell-buy-button {
+                        margin-top: 0px;                        
+                        background: rgba(204, 116, 0);
+                        text-decoration: none;
+                        color: white;
+                        font-weight: 200;
+                        font-size: 10px;
+                        padding-top: 20px;
+                        padding-bottom: 20px;
+                        padding-right: 12px;
+                        padding-left: 13px;	  
+                        border: solid;
+                        letter-spacing: 1px;
+                        border-radius: 5px;
+                        border-width: 0px;
+                        width: 70px;
+                        opacity: 1;
+                        box-shadow: 0px 8px 12px -6px rgba(204, 116, 0); 		  
+                    }
+                
+                    #sell-buy-button:hover,
+                    #sell-buy-button:focus {
+                        opacity: .4;
+                        transition: 1s;
+                        cursor: pointer;
+                    }    
+
+
+				#total-word-sell {
+                    color: black; 
+                    font-size: 12px;
+                    font-weight: 200;
+                    opacity: .3;
+				}
+				#total-number-sell {
+                    color: gray; 
+					font-size: 13px;
+					font-weight: 200;
+					margin-left: 3px;
+                    opacity: 1;
+
+				}
+				#total-num-sell {
+                    color: black; 
+					font-size: 14px;
+					font-weight: 600;
+					margin-left: 2px;
+
+				}
+    #sell-button {
+        background: black;
+        text-decoration: none;
+        color: white;
+        font-weight: 200;
+        font-size: 10px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-right: 12px;
+        padding-left: 13px;	  
+        border: solid;
+        letter-spacing: 1px;
+        border-radius: 5px;
+        border-width: 0px;
+        margin-top: 30px;
+        width: 150px;
+        opacity: 1;
+        box-shadow: 0px 8px 12px -6px black;  			  
+    }
+
+    #sell-button:hover,
+    #sell-button:focus {
+        opacity: .4;
+        transition: 1s;
+        cursor: pointer;
+    }    
+		

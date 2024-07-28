@@ -1,280 +1,261 @@
 # Arells Build Notes...
 
-## Arells 1.5
-- Pages separated like so: own/address (if not signed up) store-name/own/address{redirects-if-connected} (if signed-up)
-- AUM (Assets Under Management) system & # of New Wallets Created, system.
-- Emphasize Revenue while including AUM... arells(dot)com/metrics
-- Hidden From Public (full feature)
+## Arells Cryptocurrency Marketplace MVP
 
-### Sign-Up
-- Sign Up with Google/Apple/Facebook/Etc
+## Arells 1.0
 
-### Edit Store
-- Store|Brand Logo: Default Store Logo
-- Store|Brand Name: No Maximum Characters
-- Store Addresses & Locations:
-- - Claimed: 0x74348347 [Enter Store]
-- - Unclaimed: 0x74348347 [Enter Store] |Save Changes to Claim Address|
+- emailConfirmed attribute
+- - if null, emailUnConfirmed(true){}, emailConfirmed(false){};
+- - if true, opposite
 
-### My Store
-- Top-Center[EDIT]-(SignUp/LogIn to Create/Edit {if not logged in})
-- small Logo or Slogan
-- Logo: Default Store Logo
-- Store Name: Maximum Width if long name (Test) Unclaimed Store Address
-- Store Address: 0x74348347
-- Theme: Arells Logo needs to be 300-500px (on all pages (Home/etc))
+### Confirm Email 
+- Send Confirmation (Link)
+- look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
 
-### Other Store
-- Top-Left[||]-([My-Store]if connected)([/\]if not connected)
-- small Logo or Slogan
-- Image Default: Store Icon
-- Name Default: Unclaimed Store Address
-- Store Address: Address
+### Testing
+- - - Plaid Info (pending approval)
+- **Possibly a Blockchain Info (with API) to pull Bitcoin to Buy & Sell?**
+- Test Buying, Selling | Depositing process... 
+- - Separate Bitcoin Wallet Page where handleBuy, handleSell and handleExport pages handle changes from and to first.
+- - handleBuy/handleSell/handleWithdraw (add try, awaits and catch to ensures the entire process is successful before updating backend information)
 
-#### Test
-- All broken Images (Hidden or not) on mobile, etc///
+### Account
+- Test with "manualBitcoinPrice" editing from CoinGecko API for selling/holding and selling page functionaliries.
+- if acVactsAts = 0 sell display none, holding display true, else opposite
+- Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) with Sell/Hold button 10 second intervals from coin gecko API wrapper instead of entire page?
 
-#### If time permits: 
-- Created By & Owned By (Store|Brand Logo next to Address|Name)
-- Socials
-- Remove all Console.logs
+ #### (B) Price = Bitcoin Price API 
 
-#### After Testing and Before Launch: 
-- Delete all important variables
-- Inform of Arells 1.7 release (and features including clickable pictures).
+  #### Connect Bank (Page)
+ - Connects to Plaid First, (if not connected)
+ - - Bottom showed after connection
 
-________________________________________________________________________________________________________________________________________________
+ #### Buy (Page)
 
-## Arells 1.7
+ #### Sell (Page)
+ - displayed if acVacts == 0 or if acVactsAts > 0, otherwise hidden 
 
-### My Store Asset (See Asset Modal)
-- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
-- Asset Name in title
+ #### Holding (replaces Sell button)
+ - displayed once acVactsAts <= 0, otherwsie hidden
 
-### My Store
-- Store Name in title
+ #### (A)(B) Price = HPAP || Bitcoin Price
+ - HPAP system from HPM wrapper
 
-### Other Store Asset (See Asset Modal)     
-- PAP Logo Above Price After Purchase (clickable and explains roadmap Polygon to USDC)
-- Asset Name in title
+ #### Wallet
+ - Displays $ acVatops, if acVatops <= 0, displays acVacts
 
-### My Store
-- Store Name in title
+ #### Profits
+ - displays $ acdVatops
 
-#### LinkTree Links... 
-***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
-- MetaTag Image(Asset): large-image|name, small-|category
-- MetaTag Title: "Store/Asset Name" (character Limit)
-- MetaTag Description: "Slogan"
-- MetaTag Image: "Store/Asset Image"
-- Google Search Console Index (with sitemap) Log-In/Sign-Up
+ #### Amount Sold
+ - Displays "Sold Amount" from Database $, else, "$0"
+ - (Withdraw)-> Modal
+ - - Modal:
+    - - - (Bank) Withdrawing 
+    - - -  (Check) Withdraw Complete (View Transactions adds Date (logs new Date in "Transaction Dates" database), (B) and link to Bank Account to "Withdrew Amount in Database")-> Transactions
+    - - - (X) Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
 
-##### Bugs
-- Try/Catch Apollo Connection/Address Error...
-- Remove All Console.logs
-- 404 and Server Error Pages
-- Resolve overextending numbers listing issue
-- Resolve "Price After Purchase Price after not 0.00ing in listing issue"
-- Resolve "Price After Purchase Collector (buy) loading price pop-up issue"
-- Polish "Add" button edges
-
-#### After Testing and Before Launch: 
-- Delete all important variables
-- Send 1 month - 2 week notifications on new Features to be added in Arells 3.0
-- Prepare Promotional Instagram/Discords) Abstracts/Illustrations/Photos  hashtags*)) arells.com/abstracts|illustrations|photography pages
-________________________________________________________________________________________________________________________________________________
+ #### Log Out (Redirects to Home)
 
 
-## Arells 2.0
-- SiteMap/s
-- Connect NFTs <-> NFTs Function
-- Pages separated like so: store-name/asset/address
-- Connect Address to Profile-LogIn. If Address connected to Profile/Automatically logs you in 
-- Research Upgradable SmartContracts (through OpenZeppelin)
-- Hard Code SmartContract External Transfers for delisting an nft (if minted, transfer price & Signer (1) to new signer (1) automatically delisting, if not minted, transfer non-price)
+### Buy
+**Pull handleBuy from HPMContext & BoughtAmountContext and edit saveVatopGroups import for success and error modal handling.**
+- (B) Price
+- Amount Input (in $) (tel no * or #) see HPMTester
+- fees (total * .03 goes to our Arells Stripe Account?)
+- total (from input) see HPMTester
+- (BUY) -> Modals
+- Modals: 
+- - Confirming Purchase 3 Second delay
+- - Purchase Complete (confirming purchase modal = false, (see HPMTester)) -> View Transactions
+- - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
+- - Enter information (if one or more fields are empty)
+- Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 
-### Wallet
-- Test with Metamask/Mumbai-USDC
-- Mainnet with Coinbase/Polygon-USDC
-- CrossMint Payment (Integrate Arells in Email) Api... Contact sales for Bank Statements
-
-### Buying Provider
-- Arells [Arells uses Crossmint as it's payment provider] info at bottom.
-
-### Home
-- If logged in [(Open Store), (Close Store)]
-- If not logged in [Open Store] - takes you to "My Store (SignerProvider)" if not [Connect Wallet]
-- List of Addresses | Locations
-
-
-### My Store
-- Top-Right[Cart][Connect Wallet]-if not connected
-- Bottom-Center[+]<black. [Connect Wallet]-if not connected (SignUp/LogIn to Create/Edit {if not logged in})
-- - **Created**:
-- [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
-- - **Collected**:
-- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
-- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
-- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
-
-### My Store Asset   
-- Top-Left[/\]- (See HOME section)
-- Top-Right[Cart][Connect Wallet]-if not connected
-- Bottom-Center[+]<black. [Connect Wallet]-if not connected
-- Images (Default Store Image) here render small pixels
-- Name
-- Evolutions Section
-- Mimick Set Price Section and Buy Button for List to Sell
-- Created by (Signer 0 (if addressClaimed then Store Name)), Owned by (Signer 1 (if addressClaimed then Store Name))
-- PAP Logo Above Price After Purchase
-- Certificates of Ownership
--  Set Price After Purchase(Connect Wallet if not connected): Price (set)?: shows what you keep, creator keeps, fees, etc. [Save Changes (Price After Purchase Error if not correct] Buyer must list new PAP price (no lower than 2x of price) [Calculate earnings: Next Collector Keeps... 47%, insert-creator-name Keeps... 50%, Fees... 3%]... [Save Changes]-if wallet not connected (Connect Wallet)
-- - **Selling**:
-- Price After Purchase - (if price not yet set purchased) = "Sold"
-- [Add To Cart]-share to sell Modal, [Not For Sale]-silver, [Sold]white
-- - **Owned**:
-- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
-- [Add To Cart]-share to sell Modal, [Not For Sale]-silver,
-
-### Other Store
-- Top-Right[Cart][Connect Wallet]-if not connected
-- Bottom-Center[+]<black. [Connect Wallet]-if not connected
-- - **Selling**:
-- Created by (Signer 0 (if addressClaimed then Store Name)), Owned by (Signer 1 (if addressClaimed then Store Name))
-- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
-- [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
-- - **Owned**:
-- Price After Purchase - (if price not yet set purchased) = "Not For Sale"
-- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
-- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver,
-
-### Other Store Asset       
-- Top-Left[||]-([My-Store]if connected)([/\]if not connected)
-- Top-Right[Cart]
-- Bottom-Left & Right -- Nothing
-- Images here render small pixels
-- Name
-- Evolutions Section
-- Mimick Set Price Section and Buy Button for List to Sell
-- - **Selling**:
-- [Add-To-Cart]-Use Prototype as Reference, ([Not For Sale]-Light [For Sale]-heavy(if I'm the collector)) ([Not For Sale]-greyed [Add-To-Cart](if not the collector))
-- - **Owned**:
-- Price After Purchase - To Be Set (if price not yet set purchased) = "Not For Sale"
-- [Add-To-Cart]-Use Prototype as Reference, [Not For Sale]-greyed,
-- *If you're the creator* [For Sale]-dark-gray, [Not For Sale]-silver
+### Sell
+**Pull handleSell from HPMContext sellAmountContext and edit saveVatopGroups import for success and error modal handling.**
+- (B) Amount Available To Sell
+- - Wallet: displays acVactsAts
+- - Profits: displays acdVatops
+- - Sell Amount Input: (tel no * or #) see HPMTester
+- - Sell: see HPMTester
+- - (Confirm Sale) -> Modals
+- - - Modals: 
+- - - - Confirming Sale...3 Second delay
+- - - - Sale Complete (confirming sale modal = false) (see HPMTester) (View Transactions) -> Transactions
+- - - - Transaction Failed (confirming sale modal = false) (OK)
+- - - - Enter information (if one or more fields are empty)
+- Reloads modules every 10 seconds (price, wallet, and profits animation css) from coin gecko API wrapper?
 
 
-#### After Purchase (Modal)
--- Congratulations on your Purchase! Set Price After Purchase to make money off your owned art [VIEW MY STORE]- Takes you to your Owned store
+### Important
+- Create separate Wallet to handle where we get our 3% fee... (Stripe?)
 
-#### LinkTree Links... 
-***Dynamic Metadata (for Profile/Assets), Static Metadata (for Non-Profile/Asset Pages)***
-- MetaTag Title: "Store Name" (character Limit)
-- MetaTag Description: "Slogan"
-- MetaTag Image: Logo Image centered (use created AWS SDK)
+### Other (if Time Permits)
+- Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
+- Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 
-#### After Testing and Before Launch: 
-- Store Private Key Cold
-- Delete all Test/Branched/Component links
-- Send 1 month - 2 week notifications on new Features (show what sharing page will look like) to be added in Arells 3.0
-- Marketing "Promotional campaign" for Arells 2.0 and beyond = USDC/Credit-Card Holders (Mainstream) Audience on Instagram #sell #art #assets #profits)
 
-##### Bugs
-- Clean up if/else if Displays to make more efficient...
 
-#### After Launch
-- Google Sitemap Update
-________________________________________________________________________________________________________________________________________________
 
-## Arells 3.0
 
-### Welcome to Arells! Never lose money selling art! [Start Selling]
 
-### Price After Purchase About**
-- Create link to Individual PAP GitHub Technical (Learn More)
-- Create AUM Tracker (for all Current Prices)
 
-### Memory based Art creation
-- We don't allow deleting due to our memory-based art creation method. Your life's memories are valuable because (no matter how good or bad they are) they can never be deleted. The same philosophy rings true with Arells. Memory based Art creations ensures no art (no matter how good or bad) can ever be deleted thus ensuring its overall sustained value-creation.
 
-### My/Other Store Assets
-- PAP Logo Above Price After Purchase (Assets) (Asset links to Price After Purchase About Page with logo and Description) [Even in Edit]
-- Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
 
-### Price After Purchase About
-- Arells' Price After Purchase system is a market innovation that removes bear markets (markets in which you lose money selling assets) out of financial systems... Learn More (Coming Soon)
 
-### My Store Asset
-- Edit: On-Off button Public/Private
 
-### My/Other Store**
--- ([automatically loads latest])
-- Bottom-Left[Bell]<light. (only after logged in) Separate Divs for all hovering buttons.
-- (Private Art) (Public Art)
 
-### Home
-- If logged in [(View My Store), (The Price After Purchase System), Contact (Instagram/Discord) by Category, (Log-Out)]
 
-### Bell
-- "Congratulations xxxx! Your Art xxxx Sold to xxxx for xxxx", You've made xxxx in profit!".
-- Email Notifications
-- Notifications "you'll be earning...X after Purchasing" when collector changes purchase.
 
-#### After Testing and Before Launch: 
-- Delete all important variables
-- Send 1 - 2 week notification about new Features in next iteration
-________________________________________________________________________________________________________________________________________
 
-## Arells 4.0 
 
-- Rename Production Repo (Arells Marketplace)
-- Wallet Logs you off After 10 minutes of innaction (review Bank Apps)
-- "Store Name is Taken Error, and if Asset Name is taken"
-- NFTs = Digital Art,
-- Seed Phrase = Vault Code
-- Connect Wallet = Connect Store, 
-- Public Key = Address,
-- Automatic Token Confirmations when listing, creating, and buying Art.
-- Creating on one new address (if we switch blockchains) automatically bridges all funds from one address to another… Users don’t have to manually change addresses. All polygon prices switch to USDC (auto)
-- Private Key = (Do Not Show and Allow Outbound USDC Transfers, only Withdrawals to Banks and Inbound Transfers [For Security purposes]).
-- Make API Key Private
-- Build with Circle Wallet As A Service? (USDC) ***Connects to bank account once and automatically converts USDC with purchacing***                                           
-- Change all NFT words (WebApp/Twitter/GitHub/Crunchbase) into "Digital Art"
-- Heavy KYC/AML [USDC -to-bank- transfers only] through Integrating Apple-Pay & Google Pay Credit Card with USDC "purchase".
 
-### Bug-fixes
-- Test to see if page-restart (after system restart) shows blank code page.
 
-### Sign-up
-- Proof-of-Creation (Website/Social-Media-Links) to prevent plagarism for artwork creating. (Verified Check... No Verified check for buyer)
-- Terms & Conditions Agreement
 
-#### How To Make Money:
-{As A Collector: Buy, Set Price After Purchase (list profits), Share}{As A Creator: Create, Set Price and Price After Purchase, Share} [VIEW STORE]-(if no art collected (Created), else (Collected)).
 
-#### About (in Home Section)
-- Created by artists for artists. Arells was created from a deep frustration of how difficult it is to make a living as artists in a society that doesn't value art to the same degree as other careers. But now thanks to the technology powering cryptocurrencies (blockchain), all this changes. Neither you nor buyers of your artwork will ever lose money selling art thanks to a new market system we're calling "Price After Purchase". With our Price After Purchase system (PAP Logo - link to PAP Description), bear markets (markets in which people sell assets at a loss) are obsolete. Arells would have been impossible to create before blockchain technology and so... This marks you as a pioneer of a revolution that will change not just the art industry, but asset markets everywhere.
 
-### Seller-Created/Collected
-- Addresses section (based on Blockchains(incorporate SOL USDC?)
-- Private and Not-For-Sale items automatically show on bottom of pack
-- Create Categories (General, Illustrations, etc)
-- Check how GitHub Integrates Profile Image with Profile Change (integrate this in MetaImage)
-- - Proof-of-creation 70x PAP for Copyright Proven Artistic Works
-- - Proof-of-ownership for major assets.
 
-### Cash-Register (Slide-Up)
--- Store dissapears on top left  replaced by Bell.
-- USDC Transfer to Bank Account (Beam Cash Out API?)
 
-### Vault (Slide-Up)
-- NFT Collections (Ability to Receive ONLY [In-Bound]... No Outbound Transfers)
-  
-#### Connect Wallet(Open Market):
-- USDC only (On Polygon until Ethereum 2 Upgrade is complete (100,000 TPS, lower gas fee L2s (Keep users informed)
-- Phase out Crossmint (if they won't include our own Logo/Name in Email/Payment info)
-- Rarimo (CCTP) Circle?
-- Extensions: Chrome, Edge, Brave, Opera, iOS, PlayStore
 
-##### Other:
--	`onError(event => fail()}` for failed images
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Arells 1.5 - 2
+
+### Important:
+- Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
+- Update Blockchain.info API to Amplify (IP) API
+- Resolve "HPMContext" errors that show "cannot find email, Error fetching Bitcoin Price, etc etc" from console.log if pages don't need them...
+- Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/HPMContext
+
+### Testing
+- Test Export process... 
+- - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information)
+
+### Account
+- Import
+- Export
+
+### Sell
+**Pull handleSell from HPMContext sellAmountContext and edit saveVatopGroups import for success and error modal handling.**
+if acVactsAts <= 0 && acVatops > 0 display:
+-  (A)(B) Holding Amount
+- - Wallet: acVatops
+if acVatops <= 0:
+- No Amount Available to Sell
+else:
+
+### Transactions
+**From Transactions Attribute (API)**
+- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
+- (Calendar) 06/21/24 (mm/dd/yr) (pulls from "Transactions Dates" from Database)
+- (B) Sold: 0.0087 (pulls from "Sold Amount" database) 
+- - (Cash Register) for: $ 
+- (B) Bought: 0.0087 (pulls from "Bought Amount" database) 
+- - (Cash Register) for: $
+- (Vault) Withdrew: $ (pulls from "Withdrew Amount" database) 
+- - (Bank) to: (Plaid Bank Logo Button? from Plaid Wrapper?)(long bank words have maximum display length of ?)->Bank Account
+- (^-circle) Exporting: 0.00043 (if loading useEffect from Block Explorer)| (B) Exported: 0.00323 (if completed useEffect) (pulls from "Exported Amount" database) 
+- - (App) To: (View On Block Explorer)-> Block Explorer Link
+
+### Withdraw
+**From Sold Amount Attribute (API)**
+- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
+- Displays "Sold Amount" from Database $
+- (Bank) to: (Plaid Bank Logo Button? from Plaid Wrapper?)->Bank Account
+- (Withdraw) -> Modal
+- - Modal:
+- - - (Bank) Withdrawing 
+- - -  (Check) Withdraw Complete (View Transactions adds Date (logs new Date in "Transaction Dates" database), (B) and link to Bank Account to "Withdrew Amount in Database")-> Transactions
+- - - (X) Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
+
+### Bank Account
+- (A) -> Account Page (B) ->Buy Page
+- Plaid info from Plaid Wrapper?
+
+### Import
+- Pull Bitcoin Address From Backend
+- - acVactTas <- add a useEffect that constantly updates based on Total Bitcoin Amount from Bitcoin Wallet
+
+### Export
+**Pull handleExport from HPMContext and edit saveVatopGroups import for success and error modal handling.**
+- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
+- (W) Wallet: Displays acVatops.
+- (B) Amount: Displays acVactTas 7 decimals long maximum
+- Export Amount Input: (tel no * or #) see HPMTester
+- Export Address Input: (tel no * or #) see HPMTester
+- Exporting
+- (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page) 7 decimals long maximum)
+- Total exported wallet value: see HPMTester
+- You will lose: see HPMTester
+- (CANCEL) -> Account Page, 
+- (EXPORT) -> Modal
+- - Modal:
+- - - Exporting (3 second delay) see HPMTester 
+- - - Successfuly Exported (exporting modal = false, adds Date (logs new Date in "Transaction Dates" database), cVactTas exported to "Exported Amount" and link to Block Exporer to "Exported Link" in Database) (View Transactions)-> Transactions-
+- - - Export Failed (exporting modal = false)(OK) (if export fails (see HPMTester))
+- - - Check Address (exporting modal = false)(if Bitcoin Address is not in right format (refer to Bitcoin Page))
+- - - Enter information (exporting modal = false) (if one or more fields are empty)
+- - - Send more Bitcoin (exporting modal = false) (refer to Bitcoin Page for fee limit)
+- Reloads modules every 5 minutes (price, wallet, and losses animation css) from coin gecko API wrapper?
+
+### KYC/AML
+- Add this to Plaid API
+
+### UserContextWrapped
+- if logged in for more than 5 minutes without use, automatically sign out and take to homepage.
+
+### Home/Account
+- Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
+- Contact us (Account/Home): Email
+- Clean up Lagging Pages
+- Contact us: Email
+
+### Sign Up
+- Verify Email *important*
+- Add noreply@arells.com to Amazon SES Identities
+- - Test to see if "Confirmation Code Exists" error works...
+
+### Confirm
+- - - Ensure Private Key is Encrypted (if successful)
+
+### Export
+- Increase fees for faster exports
+
+### Log In
+- - if email already exists but is unconfirmed -> Confirm Page
+- Forgot Password 
+- Add 2FA for Buying/Selling and first Logging In.
+
+### Bank Account
+- Change Bank Account (Plaid Connect? from Plaid Wrapper?) (long bank words have maximum display length of ?)
+
+### Transactions
+- Add Imported
+
+#### Misc
+- fix "bitcoinAmount" API misswording issue within Withdraw Amount JSON.
+
+##### Home Page:
+10 years, 5 years, 1 year, 6 months, 90 days, 30 days, 7 days, 24 hours, 6 hours, 1 hours (load whichever time frame from 24 hours first, to 7 days, prioritize days then months then years in regards to the highest percentage increase).
+
+## Code Name: Project Omega
+
+### Problem: AI is on track to displace many jobs.
+
+### Solution: A marketplace that creates new jobs for people in a AI job displacing world.
+
+

@@ -1,0 +1,380 @@
+
+#transactions-wrapper {
+	padding-top: 20px; 
+	text-align: center;
+	font-family: Arial;
+	margin-top: 0%;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+		background-color: rgb(255, 251, 245);
+		border-radius: 30px;
+		padding-bottom: 0px;
+		-webkit-animation-name: animatetop;
+		-webkit-animation-duration: 1.00s;
+		animation-name: animatetop;
+		animation-duration: 1.00s;
+		padding-bottom: 80px; 
+   }
+   
+	   @-webkit-keyframes animatetop {
+	   from {center:0; opacity:0}
+	   to {center:0; opacity:1}
+	 }
+	 
+	 @keyframes animatetop {
+	   from {center:0; opacity:0}
+	   to {center:0; opacity:1}
+	 }
+
+	 #header-navigation {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: fixed;
+		padding-top: 10px;
+		margin-left: -8px;
+		background: none;
+		width: 100%;
+		height: 50px;
+		z-index: 100;
+	}
+
+		#home-link{
+			display: inline-block;
+			text-decoration: none;
+			margin-right: 100px;
+			text-decoration: none;
+			padding-top: 9px;
+			padding-bottom: 5.5px;
+			padding-right: 9px;
+			padding-left: 9px;		  
+			border: solid;
+			border-color: rgb(0, 0, 0, 0.2);
+			border-radius: 30px;
+			border-width: 1.5px;
+			opacity: .9;
+				background: white;					
+		}
+		#home-link:hover,
+		#home-link:focus {
+			transition: 1s;
+			cursor: pointer;
+			border-color: rgb(0, 0, 0, 0.05);
+			box-shadow: none;
+			}		
+			#account-navigation {
+				height: 23px;
+				width: 23px;
+			}
+			/* Add Animation */
+			@-webkit-keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			}
+			
+			@keyframes animatetop {
+				from {center:0; opacity:0}
+				to {center:0; opacity:1}
+			}
+		#cart-link{
+			display: inline-block;
+			text-decoration: none;
+			text-decoration: none;
+			padding-top: 9px;
+			margin-left: 100px;
+			padding-bottom: 5.5px;
+			padding-right: 9px;
+			padding-left: 9px;	  	  
+			border: solid;
+			border-color: rgb(255, 170, 60, 1);
+			border-radius: 30px;
+			border-width: 1.5px;
+			opacity: .9;
+			background: white;	
+			box-shadow: 0px 5px 20px -8px rgb(198, 112, 0, 1); 	 						
+		}
+			#bitcoin-navigation {
+				height: 23px;
+				width: 23px;
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
+			}
+			#cart-link:hover,
+			#cart-link:focus {
+				transition: 1s;
+				cursor: pointer;
+				border-color: rgb(255, 170, 60, 0.2);
+				box-shadow: none; 
+				}	
+		
+
+	 #transactions-title {
+		margin-top: 25px;
+		color: black; 
+		margin-left: auto;	
+		margin-right: auto;	
+		font-weight: 600;	
+		font-size: 20px;
+		letter-spacing: 0px;	
+		opacity: .2;	
+	}	
+
+
+
+	#transactions-wallet-wrapper {
+		padding-top: 5px;
+		padding-bottom: 70px;
+		margin-top: 45px;
+		margin-left: auto;
+		margin-right: auto;
+		height: 100%;
+		width: 380px;
+		background-color: white;
+		border-radius: 30px;
+		/* box-shadow: 0px 5px 40px -15px rgba(215, 181, 138, 1); */
+	}
+
+		#withdraw-calendar-wrapper {
+			display: flex;
+			justify-content: center; 
+			align-items: center;
+			margin-top: 35px;
+			margin-bottom: 30px;
+		}
+
+			#calendar-image{
+				width: 12px;
+				height: 12px;
+				opacity: .3; 
+			}
+			#calendar-date {
+				color: black;
+				font-size: 12px;
+				font-weight: 800;
+				margin-left: 3px;
+				opacity: 1;
+			}	
+			#calendar-date-format {
+				color: black;
+				font-size: 9px;
+				font-weight: 200;
+				margin-left: 3px;
+				opacity: .3;
+				margin-top: 0px;
+			}
+
+
+		#transactions-amount-wrapper {
+			margin-top: 20px;
+			padding-top: 20px;
+			margin-left: auto;
+			margin-right: auto;
+			height: 92px;
+			width: 260px;
+			background-color: rgba(255, 251, 245, 1);
+			border-radius: 30px;
+			box-shadow: 0px 10px 25px -11px rgba(204, 116, 0, 0.25);
+		}
+		#transactions-button-wrapper {
+			margin-top: 20px;
+			padding-top: 20px;
+			margin-left: auto;
+			margin-right: auto;
+			height: 100px;
+			width: 260px;
+			background-color: rgba(255, 251, 245, 1);
+			border-radius: 30px;
+			box-shadow: 0px 10px 25px -11px rgba(204, 116, 0, 0.25);
+		}
+
+
+				#b-wallet-transactions{
+					margin-top: 0px;
+					display: flex;
+					justify-content: center; 
+					align-items: center;
+					padding-bottom: 15px;
+					box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
+				}	
+				#b-wallet-wrapper-exporting,
+				#b-wallet-wrapper-exported {
+					-webkit-animation-name: animatetop;
+					-webkit-animation-duration: 1.50s;
+					animation-name: animatetop;
+					animation-duration: 1.50s;
+				}
+
+
+					#bitcoin-transactions{
+						width: 15px;
+						height: 15px;
+						border-radius: 100px;
+						box-shadow: 0px 2px 10px 0px rgb(198, 112, 0, 0.0);
+						opacity: 1; 
+						margin-top: 2px;
+					}
+					#exporting-image{
+						margin-top: 2px;
+						width: 15px;
+						height: 15px;
+						opacity: 1; 
+						margin-right: 3px;
+					}
+					#bitcoin-amount-transactions {
+						color: black;
+						font-size: 10px;
+						font-weight: 200;
+						margin-left: 4px;
+						opacity: .3;
+					}
+					#bitcoin-amount-transactions-exported {
+						color: black;
+						font-size: 10px;
+						font-weight: 200;
+						margin-left: 4px;
+						opacity: .3;
+						-webkit-animation-name: animateexport;
+						-webkit-animation-duration: 1.00s;
+						animation-name: animateexport;
+						animation-duration: 1.00s;
+					}
+					@-webkit-keyframes animateexport {
+						from {center:0; opacity:0}
+						to {center:0; opacity:.3}
+					}
+					
+					@keyframes animateexport {
+						from {center:0; opacity:0}
+						to {center:0; opacity:.3}
+					}
+					
+
+					#bitcoin-amount-number-sold,
+					#bitcoin-amount-number-bought {
+						color: black;
+						font-size: 12px;
+						font-weight: 600;
+						margin-left: 2px;
+
+					}
+					#bitcoin-amount-number-exported {
+						color: black;
+						font-size: 12px;
+						font-weight: 600;
+						margin-left: 2px;
+						-webkit-animation-name: animatetop;
+						-webkit-animation-duration: 1.50s;
+						animation-name: animatetop;
+						animation-duration: 1.50s;
+
+					}
+					
+				#a-wallet-transactions{
+					padding-top: 18px;
+					display: flex;
+					justify-content: center; 
+					align-items: center;
+					padding-bottom: 20px;
+				}
+
+					#wallet-icon-transactions {
+						opacity: .3;
+					}
+
+					#wallet-icon-exported {
+						opacity: .3;
+						margin-top: 1.5px;
+					}
+					#wallet-icon-vault {
+						margin-top: 1.5px;
+						opacity: .3;
+					}
+					#transactions-exported-to {
+						color: black;
+						font-size: 10px;
+						font-weight: 200;
+						margin-left: 1px;
+						opacity: .3;
+					}
+					#transactions-wallet-word {
+						color: black;
+						font-size: 10px;
+						font-weight: 200;
+						margin-left: 4px;
+						opacity: .3;
+
+					}
+					#transactions-wallet-number {
+						color: gray;
+						font-size: 12px;
+						font-weight: 200;
+						margin-left: 3px;
+
+					}
+					#transactions-wallet-num-bought,
+					#transactions-wallet-num-sold,
+					#transactions-wallet-num-withdrew {
+						color: black;
+						font-size: 12px;
+						font-weight: 600;
+						margin-left: 2px;
+
+					}
+
+				
+
+
+			#withdrew-export {
+				margin-left: 5px;
+				background: rgb(0, 0, 0, 0.1);
+				text-decoration: none;
+				color: black;
+				font-weight: 800;
+				font-size: 9px;
+				padding-top: 8px;
+				padding-bottom: 8px;
+				padding-right: 8px;
+				padding-left: 8px;	  
+				border: solid;
+				letter-spacing: 0px;
+				border-radius: 5px;
+				border-width: 0px;
+				width: 100px;
+				opacity: 1;
+				box-shadow: 0px 6px 8px -6px rgb(0, 0, 0, 0);  			  
+			}
+			#view-export {
+				margin-left: 5px;
+				background: black;
+				text-decoration: none;
+				color: white;
+				font-weight: 500;
+				font-size: 7px;
+				padding-top: 8px;
+				padding-bottom: 8px;
+				padding-right: 8px;
+				padding-left: 8px;	  
+				border: solid;
+				letter-spacing: 1px;
+				border-radius: 5px;
+				border-width: 0px;
+				width: 95px;
+				opacity: 1;
+				box-shadow: 0px 6px 8px -6px rgb(0, 0, 0, 0);  			  
+			}
+			
+			#view-export:hover,
+			#view-export:focus,
+			#withdrew-export:hover,
+			#withdrew-export:focus
+			 {
+			  cursor: pointer;
+			  opacity: .4;
+			  transition: 1s;
+			  
+			}
+	
+
