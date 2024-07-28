@@ -62,16 +62,15 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <span id="descriptioner">ALWAYS SELL</span>
-        <span id="ada-description">BITCOIN</span>
-        <span id="ada-descriptioner">FOR PROFITS</span>
+        <p id="descriptioner">ALWAYS SELL</p>
+        <p id="ada-description">BITCOIN</p>
+        <p id="ada-descriptioner">FOR PROFITS</p>
       </div>
 
       <BitcoinChart />
 
       <div id="buy-info-wrapper">
-        <span id="buy-info">Buy small amounts of Bitcoin.</span>
-        <span id="buy-info-homer">Always sell them for Profits.</span>
+        <p id="buy-info">Buy small amounts of Bitcoin. Always sell them for Profits</p>
       </div>
       <Link href="/login" passHref>
         <button id="login">LOGIN</button>
