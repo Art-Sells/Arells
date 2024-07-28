@@ -93,8 +93,8 @@
 		#buy-info-wrapper {
 			margin-left:auto;
 			margin-right: auto;
-			margin-top: 15px;
-			font-size: 10px;
+			margin-top: 20px;
+			font-size: 9px;
 			font-weight: 600;
 		}
 			#buy-info-home {
@@ -181,7 +181,7 @@
 
 
 	#buy-info-wrapper {
-		font-size: 9px;
+		font-size: 8px;
 	}
 
 	#buy-info-homer {

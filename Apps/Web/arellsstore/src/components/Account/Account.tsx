@@ -297,14 +297,16 @@ const Account: React.FC = () => {
 
       {walletNotConnected && (
           <p id="amount-sold-number-account-num-null">
-          Buy small amounts of Bitcoin. 
+          Buy small amounts of Bitcoin.
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           Always sell them for Profits.
         </p>    
       )}
 
       {awaitingApprovals && (
           <p id="amount-sold-number-account-num-null">
-          Buy small amounts of Bitcoin. 
+          Buy small amounts of Bitcoin.
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           Always sell them for Profits.
         </p>    
       )}
