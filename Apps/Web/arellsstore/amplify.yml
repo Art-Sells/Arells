@@ -5,6 +5,8 @@ applications:
       phases:
         preBuild:
           commands:
+            - nvm install 18.17.0
+            - nvm use 18.17.0
             - yarn install --frozen-lockfile
         build:
           commands:
