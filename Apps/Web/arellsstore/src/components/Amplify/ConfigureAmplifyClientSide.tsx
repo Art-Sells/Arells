@@ -1,9 +1,11 @@
 // components/ConfigureAmplifyClientSide.tsx
 "use client";
 import { Amplify } from 'aws-amplify';
-import config from "../../aws-exports";
+import awsmobile from '../../aws-exports';
+import dotenv from 'dotenv';
 
-Amplify.configure({ ...config });
+dotenv.config();
+Amplify.configure(awsmobile);
 
 export default function ConfigureAmplifyClientSide() {
     return null;

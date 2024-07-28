@@ -45,20 +45,8 @@ typechain-types
 cache
 artifacts
 
-
-node_modules
-.env
-coverage
-coverage.json
-typechain
-typechain-types
-
-# Hardhat files
-cache
-artifacts
-
-#amplify-do-not-edit-begin
-amplify/\#current-cloud-backend
+# amplify-do-not-edit-begin
+amplify/#current-cloud-backend
 amplify/.config/local-*
 amplify/logs
 amplify/mock-data
@@ -68,13 +56,12 @@ amplify/backend/.temp
 build/
 dist/
 node_modules/
-aws-exports.js
-awsconfiguration.json
-amplifyconfiguration.json
-amplifyconfiguration.dart
-amplify-build-config.json
-amplify-gradle-config.json
-amplifytools.xcconfig
+/awsconfiguration.json
+/amplifyconfiguration.json
+/amplifyconfiguration.dart
+/amplify-build-config.json
+/amplify-gradle-config.json
+/amplifytools.xcconfig
 .secret-*
 **.sample
-#amplify-do-not-edit-end
+# amplify-do-not-edit-end

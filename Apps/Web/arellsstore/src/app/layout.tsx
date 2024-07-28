@@ -5,9 +5,11 @@ import { UserProvider } from '../context/UserContext';
 import { HPMProvider } from '../context/HPMContext';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
-import config from "../../aws-exports";
+import awsmobile from '../aws-exports';
+import dotenv from 'dotenv';
 
-Amplify.configure({ ...config });
+dotenv.config();
+Amplify.configure(awsmobile);
 
 type LayoutProps = {
   children: ReactNode;

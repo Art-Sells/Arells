@@ -18,7 +18,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `https://api.coingecko.com/api/v3/:path*`,
+        destination: `https://pro-api.coingecko.com/api/v3/:path*`,
       },
     ];
   },
