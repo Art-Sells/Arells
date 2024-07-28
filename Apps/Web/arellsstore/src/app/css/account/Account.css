@@ -456,12 +456,12 @@
 					opacity: 1;
 				}
 				#amount-sold-number-account-num-approvals {
-					margin-top: 11px;
-					width: 180px;
+					margin-top: 12px;
+					width: 140px;
 					margin-left: auto;
 					margin-right: auto;
 					color: black;
-					font-size: 16px;
+					font-size: 14px;
 					font-weight: 600;
 					line-height:14px;
 					letter-spacing: -0.5px;
