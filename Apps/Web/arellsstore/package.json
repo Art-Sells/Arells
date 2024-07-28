@@ -10,8 +10,7 @@
     "lint": "next lint",
     "compile": "graphql-codegen",
     "watch": "graphql-codegen -w",
-    "proxy": "https://pro-api.coingecko.com",
-    "postinstall": "yarn install --frozen-lockfile"
+    "proxy": "https://pro-api.coingecko.com"
   },
   "dependencies": {
     "@aws-amplify/auth": "^6.3.7",
