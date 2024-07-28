@@ -11,7 +11,7 @@ import { signUp, signIn, fetchUserAttributes, signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
 import { generateWallet } from '../../lib/bitcoin';
-import { createS3Folder } from '../../aws-config';
+import { createS3Folder } from '../../../aws-config';
 import CryptoJS from 'crypto-js';
 
 interface Attribute {

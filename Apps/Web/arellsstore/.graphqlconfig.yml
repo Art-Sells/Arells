@@ -1,0 +1,18 @@
+projects:
+  arellsstore:
+    schemaPath: amplify/backend/api/arellsstore/build/schema.graphql
+    includes:
+      - aws-exports.js
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: javascript
+        generatedFileName: ''
+        docsFilePath: .
+        region: us-west-1
+        apiId: null
+        maxDepth: 10
+extensions:
+  amplify:
+    version: 3
