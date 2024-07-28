@@ -83,8 +83,8 @@ const Account: React.FC = () => {
 
       <p id="account-slogan">
         ALWAYS SELL
-        <span id="account-slogan-two">BITCOIN</span>
-        <span id="account-slogan-three">FOR PROFITS</span>
+        <span id="ada-account-slogan">BITCOIN</span>
+        <span id="ada-account-slogan-two">FOR PROFITS</span>
       </p>
 
       {awaitingApprovals && (
