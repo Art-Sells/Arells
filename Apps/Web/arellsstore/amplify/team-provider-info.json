@@ -32,6 +32,9 @@
     "categories": {
       "auth": {
         "arellsstore4561ad4f": {}
+      },
+      "api": {
+        "arellsstore": {}
       }
     }
   }

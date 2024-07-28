@@ -10,6 +10,7 @@
 
 ### Confirm Email 
 - Send Confirmation (Link)
+- look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
 
 ### Testing
 - - - Plaid Info (pending approval)
