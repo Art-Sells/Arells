@@ -37,5 +37,27 @@
         "arellsstore": {}
       }
     }
+  },
+  "arellsuser": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-arellsstore-arellsuser-9f7af-authRole",
+      "UnauthRoleArn": "arn:aws:iam::487503560320:role/amplify-arellsstore-arellsuser-9f7af-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::487503560320:role/amplify-arellsstore-arellsuser-9f7af-authRole",
+      "Region": "us-west-1",
+      "DeploymentBucketName": "amplify-arellsstore-arellsuser-9f7af-deployment",
+      "UnauthRoleName": "amplify-arellsstore-arellsuser-9f7af-unauthRole",
+      "StackName": "amplify-arellsstore-arellsuser-9f7af",
+      "StackId": "arn:aws:cloudformation:us-west-1:487503560320:stack/amplify-arellsstore-arellsuser-9f7af/bced1d40-4c9c-11ef-b723-06bfaf49bb83",
+      "AmplifyAppId": "d1urnv509tbppv"
+    },
+    "categories": {
+      "auth": {
+        "arellsstore4561ad4f": {},
+        "userPoolGroups": {}
+      },
+      "api": {
+        "arellsstore": {}
+      }
+    }
   }
 }
