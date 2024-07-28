@@ -168,7 +168,7 @@ const BitcoinChart: React.FC = () => {
   };
 
   return (
-    <div className={styles.chartContainer}>
+    <div className={styles.chartContainerAccount}>
       <div id="b-logo-home">
         <span>
           <div id="a-how-wrapper">
