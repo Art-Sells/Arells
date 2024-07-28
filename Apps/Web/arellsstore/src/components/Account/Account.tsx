@@ -81,7 +81,7 @@ const Account: React.FC = () => {
         src="images/Arells-Logo-Ebony.png"
       />
 
-      <p id="descriptioner-account">
+      <p id="descriptioner-account-crypt">
         ALWAYS SELL
         <span id="descriptioner-account-crypto">BITCOIN</span>
         <span id="descriptioner-account-cryptor">FOR PROFITS</span>

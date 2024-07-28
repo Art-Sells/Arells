@@ -136,7 +136,7 @@
 
 @media screen and (max-width: 650px) {
   .chartContainer {
-      width: 300px;
+      width: 280px;
 		  -webkit-animation-name: animatetop;
 		  -webkit-animation-duration: 2.00s;
 		  animation-name: animatetop;
@@ -155,7 +155,8 @@
   
     
     .lineChartWrapper {
-      width: 194px;
+      margin-left: 105px;
+      width: 184px;
 		  -webkit-animation-name: animatetop;
 		  -webkit-animation-duration: 2.00s;
 		  animation-name: animatetop;

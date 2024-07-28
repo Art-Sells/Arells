@@ -30,9 +30,9 @@
 		opacity: 1;
 	}
 
-	  #descriptioner-account {
+	  #descriptioner-account-crypt {
 		margin-top: 10px;
-		font-size: 8.5px;
+		font-size: 8px;
 		letter-spacing: 0px;
 		margin-left: -.5px; 
 		font-weight: 600;
@@ -73,7 +73,7 @@
 		margin-left: auto;
 		margin-right: auto;
 		height: 222px;
-		width: 380px;
+		width: 350px;
 		background-color: white;
 		border-radius: 30px;
 		/* box-shadow: 0px 5px 40px -15px rgba(215, 181, 138, 1); */
@@ -414,7 +414,7 @@
 			margin-left: auto;
 			margin-right: auto;
 			height: 110px;
-			width: 250px;
+			width: 220px;
 			background-color: rgba(255, 251, 245, 1);
 			border-radius: 30px;
 			box-shadow: 0px 10px 25px -11px rgba(204, 116, 0, 0);
