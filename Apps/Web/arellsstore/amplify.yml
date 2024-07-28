@@ -5,8 +5,9 @@ applications:
       phases:
         preBuild:
           commands:
-            - nvm install 18.18.2
-            - nvm use 18.18.2
+            - curl https://get.volta.sh | bash
+            - volta install node@18.18.2
+            - volta install yarn
             - yarn install
         build:
           commands:
