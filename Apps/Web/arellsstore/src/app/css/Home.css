@@ -60,7 +60,7 @@
 	
 	  
 		#descriptioner-wrapper {
-			margin-top: 40px;
+			margin-top: 35px;
 			margin-left: auto;
 			margin-right: auto;
 			font-size: 11px;
@@ -173,11 +173,9 @@
 
 	  
 	  #descriptioner-wrapper {
-		margin-top: 35px;
+		margin-top: 30px;
+		font-size: 9px;
 	  }
-	  #descriptioner {
-		font-size: 9.5px;
-	}	
 
 
 	#buy-info-wrapper {

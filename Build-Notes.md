@@ -4,14 +4,6 @@
 
 ## Arells 1.0
 
-- emailConfirmed attribute
-- - if null, emailUnConfirmed(true){}, emailConfirmed(false){};
-- - if true, opposite
-
-### Confirm Email 
-- Send Confirmation (Link)
-- look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
-
 ### Testing
 - - - Plaid Info (pending approval)
 - **Possibly a Blockchain Info (with API) to pull Bitcoin to Buy & Sell?**
@@ -94,6 +86,10 @@
 ### Other (if Time Permits)
 - Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
+- emailConfirmed attribute
+- - if null, emailUnConfirmed(true){}, emailConfirmed(false){};
+- - if true, opposite
+- Send Confirmation (Link) look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
 
 
 
