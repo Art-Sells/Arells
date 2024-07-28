@@ -16,5 +16,23 @@
         "arellsstore4561ad4f": {}
       }
     }
+  },
+  "arells": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-arellsstore-arells-a2cfa-authRole",
+      "UnauthRoleArn": "arn:aws:iam::487503560320:role/amplify-arellsstore-arells-a2cfa-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::487503560320:role/amplify-arellsstore-arells-a2cfa-authRole",
+      "Region": "us-west-1",
+      "DeploymentBucketName": "amplify-arellsstore-arells-a2cfa-deployment",
+      "UnauthRoleName": "amplify-arellsstore-arells-a2cfa-unauthRole",
+      "StackName": "amplify-arellsstore-arells-a2cfa",
+      "StackId": "arn:aws:cloudformation:us-west-1:487503560320:stack/amplify-arellsstore-arells-a2cfa/4dec5760-4c94-11ef-abf6-02e082f36dc1",
+      "AmplifyAppId": "d1urnv509tbppv"
+    },
+    "categories": {
+      "auth": {
+        "arellsstore4561ad4f": {}
+      }
+    }
   }
 }
