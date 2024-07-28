@@ -1,7 +1,7 @@
+// pages/api/fetchBitcoinPrice.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
-const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
 let cachedPrice: number | null = null;
 let cacheTimestamp: number | null = null;
 const CACHE_DURATION = 60000; // 1 minute in milliseconds
@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         vs_currencies: 'usd'
       },
       headers: {
-        'x-cg-pro-api-key': COINGECKO_API_KEY
+        'x-cg-pro-api-key': process.env.NEXT_PUBLIC_COINGECKO_API_KEY
       }
     });
 

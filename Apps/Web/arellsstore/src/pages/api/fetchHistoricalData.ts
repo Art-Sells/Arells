@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
-const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
+const NEXT_PUBLIC_COINGECKO_API_KEY = process.env.NEXT_PUBLIC_COINGECKO_API_KEY;
 let cachedHistoricalData: any | null = null;
 let historicalCacheTimestamp: number | null = null;
 const HISTORICAL_CACHE_DURATION = 3600000; // 1 hour in milliseconds
@@ -9,7 +9,7 @@ const HISTORICAL_CACHE_DURATION = 3600000; // 1 hour in milliseconds
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const currentTime = Date.now();
 
-  if (!COINGECKO_API_KEY) {
+  if (!NEXT_PUBLIC_COINGECKO_API_KEY) {
     console.error('COINGECKO_API_KEY is not set');
     res.status(500).json({ error: 'Internal Server Error' });
     return;
@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         days: 365
       },
       headers: {
-        'x-cg-pro-api-key': COINGECKO_API_KEY
+        'x-cg-pro-api-key': NEXT_PUBLIC_COINGECKO_API_KEY
       }
     });
 

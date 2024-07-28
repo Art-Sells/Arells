@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
 import '../../app/css/howitworks/howitworks.css';
-import '../../app/css/modals/stayupdated-modal.css';
+//import '../../app/css/modals/stayupdated-modal.css';
 
 
 

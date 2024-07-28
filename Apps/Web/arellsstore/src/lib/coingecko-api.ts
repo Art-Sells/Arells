@@ -1,12 +1,6 @@
-import axios from 'axios';
-import axiosRetry from 'axios-retry';
+// src/lib/coingecko-api.ts
 
-// Configure axios to retry on failure
-axiosRetry(axios, {
-  retries: 2,
-  retryDelay: (retryCount) => axiosRetry.exponentialDelay(retryCount),
-  retryCondition: (error) => axios.isAxiosError(error) && error.response?.status === 429,
-});
+import axios from 'axios';
 
 // Variable to set the Bitcoin price manually
 let manualBitcoinPrice: number | null = null;
@@ -79,22 +73,3 @@ export const updateManualBitcoinPrice = async (): Promise<number> => {
   setManualBitcoinPrice(price);
   return price;
 };
-
-// Example usage: Manually set the Bitcoin price
-(async () => {
-  try {
-    // Set manual Bitcoin price to 70000
-    //setManualBitcoinPrice(45000);
-
-    // Fetch current price (should return 70000)
-    let currentPrice = await fetchBitcoinPrice();
-
-    // // Reset to live price
-    setManualBitcoinPrice(null);
-
-    // // Fetch current price (should fetch live price)
-    currentPrice = await fetchBitcoinPrice();
-  } catch (error) {
-    console.error('Error updating manual Bitcoin price:', error);
-  }
-})();
