@@ -31,7 +31,11 @@ const Index = () => {
 
   useEffect(() => {
     if (Object.values(imagesLoaded).every(Boolean)) {
-      setLoading(false);
+      const timeoutId = setTimeout(() => {
+        setLoading(false);
+      }, 2250); // Delay of 2 seconds
+  
+      return () => clearTimeout(timeoutId); // Clear timeout if component unmounts
     }
   }, [imagesLoaded]);
 
