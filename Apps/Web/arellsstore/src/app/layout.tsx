@@ -5,16 +5,13 @@ import { UserProvider } from '../context/UserContext';
 import { HPMProvider } from '../context/HPMContext';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
-import awsmobile from '../aws-exports';
-import dotenv from 'dotenv';
+import config from "../../aws-exports";
 
-dotenv.config();
-Amplify.configure(awsmobile);
+Amplify.configure({ ...config });
 
 type LayoutProps = {
   children: ReactNode;
 };
-
 
 const RootLayout = ({ children }: LayoutProps) => {
   return (
