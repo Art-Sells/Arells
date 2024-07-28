@@ -10,10 +10,12 @@
     "lint": "next lint",
     "compile": "graphql-codegen",
     "watch": "graphql-codegen -w",
-    "proxy": "https://pro-api.coingecko.com"
+    "proxy": "https://pro-api.coingecko.com",
+    "postinstall": "yarn install --frozen-lockfile"
   },
   "dependencies": {
     "@aws-amplify/auth": "^6.3.7",
+    "@aws-amplify/core": "^6.3.7",
     "@aws-sdk/client-s3": "^3.616.0",
     "@coinbase/wallet-sdk": "^3.7.2",
     "@openzeppelin/contracts": "^4.9.3",

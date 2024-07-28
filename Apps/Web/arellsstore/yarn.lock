@@ -50,7 +50,7 @@
   dependencies:
     tslib "^2.5.0"
 
-"@aws-amplify/core@6.3.7":
+"@aws-amplify/core@6.3.7", "@aws-amplify/core@^6.3.7":
   version "6.3.7"
   resolved "https://registry.yarnpkg.com/@aws-amplify/core/-/core-6.3.7.tgz#b71caaa1726f4a5081170ebd6fa90ce5e3ac604c"
   integrity sha512-OfUUrhgBW0EyjjXoTORR+vFEtnl8owY1CubId3R2aRPrpg1xi9SDrAT8ZX/o1gUPfGOHkalKBF3xhoQSHNh8Vg==
