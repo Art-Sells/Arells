@@ -2,7 +2,7 @@
 "use client";
 import { Amplify } from 'aws-amplify';
 import dotenv from 'dotenv';
-import awsmobile from "../../../aws-exports";
+import awsmobile from "../../aws-exports";
 
 dotenv.config();
 Amplify.configure(awsmobile);
