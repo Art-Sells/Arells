@@ -307,7 +307,35 @@
 			opacity: .4;
 			transition: 1s;
 			cursor: pointer;
-			} 			
+			} 	
+			
+			
+	#privacy-policy-footer {
+		margin-top: 70px;
+	}
+		#privacy-policy-footer-word{
+			color: rgb(115, 65, 0); 
+			font-size: 8.5px;
+			font-weight: 600;
+			opacity: .3;
+			display:inline-block;
+		}
+		#privacy-link {
+			color: black; 
+			font-size: 9.5px;
+			font-weight: 600;
+			opacity: 1;
+			display:inline-block;
+			margin-left: 3px;
+			text-decoration: none;
+		}
+		#privacy-link:hover,
+		#privacy-link:focus {
+		opacity: .4;
+		transition: 1s;
+		cursor: pointer;
+		} 	
+	
 			
 			
 

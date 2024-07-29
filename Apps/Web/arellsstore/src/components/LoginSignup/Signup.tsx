@@ -311,6 +311,18 @@ const Signup: React.FC = () => {
           <button id="signup-button" type="submit">SIGN UP</button>
         </form>
       </div>
+
+      <div id="privacy-policy-footer">
+        <p id="privacy-policy-footer-word">
+          By signing-up you agree to our
+        </p>
+        <Link 
+        href="/privacy-policy" 
+        id="privacy-link"
+        passHref
+        > Privacy Policy
+        </Link>
+      </div>
     </>
   );
 };
