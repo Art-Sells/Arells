@@ -36,7 +36,6 @@
 	margin-bottom: 0%;
 		background-color: rgb(255, 251, 245);
 		border-radius: 30px;
-		padding-bottom: 0px;
 		-webkit-animation-name: animatetop;
 		-webkit-animation-duration: 1.00s;
 		animation-name: animatetop;
@@ -97,7 +96,6 @@
 	}
 	#log-in {
 		color: rgb(115, 65, 0); 
-		width: 100%;
 		height: 250px;
 		padding-top: 40px;
 		padding-left: 10px;
