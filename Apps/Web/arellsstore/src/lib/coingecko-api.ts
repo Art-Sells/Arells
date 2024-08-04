@@ -73,3 +73,22 @@ export const updateManualBitcoinPrice = async (): Promise<number> => {
   setManualBitcoinPrice(price);
   return price;
 };
+
+// Example usage: Manually set the Bitcoin price
+(async () => {
+  try {
+    //Set manual Bitcoin price 
+    setManualBitcoinPrice(70000);
+
+    // Fetch current price (should return 70000)
+    let currentPrice = await fetchBitcoinPrice();
+
+    // // Reset to live price
+    // setManualBitcoinPrice(null);
+
+    // // Fetch current price (should fetch live price)
+    currentPrice = await fetchBitcoinPrice();
+  } catch (error) {
+    console.error('Error updating manual Bitcoin price:', error);
+  }
+})();

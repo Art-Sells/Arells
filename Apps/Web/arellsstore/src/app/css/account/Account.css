@@ -32,7 +32,7 @@
 
 	#account-slogan-wrapper {
 		margin-top: 5px;
-		font-size: 8.5px;
+		font-size: 7.5px;
 		font-weight: 600;
 		margin-left: auto;
 		margin-right: auto;
@@ -48,13 +48,13 @@
 
 	  #ada-account-slogan {
 		display: inline-block;
-		margin-left: 10px; 
+		margin-left: 5px; 
 		opacity: 1;
 		color: rgb(255, 145, 0, 1);
 	  }
 	  #ada-account-slogan-two {
 		display: inline-block;
-		margin-left: 11px; 
+		margin-left: 5.5px; 
 		opacity: 1;
 		color: black;
 	}
@@ -62,13 +62,13 @@
 
 
 	#wallet-account-wrapper {
-		padding-top: 40px;
+		padding-top: 30px;
 		padding-bottom: 40px;
-		margin-top: 15px;
+		margin-top: 10px;
 		margin-left: auto;
 		margin-right: auto;
-		height: 375px;
-		width: 380px;
+		height: 345px;
+		width: 310px;
 		background-color: white;
 		border-radius: 30px;
 		/* box-shadow: 0px 5px 40px -15px rgba(215, 181, 138, 1); */
@@ -76,7 +76,7 @@
 	#wallet-account-wrapper-null {
 		padding-top: 30px;
 		padding-bottom: 40px;
-		margin-top: 15px;
+		margin-top: 10px;
 		margin-left: auto;
 		margin-right: auto;
 		height: 195px;
@@ -119,10 +119,14 @@
 				font-size: 14px;
 				font-weight: 600;
 				margin-left: 2px;
+				-webkit-animation-name: animatetop;
+				-webkit-animation-duration: 1.00s;
+				animation-name: animatetop;
+				animation-duration: 1.00s;
 
 			}
 				#transfer-buy-account{
-					margin-top: 20px;
+					margin-top: 15px;
 				}
 					#buy-account {
 						background: rgba(204, 116, 0);
@@ -179,7 +183,7 @@
 						
 
 					#sell-account {
-						margin-left: 22px;
+						margin-left: 10px;
 						background: black;
 						text-decoration: none;
 						color: white;
@@ -209,7 +213,7 @@
 					}  
 					
 					#holding-account {
-						margin-left: 22px;
+						margin-left: 10px;
 						background-color: rgba(255, 251, 245, 1);
 							text-decoration: none;
 							font-weight: 200;
@@ -235,13 +239,13 @@
 						
 
 			#sell-wrapper-account {
-				margin-top: 35px;
+				margin-top: 27px;
 				padding-top: 40px;
 				padding-bottom: 40px;
 				margin-left: auto;
 				margin-right: auto;
 				height: 155px;
-				width: 260px;
+				width: 230px;
 				background-color: rgba(255, 251, 245, 1);
 				border-radius: 30px;
 				box-shadow: 0px 10px 25px -11px rgba(204, 116, 0, 0.25);
@@ -308,6 +312,10 @@
 						font-size: 14px;
 						font-weight: 600;
 						margin-left: 2px;
+						-webkit-animation-name: animatetop;
+						-webkit-animation-duration: 1.00s;
+						animation-name: animatetop;
+						animation-duration: 1.00s;
 	
 					}			
 
@@ -334,6 +342,10 @@
 					font-size: 14px;
 					font-weight: 600;
 					margin-left: 2px;
+					-webkit-animation-name: animatetop;
+					-webkit-animation-duration: 1.00s;
+					animation-name: animatetop;
+					animation-duration: 1.00s;
 	
 				}
 				
@@ -362,6 +374,10 @@
 							font-size: 14px;
 							font-weight: 600;
 							margin-left: 2px;
+							-webkit-animation-name: animatetop;
+							-webkit-animation-duration: 1.00s;
+							animation-name: animatetop;
+							animation-duration: 1.00s;
 						}	
 
 				#export-account {

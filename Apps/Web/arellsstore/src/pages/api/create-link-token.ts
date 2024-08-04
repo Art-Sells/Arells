@@ -10,7 +10,7 @@ console.log('PLAID_CLIENT_ID:', process.env.NEXT_PUBLIC_PLAID_CLIENT_ID);
 console.log('PLAID_SECRET:', process.env.NEXT_PUBLIC_PLAID_SECRET);
 
 const config = new Configuration({
-  basePath: PlaidEnvironments.sandbox, // Use 'production' for production environment
+  basePath: PlaidEnvironments.production, // Use 'production' for production environment
   baseOptions: {
     headers: {
       'PLAID-CLIENT-ID': process.env.NEXT_PUBLIC_PLAID_CLIENT_ID!,
@@ -40,13 +40,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const response = await client.linkTokenCreate({
       user: { client_user_id: userId },
       client_name: 'Arells',
-      products: [Products.Auth, Products.Transactions], // Ensure correct product types
+      products: [Products.Auth], // Ensure correct product types
       country_codes: [
-        CountryCode.Us, CountryCode.Gb, CountryCode.Es, CountryCode.Nl, 
-        CountryCode.Fr, CountryCode.Ie, CountryCode.Ca, CountryCode.De, 
-        CountryCode.It, CountryCode.Pl, CountryCode.Dk, CountryCode.No, 
-        CountryCode.Se, CountryCode.Ee, CountryCode.Lt, CountryCode.Lv, 
-        CountryCode.Pt, CountryCode.Be
+        CountryCode.Us, 
       ],
       language: 'en',
     });

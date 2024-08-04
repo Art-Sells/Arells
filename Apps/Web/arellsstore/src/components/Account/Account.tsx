@@ -13,22 +13,26 @@ import styles from '../../app/css/modals/loader/accountloader.module.css';
 import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useHPM } from '../../context/HPMContext';
 
 const Account: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   };
 
+  const [price, setNewPrice] = useState<number | undefined>(undefined);
+  const {vatopCombinations, hpap} = useHPM();
   const [showLoading, setLoading] = useState<boolean>(true);
-  const [walletConnected, setWalletConnected] = useState<boolean>(false);
-  const [awaitingApprovals, setAwaitingApprovals] = useState<boolean>(true);
+  const [walletConnected, setWalletConnected] = useState<boolean>(true);
+  const [readyToSell, setReadyToSell] = useState<boolean>(false);
+  const [holding, setHolding] = useState<boolean>(false);
+  const [awaitingApprovals, setAwaitingApprovals] = useState<boolean>(false);
   const [walletNotConnected, setWalletNotConnected] = useState<boolean>(false);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     accountLogo: false,
   });
 
   const handleImageLoaded = (imageName: string) => {
-    console.log(`Image loaded: ${imageName}`);
     setImagesLoaded((prevState) => ({
       ...prevState,
       [imageName]: true,
@@ -37,13 +41,36 @@ const Account: React.FC = () => {
 
   useEffect(() => {
     if (Object.values(imagesLoaded).every(Boolean)) {
-      setLoading(false);
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+      return () => clearTimeout(timer);
     }
   }, [imagesLoaded]);
 
-  const bitcoinPrice = useBitcoinPrice();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReadyToSell(vatopCombinations.acVacts === 0 || vatopCombinations.acVactsAts > 0);
+      setHolding(vatopCombinations.acVactsAts <= 0);
+    }, 3000);
+  
+    return () => clearTimeout(timer);
+  }, [vatopCombinations]);
+  
+  // Then in the component where readyToSell and holding are used, it should now dynamically set their values.
+
+  const bitcoinPrice = useBitcoinPrice(); // Use the hook directly
 
   const formattedPrice = bitcoinPrice ? Math.round(bitcoinPrice).toLocaleString('en-US') : '...';
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReadyToSell(vatopCombinations.acVacts === 0 || vatopCombinations.acVactsAts > 0);
+      setHolding(vatopCombinations.acVactsAts <= 0);
+    }, 3000);
+  
+    return () => clearTimeout(timer);
+  }, [vatopCombinations]);
 
   const router = useRouter();
 
@@ -174,17 +201,25 @@ const Account: React.FC = () => {
           </div>
             <div id="transfer-buy-account">
               <span>
-                <button id="buy-account">BUY</button>
+                <Link href="/buy">
+                  <button id="buy-account">BUY</button>
+                </Link>	
               </span>
               {/* <span>
                 <button id="transfer-account">IMPORT</button>
               </span> */}
-              {/* <span>
-                <button id="sell-account">SELL</button>
-              </span> */}
+              {readyToSell && (
+              <span>
+                <Link href="/sell">
+                  <button id="sell-account">SELL</button>
+                </Link>	
+              </span>
+              )}
+              {holding && (
               <span>
                 <button id="holding-account">HOLDING</button>
               </span>
+              )}
             </div>
 
 
@@ -219,7 +254,7 @@ const Account: React.FC = () => {
               <span id="holding-price-account">Price:</span>
               <span id="holding-price-number-account">$
                 <span id="holding-price-number-account-num">
-                {formattedPrice}
+                {formatCurrency(hpap)}
                 </span>
               </span>
             </div>
@@ -240,7 +275,11 @@ const Account: React.FC = () => {
               <span id="wallet-account">Wallet:</span>
               <span id="wallet-number-account">$
                 <span id="wallet-number-account-num">
-                  0
+                  {formatCurrency(
+                    vatopCombinations.acVatops >= vatopCombinations.acVacts
+                      ? vatopCombinations.acVatops
+                      : vatopCombinations.acVacts
+                  )}
                 </span>
               </span>
             </div>
@@ -262,7 +301,9 @@ const Account: React.FC = () => {
               <span id="wallet-account-profits">Profits:</span>
               <span id="wallet-number-profits-account">$
                 <span id="wallet-number-profits-account-num">
-                  0
+                {formatCurrency(
+                  vatopCombinations.acdVatops
+                )}
                 </span>
               </span>
             </div>
@@ -324,6 +365,10 @@ const Account: React.FC = () => {
       </div>
     </>
   );
+};
+
+const formatCurrency = (value: number): string => {
+  return `${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 };
 
 export default Account;
