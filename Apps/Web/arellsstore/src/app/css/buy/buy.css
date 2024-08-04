@@ -48,7 +48,7 @@
 		margin-left: auto;
 		margin-right: auto;
 		height: 515px;
-		width: 380px;
+		width: 300px;
 		background-color: white;
 		border-radius: 30px;
 		/* box-shadow: 0px 5px 40px -15px rgba(215, 181, 138, 1); */
@@ -98,7 +98,7 @@
 			margin-left: auto;
 			margin-right: auto;
 			height: 340px;
-			width: 260px;
+			width: 220px;
 			background-color: rgba(255, 251, 245, 1);
 			border-radius: 30px;
 			box-shadow: 0px 10px 25px -11px rgba(0, 0, 0, 0.15);
@@ -118,7 +118,7 @@
                 padding-top: 0px;
                 display: flex;
                 justify-content: center; 
-                width: 250px;
+                width: 220px;
                 align-items: center;
                 margin-left: auto;
                 margin-right: auto;
@@ -142,7 +142,7 @@
                 letter-spacing: 0px;    	   		
                 background: rgb(251, 251, 251);
                 opacity: .7; 
-                margin-left: -165px;
+                margin-left: -145px;
 
             }  
 			#buy-input { 
@@ -156,7 +156,7 @@
                 border: none;
                 border-radius: 10px;
                 font-size: 18px;
-                width: 100px;
+                width: 80px;
                 margin-left: 0px;
                 height: 5px;
                 letter-spacing: 0px;    	   		
@@ -173,7 +173,7 @@
                 padding-top: 30px;
                 display: flex;
                 justify-content: center; 
-                width: 250px;
+                width: 220px;
                 align-items: center;
                 margin-left: auto;
                 margin-right: auto;
@@ -207,7 +207,7 @@
 				padding-top: 35px;
 				display: flex;
 				justify-content: center; 
-				width: 250px;
+				width: 220px;
 				align-items: center;
 				margin-left: auto;
 				margin-right: auto;
@@ -252,7 +252,7 @@
 				letter-spacing: 1px;
 				border-radius: 5px;
 				border-width: 0px;
-				width: 150px;
+				width: 130px;
 				opacity: 1;
 				box-shadow: 0px 8px 12px -6px rgb(0, 0, 0);  			  
 			}

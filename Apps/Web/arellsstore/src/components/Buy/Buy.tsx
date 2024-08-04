@@ -15,7 +15,7 @@ import { useHPM } from '../../context/HPMContext';
 
 const Buy: React.FC = () => {
   const [showPurchaseFailed, setPurchaseFailed] = useState<boolean>(false);
-  const [showBuyingSuccess, setBuyingSuccess] = useState<boolean>(true);
+  const [showBuyingSuccess, setBuyingSuccess] = useState<boolean>(false);
   const [showBuying, setBuying] = useState<boolean>(false);
   const { buyAmount, setBuyAmount, handleBuy: contextHandleBuy } = useHPM();
 
@@ -61,7 +61,7 @@ const Buy: React.FC = () => {
   };
 
   const formatCurrency = (value: number): string => {
-    return `$${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+    return `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
   };
 
   const [total, setTotal] = useState<number>(0);

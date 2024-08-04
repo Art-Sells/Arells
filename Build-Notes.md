@@ -34,9 +34,6 @@
 - Reloads modules every 10 seconds (price, wallet, and profits animation css) from coin gecko API wrapper?
 
 
-### Important
-- Create separate Wallet to handle where we get our 3% fee... (Stripe?)
-
 ### Other (if Time Permits)
 - Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
@@ -44,6 +41,10 @@
 - - if null, emailUnConfirmed(true){}, emailConfirmed(false){};
 - - if true, opposite
 - Send Confirmation (Link) look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
+
+### Last Resort
+- Create separate Wallet to handle where we get our 3% fee... (Stripe?)
+- Remove console.logs from all components, hide "wallettester" and "hpmtester" from main
 
 
 
