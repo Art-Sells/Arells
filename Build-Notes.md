@@ -90,6 +90,7 @@
 - Update Blockchain.info API to Amplify (IP) API
 - Resolve "HPMContext" errors that show "cannot find email, Error fetching Bitcoin Price, etc etc" from console.log if pages don't need them...
 - Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/HPMContext
+- Sign up for 2 more Exchange APIs then begin aggregating our own Cryptocurrencies (set into plan)…
 
 ### Testing
 - Test Export process... 
