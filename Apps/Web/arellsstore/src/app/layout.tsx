@@ -44,6 +44,7 @@ const RootLayout = ({ children }: LayoutProps) => {
           dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
         />
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+        <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
         <ConfigureAmplifyClientSide />
