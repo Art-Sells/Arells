@@ -1,5 +1,3 @@
-
-
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
@@ -17,29 +15,34 @@ type LayoutProps = {
 };
 
 const RootLayout = ({ children }: LayoutProps) => {
+  const breadcrumbJsonLd = `
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Arells",
+        "item": "https://arells.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Login",
+        "item": "https://arells.com/login"
+      }
+    ]
+  }
+  `;
+
   return (
     <html lang="en">
       <head>
-      <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Arells",
-                "item": "https://arells.com/"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Login",
-                "item": "https://arells.com/login"
-              }
-            ]
-          })}
-        </script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
+        />
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
       </head>
       <body>
