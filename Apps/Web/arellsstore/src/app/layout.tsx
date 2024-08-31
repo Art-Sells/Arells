@@ -19,7 +19,18 @@ const RootLayout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
       <head>
-        <link rel="shortcut icon" href="/ArellsBitcoin.png" />
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="description" content="Always sell Bitcoin for profits. Buy small amounts of bitcoin and always sell them for profits." />
+        <meta name="robots" content="noimageindex" />
+        <meta property="og:title" content="Arells" />
+        <meta property="og:description" content="Always sell Bitcoin for profits. Buy small amounts of bitcoin and always sell them for profits." />
+        <meta property="og:url" content="https://arells.com" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/ArellsBitcoinBanner.jpg" />
+        <meta name="twitter:title" content="Arells" />
+        <meta name="twitter:description" content="Always sell Bitcoin for profits. Buy small amounts of bitcoin and always sell them for profits." />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/ArellsBitcoinBanner.jpg" />
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
       </head>
       <body>
