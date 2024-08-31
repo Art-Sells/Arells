@@ -24,7 +24,7 @@ const RootLayout = ({ children }: LayoutProps) => {
         "@type": "ListItem",
         "position": 1,
         "name": "Arells",
-        "item": "https://arells.com/"
+        "item": "https://arells.com"
       },
       {
         "@type": "ListItem",
