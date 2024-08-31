@@ -56,5 +56,3 @@ const RootLayout = ({ children }: LayoutProps) => {
 };
 
 export default RootLayout;
-
-export default RootLayout;
