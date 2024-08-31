@@ -179,10 +179,10 @@ _______________________________________________________________________
   - [X] Prototype *[[Complete]](https://arells.com/prototype-seller-created)*----*arells.com/prototype-seller-created*
  
 - **May 2023 - Dec 2023**
-  - [X] Arells 1.0 *[[Complete]](https://arells.com)*
+  - [X] Arells 0.9 *[[Complete]](https://arells.com)*
  
 - **May 2024 - Sep/Oct 2024**
-  - [ ] Arells Cryptocurrency Marketplace MVP *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
+  - [ ] Arells 1.0 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
 
 _______________________________________________________________________
 
