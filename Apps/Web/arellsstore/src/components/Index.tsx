@@ -73,7 +73,7 @@ const Index = () => {
 
       <BitcoinChart />
 
-      <div id="buy-info-wrapper">
+      <div id="buy-info-wrapping">
         <p id="buy-info">
           Buy small amounts of Bitcoin.
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
