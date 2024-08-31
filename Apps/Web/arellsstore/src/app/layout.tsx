@@ -1,4 +1,5 @@
 
+
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
@@ -33,7 +34,7 @@ const RootLayout = ({ children }: LayoutProps) => {
               {
                 "@type": "ListItem",
                 "position": 2,
-                "name": "Log In",
+                "name": "Login",
                 "item": "https://arells.com/login"
               }
             ]
