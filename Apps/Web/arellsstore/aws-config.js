@@ -3,12 +3,6 @@
 const AWS = require('aws-sdk');
 require('dotenv').config(); // Load .env variables
 
-// Add console.logs to check if environment variables are loaded
-console.log('AWS Access Key ID:', process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID ? 'Loaded' : 'Not Set');
-console.log('AWS Secret Access Key:', process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY ? 'Loaded' : 'Not Set');
-console.log('AWS Region:', process.env.NEXT_PUBLIC_AWS_REGION ? process.env.NEXT_PUBLIC_AWS_REGION : 'Not Set');
-console.log('S3 Bucket Name:', process.env.NEXT_PUBLIC_S3_BUCKET_NAME ? process.env.NEXT_PUBLIC_S3_BUCKET_NAME : 'Not Set');
-
 // Configure AWS SDK
 AWS.config.update({
   accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
