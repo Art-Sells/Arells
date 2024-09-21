@@ -23,11 +23,11 @@ const Account: React.FC = () => {
   const [price, setNewPrice] = useState<number | undefined>(undefined);
   const {vatopCombinations, hpap} = useHPM();
   const [showLoading, setLoading] = useState<boolean>(true);
-  const [walletConnected, setWalletConnected] = useState<boolean>(true);
+  const [walletConnected, setWalletConnected] = useState<boolean>(false);
   const [readyToSell, setReadyToSell] = useState<boolean>(false);
   const [holding, setHolding] = useState<boolean>(false);
   const [awaitingApprovals, setAwaitingApprovals] = useState<boolean>(false);
-  const [walletNotConnected, setWalletNotConnected] = useState<boolean>(false);
+  const [walletNotConnected, setWalletNotConnected] = useState<boolean>(true);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     accountLogo: false,
   });

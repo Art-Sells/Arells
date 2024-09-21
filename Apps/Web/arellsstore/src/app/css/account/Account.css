@@ -32,7 +32,7 @@
 
 	#account-slogan-wrapper {
 		margin-top: 5px;
-		font-size: 7.5px;
+		font-size: 6px;
 		font-weight: 600;
 		margin-left: auto;
 		margin-right: auto;
@@ -40,7 +40,7 @@
 	  #account-slogan {
 		display: inline-block;
 		letter-spacing: 0px;
-		margin-left: -.5px; 
+		margin-left: -6px; 
 		opacity: 1;
 		color: black;
 		word-spacing: 0px;
@@ -48,13 +48,13 @@
 
 	  #ada-account-slogan {
 		display: inline-block;
-		margin-left: 5px; 
+		margin-left: 6px; 
 		opacity: 1;
 		color: rgb(255, 145, 0, 1);
 	  }
 	  #ada-account-slogan-two {
 		display: inline-block;
-		margin-left: 5.5px; 
+		margin-left: 6px; 
 		opacity: 1;
 		color: black;
 	}

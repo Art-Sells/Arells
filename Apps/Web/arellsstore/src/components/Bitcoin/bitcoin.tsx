@@ -181,8 +181,6 @@ const Bitcoin: React.FC = () => {
   const connectBank = async () => {
     if (!bankAccount) {
       await createLinkToken();
-
-      return; // Exit the function and let the useEffect handle the rest
     }
   };
 
@@ -281,7 +279,7 @@ const Bitcoin: React.FC = () => {
 
   return (
     <div>
-      <div>
+      {/* <div>
         <p>Address</p>
         <p>{bitcoinAddress}</p>
         <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
@@ -305,7 +303,7 @@ const Bitcoin: React.FC = () => {
           <button onClick={sendBitcoin}>Send Bitcoin</button>
           {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
-      </div>
+      </div> */}
   
 
       <div>
@@ -314,7 +312,7 @@ const Bitcoin: React.FC = () => {
         <button onClick={connectBank}>CONNECT BANK</button>
       </div>
 
-      <div>
+      {/* <div>
         <label>
           Bitcoin Price: ${bitcoinPrice.toFixed(2)}
         </label>
@@ -330,7 +328,7 @@ const Bitcoin: React.FC = () => {
         <button onClick={() => handleKrakenAPI('sell')} disabled={krakenLoading}>
           {krakenLoading ? 'Processing...' : 'Sell Bitcoin'}
         </button>
-      </div>
+      </div> */}
 </div>
   );
 };
