@@ -48,7 +48,7 @@
 ### Last Resort
 - Create separate Wallet to handle where we get our 3% fee... (Stripe?)
 - Remove console.logs from all components, hide "wallettester" and "hpmtester" from main
-- Resolve Google/Bing/Yahoo Search Tab issues
+- Resolve Google/Bing/Yahoo Search Tab issues (Add Metatags to all recurring pages)
 
 
 
