@@ -40,7 +40,7 @@
 	  #account-slogan {
 		display: inline-block;
 		letter-spacing: 0px;
-		margin-left: -6px; 
+		margin-left: -4px; 
 		opacity: 1;
 		color: black;
 		word-spacing: 0px;
@@ -48,13 +48,13 @@
 
 	  #ada-account-slogan {
 		display: inline-block;
-		margin-left: 6px; 
+		margin-left: 4px; 
 		opacity: 1;
 		color: rgb(255, 145, 0, 1);
 	  }
 	  #ada-account-slogan-two {
 		display: inline-block;
-		margin-left: 6px; 
+		margin-left: 4px; 
 		opacity: 1;
 		color: black;
 	}
@@ -498,7 +498,7 @@
 					margin-right: auto;
 					color: black;
 					font-size: 7px;
-					font-weight: 600;
+					font-weight: 200;
 					letter-spacing: 0px;
 					opacity: 1;
 					margin-bottom: 40px;

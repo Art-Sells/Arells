@@ -71,17 +71,20 @@ const Index = () => {
         <p id="ada-descriptioner">FOR PROFITS</p>
       </div>
 
-      <BitcoinChart />
+
+
+        <BitcoinChart />
+
+        <Link href="/login" passHref>
+          <button id="login">LOGIN</button>
+        </Link>
 
       <div id="buy-info-wrapping">
-        <p id="buy-info">
-          Buy small amounts of Bitcoin.
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          Always sell them for Profits.</p>
-      </div>
-      <Link href="/login" passHref>
-        <button id="login">LOGIN</button>
-      </Link>
+          <p id="buy-info">
+            Import small amounts of Bitcoin.
+            Always sell them for Profits.</p>
+        </div>
+
     </>
   );
 }

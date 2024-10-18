@@ -173,7 +173,7 @@ const Account: React.FC = () => {
 
 
         <div id="amount-sold-account-wrapper-null">
-          <button id="withdraw-account-null">START BUYING</button>
+          <button id="withdraw-account-null">IMPORT BITCOIN</button>
         </div>
       </div>
         )}
@@ -338,16 +338,14 @@ const Account: React.FC = () => {
 
       {walletNotConnected && (
           <p id="amount-sold-number-account-num-null">
-          Buy small amounts of Bitcoin.
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          Import small amounts of Bitcoin.
           Always sell them for Profits.
         </p>    
       )}
 
       {awaitingApprovals && (
           <p id="amount-sold-number-account-num-null">
-          Buy small amounts of Bitcoin.
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          Import small amounts of Bitcoin.
           Always sell them for Profits.
         </p>    
       )}
