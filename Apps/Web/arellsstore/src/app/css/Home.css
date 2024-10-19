@@ -38,8 +38,8 @@
 		}
 	  #word-logoo {
 		  margin-top: 100px;
-		  width: 100px;	
-		  height: 32px;
+		  width: 105px;	
+		  height: 33px;
 		  -webkit-animation-name: animatetop;
 		  -webkit-animation-duration: 1.00s;
 		  animation-name: animatetop;
@@ -63,28 +63,28 @@
 			margin-left: auto;
 			margin-right: auto;
 			font-size: 8px;
-			font-weight: 600;
-			margin-bottom: -5px;
+			font-weight: 200;
+			padding-bottom: 5px;
 		}
 			#descriptioner {
 				letter-spacing: 0px;
-				margin-left: -5px; 
+				margin-left: -2px; 
 				opacity: 1;
-				color: black;
+				color: gray;
 				word-spacing: 0px;
 				display: inline-block;
 			}	
 
 			#ada-description {
-				margin-left: 5px; 
+				margin-left: 3px; 
 				opacity: 1;
-				color: rgb(255, 145, 0, 1);
+				color: gray;
 				display: inline-block;
 			}
 			#ada-descriptioner {
-				margin-left: 5.5px; 
+				margin-left: 3px; 
 				opacity: 1;
-				color: black;
+				color: gray;
 				display: inline-block;
 			}
 
@@ -183,12 +183,10 @@
 
 		#ada-description {
 			opacity: 1;
-			color: rgb(255, 145, 0, 1);
 			display: inline-block;
 		}
 		#ada-descriptioner {
 			opacity: 1;
-			color: black;
 			display: inline-block;
 		}
 
