@@ -9,6 +9,7 @@ Arells exists because it believes ***investors should always make profits sellin
 A Bitcoin marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **HPM (Holding Price Mechanism)**.
 
 ## HPM
+<img src="https://github.com/Art-Sells/Arells/blob/test/Art/General/HPMLogoDisplay.png" width="200px"> 
 Holds the highest price after purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat:
 
 ### HPAP = Highest Price After Purchase
