@@ -51,6 +51,11 @@
 - Resolve Google/Bing/Yahoo Search Tab issues (Add Metatags to all recurring pages)
 
 
+## Arells 2.0 (and beyond):
+
+Create Separate GitHub Repo for HPM System
+
+
 
 
 
