@@ -6,25 +6,24 @@
 Arells exists because it believes ***investors should always make profits selling assets***, especially during Bear Markets.
 
 ### Solution:
-A Bitcoin marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called **HPM (Holding Price Mechanism)**.
+A Bitcoin marketplace that helps render bear markets obsolete. Arells is working on achieving this through an innovation called: <img src="https://github.com/Art-Sells/Arells/blob/test/Art/General/HPMLogoDisplay.png" width="200px"> 
 
-## HPM
-<img src="https://github.com/Art-Sells/Arells/blob/test/Art/General/HPMLogoDisplay.png" width="200px"> 
-Holds the highest price after purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat:
+## HPM (Holding Price Mechanism)
+Holds the highest price of an asset after its import or purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat:
 
 ### HPAP = Highest Price After Purchase
 - Changes based on the highest cpVatop, otherwise 0
 
 ### Vatop = Value At Time Of Purchase
-- **cVatop** = Corresponding Vatop (the value of your Bitcoin investment at time of purchase)
-- **cpVatop** = Corresponding Price Vatop (the price of Bitcoin at time of purchase)
+- **cVatop** = Corresponding Vatop (the value of your Bitcoin investment at time of purchase/import)
+- **cpVatop** = Corresponding Price Vatop (the price of Bitcoin at time of purchase/import)
 - **cdVatop** = Corresponding Difference Vatop (cVact - cVatop = cdVatop)
 - **acVatops** = All cVatops (Combines all cVatops)
 - **acdVatops** = All cdVatops (combines all cdVatops only if positive, otherwise 0)
 
 ### Vact = Value At Current Time
 - **cVact** = Corresponding Vact (the value of your Bitcoin investment based on the current Bitcoin price, this is updated consistently based on the current Bitcoin price)
-- **cVactTa** = cVact Token Amount (reflects the amount of Bitcoin at time of purchase)
+- **cVactTa** = cVact Token Amount (reflects the amount of Bitcoin at time of purchase/import)
 - **acVacts** = All cVacts (combines all cVacts)
 - **acVactTas** = All cVactTas (combines all cVactTas)
 - **acVactTaAts** = acVactTa Available To Sell (combines all cVactTas if acVactsAts > 0)
@@ -33,7 +32,7 @@ Holds the highest price after purchase limiting the erasure of its value thus in
 #### Example:
 
 1. Bitcoin Price: $60,000
- - $500 worth of Bitcoin is purchased
+ - $500 worth of Bitcoin is purchased/imported
  - HPAP = $60,000
  - Vatop Group 1
  - - cVatop 1 = $500
@@ -49,7 +48,7 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - acVactsAts = $0
 
 2. Bitcoin Price: $54,000
- - $600 worth of Bitcoin is purchased
+ - $600 worth of Bitcoin is purchased/imported
  - HPAP = $60,000
  - Vatop Group 1
  - - cVatop 1 = $500
@@ -71,7 +70,7 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - acVactsAts = $0
 
 3. Bitcoin Price: $55,000
- - No Bitcoin is purchased
+ - No Bitcoin is purchased/imported
  - HPAP = $60,000
  - Vatop Group 1
  - - cVatop 1 = $500
@@ -93,7 +92,7 @@ Holds the highest price after purchase limiting the erasure of its value thus in
  - - acVactsAts = $611
 
 4. Bitcoin Price: $65,000
- - $200 worth of Bitcoin is purchased
+ - $200 worth of Bitcoin is purchased/imported
  - HPAP = $65,000
  - Vatop Group 1
  - - cVatop 1 = $500
