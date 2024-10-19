@@ -3,7 +3,7 @@
 # [Arells](https://arells.com)
 ## Always sell Bitcoin for Profits.
 
-Arells exists because it believes ***investors should always make profits selling assets***, especially during Bear Markets.
+Arells exists because it believes ***investors should never lose money selling assets***, especially during Bear Markets.
 
 ### Solution:
 A Bitcoin marketplace that ensures investors will always make profits selling assets. Arells is working on achieving this through an innovation called:
@@ -190,8 +190,8 @@ _______________________________________________________________________
 
 ## Core Beliefs:
 
-Arells believes:
 1. Investors should always make profits selling assets.
 2. In empowering investors more than itself.
 3. The love of money is the root to all evil, not money.
+
 - This will keep Arells away from selfish ambition and towards creating innovations that will help empower investors more than itself.
