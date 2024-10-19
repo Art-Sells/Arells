@@ -68,7 +68,7 @@
 		}
 			#descriptioner {
 				letter-spacing: 0px;
-				margin-left: 0px; 
+				margin-left: -5px; 
 				opacity: 1;
 				color: black;
 				word-spacing: 0px;
@@ -127,6 +127,7 @@
 		margin-right: auto;
 		margin-top: 20px;
 		font-size: 8px;
+		color: gray;
 		font-weight: 200;
 		opacity: 1;
 	}
@@ -143,7 +144,7 @@
 			color: black;
 			opacity: 1;
 			letter-spacing: 0px;
-			margin-left: 4px;
+			margin-left: 0px;
 			display: inline-block;
 
 		}
@@ -177,7 +178,7 @@
 
 	  
 	  #descriptioner-wrapper {
-		font-size: 7px;
+		font-size: 7.3px;
 	  }
 
 		#ada-description {

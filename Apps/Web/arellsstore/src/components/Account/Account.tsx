@@ -108,11 +108,11 @@ const Account: React.FC = () => {
         src="images/Arells-Logo-Ebony.png"
       />
 
-      <div id="account-slogan-wrapper">
-          <p id="account-slogan">ALWAYS SELL</p>
-          <p id="ada-account-slogan">BITCOIN</p>
-          <p id="ada-account-slogan-two">FOR PROFITS</p>
-      </div>
+      {/* <div id="account-slogan-wrapper">
+          <p id="account-slogan">Always sell</p>
+          <p id="ada-account-slogan">Bitcoin</p>
+          <p id="ada-account-slogan-two">for Profits</p>
+      </div> */}
 
       {awaitingApprovals && (
         <div id="wallet-account-wrapper-null">

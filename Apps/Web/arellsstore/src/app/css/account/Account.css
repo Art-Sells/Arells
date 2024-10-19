@@ -1,5 +1,5 @@
 #account-wrapper {
-	padding-top: 35px;
+	padding-top: 25px;
 	text-align: center;
 	  font-family: Arial;
 	  margin-top: -10px;
@@ -25,38 +25,38 @@
 		
 
 	 #word-logo-account {
-		width: 50px;
-		height: 16px;
-		opacity: 1;
+		width: 60px;
+		height: 19px;
+		opacity: .1;
 	}
 
 	#account-slogan-wrapper {
-		margin-top: 5px;
-		font-size: 6px;
-		font-weight: 600;
+		margin-top: 20px;
+		font-size: 7px;
+		font-weight: 200;
 		margin-left: auto;
 		margin-right: auto;
 	}
 	  #account-slogan {
 		display: inline-block;
 		letter-spacing: 0px;
-		margin-left: -4px; 
+		margin-left: -2px; 
 		opacity: 1;
-		color: black;
+		color: gray;
 		word-spacing: 0px;
 	}	
 
 	  #ada-account-slogan {
 		display: inline-block;
-		margin-left: 4px; 
+		margin-left: 2px; 
 		opacity: 1;
-		color: rgb(255, 145, 0, 1);
+		color: gray;
 	  }
 	  #ada-account-slogan-two {
 		display: inline-block;
-		margin-left: 4px; 
+		margin-left: 2px; 
 		opacity: 1;
-		color: black;
+		color: gray;
 	}
 
 
@@ -64,7 +64,7 @@
 	#wallet-account-wrapper {
 		padding-top: 30px;
 		padding-bottom: 40px;
-		margin-top: 10px;
+		margin-top: 20px;
 		margin-left: auto;
 		margin-right: auto;
 		height: 345px;
@@ -76,7 +76,7 @@
 	#wallet-account-wrapper-null {
 		padding-top: 30px;
 		padding-bottom: 40px;
-		margin-top: 10px;
+		margin-top: 20px;
 		margin-left: auto;
 		margin-right: auto;
 		height: 195px;
@@ -496,7 +496,7 @@
 					margin-top: -25px;
 					margin-left: auto;
 					margin-right: auto;
-					color: black;
+					color: gray;
 					font-size: 7px;
 					font-weight: 200;
 					letter-spacing: 0px;

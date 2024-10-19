@@ -66,9 +66,9 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner">ALWAYS SELL</p>
-        <p id="ada-description">BITCOIN</p>
-        <p id="ada-descriptioner">FOR PROFITS</p>
+        <p id="descriptioner">Always sell</p>
+        <p id="ada-description">Bitcoin</p>
+        <p id="ada-descriptioner">for Profits</p>
       </div>
 
 
