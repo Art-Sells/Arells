@@ -5,17 +5,16 @@
 ## Arells 1.0
 
 ### Testing
-- - - Bakkt (pending approval)
-- **Possibly a Blockchain Info (with API) to pull Bitcoin to Buy & Sell?**
-- Test Buying, Selling|Depositing process first...
-- - Separate Bitcoin Wallet Page where handleBuy, handleSell handle changes from and to first.
-- - handleBuy/handleSell (add try, awaits and catch to ensure the entire process is successful before contextHandleBuy and contextHandleSell is initiated)
+- Test Import
+- Import & Sell (without HPM) Bitcoin to USDC (Polygon) Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
 
+### Account
+- (If Bitcoin wallet has more than a certain amount), then hide "Import Bitcoin to Sell" and show "Sell, Withdraw boxes"
+- Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
+- Withdraw (USDC)
 
-
-  #### Start Buying (Page)
- - Connects to Plaid First, (if not connected)
- - - Sell/Buy shows if bankAccount !== null
+#### Import Bitcoin To Sell (Page)
+- Import Page
 
 
 ### Sell
@@ -33,6 +32,12 @@
 - - - - Enter information (if one or more fields are empty)
 - Reloads modules every 10 seconds (price, wallet, and profits animation css) from coin gecko API wrapper?
 
+### Withdraw
+- Withdraw and send your USDC into another exchange
+- USDC (Polygon) Address
+- Amount
+- Amount to Send
+- Send
 
 #### Test Amplify/S3 Login
 
@@ -46,7 +51,7 @@
 - Send Confirmation (Link) look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
 
 ### Last Resort
-- Create separate Wallet to handle where we get our 3% fee... (Stripe?)
+- Create separate Wallet to handle where we get our 3% fee...
 - Remove console.logs from all components, hide "wallettester" and "hpmtester" from main
 - Resolve Google/Bing/Yahoo Search Tab issues (Add Metatags to all recurring pages)
 
