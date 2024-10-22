@@ -480,15 +480,15 @@
 				}
 				#amount-sold-number-account-num-approvals {
 					margin-top: 13px;
-					width: 120px;
+					width: 105px;
 					margin-left: auto;
 					margin-right: auto;
 					color: black;
 					font-size: 12px;
-					font-weight: 800;
+					font-weight: 200;
 					line-height:12px;
-					letter-spacing: -1px;
-					opacity: .5;
+					letter-spacing: 0px;
+					opacity: 1;
 					margin-bottom: 50px;
 				}
 

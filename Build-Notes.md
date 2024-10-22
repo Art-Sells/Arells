@@ -13,8 +13,8 @@
 - Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
 - Withdraw (USDC)
 
-#### Import Bitcoin To Sell (Page)
-- Import Page
+#### Import (Page)
+- Import Bitcoins to Always sell them for profits
 
 
 ### Sell

@@ -26,8 +26,8 @@ const Account: React.FC = () => {
   const [walletConnected, setWalletConnected] = useState<boolean>(false);
   const [readyToSell, setReadyToSell] = useState<boolean>(false);
   const [holding, setHolding] = useState<boolean>(false);
-  const [awaitingApprovals, setAwaitingApprovals] = useState<boolean>(false);
-  const [walletNotConnected, setWalletNotConnected] = useState<boolean>(true);
+  const [awaitingApprovals, setAwaitingApprovals] = useState<boolean>(true);
+  const [walletNotConnected, setWalletNotConnected] = useState<boolean>(false);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     accountLogo: false,
   });
