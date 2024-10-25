@@ -151,7 +151,7 @@ Holds the highest price of an asset after its import or purchase limiting the er
 
 ## This introduces a new kind of marketplace and market dynamics…
 
-- **Solid Marketplace: an illiquid marketplace that constrains the flexibility of selling assets erasing bear markets.**
+- **Solid Marketplace: a marketplace in which asset prices either stagnate or increase. This is achieved by constraining the flexibility of selling assets creating solidity in marketplaces. In solid marketplaces, bear markets don't exist.**
 - **Sloth Market: a market in which asset prices stagnate.**
 
 <img src="https://github.com/Art-Sells/Arells/blob/3651d2883b9a4fce7076a4d14f89aae2d6a1be0e/Art/Marketing/BeforeandAfterArellss.jpg" width="800px"> 
