@@ -4,6 +4,22 @@
 
 ## Arells 1.0
 
+### POC
+- Title: arells: Always Sell Bitcoin for Profits 
+- - proof of concept (for testing purposes)
+- (B) Price (Up/Down Arrows)
+- - Import ((B) Amount) (Import)
+- - - (B) Imported Modal
+- (A)(B) Wallet {take from Account}
+- - Sell (($) Amount) (Sell)
+- - - (A)(B) Sold Modal
+- - Holding
+- (USDC) Wallet
+- - Export (($) Amount) (Export)
+- Price Chart
+
+
+
 ### Testing
 - Test Import
 - Import & Sell (without HPM) Bitcoin to USDC (Polygon) Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
