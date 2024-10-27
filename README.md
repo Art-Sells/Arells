@@ -8,7 +8,7 @@ Arells exists because it believes ***investors should never lose money selling a
 ### Solution:
 A Bitcoin marketplace that ensures investors will always make profits selling assets. Arells is working on achieving this through an innovation called:
 
-<img src="https://github.com/Art-Sells/Arells/blob/test/Art/General/HPMLogoDisplay.png" width="400px"> 
+<img src="https://github.com/Art-Sells/Arells/blob/test/Art/General/HPMLogoDisplay.png" width="200px"> 
 
 ## HPM (Holding Price Mechanism)
 Holds the highest price of an asset after its import or purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat: **[HPM Mechanics](https://github.com/Art-Sells/HPM/blob/main/Mechanics.md)**
