@@ -14,8 +14,8 @@
 - - Sell (($) Amount) (Sell)
 - - - (A)(B) Sold Modal
 - - Holding
-- (USDC) Wallet
-- - Export (($) Amount) (Export)
+- Amount Sold
+- - (USDC) Wallet
 - Price Chart
 
 

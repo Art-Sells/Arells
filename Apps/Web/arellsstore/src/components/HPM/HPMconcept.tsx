@@ -20,6 +20,7 @@ const HPMConcept: React.FC = () => {
   } = useHPM();
 
   const [manualPrice, setManualPrice] = useState<number>(bitcoinPrice);
+  const [totalSoldAmount, setTotalSoldAmount] = useState<number>(0); // New state for tracking sold amount
 
   const handleManualPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setManualPrice(Number(e.target.value));
@@ -35,6 +36,12 @@ const HPMConcept: React.FC = () => {
 
   const formatNumber = (value: number): string => {
     return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 7 });
+  };
+
+  // Custom handleSell function to update total sold amount
+  const handleSellWithTotalUpdate = (amount: number) => {
+    handleSell(amount); // Call the original handleSell function
+    setTotalSoldAmount((prev) => prev + amount); // Update total sold amount
   };
 
   return (
@@ -58,7 +65,12 @@ const HPMConcept: React.FC = () => {
       <div>
         <label>Sell Amount:</label>
         <input type="number" value={sellAmount} onChange={(e) => setSellAmount(Number(e.target.value))} />
-        <button onClick={() => handleSell(sellAmount)}>Sell</button>
+        <button onClick={() => handleSellWithTotalUpdate(sellAmount)}>Sell</button>
+      </div>
+      
+      {/* Amount Sold Section */}
+      <div>
+        <h2>Amount Sold: {formatCurrency(totalSoldAmount)}</h2>
       </div>
 
       {/* Display Section */}
