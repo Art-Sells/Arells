@@ -17,17 +17,15 @@ const HPMConcept: React.FC = () => {
     handleSell,
     setManualBitcoinPrice,
     email,
+    soldAmount,
   } = useHPM();
 
-  const [manualPrice, setManualPrice] = useState<number>(bitcoinPrice);
-  const [totalSoldAmount, setTotalSoldAmount] = useState<number>(0); // New state for tracking sold amount
-
-  const handleManualPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setManualPrice(Number(e.target.value));
+  const increasePrice = () => {
+    setManualBitcoinPrice((currentPrice) => currentPrice + 5000);
   };
 
-  const applyManualPrice = () => {
-    setManualBitcoinPrice(manualPrice);
+  const decreasePrice = () => {
+    setManualBitcoinPrice((currentPrice) => Math.max(0, currentPrice - 5000));
   };
 
   const formatCurrency = (value: number): string => {
@@ -38,39 +36,41 @@ const HPMConcept: React.FC = () => {
     return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 7 });
   };
 
-  // Custom handleSell function to update total sold amount
-  const handleSellWithTotalUpdate = (amount: number) => {
-    handleSell(amount); // Call the original handleSell function
-    setTotalSoldAmount((prev) => prev + amount); // Update total sold amount
+  const [inputBuyAmount, setInputBuyAmount] = useState<number>(0);
+
+  const handleBuyClick = () => {
+    setBuyAmount(inputBuyAmount);
+    handleBuy(inputBuyAmount);
   };
 
   return (
     <div>
       <h1>HPM Tester</h1>
       <div>
-        <label>Bitcoin Price: ${bitcoinPrice}</label>
-      </div>
-      <div>
-        <label>
-          Set Manual Bitcoin Price:
-          <input type="number" value={manualPrice} onChange={handleManualPriceChange} />
-        </label>
-        <button onClick={applyManualPrice}>Apply Price</button>
+        <label>Bitcoin Price: {formatCurrency(bitcoinPrice)}</label>
+        <div>
+          <button onClick={increasePrice}>Increase by $5,000</button>
+          <button onClick={decreasePrice}>Decrease by $5,000</button>
+        </div>
       </div>
       <div>
         <label>Amount:</label>
-        <input type="number" value={buyAmount} onChange={(e) => setBuyAmount(Number(e.target.value))} />
-        <button onClick={() => handleBuy(buyAmount)}>Buy</button>
+        <input 
+          type="number" 
+          value={inputBuyAmount} 
+          onChange={(e) => setInputBuyAmount(Number(e.target.value))}
+        />
+        <button onClick={handleBuyClick}>Buy</button>
       </div>
       <div>
         <label>Sell Amount:</label>
         <input type="number" value={sellAmount} onChange={(e) => setSellAmount(Number(e.target.value))} />
-        <button onClick={() => handleSellWithTotalUpdate(sellAmount)}>Sell</button>
+        <button onClick={() => handleSell(sellAmount)}>Sell</button>
       </div>
       
       {/* Amount Sold Section */}
       <div>
-        <h2>Amount Sold: {formatCurrency(totalSoldAmount)}</h2>
+        <h2>Amount Sold: {formatCurrency(soldAmount)}</h2>
       </div>
 
       {/* Display Section */}

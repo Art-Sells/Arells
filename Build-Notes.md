@@ -9,14 +9,20 @@
 - - proof of concept (for testing purposes)
 - (B) Price (Up/Down Arrows)
 - - Import ((B) Amount) (Import)
-- - - (B) Imported Modal
 - (A)(B) Wallet {take from Account}
-- - Sell (($) Amount) (Sell)
-- - - (A)(B) Sold Modal
-- - Holding
+- - Wallet: vatopCombinations.acVatops >= vatopCombinations.acVacts
+        ? vatopCombinations.acVatops
+        : vatopCombinations.acVacts
+- - Available to Sell: acVactsAts
+- - Profits: acdVatops
+- - - if acVactsAts > 0 then true, else false: Sell (($) Amount) (Sell)
+- - - else if acVactsAts =< then true, else false: Holding
 - Amount Sold
 - - (USDC) Wallet
 - Price Chart
+
+### After POC
+- Replace HPMContextConcept with HPMContext in layout wrapper
 
 
 
