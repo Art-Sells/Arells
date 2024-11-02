@@ -47,7 +47,7 @@ const HPMConcept: React.FC = () => {
   };
 
   const formatCurrency = (value: number): string => {
-    return `$${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+    return `${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
   };
 
   const formatNumber = (value: number): string => {
@@ -77,16 +77,20 @@ const HPMConcept: React.FC = () => {
             alt=""
             width={50}
             height={16}
-            id="word-logo-account"
+            id="word-logo-account-concept"
             src="images/Arells-Logo-Ebony.png"
           />
+        </span>
+        <span id="concept-title-description-line">
+          |
         </span>
         <span id="concept-title-description">
           Always sell Bitcoin for Profits
         </span>
       </div>
+      
       <p id="concept-title-announcement">
-        Concept
+        CONCEPT
       </p>
 
 
@@ -132,7 +136,7 @@ const HPMConcept: React.FC = () => {
           </div>
         </div>
         <div id="buy-input-wrapper">
-          <p id="amount-input-word">Import Amount</p>
+          <p id="amount-input-word">Import Bitcoin Amount</p>
             <div id="b-price-buy">
               <span>
                 <input 
@@ -278,7 +282,7 @@ const HPMConcept: React.FC = () => {
                   <input 
                       id="sell-input"
                       type="tel" 
-                      value={sellAmount} 
+                      value={sellAmount  || ''} 
                       onChange={(e) => setSellAmount(Number(e.target.value))} 
                   />
                 </span>
@@ -309,19 +313,6 @@ const HPMConcept: React.FC = () => {
       {/* Amount Sold Section */}
       <div id="amount-sold-account-wrapper">
         <div id="amount-sold-num-wrap">
-          <span>
-            <div id="w-account-wrapper">
-              <Image
-                loader={imageLoader}
-                onLoad={() => handleImageLoaded('accountLogo')}
-                alt=""
-                width={20}
-                height={20}
-                id="wallet-icon-account"
-                src="images/market/cash-register.png"
-              />
-            </div>
-          </span>
           <span id="amount-sold-account-title">Sold: </span>
           <span id="amount-sold-number-account">
             <Image

@@ -44,6 +44,48 @@
 		opacity: 1;
 		color: gray;
 		word-spacing: 0px;
+	}
+#concept-title-header {
+	margin-top: -50px;
+	display: flex;
+	align-items: center; 
+	position: relative;
+	justify-content: center; 
+}	
+	#word-logo-account-concept {
+		width: 35px;
+		height: 11px;
+		opacity: .45;
+	}
+	#concept-title-description-line {
+		display: flex;
+		letter-spacing: 0px;
+		font-size: 15px;
+		margin-top: -1px;
+		margin-left: 6px; 
+		font-weight: 800;
+		opacity: .1;
+		color: black;
+		word-spacing: 0px;
+	}	
+	#concept-title-description {
+		display: inline-block;
+		letter-spacing: 0px;
+		font-size: 9px;
+		margin-top: 3px;
+		margin-left: 6px; 
+		opacity: .45;
+		color: black;
+		word-spacing: 0px;
+	}	
+	#concept-title-announcement {
+		display: inline-block;
+		letter-spacing: -1px;
+		font-size: 15px;
+		font-weight: 800;
+		margin-top: 30px;
+		opacity: .2;
+		color: black;
 	}	
 
 	  #ada-account-slogan {

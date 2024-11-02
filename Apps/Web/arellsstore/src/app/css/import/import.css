@@ -15,6 +15,23 @@
 		animation-duration: 1.00s;
 		padding-bottom: 80px; 
    }
+
+   #import-wrapper-concept {
+	padding-top: 20px; 
+	text-align: center;
+	font-family: Arial;
+	margin-top: 40px;
+	margin-left: 0%;
+	margin-right: 0%;
+	margin-bottom: 0%;
+		background-color: rgb(255, 251, 245);
+		border-radius: 30px;
+		-webkit-animation-name: animatetop;
+		-webkit-animation-duration: 1.00s;
+		animation-name: animatetop;
+		animation-duration: 1.00s;
+		padding-bottom: 80px; 
+   }
    
 	   @-webkit-keyframes animatetop {
 	   from {center:0; opacity:0}

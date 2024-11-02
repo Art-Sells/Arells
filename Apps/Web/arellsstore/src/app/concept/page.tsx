@@ -41,7 +41,7 @@ const HPMConceptPage = () => {
   return (
     <>
 
-      <div id="import-wrapper">
+      <div id="import-wrapper-concept">
             <HPMconcept/>
       </div>
     </>
