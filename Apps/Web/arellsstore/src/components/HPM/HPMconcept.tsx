@@ -75,8 +75,8 @@ const HPMConcept: React.FC = () => {
             loader={imageLoader}
             onLoad={() => handleImageLoaded('accountLogo')}
             alt=""
-            width={50}
-            height={16}
+            width={34}
+            height={11}
             id="word-logo-account-concept"
             src="images/Arells-Logo-Ebony.png"
           />
@@ -88,7 +88,7 @@ const HPMConcept: React.FC = () => {
           Always sell Bitcoin for Profits
         </span>
       </div>
-      
+
       <p id="concept-title-announcement">
         CONCEPT
       </p>
@@ -98,8 +98,9 @@ const HPMConcept: React.FC = () => {
 
 
 
-      <div>
-        <div id="b-concept-price-account-wrapper">
+      <div id="b-concept-price-account-wrapper">
+
+        <div id="b-price-account-wrapper">
           <div id="b-price-account">
             <span>
               <div id="b-account-wrapper">
@@ -124,35 +125,42 @@ const HPMConcept: React.FC = () => {
           <div id="concept-buttons-wrapper">
             <button id="increase-price"
               onClick={increasePrice}>
-                Increase by $5,000
+                Increase Price
             </button>
             <button id="decrease-price"
               onClick={decreasePrice}>
-                Decrease by $5,000
+                Decrease Price
             </button>
             <p id="testing-purposes">
-              For testing purposes
+              for testing purposes
             </p>
           </div>
         </div>
-        <div id="buy-input-wrapper">
+
+        
+        <div id="buy-input-wrapper-concept">
           <p id="amount-input-word">Import Bitcoin Amount</p>
-            <div id="b-price-buy">
-              <span>
-                <input 
-                id="buy-input" 
-                type="tel" 
-                onChange={(e) => setInputBuyAmount(Number(e.target.value))}
-                value={inputBuyAmount || ''} 
-                />
-              </span>
-              <span>
-                <div id="cash-input-buy">$</div>
-              </span>
-            </div>
-          <button onClick={handleBuyClick}>IMPORT</button>
+          <div id="b-price-buy-concept">
+            <span>
+              <input 
+              id="buy-input-concept" 
+              type="tel" 
+              onChange={(e) => setInputBuyAmount(Number(e.target.value))}
+              value={inputBuyAmount || ''} 
+              />
+            </span>
+            <span>
+              <div id="cash-input-buy-concept">$</div>
+            </span>
+          </div>
+          <button 
+            id="sell-account-concept"
+            onClick={handleBuyClick}>
+            IMPORT
+            </button>
         </div>
-      </div>
+
+
 
 
 
@@ -306,6 +314,24 @@ const HPMConcept: React.FC = () => {
 
 
       </div>
+      
+
+
+
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -313,7 +339,7 @@ const HPMConcept: React.FC = () => {
       {/* Amount Sold Section */}
       <div id="amount-sold-account-wrapper">
         <div id="amount-sold-num-wrap">
-          <span id="amount-sold-account-title">Sold: </span>
+          <span id="amount-sold-account-title">Sold</span>
           <span id="amount-sold-number-account">
             <Image
               loader={imageLoader}
