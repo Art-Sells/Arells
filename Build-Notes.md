@@ -6,10 +6,9 @@
 
 ### POC
 - Title: arells: Always Sell Bitcoin for Profits 
-- - proof of concept (for testing purposes)
-- (B) Price (Up/Down Arrows)
+- (B) Price (for testing purposes Up/Down Arrows)
 - - Import ((B) Amount) (Import)
-- (A)(B) Wallet {take from Account}
+- (A)(B) Wallet
 - - Wallet: vatopCombinations.acVatops >= vatopCombinations.acVacts
         ? vatopCombinations.acVatops
         : vatopCombinations.acVacts
@@ -19,7 +18,7 @@
 - - - else if acVactsAts =< then true, else false: Holding
 - Amount Sold
 - - (USDC) Wallet
-- Price Chart
+
 
 ### After POC
 - Replace HPMContextConcept with HPMContext in layout wrapper
