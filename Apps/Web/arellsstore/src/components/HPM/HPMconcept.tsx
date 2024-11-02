@@ -350,7 +350,7 @@ const HPMConcept: React.FC = () => {
 
 
       {/* Display Section */}
-      <div>
+      {/* <div>
         <h2>HPAP: {formatCurrency(hpap)}</h2>
         <h2>Vatop Groups:</h2>
         {vatopGroups.length > 0 ? (
@@ -376,8 +376,14 @@ const HPMConcept: React.FC = () => {
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
         <p>acVactsAts: {formatCurrency(vatopCombinations.acVactsAts)}</p>
         <p>acVactTaAts: {formatNumber(vatopCombinations.acVactTaAts)}</p>
-      </div>
+      </div> */}
+
+
+
+
     </div>
+
+    
   );
 };
 
