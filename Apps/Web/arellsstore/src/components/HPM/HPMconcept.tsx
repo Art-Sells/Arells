@@ -56,6 +56,7 @@ const HPMConcept: React.FC = () => {
     soldAmount,
   } = useHPM();
   const [showImportSuccess, setImportSuccess] = useState<boolean>(false);
+  const [showImportSuccessSell, setImportSuccessSell] = useState<boolean>(false);
   const [showImporting, setImporting] = useState<boolean>(false);
   const [showSellSuccess, setSellSuccess] = useState<boolean>(false);
   const [showSelling, setSelling] = useState<boolean>(false);
@@ -143,6 +144,24 @@ const HPMConcept: React.FC = () => {
   const closeImportSuccess = () => {
     setImportSuccess(false);
   };
+  // Check if acVactsAts is greater than 0 and show ImportSuccessSell modal
+  const [importSuccessSellShown, setImportSuccessSellShown] = useState(false); // Track if modal has already been shown
+
+  // Check if acVactsAts is greater than 0 and show ImportSuccessSell modal only once
+  useEffect(() => {
+    if (vatopCombinations.acVactsAts > 0 && !importSuccessSellShown) {
+      setImportSuccessSell(true);
+      setImportSuccessSellShown(true); // Mark as shown to prevent repeated triggers
+    }
+  }, [vatopCombinations.acVactsAts, importSuccessSellShown]);
+  
+  // Close ImportSuccessSell and scroll to the bottom
+  const closeImportSuccessSell = () => {
+    setImportSuccessSell(false);
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  };
+
+
 
   return (
 
@@ -251,6 +270,46 @@ const HPMConcept: React.FC = () => {
               <button id="account-created-close-two-concept"
               onClick={closeImportSuccess}>
                 OK
+              </button>
+        </div>
+      </div>
+      )}
+
+    {showImportSuccessSell && (
+      <div id="account-created-wrapper">
+        <div id="account-created-content">
+          <div id="a-price-account-concept-loader">
+            <span>
+              <div id="a-account-wrapper">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={35}
+                  height={35}
+                  id="arells-account-concept"
+                  src="images/howitworks/ArellsBitcoin.png"
+                />
+              </div>
+            </span>
+            <span>
+              <div id="b-account-wrapper">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={35}
+                  height={35}
+                  id="bitcoin-account-wallet-concept"
+                  src="images/howitworks/Bitcoin.png"
+                />
+              </div>
+            </span>
+          </div>
+            <p id="account-created-words">Available To Sell</p>
+              <button id="account-created-close-two-concept-one"
+              onClick={closeImportSuccessSell}>
+                SCROLL DOWN
               </button>
         </div>
       </div>

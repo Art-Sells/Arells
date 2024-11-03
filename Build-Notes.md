@@ -12,6 +12,7 @@
 ### Testing
 - Test Import
 - Import & Sell (without HPM) Bitcoin to USDC (Polygon) Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
+- Ensure it allows acVactsAts to sell to 0...
 
 ### Account
 - (If Bitcoin wallet has more than a certain amount), then hide "Import Bitcoin to Sell" and show "Sell, Withdraw boxes"
