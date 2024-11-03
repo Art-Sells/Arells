@@ -9,7 +9,10 @@ applications:
             - export VOLTA_HOME="$HOME/.volta"
             - export PATH="$VOLTA_HOME/bin:$PATH"
             - volta install node@18.17.0
-            - volta install yarn@1.22.22  # Ensure the same Yarn version as local
+            - volta install yarn@1.22.22
+            - volta --version
+            - node --version
+            - yarn --version
             - yarn install --immutable --immutable-cache
         build:
           commands:
@@ -18,7 +21,3 @@ applications:
         baseDirectory: .next
         files:
           - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
-          - .next/cache/**/*
