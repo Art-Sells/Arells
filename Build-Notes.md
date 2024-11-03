@@ -5,7 +5,7 @@
 ## Arells 1.0
 
 ### After POC
-- Replace HPMContextConcept with HPMContext in layout wrapper (also in account page)
+- Replace HPMContextConcept with HPMContext in layout wrapper (also in account, buy, and sell page)
 
 
 
