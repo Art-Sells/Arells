@@ -119,12 +119,12 @@ const HPMConcept: React.FC = () => {
 
   
   // Function to conditionally set state based on vatopCombinations
-  const updateSellAndHoldStates = () => {
+  useEffect(() => {
     const newImportToSell = vatopCombinations.acVacts === 0;
     const newReadyToSellConcept = vatopCombinations.acVactsAts > 0;
     const newHoldingConcept = vatopCombinations.acVactsAts <= 0 && vatopCombinations.acVacts !== 0;
-  
-    // Update only if the new values differ from the current state
+
+    // Check and update states only when they differ
     if (importToSell !== newImportToSell) {
       setImportToSell(newImportToSell);
     }
@@ -134,10 +134,8 @@ const HPMConcept: React.FC = () => {
     if (holdingConcept !== newHoldingConcept) {
       setHoldingConcept(newHoldingConcept);
     }
-  };
+  }, [vatopCombinations, importToSell, readyToSellConcept, holdingConcept]);
   
-  // Call the function to update the states conditionally
-  updateSellAndHoldStates();
 
   // Check if acVactsAts is greater than 0 and show ImportSuccessSell modal
   const [importSuccessSellShown, setImportSuccessSellShown] = useState(false); // Track if modal has already been shown
