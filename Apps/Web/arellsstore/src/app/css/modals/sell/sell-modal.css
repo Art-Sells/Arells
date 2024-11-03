@@ -100,7 +100,12 @@
     opacity: .65;
   }
   #selling-image-concept{
-    margin-top: 16px;
+    margin-top: 15.2px;
+    opacity: .5;
+    margin-bottom: 7px;
+  }
+  #selling-image-concept-bit{
+    margin-top: 12.4px;
     opacity: .5;
   }
   

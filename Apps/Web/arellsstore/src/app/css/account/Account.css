@@ -550,6 +550,14 @@
 				padding-bottom: 15px;
 				box-shadow: 0px 5px 15px -5px rgba(204, 116, 0, 0.0);
 			}
+			#a-price-account-concept-loader{
+				margin-top: 10px;
+				display: flex;
+				justify-content: center; 
+				align-items: center;
+				padding-bottom: 0px;
+				box-shadow: 0px 5px 15px -5px rgba(204, 116, 0, 0.0);
+			}
 			#b-price-account-wallet-concept{
 				padding-top: 10px;
 				display: flex;
@@ -601,11 +609,25 @@
 						height: 20px;
 		
 					}
+					#arells-account-concept{
+						margin-left: 3.7px;
+						width: 35px;
+						height: 35px;
+		
+					}
 
 					#bitcoin-account-wallet{
 						margin-left: -1.5px;
 						width: 20px;
 						height: 20px;
+						border-radius: 100px;
+						box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.0); 
+		
+					}
+					#bitcoin-account-wallet-concept{
+						margin-left: -3.7px;
+						width: 35px;
+						height: 35px;
 						border-radius: 100px;
 						box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.0); 
 		

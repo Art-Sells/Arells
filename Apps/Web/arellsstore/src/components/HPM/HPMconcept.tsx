@@ -206,10 +206,10 @@ const HPMConcept: React.FC = () => {
             <Image 
                 // loader={imageLoader}
                 alt="" 
-                width={22}
-                height={22}
-                id="selling-image-concept" 
-                src="/images/Arells-Icon-Ivory.png"
+                width={30}
+                height={30}
+                id="selling-image-concept-bit" 
+                src="/images/market/bitcoin-loader.png"
                 /> 
             <p id="selling-words">importing</p>
           </div>
@@ -219,13 +219,34 @@ const HPMConcept: React.FC = () => {
     {showImportSuccess && (
       <div id="account-created-wrapper">
         <div id="account-created-content">
-            <Image
-                alt=""
-                width={35}
-                height={35}
-                id="account-created-image-concept"
-                src="/images/howitworks/Bitcoin.png"
-            />
+          <div id="a-price-account-concept-loader">
+            <span>
+              <div id="a-account-wrapper">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={35}
+                  height={35}
+                  id="arells-account-concept"
+                  src="images/howitworks/ArellsBitcoin.png"
+                />
+              </div>
+            </span>
+            <span>
+              <div id="b-account-wrapper">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={35}
+                  height={35}
+                  id="bitcoin-account-wallet-concept"
+                  src="images/howitworks/Bitcoin.png"
+                />
+              </div>
+            </span>
+          </div>
             <p id="account-created-words">Imported</p>
               <button id="account-created-close-two-concept"
               onClick={closeImportSuccess}>
