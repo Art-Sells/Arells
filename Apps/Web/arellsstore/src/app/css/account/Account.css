@@ -454,6 +454,31 @@
 								animation-name: animatetop;
 								animation-duration: 1.00s;		  
 							}	
+							#holding-account-concept-two {
+								background-color: rgb(255, 255, 255, 0);
+									text-decoration: none;
+									font-weight: 800;
+									font-size: 40px;
+									margin-top: 46px; 
+									margin-left: 19px;
+									line-height: 0px;
+									border: none;
+									letter-spacing: -3.5px;
+									width: 180px;
+									height: 145px;
+									opacity: 1;
+									color: rgb(0, 0, 0, 0.06);	
+									-webkit-animation-name: animatetop;
+									-webkit-animation-duration: 1.00s;
+									animation-name: animatetop;
+									animation-duration: 1.00s;		  
+								}	
+								#import-bitcoin-to-sell-two{
+									margin-top: -10px;
+								}
+								#import-bitcoin-to-sell-three{
+									margin-top: -10px;
+								}
 						
 						
 
