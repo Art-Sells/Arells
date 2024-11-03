@@ -35,9 +35,9 @@ interface HPMContextType {
   soldAmount: number; // Track sold amount
 }
 
-const HPMContext = createContext<HPMContextType | undefined>(undefined);
+const HPMContextConcept = createContext<HPMContextType | undefined>(undefined);
 
-export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [bitcoinPrice, setBitcoinPrice] = useState<number>(60000);
   const [buyAmount, setBuyAmount] = useState<number>(0);
   const [sellAmount, setSellAmount] = useState<number>(0);
@@ -167,7 +167,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
   return (
-    <HPMContext.Provider value={{
+    <HPMContextConcept.Provider value={{
       bitcoinPrice,
       vatopGroups,
       vatopCombinations,
@@ -183,12 +183,12 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       soldAmount,
     }}>
       {children}
-    </HPMContext.Provider>
+    </HPMContextConcept.Provider>
   );
 };
 
 export const useHPM = () => {
-  const context = useContext(HPMContext);
+  const context = useContext(HPMContextConcept);
   if (context === undefined) {
     throw new Error('useHPM must be used within an HPMProvider');
   }
