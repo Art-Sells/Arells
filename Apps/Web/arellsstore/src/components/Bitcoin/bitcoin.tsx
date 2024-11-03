@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import React, { useCallback, useEffect, useState } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { usePlaidLink } from 'react-plaid-link';
-import { useHPM } from '../../context/HPMContext';
+import { useHPM } from '../../context/concept/HPMContextConcept';
 import CryptoJS from 'crypto-js';
 
 const Bitcoin: React.FC = () => {
