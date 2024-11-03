@@ -394,7 +394,13 @@
   #account-created-close:hover,
   #account-created-close:focus,
   #account-created-close-two:hover,
-  #account-created-close-two:focus,
+  #account-created-close-two:focus
+   {
+    cursor: pointer;
+    opacity: .4;
+    transition: 1s;
+    
+  }
   #account-created-close-two-concept:hover,
   #account-created-close-two-concept:focus,
   #account-created-close-two-concept-one:hover,

@@ -139,13 +139,6 @@ const HPMConcept: React.FC = () => {
   // Call the function to update the states conditionally
   updateSellAndHoldStates();
 
-  const closeSellSuccess = () => {
-    setSellSuccess(false);
-  };
-
-  const closeImportSuccess = () => {
-    setImportSuccess(false);
-  };
   // Check if acVactsAts is greater than 0 and show ImportSuccessSell modal
   const [importSuccessSellShown, setImportSuccessSellShown] = useState(false); // Track if modal has already been shown
 
@@ -161,6 +154,14 @@ const HPMConcept: React.FC = () => {
   const closeImportSuccessSell = () => {
     setImportSuccessSell(false);
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  };
+
+  const closeSellSuccess = () => {
+    setSellSuccess(false);
+  };
+
+  const closeImportSuccess = () => {
+    setImportSuccess(false);
   };
 
 
