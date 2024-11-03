@@ -21,7 +21,7 @@
 
 
 ### After POC
-- Replace HPMContextConcept with HPMContext in layout wrapper
+- Replace HPMContextConcept with HPMContext in layout wrapper (also in account page)
 
 
 

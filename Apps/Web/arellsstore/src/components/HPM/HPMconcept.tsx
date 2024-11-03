@@ -169,156 +169,151 @@ const HPMConcept: React.FC = () => {
 
 
 
-      <div id="sell-wrapper-account">
-        <div id="a-price-account">
-          <span>
-            <div id="a-account-wrapper">
-              <Image
-                loader={imageLoader}
-                onLoad={() => handleImageLoaded('accountLogo')}
-                alt=""
-                width={20}
-                height={20}
-                id="arells-account"
-                src="images/howitworks/ArellsBitcoin.png"
-              />
-            </div>
-          </span>
-          <span>
-            <div id="b-account-wrapper">
-              <Image
-                loader={imageLoader}
-                onLoad={() => handleImageLoaded('accountLogo')}
-                alt=""
-                width={20}
-                height={20}
-                id="bitcoin-account-wallet"
-                src="images/howitworks/Bitcoin.png"
-              />
-            </div>
-          </span>
-          <span id="holding-price-account">Price:</span>
-          <span id="holding-price-number-account">$
-            <span id="holding-price-number-account-num">
-            {formatCurrency(hpap)}
-            </span>
-          </span>
-        </div>
-        <div id="b-price-account-wallet">
-          <span>
-            <div id="w-account-wrapper">
-              <Image
-                loader={imageLoader}
-                onLoad={() => handleImageLoaded('accountLogo')}
-                alt=""
-                width={20}
-                height={20}
-                id="wallet-icon-account"
-                src="images/market/wallet.png"
-              />
-            </div>
-          </span>
-          <span id="wallet-account">Wallet:</span>
-          <span id="wallet-number-account">$
-            <span id="wallet-number-account-num">
-              {formatCurrency(
-                vatopCombinations.acVatops >= vatopCombinations.acVacts
-                  ? vatopCombinations.acVatops
-                  : vatopCombinations.acVacts
-              )}
-            </span>
-          </span>
-        </div>
+        <div id="sell-wrapper-account-concept">
 
-        <div id="b-profits-account">
-          <span>
-            <div id="w-account-wrapper">
-              <Image
-                loader={imageLoader}
-                onLoad={() => handleImageLoaded('accountLogo')}
-                alt=""
-                width={20}
-                height={20}
-                id="profits-icon-account"
-                src="images/howitworks/up-arrow-ebony.png"
-              />
-            </div>
-          </span>
-          <span id="wallet-account-profits">Available to Sell:</span>
-          <span id="wallet-number-profits-account">$
-            <span id="wallet-number-profits-account-num">
-            {formatCurrency(
-              vatopCombinations.acVactsAts
-            )}
-            </span>
-          </span>
-        </div>
-
-        <div id="b-profits-account">
-          <span>
-            <div id="w-account-wrapper">
-              <Image
-                loader={imageLoader}
-                onLoad={() => handleImageLoaded('accountLogo')}
-                alt=""
-                width={20}
-                height={20}
-                id="profits-icon-account"
-                src="images/howitworks/up-arrow-ebony.png"
-              />
-            </div>
-          </span>
-          <span id="wallet-account-profits">Profits:</span>
-          <span id="wallet-number-profits-account">$
-            <span id="wallet-number-profits-account-num">
-            {formatCurrency(
-              vatopCombinations.acdVatops
-            )}
-            </span>
-          </span>
-        </div>
-
-
-        <div id="b-profits-account">
-          {readyToSellConcept && (
-            <>
-              <p id="sell-amount-title">
-                Sell Amount
-              </p>
-              <div id="b-price-sell">
-                <span>
-                  <input 
-                      id="sell-input"
-                      type="tel" 
-                      value={sellAmount  || ''} 
-                      onChange={(e) => setSellAmount(Number(e.target.value))} 
-                  />
-                </span>
-                <span>
-                  <div 
-                      id="cash-input">
-                    $  
-                    </div>
-                </span>
-              </div>
-              <button onClick={() => handleSell(sellAmount)}>SELL</button>
-            </>
-          )}
-          {holdingConcept && (
+          <div id="a-price-account">
             <span>
-              <button id="holding-account">HOLDING</button>
+              <div id="a-account-wrapper">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={20}
+                  height={20}
+                  id="arells-account"
+                  src="images/howitworks/ArellsBitcoin.png"
+                />
+              </div>
             </span>
-          )}
+            <span>
+              <div id="b-account-wrapper">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={20}
+                  height={20}
+                  id="bitcoin-account-wallet"
+                  src="images/howitworks/Bitcoin.png"
+                />
+              </div>
+            </span>
+            <span id="holding-price-account">Price:</span>
+            <span id="holding-price-number-account">$
+              <span id="holding-price-number-account-num">
+              {formatCurrency(hpap)}
+              </span>
+            </span>
+          </div>
+          <div id="b-price-account-wallet">
+            <span>
+              <div id="w-account-wrapper">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={20}
+                  height={20}
+                  id="wallet-icon-account"
+                  src="images/market/wallet.png"
+                />
+              </div>
+            </span>
+            <span id="wallet-account">Wallet:</span>
+            <span id="wallet-number-account">$
+              <span id="wallet-number-account-num">
+                {formatCurrency(
+                  vatopCombinations.acVatops >= vatopCombinations.acVacts
+                    ? vatopCombinations.acVatops
+                    : vatopCombinations.acVacts
+                )}
+              </span>
+            </span>
+          </div>
+
+          <div id="b-profits-account">
+            <span>
+              <div id="w-account-wrapper">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={20}
+                  height={20}
+                  id="profits-icon-account"
+                  src="images/howitworks/up-arrow-ebony.png"
+                />
+              </div>
+            </span>
+            <span id="wallet-account-profits">Available to Sell:</span>
+            <span id="wallet-number-profits-account">$
+              <span id="wallet-number-profits-account-num">
+              {formatCurrency(
+                vatopCombinations.acVactsAts
+              )}
+              </span>
+            </span>
+          </div>
+
+          <div id="b-profits-account">
+            <span>
+              <div id="w-account-wrapper">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={20}
+                  height={20}
+                  id="profits-icon-account"
+                  src="images/howitworks/up-arrow-ebony.png"
+                />
+              </div>
+            </span>
+            <span id="wallet-account-profits">Profits:</span>
+            <span id="wallet-number-profits-account">$
+              <span id="wallet-number-profits-account-num">
+              {formatCurrency(
+                vatopCombinations.acdVatops
+              )}
+              </span>
+            </span>
+          </div>
+
+
+          <div id="sell-input-wrapper-concept">
+            {readyToSellConcept && (
+              <>
+                <p id="amount-input-word">Sell Amount</p>
+                <div id="b-price-buy-concept">
+                  <span>
+                    <input 
+                    id="buy-input-concept" 
+                    type="tel" 
+                    value={sellAmount  || ''} 
+                    onChange={(e) => setSellAmount(Number(e.target.value))} 
+                    />
+                  </span>
+                  <span>
+                    <div id="cash-input-buy-concept">$</div>
+                  </span>
+                </div>
+                <button 
+                  id="sell-account-concept"
+                  onClick={handleBuyClick}>
+                  SELL
+                </button>
+              </>
+            )}
+            {holdingConcept && (
+              <span>
+                <button id="holding-account">HOLDING</button>
+              </span>
+            )}  
+          </div>
+          
 
         </div>
-
-
-      </div>
       
-
-
-
-
 
 
 

@@ -13,7 +13,7 @@ import styles from '../../app/css/modals/loader/accountloader.module.css';
 import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useHPM } from '../../context/HPMContext';
+import { useHPM } from '../../context/concept/HPMContextConcept';
 
 const Account: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -140,9 +140,13 @@ const Account: React.FC = () => {
 
         <div id="amount-sold-account-wrapper-null">
           <p id="amount-sold-number-account-num-approvals">
-            Pending Liquidity Provider Approval.
-            Thank you for your patience.
+            Coming Soon
           </p>   
+          <Link href="/concept">
+            <button id="sell-account-concept-link">
+              VIEW CONCEPT
+              </button>
+          </Link>	
         </div>
       </div>
         )}
