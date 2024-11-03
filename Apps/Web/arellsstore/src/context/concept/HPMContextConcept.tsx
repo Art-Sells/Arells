@@ -127,10 +127,7 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
 
   const handleSell = (amount: number) => {
-    // Capture the initial acVactsAts to calculate the amount sold in this transaction
-    const initialAcVactsAts = vatopCombinations.acVactsAts;
-    
-    if (amount > initialAcVactsAts) return; // Ensure we don't exceed available amount
+    if (amount <= 0 || amount > vatopCombinations.acVactsAts) return; // Exit if invalid amount
   
     let remainingAmount = amount;
     const updatedVatopGroups = [...vatopGroups].sort((a, b) => a.cpVatop - b.cpVatop);
@@ -138,36 +135,24 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     for (let i = 0; i < updatedVatopGroups.length && remainingAmount > 0; i++) {
       const group = updatedVatopGroups[i];
       const sellAmount = Math.min(group.cVact, remainingAmount);
-  
       remainingAmount -= sellAmount;
       group.cVatop -= sellAmount;
       group.cVact -= sellAmount;
-      group.cVactTa = group.cVactTa - sellAmount / bitcoinPrice;
-  
-      // If selling the last bit, ensure no tiny residuals are left
-      if (remainingAmount <= 0) {
-        group.cVact = 0;
-        group.cVactTa = 0;
-        group.cVatop = 0;
-      }
-      
+      group.cVactTa -= sellAmount / bitcoinPrice;
       group.cdVatop = group.cVact - group.cVatop;
   
-      // Remove any group with negligible value left
-      if (group.cVactTa < 0.0000001) {
+      // Remove the group if it's depleted
+      if (group.cVact <= 0) {
         updatedVatopGroups.splice(i, 1);
         i--;
       }
     }
   
-    // Calculate the amount sold in this transaction
-    const finalAcVactsAts = updatedVatopGroups.reduce((acc, group) => acc + group.cVact, 0);
-    const currentTransactionSoldAmount = initialAcVactsAts - finalAcVactsAts;
+    // Calculate the actual amount sold and update the soldAmount
+    const actualSoldAmount = amount - remainingAmount;
+    setSoldAmount((prevSoldAmount) => prevSoldAmount + actualSoldAmount);
   
-    // Increment soldAmount by adding the current transaction's sold amount
-    setSoldAmount((prevSoldAmount) => prevSoldAmount + currentTransactionSoldAmount);
-  
-    // Update all state based on the new groups and bitcoin price
+    // Update combinations based on the new groups
     updateAllState(bitcoinPrice, updatedVatopGroups);
   };
 

@@ -102,16 +102,18 @@ const HPMConcept: React.FC = () => {
   };
   
   const handleSellClick = () => {
-    if (sellAmount > 0) { // Check if sellAmount is not empty
-      setSelling(true); // Show selling loader
-      setTimeout(() => {
-        setSelling(false); // Hide selling loader
-        setSellSuccess(true); // Show sell success message
-      }, 2000); // Delay for 3 seconds
-  
-      handleSell(sellAmount); // Perform the sell action
-      setSellAmount(0); // Clear the sell input field after selling
+    if (sellAmount <= 0 || sellAmount > vatopCombinations.acVactsAts) {
+      return; // Return if sellAmount is invalid or exceeds available amount
     }
+  
+    setSelling(true); // Show selling loader
+    setTimeout(() => {
+      setSelling(false); // Hide selling loader
+      setSellSuccess(true); // Show sell success message
+    }, 2000); // Delay for 2 seconds
+  
+    handleSell(sellAmount); // Perform the sell action
+    setSellAmount(0); // Clear the sell input field after selling
   };
 
 
