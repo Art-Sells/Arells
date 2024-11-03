@@ -59,13 +59,33 @@ const HPMConcept: React.FC = () => {
   const handleBuyClick = () => {
     setBuyAmount(inputBuyAmount);
     handleBuy(inputBuyAmount);
+    setInputBuyAmount(0); // Clear the buy input field after buying
+  };
+  
+  const handleSellClick = () => {
+    handleSell(sellAmount);
+    setSellAmount(0); // Clear the sell input field after selling
   };
 
-  const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(true);
+  const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(false);
   const [holdingConcept, setHoldingConcept] = useState<boolean>(false);
-
-  // setReadyToSellConcept(vatopCombinations.acVacts === 0 || vatopCombinations.acVactsAts > 0);
-  // setHoldingConcept(vatopCombinations.acVactsAts <= 0);
+  
+  // Function to conditionally set state based on vatopCombinations
+  const updateSellAndHoldStates = () => {
+    const newReadyToSellConcept = vatopCombinations.acVacts === 0 || vatopCombinations.acVactsAts > 0;
+    const newHoldingConcept = vatopCombinations.acVactsAts <= 0;
+  
+    // Update only if the new values differ from the current state
+    if (readyToSellConcept !== newReadyToSellConcept) {
+      setReadyToSellConcept(newReadyToSellConcept);
+    }
+    if (holdingConcept !== newHoldingConcept) {
+      setHoldingConcept(newHoldingConcept);
+    }
+  };
+  
+  // Call the function to update the states conditionally
+  updateSellAndHoldStates();
 
   return (
     <div>
@@ -308,7 +328,7 @@ const HPMConcept: React.FC = () => {
                 </div>
                 <button 
                   id="sell-account-conceptt"
-                  onClick={handleBuyClick}>
+                  onClick={handleSellClick}>
                   SELL
                 </button>
               </>
@@ -341,21 +361,21 @@ const HPMConcept: React.FC = () => {
 
       
       {/* Amount Sold Section */}
-      <div id="amount-sold-account-wrapper">
-        <div id="amount-sold-num-wrap">
-          <span id="amount-sold-account-title">Sold</span>
+      <div id="amount-sold-account-wrapper-concept">
+        <div id="amount-sold-num-wrap-concept">
+          <span id="amount-sold-account-title-concept">Sold</span>
           <span id="amount-sold-number-account">
             <Image
               loader={imageLoader}
               onLoad={() => handleImageLoaded('accountLogo')}
               alt=""
-              width={20}
-              height={20}
-              id="wallet-icon-account"
+              width={30}
+              height={30}
+              id="wallet-icon-account-concept-usdc"
               src="images/market/usdc-arells.png"
             />
           </span>
-          <span id="amount-sold-number-account-num">
+          <span id="amount-sold-number-account-num-concept">
             {formatCurrency(soldAmount)}
           </span>
         </div>
