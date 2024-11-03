@@ -61,8 +61,8 @@ const HPMConcept: React.FC = () => {
     handleBuy(inputBuyAmount);
   };
 
-  const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(true);
-  const [holdingConcept, setHoldingConcept] = useState<boolean>(false);
+  const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(false);
+  const [holdingConcept, setHoldingConcept] = useState<boolean>(true);
 
   // setReadyToSellConcept(vatopCombinations.acVacts === 0 || vatopCombinations.acVactsAts > 0);
   // setHoldingConcept(vatopCombinations.acVactsAts <= 0);
@@ -115,7 +115,7 @@ const HPMConcept: React.FC = () => {
                 />
               </div>
             </span>
-            <span id="price-account">Price:</span>
+            <span id="price-account-concept">Price:</span>
             <span id="price-number-account">$
               <span id="price-number-account-num">
               {formatCurrency(bitcoinPrice)}
@@ -139,7 +139,7 @@ const HPMConcept: React.FC = () => {
 
         
         <div id="buy-input-wrapper-concept">
-          <p id="amount-input-word">Import Bitcoin Amount</p>
+          <p id="amount-input-word-concept">Import Bitcoin Amount</p>
           <div id="b-price-buy-concept">
             <span>
               <input 
@@ -162,7 +162,7 @@ const HPMConcept: React.FC = () => {
 
 
 
-
+        <hr id="concept-line-top"/>
 
 
 
@@ -171,7 +171,7 @@ const HPMConcept: React.FC = () => {
 
         <div id="sell-wrapper-account-concept">
 
-          <div id="a-price-account">
+          <div id="a-price-account-concept">
             <span>
               <div id="a-account-wrapper">
                 <Image
@@ -198,14 +198,17 @@ const HPMConcept: React.FC = () => {
                 />
               </div>
             </span>
-            <span id="holding-price-account">Price:</span>
+            <span id="holding-price-account-concept">Price:</span>
             <span id="holding-price-number-account">$
               <span id="holding-price-number-account-num">
               {formatCurrency(hpap)}
               </span>
             </span>
           </div>
-          <div id="b-price-account-wallet">
+
+          <hr id="concept-line"/>
+
+          <div id="b-price-account-wallet-concept">
             <span>
               <div id="w-account-wrapper">
                 <Image
@@ -219,7 +222,7 @@ const HPMConcept: React.FC = () => {
                 />
               </div>
             </span>
-            <span id="wallet-account">Wallet:</span>
+            <span id="wallet-account-concept">Wallet:</span>
             <span id="wallet-number-account">$
               <span id="wallet-number-account-num">
                 {formatCurrency(
@@ -231,7 +234,9 @@ const HPMConcept: React.FC = () => {
             </span>
           </div>
 
-          <div id="b-profits-account">
+          <hr id="concept-line"/>
+
+          <div id="b-profits-account-concept">
             <span>
               <div id="w-account-wrapper">
                 <Image
@@ -245,7 +250,7 @@ const HPMConcept: React.FC = () => {
                 />
               </div>
             </span>
-            <span id="wallet-account-profits">Available to Sell:</span>
+            <span id="wallet-account-profits-concept">Available to Sell:</span>
             <span id="wallet-number-profits-account">$
               <span id="wallet-number-profits-account-num">
               {formatCurrency(
@@ -255,7 +260,9 @@ const HPMConcept: React.FC = () => {
             </span>
           </div>
 
-          <div id="b-profits-account">
+          <hr id="concept-line"/>
+
+          <div id="b-profitss-account-concept">
             <span>
               <div id="w-account-wrapper">
                 <Image
@@ -269,7 +276,7 @@ const HPMConcept: React.FC = () => {
                 />
               </div>
             </span>
-            <span id="wallet-account-profits">Profits:</span>
+            <span id="wallet-account-profits-concept">Profits:</span>
             <span id="wallet-number-profits-account">$
               <span id="wallet-number-profits-account-num">
               {formatCurrency(
@@ -279,11 +286,13 @@ const HPMConcept: React.FC = () => {
             </span>
           </div>
 
+          <hr id="concept-line-bottom"/>
+
 
           <div id="sell-input-wrapper-concept">
             {readyToSellConcept && (
               <>
-                <p id="amount-input-word">Sell Amount</p>
+                <p id="amount-input-word-concept">Sell Bitcoin Amount</p>
                 <div id="b-price-buy-concept">
                   <span>
                     <input 
@@ -298,7 +307,7 @@ const HPMConcept: React.FC = () => {
                   </span>
                 </div>
                 <button 
-                  id="sell-account-concept"
+                  id="sell-account-conceptt"
                   onClick={handleBuyClick}>
                   SELL
                 </button>
@@ -306,11 +315,11 @@ const HPMConcept: React.FC = () => {
             )}
             {holdingConcept && (
               <span>
-                <button id="holding-account">HOLDING</button>
+                <button id="holding-account-concept">HOLDING</button>
               </span>
             )}  
           </div>
-          
+
 
         </div>
       

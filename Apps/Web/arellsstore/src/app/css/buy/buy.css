@@ -104,20 +104,20 @@
 			box-shadow: 0px 10px 25px -11px rgba(0, 0, 0, 0.15);
 		}
 		#buy-input-wrapper-concept {
-			margin-top: 0px;
-			padding-top: 10px;
+			margin-top: 20px;
+			padding-top: 20px;
 			padding-bottom: 40px;
 			margin-left: auto;
 			margin-right: auto;
-			height: 125px;
+			height: 135px;
 			width: 220px;
 			background-color: rgba(255, 251, 245, 1);
 			border-radius: 30px;
-			box-shadow: 0px 8px 25px -0px rgba(0, 0, 0, 0.02);
+			box-shadow: 0px 8px 25px -0px rgba(0, 0, 0, 0.0);
 		}
 
 		#sell-input-wrapper-concept {
-			margin-top: 20px;
+			margin-top: 10px;
 			padding-top: 10px;
 			padding-bottom: 40px;
 			margin-left: auto;
@@ -138,6 +138,14 @@
                 font-size: 11px;
                 opacity: .4;			
 			}
+			#amount-input-word-concept{
+				color: black;
+                margin-left: auto;	
+                margin-right: auto;	
+                font-weight: 200;	
+                font-size: 8px;
+                opacity: .4;	
+			}
 
 			#b-price-buy{
                 padding-top: 0px;
@@ -152,7 +160,7 @@
             }  
 		
 		#b-price-buy-concept{
-			padding-top: 0px;
+			padding-top: 6px;
 			display: flex;
 			justify-content: center; 
 			width: 220px;
@@ -182,6 +190,25 @@
 
             }  
 		#cash-input-buy-concept { 
+			text-align: center;  	   
+			padding-top: 15px;
+			padding-bottom: 26px;
+			padding-left: 10px;
+			padding-right: 4px;       	   		
+			color: rgb(175, 175, 175);
+			font-weight: 200;
+			border: none;
+			border-radius: 0px;
+			font-size: 13px;
+			width: 20px;
+			height: 5px;
+			letter-spacing: 0px;    	   		
+			background:  rgba(255, 251, 245, 1);
+			opacity: .8; 
+			margin-left: -125px;
+
+		}  
+		#cash-input-sell-concept { 
 			text-align: center;  	   
 			padding-top: 15px;
 			padding-bottom: 26px;
@@ -234,14 +261,37 @@
                 letter-spacing: 0px;    	   		
 				background: rgb(0, 0, 0, 0.2);
 			}
+			#sell-input-concept { 
+                text-align:left;  	   
+                padding-top: 18px;
+                padding-bottom: 18px;
+                padding-left: 40px;
+                padding-right: 20px;       	   		
+                color: white;
+                font-weight: 800;
+                border: none;
+                border-radius: 10px;
+                font-size: 18px;
+                width: 60px;
+                margin-left: 0px;
+                height: 5px;
+                letter-spacing: 0px;    	   		
+				background: rgba(204, 116, 0, 0.3);
+			}
 
-			#buy-input:focus,
-			#buy-input-concept:focus
-			 {
-				outline: none;
-				transition: 1s;
-				background: rgb(0, 0, 0, 1);	    
-			}   
+				#buy-input:focus,
+				#buy-input-concept:focus
+				{
+					outline: none;
+					transition: 1s;
+					background: rgb(0, 0, 0, 1);	    
+				}   
+				#sell-input-concept:focus
+				 {
+					outline: none;
+					transition: 1s;
+					background: rgba(204, 116, 0, 1);    
+				}   
 
 			#a-wallet-buy-wrapper{
                 padding-top: 30px;
