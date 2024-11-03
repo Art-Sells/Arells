@@ -61,8 +61,8 @@ const HPMConcept: React.FC = () => {
     handleBuy(inputBuyAmount);
   };
 
-  const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(false);
-  const [holdingConcept, setHoldingConcept] = useState<boolean>(true);
+  const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(true);
+  const [holdingConcept, setHoldingConcept] = useState<boolean>(false);
 
   // setReadyToSellConcept(vatopCombinations.acVacts === 0 || vatopCombinations.acVactsAts > 0);
   // setHoldingConcept(vatopCombinations.acVactsAts <= 0);
@@ -243,14 +243,14 @@ const HPMConcept: React.FC = () => {
                   loader={imageLoader}
                   onLoad={() => handleImageLoaded('accountLogo')}
                   alt=""
-                  width={20}
-                  height={20}
+                  width={18}
+                  height={18}
                   id="profits-icon-account"
-                  src="images/howitworks/up-arrow-ebony.png"
+                  src="images/market/coin-stacks.png"
                 />
               </div>
             </span>
-            <span id="wallet-account-profits-concept">Available to Sell:</span>
+            <span id="wallet-account-profits-concept-available">Available to Sell:</span>
             <span id="wallet-number-profits-account">$
               <span id="wallet-number-profits-account-num">
               {formatCurrency(
