@@ -122,50 +122,38 @@ const HPMConcept: React.FC = () => {
       setMissingFields(true); // Show error if sellAmount is invalid
     }
   };
-  
-  // Handle number input for both buy and sell fields
-  const handleNumberInput = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setter: React.Dispatch<React.SetStateAction<number>>
-  ) => {
-    const numericValue = e.target.value.replace(/\D/g, ''); // Remove any non-numeric characters
-    setter(numericValue ? Number(numericValue) : 0); // Set parsed number, defaulting to 0 if empty
-  };
 
-    // Helper to parse and validate number inputs
-  const parseNumberInput = (value: string): number => {
-    const numericValue = value.replace(/\D/g, ''); // Removes non-numeric characters
-    return numericValue ? Number(numericValue) : 0; // Returns 0 if input is empty
-  };
 
-  // Use separate handlers for each input to avoid passing setters directly
   const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputBuyAmount(parseNumberInput(e.target.value));
+    // Use regex to keep only numeric characters
+    const sanitizedValue = e.target.value.replace(/[^0-9]/g, '');
+    setInputBuyAmount(sanitizedValue ? Number(sanitizedValue) : 0); // Update state with only numbers
   };
-
+  
   const handleSellAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSellAmount(parseNumberInput(e.target.value));
+    const sanitizedValue = e.target.value.replace(/[^0-9]/g, '');
+    setSellAmount(sanitizedValue ? Number(sanitizedValue) : 0);
   };
-
 
   
   // Function to conditionally set state based on vatopCombinations
   useEffect(() => {
-    if (vatopCombinations.acVacts === 0) {
-      // Case: No balance in acVacts, so import is required
-      setImportToSell(true);
-      setReadyToSellConcept(false);
-      setHoldingConcept(false);
-    } else if (vatopCombinations.acVactsAts > 0) {
+ if (vatopCombinations.acVactsAts > 0) {
       // Case: Ready to sell if there's available balance in acVactsAts
       setImportToSell(false);
       setReadyToSellConcept(true);
       setHoldingConcept(false);
-    } else if (vatopCombinations.acVactsAts === 0 && vatopCombinations.acVacts > 0) {
+    } if (vatopCombinations.acVactsAts === 0 && vatopCombinations.acVacts > 0) {
       // Case: Holding state if acVacts has a balance, but acVactsAts is zero
       setImportToSell(false);
       setReadyToSellConcept(false);
       setHoldingConcept(true);
+    }
+    else if (vatopCombinations.acVacts === 0) {
+      // Case: No balance in acVacts, so import is required
+      setImportToSell(true);
+      setReadyToSellConcept(false);
+      setHoldingConcept(false);
     }
   }, [vatopCombinations]);
   
