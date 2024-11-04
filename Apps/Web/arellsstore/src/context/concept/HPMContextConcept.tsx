@@ -127,7 +127,7 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
 
   const handleSell = (amount: number) => {
-    if (amount <= 0 || amount > vatopCombinations.acVactsAts) return; // Exit if invalid amount
+    if (amount <= 0 || amount > vatopCombinations.acVactsAts) return;
   
     let remainingAmount = amount;
     const updatedVatopGroups = [...vatopGroups].sort((a, b) => a.cpVatop - b.cpVatop);
@@ -141,18 +141,19 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       group.cVactTa -= sellAmount / bitcoinPrice;
       group.cdVatop = group.cVact - group.cVatop;
   
-      // Remove the group if it's depleted
       if (group.cVact <= 0) {
         updatedVatopGroups.splice(i, 1);
         i--;
       }
     }
   
-    // Calculate the actual amount sold and update the soldAmount
     const actualSoldAmount = amount - remainingAmount;
     setSoldAmount((prevSoldAmount) => prevSoldAmount + actualSoldAmount);
   
-    // Update combinations based on the new groups
+    // Recalculate `acVactsAts` accurately after sell
+    const updatedAcVactsAts = updatedVatopGroups.reduce((total, group) => total + group.cVact, 0);
+    setVatopCombinations((prev) => ({ ...prev, acVactsAts: updatedAcVactsAts }));
+  
     updateAllState(bitcoinPrice, updatedVatopGroups);
   };
 

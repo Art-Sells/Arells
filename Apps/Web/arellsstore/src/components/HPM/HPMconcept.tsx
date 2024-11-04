@@ -8,10 +8,13 @@ import '../../app/css/account/Account.css';
 import '../../app/css/buy/buy.css';
 import '../../app/css/sell/Sell.css';
 import '../../app/css/modals/sell/sell-modal.css';
+import '../../app/css/modals/export/export-modal.css';
 import '../../app/css/modals/loader/accountloaderbackground.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import styles from '../../app/css/modals/loader/accountloader.module.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
+
+
 
 const HPMConcept: React.FC = () => {
 
@@ -63,6 +66,7 @@ const HPMConcept: React.FC = () => {
   const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(false);
   const [holdingConcept, setHoldingConcept] = useState<boolean>(false);
   const [importToSell, setImportToSell] = useState<boolean>(false);
+  const [showMissingFields, setMissingFields] = useState<boolean>(false);
 
 
 
@@ -98,43 +102,72 @@ const HPMConcept: React.FC = () => {
       setBuyAmount(inputBuyAmount);
       handleBuy(inputBuyAmount); // Perform the buy action
       setInputBuyAmount(0); // Clear the buy input field after buying
+    } else {
+      setMissingFields(true); // Show missing fields message if no input
     }
   };
   
   const handleSellClick = () => {
-    if (sellAmount <= 0 || sellAmount > vatopCombinations.acVactsAts) {
-      return; // Return if sellAmount is invalid or exceeds available amount
+    // Validate against the exact available amount for sale, allowing full `acVactsAts` to be sold
+    if (sellAmount > 0 && sellAmount <= Math.round(vatopCombinations.acVactsAts)) {
+      setSelling(true);
+      setTimeout(() => {
+        setSelling(false);
+        setSellSuccess(true);
+      }, 2000);
+  
+      handleSell(sellAmount);
+      setSellAmount(0); // Clear the input field
+    } else {
+      setMissingFields(true); // Show error if sellAmount is invalid
     }
+  };
   
-    setSelling(true); // Show selling loader
-    setTimeout(() => {
-      setSelling(false); // Hide selling loader
-      setSellSuccess(true); // Show sell success message
-    }, 2000); // Delay for 2 seconds
-  
-    handleSell(sellAmount); // Perform the sell action
-    setSellAmount(0); // Clear the sell input field after selling
+  // Handle number input for both buy and sell fields
+  const handleNumberInput = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    const numericValue = e.target.value.replace(/\D/g, ''); // Remove any non-numeric characters
+    setter(numericValue ? Number(numericValue) : 0); // Set parsed number, defaulting to 0 if empty
+  };
+
+    // Helper to parse and validate number inputs
+  const parseNumberInput = (value: string): number => {
+    const numericValue = value.replace(/\D/g, ''); // Removes non-numeric characters
+    return numericValue ? Number(numericValue) : 0; // Returns 0 if input is empty
+  };
+
+  // Use separate handlers for each input to avoid passing setters directly
+  const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputBuyAmount(parseNumberInput(e.target.value));
+  };
+
+  const handleSellAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSellAmount(parseNumberInput(e.target.value));
   };
 
 
   
   // Function to conditionally set state based on vatopCombinations
   useEffect(() => {
-    const newImportToSell = vatopCombinations.acVacts === 0;
-    const newReadyToSellConcept = vatopCombinations.acVactsAts > 0;
-    const newHoldingConcept = vatopCombinations.acVactsAts <= 0 && vatopCombinations.acVacts !== 0;
-
-    // Check and update states only when they differ
-    if (importToSell !== newImportToSell) {
-      setImportToSell(newImportToSell);
+    if (vatopCombinations.acVacts === 0) {
+      // Case: No balance in acVacts, so import is required
+      setImportToSell(true);
+      setReadyToSellConcept(false);
+      setHoldingConcept(false);
+    } else if (vatopCombinations.acVactsAts > 0) {
+      // Case: Ready to sell if there's available balance in acVactsAts
+      setImportToSell(false);
+      setReadyToSellConcept(true);
+      setHoldingConcept(false);
+    } else if (vatopCombinations.acVactsAts === 0 && vatopCombinations.acVacts > 0) {
+      // Case: Holding state if acVacts has a balance, but acVactsAts is zero
+      setImportToSell(false);
+      setReadyToSellConcept(false);
+      setHoldingConcept(true);
     }
-    if (readyToSellConcept !== newReadyToSellConcept) {
-      setReadyToSellConcept(newReadyToSellConcept);
-    }
-    if (holdingConcept !== newHoldingConcept) {
-      setHoldingConcept(newHoldingConcept);
-    }
-  }, [vatopCombinations, importToSell, readyToSellConcept, holdingConcept]);
+  }, [vatopCombinations]);
   
 
   // Check if acVactsAts is greater than 0 and show ImportSuccessSell modal
@@ -162,6 +195,11 @@ const HPMConcept: React.FC = () => {
     setImportSuccess(false);
   };
 
+  const closeMissingFields = () => {
+    setMissingFields(false);
+
+  };
+
 
 
   return (
@@ -178,6 +216,21 @@ const HPMConcept: React.FC = () => {
             src="images/Arells-Icon.png"
           />    
           <div id={styles.accountloader}></div>    
+        </div>
+      )}
+      {showMissingFields && (
+        <div id="export-failed-wrapper">
+          <div id="missing-fields-content">
+            <Image 
+              alt="" 
+              width={35} 
+              height={11} 
+              id="missing-fields-image" 
+              src="/images/prototype/EnterNameErrorImage.png" 
+            />  
+            <p id="missing-fields-words">invalid amount</p>
+            <button id="export-failed-close" onClick={closeMissingFields}>OK</button> 
+          </div>
         </div>
       )}
 
@@ -394,7 +447,7 @@ const HPMConcept: React.FC = () => {
             <input 
             id="buy-input-concept" 
             type="tel" 
-            onChange={(e) => setInputBuyAmount(Number(e.target.value))}
+            onChange={handleBuyAmountChange}
             value={inputBuyAmount || ''} 
             />
           </span>
@@ -547,8 +600,8 @@ const HPMConcept: React.FC = () => {
                   <input 
                   id="buy-input-concept" 
                   type="tel" 
-                  value={sellAmount  || ''} 
-                  onChange={(e) => setSellAmount(Number(e.target.value))} 
+                  onChange={handleSellAmountChange}
+                  value={sellAmount || ''} 
                   />
                 </span>
                 <span>
