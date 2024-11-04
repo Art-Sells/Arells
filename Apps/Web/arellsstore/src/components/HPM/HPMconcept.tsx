@@ -467,7 +467,8 @@ const HPMConcept: React.FC = () => {
           <span>
             <input 
             id="buy-input-concept" 
-            type="tel" 
+            type="text" 
+            inputMode="decimal" 
             onChange={handleBuyAmountChange}
             value={inputBuyAmount || ''} 
             />
@@ -616,7 +617,8 @@ const HPMConcept: React.FC = () => {
                 <span>
                   <input 
                     id="buy-input-concept" 
-                    type="tel" 
+                    type="text" 
+                    inputMode="decimal" 
                     onChange={handleSellAmountChange}
                     value={inputSellAmount || ''}
                   />
