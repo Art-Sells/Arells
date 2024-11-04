@@ -60,6 +60,7 @@
 - Create separate Wallet to handle where we get our 3% fee...
 - Remove console.logs from all components, hide "wallettester" and "hpmtester" from main
 - Resolve Google/Bing/Yahoo Search Tab issues (Add Metatags to all recurring pages)
+- Resolve UI (pop-up images modals and rolling loader issues [on mobile, etc])
 
 
 ## Arells 2.0 (and beyond):
