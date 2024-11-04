@@ -82,7 +82,7 @@ const HPMConcept: React.FC = () => {
   };
 
   const formatCurrency = (value: number): string => {
-    return `${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+    return `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
   };
 
   const formatNumber = (value: number): string => {
@@ -138,23 +138,39 @@ const HPMConcept: React.FC = () => {
   
   // Function to conditionally set state based on vatopCombinations
   useEffect(() => {
+    console.log("Current Values:", {
+      acVacts: vatopCombinations.acVacts,
+      acVactsAts: vatopCombinations.acVactsAts,
+      acdVatops: vatopCombinations.acdVatops,
+    });
     if (Math.round(vatopCombinations.acVactsAts) > 0) {
       // Ready to sell if there's available balance in acVactsAts
       setImportToSell(false);
       setReadyToSellConcept(true);
       setHoldingConcept(false);
-    } else if (Math.round(vatopCombinations.acVactsAts) === 0 && vatopCombinations.acVacts > 0) {
-      // Holding state if acVacts has a balance but acVactsAts is zero
+    } else if (
+      Math.round(vatopCombinations.acVactsAts) === 0 &&
+      Math.round(vatopCombinations.acdVatops) === 0 &&
+      vatopCombinations.acVacts > 0
+    ) {
+      // Set holding if acVacts has balance, acVactsAts is zero, and acdVatops is zero
       setImportToSell(false);
       setReadyToSellConcept(false);
       setHoldingConcept(true);
-    } else if (Math.round(vatopCombinations.acVactsAts) === 0 && vatopCombinations.acVacts === 0) {
+    } else if (
+      Math.round(vatopCombinations.acVactsAts) === 0 &&
+      vatopCombinations.acVacts === 0
+    ) {
       // No balance in acVacts, so import is required
       setImportToSell(true);
       setReadyToSellConcept(false);
       setHoldingConcept(false);
     }
-  }, [Math.round(vatopCombinations.acVacts), Math.round(vatopCombinations.acVactsAts)]);
+  }, [
+    Math.round(vatopCombinations.acVacts),
+    Math.round(vatopCombinations.acVactsAts),
+    Math.round(vatopCombinations.acdVatops)
+  ]);
   
 
   // Check if acVactsAts is greater than 0 and show ImportSuccessSell modal
@@ -186,7 +202,6 @@ const HPMConcept: React.FC = () => {
     setMissingFields(false);
 
   };
-
 
 
   return (
@@ -542,9 +557,7 @@ const HPMConcept: React.FC = () => {
           <span id="wallet-account-profits-concept-available">Available to Sell:</span>
           <span id="wallet-number-profits-account">$
             <span id="wallet-number-profits-account-num">
-            {formatCurrency(
-              vatopCombinations.acVactsAts
-            )}
+              {formatCurrency(vatopCombinations.acVactsAts)}
             </span>
           </span>
         </div>

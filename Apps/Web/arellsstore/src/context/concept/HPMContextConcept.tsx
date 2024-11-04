@@ -61,18 +61,17 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const newVatopCombinations = filteredGroups.reduce(
       (acc, group) => {
         acc.acVatops += group.cVatop;
-        acc.acVacts += group.cVact;
-        acc.acVactTas += group.cVactTa;
-
+        acc.acVacts += Number(group.cVact.toFixed(2));
+        acc.acVactTas += Number(group.cVactTa.toFixed(2));
+    
         const initialCost = group.cVactTa * group.cpVatop;
         const currentValue = group.cVactTa * newBitcoinPrice;
         const profit = currentValue - initialCost;
         if (profit > 0) {
-          acc.acdVatops += profit;
-          acc.acVactsAts += Math.round(group.cVact);
-          acc.acVactTaAts += group.cVactTa;
+          acc.acdVatops += Number(profit.toFixed(2));
+          acc.acVactsAts += Number(group.cVact.toFixed(2));
+          acc.acVactTaAts += Number(group.cVactTa.toFixed(2));
         }
-
         return acc;
       },
       {
