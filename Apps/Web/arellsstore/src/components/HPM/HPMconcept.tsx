@@ -128,17 +128,23 @@ const HPMConcept: React.FC = () => {
   const handleBuyClick = () => {
     // Remove commas from inputBuyAmount and convert to a float for processing
     const buyAmount = parseFloat(inputBuyAmount.replace(/,/g, '')) || 0;
-    
+  
     if (buyAmount > 0) {
       setImporting(true); // Show importing loader
       setTimeout(() => {
         setImporting(false); // Hide importing loader
         setImportSuccess(true); // Show import success message
+  
+        // Hide import success message after 2 seconds
+        setTimeout(() => {
+          setImportSuccess(false);
+          setInputBuyAmount(""); // Clear the input field
+        }, 2000);
+  
       }, 2000);
   
       setBuyAmount(buyAmount);
       handleBuy(buyAmount);
-      setInputBuyAmount(""); // Clear the input field
     } else {
       setMissingFields(true); // Show missing fields message
     }
@@ -161,10 +167,16 @@ const HPMConcept: React.FC = () => {
       setTimeout(() => {
         setSelling(false);
         setSellSuccess(true);
+  
+        // Hide success message after 2 seconds
+        setTimeout(() => {
+          setSellSuccess(false);
+          setInputSellAmount(''); // Clear the input field
+        }, 2000);
+  
       }, 2000);
   
       handleSell(sellAmount);
-      setInputSellAmount(''); // Clear the input field
     } else {
       setMissingFields(true); // Show error if sellAmount is invalid
     }
@@ -285,7 +297,7 @@ const HPMConcept: React.FC = () => {
 
     {showSellSuccess && (
       <div id="account-created-wrapper">
-        <div id="account-created-content">
+        <div id="account-created-content-concept">
             <Image
                 alt=""
                 width={35}
@@ -294,10 +306,10 @@ const HPMConcept: React.FC = () => {
                 src="/images/market/usdc-arells.png"
             />
             <p id="account-created-words">Sold</p>
-              <button id="account-created-close-two-concept"
+              {/* <button id="account-created-close-two-concept"
               onClick={closeSellSuccess}>
                 OK
-              </button>
+              </button> */}
         </div>
       </div>
       )}
@@ -322,7 +334,7 @@ const HPMConcept: React.FC = () => {
 
     {showImportSuccess && (
       <div id="account-created-wrapper">
-        <div id="account-created-content">
+        <div id="account-created-content-concept">
           <div id="a-price-account-concept-loader">
             <span>
               <div id="a-account-wrapper">
@@ -352,10 +364,10 @@ const HPMConcept: React.FC = () => {
             </span>
           </div>
             <p id="account-created-words">Imported</p>
-              <button id="account-created-close-two-concept"
+              {/* <button id="account-created-close-two-concept"
               onClick={closeImportSuccess}>
                 OK
-              </button>
+              </button> */}
         </div>
       </div>
       )}
