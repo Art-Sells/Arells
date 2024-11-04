@@ -138,24 +138,23 @@ const HPMConcept: React.FC = () => {
   
   // Function to conditionally set state based on vatopCombinations
   useEffect(() => {
- if (vatopCombinations.acVactsAts > 0) {
-      // Case: Ready to sell if there's available balance in acVactsAts
+    if (Math.round(vatopCombinations.acVactsAts) > 0) {
+      // Ready to sell if there's available balance in acVactsAts
       setImportToSell(false);
       setReadyToSellConcept(true);
       setHoldingConcept(false);
-    } if (vatopCombinations.acVactsAts === 0 && vatopCombinations.acVacts > 0) {
-      // Case: Holding state if acVacts has a balance, but acVactsAts is zero
+    } else if (Math.round(vatopCombinations.acVactsAts) === 0 && vatopCombinations.acVacts > 0) {
+      // Holding state if acVacts has a balance but acVactsAts is zero
       setImportToSell(false);
       setReadyToSellConcept(false);
       setHoldingConcept(true);
-    }
-    else if (vatopCombinations.acVacts === 0) {
-      // Case: No balance in acVacts, so import is required
+    } else if (Math.round(vatopCombinations.acVacts) === 0) {
+      // No balance in acVacts, so import is required
       setImportToSell(true);
       setReadyToSellConcept(false);
       setHoldingConcept(false);
     }
-  }, [vatopCombinations]);
+  }, [Math.round(vatopCombinations.acVacts), Math.round(vatopCombinations.acVactsAts)]);
   
 
   // Check if acVactsAts is greater than 0 and show ImportSuccessSell modal
@@ -434,7 +433,7 @@ const HPMConcept: React.FC = () => {
           <span>
             <input 
             id="buy-input-concept" 
-            type="tel" 
+            type="number" 
             onChange={handleBuyAmountChange}
             value={inputBuyAmount || ''} 
             />
@@ -587,7 +586,7 @@ const HPMConcept: React.FC = () => {
                 <span>
                   <input 
                   id="buy-input-concept" 
-                  type="tel" 
+                  type="number" 
                   onChange={handleSellAmountChange}
                   value={sellAmount || ''} 
                   />
