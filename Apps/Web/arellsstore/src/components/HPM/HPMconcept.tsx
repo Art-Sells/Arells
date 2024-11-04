@@ -148,7 +148,7 @@ const HPMConcept: React.FC = () => {
       setImportToSell(false);
       setReadyToSellConcept(false);
       setHoldingConcept(true);
-    } else if (Math.round(vatopCombinations.acVacts) === 0) {
+    } else if (Math.round(vatopCombinations.acVactsAts) === 0 && vatopCombinations.acVacts === 0) {
       // No balance in acVacts, so import is required
       setImportToSell(true);
       setReadyToSellConcept(false);
@@ -433,7 +433,7 @@ const HPMConcept: React.FC = () => {
           <span>
             <input 
             id="buy-input-concept" 
-            type="number" 
+            type="tel" 
             onChange={handleBuyAmountChange}
             value={inputBuyAmount || ''} 
             />
@@ -586,7 +586,7 @@ const HPMConcept: React.FC = () => {
                 <span>
                   <input 
                   id="buy-input-concept" 
-                  type="number" 
+                  type="tel" 
                   onChange={handleSellAmountChange}
                   value={sellAmount || ''} 
                   />
@@ -691,7 +691,7 @@ const HPMConcept: React.FC = () => {
       <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
       <p>acVactsAts: {formatCurrency(vatopCombinations.acVactsAts)}</p>
       <p>acVactTaAts: {formatNumber(vatopCombinations.acVactTaAts)}</p>
-    </div> */}
+    </div>  */}
 
 
 

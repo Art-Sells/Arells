@@ -32,7 +32,7 @@ interface HPMContextType {
   handleSell: (amount: number) => void;
   setManualBitcoinPrice: (price: number | ((currentPrice: number) => number)) => void;
   email: string;
-  soldAmount: number; // Track sold amount
+  soldAmount: number;
 }
 
 const HPMContextConcept = createContext<HPMContextType | undefined>(undefined);
@@ -55,7 +55,10 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [soldAmount, setSoldAmount] = useState<number>(0);
 
   const updateAllState = (newBitcoinPrice: number, updatedGroups: VatopGroup[]) => {
-    const newVatopCombinations = updatedGroups.reduce(
+    // Remove groups with cVact of 0
+    const filteredGroups = updatedGroups.filter((group) => group.cVact > 0);
+
+    const newVatopCombinations = filteredGroups.reduce(
       (acc, group) => {
         acc.acVatops += group.cVatop;
         acc.acVacts += group.cVact;
@@ -66,7 +69,7 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         const profit = currentValue - initialCost;
         if (profit > 0) {
           acc.acdVatops += profit;
-          acc.acVactsAts += group.cVact;
+          acc.acVactsAts += Math.round(group.cVact);
           acc.acVactTaAts += group.cVactTa;
         }
 
@@ -84,10 +87,10 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     setVatopCombinations(newVatopCombinations);
 
-    const maxCpVatop = updatedGroups.length > 0 ? Math.max(...updatedGroups.map((group) => group.cpVatop)) : 0;
+    const maxCpVatop = filteredGroups.length > 0 ? Math.max(...filteredGroups.map((group) => group.cpVatop)) : 0;
     setHpap(Math.max(newBitcoinPrice, maxCpVatop || newBitcoinPrice));
 
-    setVatopGroups(updatedGroups);
+    setVatopGroups(filteredGroups);
   };
 
   const setManualBitcoinPrice = (price: number | ((currentPrice: number) => number)) => {
@@ -120,12 +123,6 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     updateAllState(bitcoinPrice, updatedVatopGroups);
   };
 
-
-
-
-
-
-
   const handleSell = (amount: number) => {
     if (amount <= 0 || amount > vatopCombinations.acVactsAts) return;
   
@@ -134,33 +131,25 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   
     for (let i = 0; i < updatedVatopGroups.length && remainingAmount > 0; i++) {
       const group = updatedVatopGroups[i];
-      const sellAmount = Math.min(group.cVact, remainingAmount);
+      const sellAmount = Math.min(Math.round(group.cVact), remainingAmount); // Ensure sellAmount is an integer
       remainingAmount -= sellAmount;
       group.cVatop -= sellAmount;
       group.cVact -= sellAmount;
       group.cVactTa -= sellAmount / bitcoinPrice;
       group.cdVatop = group.cVact - group.cVatop;
-  
-      if (group.cVact <= 0) {
-        updatedVatopGroups.splice(i, 1);
-        i--;
-      }
     }
   
     const actualSoldAmount = amount - remainingAmount;
     setSoldAmount((prevSoldAmount) => prevSoldAmount + actualSoldAmount);
   
-    // Recalculate `acVactsAts` accurately after sell
-    const updatedAcVactsAts = updatedVatopGroups.reduce((total, group) => total + group.cVact, 0);
+    // Filter out groups with cVact of 0 after sell
+    const filteredGroups = updatedVatopGroups.filter((group) => group.cVact > 0);
+
+    const updatedAcVactsAts = filteredGroups.reduce((total, group) => total + Math.round(group.cVact), 0);
     setVatopCombinations((prev) => ({ ...prev, acVactsAts: updatedAcVactsAts }));
   
-    updateAllState(bitcoinPrice, updatedVatopGroups);
+    updateAllState(bitcoinPrice, filteredGroups);
   };
-
-
-
-
-
 
   return (
     <HPMContextConcept.Provider value={{
