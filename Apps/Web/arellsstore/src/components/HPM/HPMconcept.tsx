@@ -89,26 +89,40 @@ const HPMConcept: React.FC = () => {
     return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 7 });
   };
 
-  const formatWithCommas = (value: string) => {
-    const parts = value.split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return parts.join('.');
-  };
+
 
   const [inputBuyAmount, setInputBuyAmount] = useState<string>("");
   const [inputSellAmount, setInputSellAmount] = useState<string>("");
-  // Buy amount handler
-  const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Remove any non-numeric characters except decimal
-    setInputBuyAmount(formatWithCommas(numericValue));
-    setBuyAmount(parseFloat(numericValue) || 0); // Store numeric value in state for calculations
+  const formatWithCommas = (value: string) => {
+    const parts = value.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Format integer part with commas
+    return parts.join('.');
   };
   
-  // Sell amount handler
+  const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal
+  
+    // Limit to two decimal places
+    if (numericValue.includes('.')) {
+      const [integer, decimals] = numericValue.split('.');
+      numericValue = `${integer}.${decimals.slice(0, 2)}`; // Keep only the first two decimal places
+    }
+  
+    setInputBuyAmount(formatWithCommas(numericValue)); // Format with commas for display
+    setBuyAmount(parseFloat(numericValue) || 0); // Store as a number for calculations
+  };
+  
   const handleSellAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Remove any non-numeric characters except decimal
-    setInputSellAmount(formatWithCommas(numericValue));
-    setSellAmount(parseFloat(numericValue) || 0); // Store numeric value in state for calculations
+    let numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal
+  
+    // Limit to two decimal places
+    if (numericValue.includes('.')) {
+      const [integer, decimals] = numericValue.split('.');
+      numericValue = `${integer}.${decimals.slice(0, 2)}`; // Keep only the first two decimal places
+    }
+  
+    setInputSellAmount(formatWithCommas(numericValue)); // Format with commas for display
+    setSellAmount(parseFloat(numericValue) || 0); // Store as a number for calculations
   };
   
   // Convert to numbers where needed, e.g., on submit:
@@ -586,7 +600,7 @@ const HPMConcept: React.FC = () => {
           <span id="wallet-account-profits-concept">Profits:</span>
           <span id="wallet-number-profits-account">$
             <span id="wallet-number-profits-account-num">
-            {formatCurrency(vatopCombinations.acdVatops > .3 ? vatopCombinations.acdVatops : 0.00)}
+            {formatCurrency(vatopCombinations.acdVatops > .01 ? vatopCombinations.acdVatops : 0.00)}
             </span>
           </span>
         </div>
