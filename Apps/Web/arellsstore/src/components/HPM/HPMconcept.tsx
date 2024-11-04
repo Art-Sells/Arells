@@ -125,38 +125,48 @@ const HPMConcept: React.FC = () => {
     setSellAmount(parseFloat(numericValue) || 0); // Store as a number for calculations
   };
   
-  // Convert to numbers where needed, e.g., on submit:
   const handleBuyClick = () => {
-    const buyAmount = parseFloat(inputBuyAmount) || 0;
+    // Remove commas from inputBuyAmount and convert to a float for processing
+    const buyAmount = parseFloat(inputBuyAmount.replace(/,/g, '')) || 0;
+    
     if (buyAmount > 0) {
       setImporting(true); // Show importing loader
       setTimeout(() => {
         setImporting(false); // Hide importing loader
         setImportSuccess(true); // Show import success message
       }, 2000);
+  
       setBuyAmount(buyAmount);
       handleBuy(buyAmount);
-      setInputBuyAmount("");
+      setInputBuyAmount(""); // Clear the input field
     } else {
-      setMissingFields(true);
+      setMissingFields(true); // Show missing fields message
     }
   };
 
   
   const handleSellClick = () => {
-    const sellAmount = parseFloat(inputSellAmount) || 0;
+    // Remove commas from inputSellAmount and convert to a float for comparison
+    const sellAmount = parseFloat(inputSellAmount.replace(/,/g, '')) || 0;
+  
+    // Check if sellAmount is greater than acVactsAts
+    if (sellAmount > vatopCombinations.acVactsAts) {
+      setMissingFields(true); // Show missing fields message
+      return; // Exit the function
+    }
+  
+    // Proceed with sell logic if the amount is valid
     if (sellAmount > 0 && sellAmount <= vatopCombinations.acVactsAts) {
       setSelling(true);
       setTimeout(() => {
         setSelling(false);
         setSellSuccess(true);
       }, 2000);
-
-      setSellAmount(sellAmount);
+  
       handleSell(sellAmount);
-      setInputSellAmount("");
+      setInputSellAmount(''); // Clear the input field
     } else {
-      setMissingFields(true);
+      setMissingFields(true); // Show error if sellAmount is invalid
     }
   };
   
