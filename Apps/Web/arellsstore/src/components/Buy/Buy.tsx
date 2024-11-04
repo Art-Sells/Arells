@@ -7,16 +7,17 @@ import Link from 'next/link';
 import { useBitcoinPrice } from '../../context/BitcoinPriceContext';
 import '../../app/css/buy/buy.css';
 import '../../app/css/modals/buy/buy-modal.css';
-import '../../app/css/modals/loader/accountloaderbackground.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
+import '../../app/css/modals/loader/accountloaderbackground.css';
 import styles from '../../app/css/modals/loader/accountloader.module.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
+import { useHPM } from '../../context/concept/HPMContextConcept';
 
 const Buy: React.FC = () => {
   const [showPurchaseFailed, setPurchaseFailed] = useState<boolean>(false);
   const [showBuyingSuccess, setBuyingSuccess] = useState<boolean>(false);
   const [showBuying, setBuying] = useState<boolean>(false);
-  const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
+  const { buyAmount, setBuyAmount, handleBuy: contextHandleBuy } = useHPM();
 
   //Loader Function/s
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -54,6 +55,38 @@ const Buy: React.FC = () => {
     setBuyingSuccess(false);
   };
 
+  const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // Exclude '*' and '#'
+    setBuyAmount(Number(value));
+  };
+
+  const formatCurrency = (value: number): string => {
+    return `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+  };
+
+  const [total, setTotal] = useState<number>(0);
+  const [fees, setFees] = useState<number>(0);
+
+  useEffect(() => {
+    const calculatedFees = buyAmount * 0.03;
+    setFees(calculatedFees);
+    setTotal(buyAmount + calculatedFees);
+  }, [buyAmount]);
+
+  const handleBuy = async (amount: number) => {
+    setBuying(true);
+    await new Promise((resolve) => setTimeout(resolve, 3000)); // 3-second delay
+
+    try {
+      await contextHandleBuy(amount);
+      setBuying(false);
+      setBuyingSuccess(true);
+    } catch (error) {
+      setBuying(false);
+      setPurchaseFailed(true);
+    }
+  };
+
   return (
     <>
       {showLoading && (
@@ -75,7 +108,6 @@ const Buy: React.FC = () => {
           <div id="buying-content">
             <div className={stylings.marketplaceloader}></div>
             <Image
-              // loader={imageLoader}
               alt=""
               width={22}
               height={22}
@@ -98,9 +130,9 @@ const Buy: React.FC = () => {
               src="/images/market/checkmark-ebony.png"
             />
             <p id="account-created-words">Purchase Complete</p>
-            <Link href="/transactions" passHref>
+            <Link href="/account" passHref>
               <button id="account-created-close-two" onClick={closeBuyingSuccess}>
-                VIEW TRANSACTIONS
+                VIEW ACCOUNT
               </button>
             </Link>
           </div>
@@ -118,11 +150,10 @@ const Buy: React.FC = () => {
               id="buying-image"
               src="images/market/cancelled-ivory.png"
             />
-            <p id="buying-failed-words-one">Purchase Failed</p>
-            <p id="buying-failed-words-two">Check Bank Account</p>
-            <Link href="/bank_account" passHref></Link>
+            <p id="buying-failed-words-one">purchase failed</p>
+            <p id="buying-failed-words-two">check your bank</p>
             <button id="buying-failed-close" onClick={closePurchaseFailed}>
-              VIEW CONNECTED BANK
+              OK
             </button>
           </div>
         </div>
@@ -153,7 +184,7 @@ const Buy: React.FC = () => {
           <p id="amount-input-word">Buy Amount</p>
           <div id="b-price-buy">
             <span>
-              <input id="buy-input" type="tel" />
+              <input id="buy-input" type="tel" onChange={handleBuyAmountChange} value={buyAmount || ''} />
             </span>
             <span>
               <div id="cash-input-buy">$</div>
@@ -161,13 +192,13 @@ const Buy: React.FC = () => {
           </div>
           <div id="a-wallet-buy-wrapper">
             <span id="fees-total-word">Fees:</span>
-            <span id="fees-total-number">$<span id="fees-total-num">0.00</span></span>
+            <span id="fees-total-number">$<span id="fees-total-num">{formatCurrency(fees)}</span></span>
           </div>
           <div id="a-wallet-buy-wrapper-bottom">
             <span id="total-word">Total:</span>
-            <span id="total-number">$<span id="total-num">2,000.00</span></span>
+            <span id="total-number">$<span id="total-num">{formatCurrency(total)}</span></span>
           </div>
-          <button id="buy-button">BUY</button>
+          <button id="buy-button" onClick={() => handleBuy(buyAmount)}>BUY</button>
         </div>
       </div>
     </>

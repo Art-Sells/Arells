@@ -14,9 +14,7 @@
 	animation-name: animatetop;
 	animation-duration: 1.00s;
 }
-	#connected-spacing {
-		padding-top: 70px;
-	}
+
   
 	  #arells-iconn {
 		margin-top: 60px;
@@ -39,9 +37,9 @@
 		  to {center:0; opacity:1}
 		}
 	  #word-logoo {
-		  margin-top: 80px;
-		  width: 100px;	
-		  height: 32px;
+		  margin-top: 100px;
+		  width: 105px;	
+		  height: 33px;
 		  -webkit-animation-name: animatetop;
 		  -webkit-animation-duration: 1.00s;
 		  animation-name: animatetop;
@@ -58,64 +56,43 @@
 		  to {center:0; opacity:1}
 		}
 	
+
 	  
 		#descriptioner-wrapper {
-			margin-top: 35px;
+			margin-top: 3px;
 			margin-left: auto;
 			margin-right: auto;
-			font-size: 9px;
-			font-weight: 600;
-			margin-bottom: -5px;
+			font-size: 8px;
+			font-weight: 200;
+			padding-bottom: 5px;
 		}
 			#descriptioner {
 				letter-spacing: 0px;
-				margin-left: 0px; 
+				margin-left: -2px; 
 				opacity: 1;
-				color: black;
+				color: gray;
 				word-spacing: 0px;
 				display: inline-block;
 			}	
 
 			#ada-description {
-				margin-left: 17px; 
+				margin-left: 3px; 
 				opacity: 1;
-				color: rgb(255, 145, 0, 1);
+				color: gray;
 				display: inline-block;
 			}
 			#ada-descriptioner {
-				margin-left: 18px; 
+				margin-left: 3px; 
 				opacity: 1;
-				color: black;
+				color: gray;
 				display: inline-block;
 			}
+
 	
 
-		#buy-info-wrapping {
-			margin-left:auto;
-			margin-right: auto;
-			margin-top: 17px;
-			font-size: 9px;
-			font-weight: 600;
-		}
-			#buy-info-home {
-				color: black;
-				opacity: 1;
-				letter-spacing: 0px;
-				margin-left: 0px;
-				display: inline-block;
 
-			}
-
-			#buy-info-homer {
-				color: black;
-				opacity: 1;
-				letter-spacing: 0px;
-				margin-left: 4px;
-				display: inline-block;
-
-			}
 	#login {
-		margin-top: 60px;
+		margin-top: 25px;
 	  background: rgba(204, 116, 0);
 	  text-decoration: none;
 	  color: white;
@@ -129,7 +106,7 @@
 	  letter-spacing: 2px;
 	  border-radius: 5px;
 	  border-width: 0px;
-	  width: 300px;
+	  width: 280px;
 	  opacity: 1;
 	  box-shadow: 0px 8px 12px -6px rgba(204, 116, 0);  
 	  -webkit-animation-name: animatetop;
@@ -143,6 +120,34 @@
 	  transition: 1s;
 	  cursor: pointer;
 	}   
+
+
+	#buy-info-wrapping {
+		margin-left:auto;
+		margin-right: auto;
+		margin-top: 20px;
+		font-size: 8px;
+		color: gray;
+		font-weight: 200;
+		opacity: 1;
+	}
+		#buy-info-home {
+			color: black;
+			opacity: 1;
+			letter-spacing: 0px;
+			margin-left: 0px;
+			display: inline-block;
+
+		}
+
+		#buy-info-homer {
+			color: black;
+			opacity: 1;
+			letter-spacing: 0px;
+			margin-left: 0px;
+			display: inline-block;
+
+		}
 
 	  	
 	  
@@ -173,26 +178,21 @@
 
 	  
 	  #descriptioner-wrapper {
-		margin-top: 30px;
-		font-size: 8px;
+		font-size: 7.3px;
 	  }
 
 		#ada-description {
-			margin-left: 17px; 
 			opacity: 1;
-			color: rgb(255, 145, 0, 1);
 			display: inline-block;
 		}
 		#ada-descriptioner {
-			margin-left: 18px; 
 			opacity: 1;
-			color: black;
 			display: inline-block;
 		}
 
 
 	#buy-info-wrapping {
-		font-size: 8px;
+		font-size: 7px;
 	}
 
 	#buy-info-homer {
@@ -200,11 +200,15 @@
 	}
 
 	#login {
-		width: 270px;
+		width: 240px;
 		font-size: 11px; 			  
 		}
 	  
 	}	
+  
+  
+  
+
   
   
   

@@ -4,84 +4,49 @@
 
 ## Arells 1.0
 
+### After POC
+- Replace HPMContextConcept with HPMContext in layout wrapper (also in account, buy, and sell, bitcoin.tsx page)
+
+
+
 ### Testing
-- - - Plaid Info (pending approval)
-- **Possibly a Blockchain Info (with API) to pull Bitcoin to Buy & Sell?**
-- Test Buying, Selling | Depositing process... 
-- - Separate Bitcoin Wallet Page where handleBuy, handleSell and handleExport pages handle changes from and to first.
-- - handleBuy/handleSell/handleWithdraw (add try, awaits and catch to ensures the entire process is successful before updating backend information)
+- Test Import
+- Import & Sell (without HPM) Bitcoin to USDC (Polygon) Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
+- Ensure it allows acVactsAts to sell to 0...
 
 ### Account
-- Test with "manualBitcoinPrice" editing from CoinGecko API for selling/holding and selling page functionaliries.
-- if acVactsAts = 0 sell display none, holding display true, else opposite
-- Reloads ((B)Price, (A)(B)Price, Wallet, and profits animation css) with Sell/Hold button 10 second intervals from coin gecko API wrapper instead of entire page?
+- (If Bitcoin wallet has more than a certain amount), then hide "Import Bitcoin to Sell" and show "Sell, Withdraw boxes"
+- Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
+- Withdraw (USDC)
 
- #### (B) Price = Bitcoin Price API 
+#### Import (Page)
+- Import Bitcoins to Always sell them for profits
 
-  #### Connect Bank (Page)
- - Connects to Plaid First, (if not connected)
- - - Bottom showed after connection
-
- #### Buy (Page)
-
- #### Sell (Page)
- - displayed if acVacts == 0 or if acVactsAts > 0, otherwise hidden 
-
- #### Holding (replaces Sell button)
- - displayed once acVactsAts <= 0, otherwsie hidden
-
- #### (A)(B) Price = HPAP || Bitcoin Price
- - HPAP system from HPM wrapper
-
- #### Wallet
- - Displays $ acVatops, if acVatops <= 0, displays acVacts
-
- #### Profits
- - displays $ acdVatops
-
- #### Amount Sold
- - Displays "Sold Amount" from Database $, else, "$0"
- - (Withdraw)-> Modal
- - - Modal:
-    - - - (Bank) Withdrawing 
-    - - -  (Check) Withdraw Complete (View Transactions adds Date (logs new Date in "Transaction Dates" database), (B) and link to Bank Account to "Withdrew Amount in Database")-> Transactions
-    - - - (X) Withdraw Failed, check Bank Account Connection (View Connected Bank Account) -> Bank Account
-
- #### Log Out (Redirects to Home)
-
-
-### Buy
-**Pull handleBuy from HPMContext & BoughtAmountContext and edit saveVatopGroups import for success and error modal handling.**
-- (B) Price
-- Amount Input (in $) (tel no * or #) see HPMTester
-- fees (total * .03 goes to our Arells Stripe Account?)
-- total (from input) see HPMTester
-- (BUY) -> Modals
-- Modals: 
-- - Confirming Purchase 3 Second delay
-- - Purchase Complete (confirming purchase modal = false, (see HPMTester)) -> View Transactions
-- - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
-- - Enter information (if one or more fields are empty)
-- Reloads modules every 5 minutes (price animation css) from coin gecko API wrapper?
 
 ### Sell
-**Pull handleSell from HPMContext sellAmountContext and edit saveVatopGroups import for success and error modal handling.**
+**Test to see if it'll sell if over amount?**
 - (B) Amount Available To Sell
-- - Wallet: displays acVactsAts
+- - amount: displays acVactsAts
 - - Profits: displays acdVatops
 - - Sell Amount Input: (tel no * or #) see HPMTester
 - - Sell: see HPMTester
 - - (Confirm Sale) -> Modals
 - - - Modals: 
 - - - - Confirming Sale...3 Second delay
-- - - - Sale Complete (confirming sale modal = false) (see HPMTester) (View Transactions) -> Transactions
+- - - - Sale Complete (confirming sale modal = false) (see HPMTester) (View Account) -> Account
 - - - - Transaction Failed (confirming sale modal = false) (OK)
 - - - - Enter information (if one or more fields are empty)
 - Reloads modules every 10 seconds (price, wallet, and profits animation css) from coin gecko API wrapper?
 
+### Withdraw
+- Withdraw and send your USDC into another exchange
+- USDC (Polygon) Address
+- Amount
+- Amount to Send
+- Send
 
-### Important
-- Create separate Wallet to handle where we get our 3% fee... (Stripe?)
+#### Test Amplify/S3 Login
+
 
 ### Other (if Time Permits)
 - Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
@@ -90,6 +55,16 @@
 - - if null, emailUnConfirmed(true){}, emailConfirmed(false){};
 - - if true, opposite
 - Send Confirmation (Link) look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
+
+### Last Resort
+- Create separate Wallet to handle where we get our 3% fee...
+- Remove console.logs from all components, hide "wallettester" and "hpmtester" from main
+- Resolve Google/Bing/Yahoo Search Tab issues (Add Metatags to all recurring pages)
+
+
+## Arells 2.0 (and beyond):
+
+Create Separate GitHub Repo for HPM System
 
 
 
@@ -132,10 +107,11 @@
 ## Arells 1.5 - 2
 
 ### Important:
-- Encrypt Bitcoin Private Key (after confirmation), then Decrypt. Decrypt Private Key After Log In to connect to Account...
 - Update Blockchain.info API to Amplify (IP) API
+- Emails (Bitcoin Available to Sell)
 - Resolve "HPMContext" errors that show "cannot find email, Error fetching Bitcoin Price, etc etc" from console.log if pages don't need them...
 - Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/HPMContext
+- Sign up for 2 more Exchange APIs then begin aggregating our own Cryptocurrencies (set into plan)…
 
 ### Testing
 - Test Export process... 
@@ -228,6 +204,13 @@ else:
 ### Confirm
 - - - Ensure Private Key is Encrypted (if successful)
 
+### Buy
+- - Purchase Failed, check Bank Account for sufficient funds (View Connected Bank Account) -> Bank Account
+- - Purchase Complete (confirming purchase modal = false, (see HPMTester)) -> View Transactions
+
+### Sell
+- - - - Sale Complete (confirming sale modal = false) (see HPMTester) (View Transactions) -> Transactions
+
 ### Export
 - Increase fees for faster exports
 
@@ -244,6 +227,7 @@ else:
 
 #### Misc
 - fix "bitcoinAmount" API misswording issue within Withdraw Amount JSON.
+- Amazon EC2 Maintenance restructure...
 
 ##### Home Page:
 10 years, 5 years, 1 year, 6 months, 90 days, 30 days, 7 days, 24 hours, 6 hours, 1 hours (load whichever time frame from 24 hours first, to 7 days, prioritize days then months then years in regards to the highest percentage increase).

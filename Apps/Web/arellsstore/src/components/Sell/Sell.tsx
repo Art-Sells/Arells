@@ -15,7 +15,7 @@ import stylings from '../../app/css/modals/loading/marketplaceloader.module.css'
 const Sell: React.FC = () => {
 
   const [showSellFailed, setSellFailed] = useState<boolean>(false);
-  const [showSellSuccess, setSellSuccess] = useState<boolean>(true);
+  const [showSellSuccess, setSellSuccess] = useState<boolean>(false);
   const [showSelling, setSelling] = useState<boolean>(false);
   const [showSellAvailable, setSellAvailable] = useState<boolean>(true);
   const [showSellUnavailable, setSellUnavailable] = useState<boolean>(false);

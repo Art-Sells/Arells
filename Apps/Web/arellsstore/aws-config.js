@@ -1,5 +1,3 @@
-// aws-config.js
-
 const AWS = require('aws-sdk');
 require('dotenv').config(); // Load .env variables
 

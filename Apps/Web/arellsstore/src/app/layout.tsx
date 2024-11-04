@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
-import { HPMProvider } from '../context/HPMContext';
+import { HPMConceptProvider } from '../context/concept/HPMContextConcept';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
@@ -50,9 +50,9 @@ const RootLayout = ({ children }: LayoutProps) => {
         <ConfigureAmplifyClientSide />
         <BitcoinPriceProvider>
           <UserProvider>
-            <HPMProvider>
+            <HPMConceptProvider>
               {children}
-            </HPMProvider>
+            </HPMConceptProvider>
           </UserProvider>
         </BitcoinPriceProvider>
       </body>

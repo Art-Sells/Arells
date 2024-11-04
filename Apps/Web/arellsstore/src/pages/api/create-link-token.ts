@@ -6,11 +6,8 @@ import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
 
-console.log('PLAID_CLIENT_ID:', process.env.NEXT_PUBLIC_PLAID_CLIENT_ID);
-console.log('PLAID_SECRET:', process.env.NEXT_PUBLIC_PLAID_SECRET);
-
 const config = new Configuration({
-  basePath: PlaidEnvironments.sandbox, // Use 'production' for production environment
+  basePath: PlaidEnvironments.production, // Use 'production' for production environment
   baseOptions: {
     headers: {
       'PLAID-CLIENT-ID': process.env.NEXT_PUBLIC_PLAID_CLIENT_ID!,
@@ -40,23 +37,32 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const response = await client.linkTokenCreate({
       user: { client_user_id: userId },
       client_name: 'Arells',
-      products: [Products.Auth, Products.Transactions], // Ensure correct product types
-      country_codes: [
-        CountryCode.Us, CountryCode.Gb, CountryCode.Es, CountryCode.Nl, 
-        CountryCode.Fr, CountryCode.Ie, CountryCode.Ca, CountryCode.De, 
-        CountryCode.It, CountryCode.Pl, CountryCode.Dk, CountryCode.No, 
-        CountryCode.Se, CountryCode.Ee, CountryCode.Lt, CountryCode.Lv, 
-        CountryCode.Pt, CountryCode.Be
-      ],
+      products: [Products.Auth], // Ensure correct product types
+      country_codes: [CountryCode.Us],
       language: 'en',
     });
 
-    return res.status(200).json(response.data);
+    const { request_id, link_token } = response.data;
+
+    // Log the request_id
+    console.log('Link token created. Request ID:', request_id);
+
+    // Return the link token and request_id in the response
+    return res.status(200).json({ link_token, request_id });
   } catch (error: any) {
     console.error('Error creating link token:', error);
+
     if (error.response) {
+      const requestId = error.response.data.request_id || 'Unknown request_id';
       console.error('Error response from Plaid API:', error.response.data);
-      return res.status(500).json({ error: error.response.data.error_message });
+
+      // Log the request_id for this error
+      console.log('Error Request ID:', requestId);
+
+      return res.status(500).json({
+        error: error.response.data.error_message,
+        request_id: requestId, // Include it in the response for debugging
+      });
     } else {
       const errorMessage = (error as Error).message || 'Failed to create link token';
       return res.status(500).json({ error: errorMessage });

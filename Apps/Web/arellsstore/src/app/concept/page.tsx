@@ -1,19 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-// Import other necessary components and hooks
-import '../css/transactions/transactions.css';
 
-import Transactions from '../../components/Transactions/Transactions';
+// Import other necessary components and hooks
+import '../css/import/import.css';
+
+
+import HPMconcept from '../../components/HPM/HPMconcept';
 
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
-  title: "Transactions",
+  title: "Concept",
   description: "Always sell Bitcoin for profits. Import small amounts of bitcoin and always sell them for profits.",
   robots: "noimageindex",
   openGraph: {
-    title: "Transactions",
+    title: "Concept",
     description: "Always sell Bitcoin for profits. Import small amounts of bitcoin and always sell them for profits.",
-    url: "https://arells.com/transactions",
+    url: "https://arells.com/concept",
     type: "website",
     images: [
       {
@@ -22,7 +24,7 @@ export const metadata: Metadata = {
     ]
   },
   twitter: {
-    title: "Transactions",
+    title: "Concept",
     description: "Always sell Bitcoin for profits. Import small amounts of bitcoin and always sell them for profits.",
     card: "summary_large_image",
     images: [
@@ -33,17 +35,17 @@ export const metadata: Metadata = {
   }
 };
 
-const TransactionsPage = () => {
+const HPMConceptPage = () => {
   
 
   return (
     <>
 
-      <div id="transactions-wrapper">
-            <Transactions/>
+      <div id="import-wrapper-concept">
+            <HPMconcept/>
       </div>
     </>
   );
 }
 
-export default TransactionsPage;
+export default HPMConceptPage;

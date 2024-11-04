@@ -4,7 +4,6 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import axios from 'axios';
 import { fetchBitcoinPrice, setManualBitcoinPrice as setManualBitcoinPriceApi } from '../lib/coingecko-api';
 import { fetchUserAttributes } from 'aws-amplify/auth';
-import { createBoughtAmountTransaction, createExportedAmountTransaction, createSoldAmountTransaction } from '../lib/transactions';
 
 interface VatopGroup {
   cVatop: number;
@@ -112,18 +111,18 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     fetchPrice();
     }, []);
     
-    // useEffect(() => {
-    // const fetchEmail = async () => {
-    // try {
-    // const attributesResponse = await fetchUserAttributes();
-    // const emailAttribute = attributesResponse.email;
-    // if (emailAttribute) {
-    // setEmail(emailAttribute);
-    // }
-    // } catch (error) {
-    // console.error('Log In or Sign Up to access Arells.');
-    // }
-    // }; fetchEmail();}, []);
+    useEffect(() => {
+    const fetchEmail = async () => {
+    try {
+    const attributesResponse = await fetchUserAttributes();
+    const emailAttribute = attributesResponse.email;
+    if (emailAttribute) {
+    setEmail(emailAttribute);
+    }
+    } catch (error) {
+    console.log('Log In or Sign Up to access Arells.');
+    }
+    }; fetchEmail();}, []);
 
     const fetchVatopGroups = useCallback(async () => {
     try {
