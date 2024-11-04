@@ -57,20 +57,20 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const updateAllState = (newBitcoinPrice: number, updatedGroups: VatopGroup[]) => {
     // Remove groups with cVact of 0
     const filteredGroups = updatedGroups.filter((group) => group.cVact > 0);
-
+  
     const newVatopCombinations = filteredGroups.reduce(
       (acc, group) => {
         acc.acVatops += group.cVatop;
-        acc.acVacts += Number(group.cVact.toFixed(2));
-        acc.acVactTas += Number(group.cVactTa.toFixed(2));
-    
+        acc.acVacts += parseFloat(group.cVact.toFixed(2)); // Display to 2 decimal places
+        acc.acVactTas += parseFloat(group.cVactTa.toFixed(7)); // 7 decimal places for consistency
+  
         const initialCost = group.cVactTa * group.cpVatop;
         const currentValue = group.cVactTa * newBitcoinPrice;
         const profit = currentValue - initialCost;
         if (profit > 0) {
-          acc.acdVatops += Number(profit.toFixed(2));
-          acc.acVactsAts += Number(group.cVact.toFixed(2));
-          acc.acVactTaAts += Number(group.cVactTa.toFixed(2));
+          acc.acdVatops += parseFloat(profit.toFixed(2));
+          acc.acVactsAts += parseFloat(group.cVact.toFixed(2));
+          acc.acVactTaAts += parseFloat(group.cVactTa.toFixed(7)); // Maintain 7 decimal places
         }
         return acc;
       },
@@ -83,12 +83,12 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         acVactTaAts: 0,
       } as VatopCombinations
     );
-
+  
     setVatopCombinations(newVatopCombinations);
-
+  
     const maxCpVatop = filteredGroups.length > 0 ? Math.max(...filteredGroups.map((group) => group.cpVatop)) : 0;
     setHpap(Math.max(newBitcoinPrice, maxCpVatop || newBitcoinPrice));
-
+  
     setVatopGroups(filteredGroups);
   };
 

@@ -89,87 +89,92 @@ const HPMConcept: React.FC = () => {
     return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 7 });
   };
 
-  const [inputBuyAmount, setInputBuyAmount] = useState<number>(0);
+  const formatWithCommas = (value: string) => {
+    const parts = value.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  };
 
+  const [inputBuyAmount, setInputBuyAmount] = useState<string>("");
+  const [inputSellAmount, setInputSellAmount] = useState<string>("");
+  // Buy amount handler
+  const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Remove any non-numeric characters except decimal
+    setInputBuyAmount(formatWithCommas(numericValue));
+    setBuyAmount(parseFloat(numericValue) || 0); // Store numeric value in state for calculations
+  };
+  
+  // Sell amount handler
+  const handleSellAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Remove any non-numeric characters except decimal
+    setInputSellAmount(formatWithCommas(numericValue));
+    setSellAmount(parseFloat(numericValue) || 0); // Store numeric value in state for calculations
+  };
+  
+  // Convert to numbers where needed, e.g., on submit:
   const handleBuyClick = () => {
-    if (inputBuyAmount > 0) { // Check if inputBuyAmount is not empty
+    const buyAmount = parseFloat(inputBuyAmount) || 0;
+    if (buyAmount > 0) {
       setImporting(true); // Show importing loader
       setTimeout(() => {
         setImporting(false); // Hide importing loader
         setImportSuccess(true); // Show import success message
-      }, 2000); // Delay for 2 seconds
-  
-      setBuyAmount(inputBuyAmount);
-      handleBuy(inputBuyAmount); // Perform the buy action
-      setInputBuyAmount(0); // Clear the buy input field after buying
+      }, 2000);
+      setBuyAmount(buyAmount);
+      handleBuy(buyAmount);
+      setInputBuyAmount("");
     } else {
-      setMissingFields(true); // Show missing fields message if no input
+      setMissingFields(true);
     }
   };
+
   
   const handleSellClick = () => {
-    // Validate against the exact available amount for sale, allowing full `acVactsAts` to be sold
-    if (sellAmount > 0 && sellAmount <= Math.round(vatopCombinations.acVactsAts)) {
+    const sellAmount = parseFloat(inputSellAmount) || 0;
+    if (sellAmount > 0 && sellAmount <= vatopCombinations.acVactsAts) {
       setSelling(true);
       setTimeout(() => {
         setSelling(false);
         setSellSuccess(true);
       }, 2000);
-  
+
+      setSellAmount(sellAmount);
       handleSell(sellAmount);
-      setSellAmount(0); // Clear the input field
+      setInputSellAmount("");
     } else {
-      setMissingFields(true); // Show error if sellAmount is invalid
+      setMissingFields(true);
     }
   };
-
-
-  const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Use regex to keep only numeric characters
-    const sanitizedValue = e.target.value.replace(/[^0-9]/g, '');
-    setInputBuyAmount(sanitizedValue ? Number(sanitizedValue) : 0); // Update state with only numbers
-  };
   
-  const handleSellAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const sanitizedValue = e.target.value.replace(/[^0-9]/g, '');
-    setSellAmount(sanitizedValue ? Number(sanitizedValue) : 0);
-  };
-
-  
-  // Function to conditionally set state based on vatopCombinations
   useEffect(() => {
-    console.log("Current Values:", {
-      acVacts: vatopCombinations.acVacts,
-      acVactsAts: vatopCombinations.acVactsAts,
-      acdVatops: vatopCombinations.acdVatops,
-    });
-    if (Math.round(vatopCombinations.acVactsAts) > 0) {
-      // Ready to sell if there's available balance in acVactsAts
+  
+    if (vatopCombinations.acVactsAts > 0.99) {
+      // Ready to sell if there's sufficient balance in acVactsAts
       setImportToSell(false);
       setReadyToSellConcept(true);
       setHoldingConcept(false);
     } else if (
-      Math.round(vatopCombinations.acVactsAts) === 0 &&
+      vatopCombinations.acVactsAts <= 0.99 &&
       Math.round(vatopCombinations.acdVatops) === 0 &&
       vatopCombinations.acVacts > 0
     ) {
-      // Set holding if acVacts has balance, acVactsAts is zero, and acdVatops is zero
+      // Holding state if acVacts has balance but acVactsAts is low and acdVatops is zero
       setImportToSell(false);
       setReadyToSellConcept(false);
       setHoldingConcept(true);
     } else if (
-      Math.round(vatopCombinations.acVactsAts) === 0 &&
+      vatopCombinations.acVactsAts <= 0.99 &&
       vatopCombinations.acVacts === 0
     ) {
-      // No balance in acVacts, so import is required
+      // Import required if no balance in acVacts
       setImportToSell(true);
       setReadyToSellConcept(false);
       setHoldingConcept(false);
     }
   }, [
-    Math.round(vatopCombinations.acVacts),
-    Math.round(vatopCombinations.acVactsAts),
-    Math.round(vatopCombinations.acdVatops)
+    vatopCombinations.acVacts,
+    vatopCombinations.acVactsAts,
+    vatopCombinations.acdVatops
   ]);
   
 
@@ -556,9 +561,9 @@ const HPMConcept: React.FC = () => {
           </span>
           <span id="wallet-account-profits-concept-available">Available to Sell:</span>
           <span id="wallet-number-profits-account">$
-            <span id="wallet-number-profits-account-num">
-              {formatCurrency(vatopCombinations.acVactsAts)}
-            </span>
+          <span id="wallet-number-profits-account-num">
+            {formatCurrency(vatopCombinations.acVactsAts > 1 ? vatopCombinations.acVactsAts : 0.00)}
+          </span>
           </span>
         </div>
 
@@ -581,9 +586,7 @@ const HPMConcept: React.FC = () => {
           <span id="wallet-account-profits-concept">Profits:</span>
           <span id="wallet-number-profits-account">$
             <span id="wallet-number-profits-account-num">
-            {formatCurrency(
-              vatopCombinations.acdVatops
-            )}
+            {formatCurrency(vatopCombinations.acdVatops > .3 ? vatopCombinations.acdVatops : 0.00)}
             </span>
           </span>
         </div>
@@ -598,10 +601,10 @@ const HPMConcept: React.FC = () => {
               <div id="b-price-buy-concept">
                 <span>
                   <input 
-                  id="buy-input-concept" 
-                  type="tel" 
-                  onChange={handleSellAmountChange}
-                  value={sellAmount || ''} 
+                    id="buy-input-concept" 
+                    type="tel" 
+                    onChange={handleSellAmountChange}
+                    value={inputSellAmount || ''}
                   />
                 </span>
                 <span>
