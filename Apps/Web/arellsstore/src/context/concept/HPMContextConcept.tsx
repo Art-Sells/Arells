@@ -8,6 +8,8 @@ interface VatopGroup {
   cVact: number;
   cVactTa: number;
   cdVatop: number;
+  cpVact: number; // Reflects corresponding price value at the highest observed price
+  highestBitcoinPrice: number; // Tracks the highest observed Bitcoin price for this group
 }
 
 interface VatopCombinations {
@@ -15,8 +17,6 @@ interface VatopCombinations {
   acVacts: number;
   acVactTas: number;
   acdVatops: number;
-  acVactsAts: number;
-  acVactTaAts: number;
 }
 
 interface HPMContextType {
@@ -47,31 +47,39 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     acVacts: 0,
     acVactTas: 0,
     acdVatops: 0,
-    acVactsAts: 0,
-    acVactTaAts: 0,
   });
   const [hpap, setHpap] = useState<number>(60000);
   const [email, setEmail] = useState<string>('');
   const [soldAmount, setSoldAmount] = useState<number>(0);
 
   const updateAllState = (newBitcoinPrice: number, updatedGroups: VatopGroup[]) => {
-    // Remove groups with cVact of 0
-    const filteredGroups = updatedGroups.filter((group) => group.cVact > 0);
+    const epsilon = 0.0001; // Precision threshold
   
-    const newVatopCombinations = filteredGroups.reduce(
+    const filteredGroups = updatedGroups.map((group) => {
+      const newHighestPrice = Math.max(group.highestBitcoinPrice || group.cpVatop, newBitcoinPrice);
+  
+      // Ensure `cVact` reflects `cpVact` and `cVactTa`
+      const newCpVact = newHighestPrice;
+      const newCVact = group.cVactTa * newCpVact;
+  
+      return {
+        ...group,
+        highestBitcoinPrice: newHighestPrice,
+        cpVact: newCpVact,
+        cVact: newCVact, // cVact reflects cpVact * cVactTa
+        cdVatop: group.cVactTa * (newCpVact - group.cpVatop), // Update cdVatop
+      };
+    });
+  
+    // Retain only groups where `cVact > epsilon`
+    const retainedGroups = filteredGroups.filter((group) => group.cVact > epsilon);
+  
+    const newVatopCombinations = retainedGroups.reduce(
       (acc, group) => {
         acc.acVatops += group.cVatop;
-        acc.acVacts += parseFloat(group.cVact.toFixed(2)); // Display to 2 decimal places
-        acc.acVactTas += parseFloat(group.cVactTa.toFixed(7)); // 7 decimal places for consistency
-  
-        const initialCost = group.cVactTa * group.cpVatop;
-        const currentValue = group.cVactTa * newBitcoinPrice;
-        const profit = currentValue - initialCost;
-        if (profit > 0) {
-          acc.acdVatops += parseFloat(profit.toFixed(2));
-          acc.acVactsAts += parseFloat(group.cVact.toFixed(2));
-          acc.acVactTaAts += parseFloat(group.cVactTa.toFixed(7)); // Maintain 7 decimal places
-        }
+        acc.acVacts += parseFloat(group.cVact.toFixed(2));
+        acc.acVactTas += parseFloat(group.cVactTa.toFixed(7));
+        acc.acdVatops += group.cdVatop > 0 ? parseFloat(group.cdVatop.toFixed(2)) : 0;
         return acc;
       },
       {
@@ -79,93 +87,119 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         acVacts: 0,
         acVactTas: 0,
         acdVatops: 0,
-        acVactsAts: 0,
-        acVactTaAts: 0,
       } as VatopCombinations
     );
   
+    if (retainedGroups.length > 0) {
+      const maxCpVatop = Math.max(...retainedGroups.map((group) => group.cpVatop));
+      const maxCpVact = Math.max(...retainedGroups.map((group) => group.cpVact));
+      setHpap(maxCpVact > maxCpVatop ? maxCpVact : maxCpVatop);
+    } else {
+      setHpap(newBitcoinPrice);
+    }
+  
+    setVatopGroups(retainedGroups);
     setVatopCombinations(newVatopCombinations);
-  
-    const maxCpVatop = filteredGroups.length > 0 ? Math.max(...filteredGroups.map((group) => group.cpVatop)) : 0;
-    setHpap(Math.max(newBitcoinPrice, maxCpVatop || newBitcoinPrice));
-  
-    setVatopGroups(filteredGroups);
   };
-
+  
   const setManualBitcoinPrice = (price: number | ((currentPrice: number) => number)) => {
     setBitcoinPrice((currentPrice) => {
       const newPrice = typeof price === 'function' ? price(currentPrice) : price;
-
-      const updatedGroups = vatopGroups.map((group) => ({
-        ...group,
-        cVact: group.cVactTa * newPrice,
-        cdVatop: group.cVactTa * (newPrice - group.cpVatop),
-      }));
-
+  
+      const updatedGroups = vatopGroups.map((group) => {
+        const newHighestPrice = Math.max(group.highestBitcoinPrice || group.cpVatop, newPrice);
+  
+        return {
+          ...group,
+          highestBitcoinPrice: newHighestPrice,
+          cpVact: newHighestPrice, // Reflect the highest Bitcoin price
+          cVact: group.cVactTa * Math.max(newPrice, hpap), // Reflect the new effective price
+          cdVatop: group.cVactTa * (newHighestPrice - group.cpVatop), // Recalculate profit
+        };
+      });
+  
       updateAllState(newPrice, updatedGroups);
       return newPrice;
     });
   };
+  
 
   const handleBuy = (amount: number) => {
     if (amount <= 0) return;
-
+  
+    const currentImportPrice = bitcoinPrice;
+  
     const newVatop: VatopGroup = {
       cVatop: amount,
-      cpVatop: bitcoinPrice,
-      cVact: amount,
-      cVactTa: amount / bitcoinPrice,
+      cpVatop: currentImportPrice,
+      cVact: currentImportPrice, // Reflect cpVact by default
+      cpVact: currentImportPrice,
+      cVactTa: amount / currentImportPrice,
       cdVatop: 0,
+      highestBitcoinPrice: currentImportPrice,
     };
-
+  
     const updatedVatopGroups = [...vatopGroups, newVatop];
     updateAllState(bitcoinPrice, updatedVatopGroups);
   };
 
   const handleSell = (amount: number) => {
-    if (amount <= 0 || amount > vatopCombinations.acVactsAts) return;
-  
-    let remainingAmount = amount;
-    const updatedVatopGroups = [...vatopGroups].sort((a, b) => a.cpVatop - b.cpVatop);
-  
-    for (let i = 0; i < updatedVatopGroups.length && remainingAmount > 0; i++) {
-      const group = updatedVatopGroups[i];
-      const sellAmount = Math.min(Math.round(group.cVact), remainingAmount); // Ensure sellAmount is an integer
-      remainingAmount -= sellAmount;
-      group.cVatop -= sellAmount;
-      group.cVact -= sellAmount;
-      group.cVactTa -= sellAmount / bitcoinPrice;
-      group.cdVatop = group.cVact - group.cVatop;
+    if (amount <= 0 || vatopCombinations.acVacts <= 0) {
+      return;
     }
   
+    let remainingAmount = amount;
+    const epsilon = 0.0001; // Precision threshold
+  
+    const updatedVatopGroups = vatopGroups.map((group) => {
+      if (remainingAmount <= 0) return group;
+  
+      const sellAmount = Math.min(group.cVact, remainingAmount); // Max we can sell from this group
+      remainingAmount -= sellAmount;
+  
+      // Updated values after the sell
+      const updatedCVact = Math.max(group.cVact - sellAmount, 0); // Ensure no negative values
+      const updatedCVactTa = Math.max(group.cVactTa - sellAmount / bitcoinPrice, 0); // Ensure no negative values
+      const updatedCVatop = Math.max(group.cVatop - sellAmount, 0); // Ensure no negative values
+  
+      return {
+        ...group,
+        cVatop: updatedCVatop,
+        cVact: updatedCVact,
+        cVactTa: updatedCVactTa,
+        cdVatop: updatedCVactTa > epsilon ? updatedCVactTa * (group.cpVact - group.cpVatop) : 0, // Update cdVatop
+      };
+    });
+  
+    // Retain only groups where cVact is strictly greater than epsilon
+    const retainedGroups = updatedVatopGroups.filter((group) => group.cVact > epsilon);
+  
+    // Calculate the actual sold amount and update state
     const actualSoldAmount = amount - remainingAmount;
     setSoldAmount((prevSoldAmount) => prevSoldAmount + actualSoldAmount);
   
-    // Filter out groups with cVact of 0 after sell
-    const filteredGroups = updatedVatopGroups.filter((group) => group.cVact > 0);
-
-    const updatedAcVactsAts = filteredGroups.reduce((total, group) => total + Math.round(group.cVact), 0);
-    setVatopCombinations((prev) => ({ ...prev, acVactsAts: updatedAcVactsAts }));
-  
-    updateAllState(bitcoinPrice, filteredGroups);
+    // Update the state with the remaining groups
+    updateAllState(bitcoinPrice, retainedGroups);
   };
 
   return (
-    <HPMContextConcept.Provider value={{
-      bitcoinPrice,
-      vatopGroups,
-      vatopCombinations,
-      hpap,
-      buyAmount,
-      sellAmount,
-      setBuyAmount,
-      setSellAmount,
-      handleBuy,
-      handleSell,
-      setManualBitcoinPrice,
-      email,
-      soldAmount,
-    }}>
+    <HPMContextConcept.Provider
+      value={{
+        bitcoinPrice,
+        vatopGroups,
+        vatopCombinations,
+        hpap,
+        buyAmount,
+        sellAmount,
+        setBuyAmount,
+        setSellAmount,
+        handleBuy,
+        handleSell,
+        setManualBitcoinPrice,
+        email,
+        soldAmount,
+      }}
+    >
       {children}
     </HPMContextConcept.Provider>
   );

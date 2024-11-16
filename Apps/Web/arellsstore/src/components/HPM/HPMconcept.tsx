@@ -156,13 +156,13 @@ const HPMConcept: React.FC = () => {
     const sellAmount = parseFloat(inputSellAmount.replace(/,/g, '')) || 0;
   
     // Check if sellAmount is greater than acVactsAts
-    if (sellAmount > vatopCombinations.acVactsAts) {
+    if (sellAmount > vatopCombinations.acVacts) {
       setMissingFields(true); // Show missing fields message
       return; // Exit the function
     }
   
     // Proceed with sell logic if the amount is valid
-    if (sellAmount > 0 && sellAmount <= vatopCombinations.acVactsAts) {
+    if (sellAmount > 0 && sellAmount <= vatopCombinations.acVacts) {
       setSelling(true);
       setTimeout(() => {
         setSelling(false);
@@ -184,22 +184,12 @@ const HPMConcept: React.FC = () => {
   
   useEffect(() => {
   
-    if (vatopCombinations.acVactsAts > 0.99) {
+    if (vatopCombinations.acVacts > 0.99) {
       // Ready to sell if there's sufficient balance in acVactsAts
       setImportToSell(false);
       setReadyToSellConcept(true);
       setHoldingConcept(false);
     } else if (
-      vatopCombinations.acVactsAts <= 0.99 &&
-      Math.round(vatopCombinations.acdVatops) === 0 &&
-      vatopCombinations.acVacts > 0
-    ) {
-      // Holding state if acVacts has balance but acVactsAts is low and acdVatops is zero
-      setImportToSell(false);
-      setReadyToSellConcept(false);
-      setHoldingConcept(true);
-    } else if (
-      vatopCombinations.acVactsAts <= 0.99 &&
       vatopCombinations.acVacts === 0
     ) {
       // Import required if no balance in acVacts
@@ -209,7 +199,6 @@ const HPMConcept: React.FC = () => {
     }
   }, [
     vatopCombinations.acVacts,
-    vatopCombinations.acVactsAts,
     vatopCombinations.acdVatops
   ]);
   
@@ -219,11 +208,11 @@ const HPMConcept: React.FC = () => {
 
   // Check if acVactsAts is greater than 0 and show ImportSuccessSell modal only once
   useEffect(() => {
-    if (vatopCombinations.acVactsAts > 0 && !importSuccessSellShown) {
+    if (vatopCombinations.acdVatops > 0 && !importSuccessSellShown) {
       setImportSuccessSell(true);
       setImportSuccessSellShown(true); // Mark as shown to prevent repeated triggers
     }
-  }, [vatopCombinations.acVactsAts, importSuccessSellShown]);
+  }, [vatopCombinations.acdVatops, importSuccessSellShown]);
   
   // Close ImportSuccessSell and scroll to the bottom
   const closeImportSuccessSell = () => {
@@ -403,7 +392,7 @@ const HPMConcept: React.FC = () => {
               </div>
             </span>
           </div>
-            <p id="account-created-words">Available To Sell</p>
+            <p id="account-created-words">Profits Available</p>
               <button id="account-created-close-two-concept-one"
               onClick={closeImportSuccessSell}>
                 SCROLL DOWN
@@ -582,30 +571,6 @@ const HPMConcept: React.FC = () => {
 
         <hr id="concept-line"/>
 
-        <div id="b-profits-account-concept">
-          <span>
-            <div id="w-account-wrapper">
-              <Image
-                loader={imageLoader}
-                onLoad={() => handleImageLoaded('accountLogo')}
-                alt=""
-                width={18}
-                height={18}
-                id="profits-icon-account"
-                src="images/market/coin-stacks.png"
-              />
-            </div>
-          </span>
-          <span id="wallet-account-profits-concept-available">Available to Sell:</span>
-          <span id="wallet-number-profits-account">$
-          <span id="wallet-number-profits-account-num">
-            {formatCurrency(vatopCombinations.acVactsAts > 1 ? vatopCombinations.acVactsAts : 0.00)}
-          </span>
-          </span>
-        </div>
-
-        <hr id="concept-line"/>
-
         <div id="b-profitss-account-concept">
           <span>
             <div id="w-account-wrapper">
@@ -656,9 +621,6 @@ const HPMConcept: React.FC = () => {
               </button>
             </>
           )}
-          {holdingConcept && (
-            <button id="holding-account-concept">HOLDING</button>
-          )}  
           {importToSell && (
             <div id="holding-account-concept-two">
               <p id="import-bitcoin-to-sell-one">Import</p>
@@ -719,7 +681,7 @@ const HPMConcept: React.FC = () => {
 
 
     {/* Display Section */}
-    {/* <div>
+     <div>
       <h2>HPAP: {formatCurrency(hpap)}</h2>
       <h2>Vatop Groups:</h2>
       {vatopGroups.length > 0 ? (
@@ -729,6 +691,7 @@ const HPMConcept: React.FC = () => {
             <p>cVatop: {formatCurrency(group.cVatop)}</p>
             <p>cpVatop: {formatCurrency(group.cpVatop)}</p>
             <p>cVact: {formatCurrency(group.cVact)}</p>
+            <p>cpVact: {formatCurrency(group.cpVact)}</p>
             <p>cVactTa: {formatNumber(group.cVactTa)}</p>
             <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
           </div>
@@ -743,9 +706,7 @@ const HPMConcept: React.FC = () => {
       <p>acVacts: {formatCurrency(vatopCombinations.acVacts)}</p>
       <p>acVactTas: {formatNumber(vatopCombinations.acVactTas)}</p>
       <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
-      <p>acVactsAts: {formatCurrency(vatopCombinations.acVactsAts)}</p>
-      <p>acVactTaAts: {formatNumber(vatopCombinations.acVactTaAts)}</p>
-    </div>  */}
+    </div>  
 
 
 
