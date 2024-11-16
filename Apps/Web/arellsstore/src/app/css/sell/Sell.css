@@ -232,7 +232,6 @@
             }  
             #sell-input:focus {
                 outline: none;
-                transition: 1s;	
                 opacity: 1;	    
             }   
             
@@ -326,7 +325,6 @@
                     #sell-buy-button:hover,
                     #sell-buy-button:focus {
                         opacity: .4;
-                        transition: 1s;
                         cursor: pointer;
                     }    
 
@@ -375,7 +373,6 @@
     #sell-button:hover,
     #sell-button:focus {
         opacity: .4;
-        transition: 1s;
         cursor: pointer;
     }    
 		

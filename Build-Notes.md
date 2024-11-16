@@ -49,6 +49,7 @@
 
 
 ### Other (if Time Permits)
+- Remove all "2 second delay for buttons"
 - Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - emailConfirmed attribute

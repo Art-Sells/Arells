@@ -283,13 +283,11 @@
 				#buy-input-concept:focus
 				{
 					outline: none;
-					transition: 1s;
 					background: rgb(0, 0, 0, 1);	    
 				}   
 				#sell-input-concept:focus
 				 {
 					outline: none;
-					transition: 1s;
 					background: rgba(204, 116, 0, 1);    
 				}   
 
@@ -383,7 +381,6 @@
 			#buy-button:hover,
 			#buy-button:focus {
 				opacity: .4;
-				transition: 1s;
 				cursor: pointer;
 			}  
 	
