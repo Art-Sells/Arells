@@ -419,7 +419,7 @@ const HPMConcept: React.FC = () => {
         |
       </span>
       <span id="concept-title-description">
-        Always sell Bitcoin for Profits
+        Bitcoin investments never lose value
       </span>
     </div>
 
@@ -561,9 +561,7 @@ const HPMConcept: React.FC = () => {
           <span id="wallet-number-account">$
             <span id="wallet-number-account-num">
               {formatCurrency(
-                vatopCombinations.acVatops >= vatopCombinations.acVacts
-                  ? vatopCombinations.acVatops
-                  : vatopCombinations.acVacts
+                vatopCombinations.acVacts
               )}
             </span>
           </span>
@@ -681,7 +679,7 @@ const HPMConcept: React.FC = () => {
 
 
     {/* Display Section */}
-     <div>
+     {/* <div>
       <h2>HPAP: {formatCurrency(hpap)}</h2>
       <h2>Vatop Groups:</h2>
       {vatopGroups.length > 0 ? (
@@ -693,6 +691,7 @@ const HPMConcept: React.FC = () => {
             <p>cVact: {formatCurrency(group.cVact)}</p>
             <p>cpVact: {formatCurrency(group.cpVact)}</p>
             <p>cVactTa: {formatNumber(group.cVactTa)}</p>
+            <p>cVactDa: {formatCurrency(group.cVactDa)}</p>
             <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
           </div>
         ))
@@ -705,8 +704,10 @@ const HPMConcept: React.FC = () => {
       <p>acVatops: {formatCurrency(vatopCombinations.acVatops)}</p>
       <p>acVacts: {formatCurrency(vatopCombinations.acVacts)}</p>
       <p>acVactTas: {formatNumber(vatopCombinations.acVactTas)}</p>
+      <p>acVactDas: {formatCurrency(vatopCombinations.acVactDas)}</p>
       <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
-    </div>  
+    
+    </div> */}
 
 
 

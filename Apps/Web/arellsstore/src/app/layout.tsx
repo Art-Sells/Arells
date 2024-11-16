@@ -15,37 +15,37 @@ type LayoutProps = {
 };
 
 const RootLayout = ({ children }: LayoutProps) => {
-  const breadcrumbJsonLd = `
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Arells",
-        "item": "https://arells.com"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Login",
-        "item": "https://arells.com/login"
-      }
-    ]
-  }
-  `;
+  // const breadcrumbJsonLd = `
+  // {
+  //   "@context": "https://schema.org",
+  //   "@type": "BreadcrumbList",
+  //   "itemListElement": [
+  //     {
+  //       "@type": "ListItem",
+  //       "position": 1,
+  //       "name": "Arells",
+  //       "item": "https://arells.com"
+  //     },
+  //     {
+  //       "@type": "ListItem",
+  //       "position": 2,
+  //       "name": "Login",
+  //       "item": "https://arells.com/login"
+  //     }
+  //   ]
+  // }
+  // `;
 
   return (
     <html lang="en">
-      <head>
+      {/* <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
         />
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
         <link rel="icon" href="/favicon.ico" />
-      </head>
+      </head> */}
       <body>
         <ConfigureAmplifyClientSide />
         <BitcoinPriceProvider>

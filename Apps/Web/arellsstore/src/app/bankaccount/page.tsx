@@ -8,11 +8,11 @@ import BankAccount from '../../components/BankAccount/BankAccount';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Bank Account",
-  description: "Always sell Bitcoin for profits. Import small amounts of bitcoin and always sell them for profits.",
+  description: "Bitcoin investments never lose value. Import small amounts of bitcoin and never lose money selling them.",
   robots: "noimageindex",
   openGraph: {
     title: "Bank Account",
-    description: "Always sell Bitcoin for profits. Import small amounts of bitcoin and always sell them for profits.",
+    description: "Bitcoin investments never lose value. Import small amounts of bitcoin and never lose money selling them.",
     url: "https://arells.com/bankaccount",
     type: "website",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Bank Account",
-    description: "Always sell Bitcoin for profits. Import small amounts of bitcoin and always sell them for profits.",
+    description: "Bitcoin investments never lose value. Import small amounts of bitcoin and never lose money selling them.",
     card: "summary_large_image",
     images: [
       {

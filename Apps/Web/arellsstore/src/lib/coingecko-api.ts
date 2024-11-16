@@ -83,8 +83,8 @@ export const updateManualBitcoinPrice = async (): Promise<number> => {
     // Fetch current price (should return 70000)
     let currentPrice = await fetchBitcoinPrice();
 
-    // // Reset to live price
-    // setManualBitcoinPrice(null);
+    // Reset to live price
+    setManualBitcoinPrice(null);
 
     // // Fetch current price (should fetch live price)
     currentPrice = await fetchBitcoinPrice();

@@ -48,14 +48,7 @@ const Account: React.FC = () => {
     }
   }, [imagesLoaded]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setReadyToSell(vatopCombinations.acVacts === 0 || vatopCombinations.acVactsAts > 0);
-      setHolding(vatopCombinations.acVactsAts <= 0);
-    }, 3000);
-  
-    return () => clearTimeout(timer);
-  }, [vatopCombinations]);
+
   
   // Then in the component where readyToSell and holding are used, it should now dynamically set their values.
 
@@ -63,14 +56,6 @@ const Account: React.FC = () => {
 
   const formattedPrice = bitcoinPrice ? Math.round(bitcoinPrice).toLocaleString('en-US') : '...';
   
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setReadyToSell(vatopCombinations.acVacts === 0 || vatopCombinations.acVactsAts > 0);
-      setHolding(vatopCombinations.acVactsAts <= 0);
-    }, 3000);
-  
-    return () => clearTimeout(timer);
-  }, [vatopCombinations]);
 
   const router = useRouter();
 
@@ -342,15 +327,13 @@ const Account: React.FC = () => {
 
       {walletNotConnected && (
           <p id="amount-sold-number-account-num-null">
-          Import small amounts of Bitcoin.
-          Always sell them for Profits.
+          Bitcoin investments never lose value.
         </p>    
       )}
 
       {awaitingApprovals && (
           <p id="amount-sold-number-account-num-null">
-          Import small amounts of Bitcoin.
-          Always sell them for Profits.
+          Bitcoin investments never lose value.
         </p>    
       )}
 

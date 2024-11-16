@@ -8,14 +8,16 @@ interface VatopGroup {
   cVact: number;
   cVactTa: number;
   cdVatop: number;
-  cpVact: number; // Reflects corresponding price value at the highest observed price
-  highestBitcoinPrice: number; // Tracks the highest observed Bitcoin price for this group
+  cpVact: number;
+  highestBitcoinPrice: number;
+  cVactDa: number; // New field for Dollar Amount
 }
 
 interface VatopCombinations {
   acVatops: number;
   acVacts: number;
   acVactTas: number;
+  acVactDas: number; // Aggregate Dollar Amount
   acdVatops: number;
 }
 
@@ -47,6 +49,7 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     acVacts: 0,
     acVactTas: 0,
     acdVatops: 0,
+    acVactDas: 0,
   });
   const [hpap, setHpap] = useState<number>(60000);
   const [email, setEmail] = useState<string>('');
@@ -62,11 +65,15 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       const newCpVact = newHighestPrice;
       const newCVact = group.cVactTa * newCpVact;
   
+      // Calculate `cVactDa` based on the new logic
+      const newCVactDa = newBitcoinPrice <= group.cpVatop ? newCVact : 0;
+  
       return {
         ...group,
         highestBitcoinPrice: newHighestPrice,
         cpVact: newCpVact,
         cVact: newCVact, // cVact reflects cpVact * cVactTa
+        cVactDa: newCVactDa, // Reflects current dollar value if condition is met
         cdVatop: group.cVactTa * (newCpVact - group.cpVatop), // Update cdVatop
       };
     });
@@ -79,6 +86,7 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         acc.acVatops += group.cVatop;
         acc.acVacts += parseFloat(group.cVact.toFixed(2));
         acc.acVactTas += parseFloat(group.cVactTa.toFixed(7));
+        acc.acVactDas += parseFloat(group.cVactDa.toFixed(2)); // Aggregate `cVactDa`
         acc.acdVatops += group.cdVatop > 0 ? parseFloat(group.cdVatop.toFixed(2)) : 0;
         return acc;
       },
@@ -86,6 +94,7 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         acVatops: 0,
         acVacts: 0,
         acVactTas: 0,
+        acVactDas: 0, // Initialize aggregate
         acdVatops: 0,
       } as VatopCombinations
     );
@@ -132,9 +141,10 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const newVatop: VatopGroup = {
       cVatop: amount,
       cpVatop: currentImportPrice,
-      cVact: currentImportPrice, // Reflect cpVact by default
+      cVact: amount, // Reflect cpVact by default
       cpVact: currentImportPrice,
       cVactTa: amount / currentImportPrice,
+      cVactDa: amount, // Initialize with the dollar amount
       cdVatop: 0,
       highestBitcoinPrice: currentImportPrice,
     };

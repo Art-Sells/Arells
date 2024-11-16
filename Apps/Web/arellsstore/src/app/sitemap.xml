@@ -4,4 +4,8 @@
     <loc>https://arells.com</loc>
     <changefreq>daily</changefreq>
   </url>
+  <url>
+    <loc>https://arells.com/login</loc>
+    <changefreq>daily</changefreq>
+  </url>
 </urlset>
