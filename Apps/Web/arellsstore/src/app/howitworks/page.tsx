@@ -10,7 +10,7 @@ import HowItWorks from '../../components/HowTo/HowItWorks';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "How It Works",
-  description: "Never lose money selling cryptocurrencies.",
+    description: "Bitcoin investments never lose value. Import small amounts of bitcoin and never lose money selling them.",
   robots: "noimageindex",
   openGraph: {
     title: "How It Works",

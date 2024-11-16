@@ -66,9 +66,7 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner">Always sell</p>
-        <p id="ada-description">Bitcoin</p>
-        <p id="ada-descriptioner">for Profits</p>
+        <p id="descriptioner">Bitcoin investments never lose value.</p>
       </div>
 
 
@@ -81,8 +79,7 @@ const Index = () => {
 
       <div id="buy-info-wrapping">
           <p id="buy-info">
-            Import small amounts of Bitcoin.
-            Always sell them for Profits.</p>
+            Import bitcoin and never lose money selling.</p>
         </div>
 
     </>
