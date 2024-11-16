@@ -211,7 +211,6 @@
 					#buy-account:hover,
 					#buy-account:focus {
 						opacity: .4;
-						transition: 1s;
 						cursor: pointer;
 					}  
 				#concept-buttons-wrapper {
@@ -260,7 +259,6 @@
 					#decrease-price:hover,
 					#decrease-price:focus {
 						opacity: .4;
-						transition: 0.3s;
 						cursor: pointer;
 					} 
 				#testing-purposes {
@@ -297,7 +295,6 @@
 					#transfer-account:hover,
 					#transfer-account:focus {
 						opacity: .4;
-						transition: 1s;
 						cursor: pointer;
 					}  
 						
@@ -405,7 +402,6 @@
 					#sell-account-concept-link:hover,
 					#sell-account-concept-link:focus {
 						opacity: .4;
-						transition: 1s;
 						cursor: pointer;
 					}  
 					
@@ -783,7 +779,6 @@
 				#export-account:hover,
 				#export-account:focus {
 					opacity: .4;
-					transition: 1s;
 					cursor: pointer;
 				}  
 					
@@ -959,7 +954,6 @@
 				#withdraw-account-null:hover,
 				#withdraw-account-null:focus {
 					opacity: .4;
-					transition: 1s;
 					cursor: pointer;
 				}  
 
@@ -1012,7 +1006,6 @@
 			#log-out-account:hover,
 			#log-out-account:focus {
 				opacity: .4;
-				transition: 1s;
 				cursor: pointer;
 			}  
 				

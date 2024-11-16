@@ -152,7 +152,6 @@
   #selling-failed-close:hover,
   #selling-failed-close:focus {
     cursor: pointer;
-    opacity: .4;
     transition: 1s;
     
   }

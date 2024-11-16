@@ -66,7 +66,7 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner">Bitcoin investments never lose value.</p>
+        <p id="descriptioner">Bitcoin investments that never lose value.</p>
       </div>
 
 
