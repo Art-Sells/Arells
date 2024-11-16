@@ -45,6 +45,7 @@ const RootLayout = ({ children }: LayoutProps) => {
         />
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
         <link rel="icon" href="/favicon.ico" />
+        // CAUTION!: favicon.ico might show up "blurry on google"
       </head> */}
       <body>
         <ConfigureAmplifyClientSide />
