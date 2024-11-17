@@ -122,10 +122,6 @@
   position: relative;
   margin-left: auto;
   margin-right: auto;  
-  -webkit-animation-name: animatetop;
-  -webkit-animation-duration: 2.00s;
-  animation-name: animatetop;
-  animation-duration: 2.00s;
   box-shadow: 0px 1px 5px 0px rgba(204, 116, 0, 0.25);
   margin-bottom: 50px;
 }
