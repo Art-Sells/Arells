@@ -7,8 +7,6 @@
 ### After POC
 - Replace HPMContextConcept with HPMContext in layout wrapper (also in account, buy, and sell, bitcoin.tsx page)
 
-
-
 ### Testing
 - Test Import
 - Import & Sell (without HPM) Bitcoin to USDC (Polygon) Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
@@ -60,8 +58,7 @@
 ### Last Resort
 - Create separate Wallet to handle where we get our 3% fee...
 - Remove console.logs from all components, hide "wallettester" and "hpmtester" from main
-- Resolve Google/Bing/Yahoo Search Tab issues (Add Metatags to all recurring pages)
-- Resolve UI (pop-up images modals and rolling loader issues [on mobile, etc])
+- Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages)
 
 
 ## Arells 2.0 (and beyond):
