@@ -112,6 +112,19 @@
   box-shadow: 0px 1px 5px 0px rgba(204, 116, 0, 0.25);
   margin-bottom: 50px;
 }
+#account-created-content-concepter {
+  padding-top: 45px;
+  width: 270px;
+  height: 200px;
+  background: none; 
+  border-radius: 20px;
+  align-items: center;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;  
+  box-shadow: 0px 1px 5px 0px rgba(204, 116, 0, 0.25);
+  margin-bottom: 50px;
+}
 
 #account-created-content-concept {
   padding-top: 45px;
@@ -133,13 +146,13 @@
 
 /* Add Animation */
 @-webkit-keyframes animatetop {
-  from {center:0; opacity:0}
-  to {center:0; opacity:1}
+  from {opacity:0}
+  to {opacity:1}
 }
 
 @keyframes animatetop {
-  from {center:0; opacity:0}
-  to {center:0; opacity:1}
+  from {opacity:0}
+  to {opacity:1}
 }
 
 #login-error-image{
