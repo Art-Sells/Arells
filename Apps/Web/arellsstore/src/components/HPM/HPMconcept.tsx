@@ -269,16 +269,16 @@ const HPMConcept: React.FC = () => {
       {showSelling && (
         <div id="selling-failed-wrapper-concept">
           <div id="selling-content-concept">
-            <div className={stylings.marketplaceloader}> 
-            </div>
             <Image 
                 // loader={imageLoader}
                 alt="" 
-                width={22}
-                height={22}
+                width={20}
+                height={20}
                 id="selling-image-concept" 
                 src="/images/Arells-Icon-Ivory.png"
                 /> 
+            <div className={stylings.marketplaceloader}> 
+            </div>    
             <p id="selling-words">selling</p>
           </div>
         </div>
@@ -306,16 +306,16 @@ const HPMConcept: React.FC = () => {
     {showImporting && (
         <div id="selling-failed-wrapper-concept">
           <div id="selling-content-concept">
-            <div className={stylings.marketplaceloader}> 
-            </div>
             <Image 
                 // loader={imageLoader}
                 alt="" 
-                width={30}
-                height={30}
+                width={25}
+                height={25}
                 id="selling-image-concept-bit" 
                 src="/images/market/bitcoin-loader.png"
                 /> 
+                <div className={stylings.marketplaceloader}> 
+                </div>
             <p id="selling-words">importing</p>
           </div>
         </div>
