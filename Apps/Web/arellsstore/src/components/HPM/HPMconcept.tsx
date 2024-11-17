@@ -135,11 +135,12 @@ const HPMConcept: React.FC = () => {
         setImporting(false); // Hide importing loader
         setImportSuccess(true); // Show import success message
   
-      }, 2000);
-
-      setTimeout(() => {
-        setImportSuccess(false);
-        setInputBuyAmount(""); // Clear the input field
+        // Hide import success message after 2 seconds
+        setTimeout(() => {
+          setImportSuccess(false);
+          setInputBuyAmount(""); // Clear the input field
+        }, 2000);
+  
       }, 2000);
   
       setBuyAmount(buyAmount);

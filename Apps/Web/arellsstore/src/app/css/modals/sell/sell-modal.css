@@ -87,9 +87,9 @@
     margin-left: auto;
     margin-right: auto;  
     -webkit-animation-name: animatetop;
-    -webkit-animation-duration: 1.00s;
+    -webkit-animation-duration: 2.00s;
     animation-name: animatetop;
-    animation-duration: 1.00s;
+    animation-duration: 2.00s;
     box-shadow: rgba(69, 51, 27, 1);
     margin-bottom: 50px;
   }
