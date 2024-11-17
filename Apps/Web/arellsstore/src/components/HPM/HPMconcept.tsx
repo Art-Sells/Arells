@@ -62,7 +62,7 @@ const HPMConcept: React.FC = () => {
   const [showImportSuccessSell, setImportSuccessSell] = useState<boolean>(false);
   const [showImporting, setImporting] = useState<boolean>(false);
   const [showSellSuccess, setSellSuccess] = useState<boolean>(false);
-  const [showSelling, setSelling] = useState<boolean>(true);
+  const [showSelling, setSelling] = useState<boolean>(false);
   const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(false);
   const [holdingConcept, setHoldingConcept] = useState<boolean>(false);
   const [importToSell, setImportToSell] = useState<boolean>(false);
