@@ -351,7 +351,7 @@ const HPMConcept: React.FC = () => {
 
     {showImportSuccessSell && (
       <div id="account-created-wrapper">
-        <div id="account-created-content">
+        <div id="account-created-content-concepter">
           <div id="a-price-account-concept-loader">
             <span>
               <div id="a-account-wrapper">
