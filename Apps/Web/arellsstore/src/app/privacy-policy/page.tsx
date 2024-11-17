@@ -10,11 +10,11 @@ import PrivacyPolicy from '../../components/privacy/PrivacyPolicy';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
     title: "Policy",
-    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+    description: "Privacy Policy and Terms of Service.",
     robots: "noimageindex",
     openGraph: {
       title: "Policy",
-      description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+      description: "Privacy Policy and Terms of Service.",
       url: "https://arells.com/privacy-policy",
       type: "website",
       images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     },
     twitter: {
       title: "Policy",
-      description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+      description: "Privacy Policy and Terms of Service.",
       card: "summary_large_image",
       images: [
         {
