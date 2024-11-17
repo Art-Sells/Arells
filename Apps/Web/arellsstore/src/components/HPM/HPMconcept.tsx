@@ -130,17 +130,11 @@ const HPMConcept: React.FC = () => {
     const buyAmount = parseFloat(inputBuyAmount.replace(/,/g, '')) || 0;
   
     if (buyAmount > 0) {
-      setImporting(true); // Show importing loader
+      setImportSuccess(true); // Show importing loader
+      // Hide import success message after 2 seconds
       setTimeout(() => {
-        setImporting(false); // Hide importing loader
-        setImportSuccess(true); // Show import success message
-  
-        // Hide import success message after 2 seconds
-        setTimeout(() => {
-          setImportSuccess(false);
-          setInputBuyAmount(""); // Clear the input field
-        }, 2000);
-  
+        setImportSuccess(false);
+        setInputBuyAmount(""); // Clear the input field
       }, 2000);
   
       setBuyAmount(buyAmount);
@@ -163,17 +157,11 @@ const HPMConcept: React.FC = () => {
   
     // Proceed with sell logic if the amount is valid
     if (sellAmount > 0 && sellAmount <= vatopCombinations.acVacts) {
-      setSelling(true);
+      setSellSuccess(true);
+      // Hide success message after 2 seconds
       setTimeout(() => {
-        setSelling(false);
-        setSellSuccess(true);
-  
-        // Hide success message after 2 seconds
-        setTimeout(() => {
-          setSellSuccess(false);
-          setInputSellAmount(''); // Clear the input field
-        }, 2000);
-  
+        setSellSuccess(false);
+        setInputSellAmount(''); // Clear the input field
       }, 2000);
   
       handleSell(sellAmount);
