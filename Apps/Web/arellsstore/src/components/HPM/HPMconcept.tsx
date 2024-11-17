@@ -60,7 +60,7 @@ const HPMConcept: React.FC = () => {
   } = useHPM();
   const [showImportSuccess, setImportSuccess] = useState<boolean>(false);
   const [showImportSuccessSell, setImportSuccessSell] = useState<boolean>(false);
-  const [showImporting, setImporting] = useState<boolean>(true);
+  const [showImporting, setImporting] = useState<boolean>(false);
   const [showSellSuccess, setSellSuccess] = useState<boolean>(false);
   const [showSelling, setSelling] = useState<boolean>(false);
   const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(false);
@@ -306,8 +306,6 @@ const HPMConcept: React.FC = () => {
     {showImporting && (
         <div id="selling-failed-wrapper-concept">
           <div id="selling-content-concept">
-            <div className={stylings.marketplaceloader}> 
-            </div>
             <Image 
                 // loader={imageLoader}
                 alt="" 
@@ -316,6 +314,8 @@ const HPMConcept: React.FC = () => {
                 id="selling-image-concept-bit" 
                 src="/images/market/bitcoin-loader.png"
                 /> 
+                <div className={stylings.marketplaceloader}> 
+                </div>
             <p id="selling-words">importing</p>
           </div>
         </div>

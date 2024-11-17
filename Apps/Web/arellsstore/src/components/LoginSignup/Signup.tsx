@@ -184,7 +184,6 @@ const Signup: React.FC = () => {
       {showSigningUp && (
         <div id="buying-wrapper">
           <div id="buying-content">
-            <div className={stylings.marketplaceloader}></div>
             <Image
               alt=""
               width={22}
@@ -192,6 +191,7 @@ const Signup: React.FC = () => {
               id="buying-image"
               src="/images/market/profile-ivory.png"
             />
+            <div className={stylings.marketplaceloader}></div>
             <p id="buying-words">creating account</p>
           </div>
         </div>
