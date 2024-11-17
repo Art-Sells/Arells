@@ -60,9 +60,9 @@ const HPMConcept: React.FC = () => {
   } = useHPM();
   const [showImportSuccess, setImportSuccess] = useState<boolean>(false);
   const [showImportSuccessSell, setImportSuccessSell] = useState<boolean>(false);
-  const [showImporting, setImporting] = useState<boolean>(true);
+  const [showImporting, setImporting] = useState<boolean>(false);
   const [showSellSuccess, setSellSuccess] = useState<boolean>(false);
-  const [showSelling, setSelling] = useState<boolean>(false);
+  const [showSelling, setSelling] = useState<boolean>(true);
   const [readyToSellConcept, setReadyToSellConcept] = useState<boolean>(false);
   const [holdingConcept, setHoldingConcept] = useState<boolean>(false);
   const [importToSell, setImportToSell] = useState<boolean>(false);
@@ -272,8 +272,8 @@ const HPMConcept: React.FC = () => {
             <Image 
                 // loader={imageLoader}
                 alt="" 
-                width={22}
-                height={22}
+                width={20}
+                height={20}
                 id="selling-image-concept" 
                 src="/images/Arells-Icon-Ivory.png"
                 /> 
@@ -309,8 +309,8 @@ const HPMConcept: React.FC = () => {
             <Image 
                 // loader={imageLoader}
                 alt="" 
-                width={30}
-                height={30}
+                width={25}
+                height={25}
                 id="selling-image-concept-bit" 
                 src="/images/market/bitcoin-loader.png"
                 /> 
