@@ -20,7 +20,7 @@ Holds the highest price of an asset after its import or purchase limiting the er
 
 <img src="https://github.com/Art-Sells/Arells/blob/test/Art/Marketing/BeforeandAfterArellss.png" width="400px"> 
 
-### Concept: https://arells.com/concept
+### Concept: [arells.com/concept](https://arells.com/concept)
 _______________________________________________________________________
 
 ## FAQ:
