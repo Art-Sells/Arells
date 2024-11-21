@@ -3,11 +3,6 @@
 # [Arells](https://arells.com)
 ## Bitcoin investments that never lose value.
 
-<img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
-
-# [Arells](https://arells.com)
-## Bitcoin investments that never lose value.
-
 Arells exists because it believes ***investments should never lose value and investors should never lose money selling assets***, especially during Bear Markets.
 
 ### Solution:
