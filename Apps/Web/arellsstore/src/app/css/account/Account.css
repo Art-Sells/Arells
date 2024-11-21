@@ -255,9 +255,7 @@
 						opacity: 1;		  
 					}
 					#increase-price:hover,
-					#increase-price:focus,
-					#decrease-price:hover,
-					#decrease-price:focus {
+					#decrease-price:hover {
 						opacity: .4;
 						cursor: pointer;
 					} 
