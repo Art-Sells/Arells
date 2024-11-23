@@ -2,26 +2,25 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-//import { useHPM } from '../../context/HPMContext';
+import { useHPM } from '../../context/HPMContext';
 import { Transactions, createWithdrewAmountTransaction, ParsedTransaction } from '../../lib/transactions';
 
 const HPMTester: React.FC = () => {
-//   const {
-//     bitcoinPrice,
-//     vatopGroups,
-//     vatopCombinations,
-//     hpap,
-//     buyAmount,
-//     setBuyAmount,
-//     sellAmount,
-//     setSellAmount,
-//     setImportAmount,
-//     handleBuy,
-//     handleSell,
-//     //handleExport,
-//     updateVatopCombinations,
-//     email,
-//   } = useHPM();
+  const {
+    bitcoinPrice,
+    vatopGroups,
+    vatopCombinations,
+    hpap,
+    buyAmount,
+    setBuyAmount,
+    sellAmount,
+    setSellAmount,
+    handleBuy,
+    handleSell,
+    setManualBitcoinPrice,
+    email,
+    soldAmount,
+  } = useHPM();
 
   const [localExportAmount, setLocalExportAmount] = useState<number>(0);
   const [localImportAmount, setLocalImportAmount] = useState<number>(0);
@@ -29,142 +28,181 @@ const HPMTester: React.FC = () => {
   const [localYouWillLose, setLocalYouWillLose] = useState<number>(0);
   const [transactions, setTransactions] = useState<Transactions[]>([]);
 
-//   const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setBuyAmount(Number(e.target.value));
-//   };
+  const increasePrice = () => {
+    setManualBitcoinPrice((currentPrice) => currentPrice + 5000);
+  };
 
-//   const handleSellAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setSellAmount(Number(e.target.value));
-//   };
+  const decreasePrice = () => {
+    setManualBitcoinPrice((currentPrice) => Math.max(0, currentPrice - 5000));
+  };
 
-//   const handleWithdraw = async () => {
-//     console.log('Withdrawing sold amount');
+  const formatCurrency = (value: number): string => {
+    return `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+  };
+
+  const formatNumber = (value: number): string => {
+    return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 7 });
+  };
+
+
+
+  const [inputBuyAmount, setInputBuyAmount] = useState<string>("");
+  const [inputSellAmount, setInputSellAmount] = useState<string>("");
+  const formatWithCommas = (value: string) => {
+    const parts = value.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Format integer part with commas
+    return parts.join('.');
+  };
   
-//     // Create Withdraw Transaction
-//     let withdrewTransaction;
-//     try {
-//       withdrewTransaction = await createWithdrewAmountTransaction(email, 0); // Await the result
-//       console.log('Withdrew transaction: ', withdrewTransaction); // Log the result
-//     } catch (error) {
-//       console.error('Error creating withdrew amount transaction:', error);
-//       return; // Exit if transaction creation fails
-//     }
+  const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal
   
-//     try {
-//       const newSoldAmount = 0; 
-//       console.log('Sending withdraw request with payload:', { email, soldAmounts: newSoldAmount });
+    // Limit to two decimal places
+    if (numericValue.includes('.')) {
+      const [integer, decimals] = numericValue.split('.');
+      numericValue = `${integer}.${decimals.slice(0, 2)}`; // Keep only the first two decimal places
+    }
   
-//       const updatedVatopCombinations = updateVatopCombinations(vatopGroups);
+    setInputBuyAmount(formatWithCommas(numericValue)); // Format with commas for display
+    setBuyAmount(parseFloat(numericValue) || 0); // Store as a number for calculations
+  };
   
-//       // Fetch updated transactions
-//       const responseTransactions = await axios.get(`/api/fetchVatopGroups?email=${email}`);
-//       const updatedTransactions = responseTransactions.data.transactions || [];
+  const handleSellAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal
   
-//       const payload = {
-//         email,
-//         vatopGroups,
-//         vatopCombinations: updatedVatopCombinations,
-//       };
+    // Limit to two decimal places
+    if (numericValue.includes('.')) {
+      const [integer, decimals] = numericValue.split('.');
+      numericValue = `${integer}.${decimals.slice(0, 2)}`; // Keep only the first two decimal places
+    }
   
-//       console.log('Payload:', payload);
+    setInputSellAmount(formatWithCommas(numericValue)); // Format with commas for display
+    setSellAmount(parseFloat(numericValue) || 0); // Store as a number for calculations
+  };
+
+  const handleBuyClick = () => {
+    // Remove commas from inputBuyAmount and convert to a float for processing
+    const buyAmount = parseFloat(inputBuyAmount.replace(/,/g, '')) || 0;
   
-//       const response = await axios.post('/api/saveVatopGroups', payload);
-//       console.log('Withdraw response:', response.data);
+    if (buyAmount > 0) {
+      setTimeout(() => {
+        setInputBuyAmount("");
+      }, 0);
   
-//       updateVatopCombinations(vatopGroups); // Update the combinations
-//     } catch (error) {
-//       console.error('Error withdrawing sold amount:', error);
-//     }
-//   };
+      setBuyAmount(buyAmount);
+      handleBuy(buyAmount);
+    } else {
+      alert("invalid amount");
+    }
+  };
+
+  
+  const handleSellClick = () => {
+    // Remove commas from inputSellAmount and convert to a float for comparison
+    const sellAmount = parseFloat(inputSellAmount.replace(/,/g, '')) || 0;
+  
+    // Check if sellAmount is greater than acVactsAts
+    if (sellAmount > vatopCombinations.acVacts) {
+      return; // Exit the function
+    }
+  
+    // Proceed with sell logic if the amount is valid
+    if (sellAmount > 0 && sellAmount <= vatopCombinations.acVacts) {
+      setTimeout(() => {
+        setInputSellAmount('');
+      }, 0);
+  
+      handleSell(sellAmount);
+    } else {
+      alert("invalid amount");
+    }
+  };
+  
 
   return (
-    <>
     <div>
-        <p>
-        ( ^ . ^ ) 
-        </p>
+      <h1>HPM Tester</h1>
+      <div>
+        <label>
+          Bitcoin Price: ${bitcoinPrice}
+        </label>
+      </div>
+      <div>
+        <label>
+          Buy Amount:
+          <input 
+            type="text" 
+            inputMode="decimal" 
+            onChange={handleBuyAmountChange}
+            value={inputBuyAmount || ''} 
+          />
+        </label>
+        <button 
+          id="sell-account-concept"
+          onClick={handleBuyClick}>
+          IMPORT
+          </button>
+      </div>
+      <div>
+        <label>
+          Sell Amount:
+          <input 
+            type="text" 
+            inputMode="decimal" 
+            onChange={handleSellAmountChange}
+            value={inputSellAmount || ''}
+          />
+        </label>
+        <button 
+          onClick={handleSellClick}
+        >
+          Sell
+        </button>
+      </div>
+
+
+
+
+
+
+    {/* Display Section */}
+    <div>
+      <h2>HPAP: {formatCurrency(hpap)}</h2>
+      <h2>Vatop Groups:</h2>
+      {vatopGroups.length > 0 ? (
+        vatopGroups.map((group, index) => (
+          <div key={index}>
+            <h3>Vatop Group {index + 1}</h3>
+            <p>cVatop: {formatCurrency(group.cVatop)}</p>
+            <p>cpVatop: {formatCurrency(group.cpVatop)}</p>
+            <p>cVact: {formatCurrency(group.cVact)}</p>
+            <p>cpVact: {formatCurrency(group.cpVact)}</p>
+            <p>cVactTa: {formatNumber(group.cVactTa)}</p>
+            <p>cVactDa: {formatCurrency(group.cVactDa)}</p>
+            <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
+          </div>
+        ))
+      ) : (
+        <p>No Vatop Groups available</p>
+      )}
     </div>
-    </>
-    // <div>
-    //   <h1>HPM Tester</h1>
-    //   <div>
-    //     <label>
-    //       Bitcoin Price: ${bitcoinPrice}
-    //     </label>
-    //   </div>
-    //   <div>
-    //     <label>
-    //       Buy Amount:
-    //       <input type="number" value={buyAmount} onChange={handleBuyAmountChange} />
-    //     </label>
-    //     <button onClick={() => handleBuy(buyAmount)}>Buy</button>
-    //   </div>
-    //   <div>
-    //     <label>
-    //       Sell Amount:
-    //       <input type="number" value={sellAmount} onChange={handleSellAmountChange} />
-    //     </label>
-    //     <button onClick={() => handleSell(sellAmount)}>Sell</button>
-    //   </div>
-    // {/* <div>
-    //     <label>
-    //       Export Amount:
-    //       <input type="number" value={localExportAmount} onChange={handleExportAmountChange} />
-    //     </label>
-    //     <button onClick={() => handleExport(localExportAmount)}>Export</button>
-    //   </div>
-    //   <div>
-    //     <label>
-    //       Import Amount:
-    //       <input type="number" value={localImportAmount} onChange={handleImportAmountChange} />
-    //     </label>
-    //     <button onClick={handleImportClick}>Import</button>
-    //   </div> */}
-    //   {/* <div>
-    //     <h2>Total Exported Wallet Value: {formatCurrency(localTotalExportedWalletValue)}</h2>
-    //     <h2>You Will Lose: {formatCurrency(localYouWillLose)}</h2>
-    //   </div> */}
-    //   <div>
-    //     <h2>HPAP: {formatCurrency(hpap)}</h2>
-    //     <h2>Vatop Groups:</h2>
-    //     {vatopGroups.length > 0 ? (
-    //       vatopGroups.map((group, index) => (
-    //         <div key={index}>
-    //           <h3>Vatop Group {index + 1}</h3>
-    //           <p>cVatop: {formatCurrency(group.cVatop)}</p>
-    //           <p>cpVatop: {formatCurrency(group.cpVatop)}</p>
-    //           <p>cVact: {formatCurrency(group.cVact)}</p>
-    //           <p>cVactTa: {formatNumber(group.cVactTa)}</p>
-    //           <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
-    //         </div>
-    //       ))
-    //     ) : (
-    //       <p>No Vatop Groups available</p>
-    //     )}
-    //   </div>
-    //   <div>
-    //     <h2>Vatop Group Combinations:</h2>
-    //     <p>acVatops: {formatCurrency(vatopCombinations.acVatops)}</p>
-    //     <p>acVacts: {formatCurrency(vatopCombinations.acVacts)}</p>
-    //     <p>acVactTas: {formatNumber(vatopCombinations.acVactTas)}</p>
-    //     <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
-    //     <p>acVactsAts: {formatCurrency(vatopCombinations.acVactsAts)}</p>
-    //     <p>acVactTaAts: {formatNumber(vatopCombinations.acVactTaAts)}</p>
-    //   </div>
-    //   {/* <div>
-    //     <h2>Transactions</h2>
-    //     {renderTransactions()}
-    //   </div> */}
-    // </div>
+    <div>
+      <h2>Vatop Group Combinations:</h2>
+      <p>acVatops: {formatCurrency(vatopCombinations.acVatops)}</p>
+      <p>acVacts: {formatCurrency(vatopCombinations.acVacts)}</p>
+      <p>acVactTas: {formatNumber(vatopCombinations.acVactTas)}</p>
+      <p>acVactDas: {formatCurrency(vatopCombinations.acVactDas)}</p>
+      <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
+    
+    </div>
+
+
+
+
+
+
+    </div>
   );
-};
-
-const formatCurrency = (value: number): string => {
-  return `$${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
-};
-
-const formatNumber = (value: number): string => {
-  return value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 7 });
 };
 
 export default HPMTester;

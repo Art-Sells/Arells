@@ -42,7 +42,7 @@ interface HPMContextType {
 
 const HPMContext = createContext<HPMContextType | undefined>(undefined);
 
-export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [bitcoinPrice, setBitcoinPrice] = useState<number>(60000);
   const [buyAmount, setBuyAmount] = useState<number>(0);
   const [sellAmount, setSellAmount] = useState<number>(0);
