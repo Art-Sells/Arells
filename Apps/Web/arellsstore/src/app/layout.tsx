@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
-import { HPMConceptProvider } from '../context/concept/HPMContextConcept';
+import { HPMProvider } from '../context/HPMContext';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
@@ -15,26 +15,6 @@ type LayoutProps = {
 };
 
 const RootLayout = ({ children }: LayoutProps) => {
-  // const breadcrumbJsonLd = `
-  // {
-  //   "@context": "https://schema.org",
-  //   "@type": "BreadcrumbList",
-  //   "itemListElement": [
-  //     {
-  //       "@type": "ListItem",
-  //       "position": 1,
-  //       "name": "Arells",
-  //       "item": "https://arells.com"
-  //     },
-  //     {
-  //       "@type": "ListItem",
-  //       "position": 2,
-  //       "name": "Login",
-  //       "item": "https://arells.com/login"
-  //     }
-  //   ]
-  // }
-  // `;
 
   return (
     <html lang="en">
@@ -51,9 +31,9 @@ const RootLayout = ({ children }: LayoutProps) => {
         <ConfigureAmplifyClientSide />
         <BitcoinPriceProvider>
           <UserProvider>
-            <HPMConceptProvider>
+            <HPMProvider>
               {children}
-            </HPMConceptProvider>
+            </HPMProvider>
           </UserProvider>
         </BitcoinPriceProvider>
       </body>

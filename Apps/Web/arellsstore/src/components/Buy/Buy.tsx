@@ -11,7 +11,7 @@ import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import '../../app/css/modals/loader/accountloaderbackground.css';
 import styles from '../../app/css/modals/loader/accountloader.module.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
-import { useHPM } from '../../context/concept/HPMContextConcept';
+import { useHPM } from '../../context/HPMContext';
 
 const Buy: React.FC = () => {
   const [showPurchaseFailed, setPurchaseFailed] = useState<boolean>(false);
