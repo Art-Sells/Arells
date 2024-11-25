@@ -4,21 +4,37 @@
 
 ## Arells 1.0
 
-### After POC
-- Replace HPMContextConcept with HPMContext in layout wrapper (also in account, buy, and sell, bitcoin.tsx page)
-
 ### Testing
 - Test Import
-- Import & Sell (without HPM) Bitcoin to USDC (Polygon) Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
-- Ensure it allows acVactsAts to sell to 0...
+- - MASS(Market Automated Supplication System).json created when Import button first clicked
+- - - aBTC(ArellsBTC){created in MASS and incremented from the total BTC amount}
+- - - BTC amount incremented into aBTC first then swapped into USDC
+- - - - if aBTC > acVactTas then "handleImportAmount" = aBTC - acVactTas (3 second useEffect)
+- - - - - Sell (incorporate into handleSell: swap $sellAmount in $ from WBTC to USDC (while subtracting $sellAmount from aBTC))
+- - - soldAmounts == aUSDC(ArellsUSDC){created in MASS and updated based on soldAmounts}
+- - - USDC == aUSDC + acVactDas
+- - - - if acVactDas > 1, swap WBTC equivalent into USDC
+- - - - if acVactTaa > 0.00001 || $1.00, swap USDC equivalent into WBTC
+- - - acVactDas == aUSDC (Arells USDC)
+- Test aWBTC to aUSDC trading/swapping based on MASS & FA(Fee Arbitration)
+- - FA:
+    1. If Bitcoin price ≥ cpVact + 0.5(FA): cVact in USDC is traded for WBTC.
+	2. If Bitcoin price ≤ cpVatop + 0.5(FA): cVactTa in WBTC is traded for USDC.
+- Import & Sell (without HPM) Bitcoin to WBTC(Polygon), WBTC<-swap->USDC(Polygon). Import (Polygon USDC wallet created (when Import clicked)) Encrypt/Decrypt Wallet Key (like Bitcoin).
+- Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC trading/swapping based on MASS & FA(Fee Arbitration)
+- - FA:
+    1. If acVactTaa < 0.0001, then trade remaining acVactTaa in USDC WBTC for USDC 
+	2. If aUSDC < USDC, then trade remaining USDC for WBTC  200 - 500 = 300
 
 ### Account
+- Set A/B (Wallet to load 3-4 seconds?)
 - (If Bitcoin wallet has more than a certain amount), then hide "Import Bitcoin to Sell" and show "Sell, Withdraw boxes"
 - Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
 - Withdraw (USDC)
 
 #### Import (Page)
-- Import Bitcoins to Always sell them for profits
+- Import Bitcoin to ensure your investments never lose value
+- import fee: $0.01 - $0.5~
 
 
 ### Sell
@@ -26,7 +42,8 @@
 - (B) Amount Available To Sell
 - - amount: displays acVactsAts
 - - Profits: displays acdVatops
-- - Sell Amount Input: (tel no * or #) see HPMTester
+- - Sell Amount Input:  see HPMTester
+- - Fee (include fee in sale)
 - - Sell: see HPMTester
 - - (Confirm Sale) -> Modals
 - - - Modals: 

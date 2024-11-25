@@ -52,8 +52,8 @@ const HPMConcept: React.FC = () => {
     setBuyAmount,
     sellAmount,
     setSellAmount,
-    handleBuy,
-    handleSell,
+    handleBuyConcept,
+    handleSellConcept,
     setManualBitcoinPrice,
     email,
     soldAmount,
@@ -138,7 +138,7 @@ const HPMConcept: React.FC = () => {
       }, 2000);
   
       setBuyAmount(buyAmount);
-      handleBuy(buyAmount);
+      handleBuyConcept(buyAmount);
     } else {
       setMissingFields(true); // Show missing fields message
     }
@@ -164,7 +164,7 @@ const HPMConcept: React.FC = () => {
         setInputSellAmount(''); // Clear the input field
       }, 2000);
   
-      handleSell(sellAmount);
+      handleSellConcept(sellAmount);
     } else {
       setMissingFields(true); // Show error if sellAmount is invalid
     }

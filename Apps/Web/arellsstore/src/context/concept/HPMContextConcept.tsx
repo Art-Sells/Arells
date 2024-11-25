@@ -85,9 +85,6 @@ export const HPMConceptProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         group.cVact > epsilon || group.cVactTa > epsilon || group.cVatop > epsilon
     );
   
-    console.log("Processed Groups:", processedGroups);
-    console.log("Retained Groups:", retainedGroups);
-  
     const newVatopCombinations = retainedGroups.reduce(
       (acc, group) => {
         acc.acVatops += group.cVatop;
