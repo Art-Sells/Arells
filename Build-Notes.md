@@ -8,23 +8,16 @@
 - Test Import
 - - MASS(Market Automated Supplication System).json created when Import button first clicked
 - - - aBTC(ArellsBTC){created in MASS and incremented from the total BTC amount}
-- - - BTC amount incremented into aBTC first then swapped into USDC
+- - - BTC amount (imported and minted into WBTC) incremented into aBTC first then swapped into USDC
 - - - - if aBTC > acVactTas then "handleImportAmount" = aBTC - acVactTas (3 second useEffect)
 - - - - - Sell (incorporate into handleSell: swap $sellAmount in $ from WBTC to USDC (while subtracting $sellAmount from aBTC))
 - - - soldAmounts == aUSDC(ArellsUSDC){created in MASS and updated based on soldAmounts}
 - - - USDC == aUSDC + acVactDas
 - - - - if acVactDas > 1, swap WBTC equivalent into USDC
-- - - - if acVactTaa > 0.00001 || $1.00, swap USDC equivalent into WBTC
-- - - acVactDas == aUSDC (Arells USDC)
-- Test aWBTC to aUSDC trading/swapping based on MASS & FA(Fee Arbitration)
-- - FA:
-    1. If Bitcoin price ≥ cpVact + 0.5(FA): cVact in USDC is traded for WBTC.
-	2. If Bitcoin price ≤ cpVatop + 0.5(FA): cVactTa in WBTC is traded for USDC.
-- Import & Sell (without HPM) Bitcoin to WBTC(Polygon), WBTC<-swap->USDC(Polygon). Import (Polygon USDC wallet created (when Import clicked)) Encrypt/Decrypt Wallet Key (like Bitcoin).
+- - - - if acVactTaa > 0.00001, swap USDC equivalent into WBTC
+- - - - - swap and subtract swapping fee (same as handleSell function but without the “soldAmounts”) (take from Polygon) from cVact… 
+- Import & Sell (without HPM) Bitcoin to WBTC(Polygon POS), WBTC<-swap->USDC(Polygon POS). Import (Polygon POS USDC wallet created (when Import clicked)) Encrypt/Decrypt Wallet Key (like Bitcoin).
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC trading/swapping based on MASS & FA(Fee Arbitration)
-- - FA:
-    1. If acVactTaa < 0.0001, then trade remaining acVactTaa in USDC WBTC for USDC 
-	2. If aUSDC < USDC, then trade remaining USDC for WBTC  200 - 500 = 300
 
 ### Account
 - Set A/B (Wallet to load 3-4 seconds?)
@@ -34,7 +27,6 @@
 
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value
-- import fee: $0.01 - $0.5~
 
 
 ### Sell
@@ -71,6 +63,7 @@
 - - if null, emailUnConfirmed(true){}, emailConfirmed(false){};
 - - if true, opposite
 - Send Confirmation (Link) look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
+- FA[Fee Arbitration] (Optional MASS integration if swaping fees exceed a certain amount) [cVact (based on cpVact if cVactDa is = 0.00 else doesn’t change until threshold is met).] 
 
 ### Last Resort
 - Create separate Wallet to handle where we get our 3% fee...

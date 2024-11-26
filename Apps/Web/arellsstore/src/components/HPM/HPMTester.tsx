@@ -195,6 +195,7 @@ const HPMTester: React.FC = () => {
             <p>cVact: {formatCurrency(group.cVact)}</p>
             <p>cpVact: {formatCurrency(group.cpVact)}</p>
             <p>cVactTa: {formatNumber(group.cVactTa)}</p>
+            <p>cVactTaa: {formatNumber(group.cVactTaa)}</p>
             <p>cVactDa: {formatCurrency(group.cVactDa)}</p>
             <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
           </div>
@@ -207,6 +208,7 @@ const HPMTester: React.FC = () => {
         <p>acVactTas: {formatNumber(vatopCombinations.acVactTas)}</p>
         <p>acVactDas: {formatCurrency(vatopCombinations.acVactDas)}</p>
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
+        <p>acVactTaa: {formatNumber(vatopCombinations.acVactTaa)}</p>
       </div>
     </div>
   );

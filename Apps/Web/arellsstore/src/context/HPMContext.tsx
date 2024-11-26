@@ -14,9 +14,8 @@ interface VatopGroup {
   cpVact: number;
   cVactTa: number;
   cVactDa: number;
+  cVactTaa: number; // Reflects cVactTa if cdVatop > 0, else 0
   HAP: number;
-  thresholdTracker?: number; // Optional property for tracking the next threshold
-  lastThreshold?: number; 
 }
 
 interface VatopCombinations {
@@ -25,6 +24,7 @@ interface VatopCombinations {
   acVactTas: number;
   acVactDas: number;
   acdVatops: number;
+  acVactTaa: number; // Sum of all cVactTaa
 }
 
 interface HPMContextType {
@@ -63,6 +63,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     acVactTas: 0,
     acVactDas: 0,
     acdVatops: 0,
+    acVactTaa: 0,
   });
   const [hpap, setHpap] = useState<number>(60000);
   const [soldAmount, setSoldAmount] = useState<number>(0);
@@ -165,51 +166,37 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     updatedGroups: VatopGroup[],
     email: string
   ) => {
-    const feeThresholdIncrement = 0.5; // $0.5 threshold increments
     const epsilon = 0.0001; // Minimal value for numerical stability
   
     const processedGroups = updatedGroups.map((group) => {
-      // Ensure `thresholdTracker` and `lastThreshold` are initialized
-      const currentThreshold = group.thresholdTracker ?? feeThresholdIncrement;
-      const lastThreshold = group.lastThreshold ?? 0;
-      
       const newHAP = Math.max(group.HAP || group.cpVatop, newBitcoinPrice);
       const newCpVact = Math.max(newHAP, group.cpVact); // Ensure cpVact only increases
       const newCVact = group.cVactTa * newCpVact; // Calculate cVact based on cpVact
       const newCdVatop = group.cVactTa * (newCpVact - group.cpVatop); // Calculate cdVatop
   
-      let newThresholdTracker = currentThreshold; // Initialize tracker
-      let newLastThreshold = lastThreshold; // Initialize last threshold
+      let newCVactDa = group.cVactDa; // Default to the current cVactDa
   
-      let newCVactDa = group.cVactDa; // Start with existing value of cVactDa
-  
-      // Stabilize `cVactDa` changes
-      if (
-        newBitcoinPrice >= newCpVact &&
-        newCdVatop >= currentThreshold &&
-        currentThreshold > lastThreshold
-      ) {
-        newCVactDa = 0; // Set cVactDa to 0
-        newLastThreshold = currentThreshold; // Update last threshold
-        newThresholdTracker = currentThreshold + feeThresholdIncrement; // Increment threshold
-      } else if (newBitcoinPrice <= group.cpVatop) {
-        newCVactDa = newCVact; // Set cVactDa to match cVact
-        newLastThreshold = 0; // Reset last threshold
-        newThresholdTracker = feeThresholdIncrement; // Reset threshold
+      // Rule 1: If Bitcoin price >= cpVact, cVactDa should be 0
+      if (newBitcoinPrice >= newCpVact) {
+        newCVactDa = 0;
       }
   
-      // If no change in condition, stabilize `cVactDa`
-      const stableCVactDa = newCVactDa !== group.cVactDa ? newCVactDa : group.cVactDa;
+      // Rule 2: If Bitcoin price ≤ cpVatop, cVactDa should equal cVact
+      if (newBitcoinPrice <= group.cpVatop) {
+        newCVactDa = newCVact;
+      }
+  
+      // Calculate cVactTaa
+      const newCVactTaa = newCdVatop > 0 ? group.cVactTa : 0;
   
       return {
         ...group,
         HAP: newHAP,
         cpVact: parseFloat(newCpVact.toFixed(2)),
         cVact: parseFloat(newCVact.toFixed(2)),
-        cVactDa: parseFloat(stableCVactDa.toFixed(2)), // Stabilize oscillations
+        cVactDa: parseFloat(newCVactDa.toFixed(2)),
+        cVactTaa: parseFloat(newCVactTaa.toFixed(7)), // Reflect cVactTa or 0
         cdVatop: parseFloat(newCdVatop.toFixed(2)),
-        thresholdTracker: newThresholdTracker, // Update tracker
-        lastThreshold: newLastThreshold, // Update last threshold
       };
     });
   
@@ -226,6 +213,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         acc.acVactTas += group.cVactTa;
         acc.acVactDas += group.cVactDa;
         acc.acdVatops += group.cdVatop > 0 ? group.cdVatop : 0;
+        acc.acVactTaa += group.cVactTaa; // Sum up cVactTaa
         return acc;
       },
       {
@@ -234,6 +222,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         acVactTas: 0,
         acVactDas: 0,
         acdVatops: 0,
+        acVactTaa: 0, // Initialize acVactTaa
       }
     );
   
@@ -400,6 +389,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cVactTa: amount / bitcoinPrice,
       cVactDa: amount,
       cdVatop: 0,
+      cVactTaa: 0,
       HAP: bitcoinPrice,
     };
 
@@ -462,6 +452,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cVactTa: amount / bitcoinPrice,
       cVactDa: amount,
       cdVatop: 0,
+      cVactTaa: 0,
       HAP: bitcoinPrice,
     };
   
@@ -482,6 +473,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cVactTa: amount,
       cVactDa: amount * bitcoinPrice,
       cdVatop: 0,
+      cVactTaa: 0, // Since cdVatop is 0 for new imports, cVactTaa is 0
       HAP: bitcoinPrice,
     };
   
