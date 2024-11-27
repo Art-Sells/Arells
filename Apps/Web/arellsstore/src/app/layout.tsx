@@ -6,6 +6,7 @@ import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyCl
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
 import dotenv from 'dotenv';
+import { MASSProvider } from '../context/MASSContext';
 
 dotenv.config();
 Amplify.configure(awsmobile);
@@ -32,7 +33,9 @@ const RootLayout = ({ children }: LayoutProps) => {
         <BitcoinPriceProvider>
           <UserProvider>
             <HPMProvider>
-              {children}
+              <MASSProvider>
+                {children}
+              </MASSProvider>
             </HPMProvider>
           </UserProvider>
         </BitcoinPriceProvider>

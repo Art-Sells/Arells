@@ -6,17 +6,17 @@
 
 ### Testing
 - Test Import
-- - MASS(Market Automated Supplication System).json created when Import button first clicked
-- - - aBTC(ArellsBTC){created in MASS and incremented from the total BTC amount}
-- - - BTC amount (imported and minted into WBTC) incremented into aBTC first then swapped into USDC
-- - - - if aBTC > acVactTas then "handleImportAmount" = aBTC - acVactTas (3 second useEffect)
-- - - - - Sell (incorporate into handleSell: swap $sellAmount in $ from WBTC to USDC (while subtracting $sellAmount from aBTC))
-- - - soldAmounts == aUSDC(ArellsUSDC){created in MASS and updated based on soldAmounts}
-- - - USDC == aUSDC + acVactDas
-- - - - if acVactDas > 1, swap WBTC equivalent into USDC
-- - - - if acVactTaa > 0.00001, swap USDC equivalent into WBTC
-- - - - - swap and subtract swapping fee (same as handleSell function but without the “soldAmounts”) (take from Polygon) from cVact… 
-- Import & Sell (without HPM) Bitcoin to WBTC(Polygon POS), WBTC<-swap->USDC(Polygon POS). Import (Polygon POS USDC wallet created (when Import clicked)) Encrypt/Decrypt Wallet Key (like Bitcoin).
+- - BTC amount (imported and minted into WBTC) incremented into aBTC first then swapped into USDC
+- - - if aBTC > acVactTas then "handleImportAmount" = aBTC - acVactTas (3 second useEffect)
+- - - - Sell: incorporate into handleSell: 
+- - - - - if acVactTaa > 0.00000 swap WBTC equivalent into USDC (while taking 3% in USDC and subtracting $sellAmount(in BTC) from aBTC(subtract from aBTC before going down to vatopGroups)) and increment into soldAmounts
+- - - - - if acVactDas > 0.00, (increment amount into soldAmounts(this is already baked into the HPM algorithm)) (while taking 3% in USDC) 
+- - USDC == soldAmounts + acVactDas
+- - MASSContext (create)
+- - - if acVactTaa > 0.00000, swap WBTC equivalent into USDC (only during a change from 0 (so as to not continue swapping endlessly))
+- - - if acVactDas > 0.00, swap USDC equivalent into WBTC (only during a change from 0 (so as to not continue swapping endlessly))
+- - - - swap and subtract swapping fee (same as handleSell function but without the “soldAmounts”) (take from Polygon) from cVact… 
+- Test Import & Sell (without HPM) Bitcoin to WBTC(Polygon POS), WBTC<-swap->USDC(Polygon POS). Import (Polygon POS USDC wallet created (when Import clicked)) Encrypt/Decrypt Wallet Key (like Bitcoin).
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC trading/swapping based on MASS & FA(Fee Arbitration)
 
 ### Account
@@ -53,6 +53,7 @@
 - Send
 
 #### Test Amplify/S3 Login
+- Ensure that NEXT_PUBLIC is not invoked!
 
 
 ### Other (if Time Permits)

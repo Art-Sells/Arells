@@ -124,6 +124,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         acVactTas: 0,
         acVactDas: 0,
         acdVatops: 0,
+        acVactTaa: 0,
       }
     );
 
@@ -173,21 +174,15 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const newCpVact = Math.max(newHAP, group.cpVact); // Ensure cpVact only increases
       const newCVact = group.cVactTa * newCpVact; // Calculate cVact based on cpVact
       const newCdVatop = group.cVactTa * (newCpVact - group.cpVatop); // Calculate cdVatop
-  
-      let newCVactDa = group.cVactDa; // Default to the current cVactDa
-  
-      // Rule 1: If Bitcoin price >= cpVact, cVactDa should be 0
-      if (newBitcoinPrice >= newCpVact) {
-        newCVactDa = 0;
-      }
-  
-      // Rule 2: If Bitcoin price ≤ cpVatop, cVactDa should equal cVact
-      if (newBitcoinPrice <= group.cpVatop) {
-        newCVactDa = newCVact;
-      }
-  
-      // Calculate cVactTaa
-      const newCVactTaa = newCdVatop > 0 ? group.cVactTa : 0;
+      const newCVactDa =
+        newBitcoinPrice >= newCpVact
+          ? 0 // Set cVactDa to 0 if Bitcoin price >= cpVact
+          : newCVact; // Otherwise, match cVact
+      
+      const newCVactTaa = 
+        newBitcoinPrice < newCpVact 
+          ? 0 // Set cVactTaa to 0 if Bitcoin price < cpVact
+          : group.cVactTa; // Otherwise, match cVactTa
   
       return {
         ...group,
@@ -195,7 +190,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cpVact: parseFloat(newCpVact.toFixed(2)),
         cVact: parseFloat(newCVact.toFixed(2)),
         cVactDa: parseFloat(newCVactDa.toFixed(2)),
-        cVactTaa: parseFloat(newCVactTaa.toFixed(7)), // Reflect cVactTa or 0
+        cVactTaa: parseFloat(newCVactTaa.toFixed(7)), // Reflect updated cVactTaa
         cdVatop: parseFloat(newCdVatop.toFixed(2)),
       };
     });
@@ -213,7 +208,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         acc.acVactTas += group.cVactTa;
         acc.acVactDas += group.cVactDa;
         acc.acdVatops += group.cdVatop > 0 ? group.cdVatop : 0;
-        acc.acVactTaa += group.cVactTaa; // Sum up cVactTaa
+        acc.acVactTaa += group.cVactTaa; // Aggregate cVactTaa
         return acc;
       },
       {
@@ -340,6 +335,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         acVactTas: 0,
         acVactDas: 0,
         acdVatops: 0,
+        acVactTaa: 0,
       } as VatopCombinations
     );
 
@@ -350,6 +346,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       acVactTas: parseFloat(newVatopCombinations.acVactTas.toFixed(7)),
       acVactDas: parseFloat(newVatopCombinations.acVactDas.toFixed(2)),
       acdVatops: parseFloat(newVatopCombinations.acdVatops.toFixed(2)),
+      acVactTaa: parseFloat(newVatopCombinations.acVactTaa.toFixed(7))
     });
 
     if (retainedGroups.length > 0) {
