@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHPM } from '../../context/HPMContext';
 
 const HPMTester: React.FC = () => {
@@ -8,170 +8,95 @@ const HPMTester: React.FC = () => {
     bitcoinPrice,
     vatopGroups,
     vatopCombinations,
-    hpap,
-    buyAmount,
-    setBuyAmount,
-    sellAmount,
-    setSellAmount,
+    hpap, // Including hpap
     handleBuy,
     handleSell,
-    handleImport,
-    setManualBitcoinPriceConcept,
-    setManualBitcoinPrice,
-    email,
-    soldAmount,
+    handleImportABTC,
+    readABTCFile,
+    setManualBitcoinPrice
   } = useHPM();
 
   const [inputBuyAmount, setInputBuyAmount] = useState<string>('');
-  const [inputImportAmount, setInputImportAmount] = useState<string>('');
   const [inputSellAmount, setInputSellAmount] = useState<string>('');
-  const [payload, setPayload] = useState<any>(null); // State to store payload
+  const [inputImportAmount, setInputImportAmount] = useState<string>('');
+  const [aBTC, setABTC] = useState<number>(0);
 
-  const formatCurrency = (value: number): string => {
-    if (typeof value !== 'number' || isNaN(value)) {
-      value = 0; // Default to 0 if the value is undefined, null, or NaN
+  useEffect(() => {
+    const fetchABTC = async () => {
+      const fetchedABTC = await readABTCFile();
+      setABTC(fetchedABTC || 0);
+    };
+    fetchABTC();
+  }, [readABTCFile]);
+
+  const formatCurrency = (value: number | null | undefined): string => {
+    if (value == null || isNaN(value)) {
+      return '0.00'; // Return a default value for invalid inputs
     }
-    return `${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+    return value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
-  const formatNumber = (value: number): string => {
-    if (typeof value !== 'number' || isNaN(value)) {
-      value = 0; // Default to 0 if the value is undefined, null, or NaN
+  const formatNumber = (value: number | null | undefined): string => {
+    if (value == null || isNaN(value)) {
+      return '0.0000000'; // Return a default value for invalid inputs
     }
     return value.toLocaleString(undefined, {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 7,
+      maximumFractionDigits: 5,
     });
   };
-
-  const increasePrice = () => {
-    setManualBitcoinPrice((currentPrice) => currentPrice + 20);
+  const handleIncreasePrice = () => {
+    setManualBitcoinPrice((currentPrice) => currentPrice + 1000); // Increase by $1000
   };
 
-  const decreasePrice = () => {
-    setManualBitcoinPrice((currentPrice) => Math.max(0, currentPrice - 20));
-  };
-
-  const formatWithCommas = (value: string) => {
-    const parts = value.split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Format integer part with commas
-    return parts.join('.');
-  };
-
-  const handleBuyAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal
-    if (numericValue.includes('.')) {
-      const [integer, decimals] = numericValue.split('.');
-      numericValue = `${integer}.${decimals.slice(0, 2)}`; // Keep only two decimal places
-    }
-    setInputBuyAmount(formatWithCommas(numericValue)); // Format for display
-    setBuyAmount(parseFloat(numericValue) || 0); // Store numeric value
-  };
-
-  const handleImportAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal
-    if (numericValue.includes('.')) {
-      const [integer, decimals] = numericValue.split('.');
-      numericValue = `${integer}.${decimals.slice(0, 5)}`; // Keep only five decimal places
-    }
-    setInputImportAmount(formatWithCommas(numericValue)); // Format for display
-  };
-
-  const handleSellAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let numericValue = e.target.value.replace(/[^0-9.]/g, ''); // Allow only numbers and decimal
-    if (numericValue.includes('.')) {
-      const [integer, decimals] = numericValue.split('.');
-      numericValue = `${integer}.${decimals.slice(0, 2)}`; // Keep only two decimal places
-    }
-    setInputSellAmount(formatWithCommas(numericValue)); // Format for display
-    setSellAmount(parseFloat(numericValue) || 0); // Store numeric value
+  const handleDecreasePrice = () => {
+    setManualBitcoinPrice((currentPrice) => Math.max(currentPrice - 1000, 0)); // Decrease by $1000 but not below $0
   };
 
 
-  const handleBuyClick = async () => {
-    const buyAmount = parseFloat(inputBuyAmount.replace(/,/g, '')) || 0;
-    if (buyAmount > 0) {
-      await handleBuy(buyAmount);
-
-      const newPayload = {
-        email,
-        vatopGroups,
-        vatopCombinations,
-      };
-      setPayload(newPayload);
-      setInputBuyAmount(''); // Clear input
+  const handleBuyClick = () => {
+    const amount = parseFloat(inputBuyAmount) || 0;
+    if (amount > 0) {
+      handleBuy(amount);
+      setInputBuyAmount('');
     } else {
       alert('Invalid buy amount');
     }
   };
 
-  const handleImportClick = async () => {
-    const importAmount = parseFloat(inputImportAmount.replace(/,/g, '')) || 0;
-    if (importAmount < 0.0001) {
-      alert('The minimum import amount is 0.0001 BTC.');
-      return;
-    }
-    if (importAmount > 0) {
-      await handleImport(importAmount);
-  
-      const newPayload = {
-        email,
-        vatopGroups,
-        vatopCombinations,
-      };
-      setPayload(newPayload);
-      setInputImportAmount(''); // Clear input
-      window.location.reload(); // Reload the page after import
-    } else {
-      alert('Invalid import amount');
-    }
-  };
-  
-  const handleSellClick = async () => {
-    const sellAmount = parseFloat(inputSellAmount.replace(/,/g, '')) || 0;
-    if (sellAmount > 0 && sellAmount <= vatopCombinations.acVacts) {
-      await handleSell(sellAmount);
-  
-      const newPayload = {
-        email,
-        vatopGroups,
-        vatopCombinations,
-      };
-      setPayload(newPayload);
-      setInputSellAmount(''); // Clear input
-      window.location.reload(); // Reload the page after sell
+  const handleSellClick = () => {
+    const amount = parseFloat(inputSellAmount) || 0;
+    if (amount > 0) {
+      handleSell(amount);
+      setInputSellAmount('');
     } else {
       alert('Invalid sell amount');
     }
   };
 
-  console.log("Rendering vatopGroups from Context:", vatopGroups);
+  const handleImportClick = async () => {
+    const amount = parseFloat(inputImportAmount) || 0;
+    if (amount > 0) {
+      await handleImportABTC(amount);
+      setInputImportAmount('');
+    } else {
+      alert('Invalid import amount');
+    }
+  };
 
   return (
     <div>
       <h1>HPM Tester</h1>
-      <div>
-        <label>Bitcoin Price: ${formatCurrency(bitcoinPrice)}</label>
-        <div>
-          <button onClick={increasePrice}>Increase Price</button>
-          <button onClick={decreasePrice}>Decrease Price</button>
-        </div>
-      </div>
-      <div>
-        <label>Import Amount (BTC):</label>
-        <input
-          type="text"
-          value={inputImportAmount}
-          onChange={handleImportAmountChange}
-        />
-        <button onClick={handleImportClick}>Import</button>
-      </div>
+      <h2>Bitcoin Price</h2>
+        <h3>${formatCurrency(bitcoinPrice)}</h3>
+        <button onClick={handleIncreasePrice}>Increase Price</button>
+        <button onClick={handleDecreasePrice}>Decrease Price</button>
       {/* <div>
         <label>Buy Amount:</label>
         <input
           type="text"
           value={inputBuyAmount}
-          onChange={handleBuyAmountChange}
+          onChange={(e) => setInputBuyAmount(e.target.value)}
         />
         <button onClick={handleBuyClick}>Buy</button>
       </div> */}
@@ -180,12 +105,28 @@ const HPMTester: React.FC = () => {
         <input
           type="text"
           value={inputSellAmount}
-          onChange={handleSellAmountChange}
+          onChange={(e) => setInputSellAmount(e.target.value)}
         />
         <button onClick={handleSellClick}>Sell</button>
       </div>
-      <h2>HPAP: {formatCurrency(hpap)}</h2>
       <div>
+        <label>Import Amount (BTC):</label>
+        <input
+          type="text"
+          value={inputImportAmount}
+          onChange={(e) => setInputImportAmount(e.target.value)}
+        />
+        <button onClick={handleImportClick}>Import</button>
+      </div>
+      <div>
+        <div>
+          <h2>HPAP:</h2>
+          <h3>${formatCurrency(hpap)}</h3>
+        </div>
+        <div>
+          <h2>aBTC:</h2>
+          <p>{formatNumber(aBTC)}</p>
+        </div>
         <h2>Vatop Groups:</h2>
         {vatopGroups.map((group, index) => (
           <div key={index}>

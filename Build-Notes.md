@@ -5,34 +5,46 @@
 ## Arells 1.0
 
 ### Testing
+
 - Test Import
-- - BTC amount (imported and minted into WBTC) incremented into aBTC first then swapped into USDC
-- - - if aBTC > acVactTas then "handleImportAmount" = aBTC - acVactTas (3 second useEffect)
-- - - - Sell: incorporate into handleSell: 
-- - - - - if acVactTaa > 0.00000 swap WBTC equivalent into USDC (while taking 3% in USDC and subtracting $sellAmount(in BTC) from aBTC(subtract from aBTC before going down to vatopGroups)) and increment into soldAmounts
-- - - - - if acVactDas > 0.00, (increment amount into soldAmounts(this is already baked into the HPM algorithm)) (while taking 3% in USDC) 
-- - USDC == soldAmounts + acVactDas
 - - MASSContext (create)
-- - - if acVactTaa > 0.00000, swap WBTC equivalent into USDC (only during a change from 0 (so as to not continue swapping endlessly))
-- - - if acVactDas > 0.00, swap USDC equivalent into WBTC (only during a change from 0 (so as to not continue swapping endlessly))
-- - - - swap and subtract swapping fee (same as handleSell function but without the “soldAmounts”) (take from Polygon) from cVact… 
-- Test Import & Sell (without HPM) Bitcoin to WBTC(Polygon POS), WBTC<-swap->USDC(Polygon POS). Import (Polygon POS USDC wallet created (when Import clicked)) Encrypt/Decrypt Wallet Key (like Bitcoin).
+- - - if acVactTaa > 0.00000, initiate a swapWBTC"Function"(from Smart Contract) only during a change from acVactTaa > 0.00000 to acVactTaa <== 0.00000 and vise versa (so as to not continue swapping endlessly)
+- - - if acVactDas > 0.00, initiate a swapUSDC"Function"(from Smart Contract) only during a change from acVactDas > 0.00 to acVactDas <== 0.00 and vise versa (so as to not continue swapping endlessly)
+- - Sell Test (HPMContext)
+- - - if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).
+- - - If acVactDas > 0.00, increment $sellAmount into soldAmounts(this is already baked into the HPM algorithm). Then initiate sellUSDC"Function"(from Smart Contract).
+
+- Test Import & Sell (without HPM) Bitcoin to WBTC(Polygon POS), WBTC<-swap->USDC(Polygon POS). 
+- - Import (Polygon POS USDC wallet created in Cognito (when Import clicked)). Encrypt/Decrypt Wallet Key (like Bitcoin).
+
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC trading/swapping based on MASS & FA(Fee Arbitration)
+- - Import: BTC amount (imported and minted into WBTC) incremented into aBTC.
+- - MASSsmartContract:
+- - - swapWBTC (amount taken from HPMContext acVactTaa) into USDC
+- - - swapUSDC (amount taken from HPMContext acVactDas) into WBTC
+- - - When swap initiated, subtract (PolygonPOS)swapping fee (same as handleSell function but without incrementing into “soldAmounts”) from cVact (show HPMContext and MASSsmartContract to GPT for help)
+- - SellsmartContract: incorporate into handleSell
+- - - sellWBTC: Swap WBTC ((amount taken from HPMContext "$sellAmount + 3%")in BTC format) into USDC while subtracting 3% in USDC. 
+- - - sellUSDC: 3% subtracted (3% amount calculated from HPMContext "$sellAmount") from USDC.
+- - Withdraw: Send your soldlAmounts worth of USDC into another exchange
+- - - USDC (Polygon) Address
+- - - Amount = soldAmounts
+- - - Amount to Send (subtracted from soldAmounts)
+- - - Send
 
 ### Account
 - Set A/B (Wallet to load 3-4 seconds?)
-- (If Bitcoin wallet has more than a certain amount), then hide "Import Bitcoin to Sell" and show "Sell, Withdraw boxes"
-- Sell (Polygon USDC wallet created (only once)) Encrypt/Decrypt Wallet Key (like Bitcoin)
-- Withdraw (USDC)
+- (If Bitcoin wallet has more than a certain amount), then hide "Import Bitcoin to ensure your investments never lose value" and show "Sell, Withdraw boxes"
+- Sell
+- Withdraw (Export USDC) (USDC)
 
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value
 
-
 ### Sell
 **Test to see if it'll sell if over amount?**
-- (B) Amount Available To Sell
-- - amount: displays acVactsAts
+- (A)(B)
+- - Amount: displays acVacts
 - - Profits: displays acdVatops
 - - Sell Amount Input:  see HPMTester
 - - Fee (include fee in sale)
@@ -46,15 +58,19 @@
 - Reloads modules every 10 seconds (price, wallet, and profits animation css) from coin gecko API wrapper?
 
 ### Withdraw
-- Withdraw and send your USDC into another exchange
+- Withdraw and send your soldlAmounts worth of USDC into another exchange
 - USDC (Polygon) Address
 - Amount
-- Amount to Send
+- Amount to Send (subtracted from soldAmounts)
 - Send
+- - Modals: 
+- - - Sending...3 Second delay
+- - - Sent (confirming sale modal = false) (see HPMTester) (View Transaction) -> Polygon Explorer
+- - - Transaction Failed (confirming sale modal = false) (OK)
+- - - Enter information (if one or more fields are empty)
 
 #### Test Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked!
-
 
 ### Other (if Time Permits)
 - Remove all "2 second delay for buttons"

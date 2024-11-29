@@ -37,7 +37,7 @@ interface HPMContextType {
   setBuyAmount: (amount: number) => void;
   setSellAmount: (amount: number) => void;
   handleBuy: (amount: number) => void;
-  handleImport: (amount: number) => void;
+  handleImportABTC: (amount: number) => void;
   handleSell: (amount: number) => void;
   handleBuyConcept: (amount: number) => void;
   handleSellConcept: (amount: number) => void;
@@ -45,6 +45,8 @@ interface HPMContextType {
   setManualBitcoinPrice: (price: number | ((currentPrice: number) => number)) => void;
   soldAmount: number;
   email: string;
+  readABTCFile: () => Promise<number | null>;
+  updateABTCFile: (amount: number) => Promise<void>;
 }
 
 const HPMContext = createContext<HPMContextType | undefined>(undefined);
@@ -57,6 +59,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [sellAmount, setSellAmount] = useState<number>(0);
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
   const [vatopUpdateTrigger, setVatopUpdateTrigger] = useState(false);
+  
   const [vatopCombinations, setVatopCombinations] = useState<VatopCombinations>({
     acVatops: 0,
     acVacts: 0,
@@ -65,10 +68,11 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     acdVatops: 0,
     acVactTaa: 0,
   });
+
   const [hpap, setHpap] = useState<number>(60000);
   const [soldAmount, setSoldAmount] = useState<number>(0);
 
-  useEffect(() => {
+ useEffect(() => {
     const fetchEmail = async () => {
       try {
         const attributesResponse = await fetchUserAttributes();
@@ -128,9 +132,11 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     );
 
+    console.log("Updated vatopCombinations:", combinations); 
     setVatopCombinations(combinations);
     return combinations;
   };
+
   useEffect(() => {
     if (!vatopUpdateTrigger) return; // Only run if triggered
   
@@ -275,6 +281,36 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
     setBitcoinPrice(newPrice);
   };
+  const readABTCFile = async (): Promise<number | null> => {
+    try {
+      if (!email) throw new Error("Email is not set in context.");
+      
+      const response = await axios.get('/api/readABTC', { params: { email } });
+      return response.data.aBTC || 0;
+    } catch (error) {
+      console.error('Error reading aBTC.json:', error);
+      return null;
+    }
+  };
+
+  const updateABTCFile = async (amount: number): Promise<void> => {
+    try {
+      if (!email) throw new Error("Email is not set in context.");
+      
+      await axios.post('/api/saveABTC', { email, amount });
+      console.log('Successfully updated aBTC.json with amount:', amount);
+    } catch (error) {
+      console.error('Error updating aBTC.json:', error);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleImport();
+    }, 3000);
+  
+    return () => clearInterval(interval);
+  }, [vatopCombinations, email]);
 
 
 
@@ -456,55 +492,105 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedVatopGroups = [...vatopGroups, newVatop];
     await updateAllState(bitcoinPrice, updatedVatopGroups, email);
   };
-  const handleImport = async (amount: number) => {
+  const handleImportABTC = async (amount: number) => {
     if (amount < 0.0001) {
       alert('The minimum import amount is 0.0001 BTC.');
       return;
     }
-  
-    const newVatop: VatopGroup = {
-      cVatop: amount * bitcoinPrice,
-      cpVatop: bitcoinPrice,
-      cVact: amount * bitcoinPrice,
-      cpVact: bitcoinPrice,
-      cVactTa: amount,
-      cVactDa: amount * bitcoinPrice,
-      cdVatop: 0,
-      cVactTaa: 0, // Since cdVatop is 0 for new imports, cVactTaa is 0
-      HAP: bitcoinPrice,
-    };
-  
-    const updatedVatopGroups = [...vatopGroups, newVatop];
-    await updateAllState(bitcoinPrice, updatedVatopGroups, email);
-    setVatopUpdateTrigger(true); // Trigger the update
+    try {
+      await axios.post('/api/saveABTC', { email, amount });
+    } catch (error) {
+      console.error('Error saving to aBTC.json:', error);
+    }
   };
+  // Automatically process import if aBTC > acVactTas
+  const handleImport = async () => {
+    try {
+      const aBTC = await readABTCFile();
+  
+      // Check conditions
+      if (aBTC === null || vatopCombinations.acVactTas === undefined || aBTC <= vatopCombinations.acVactTas) {
+        console.log("No import needed or invalid state.");
+        return;
+      }
+  
+      const amount = aBTC - vatopCombinations.acVactTas;
+      console.log(`Importing amount: ${amount} BTC`);
+  
+      const newVatop: VatopGroup = {
+        cVatop: amount * bitcoinPrice,
+        cpVatop: bitcoinPrice,
+        cVact: amount * bitcoinPrice,
+        cpVact: bitcoinPrice,
+        cVactTa: amount,
+        cVactDa: amount * bitcoinPrice,
+        cdVatop: 0,
+        cVactTaa: 0, // Reset Taa for new imports
+        HAP: bitcoinPrice,
+      };
+  
+      const updatedVatopGroups = [...vatopGroups, newVatop];
+      await updateAllState(bitcoinPrice, updatedVatopGroups, email);
+
+      const updatedABTC = await readABTCFile();
+      console.log("Updated aBTC after import:", updatedABTC);
+    } catch (error) {
+      console.error("Error during handleImport:", error);
+    }
+  };
+
+  
+
+
+
+
+
+
+
   const handleSell = async (amount: number) => {
     if (amount <= 0 || amount > vatopCombinations.acVacts) return;
   
-    let remainingAmount = amount;
+    try {
+      // Convert the dollar amount to BTC amount
+      const btcAmount = amount / bitcoinPrice;
   
-    const updatedVatopGroups = vatopGroups.map((group) => {
-      if (remainingAmount <= 0) return group;
+      // Subtract the BTC amount from aBTC first
+      await updateABTCFile(-btcAmount);
   
-      const sellAmount = Math.min(group.cVact, remainingAmount);
-      remainingAmount -= sellAmount;
+      let remainingAmount = amount;
   
-      return {
-        ...group,
-        cVatop: Math.max(group.cVatop - sellAmount, 0),
-        cVact: Math.max(group.cVact - sellAmount, 0),
-        cVactTa: Math.max(group.cVactTa - sellAmount / group.cpVact, 0),
-        cdVatop: Math.max(group.cVactTa * (group.cpVact - group.cpVatop), 0),
-      };
-    });
+      const updatedVatopGroups = vatopGroups.map((group) => {
+        if (remainingAmount <= 0) return group;
   
-    const retainedGroups = updatedVatopGroups.filter(
-      (group) => group.cVatop > 0 || group.cVact > 0 || group.cVactTa > 0
-    );
+        const sellAmount = Math.min(group.cVact, remainingAmount);
+        remainingAmount -= sellAmount;
   
-    await updateAllState(bitcoinPrice, retainedGroups, email);
-    setVatopUpdateTrigger(true); // Trigger the update
+        return {
+          ...group,
+          cVatop: Math.max(group.cVatop - sellAmount, 0),
+          cVact: Math.max(group.cVact - sellAmount, 0),
+          cVactTa: Math.max(group.cVactTa - sellAmount / group.cpVact, 0),
+          cdVatop: Math.max(group.cVactTa * (group.cpVact - group.cpVatop), 0),
+        };
+      });
+  
+      const retainedGroups = updatedVatopGroups.filter(
+        (group) => group.cVatop > 0 || group.cVact > 0 || group.cVactTa > 0
+      );
+  
+      // Update the state with the remaining groups
+      await updateAllState(bitcoinPrice, retainedGroups, email);
+      setVatopUpdateTrigger(true); // Trigger the update
+    } catch (error) {
+      console.error("Error during sell operation:", error);
+    }
   };
+
+
+
+
+
+
 
   return (
     <HPMContext.Provider
@@ -518,7 +604,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setBuyAmount,
         setSellAmount,
         handleBuy,
-        handleImport,
+        handleImportABTC,
         handleSell,
         handleBuyConcept,
         handleSellConcept,
@@ -526,6 +612,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setManualBitcoinPrice,
         email,
         soldAmount,
+        readABTCFile, 
+        updateABTCFile
       }}
     >
       {children}
