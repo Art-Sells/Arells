@@ -11,8 +11,8 @@
 - - - if acVactTaa > 0.00000, initiate a swapWBTC"Function"(from Smart Contract) only during a change from acVactTaa > 0.00000 to acVactTaa <== 0.00000 and vise versa (so as to not continue swapping endlessly)
 - - - if acVactDas > 0.00, initiate a swapUSDC"Function"(from Smart Contract) only during a change from acVactDas > 0.00 to acVactDas <== 0.00 and vise versa (so as to not continue swapping endlessly)
 - - Sell Test (HPMContext)
-- - - if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmount. Then initiate sellWBTC"Function"(from Smart Contract).
-- - - If acVactDas > 0.00, increment $sellAmount into soldAmount(this is already baked into the HPM algorithm). Then initiate sellUSDC"Function"(from Smart Contract).
+- - - if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).
+- - - If acVactDas > 0.00, increment $sellAmount into soldAmounts(this is already baked into the HPM algorithm). Then initiate sellUSDC"Function"(from Smart Contract).
 
 - Test Import & Sell (without HPM) Bitcoin to WBTC(Polygon POS), WBTC<-swap->USDC(Polygon POS). 
 - - Import (Polygon POS USDC wallet created in Cognito (when Import clicked)). Encrypt/Decrypt Wallet Key (like Bitcoin).
@@ -28,8 +28,8 @@
 - - - sellUSDC: 3% subtracted (3% amount calculated from HPMContext "$sellAmount") from USDC.
 - - Withdraw: Send your soldlAmounts worth of USDC into another exchange
 - - - USDC (Polygon) Address
-- - - Amount = soldAmount
-- - - Amount to Send (subtracted from soldAmount)
+- - - Amount = soldAmounts
+- - - Amount to Send (subtracted from soldAmounts)
 - - - Send
 
 ### Account

@@ -14,7 +14,7 @@ const HPMTester: React.FC = () => {
     handleImportABTC,
     readABTCFile,
     setManualBitcoinPrice,
-    soldAmount
+    soldAmounts
   } = useHPM();
 
   const [inputBuyAmount, setInputBuyAmount] = useState<string>('');
@@ -157,7 +157,7 @@ const HPMTester: React.FC = () => {
       <div>
         <h2>Sold Amount</h2>
         <p id="amount-sold-number-account-num-concept">
-          {formatCurrency(soldAmount)}
+          {formatCurrency(soldAmounts)}
         </p>
       </div>
     </div>
