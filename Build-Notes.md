@@ -8,8 +8,8 @@
 
 - Test Import
 - - MASSContext (create)
-- - - if a cVactTaa > 0.00000, initiate a swapWBTC"Function"(from Smart Contract) only during a change from cVactTaa > 0.00000 to cVactTaa <== 0.00000 and vise versa (so as to not continue swapping endlessly)
-- - - if a cVactDa > 0.00, initiate a swapUSDC"Function"(from Smart Contract) only during a change from cVactDa > 0.00 to cVactDa <== 0.00 and vise versa (so as to not continue swapping endlessly)
+- - - if a cVactTaa > 0.00000, initiate a swapWBTC"Function"(from Smart Contract) only during a change from cVactTaa > 0.00000 to
+- - - if a cVactDa > 0.00, initiate a swapUSDC"Function"(from Smart Contract) only during a change from cVactDa > 0.00
 - - Sell Test (HPMContext)
 - - - if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).
 - - - If acVactDas > 0.00, increment $sellAmount into soldAmounts(this is already baked into the HPM algorithm). Then initiate sellUSDC"Function"(from Smart Contract).

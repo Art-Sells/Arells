@@ -7,8 +7,6 @@ import axios from 'axios';
 interface MASSContextType {
   cVactTaa: number;
   cVactDa: number;
-  setCVactTaa: (value: number) => void;
-  setCVactDa: (value: number) => void;
 }
 
 interface VatopGroup {
@@ -22,23 +20,16 @@ interface VatopGroup {
   cdVatop: number;
 }
 
-interface MASSContextType {
-  cVactTaa: number;
-  cVactDa: number;
-}
-
 const MASSContext = createContext<MASSContextType | undefined>(undefined);
 
 export const MASSProvider = ({ children }: { children: ReactNode }) => {
   const [cVactTaa, setCVactTaa] = useState<number>(0);
   const [cVactDa, setCVactDa] = useState<number>(0);
 
-  const [prevCVactTaa, setPrevCVactTaa] = useState<number>(0);
-  const [prevCVactDa, setPrevCVactDa] = useState<number>(0);
-
   const [email, setEmail] = useState<string>('');
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
 
+  // Fetch email on mount
   useEffect(() => {
     const fetchEmail = async () => {
       try {
@@ -54,7 +45,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     fetchEmail();
   }, []);
 
-
+  // Fetch VatopGroups based on email
   useEffect(() => {
     const fetchVatopGroups = async () => {
       try {
@@ -72,8 +63,23 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
             index === self.findIndex((g) => g.cpVatop === group.cpVatop && g.cVactTa === group.cVactTa)
         );
   
-        setVatopGroups(uniqueVatopGroups); // Set only unique groups
+        setVatopGroups(uniqueVatopGroups);
   
+        // Calculate totals
+        const totalCVactTaa = uniqueVatopGroups.reduce(
+          (sum: number, group: VatopGroup) => sum + (group.cVactTaa || 0),
+          0
+        );
+        const totalCVactDa = uniqueVatopGroups.reduce(
+          (sum: number, group: VatopGroup) => sum + (group.cVactDa || 0),
+          0
+        );
+  
+        setCVactTaa(totalCVactTaa);
+        setCVactDa(totalCVactDa);
+  
+        console.log('Fetched vatopGroups:', uniqueVatopGroups);
+        console.log('Updated cVactTaa:', totalCVactTaa, 'Updated cVactDa:', totalCVactDa);
       } catch (error) {
         console.error('Error fetching vatop groups:', error);
       }
@@ -82,6 +88,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     fetchVatopGroups();
   }, [email]);
 
+  // Swap functions
   const swapWBTC = async () => {
     console.log('Initiating WBTC swap');
     // Logic for WBTC swap will go here
@@ -94,26 +101,20 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
   // Monitor cVactTaa for changes and trigger swap logic
   useEffect(() => {
-    if (prevCVactTaa === 0 && cVactTaa > 0) {
-      swapWBTC();
-    } else if (prevCVactTaa > 0 && cVactTaa === 0) {
+    if (cVactTaa > 0) {
       swapWBTC();
     }
-    setPrevCVactTaa(cVactTaa);
-  }, [cVactTaa, prevCVactTaa]);
+  }, [cVactTaa]);
 
   // Monitor cVactDa for changes and trigger swap logic
   useEffect(() => {
-    if (prevCVactDa === 0 && cVactDa > 0) {
-      swapUSDC();
-    } else if (prevCVactDa > 0 && cVactDa === 0) {
+    if (cVactDa > 0) {
       swapUSDC();
     }
-    setPrevCVactDa(cVactDa);
-  }, [cVactDa, prevCVactDa]);
+  }, [cVactDa]);
 
   return (
-    <MASSContext.Provider value={{ cVactTaa, cVactDa, setCVactTaa, setCVactDa }}>
+    <MASSContext.Provider value={{ cVactTaa, cVactDa }}>
       {children}
     </MASSContext.Provider>
   );
