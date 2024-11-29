@@ -46,7 +46,7 @@ interface HPMContextType {
   soldAmount: number;
   email: string;
   readABTCFile: () => Promise<number | null>;
-  updateABTCFile: (amount: number) => Promise<void>;
+  updateABTCFile: (amount: number) => Promise<number>;
 }
 
 const HPMContext = createContext<HPMContextType | undefined>(undefined);
@@ -136,6 +136,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setVatopCombinations(combinations);
     return combinations;
   };
+  
 
   useEffect(() => {
     if (!vatopUpdateTrigger) return; // Only run if triggered
@@ -293,19 +294,24 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateABTCFile = async (amount: number): Promise<void> => {
+  const updateABTCFile = async (amount: number): Promise<number> => {
     try {
       if (!email) throw new Error("Email is not set in context.");
       
-      await axios.post('/api/saveABTC', { email, amount });
-      console.log('Successfully updated aBTC.json with amount:', amount);
+      const response = await axios.post('/api/saveABTC', { email, amount });
+      console.log('Successfully updated aBTC.json with adjustment:', amount);
+  
+      // Return the updated aBTC value from the server response
+      return response.data.aBTC;
     } catch (error) {
       console.error('Error updating aBTC.json:', error);
+      throw error;
     }
   };
 
   useEffect(() => {
     const interval = setInterval(() => {
+      readABTCFile();
       handleImport();
     }, 3000);
   
@@ -503,74 +509,117 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error('Error saving to aBTC.json:', error);
     }
   };
+  let isUpdating = false; // Shared lock variable
   // Automatically process import if aBTC > acVactTas
   const handleImport = async () => {
+    if (isUpdating) {
+      console.log("Another operation is in progress. Aborting import.");
+      return;
+    }
+  
+    isUpdating = true;
+  
     try {
       const aBTC = await readABTCFile();
+      console.log("aBTC in import:", aBTC);
   
-      // Check conditions
-      if (aBTC === null || vatopCombinations.acVactTas === undefined || aBTC <= vatopCombinations.acVactTas) {
-        console.log("No import needed or invalid state.");
+      if (aBTC === null) {
+        console.error("Invalid state: aBTC is null.");
         return;
       }
   
-      const amount = aBTC - vatopCombinations.acVactTas;
-      console.log(`Importing amount: ${amount} BTC`);
+      const acVactTas = vatopCombinations.acVactTas || 0;
   
-      const newVatop: VatopGroup = {
-        cVatop: amount * bitcoinPrice,
-        cpVatop: bitcoinPrice,
-        cVact: amount * bitcoinPrice,
-        cpVact: bitcoinPrice,
-        cVactTa: amount,
-        cVactDa: amount * bitcoinPrice,
-        cdVatop: 0,
-        cVactTaa: 0, // Reset Taa for new imports
-        HAP: bitcoinPrice,
-      };
+      if (aBTC > acVactTas) {
+        const amountToImport = parseFloat((aBTC - acVactTas).toFixed(8));
+        console.log(`Importing amount: ${amountToImport} BTC`);
   
-      const updatedVatopGroups = [...vatopGroups, newVatop];
-      await updateAllState(bitcoinPrice, updatedVatopGroups, email);
-
-      const updatedABTC = await readABTCFile();
-      console.log("Updated aBTC after import:", updatedABTC);
+        const newGroup = {
+          cVatop: amountToImport * bitcoinPrice,
+          cpVatop: bitcoinPrice,
+          cVact: amountToImport * bitcoinPrice,
+          cpVact: bitcoinPrice,
+          cVactTa: amountToImport,
+          cVactDa: amountToImport * bitcoinPrice,
+          cdVatop: 0,
+          cVactTaa: 0,
+          HAP: bitcoinPrice,
+        };
+  
+        const updatedVatopGroups = [...vatopGroups, newGroup];
+        await updateAllState(bitcoinPrice, updatedVatopGroups, email);
+  
+        console.log("Updated vatopGroups after import:", updatedVatopGroups);
+  
+        // Force synchronization of aBTC
+        setVatopCombinations((prev) => ({
+          ...prev,
+          acVactTas: aBTC,
+        }));
+      } else {
+        console.log(
+          `No import needed: aBTC (${aBTC.toFixed(8)}) is less than or equal to acVactTas (${acVactTas.toFixed(8)}).`
+        );
+      }
     } catch (error) {
       console.error("Error during handleImport:", error);
+    } finally {
+      isUpdating = false;
     }
   };
-
   
-
-
-
-
-
-
 
   const handleSell = async (amount: number) => {
-    if (amount <= 0 || amount > vatopCombinations.acVacts) return;
+    if (isUpdating) {
+      console.log("Another operation is in progress. Aborting sell.");
+      return;
+    }
+  
+    isUpdating = true;
   
     try {
-      // Convert the dollar amount to BTC amount
-      const btcAmount = amount / bitcoinPrice;
+      const btcAmount = parseFloat((amount / bitcoinPrice).toFixed(8));
+      console.log(`Sell Amount (BTC): ${btcAmount}`);
   
-      // Subtract the BTC amount from aBTC first
-      await updateABTCFile(-btcAmount);
+      const currentABTC = await readABTCFile();
+      if (currentABTC === null) {
+        console.error("Unable to fetch aBTC for the user.");
+        return;
+      }
   
-      let remainingAmount = amount;
+      console.log(`Available aBTC: ${currentABTC}`);
+      if (btcAmount > currentABTC) {
+        alert(
+          `Insufficient aBTC! You tried to sell ${btcAmount} BTC, but only ${currentABTC} BTC is available.`
+        );
+        return;
+      }
+  
+      const newABTC = await updateABTCFile(-btcAmount);
+      console.log("Updated aBTC after selling:", newABTC);
+  
+      // Explicitly synchronize state immediately
+      setVatopCombinations((prev) => ({
+        ...prev,
+        acVactTas: newABTC,
+      }));
+  
+      let remainingBTC = btcAmount;
   
       const updatedVatopGroups = vatopGroups.map((group) => {
-        if (remainingAmount <= 0) return group;
+        if (remainingBTC <= 0) return group;
   
-        const sellAmount = Math.min(group.cVact, remainingAmount);
-        remainingAmount -= sellAmount;
+        const sellBTC = Math.min(group.cVactTa, remainingBTC);
+        remainingBTC -= sellBTC;
   
         return {
           ...group,
-          cVatop: Math.max(group.cVatop - sellAmount, 0),
-          cVact: Math.max(group.cVact - sellAmount, 0),
-          cVactTa: Math.max(group.cVactTa - sellAmount / group.cpVact, 0),
+          cVatop: Math.max(group.cVatop - sellBTC * group.cpVatop, 0),
+          cVact: Math.max(group.cVact - sellBTC * group.cpVact, 0),
+          cVactTa: Math.max(group.cVactTa - sellBTC, 0),
+          cVactDa: Math.max(group.cVactDa - sellBTC * group.cpVact, 0),
           cdVatop: Math.max(group.cVactTa * (group.cpVact - group.cpVatop), 0),
+          cVactTaa: group.cVactTaa > 0 ? Math.max(group.cVactTa - sellBTC, 0) : 0,
         };
       });
   
@@ -578,14 +627,17 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         (group) => group.cVatop > 0 || group.cVact > 0 || group.cVactTa > 0
       );
   
-      // Update the state with the remaining groups
-      await updateAllState(bitcoinPrice, retainedGroups, email);
-      setVatopUpdateTrigger(true); // Trigger the update
+      setVatopGroups(retainedGroups);
+      updateVatopCombinations(retainedGroups);
+      setSoldAmount((prev) => prev + amount);
+  
+      console.log("Sell operation completed successfully.");
     } catch (error) {
       console.error("Error during sell operation:", error);
+    } finally {
+      isUpdating = false;
     }
   };
-
 
 
 

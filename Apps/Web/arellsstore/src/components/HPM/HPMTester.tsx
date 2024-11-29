@@ -13,7 +13,8 @@ const HPMTester: React.FC = () => {
     handleSell,
     handleImportABTC,
     readABTCFile,
-    setManualBitcoinPrice
+    setManualBitcoinPrice,
+    soldAmount
   } = useHPM();
 
   const [inputBuyAmount, setInputBuyAmount] = useState<string>('');
@@ -65,9 +66,11 @@ const HPMTester: React.FC = () => {
   };
 
   const handleSellClick = () => {
-    const amount = parseFloat(inputSellAmount) || 0;
+    // Parse sell amount as a float
+    const amount = parseFloat(inputSellAmount.replace(/,/g, '').trim()) || 0; // Remove commas before parsing
     if (amount > 0) {
-      handleSell(amount);
+      console.log("Sell Amount (USD):", amount); // Debug log
+      handleSell(amount); // Pass the exact amount
       setInputSellAmount('');
     } else {
       alert('Invalid sell amount');
@@ -150,6 +153,12 @@ const HPMTester: React.FC = () => {
         <p>acVactDas: {formatCurrency(vatopCombinations.acVactDas)}</p>
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
         <p>acVactTaa: {formatNumber(vatopCombinations.acVactTaa)}</p>
+      </div>
+      <div>
+        <h2>Sold Amount</h2>
+        <p id="amount-sold-number-account-num-concept">
+          {formatCurrency(soldAmount)}
+        </p>
       </div>
     </div>
   );
