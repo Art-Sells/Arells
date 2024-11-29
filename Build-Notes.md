@@ -8,8 +8,8 @@
 
 - Test Import
 - - MASSContext (create)
-- - - if acVactTaa > 0.00000, initiate a swapWBTC"Function"(from Smart Contract) only during a change from acVactTaa > 0.00000 to acVactTaa <== 0.00000 and vise versa (so as to not continue swapping endlessly)
-- - - if acVactDas > 0.00, initiate a swapUSDC"Function"(from Smart Contract) only during a change from acVactDas > 0.00 to acVactDas <== 0.00 and vise versa (so as to not continue swapping endlessly)
+- - - if a cVactTaa > 0.00000, initiate a swapWBTC"Function"(from Smart Contract) only during a change from cVactTaa > 0.00000 to cVactTaa <== 0.00000 and vise versa (so as to not continue swapping endlessly)
+- - - if a cVactDa > 0.00, initiate a swapUSDC"Function"(from Smart Contract) only during a change from cVactDa > 0.00 to cVactDa <== 0.00 and vise versa (so as to not continue swapping endlessly)
 - - Sell Test (HPMContext)
 - - - if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).
 - - - If acVactDas > 0.00, increment $sellAmount into soldAmounts(this is already baked into the HPM algorithm). Then initiate sellUSDC"Function"(from Smart Contract).
@@ -18,7 +18,7 @@
 - - Import (Polygon POS USDC wallet created in Cognito (when Import clicked)). Encrypt/Decrypt Wallet Key (like Bitcoin).
 
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC trading/swapping based on MASS & FA(Fee Arbitration)
-- - Import: BTC amount (imported and minted into WBTC) incremented into aBTC.
+- - Import: BTC amount (imported and minted into WBTC) aBTC updated (not incremented) based on WBTC number.
 - - MASSsmartContract:
 - - - swapWBTC (amount taken from HPMContext acVactTaa) into USDC
 - - - swapUSDC (amount taken from HPMContext acVactDas) into WBTC

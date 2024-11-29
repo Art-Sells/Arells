@@ -125,13 +125,11 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (!vatopGroups.length) {
       setHpap(bitcoinPrice); // Default HPAP to current Bitcoin price if no groups exist
-      console.log("HPAP set to bitcoinPrice due to empty vatopGroups:", bitcoinPrice);
       return;
     }
   
     const highestCpVact = Math.max(...vatopGroups.map((group) => group.cpVact || 0));
     setHpap(highestCpVact);
-    console.log("Updated HPAP after vatopGroups change:", highestCpVact);
   }, [vatopGroups, bitcoinPrice]); // Depend on vatopGroups and bitcoinPrice
 
   const updateVatopCombinations = (groups: VatopGroup[]): VatopCombinations => {
@@ -155,7 +153,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     );
   
-    console.log("Updated vatopCombinations:", combinations); 
     setVatopCombinations(combinations);
     return combinations;
   };
@@ -175,18 +172,15 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setVatopGroups(updatedVatopGroups);
     updateVatopCombinations(updatedVatopGroups); // Update combinations
     setVatopUpdateTrigger(false); // Reset the trigger
-    console.log("Updated vatopGroups after recalculation:", updatedVatopGroups);
   }, [vatopUpdateTrigger]); 
   useEffect(() => {
     if (!vatopGroups.length) {
       setHpap(bitcoinPrice); // Default HPAP to current Bitcoin price if no groups exist
-      console.log("HPAP set to bitcoinPrice due to empty vatopGroups:", bitcoinPrice);
       return;
     }
   
     const highestCpVact = Math.max(...vatopGroups.map((group) => group.cpVact || 0));
     setHpap(highestCpVact);
-    console.log("Updated HPAP after vatopGroups change:", highestCpVact);
   }, [vatopGroups, bitcoinPrice]); // Depend on vatopGroups and bitcoinPrice
   const filterEmptyGroupsAndUpdateHPAP = (groups: VatopGroup[]): VatopGroup[] => {
     const filteredGroups = groups.filter((group) => group.cVatop > 0 || group.cVact > 0);
@@ -195,10 +189,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (filteredGroups.length > 0) {
       const highestCpVact = Math.max(...filteredGroups.map((group) => group.cpVact || 0));
       setHpap(highestCpVact);
-      console.log("Updated HPAP after filtering groups:", highestCpVact);
     } else {
       setHpap(bitcoinPrice); // If no groups, fallback to bitcoinPrice
-      console.log("Updated HPAP to bitcoinPrice after filtering groups:", bitcoinPrice);
     }
   
     return filteredGroups;
@@ -271,8 +263,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
     });
   
-    console.log("Updated Groups Before Saving:", updatedGroups);
-  
     await updateAllState(newPrice, updatedGroups, email); // Ensure downstream updates happen after the price is set
   };
   const readABTCFile = async (): Promise<number | null> => {
@@ -292,7 +282,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (!email) throw new Error("Email is not set in context.");
       
       const response = await axios.post('/api/saveABTC', { email, amount });
-      console.log('Successfully updated aBTC.json with adjustment:', amount);
   
       // Return the updated aBTC value from the server response
       return response.data.aBTC;
@@ -518,16 +507,13 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
   const handleImport = async () => {
     if (isUpdating) {
-      console.log("Another operation is in progress. Aborting import.");
       return;
     }
   
     isUpdating = true;
   
     try {
-      console.log("Bitcoin Price before: ", bitcoinPrice);
       const aBTC = await readABTCFile(); // Fetch the current aBTC value
-      console.log("aBTC in import:", aBTC);
   
       if (aBTC === null) {
         console.error("Invalid state: aBTC is null.");
@@ -537,17 +523,14 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const acVactTas = vatopCombinations.acVactTas || 0;
   
       if (aBTC - acVactTas < 0.00001) {
-        console.log(`Import amount (${aBTC - acVactTas}) is too small. Cancelling import.`);
         return;
       }
   
       if (aBTC > acVactTas) {
         const amountToImport = parseFloat((aBTC - acVactTas).toFixed(8));
-        console.log(`Importing amount: ${amountToImport} BTC`);
   
         const currentPrice = bitcoinPrice;
-        console.log("Using current price for import:", currentPrice);
-  
+
         const newGroup = {
           cVatop: amountToImport * currentPrice,
           cpVatop: currentPrice,
@@ -562,17 +545,15 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
         const updatedVatopGroups = [...vatopGroups, newGroup];
         await updateAllState(currentPrice, updatedVatopGroups, email);
-  
-        console.log("Updated vatopGroups after import:", updatedVatopGroups);
-  
+
         setVatopCombinations((prev) => ({
           ...prev,
           acVactTas: aBTC,
         }));
       } else {
-        console.log(
-          `No import needed: aBTC (${aBTC.toFixed(8)}) is less than or equal to acVactTas (${acVactTas.toFixed(8)}).`
-        );
+        // console.log(
+        //   `No import needed: aBTC (${aBTC.toFixed(8)}) is less than or equal to acVactTas (${acVactTas.toFixed(8)}).`
+        // );
       }
     } catch (error) {
       console.error("Error during handleImport:", error);
@@ -601,14 +582,12 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
   
       const response = await axios.post('/api/saveVatopGroups', payload);
-      console.log('Save successful:', response.data);
     } catch (error) {
       console.error('Error saving vatop groups:', error);
     }
   };
   const handleSell = async (amount: number) => {
     if (isUpdating) {
-      console.log("Another operation is in progress. Aborting sell.");
       return;
     }
   
@@ -616,7 +595,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
     try {
       const btcAmount = parseFloat((amount / bitcoinPrice).toFixed(8));
-      console.log(`Sell Amount (BTC): ${btcAmount}`);
   
       if (amount > vatopCombinations.acVacts) {
         alert(`Insufficient BTC! You tried to sell $${amount}, but only $${vatopCombinations.acVacts} is available.`);
@@ -624,7 +602,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
   
       const newABTC = await updateABTCFile(-btcAmount);
-      console.log("Updated aBTC after selling:", newABTC);
   
       setVatopCombinations((prev) => ({
         ...prev,
@@ -663,8 +640,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         vatopCombinations: newVatopCombinations,
         soldAmounts: newSoldAmounts,
       });
-  
-      console.log("Sell operation completed successfully.");
     } catch (error) {
       console.error("Error during sell operation:", error);
     } finally {
