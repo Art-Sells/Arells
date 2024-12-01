@@ -23,11 +23,10 @@ interface VatopGroup {
 const MASSContext = createContext<MASSContextType | undefined>(undefined);
 
 export const MASSProvider = ({ children }: { children: ReactNode }) => {
-  const [cVactTaa, setCVactTaa] = useState<number>(0);
-  const [cVactDa, setCVactDa] = useState<number>(0);
-
   const [email, setEmail] = useState<string>('');
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
+  const [prevVatopGroups, setPrevVatopGroups] = useState<VatopGroup[]>([]);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true); // Track initial load
 
   // Fetch email on mount
   useEffect(() => {
@@ -45,76 +44,86 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     fetchEmail();
   }, []);
 
-  // Fetch VatopGroups based on email
+  // Fetch VatopGroups every 3 seconds
   useEffect(() => {
+    if (!email) return;
+
     const fetchVatopGroups = async () => {
       try {
-        if (!email) {
-          console.warn('No email provided, skipping fetchVatopGroups');
-          return;
-        }
-  
         const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
         const fetchedVatopGroups = response.data.vatopGroups || [];
-  
+
         // Ensure no duplicate or redundant groups
         const uniqueVatopGroups = fetchedVatopGroups.filter(
           (group: VatopGroup, index: number, self: VatopGroup[]) =>
             index === self.findIndex((g) => g.cpVatop === group.cpVatop && g.cVactTa === group.cVactTa)
         );
-  
+
         setVatopGroups(uniqueVatopGroups);
-  
-        // Calculate totals
-        const totalCVactTaa = uniqueVatopGroups.reduce(
-          (sum: number, group: VatopGroup) => sum + (group.cVactTaa || 0),
-          0
-        );
-        const totalCVactDa = uniqueVatopGroups.reduce(
-          (sum: number, group: VatopGroup) => sum + (group.cVactDa || 0),
-          0
-        );
-  
-        setCVactTaa(totalCVactTaa);
-        setCVactDa(totalCVactDa);
-  
         console.log('Fetched vatopGroups:', uniqueVatopGroups);
-        console.log('Updated cVactTaa:', totalCVactTaa, 'Updated cVactDa:', totalCVactDa);
+
+        if (isInitialLoad) {
+          setPrevVatopGroups(uniqueVatopGroups); // Initialize prevVatopGroups on first load
+          setIsInitialLoad(false); // Mark initial load as complete
+        }
       } catch (error) {
         console.error('Error fetching vatop groups:', error);
       }
     };
-  
-    fetchVatopGroups();
-  }, [email]);
+
+    fetchVatopGroups(); // Fetch initially
+
+    const intervalId = setInterval(fetchVatopGroups, 3000); // Fetch every 3 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [email, isInitialLoad]);
 
   // Swap functions
-  const swapWBTC = async () => {
-    console.log('Initiating WBTC swap');
-    // Logic for WBTC swap will go here
+  const swapUSDCintoWBTC = async (amount: number) => {
+    console.log(`Initiating USDC to WBTC swap for amount: ${amount}`);
+    // Logic for USDC to WBTC swap goes here
   };
 
-  const swapUSDC = async () => {
-    console.log('Initiating USDC swap');
-    // Logic for USDC swap will go here
+  const swapWBTCintoUSDC = async (amount: number) => {
+    console.log(`Initiating WBTC to USDC swap for amount: ${amount}`);
+    // Logic for WBTC to USDC swap goes here
   };
 
-  // Monitor cVactTaa for changes and trigger swap logic
+  // Monitor VatopGroups for changes and perform swaps
   useEffect(() => {
-    if (cVactTaa > 0) {
-      swapWBTC();
-    }
-  }, [cVactTaa]);
+    if (isInitialLoad) return; // Prevent swaps on initial load
 
-  // Monitor cVactDa for changes and trigger swap logic
-  useEffect(() => {
-    if (cVactDa > 0) {
-      swapUSDC();
+    const prevIds = prevVatopGroups.map((group) => group.cpVatop);
+    const currentIds = vatopGroups.map((group) => group.cpVatop);
+
+    const addedGroups = vatopGroups.filter((group) => !prevIds.includes(group.cpVatop));
+    const deletedGroups = prevVatopGroups.filter((group) => !currentIds.includes(group.cpVatop));
+
+    if (addedGroups.length > 0 || deletedGroups.length > 0) {
+      console.log('Groups were added or deleted, skipping swaps.');
+      setPrevVatopGroups([...vatopGroups]); // Update previous groups
+      return; // Skip swap logic
     }
-  }, [cVactDa]);
+
+    vatopGroups.forEach((group, index) => {
+      const prevGroup = prevVatopGroups[index] || {};
+
+      // Check for cVactTaa swap condition
+      if (group.cVactTaa > 0.00001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
+        swapUSDCintoWBTC(group.cVactTaa);
+      }
+
+      // Check for cVactDa swap condition
+      if (group.cVactDa > 0.01 && (!prevGroup.cVactDa || group.cVactDa > prevGroup.cVactDa)) {
+        swapWBTCintoUSDC(group.cVactDa);
+      }
+    });
+
+    setPrevVatopGroups([...vatopGroups]); // Update previous groups
+  }, [vatopGroups, isInitialLoad]);
 
   return (
-    <MASSContext.Provider value={{ cVactTaa, cVactDa }}>
+    <MASSContext.Provider value={{ cVactTaa: 0, cVactDa: 0 }}>
       {children}
     </MASSContext.Provider>
   );

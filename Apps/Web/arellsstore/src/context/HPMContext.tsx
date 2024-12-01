@@ -183,14 +183,17 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setHpap(highestCpVact);
   }, [vatopGroups, bitcoinPrice]); // Depend on vatopGroups and bitcoinPrice
   const filterEmptyGroupsAndUpdateHPAP = (groups: VatopGroup[]): VatopGroup[] => {
-    const filteredGroups = groups.filter((group) => group.cVatop > 0 || group.cVact > 0);
+    // Filter out groups where cVact <= 0 or cVatop <= 0
+    const filteredGroups = groups.filter(
+      (group) => group.cVact > 0 && group.cVatop > 0
+    );
   
-    // Recalculate HPAP based on the retained groups
+    // Update HPAP based on the remaining groups
     if (filteredGroups.length > 0) {
       const highestCpVact = Math.max(...filteredGroups.map((group) => group.cpVact || 0));
       setHpap(highestCpVact);
     } else {
-      setHpap(bitcoinPrice); // If no groups, fallback to bitcoinPrice
+      setHpap(bitcoinPrice); // Fallback to bitcoinPrice if no valid groups
     }
   
     return filteredGroups;
@@ -201,44 +204,51 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cdVatop: parseFloat((group.cVact - group.cVatop).toFixed(2)), // Recalculate cdVatop
     }));
   };
-  const updateAllState = async (
-    newBitcoinPrice: number,
-    updatedGroups: VatopGroup[],
-    email: string
-  ) => {
-    const processedGroups = updatedGroups.map((group) => {
-      const newCpVact = Math.max(group.cpVact, newBitcoinPrice); // Ensure cpVact only increases
-      const newCVact = group.cVactTa * newCpVact; // Update cVact
-      const newCVactTaa = newBitcoinPrice >= newCpVact ? group.cVactTa : 0; // cVactTaa logic
-      const newCVactDa = newBitcoinPrice < newCpVact ? newCVact : 0; // cVactDa logic
-  
-      return {
-        ...group,
-        cpVact: newCpVact,
-        cVact: parseFloat(newCVact.toFixed(2)),
-        cVactTaa: parseFloat(newCVactTaa.toFixed(7)),
-        cVactDa: parseFloat(newCVactDa.toFixed(2)),
-        cdVatop: parseFloat((newCVact - group.cVatop).toFixed(2)), // Update cdVatop
-      };
-    });
-  
-    setVatopGroups(processedGroups); // Update vatopGroups
-    const newCombinations = updateVatopCombinations(processedGroups);
-    setVatopCombinations(newCombinations); // Sync vatopCombinations
-  
-    // Optionally save state to the server
-    const payload = {
-      email,
-      vatopGroups: processedGroups,
-      vatopCombinations: newCombinations,
+
+
+
+
+const updateAllState = async (
+  newBitcoinPrice: number,
+  updatedGroups: VatopGroup[],
+  email: string
+) => {
+  const processedGroups = updatedGroups.map((group) => {
+    const newCpVact = Math.max(group.cpVact, newBitcoinPrice);
+    const newCVact = group.cVactTa * newCpVact;
+    const newCVactTaa = newBitcoinPrice >= newCpVact ? group.cVactTa : 0;
+    const newCVactDa = newBitcoinPrice < newCpVact ? newCVact : 0;
+
+    return {
+      ...group,
+      cpVact: newCpVact,
+      cVact: parseFloat(newCVact.toFixed(2)),
+      cVactTaa: parseFloat(newCVactTaa.toFixed(7)),
+      cVactDa: parseFloat(newCVactDa.toFixed(2)),
+      cdVatop: parseFloat((newCVact - group.cVatop).toFixed(2)),
     };
-  
-    try {
-      await axios.post('/api/saveVatopGroups', payload); // Save to server
-    } catch (error) {
-      console.error("Error saving vatopGroups:", error);
-    }
-  };
+  });
+
+  const filteredGroups = filterEmptyGroupsAndUpdateHPAP(processedGroups);
+
+  setVatopGroups(filteredGroups);
+
+  const newCombinations = updateVatopCombinations(filteredGroups);
+
+  try {
+    await axios.post('/api/saveVatopGroups', {
+      email,
+      vatopGroups: filteredGroups,
+      vatopCombinations: newCombinations,
+    });
+  } catch (error) {
+    console.error("Error saving vatopGroups:", error);
+  }
+};
+
+
+
+
   const setManualBitcoinPrice = async (
     price: number | ((currentPrice: number) => number)
   ) => {
@@ -587,9 +597,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
   const handleSell = async (amount: number) => {
-    if (isUpdating) {
-      return;
-    }
+    if (isUpdating) return;
   
     isUpdating = true;
   
@@ -627,18 +635,16 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
       const filteredGroups = updatedVatopGroups.filter((group) => group.cVact > 0);
   
-      // Update vatopGroups and combinations
       setVatopGroups(filteredGroups);
-      const newVatopCombinations = updateVatopCombinations(filteredGroups);
   
-      const newSoldAmounts = soldAmounts + amount;
-      setSoldAmounts(newSoldAmounts);
+      const newVatopCombinations = updateVatopCombinations(filteredGroups);
+      setSoldAmounts((prev) => prev + amount);
   
       await saveVatopGroups({
         email,
         vatopGroups: filteredGroups,
         vatopCombinations: newVatopCombinations,
-        soldAmounts: newSoldAmounts,
+        soldAmounts,
       });
     } catch (error) {
       console.error("Error during sell operation:", error);
