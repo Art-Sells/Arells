@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
-import { HPMProvider } from '../context/HPMContext';
+import { HPMProvider } from '../context/HPMarchitecture';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
 import dotenv from 'dotenv';
-import { MASSProvider } from '../context/MASSContext';
+import { MASSProvider } from '../context/MASSarchitecture';
 
 dotenv.config();
 Amplify.configure(awsmobile);

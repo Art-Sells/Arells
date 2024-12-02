@@ -12,10 +12,11 @@
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC trading/swapping based on MASS & FA(Fee Arbitration)
 - - Import: BTC amount (imported and minted into WBTC) aBTC updated (not incremented) based on WBTC number. After this, then swapped immediatelly into USDC.
 - - MASSsmartContract:
-- - - Add Console.logs to MASSContext before test (check NOV30 GitHubFile)
+- - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
 - - - swapUSDCintoWBTC (amount taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC))
 - - - swapWBTCintoUSDC (amount taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC))
 - - - When swap initiated, subtract (PolygonPOS)swapping fee (same as handleSell function but without incrementing into “soldAmounts”) from cVact (show HPMContext and MASSsmartContract to GPT for help)
+- - - if cVactDa < $0.01, cancel (exit) MASS
 
 
 ### Account
@@ -45,7 +46,7 @@
 - Work on making the Swapping system more efficient (aggregate all cVactTaa and cVactDa into a "listing system" so swapping doesn't occur multiple times from individual VatopGroups and happens only once per Bitcoin Price Change)
 
 ### Last Resort
-- Remove console.logs from all components, hide "wallettester" and "hpmtester" from main
+- Remove console.logs (and console.errors/warn) from all wrappers(userContext, HPMContext & MASSContext), hide "wallettester" and "hpmtester" from main
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages)
 
 

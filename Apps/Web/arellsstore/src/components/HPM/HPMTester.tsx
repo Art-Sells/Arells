@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useHPM } from '../../context/HPMContext';
+import { useHPM } from '../../context/HPMarchitecture';
 
 const HPMTester: React.FC = () => {
   const {

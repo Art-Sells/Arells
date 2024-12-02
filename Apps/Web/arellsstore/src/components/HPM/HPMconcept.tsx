@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useHPM } from '../../context/HPMContext';
+import { useHPM } from '../../context/HPMarchitecture';
 import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
 import '../../app/css/account/Account.css';

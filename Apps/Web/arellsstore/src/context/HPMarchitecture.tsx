@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '../context/UserContext';
+import { useUser } from './UserContext';
 import axios from 'axios';
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { fetchBitcoinPrice, setManualBitcoinPrice as setManualBitcoinPriceApi } from '../lib/coingecko-api';
@@ -27,7 +27,7 @@ interface VatopCombinations {
   acVactTaa: number; // Sum of all cVactTaa
 }
 
-interface HPMContextType {
+interface HPMarchitectureType {
   bitcoinPrice: number;
   vatopGroups: VatopGroup[];
   vatopCombinations: VatopCombinations;
@@ -49,7 +49,7 @@ interface HPMContextType {
   updateABTCFile: (amount: number) => Promise<number>;
 }
 
-const HPMContext = createContext<HPMContextType | undefined>(undefined);
+const HPMarchitecture = createContext<HPMarchitectureType | undefined>(undefined);
 
 export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [email, setEmail] = useState<string>('');
@@ -99,7 +99,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
         const fetchedVatopGroups = response.data.vatopGroups || [];
         const fetchedVatopCombinations = response.data.vatopCombinations || {};
-        const fetchedSoldAmounts = response.data.soldAmounts || 0; // Fetch soldAmounts
+        const fetchedSoldAmounts = response.data.soldAmounts || 0;
   
         // Ensure no duplicate or redundant groups
         const uniqueVatopGroups = fetchedVatopGroups.filter(
@@ -107,12 +107,17 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             index === self.findIndex((g) => g.cpVatop === group.cpVatop && g.cVactTa === group.cVactTa)
         );
   
-        setVatopGroups(uniqueVatopGroups); // Set only unique groups
+        // Remove groups with zero or invalid values
+        const validVatopGroups = uniqueVatopGroups.filter(
+          (group: { cVatop: number; cVact: number; cVactTa: number; cdVatop: number; }) => group.cVatop > 0 || group.cVact > 0 || group.cVactTa > 0 || group.cdVatop > 0
+        );
+  
+        setVatopGroups(validVatopGroups); // Update state with valid groups
         setVatopCombinations(fetchedVatopCombinations);
-        setSoldAmounts(fetchedSoldAmounts); // Set soldAmounts
+        setSoldAmounts(fetchedSoldAmounts);
   
         // Recalculate HPAP
-        const maxCpVact = Math.max(...uniqueVatopGroups.map((group: { cpVact: any; }) => group.cpVact || 0));
+        const maxCpVact = Math.max(...validVatopGroups.map((group: { cpVact: any; }) => group.cpVact || 0));
         setHpap(maxCpVact);
       } catch (error) {
         console.error('Error fetching vatop groups:', error);
@@ -208,44 +213,46 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
 
-const updateAllState = async (
-  newBitcoinPrice: number,
-  updatedGroups: VatopGroup[],
-  email: string
-) => {
-  const processedGroups = updatedGroups.map((group) => {
-    const newCpVact = Math.max(group.cpVact, newBitcoinPrice);
-    const newCVact = group.cVactTa * newCpVact;
-    const newCVactTaa = newBitcoinPrice >= newCpVact ? group.cVactTa : 0;
-    const newCVactDa = newBitcoinPrice < newCpVact ? newCVact : 0;
-
-    return {
-      ...group,
-      cpVact: newCpVact,
-      cVact: parseFloat(newCVact.toFixed(2)),
-      cVactTaa: parseFloat(newCVactTaa.toFixed(7)),
-      cVactDa: parseFloat(newCVactDa.toFixed(2)),
-      cdVatop: parseFloat((newCVact - group.cVatop).toFixed(2)),
-    };
-  });
-
-  const filteredGroups = filterEmptyGroupsAndUpdateHPAP(processedGroups);
-
-  setVatopGroups(filteredGroups);
-
-  const newCombinations = updateVatopCombinations(filteredGroups);
-
-  try {
-    await axios.post('/api/saveVatopGroups', {
-      email,
-      vatopGroups: filteredGroups,
-      vatopCombinations: newCombinations,
+  const updateAllState = async (
+    newBitcoinPrice: number,
+    updatedGroups: VatopGroup[],
+    email: string
+  ) => {
+    const processedGroups = updatedGroups.map((group) => {
+      const newCpVact = Math.max(group.cpVact, newBitcoinPrice);
+      const newCVact = group.cVactTa * newCpVact;
+      const newCVactTaa = newBitcoinPrice >= newCpVact ? group.cVactTa : 0;
+      const newCVactDa = newBitcoinPrice < newCpVact ? newCVact : 0;
+  
+      return {
+        ...group,
+        cpVact: newCpVact,
+        cVact: parseFloat(newCVact.toFixed(2)),
+        cVactTaa: parseFloat(newCVactTaa.toFixed(7)),
+        cVactDa: parseFloat(newCVactDa.toFixed(2)),
+        cdVatop: parseFloat((newCVact - group.cVatop).toFixed(2)),
+      };
     });
-  } catch (error) {
-    console.error("Error saving vatopGroups:", error);
-  }
-};
-
+  
+    // Filter out invalid groups
+    const validGroups = processedGroups.filter(
+      (group) => group.cVatop > 0 || group.cVact > 0 || group.cVactTa > 0 || group.cdVatop > 0
+    );
+  
+    setVatopGroups(validGroups);
+  
+    const newCombinations = updateVatopCombinations(validGroups);
+  
+    try {
+      await axios.post('/api/saveVatopGroups', {
+        email,
+        vatopGroups: validGroups,
+        vatopCombinations: newCombinations,
+      });
+    } catch (error) {
+      console.error("Error saving vatopGroups:", error);
+    }
+  };
 
 
 
@@ -659,7 +666,7 @@ const updateAllState = async (
 
 
   return (
-    <HPMContext.Provider
+    <HPMarchitecture.Provider
       value={{
         bitcoinPrice,
         vatopGroups,
@@ -683,12 +690,12 @@ const updateAllState = async (
       }}
     >
       {children}
-    </HPMContext.Provider>
+    </HPMarchitecture.Provider>
   );
 };
 
 export const useHPM = () => {
-  const context = useContext(HPMContext);
+  const context = useContext(HPMarchitecture);
   if (context === undefined) {
     throw new Error('useHPM must be used within an HPMProvider');
   }
