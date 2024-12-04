@@ -3,35 +3,24 @@
 import { v4 as uuidv4 } from 'uuid';
 import React, { useCallback, useEffect, useState } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
-import { useHPM } from '../../context/HPMarchitecture';
 import CryptoJS from 'crypto-js';
 
 const Bitcoin: React.FC = () => {
-  const {
-    bitcoinPrice,
-    buyAmount,
-    setBuyAmount,
-    sellAmount,
-    setSellAmount,
-    handleBuy,
-    handleSell
-  } = useHPM();
+
   const [balance, setBalance] = useState<number | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
-  const [amount, setAmount] = useState<string>(''); // amount in BTC
-  const [feeRate, setFeeRate] = useState<number>(10); // Fee rate in satoshis per byte
   const [bitcoinAddress, setBitcoinAddress] = useState<string>('');
   const [bitcoinPrivateKey, setBitcoinPrivateKey] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  const [linkToken, setLinkToken] = useState<string | null>(null);
-  const [tokenCreated, setTokenCreated] = useState<boolean>(false);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [bankAccount, setBankAccount] = useState<string>('');
-  const [krakenResult, setKrakenResult] = useState<any>(null);
-  const [krakenLoading, setKrakenLoading] = useState<boolean>(false);
-  const [krakenError, setKrakenError] = useState<string | null>(null);
-  const [dollarAmount, setDollarAmount] = useState<string>('');
+  // const [error, setError] = useState<string | null>(null);
+  // const [linkToken, setLinkToken] = useState<string | null>(null);
+  // const [tokenCreated, setTokenCreated] = useState<boolean>(false);
+  // const [accessToken, setAccessToken] = useState<string | null>(null);
+  // const [bankAccount, setBankAccount] = useState<string>('');
+  // const [krakenResult, setKrakenResult] = useState<any>(null);
+  // const [krakenLoading, setKrakenLoading] = useState<boolean>(false);
+  // const [krakenError, setKrakenError] = useState<string | null>(null);
+  // const [dollarAmount, setDollarAmount] = useState<string>('');
 
   useEffect(() => {
     const fetchAttributes = async () => {
@@ -68,72 +57,72 @@ const Bitcoin: React.FC = () => {
     }
   }, [bitcoinAddress]);
 
-  useEffect(() => {
-    const fetchFeeRate = async () => {
-      try {
-        const res = await fetch('https://mempool.space/api/v1/fees/recommended');
-        const data = await res.json();
-        setFeeRate(data.fastestFee); // Use the fastest fee rate for the example
-      } catch (error) {
-        console.error('Error fetching fee rate:', error);
-        setFeeRate(10); // Fallback to 10 satoshis per byte if the fetch fails
-      }
-    };
-    fetchFeeRate();
-  }, []);
+  // useEffect(() => {
+  //   const fetchFeeRate = async () => {
+  //     try {
+  //       const res = await fetch('https://mempool.space/api/v1/fees/recommended');
+  //       const data = await res.json();
+  //       setFeeRate(data.fastestFee); // Use the fastest fee rate for the example
+  //     } catch (error) {
+  //       console.error('Error fetching fee rate:', error);
+  //       setFeeRate(10); // Fallback to 10 satoshis per byte if the fetch fails
+  //     }
+  //   };
+  //   fetchFeeRate();
+  // }, []);
 
-  const sendBitcoin = async () => {
-    if (!bitcoinAddress || !bitcoinPrivateKey) {
-      alert('Please sign in to send Bitcoin.');
-      return;
-    }
+  // const sendBitcoin = async () => {
+  //   if (!bitcoinAddress || !bitcoinPrivateKey) {
+  //     alert('Please sign in to send Bitcoin.');
+  //     return;
+  //   }
 
-    const minAmount = 0.0001; // Minimum amount in BTC (0.0001 BTC)
+  //   const minAmount = 0.0001; // Minimum amount in BTC (0.0001 BTC)
 
-    if (parseFloat(amount) < minAmount) {
-      alert(`The amount is too low. Minimum amount is ${minAmount} BTC.`);
-      return;
-    }
+  //   if (parseFloat(amount) < minAmount) {
+  //     alert(`The amount is too low. Minimum amount is ${minAmount} BTC.`);
+  //     return;
+  //   }
 
-    try {
-      const amountInSatoshis = Math.round(parseFloat(amount) * 100000000); // Convert amount to satoshis
-      const transactionSize = 100; // Estimate of transaction size in bytes
-      const fee = transactionSize * feeRate;
-      const totalAmount = amountInSatoshis + fee;
+  //   try {
+  //     const amountInSatoshis = Math.round(parseFloat(amount) * 100000000); // Convert amount to satoshis
+  //     const transactionSize = 100; // Estimate of transaction size in bytes
+  //     const fee = transactionSize * feeRate;
+  //     const totalAmount = amountInSatoshis + fee;
 
-      console.log('Amount:', amountInSatoshis, 'satoshis');
-      console.log('Fee:', fee, 'satoshis');
-      console.log('Total amount needed:', totalAmount, 'satoshis');
-      console.log('Balance:', balance, 'satoshis');
+  //     console.log('Amount:', amountInSatoshis, 'satoshis');
+  //     console.log('Fee:', fee, 'satoshis');
+  //     console.log('Total amount needed:', totalAmount, 'satoshis');
+  //     console.log('Balance:', balance, 'satoshis');
 
-      if (balance === null || totalAmount > balance) {
-        alert('Insufficient balance to cover the amount and the fee.');
-        return;
-      }
+  //     if (balance === null || totalAmount > balance) {
+  //       alert('Insufficient balance to cover the amount and the fee.');
+  //       return;
+  //     }
 
-      const res = await fetch('/api/transaction', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          senderPrivateKey: bitcoinPrivateKey,
-          recipientAddress,
-          amount: amountInSatoshis,
-          fee,
-        }),
-      });
+  //     const res = await fetch('/api/transaction', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({
+  //         senderPrivateKey: bitcoinPrivateKey,
+  //         recipientAddress,
+  //         amount: amountInSatoshis,
+  //         fee,
+  //       }),
+  //     });
 
-      const data = await res.json();
-      if (res.ok) {
-        alert(`Transaction sent successfully! TX ID: ${data.txId}`);
-      } else {
-        console.error('Response data on error:', data);
-        alert(`Error: ${data.error}`);
-      }
-    } catch (error) {
-      console.error('Error in sending transaction:', error);
-      alert('An unknown error occurred');
-    }
-  };
+  //     const data = await res.json();
+  //     if (res.ok) {
+  //       alert(`Transaction sent successfully! TX ID: ${data.txId}`);
+  //     } else {
+  //       console.error('Response data on error:', data);
+  //       alert(`Error: ${data.error}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error in sending transaction:', error);
+  //     alert('An unknown error occurred');
+  //   }
+  // };
 
   const formatBalance = (balanceInSatoshis: number | null) => {
     if (balanceInSatoshis === null) return 'Loading...';
@@ -142,119 +131,119 @@ const Bitcoin: React.FC = () => {
     return balanceInBTC.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
   };
 
-  const fetchBankAccountStatus = async () => {
-    try {
-      const res = await fetch(`/api/fetch-bank-account?email=${email}`);
-      const data = await res.json();
-      setBankAccount(data.bankAccount || '');
-    } catch (error) {
-      console.error('Error fetching bank account status:', error);
-    }
-  };
+  // const fetchBankAccountStatus = async () => {
+  //   try {
+  //     const res = await fetch(`/api/fetch-bank-account?email=${email}`);
+  //     const data = await res.json();
+  //     setBankAccount(data.bankAccount || '');
+  //   } catch (error) {
+  //     console.error('Error fetching bank account status:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchBankAccountStatus();
-  }, [email]);
+  // useEffect(() => {
+  //   fetchBankAccountStatus();
+  // }, [email]);
 
-  const createLinkToken = async () => {
-    if (email) {
-      try {
-        const res = await fetch('/api/create-link-token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-        if (!res.ok) {
-          throw new Error(`Error creating link token: ${res.statusText}`);
-        }
-        const data = await res.json();
-        setLinkToken(data.link_token);
-        console.log('Link token fetched from API:', data.link_token);
-      } catch (error: any) {
-        console.error('Error creating link token:', error);
-        setError('Failed to create link token');
-      }
-    }
-  };
+  // const createLinkToken = async () => {
+  //   if (email) {
+  //     try {
+  //       const res = await fetch('/api/create-link-token', {
+  //         method: 'POST',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify({ email }),
+  //       });
+  //       if (!res.ok) {
+  //         throw new Error(`Error creating link token: ${res.statusText}`);
+  //       }
+  //       const data = await res.json();
+  //       setLinkToken(data.link_token);
+  //       console.log('Link token fetched from API:', data.link_token);
+  //     } catch (error: any) {
+  //       console.error('Error creating link token:', error);
+  //       setError('Failed to create link token');
+  //     }
+  //   }
+  // };
 
-  const connectBank = async () => {
-    if (!bankAccount) {
-      await createLinkToken();
-    }
-  };
+  // const connectBank = async () => {
+  //   if (!bankAccount) {
+  //     await createLinkToken();
+  //   }
+  // };
 
-  useEffect(() => {
-    const initializePlaidLink = () => {
-      if (linkToken) {
-        const handler = (window as any).Plaid.create({
-          token: linkToken,
-          onSuccess: async (public_token: string, metadata: any) => {
-            console.log('Public Token:', public_token);
+  // useEffect(() => {
+  //   const initializePlaidLink = () => {
+  //     if (linkToken) {
+  //       const handler = (window as any).Plaid.create({
+  //         token: linkToken,
+  //         onSuccess: async (public_token: string, metadata: any) => {
+  //           console.log('Public Token:', public_token);
 
-            // Set bankAccount to public_token
-            setBankAccount(public_token);
+  //           // Set bankAccount to public_token
+  //           setBankAccount(public_token);
 
-            // Update the bank account attribute with the public_token
-            await fetch('/api/update-bank-account', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email, bankAccount: public_token }),
-            });
+  //           // Update the bank account attribute with the public_token
+  //           await fetch('/api/update-bank-account', {
+  //             method: 'POST',
+  //             headers: { 'Content-Type': 'application/json' },
+  //             body: JSON.stringify({ email, bankAccount: public_token }),
+  //           });
 
-            // Fetch the updated bank account status
-            fetchBankAccountStatus();
-          },
-          onExit: (err: any, metadata: any) => {
-            // Open blank out back Modal here
-          },
-          onEvent: (eventName: string, metadata: any) => {
-            // handle event
-          }
-        });
-        handler.open();
-      }
-    };
+  //           // Fetch the updated bank account status
+  //           fetchBankAccountStatus();
+  //         },
+  //         onExit: (err: any, metadata: any) => {
+  //           // Open blank out back Modal here
+  //         },
+  //         onEvent: (eventName: string, metadata: any) => {
+  //           // handle event
+  //         }
+  //       });
+  //       handler.open();
+  //     }
+  //   };
 
-    if (!bankAccount && linkToken) {
-      initializePlaidLink();
-    }
-  }, [linkToken, bankAccount]);
+  //   if (!bankAccount && linkToken) {
+  //     initializePlaidLink();
+  //   }
+  // }, [linkToken, bankAccount]);
 
 
 
-  const [result, setResult] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [result, setResult] = useState<any>(null);
+  // const [loading, setLoading] = useState<boolean>(false);
 
-  const calculateBitcoinAmount = (dollarAmount: string) => {
-    if (bitcoinPrice === null || dollarAmount === '') return '';
-    const amountInBTC = parseFloat(dollarAmount) / bitcoinPrice;
-    return amountInBTC.toFixed(8); // 8 decimal places for Bitcoin
-  };
+  // const calculateBitcoinAmount = (dollarAmount: string) => {
+  //   if (bitcoinPrice === null || dollarAmount === '') return '';
+  //   const amountInBTC = parseFloat(dollarAmount) / bitcoinPrice;
+  //   return amountInBTC.toFixed(8); // 8 decimal places for Bitcoin
+  // };
 
-  const handleKrakenAPI = async (type: 'buy' | 'sell') => {
-    const volume = calculateBitcoinAmount(dollarAmount);
-    if (volume === '') {
-      setKrakenError('Invalid dollar amount');
-      return;
-    }
+  // const handleKrakenAPI = async (type: 'buy' | 'sell') => {
+  //   const volume = calculateBitcoinAmount(dollarAmount);
+  //   if (volume === '') {
+  //     setKrakenError('Invalid dollar amount');
+  //     return;
+  //   }
   
-    setKrakenLoading(true);
-    setKrakenError(null);
+  //   setKrakenLoading(true);
+  //   setKrakenError(null);
   
-    try {
-      const response = await fetch('/api/kraken-api', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, volume }),
-      });
-      const data = await response.json();
-      setKrakenResult(data);
-    } catch (err) {
-      setKrakenError('Error executing Kraken API');
-    } finally {
-      setKrakenLoading(false);
-    }
-  };
+  //   try {
+  //     const response = await fetch('/api/kraken-api', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ type, volume }),
+  //     });
+  //     const data = await response.json();
+  //     setKrakenResult(data);
+  //   } catch (err) {
+  //     setKrakenError('Error executing Kraken API');
+  //   } finally {
+  //     setKrakenLoading(false);
+  //   }
+  // };
 
 
 
@@ -278,12 +267,12 @@ const Bitcoin: React.FC = () => {
 
   return (
     <div>
-      {/* <div>
+      <div>
         <p>Address</p>
         <p>{bitcoinAddress}</p>
         <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
         
-        <div>
+        {/* <div>
           <h2>Send Bitcoin</h2>
           <input
             type="text"
@@ -301,15 +290,15 @@ const Bitcoin: React.FC = () => {
           <br />
           <button onClick={sendBitcoin}>Send Bitcoin</button>
           {error && <p style={{ color: 'red' }}>{error}</p>}
-        </div>
-      </div> */}
+        </div> */}
+      </div>
   
 
-      <div>
+      {/* <div>
         <h2>Connect Bank</h2>
         <br />
         <button onClick={connectBank}>CONNECT BANK</button>
-      </div>
+      </div> */}
 
       {/* <div>
         <label>

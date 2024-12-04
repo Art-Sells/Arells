@@ -7,11 +7,12 @@
 ### Testing
 
 - Test Import (without HPM) Bitcoin to WBTC(Polygon POS), WBTC<-swap->USDC(Polygon POS). 
-- - Import (Polygon POS USDC wallet created in Cognito (when Import clicked)). Encrypt/Decrypt Wallet Key (like Bitcoin).
+- - Import (Polygon POS wallet created in Cognito (when Import clicked)). Encrypt/Decrypt Wallet Key (like Bitcoin).
 
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC trading/swapping based on MASS & FA(Fee Arbitration)
+- - Search if Polygon POS Wallet exists in Cognito, then Create Polygon POS wallet address (and encrypt key) (check MASSProvider for checking reference and SignUp.tsx for cognito reference and (decrypter) (add console.logs to ensure it decrypts the private key correctly))
 - - Import: BTC amount (imported and minted into WBTC) aBTC updated (not incremented) based on WBTC number. After this, then swapped immediatelly into USDC.
-- - MASSsmartContract:
+- - MASSsmartContract(WrapMassContractProvider):
 - - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
 - - - swapUSDCintoWBTC (amount taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC))
 - - - swapWBTCintoUSDC (amount taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC))
@@ -46,7 +47,7 @@
 - Work on making the Swapping system more efficient (aggregate all cVactTaa and cVactDa into a "listing system" so swapping doesn't occur multiple times from individual VatopGroups and happens only once per Bitcoin Price Change)
 
 ### Last Resort
-- Remove console.logs (and console.errors/warn) from all wrappers(userContext, HPMContext & MASSContext), hide "wallettester" and "hpmtester" from main
+- Remove console.logs (and console.errors/warn) from all wrappers(userContext, HPMContext & MASSContext), hide "masstester" "wallettester" and "hpmtester" from main
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages)
 
 

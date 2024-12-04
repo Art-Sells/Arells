@@ -8,6 +8,7 @@
       "strict": true,
       "skipLibCheck": true,
       "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
       "lib": [
         "dom",
         "dom.iterable",
@@ -33,7 +34,7 @@
       ".next/types/**/*.ts",
       "**/*.ts",
       "**/*.tsx"
-    ],
+, "test/index.js"    ],
     "exclude": [
       "node_modules"
     ]
