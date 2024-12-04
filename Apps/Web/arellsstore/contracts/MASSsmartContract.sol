@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract TokenSwapper {
+contract MASSsmartContract {
     address public owner;
     ERC20 public wbtc;
     ERC20 public usdc;

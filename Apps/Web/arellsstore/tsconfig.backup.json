@@ -34,7 +34,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "test/index.ts", 
+    "test/index.js", 
     "contracts/**/*.sol", 
     "scripts/**/*.js"
   ],

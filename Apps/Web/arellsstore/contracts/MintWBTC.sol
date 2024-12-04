@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract WBTC is ERC20 {
+contract aBTC is ERC20 {
     address public owner;
 
-    constructor() ERC20("Wrapped Bitcoin", "WBTC") {
+    constructor() ERC20("Wrapped Bitcoin as Arells Bitcoin", "WBTC~aBTC") {
         owner = msg.sender;
     }
 
