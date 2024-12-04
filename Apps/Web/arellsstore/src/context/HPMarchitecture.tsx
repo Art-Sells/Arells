@@ -637,6 +637,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           cVactTa: Math.max(group.cVactTa - sellBTC, 0),
           cVactDa: Math.max(group.cVactDa - sellBTC * group.cpVact, 0),
           cVactTaa: group.cVactTaa > 0 ? Math.max(group.cVactTa - sellBTC, 0) : 0,
+          cdVatop: parseFloat((group.cVact - group.cVatop).toFixed(2)), 
         };
       });
   
