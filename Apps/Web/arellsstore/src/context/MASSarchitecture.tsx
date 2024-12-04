@@ -53,12 +53,13 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       try {
         const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
         const fetchedVatopGroups = response.data.vatopGroups || [];
-        setVatopGroups(fetchedVatopGroups); // Only updates state, no filtering
+        setVatopGroups(fetchedVatopGroups);
       } catch (error) {
         console.error('Error fetching vatop groups:', error);
       }
     };
 
+    // Read vatopGroups every 10 seconds
     const intervalId = setInterval(fetchVatopGroups, 10000);
     fetchVatopGroups();
 
@@ -66,11 +67,47 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   }, [email]);
 
   const handleSwaps = (amount: number, swapType: 'USDCtoWBTC' | 'WBTCtoUSDC', group: VatopGroup) => {
+    const feeSpentPerGroup: Record<string, number> = {};
+    let currentCdVatop = group.cdVatop;
+    let currentCVact = group.cVact;
     const groupId = group.cpVatop;
 
-    console.log(
-      `Group ${groupId}: Running ${swapType} swap for amount $${amount}.`
-    );
+    // Calculate safeguard limit (retain 99.99% of initial cVact)
+    const minCVact = currentCVact * SAFEGUARD_THRESHOLD;
+
+    // Stop swaps if cVact drops below the safeguard limit
+    if (currentCVact < minCVact) {
+      console.log(`Group ${groupId}: Swaps paused. cVact dropped below safeguard limit ($${minCVact}).`);
+      return;
+    }
+
+    // Handle low cdVatop
+    if (currentCdVatop < 0.01) {
+      console.log(`Group ${groupId} has low cdVatop. Deducting fees from cVact.`);
+      const shortfall = 0.01 - currentCdVatop;
+
+      if (currentCVact >= shortfall) {
+        currentCVact -= shortfall;
+        console.log(`Group ${groupId}: Shortfall of $${shortfall} covered by cVact.`);
+      } else {
+        console.log(`Group ${groupId}: Insufficient cVact to cover shortfall. Skipping swap.`);
+        return;
+      }
+    }
+
+    // Deduct fees
+    if (currentCdVatop >= FEE_PER_SWAP) {
+      currentCdVatop -= FEE_PER_SWAP;
+      console.log(`Group ${groupId}: Fee of $${FEE_PER_SWAP} deducted from cdVatop.`);
+    } else if (currentCVact >= FEE_PER_SWAP) {
+      currentCVact -= FEE_PER_SWAP;
+      console.log(`Group ${groupId}: Fee of $${FEE_PER_SWAP} deducted from cVact.`);
+    } else {
+      console.log(`Group ${groupId}: Insufficient funds to cover fees. Skipping swap.`);
+      return;
+    }
+
+    console.log(`Group ${groupId}: Running ${swapType} swap for amount: $${amount}.`);
   };
 
   useEffect(() => {
@@ -91,17 +128,35 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
       if (group.cVactTaa > 0.00001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
         console.log(`Initiating USDC to WBTC swap for amount: ${group.cVactTaa}`);
-        handleSwaps(group.cVactTaa, 'USDCtoWBTC', group);
+        swapUSDCintoWBTC(group.cVactTaa, group);
       }
 
       if (group.cVactDa > 0.01 && (!prevGroup.cVactDa || group.cVactDa > prevGroup.cVactDa)) {
         console.log(`Initiating WBTC to USDC swap for amount: ${group.cVactDa}`);
-        handleSwaps(group.cVactDa, 'WBTCtoUSDC', group);
+        swapWBTCintoUSDC(group.cVactDa, group);
       }
     });
 
-    setPrevVatopGroups([...vatopGroups]); // Only for comparison, no modifications
+    setPrevVatopGroups([...vatopGroups]);
   }, [vatopGroups]);
+
+  const swapUSDCintoWBTC = async (amount: number, group: VatopGroup) => {
+    if (amount <= 0) {
+      console.log('Swap amount must be greater than 0. Skipping swap.');
+      return;
+    }
+    console.log(`Swapping ${amount} USDC to WBTC`);
+    handleSwaps(amount, 'USDCtoWBTC', group);
+  };
+
+  const swapWBTCintoUSDC = async (amount: number, group: VatopGroup) => {
+    if (amount <= 0) {
+      console.log('Swap amount must be greater than 0. Skipping swap.');
+      return;
+    }
+    console.log(`Swapping ${amount} WBTC to USDC`);
+    handleSwaps(amount, 'WBTCtoUSDC', group);
+  };
 
   return (
     <MASSarchitecture.Provider value={{ cVactTaa: 0, cVactDa: 0 }}>

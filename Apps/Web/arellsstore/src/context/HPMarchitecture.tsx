@@ -219,10 +219,11 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     email: string
   ) => {
     const processedGroups = updatedGroups.map((group) => {
+      
       const newCpVact = Math.max(group.cpVact, newBitcoinPrice);
       const newCVact = group.cVactTa * newCpVact;
-      const newCVactTaa = newBitcoinPrice >= newCpVact ? group.cVactTa : 0;
-      const newCVactDa = newBitcoinPrice < newCpVact ? newCVact : 0;
+      const newCVactTaa = Math.round(newBitcoinPrice) >= Math.round(newCpVact) ? group.cVactTa : 0; // Round newPrice and newCpVact for comparison
+      const newCVactDa = Math.round(newBitcoinPrice) < Math.round(newCpVact) ? newCVact : 0; // Round newPrice and newCpVact for comparison
   
       return {
         ...group,
@@ -266,8 +267,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedGroups = vatopGroups.map((group) => {
       const newCpVact = Math.max(group.cpVact, newPrice); // Ensure cpVact only increases
       const newCVact = group.cVactTa * newCpVact; // Update cVact
-      const newCVactTaa = newPrice >= newCpVact ? group.cVactTa : 0; // cVactTaa logic
-      const newCVactDa = newPrice < newCpVact ? newCVact : 0; // cVactDa logic
+      const newCVactTaa = Math.round(newPrice) >= Math.round(newCpVact) ? group.cVactTa : 0; // Round newPrice and newCpVact for comparison
+      const newCVactDa = Math.round(newPrice) < Math.round(newCpVact) ? newCVact : 0; // Round newPrice and newCpVact for comparison
       const newCdVatop = newCVact - group.cVatop; // Recalculate cdVatop
   
       return {
