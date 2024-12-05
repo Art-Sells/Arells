@@ -21,8 +21,14 @@
     "allowJs": true,
     "typeRoots": [
       "./types",
-      "./node_modules/@types"
+      "./node_modules/@types",
+            "./node_modules/@nomicfoundation/hardhat-ethers/src"
     ],
+    "paths": {
+      "ethers": [
+        "./node_modules/ethers/lib.esm/index.d.ts",
+      ],
+    },
     "plugins": [
       {
         "name": "next"
@@ -34,7 +40,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "test/index.ts", 
+    "test/index.js", 
     "contracts/**/*.sol", 
     "scripts/**/*.js"
   ],

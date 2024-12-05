@@ -27,7 +27,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
   const [prevVatopGroups, setPrevVatopGroups] = useState<VatopGroup[]>([]);
 
-  const FEE_PER_SWAP = 0.00016; // $0.00016 per swap
+  const FEE_PER_SWAP = 0.00016; // $0.00016 per swap or GWEI (denominated from Price Oracle API)
   const MAX_FEE_PER_GROUP = 0.01; // Maximum fee per group before pausing swaps
   const SAFEGUARD_THRESHOLD = 0.9999; // Retain 99.99% of initial cVact
 
@@ -66,7 +66,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     return () => clearInterval(intervalId);
   }, [email]);
 
-  const handleSwaps = (amount: number, swapType: 'USDCtoWBTC' | 'WBTCtoUSDC', group: VatopGroup) => {
+  const handleSupplications = (amount: number, swapType: 'USDCtoWBTC' | 'WBTCtoUSDC', group: VatopGroup) => {
     const feeSpentPerGroup: Record<string, number> = {};
     let currentCdVatop = group.cdVatop;
     let currentCVact = group.cVact;
@@ -127,35 +127,35 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       const prevGroup = prevVatopGroups[index] || {};
 
       if (group.cVactTaa > 0.00001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
-        console.log(`Initiating USDC to WBTC swap for amount: ${group.cVactTaa}`);
-        swapUSDCintoWBTC(group.cVactTaa, group);
+        console.log(`Initiating USDC to WBTC supplication for amount: ${group.cVactTaa}`);
+        supplicateUSDCintoWBTC(group.cVactTaa, group);
       }
 
       if (group.cVactDa > 0.01 && (!prevGroup.cVactDa || group.cVactDa > prevGroup.cVactDa)) {
-        console.log(`Initiating WBTC to USDC swap for amount: ${group.cVactDa}`);
-        swapWBTCintoUSDC(group.cVactDa, group);
+        console.log(`Initiating WBTC to USDC supplication for amount: ${group.cVactDa}`);
+        supplicateWBTCintoUSDC(group.cVactDa, group);
       }
     });
 
     setPrevVatopGroups([...vatopGroups]);
   }, [vatopGroups]);
 
-  const swapUSDCintoWBTC = async (amount: number, group: VatopGroup) => {
+  const supplicateUSDCintoWBTC = async (amount: number, group: VatopGroup) => {
     if (amount <= 0) {
-      console.log('Swap amount must be greater than 0. Skipping swap.');
+      console.log('Supplication amount must be greater than 0. Skipping swap.');
       return;
     }
-    console.log(`Swapping ${amount} USDC to WBTC`);
-    handleSwaps(amount, 'USDCtoWBTC', group);
+    console.log(`Supplicating ${amount} USDC to WBTC`);
+    handleSupplications(amount, 'USDCtoWBTC', group);
   };
 
-  const swapWBTCintoUSDC = async (amount: number, group: VatopGroup) => {
+  const supplicateWBTCintoUSDC = async (amount: number, group: VatopGroup) => {
     if (amount <= 0) {
       console.log('Swap amount must be greater than 0. Skipping swap.');
       return;
     }
-    console.log(`Swapping ${amount} WBTC to USDC`);
-    handleSwaps(amount, 'WBTCtoUSDC', group);
+    console.log(`Supplicating ${amount} WBTC to USDC`);
+    handleSupplications(amount, 'WBTCtoUSDC', group);
   };
 
   return (

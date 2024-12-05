@@ -14,23 +14,36 @@ contract MASSsmartContract {
         usdc = ERC20(_usdc);
     }
 
-    function swapWBTCtoUSDC(uint256 amount) external {
-        require(wbtc.transferFrom(msg.sender, address(this), amount), "WBTC transfer failed");
-        uint256 usdcAmount = getUSDCEquivalent(amount);
-        usdc.transfer(msg.sender, usdcAmount);
+    event Supplicate(address indexed from, uint256 amount, string supplicateType);
+
+    function supplicateWBTCtoUSDC(uint256 usdcAmount, uint256 bitcoinPrice) external {
+        // Convert USDC amount to WBTC equivalent before proceeding
+        uint256 wbtcEquivalent = getWBTCEquivalent(usdcAmount, bitcoinPrice);
+        
+        require(wbtc.transferFrom(msg.sender, address(this), wbtcEquivalent), "WBTC transfer failed");
+        
+        usdc.transfer(msg.sender, usdcAmount); // Transfer the entered USDC amount
+        emit Supplicate(msg.sender, usdcAmount, "WBTC to USDC");
     }
 
-    function swapUSDCtoWBTC(uint256 amount) external {
-        require(usdc.transferFrom(msg.sender, address(this), amount), "USDC transfer failed");
-        uint256 wbtcAmount = getWBTCEquivalent(amount);
-        wbtc.transfer(msg.sender, wbtcAmount);
+    function supplicateUSDCtoWBTC(uint256 wbtcAmount, uint256 bitcoinPrice) external {
+        // Convert WBTC amount to USDC equivalent before proceeding
+        uint256 usdcEquivalent = getUSDCEquivalent(wbtcAmount, bitcoinPrice);
+        
+        require(usdc.transferFrom(msg.sender, address(this), usdcEquivalent), "USDC transfer failed");
+        
+        wbtc.transfer(msg.sender, wbtcAmount); // Transfer the entered WBTC amount
+        emit Supplicate(msg.sender, wbtcAmount, "USDC to WBTC");
     }
 
-    function getUSDCEquivalent(uint256 wbtcAmount) public pure returns (uint256) {
-        return wbtcAmount * 1000; // Example: 1 WBTC = 1000 USDC
+    function getUSDCEquivalent(uint256 wbtcAmount, uint256 bitcoinPrice) public pure returns (uint256) {
+        // Example: 1 WBTC * bitcoinPrice = USDC amount
+        return wbtcAmount * bitcoinPrice;
     }
 
-    function getWBTCEquivalent(uint256 usdcAmount) public pure returns (uint256) {
-        return usdcAmount / 1000; // Example: 1000 USDC = 1 WBTC
+    function getWBTCEquivalent(uint256 usdcAmount, uint256 bitcoinPrice) public pure returns (uint256) {
+        // Example: USDC amount / bitcoinPrice = 1 WBTC
+        require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
+        return usdcAmount / bitcoinPrice;
     }
 }
