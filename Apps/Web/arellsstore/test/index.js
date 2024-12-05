@@ -11,93 +11,108 @@ describe("MintWBTC and MASSsmartContract Tests", function () {
     [deployer] = await ethers.getSigners();
     console.log("Deployer Address:", deployer.address);
 
+    // Deploy aBTC Contract
     const MintWBTC = await ethers.getContractFactory("aBTC");
     mintWBTCContract = await MintWBTC.deploy();
     await mintWBTCContract.waitForDeployment();
     console.log("MintWBTC Contract Address:", mintWBTCContract.target);
 
+    // Deploy MASSsmartContract
     const MASSsmartContract = await ethers.getContractFactory("MASSsmartContract");
     massSmartContract = await MASSsmartContract.deploy(
-      mintWBTCContract.target,
-      mintWBTCContract.target
+      mintWBTCContract.target, // WBTC contract
+      mintWBTCContract.target // Mock USDC contract
     );
     await massSmartContract.waitForDeployment();
     console.log("MASSsmartContract Address:", massSmartContract.target);
 
-    bitcoinPrice = 60000; // Example price in USD
+    bitcoinPrice = 60000; // $60,000 in USD
 
-    // Mint initial balances
-    const initialBalance = ethers.parseUnits("100000", 18); // Increased mint amount for testing
-    await mintWBTCContract.mint(deployer.address, initialBalance);
-    await mintWBTCContract.mint(massSmartContract.target, initialBalance);
+    const initialBalance = BigInt(100) * BigInt(10 ** 8); // 100 BTC in Satoshis (100 * 10^8)
+    await mintWBTCContract.mint(initialBalance, 0n); // Mint to deployer
+    await mintWBTCContract.mint(initialBalance, 0n); // Mint to MASSsmartContract
   });
 
   describe("MintWBTC Contract", function () {
-    it("Should allow the owner to mint WBTC", async function () {
-      const mintAmount = ethers.parseUnits("5", 18);
-      const tx = await mintWBTCContract.mint(deployer.address, mintAmount);
-      const receipt = await tx.wait();
+    it("Should allow the owner to mint WBTC with valid parameters", async function () {
+      const arellsBTC = BigInt(0.00121 * 10 ** 8);  // Convert 0.00121 BTC to satoshis (121000 Satoshis)
+      const acVactTas = BigInt(0.00021 * 10 ** 8);   // Convert 0.00021 BTC to satoshis (21000 Satoshis)
+      const expectedMintAmount = arellsBTC - acVactTas;  // Expected mint amount in Satoshis
 
-      const event = receipt.logs.find(log => log.address === mintWBTCContract.target);
-      expect(event, "Transfer event not found").to.not.be.undefined;
+      console.log("Expected Mint Amount in Satoshis: ", expectedMintAmount.toString());
 
-      const transferEvent = mintWBTCContract.interface.parseLog(event);
-      expect(transferEvent.name).to.equal("Transfer");
-      expect(transferEvent.args.from).to.equal(ethers.ZeroAddress);
-      expect(transferEvent.args.to).to.equal(deployer.address);
-      expect(transferEvent.args.value.toString()).to.equal(mintAmount.toString());
+      const tx = await mintWBTCContract.mint(arellsBTC, acVactTas);
+      await tx.wait();
+
+      const totalMinted = await mintWBTCContract.totalMinted();
+      console.log("Total Minted: ", totalMinted.toString());
+
+      // Assert that the total minted matches the expected amount in Satoshis
+      expect(totalMinted.toString()).to.equal(expectedMintAmount.toString());
     });
 
-    it("Should not allow non-owner to mint WBTC", async function () {
-      const [_, nonOwner] = await ethers.getSigners();
-      const mintAmount = ethers.parseUnits("5", 18);
+    it("Should not allow minting if the amount to mint is below the threshold", async function () {
+      const arellsBTC = BigInt(0.00000001 * 10 ** 8);  // Below 0.00001 BTC (1 Satoshi)
+      const acVactTas = BigInt(0);
+
       await expect(
-        mintWBTCContract.connect(nonOwner).mint(nonOwner.address, mintAmount)
-      ).to.be.revertedWith("Only owner can mint");
+        mintWBTCContract.mint(arellsBTC, acVactTas)
+      ).to.be.revertedWith("Amount to mint is too small");
+    });
+
+    it("Should update total minted after minting", async function () {
+      const arellsBTC = BigInt(2 * 10 ** 8);  // 2 BTC in Satoshis
+      const acVactTas = BigInt(1 * 10 ** 8);  // 1 BTC in Satoshis
+      const expectedMintAmount = arellsBTC - acVactTas;
+
+      const initialTotalMinted = BigInt(await mintWBTCContract.totalMinted());
+      const tx = await mintWBTCContract.mint(arellsBTC, acVactTas);
+      await tx.wait();
+
+      const finalTotalMinted = BigInt(await mintWBTCContract.totalMinted());
+      expect(finalTotalMinted - initialTotalMinted).to.equal(expectedMintAmount);
     });
   });
 
   describe("MASSsmartContract Supplicating", function () {
+    before(async () => {
+      const initialBalance = 100n * 10n ** 8n;
+      await mintWBTCContract.mint(initialBalance, 0n);
+      await mintWBTCContract.mint(initialBalance, 0n);
+    });
+
     it("Should supplicate WBTC to USDC", async function () {
-      const supplicateAmount = ethers.parseUnits("1", 18);
+      const usdcAmount = BigInt(121202); // $1212.02 in cents
+      const wbtcAmount = (usdcAmount * 10n ** 8n) / BigInt(bitcoinPrice);
 
-      // Approve the MASSsmartContract to spend WBTC
-      await mintWBTCContract.approve(massSmartContract.target, supplicateAmount);
+      await mintWBTCContract.approve(massSmartContract.target, wbtcAmount);
 
-      // Perform the supplication
-      const tx = await massSmartContract.supplicateWBTCtoUSDC(supplicateAmount, bitcoinPrice);
+      const tx = await massSmartContract.supplicateWBTCtoUSDC(usdcAmount, bitcoinPrice);
       const receipt = await tx.wait();
 
-      // Locate the Supplicate event
-      const event = receipt.logs.find(log => log.address === massSmartContract.target);
+      const event = receipt.logs.find((log) => log.address === massSmartContract.target);
       expect(event, "Supplicate event not found").to.not.be.undefined;
 
-      const supplicateEvent = massSmartContract.interface.parseLog(event);
-      expect(supplicateEvent.name).to.equal("Supplicate");
-      expect(supplicateEvent.args.from).to.equal(deployer.address);
-      expect(supplicateEvent.args.amount.toString()).to.equal(supplicateAmount.toString());
-      expect(supplicateEvent.args.supplicateType).to.equal("WBTC to USDC");
+      const parsedEvent = massSmartContract.interface.parseLog(event);
+      expect(parsedEvent.args.amount.toString()).to.equal(usdcAmount.toString());
+      expect(parsedEvent.args.supplicateType).to.equal("WBTC to USDC");
     });
 
     it("Should supplicate USDC to WBTC", async function () {
-      const supplicateAmount = ethers.parseUnits("60000", 18); // Equivalent USDC for 1 WBTC at 60,000 price
+      const wbtcAmount = BigInt(50000000); // 0.5 BTC in satoshis
+      const usdcAmount = (wbtcAmount * BigInt(bitcoinPrice)) / 10n ** 8n;
 
-      // Approve the MASSsmartContract to spend USDC
-      await mintWBTCContract.approve(massSmartContract.target, supplicateAmount);
+      await mintWBTCContract.approve(massSmartContract.target, usdcAmount);
 
-      // Perform the supplication
-      const tx = await massSmartContract.supplicateUSDCtoWBTC(supplicateAmount, bitcoinPrice);
+      const tx = await massSmartContract.supplicateUSDCtoWBTC(wbtcAmount, bitcoinPrice);
       const receipt = await tx.wait();
 
-      // Locate the Supplicate event
-      const event = receipt.logs.find(log => log.address === massSmartContract.target);
+      const event = receipt.logs.find((log) => log.address === massSmartContract.target);
       expect(event, "Supplicate event not found").to.not.be.undefined;
 
-      const supplicateEvent = massSmartContract.interface.parseLog(event);
-      expect(supplicateEvent.name).to.equal("Supplicate");
-      expect(supplicateEvent.args.from).to.equal(deployer.address);
-      expect(supplicateEvent.args.amount.toString()).to.equal(supplicateAmount.toString());
-      expect(supplicateEvent.args.supplicateType).to.equal("USDC to WBTC");
+      const parsedEvent = massSmartContract.interface.parseLog(event);
+      expect(parsedEvent.args.amount.toString()).to.equal(wbtcAmount.toString());
+      expect(parsedEvent.args.supplicateType).to.equal("USDC to WBTC");
     });
   });
 });

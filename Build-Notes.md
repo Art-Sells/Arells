@@ -11,7 +11,7 @@
 
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC supplicating based on MASS & FA(Fee Arbitration)
 - - Search if Polygon POS Wallet exists in Cognito, then Create Polygon POS wallet address (and encrypt key) (check MASSProvider for checking reference and SignUp.tsx for cognito reference and (decrypter) (add console.logs to ensure it decrypts the private key correctly))
-- - Import: BTC amount (imported and minted into WBTC) aBTC updated (not incremented) based on WBTC number.
+- - Import: BTC amount (imported and minted into WBTC) aBTC updated (not incremented) based on BTC amount (look at handleImport function in amountToImport as referencce for mint(function)).
 - - MASSsmartContract(WrapMassContractProvider):
 - - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
 - - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC))

@@ -32,18 +32,17 @@ contract MASSsmartContract {
         
         require(usdc.transferFrom(msg.sender, address(this), usdcEquivalent), "USDC transfer failed");
         
-        wbtc.transfer(msg.sender, wbtcAmount); // Transfer the entered WBTC amount
         emit Supplicate(msg.sender, wbtcAmount, "USDC to WBTC");
+
+        require(wbtc.transfer(msg.sender, wbtcAmount), "WBTC transfer failed");
     }
 
     function getUSDCEquivalent(uint256 wbtcAmount, uint256 bitcoinPrice) public pure returns (uint256) {
-        // Example: 1 WBTC * bitcoinPrice = USDC amount
-        return wbtcAmount * bitcoinPrice;
+        return (wbtcAmount * bitcoinPrice) / 1e8; // 1 WBTC = 1e8 satoshis
     }
 
     function getWBTCEquivalent(uint256 usdcAmount, uint256 bitcoinPrice) public pure returns (uint256) {
-        // Example: USDC amount / bitcoinPrice = 1 WBTC
         require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
-        return usdcAmount / bitcoinPrice;
+        return (usdcAmount * 1e8) / bitcoinPrice; // Scale by 1e8 for WBTC decimals
     }
 }
