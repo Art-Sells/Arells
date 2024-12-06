@@ -17,7 +17,7 @@ const PrivacyPolicy: React.FC = () => {
          <strong>Jurisdictional Compliance</strong>: As an Arells user, you agree to follow the laws, rules, and regulations of your local and national jurisdictions. You acknowledge that it is your responsibility to ensure compliance with any relevant legal requirements in your area.
       </p>
       <p className="privacy-policy-text">
-         <strong>Financial Compliance</strong>: You understand that cryptocurrency marketplaces, as new financial innovative ecosystems, remain broadly unregulated in the United States and its jurisdictions. To maintain financial compliance with current United States laws, Arells reserves the right to pause, deny, or remove any user or transaction flagged as "non-compliant" or a "legal risk" by United States regulators.
+         <strong>Financial Compliance</strong>: You understand that cryptocurrency marketplaces, as new financial innovative ecosystems, remain broadly unregulated in the United States and global jurisdictions. To maintain financial compliance with current global laws, Arells reserves the right to pause, deny, or remove any user or transaction flagged as "non-compliant" or a "legal risk" by global regulators.
       </p>
       
       <h2 className="privacy-policy-subtitle">Data Collection and Use</h2>
