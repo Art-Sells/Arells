@@ -29,19 +29,18 @@ describe("MintWBTC and MASSsmartContract Tests", function () {
     bitcoinPrice = 60000; // $60,000 in USD
 
     // Mint initial balance (100 BTC in Satoshis)
-    const initialBalance = 100 * 1e8; // 100 BTC, scaled to Satoshis
+    const initialBalance = ethers.parseUnits("100", 8); // 100 BTC, scaled to 8 decimals
     await mintWBTCContract.mint(initialBalance, 0); // Mint to deployer
     await mintWBTCContract.mint(initialBalance, 0); // Mint to MASSsmartContract
   });
 
   describe("MintWBTC Contract", function () {
     it("Should allow the owner to mint WBTC with valid parameters", async function () {
-      // Directly use BTC, scale it to Satoshis by multiplying with 1e8
-      const arellsBTC = 0.00121 * 1e8;  // 0.00121 BTC in Satoshis (12100000 Satoshis)
-      const acVactTas = 0.00021 * 1e8;  // 0.00021 BTC in Satoshis (2100000 Satoshis)
-      const expectedMintAmount = arellsBTC - acVactTas;  // Expected mint amount in Satoshis
+      const arellsBTC = ethers.parseUnits("0.00121", 8);  // 0.00121 BTC in 8 decimals
+      const acVactTas = ethers.parseUnits("0.00021", 8);  // 0.00021 BTC in 8 decimals
+      const expectedMintAmount = arellsBTC.sub(acVactTas);  // Use the sub() method correctly on BigNumber
 
-      console.log("Expected Mint Amount in Satoshis: ", expectedMintAmount);
+      console.log("Expected Mint Amount in Satoshis: ", expectedMintAmount.toString());
 
       const tx = await mintWBTCContract.mint(arellsBTC, acVactTas);
       await tx.wait();
@@ -54,8 +53,8 @@ describe("MintWBTC and MASSsmartContract Tests", function () {
     });
 
     it("Should not allow minting if the amount to mint is below the threshold", async function () {
-      const arellsBTC = 0.00000001 * 1e8;  // Below 1 satoshi
-      const acVactTas = 0;
+      const arellsBTC = ethers.parseUnits("0.00000001", 8);  // Below 1 Satoshi
+      const acVactTas = ethers.parseUnits("0", 8);
 
       await expect(
         mintWBTCContract.mint(arellsBTC, acVactTas)
@@ -65,9 +64,9 @@ describe("MintWBTC and MASSsmartContract Tests", function () {
 
   describe("MASSsmartContract Supplicating", function () {
     before(async () => {
-      const initialBalance = 100n * 10n ** 8n;
-      await mintWBTCContract.mint(initialBalance, 0n);
-      await mintWBTCContract.mint(initialBalance, 0n);
+      const initialBalance = ethers.parseUnits("100", 8);  // 100 BTC in Satoshis
+      await mintWBTCContract.mint(initialBalance, 0); // Mint to deployer
+      await mintWBTCContract.mint(initialBalance, 0); // Mint to MASSsmartContract
     });
 
     it("Should supplicate WBTC to USDC", async function () {
@@ -88,7 +87,7 @@ describe("MintWBTC and MASSsmartContract Tests", function () {
     });
 
     it("Should supplicate USDC to WBTC", async function () {
-      const wbtcAmount = BigInt(50000000); // 0.5 BTC in satoshis
+      const wbtcAmount = ethers.parseUnits("0.5", 8); // 0.5 BTC in satoshis
       const usdcAmount = (wbtcAmount * BigInt(bitcoinPrice)) / 10n ** 8n;
 
       await mintWBTCContract.approve(massSmartContract.target, usdcAmount);

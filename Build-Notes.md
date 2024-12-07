@@ -14,8 +14,8 @@
 - - Import: BTC amount (imported and minted into WBTC) aBTC updated (not incremented) based on BTC amount (look at handleImport function in amountToImport as referencce for mint(function)).
 - - MASSsmartContract(WrapMassContractProvider):
 - - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
-- - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC))
-- - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC))
+- - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC)) ***Might need to convert it into Sats before swap (look at test/index.js for refference)***
+- - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Might need to convert it into Sats before swap (look at test/index.js for refference)***
 - - - When swap initiated, subtract (PolygonPOS)swapping fee (same as handleSell function but without incrementing into “soldAmounts”) from cVact (show HPMContext and MASSsmartContract to GPT for help)
 - - - if cVactDa < $0.01, cancel (exit) MASS
 
@@ -227,6 +227,7 @@
 
 ### Important:
 - Why do we need Stripe and Plaid? Can't we build our own internal (Buying(with Debit Cards) & Selling (with Bank Account#/Routing#) system)?
+- - If this sytem can be built without relying on them, then completely omit all the environment variables and APIs
 - Update Blockchain.info API to Amplify (IP) API
 - Emails (Bitcoin Available to Sell)
 - Resolve "HPMContext" errors that show "cannot find email, Error fetching Bitcoin Price, etc etc" from console.log if pages don't need them...
