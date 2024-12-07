@@ -226,6 +226,7 @@
 ## Arells 2 & Beyond
 
 ### Important:
+- Why do we need Stripe and Plaid? Can't we build our own internal (Buying(with Debit Cards) & Selling (with Bank Account#/Routing#) system)?
 - Update Blockchain.info API to Amplify (IP) API
 - Emails (Bitcoin Available to Sell)
 - Resolve "HPMContext" errors that show "cannot find email, Error fetching Bitcoin Price, etc etc" from console.log if pages don't need them...
