@@ -1,106 +1,211 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("MintWBTC and MASSsmartContract Tests", function () {
-  let mintWBTCContract;
+// Helper functions for formatting
+const formatUSDC = (cents) => {
+  const dollars = (cents / 100).toFixed(2);
+  return dollars.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+const formatWBTC = (sats) => {
+  return (sats / 1e8).toFixed(6);
+};
+
+describe("MASSsmartContract Tests", function () {
   let massSmartContract;
-  let deployer;
-  let bitcoinPrice;
+  let user1, user2, user3;
+  let usdcAddressUser1, usdcAddressUser2;
+  const bitcoinPrice = 60000; // Bitcoin price for testing
 
   before(async () => {
-    [deployer] = await ethers.getSigners();
-    console.log("Deployer Address:", deployer.address);
+    [user1, user2, user3] = await ethers.getSigners();
 
-    // Deploy aBTC Contract
-    const MintWBTC = await ethers.getContractFactory("aBTC");
-    mintWBTCContract = await MintWBTC.deploy();
-    await mintWBTCContract.waitForDeployment();
-    console.log("MintWBTC Contract Address:", mintWBTCContract.target);
+    console.log("User1 Address:", user1.address);
+    console.log("User2 Address:", user2.address);
+    console.log("User3 Address:", user3.address);
 
     // Deploy MASSsmartContract
-    const MASSsmartContract = await ethers.getContractFactory("MASSsmartContract");
-    massSmartContract = await MASSsmartContract.deploy(
-      mintWBTCContract.target, // WBTC contract
-      mintWBTCContract.target // Mock USDC contract
-    );
+    const MassSmartContract = await ethers.getContractFactory("MASSsmartContract");
+    massSmartContract = await MassSmartContract.deploy();
     await massSmartContract.waitForDeployment();
-    console.log("MASSsmartContract Address:", massSmartContract.target);
 
-    bitcoinPrice = 60000; // $60,000 in USD
+    console.log("Contract Deployed at:", massSmartContract.target);
 
-    // Mint initial balance (100 BTC in Satoshis)
-    const initialBalance = ethers.parseUnits("100", 8); // 100 BTC, scaled to 8 decimals
-    await mintWBTCContract.mint(initialBalance, 0); // Mint to deployer
-    await mintWBTCContract.mint(initialBalance, 0); // Mint to MASSsmartContract
+    // Simulate separate USDC addresses for each user
+    usdcAddressUser1 = ethers.Wallet.createRandom().address;
+    usdcAddressUser2 = ethers.Wallet.createRandom().address;
+
+    console.log("User1 USDC Address:", usdcAddressUser1);
+    console.log("User2 USDC Address:", usdcAddressUser2);
   });
 
-  describe("MintWBTC Contract", function () {
-    it("Should allow the owner to mint WBTC with valid parameters", async function () {
-      const arellsBTC = ethers.parseUnits("0.00121", 8);  // 0.00121 BTC in 8 decimals
-      const acVactTas = ethers.parseUnits("0.00021", 8);  // 0.00021 BTC in 8 decimals
-      const expectedMintAmount = arellsBTC.sub(acVactTas);  // Use the sub() method correctly on BigNumber
-
-      console.log("Expected Mint Amount in Satoshis: ", expectedMintAmount.toString());
-
-      const tx = await mintWBTCContract.mint(arellsBTC, acVactTas);
-      await tx.wait();
-
-      const totalMinted = await mintWBTCContract.balanceOf(deployer.address);
-      console.log("Deployer Balance after minting: ", totalMinted.toString());
-
-      // Assert that the total minted matches the expected amount
-      expect(totalMinted.toString()).to.equal(expectedMintAmount.toString());
+  describe("createMASS", function () {
+    it("Should allow User1 to create MASS", async function () {
+      await massSmartContract.connect(user1).createMASS(usdcAddressUser1);
+  
+      const storedUsdcUser1 = await massSmartContract.userToUsdcAddress(user1.address);
+      console.log("User1 Stored USDC Address:", storedUsdcUser1);
+  
+      expect(storedUsdcUser1).to.equal(usdcAddressUser1);
     });
-
-    it("Should not allow minting if the amount to mint is below the threshold", async function () {
-      const arellsBTC = ethers.parseUnits("0.00000001", 8);  // Below 1 Satoshi
-      const acVactTas = ethers.parseUnits("0", 8);
-
+  
+    it("Should revert if MASS is already created by User1", async function () {
       await expect(
-        mintWBTCContract.mint(arellsBTC, acVactTas)
-      ).to.be.revertedWith("Amount to mint is too small");
+        massSmartContract.connect(user1).createMASS(usdcAddressUser1)
+      ).to.be.revertedWith("MASS already created by this user");
+    });
+  
+    it("Should allow User2 to create MASS", async function () {
+      await massSmartContract.connect(user2).createMASS(usdcAddressUser2);
+  
+      const storedUsdcUser2 = await massSmartContract.userToUsdcAddress(user2.address);
+      console.log("User2 Stored USDC Address:", storedUsdcUser2);
+  
+      expect(storedUsdcUser2).to.equal(usdcAddressUser2);
+    });
+  
+    it("Should revert if MASS is already created by User2", async function () {
+      await expect(
+        massSmartContract.connect(user2).createMASS(usdcAddressUser2)
+      ).to.be.revertedWith("MASS already created by this user");
     });
   });
 
-  describe("MASSsmartContract Supplicating", function () {
-    before(async () => {
-      const initialBalance = ethers.parseUnits("100", 8);  // 100 BTC in Satoshis
-      await mintWBTCContract.mint(initialBalance, 0); // Mint to deployer
-      await mintWBTCContract.mint(initialBalance, 0); // Mint to MASSsmartContract
+  describe("Minting WBTC by Multiple Users", function () {
+    it("Should allow User1 to mint WBTC", async function () {
+      const aBTC = 40000000; // 0.4 BTC in Satoshis
+      const acVactTas = 20000000; // 0.2 BTC in Satoshis
+      const expectedMintAmount = aBTC - acVactTas;
+
+      await massSmartContract.connect(user1).mint(aBTC, acVactTas);
+
+      const user1Balance = await massSmartContract.balances(user1.address);
+      console.log("User1 Balance After Minting:", formatWBTC(user1Balance.toString()), "BTC");
+
+      expect(user1Balance.toString()).to.equal(expectedMintAmount.toString());
     });
 
-    it("Should supplicate WBTC to USDC", async function () {
-      const usdcAmount = 121202n; // $1212.02 in cents
-      const wbtcAmount = (usdcAmount * 10n ** 8n) / BigInt(bitcoinPrice);
+    it("Should allow User2 to mint WBTC", async function () {
+      const aBTC = 15000000; // 0.15 BTC in Satoshis
+      const acVactTas = 5000000; // 0.05 BTC in Satoshis
+      const expectedMintAmount = aBTC - acVactTas;
 
-      await mintWBTCContract.approve(massSmartContract.target, wbtcAmount);
+      await massSmartContract.connect(user2).mint(aBTC, acVactTas);
 
-      const tx = await massSmartContract.supplicateWBTCtoUSDC(usdcAmount, bitcoinPrice);
-      const receipt = await tx.wait();
+      const user2Balance = await massSmartContract.balances(user2.address);
+      console.log("User2 Balance After Minting:", formatWBTC(user2Balance.toString()), "BTC");
 
-      const event = receipt.logs.find((log) => log.address === massSmartContract.target);
-      expect(event, "Supplicate event not found").to.not.be.undefined;
-
-      const parsedEvent = massSmartContract.interface.parseLog(event);
-      expect(parsedEvent.args.amount.toString()).to.equal(usdcAmount.toString());
-      expect(parsedEvent.args.supplicateType).to.equal("WBTC to USDC");
+      expect(user2Balance.toString()).to.equal(expectedMintAmount.toString());
     });
+  });
 
-    it("Should supplicate USDC to WBTC", async function () {
-      const wbtcAmount = ethers.parseUnits("0.5", 8); // 0.5 BTC in satoshis
-      const usdcAmount = (wbtcAmount * BigInt(bitcoinPrice)) / 10n ** 8n;
-
-      await mintWBTCContract.approve(massSmartContract.target, usdcAmount);
-
-      const tx = await massSmartContract.supplicateUSDCtoWBTC(wbtcAmount, bitcoinPrice);
-      const receipt = await tx.wait();
-
-      const event = receipt.logs.find((log) => log.address === massSmartContract.target);
-      expect(event, "Supplicate event not found").to.not.be.undefined;
-
-      const parsedEvent = massSmartContract.interface.parseLog(event);
-      expect(parsedEvent.args.amount.toString()).to.equal(wbtcAmount.toString());
-      expect(parsedEvent.args.supplicateType).to.equal("USDC to WBTC");
+  describe("Supplicating WBTC to USDC and USDC to WBTC for Multiple Users", function () {
+    it("Should allow User1 to supplicate WBTC to USDC first", async function () {
+      const usdcAmount = 112202; // $1122.02 x 100 (in cents)
+      const expectedWbtcEquivalent = Math.floor(((usdcAmount * 1e8) / 100) / bitcoinPrice);
+  
+      const initialWbtcBalance = await massSmartContract.balances(user1.address); // Satoshis
+      const initialUsdcBalance = await massSmartContract.balances(usdcAddressUser1); // Cents
+  
+      console.log("User1 Initial WBTC Balance:", formatWBTC(initialWbtcBalance.toString()), "BTC");
+      console.log("Expected WBTC Equivalent:", formatWBTC(expectedWbtcEquivalent.toString()), "BTC");
+      console.log("User1 Initial USDC Balance:", formatUSDC(initialUsdcBalance.toString()), "USD");
+  
+      await massSmartContract.connect(user1).supplicateWBTCtoUSDC(usdcAmount, bitcoinPrice);
+  
+      const finalWbtcBalance = await massSmartContract.balances(user1.address); // Satoshis
+      const finalUsdcBalance = await massSmartContract.balances(usdcAddressUser1); // Cents
+  
+      console.log("User1 Final WBTC Balance:", formatWBTC(finalWbtcBalance.toString()), "BTC");
+      console.log("User1 Final USDC Balance:", formatUSDC(finalUsdcBalance.toString()), "USD");
+  
+      expect(finalWbtcBalance.toString()).to.equal(
+        (BigInt(initialWbtcBalance) - BigInt(expectedWbtcEquivalent)).toString()
+      );
+      expect(finalUsdcBalance.toString()).to.equal(
+        (BigInt(initialUsdcBalance) + BigInt(usdcAmount)).toString()
+      );
+    });
+  
+    it("Should allow User2 to supplicate WBTC to USDC first", async function () {
+      const usdcAmount = 75000; // $750 x 100 (in cents)
+      const expectedWbtcEquivalent = Math.floor(((usdcAmount * 1e8) / 100) / bitcoinPrice);
+  
+      const initialWbtcBalance = await massSmartContract.balances(user2.address); // Satoshis
+      const initialUsdcBalance = await massSmartContract.balances(usdcAddressUser2); // Cents
+  
+      console.log("User2 Initial WBTC Balance:", formatWBTC(initialWbtcBalance.toString()), "BTC");
+      console.log("Expected WBTC Equivalent:", formatWBTC(expectedWbtcEquivalent.toString()), "BTC");
+      console.log("User2 Initial USDC Balance:", formatUSDC(initialUsdcBalance.toString()), "USD");
+  
+      await massSmartContract.connect(user2).supplicateWBTCtoUSDC(usdcAmount, bitcoinPrice);
+  
+      const finalWbtcBalance = await massSmartContract.balances(user2.address); // Satoshis
+      const finalUsdcBalance = await massSmartContract.balances(usdcAddressUser2); // Cents
+  
+      console.log("User2 Final WBTC Balance:", formatWBTC(finalWbtcBalance.toString()), "BTC");
+      console.log("User2 Final USDC Balance:", formatUSDC(finalUsdcBalance.toString()), "USD");
+  
+      expect(finalWbtcBalance.toString()).to.equal(
+        (BigInt(initialWbtcBalance) - BigInt(expectedWbtcEquivalent)).toString()
+      );
+      expect(finalUsdcBalance.toString()).to.equal(
+        (BigInt(initialUsdcBalance) + BigInt(usdcAmount)).toString()
+      );
+    });
+  
+    it("Should allow User1 to supplicate USDC to WBTC after", async function () {
+      const wbtcAmount = 500000; // 0.005 BTC in Satoshis
+      const expectedUsdcEquivalent = (wbtcAmount * bitcoinPrice * 100) / 1e8;
+  
+      const initialUsdcBalance = await massSmartContract.balances(usdcAddressUser1); // Cents
+      const initialWbtcBalance = await massSmartContract.balances(user1.address); // Satoshis
+  
+      console.log("User1 Initial USDC Balance:", formatUSDC(initialUsdcBalance.toString()), "USD");
+      console.log("Expected USDC Equivalent:", formatUSDC(expectedUsdcEquivalent.toString()), "USD");
+      console.log("User1 Initial WBTC Balance:", formatWBTC(initialWbtcBalance.toString()), "BTC");
+  
+      await massSmartContract.connect(user1).supplicateUSDCtoWBTC(wbtcAmount, bitcoinPrice);
+  
+      const finalUsdcBalance = await massSmartContract.balances(usdcAddressUser1); // Cents
+      const finalWbtcBalance = await massSmartContract.balances(user1.address); // Satoshis
+  
+      console.log("User1 Final USDC Balance:", formatUSDC(finalUsdcBalance.toString()), "USD");
+      console.log("User1 Final WBTC Balance:", formatWBTC(finalWbtcBalance.toString()), "BTC");
+  
+      expect(finalUsdcBalance.toString()).to.equal(
+        (BigInt(initialUsdcBalance) - BigInt(expectedUsdcEquivalent)).toString()
+      );
+      expect(finalWbtcBalance.toString()).to.equal(
+        (BigInt(initialWbtcBalance) + BigInt(wbtcAmount)).toString()
+      );
+    });
+  
+    it("Should allow User2 to supplicate USDC to WBTC after", async function () {
+      const wbtcAmount = 1000000; // 0.01 BTC in Satoshis
+      const expectedUsdcEquivalent = (wbtcAmount * bitcoinPrice * 100) / 1e8;
+  
+      const initialUsdcBalance = await massSmartContract.balances(usdcAddressUser2); // Cents
+      const initialWbtcBalance = await massSmartContract.balances(user2.address); // Satoshis
+  
+      console.log("User2 Initial USDC Balance:", formatUSDC(initialUsdcBalance.toString()), "USD");
+      console.log("Expected USDC Equivalent:", formatUSDC(expectedUsdcEquivalent.toString()), "USD");
+      console.log("User2 Initial WBTC Balance:", formatWBTC(initialWbtcBalance.toString()), "BTC");
+  
+      await massSmartContract.connect(user2).supplicateUSDCtoWBTC(wbtcAmount, bitcoinPrice);
+  
+      const finalUsdcBalance = await massSmartContract.balances(usdcAddressUser2); // Cents
+      const finalWbtcBalance = await massSmartContract.balances(user2.address); // Satoshis
+  
+      console.log("User2 Final USDC Balance:", formatUSDC(finalUsdcBalance.toString()), "USD");
+      console.log("User2 Final WBTC Balance:", formatWBTC(finalWbtcBalance.toString()), "BTC");
+  
+      expect(finalUsdcBalance.toString()).to.equal(
+        (BigInt(initialUsdcBalance) - BigInt(expectedUsdcEquivalent)).toString()
+      );
+      expect(finalWbtcBalance.toString()).to.equal(
+        (BigInt(initialWbtcBalance) + BigInt(wbtcAmount)).toString()
+      );
     });
   });
 });

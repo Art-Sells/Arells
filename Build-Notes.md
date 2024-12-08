@@ -11,11 +11,11 @@
 
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC supplicating based on MASS & FA(Fee Arbitration)
 - - Search if Polygon POS Wallet exists in Cognito, then Create Polygon POS wallet address (and encrypt key) (check MASSProvider for checking reference and SignUp.tsx for cognito reference and (decrypter) (add console.logs to ensure it decrypts the private key correctly))
-- - Import: BTC amount (imported and minted into WBTC) aBTC updated (not incremented) based on BTC amount (look at handleImport function in amountToImport as referencce for mint(function)).
+- - Import: BTC amount (imported and minted into WBTC) aBTC updated (not incremented) based on BTC amount (look at handleImport function in amountToImport as referencce for mint(function)) ***Multiply aBTC and acVactTas * 10000000 (or convert to SATS)  before import (look at test/index.js for refference)***
 - - MASSsmartContract(WrapMassContractProvider):
 - - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
-- - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC)) ***Might need to convert it into Sats before swap (look at test/index.js for refference)***
-- - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Might need to convert it into Sats before swap (look at test/index.js for refference)***
+- - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC)) ***Multiply cVactTaa * 10000000 (or convert to SATS) (look at test/index.js for reference)***
+- - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
 - - - When swap initiated, subtract (PolygonPOS)swapping fee (same as handleSell function but without incrementing into “soldAmounts”) from cVact (show HPMContext and MASSsmartContract to GPT for help)
 - - - if cVactDa < $0.01, cancel (exit) MASS
 
@@ -79,7 +79,9 @@
 
 
 
-## Arells 1.5 (Sell Bitcoin & Export USDC)
+## Arells 1.5 (Export BTC)
+
+**If initial Bitcoin amount is less than USDC amount, then "buy" equivalent BTC before exporting so for example: You start with 0.00121 BTC worth $200 when Bitcoin is at $60,000. To maintain the same value ($205), when the price of Bitcoin falls to $10,000, you buy Bitcoin using your $205 in USDC. At $10,000 per Bitcoin, you would get: $205 / $10,000 = 0.0205 BTC.**
 
 ### Testing
 - Sell Test (HPMContext)
