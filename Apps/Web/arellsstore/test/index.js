@@ -13,45 +13,49 @@ const formatWBTC = (sats) => {
 
 describe("MASSsmartContract Tests", function () {
   let massSmartContract;
-  let arellsInitial, user1, user2;
-  let bitcoinPrice = 60000;
+  let arellsWallet, user1, user2;
+  const bitcoinPrice = 60000;
 
   before(async () => {
-    // Get pre-funded test account
-    [arellsInitial] = await ethers.getSigners();
-  
-    console.log("ArellsInitial Address:", arellsInitial.address);
-  
+    // Create an Arells wallet and fund it
+    arellsWallet = ethers.Wallet.createRandom().connect(ethers.provider);
+    const [deployer] = await ethers.getSigners();
+
+    // Fund Arells wallet with MATIC
+    await deployer.sendTransaction({
+      to: arellsWallet.address,
+      value: ethers.parseEther("0.1"), // 0.1 MATIC
+    });
+
+    console.log("Arells Wallet Address:", arellsWallet.address);
+
     // Generate random wallets for User1 and User2
     user1 = ethers.Wallet.createRandom().connect(ethers.provider);
     user2 = ethers.Wallet.createRandom().connect(ethers.provider);
-  
+
     console.log("User1 Address:", user1.address);
     console.log("User1 Private Key:", user1.privateKey);
     console.log("User2 Address:", user2.address);
     console.log("User2 Private Key:", user2.privateKey);
-  
-    // Fund the random wallets from arellsInitial
-    const fundUser1Tx = await arellsInitial.sendTransaction({
-      to: user1.address, // Correct wallet address
-      value: ethers.parseEther("0.01"), // Fund with 0.01 MATIC
+
+    // Fund the random wallets from Arells wallet
+    await arellsWallet.sendTransaction({
+      to: user1.address,
+      value: ethers.parseEther("0.01"), // Fund User1
     });
-    await fundUser1Tx.wait();
-  
-    const fundUser2Tx = await arellsInitial.sendTransaction({
-      to: user2.address, // Correct wallet address
-      value: ethers.parseEther("0.01"), // Fund with 0.01 MATIC
+    await arellsWallet.sendTransaction({
+      to: user2.address,
+      value: ethers.parseEther("0.01"), // Fund User2
     });
-    await fundUser2Tx.wait();
-  
+
     console.log("User1 and User2 Wallets Funded with 0.01 MATIC Each");
-  
-    // Deploy the contract with the correct address parameter
+
+    // Deploy the smart contract
     const MassSmartContract = await ethers.getContractFactory("MASSsmartContract");
-    massSmartContract = await MassSmartContract.deploy(arellsInitial.address);
+    massSmartContract = await MassSmartContract.deploy();
     await massSmartContract.waitForDeployment();
-  
-    console.log("Contract Deployed at:", massSmartContract.target);
+
+    console.log("Contract Deployed at:", massSmartContract.address);
   });
 
   describe("createMASS", function () {

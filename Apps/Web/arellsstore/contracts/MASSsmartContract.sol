@@ -9,15 +9,9 @@ contract MASSsmartContract {
     uint256 public totalMinted;
     uint256 public constant MIN_MINT_THRESHOLD = 1; // 1 Satoshi
 
-    address public arellsInitial; // Address of the funding wallet
-
     event Supplicate(address indexed from, uint256 amount, string supplicateType);
     event Mint(address indexed to, uint256 amount);
     event MASSCreated(address indexed user, address usdcAddress);
-
-    constructor(address _arellsInitial) {
-        arellsInitial = _arellsInitial;
-    }
 
     function createMASS() external {
         require(userToUsdcAddress[msg.sender] == address(0), "MASS already created by this user");
@@ -68,7 +62,4 @@ contract MASSsmartContract {
         require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
         return ((usdcAmount * 1e8) / 100) / bitcoinPrice;
     }
-
-    // Allow ArellsInitial to fund this contract with MATIC
-    receive() external payable {}
 }
