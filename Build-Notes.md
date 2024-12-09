@@ -20,6 +20,9 @@
 - - - if cVactDa < $0.01, cancel (exit) MASS
 - Send 1 USDC to deployed Smart Contract Address
 
+### After Test
+- deploy to polygon mainnet and refactor hardhat config and signer.tsx
+
 
 ### Account
 - Set A/B (Wallet to load 3-4 seconds?)
@@ -28,7 +31,7 @@
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value
 
-#### Test Amplify/S3 Login
+#### After Completion: Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked!
 
 #### Metatags/ Description (Home)
