@@ -1,15 +1,13 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import CryptoJS from 'crypto-js';
-import  useSigner from '../../state/signer';
+import { useSigner } from '../../state/signer'; // Ensure correct path
 
 const MASSTester: React.FC = () => {
-  const { createMASSwallet, address } = useSigner();  // Access the context
+  const { createMASSwallet, address } = useSigner();
   const [balance, setBalance] = useState<number | null>(null);
   const [bitcoinAddress, setBitcoinAddress] = useState<string>('');
-  const [bitcoinPrivateKey, setBitcoinPrivateKey] = useState<string>('');
+  const [MASSAddress, setMASSAddress] = useState<string>(''); // Added state for MASSAddress
   const [email, setEmail] = useState<string>('');
 
   useEffect(() => {
@@ -19,20 +17,21 @@ const MASSTester: React.FC = () => {
         const emailAttribute = attributesResponse.email;
         const bitcoinAddressAttribute = attributesResponse['custom:bitcoinAddress'];
         const bitcoinPrivateKeyAttribute = attributesResponse['custom:bitcoinPrivateKey'];
+        const MASSAddressAttribute = attributesResponse['custom:MASSAddress']; // Fetching MASSAddress
+        const MASSPrivateKeyAttribute = attributesResponse['custom:MASSPrivateKey']; // Fetching MASSPrivateKey
 
         if (emailAttribute) setEmail(emailAttribute);
         if (bitcoinAddressAttribute) setBitcoinAddress(bitcoinAddressAttribute);
-        if (bitcoinPrivateKeyAttribute) {
-          const decryptedPrivateKey = CryptoJS.AES.decrypt(bitcoinPrivateKeyAttribute).toString(CryptoJS.enc.Utf8);
-          setBitcoinPrivateKey(decryptedPrivateKey);
-        }
+        if (MASSAddressAttribute) setMASSAddress(MASSAddressAttribute); // Setting MASSAddress
+
+        // Decryption or other secure handling of private keys would be done here if needed, not stored or logged
       } catch (error) {
         console.error('Error fetching user attributes:', error);
       }
     };
 
     fetchAttributes();
-  }, [setEmail, setBitcoinAddress, setBitcoinPrivateKey]);
+  }, []);
 
   useEffect(() => {
     if (bitcoinAddress) {
@@ -47,15 +46,14 @@ const MASSTester: React.FC = () => {
 
   const formatBalance = (balanceInSatoshis: number | null) => {
     if (balanceInSatoshis === null) return 'Loading...';
-    if (balanceInSatoshis === 0) return '0';
-    const balanceInBTC = balanceInSatoshis / 100000000;
-    return balanceInBTC.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
+    return (balanceInSatoshis / 100000000).toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
   };
 
   return (
     <div>
       <p>Email: {email}</p>
-      <p>Address: {bitcoinAddress}</p>
+      <p>Bitcoin Address: {bitcoinAddress}</p>
+      <p>MASS Address: {MASSAddress}</p> {/* Displaying the MASS address */}
       <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
       <button onClick={createMASSwallet}>Create MASSwallet</button>
       {address && <p>New MASSwallet Address: {address}</p>}

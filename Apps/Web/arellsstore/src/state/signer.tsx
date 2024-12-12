@@ -1,44 +1,41 @@
-"use client";
-
-import { ethers } from "hardhat";
+// Assuming these are already imported
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { ethers } from "ethers";
+import CryptoJS from 'crypto-js';
 
-type Wallet = InstanceType<typeof ethers.Wallet>; // Explicitly define Wallet type
+interface SignerContextType {
+    address: string;
+    privateKey: string;
+    createMASSwallet: () => Promise<void>;
+}
 
-const { Wallet, JsonRpcProvider } = require("ethers");
+const SignerContext = createContext<SignerContextType | undefined>(undefined);
 
-const RPC_URL = "https://polygon-amoy.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68";
-const provider = new JsonRpcProvider(RPC_URL);
+export const SignerProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+    const [address, setAddress] = useState("");
+    const [privateKey, setPrivateKey] = useState("");
 
-type SignerContextType = {
-    wallet?: Wallet;
-    address?: string;
-    createMASSwallet(): void;
-};
+    const createMASSwallet = async () => {
+        const newWallet = ethers.Wallet.createRandom();
+        const encryptedPrivateKey = CryptoJS.AES.encrypt(newWallet.privateKey, 'your-secret-key').toString();
+        setAddress(newWallet.address);
+        setPrivateKey(encryptedPrivateKey);
 
-const SignerContext = createContext<SignerContextType>({} as SignerContextType);
-
-const useSigner = () => useContext(SignerContext);
-
-export const SignerProvider = ({ children }: { children: ReactNode }) => {
-    const [wallet, setWallet] = useState<Wallet>();
-    const [address, setAddress] = useState<string>();
-
-    const createMASSwallet = () => {
-        const MASSwallet = Wallet.createRandom().connect(provider);
-        setWallet(MASSwallet);
-        setAddress(MASSwallet.address);
-
-        // Log the wallet address and private key
-        console.log("MASSwallet Address:", MASSwallet.address);
-        console.log("MASSwallet Private Key:", MASSwallet.privateKey);
+        // Optionally save wallet details using an API, etc.
+        // Logging the address and encrypted private key
+        console.log("New Wallet Address:", newWallet.address);
+        console.log("Encrypted Private Key:", encryptedPrivateKey);
     };
 
     return (
-        <SignerContext.Provider value={{ wallet, address, createMASSwallet }}>
+        <SignerContext.Provider value={{ address, privateKey, createMASSwallet }}>
             {children}
         </SignerContext.Provider>
     );
 };
 
-export default useSigner;
+export const useSigner = () => {
+    const context = useContext(SignerContext);
+    if (!context) throw new Error('useSigner must be used within a SignerProvider');
+    return context;
+};

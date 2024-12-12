@@ -8,6 +8,7 @@
 
 
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC supplicating based on MASS & FA(Fee Arbitration)
+- - - Create a createMASSusdc section that activates "createMASS" function from smartContract within the createMASS function and add a new body to create an address ansection where i can see MASS WBTC Wallet Balance (my wallet balance) (separate from Bitcoin Balance), and USDC Balance
 - - Search if Polygon POS Wallet exists in Cognito, then Create Polygon POS wallet address (and encrypt key) (check MASSProvider for checking reference and SignUp.tsx for cognito reference and (decrypter) (add console.logs to ensure it decrypts the private key correctly)) (automatically activates a "fund wallet" when "Import" clicked that pulls my Address and PrivateKey and funds a wallet 0.005 MATIC)
 - - Import: BTC amount (imported and minted into WBTC) aBTC updated (not incremented) based on BTC amount (look at handleImport function in amountToImport as referencce for mint(function)) ***Multiply aBTC and acVactTas * 10000000 (or convert to SATS)  before import (look at test/index.js for refference)*** if (Import dimensions are met, await the mint function to go through before completing import)
 - - MASSsmartContract(WrapMassContractProvider):
@@ -16,7 +17,7 @@
 - - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
 - - - When swap initiated, subtract (PolygonPOS)swapping fee (same as handleSell function but without incrementing into “soldAmounts”) from cVact (show HPMContext and MASSsmartContract to GPT for help)
 - - - if cVactDa < $0.01, cancel (exit) MASS
-- Send 1 USDC to deployed Smart Contract Address
+- Send 1 USDC to deployed Smart Contract Addresses
 
 ### After Test
 - deploy to polygon mainnet and refactor hardhat config and signer.tsx
@@ -235,6 +236,7 @@
 ## Arells 2 & Beyond
 
 ### Important:
+- Figure out way to save .JSON info into another very secure section (possibly offline for added security)
 - Why do we need Stripe and Plaid? Can't we build our own internal (Buying(with Debit Cards) & Selling (with Bank Account#/Routing#) system)?
 - - If this sytem can be built without relying on them, then completely omit all the environment variables and APIs
 - Update Blockchain.info API to Amplify (IP) API
