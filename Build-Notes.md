@@ -6,8 +6,6 @@
 
 ### Testing
 
-- Test Import (without HPM) Bitcoin to WBTC(Polygon POS), WBTC<-supplicate->USDC(Polygon POS). 
-- - Import (Polygon POS wallet created in Cognito (when Import clicked)). Encrypt/Decrypt Wallet Key (like Bitcoin).
 
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC supplicating based on MASS & FA(Fee Arbitration)
 - - Search if Polygon POS Wallet exists in Cognito, then Create Polygon POS wallet address (and encrypt key) (check MASSProvider for checking reference and SignUp.tsx for cognito reference and (decrypter) (add console.logs to ensure it decrypts the private key correctly)) (automatically activates a "fund wallet" when "Import" clicked that pulls my Address and PrivateKey and funds a wallet 0.005 MATIC)
@@ -88,6 +86,8 @@
 **If initial Bitcoin amount is less than USDC amount, then "buy" equivalent BTC before exporting so for example: You start with 0.00121 BTC worth $200 when Bitcoin is at $60,000. To maintain the same value ($205), when the price of Bitcoin falls to $10,000, you buy Bitcoin using your $205 in USDC. At $10,000 per Bitcoin, you would get: $205 / $10,000 = 0.0205 BTC.**
 
 ### Testing
+- Export Test (similar to sell except)
+- - if (cVactDa > 0.00) take Dollar difference from cpVact - bitcoinPrice and ensure this USDC amount is used to bridge to BTC and that amount it added to BTC address before exporting out (figure out how to ensure aBTC doesn't update from BTC since we'll be adding more BTC before exporting)
 - Sell Test (HPMContext)
 - - (start here first since taking from highest HPAP) if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).
 - - (if acVactTaa <= 0.00000, then else here) if acVactDas > 0.00, increment $sellAmount into soldAmounts(this is already baked into the HPM algorithm). Then initiate sellUSDC"Function"(from Smart Contract).
@@ -182,6 +182,9 @@
 
 
 ## Arells 1.7 (Export Bitcoin)
+
+### Email
+- Check "M-I" folder
 
 ### Testing
 - Test Export process... 
@@ -283,7 +286,7 @@
 - Change Bank Account (Plaid Connect? from Plaid Wrapper?) (long bank words have maximum display length of ?)
 
 ### Transactions
-- Add Imported
+- Add Importedx
 
 #### Misc
 - fix "bitcoinAmount" API misswording issue within Withdraw Amount JSON.
@@ -291,6 +294,9 @@
 
 ##### Home Page:
 10 years, 5 years, 1 year, 6 months, 90 days, 30 days, 7 days, 24 hours, 6 hours, 1 hours (load whichever time frame from 24 hours first, to 7 days, prioritize days then months then years in regards to the highest percentage increase).
+
+## HPM SDK
+- Free SDK for any developer to adopt and integrate into their financial and market based systems.
 
 ## Code Name: Project Omega
 
