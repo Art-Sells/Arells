@@ -32,6 +32,7 @@
 
 #### After Completion: Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked!
+- Delete MASS address info from MASStester
 
 #### Metatags/ Description (Home)
 - Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
