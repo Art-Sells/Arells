@@ -16,7 +16,7 @@
 - - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
 - - - When swap initiated, subtract (PolygonPOS)swapping fee (same as handleSell function but without incrementing into “soldAmounts”) from cVact (show HPMContext and MASSsmartContract to GPT for help)
 - if cVactDa < $0.01, cancel (exit) MASS
-- automatically activates a "fund wallet" when "Import (createMASS)" clicked that pulls my Address and PrivateKey and funds a wallet 0.005 MATIC (set console.logs for this)
+- automatically activates a "fund wallet" when "Import (createMASS)" clicked that pulls my Address and PrivateKey and funds a wallet 0.005 POL to each MASSaddress & MASSsuplicationAddress that are created (set console.logs for this)
 
 ### After Test
 - deploy to polygon mainnet and refactor hardhat config and signer.tsx

@@ -6,7 +6,7 @@ import { useSigner } from '../../state/signer'; // Ensure the correct path
 import CryptoJS from 'crypto-js';
 
 const MASSTester: React.FC = () => {
-  const { createMASSwallet, readMASSFile } = useSigner();
+  const { createMASSwallet, readMASSFile, fetchBalances } = useSigner();
   const [balance, setBalance] = useState<number | null>(null);
   const [bitcoinAddress, setBitcoinAddress] = useState<string>('');
   const [bitcoinPrivateKey, setBitcoinPrivateKey] = useState<string>('');
@@ -15,6 +15,17 @@ const MASSTester: React.FC = () => {
   const [MASSPrivateKey, setMASSPrivateKey] = useState<string>('');
   const [MASSSupplicationPrivateKey, setMASSSupplicationPrivateKey] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [balances, setBalances] = useState<{
+    WBTC: string;
+    USDC: string;
+    POL_MASS: string;
+    POL_SUPPLICATION: string;
+  }>({
+    WBTC: '0',
+    USDC: '0',
+    POL_MASS: '0',
+    POL_SUPPLICATION: '0',
+  });
 
   useEffect(() => {
     const fetchAttributesAndMASSDetails = async () => {
@@ -46,11 +57,35 @@ const MASSTester: React.FC = () => {
   }, [readMASSFile]);
 
   useEffect(() => {
+    const loadBalances = async () => {
+      try {
+        const fetchedBalances = await fetchBalances();
+        setBalances({
+          WBTC: fetchedBalances.WBTC,
+          USDC: fetchedBalances.USDC,
+          POL_MASS: fetchedBalances.POL, // POL balance for MASSAddress
+          POL_SUPPLICATION: fetchedBalances.POL_SUPPLICATION || '0', // POL balance for MASS Supplication Address
+        });
+      } catch (error) {
+        console.error('Error fetching balances:', error);
+      }
+    };
+
+    if (MASSAddress && MASSSupplicationAddress) {
+      loadBalances();
+    }
+  }, [fetchBalances, MASSAddress, MASSSupplicationAddress]);
+
+  useEffect(() => {
     if (bitcoinAddress) {
       const fetchBalance = async () => {
-        const res = await fetch(`/api/balance?address=${bitcoinAddress}`);
-        const data = await res.json();
-        setBalance(data);
+        try {
+          const res = await fetch(`/api/balance?address=${bitcoinAddress}`);
+          const data = await res.json();
+          setBalance(data);
+        } catch (error) {
+          console.error('Error fetching Bitcoin balance:', error);
+        }
       };
       fetchBalance();
     }
@@ -64,16 +99,26 @@ const MASSTester: React.FC = () => {
   return (
     <div>
       <p>Email: {email}</p>
+      <hr />
       <p>Bitcoin Address: {bitcoinAddress}</p>
       <p>Bitcoin Private Key: {bitcoinPrivateKey.substring(0, 5)}... (sensitive information displayed securely)</p>
+      <p>Bitcoin Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
+      <hr />
+      <button onClick={createMASSwallet}>Create MASSwallet</button>
       <p>MASS Address: {MASSAddress}</p>
       <p>MASS Private Key: {MASSPrivateKey.substring(0, 5)}... (sensitive information displayed securely)</p>
+      <br />
       <p>MASS Supplication Address: {MASSSupplicationAddress}</p>
       <p>MASS Supplication Private Key: {MASSSupplicationPrivateKey.substring(0, 5)}... (sensitive information displayed securely)</p>
-      <p>Balance: {balance !== null ? formatBalance(balance) : 'Loading...'} BTC</p>
-      <button onClick={createMASSwallet}>Create MASSwallet</button>
-      {MASSAddress && <p>New MASSwallet Address: {MASSAddress}</p>}
-      {MASSSupplicationAddress && <p>New MASS Supplication Address: {MASSSupplicationAddress}</p>}
+      <br />
+      <h2>Balances</h2>
+      <p><strong>MASS Address Balances:</strong></p>
+      <p>WBTC: {balances.WBTC} WBTC</p>
+      <p>POL: {balances.POL_MASS} POL</p>
+      <br />
+      <p><strong>MASS Supplication Address Balances:</strong></p>
+      <p>USDC: {balances.USDC} USDC</p>
+      <p>POL: {balances.POL_SUPPLICATION} POL</p>
     </div>
   );
 };
