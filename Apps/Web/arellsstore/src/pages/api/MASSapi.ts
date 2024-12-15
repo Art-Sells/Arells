@@ -1,11 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import * as bitcoin from "bitcoinjs-lib";
-import { loadTinySecp256k1 } from "../../lib/bitcoin"; // Adjust path to your bitcoin.ts
-import { createTransaction } from "../../lib/bitcoin"; // Adjust path to your bitcoin.ts
+import { loadTinySecp256k1, createTransaction } from "../../lib/bitcoin";
 
-const BTC_NETWORK = bitcoin.networks.bitcoin; // Mainnet for Bitcoin
-const LI_FI_API_URL = "https://li.quest/v1";
+const BTC_NETWORK = bitcoin.networks.bitcoin;
+const WBTC_ON_POL = 0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -19,90 +18,99 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const tinySecp256k1 = await loadTinySecp256k1();
-    const ECPairFactory = (await import("ecpair")).default;
-    const ECPair = ECPairFactory(tinySecp256k1);
+    console.log("Starting BTC to WBTC conversion...");
 
-    // Step 1: Get Quote for BTC -> WBTC Conversion
-    const quote = await getConvertQuote(bitcoinAmount, massAddress);
+    // Step 1: Get conversion quote
+    const quote = await getConvertQuote(bitcoinAmount, bitcoinAddress, massAddress);
+    if (!quote) throw new Error("Failed to fetch conversion quote");
 
-    if (!quote) {
-      throw new Error("Failed to fetch conversion quote");
-    }
+    console.log("Conversion quote received:", quote);
 
-    console.log("LI.FI Conversion Quote:", quote);
-
-    // Step 2: Perform Bitcoin Transaction
-    const btcKeyPair = ECPair.fromWIF(bitcoinPrivateKey, BTC_NETWORK);
-    const senderAddress = bitcoin.payments.p2pkh({
-      pubkey: Buffer.from(btcKeyPair.publicKey), // Convert publicKey to Buffer
-    }).address!;
+    // Step 2: Create BTC transaction
     const { txHex, txId } = await createTransaction(
       bitcoinPrivateKey,
-      quote.depositAddress,
+      quote.transactionRequest.to, // Destination address from the quote
       bitcoinAmount,
-      10000 // Estimated fee in satoshis
+      10000 // Fee in satoshis
     );
 
-    console.log("Bitcoin Transaction Hex:", txHex);
-    console.log("Bitcoin Transaction ID:", txId);
+    console.log("Transaction created:", { txHex, txId });
 
-    // Step 3: Monitor and Confirm Conversion
-    const wbtcAmount = await monitorConversion(quote.transactionId, massAddress);
+    // Step 3: Monitor conversion
+    const wbtcAmount = await monitorConversion(quote.tool, txId);
 
     return res.status(200).json({
       message: "Conversion completed successfully",
       txId,
       wbtcAmount,
     });
-  } catch (error) {
-    console.error("Error in convertBitcoinToWBTC:", error instanceof Error ? error.message : error);
-    res.status(500).json({ error: "Conversion failed", details: error });
+  } catch (error: any) {
+    console.error("Error in convertBitcoinToWBTC:", error.message || error);
+    return res.status(500).json({ error: "Conversion failed", details: error.message || error });
   }
 }
 
-// Get LI.FI Conversion Quote
-async function getConvertQuote(bitcoinAmount: number, recipientAddress: string) {
-  try {
-    const response = await axios.get(`${LI_FI_API_URL}/quote`, {
-      params: {
-        fromChainId: 1, // Bitcoin Mainnet
-        toChainId: 137, // Polygon Mainnet
-        fromTokenAddress: "BTC", // LI.FI token identifier for BTC
-        toTokenAddress: "WBTC", // LI.FI token identifier for WBTC on Polygon
-        fromAmount: bitcoinAmount.toString(), // Amount in satoshis
-        toAddress: recipientAddress, // Destination WBTC address on Polygon
-        slippage: 1, // Allow 1% slippage
-      },
-    });
+// Helper to fetch conversion quote
+async function getConvertQuote(
+  bitcoinAmount: number,
+  fromAddress: string,
+  toAddress: string
+) {
+  const params = {
+    fromChain: 20000000000001, // Bitcoin chain ID
+    toChain: 'POL', // Polygon chain ID
+    fromToken: "bitcoin", // Native BTC token identifier
+    toToken: "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6", //  WBTC token address on Polygon
+    fromAmount: bitcoinAmount.toString(), // Amount in satoshis
+    fromAddress, // Bitcoin sender address
+    toAddress, // Polygon WBTC recipient address
+    slippage: 1, // 1% slippage
+  };
 
+  try {
+    console.log("Requesting LI.FI quote with params:", params);
+
+    const response = await axios.get("https://li.quest/v1/quote", { params });
+
+    console.log("Received quote from LI.FI:", response.data);
     return response.data;
-  } catch (error) {
-    console.error("Error fetching LI.FI quote:", error instanceof Error ? error.message : error);
-    return null;
+  } catch (error: any) {
+    console.error("Error fetching LI.FI quote:", error.message || error);
+    if (error.response) {
+      console.error("Failed request params:", error.response.config.params);
+      console.error("Response data:", error.response.data);
+    }
+    throw new Error("Failed to fetch conversion quote");
   }
 }
 
-// Monitor LI.FI Conversion
-async function monitorConversion(transactionId: string, recipientAddress: string) {
+// Helper to monitor conversion status
+async function monitorConversion(tool: string, txHash: string) {
   try {
-    while (true) {
-      const statusResponse = await axios.get(`${LI_FI_API_URL}/status`, {
-        params: { transactionId },
-      });
+    const params = {
+      bridge: tool,
+      fromChain: "BTC",
+      toChain: "POL",
+      txHash,
+    };
 
-      if (statusResponse.data.status === "COMPLETED") {
-        console.log("Conversion completed:", statusResponse.data);
-        return parseFloat(statusResponse.data.receivedAmount);
-      } else if (statusResponse.data.status === "FAILED") {
+    console.log("Monitoring LI.FI conversion with params:", params);
+
+    while (true) {
+      const response = await axios.get("https://li.quest/v1/status", { params });
+
+      if (response.data.status === "DONE") {
+        console.log("Conversion completed:", response.data);
+        return response.data.receivedAmount;
+      } else if (response.data.status === "FAILED") {
         throw new Error("Conversion failed");
       }
 
       console.log("Waiting for conversion to complete...");
       await new Promise((resolve) => setTimeout(resolve, 15000)); // Poll every 15 seconds
     }
-  } catch (error) {
-    console.error("Error monitoring conversion:", error instanceof Error ? error.message : error);
+  } catch (error: any) {
+    console.error("Error monitoring conversion:", error.message || error);
     throw new Error("Failed to monitor conversion");
   }
 }
