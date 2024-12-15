@@ -28,15 +28,18 @@
 
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value
+- - Modal: Preparing (B) Wallet (to create wallet (take from concept)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
 
 #### After Completion: Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked!
 - Delete MASS address info from MASStester and console.logs from all signer.
+- Restructure decryption process in readMASS and readBTC apis
 
 #### Metatags/ Description (Home)
 - Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
 
 ### Other (if Time Permits)
+- Remove BTC Wallet & Key creations in signup and login
 - Remove all "2 second delay for buttons"
 - Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)

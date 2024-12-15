@@ -93,6 +93,24 @@
     box-shadow: rgba(69, 51, 27, 1);
     margin-bottom: 50px;
   }
+
+  #importing-content {
+    padding-top: 55px;
+    width: 230px;
+    height: 135px;
+    background-color: rgba(224, 167, 92, 0.2); 
+    border-radius: 20px;
+    align-items: center;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;  
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 2.00s;
+    animation-name: animatetop;
+    animation-duration: 2.00s;
+    box-shadow: rgba(69, 51, 27, 1);
+    margin-bottom: 50px;
+  }
   
   
   #selling-image{
@@ -115,6 +133,15 @@
         font-size: 11px;
         margin-top: 32px;
         margin-bottom: 30px;
+        letter-spacing: 0px;
+        margin-left: 0px; 
+        opacity: .6;
+      }
+      #importing-words {
+        color: rgb(255, 255, 255);
+        font-weight: 500;
+        font-size: 11px;
+        margin-top: 32px;
         letter-spacing: 0px;
         margin-left: 0px; 
         opacity: .6;

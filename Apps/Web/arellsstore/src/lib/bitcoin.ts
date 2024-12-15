@@ -4,7 +4,7 @@ import axiosRetry from 'axios-retry';
 
 axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
-const loadTinySecp256k1 = async () => {
+export const loadTinySecp256k1 = async () => {
   const tinySecp256k1 = await import('tiny-secp256k1');
   return tinySecp256k1;
 };
@@ -14,7 +14,9 @@ export const generateWallet = async () => {
   const ECPairFactory = (await import('ecpair')).default;
   const ECPair = ECPairFactory(tinySecp256k1);
   const keyPair = ECPair.makeRandom();
-  const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey });
+
+  // Convert publicKey to Buffer for bitcoinjs-lib compatibility
+  const { address } = bitcoin.payments.p2pkh({ pubkey: Buffer.from(keyPair.publicKey) });
   const privateKey = keyPair.toWIF();
   return { address, privateKey };
 };
@@ -30,7 +32,10 @@ export const loadWallet = async (address: string, privateKey: string) => {
   const ECPair = ECPairFactory(tinySecp256k1);
   try {
     const keyPair = ECPair.fromWIF(privateKey);
-    const derivedAddress = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey }).address;
+
+    // Convert publicKey to Buffer for bitcoinjs-lib compatibility
+    const derivedAddress = bitcoin.payments.p2pkh({ pubkey: Buffer.from(keyPair.publicKey) }).address;
+
     return address === derivedAddress ? { address, privateKey } : null;
   } catch (error) {
     console.error('Error loading wallet:', error);
@@ -43,14 +48,23 @@ export const createTransaction = async (
   recipientAddress: string,
   amount: number,
   fee: number
-): Promise<{ txHex: string, txId: string }> => {
+): Promise<{ txHex: string; txId: string }> => {
   const tinySecp256k1 = await loadTinySecp256k1();
   const ECPairFactory = (await import('ecpair')).default;
   const ECPair = ECPairFactory(tinySecp256k1);
 
   const keyPair = ECPair.fromWIF(senderPrivateKey);
-  const senderAddress = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey }).address!;
-  
+
+  // Create a custom signer wrapper for compatibility
+  const customSigner = {
+    publicKey: Buffer.from(keyPair.publicKey), // Convert publicKey to Buffer
+    sign: (hash: Buffer) => {
+      return Buffer.from(keyPair.sign(hash)); // Ensure signed data is returned as Buffer
+    },
+  };
+
+  const senderAddress = bitcoin.payments.p2pkh({ pubkey: customSigner.publicKey }).address!;
+
   // Get unspent transaction outputs (UTXOs) for the sender's address
   const utxosResponse = await axios.get(`https://blockchain.info/unspent?active=${senderAddress}`);
   const utxos = utxosResponse.data.unspent_outputs;
@@ -92,7 +106,7 @@ export const createTransaction = async (
     });
   }
 
-  psbt.signAllInputs(keyPair);
+  psbt.signAllInputs(customSigner); // Use the custom signer
   psbt.finalizeAllInputs();
 
   const tx = psbt.extractTransaction();

@@ -56,7 +56,7 @@ const HPMConcept: React.FC = () => {
     handleSellConcept,
     setManualBitcoinPrice,
     email,
-    soldAmount,
+    soldAmounts,
   } = useHPM();
   const [showImportSuccess, setImportSuccess] = useState<boolean>(false);
   const [showImportSuccessSell, setImportSuccessSell] = useState<boolean>(false);
@@ -653,7 +653,7 @@ const HPMConcept: React.FC = () => {
           />
         </span>
         <span id="amount-sold-number-account-num-concept">
-          {formatCurrency(soldAmount)}
+          {formatCurrency(soldAmounts)}
         </span>
       </div>
     </div>
