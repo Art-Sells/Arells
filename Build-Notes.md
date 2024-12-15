@@ -14,8 +14,7 @@
 - - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
 - - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC)) ***Multiply cVactTaa * 10000000 (or convert to SATS) (look at test/index.js for reference)***
 - - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
-- - - When swap initiated, subtract (PolygonPOS)swapping fee (same as handleSell function but without incrementing into “soldAmounts”) from cVact (show HPMContext and MASSsmartContract to GPT for help)
-- if cVactDa < $0.01, cancel (exit) MASS
+- - - When swap initiated, subtract (PolygonPOS)swapping fee (-$0.0006) (same as handleSell function but without incrementing into “soldAmounts”) from cVact (show HPMContext and MASSsmartContract to GPT for help)
 - automatically activates a "fund wallet" when "Import (createMASS)" clicked that pulls my Address and PrivateKey and funds a wallet 0.005 POL to each MASSaddress & MASSsuplicationAddress that are created (set console.logs for this)
 
 ### After Test
@@ -51,6 +50,7 @@
 
 ### MASS
 - Work on making the Swapping system more efficient (aggregate all cVactTaa and cVactDa into a "listing system" so swapping doesn't occur multiple times from individual VatopGroups and happens only once per Bitcoin Price Change)
+- if cVactDa < $0.01, cancel (exit) MASS & HPM supplication
 
 ### Last Resort
 - Remove console.logs (and console.errors/warn) from all wrappers(userContext, HPMContext & MASSContext), hide "masstester" "wallettester" and "hpmtester" from main
