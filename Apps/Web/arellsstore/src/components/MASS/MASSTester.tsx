@@ -38,7 +38,7 @@ const MASSTester: React.FC = () => {
 
     try {
       const response = await axios.post('/api/MASSapi', {
-        bitcoinAmount: parseFloat(wrappedBitcoinAmount as string) * 1e8, // Convert BTC to satoshis
+        wrappedBitcoinAmount: parseFloat(wrappedBitcoinAmount as string) * 1e8, // Convert BTC to satoshis
         wrappedBitcoinAddress,
         wrappedBitcoinPrivateKey,
         massAddress: MASSaddress,
@@ -62,7 +62,7 @@ const MASSTester: React.FC = () => {
       <h3>Wrapped Bitcoin Details</h3>
       <p>Wrapped Bitcoin Address: {wrappedBitcoinAddress}</p>
       <p>Wrapped Bitcoin Private Key:</p>
-      <pre>{wrappedBitcoinPrivateKey || "Not Available"}</pre>
+      <pre>{wrappedBitcoinPrivateKey || 'Not Available'}</pre>
       <p>Wrapped Bitcoin Balance (ARB): {balances.WBTC_ARB} WBTC</p>
       <h3>Convert Wrapped Bitcoin to MASS Wrapped Bitcoin</h3>
       <div>
@@ -71,10 +71,10 @@ const MASSTester: React.FC = () => {
           id="wrappedBitcoinAmount"
           value={wrappedBitcoinAmount}
           onChange={(e) => setWrappedBitcoinAmount(e.target.value)}
-          placeholder="Enter amount in BTC"
+          placeholder="Enter amount in WBTC"
         />
         <button onClick={handleConvertToMASSWBTC} disabled={isConverting}>
-          {isConverting ? 'Converting...' : 'Convert to WBTC'}
+          {isConverting ? 'Converting...' : 'Convert to MASS WBTC'}
         </button>
       </div>
       {conversionError && <p style={{ color: 'red' }}>{conversionError}</p>}
@@ -83,14 +83,14 @@ const MASSTester: React.FC = () => {
       <hr />
       <button onClick={createWallets}>Create Wallets</button>
       <h3>MASS Wallet</h3>
-      <p>MASS Address: {MASSaddress || "Not Available"}</p>
+      <p>MASS Address: {MASSaddress || 'Not Available'}</p>
       <p>MASS Private Key:</p>
-      <pre>{MASSPrivateKey || "Not Available"}</pre>
+      <pre>{MASSPrivateKey || 'Not Available'}</pre>
       <p>MASS Balance (WBTC/POL): {balances.WBTC_POL} WBTC</p>
       <h3>MASS Supplication Wallet</h3>
-      <p>MASS Supplication Address: {MASSsupplicationAddress || "Not Available"}</p>
+      <p>MASS Supplication Address: {MASSsupplicationAddress || 'Not Available'}</p>
       <p>MASS Supplication Private Key:</p>
-      <pre>{MASSsupplicationPrivateKey || "Not Available"}</pre>
+      <pre>{MASSsupplicationPrivateKey || 'Not Available'}</pre>
       <p>MASS Supplication Balance (USDC/POL): {balances.USDC_POL} USDC</p>
     </div>
   );
