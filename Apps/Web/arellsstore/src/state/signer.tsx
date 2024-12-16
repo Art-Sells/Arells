@@ -5,35 +5,34 @@ import { ethers } from "ethers";
 import CryptoJS from "crypto-js";
 import axios from "axios";
 import { fetchUserAttributes } from "aws-amplify/auth";
-import { JsonRpcProvider } from "ethers";
-import {generateWallet} from "../lib/bitcoin";
-import Image from 'next/image';
-import stylings from '../app/css/modals/loading/marketplaceloader.module.css';
-import '../app/css/modals/sell/sell-modal.css';
 
-const provider = new JsonRpcProvider(
+const TOKEN_ADDRESSES = {
+  WBTC_POL: "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6", // WBTC on Polygon
+  WBTC_ARB: "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f", // WBTC on Arbitrum
+  USDC_POL: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", // USDC on Polygon
+};
+
+const provider_POL = new ethers.JsonRpcProvider(
   `https://polygon-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68`
 );
 
-const TOKEN_ADDRESSES = {
-  WBTC: "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6", // WBTC contract address
-  USDC: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174", // USDC contract address
-};
+const provider_ARB = new ethers.JsonRpcProvider(
+  `https://arbitrum-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68`
+);
 
 interface SignerContextType {
   MASSaddress: string;
   MASSsupplicationAddress: string;
-  bitcoinAddress: string;
-  bitcoinPrivateKey: string;
+  wrappedBitcoinAddress: string;
+  wrappedBitcoinPrivateKey: string;
   MASSPrivateKey: string;
   MASSsupplicationPrivateKey: string;
   email: string;
-  bitcoinBalance: number | null;
+  wrappedBitcoinBalance: number | null;
   balances: {
-    WBTC: string;
-    USDC: string;
-    POL_MASS: string;
-    POL_SUPPLICATION: string;
+    WBTC_POL: string;
+    WBTC_ARB: string;
+    USDC_POL: string;
   };
   createWallets: () => Promise<void>;
 }
@@ -43,103 +42,69 @@ const SignerContext = createContext<SignerContextType | undefined>(undefined);
 export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [MASSaddress, setMASSaddress] = useState<string>("");
   const [MASSsupplicationAddress, setMASSsupplicationAddress] = useState<string>("");
-  const [bitcoinAddress, setBitcoinAddress] = useState<string>("");
-  const [bitcoinPrivateKey, setBitcoinPrivateKey] = useState<string>("");
+  const [wrappedBitcoinAddress, setWrappedBitcoinAddress] = useState<string>("");
+  const [wrappedBitcoinPrivateKey, setWrappedBitcoinPrivateKey] = useState<string>("");
   const [MASSPrivateKey, setMASSPrivateKey] = useState<string>("");
   const [MASSsupplicationPrivateKey, setMASSsupplicationPrivateKey] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [bitcoinBalance, setBitcoinBalance] = useState<number | null>(null);
+  const [wrappedBitcoinBalance, setWrappedBitcoinBalance] = useState<number | null>(null);
   const [balances, setBalances] = useState({
-    WBTC: "0",
-    USDC: "0",
-    POL_MASS: "0",
-    POL_SUPPLICATION: "0",
+    WBTC_POL: "0",
+    WBTC_ARB: "0",
+    USDC_POL: "0",
   });
-
-
-const [showImporting, setImporting] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchAttributes = async () => {
-        try {
-            const attributesResponse = await fetchUserAttributes();
-            setEmail(attributesResponse.email ?? '');
-        } catch (error) {
-            console.error('Error fetching user attributes:', error);
-        }
+      try {
+        const attributesResponse = await fetchUserAttributes();
+        setEmail(attributesResponse.email ?? '');
+      } catch (error) {
+        console.error('Error fetching user attributes:', error);
+      }
     };
 
     fetchAttributes();
-}, []);
+  }, []);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  const fetchBitcoinBalance = async (address: string) => {
-    if (!address) {
-      console.warn("Bitcoin address is not available. Skipping balance fetch.");
-      setBitcoinBalance(null); // Explicitly set to null to avoid `NaN`
-      return;
-    }
-  
+  const fetchWrappedBitcoinBalance = async (address: string) => {
+    if (!address) return;
     try {
-      console.log("Fetching Bitcoin balance for address:", address);
-      const res = await fetch(`/api/balance?address=${address}`);
-      const data = await res.json();
-      console.log("Raw API response for Bitcoin balance:", data); // Log the raw response
-  
-      // Check if data is a number (raw balance in satoshis)
-      if (typeof data === "number") {
-        setBitcoinBalance(data / 100000000); // Convert from satoshis to BTC
-      } else {
-        console.error("Invalid balance format from API:", data);
-        setBitcoinBalance(0); // Fallback to 0 if the API returns invalid data
-      }
+      console.log("Fetching WBTC balance for address:", address);
+      const WBTCContract_POL = new ethers.Contract(
+        TOKEN_ADDRESSES.WBTC_POL,
+        ["function balanceOf(address owner) view returns (uint256)"],
+        provider_POL
+      );
+      const balance = await WBTCContract_POL.balanceOf(address);
+      setWrappedBitcoinBalance(parseFloat(ethers.formatUnits(balance, 8))); // WBTC uses 8 decimals
     } catch (error) {
-      console.error("Error fetching Bitcoin balance:", error);
-      setBitcoinBalance(null); // Explicitly set to null on error
+      console.error("Error fetching WBTC balance:", error);
+      setWrappedBitcoinBalance(null);
     }
   };
 
-  useEffect(() => {
-    if (bitcoinAddress) {
-      fetchBitcoinBalance(bitcoinAddress);
-    }
-  }, [bitcoinAddress]);
-
-
-
-  const readBTCFile = async (): Promise<{ BTCaddress: string; BTCkey: string } | null> => {
+  const readWBTCFile = async (): Promise<{ WBTCaddress: string; WBTCkey: string } | null> => {
     try {
       if (!email) {
         console.warn('Reading email... Please wait');
         return null;
       }
   
-      const response = await axios.get('/api/readBTC', { params: { email } });
+      const response = await axios.get('/api/readWBTC', { params: { email } });
       const data = response.data;
   
-      console.log('Read BTC File:', data); // Log the data for debugging
-      setBitcoinAddress(data.BTCaddress);
+      console.log('Read WBTC File:', data);
+      setWrappedBitcoinAddress(data.WBTCaddress);
   
-      const decryptedPrivateKey = CryptoJS.AES.decrypt(data.BTCkey, 'your-secret-key').toString(
+      const decryptedPrivateKey = CryptoJS.AES.decrypt(data.WBTCkey, 'your-secret-key').toString(
         CryptoJS.enc.Utf8
       );
-      setBitcoinPrivateKey(decryptedPrivateKey);
+      setWrappedBitcoinPrivateKey(decryptedPrivateKey);
   
       return data;
     } catch (error) {
-      console.error('Error reading BTC file:', error);
+      console.error('Error reading WBTC file:', error);
       return null;
     }
   };
@@ -158,7 +123,7 @@ const [showImporting, setImporting] = useState<boolean>(false);
   
       const response = await axios.get('/api/readMASS', { params: { email } });
       const data = response.data;
-      console.log('Read MASS File:', data); // Log the data for debugging
+      console.log('Read MASS File:', data);
       setMASSaddress(data.MASSaddress);
       setMASSsupplicationAddress(data.MASSsupplicationAddress);
       return data;
@@ -168,6 +133,213 @@ const [showImporting, setImporting] = useState<boolean>(false);
     }
   };
 
+  const checkWBTCWalletExists = async (): Promise<boolean> => {
+    if (!email) {
+      console.warn('Email is not set. Cannot check WBTC wallet file existence.');
+      return false;
+    }
+  
+    try {
+      const response = await axios.get(`/api/readWBTC`, { params: { email } });
+      console.log('WBTC Wallet exists');
+      return true; // File exists
+    } catch (error: any) {
+      if (error.response && error.response.status === 404) {
+        console.log('WBTC wallet does not exist.');
+        return false; // File does not exist
+      }
+      console.error('Error checking WBTC wallet file existence:', error);
+      throw error;
+    }
+  };
+
+  const createWBTCWallet = async () => {
+    try {
+      const fileExists = await checkWBTCWalletExists();
+      if (fileExists) {
+        console.log('Skipping WBTC wallet creation.');
+        return;
+      }
+  
+      const newWallet = ethers.Wallet.createRandom();
+      const encryptedPrivateKey = CryptoJS.AES.encrypt(newWallet.privateKey, 'your-secret-key').toString();
+  
+      console.log('New WBTC Wallet Address:', newWallet.address);
+      console.log('Encrypted Private Key for WBTC Wallet:', encryptedPrivateKey);
+  
+      await saveWBTCWalletDetails(newWallet.address, encryptedPrivateKey, email);
+      setWrappedBitcoinAddress(newWallet.address);
+      setWrappedBitcoinPrivateKey(encryptedPrivateKey);
+    } catch (error) {
+      console.error('Error creating WBTC wallet:', error);
+    }
+  };
+
+  const saveWBTCWalletDetails = async (WBTCaddress: string, WBTCkey: string, email: string) => {
+    try {
+      const response = await fetch('/api/saveWBTC', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          WBTCaddress,
+          WBTCkey,
+          email,
+        }),
+      });
+  
+      const data = await response.json();
+      console.log('Save WBTC Wallet Response:', data);
+    } catch (error) {
+      console.error('Error saving WBTC wallet details:', error);
+    }
+  };
+
+  const checkMASSWalletExists = async (): Promise<boolean> => {
+    if (!email) {
+      console.warn('Email is not set. Cannot check MASS wallet file existence.');
+      return false;
+    }
+  
+    try {
+      const response = await axios.get(`/api/readMASS`, { params: { email } });
+      console.log('MASS Wallet exists');
+      return true; // File exists
+    } catch (error: any) {
+      if (error.response && error.response.status === 404) {
+        console.log('MASS wallet does not exist.');
+        return false; // File does not exist
+      }
+      console.error('Error checking MASS wallet file existence:', error);
+      throw error;
+    }
+  };
+
+  const createMASSWallet = async () => {
+    try {
+      const fileExists = await checkMASSWalletExists();
+      if (fileExists) {
+        console.log('Skipping MASS wallet creation.');
+        return;
+      }
+
+      const newWallet = ethers.Wallet.createRandom();
+      const newSupplicationWallet = ethers.Wallet.createRandom();
+      const encryptedPrivateKey = CryptoJS.AES.encrypt(newWallet.privateKey, 'your-secret-key').toString();
+      const encryptedSupplicationPrivateKey = CryptoJS.AES.encrypt(newSupplicationWallet.privateKey, 'your-secret-key').toString();
+
+      console.log("New MASS Wallet Address:", newWallet.address);
+      console.log("New MASS Supplication Wallet Address:", newSupplicationWallet.address);
+
+      await saveMASSWalletDetails(
+        newWallet.address,
+        newSupplicationWallet.address,
+        encryptedPrivateKey,
+        encryptedSupplicationPrivateKey,
+        email
+      );
+      setMASSaddress(newWallet.address);
+      setMASSsupplicationAddress(newSupplicationWallet.address);
+    } catch (error) {
+      console.error('Error creating MASS wallet:', error);
+    }
+  };
+
+  const saveMASSWalletDetails = async (
+    MASSaddress: string,
+    MASSsupplicationAddress: string,
+    MASSkey: string,
+    MASSsupplicationKey: string,
+    email: string
+  ) => {
+    try {
+      const response = await fetch('/api/saveMASS', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          MASSaddress,
+          MASSsupplicationAddress,
+          MASSkey,
+          MASSsupplicationKey,
+          email,
+        }),
+      });
+      const data = await response.json();
+      console.log('Save MASS Wallet Response:', data);
+    } catch (error) {
+      console.error('Error saving MASS wallet details:', error);
+    }
+  };
+
+  const createWallets = async () => {
+    try {
+      await createWBTCWallet();
+      await createMASSWallet();
+    } catch (error) {
+      console.error("Error creating wallets:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchWalletDetails = async () => {
+      try {
+        await readMASSFile();
+        await readWBTCFile();
+      } catch (error) {
+        console.error('Error fetching wallet details:', error);
+      }
+    };
+
+    fetchWalletDetails();
+  }, []);
+
+  useEffect(() => {
+    const loadBalances = async () => {
+      if (!MASSaddress || !MASSsupplicationAddress || !wrappedBitcoinAddress) return;
+  
+      try {
+        // WBTC on Polygon
+        const WBTCContract_POL = new ethers.Contract(
+          TOKEN_ADDRESSES.WBTC_POL,
+          ["function balanceOf(address owner) view returns (uint256)"],
+          provider_POL
+        );
+  
+        // WBTC on Arbitrum
+        const WBTCContract_ARB = new ethers.Contract(
+          TOKEN_ADDRESSES.WBTC_ARB,
+          ["function balanceOf(address owner) view returns (uint256)"],
+          provider_ARB
+        );
+  
+        // USDC on Polygon
+        const USDCContract_POL = new ethers.Contract(
+          TOKEN_ADDRESSES.USDC_POL,
+          ["function balanceOf(address owner) view returns (uint256)"],
+          provider_POL
+        );
+  
+        const [WBTC_POL, WBTC_ARB, USDC_POL] = await Promise.all([
+          WBTCContract_POL.balanceOf(MASSaddress), // Balance on Polygon
+          WBTCContract_ARB.balanceOf(wrappedBitcoinAddress), // Balance on Arbitrum
+          USDCContract_POL.balanceOf(MASSsupplicationAddress), // USDC on Polygon
+        ]);
+  
+        setBalances({
+          WBTC_POL: ethers.formatUnits(WBTC_POL, 8),
+          WBTC_ARB: ethers.formatUnits(WBTC_ARB, 8),
+          USDC_POL: ethers.formatUnits(USDC_POL, 6),
+        });
+      } catch (error) {
+        console.error("Error fetching balances:", error);
+      }
+    };
+  
+    loadBalances();
+  }, [MASSaddress, MASSsupplicationAddress, wrappedBitcoinAddress]);
 
   useEffect(() => {
     const fetchWalletDetails = async () => {
@@ -185,12 +357,12 @@ const [showImporting, setImporting] = useState<boolean>(false);
           );
         }
   
-        // Fetch BTC details
-        const btcDetails = await readBTCFile();
-        if (btcDetails) {
-          setBitcoinAddress(btcDetails.BTCaddress);
-          setBitcoinPrivateKey(
-            CryptoJS.AES.decrypt(btcDetails.BTCkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
+        // Fetch WBTC details
+        const wbtcDetails = await readWBTCFile();
+        if (wbtcDetails) {
+          setWrappedBitcoinAddress(wbtcDetails.WBTCaddress);
+          setWrappedBitcoinPrivateKey(
+            CryptoJS.AES.decrypt(wbtcDetails.WBTCkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
           );
         }
       } catch (error) {
@@ -199,301 +371,23 @@ const [showImporting, setImporting] = useState<boolean>(false);
     };
   
     fetchWalletDetails();
-  }, [readBTCFile, readMASSFile]);
-
-  useEffect(() => {
-    const loadBalances = async () => {
-      if (MASSaddress && MASSsupplicationAddress) {
-        try {
-          const WBTCContract = new ethers.Contract(
-            TOKEN_ADDRESSES.WBTC,
-            ["function balanceOf(address owner) view returns (uint256)"],
-            provider
-          );
-          const USDCContract = new ethers.Contract(
-            TOKEN_ADDRESSES.USDC,
-            ["function balanceOf(address owner) view returns (uint256)"],
-            provider
-          );
-
-          const WBTCBalance = await WBTCContract.balanceOf(MASSaddress);
-          const USDCBalance = await USDCContract.balanceOf(MASSsupplicationAddress);
-          const POLBalance_MASS = await provider.getBalance(MASSaddress);
-          const POLBalance_SUPPLICATION = await provider.getBalance(MASSsupplicationAddress);
-
-          setBalances({
-            WBTC: ethers.formatUnits(WBTCBalance, 8),
-            USDC: ethers.formatUnits(USDCBalance, 6),
-            POL_MASS: ethers.formatEther(POLBalance_MASS),
-            POL_SUPPLICATION: ethers.formatEther(POLBalance_SUPPLICATION),
-          });
-        } catch (error) {
-          console.error("Error fetching balances:", error);
-        }
-      }
-    };
-
-    loadBalances();
-  }, [MASSaddress, MASSsupplicationAddress]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  const checkBTCWalletExists = async (): Promise<boolean> => {
-    if (!email) {
-      console.warn('Email is not set. Cannot check BTC wallet file existence.');
-      return false;
-    }
-  
-    try {
-      const response = await axios.get(`/api/readBTC`, { params: { email } });
-      console.log('BTC Wallet exists');
-      return true; // File exists
-    } catch (error: any) {
-      if (error.response && error.response.status === 404) {
-        console.log('BTC wallet does not exist.');
-        return false; // File does not exist
-      }
-      console.error('Error checking BTC wallet file existence:', error);
-      throw error;
-    }
-  };
-  const createBTCwallet = async () => {
-    try {
-      const fileExists = await checkBTCWalletExists();
-      if (fileExists) {
-        console.log('Skipping BTC wallet creation.');
-        return;
-      }
-
-      setImporting(true);
-  
-      const { address, privateKey } = await generateWallet();
-  
-      if (!email || !address) {
-        console.error('Email or address is undefined. Cannot create BTC wallet.');
-        return;
-      }
-  
-      // Encrypt the private key
-      const encryptedPrivateKey = CryptoJS.AES.encrypt(privateKey, 'your-secret-key').toString();
-  
-      console.log('New BTC Wallet Address:', address);
-      console.log('Encrypted Private Key for BTC Wallet:', encryptedPrivateKey);
-  
-      // Save the wallet details to the server
-      await saveBTCWalletDetails(address, encryptedPrivateKey, email);
-  
-      // Update state
-      setBitcoinAddress(address);
-      setBitcoinPrivateKey(encryptedPrivateKey);
-    } catch (error) {
-      console.error('Error creating BTC wallet:', error);
-    }
-  };
-  const saveBTCWalletDetails = async (BTCaddress: string, BTCkey: string, email: string) => {
-    try {
-      const response = await fetch('/api/saveBTC', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          BTCaddress,
-          BTCkey,
-          email,
-        }),
-      });
-  
-      const data = await response.json();
-      console.log('Save BTC Wallet Response:', data);
-    } catch (error) {
-      console.error('Error saving BTC wallet details:', error);
-    }
-  };
-
-
-
-
-
-
-
-
-
-  const checkMASSWalletExists = async (): Promise<boolean> => {
-    if (!email) {
-        console.warn('Email is not set. Cannot check wallet file existence.');
-        return false;
-    }
-
-    try {
-        const response = await axios.get(`/api/readMASS`, { params: { email } });
-        console.log('MASS Wallet exists');
-        return true; // File exists
-    } catch (error: any) {
-        if (error.response && error.response.status === 404) {
-            console.log('MASSwallet does not exist.');
-            return false; // File does not exist
-        }
-        console.error('Error checking MASSwallet file existence:', error);
-        throw error;
-    }
-};
-
-
-const createMASSwallet = async () => {
-    try {
-        const fileExists = await checkMASSWalletExists();
-        if (fileExists) {
-            console.log('Skipping wallet creation.');
-            return;
-        }
-
-        const newWallet = ethers.Wallet.createRandom();
-        const newSupplicationWallet = ethers.Wallet.createRandom();
-        const encryptedPrivateKey = CryptoJS.AES.encrypt(newWallet.privateKey, 'your-secret-key').toString();
-        const encryptedSupplicationPrivateKey = CryptoJS.AES.encrypt(newSupplicationWallet.privateKey, 'your-secret-key').toString();
-
-        console.log("New Wallet Address:", newWallet.address);
-        console.log("Encrypted Private Key for MASS Wallet:", encryptedPrivateKey);
-        console.log("New MASS Supplication Wallet Address:", newSupplicationWallet.address);
-        console.log("Encrypted Private Key for MASS Supplication Wallet:", encryptedSupplicationPrivateKey);
-
-        await saveWalletDetails(newWallet.address, newSupplicationWallet.address, encryptedPrivateKey, encryptedSupplicationPrivateKey, email);
-        setMASSaddress(newWallet.address);
-        setMASSsupplicationAddress(newSupplicationWallet.address);
-    } catch (error) {
-        console.error('Error creating MASS wallet:', error);
-    }
-};
-
-const saveWalletDetails = async (
-    MASSaddress: string,
-    MASSsupplicationAddress: string,
-    MASSkey: string,
-    MASSsupplicationKey: string,
-    email: string
-) => {
-    try {
-        const response = await fetch('/api/saveMASS', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                MASSaddress,
-                MASSsupplicationAddress,
-                MASSkey,
-                MASSsupplicationKey,
-                email,
-            }),
-        });
-        const data = await response.json();
-        console.log('Save MASS Response:', data);
-    } catch (error) {
-        console.error('Error saving wallet details:', error);
-    }
-};
-
-
-
-
-
-
-
-
-
-
-
-const createWallets = async () => {
-    let btcWalletCreationInvoked = false;
-    let massWalletCreationInvoked = false;
-  
-    try {
-      await createBTCwallet();
-      btcWalletCreationInvoked = true;
-      console.log("BTC wallet creation invoked successfully.");
-    } catch (error) {
-      console.error("Error invoking BTC wallet creation:", error);
-    }
-  
-    try {
-      await createMASSwallet();
-      massWalletCreationInvoked = true;
-      console.log("MASS wallet creation invoked successfully.");
-    } catch (error) {
-      console.error("Error invoking MASS wallet creation:", error);
-    }
-  
-    if (!btcWalletCreationInvoked && !massWalletCreationInvoked) {
-      console.error("Both BTC and MASS wallet creations failed.");
-    } else if (!btcWalletCreationInvoked) {
-      console.warn("BTC wallet invocation failed");
-    } else if (!massWalletCreationInvoked) {
-      console.warn("MASS wallet invocation failed");
-    }
-  };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  }, [readWBTCFile, readMASSFile]);
 
   return (
     <SignerContext.Provider
       value={{
         MASSaddress,
         MASSsupplicationAddress,
-        bitcoinAddress,
-        bitcoinPrivateKey,
+        wrappedBitcoinAddress,
+        wrappedBitcoinPrivateKey,
         MASSPrivateKey,
         MASSsupplicationPrivateKey,
         email,
-        bitcoinBalance,
+        wrappedBitcoinBalance,
         balances,
         createWallets,
       }}
     >
-        <>
-            {showImporting && (
-            <div id="selling-failed-wrapper-concept">
-            <div id="importing-content">
-                <Image 
-                    // loader={imageLoader}
-                    alt="" 
-                    width={25}
-                    height={25}
-                    id="selling-image-concept-bit" 
-                    src="/images/market/bitcoin-loader.png"
-                    /> 
-                    <div className={stylings.marketplaceloader}> 
-                    </div>
-                <p id="importing-words">creating importer</p>
-            </div>
-            </div>
-        )}
-        </>
       {children}
     </SignerContext.Provider>
   );

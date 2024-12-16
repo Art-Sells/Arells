@@ -12,6 +12,10 @@ const config: HardhatUserConfig = {
       url: `https://polygon-mainnet.infura.io/v3/${projectId}`,
       accounts: [privateKey]
     },
+    arb: {
+      url: `https://arbitrum-mainnet.infura.io/v3/${projectId}`,
+      accounts: [privateKey]
+    },
   }
 };
 

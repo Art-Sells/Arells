@@ -1,4 +1,4 @@
-// pages/api/readBTC.ts
+// pages/api/readWBTC.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 
@@ -16,7 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ error: 'Email query parameter is required' });
   }
 
-  const key = `${email}/BTCwallet.json`;
+  const key = `${email}/WBTCwallet.json`;
 
   try {
     const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
@@ -24,13 +24,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const walletData = JSON.parse(response.Body.toString());
       return res.status(200).json(walletData);
     } else {
-      return res.status(404).json({ error: 'BTC Wallet not found' });
+      return res.status(404).json({ error: 'WBTC Wallet not found' });
     }
   } catch (error: any) {
     if (error.code === 'NoSuchKey') {
-      return res.status(404).json({ error: 'BTC Wallet not found' });
+      return res.status(404).json({ error: 'WBTC Wallet not found' });
     }
-    console.error('Error fetching BTC Wallet data:', error);
-    return res.status(500).json({ error: 'Error fetching BTC Wallet data', details: error.message });
+    console.error('Error fetching WBTC Wallet data:', error);
+    return res.status(500).json({ error: 'Error fetching WBTC Wallet data', details: error.message });
   }
 };

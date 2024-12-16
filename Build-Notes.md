@@ -8,14 +8,12 @@
 
 
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC supplicating based on MASS & FA(Fee Arbitration)
-- - Send money to test address (most likely deploy on mainnet)
+- - Send money to POL & ETH(ARB) address (most likely deploy on mainnet) (fees from ARB & POL pulled from this wallet)
 - - Import: BTC amount (imported and minted into WBTC meaning BTC is zeroed out) aBTC incremented based on new BTC amount (look at handleImport function in amountToImport as referencce for mint(function)) ***Multiply aBTC and acVactTas * 10000000 (or convert to SATS)  before import (look at test/index.js for refference)***
 - - MASSsmartContract(WrapMassContractProvider):
 - - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
 - - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC)) ***Multiply cVactTaa * 10000000 (or convert to SATS) (look at test/index.js for reference)***
 - - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
-- - - When swap initiated, subtract (PolygonPOS)swapping fee (-$0.0006) (same as handleSell function but without incrementing into “soldAmounts”) from cVact (show HPMContext and MASSsmartContract to GPT for help)
-- automatically activates a "fund wallet" when "Import (createMASS)" clicked that pulls my Address and PrivateKey and funds a wallet 0.005 POL to each MASSaddress & MASSsuplicationAddress that are created (set console.logs for this)
 
 ### After Test
 - deploy to polygon mainnet and refactor hardhat config and signer.tsx
@@ -91,6 +89,7 @@
 
 ### Testing
 - Export Test (similar to sell except)
+- 3%-0.1% export (selling) fee?
 - - if (cVactDa > 0.00) take Dollar difference from cpVact - bitcoinPrice and ensure this USDC amount is used to bridge to BTC and that amount it added to BTC address before exporting out (figure out how to ensure aBTC doesn't update from BTC since we'll be adding more BTC before exporting)
 - Sell Test (HPMContext)
 - - (start here first since taking from highest HPAP) if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).

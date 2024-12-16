@@ -1,22 +1,22 @@
-// pages/api/saveBTC.ts
+// pages/api/saveWBTC.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
 
-export default async function saveBTC(req: NextApiRequest, res: NextApiResponse) {
+export default async function saveWBTC(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { BTCaddress, BTCkey, email } = req.body;
+  const { WBTCaddress, WBTCkey, email } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: 'Email is required' });
   }
 
-  const key = `${email}/BTCwallet.json`;
+  const key = `${email}/WBTCwallet.json`;
 
   try {
     await s3.headObject({ Bucket: BUCKET_NAME, Key: key }).promise();
@@ -27,11 +27,11 @@ export default async function saveBTC(req: NextApiRequest, res: NextApiResponse)
         .putObject({
           Bucket: BUCKET_NAME,
           Key: key,
-          Body: JSON.stringify({ BTCaddress, BTCkey }),
+          Body: JSON.stringify({ WBTCaddress, WBTCkey }),
           ContentType: 'application/json',
         })
         .promise();
-      return res.status(201).json({ message: 'BTC Wallet saved successfully' });
+      return res.status(201).json({ message: 'WBTC Wallet saved successfully' });
     } else {
       console.error('Error accessing S3:', error);
       return res.status(500).json({ error: 'Failed to access S3', details: error.message });

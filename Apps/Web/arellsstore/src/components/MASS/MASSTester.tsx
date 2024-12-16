@@ -9,30 +9,26 @@ const MASSTester: React.FC = () => {
     createWallets,
     MASSaddress,
     MASSsupplicationAddress,
-    bitcoinAddress,
-    bitcoinPrivateKey,
+    wrappedBitcoinAddress,
+    wrappedBitcoinPrivateKey,
     MASSPrivateKey,
     MASSsupplicationPrivateKey,
     balances,
     email,
-    bitcoinBalance,
   } = useSigner();
 
-  const [bitcoinAmount, setBitcoinAmount] = useState<number | string>('');
+  const [wrappedBitcoinAmount, setWrappedBitcoinAmount] = useState<number | string>('');
   const [conversionResult, setConversionResult] = useState<string | null>(null);
   const [conversionError, setConversionError] = useState<string | null>(null);
   const [isConverting, setIsConverting] = useState<boolean>(false);
 
-  const formatBalance = (balance: number | null) =>
-    balance !== null ? balance.toFixed(8) : "Loading...";
-
-  const handleConvertToWBTC = async () => {
-    if (!bitcoinAmount || parseFloat(bitcoinAmount as string) <= 0) {
+  const handleConvertToMASSWBTC = async () => {
+    if (!wrappedBitcoinAmount || parseFloat(wrappedBitcoinAmount as string) <= 0) {
       setConversionError('Please enter a valid Bitcoin amount.');
       return;
     }
 
-    if (!bitcoinAddress || !bitcoinPrivateKey || !MASSaddress) {
+    if (!wrappedBitcoinAddress || !wrappedBitcoinPrivateKey || !MASSaddress) {
       setConversionError('Wallet information is missing.');
       return;
     }
@@ -42,9 +38,9 @@ const MASSTester: React.FC = () => {
 
     try {
       const response = await axios.post('/api/MASSapi', {
-        bitcoinAmount: parseFloat(bitcoinAmount as string) * 1e8, // Convert BTC to satoshis
-        bitcoinAddress,
-        bitcoinPrivateKey,
+        bitcoinAmount: parseFloat(wrappedBitcoinAmount as string) * 1e8, // Convert BTC to satoshis
+        wrappedBitcoinAddress,
+        wrappedBitcoinPrivateKey,
         massAddress: MASSaddress,
       });
 
@@ -63,21 +59,21 @@ const MASSTester: React.FC = () => {
       <h2>MASS Wallet Tester</h2>
       <p>Email: {email}</p>
       <hr />
-      <h3>Bitcoin Details</h3>
-      <p>Bitcoin Address: {bitcoinAddress}</p>
-      <p>Bitcoin Private Key:</p>
-      <pre>{bitcoinPrivateKey || "Not Available"}</pre> {/* Full key displayed securely */}
-      <p>Bitcoin Balance: {formatBalance(bitcoinBalance)} BTC</p>
-      <h3>Convert BTC to WBTC</h3>
+      <h3>Wrapped Bitcoin Details</h3>
+      <p>Wrapped Bitcoin Address: {wrappedBitcoinAddress}</p>
+      <p>Wrapped Bitcoin Private Key:</p>
+      <pre>{wrappedBitcoinPrivateKey || "Not Available"}</pre>
+      <p>Wrapped Bitcoin Balance (ARB): {balances.WBTC_ARB} WBTC</p>
+      <h3>Convert Wrapped Bitcoin to MASS Wrapped Bitcoin</h3>
       <div>
         <input
           type="tel"
-          id="bitcoinAmount"
-          value={bitcoinAmount}
-          onChange={(e) => setBitcoinAmount(e.target.value)}
+          id="wrappedBitcoinAmount"
+          value={wrappedBitcoinAmount}
+          onChange={(e) => setWrappedBitcoinAmount(e.target.value)}
           placeholder="Enter amount in BTC"
         />
-        <button onClick={handleConvertToWBTC} disabled={isConverting}>
+        <button onClick={handleConvertToMASSWBTC} disabled={isConverting}>
           {isConverting ? 'Converting...' : 'Convert to WBTC'}
         </button>
       </div>
@@ -86,21 +82,16 @@ const MASSTester: React.FC = () => {
 
       <hr />
       <button onClick={createWallets}>Create Wallets</button>
-      <h3>MASS Wallet Details</h3>
+      <h3>MASS Wallet</h3>
       <p>MASS Address: {MASSaddress || "Not Available"}</p>
       <p>MASS Private Key:</p>
-      <pre>{MASSPrivateKey || "Not Available"}</pre> {/* Full decrypted key displayed */}
+      <pre>{MASSPrivateKey || "Not Available"}</pre>
+      <p>MASS Balance (WBTC/POL): {balances.WBTC_POL} WBTC</p>
+      <h3>MASS Supplication Wallet</h3>
       <p>MASS Supplication Address: {MASSsupplicationAddress || "Not Available"}</p>
       <p>MASS Supplication Private Key:</p>
-      <pre>{MASSsupplicationPrivateKey || "Not Available"}</pre> {/* Full decrypted key displayed */}
-      <h3>Balances</h3>
-      <p>MASS Balances:</p>
-      <p>WBTC: {balances.WBTC}</p>
-      <p>POL: {balances.POL_MASS}</p>
-      <p>MASS Supplication Balances:</p>
-      <p>USDC: {balances.USDC}</p>
-      <p>POL: {balances.POL_SUPPLICATION}</p>
-
+      <pre>{MASSsupplicationPrivateKey || "Not Available"}</pre>
+      <p>MASS Supplication Balance (USDC/POL): {balances.USDC_POL} USDC</p>
     </div>
   );
 };
