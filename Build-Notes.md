@@ -6,10 +6,10 @@
 
 ### Testing
 
-
-- Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC supplicating based on MASS & FA(Fee Arbitration)
-- - Send money to POL & ETH(ARB) address (most likely deploy on mainnet) (fees from ARB & POL pulled from this wallet)
-- - Import: BTC amount (imported and minted into WBTC meaning BTC is zeroed out) aBTC incremented based on new BTC amount (look at handleImport function in amountToImport as referencce for mint(function)) ***Multiply aBTC and acVactTas * 10000000 (or convert to SATS)  before import (look at test/index.js for refference)***
+- Create HPM & MASS Tester (with HPM (Increase/Decrease Bitcoin Price))
+- - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
+- - import function: if MASS Balance > aBTC, then new cVactTa (VatopGroup) = MASS Balance - aBTC.
+- - when supplicateWBTCtoUSD is called, subtract WBTC amount from aBTC (ensure import useEffect that runs every 10 seconds is halted)
 - - MASSsmartContract(WrapMassContractProvider):
 - - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
 - - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC)) ***Multiply cVactTaa * 10000000 (or convert to SATS) (look at test/index.js for reference)***
@@ -17,6 +17,9 @@
 
 ### After Test
 - deploy to polygon mainnet and refactor hardhat config and signer.tsx
+- Reconfigure HPM (MASS activation time frame), if supplicateWBTCtoUSD == true for each vatopGroup do not update cpVact (this changes back to false after 24 hours have passed, per Vatop Group so if one vatopGroup has supplicateWBTCtoUSD == true, then skip that cpVact update based on Bitcoin price, if it's false, then update that cpVact, every new Vatop Group supplicateWBTCtoUSD is by default false)
+- Set time to check Arbitrum Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001... This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
+- Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
 
 
 ### Account

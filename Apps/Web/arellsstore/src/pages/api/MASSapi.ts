@@ -4,169 +4,249 @@ import "dotenv/config";
 import { ethers } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 
+// Constants
 const ARBITRUM_WBTC_ADDRESS = "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f";
-const POLYGON_WBTC_ADDRESS = "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6";
-const TRANSFER_FEE_WALLET = "0xD9A6714BbA0985b279DFcaff0A512Ba25F5A03d1";
+const ARBITRUM_USDC_ADDRESS = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831";
+const ARBITRUM_RPC_URL = process.env.ARBITRUM_RPC_URL!;
 const TRANSFER_FEE_WALLET_PRIVATE_KEY = process.env.ARELLS_PRIVATE_KEY!;
-console.log("TRANSFER_FEE_WALLET_PRIVATE_KEY:", TRANSFER_FEE_WALLET_PRIVATE_KEY);
+const LI_FI_API_URL = "https://li.quest/v1";
 
-if (!TRANSFER_FEE_WALLET_PRIVATE_KEY) {
-  throw new Error("TRANSFER_FEE_WALLET_PRIVATE_KEY is not defined in environment variables.");
+// Ensure ENV variables are set
+if (!TRANSFER_FEE_WALLET_PRIVATE_KEY || !ARBITRUM_RPC_URL) {
+  throw new Error("Environment variables not defined properly.");
 }
 
-const LI_FI_API_URL = "https://li.quest/v1";
-const ARBITRUM_RPC_URL = process.env.ARBITRUM_RPC_URL!;
-const POLYGON_RPC_URL = process.env.POLYGON_RPC_URL!;
-
-const GWEI_TO_WEI = BigNumber.from(10).pow(9); // 1 GWEI = 10^9 WEI
-const transferFee = GWEI_TO_WEI.mul(140); // 0.0140 GWEI = 140 GWEI
-
+// **Main API Handler**
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { wrappedBitcoinAmount, wrappedBitcoinAddress, wrappedBitcoinPrivateKey, massAddress } = req.body;
+  const { wrappedBitcoinAmount, massAddress, massPrivateKey, massSupplicationAddress } = req.body;
 
-  if (!wrappedBitcoinAmount || !wrappedBitcoinAddress || !wrappedBitcoinPrivateKey || !massAddress) {
+  if (!wrappedBitcoinAmount || !massAddress || !massPrivateKey || !massSupplicationAddress) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
   try {
-    console.log("Starting WBTC transfer from Arbitrum to Polygon...");
+    console.log("🚀 Starting WBTC to USDC Supplication...");
 
-    // Step 1: Get transfer quote from LI.FI
-    const quote = await getTransferQuote(wrappedBitcoinAmount, wrappedBitcoinAddress, massAddress);
-    if (!quote) throw new Error("Failed to fetch transfer quote");
+    // Step 1: Fetch Transfer Quote
+    const quote = await fetchTransferQuote(wrappedBitcoinAmount, massAddress, massSupplicationAddress);
+    console.log("✅ Transfer Quote Received:", quote);
 
-    console.log("Transfer quote received:", quote);
+    // Step 2: Fund MASS Address with $0.11 Worth of ETH
+    const fundingTxHash = await fundGasFees(massAddress);
+    console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
 
-    // Step 2: Deduct the transfer fee
-    const transferFeeTxHash = await deductTransferFee(transferFee);
-    console.log("Transfer fee deducted:", transferFeeTxHash);
+    // Step 3: Check and Set Allowance for WBTC
+    await checkAndSetAllowance(massPrivateKey, ARBITRUM_WBTC_ADDRESS, quote.estimate.approvalAddress, wrappedBitcoinAmount);
 
-    // Step 3: Initiate WBTC transfer on Arbitrum
-    const transferTxHash = await executeTransfer(quote, wrappedBitcoinPrivateKey);
-    console.log("WBTC transfer initiated:", transferTxHash);
+    // Step 4: Execute WBTC Transfer
+    const transferTxHash = await executeTransfer(quote, massPrivateKey);
+    console.log(`✅ WBTC Transfer Initiated: ${transferTxHash}`);
 
-    // Step 4: Monitor the transfer status
-    const receivedAmount = await monitorTransfer(quote.id, massAddress);
-    console.log("Transfer completed, WBTC received:", receivedAmount);
+    // Step 5: Monitor Transfer Status
+    const receivedAmount = await monitorTransfer(quote.id);
+    console.log(`✅ Transfer Completed. Received Amount: ${receivedAmount}`);
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Transfer completed successfully",
       transferTxHash,
-      transferFeeTxHash,
+      fundingTxHash,
       receivedAmount,
     });
   } catch (error: any) {
-    console.error("Error in MASSapi:", error.message || error);
-    return res.status(500).json({ error: "Transfer failed", details: error.message || error });
+    console.error("❌ Error during WBTC to USDC transfer:", error.message || error);
+    res.status(500).json({ error: "Transfer failed", details: error.message || error });
   }
 }
 
-// Helper to fetch transfer quote
-async function getTransferQuote(
-  wrappedBitcoinAmount: number,
-  wrappedBitcoinAddress: string,
-  massAddress: string
-) {
-  const fromAmount = Math.floor(wrappedBitcoinAmount).toString(); // Ensure smallest unit (integer)
+// **Helper Functions**
 
-  const params = {
-    fromChain: 42161, // Arbitrum chain ID
-    toChain: 137, // Polygon chain ID
-    fromToken: ARBITRUM_WBTC_ADDRESS, // WBTC address on Arbitrum
-    toToken: POLYGON_WBTC_ADDRESS, // WBTC address on Polygon
-    fromAmount, // Amount in smallest units (satoshi-equivalent)
-    fromAddress: wrappedBitcoinAddress, // Sender address on Arbitrum
-    toAddress: massAddress, // Recipient address on Polygon
-    slippage: 1, // Allow 1% slippage
-  };
-
-  try {
-    console.log("Requesting LI.FI transfer quote with params:", params);
-    const response = await axios.get(`${LI_FI_API_URL}/quote`, { params });
-    console.log("Received quote from LI.FI:", response.data);
-    return response.data;
-  } catch (error: any) {
-    console.error("Error fetching LI.FI quote:", error.message || error);
-    if (error.response) {
-      console.error("Failed request params:", error.response.config.params);
-      console.error("Response data:", error.response.data);
-    }
-    throw new Error("Failed to fetch transfer quote");
-  }
+/* Fetch Current ETH Price */
+async function fetchEthPrice(): Promise<number> {
+  const response = await axios.get("https://api.coingecko.com/api/v3/simple/price", {
+    params: { ids: "ethereum", vs_currencies: "usd" },
+  });
+  return response.data.ethereum.usd;
 }
 
-// Helper to deduct transfer fees from the designated wallet
-async function deductTransferFee(feeAmount: BigNumber) {
+/* Fund MASS Address with ETH for Gas Fees */
+/* Fund MASS Address with ETH for Gas Fees */
+async function fundGasFees(recipientAddress: string) {
   const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
   const wallet = new ethers.Wallet(TRANSFER_FEE_WALLET_PRIVATE_KEY, provider);
 
+  // Fetch ETH price
+  const ethPrice = await fetchEthPrice();
+
+  // Define target funding amount in USD ($0.30)
+  const TARGET_USD_BALANCE = 0.31;
+
+  // Check current balance of MASS address
+  const balanceInWei = await provider.getBalance(recipientAddress);
+  const balanceInEth = parseFloat(ethers.formatEther(balanceInWei));
+  const balanceInUSD = balanceInEth * ethPrice;
+
+  console.log(
+    `🔍 MASS Address Balance: ${balanceInEth.toFixed(8)} ETH (~$${balanceInUSD.toFixed(2)} USD)`
+  );
+
+  // Calculate the funding amount required
+  const shortfallUSD = TARGET_USD_BALANCE - balanceInUSD;
+
+  if (shortfallUSD <= 0) {
+    console.log("✅ MASS Address has sufficient balance. No funding required.");
+    return;
+  }
+
+  const amountToFundInEth = shortfallUSD / ethPrice;
+
+  console.log(
+    `⛽ Funding MASS Address: Shortfall: $${shortfallUSD.toFixed(2)} (~${amountToFundInEth.toFixed(8)} ETH)`
+  );
+
+  // Send the calculated amount
   const tx = await wallet.sendTransaction({
-    to: TRANSFER_FEE_WALLET,
-    value: feeAmount.toHexString(), // Convert BigNumber to Hex String for `value`
+    to: recipientAddress,
+    value: ethers.parseUnits(amountToFundInEth.toFixed(8), "ether"),
   });
 
+  await tx.wait();
+  console.log(`✅ Gas Fees Funded: ${tx.hash}`);
+  return tx.hash;
+}
+
+async function fetchTransferQuote(amount: number, fromAddress: string, toAddress: string) {
+  const params = {
+    fromChain: 42161,
+    toChain: 42161,
+    fromToken: ARBITRUM_WBTC_ADDRESS,
+    toToken: ARBITRUM_USDC_ADDRESS,
+    fromAmount: Math.floor(amount).toString(), // Truncate decimals
+    fromAddress,
+    toAddress,
+    slippage: 1,
+  };
+
+  const response = await axios.get(`${LI_FI_API_URL}/quote`, { params });
+  return response.data;
+}
+
+/* Check and Set Allowance for WBTC */
+async function checkAndSetAllowance(
+  privateKey: string,
+  tokenAddress: string,
+  spenderAddress: string,
+  amount: number
+) {
+  const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
+  const wallet = new ethers.Wallet(privateKey, provider);
+
+  const ERC20_ABI = [
+    "function approve(address spender, uint256 amount) external returns (bool)",
+    "function allowance(address owner, address spender) external view returns (uint256)",
+  ];
+  const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, wallet);
+
+  console.log(`🔍 Checking allowance for ${spenderAddress} to spend WBTC...`);
+  const currentAllowance = await tokenContract.allowance(await wallet.getAddress(), spenderAddress);
+
+  const bigAmount = BigNumber.from(Math.floor(amount).toString()); // Ensure integer value
+
+  if (BigNumber.from(currentAllowance).lt(bigAmount)) {
+    console.log("⛽ Insufficient allowance, approving token...");
+    const tx = await tokenContract.approve(spenderAddress, bigAmount.toString()); // Convert to string here
+    await tx.wait();
+    console.log(`✅ Approval successful: ${tx.hash}`);
+  } else {
+    console.log("✅ Sufficient allowance already exists.");
+  }
+}
+
+/* Execute Transfer Transaction */
+async function executeTransfer(quote: any, privateKey: string) {
+  const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
+  const wallet = new ethers.Wallet(privateKey, provider);
+
+  const txRequest = {
+    to: quote.transactionRequest.to,
+    data: quote.transactionRequest.data,
+    value: quote.transactionRequest.value || "0",
+    gasLimit: quote.transactionRequest.gasLimit || "300000",
+  };
+
+  const tx = await wallet.sendTransaction(txRequest);
   await tx.wait();
   return tx.hash;
 }
 
-// Helper to execute the WBTC transfer
-async function executeTransfer(quote: any, wrappedBitcoinPrivateKey: string) {
-  const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
-  const wallet = new ethers.Wallet(wrappedBitcoinPrivateKey, provider);
+/* Monitor Transfer Status */
+/* Monitor Transfer Status */
+async function monitorTransfer(txHash: string) {
+  const params = { txHash }; // txHash is the key parameter now.
 
-  try {
-    console.log("Executing WBTC transfer using LI.FI...");
+  console.log("🔍 Monitoring Transfer Status...");
 
-    const tx = await wallet.sendTransaction({
-      to: quote.transactionRequest.to, // The contract address to interact with
-      data: quote.transactionRequest.data, // Encoded data for the transaction
-      value: quote.transactionRequest.value || "0", // Use directly since it's BigNumberish
-      gasLimit: quote.transactionRequest.gasLimit || "300000", // Use directly
-      gasPrice: quote.transactionRequest.gasPrice || "0", // Use directly
-    });
-
-    console.log("Transaction sent:", tx.hash);
-
-    await tx.wait(); // Wait for confirmation
-    console.log("Transaction confirmed:", tx.hash);
-
-    return tx.hash;
-  } catch (error: any) {
-    console.error("Error executing transfer:", error.message || error);
-    throw new Error("Failed to execute transfer");
-  }
-}
-
-// Helper to monitor the transfer status
-async function monitorTransfer(transactionId: string, recipientAddress: string) {
-  try {
-    const params = {
-      transactionId,
-      toChainId: 137, // Polygon chain ID
-      toAddress: recipientAddress,
-    };
-
-    console.log("Monitoring LI.FI transfer with params:", params);
-
-    while (true) {
+  while (true) {
+    try {
       const response = await axios.get(`${LI_FI_API_URL}/status`, { params });
+      const { status, substatus, substatusMessage, lifiExplorerLink, receiving } = response.data;
 
-      if (response.data.status === "DONE") {
-        console.log("Transfer completed:", response.data);
-        return response.data.receivedAmount;
-      } else if (response.data.status === "FAILED") {
-        throw new Error("Transfer failed");
+      console.log(`🔍 Current Status: ${status}, Sub-status: ${substatus || "N/A"}`);
+      
+      // If status is "DONE", log the success and return the amount received.
+      if (status === "DONE") {
+        console.log("✅ Transfer Completed:", response.data);
+        console.log(`🔗 View on LiFi Explorer: ${lifiExplorerLink}`);
+        return receiving?.amount || "Unknown Amount";
       }
 
-      console.log("Waiting for transfer to complete...");
-      await new Promise((resolve) => setTimeout(resolve, 15000)); // Poll every 15 seconds
+      // If status is "FAILED", throw an error with additional details
+      if (status === "FAILED") {
+        console.error(`❌ Transfer Failed: ${substatusMessage || "Unknown error"}`);
+        throw new Error(`Transfer failed: ${substatusMessage || "No details available"}`);
+      }
+
+      // Handle substatuses for "PENDING" or unexpected errors
+      if (status === "PENDING") {
+        switch (substatus) {
+          case "WAIT_SOURCE_CONFIRMATIONS":
+            console.log("⏳ Waiting for source confirmations...");
+            break;
+          case "WAIT_DESTINATION_TRANSACTION":
+            console.log("⏳ Destination transaction pending, waiting for mining...");
+            break;
+          case "BRIDGE_NOT_AVAILABLE":
+            console.warn("⚠️ Bridge API temporarily unavailable. Retrying...");
+            break;
+          case "CHAIN_NOT_AVAILABLE":
+            console.warn("⚠️ RPC communication issue on source/destination chain. Retrying...");
+            break;
+          case "REFUND_IN_PROGRESS":
+            console.warn("⏳ Refund is being processed. Please wait...");
+            break;
+          case "UNKNOWN_ERROR":
+            console.error("⚠️ An unknown error occurred. Retrying...");
+            break;
+          default:
+            console.log(`⏳ Transfer pending... Sub-status: ${substatus || "N/A"}`);
+        }
+      }
+
+      // Handle "NOT_FOUND" status
+      if (status === "NOT_FOUND") {
+        console.warn("⚠️ Transaction not found. It might still be pending mining...");
+      }
+
+      // Wait before retrying the status check
+      console.log("⏳ Waiting 15 seconds before checking again...");
+      await new Promise((resolve) => setTimeout(resolve, 15000));
+
+    } catch (error: any) {
+      console.error("❌ Error while checking transfer status:", error.response?.data || error.message);
+      throw new Error("Failed to monitor transfer.");
     }
-  } catch (error: any) {
-    console.error("Error monitoring transfer:", error.message || error);
-    throw new Error("Failed to monitor transfer");
   }
 }

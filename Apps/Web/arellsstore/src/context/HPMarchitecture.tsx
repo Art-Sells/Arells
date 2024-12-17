@@ -187,28 +187,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const highestCpVact = Math.max(...vatopGroups.map((group) => group.cpVact || 0));
     setHpap(highestCpVact);
   }, [vatopGroups, bitcoinPrice]); // Depend on vatopGroups and bitcoinPrice
-  const filterEmptyGroupsAndUpdateHPAP = (groups: VatopGroup[]): VatopGroup[] => {
-    // Filter out groups where cVact <= 0 or cVatop <= 0
-    const filteredGroups = groups.filter(
-      (group) => group.cVact > 0 && group.cVatop > 0
-    );
-  
-    // Update HPAP based on the remaining groups
-    if (filteredGroups.length > 0) {
-      const highestCpVact = Math.max(...filteredGroups.map((group) => group.cpVact || 0));
-      setHpap(highestCpVact);
-    } else {
-      setHpap(bitcoinPrice); // Fallback to bitcoinPrice if no valid groups
-    }
-  
-    return filteredGroups;
-  };
-  const recalculateCdVatop = (groups: VatopGroup[]): VatopGroup[] => {
-    return groups.map((group) => ({
-      ...group,
-      cdVatop: parseFloat((group.cVact - group.cVatop).toFixed(2)), // Recalculate cdVatop
-    }));
-  };
 
 
 
