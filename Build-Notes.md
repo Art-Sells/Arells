@@ -16,10 +16,9 @@
 - - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
 
 ### After Test
-- deploy to polygon mainnet and refactor hardhat config and signer.tsx
 - Reconfigure HPM (MASS activation time frame), if supplicateWBTCtoUSD == true for each vatopGroup do not update cpVact (this changes back to false after 24 hours have passed, per Vatop Group so if one vatopGroup has supplicateWBTCtoUSD == true, then skip that cpVact update based on Bitcoin price, if it's false, then update that cpVact, every new Vatop Group supplicateWBTCtoUSD is by default false)
-- Set time to check Arbitrum Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001... This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
-- Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
+- - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Our system is set up so your wallet balance and profits update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
+
 
 
 ### Account
@@ -37,6 +36,10 @@
 
 #### Metatags/ Description (Home)
 - Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
+
+### After Completion
+- Add new invention and those updates will decrease as the system improves as we release more upgrades to Arells (from 24hrs to 12hrs, to 6hrs and one day, your wallet balances will update every second in order to ensure you accumulate the maximum amounts of profits a day)… Remove Emojis from API
+- Set time to check Arbitrum Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001... This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
 
 ### Other (if Time Permits)
 - Remove BTC Wallet & Key creations in signup and login
