@@ -9,13 +9,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, vatopGroups, vatopCombinations, acVactTas, soldAmounts, transactions } = req.body;
+  const { email, vatopGroups, vatopCombinations, soldAmounts, transactions } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: 'Missing email' });
   }
-
-  let currentVatopCombinations = vatopCombinations || {};
 
   try {
     const key = `${email}/vatop-data.json`;
@@ -31,20 +29,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    // Use existing combinations if not provided
-    if (!vatopCombinations) {
-      currentVatopCombinations = existingData.vatopCombinations || {};
-    }
-
-    // Update combinations if acVactTas is provided
-    if (acVactTas !== undefined) {
-      currentVatopCombinations.acVactTas = acVactTas;
-    }
+    // Merge or replace existing vatopGroups with the new ones
+    const mergedVatopGroups = vatopGroups.map((group: any) => {
+      const existingGroup = existingData.vatopGroups?.find((g: any) => g.cpVatop === group.cpVatop) || {};
+      return {
+        ...existingGroup,
+        ...group,
+        supplicateWBTCtoUSD: group.supplicateWBTCtoUSD ?? existingGroup.supplicateWBTCtoUSD ?? false,
+      };
+    });
 
     // Prepare the new data
     const newData = {
-      vatopGroups: vatopGroups || existingData.vatopGroups || [],
-      vatopCombinations: currentVatopCombinations,
+      vatopGroups: mergedVatopGroups,
+      vatopCombinations: vatopCombinations || existingData.vatopCombinations || {},
       soldAmounts: soldAmounts !== undefined ? soldAmounts : existingData.soldAmounts || 0,
       transactions: transactions || existingData.transactions || [],
     };
@@ -60,9 +58,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json({ message: 'Data saved successfully', data: newData });
   } catch (error) {
-    const errorMessage = (error as Error).message || 'Failed to save data';
-    console.error('Error saving data:', errorMessage);
-    return res.status(500).json({ error: errorMessage });
+    console.error('Error saving data:', error);
+    return res.status(500).json({ error: 'Failed to save data' });
   }
 };
 

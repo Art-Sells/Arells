@@ -7,6 +7,7 @@
 ### Testing
 
 - Create HPM & MASS Tester (with HPM (Increase/Decrease Bitcoin Price))
+- - Create supplicateWBTCtoUSD?: boolean; within Vatop Group to handle (and reset it only throug hthe MASS architecture [use MASS architecture code from 2 weeks ago to pull from removing fee logic])
 - - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
 - - import function: if MASS Balance > aBTC, then new cVactTa (VatopGroup) = MASS Balance - aBTC.
 - - when supplicateWBTCtoUSD is called, subtract WBTC amount from aBTC (ensure import useEffect that runs every 10 seconds is halted)
@@ -16,7 +17,7 @@
 - - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
 
 ### After Test
-- Reconfigure HPM (MASS activation time frame), if supplicateWBTCtoUSD == true for each vatopGroup do not update cpVact (this changes back to false after 24 hours have passed, per Vatop Group so if one vatopGroup has supplicateWBTCtoUSD == true, then skip that cpVact update based on Bitcoin price, if it's false, then update that cpVact, every new Vatop Group supplicateWBTCtoUSD is by default false)
+- Reconfigure HPM (MASS intervals (not for every 10 seconds but every 24 hours) activation time frame), if supplicateWBTCtoUSD == true for each vatopGroup do not update cpVact (this changes back to false after 24 hours have passed, per Vatop Group so if one vatopGroup has supplicateWBTCtoUSD == true, then skip that cpVact update based on Bitcoin price, if it's false, then update that cpVact, every new Vatop Group supplicateWBTCtoUSD is by default false)
 - - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Our system is set up so your wallet balance and profits update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
 
 
@@ -29,16 +30,18 @@
 - Import Bitcoin to ensure your investments never lose value
 - - Modal: Preparing (B) Wallet (to create wallet (take from concept)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
 
-#### After Completion: Amplify/S3 Login
+#### Metatags/ Description (Home)
+- Alter: "Wrapped Bitcoin investments that never lose value. Import Small Amounts of Wrapped Bitcoin, ensure that they never lose value."
+
+#### Deployment Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked!
 - Delete MASS address info from MASStester and console.logs from all signer.
 - Restructure decryption process in readMASS and readBTC apis
 
-#### Metatags/ Description (Home)
-- Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
-
 ### After Completion
 - Add new invention and those updates will decrease as the system improves as we release more upgrades to Arells (from 24hrs to 12hrs, to 6hrs and one day, your wallet balances will update every second in order to ensure you accumulate the maximum amounts of profits a day)… Remove Emojis from API
+- Add "Discord" section for any questions
+- Restructure MASS Fee Constraints (based on MASSApi & MASSSupplicationApi)
 - Set time to check Arbitrum Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001... This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
 
 ### Other (if Time Permits)
@@ -57,7 +60,7 @@
 - if cVactDa < $0.01, cancel (exit) MASS & HPM supplication
 
 ### Last Resort
-- Remove console.logs (and console.errors/warn) from all wrappers(userContext, HPMContext & MASSContext), hide "masstester" "wallettester" and "hpmtester" from main
+- Remove console.logs (and console.errors/warn) from all wrappers(userContext, HPMContext & MASSContext), hide "masstester" "wallettester" "hpmtester" & "hpmmasstester" from main
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages)
 
 

@@ -18,6 +18,7 @@ interface VatopGroup {
   cVactDa: number;
   cVactTaa: number;
   cdVatop: number;
+  supplicateWBTCtoUSD: boolean;
 }
 
 const MASSarchitecture = createContext<MASSarchitectureType | undefined>(undefined);
@@ -26,10 +27,6 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmail] = useState<string>('');
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
   const [prevVatopGroups, setPrevVatopGroups] = useState<VatopGroup[]>([]);
-
-  const FEE_PER_SWAP = 0.00016; // $0.00016 per swap or GWEI (denominated from Price Oracle API)
-  const MAX_FEE_PER_GROUP = 0.01; // Maximum fee per group before pausing swaps
-  const SAFEGUARD_THRESHOLD = 0.9999; // Retain 99.99% of initial cVact
 
   useEffect(() => {
     const fetchEmail = async () => {
@@ -48,114 +45,114 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!email) return;
-
+  
     const fetchVatopGroups = async () => {
       try {
         const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
         const fetchedVatopGroups = response.data.vatopGroups || [];
-        setVatopGroups(fetchedVatopGroups);
+  
+        // Initialize or retain `supplicateWBTCtoUSD`
+        const initializedGroups = fetchedVatopGroups.map((group: VatopGroup) => ({
+          ...group,
+          supplicateWBTCtoUSD: group.supplicateWBTCtoUSD ?? false,
+        }));
+  
+        setVatopGroups(initializedGroups);
       } catch (error) {
         console.error('Error fetching vatop groups:', error);
       }
     };
-
-    // Read vatopGroups every 10 seconds
+  
     const intervalId = setInterval(fetchVatopGroups, 10000);
     fetchVatopGroups();
-
+  
     return () => clearInterval(intervalId);
   }, [email]);
-
-  const handleSupplications = (amount: number, swapType: 'USDCtoWBTC' | 'WBTCtoUSDC', group: VatopGroup) => {
-    const feeSpentPerGroup: Record<string, number> = {};
-    let currentCdVatop = group.cdVatop;
-    let currentCVact = group.cVact;
-    const groupId = group.cpVatop;
-
-    // Calculate safeguard limit (retain 99.99% of initial cVact)
-    const minCVact = currentCVact * SAFEGUARD_THRESHOLD;
-
-    // Stop swaps if cVact drops below the safeguard limit
-    if (currentCVact < minCVact) {
-      console.log(`Group ${groupId}: Swaps paused. cVact dropped below safeguard limit ($${minCVact}).`);
-      return;
-    }
-
-    // Handle low cdVatop
-    if (currentCdVatop < 0.01) {
-      console.log(`Group ${groupId} has low cdVatop. Deducting fees from cVact.`);
-      const shortfall = 0.01 - currentCdVatop;
-
-      if (currentCVact >= shortfall) {
-        currentCVact -= shortfall;
-        console.log(`Group ${groupId}: Shortfall of $${shortfall} covered by cVact.`);
-      } else {
-        console.log(`Group ${groupId}: Insufficient cVact to cover shortfall. Skipping swap.`);
-        return;
-      }
-    }
-
-    // Deduct fees
-    if (currentCdVatop >= FEE_PER_SWAP) {
-      currentCdVatop -= FEE_PER_SWAP;
-      console.log(`Group ${groupId}: Fee of $${FEE_PER_SWAP} deducted from cdVatop.`);
-    } else if (currentCVact >= FEE_PER_SWAP) {
-      currentCVact -= FEE_PER_SWAP;
-      console.log(`Group ${groupId}: Fee of $${FEE_PER_SWAP} deducted from cVact.`);
-    } else {
-      console.log(`Group ${groupId}: Insufficient funds to cover fees. Skipping swap.`);
-      return;
-    }
-
-    console.log(`Group ${groupId}: Running ${swapType} swap for amount: $${amount}.`);
-  };
 
   useEffect(() => {
     const prevIds = prevVatopGroups.map((group) => group.cpVatop);
     const currentIds = vatopGroups.map((group) => group.cpVatop);
-
+  
     const addedGroups = vatopGroups.filter((group) => !prevIds.includes(group.cpVatop));
     const deletedGroups = prevVatopGroups.filter((group) => !currentIds.includes(group.cpVatop));
-
+  
     if (addedGroups.length > 0 || deletedGroups.length > 0) {
       console.log('Groups were added or deleted, skipping swaps.');
       setPrevVatopGroups([...vatopGroups]);
       return;
     }
-
+  
     vatopGroups.forEach((group, index) => {
       const prevGroup = prevVatopGroups[index] || {};
-
+  
       if (group.cVactTaa > 0.00001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
         console.log(`Initiating USDC to WBTC supplication for amount: ${group.cVactTaa}`);
         supplicateUSDCintoWBTC(group.cVactTaa, group);
       }
-
+  
       if (group.cVactDa > 0.01 && (!prevGroup.cVactDa || group.cVactDa > prevGroup.cVactDa)) {
         console.log(`Initiating WBTC to USDC supplication for amount: ${group.cVactDa}`);
         supplicateWBTCintoUSDC(group.cVactDa, group);
+  
+        // Log before updating
+        console.log(`Setting supplicateWBTCtoUSD to true for group with cVactTa: ${group.cVactTa}`);
+        setVatopGroups((prevGroups) => {
+          const updatedGroups = prevGroups.map((g) =>
+            g.cVactTa === group.cVactTa ? { ...g, supplicateWBTCtoUSD: true } : g
+          );
+          console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
+  
+          // Save updated groups to the backend
+          saveVatopGroups(updatedGroups);
+  
+          return updatedGroups;
+        });
+  
+        // Reset `supplicateWBTCtoUSD` after 60 seconds
+        setTimeout(() => {
+          setVatopGroups((prevGroups) => {
+            const updatedGroups = prevGroups.map((g) =>
+              g.cVactTa === group.cVactTa ? { ...g, supplicateWBTCtoUSD: false } : g
+            );
+            console.log('Updated vatopGroups after resetting supplicateWBTCtoUSD to false:', updatedGroups);
+  
+            // Save updated groups to the backend
+            saveVatopGroups(updatedGroups);
+  
+            return updatedGroups;
+          });
+        }, 10000); // Reset supplicateWBTCtoUSD to false after 60 seconds
       }
     });
-
+  
     setPrevVatopGroups([...vatopGroups]);
   }, [vatopGroups]);
+  
+  const saveVatopGroups = async (updatedGroups: VatopGroup[]) => {
+    try {
+      const payload = {
+        email,
+        vatopGroups: updatedGroups,
+      };
+      await axios.post('/api/saveVatopGroups', payload);
+      console.log('Updated vatopGroups saved to backend successfully');
+    } catch (error) {
+      console.error('Error saving vatopGroups to backend:', error);
+    }
+  };
 
   const supplicateUSDCintoWBTC = async (amount: number, group: VatopGroup) => {
     if (amount <= 0) {
       console.log('Supplication amount must be greater than 0. Skipping swap.');
       return;
     }
-    console.log(`Supplicating ${amount} USDC to WBTC`);
-    handleSupplications(amount, 'USDCtoWBTC', group);
   };
 
   const supplicateWBTCintoUSDC = async (amount: number, group: VatopGroup) => {
     if (amount <= 0) {
-      console.log('Swap amount must be greater than 0. Skipping swap.');
+      console.log('Supplication amount must be greater than 0. Skipping swap.');
       return;
     }
-    console.log(`Supplicating ${amount} WBTC to USDC`);
-    handleSupplications(amount, 'WBTCtoUSDC', group);
   };
 
   return (
