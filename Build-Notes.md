@@ -7,7 +7,8 @@
 ### Testing
 
 - Create HPM & MASS Tester (with HPM (Increase/Decrease Bitcoin Price))
-- - Create supplicateWBTCtoUSD?: boolean; within Vatop Group to handle (and reset it only throug hthe MASS architecture [use MASS architecture code from 2 weeks ago to pull from removing fee logic])
+- - Resolve "Groups were added" issue what doesn't update group when cVactDa initially updates
+- - Create supplicateWBTCtoUSD?: boolean; within Vatop Group to handle (and reset it to false only when a new date is set from the countdown) throug hthe MASS architecture [use MASS architecture code from 2 weeks ago to pull from removing fee logic])
 - - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
 - - import function: if MASS Balance > aBTC, then new cVactTa (VatopGroup) = MASS Balance - aBTC.
 - - when supplicateWBTCtoUSD is called, subtract WBTC amount from aBTC (ensure import useEffect that runs every 10 seconds is halted)
@@ -41,7 +42,7 @@
 ### After Completion
 - Add new invention and those updates will decrease as the system improves as we release more upgrades to Arells (from 24hrs to 12hrs, to 6hrs and one day, your wallet balances will update every second in order to ensure you accumulate the maximum amounts of profits a day)… Remove Emojis from API
 - Add "Discord" section for any questions
-- Restructure MASS Fee Constraints (based on MASSApi & MASSSupplicationApi)
+- Restructure MASS Fee Abstraction (based on MASSApi & MASSSupplicationApi & MASS architecture)
 - Set time to check Arbitrum Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001... This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
 
 ### Other (if Time Permits)
@@ -99,6 +100,7 @@
 ### Testing
 - Export Test (similar to sell except)
 - 3%-0.1% export (selling) fee?
+- **fix Selling Discrepancy Issue (VERY IMPORTANT)**
 - - if (cVactDa > 0.00) take Dollar difference from cpVact - bitcoinPrice and ensure this USDC amount is used to bridge to BTC and that amount it added to BTC address before exporting out (figure out how to ensure aBTC doesn't update from BTC since we'll be adding more BTC before exporting)
 - Sell Test (HPMContext)
 - - (start here first since taking from highest HPAP) if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).

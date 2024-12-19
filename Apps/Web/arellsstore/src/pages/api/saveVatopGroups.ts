@@ -31,11 +31,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Merge or replace existing vatopGroups with the new ones
     const mergedVatopGroups = vatopGroups.map((group: any) => {
-      const existingGroup = existingData.vatopGroups?.find((g: any) => g.cpVatop === group.cpVatop) || {};
+      const existingGroup = existingData.vatopGroups?.find((g: any) => g.id === group.id) || {};
       return {
         ...existingGroup,
         ...group,
-        supplicateWBTCtoUSD: group.supplicateWBTCtoUSD ?? existingGroup.supplicateWBTCtoUSD ?? false,
+        supplicateWBTCtoUSD:
+          group.supplicateWBTCtoUSD !== undefined
+            ? group.supplicateWBTCtoUSD
+            : existingGroup.supplicateWBTCtoUSD, // Prefer existing value if new value is undefined
       };
     });
 
@@ -46,6 +49,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       soldAmounts: soldAmounts !== undefined ? soldAmounts : existingData.soldAmounts || 0,
       transactions: transactions || existingData.transactions || [],
     };
+
+    // Log for debugging
+    console.log('Saving to S3:', JSON.stringify(newData, null, 2));
 
     // Save the updated data to S3
     await s3.putObject({

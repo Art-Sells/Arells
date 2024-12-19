@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useHPM } from '../../context/HPMarchitecture';
+import { useMASS } from '../../context/MASSarchitecture';
 import { useSigner } from '../../state/signer'; // Ensure the correct path
 import axios from 'axios';
 
@@ -33,6 +34,7 @@ const HPMMASSTester: React.FC = () => {
   const [inputSellAmount, setInputSellAmount] = useState<string>('');
   const [inputImportAmount, setInputImportAmount] = useState<string>('');
   const [aBTC, setABTC] = useState<number>(0);
+  const { resetSupplicateWBTCtoUSD } = useMASS();
 
   const [wrappedBitcoinAmount, setWrappedBitcoinAmount] = useState<number | string>('');
   const [dollarAmount, setDollarAmount] = useState<number | string>('');
@@ -165,9 +167,15 @@ const HPMMASSTester: React.FC = () => {
     }
   };
 
+
+  const handleReset = () => {
+    resetSupplicateWBTCtoUSD();
+    console.log('SupplicateWBTCtoUSD has been reset for all groups.');
+  };
+
   return (
     <div>
-      <h1>HPM and MASS Wallet Tester</h1>
+      <h1>HPM and MASS Tester</h1>
       <h2>Bitcoin Price</h2>
       <h3>${formatCurrency(bitcoinPrice)}</h3>
       <button onClick={handleIncreasePrice}>Increase Price</button>
@@ -225,6 +233,7 @@ const HPMMASSTester: React.FC = () => {
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
         <p>acVactTaa: {formatNumber(vatopCombinations.acVactTaa)}</p>
       </div>
+      <button onClick={handleReset}>Reset supplicateWBTCtoUSD</button>
       <div>
         <h2>Sold Amount</h2>
         <p id="amount-sold-number-account-num-concept">{formatCurrency(soldAmounts)}</p>

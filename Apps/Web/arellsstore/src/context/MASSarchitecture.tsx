@@ -3,13 +3,18 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { useHPM } from './HPMarchitecture';
 
 interface MASSarchitectureType {
   cVactTaa: number;
   cVactDa: number;
+  resetSupplicateWBTCtoUSD: () => void;
+  refreshVatopGroups: () => void;
 }
 
 interface VatopGroup {
+  id: string; 
   cVatop: number;
   cpVatop: number;
   cVact: number;
@@ -27,15 +32,13 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmail] = useState<string>('');
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
   const [prevVatopGroups, setPrevVatopGroups] = useState<VatopGroup[]>([]);
-
+  const [supplicateState, setSupplicateState] = useState<Record<string, boolean>>({});
   useEffect(() => {
     const fetchEmail = async () => {
       try {
         const attributesResponse = await fetchUserAttributes();
         const emailAttribute = attributesResponse.email;
-        if (emailAttribute) {
-          setEmail(emailAttribute);
-        }
+        if (emailAttribute) setEmail(emailAttribute);
       } catch (error) {
         console.error('Error fetching user attributes:', error);
       }
@@ -43,30 +46,45 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     fetchEmail();
   }, []);
 
+  const fetchVatopGroups = async () => {
+    try {
+      if (!email) return;
+  
+      const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
+      const fetchedVatopGroups = response.data.vatopGroups || [];
+      const validVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => ({
+        ...group,
+        id: group.id || uuidv4(), // Ensure all groups have a unique ID
+      }));
+  
+      setVatopGroups(validVatopGroups);
+    } catch (error) {
+      console.error('Error fetching vatop groups:', error);
+    }
+  };
+
+  const saveVatopGroups = async ({
+    email,
+    vatopGroups,
+  }: {
+    email: string;
+    vatopGroups: VatopGroup[];
+  }) => {
+    try {
+      const payload = { email, vatopGroups };
+      console.log('Saving vatopGroups:', payload);
+      await axios.post('/api/saveVatopGroups', payload);
+      console.log('VatopGroups saved successfully.');
+    } catch (error) {
+      console.error('Error saving vatop groups:', error);
+    }
+  };
+
   useEffect(() => {
-    if (!email) return;
-  
-    const fetchVatopGroups = async () => {
-      try {
-        const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
-        const fetchedVatopGroups = response.data.vatopGroups || [];
-  
-        // Initialize or retain `supplicateWBTCtoUSD`
-        const initializedGroups = fetchedVatopGroups.map((group: VatopGroup) => ({
-          ...group,
-          supplicateWBTCtoUSD: group.supplicateWBTCtoUSD ?? false,
-        }));
-  
-        setVatopGroups(initializedGroups);
-      } catch (error) {
-        console.error('Error fetching vatop groups:', error);
-      }
-    };
-  
-    const intervalId = setInterval(fetchVatopGroups, 10000);
     fetchVatopGroups();
-  
-    return () => clearInterval(intervalId);
+
+    const interval = setInterval(fetchVatopGroups, 10000); // Refresh every 10 seconds
+    return () => clearInterval(interval);
   }, [email]);
 
   useEffect(() => {
@@ -94,71 +112,78 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         console.log(`Initiating WBTC to USDC supplication for amount: ${group.cVactDa}`);
         supplicateWBTCintoUSDC(group.cVactDa, group);
   
-        // Log before updating
-        console.log(`Setting supplicateWBTCtoUSD to true for group with cVactTa: ${group.cVactTa}`);
         setVatopGroups((prevGroups) => {
           const updatedGroups = prevGroups.map((g) =>
             g.cVactTa === group.cVactTa ? { ...g, supplicateWBTCtoUSD: true } : g
           );
           console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
   
-          // Save updated groups to the backend
-          saveVatopGroups(updatedGroups);
-  
+          // Pass email explicitly with updatedGroups
+          saveVatopGroups({ email, vatopGroups: updatedGroups }); 
           return updatedGroups;
         });
-  
-        // Reset `supplicateWBTCtoUSD` after 60 seconds
-        setTimeout(() => {
-          setVatopGroups((prevGroups) => {
-            const updatedGroups = prevGroups.map((g) =>
-              g.cVactTa === group.cVactTa ? { ...g, supplicateWBTCtoUSD: false } : g
-            );
-            console.log('Updated vatopGroups after resetting supplicateWBTCtoUSD to false:', updatedGroups);
-  
-            // Save updated groups to the backend
-            saveVatopGroups(updatedGroups);
-  
-            return updatedGroups;
-          });
-        }, 10000); // Reset supplicateWBTCtoUSD to false after 60 seconds
       }
     });
   
     setPrevVatopGroups([...vatopGroups]);
   }, [vatopGroups]);
+
+  const resetSupplicateWBTCtoUSD = async () => {
+    const updatedGroups = vatopGroups.map((group) => ({ ...group, supplicateWBTCtoUSD: false }));
+    setVatopGroups(updatedGroups);
   
-  const saveVatopGroups = async (updatedGroups: VatopGroup[]) => {
+    console.log('Reset supplicateWBTCtoUSD to false for all groups.');
+  
     try {
-      const payload = {
-        email,
-        vatopGroups: updatedGroups,
-      };
-      await axios.post('/api/saveVatopGroups', payload);
-      console.log('Updated vatopGroups saved to backend successfully');
+      await saveVatopGroups({ email, vatopGroups: updatedGroups });
     } catch (error) {
-      console.error('Error saving vatopGroups to backend:', error);
+      console.error('Error saving vatopGroups:', error);
     }
+  };
+
+  const toggleSupplicateWBTCtoUSD = (groupId: string, value: boolean) => {
+    setVatopGroups((prevGroups) =>
+      prevGroups.map((group) =>
+        group.id === groupId ? { ...group, supplicateWBTCtoUSD: value } : group
+      )
+    );
   };
 
   const supplicateUSDCintoWBTC = async (amount: number, group: VatopGroup) => {
     if (amount <= 0) {
-      console.log('Supplication amount must be greater than 0. Skipping swap.');
+      console.log('Supplication amount must be greater than 0. Skipping.');
       return;
     }
+    console.log(`Supplicating USDC into WBTC for amount: ${amount}`);
+    toggleSupplicateWBTCtoUSD(group.id, true);
+    // Add your logic here (e.g., calling an API or updating state).
   };
 
   const supplicateWBTCintoUSDC = async (amount: number, group: VatopGroup) => {
     if (amount <= 0) {
-      console.log('Supplication amount must be greater than 0. Skipping swap.');
+      console.log('Supplication amount must be greater than 0. Skipping.');
       return;
     }
+    console.log(`Supplicating WBTC into USDC for amount: ${amount}`);
+    // Add your logic here (e.g., calling an API or updating state).
   };
 
   return (
-    <MASSarchitecture.Provider value={{ cVactTaa: 0, cVactDa: 0 }}>
-      {children}
-    </MASSarchitecture.Provider>
+<MASSarchitecture.Provider
+  value={{
+    cVactTaa: vatopGroups.reduce((sum, group) => sum + group.cVactTaa, 0), // Sum up all `cVactTaa` values
+    cVactDa: vatopGroups.reduce((sum, group) => sum + group.cVactDa, 0), // Sum up all `cVactDa` values
+    resetSupplicateWBTCtoUSD: async () => {
+      setVatopGroups((prevGroups) =>
+        prevGroups.map((group) => ({ ...group, supplicateWBTCtoUSD: false }))
+      );
+      console.log('Reset supplicateWBTCtoUSD for all groups.');
+    },
+    refreshVatopGroups: fetchVatopGroups,
+  }}
+>
+  {children}
+</MASSarchitecture.Provider>
   );
 };
 
