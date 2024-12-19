@@ -129,15 +129,22 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   }, [vatopGroups]);
 
   const resetSupplicateWBTCtoUSD = async () => {
-    const updatedGroups = vatopGroups.map((group) => ({ ...group, supplicateWBTCtoUSD: false }));
-    setVatopGroups(updatedGroups);
-  
-    console.log('Reset supplicateWBTCtoUSD to false for all groups.');
-  
     try {
+      // Reset the state
+      const updatedGroups = vatopGroups.map((group) => ({
+        ...group,
+        supplicateWBTCtoUSD: false,
+      }));
+  
+      setVatopGroups(updatedGroups);
+  
+      console.log('Reset supplicateWBTCtoUSD to false for all groups.');
+  
+      // Persist changes
       await saveVatopGroups({ email, vatopGroups: updatedGroups });
+      console.log('Changes saved to backend successfully.');
     } catch (error) {
-      console.error('Error saving vatopGroups:', error);
+      console.error('Error in resetSupplicateWBTCtoUSD:', error);
     }
   };
 
@@ -171,14 +178,9 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   return (
 <MASSarchitecture.Provider
   value={{
-    cVactTaa: vatopGroups.reduce((sum, group) => sum + group.cVactTaa, 0), // Sum up all `cVactTaa` values
-    cVactDa: vatopGroups.reduce((sum, group) => sum + group.cVactDa, 0), // Sum up all `cVactDa` values
-    resetSupplicateWBTCtoUSD: async () => {
-      setVatopGroups((prevGroups) =>
-        prevGroups.map((group) => ({ ...group, supplicateWBTCtoUSD: false }))
-      );
-      console.log('Reset supplicateWBTCtoUSD for all groups.');
-    },
+    cVactTaa: vatopGroups.reduce((sum, group) => sum + group.cVactTaa, 0),
+    cVactDa: vatopGroups.reduce((sum, group) => sum + group.cVactDa, 0),
+    resetSupplicateWBTCtoUSD, // Use the actual function
     refreshVatopGroups: fetchVatopGroups,
   }}
 >

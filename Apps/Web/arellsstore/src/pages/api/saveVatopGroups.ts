@@ -35,10 +35,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return {
         ...existingGroup,
         ...group,
-        supplicateWBTCtoUSD:
-          group.supplicateWBTCtoUSD !== undefined
-            ? group.supplicateWBTCtoUSD
-            : existingGroup.supplicateWBTCtoUSD, // Prefer existing value if new value is undefined
+        // Always prefer the incoming value
+        supplicateWBTCtoUSD: group.supplicateWBTCtoUSD !== undefined
+          ? group.supplicateWBTCtoUSD
+          : false, // Default to false if not set explicitly
       };
     });
 
