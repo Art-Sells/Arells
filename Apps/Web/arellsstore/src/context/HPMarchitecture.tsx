@@ -98,34 +98,48 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const fetchVatopGroups = async () => {
       try {
         if (!email) {
-          console.warn('No email provided, skipping fetchVatopGroups');
+          console.warn("No email provided, skipping fetchVatopGroups");
           return;
         }
   
-        const response = await axios.get('/api/fetchVatopGroups', { params: { email } });
+        const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
+        console.log("Fetched backend response:", response.data);
+  
         const fetchedVatopGroups = response.data.vatopGroups || [];
         const fetchedVatopCombinations = response.data.vatopCombinations || {};
         const fetchedSoldAmounts = response.data.soldAmounts || 0;
   
-        const validVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => ({
-          ...group,
-          id: group.id || uuidv4(), // Ensure all groups have a unique ID
-        }));
+        const validVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
+          const updatedGroup = {
+            ...group,
+            id: group.id || uuidv4(), // Ensure unique ID
+            cpVact: group.supplicateWBTCtoUSD ? group.cpVact : bitcoinPrice, // Preserve or update cpVact
+            cVact: parseFloat((group.cVactTa * group.cpVact).toFixed(2)), // Calculate cVact
+            cdVatop: parseFloat((group.cVact - group.cVatop).toFixed(2)), // Calculate cdVatop
+            cVactDa: parseFloat((group.cVactTa * group.cpVact).toFixed(2)), // Calculate cVactDa
+            cVactTaa: parseFloat(group.cVactTaa.toFixed(7)), // Ensure consistent formatting
+            cVactTa: parseFloat(group.cVactTa.toFixed(7)), // Ensure consistent formatting
+          };
+          console.log("Processed group:", updatedGroup); // Log for debugging
+          return updatedGroup;
+        });
   
-        setVatopGroups(validVatopGroups); // Update state with valid groups
+        setVatopGroups(validVatopGroups);
         setVatopCombinations(fetchedVatopCombinations);
         setSoldAmounts(fetchedSoldAmounts);
+        console.log("Updated vatopGroups in state:", validVatopGroups);
   
-        // Recalculate HPAP
-        const maxCpVact = Math.max(...validVatopGroups.map((group: { cpVact: any; }) => group.cpVact || 0));
+        const maxCpVact = Math.max(
+          ...validVatopGroups.map((group: { cpVact: any; }) => group.cpVact || 0)
+        );
         setHpap(maxCpVact);
       } catch (error) {
-        console.error('Error fetching vatop groups:', error);
+        console.error("Error fetching vatop groups:", error);
       }
     };
   
     fetchVatopGroups();
-  }, [email]);
+  }, [email, bitcoinPrice]);
 
   useEffect(() => {
     if (!vatopGroups.length) {
@@ -230,22 +244,24 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     email: string
   ) => {
     const processedGroups = updatedGroups.map((group) => {
-      const newCpVact = group.supplicateWBTCtoUSD
-        ? group.cpVact
-        : Math.max(group.cpVact, newBitcoinPrice);
+      if (group.supplicateWBTCtoUSD) {
+        // Explicitly preserve cpVact and update only dependent fields
+        return {
+          ...group,
+          cpVact: group.cpVact, // Explicitly preserve cpVact
+          cVact: parseFloat((group.cVactTa * group.cpVact).toFixed(2)),
+          cVactDa: parseFloat((group.cVactTa * group.cpVact).toFixed(2)),
+          cdVatop: parseFloat((group.cVact - group.cVatop).toFixed(2)),
+        };
+      }
+  
+      // Handle cases where supplicateWBTCtoUSD is false
+      const newCpVact = Math.max(group.cpVact, newBitcoinPrice);
       const newCVact = group.cVactTa * newCpVact;
-  
       const newCVactTaa =
-        !group.supplicateWBTCtoUSD &&
-        Math.round(newBitcoinPrice) >= Math.round(newCpVact)
-          ? group.cVactTa
-          : 0;
-  
+        Math.round(newBitcoinPrice) >= Math.round(newCpVact) ? group.cVactTa : 0;
       const newCVactDa =
-        !group.supplicateWBTCtoUSD &&
-        Math.round(newBitcoinPrice) < Math.round(newCpVact)
-          ? newCVact
-          : 0;
+        Math.round(newBitcoinPrice) < Math.round(newCpVact) ? newCVact : 0;
   
       return {
         ...group,
@@ -288,22 +304,24 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setBitcoinPrice(newPrice);
   
     const updatedGroups = vatopGroups.map((group) => {
-      const newCpVact = group.supplicateWBTCtoUSD
-        ? group.cpVact
-        : Math.max(group.cpVact, newPrice);
+      if (group.supplicateWBTCtoUSD) {
+        // Explicitly preserve cpVact and update only dependent fields
+        return {
+          ...group,
+          cpVact: group.cpVact, // Preserve cpVact when supplicateWBTCtoUSD is true
+          cVact: parseFloat((group.cVactTa * group.cpVact).toFixed(2)),
+          cVactDa: parseFloat((group.cVactTa * group.cpVact).toFixed(2)),
+          cdVatop: parseFloat((group.cVact - group.cVatop).toFixed(2)),
+        };
+      }
+  
+      // When supplicateWBTCtoUSD is false, allow cpVact to change with bitcoin price
+      const newCpVact = Math.max(group.cpVact, newPrice);
       const newCVact = group.cVactTa * newCpVact;
-  
       const newCVactTaa =
-        !group.supplicateWBTCtoUSD &&
-        Math.round(newPrice) >= Math.round(newCpVact)
-          ? group.cVactTa
-          : 0;
-  
+        Math.round(newPrice) >= Math.round(newCpVact) ? group.cVactTa : 0;
       const newCVactDa =
-        !group.supplicateWBTCtoUSD &&
-        Math.round(newPrice) < Math.round(newCpVact)
-          ? newCVact
-          : 0;
+        Math.round(newPrice) < Math.round(newCpVact) ? newCVact : 0;
   
       return {
         ...group,
