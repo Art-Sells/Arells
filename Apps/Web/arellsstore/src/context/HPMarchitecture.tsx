@@ -230,16 +230,20 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     email: string
   ) => {
     const processedGroups = updatedGroups.map((group) => {
-      const newCpVact = group.supplicateWBTCtoUSD ? group.cpVact : Math.max(group.cpVact, newBitcoinPrice);
+      const newCpVact = group.supplicateWBTCtoUSD
+        ? group.cpVact
+        : Math.max(group.cpVact, newBitcoinPrice);
       const newCVact = group.cVactTa * newCpVact;
   
       const newCVactTaa =
-        !group.supplicateWBTCtoUSD && Math.round(newBitcoinPrice) >= Math.round(newCpVact)
+        !group.supplicateWBTCtoUSD &&
+        Math.round(newBitcoinPrice) >= Math.round(newCpVact)
           ? group.cVactTa
           : 0;
   
       const newCVactDa =
-        !group.supplicateWBTCtoUSD && Math.round(newBitcoinPrice) < Math.round(newCpVact)
+        !group.supplicateWBTCtoUSD &&
+        Math.round(newBitcoinPrice) < Math.round(newCpVact)
           ? newCVact
           : 0;
   
@@ -254,15 +258,16 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   
     const validGroups = processedGroups.filter(
-      (group) => group.cVatop > 0 || group.cVact > 0 || group.cVactTa > 0 || group.cdVatop > 0
+      (group) =>
+        group.cVatop > 0 || group.cVact > 0 || group.cVactTa > 0 || group.cdVatop > 0
     );
-  
   
     setVatopGroups(validGroups);
   
     const newCombinations = updateVatopCombinations(validGroups);
   
     try {
+      console.log("Saving to backend:", { email, validGroups, newCombinations });
       await axios.post('/api/saveVatopGroups', {
         email,
         vatopGroups: validGroups,
@@ -283,17 +288,20 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setBitcoinPrice(newPrice);
   
     const updatedGroups = vatopGroups.map((group) => {
-      const newCpVact = group.supplicateWBTCtoUSD ? group.cpVact : Math.max(group.cpVact, newPrice);
+      const newCpVact = group.supplicateWBTCtoUSD
+        ? group.cpVact
+        : Math.max(group.cpVact, newPrice);
       const newCVact = group.cVactTa * newCpVact;
   
-      // Ensure cVactTaa and cVactDa remain consistent
       const newCVactTaa =
-        !group.supplicateWBTCtoUSD && Math.round(newPrice) >= Math.round(newCpVact)
+        !group.supplicateWBTCtoUSD &&
+        Math.round(newPrice) >= Math.round(newCpVact)
           ? group.cVactTa
           : 0;
   
       const newCVactDa =
-        !group.supplicateWBTCtoUSD && Math.round(newPrice) < Math.round(newCpVact)
+        !group.supplicateWBTCtoUSD &&
+        Math.round(newPrice) < Math.round(newCpVact)
           ? newCVact
           : 0;
   
@@ -306,6 +314,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cdVatop: parseFloat((newCVact - group.cVatop).toFixed(2)),
       };
     });
+  
+    console.log("Updating groups and saving to backend:", updatedGroups);
   
     await updateAllState(newPrice, updatedGroups, email);
   };

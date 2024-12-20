@@ -22,28 +22,39 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         try {
             const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
             existingData = JSON.parse(data.Body!.toString());
+            console.log('Fetched existing data from S3:', JSON.stringify(existingData, null, 2));
         } catch (err: any) {
             if (err.code !== 'NoSuchKey') {
                 console.error('Error fetching existing data:', err);
                 return res.status(500).json({ error: 'Failed to fetch existing data' });
             }
             existingData = {}; // If no existing data, start fresh
+            console.log('No existing data found; initializing empty data.');
         }
 
-        console.log('Existing data:', JSON.stringify(existingData));
-
+        console.log('Incoming vatopGroups:', JSON.stringify(vatopGroups, null, 2));
+        
         const updatedVatopGroups = (vatopGroups || existingData.vatopGroups || []).map((group: { id: any; hasOwnProperty: (arg0: string) => any; supplicateWBTCtoUSD: any; }) => {
           const existingGroup = existingData.vatopGroups?.find((g: { id: any; }) => g.id === group.id) || {};
-          return {
-              ...group, // First apply new group properties
-              ...existingGroup, // Override with existing group properties if available
-              supplicateWBTCtoUSD: group.hasOwnProperty('supplicateWBTCtoUSD') 
-                  ? group.supplicateWBTCtoUSD 
-                  : existingGroup.supplicateWBTCtoUSD, // Explicitly handle supplicateWBTCtoUSD
+          console.log('Processing group:', JSON.stringify(group, null, 2));
+          console.log('Matching existing group:', JSON.stringify(existingGroup, null, 2));
+      
+          const mergedGroup = {
+              ...existingGroup, // Start with existing properties
+              ...group,
+              supplicateWBTCtoUSD:
+                  existingGroup.supplicateWBTCtoUSD === true // Retain `true` if it exists in existing data
+                      ? true
+                      : group.supplicateWBTCtoUSD !== undefined
+                      ? group.supplicateWBTCtoUSD // Use explicitly provided value if it exists
+                      : false, // Default to false if neither exists
           };
-        });
+      
+          console.log('Merged group:', JSON.stringify(mergedGroup, null, 2));
+          return mergedGroup;
+      });
 
-        console.log('Updated vatopGroups:', JSON.stringify(updatedVatopGroups));
+        console.log('Updated vatopGroups after processing:', JSON.stringify(updatedVatopGroups, null, 2));
 
         const newData = {
             vatopGroups: updatedVatopGroups,
@@ -52,6 +63,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             transactions: transactions || existingData.transactions || [],
         };
 
+        console.log('Final data to save:', JSON.stringify(newData, null, 2));
+
         await s3.putObject({
             Bucket: BUCKET_NAME,
             Key: key,
@@ -59,6 +72,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             ContentType: 'application/json',
             ACL: 'private',
         }).promise();
+
+        console.log('Data successfully saved to S3.');
 
         return res.status(200).json({ message: 'Data saved successfully', data: newData });
     } catch (error) {
