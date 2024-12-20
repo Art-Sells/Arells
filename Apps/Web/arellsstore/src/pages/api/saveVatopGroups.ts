@@ -5,68 +5,66 @@ const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { email, vatopGroups, vatopCombinations, soldAmounts, transactions } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ error: 'Missing email' });
-  }
-
-  try {
-    const key = `${email}/vatop-data.json`;
-    let existingData: any = {};
-
-    // Fetch existing data from S3
-    try {
-      const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
-      existingData = JSON.parse(data.Body!.toString());
-    } catch (err: any) {
-      if (err.code !== 'NoSuchKey') {
-        throw err;
-      }
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // Merge or replace existing vatopGroups with the new ones
-    const mergedVatopGroups = vatopGroups.map((group: any) => {
-      const existingGroup = existingData.vatopGroups?.find((g: any) => g.id === group.id) || {};
-      return {
-        ...existingGroup,
-        ...group,
-        // Always prefer the incoming value
-        supplicateWBTCtoUSD: group.supplicateWBTCtoUSD !== undefined
-          ? group.supplicateWBTCtoUSD
-          : false, // Default to false if not set explicitly
-      };
-    });
+    const { email, vatopGroups, vatopCombinations, soldAmounts, transactions } = req.body;
 
-    // Prepare the new data
-    const newData = {
-      vatopGroups: mergedVatopGroups,
-      vatopCombinations: vatopCombinations || existingData.vatopCombinations || {},
-      soldAmounts: soldAmounts !== undefined ? soldAmounts : existingData.soldAmounts || 0,
-      transactions: transactions || existingData.transactions || [],
-    };
+    if (!email) {
+        return res.status(400).json({ error: 'Missing email' });
+    }
 
-    // Log for debugging
-    console.log('Saving to S3:', JSON.stringify(newData, null, 2));
+    try {
+        const key = `${email}/vatop-data.json`;
+        let existingData: any = {};
 
-    // Save the updated data to S3
-    await s3.putObject({
-      Bucket: BUCKET_NAME,
-      Key: key,
-      Body: JSON.stringify(newData),
-      ContentType: 'application/json',
-      ACL: 'private',
-    }).promise();
+        try {
+            const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+            existingData = JSON.parse(data.Body!.toString());
+        } catch (err: any) {
+            if (err.code !== 'NoSuchKey') {
+                console.error('Error fetching existing data:', err);
+                return res.status(500).json({ error: 'Failed to fetch existing data' });
+            }
+            existingData = {}; // If no existing data, start fresh
+        }
 
-    return res.status(200).json({ message: 'Data saved successfully', data: newData });
-  } catch (error) {
-    console.error('Error saving data:', error);
-    return res.status(500).json({ error: 'Failed to save data' });
-  }
+        console.log('Existing data:', JSON.stringify(existingData));
+
+        const updatedVatopGroups = (vatopGroups || existingData.vatopGroups || []).map((group: { id: any; hasOwnProperty: (arg0: string) => any; supplicateWBTCtoUSD: any; }) => {
+          const existingGroup = existingData.vatopGroups?.find((g: { id: any; }) => g.id === group.id) || {};
+          return {
+              ...group, // First apply new group properties
+              ...existingGroup, // Override with existing group properties if available
+              supplicateWBTCtoUSD: group.hasOwnProperty('supplicateWBTCtoUSD') 
+                  ? group.supplicateWBTCtoUSD 
+                  : existingGroup.supplicateWBTCtoUSD, // Explicitly handle supplicateWBTCtoUSD
+          };
+        });
+
+        console.log('Updated vatopGroups:', JSON.stringify(updatedVatopGroups));
+
+        const newData = {
+            vatopGroups: updatedVatopGroups,
+            vatopCombinations: vatopCombinations || existingData.vatopCombinations || {},
+            soldAmounts: soldAmounts !== undefined ? soldAmounts : existingData.soldAmounts || 0,
+            transactions: transactions || existingData.transactions || [],
+        };
+
+        await s3.putObject({
+            Bucket: BUCKET_NAME,
+            Key: key,
+            Body: JSON.stringify(newData),
+            ContentType: 'application/json',
+            ACL: 'private',
+        }).promise();
+
+        return res.status(200).json({ message: 'Data saved successfully', data: newData });
+    } catch (error) {
+        console.error('Error during processing:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
 };
 
 export default handler;

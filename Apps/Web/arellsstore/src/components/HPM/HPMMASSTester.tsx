@@ -17,6 +17,7 @@ const HPMMASSTester: React.FC = () => {
     handleImportABTC,
     readABTCFile,
     setManualBitcoinPrice,
+    resetVatopGroups,
     soldAmounts,
   } = useHPM();
 
@@ -73,6 +74,12 @@ const HPMMASSTester: React.FC = () => {
 
   const handleDecreasePrice = () => {
     setManualBitcoinPrice((currentPrice) => Math.max(currentPrice - 1000, 0));
+  };
+
+  const handleResetVatopGroups = () => {
+    if (confirm('Are you sure you want to reset all vatop groups? This action cannot be undone.')) {
+      resetVatopGroups();
+    }
   };
 
   const handleBuyClick = () => {
@@ -204,6 +211,7 @@ const HPMMASSTester: React.FC = () => {
         <h2>HPAP:</h2>
         <h3>${formatCurrency(hpap)}</h3>
       </div>
+      <button onClick={handleResetVatopGroups}>Reset Vatop Groups</button>
       <div>
         <h2>aBTC:</h2>
         <p>{formatNumber(aBTC)}</p>

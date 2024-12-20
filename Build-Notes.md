@@ -7,7 +7,7 @@
 ### Testing
 
 - Create HPM & MASS Tester (with HPM (Increase/Decrease Bitcoin Price))
-- - Resolve "Groups were added" issue what doesn't update group when cVactDa initially updates
+- - Resolve "When Page Onload" if supplicateWBTCtoUSDC is true, then cVactTaa and cVactDa are 0.00.
 - - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
 - - import function: if MASS Balance > aBTC, then new cVactTa (VatopGroup) = MASS Balance - aBTC.
 - - when supplicateWBTCtoUSD is called, subtract WBTC amount from aBTC (ensure import useEffect that runs every 10 seconds is halted)
