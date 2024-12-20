@@ -24,6 +24,16 @@ interface VatopGroup {
   cVactTaa: number;
   cdVatop: number;
   supplicateWBTCtoUSD: boolean;
+  HAP: number;
+}
+
+interface VatopCombinations {
+  acVatops: number;
+  acVacts: number;
+  acVactTas: number;
+  acVactDas: number;
+  acdVatops: number;
+  acVactTaa: number; // Sum of all cVactTaa
 }
 
 const MASSarchitecture = createContext<MASSarchitectureType | undefined>(undefined);
@@ -66,15 +76,42 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   const saveVatopGroups = async ({
     email,
     vatopGroups,
+    vatopCombinations = {
+      acVatops: 0,
+      acVacts: 0,
+      acVactTas: 0,
+      acVactDas: 0,
+      acdVatops: 0,
+      acVactTaa: 0,
+    },
+    soldAmounts = 0,
   }: {
     email: string;
     vatopGroups: VatopGroup[];
-  }) => {
+    vatopCombinations?: VatopCombinations; // Mark as optional
+    soldAmounts?: number;                 // Mark as optional
+  }) =>  {
     try {
-      const payload = { email, vatopGroups };
-      console.log('Saving vatopGroups:', payload);
-      await axios.post('/api/saveVatopGroups', payload);
-      console.log('VatopGroups saved successfully.');
+      // Prepare minimal data for payload
+      const minimalVatopGroups = vatopGroups.map(({ id, cVactTa, cpVatop, HAP, supplicateWBTCtoUSD }) => ({
+        id,
+        cVactTa,
+        cpVatop,
+        HAP,
+        supplicateWBTCtoUSD,
+      }));
+  
+      const payload = {
+        email,
+        vatopGroups: minimalVatopGroups,
+        vatopCombinations, // Optional, remove if unnecessary
+        soldAmounts, // Optional, remove if unnecessary
+      };
+  
+      console.log('Minimal Payload to save:', payload);
+  
+      const response = await axios.post('/api/saveVatopGroups', payload);
+      console.log('Save response:', response.data);
     } catch (error) {
       console.error('Error saving vatop groups:', error);
     }
@@ -88,61 +125,90 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   }, [email]);
 
   useEffect(() => {
-    const prevIds = prevVatopGroups.map((group) => group.cpVatop);
-    const currentIds = vatopGroups.map((group) => group.cpVatop);
+    const prevIds = prevVatopGroups.map((group) => group.id); // Match by `id`
+    const currentIds = vatopGroups.map((group) => group.id);
   
-    const addedGroups = vatopGroups.filter((group) => !prevIds.includes(group.cpVatop));
-    const deletedGroups = prevVatopGroups.filter((group) => !currentIds.includes(group.cpVatop));
+    // Identify added and deleted groups
+    const addedGroups = vatopGroups.filter((group) => !prevIds.includes(group.id));
+    const deletedGroups = prevVatopGroups.filter((group) => !currentIds.includes(group.id));
   
-    if (addedGroups.length > 0 || deletedGroups.length > 0) {
-      console.log('Groups were added or deleted, skipping swaps.');
-      setPrevVatopGroups([...vatopGroups]);
-      return;
+    // Handle added groups
+    if (addedGroups.length > 0) {
+      console.log('Processing added groups:', addedGroups);
+  
+      addedGroups.forEach((group) => {
+        // Ensure `supplicateWBTCtoUSD` is `false` during initialization
+        if (group.supplicateWBTCtoUSD) {
+          console.log(`Skipping added group ${group.id} as supplicateWBTCtoUSD is true.`);
+          return;
+        }
+  
+        // Only allow WBTC to USDC supplication for added groups
+        if (group.cVactDa > 0.01) {
+          console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
+          supplicateWBTCintoUSDC(group.cVactDa, group);
+        } else {
+          console.log(`No WBTC to USDC supplication required for added group ${group.id}.`);
+        }
+      });
+  
+      setPrevVatopGroups([...vatopGroups]); // Update the state for tracking
+      return; // Exit early, skipping further processing
     }
   
+    // Process existing groups
     vatopGroups.forEach((group, index) => {
       const prevGroup = prevVatopGroups[index] || {};
   
+      // Skip if `supplicateWBTCtoUSD` is `true`
+      if (group.supplicateWBTCtoUSD) {
+        console.log(`Skipping supplication for group ${group.id} as supplicateWBTCtoUSD is true.`);
+        return;
+      }
+  
+      // Trigger USDC to WBTC supplication only if `cVactTaa` has increased
       if (group.cVactTaa > 0.00001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
         console.log(`Initiating USDC to WBTC supplication for amount: ${group.cVactTaa}`);
         supplicateUSDCintoWBTC(group.cVactTaa, group);
       }
   
+      // Trigger WBTC to USDC supplication only if `cVactDa` has increased
       if (group.cVactDa > 0.01 && (!prevGroup.cVactDa || group.cVactDa > prevGroup.cVactDa)) {
         console.log(`Initiating WBTC to USDC supplication for amount: ${group.cVactDa}`);
         supplicateWBTCintoUSDC(group.cVactDa, group);
   
+        // Set `supplicateWBTCtoUSD` to `true` for the group
         setVatopGroups((prevGroups) => {
           const updatedGroups = prevGroups.map((g) =>
-            g.cVactTa === group.cVactTa ? { ...g, supplicateWBTCtoUSD: true } : g
+            g.id === group.id ? { ...g, supplicateWBTCtoUSD: true } : g
           );
           console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
   
-          // Pass email explicitly with updatedGroups
-          saveVatopGroups({ email, vatopGroups: updatedGroups }); 
+          // Save updated groups to backend
+          saveVatopGroups({ email, vatopGroups: updatedGroups });
           return updatedGroups;
         });
       }
     });
   
-    setPrevVatopGroups([...vatopGroups]);
+    setPrevVatopGroups([...vatopGroups]); // Update previous groups
   }, [vatopGroups]);
 
   const resetSupplicateWBTCtoUSD = async () => {
     try {
-      // Reset the state
       const updatedGroups = vatopGroups.map((group) => ({
         ...group,
         supplicateWBTCtoUSD: false,
       }));
   
-      setVatopGroups(updatedGroups);
+      setVatopGroups(updatedGroups); // Update local state
   
-      console.log('Reset supplicateWBTCtoUSD to false for all groups.');
-  
-      // Persist changes
-      await saveVatopGroups({ email, vatopGroups: updatedGroups });
-      console.log('Changes saved to backend successfully.');
+      // Use a callback to ensure updated state is passed
+      setTimeout(async () => {
+        console.log('Reset supplicateWBTCtoUSD to false for all groups:', updatedGroups);
+        await saveVatopGroups({ email, vatopGroups: updatedGroups });
+        console.log('Changes saved to backend successfully.');
+      }, 0);
     } catch (error) {
       console.error('Error in resetSupplicateWBTCtoUSD:', error);
     }
