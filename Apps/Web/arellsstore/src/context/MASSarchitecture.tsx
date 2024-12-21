@@ -15,14 +15,10 @@ interface MASSarchitectureType {
 
 interface VatopGroup {
   id: string; 
-  cVatop: number;
   cpVatop: number;
-  cVact: number;
-  cpVact: number;
   cVactTa: number;
   cVactDa: number;
   cVactTaa: number;
-  cdVatop: number;
   supplicateWBTCtoUSD: boolean;
   HAP: number;
 }
@@ -33,7 +29,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmail] = useState<string>('');
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
   const [prevVatopGroups, setPrevVatopGroups] = useState<VatopGroup[]>([]);
-  const [supplicateState, setSupplicateState] = useState<Record<string, boolean>>({});
+
   useEffect(() => {
     const fetchEmail = async () => {
       try {
@@ -125,6 +121,17 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         if (group.cVactDa > 0.01) {
           console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
           supplicateWBTCintoUSDC(group.cVactDa, group);
+            // Set `supplicateWBTCtoUSD` to `true` for the group
+            setVatopGroups((prevGroups) => {
+              const updatedGroups = prevGroups.map((g) =>
+                g.id === group.id ? { ...g, supplicateWBTCtoUSD: true } : g
+              );
+              console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
+      
+              // Save updated groups to backend
+              saveVatopGroups({ email, vatopGroups: updatedGroups });
+              return updatedGroups;
+            });
         } else {
           console.log(`No WBTC to USDC supplication required for added group ${group.id}.`);
         }

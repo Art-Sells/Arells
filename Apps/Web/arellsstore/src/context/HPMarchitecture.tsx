@@ -244,35 +244,38 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
     console.log("Starting updateAllState...");
     console.log("New Bitcoin Price:", newBitcoinPrice);
-    console.log("Existing Groups Before Update:", JSON.stringify(vatopGroups, null, 2));
   
-    // Map through existing groups to update them
-    const updatedGroups = vatopGroups.map((group) => {
+    // Wait for vatopGroups to be fetched and set
+    const currentVatopGroups = [...vatopGroups]; // Create a snapshot of the current state
+    console.log("Existing Groups Before Update:", JSON.stringify(currentVatopGroups, null, 2));
+  
+    // Ensure no intermediate recalculation happens until vatopGroups are fully updated
+    const updatedGroups = currentVatopGroups.map((group) => {
       console.log("Processing group:", group.id);
   
       const newHAP = Math.max(group.HAP || group.cpVatop, newBitcoinPrice);
   
       if (group.supplicateWBTCtoUSD) {
-        const updatedGroup = {
+        // Skip recalculating `cVactTaa` and `cVactDa` when supplicateWBTCtoUSD is true
+        return {
           ...group,
           HAP: newHAP,
           cpVact: group.cpVact,
           cVact: parseFloat((group.cVactTa * group.cpVact).toFixed(2)),
-          cVactTaa: group.cpVact <= group.cpVatop ? group.cVactTa : 0,
-          cVactDa: group.cpVact > group.cpVatop ? parseFloat((group.cVactTa * group.cpVact).toFixed(2)) : 0,
+          cVactTaa: group.cVactTaa, // Preserve the existing value
+          cVactDa: group.cVactDa,   // Preserve the existing value
           cdVatop: parseFloat((group.cVact - group.cVatop).toFixed(2)),
         };
-        console.log("Updated group (supplicateWBTCtoUSD true):", updatedGroup);
-        return updatedGroup;
       }
   
+      // Recalculate only if supplicateWBTCtoUSD is false
       const cpVact = newHAP;
       const cVact = group.cVactTa * cpVact;
       const cVactTaa = newBitcoinPrice >= group.cpVatop ? group.cVactTa : 0;
       const cVactDa = newBitcoinPrice < group.cpVatop ? cVact : 0;
       const cdVatop = cVact - group.cVatop;
   
-      const updatedGroup = {
+      return {
         ...group,
         HAP: newHAP,
         cpVact: parseFloat(cpVact.toFixed(2)),
@@ -281,14 +284,11 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cVactDa: parseFloat(cVactDa.toFixed(2)),
         cdVatop: parseFloat(cdVatop.toFixed(2)),
       };
-  
-      console.log("Updated group (regular):", updatedGroup);
-      return updatedGroup;
     });
   
     console.log("Updated Groups After Processing:", JSON.stringify(updatedGroups, null, 2));
   
-    // Update local state
+    // Update state only after all groups are fully processed
     setVatopGroups(updatedGroups);
   
     const newCombinations = updateVatopCombinations(updatedGroups);
