@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`✅ USDC Transfer Initiated: ${transferTxHash}`);
 
     // Step 5: Monitor Transfer Status
-    const receivedAmount = await monitorTransfer(quote.id);
+    const receivedAmount = await monitorTransfer(transferTxHash);
     console.log(`✅ Transfer Completed. Received Amount: ${receivedAmount}`);
 
     res.status(200).json({
@@ -163,33 +163,49 @@ async function executeTransfer(quote: any, privateKey: string) {
     gasLimit: quote.transactionRequest.gasLimit || "300000",
   };
 
+  console.log("🚀 Sending transaction...");
   const tx = await wallet.sendTransaction(txRequest);
+  console.log(`✅ Transaction sent. Hash: ${tx.hash}`);
+
   await tx.wait();
   return tx.hash;
 }
 
-// Monitor Transfer Status
+function isValidTxHash(txHash: string): boolean {
+  return /^0x([A-Fa-f0-9]{64})$/.test(txHash);
+}
+
 async function monitorTransfer(txHash: string) {
+  if (!isValidTxHash(txHash)) {
+    throw new Error(`/txHash Not a valid txHash: ${txHash}`);
+  }
+
   const params = { txHash };
 
   console.log("🔍 Monitoring Transfer Status...");
+
   while (true) {
     try {
       const response = await axios.get(`${LI_FI_API_URL}/status`, { params });
-      const { status, substatus, substatusMessage } = response.data;
+      const { status, substatus, substatusMessage, lifiExplorerLink, receiving } = response.data;
 
+      console.log(`🔍 Current Status: ${status}, Sub-status: ${substatus || "N/A"}`);
+      
       if (status === "DONE") {
-        console.log("✅ Transfer Completed.");
-        return response.data.receiving?.amount || "Unknown Amount";
-      }
-      if (status === "FAILED") {
-        throw new Error(`❌ Transfer failed: ${substatusMessage}`);
+        console.log("✅ Transfer Completed:", response.data);
+        console.log(`🔗 View on LiFi Explorer: ${lifiExplorerLink}`);
+        return receiving?.amount || "Unknown Amount";
       }
 
-      console.log("⏳ Transfer Pending. Retrying...");
+      if (status === "FAILED") {
+        throw new Error(`Transfer failed: ${substatusMessage || "No details available"}`);
+      }
+
+      console.log("⏳ Waiting for transfer to complete...");
       await new Promise((resolve) => setTimeout(resolve, 15000));
     } catch (error: any) {
-      throw new Error("Failed to monitor transfer status.");
+      console.error("❌ Error while checking transfer status:", error.response?.data || error.message);
+      throw new Error("Failed to monitor transfer.");
     }
   }
 }

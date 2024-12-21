@@ -16,9 +16,10 @@
 - - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
 - - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC)) ***Multiply cVactTaa * 10000000 (or convert to SATS) (look at test/index.js for reference)***
 - - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
-- - - - setManualBitcoinPrice (price (reloads (in the background every 10 seconds)))
+- - - - setManualBitcoinPrice (price (reloads (in the background every 10 seconds))) (Change to Wrapped Bitcoin Price from coinGecko)
 
 ### After Test
+- - Fund Arells Fee Funder with 20 USD in ETH on Arbitrum
 - - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
 
 

@@ -1,72 +1,225 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import AWS from 'aws-sdk';
+import type { NextApiRequest, NextApiResponse } from "next";
+import axios from "axios";
+import "dotenv/config";
+import { ethers } from "ethers";
+import { BigNumber } from "@ethersproject/bignumber";
 
-const s3 = new AWS.S3();
-const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
+// Constants
+const ARBITRUM_WBTC_ADDRESS = "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f";
+const ARBITRUM_USDC_ADDRESS = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831";
+const ARBITRUM_RPC_URL = process.env.ARBITRUM_RPC_URL!;
+const TRANSFER_FEE_WALLET_PRIVATE_KEY = process.env.ARELLS_PRIVATE_KEY!;
+const LI_FI_API_URL = "https://li.quest/v1";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+// Ensure ENV variables are set
+if (!TRANSFER_FEE_WALLET_PRIVATE_KEY || !ARBITRUM_RPC_URL) {
+  throw new Error("Environment variables not defined properly.");
+}
+
+// **Main API Handler**
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { email, vatopGroups, vatopCombinations, soldAmounts, transactions } = req.body;
+  const { wrappedBitcoinAmount, massAddress, massPrivateKey, massSupplicationAddress } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: 'Missing email' });
+  if (!wrappedBitcoinAmount || !massAddress || !massPrivateKey || !massSupplicationAddress) {
+    return res.status(400).json({ error: "Missing required parameters" });
   }
 
   try {
-    const key = `${email}/vatop-data.json`;
-    let existingData: any = {};
+    console.log("🚀 Starting WBTC to USDC Supplication...");
 
-    // Fetch existing data from S3
-    try {
-      const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
-      existingData = JSON.parse(data.Body!.toString());
-    } catch (err: any) {
-      if (err.code !== 'NoSuchKey') {
-        throw err;
-      }
-    }
+    // Step 1: Fetch Transfer Quote
+    const quote = await fetchTransferQuote(wrappedBitcoinAmount, massAddress, massSupplicationAddress);
+    console.log("✅ Transfer Quote Received:", quote);
 
-    // Merge or replace existing vatopGroups with the new ones
-    const mergedVatopGroups = vatopGroups.map((group: any) => {
-      const existingGroup = existingData.vatopGroups?.find((g: any) => g.id === group.id) || {};
-      return {
-        ...existingGroup,
-        ...group,
-        supplicateWBTCtoUSD:
-          group.supplicateWBTCtoUSD !== undefined
-            ? group.supplicateWBTCtoUSD
-            : existingGroup.supplicateWBTCtoUSD, // Prefer existing value if new value is undefined
-      };
+    // Step 2: Fund MASS Address with $0.11 Worth of ETH
+    const fundingTxHash = await fundGasFees(massAddress);
+    console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
+
+    // Step 3: Check and Set Allowance for WBTC
+    await checkAndSetAllowance(massPrivateKey, ARBITRUM_WBTC_ADDRESS, quote.estimate.approvalAddress, wrappedBitcoinAmount);
+
+    // Step 4: Execute WBTC Transfer
+    const transferTxHash = await executeTransfer(quote, massPrivateKey);
+    console.log(`✅ WBTC Transfer Initiated: ${transferTxHash}`);
+
+    // Step 5: Monitor Transfer Status
+    const receivedAmount = await monitorTransfer(transferTxHash);
+    console.log(`✅ Transfer Completed. Received Amount: ${receivedAmount}`);
+
+    res.status(200).json({
+      message: "Transfer completed successfully",
+      transferTxHash,
+      fundingTxHash,
+      receivedAmount,
     });
-
-    // Prepare the new data
-    const newData = {
-      vatopGroups: mergedVatopGroups,
-      vatopCombinations: vatopCombinations || existingData.vatopCombinations || {},
-      soldAmounts: soldAmounts !== undefined ? soldAmounts : existingData.soldAmounts || 0,
-      transactions: transactions || existingData.transactions || [],
-    };
-
-    // Log for debugging
-    console.log('Saving to S3:', JSON.stringify(newData, null, 2));
-
-    // Save the updated data to S3
-    await s3.putObject({
-      Bucket: BUCKET_NAME,
-      Key: key,
-      Body: JSON.stringify(newData),
-      ContentType: 'application/json',
-      ACL: 'private',
-    }).promise();
-
-    return res.status(200).json({ message: 'Data saved successfully', data: newData });
-  } catch (error) {
-    console.error('Error saving data:', error);
-    return res.status(500).json({ error: 'Failed to save data' });
+  } catch (error: any) {
+    console.error("❌ Error during WBTC to USDC transfer:", error.message || error);
+    res.status(500).json({ error: "Transfer failed", details: error.message || error });
   }
-};
+}
 
-export default handler;
+// **Helper Functions**
+
+/* Fetch Current ETH Price */
+async function fetchEthPrice(): Promise<number> {
+  const response = await axios.get("https://api.coingecko.com/api/v3/simple/price", {
+    params: { ids: "ethereum", vs_currencies: "usd" },
+  });
+  return response.data.ethereum.usd;
+}
+
+/* Fund MASS Address with ETH for Gas Fees */
+/* Fund MASS Address with ETH for Gas Fees */
+async function fundGasFees(recipientAddress: string) {
+  const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
+  const wallet = new ethers.Wallet(TRANSFER_FEE_WALLET_PRIVATE_KEY, provider);
+
+  // Fetch ETH price
+  const ethPrice = await fetchEthPrice();
+
+  // Define target funding amount in USD ($0.30)
+  const TARGET_USD_BALANCE = 0.31;
+
+  // Check current balance of MASS address
+  const balanceInWei = await provider.getBalance(recipientAddress);
+  const balanceInEth = parseFloat(ethers.formatEther(balanceInWei));
+  const balanceInUSD = balanceInEth * ethPrice;
+
+  console.log(
+    `🔍 MASS Address Balance: ${balanceInEth.toFixed(8)} ETH (~$${balanceInUSD.toFixed(2)} USD)`
+  );
+
+  // Calculate the funding amount required
+  const shortfallUSD = TARGET_USD_BALANCE - balanceInUSD;
+
+  if (shortfallUSD <= 0) {
+    console.log("✅ MASS Address has sufficient balance. No funding required.");
+    return;
+  }
+
+  const amountToFundInEth = shortfallUSD / ethPrice;
+
+  console.log(
+    `⛽ Funding MASS Address: Shortfall: $${shortfallUSD.toFixed(2)} (~${amountToFundInEth.toFixed(8)} ETH)`
+  );
+
+  // Send the calculated amount
+  const tx = await wallet.sendTransaction({
+    to: recipientAddress,
+    value: ethers.parseUnits(amountToFundInEth.toFixed(8), "ether"),
+  });
+
+  await tx.wait();
+  console.log(`✅ Gas Fees Funded: ${tx.hash}`);
+  return tx.hash;
+}
+
+async function fetchTransferQuote(amount: number, fromAddress: string, toAddress: string) {
+  const params = {
+    fromChain: 42161,
+    toChain: 42161,
+    fromToken: ARBITRUM_WBTC_ADDRESS,
+    toToken: ARBITRUM_USDC_ADDRESS,
+    fromAmount: Math.floor(amount).toString(), // Truncate decimals
+    fromAddress,
+    toAddress,
+    slippage: 1,
+  };
+
+  const response = await axios.get(`${LI_FI_API_URL}/quote`, { params });
+  return response.data;
+}
+
+/* Check and Set Allowance for WBTC */
+async function checkAndSetAllowance(
+  privateKey: string,
+  tokenAddress: string,
+  spenderAddress: string,
+  amount: number
+) {
+  const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
+  const wallet = new ethers.Wallet(privateKey, provider);
+
+  const ERC20_ABI = [
+    "function approve(address spender, uint256 amount) external returns (bool)",
+    "function allowance(address owner, address spender) external view returns (uint256)",
+  ];
+  const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, wallet);
+
+  console.log(`🔍 Checking allowance for ${spenderAddress} to spend WBTC...`);
+  const currentAllowance = await tokenContract.allowance(await wallet.getAddress(), spenderAddress);
+
+  const bigAmount = BigNumber.from(Math.floor(amount).toString()); // Ensure integer value
+
+  if (BigNumber.from(currentAllowance).lt(bigAmount)) {
+    console.log("⛽ Insufficient allowance, approving token...");
+    const tx = await tokenContract.approve(spenderAddress, bigAmount.toString()); // Convert to string here
+    await tx.wait();
+    console.log(`✅ Approval successful: ${tx.hash}`);
+  } else {
+    console.log("✅ Sufficient allowance already exists.");
+  }
+}
+
+/* Execute Transfer Transaction */
+async function executeTransfer(quote: any, privateKey: string) {
+  const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
+  const wallet = new ethers.Wallet(privateKey, provider);
+
+  const txRequest = {
+    to: quote.transactionRequest.to,
+    data: quote.transactionRequest.data,
+    value: quote.transactionRequest.value || "0",
+    gasLimit: quote.transactionRequest.gasLimit || "300000",
+  };
+
+  console.log("🚀 Sending transaction...");
+  const tx = await wallet.sendTransaction(txRequest);
+  console.log(`✅ Transaction sent. Hash: ${tx.hash}`);
+  await tx.wait();
+  return tx.hash;
+}
+
+function isValidTxHash(txHash: string): boolean {
+  return /^0x([A-Fa-f0-9]{64})$/.test(txHash);
+}
+
+/* Monitor Transfer Status */
+async function monitorTransfer(txHash: string) {
+  if (!isValidTxHash(txHash)) {
+    throw new Error(`/txHash Not a valid txHash: ${txHash}`);
+  }
+
+  const params = { txHash };
+
+  console.log("🔍 Monitoring Transfer Status...");
+
+  while (true) {
+    try {
+      const response = await axios.get(`${LI_FI_API_URL}/status`, { params });
+      const { status, substatus, substatusMessage, lifiExplorerLink, receiving } = response.data;
+
+      console.log(`🔍 Current Status: ${status}, Sub-status: ${substatus || "N/A"}`);
+      
+      if (status === "DONE") {
+        console.log("✅ Transfer Completed:", response.data);
+        console.log(`🔗 View on LiFi Explorer: ${lifiExplorerLink}`);
+        return receiving?.amount || "Unknown Amount";
+      }
+
+      if (status === "FAILED") {
+        throw new Error(`Transfer failed: ${substatusMessage || "No details available"}`);
+      }
+
+      console.log("⏳ Waiting for transfer to complete...");
+      await new Promise((resolve) => setTimeout(resolve, 15000));
+    } catch (error: any) {
+      console.error("❌ Error while checking transfer status:", error.response?.data || error.message);
+      throw new Error("Failed to monitor transfer.");
+    }
+  }
+}
