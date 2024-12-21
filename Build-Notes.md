@@ -7,7 +7,9 @@
 ### Testing
 
 - Create HPM & MASS Tester (with HPM (Increase/Decrease Bitcoin Price))
-- - Resolve "When Page Onload" if supplicateWBTCtoUSDC is true, then cVactTaa and cVactDa are 0.00.
+- - The supplicateWBTCtoUSDC only changes as true if the API supplication is successful (remove the api function success check).
+- - Ensure the “if changes supplicate” logic accounts only for changes from 0, not from number changes if cVactTaa changes from .03 to .02 or the Da, still activate.
+- - If all VatopGroups supplicantee are true, then start countdown (test with simple 30 second countdown) until reset supplicants is hit and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
 - - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
 - - import function: if MASS Balance > aBTC, then new cVactTa (VatopGroup) = MASS Balance - aBTC.
 - - when supplicateWBTCtoUSD is called, subtract WBTC amount from aBTC (ensure import useEffect that runs every 10 seconds is halted)
@@ -17,14 +19,16 @@
 - - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
 
 ### After Test
-- Reconfigure HPM (MASS intervals (not for every 10 seconds but every 24 hours) activation time frame), if supplicateWBTCtoUSD == true for each vatopGroup do not update cpVact (this changes back to false after 24 hours have passed, per Vatop Group so if one vatopGroup has supplicateWBTCtoUSD == true, then skip that cpVact update based on Bitcoin price, if it's false, then update that cpVact, every new Vatop Group supplicateWBTCtoUSD is by default false)
-- - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Our system is set up so your wallet balance and profits update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
-
+- - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
 
 
 ### Account
-- Set A/B (Wallet to load 3-4 seconds?)
-- (If Bitcoin wallet has more than a certain amount), then hide "Import Bitcoin to ensure your investments never lose value" and show "Sell, Withdraw boxes"
+- Set A/B (price to reload every 3-4 seconds?)
+- updated section
+- If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value" and show "Sell, Withdraw boxes"
+- - Price: HPAP
+- - Wallet: acVacts
+- - Profits: acdVatops
 
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value
