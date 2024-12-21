@@ -8,7 +8,6 @@
 
 - Create HPM & MASS Tester (with HPM (Increase/Decrease Bitcoin Price))
 - - The supplicateWBTCtoUSDC only changes as true if the API supplication is successful (remove the api function success check).
-- - Ensure the “if changes supplicate” logic accounts only for changes from 0, not from number changes if cVactTaa changes from .03 to .02 or the Da, still activate.
 - - If all VatopGroups supplicantee are true, then start countdown (test with simple 30 second countdown) until reset supplicants is hit and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
 - - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
 - - import function: if MASS Balance > aBTC, then new cVactTa (VatopGroup) = MASS Balance - aBTC.
@@ -102,6 +101,7 @@
 
 ### Testing
 - Export Test (similar to sell except)
+- - Ensure the “if changes supplicate” logic accounts only for changes from 0, not from number changes if cVactTaa changes from .03 to .02 or the Da, still activate (from selling)
 - 3%-0.1% export (selling) fee?
 - **fix Selling Discrepancy Issue (VERY IMPORTANT)**
 - - if (cVactDa > 0.00) take Dollar difference from cpVact - bitcoinPrice and ensure this USDC amount is used to bridge to BTC and that amount it added to BTC address before exporting out (figure out how to ensure aBTC doesn't update from BTC since we'll be adding more BTC before exporting)

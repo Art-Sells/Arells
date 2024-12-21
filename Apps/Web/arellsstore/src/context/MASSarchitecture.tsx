@@ -27,15 +27,6 @@ interface VatopGroup {
   HAP: number;
 }
 
-interface VatopCombinations {
-  acVatops: number;
-  acVacts: number;
-  acVactTas: number;
-  acVactDas: number;
-  acdVatops: number;
-  acVactTaa: number; // Sum of all cVactTaa
-}
-
 const MASSarchitecture = createContext<MASSarchitectureType | undefined>(undefined);
 
 export const MASSProvider = ({ children }: { children: ReactNode }) => {
@@ -76,20 +67,9 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   const saveVatopGroups = async ({
     email,
     vatopGroups,
-    vatopCombinations = {
-      acVatops: 0,
-      acVacts: 0,
-      acVactTas: 0,
-      acVactDas: 0,
-      acdVatops: 0,
-      acVactTaa: 0,
-    },
-    soldAmounts = 0,
   }: {
     email: string;
     vatopGroups: VatopGroup[];
-    vatopCombinations?: VatopCombinations; // Mark as optional
-    soldAmounts?: number;                 // Mark as optional
   }) =>  {
     try {
       // Prepare minimal data for payload
@@ -104,8 +84,6 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       const payload = {
         email,
         vatopGroups: minimalVatopGroups,
-        vatopCombinations, // Optional, remove if unnecessary
-        soldAmounts, // Optional, remove if unnecessary
       };
   
       console.log('Minimal Payload to save:', payload);

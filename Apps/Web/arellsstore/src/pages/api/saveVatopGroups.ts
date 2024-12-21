@@ -10,7 +10,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const { email, vatopGroups, vatopCombinations, soldAmounts, transactions } = req.body;
-  console.log('Incoming payload:', JSON.stringify(req.body, null, 2));
 
   if (!email) {
     return res.status(400).json({ error: 'Missing email' });
@@ -18,60 +17,69 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const key = `${email}/vatop-data.json`;
-    let existingData: any = {};
 
-    // Fetch existing data
+    // Fetch existing data from S3
+    let existingData: any = {};
     try {
       const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
       existingData = JSON.parse(data.Body!.toString());
+      console.log("Existing data loaded:", existingData);
     } catch (err: any) {
-      if (err.code !== 'NoSuchKey') {
+      if (err.code === 'NoSuchKey') {
+        console.warn("No existing data found for user:", email);
+      } else {
         throw err;
       }
     }
 
     const existingGroups = Array.isArray(existingData.vatopGroups) ? existingData.vatopGroups : [];
-    const updatedVatopGroups = vatopGroups.map((group: any) => {
-      const existingGroup = existingGroups.find((g: any) => g.id === group.id) || {};
+    console.log("Existing Groups from Backend:", JSON.stringify(existingGroups, null, 2));
+    console.log("Incoming Groups from Frontend:", JSON.stringify(vatopGroups, null, 2));
 
-      // Calculate `cpVact` safely
-      const cpVact = Math.max(
-        group.HAP ?? existingGroup.HAP ?? group.cpVatop, 
-        existingGroup.cpVact ?? group.cpVatop
-      );
-
-      // Calculate `cVact` based on `cVactTa` and `cpVact`
-      const cVact = (group.cVactTa ?? 0) * cpVact;
-
-      return {
-        ...existingGroup,
-        ...group,
-        cpVact,
-        cVact,
-        cVactTaa: cpVact >= group.cpVatop ? group.cVactTa : 0,
-        cVactDa: cpVact < group.cpVatop ? cVact : 0,
-        supplicateWBTCtoUSD: group.supplicateWBTCtoUSD ?? existingGroup.supplicateWBTCtoUSD ?? false,
-      };
+    // Ensure groups are updated without duplication
+    const mergedVatopGroups = existingGroups.map((existingGroup: any) => {
+      const incomingGroup = vatopGroups.find((group: any) => group.id === existingGroup.id);
+      return incomingGroup
+        ? {
+            ...existingGroup, // Keep existing values
+            ...incomingGroup, // Override with new values
+            supplicateWBTCtoUSD:
+              incomingGroup.supplicateWBTCtoUSD ?? existingGroup.supplicateWBTCtoUSD ?? false,
+          }
+        : existingGroup;
     });
 
+    // Add only new groups that don’t already exist in `existingGroups`
+    const newGroups = vatopGroups.filter(
+      (group: any) => !existingGroups.some((existingGroup: any) => existingGroup.id === group.id)
+    );
+
+    console.log("New Groups to Add:", JSON.stringify(newGroups, null, 2));
+
+    const updatedVatopGroups = [...mergedVatopGroups, ...newGroups];
+
+    console.log("Final Merged Groups Before Save:", JSON.stringify(updatedVatopGroups, null, 2));
+
+    // Build the new data object
     const newData = {
       vatopGroups: updatedVatopGroups,
       vatopCombinations: vatopCombinations ?? existingData.vatopCombinations ?? {},
       soldAmounts: soldAmounts ?? existingData.soldAmounts ?? 0,
       transactions: transactions ?? existingData.transactions ?? [],
     };
-    
-    console.log('Validated payload to save:', JSON.stringify(newData, null, 2));
 
-    console.log('Final payload to save:', JSON.stringify(newData, null, 2));
+    console.log("Final Data Object to Save:", JSON.stringify(newData, null, 2));
 
-    await s3.putObject({
-      Bucket: BUCKET_NAME,
-      Key: key,
-      Body: JSON.stringify(newData),
-      ContentType: 'application/json',
-      ACL: 'private',
-    }).promise();
+    // Save the updated data to S3
+    await s3
+      .putObject({
+        Bucket: BUCKET_NAME,
+        Key: key,
+        Body: JSON.stringify(newData),
+        ContentType: 'application/json',
+        ACL: 'private',
+      })
+      .promise();
 
     return res.status(200).json({ message: 'Data saved successfully', data: newData });
   } catch (error) {
