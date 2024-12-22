@@ -123,35 +123,35 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
           const newHAP = Math.max(group.HAP || group.cpVatop, bitcoinPrice);
           const cpVact = 
-            group.supplicateWBTCtoUSD 
-            && !group.supplicateUSDtoWBTC
-            ? group.cpVact : newHAP; // Maintain cpVact if supplicateWBTCtoUSD & !supplicateUSDtoWBT
-    
+            (group.supplicateWBTCtoUSD === false && group.supplicateUSDtoWBTC === false) ||
+            (group.supplicateWBTCtoUSD === false && group.supplicateUSDtoWBTC === true)
+              ? newHAP
+              : group.cpVact;
+        
           const cVact = group.cVactTa * cpVact;
-    
-          // Only recalculate if `supplicateWBTCtoUSD` is false
+        
           const cVactTaa = group.supplicateWBTCtoUSD
             ? group.cVactTaa // Preserve existing value
             : cpVact === bitcoinPrice
             ? group.cVactTa
             : 0;
-    
+        
           const cVactDa = group.supplicateWBTCtoUSD
             ? group.cVactDa // Preserve existing value
             : cpVact > bitcoinPrice
             ? cVact
             : 0;
-    
+        
           const cdVatop = cVact - group.cVatop;
-    
+        
           return {
             ...group,
             HAP: newHAP,
-            cpVact: cpVact,
-            cVact: cVact,
-            cVactTaa: cVactTaa,
-            cVactDa: cVactDa,
-            cdVatop: cdVatop,
+            cpVact,
+            cVact,
+            cVactTaa,
+            cVactDa,
+            cdVatop,
           };
         });
     
@@ -305,37 +305,37 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // Recalculate and update vatopGroups
     const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
-      const newHAP = Math.max(group.HAP || group.cpVatop, bitcoinPrice);
+      const newHAP = Math.max(group.HAP || group.cpVatop, newBitcoinPrice);
       const cpVact = 
-        group.supplicateWBTCtoUSD 
-        && !group.supplicateUSDtoWBTC
-        ? group.cpVact : newHAP; // Maintain cpVact if supplicateWBTCtoUSD & !supplicateUSDtoWBT
-
+        (group.supplicateWBTCtoUSD === false && group.supplicateUSDtoWBTC === false) ||
+        (group.supplicateWBTCtoUSD === false && group.supplicateUSDtoWBTC === true)
+          ? newHAP
+          : group.cpVact;
+    
       const cVact = group.cVactTa * cpVact;
-
-      // Only recalculate if `supplicateWBTCtoUSD` is false
+    
       const cVactTaa = group.supplicateWBTCtoUSD
         ? group.cVactTaa // Preserve existing value
         : cpVact === bitcoinPrice
         ? group.cVactTa
         : 0;
-
+    
       const cVactDa = group.supplicateWBTCtoUSD
         ? group.cVactDa // Preserve existing value
         : cpVact > bitcoinPrice
         ? cVact
         : 0;
-
+    
       const cdVatop = cVact - group.cVatop;
-
+    
       return {
         ...group,
         HAP: newHAP,
-        cpVact: cpVact,
-        cVact: cVact,
-        cVactTaa: cVactTaa,
-        cVactDa: cVactDa,
-        cdVatop: cdVatop,
+        cpVact,
+        cVact,
+        cVactTaa,
+        cVactDa,
+        cdVatop,
       };
     });
 
