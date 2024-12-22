@@ -18,7 +18,7 @@ interface MASSarchitectureType {
 interface VatopGroup {
   id: string; 
   cpVatop: number;
-  cVactTa: number;
+  cVactDat: number;
   cVactDa: number;
   cVactTaa: number;
   cpVact: number; 
@@ -177,7 +177,7 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
   
     try {
       // Calculate USDC equivalent using cpVact instead of bitcoinPrice
-      const usdcEquivalent = getUSDCEquivalent(Number(wrappedBitcoinAmount), bitcoinPrice);;
+      const usdcEquivalent = getUSDCEquivalent(Number(wrappedBitcoinAmount), group.cpVact);;
   
       // Apply shortfall by rounding down by 1 cent
       const usdcShortfall = Math.max(0, usdcEquivalent - 0.01); // Ensure no negative values
@@ -227,9 +227,9 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
   }) =>  {
     try {
       // Prepare minimal data for payload
-      const minimalVatopGroups = vatopGroups.map(({ id, cVactTa, cpVatop, HAP, supplicateWBTCtoUSD }) => ({
+      const minimalVatopGroups = vatopGroups.map(({ id, cVactDat, cpVatop, HAP, supplicateWBTCtoUSD }) => ({
         id,
-        cVactTa,
+        cVactDat,
         cpVatop,
         HAP,
         supplicateWBTCtoUSD,
@@ -331,8 +331,8 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
       // Trigger USDC to WBTC supplication only if `cVactTaa` has increased
       if (group.cVactTaa > 0.000001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
         console.log(`Initiating USDC to WBTC supplication for amount: ${group.cVactTaa}`);
-        const usdcEquivalent = getUSDCEquivalent(group.cVactTa, bitcoinPrice);
-        console.log(`Converted cVactDa ${group.cVactTa} to WBTC equivalent: ${usdcEquivalent.toFixed(4)}`);
+        const usdcEquivalent = getUSDCEquivalent(group.cVactTaa, bitcoinPrice);
+        console.log(`Converted cVactDa ${group.cVactTaa} to WBTC equivalent: ${usdcEquivalent.toFixed(4)}`);
         try {
           await handleUSDCsupplication(group);
   

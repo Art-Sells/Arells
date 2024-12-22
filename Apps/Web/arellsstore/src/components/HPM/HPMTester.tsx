@@ -113,7 +113,7 @@ const HPMTester: React.FC = () => {
         <button onClick={handleSellClick}>Sell</button>
       </div>
       <div>
-        <label>Import Amount (BTC):</label>
+        <label>Import Amount (WBTC in USD format):</label>
         <input
           type="text"
           value={inputImportAmount}
@@ -138,7 +138,7 @@ const HPMTester: React.FC = () => {
             <p>cpVatop: {formatCurrency(group.cpVatop)}</p>
             <p>cVact: {formatCurrency(group.cVact)}</p>
             <p>cpVact: {formatCurrency(group.cpVact)}</p>
-            <p>cVactTa: {formatNumber(group.cVactTa)}</p>
+            <p>cVactDat: {formatCurrency(group.cVactDat)}</p>
             <p>cVactTaa: {formatNumber(group.cVactTaa)}</p>
             <p>cVactDa: {formatCurrency(group.cVactDa)}</p>
             <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
@@ -149,7 +149,7 @@ const HPMTester: React.FC = () => {
         <h2>Vatop Combinations:</h2>
         <p>acVatops: {formatCurrency(vatopCombinations.acVatops)}</p>
         <p>acVacts: {formatCurrency(vatopCombinations.acVacts)}</p>
-        <p>acVactTas: {formatNumber(vatopCombinations.acVactTas)}</p>
+        <p>acVactDat: {formatCurrency(vatopCombinations.acVactDat)}</p>
         <p>acVactDas: {formatCurrency(vatopCombinations.acVactDas)}</p>
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
         <p>acVactTaa: {formatNumber(vatopCombinations.acVactTaa)}</p>

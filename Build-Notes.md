@@ -6,32 +6,30 @@
 
 ### Testing
 
+- import function: if aBTC = Total USD (MASS Balance + MASS Supplication Balance)  if aBTC > acVactTas, then initiate import.
+- if supplicateUSDCtoWBTC is true, cVactTa will now equal token amount taken from API calculations (subtract difference away from aBTC (check sell for how to delete aBTC))
 - - If all VatopGroups supplicantee are true, then start countdown (test with simple 30 second countdown) until reset supplicants is hit and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
 - - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
-- - import function: if MASS Balance > aBTC, then new cVactTa (VatopGroup) = MASS Balance - aBTC.
 - - when supplicateWBTCtoUSD is called, subtract WBTC amount from aBTC (ensure import useEffect that runs every 10 seconds is halted)
-- - MASSsmartContract(WrapMassContractProvider):
-- - - Add Console.logs to MASSarchitecture & MASSsmartContract before test (check NOV30 GitHubFile)
-- - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC)) ***Multiply cVactTaa * 10000000 (or convert to SATS) (look at test/index.js for reference)***
-- - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
-- - - - setManualBitcoinPrice (price (**needs to reload as it'll only reload if page reloaded** (in the background every 10 seconds))) (Change to Wrapped Bitcoin Price from coinGecko)
+- - - - setManualBitcoinPrice (price (**needs to reload as it'll only reload if page reloaded** (in the background every 10 seconds)))
 - - - Why is it creating more than one group automatically? (check fetchVatopGroups in HPMarchitecture)
 
 ### After Test
 - - Fund Arells Fee Funder with 20 USD in ETH on Arbitrum
 - - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
+Change all "Bitcoin to Wrapped Bitcoin Front-ends"
 
 
 ### Account
 - Set A/B (price to reload every 3-4 seconds?) (formatPrice from HPMMASSTester.tsx)
 - updated section
-- If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value" and show "Sell, Withdraw boxes"
+- If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value"
 - - Price: HPAP (formatPrice from HPMMASSTester.tsx)
 - - Wallet: acVacts (formatCurrency from HPMMASSTester.tsx)
 - - Profits: acdVatops (formatCurrency from HPMMASSTester.tsx)
 
 #### Import (Page)
-- Import Bitcoin to ensure your investments never lose value
+- Import Wrapped Bitcoin to ensure your investments never lose value (on Arbitrum)
 - - Modal: Preparing (B) Wallet (to create wallet (take from concept)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
 
 #### Metatags/ Description (Home)
@@ -44,6 +42,7 @@
 
 ### After Completion
 - Add new invention and those updates will decrease as the system improves as we release more upgrades to Arells (from 24hrs to 12hrs, to 6hrs and one day, your wallet balances will update every second in order to ensure you accumulate the maximum amounts of profits a day)… Remove Emojis from API
+- change acVactTas (to USD total)
 - Add "Discord" section for any questions
 - Restructure MASS Fee Abstraction (based on MASSApi & MASSSupplicationApi & MASS architecture)
 - Set time to check Arbitrum Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001... This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)

@@ -73,11 +73,25 @@ const HPMMASSTester: React.FC = () => {
       return '0.00000000';
     }
   
-    // Convert to a fixed number of decimal places without scientific notation
-    const formattedValue = value.toFixed(8);
+    // Convert to a fixed number of decimal places (6) without scientific notation
+    let formattedValue = value.toFixed(6);
+  
+    // Reduce the last decimal by 1
+    const parts = formattedValue.split('.');
+    if (parts.length === 2) {
+      const integerPart = parts[0];
+      let decimalPart = parts[1];
+  
+      // Adjust the last digit
+      const lastDigit = parseInt(decimalPart[5]) || 0;
+      decimalPart = decimalPart.substring(0, 5) + Math.max(lastDigit - 1, 0);
+  
+      // Recombine the parts
+      formattedValue = `${integerPart}.${decimalPart}`;
+    }
   
     // Ensure no trailing zeros are trimmed
-    return formattedValue.replace(/\.?0+$/, '') || '0.00000000';
+    return formattedValue || '0.00000000';
   };
 
   const handleIncreasePrice = () => {
@@ -305,6 +319,26 @@ const HPMMASSTester: React.FC = () => {
 
 
 
+const calculateTotalUSDC = (): string => {
+  // Ensure bitcoinPrice is valid
+  if (!bitcoinPrice || bitcoinPrice <= 0) return '0.00';
+
+  // Safely parse balances to numbers
+  const wbtcBalance = parseFloat(balances.WBTC_ARB || '0'); // WBTC balance
+  const usdBalance = parseFloat(balances.USDC_ARB || '0');  // USDC balance
+
+  // Convert WBTC to USD
+  const usdFromWBTC = wbtcBalance * bitcoinPrice;
+
+  // Calculate total USDC
+  const totalUSDC = usdBalance + usdFromWBTC;
+
+  // Format the result
+  return formatCurrency(totalUSDC);
+};
+
+
+
 
 
 
@@ -348,8 +382,12 @@ const HPMMASSTester: React.FC = () => {
         <h3>${formatPrice(hpap)}</h3>
       </div>
       <div>
+      <div>
+      <h2>Total USD:</h2>
+        <p>{calculateTotalUSDC()} USD</p>
+      </div>
         <h2>aBTC:</h2>
-        <p>{formatNumber(aBTC)}</p>
+        <p>{formatCurrency(aBTC)}</p>
       </div>
       <div>
         <h2>Vatop Groups:</h2>
@@ -360,7 +398,7 @@ const HPMMASSTester: React.FC = () => {
             <p>cpVatop: {formatPrice(group.cpVatop)}</p>
             <p>cVact: {formatCurrency(group.cVact)}</p>
             <p>cpVact: {formatPrice(group.cpVact)}</p>
-            <p>cVactTa: {formatNumber(group.cVactTa)}</p>
+            <p>cVactDat: {formatNumber(group.cVactDat)}</p>
             <p>cVactTaa: {formatNumber(group.cVactTaa)}</p>
             <p>cVactDa: {formatCurrency(group.cVactDa)}</p>
             <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
@@ -371,7 +409,7 @@ const HPMMASSTester: React.FC = () => {
         <h2>Vatop Combinations:</h2>
         <p>acVatops: {formatCurrency(vatopCombinations.acVatops)}</p>
         <p>acVacts: {formatCurrency(vatopCombinations.acVacts)}</p>
-        <p>acVactTas: {formatNumber(vatopCombinations.acVactTas)}</p>
+        <p>acVactDat: {formatNumber(vatopCombinations.acVactDat)}</p>
         <p>acVactDas: {formatCurrency(vatopCombinations.acVactDas)}</p>
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
         <p>acVactTaa: {formatNumber(vatopCombinations.acVactTaa)}</p>

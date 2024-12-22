@@ -6,6 +6,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { fetchBitcoinPrice } from '../lib/coingecko-api';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { v4 as uuidv4 } from 'uuid';
+import { useSigner } from '../state/signer'; 
 
 interface VatopGroup {
   id: string; 
@@ -14,9 +15,9 @@ interface VatopGroup {
   cdVatop: number;
   cVact: number;
   cpVact: number;
-  cVactTa: number;
+  cVactDat: number;
   cVactDa: number;
-  cVactTaa: number; // Reflects cVactTa if cdVatop > 0, else 0
+  cVactTaa: number; // Reflects cVactDat / bitcoinPrice
   HAP: number;
   supplicateWBTCtoUSD: boolean;
   supplicateUSDtoWBTC: boolean;
@@ -25,7 +26,7 @@ interface VatopGroup {
 interface VatopCombinations {
   acVatops: number;
   acVacts: number;
-  acVactTas: number;
+  acVactDat: number;
   acVactDas: number;
   acdVatops: number;
   acVactTaa: number; // Sum of all cVactTaa
@@ -58,6 +59,12 @@ interface HPMarchitectureType {
 const HPMarchitecture = createContext<HPMarchitectureType | undefined>(undefined);
 
 export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const {
+      MASSaddress,
+      MASSsupplicationAddress,
+      balances,
+    } = useSigner();
+
   const [email, setEmail] = useState<string>('');
   const [refreshData, setRefreshData] = useState<boolean>(false);
   const [bitcoinPrice, setBitcoinPrice] = useState<number>(0);
@@ -69,7 +76,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [vatopCombinations, setVatopCombinations] = useState<VatopCombinations>({
     acVatops: 0.00,
     acVacts: 0.00,
-    acVactTas: 0.00000000,
+    acVactDat: 0.00,
     acVactDas: 0.00,
     acdVatops: 0.00,
     acVactTaa: 0.00000000,
@@ -128,12 +135,12 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               ? newHAP
               : group.cpVact;
         
-          const cVact = group.cVactTa * cpVact;
+          const cVact = group.cVactDat;
         
           const cVactTaa = group.supplicateWBTCtoUSD
             ? group.cVactTaa // Preserve existing value
             : cpVact === bitcoinPrice
-            ? group.cVactTa
+            ? group.cVactDat
             : 0;
         
           const cVactDa = group.supplicateWBTCtoUSD
@@ -149,6 +156,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             HAP: newHAP,
             cpVact,
             cVact,
+            cVactDat: parseFloat((group.cVactTaa * bitcoinPrice + group.cVactDa).toFixed(2)),
             cVactTaa,
             cVactDa,
             cdVatop,
@@ -200,7 +208,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       (acc, group) => {
         acc.acVatops += group.cVatop || 0;
         acc.acVacts += group.cVact || 0;
-        acc.acVactTas += group.cVactTa || 0;
+        acc.acVactDat += group.cVactDat || 0;
         acc.acVactDas += group.cVactDa || 0;
         acc.acdVatops += group.cVact - group.cVatop > 0 ? group.cVact - group.cVatop : 0;
         acc.acVactTaa += group.cVactTaa || 0;
@@ -209,7 +217,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {
         acVatops: 0,
         acVacts: 0,
-        acVactTas: 0,
+        acVactDat: 0,
         acVactDas: 0,
         acdVatops: 0,
         acVactTaa: 0,
@@ -231,7 +239,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       (acc, group) => {
         acc.acVatops += group.cVatop || 0;
         acc.acVacts += group.cVact || 0;
-        acc.acVactTas += group.cVactTa || 0;
+        acc.acVactDat += group.cVactDat || 0;
         acc.acVactDas += group.cVactDa || 0;
         acc.acdVatops += group.cVact - group.cVatop > 0 ? group.cVact - group.cVatop : 0;
         acc.acVactTaa += group.cVactTaa || 0;
@@ -240,7 +248,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {
         acVatops: 0,
         acVacts: 0,
-        acVactTas: 0,
+        acVactDat: 0,
         acVactDas: 0,
         acdVatops: 0,
         acVactTaa: 0,
@@ -250,7 +258,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setVatopCombinations({
       acVatops: parseFloat(newCombinations.acVatops.toFixed(2)),
       acVacts: parseFloat(newCombinations.acVacts.toFixed(2)),
-      acVactTas: parseFloat(newCombinations.acVactTas.toFixed(7)),
+      acVactDat: parseFloat(newCombinations.acVactDat.toFixed(2)),
       acVactDas: parseFloat(newCombinations.acVactDas.toFixed(2)),
       acdVatops: parseFloat(newCombinations.acdVatops.toFixed(2)),
       acVactTaa: parseFloat(newCombinations.acVactTaa.toFixed(7)),
@@ -266,8 +274,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedVatopGroups = vatopGroups
       .map((group) => ({
         ...group,
-        cVact: group.cVactTa * group.cpVact, // Reflect cpVact in cVact
-        cdVatop: group.cVactTa * (group.cpVact - group.cpVatop), // Use cpVact - cpVatop
+        cVact: group.cVactDat, // Reflect cpVact in cVact
+        cdVatop: group.cVact - group.cVatop,
       }))
       .filter((group) => group.cVact > 0); // Filter valid groups
   
@@ -312,12 +320,12 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ? newHAP
           : group.cpVact;
     
-      const cVact = group.cVactTa * cpVact;
+      const cVact = group.cVactDat;
     
       const cVactTaa = group.supplicateWBTCtoUSD
         ? group.cVactTaa // Preserve existing value
         : cpVact === bitcoinPrice
-        ? group.cVactTa
+        ? group.cVactDat
         : 0;
     
       const cVactDa = group.supplicateWBTCtoUSD
@@ -333,6 +341,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         HAP: newHAP,
         cpVact,
         cVact,
+        cVactDat: parseFloat((group.cVactTaa * bitcoinPrice + group.cVactDa).toFixed(2)),
         cVactTaa,
         cVactDa,
         cdVatop,
@@ -444,7 +453,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const processedGroups = updatedGroups.map((group) => {
       const newHighestPrice = Math.max(group.HAP || group.cpVatop, newBitcoinPrice);
       const newCpVact = newHighestPrice;
-      const newCVact = group.cVactTa * newCpVact;
+      const newCVact = group.cVactDat;
       const newCVactDa = newBitcoinPrice > 0 && newBitcoinPrice <= group.cpVatop ? newCVact : 0;
 
       return {
@@ -453,22 +462,22 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cpVact: parseFloat(newCpVact.toFixed(2)),
         cVact: parseFloat(Math.max(newCVact, 0).toFixed(2)),
         cVactDa: parseFloat(newCVactDa.toFixed(2)),
-        cVactTa: parseFloat(group.cVactTa.toFixed(7)),
-        cdVatop: parseFloat((group.cVactTa * (newCpVact - group.cpVatop)).toFixed(2)),
+        cVactDat: parseFloat(group.cVactDat.toFixed(4)),
+        cdVatop: parseFloat((group.cVactDat - group.cpVatop).toFixed(2)),
         cVatop: parseFloat(group.cVatop.toFixed(2)),
       };
     });
 
     const retainedGroups = processedGroups.filter(
       (group) =>
-        group.cVact > epsilon || group.cVactTa > epsilon || group.cVatop > epsilon
+        group.cVact > epsilon || group.cVactDat > epsilon || group.cVatop > epsilon
     );
 
     const newVatopCombinations = retainedGroups.reduce(
       (acc, group) => {
         acc.acVatops += group.cVatop;
         acc.acVacts += group.cVact;
-        acc.acVactTas += group.cVactTa;
+        acc.acVactDat += group.cVactDat;
         acc.acVactDas += group.cVactDa;
         acc.acdVatops += group.cdVatop > 0 ? group.cdVatop : 0;
         return acc;
@@ -476,7 +485,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {
         acVatops: 0,
         acVacts: 0,
-        acVactTas: 0,
+        acVactDat: 0,
         acVactDas: 0,
         acdVatops: 0,
         acVactTaa: 0,
@@ -487,7 +496,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setVatopCombinations({
       acVatops: parseFloat(newVatopCombinations.acVatops.toFixed(2)),
       acVacts: parseFloat(newVatopCombinations.acVacts.toFixed(2)),
-      acVactTas: parseFloat(newVatopCombinations.acVactTas.toFixed(7)),
+      acVactDat: parseFloat(newVatopCombinations.acVactDat.toFixed(4)),
       acVactDas: parseFloat(newVatopCombinations.acVactDas.toFixed(2)),
       acdVatops: parseFloat(newVatopCombinations.acdVatops.toFixed(2)),
       acVactTaa: parseFloat(newVatopCombinations.acVactTaa.toFixed(7))
@@ -510,8 +519,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedGroups = vatopGroups.map((group) => ({
         ...group,
         HAP: Math.max(group.HAP || group.cpVatop, newPrice),
-        cVact: group.cVactTa * Math.max(newPrice, hpap),
-        cdVatop: group.cVactTa * (Math.max(newPrice, hpap) - group.cpVatop),
+        cVact: group.cVactDat * Math.max(newPrice, hpap),
+        cdVatop: group.cVactDa * (Math.max(newPrice, hpap) - group.cpVatop),
       }));
 
       updateAllStateConcept(newPrice, updatedGroups);
@@ -528,10 +537,10 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cpVatop: bitcoinPrice,
       cVact: amount,
       cpVact: bitcoinPrice,
-      cVactTa: amount / bitcoinPrice,
+      cVactDat: amount,
       cVactDa: amount,
       cdVatop: 0,
-      cVactTaa: 0,
+      cVactTaa: amount / bitcoinPrice,
       HAP: bitcoinPrice,
       supplicateWBTCtoUSD: false,
       supplicateUSDtoWBTC: false,
@@ -556,13 +565,14 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ...group,
         cVatop: Math.max(group.cVatop - sellAmount, 0),
         cVact: Math.max(group.cVact - sellAmount, 0),
-        cVactTa: Math.max(group.cVactTa - sellAmount / group.cpVact, 0),
-        cdVatop: Math.max(group.cVactTa * (group.cpVact - group.cpVatop), 0),
+        cVactDat: Math.max(group.cVactDat - sellAmount, 0),
+        cVactTaa: Math.max(group.cVactTaa - sellAmount / group.cpVact, 0),
+        cdVatop: Math.max(group.cVactDat * (group.cpVact - group.cpVatop), 0),
       };
     });
 
     const retainedGroups = updatedGroups.filter(
-      (group) => group.cVatop > 0 || group.cVact > 0 || group.cVactTa > 0
+      (group) => group.cVatop > 0 || group.cVact > 0 || group.cVactDat > 0
     );
 
     updateAllStateConcept(bitcoinPrice, retainedGroups);
@@ -594,10 +604,10 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cpVatop: bitcoinPrice,
       cVact: amount,
       cpVact: bitcoinPrice,
-      cVactTa: amount / bitcoinPrice,
+      cVactDat: amount,
       cVactDa: amount,
       cdVatop: 0,
-      cVactTaa: 0,
+      cVactTaa: amount / bitcoinPrice,
       HAP: bitcoinPrice,
       supplicateWBTCtoUSD: false,
       supplicateUSDtoWBTC: false,
@@ -607,8 +617,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     await updateAllState(bitcoinPrice, email);
   };
   const handleImportABTC = async (amount: number) => {
-    if (amount < 0.000003) {
-      alert('The minimum import amount is 0.000003 WBTC.');
+    if (amount < 0.01) {
+      alert('The minimum import amount is 0.01 USD.');
       return;
     }
     try {
@@ -634,26 +644,26 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return;
       }
   
-      const acVactTas = vatopCombinations.acVactTas || 0;
+      const acVactDat = vatopCombinations.acVactDat || 0;
   
-      if (aBTC - acVactTas < 0.00001) {
+      if (aBTC - acVactDat < 0.01) {
         return;
       }
   
-      if (aBTC > acVactTas) {
-        const amountToImport = parseFloat((aBTC - acVactTas).toFixed(8));
+      if (aBTC > acVactDat) {
+        const amountToImport = aBTC - acVactDat;
         const currentPrice = bitcoinPrice;
   
         const newGroup = {
           id: uuidv4(),
-          cVatop: amountToImport * currentPrice,
+          cVatop: amountToImport,
           cpVatop: currentPrice,
-          cVact: amountToImport * currentPrice,
+          cVact: amountToImport,
           cpVact: currentPrice,
-          cVactTa: amountToImport,
+          cVactDat: amountToImport,
           cVactDa: 0,
           cdVatop: 0,
-          cVactTaa: amountToImport,
+          cVactTaa: parseFloat((amountToImport / currentPrice).toFixed(8)),
           HAP: currentPrice,
           supplicateWBTCtoUSD: false,
           supplicateUSDtoWBTC: false,
@@ -733,16 +743,16 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updatedVatopGroups = vatopGroups.map((group) => {
         if (remainingBTC <= 0) return group;
   
-        const sellBTC = Math.min(group.cVactTa, remainingBTC);
+        const sellBTC = Math.min(group.cVactDat, remainingBTC);
         remainingBTC -= sellBTC;
   
         return {
           ...group,
           cVatop: Math.max(group.cVatop - sellBTC * group.cpVatop, 0),
           cVact: Math.max(group.cVact - sellBTC * group.cpVact, 0),
-          cVactTa: Math.max(group.cVactTa - sellBTC, 0),
+          cVactDat: Math.max(group.cVactDat - sellBTC, 0),
           cVactDa: Math.max(group.cVactDa - sellBTC * group.cpVact, 0),
-          cVactTaa: group.cVactTaa > 0 ? Math.max(group.cVactTa - sellBTC, 0) : 0,
+          cVactTaa: group.cVactTaa > 0 ? Math.max(group.cVactDat - sellBTC, 0) : 0,
           cdVatop: parseFloat((group.cVact - group.cVatop).toFixed(2)), 
         };
       });
