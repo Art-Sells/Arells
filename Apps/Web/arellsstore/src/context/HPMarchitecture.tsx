@@ -66,12 +66,12 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [vatopUpdateTrigger, setVatopUpdateTrigger] = useState(false);
   
   const [vatopCombinations, setVatopCombinations] = useState<VatopCombinations>({
-    acVatops: 0,
-    acVacts: 0,
-    acVactTas: 0,
-    acVactDas: 0,
-    acdVatops: 0,
-    acVactTaa: 0,
+    acVatops: 0.00,
+    acVacts: 0.00,
+    acVactTas: 0.00000000,
+    acVactDas: 0.00,
+    acdVatops: 0.00,
+    acVactTaa: 0.00000000,
   });
 
   const [hpap, setHpap] = useState<number>(bitcoinPrice);
@@ -143,11 +143,11 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           return {
             ...group,
             HAP: newHAP,
-            cpVact: parseFloat(cpVact.toFixed(2)),
-            cVact: parseFloat(cVact.toFixed(2)),
-            cVactTaa: parseFloat(cVactTaa.toFixed(7)),
-            cVactDa: parseFloat(cVactDa.toFixed(2)),
-            cdVatop: parseFloat(cdVatop.toFixed(2)),
+            cpVact: cpVact,
+            cVact: cVact,
+            cVactTaa: cVactTaa,
+            cVactDa: cVactDa,
+            cdVatop: cdVatop,
           };
         });
     
@@ -320,11 +320,11 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return {
         ...group,
         HAP: newHAP,
-        cpVact: parseFloat(cpVact.toFixed(2)),
-        cVact: parseFloat(cVact.toFixed(2)),
-        cVactTaa: parseFloat(cVactTaa.toFixed(7)),
-        cVactDa: parseFloat(cVactDa.toFixed(2)),
-        cdVatop: parseFloat(cdVatop.toFixed(2)),
+        cpVact: cpVact,
+        cVact: cVact,
+        cVactTaa: cVactTaa,
+        cVactDa: cVactDa,
+        cdVatop: cdVatop,
       };
     });
   
@@ -594,8 +594,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     await updateAllState(bitcoinPrice, email);
   };
   const handleImportABTC = async (amount: number) => {
-    if (amount < 0.0001) {
-      alert('The minimum import amount is 0.0001 BTC.');
+    if (amount < 0.000003) {
+      alert('The minimum import amount is 0.000003 WBTC.');
       return;
     }
     try {

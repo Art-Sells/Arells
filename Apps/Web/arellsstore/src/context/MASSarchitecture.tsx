@@ -5,6 +5,8 @@ import { fetchUserAttributes } from 'aws-amplify/auth';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { useHPM } from './HPMarchitecture';
+import { useSigner } from '../state/signer';
+
 
 interface MASSarchitectureType {
   cVactTaa: number;
@@ -19,6 +21,7 @@ interface VatopGroup {
   cVactTa: number;
   cVactDa: number;
   cVactTaa: number;
+  cpVact: number; 
   supplicateWBTCtoUSD: boolean;
   HAP: number;
 }
@@ -26,6 +29,18 @@ interface VatopGroup {
 const MASSarchitecture = createContext<MASSarchitectureType | undefined>(undefined);
 
 export const MASSProvider = ({ children }: { children: ReactNode }) => {
+
+  const {
+    bitcoinPrice,
+  } = useHPM();
+  const {
+    MASSaddress,
+    MASSsupplicationAddress,
+    MASSPrivateKey,
+    MASSsupplicationPrivateKey,
+  } = useSigner();
+
+
   const [email, setEmail] = useState<string>('');
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
   const [prevVatopGroups, setPrevVatopGroups] = useState<VatopGroup[]>([]);
@@ -59,6 +74,152 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       console.error('Error fetching vatop groups:', error);
     }
   };
+
+
+
+// MASS blockchain implementation code below
+
+  const [wrappedBitcoinAmount, setWrappedBitcoinAmount] = useState<number | string>('');
+  const [dollarAmount, setDollarAmount] = useState<number | string>('');
+  const [supplicationResult, setSupplicationResult] = useState<string | null>(null);
+  const [supplicationError, setSupplicationError] = useState<string | null>(null);
+  const [isSupplicating, setIsSupplicating] = useState<boolean>(false);
+
+
+// supplicateWBTCtoUSDC functions
+  const getWBTCEquivalent = (usdcAmount: number, bitcoinPrice: number): number => {
+    if (bitcoinPrice <= 0) {
+      throw new Error('Bitcoin price must be greater than zero.');
+    }
+    return usdcAmount / bitcoinPrice; // Calculate WBTC equivalent
+  };
+// Adjust the VatopGroup interface if cpVact is not already included
+interface VatopGroup {
+  id: string; 
+  cpVatop: number;
+  cVactTa: number;
+  cVactDa: number;
+  cVactTaa: number;
+  cpVact: number; // Assuming cpVact is the price used for transactions
+  supplicateWBTCtoUSD: boolean;
+  HAP: number;
+}
+
+const handleWBTCsupplication = async (group: VatopGroup) => {
+  // Subtract 0.01 from the dollar input for adjustment
+  const adjustedDollarInput = parseFloat(String(group.cVactDa)) - 0.01;
+  console.log("Adjusted Dollar Input:", adjustedDollarInput);
+
+  if (isNaN(adjustedDollarInput) || adjustedDollarInput <= 0) {
+    setSupplicationError('Please enter a valid dollar amount.');
+    return;
+  }
+
+  // Ensure cpVact is available and valid
+  if (!group.cpVact || group.cpVact <= 0) {
+    console.error("Invalid or missing cpVact value.");
+    setSupplicationError("Transaction price data is missing or invalid.");
+    return;
+  }
+
+  // Convert adjusted dollars to BTC equivalent using cpVact
+  const wbtcEquivalent = adjustedDollarInput / group.cpVact;
+  console.log("WBTC Equivalent (BTC):", wbtcEquivalent);
+
+  // Format the BTC to string with 8 decimal places then convert to satoshis
+  const formattedWbtc = Number(wbtcEquivalent.toFixed(8));
+  const wbtcInSatoshis = Math.round(formattedWbtc * 1e8);
+  console.log("WBTC in Satoshis:", wbtcInSatoshis);
+
+  if (!MASSaddress || !MASSsupplicationAddress || !MASSPrivateKey) {
+    setSupplicationError('Wallet information is missing.');
+    return;
+  }
+
+  const payload = {
+    wrappedBitcoinAmount: wbtcInSatoshis,
+    massAddress: MASSaddress,
+    massPrivateKey: MASSPrivateKey,
+    massSupplicationAddress: MASSsupplicationAddress,
+  };
+
+  console.log('🚀 Sending Payload:', payload);
+
+  try {
+    const response = await axios.post('/api/MASSapi', payload);
+    const { receivedAmount, txId } = response.data;
+    setSupplicationResult(`Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`);
+  } catch (error) {
+    console.error('❌ API Error:', error);
+    setSupplicationError('Supplication failed. Please try again.');
+  } finally {
+    setIsSupplicating(false);
+  }
+};
+
+
+
+
+// supplicateUSDCtoWBTC functions
+  const getUSDCEquivalent = (wbtcAmount: number, bitcoinPrice: number): number => {
+    return wbtcAmount * bitcoinPrice; // Direct conversion without extra factors
+  };
+  const handleUSDCsupplication = async () => {
+    if (!wrappedBitcoinAmount || isNaN(Number(wrappedBitcoinAmount)) || Number(wrappedBitcoinAmount) <= 0) {
+      setSupplicationError('Please enter a valid amount.');
+      return;
+    }
+
+    if (!MASSsupplicationAddress || !MASSsupplicationPrivateKey || !MASSaddress) {
+      setSupplicationError('Wallet information is missing.');
+      return;
+    }
+
+    setSupplicationError(null);
+    setIsSupplicating(true);
+
+    try {
+      // Calculate USDC equivalent
+      const usdcEquivalent = getUSDCEquivalent(Number(wrappedBitcoinAmount), bitcoinPrice);
+
+      // Apply shortfall by rounding down by 1 cent
+      const usdcShortfall = Math.max(0, usdcEquivalent - 0.01); // Ensure no negative values
+      const usdcInMicroUnits = Math.floor(usdcShortfall * 1e6); // Convert to base units
+
+      if (usdcInMicroUnits === 0) {
+        setSupplicationError('Calculated USDC amount is too small.');
+        return;
+      }
+
+      const payload = {
+        usdcAmount: usdcInMicroUnits,
+        massSupplicationAddress: MASSsupplicationAddress,
+        massSupplicationPrivateKey: MASSsupplicationPrivateKey,
+        massAddress: MASSaddress,
+      };
+
+      console.log('🚀 Sending Payload with Shortfall:', payload);
+
+      const response = await axios.post('/api/MASSsupplicationApi', payload);
+
+      const { receivedAmount, txId } = response.data;
+      setSupplicationResult(`Supplication successful! Received ${receivedAmount} WBTC. Transaction ID: ${txId}`);
+    } catch (error: any) {
+      console.error('❌ API Error:', error.response?.data || error.message);
+      setSupplicationError(error.response?.data?.error || 'Supplication failed. Please try again.');
+    } finally {
+      setIsSupplicating(false);
+    }
+  };
+
+// MASS blockchain implementation code above   
+
+
+
+
+
+
+
 
   const saveVatopGroups = async ({
     email,
@@ -98,6 +259,14 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     return () => clearInterval(interval);
   }, [email]);
 
+
+
+
+
+
+
+
+
   useEffect(() => {
     const prevIds = prevVatopGroups.map((group) => group.id); // Match by `id`
     const currentIds = vatopGroups.map((group) => group.id);
@@ -110,7 +279,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     if (addedGroups.length > 0) {
       console.log('Processing added groups:', addedGroups);
   
-      addedGroups.forEach((group) => {
+      addedGroups.forEach(async (group) => {
         // Ensure `supplicateWBTCtoUSD` is `false` during initialization
         if (group.supplicateWBTCtoUSD) {
           console.log(`Skipping added group ${group.id} as supplicateWBTCtoUSD is true.`);
@@ -120,20 +289,30 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         // Only allow WBTC to USDC supplication for added groups
         if (group.cVactDa > 0.01) {
           console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
-          supplicateWBTCintoUSDC(group.cVactDa, group);
-            // Set `supplicateWBTCtoUSD` to `true` for the group
+
+          // Convert cVactDa to WBTC equivalent
+          const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, bitcoinPrice);
+          console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
+
+          try {
+            // Perform the supplication using the converted WBTC equivalent
+            await handleWBTCsupplication(group);
+
+            // If successful, update the group state
             setVatopGroups((prevGroups) => {
               const updatedGroups = prevGroups.map((g) =>
                 g.id === group.id ? { ...g, supplicateWBTCtoUSD: true } : g
               );
               console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
-      
+
               // Save updated groups to backend
               saveVatopGroups({ email, vatopGroups: updatedGroups });
               return updatedGroups;
             });
-        } else {
-          console.log(`No WBTC to USDC supplication required for added group ${group.id}.`);
+          } catch (error) {
+            console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
+            // Handle error or provide feedback to the user
+          }
         }
       });
   
@@ -142,7 +321,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     }
   
     // Process existing groups
-    vatopGroups.forEach((group, index) => {
+    vatopGroups.forEach(async (group, index) => {
       const prevGroup = prevVatopGroups[index] || {};
   
       // Skip if `supplicateWBTCtoUSD` is `true`
@@ -159,25 +338,43 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   
       // Trigger WBTC to USDC supplication only if `cVactDa` has increased
       if (group.cVactDa > 0.01 && (!prevGroup.cVactDa || group.cVactDa > prevGroup.cVactDa)) {
-        console.log(`Initiating WBTC to USDC supplication for amount: ${group.cVactDa}`);
-        supplicateWBTCintoUSDC(group.cVactDa, group);
-  
-        // Set `supplicateWBTCtoUSD` to `true` for the group
-        setVatopGroups((prevGroups) => {
-          const updatedGroups = prevGroups.map((g) =>
-            g.id === group.id ? { ...g, supplicateWBTCtoUSD: true } : g
-          );
-          console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
-  
-          // Save updated groups to backend
-          saveVatopGroups({ email, vatopGroups: updatedGroups });
-          return updatedGroups;
-        });
+        console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
+
+        // Convert cVactDa to WBTC equivalent
+        const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, bitcoinPrice);
+        console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
+
+        try {
+          // Perform the supplication using the converted WBTC equivalent
+          await handleWBTCsupplication(group);
+
+          // If successful, update the group state
+          setVatopGroups((prevGroups) => {
+            const updatedGroups = prevGroups.map((g) =>
+              g.id === group.id ? { ...g, supplicateWBTCtoUSD: true } : g
+            );
+            console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
+
+            // Save updated groups to backend
+            saveVatopGroups({ email, vatopGroups: updatedGroups });
+            return updatedGroups;
+          });
+        } catch (error) {
+          console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
+          // Handle error or provide feedback to the user
+        }
       }
     });
   
     setPrevVatopGroups([...vatopGroups]); // Update previous groups
   }, [vatopGroups]);
+
+
+
+
+
+
+
 
   const resetSupplicateWBTCtoUSD = async () => {
     try {
@@ -198,6 +395,12 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       console.error('Error in resetSupplicateWBTCtoUSD:', error);
     }
   };
+
+
+
+
+
+
 
   const toggleSupplicateWBTCtoUSD = (groupId: string, value: boolean) => {
     setVatopGroups((prevGroups) =>

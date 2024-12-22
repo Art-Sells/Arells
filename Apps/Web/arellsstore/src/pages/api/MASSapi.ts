@@ -133,7 +133,7 @@ async function fetchTransferQuote(amount: number, fromAddress: string, toAddress
     toChain: 42161,
     fromToken: ARBITRUM_WBTC_ADDRESS,
     toToken: ARBITRUM_USDC_ADDRESS,
-    fromAmount: Math.floor(amount).toString(), // Truncate decimals
+    fromAmount: amount.toString(), // Truncate decimals
     fromAddress,
     toAddress,
     slippage: 1,

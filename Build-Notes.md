@@ -28,8 +28,8 @@
 - updated section
 - If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value" and show "Sell, Withdraw boxes"
 - - Price: HPAP
-- - Wallet: acVacts
-- - Profits: acdVatops
+- - Wallet: acVacts (formatCurrency from HPMMASSTester.tsx)
+- - Profits: acdVatops (formatCurrency from HPMMASSTester.tsx)
 
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value
@@ -104,6 +104,7 @@
 ### Testing
 - Export Test (similar to sell except (Combines the acVactTaa and acVactDas and subtracts from the group with the lowest cpVatop first))
 - - Ensure the “if changes supplicate” logic accounts only for changes from 0, not from number changes if cVactTaa changes from .03 to .02 or the Da, still activate (from selling)
+- Ensure that vatopGroups delete if cVact <= $0.01 and if acVactTas && aBTC = 0, then delete a vatopGroup (do not add a VatopGroup)
 - 3%-0.1% export (selling) fee?
 - **fix Selling Discrepancy Issue (VERY IMPORTANT)**
 - - if (cVactDa > 0.00) take Dollar difference from cpVact - bitcoinPrice and ensure this USDC amount is used to bridge to BTC and that amount it added to BTC address before exporting out (figure out how to ensure aBTC doesn't update from BTC since we'll be adding more BTC before exporting)
