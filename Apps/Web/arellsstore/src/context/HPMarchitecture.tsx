@@ -19,6 +19,7 @@ interface VatopGroup {
   cVactTaa: number; // Reflects cVactTa if cdVatop > 0, else 0
   HAP: number;
   supplicateWBTCtoUSD: boolean;
+  supplicateUSDtoWBTC: boolean;
 }
 
 interface VatopCombinations {
@@ -121,7 +122,10 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // Recalculate and update vatopGroups
         const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
           const newHAP = Math.max(group.HAP || group.cpVatop, bitcoinPrice);
-          const cpVact = group.supplicateWBTCtoUSD ? group.cpVact : newHAP; // Maintain cpVact if supplicateWBTCtoUSD
+          const cpVact = 
+            group.supplicateWBTCtoUSD 
+            && !group.supplicateUSDtoWBTC
+            ? group.cpVact : newHAP; // Maintain cpVact if supplicateWBTCtoUSD & !supplicateUSDtoWBT
     
           const cVact = group.cVactTa * cpVact;
     
@@ -289,34 +293,41 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error("Email is required for updateAllState.");
       return;
     }
-  
+    const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
+    const fetchedVatopGroups = response.data.vatopGroups || [];
+
     console.log("Starting updateAllState...");
     console.log("New Bitcoin Price:", newBitcoinPrice);
   
     const currentVatopGroups = [...vatopGroups];
     console.log("Existing Groups Before Update:", JSON.stringify(currentVatopGroups, null, 2));
   
-    const updatedGroups = currentVatopGroups.map((group) => {
-      const newHAP = Math.max(group.HAP || group.cpVatop, newBitcoinPrice);
-  
-      if (group.supplicateWBTCtoUSD) {
-        return {
-          ...group,
-          HAP: newHAP,
-          cpVact: group.cpVact,
-          cVact: parseFloat((group.cVactTa * group.cpVact).toFixed(2)),
-          cVactTaa: group.cVactTaa,
-          cVactDa: group.cVactDa,
-          cdVatop: parseFloat((group.cVact - group.cVatop).toFixed(2)),
-        };
-      }
-  
-      const cpVact = newHAP;
+
+    // Recalculate and update vatopGroups
+    const updatedVatopGroups = fetchedVatopGroups.map((group: VatopGroup) => {
+      const newHAP = Math.max(group.HAP || group.cpVatop, bitcoinPrice);
+      const cpVact = 
+        group.supplicateWBTCtoUSD 
+        && !group.supplicateUSDtoWBTC
+        ? group.cpVact : newHAP; // Maintain cpVact if supplicateWBTCtoUSD & !supplicateUSDtoWBT
+
       const cVact = group.cVactTa * cpVact;
-      const cVactTaa = newBitcoinPrice >= group.cpVatop ? group.cVactTa : 0;
-      const cVactDa = newBitcoinPrice < group.cpVatop ? cVact : 0;
+
+      // Only recalculate if `supplicateWBTCtoUSD` is false
+      const cVactTaa = group.supplicateWBTCtoUSD
+        ? group.cVactTaa // Preserve existing value
+        : cpVact === bitcoinPrice
+        ? group.cVactTa
+        : 0;
+
+      const cVactDa = group.supplicateWBTCtoUSD
+        ? group.cVactDa // Preserve existing value
+        : cpVact > bitcoinPrice
+        ? cVact
+        : 0;
+
       const cdVatop = cVact - group.cVatop;
-  
+
       return {
         ...group,
         HAP: newHAP,
@@ -327,18 +338,18 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cdVatop: cdVatop,
       };
     });
-  
-    console.log("Updated Groups After Processing:", JSON.stringify(updatedGroups, null, 2));
+
+    console.log("Updated Groups After Processing:", JSON.stringify(updatedVatopGroups, null, 2));
   
     // Update vatopGroups and vatopCombinations simultaneously
-    updateVatopGroupsAndCombinations(updatedGroups);
+    updateVatopGroupsAndCombinations(updatedVatopGroups);
   
     // Save to backend
     try {
       console.log("Saving updated groups...");
       await axios.post("/api/saveVatopGroups", {
         email,
-        vatopGroups: updatedGroups,
+        vatopGroups: updatedVatopGroups,
         vatopCombinations,
         soldAmounts,
       });
@@ -523,6 +534,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cVactTaa: 0,
       HAP: bitcoinPrice,
       supplicateWBTCtoUSD: false,
+      supplicateUSDtoWBTC: false,
     };
 
     const updatedGroups = [...vatopGroups, newVatop];
@@ -588,6 +600,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cVactTaa: 0,
       HAP: bitcoinPrice,
       supplicateWBTCtoUSD: false,
+      supplicateUSDtoWBTC: false,
     };
   
     const updatedVatopGroups = [...vatopGroups, newVatop];
@@ -643,6 +656,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           cVactTaa: amountToImport,
           HAP: currentPrice,
           supplicateWBTCtoUSD: false,
+          supplicateUSDtoWBTC: false,
         };
   
         const updatedVatopGroups = [...vatopGroups, newGroup];

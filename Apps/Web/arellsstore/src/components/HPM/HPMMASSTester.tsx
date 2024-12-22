@@ -56,6 +56,17 @@ const HPMMASSTester: React.FC = () => {
     // Format to two decimal places with commas
     return roundedValue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
+  const formatPrice = (value: number | null | undefined): string => {
+    if (value == null || isNaN(value)) {
+      return '0.00';
+    }
+    
+    // Subtract $0.01, ensuring the result is not negative
+    const roundedValue = Math.max(0, value - 0.00);
+  
+    // Format to two decimal places with commas
+    return roundedValue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
 
   const formatNumber = (value: number | null | undefined): string => {
     if (value == null || isNaN(value)) {
@@ -309,7 +320,7 @@ const HPMMASSTester: React.FC = () => {
     <div>
       <h1>HPM and MASS Tester</h1>
       <h2>Wrapped Bitcoin Price</h2>
-      <h3>${formatCurrency(bitcoinPrice)}</h3>
+      <h3>${formatPrice(bitcoinPrice)}</h3>
       <button onClick={handleIncreasePrice}>Increase Price</button>
       <button onClick={handleDecreasePrice}>Decrease Price</button>
 
@@ -334,7 +345,7 @@ const HPMMASSTester: React.FC = () => {
 
       <div>
         <h2>HPAP:</h2>
-        <h3>${formatCurrency(hpap)}</h3>
+        <h3>${formatPrice(hpap)}</h3>
       </div>
       <div>
         <h2>aBTC:</h2>
@@ -346,9 +357,9 @@ const HPMMASSTester: React.FC = () => {
           <div key={index}>
             <h3>Group {index + 1}</h3>
             <p>cVatop: {formatCurrency(group.cVatop)}</p>
-            <p>cpVatop: {formatCurrency(group.cpVatop)}</p>
+            <p>cpVatop: {formatPrice(group.cpVatop)}</p>
             <p>cVact: {formatCurrency(group.cVact)}</p>
-            <p>cpVact: {formatCurrency(group.cpVact)}</p>
+            <p>cpVact: {formatPrice(group.cpVact)}</p>
             <p>cVactTa: {formatNumber(group.cVactTa)}</p>
             <p>cVactTaa: {formatNumber(group.cVactTaa)}</p>
             <p>cVactDa: {formatCurrency(group.cVactDa)}</p>

@@ -6,8 +6,6 @@
 
 ### Testing
 
-- Create HPM & MASS Tester (with HPM (Increase/Decrease Bitcoin Price))
-- - The supplicateWBTCtoUSDC only changes as true if the API supplication is successful (remove the api function success check).
 - - If all VatopGroups supplicantee are true, then start countdown (test with simple 30 second countdown) until reset supplicants is hit and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
 - - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
 - - import function: if MASS Balance > aBTC, then new cVactTa (VatopGroup) = MASS Balance - aBTC.
@@ -17,6 +15,7 @@
 - - - supplicateUSDCintoWBTC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactTaa (converts cVactTaa(in WBTC) format into USDC format, and swaps that amount from USDC into WBTC)) ***Multiply cVactTaa * 10000000 (or convert to SATS) (look at test/index.js for reference)***
 - - - supplicateWBTCintoUSDC(MASSsmartContract) (amount & bitcoinPrice taken from HPMContext cVactDa (converts cVactDa(in USDC) format into WBTC format, and swaps that amount from WBTC into USDC)) ***Multiply USDC * 100 (or convert to cents) (look at test/index.js for reference)***
 - - - - setManualBitcoinPrice (price (**needs to reload as it'll only reload if page reloaded** (in the background every 10 seconds))) (Change to Wrapped Bitcoin Price from coinGecko)
+- - - Why is it creating more than one group automatically? (check fetchVatopGroups in HPMarchitecture)
 
 ### After Test
 - - Fund Arells Fee Funder with 20 USD in ETH on Arbitrum
@@ -24,10 +23,10 @@
 
 
 ### Account
-- Set A/B (price to reload every 3-4 seconds?)
+- Set A/B (price to reload every 3-4 seconds?) (formatPrice from HPMMASSTester.tsx)
 - updated section
 - If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value" and show "Sell, Withdraw boxes"
-- - Price: HPAP
+- - Price: HPAP (formatPrice from HPMMASSTester.tsx)
 - - Wallet: acVacts (formatCurrency from HPMMASSTester.tsx)
 - - Profits: acdVatops (formatCurrency from HPMMASSTester.tsx)
 

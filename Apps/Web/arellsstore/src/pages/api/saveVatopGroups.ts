@@ -45,6 +45,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             ...incomingGroup, // Override with new values
             supplicateWBTCtoUSD:
               incomingGroup.supplicateWBTCtoUSD ?? existingGroup.supplicateWBTCtoUSD ?? false,
+              supplicateUSDtoWBTC:
+              incomingGroup.supplicateUSDtoWBTC ?? existingGroup.supplicateUSDtoWBTC ?? false,
           }
         : existingGroup;
     });
