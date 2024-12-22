@@ -90,7 +90,7 @@ const HPMTester: React.FC = () => {
   return (
     <div>
       <h1>HPM Tester</h1>
-      <h2>Bitcoin Price</h2>
+      <h2>Wrapped Bitcoin Price</h2>
         <h3>${formatCurrency(bitcoinPrice)}</h3>
         <button onClick={handleIncreasePrice}>Increase Price</button>
         <button onClick={handleDecreasePrice}>Decrease Price</button>
