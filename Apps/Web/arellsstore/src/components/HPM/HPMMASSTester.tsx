@@ -38,9 +38,11 @@ const HPMMASSTester: React.FC = () => {
 
   const [wrappedBitcoinAmount, setWrappedBitcoinAmount] = useState<number | string>('');
   const [dollarAmount, setDollarAmount] = useState<number | string>('');
-  const [conversionResult, setConversionResult] = useState<string | null>(null);
-  const [conversionError, setConversionError] = useState<string | null>(null);
-  const [isConverting, setIsConverting] = useState<boolean>(false);
+  const [supplicationResult, setSupplicationResult] = useState<string | null>(null);
+  const [supplicationError, setSupplicationError] = useState<string | null>(null);
+  const [isSupplicating, setIsSupplicating] = useState<boolean>(false);
+  const [wbtcConversion, setWbtcConversion] = useState<string>('0.00000000');
+  const [usdcConversion, setUsdcConversion] = useState<string>('0.00');
 
   useEffect(() => {
     const fetchABTC = async () => {
@@ -105,67 +107,110 @@ const HPMMASSTester: React.FC = () => {
     }
   };
 
-  const handleWBTCsupplication = async () => {
-    if (!wrappedBitcoinAmount || parseFloat(wrappedBitcoinAmount as string) <= 0) {
-      setConversionError('Please enter a valid Bitcoin amount.');
-      return;
-    }
+// Corrected USDC equivalent for a given WBTC amount
+const getUSDCEquivalent = (wbtcAmount: number, bitcoinPrice: number): number => {
+  return wbtcAmount * bitcoinPrice; // Direct conversion without extra factors
+};
 
-    if (!MASSaddress || !MASSsupplicationAddress) {
-      setConversionError('Wallet information is missing.');
-      return;
-    }
+// Calculate WBTC equivalent for a given USDC amount
+const getWBTCEquivalent = (usdcAmount: number, bitcoinPrice: number): number => {
+  if (bitcoinPrice <= 0) {
+    throw new Error('Bitcoin price must be greater than zero');
+  }
+  return usdcAmount / bitcoinPrice; // Convert to satoshis
+};
 
-    setConversionError(null);
-    setIsConverting(true);
+const handleUSDCInputChange = (value: string) => {
+  setDollarAmount(value); // Update the dollar amount state
+  const parsedAmount = parseFloat(value); // Parse the input
 
-    try {
-      const response = await axios.post('/api/MASSapi', {
-        wrappedBitcoinAmount: parseFloat(wrappedBitcoinAmount as string) * 1e8,
-        massAddress: MASSaddress,
-        massPrivateKey: MASSPrivateKey,
-        massSupplicationAddress: MASSsupplicationAddress,
-      });
+  if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
+    const wbtcEquivalent = getWBTCEquivalent(parsedAmount, bitcoinPrice); // Convert USDC to WBTC
+    setWbtcConversion(wbtcEquivalent.toFixed(8)); // Format WBTC value
+  } else {
+    setWbtcConversion('0.00000000'); // Reset if input is invalid
+  }
+};
 
-      const { wbtcAmount, txId } = response.data;
-      setConversionResult(`Conversion successful! Received ${wbtcAmount} WBTC. Transaction ID: ${txId}`);
-    } catch (error: any) {
-      setConversionError(error.response?.data?.error || 'Conversion failed. Please try again.');
-    } finally {
-      setIsConverting(false);
-    }
-  };
+const handleWBTCInputChange = (value: string) => {
+  setWrappedBitcoinAmount(value); // Update WBTC input value
+  const parsedAmount = parseFloat(value); // Parse the input
 
-  const handleUSDCsupplication = async () => {
-    if (!dollarAmount || isNaN(Number(dollarAmount)) || Number(dollarAmount) <= 0) {
-      setConversionError('Please enter a valid USDC amount.');
-      return;
-    }
+  if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
+    const usdcEquivalent = getUSDCEquivalent(parsedAmount, bitcoinPrice); // Convert WBTC to USDC
+    setUsdcConversion(usdcEquivalent.toFixed(2)); // Format USDC value
+  } else {
+    setUsdcConversion('0.00'); // Reset if input is invalid
+  }
+};
 
-    if (!MASSsupplicationAddress || !MASSsupplicationPrivateKey || !MASSaddress) {
-      setConversionError('Wallet information is missing.');
-      return;
-    }
+const handleWBTCsupplication = async () => {
+  const usdcAmount = parseFloat(String(wrappedBitcoinAmount));
+  if (!usdcAmount || usdcAmount <= 0) {
+    setSupplicationError('Please enter a valid USDC amount.');
+    return;
+  }
 
-    setConversionError(null);
-    setIsConverting(true);
+  if (!MASSaddress || !MASSsupplicationAddress) {
+    setSupplicationError('Wallet information is missing.');
+    return;
+  }
 
-    try {
-      const response = await axios.post('/api/MASSsupplicationApi', {
-        usdcAmount: Math.floor(Number(dollarAmount) * 1e6),
-        massSupplicationAddress: MASSsupplicationAddress,
-        massSupplicationPrivateKey: MASSsupplicationPrivateKey,
-        massAddress: MASSaddress,
-      });
+  setSupplicationError(null);
+  setIsSupplicating(true);
 
-      const { receivedAmount, txId } = response.data;
-      setConversionResult(`Supplication successful! Received ${receivedAmount} WBTC. Transaction ID: ${txId}`);
-    } catch (error: any) {
-      setConversionError('Supplication failed. Please try again.');
-    } finally {
-      setIsConverting(false);
-    }
-  };
+  try {
+    const wbtcEquivalent = getWBTCEquivalent(usdcAmount, bitcoinPrice);
+
+    const response = await axios.post('/api/MASSapi', {
+      wrappedBitcoinAmount: wbtcEquivalent,
+      massAddress: MASSaddress,
+      massPrivateKey: MASSPrivateKey,
+      massSupplicationAddress: MASSsupplicationAddress,
+    });
+
+    const { wbtcAmount, txId } = response.data;
+    setSupplicationResult(`Conversion successful! Received ${wbtcAmount} WBTC. Transaction ID: ${txId}`);
+  } catch (error: any) {
+    setSupplicationError(error.response?.data?.error || 'Conversion failed. Please try again.');
+  } finally {
+    setIsSupplicating(false);
+  }
+};
+
+const handleUSDCsupplication = async () => {
+  const wbtcAmount = parseFloat(String(dollarAmount));
+  if (!wbtcAmount || wbtcAmount <= 0) {
+    setSupplicationError('Please enter a valid WBTC amount.');
+    return;
+  }
+
+  if (!MASSsupplicationAddress || !MASSsupplicationPrivateKey || !MASSaddress) {
+    setSupplicationError('Wallet information is missing.');
+    return;
+  }
+
+  setSupplicationError(null);
+  setIsSupplicating(true);
+
+  try {
+    const usdcEquivalent = getUSDCEquivalent(wbtcAmount, bitcoinPrice);
+
+    const response = await axios.post('/api/MASSsupplicationApi', {
+      usdcAmount: Math.floor(usdcEquivalent), // Convert to base units
+      massSupplicationAddress: MASSsupplicationAddress,
+      massSupplicationPrivateKey: MASSsupplicationPrivateKey,
+      massAddress: MASSaddress,
+    });
+
+    const { receivedAmount, txId } = response.data;
+    setSupplicationResult(`Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`);
+  } catch (error: any) {
+    setSupplicationError('Supplication failed. Please try again.');
+  } finally {
+    setIsSupplicating(false);
+  }
+};
 
 
   const handleReset = () => {
@@ -176,7 +221,7 @@ const HPMMASSTester: React.FC = () => {
   return (
     <div>
       <h1>HPM and MASS Tester</h1>
-      <h2>Bitcoin Price</h2>
+      <h2>Wrapped Bitcoin Price</h2>
       <h3>${formatCurrency(bitcoinPrice)}</h3>
       <button onClick={handleIncreasePrice}>Increase Price</button>
       <button onClick={handleDecreasePrice}>Decrease Price</button>
@@ -246,18 +291,22 @@ const HPMMASSTester: React.FC = () => {
         <pre>{MASSPrivateKey || 'Not Available'}</pre>
         <p>MASS Balance (WBTC/ARB): {balances.WBTC_ARB} WBTC</p>
         <div>
-          <input
-            type="tel"
-            id="wrappedBitcoinAmount"
-            value={wrappedBitcoinAmount}
-            onChange={(e) => setWrappedBitcoinAmount(e.target.value)}
-            placeholder="Enter amount in WBTC"
-          />
-          <button onClick={handleWBTCsupplication} disabled={isConverting}>
-            {isConverting ? 'Supplicating...' : 'Supplicate WBTC to USD'}
+          <div>
+            <label>USDC Amount:</label>
+            <input
+              type="text"
+              id="usdcAmount"
+              value={dollarAmount}
+              onChange={(e) => handleUSDCInputChange(e.target.value)}
+              placeholder="Enter amount in USDC"
+            />
+            <p>WBTC Equivalent: {wbtcConversion} WBTC</p>
+          </div>
+          <button onClick={handleWBTCsupplication} disabled={isSupplicating}>
+            {isSupplicating ? 'Supplicating...' : 'Supplicate WBTC to USD'}
           </button>
-          {conversionError && <p style={{ color: 'red' }}>{conversionError}</p>}
-          {conversionResult && <p style={{ color: 'green' }}>{conversionResult}</p>}
+          {supplicationError && <p style={{ color: 'red' }}>{supplicationError}</p>}
+          {supplicationResult && <p style={{ color: 'green' }}>{supplicationResult}</p>}
         </div>
       </div>
 
@@ -268,19 +317,29 @@ const HPMMASSTester: React.FC = () => {
       <pre>{MASSsupplicationPrivateKey || 'Not Available'}</pre>
       <p>MASS Supplication Balance (USDC/ARB): {balances.USDC_ARB} USDC</p>
       <div>
-        <input
-          type="tel"
-          id="dollarAmount"
-          value={dollarAmount}
-          onChange={(e) => setDollarAmount(e.target.value)}
-          placeholder="Enter amount in USD (USDC)"
-        />
-        <button onClick={handleUSDCsupplication} disabled={isConverting}>
-          {isConverting ? 'Supplicating...' : 'Supplicate USDC to WBTC'}
+        <div>
+          <label>WBTC Amount:</label>
+          <input
+            type="text"
+            id="wbtcAmount"
+            value={wrappedBitcoinAmount}
+            onChange={(e) => handleWBTCInputChange(e.target.value)}
+            placeholder="Enter amount in WBTC"
+          />
+          <p>USDC Equivalent: ${usdcConversion} USDC</p>
+        </div>
+        <button onClick={handleUSDCsupplication} disabled={isSupplicating}>
+          {isSupplicating ? 'Supplicating...' : 'Supplicate USDC to WBTC'}
         </button>
+        {supplicationError && <p style={{ color: 'red' }}>{supplicationError}</p>}
+        {supplicationResult && <p style={{ color: 'green' }}>{supplicationResult}</p>}
       </div>
     </div>
   );
 };
 
 export default HPMMASSTester;
+
+function setWbtcConversion(arg0: string) {
+  throw new Error('Function not implemented.');
+}

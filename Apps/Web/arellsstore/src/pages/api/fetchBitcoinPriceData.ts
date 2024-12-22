@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const response = await axios.get('https://pro-api.coingecko.com/api/v3/simple/price', {
       params: {
-        ids: 'bitcoin',
+        ids: 'wrapped-bitcoin',
         vs_currencies: 'usd'
       },
       headers: {
@@ -25,12 +25,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     });
 
-    cachedPrice = response.data.bitcoin.usd;
+    cachedPrice = response.data['wrapped-bitcoin'].usd;
     cacheTimestamp = currentTime;
 
     res.status(200).json({ x: new Date(), y: cachedPrice });
   } catch (error) {
-    console.error('Error fetching Bitcoin price data:', error);
-    res.status(500).json({ error: 'Could not fetch Bitcoin price data' });
+    console.error('Error fetching Wrapped Bitcoin price data:', error);
+    res.status(500).json({ error: 'Could not fetch Wrapped Bitcoin price data' });
   }
 }

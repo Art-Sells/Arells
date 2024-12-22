@@ -12,19 +12,20 @@ export const BitcoinPriceProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const getPrice = async () => {
       try {
         const fetchedPrice = await fetchBitcoinPrice();
-        setPrice((prevPrice) => (fetchedPrice !== prevPrice ? fetchedPrice : prevPrice));
+        setPrice(fetchedPrice);
       } catch (error) {
         console.error('Error fetching Bitcoin price:', error);
+        setPrice(undefined); // Reset to undefined on error
       }
     };
-  
+
     getPrice(); // Initial fetch
-  
+
     const interval = setInterval(() => {
       getPrice(); // Fetch price every 3 seconds
     }, 3000);
-  
-    return () => clearInterval(interval); // Clear interval on component unmount
+
+    return () => clearInterval(interval); // Clear interval on unmount
   }, []);
 
   return (

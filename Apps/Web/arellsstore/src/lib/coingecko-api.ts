@@ -10,7 +10,6 @@ export const setManualBitcoinPrice = (price: number | null): void => {
   manualBitcoinPrice = price;
 };
 
-// Function to fetch the Bitcoin price
 export const fetchBitcoinPrice = async (): Promise<number> => {
   if (manualBitcoinPrice !== null) {
     return manualBitcoinPrice;
@@ -18,7 +17,12 @@ export const fetchBitcoinPrice = async (): Promise<number> => {
 
   try {
     const response = await axios.get('/api/fetchBitcoinPrice');
-    return response.data.bitcoin.usd;
+
+    if (!response.data?.['wrapped-bitcoin']?.usd) {
+      throw new Error('Invalid response structure from API');
+    }
+
+    return response.data['wrapped-bitcoin'].usd;
   } catch (error) {
     console.error('Error fetching Bitcoin price:', error);
     throw new Error('Could not fetch Bitcoin price');
@@ -29,7 +33,7 @@ export const fetchBitcoinPrice = async (): Promise<number> => {
 export const fetchBitcoinPriceData = async (): Promise<{ x: Date, y: number }> => {
   try {
     const response = await axios.get('/api/fetchBitcoinPrice');
-    return { x: new Date(), y: response.data.bitcoin.usd };
+    return { x: new Date(), y: response.data['wrapped-bitcoin'].usd };
   } catch (error) {
     console.error('Error fetching Bitcoin price data:', error);
     throw new Error('Could not fetch Bitcoin price data');

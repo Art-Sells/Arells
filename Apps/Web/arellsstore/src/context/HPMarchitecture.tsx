@@ -3,7 +3,7 @@
 import { useUser } from './UserContext';
 import axios from 'axios';
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { fetchBitcoinPrice, setManualBitcoinPrice as setManualBitcoinPriceApi } from '../lib/coingecko-api';
+import { fetchBitcoinPrice } from '../lib/coingecko-api';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -59,7 +59,7 @@ const HPMarchitecture = createContext<HPMarchitectureType | undefined>(undefined
 export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [email, setEmail] = useState<string>('');
   const [refreshData, setRefreshData] = useState<boolean>(false);
-  const [bitcoinPrice, setBitcoinPrice] = useState<number>(60000);
+  const [bitcoinPrice, setBitcoinPrice] = useState<number>(0);
   const [buyAmount, setBuyAmount] = useState<number>(0);
   const [sellAmount, setSellAmount] = useState<number>(0);
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
@@ -74,8 +74,21 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     acVactTaa: 0,
   });
 
-  const [hpap, setHpap] = useState<number>(60000);
+  const [hpap, setHpap] = useState<number>(bitcoinPrice);
   const [soldAmounts, setSoldAmounts] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const price = await fetchBitcoinPrice();
+        setBitcoinPrice(price);
+      } catch (error) {
+        console.error('Error fetching Bitcoin price:', error);
+      }
+    };
+
+    fetchPrice();
+  }, []);
 
  useEffect(() => {
     const fetchEmail = async () => {
