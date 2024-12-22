@@ -115,9 +115,9 @@ const getUSDCEquivalent = (wbtcAmount: number, bitcoinPrice: number): number => 
 // Calculate WBTC equivalent for a given USDC amount
 const getWBTCEquivalent = (usdcAmount: number, bitcoinPrice: number): number => {
   if (bitcoinPrice <= 0) {
-    throw new Error('Bitcoin price must be greater than zero');
+    throw new Error('Bitcoin price must be greater than zero.');
   }
-  return usdcAmount / bitcoinPrice; // Convert to satoshis
+  return usdcAmount / bitcoinPrice; // Calculate WBTC equivalent
 };
 
 const handleUSDCInputChange = (value: string) => {
@@ -144,14 +144,32 @@ const handleWBTCInputChange = (value: string) => {
   }
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const handleWBTCsupplication = async () => {
-  const usdcAmount = parseFloat(String(wrappedBitcoinAmount));
-  if (!usdcAmount || usdcAmount <= 0) {
-    setSupplicationError('Please enter a valid USDC amount.');
+  const dollarInput = parseFloat(String(dollarAmount)); // User input in dollars
+
+  if (isNaN(dollarInput) || dollarInput <= 0) {
+    setSupplicationError('Please enter a valid dollar amount.');
     return;
   }
 
-  if (!MASSaddress || !MASSsupplicationAddress) {
+  if (!MASSaddress || !MASSsupplicationAddress || !MASSPrivateKey) {
     setSupplicationError('Wallet information is missing.');
     return;
   }
@@ -160,28 +178,41 @@ const handleWBTCsupplication = async () => {
   setIsSupplicating(true);
 
   try {
-    const wbtcEquivalent = getWBTCEquivalent(usdcAmount, bitcoinPrice);
+    // Convert dollars to WBTC equivalent
+    const wbtcEquivalent = dollarInput / bitcoinPrice; // WBTC equivalent of dollarInput
+    const wbtcInSatoshis = Math.floor(wbtcEquivalent * 1e8); // Convert to satoshis
 
-    const response = await axios.post('/api/MASSapi', {
-      wrappedBitcoinAmount: wbtcEquivalent,
+    if (wbtcInSatoshis <= 0) {
+      setSupplicationError('Calculated WBTC amount is too small.');
+      return;
+    }
+
+    const payload = {
+      wrappedBitcoinAmount: wbtcInSatoshis, // Amount in satoshis
       massAddress: MASSaddress,
       massPrivateKey: MASSPrivateKey,
       massSupplicationAddress: MASSsupplicationAddress,
-    });
+    };
 
-    const { wbtcAmount, txId } = response.data;
-    setSupplicationResult(`Conversion successful! Received ${wbtcAmount} WBTC. Transaction ID: ${txId}`);
+    console.log('🚀 Sending Payload:', payload);
+
+    const response = await axios.post('/api/MASSapi', payload);
+
+    const { receivedAmount, txId } = response.data;
+    setSupplicationResult(
+      `Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`
+    );
   } catch (error: any) {
-    setSupplicationError(error.response?.data?.error || 'Conversion failed. Please try again.');
+    console.error('❌ API Error:', error.response?.data || error.message);
+    setSupplicationError(error.response?.data?.error || 'Supplication failed. Please try again.');
   } finally {
     setIsSupplicating(false);
   }
 };
 
 const handleUSDCsupplication = async () => {
-  const wbtcAmount = parseFloat(String(dollarAmount));
-  if (!wbtcAmount || wbtcAmount <= 0) {
-    setSupplicationError('Please enter a valid WBTC amount.');
+  if (!wrappedBitcoinAmount || isNaN(Number(wrappedBitcoinAmount)) || Number(wrappedBitcoinAmount) <= 0) {
+    setSupplicationError('Please enter a valid amount.');
     return;
   }
 
@@ -194,23 +225,52 @@ const handleUSDCsupplication = async () => {
   setIsSupplicating(true);
 
   try {
-    const usdcEquivalent = getUSDCEquivalent(wbtcAmount, bitcoinPrice);
+    // Calculate USDC equivalent with 6 decimal places
+    const usdcEquivalent = getUSDCEquivalent(Number(wrappedBitcoinAmount), bitcoinPrice);
+    const usdcInMicroUnits = Math.floor(usdcEquivalent * 1e6); // Convert to base units
 
-    const response = await axios.post('/api/MASSsupplicationApi', {
-      usdcAmount: Math.floor(usdcEquivalent), // Convert to base units
+    if (usdcInMicroUnits === 0) {
+      setSupplicationError('Calculated USDC amount is too small.');
+      return;
+    }
+
+    const payload = {
+      usdcAmount: usdcInMicroUnits,
       massSupplicationAddress: MASSsupplicationAddress,
       massSupplicationPrivateKey: MASSsupplicationPrivateKey,
       massAddress: MASSaddress,
-    });
+    };
+
+    console.log('🚀 Sending Payload:', payload);
+
+    const response = await axios.post('/api/MASSsupplicationApi', payload);
 
     const { receivedAmount, txId } = response.data;
-    setSupplicationResult(`Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`);
+    setSupplicationResult(`Supplication successful! Received ${receivedAmount} WBTC. Transaction ID: ${txId}`);
   } catch (error: any) {
-    setSupplicationError('Supplication failed. Please try again.');
+    console.error('❌ API Error:', error.response?.data || error.message);
+    setSupplicationError(error.response?.data?.error || 'Supplication failed. Please try again.');
   } finally {
     setIsSupplicating(false);
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   const handleReset = () => {

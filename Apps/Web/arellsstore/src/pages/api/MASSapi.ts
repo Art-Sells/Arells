@@ -24,6 +24,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { wrappedBitcoinAmount, massAddress, massPrivateKey, massSupplicationAddress } = req.body;
 
+  if (
+    typeof wrappedBitcoinAmount !== 'number' ||
+    wrappedBitcoinAmount <= 0 ||
+    !Number.isFinite(wrappedBitcoinAmount) ||
+    Math.abs(wrappedBitcoinAmount - parseFloat(wrappedBitcoinAmount.toFixed(8))) > Number.EPSILON // Ensure up to 8 decimals
+  ) {
+    return res.status(400).json({ error: 'Invalid WBTC amount. Ensure it is up to 8 decimal points.' });
+  }
+
   if (!wrappedBitcoinAmount || !massAddress || !massPrivateKey || !massSupplicationAddress) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
