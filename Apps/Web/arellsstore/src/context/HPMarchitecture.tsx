@@ -695,9 +695,9 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // Save new group data to backend
         try {
           console.log("Saving new group via handleImport...");
-          await axios.post("/api/saveVatopGroups", {
+          await axios.post("/api/addVatopGroups", {
             email,
-            vatopGroups: updatedVatopGroups,
+            newVatopGroups: [newGroup],
             vatopCombinations: newCombinations,
             soldAmounts,
           });

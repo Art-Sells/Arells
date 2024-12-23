@@ -17,15 +17,19 @@ interface MASSarchitectureType {
 
 interface VatopGroup {
   id: string; 
+  cVatop: number;
   cpVatop: number;
+  cdVatop: number;
+  cVact: number;
+  cpVact: number;
   cVactDat: number;
   cVactDa: number;
-  cVactTaa: number;
-  cpVact: number; 
+  cVactTaa: number; // Reflects cVactDat / bitcoinPrice
+  HAP: number;
   supplicateWBTCtoUSD: boolean;
   supplicateUSDtoWBTC: boolean;
-  HAP: number;
 }
+
 
 const MASSarchitecture = createContext<MASSarchitectureType | undefined>(undefined);
 
@@ -218,34 +222,17 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
 
 
 
-  const saveVatopGroups = async ({
-    email,
-    vatopGroups,
-  }: {
-    email: string;
-    vatopGroups: VatopGroup[];
-  }) =>  {
+  const saveSupplications = async (updates: { id: string; supplicateWBTCtoUSD?: boolean; supplicateUSDtoWBTC?: boolean }[]) => {
     try {
-      // Prepare minimal data for payload
-      const minimalVatopGroups = vatopGroups.map(({ id, cVactDat, cpVatop, HAP, supplicateWBTCtoUSD }) => ({
-        id,
-        cVactDat,
-        cpVatop,
-        HAP,
-        supplicateWBTCtoUSD,
-      }));
-  
       const payload = {
         email,
-        vatopGroups: minimalVatopGroups,
+        supplicationUpdates: updates,
       };
-  
-      console.log('Minimal Payload to save:', payload);
-  
-      const response = await axios.post('/api/saveVatopGroups', payload);
-      console.log('Save response:', response.data);
+
+      const response = await axios.post('/api/saveSupplications', payload);
+      console.log('Supplications save response:', response.data);
     } catch (error) {
-      console.error('Error saving vatop groups:', error);
+      console.error('Error saving supplications:', error);
     }
   };
 
@@ -303,7 +290,7 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
               console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
 
               // Save updated groups to backend
-              saveVatopGroups({ email, vatopGroups: updatedGroups });
+              saveSupplications([{ id: group.id, supplicateWBTCtoUSD: true }])
               return updatedGroups;
             });
           } catch (error) {
@@ -344,7 +331,7 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
             console.log('Updated vatopGroups after setting supplicateUSDtoWBTC to true:', updatedGroups);
   
             // Save updated groups to backend
-            saveVatopGroups({ email, vatopGroups: updatedGroups });
+              saveSupplications([{ id: group.id, supplicateUSDtoWBTC: true }])
             return updatedGroups;
           });
         } catch (error) {
@@ -374,7 +361,7 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
             console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
 
             // Save updated groups to backend
-            saveVatopGroups({ email, vatopGroups: updatedGroups });
+            saveSupplications([{ id: group.id, supplicateWBTCtoUSD: true }])
             return updatedGroups;
           });
         } catch (error) {
@@ -404,12 +391,16 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
   
       setVatopGroups(updatedGroups); // Update local state
   
-      // Use a callback to ensure updated state is passed
-      setTimeout(async () => {
-        console.log('Reset supplicateWBTCtoUSD to false for all groups:', updatedGroups);
-        await saveVatopGroups({ email, vatopGroups: updatedGroups });
-        console.log('Changes saved to backend successfully.');
-      }, 0);
+      const updates = updatedGroups.map((group) => ({
+        id: group.id,
+        supplicateWBTCtoUSD: false,
+        supplicateUSDtoWBTC: false,
+      }));
+  
+      console.log('Reset supplicateWBTCtoUSD to false for all groups:', updates);
+  
+      await saveSupplications(updates);
+      console.log('Changes saved to backend successfully.');
     } catch (error) {
       console.error('Error in resetSupplicateWBTCtoUSD:', error);
     }

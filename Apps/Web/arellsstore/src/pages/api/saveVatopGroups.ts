@@ -9,7 +9,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, vatopGroups, vatopCombinations, soldAmounts, transactions } = req.body;
+  const { email, vatopGroups = [], vatopCombinations, soldAmounts, transactions } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: 'Missing email' });
@@ -27,6 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (err: any) {
       if (err.code === 'NoSuchKey') {
         console.warn("No existing data found for user:", email);
+        return res.status(400).json({ error: 'No existing data found for this user.' });
       } else {
         throw err;
       }
@@ -36,31 +37,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log("Existing Groups from Backend:", JSON.stringify(existingGroups, null, 2));
     console.log("Incoming Groups from Frontend:", JSON.stringify(vatopGroups, null, 2));
 
-    // Ensure groups are updated without duplication
-    const mergedVatopGroups = existingGroups.map((existingGroup: any) => {
+    // Validate incoming groups against existingGroups
+    const updatedVatopGroups = existingGroups.map((existingGroup: any) => {
       const incomingGroup = vatopGroups.find((group: any) => group.id === existingGroup.id);
-      return incomingGroup
-        ? {
-            ...existingGroup, // Keep existing values
-            ...incomingGroup, // Override with new values
-            supplicateWBTCtoUSD:
-              incomingGroup.supplicateWBTCtoUSD ?? existingGroup.supplicateWBTCtoUSD ?? false,
-              supplicateUSDtoWBTC:
-              incomingGroup.supplicateUSDtoWBTC ?? existingGroup.supplicateUSDtoWBTC ?? false,
-          }
-        : existingGroup;
+
+      // Only update if incoming group matches the existing group's ID
+      if (incomingGroup) {
+        return {
+          ...existingGroup,
+          HAP: incomingGroup.HAP ?? existingGroup.HAP,
+          cpVatop: incomingGroup.cpVatop ?? existingGroup.cpVatop,
+          cVactDat: incomingGroup.cVactDat ?? existingGroup.cVactDat,
+          supplicateWBTCtoUSD: incomingGroup.supplicateWBTCtoUSD ?? existingGroup.supplicateWBTCtoUSD ?? false,
+          supplicateUSDtoWBTC: incomingGroup.supplicateUSDtoWBTC ?? existingGroup.supplicateUSDtoWBTC ?? false,
+        };
+      }
+
+      // If no matching incoming group, retain existing group as-is
+      return existingGroup;
     });
-
-    // Add only new groups that don’t already exist in `existingGroups`
-    const newGroups = vatopGroups.filter(
-      (group: any) => !existingGroups.some((existingGroup: any) => existingGroup.id === group.id)
-    );
-
-    console.log("New Groups to Add:", JSON.stringify(newGroups, null, 2));
-
-    const updatedVatopGroups = [...mergedVatopGroups, ...newGroups];
-
-    console.log("Final Merged Groups Before Save:", JSON.stringify(updatedVatopGroups, null, 2));
 
     // Build the new data object
     const newData = {
