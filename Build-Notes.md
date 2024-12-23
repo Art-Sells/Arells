@@ -5,12 +5,11 @@
 ## Arells 1 (Import/Custody Bitcoin)
 
 ### Testing
-
+- Ensure that"exiting and not changing boolean" for supplicateWBTC & its counterpart code is solved
 - import function: if aBTC = Total USD (MASS Balance + MASS Supplication Balance)  if aBTC > acVactDat, then initiate import.
 - if supplicateUSDCtoWBTC is true, cVactTa will now equal token amount taken from API calculations (subtract difference away from aBTC (check sell for how to delete aBTC))
-- - If all VatopGroups supplicantee are true, then start countdown (test with simple 30 second countdown) until reset supplicants is hit and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
+- - If all VatopGroups supplicateWBTCtoUSD are true, then start countdown (test with simple 30 second countdown) until reset supplicants is hit and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
 - - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
-- - when supplicateWBTCtoUSD is called, subtract WBTC amount from aBTC (ensure import useEffect that runs every 10 seconds is halted)
 - - - - setManualBitcoinPrice (price (**needs to reload as it'll only reload if page reloaded** (in the background every 10 seconds)))
 
 ### After Test

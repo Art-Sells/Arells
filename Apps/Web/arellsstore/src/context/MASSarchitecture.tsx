@@ -99,57 +99,48 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     return usdcAmount / bitcoinPrice; // Calculate WBTC equivalent
   };
 
-const handleWBTCsupplication = async (group: VatopGroup) => {
-  // Subtract 0.01 from the dollar input for adjustment
-  const adjustedDollarInput = parseFloat(String(group.cVactDa)) - 0.01;
-  console.log("Adjusted Dollar Input:", adjustedDollarInput);
-
-  if (isNaN(adjustedDollarInput) || adjustedDollarInput <= 0) {
-    setSupplicationError('Please enter a valid dollar amount.');
-    return;
-  }
-
-  // Ensure cpVact is available and valid
-  if (!group.cpVact || group.cpVact <= 0) {
-    console.error("Invalid or missing cpVact value.");
-    setSupplicationError("Transaction price data is missing or invalid.");
-    return;
-  }
-
-  // Convert adjusted dollars to BTC equivalent using cpVact
-  const wbtcEquivalent = adjustedDollarInput / group.cpVact;
-  console.log("WBTC Equivalent (BTC):", wbtcEquivalent);
-
-  // Format the BTC to string with 8 decimal places then convert to satoshis
-  const formattedWbtc = Number(wbtcEquivalent.toFixed(8));
-  const wbtcInSatoshis = Math.round(formattedWbtc * 1e8);
-  console.log("WBTC in Satoshis:", wbtcInSatoshis);
-
-  if (!MASSaddress || !MASSsupplicationAddress || !MASSPrivateKey) {
-    setSupplicationError('Wallet information is missing.');
-    return;
-  }
-
-  const payload = {
-    wrappedBitcoinAmount: wbtcInSatoshis,
-    massAddress: MASSaddress,
-    massPrivateKey: MASSPrivateKey,
-    massSupplicationAddress: MASSsupplicationAddress,
+  const handleWBTCsupplication = async (group: VatopGroup) => {
+    const adjustedDollarInput = parseFloat(String(group.cVactDa)) - 0.01;
+    if (isNaN(adjustedDollarInput) || adjustedDollarInput <= 0) {
+      setSupplicationError('Please enter a valid dollar amount.');
+      return false;  // indicate failure
+    }
+  
+    if (!group.cpVact || group.cpVact <= 0) {
+      console.error("Invalid or missing cpVact value.");
+      setSupplicationError("Transaction price data is missing or invalid.");
+      return false;  // indicate failure
+    }
+  
+    const wbtcEquivalent = adjustedDollarInput / group.cpVact;
+    const formattedWbtc = Number(wbtcEquivalent.toFixed(8));
+    const wbtcInSatoshis = Math.round(formattedWbtc * 1e8);
+  
+    if (!MASSaddress || !MASSsupplicationAddress || !MASSPrivateKey) {
+      setSupplicationError('Wallet information is missing.');
+      return false;  // indicate failure
+    }
+  
+    const payload = {
+      wrappedBitcoinAmount: wbtcInSatoshis,
+      massAddress: MASSaddress,
+      massPrivateKey: MASSPrivateKey,
+      massSupplicationAddress: MASSsupplicationAddress,
+    };
+  
+    try {
+      const response = await axios.post('/api/MASSapi', payload);
+      const { receivedAmount, txId } = response.data;
+      setSupplicationResult(`Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`);
+      return true;  // indicate success
+    } catch (error) {
+      console.error('❌ API Error:', error);
+      setSupplicationError('Supplication failed. Please try again.');
+      return false;  // indicate failure
+    }
   };
+  
 
-  console.log('🚀 Sending Payload:', payload);
-
-  try {
-    const response = await axios.post('/api/MASSapi', payload);
-    const { receivedAmount, txId } = response.data;
-    setSupplicationResult(`Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`);
-  } catch (error) {
-    console.error('❌ API Error:', error);
-    setSupplicationError('Supplication failed. Please try again.');
-  } finally {
-    setIsSupplicating(false);
-  }
-};
 
 
 
@@ -280,19 +271,22 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
 
           try {
             // Perform the supplication using the converted WBTC equivalent
-            await handleWBTCsupplication(group);
+            // Usage
+            if (await handleWBTCsupplication(group)) {
+              // If successful, update the group state
+              setVatopGroups((prevGroups) => {
+                const updatedGroups = prevGroups.map((g) =>
+                  g.id === group.id ? { ...g, supplicateWBTCtoUSD: true } : g
+                );
+                console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
 
-            // If successful, update the group state
-            setVatopGroups((prevGroups) => {
-              const updatedGroups = prevGroups.map((g) =>
-                g.id === group.id ? { ...g, supplicateWBTCtoUSD: true } : g
-              );
-              console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
+                // Save updated groups to backend
+                saveSupplications([{ id: group.id, supplicateWBTCtoUSD: true }])
+                return updatedGroups;
+              });
+            }
 
-              // Save updated groups to backend
-              saveSupplications([{ id: group.id, supplicateWBTCtoUSD: true }])
-              return updatedGroups;
-            });
+
           } catch (error) {
             console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
             // Handle error or provide feedback to the user
@@ -326,12 +320,12 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
           // If successful, update the group state
           setVatopGroups((prevGroups) => {
             const updatedGroups = prevGroups.map((g) =>
-              g.id === group.id ? { ...g, supplicateUSDtoWBTC: true } : g
+              g.id === group.id ? { ...g, supplicateUSDtoWBTC: false } : g
             );
             console.log('Updated vatopGroups after setting supplicateUSDtoWBTC to true:', updatedGroups);
   
             // Save updated groups to backend
-              saveSupplications([{ id: group.id, supplicateUSDtoWBTC: true }])
+              saveSupplications([{ id: group.id, supplicateUSDtoWBTC: false }])
             return updatedGroups;
           });
         } catch (error) {
@@ -342,7 +336,7 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
       }
   
       // Trigger WBTC to USDC supplication only if `cVactDa` has increased
-      if (group.cVactDa > 0.01 && (!prevGroup.cVactDa || group.cVactDa > prevGroup.cVactDa)) {
+      if (group.cVactDa > 0.01 && (prevGroup?.cVactDa === undefined || group.cVactDa > prevGroup.cVactDa)) {
         console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
 
         // Convert cVactDa to WBTC equivalent
@@ -373,9 +367,6 @@ const handleWBTCsupplication = async (group: VatopGroup) => {
   
     setPrevVatopGroups([...vatopGroups]); // Update previous groups
   }, [vatopGroups]);
-
-
-
 
 
 

@@ -114,87 +114,144 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   useEffect(() => {
+    let isFetchingGroups = false;
+  
     const fetchVatopGroups = async () => {
+      if (!email) {
+        console.warn("Email is not set, cannot fetch vatopGroups.");
+        return;
+      }
+  
+      // Prevent overlapping calls
+      if (isFetchingGroups) {
+        console.warn("fetchVatopGroups is already in progress. Skipping this call.");
+        return;
+      }
+  
+      isFetchingGroups = true;
+  
       try {
         console.log("Fetching vatop groups from API...");
-    
-        // Fetch data from the API
         const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
-        console.log("API response:", response.data);
-    
         const fetchedVatopGroups = response.data.vatopGroups || [];
         const fetchedSoldAmounts = response.data.soldAmounts || 0;
-    
-        // Update existing groups only
+  
+        console.log("API response:", response.data);
+  
+        // Update existing groups with fetched data
         const updatedVatopGroups = vatopGroups.map((existingGroup) => {
-          const fetchedGroup = fetchedVatopGroups.find((fg: { id: string; }) => fg.id === existingGroup.id);
-    
+          const fetchedGroup = fetchedVatopGroups.find((fg: { id: string }) => fg.id === existingGroup.id);
+  
+          // If no matching group is found in fetched data, preserve the existing group
           if (!fetchedGroup) {
-            // If no fetched group matches the existing one, preserve the current state
-            console.warn(`Group with ID ${existingGroup.id} not found in fetchedVatopGroups. Preserving existing group.`);
+            console.warn(`Group with ID ${existingGroup.id} not found in fetched data.`);
             return existingGroup;
           }
-    
-          // Update the existing group with new values
+  
           const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, bitcoinPrice);
+  
+          // Set `cpVact` based on the conditions
           const cpVact =
-            (fetchedGroup.supplicateWBTCtoUSD === false && fetchedGroup.supplicateUSDtoWBTC === false) ||
-            (fetchedGroup.supplicateWBTCtoUSD === false && fetchedGroup.supplicateUSDtoWBTC === true)
-              ? newHAP
-              : fetchedGroup.cpVact;
-    
-          const cVactDat = parseFloat((fetchedGroup.cVactTaa * bitcoinPrice + fetchedGroup.cVactDa).toFixed(2));
+            fetchedGroup.supplicateWBTCtoUSD && !fetchedGroup.supplicateUSDtoWBTC
+              ? fetchedGroup.cpVact // Retain fetched `cpVact`
+              : fetchedGroup.supplicateUSDtoWBTC && !fetchedGroup.supplicateWBTCtoUSD
+              ? newHAP // Set `cpVact` to `HAP`
+              : newHAP; // Default to `HAP` if both are false
+  
+          const cVactDat = fetchedGroup.cVactTaa * cpVact + fetchedGroup.cVactDa;
           const cVact = cVactDat;
-    
+  
           const cVactTaa = fetchedGroup.supplicateWBTCtoUSD
             ? fetchedGroup.cVactTaa
             : cpVact === bitcoinPrice
             ? cVactDat / bitcoinPrice
             : 0;
-    
+  
           const cVactDa = fetchedGroup.supplicateWBTCtoUSD
             ? fetchedGroup.cVactDa
             : cpVact > bitcoinPrice
             ? cVact
             : 0;
-    
+  
           const cdVatop = parseFloat((cVact - fetchedGroup.cVatop).toFixed(2));
-    
+  
           return {
             ...existingGroup,
             HAP: newHAP,
-            cpVact,
-            cVact,
-            cVactDat,
-            cVactTaa,
-            cVactDa,
-            cdVatop,
+            cpVact: cpVact,
+            cVact: cVact,
+            cVactDat: cVactDat,
+            cVactTaa: cVactTaa,
+            cVactDa: cVactDa,
+            cdVatop: cdVatop,
           };
         });
-    
-        console.log("Updated Groups After Processing:", JSON.stringify(updatedVatopGroups, null, 2));
-    
-        // Update vatopGroups and vatopCombinations
-        updateVatopGroupsAndCombinations(updatedVatopGroups);
+  
+        // Add unmatched fetched groups
+        const unmatchedFetchedGroups = fetchedVatopGroups.filter(
+          (fg: { id: string }) => !vatopGroups.some((existingGroup) => existingGroup.id === fg.id)
+        );
+  
+        const finalVatopGroups = [...updatedVatopGroups, ...unmatchedFetchedGroups];
+  
+        console.log("Final vatopGroups after merging:", finalVatopGroups);
+  
+        // Recalculate HPAP
+        const maxCpVact = Math.max(...finalVatopGroups.map((group) => group.cpVact || 0));
+        setHpap(maxCpVact);
+  
+        // Update state with the final merged groups
+        setVatopGroups(finalVatopGroups);
         setSoldAmounts(fetchedSoldAmounts);
-    
-        console.log("Updated vatopGroups in state:", updatedVatopGroups);
-    
-        // Save updated data to the backend
-        const payload = {
-          email,
-          vatopGroups: updatedVatopGroups,
-          vatopCombinations,
-          soldAmounts: fetchedSoldAmounts,
-        };
-    
-        console.log("Payload to save:", payload);
-    
-        const saveResponse = await axios.post("/api/saveVatopGroups", payload);
-        console.log("API save response:", saveResponse.data);
+  
+        // Update vatop combinations
+        const combinations = updateVatopCombinations(finalVatopGroups);
+        setVatopCombinations(combinations);
+  
+        console.log("✅ Updated vatopGroups in state:", finalVatopGroups);
+        console.log("✅ Updated vatopCombinations:", combinations);
       } catch (error) {
-        console.error("Error fetching or saving vatop groups:", error);
+        console.error("❌ Error fetching vatopGroups:", error);
+      } finally {
+        isFetchingGroups = false;
       }
     };
   
@@ -241,17 +298,60 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setVatopCombinations(combinations);
     return combinations;
   };
+  
 
-  const updateVatopGroupsAndCombinations = (newVatopGroups: VatopGroup[]) => {
-    // Filter out invalid groups (e.g., groups with cVact <= 0)
-    const validGroups = newVatopGroups.filter((group) => group.cVact > 0);
-  
-    // Update vatopGroups state
-    setVatopGroups(validGroups);
-  
-    // Immediately calculate and update vatopCombinations
-    const newCombinations = validGroups.reduce(
-      (acc, group) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const updateVatopGroupsAndCombinations = (updatedVatopGroups: VatopGroup[]) => {
+    console.log("🔧 Validating and Updating Vatop Groups...");
+    console.log("🔎 Current Groups (before update):", JSON.stringify(vatopGroups, null, 2));
+    console.log("🔎 Updated Groups (incoming):", JSON.stringify(updatedVatopGroups, null, 2));
+    
+    // Ensure updated groups match existing ones by ID
+    const validatedGroups = vatopGroups.map((existingGroup) => {
+        const matchingGroup = updatedVatopGroups.find((group) => group.id === existingGroup.id);
+        return matchingGroup ? { ...existingGroup, ...matchingGroup } : existingGroup;
+    });
+
+    // Log unexpected additions
+    const extraGroups = updatedVatopGroups.filter(
+        (group) => !vatopGroups.find((existing) => existing.id === group.id)
+    );
+
+    if (extraGroups.length > 0) {
+        console.error("⚠️ Extra groups detected and ignored:", JSON.stringify(extraGroups, null, 2));
+    }
+
+    // Update state with validated groups only
+    setVatopGroups(validatedGroups);
+
+    // Calculate combinations
+    const newCombinations = validatedGroups.reduce((acc, group) => {
         acc.acVatops += group.cVatop || 0;
         acc.acVacts += group.cVact || 0;
         acc.acVactDat += group.cVactDat || 0;
@@ -259,28 +359,32 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         acc.acdVatops += Math.max(group.cVact - group.cVatop, 0);
         acc.acVactTaa += group.cVactTaa || 0;
         return acc;
-      },
-      {
+    }, {
         acVatops: 0,
         acVacts: 0,
         acVactDat: 0,
         acVactDas: 0,
         acdVatops: 0,
         acVactTaa: 0,
-      } as VatopCombinations
-    );
-  
-    setVatopCombinations({
-      acVatops: parseFloat(newCombinations.acVatops.toFixed(2)),
-      acVacts: parseFloat(newCombinations.acVacts.toFixed(2)),
-      acVactDat: parseFloat(newCombinations.acVactDat.toFixed(2)),
-      acVactDas: parseFloat(newCombinations.acVactDas.toFixed(2)),
-      acdVatops: parseFloat(newCombinations.acdVatops.toFixed(2)),
-      acVactTaa: parseFloat(newCombinations.acVactTaa.toFixed(7)),
     });
-  
-    console.log("Updated vatopCombinations:", newCombinations);
-  };
+
+    console.log("📝 Updated Vatop Combinations:", JSON.stringify(newCombinations, null, 2));
+    setVatopCombinations(newCombinations);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
 
   useEffect(() => {
@@ -311,34 +415,68 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  let isUpdatingAllState = false;
+
   const updateAllState = async (newBitcoinPrice: number, email: string) => {
     if (!email) {
       console.error("Email is required for updateAllState.");
       return;
     }
   
+    // Guard against overlapping updates
+    if (isUpdatingAllState) {
+      console.warn("updateAllState is already in progress. Skipping this call.");
+      return;
+    }
+  
+    isUpdatingAllState = true;
+  
     try {
+      console.log("🔄 Fetching vatopGroups for update...");
       const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
       const fetchedVatopGroups = response.data.vatopGroups || [];
+      const fetchedSoldAmounts = response.data.soldAmounts || 0;
   
+      console.log("🔎 Fetched vatopGroups from API:", fetchedVatopGroups);
   
-      // Match and update existing groups
-      const updatedVatopGroups = vatopGroups.map((group) => {
-        const fetchedGroup = fetchedVatopGroups.find((fg: { id: string; }) => fg.id === group.id);
+      // Update existing groups only
+      const updatedVatopGroups = vatopGroups.map((existingGroup) => {
+        const fetchedGroup = fetchedVatopGroups.find((fg: VatopGroup) => fg.id === existingGroup.id);
+
   
-        if (!fetchedGroup) {
-          console.warn(`Group with ID ${group.id} not found in fetchedVatopGroups.`);
-          return group; // Preserve current group if not found
-        }
-  
+        // Update group attributes
         const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, newBitcoinPrice);
-        const cpVact =
-          (fetchedGroup.supplicateWBTCtoUSD === false && fetchedGroup.supplicateUSDtoWBTC === false) ||
-          (fetchedGroup.supplicateWBTCtoUSD === false && fetchedGroup.supplicateUSDtoWBTC === true)
-            ? newHAP
-            : fetchedGroup.cpVact;
+        const cpVact = fetchedGroup.supplicateWBTCtoUSD
+          ? fetchedGroup.cpVact
+          : fetchedGroup.supplicateUSDtoWBTC
+          ? newHAP
+          : newHAP;
   
-        const cVactDat = parseFloat((fetchedGroup.cVactTaa * newBitcoinPrice + fetchedGroup.cVactDa).toFixed(2));
+        const cVactDat = fetchedGroup.cVactTaa * cpVact + fetchedGroup.cVactDa;
         const cVact = cVactDat;
   
         const cVactTaa = fetchedGroup.supplicateWBTCtoUSD
@@ -353,37 +491,66 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ? cVact
           : 0;
   
-        const cdVatop = cVact - fetchedGroup.cVatop;
+        const cdVatop = parseFloat((cVact - fetchedGroup.cVatop).toFixed(2));
   
         return {
-          ...group,
+          ...existingGroup,
           HAP: newHAP,
-          cpVact,
-          cVact,
-          cVactDat,
-          cVactTaa,
-          cVactDa,
-          cdVatop,
+          cpVact: cpVact,
+          cVact: cVact,
+          cVactDat: cVactDat,
+          cVactTaa: cVactTaa,
+          cVactDa: cVactDa,
+          cdVatop: cdVatop,
         };
       });
   
-      console.log("Updated Groups After Processing:", JSON.stringify(updatedVatopGroups, null, 2));
+      console.log("📝 Updated Groups After Processing:", updatedVatopGroups);
   
-      // Update vatopGroups and vatopCombinations simultaneously
+
+      // Recalculate HPAP
+      const maxCpVact = Math.max(...updatedVatopGroups.map((group) => group.cpVact || 0));
+      setHpap(maxCpVact);
+      // Update state and backend
       updateVatopGroupsAndCombinations(updatedVatopGroups);
+      setSoldAmounts(fetchedSoldAmounts);
+
+      
   
-      // Save to backend
       await axios.post("/api/saveVatopGroups", {
         email,
         vatopGroups: updatedVatopGroups,
         vatopCombinations,
         soldAmounts,
       });
-      console.log("Successfully saved updated groups.");
+  
+      console.log("✅ Successfully saved updated groups.");
     } catch (error) {
-      console.error("Error updating state:", error);
+      console.error("❌ Error updating state:", error);
+    } finally {
+      isUpdatingAllState = false;
     }
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   const setManualBitcoinPrice = async (
     price: number | ((currentPrice: number) => number)

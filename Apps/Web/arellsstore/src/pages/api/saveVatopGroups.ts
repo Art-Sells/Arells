@@ -9,7 +9,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, vatopGroups = [], vatopCombinations, soldAmounts, transactions } = req.body;
+  const { email, vatopCombinations, vatopGroups } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: 'Missing email' });
@@ -23,51 +23,48 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
       existingData = JSON.parse(data.Body!.toString());
-      console.log("Existing data loaded:", existingData);
+      console.log("📥 Existing data loaded from S3:", existingData);
     } catch (err: any) {
       if (err.code === 'NoSuchKey') {
-        console.warn("No existing data found for user:", email);
-        return res.status(400).json({ error: 'No existing data found for this user.' });
+        console.warn("⚠️ No existing data found for user:", email);
+        existingData = { vatopGroups: [], vatopCombinations: {}, soldAmounts: 0, transactions: [] };
       } else {
         throw err;
       }
     }
 
+    // Merge or update vatopGroups
     const existingGroups = Array.isArray(existingData.vatopGroups) ? existingData.vatopGroups : [];
-    console.log("Existing Groups from Backend:", JSON.stringify(existingGroups, null, 2));
-    console.log("Incoming Groups from Frontend:", JSON.stringify(vatopGroups, null, 2));
-
-    // Validate incoming groups against existingGroups
-    const updatedVatopGroups = existingGroups.map((existingGroup: any) => {
-      const incomingGroup = vatopGroups.find((group: any) => group.id === existingGroup.id);
-
-      // Only update if incoming group matches the existing group's ID
-      if (incomingGroup) {
-        return {
-          ...existingGroup,
-          HAP: incomingGroup.HAP ?? existingGroup.HAP,
-          cpVatop: incomingGroup.cpVatop ?? existingGroup.cpVatop,
-          cVactDat: incomingGroup.cVactDat ?? existingGroup.cVactDat,
-          supplicateWBTCtoUSD: incomingGroup.supplicateWBTCtoUSD ?? existingGroup.supplicateWBTCtoUSD ?? false,
-          supplicateUSDtoWBTC: incomingGroup.supplicateUSDtoWBTC ?? existingGroup.supplicateUSDtoWBTC ?? false,
-        };
+    const updatedVatopGroups = vatopGroups.map((incomingGroup: any) => {
+      const existingGroup = existingGroups.find((group: any) => group.id === incomingGroup.id);
+      if (existingGroup) {
+        console.log(`🔄 Updating existing group: ${incomingGroup.id}`);
+        return { ...existingGroup, ...incomingGroup }; // Merge updates
+      } else {
+        console.log(`➕ Adding new group: ${incomingGroup.id}`);
+        return incomingGroup; // Add new group
       }
-
-      // If no matching incoming group, retain existing group as-is
-      return existingGroup;
     });
+
+    // Merge vatopCombinations
+    const updatedVatopCombinations = {
+      ...existingData.vatopCombinations,
+      ...vatopCombinations,
+    };
+
+    console.log("🔄 Merged vatopCombinations:", JSON.stringify(updatedVatopCombinations, null, 2));
 
     // Build the new data object
     const newData = {
       vatopGroups: updatedVatopGroups,
-      vatopCombinations: vatopCombinations ?? existingData.vatopCombinations ?? {},
-      soldAmounts: soldAmounts ?? existingData.soldAmounts ?? 0,
-      transactions: transactions ?? existingData.transactions ?? [],
+      vatopCombinations: updatedVatopCombinations,
+      soldAmounts: existingData.soldAmounts ?? 0,
+      transactions: existingData.transactions ?? [],
     };
 
-    console.log("Final Data Object to Save:", JSON.stringify(newData, null, 2));
+    console.log("📝 Final Data Object to Save:", JSON.stringify(newData, null, 2));
 
-    // Save the updated data to S3
+    // Save the updated data back to S3
     await s3
       .putObject({
         Bucket: BUCKET_NAME,
@@ -80,7 +77,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json({ message: 'Data saved successfully', data: newData });
   } catch (error) {
-    console.error('Error during processing:', error);
+    console.error('❌ Error during processing:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
