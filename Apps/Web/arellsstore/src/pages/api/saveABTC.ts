@@ -22,29 +22,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const key = `${email}/aBTC.json`;
 
   try {
-    let existingData: any = { aBTC: 0 };
+    // Directly set `aBTC` to the incoming `amount`
+    const updatedABTC = parseFloat(amount.toFixed(2));
 
-    // Fetch the existing data from S3
-    try {
-      const data = await s3
-        .getObject({ Bucket: BUCKET_NAME, Key: key })
-        .promise();
-      existingData = JSON.parse(data.Body!.toString());
-    } catch (err: any) {
-      if (err.code === 'NoSuchKey') {
-        console.warn(`No existing aBTC file found for ${email}. Creating a new one.`);
-      } else {
-        console.error('Error reading from S3:', err.message || err);
-        throw err;
-      }
-    }
-
-    // Calculate the updated aBTC value, ensuring it doesn't go below 0
-    const updatedABTC = parseFloat(
-      Math.max((existingData.aBTC || 0) + parseFloat(amount.toFixed(8)), 0).toFixed(8)
-    );
-
-    // Save the updated aBTC value back to S3
+    // Save the updated `aBTC` value to S3
     await s3
       .putObject({
         Bucket: BUCKET_NAME,
@@ -54,9 +35,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
       .promise();
 
-    console.log(`Successfully updated aBTC for ${email}:`, updatedABTC);
+    console.log(`Successfully set aBTC for ${email}:`, updatedABTC);
 
-    return res.status(200).json({ message: 'aBTC updated successfully', aBTC: updatedABTC });
+    return res.status(200).json({ message: 'aBTC set successfully', aBTC: updatedABTC });
   } catch (error: any) {
     console.error('Error updating aBTC.json:', error.message || error);
     return res.status(500).json({ error: 'Failed to update aBTC.json', details: error.message || error });

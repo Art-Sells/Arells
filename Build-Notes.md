@@ -5,15 +5,15 @@
 ## Arells 1 (Import/Custody Bitcoin)
 
 ### Testing
-- Ensure that"exiting and not changing boolean" for supplicateWBTC & its counterpart code is solved
-- import function: if aBTC = Total USD (MASS Balance + MASS Supplication Balance)  if aBTC > acVactDat, then initiate import.
-- if supplicateUSDCtoWBTC is true, cVactTa will now equal token amount taken from API calculations (subtract difference away from aBTC (check sell for how to delete aBTC))
+- Ensure that "exiting and not changing boolean" for supplicateWBTC & its counterpart code is solved
+- - supplicate WBTCtoUSD changes itself to true and USDtoWBTC to false and vise versa
+- if supplicateUSDCtoWBTC is true, cVactTaa will now equal token amount taken from API calculations
 - - If all VatopGroups supplicateWBTCtoUSD are true, then start countdown (test with simple 30 second countdown) until reset supplicants is hit and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
 - - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
-- - - - setManualBitcoinPrice (price (**needs to reload as it'll only reload if page reloaded** (in the background every 10 seconds)))
+- - - - setManualBitcoinPrice (price (**needs to reload price (and wallet (possibly wallet page)) as it'll only reload if page reloaded** (in the background every 10 seconds)))
 
 ### After Test
-- - Fund Arells Fee Funder with 20 USD in ETH on Arbitrum
+- - Fund Arells Fee Funder with 50 USD in ETH on Base
 - - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
 Change all "Bitcoin to Wrapped Bitcoin Front-ends"
 
@@ -27,7 +27,7 @@ Change all "Bitcoin to Wrapped Bitcoin Front-ends"
 - - Profits: acdVatops (formatCurrency from HPMMASSTester.tsx)
 
 #### Import (Page)
-- Import Wrapped Bitcoin to ensure your investments never lose value (on Arbitrum)
+- Import Bitcoin to ensure your investments never lose value (on Base)
 - - Modal: Preparing (B) Wallet (to create wallet (take from concept)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
 
 #### Metatags/ Description (Home)

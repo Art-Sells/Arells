@@ -7,12 +7,12 @@ import axios from "axios";
 import { fetchUserAttributes } from "aws-amplify/auth";
 
 const TOKEN_ADDRESSES = {
-  WBTC_ARB: "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f", // WBTC on Arbitrum
-  USDC_ARB: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831", // USDC on Arbitrum
+  BTC_BASE: "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf", // BTC on Base
+  USDC_BASE: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDC on Base
 };
 
-const provider_ARB = new ethers.JsonRpcProvider(
-  `https://arbitrum-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68`
+const provider_BASE = new ethers.JsonRpcProvider(
+  `https://base-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68`
 );
 
 interface SignerContextType {
@@ -22,8 +22,8 @@ interface SignerContextType {
   MASSsupplicationPrivateKey: string;
   email: string;
   balances: {
-    WBTC_ARB: string;
-    USDC_ARB: string;
+    BTC_BASE: string;
+    USDC_BASE: string;
   };
   createWallets: () => Promise<void>;
 }
@@ -37,8 +37,8 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [MASSsupplicationPrivateKey, setMASSsupplicationPrivateKey] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [balances, setBalances] = useState({
-    WBTC_ARB: "0",
-    USDC_ARB: "0",
+    BTC_BASE: "0",
+    USDC_BASE: "0",
   });
 
   useEffect(() => {
@@ -184,26 +184,26 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
         // WBTC on Arbitrum
         const WBTCContract_ARB = new ethers.Contract(
-          TOKEN_ADDRESSES.WBTC_ARB,
+          TOKEN_ADDRESSES.BTC_BASE,
           ["function balanceOf(address owner) view returns (uint256)"],
-          provider_ARB
+          provider_BASE
         );
   
         // USDC on Polygon
         const USDCContract_ARB = new ethers.Contract(
-          TOKEN_ADDRESSES.USDC_ARB,
+          TOKEN_ADDRESSES.USDC_BASE,
           ["function balanceOf(address owner) view returns (uint256)"],
-          provider_ARB
+          provider_BASE
         );
   
-        const [WBTC_ARB, USDC_ARB] = await Promise.all([
+        const [BTC_BASE, USDC_BASE] = await Promise.all([
           WBTCContract_ARB.balanceOf(MASSaddress), // Balance on Arbitrum
           USDCContract_ARB.balanceOf(MASSsupplicationAddress), // USDC on Polygon
         ]);
   
         setBalances({
-          WBTC_ARB: ethers.formatUnits(WBTC_ARB, 8),
-          USDC_ARB: ethers.formatUnits(USDC_ARB, 6),
+          BTC_BASE: ethers.formatUnits(BTC_BASE, 8),
+          USDC_BASE: ethers.formatUnits(USDC_BASE, 6),
         });
       } catch (error) {
         console.error("Error fetching balances:", error);

@@ -5,14 +5,14 @@ import { ethers } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 
 // Constants
-const ARBITRUM_WBTC_ADDRESS = "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f";
-const ARBITRUM_USDC_ADDRESS = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831";
-const ARBITRUM_RPC_URL = process.env.ARBITRUM_RPC_URL!;
+const BASE_BTC_ADDRESS = "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf";
+const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+const BASE_RPC_URL = process.env.BASE_RPC_URL!;
 const TRANSFER_FEE_WALLET_PRIVATE_KEY = process.env.ARELLS_PRIVATE_KEY!;
 const LI_FI_API_URL = "https://li.quest/v1";
 
 // Ensure ENV variables are set
-if (!TRANSFER_FEE_WALLET_PRIVATE_KEY || !ARBITRUM_RPC_URL) {
+if (!TRANSFER_FEE_WALLET_PRIVATE_KEY || !BASE_RPC_URL) {
   throw new Error("Environment variables not defined properly.");
 }
 
@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
 
     // Step 3: Check and Set Allowance for WBTC
-    await checkAndSetAllowance(massPrivateKey, ARBITRUM_WBTC_ADDRESS, quote.estimate.approvalAddress, wrappedBitcoinAmount);
+    await checkAndSetAllowance(massPrivateKey, BASE_BTC_ADDRESS, quote.estimate.approvalAddress, wrappedBitcoinAmount);
 
     // Step 4: Execute WBTC Transfer
     const transferTxHash = await executeTransfer(quote, massPrivateKey);
@@ -84,7 +84,7 @@ async function fetchEthPrice(): Promise<number> {
 /* Fund MASS Address with ETH for Gas Fees */
 /* Fund MASS Address with ETH for Gas Fees */
 async function fundGasFees(recipientAddress: string) {
-  const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
+  const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
   const wallet = new ethers.Wallet(TRANSFER_FEE_WALLET_PRIVATE_KEY, provider);
 
   // Fetch ETH price
@@ -129,10 +129,10 @@ async function fundGasFees(recipientAddress: string) {
 
 async function fetchTransferQuote(amount: number, fromAddress: string, toAddress: string) {
   const params = {
-    fromChain: 42161,
-    toChain: 42161,
-    fromToken: ARBITRUM_WBTC_ADDRESS,
-    toToken: ARBITRUM_USDC_ADDRESS,
+    fromChain: 8453,
+    toChain: 8453,
+    fromToken: BASE_BTC_ADDRESS,
+    toToken: BASE_USDC_ADDRESS,
     fromAmount: amount.toString(), // Truncate decimals
     fromAddress,
     toAddress,
@@ -150,7 +150,7 @@ async function checkAndSetAllowance(
   spenderAddress: string,
   amount: number
 ) {
-  const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
+  const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
   const wallet = new ethers.Wallet(privateKey, provider);
 
   const ERC20_ABI = [
@@ -176,7 +176,7 @@ async function checkAndSetAllowance(
 
 /* Execute Transfer Transaction */
 async function executeTransfer(quote: any, privateKey: string) {
-  const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
+  const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
   const wallet = new ethers.Wallet(privateKey, provider);
 
   const txRequest = {

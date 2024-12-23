@@ -120,7 +120,7 @@ const MASSTester: React.FC = () => {
       <p>{MASSaddress || 'Not Available'}</p>
       <p>MASS Private Key:</p>
       <pre>{MASSPrivateKey || 'Not Available'}</pre>
-      <p>MASS Balance (WBTC/ARB): {balances.WBTC_ARB} WBTC</p>
+      <p>MASS Balance (BTC/BASE): {balances.BTC_BASE} BTC</p>
       <div>
         <input
           type="tel"
@@ -140,7 +140,7 @@ const MASSTester: React.FC = () => {
       <p>{MASSsupplicationAddress || 'Not Available'}</p>
       <p>MASS Supplication Private Key:</p>
       <pre>{MASSsupplicationPrivateKey || 'Not Available'}</pre>
-      <p>MASS Supplication Balance (USDC/ARB): {balances.USDC_ARB} USDC</p>
+      <p>MASS Supplication Balance (USDC/BASE): {balances.USDC_BASE} USDC</p>
       <div>
         <input
           type="tel"

@@ -324,8 +324,8 @@ const calculateTotalUSDC = (): string => {
   if (!bitcoinPrice || bitcoinPrice <= 0) return '0.00';
 
   // Safely parse balances to numbers
-  const wbtcBalance = parseFloat(balances.WBTC_ARB || '0'); // WBTC balance
-  const usdBalance = parseFloat(balances.USDC_ARB || '0');  // USDC balance
+  const wbtcBalance = parseFloat(balances.BTC_BASE || '0'); // WBTC balance
+  const usdBalance = parseFloat(balances.USDC_BASE || '0');  // USDC balance
 
   // Convert WBTC to USD
   const usdFromWBTC = wbtcBalance * bitcoinPrice;
@@ -353,29 +353,10 @@ const calculateTotalUSDC = (): string => {
   return (
     <div>
       <h1>HPM and MASS Tester</h1>
-      <h2>Wrapped Bitcoin Price</h2>
+      <h2>Bitcoin Price</h2>
       <h3>${formatPrice(bitcoinPrice)}</h3>
       <button onClick={handleIncreasePrice}>Increase Price</button>
       <button onClick={handleDecreasePrice}>Decrease Price</button>
-
-      <div>
-        <label>Sell Amount:</label>
-        <input
-          type="text"
-          value={inputSellAmount}
-          onChange={(e) => setInputSellAmount(e.target.value)}
-        />
-        <button onClick={handleSellClick}>Sell</button>
-      </div>
-      <div>
-        <label>Import Amount (BTC):</label>
-        <input
-          type="text"
-          value={inputImportAmount}
-          onChange={(e) => setInputImportAmount(e.target.value)}
-        />
-        <button onClick={handleImportClick}>Import</button>
-      </div>
 
       <div>
         <h2>HPAP:</h2>
@@ -414,7 +395,7 @@ const calculateTotalUSDC = (): string => {
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
         <p>acVactTaa: {formatNumber(vatopCombinations.acVactTaa)}</p>
       </div>
-      <button onClick={handleReset}>Reset supplicateWBTCtoUSD</button>
+      <button onClick={handleReset}>Reset supplicateBTCtoUSD</button>
       <div>
         <h2>Sold Amount</h2>
         <p id="amount-sold-number-account-num-concept">{formatCurrency(soldAmounts)}</p>
@@ -425,7 +406,7 @@ const calculateTotalUSDC = (): string => {
         <p>{MASSaddress || 'Not Available'}</p>
         <p>MASS Private Key:</p>
         <pre>{MASSPrivateKey || 'Not Available'}</pre>
-        <p>MASS Balance (WBTC/ARB): {balances.WBTC_ARB} WBTC</p>
+        <p>MASS Balance (BTC/BASE): {balances.BTC_BASE} BTC</p>
         <div>
           <div>
             <label>USDC Amount:</label>
@@ -436,7 +417,7 @@ const calculateTotalUSDC = (): string => {
               onChange={(e) => handleUSDCInputChange(e.target.value)}
               placeholder="Enter amount in USDC"
             />
-            <p>WBTC Equivalent: {wbtcConversion} WBTC</p>
+            <p>BTC Equivalent: {wbtcConversion} BTC</p>
           </div>
           <button onClick={handleWBTCsupplication} disabled={isSupplicating}>
             {isSupplicating ? 'Supplicating...' : 'Supplicate WBTC to USD'}
@@ -451,7 +432,7 @@ const calculateTotalUSDC = (): string => {
       <p>{MASSsupplicationAddress || 'Not Available'}</p>
       <p>MASS Supplication Private Key:</p>
       <pre>{MASSsupplicationPrivateKey || 'Not Available'}</pre>
-      <p>MASS Supplication Balance (USDC/ARB): {balances.USDC_ARB} USDC</p>
+      <p>MASS Supplication Balance (USDC/BASE): {balances.USDC_BASE} USDC</p>
       <div>
         <div>
           <label>WBTC Amount:</label>

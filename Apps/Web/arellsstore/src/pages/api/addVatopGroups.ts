@@ -4,6 +4,28 @@ import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
 
+const calculateVatopCombinations = (groups: any[]) => {
+  return groups.reduce(
+    (acc, group) => {
+      acc.acVatops += group.cVatop || 0;
+      acc.acVacts += group.cVact || 0;
+      acc.acVactDat += group.cVactDat || 0;
+      acc.acVactDas += group.cVactDa || 0;
+      acc.acdVatops += group.cVact - group.cVatop > 0 ? group.cVact - group.cVatop : 0;
+      acc.acVactTaa += group.cVactTaa || 0;
+      return acc;
+    },
+    {
+      acVatops: 0,
+      acVacts: 0,
+      acVactDat: 0,
+      acVactDas: 0,
+      acdVatops: 0,
+      acVactTaa: 0,
+    }
+  );
+};
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -45,9 +67,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const updatedVatopGroups = [...existingGroups, ...validNewGroups];
 
+    // Calculate new vatop combinations
+    const updatedVatopCombinations = calculateVatopCombinations(updatedVatopGroups);
+
     const newData = {
       ...existingData,
       vatopGroups: updatedVatopGroups,
+      vatopCombinations: updatedVatopCombinations,
     };
 
     await s3
@@ -60,7 +86,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       })
       .promise();
 
-    return res.status(200).json({ message: 'New groups added successfully', data: newData });
+    return res.status(200).json({ 
+      message: 'New groups added successfully', 
+      data: newData 
+    });
   } catch (error) {
     console.error('Error during processing:', error);
     return res.status(500).json({ error: 'Internal Server Error' });

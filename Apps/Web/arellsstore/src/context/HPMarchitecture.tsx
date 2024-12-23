@@ -800,6 +800,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const updatedVatopGroups = [...vatopGroups, newVatop];
     await updateAllState(bitcoinPrice, email);
   };
+
   const handleImportABTC = async (amount: number) => {
     if (amount < 0.01) {
       alert('The minimum import amount is 0.01 USD.');
@@ -811,10 +812,47 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error('Error saving to aBTC.json:', error);
     }
   };
+  useEffect(() => {
+    if (!email) {
+      console.warn("Email is not set. Skipping auto-import.");
+      return;
+    }
+  
+    const interval = setInterval(async () => {
+      if (!bitcoinPrice || bitcoinPrice <= 0) {
+        console.warn("Invalid bitcoinPrice. Skipping calculation.");
+        return;
+      }
+  
+      // Safely parse balances to numbers
+      const wbtcBalance = parseFloat(balances.BTC_BASE || "0"); // WBTC balance
+      const usdBalance = parseFloat(balances.USDC_BASE || "0");  // USDC balance
+  
+      // Convert WBTC to USD
+      const usdFromWBTC = wbtcBalance * bitcoinPrice;
+  
+      // Calculate total USDC
+      const totalUSDC = usdBalance + usdFromWBTC;
+  
+      console.log(`Calculated totalUSDC: ${totalUSDC}`);
+  
+      // Handle aBTC import logic
+      try {
+        await axios.post('/api/saveABTC', { email, amount: totalUSDC });
+        console.log("Successfully imported aBTC:", totalUSDC);
+      } catch (error) {
+        console.error("Error importing aBTC:", error);
+      }
+    }, 10000); // Run every 10 seconds
+  
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [email, bitcoinPrice, balances]);
+
   let isUpdating = false; // Shared lock variable
   
   const handleImport = async () => {
     if (isUpdating) {
+      console.warn("Import is already in progress. Skipping...");
       return;
     }
   
@@ -828,49 +866,56 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return;
       }
   
-      const acVactDat = vatopCombinations.acVactDat || 0;
+      // Normalize aBTC and acVactDat to 2 decimal places
+      const normalizedABTC = parseFloat(aBTC.toFixed(2));
+      const normalizedAcVactDat = parseFloat((vatopCombinations.acVactDat || 0).toFixed(2));
   
-      if (aBTC - acVactDat < 0.01) {
+      // Only import if aBTC > acVactDat
+      if (normalizedABTC <= normalizedAcVactDat) {
+        console.log("No significant amount to import. Skipping...");
         return;
       }
   
-      if (aBTC > acVactDat) {
-        const amountToImport = aBTC - acVactDat;
-        const currentPrice = bitcoinPrice;
+      const amountToImport = parseFloat((normalizedABTC - normalizedAcVactDat).toFixed(2));
+      const currentPrice = parseFloat(bitcoinPrice.toFixed(2)); // Round price to 2 decimal places
   
-        const newGroup = {
-          id: uuidv4(),
-          cVatop: amountToImport,
-          cpVatop: currentPrice,
-          cVact: amountToImport,
-          cpVact: currentPrice,
-          cVactDat: amountToImport,
-          cVactDa: 0,
-          cdVatop: 0,
-          cVactTaa: parseFloat((amountToImport / currentPrice).toFixed(8)),
-          HAP: currentPrice,
-          supplicateWBTCtoUSD: false,
-          supplicateUSDtoWBTC: false,
-        };
+      console.log(`aBTC: ${normalizedABTC}, acVactDat: ${normalizedAcVactDat}, Amount to import: ${amountToImport}`);
   
-        const updatedVatopGroups = [...vatopGroups, newGroup];
+      // Create a new group for the import
+      const newGroup = {
+        id: uuidv4(),
+        cVatop: amountToImport,
+        cpVatop: currentPrice,
+        cVact: amountToImport,
+        cpVact: currentPrice,
+        cVactDat: amountToImport,
+        cVactDa: 0,
+        cdVatop: 0,
+        cVactTaa: parseFloat((amountToImport / currentPrice).toFixed(8)), // Higher precision for ratios
+        HAP: currentPrice,
+        supplicateWBTCtoUSD: false,
+        supplicateUSDtoWBTC: false,
+      };
   
-        setVatopGroups(updatedVatopGroups);
-        const newCombinations = updateVatopCombinations(updatedVatopGroups);
-        setVatopCombinations(newCombinations);
+      console.log("Creating new group:", newGroup);
   
-        // Save new group data to backend
-        try {
-          console.log("Saving new group via handleImport...");
-          await axios.post("/api/addVatopGroups", {
-            email,
-            newVatopGroups: [newGroup],
-            vatopCombinations: newCombinations,
-            soldAmounts,
-          });
-        } catch (error) {
-          console.error("Error saving new group:", error);
-        }
+      const updatedVatopGroups = [...vatopGroups, newGroup];
+  
+      setVatopGroups(updatedVatopGroups);
+      const newCombinations = updateVatopCombinations(updatedVatopGroups);
+      setVatopCombinations(newCombinations);
+  
+      // Save new group data to backend
+      try {
+        console.log("Saving new group via handleImport...");
+        await axios.post("/api/addVatopGroups", {
+          email,
+          newVatopGroups: [newGroup],
+          vatopCombinations: newCombinations,
+          soldAmounts,
+        });
+      } catch (error) {
+        console.error("Error saving new group:", error);
       }
     } catch (error) {
       console.error("Error during handleImport:", error);
