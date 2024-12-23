@@ -9,13 +9,11 @@
 - - supplicate WBTCtoUSD changes itself to true and USDtoWBTC to false and vise versa
 - if supplicateUSDCtoWBTC is true, cVactTaa will now equal token amount taken from API calculations
 - - If all VatopGroups supplicateWBTCtoUSD are true, then start countdown (test with simple 30 second countdown) until reset supplicants is hit and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
-- - Send money to ETH(ARB) address (most likely deploy on mainnet) (fees pulled from this wallet)
 - - - - setManualBitcoinPrice (price (**needs to reload price (and wallet (possibly wallet page)) as it'll only reload if page reloaded** (in the background every 10 seconds)))
 
 ### After Test
 - - Fund Arells Fee Funder with 50 USD in ETH on Base
 - - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
-Change all "Bitcoin to Wrapped Bitcoin Front-ends"
 
 
 ### Account
@@ -28,10 +26,13 @@ Change all "Bitcoin to Wrapped Bitcoin Front-ends"
 
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value (on Base)
-- - Modal: Preparing (B) Wallet (to create wallet (take from concept)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
+- - Modal: Preparing (B) Wallet (to create wallet (take from MASSTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
 
-#### Metatags/ Description (Home)
-- Alter: "Wrapped Bitcoin investments that never lose value. Import Small Amounts of Wrapped Bitcoin, ensure that they never lose value."
+#### Metatags/ Description
+- Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
+
+#### Description (Home/Account)
+- Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
 
 #### Deployment Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked!
@@ -43,7 +44,7 @@ Change all "Bitcoin to Wrapped Bitcoin Front-ends"
 - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
 - Add "Discord" section for any questions
 - Restructure MASS Fee Abstraction (based on MASSApi & MASSSupplicationApi & MASS architecture)
-- Set time to check Arbitrum Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001... This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
+- Set time to check Base Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001...Reach out to Jesse Walden (and Base team on Discord, etc to discuss this) This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
 
 ### Other (if Time Permits)
 - Remove BTC Wallet & Key creations in signup and login
