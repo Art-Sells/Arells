@@ -5,10 +5,8 @@
 ## Arells 1 (Import/Custody Bitcoin)
 
 ### Testing
-- Ensure that "exiting and not changing boolean" for supplicateWBTC & its counterpart code is solved
-- - supplicate WBTCtoUSD changes itself to true and USDtoWBTC to false and vise versa
-- if supplicateUSDCtoWBTC is true, cVactTaa will now equal token amount taken from API calculations
-- - If all VatopGroups supplicateWBTCtoUSD are true, then start countdown (test with simple 30 second countdown) until reset supplicants is hit and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
+- test supplicateUSDtoWBTC
+- - If holdMASS is true for all vatopGroups, then start countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
 - - - - setManualBitcoinPrice (price (**needs to reload price (and wallet (possibly wallet page)) as it'll only reload if page reloaded** (in the background every 10 seconds)))
 
 ### After Test

@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const currentTime = Date.now();
 
   if (cachedPrice && cacheTimestamp && currentTime - cacheTimestamp < CACHE_DURATION) {
-    res.status(200).json({ 'wrapped-bitcoin': { usd: cachedPrice } });
+    res.status(200).json({ 'coinbase-wrapped-btc': { usd: cachedPrice } });
     return;
   }
 

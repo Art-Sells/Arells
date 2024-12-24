@@ -11,7 +11,7 @@ import { useSigner } from '../state/signer';
 interface MASSarchitectureType {
   cVactTaa: number;
   cVactDa: number;
-  resetSupplicateWBTCtoUSD: () => void;
+  releaseMASS: () => void;
   refreshVatopGroups: () => void;
 }
 
@@ -127,11 +127,34 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       massPrivateKey: MASSPrivateKey,
       massSupplicationAddress: MASSsupplicationAddress,
     };
+
+
   
     try {
       const response = await axios.post('/api/MASSapi', payload);
       const { receivedAmount, txId } = response.data;
       setSupplicationResult(`Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`);
+      // If successful, update the group state
+      setVatopGroups((prevGroups) => {
+        const updatedGroups = prevGroups.map((g) =>
+          g.id === group.id
+            ? { ...g, 
+              supplicateWBTCtoUSD: true, 
+              supplicateUSDtoWBTC: false,
+              holdMASS: true }
+            : g
+        );
+        console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true and supplicateUSDtoWBTC to false:', updatedGroups);
+      
+        // Save updated groups to backend
+        saveSupplications([{ 
+          id: group.id, 
+          supplicateWBTCtoUSD: true, 
+          supplicateUSDtoWBTC: false,
+          holdMASS: false }]);
+      
+        return updatedGroups;
+      });
       return true;  // indicate success
     } catch (error) {
       console.error('❌ API Error:', error);
@@ -195,7 +218,25 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       const response = await axios.post('/api/MASSsupplicationApi', payload);
   
       const { receivedAmount, txId } = response.data;
-      setSupplicationResult(`Supplication successful! Received ${receivedAmount} WBTC. Transaction ID: ${txId}`);
+      setSupplicationResult(`Supplication successful! Received ${receivedAmount} cbBTC. Transaction ID: ${txId}`);
+      setVatopGroups((prevGroups) => {
+        const updatedGroups = prevGroups.map((g) =>
+          g.id === group.id
+            ? { ...g, 
+              supplicateWBTCtoUSD: false, 
+              supplicateUSDtoWBTC: true }
+            : g
+        );
+        console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true and supplicateUSDtoWBTC to false:', updatedGroups);
+      
+        // Save updated groups to backend
+        saveSupplications([{ 
+          id: group.id, 
+          supplicateWBTCtoUSD: false, 
+          supplicateUSDtoWBTC: true }]);
+      
+        return updatedGroups;
+      });
     } catch (error) {
       console.error('❌ API Error:', error);
       setSupplicationError('Supplication failed. Please try again.');
@@ -213,7 +254,12 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-  const saveSupplications = async (updates: { id: string; supplicateWBTCtoUSD?: boolean; supplicateUSDtoWBTC?: boolean }[]) => {
+  const saveSupplications = async (updates: { 
+    id: string; 
+    supplicateWBTCtoUSD?: boolean; 
+    supplicateUSDtoWBTC?: boolean;
+    holdMASS?: boolean 
+  }[]) => {
     try {
       const payload = {
         email,
@@ -272,19 +318,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
           try {
             // Perform the supplication using the converted WBTC equivalent
             // Usage
-            if (await handleWBTCsupplication(group)) {
-              // If successful, update the group state
-              setVatopGroups((prevGroups) => {
-                const updatedGroups = prevGroups.map((g) =>
-                  g.id === group.id ? { ...g, supplicateWBTCtoUSD: true } : g
-                );
-                console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
-
-                // Save updated groups to backend
-                saveSupplications([{ id: group.id, supplicateWBTCtoUSD: true }])
-                return updatedGroups;
-              });
-            }
+            await handleWBTCsupplication(group)
 
 
           } catch (error) {
@@ -317,17 +351,6 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         try {
           await handleUSDCsupplication(group);
   
-          // If successful, update the group state
-          setVatopGroups((prevGroups) => {
-            const updatedGroups = prevGroups.map((g) =>
-              g.id === group.id ? { ...g, supplicateUSDtoWBTC: false } : g
-            );
-            console.log('Updated vatopGroups after setting supplicateUSDtoWBTC to true:', updatedGroups);
-  
-            // Save updated groups to backend
-              saveSupplications([{ id: group.id, supplicateUSDtoWBTC: false }])
-            return updatedGroups;
-          });
         } catch (error) {
           console.error(`Error during USD to WBTC supplication for group ${group.id}:`, error);
           // Handle error or provide feedback to the user
@@ -347,17 +370,6 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
           // Perform the supplication using the converted WBTC equivalent
           await handleWBTCsupplication(group);
 
-          // If successful, update the group state
-          setVatopGroups((prevGroups) => {
-            const updatedGroups = prevGroups.map((g) =>
-              g.id === group.id ? { ...g, supplicateWBTCtoUSD: true } : g
-            );
-            console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true:', updatedGroups);
-
-            // Save updated groups to backend
-            saveSupplications([{ id: group.id, supplicateWBTCtoUSD: true }])
-            return updatedGroups;
-          });
         } catch (error) {
           console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
           // Handle error or provide feedback to the user
@@ -372,23 +384,21 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-  const resetSupplicateWBTCtoUSD = async () => {
+  const releaseMASS = async () => {
     try {
       const updatedGroups = vatopGroups.map((group) => ({
         ...group,
-        supplicateWBTCtoUSD: false,
-        supplicateUSDtoWBTC: false,
+        holdMASS: false,
       }));
   
       setVatopGroups(updatedGroups); // Update local state
   
       const updates = updatedGroups.map((group) => ({
         id: group.id,
-        supplicateWBTCtoUSD: false,
-        supplicateUSDtoWBTC: false,
+        holdMASS: false,
       }));
   
-      console.log('Reset supplicateWBTCtoUSD to false for all groups:', updates);
+      console.log('Released MASS hold for all groups:', updates);
   
       await saveSupplications(updates);
       console.log('Changes saved to backend successfully.');
@@ -435,7 +445,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   value={{
     cVactTaa: vatopGroups.reduce((sum, group) => sum + group.cVactTaa, 0),
     cVactDa: vatopGroups.reduce((sum, group) => sum + group.cVactDa, 0),
-    resetSupplicateWBTCtoUSD, // Use the actual function
+    releaseMASS, // Use the actual function
     refreshVatopGroups: fetchVatopGroups,
   }}
 >

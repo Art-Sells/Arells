@@ -34,7 +34,7 @@ const HPMMASSTester: React.FC = () => {
   const [inputSellAmount, setInputSellAmount] = useState<string>('');
   const [inputImportAmount, setInputImportAmount] = useState<string>('');
   const [aBTC, setABTC] = useState<number>(0);
-  const { resetSupplicateWBTCtoUSD } = useMASS();
+  const { releaseMASS } = useMASS();
 
 
   useEffect(() => {
@@ -345,9 +345,9 @@ const calculateTotalUSDC = (): string => {
 
 
 
-  const handleReset = () => {
-    resetSupplicateWBTCtoUSD();
-    console.log('SupplicateWBTCtoUSD has been reset for all groups.');
+  const handleMASSRelease = () => {
+    releaseMASS();
+    console.log('MASS hold has been released for al lgroups.');
   };
 
   return (
@@ -395,7 +395,7 @@ const calculateTotalUSDC = (): string => {
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
         <p>acVactTaa: {formatNumber(vatopCombinations.acVactTaa)}</p>
       </div>
-      <button onClick={handleReset}>Reset supplicateBTCtoUSD</button>
+      <button onClick={handleMASSRelease}>Release MASS Hold</button>
       <div>
         <h2>Sold Amount</h2>
         <p id="amount-sold-number-account-num-concept">{formatCurrency(soldAmounts)}</p>

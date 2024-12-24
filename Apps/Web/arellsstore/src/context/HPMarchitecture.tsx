@@ -21,6 +21,7 @@ interface VatopGroup {
   HAP: number;
   supplicateWBTCtoUSD: boolean;
   supplicateUSDtoWBTC: boolean;
+  holdMASS: boolean;
 }
 
 interface VatopCombinations {
@@ -189,12 +190,9 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, bitcoinPrice);
   
           // Set `cpVact` based on the conditions
-          const cpVact =
-            fetchedGroup.supplicateWBTCtoUSD && !fetchedGroup.supplicateUSDtoWBTC
-              ? fetchedGroup.cpVact // Retain fetched `cpVact`
-              : fetchedGroup.supplicateUSDtoWBTC && !fetchedGroup.supplicateWBTCtoUSD
-              ? newHAP // Set `cpVact` to `HAP`
-              : newHAP; // Default to `HAP` if both are false
+          const cpVact = fetchedGroup.supplicateUSDtoWBTC
+          ? newHAP // If supplicateUSDtoWBTC is true, use newHAP
+          : fetchedGroup.cpVact; // Otherwise, use the existing cpVact
   
           const cVactDat = fetchedGroup.cVactTaa * cpVact + fetchedGroup.cVactDa;
           const cVact = cVactDat;
@@ -470,11 +468,9 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
         // Update group attributes
         const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, newBitcoinPrice);
-        const cpVact = fetchedGroup.supplicateWBTCtoUSD
-          ? fetchedGroup.cpVact
-          : fetchedGroup.supplicateUSDtoWBTC
-          ? newHAP
-          : newHAP;
+        const cpVact = fetchedGroup.supplicateUSDtoWBTC
+        ? newHAP // If supplicateUSDtoWBTC is true, use newHAP
+        : fetchedGroup.cpVact; // Otherwise, use the existing cpVact
   
         const cVactDat = fetchedGroup.cVactTaa * cpVact + fetchedGroup.cVactDa;
         const cVact = cVactDat;
@@ -727,7 +723,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cVactTaa: amount / bitcoinPrice,
       HAP: bitcoinPrice,
       supplicateWBTCtoUSD: false,
-      supplicateUSDtoWBTC: false,
+      supplicateUSDtoWBTC: true,
+      holdMASS: false,
     };
 
     const updatedGroups = [...vatopGroups, newVatop];
@@ -794,7 +791,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cVactTaa: amount / bitcoinPrice,
       HAP: bitcoinPrice,
       supplicateWBTCtoUSD: false,
-      supplicateUSDtoWBTC: false,
+      supplicateUSDtoWBTC: true,
+      holdMASS: false,
     };
   
     const updatedVatopGroups = [...vatopGroups, newVatop];
@@ -894,7 +892,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cVactTaa: parseFloat((amountToImport / currentPrice).toFixed(8)), // Higher precision for ratios
         HAP: currentPrice,
         supplicateWBTCtoUSD: false,
-        supplicateUSDtoWBTC: false,
+        supplicateUSDtoWBTC: true,
+        holdMASS: false,
       };
   
       console.log("Creating new group:", newGroup);
