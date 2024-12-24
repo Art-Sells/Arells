@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const quote = await fetchTransferQuote(wrappedBitcoinAmount, massAddress, massSupplicationAddress);
     console.log("✅ Transfer Quote Received:", quote);
 
-    // Step 2: Fund MASS Address with $0.11 Worth of ETH
+    // Step 2: Fund MASS Address with ETH for Gas Fees
     const fundingTxHash = await fundGasFees(massAddress);
     console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
 
@@ -55,16 +55,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const transferTxHash = await executeTransfer(quote, massPrivateKey);
     console.log(`✅ WBTC Transfer Initiated: ${transferTxHash}`);
 
-    // Step 5: Monitor Transfer Status
-    const receivedAmount = await monitorTransfer(transferTxHash);
-    console.log(`✅ Transfer Completed. Received Amount: ${receivedAmount}`);
+    // Step 5: Confirm Transfer Completion
+    const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
+    const receipt = await provider.getTransactionReceipt(transferTxHash);
 
-    res.status(200).json({
-      message: "Transfer completed successfully",
-      transferTxHash,
-      fundingTxHash,
-      receivedAmount,
-    });
+    if (receipt && receipt.status === 1) {
+      console.log("✅ Transfer Confirmed on-chain:", receipt);
+      res.status(200).json({
+        message: "Transfer completed successfully",
+        transferTxHash,
+        fundingTxHash,
+        receipt,
+      });
+    } else {
+      throw new Error("Transaction failed on-chain.");
+    }
   } catch (error: any) {
     console.error("❌ Error during WBTC to USDC transfer:", error.message || error);
     res.status(500).json({ error: "Transfer failed", details: error.message || error });
@@ -91,7 +96,7 @@ async function fundGasFees(recipientAddress: string) {
   const ethPrice = await fetchEthPrice();
 
   // Define target funding amount in USD ($0.30)
-  const TARGET_USD_BALANCE = 0.31;
+  const TARGET_USD_BALANCE = 0.30;
 
   // Check current balance of MASS address
   const balanceInWei = await provider.getBalance(recipientAddress);
@@ -191,44 +196,4 @@ async function executeTransfer(quote: any, privateKey: string) {
   console.log(`✅ Transaction sent. Hash: ${tx.hash}`);
   await tx.wait();
   return tx.hash;
-}
-
-function isValidTxHash(txHash: string): boolean {
-  return /^0x([A-Fa-f0-9]{64})$/.test(txHash);
-}
-
-/* Monitor Transfer Status */
-async function monitorTransfer(txHash: string) {
-  if (!isValidTxHash(txHash)) {
-    throw new Error(`/txHash Not a valid txHash: ${txHash}`);
-  }
-
-  const params = { txHash };
-
-  console.log("🔍 Monitoring Transfer Status...");
-
-  while (true) {
-    try {
-      const response = await axios.get(`${LI_FI_API_URL}/status`, { params });
-      const { status, substatus, substatusMessage, lifiExplorerLink, receiving } = response.data;
-
-      console.log(`🔍 Current Status: ${status}, Sub-status: ${substatus || "N/A"}`);
-      
-      if (status === "DONE") {
-        console.log("✅ Transfer Completed:", response.data);
-        console.log(`🔗 View on LiFi Explorer: ${lifiExplorerLink}`);
-        return receiving?.amount || "Unknown Amount";
-      }
-
-      if (status === "FAILED") {
-        throw new Error(`Transfer failed: ${substatusMessage || "No details available"}`);
-      }
-
-      console.log("⏳ Waiting for transfer to complete...");
-      await new Promise((resolve) => setTimeout(resolve, 15000));
-    } catch (error: any) {
-      console.error("❌ Error while checking transfer status:", error.response?.data || error.message);
-      throw new Error("Failed to monitor transfer.");
-    }
-  }
 }

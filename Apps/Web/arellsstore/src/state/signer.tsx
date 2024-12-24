@@ -26,6 +26,7 @@ interface SignerContextType {
     USDC_BASE: string;
   };
   createWallets: () => Promise<void>;
+  loadBalances: () => Promise<void>;
 }
 
 const SignerContext = createContext<SignerContextType | undefined>(undefined);
@@ -182,23 +183,23 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
       try {
   
-        // WBTC on Arbitrum
-        const WBTCContract_ARB = new ethers.Contract(
+        // BTC on Base
+        const BTCContract_BASE = new ethers.Contract(
           TOKEN_ADDRESSES.BTC_BASE,
           ["function balanceOf(address owner) view returns (uint256)"],
           provider_BASE
         );
   
-        // USDC on Polygon
-        const USDCContract_ARB = new ethers.Contract(
+        // USDC on Base
+        const USDCContract_BASE = new ethers.Contract(
           TOKEN_ADDRESSES.USDC_BASE,
           ["function balanceOf(address owner) view returns (uint256)"],
           provider_BASE
         );
   
         const [BTC_BASE, USDC_BASE] = await Promise.all([
-          WBTCContract_ARB.balanceOf(MASSaddress), // Balance on Arbitrum
-          USDCContract_ARB.balanceOf(MASSsupplicationAddress), // USDC on Polygon
+          BTCContract_BASE.balanceOf(MASSaddress), // Balance on Arbitrum
+          USDCContract_BASE.balanceOf(MASSsupplicationAddress), // USDC on Polygon
         ]);
   
         setBalances({
@@ -212,6 +213,39 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
     loadBalances();
   }, [MASSaddress, MASSsupplicationAddress]);
+
+  const loadBalances = async () => {
+    if (!MASSaddress || !MASSsupplicationAddress) return;
+
+    try {
+
+      // WBTC on Arbitrum
+      const BTCContract_BASE = new ethers.Contract(
+        TOKEN_ADDRESSES.BTC_BASE,
+        ["function balanceOf(address owner) view returns (uint256)"],
+        provider_BASE
+      );
+
+      // USDC on Polygon
+      const USDCContract_BASE = new ethers.Contract(
+        TOKEN_ADDRESSES.USDC_BASE,
+        ["function balanceOf(address owner) view returns (uint256)"],
+        provider_BASE
+      );
+
+      const [BTC_BASE, USDC_BASE] = await Promise.all([
+        BTCContract_BASE.balanceOf(MASSaddress), // Balance on Arbitrum
+        USDCContract_BASE.balanceOf(MASSsupplicationAddress), // USDC on Polygon
+      ]);
+
+      setBalances({
+        BTC_BASE: ethers.formatUnits(BTC_BASE, 8),
+        USDC_BASE: ethers.formatUnits(USDC_BASE, 6),
+      });
+    } catch (error) {
+      console.error("Error fetching balances:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchWalletDetails = async () => {
@@ -247,6 +281,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         email,
         balances,
         createWallets,
+        loadBalances,
       }}
     >
       {children}

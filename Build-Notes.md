@@ -10,7 +10,7 @@
 - - - - setManualBitcoinPrice (price (**needs to reload price (and wallet (possibly wallet page)) as it'll only reload if page reloaded** (in the background every 10 seconds)))
 
 ### After Test
-- - Fund Arells Fee Funder with 50 USD in ETH on Base
+- - Fund Arells Fee Funder with 150 USD in ETH on Base
 - - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
 
 
@@ -25,6 +25,9 @@
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value (on Base)
 - - Modal: Preparing (B) Wallet (to create wallet (take from MASSTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
+
+### Sign-Up/Sign-In
+- Test multiple sign ups/sign ins with differing amounts (view all s3 jsons)
 
 #### Metatags/ Description
 - Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."

@@ -43,6 +43,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     MASSsupplicationAddress,
     MASSPrivateKey,
     MASSsupplicationPrivateKey,
+    balances
   } = useSigner();
 
 
@@ -100,66 +101,78 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleWBTCsupplication = async (group: VatopGroup) => {
-    const adjustedDollarInput = parseFloat(String(group.cVactDa)) - 0.01;
+    const adjustedDollarInput = group.cVactDa; 
+    console.log("Adjusted dollar amount: ", adjustedDollarInput);
+  
     if (isNaN(adjustedDollarInput) || adjustedDollarInput <= 0) {
-      setSupplicationError('Please enter a valid dollar amount.');
-      return false;  // indicate failure
+      setSupplicationError("Please enter a valid dollar amount.");
+      return false;
     }
   
     if (!group.cpVact || group.cpVact <= 0) {
       console.error("Invalid or missing cpVact value.");
       setSupplicationError("Transaction price data is missing or invalid.");
-      return false;  // indicate failure
+      return false;
     }
-  
-    const wbtcEquivalent = adjustedDollarInput / group.cpVact;
-    const formattedWbtc = Number(wbtcEquivalent.toFixed(8));
-    const wbtcInSatoshis = Math.round(formattedWbtc * 1e8);
-  
-    if (!MASSaddress || !MASSsupplicationAddress || !MASSPrivateKey) {
-      setSupplicationError('Wallet information is missing.');
-      return false;  // indicate failure
-    }
-  
-    const payload = {
-      wrappedBitcoinAmount: wbtcInSatoshis,
-      massAddress: MASSaddress,
-      massPrivateKey: MASSPrivateKey,
-      massSupplicationAddress: MASSsupplicationAddress,
-    };
-
-
   
     try {
-      const response = await axios.post('/api/MASSapi', payload);
+      const massBalanceInBTC = parseFloat(balances.BTC_BASE || "0");
+      console.log("Available MASS Balance (BTC): ", massBalanceInBTC);
+  
+      const wbtcEquivalent = adjustedDollarInput / group.cpVact;
+      console.log("WBTC Equivalent: ", wbtcEquivalent);
+  
+      const formattedWbtc = Math.min(Number(wbtcEquivalent.toFixed(8)), massBalanceInBTC);
+      console.log("Adjusted Formatted WBTC: ", formattedWbtc);
+  
+      const wbtcInSatoshis = Math.round(formattedWbtc * 1e8);
+  
+      if (!MASSaddress || !MASSsupplicationAddress || !MASSPrivateKey) {
+        setSupplicationError("Wallet information is missing.");
+        return false;
+      }
+  
+      const payload = {
+        wrappedBitcoinAmount: wbtcInSatoshis,
+        massAddress: MASSaddress,
+        massPrivateKey: MASSPrivateKey,
+        massSupplicationAddress: MASSsupplicationAddress,
+      };
+  
+      const response = await axios.post("/api/MASSapi", payload);
       const { receivedAmount, txId } = response.data;
-      setSupplicationResult(`Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`);
-      // If successful, update the group state
+  
+      setSupplicationResult(
+        `Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`
+      );
+  
       setVatopGroups((prevGroups) => {
         const updatedGroups = prevGroups.map((g) =>
           g.id === group.id
             ? { ...g, 
               supplicateWBTCtoUSD: true, 
-              supplicateUSDtoWBTC: false,
+              supplicateUSDtoWBTC: false, 
               holdMASS: true }
             : g
         );
-        console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true and supplicateUSDtoWBTC to false:', updatedGroups);
-      
-        // Save updated groups to backend
-        saveSupplications([{ 
-          id: group.id, 
-          supplicateWBTCtoUSD: true, 
-          supplicateUSDtoWBTC: false,
-          holdMASS: false }]);
-      
+  
+        saveSupplications([
+          {
+            id: group.id,
+            supplicateWBTCtoUSD: true,
+            supplicateUSDtoWBTC: false,
+            holdMASS: true,
+          },
+        ]);
+  
         return updatedGroups;
       });
-      return true;  // indicate success
+  
+      return true;
     } catch (error) {
-      console.error('❌ API Error:', error);
-      setSupplicationError('Supplication failed. Please try again.');
-      return false;  // indicate failure
+      console.error("❌ API Error:", error);
+      setSupplicationError("Supplication failed. Please try again.");
+      return false;
     }
   };
   
@@ -174,35 +187,33 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   };
   const handleUSDCsupplication = async (group: VatopGroup) => {
     if (!wrappedBitcoinAmount || isNaN(Number(wrappedBitcoinAmount)) || Number(wrappedBitcoinAmount) <= 0) {
-      setSupplicationError('Please enter a valid amount.');
+      setSupplicationError("Please enter a valid amount.");
       return;
     }
   
     if (!MASSsupplicationAddress || !MASSsupplicationPrivateKey || !MASSaddress) {
-      setSupplicationError('Wallet information is missing.');
+      setSupplicationError("Wallet information is missing.");
       return;
     }
   
-    // Ensure cpVact is available and valid
     if (!group.cpVact || group.cpVact <= 0) {
       console.error("Invalid or missing cpVact value.");
       setSupplicationError("Transaction price data is missing or invalid.");
       return;
     }
   
-    setSupplicationError(null);
-    setIsSupplicating(true);
-  
     try {
-      // Calculate USDC equivalent using cpVact instead of bitcoinPrice
-      const usdcEquivalent = getUSDCEquivalent(Number(wrappedBitcoinAmount), group.cpVact);;
+      const usdcBalance = parseFloat(balances.USDC_BASE || "0");
+      console.log("Available USDC Balance: ", usdcBalance);
   
-      // Apply shortfall by rounding down by 1 cent
-      const usdcShortfall = Math.max(0, usdcEquivalent - 0.01); // Ensure no negative values
-      const usdcInMicroUnits = Math.floor(usdcShortfall * 1e6); // Convert to base units
+      const adjustedBTCInput = Math.min(Number(wrappedBitcoinAmount), usdcBalance / group.cpVact);
+      console.log(`Adjusted BTC Input: ${adjustedBTCInput.toFixed(8)} WBTC`);
+  
+      const usdcEquivalent = adjustedBTCInput * group.cpVact;
+      const usdcInMicroUnits = Math.floor(usdcEquivalent * 1e6);
   
       if (usdcInMicroUnits === 0) {
-        setSupplicationError('Calculated USDC amount is too small.');
+        setSupplicationError("Calculated USDC amount is too small.");
         return;
       }
   
@@ -213,35 +224,35 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         massAddress: MASSaddress,
       };
   
-      console.log('🚀 Sending Payload with Shortfall:', payload);
+      console.log("🚀 Sending Payload with Adjusted BTC Input and Shortfall:", payload);
   
-      const response = await axios.post('/api/MASSsupplicationApi', payload);
-  
+      const response = await axios.post("/api/MASSsupplicationApi", payload);
       const { receivedAmount, txId } = response.data;
-      setSupplicationResult(`Supplication successful! Received ${receivedAmount} cbBTC. Transaction ID: ${txId}`);
+  
+      setSupplicationResult(
+        `Supplication successful! Received ${receivedAmount} cbBTC. Transaction ID: ${txId}`
+      );
+  
       setVatopGroups((prevGroups) => {
         const updatedGroups = prevGroups.map((g) =>
           g.id === group.id
-            ? { ...g, 
-              supplicateWBTCtoUSD: false, 
-              supplicateUSDtoWBTC: true }
+            ? { ...g, supplicateWBTCtoUSD: false, supplicateUSDtoWBTC: true }
             : g
         );
-        console.log('Updated vatopGroups after setting supplicateWBTCtoUSD to true and supplicateUSDtoWBTC to false:', updatedGroups);
-      
-        // Save updated groups to backend
-        saveSupplications([{ 
-          id: group.id, 
-          supplicateWBTCtoUSD: false, 
-          supplicateUSDtoWBTC: true }]);
-      
+  
+        saveSupplications([
+          {
+            id: group.id,
+            supplicateWBTCtoUSD: false,
+            supplicateUSDtoWBTC: true,
+          },
+        ]);
+  
         return updatedGroups;
       });
     } catch (error) {
-      console.error('❌ API Error:', error);
-      setSupplicationError('Supplication failed. Please try again.');
-    } finally {
-      setIsSupplicating(false);
+      console.error("❌ API Error:", error);
+      setSupplicationError("Supplication failed. Please try again.");
     }
   };
 
@@ -287,7 +298,28 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-
+  useEffect(() => {
+    vatopGroups.forEach(async (group) => {
+      // Skip groups where `supplicateWBTCtoUSD` is already true
+      if (group.supplicateWBTCtoUSD) {
+        console.log(`Skipping group ${group.id} as supplicateWBTCtoUSD is true.`);
+        return; // Skip this group
+      }
+  
+      // Trigger WBTC to USDC supplication if `cVactDa` > 0.01
+      if (group.cVactDa > 0.01) {
+        console.log(`Initiating WBTC to USDC supplication for group ${group.id} with amount: ${group.cVactDa}`);
+  
+        try {
+          await handleWBTCsupplication(group);
+        } catch (error) {
+          console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
+        }
+      }
+    });
+  
+    setPrevVatopGroups([...vatopGroups]); // Update previous groups after processing
+  }, [vatopGroups]);
   useEffect(() => {
     const prevIds = prevVatopGroups.map((group) => group.id); // Match by `id`
     const currentIds = vatopGroups.map((group) => group.id);

@@ -240,39 +240,36 @@ const HPMMASSTester: React.FC = () => {
         setSupplicationError('Please enter a valid amount.');
         return;
       }
-
+    
       if (!MASSsupplicationAddress || !MASSsupplicationPrivateKey || !MASSaddress) {
         setSupplicationError('Wallet information is missing.');
         return;
       }
-
+    
       setSupplicationError(null);
       setIsSupplicating(true);
-
+    
       try {
         // Calculate USDC equivalent
         const usdcEquivalent = getUSDCEquivalent(Number(wrappedBitcoinAmount), bitcoinPrice);
-
-        // Apply shortfall by rounding down by 1 cent
-        const usdcShortfall = Math.max(0, usdcEquivalent - 0.01); // Ensure no negative values
-        const usdcInMicroUnits = Math.floor(usdcShortfall * 1e6); // Convert to base units
-
+        const usdcInMicroUnits = Math.floor(usdcEquivalent * 1e6); // Convert to base units
+    
         if (usdcInMicroUnits === 0) {
           setSupplicationError('Calculated USDC amount is too small.');
           return;
         }
-
+    
         const payload = {
           usdcAmount: usdcInMicroUnits,
           massSupplicationAddress: MASSsupplicationAddress,
           massSupplicationPrivateKey: MASSsupplicationPrivateKey,
           massAddress: MASSaddress,
         };
-
-        console.log('🚀 Sending Payload with Shortfall:', payload);
-
+    
+        console.log('🚀 Sending Payload:', payload);
+    
         const response = await axios.post('/api/MASSsupplicationApi', payload);
-
+    
         const { receivedAmount, txId } = response.data;
         setSupplicationResult(`Supplication successful! Received ${receivedAmount} WBTC. Transaction ID: ${txId}`);
       } catch (error: any) {

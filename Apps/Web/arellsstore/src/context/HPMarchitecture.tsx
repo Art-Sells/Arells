@@ -64,6 +64,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       MASSaddress,
       MASSsupplicationAddress,
       balances,
+      loadBalances,
     } = useSigner();
 
   const [email, setEmail] = useState<string>('');
@@ -97,6 +98,28 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     fetchPrice();
+  }, []);
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+  
+    const fetchPrice = async () => {
+      try {
+        const price = await fetchBitcoinPrice();
+        setBitcoinPrice(price);
+        console.log("Fetched Bitcoin Price:", price);
+      } catch (error) {
+        console.error("Error fetching Bitcoin price:", error);
+      }
+    };
+  
+    // Initial fetch
+    fetchPrice();
+  
+    // Set up a 10-second interval
+    intervalId = setInterval(fetchPrice, 10000);
+  
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
  useEffect(() => {
@@ -246,6 +269,13 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
         console.log("✅ Updated vatopGroups in state:", finalVatopGroups);
         console.log("✅ Updated vatopCombinations:", combinations);
+      // Save updated data to backend
+        await saveVatopGroups({
+          email,
+          vatopGroups: finalVatopGroups,
+          vatopCombinations: combinations,
+          soldAmounts: fetchedSoldAmounts,
+        });
       } catch (error) {
         console.error("❌ Error fetching vatopGroups:", error);
       } finally {
@@ -810,6 +840,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error('Error saving to aBTC.json:', error);
     }
   };
+
+
   useEffect(() => {
     if (!email) {
       console.warn("Email is not set. Skipping auto-import.");
@@ -821,16 +853,16 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         console.warn("Invalid bitcoinPrice. Skipping calculation.");
         return;
       }
-  
+      await loadBalances();
       // Safely parse balances to numbers
-      const wbtcBalance = parseFloat(balances.BTC_BASE || "0"); // WBTC balance
+      const btcBalance = parseFloat(balances.BTC_BASE || "0"); // WBTC balance
       const usdBalance = parseFloat(balances.USDC_BASE || "0");  // USDC balance
   
       // Convert WBTC to USD
-      const usdFromWBTC = wbtcBalance * bitcoinPrice;
+      const usdFromBTC = btcBalance * bitcoinPrice;
   
       // Calculate total USDC
-      const totalUSDC = usdBalance + usdFromWBTC;
+      const totalUSDC = usdBalance + usdFromBTC;
   
       console.log(`Calculated totalUSDC: ${totalUSDC}`);
   
@@ -875,7 +907,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
   
       const amountToImport = parseFloat((normalizedABTC - normalizedAcVactDat).toFixed(2));
-      const currentPrice = parseFloat(bitcoinPrice.toFixed(2)); // Round price to 2 decimal places
   
       console.log(`aBTC: ${normalizedABTC}, acVactDat: ${normalizedAcVactDat}, Amount to import: ${amountToImport}`);
   
@@ -883,14 +914,14 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const newGroup = {
         id: uuidv4(),
         cVatop: amountToImport,
-        cpVatop: currentPrice,
+        cpVatop: bitcoinPrice,
         cVact: amountToImport,
-        cpVact: currentPrice,
+        cpVact: bitcoinPrice,
         cVactDat: amountToImport,
         cVactDa: 0,
         cdVatop: 0,
-        cVactTaa: parseFloat((amountToImport / currentPrice).toFixed(8)), // Higher precision for ratios
-        HAP: currentPrice,
+        cVactTaa: parseFloat((amountToImport / bitcoinPrice).toFixed(8)), // Higher precision for ratios
+        HAP: bitcoinPrice,
         supplicateWBTCtoUSD: false,
         supplicateUSDtoWBTC: true,
         holdMASS: false,
