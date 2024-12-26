@@ -17,9 +17,7 @@ const provider_BASE = new ethers.JsonRpcProvider(
 
 interface SignerContextType {
   MASSaddress: string;
-  MASSsupplicationAddress: string;
   MASSPrivateKey: string;
-  MASSsupplicationPrivateKey: string;
   email: string;
   balances: {
     BTC_BASE: string;
@@ -33,9 +31,7 @@ const SignerContext = createContext<SignerContextType | undefined>(undefined);
 
 export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [MASSaddress, setMASSaddress] = useState<string>("");
-  const [MASSsupplicationAddress, setMASSsupplicationAddress] = useState<string>("");
   const [MASSPrivateKey, setMASSPrivateKey] = useState<string>("");
-  const [MASSsupplicationPrivateKey, setMASSsupplicationPrivateKey] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [balances, setBalances] = useState({
     BTC_BASE: "0",
@@ -57,9 +53,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   const readMASSFile = async (): Promise<{
     MASSaddress: string;
-    MASSsupplicationAddress: string;
     MASSkey: string;
-    MASSsupplicationKey: string;
   } | null> => {
     try {
       if (!email) {
@@ -69,9 +63,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
       const response = await axios.get('/api/readMASS', { params: { email } });
       const data = response.data;
-      console.log('Read MASS File:', data);
       setMASSaddress(data.MASSaddress);
-      setMASSsupplicationAddress(data.MASSsupplicationAddress);
       return data;
     } catch (error) {
       console.error('Error reading MASS file:', error);
@@ -108,22 +100,14 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       }
 
       const newWallet = ethers.Wallet.createRandom();
-      const newSupplicationWallet = ethers.Wallet.createRandom();
       const encryptedPrivateKey = CryptoJS.AES.encrypt(newWallet.privateKey, 'your-secret-key').toString();
-      const encryptedSupplicationPrivateKey = CryptoJS.AES.encrypt(newSupplicationWallet.privateKey, 'your-secret-key').toString();
-
-      console.log("New MASS Wallet Address:", newWallet.address);
-      console.log("New MASS Supplication Wallet Address:", newSupplicationWallet.address);
 
       await saveMASSWalletDetails(
         newWallet.address,
-        newSupplicationWallet.address,
         encryptedPrivateKey,
-        encryptedSupplicationPrivateKey,
         email
       );
       setMASSaddress(newWallet.address);
-      setMASSsupplicationAddress(newSupplicationWallet.address);
     } catch (error) {
       console.error('Error creating MASS wallet:', error);
     }
@@ -131,9 +115,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   const saveMASSWalletDetails = async (
     MASSaddress: string,
-    MASSsupplicationAddress: string,
     MASSkey: string,
-    MASSsupplicationKey: string,
     email: string
   ) => {
     try {
@@ -144,14 +126,11 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         },
         body: JSON.stringify({
           MASSaddress,
-          MASSsupplicationAddress,
           MASSkey,
-          MASSsupplicationKey,
           email,
         }),
       });
-      const data = await response.json();
-      console.log('Save MASS Wallet Response:', data);
+      console.log(' MASS Wallet saved');
     } catch (error) {
       console.error('Error saving MASS wallet details:', error);
     }
@@ -179,7 +158,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   useEffect(() => {
     const loadBalances = async () => {
-      if (!MASSaddress || !MASSsupplicationAddress) return;
+      if (!MASSaddress) return;
   
       try {
   
@@ -199,7 +178,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
         const [BTC_BASE, USDC_BASE] = await Promise.all([
           BTCContract_BASE.balanceOf(MASSaddress), // Balance on Arbitrum
-          USDCContract_BASE.balanceOf(MASSsupplicationAddress), // USDC on Polygon
+          USDCContract_BASE.balanceOf(MASSaddress), // USDC on Polygon
         ]);
   
         setBalances({
@@ -212,10 +191,10 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
   
     loadBalances();
-  }, [MASSaddress, MASSsupplicationAddress]);
+  }, [MASSaddress]);
 
   const loadBalances = async () => {
-    if (!MASSaddress || !MASSsupplicationAddress) return;
+    if (!MASSaddress) return;
 
     try {
 
@@ -234,8 +213,8 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       );
 
       const [BTC_BASE, USDC_BASE] = await Promise.all([
-        BTCContract_BASE.balanceOf(MASSaddress), // Balance on Arbitrum
-        USDCContract_BASE.balanceOf(MASSsupplicationAddress), // USDC on Polygon
+        BTCContract_BASE.balanceOf(MASSaddress), // BTC on Base
+        USDCContract_BASE.balanceOf(MASSaddress), // USDC on Base
       ]);
 
       setBalances({
@@ -254,12 +233,8 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         const massDetails = await readMASSFile();
         if (massDetails) {
           setMASSaddress(massDetails.MASSaddress);
-          setMASSsupplicationAddress(massDetails.MASSsupplicationAddress);
           setMASSPrivateKey(
             CryptoJS.AES.decrypt(massDetails.MASSkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
-          );
-          setMASSsupplicationPrivateKey(
-            CryptoJS.AES.decrypt(massDetails.MASSsupplicationKey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
           );
         }
 
@@ -275,9 +250,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     <SignerContext.Provider
       value={{
         MASSaddress,
-        MASSsupplicationAddress,
         MASSPrivateKey,
-        MASSsupplicationPrivateKey,
         email,
         balances,
         createWallets,

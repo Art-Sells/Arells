@@ -23,9 +23,7 @@ const HPMMASSTester: React.FC = () => {
   const {
     createWallets,
     MASSaddress,
-    MASSsupplicationAddress,
     MASSPrivateKey,
-    MASSsupplicationPrivateKey,
     balances,
     email,
   } = useSigner();
@@ -51,7 +49,7 @@ const HPMMASSTester: React.FC = () => {
     }
     
     // Subtract $0.01, ensuring the result is not negative
-    const roundedValue = Math.max(0, value - 0.01);
+    const roundedValue = Math.max(0, value - 0.00);
   
     // Format to two decimal places with commas
     return roundedValue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -176,7 +174,7 @@ const HPMMASSTester: React.FC = () => {
         return;
       }
 
-      if (!MASSaddress || !MASSsupplicationAddress || !MASSPrivateKey) {
+      if (!MASSaddress || !MASSPrivateKey) {
         setSupplicationError('Wallet information is missing.');
         return;
       }
@@ -198,7 +196,6 @@ const HPMMASSTester: React.FC = () => {
           wrappedBitcoinAmount: wbtcInSatoshis, // Amount in satoshis
           massAddress: MASSaddress,
           massPrivateKey: MASSPrivateKey,
-          massSupplicationAddress: MASSsupplicationAddress,
         };
 
         console.log('🚀 Sending Payload:', payload);
@@ -241,7 +238,7 @@ const HPMMASSTester: React.FC = () => {
         return;
       }
     
-      if (!MASSsupplicationAddress || !MASSsupplicationPrivateKey || !MASSaddress) {
+      if (!MASSPrivateKey || !MASSaddress) {
         setSupplicationError('Wallet information is missing.');
         return;
       }
@@ -261,8 +258,7 @@ const HPMMASSTester: React.FC = () => {
     
         const payload = {
           usdcAmount: usdcInMicroUnits,
-          massSupplicationAddress: MASSsupplicationAddress,
-          massSupplicationPrivateKey: MASSsupplicationPrivateKey,
+          massPrivateKey: MASSPrivateKey,
           massAddress: MASSaddress,
         };
     
@@ -403,7 +399,8 @@ const calculateTotalUSDC = (): string => {
         <p>{MASSaddress || 'Not Available'}</p>
         <p>MASS Private Key:</p>
         <pre>{MASSPrivateKey || 'Not Available'}</pre>
-        <p>MASS Balance (BTC/BASE): {balances.BTC_BASE} BTC</p>
+        <hr/>
+        <p>Balance (BTC/BASE): {balances.BTC_BASE} BTC</p>
         <div>
           <div>
             <label>USDC Amount:</label>
@@ -423,13 +420,9 @@ const calculateTotalUSDC = (): string => {
           {supplicationResult && <p style={{ color: 'green' }}>{supplicationResult}</p>}
         </div>
       </div>
+      <hr/>
 
-      <hr />
-      <h3>MASS Supplication Wallet Address</h3>
-      <p>{MASSsupplicationAddress || 'Not Available'}</p>
-      <p>MASS Supplication Private Key:</p>
-      <pre>{MASSsupplicationPrivateKey || 'Not Available'}</pre>
-      <p>MASS Supplication Balance (USDC/BASE): {balances.USDC_BASE} USDC</p>
+      <p>Balance (USDC/BASE): {balances.USDC_BASE} BTC</p>
       <div>
         <div>
           <label>WBTC Amount:</label>

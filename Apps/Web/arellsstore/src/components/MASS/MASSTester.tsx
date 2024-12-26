@@ -8,9 +8,7 @@ const MASSTester: React.FC = () => {
   const {
     createWallets,
     MASSaddress,
-    MASSsupplicationAddress,
     MASSPrivateKey,
-    MASSsupplicationPrivateKey,
     balances,
     email,
   } = useSigner();
@@ -54,7 +52,7 @@ const MASSTester: React.FC = () => {
       return;
     }
   
-    if (!MASSaddress || !MASSsupplicationAddress) {
+    if (!MASSaddress) {
       setConversionError('Wallet information is missing.');
       return;
     }
@@ -67,7 +65,6 @@ const MASSTester: React.FC = () => {
         wrappedBitcoinAmount: parseFloat(wrappedBitcoinAmount as string) * 1e8, // Convert BTC to satoshis
         massAddress: MASSaddress, // Fix case sensitivity
         massPrivateKey: MASSPrivateKey, // Fix parameter name
-        massSupplicationAddress: MASSsupplicationAddress,
       });
   
       const { wbtcAmount, txId } = response.data;
@@ -85,7 +82,7 @@ const MASSTester: React.FC = () => {
       return;
     }
   
-    if (!MASSsupplicationAddress || !MASSsupplicationPrivateKey || !MASSaddress) {
+    if (!MASSPrivateKey || !MASSaddress) {
       setConversionError('Wallet information is missing.');
       return;
     }
@@ -96,9 +93,8 @@ const MASSTester: React.FC = () => {
     try {
       const response = await axios.post('/api/MASSsupplicationApi', {
         usdcAmount: Math.floor(Number(dollarAmount) * 1e6), // Convert USD to base units (6 decimals)
-        massSupplicationAddress: MASSsupplicationAddress,
-        massSupplicationPrivateKey: MASSsupplicationPrivateKey,
         massAddress: MASSaddress,
+        massPrivateKey: MASSPrivateKey,
       });
   
       const { receivedAmount, txId } = response.data;
@@ -120,7 +116,8 @@ const MASSTester: React.FC = () => {
       <p>{MASSaddress || 'Not Available'}</p>
       <p>MASS Private Key:</p>
       <pre>{MASSPrivateKey || 'Not Available'}</pre>
-      <p>MASS Balance (BTC/BASE): {balances.BTC_BASE} BTC</p>
+      <h4>Balances</h4>
+      <p>BTC/BASE: {balances.BTC_BASE} BTC</p>
       <div>
         <input
           type="tel"
@@ -136,11 +133,7 @@ const MASSTester: React.FC = () => {
         {conversionResult && <p style={{ color: 'green' }}>{conversionResult}</p>}
       </div>
       <hr />
-      <h3>MASS Supplication Wallet Address</h3>
-      <p>{MASSsupplicationAddress || 'Not Available'}</p>
-      <p>MASS Supplication Private Key:</p>
-      <pre>{MASSsupplicationPrivateKey || 'Not Available'}</pre>
-      <p>MASS Supplication Balance (USDC/BASE): {balances.USDC_BASE} USDC</p>
+      <p>USDC/BASE: {balances.USDC_BASE} USDC</p>
       <div>
         <input
           type="tel"

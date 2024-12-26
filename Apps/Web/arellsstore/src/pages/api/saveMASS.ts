@@ -10,11 +10,9 @@ export default async function saveMASS(req: NextApiRequest, res: NextApiResponse
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const { MASSaddress, MASSsupplicationAddress, MASSkey, MASSsupplicationKey } = req.body as {
+    const { MASSaddress, MASSkey } = req.body as {
         MASSaddress: string;
-        MASSsupplicationAddress: string;
         MASSkey: string;
-        MASSsupplicationKey: string;
     };
     const { email, amount } = req.body;
 
@@ -35,7 +33,7 @@ export default async function saveMASS(req: NextApiRequest, res: NextApiResponse
             await s3.putObject({
                 Bucket: BUCKET_NAME,
                 Key: key,
-                Body: JSON.stringify({ MASSaddress, MASSsupplicationAddress, MASSkey, MASSsupplicationKey }),
+                Body: JSON.stringify({ MASSaddress, MASSkey }),
                 ContentType: 'application/json'
             }).promise();
             return res.status(201).json({ message: 'Wallet saved successfully' });

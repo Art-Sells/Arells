@@ -5,29 +5,23 @@
 ## Arells 1 (Import/Custody Bitcoin)
 
 ### Testing
-- test supplicateUSDtoWBTC
-- - If holdMASS is true for all vatopGroups, then start countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email and date appears. Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date…
-- - - - setManualBitcoinPrice (price (**needs to reload price (and wallet (possibly wallet page)) as it'll only reload if page reloaded** (in the background every 10 seconds)))
+- test supplicateWBTCtoUSD (come back and check on this consistently with many vatopGroups).
+- Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History)
+- test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 
 ### After Test
 - - Fund Arells Fee Funder with 150 USD in ETH on Base
-- - Set dates Updated on (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date… (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. Add (countdown in hours until next update (from 24 hours after all supplicateWBTCtoUSD are true), else (updated))
-
 
 ### Account
-- Set A/B (price to reload every 3-4 seconds?) (formatPrice from HPMMASSTester.tsx)
-- updated section
 - If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value"
 - - Price: HPAP (formatPrice from HPMMASSTester.tsx)
 - - Wallet: acVacts (formatCurrency from HPMMASSTester.tsx)
 - - Profits: acdVatops (formatCurrency from HPMMASSTester.tsx)
+- - Wallet Balance Updated every 24~ hours
 
 #### Import (Page)
-- Import Bitcoin to ensure your investments never lose value (on Base)
+- Import Bitcoin to ensure your investments never lose value (through Coinbase/Base) (Base Address)
 - - Modal: Preparing (B) Wallet (to create wallet (take from MASSTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
-
-### Sign-Up/Sign-In
-- Test multiple sign ups/sign ins with differing amounts (view all s3 jsons)
 
 #### Metatags/ Description
 - Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
@@ -41,13 +35,15 @@
 - Restructure decryption process in readMASS and readBTC apis
 
 ### After Completion
-- Add new invention and those updates will decrease as the system improves as we release more upgrades to Arells (from 24hrs to 12hrs, to 6hrs and one day, your wallet balances will update every second in order to ensure you accumulate the maximum amounts of profits a day)… Remove Emojis from API
+- Talk about 1 week wallet balance update - Arells 1.5 (24 hour wallet balance update) 
+- Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
 - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
 - Add "Discord" section for any questions
 - Restructure MASS Fee Abstraction (based on MASSApi & MASSSupplicationApi & MASS architecture)
 - Set time to check Base Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001...Reach out to Jesse Walden (and Base team on Discord, etc to discuss this) This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
 
-### Other (if Time Permits)
+### Other (if Time Permits (add the below sections to Arells 1.5...))
+- Remove MASSapi and MASSsupplication API errors dealing with fee checking (when transactions are successful) and fetchVatopGroups console.log error
 - Remove BTC Wallet & Key creations in signup and login
 - Remove all "2 second delay for buttons"
 - Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
@@ -100,6 +96,8 @@
 **If initial Bitcoin amount is less than USDC amount, then "buy" equivalent BTC before exporting so for example: You start with 0.00121 BTC worth $200 when Bitcoin is at $60,000. To maintain the same value ($205), when the price of Bitcoin falls to $10,000, you buy Bitcoin using your $205 in USDC. At $10,000 per Bitcoin, you would get: $205 / $10,000 = 0.0205 BTC.**
 
 ### Testing
+- supplicateUSDtoWBTC (with holdMASS function revoked)
+- - If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. 
 - Export Test (similar to sell except (Combines the acVactTaa and acVactDas and subtracts from the group with the lowest cpVatop first))
 - - Ensure the “if changes supplicate” logic accounts only for changes from 0, not from number changes if cVactTaa changes from .03 to .02 or the Da, still activate (from selling)
 - Ensure that vatopGroups delete if cVact <= $0.01 and if acVactTas && aBTC = 0, then delete a vatopGroup (do not add a VatopGroup)
@@ -202,24 +200,21 @@
 ## Arells 1.7 (Export Bitcoin)
 
 ### Email
-- Check "M-I" folder
+- Check "Main-Inv" folder in email
 
-### Testing
+### Testing (HPM & MASS Tester)
 - Test Export process... 
-- - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information)
+- - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information) (check handle Sell for reference).
+- - - 
+- Export Amount Input: In Dollars that Converts to cbBTC based on bitcoin price.
+- Export Address Input (Base Address).
 
 ### Export (Bitcoin)
 **Pull handleExport from HPMContext and edit saveVatopGroups import for success and error modal handling.**
 - (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
 - (W) Wallet: Displays acVatops.
-- (B) Amount: Displays acVactTas 7 decimals long maximum
-- Export Amount Input: (tel no * or #) see HPMTester
-- Export Address Input: (tel no * or #) see HPMTester
-- Exporting
-- (B) 0.00998 (decimals in Bitcoin format tel with no * or # (see Bitcoin Page) 7 decimals long maximum)
-- Total exported wallet value: see HPMTester
-- You will lose: see HPMTester
-- (CANCEL) -> Account Page, 
+- (A)(B) Amount: Displays aBTC 8 decimals long maximum
+- BASE Address (Must Be Base (Give Coinbase Base address link for info))
 - (EXPORT) -> Modal
 - - Modal:
 - - - Exporting (3 second delay) see HPMTester 

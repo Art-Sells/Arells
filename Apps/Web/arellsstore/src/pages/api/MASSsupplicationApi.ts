@@ -22,9 +22,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { usdcAmount, massSupplicationAddress, massSupplicationPrivateKey, massAddress } = req.body;
+  const { usdcAmount, massPrivateKey, massAddress } = req.body;
 
-  if (!usdcAmount || !massSupplicationAddress || !massSupplicationPrivateKey || !massAddress) {
+  if (!usdcAmount || !massPrivateKey || !massAddress) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
@@ -32,23 +32,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log("🚀 Starting USDC to WBTC Supplication...");
 
     // Step 1: Fetch Transfer Quote
-    const quote = await fetchTransferQuote(usdcAmount, massSupplicationAddress, massAddress);
+    const quote = await fetchTransferQuote(usdcAmount, massAddress, massAddress);
     console.log("✅ Transfer Quote Received:", quote);
 
     // Step 2: Fund MASS Supplication Address with ETH for Gas Fees
-    const fundingTxHash = await fundGasFees(massSupplicationAddress);
+    const fundingTxHash = await fundGasFees(massAddress);
     console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
 
     // Step 3: Check and Set Allowance for USDC
     await checkAndSetAllowance(
-      massSupplicationPrivateKey,
+      massPrivateKey,
       BASE_USDC_ADDRESS,
       quote.estimate.approvalAddress,
       usdcAmount
     );
 
     // Step 4: Execute USDC Transfer
-    const transferTxHash = await executeTransfer(quote, massSupplicationPrivateKey);
+    const transferTxHash = await executeTransfer(quote, massPrivateKey);
     console.log(`✅ USDC Transfer Initiated: ${transferTxHash}`);
 
     // Step 5: Confirm Transfer Completion
@@ -88,7 +88,7 @@ async function fundGasFees(recipientAddress: string) {
   const wallet = new ethers.Wallet(TRANSFER_FEE_WALLET_PRIVATE_KEY, provider);
 
   const ethPrice = await fetchEthPrice();
-  const TARGET_USD_BALANCE = 0.30;
+  const TARGET_USD_BALANCE = 0.50;
 
   const balanceInWei = await provider.getBalance(recipientAddress);
   const balanceInUSD = parseFloat(ethers.formatEther(balanceInWei)) * ethPrice;

@@ -40,9 +40,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   } = useHPM();
   const {
     MASSaddress,
-    MASSsupplicationAddress,
     MASSPrivateKey,
-    MASSsupplicationPrivateKey,
     balances
   } = useSigner();
 
@@ -77,7 +75,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   
       setVatopGroups(validVatopGroups);
     } catch (error) {
-      console.error('Error fetching vatop groups:', error);
+      console.warn('Vatop Group Creation awaiting');
     }
   };
 
@@ -127,7 +125,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   
       const wbtcInSatoshis = Math.round(formattedWbtc * 1e8);
   
-      if (!MASSaddress || !MASSsupplicationAddress || !MASSPrivateKey) {
+      if (!MASSaddress || !MASSPrivateKey) {
         setSupplicationError("Wallet information is missing.");
         return false;
       }
@@ -136,7 +134,6 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         wrappedBitcoinAmount: wbtcInSatoshis,
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
-        massSupplicationAddress: MASSsupplicationAddress,
       };
   
       const response = await axios.post("/api/MASSapi", payload);
@@ -149,12 +146,12 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       setVatopGroups((prevGroups) => {
         const updatedGroups = prevGroups.map((g) =>
           g.id === group.id
-            ? { ...g, 
-              supplicateWBTCtoUSD: true, 
+            ? { ...g, supplicateWBTCtoUSD: true, 
               supplicateUSDtoWBTC: false, 
               holdMASS: true }
             : g
         );
+        console.log("Updated Groups After setting Supplication:", updatedGroups); // Debugging log
   
         saveSupplications([
           {
@@ -164,6 +161,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
             holdMASS: true,
           },
         ]);
+
+        console.log("Updated Groups After saving Supplication:", updatedGroups); // Debugging log
   
         return updatedGroups;
       });
@@ -191,7 +190,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
   
-    if (!MASSsupplicationAddress || !MASSsupplicationPrivateKey || !MASSaddress) {
+    if (!MASSaddress || !MASSPrivateKey) {
       setSupplicationError("Wallet information is missing.");
       return;
     }
@@ -219,9 +218,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   
       const payload = {
         usdcAmount: usdcInMicroUnits,
-        massSupplicationAddress: MASSsupplicationAddress,
-        massSupplicationPrivateKey: MASSsupplicationPrivateKey,
         massAddress: MASSaddress,
+        massPrivateKey: MASSPrivateKey,
       };
   
       console.log("🚀 Sending Payload with Adjusted BTC Input and Shortfall:", payload);
@@ -236,7 +234,9 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       setVatopGroups((prevGroups) => {
         const updatedGroups = prevGroups.map((g) =>
           g.id === group.id
-            ? { ...g, supplicateWBTCtoUSD: false, supplicateUSDtoWBTC: true }
+            ? { ...g, 
+              supplicateWBTCtoUSD: false, 
+              supplicateUSDtoWBTC: true }
             : g
         );
   

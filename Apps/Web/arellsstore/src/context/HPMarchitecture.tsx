@@ -62,7 +62,6 @@ const HPMarchitecture = createContext<HPMarchitectureType | undefined>(undefined
 export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const {
       MASSaddress,
-      MASSsupplicationAddress,
       balances,
       loadBalances,
     } = useSigner();
@@ -106,7 +105,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try {
         const price = await fetchBitcoinPrice();
         setBitcoinPrice(price);
-        console.log("Fetched Bitcoin Price:", price);
       } catch (error) {
         console.error("Error fetching Bitcoin price:", error);
       }
@@ -193,12 +191,9 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isFetchingGroups = true;
   
       try {
-        console.log("Fetching vatop groups from API...");
         const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
         const fetchedVatopGroups = response.data.vatopGroups || [];
         const fetchedSoldAmounts = response.data.soldAmounts || 0;
-  
-        console.log("API response:", response.data);
   
         // Update existing groups with fetched data
         const updatedVatopGroups = vatopGroups.map((existingGroup) => {
@@ -232,7 +227,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             ? cVact
             : 0;
   
-          const cdVatop = parseFloat((cVact - fetchedGroup.cVatop).toFixed(2));
+          const cdVatop = fetchedGroup.cVact - fetchedGroup.cVatop;
   
           return {
             ...existingGroup,
@@ -253,8 +248,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
         const finalVatopGroups = [...updatedVatopGroups, ...unmatchedFetchedGroups];
   
-        console.log("Final vatopGroups after merging:", finalVatopGroups);
-  
         // Recalculate HPAP
         const maxCpVact = Math.max(...finalVatopGroups.map((group) => group.cpVact || 0));
         setHpap(maxCpVact);
@@ -266,9 +259,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // Update vatop combinations
         const combinations = updateVatopCombinations(finalVatopGroups);
         setVatopCombinations(combinations);
-  
-        console.log("✅ Updated vatopGroups in state:", finalVatopGroups);
-        console.log("✅ Updated vatopCombinations:", combinations);
       // Save updated data to backend
         await saveVatopGroups({
           email,
@@ -277,7 +267,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           soldAmounts: fetchedSoldAmounts,
         });
       } catch (error) {
-        console.error("❌ Error fetching vatopGroups:", error);
+        console.warn("Awaiting Vatop Group creation");
       } finally {
         isFetchingGroups = false;
       }
@@ -299,7 +289,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
   const updateVatopCombinations = (groups: VatopGroup[]): VatopCombinations => {
-    console.log("Calculating vatopCombinations with groups:", groups);
   
     const combinations = groups.reduce(
       (acc, group) => {
@@ -321,7 +310,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } as VatopCombinations
     );
   
-    console.log("Calculated combinations:", combinations);
   
     setVatopCombinations(combinations);
     return combinations;
@@ -356,9 +344,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
   const updateVatopGroupsAndCombinations = (updatedVatopGroups: VatopGroup[]) => {
-    console.log("🔧 Validating and Updating Vatop Groups...");
-    console.log("🔎 Current Groups (before update):", JSON.stringify(vatopGroups, null, 2));
-    console.log("🔎 Updated Groups (incoming):", JSON.stringify(updatedVatopGroups, null, 2));
     
     // Ensure updated groups match existing ones by ID
     const validatedGroups = vatopGroups.map((existingGroup) => {
@@ -395,8 +380,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         acdVatops: 0,
         acVactTaa: 0,
     });
-
-    console.log("📝 Updated Vatop Combinations:", JSON.stringify(newCombinations, null, 2));
     setVatopCombinations(newCombinations);
 };
 
@@ -469,6 +452,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   let isUpdatingAllState = false;
 
+  //Below for testing purposes 
   const updateAllState = async (newBitcoinPrice: number, email: string) => {
     if (!email) {
       console.error("Email is required for updateAllState.");
@@ -484,12 +468,9 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     isUpdatingAllState = true;
   
     try {
-      console.log("🔄 Fetching vatopGroups for update...");
       const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
       const fetchedVatopGroups = response.data.vatopGroups || [];
       const fetchedSoldAmounts = response.data.soldAmounts || 0;
-  
-      console.log("🔎 Fetched vatopGroups from API:", fetchedVatopGroups);
   
       // Update existing groups only
       const updatedVatopGroups = vatopGroups.map((existingGroup) => {
@@ -530,9 +511,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           cdVatop: cdVatop,
         };
       });
-  
-      console.log("📝 Updated Groups After Processing:", updatedVatopGroups);
-  
 
       // Recalculate HPAP
       const maxCpVact = Math.max(...updatedVatopGroups.map((group) => group.cpVact || 0));
@@ -549,8 +527,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         vatopCombinations,
         soldAmounts,
       });
-  
-      console.log("✅ Successfully saved updated groups.");
     } catch (error) {
       console.error("❌ Error updating state:", error);
     } finally {
@@ -586,8 +562,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Set the new Bitcoin price
     setBitcoinPrice(newPrice);
   
-    // Call updateAllState with the new price and the existing groups
-    console.log("Updating state with new Bitcoin price:", newPrice);
     await updateAllState(newPrice, email);
   };
 
@@ -599,7 +573,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const response = await axios.get('/api/readABTC', { params: { email } });
       return response.data.aBTC || 0;
     } catch (error) {
-      console.error('Error reading aBTC.json:', error);
+      console.warn('Awaiting aBTC creation');
       return null;
     }
   };
@@ -863,13 +837,10 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
       // Calculate total USDC
       const totalUSDC = usdBalance + usdFromBTC;
-  
-      console.log(`Calculated totalUSDC: ${totalUSDC}`);
-  
+
       // Handle aBTC import logic
       try {
         await axios.post('/api/saveABTC', { email, amount: totalUSDC });
-        console.log("Successfully imported aBTC:", totalUSDC);
       } catch (error) {
         console.error("Error importing aBTC:", error);
       }
@@ -881,77 +852,79 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   let isUpdating = false; // Shared lock variable
   
   const handleImport = async () => {
+    
     if (isUpdating) {
       console.warn("Import is already in progress. Skipping...");
       return;
     }
+
+    if (bitcoinPrice) {
+      isUpdating = true;
   
-    isUpdating = true;
-  
-    try {
-      const aBTC = await readABTCFile(); // Fetch the current aBTC value
-  
-      if (aBTC === null) {
-        console.error("Invalid state: aBTC is null.");
-        return;
-      }
-  
-      // Normalize aBTC and acVactDat to 2 decimal places
-      const normalizedABTC = parseFloat(aBTC.toFixed(2));
-      const normalizedAcVactDat = parseFloat((vatopCombinations.acVactDat || 0).toFixed(2));
-  
-      // Only import if aBTC > acVactDat
-      if (normalizedABTC <= normalizedAcVactDat) {
-        console.log("No significant amount to import. Skipping...");
-        return;
-      }
-  
-      const amountToImport = parseFloat((normalizedABTC - normalizedAcVactDat).toFixed(2));
-  
-      console.log(`aBTC: ${normalizedABTC}, acVactDat: ${normalizedAcVactDat}, Amount to import: ${amountToImport}`);
-  
-      // Create a new group for the import
-      const newGroup = {
-        id: uuidv4(),
-        cVatop: amountToImport,
-        cpVatop: bitcoinPrice,
-        cVact: amountToImport,
-        cpVact: bitcoinPrice,
-        cVactDat: amountToImport,
-        cVactDa: 0,
-        cdVatop: 0,
-        cVactTaa: parseFloat((amountToImport / bitcoinPrice).toFixed(8)), // Higher precision for ratios
-        HAP: bitcoinPrice,
-        supplicateWBTCtoUSD: false,
-        supplicateUSDtoWBTC: true,
-        holdMASS: false,
-      };
-  
-      console.log("Creating new group:", newGroup);
-  
-      const updatedVatopGroups = [...vatopGroups, newGroup];
-  
-      setVatopGroups(updatedVatopGroups);
-      const newCombinations = updateVatopCombinations(updatedVatopGroups);
-      setVatopCombinations(newCombinations);
-  
-      // Save new group data to backend
       try {
-        console.log("Saving new group via handleImport...");
-        await axios.post("/api/addVatopGroups", {
-          email,
-          newVatopGroups: [newGroup],
-          vatopCombinations: newCombinations,
-          soldAmounts,
-        });
+        const aBTC = await readABTCFile(); // Fetch the current aBTC value
+    
+        if (aBTC === null) {
+          console.error("Invalid state: aBTC is null.");
+          return;
+        }
+    
+        // Normalize aBTC and acVactDat to 2 decimal places
+        const normalizedABTC = parseFloat(aBTC.toFixed(2));
+        const normalizedAcVactDat = parseFloat((vatopCombinations.acVactDat || 0).toFixed(2));
+    
+        // Only import if aBTC > acVactDat
+        if (normalizedABTC <= normalizedAcVactDat) {
+          console.log("No significant amount to import. Skipping...");
+          return;
+        }
+    
+        const amountToImport = parseFloat((normalizedABTC - normalizedAcVactDat).toFixed(2));
+    
+        console.log(`aBTC: ${normalizedABTC}, acVactDat: ${normalizedAcVactDat}, Amount to import: ${amountToImport}`);
+    
+        // Create a new group for the import
+        const newGroup = {
+          id: uuidv4(),
+          cVatop: amountToImport,
+          cpVatop: bitcoinPrice,
+          cVact: amountToImport,
+          cpVact: bitcoinPrice,
+          cVactDat: amountToImport,
+          cVactDa: 0,
+          cdVatop: 0,
+          cVactTaa: parseFloat((amountToImport / bitcoinPrice).toFixed(8)), // Higher precision for ratios
+          HAP: bitcoinPrice,
+          supplicateWBTCtoUSD: false,
+          supplicateUSDtoWBTC: true,
+          holdMASS: false,
+        };
+
+    
+        const updatedVatopGroups = [...vatopGroups, newGroup];
+    
+        setVatopGroups(updatedVatopGroups);
+        const newCombinations = updateVatopCombinations(updatedVatopGroups);
+        setVatopCombinations(newCombinations);
+    
+        // Save new group data to backend
+        try {
+          await axios.post("/api/addVatopGroups", {
+            email,
+            newVatopGroups: [newGroup],
+            vatopCombinations: newCombinations,
+            soldAmounts,
+          });
+        } catch (error) {
+          console.error("Error saving new group:", error);
+        }
       } catch (error) {
-        console.error("Error saving new group:", error);
+        console.error("Error during handleImport:", error);
+      } finally {
+        isUpdating = false;
       }
-    } catch (error) {
-      console.error("Error during handleImport:", error);
-    } finally {
-      isUpdating = false;
     }
+
   };
   
   const saveVatopGroups = async ({

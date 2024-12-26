@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { wrappedBitcoinAmount, massAddress, massPrivateKey, massSupplicationAddress } = req.body;
+  const { wrappedBitcoinAmount, massAddress, massPrivateKey } = req.body;
 
   if (
     typeof wrappedBitcoinAmount !== 'number' ||
@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Invalid WBTC amount. Ensure it is up to 8 decimal points.' });
   }
 
-  if (!wrappedBitcoinAmount || !massAddress || !massPrivateKey || !massSupplicationAddress) {
+  if (!wrappedBitcoinAmount || !massAddress || !massPrivateKey) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log("🚀 Starting WBTC to USDC Supplication...");
 
     // Step 1: Fetch Transfer Quote
-    const quote = await fetchTransferQuote(wrappedBitcoinAmount, massAddress, massSupplicationAddress);
+    const quote = await fetchTransferQuote(wrappedBitcoinAmount, massAddress, massAddress);
     console.log("✅ Transfer Quote Received:", quote);
 
     // Step 2: Fund MASS Address with ETH for Gas Fees
@@ -96,7 +96,7 @@ async function fundGasFees(recipientAddress: string) {
   const ethPrice = await fetchEthPrice();
 
   // Define target funding amount in USD ($0.30)
-  const TARGET_USD_BALANCE = 0.30;
+  const TARGET_USD_BALANCE = 0.50;
 
   // Check current balance of MASS address
   const balanceInWei = await provider.getBalance(recipientAddress);
@@ -195,5 +195,6 @@ async function executeTransfer(quote: any, privateKey: string) {
   const tx = await wallet.sendTransaction(txRequest);
   console.log(`✅ Transaction sent. Hash: ${tx.hash}`);
   await tx.wait();
+  
   return tx.hash;
 }

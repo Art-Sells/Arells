@@ -23,7 +23,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
       existingData = JSON.parse(data.Body!.toString());
-      console.log("📥 Existing data loaded from S3:", existingData);
     } catch (err: any) {
       if (err.code === 'NoSuchKey') {
         console.warn("⚠️ No existing data found for user:", email);
@@ -38,10 +37,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const updatedVatopGroups = vatopGroups.map((incomingGroup: any) => {
       const existingGroup = existingGroups.find((group: any) => group.id === incomingGroup.id);
       if (existingGroup) {
-        console.log(`🔄 Updating existing group: ${incomingGroup.id}`);
         return { ...existingGroup, ...incomingGroup }; // Merge updates
       } else {
-        console.log(`➕ Adding new group: ${incomingGroup.id}`);
         return incomingGroup; // Add new group
       }
     });
@@ -52,8 +49,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       ...vatopCombinations,
     };
 
-    console.log("🔄 Merged vatopCombinations:", JSON.stringify(updatedVatopCombinations, null, 2));
-
     // Build the new data object
     const newData = {
       vatopGroups: updatedVatopGroups,
@@ -61,8 +56,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       soldAmounts: existingData.soldAmounts ?? 0,
       transactions: existingData.transactions ?? [],
     };
-
-    console.log("📝 Final Data Object to Save:", JSON.stringify(newData, null, 2));
 
     // Save the updated data back to S3
     await s3
