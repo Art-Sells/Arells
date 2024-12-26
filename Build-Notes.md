@@ -4,24 +4,23 @@
 
 ## Arells 1 (Import/Custody Bitcoin)
 
-### Testing
-- test supplicateWBTCtoUSD (come back and check on this consistently with many vatopGroups).
-- Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History)
-- test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 
-### After Test
-- - Fund Arells Fee Funder with 150 USD in ETH on Base
+
+
 
 ### Account
 - If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value"
 - - Price: HPAP (formatPrice from HPMMASSTester.tsx)
 - - Wallet: acVacts (formatCurrency from HPMMASSTester.tsx)
 - - Profits: acdVatops (formatCurrency from HPMMASSTester.tsx)
-- - Wallet Balance Updated every 24~ hours
+- - Wallet Balance Updated every 1~ week
 
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value (through Coinbase/Base) (Base Address)
 - - Modal: Preparing (B) Wallet (to create wallet (take from MASSTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
+
+### After Test
+- - Fund Arells Fee Funder with 150 USD in ETH on Base
 
 #### Metatags/ Description
 - Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
@@ -96,6 +95,10 @@
 **If initial Bitcoin amount is less than USDC amount, then "buy" equivalent BTC before exporting so for example: You start with 0.00121 BTC worth $200 when Bitcoin is at $60,000. To maintain the same value ($205), when the price of Bitcoin falls to $10,000, you buy Bitcoin using your $205 in USDC. At $10,000 per Bitcoin, you would get: $205 / $10,000 = 0.0205 BTC.**
 
 ### Testing
+- test supplicateWBTCtoUSD (come back and check on this consistently with many vatopGroups) add supplicate boolean changes API calls.
+- Integrate 25bps in Business Modal (subtract from WBTCtoUSD(handle sell for reference))
+- Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History)
+- test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 - supplicateUSDtoWBTC (with holdMASS function revoked)
 - - If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. 
 - Export Test (similar to sell except (Combines the acVactTaa and acVactDas and subtracts from the group with the lowest cpVatop first))

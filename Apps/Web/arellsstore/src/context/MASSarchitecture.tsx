@@ -28,6 +28,7 @@ interface VatopGroup {
   HAP: number;
   supplicateWBTCtoUSD: boolean;
   supplicateUSDtoWBTC: boolean;
+  holdMASS: boolean;
 }
 
 
@@ -307,7 +308,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       }
   
       // Trigger WBTC to USDC supplication if `cVactDa` > 0.01
-      if (group.cVactDa > 0.01) {
+      if (!group.supplicateWBTCtoUSD && group.cVactDa > 0.01) {
         console.log(`Initiating WBTC to USDC supplication for group ${group.id} with amount: ${group.cVactDa}`);
   
         try {
@@ -320,97 +321,97 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   
     setPrevVatopGroups([...vatopGroups]); // Update previous groups after processing
   }, [vatopGroups]);
-  useEffect(() => {
-    const prevIds = prevVatopGroups.map((group) => group.id); // Match by `id`
-    const currentIds = vatopGroups.map((group) => group.id);
+  // useEffect(() => {
+  //   const prevIds = prevVatopGroups.map((group) => group.id); // Match by `id`
+  //   const currentIds = vatopGroups.map((group) => group.id);
   
-    // Identify added and deleted groups
-    const addedGroups = vatopGroups.filter((group) => !prevIds.includes(group.id));
-    const deletedGroups = prevVatopGroups.filter((group) => !currentIds.includes(group.id));
+  //   // Identify added and deleted groups
+  //   const addedGroups = vatopGroups.filter((group) => !prevIds.includes(group.id));
+  //   const deletedGroups = prevVatopGroups.filter((group) => !currentIds.includes(group.id));
   
-    // Handle added groups
-    if (addedGroups.length > 0) {
-      console.log('Processing added groups:', addedGroups);
+  //   // Handle added groups
+  //   if (addedGroups.length > 0) {
+  //     console.log('Processing added groups:', addedGroups);
   
-      addedGroups.forEach(async (group) => {
-        // Ensure `supplicateWBTCtoUSD` is `false` during initialization
-        if (group.supplicateWBTCtoUSD) {
-          console.log(`Skipping added group ${group.id} as supplicateWBTCtoUSD is true.`);
-          return;
-        }
+  //     addedGroups.forEach(async (group) => {
+  //       // Ensure `supplicateWBTCtoUSD` is `false` during initialization
+  //       if (group.supplicateWBTCtoUSD) {
+  //         console.log(`Skipping added group ${group.id} as supplicateWBTCtoUSD is true.`);
+  //         return;
+  //       }
   
-        // Only allow WBTC to USDC supplication for added groups
-        if (group.cVactDa > 0.01) {
-          console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
+  //       // Only allow WBTC to USDC supplication for added groups
+  //       if (!group.supplicateWBTCtoUSD && group.cVactDa > 0.01) {
+  //         console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
 
-          // Convert cVactDa to WBTC equivalent
-          const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, bitcoinPrice);
-          console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
+  //         // Convert cVactDa to WBTC equivalent
+  //         const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, bitcoinPrice);
+  //         console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
 
-          try {
-            // Perform the supplication using the converted WBTC equivalent
-            // Usage
-            await handleWBTCsupplication(group)
+  //         try {
+  //           // Perform the supplication using the converted WBTC equivalent
+  //           // Usage
+  //           await handleWBTCsupplication(group)
 
 
-          } catch (error) {
-            console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
-            // Handle error or provide feedback to the user
-          }
-        }
-      });
+  //         } catch (error) {
+  //           console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
+  //           // Handle error or provide feedback to the user
+  //         }
+  //       }
+  //     });
   
-      setPrevVatopGroups([...vatopGroups]); // Update the state for tracking
-      return; // Exit early, skipping further processing
-    }
+  //     setPrevVatopGroups([...vatopGroups]); // Update the state for tracking
+  //     return; // Exit early, skipping further processing
+  //   }
   
-    // Process existing groups
-    vatopGroups.forEach(async (group, index) => {
-      const prevGroup = prevVatopGroups[index] || {};
+  //   // Process existing groups
+  //   vatopGroups.forEach(async (group, index) => {
+  //     const prevGroup = prevVatopGroups[index] || {};
   
-      // Skip if `supplicateWBTCtoUSD` is `true`
-      if (group.supplicateWBTCtoUSD) {
-        console.log(`Skipping supplication for group ${group.id} as supplicateWBTCtoUSD is true.`);
-        return;
-      }
+  //     // Skip if `supplicateWBTCtoUSD` is `true`
+  //     if (group.supplicateWBTCtoUSD) {
+  //       console.log(`Skipping supplication for group ${group.id} as supplicateWBTCtoUSD is true.`);
+  //       return;
+  //     }
 
   
-      // Trigger USDC to WBTC supplication only if `cVactTaa` has increased
-      if (group.cVactTaa > 0.000001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
-        console.log(`Initiating USDC to WBTC supplication for amount: ${group.cVactTaa}`);
-        const usdcEquivalent = getUSDCEquivalent(group.cVactTaa, bitcoinPrice);
-        console.log(`Converted cVactDa ${group.cVactTaa} to WBTC equivalent: ${usdcEquivalent.toFixed(4)}`);
-        try {
-          await handleUSDCsupplication(group);
+  //     // Trigger USDC to WBTC supplication only if `cVactTaa` has increased
+  //     if (group.cVactTaa > 0.000001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
+  //       console.log(`Initiating USDC to WBTC supplication for amount: ${group.cVactTaa}`);
+  //       const usdcEquivalent = getUSDCEquivalent(group.cVactTaa, bitcoinPrice);
+  //       console.log(`Converted cVactDa ${group.cVactTaa} to WBTC equivalent: ${usdcEquivalent.toFixed(4)}`);
+  //       try {
+  //         await handleUSDCsupplication(group);
   
-        } catch (error) {
-          console.error(`Error during USD to WBTC supplication for group ${group.id}:`, error);
-          // Handle error or provide feedback to the user
-        }
+  //       } catch (error) {
+  //         console.error(`Error during USD to WBTC supplication for group ${group.id}:`, error);
+  //         // Handle error or provide feedback to the user
+  //       }
         
-      }
+  //     }
   
-      // Trigger WBTC to USDC supplication only if `cVactDa` has increased
-      if (group.cVactDa > 0.01 && (prevGroup?.cVactDa === undefined || group.cVactDa > prevGroup.cVactDa)) {
-        console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
+  //     // Trigger WBTC to USDC supplication only if `cVactDa` has increased
+  //     if (group.cVactDa > 0.01 && (prevGroup?.cVactDa === undefined || group.cVactDa > prevGroup.cVactDa)) {
+  //       console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
 
-        // Convert cVactDa to WBTC equivalent
-        const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, bitcoinPrice);
-        console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
+  //       // Convert cVactDa to WBTC equivalent
+  //       const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, bitcoinPrice);
+  //       console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
 
-        try {
-          // Perform the supplication using the converted WBTC equivalent
-          await handleWBTCsupplication(group);
+  //       try {
+  //         // Perform the supplication using the converted WBTC equivalent
+  //         await handleWBTCsupplication(group);
 
-        } catch (error) {
-          console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
-          // Handle error or provide feedback to the user
-        }
-      }
-    });
+  //       } catch (error) {
+  //         console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
+  //         // Handle error or provide feedback to the user
+  //       }
+  //     }
+  //   });
   
-    setPrevVatopGroups([...vatopGroups]); // Update previous groups
-  }, [vatopGroups]);
+  //   setPrevVatopGroups([...vatopGroups]); // Update previous groups
+  // }, [vatopGroups]);
 
 
 

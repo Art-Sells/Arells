@@ -59,17 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
     const receipt = await provider.getTransactionReceipt(transferTxHash);
 
-    if (receipt && receipt.status === 1) {
-      console.log("✅ Transfer Confirmed on-chain:", receipt);
-      res.status(200).json({
-        message: "Transfer completed successfully",
-        transferTxHash,
-        fundingTxHash,
-        receipt,
-      });
-    } else {
-      throw new Error("Transaction failed on-chain.");
-    }
+    console.log("✅ Transfer Confirmed on-chain:", receipt);
   } catch (error: any) {
     console.error("❌ Error during WBTC to USDC transfer:", error.message || error);
     res.status(500).json({ error: "Transfer failed", details: error.message || error });
