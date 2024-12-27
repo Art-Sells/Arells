@@ -602,6 +602,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
       try {
         // Fetch and import data only when necessary
+        await setBitcoinPrice(bitcoinPrice);
         await readABTCFile(); // Fetch the current aBTC (if needed for internal use)
         await handleImport(); // Call handleImport to sync
       } catch (error) {
@@ -851,71 +852,73 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   
   const handleImport = async () => {
+    console.log("Bitcoin Price for import: ", bitcoinPrice);
+
     if (!bitcoinPrice || bitcoinPrice <= 0) {
       console.warn("Invalid bitcoinPrice. Import.");
       return;
     }
   
-      try {
-        const aBTC = await readABTCFile(); // Fetch the current aBTC value
-    
-        if (aBTC === null) {
-          console.error("Invalid state: aBTC is null.");
-          return;
-        }
-    
-        // Normalize aBTC and acVactDat to 2 decimal places
-        const normalizedABTC = parseFloat(aBTC.toFixed(2));
-        const normalizedAcVactDat = parseFloat((vatopCombinations.acVactDat || 0).toFixed(2));
-    
-        // Only import if aBTC > acVactDat
-        if (normalizedABTC <= normalizedAcVactDat) {
-          console.log("No significant amount to import. Skipping...");
-          return;
-        }
-    
-        const amountToImport = parseFloat((normalizedABTC - normalizedAcVactDat).toFixed(2));
-    
-        console.log(`aBTC: ${normalizedABTC}, acVactDat: ${normalizedAcVactDat}, Amount to import: ${amountToImport}`);
-    
-        // Create a new group for the import
-        const newGroup = {
-          id: uuidv4(),
-          cVatop: amountToImport,
-          cpVatop: bitcoinPrice,
-          cVact: amountToImport,
-          cpVact: bitcoinPrice,
-          cVactDat: amountToImport,
-          cVactDa: 0,
-          cdVatop: 0,
-          cVactTaa: parseFloat((amountToImport / bitcoinPrice).toFixed(8)), // Higher precision for ratios
-          HAP: bitcoinPrice,
-          supplicateWBTCtoUSD: false,
-          supplicateUSDtoWBTC: true,
-          holdMASS: false,
-        };
-
-    
-        const updatedVatopGroups = [...vatopGroups, newGroup];
-    
-        setVatopGroups(updatedVatopGroups);
-        const newCombinations = updateVatopCombinations(updatedVatopGroups);
-        setVatopCombinations(newCombinations);
-    
-        // Save new group data to backend
-        try {
-          await axios.post("/api/addVatopGroups", {
-            email,
-            newVatopGroups: [newGroup],
-            vatopCombinations: newCombinations,
-            soldAmounts,
-          });
-        } catch (error) {
-          console.error("Error saving new group:", error);
-        }
-      } catch (error) {
-        console.error("Error during handleImport:", error);
+    try {
+      const aBTC = await readABTCFile(); // Fetch the current aBTC value
+  
+      if (aBTC === null) {
+        console.error("Invalid state: aBTC is null.");
+        return;
       }
+  
+      // Normalize aBTC and acVactDat to 2 decimal places
+      const normalizedABTC = parseFloat(aBTC.toFixed(2));
+      const normalizedAcVactDat = parseFloat((vatopCombinations.acVactDat || 0).toFixed(2));
+  
+      // Only import if aBTC > acVactDat
+      if (normalizedABTC <= normalizedAcVactDat) {
+        console.log("No significant amount to import. Skipping...");
+        return;
+      }
+  
+      const amountToImport = parseFloat((normalizedABTC - normalizedAcVactDat).toFixed(2));
+  
+      console.log(`aBTC: ${normalizedABTC}, acVactDat: ${normalizedAcVactDat}, Amount to import: ${amountToImport}`);
+  
+      // Create a new group for the import
+      const newGroup = {
+        id: uuidv4(),
+        cVatop: amountToImport,
+        cpVatop: bitcoinPrice,
+        cVact: amountToImport,
+        cpVact: bitcoinPrice,
+        cVactDat: amountToImport,
+        cVactDa: 0,
+        cdVatop: 0,
+        cVactTaa: parseFloat((amountToImport / bitcoinPrice).toFixed(8)), // Higher precision for ratios
+        HAP: bitcoinPrice,
+        supplicateWBTCtoUSD: false,
+        supplicateUSDtoWBTC: true,
+        holdMASS: false,
+      };
+
+  
+      const updatedVatopGroups = [...vatopGroups, newGroup];
+  
+      setVatopGroups(updatedVatopGroups);
+      const newCombinations = updateVatopCombinations(updatedVatopGroups);
+      setVatopCombinations(newCombinations);
+  
+      // Save new group data to backend
+      try {
+        await axios.post("/api/addVatopGroups", {
+          email,
+          newVatopGroups: [newGroup],
+          vatopCombinations: newCombinations,
+          soldAmounts,
+        });
+      } catch (error) {
+        console.error("Error saving new group:", error);
+      }
+    } catch (error) {
+      console.error("Error during handleImport:", error);
+    }
 
   };
   
