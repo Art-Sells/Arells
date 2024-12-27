@@ -36,6 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           ...group,
           supplicateWBTCtoUSD: update.supplicateWBTCtoUSD ?? group.supplicateWBTCtoUSD,
           supplicateUSDtoWBTC: update.supplicateUSDtoWBTC ?? group.supplicateUSDtoWBTC,
+          holdMASS: update.holdMASS ?? group.holdMASS,
         };
       }
       return group;

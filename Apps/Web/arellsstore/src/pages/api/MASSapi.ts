@@ -55,11 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const transferTxHash = await executeTransfer(quote, massPrivateKey);
     console.log(`✅ WBTC Transfer Initiated: ${transferTxHash}`);
 
-    // Step 5: Confirm Transfer Completion
-    const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
-    const receipt = await provider.getTransactionReceipt(transferTxHash);
-
-    console.log("✅ Transfer Confirmed on-chain:", receipt);
+    
   } catch (error: any) {
     console.error("❌ Error during WBTC to USDC transfer:", error.message || error);
     res.status(500).json({ error: "Transfer failed", details: error.message || error });
