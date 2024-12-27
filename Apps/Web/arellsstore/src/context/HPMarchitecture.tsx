@@ -849,17 +849,12 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, [email, bitcoinPrice, balances]);
 
-  let isUpdating = false; // Shared lock variable
   
   const handleImport = async () => {
-    
-    if (isUpdating) {
-      console.warn("Import is already in progress. Skipping...");
+    if (!bitcoinPrice || bitcoinPrice <= 0) {
+      console.warn("Invalid bitcoinPrice. Import.");
       return;
     }
-
-    if (bitcoinPrice) {
-      isUpdating = true;
   
       try {
         const aBTC = await readABTCFile(); // Fetch the current aBTC value
@@ -920,10 +915,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       } catch (error) {
         console.error("Error during handleImport:", error);
-      } finally {
-        isUpdating = false;
       }
-    }
 
   };
   
@@ -952,9 +944,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
   const handleSell = async (amount: number) => {
-    if (isUpdating) return;
-  
-    isUpdating = true;
   
     try {
       const btcAmount = parseFloat((amount / bitcoinPrice).toFixed(8));
@@ -1004,8 +993,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
     } catch (error) {
       console.error("Error during sell operation:", error);
-    } finally {
-      isUpdating = false;
     }
   };
 
