@@ -7,6 +7,8 @@ import { fetchBitcoinPrice } from '../lib/coingecko-api';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { useSigner } from '../state/signer'; 
+import { useRef } from 'react';
+
 
 interface VatopGroup {
   id: string; 
@@ -92,29 +94,15 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const price = await fetchBitcoinPrice();
         setBitcoinPrice(price);
       } catch (error) {
-        console.error('Error fetching Bitcoin price:', error);
-      }
-    };
-
-    fetchPrice();
-  }, []);
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-  
-    const fetchPrice = async () => {
-      try {
-        const price = await fetchBitcoinPrice();
-        setBitcoinPrice(price);
-      } catch (error) {
         console.error("Error fetching Bitcoin price:", error);
       }
     };
   
-    // Initial fetch
+    // Fetch the price initially
     fetchPrice();
   
-    // Set up a 10-second interval
-    intervalId = setInterval(fetchPrice, 10000);
+    // Set up a 10-second interval for recurring fetch
+    const intervalId = setInterval(fetchPrice, 10000);
   
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId);
@@ -602,7 +590,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
       try {
         // Fetch and import data only when necessary
-        await setBitcoinPrice(bitcoinPrice);
         await readABTCFile(); // Fetch the current aBTC (if needed for internal use)
         await handleImport(); // Call handleImport to sync
       } catch (error) {
@@ -816,39 +803,36 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-
+  const balancesRef = useRef(balances);
+  
   useEffect(() => {
-    if (!email) {
-      console.warn("Email is not set. Skipping auto-import.");
+    if (!email || !bitcoinPrice || bitcoinPrice <= 0) {
+      console.warn("Skipping interval: Missing email or valid Bitcoin price.");
       return;
     }
   
     const interval = setInterval(async () => {
-      if (!bitcoinPrice || bitcoinPrice <= 0) {
-        console.warn("Invalid bitcoinPrice. Skipping calculation.");
-        return;
-      }
+      console.log("Running balance fetch interval...");
       await loadBalances();
-      // Safely parse balances to numbers
-      const btcBalance = parseFloat(balances.BTC_BASE || "0"); // WBTC balance
-      const usdBalance = parseFloat(balances.USDC_BASE || "0");  // USDC balance
   
-      // Convert WBTC to USD
+      const btcBalance = parseFloat(balancesRef.current?.BTC_BASE || "0");
+      const usdBalance = parseFloat(balancesRef.current?.USDC_BASE || "0");
+      console.log("Balances in interval:", { btcBalance, usdBalance });
+  
       const usdFromBTC = btcBalance * bitcoinPrice;
-  
-      // Calculate total USDC
       const totalUSDC = usdBalance + usdFromBTC;
-
-      // Handle aBTC import logic
+  
+      console.log("Total USDC calculated:", totalUSDC);
+  
       try {
-        await axios.post('/api/saveABTC', { email, amount: totalUSDC });
+        await axios.post("/api/saveABTC", { email, amount: totalUSDC });
       } catch (error) {
         console.error("Error importing aBTC:", error);
       }
-    }, 10000); // Run every 10 seconds
+    }, 10000);
   
-    return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [email, bitcoinPrice, balances]);
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, [email, bitcoinPrice]);
 
   
   const handleImport = async () => {
