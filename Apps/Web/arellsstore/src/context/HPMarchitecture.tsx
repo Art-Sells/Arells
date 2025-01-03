@@ -95,7 +95,6 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         console.log("Fetched price from API:", price);
         if (price > 0) {
           setBitcoinPrice(price);
-          await readABTCFile(); // Fetch the current aBTC (if needed for internal use)
           await handleImport(price); 
         } else {
           console.warn("Invalid Bitcoin price fetched:", price);
@@ -566,6 +565,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (!email) throw new Error("Email is not set in context.");
       
       const response = await axios.get('/api/readABTC', { params: { email } });
+      console.log("Response from readABTCFile:", response.data);
       return response.data.aBTC || 0;
     } catch (error) {
       console.warn('Awaiting aBTC creation');
@@ -789,10 +789,17 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const balancesRef = useRef(balances);
+  useEffect(() => {
+    balancesRef.current = balances; 
+  }, [balances]);
   
   useEffect(() => {
     if (!email || !bitcoinPrice || bitcoinPrice <= 0) {
       console.warn("Skipping interval: Missing email or valid Bitcoin price.");
+      return;
+    }
+    if (!balances.BTC_BASE && !balances.USDC_BASE) {
+      console.warn("Skipping interval: Balances not loaded.");
       return;
     }
   
@@ -831,13 +838,13 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const aBTC = await readABTCFile(); // Fetch the current aBTC value
       if (aBTC === null) {
-        console.error("Invalid state: aBTC is null.");
+        console.warn("Awaiting aBTC Import.");
         return;
       }
   
       const normalizedABTC = parseFloat(aBTC.toFixed(2));
       const normalizedAcVactDat = parseFloat((vatopCombinations.acVactDat || 0).toFixed(2));
-  
+      console.log(`normalizedABTC: ${normalizedABTC}, normalizedAcVactDat: ${normalizedAcVactDat}`);
       if (normalizedABTC <= normalizedAcVactDat) {
         console.log("No significant amount to import. Skipping...");
         return;
