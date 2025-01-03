@@ -92,11 +92,11 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
 
 // supplicateWBTCtoUSDC functions
-  const getWBTCEquivalent = (usdcAmount: number, bitcoinPrice: number): number => {
-    if (bitcoinPrice <= 0) {
-      throw new Error('Bitcoin price must be greater than zero.');
+  const getWBTCEquivalent = (usdcAmount: number, cpVact: number): number => {
+    if (cpVact <= 0) {
+      throw new Error('cpVact price must be greater than zero.');
     }
-    return usdcAmount / bitcoinPrice; // Calculate WBTC equivalent
+    return usdcAmount / cpVact; // Calculate WBTC equivalent
   };
 
   const handleWBTCsupplication = async (group: VatopGroup) => {
@@ -345,7 +345,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
           console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
 
           // Convert cVactDa to WBTC equivalent
-          const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, bitcoinPrice);
+          const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, group.cpVact);
           console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
 
           try {
@@ -396,7 +396,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
 
         // Convert cVactDa to WBTC equivalent
-        const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, bitcoinPrice);
+        const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, group.cpVact);
         console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
 
         try {
