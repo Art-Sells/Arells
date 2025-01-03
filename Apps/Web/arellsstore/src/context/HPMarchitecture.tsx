@@ -92,7 +92,12 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const fetchPrice = async () => {
       try {
         const price = await fetchBitcoinPrice();
-        setBitcoinPrice(price);
+        console.log("Fetched price from API:", price);
+        if (price > 0) {
+          setBitcoinPrice(price);
+        } else {
+          console.warn("Invalid Bitcoin price fetched:", price);
+        }
       } catch (error) {
         console.error("Error fetching Bitcoin price:", error);
       }
