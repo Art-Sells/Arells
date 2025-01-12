@@ -7,17 +7,17 @@
 Arells exists because it believes ***investments should never lose value and investors should never lose money selling assets***, especially during Bear Markets.
 
 ### Solution:
-A Bitcoin marketplace that ensures Bitcoin investments will never lose value. Arells is working on achieving this through an innovation called:
+A Bitcoin marketplace that ensures Bitcoin investments will never lose value. Arells is working on achieving this through an invention called:
 
 <img src="https://github.com/Art-Sells/Arells/blob/test/Art/General/HPMLogoDisplay.png" width="200px"> 
 
 ## HPM (Holding Price Mechanism)
-Holds the highest price of an asset after its import or purchase limiting the erasure of its value thus introducing new mechanisms to help it achieve this feat: **[HPM Mechanics](https://github.com/Art-Sells/HPM/blob/main/Mechanics.md)**
+Records the highest price of an asset after its import or purchase limiting the erasure of an investment’s value thus introducing new mechanisms to help it achieve this feat: **[HPM Mechanics](https://github.com/Art-Sells/HPM/blob/main/Mechanics.md)**
 
 **HPM is a Bear Market obfuscating financial architecture that introduces a new kind of marketplace and market dynamics:**
 
-- **Solid Marketplace: a marketplace in which asset prices either stagnate or increase. This is achieved through a Stablecoin-to-Financial-Asset(or Crypto Asset) Market Automated Supplication System or MASS. In solid marketplaces, bear markets don't exist.**
-- **Sloth Market: a market in which asset prices stagnate.**
+- **Solid Marketplace: a marketplace in which investments either stagnate or increase. This is achieved through a Stablecoin-to-Financial-Asset(or Crypto Asset) Market Automated Supplication System or [MASS](https://github.com/Art-Sells/HPM/tree/main/HPMCodeBase/MASS). In solid marketplaces, bear markets don't exist.**
+- **Sloth Market: a market in which investments stagnate.**
 
 <img src="https://github.com/Art-Sells/Arells/blob/test/Art/Marketing/BeforeandAfterArellss.png" width="400px"> 
 
@@ -43,21 +43,20 @@ _______________________________________________________________________
    - [X] Infrastructure *[[Dissolved into Arells]](https://github.com/Ecare-Exchange/infrastructure)*
 
 - **Mar 2023 - May 2023**
-  - [X] Prototype *[[Complete]](https://arells.com/prototype-seller-created)*----*arells.com/prototype-seller-created*
+  - [X] Concept *[[Complete]](https://arells.com/concept)*----*arells.com/concept*
  
 - **May 2023 - Dec 2023**
   - [X] Arells 0.9 *[[Complete]](https://arells.com)*
- 
 
-- **May 2024 - December-2025/January-2025**
+- **May 2024 - March 2025**
   - [ ] Arells 1.0 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
 
 _______________________________________________________________________
 
 ## Core Beliefs:
 
-1. Investments should never lose value.
-2. Investors should never lose money selling assets.
-3. The love of money is the root to all evil, not money.
+1. The love of money is the root to all evil.
+2. Empowering investors more than itself.
+3. Investors should never lose money selling assets.
 
-- This will keep Arells away from selfish ambition and towards creating innovations that will help empower investors more than itself.
+- This will keep Arells away from selfish ambition and towards creating inventions that will help empower investors everywhere.
