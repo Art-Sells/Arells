@@ -8,6 +8,7 @@ import awsmobile from '../aws-exports';
 import dotenv from 'dotenv';
 import { MASSProvider } from '../context/MASSarchitecture';
 import { SignerProvider } from "../state/signer";
+import { OnchainProvider } from '../state/providers';
 
 dotenv.config();
 Amplify.configure(awsmobile);
@@ -34,6 +35,7 @@ const RootLayout = ({ children }: LayoutProps) => {
         <BitcoinPriceProvider>
           <UserProvider>
             <SignerProvider>
+              <OnchainProvider>
               
               <HPMProvider>
                 <MASSProvider>
@@ -41,6 +43,7 @@ const RootLayout = ({ children }: LayoutProps) => {
                 </MASSProvider>
               </HPMProvider>
 
+              </OnchainProvider>
             </SignerProvider>
           </UserProvider>
         </BitcoinPriceProvider>
