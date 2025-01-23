@@ -1,3 +1,5 @@
 declare module '@coinbase/onchainkit/token' {
-    export const TokenChip: any; // Replace `any` with the correct type if available
+    export const TokenChip: any; 
+    export const TokenSearch: any; 
+    export const Token: any; 
   }
