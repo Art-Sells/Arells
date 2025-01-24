@@ -8,6 +8,7 @@ import {
   SwapButton,
   SwapMessage,
   SwapToast,
+  SwapDefault,
 } from '@coinbase/onchainkit/swap';
 import { Wallet, ConnectWallet } from '@coinbase/onchainkit/wallet';
 import { Avatar, Name } from '@coinbase/onchainkit/identity';
@@ -26,19 +27,19 @@ type Token = {
 };
 
 // Configure OnchainKit with your API key
-setOnchainKitConfig({ apiKey: 'YOUR_API_KEY' });
+setOnchainKitConfig({ apiKey: process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY! });
 
 const OnchainSwap: React.FC = () => {
   const { address } = useAccount();
 
   // Define tokens for swapping
-  const ETHToken: Token = {
-    name: 'Ethereum',
-    address: '',
-    symbol: 'ETH',
-    decimals: 18,
+  const BASEBTCToken: Token = {
+    name: 'cbBTC',
+    address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+    symbol: 'cbBTC',
+    decimals: 8,
     image:
-      'https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png',
+      '/images/howitworks/Bitcoin.png',
     chainId: 8453,
   };
 
@@ -52,7 +53,7 @@ const OnchainSwap: React.FC = () => {
     chainId: 8453,
   };
 
-  const swappableTokens: Token[] = [ETHToken, USDCToken];
+  const swappableTokens: Token[] = [BASEBTCToken, USDCToken];
 
   return (
     <div style={{ padding: '20px' }}>
@@ -63,7 +64,7 @@ const OnchainSwap: React.FC = () => {
           <SwapAmountInput
             label="Sell"
             swappableTokens={swappableTokens}
-            token={ETHToken}
+            token={BASEBTCToken}
             type="from"
           />
 
