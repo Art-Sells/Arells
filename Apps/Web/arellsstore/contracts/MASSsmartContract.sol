@@ -1,50 +1,121 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract MASSsmartContract {
-    mapping(address => uint256) public wbtcBalances; // Stores WBTC balances of wallets
-    mapping(address => uint256) public usdcBalances; // Stores USDC balances of wallets
+interface IERC20 {
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
+}
 
-    event Supplicate(address indexed from, uint256 amount, string supplicateType);
-    
-        // Set balances for testing
-    function setBalances(
-        address wallet,
-        uint256 wbtcAmount,
-        uint256 usdcAmount
-    ) external {
-        wbtcBalances[wallet] = wbtcAmount;
-        usdcBalances[wallet] = usdcAmount;
+interface IPriceOracle {
+    function getBitcoinPriceInUSD() external view returns (uint256);
+}
+
+contract  {
+    string public constant aBTCName = "Arells Bitcoin";
+    string public constant aBTCNameSymbol = "aBTC";
+    string public constant aUSDCName = "Arells USDC";
+    string public constant aUSDCNameSymbol = "aUSDC";
+
+    IERC20 public cbBTC; // The cbBTC token contract
+    address public reserveAddress; // Address where cbBTC is deposited
+
+    uint256 public totalaBTC;
+    uint256 public totalaUSDC;
+
+    mapping(address => uint256) public aBTCBalances;
+    mapping(address => uint256) public aUSDCBalances;
+
+    IPriceOracle public priceOracle;
+
+    address public admin;
+
+    event aBTCMinted(address indexed user, uint256 amount);
+    event aUSDCMinted(address indexed user, uint256 amount);
+    event aBTCBurned(address indexed user, uint256 amount);
+    event aUSDCBurned(address indexed user, uint256 amount);
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only admin can perform this action");
+        _;
     }
 
-    function supplicateWBTCtoUSDC(uint256 usdcAmount, uint256 bitcoinPrice) external {
-        uint256 wbtcEquivalent = getWBTCEquivalent(usdcAmount, bitcoinPrice);
-
-        require(wbtcBalances[msg.sender] >= wbtcEquivalent, "Insufficient WBTC balance");
-
-        wbtcBalances[msg.sender] -= wbtcEquivalent; // Deduct WBTC from the sender
-        usdcBalances[msg.sender] += usdcAmount; // Add USDC to the user's USDC balance
-
-        emit Supplicate(msg.sender, usdcAmount, "WBTC to USDC");
+    constructor(address _cbBTCAddress, address _reserveAddress, address _priceOracle) {
+        cbBTC = IERC20(_cbBTCAddress);
+        reserveAddress = _reserveAddress;
+        priceOracle = IPriceOracle(_priceOracle);
+        admin = msg.sender;
     }
 
-    function supplicateUSDCtoWBTC(uint256 wbtcAmount, uint256 bitcoinPrice) external {
-        uint256 usdcEquivalent = getUSDCEquivalent(wbtcAmount, bitcoinPrice);
+    // Mint aBTC by depositing cbBTC
+    function mintaBTC(uint256 cbBTCAmount) external {
+        require(cbBTCAmount > 0, "Amount must be greater than zero");
 
-        require(usdcBalances[msg.sender] >= usdcEquivalent, "Insufficient USDC balance");
+        // Transfer cbBTC from the user to the reserve address
+        require(
+            cbBTC.transferFrom(msg.sender, reserveAddress, cbBTCAmount),
+            "cbBTC transfer failed"
+        );
 
-        usdcBalances[msg.sender] -= usdcEquivalent; // Deduct USDC from the user's USDC balance
-        wbtcBalances[msg.sender] += wbtcAmount; // Credit WBTC to the sender
+        // Mint aBTC to the user
+        aBTCBalances[msg.sender] += cbBTCAmount;
+        totalaBTC += cbBTCAmount;
 
-        emit Supplicate(msg.sender, wbtcAmount, "USDC to WBTC");
+        emit aBTCMinted(msg.sender, cbBTCAmount);
     }
 
-    function getUSDCEquivalent(uint256 wbtcAmount, uint256 bitcoinPrice) public pure returns (uint256) {
-        return (wbtcAmount * bitcoinPrice * 100) / 1e8;
+    // Burn aBTC and Mint aUSDC
+    function supplicateABTCforAUSDC(uint256 aBTCAmount) external {
+        require(aBTCBalances[msg.sender] >= aBTCAmount, "Insufficient aBTC balance");
+        require(aBTCAmount > 0, "Amount must be greater than zero");
+
+        uint256 bitcoinPrice = priceOracle.getBitcoinPriceInUSD(); // Get Bitcoin price in USD
+        uint256 aUSDCAmount = aBTCAmount * bitcoinPrice / 1e8; // aBTC has 8 decimals, aUSDC has 6
+
+        // Burn aBTC
+        aBTCBalances[msg.sender] -= aBTCAmount;
+        totalaBTC -= aBTCAmount;
+
+        // Mint aUSDC
+        aUSDCBalances[msg.sender] += aUSDCAmount;
+        totalaUSDC += aUSDCAmount;
+
+        emit aBTCBurned(msg.sender, aBTCAmount);
+        emit aUSDCMinted(msg.sender, aUSDCAmount);
     }
 
-    function getWBTCEquivalent(uint256 usdcAmount, uint256 bitcoinPrice) public pure returns (uint256) {
-        require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
-        return ((usdcAmount * 1e8) / 100) / bitcoinPrice;
+    // Burn aUSDC and Mint aBTC
+    function supplicateAUSDCforABTC(uint256 aUSDCAmount) external {
+        require(aUSDCBalances[msg.sender] >= aUSDCAmount, "Insufficient aUSDC balance");
+        require(aUSDCAmount > 0, "Amount must be greater than zero");
+
+        uint256 bitcoinPrice = priceOracle.getBitcoinPriceInUSD(); // Get Bitcoin price in USD
+        uint256 aBTCAmount = aUSDCAmount * 1e8 / bitcoinPrice; // aBTC has 8 decimals, aUSDC has 6
+
+        // Burn aUSDC
+        aUSDCBalances[msg.sender] -= aUSDCAmount;
+        totalaUSDC -= aUSDCAmount;
+
+        // Mint aBTC
+        aBTCBalances[msg.sender] += aBTCAmount;
+        totalaBTC += aBTCAmount;
+
+        emit aUSDCBurned(msg.sender, aUSDCAmount);
+        emit aBTCMinted(msg.sender, aBTCAmount);
+    }
+
+    // View aBTC Balance
+    function getaBTCBalance(address user) external view returns (uint256) {
+        return aBTCBalances[user];
+    }
+
+    // View aUSDC Balance
+    function getaUSDCBalance(address user) external view returns (uint256) {
+        return aUSDCBalances[user];
+    }
+
+    // Admin withdraw function (optional for safety)
+    function withdrawaBTC(uint256 amount) external onlyAdmin {
+        require(totalaBTC >= amount, "Insufficient total aBTC supply");
+        totalaBTC -= amount;
     }
 }
