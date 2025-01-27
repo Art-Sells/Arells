@@ -28,44 +28,44 @@ import "@nomicfoundation/hardhat-toolbox";
 
 //Below for deployment testing purposes (check signer.tsx)
 
-  const privateKeyTest = process.env.ARELLS_PRIVATE_KEY || "";
-  const config: HardhatUserConfig = {
-    solidity: {
-      version: "0.8.18",
-      settings: {
-        optimizer: {
-          enabled: true,
-          runs: 200
-        }
-      }
-    },
-    networks: {
-      amoy: {
-        url: `https://polygon-amoy.infura.io/v3/${projectId}`,
-        accounts: [privateKeyTest]
-      },
-      sepolia: {
-        url: `https://base-sepolia.infura.io/v3/${projectId}`,
-        accounts: [privateKeyTest]
-      },
-    }
-  };
+  // const privateKeyTest = process.env.ARELLS_PRIVATE_KEY || "";
+  // const config: HardhatUserConfig = {
+  //   solidity: {
+  //     version: "0.8.18",
+  //     settings: {
+  //       optimizer: {
+  //         enabled: true,
+  //         runs: 200
+  //       }
+  //     }
+  //   },
+  //   networks: {
+  //     amoy: {
+  //       url: `https://polygon-amoy.infura.io/v3/${projectId}`,
+  //       accounts: [privateKeyTest]
+  //     },
+  //     sepolia: {
+  //       url: `https://base-sepolia.infura.io/v3/${projectId}`,
+  //       accounts: [privateKeyTest]
+  //     },
+  //   }
+  // };
 
-  export default config;
+  // export default config;
 
 
 //Below for local testing purposes
 
-// const config: HardhatUserConfig = {
-//   solidity: {
-//     version: "0.8.20",
-//     settings: {
-//       optimizer: {
-//         enabled: true,
-//         runs: 200,
-//       },
-//     },
-//   },
-// };
+const config: HardhatUserConfig = {
+  solidity: {
+    version: "0.8.20",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
+};
 
-// export default config;
+export default config;

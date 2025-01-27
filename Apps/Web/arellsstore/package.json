@@ -90,6 +90,6 @@
     "style-loader": "^4.0.0",
     "ts-node": "^10.9.2",
     "typechain": "^8.3.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   }
 }

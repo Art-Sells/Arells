@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "target": "es2020",
-    "module": "preserve",
+    "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -10,7 +10,7 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "incremental": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "isolatedModules": true,
     "noEmit": true,
     "lib": [
