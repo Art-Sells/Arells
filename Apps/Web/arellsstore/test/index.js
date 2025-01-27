@@ -18,17 +18,17 @@ describe("MASSsmartContract Tests", function () {
 
   before(async () => {
     const [deployer] = await ethers.getSigners();
-
+  
     // Create Arells wallet and fund it
     arellsWallet = ethers.Wallet.createRandom().connect(deployer.provider);
-
+  
     await deployer.sendTransaction({
       to: arellsWallet.address,
       value: ethers.parseEther("0.1"), // 0.1 ETH
     });
-
+  
     console.log("Arells Wallet Address:", arellsWallet.address);
-
+  
     // Generate random wallets for User1 and User2
     user1 = {
       aBTCWallet: ethers.Wallet.createRandom().connect(deployer.provider),
@@ -38,37 +38,26 @@ describe("MASSsmartContract Tests", function () {
       aBTCWallet: ethers.Wallet.createRandom().connect(deployer.provider),
       aUSDCWallet: ethers.Wallet.createRandom(),
     };
-
+  
     console.log("User1 aBTC Address:", user1.aBTCWallet.address);
-    console.log("User1 aBTC Private Key:", user1.aBTCWallet.privateKey);
     console.log("User1 aUSDC Address:", user1.aUSDCWallet.address);
-    console.log("User1 aUSDC Private Key:", user1.aUSDCWallet.privateKey);
-    
     console.log("User2 aBTC Address:", user2.aBTCWallet.address);
-    console.log("User2 aBTC Private Key:", user2.aBTCWallet.privateKey);
     console.log("User2 aUSDC Address:", user2.aUSDCWallet.address);
-    console.log("User2 aUSDC Private Key:", user2.aUSDCWallet.privateKey);
-
-    // Fund WBTC wallets
-    await arellsWallet.sendTransaction({
-      to: user1.aBTCWallet.address,
-      value: ethers.parseEther("0.01"),
-    });
-    await arellsWallet.sendTransaction({
-      to: user2.aBTCWallet.address,
-      value: ethers.parseEther("0.01"),
-    });
-
-    console.log("User1 and User2 aBTC Wallets Funded with 0.01 ETH Each");
-
-    // Deploy the smart contract
+  
+    // Deploy a mock cbBTC token
+    const MockCBTC = await ethers.getContractFactory("MockCBTC");
+    const mockCBTC = await MockCBTC.deploy();
+    await mockCBTC.deployed();
+    console.log("Mock CBTC Contract Deployed at:", mockCBTC.address);
+  
+    // Deploy the MASSsmartContract with constructor arguments
     const MassSmartContract = await ethers.getContractFactory("MASSsmartContract");
-    massSmartContract = await MassSmartContract.deploy();
-    await massSmartContract.waitForDeployment();
-
-    console.log("Contract Deployed at:", await massSmartContract.getAddress());
-
-    // Add mock aBTC balances for both users
+    massSmartContract = await MassSmartContract.deploy(mockCBTC.address, arellsWallet.address);
+    await massSmartContract.deployed();
+  
+    console.log("MASSsmartContract Deployed at:", massSmartContract.address);
+  
+    // Add mock balances for both users
     await massSmartContract.setBalances(user1.aBTCWallet.address, 20000000, 0); // 0.2 BTC, 0 USDC
     await massSmartContract.setBalances(user2.aBTCWallet.address, 15000000, 0); // 0.15 BTC, 0 USDC
   });
