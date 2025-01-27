@@ -47,13 +47,13 @@ describe("MASSsmartContract Tests", function () {
     // Deploy a mock cbBTC token
     const MockCBTC = await ethers.getContractFactory("MockCBTC");
     const mockCBTC = await MockCBTC.deploy();
-    await mockCBTC.deployed();
+    await mockCBTC.waitForDeployment();
     console.log("Mock CBTC Contract Deployed at:", mockCBTC.address);
   
     // Deploy the MASSsmartContract with constructor arguments
     const MassSmartContract = await ethers.getContractFactory("MASSsmartContract");
     massSmartContract = await MassSmartContract.deploy(mockCBTC.address, arellsWallet.address);
-    await massSmartContract.deployed();
+    await massSmartContract.waitForDeployment();
   
     console.log("MASSsmartContract Deployed at:", massSmartContract.address);
   
