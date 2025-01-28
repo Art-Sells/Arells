@@ -9,24 +9,24 @@ interface IERC20 {
 contract MASSsmartContract {
     string public constant aBTCName = "Arells Bitcoin";
     string public constant aBTCNameSymbol = "aBTC";
-    string public constant aUSDCName = "Arells USDC";
-    string public constant aUSDCNameSymbol = "aUSDC";
+    string public constant aUSDName = "Arells USD";
+    string public constant aUSDNameSymbol = "aUSD";
 
     IERC20 public cbBTC; // The cbBTC token contract
     address public reserveAddress; // Address where cbBTC is deposited
 
     uint256 public totalaBTC;
-    uint256 public totalaUSDC;
+    uint256 public totalaUSD;
 
     mapping(address => uint256) public aBTCBalances;
-    mapping(address => uint256) public aUSDCBalances;
+    mapping(address => uint256) public aUSDBalances;
 
     address public admin;
 
     event aBTCMinted(address indexed user, uint256 amount);
-    event aUSDCMinted(address indexed user, uint256 amount);
+    event aUSDMinted(address indexed user, uint256 amount);
     event aBTCBurned(address indexed user, uint256 amount);
-    event aUSDCBurned(address indexed user, uint256 amount);
+    event aUSDBurned(address indexed user, uint256 amount);
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "Only admin can perform this action");
@@ -41,14 +41,14 @@ contract MASSsmartContract {
 
     //setBalances Add Here
 // Admin-only function to set balances for testing or initialization
-    function setBalances(address user, uint256 aBTCAmount, uint256 aUSDCAmount) external onlyAdmin {
+    function setBalances(address user, uint256 aBTCAmount, uint256 aUSDAmount) external onlyAdmin {
         require(user != address(0), "Invalid address");
         
         aBTCBalances[user] = aBTCAmount;
-        aUSDCBalances[user] = aUSDCAmount;
+        aUSDBalances[user] = aUSDAmount;
 
         totalaBTC += aBTCAmount;
-        totalaUSDC += aUSDCAmount;
+        totalaUSD += aUSDAmount;
     }
 
 
@@ -58,8 +58,8 @@ contract MASSsmartContract {
     }
 
     // View aUSDC Balance
-    function aUSDCBalance(address user) external view returns (uint256) {
-        return aUSDCBalances[user];
+    function aUSDBalance(address user) external view returns (uint256) {
+        return aUSDBalances[user];
     }
 
     // Mint aBTC by depositing cbBTC
@@ -79,55 +79,55 @@ contract MASSsmartContract {
         emit aBTCMinted(msg.sender, cbBTCAmount);
     }
 
-    // Burn aBTC and Mint aUSDC
-    function supplicateABTCforAUSDC(uint256 aBTCAmount, uint256 bitcoinPrice) external {
+    // Burn aBTC and Mint aUSD
+    function supplicateABTCtoAUSD(uint256 aBTCAmount, uint256 bitcoinPrice) external {
         require(aBTCBalances[msg.sender] >= aBTCAmount, "Insufficient aBTC balance");
         require(aBTCAmount > 0, "Amount must be greater than zero");
         require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
 
-        uint256 aUSDCAmount = getUSDCEquivalent(aBTCAmount, bitcoinPrice);
+        uint256 aUSDAmount = getUSDEquivalent(aBTCAmount, bitcoinPrice);
 
         // Burn aBTC
         aBTCBalances[msg.sender] -= aBTCAmount;
         totalaBTC -= aBTCAmount;
 
         // Mint aUSDC
-        aUSDCBalances[msg.sender] += aUSDCAmount;
-        totalaUSDC += aUSDCAmount;
+        aUSDBalances[msg.sender] += aUSDAmount;
+        totalaUSD += aUSDAmount;
 
         emit aBTCBurned(msg.sender, aBTCAmount);
-        emit aUSDCMinted(msg.sender, aUSDCAmount);
+        emit aUSDMinted(msg.sender, aUSDAmount);
     }
 
-    // Burn aUSDC and Mint aBTC
-    function supplicateAUSDCforABTC(uint256 aUSDCAmount, uint256 bitcoinPrice) external {
-        require(aUSDCBalances[msg.sender] >= aUSDCAmount, "Insufficient aUSDC balance");
-        require(aUSDCAmount > 0, "Amount must be greater than zero");
+    // Burn aUSD and Mint aBTC
+    function supplicateAUSDtoABTC(uint256 aUSDAmount, uint256 bitcoinPrice) external {
+        require(aUSDBalances[msg.sender] >= aUSDAmount, "Insufficient aUSDC balance");
+        require(aUSDAmount > 0, "Amount must be greater than zero");
         require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
 
-        uint256 aBTCAmount = getABTCEquivalent(aUSDCAmount, bitcoinPrice);
+        uint256 aBTCAmount = getBTCEquivalent(aUSDAmount, bitcoinPrice);
 
         // Burn aUSDC
-        aUSDCBalances[msg.sender] -= aUSDCAmount;
-        totalaUSDC -= aUSDCAmount;
+        aUSDBalances[msg.sender] -= aUSDAmount;
+        totalaUSD -= aUSDAmount;
 
         // Mint aBTC
         aBTCBalances[msg.sender] += aBTCAmount;
         totalaBTC += aBTCAmount;
 
-        emit aUSDCBurned(msg.sender, aUSDCAmount);
+        emit aUSDBurned(msg.sender, aUSDAmount);
         emit aBTCMinted(msg.sender, aBTCAmount);
     }
 
-    // Calculate USDC equivalent for a given aBTC amount
-    function getUSDCEquivalent(uint256 aBTCAmount, uint256 bitcoinPrice) public pure returns (uint256) {
-        return (aBTCAmount * bitcoinPrice) / 1e8; // aBTC has 8 decimals, aUSDC has 6
+    function getUSDEquivalent(uint256 aBTCAmount, uint256 bitcoinPrice) public pure returns (uint256) {
+        // Returns USD equivalent directly in cents (2 decimals)
+        return (aBTCAmount * bitcoinPrice) / 1e8; 
     }
 
-    // Calculate aBTC equivalent for a given aUSDC amount
-    function getABTCEquivalent(uint256 aUSDCAmount, uint256 bitcoinPrice) public pure returns (uint256) {
+    function getBTCEquivalent(uint256 aUSDAmount, uint256 bitcoinPrice) public pure returns (uint256) {
         require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
-        return (aUSDCAmount * 1e8) / bitcoinPrice; // aBTC has 8 decimals, aUSDC has 6
+        // Returns BTC equivalent directly in satoshis (8 decimals)
+        return (aUSDAmount * 1e8) / bitcoinPrice; 
     }
 
 

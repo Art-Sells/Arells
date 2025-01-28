@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract aUSDC is ERC20, Ownable {
+contract aUSD is ERC20, Ownable {
     uint8 private _decimals = 6; // Match USDC's decimals
 
     constructor(address initialOwner) ERC20("Arells USDC", "aUSDC") Ownable(initialOwner) {
