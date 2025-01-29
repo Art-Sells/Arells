@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IERC20 {
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-    function balanceOf(address account) external view returns (uint256);
-}
+import "./ArellsBTC.sol"; // Import the actual aBTC contract
+import "./ArellsUSD.sol"; // Import the actual aUSD contract
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract MASSsmartContract {
     string public constant aBTCName = "Arells Bitcoin";
@@ -13,6 +12,8 @@ contract MASSsmartContract {
     string public constant aUSDNameSymbol = "aUSD";
 
     IERC20 public cbBTC; // The cbBTC token contract
+    aBTC public aBTCContract;
+    aUSD public aUSDContract;
     address public reserveAddress; // Address where cbBTC is deposited
 
     uint256 public totalaBTC;
@@ -33,14 +34,20 @@ contract MASSsmartContract {
         _;
     }
 
-    constructor(address _cbBTCAddress, address _reserveAddress) {
+    constructor(
+        address _cbBTCAddress,
+        address _aBTCAddress,
+        address _aUSDAddress, 
+        address _reserveAddress
+    ) {
         cbBTC = IERC20(_cbBTCAddress);
+        aBTCContract = aBTC(_aBTCAddress); // Correctly using the aBTC contract
+        aUSDContract = aUSD(_aUSDAddress); // Correctly using the aUSD contract
         reserveAddress = _reserveAddress;
         admin = msg.sender;
     }
 
-    //setBalances Add Here
-// Admin-only function to set balances for testing or initialization
+    // Admin-only function to set balances for testing or initialization
     function setBalances(address user, uint256 aBTCAmount, uint256 aUSDAmount) external onlyAdmin {
         require(user != address(0), "Invalid address");
         
@@ -51,13 +58,12 @@ contract MASSsmartContract {
         totalaUSD += aUSDAmount;
     }
 
-
     // View aBTC Balance
     function aBTCBalance(address user) external view returns (uint256) {
         return aBTCBalances[user];
     }
 
-    // View aUSDC Balance
+    // View aUSD Balance
     function aUSDBalance(address user) external view returns (uint256) {
         return aUSDBalances[user];
     }
@@ -73,7 +79,7 @@ contract MASSsmartContract {
         );
 
         // Mint aBTC to the user
-        aBTCBalances[msg.sender] += cbBTCAmount;
+        aBTCContract.mint(msg.sender, cbBTCAmount);
         totalaBTC += cbBTCAmount;
 
         emit aBTCMinted(msg.sender, cbBTCAmount);
@@ -87,13 +93,19 @@ contract MASSsmartContract {
 
         uint256 aUSDAmount = getUSDEquivalent(aBTCAmount, bitcoinPrice);
 
-        // Burn aBTC
+
+        // Update Local Balances
         aBTCBalances[msg.sender] -= aBTCAmount;
         totalaBTC -= aBTCAmount;
 
-        // Mint aUSDC
         aUSDBalances[msg.sender] += aUSDAmount;
         totalaUSD += aUSDAmount;
+
+                // **Burn aBTC from ERC-20 contract**
+        aBTCContract.burn(msg.sender, aBTCAmount); 
+
+        // **Mint aUSD in ERC-20 contract**
+        aUSDContract.mint(msg.sender, aUSDAmount);
 
         emit aBTCBurned(msg.sender, aBTCAmount);
         emit aUSDMinted(msg.sender, aUSDAmount);
@@ -114,6 +126,13 @@ contract MASSsmartContract {
         // Mint aBTC
         aBTCBalances[msg.sender] += aBTCAmount;
         totalaBTC += aBTCAmount;
+
+        // **Mint aUSD in ERC-20 contract**
+        aUSDContract.burn(msg.sender, aUSDAmount);
+
+        // **Burn aBTC from ERC-20 contract**
+        aBTCContract.mint(msg.sender, aBTCAmount); 
+
 
         emit aUSDBurned(msg.sender, aUSDAmount);
         emit aBTCMinted(msg.sender, aBTCAmount);
