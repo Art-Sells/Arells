@@ -19,11 +19,13 @@ contract aBTC is ERC20, Ownable {
 
     // Admin-only minting function
     function mint(address to, uint256 amount) external onlyOwner {
+        require(amount > 0, "Cannot mint zero tokens");
         _mint(to, amount);
     }
 
     // Admin-only burning function
     function burn(address from, uint256 amount) external onlyOwner {
+        require(amount > 0, "Cannot burn zero tokens");
         _burn(from, amount);
     }
 }

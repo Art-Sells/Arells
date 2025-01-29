@@ -5,6 +5,8 @@ import "./ArellsBTC.sol"; // Import the actual aBTC contract
 import "./ArellsUSD.sol"; // Import the actual aUSD contract
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import "hardhat/console.sol";
+
 contract MASSsmartContract {
     string public constant aBTCName = "Arells Bitcoin";
     string public constant aBTCNameSymbol = "aBTC";
@@ -47,17 +49,6 @@ contract MASSsmartContract {
         admin = msg.sender;
     }
 
-    // Admin-only function to set balances for testing or initialization
-    function setBalances(address user, uint256 aBTCAmount, uint256 aUSDAmount) external onlyAdmin {
-        require(user != address(0), "Invalid address");
-        
-        aBTCBalances[user] = aBTCAmount;
-        aUSDBalances[user] = aUSDAmount;
-
-        totalaBTC += aBTCAmount;
-        totalaUSD += aUSDAmount;
-    }
-
     // View aBTC Balance
     function aBTCBalance(address user) external view returns (uint256) {
         return aBTCBalances[user];
@@ -80,19 +71,25 @@ contract MASSsmartContract {
 
         // Mint aBTC to the user
         aBTCContract.mint(msg.sender, cbBTCAmount);
+
+        // Update internal balance mapping
+        aBTCBalances[msg.sender] += cbBTCAmount;
         totalaBTC += cbBTCAmount;
 
         emit aBTCMinted(msg.sender, cbBTCAmount);
     }
 
-    // Burn aBTC and Mint aUSD
     function supplicateABTCtoAUSD(uint256 aBTCAmount, uint256 bitcoinPrice) external {
         require(aBTCBalances[msg.sender] >= aBTCAmount, "Insufficient aBTC balance");
         require(aBTCAmount > 0, "Amount must be greater than zero");
         require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
 
         uint256 aUSDAmount = getUSDEquivalent(aBTCAmount, bitcoinPrice);
-
+        
+        // 🔹 Debug Log
+        console.log("BTC Amount:", aBTCAmount);
+        console.log("Bitcoin Price:", bitcoinPrice);
+        console.log("Calculated USD Amount:", aUSDAmount);
 
         // Update Local Balances
         aBTCBalances[msg.sender] -= aBTCAmount;
@@ -101,10 +98,7 @@ contract MASSsmartContract {
         aUSDBalances[msg.sender] += aUSDAmount;
         totalaUSD += aUSDAmount;
 
-                // **Burn aBTC from ERC-20 contract**
         aBTCContract.burn(msg.sender, aBTCAmount); 
-
-        // **Mint aUSD in ERC-20 contract**
         aUSDContract.mint(msg.sender, aUSDAmount);
 
         emit aBTCBurned(msg.sender, aBTCAmount);
@@ -127,10 +121,8 @@ contract MASSsmartContract {
         aBTCBalances[msg.sender] += aBTCAmount;
         totalaBTC += aBTCAmount;
 
-        // **Mint aUSD in ERC-20 contract**
         aUSDContract.burn(msg.sender, aUSDAmount);
 
-        // **Burn aBTC from ERC-20 contract**
         aBTCContract.mint(msg.sender, aBTCAmount); 
 
 
@@ -138,10 +130,9 @@ contract MASSsmartContract {
         emit aBTCMinted(msg.sender, aBTCAmount);
     }
 
-    function getUSDEquivalent(uint256 aBTCAmount, uint256 bitcoinPrice) public pure returns (uint256) {
-        // Returns USD equivalent directly in cents (2 decimals)
-        return (aBTCAmount * bitcoinPrice) / 1e8; 
-    }
+function getUSDEquivalent(uint256 aBTCAmount, uint256 bitcoinPrice) public pure returns (uint256) {
+    return (aBTCAmount * bitcoinPrice) / (1e8 / 100);  // Convert satoshis properly to cents
+}
 
     function getBTCEquivalent(uint256 aUSDAmount, uint256 bitcoinPrice) public pure returns (uint256) {
         require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");

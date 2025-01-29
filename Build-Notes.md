@@ -4,10 +4,12 @@
 
 ## Arells 1 (Import/Custody Bitcoin)
 
-
+# Test
+- TransferOwnership of aBTC and aUSD
+- Check periodically cbBTC amount, if cbBTC > aBTC, then cbBTC - aBTC = cbBTCamount to mint into aBTC
 
 ### After Test
-- test import (after syupplication), so it doesn't create a new group from the acdVatops)
+- test import (after syupplication), so it doesn't create a new group from the acdVatops
 - test supplicateWBTCtoUSD (come back and check on this consistently with many vatopGroups) add supplicate boolean changes API calls.
 - Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History)
 - Integrate 25bps in Business Modal (subtract from WBTCtoUSD(handle sell))
