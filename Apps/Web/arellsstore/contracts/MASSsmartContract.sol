@@ -79,32 +79,41 @@ contract MASSsmartContract {
         emit aBTCMinted(msg.sender, cbBTCAmount);
     }
 
-    function supplicateABTCtoAUSD(uint256 aBTCAmount, uint256 bitcoinPrice) external {
+    // Burn aBTC and Mint aUSD
+    function supplicateABTCtoAUSD(address to, uint256 aBTCAmount, uint256 bitcoinPrice) external {
+        console.log("Burning aBTC Amount:", aBTCAmount);
+        console.log("Bitcoin Price:", bitcoinPrice);
+        console.log("Raw Calculation:", aBTCAmount * bitcoinPrice);
+        console.log("Expected USD (Before Division):", (aBTCAmount * bitcoinPrice) / 1e8);
+        console.log("Expected USD (If ERC20):", (aBTCAmount * bitcoinPrice) / 1e18);
+
         require(aBTCBalances[msg.sender] >= aBTCAmount, "Insufficient aBTC balance");
         require(aBTCAmount > 0, "Amount must be greater than zero");
         require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
 
         uint256 aUSDAmount = getUSDEquivalent(aBTCAmount, bitcoinPrice);
         
-        // 🔹 Debug Log
-        console.log("BTC Amount:", aBTCAmount);
-        console.log("Bitcoin Price:", bitcoinPrice);
+        console.log("Before Burning: User aBTC:", aBTCBalances[msg.sender]);
+        console.log("Burning Amount: ", aBTCAmount);
         console.log("Calculated USD Amount:", aUSDAmount);
 
         // Update Local Balances
         aBTCBalances[msg.sender] -= aBTCAmount;
         totalaBTC -= aBTCAmount;
 
-        aUSDBalances[msg.sender] += aUSDAmount;
+        aUSDBalances[to] += aUSDAmount;  // ✅ Fix: Ensure aUSD balance is updated correctly
         totalaUSD += aUSDAmount;
 
-        aBTCContract.burn(msg.sender, aBTCAmount); 
-        aUSDContract.mint(msg.sender, aUSDAmount);
+        console.log("After Burning: User aBTC:", aBTCBalances[msg.sender]);
+        console.log("After Minting: User aUSD:", aUSDBalances[to]);
+
+        // Burn and Mint Tokens
+        aBTCContract.burn(msg.sender, aBTCAmount);
+        aUSDContract.mint(to, aUSDAmount); // ✅ FIX: Explicitly send aUSD to the correct address
 
         emit aBTCBurned(msg.sender, aBTCAmount);
-        emit aUSDMinted(msg.sender, aUSDAmount);
+        emit aUSDMinted(to, aUSDAmount);
     }
-
     // Burn aUSD and Mint aBTC
     function supplicateAUSDtoABTC(uint256 aUSDAmount, uint256 bitcoinPrice) external {
         require(aUSDBalances[msg.sender] >= aUSDAmount, "Insufficient aUSDC balance");
@@ -130,9 +139,12 @@ contract MASSsmartContract {
         emit aBTCMinted(msg.sender, aBTCAmount);
     }
 
-function getUSDEquivalent(uint256 aBTCAmount, uint256 bitcoinPrice) public pure returns (uint256) {
-    return (aBTCAmount * bitcoinPrice) / (1e8 / 100);  // Convert satoshis properly to cents
-}
+    function getUSDEquivalent(uint256 aBTCAmount, uint256 bitcoinPrice) public pure returns (uint256) {
+        uint256 rawUSD = (aBTCAmount * bitcoinPrice) / 1e6; 
+        console.log("Raw USD Calculation:", rawUSD);
+
+        return rawUSD; 
+    }
 
     function getBTCEquivalent(uint256 aUSDAmount, uint256 bitcoinPrice) public pure returns (uint256) {
         require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
