@@ -32,11 +32,11 @@ describe("MASSsmartContract Tests", function () {
       // Generate random wallets for User1 and User2
       user1 = {
           aBTCWallet: ethers.Wallet.createRandom().connect(deployer.provider),
-          aUSDWallet: ethers.Wallet.createRandom(),
+          aUSDWallet: ethers.Wallet.createRandom().connect(deployer.provider),
       };
       user2 = {
           aBTCWallet: ethers.Wallet.createRandom().connect(deployer.provider),
-          aUSDWallet: ethers.Wallet.createRandom(),
+          aUSDWallet: ethers.Wallet.createRandom().connect(deployer.provider),
       };
 
       console.log("User1 aBTC Address:", user1.aBTCWallet.address);
@@ -51,6 +51,15 @@ describe("MASSsmartContract Tests", function () {
       });
       await deployer.sendTransaction({
         to: user2.aBTCWallet.address,
+        value: ethers.parseEther("0.01"), // 1 ETH
+      });
+
+      await deployer.sendTransaction({
+        to: user1.aUSDWallet.address,
+        value: ethers.parseEther("0.01"), // 1 ETH
+      });
+      await deployer.sendTransaction({
+        to: user2.aUSDWallet.address,
         value: ethers.parseEther("0.01"), // 1 ETH
       });
 
@@ -141,18 +150,14 @@ describe("MASSsmartContract Tests", function () {
   
 
     it("Should allow User1 to supplicate aBTC to aUSD first", async function () {
-      const usdAmount = 112202; // $1122.02 in cents
+      const usdAmount = 112202; // $1122.02 x 100 in cents
   
       // Convert values to standard numbers
       const usdAmountNum = Number(usdAmount);
       const bitcoinPriceNum = Number(bitcoinPrice);
   
       // Correct calculation: expected WBTC (satoshis) equivalent
-      const expectedWbtcEquivalent = Math.floor((usdAmountNum * 1e8) / bitcoinPriceNum);
-  
-      console.log("USD Amount:", usdAmountNum);
-      console.log("Bitcoin Price:", bitcoinPriceNum);
-      console.log("Expected WBTC Equivalent:", expectedWbtcEquivalent);
+      const expectedWbtcEquivalent = Math.floor(((usdAmountNum * 1e8) / 100) / bitcoinPriceNum);
   
       // Get initial balances directly from the contract
       const initialWbtcBalance = Number(await massSmartContract.aBTCBalance(user1.aBTCWallet.address));
@@ -173,76 +178,77 @@ describe("MASSsmartContract Tests", function () {
       console.log("User1 Final aBTC Balance:", formatABTC(finalWbtcBalance), "BTC");
       console.log("User1 Final aUSD Balance:", formatAUSD(finalUsdBalance), "USD");
   
-      // **Key Fix: Fetch expected balance directly from smart contract**
-      const expectedFinalBTCBalance = Number(await massSmartContract.aBTCBalance(user1.aBTCWallet.address));
-  
-      console.log("Expected Final aBTC Balance:", expectedFinalBTCBalance);
-      console.log("Actual Final aBTC Balance:", finalWbtcBalance);
-  
       // Assertions
-      expect(finalWbtcBalance).to.equal(expectedFinalBTCBalance);
-      expect(finalUsdBalance).to.equal(initialUsdBalance + usdAmountNum);  // ✅ Fix: Ensure aUSD is properly updated
-  });
+      expect(finalWbtcBalance).to.equal(initialWbtcBalance - expectedWbtcEquivalent);
+      expect(finalUsdBalance).to.equal(initialUsdBalance + usdAmountNum); 
+    });
 
-    // it("Should allow User2 to supplicate aBTC to aUSD first", async function () {
-    //   const usdAmount = 75000; // $750 x 100 (in cents)
-    //   const expectedWbtcEquivalent = Math.floor((usdAmount * 1e8) / (bitcoinPrice * 100));
+    it("Should allow User2 to supplicate aBTC to aUSD first", async function () {
+      const usdAmount = 75000; // $750 x 100 in cents
 
-    //   // Initial balances
-    //   const initialWbtcBalance = await massSmartContract.aBTCBalance(user2.aBTCWallet.address);
-    //   const initialUsdBalance = await massSmartContract.aUSDBalance(user2.aUSDWallet.address);
+      // Convert values to standard numbers
+      const usdAmountNum = Number(usdAmount);
+      const bitcoinPriceNum = Number(bitcoinPrice);
 
-    //   console.log("User2 Initial aBTC Balance:", formatABTC(initialWbtcBalance.toString()), "BTC");
-    //   console.log("User2 Initial aUSD Balance:", formatAUSD(initialUsdBalance.toString()), "USD");
+      // Correct calculation: expected WBTC (satoshis) equivalent
+      const expectedWbtcEquivalent = Math.floor(((usdAmountNum * 1e8) / 100) / bitcoinPriceNum);
 
-    //   // Supplicate WBTC to USDC
-    //   await massSmartContract.connect(user2.aBTCWallet).supplicateABTCtoAUSD(usdAmount, bitcoinPrice);
+      // Get initial balances directly from the contract
+      const initialWbtcBalance = Number(await massSmartContract.aBTCBalance(user2.aBTCWallet.address));
+      const initialUsdBalance = Number(await massSmartContract.aUSDBalance(user2.aUSDWallet.address));
 
-    //   // Final balances
-    //   const finalWbtcBalance = await massSmartContract.aBTCBalance(user2.aBTCWallet.address);
-    //   const finalUsdBalance = await massSmartContract.aUSDBalance(user2.aUSDWallet.address);
+      console.log("User2 Initial aBTC Balance:", formatABTC(initialWbtcBalance), "BTC");
+      console.log("User2 Initial aUSD Balance:", formatAUSD(initialUsdBalance), "USD");
 
-    //   console.log("User2 Final aBTC Balance:", formatABTC(finalWbtcBalance.toString()), "BTC");
-    //   console.log("User2 Final aUSD Balance:", formatAUSD(finalUsdBalance.toString()), "USD");
+      // Execute the conversion
+      await massSmartContract
+      .connect(user2.aBTCWallet)
+      .supplicateABTCtoAUSD(user2.aUSDWallet.address, usdAmount, bitcoinPrice);
 
-    //   // Assertions
-    //   expect(finalWbtcBalance.toString()).to.equal(
-    //     (BigInt(initialWbtcBalance) - BigInt(expectedWbtcEquivalent)).toString()
-    //   );
-    //   expect(finalUsdBalance.toString()).to.equal(
-    //     (BigInt(initialUsdBalance) + BigInt(usdAmount)).toString()
-    //   );
-    // });
+      // Fetch actual balances from the contract
+      const finalWbtcBalance = Number(await massSmartContract.aBTCBalance(user2.aBTCWallet.address));
+      const finalUsdBalance = Number(await massSmartContract.aUSDBalance(user2.aUSDWallet.address));
 
-    // it("Should allow User1 to supplicate aUSD to aBTC after", async function () {
-    //   const wbtcAmount = 500000; // 0.005 BTC in Satoshis
-    //   const expectedUsdEquivalent = Math.floor((wbtcAmount * bitcoinPrice * 100) / 1e8);
+      console.log("User1 Final aBTC Balance:", formatABTC(finalWbtcBalance), "BTC");
+      console.log("User1 Final aUSD Balance:", formatAUSD(finalUsdBalance), "USD");
 
-    //   // Initial balances
-    //   const initialWbtcBalance = await massSmartContract.aBTCBalance(user1.aBTCWallet.address);
-    //   const initialUsdBalance = await massSmartContract.aUSDBalance(user1.aUSDWallet.address);
+      // Assertions
+      expect(finalWbtcBalance).to.equal(initialWbtcBalance - expectedWbtcEquivalent);
+      expect(finalUsdBalance).to.equal(initialUsdBalance + usdAmountNum); 
+    });
 
-    //   console.log("User1 Initial aBTC Balance:", formatABTC(initialWbtcBalance.toString()), "BTC");
-    //   console.log("User1 Initial aUSD Balance:", formatAUSD(initialUsdBalance.toString()), "USD");
+    it("Should allow User1 to supplicate aUSD to aBTC after", async function () {
+      const btcAmount = 500000; // 0.005 BTC in Satoshis
 
-    //   // Supplicate USDC to WBTC
-    //   await massSmartContract.connect(user1.wbtcWallet).supplicateAUSDtoABTC(wbtcAmount, bitcoinPrice);
+      // Convert values to standard numbers
+      const btcAmountNum = Number(btcAmount);
+      const bitcoinPriceNum = Number(bitcoinPrice);
 
-    //   // Final balances
-    //   const finalWbtcBalance = await massSmartContract.aBTCBalance(user1.aBTCWallet.address);
-    //   const finalUsdBalance = await massSmartContract.aUSDBalance(user1.aUSDWallet.address);
+      const expectedUsdEquivalent = (btcAmountNum * bitcoinPriceNum * 100) / 1e8;
 
-    //   console.log("User1 Final aBTC Balance:", formatABTC(finalWbtcBalance.toString()), "BTC");
-    //   console.log("User1 Final aUSD Balance:", formatAUSDC(finalUsdBalance.toString()), "USD");
+      // Get initial balances directly from the contract
+      const initialUsdBalance = Number(await massSmartContract.aUSDBalance(user1.aUSDWallet.address));
+      const initialWbtcBalance = Number(await massSmartContract.aBTCBalance(user1.aBTCWallet.address));
 
-    //   // Assertions
-    //   expect(finalWbtcBalance.toString()).to.equal(
-    //     (BigInt(initialWbtcBalance) + BigInt(wbtcAmount)).toString()
-    //   );
-    //   expect(finalUsdBalance.toString()).to.equal(
-    //     (BigInt(initialUsdBalance) - BigInt(expectedUsdEquivalent)).toString()
-    //   );
-    // });
+      console.log("User1 Initial aUSD Balance:", formatAUSD(initialUsdBalance.toString()), "USD");
+      console.log("User1 Initial aBTC Balance:", formatABTC(initialWbtcBalance.toString()), "BTC");
+
+      // Execute the conversion
+      await massSmartContract
+      .connect(user1.aUSDWallet)
+      .supplicateAUSDtoABTC(user1.aBTCWallet.address, btcAmount, bitcoinPrice);
+
+      // Final balances
+      const finalUsdBalance = Number(await massSmartContract.aUSDBalance(user1.aUSDWallet.address));
+      const finalWbtcBalance = Number(await massSmartContract.aBTCBalance(user1.aBTCWallet.address));
+
+      console.log("User1 Final aUSD Balance:", formatAUSD(finalUsdBalance.toString()), "USD");
+      console.log("User1 Final aBTC Balance:", formatABTC(finalWbtcBalance.toString()), "BTC");
+
+      // Assertions
+      expect(finalWbtcBalance).to.equal(initialWbtcBalance + btcAmountNum);
+      expect(finalUsdBalance).to.equal(initialUsdBalance - expectedUsdEquivalent); 
+    });
 
     // it("Should allow User2 to supplicate aUSD to aBTC after", async function () {
     //   const wbtcAmount = 1000000; // 0.01 BTC in Satoshis

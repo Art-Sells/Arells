@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "hardhat/console.sol";
-
 contract aUSD is ERC20, Ownable {
     uint8 private _decimals = 6; // Match USDC's decimals
 
@@ -23,10 +21,6 @@ contract aUSD is ERC20, Ownable {
     function mint(address to, uint256 amount) external onlyOwner {
         require(amount > 0, "Cannot mint zero tokens");
         _mint(to, amount);
-        
-        // Debug log
-        console.log("Minted aUSD:", amount, "to", to);
-        console.log("New Balance:", balanceOf(to));
     }
 
     // Admin-only burning function

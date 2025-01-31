@@ -80,76 +80,54 @@ contract MASSsmartContract {
     }
 
     // Burn aBTC and Mint aUSD
-    function supplicateABTCtoAUSD(address to, uint256 aBTCAmount, uint256 bitcoinPrice) external {
-        console.log("Burning aBTC Amount:", aBTCAmount);
-        console.log("Bitcoin Price:", bitcoinPrice);
-        console.log("Raw Calculation:", aBTCAmount * bitcoinPrice);
-        console.log("Expected USD (Before Division):", (aBTCAmount * bitcoinPrice) / 1e8);
-        console.log("Expected USD (If ERC20):", (aBTCAmount * bitcoinPrice) / 1e18);
+    function supplicateABTCtoAUSD(address to, uint256 usdAmount, uint256 bitcoinPrice) external {
+        uint256 aBTCEquivalent = getBTCEquivalent(usdAmount, bitcoinPrice);
 
-        require(aBTCBalances[msg.sender] >= aBTCAmount, "Insufficient aBTC balance");
-        require(aBTCAmount > 0, "Amount must be greater than zero");
-        require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
-
-        uint256 aUSDAmount = getUSDEquivalent(aBTCAmount, bitcoinPrice);
-        
-        console.log("Before Burning: User aBTC:", aBTCBalances[msg.sender]);
-        console.log("Burning Amount: ", aBTCAmount);
-        console.log("Calculated USD Amount:", aUSDAmount);
+        require(aBTCBalances[msg.sender] >= aBTCEquivalent, "Insufficient aBTC balance");
+        require(aBTCEquivalent > 0, "Amount must be greater than zero");
 
         // Update Local Balances
-        aBTCBalances[msg.sender] -= aBTCAmount;
-        totalaBTC -= aBTCAmount;
+        aBTCBalances[msg.sender] -= aBTCEquivalent;
+        totalaBTC -= aBTCEquivalent;
 
-        aUSDBalances[to] += aUSDAmount;  // ✅ Fix: Ensure aUSD balance is updated correctly
-        totalaUSD += aUSDAmount;
-
-        console.log("After Burning: User aBTC:", aBTCBalances[msg.sender]);
-        console.log("After Minting: User aUSD:", aUSDBalances[to]);
+        aUSDBalances[to] += usdAmount; 
+        totalaUSD += usdAmount;
 
         // Burn and Mint Tokens
-        aBTCContract.burn(msg.sender, aBTCAmount);
-        aUSDContract.mint(to, aUSDAmount); // ✅ FIX: Explicitly send aUSD to the correct address
+        aBTCContract.burn(msg.sender, aBTCEquivalent);
+        aUSDContract.mint(to, usdAmount);
 
-        emit aBTCBurned(msg.sender, aBTCAmount);
-        emit aUSDMinted(to, aUSDAmount);
+        emit aBTCBurned(msg.sender, aBTCEquivalent);
+        emit aUSDMinted(to, usdAmount);
     }
     // Burn aUSD and Mint aBTC
-    function supplicateAUSDtoABTC(uint256 aUSDAmount, uint256 bitcoinPrice) external {
-        require(aUSDBalances[msg.sender] >= aUSDAmount, "Insufficient aUSDC balance");
-        require(aUSDAmount > 0, "Amount must be greater than zero");
-        require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
+    function supplicateAUSDtoABTC(address to, uint256 btcAmount, uint256 bitcoinPrice) external {
+        uint256 aUSDEquivalent = getUSDEquivalent(btcAmount, bitcoinPrice);
 
-        uint256 aBTCAmount = getBTCEquivalent(aUSDAmount, bitcoinPrice);
+        require(aUSDBalances[msg.sender] >= aUSDEquivalent, "Insufficient aUSDC balance");
+        require(aUSDEquivalent > 0, "Amount must be greater than zero");
 
-        // Burn aUSDC
-        aUSDBalances[msg.sender] -= aUSDAmount;
-        totalaUSD -= aUSDAmount;
+        // Update Local Balances
+        aUSDBalances[msg.sender] -= aUSDEquivalent;
+        totalaUSD -= aUSDEquivalent;
 
-        // Mint aBTC
-        aBTCBalances[msg.sender] += aBTCAmount;
-        totalaBTC += aBTCAmount;
+        aBTCBalances[to] += btcAmount;
+        totalaBTC += btcAmount;
 
-        aUSDContract.burn(msg.sender, aUSDAmount);
+        // Burn and Mint Tokens
+        aUSDContract.burn(msg.sender, aUSDEquivalent);
+        aBTCContract.mint(to, btcAmount); 
 
-        aBTCContract.mint(msg.sender, aBTCAmount); 
-
-
-        emit aUSDBurned(msg.sender, aUSDAmount);
-        emit aBTCMinted(msg.sender, aBTCAmount);
+        emit aUSDBurned(msg.sender, aUSDEquivalent);
+        emit aBTCMinted(to, btcAmount);
     }
 
     function getUSDEquivalent(uint256 aBTCAmount, uint256 bitcoinPrice) public pure returns (uint256) {
-        uint256 rawUSD = (aBTCAmount * bitcoinPrice) / 1e6; 
-        console.log("Raw USD Calculation:", rawUSD);
-
-        return rawUSD; 
+        return (aBTCAmount * bitcoinPrice * 100) / 1e8;
     }
 
     function getBTCEquivalent(uint256 aUSDAmount, uint256 bitcoinPrice) public pure returns (uint256) {
-        require(bitcoinPrice > 0, "Bitcoin price must be greater than zero");
-        // Returns BTC equivalent directly in satoshis (8 decimals)
-        return (aUSDAmount * 1e8) / bitcoinPrice; 
+        return ((aUSDAmount * 1e8) / 100) / bitcoinPrice;
     }
 
 

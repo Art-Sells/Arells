@@ -5,7 +5,6 @@
 ## Arells 1 (Import/Custody Bitcoin)
 
 # Test
-- Migth need to convert constants to Number before implementing into supplications
 - TransferOwnership of aBTC and aUSD
 - Check periodically cbBTC amount, if cbBTC > aBTC, then cbBTC - aBTC = cbBTCamount to mint into aBTC
 
