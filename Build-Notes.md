@@ -4,9 +4,90 @@
 
 ## Arells 1 (Import/Custody Bitcoin)
 
-# Test
+## Test
 - TransferOwnership of aBTC and aUSD
 - Check periodically cbBTC amount, if cbBTC > aBTC, then cbBTC - aBTC = cbBTCamount to mint into aBTC
+
+### Example:
+
+#### **Step 1: User Imports 0.1 cbBTC**
+- The user deposits **0.1 cbBTC** into their marketplace wallet.
+- The marketplace mints **0.1 aBTC** (pegged 1:1 with cbBTC).
+- The marketplace transfers **0.1 cbBTC** to the **External Liquidity Reserve Address (ELAR)**.
+- **ELAR Holdings After Import:**
+  - **$506,000 worth of cbBTC** (≈ **8.4333 cbBTC**)
+  - **$500,000 USDC**
+  - **User holds 0.1 aBTC**
+  - **Total Reserve Value: $1,006,000**
+
+---
+
+#### **Step 2: User Swaps 0.1 aBTC → 6,000 aUSD**
+- The user **burns 0.1 aBTC**.
+- The system **mints 6,000 aUSD**.
+- The user **receives 6,000 aUSD**, backed by **ELAR’s USDC**.
+- **ELAR Holdings After Swap:**
+  - **$506,000 worth of cbBTC** (unchanged)
+  - **$500,000 USDC (unchanged—now backing 6,000 aUSD)**
+  - **User holds 6,000 aUSD**
+  - **Total Reserve Value: $1,000,000** *(remains fully collateralized)*
+
+---
+
+#### **Step 3: cbBTC Price Drops to $55K**
+- cbBTC’s market price falls, but ELAR’s **cbBTC holdings remain unchanged**.
+- **New ELAR cbBTC Valuation:**
+  - **$464,000 worth of cbBTC** (8.4333 cbBTC @ $55K)
+  - **$500,000 USDC (unchanged)**
+  - **Total Reserve Value: $964,000**
+  - *💡 ELAR is still fully backed, but the total reserve value reflects the lower cbBTC price.*
+
+---
+
+#### **Step 4: User Swaps 6,000 aUSD → aBTC**
+- The user **burns 6,000 aUSD**.
+- The system **mints 0.1091 aBTC** (since **6,000 aUSD = 0.1091 aBTC at $55K per BTC**).
+- The user **receives 0.1091 aBTC**.
+- **ELAR Holdings After Swap:**
+  - **$464,000 worth of cbBTC (unchanged at $55K price)**
+  - **$500,000 USDC (unchanged—still backing remaining aUSD)**
+  - **User holds 0.1091 aBTC**
+  - **Total Reserve Value: $964,000**
+
+---
+
+#### **Step 5: cbBTC Price Rises to $65K (User in Profit)**
+- The market price of **cbBTC increases** from **$55K → $65K**.
+- The **user’s 0.1091 aBTC is now worth:**
+  - **0.1091 × 65,000 = 7,091.50 aUSD**
+- **Profit Calculation:**
+  - **Original cost:** 6,000 aUSD
+  - **New value:** 7,091.50 aUSD
+  - **Profit = 7,091.50 - 6,000 = 1,091.50 aUSD worth of profit**
+
+---
+
+#### **Step 6: ELAR Takes 3% Profit Fee in aBTC**
+- Instead of swapping aBTC back into aUSD, **3% of the profit is deposited into ELAR’s aBTC wallet**.
+- **Fee Calculation (3% of 1,091.50 aUSD in aBTC):**
+  - **3% × 1,091.50 = 32.75 aUSD worth of aBTC**
+  - **At $65K per BTC, this is:**
+    ```
+    32.75 ÷ 65,000 = 0.00050385 aBTC
+    ```
+- **Fee Transfer to ELAR:**
+  - **0.00050385 aBTC is transferred to ELAR’s aBTC wallet.**
+  - **User keeps 97% of the profit (0.10859615 aBTC instead of 0.1091 aBTC).**
+  - **aBTC never swaps back into aUSD when a user is in profit.**
+- **ELAR Holdings After Profit Fee Collection:**
+  - **$464,000 worth of cbBTC (unchanged at $55K price)**
+  - **$500,000 USDC (unchanged)**
+  - **ELAR now holds an additional 0.00050385 aBTC in its aBTC reserve.**
+  - **Total Reserve Value: $964,000** *(fully backed, ELAR slowly accumulates aBTC over time).*
+
+- Inform "Angel Users" on google docs spread sheet after release
+
+_______________________________________________________________________________________
 
 
 ### After Test
