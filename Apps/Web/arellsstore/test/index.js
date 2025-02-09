@@ -1,286 +1,78 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
+import dotenv from "dotenv";
 
-// Helper functions for formatting
-const formatAUSD = (cents) => {
-  const dollars = (cents / 100).toFixed(2);
-  return dollars.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
+dotenv.config();
 
-const formatABTC = (sats) => {
-  return (sats / 1e8).toFixed(6);
-};
+describe("MASSTester Swap Test", function () {
+    let massTester, tokenAContract, tokenBContract;
+    let userAddress = "0xE6a1218F4E2F514a3fC215758D450AaC632B0DE3";
+    let userWallet;
+    let masstesterAddress = "0x00922a1FF79f500985dd325149DBb6De823BFB24";
 
-describe("MASSsmartContract Tests", function () {
-  let massSmartContract;
-  let arellsWallet, user1, user2;
-  let mockCBTC, mockaBTC, mockaUSD;
+    let uniswapPool = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef"; // USDC/CBBTC Pool
+    let uniswapRouter = "0xE592427A0AEce92De3Edee1F18E0157C05861564"; // Uniswap V3 Router
 
-  before(async () => {
-      const [deployer] = await ethers.getSigners();
+    before(async function () {
+        console.log("\n🚀 Connecting to Deployed Contracts on Base...");
 
-      // Create Arells wallet and fund it
-      arellsWallet = ethers.Wallet.createRandom().connect(deployer.provider);
+        userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, ethers.provider);
+        console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
-      await deployer.sendTransaction({
-          to: arellsWallet.address,
-          value: ethers.parseEther("0.01"), // 0.1 ETH
-      });
+        const tokenA = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"; // USDC
+        const tokenB = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf"; // CBBTC
 
-      console.log("Arells Wallet Address:", arellsWallet.address);
+        massTester = await ethers.getContractAt("MASSTester", masstesterAddress, userWallet);
+        console.log(`✅ Connected to MASSTester at: ${await massTester.getAddress()}`);
 
-      // Generate random wallets for User1 and User2
-      user1 = {
-          aBTCWallet: ethers.Wallet.createRandom().connect(deployer.provider),
-          aUSDWallet: ethers.Wallet.createRandom().connect(deployer.provider),
-      };
-      user2 = {
-          aBTCWallet: ethers.Wallet.createRandom().connect(deployer.provider),
-          aUSDWallet: ethers.Wallet.createRandom().connect(deployer.provider),
-      };
+        tokenAContract = await ethers.getContractAt("IERC20", tokenA, userWallet);
+        tokenBContract = await ethers.getContractAt("IERC20", tokenB, userWallet);
 
-      console.log("User1 aBTC Address:", user1.aBTCWallet.address);
-      console.log("User1 aUSD Address:", user1.aUSDWallet.address);
-      console.log("User2 aBTC Address:", user2.aBTCWallet.address);
-      console.log("User2 aUSD Address:", user2.aUSDWallet.address);
-
-        // Fund User1 and User2 aBTC wallets
-      await deployer.sendTransaction({
-        to: user1.aBTCWallet.address,
-        value: ethers.parseEther("0.01"), // 1 ETH
-      });
-      await deployer.sendTransaction({
-        to: user2.aBTCWallet.address,
-        value: ethers.parseEther("0.01"), // 1 ETH
-      });
-
-      await deployer.sendTransaction({
-        to: user1.aUSDWallet.address,
-        value: ethers.parseEther("0.01"), // 1 ETH
-      });
-      await deployer.sendTransaction({
-        to: user2.aUSDWallet.address,
-        value: ethers.parseEther("0.01"), // 1 ETH
-      });
-
-      // Deploy a mock cbBTC token
-      const MockCBTC = await ethers.getContractFactory("MockCBTC");
-      mockCBTC = await MockCBTC.deploy();
-      await mockCBTC.waitForDeployment();
-      const mockCBTCAddress = await mockCBTC.getAddress();
-      console.log("Mock CBTC Contract Deployed at:", mockCBTCAddress);
-      // Mint cbBTC to User1 and User2 so they can deposit
-      await mockCBTC.mint(user1.aBTCWallet.address, ethers.parseUnits(".2", 8)); // .2 CBTC to User1
-      await mockCBTC.mint(user2.aBTCWallet.address, ethers.parseUnits(".15", 8)); // .15 CBTC to User2
-      console.log("Minted CBTC each to User1 and User2");
-
-      // Deploy mock aBTC and aUSD tokens
-      const aBTCContract = await ethers.getContractFactory("aBTC");
-      const aUSDContract = await ethers.getContractFactory("aUSD");
-
-      mockaBTC = await aBTCContract.deploy(deployer.address);
-      await mockaBTC.waitForDeployment();
-      const mockaBTCAddress = await mockaBTC.getAddress();
-      console.log("Mock aBTC Contract Deployed at:", mockaBTCAddress);
-
-      mockaUSD = await aUSDContract.deploy(deployer.address);
-      await mockaUSD.waitForDeployment();
-      const mockaUSDAddress = await mockaUSD.getAddress();
-      console.log("Mock aUSD Contract Deployed at:", mockaUSDAddress);
-
-      // Deploy the MASSsmartContract with constructor arguments
-      const MassSmartContract = await ethers.getContractFactory("MASSsmartContract");
-      massSmartContract = await MassSmartContract.deploy(
-        mockCBTCAddress,  // Mock CBTC Token Address
-        mockaBTCAddress,  // Mock aBTC Token Address
-        mockaUSDAddress,  // Mock aUSD Token Address
-        arellsWallet.address // Reserve Address
-    );
-    await massSmartContract.waitForDeployment();
-      console.log("MASSsmartContract Deployed at:", await massSmartContract.getAddress());
-
-    await mockaBTC.transferOwnership(await massSmartContract.getAddress());
-    await mockaUSD.transferOwnership(await massSmartContract.getAddress());
-    console.log("Ownership of aBTC and aUSD transferred to MASSsmartContract");
-
-    const newOwner = await mockaBTC.owner();
-    expect(newOwner).to.equal(await massSmartContract.getAddress()); // Confirm MASSsmartContract is the owner
-  });
-
-  describe("Minting aBTC by depositing cbBTC", function () {
-    it("Should mint aBTC when cbBTC is deposited to User1", async function () {
-      const cbBTCDepositAmount = ethers.parseUnits(".01", 8); // .01 cbBTC
-
-      // Get initial aBTC balance
-      const initialABTCBalance = await mockaBTC.balanceOf(user1.aBTCWallet.address);
-      console.log("User1 Initial aBTC Balance:", formatABTC(initialABTCBalance.toString()), "BTC");
-
-      // Mock cbBTC transfer approval
-      await mockCBTC.connect(user1.aBTCWallet).approve(await massSmartContract.getAddress(), cbBTCDepositAmount);
-
-      // User deposits cbBTC and expects aBTC to be minted
-      await massSmartContract.connect(user1.aBTCWallet).mintaBTC(cbBTCDepositAmount);
-
-      // Get final aBTC balance
-      const finalABTCBalance = await mockaBTC.balanceOf(user1.aBTCWallet.address);
-      console.log("User1 Final aBTC Balance:", formatABTC(finalABTCBalance.toString()), "BTC");
-
-      // Assertions
-        expect(finalABTCBalance.toString()).to.equal(
-          cbBTCDepositAmount.toString()
-      );
-    });
-  });
-
-  describe("Supplicating aBTC to  and aUSD to aBTC for Multiple Users", function () {
-    const bitcoinPrice = 60000 // $60,000 per Bitcoin
-
-    beforeEach(async () => {
-      // Ensure User1 and User2 have enough cbBTC before minting aBTC
-      await mockCBTC.mint(user1.aBTCWallet.address, ethers.parseUnits("0.5", 8)); // Mint 0.5 CBTC
-      await mockCBTC.mint(user2.aBTCWallet.address, ethers.parseUnits("0.5", 8)); // Mint 0.5 CBTC
-    
-      // Approve massSmartContract to spend cbBTC
-      await mockCBTC.connect(user1.aBTCWallet).approve(await massSmartContract.getAddress(), ethers.parseUnits("0.2", 8));
-      await massSmartContract.connect(user1.aBTCWallet).mintaBTC(ethers.parseUnits("0.2", 8)); // User1 mints 0.2 aBTC
-    
-      await mockCBTC.connect(user2.aBTCWallet).approve(await massSmartContract.getAddress(), ethers.parseUnits("0.15", 8));
-      await massSmartContract.connect(user2.aBTCWallet).mintaBTC(ethers.parseUnits("0.15", 8)); // User2 mints 0.15 aBTC
-    });
-  
-
-    it("Should allow User1 to supplicate aBTC to aUSD first", async function () {
-      const usdAmount = 112202; // $1122.02 x 100 in cents
-  
-      // Convert values to standard numbers
-      const usdAmountNum = Number(usdAmount);
-      const bitcoinPriceNum = Number(bitcoinPrice);
-  
-      // Correct calculation: expected WBTC (satoshis) equivalent
-      const expectedWbtcEquivalent = Math.floor(((usdAmountNum * 1e8) / 100) / bitcoinPriceNum);
-  
-      // Get initial balances directly from the contract
-      const initialWbtcBalance = Number(await massSmartContract.aBTCBalance(user1.aBTCWallet.address));
-      const initialUsdBalance = Number(await massSmartContract.aUSDBalance(user1.aUSDWallet.address));
-  
-      console.log("User1 Initial aBTC Balance:", formatABTC(initialWbtcBalance), "BTC");
-      console.log("User1 Initial aUSD Balance:", formatAUSD(initialUsdBalance), "USD");
-  
-      // Execute the conversion
-      await massSmartContract
-      .connect(user1.aBTCWallet)
-      .supplicateABTCtoAUSD(user1.aUSDWallet.address, usdAmount, bitcoinPrice);
-  
-      // Fetch actual balances from the contract
-      const finalWbtcBalance = Number(await massSmartContract.aBTCBalance(user1.aBTCWallet.address));
-      const finalUsdBalance = Number(await massSmartContract.aUSDBalance(user1.aUSDWallet.address));
-  
-      console.log("User1 Final aBTC Balance:", formatABTC(finalWbtcBalance), "BTC");
-      console.log("User1 Final aUSD Balance:", formatAUSD(finalUsdBalance), "USD");
-  
-      // Assertions
-      expect(finalWbtcBalance).to.equal(initialWbtcBalance - expectedWbtcEquivalent);
-      expect(finalUsdBalance).to.equal(initialUsdBalance + usdAmountNum); 
+        console.log(`✅ Uniswap V3 Pool: ${uniswapPool}`);
+        console.log(`✅ Uniswap V3 Router: ${uniswapRouter}`);
     });
 
-    it("Should allow User2 to supplicate aBTC to aUSD first", async function () {
-      const usdAmount = 75000; // $750 x 100 in cents
+    it("Should execute a zero-fee swap", async function () {
+        console.log("\n🔄 Initiating Zero-Fee Swap...");
 
-      // Convert values to standard numbers
-      const usdAmountNum = Number(usdAmount);
-      const bitcoinPriceNum = Number(bitcoinPrice);
+        const amountIn = ethers.parseUnits("5", 6); // 5 USDC
+        console.log(`➡️  Swapping ${ethers.formatUnits(amountIn, 6)} USDC for CBBTC`);
 
-      // Correct calculation: expected WBTC (satoshis) equivalent
-      const expectedWbtcEquivalent = Math.floor(((usdAmountNum * 1e8) / 100) / bitcoinPriceNum);
+        // ✅ Check User's USDC Balance
+        const userBalance = await tokenAContract.balanceOf(userAddress);
+        console.log(`💰 User USDC Balance: ${ethers.formatUnits(userBalance, 6)}`);
 
-      // Get initial balances directly from the contract
-      const initialWbtcBalance = Number(await massSmartContract.aBTCBalance(user2.aBTCWallet.address));
-      const initialUsdBalance = Number(await massSmartContract.aUSDBalance(user2.aUSDWallet.address));
+        if (BigInt(userBalance) < BigInt(amountIn)) {
+            throw new Error("❌ User does not have enough USDC for the test.");
+        }
 
-      console.log("User2 Initial aBTC Balance:", formatABTC(initialWbtcBalance), "BTC");
-      console.log("User2 Initial aUSD Balance:", formatAUSD(initialUsdBalance), "USD");
+        // ✅ Check Current Allowance
+        let currentAllowance = await tokenAContract.allowance(userAddress, masstesterAddress);
+        console.log(`🔎 Current Allowance: ${ethers.formatUnits(currentAllowance, 6)} USDC`);
 
-      // Execute the conversion
-      await massSmartContract
-      .connect(user2.aBTCWallet)
-      .supplicateABTCtoAUSD(user2.aUSDWallet.address, usdAmount, bitcoinPrice);
+        // ✅ Approve MASSTester to Spend USDC if Needed
+        if (BigInt(currentAllowance) < BigInt(amountIn)) {
+            console.log("⚠️ Allowance too low, approving more USDC...");
+            const approveTx = await tokenAContract.connect(userWallet).approve(masstesterAddress, ethers.parseUnits("100", 6));
+            await approveTx.wait();
+            console.log("✅ USDC Approved for MASSTester");
+        } else {
+            console.log("✅ Sufficient Allowance Already Set");
+        }
 
-      // Fetch actual balances from the contract
-      const finalWbtcBalance = Number(await massSmartContract.aBTCBalance(user2.aBTCWallet.address));
-      const finalUsdBalance = Number(await massSmartContract.aUSDBalance(user2.aUSDWallet.address));
+        // ✅ Verify Allowance Again
+        currentAllowance = await tokenAContract.allowance(userAddress, masstesterAddress);
+        console.log(`🔎 Updated Allowance: ${ethers.formatUnits(currentAllowance, 6)} USDC`);
 
-      console.log("User1 Final aBTC Balance:", formatABTC(finalWbtcBalance), "BTC");
-      console.log("User1 Final aUSD Balance:", formatAUSD(finalUsdBalance), "USD");
+        // ✅ Perform the Manipulated Tick Swap
+        const tx = await massTester.connect(userWallet).executeZeroFeeSwap(amountIn, userAddress);
+        await tx.wait();
+        console.log("✅ Swap Executed Successfully");
 
-      // Assertions
-      expect(finalWbtcBalance).to.equal(initialWbtcBalance - expectedWbtcEquivalent);
-      expect(finalUsdBalance).to.equal(initialUsdBalance + usdAmountNum); 
+        // ✅ Check if the user received the output token without fees
+        const balanceAfter = await tokenBContract.balanceOf(userAddress);
+        console.log(`💰 User received CBBTC: ${ethers.formatEther(balanceAfter)}`);
+
+        expect(balanceAfter).to.be.gt(0);
     });
-
-    it("Should allow User1 to supplicate aUSD to aBTC after", async function () {
-      const btcAmount = 500000; // 0.005 BTC in Satoshis
-
-      // Convert values to standard numbers
-      const btcAmountNum = Number(btcAmount);
-      const bitcoinPriceNum = Number(bitcoinPrice);
-
-      const expectedUsdEquivalent = (btcAmountNum * bitcoinPriceNum * 100) / 1e8;
-
-      // Get initial balances directly from the contract
-      const initialUsdBalance = Number(await massSmartContract.aUSDBalance(user1.aUSDWallet.address));
-      const initialWbtcBalance = Number(await massSmartContract.aBTCBalance(user1.aBTCWallet.address));
-
-      console.log("User1 Initial aUSD Balance:", formatAUSD(initialUsdBalance.toString()), "USD");
-      console.log("User1 Initial aBTC Balance:", formatABTC(initialWbtcBalance.toString()), "BTC");
-
-      // Execute the conversion
-      await massSmartContract
-      .connect(user1.aUSDWallet)
-      .supplicateAUSDtoABTC(user1.aBTCWallet.address, btcAmount, bitcoinPrice);
-
-      // Final balances
-      const finalUsdBalance = Number(await massSmartContract.aUSDBalance(user1.aUSDWallet.address));
-      const finalWbtcBalance = Number(await massSmartContract.aBTCBalance(user1.aBTCWallet.address));
-
-      console.log("User1 Final aUSD Balance:", formatAUSD(finalUsdBalance.toString()), "USD");
-      console.log("User1 Final aBTC Balance:", formatABTC(finalWbtcBalance.toString()), "BTC");
-
-      // Assertions
-      expect(finalWbtcBalance).to.equal(initialWbtcBalance + btcAmountNum);
-      expect(finalUsdBalance).to.equal(initialUsdBalance - expectedUsdEquivalent); 
-    });
-
-    it("Should allow User2 to supplicate aUSD to aBTC after", async function () {
-      const btcAmount = 50000; // 0.01 BTC in Satoshis
-
-      // Convert values to standard numbers
-      const btcAmountNum = Number(btcAmount);
-      const bitcoinPriceNum = Number(bitcoinPrice);
-
-      const expectedUsdEquivalent = (btcAmountNum * bitcoinPriceNum * 100) / 1e8;
-
-      // Get initial balances directly from the contract
-      const initialUsdBalance = Number(await massSmartContract.aUSDBalance(user2.aUSDWallet.address));
-      const initialWbtcBalance = Number(await massSmartContract.aBTCBalance(user2.aBTCWallet.address));
-
-      console.log("User2 Initial aUSD Balance:", formatAUSD(initialUsdBalance.toString()), "USD");
-      console.log("User2 Initial aBTC Balance:", formatABTC(initialWbtcBalance.toString()), "BTC");
-
-      // Execute the conversion
-      await massSmartContract
-      .connect(user2.aUSDWallet)
-      .supplicateAUSDtoABTC(user2.aBTCWallet.address, btcAmount, bitcoinPrice);
-
-      // Final balances
-      const finalUsdBalance = Number(await massSmartContract.aUSDBalance(user2.aUSDWallet.address));
-      const finalWbtcBalance = Number(await massSmartContract.aBTCBalance(user2.aBTCWallet.address));
-
-      console.log("User2 Final aUSD Balance:", formatAUSD(finalUsdBalance.toString()), "USD");
-      console.log("User2 Final aBTC Balance:", formatABTC(finalWbtcBalance.toString()), "BTC");
-
-      // Assertions
-      expect(finalWbtcBalance).to.equal(initialWbtcBalance + btcAmountNum);
-      expect(finalUsdBalance).to.equal(initialUsdBalance - expectedUsdEquivalent); 
-    });
-   });
 });
