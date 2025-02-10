@@ -7,6 +7,9 @@
 ## Test
 - TransferOwnership of aBTC and aBTC (see Base Swap Platform Design chat)
 - Check periodically cbBTC amount, if cbBTC > aBTC, then cbBTC - aBTC = cbBTCamount to mint into aBTC
+yarn hardhat run scripts/deploy.ts --network base
+yarn hardhat test --network base
+
 
 ### Example: MASS: Market Automated Supplication System
 

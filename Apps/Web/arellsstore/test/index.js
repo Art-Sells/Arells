@@ -6,9 +6,9 @@ dotenv.config();
 
 describe("MASSTester Swap Test", function () {
     let massTester, tokenAContract, tokenBContract;
-    let userAddress = "0xE6a1218F4E2F514a3fC215758D450AaC632B0DE3";
     let userWallet;
-    let masstesterAddress = "0x00922a1FF79f500985dd325149DBb6De823BFB24";
+    let userAddress = "0xE6a1218F4E2F514a3fC215758D450AaC632B0DE3";
+    let masstesterAddress = "0x5BBC6A453EA91049Bd176610653529a6Ca0e2AF6";
 
     let uniswapPool = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef"; // USDC/CBBTC Pool
     let uniswapRouter = "0xE592427A0AEce92De3Edee1F18E0157C05861564"; // Uniswap V3 Router
@@ -36,7 +36,16 @@ describe("MASSTester Swap Test", function () {
         console.log("\n🔄 Initiating Zero-Fee Swap...");
 
         const amountIn = ethers.parseUnits("5", 6); // 5 USDC
-        console.log(`➡️  Swapping ${ethers.formatUnits(amountIn, 6)} USDC for CBBTC`);
+        console.log(`➡️ Swapping ${ethers.formatUnits(amountIn, 6)} USDC for CBBTC`);
+
+        // ✅ Check Uniswap Pool Liquidity
+        const poolContract = await ethers.getContractAt("IUniswapV3Pool", uniswapPool, ethers.provider);
+        const poolLiquidity = await poolContract.liquidity();
+        console.log(`💧 Uniswap Pool Liquidity: ${poolLiquidity}`);
+
+        if (BigInt(poolLiquidity) === BigInt(0)) {
+            throw new Error("❌ Uniswap Pool has no liquidity!");
+        }
 
         // ✅ Check User's USDC Balance
         const userBalance = await tokenAContract.balanceOf(userAddress);
@@ -48,28 +57,24 @@ describe("MASSTester Swap Test", function () {
 
         // ✅ Check Current Allowance
         let currentAllowance = await tokenAContract.allowance(userAddress, masstesterAddress);
-        console.log(`🔎 Current Allowance: ${ethers.formatUnits(currentAllowance, 6)} USDC`);
+        console.log(`🔎 Current Allowance Before Approval: ${ethers.formatUnits(currentAllowance, 6)} USDC`);
 
-        // ✅ Approve MASSTester to Spend USDC if Needed
-        if (BigInt(currentAllowance) < BigInt(amountIn)) {
-            console.log("⚠️ Allowance too low, approving more USDC...");
-            const approveTx = await tokenAContract.connect(userWallet).approve(masstesterAddress, ethers.parseUnits("100", 6));
-            await approveTx.wait();
-            console.log("✅ USDC Approved for MASSTester");
-        } else {
-            console.log("✅ Sufficient Allowance Already Set");
-        }
+        // ✅ Approve USDC
+        console.log("🔄 Approving 5 USDC for MASSTester...");
+        const approveTx = await tokenAContract.connect(userWallet).approve(masstesterAddress, amountIn);
+        await approveTx.wait();
+        console.log("✅ 5 USDC Approved");
 
-        // ✅ Verify Allowance Again
-        currentAllowance = await tokenAContract.allowance(userAddress, masstesterAddress);
-        console.log(`🔎 Updated Allowance: ${ethers.formatUnits(currentAllowance, 6)} USDC`);
-
-        // ✅ Perform the Manipulated Tick Swap
+        // ✅ Perform Swap
         const tx = await massTester.connect(userWallet).executeZeroFeeSwap(amountIn, userAddress);
         await tx.wait();
         console.log("✅ Swap Executed Successfully");
 
-        // ✅ Check if the user received the output token without fees
+        // ✅ Check Router's Balance (Uniswap must receive USDC)
+        const routerBalance = await tokenAContract.balanceOf(uniswapRouter);
+        console.log(`💡 Uniswap Router USDC Balance: ${ethers.formatUnits(routerBalance, 6)}`);
+
+        // ✅ Check if the user received the output token
         const balanceAfter = await tokenBContract.balanceOf(userAddress);
         console.log(`💰 User received CBBTC: ${ethers.formatEther(balanceAfter)}`);
 
