@@ -8,10 +8,10 @@ describe("MASSTester Swap Test", function () {
     let massTester, tokenAContract, tokenBContract;
     let userWallet;
     let userAddress = "0xE6a1218F4E2F514a3fC215758D450AaC632B0DE3";
-    let masstesterAddress = "0x5BBC6A453EA91049Bd176610653529a6Ca0e2AF6";
+    let masstesterAddress = "0x8bF7C878EaF271509aCc90d82726865eF45cCAF8";
 
     let uniswapPool = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef"; // USDC/CBBTC Pool
-    let uniswapRouter = "0xE592427A0AEce92De3Edee1F18E0157C05861564"; // Uniswap V3 Router
+    let uniswapRouter = "0x2626664c2603336E57B271c5C0b26F421741e481"; // Uniswap V3 Router on Base
 
     before(async function () {
         console.log("\n🚀 Connecting to Deployed Contracts on Base...");
@@ -61,7 +61,9 @@ describe("MASSTester Swap Test", function () {
 
         // ✅ Approve USDC
         console.log("🔄 Approving 5 USDC for MASSTester...");
-        const approveTx = await tokenAContract.connect(userWallet).approve(masstesterAddress, amountIn);
+        const approveTx = await tokenAContract.connect(userWallet).approve(masstesterAddress, amountIn, {
+            gasPrice: ethers.parseUnits(".35", "gwei"), // Adjust gas price
+        });
         await approveTx.wait();
         console.log("✅ 5 USDC Approved");
 
