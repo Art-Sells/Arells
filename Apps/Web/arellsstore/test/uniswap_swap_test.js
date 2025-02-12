@@ -15,21 +15,28 @@ async function main() {
     const tokenA = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"; // USDC
     const tokenB = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf"; // CBBTC
 
-    // Corrected ABI format
     const ISwapRouterABI = [
-        "function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256)"
+        "function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256)",
+        "function multicall(bytes[] calldata data) external payable returns (bytes[] memory results)",
+        "function exactOutputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountOut, uint256 amountInMaximum, uint160 sqrtPriceLimitX96)) external payable returns (uint256)"
     ];
     
-    // Fix Contract Initialization
     const router = new ethers.Contract(routerAddress, ISwapRouterABI, userWallet);
     
-    if (!router) {
+    if (!router || !router.interface) {
         console.error("❌ ERROR: Router contract failed to initialize. Check address and ABI.");
         return;
     }
+    console.log("✅ Router contract initialized successfully.");
+    
+    // Correct function check
+    const availableFunctions = router.interface.fragments.map(f => f.name);
+    console.log("📜 Available Router Functions:", availableFunctions);
 
-    console.log("🔎 Checking available router functions...");
-    console.log("📜 Available Router Functions:", Object.keys(router.functions));
+    if (!availableFunctions.includes("exactInputSingle")) {
+        console.error("❌ ERROR: `exactInputSingle` function not found in router contract! Check ABI or contract address.");
+        return;
+    }
 
     const pool = await ethers.getContractAt("IUniswapV3Pool", poolAddress, ethers.provider);
     const usdcContract = await ethers.getContractAt("IERC20", tokenA, userWallet);
