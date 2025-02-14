@@ -15,28 +15,17 @@ async function main() {
     const tokenA = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"; // USDC
     const tokenB = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf"; // CBBTC
 
-    const ISwapRouterABI = [
-        "function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256)",
-        "function multicall(bytes[] calldata data) external payable returns (bytes[] memory results)",
-        "function exactOutputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountOut, uint256 amountInMaximum, uint160 sqrtPriceLimitX96)) external payable returns (uint256)"
-    ];
-    
-    const router = new ethers.Contract(routerAddress, ISwapRouterABI, userWallet);
-    
-    if (!router || !router.interface) {
-        console.error("❌ ERROR: Router contract failed to initialize. Check address and ABI.");
-        return;
-    }
-    console.log("✅ Router contract initialized successfully.");
-    
-    // Correct function check
-    const availableFunctions = router.interface.fragments.map(f => f.name);
-    console.log("📜 Available Router Functions:", availableFunctions);
+    const FEE_TIER = 500; // ✅ Updated to 0.05% (500 in Uniswap V3)
 
-    if (!availableFunctions.includes("exactInputSingle")) {
-        console.error("❌ ERROR: `exactInputSingle` function not found in router contract! Check ABI or contract address.");
+    const router = await ethers.getContractAt("ISwapRouter", routerAddress, userWallet);
+
+    if (!router) {
+        console.error("❌ ERROR: Router contract failed to initialize.");
         return;
     }
+
+    console.log("✅ Router contract initialized successfully.");
+    console.log("📜 Available Router Functions:", router.interface.fragments.map(f => f.name));
 
     const pool = await ethers.getContractAt("IUniswapV3Pool", poolAddress, ethers.provider);
     const usdcContract = await ethers.getContractAt("IERC20", tokenA, userWallet);
@@ -53,56 +42,67 @@ async function main() {
     const userBalance = await usdcContract.balanceOf(await userWallet.getAddress());
     console.log(`💰 User USDC Balance: ${ethers.formatUnits(userBalance, 6)}`);
 
-    const amountIn = ethers.parseUnits("10", 6);
+    const amountIn = ethers.parseUnits("10", 6); // 10 USDC
 
     if (BigInt(userBalance) < BigInt(amountIn)) {
         console.log("❌ Not enough USDC! Exiting...");
         return;
     }
 
-    // Approve Uniswap Router
-    console.log("🔄 Approving USDC for Uniswap Router...");
-    const approveTx = await usdcContract.connect(userWallet).approve(routerAddress, amountIn);
-    await approveTx.wait();
-    console.log("✅ USDC Approved");
+    // **Check Allowance**
+    const allowance = await usdcContract.allowance(userWallet.address, routerAddress);
+    console.log(`🔎 Current Allowance: ${ethers.formatUnits(allowance, 6)} USDC`);
 
-    // Get expected swap output
-    console.log("🔍 Checking expected output amount...");
+    if (BigInt(allowance) < BigInt(amountIn)) {
+        console.log("🔄 Approving USDC for Uniswap Router...");
+        const approveTx = await usdcContract.connect(userWallet).approve(routerAddress, amountIn);
+        await approveTx.wait();
+        console.log("✅ USDC Approved");
+    } else {
+        console.log("✅ Router already has enough allowance.");
+    }
+
+    // **Get Estimated Output**
+    let estimatedAmountOut;
     try {
-        const quote = await router.callStatic.exactInputSingle({
+        estimatedAmountOut = await router.callStatic.exactInputSingle({
             tokenIn: tokenA,
             tokenOut: tokenB,
-            fee: 3000,
+            fee: FEE_TIER, // ✅ Using 0.05% fee tier
             recipient: userWallet.address,
             deadline: Math.floor(Date.now() / 1000) + 300,
             amountIn: amountIn,
-            amountOutMinimum: 0,
+            amountOutMinimum: 0, // Allow any slippage
             sqrtPriceLimitX96: 0
         });
-
-        console.log(`💰 Expected CBBTC Output: ${ethers.formatEther(quote)}`);
+        console.log(`💰 Estimated CBBTC Output: ${ethers.formatEther(estimatedAmountOut)}`);
     } catch (error) {
-        console.error("❌ ERROR calling exactInputSingle:", error);
+        console.error("❌ ERROR calling exactInputSingle (quote estimation):", error);
         return;
     }
 
-    // Execute the swap
+    // **Perform Swap**
     console.log("🔄 Executing Swap on Uniswap...");
-    const tx = await router.exactInputSingle({
-        tokenIn: tokenA,
-        tokenOut: tokenB,
-        fee: 3000,
-        recipient: userWallet.address,
-        deadline: Math.floor(Date.now() / 1000) + 300,
-        amountIn: amountIn,
-        amountOutMinimum: 1, // Ensure a minimum return
-        sqrtPriceLimitX96: 0
-    });
+    try {
+        const tx = await router.connect(userWallet).exactInputSingle({
+            tokenIn: tokenA,
+            tokenOut: tokenB,
+            fee: FEE_TIER, // ✅ Using 0.05% fee tier
+            recipient: userWallet.address,
+            deadline: Math.floor(Date.now() / 1000) + 300,
+            amountIn: amountIn,
+            amountOutMinimum: estimatedAmountOut, // ✅ Ensure minimum output
+            sqrtPriceLimitX96: 0
+        });
 
-    await tx.wait();
-    console.log("✅ Swap Successful!");
+        await tx.wait();
+        console.log("✅ Swap Successful!");
+    } catch (error) {
+        console.error("❌ ERROR Executing Swap:", error);
+        return;
+    }
 
-    // Check new CBBTC balance
+    // **Check New CBBTC Balance**
     const newBalance = await cbbtcContract.balanceOf(await userWallet.getAddress());
     console.log(`💰 User CBBTC Balance After Swap: ${ethers.formatEther(newBalance)}`);
 }
