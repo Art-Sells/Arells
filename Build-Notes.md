@@ -8,6 +8,7 @@
 - TransferOwnership of aBTC and aBTC (see Base Swap Platform Design chat)
 - Check periodically cbBTC amount, if cbBTC > aBTC, then cbBTC - aBTC = cbBTCamount to mint into aBTC
 yarn hardhat run scripts/deploy.ts --network base
+yarn hardhat run test/uniswap_swap_test.js --network base
 yarn hardhat test --network base
 
 

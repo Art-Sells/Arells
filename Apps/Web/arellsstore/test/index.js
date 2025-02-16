@@ -8,7 +8,7 @@ describe("MASSTester Swap Test", function () {
     let massTester, tokenAContract, tokenBContract;
     let userWallet;
     let userAddress = "0xE6a1218F4E2F514a3fC215758D450AaC632B0DE3";
-    let masstesterAddress = "0x8bF7C878EaF271509aCc90d82726865eF45cCAF8";
+    let masstesterAddress = "0x97582f829eB649B908c53965B1A8611F5ae70133";
 
     let uniswapPool = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef"; // USDC/CBBTC Pool
     let uniswapRouter = "0x2626664c2603336E57B271c5C0b26F421741e481"; // Uniswap V3 Router on Base
