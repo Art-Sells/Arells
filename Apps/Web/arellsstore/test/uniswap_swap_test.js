@@ -24,19 +24,28 @@ async function main() {
         throw new Error("❌ ERROR: SWAP_ROUTER_ABI.abi is undefined! Check the import path.");
     }
 
-    console.log("🔍 Debug: Router ABI Functions:", SWAP_ROUTER_ABI.abi.map(f => f.name));
+    console.log("🔍 Debug: Checking SWAP_ROUTER_ABI...");
+    console.log(SWAP_ROUTER_ABI.abi.find(f => f.name === "exactInputSingle"));
 
     // **Initialize Router Contract with Signer**
     const router = new ethers.Contract(routerAddress, SWAP_ROUTER_ABI.abi, userWallet);
+    console.log("🔍 Debug: Checking Router Interface:");
+    console.log(router.interface);
     console.log("✅ Router contract initialized successfully.");
 
     // **Debug: Ensure `exactInputSingle` Exists**
-    const routerFunctions = Object.keys(router.interface?.functions || {});
-    console.log("🔎 Available Router Functions:", routerFunctions);
+    const functionNames = router.interface.fragments
+    .filter(frag => frag.type === "function")
+    .map(frag => frag.name);
 
-    if (!routerFunctions.includes("exactInputSingle")) {
+    console.log("🔎 Extracted Router Functions:", functionNames);
+
+    // **✅ Fix: Use functionNames Instead of routerFunctions**
+    if (!functionNames.includes("exactInputSingle")) {
         throw new Error("❌ ERROR: exactInputSingle function not found in router contract!");
     }
+
+    console.log("✅ exactInputSingle exists, proceeding with swap...");
     // **Declare `amountIn`**
     const amountIn = ethers.parseUnits("10", 6); // ✅ 10 USDC
 
