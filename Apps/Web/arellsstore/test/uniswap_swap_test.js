@@ -120,8 +120,6 @@ async function main() {
 
     const quoter = new ethers.Contract(quoterAddress, QUOTER_ABI, provider);
 
-    const MAX_UINT160 = "1461501637330902918203684832716283019655932542975"; // 2^160 - 1
-
     console.log("🔍 Checking if Pool Fee Tier Exists...");
 
     // ✅ Fetch the actual supported fee tiers from Uniswap V3
@@ -146,12 +144,59 @@ async function main() {
         console.log("🔄 Swapping token order...");
         tokenIn = tokenB;
         tokenOut = tokenA;
+        console.log(`🔍 Token In: ${tokenIn}, Token Out: ${tokenOut}`);
     }
     
     // ✅ Estimate Swap Output with FIXED sqrtPriceLimitX96
     console.log("🔍 Estimating Swap Output...");
+
+    // ✅ Use MAX_UINT160 to avoid pricing limits that may cause reverts
+    const sqrtPriceLimitX96 = "1461501637330902918203684832716283019655932542975"; // 2^160 - 1
+    console.log(`🔹 Updated Sqrt Price Limit X96: ${sqrtPriceLimitX96}`);
+    
+    // ✅ Log the exact parameters for debugging
+    console.log("\n🔍 Debugging Quoter Call Data...");
+    console.log(`🔹 Token In: ${tokenIn}`);
+    console.log(`🔹 Token Out: ${tokenOut}`);
+    console.log(`🔹 Pool Fee Tier: ${poolFee}`);
+    console.log(`🔹 Amount In: ${ethers.formatUnits(amountIn, 6)} USDC`);
+    console.log(`🔹 Sqrt Price Limit X96: ${sqrtPriceLimitX96}`);
+
+    console.log("\n🔍 Encoding Quoter Call Data with Updated `sqrtPriceLimitX96`...");
+    const callData = quoter.interface.encodeFunctionData("quoteExactInputSingle", [
+        tokenIn, tokenOut, poolFee, amountIn, sqrtPriceLimitX96
+    ]);
+    console.log(`🔹 Encoded Call Data: ${callData}`);
+
+    // ✅ Debug: Use staticCall to test if Quoter call reverts
     try {
-        estimatedOutput = await quoter.quoteExactInputSingle(tokenIn, tokenOut, poolFee, amountIn, MAX_UINT160);
+        console.log("🔍 Testing Quoter Call with staticCall...");
+        const testCall = await provider.call({ to: quoterAddress, data: callData });
+        console.log("✅ Quoter Call Successful:", testCall);
+    } catch (error) {
+        console.error("❌ Quoter Call Failed! Debugging Revert Reason...", error);
+
+        // ✅ Capture revert reason if available
+        if (error.data) {
+            console.error("🔍 Revert Reason Data:", error.data);
+        }
+
+        throw new Error("Quoter contract call failed. Check token order, fee tier, or liquidity.");
+    }
+    
+    // ✅ Debug: Use staticCall to test if Quoter call reverts
+    try {
+        console.log("🔍 Testing Quoter Call with staticCall...");
+        const testCall = await provider.call({ to: quoterAddress, data: callData });
+        console.log("✅ Quoter Call Successful:", testCall);
+    } catch (error) {
+        console.error("❌ Quoter Call Failed:", error);
+        throw new Error("Quoter contract call failed. Check token order and fee tier.");
+    }
+    
+    // ✅ Proceed with actual swap estimation
+    try {
+        estimatedOutput = await quoter.quoteExactInputSingle(tokenIn, tokenOut, poolFee, amountIn, sqrtPriceLimitX96);
         console.log(`✅ Estimated Output: ${ethers.formatUnits(estimatedOutput, 8)} CBBTC`);
     } catch (error) {
         console.error("❌ ERROR estimating swap output:", error);
