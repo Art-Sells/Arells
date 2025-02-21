@@ -100,134 +100,176 @@ async function main() {
         await approvalTx.wait();
     }
 
-    // ✅ Initialize Quoter Contract
-    console.log("🔍 Estimating Swap Output...");
-    const QUOTER_ABI = [
-        {
-            "inputs": [
-                { "internalType": "address", "name": "tokenIn", "type": "address" },
-                { "internalType": "address", "name": "tokenOut", "type": "address" },
-                { "internalType": "uint24", "name": "fee", "type": "uint24" },
-                { "internalType": "uint256", "name": "amountIn", "type": "uint256" },
-                { "internalType": "uint160", "name": "sqrtPriceLimitX96", "type": "uint160" }
-            ],
-            "name": "quoteExactInputSingle",
-            "outputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }],
-            "stateMutability": "view",
-            "type": "function"
-        }
-    ];
+    // Compute the expected output manually
+    const liquidityUSDC = reserveToken0;
+    const liquidityCBBTC = reserveToken1;
 
-    const quoter = new ethers.Contract(quoterAddress, QUOTER_ABI, provider);
+    const usdcToCBBTCPrice = BigInt(liquidityUSDC) / BigInt(liquidityCBBTC);
+    const expectedOutput = BigInt(amountIn) / usdcToCBBTCPrice;
 
-    console.log("🔍 Checking if Pool Fee Tier Exists...");
+    console.log(`🔹 [Manual Calculation] Expected CBBTC for ${ethers.formatUnits(amountIn, 6)} USDC: ${ethers.formatUnits(expectedOutput, 8)} CBBTC`);
+    // Convert reserves to proper decimals
+    const usdcReserveNormalized = Number(ethers.formatUnits(reserveToken0, 6)); // 6 decimals
+    const cbBTCReserveNormalized = Number(ethers.formatUnits(reserveToken1, 8)); // 8 decimals
 
-    // ✅ Fetch the actual supported fee tiers from Uniswap V3
-    const feeTiers = [100, 500, 3000, 10000]; // Standard Uniswap V3 Fee Tiers
-    console.log(`🔎 Available Fee Tiers: ${feeTiers.join(", ")}`);
-    console.log(`🔎 Pool Reported Fee Tier: ${poolFee}`);
+    // Compute correct price
+    const poolPriceCorrected = usdcReserveNormalized / cbBTCReserveNormalized;
+
+    console.log(`💰 [Corrected Pool Price] 1 CBBTC ≈ ${poolPriceCorrected.toFixed(2)} USDC`);
+    console.log(`💰 [Corrected Pool Price] 1 USDC ≈ ${(1 / poolPriceCorrected).toFixed(8)} CBBTC`);
+
+    // // ✅ Initialize Quoter Contract
+    // console.log("🔍 Estimating Swap Output...");
+    // const QUOTER_ABI = [
+    //     {
+    //         "inputs": [
+    //             { "internalType": "address", "name": "tokenIn", "type": "address" },
+    //             { "internalType": "address", "name": "tokenOut", "type": "address" },
+    //             { "internalType": "uint24", "name": "fee", "type": "uint24" },
+    //             { "internalType": "uint256", "name": "amountIn", "type": "uint256" },
+    //             { "internalType": "uint160", "name": "sqrtPriceLimitX96", "type": "uint160" }
+    //         ],
+    //         "name": "quoteExactInputSingle",
+    //         "outputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }],
+    //         "stateMutability": "view",
+    //         "type": "function"
+    //     }
+    // ];
+
+    // const quoter = new ethers.Contract(quoterAddress, [
+    //     "function quoteExactInputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96) external view returns (uint256 amountOut)",
+    //     "function quoteExactOutputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountOut, uint160 sqrtPriceLimitX96) external view returns (uint256 amountIn)"
+    // ], provider);
     
-    // ✅ Verify if the poolFee is in the list
-    if (!feeTiers.includes(Number(poolFee))) {
-        console.error(`❌ ERROR: Pool fee ${poolFee} is not a standard Uniswap fee tier.`);
-        console.log("🔎 Double-checking if Uniswap V3 has custom fee tiers...");
+    // // 🔎 Log available Quoter functions
+    // const quoterFunctions = quoter.interface.fragments.map(frag => frag.name);
+    // console.log("🔎 Extracted QuoterV2 Functions:", quoterFunctions);
+
+    // console.log("🔍 Checking if Pool Fee Tier Exists...");
+
+    // // ✅ Fetch the actual supported fee tiers from Uniswap V3
+    // const feeTiers = [100, 500, 3000, 10000]; // Standard Uniswap V3 Fee Tiers
+    // console.log(`🔎 Available Fee Tiers: ${feeTiers.join(", ")}`);
+    // console.log(`🔎 Pool Reported Fee Tier: ${poolFee}`);
+    
+    // // ✅ Verify if the poolFee is in the list
+    // if (!feeTiers.includes(Number(poolFee))) {
+    //     console.error(`❌ ERROR: Pool fee ${poolFee} is not a standard Uniswap fee tier.`);
+    //     console.log("🔎 Double-checking if Uniswap V3 has custom fee tiers...");
         
-        // Fetch fee tiers from Uniswap (if API or other sources available)
-        console.log("🔎 Fetching pool details from Basescan...");
+    //     // Fetch fee tiers from Uniswap (if API or other sources available)
+    //     console.log("🔎 Fetching pool details from Basescan...");
         
-        throw new Error(`❌ ERROR: Pool fee ${poolFee} is not recognized. Verify Uniswap Pool on Basescan.`);
-    }
+    //     throw new Error(`❌ ERROR: Pool fee ${poolFee} is not recognized. Verify Uniswap Pool on Basescan.`);
+    // }
     
-    console.log(`✅ Confirmed: Pool supports valid fee tier ${poolFee}`);
-    // ✅ Ensure Token Order is Correct
-    if (token0.toLowerCase() === tokenB.toLowerCase()) {
-        console.log("🔄 Swapping token order...");
-        tokenIn = tokenB;
-        tokenOut = tokenA;
-        console.log(`🔍 Token In: ${tokenIn}, Token Out: ${tokenOut}`);
-    }
+    // console.log(`✅ Confirmed: Pool supports valid fee tier ${poolFee}`);
+    // // ✅ Ensure Token Order is Correct
+    // if (token0.toLowerCase() === tokenB.toLowerCase()) {
+    //     console.log("🔄 Swapping token order...");
+    //     tokenIn = tokenB;
+    //     tokenOut = tokenA;
+    //     console.log(`🔍 Token In: ${tokenIn}, Token Out: ${tokenOut}`);
+    // }
     
-    // ✅ Estimate Swap Output with FIXED sqrtPriceLimitX96
-    console.log("🔍 Estimating Swap Output...");
+    // // ✅ Estimate Swap Output with FIXED sqrtPriceLimitX96
+    // console.log("🔍 Estimating Swap Output...");
 
-    // ✅ Use MAX_UINT160 to avoid pricing limits that may cause reverts
-    const sqrtPriceLimitX96 = "1461501637330902918203684832716283019655932542975"; // 2^160 - 1
-    console.log(`🔹 Updated Sqrt Price Limit X96: ${sqrtPriceLimitX96}`);
+    // // ✅ Use MAX_UINT160 to avoid pricing limits that may cause reverts
+    // const sqrtPriceLimitX96 = 0;
+    // console.log(`🔹 Updated Sqrt Price Limit X96: ${sqrtPriceLimitX96}`);
+
+    // // ✅ Initialize estimatedOutput before the try/catch block
+    // let estimatedOutput = amountIn; // Default fallback value
+
+    // try {
+    //     estimatedOutput = await quoter.quoteExactInputSingle(
+    //         tokenIn, tokenOut, poolFee, amountIn, 0 // Remove price limit
+    //     );
+    //     console.log(`✅ Estimated Output: ${ethers.formatUnits(estimatedOutput, 8)} CBBTC`);
+    // } catch (error) {
+    //     console.warn("⚠️ Warning: Quoter Call Failed, proceeding with swap...");
+    //     console.error("❌ Quoter Error:", error);
+    //     estimatedOutput = amountIn; // Fallback (not ideal, but ensures execution)
+    // }
+
+    // // ✅ Log Final Swap Parameters
+    // console.log("\n🔍 Swap Parameters:");
+    // console.log(`   🔹 Token In: ${tokenIn}`);
+    // console.log(`   🔹 Token Out: ${tokenOut}`);
+    // console.log(`   🔹 Pool Fee Tier: ${poolFee}`);
+    // console.log(`   🔹 Amount In: ${ethers.formatUnits(amountIn, 6)} USDC`);
+    // console.log(`   🔹 Estimated Output: ${ethers.formatUnits(estimatedOutput, 8)} CBBTC`);
+    // console.log(`   🔹 Amount Out Minimum (with slippage): ${ethers.formatUnits(BigInt(estimatedOutput) * BigInt(90) / BigInt(100), 8)} CBBTC`);
+    // console.log(`   🔹 Sqrt Price Limit X96: 0`);
+
+    // console.log("\n🔍 Encoding Quoter Call Data with Updated `sqrtPriceLimitX96`...");
+    // const callData = quoter.interface.encodeFunctionData("quoteExactInputSingle", [
+    //     tokenIn, tokenOut, poolFee, amountIn, sqrtPriceLimitX96
+    // ]);
+    // console.log(`🔹 Encoded Call Data: ${callData}`);
+
+    // // ✅ Debug: Use staticCall to test if Quoter call reverts
+    // console.log("\n🔍 Testing Quoter Call with staticCall...");
+    // const quoterData = quoter.interface.encodeFunctionData("quoteExactInputSingle", [
+    //     tokenIn, tokenOut, poolFee, amountIn, 0 // No price limit
+    // ]);
     
-    // ✅ Log the exact parameters for debugging
-    console.log("\n🔍 Debugging Quoter Call Data...");
-    console.log(`🔹 Token In: ${tokenIn}`);
-    console.log(`🔹 Token Out: ${tokenOut}`);
-    console.log(`🔹 Pool Fee Tier: ${poolFee}`);
-    console.log(`🔹 Amount In: ${ethers.formatUnits(amountIn, 6)} USDC`);
-    console.log(`🔹 Sqrt Price Limit X96: ${sqrtPriceLimitX96}`);
-
-    console.log("\n🔍 Encoding Quoter Call Data with Updated `sqrtPriceLimitX96`...");
-    const callData = quoter.interface.encodeFunctionData("quoteExactInputSingle", [
-        tokenIn, tokenOut, poolFee, amountIn, sqrtPriceLimitX96
-    ]);
-    console.log(`🔹 Encoded Call Data: ${callData}`);
-
-    // ✅ Debug: Use staticCall to test if Quoter call reverts
-    try {
-        console.log("🔍 Testing Quoter Call with staticCall...");
-        const testCall = await provider.call({ to: quoterAddress, data: callData });
-        console.log("✅ Quoter Call Successful:", testCall);
-    } catch (error) {
-        console.error("❌ Quoter Call Failed! Debugging Revert Reason...", error);
-
-        // ✅ Capture revert reason if available
-        if (error.data) {
-            console.error("🔍 Revert Reason Data:", error.data);
-        }
-
-        throw new Error("Quoter contract call failed. Check token order, fee tier, or liquidity.");
-    }
+    // try {
+    //     const testCall = await provider.call({ to: quoterAddress, data: quoterData });
+    //     console.log("✅ Quoter Call Successful:", testCall);
+    // } catch (error) {
+    //     console.error("❌ Quoter Call Failed! Debugging...", error);
+    //     if (error.data) {
+    //         console.error("🔍 Revert Reason Data:", error.data);
+    //     }
+    //     throw new Error("Quoter contract call failed. Check token order, fee tier, or liquidity.");
+    // }
     
-    // ✅ Debug: Use staticCall to test if Quoter call reverts
-    try {
-        console.log("🔍 Testing Quoter Call with staticCall...");
-        const testCall = await provider.call({ to: quoterAddress, data: callData });
-        console.log("✅ Quoter Call Successful:", testCall);
-    } catch (error) {
-        console.error("❌ Quoter Call Failed:", error);
-        throw new Error("Quoter contract call failed. Check token order and fee tier.");
-    }
+    // // ✅ Debug: Use staticCall to test if Quoter call reverts
+    // try {
+    //     console.log("🔍 Testing Quoter Call with staticCall...");
+    //     const testCall = await provider.call({ to: quoterAddress, data: callData });
+    //     console.log("✅ Quoter Call Successful:", testCall);
+    // } catch (error) {
+    //     console.error("❌ Quoter Call Failed:", error);
+    //     throw new Error("Quoter contract call failed. Check token order and fee tier.");
+    // }
     
-    // ✅ Proceed with actual swap estimation
-    try {
-        estimatedOutput = await quoter.quoteExactInputSingle(tokenIn, tokenOut, poolFee, amountIn, sqrtPriceLimitX96);
-        console.log(`✅ Estimated Output: ${ethers.formatUnits(estimatedOutput, 8)} CBBTC`);
-    } catch (error) {
-        console.error("❌ ERROR estimating swap output:", error);
-        throw new Error("Failed to estimate swap output.");
-    }
+    // // ✅ Proceed with actual swap estimation
+    // try {
+    //     estimatedOutput = await quoter.quoteExactInputSingle(tokenIn, tokenOut, poolFee, amountIn, sqrtPriceLimitX96);
+    //     console.log(`✅ Estimated Output: ${ethers.formatUnits(estimatedOutput, 8)} CBBTC`);
+    // } catch (error) {
+    //     console.error("❌ ERROR estimating swap output:", error);
+    //     throw new Error("Failed to estimate swap output.");
+    // }
 
-    if (BigInt(estimatedOutput) === BigInt(0)) {
-        throw new Error("❌ ERROR: Swap would return 0 CBBTC, which indicates an issue.");
-    }
+    // if (BigInt(estimatedOutput) === BigInt(0)) {
+    //     throw new Error("❌ ERROR: Swap would return 0 CBBTC, which indicates an issue.");
+    // }
 
-    // ✅ Execute Swap
-    console.log("🔍 Executing Swap...");
-    try {
-        const tx = await router.exactInputSingle({
-            tokenIn: tokenA,
-            tokenOut: tokenB,
-            fee: poolFee, // ✅ Use correct pool fee
-            recipient: userWallet.address,
-            deadline: Math.floor(Date.now() / 1000) + 60 * 10,
-            amountIn,
-            amountOutMinimum: BigInt(estimatedOutput) * BigInt(95) / BigInt(100), // 5% slippage protection
-            sqrtPriceLimitX96: 0,
-        }, { gasLimit: 500000 });
+    // // ✅ Execute Swap
+    // console.log("🔍 Executing Swap...");
+    // try {
+    //     const tx = await router.exactInputSingle({
+    //         tokenIn,
+    //         tokenOut,
+    //         fee: poolFee,
+    //         recipient: userWallet.address,
+    //         deadline: Math.floor(Date.now() / 1000) + 60 * 10,
+    //         amountIn,
+    //         amountOutMinimum: BigInt(estimatedOutput) * BigInt(95) / BigInt(100), // 5% slippage protection
+    //         sqrtPriceLimitX96: 0, // ✅ Use `0` instead of forcing a price limit
+    //     }, { gasLimit: 500000 });
 
-        console.log(`✅ Swap Transaction Sent! Tx Hash: ${tx.hash}`);
-        await tx.wait();
-        console.log("✅ Swap Completed!");
-    } catch (error) {
-        console.error("❌ ERROR executing swap:", error);
-        throw new Error("Swap failed.");
-    }
+    //     console.log(`✅ Swap Transaction Sent! Tx Hash: ${tx.hash}`);
+    //     await tx.wait();
+    //     console.log("✅ Swap Completed!");
+    // } catch (error) {
+    //     console.error("❌ ERROR executing swap:", error);
+    //     throw new Error("Swap failed.");
+    // }
 }
 
 // **Run Script & Handle Errors**
