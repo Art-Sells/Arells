@@ -7,7 +7,8 @@ dotenv.config();
 async function main() {
     console.log("\n🚀 Debugging Uniswap Swap with Pool & Quoter Analysis...");
 
-    const provider = ethers.provider;
+    // ✅ Initialize Provider
+    const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
     const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
     console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
@@ -20,16 +21,15 @@ async function main() {
     const USDC = ethers.getAddress("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913");
     const CBBTC = ethers.getAddress("0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf");
 
-    // ✅ Load Router & Quoter
+    // ✅ Load Router & Factory Contracts
     const router = new ethers.Contract(routerAddress, SWAP_ROUTER_ABI.abi, userWallet);
     const factory = new ethers.Contract(factoryAddress, ["function getPool(address,address,uint24) external view returns (address)"], provider);
 
     // ✅ Corrected ABI for Quoter
     const QUOTER_ABI = [
-        "function quoteExactInputSingle((address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96)) external returns (uint256 amountOut, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)"
+        "function quoteExactInputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96) external returns (uint256 amountOut, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)"
     ];
-    const quoter = new ethers.Contract(quoterAddress, QUOTER_ABI, provider);
-
+    const quoter = new ethers.Contract(quoterAddress, QUOTER_ABI, userWallet);
     // ✅ Check Router ABI
     console.log("🔍 Router ABI loaded successfully.");
     const routerFunctions = SWAP_ROUTER_ABI.abi.map(f => f.name).filter(Boolean);
@@ -37,7 +37,7 @@ async function main() {
 
     // ✅ Check Wallet Balance
     const amountIn = ethers.parseUnits("10", 6); // 10 USDC
-    const usdcContract = await ethers.getContractAt("IERC20", USDC, userWallet);
+    const usdcContract = await ethers.getContractAt("IERC20", USDC, provider);
     const balance = await usdcContract.balanceOf(userWallet.address);
     console.log(`💰 USDC Balance: ${ethers.formatUnits(balance, 6)}`);
 
@@ -50,6 +50,7 @@ async function main() {
             let tokenIn = USDC;
             let tokenOut = CBBTC;
 
+            // ✅ Ensure Token Order is Correct for Uniswap V3
             if (BigInt(USDC) > BigInt(CBBTC)) {
                 console.log("🔄 Reordering tokens for Uniswap V3 compatibility...");
                 [tokenIn, tokenOut] = [tokenOut, tokenIn];
@@ -87,22 +88,15 @@ async function main() {
                 for (const testAmount of testAmounts) {
                     try {
                         console.log(`🔹 Testing Quoter with ${ethers.formatUnits(testAmount, 6)} USDC...`);
-
-                        const params = {
-                            tokenIn,
-                            tokenOut,
-                            fee,
-                            amountIn: testAmount,
-                            sqrtPriceLimitX96: 0
-                        };
-
                         const [amountOut, sqrtPriceX96After, initializedTicksCrossed, gasEstimate] =
-                            await quoter.quoteExactInputSingle([params]);
+                        await quoter.callStatic.quoteExactInputSingle(
+                            tokenIn, tokenOut, fee, testAmount, 0
+                        );
 
-                        console.log(`✅ Estimated Output for Fee ${fee}: ${ethers.formatUnits(amountOut, 8)} CBBTC`);
-                        console.log(`🔍 Final SqrtPriceX96: ${sqrtPriceX96After}`);
-                        console.log(`📊 Initialized Ticks Crossed: ${initializedTicksCrossed}`);
-                        console.log(`⛽ Gas Estimate: ${gasEstimate}`);
+                    console.log(`✅ Estimated Output for Fee ${fee}: ${ethers.formatUnits(amountOut, 8)} CBBTC`);
+                    console.log(`🔍 Final SqrtPriceX96: ${sqrtPriceX96After}`);
+                    console.log(`📊 Initialized Ticks Crossed: ${initializedTicksCrossed}`);
+                    console.log(`⛽ Gas Estimate: ${gasEstimate}`);
                     } catch (error) {
                         console.error(`❌ Swap Estimate Failed for Fee ${fee} at ${ethers.formatUnits(testAmount, 6)} USDC:`, error.message);
                     }
@@ -117,7 +111,7 @@ async function main() {
     // ✅ Check if CBBTC has Transfer Restrictions
     console.log("\n🔍 Testing CBBTC Transfer Restrictions...");
     try {
-        const cbBTCContract = await ethers.getContractAt("IERC20", CBBTC, userWallet);
+        const cbBTCContract = await ethers.getContractAt("IERC20", CBBTC, provider);
         const cbBTCBalance = await cbBTCContract.balanceOf(userWallet.address);
         console.log(`💰 CBBTC Balance: ${ethers.formatUnits(cbBTCBalance, 8)}`);
 
