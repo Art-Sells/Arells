@@ -10,6 +10,7 @@
 yarn hardhat run scripts/deploy.ts --network base
 yarn hardhat run test/uniswap_swap_test.js --network base
 yarn hardhat test --network base
+** Remove P/K & P/K Test from e en vee
 
 
 ### Example: MASS: Market Automated Supplication System
