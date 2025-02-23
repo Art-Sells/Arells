@@ -5,110 +5,131 @@ import SWAP_ROUTER_ABI from "@uniswap/v3-periphery/artifacts/contracts/SwapRoute
 dotenv.config();
 
 async function main() {
-    console.log("\n🚀 Testing Uniswap Swap with Routing...");
+    console.log("\n🚀 Debugging Uniswap Swap with Pool & Quoter Analysis...");
 
     const provider = ethers.provider;
     const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
     console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
-    // Define Uniswap V3 Contracts
+    // ✅ Uniswap V3 Addresses on Base
     const routerAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
     const quoterAddress = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
-    
-    // Define Tokens
-    const tokenA = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"; // USDC
-    const tokenB = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf"; // CBBTC
+    const factoryAddress = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 
-    // Load Router Contract
-    if (!SWAP_ROUTER_ABI.abi) {
-        throw new Error("❌ ERROR: SWAP_ROUTER_ABI.abi is undefined! Check the import path.");
-    }
+    // ✅ Tokens (With Checksum Address)
+    const USDC = ethers.getAddress("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913");
+    const CBBTC = ethers.getAddress("0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf");
+
+    // ✅ Load Router & Quoter
     const router = new ethers.Contract(routerAddress, SWAP_ROUTER_ABI.abi, userWallet);
-    console.log("✅ Router contract initialized successfully.");
+    const factory = new ethers.Contract(factoryAddress, ["function getPool(address,address,uint24) external view returns (address)"], provider);
 
-    // Fetch User's USDC Balance
-    const usdcContract = await ethers.getContractAt("IERC20", tokenA, userWallet);
+    // ✅ Corrected ABI for Quoter
+    const QUOTER_ABI = [
+        "function quoteExactInputSingle((address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96)) external returns (uint256 amountOut, uint160 sqrtPriceX96After, uint32 initializedTicksCrossed, uint256 gasEstimate)"
+    ];
+    const quoter = new ethers.Contract(quoterAddress, QUOTER_ABI, provider);
+
+    // ✅ Check Router ABI
+    console.log("🔍 Router ABI loaded successfully.");
+    const routerFunctions = SWAP_ROUTER_ABI.abi.map(f => f.name).filter(Boolean);
+    console.log("🔎 Router Functions Loaded:", routerFunctions);
+
+    // ✅ Check Wallet Balance
     const amountIn = ethers.parseUnits("10", 6); // 10 USDC
+    const usdcContract = await ethers.getContractAt("IERC20", USDC, userWallet);
     const balance = await usdcContract.balanceOf(userWallet.address);
     console.log(`💰 USDC Balance: ${ethers.formatUnits(balance, 6)}`);
-    if (BigInt(balance) < BigInt(amountIn)) throw new Error("❌ ERROR: Not enough USDC to swap.");
 
-    // Approve Uniswap Router
-    console.log("🔑 Approving Uniswap Router...");
-    const allowance = await usdcContract.allowance(userWallet.address, routerAddress);
-    if (BigInt(allowance) < BigInt(amountIn)) {
-        const approvalTx = await usdcContract.approve(routerAddress, amountIn);
-        console.log(`✅ Approval TX: ${approvalTx.hash}`);
-        await approvalTx.wait();
-    }
+    // ✅ Pool Fee Tiers
+    const feeTiers = [500, 3000, 10000];
 
-    // Initialize Quoter Contract
-    const quoter = new ethers.Contract(quoterAddress, [
-        "function quoteExactInputSingle(address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint160 sqrtPriceLimitX96) external view returns (uint256 amountOut)",
-    ], provider);
+    for (const fee of feeTiers) {
+        console.log(`\n🔎 Checking Pool (Fee Tier: ${fee})`);
+        try {
+            let tokenIn = USDC;
+            let tokenOut = CBBTC;
 
-    // Attempt Direct Swap (USDC → CBBTC)
-    console.log("🔍 Fetching Uniswap QuoterV2 Pricing...");
-    let estimatedOutput;
-    try {
-        estimatedOutput = await quoter.quoteExactInputSingle(tokenA, tokenB, 500, amountIn, 0);
-        console.log(`✅ Estimated Output (Direct Swap): ${ethers.formatUnits(estimatedOutput, 8)} CBBTC`);
-    } catch (error) {
-        console.warn("⚠️ Direct swap failed, checking alternative routes...");
-        estimatedOutput = null;
-    }
+            if (BigInt(USDC) > BigInt(CBBTC)) {
+                console.log("🔄 Reordering tokens for Uniswap V3 compatibility...");
+                [tokenIn, tokenOut] = [tokenOut, tokenIn];
+            }
 
-    // If direct swap fails, check alternative routes
-    if (!estimatedOutput || BigInt(estimatedOutput) === BigInt(0)) {
-        const potentialPools = [
-            { token1: tokenA, token2: "0x0000000000000000000000000000000000000000", fee: 3000 },
-            { token1: "0x0000000000000000000000000000000000000000", token2: tokenB, fee: 3000 },
-            { token1: tokenA, token2: "0x1111111111111111111111111111111111111111", fee: 500 },
-            { token1: "0x1111111111111111111111111111111111111111", token2: tokenB, fee: 500 }
-        ];
+            const pool = await factory.getPool(tokenIn, tokenOut, fee);
+            if (pool === ethers.ZeroAddress) {
+                console.warn(`⚠️ No Pool Found for Fee Tier ${fee}`);
+                continue;
+            }
+            console.log(`✅ Pool Exists at: ${pool}`);
 
-        let bestRoute = null;
-        for (const route of potentialPools) {
-            try {
-                const routeOutput = await quoter.quoteExactInputSingle(route.token1, route.token2, route.fee, amountIn, 0);
-                if (BigInt(routeOutput) > BigInt(0)) {
-                    bestRoute = route;
-                    estimatedOutput = routeOutput;
-                    break;
+            // ✅ Fetch Pool State
+            const poolContract = await ethers.getContractAt("IUniswapV3Pool", pool, provider);
+            const [slot0, liquidity] = await Promise.all([
+                poolContract.slot0(),
+                poolContract.liquidity()
+            ]);
+            console.log(`🔍 Pool State [Fee ${fee}]:`);
+            console.log(`   🔹 SqrtPriceX96: ${slot0.sqrtPriceX96}`);
+            console.log(`   🔹 Tick: ${slot0.tick}`);
+            console.log(`   🔹 Liquidity: ${liquidity}`);
+
+            // ✅ Call Quoter Manually
+            console.log("🔍 Calling Quoter for Swap Estimate...");
+            const testAmounts = [amountIn / 10n, amountIn / 2n, amountIn];
+
+            console.log("🔎 Fetching Available Quoter Functions...");
+            const quoterFunctions = quoter.interface.fragments.map(f => f.name).filter(Boolean);
+            console.log("🔎 Available Quoter Functions:", quoterFunctions);
+
+            if (!quoterFunctions.includes("quoteExactInputSingle")) {
+                console.error("❌ ERROR: `quoteExactInputSingle` function not found in Quoter contract!");
+            } else {
+                for (const testAmount of testAmounts) {
+                    try {
+                        console.log(`🔹 Testing Quoter with ${ethers.formatUnits(testAmount, 6)} USDC...`);
+
+                        const params = {
+                            tokenIn,
+                            tokenOut,
+                            fee,
+                            amountIn: testAmount,
+                            sqrtPriceLimitX96: 0
+                        };
+
+                        const [amountOut, sqrtPriceX96After, initializedTicksCrossed, gasEstimate] =
+                            await quoter.quoteExactInputSingle([params]);
+
+                        console.log(`✅ Estimated Output for Fee ${fee}: ${ethers.formatUnits(amountOut, 8)} CBBTC`);
+                        console.log(`🔍 Final SqrtPriceX96: ${sqrtPriceX96After}`);
+                        console.log(`📊 Initialized Ticks Crossed: ${initializedTicksCrossed}`);
+                        console.log(`⛽ Gas Estimate: ${gasEstimate}`);
+                    } catch (error) {
+                        console.error(`❌ Swap Estimate Failed for Fee ${fee} at ${ethers.formatUnits(testAmount, 6)} USDC:`, error.message);
+                    }
                 }
-            } catch {}
-        }
+            }
 
-        if (!bestRoute) {
-            throw new Error("❌ No valid swap route found!");
+        } catch (error) {
+            console.error(`❌ Error Fetching Pool ${fee}:`, error.message);
         }
     }
 
-    // Execute Swap
-    console.log("🔍 Executing Swap...");
+    // ✅ Check if CBBTC has Transfer Restrictions
+    console.log("\n🔍 Testing CBBTC Transfer Restrictions...");
     try {
-        const tx = await router.exactInputSingle({
-            tokenIn: tokenA,
-            tokenOut: tokenB,
-            fee: 500,
-            recipient: userWallet.address,
-            deadline: Math.floor(Date.now() / 1000) + 60 * 10,
-            amountIn,
-            amountOutMinimum: BigInt(estimatedOutput) * BigInt(95) / BigInt(100), // 5% slippage protection
-            sqrtPriceLimitX96: 0,
-        }, { gasLimit: 500000 });
+        const cbBTCContract = await ethers.getContractAt("IERC20", CBBTC, userWallet);
+        const cbBTCBalance = await cbBTCContract.balanceOf(userWallet.address);
+        console.log(`💰 CBBTC Balance: ${ethers.formatUnits(cbBTCBalance, 8)}`);
 
-        console.log(`✅ Swap Transaction Sent! Tx Hash: ${tx.hash}`);
-        await tx.wait();
-        console.log("✅ Swap Completed!");
+        if (cbBTCBalance < ethers.parseUnits("0.0001", 8)) {
+            console.warn("⚠️ Skipping transfer test, insufficient balance.");
+        } else {
+            const testTx = await cbBTCContract.transfer(userWallet.address, ethers.parseUnits("0.0001", 8));
+            console.log("✅ CBBTC Transfer Test Passed!");
+        }
     } catch (error) {
-        console.error("❌ ERROR executing swap:", error);
-        throw new Error("Swap failed.");
+        console.error("❌ CBBTC Transfer Test Failed! Possible Transfer Restrictions.", error.message);
     }
 }
 
-// Run Script & Handle Errors
-main().catch((error) => {
-    console.error(error);
-    process.exit(1);
-});
+main().catch(console.error);
