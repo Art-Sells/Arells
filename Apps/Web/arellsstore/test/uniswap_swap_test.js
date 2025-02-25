@@ -10,16 +10,17 @@ const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
 const ROUTER_ADDRESS = "0x2626664c2603336E57B271c5C0b26F421741e481";
 const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 
-// ✅ Token Addresses
-const USDC = ethers.getAddress
-    ? ethers.getAddress("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913")
-    : ethers.utils.getAddress
+// ✅ Token Addresses (Ensure Compatibility with Both ethers v5 & v6)
+const USDC = ethers.utils && ethers.utils.getAddress
     ? ethers.utils.getAddress("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913")
+    : ethers.getAddress
+    ? ethers.getAddress("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913")
     : "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"; // Fallback for older ethers versions
-    const CBBTC = ethers.getAddress
-    ? ethers.getAddress("0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf")
-    : ethers.utils.getAddress
+
+const CBBTC = ethers.utils && ethers.utils.getAddress
     ? ethers.utils.getAddress("0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf")
+    : ethers.getAddress
+    ? ethers.getAddress("0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf")
     : "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf"; // Fallback for older ethers versions
 
 // ✅ Fetch ABI from BaseScan
@@ -48,7 +49,10 @@ async function main() {
     console.log("\n🚀 Debugging Uniswap Swap with Pool & Quoter Analysis...");
 
     // ✅ Initialize Provider & Wallet
-    const provider = new ethers.providers.JsonRpcProvider(process.env.BASE_RPC_URL);
+    const provider = ethers.providers && ethers.providers.JsonRpcProvider
+        ? new ethers.providers.JsonRpcProvider(process.env.BASE_RPC_URL)
+        : new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+
     const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
     const nonce = await provider.getTransactionCount(userWallet.address, "latest");
     console.log("✅ Connected to Network:", await provider.getNetwork());
@@ -56,7 +60,11 @@ async function main() {
 
     // ✅ Initialize Router & Factory
     const router = new ethers.Contract(ROUTER_ADDRESS, SWAP_ROUTER_ABI.abi, userWallet);
-    const factory = new ethers.Contract(FACTORY_ADDRESS, ["function getPool(address,address,uint24) external view returns (address)"], provider);
+    const factory = new ethers.Contract(
+        FACTORY_ADDRESS,
+        ["function getPool(address,address,uint24) external view returns (address)"],
+        provider
+    );
 
     // ✅ Fetch ABI & Initialize Quoter Contract
     const quoterABI = await fetchQuoterABI();
@@ -65,6 +73,7 @@ async function main() {
         return;
     }
 
+    // ✅ FIX: Ensure Quoter Uses a Signer
     const quoter = new ethers.Contract(QUOTER_ADDRESS, quoterABI, provider).connect(userWallet);
     console.log("✅ Quoter Contract Initialized!");
 
@@ -82,8 +91,15 @@ async function main() {
 
     // ✅ Fetch Swap Estimates
     console.log("\n🔍 Fetching Swap Estimates...");
-    const amountIn = ethers.utils.parseUnits("10", 6);
-    const testAmounts = [amountIn.div(10), amountIn.div(2), amountIn];
+    const amountIn = ethers.utils && ethers.utils.parseUnits
+    ? ethers.utils.parseUnits("10", 6) // ethers v5
+    : ethers.parseUnits("10", 6); // ethers v6
+
+    const testAmounts = [
+        amountIn / BigInt(10),  // Use `/` for bigint division in ethers v6
+        amountIn / BigInt(2),
+        amountIn
+    ];
     const feeTiers = [500, 3000, 10000];
 
     for (const fee of feeTiers) {
@@ -122,10 +138,17 @@ async function main() {
                         sqrtPriceLimitX96: 0
                     };
 
+                    // ✅ Ensure Proper Gas Settings & Transaction Parameters
                     const result = await quoter.quoteExactInputSingle(params, {
-                        gasLimit: ethers.utils.hexlify(500000),
-                        maxFeePerGas: ethers.utils.parseUnits("10", "gwei"),
-                        maxPriorityFeePerGas: ethers.utils.parseUnits("2", "gwei"),
+                        gasLimit: ethers.utils && ethers.utils.hexlify
+                            ? ethers.utils.hexlify(500000)
+                            : "0x7a120",
+                        maxFeePerGas: ethers.utils && ethers.utils.parseUnits
+                            ? ethers.utils.parseUnits("10", "gwei")
+                            : ethers.parseUnits("10", "gwei"),
+                        maxPriorityFeePerGas: ethers.utils && ethers.utils.parseUnits
+                            ? ethers.utils.parseUnits("2", "gwei")
+                            : ethers.parseUnits("2", "gwei"),
                     });
 
                     console.log(`✅ Estimated Output for Fee ${fee}: ${ethers.utils.formatUnits(result.amountOut, 8)} CBBTC`);
