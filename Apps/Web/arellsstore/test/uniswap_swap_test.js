@@ -10,18 +10,21 @@ const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
 const ROUTER_ADDRESS = "0x2626664c2603336E57B271c5C0b26F421741e481";
 const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 
-// ✅ Token Addresses (Ensure Compatibility with Both ethers v5 & v6)
-const USDC = ethers.utils && ethers.utils.getAddress
-    ? ethers.utils.getAddress("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913")
-    : ethers.getAddress
-    ? ethers.getAddress("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913")
-    : "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"; // Fallback for older ethers versions
+// ✅ Token Addresses
+const USDC = ethers.utils?.getAddress?.("0x833589fcd6edb6e08f4c7c32d4f71b54bda02913") || "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
+const CBBTC = ethers.utils?.getAddress?.("0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf") || "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
-const CBBTC = ethers.utils && ethers.utils.getAddress
-    ? ethers.utils.getAddress("0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf")
-    : ethers.getAddress
-    ? ethers.getAddress("0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf")
-    : "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf"; // Fallback for older ethers versions
+// ✅ Address Zero Compatibility
+const AddressZero = ethers.constants?.AddressZero || ethers.ZeroAddress || "0x0000000000000000000000000000000000000000";
+
+// ✅ formatUnits Compatibility
+const formatUnits = ethers.utils?.formatUnits || ethers.formatUnits;
+
+// ✅ parseUnits Compatibility
+const parseUnits = ethers.utils?.parseUnits || ethers.parseUnits;
+
+// ✅ parseEther Compatibility
+const parseEther = ethers.utils?.parseEther || ethers.parseEther;
 
 // ✅ Fetch ABI from BaseScan
 async function fetchQuoterABI() {
@@ -31,13 +34,10 @@ async function fetchQuoterABI() {
             `https://api.basescan.org/api?module=contract&action=getabi&address=${QUOTER_ADDRESS}&apikey=${process.env.BASESCAN_API_KEY}`
         );
 
-        if (response.data.status !== "1") {
-            throw new Error(`BaseScan API Error: ${response.data.message}`);
-        }
+        if (response.data.status !== "1") throw new Error(`BaseScan API Error: ${response.data.message}`);
 
         const abi = JSON.parse(response.data.result);
         console.log(`✅ ABI Fetched Successfully: ${abi.length} functions loaded.`);
-        console.log("🔍 ABI Preview:", abi.slice(0, 3)); // Debug: Show first 3 functions
         return abi;
     } catch (error) {
         console.error("❌ Failed to fetch ABI from BaseScan:", error.message);
@@ -48,40 +48,36 @@ async function fetchQuoterABI() {
 async function main() {
     console.log("\n🚀 Debugging Uniswap Swap with Pool & Quoter Analysis...");
 
-    // ✅ Initialize Provider & Wallet
-    const provider = ethers.providers && ethers.providers.JsonRpcProvider
-        ? new ethers.providers.JsonRpcProvider(process.env.BASE_RPC_URL)
-        : new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-
+    const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
     const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
+    const balance = await provider.getBalance(userWallet.address);
+
+    console.log(`💰 Wallet Balance: ${formatUnits(balance, "ether")} ETH`);
+
+    // ✅ Ensure Enough Funds for Gas (Fixed Comparison)
+    const minRequired = parseEther("0.0001");
+    if (BigInt(balance) < BigInt(minRequired)) {
+        console.error(`❌ ERROR: Insufficient funds! You need at least ${formatUnits(minRequired, "ether")} ETH.`);
+        return;
+    }
+
     const nonce = await provider.getTransactionCount(userWallet.address, "latest");
     console.log("✅ Connected to Network:", await provider.getNetwork());
     console.log(`✅ Using Test Wallet: ${userWallet.address} (Next Nonce: ${nonce})`);
 
-    // ✅ Initialize Router & Factory
     const router = new ethers.Contract(ROUTER_ADDRESS, SWAP_ROUTER_ABI.abi, userWallet);
-    const factory = new ethers.Contract(
-        FACTORY_ADDRESS,
-        ["function getPool(address,address,uint24) external view returns (address)"],
-        provider
-    );
+    const factory = new ethers.Contract(FACTORY_ADDRESS, ["function getPool(address,address,uint24) external view returns (address)"], provider);
 
-    // ✅ Fetch ABI & Initialize Quoter Contract
     const quoterABI = await fetchQuoterABI();
     if (!quoterABI) {
         console.error("❌ ERROR: Could not fetch Quoter ABI.");
         return;
     }
 
-    // ✅ FIX: Ensure Quoter Uses a Signer
-    const quoter = new ethers.Contract(QUOTER_ADDRESS, quoterABI, provider).connect(userWallet);
+    const quoter = new ethers.Contract(QUOTER_ADDRESS, quoterABI, provider);
     console.log("✅ Quoter Contract Initialized!");
 
-    // ✅ Extract Function Names
-    const quoterFunctions = quoter.interface.fragments
-        .filter(frag => frag.type === "function")
-        .map(frag => frag.name);
-
+    const quoterFunctions = quoter.interface.fragments.filter(frag => frag.type === "function").map(frag => frag.name);
     console.log("🔍 Quoter Available Functions:", quoterFunctions);
 
     if (!quoterFunctions.includes("quoteExactInputSingle")) {
@@ -89,17 +85,9 @@ async function main() {
         return;
     }
 
-    // ✅ Fetch Swap Estimates
     console.log("\n🔍 Fetching Swap Estimates...");
-    const amountIn = ethers.utils && ethers.utils.parseUnits
-    ? ethers.utils.parseUnits("10", 6) // ethers v5
-    : ethers.parseUnits("10", 6); // ethers v6
-
-    const testAmounts = [
-        amountIn / BigInt(10),  // Use `/` for bigint division in ethers v6
-        amountIn / BigInt(2),
-        amountIn
-    ];
+    const amountIn = parseUnits("10", 6);
+    const testAmounts = [amountIn / 10n, amountIn / 2n, amountIn];
     const feeTiers = [500, 3000, 10000];
 
     for (const fee of feeTiers) {
@@ -114,50 +102,33 @@ async function main() {
             }
 
             const pool = await factory.getPool(tokenIn, tokenOut, fee);
-            if (pool === ethers.constants.AddressZero) {
+            if (pool === AddressZero) {
                 console.warn(`⚠️ No Pool Found for Fee Tier ${fee}`);
                 continue;
             }
             console.log(`✅ Pool Exists at: ${pool}`);
 
+            // ✅ FIXED Gas Settings (Using `toBeHex` instead of `hexlify`)
+            const gasSettings = {
+                gasLimit: ethers.toBeHex(150000),  
+                maxFeePerGas: parseUnits("0.1", "gwei"),  
+                maxPriorityFeePerGas: parseUnits("0", "gwei"),
+            };
+
             console.log("🔍 Calling Quoter for Swap Estimate...");
             for (const testAmount of testAmounts) {
-                try {
-                    console.log(`🔹 Testing Quoter with ${ethers.utils.formatUnits(testAmount, 6)} USDC...`);
+                console.log(`🔹 Testing Quoter with ${formatUnits(testAmount, 6)} USDC...`);
+                const params = { tokenIn, tokenOut, fee, amountIn: testAmount, sqrtPriceLimitX96: 0 };
 
-                    if (!testAmount) {
-                        console.error("❌ ERROR: testAmount is undefined!");
-                        continue;
-                    }
+                // ✅ FIX: Use `callStatic` to simulate transaction
+                const result = await quoter.callStatic.quoteExactInputSingle(params);
 
-                    const params = {
-                        tokenIn,
-                        tokenOut,
-                        fee,
-                        amountIn: testAmount,
-                        sqrtPriceLimitX96: 0
-                    };
-
-                    // ✅ Ensure Proper Gas Settings & Transaction Parameters
-                    const result = await quoter.quoteExactInputSingle(params, {
-                        gasLimit: ethers.utils && ethers.utils.hexlify
-                            ? ethers.utils.hexlify(500000)
-                            : "0x7a120",
-                        maxFeePerGas: ethers.utils && ethers.utils.parseUnits
-                            ? ethers.utils.parseUnits("10", "gwei")
-                            : ethers.parseUnits("10", "gwei"),
-                        maxPriorityFeePerGas: ethers.utils && ethers.utils.parseUnits
-                            ? ethers.utils.parseUnits("2", "gwei")
-                            : ethers.parseUnits("2", "gwei"),
-                    });
-
-                    console.log(`✅ Estimated Output for Fee ${fee}: ${ethers.utils.formatUnits(result.amountOut, 8)} CBBTC`);
-                    console.log(`🔍 Final SqrtPriceX96: ${result.sqrtPriceX96After}`);
-                    console.log(`📊 Initialized Ticks Crossed: ${result.initializedTicksCrossed}`);
-                    console.log(`⛽ Gas Estimate: ${result.gasEstimate}`);
-                } catch (error) {
-                    console.error(`❌ Swap Estimate Failed for Fee ${fee} at ${ethers.utils.formatUnits(testAmount, 6)} USDC:`, error.message);
+                if (!result || !result.amountOut) {
+                    console.error(`❌ ERROR: Quoter returned null response for Fee ${fee}`);
+                    continue;
                 }
+
+                console.log(`✅ Estimated Output: ${formatUnits(result.amountOut, 8)} CBBTC`);
             }
         } catch (error) {
             console.error(`❌ Error Fetching Pool ${fee}:`, error.message);
