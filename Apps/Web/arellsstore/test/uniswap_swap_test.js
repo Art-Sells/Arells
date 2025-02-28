@@ -14,9 +14,10 @@ const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
-// ✅ Address Zero Compatibility
-const AddressZero = ethers.constants?.AddressZero || "0x0000000000000000000000000000000000000000";
+// ✅ Address Zero
+const AddressZero = ethers.ZeroAddress || "0x0000000000000000000000000000000000000000";
 
+// ✅ Fetch ABI from BaseScan
 async function fetchQuoterABI() {
     try {
         console.log("\n🔍 Fetching Quoter ABI from BaseScan...");
@@ -27,8 +28,6 @@ async function fetchQuoterABI() {
         if (response.data.status !== "1") throw new Error(`BaseScan API Error: ${response.data.message}`);
 
         const abi = JSON.parse(response.data.result);
-
-        // ✅ Debug: Print entire ABI structure
         console.log("\n🔎 Full ABI Structure:", abi);
 
         if (!Array.isArray(abi)) {
@@ -36,6 +35,12 @@ async function fetchQuoterABI() {
         }
 
         console.log(`✅ ABI Fetched Successfully: ${abi.length} functions loaded.`);
+
+        // ✅ Ensure ABI contains `quoteExactInputSingle`
+        if (!abi.some((entry) => entry.name === "quoteExactInputSingle")) {
+            throw new Error("🚨 ABI does NOT contain `quoteExactInputSingle`. Check contract compatibility.");
+        }
+
         return abi;
     } catch (error) {
         console.error("❌ Failed to fetch ABI from BaseScan:", error.message);
@@ -65,7 +70,6 @@ async function main() {
         return;
     }
 
-    // ✅ Debug: Check ABI format before using it
     console.log("\n🔍 Validating Quoter ABI Format...");
     if (!quoterABI.some((entry) => entry.type === "function")) {
         console.error("❌ ERROR: ABI does not contain function signatures.");
@@ -73,18 +77,23 @@ async function main() {
     }
     console.log("✅ ABI contains valid function signatures.");
 
-    // ✅ Initialize Quoter Contract with Validated ABI
+    // ✅ Initialize Quoter Contract
     const quoter = new ethers.Contract(QUOTER_ADDRESS, quoterABI, provider);
     console.log("✅ Quoter Contract Initialized!");
 
-    // ✅ Fix: Ensure `quoter.interface.functions` is not undefined
-    if (!quoter.interface || !quoter.interface.functions) {
-        console.error("❌ ERROR: `quoter.interface.functions` is undefined.");
-        console.log("\n🔎 Debugging ABI Interface:", quoter.interface);
+    // ✅ Debug: Log quoter contract details
+    console.log("\n🔍 Quoter Contract Debug:", quoter);
+
+    if (!quoter.interface) {
+        console.error("❌ ERROR: `quoter.interface` is undefined.");
         return;
     }
 
-    const quoterFunctions = Object.keys(quoter.interface.functions);
+    // ✅ Use `.fragments` instead of `.functions` (Ethers v6)
+    const quoterFunctions = quoter.interface.fragments
+        .filter((frag) => frag.type === "function")
+        .map((frag) => frag.name);
+
     console.log("🔍 Quoter Available Functions:", quoterFunctions);
 
     if (!quoterFunctions.includes("quoteExactInputSingle")) {
@@ -128,8 +137,14 @@ async function main() {
                         sqrtPriceLimitX96: 0,
                     };
 
-                    // ✅ Use `callStatic` to simulate without spending gas
-                    const result = await quoter.callStatic.quoteExactInputSingle(params);
+                    console.log("✅ Calling `quoteExactInputSingle` with params:", params);
+                    const result = await quoter.callStatic.quoteExactInputSingle(
+                        params.tokenIn,
+                        params.tokenOut,
+                        params.fee,
+                        params.amountIn,
+                        params.sqrtPriceLimitX96
+                    );
 
                     if (!result || !result.amountOut) {
                         console.error(`❌ ERROR: Quoter returned null response for Fee ${fee}`);
