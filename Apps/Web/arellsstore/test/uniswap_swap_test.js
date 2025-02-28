@@ -1,105 +1,45 @@
 import { ethers } from "ethers";
 import dotenv from "dotenv";
-import axios from "axios";
+import { abi as IUniswapV3PoolABI } from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
+import { abi as IUniswapV3RouterABI } from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
 
 dotenv.config();
 
-// ✅ Uniswap Contract Addresses
-const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
-const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
+const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 
-// ✅ Token Addresses
+const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
+const ROUTER_ADDRESS = "0xE592427A0AEce92De3Edee1F18E0157C05861564"; // Uniswap V3 Router
+const POOL_ADDRESS = "0xINSERT_YOUR_POOL_ADDRESS_HERE"; // Pool for the pair
+
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
-const AddressZero = "0x0000000000000000000000000000000000000000";
 
-// ✅ Fetch ABI from BaseScan
-async function fetchQuoterABI() {
-    try {
-        console.log("\n🔍 Fetching Quoter ABI from BaseScan...");
-        const response = await axios.get(
-            `https://api.basescan.org/api?module=contract&action=getabi&address=${QUOTER_ADDRESS}&apikey=${process.env.BASESCAN_API_KEY}`
-        );
+async function swapWithoutFees(amountIn) {
+    const pool = new ethers.Contract(POOL_ADDRESS, IUniswapV3PoolABI, wallet);
+    const router = new ethers.Contract(ROUTER_ADDRESS, IUniswapV3RouterABI, wallet);
 
-        if (response.data.status !== "1") throw new Error(`BaseScan API Error: ${response.data.message}`);
+    console.log("🔍 Injecting MASS Liquidity...");
+    await pool.mint(wallet.address, -887220, 887220, ethers.parseUnits("100000", 6), "0x");
 
-        const abi = typeof response.data.result === "string" ? JSON.parse(response.data.result) : response.data.result;
-        if (!Array.isArray(abi)) {
-            throw new Error("Fetched ABI is not an array. Possible malformed ABI.");
-        }
-
-        console.log(`✅ ABI Fetched Successfully: ${abi.length} functions loaded.`);
-        return abi;
-    } catch (error) {
-        console.error("❌ Failed to fetch ABI from BaseScan:", error.message);
-        return null;
-    }
-}
-
-async function main() {
-    console.log("\n🚀 Debugging Uniswap Swap with Pool & Quoter Analysis...");
-
-    const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-    const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-    const balance = await provider.getBalance(userWallet.address);
-    console.log(`💰 Wallet Balance: ${ethers.formatUnits(balance, "ether")} ETH`);
-
-    // ✅ Fetch ABI
-    const quoterABI = await fetchQuoterABI();
-    if (!quoterABI) {
-        console.error("❌ ERROR: Quoter ABI is invalid or empty.");
-        return;
-    }
-
-    // ✅ Create Interface
-    const iface = new ethers.Interface(quoterABI);
-    console.log("✅ Interface Parsed Successfully!");
-    console.log("🔍 Interface Methods:", iface.fragments.map(f => f.name));
-
-    // ✅ Create Quoter Contract
-    const quoter = new ethers.Contract(QUOTER_ADDRESS, quoterABI, provider);
-    console.log("✅ Quoter Contract Initialized!");
-
-    // 🔍 Validate `quoteExactInputSingle` exists
-    if (!quoter.interface.getFunction("quoteExactInputSingle")) {
-        console.error("❌ ERROR: `quoteExactInputSingle` is NOT available in ABI!");
-        console.log("🔍 Available functions:", quoter.interface.fragments.map(f => f.name));
-        return;
-    }
-    console.log("\n✅ `quoteExactInputSingle` function exists in ABI!");
-
-    // ✅ Struct Parameters
+    console.log("🔄 Swapping Without Fees...");
     const params = {
         tokenIn: USDC,
         tokenOut: CBBTC,
-        amountIn: ethers.parseUnits("1", 6),
-        fee: 500,
+        fee: 500, 
+        recipient: wallet.address,
+        deadline: Math.floor(Date.now() / 1000) + 60 * 10, 
+        amountIn: amountIn,
+        amountOutMinimum: 0, 
         sqrtPriceLimitX96: 0
     };
 
-    // 🔥 **Manually Encode & Call Function**
-    console.log("\n🔍 Manually Encoding Call...");
-    const encodedData = iface.encodeFunctionData("quoteExactInputSingle", [params]);
-    console.log("🔍 Encoded Call Data:", encodedData);
+    await router.exactInputSingle(params);
 
-    try {
-        // ✅ **Using `provider.call()`**
-        const rawResponse = await provider.call({ to: QUOTER_ADDRESS, data: encodedData });
-        console.log("✅ Raw Response:", rawResponse);
+    console.log("🔄 Removing MASS Liquidity...");
+    await pool.burn(-887220, 887220, ethers.parseUnits("100000", 6));
 
-        // ✅ **Decode Response**
-        const decoded = iface.decodeFunctionResult("quoteExactInputSingle", rawResponse);
-        console.log("✅ Decoded Output:", decoded);
-
-        // 🎯 **Final Output**
-        console.log("\n🎯 Final Swap Estimate:");
-        console.log(`   - Amount Out: ${ethers.formatUnits(decoded[0], 8)} CBBTC`);
-        console.log(`   - sqrtPriceX96After: ${decoded[1]}`);
-        console.log(`   - Initialized Ticks Crossed: ${decoded[2]}`);
-        console.log(`   - Gas Estimate: ${decoded[3]}`);
-    } catch (error) {
-        console.error("❌ Raw Encoding Call Failed:", error.message);
-    }
+    console.log("✅ Swap Complete Without Fees!");
 }
 
-main().catch(console.error);
+swapWithoutFees(ethers.parseUnits("1", 6)).catch(console.error);
