@@ -4,124 +4,170 @@ import axios from "axios";
 
 dotenv.config();
 
-const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-
+// ✅ Uniswap Contract Addresses
 const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
-const ROUTER_ADDRESS = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
+const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 
 // ✅ Token Addresses
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
-// ✅ Fetch Uniswap V3 Quoter ABI
-async function fetchQuoterABI() {
+// ✅ Set Up Ethereum Provider
+const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+
+// ✅ Fetch ABI from BaseScan (Correct Format for JavaScript)
+async function fetchABI(contractAddress) {
     try {
-        console.log("\n🔍 Fetching Quoter ABI from BaseScan...");
+        console.log(`\n🔍 Fetching ABI for ${contractAddress} from BaseScan...`);
         const response = await axios.get(
-            `https://api.basescan.org/api?module=contract&action=getabi&address=${QUOTER_ADDRESS}&apikey=${process.env.BASESCAN_API_KEY}`
+            `https://api.basescan.org/api?module=contract&action=getabi&address=${contractAddress}&apikey=${process.env.BASESCAN_API_KEY}`
         );
 
         if (response.data.status !== "1") throw new Error(`BaseScan API Error: ${response.data.message}`);
 
         const abi = JSON.parse(response.data.result);
-        console.log("✅ ABI Fetched Successfully!");
+        console.log(`✅ ABI Fetched Successfully for ${contractAddress}`);
         return abi;
     } catch (error) {
-        console.error("❌ Failed to fetch ABI from BaseScan:", error.message);
+        console.error("❌ Failed to fetch ABI:", error.message);
         return null;
     }
 }
 
-// ✅ Get the Uniswap Swap Quote for USDC → CBBTC
-async function getUniswapQuote(amountIn) {
-    console.log("\n🔍 Checking Uniswap Swap Quote...");
+// ✅ Get Uniswap V3 Pool Address
+async function getPoolAddress() {
+    const factoryABI = await fetchABI(FACTORY_ADDRESS);
+    if (!factoryABI) return null;
 
-    const quoterABI = await fetchQuoterABI();
-    if (!quoterABI) return null;
-
-    // ✅ Ensure `quoteExactInputSingle` exists in ABI
-    const iface = new ethers.Interface(quoterABI);
-    if (!iface.getFunction("quoteExactInputSingle")) {
-        console.error("❌ ERROR: `quoteExactInputSingle` is NOT available in ABI!");
+    const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
+    try {
+        const poolAddress = await factory.getPool(USDC, CBBTC, 500);
+        if (poolAddress === ethers.ZeroAddress) {
+            console.error("❌ No Uniswap V3 Pool found for USDC-CBBTC.");
+            return null;
+        }
+        console.log(`✅ Pool Address: ${poolAddress}`);
+        return poolAddress;
+    } catch (error) {
+        console.error("❌ Failed to fetch pool address:", error.message);
         return null;
     }
+}
 
+// ✅ Check Pool Liquidity
+async function checkPoolLiquidity(poolAddress) {
+    const poolABI = await fetchABI(poolAddress);
+    if (!poolABI) return null;
+
+    const pool = new ethers.Contract(poolAddress, poolABI, provider);
+    try {
+        const slot0 = await pool.slot0();
+        const liquidity = await pool.liquidity();
+
+        console.log("\n🔍 Pool Liquidity Data:");
+        console.log(`   - sqrtPriceX96: ${slot0[0]}`);
+        console.log(`   - Current Tick: ${slot0[1]}`);
+        console.log(`   - Liquidity: ${liquidity}`);
+
+        return { liquidity, sqrtPriceX96: slot0[0], tick: slot0[1] };
+    } catch (error) {
+        console.error("❌ Failed to fetch liquidity:", error.message);
+        return null;
+    }
+}
+
+// ✅ Execute Quote: Ensure No Fees
+async function executeQuote(amountIn, sqrtPriceLimitX96) {
+    console.log(`\n🚀 Running Quote for ${amountIn} USDC → CBBTC (sqrtPriceLimitX96: ${sqrtPriceLimitX96})`);
+
+    const poolAddress = await getPoolAddress();
+    if (!poolAddress) return;
+
+    const poolData = await checkPoolLiquidity(poolAddress);
+    if (!poolData || poolData.liquidity === 0) {
+        console.error("❌ Pool has ZERO liquidity. No swap can be performed.");
+        return;
+    }
+
+    const quoterABI = await fetchABI(QUOTER_ADDRESS);
+    if (!quoterABI) return;
+
+    const iface = new ethers.Interface(quoterABI);
     const quoter = new ethers.Contract(QUOTER_ADDRESS, quoterABI, provider);
-    const amount = ethers.parseUnits(amountIn.toString(), 6);
+
+    const params = {
+        tokenIn: USDC,
+        tokenOut: CBBTC,
+        amountIn: ethers.parseUnits(amountIn.toString(), 6),
+        fee: 500, 
+        sqrtPriceLimitX96, // Key to manipulating fee circumvention
+    };
+
+    console.log("\n🔍 Encoding Quote Call...");
+    const encodedData = iface.encodeFunctionData("quoteExactInputSingle", [params]);
 
     try {
-        const params = {
-            tokenIn: USDC,
-            tokenOut: CBBTC,
-            amountIn: amount,
-            fee: 500, // 0.05% fee
-            sqrtPriceLimitX96: 0
-        };
-
-        console.log("🔍 Querying `quoteExactInputSingle`...");
-        const encodedData = iface.encodeFunctionData("quoteExactInputSingle", [params]);
-
         const rawResponse = await provider.call({ to: QUOTER_ADDRESS, data: encodedData });
         const decoded = iface.decodeFunctionResult("quoteExactInputSingle", rawResponse);
 
-        console.log(`🔹 Uniswap Quote: ${ethers.formatUnits(decoded[0], 8)} CBBTC`);
-        return decoded[0];
+        console.log(`\n🎯 Swap Estimate (sqrtPriceLimitX96: ${sqrtPriceLimitX96}):`);
+        console.log(`   - Amount Out: ${ethers.formatUnits(decoded[0], 8)} CBBTC`);
+        console.log(`   - sqrtPriceX96After: ${decoded[1]}`);
+        console.log(`   - Initialized Ticks Crossed: ${decoded[2]}`);
+        console.log(`   - Gas Estimate: ${decoded[3]}`);
+
+        return decoded;
     } catch (error) {
-        console.error("❌ Uniswap Quote Fetch Failed:", error.message);
+        console.error("❌ Swap Quote Failed:", error.message);
         return null;
     }
 }
 
-// ✅ Get Best CBBTC → USDC Swap Quote from Another DEX (Simulated)
-async function getBestReverseQuote(amountCBBTC) {
-    console.log("\n🔍 Checking Best Reverse Swap Quote for CBBTC → USDC...");
+// ✅ Test Price Limits & Ensure Fees Are Avoided
+async function testFeeCircumvention() {
+    console.log("\n🔍 Searching for a Fee-Free Route...");
 
-    // Simulate fetching from another DEX (Balancer, SushiSwap, Curve)
-    // Ideally, call their APIs for real-time price comparison.
-    // For now, let's assume a **slightly better simulated price**.
+    // ✅ Start with the pool’s current sqrtPriceX96
+    const poolAddress = await getPoolAddress();
+    if (!poolAddress) return;
 
-    const simulatedBetterRate = parseFloat(ethers.formatUnits(amountCBBTC, 8)) * 1.0005; // 0.05% better
-    const usdcEquivalent = ethers.parseUnits(simulatedBetterRate.toFixed(6), 6);
+    const poolData = await checkPoolLiquidity(poolAddress);
+    if (!poolData) return;
 
-    console.log(`🔹 Best Reverse Quote: ${ethers.formatUnits(usdcEquivalent, 6)} USDC`);
-    return usdcEquivalent;
-}
+    const sqrtPriceLimits = [
+        poolData.sqrtPriceX96,  // Start with the pool's current price
+        "1000000000000000000",
+        "10000000000000000000",
+        "100000000000000000000"
+    ];
 
-// ✅ Check If Arbitrage Covers Fees
-async function checkFeeFreeSwap(amountIn) {
-    console.log("\n🚀 Simulating Atomic Swap...");
+    let feeFreeQuote = null;
 
-    // Step 1: Get Uniswap Quote (USDC → CBBTC)
-    const uniswapOut = await getUniswapQuote(amountIn);
-    if (!uniswapOut) {
-        console.log("❌ Failed to get Uniswap quote.");
-        return;
+    for (const sqrtLimit of sqrtPriceLimits) {
+        const quote = await executeQuote(100, sqrtLimit);
+        if (quote) {
+            const ticksCrossed = parseInt(quote[2].toString());
+            
+            // ✅ Circumvent Fees by Avoiding Tick Crosses
+            if (ticksCrossed === 0) {
+                feeFreeQuote = { sqrtLimit, amountOut: ethers.formatUnits(quote[0], 8) };
+                break;
+            }
+        }
     }
 
-    // Step 2: Get Reverse Swap Quote (CBBTC → USDC) on Another DEX
-    const reverseUSDC = await getBestReverseQuote(uniswapOut);
-    if (!reverseUSDC) {
-        console.log("❌ Failed to get reverse swap quote.");
-        return;
-    }
-
-    // Step 3: Compare If Arbitrage Covers Uniswap Fees
-    const initialUSDC = ethers.parseUnits(amountIn.toString(), 6);
-    if (reverseUSDC >= initialUSDC) {
-        console.log("\n✅ **Arbitrage Covers Fees! Swap Can Be Executed Without Fees!** 🚀");
-        console.log(`   - Initial USDC: ${ethers.formatUnits(initialUSDC, 6)}`);
-        console.log(`   - Final USDC After Reverse Swap: ${ethers.formatUnits(reverseUSDC, 6)}`);
+    if (feeFreeQuote) {
+        console.log("\n✅ **Fee-Free Swap Found!**");
+        console.log(`   - sqrtPriceLimitX96: ${feeFreeQuote.sqrtLimit}`);
+        console.log(`   - Amount Out: ${feeFreeQuote.amountOut} CBBTC`);
     } else {
-        console.log("\n❌ **Arbitrage Not Profitable. Swap Will Incur Fees.**");
+        console.log("\n❌ No Fee-Free Route Found!");
     }
 }
 
-// ✅ Run the Fee-Free Swap Simulation
+// ✅ Run the Fee Circumvention Strategy
 async function main() {
-    const amountIn = 100; // 100 USDC
-    await checkFeeFreeSwap(amountIn);
+    await testFeeCircumvention();
 }
 
-// ✅ Run the Code (Only Simulates, Does Not Execute Swap)
 main().catch(console.error);
