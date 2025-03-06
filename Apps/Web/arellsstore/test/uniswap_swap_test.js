@@ -76,6 +76,42 @@ async function checkPoolLiquidity(poolAddress) {
     }
 }
 
+
+// ✅ Convert tick index to sqrtPriceX96 using Uniswap's formula
+function getSqrtRatioAtTick(tick) {
+    const Q96 = BigInt(2 ** 96); // 2^96 in BigInt
+    const sqrtBase = 10000n; // Fixed-point representation of sqrt(1.0001)
+    const tickFactor = tick * 2n; // Equivalent of tick/2
+
+    let sqrtRatio = Q96;
+    for (let i = 0n; i < tickFactor; i++) {
+        sqrtRatio = (sqrtRatio * sqrtBase) / 10000n;
+    }
+
+    return sqrtRatio;
+}
+
+// ✅ Find the optimal sqrtPriceX96 **without crossing ticks**
+async function calculateOptimalSqrtPrice(amountIn) {
+    const poolAddress = await getPoolAddress();
+    if (!poolAddress) return null;
+
+    const poolData = await checkPoolLiquidity(poolAddress);
+    if (!poolData) return null;
+
+    const { tick } = poolData;
+    const tickSpacing = 10n; // Keep tick spacing BigInt
+
+    // ✅ Snap to the nearest tick
+    const adjustedTick = (BigInt(tick) / tickSpacing) * tickSpacing;
+
+    // ✅ Convert tick to sqrtPriceX96 (keep it within the range)
+    const sqrtPriceX96 = getSqrtRatioAtTick(adjustedTick);
+
+    console.log("\n✅ Adjusted sqrtPriceX96 (BigInt-safe):", sqrtPriceX96.toString());
+    return sqrtPriceX96.toString();
+}
+
 // ✅ Execute Quote: Ensure No Fees
 async function executeQuote(amountIn, sqrtPriceLimitX96) {
     console.log(`\n🚀 Running Quote for ${amountIn} USDC → CBBTC (sqrtPriceLimitX96: ${sqrtPriceLimitX96})`);
@@ -123,49 +159,28 @@ async function executeQuote(amountIn, sqrtPriceLimitX96) {
     }
 }
 
-// ✅ Test Price Limits & Ensure Fees Are Avoided
+// ✅ Test Fee-Free Route Using Dynamic Calculation
 async function testFeeCircumvention() {
     console.log("\n🔍 Searching for a Fee-Free Route...");
 
-    // ✅ Start with the pool’s current sqrtPriceX96
-    const poolAddress = await getPoolAddress();
-    if (!poolAddress) return;
+    const amountIn = 5; // 5 USDC
+    const optimalSqrtPriceX96 = await calculateOptimalSqrtPrice(amountIn);
+    if (!optimalSqrtPriceX96) return;
 
-    const poolData = await checkPoolLiquidity(poolAddress);
-    if (!poolData) return;
-
-    const sqrtPriceLimits = [
-        "2684392921197311139192375034",  // Pool's current price
-        "2684392921197311139192375100",  // Slightly higher
-        "2684392921197311139192375200",  // Another step up
-        "2684392921197311139192375300",  // Gradual increase
-        "2684392921197311139192375400",  // Keep adjusting upwards
-        "2684392921197311139192375500",  // Near top range
-        "2684392921197311139192375600"   // Extreme upper bound
-    ];
-
-    let feeFreeQuote = null;
-
-    for (const sqrtLimit of sqrtPriceLimits) {
-        const quote = await executeQuote(5, sqrtLimit);
-        if (quote) {
-            const ticksCrossed = parseInt(quote[2].toString());
-            
-            // ✅ Circumvent Fees by Avoiding Tick Crosses
-            if (ticksCrossed === 0) {
-                feeFreeQuote = { sqrtLimit, amountOut: ethers.formatUnits(quote[0], 8) };
-                break;
-            }
+    const quote = await executeQuote(amountIn, optimalSqrtPriceX96);
+    if (quote) {
+        const ticksCrossed = parseInt(quote[2].toString());
+        
+        // ✅ Circumvent Fees by Avoiding Tick Crosses
+        if (ticksCrossed === 0) {
+            console.log("\n✅ **Fee-Free Swap Found!**");
+            console.log(`   - sqrtPriceLimitX96: ${optimalSqrtPriceX96}`);
+            console.log(`   - Amount Out: ${ethers.formatUnits(quote[0], 8)} CBBTC`);
+            return;
         }
     }
 
-    if (feeFreeQuote) {
-        console.log("\n✅ **Fee-Free Swap Found!**");
-        console.log(`   - sqrtPriceLimitX96: ${feeFreeQuote.sqrtLimit}`);
-        console.log(`   - Amount Out: ${feeFreeQuote.amountOut} CBBTC`);
-    } else {
-        console.log("\n❌ No Fee-Free Route Found!");
-    }
+    console.log("\n❌ No Fee-Free Route Found!");
 }
 
 // ✅ Run the Fee Circumvention Strategy
