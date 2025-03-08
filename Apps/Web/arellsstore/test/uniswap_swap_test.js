@@ -12,8 +12,14 @@ const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
-// ✅ Set Up Ethereum Provider
+// ✅ Set Up Ethereum Provider & Wallet
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
+console.log(`✅ Using Test Wallet: ${userWallet.address}`);
+
+// ✅ Get Token Contract Instances
+const USDCContract = new ethers.Contract(USDC, ["function balanceOf(address) view returns (uint256)", "function approve(address, uint256)"], userWallet);
+const CBBTCContract = new ethers.Contract(CBBTC, ["function balanceOf(address) view returns (uint256)"], userWallet);
 
 /**
  * ✅ Fetch ABI from BaseScan
@@ -85,10 +91,25 @@ async function checkPoolLiquidity(poolAddress) {
 }
 
 /**
- * ✅ Check Fee-Free Route (Supports Both USDC → CBBTC and CBBTC → USDC)
+ * ✅ Check if Wallet Has Enough USDC for Trade
  */
-async function checkFeeFreeRoute(amountIn, tokenIn, tokenOut, decimals) {
-    console.log(`\n🚀 Checking Fee-Free Route for ${amountIn} ${tokenIn} → ${tokenOut}`);
+async function hasSufficientUSDC(amountIn) {
+    const balance = await USDCContract.balanceOf(userWallet.address);
+    const balanceFormatted = ethers.formatUnits(balance, 6);
+    console.log(`💰 USDC Balance: ${balanceFormatted}`);
+    
+    if (Number(balanceFormatted) < amountIn) {
+        console.error(`❌ Insufficient USDC Balance! Required: ${amountIn}, Available: ${balanceFormatted}`);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * ✅ Check Fee-Free Route
+ */
+async function checkFeeFreeRoute(amountIn) {
+    console.log(`\n🚀 Checking Fee-Free Route for ${amountIn} USDC → CBBTC`);
 
     const poolAddress = await getPoolAddress();
     if (!poolAddress) return false;
@@ -99,81 +120,81 @@ async function checkFeeFreeRoute(amountIn, tokenIn, tokenOut, decimals) {
         return false;
     }
 
-    console.log(`\n🔍 Current Pool Data:`);
-    console.log(`   - sqrtPriceX96: ${poolData.sqrtPriceX96}`);
-    console.log(`   - Current Tick: ${poolData.tick}`);
-    console.log(`   - Liquidity: ${poolData.liquidity}`);
-    console.log(`   - Tick Spacing: ${poolData.tickSpacing}`);
-
     // ✅ Define the tick range to check
     const tickLower = Math.floor(Number(poolData.tick) / Number(poolData.tickSpacing)) * Number(poolData.tickSpacing);
     const tickUpper = tickLower + Number(poolData.tickSpacing);
 
     console.log(`\n🔍 Checking liquidity between ticks: ${tickLower} → ${tickUpper}`);
 
+    if (poolData.liquidity > 0) {
+        console.log(`\n✅ **Fee-Free Route Available for ${amountIn} USDC!** 🚀`);
+        return true;
+    }
+
+    console.log(`\n❌ No Fee-Free Route Found for ${amountIn} USDC.`);
+    return false;
+}
+
+/**
+ * ✅ Execute Swap Transaction
+ */
+async function executeTrade(amountIn) {
+    console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
+
+    if (!(await hasSufficientUSDC(amountIn))) return;
+
+    // ✅ Approve Quoter Contract to Spend USDC
+    console.log("🔑 Approving Quoter Contract...");
+    const approveTx = await USDCContract.approve(QUOTER_ADDRESS, ethers.parseUnits(amountIn.toString(), 6));
+    await approveTx.wait();
+    console.log("✅ Approval Successful!");
+
+    // ✅ Get Fee-Free Quote Before Execution
+    if (!(await checkFeeFreeRoute(amountIn))) return;
+
+    const quoterABI = await fetchABI(QUOTER_ADDRESS);
+    if (!quoterABI) return;
+
+    const iface = new ethers.Interface(quoterABI);
+    const quoter = new ethers.Contract(QUOTER_ADDRESS, quoterABI, provider);
+
+    const params = {
+        tokenIn: USDC,
+        tokenOut: CBBTC,
+        amountIn: ethers.parseUnits(amountIn.toString(), 6),
+        fee: 500,
+        sqrtPriceLimitX96: "0" // No price limit (to ensure execution)
+    };
+
+    console.log("\n🔍 Encoding Swap Call...");
+    const encodedData = iface.encodeFunctionData("quoteExactInputSingle", [params]);
+
     try {
-        const poolABI = await fetchABI(poolAddress);
-        if (!poolABI) return false;
+        const rawResponse = await provider.call({ to: QUOTER_ADDRESS, data: encodedData });
+        const decoded = iface.decodeFunctionResult("quoteExactInputSingle", rawResponse);
 
-        const pool = new ethers.Contract(poolAddress, poolABI, provider);
-        const liquidityLower = await pool.liquidity(); // Placeholder: No direct function for `liquidityAtTick`
-        const liquidityUpper = await pool.liquidity(); // Placeholder
+        console.log(`\n🎯 Swap Estimate:`);
+        console.log(`   - Amount Out: ${ethers.formatUnits(decoded[0], 8)} CBBTC`);
+        console.log(`   - Gas Estimate: ${decoded[3]}`);
 
-        console.log(`   - Liquidity at ${tickLower}: ${liquidityLower}`);
-        console.log(`   - Liquidity at ${tickUpper}: ${liquidityUpper}`);
+        console.log("\n🚀 Executing Swap on Uniswap V3...");
+        const swapTx = await quoter.quoteExactInputSingle(params);
+        await swapTx.wait();
+        console.log("✅ Swap Executed Successfully!");
 
-        if (liquidityLower > 0 && liquidityUpper > 0) {
-            console.log(`\n✅ **Fee-Free Route Available for ${amountIn} ${tokenIn}!** 🚀`);
-            return true;
-        } else {
-            console.log(`\n❌ No Fee-Free Route Found for ${amountIn} ${tokenIn}.`);
-            return false;
-        }
     } catch (error) {
-        console.error("❌ Error checking tick liquidity:", error);
-        return false;
+        console.error("❌ Swap Execution Failed:", error.message);
     }
 }
 
 /**
- * ✅ Run Fee-Free Checks for Multiple Amounts (USDC → CBBTC and CBBTC → USDC)
+ * ✅ Main Function: Execute Swap for $5 USDC
  */
 async function main() {
     console.log("\n🔍 Checking for a Fee-Free Quote...");
+    const amountToTrade = 5.00; // USDC to trade
 
-    // ✅ USDC amounts (6 decimals)
-    const usdcAmounts = [5.03, 10.22, 25.000011, 50.12233, 100.013232];
-
-    // ✅ CBBTC amounts (8 decimals)
-    const cbbtcAmounts = [0.002323, 0.0120323, 1.3233, 0.50012345, 2.12345678];
-
-    let foundFeeFree = false; // Track if any fee-free route was found
-
-    // ✅ Check for USDC → CBBTC
-    for (const amount of usdcAmounts) {
-        const feeFree = await checkFeeFreeRoute(amount, "USDC", "CBBTC", 6);
-
-        if (feeFree) {
-            console.log(`\n✅ **Fee-Free Quote Found at ${amount} USDC!** 🚀`);
-            foundFeeFree = true;
-        }
-    }
-
-    // ✅ Check for CBBTC → USDC
-    for (const amount of cbbtcAmounts) {
-        const feeFree = await checkFeeFreeRoute(amount, "CBBTC", "USDC", 8);
-
-        if (feeFree) {
-            console.log(`\n✅ **Fee-Free Quote Found at ${amount} CBBTC!** 🚀`);
-            foundFeeFree = true;
-        }
-    }
-
-    if (!foundFeeFree) {
-        console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
-    } else {
-        console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
-    }
+    await executeTrade(amountToTrade);
 }
 
 main().catch(console.error);
