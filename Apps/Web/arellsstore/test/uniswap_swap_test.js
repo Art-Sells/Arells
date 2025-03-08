@@ -15,6 +15,17 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 // ✅ Set Up Ethereum Provider
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 
+async function checkTickMathContract() {
+    const tickMathAddress = "0x1F98431c8aD98523631AE4a59f267346ea31F984"; 
+    const code = await provider.getCode(tickMathAddress);
+    if (code === "0x") {
+        console.error("❌ TickMath contract is NOT deployed on Base.");
+        return false;
+    }
+    console.log("✅ TickMath contract exists on Base.");
+    return true;
+}
+
 // ✅ Fetch ABI from BaseScan (Correct Format for JavaScript)
 async function fetchABI(contractAddress) {
     try {
@@ -76,66 +87,29 @@ async function checkPoolLiquidity(poolAddress) {
     }
 }
 
-// ✅ Check if a tick is initialized using `tickBitmap`
-function getSqrtRatioAtTick(tick) {
+async function getSqrtRatioAtTick(tick) {
     if (tick < -887272 || tick > 887272) {
-        throw new Error("Tick is out of range"); // Ensure tick is within Uniswap's range
+        throw new Error("Tick is out of range");
     }
 
-    const Q96 = BigInt(2) ** BigInt(96); // 2^96
-    const base = BigInt(10001); // Represents 1.0001 in fixed-point
-    const divisor = BigInt(10000); // Scaling divisor
+    const MIN_TICK = -887272;
+    const MAX_TICK = 887272;
+    const MIN_SQRT_RATIO = BigInt(4295128739);
+    const MAX_SQRT_RATIO = BigInt(1461446703485210103287273052203988822378723970342);
 
-    let sqrtRatio = Q96; // Start with Q96
+    if (tick <= MIN_TICK) return MIN_SQRT_RATIO;
+    if (tick >= MAX_TICK) return MAX_SQRT_RATIO;
 
-    // ✅ Ensure tick is BigInt before calculations
-    const absTick = tick < 0 ? BigInt(-tick) : BigInt(tick);
+    let ratio = BigInt("0xfffcb933bd6fad37aa2d162d1a594001");
 
-    for (let i = BigInt(0); i < absTick * BigInt(2); i++) { // Loop fully in BigInt
-        sqrtRatio = (sqrtRatio * base) / divisor;
+    for (let i = 1; i <= Math.abs(tick); i++) {
+        ratio = (ratio * BigInt(10001)) / BigInt(10000);
     }
 
-    // ✅ If tick is negative, we need to invert the ratio
-    if (tick < 0) {
-        sqrtRatio = (BigInt(1) << BigInt(192)) / sqrtRatio;
-    }
-
-    console.log(`✅ Computed sqrtPriceX96: ${sqrtRatio.toString()}`);
-    return sqrtRatio;
+    return ratio;
 }
 
-// ✅ Fetch tickBitmap to find valid ticks
-async function getNearestValidTick(pool, currentTick) {
-    const tickSpacing = BigInt(await pool.tickSpacing());
-    let adjustedTick = (BigInt(currentTick) / tickSpacing) * tickSpacing;
-
-    console.log("\n🔍 Searching for nearest valid tick...");
-
-    let foundValidTick = false;
-    let attempts = 0; // Prevent infinite loops
-
-    while (!foundValidTick && attempts < 10) {
-        try {
-            const tickData = await pool.ticks(adjustedTick);
-            if (tickData.liquidityNet !== 0) {
-                foundValidTick = true;
-                break;
-            }
-        } catch (error) {
-            console.log(`   ❌ Tick ${adjustedTick} not initialized, trying another...`);
-        }
-
-        // ✅ Try going **both up and down** instead of always decreasing
-        adjustedTick += tickSpacing;
-        attempts++;
-    }
-
-    console.log(`✅ Found nearest initialized tick: ${adjustedTick}`);
-    return adjustedTick;
-}
-
-// ✅ Fix `calculateOptimalSqrtPrice` by aligning ticks properly
-async function calculateOptimalSqrtPrice(amountIn) {
+async function calculateOptimalSqrtPrice() {
     const poolAddress = await getPoolAddress();
     if (!poolAddress) return null;
 
@@ -143,25 +117,35 @@ async function calculateOptimalSqrtPrice(amountIn) {
     if (!poolData) return null;
 
     const { sqrtPriceX96, tick } = poolData;
-    
     const poolABI = await fetchABI(poolAddress);
     if (!poolABI) return null;
-    
+
     const pool = new ethers.Contract(poolAddress, poolABI, provider);
 
-    // ✅ Get the closest valid tick
-    const validTick = await getNearestValidTick(pool, tick);
+    console.log(`🔍 Current sqrtPriceX96: ${sqrtPriceX96}`);
 
-    // ✅ Instead of computing a drastic `sqrtPriceX96`, adjust slightly from `sqrtPriceX96`
-    let sqrtPriceLimitX96 = BigInt(sqrtPriceX96) + BigInt(1); // Ensure minimal movement
+    // ✅ Define a percentage buffer (e.g., 1% price shift)
+    const PERCENTAGE_BUFFER = 0.01; // 1%
 
-    console.log(`✅ Adjusted sqrtPriceX96 (BigInt-safe): ${sqrtPriceLimitX96}`);
+    let sqrtPriceLimitX96 = BigInt(sqrtPriceX96) + (BigInt(sqrtPriceX96) * BigInt(Math.floor(PERCENTAGE_BUFFER * 100))) / BigInt(100);
+
+    // ✅ Clamp within Uniswap's valid range
+    const MIN_SQRT_RATIO = BigInt(4295128739);
+    const MAX_SQRT_RATIO = BigInt(1461446703485210103287273052203988822378723970342);
+
+    if (sqrtPriceLimitX96 < MIN_SQRT_RATIO) {
+        console.log(`⚠️ Adjusting sqrtPriceLimitX96 to MIN_SQRT_RATIO: ${MIN_SQRT_RATIO}`);
+        sqrtPriceLimitX96 = MIN_SQRT_RATIO;
+    } else if (sqrtPriceLimitX96 > MAX_SQRT_RATIO) {
+        console.log(`⚠️ Adjusting sqrtPriceLimitX96 to MAX_SQRT_RATIO: ${MAX_SQRT_RATIO}`);
+        sqrtPriceLimitX96 = MAX_SQRT_RATIO;
+    }
+
+    console.log(`✅ Final sqrtPriceLimitX96: ${sqrtPriceLimitX96}`);
     return sqrtPriceLimitX96.toString();
 }
-
-// ✅ Adjusted executeQuote function to fine-tune sqrtPriceLimitX96
 async function executeQuote(amountIn, sqrtPriceLimitX96) {
-    console.log(`\n🚀 Running Quote for ${amountIn} USDC → CBBTC (sqrtPriceLimitX96: ${sqrtPriceLimitX96})`);
+    console.log(`\n🚀 Running Quote for ${amountIn} USDC → CBBTC`);
 
     const poolAddress = await getPoolAddress();
     if (!poolAddress) return;
@@ -178,73 +162,59 @@ async function executeQuote(amountIn, sqrtPriceLimitX96) {
     const iface = new ethers.Interface(quoterABI);
     const quoter = new ethers.Contract(QUOTER_ADDRESS, quoterABI, provider);
 
+    console.log(`✅ Resolved sqrtPriceLimitX96: ${sqrtPriceLimitX96}`);
+
+    if (!sqrtPriceLimitX96 || isNaN(Number(sqrtPriceLimitX96))) {
+        console.error("❌ ERROR: Invalid sqrtPriceLimitX96 value detected.");
+        return;
+    }
+
     const params = {
         tokenIn: USDC,
         tokenOut: CBBTC,
         amountIn: ethers.parseUnits(amountIn.toString(), 6),
-        fee: 500, 
-        sqrtPriceLimitX96, // Key to manipulating fee circumvention
+        fee: 500,
+        sqrtPriceLimitX96: sqrtPriceLimitX96,
     };
 
-    console.log("\n🔍 Encoding Quote Call...");
+    console.log("\n🔍 Encoding Quote Call with parameters:");
+    console.log(params);
 
-    let adjustedSqrtPriceLimit = BigInt(sqrtPriceLimitX96);
-    let ticksCrossed = 1; // Start with a non-zero value to enter the loop
-    let attempts = 0;
-    const maxAttempts = 10; // Prevent infinite loop
-
-    while (ticksCrossed > 0 && attempts < maxAttempts) {
+    try {
         const encodedData = iface.encodeFunctionData("quoteExactInputSingle", [params]);
+        console.log(`📩 Encoded Data: ${encodedData}`);
 
-        try {
-            const rawResponse = await provider.call({ to: QUOTER_ADDRESS, data: encodedData });
-            const decoded = iface.decodeFunctionResult("quoteExactInputSingle", rawResponse);
+        const rawResponse = await provider.call({ to: QUOTER_ADDRESS, data: encodedData });
+        console.log(`📩 Raw Response: ${rawResponse}`);
 
-            console.log(`\n🎯 Swap Estimate (sqrtPriceLimitX96: ${adjustedSqrtPriceLimit}):`);
-            console.log(`   - Amount Out: ${ethers.formatUnits(decoded[0], 8)} CBBTC`);
-            console.log(`   - sqrtPriceX96After: ${decoded[1]}`);
-            console.log(`   - Initialized Ticks Crossed: ${decoded[2]}`);
-            console.log(`   - Gas Estimate: ${decoded[3]}`);
+        const decoded = iface.decodeFunctionResult("quoteExactInputSingle", rawResponse);
 
-            ticksCrossed = parseInt(decoded[2].toString()); // Check if we crossed any tick
+        console.log(`\n🎯 Swap Estimate:`);
+        console.log(`   - Amount Out: ${ethers.formatUnits(decoded[0], 8)} CBBTC`);
+        console.log(`   - sqrtPriceX96After: ${decoded[1]}`);
+        console.log(`   - Initialized Ticks Crossed: ${decoded[2]}`);
+        console.log(`   - Gas Estimate: ${decoded[3]}`);
 
-            // ✅ If ticks crossed > 0, slightly adjust sqrtPriceLimitX96
-            if (ticksCrossed > 0) {
-                console.log("🔄 Adjusting sqrtPriceLimitX96 to avoid tick crossing...");
-                adjustedSqrtPriceLimit += BigInt(1); // Increment by 1
-                params.sqrtPriceLimitX96 = adjustedSqrtPriceLimit.toString();
-            }
-
-            attempts++;
-        } catch (error) {
-            console.error("❌ Swap Quote Failed:", error.message);
-            return null;
-        }
-    }
-
-    // ✅ If still crossing ticks, return no fee-free route
-    if (ticksCrossed > 0) {
-        console.log("\n❌ No Fee-Free Route Found after adjustments!");
+        return sqrtPriceLimitX96;
+    } catch (error) {
+        console.error("❌ Swap Quote Failed:", error);
         return null;
     }
-
-    console.log("\n✅ Fee-Free Route Found!");
-    return adjustedSqrtPriceLimit.toString();
 }
-
 // ✅ Test Fee-Free Route Using Dynamic Calculation
 async function testFeeCircumvention() {
     console.log("\n🔍 Searching for a Fee-Free Route...");
 
     const amountIn = 5; // 5 USDC
-    const optimalSqrtPriceX96 = await calculateOptimalSqrtPrice(amountIn);
+    const optimalSqrtPriceX96 = await calculateOptimalSqrtPrice(); // ✅ Ensure the function is awaited
+
     if (!optimalSqrtPriceX96) return;
 
-    const quote = await executeQuote(amountIn, optimalSqrtPriceX96);
+    const quote = await executeQuote(amountIn, optimalSqrtPriceX96); // ✅ Pass resolved value
+
     if (quote) {
         const ticksCrossed = parseInt(quote[2].toString());
-        
-        // ✅ Circumvent Fees by Avoiding Tick Crosses
+
         if (ticksCrossed === 0) {
             console.log("\n✅ **Fee-Free Swap Found!**");
             console.log(`   - sqrtPriceLimitX96: ${optimalSqrtPriceX96}`);
