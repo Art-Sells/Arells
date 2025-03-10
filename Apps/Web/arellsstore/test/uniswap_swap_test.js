@@ -15,6 +15,7 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 // ✅ Set Up Ethereum Provider & Wallet
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
+const signer = userWallet.connect(provider);
 console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
 // ✅ Get Token Contract Instances
@@ -138,52 +139,64 @@ async function checkFeeFreeRoute(amountIn) {
 /**
  * ✅ Execute Swap Transaction
  */
-async function executeTrade(amountIn) {
+const swapRouterAddress = "0xE592427A0AEce92De3Edee1F18E0157C05861564"; // Uniswap V3 Router on Base
+
+async function executeSwap(amountIn) {
     console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
 
-    if (!(await hasSufficientUSDC(amountIn))) return;
+    // ✅ Check if the wallet has sufficient USDC balance
+    const hasBalance = await hasSufficientUSDC(amountIn);
+    if (!hasBalance) {
+        console.error(`❌ Aborting swap! Not enough USDC.`);
+        return;
+    }
 
-    // ✅ Approve Quoter Contract to Spend USDC
-    console.log("🔑 Approving Quoter Contract...");
-    const approveTx = await USDCContract.approve(QUOTER_ADDRESS, ethers.parseUnits(amountIn.toString(), 6));
-    await approveTx.wait();
-    console.log("✅ Approval Successful!");
+    // ✅ Ensure a Fee-Free Route Exists
+    const isFeeFree = await checkFeeFreeRoute(amountIn);
+    if (!isFeeFree) {
+        console.error(`❌ Aborting swap! No fee-free route found.`);
+        return;
+    }
 
-    // ✅ Get Fee-Free Quote Before Execution
-    if (!(await checkFeeFreeRoute(amountIn))) return;
+    // ✅ Get the pool data (again) to ensure up-to-date liquidity info
+    const poolAddress = await getPoolAddress();
+    if (!poolAddress) return;
 
-    const quoterABI = await fetchABI(QUOTER_ADDRESS);
-    if (!quoterABI) return;
+    const poolData = await checkPoolLiquidity(poolAddress);
+    if (!poolData || poolData.liquidity === 0) {
+        console.error("❌ Pool has ZERO liquidity. No swap can be performed.");
+        return;
+    }
 
-    const iface = new ethers.Interface(quoterABI);
-    const quoter = new ethers.Contract(QUOTER_ADDRESS, quoterABI, provider);
+    // ✅ Use the Uniswap V3 Router contract
+    const routerABI = await fetchABI(swapRouterAddress);
+    const swapRouter = new ethers.Contract(swapRouterAddress, routerABI, userWallet);
 
+    // ✅ Swap parameters ensuring fee-free conditions
     const params = {
         tokenIn: USDC,
         tokenOut: CBBTC,
-        amountIn: ethers.parseUnits(amountIn.toString(), 6),
         fee: 500,
-        sqrtPriceLimitX96: "0" // No price limit (to ensure execution)
+        recipient: userWallet.address,
+        deadline: Math.floor(Date.now() / 1000) + 60 * 10, // 10 min deadline
+        amountIn: ethers.parseUnits(amountIn.toString(), 6),
+        amountOutMinimum: 0,
+        sqrtPriceLimitX96: poolData.sqrtPriceX96
     };
 
     console.log("\n🔍 Encoding Swap Call...");
-    const encodedData = iface.encodeFunctionData("quoteExactInputSingle", [params]);
-
+    
     try {
-        const rawResponse = await provider.call({ to: QUOTER_ADDRESS, data: encodedData });
-        const decoded = iface.decodeFunctionResult("quoteExactInputSingle", rawResponse);
+        const tx = await swapRouter.exactInputSingle(params, {
+            gasLimit: 250000,
+        });
 
-        console.log(`\n🎯 Swap Estimate:`);
-        console.log(`   - Amount Out: ${ethers.formatUnits(decoded[0], 8)} CBBTC`);
-        console.log(`   - Gas Estimate: ${decoded[3]}`);
-
-        console.log("\n🚀 Executing Swap on Uniswap V3...");
-        const swapTx = await quoter.quoteExactInputSingle(params);
-        await swapTx.wait();
-        console.log("✅ Swap Executed Successfully!");
-
+        console.log(`🚀 Executing Swap on Uniswap V3...`);
+        const receipt = await tx.wait();
+        console.log(`✅ Swap Executed Successfully!`);
+        console.log(`🔗 Transaction Hash: ${receipt.transactionHash}`);
     } catch (error) {
-        console.error("❌ Swap Execution Failed:", error.message);
+        console.error(`❌ Swap Execution Failed: ${error.message}`);
     }
 }
 
@@ -192,9 +205,9 @@ async function executeTrade(amountIn) {
  */
 async function main() {
     console.log("\n🔍 Checking for a Fee-Free Quote...");
-    const amountToTrade = 5.00; // USDC to trade
 
-    await executeTrade(amountToTrade);
+    const usdcAmountToTrade = 5.00; // Adjust as needed
+    await executeSwap(usdcAmountToTrade);
 }
 
 main().catch(console.error);
