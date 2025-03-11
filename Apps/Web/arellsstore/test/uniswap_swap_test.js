@@ -185,23 +185,23 @@ async function approveUSDC(amountIn) {
     console.log("✅ Approval Successful!");
 }
 
-const ethBalance = await provider.getBalance(userWallet.address);
-console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalance)} ETH`);
+async function checkETHBalance() {
+    const ethBalance = await provider.getBalance(userWallet.address);
+    console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalance)} ETH`);
 
-if (ethBalance < ethers.parseEther("0.001")) {
-    console.error("❌ Not enough ETH for gas fees!");
-    return;
+    // ✅ Check if balance is above 0.000015 ETH (not 0.001 ETH)
+    if (ethBalance < ethers.parseEther("0.000015")) {
+        console.error("❌ Not enough ETH for gas fees! Minimum required: 0.000015 ETH");
+        return false;
+    }
+    return true;
 }
 
 async function executeSwap(amountIn) {
     console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
 
     // ✅ Check ETH Balance Before Proceeding
-    const ethBalance = await provider.getBalance(userWallet.address);
-    console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalance)} ETH`);
-
-    if (ethBalance.lt(ethers.parseEther("0.001"))) {
-        console.error("❌ Not enough ETH for gas fees!");
+    if (!(await checkETHBalance())) {
         return;
     }
 
