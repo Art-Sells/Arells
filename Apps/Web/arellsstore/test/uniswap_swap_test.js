@@ -98,21 +98,6 @@ async function checkPoolLiquidity(poolAddress) {
 }
 
 /**
- * ✅ Check if Wallet Has Enough USDC for Trade
- */
-async function hasSufficientUSDC(amountIn) {
-    const balance = await USDCContract.balanceOf(userWallet.address);
-    const balanceFormatted = ethers.formatUnits(balance, 6);
-    console.log(`💰 USDC Balance: ${balanceFormatted}`);
-    
-    if (Number(balanceFormatted) < amountIn) {
-        console.error(`❌ Insufficient USDC Balance! Required: ${amountIn}, Available: ${balanceFormatted}`);
-        return false;
-    }
-    return true;
-}
-
-/**
  * ✅ Check Fee-Free Route
  */
 async function checkFeeFreeRoute(amountIn) {
@@ -210,7 +195,6 @@ async function checkETHBalance() {
 async function executeSwap(amountIn) {
     console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
 
-    // ✅ Check for a Fee-Free Route and get liquidity details
     const poolAddress = await getPoolAddress();
     if (!poolAddress) return;
 
@@ -226,69 +210,62 @@ async function executeSwap(amountIn) {
         return;
     }
 
-    // ✅ Ensure we are swapping within a Fee-Free tick range
-    const tickLower = Math.floor(Number(poolData.tick) / Number(poolData.tickSpacing)) * Number(poolData.tickSpacing);
-    const tickUpper = tickLower + Number(poolData.tickSpacing);
-    console.log(`✅ Using Fee-Free Tick Range: ${tickLower} → ${tickUpper}`);
+    console.log("✅ Fee-Free Route Confirmed!");
 
-    // ✅ Calculate the sqrtPriceLimitX96 for this tick range
-    const sqrtPriceLimitX96 = poolData.sqrtPriceX96; // Ensure this is correctly retrieved
+    const sqrtPriceLimitX96 = poolData.sqrtPriceX96;
 
-    // ✅ Check ETH Balance Before Proceeding
     if (!(await checkETHBalance())) {
         return;
     }
 
-    await approveUSDC(amountIn); // ✅ Ensure approval is granted
+    await approveUSDC(amountIn);
 
-    // ✅ Get balances BEFORE swap
     const balancesBefore = await getBalances();
     console.log(`\n🔍 Balances BEFORE Swap:`);
     console.log(`   - USDC: ${balancesBefore.usdc}`);
     console.log(`   - CBBTC: ${balancesBefore.cbbtc}`);
 
     const UNISWAP_V3_ROUTER_ABI = [
-        "function exactInputSingle(tuple(address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256 amountOut)"
+        "function exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160)) external payable returns (uint256 amountOut)"
     ];
 
     const swapRouter = new ethers.Contract(swapRouterAddress, UNISWAP_V3_ROUTER_ABI, userWallet);
 
-    // ✅ Updated Swap Parameters with Fee-Free Route
+    if (!swapRouter || !swapRouter.exactInputSingle) {
+        console.error("❌ ERROR: `exactInputSingle` method NOT FOUND on SwapRouter! Check ABI and contract address.");
+        return;
+    }
+
     const params = {
         tokenIn: USDC,
         tokenOut: CBBTC,
         fee: 500,
         recipient: userWallet.address,
-        deadline: Math.floor(Date.now() / 1000) + 60 * 10, // 10 min deadline
+        deadline: Math.floor(Date.now() / 1000) + 60 * 10,
         amountIn: ethers.parseUnits(amountIn.toString(), 6),
-        amountOutMinimum: ethers.parseUnits("0.000001", 8), // Minimum output
-        sqrtPriceLimitX96: sqrtPriceLimitX96 // ✅ This ensures the swap follows the Fee-Free route
+        amountOutMinimum: ethers.parseUnits("0.000001", 8),
+        sqrtPriceLimitX96: sqrtPriceLimitX96
     };
 
     console.log("\n🔍 Swap Parameters:");
     console.log(params);
 
-    // ✅ Estimate Gas
     try {
         console.log("⛽ Estimating Gas for Swap...");
-        const estimatedGas = await swapRouter.estimateGas.exactInputSingle(params);
+        const estimatedGas = await swapRouter.estimateGas.exactInputSingle([
+            params.tokenIn,
+            params.tokenOut,
+            params.fee,
+            params.recipient,
+            params.deadline,
+            params.amountIn,
+            params.amountOutMinimum,
+            params.sqrtPriceLimitX96
+        ]);
         console.log(`📊 Estimated Gas: ${estimatedGas.toString()} units`);
-    } catch (error) {
-        console.error("❌ Gas Estimation Failed:", error);
-        return;
-    }
 
-    // ✅ Fetch current gas price
-    const feeData = await provider.getFeeData();
-    const gasPrice = feeData.gasPrice;
-    console.log(`⛽ Gas Price: ${ethers.formatUnits(gasPrice, "gwei")} Gwei`);
-
-    try {
         console.log("🚀 Sending Swap Transaction...");
-        const tx = await swapRouter.exactInputSingle(params, {
-            gasLimit: estimatedGas, // ✅ Use estimated gas
-        });
-
+        const tx = await swapRouter.exactInputSingle(params, { gasLimit: estimatedGas });
         console.log("⏳ Waiting for Transaction Confirmation...");
         const receipt = await tx.wait();
 
@@ -300,7 +277,7 @@ async function executeSwap(amountIn) {
         console.log(`✅ Swap Executed Successfully!`);
         console.log(`🔗 Transaction Hash: ${receipt.transactionHash}`);
     } catch (error) {
-        console.error(`❌ Swap Execution Failed:`, error); // ✅ Log full error object
+        console.error(`❌ Swap Execution Failed:`, error);
     }
 }
 
