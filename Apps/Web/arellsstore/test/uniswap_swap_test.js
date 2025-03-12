@@ -26,6 +26,8 @@ const USDCContract = new ethers.Contract(USDC, [
 ], userWallet);
 const CBBTCContract = new ethers.Contract(CBBTC, ["function balanceOf(address) view returns (uint256)"], userWallet);
 
+
+console.log(`🔥 Ethers.js Version: ${ethers.version}`);
 /**
  * ✅ Fetch ABI from BaseScan
  */
@@ -165,7 +167,8 @@ async function approveUSDC(amountIn) {
     }
 
     // 🔥 Fetch current gas price
-    const gasPrice = await provider.getGasPrice();
+    const feeData = await provider.getFeeData();
+    const gasPrice = feeData.gasPrice; // ✅ Correct for Ethers v6
     console.log(`⛽ Current Gas Price: ${ethers.formatUnits(gasPrice, "gwei")} Gwei`);
 
     // 🔥 Calculate max gas units for $0.03
@@ -189,9 +192,16 @@ async function checkETHBalance() {
     const ethBalance = await provider.getBalance(userWallet.address);
     console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalance)} ETH`);
 
-    // ✅ Check if balance is above 0.000015 ETH (not 0.001 ETH)
-    if (ethBalance < ethers.parseEther("0.000015")) {
-        console.error("❌ Not enough ETH for gas fees! Minimum required: 0.000015 ETH");
+    // 🔥 Fetch gas price
+    const feeData = await provider.getFeeData();
+    const gasPrice = feeData.gasPrice;  // ✅ Ensure gasPrice is defined here
+
+    // 🔥 Define max gas units allowed
+    const maxGasUnitsNumber = 70000n; // Example fixed value, adjust as needed
+    const requiredGasETH = gasPrice * maxGasUnitsNumber; // ✅ Now it has gasPrice
+
+    if (ethBalance < requiredGasETH) {
+        console.error(`❌ Not enough ETH for gas fees! Required: ${ethers.formatEther(requiredGasETH)} ETH`);
         return false;
     }
     return true;
@@ -199,6 +209,30 @@ async function checkETHBalance() {
 
 async function executeSwap(amountIn) {
     console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
+
+    // ✅ Check for a Fee-Free Route and get liquidity details
+    const poolAddress = await getPoolAddress();
+    if (!poolAddress) return;
+
+    const poolData = await checkPoolLiquidity(poolAddress);
+    if (!poolData || poolData.liquidity === 0) {
+        console.error("❌ Pool has ZERO liquidity. No swap can be performed.");
+        return;
+    }
+
+    const isFeeFree = await checkFeeFreeRoute(amountIn);
+    if (!isFeeFree) {
+        console.error("❌ No Fee-Free Route Available! Swap will NOT proceed.");
+        return;
+    }
+
+    // ✅ Ensure we are swapping within a Fee-Free tick range
+    const tickLower = Math.floor(Number(poolData.tick) / Number(poolData.tickSpacing)) * Number(poolData.tickSpacing);
+    const tickUpper = tickLower + Number(poolData.tickSpacing);
+    console.log(`✅ Using Fee-Free Tick Range: ${tickLower} → ${tickUpper}`);
+
+    // ✅ Calculate the sqrtPriceLimitX96 for this tick range
+    const sqrtPriceLimitX96 = poolData.sqrtPriceX96; // Ensure this is correctly retrieved
 
     // ✅ Check ETH Balance Before Proceeding
     if (!(await checkETHBalance())) {
@@ -213,21 +247,13 @@ async function executeSwap(amountIn) {
     console.log(`   - USDC: ${balancesBefore.usdc}`);
     console.log(`   - CBBTC: ${balancesBefore.cbbtc}`);
 
-    const poolAddress = await getPoolAddress();
-    if (!poolAddress) return;
-
-    const poolData = await checkPoolLiquidity(poolAddress);
-    if (!poolData || poolData.liquidity === 0) {
-        console.error("❌ Pool has ZERO liquidity. No swap can be performed.");
-        return;
-    }
-
     const UNISWAP_V3_ROUTER_ABI = [
         "function exactInputSingle(tuple(address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256 amountOut)"
     ];
 
     const swapRouter = new ethers.Contract(swapRouterAddress, UNISWAP_V3_ROUTER_ABI, userWallet);
 
+    // ✅ Updated Swap Parameters with Fee-Free Route
     const params = {
         tokenIn: USDC,
         tokenOut: CBBTC,
@@ -236,25 +262,31 @@ async function executeSwap(amountIn) {
         deadline: Math.floor(Date.now() / 1000) + 60 * 10, // 10 min deadline
         amountIn: ethers.parseUnits(amountIn.toString(), 6),
         amountOutMinimum: ethers.parseUnits("0.000001", 8), // Minimum output
-        sqrtPriceLimitX96: poolData.sqrtPriceX96
+        sqrtPriceLimitX96: sqrtPriceLimitX96 // ✅ This ensures the swap follows the Fee-Free route
     };
 
     console.log("\n🔍 Swap Parameters:");
     console.log(params);
 
-    // 🔥 Fetch gas price & calculate max units
-    const gasPrice = await provider.getGasPrice();
-    const ethPriceInUSD = 2100; // 🟢 Update this with real ETH price
-    const maxETHForGas = 0.03 / ethPriceInUSD;
-    const maxGasUnits = Math.floor(maxETHForGas / ethers.formatUnits(gasPrice, "ether"));
+    // ✅ Estimate Gas
+    try {
+        console.log("⛽ Estimating Gas for Swap...");
+        const estimatedGas = await swapRouter.estimateGas.exactInputSingle(params);
+        console.log(`📊 Estimated Gas: ${estimatedGas.toString()} units`);
+    } catch (error) {
+        console.error("❌ Gas Estimation Failed:", error);
+        return;
+    }
 
+    // ✅ Fetch current gas price
+    const feeData = await provider.getFeeData();
+    const gasPrice = feeData.gasPrice;
     console.log(`⛽ Gas Price: ${ethers.formatUnits(gasPrice, "gwei")} Gwei`);
-    console.log(`🔹 Max Gas Allowed: ${maxGasUnits} units (equivalent to $0.03 in ETH)`);
 
     try {
         console.log("🚀 Sending Swap Transaction...");
         const tx = await swapRouter.exactInputSingle(params, {
-            gasLimit: maxGasUnits, // 🔥 Limit gas usage to $0.03
+            gasLimit: estimatedGas, // ✅ Use estimated gas
         });
 
         console.log("⏳ Waiting for Transaction Confirmation...");
@@ -267,15 +299,8 @@ async function executeSwap(amountIn) {
 
         console.log(`✅ Swap Executed Successfully!`);
         console.log(`🔗 Transaction Hash: ${receipt.transactionHash}`);
-
-        // ✅ Get balances AFTER swap
-        const balancesAfter = await getBalances();
-        console.log(`\n🔍 Balances AFTER Swap:`);
-        console.log(`   - USDC: ${balancesAfter.usdc}`);
-        console.log(`   - CBBTC: ${balancesAfter.cbbtc}`);
-
     } catch (error) {
-        console.error(`❌ Swap Execution Failed: ${error.message}`);
+        console.error(`❌ Swap Execution Failed:`, error); // ✅ Log full error object
     }
 }
 
