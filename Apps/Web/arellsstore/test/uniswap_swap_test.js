@@ -130,7 +130,7 @@ async function checkFeeFreeRoute(amountIn) {
 /**
  * ✅ Execute Swap Transaction
  */
-const swapRouterAddress = "0xE592427A0AEce92De3Edee1F18E0157C05861564"; // Uniswap V3 Router on Base
+const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481"; // ✅ Correct SwapRouter02 on Base
 
 async function getBalances() {
     const usdcBalance = await USDCContract.balanceOf(userWallet.address);
@@ -225,11 +225,22 @@ async function executeSwap(amountIn) {
     console.log(`   - USDC: ${balancesBefore.usdc}`);
     console.log(`   - CBBTC: ${balancesBefore.cbbtc}`);
 
-    const UNISWAP_V3_ROUTER_ABI = [
-        "function exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160)) external payable returns (uint256 amountOut)"
-    ];
+    // ✅ Fetch correct ABI for the Swap Router
+    console.log(`🔍 Fetching SwapRouter ABI for ${swapRouterAddress}...`);
+    const swapRouterABI = await fetchABI(swapRouterAddress);
+    if (!swapRouterABI) {
+        console.error("❌ Failed to fetch SwapRouter ABI.");
+        return;
+    }
 
-    const swapRouter = new ethers.Contract(swapRouterAddress, UNISWAP_V3_ROUTER_ABI, userWallet);
+    console.log("\n✅ **Functions Available in SwapRouter ABI:**");
+    for (let item of swapRouterABI) {
+        if (item.type === "function") {
+            console.log(`   - ${item.name}`);
+        }
+    }
+
+    const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, userWallet);
 
     if (!swapRouter || !swapRouter.exactInputSingle) {
         console.error("❌ ERROR: `exactInputSingle` method NOT FOUND on SwapRouter! Check ABI and contract address.");
@@ -252,16 +263,7 @@ async function executeSwap(amountIn) {
 
     try {
         console.log("⛽ Estimating Gas for Swap...");
-        const estimatedGas = await swapRouter.estimateGas.exactInputSingle([
-            params.tokenIn,
-            params.tokenOut,
-            params.fee,
-            params.recipient,
-            params.deadline,
-            params.amountIn,
-            params.amountOutMinimum,
-            params.sqrtPriceLimitX96
-        ]);
+        const estimatedGas = await swapRouter.estimateGas.exactInputSingle(params);
         console.log(`📊 Estimated Gas: ${estimatedGas.toString()} units`);
 
         console.log("🚀 Sending Swap Transaction...");
