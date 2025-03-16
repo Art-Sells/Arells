@@ -227,10 +227,12 @@ async function executeSwap(amountIn) {
 
     // ✅ Fetch correct ABI for the Swap Router
     console.log(`🔍 Fetching SwapRouter ABI for ${swapRouterAddress}...`);
-    const swapRouterABI = await fetchABI(swapRouterAddress);
+    let swapRouterABI = await fetchABI(swapRouterAddress);
     if (!swapRouterABI) {
-        console.error("❌ Failed to fetch SwapRouter ABI.");
-        return;
+        console.error("❌ Failed to fetch SwapRouter ABI. Using fallback ABI.");
+        swapRouterABI = [
+            "function exactInputSingle(tuple(address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256 amountOut)"
+        ];
     }
 
     console.log("\n✅ **Functions Available in SwapRouter ABI:**");
@@ -240,9 +242,10 @@ async function executeSwap(amountIn) {
         }
     }
 
-    const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, userWallet);
+    const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, provider).connect(userWallet);
 
-    if (!swapRouter || !swapRouter.exactInputSingle) {
+    // ✅ Verify that `exactInputSingle` exists
+    if (!swapRouter.interface.getFunction("exactInputSingle")) {
         console.error("❌ ERROR: `exactInputSingle` method NOT FOUND on SwapRouter! Check ABI and contract address.");
         return;
     }
@@ -262,6 +265,14 @@ async function executeSwap(amountIn) {
     console.log(params);
 
     try {
+        console.log("\n🔍 SwapRouter Contract Functions Available:");
+        console.log(Object.keys(swapRouter));
+
+        if (!swapRouter.callStatic.exactInputSingle) {
+            console.error("❌ ERROR: `exactInputSingle` is NOT callable! Check ABI & contract initialization.");
+            return;
+        }
+
         console.log("⛽ Estimating Gas for Swap...");
         const estimatedGas = await swapRouter.estimateGas.exactInputSingle(params);
         console.log(`📊 Estimated Gas: ${estimatedGas.toString()} units`);
