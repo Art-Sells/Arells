@@ -259,6 +259,7 @@ async function executeSwap(amountIn) {
     // 🟢 First attempt: Use the original `sqrtPriceLimitX96` (to maintain fee-free route)
     let adjustedSqrtPriceLimitX96 = sqrtPriceLimitX96;
 
+    
     const params = {
         tokenIn: USDC,
         tokenOut: CBBTC,
