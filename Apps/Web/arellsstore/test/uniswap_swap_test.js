@@ -153,9 +153,9 @@ async function approveUSDC(amountIn) {
     const allowance = await USDCContract.allowance(userWallet.address, swapRouterAddress);
     console.log(`✅ USDC Allowance: ${ethers.formatUnits(allowance, 6)} USDC`);
     
-    if (allowance < ethers.parseUnits(amountIn.toString(), 6)) {
-        console.error("❌ ERROR: USDC allowance too low. Approving more...");
-        await approveUSDC(amountIn); // ✅ Ensure sufficient approval before swap
+    if (allowance >= ethers.parseUnits(amountIn.toString(), 6)) {
+        console.log("✅ Approval already granted.");
+        return;
     }
 
     // 🔥 Fetch current gas price
@@ -299,8 +299,8 @@ async function executeSwap(amountIn) {
             to: swapRouterAddress,
             data: functionData,
             gasLimit: 3000000,
-            gasPrice: feeData.gasPrice, // ✅ Corrected gas price
-            maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei") // ✅ Use fetched priority fee, fallback if null
+            maxFeePerGas: feeData.maxFeePerGas, // ✅ Correct EIP-1559 transaction format
+            maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei")
         });
 
         console.log("\n✅ Transaction Sent:");
@@ -309,9 +309,9 @@ async function executeSwap(amountIn) {
         console.log("\n⏳ Waiting for Confirmation...");
         const receipt = await tx.wait();
         
-        if (receipt && receipt.transactionHash) {
+        if (receipt && receipt.hash) {
             console.log("\n✅ Transaction Confirmed! Hash:");
-            console.log(receipt.transactionHash);
+            console.log(receipt.hash);
         } else {
             console.error("❌ ERROR: Transaction hash is undefined.");
         }
@@ -343,9 +343,9 @@ async function executeSwap(amountIn) {
                 console.log("\n⏳ Waiting for Confirmation...");
                 const receipt = await tx.wait();
                 
-                if (receipt && receipt.transactionHash) {
+                if (receipt && receipt.hash) {
                     console.log("\n✅ Transaction Confirmed! Hash:");
-                    console.log(receipt.transactionHash);
+                    console.log(receipt.hash);
                 } else {
                     console.error("❌ ERROR: Transaction hash is undefined.");
                 }
@@ -364,7 +364,7 @@ async function executeSwap(amountIn) {
 async function main() {
     console.log("\n🔍 Checking for a Fee-Free Quote...");
 
-    const usdcAmountToTrade = 7.00; // Adjust as needed
+    const usdcAmountToTrade = 5; // Adjust as needed
     await executeSwap(usdcAmountToTrade);
 }
 
