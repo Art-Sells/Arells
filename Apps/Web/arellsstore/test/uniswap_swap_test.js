@@ -242,34 +242,20 @@ async function executeSwap(amountIn) {
 
     const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, provider);
     const swapRouterWithSigner = swapRouter.connect(userWallet);
-    
-    // 🔍 Debug contract methods
+
     console.log("\n🔍 Checking available functions in SwapRouter...");
     const availableFunctions = swapRouterWithSigner.interface.fragments.map(f => f.name);
     console.log(availableFunctions);
-    
-    // 🔍 Verify `exactInputSingle` Exists
+
     if (!availableFunctions.includes("exactInputSingle")) {
         console.error("❌ ERROR: `exactInputSingle` function is missing in ABI.");
         return;
     }
-    
+
     console.log("\n✅ `exactInputSingle` is present in ABI.");
 
-    console.log("\n🔍 SwapRouter Contract Instance (Full Dump):");
-    console.log(swapRouterWithSigner);
-
-    console.log("\n🔍 SwapRouter Interface Functions:");
-    console.log(swapRouterWithSigner.interface.fragments.map(f => f.name));
-
-    console.log("\n🔍 Checking if `exactInputSingle` function is callable...");
-    if (!swapRouterWithSigner["exactInputSingle"]) {
-        console.error("❌ ERROR: `exactInputSingle` is NOT callable. ABI might be incorrect.");
-        console.log("\n🔍 Dumping full swapRouterWithSigner:");
-        console.log(swapRouterWithSigner);
-        return;
-    }
-    console.log("✅ `exactInputSingle` function is callable.");
+    // 🟢 First attempt: Use the original `sqrtPriceLimitX96` (to maintain fee-free route)
+    let adjustedSqrtPriceLimitX96 = sqrtPriceLimitX96;
 
     const params = {
         tokenIn: USDC,
@@ -279,44 +265,36 @@ async function executeSwap(amountIn) {
         deadline: Math.floor(Date.now() / 1000) + 60 * 10,
         amountIn: ethers.parseUnits(amountIn.toString(), 6),
         amountOutMinimum: ethers.parseUnits("0.000001", 8),
-        sqrtPriceLimitX96: sqrtPriceLimitX96
+        sqrtPriceLimitX96: adjustedSqrtPriceLimitX96
     };
 
     console.log("\n🔍 Swap Parameters:");
     console.log(params);
 
-    console.log("\n🔍 Attempting to populate transaction...");
+    console.log("\n🔍 Encoding function data...");
+    const iface = new ethers.Interface(swapRouterABI);
+    const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
+
+    console.log("\n✅ Encoded function data:");
+    console.log(functionData);
+
+    console.log("\n🔍 Checking USDC Allowance...");
+    const allowance = await USDCContract.allowance(userWallet.address, swapRouterAddress);
+    console.log(`✅ USDC Allowance: ${ethers.formatUnits(allowance, 6)} USDC`);
+
+    if (allowance < params.amountIn) {
+        console.error("❌ ERROR: USDC allowance too low. Approve more USDC first.");
+        return;
+    }
+
+    console.log("\n⛽ Attempting transaction submission...");
     try {
-        const iface = new ethers.Interface(swapRouterABI);
-        const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
-        
-        const tx = await swapRouterWithSigner.sendTransaction({
+        const tx = await userWallet.sendTransaction({
             to: swapRouterAddress,
             data: functionData,
-            gasLimit: estimatedGas
+            gasLimit: 3000000 // 🔥 Manually set high gas limit
         });
-        console.log("\n✅ Populated Transaction Data:");
-        console.log(populatedTx);
-    } catch (err) {
-        console.error("❌ ERROR: `exactInputSingle` failed at populateTransaction. Possible ABI issue.");
-        console.error(err);
-        return;
-    }
 
-    console.log("\n⛽ Estimating Gas for Swap...");
-    let estimatedGas;
-    try {
-        estimatedGas = await swapRouterWithSigner.estimateGas["exactInputSingle"](params);
-        console.log(`📊 Estimated Gas: ${estimatedGas.toString()} units`);
-    } catch (err) {
-        console.error("❌ ERROR: Gas estimation failed for `exactInputSingle`.");
-        console.error(err);
-        return;
-    }
-
-    console.log("\n🔍 Executing `exactInputSingle`...");
-    try {
-        const tx = await swapRouterWithSigner.functions["exactInputSingle"](params, { gasLimit: estimatedGas });
         console.log("\n✅ Transaction Sent:");
         console.log(tx);
 
@@ -324,9 +302,44 @@ async function executeSwap(amountIn) {
         const receipt = await tx.wait();
         console.log("\n✅ Transaction Confirmed! Hash:");
         console.log(receipt.transactionHash);
+        return;
     } catch (err) {
         console.error("\n❌ ERROR: Swap Transaction Failed:");
         console.error(err);
+
+        // 🔴 If error contains "SPL", retry with a slightly adjusted `sqrtPriceLimitX96`
+        if (err.reason && err.reason.includes("SPL")) {
+            console.log("\n🔁 Retrying swap with slightly adjusted `sqrtPriceLimitX96`...");
+
+            adjustedSqrtPriceLimitX96 = BigInt(sqrtPriceLimitX96) * BigInt(99) / BigInt(100); // Reduce by 1%
+
+            console.log(`🔹 Adjusted sqrtPriceLimitX96: ${adjustedSqrtPriceLimitX96}`);
+
+            params.sqrtPriceLimitX96 = adjustedSqrtPriceLimitX96;
+
+            const functionDataRetry = iface.encodeFunctionData("exactInputSingle", [params]);
+
+            console.log("\n⛽ Retrying transaction submission...");
+            try {
+                const txRetry = await userWallet.sendTransaction({
+                    to: swapRouterAddress,
+                    data: functionDataRetry,
+                    gasLimit: 3000000
+                });
+
+                console.log("\n✅ Retry Transaction Sent:");
+                console.log(txRetry);
+
+                console.log("⏳ Waiting for Confirmation...");
+                const receiptRetry = await txRetry.wait();
+                console.log("\n✅ Retry Transaction Confirmed! Hash:");
+                console.log(receiptRetry.transactionHash);
+                return;
+            } catch (errRetry) {
+                console.error("\n❌ ERROR: Retry Swap Transaction Failed:");
+                console.error(errRetry);
+            }
+        }
     }
 }
 
