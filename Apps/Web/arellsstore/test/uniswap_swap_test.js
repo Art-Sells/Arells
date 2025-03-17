@@ -151,9 +151,11 @@ async function approveUSDC(amountIn) {
     console.log(`🔑 Approving Swap Router to spend ${amountIn} USDC...`);
 
     const allowance = await USDCContract.allowance(userWallet.address, swapRouterAddress);
-    if (allowance >= ethers.parseUnits(amountIn.toString(), 6)) {
-        console.log("✅ Approval already granted.");
-        return true;
+    console.log(`✅ USDC Allowance: ${ethers.formatUnits(allowance, 6)} USDC`);
+    
+    if (allowance < ethers.parseUnits(amountIn.toString(), 6)) {
+        console.error("❌ ERROR: USDC allowance too low. Approving more...");
+        await approveUSDC(amountIn); // ✅ Ensure sufficient approval before swap
     }
 
     // 🔥 Fetch current gas price
@@ -264,8 +266,8 @@ async function executeSwap(amountIn) {
         recipient: userWallet.address,
         deadline: Math.floor(Date.now() / 1000) + 60 * 10,
         amountIn: ethers.parseUnits(amountIn.toString(), 6),
-        amountOutMinimum: ethers.parseUnits("0.000001", 8),
-        sqrtPriceLimitX96: adjustedSqrtPriceLimitX96
+        amountOutMinimum: ethers.parseUnits("0.000001", 8), // ✅ Lower slippage tolerance
+        sqrtPriceLimitX96: BigInt(poolData.sqrtPriceX96) * BigInt(90) / BigInt(100) // ✅ Loosen sqrtPriceLimitX96 by 5%
     };
 
     console.log("\n🔍 Swap Parameters:");
@@ -289,19 +291,30 @@ async function executeSwap(amountIn) {
 
     console.log("\n⛽ Attempting transaction submission...");
     try {
+        const nonce = await provider.getTransactionCount(userWallet.address, "pending"); // Fetch latest pending nonce
+        console.log(`📌 Using latest pending nonce: ${nonce}`);
+        
+        const feeData = await provider.getFeeData();
         const tx = await userWallet.sendTransaction({
             to: swapRouterAddress,
             data: functionData,
-            gasLimit: 3000000 // 🔥 Manually set high gas limit
+            gasLimit: 3000000,
+            gasPrice: feeData.gasPrice, // ✅ Corrected gas price
+            maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei") // ✅ Use fetched priority fee, fallback if null
         });
 
         console.log("\n✅ Transaction Sent:");
         console.log(tx);
 
-        console.log("⏳ Waiting for Confirmation...");
+        console.log("\n⏳ Waiting for Confirmation...");
         const receipt = await tx.wait();
-        console.log("\n✅ Transaction Confirmed! Hash:");
-        console.log(receipt.transactionHash);
+        
+        if (receipt && receipt.transactionHash) {
+            console.log("\n✅ Transaction Confirmed! Hash:");
+            console.log(receipt.transactionHash);
+        } else {
+            console.error("❌ ERROR: Transaction hash is undefined.");
+        }
         return;
     } catch (err) {
         console.error("\n❌ ERROR: Swap Transaction Failed:");
@@ -327,13 +340,15 @@ async function executeSwap(amountIn) {
                     gasLimit: 3000000
                 });
 
-                console.log("\n✅ Retry Transaction Sent:");
-                console.log(txRetry);
-
-                console.log("⏳ Waiting for Confirmation...");
-                const receiptRetry = await txRetry.wait();
-                console.log("\n✅ Retry Transaction Confirmed! Hash:");
-                console.log(receiptRetry.transactionHash);
+                console.log("\n⏳ Waiting for Confirmation...");
+                const receipt = await tx.wait();
+                
+                if (receipt && receipt.transactionHash) {
+                    console.log("\n✅ Transaction Confirmed! Hash:");
+                    console.log(receipt.transactionHash);
+                } else {
+                    console.error("❌ ERROR: Transaction hash is undefined.");
+                }
                 return;
             } catch (errRetry) {
                 console.error("\n❌ ERROR: Retry Swap Transaction Failed:");
@@ -349,7 +364,7 @@ async function executeSwap(amountIn) {
 async function main() {
     console.log("\n🔍 Checking for a Fee-Free Quote...");
 
-    const usdcAmountToTrade = 5.00; // Adjust as needed
+    const usdcAmountToTrade = 7.00; // Adjust as needed
     await executeSwap(usdcAmountToTrade);
 }
 
