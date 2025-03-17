@@ -42,6 +42,11 @@ async function fetchABI(contractAddress) {
 
         const abi = JSON.parse(response.data.result);
         console.log(`✅ ABI Fetched Successfully for ${contractAddress}`);
+
+        // 🔍 Check if `exactInputSingle` exists in ABI
+        const functionExists = abi.some((item) => item.name === "exactInputSingle");
+        console.log(`🔍 Does ABI Contain 'exactInputSingle'?`, functionExists ? "✅ YES" : "❌ NO");
+
         return abi;
     } catch (error) {
         console.error("❌ Failed to fetch ABI:", error.message);
@@ -225,30 +230,46 @@ async function executeSwap(amountIn) {
     console.log(`   - USDC: ${balancesBefore.usdc}`);
     console.log(`   - CBBTC: ${balancesBefore.cbbtc}`);
 
-    // ✅ Fetch correct ABI for the Swap Router
     console.log(`🔍 Fetching SwapRouter ABI for ${swapRouterAddress}...`);
     let swapRouterABI = await fetchABI(swapRouterAddress);
+    
     if (!swapRouterABI) {
         console.error("❌ Failed to fetch SwapRouter ABI. Using fallback ABI.");
         swapRouterABI = [
-            "function exactInputSingle(tuple(address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256 amountOut)"
+            "function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 deadline, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external payable returns (uint256 amountOut)"
         ];
     }
 
-    console.log("\n✅ **Functions Available in SwapRouter ABI:**");
-    for (let item of swapRouterABI) {
-        if (item.type === "function") {
-            console.log(`   - ${item.name}`);
-        }
-    }
-
-    const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, provider).connect(userWallet);
-
-    // ✅ Verify that `exactInputSingle` exists
-    if (!swapRouter.interface.getFunction("exactInputSingle")) {
-        console.error("❌ ERROR: `exactInputSingle` method NOT FOUND on SwapRouter! Check ABI and contract address.");
+    const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, provider);
+    const swapRouterWithSigner = swapRouter.connect(userWallet);
+    
+    // 🔍 Debug contract methods
+    console.log("\n🔍 Checking available functions in SwapRouter...");
+    const availableFunctions = swapRouterWithSigner.interface.fragments.map(f => f.name);
+    console.log(availableFunctions);
+    
+    // 🔍 Verify `exactInputSingle` Exists
+    if (!availableFunctions.includes("exactInputSingle")) {
+        console.error("❌ ERROR: `exactInputSingle` function is missing in ABI.");
         return;
     }
+    
+    console.log("\n✅ `exactInputSingle` is present in ABI.");
+
+    console.log("\n🔍 SwapRouter Contract Instance (Full Dump):");
+    console.log(swapRouterWithSigner);
+
+    console.log("\n🔍 SwapRouter Interface Functions:");
+    console.log(swapRouterWithSigner.interface.fragments.map(f => f.name));
+
+    console.log("\n🔍 Checking if `exactInputSingle` function is callable...");
+    if (!swapRouterWithSigner["exactInputSingle"]) {
+        console.error("❌ ERROR: `exactInputSingle` is NOT callable. ABI might be incorrect.");
+        console.log("\n🔍 Dumping full swapRouterWithSigner:");
+        console.log(swapRouterWithSigner);
+        return;
+    }
+    console.log("✅ `exactInputSingle` function is callable.");
 
     const params = {
         tokenIn: USDC,
@@ -264,33 +285,48 @@ async function executeSwap(amountIn) {
     console.log("\n🔍 Swap Parameters:");
     console.log(params);
 
+    console.log("\n🔍 Attempting to populate transaction...");
     try {
-        console.log("\n🔍 SwapRouter Contract Functions Available:");
-        console.log(Object.keys(swapRouter));
+        const iface = new ethers.Interface(swapRouterABI);
+        const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
+        
+        const tx = await swapRouterWithSigner.sendTransaction({
+            to: swapRouterAddress,
+            data: functionData,
+            gasLimit: estimatedGas
+        });
+        console.log("\n✅ Populated Transaction Data:");
+        console.log(populatedTx);
+    } catch (err) {
+        console.error("❌ ERROR: `exactInputSingle` failed at populateTransaction. Possible ABI issue.");
+        console.error(err);
+        return;
+    }
 
-        if (!swapRouter.callStatic.exactInputSingle) {
-            console.error("❌ ERROR: `exactInputSingle` is NOT callable! Check ABI & contract initialization.");
-            return;
-        }
-
-        console.log("⛽ Estimating Gas for Swap...");
-        const estimatedGas = await swapRouter.estimateGas.exactInputSingle(params);
+    console.log("\n⛽ Estimating Gas for Swap...");
+    let estimatedGas;
+    try {
+        estimatedGas = await swapRouterWithSigner.estimateGas["exactInputSingle"](params);
         console.log(`📊 Estimated Gas: ${estimatedGas.toString()} units`);
+    } catch (err) {
+        console.error("❌ ERROR: Gas estimation failed for `exactInputSingle`.");
+        console.error(err);
+        return;
+    }
 
-        console.log("🚀 Sending Swap Transaction...");
-        const tx = await swapRouter.exactInputSingle(params, { gasLimit: estimatedGas });
-        console.log("⏳ Waiting for Transaction Confirmation...");
+    console.log("\n🔍 Executing `exactInputSingle`...");
+    try {
+        const tx = await swapRouterWithSigner.functions["exactInputSingle"](params, { gasLimit: estimatedGas });
+        console.log("\n✅ Transaction Sent:");
+        console.log(tx);
+
+        console.log("⏳ Waiting for Confirmation...");
         const receipt = await tx.wait();
-
-        if (!receipt.transactionHash) {
-            console.error("❌ Transaction Failed: No Hash Found");
-            return;
-        }
-
-        console.log(`✅ Swap Executed Successfully!`);
-        console.log(`🔗 Transaction Hash: ${receipt.transactionHash}`);
-    } catch (error) {
-        console.error(`❌ Swap Execution Failed:`, error);
+        console.log("\n✅ Transaction Confirmed! Hash:");
+        console.log(receipt.transactionHash);
+    } catch (err) {
+        console.error("\n❌ ERROR: Swap Transaction Failed:");
+        console.error(err);
     }
 }
 
