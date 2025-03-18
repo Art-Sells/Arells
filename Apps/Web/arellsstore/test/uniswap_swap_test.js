@@ -268,7 +268,7 @@ async function executeSwap(amountIn) {
         deadline: Math.floor(Date.now() / 1000) + 60 * 10,
         amountIn: ethers.parseUnits(amountIn.toString(), 6),
         amountOutMinimum: ethers.parseUnits("0.000001", 8), // ✅ Lower slippage tolerance
-        sqrtPriceLimitX96: BigInt(poolData.sqrtPriceX96) * BigInt(90) / BigInt(100) // ✅ Loosen sqrtPriceLimitX96 by 5%
+        sqrtPriceLimitX96: poolData.sqrtPriceX96 // ✅ Loosen sqrtPriceLimitX96 by 5%
     };
 
     console.log("\n🔍 Swap Parameters:");
