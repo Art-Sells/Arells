@@ -7,7 +7,8 @@
 ## Test
 - Test USDC to CBBTC no fee transfer, back and forth many times...
 yarn hardhat run scripts/deploy.ts --network base
-yarn hardhat run test/uniswap_swap_test.js --network base
+yarn hardhat run test/mass_usdc_swap_test.js --network base
+yarn hardhat run test/mass_cbbtc_swap_test.js --network base
 yarn hardhat test --network base
 ** Remove P/K & P/K Test from e en vee **
 ** Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again... **
