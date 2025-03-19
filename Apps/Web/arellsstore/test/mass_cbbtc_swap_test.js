@@ -24,8 +24,11 @@ const USDCContract = new ethers.Contract(USDC, [
     "function approve(address, uint256)",
     "function allowance(address, address) view returns (uint256)"  // ✅ Add `allowance`
 ], userWallet);
-const CBBTCContract = new ethers.Contract(CBBTC, ["function balanceOf(address) view returns (uint256)"], userWallet);
-
+const CBBTCContract = new ethers.Contract(CBBTC, [
+    "function balanceOf(address) view returns (uint256)",
+    "function approve(address, uint256)",  // ✅ Add approve function
+    "function allowance(address, address) view returns (uint256)" // ✅ Add allowance function
+], userWallet);
 
 console.log(`🔥 Ethers.js Version: ${ethers.version}`);
 /**
@@ -147,13 +150,13 @@ async function getBalances() {
     };
 }
 
-async function approveUSDC(amountIn) {
-    console.log(`🔑 Approving Swap Router to spend ${amountIn} USDC...`);
+async function approveCBBTC(amountIn) {
+    console.log(`🔑 Approving Swap Router to spend ${amountIn} CBBTC...`);
 
-    const allowance = await USDCContract.allowance(userWallet.address, swapRouterAddress);
-    console.log(`✅ USDC Allowance: ${ethers.formatUnits(allowance, 6)} USDC`);
+    const allowance = await CBBTCContract.allowance(userWallet.address, swapRouterAddress);
+    console.log(`✅ CBBTC Allowance: ${ethers.formatUnits(allowance, 8)} CBBTC`);
     
-    if (allowance >= ethers.parseUnits(amountIn.toString(), 6)) {
+    if (allowance >= ethers.parseUnits(amountIn.toString(), 8)) {
         console.log("✅ Approval already granted.");
         return;
     }
@@ -170,9 +173,9 @@ async function approveUSDC(amountIn) {
 
     console.log(`🔹 Max Gas Allowed: ${maxGasUnits} units (equivalent to $0.03 in ETH)`);
 
-    const tx = await USDCContract.approve(
+    const tx = await CBBTCContract.approve(
         swapRouterAddress,
-        ethers.parseUnits(amountIn.toString(), 6),
+        ethers.parseUnits(amountIn.toString(), 8),
         { gasLimit: maxGasUnits } // 🔥 Limit gas usage
     );
 
@@ -202,15 +205,31 @@ async function checkETHBalance() {
 async function executeSwap(amountIn) {
     console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
 
+    // ✅ Step 1: Fetch Pool Address
     const poolAddress = await getPoolAddress();
     if (!poolAddress) return;
 
+    // ✅ Step 2: Check Pool Liquidity
     const poolData = await checkPoolLiquidity(poolAddress);
     if (!poolData || poolData.liquidity === 0) {
         console.error("❌ Pool has ZERO liquidity. No swap can be performed.");
         return;
     }
 
+    // 🔹 Check Reverse Liquidity for CBBTC → USDC
+    const tickLower = Math.floor(Number(poolData.tick) / Number(poolData.tickSpacing)) * Number(poolData.tickSpacing);
+    const tickUpper = tickLower + Number(poolData.tickSpacing);
+
+    console.log(`\n🔍 Checking liquidity for CBBTC → USDC between ticks: ${tickLower} → ${tickUpper}`);
+
+    if (poolData.liquidity <= 0) {
+        console.error("❌ Not enough liquidity for CBBTC → USDC. Swap aborted.");
+        return;
+    }
+
+    console.log("✅ Liquidity confirmed for CBBTC → USDC swap!");
+
+    // ✅ Step 3: Verify Fee-Free Route
     const isFeeFree = await checkFeeFreeRoute(amountIn);
     if (!isFeeFree) {
         console.error("❌ No Fee-Free Route Available! Swap will NOT proceed.");
@@ -219,19 +238,32 @@ async function executeSwap(amountIn) {
 
     console.log("✅ Fee-Free Route Confirmed!");
 
-    const sqrtPriceLimitX96 = poolData.sqrtPriceX96;
+    // ✅ Step 4: Test if CBBTC is Transferable
+    try {
+        console.log("🔍 Testing if CBBTC is transferable...");
+        const transferTest = await CBBTCContract.transfer(userWallet.address, ethers.parseUnits("0.00001", 8));
+        await transferTest.wait();
+        console.log("✅ CBBTC is transferable!");
+    } catch (error) {
+        console.error("❌ ERROR: CBBTC cannot be transferred. Swap cannot proceed.");
+        return;
+    }
 
+    // ✅ Step 5: Check ETH Balance for Gas
     if (!(await checkETHBalance())) {
         return;
     }
 
+    // ✅ Step 6: Approve CBBTC for Swap
     await approveCBBTC(amountIn);
 
+    // ✅ Step 7: Fetch Balances Before Swap
     const balancesBefore = await getBalances();
     console.log(`\n🔍 Balances BEFORE Swap:`);
     console.log(`   - USDC: ${balancesBefore.usdc}`);
     console.log(`   - CBBTC: ${balancesBefore.cbbtc}`);
 
+    // ✅ Step 8: Fetch SwapRouter ABI
     console.log(`🔍 Fetching SwapRouter ABI for ${swapRouterAddress}...`);
     let swapRouterABI = await fetchABI(swapRouterAddress);
     
@@ -256,20 +288,28 @@ async function executeSwap(amountIn) {
 
     console.log("\n✅ `exactInputSingle` is present in ABI.");
 
+    // ✅ Step 9: Adjust sqrtPriceLimitX96 for Flexibility
+    let sqrtPriceLimitX96 = BigInt(poolData.sqrtPriceX96);
+    sqrtPriceLimitX96 = (sqrtPriceLimitX96 * 95n) / 100n; // 🔥 Adjust by reducing 5%
+
+    console.log(`🔹 Adjusted sqrtPriceLimitX96 for swap: ${sqrtPriceLimitX96}`);
+
+    // ✅ Step 10: Set Swap Parameters
     const params = {
-        tokenIn: CBBTC, // ✅ Swapping CBBTC for USDC
+        tokenIn: CBBTC, 
         tokenOut: USDC,
         fee: 500,
         recipient: userWallet.address,
         deadline: Math.floor(Date.now() / 1000) + 60 * 10,
-        amountIn: ethers.parseUnits(amountIn.toString(), 8), // ✅ Adjusted for CBBTC decimals (8)
-        amountOutMinimum: ethers.parseUnits("0.000001", 6), // ✅ Lower slippage tolerance
-        sqrtPriceLimitX96: poolData.sqrtPriceX96 // ✅ Ensuring 100% exact limit
+        amountIn: ethers.parseUnits(amountIn.toString(), 8), 
+        amountOutMinimum: ethers.parseUnits("0.0001", 6), 
+        sqrtPriceLimitX96: sqrtPriceLimitX96  
     };
 
     console.log("\n🔍 Swap Parameters:");
     console.log(params);
 
+    // ✅ Step 11: Encode Function Data
     console.log("\n🔍 Encoding function data...");
     const iface = new ethers.Interface(swapRouterABI);
     const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
@@ -277,6 +317,7 @@ async function executeSwap(amountIn) {
     console.log("\n✅ Encoded function data:");
     console.log(functionData);
 
+    // ✅ Step 12: Check CBBTC Allowance
     console.log("\n🔍 Checking CBBTC Allowance...");
     const allowance = await CBBTCContract.allowance(userWallet.address, swapRouterAddress);
     console.log(`✅ CBBTC Allowance: ${ethers.formatUnits(allowance, 8)} CBBTC`);
@@ -286,6 +327,7 @@ async function executeSwap(amountIn) {
         return;
     }
 
+    // ✅ Step 13: Attempt Transaction Submission
     console.log("\n⛽ Attempting transaction submission...");
     try {
         const nonce = await provider.getTransactionCount(userWallet.address, "pending");
