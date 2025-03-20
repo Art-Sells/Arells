@@ -55,7 +55,7 @@ async function initializeCBBTCContract() {
         "function balanceOf(address) view returns (uint256)",
         "function approve(address, uint256)",
         "function allowance(address, address) view returns (uint256)",
-        "function transfer(address, uint256)"
+        "function transferFrom(address, address, uint256)"
     ], userWallet);
 }
 
@@ -143,7 +143,7 @@ async function checkPoolLiquidity(poolAddress) {
  * ✅ Check Fee-Free Route
  */
 async function checkFeeFreeRoute(amountIn) {
-    console.log(`\n🚀 Checking Fee-Free Route for ${amountIn} USDC → CBBTC`);
+    console.log(`\n🚀 Checking Fee-Free Route for ${amountIn} CBBTC - > USDC`);
 
     const poolAddress = await getPoolAddress();
     if (!poolAddress) return false;
@@ -161,11 +161,11 @@ async function checkFeeFreeRoute(amountIn) {
     console.log(`\n🔍 Checking liquidity between ticks: ${tickLower} → ${tickUpper}`);
 
     if (poolData.liquidity > 0) {
-        console.log(`\n✅ **Fee-Free Route Available for ${amountIn} USDC!** 🚀`);
+        console.log(`\n✅ **Fee-Free Route Available for ${amountIn} CBBTC!** 🚀`);
         return true;
     }
 
-    console.log(`\n❌ No Fee-Free Route Found for ${amountIn} USDC.`);
+    console.log(`\n❌ No Fee-Free Route Found for ${amountIn} CBBTC.`);
     return false;
 }
 
@@ -176,20 +176,31 @@ const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481"; // ✅ C
 
 async function getBalances() {
     const usdcBalance = await USDCContract.balanceOf(userWallet.address);
-    const cbbtcBalance = await CBBTCContract.balanceOf(userWallet.address);
+    const cbbtcBalance = await checkCBBTCBalance(); // ✅ Fetch from proxy contract
 
     return {
-        usdc: ethers.formatUnits(usdcBalance, 6), // USDC has 6 decimals
-        cbbtc: ethers.formatUnits(cbbtcBalance, 8) // CBBTC has 8 decimals
+        usdc: ethers.formatUnits(usdcBalance, 6), 
+        cbbtc: ethers.formatUnits(cbbtcBalance, 8)
     };
 }
 
 async function approveCBBTC(amountIn) {
     console.log(`🔑 Approving Swap Router to spend ${amountIn} CBBTC...`);
 
-    const allowance = await CBBTCContract.allowance(userWallet.address, swapRouterAddress);
+    const balance = await checkCBBTCBalance();
+    if (balance < ethers.parseUnits(amountIn.toString(), 8)) {
+        console.error(`❌ ERROR: Insufficient CBBTC balance! Available: ${ethers.formatUnits(balance, 8)}, Required: ${amountIn}`);
+        return;
+    }
+
+    const proxyCBBTCContract = new ethers.Contract(CBBTC, [
+        "function approve(address, uint256)",
+        "function allowance(address, address) view returns (uint256)"
+    ], userWallet);
+
+    const allowance = await proxyCBBTCContract.allowance(userWallet.address, swapRouterAddress);
     console.log(`✅ CBBTC Allowance: ${ethers.formatUnits(allowance, 8)} CBBTC`);
-    
+
     if (allowance >= ethers.parseUnits(amountIn.toString(), 8)) {
         console.log("✅ Approval already granted.");
         return;
@@ -197,20 +208,13 @@ async function approveCBBTC(amountIn) {
 
     // 🔥 Fetch current gas price
     const feeData = await provider.getFeeData();
-    const gasPrice = feeData.gasPrice; // ✅ Correct for Ethers v6
+    const gasPrice = feeData.gasPrice;
     console.log(`⛽ Current Gas Price: ${ethers.formatUnits(gasPrice, "gwei")} Gwei`);
 
-    // 🔥 Calculate max gas units for $0.03
-    const ethPriceInUSD = 2100; // 🟢 Update this with real-time ETH price
-    const maxETHForGas = 0.03 / ethPriceInUSD; // Convert $0.03 to ETH
-    const maxGasUnits = Math.floor(maxETHForGas / ethers.formatUnits(gasPrice, "ether"));
-
-    console.log(`🔹 Max Gas Allowed: ${maxGasUnits} units (equivalent to $0.03 in ETH)`);
-
-    const tx = await CBBTCContract.approve(
+    const tx = await proxyCBBTCContract.approve(
         swapRouterAddress,
         ethers.parseUnits(amountIn.toString(), 8),
-        { gasLimit: maxGasUnits } // 🔥 Limit gas usage
+        { gasLimit: 70000 }
     );
 
     await tx.wait();
@@ -257,11 +261,26 @@ async function testTransferFrom() {
         console.error(error.message);
     }
 }
+async function checkCBBTCBalance() {
+    const proxyCBBTCContract = new ethers.Contract(CBBTC, [
+        "function balanceOf(address) view returns (uint256)"
+    ], provider);
 
+    const balance = await proxyCBBTCContract.balanceOf(userWallet.address);
+    console.log(`💰 CBBTC Balance: ${ethers.formatUnits(balance, 8)} CBBTC`);
+    return balance;
+}
 
 
 async function executeSwap(amountIn) {
     console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
+
+    // ✅ Check CBBTC Balance Before Swap
+    const balance = await checkCBBTCBalance();
+    if (balance < ethers.parseUnits(amountIn.toString(), 8)) {
+        console.error(`❌ ERROR: Insufficient CBBTC balance! Available: ${ethers.formatUnits(balance, 8)}, Required: ${amountIn}`);
+        return;
+    }
 
     // ✅ Step 1: Fetch Pool Address
     const poolAddress = await getPoolAddress();
@@ -294,12 +313,21 @@ async function executeSwap(amountIn) {
         return;
     }
 
+    // ✅ Step 4: Fetch Balances Before Swap
+    const balancesBefore = await getBalances();
+    console.log(`\n🔍 Balances BEFORE Swap:`);
+    console.log(`   - USDC: ${balancesBefore.usdc}`);
+    console.log(`   - CBBTC: ${balancesBefore.cbbtc}`);
+
     console.log("✅ Fee-Free Route Confirmed!");
+
+    // ✅ Step 4: Approve CBBTC for Swap
+    await approveCBBTC(amountIn);
 
     // Run this before swapping
     await testTransferFrom();
 
-    // ✅ Step 4: Test if CBBTC is Transferable
+    // ✅ Step 5: Test if CBBTC is Transferable
     console.log("🔍 Fetching CBBTC Implementation Address...");
     const CBBTC_IMPLEMENTATION = await getImplementationAddress(CBBTC);
     
@@ -313,16 +341,19 @@ async function executeSwap(amountIn) {
         "function balanceOf(address) view returns (uint256)",
         "function approve(address, uint256)",
         "function allowance(address, address) view returns (uint256)",
-        "function transfer(address, uint256)"
+        "function transferFrom(address, address, uint256)"
     ], userWallet);
     
     try {
         console.log("🔍 Testing if CBBTC is transferable using transferFrom()...");
     
         // Approve yourself first (needed for transferFrom)
-        const approvalTx = await CBBTCContract.approve(swapRouterAddress, ethers.parseUnits(amountIn.toString(), 8));
+        const approvalTx = await realCBBTCContract.approve(swapRouterAddress, ethers.parseUnits(amountIn.toString(), 8));
         await approvalTx.wait();
         console.log("✅ Approved self-transfer!");
+
+        const allowance = await proxyCBBTCContract.allowance(userWallet.address, swapRouterAddress);
+        console.log(`✅ CBBTC Allowance: ${ethers.formatUnits(allowance, 8)} CBBTC`);
     
         // Try using transferFrom instead of transfer
         const transferTest = await realCBBTCContract.transferFrom(userWallet.address, userWallet.address, ethers.parseUnits("0.00001", 8));
@@ -333,19 +364,10 @@ async function executeSwap(amountIn) {
         return;
     }
 
-    // ✅ Step 5: Check ETH Balance for Gas
+    // ✅ Step 6: Check ETH Balance for Gas
     if (!(await checkETHBalance())) {
         return;
     }
-
-    // ✅ Step 6: Approve CBBTC for Swap
-    await approveCBBTC(amountIn);
-
-    // ✅ Step 7: Fetch Balances Before Swap
-    const balancesBefore = await getBalances();
-    console.log(`\n🔍 Balances BEFORE Swap:`);
-    console.log(`   - USDC: ${balancesBefore.usdc}`);
-    console.log(`   - CBBTC: ${balancesBefore.cbbtc}`);
 
     // ✅ Step 8: Fetch SwapRouter ABI
     console.log(`🔍 Fetching SwapRouter ABI for ${swapRouterAddress}...`);
