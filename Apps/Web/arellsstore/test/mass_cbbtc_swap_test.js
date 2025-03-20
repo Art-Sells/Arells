@@ -24,13 +24,47 @@ const USDCContract = new ethers.Contract(USDC, [
     "function approve(address, uint256)",
     "function allowance(address, address) view returns (uint256)"  // ✅ Add `allowance`
 ], userWallet);
-const CBBTCContract = new ethers.Contract(CBBTC, [
-    "function balanceOf(address) view returns (uint256)",
-    "function approve(address, uint256)",  // ✅ Add approve function
-    "function allowance(address, address) view returns (uint256)" // ✅ Add allowance function
-], userWallet);
+async function getImplementationAddress(proxyAddress) {
+    const proxyABI = ["function implementation() view returns (address)"];
+    const proxyContract = new ethers.Contract(proxyAddress, proxyABI, provider);
 
-console.log(`🔥 Ethers.js Version: ${ethers.version}`);
+    try {
+        const implementationAddress = await proxyContract.implementation();
+        console.log(`✅ CBBTC Implementation Contract: ${implementationAddress}`);
+        return implementationAddress;
+    } catch (error) {
+        console.error("❌ ERROR: Could not fetch implementation contract:", error.message);
+        return null;
+    }
+}
+let CBBTCContract; // Declare it outside the function
+
+async function initializeCBBTCContract() {
+    console.log("🔍 Fetching CBBTC Implementation Address...");
+    const CBBTC_IMPLEMENTATION = await getImplementationAddress(CBBTC);
+
+    if (!CBBTC_IMPLEMENTATION) {
+        console.error("❌ ERROR: Unable to retrieve CBBTC implementation. Swap cannot proceed.");
+        return;
+    }
+
+    console.log(`✅ CBBTC Implementation Contract: ${CBBTC_IMPLEMENTATION}`);
+
+    // ✅ Use the Implementation Contract for Transfers
+    CBBTCContract = new ethers.Contract(CBBTC_IMPLEMENTATION, [
+        "function balanceOf(address) view returns (uint256)",
+        "function approve(address, uint256)",
+        "function allowance(address, address) view returns (uint256)",
+        "function transfer(address, uint256)"
+    ], userWallet);
+}
+
+// 🔥 Call the function immediately
+initializeCBBTCContract().then(() => {
+    console.log("✅ CBBTC Contract Initialized Successfully!");
+}).catch((error) => {
+    console.error("❌ ERROR: Failed to initialize CBBTC contract:", error);
+});
 /**
  * ✅ Fetch ABI from BaseScan
  */
@@ -202,6 +236,30 @@ async function checkETHBalance() {
     return true;
 }
 
+async function testTransferFrom() {
+    console.log("🔍 Testing if CBBTC transferFrom() works...");
+
+    const spender = swapRouterAddress;
+    const amount = ethers.parseUnits("0.00001", 8);
+
+    try {
+        // Approve first
+        const approvalTx = await CBBTCContract.approve(spender, amount);
+        await approvalTx.wait();
+        console.log("✅ Approved SwapRouter!");
+
+        // Try using transferFrom()
+        const transferTx = await CBBTCContract.transferFrom(userWallet.address, spender, amount);
+        await transferTx.wait();
+        console.log("✅ transferFrom() works!");
+    } catch (error) {
+        console.error("❌ ERROR: transferFrom() failed. Uniswap will not be able to pull CBBTC.");
+        console.error(error.message);
+    }
+}
+
+
+
 async function executeSwap(amountIn) {
     console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
 
@@ -238,14 +296,40 @@ async function executeSwap(amountIn) {
 
     console.log("✅ Fee-Free Route Confirmed!");
 
+    // Run this before swapping
+    await testTransferFrom();
+
     // ✅ Step 4: Test if CBBTC is Transferable
+    console.log("🔍 Fetching CBBTC Implementation Address...");
+    const CBBTC_IMPLEMENTATION = await getImplementationAddress(CBBTC);
+    
+    if (!CBBTC_IMPLEMENTATION) {
+        console.error("❌ ERROR: Unable to retrieve CBBTC implementation. Swap cannot proceed.");
+        return;
+    }
+    
+    // ✅ Use the Implementation Contract for Transfers
+    const realCBBTCContract = new ethers.Contract(CBBTC_IMPLEMENTATION, [
+        "function balanceOf(address) view returns (uint256)",
+        "function approve(address, uint256)",
+        "function allowance(address, address) view returns (uint256)",
+        "function transfer(address, uint256)"
+    ], userWallet);
+    
     try {
-        console.log("🔍 Testing if CBBTC is transferable...");
-        const transferTest = await CBBTCContract.transfer(userWallet.address, ethers.parseUnits("0.00001", 8));
+        console.log("🔍 Testing if CBBTC is transferable using transferFrom()...");
+    
+        // Approve yourself first (needed for transferFrom)
+        const approvalTx = await CBBTCContract.approve(swapRouterAddress, ethers.parseUnits(amountIn.toString(), 8));
+        await approvalTx.wait();
+        console.log("✅ Approved self-transfer!");
+    
+        // Try using transferFrom instead of transfer
+        const transferTest = await realCBBTCContract.transferFrom(userWallet.address, userWallet.address, ethers.parseUnits("0.00001", 8));
         await transferTest.wait();
         console.log("✅ CBBTC is transferable!");
     } catch (error) {
-        console.error("❌ ERROR: CBBTC cannot be transferred. Swap cannot proceed.");
+        console.error("❌ ERROR: CBBTC cannot be transferred, even with transferFrom. Swap cannot proceed.");
         return;
     }
 
