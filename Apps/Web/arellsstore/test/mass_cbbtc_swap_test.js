@@ -184,28 +184,27 @@ async function executeSwap(amountIn) {
   if (!(await checkETHBalance())) return;
 
   const swapRouterABI = [
-    "function exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160)) external payable returns (uint256)"
+    "function exactInputSingle(tuple(address tokenIn,address tokenOut,uint24 fee,address recipient,uint256 deadline,uint256 amountIn,uint256 amountOutMinimum,uint160 sqrtPriceLimitX96)) external payable returns (uint256)"
   ];
+  
   const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, userWallet);
-
-  const sqrtPriceLimitX96 = BigInt(poolData.sqrtPriceX96) * 95n / 100n;
-
-  const params = [
-    CBBTC,                      // tokenIn
-    USDC,                       // tokenOut
-    500,                        // fee
-    userWallet.address,         // recipient
-    Math.floor(Date.now() / 1000) + 600,  // deadline
-    ethers.parseUnits(amountIn.toString(), 8),   // amountIn
-    ethers.parseUnits("0.0001", 6),              // amountOutMinimum
-    sqrtPriceLimitX96           // sqrtPriceLimitX96
-  ];
-
+  const sqrtPriceLimitX96 = poolData.sqrtPriceX96;
+  const params = {
+    tokenIn: CBBTC,
+    tokenOut: USDC,
+    fee: 500,
+    recipient: userWallet.address,
+    deadline: Math.floor(Date.now() / 1000) + 600,
+    amountIn: ethers.parseUnits(amountIn.toString(), 8),
+    amountOutMinimum: ethers.parseUnits("0.0001", 6),
+    sqrtPriceLimitX96
+  };
+  
   try {
     console.log("\n🔍 Simulating swap...");
     const estimatedOut = await swapRouter.callStatic.exactInputSingle(params);
     console.log("✅ Estimated Output:", ethers.formatUnits(estimatedOut, 6));
-
+  
     console.log("\n🚀 Sending transaction...");
     const tx = await swapRouter.exactInputSingle(params);
     const receipt = await tx.wait();
