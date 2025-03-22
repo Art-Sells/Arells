@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, Interface } from "ethers"; 
 import dotenv from "dotenv";
 import axios from "axios";
 
@@ -23,18 +23,6 @@ const USDCContract = new ethers.Contract(USDC, [
   "function allowance(address, address) view returns (uint256)"
 ], userWallet);
 
-async function getImplementationAddress(proxyAddress) {
-  const proxyABI = ["function implementation() view returns (address)"];
-  const proxyContract = new ethers.Contract(proxyAddress, proxyABI, provider);
-  try {
-    const implementationAddress = await proxyContract.implementation();
-    console.log(`✅ CBBTC Implementation Contract: ${implementationAddress}`);
-    return implementationAddress;
-  } catch (error) {
-    console.error("❌ ERROR: Could not fetch implementation contract:", error.message);
-    return null;
-  }
-}
 
 async function fetchABI(contractAddress) {
   try {
@@ -183,12 +171,36 @@ async function executeSwap(amountIn) {
   await approveCBBTC(amountIn);
   if (!(await checkETHBalance())) return;
 
-  const swapRouterABI = [
-    "function exactInputSingle(tuple(address tokenIn,address tokenOut,uint24 fee,address recipient,uint256 deadline,uint256 amountIn,uint256 amountOutMinimum,uint160 sqrtPriceLimitX96)) external payable returns (uint256)"
-  ];
-  
-  const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, userWallet);
-  const sqrtPriceLimitX96 = poolData.sqrtPriceX96;
+  // ✅ Create Interface first
+  const abiInterface = new Interface([
+    {
+      "inputs": [
+        {
+          "components": [
+            { "internalType": "address", "name": "tokenIn", "type": "address" },
+            { "internalType": "address", "name": "tokenOut", "type": "address" },
+            { "internalType": "uint24", "name": "fee", "type": "uint24" },
+            { "internalType": "address", "name": "recipient", "type": "address" },
+            { "internalType": "uint256", "name": "deadline", "type": "uint256" },
+            { "internalType": "uint256", "name": "amountIn", "type": "uint256" },
+            { "internalType": "uint256", "name": "amountOutMinimum", "type": "uint256" },
+            { "internalType": "uint160", "name": "sqrtPriceLimitX96", "type": "uint160" }
+          ],
+          "internalType": "struct ISwapRouter.ExactInputSingleParams",
+          "name": "params",
+          "type": "tuple"
+        }
+      ],
+      "name": "exactInputSingle",
+      "outputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }],
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ]);
+
+  const swapRouter = new ethers.Contract(swapRouterAddress, abiInterface, userWallet);
+
+  const sqrtPriceLimitX96 = BigInt(poolData.sqrtPriceX96) * 99n / 100n;
   const params = {
     tokenIn: CBBTC,
     tokenOut: USDC,
@@ -197,14 +209,14 @@ async function executeSwap(amountIn) {
     deadline: Math.floor(Date.now() / 1000) + 600,
     amountIn: ethers.parseUnits(amountIn.toString(), 8),
     amountOutMinimum: ethers.parseUnits("0.0001", 6),
-    sqrtPriceLimitX96
+    sqrtPriceLimitX96: poolData.sqrtPriceX96,
   };
-  
+
   try {
     console.log("\n🔍 Simulating swap...");
     const estimatedOut = await swapRouter.callStatic.exactInputSingle(params);
     console.log("✅ Estimated Output:", ethers.formatUnits(estimatedOut, 6));
-  
+
     console.log("\n🚀 Sending transaction...");
     const tx = await swapRouter.exactInputSingle(params);
     const receipt = await tx.wait();
