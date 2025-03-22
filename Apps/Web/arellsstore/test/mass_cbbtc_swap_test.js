@@ -163,65 +163,55 @@ async function checkETHBalance() {
 
 async function executeSwap(amountIn) {
   console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
+
   const balance = await checkCBBTCBalance();
   if (balance < ethers.parseUnits(amountIn.toString(), 8)) {
-    console.error(`❌ ERROR: Insufficient CBBTC balance! Available: ${ethers.formatUnits(balance, 8)}, Required: ${amountIn}`);
+    console.error(`❌ ERROR: Insufficient CBBTC balance!`);
     return;
   }
+
   const poolAddress = await getPoolAddress();
-  if (!poolAddress) return;
   const poolData = await checkPoolLiquidity(poolAddress);
   if (!poolData || poolData.liquidity === 0) {
-    console.error("❌ Pool has ZERO liquidity. No swap can be performed.");
+    console.error("❌ No liquidity available.");
     return;
   }
+
   const isFeeFree = await checkFeeFreeRoute(amountIn);
-  if (!isFeeFree) {
-    console.error("❌ No Fee-Free Route Available! Swap will NOT proceed.");
-    return;
-  }
-  const balancesBefore = await getBalances();
-  console.log(`\n🔍 Balances BEFORE Swap:`);
-  console.log(`   - USDC: ${balancesBefore.usdc}`);
-  console.log(`   - CBBTC: ${balancesBefore.cbbtc}`);
+  if (!isFeeFree) return;
 
   await approveCBBTC(amountIn);
   if (!(await checkETHBalance())) return;
 
-  console.log(`🔍 Fetching SwapRouter ABI for ${swapRouterAddress}...`);
-  const swapRouterABI = await fetchABI(swapRouterAddress);
-  const iface = new ethers.Interface(swapRouterABI);
-  try {
-    const exactInputSingleFragment = iface.getFunction("exactInputSingle");
-    console.log("✅ exactInputSingle Function Fragment:");
-    console.log(exactInputSingleFragment.format(ethers.FormatTypes.full));
-  } catch (err) {
-    console.error("❌ ERROR: 'exactInputSingle' not found in ABI!", err.message);
-  }
+  const swapRouterABI = [
+    "function exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160)) external payable returns (uint256)"
+  ];
   const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, userWallet);
 
   const sqrtPriceLimitX96 = BigInt(poolData.sqrtPriceX96) * 95n / 100n;
-  const params = {
-    tokenIn: CBBTC,
-    tokenOut: USDC,
-    fee: 500,
-    recipient: userWallet.address,
-    deadline: Math.floor(Date.now() / 1000) + 600,
-    amountIn: ethers.parseUnits(amountIn.toString(), 8),
-    amountOutMinimum: ethers.parseUnits("0.0001", 6),
-    sqrtPriceLimitX96
-  };
+
+  const params = [
+    CBBTC,                      // tokenIn
+    USDC,                       // tokenOut
+    500,                        // fee
+    userWallet.address,         // recipient
+    Math.floor(Date.now() / 1000) + 600,  // deadline
+    ethers.parseUnits(amountIn.toString(), 8),   // amountIn
+    ethers.parseUnits("0.0001", 6),              // amountOutMinimum
+    sqrtPriceLimitX96           // sqrtPriceLimitX96
+  ];
 
   try {
-    console.log("\n🔍 Simulating swap with callStatic...");
+    console.log("\n🔍 Simulating swap...");
     const estimatedOut = await swapRouter.callStatic.exactInputSingle(params);
     console.log("✅ Estimated Output:", ethers.formatUnits(estimatedOut, 6));
+
     console.log("\n🚀 Sending transaction...");
     const tx = await swapRouter.exactInputSingle(params);
     const receipt = await tx.wait();
-    console.log("✅ Transaction Confirmed! Hash:", receipt.hash);
+    console.log("✅ Transaction confirmed. Hash:", receipt.hash);
   } catch (err) {
-    console.error("❌ ERROR: Swap Transaction Failed:", err.reason || err.message);
+    console.error("❌ ERROR: Swap Transaction Failed:", err.reason || err.message || err);
   }
 }
 
