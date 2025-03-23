@@ -114,28 +114,33 @@ async function getBalances() {
 async function approveCBBTC(amountIn) {
   console.log(`🔑 Approving Swap Router to spend ${amountIn} CBBTC...`);
   const balance = await checkCBBTCBalance();
-  if (balance < ethers.parseUnits(amountIn.toString(), 8)) {
+  const amountBaseUnits = ethers.parseUnits(amountIn.toString(), 8);
+  
+  if (balance < amountBaseUnits) {
     console.error(`❌ ERROR: Insufficient CBBTC balance! Available: ${ethers.formatUnits(balance, 8)}, Required: ${amountIn}`);
     return;
   }
+
   const proxyCBBTCContract = new ethers.Contract(CBBTC, [
     "function approve(address, uint256)",
     "function allowance(address, address) view returns (uint256)"
   ], userWallet);
-  const allowance = await proxyCBBTCContract.allowance(userWallet.address, swapRouterAddress);
-  console.log(`✅ CBBTC Allowance: ${ethers.formatUnits(allowance, 8)} CBBTC`);
-  if (allowance >= ethers.parseUnits(amountIn.toString(), 8)) {
-    console.log("✅ Approval already granted.");
-    return;
+
+  const currentAllowance = await proxyCBBTCContract.allowance(userWallet.address, swapRouterAddress);
+  console.log(`✅ CBBTC Allowance: ${ethers.formatUnits(currentAllowance, 8)} CBBTC`);
+
+  if (currentAllowance < amountBaseUnits) {
+    const approvalAmount = ethers.MaxUint256; // Grant full approval
+    const tx = await proxyCBBTCContract.approve(
+      swapRouterAddress,
+      approvalAmount,
+      { gasLimit: 70000 }
+    );
+    await tx.wait();
+    console.log("✅ Approval Successful!");
+  } else {
+    console.log("✅ Approval already sufficient.");
   }
-  const feeData = await provider.getFeeData();
-  const tx = await proxyCBBTCContract.approve(
-    swapRouterAddress,
-    ethers.parseUnits(amountIn.toString(), 8),
-    { gasLimit: 70000 }
-  );
-  await tx.wait();
-  console.log("✅ Approval Successful!");
 }
 
 async function checkETHBalance() {
@@ -148,6 +153,8 @@ async function checkETHBalance() {
   }
   return true;
 }
+
+
 
 async function executeSwap(amountIn) {
   console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
@@ -171,8 +178,7 @@ async function executeSwap(amountIn) {
   await approveCBBTC(amountIn);
   if (!(await checkETHBalance())) return;
 
-  // ✅ Create Interface first
-  const abiInterface = new Interface([
+  const swapRouterABI = [
     {
       "inputs": [
         {
@@ -192,15 +198,14 @@ async function executeSwap(amountIn) {
         }
       ],
       "name": "exactInputSingle",
-      "outputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }],
+      "outputs": [
+        { "internalType": "uint256", "name": "amountOut", "type": "uint256" }
+      ],
       "stateMutability": "payable",
       "type": "function"
     }
-  ]);
+  ];
 
-  const swapRouter = new ethers.Contract(swapRouterAddress, abiInterface, userWallet);
-
-  const sqrtPriceLimitX96 = BigInt(poolData.sqrtPriceX96) * 99n / 100n;
   const params = {
     tokenIn: CBBTC,
     tokenOut: USDC,
@@ -212,13 +217,22 @@ async function executeSwap(amountIn) {
     sqrtPriceLimitX96: poolData.sqrtPriceX96,
   };
 
-  try {
-    console.log("\n🔍 Simulating swap...");
-    const estimatedOut = await swapRouter.callStatic.exactInputSingle(params);
-    console.log("✅ Estimated Output:", ethers.formatUnits(estimatedOut, 6));
+  const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, userWallet);
 
+  try {
+    console.log("\n🔍 Simulating swap with callStatic...");
+    const estimatedOut = await swapRouter.callStatic.exactInputSingle(params);
+    console.log("✅ Static Estimated Output:", ethers.formatUnits(estimatedOut, 6));
+  } catch (e) {
+    console.error("❌ Static call failed:", e.reason || e.message);
+    return; // 🔁 Don't continue if static call fails
+  }
+
+  try {
     console.log("\n🚀 Sending transaction...");
-    const tx = await swapRouter.exactInputSingle(params);
+    const tx = await swapRouter.exactInputSingle(params, {
+      gasLimit: 500000
+    });
     const receipt = await tx.wait();
     console.log("✅ Transaction confirmed. Hash:", receipt.hash);
   } catch (err) {
@@ -226,12 +240,56 @@ async function executeSwap(amountIn) {
   }
 }
 
+async function attemptCBBTCTransfer(to, amountRaw) {
+  console.log(`\n🔍 Attempting to transfer ${ethers.formatUnits(amountRaw, 8)} CBBTC to ${to}...`);
+
+  const cbbtc = new ethers.Contract(CBBTC, [
+    "function approve(address spender, uint256 amount) public returns (bool)",
+    "function allowance(address owner, address spender) public view returns (uint256)",
+    "function transferFrom(address from, address to, uint256 amount) public returns (bool)",
+    "function transfer(address to, uint256 amount) public returns (bool)",
+    // Optional for tokens supporting EIP-3009
+    "function transferWithAuthorization(address from, address to, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 nonce, uint8 v, bytes32 r, bytes32 s)"
+  ], userWallet);
+
+  try {
+    // Step 1: Approve
+    const approvalTx = await cbbtc.approve(to, amountRaw);
+    await approvalTx.wait();
+    console.log("✅ Approved for transferFrom");
+
+    // Step 2: Try transferFrom
+    const tx1 = await cbbtc.transferFrom(userWallet.address, to, amountRaw);
+    await tx1.wait();
+    console.log("✅ transferFrom() successful");
+    return;
+  } catch (err1) {
+    console.warn("⚠️ transferFrom failed:", err1.reason || err1.message);
+  }
+
+  try {
+    // Step 3: Try direct transfer
+    const tx2 = await cbbtc.transfer(to, amountRaw);
+    await tx2.wait();
+    console.log("✅ transfer() successful");
+    return;
+  } catch (err2) {
+    console.warn("⚠️ transfer() failed:", err2.reason || err2.message);
+  }
+
+  console.log("❌ Both transferFrom and transfer failed. Consider implementing transferWithAuthorization next.");
+}
+
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
-  console.log("\n🔍 Checking for a Fee-Free Quote...");
-  const cbbtcAmountToTrade = 0.00006021;
-  await executeSwap(cbbtcAmountToTrade);
+  const to = "0x000000000000000000000000000000000000dead";
+  const amount = ethers.parseUnits("0.00006021", 8);
+  await attemptCBBTCTransfer(to, amount);
+  // const cbbtcAmountToTrade = 0.00006021;
+  // await executeSwap(cbbtcAmountToTrade);
 }
+
+
 
 main().catch(console.error);
