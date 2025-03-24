@@ -10,7 +10,7 @@ yarn hardhat run scripts/deploy.ts --network base
 yarn hardhat run test/mass_usdc_swap_test.js --network base
 yarn hardhat run test/mass_cbbtc_swap_test.js --network base
 yarn hardhat test --network base
-** Remove P/K & P/K Test from e en vee **
+** Remove P/K & P/K Test from e en vee (check decoding process for each individual account to prevent external P/K decoding)**
 ** Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again... **
 
 

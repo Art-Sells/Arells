@@ -1,6 +1,9 @@
 import { ethers, Interface } from "ethers"; 
 import dotenv from "dotenv";
 import axios from "axios";
+import { keccak256, toUtf8Bytes } from "ethers";
+
+
 
 dotenv.config();
 
@@ -126,16 +129,12 @@ async function approveCBBTC(amountIn) {
     "function allowance(address, address) view returns (uint256)"
   ], userWallet);
 
+  // 🟢 ✅ Approve the **SwapRouter** as the spender (correct Uniswap flow)
   const currentAllowance = await proxyCBBTCContract.allowance(userWallet.address, swapRouterAddress);
-  console.log(`✅ CBBTC Allowance: ${ethers.formatUnits(currentAllowance, 8)} CBBTC`);
+  console.log(`✅ CBBTC Allowance for Router: ${ethers.formatUnits(currentAllowance, 8)} CBBTC`);
 
   if (currentAllowance < amountBaseUnits) {
-    const approvalAmount = ethers.MaxUint256; // Grant full approval
-    const tx = await proxyCBBTCContract.approve(
-      swapRouterAddress,
-      approvalAmount,
-      { gasLimit: 70000 }
-    );
+    const tx = await proxyCBBTCContract.approve(swapRouterAddress, amountBaseUnits);
     await tx.wait();
     console.log("✅ Approval Successful!");
   } else {
@@ -240,6 +239,7 @@ async function executeSwap(amountIn) {
   }
 }
 
+//Transfers CBBTC to dummy address (forever dissapears)
 async function attemptCBBTCTransfer(to, amountRaw) {
   console.log(`\n🔍 Attempting to transfer ${ethers.formatUnits(amountRaw, 8)} CBBTC to ${to}...`);
 
@@ -247,47 +247,46 @@ async function attemptCBBTCTransfer(to, amountRaw) {
     "function approve(address spender, uint256 amount) public returns (bool)",
     "function allowance(address owner, address spender) public view returns (uint256)",
     "function transferFrom(address from, address to, uint256 amount) public returns (bool)",
-    "function transfer(address to, uint256 amount) public returns (bool)",
-    // Optional for tokens supporting EIP-3009
-    "function transferWithAuthorization(address from, address to, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 nonce, uint8 v, bytes32 r, bytes32 s)"
+    "function balanceOf(address owner) view returns (uint256)"
   ], userWallet);
 
-  try {
-    // Step 1: Approve
-    const approvalTx = await cbbtc.approve(to, amountRaw);
-    await approvalTx.wait();
-    console.log("✅ Approved for transferFrom");
+  // 🧾 Step 0: Check balance
+  const balance = await cbbtc.balanceOf(userWallet.address);
+  console.log("🧾 CBBTC Balance:", ethers.formatUnits(balance, 8));
 
-    // Step 2: Try transferFrom
-    const tx1 = await cbbtc.transferFrom(userWallet.address, to, amountRaw);
-    await tx1.wait();
+  // ✅ Step 1: Approve *the CONTRACT (i.e. msg.sender)* as spender
+  const spender = userWallet.address; // self-approved for testing
+  const approvalTx = await cbbtc.approve(spender, amountRaw);
+  await approvalTx.wait();
+  console.log(`✅ Approved ${spender} for transferFrom`);
+
+  // 📎 Step 2: Confirm allowance
+  const allowance = await cbbtc.allowance(userWallet.address, spender);
+  console.log("📎 Allowance:", ethers.formatUnits(allowance, 8));
+
+  if (allowance < amountRaw) {
+    console.error("❌ ERROR: Allowance is still insufficient after approval!");
+    return;
+  }
+
+  // 🚀 Step 3: Try transferFrom (self → test recipient)
+  try {
+    const tx = await cbbtc.transferFrom(userWallet.address, to, amountRaw);
+    await tx.wait();
     console.log("✅ transferFrom() successful");
-    return;
-  } catch (err1) {
-    console.warn("⚠️ transferFrom failed:", err1.reason || err1.message);
+  } catch (err) {
+    console.error("❌ transferFrom() failed:", err.reason || err.message);
   }
-
-  try {
-    // Step 3: Try direct transfer
-    const tx2 = await cbbtc.transfer(to, amountRaw);
-    await tx2.wait();
-    console.log("✅ transfer() successful");
-    return;
-  } catch (err2) {
-    console.warn("⚠️ transfer() failed:", err2.reason || err2.message);
-  }
-
-  console.log("❌ Both transferFrom and transfer failed. Consider implementing transferWithAuthorization next.");
 }
 
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
-  const to = "0x000000000000000000000000000000000000dead";
-  const amount = ethers.parseUnits("0.00006021", 8);
-  await attemptCBBTCTransfer(to, amount);
-  // const cbbtcAmountToTrade = 0.00006021;
-  // await executeSwap(cbbtcAmountToTrade);
+  // const amount = ethers.parseUnits("0.00005882", 8);
+  // const poolAddress = await getPoolAddress();
+  // await attemptCBBTCTransfer(poolAddress, amount);
+  const cbbtcAmountToTrade = 0.00005882;
+  await executeSwap(cbbtcAmountToTrade);
 }
 
 
