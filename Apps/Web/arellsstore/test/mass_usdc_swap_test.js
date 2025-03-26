@@ -253,6 +253,7 @@ async function executeSwap(amountIn) {
         console.error("❌ ERROR: `exactInputSingle` function is missing in ABI.");
         return;
     }
+    
 
     console.log("\n✅ `exactInputSingle` is present in ABI.");
 
