@@ -255,6 +255,10 @@ async function executeSwap(amountIn) {
     }
 
     console.log("\n✅ `exactInputSingle` is present in ABI.");
+
+    // 🟢 First attempt: Use the original `sqrtPriceLimitX96` (to maintain fee-free route)
+    let adjustedSqrtPriceLimitX96 = sqrtPriceLimitX96;
+
     
     const params = {
         tokenIn: USDC,
@@ -264,7 +268,7 @@ async function executeSwap(amountIn) {
         deadline: Math.floor(Date.now() / 1000) + 60 * 10,
         amountIn: ethers.parseUnits(amountIn.toString(), 6),
         amountOutMinimum: ethers.parseUnits("0.000001", 8), // ✅ Lower slippage tolerance
-        sqrtPriceLimitX96: poolData.sqrtPriceX96 // ✅ Loosen sqrtPriceLimitX96 by 5%
+        sqrtPriceLimitX96: BigInt(poolData.sqrtPriceX96) * BigInt(90) / BigInt(100) // ✅ Loosen sqrtPriceLimitX96 by 5%
     };
 
     console.log("\n🔍 Swap Parameters:");
@@ -316,6 +320,42 @@ async function executeSwap(amountIn) {
     } catch (err) {
         console.error("\n❌ ERROR: Swap Transaction Failed:");
         console.error(err);
+
+        // 🔴 If error contains "SPL", retry with a slightly adjusted `sqrtPriceLimitX96`
+        if (err.reason && err.reason.includes("SPL")) {
+            console.log("\n🔁 Retrying swap with slightly adjusted `sqrtPriceLimitX96`...");
+
+            adjustedSqrtPriceLimitX96 = BigInt(sqrtPriceLimitX96) * BigInt(99) / BigInt(100); // Reduce by 1%
+
+            console.log(`🔹 Adjusted sqrtPriceLimitX96: ${adjustedSqrtPriceLimitX96}`);
+
+            params.sqrtPriceLimitX96 = adjustedSqrtPriceLimitX96;
+
+            const functionDataRetry = iface.encodeFunctionData("exactInputSingle", [params]);
+
+            console.log("\n⛽ Retrying transaction submission...");
+            try {
+                const txRetry = await userWallet.sendTransaction({
+                    to: swapRouterAddress,
+                    data: functionDataRetry,
+                    gasLimit: 3000000
+                });
+
+                console.log("\n⏳ Waiting for Confirmation...");
+                const receipt = await tx.wait();
+                
+                if (receipt && receipt.hash) {
+                    console.log("\n✅ Transaction Confirmed! Hash:");
+                    console.log(receipt.hash);
+                } else {
+                    console.error("❌ ERROR: Transaction hash is undefined.");
+                }
+                return;
+            } catch (errRetry) {
+                console.error("\n❌ ERROR: Retry Swap Transaction Failed:");
+                console.error(errRetry);
+            }
+        }
     }
 }
 
@@ -325,7 +365,7 @@ async function executeSwap(amountIn) {
 async function main() {
     console.log("\n🔍 Checking for a Fee-Free Quote...");
 
-    const usdcAmountToTrade = 2; // Adjust as needed
+    const usdcAmountToTrade = 3; // Adjust as needed
     await executeSwap(usdcAmountToTrade);
 }
 
