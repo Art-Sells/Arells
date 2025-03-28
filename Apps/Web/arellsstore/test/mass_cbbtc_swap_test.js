@@ -1,7 +1,7 @@
-import { ethers, Interface } from "ethers"; 
+import { ethers } from "ethers"; 
 import dotenv from "dotenv";
 import axios from "axios";
-import { keccak256, toUtf8Bytes } from "ethers";
+import { TickMath } from "@uniswap/v3-sdk";
 
 
 
@@ -183,7 +183,7 @@ async function executeSwap(amountIn) {
     return;
   }
 
-  const { isFeeFree, poolData: refreshedPoolData } = await checkFeeFreeRoute(amountIn);
+  const { isFeeFree } = await checkFeeFreeRoute(amountIn);
   if (!isFeeFree) {
     console.error("❌ Not a fee-free route. Aborting swap.");
     return;
@@ -191,10 +191,25 @@ async function executeSwap(amountIn) {
 
   console.log("✅ Fee-Free Route Confirmed!");
 
-  const sqrtPriceLimitX96 = refreshedPoolData.sqrtPriceX96;
-
-  await approveCBBTC(amountIn);
-  if (!(await checkETHBalance())) return;
+  await approveCBBTC(amountIn);             
+  if (!(await checkETHBalance())) return;     
+  
+  const TICKS_TO_TRY = 4;
+  const tickSpacing = Number(poolData.tickSpacing);
+  const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+  let lastError = null;
+  for (let i = 0; i < TICKS_TO_TRY; i++) {
+  const testTick = baseTick + (i * tickSpacing);
+  console.log(`🔁 Trying swap with fee-free tick ${testTick}`);
+  
+  let sqrtPriceLimitX96;
+  try {
+    sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+  } catch (err) {
+    console.warn(`⚠️ Failed to calculate sqrtPriceLimitX96 for tick ${testTick}: ${err.message}`);
+    lastError = err;
+    continue;
+  }
 
   const params = {
     tokenIn: CBBTC,
@@ -204,27 +219,15 @@ async function executeSwap(amountIn) {
     deadline: Math.floor(Date.now() / 1000) + 600,
     amountIn: ethers.parseUnits(amountIn.toString(), 8),
     amountOutMinimum: ethers.parseUnits("0.0001", 6),
-    sqrtPriceLimitX96
+    sqrtPriceLimitX96,
   };
 
-  console.log("\n🔍 Fetching ABI for Swap Router...");
+  console.log("🔍 Attempting swap with params:");
+  console.log(params);
+
   const swapRouterABI = await fetchABI(swapRouterAddress);
-  if (!swapRouterABI) {
-    console.error("❌ Failed to fetch SwapRouter ABI.");
-    return;
-  }
-
-  // ✅ Confirm function exists before using it
-  const functionExists = swapRouterABI.some((item) => item.name === "exactInputSingle");
-  if (!functionExists) {
-    console.error("❌ ABI does NOT contain 'exactInputSingle'");
-    return;
-  }
-
-  // ✅ Encode function call manually
   const iface = new ethers.Interface(swapRouterABI);
   const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
-  console.log("✅ Encoded function data");
 
   try {
     const feeData = await provider.getFeeData();
@@ -233,71 +236,24 @@ async function executeSwap(amountIn) {
       data: functionData,
       gasLimit: 300000,
       maxFeePerGas: feeData.maxFeePerGas,
-      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei")
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
     });
 
     console.log("⏳ Waiting for confirmation...");
     const receipt = await tx.wait();
     console.log("✅ Swap Transaction Confirmed:");
     console.log(`🔗 Tx Hash: ${receipt.hash}`);
+    return; // ✅ Exit early after successful swap
   } catch (err) {
-    console.error("❌ ERROR: Swap Transaction Failed:", err.reason || err.message || err);
-    if (err.data) {
-      try {
-        const decoded = iface.parseError(err.data);
-        console.log("❌ Decoded Error:", decoded.name, decoded.args);
-      } catch (decodeErr) {
-        console.log("⚠️ Failed to decode revert reason");
-      }
-    }
+    console.error(`❌ Swap failed at tick ${testTick}:`, err.reason || err.message || err);
+    lastError = err;
   }
 }
 
+console.error("❌ All fee-free tick attempts failed.");
+throw lastError;
 
-
-
-
-
-
-
-//Transfers CBBTC to dummy address (forever dissapears)
-async function attemptCBBTCTransfer(to, amountRaw) {
-  console.log(`\n🔍 Attempting to transfer ${ethers.formatUnits(amountRaw, 8)} CBBTC to ${to}...`);
-
-  const cbbtc = new ethers.Contract(CBBTC, [
-    "function approve(address spender, uint256 amount) public returns (bool)",
-    "function allowance(address owner, address spender) public view returns (uint256)",
-    "function transferFrom(address from, address to, uint256 amount) public returns (bool)",
-    "function balanceOf(address owner) view returns (uint256)"
-  ], userWallet);
-
-  // 🧾 Step 0: Check balance
-  const balance = await cbbtc.balanceOf(userWallet.address);
-  console.log("🧾 CBBTC Balance:", ethers.formatUnits(balance, 8));
-
-  // ✅ Step 1: Approve *the CONTRACT (i.e. msg.sender)* as spender
-  const spender = userWallet.address; // self-approved for testing
-  const approvalTx = await cbbtc.approve(spender, amountRaw);
-  await approvalTx.wait();
-  console.log(`✅ Approved ${spender} for transferFrom`);
-
-  // 📎 Step 2: Confirm allowance
-  const allowance = await cbbtc.allowance(userWallet.address, spender);
-  console.log("📎 Allowance:", ethers.formatUnits(allowance, 8));
-
-  if (allowance < amountRaw) {
-    console.error("❌ ERROR: Allowance is still insufficient after approval!");
-    return;
-  }
-
-  // 🚀 Step 3: Try transferFrom (self → test recipient)
-  try {
-    const tx = await cbbtc.transferFrom(userWallet.address, to, amountRaw);
-    await tx.wait();
-    console.log("✅ transferFrom() successful");
-  } catch (err) {
-    console.error("❌ transferFrom() failed:", err.reason || err.message);
-  }
+  
 }
 
 
@@ -309,10 +265,7 @@ async function attemptCBBTCTransfer(to, amountRaw) {
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
-  // const amount = ethers.parseUnits("0.00004769", 8);
-  // const poolAddress = await getPoolAddress();
-  // await attemptCBBTCTransfer(poolAddress, amount);
-  const cbbtcAmountToTrade = 0.00003451;
+  const cbbtcAmountToTrade = 0.00003;
   await executeSwap(cbbtcAmountToTrade);
 }
 
