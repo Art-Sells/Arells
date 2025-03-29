@@ -64,20 +64,23 @@ async function getPoolAddress() {
     if (!factoryABI) return null;
 
     const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-    try {
-        const poolAddress = await factory.getPool(USDC, CBBTC, 500);
-        if (poolAddress === ethers.ZeroAddress) {
-            console.error("❌ No Uniswap V3 Pool found for USDC-CBBTC.");
-            return null;
-        }
-        console.log(`✅ Pool Address: ${poolAddress}`);
-        return poolAddress;
-    } catch (error) {
-        console.error("❌ Failed to fetch pool address:", error.message);
-        return null;
-    }
-}
+    const feeTiers = [100, 500, 3000, 10000]; // 0.01%, 0.05%, 0.3%, 1%
 
+    for (let fee of feeTiers) {
+        try {
+            const poolAddress = await factory.getPool(USDC, CBBTC, fee);
+            if (poolAddress !== ethers.ZeroAddress) {
+                console.log(`✅ Found Pool for fee tier ${fee}: ${poolAddress}`);
+                return { poolAddress, fee };
+            }
+        } catch (error) {
+            console.warn(`⚠️ Failed to get pool for fee tier ${fee}: ${error.message}`);
+        }
+    }
+
+    console.error("❌ No Uniswap V3 Pool found for USDC-CBBTC.");
+    return null;
+}
 /**
  * ✅ Check Pool Liquidity
  */
@@ -107,32 +110,46 @@ async function checkPoolLiquidity(poolAddress) {
 /**
  * ✅ Check Fee-Free Route
  */
+// ✅ Replace getPoolAddress() call inside checkFeeFreeRoute with explicit loop through all tiers
+
+// REPLACE checkFeeFreeRoute() WITH:
 async function checkFeeFreeRoute(amountIn) {
-    console.log(`\n🚀 Checking Fee-Free Route for ${amountIn} USDC → CBBTC`);
-
-    const poolAddress = await getPoolAddress();
-    if (!poolAddress) return false;
-
-    const poolData = await checkPoolLiquidity(poolAddress);
-    if (!poolData || poolData.liquidity === 0) {
-        console.error("❌ Pool has ZERO liquidity. No swap can be quoted.");
-        return false;
+    console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} USDC → CBBTC`);
+  
+    const factoryABI = await fetchABI(FACTORY_ADDRESS);
+    if (!factoryABI) return [];
+  
+    const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
+    const feeTiers = [100, 500, 3000, 10000];
+    const feeFreeRoutes = [];
+  
+    for (let fee of feeTiers) {
+      try {
+        const poolAddress = await factory.getPool(USDC, CBBTC, fee);
+        if (poolAddress === ethers.ZeroAddress) continue;
+  
+        const poolData = await checkPoolLiquidity(poolAddress);
+        if (!poolData || poolData.liquidity === 0) continue;
+  
+        const tickSpacing = Number(poolData.tickSpacing);
+        const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+  
+        for (let i = 0; i < 3; i++) {
+          const testTick = baseTick + i * tickSpacing;
+          try {
+            const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+            feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96 });
+          } catch (err) {
+            console.warn(`⚠️ Skip tick ${testTick}: ${err.message}`);
+          }
+        }
+      } catch (err) {
+        console.warn(`⚠️ Fee tier ${fee} skipped: ${err.message}`);
+      }
     }
-
-    // ✅ Define the tick range to check
-    const tickLower = Math.floor(Number(poolData.tick) / Number(poolData.tickSpacing)) * Number(poolData.tickSpacing);
-    const tickUpper = tickLower + Number(poolData.tickSpacing);
-
-    console.log(`\n🔍 Checking liquidity between ticks: ${tickLower} → ${tickUpper}`);
-
-    if (poolData.liquidity > 0) {
-        console.log(`\n✅ **Fee-Free Route Available for ${amountIn} USDC!** 🚀`);
-        return true;
-    }
-
-    console.log(`\n❌ No Fee-Free Route Found for ${amountIn} USDC.`);
-    return false;
-}
+  
+    return feeFreeRoutes;
+  }
 
 /**
  * ✅ Execute Swap Transaction
@@ -204,8 +221,9 @@ async function checkETHBalance() {
 async function executeSwap(amountIn) {
     console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
 
-    const poolAddress = await getPoolAddress();
-    if (!poolAddress) return;
+    const poolInfo = await getPoolAddress();
+    if (!poolInfo) return;
+    const { poolAddress, fee } = poolInfo;
 
     const poolData = await checkPoolLiquidity(poolAddress);
     if (!poolData || poolData.liquidity === 0) {
@@ -284,7 +302,7 @@ async function executeSwap(amountIn) {
     const params = {
         tokenIn: USDC,
         tokenOut: CBBTC,
-        fee: 500,
+        fee,
         recipient: userWallet.address,
         deadline: Math.floor(Date.now() / 1000) + 60 * 10,
         amountIn: ethers.parseUnits(amountIn.toString(), 6),
