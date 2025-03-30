@@ -228,6 +228,8 @@ async function executeSwap(amountIn) {
   const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
   let lastError = null;
 
+  const before = await checkCBBTCBalance();
+
   for (const route of feeFreeRoutes) {
     const { poolAddress, fee, sqrtPriceLimitX96, poolData } = route;
   
@@ -304,7 +306,7 @@ throw lastError;
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
-  const cbbtcAmountToTrade = 0.00003638;
+  const cbbtcAmountToTrade = 0.00003637;
   await executeSwap(cbbtcAmountToTrade);
 }
 
