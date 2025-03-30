@@ -11,7 +11,7 @@ yarn hardhat run test/mass_usdc_swap_test.js --network base
 yarn hardhat run test/mass_cbbtc_swap_test.js --network base
 yarn hardhat test --network base
 ** Remove P/K & P/K Test from e en vee (check decoding process for each individual account to prevent external P/K decoding)**
-** Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again... AFTER LAUNCH: Remove later Console.logs in USDC/CBBTC supplication.js and condense to make faster and more efficient. Add later check to check liquidity with cbbtc/usdc wallet and if there's enough liquidity for a supplication... And add later a function to compare total amount in USDC & CBBTC with Vatop Groups and if it doesn't match, then delete correspondingly (in case anyone transacts with their wallet-address outside HPM-MASS) **
+** Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again... AFTER LAUNCH: Remove later Console.logs in USDC/CBBTC supplication.js and condense to make faster and more efficient. Add later check to check liquidity with cbbtc/usdc wallet and if there's enough liquidity for a supplication (f not, supplications will only transfer small amounts)... And add later a function to compare total amount in USDC & CBBTC with Vatop Groups and if it doesn't match, then delete correspondingly (in case anyone transacts with their wallet-address outside HPM-MASS) **
 
 
 ### After Test
@@ -47,6 +47,7 @@ yarn hardhat test --network base
 ### After Completion
 - Talk about 1 week wallet balance update - Arells 1.5 (24 hour wallet balance update) 
 - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
+- Talk about working on Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
 - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
 - Add "Discord" section for any questions
 - Restructure MASS Fee Abstraction (based on MASSApi & MASSSupplicationApi & MASS architecture)
@@ -100,12 +101,12 @@ yarn hardhat test --network base
 
 
 
-
-## Arells 1.5 (Export BTC)
+## Arells 1.5 (Sell/Export USDC)
 
 **If initial Bitcoin amount is less than USDC amount, then "buy" equivalent BTC before exporting so for example: You start with 0.00121 BTC worth $200 when Bitcoin is at $60,000. To maintain the same value ($205), when the price of Bitcoin falls to $10,000, you buy Bitcoin using your $205 in USDC. At $10,000 per Bitcoin, you would get: $205 / $10,000 = 0.0205 BTC.**
 
 ### Testing
+- Create New Export Wallet Address for Selling and Exporting USDC/CBBTC
 - supplicateUSDtoWBTC (with holdMASS function revoked)
 - - If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. 
 - Export Test (similar to sell except (Combines the acVactTaa and acVactDas and subtracts from the group with the lowest cpVatop first))
@@ -221,9 +222,19 @@ yarn hardhat test --network base
 
 ### Export (Bitcoin)
 **Pull handleExport from HPMContext and edit saveVatopGroups import for success and error modal handling.**
-- (A(arells-circle)) -> Account Page (B(bitcoin-logo)) ->Buy Page
-- (W) Wallet: Displays acVatops.
-- (A)(B) Amount: Displays aBTC 8 decimals long maximum
+- Modal: Exporting your Bitcoin out of Arells means your investment will likely lose value, are you sure?
+- - (YES) -> Hidden: Prepare (A)(B) for (B) export
+- - (No) -> Takes back to homepage
+- Hidden: Prepare (A)(B) for (B) export, once you click Prepare Bitcoin, your (A)(B) Arells Bitcoin will be converted into (B) Bitcoin and will be ready for export. This cannot be reversed.
+- - (Prepare Bitcoin) -> Preparing Modal (Swap(Sell meaning to Zero out all Vatop Groups) all CBBTC/USDC into Export Address before swapping all USDC into CBBTC)
+- - (Take Me Back) -> Takes back to homepage
+- After Prepare: 
+- - Homepage: the import will show but your wallet will also show how much CBBTC you have and the value,
+- - Import: the import will show you the amount of CBBTC sitting ready for you to export
+- - Export: Will immediately show you Ready to Export
+- Ready to Export:
+- (W) Wallet: Displays your cbBTC value.
+- (B) Amount: Displays cbBTC 8 decimals long maximum
 - BASE Address (Must Be Base (Give Coinbase Base address link for info))
 - (EXPORT) -> Modal
 - - Modal:

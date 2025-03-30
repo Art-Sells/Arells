@@ -57,31 +57,6 @@ async function fetchABI(contractAddress) {
 }
 
 /**
- * ✅ Get Uniswap V3 Pool Address
- */
-async function getPoolAddress() {
-    const factoryABI = await fetchABI(FACTORY_ADDRESS);
-    if (!factoryABI) return null;
-
-    const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-    const feeTiers = [500, 3000, 10000, 100]; // 0.01%, 0.05%, 0.3%, 1%
-
-    for (let fee of feeTiers) {
-        try {
-            const poolAddress = await factory.getPool(USDC, CBBTC, fee);
-            if (poolAddress !== ethers.ZeroAddress) {
-                console.log(`✅ Found Pool for fee tier ${fee}: ${poolAddress}`);
-                return { poolAddress, fee };
-            }
-        } catch (error) {
-            console.warn(`⚠️ Failed to get pool for fee tier ${fee}: ${error.message}`);
-        }
-    }
-
-    console.error("❌ No Uniswap V3 Pool found for USDC-CBBTC.");
-    return null;
-}
-/**
  * ✅ Check Pool Liquidity
  */
 async function checkPoolLiquidity(poolAddress) {
