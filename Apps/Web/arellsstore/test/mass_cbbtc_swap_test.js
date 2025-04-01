@@ -306,7 +306,7 @@ throw lastError;
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
-  const cbbtcAmountToTrade = 0.00003637;
+  const cbbtcAmountToTrade = 0.00003626;
   await executeSwap(cbbtcAmountToTrade);
 }
 

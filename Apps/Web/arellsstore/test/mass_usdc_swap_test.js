@@ -216,40 +216,56 @@ async function executeSwap(amountIn) {
     const iface = new ethers.Interface(swapRouterABI);
   
     for (const route of feeFreeRoutes) {
-      const { poolAddress, fee, sqrtPriceLimitX96 } = route;
-  
-      const params = {
-        tokenIn: USDC,
-        tokenOut: CBBTC,
-        fee,
-        recipient: userWallet.address,
-        deadline: Math.floor(Date.now() / 1000) + 600,
-        amountIn: ethers.parseUnits(amountIn.toString(), 6),
-        amountOutMinimum: 1,
-        sqrtPriceLimitX96
-      };
-  
-      console.log(`🔁 Trying swap with fee tier ${fee} at sqrtPriceLimitX96 = ${sqrtPriceLimitX96}`);
-  
-      const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
-  
-      try {
-        const feeData = await provider.getFeeData();
-        const tx = await userWallet.sendTransaction({
-          to: swapRouterAddress,
-          data: functionData,
-          gasLimit: 300000,
-          maxFeePerGas: feeData.maxFeePerGas,
-          maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
-        });
-  
-        console.log("⏳ Waiting for confirmation...");
-        const receipt = await tx.wait();
-        console.log("✅ Swap Transaction Confirmed:");
-        console.log(`🔗 Tx Hash: ${receipt.hash}`);
-        return;
-      } catch (err) {
-        console.warn(`❌ Swap failed at sqrtPriceLimitX96 ${sqrtPriceLimitX96}: ${err.reason || err.message || err}`);
+      const { fee, poolAddress } = route;
+    
+      const poolData = await checkPoolLiquidity(poolAddress);
+      const tickSpacing = Number(poolData.tickSpacing);
+      const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+    
+      for (let i = 0; i < 3; i++) {
+        const testTick = baseTick + i * tickSpacing;
+        let sqrtPriceLimitX96;
+    
+        try {
+          sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+        } catch (err) {
+          console.warn(`⚠️ Invalid tick ${testTick}: ${err.message}`);
+          continue;
+        }
+    
+        const params = {
+          tokenIn: USDC,
+          tokenOut: CBBTC,
+          fee,
+          recipient: userWallet.address,
+          deadline: Math.floor(Date.now() / 1000) + 600,
+          amountIn: ethers.parseUnits(amountIn.toString(), 6),
+          amountOutMinimum: 1,
+          sqrtPriceLimitX96
+        };
+    
+        console.log(`🔁 Trying swap for fee ${fee} at tick ${testTick}`);
+    
+        const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
+    
+        try {
+          const feeData = await provider.getFeeData();
+          const tx = await userWallet.sendTransaction({
+            to: swapRouterAddress,
+            data: functionData,
+            gasLimit: 300000,
+            maxFeePerGas: feeData.maxFeePerGas,
+            maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
+          });
+    
+          console.log("⏳ Waiting for confirmation...");
+          const receipt = await tx.wait();
+          console.log("✅ Swap Transaction Confirmed:");
+          console.log(`🔗 Tx Hash: ${receipt.hash}`);
+          return;
+        } catch (err) {
+          console.warn(`❌ Swap failed at tick ${testTick}: ${err.reason || err.message || err}`);
+        }
       }
     }
   
