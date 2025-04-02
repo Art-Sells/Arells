@@ -55,7 +55,7 @@ async function getPoolAddress() {
     if (!factoryABI) return null;
 
     const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-    const feeTiers = [500, 3000, 10000, 100]; // 0.01%, 0.05%, 0.3%, 1%
+    const feeTiers = [500]; // 0.01%, 0.05%, 0.3%, 1%
 
     for (let fee of feeTiers) {
         try {
@@ -102,7 +102,7 @@ async function checkFeeFreeRoute(amountIn) {
   if (!factoryABI) return [];
 
   const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-  const feeTiers = [500, 3000, 10000, 100];
+  const feeTiers = [500];
   const feeFreeRoutes = [];
 
   for (let fee of feeTiers) {
@@ -306,7 +306,7 @@ throw lastError;
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
-  const cbbtcAmountToTrade = 0.00003626;
+  const cbbtcAmountToTrade = 0.00003627;
   await executeSwap(cbbtcAmountToTrade);
 }
 
