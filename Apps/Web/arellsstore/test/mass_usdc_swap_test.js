@@ -200,6 +200,7 @@ async function executeSwap(amountIn) {
     console.error("❌ No Fee-Free Route Available! Swap will NOT proceed.");
     return;
   }
+  console.log("✅ Fee-Free Route Confirmed!");
 
   await approveUSDC(amountIn);
   if (!(await checkETHBalance())) return;
@@ -210,72 +211,54 @@ async function executeSwap(amountIn) {
     return;
   }
 
-  const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, provider).connect(userWallet);
   const iface = new ethers.Interface(swapRouterABI);
+  const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, provider).connect(userWallet);
   let lastError = null;
 
   for (const route of feeFreeRoutes) {
-    const { fee, poolAddress, sqrtPriceLimitX96, poolData } = route;
+    const { fee, poolData } = route;
 
-    const tickSpacing = Number(poolData.tickSpacing);
-    const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+    // ✅ Just add buffer to current sqrtPriceX96 (avoid tick-math jumps)
+    const limitX96 = BigInt(poolData.sqrtPriceX96) * 1001n / 1000n;
 
-    for (let i = 0; i < 3; i++) {
-      const testTick = baseTick + i * tickSpacing;
-      let limitX96;
+    if (limitX96 <= poolData.sqrtPriceX96) {
+      console.log("⛔ Skipping — limit below current price");
+      continue;
+    }
 
-      try {
-        limitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-      } catch (err) {
-        console.warn(`⚠️ Failed sqrtPriceLimitX96 for tick ${testTick}: ${err.message}`);
-        lastError = err;
-        continue;
-      }
+    const params = {
+      tokenIn: USDC,
+      tokenOut: CBBTC,
+      fee,
+      recipient: userWallet.address,
+      deadline: Math.floor(Date.now() / 1000) + 600,
+      amountIn: ethers.parseUnits(amountIn.toString(), 6),
+      amountOutMinimum: 1,
+      sqrtPriceLimitX96: 0n,
+    };
 
-      // ✅ Add tiny buffer to avoid revert due to 1 wei slippage
-      const buffer = BigInt(1_000_000);
-      limitX96 += buffer;
+    console.log(`🔁 Trying swap for fee ${fee} (limitX96 = ${limitX96})`);
 
-      // ✅ Ensure price limit is above current
-      if (limitX96 <= poolData.sqrtPriceX96) {
-        console.log(`⛔ Skipping tick ${testTick} — limit below current price`);
-        continue;
-      }
+    const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
 
-      const params = {
-        tokenIn: USDC,
-        tokenOut: CBBTC,
-        fee,
-        recipient: userWallet.address,
-        deadline: Math.floor(Date.now() / 1000) + 600,
-        amountIn: ethers.parseUnits(amountIn.toString(), 6),
-        amountOutMinimum: 1,
-        sqrtPriceLimitX96: limitX96
-      };
+    try {
+      const feeData = await provider.getFeeData();
+      const tx = await userWallet.sendTransaction({
+        to: swapRouterAddress,
+        data: functionData,
+        gasLimit: 300000,
+        maxFeePerGas: feeData.maxFeePerGas,
+        maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
+      });
 
-      console.log(`🔁 Trying swap for fee ${fee} @ tick ${testTick} (limitX96 = ${limitX96})`);
-
-      const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
-
-      try {
-        const feeData = await provider.getFeeData();
-        const tx = await userWallet.sendTransaction({
-          to: swapRouterAddress,
-          data: functionData,
-          gasLimit: 300000,
-          maxFeePerGas: feeData.maxFeePerGas,
-          maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
-        });
-
-        console.log("⏳ Waiting for confirmation...");
-        const receipt = await tx.wait();
-        console.log("✅ Swap Transaction Confirmed!");
-        console.log(`🔗 Tx Hash: ${receipt.hash}`);
-        return;
-      } catch (err) {
-        console.warn(`❌ Swap failed at tick ${testTick}: ${err.reason || err.message || err}`);
-        lastError = err;
-      }
+      console.log("⏳ Waiting for confirmation...");
+      const receipt = await tx.wait();
+      console.log("✅ Swap Transaction Confirmed!");
+      console.log(`🔗 Tx Hash: ${receipt.hash}`);
+      return;
+    } catch (err) {
+      console.warn(`❌ Swap failed: ${err.reason || err.message || err}`);
+      lastError = err;
     }
   }
 

@@ -6,12 +6,11 @@
 
 ## Test
 - Test USDC to CBBTC no fee transfer, back and forth many times...
-yarn hardhat run scripts/deploy.ts --network base
 yarn hardhat run test/mass_usdc_swap_test.js --network base
 yarn hardhat run test/mass_cbbtc_swap_test.js --network base
-yarn hardhat test --network base
-** Remove P/K & P/K Test from e en vee (check decoding process for each individual account to prevent external P/K decoding)**
-** Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again... AFTER LAUNCH: Remove later Console.logs in USDC/CBBTC supplication.js and condense to make faster and more efficient. Add later check to check liquidity with cbbtc/usdc wallet and if there's enough liquidity for a supplication (f not, supplications will only transfer small amounts)... And add later a function to compare total amount in USDC & CBBTC with Vatop Groups and if it doesn't match, then delete correspondingly (in case anyone transacts with their wallet-address outside HPM-MASS) **
+- *** Remove P/K & P/K Test from e en vee (check decoding process for each individual account to prevent external P/K decoding) ***
+- *** Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again... AFTER LAUNCH: Remove later Console.logs in USDC/CBBTC supplication.js and condense to make faster and more efficient. Add later check to check liquidity with cbbtc/usdc wallet and if there's enough liquidity for a supplication (f not, supplications will only transfer small amounts)... And add later a function to compare total amount in USDC & CBBTC with Vatop Groups and if it doesn't match, then delete correspondingly (in case anyone transacts with their wallet-address outside HPM-MASS) ***
+- *** Loop over more ticks if fee free routes aren't find 10, 20, 30? ***
 
 
 ### After Test
