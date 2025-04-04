@@ -193,7 +193,7 @@ async function checkETHBalance() {
   return true;
 }
 
-async function executeSwap(amountIn) {
+async function executeSupplication(amountIn) {
   console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
 
   const balance = await checkCBBTCBalance();
@@ -238,7 +238,7 @@ async function executeSwap(amountIn) {
   
     for (let i = 0; i < 3; i++) {
       const testTick = baseTick + (i * tickSpacing);
-      console.log(`🔁 Trying swap for fee ${fee} at tick ${testTick}`);
+      console.log(`🔁 Trying supplication for fee ${fee} at tick ${testTick}`);
   
       let limitX96;
       try {
@@ -260,7 +260,7 @@ async function executeSwap(amountIn) {
         sqrtPriceLimitX96: limitX96,
       };
   
-      console.log("🔍 Attempting swap with params:", params);
+      console.log("🔍 Attempting supplication with params:", params);
   
       const swapRouterABI = await fetchABI(swapRouterAddress);
       const iface = new ethers.Interface(swapRouterABI);
@@ -306,8 +306,8 @@ throw lastError;
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
-  const cbbtcAmountToTrade = 0.00003587;
-  await executeSwap(cbbtcAmountToTrade);
+  const cbbtcAmountToTrade = 0.00003626;
+  await executeSupplication(cbbtcAmountToTrade);
 }
 
 
