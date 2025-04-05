@@ -44,11 +44,6 @@ async function fetchABI(contractAddress) {
         if (response.data.status !== "1") throw new Error(`BaseScan API Error: ${response.data.message}`);
 
         const abi = JSON.parse(response.data.result);
-        console.log(`✅ ABI Fetched Successfully for ${contractAddress}`);
-
-        // 🔍 Check if `exactInputSingle` exists in ABI
-        const functionExists = abi.some((item) => item.name === "exactInputSingle");
-        console.log(`🔍 Does ABI Contain 'exactInputSingle'?`, functionExists ? "✅ YES" : "❌ NO");
 
         return abi;
     } catch (error) {
@@ -103,6 +98,35 @@ async function checkPoolLiquidity(poolAddress) {
   }
 }
 
+async function simulateWithQuoter(params) {
+  const quoterABI = await fetchABI(QUOTER_ADDRESS);
+  if (!quoterABI) return null;
+
+  const iface = new ethers.Interface(quoterABI);
+
+  const functionData = iface.encodeFunctionData("quoteExactInputSingle", [{
+    tokenIn: params.tokenIn,
+    tokenOut: params.tokenOut,
+    fee: params.fee,
+    amountIn: params.amountIn,
+    sqrtPriceLimitX96: params.sqrtPriceLimitX96
+  }]);
+
+  try {
+    const result = await provider.call({
+      to: QUOTER_ADDRESS,
+      data: functionData
+    });
+
+    const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", result);
+    console.log(`🔁 Simulated amountOut: ${ethers.formatUnits(amountOut, 8)} CBBTC`);
+    return amountOut;
+  } catch (err) {
+    console.warn("⚠️ QuoterV2 simulation failed:", err.reason || err.message || err);
+    return null;
+  }
+}
+
 /**
  * ✅ Check Fee-Free Route
  */
@@ -130,7 +154,22 @@ async function checkFeeFreeRoute(amountIn) {
       const testTick = baseTick + i * tickSpacing;
       try {
         const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-        feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData });
+        const amountInWei = ethers.parseUnits(amountIn.toString(), 6);
+    
+        const simulation = await simulateWithQuoter({
+          tokenIn: USDC,
+          tokenOut: CBBTC,
+          fee,
+          amountIn: amountInWei,
+          sqrtPriceLimitX96
+        });
+    
+        if (simulation && simulation > 0n) {
+          console.log(`✅ Route at tick ${testTick} is valid. Estimated out: ${ethers.formatUnits(simulation, 8)} CBBTC`);
+          feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData, tick: testTick });
+        } else {
+          // console.log(`❌ Route at tick ${testTick} returned zero or failed`);
+        }
       } catch (err) {
         console.warn(`⚠️ Skip tick ${testTick}: ${err.message}`);
       }
@@ -306,14 +345,41 @@ async function executeSupplication(amountIn) {
   if (lastError) throw lastError;
 }
 
+
 /**
  * ✅ Main Function: Execute Swap for $5 USDC
  */
 async function main() {
-    console.log("\n🔍 Checking for a Fee-Free Quote...");
+  console.log("\n🔍 Checking for a Fee-Free Quote...");
+  // ✅ USDC amounts (6 decimals)
+  const usdcAmounts = [
+    5.03, 
+    10.22, 
+    25.000011, 
+    50.12233, 
+    1000.013232,
+    10000.013232, 
+    100000.013232];
 
-    const usdcAmountToTrade = 3; // Adjust as needed
-    await executeSupplication(usdcAmountToTrade);
+  let foundFeeFree = false; // Track if any fee-free route was found
+
+  // ✅ Check for USDC → CBBTC
+  for (const amount of usdcAmounts) {
+      const feeFree = await checkFeeFreeRoute(amount, "USDC", "CBBTC", 6);
+
+      if (feeFree) {
+          console.log(`\n✅ **Fee-Free Quote Found at ${amount} USDC!** 🚀`);
+          foundFeeFree = true;
+      }
+  }
+  if (!foundFeeFree) {
+    console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
+  } else {
+      console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
+  }
+
+  // const usdcAmountToTrade = 3; // Adjust as needed
+  // await executeSupplication(usdcAmountToTrade);
 }
 
 main().catch(console.error);
