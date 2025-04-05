@@ -5,6 +5,7 @@
 ## Arells 1 (Import/Custody Bitcoin)
 
 ## Test
+- Prepare notes below to test HPM-MASS integration (Arells Fee Funder for each account (check and replenish everyday/hour and adjust MASS time-fram accordinglyuntil BASE L3 is complete), etc, first test HPM-MASS for one account (console.log transacton hash always))
 - Test USDC to CBBTC no fee transfer, back and forth many times...
 yarn hardhat run test/usdc_mass_test.js --network base
 yarn hardhat run test/cbbtc_mass_test.js --network base
