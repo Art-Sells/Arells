@@ -218,7 +218,7 @@ const BitcoinChart: React.FC = () => {
           src="images/howitworks/up-arrow-ebony.png"
         />
       </div>
-      <p className={styles.lastThirtyDays}>1 YEAR</p>
+      <p className={styles.lastThirtyDays}>5 YEARS</p>
       <div className={styles.lineChartWrapper}>
         <Line
           id="bitcoinChart"
