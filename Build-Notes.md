@@ -2,25 +2,26 @@
 
 ## Arells Cryptocurrency Marketplace MVP
 
-## Arells 1 (Import/Custody Bitcoin)
+## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- Prepare notes below to test HPM-MASS integration (Arells Fee Funder for each account (check and replenish everyday/hour and adjust MASS time-fram accordinglyuntil BASE L3 is complete), etc, first test HPM-MASS for one account (console.log transacton hash always))
-- Test USDC to CBBTC no fee transfer, back and forth many times...
-yarn hardhat run test/usdc_mass_test.js --network base
-yarn hardhat run test/cbbtc_mass_test.js --network base
-- *** Remove P/K & P/K Test from e en vee (check decoding process for each individual account to prevent external P/K decoding) ***
-- *** Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again... AFTER LAUNCH: Remove later Console.logs in USDC/CBBTC supplication.js and condense to make faster and more efficient. Add later check to check liquidity with cbbtc/usdc wallet and if there's enough liquidity for a supplication (f not, supplications will only transfer small amounts)... And add later a function to compare total amount in USDC & CBBTC with Vatop Groups and if it doesn't match, then delete correspondingly (in case anyone transacts with their wallet-address outside HPM-MASS) ***
-- *** Remove loops in CBBTC/USDC supplication tests executeSupplication, clean up "cbBTC mass test for first failure before confirmation ***
 
-
-### After Test
-- test import (after supplication), so it doesn't create a new group from the acdVatops
-- test supplicateWBTCtoUSD (come back and check on this consistently with many vatopGroups) add supplicate boolean changes API calls.
-- Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History)
-- Integrate 25bps in Business Modal (subtract from WBTCtoUSD(handle sell))
+### Offline:
+- Import CBBTC into hpmmsstester account and manually test through MASSTester.tsx
+- Import CBBTC into hpmmsstester account and test through HPMMASSTester.tsx (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
+- - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again
+- - - test import (after supplication), so it doesn't create a new group from the acdVatops
+- - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
+### Online:
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
-- - Fund Arells Fee Funder with 150 USD in ETH on Base
+- Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 24hrs.
+- Build HPM-MASS Assets (line-chart with profits, etc) based on VatopGroup info.
+
+
+## After Test
+- Fund Arells Fee Funder with 10 USD in ETH on Base (check and replenish everyday/hour and adjust MASS time-frame accordinglyuntil BASE L3 is complete)
+- Remove P/K & P/K Test from e en vee (check decoding proces (in console.logs) for each individual account to prevent external P/K decoding (MASSTester.tsx and HPMTester.tsx?))
+
 
 ### Account
 - If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value"
@@ -34,10 +35,10 @@ yarn hardhat run test/cbbtc_mass_test.js --network base
 - - Modal: Preparing (B) Wallet (to create wallet (take from MASSTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
 
 #### Metatags/ Description
-- Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
+- Alter: "Import Small Amounts of Bitcoin, ensure they never lose value."
 
 #### Description (Home/Account)
-- Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
+- Alter: "Import Small Amounts of Bitcoin, ensure they never lose value."
 
 #### Deployment Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked!
@@ -45,6 +46,7 @@ yarn hardhat run test/cbbtc_mass_test.js --network base
 - Restructure decryption process in readMASS and readBTC apis
 
 ### After Completion
+- Fund Arells Fee Funder with 120 USD in ETH on Base (check and replenish everyday/hour and adjust MASS time-frame accordinglyuntil BASE L3 is complete)
 - Talk about 1 week wallet balance update - Arells 1.5 (24 hour wallet balance update) 
 - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
 - Talk about working on Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
@@ -53,7 +55,9 @@ yarn hardhat run test/cbbtc_mass_test.js --network base
 - Restructure MASS Fee Abstraction (based on MASSApi & MASSSupplicationApi & MASS architecture)
 - Set time to check Base Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001...Reach out to Jesse Walden (and Base team on Discord, etc to discuss this) This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
 
+
 ### Other (if Time Permits (add the below sections to Arells 1.5...))
+- Remove loops in CBBTC/USDC supplication tests executeSupplication, clean up "cbBTC mass test for first failure before confirmation"
 - Remove MASSapi and MASSsupplication API errors dealing with fee checking (when transactions are successful) and fetchVatopGroups console.log error
 - Remove BTC Wallet & Key creations in signup and login
 - Remove all "2 second delay for buttons"
@@ -65,7 +69,8 @@ yarn hardhat run test/cbbtc_mass_test.js --network base
 - Send Confirmation (Link) look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
 - FA[Fee Arbitration] (optional MASS integration if swaping fees exceed a certain amount) [cVact (based on cpVact if cVactDa is = 0.00 else doesn’t change until threshold is met).] 
 
-### MASS
+### MASS/HPM
+- Remove Console.logs in MASS_cbbtc/usdc Apis and condense to make faster and more efficient. 
 - Work on making the Swapping system more efficient (aggregate all cVactTaa and cVactDa into a "listing system" so swapping doesn't occur multiple times from individual VatopGroups and happens only once per Bitcoin Price Change)
 - if cVactDa < $0.01, cancel (exit) MASS & HPM supplication
 
@@ -106,6 +111,9 @@ yarn hardhat run test/cbbtc_mass_test.js --network base
 **If initial Bitcoin amount is less than USDC amount, then "buy" equivalent BTC before exporting so for example: You start with 0.00121 BTC worth $200 when Bitcoin is at $60,000. To maintain the same value ($205), when the price of Bitcoin falls to $10,000, you buy Bitcoin using your $205 in USDC. At $10,000 per Bitcoin, you would get: $205 / $10,000 = 0.0205 BTC.**
 
 ### Testing
+- Create a separate HPMarchitecture (take from prior HPMarchitecture in main before v1 launch merge from test) for the concept (for demonstration purposes)
+- Add function to compare total amount in USDC & CBBTC with Vatop Groups and if it doesn't match, then delete correspondingly (in case anyone transacts with their wallet-address outside HPM-MASS)
+- TARGET_USD_BALANCE in MASS apis need to be adjusted, maybe create a shortfall of if it's less than $.005, then fund it until it hits $.01?
 - Create New Export Wallet Address for Selling and Exporting USDC/CBBTC
 - supplicateUSDtoWBTC (with holdMASS function revoked)
 - - If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. 

@@ -249,7 +249,7 @@ async function checkETHBalance() {
 }
 
 
-async function executeSupplication(amountIn) {
+export async function executeSupplication(amountIn) {
   console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
 
   const poolInfo = await getPoolAddress();
@@ -267,7 +267,7 @@ async function executeSupplication(amountIn) {
     console.error("❌ No Fee-Free Route Available! Swap will NOT proceed.");
     return;
   }
-  console.log("✅ Fee-Free Route Confirmed!");
+  // console.log("✅ Fee-Free Route Confirmed!");
 
   await approveUSDC(amountIn);
   if (!(await checkETHBalance())) return;
@@ -278,9 +278,6 @@ async function executeSupplication(amountIn) {
     return;
   }
 
-  const iface = new ethers.Interface(swapRouterABI);
-  const tickSpacing = Number(poolData.tickSpacing);
-  const swapRouter = new ethers.Contract(swapRouterAddress, swapRouterABI, provider).connect(userWallet);
   let lastError = null;
 
   for (const route of feeFreeRoutes) {
@@ -331,11 +328,11 @@ async function executeSupplication(amountIn) {
 
         console.log("⏳ Waiting for confirmation...");
         const receipt = await tx.wait();
-        console.log("✅ Swap Transaction Confirmed:");
+        console.log("✅ Supplicstion Transaction Confirmed:");
         console.log(`🔗 Tx Hash: ${receipt.hash}`);
         return;
       } catch (err) {
-        console.error(`❌ Swap failed at tick ${testTick}:`, err.reason || err.message || err);
+        console.error(`❌ Supplication failed at tick ${testTick}:`, err.reason || err.message || err);
         lastError = err;
       }
     }
@@ -349,37 +346,39 @@ async function executeSupplication(amountIn) {
 /**
  * ✅ Main Function: Execute Swap for $5 USDC
  */
-async function main() {
-  console.log("\n🔍 Checking for a Fee-Free Quote...");
-  // ✅ USDC amounts (6 decimals)
-  const usdcAmounts = [
-    5.03, 
-    10.22, 
-    25.000011, 
-    50.12233, 
-    1000.013232,
-    10000.013232, 
-    100000.013232];
+// async function main() {
+//   console.log("\n🔍 Checking for a Fee-Free Quote...");
+//   // ✅ USDC amounts (6 decimals)
+//   const usdcAmounts = [
+//     5.03, 
+//     10.22, 
+//     25.000011, 
+//     50.12233, 
+//     1000.013232,
+//     10000.013232, 
+//     100000.013232];
 
-  let foundFeeFree = false; // Track if any fee-free route was found
+//   let foundFeeFree = false; // Track if any fee-free route was found
 
-  // ✅ Check for USDC → CBBTC
-  for (const amount of usdcAmounts) {
-      const feeFree = await checkFeeFreeRoute(amount, "USDC", "CBBTC", 6);
+//   // // ✅ Check for USDC → CBBTC
+//   // for (const amount of usdcAmounts) {
+//   //     const feeFree = await checkFeeFreeRoute(amount, "USDC", "CBBTC", 6);
 
-      if (feeFree) {
-          console.log(`\n✅ **Fee-Free Quote Found at ${amount} USDC!** 🚀`);
-          foundFeeFree = true;
-      }
-  }
-  if (!foundFeeFree) {
-    console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
-  } else {
-      console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
-  }
+//   //     if (feeFree) {
+//   //         console.log(`\n✅ **Fee-Free Quote Found at ${amount} USDC!** 🚀`);
+//   //         foundFeeFree = true;
+//   //     }
+//   // }
+//   // if (!foundFeeFree) {
+//   //   console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
+//   // } else {
+//   //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
+//   // }
 
-  // const usdcAmountToTrade = 3; // Adjust as needed
-  // await executeSupplication(usdcAmountToTrade);
-}
+//   const usdcAmountToTrade = 3; // Adjust as needed
+//   await executeSupplication(usdcAmountToTrade);
+// }
 
-main().catch(console.error);
+// main().catch(console.error);
+
+//to test run: yarn hardhat run test/usdc_mass_test.js --network base

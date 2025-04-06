@@ -61,16 +61,16 @@ const MASSTester: React.FC = () => {
     setIsConverting(true);
   
     try {
-      const response = await axios.post('/api/MASSapi', {
-        wrappedBitcoinAmount: parseFloat(wrappedBitcoinAmount as string) * 1e8, // Convert BTC to satoshis
-        massAddress: MASSaddress, // Fix case sensitivity
-        massPrivateKey: MASSPrivateKey, // Fix parameter name
+      const response = await axios.post('/api/MASS_cbbtc', {
+        cbBitcoinAmount: parseFloat(wrappedBitcoinAmount as string), // Keep as BTC (float with 8 decimals)
+        massAddress: MASSaddress,
+        massPrivateKey: MASSPrivateKey,
       });
   
       const { wbtcAmount, txId } = response.data;
-      setConversionResult(`Conversion successful! Received ${wbtcAmount} WBTC. Transaction ID: ${txId}`);
+      setConversionResult(`Supplication successful! `);
     } catch (error: any) {
-      console.error('Error converting BTC to WBTC:', error);
+      console.error('Error supplicating CBBTC to USDC:', error);
       setConversionError(error.response?.data?.error || 'Conversion failed. Please try again.');
     } finally {
       setIsConverting(false);
@@ -91,14 +91,14 @@ const MASSTester: React.FC = () => {
     setConversionError(null);
   
     try {
-      const response = await axios.post('/api/MASSsupplicationApi', {
+      const response = await axios.post('/api/MASS_usdc', {
         usdcAmount: Math.floor(Number(dollarAmount) * 1e6), // Convert USD to base units (6 decimals)
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
       });
   
       const { receivedAmount, txId } = response.data;
-      setConversionResult(`Supplication successful! Received ${receivedAmount} WBTC. Transaction ID: ${txId}`);
+      setConversionResult(`Supplication successful!`);
     } catch (error: any) {
       console.error('Error during USDC supplication:', error.response?.data || error.message);
       setConversionError('Supplication failed. Please try again.');
@@ -124,10 +124,10 @@ const MASSTester: React.FC = () => {
           id="wrappedBitcoinAmount"
           value={wrappedBitcoinAmount}
           onChange={(e) => setWrappedBitcoinAmount(e.target.value)}
-          placeholder="Enter amount in WBTC"
+          placeholder="Enter amount in BTC"
         />
         <button onClick={handleWBTCsupplication} disabled={isConverting}>
-          {isConverting ? 'Supplicating...' : 'Supplicate WBTC to USD'}
+          {isConverting ? 'Supplicating...' : 'Supplicate CBBTC to USD'}
         </button>
         {conversionError && <p style={{ color: 'red' }}>{conversionError}</p>}
         {conversionResult && <p style={{ color: 'green' }}>{conversionResult}</p>}
@@ -140,10 +140,10 @@ const MASSTester: React.FC = () => {
           id="dollarAmount"
           value={dollarAmount}
           onChange={(e) => setDollarAmount(e.target.value)}
-          placeholder="Enter amount in USD (USDC)"
+          placeholder="Enter amount in USD"
         />
         <button onClick={handleUSDCsupplication} disabled={isConverting}>
-          {isConverting ? 'Supplicating...' : 'Supplicate USDC to WBTC'}
+          {isConverting ? 'Supplicating...' : 'Supplicate USDC to CBBTC'}
         </button>
       </div>
       {conversionError && <p style={{ color: 'red' }}>{conversionError}</p>}

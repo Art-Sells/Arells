@@ -148,7 +148,7 @@ const HPMMASSTester: React.FC = () => {
 
 
 
-  // supplicateWBTCtoUSDC functions
+  // supplicateCBTCtoUSDC functions
     const handleUSDCInputChange = (value: string) => {
       setDollarAmount(value); // Update the dollar amount state
       const parsedAmount = parseFloat(value); // Parse the input
@@ -188,7 +188,7 @@ const HPMMASSTester: React.FC = () => {
         const wbtcInSatoshis = Math.floor(wbtcEquivalent * 1e8); // Convert to satoshis
 
         if (wbtcInSatoshis <= 0) {
-          setSupplicationError('Calculated WBTC amount is too small.');
+          setSupplicationError('Calculated CBBTC amount is too small.');
           return;
         }
 
@@ -200,7 +200,7 @@ const HPMMASSTester: React.FC = () => {
 
         console.log('🚀 Sending Payload:', payload);
 
-        const response = await axios.post('/api/MASSapi', payload);
+        const response = await axios.post('/api/MASS_cbbtc', payload);
 
         const { receivedAmount, txId } = response.data;
         setSupplicationResult(
@@ -217,7 +217,7 @@ const HPMMASSTester: React.FC = () => {
 
 
 
-  // supplicateUSDCtoWBTC functions
+  // supplicateUSDCtoCBBTC functions
     const handleWBTCInputChange = (value: string) => {
       setWrappedBitcoinAmount(value); // Update WBTC input value
       const parsedAmount = parseFloat(value); // Parse the input
@@ -264,7 +264,7 @@ const HPMMASSTester: React.FC = () => {
     
         console.log('🚀 Sending Payload:', payload);
     
-        const response = await axios.post('/api/MASSsupplicationApi', payload);
+        const response = await axios.post('/api/MASS_usdc', payload);
     
         const { receivedAmount, txId } = response.data;
         setSupplicationResult(`Supplication successful! Received ${receivedAmount} WBTC. Transaction ID: ${txId}`);

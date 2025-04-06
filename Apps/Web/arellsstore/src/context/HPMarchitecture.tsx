@@ -88,48 +88,46 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [hpap, setHpap] = useState<number>(bitcoinPrice);
   const [soldAmounts, setSoldAmounts] = useState<number>(0);
 
-  useEffect(() => {
-    const fetchPrice = async () => {
-      try {
-        const price = await fetchBitcoinPrice();
-        console.log("Fetched price from API:", price);
-        if (price > 0) {
-          setBitcoinPrice(price);
-          await handleImport(price); 
-        } else {
-          console.warn("Invalid Bitcoin price fetched:", price);
-        }
-      } catch (error) {
-        console.error("Error fetching Bitcoin price:", error);
-      }
-    };
+//   useEffect(() => {
+//     const fetchPrice = async () => {
+//       try {
+//         const price = await fetchBitcoinPrice();
+//         console.log("Fetched price from API:", price);
+//         if (price > 0) {
+//           setBitcoinPrice(price);
+//           await handleImport(price); 
+//         } else {
+//           console.warn("Invalid Bitcoin price fetched:", price);
+//         }
+//       } catch (error) {
+//         console.error("Error fetching Bitcoin price:", error);
+//       }
+//     };
   
-    // Fetch the price initially
-    fetchPrice();
+//     // Fetch the price initially
+//     fetchPrice();
   
-    // Set up a 10-second interval for recurring fetch
-    const intervalId = setInterval(fetchPrice, 10000);
+//     // Set up a 10-second interval for recurring fetch
+//     const intervalId = setInterval(fetchPrice, 10000);
   
-    // Cleanup the interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []);
+//     // Cleanup the interval on component unmount
+//     return () => clearInterval(intervalId);
+//   }, []);
 
- useEffect(() => {
-    const fetchEmail = async () => {
-      try {
-        const attributesResponse = await fetchUserAttributes();
-        const emailAttribute = attributesResponse.email;
-        if (emailAttribute) {
-          setEmail(emailAttribute);
-        }
-      } catch (error) {
-        console.error('Error fetching user attributes:', error);
-      }
-    };
-    fetchEmail();
-  }, []);
-
-
+//  useEffect(() => {
+//     const fetchEmail = async () => {
+//       try {
+//         const attributesResponse = await fetchUserAttributes();
+//         const emailAttribute = attributesResponse.email;
+//         if (emailAttribute) {
+//           setEmail(emailAttribute);
+//         }
+//       } catch (error) {
+//         console.error('Error fetching user attributes:', error);
+//       }
+//     };
+//     fetchEmail();
+//   }, []);
 
 
 
@@ -167,118 +165,120 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
 
-  useEffect(() => {
-    let isFetchingGroups = false;
+
+
+  // useEffect(() => {
+  //   let isFetchingGroups = false;
   
-    const fetchVatopGroups = async () => {
-      if (!email) {
-        console.warn("Email is not set, cannot fetch vatopGroups.");
-        return;
-      }
+  //   const fetchVatopGroups = async () => {
+  //     if (!email) {
+  //       console.warn("Email is not set, cannot fetch vatopGroups.");
+  //       return;
+  //     }
   
-      // Prevent overlapping calls
-      if (isFetchingGroups) {
-        console.warn("fetchVatopGroups is already in progress. Skipping this call.");
-        return;
-      }
+  //     // Prevent overlapping calls
+  //     if (isFetchingGroups) {
+  //       console.warn("fetchVatopGroups is already in progress. Skipping this call.");
+  //       return;
+  //     }
   
-      isFetchingGroups = true;
+  //     isFetchingGroups = true;
   
-      try {
-        const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
-        const fetchedVatopGroups = response.data.vatopGroups || [];
-        const fetchedSoldAmounts = response.data.soldAmounts || 0;
+  //     try {
+  //       const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
+  //       const fetchedVatopGroups = response.data.vatopGroups || [];
+  //       const fetchedSoldAmounts = response.data.soldAmounts || 0;
   
-        // Update existing groups with fetched data
-        const updatedVatopGroups = vatopGroups.map((existingGroup) => {
-          const fetchedGroup = fetchedVatopGroups.find((fg: { id: string }) => fg.id === existingGroup.id);
+  //       // Update existing groups with fetched data
+  //       const updatedVatopGroups = vatopGroups.map((existingGroup) => {
+  //         const fetchedGroup = fetchedVatopGroups.find((fg: { id: string }) => fg.id === existingGroup.id);
   
-          // If no matching group is found in fetched data, preserve the existing group
-          if (!fetchedGroup) {
-            console.warn(`Group with ID ${existingGroup.id} not found in fetched data.`);
-            return existingGroup;
-          }
+  //         // If no matching group is found in fetched data, preserve the existing group
+  //         if (!fetchedGroup) {
+  //           console.warn(`Group with ID ${existingGroup.id} not found in fetched data.`);
+  //           return existingGroup;
+  //         }
   
-          const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, bitcoinPrice);
+  //         const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, bitcoinPrice);
   
-          // Set `cpVact` based on the conditions
-          const cpVact = fetchedGroup.supplicateUSDtoWBTC
-          ? newHAP // If supplicateUSDtoWBTC is true, use newHAP
-          : fetchedGroup.cpVact; // Otherwise, use the existing cpVact
+  //         // Set `cpVact` based on the conditions
+  //         const cpVact = fetchedGroup.supplicateUSDtoWBTC
+  //         ? newHAP // If supplicateUSDtoWBTC is true, use newHAP
+  //         : fetchedGroup.cpVact; // Otherwise, use the existing cpVact
   
-          const cVactDat = fetchedGroup.cVactTaa * cpVact + fetchedGroup.cVactDa;
-          const cVact = cVactDat;
+  //         const cVactDat = fetchedGroup.cVactTaa * cpVact + fetchedGroup.cVactDa;
+  //         const cVact = cVactDat;
   
-          const cVactTaa = fetchedGroup.supplicateWBTCtoUSD
-            ? fetchedGroup.cVactTaa
-            : cpVact === bitcoinPrice
-            ? cVactDat / bitcoinPrice
-            : 0;
+  //         const cVactTaa = fetchedGroup.supplicateWBTCtoUSD
+  //           ? fetchedGroup.cVactTaa
+  //           : cpVact === bitcoinPrice
+  //           ? cVactDat / bitcoinPrice
+  //           : 0;
   
-          const cVactDa = fetchedGroup.supplicateWBTCtoUSD
-            ? fetchedGroup.cVactDa
-            : cpVact > bitcoinPrice
-            ? cVact
-            : 0;
+  //         const cVactDa = fetchedGroup.supplicateWBTCtoUSD
+  //           ? fetchedGroup.cVactDa
+  //           : cpVact > bitcoinPrice
+  //           ? cVact
+  //           : 0;
   
-          const cdVatop = fetchedGroup.cVact - fetchedGroup.cVatop;
+  //         const cdVatop = fetchedGroup.cVact - fetchedGroup.cVatop;
   
-          return {
-            ...existingGroup,
-            HAP: newHAP,
-            cpVact: cpVact,
-            cVact: cVact,
-            cVactDat: cVactDat,
-            cVactTaa: cVactTaa,
-            cVactDa: cVactDa,
-            cdVatop: cdVatop,
-          };
-        });
+  //         return {
+  //           ...existingGroup,
+  //           HAP: newHAP,
+  //           cpVact: cpVact,
+  //           cVact: cVact,
+  //           cVactDat: cVactDat,
+  //           cVactTaa: cVactTaa,
+  //           cVactDa: cVactDa,
+  //           cdVatop: cdVatop,
+  //         };
+  //       });
   
-        // Add unmatched fetched groups
-        const unmatchedFetchedGroups = fetchedVatopGroups.filter(
-          (fg: { id: string }) => !vatopGroups.some((existingGroup) => existingGroup.id === fg.id)
-        );
+  //       // Add unmatched fetched groups
+  //       const unmatchedFetchedGroups = fetchedVatopGroups.filter(
+  //         (fg: { id: string }) => !vatopGroups.some((existingGroup) => existingGroup.id === fg.id)
+  //       );
   
-        const finalVatopGroups = [...updatedVatopGroups, ...unmatchedFetchedGroups];
+  //       const finalVatopGroups = [...updatedVatopGroups, ...unmatchedFetchedGroups];
   
-        // Recalculate HPAP
-        const maxCpVact = Math.max(...finalVatopGroups.map((group) => group.cpVact || 0));
-        setHpap(maxCpVact);
+  //       // Recalculate HPAP
+  //       const maxCpVact = Math.max(...finalVatopGroups.map((group) => group.cpVact || 0));
+  //       setHpap(maxCpVact);
   
-        // Update state with the final merged groups
-        setVatopGroups(finalVatopGroups);
-        setSoldAmounts(fetchedSoldAmounts);
+  //       // Update state with the final merged groups
+  //       setVatopGroups(finalVatopGroups);
+  //       setSoldAmounts(fetchedSoldAmounts);
   
-        // Update vatop combinations
-        const combinations = updateVatopCombinations(finalVatopGroups);
-        setVatopCombinations(combinations);
-      // Save updated data to backend
-        await saveVatopGroups({
-          email,
-          vatopGroups: finalVatopGroups,
-          vatopCombinations: combinations,
-          soldAmounts: fetchedSoldAmounts,
-        });
-      } catch (error) {
-        console.warn("Awaiting Vatop Group creation");
-      } finally {
-        isFetchingGroups = false;
-      }
-    };
+  //       // Update vatop combinations
+  //       const combinations = updateVatopCombinations(finalVatopGroups);
+  //       setVatopCombinations(combinations);
+  //     // Save updated data to backend
+  //       await saveVatopGroups({
+  //         email,
+  //         vatopGroups: finalVatopGroups,
+  //         vatopCombinations: combinations,
+  //         soldAmounts: fetchedSoldAmounts,
+  //       });
+  //     } catch (error) {
+  //       console.warn("Awaiting Vatop Group creation");
+  //     } finally {
+  //       isFetchingGroups = false;
+  //     }
+  //   };
   
-    fetchVatopGroups();
-  }, [email, bitcoinPrice]);
+  //   fetchVatopGroups();
+  // }, [email, bitcoinPrice]);
 
-  useEffect(() => {
-    if (!vatopGroups.length) {
-      setHpap(bitcoinPrice); // Default HPAP to current Bitcoin price if no groups exist
-      return;
-    }
+  // useEffect(() => {
+  //   if (!vatopGroups.length) {
+  //     setHpap(bitcoinPrice); // Default HPAP to current Bitcoin price if no groups exist
+  //     return;
+  //   }
   
-    const highestCpVact = Math.max(...vatopGroups.map((group) => group.cpVact || 0));
-    setHpap(highestCpVact);
-  }, [vatopGroups, bitcoinPrice]); // Depend on vatopGroups and bitcoinPrice
+  //   const highestCpVact = Math.max(...vatopGroups.map((group) => group.cpVact || 0));
+  //   setHpap(highestCpVact);
+  // }, [vatopGroups, bitcoinPrice]); // Depend on vatopGroups and bitcoinPrice
 
 
 
@@ -392,30 +392,30 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   
 
-  useEffect(() => {
-    if (!vatopUpdateTrigger) return; // Only run if triggered
+  // useEffect(() => {
+  //   if (!vatopUpdateTrigger) return; // Only run if triggered
   
-    const updatedVatopGroups = vatopGroups
-      .map((group) => ({
-        ...group,
-        cVact: group.cVactDat, // Reflect cpVact in cVact
-        cdVatop: group.cVact - group.cVatop,
-      }))
-      .filter((group) => group.cVact > 0); // Filter valid groups
+  //   const updatedVatopGroups = vatopGroups
+  //     .map((group) => ({
+  //       ...group,
+  //       cVact: group.cVactDat, // Reflect cpVact in cVact
+  //       cdVatop: group.cVact - group.cVatop,
+  //     }))
+  //     .filter((group) => group.cVact > 0); // Filter valid groups
   
-    setVatopGroups(updatedVatopGroups);
-    updateVatopCombinations(updatedVatopGroups); // Update combinations
-    setVatopUpdateTrigger(false); // Reset the trigger
-  }, [vatopUpdateTrigger]); 
-  useEffect(() => {
-    if (!vatopGroups.length) {
-      setHpap(bitcoinPrice); // Default HPAP to current Bitcoin price if no groups exist
-      return;
-    }
+  //   setVatopGroups(updatedVatopGroups);
+  //   updateVatopCombinations(updatedVatopGroups); // Update combinations
+  //   setVatopUpdateTrigger(false); // Reset the trigger
+  // }, [vatopUpdateTrigger]); 
+  // useEffect(() => {
+  //   if (!vatopGroups.length) {
+  //     setHpap(bitcoinPrice); // Default HPAP to current Bitcoin price if no groups exist
+  //     return;
+  //   }
   
-    const highestCpVact = Math.max(...vatopGroups.map((group) => group.cpVact || 0));
-    setHpap(highestCpVact);
-  }, [vatopGroups, bitcoinPrice]); // Depend on vatopGroups and bitcoinPrice
+  //   const highestCpVact = Math.max(...vatopGroups.map((group) => group.cpVact || 0));
+  //   setHpap(highestCpVact);
+  // }, [vatopGroups, bitcoinPrice]); // Depend on vatopGroups and bitcoinPrice
 
 
 
@@ -1025,7 +1025,9 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 };
 
 export const useHPM = () => {
-  const context = useContext(HPMarchitecture);
+  const context = useContext(
+    HPMarchitecture
+  );
   if (context === undefined) {
     throw new Error('useHPM must be used within an HPMProvider');
   }
