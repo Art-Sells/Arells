@@ -1,5 +1,5 @@
 #b-logo-home{
-    margin-top: 60px;
+    margin-top: 55px;
     margin-left: 0px;
     display: flex;
     justify-content: left; 
@@ -41,12 +41,13 @@
         margin-left: -270px;
     }
     #plus-home {
-        opacity: .7;
+        opacity: .5;
         margin-left: 0px;
+        margin-right: 1px;
     }
     #percentage-home {
-        opacity: .7;
-        margin-left: -1px;
+        opacity: .55;
+        margin-left: 2px;
     }
 
     #spacer-if-error {

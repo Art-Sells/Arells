@@ -7,7 +7,7 @@
 ## Test
 
 ### Offline:
-- Import CBBTC into hpmmsstester account and manually test through MASSTester.tsx
+- Import CBBTC into masstester account and manually test through MASSTester.tsx
 - Import CBBTC into hpmmsstester account and test through HPMMASSTester.tsx (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again
 - - - test import (after supplication), so it doesn't create a new group from the acdVatops
