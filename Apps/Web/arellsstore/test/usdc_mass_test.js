@@ -316,6 +316,9 @@ export async function executeSupplication(amountIn) {
       const iface = new ethers.Interface(swapRouterABI);
       const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
 
+      const ethBefore = await provider.getBalance(userWallet.address);
+      console.log(`💰 ETH Balance Before: ${ethers.formatEther(ethBefore)} ETH`);
+
       try {
         const feeData = await provider.getFeeData();
         const tx = await userWallet.sendTransaction({
@@ -330,6 +333,9 @@ export async function executeSupplication(amountIn) {
         const receipt = await tx.wait();
         console.log("✅ Supplicstion Transaction Confirmed:");
         console.log(`🔗 Tx Hash: ${receipt.hash}`);
+        const ethAfter = await provider.getBalance(userWallet.address);
+        console.log(`💰 ETH Balance After: ${ethers.formatEther(ethAfter)} ETH`);
+        
         return;
       } catch (err) {
         console.error(`❌ Supplication failed at tick ${testTick}:`, err.reason || err.message || err);

@@ -7,8 +7,10 @@
 ## Test
 
 ### Offline:
+
+
 - Import CBBTC into masstester account and manually test through MASSTester.tsx
-- Import CBBTC into hpmmsstester account and test through HPMMASSTester.tsx (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
+- Import CBBTC into hpmmsstester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again
 - - - test import (after supplication), so it doesn't create a new group from the acdVatops
 - - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
@@ -47,13 +49,13 @@
 
 ### After Completion
 - Fund Arells Fee Funder with 120 USD in ETH on Base (check and replenish everyday/hour and adjust MASS time-frame accordinglyuntil BASE L3 is complete)
-- Talk about 1 week wallet balance update - Arells 1.5 (24 hour wallet balance update) 
+- Talk about 24hr wallet balance update - Arells 1.5 (12-6 hour wallet balance update, etc) 
 - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
 - Talk about working on Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
 - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
 - Add "Discord" section for any questions
 - Restructure MASS Fee Abstraction (based on MASSApi & MASSSupplicationApi & MASS architecture)
-- Set time to check Base Wallet and adjust MASS activation time frame accordingly... Business model will most likely have to abstract from profits (cdVatops ("selling")) to account for $0.11 MASS fees (taken from Li.Fi API)... We'll most likely have to build our own L2 (or L3), or our own ReLayer to bring the MASS fees down to $0~, for now, the next option will have to be not using Li.Fi, and checking LayerZero in order to bring the fees down to ~$0.000001...Reach out to Jesse Walden (and Base team on Discord, etc to discuss this) This till be an ever changing iteration and infrastructure building process. Maybe build an Arbitrum L3 (reach out to Arb team to see if they can facilitate this)
+- Set time to check Base Wallet and adjust MASS activation time frame accordingly (Adjust as needed in system if costs baloon checking Fee Funder)... Business model will most likely have to abstract from profits (cdVatops ("selling")) (Base L3 so transaction fees go down to Zero and Base/Coinbase can keep 6% off all profits in response).
 
 
 ### Other (if Time Permits (add the below sections to Arells 1.5...))

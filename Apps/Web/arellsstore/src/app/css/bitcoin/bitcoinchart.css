@@ -41,13 +41,13 @@
         margin-left: -270px;
     }
     #plus-home {
-        opacity: .5;
+        opacity: .4;
         margin-left: 0px;
         margin-right: 1px;
     }
     #percentage-home {
         opacity: .55;
-        margin-left: 2px;
+        margin-left: 3px;
     }
 
     #spacer-if-error {

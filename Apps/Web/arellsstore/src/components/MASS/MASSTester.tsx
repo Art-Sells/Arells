@@ -92,7 +92,7 @@ const MASSTester: React.FC = () => {
   
     try {
       const response = await axios.post('/api/MASS_usdc', {
-        usdcAmount: Math.floor(Number(dollarAmount) * 1e6), // Convert USD to base units (6 decimals)
+        usdcAmount: parseFloat(dollarAmount as string),
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
       });
