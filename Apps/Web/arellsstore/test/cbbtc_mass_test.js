@@ -343,39 +343,49 @@ throw lastError;
 
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
-// async function main() {
-//   console.log("\n🔍 Checking for a Fee-Free Quote...");
-//   // ✅ CBBTC amounts (8 decimals)
-//   const cbbtcAmounts = [
-//     0.002323, 
-//     0.0120323, 
-//     1.3233, 
-//     0.50012345, 
-//     2.12345678];
+async function main() {
+  console.log("\n🔍 Checking for a Fee-Free Quote...");
+  // ✅ CBBTC amounts (8 decimals)
+  const cbbtcAmounts = [
+    0.002323, 
+    0.0120323, 
+    1.3233, 
+    0.50012345, 
+    2.12345678];
 
-//   let foundFeeFree = false; // Track if any fee-free route was found
+  let foundFeeFree = false; // Track if any fee-free route was found
 
-//   // // ✅ Check for CBBTC → USDC
-//   // for (const amount of cbbtcAmounts) {
-//   //     const feeFree = await checkFeeFreeRoute(amount, "CBBTC", "USDC", 8);
+  // // ✅ Check for CBBTC → USDC
+  // for (const amount of cbbtcAmounts) {
+  //     const feeFree = await checkFeeFreeRoute(amount, "CBBTC", "USDC", 8);
 
-//   //     if (feeFree) {
-//   //         console.log(`\n✅ **Fee-Free Quote Found at ${amount} CBBTC!** 🚀`);
-//   //         foundFeeFree = true;
-//   //     }
-//   // }
-//   // if (!foundFeeFree) {
-//   //   console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
-//   // } else {
-//   //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
-//   // }
+  //     if (feeFree) {
+  //         console.log(`\n✅ **Fee-Free Quote Found at ${amount} CBBTC!** 🚀`);
+  //         foundFeeFree = true;
+  //     }
+  // }
+  // if (!foundFeeFree) {
+  //   console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
+  // } else {
+  //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
+  // }
 
-//   const cbbtcAmountToTrade = 0.0000358;
-//   await executeSupplication(cbbtcAmountToTrade);
-// }
+  const cbbtcAmountToTrade = 0.00003947;
+
+  while (true) {
+    try {
+      await executeSupplication(cbbtcAmountToTrade);
+      console.log("🎉 Supplication successful!");
+      break; // Exit loop after success
+    } catch (error) {
+      console.warn("❌ Supplication failed, retrying in 15s...\n", error.message || error);
+      await new Promise(res => setTimeout(res, 15000));
+    }
+  }
+}
 
 
 
-// main().catch(console.error);
+main().catch(console.error);
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base

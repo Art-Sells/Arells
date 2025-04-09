@@ -8,15 +8,15 @@
 
 ### Offline:
 
-
-- Import CBBTC into masstester account and manually test through MASSTester.tsx
-- Import CBBTC into hpmmsstester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
+- Calculate the profits based on weekly, daily, hourly, etc and mark where MASS currently is in its efficiency (mark it in GitHub).
+- Import CBBTC into masstester or hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again
 - - - test import (after supplication), so it doesn't create a new group from the acdVatops
 - - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
+- - - Add endless 15 second loop incase Base network is down [if Base Network is congested add error message]
 ### Online:
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
-- Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 24hrs.
+- Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 1 week.
 - Build HPM-MASS Assets (line-chart with profits, etc) based on VatopGroup info.
 
 
@@ -48,8 +48,8 @@
 - Restructure decryption process in readMASS and readBTC apis
 
 ### After Completion
-- Fund Arells Fee Funder with 120 USD in ETH on Base (check and replenish everyday/hour and adjust MASS time-frame accordinglyuntil BASE L3 is complete)
-- Talk about 24hr wallet balance update - Arells 1.5 (12-6 hour wallet balance update, etc) 
+- Fund Arells Fee Funder with 120 USD in ETH on Base (check and replenish everyweek/day and adjust MASS time-frame accordinglyuntil BASE L3 is complete)
+- Talk about weekly wallet balance update - Arells 1.5 and beyond (24/12/6/3 hours-seconds wallet balance update as system improves, etc) 
 - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
 - Talk about working on Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
 - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)

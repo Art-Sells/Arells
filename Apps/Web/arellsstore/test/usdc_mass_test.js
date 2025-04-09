@@ -352,39 +352,48 @@ export async function executeSupplication(amountIn) {
 /**
  * ✅ Main Function: Execute Swap for $5 USDC
  */
-// async function main() {
-//   console.log("\n🔍 Checking for a Fee-Free Quote...");
-//   // ✅ USDC amounts (6 decimals)
-//   const usdcAmounts = [
-//     5.03, 
-//     10.22, 
-//     25.000011, 
-//     50.12233, 
-//     1000.013232,
-//     10000.013232, 
-//     100000.013232];
+async function main() {
+  console.log("\n🔍 Checking for a Fee-Free Quote...");
+  // ✅ USDC amounts (6 decimals)
+  const usdcAmounts = [
+    5.03, 
+    10.22, 
+    25.000011, 
+    50.12233, 
+    1000.013232,
+    10000.013232, 
+    100000.013232];
 
-//   let foundFeeFree = false; // Track if any fee-free route was found
+  let foundFeeFree = false; // Track if any fee-free route was found
 
-//   // // ✅ Check for USDC → CBBTC
-//   // for (const amount of usdcAmounts) {
-//   //     const feeFree = await checkFeeFreeRoute(amount, "USDC", "CBBTC", 6);
+  // // ✅ Check for USDC → CBBTC
+  // for (const amount of usdcAmounts) {
+  //     const feeFree = await checkFeeFreeRoute(amount, "USDC", "CBBTC", 6);
 
-//   //     if (feeFree) {
-//   //         console.log(`\n✅ **Fee-Free Quote Found at ${amount} USDC!** 🚀`);
-//   //         foundFeeFree = true;
-//   //     }
-//   // }
-//   // if (!foundFeeFree) {
-//   //   console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
-//   // } else {
-//   //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
-//   // }
+  //     if (feeFree) {
+  //         console.log(`\n✅ **Fee-Free Quote Found at ${amount} USDC!** 🚀`);
+  //         foundFeeFree = true;
+  //     }
+  // }
+  // if (!foundFeeFree) {
+  //   console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
+  // } else {
+  //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
+  // }
 
-//   const usdcAmountToTrade = 3; // Adjust as needed
-//   await executeSupplication(usdcAmountToTrade);
-// }
+  const usdcAmountToTrade = 1; // Adjust as needed
+    while (true) {
+      try {
+        await executeSupplication(usdcAmountToTrade);
+        console.log("🎉 Supplication successful!");
+        break; // Exit loop after success
+      } catch (error) {
+        console.warn("❌ Supplication failed, retrying in 15s...\n", error.message || error);
+        await new Promise(res => setTimeout(res, 15000));
+      }
+    }
+}
 
-// main().catch(console.error);
+main().catch(console.error);
 
 //to test run: yarn hardhat run test/usdc_mass_test.js --network base
