@@ -381,7 +381,7 @@ async function main() {
   //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
   // }
 
-  const usdcAmountToTrade = 1; // Adjust as needed
+  const usdcAmountToTrade = 3; // Adjust as needed
     while (true) {
       try {
         await executeSupplication(usdcAmountToTrade);

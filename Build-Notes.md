@@ -6,9 +6,8 @@
 
 ## Test
 
-### Offline:
-
-- Calculate the profits based on weekly, daily, hourly, etc and mark where MASS currently is in its efficiency (mark it in GitHub).
+### Offline (test network transactions daily and verify amounts in DEX UI)
+- Adjust Bitcoin Chart (resolve innacurate price chart [check chat GPT])
 - Import CBBTC into masstester or hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again
 - - - test import (after supplication), so it doesn't create a new group from the acdVatops
@@ -49,7 +48,6 @@
 
 ### After Completion
 - Fund Arells Fee Funder with 120 USD in ETH on Base (check and replenish everyweek/day and adjust MASS time-frame accordinglyuntil BASE L3 is complete)
-- Talk about weekly wallet balance update - Arells 1.5 and beyond (24/12/6/3 hours-seconds wallet balance update as system improves, etc) 
 - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
 - Talk about working on Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
 - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)

@@ -370,7 +370,7 @@ async function main() {
   //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
   // }
 
-  const cbbtcAmountToTrade = 0.00003947;
+  const cbbtcAmountToTrade = 0.00003729;
 
   while (true) {
     try {
