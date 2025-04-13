@@ -76,10 +76,11 @@ const BitcoinChart: React.FC = () => {
         setMinDate(minDate);
         setMaxDate(maxDate);
 
-        const minPrice = Math.min(...filteredPrices.map(price => price.y));
+        // Get the first price on or after the 5-year mark
+        const initialPrice = filteredPrices.find(p => p.x.getTime() >= minDate)?.y || 0;
         const maxPrice = Math.max(...filteredPrices.map(price => price.y));
 
-        const percentageIncrease = ((maxPrice - minPrice) / minPrice) * 100;
+        const percentageIncrease = ((maxPrice - initialPrice) / initialPrice) * 100;
 
         setPercentageIncrease(percentageIncrease);
 

@@ -26,8 +26,8 @@ interface VatopGroup {
   cVactDa: number;
   cVactTaa: number; // Reflects cVactDat / bitcoinPrice
   HAP: number;
-  supplicateWBTCtoUSD: boolean;
-  supplicateUSDtoWBTC: boolean;
+  supplicateCBBTCtoUSD: boolean;
+  supplicateUSDtoCBBTC: boolean;
   holdMASS: boolean;
 }
 
@@ -50,18 +50,18 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   const [vatopGroups, setVatopGroups] = useState<VatopGroup[]>([]);
   const [prevVatopGroups, setPrevVatopGroups] = useState<VatopGroup[]>([]);
 
-  // useEffect(() => {
-  //   const fetchEmail = async () => {
-  //     try {
-  //       const attributesResponse = await fetchUserAttributes();
-  //       const emailAttribute = attributesResponse.email;
-  //       if (emailAttribute) setEmail(emailAttribute);
-  //     } catch (error) {
-  //       console.error('Error fetching user attributes:', error);
-  //     }
-  //   };
-  //   fetchEmail();
-  // }, []);
+  useEffect(() => {
+    const fetchEmail = async () => {
+      try {
+        const attributesResponse = await fetchUserAttributes();
+        const emailAttribute = attributesResponse.email;
+        if (emailAttribute) setEmail(emailAttribute);
+      } catch (error) {
+        console.error('Error fetching user attributes:', error);
+      }
+    };
+    fetchEmail();
+  }, []);
 
   const fetchVatopGroups = async () => {
     try {
@@ -84,22 +84,22 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
 // MASS blockchain implementation code below
 
-  const [wrappedBitcoinAmount, setWrappedBitcoinAmount] = useState<number | string>('');
+  const [cbBitcoinAmount, setCbBitcoinAmount] = useState<number | string>('');
   const [dollarAmount, setDollarAmount] = useState<number | string>('');
   const [supplicationResult, setSupplicationResult] = useState<string | null>(null);
   const [supplicationError, setSupplicationError] = useState<string | null>(null);
   const [isSupplicating, setIsSupplicating] = useState<boolean>(false);
 
 
-// supplicateWBTCtoUSDC functions
+// supplicateCBBTCtoUSDC functions
   const getWBTCEquivalent = (usdcAmount: number, cpVact: number): number => {
     if (cpVact <= 0) {
       throw new Error('cpVact price must be greater than zero.');
     }
-    return usdcAmount / cpVact; // Calculate WBTC equivalent
+    return usdcAmount / cpVact; // Calculate CBBTC equivalent
   };
 
-  const handleWBTCsupplication = async (group: VatopGroup) => {
+  const handleCBBTCsupplication = async (group: VatopGroup) => {
     const adjustedDollarInput = group.cVactDa; 
     console.log("Adjusted dollar amount: ", adjustedDollarInput);
   
@@ -119,12 +119,12 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       console.log("Available MASS Balance (BTC): ", massBalanceInBTC);
   
       const wbtcEquivalent = adjustedDollarInput / group.cpVact;
-      console.log("WBTC Equivalent: ", wbtcEquivalent);
+      console.log("CBBTC Equivalent: ", wbtcEquivalent);
   
       const formattedWbtc = Math.min(Number(wbtcEquivalent.toFixed(8)), massBalanceInBTC);
-      console.log("Adjusted Formatted WBTC: ", formattedWbtc);
+      console.log("Adjusted Formatted CBBTC: ", formattedWbtc);
   
-      const wbtcInSatoshis = Math.round(formattedWbtc * 1e8);
+      const cbbtcInSatoshis = Math.round(formattedWbtc * 1e8);
   
       if (!MASSaddress || !MASSPrivateKey) {
         setSupplicationError("Wallet information is missing.");
@@ -132,23 +132,23 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       }
   
       const payload = {
-        wrappedBitcoinAmount: wbtcInSatoshis,
+        cbBitcoinAmount: cbbtcInSatoshis,
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
       };
   
-      const response = await axios.post("/api/MASSapi", payload);
+      const response = await axios.post("/api/MASS_cbbtc", payload);
       const { receivedAmount, txId } = response.data;
   
       setSupplicationResult(
-        `Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`
+        `Supplication successful!`
       );
   
       setVatopGroups((prevGroups) => {
         const updatedGroups = prevGroups.map((g) =>
           g.id === group.id
-            ? { ...g, supplicateWBTCtoUSD: true, 
-              supplicateUSDtoWBTC: false, 
+            ? { ...g, supplicateCBBTCtoUSD: true, 
+              supplicateUSDtoCBBTC: false, 
               holdMASS: true }
             : g
         );
@@ -157,8 +157,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         saveSupplications([
           {
             id: group.id,
-            supplicateWBTCtoUSD: true,
-            supplicateUSDtoWBTC: false,
+            supplicateCBBTCtoUSD: true,
+            supplicateUSDtoCBBTC: false,
             holdMASS: true,
           },
         ]);
@@ -181,12 +181,12 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-// supplicateUSDCtoWBTC functions
-  const getUSDCEquivalent = (wbtcAmount: number, bitcoinPrice: number): number => {
-    return wbtcAmount * bitcoinPrice; // Direct conversion without extra factors
+// supplicateUSDCtoCBBTC functions
+  const getUSDCEquivalent = (cbbtcAmount: number, bitcoinPrice: number): number => {
+    return cbbtcAmount * bitcoinPrice; // Direct conversion without extra factors
   };
   const handleUSDCsupplication = async (group: VatopGroup) => {
-    if (!wrappedBitcoinAmount || isNaN(Number(wrappedBitcoinAmount)) || Number(wrappedBitcoinAmount) <= 0) {
+    if (!cbBitcoinAmount || isNaN(Number(cbBitcoinAmount)) || Number(cbBitcoinAmount) <= 0) {
       setSupplicationError("Please enter a valid amount.");
       return;
     }
@@ -206,8 +206,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       const usdcBalance = parseFloat(balances.USDC_BASE || "0");
       console.log("Available USDC Balance: ", usdcBalance);
   
-      const adjustedBTCInput = Math.min(Number(wrappedBitcoinAmount), usdcBalance / group.cpVact);
-      console.log(`Adjusted BTC Input: ${adjustedBTCInput.toFixed(8)} WBTC`);
+      const adjustedBTCInput = Math.min(Number(cbBitcoinAmount), usdcBalance / group.cpVact);
+      console.log(`Adjusted BTC Input: ${adjustedBTCInput.toFixed(8)} CBBTC`);
   
       const usdcEquivalent = adjustedBTCInput * group.cpVact;
       const usdcInMicroUnits = Math.floor(usdcEquivalent * 1e6);
@@ -225,18 +225,18 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   
       console.log("🚀 Sending Payload with Adjusted BTC Input and Shortfall:", payload);
   
-      const response = await axios.post("/api/MASSsupplicationApi", payload);
+      const response = await axios.post("/api/MASS_usdc", payload);
       const { receivedAmount, txId } = response.data;
   
       setSupplicationResult(
-        `Supplication successful! Received ${receivedAmount} cbBTC. Transaction ID: ${txId}`
+        `CBBTC -> USDC Supplication successful!`
       );
   
       setVatopGroups((prevGroups) => {
         const updatedGroups = prevGroups.map((g) =>
           g.id === group.id
             ? { ...g, 
-              supplicateWBTCtoUSD: false, 
+              supplicateCBBTCtoUSD: false, 
               supplicateUSDtoWBTC: true }
             : g
         );
@@ -244,8 +244,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         saveSupplications([
           {
             id: group.id,
-            supplicateWBTCtoUSD: false,
-            supplicateUSDtoWBTC: true,
+            supplicateCBBTCtoUSD: false,
+            supplicateUSDtoCBBTC: true,
           },
         ]);
   
@@ -268,8 +268,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
   const saveSupplications = async (updates: { 
     id: string; 
-    supplicateWBTCtoUSD?: boolean; 
-    supplicateUSDtoWBTC?: boolean;
+    supplicateCBBTCtoUSD?: boolean; 
+    supplicateUSDtoCBBTC?: boolean;
     holdMASS?: boolean 
   }[]) => {
     try {
@@ -301,20 +301,20 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
   // useEffect(() => {
   //   vatopGroups.forEach(async (group) => {
-  //     // Skip groups where `supplicateWBTCtoUSD` is already true
-  //     if (group.supplicateWBTCtoUSD || group.cVactDa <= 0) {
-  //       console.log(`Skipping group ${group.id} as supplicateWBTCtoUSD is true.`);
+  //     // Skip groups where `supplicateCBBTCtoUSD` is already true
+  //     if (group.supplicateCBBTCtoUSD || group.cVactDa <= 0) {
+  //       console.log(`Skipping group ${group.id} as supplicateCBBTCtoUSD is true.`);
   //       return; // Skip this group
   //     }
   
-  //     // Trigger WBTC to USDC supplication if `cVactDa` > 0.01
+  //     // Trigger CBBTC to USDC supplication if `cVactDa` > 0.01
   //     if (group.cVactDa > 0.01) {
-  //       console.log(`Initiating WBTC to USDC supplication for group ${group.id} with amount: ${group.cVactDa}`);
+  //       console.log(`Initiating CBBTC to USDC supplication for group ${group.id} with amount: ${group.cVactDa}`);
   
   //       try {
-  //         await handleWBTCsupplication(group);
+  //         await handleCBBTCsupplication(group);
   //       } catch (error) {
-  //         console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
+  //         console.error(`Error during CBBTC to USDC supplication for group ${group.id}:`, error);
   //       }
   //     }
   //   });
@@ -334,28 +334,28 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   //     console.log('Processing added groups:', addedGroups);
   
   //     addedGroups.forEach(async (group) => {
-  //       // Ensure `supplicateWBTCtoUSD` is `false` during initialization
-  //       if (group.supplicateWBTCtoUSD || group.cVactDa <= 0) {
-  //         console.log(`Skipping added group ${group.id} as supplicateWBTCtoUSD is true.`);
+  //       // Ensure `supplicateCBBTCtoUSD` is `false` during initialization
+  //       if (group.supplicateCBBTCtoUSD || group.cVactDa <= 0) {
+  //         console.log(`Skipping added group ${group.id} as supplicateCBBTCtoUSD is true.`);
   //         return;
   //       }
   
-  //       // Only allow WBTC to USDC supplication for added groups
+  //       // Only allow CBBTC to USDC supplication for added groups
   //       if (group.cVactDa > 0.01) {
-  //         console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
+  //         console.log(`Initiating CBBTC to USDC supplication for added group amount: ${group.cVactDa}`);
 
-  //         // Convert cVactDa to WBTC equivalent
+  //         // Convert cVactDa to CBBTC equivalent
   //         const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, group.cpVact);
-  //         console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
+  //         console.log(`Converted cVactDa ${group.cVactDa} to CBBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
 
   //         try {
-  //           // Perform the supplication using the converted WBTC equivalent
+  //           // Perform the supplication using the converted CBBTC equivalent
   //           // Usage
-  //           await handleWBTCsupplication(group)
+  //           await handleCBBTCsupplication(group)
 
 
   //         } catch (error) {
-  //           console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
+  //           console.error(`Error during CBBTC to USDC supplication for group ${group.id}:`, error);
   //           // Handle error or provide feedback to the user
   //         }
   //       }
@@ -370,41 +370,41 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   //     const prevGroup = prevVatopGroups[index] || {};
   
   //     // Skip if `supplicateUSDtoWBTC` is `true`
-  //     if (group.supplicateUSDtoWBTC || group.cVactTaa <= 0) {
-  //       console.log(`Skipping supplication for group ${group.id} as supplicateWBTCtoUSD is true.`);
+  //     if (group.supplicateUSDtoCBBTC || group.cVactTaa <= 0) {
+  //       console.log(`Skipping supplication for group ${group.id} as supplicateCBBTCtoUSD is true.`);
   //       return;
   //     }
 
   
-  //     // Trigger USDC to WBTC supplication only if `cVactTaa` has increased
+  //     // Trigger USDC to CBBTC supplication only if `cVactTaa` has increased
   //     if (group.cVactTaa > 0.000001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
-  //       console.log(`Initiating USDC to WBTC supplication for amount: ${group.cVactTaa}`);
+  //       console.log(`Initiating USDC to CBBTC supplication for amount: ${group.cVactTaa}`);
   //       const usdcEquivalent = getUSDCEquivalent(group.cVactTaa, bitcoinPrice);
-  //       console.log(`Converted cVactDa ${group.cVactTaa} to WBTC equivalent: ${usdcEquivalent.toFixed(4)}`);
+  //       console.log(`Converted cVactDa ${group.cVactTaa} to CBTC equivalent: ${usdcEquivalent.toFixed(4)}`);
   //       try {
   //         await handleUSDCsupplication(group);
   
   //       } catch (error) {
-  //         console.error(`Error during USD to WBTC supplication for group ${group.id}:`, error);
+  //         console.error(`Error during USD to CBBTC supplication for group ${group.id}:`, error);
   //         // Handle error or provide feedback to the user
   //       }
         
   //     }
   
-  //     // Trigger WBTC to USDC supplication only if `cVactDa` has increased
+  //     // Trigger CBBTC to USDC supplication only if `cVactDa` has increased
   //     if (group.cVactDa > 0.01 && (prevGroup?.cVactDa === undefined || group.cVactDa > prevGroup.cVactDa)) {
-  //       console.log(`Initiating WBTC to USDC supplication for added group amount: ${group.cVactDa}`);
+  //       console.log(`Initiating CBBTC to USDC supplication for added group amount: ${group.cVactDa}`);
 
-  //       // Convert cVactDa to WBTC equivalent
+  //       // Convert cVactDa to CBBTC equivalent
   //       const wbtcEquivalent = getWBTCEquivalent(group.cVactDa, group.cpVact);
-  //       console.log(`Converted cVactDa ${group.cVactDa} to WBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
+  //       console.log(`Converted cVactDa ${group.cVactDa} to CBBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
 
   //       try {
-  //         // Perform the supplication using the converted WBTC equivalent
-  //         await handleWBTCsupplication(group);
+  //         // Perform the supplication using the converted CBBTC equivalent
+  //         await handleCBBTCsupplication(group);
 
   //       } catch (error) {
-  //         console.error(`Error during WBTC to USDC supplication for group ${group.id}:`, error);
+  //         console.error(`Error during CBBTC to USDC supplication for group ${group.id}:`, error);
   //         // Handle error or provide feedback to the user
   //       }
   //     }
@@ -441,37 +441,6 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
-
-
-
-// For testing purposes
-
-  // const toggleSupplicateWBTCtoUSD = (groupId: string, value: boolean) => {
-  //   setVatopGroups((prevGroups) =>
-  //     prevGroups.map((group) =>
-  //       group.id === groupId ? { ...group, supplicateWBTCtoUSD: value } : group
-  //     )
-  //   );
-  // };
-
-  // const supplicateUSDCintoWBTC = async (amount: number, group: VatopGroup) => {
-  //   if (amount <= 0) {
-  //     console.log('Supplication amount must be greater than 0. Skipping.');
-  //     return;
-  //   }
-  //   console.log(`Supplicating USDC into WBTC for amount: ${amount}`);
-  //   toggleSupplicateWBTCtoUSD(group.id, true);
-  //   // Add your logic here (e.g., calling an API or updating state).
-  // };
-
-  // const supplicateWBTCintoUSDC = async (amount: number, group: VatopGroup) => {
-  //   if (amount <= 0) {
-  //     console.log('Supplication amount must be greater than 0. Skipping.');
-  //     return;
-  //   }
-  //   console.log(`Supplicating WBTC into USDC for amount: ${amount}`);
-  //   // Add your logic here (e.g., calling an API or updating state).
-  // };
 
   return (
 <MASSarchitecture.Provider

@@ -7,16 +7,19 @@
 ## Test
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
-- Adjust Bitcoin Chart (resolve innacurate price chart [check chat GPT])
-- Import CBBTC into masstester or hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
+- Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again
+- - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
+- - Ensure that vatopGroups delete if cVact <= $0.01 and if acVactTas && aBTC = 0, then delete a vatopGroup (do not add a VatopGroup)
 - - - test import (after supplication), so it doesn't create a new group from the acdVatops
 - - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
-- - - Add endless 15 second loop incase Base network is down [if Base Network is congested add error message]
+- - - Add endless 15 second loop incase Base network is down (if Base Network is congested add error message (if successful, then error message is invisible))
+
 ### Online:
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 - Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 1 week.
-- Build HPM-MASS Assets (line-chart with profits, etc) based on VatopGroup info.
+- If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateCBBTCtoUSDCs are true then start time)… Update every 168~ hours. 
+- Build HPM Assets (line-chart with profits, etc) based on VatopGroup info.
 
 
 ## After Test
@@ -25,11 +28,14 @@
 
 
 ### Account
+- "Import Bitcoin to ensure your investments never lose value"
+- - Import button triggers "Create Wallets" <- use function from MASSTester.tsx
 - If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value"
 - - Price: HPAP (formatPrice from HPMMASSTester.tsx)
 - - Wallet: acVacts (formatCurrency from HPMMASSTester.tsx)
 - - Profits: acdVatops (formatCurrency from HPMMASSTester.tsx)
 - - Wallet Balance Updated every 1~ week
+- - - Error Message Modal visible: if Base network congestion error (from executeSupplication), if executeSupplication successful, then invisible.
 
 #### Import (Page)
 - Import Bitcoin to ensure your investments never lose value (through Coinbase/Base) (Base Address)
@@ -41,19 +47,23 @@
 #### Description (Home/Account)
 - Alter: "Import Small Amounts of Bitcoin, ensure they never lose value."
 
+#### Concept
+- Look at main/ and copy/paste the HPMArchitecture into HPMArchitectureConcept (rename all functions to concept) for concept
+
 #### Deployment Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked!
 - Delete MASS address info from MASStester and console.logs from all signer.
 - Restructure decryption process in readMASS and readBTC apis
 
 ### After Completion
-- Fund Arells Fee Funder with 120 USD in ETH on Base (check and replenish everyweek/day and adjust MASS time-frame accordinglyuntil BASE L3 is complete)
-- Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
-- Talk about working on Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
-- replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
-- Add "Discord" section for any questions
-- Restructure MASS Fee Abstraction (based on MASSApi & MASSSupplicationApi & MASS architecture)
-- Set time to check Base Wallet and adjust MASS activation time frame accordingly (Adjust as needed in system if costs baloon checking Fee Funder)... Business model will most likely have to abstract from profits (cdVatops ("selling")) (Base L3 so transaction fees go down to Zero and Base/Coinbase can keep 6% off all profits in response).
+- Users:
+- - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
+- - Accepting only the first 150 Investors (until our L3 is built) talk about releasing Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
+- - Add "Discord" section for any questions
+- Team:
+- - Fund Arells Fee Funder with 150 USD in ETH on Base (check and replenish everyweek/day until BASE L3 is complete)
+- - review ##Base
+- - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
 
 
 ### Other (if Time Permits (add the below sections to Arells 1.5...))
@@ -97,7 +107,12 @@
 
 
 
-
+## BASE L3 (possibly after v1.5):
+- Phase 1: 
+- - Abstract Transaction Fees to $0~
+- - Replace Transaction Fees from MASS profits (calculate previous cdVatops from new cdVatops and if +15% or more, subtract 5% into Base L3 and other 5% into Arells (should work the same as selling logic)). 
+- Phase 2:
+- - Txns/s need to be in 1000s-10000s per second for meme-coins to benefit (reference HPM Efficiency charts).
 
 
 
@@ -111,18 +126,9 @@
 **If initial Bitcoin amount is less than USDC amount, then "buy" equivalent BTC before exporting so for example: You start with 0.00121 BTC worth $200 when Bitcoin is at $60,000. To maintain the same value ($205), when the price of Bitcoin falls to $10,000, you buy Bitcoin using your $205 in USDC. At $10,000 per Bitcoin, you would get: $205 / $10,000 = 0.0205 BTC.**
 
 ### Testing
-- Create a separate HPMarchitecture (take from prior HPMarchitecture in main before v1 launch merge from test) for the concept (for demonstration purposes)
 - Add function to compare total amount in USDC & CBBTC with Vatop Groups and if it doesn't match, then delete correspondingly (in case anyone transacts with their wallet-address outside HPM-MASS)
-- TARGET_USD_BALANCE in MASS apis need to be adjusted, maybe create a shortfall of if it's less than $.005, then fund it until it hits $.01?
 - Create New Export Wallet Address for Selling and Exporting USDC/CBBTC
-- supplicateUSDtoWBTC (with holdMASS function revoked)
-- - If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateWBTCtoUSDCs are true then start time)… Update every 24~ hours. 
-- Export Test (similar to sell except (Combines the acVactTaa and acVactDas and subtracts from the group with the lowest cpVatop first))
-- - Ensure the “if changes supplicate” logic accounts only for changes from 0, not from number changes if cVactTaa changes from .03 to .02 or the Da, still activate (from selling)
-- Ensure that vatopGroups delete if cVact <= $0.01 and if acVactTas && aBTC = 0, then delete a vatopGroup (do not add a VatopGroup)
-- 3%-0.1% export (selling) fee?
 - **fix Selling Discrepancy Issue (VERY IMPORTANT)**
-- - if (cVactDa > 0.00) take Dollar difference from cpVact - bitcoinPrice and ensure this USDC amount is used to bridge to BTC and that amount it added to BTC address before exporting out (figure out how to ensure aBTC doesn't update from BTC since we'll be adding more BTC before exporting)
 - Sell Test (HPMContext)
 - - (start here first since taking from highest HPAP) if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).
 - - (if acVactTaa <= 0.00000, then else here) if acVactDas > 0.00, increment $sellAmount into soldAmounts(this is already baked into the HPM algorithm). Then initiate sellUSDC"Function"(from Smart Contract).
@@ -189,6 +195,16 @@
 #### Metatags/ Description (Home)
 - Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
 
+### After Completion
+- Users:
+- - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
+- - Accepting only the first 150 Investors (until our L3 is built) talk about releasing Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
+- - Add "Discord" section for any questions
+- Team:
+- - Fund Arells Fee Funder with 150 USD in ETH on Base (check and replenish everyweek/day until BASE L3 is complete)
+- - review ##Base
+- - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
+
 ### Last Resort
 - Create separate Wallet to handle where we get our 3% fee...
 
@@ -222,9 +238,9 @@
 - Check "Main-Inv" folder in email
 
 ### Testing (HPM & MASS Tester)
-- Test Export process... 
+- Test Export process (Converts all USDC from MASSaddress into SELLaddress CBBTC (while also sending CBBTC from MASSaddress into SELLaddress) and prepares to export everything)... 
 - - handleExport (add try, awaits and catch to ensures the entire process is successful before updating backend information) (check handle Sell for reference).
-- - - 
+- Export Test (similar to sell except (Combines the acVactTaa and acVactDas and subtracts from all groups))
 - Export Amount Input: In Dollars that Converts to cbBTC based on bitcoin price.
 - Export Address Input (Base Address).
 

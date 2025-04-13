@@ -370,7 +370,7 @@ async function main() {
   //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
   // }
 
-  const cbbtcAmountToTrade = 0.00003729;
+  const cbbtcAmountToTrade = 0.00007024;
 
   while (true) {
     try {
@@ -386,6 +386,6 @@ async function main() {
 
 
 
-main().catch(console.error);
+//main().catch(console.error);
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base

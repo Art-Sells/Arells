@@ -24,11 +24,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const walletData = JSON.parse(response.Body.toString());
       return res.status(200).json(walletData);
     } else {
-      return res.status(404).json({ error: 'WBTC Wallet not found' });
+      return res.status(404).json({ error: 'CBBTC Wallet not found' });
     }
   } catch (error: any) {
     if (error.code === 'NoSuchKey') {
-      return res.status(404).json({ error: 'WBTC Wallet not found' });
+      return res.status(404).json({ error: 'CBBTC Wallet not found' });
     }
     console.error('Error fetching WBTC Wallet data:', error);
     return res.status(500).json({ error: 'Error fetching WBTC Wallet data', details: error.message });

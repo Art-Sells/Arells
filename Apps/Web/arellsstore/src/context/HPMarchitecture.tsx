@@ -21,8 +21,8 @@ interface VatopGroup {
   cVactDa: number;
   cVactTaa: number; // Reflects cVactDat / bitcoinPrice
   HAP: number;
-  supplicateWBTCtoUSD: boolean;
-  supplicateUSDtoWBTC: boolean;
+  supplicateCBBTCtoUSD: boolean;
+  supplicateUSDtoCBBTC: boolean;
   holdMASS: boolean;
 }
 
@@ -88,46 +88,46 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [hpap, setHpap] = useState<number>(bitcoinPrice);
   const [soldAmounts, setSoldAmounts] = useState<number>(0);
 
-//   useEffect(() => {
-//     const fetchPrice = async () => {
-//       try {
-//         const price = await fetchBitcoinPrice();
-//         console.log("Fetched price from API:", price);
-//         if (price > 0) {
-//           setBitcoinPrice(price);
-//           await handleImport(price); 
-//         } else {
-//           console.warn("Invalid Bitcoin price fetched:", price);
-//         }
-//       } catch (error) {
-//         console.error("Error fetching Bitcoin price:", error);
-//       }
-//     };
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const price = await fetchBitcoinPrice();
+        console.log("Fetched price from API:", price);
+        if (price > 0) {
+          setBitcoinPrice(price);
+          await handleImport(price); 
+        } else {
+          console.warn("Invalid Bitcoin price fetched:", price);
+        }
+      } catch (error) {
+        console.error("Error fetching Bitcoin price:", error);
+      }
+    };
   
-//     // Fetch the price initially
-//     fetchPrice();
+    // Fetch the price initially
+    fetchPrice();
   
-//     // Set up a 10-second interval for recurring fetch
-//     const intervalId = setInterval(fetchPrice, 10000);
+    // Set up a 10-second interval for recurring fetch
+    const intervalId = setInterval(fetchPrice, 10000);
   
-//     // Cleanup the interval on component unmount
-//     return () => clearInterval(intervalId);
-//   }, []);
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
-//  useEffect(() => {
-//     const fetchEmail = async () => {
-//       try {
-//         const attributesResponse = await fetchUserAttributes();
-//         const emailAttribute = attributesResponse.email;
-//         if (emailAttribute) {
-//           setEmail(emailAttribute);
-//         }
-//       } catch (error) {
-//         console.error('Error fetching user attributes:', error);
-//       }
-//     };
-//     fetchEmail();
-//   }, []);
+ useEffect(() => {
+    const fetchEmail = async () => {
+      try {
+        const attributesResponse = await fetchUserAttributes();
+        const emailAttribute = attributesResponse.email;
+        if (emailAttribute) {
+          setEmail(emailAttribute);
+        }
+      } catch (error) {
+        console.error('Error fetching user attributes:', error);
+      }
+    };
+    fetchEmail();
+  }, []);
 
 
 
@@ -202,20 +202,20 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   //         const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, bitcoinPrice);
   
   //         // Set `cpVact` based on the conditions
-  //         const cpVact = fetchedGroup.supplicateUSDtoWBTC
-  //         ? newHAP // If supplicateUSDtoWBTC is true, use newHAP
+  //         const cpVact = fetchedGroup.supplicateUSDtoCBBTC
+  //         ? newHAP // If supplicateUSDtoCBBTC is true, use newHAP
   //         : fetchedGroup.cpVact; // Otherwise, use the existing cpVact
   
   //         const cVactDat = fetchedGroup.cVactTaa * cpVact + fetchedGroup.cVactDa;
   //         const cVact = cVactDat;
   
-  //         const cVactTaa = fetchedGroup.supplicateWBTCtoUSD
+  //         const cVactTaa = fetchedGroup.supplicateCBBTCtoUSD
   //           ? fetchedGroup.cVactTaa
   //           : cpVact === bitcoinPrice
   //           ? cVactDat / bitcoinPrice
   //           : 0;
   
-  //         const cVactDa = fetchedGroup.supplicateWBTCtoUSD
+  //         const cVactDa = fetchedGroup.supplicateCBBTCtoUSD
   //           ? fetchedGroup.cVactDa
   //           : cpVact > bitcoinPrice
   //           ? cVact
@@ -473,20 +473,20 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
         // Update group attributes
         const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, newBitcoinPrice);
-        const cpVact = fetchedGroup.supplicateUSDtoWBTC
-        ? newHAP // If supplicateUSDtoWBTC is true, use newHAP
+        const cpVact = fetchedGroup.supplicateUSDtoCBBTC
+        ? newHAP // If supplicateUSDtoCBBTC is true, use newHAP
         : fetchedGroup.cpVact; // Otherwise, use the existing cpVact
   
         const cVactDat = fetchedGroup.cVactTaa * cpVact + fetchedGroup.cVactDa;
         const cVact = cVactDat;
   
-        const cVactTaa = fetchedGroup.supplicateWBTCtoUSD
+        const cVactTaa = fetchedGroup.supplicateCBBTCtoUSD
           ? fetchedGroup.cVactTaa
           : cpVact === newBitcoinPrice
           ? cVactDat / newBitcoinPrice
           : 0;
   
-        const cVactDa = fetchedGroup.supplicateWBTCtoUSD
+        const cVactDa = fetchedGroup.supplicateCBBTCtoUSD
           ? fetchedGroup.cVactDa
           : cpVact > newBitcoinPrice
           ? cVact
@@ -699,8 +699,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cdVatop: 0,
       cVactTaa: amount / bitcoinPrice,
       HAP: bitcoinPrice,
-      supplicateWBTCtoUSD: false,
-      supplicateUSDtoWBTC: true,
+      supplicateCBBTCtoUSD: false,
+      supplicateUSDtoCBBTC: true,
       holdMASS: false,
     };
 
@@ -767,8 +767,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cdVatop: 0,
       cVactTaa: amount / bitcoinPrice,
       HAP: bitcoinPrice,
-      supplicateWBTCtoUSD: false,
-      supplicateUSDtoWBTC: true,
+      supplicateCBBTCtoUSD: false,
+      supplicateUSDtoCBBTC: true,
       holdMASS: false,
     };
   
@@ -867,8 +867,8 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cdVatop: 0,
         cVactTaa: parseFloat((amountToImport / currentBitcoinPrice).toFixed(8)),
         HAP: currentBitcoinPrice,
-        supplicateWBTCtoUSD: false,
-        supplicateUSDtoWBTC: true,
+        supplicateCBBTCtoUSD: false,
+        supplicateUSDtoCBBTC: true,
         holdMASS: false,
       };
   
@@ -968,7 +968,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const toggleSupplicateWBTCtoUSD = (groupId: string, value: boolean) => {
     setVatopGroups((prevGroups) =>
       prevGroups.map((group) =>
-        group.id === groupId ? { ...group, supplicateWBTCtoUSD: value } : group
+        group.id === groupId ? { ...group, supplicateCBBTCtoUSD: value } : group
       )
     );
   };

@@ -100,36 +100,6 @@ const HPMMASSTester: React.FC = () => {
     setManualBitcoinPrice((currentPrice) => Math.max(currentPrice - 1000, 0));
   };
 
-  const handleBuyClick = () => {
-    const amount = parseFloat(inputBuyAmount) || 0;
-    if (amount > 0) {
-      handleBuy(amount);
-      setInputBuyAmount('');
-    } else {
-      alert('Invalid buy amount');
-    }
-  };
-
-  const handleSellClick = () => {
-    const amount = parseFloat(inputSellAmount.replace(/,/g, '').trim()) || 0;
-    if (amount > 0) {
-      handleSell(amount);
-      setInputSellAmount('');
-    } else {
-      alert('Invalid sell amount');
-    }
-  };
-
-  const handleImportClick = async () => {
-    const amount = parseFloat(inputImportAmount) || 0;
-    if (amount > 0) {
-      await handleImportABTC(amount);
-      setInputImportAmount('');
-    } else {
-      alert('Invalid import amount');
-    }
-  };
-
 
 
 
@@ -138,12 +108,12 @@ const HPMMASSTester: React.FC = () => {
 
 
 // MASS blockchain implementation code below
-  const [wrappedBitcoinAmount, setWrappedBitcoinAmount] = useState<number | string>('');
+  const [cbBitcoinAmount, setWrappedBitcoinAmount] = useState<number | string>('');
   const [dollarAmount, setDollarAmount] = useState<number | string>('');
   const [supplicationResult, setSupplicationResult] = useState<string | null>(null);
   const [supplicationError, setSupplicationError] = useState<string | null>(null);
   const [isSupplicating, setIsSupplicating] = useState<boolean>(false);
-  const [wbtcConversion, setWbtcConversion] = useState<string>('0.00000000');
+  const [cbbtcConversion, setWbtcConversion] = useState<string>('0.00000000');
   const [usdcConversion, setUsdcConversion] = useState<string>('0.00');
 
 
@@ -154,8 +124,8 @@ const HPMMASSTester: React.FC = () => {
       const parsedAmount = parseFloat(value); // Parse the input
 
       if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
-        const wbtcEquivalent = getWBTCEquivalent(parsedAmount, bitcoinPrice); // Convert USDC to WBTC
-        setWbtcConversion(wbtcEquivalent.toFixed(8)); // Format WBTC value
+        const cbbtcEquivalent = getWBTCEquivalent(parsedAmount, bitcoinPrice); // Convert USDC to CBBTC
+        setWbtcConversion(cbbtcEquivalent.toFixed(8)); // Format CBBTC value
       } else {
         setWbtcConversion('0.00000000'); // Reset if input is invalid
       }
@@ -164,9 +134,9 @@ const HPMMASSTester: React.FC = () => {
       if (bitcoinPrice <= 0) {
         throw new Error('Bitcoin price must be greater than zero.');
       }
-      return usdcAmount / bitcoinPrice; // Calculate WBTC equivalent
+      return usdcAmount / bitcoinPrice; // Calculate CBBTC equivalent
     };
-    const handleWBTCsupplication = async () => {
+    const handleCBBTCsupplication = async () => {
       const dollarInput = parseFloat(String(dollarAmount)); // User input in dollars
 
       if (isNaN(dollarInput) || dollarInput <= 0) {
@@ -183,17 +153,17 @@ const HPMMASSTester: React.FC = () => {
       setIsSupplicating(true);
 
       try {
-        // Convert dollars to WBTC equivalent
-        const wbtcEquivalent = dollarInput / bitcoinPrice; // WBTC equivalent of dollarInput
-        const wbtcInSatoshis = Math.floor(wbtcEquivalent * 1e8); // Convert to satoshis
+        // Convert dollars to CBBTC equivalent
+        const cbbtcEquivalent = dollarInput / bitcoinPrice; // CBBTC equivalent of dollarInput
+        const cbbtcInSatoshis = Math.floor(cbbtcEquivalent * 1e8); // Convert to satoshis
 
-        if (wbtcInSatoshis <= 0) {
+        if (cbbtcInSatoshis <= 0) {
           setSupplicationError('Calculated CBBTC amount is too small.');
           return;
         }
 
         const payload = {
-          wrappedBitcoinAmount: wbtcInSatoshis, // Amount in satoshis
+          wrappedBitcoinAmount: cbbtcInSatoshis, // Amount in satoshis
           massAddress: MASSaddress,
           massPrivateKey: MASSPrivateKey,
         };
@@ -204,7 +174,7 @@ const HPMMASSTester: React.FC = () => {
 
         const { receivedAmount, txId } = response.data;
         setSupplicationResult(
-          `Supplication successful! Received ${receivedAmount} USDC. Transaction ID: ${txId}`
+          `USDC -> CBBTC Supplication successful!`
         );
       } catch (error: any) {
         console.error('❌ API Error:', error.response?.data || error.message);
@@ -218,22 +188,22 @@ const HPMMASSTester: React.FC = () => {
 
 
   // supplicateUSDCtoCBBTC functions
-    const handleWBTCInputChange = (value: string) => {
-      setWrappedBitcoinAmount(value); // Update WBTC input value
+    const handleCBBTCInputChange = (value: string) => {
+      setWrappedBitcoinAmount(value); // Update CBBTC input value
       const parsedAmount = parseFloat(value); // Parse the input
 
       if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
-        const usdcEquivalent = getUSDCEquivalent(parsedAmount, bitcoinPrice); // Convert WBTC to USDC
+        const usdcEquivalent = getUSDCEquivalent(parsedAmount, bitcoinPrice); // Convert CBBTC to USDC
         setUsdcConversion(usdcEquivalent.toFixed(2)); // Format USDC value
       } else {
         setUsdcConversion('0.00'); // Reset if input is invalid
       }
     };
-    const getUSDCEquivalent = (wbtcAmount: number, bitcoinPrice: number): number => {
-      return wbtcAmount * bitcoinPrice; // Direct conversion without extra factors
+    const getUSDCEquivalent = (cbbtcAmount: number, bitcoinPrice: number): number => {
+      return cbbtcAmount * bitcoinPrice; // Direct conversion without extra factors
     };
     const handleUSDCsupplication = async () => {
-      if (!wrappedBitcoinAmount || isNaN(Number(wrappedBitcoinAmount)) || Number(wrappedBitcoinAmount) <= 0) {
+      if (!cbBitcoinAmount || isNaN(Number(cbBitcoinAmount)) || Number(cbBitcoinAmount) <= 0) {
         setSupplicationError('Please enter a valid amount.');
         return;
       }
@@ -248,7 +218,7 @@ const HPMMASSTester: React.FC = () => {
     
       try {
         // Calculate USDC equivalent
-        const usdcEquivalent = getUSDCEquivalent(Number(wrappedBitcoinAmount), bitcoinPrice);
+        const usdcEquivalent = getUSDCEquivalent(Number(cbBitcoinAmount), bitcoinPrice);
         const usdcInMicroUnits = Math.floor(usdcEquivalent * 1e6); // Convert to base units
     
         if (usdcInMicroUnits === 0) {
@@ -267,7 +237,7 @@ const HPMMASSTester: React.FC = () => {
         const response = await axios.post('/api/MASS_usdc', payload);
     
         const { receivedAmount, txId } = response.data;
-        setSupplicationResult(`Supplication successful! Received ${receivedAmount} WBTC. Transaction ID: ${txId}`);
+        setSupplicationResult(`CBBTC -> USDC Supplication successful!`);
       } catch (error: any) {
         console.error('❌ API Error:', error.response?.data || error.message);
         setSupplicationError(error.response?.data?.error || 'Supplication failed. Please try again.');
@@ -317,14 +287,14 @@ const calculateTotalUSDC = (): string => {
   if (!bitcoinPrice || bitcoinPrice <= 0) return '0.00';
 
   // Safely parse balances to numbers
-  const wbtcBalance = parseFloat(balances.BTC_BASE || '0'); // WBTC balance
+  const cbbtcBalance = parseFloat(balances.BTC_BASE || '0'); // CBBTC balance
   const usdBalance = parseFloat(balances.USDC_BASE || '0');  // USDC balance
 
-  // Convert WBTC to USD
-  const usdFromWBTC = wbtcBalance * bitcoinPrice;
+  // Convert CBBTC to USD
+  const usdFromCBBTC = cbbtcBalance * bitcoinPrice;
 
   // Calculate total USDC
-  const totalUSDC = usdBalance + usdFromWBTC;
+  const totalUSDC = usdBalance + usdFromCBBTC;
 
   // Format the result
   return formatCurrency(totalUSDC);
@@ -360,7 +330,7 @@ const calculateTotalUSDC = (): string => {
       <h2>Total USD:</h2>
         <p>{calculateTotalUSDC()} USD</p>
       </div>
-        <h2>aBTC:</h2>
+        <h2>aBTC in USD:</h2>
         <p>{formatCurrency(aBTC)}</p>
       </div>
       <div>
@@ -411,35 +381,37 @@ const calculateTotalUSDC = (): string => {
               onChange={(e) => handleUSDCInputChange(e.target.value)}
               placeholder="Enter amount in USDC"
             />
-            <p>BTC Equivalent: {wbtcConversion} BTC</p>
+            <p>BTC Equivalent: {cbbtcConversion} CBBTC</p>
           </div>
-          <button onClick={handleWBTCsupplication} disabled={isSupplicating}>
-            {isSupplicating ? 'Supplicating...' : 'Supplicate WBTC to USD'}
+          <button onClick={handleCBBTCsupplication} disabled={isSupplicating}>
+            {isSupplicating ? 'Supplicating...' : 'Manually Supplicate CBBTC to USD'}
           </button>
           {supplicationError && <p style={{ color: 'red' }}>{supplicationError}</p>}
           {supplicationResult && <p style={{ color: 'green' }}>{supplicationResult}</p>}
         </div>
-      </div>
-      <hr/>
 
-      <p>Balance (USDC/BASE): {balances.USDC_BASE} BTC</p>
-      <div>
+        <hr/>
+
+        <p>Balance (USDC/BASE): ${balances.USDC_BASE} USD</p>
         <div>
-          <label>WBTC Amount:</label>
-          <input
-            type="text"
-            id="wbtcAmount"
-            value={wrappedBitcoinAmount}
-            onChange={(e) => handleWBTCInputChange(e.target.value)}
-            placeholder="Enter amount in WBTC"
-          />
-          <p>USDC Equivalent: ${usdcConversion} USDC</p>
+          <div>
+            <label>CBBTC Amount:</label>
+            <input
+              type="text"
+              id="cbbtcAmount"
+              value={cbBitcoinAmount}
+              onChange={(e) => handleCBBTCInputChange(e.target.value)}
+              placeholder="Enter amount in BTC"
+            />
+            <p>USD Equivalent: ${usdcConversion} USDC</p>
+          </div>
+          <button onClick={handleUSDCsupplication} disabled={isSupplicating}>
+            {isSupplicating ? 'Supplicating...' : 'Manually Supplicate USDC to CBBTC'}
+          </button>
+          {supplicationError && <p style={{ color: 'red' }}>{supplicationError}</p>}
+          {supplicationResult && <p style={{ color: 'green' }}>{supplicationResult}</p>}
         </div>
-        <button onClick={handleUSDCsupplication} disabled={isSupplicating}>
-          {isSupplicating ? 'Supplicating...' : 'Supplicate USDC to WBTC'}
-        </button>
-        {supplicationError && <p style={{ color: 'red' }}>{supplicationError}</p>}
-        {supplicationResult && <p style={{ color: 'green' }}>{supplicationResult}</p>}
+
       </div>
     </div>
   );

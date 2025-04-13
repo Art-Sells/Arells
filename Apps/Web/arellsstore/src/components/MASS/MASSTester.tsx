@@ -46,7 +46,7 @@ const MASSTester: React.FC = () => {
   //   }
   // };
 
-  const handleWBTCsupplication = async () => {
+  const handleCBBTCsupplication = async () => {
     if (!wrappedBitcoinAmount || parseFloat(wrappedBitcoinAmount as string) <= 0) {
       setConversionError('Please enter a valid Bitcoin amount.');
       return;
@@ -126,7 +126,7 @@ const MASSTester: React.FC = () => {
           onChange={(e) => setWrappedBitcoinAmount(e.target.value)}
           placeholder="Enter amount in BTC"
         />
-        <button onClick={handleWBTCsupplication} disabled={isConverting}>
+        <button onClick={handleCBBTCsupplication} disabled={isConverting}>
           {isConverting ? 'Supplicating...' : 'Supplicate CBBTC to USD'}
         </button>
         {conversionError && <p style={{ color: 'red' }}>{conversionError}</p>}
