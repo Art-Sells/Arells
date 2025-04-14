@@ -28,6 +28,12 @@ const HPMMASSTester: React.FC = () => {
     email,
   } = useSigner();
 
+  useEffect(() => {
+    if (balances && balances.USDC_BASE !== undefined) {
+      console.log('🪙 USDC Balance (BASE):', balances.USDC_BASE);
+    }
+  }, [balances.USDC_BASE]);
+
   const [inputBuyAmount, setInputBuyAmount] = useState<string>('');
   const [inputSellAmount, setInputSellAmount] = useState<string>('');
   const [inputImportAmount, setInputImportAmount] = useState<string>('');
@@ -117,8 +123,7 @@ const HPMMASSTester: React.FC = () => {
   const [usdcConversion, setUsdcConversion] = useState<string>('0.00');
 
 
-
-  // supplicateCBTCtoUSDC functions
+// supplicateCBTCtoUSDC functions
     const handleUSDCInputChange = (value: string) => {
       setDollarAmount(value); // Update the dollar amount state
       const parsedAmount = parseFloat(value); // Parse the input
@@ -318,8 +323,8 @@ const calculateTotalUSDC = (): string => {
       <h1>HPM and MASS Tester</h1>
       <h2>Bitcoin Price</h2>
       <h3>${formatPrice(bitcoinPrice)}</h3>
-      <button onClick={handleIncreasePrice}>Increase Price</button>
-      <button onClick={handleDecreasePrice}>Decrease Price</button>
+      {/* <button onClick={handleIncreasePrice}>Increase Price</button>
+      <button onClick={handleDecreasePrice}>Decrease Price</button> */}
 
       <div>
         <h2>HPAP:</h2>
@@ -328,7 +333,7 @@ const calculateTotalUSDC = (): string => {
       <div>
       <div>
       <h2>Total USD:</h2>
-        <p>{calculateTotalUSDC()} USD</p>
+        <p>${calculateTotalUSDC()} USD</p>
       </div>
         <h2>aBTC in USD:</h2>
         <p>{formatCurrency(aBTC)}</p>
@@ -392,7 +397,8 @@ const calculateTotalUSDC = (): string => {
 
         <hr/>
 
-        <p>Balance (USDC/BASE): ${balances.USDC_BASE} USD</p>
+        <p>Balance (USDC/BASE): ${balances.USDC_BASE} USDC</p>
+        
         <div>
           <div>
             <label>CBBTC Amount:</label>

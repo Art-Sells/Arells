@@ -17,7 +17,8 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 // ✅ Set Up Ethereum Provider & Wallet
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
+const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
+const userWallet = new ethers.Wallet(privateKeyToUse, provider);
 const signer = userWallet.connect(provider);
 console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
@@ -249,8 +250,11 @@ async function checkETHBalance() {
 }
 
 
-export async function executeSupplication(amountIn) {
+export async function executeSupplication(amountIn, customPrivateKey) {
   console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
+
+  const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
+  const userWallet = new ethers.Wallet(privateKeyToUse, provider);
 
   const poolInfo = await getPoolAddress();
   if (!poolInfo) return;
@@ -305,7 +309,7 @@ export async function executeSupplication(amountIn) {
         fee,
         recipient: userWallet.address,
         deadline: Math.floor(Date.now() / 1000) + 600,
-        amountIn: ethers.parseUnits(amountIn.toFixed(6), 6),
+        amountIn: ethers.parseUnits(amountIn.toString(), 6),
         amountOutMinimum: 1,
         sqrtPriceLimitX96: limitX96,
       };
@@ -381,7 +385,7 @@ async function main() {
   //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
   // }
 
-  const usdcAmountToTrade = 2.21; // Adjust as needed
+  const usdcAmountToTrade = 2; // Adjust as needed
     while (true) {
       try {
         await executeSupplication(usdcAmountToTrade);

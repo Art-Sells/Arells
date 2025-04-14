@@ -62,7 +62,7 @@ async function fundGasFees(recipientAddress: string) {
   const wallet = new ethers.Wallet(TRANSFER_FEE_WALLET_PRIVATE_KEY, provider);
 
   const ethPrice = await fetchEthPrice();
-  const TARGET_USD_BALANCE = 0.5;
+  const TARGET_USD_BALANCE = 0.3;
 
   const balanceInWei = await provider.getBalance(recipientAddress);
   const balanceInEth = parseFloat(ethers.formatEther(balanceInWei));

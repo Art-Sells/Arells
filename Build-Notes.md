@@ -23,7 +23,6 @@
 
 
 ## After Test
-- Fund Arells Fee Funder with 10 USD in ETH on Base (check and replenish everyday/hour and adjust MASS time-frame accordinglyuntil BASE L3 is complete)
 - Remove P/K & P/K Test from e en vee (check decoding proces (in console.logs) for each individual account to prevent external P/K decoding (MASSTester.tsx and HPMTester.tsx?))
 
 
@@ -66,9 +65,8 @@
 - - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
 
 
-### Other (if Time Permits (add the below sections to Arells 1.5...))
+### Other (if Time Permits)
 - Remove loops in CBBTC/USDC supplication tests executeSupplication, clean up "cbBTC mass test for first failure before confirmation"
-- Remove MASSapi and MASSsupplication API errors dealing with fee checking (when transactions are successful) and fetchVatopGroups console.log error
 - Remove BTC Wallet & Key creations in signup and login
 - Remove all "2 second delay for buttons"
 - Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
@@ -78,10 +76,7 @@
 - - if true, opposite
 - Send Confirmation (Link) look into Hosted UI in AWS Copgnito for custom UI interface Emails, etc..
 - FA[Fee Arbitration] (optional MASS integration if swaping fees exceed a certain amount) [cVact (based on cpVact if cVactDa is = 0.00 else doesn’t change until threshold is met).] 
-
-### MASS/HPM
 - Remove Console.logs in MASS_cbbtc/usdc Apis and condense to make faster and more efficient. 
-- Work on making the Swapping system more efficient (aggregate all cVactTaa and cVactDa into a "listing system" so swapping doesn't occur multiple times from individual VatopGroups and happens only once per Bitcoin Price Change)
 - if cVactDa < $0.01, cancel (exit) MASS & HPM supplication
 
 ### Last Resort
@@ -123,19 +118,14 @@
 
 ## Arells 1.5 (Sell/Export USDC)
 
-**If initial Bitcoin amount is less than USDC amount, then "buy" equivalent BTC before exporting so for example: You start with 0.00121 BTC worth $200 when Bitcoin is at $60,000. To maintain the same value ($205), when the price of Bitcoin falls to $10,000, you buy Bitcoin using your $205 in USDC. At $10,000 per Bitcoin, you would get: $205 / $10,000 = 0.0205 BTC.**
-
-### Testing
+### Test
 - Add function to compare total amount in USDC & CBBTC with Vatop Groups and if it doesn't match, then delete correspondingly (in case anyone transacts with their wallet-address outside HPM-MASS)
 - Create New Export Wallet Address for Selling and Exporting USDC/CBBTC
 - **fix Selling Discrepancy Issue (VERY IMPORTANT)**
 - Sell Test (HPMContext)
 - - (start here first since taking from highest HPAP) if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).
 - - (if acVactTaa <= 0.00000, then else here) if acVactDas > 0.00, increment $sellAmount into soldAmounts(this is already baked into the HPM algorithm). Then initiate sellUSDC"Function"(from Smart Contract).
-
 - Test Sell (without HPM) 
-- - Import (Polygon POS USDC wallet created in Cognito (when Import clicked)). Encrypt/Decrypt Wallet Key (like Bitcoin).
-
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC trading/swapping based on MASS & FA(Fee Arbitration)
 - - SellsmartContract: incorporate into handleSell
 - - - sellWBTC: Swap WBTC ((amount taken from HPMContext "$sellAmount + 3%")in BTC format) into USDC while subtracting 3% in USDC. 

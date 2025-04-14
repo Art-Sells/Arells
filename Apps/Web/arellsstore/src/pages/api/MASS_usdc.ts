@@ -30,9 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
 
     // Step 2: Execute the Supplication
-    const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
-    const wallet = new ethers.Wallet(massPrivateKey, provider);
-    await executeSupplication(usdcAmount);
+    await executeSupplication(usdcAmount, massPrivateKey);
 
     return res.status(200).json({ message: `Supplication executed for ${usdcAmount} USDC` });
   } catch (error: any) {
@@ -53,7 +51,7 @@ async function fundGasFees(recipientAddress: string) {
   const wallet = new ethers.Wallet(TRANSFER_FEE_WALLET_PRIVATE_KEY, provider);
 
   const ethPrice = await fetchEthPrice();
-  const TARGET_USD_BALANCE = 0.5;
+  const TARGET_USD_BALANCE = 0.3;
 
   const balanceInWei = await provider.getBalance(recipientAddress);
   const balanceInUSD = parseFloat(ethers.formatEther(balanceInWei)) * ethPrice;
