@@ -17,21 +17,6 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 // ✅ Set Up Ethereum Provider & Wallet
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
-const userWallet = new ethers.Wallet(privateKeyToUse, provider);
-const signer = userWallet.connect(provider);
-console.log(`✅ Using Test Wallet: ${userWallet.address}`);
-
-// ✅ Get Token Contract Instances
-const USDCContract = new ethers.Contract(USDC, [
-    "function balanceOf(address) view returns (uint256)",
-    "function approve(address, uint256)",
-    "function allowance(address, address) view returns (uint256)"  // ✅ Add `allowance`
-], userWallet);
-const CBBTCContract = new ethers.Contract(CBBTC, ["function balanceOf(address) view returns (uint256)"], userWallet);
-
-
-console.log(`🔥 Ethers.js Version: ${ethers.version}`);
 /**
  * ✅ Fetch ABI from BaseScan
  */
@@ -187,17 +172,17 @@ async function checkFeeFreeRoute(amountIn) {
  */
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481"; // ✅ Correct SwapRouter02 on Base
 
-async function getBalances() {
-    const usdcBalance = await USDCContract.balanceOf(userWallet.address);
-    const cbbtcBalance = await CBBTCContract.balanceOf(userWallet.address);
+async function getBalances(USDCContract, CBBTCContract, userWallet) {
+  const usdcBalance = await USDCContract.balanceOf(userWallet.address);
+  const cbbtcBalance = await CBBTCContract.balanceOf(userWallet.address);
 
-    return {
-        usdc: ethers.formatUnits(usdcBalance, 6), // USDC has 6 decimals
-        cbbtc: ethers.formatUnits(cbbtcBalance, 8) // CBBTC has 8 decimals
-    };
+  return {
+    usdc: ethers.formatUnits(usdcBalance, 6),
+    cbbtc: ethers.formatUnits(cbbtcBalance, 8)
+  };
 }
 
-async function approveUSDC(amountIn) {
+async function approveUSDC(amountIn, USDCContract, userWallet) {
     console.log(`🔑 Approving Swap Router to spend ${amountIn} USDC...`);
 
     const allowance = await USDCContract.allowance(userWallet.address, swapRouterAddress);
@@ -230,7 +215,7 @@ async function approveUSDC(amountIn) {
     console.log("✅ Approval Successful!");
 }
 
-async function checkETHBalance() {
+async function checkETHBalance(userWallet) {
     const ethBalance = await provider.getBalance(userWallet.address);
     console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalance)} ETH`);
 
@@ -256,6 +241,22 @@ export async function executeSupplication(amountIn, customPrivateKey) {
   const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
   const userWallet = new ethers.Wallet(privateKeyToUse, provider);
 
+  const USDCContract = new ethers.Contract(USDC, [
+    "function balanceOf(address) view returns (uint256)",
+    "function approve(address, uint256)",
+    "function allowance(address, address) view returns (uint256)"
+  ], userWallet);
+  
+  const CBBTCContract = new ethers.Contract(CBBTC, [
+    "function balanceOf(address) view returns (uint256)"
+  ], userWallet);
+
+  const usdcBalanceRaw = await USDCContract.balanceOf(userWallet.address);
+  const ethBalanceRaw = await provider.getBalance(userWallet.address);
+
+  console.log(`💰 USDC Balance: ${ethers.formatUnits(usdcBalanceRaw, 6)} USDC`);
+  console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalanceRaw)} ETH`);
+
   const poolInfo = await getPoolAddress();
   if (!poolInfo) return;
   const { poolAddress, fee } = poolInfo;
@@ -273,8 +274,8 @@ export async function executeSupplication(amountIn, customPrivateKey) {
   }
   // console.log("✅ Fee-Free Route Confirmed!");
 
-  await approveUSDC(amountIn);
-  if (!(await checkETHBalance())) return;
+  await approveUSDC(amountIn, USDCContract, userWallet);
+  if (!(await checkETHBalance(userWallet))) return;
 
   const swapRouterABI = await fetchABI(swapRouterAddress);
   if (!swapRouterABI) {
@@ -398,6 +399,6 @@ async function main() {
     }
 }
 
- main().catch(console.error);
+ //main().catch(console.error);
 
 //to test run: yarn hardhat run test/usdc_mass_test.js --network base
