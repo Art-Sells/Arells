@@ -208,6 +208,18 @@ const HPMMASSTester: React.FC = () => {
       return cbbtcAmount * bitcoinPrice; // Direct conversion without extra factors
     };
     const handleUSDCsupplication = async () => {
+      console.log("cbBitcoinAmount (input):", cbBitcoinAmount);
+      console.log("bitcoinPrice:", bitcoinPrice);
+
+      const numericAmount = parseFloat(String(cbBitcoinAmount));
+
+      if (isNaN(numericAmount) || numericAmount <= 0) {
+        setSupplicationError("Invalid cbBitcoinAmount.");
+        return;
+      }
+
+      const usdcEquivalent = getUSDCEquivalent(numericAmount, bitcoinPrice);
+      console.log("Calculated USDC Equivalent:", usdcEquivalent);
       if (!cbBitcoinAmount || isNaN(Number(cbBitcoinAmount)) || Number(cbBitcoinAmount) <= 0) {
         setSupplicationError('Please enter a valid amount.');
         return;

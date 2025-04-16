@@ -30,7 +30,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
 
     // Step 2: Execute the Supplication
-    await executeSupplication(usdcAmount, massPrivateKey);
+    const parsedUSDCAmount = Math.floor(Number(usdcAmount)); // ensure integer
+    if (isNaN(parsedUSDCAmount) || parsedUSDCAmount <= 0) {
+      return res.status(400).json({ error: "Invalid usdcAmount" });
+    }
+    
+    await executeSupplication(parsedUSDCAmount, massPrivateKey);
 
     return res.status(200).json({ message: `Supplication executed for ${usdcAmount} USDC` });
   } catch (error: any) {
