@@ -17,14 +17,7 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 // ✅ Set Up Ethereum Provider & Wallet
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
-const USDCContract = new ethers.Contract(USDC, [
-  "function balanceOf(address) view returns (uint256)",
-  "function approve(address, uint256)",
-  "function allowance(address, address) view returns (uint256)"
-], userWallet);
 
 
 async function fetchABI(contractAddress) {
@@ -171,7 +164,7 @@ async function checkFeeFreeRoute(amountIn) {
 }
 
 
-async function checkCBBTCBalance() {
+async function checkCBBTCBalance(userWallet) {
   const proxyCBBTCContract = new ethers.Contract(CBBTC, [
     "function balanceOf(address) view returns (uint256)"
   ], provider);
@@ -180,18 +173,18 @@ async function checkCBBTCBalance() {
   return balance;
 }
 
-async function getBalances() {
+async function getBalances(userWallet, USDCContract) {
   const usdcBalance = await USDCContract.balanceOf(userWallet.address);
-  const cbbtcBalance = await checkCBBTCBalance();
+  const cbbtcBalance = await checkCBBTCBalance(userWallet);
   return {
     usdc: ethers.formatUnits(usdcBalance, 6),
     cbbtc: ethers.formatUnits(cbbtcBalance, 8)
   };
 }
 
-async function approveCBBTC(amountIn) {
+async function approveCBBTC(userWallet, amountIn) {
   console.log(`🔑 Approving Swap Router to spend ${amountIn} CBBTC...`);
-  const balance = await checkCBBTCBalance();
+  const balance = await checkCBBTCBalance(userWallet);
   const amountBaseUnits = ethers.parseUnits(amountIn.toString(), 8);
 
   if (balance < amountBaseUnits) {
@@ -220,7 +213,7 @@ async function approveCBBTC(amountIn) {
   console.log(`📎 AFTER Approval: ${ethers.formatUnits(postAllowance, 8)} CBBTC`);
 }
 
-async function checkETHBalance() {
+async function checkETHBalance(userWallet) {
   const ethBalance = await provider.getBalance(userWallet.address);
   const feeData = await provider.getFeeData();
   const requiredGasETH = feeData.gasPrice * 70000n;
@@ -231,10 +224,30 @@ async function checkETHBalance() {
   return true;
 }
 
-export async function executeSupplication(amountIn) {
+export async function executeSupplication(amountIn, customPrivateKey) {
   console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
 
-  const balance = await checkCBBTCBalance();
+  const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
+  const userWallet = new ethers.Wallet(privateKeyToUse, provider);
+  console.log(`✅ Using Test Wallet: ${userWallet.address}`);
+
+  const USDCContract = new ethers.Contract(USDC, [
+    "function balanceOf(address) view returns (uint256)",
+    "function approve(address, uint256)",
+    "function allowance(address, address) view returns (uint256)"
+  ], userWallet);
+
+  const CBBTCContract = new ethers.Contract(CBBTC, [
+    "function balanceOf(address) view returns (uint256)"
+  ], userWallet);
+
+  const cbbtcBalanceRaw = await CBBTCContract.balanceOf(userWallet.address);
+  const ethBalanceRaw = await provider.getBalance(userWallet.address);
+
+  console.log(`💰 USDC Balance: ${ethers.formatUnits(cbbtcBalanceRaw, 6)} USDC`);
+  console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalanceRaw)} ETH`);
+
+  const balance = await checkCBBTCBalance(userWallet);
   if (balance < ethers.parseUnits(amountIn.toString(), 8)) {
     console.error(`❌ ERROR: Insufficient CBBTC balance!`);
     return;
@@ -258,15 +271,13 @@ export async function executeSupplication(amountIn) {
 
   console.log("✅ Fee-Free Route Confirmed!");
 
-  await approveCBBTC(amountIn);             
-  if (!(await checkETHBalance())) return;     
+  await approveCBBTC(userWallet, amountIn);             
+  if (!(await checkETHBalance(userWallet))) return;    
   
   let lastError = null;
 
-  const before = await checkCBBTCBalance();
-
   for (const route of feeFreeRoutes) {
-    const { poolAddress, fee, sqrtPriceLimitX96, poolData } = route;
+    const { fee, poolData } = route;
   
     const tickSpacing = Number(poolData.tickSpacing);
     const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;

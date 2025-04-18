@@ -124,144 +124,138 @@ const HPMMASSTester: React.FC = () => {
 
 
 // supplicateCBTCtoUSDC functions
-    const handleUSDCInputChange = (value: string) => {
-      setDollarAmount(value); // Update the dollar amount state
-      const parsedAmount = parseFloat(value); // Parse the input
+  const handleUSDCInputChange = (value: string) => {
+    setDollarAmount(value); // Update the dollar amount state
+    const parsedAmount = parseFloat(value); // Parse the input
 
-      if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
-        const cbbtcEquivalent = getWBTCEquivalent(parsedAmount, bitcoinPrice); // Convert USDC to CBBTC
-        setWbtcConversion(cbbtcEquivalent.toFixed(8)); // Format CBBTC value
-      } else {
-        setWbtcConversion('0.00000000'); // Reset if input is invalid
-      }
-    };
-    const getWBTCEquivalent = (usdcAmount: number, bitcoinPrice: number): number => {
-      if (bitcoinPrice <= 0) {
-        throw new Error('Bitcoin price must be greater than zero.');
-      }
-      return usdcAmount / bitcoinPrice; // Calculate CBBTC equivalent
-    };
-    const handleCBBTCsupplication = async () => {
-      const dollarInput = parseFloat(String(dollarAmount)); // User input in dollars
+    if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
+      const cbbtcEquivalent = getWBTCEquivalent(parsedAmount, bitcoinPrice); // Convert USDC to CBBTC
+      setWbtcConversion(cbbtcEquivalent.toFixed(8)); // Format CBBTC value
+    } else {
+      setWbtcConversion('0.00000000'); // Reset if input is invalid
+    }
+  };
+  const getWBTCEquivalent = (usdcAmount: number, bitcoinPrice: number): number => {
+    if (bitcoinPrice <= 0) {
+      throw new Error('Bitcoin price must be greater than zero.');
+    }
+    return usdcAmount / bitcoinPrice; // Calculate CBBTC equivalent
+  };
+  const handleCBBTCsupplication = async () => {
+    const dollarInput = parseFloat(String(dollarAmount)); // User input in dollars
 
-      if (isNaN(dollarInput) || dollarInput <= 0) {
-        setSupplicationError('Please enter a valid dollar amount.');
+    if (isNaN(dollarInput) || dollarInput <= 0) {
+      setSupplicationError('Please enter a valid dollar amount.');
+      return;
+    }
+
+    if (!MASSaddress || !MASSPrivateKey) {
+      setSupplicationError('Wallet information is missing.');
+      return;
+    }
+
+    setSupplicationError(null);
+    setIsSupplicating(true);
+
+    try {
+      // Convert dollars to CBBTC equivalent
+      const cbbtcEquivalent = dollarInput / bitcoinPrice; // CBBTC equivalent of dollarInput
+
+      const payload = {
+        cbBitcoinAmount: parseFloat(cbbtcEquivalent.toFixed(8)), // Amount in satoshis
+        massAddress: MASSaddress,
+        massPrivateKey: MASSPrivateKey,
+      };
+
+      console.log('🚀 Sending Payload:', payload);
+
+      const response = await axios.post('/api/MASS_cbbtc', payload);
+
+      const { receivedAmount, txId } = response.data;
+      setSupplicationResult(
+        `USDC -> CBBTC Supplication successful!`
+      );
+    } catch (error: any) {
+      console.error('❌ API Error:', error.response?.data || error.message);
+      setSupplicationError(error.response?.data?.error || 'Supplication failed. Please try again.');
+    } finally {
+      setIsSupplicating(false);
+    }
+  };
+
+
+
+
+// supplicateUSDCtoCBBTC functions
+  const handleCBBTCInputChange = (value: string) => {
+    setWrappedBitcoinAmount(value); // Update CBBTC input value
+    const parsedAmount = parseFloat(value); // Parse the input
+
+    if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
+      const usdcEquivalent = getUSDCEquivalent(parsedAmount, bitcoinPrice); // Convert CBBTC to USDC
+      setUsdcConversion(usdcEquivalent.toFixed(2)); // Format USDC value
+    } else {
+      setUsdcConversion('0.00'); // Reset if input is invalid
+    }
+  };
+  const getUSDCEquivalent = (cbbtcAmount: number, bitcoinPrice: number): number => {
+    return cbbtcAmount * bitcoinPrice; // Direct conversion without extra factors
+  };
+  const handleUSDCsupplication = async () => {
+    console.log("cbBitcoinAmount (input):", cbBitcoinAmount);
+    console.log("bitcoinPrice:", bitcoinPrice);
+
+    const numericAmount = parseFloat(String(cbBitcoinAmount));
+
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      setSupplicationError("Invalid cbBitcoinAmount.");
+      return;
+    }
+
+    const usdcEquivalent = getUSDCEquivalent(numericAmount, bitcoinPrice);
+    console.log("Calculated USDC Equivalent:", usdcEquivalent);
+    if (!cbBitcoinAmount || isNaN(Number(cbBitcoinAmount)) || Number(cbBitcoinAmount) <= 0) {
+      setSupplicationError('Please enter a valid amount.');
+      return;
+    }
+  
+    if (!MASSPrivateKey || !MASSaddress) {
+      setSupplicationError('Wallet information is missing.');
+      return;
+    }
+  
+    setSupplicationError(null);
+    setIsSupplicating(true);
+  
+    try {
+      // Calculate USDC equivalent
+      const usdcEquivalent = getUSDCEquivalent(Number(cbBitcoinAmount), bitcoinPrice);
+  
+      if (usdcEquivalent === 0) {
+        setSupplicationError('Calculated USDC amount is too small.');
         return;
       }
-
-      if (!MASSaddress || !MASSPrivateKey) {
-        setSupplicationError('Wallet information is missing.');
-        return;
-      }
-
-      setSupplicationError(null);
-      setIsSupplicating(true);
-
-      try {
-        // Convert dollars to CBBTC equivalent
-        const cbbtcEquivalent = dollarInput / bitcoinPrice; // CBBTC equivalent of dollarInput
-        const cbbtcInSatoshis = Math.floor(cbbtcEquivalent * 1e8); // Convert to satoshis
-
-        if (cbbtcInSatoshis <= 0) {
-          setSupplicationError('Calculated CBBTC amount is too small.');
-          return;
-        }
-
-        const payload = {
-          wrappedBitcoinAmount: cbbtcInSatoshis, // Amount in satoshis
-          massAddress: MASSaddress,
-          massPrivateKey: MASSPrivateKey,
-        };
-
-        console.log('🚀 Sending Payload:', payload);
-
-        const response = await axios.post('/api/MASS_cbbtc', payload);
-
-        const { receivedAmount, txId } = response.data;
-        setSupplicationResult(
-          `USDC -> CBBTC Supplication successful!`
-        );
-      } catch (error: any) {
-        console.error('❌ API Error:', error.response?.data || error.message);
-        setSupplicationError(error.response?.data?.error || 'Supplication failed. Please try again.');
-      } finally {
-        setIsSupplicating(false);
-      }
-    };
-
-
-
-
-  // supplicateUSDCtoCBBTC functions
-    const handleCBBTCInputChange = (value: string) => {
-      setWrappedBitcoinAmount(value); // Update CBBTC input value
-      const parsedAmount = parseFloat(value); // Parse the input
-
-      if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
-        const usdcEquivalent = getUSDCEquivalent(parsedAmount, bitcoinPrice); // Convert CBBTC to USDC
-        setUsdcConversion(usdcEquivalent.toFixed(2)); // Format USDC value
-      } else {
-        setUsdcConversion('0.00'); // Reset if input is invalid
-      }
-    };
-    const getUSDCEquivalent = (cbbtcAmount: number, bitcoinPrice: number): number => {
-      return cbbtcAmount * bitcoinPrice; // Direct conversion without extra factors
-    };
-    const handleUSDCsupplication = async () => {
-      console.log("cbBitcoinAmount (input):", cbBitcoinAmount);
-      console.log("bitcoinPrice:", bitcoinPrice);
-
-      const numericAmount = parseFloat(String(cbBitcoinAmount));
-
-      if (isNaN(numericAmount) || numericAmount <= 0) {
-        setSupplicationError("Invalid cbBitcoinAmount.");
-        return;
-      }
-
-      const usdcEquivalent = getUSDCEquivalent(numericAmount, bitcoinPrice);
-      console.log("Calculated USDC Equivalent:", usdcEquivalent);
-      if (!cbBitcoinAmount || isNaN(Number(cbBitcoinAmount)) || Number(cbBitcoinAmount) <= 0) {
-        setSupplicationError('Please enter a valid amount.');
-        return;
-      }
-    
-      if (!MASSPrivateKey || !MASSaddress) {
-        setSupplicationError('Wallet information is missing.');
-        return;
-      }
-    
-      setSupplicationError(null);
-      setIsSupplicating(true);
-    
-      try {
-        // Calculate USDC equivalent
-        const usdcEquivalent = getUSDCEquivalent(Number(cbBitcoinAmount), bitcoinPrice);
-    
-        if (usdcEquivalent === 0) {
-          setSupplicationError('Calculated USDC amount is too small.');
-          return;
-        }
-    
-        const payload = {
-          usdcAmount: usdcEquivalent,
-          massPrivateKey: MASSPrivateKey,
-          massAddress: MASSaddress,
-        };
-    
-        console.log('🚀 Sending Payload:', payload);
-        console.log("📤 Final Payload (frontend):", payload);
-    
-        const response = await axios.post('/api/MASS_usdc', payload);
-    
-        const { receivedAmount, txId } = response.data;
-        setSupplicationResult(`CBBTC -> USDC Supplication successful!`);
-      } catch (error: any) {
-        console.error('❌ API Error:', error.response?.data || error.message);
-        setSupplicationError(error.response?.data?.error || 'Supplication failed. Please try again.');
-      } finally {
-        setIsSupplicating(false);
-      }
-    };
+  
+      const payload = {
+        usdcAmount: usdcEquivalent,
+        massPrivateKey: MASSPrivateKey,
+        massAddress: MASSaddress,
+      };
+  
+      console.log('🚀 Sending Payload:', payload);
+      console.log("📤 Final Payload (frontend):", payload);
+  
+      const response = await axios.post('/api/MASS_usdc', payload);
+  
+      const { receivedAmount, txId } = response.data;
+      setSupplicationResult(`CBBTC -> USDC Supplication successful!`);
+    } catch (error: any) {
+      console.error('❌ API Error:', error.response?.data || error.message);
+      setSupplicationError(error.response?.data?.error || 'Supplication failed. Please try again.');
+    } finally {
+      setIsSupplicating(false);
+    }
+  };
 
 // MASS blockchain implementation code above    
 

@@ -39,9 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
 
     // Step 2: Execute the Uniswap V3 swap (fee-free route) from CBBTC to USDC
-    const provider = new ethers.JsonRpcProvider(BASE_RPC_URL);
-    const wallet = new ethers.Wallet(massPrivateKey, provider);
-    await executeSupplication(cbBitcoinAmount);
+    await executeSupplication(cbBitcoinAmount, massPrivateKey);
 
     return res.status(200).json({ message: `Supplication executed: ${cbBitcoinAmount} CBBTC → USDC` });
   } catch (error: any) {
