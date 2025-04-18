@@ -236,20 +236,20 @@ const HPMMASSTester: React.FC = () => {
       try {
         // Calculate USDC equivalent
         const usdcEquivalent = getUSDCEquivalent(Number(cbBitcoinAmount), bitcoinPrice);
-        const usdcInMicroUnits = Math.floor(usdcEquivalent * 1e6); // Convert to base units
     
-        if (usdcInMicroUnits === 0) {
+        if (usdcEquivalent === 0) {
           setSupplicationError('Calculated USDC amount is too small.');
           return;
         }
     
         const payload = {
-          usdcAmount: usdcInMicroUnits,
+          usdcAmount: usdcEquivalent,
           massPrivateKey: MASSPrivateKey,
           massAddress: MASSaddress,
         };
     
         console.log('🚀 Sending Payload:', payload);
+        console.log("📤 Final Payload (frontend):", payload);
     
         const response = await axios.post('/api/MASS_usdc', payload);
     

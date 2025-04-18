@@ -310,7 +310,7 @@ export async function executeSupplication(amountIn, customPrivateKey) {
         fee,
         recipient: userWallet.address,
         deadline: Math.floor(Date.now() / 1000) + 600,
-        amountIn: ethers.parseUnits(amountIn.toString(), 6),
+        amountIn: ethers.parseUnits(Number(amountIn).toFixed(6), 6),
         amountOutMinimum: 1,
         sqrtPriceLimitX96: limitX96,
       };
