@@ -7,7 +7,6 @@
 ## Test
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
-- Adjust executeSupplication functions to intake massPrivateKey
 - Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again
 - - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
