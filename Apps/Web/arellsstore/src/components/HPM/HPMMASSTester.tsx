@@ -16,7 +16,6 @@ const HPMMASSTester: React.FC = () => {
     handleSell,
     handleImportABTC,
     readABTCFile,
-    setManualBitcoinPrice,
     soldAmounts,
   } = useHPM();
 
@@ -98,14 +97,6 @@ const HPMMASSTester: React.FC = () => {
     return formattedValue || '0.00000000';
   };
 
-  const handleIncreasePrice = () => {
-    setManualBitcoinPrice((currentPrice) => currentPrice + 1000);
-  };
-
-  const handleDecreasePrice = () => {
-    setManualBitcoinPrice((currentPrice) => Math.max(currentPrice - 1000, 0));
-  };
-
 
 
 
@@ -129,13 +120,15 @@ const HPMMASSTester: React.FC = () => {
     const parsedAmount = parseFloat(value); // Parse the input
 
     if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
-      const cbbtcEquivalent = getWBTCEquivalent(parsedAmount, bitcoinPrice); // Convert USDC to CBBTC
+      const cbbtcEquivalent = getCBBTCEquivalent(parsedAmount, bitcoinPrice); // Convert USDC to CBBTC
       setWbtcConversion(cbbtcEquivalent.toFixed(8)); // Format CBBTC value
     } else {
       setWbtcConversion('0.00000000'); // Reset if input is invalid
     }
   };
-  const getWBTCEquivalent = (usdcAmount: number, bitcoinPrice: number): number => {
+
+
+  const getCBBTCEquivalent = (usdcAmount: number, bitcoinPrice: number): number => {
     if (bitcoinPrice <= 0) {
       throw new Error('Bitcoin price must be greater than zero.');
     }
@@ -198,6 +191,8 @@ const HPMMASSTester: React.FC = () => {
       setUsdcConversion('0.00'); // Reset if input is invalid
     }
   };
+
+
   const getUSDCEquivalent = (cbbtcAmount: number, bitcoinPrice: number): number => {
     return cbbtcAmount * bitcoinPrice; // Direct conversion without extra factors
   };

@@ -32,27 +32,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    // Merge or update vatopGroups
-    const existingGroups = Array.isArray(existingData.vatopGroups) ? existingData.vatopGroups : [];
-    const updatedVatopGroups = vatopGroups.map((incomingGroup: any) => {
-      const existingGroup = existingGroups.find((group: any) => group.id === incomingGroup.id);
-      if (existingGroup) {
-        return { ...existingGroup, ...incomingGroup }; // Merge updates
-      } else {
-        return incomingGroup; // Add new group
-      }
-    });
-
-    // Merge vatopCombinations
-    const updatedVatopCombinations = {
-      ...existingData.vatopCombinations,
-      ...vatopCombinations,
-    };
-
-    // Build the new data object
+    // ✅ REPLACE vatopGroups with latest from frontend
     const newData = {
-      vatopGroups: updatedVatopGroups,
-      vatopCombinations: updatedVatopCombinations,
+      vatopGroups, // ← trust the incoming frontend data
+      vatopCombinations,
       soldAmounts: existingData.soldAmounts ?? 0,
       transactions: existingData.transactions ?? [],
     };

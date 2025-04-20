@@ -12,7 +12,7 @@
 - - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
 - - Ensure that vatopGroups delete if cVact <= $0.01 and if acVactTas && aBTC = 0, then delete a vatopGroup (do not add a VatopGroup)
 - - - test import (after supplication), so it doesn't create a new group from the acdVatops
-- - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
+- - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons (do are vatopGroups immediately created?))
 - - - Add endless 15 second loop incase Base network is down (if Base Network is congested add error message (if successful, then error message is invisible))
 
 ### Online:
@@ -47,7 +47,7 @@
 - Alter: "Import Small Amounts of Bitcoin, ensure they never lose value."
 
 #### Concept
-- Look at main/ and copy/paste the HPMArchitecture into HPMArchitectureConcept (rename all functions to concept) for concept
+- Look at main/ and copy/paste the HPMArchitecture (replace all "concept" functions in test to concept)
 
 #### Deployment Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked!
