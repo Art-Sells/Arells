@@ -377,7 +377,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       if (group.cVactTaa > 0.000001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
         console.log(`Initiating USDC to CBBTC supplication for amount: ${group.cVactTaa}`);
         const usdcEquivalent = getUSDCEquivalent(group.cVactTaa, bitcoinPrice);
-        console.log(`Converted cVactDa ${group.cVactTaa} to CBTC equivalent: ${usdcEquivalent.toFixed(4)}`);
+        console.log(`Converted cVactDa ${group.cVactTaa} to CBTC equivalent: ${usdcEquivalent.toFixed(5)}`);
         try {
           await handleUSDCsupplication(group);
   

@@ -6,6 +6,7 @@ import { useMASS } from '../../context/MASSarchitecture';
 import { useSigner } from '../../state/signer'; // Ensure the correct path
 import axios from 'axios';
 
+
 const HPMMASSTester: React.FC = () => {
   const {
     bitcoinPrice,
@@ -316,7 +317,7 @@ const calculateTotalUSDC = (): string => {
 
   const handleMASSRelease = () => {
     releaseMASS();
-    console.log('MASS hold has been released for al lgroups.');
+    console.log('MASS hold has been released for all groups.');
   };
 
   return (
@@ -329,7 +330,7 @@ const calculateTotalUSDC = (): string => {
 
       <div>
         <h2>HPAP:</h2>
-        <h3>${formatPrice(hpap)}</h3>
+        <h3 id="HPAP-HPM-MASS-Tester">${formatPrice(hpap)}</h3>
       </div>
       <div>
       <div>

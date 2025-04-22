@@ -8,15 +8,15 @@
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
-- - Progress: 
-- - - cpVact changing and reflecting correct totals in other accronyms and vatop group imports working
-- - problems:
-- - - new vatop groups (though added in back-end after imports) are not reflected in front-end only until after "manual refresh".
-- - - Supplications are successful but in the logs, show as unsuccessful (not running through fee free routes?)
-- - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again
+- - Problems: 
+- - - CBBTCtoUSD MASS booleans have issues (supplication successful, booleans need fixing)
+- - After Problems solved:
+- - - Check TXN (and amount in Wallet .json calculate if fees taken)
+- - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again (break transaction in test files to test this).
 - - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
-- - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons (do are vatopGroups immediately created?))
-- - - Add endless 15 second loop incase Base network is down (if Base Network is congested add error message (if successful, then error message is invisible))
+- - Test releaseMASS and holdMASS booleans (releases all of the VatopGroups (not individuals only))
+- - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
+- - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
 
 ### Online:
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
@@ -56,6 +56,9 @@
 - Ensure that NEXT_PUBLIC is not invoked!
 - Delete MASS address info from MASStester and console.logs from all signer.
 - Restructure decryption process in readMASS and readBTC apis
+
+## Final Test
+- 2-3 accounts
 
 ### After Completion
 - Users:
