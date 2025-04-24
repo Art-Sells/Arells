@@ -9,7 +9,7 @@
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Problems: 
-- - - CBBTCtoUSD MASS booleans have issues (supplication successful, booleans need fixing)
+- - - Prices not reflecting new HAP
 - - After Problems solved:
 - - - Check TXN (and amount in Wallet .json calculate if fees taken)
 - - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again (break transaction in test files to test this).

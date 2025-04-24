@@ -134,6 +134,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
       };
+      
+      console.log("📤 MASSProvider Payload:", payload); 
   
       const response = await axios.post("/api/MASS_cbbtc", payload);
 
