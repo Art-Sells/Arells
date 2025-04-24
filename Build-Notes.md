@@ -114,6 +114,7 @@
 - - Replace Transaction Fees from MASS profits (calculate previous cdVatops from new cdVatops and if +15% or more, subtract 5% into Base L3 and other 5% into Arells (should work the same as selling logic)). 
 - Phase 2:
 - - Txns/s need to be in 1000s-10000s per second for meme-coins to benefit (reference HPM Efficiency charts).
+- HPM-Liquidity System (Brainstorm)
 
 
 

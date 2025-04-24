@@ -298,9 +298,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     vatopGroups.forEach(async (group) => {
-      // Skip groups where `supplicateCBBTCtoUSD` is already true
-      if (group.supplicateCBBTCtoUSD || group.cVactDa <= 0) {
-        console.log(`Skipping group ${group.id} as supplicateCBBTCtoUSD is true.`);
+      if (group.cVactDa <= 0) {
+        console.log(`Skipping CBBTCtoUSD supplication for group ${group.id} as cVactDa is 0.`);
         return; // Skip this group
       }
   
@@ -332,8 +331,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   
       addedGroups.forEach(async (group) => {
         // Ensure `supplicateCBBTCtoUSD` is `false` during initialization
-        if (group.supplicateCBBTCtoUSD || group.cVactDa <= 0) {
-          console.log(`Skipping added group ${group.id} as supplicateCBBTCtoUSD is true.`);
+        if (group.cVactDa <= 0) {
+          console.log(`Skipping CBBTCtoUSD supplication for added group ${group.id} as cVactDa is 0.`);
           return;
         }
   
@@ -367,8 +366,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       const prevGroup = prevVatopGroups[index] || {};
   
       // Skip if `supplicateUSDtoWBTC` is `true`
-      if (group.supplicateUSDtoCBBTC || group.cVactTaa <= 0) {
-        console.log(`Skipping supplication for group ${group.id} as supplicateCBBTCtoUSD is true.`);
+      if (group.cVactTaa <= 0) {
+        console.log(`Skipping USDtoCBBTC supplication for group ${group.id} as cVactTaa is 0.`);
         return;
       }
 

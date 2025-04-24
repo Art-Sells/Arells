@@ -937,7 +937,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           vatopCombinations: updatedCombinations,
           soldAmounts,
         });
-        await fetchVatopGroups();
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Give backend time to sync
       } catch (err) {
         console.error("❌ Import failed:", err);
       } finally {
