@@ -115,14 +115,9 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     }
   
     try {
-      const massBalanceInBTC = parseFloat(balances.BTC_BASE || "0");
-      console.log("Available MASS Balance (BTC): ", massBalanceInBTC);
-  
       const cbbtcEquivalent = adjustedDollarInput / group.cpVact;
       console.log("CBBTC Equivalent: ", cbbtcEquivalent);
-  
-      const formattedCBbtc = Math.min(Number(cbbtcEquivalent.toFixed(8)), massBalanceInBTC);
-      console.log("Adjusted Formatted CBBTC: ", formattedCBbtc);
+
   
       if (!MASSaddress || !MASSPrivateKey) {
         setSupplicationError("Wallet information is missing.");
@@ -130,7 +125,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       }
   
       const payload = {
-        cbBitcoinAmount: parseFloat(formattedCBbtc.toFixed(8)),
+        cbBitcoinAmount: Math.floor(cbbtcEquivalent * 1e8) / 1e8,
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
       };
