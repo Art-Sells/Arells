@@ -111,7 +111,7 @@ const HPMMASSTester: React.FC = () => {
   const [supplicationResult, setSupplicationResult] = useState<string | null>(null);
   const [supplicationError, setSupplicationError] = useState<string | null>(null);
   const [isSupplicating, setIsSupplicating] = useState<boolean>(false);
-  const [cbbtcConversion, setWbtcConversion] = useState<string>('0.00000000');
+  const [cbbtcConversion, setCbbtcConversion] = useState<string>('0.00000000');
   const [usdcConversion, setUsdcConversion] = useState<string>('0.00');
 
 
@@ -122,9 +122,9 @@ const HPMMASSTester: React.FC = () => {
 
     if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
       const cbbtcEquivalent = getCBBTCEquivalent(parsedAmount, bitcoinPrice); // Convert USDC to CBBTC
-      setWbtcConversion(cbbtcEquivalent.toFixed(8)); // Format CBBTC value
+      setCbbtcConversion(cbbtcEquivalent.toFixed(8)); // Format CBBTC value
     } else {
-      setWbtcConversion('0.00000000'); // Reset if input is invalid
+      setCbbtcConversion('0.00000000'); // Reset if input is invalid
     }
   };
 
@@ -427,6 +427,6 @@ const calculateTotalUSDC = (): string => {
 
 export default HPMMASSTester;
 
-function setWbtcConversion(arg0: string) {
+function setCbbtcConversion(arg0: string) {
   throw new Error('Function not implemented.');
 }

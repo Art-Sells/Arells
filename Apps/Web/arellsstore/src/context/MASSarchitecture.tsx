@@ -343,8 +343,8 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
           console.log(`Initiating CBBTC to USDC supplication for added group amount: ${group.cVactDa}`);
 
           // Convert cVactDa to CBBTC equivalent
-          const wbtcEquivalent = getCBBTCEquivalent(group.cVactDa, group.cpVact);
-          console.log(`Converted cVactDa ${group.cVactDa} to CBBTC equivalent: ${wbtcEquivalent.toFixed(8)}`);
+          const cbbtcEquivalent = getCBBTCEquivalent(group.cVactDa, group.cpVact);
+          console.log(`Converted cVactDa ${group.cVactDa} to CBBTC equivalent: ${cbbtcEquivalent.toFixed(8)}`);
 
           try {
             // Perform the supplication using the converted CBBTC equivalent
@@ -378,7 +378,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       if (group.cVactTaa > 0.000001 && (!prevGroup.cVactTaa || group.cVactTaa > prevGroup.cVactTaa)) {
         console.log(`Initiating USDC to CBBTC supplication for amount: ${group.cVactTaa}`);
         const usdcEquivalent = getUSDCEquivalent(group.cVactTaa, bitcoinPrice);
-        console.log(`Converted cVactDa ${group.cVactTaa} to CBTC equivalent: ${usdcEquivalent.toFixed(5)}`);
+        console.log(`Converted cVactDa ${group.cVactTaa} to CBTC equivalent: ${usdcEquivalent.toFixed(6)}`);
         try {
           await handleUSDCsupplication(group);
   

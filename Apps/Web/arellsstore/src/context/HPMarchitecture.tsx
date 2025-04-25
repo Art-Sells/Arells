@@ -189,14 +189,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const fetchedSoldAmounts = response.data.soldAmounts || 0;
   
         // Update existing groups with fetched data
-        const updatedVatopGroups = vatopGroups.map((existingGroup) => {
-          const fetchedGroup = fetchedVatopGroups.find((fg: { id: string }) => fg.id === existingGroup.id);
-  
-          // If no matching group is found in fetched data, preserve the existing group
-          if (!fetchedGroup) {
-            console.warn(`Group with ID ${existingGroup.id} not found in fetched data.`);
-            return existingGroup;
-          }
+        const updatedVatopGroups = fetchedVatopGroups.map((fetchedGroup: VatopGroup) => {
   
           const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, latestPrice);
   
@@ -223,7 +216,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           const cdVatop = fetchedGroup.cVact - fetchedGroup.cVatop;
   
           return {
-            ...existingGroup,
+            ...fetchedGroup,
             HAP: newHAP,
             cpVact: cpVact,
             cVact: cVact,
@@ -235,7 +228,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         });
   
 
-        setVatopGroups(fetchedVatopGroups);
+        setVatopGroups(updatedVatopGroups);
         setSoldAmounts(fetchedSoldAmounts);
 
         // Recalculate combinations directly from backend data
@@ -249,7 +242,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // Save updated data to backend
         await saveVatopGroups({
           email,
-          vatopGroups: fetchedVatopGroups,
+          vatopGroups: updatedVatopGroups,
           vatopCombinations: combinations,
           soldAmounts: fetchedSoldAmounts,
         });
@@ -272,7 +265,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.log("📦 Fetched Vatop Groups after Latest Bitcoin:", JSON.stringify(fetchedGroups, null, 2));
     };
 
-    const interval = setInterval(run, 10000);
+    const interval = setInterval(run, 5000);
     return () => clearInterval(interval);
   }, [email, bitcoinPrice]);
 
@@ -915,14 +908,21 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     soldAmounts: number;
   }) => {
     try {
+      const roundedGroups = vatopGroups.map((group) => ({
+        ...group,
+        cVact: parseFloat(group.cVact.toFixed(6)),
+        cVactDat: parseFloat(group.cVactDat.toFixed(6)),
+        cVactDa: parseFloat(group.cVactDa.toFixed(6)),
+      }));
+  
       const payload = {
         email,
-        vatopGroups,
+        vatopGroups: roundedGroups,
         vatopCombinations,
-        soldAmounts, // Updated field
+        soldAmounts,
       };
   
-      const response = await axios.post('/api/saveVatopGroups', payload);
+      await axios.post('/api/saveVatopGroups', payload);
     } catch (error) {
       console.error('Error saving vatop groups:', error);
     }
