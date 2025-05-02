@@ -159,6 +159,7 @@ const HPMMASSTester: React.FC = () => {
         cbBitcoinAmount: parseFloat(cbbtcEquivalent.toFixed(8)), // Amount in satoshis
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
+        cpVact: bitcoinPrice,
       };
 
       console.log('🚀 Sending Payload:', payload);
@@ -236,6 +237,7 @@ const HPMMASSTester: React.FC = () => {
         usdcAmount: usdcEquivalent,
         massPrivateKey: MASSPrivateKey,
         massAddress: MASSaddress,
+        cpVact: bitcoinPrice,
       };
   
       console.log('🚀 Sending Payload:', payload);
@@ -350,7 +352,7 @@ const calculateTotalUSDC = (): string => {
             <p>cVact: {formatCurrency(group.cVact)}</p>
             <p>cpVact: {formatPrice(group.cpVact)}</p>
             <p>cVactDat: {formatNumber(group.cVactDat)}</p>
-            <p>cVactTaa: {formatNumber(group.cVactTaa)}</p>
+            <p>cVactTaa: {(group.cVactTaa)}</p>
             <p>cVactDa: {formatCurrency(group.cVactDa)}</p>
             <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
           </div>
@@ -363,7 +365,7 @@ const calculateTotalUSDC = (): string => {
         <p>acVactDat: {formatNumber(vatopCombinations.acVactDat)}</p>
         <p>acVactDas: {formatCurrency(vatopCombinations.acVactDas)}</p>
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
-        <p>acVactTaa: {formatNumber(vatopCombinations.acVactTaa)}</p>
+        <p>acVactTaa: {(vatopCombinations.acVactTaa)}</p>
       </div>
       <button onClick={handleMASSRelease}>Release MASS Hold</button>
       <div>

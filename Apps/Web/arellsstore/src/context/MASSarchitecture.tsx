@@ -100,7 +100,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleCBBTCsupplication = async (group: VatopGroup) => {
-    const adjustedDollarInput = group.cVactDa; 
+    const adjustedDollarInput = group.cVactDat; 
     console.log("Adjusted dollar amount: ", adjustedDollarInput);
   
     if (isNaN(adjustedDollarInput) || adjustedDollarInput <= 0) {
@@ -115,7 +115,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     }
   
     try {
-      const cbbtcEquivalent = adjustedDollarInput / group.cpVact;
+      const cbbtcEquivalent = Number((adjustedDollarInput / group.cpVact).toFixed(8));
       console.log("CBBTC Equivalent: ", cbbtcEquivalent);
 
   
@@ -125,9 +125,10 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
       }
   
       const payload = {
-        cbBitcoinAmount: Math.floor(cbbtcEquivalent * 1e8) / 1e8,
+        cbBitcoinAmount: cbbtcEquivalent,
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
+        cpVact: group.cpVact
       };
       
       console.log("📤 MASSProvider Payload:", payload); 
@@ -216,6 +217,7 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
         usdcAmount: usdcEquivalent,
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
+        cpVact: group.cpVact
       };
   
       console.log("🚀 Sending Payload with Adjusted BTC Input and Shortfall:", payload);
@@ -316,11 +318,9 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
   }, [vatopGroups]);
   useEffect(() => {
     const prevIds = prevVatopGroups.map((group) => group.id); // Match by `id`
-    const currentIds = vatopGroups.map((group) => group.id);
   
     // Identify added and deleted groups
     const addedGroups = vatopGroups.filter((group) => !prevIds.includes(group.id));
-    const deletedGroups = prevVatopGroups.filter((group) => !currentIds.includes(group.id));
   
     // Handle added groups
     if (addedGroups.length > 0) {
@@ -362,9 +362,9 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
     vatopGroups.forEach(async (group, index) => {
       const prevGroup = prevVatopGroups[index] || {};
   
-      // Skip if `supplicateUSDtoWBTC` is `true`
-      if (group.cVactTaa <= 0) {
-        console.log(`Skipping USDtoCBBTC supplication for group ${group.id} as cVactTaa is 0.`);
+      // Skip if holdMASS is `true`
+      if (group.holdMASS) {
+        console.log(`Skipping USDtoCBBTC supplication for group ${group.id} as holdMASS is true.`);
         return;
       }
 
@@ -436,23 +436,23 @@ export const MASSProvider = ({ children }: { children: ReactNode }) => {
 
 
   return (
-<MASSarchitecture.Provider
-  value={{
-    cVactTaa: vatopGroups.reduce((sum, group) => sum + group.cVactTaa, 0),
-    cVactDa: vatopGroups.reduce((sum, group) => sum + group.cVactDa, 0),
-    releaseMASS, // Use the actual function
-    refreshVatopGroups: fetchVatopGroups,
-  }}
->
-  {children}
-</MASSarchitecture.Provider>
-  );
-};
+    <MASSarchitecture.Provider
+      value={{
+        cVactTaa: vatopGroups.reduce((sum, group) => sum + group.cVactTaa, 0),
+        cVactDa: vatopGroups.reduce((sum, group) => sum + group.cVactDa, 0),
+        releaseMASS, // Use the actual function
+        refreshVatopGroups: fetchVatopGroups,
+      }}
+    >
+      {children}
+    </MASSarchitecture.Provider>
+    );
+  };
 
-export const useMASS = () => {
-  const context = useContext(MASSarchitecture);
-  if (!context) {
-    throw new Error('useMASS must be used within a MASSProvider');
-  }
-  return context;
-};
+  export const useMASS = () => {
+    const context = useContext(MASSarchitecture);
+    if (!context) {
+      throw new Error('useMASS must be used within a MASSProvider');
+    }
+    return context;
+  };

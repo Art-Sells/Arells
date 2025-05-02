@@ -38,6 +38,17 @@ async function fetchABI(contractAddress) {
   }
 }
 
+async function logFeeFreeSqrtPriceX96(amountInCBBTC) {
+  const routes = await checkFeeFreeRoute(amountInCBBTC);
+  if (!routes || routes.length === 0) {
+    console.log("❌ No fee-free routes found.");
+    return;
+  }
+
+  const firstRoute = routes[0];
+  console.log(`🧮 Fee-Free Route sqrtPriceX96: ${firstRoute.sqrtPriceLimitX96.toString()}`);
+}
+
 async function getPoolAddress() {
     const factoryABI = await fetchABI(FACTORY_ADDRESS);
     if (!factoryABI) return null;
@@ -385,8 +396,10 @@ async function main() {
 
   while (true) {
     try {
-      await executeSupplication(cbbtcAmountToTrade);
-      console.log("🎉 Supplication successful!");
+      await logFeeFreeSqrtPriceX96(cbbtcAmountToTrade);
+      console.log("🎉 Sqrt Price Check successful!");
+      // await executeSupplication(cbbtcAmountToTrade);
+      // console.log("🎉 Supplication successful!");
       break; // Exit loop after success
     } catch (error) {
       console.warn("❌ Supplication failed, retrying in 15s...\n", error.message || error);
@@ -397,6 +410,6 @@ async function main() {
 
 
 
-//main().catch(console.error);
+main().catch(console.error);
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base

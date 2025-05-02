@@ -9,17 +9,22 @@
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Problems: 
-- - - sqrtPrice and CoinGecko prices don't match for supplications
+- - - Cmopare Contrast checkFeeFreeRoute with its testing equivalent to see where sqrtPriceLimitX96 calculation is going wrong... resolve numbers not going through fee free routes with cbbtc_mass.js and usdc_mass.js
 - - After Problems solved:
-- - - increase fetchVatops intervals to 2 seconds
 - - - Check TXN (and amount in Wallet .json calculate if fees taken)
-- - Only change VatopGroup information if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again (break transaction in test files to test this).
+- - Only change MASS booleans info if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again (break transaction in .js files to test this).
 - - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
 - - Test releaseMASS and holdMASS booleans (releases all of the VatopGroups (not individuals only))
+- - - Test release MASS 5-10 minutes after also (see if supplications will run with latest bitcoin prices and if vatopGroups will update accordingly check wallet)
 - - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 - - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
 
 ### Online:
+- Establish backgroun useEffects order
+- - 1. HPM: Fetch Bitcoin Price
+- - 2. HPM: Fetch wallet Balances & update aBTC
+- - 3. HPM: Fetch Vatop Group/save Vatop Group
+- - 4. MASS: Run functions
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 - Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 1 week.
 - If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateCBBTCtoUSDCs are true then start time)… Update every 168~ hours. 
