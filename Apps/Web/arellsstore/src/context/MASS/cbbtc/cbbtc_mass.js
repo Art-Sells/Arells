@@ -134,6 +134,9 @@ async function checkFeeFreeRoute(amountIn, cpVact) {
     const { tick: currentTick, tickSpacing } = poolData;
     const searchLimit = 100;
 
+    console.log(`🧾 cpVact: ${cpVact}`);
+    console.log(`🎯 Starting Tick: ${currentTick}`);
+
     function getAdjustedPrice(sqrtPriceX96) {
       const sqrtFloat = Number(sqrtPriceX96) / Number(2n ** 96n);
       const rawPrice = sqrtFloat ** 2;
@@ -143,34 +146,26 @@ async function checkFeeFreeRoute(amountIn, cpVact) {
     for (let i = 0; i <= searchLimit; i++) {
       for (let direction of [-1, 1]) {
         const testTick = Number(currentTick) + i * direction * Number(tickSpacing);
-        const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+        try {
+          const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+          const adjustedPrice = getAdjustedPrice(sqrtPriceLimitX96);
 
-        const adjustedPrice = getAdjustedPrice(sqrtPriceLimitX96);
-        console.log(`🔍 Tick ${testTick} → sqrtPriceX96: ${sqrtPriceLimitX96}`);
-        console.log(`   🧮 Implied Price: $${adjustedPrice.toFixed(2)} per CBBTC`);
-
-        if (adjustedPrice >= cpVact) {
-          const amountOut = await simulateWithQuoter({
-            tokenIn: CBBTC,
-            tokenOut: USDC,
-            fee,
-            amountIn,
-            sqrtPriceLimitX96,
-          });
-
-          if (amountOut && amountOut > 0n) {
+          if (adjustedPrice >= cpVact) {
+            const estimatedOut = BigInt(Math.floor((Number(amountIn) / 1e8) * adjustedPrice * 1e6)); // BigInt in 6 decimals
             console.log(`✅ Found fee-free tick for CBBTC Price: $${adjustedPrice.toFixed(2)} for cpVact: ${cpVact}`);
-            console.log(`✅ Found fee-free tick for CBBTC to USDC Supplication Amount: ${ethers.formatUnits(amountOut, 6)} USDC for usdcAmount: ${cpVact}`);
             console.log(`✅ Trading CBBTC Amount: ${ethers.formatUnits(amountIn, 8)} CBBTC`);
+            console.log(`✅ Found fee-free tick for CBBTC to USDC Supplication Amount: ${ethers.formatUnits(estimatedOut, 6)} USDC`);
 
             return [{
               poolAddress,
               fee,
               sqrtPriceLimitX96,
-              estimatedOut: amountOut,
+              estimatedOut,
               tick: testTick,
             }];
           }
+        } catch (err) {
+          console.warn(`⚠️ Error at tick ${testTick}: ${err.message}`);
         }
       }
     }
@@ -357,79 +352,6 @@ async function getLivePrice(poolData) {
   return adjustedPrice;
 }
 
-export async function executeSupplication(amountIn, expectedUSDCOut, customPrivateKey, cpVact) {
-  console.log(`\n🚀 Executing Swap: ${ethers.formatUnits(amountIn, 8)} CBBTC → USDC`);
-
-  const privateKeyToUse = customPrivateKey
-  const userWallet = new ethers.Wallet(privateKeyToUse, provider);
-  console.log(`✅ Using Test Wallet: ${userWallet.address}`);
-
-  const balance = await checkCBBTCBalance(userWallet);
-  if (balance < amountIn) {
-    console.error(`❌ ERROR: Insufficient CBBTC balance!`);
-    return;
-  }
-
-  const poolInfo = await getPoolAddress();
-  if (!poolInfo) return;
-  const { poolAddress, fee } = poolInfo;
-
-  const poolData = await checkPoolLiquidity(poolAddress);
-  if (!poolData || poolData.liquidity === 0) {
-    console.error("❌ No liquidity available.");
-    return;
-  }
-
-  await getLivePrice(poolData);
-
-  const feeFreeRoutes = await checkFeeFreeRoute(amountIn);
-  if (!feeFreeRoutes.length) {
-    console.error("❌ No fee-free route available. Aborting.");
-    return;
-  }
-
-  await approveCBBTC(userWallet, amountIn);
-  if (!(await checkETHBalance(userWallet))) return;
-
-  // 🔥 Find the best tick around cpVact
-  const sqrtPriceX96 = feeFreeRoutes[0].sqrtPriceLimitX96;
-  
-  console.log("🧮 Computed sqrtPriceX96:", sqrtPriceX96.toString());
-  console.log("🧮 Expected USDC Out:", ethers.formatUnits(expectedUSDCOut, 6));
-  
-  // ✅ Set exact params
-  const params = {
-    tokenIn: CBBTC,
-    tokenOut: USDC,
-    fee: feeFreeRoutes[0].fee,  // already selected correct pool
-    recipient: userWallet.address,
-    deadline: Math.floor(Date.now() / 1000) + 600,
-    amountIn: amountIn,
-    amountOutMinimum: expectedUSDCOut,
-    sqrtPriceLimitX96: sqrtPriceX96,
-  };
-
-  console.log("🔍 Final Supplication Params:", params);
-
-  const swapRouterABI = await fetchABI(swapRouterAddress);
-  const iface = new ethers.Interface(swapRouterABI);
-  const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
-
-  const feeData = await provider.getFeeData();
-  const tx = await userWallet.sendTransaction({
-    to: swapRouterAddress,
-    data: functionData,
-    gasLimit: 300000,
-    maxFeePerGas: feeData.maxFeePerGas,
-    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
-  });
-
-  console.log("⏳ Waiting for confirmation...");
-  const receipt = await tx.wait();
-  console.log("✅ Supplication Transaction Confirmed!");
-  console.log(`🔗 Tx Hash: ${receipt.hash}`);
-}
-
 
 function encodeSqrtPriceX96FromCpVact(cpVact, usdcDecimals, cbbtcDecimals) {
   const price = 1 / cpVact;
@@ -457,8 +379,6 @@ async function isCpVactInFeeFreeTickRange(cpVact) {
   if (!poolData) return null;
 
   const { tick: currentTick, tickSpacing } = poolData;
-  const usdcDecimals = 6;
-  const cbbtcDecimals = 8;
 
   const searchLimit = 100;
 
@@ -494,6 +414,82 @@ async function isCpVactInFeeFreeTickRange(cpVact) {
   console.error("❌ No tick found with price ≥ cpVact.");
 }
 
+export async function executeSupplication(amountIn, customPrivateKey, cpVact, cVactDat) {
+  console.log(`\n🚀 Executing Swap: ${ethers.formatUnits(amountIn, 8)} CBBTC → USDC`);
+
+  const userWallet = new ethers.Wallet(customPrivateKey, provider);
+  console.log(`✅ Using Test Wallet: ${userWallet.address}`);
+
+  const cbbtcBefore = await checkCBBTCBalance(userWallet);
+  const usdcContract = new ethers.Contract(USDC, ["function balanceOf(address) view returns (uint256)"], provider);
+  const usdcBefore = await usdcContract.balanceOf(userWallet.address);
+
+  console.log(`💰 BEFORE → CBBTC: ${ethers.formatUnits(cbbtcBefore, 8)} | USDC: ${ethers.formatUnits(usdcBefore, 6)}`);
+
+  if (cbbtcBefore < amountIn) {
+    console.error(`❌ ERROR: Insufficient CBBTC balance!`);
+    return;
+  }
+
+  const poolInfo = await getPoolAddress();
+  if (!poolInfo) return;
+  const { fee } = poolInfo;
+
+  const poolData = await checkPoolLiquidity(poolInfo.poolAddress);
+  if (!poolData || poolData.liquidity === 0) {
+    console.error("❌ No liquidity available.");
+    return;
+  }
+
+  const feeFreeRoutes = await checkFeeFreeRoute(amountIn, cpVact, cVactDat);
+  if (!feeFreeRoutes.length) {
+    console.error("❌ No fee-free route available. Aborting.");
+    return;
+  }
+
+  await approveCBBTC(userWallet, amountIn);
+  if (!(await checkETHBalance(userWallet))) return;
+
+  const { sqrtPriceLimitX96, estimatedOut } = feeFreeRoutes[0];
+
+  const params = {
+    tokenIn: CBBTC,
+    tokenOut: USDC,
+    fee,
+    recipient: userWallet.address,
+    deadline: Math.floor(Date.now() / 1000) + 600,
+    amountIn,
+    amountOutMinimum: estimatedOut - 3n,
+    sqrtPriceLimitX96,
+  };
+
+  const swapRouterABI = await fetchABI(swapRouterAddress);
+  const iface = new ethers.Interface(swapRouterABI);
+  const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
+
+  const feeData = await provider.getFeeData();
+  const tx = await userWallet.sendTransaction({
+    to: swapRouterAddress,
+    data: functionData,
+    gasLimit: 300000,
+    maxFeePerGas: feeData.maxFeePerGas,
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
+  });
+
+  console.log("⏳ Waiting for confirmation...");
+  const receipt = await tx.wait();
+  console.log("✅ Supplication Transaction Confirmed!");
+  console.log(`🔗 Tx Hash: ${receipt.hash}`);
+
+  const cbbtcAfter = await checkCBBTCBalance(userWallet);
+  const usdcAfter = await usdcContract.balanceOf(userWallet.address);
+
+  console.log(`💰 AFTER → CBBTC: ${ethers.formatUnits(cbbtcAfter, 8)} | USDC: ${ethers.formatUnits(usdcAfter, 6)}`);
+}
+
+
+
+
 
 
 
@@ -505,11 +501,11 @@ const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 async function main() {
   console.log("\n🔍 Checking for a Fee-Free Quote...");
 
-   const usdcAmount = 1.940363;
-   const cpVact = 97018.18;
+   const cVactDat = 1.944427;
+   const cpVact = 97221.36;
   
    // Compute cbbtc to trade
-   const cbbtcAmountToTrade = usdcAmount / cpVact;
+   const cbbtcAmountToTrade = cVactDat / cpVact;
   
    // Scale it yourself to 8 decimals without parseUnits
    const cbbtcAmountInUnits = Math.floor(cbbtcAmountToTrade * 1e8);
@@ -517,14 +513,13 @@ async function main() {
    // Pass already scaled BigInt into executeSupplication
    const amountInFormatted = BigInt(cbbtcAmountInUnits.toString());
   
-  // const expectedUSDCOut = ethers.parseUnits(usdcAmount.toFixed(6), 6);
-  
-  // const customPrivateKey = process.env.PRIVATE_KEY_TEST;
+   const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
   try {
-  await checkFeeFreeRoute(amountInFormatted, cpVact);
+  // await checkFeeFreeRoute(amountInFormatted, cpVact, cVactDat);
+    await executeSupplication(amountInFormatted, customPrivateKey, cpVact, cVactDat)
   } catch (error) {
-    console.warn("❌ Supplication failed, retrying in 15s...\n", error.message || error);
+    console.warn("❌ Supplication failed", error.message || error);
     await new Promise(res => setTimeout(res, 1000));
   }
 }
