@@ -159,6 +159,7 @@ async function checkFeeFreeRoute(amountIn) {
     
         if (simulation && simulation > 0n) {
           console.log(`✅ Route at tick ${testTick} is valid. Estimated out: ${ethers.formatUnits(simulation, 6)} USDC`);
+          console.log(`🧮 Succeeded sqrtPriceX96: ${sqrtPriceLimitX96.toString()}`);
           feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData, tick: testTick });
         } else {
           // console.log(`❌ Route at tick ${testTick} returned zero or failed`);
@@ -396,7 +397,7 @@ async function main() {
 
   while (true) {
     try {
-      await logFeeFreeSqrtPriceX96(cbbtcAmountToTrade);
+      await checkFeeFreeRoute(cbbtcAmountToTrade);
       console.log("🎉 Sqrt Price Check successful!");
       // await executeSupplication(cbbtcAmountToTrade);
       // console.log("🎉 Supplication successful!");

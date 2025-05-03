@@ -6,12 +6,7 @@ import { TickMath } from "@uniswap/v3-sdk";
 
 
 dotenv.config();
-function logCpVactVsSqrt(cpVact, sqrtPriceLimitX96) {
-  console.log(`🧾 cpVact: ${cpVact}`);
-  console.log(`📦 amountInFormatted: (inserted from main)`);
-  console.log(`🧮 Fee-Free Route sqrtPriceX96 for cpVact: ${sqrtPriceLimitX96}`);
 
-}
 // ✅ Uniswap Contract Addresses
 const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
 const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
@@ -87,154 +82,134 @@ async function checkPoolLiquidity(poolAddress) {
 }
 
 
-async function simulateWithQuoter(params) {
-  const quoterABI = await fetchABI(QUOTER_ADDRESS);
-  if (!quoterABI) return null;
-
-  const iface = new ethers.Interface(quoterABI);
-
-  const functionData = iface.encodeFunctionData("quoteExactInputSingle", [{
-    tokenIn: params.tokenIn,
-    tokenOut: params.tokenOut,
-    fee: params.fee,
-    amountIn: params.amountIn,
-    sqrtPriceLimitX96: params.sqrtPriceLimitX96
-  }]);
-
-  try {
-    const result = await provider.call({
-      to: QUOTER_ADDRESS,
-      data: functionData
-    });
-
-    const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", result);
-    console.log(`🔁 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-    return amountOut;
-  } catch (err) {
-    console.warn("⚠️ QuoterV2 simulation failed:", err.reason || err.message || err);
-    return null;
-  }
-}
 
 
-async function checkFeeFreeRoute(amountIn, cpVact) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Check if supplications will be successful
+
+
+async function checkFeeFreeRoute(amountIn, cpVact, cVactDat) {
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
 
   const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
   const fee = 500;
+  const poolAddress = await factory.getPool(USDC, CBBTC, fee);
+  if (poolAddress === ethers.ZeroAddress) return [];
 
-  try {
-    const poolAddress = await factory.getPool(USDC, CBBTC, fee);
-    if (poolAddress === ethers.ZeroAddress) return [];
+  const poolData = await checkPoolLiquidity(poolAddress);
+  if (!poolData || poolData.liquidity === 0) return [];
 
-    const poolData = await checkPoolLiquidity(poolAddress);
-    if (!poolData || poolData.liquidity === 0) return [];
+  const tickSpacing = Number(poolData.tickSpacing);
+  const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+  const feeFreeRoutes = [];
 
-    const { tick: currentTick, tickSpacing } = poolData;
-    const searchLimit = 100;
+  // ✅ STEP 1: Try tick-based simulation using only amountIn
+  for (let i = 0; i < 3; i++) {
+    const testTick = baseTick + i * tickSpacing;
+    try {
+      const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+      const simulation = await simulateWithQuoter({
+        tokenIn: CBBTC,
+        tokenOut: USDC,
+        fee,
+        amountIn,
+        sqrtPriceLimitX96
+      });
 
-    console.log(`🧾 cpVact: ${cpVact}`);
-    console.log(`🎯 Starting Tick: ${currentTick}`);
-
-    function getAdjustedPrice(sqrtPriceX96) {
-      const sqrtFloat = Number(sqrtPriceX96) / Number(2n ** 96n);
-      const rawPrice = sqrtFloat ** 2;
-      return (1 / rawPrice) * 1e2;
+      if (simulation && simulation > 0n) {
+        feeFreeRoutes.push({
+          poolAddress,
+          fee,
+          sqrtPriceLimitX96,
+          estimatedOut: simulation,
+          poolData,
+          tick: testTick
+        });
+      }
+    } catch (err) {
+      console.warn(`⚠️ STEP 1 Skip tick ${testTick}: ${err.message}`);
     }
+  }
 
-    for (let i = 0; i <= searchLimit; i++) {
-      for (let direction of [-1, 1]) {
-        const testTick = Number(currentTick) + i * direction * Number(tickSpacing);
-        try {
-          const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-          const adjustedPrice = getAdjustedPrice(sqrtPriceLimitX96);
+  // ✅ STEP 2: Find the first tick where price ≥ cpVact
+  const usdcDecimals = 6;
+  const cbbtcDecimals = 8;
 
-          if (adjustedPrice >= cpVact) {
-            const estimatedOut = BigInt(Math.floor((Number(amountIn) / 1e8) * adjustedPrice * 1e6)); // BigInt in 6 decimals
-            console.log(`✅ Found fee-free tick for CBBTC Price: $${adjustedPrice.toFixed(2)} for cpVact: ${cpVact}`);
-            console.log(`✅ Trading CBBTC Amount: ${ethers.formatUnits(amountIn, 8)} CBBTC`);
-            console.log(`✅ Found fee-free tick for CBBTC to USDC Supplication Amount: ${ethers.formatUnits(estimatedOut, 6)} USDC`);
+  function getAdjustedPrice(sqrtPriceX96) {
+    const sqrtFloat = Number(sqrtPriceX96) / Number(2n ** 96n);
+    const rawPrice = sqrtFloat ** 2;
+    return (1 / rawPrice) * 1e2;
+  }
 
+  const currentTick = Number(poolData.tick);
+  const searchLimit = 100;
+  for (let i = 0; i <= searchLimit; i++) {
+    for (const direction of [-1, 1]) {
+      const testTick = currentTick + i * direction * tickSpacing;
+      try {
+        const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+        const adjustedPrice = getAdjustedPrice(sqrtPriceLimitX96);
+
+        if (adjustedPrice >= cpVact) {
+          const simulation = await simulateWithQuoter({
+            tokenIn: CBBTC,
+            tokenOut: USDC,
+            fee,
+            amountIn,
+            sqrtPriceLimitX96
+          });
+
+          if (simulation && simulation > 0n) {
             return [{
               poolAddress,
               fee,
               sqrtPriceLimitX96,
-              estimatedOut,
-              tick: testTick,
+              estimatedOut: simulation,
+              tick: testTick
             }];
           }
-        } catch (err) {
-          console.warn(`⚠️ Error at tick ${testTick}: ${err.message}`);
-        }
-      }
-    }
-
-    console.warn("❌ No tick found with price ≥ cpVact.");
-  } catch (err) {
-    console.warn(`⚠️ Fee-free route check failed: ${err.message}`);
-  }
-
-  return [];
-}
-
-async function checkFeeFreeRouteTest(amountIn) {
-  console.log(`\n🚀 Checking Fee-Free Routes Test for ${amountIn} CBBTC → USDC`);
-
-  const factoryABI = await fetchABI(FACTORY_ADDRESS);
-  if (!factoryABI) return [];
-
-  const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-  const feeFreeRoutes = [];
-
-  const fee = 500; // Only check 0.05% fee tier
-  try {
-    const poolAddress = await factory.getPool(USDC, CBBTC, fee);
-    if (poolAddress === ethers.ZeroAddress) return [];
-
-    const poolData = await checkPoolLiquidity(poolAddress);
-    if (!poolData || poolData.liquidity === 0) return [];
-
-    const tickSpacing = Number(poolData.tickSpacing);
-    const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
-
-    for (let i = 0; i < 3; i++) {
-      const testTick = baseTick + i * tickSpacing;
-      try {
-        const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-        const amountInWei = amountIn;
-
-        console.log(`🔍 Tick ${testTick} → sqrtPriceLimitX96: ${sqrtPriceLimitX96.toString()}`);
-        const decodedPrice = Number(sqrtPriceLimitX96) ** 2 / Number(2n ** 192n);
-          const usdcDecimals = 6;
-          const cbbtcDecimals = 8;
-          const adjustedPrice = (1 / decodedPrice) * (10 ** (cbbtcDecimals - usdcDecimals));
-          console.log(`   🧮 Implied Price: $${adjustedPrice.toFixed(2)} per CBBTC`);
-
-        const simulation = await simulateWithQuoter({
-          tokenIn: CBBTC,
-          tokenOut: USDC,
-          fee,
-          amountIn: amountInWei,
-          sqrtPriceLimitX96
-        });
-    
-        if (simulation && simulation > 0n) {
-          console.log(`✅ Route at tick ${testTick} is valid. Estimated out: ${ethers.formatUnits(simulation, 6)} USDC`);
-          feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData, tick: testTick });
-        } else {
-          // console.log(`❌ Route at tick ${testTick} returned zero or failed`);
         }
       } catch (err) {
-        console.warn(`⚠️ Skip tick ${testTick}: ${err.message}`);
+        console.warn(`⚠️ STEP 2 Error at tick ${testTick}: ${err.message}`);
       }
     }
-  } catch (err) {
-    console.warn(`⚠️ Fee tier 500 skipped: ${err.message}`);
   }
 
   return feeFreeRoutes;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 async function checkCBBTCBalance(userWallet) {
@@ -414,6 +389,48 @@ async function isCpVactInFeeFreeTickRange(cpVact) {
   console.error("❌ No tick found with price ≥ cpVact.");
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export async function executeSupplication(amountIn, customPrivateKey, cpVact, cVactDat) {
   console.log(`\n🚀 Executing Swap: ${ethers.formatUnits(amountIn, 8)} CBBTC → USDC`);
 
@@ -459,7 +476,7 @@ export async function executeSupplication(amountIn, customPrivateKey, cpVact, cV
     recipient: userWallet.address,
     deadline: Math.floor(Date.now() / 1000) + 600,
     amountIn,
-    amountOutMinimum: estimatedOut - 3n,
+    amountOutMinimum: estimatedOut,
     sqrtPriceLimitX96,
   };
 
@@ -516,8 +533,8 @@ async function main() {
    const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
   try {
-  // await checkFeeFreeRoute(amountInFormatted, cpVact, cVactDat);
-    await executeSupplication(amountInFormatted, customPrivateKey, cpVact, cVactDat)
+   await checkFeeFreeRoute(amountInFormatted, cpVact, cVactDat);
+  //  await executeSupplication(amountInFormatted, customPrivateKey, cpVact, cVactDat)
   } catch (error) {
     console.warn("❌ Supplication failed", error.message || error);
     await new Promise(res => setTimeout(res, 1000));
