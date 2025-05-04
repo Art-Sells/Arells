@@ -71,11 +71,17 @@ const Index = () => {
 
 
 
-        <BitcoinChart />
+        <br></br>
+        <p>Currently being upgraded.</p>
+        <p>Thank you for your patience.</p>
 
+        <br></br>
+
+        {/* <BitcoinChart /> */}
+{/* 
         <Link href="/login" passHref>
           <button id="login">LOGIN</button>
-        </Link>
+        </Link> */}
 
       <div id="buy-info-wrapping">
           <p id="buy-info">
