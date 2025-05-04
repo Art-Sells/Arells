@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
+import { solidityPack } from "ethers";
 
 
 
@@ -130,97 +131,45 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceL
   }
 }
 
-async function checkFeeFreeRoute(amountIn) {
-  console.log(`✅ STEP 1: Simulate with current tick:`);
+async function checkFeeFreeRoute(cVactDat) {
+  console.log(`\n✅ STEP 1: Try 3 ticks from baseTick`);
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
 
   const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-  const feeTiers = [100, 500, 3000]; // 0.01%, 0.05%, 0.3%
-  const bestRoutes = [];
+  const feeFreeRoutes = [];
 
-  for (const fee of feeTiers) {
-    const poolAddress = await factory.getPool(USDC, CBBTC, fee);
-    if (poolAddress === ethers.ZeroAddress) continue;
+  const fee = 500;
+  const poolAddress = await factory.getPool(USDC, CBBTC, fee);
+  if (poolAddress === ethers.ZeroAddress) return [];
 
-    const poolData = await checkPoolLiquidity(poolAddress);
-    if (!poolData || poolData.liquidity === 0) continue;
+  const poolData = await checkPoolLiquidity(poolAddress);
+  if (!poolData || poolData.liquidity === 0) return [];
 
-    const tickSpacing = Number(poolData.tickSpacing);
-    const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+  const tickSpacing = Number(poolData.tickSpacing);
+  const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
 
-    let sqrtPriceBase = null;
-    let baseSim = null;
+  for (let i = 0; i < 3; i++) {
+    const testTick = baseTick + i * tickSpacing;
+    try {
+      const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+      const sqrtPriceFloat = Number(sqrtPriceLimitX96) / 2 ** 96;
+      const rawPrice = sqrtPriceFloat ** 2;
+      const adjustedPrice = rawPrice * 1e-2; // ✅ adjust USDC(6) vs CBBTC(8)
 
-    // ✅ Try up to 3 fallback ticks
-    for (let i = 0; i < 3; i++) {
-      const testTick = baseTick + i * tickSpacing;
-      try {
-        const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-        const sim = await simulateWithQuoter({
-          tokenIn: CBBTC,
-          tokenOut: USDC,
-          fee,
-          amountIn,
-          sqrtPriceLimitX96
-        });
+      console.log(`✅ STEP 1 Tick ${testTick} → Price: $${adjustedPrice}`);
 
-        if (sim !== null) {
-          sqrtPriceBase = sqrtPriceLimitX96;
-          baseSim = sim;
-          console.log(`✅ Fee ${fee} STEP 1 Tick ${testTick} → amountOut: ${ethers.formatUnits(sim, 6)} USDC`);
-          bestRoutes.push({
-            poolAddress,
-            fee,
-            tick: testTick,
-            sqrtPriceLimitX96,
-            amountOut: sim,
-            poolData
-          });
-          break;
-        }
-      } catch (err) {
-        console.warn(`⚠️ Fee ${fee} STEP 1 skip tick ${baseTick + i * tickSpacing}: ${err.message}`);
+      if (adjustedPrice > 0) {
+        feeFreeRoutes.push({ sqrtPriceLimitX96, tick: testTick, price: adjustedPrice });
+        break;
       }
-    }
-
-    if (!sqrtPriceBase || !baseSim) {
-      console.warn(`❌ Fee ${fee}: STEP 1 failed to simulate any tick.`);
-      continue;
-    }
-
-    // ✅ STEP 2: Try to increase sqrtPriceX96 and compare amountOut
-    const maxTickSearch = 30;
-    for (let i = 1; i <= maxTickSearch; i++) {
-      const testTick = baseTick + i * tickSpacing;
-      try {
-        const testSqrtPrice = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-        const sim = await simulateWithQuoter({
-          tokenIn: CBBTC,
-          tokenOut: USDC,
-          fee,
-          amountIn,
-          sqrtPriceLimitX96: testSqrtPrice
-        });
-
-        if (sim !== null) {
-          const simOut = ethers.formatUnits(sim, 6);
-          const baseOut = ethers.formatUnits(baseSim, 6);
-          console.log(`🔁 Fee ${fee} STEP 2 Tick ${testTick} → amountOut: ${simOut} USDC`);
-
-          if (parseFloat(simOut) > parseFloat(baseOut)) {
-            console.log(`🚀 Fee ${fee}: amountOut increased from ${baseOut} → ${simOut} ✅`);
-            break;
-          }
-        }
-      } catch (err) {
-        console.warn(`⚠️ Fee ${fee} STEP 2 skip tick ${testTick}: ${err.message}`);
-      }
+    } catch (err) {
+      console.warn(`⚠️ STEP 1 Tick ${testTick} failed: ${err.message}`);
     }
   }
 
-  return bestRoutes;
+  return feeFreeRoutes;
 }
 
 
@@ -548,23 +497,25 @@ const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 async function main() {
   console.log("\n🔍 Checking for a Fee-Free Quote...");
 
-   const cVactDat = 1.944427;
-   const cpVact = 97221.36;
+   const cVactDat = 1.910393;
+   const feeFreeRoutes = await checkFeeFreeRoute(cVactDat);
+   if (feeFreeRoutes.length === 0) {
+     console.error("❌ No route found");
+     return;
+   }
+   
+   const { sqrtPriceLimitX96 } = feeFreeRoutes[0];
+   
+   // Step 1: Recalculate amountIn from cVactDat and sqrtPriceLimitX96
+   const sqrtPriceFloat = Number(sqrtPriceLimitX96) / 2 ** 96;
+   const rawPrice = sqrtPriceFloat ** 2;
+   const adjustedPrice = rawPrice * 1e-2;
+   const cbbtcAmount = cVactDat / adjustedPrice;
+   const amountInFormatted = BigInt(Math.floor(cbbtcAmount * 1e8));
   
-   // Compute cbbtc to trade
-   const cbbtcAmountToTrade = cVactDat / cpVact;
-  
-   // Scale it yourself to 8 decimals without parseUnits
-   const cbbtcAmountInUnits = Math.floor(cbbtcAmountToTrade * 1e8);
-  
-   // Pass already scaled BigInt into executeSupplication
-   const amountInFormatted = BigInt(cbbtcAmountInUnits.toString());
-  
-   const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
   try {
-   await checkFeeFreeRoute(amountInFormatted, cpVact, cVactDat);
-  //  await executeSupplication(amountInFormatted, customPrivateKey, cpVact, cVactDat)
+   await checkFeeFreeRoute(cVactDat);
   } catch (error) {
     console.warn("❌ Supplication failed", error.message || error);
     await new Promise(res => setTimeout(res, 1000));
