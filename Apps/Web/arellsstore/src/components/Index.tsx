@@ -72,8 +72,8 @@ const Index = () => {
 
 
         <br></br>
-        <p>Currently being upgraded.</p>
-        <p>Thank you for your patience.</p>
+        <h5>Currently being upgraded.</h5>
+        <h5>Thank you for your patience.</h5>
 
         <br></br>
 
