@@ -99,10 +99,40 @@ async function checkPoolLiquidity(poolAddress) {
 
 
 
-// Check if supplications will be successful
+let cachedQuoterABI = null;
 
+async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceLimitX96 }) {
+  if (!cachedQuoterABI) {
+    cachedQuoterABI = await fetchABI(QUOTER_ADDRESS);
+    if (!cachedQuoterABI) {
+      console.warn("❌ Failed to fetch Quoter ABI.");
+      return null;
+    }
+  }
 
-async function checkFeeFreeRoute(amountIn, cpVact, cVactDat) {
+  const iface = new ethers.Interface(cachedQuoterABI);
+  const data = iface.encodeFunctionData("quoteExactInputSingle", [{
+    tokenIn,
+    tokenOut,
+    fee,
+    amountIn,
+    sqrtPriceLimitX96,
+  }]);
+
+  try {
+    const result = await provider.call({ to: QUOTER_ADDRESS, data });
+    const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", result);
+    console.log(`🔁 Quoter Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+    return amountOut;
+  } catch (error) {
+    console.warn("⚠️ QuoterV2 simulation failed:", error.reason || error.message || error);
+    return null;
+  }
+}
+
+async function checkFeeFreeRoute(amountIn) {
+  console.log(`✅ STEP 1: Try tick-based simulation using only amountIn:`);
+
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
 
@@ -118,7 +148,8 @@ async function checkFeeFreeRoute(amountIn, cpVact, cVactDat) {
   const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
   const feeFreeRoutes = [];
 
-  // ✅ STEP 1: Try tick-based simulation using only amountIn
+  // ✅ STEP 1: Try up to 3 ticks from base
+  let sqrtPriceBase = null;
   for (let i = 0; i < 3; i++) {
     const testTick = baseTick + i * tickSpacing;
     try {
@@ -131,7 +162,9 @@ async function checkFeeFreeRoute(amountIn, cpVact, cVactDat) {
         sqrtPriceLimitX96
       });
 
-      if (simulation && simulation > 0n) {
+      if (simulation !== null) {
+        console.log(`✅ STEP 1 Simulated amountOut at tick ${testTick}: ${ethers.formatUnits(simulation, 6)} USDC`);
+        sqrtPriceBase = sqrtPriceLimitX96;
         feeFreeRoutes.push({
           poolAddress,
           fee,
@@ -140,53 +173,46 @@ async function checkFeeFreeRoute(amountIn, cpVact, cVactDat) {
           poolData,
           tick: testTick
         });
+        break; // Use the first successful tick
       }
     } catch (err) {
       console.warn(`⚠️ STEP 1 Skip tick ${testTick}: ${err.message}`);
     }
   }
 
-  // ✅ STEP 2: Find the first tick where price ≥ cpVact
-  const usdcDecimals = 6;
-  const cbbtcDecimals = 8;
-
-  function getAdjustedPrice(sqrtPriceX96) {
-    const sqrtFloat = Number(sqrtPriceX96) / Number(2n ** 96n);
-    const rawPrice = sqrtFloat ** 2;
-    return (1 / rawPrice) * 1e2;
+  if (!sqrtPriceBase) {
+    console.warn("❌ STEP 1 failed to simulate any tick.");
+    return [];
   }
 
-  const currentTick = Number(poolData.tick);
-  const searchLimit = 100;
-  for (let i = 0; i <= searchLimit; i++) {
-    for (const direction of [-1, 1]) {
-      const testTick = currentTick + i * direction * tickSpacing;
-      try {
-        const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-        const adjustedPrice = getAdjustedPrice(sqrtPriceLimitX96);
+  console.log(`🔧 STEP 1 succeeded with sqrtPriceX96: ${sqrtPriceBase.toString()}`);
+  console.log(`✅ STEP 2: Simulate strictly upward sqrtPriceLimitX96 values:`);
 
-        if (adjustedPrice >= cpVact) {
-          const simulation = await simulateWithQuoter({
-            tokenIn: CBBTC,
-            tokenOut: USDC,
-            fee,
-            amountIn,
-            sqrtPriceLimitX96
-          });
+  const multipliers = [1.00001, 1.00005, 1.0001, 1.0005, 1.001];
 
-          if (simulation && simulation > 0n) {
-            return [{
-              poolAddress,
-              fee,
-              sqrtPriceLimitX96,
-              estimatedOut: simulation,
-              tick: testTick
-            }];
-          }
-        }
-      } catch (err) {
-        console.warn(`⚠️ STEP 2 Error at tick ${testTick}: ${err.message}`);
+  for (const multiplier of multipliers) {
+    const sqrtPriceLimitX96 = BigInt(Math.floor(Number(sqrtPriceBase) * multiplier));
+    try {
+      const simulation = await simulateWithQuoter({
+        tokenIn: CBBTC,
+        tokenOut: USDC,
+        fee,
+        amountIn,
+        sqrtPriceLimitX96
+      });
+
+      if (simulation !== null) {
+        console.log(`🔁 STEP 2 Simulated amountOut at sqrtPriceX96 = ${sqrtPriceLimitX96.toString()}: ${ethers.formatUnits(simulation, 6)} USDC`);
+        feeFreeRoutes.push({
+          poolAddress,
+          fee,
+          sqrtPriceLimitX96,
+          estimatedOut: simulation,
+          tick: null
+        });
       }
+    } catch (err) {
+      console.warn(`⚠️ STEP 2 Error at sqrtPrice + ${increments[i]}: ${err.message}`);
     }
   }
 
