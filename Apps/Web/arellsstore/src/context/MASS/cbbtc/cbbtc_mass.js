@@ -131,7 +131,7 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceL
   }
 }
 
-async function checkFeeFreeRoute(cVactDat) {
+async function checkFeeFreeRoute(cVactDat, cpVact) {
   console.log(`\n✅ STEP 1: Try 3 ticks from baseTick`);
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
@@ -150,22 +150,70 @@ async function checkFeeFreeRoute(cVactDat) {
   const tickSpacing = Number(poolData.tickSpacing);
   const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
 
-  for (let i = 0; i < 3; i++) {
+  const cbbtcTarget = cVactDat / cpVact;
+  const maxAmountIn = BigInt(Math.floor(cbbtcTarget * 1e8));
+
+  for (let i = -10; i <= 10; i++) {
     const testTick = baseTick + i * tickSpacing;
+  
     try {
-      const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-      const sqrtPriceFloat = Number(sqrtPriceLimitX96) / 2 ** 96;
-      const rawPrice = sqrtPriceFloat ** 2;
-      const adjustedPrice = rawPrice * 1e-2; // ✅ adjust USDC(6) vs CBBTC(8)
-
-      console.log(`✅ STEP 1 Tick ${testTick} → Price: $${adjustedPrice}`);
-
-      if (adjustedPrice > 0) {
-        feeFreeRoutes.push({ sqrtPriceLimitX96, tick: testTick, price: adjustedPrice });
-        break;
+      const sqrtPriceLimitX96 = i === 0
+        ? 0n // Let the Quoter free-run once
+        : BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+  
+      const sqrtFloat = Number(sqrtPriceLimitX96) / 2 ** 96;
+      const rawPrice = sqrtFloat ** 2;
+      const adjustedPrice = (1 / rawPrice) * 1e2;
+  
+      if (adjustedPrice <= 0 || !isFinite(adjustedPrice)) {
+        console.warn(`❌ Tick ${testTick} skipped — invalid adjusted price`);
+        continue;
       }
+  
+      const cbbtcAmount = cVactDat / adjustedPrice;
+      const amountIn = BigInt(Math.floor(cbbtcAmount * 1e8));
+      const maxAmountIn = BigInt(Math.floor((cVactDat / cpVact) * 1e8));
+  
+      if (amountIn > maxAmountIn) {
+        console.warn(`❌ Tick ${testTick} rejected — amountIn ${Number(amountIn) / 1e8} exceeds allowed CBBTC`);
+        continue;
+      }
+  
+      const quotedOut = await simulateWithQuoter({
+        tokenIn: CBBTC,
+        tokenOut: USDC,
+        fee,
+        amountIn,
+        sqrtPriceLimitX96
+      });
+  
+      if (quotedOut && quotedOut > 0n) {
+        const usdcOutFloat = Number(ethers.formatUnits(quotedOut, 6));
+        const impliedPrice = usdcOutFloat / (Number(amountIn) / 1e8);
+  
+        if (usdcOutFloat >= cVactDat) {
+          console.log(`✅ Tick ${testTick} → ${usdcOutFloat.toFixed(6)} USDC for ${(Number(amountIn) / 1e8).toFixed(8)} CBBTC`);
+          console.log(`   - Adjusted Tick Price: $${adjustedPrice.toFixed(2)} | Implied: $${impliedPrice.toFixed(2)} per CBBTC`);
+  
+          feeFreeRoutes.push({
+            poolAddress,
+            fee,
+            sqrtPriceLimitX96,
+            tick: testTick,
+            amountOut: quotedOut,
+            poolData,
+            price: adjustedPrice,
+            amountIn
+          });
+  
+          break;
+        } else {
+          console.warn(`❌ Tick ${testTick} → Output ${usdcOutFloat} < ${cVactDat}`);
+        }
+      }
+  
     } catch (err) {
-      console.warn(`⚠️ STEP 1 Tick ${testTick} failed: ${err.message}`);
+      console.warn(`⚠️ Tick ${testTick} failed: ${err.message}`);
     }
   }
 
@@ -410,11 +458,19 @@ async function isCpVactInFeeFreeTickRange(cpVact) {
 
 
 
-export async function executeSupplication(amountIn, customPrivateKey, cpVact, cVactDat) {
-  console.log(`\n🚀 Executing Swap: ${ethers.formatUnits(amountIn, 8)} CBBTC → USDC`);
-
+export async function executeSupplication(targetUSDC, customPrivateKey) {
   const userWallet = new ethers.Wallet(customPrivateKey, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
+
+  const feeFreeRoutes = await checkFeeFreeRoute(targetUSDC);
+  if (!feeFreeRoutes.length) {
+    console.error("❌ No fee-free route available. Aborting.");
+    return;
+  }
+
+  const { sqrtPriceLimitX96, amountIn, amountOut, fee } = feeFreeRoutes[0];
+
+  console.log(`\n🚀 Executing Swap: ${ethers.formatUnits(amountIn, 8)} CBBTC → USDC`);
 
   const cbbtcBefore = await checkCBBTCBalance(userWallet);
   const usdcContract = new ethers.Contract(USDC, ["function balanceOf(address) view returns (uint256)"], provider);
@@ -427,26 +483,8 @@ export async function executeSupplication(amountIn, customPrivateKey, cpVact, cV
     return;
   }
 
-  const poolInfo = await getPoolAddress();
-  if (!poolInfo) return;
-  const { fee } = poolInfo;
-
-  const poolData = await checkPoolLiquidity(poolInfo.poolAddress);
-  if (!poolData || poolData.liquidity === 0) {
-    console.error("❌ No liquidity available.");
-    return;
-  }
-
-  const feeFreeRoutes = await checkFeeFreeRoute(amountIn, cpVact, cVactDat);
-  if (!feeFreeRoutes.length) {
-    console.error("❌ No fee-free route available. Aborting.");
-    return;
-  }
-
   await approveCBBTC(userWallet, amountIn);
   if (!(await checkETHBalance(userWallet))) return;
-
-  const { sqrtPriceLimitX96, estimatedOut } = feeFreeRoutes[0];
 
   const params = {
     tokenIn: CBBTC,
@@ -455,7 +493,7 @@ export async function executeSupplication(amountIn, customPrivateKey, cpVact, cV
     recipient: userWallet.address,
     deadline: Math.floor(Date.now() / 1000) + 600,
     amountIn,
-    amountOutMinimum: estimatedOut,
+    amountOutMinimum: amountOut,
     sqrtPriceLimitX96,
   };
 
@@ -495,31 +533,22 @@ export async function executeSupplication(amountIn, customPrivateKey, cpVact, cV
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
+
+
+  const cpVact = 96700.00;
+  const cVactDat = 1.934;
+  const customPrivateKey = process.env.PRIVATE_KEY_TEST;
+
   console.log("\n🔍 Checking for a Fee-Free Quote...");
-
-   const cVactDat = 1.910393;
-   const feeFreeRoutes = await checkFeeFreeRoute(cVactDat);
-   if (feeFreeRoutes.length === 0) {
-     console.error("❌ No route found");
-     return;
-   }
-   
-   const { sqrtPriceLimitX96 } = feeFreeRoutes[0];
-   
-   // Step 1: Recalculate amountIn from cVactDat and sqrtPriceLimitX96
-   const sqrtPriceFloat = Number(sqrtPriceLimitX96) / 2 ** 96;
-   const rawPrice = sqrtPriceFloat ** 2;
-   const adjustedPrice = rawPrice * 1e-2;
-   const cbbtcAmount = cVactDat / adjustedPrice;
-   const amountInFormatted = BigInt(Math.floor(cbbtcAmount * 1e8));
-  
-
-  try {
-   await checkFeeFreeRoute(cVactDat);
-  } catch (error) {
-    console.warn("❌ Supplication failed", error.message || error);
-    await new Promise(res => setTimeout(res, 1000));
+  const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, cpVact);
+  if (feeFreeRoutes.length === 0) {
+    console.error("❌ No route found");
+    return;
   }
+
+ // console.log("Running executeSupplication...");
+//await executeSupplication(cVactDat, customPrivateKey);
+
 }
 
 

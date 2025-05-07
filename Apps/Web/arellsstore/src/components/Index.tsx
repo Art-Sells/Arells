@@ -69,13 +69,17 @@ const Index = () => {
         <p id="descriptioner">Bitcoin investments that never lose value.</p>
       </div>
 
+        <br></br>
+        <h5>Currently being upgraded.</h5>
+        <h5>Thank you for your patience.</h5>
 
+        <br></br>
 
-        <BitcoinChart />
-
+        {/* <BitcoinChart /> */}
+{/* 
         <Link href="/login" passHref>
           <button id="login">LOGIN</button>
-        </Link>
+        </Link> */}
 
       <div id="buy-info-wrapping">
           <p id="buy-info">
