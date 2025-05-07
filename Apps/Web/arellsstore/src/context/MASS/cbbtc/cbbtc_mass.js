@@ -102,7 +102,7 @@ async function checkPoolLiquidity(poolAddress) {
 
 let cachedQuoterABI = null;
 
-async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceLimitX96 }) {
+async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountOut, sqrtPriceLimitX96 }) {
   if (!cachedQuoterABI) {
     cachedQuoterABI = await fetchABI(QUOTER_ADDRESS);
     if (!cachedQuoterABI) {
@@ -112,19 +112,19 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceL
   }
 
   const iface = new ethers.Interface(cachedQuoterABI);
-  const data = iface.encodeFunctionData("quoteExactInputSingle", [{
+  const data = iface.encodeFunctionData("quoteExactOutputSingle", [{
     tokenIn,
     tokenOut,
+    amount: amountOut,
     fee,
-    amountIn,
     sqrtPriceLimitX96,
   }]);
 
   try {
     const result = await provider.call({ to: QUOTER_ADDRESS, data });
-    const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", result);
-    console.log(`🔁 Quoter Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-    return amountOut;
+    const [amountIn] = iface.decodeFunctionResult("quoteExactOutputSingle", result);
+    console.log(`🔁 Quoter Simulated amountIn: ${(Number(amountIn) / 1e8).toFixed(8)} CBBTC`);
+    return amountIn;
   } catch (error) {
     console.warn("⚠️ QuoterV2 simulation failed:", error.reason || error.message || error);
     return null;
@@ -132,7 +132,7 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceL
 }
 
 async function checkFeeFreeRoute(cVactDat, cpVact) {
-  console.log(`\n✅ STEP 1: Try 3 ticks from baseTick`);
+  console.log(`\n✅ STEP 1: Try 20 upward ticks from baseTick`);
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
@@ -150,35 +150,16 @@ async function checkFeeFreeRoute(cVactDat, cpVact) {
   const tickSpacing = Number(poolData.tickSpacing);
   const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
 
-  const cbbtcTarget = cVactDat / cpVact;
-  const maxAmountIn = BigInt(Math.floor(cbbtcTarget * 1e8));
+  // Fix amountIn to maximum allowed
+  const cbbtcMax = cVactDat / cpVact;
+  const amountIn = BigInt(Math.floor(cbbtcMax * 1e8));
 
-  for (let i = -10; i <= 10; i++) {
+  for (let i = 0; i < 20; i++) {
     const testTick = baseTick + i * tickSpacing;
-  
+
     try {
-      const sqrtPriceLimitX96 = i === 0
-        ? 0n // Let the Quoter free-run once
-        : BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-  
-      const sqrtFloat = Number(sqrtPriceLimitX96) / 2 ** 96;
-      const rawPrice = sqrtFloat ** 2;
-      const adjustedPrice = (1 / rawPrice) * 1e2;
-  
-      if (adjustedPrice <= 0 || !isFinite(adjustedPrice)) {
-        console.warn(`❌ Tick ${testTick} skipped — invalid adjusted price`);
-        continue;
-      }
-  
-      const cbbtcAmount = cVactDat / adjustedPrice;
-      const amountIn = BigInt(Math.floor(cbbtcAmount * 1e8));
-      const maxAmountIn = BigInt(Math.floor((cVactDat / cpVact) * 1e8));
-  
-      if (amountIn > maxAmountIn) {
-        console.warn(`❌ Tick ${testTick} rejected — amountIn ${Number(amountIn) / 1e8} exceeds allowed CBBTC`);
-        continue;
-      }
-  
+      const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+
       const quotedOut = await simulateWithQuoter({
         tokenIn: CBBTC,
         tokenOut: USDC,
@@ -186,15 +167,18 @@ async function checkFeeFreeRoute(cVactDat, cpVact) {
         amountIn,
         sqrtPriceLimitX96
       });
-  
+
       if (quotedOut && quotedOut > 0n) {
         const usdcOutFloat = Number(ethers.formatUnits(quotedOut, 6));
-        const impliedPrice = usdcOutFloat / (Number(amountIn) / 1e8);
-  
-        if (usdcOutFloat >= cVactDat) {
-          console.log(`✅ Tick ${testTick} → ${usdcOutFloat.toFixed(6)} USDC for ${(Number(amountIn) / 1e8).toFixed(8)} CBBTC`);
-          console.log(`   - Adjusted Tick Price: $${adjustedPrice.toFixed(2)} | Implied: $${impliedPrice.toFixed(2)} per CBBTC`);
-  
+        const impliedPrice = usdcOutFloat / cbbtcMax;
+
+        const passesAmount = usdcOutFloat >= cVactDat;
+        const passesPrice = impliedPrice >= cpVact;
+
+        if (passesAmount && passesPrice) {
+          console.log(`✅ Tick ${testTick} → ${usdcOutFloat.toFixed(6)} USDC for ${cbbtcMax.toFixed(8)} CBBTC`);
+          console.log(`   - Implied Price: $${impliedPrice.toFixed(2)} vs Target: $${cpVact}`);
+
           feeFreeRoutes.push({
             poolAddress,
             fee,
@@ -202,16 +186,15 @@ async function checkFeeFreeRoute(cVactDat, cpVact) {
             tick: testTick,
             amountOut: quotedOut,
             poolData,
-            price: adjustedPrice,
+            price: impliedPrice,
             amountIn
           });
-  
+
           break;
         } else {
-          console.warn(`❌ Tick ${testTick} → Output ${usdcOutFloat} < ${cVactDat}`);
+          console.warn(`❌ Tick ${testTick} rejected — ${usdcOutFloat.toFixed(6)} USDC or price $${impliedPrice.toFixed(2)} too low`);
         }
       }
-  
     } catch (err) {
       console.warn(`⚠️ Tick ${testTick} failed: ${err.message}`);
     }
