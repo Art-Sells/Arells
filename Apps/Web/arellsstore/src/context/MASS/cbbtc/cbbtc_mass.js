@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
 import { solidityPack } from "ethers";
-import { encodeSqrtRatioX96 } from '@uniswap/v3-sdk';
 
 
 
@@ -137,7 +136,7 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountOut, sqrtPrice
 }
 
 async function checkFeeFreeRoute(cVactDat, cpVact) {
-  console.log(`\n✅ STEP 1: Try deltas from current sqrtPriceX96`);
+  console.log(`\n✅ STEP 1: Try 20 upward ticks from baseTick`);
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
@@ -152,15 +151,14 @@ async function checkFeeFreeRoute(cVactDat, cpVact) {
   const poolData = await checkPoolLiquidity(poolAddress);
   if (!poolData || poolData.liquidity === 0) return [];
 
+  const tickSpacing = Number(poolData.tickSpacing);
+  const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+
+  const maxAmountIn = BigInt(Math.floor((cVactDat / cpVact) * 1e8));
+  const scaledUSDCout = BigInt(Math.floor(cVactDat * 1e6));
   const currentSqrt = BigInt(poolData.sqrtPriceX96);
-  const scaledUSDCout = BigInt(Math.floor(cVactDat * 1e6)); // e.g. 2.08 → 2080000
-  const maxAmountIn = BigInt(Math.floor((cVactDat / cpVact) * 1e8)); // e.g. 2.08 / 104000 → 0.00002 → 2000
 
   const sqrtDeltas = [1n, 5n, 10n, 50n];
-
-  const sqrtFloat = Number(currentSqrt) / 2 ** 96;
-  const currentPrice = (1 / (sqrtFloat ** 2)) * 1e2;
-  console.log(`💰 Current implied price: $${currentPrice.toFixed(2)} per CBBTC`);
 
   for (const delta of sqrtDeltas) {
     const sqrtPriceLimitX96 = currentSqrt + delta;
@@ -173,23 +171,28 @@ async function checkFeeFreeRoute(cVactDat, cpVact) {
         amountOut: scaledUSDCout,
         sqrtPriceLimitX96,
       });
-
+    
       if (!quotedIn || quotedIn === 0n) {
         console.warn(`❌ Delta +${delta} returned null quote`);
         continue;
       }
+    
+      const amountInFloat = Number(quotedIn) / 1e8;
+      const impliedPrice = cVactDat / amountInFloat;
+      const maxAllowedFloat = Number(maxAmountIn) / 1e8;
 
-      const quotedFloat = Number(quotedIn) / 1e8;
-      const impliedPrice = cVactDat / quotedFloat;
-
+      const sqrtFloat = Number(currentSqrt) / 2 ** 96;
+      const currentPrice = (1 / (sqrtFloat ** 2)) * 1e2;
+      console.log(`💰 Current implied price: $${currentPrice.toFixed(2)} per CBBTC`);
       console.log(`\n🔎 Delta +${delta}`);
-      console.log(`   - Required amountIn: ${quotedFloat.toFixed(8)} CBBTC`);
-      console.log(`   - Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
+      console.log(`   - Required amountIn: ${amountInFloat.toFixed(8)} CBBTC`);
+      const correctedPrice = impliedPrice / 10000;
+      console.log(`   - Implied price: $${correctedPrice.toFixed(2)} per CBBTC`);
       console.log(`   - Target output: ${cVactDat.toFixed(6)} USDC`);
-      console.log(`   - Max allowed: ${(Number(maxAmountIn) / 1e8).toFixed(8)} CBBTC`);
-
+      console.log(`   - Max allowed: ${maxAllowedFloat.toFixed(8)} CBBTC`);
+    
       if (quotedIn <= maxAmountIn) {
-        console.log(`✅ Found Valid Route → Required: ${quotedFloat.toFixed(8)} CBBTC (<= ${(Number(maxAmountIn) / 1e8).toFixed(8)})`);
+        console.log(`✅ Found Valid Route → Required: ${amountInFloat.toFixed(8)} CBBTC (<= ${maxAllowedFloat.toFixed(8)})`);
         feeFreeRoutes.push({
           poolAddress,
           fee,
@@ -197,13 +200,12 @@ async function checkFeeFreeRoute(cVactDat, cpVact) {
           tick: poolData.tick,
           amountOut: scaledUSDCout,
           poolData,
-          amountIn: quotedIn,
+          amountIn: quotedIn
         });
         break;
       } else {
-        console.warn(`❌ Exceeds limit — Needed: ${quotedFloat.toFixed(8)}, Max: ${(Number(maxAmountIn) / 1e8).toFixed(8)}`);
+        console.warn(`❌ Exceeds limit — Needed: ${amountInFloat.toFixed(8)}, Max: ${maxAllowedFloat.toFixed(8)}`);
       }
-
     } catch (err) {
       console.warn(`⚠️ Simulation failed at delta +${delta}: ${err.message}`);
     }
