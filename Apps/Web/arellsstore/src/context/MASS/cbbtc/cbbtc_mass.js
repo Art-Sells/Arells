@@ -112,7 +112,9 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountOut, sqrtPrice
   }
 
   const iface = new ethers.Interface(cachedQuoterABI);
-  const data = iface.encodeFunctionData("quoteExactOutputSingle", [{
+
+  // Step 1: Simulate amountIn using quoteExactOutputSingle
+  const outputData = iface.encodeFunctionData("quoteExactOutputSingle", [{
     tokenIn,
     tokenOut,
     amount: amountOut,
@@ -121,12 +123,30 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountOut, sqrtPrice
   }]);
 
   try {
-    const result = await provider.call({ to: QUOTER_ADDRESS, data });
+    const result = await provider.call({ to: QUOTER_ADDRESS, data: outputData });
     const [amountIn] = iface.decodeFunctionResult("quoteExactOutputSingle", result);
-    
+
     const amountInFloat = Number(amountIn) / 1e8;
     console.log(`🔁 Simulating to receive: ${(Number(amountOut) / 1e6).toFixed(6)} USDC`);
     console.log(`🔁 Quoter Simulated amountIn: ${amountInFloat.toFixed(8)} CBBTC`);
+
+    // 🚫 Prevent dust-only swaps by confirming actual output
+    const inputData = iface.encodeFunctionData("quoteExactInputSingle", [{
+      tokenIn,
+      tokenOut,
+      amountIn,
+      fee,
+      sqrtPriceLimitX96,
+    }]);
+
+    const verifyResult = await provider.call({ to: QUOTER_ADDRESS, data: inputData });
+    const [simulatedOut] = iface.decodeFunctionResult("quoteExactInputSingle", verifyResult);
+
+    const outFloat = Number(simulatedOut) / 1e6;
+    if (outFloat < 0.000001) {
+      console.warn(`⚠️ Ignored: simulatedOut is ${outFloat} USDC (dust)`);
+      return null;
+    }
 
     return amountIn;
   } catch (error) {
@@ -186,8 +206,7 @@ async function checkFeeFreeRoute(cVactDat, cpVact) {
       console.log(`💰 Current implied price: $${currentPrice.toFixed(2)} per CBBTC`);
       console.log(`\n🔎 Delta +${delta}`);
       console.log(`   - Required amountIn: ${amountInFloat.toFixed(8)} CBBTC`);
-      const correctedPrice = impliedPrice / 10000;
-      console.log(`   - Implied price: $${correctedPrice.toFixed(2)} per CBBTC`);
+      console.log(`   - Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
       console.log(`   - Target output: ${cVactDat.toFixed(6)} USDC`);
       console.log(`   - Max allowed: ${maxAllowedFloat.toFixed(8)} CBBTC`);
     
@@ -452,11 +471,11 @@ async function isCpVactInFeeFreeTickRange(cpVact) {
 
 
 
-export async function executeSupplication(targetUSDC, customPrivateKey) {
+export async function executeSupplication(cVactDat, cpVact, customPrivateKey) {
   const userWallet = new ethers.Wallet(customPrivateKey, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
-  const feeFreeRoutes = await checkFeeFreeRoute(targetUSDC);
+  const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, cpVact);
   if (!feeFreeRoutes.length) {
     console.error("❌ No fee-free route available. Aborting.");
     return;
@@ -486,14 +505,14 @@ export async function executeSupplication(targetUSDC, customPrivateKey) {
     fee,
     recipient: userWallet.address,
     deadline: Math.floor(Date.now() / 1000) + 600,
-    amountIn,
-    amountOutMinimum: amountOut,
+    amountOut,                 
+    amountInMaximum: amountIn, 
     sqrtPriceLimitX96,
   };
 
   const swapRouterABI = await fetchABI(swapRouterAddress);
   const iface = new ethers.Interface(swapRouterABI);
-  const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
+  const functionData = iface.encodeFunctionData("exactOutputSingle", [params]);
 
   const feeData = await provider.getFeeData();
   const tx = await userWallet.sendTransaction({
@@ -529,8 +548,8 @@ const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 async function main() {
 
 
-  const cpVact = 105000.00;
-  const cVactDat = 2.1;
+  const cpVact = 104000.00;
+  const cVactDat = 2.08;
   const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
   console.log("\n🔍 Checking for a Fee-Free Quote...");
@@ -540,8 +559,8 @@ async function main() {
     return;
   }
 
- // console.log("Running executeSupplication...");
-//await executeSupplication(cVactDat, customPrivateKey);
+//  console.log("Running executeSupplication...");
+//  await executeSupplication(cVactDat, cpVact, customPrivateKey);
 
 }
 
