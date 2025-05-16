@@ -156,27 +156,27 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountOut, sqrtPrice
 }
 
 async function checkFeeFreeRoute(cVactDat, cpVact) {
-  console.log(`\n✅ STEP 1: Try 20 upward ticks from baseTick`);
+  console.log(`\n✅ STEP 1: Try upward ticks from baseTick`);
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
 
   const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-  const feeFreeRoutes = [];
-
   const fee = 500;
+
   const poolAddress = await factory.getPool(USDC, CBBTC, fee);
   if (poolAddress === ethers.ZeroAddress) return [];
 
   const poolData = await checkPoolLiquidity(poolAddress);
   if (!poolData || poolData.liquidity === 0) return [];
 
-  const tickSpacing = Number(poolData.tickSpacing);
-  const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+  const { tick, tickSpacing, sqrtPriceX96 } = poolData;
+  const baseTick = Math.floor(Number(tick) / tickSpacing) * tickSpacing;
+  const currentSqrt = BigInt(sqrtPriceX96);
 
-  const maxAmountIn = BigInt(Math.floor((cVactDat / cpVact) * 1e8));
-  const scaledUSDCout = BigInt(Math.floor(cVactDat * 1e6));
-  const currentSqrt = BigInt(poolData.sqrtPriceX96);
+  const scaledUSDCout = BigInt(Math.floor(cVactDat * 1e6)); // 6 decimals
+  const maxAmountIn = BigInt(Math.floor((cVactDat / cpVact) * 1e8)); // 8 decimals
+  const maxAllowedFloat = Number(maxAmountIn) / 1e8;
 
   const sqrtDeltas = [1n, 5n, 10n, 50n];
 
@@ -191,46 +191,50 @@ async function checkFeeFreeRoute(cVactDat, cpVact) {
         amountOut: scaledUSDCout,
         sqrtPriceLimitX96,
       });
-    
+
       if (!quotedIn || quotedIn === 0n) {
         console.warn(`❌ Delta +${delta} returned null quote`);
         continue;
       }
-    
-      const amountInFloat = Number(quotedIn) / 1e8;
-      const impliedPrice = cVactDat / amountInFloat;
-      const maxAllowedFloat = Number(maxAmountIn) / 1e8;
 
-      const sqrtFloat = Number(currentSqrt) / 2 ** 96;
+      const amountInFloat = Number(quotedIn) / 1e8;
+      const impliedPrice = Number(cVactDat) / amountInFloat;
+
+      // ✅ This avoids BigInt-math mixing:
+      const currentSqrtFloat = Number(currentSqrt);
+      const denominator = Math.pow(2, 96);
+      const sqrtFloat = currentSqrtFloat / denominator;
       const currentPrice = (1 / (sqrtFloat ** 2)) * 1e2;
-      console.log(`💰 Current implied price: $${currentPrice.toFixed(2)} per CBBTC`);
+
+      console.log(`💰 Current pool price: $${currentPrice.toFixed(2)} per CBBTC`);
       console.log(`\n🔎 Delta +${delta}`);
       console.log(`   - Required amountIn: ${amountInFloat.toFixed(8)} CBBTC`);
       console.log(`   - Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
-      console.log(`   - Target output: ${cVactDat.toFixed(6)} USDC`);
+      console.log(`   - Target USDC Out: ${cVactDat.toFixed(6)} USDC`);
       console.log(`   - Max allowed: ${maxAllowedFloat.toFixed(8)} CBBTC`);
-    
+
       if (quotedIn <= maxAmountIn) {
-        console.log(`✅ Found Valid Route → Required: ${amountInFloat.toFixed(8)} CBBTC (<= ${maxAllowedFloat.toFixed(8)})`);
-        feeFreeRoutes.push({
+        console.log(`✅ Valid Route Found — Required: ${amountInFloat.toFixed(8)} CBBTC (<= ${maxAllowedFloat.toFixed(8)})`);
+        return [{
           poolAddress,
           fee,
           sqrtPriceLimitX96,
-          tick: poolData.tick,
+          tick,
           amountOut: scaledUSDCout,
           poolData,
           amountIn: quotedIn
-        });
-        break;
-      } else {
-        console.warn(`❌ Exceeds limit — Needed: ${amountInFloat.toFixed(8)}, Max: ${maxAllowedFloat.toFixed(8)}`);
+        }];
       }
+
+      console.warn(`❌ Exceeds max — Needed: ${amountInFloat.toFixed(8)}, Max: ${maxAllowedFloat.toFixed(8)}`);
+
     } catch (err) {
-      console.warn(`⚠️ Simulation failed at delta +${delta}: ${err.message}`);
+      console.warn(`⚠️ Simulation failed @ delta +${delta}: ${err.message}`);
     }
   }
 
-  return feeFreeRoutes;
+  console.error("❌ No valid fee-free route found.");
+  return [];
 }
 
 
@@ -548,8 +552,8 @@ const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 async function main() {
 
 
-  const cpVact = 104000.00;
-  const cVactDat = 2.08;
+  const cpVact = 105000.00;
+  const cVactDat = 2.1;
   const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
   console.log("\n🔍 Checking for a Fee-Free Quote...");
