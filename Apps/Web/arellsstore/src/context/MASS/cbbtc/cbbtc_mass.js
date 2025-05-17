@@ -102,7 +102,7 @@ async function checkPoolLiquidity(poolAddress) {
 
 let cachedQuoterABI = null;
 
-async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountOut, sqrtPriceLimitX96 }) {
+async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceLimitX96 }) {
   if (!cachedQuoterABI) {
     cachedQuoterABI = await fetchABI(QUOTER_ADDRESS);
     if (!cachedQuoterABI) {
@@ -113,102 +113,83 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountOut, sqrtPrice
 
   const iface = new ethers.Interface(cachedQuoterABI);
 
-  // Step 1: Simulate amountIn using quoteExactOutputSingle
-  const outputData = iface.encodeFunctionData("quoteExactOutputSingle", [{
+  const inputData = iface.encodeFunctionData("quoteExactInputSingle", [{
     tokenIn,
     tokenOut,
-    amount: amountOut,
+    amountIn,
     fee,
-    sqrtPriceLimitX96,
+    sqrtPriceLimitX96
   }]);
 
   try {
-    const result = await provider.call({ to: QUOTER_ADDRESS, data: outputData });
-    const [amountIn] = iface.decodeFunctionResult("quoteExactOutputSingle", result);
+    const result = await provider.call({ to: QUOTER_ADDRESS, data: inputData });
+    const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", result);
 
+    const amountOutFloat = Number(amountOut) / 1e6;
     const amountInFloat = Number(amountIn) / 1e8;
-    console.log(`🔁 Simulating to receive: ${(Number(amountOut) / 1e6).toFixed(6)} USDC`);
-    console.log(`🔁 Quoter Simulated amountIn: ${amountInFloat.toFixed(8)} CBBTC`);
+    const impliedPrice = amountOutFloat / amountInFloat;
 
-    // 🚫 Prevent dust-only swaps by confirming actual output
-    const inputData = iface.encodeFunctionData("quoteExactInputSingle", [{
-      tokenIn,
-      tokenOut,
-      amountIn,
-      fee,
-      sqrtPriceLimitX96,
-    }]);
-
-    const verifyResult = await provider.call({ to: QUOTER_ADDRESS, data: inputData });
-    const [simulatedOut] = iface.decodeFunctionResult("quoteExactInputSingle", verifyResult);
-
-    const outFloat = Number(simulatedOut) / 1e6;
-    if (outFloat < 0.000001) {
-      console.warn(`⚠️ Ignored: simulatedOut is ${outFloat} USDC (dust)`);
-      return null;
-    }
-
-    return amountIn;
+    return { amountOut, amountOutFloat, amountInFloat, impliedPrice };
   } catch (error) {
     console.warn("⚠️ QuoterV2 simulation failed:", error.reason || error.message || error);
     return null;
   }
 }
 
-async function checkFeeFreeRoute(cVactDat, cpVact) {
-  console.log("\n✅ STEP 2: Try manual sweep of upward ticks ONLY (no slot0, no deltas)");
+
+async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
+  console.log("\n✅ STEP 2: Try tick-only routing with fixed input (quoteExactInputSingle)");
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
 
   const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
   const fee = 500;
-  const poolAddress = await factory.getPool(USDC, CBBTC, fee);
+  const poolAddress = await factory.getPool(CBBTC, USDC, fee); // input: CBBTC
   if (poolAddress === ethers.ZeroAddress) return [];
 
   const poolABI = await fetchABI(poolAddress);
   if (!poolABI) return [];
   const pool = new ethers.Contract(poolAddress, poolABI, provider);
 
-  const scaledUSDCout = BigInt(Math.floor(cVactDat * 1e6));
-  const maxAmountIn = BigInt(Math.floor((cVactDat / cpVact) * 1e8));
-  const maxAllowedFloat = Number(maxAmountIn) / 1e8;
+  const scaledAmountIn = BigInt(Math.floor(amountInCBBTC * 1e8)); // CBBTC (8 decimals)
+  const targetUSDC = Number(cVactDat);
 
   const tickSpacing = await pool.tickSpacing();
-  const startTick = -887270; // MIN_TICK
-  const endTick = 887270;   // MAX_TICK
+  const MIN_TICK = -887272;
+  const MAX_TICK = 887272;
 
-  for (let tick = startTick; tick <= endTick; tick += tickSpacing) {
+  for (let tick = MIN_TICK; tick <= MAX_TICK; tick += tickSpacing) {
     try {
       const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(tick).toString());
 
-      const quotedIn = await simulateWithQuoter({
+      const quote = await simulateWithQuoter({
         tokenIn: CBBTC,
         tokenOut: USDC,
         fee,
-        amountOut: scaledUSDCout,
+        amountIn: scaledAmountIn,
         sqrtPriceLimitX96
       });
 
-      if (!quotedIn || quotedIn === 0n) continue;
+      if (!quote) continue;
 
-      const amountInFloat = Number(quotedIn) / 1e8;
-      const impliedPrice = Number(cVactDat) / amountInFloat;
+      const { amountOut, amountOutFloat, amountInFloat, impliedPrice } = quote;
 
       console.log(`\n🔎 Tick ${tick}`);
-      console.log(`   - Required amountIn: ${amountInFloat.toFixed(8)} CBBTC`);
+      console.log(`   - Simulated amountOut: ${amountOutFloat.toFixed(6)} USDC`);
+      console.log(`   - Input: ${amountInFloat.toFixed(8)} CBBTC`);
       console.log(`   - Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
-      console.log(`   - Max allowed: ${maxAllowedFloat.toFixed(8)} CBBTC`);
+      console.log(`   - Target: ${targetUSDC.toFixed(6)} USDC`);
 
-      if (quotedIn <= maxAmountIn) {
-        console.log(`✅ Valid Tick Found: ${tick} → amountIn ${amountInFloat.toFixed(8)} CBBTC`);
+      if (amountOutFloat >= targetUSDC) {
+        console.log(`✅ Valid Tick Found: ${tick} → ${amountOutFloat.toFixed(6)} USDC`);
         return [{
           poolAddress,
           fee,
           sqrtPriceLimitX96,
           tick,
-          amountOut: scaledUSDCout,
-          amountIn: quotedIn
+          amountIn: scaledAmountIn,
+          amountOut
         }];
       }
     } catch (err) {
@@ -216,9 +197,10 @@ async function checkFeeFreeRoute(cVactDat, cpVact) {
     }
   }
 
-  console.error("❌ No valid tick-based fee-free route found.");
+  console.error("❌ No valid tick-based route found.");
   return [];
 }
+
 
 
 
@@ -536,12 +518,13 @@ const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 async function main() {
 
 
-  const cpVact = 105000.00;
-  const cVactDat = 2.1;
+  const cpVact = 104000.00;
+  const amountInCBBTC = 0.00002;
+  const cVactDat = 2.08;
   const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
   console.log("\n🔍 Checking for a Fee-Free Quote...");
-  const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, cpVact);
+  const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, amountInCBBTC);
   if (feeFreeRoutes.length === 0) {
     console.error("❌ No route found");
     return;
