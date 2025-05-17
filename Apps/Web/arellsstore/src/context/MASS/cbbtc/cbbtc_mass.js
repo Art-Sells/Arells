@@ -102,6 +102,12 @@ async function checkPoolLiquidity(poolAddress) {
 
 let cachedQuoterABI = null;
 
+function getTickFromCpVact(cpVact) {
+  const sqrtRatio = Math.sqrt(cpVact);
+  const sqrtPriceX96 = BigInt(Math.floor(sqrtRatio * 2 ** 96));
+  return TickMath.getTickAtSqrtRatio(sqrtPriceX96);
+}
+
 async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceLimitX96 }) {
   if (!cachedQuoterABI) {
     cachedQuoterABI = await fetchABI(QUOTER_ADDRESS);
@@ -131,35 +137,35 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceL
 
     return { amountOut, amountOutFloat, amountInFloat, impliedPrice };
   } catch (error) {
-    console.warn("⚠️ QuoterV2 simulation failed:", error.reason || error.message || error);
+    console.warn(`⚠️ QuoterV2 simulation failed:`, error.message || error);
     return null;
   }
 }
 
-
-async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
-  console.log("\n✅ STEP 2: Try tick-only routing with fixed input (quoteExactInputSingle)");
+async function checkFeeFreeRoute(cVactDat, amountInCBBTC, cpVact) {
+  console.log("\n✅ STEP 2: Try tick-only routing around cpVact");
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
 
   const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
   const fee = 500;
-  const poolAddress = await factory.getPool(CBBTC, USDC, fee); // input: CBBTC
+  const poolAddress = await factory.getPool(CBBTC, USDC, fee);
   if (poolAddress === ethers.ZeroAddress) return [];
 
   const poolABI = await fetchABI(poolAddress);
   if (!poolABI) return [];
   const pool = new ethers.Contract(poolAddress, poolABI, provider);
 
-  const scaledAmountIn = BigInt(Math.floor(amountInCBBTC * 1e8)); // CBBTC (8 decimals)
-  const targetUSDC = Number(cVactDat);
+  const scaledAmountIn = BigInt(Math.floor(amountInCBBTC * 1e8)); // 8 decimals for CBBTC
+  const tickSpacing = Number(await pool.tickSpacing());
 
-  const tickSpacing = await pool.tickSpacing();
-  const MIN_TICK = -887272;
-  const MAX_TICK = 887272;
+  const centerTick = getTickFromCpVact(cpVact);
+  console.log(`🎯 Center Tick from cpVact $${cpVact}: ${centerTick}`);
 
-  for (let tick = MIN_TICK; tick <= MAX_TICK; tick += tickSpacing) {
+  for (let i = -3; i <= 3; i++) {
+    const tick = centerTick + i * tickSpacing;
+
     try {
       const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(tick).toString());
 
@@ -179,9 +185,9 @@ async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
       console.log(`   - Simulated amountOut: ${amountOutFloat.toFixed(6)} USDC`);
       console.log(`   - Input: ${amountInFloat.toFixed(8)} CBBTC`);
       console.log(`   - Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
-      console.log(`   - Target: ${targetUSDC.toFixed(6)} USDC`);
+      console.log(`   - Target: ${cVactDat.toFixed(6)} USDC`);
 
-      if (amountOutFloat >= targetUSDC) {
+      if (amountOutFloat >= cVactDat) {
         console.log(`✅ Valid Tick Found: ${tick} → ${amountOutFloat.toFixed(6)} USDC`);
         return [{
           poolAddress,
@@ -200,7 +206,6 @@ async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
   console.error("❌ No valid tick-based route found.");
   return [];
 }
-
 
 
 
