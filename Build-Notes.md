@@ -20,7 +20,7 @@
 - - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
 
 ### Online:
-- Establish backgroun useEffects order
+- Establish background useEffects order
 - - 1. HPM: Fetch Bitcoin Price
 - - 2. HPM: Fetch wallet Balances & update aBTC
 - - 3. HPM: Fetch Vatop Group/save Vatop Group
@@ -33,7 +33,7 @@
 
 ## After Test
 - Remove P/K & P/K Test from e en vee (check decoding proces (in console.logs) for each individual account to prevent external P/K decoding (MASSTester.tsx and HPMTester.tsx?))
-
+- CoinGecko API for Chart
 
 ### Account
 - "Import Bitcoin to ensure your investments never lose value"
