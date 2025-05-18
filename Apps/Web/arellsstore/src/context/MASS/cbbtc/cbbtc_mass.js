@@ -199,6 +199,72 @@ console.error(`❌ No valid route found above cpVact $${cpVact}`);
 return [];
 }
 
+function encodeSqrtPriceX96FromCpVact(cpVactRaw) {
+  const cpVactNum = Number(cpVactRaw);
+  console.log(`🧪 encodeSqrtPriceX96FromCpVact input:`, cpVactRaw);
+  if (!cpVactNum || isNaN(cpVactNum)) {
+    throw new Error(`❌ Invalid cpVact value: ${cpVactRaw}`);
+  }
+
+  const multiplied = cpVactNum * 1e6;
+  if (isNaN(multiplied) || !isFinite(multiplied)) {
+    throw new Error(`❌ cpVact multiplication failed: ${cpVactNum} * 1e6 = ${multiplied}`);
+  }
+
+  const scaled = Math.floor(multiplied);
+  console.log(`🧪 Final scaled value: ${scaled}`);
+
+  if (!Number.isInteger(scaled)) {
+    throw new Error(`❌ Scaled value is not integer: ${scaled}`);
+  }
+
+  const numerator = JSBI.BigInt(scaled);
+  const denominator = JSBI.BigInt(1e6);
+
+  const sqrtPriceX96 = encodeSqrtRatioX96(numerator, denominator);
+  console.log(`🔢 Forced sqrtPriceX96 = ${sqrtPriceX96.toString()}`);
+  return sqrtPriceX96;
+}
+async function simulateWithQuoterSingle({ amountOut, cpVact }) {
+
+  console.log(`🧪 simulateWithQuoterSingle → cpVact:`, cpVact);
+  if (!cachedQuoterABI) {
+    cachedQuoterABI = await fetchABI(QUOTER_ADDRESS);
+    if (!cachedQuoterABI) {
+      console.warn("❌ Failed to fetch Quoter ABI.");
+      return null;
+    }
+  }
+
+  const iface = new ethers.Interface(cachedQuoterABI);
+
+  const sqrtPriceLimitX96 = encodeSqrtPriceX96FromCpVact(cpVact);
+
+  const input = {
+    tokenIn: CBBTC,
+    tokenOut: USDC,
+    fee: 500,
+    amountOut,
+    sqrtPriceLimitX96
+  };
+
+  const inputData = iface.encodeFunctionData("quoteExactOutputSingle", [input]);
+
+  try {
+    const result = await provider.call({ to: QUOTER_ADDRESS, data: inputData });
+    const [amountIn] = iface.decodeFunctionResult("quoteExactOutputSingle", result);
+
+    const amountOutFloat = Number(amountOut) / 1e6;
+    const amountInFloat = Number(amountIn) / 1e8;
+    const impliedPrice = amountOutFloat / amountInFloat;
+
+    return { amountIn, amountOutFloat, amountInFloat, impliedPrice };
+  } catch (err) {
+    console.warn("⚠️ quoteExactOutputSingle failed:", err.message);
+    return null;
+  }
+}
+
 
 
 
@@ -515,18 +581,34 @@ const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
 
-
-  const cpVact = 104000.00;
-  const amountInCBBTC = 0.00002;
   const cVactDat = 2.08;
-  const customPrivateKey = process.env.PRIVATE_KEY_TEST;
+  const cpVact = 104000;
+  console.log("🧪 typeof cpVact:", typeof cpVact, cpVact);
+  const amountOut = BigInt(Math.floor(cVactDat * 1e6)); // 2.08 USDC
 
-  console.log("\n🔍 Checking for a Fee-Free Quote...");
-  const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, cpVact);
-  if (feeFreeRoutes.length === 0) {
-    console.error("❌ No route found");
-    return;
+  console.log(`🧪 Testing simulateWithQuoterSingle with cpVact: ${cpVact}`);
+  const result = await simulateWithQuoterSingle({ amountOut, cpVact: Number(cpVact) });
+
+  if (!result) {
+    console.log("❌ No result from Quoter.");
+  } else {
+    const { amountInFloat, amountOutFloat, impliedPrice } = result;
+    console.log(`✅ Result: ${amountOutFloat.toFixed(6)} USDC for ${amountInFloat.toFixed(8)} CBBTC`);
+    console.log(`📈 Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
   }
+
+
+  // const cpVact = 104000.00;
+  // const amountInCBBTC = 0.00002;
+  // const cVactDat = 2.08;
+  // const customPrivateKey = process.env.PRIVATE_KEY_TEST;
+
+  // console.log("\n🔍 Checking for a Fee-Free Quote...");
+  // const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, cpVact);
+  // if (feeFreeRoutes.length === 0) {
+  //   console.error("❌ No route found");
+  //   return;
+  // }
 
 //  console.log("Running executeSupplication...");
 //  await executeSupplication(cVactDat, cpVact, customPrivateKey);
