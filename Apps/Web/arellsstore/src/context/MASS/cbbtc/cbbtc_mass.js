@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
 import { solidityPack } from "ethers";
-import JSBI from 'jsbi';
-import { encodeSqrtRatioX96 } from "@uniswap/v3-sdk";
 
 
 
@@ -104,27 +102,7 @@ async function checkPoolLiquidity(poolAddress) {
 
 let cachedQuoterABI = null;
 
-function getTickFromCpVact(cpVact) {
-  if (!cpVact || isNaN(cpVact)) {
-    throw new Error(`Invalid cpVact value: ${cpVact}`);
-  }
-
-  console.log(`📌 Received cpVact: ${cpVact}`);
-  const scaled = Math.floor(cpVact * 1e6);
-  if (scaled < 10000) {
-    throw new Error(`❌ cpVact too low (${cpVact}) — did you mean 104000 instead of 0.00002?`);
-  }
-
-  const numerator = JSBI.BigInt(scaled);
-  const denominator = JSBI.BigInt(1e6);
-
-  const sqrtPriceX96 = encodeSqrtRatioX96(numerator, denominator);
-  console.log(`🔢 cpVact = ${cpVact}, sqrtPriceX96 = ${sqrtPriceX96.toString()}`);
-
-  return TickMath.getTickAtSqrtRatio(sqrtPriceX96);
-}
-
-async function simulateWithQuoterPath({ path, amountOut }) {
+async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceLimitX96 }) {
   if (!cachedQuoterABI) {
     cachedQuoterABI = await fetchABI(QUOTER_ADDRESS);
     if (!cachedQuoterABI) {
@@ -134,135 +112,94 @@ async function simulateWithQuoterPath({ path, amountOut }) {
   }
 
   const iface = new ethers.Interface(cachedQuoterABI);
-  const inputData = iface.encodeFunctionData("quoteExactOutput", [path, amountOut]);
+
+  const inputData = iface.encodeFunctionData("quoteExactInputSingle", [{
+    tokenIn,
+    tokenOut,
+    amountIn,
+    fee,
+    sqrtPriceLimitX96
+  }]);
 
   try {
     const result = await provider.call({ to: QUOTER_ADDRESS, data: inputData });
-    const [amountIn] = iface.decodeFunctionResult("quoteExactOutput", result);
+    const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", result);
 
     const amountOutFloat = Number(amountOut) / 1e6;
     const amountInFloat = Number(amountIn) / 1e8;
     const impliedPrice = amountOutFloat / amountInFloat;
 
-    return { amountIn, amountOutFloat, amountInFloat, impliedPrice };
-  } catch (err) {
-    console.warn("⚠️ quoteExactOutput failed:", err.message);
+    return { amountOut, amountOutFloat, amountInFloat, impliedPrice };
+  } catch (error) {
+    console.warn(`⚠️ QuoterV2 simulation failed at tick ${tick}:`, error);
     return null;
   }
 }
 
-async function checkFeeFreeRoute(cVactDat, cpVact) {
-  console.log("✅ STEP 1: Try no-tick simulation with quoteExactOutput");
+
+async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
+  console.log("\n✅ STEP 2: Try tick-only routing with fixed input (quoteExactInputSingle)");
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
 
   const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
   const fee = 500;
-  const poolAddress = await factory.getPool(CBBTC, USDC, fee);
+  const poolAddress = await factory.getPool(CBBTC, USDC, fee); // input: CBBTC
   if (poolAddress === ethers.ZeroAddress) return [];
 
-  const path = ethers.solidityPacked(
-    ["address", "uint24", "address"],
-    [USDC, fee, CBBTC]
-  );
+  const poolABI = await fetchABI(poolAddress);
+  if (!poolABI) return [];
+  const pool = new ethers.Contract(poolAddress, poolABI, provider);
 
-  const maxAllowedCBBTC = cVactDat / cpVact;
+  const scaledAmountIn = BigInt(Math.floor(amountInCBBTC * 1e8)); // CBBTC (8 decimals)
+  const targetUSDC = Number(cVactDat);
 
-for (let i = 0; i <= 20; i++) {
-  const candidateUSDC = cVactDat - i * 0.01;
-  const amountOutUSDC = BigInt(Math.floor(candidateUSDC * 1e6));
+  const MIN_TICK = -887272;
+  const MAX_TICK = 887272;
 
-  const quote = await simulateWithQuoterPath({ path, amountOut: amountOutUSDC });
-  if (!quote) continue;
+  const tickSpacing = Number(await pool.tickSpacing());
 
-  const { amountIn, amountOutFloat, amountInFloat, impliedPrice } = quote;
+  for (let tick = MIN_TICK; tick <= MAX_TICK; tick += tickSpacing) {
+    try {
+      const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(tick).toString());
 
-  console.log(`\n🔍 Path Simulation`);
-  console.log(`   - Required amountIn: ${amountInFloat.toFixed(8)} CBBTC`);
-  console.log(`   - Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
-  console.log(`   - Target: ${amountOutFloat.toFixed(6)} USDC`);
+      const quote = await simulateWithQuoter({
+        tokenIn: CBBTC,
+        tokenOut: USDC,
+        fee,
+        amountIn: scaledAmountIn,
+        sqrtPriceLimitX96
+      });
 
-  if (impliedPrice >= cpVact && amountInFloat <= maxAllowedCBBTC) {
-    console.log(`✅ Valid Route: Implied $${impliedPrice.toFixed(2)} ≥ cpVact $${cpVact}`);
-    return [{
-      poolAddress,
-      fee,
-      path,
-      amountIn,
-      amountOut: amountOutUSDC
-    }];
-  }
-}
+      if (!quote) continue;
 
-console.error(`❌ No valid route found above cpVact $${cpVact}`);
-return [];
-}
+      const { amountOut, amountOutFloat, amountInFloat, impliedPrice } = quote;
 
-function encodeSqrtPriceX96FromCpVact(cpVactRaw) {
-  const cpVactNum = Number(cpVactRaw);
-  console.log(`🧪 encodeSqrtPriceX96FromCpVact input:`, cpVactRaw);
-  if (!cpVactNum || isNaN(cpVactNum)) {
-    throw new Error(`❌ Invalid cpVact value: ${cpVactRaw}`);
-  }
+      console.log(`\n🔎 Tick ${tick}`);
+      console.log(`   - Simulated amountOut: ${amountOutFloat.toFixed(6)} USDC`);
+      console.log(`   - Input: ${amountInFloat.toFixed(8)} CBBTC`);
+      console.log(`   - Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
+      console.log(`   - Target: ${targetUSDC.toFixed(6)} USDC`);
 
-  const multiplied = cpVactNum * 1e6;
-  if (isNaN(multiplied) || !isFinite(multiplied)) {
-    throw new Error(`❌ cpVact multiplication failed: ${cpVactNum} * 1e6 = ${multiplied}`);
-  }
-
-  const scaled = Math.floor(multiplied);
-  console.log(`🧪 Final scaled value: ${scaled}`);
-
-  if (!Number.isInteger(scaled)) {
-    throw new Error(`❌ Scaled value is not integer: ${scaled}`);
-  }
-
-  const numerator = JSBI.BigInt(scaled);
-  const denominator = JSBI.BigInt(1e6);
-
-  const sqrtPriceX96 = encodeSqrtRatioX96(numerator, denominator);
-  console.log(`🔢 Forced sqrtPriceX96 = ${sqrtPriceX96.toString()}`);
-  return sqrtPriceX96;
-}
-async function simulateWithQuoterSingle({ amountOut, cpVact }) {
-
-  console.log(`🧪 simulateWithQuoterSingle → cpVact:`, cpVact);
-  if (!cachedQuoterABI) {
-    cachedQuoterABI = await fetchABI(QUOTER_ADDRESS);
-    if (!cachedQuoterABI) {
-      console.warn("❌ Failed to fetch Quoter ABI.");
-      return null;
+      if (amountOutFloat >= targetUSDC) {
+        console.log(`✅ Valid Tick Found: ${tick} → ${amountOutFloat.toFixed(6)} USDC`);
+        return [{
+          poolAddress,
+          fee,
+          sqrtPriceLimitX96,
+          tick,
+          amountIn: scaledAmountIn,
+          amountOut
+        }];
+      }
+    } catch (err) {
+      console.warn(`⚠️ Error at tick ${tick}: ${err.message}`);
     }
   }
 
-  const iface = new ethers.Interface(cachedQuoterABI);
-
-  const sqrtPriceLimitX96 = encodeSqrtPriceX96FromCpVact(cpVact);
-
-  const input = {
-    tokenIn: CBBTC,
-    tokenOut: USDC,
-    fee: 500,
-    amountOut,
-    sqrtPriceLimitX96
-  };
-
-  const inputData = iface.encodeFunctionData("quoteExactOutputSingle", [input]);
-
-  try {
-    const result = await provider.call({ to: QUOTER_ADDRESS, data: inputData });
-    const [amountIn] = iface.decodeFunctionResult("quoteExactOutputSingle", result);
-
-    const amountOutFloat = Number(amountOut) / 1e6;
-    const amountInFloat = Number(amountIn) / 1e8;
-    const impliedPrice = amountOutFloat / amountInFloat;
-
-    return { amountIn, amountOutFloat, amountInFloat, impliedPrice };
-  } catch (err) {
-    console.warn("⚠️ quoteExactOutputSingle failed:", err.message);
-    return null;
-  }
+  console.error("❌ No valid tick-based route found.");
+  return [];
 }
 
 
@@ -581,34 +518,17 @@ const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
 
+
+  const amountInCBBTC = 0.00002;
   const cVactDat = 2.08;
-  const cpVact = 104000;
-  console.log("🧪 typeof cpVact:", typeof cpVact, cpVact);
-  const amountOut = BigInt(Math.floor(cVactDat * 1e6)); // 2.08 USDC
+  const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
-  console.log(`🧪 Testing simulateWithQuoterSingle with cpVact: ${cpVact}`);
-  const result = await simulateWithQuoterSingle({ amountOut, cpVact: Number(cpVact) });
-
-  if (!result) {
-    console.log("❌ No result from Quoter.");
-  } else {
-    const { amountInFloat, amountOutFloat, impliedPrice } = result;
-    console.log(`✅ Result: ${amountOutFloat.toFixed(6)} USDC for ${amountInFloat.toFixed(8)} CBBTC`);
-    console.log(`📈 Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
+  console.log("\n🔍 Checking for a Fee-Free Quote...");
+  const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, amountInCBBTC);
+  if (feeFreeRoutes.length === 0) {
+    console.error("❌ No route found");
+    return;
   }
-
-
-  // const cpVact = 104000.00;
-  // const amountInCBBTC = 0.00002;
-  // const cVactDat = 2.08;
-  // const customPrivateKey = process.env.PRIVATE_KEY_TEST;
-
-  // console.log("\n🔍 Checking for a Fee-Free Quote...");
-  // const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, cpVact);
-  // if (feeFreeRoutes.length === 0) {
-  //   console.error("❌ No route found");
-  //   return;
-  // }
 
 //  console.log("Running executeSupplication...");
 //  await executeSupplication(cVactDat, cpVact, customPrivateKey);
