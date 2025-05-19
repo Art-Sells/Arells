@@ -116,9 +116,9 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceL
   const inputData = iface.encodeFunctionData("quoteExactInputSingle", [{
     tokenIn,
     tokenOut,
-    amountIn,
     fee,
-    sqrtPriceLimitX96
+    amountIn: BigInt(amountIn.toString()),                // ✅ Safe BigInt conversion
+    sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96.toString()) // ✅ Safe BigInt conversion
   }]);
 
   try {
@@ -131,13 +131,15 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceL
 
     return { amountOut, amountOutFloat, amountInFloat, impliedPrice };
   } catch (error) {
-    console.warn(`⚠️ QuoterV2 simulation failed at tick ${tick}:`, error);
+    console.warn(`⚠️ QuoterV2 simulation failed with sqrtPriceLimitX96 = ${sqrtPriceLimitX96.toString()}:`, error);
     return null;
   }
 }
 
 
 async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
+  const MIN_SQRT_RATIO = 4295128739n;
+const MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342n;
   console.log("\n✅ STEP 2: Try tick-only routing with fixed input (quoteExactInputSingle)");
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
@@ -152,18 +154,24 @@ async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
   if (!poolABI) return [];
   const pool = new ethers.Contract(poolAddress, poolABI, provider);
 
-  const scaledAmountIn = BigInt(Math.floor(amountInCBBTC * 1e8)); // CBBTC (8 decimals)
+  const scaledAmountIn = BigInt((amountInCBBTC * 1e8).toFixed(0));
   const targetUSDC = Number(cVactDat);
 
-  const MIN_TICK = -887272;
-  const MAX_TICK = 887272;
-
+  const currentTickBigInt = (await pool.slot0())[1];
+  const currentTick = Number(currentTickBigInt); // ✅ convert once
   const tickSpacing = Number(await pool.tickSpacing());
+  
+  const MIN_TICK = currentTick - tickSpacing * 50;
+  const MAX_TICK = currentTick + tickSpacing * 50;
 
   for (let tick = MIN_TICK; tick <= MAX_TICK; tick += tickSpacing) {
     try {
-      const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(tick).toString());
-
+      const sqrtRaw = TickMath.getSqrtRatioAtTick(tick);
+      const sqrtPriceLimitX96 = BigInt(sqrtRaw.toString());
+      if (sqrtPriceLimitX96 < MIN_SQRT_RATIO || sqrtPriceLimitX96 > MAX_SQRT_RATIO) {
+        console.warn(`❌ sqrtPriceLimitX96 out of bounds: ${sqrtPriceLimitX96.toString()}`);
+        continue; // skip to next tick
+      }
       const quote = await simulateWithQuoter({
         tokenIn: CBBTC,
         tokenOut: USDC,
@@ -176,14 +184,19 @@ async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
 
       const { amountOut, amountOutFloat, amountInFloat, impliedPrice } = quote;
 
+      // Decode sqrtPriceX96 into USD price for logging
+      const sqrtPrice = Number(sqrtPriceLimitX96) / 2 ** 96;
+      const priceUSD = (sqrtPrice ** 2) * 1e2;
+      
       console.log(`\n🔎 Tick ${tick}`);
       console.log(`   - Simulated amountOut: ${amountOutFloat.toFixed(6)} USDC`);
       console.log(`   - Input: ${amountInFloat.toFixed(8)} CBBTC`);
       console.log(`   - Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
-      console.log(`   - Target: ${targetUSDC.toFixed(6)} USDC`);
+      console.log(`   - Decoded sqrtPrice: $${priceUSD.toFixed(2)} per CBBTC`);
+      console.log(`   - Target: ≤ ${targetUSDC.toFixed(6)} USDC`);
 
-      if (amountOutFloat >= targetUSDC) {
-        console.log(`✅ Valid Tick Found: ${tick} → ${amountOutFloat.toFixed(6)} USDC`);
+      if (amountOutFloat <= targetUSDC) {
+        console.log(`✅ MATCH: ${amountOutFloat.toFixed(6)} USDC ≤ ${targetUSDC}`);
         return [{
           poolAddress,
           fee,
