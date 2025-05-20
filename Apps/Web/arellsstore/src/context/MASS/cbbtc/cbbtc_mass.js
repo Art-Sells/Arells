@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
 import { solidityPack } from "ethers";
+import JSBI from 'jsbi';
 
 
 
@@ -100,25 +101,22 @@ async function checkPoolLiquidity(poolAddress) {
 
 
 
+// Minimal working version from April 30 that successfully transacted below pool price
+
 let cachedQuoterABI = null;
 
 async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceLimitX96 }) {
   if (!cachedQuoterABI) {
     cachedQuoterABI = await fetchABI(QUOTER_ADDRESS);
-    if (!cachedQuoterABI) {
-      console.warn("❌ Failed to fetch Quoter ABI.");
-      return null;
-    }
   }
 
   const iface = new ethers.Interface(cachedQuoterABI);
-
   const inputData = iface.encodeFunctionData("quoteExactInputSingle", [{
     tokenIn,
     tokenOut,
     fee,
-    amountIn: BigInt(amountIn.toString()),                // ✅ Safe BigInt conversion
-    sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96.toString()) // ✅ Safe BigInt conversion
+    amountIn: BigInt(amountIn.toString()),
+    sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96.toString())
   }]);
 
   try {
@@ -130,18 +128,14 @@ async function simulateWithQuoter({ tokenIn, tokenOut, fee, amountIn, sqrtPriceL
     const impliedPrice = amountOutFloat / amountInFloat;
 
     return { amountOut, amountOutFloat, amountInFloat, impliedPrice };
-  } catch (error) {
-    console.warn(`⚠️ QuoterV2 simulation failed at sqrtPriceLimitX96 = ${sqrtPriceLimitX96.toString()}: ${error.reason || error.message}`);
+  } catch (e) {
+    console.warn(`⚠️ QuoterV2 simulation failed at sqrtPriceLimitX96 = ${sqrtPriceLimitX96}: SPL`);
     return null;
   }
 }
 
-
 async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
-  const MIN_SQRT_RATIO = 4295128739n;
-  const MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342n;
-
-  console.log("\n✅ STEP 2: Try tick-only routing with fixed input (quoteExactInputSingle)");
+  console.log("\n✅ STEP 2: Try sqrtPriceX96 deltas BELOW current pool price");
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
@@ -155,53 +149,39 @@ async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
   if (!poolABI) return [];
   const pool = new ethers.Contract(poolAddress, poolABI, provider);
 
-  const scaledAmountIn = BigInt((amountInCBBTC * 1e8).toFixed(0));
+  const scaledAmountIn = BigInt((amountInCBBTC * 1e8).toFixed(0)); // 8 decimals for CBBTC
   const targetUSDC = Number(cVactDat);
 
-  const slot0 = await pool.slot0();
-  const currentTick = Number(slot0[1]);
-  const currentSqrtPriceX96 = BigInt(slot0[0].toString()); // current sqrtPriceX96
+  const { sqrtPriceX96 } = await pool.slot0();
+  const basePriceX96 = BigInt(sqrtPriceX96.toString());
 
-  const tickSpacing = Number(await pool.tickSpacing());
-  
-  // Focus narrowly just *below* current tick
-  const MIN_TICK = currentTick - tickSpacing * 10;
-  const MAX_TICK = currentTick - tickSpacing * 1;
+  const deltas = [1n, 5n, 10n, 25n, 50n, 100n, 250n, 500n]; // try lowering price gradually
+  const MIN_SQRT_RATIO = 4295128739n;
 
-  for (let tick = MIN_TICK; tick <= MAX_TICK; tick += tickSpacing) {
+  for (const delta of deltas) {
+    const sqrtPriceLimitX96 = basePriceX96 - delta;
+    if (sqrtPriceLimitX96 < MIN_SQRT_RATIO) continue;
+
     try {
-      const sqrtRaw = TickMath.getSqrtRatioAtTick(tick);
-      const sqrtPriceLimitX96 = BigInt(sqrtRaw.toString());
-
-      if (
-        sqrtPriceLimitX96 > currentSqrtPriceX96 ||
-        sqrtPriceLimitX96 < MIN_SQRT_RATIO ||
-        sqrtPriceLimitX96 > MAX_SQRT_RATIO
-      ) {
-        continue; // ✅ Skip if it's above current pool price or out of range
-      }
-
       const quote = await simulateWithQuoter({
         tokenIn: CBBTC,
         tokenOut: USDC,
         fee,
         amountIn: scaledAmountIn,
-        sqrtPriceLimitX96,
+        sqrtPriceLimitX96
       });
 
       if (!quote) continue;
 
-      const { amountOut, amountOutFloat, amountInFloat, impliedPrice } = quote;
+      const { amountOutFloat, amountInFloat, impliedPrice } = quote;
 
-      const sqrtPrice = Number(sqrtPriceLimitX96) / 2 ** 96;
-      const priceUSD = (sqrtPrice ** 2) * 1e2;
+      const sqrtFloat = Number(sqrtPriceLimitX96) / 2 ** 96;
+      const priceUSD = (sqrtFloat ** 2) * 1e2;
 
-      console.log(`\n🔎 Tick ${tick}`);
+      console.log(`\n🔎 Δ-${delta.toString()}`);
       console.log(`   - Simulated amountOut: ${amountOutFloat.toFixed(6)} USDC`);
-      console.log(`   - Input: ${amountInFloat.toFixed(8)} CBBTC`);
-      console.log(`   - Implied price: $${impliedPrice.toFixed(2)} per CBBTC`);
-      console.log(`   - Decoded sqrtPrice: $${priceUSD.toFixed(2)} per CBBTC`);
-      console.log(`   - Target: ≤ ${targetUSDC.toFixed(6)} USDC`);
+      console.log(`   - Implied price: $${impliedPrice.toFixed(2)} | sqrtPrice: $${priceUSD.toFixed(2)}`);
+      console.log(`   - Target max: ${targetUSDC.toFixed(6)} USDC`);
 
       if (amountOutFloat <= targetUSDC) {
         console.log(`✅ MATCH: ${amountOutFloat.toFixed(6)} USDC ≤ ${targetUSDC}`);
@@ -209,19 +189,136 @@ async function checkFeeFreeRoute(cVactDat, amountInCBBTC) {
           poolAddress,
           fee,
           sqrtPriceLimitX96,
-          tick,
+          tick: null,
           amountIn: scaledAmountIn,
-          amountOut
+          amountOut: quote.amountOut
         }];
       }
     } catch (err) {
-      console.warn(`⚠️ Error at tick ${tick}: ${err.message}`);
+      if (err.reason === 'SPL') {
+        console.warn(`⚠️ QuoterV2 simulation failed at sqrtPriceLimitX96 = ${sqrtPriceLimitX96}: SPL`);
+      } else {
+        console.warn(`⚠️ Simulation error at delta -${delta}: ${err.message}`);
+      }
     }
   }
 
-  console.error("❌ No valid tick-based route found.");
+  console.error("❌ No valid delta-based route found.");
   return [];
 }
+
+
+function getImpliedPrice(sqrtX96) {
+  const numerator = JSBI.multiply(sqrtX96, sqrtX96); // sqrtX96^2
+  const denominator = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(192)); // 2^192
+  const price = JSBI.toNumber(numerator) / JSBI.toNumber(denominator); // convert to float
+  return price * 1e2; // adjust for 18 decimals
+}
+
+async function checkLowerImpliedPrice() {
+  console.log(`\n✅ Checking for lower implied price than pool...`);
+
+  const factoryABI = await fetchABI(FACTORY_ADDRESS);
+  if (!factoryABI) return;
+
+  const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
+  const fee = 500;
+  const poolAddress = await factory.getPool(CBBTC, USDC, fee);
+  if (poolAddress === ethers.ZeroAddress) return;
+
+  const poolABI = await fetchABI(poolAddress);
+  if (!poolABI) return;
+  const pool = new ethers.Contract(poolAddress, poolABI, provider);
+
+  const slot0 = await pool.slot0();
+  const currentSqrt = BigInt(slot0[0].toString());
+  const currentJSBI = JSBI.BigInt(currentSqrt.toString());
+  const baseImplied = getImpliedPrice(currentJSBI);
+
+  console.log(`📈 Current implied price: $${baseImplied.toFixed(6)}`);
+  console.log(`ℹ️  Current sqrtPriceX96: ${currentSqrt}`);
+
+  const MIN_SQRT_RATIO = 4295128739n;
+  console.log(`ℹ️  MIN_SQRT_RATIO: ${MIN_SQRT_RATIO}`);
+
+  const deltas = [
+    10_000n, 25_000n, 50_000n, 100_000n,
+    250_000n, 500_000n, 1_000_000n
+  ];
+  let foundLower = false;
+
+  for (const delta of deltas) {
+    const testSqrt = currentSqrt - delta;
+    if (testSqrt < MIN_SQRT_RATIO) {
+      console.warn(`⚠️ Δ-${delta}: sqrtPriceX96 = ${testSqrt} < MIN_SQRT_RATIO — skipping`);
+      continue;
+    }
+
+    const testJSBI = JSBI.BigInt(testSqrt.toString());
+    const implied = getImpliedPrice(testJSBI);
+
+    if (implied < baseImplied) {
+      const diff = baseImplied - implied;
+      console.log(`✅ LOWER FOUND at Δ-${delta}: $${implied.toPrecision(18)} < $${baseImplied.toPrecision(18)} (Δ = ${diff.toExponential(12)})`);
+      foundLower = true;
+    } else {
+      console.log(`🔎 Δ-${delta}: Implied price = $${implied.toPrecision(18)} | sqrtPriceX96 = ${testSqrt}`);
+    }
+  }
+
+  if (!foundLower) {
+    console.error(`❌ No lower implied price found.`);
+  } else {
+    console.log(`✅ Found at least one lower implied price.`);
+  }
+
+  // =========================
+  // ⚠️ Unsafe Directional Test
+  // =========================
+  console.log(`\n⚠️ Trying unsafe brute-force sqrtPriceLimitX96 deltas (directional trick)...`);
+
+  const step = 10n;
+  const maxAttempts = 1000n;
+  const amountIn = 100000n; // 0.001 CBBTC (8 decimals)
+
+  let found = false;
+
+  for (let i = 1n; i <= maxAttempts; i++) {
+    const testSqrt = currentSqrt - (step * i);
+    if (testSqrt < MIN_SQRT_RATIO) break;
+
+    const simulation = await simulateWithQuoter({
+      tokenIn: CBBTC,
+      tokenOut: USDC,
+      fee,
+      amountIn,
+      sqrtPriceLimitX96: testSqrt
+    });
+
+    if (simulation && simulation.amountOutFloat > 0) {
+      console.log(`🔥 FORCED ↓ sqrtPriceX96 = ${testSqrt}`);
+      console.log(`   → Implied Price: $${simulation.impliedPrice.toFixed(6)}`);
+      console.log(`   → amountIn: ${simulation.amountInFloat} CBBTC`);
+      console.log(`   → amountOut: ${simulation.amountOutFloat} USDC`);
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    console.error(`🚫 No forced lower sqrtPriceLimitX96 succeeded.`);
+  }
+}
+
+function getImpliedPrice(sqrtX96) {
+  const numerator = JSBI.multiply(sqrtX96, sqrtX96);
+  const denominator = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(192));
+  const price = JSBI.toNumber(numerator) / JSBI.toNumber(denominator);
+  return price * 1e2;
+}
+
+
+
 
 
 
@@ -539,17 +636,19 @@ const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
 
+  await checkLowerImpliedPrice();
+
 
   const amountInCBBTC = 0.00002;
   const cVactDat = 2.08;
   const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
-  console.log("\n🔍 Checking for a Fee-Free Quote...");
-  const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, amountInCBBTC);
-  if (feeFreeRoutes.length === 0) {
-    console.error("❌ No route found");
-    return;
-  }
+  // console.log("\n🔍 Checking for a Fee-Free Quote...");
+  // const feeFreeRoutes = await checkFeeFreeRoute(cVactDat, amountInCBBTC);
+  // if (feeFreeRoutes.length === 0) {
+  //   console.error("❌ No route found");
+  //   return;
+  // }
 
 //  console.log("Running executeSupplication...");
 //  await executeSupplication(cVactDat, cpVact, customPrivateKey);
