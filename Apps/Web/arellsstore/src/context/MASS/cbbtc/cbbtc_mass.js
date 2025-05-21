@@ -101,8 +101,6 @@ async function checkPoolLiquidity(poolAddress) {
 
 
 
-// Minimal working version from April 30 that successfully transacted below pool price
-
 let cachedQuoterABI = null;
 
 async function simulateWithQuoterOutput({ tokenIn, tokenOut, fee, amountOut }) {
@@ -117,7 +115,7 @@ async function simulateWithQuoterOutput({ tokenIn, tokenOut, fee, amountOut }) {
     tokenOut,
     fee,
     amount: BigInt(amountOut.toString()),
-    sqrtPriceLimitX96: 0n // ← allow full pathing
+    sqrtPriceLimitX96: 0n // allow full pathing
   }]);
 
   try {
@@ -130,57 +128,64 @@ async function simulateWithQuoterOutput({ tokenIn, tokenOut, fee, amountOut }) {
 
     return { amountIn, amountInFloat, amountOutFloat, impliedPrice };
   } catch (e) {
-    console.warn(`⚠️ QuoterV2 quoteExactOutputSingle failed: ${e.reason || e.message}`);
     return null;
   }
 }
 
-async function checkFeeFreeRoute(cVactDat, maxInputCBBTC) {
-  console.log("\n✅ STEP: quoteExactOutputSingle to find required CBBTC");
+async function checkFeeFreeRoute(cVactDat, minInputCBBTC) {
+  console.log("\n✅ STEP: sweeping amountOut to match min CBBTC input...");
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
 
   const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
   const fee = 500;
-
   const poolAddress = await factory.getPool(CBBTC, USDC, fee);
   if (poolAddress === ethers.ZeroAddress) return [];
 
-  const scaledAmountOut = BigInt((cVactDat * 1e6).toFixed(0)); // USDC has 6 decimals
-  const minCBBTC = Number(maxInputCBBTC);
+  const minCBBTC = Number(minInputCBBTC);
+  const step = 0.0001; // step in USDC
+  const attempts = 100;
 
-  const quote = await simulateWithQuoterOutput({
-    tokenIn: CBBTC,
-    tokenOut: USDC,
-    fee,
-    amountOut: scaledAmountOut
-  });
-
-  if (!quote) {
-    console.warn("⚠️ Output simulation failed.");
-    return [];
-  }
-
-  const { amountInFloat, impliedPrice } = quote;
-
-  console.log(`🔎 Required CBBTC: ${amountInFloat.toFixed(8)} for ${cVactDat.toFixed(2)} USDC`);
-  console.log(`   Implied price: $${impliedPrice.toFixed(2)} | Min allowed input: ${minCBBTC} CBBTC`);
-
-  if (amountInFloat >= minCBBTC) {
-    console.log(`✅ Fee-free route FOUND!`);
-    return [{
-      poolAddress,
+  for (let i = 0; i <= attempts; i++) {
+    const testAmountOut = cVactDat - (step * i);
+    const scaledAmountOut = BigInt((testAmountOut * 1e6).toFixed(0));
+  
+    const quote = await simulateWithQuoterOutput({
+      tokenIn: CBBTC,
+      tokenOut: USDC,
       fee,
-      sqrtPriceLimitX96: 0n,
-      amountOut: scaledAmountOut,
-      amountIn: quote.amountIn
-    }];
+      amountOut: scaledAmountOut
+    });
+  
+    if (!quote) continue;
+  
+    const { amountInFloat, amountOutFloat, impliedPrice } = quote;
+  
+    console.log(`🔎 Try: ${amountOutFloat.toFixed(6)} USDC → ${amountInFloat.toFixed(8)} CBBTC @ $${impliedPrice.toFixed(2)}`);
+  
+    if (amountInFloat >= minCBBTC && amountOutFloat <= cVactDat) {
+      console.log(`✅ MATCH: ${amountInFloat.toFixed(8)} ≥ ${minCBBTC} AND ${amountOutFloat.toFixed(6)} ≤ ${cVactDat}`);
+      return [{
+        poolAddress,
+        fee,
+        sqrtPriceLimitX96: 0n,
+        amountOut: scaledAmountOut,
+        amountIn: quote.amountIn
+      }];
+    }
+  
+    // 💥 If we already exceed minCBBTC but amountOut is too high, stop sweeping — it's futile
+    if (amountInFloat > minCBBTC) {
+      console.warn(`❌ Passed minCBBTC threshold without finding valid amountOut ≤ ${cVactDat}`);
+      break;
+    }
   }
 
-  console.error("❌ No route found within max input CBBTC");
+  console.error("❌ No valid match found within sweep range.");
   return [];
 }
+
 
 
 
