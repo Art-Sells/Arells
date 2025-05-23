@@ -7,7 +7,7 @@
 ## Test
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
-- Add the 3 Liquidity Pools to the final CBBTC-USDC MASS v1 and refactor the Readme (and in chat GPT, incorporate since the USDC traded in the higher liquidity pools is less, to start incorporate that).
+- Add the 3 Liquidity Pools to the final CBBTC-USDC MASS v1 and refactor the Readme (and in chat GPT, incorporate since the USDC traded in the higher liquidity pools is less, to start incorporate that), then factor in changes to "Bitcoin that renders Bear Markets Obsolete"
 - Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Problems: 
 - - - Test Fee Free Route (Set Time to increase API Rate Limit on Infura (Even After Launch))
