@@ -38,53 +38,49 @@ async function fetchABI(contractAddress) {
   }
 }
 
-async function logFeeFreeSqrtPriceX96(amountInCBBTC) {
-  const routes = await checkFeeFreeRoute(amountInCBBTC);
-  if (!routes || routes.length === 0) {
-    console.log("❌ No fee-free routes found.");
-    return;
-  }
-
-  const firstRoute = routes[0];
-  console.log(`🧮 Fee-Free Route sqrtPriceX96: ${firstRoute.sqrtPriceLimitX96.toString()}`);
+function decodeSqrtPriceX96ToFloat(sqrtPriceX96) {
+  const price = (Number(sqrtPriceX96) / 2 ** 96) ** 2;
+  return price * 1e2; // adjust if CBBTC has 8 decimals and USDC has 6
 }
 
+
 async function getBestPricedPool() {
-  const pools = [
-    { address: "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef", fee: 500 },
-    { address: "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4", fee: 3000 }
+  const poolConfigs = [
+    { poolAddress: "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef", fee: 500, label: "V3 (0.05%)" },
+    { poolAddress: "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4", fee: 3000, label: "V4 (0.3%)" }
   ];
 
+  let bestPool = null;
   let highestPrice = 0;
-  let selectedPool = null;
 
-  for (const { address, fee } of pools) {
-    const poolABI = await fetchABI(address);
+  for (const { poolAddress, fee, label } of poolConfigs) {
+    const poolABI = await fetchABI(poolAddress);
     if (!poolABI) continue;
 
-    const pool = new ethers.Contract(address, poolABI, provider);
     try {
+      const pool = new ethers.Contract(poolAddress, poolABI, provider);
       const slot0 = await pool.slot0();
-      const sqrtX96 = BigInt(slot0[0].toString());
-      const price = (Number(sqrtX96) / 2 ** 96) ** 2 * 1e2;
+      const sqrtPriceX96 = BigInt(slot0[0].toString());
 
-      console.log(`📈 Pool ${address} @ fee ${fee / 10000}% → Price = $${price.toFixed(2)}`);
+      const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+      console.log(`🔍 Pool ${label}: sqrtPriceX96 = ${sqrtPriceX96}`);
+      console.log(`💲 Implied Price (${label}): $${price.toFixed(2)} per CBBTC`);
 
       if (price > highestPrice) {
         highestPrice = price;
-        selectedPool = { poolAddress: address, fee, sqrtPriceX96: sqrtX96 };
+        bestPool = { poolAddress, fee, label, sqrtPriceX96 };
       }
     } catch (err) {
-      console.warn(`⚠️ Failed to read pool ${address}: ${err.message}`);
+      console.warn(`⚠️ Failed to read from ${label}: ${err.message}`);
     }
   }
 
-  if (selectedPool) {
-    console.log(`✅ Using Pool with Highest Price: ${selectedPool.poolAddress} @ fee ${selectedPool.fee / 10000}%`);
-    return selectedPool;
+  if (bestPool) {
+    console.log(`\n🏆 Best Pool: ${bestPool.label} with price $${highestPrice.toFixed(2)}`);
+    return bestPool;
   }
 
-  console.error("❌ No valid pool found.");
+  console.error("❌ Could not determine best-priced pool.");
   return null;
 }
 
@@ -142,23 +138,84 @@ async function simulateWithQuoter(params) {
 async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
 
-  const bestPool = await getBestPricedPool();
-  if (!bestPool) {
-    console.error("❌ No suitable pool found with higher price.");
+  const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
+  const V4_POOL_MANAGER = "0x498581ff718922c3f8e6a244956af099b2652b2b";
+  const V4_FEE = 3000;
+
+  const POOL_MANAGER_ABI = [
+    "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint8 unlocked)"
+  ];
+
+  function getV4PoolId(token0, token1, fee, hook) {
+    const abiCoder = new ethers.AbiCoder();
+    const encoded = abiCoder.encode([
+      "address",
+      "address",
+      "uint24",
+      "address"
+    ], [token0, token1, fee, hook]);
+    return ethers.keccak256(encoded);
+  }
+
+  async function getV4SqrtPriceX96(poolManagerAddress, token0, token1, fee, hookAddress = ethers.ZeroAddress) {
+    const poolId = getV4PoolId(token0, token1, fee, hookAddress);
+    const manager = new ethers.Contract(poolManagerAddress, POOL_MANAGER_ABI, provider);
+
+    try {
+      const { sqrtPriceX96 } = await manager.getSlot0(poolId);
+      return sqrtPriceX96;
+    } catch (e) {
+      console.error(`❌ Failed to read v4 slot0: ${e.message}`);
+      return null;
+    }
+  }
+
+  const v3Data = await checkPoolLiquidity(V3_POOL_ADDRESS);
+  const v3Price = (Number(v3Data.sqrtPriceX96) / 2 ** 96) ** 2 * 1e2;
+  console.log(`💲 Implied Price (V3 (0.05%)): $${v3Price.toFixed(2)} per CBBTC`);
+
+  const v4Sqrt = await getV4SqrtPriceX96(
+    V4_POOL_MANAGER,
+    USDC,
+    CBBTC,
+    V4_FEE,
+    ethers.ZeroAddress
+  );
+
+  let bestPool = {
+    poolAddress: V3_POOL_ADDRESS,
+    fee: 500,
+    price: v3Price
+  };
+
+  if (v4Sqrt) {
+    const v4Price = (Number(v4Sqrt) / 2 ** 96) ** 2 * 1e2;
+    console.log(`💲 Implied Price (V4 (0.3%)): $${v4Price.toFixed(2)} per CBBTC`);
+
+    if (v4Price > v3Price) {
+      console.log(`🏆 Best Pool: V4 (0.3%) with price $${v4Price.toFixed(2)}`);
+      bestPool = {
+        poolAddress: "v4", // placeholder since we’re not ready to trade via v4
+        fee: V4_FEE,
+        price: v4Price
+      };
+    } else {
+      console.log(`🏆 Best Pool: V3 (0.05%) with price $${v3Price.toFixed(2)}`);
+    }
+  } else {
+    console.log(`⚠️ Failed to fetch V4 price. Using V3.`);
+  }
+
+  if (bestPool.poolAddress === "v4") {
+    console.log("⚠️ Skipping actual trade logic for v4 — not implemented yet.");
     return [];
   }
 
-  const { poolAddress, fee } = bestPool;
-
-  const poolData = await checkPoolLiquidity(poolAddress);
-  if (!poolData || poolData.liquidity === 0) {
-    console.error("❌ No liquidity in selected pool.");
-    return [];
-  }
+  const poolData = await checkPoolLiquidity(bestPool.poolAddress);
+  if (!poolData || poolData.liquidity === 0) return [];
 
   const tickSpacing = Number(poolData.tickSpacing);
   const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
-
   const feeFreeRoutes = [];
 
   for (let i = 0; i < 3; i++) {
@@ -170,7 +227,7 @@ async function checkFeeFreeRoute(amountIn) {
       const simulation = await simulateWithQuoter({
         tokenIn: CBBTC,
         tokenOut: USDC,
-        fee,
+        fee: bestPool.fee,
         amountIn: amountInWei,
         sqrtPriceLimitX96
       });
@@ -178,7 +235,7 @@ async function checkFeeFreeRoute(amountIn) {
       if (simulation && simulation > 0n) {
         console.log(`✅ Route at tick ${testTick} is valid. Estimated out: ${ethers.formatUnits(simulation, 6)} USDC`);
         console.log(`🧮 Succeeded sqrtPriceX96: ${sqrtPriceLimitX96.toString()}`);
-        feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData, tick: testTick });
+        feeFreeRoutes.push({ poolAddress: bestPool.poolAddress, fee: bestPool.fee, sqrtPriceLimitX96, poolData, tick: testTick });
       }
     } catch (err) {
       console.warn(`⚠️ Skip tick ${testTick}: ${err.message}`);
@@ -187,6 +244,7 @@ async function checkFeeFreeRoute(amountIn) {
 
   return feeFreeRoutes;
 }
+
 
 
 async function checkCBBTCBalance(userWallet) {
