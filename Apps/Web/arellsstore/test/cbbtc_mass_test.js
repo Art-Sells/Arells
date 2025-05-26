@@ -49,27 +49,43 @@ async function logFeeFreeSqrtPriceX96(amountInCBBTC) {
   console.log(`🧮 Fee-Free Route sqrtPriceX96: ${firstRoute.sqrtPriceLimitX96.toString()}`);
 }
 
-async function getPoolAddress() {
-    const factoryABI = await fetchABI(FACTORY_ADDRESS);
-    if (!factoryABI) return null;
+async function getBestPricedPool() {
+  const pools = [
+    { address: "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef", fee: 500 },
+    { address: "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4", fee: 3000 }
+  ];
 
-    const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-    const feeTiers = [500]; // 0.01%, 0.05%, 0.3%, 1%
+  let highestPrice = 0;
+  let selectedPool = null;
 
-    for (let fee of feeTiers) {
-        try {
-            const poolAddress = await factory.getPool(USDC, CBBTC, fee);
-            if (poolAddress !== ethers.ZeroAddress) {
-                console.log(`✅ Found Pool for fee tier ${fee}: ${poolAddress}`);
-                return { poolAddress, fee };
-            }
-        } catch (error) {
-            console.warn(`⚠️ Failed to get pool for fee tier ${fee}: ${error.message}`);
-        }
+  for (const { address, fee } of pools) {
+    const poolABI = await fetchABI(address);
+    if (!poolABI) continue;
+
+    const pool = new ethers.Contract(address, poolABI, provider);
+    try {
+      const slot0 = await pool.slot0();
+      const sqrtX96 = BigInt(slot0[0].toString());
+      const price = (Number(sqrtX96) / 2 ** 96) ** 2 * 1e2;
+
+      console.log(`📈 Pool ${address} @ fee ${fee / 10000}% → Price = $${price.toFixed(2)}`);
+
+      if (price > highestPrice) {
+        highestPrice = price;
+        selectedPool = { poolAddress: address, fee, sqrtPriceX96: sqrtX96 };
+      }
+    } catch (err) {
+      console.warn(`⚠️ Failed to read pool ${address}: ${err.message}`);
     }
+  }
 
-    console.error("❌ No Uniswap V3 Pool found for USDC-CBBTC.");
-    return null;
+  if (selectedPool) {
+    console.log(`✅ Using Pool with Highest Price: ${selectedPool.poolAddress} @ fee ${selectedPool.fee / 10000}%`);
+    return selectedPool;
+  }
+
+  console.error("❌ No valid pool found.");
+  return null;
 }
 
 async function checkPoolLiquidity(poolAddress) {
@@ -126,50 +142,47 @@ async function simulateWithQuoter(params) {
 async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
 
-  const factoryABI = await fetchABI(FACTORY_ADDRESS);
-  if (!factoryABI) return [];
+  const bestPool = await getBestPricedPool();
+  if (!bestPool) {
+    console.error("❌ No suitable pool found with higher price.");
+    return [];
+  }
 
-  const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
+  const { poolAddress, fee } = bestPool;
+
+  const poolData = await checkPoolLiquidity(poolAddress);
+  if (!poolData || poolData.liquidity === 0) {
+    console.error("❌ No liquidity in selected pool.");
+    return [];
+  }
+
+  const tickSpacing = Number(poolData.tickSpacing);
+  const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+
   const feeFreeRoutes = [];
 
-  const fee = 500; // Only check 0.05% fee tier
-  try {
-    const poolAddress = await factory.getPool(USDC, CBBTC, fee);
-    if (poolAddress === ethers.ZeroAddress) return [];
+  for (let i = 0; i < 3; i++) {
+    const testTick = baseTick + i * tickSpacing;
+    try {
+      const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+      const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
 
-    const poolData = await checkPoolLiquidity(poolAddress);
-    if (!poolData || poolData.liquidity === 0) return [];
+      const simulation = await simulateWithQuoter({
+        tokenIn: CBBTC,
+        tokenOut: USDC,
+        fee,
+        amountIn: amountInWei,
+        sqrtPriceLimitX96
+      });
 
-    const tickSpacing = Number(poolData.tickSpacing);
-    const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
-
-    for (let i = 0; i < 3; i++) {
-      const testTick = baseTick + i * tickSpacing;
-      try {
-        const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-        const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
-
-        const simulation = await simulateWithQuoter({
-          tokenIn: CBBTC,
-          tokenOut: USDC,
-          fee,
-          amountIn: amountInWei,
-          sqrtPriceLimitX96
-        });
-    
-        if (simulation && simulation > 0n) {
-          console.log(`✅ Route at tick ${testTick} is valid. Estimated out: ${ethers.formatUnits(simulation, 6)} USDC`);
-          console.log(`🧮 Succeeded sqrtPriceX96: ${sqrtPriceLimitX96.toString()}`);
-          feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData, tick: testTick });
-        } else {
-          // console.log(`❌ Route at tick ${testTick} returned zero or failed`);
-        }
-      } catch (err) {
-        console.warn(`⚠️ Skip tick ${testTick}: ${err.message}`);
+      if (simulation && simulation > 0n) {
+        console.log(`✅ Route at tick ${testTick} is valid. Estimated out: ${ethers.formatUnits(simulation, 6)} USDC`);
+        console.log(`🧮 Succeeded sqrtPriceX96: ${sqrtPriceLimitX96.toString()}`);
+        feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData, tick: testTick });
       }
+    } catch (err) {
+      console.warn(`⚠️ Skip tick ${testTick}: ${err.message}`);
     }
-  } catch (err) {
-    console.warn(`⚠️ Fee tier 500 skipped: ${err.message}`);
   }
 
   return feeFreeRoutes;
@@ -265,7 +278,7 @@ export async function executeSupplication(amountIn, customPrivateKey) {
     return;
   }
 
-  const poolInfo = await getPoolAddress();
+  const poolInfo = await getBestPricedPool();
   if (!poolInfo) return;
   const { poolAddress, fee } = poolInfo;
 
@@ -378,35 +391,35 @@ async function main() {
 
   let foundFeeFree = false; // Track if any fee-free route was found
 
-  // // ✅ Check for CBBTC → USDC
-  // for (const amount of cbbtcAmounts) {
-  //     const feeFree = await checkFeeFreeRoute(amount, "CBBTC", "USDC", 8);
+  // ✅ Check for CBBTC → USDC
+  for (const amount of cbbtcAmounts) {
+      const feeFree = await checkFeeFreeRoute(amount, "CBBTC", "USDC", 8);
 
-  //     if (feeFree) {
-  //         console.log(`\n✅ **Fee-Free Quote Found at ${amount} CBBTC!** 🚀`);
-  //         foundFeeFree = true;
-  //     }
-  // }
-  // if (!foundFeeFree) {
-  //   console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
-  // } else {
-  //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
-  // }
-
-  const cbbtcAmountToTrade = 0.00007024;
-
-  while (true) {
-    try {
-      await checkFeeFreeRoute(cbbtcAmountToTrade);
-      console.log("🎉 Sqrt Price Check successful!");
-      // await executeSupplication(cbbtcAmountToTrade);
-      // console.log("🎉 Supplication successful!");
-      break; // Exit loop after success
-    } catch (error) {
-      console.warn("❌ Supplication failed, retrying in 15s...\n", error.message || error);
-      await new Promise(res => setTimeout(res, 15000));
-    }
+      if (feeFree) {
+          console.log(`\n✅ **Fee-Free Quote Found at ${amount} CBBTC!** 🚀`);
+          foundFeeFree = true;
+      }
   }
+  if (!foundFeeFree) {
+    console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
+  } else {
+      console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
+  }
+
+  // const cbbtcAmountToTrade = 0.00007024;
+
+  // while (true) {
+  //   try {
+  //     await checkFeeFreeRoute(cbbtcAmountToTrade);
+  //     console.log("🎉 Sqrt Price Check successful!");
+  //     // await executeSupplication(cbbtcAmountToTrade);
+  //     // console.log("🎉 Supplication successful!");
+  //     break; // Exit loop after success
+  //   } catch (error) {
+  //     console.warn("❌ Supplication failed, retrying in 15s...\n", error.message || error);
+  //     await new Promise(res => setTimeout(res, 15000));
+  //   }
+  // }
 }
 
 
