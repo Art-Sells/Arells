@@ -104,6 +104,64 @@ async function checkPoolLiquidity(poolAddress) {
   }
 }
 
+const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
+
+const QUOTER_V4_ABI = [
+  "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks), bool zeroForOne, uint256 exactAmount, bytes hookData)"
+];
+
+const QUOTE_SWAP_ERROR = "error QuoteSwap(uint256 amount)";
+
+const parseQuoteRevert = (data) => {
+  const iface = new ethers.Interface([QUOTE_SWAP_ERROR]);
+  try {
+    const decoded = iface.decodeErrorResult("QuoteSwap", data);
+    return decoded.amount;
+  } catch (err) {
+    console.warn("Failed to decode QuoteSwap revert:", err.message);
+    return null;
+  }
+};
+
+export async function simulateWithQuoterV4({
+  provider,
+  tokenIn,
+  tokenOut,
+  amountIn,
+  fee,
+  tickSpacing,
+  hooks = ethers.ZeroAddress
+}) {
+
+  const poolKey = {
+    currency0: tokenOut,
+    currency1: tokenIn,
+    fee,
+    tickSpacing,
+    hooks
+  };
+
+  const iface = new ethers.Interface(QUOTER_V4_ABI);
+  const data = iface.encodeFunctionData("quoteExactInputSingle", [poolKey, true, amountIn, "0x"]);
+
+  try {
+    await provider.call({ to: V4_QUOTER_ADDRESS, data });
+    console.warn("⚠️ Expected revert with QuoteSwap but call succeeded unexpectedly.");
+    return null;
+  } catch (err) {
+    if (err.code === "CALL_EXCEPTION" && err.data) {
+      const amountOut = parseQuoteRevert(err.data);
+      if (amountOut) {
+        console.log(`🔁 V4 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+        return amountOut;
+      }
+    }
+    console.error("❌ V4 Quoter simulation failed:", err.reason || err.message);
+    return null;
+  }
+}
+
+
 
 async function simulateWithQuoter(params) {
   const quoterABI = await fetchABI(QUOTER_ADDRESS);
@@ -134,71 +192,72 @@ async function simulateWithQuoter(params) {
   }
 }
 
-
-async function checkFeeFreeRoute(amountIn) {
+export async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
 
   const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
   const V4_POOL_MANAGER = "0x498581ff718922c3f8e6a244956af099b2652b2b";
+  const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
   const V4_FEE = 3000;
+  const V4_TICK_SPACING = 60;
 
-  const POOL_MANAGER_ABI = [
-    "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint8 unlocked)"
-  ];
-
+  // Encode Pool ID (token0 < token1 order is required)
   function getV4PoolId(token0, token1, fee, hook) {
+    const [addr0, addr1] = [token0, token1].sort((a, b) =>
+      a.toLowerCase() < b.toLowerCase() ? -1 : 1
+    );
     const abiCoder = new ethers.AbiCoder();
-    const encoded = abiCoder.encode([
-      "address",
-      "address",
-      "uint24",
-      "address"
-    ], [token0, token1, fee, hook]);
+    const encoded = abiCoder.encode(["address", "address", "uint24", "address"], [addr0, addr1, fee, hook]);
     return ethers.keccak256(encoded);
   }
 
-  async function getV4SqrtPriceX96(poolManagerAddress, token0, token1, fee, hookAddress = ethers.ZeroAddress) {
+  async function getV4SqrtPriceX96(poolManagerAddress, token0, token1, fee, hookAddress) {
     const poolId = getV4PoolId(token0, token1, fee, hookAddress);
-    const manager = new ethers.Contract(poolManagerAddress, POOL_MANAGER_ABI, provider);
-
+    const abi = await fetchABI(poolManagerAddress);
+    const contract = new ethers.Contract(poolManagerAddress, abi, provider);
     try {
-      const { sqrtPriceX96 } = await manager.getSlot0(poolId);
-      return sqrtPriceX96;
+      const slot0 = await contract.getSlot0(poolId);
+      return slot0.sqrtPriceX96;
     } catch (e) {
       console.error(`❌ Failed to read v4 slot0: ${e.message}`);
       return null;
     }
   }
 
+  // Assume this exists
   const v3Data = await checkPoolLiquidity(V3_POOL_ADDRESS);
   const v3Price = (Number(v3Data.sqrtPriceX96) / 2 ** 96) ** 2 * 1e2;
   console.log(`💲 Implied Price (V3 (0.05%)): $${v3Price.toFixed(2)} per CBBTC`);
 
-  const v4Sqrt = await getV4SqrtPriceX96(
-    V4_POOL_MANAGER,
-    USDC,
-    CBBTC,
-    V4_FEE,
-    ethers.ZeroAddress
-  );
+  const v4Sqrt = await getV4SqrtPriceX96(V4_POOL_MANAGER, USDC, CBBTC, V4_FEE, V4_HOOK_ADDRESS);
+
+  const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
 
   let bestPool = {
     poolAddress: V3_POOL_ADDRESS,
     fee: 500,
-    price: v3Price
+    price: v3Price,
+    tickSpacing: Number(v3Data.tickSpacing),
+    type: "v3",
   };
 
   if (v4Sqrt) {
     const v4Price = (Number(v4Sqrt) / 2 ** 96) ** 2 * 1e2;
     console.log(`💲 Implied Price (V4 (0.3%)): $${v4Price.toFixed(2)} per CBBTC`);
 
-    if (v4Price > v3Price) {
-      console.log(`🏆 Best Pool: V4 (0.3%) with price $${v4Price.toFixed(2)}`);
-      bestPool = {
-        poolAddress: "v4", // placeholder since we’re not ready to trade via v4
-        fee: V4_FEE,
-        price: v4Price
-      };
+    const simulation = await simulateWithQuoterV4({
+      provider,
+      tokenIn: CBBTC,
+      tokenOut: USDC,
+      amountIn: amountInWei,
+      fee: V4_FEE,
+      tickSpacing: V4_TICK_SPACING,
+      hooks: V4_HOOK_ADDRESS,
+    });
+
+    if (v4Price > v3Price && simulation && simulation > 0n) {
+      console.log(`🏆 Best Pool: V4 (0.3%) with simulated out ${ethers.formatUnits(simulation, 6)} USDC`);
+      return [{ poolAddress: "v4", fee: V4_FEE, amountOut: simulation }];
     } else {
       console.log(`🏆 Best Pool: V3 (0.05%) with price $${v3Price.toFixed(2)}`);
     }
@@ -206,36 +265,33 @@ async function checkFeeFreeRoute(amountIn) {
     console.log(`⚠️ Failed to fetch V4 price. Using V3.`);
   }
 
-  if (bestPool.poolAddress === "v4") {
-    console.log("⚠️ Skipping actual trade logic for v4 — not implemented yet.");
-    return [];
-  }
-
-  const poolData = await checkPoolLiquidity(bestPool.poolAddress);
-  if (!poolData || poolData.liquidity === 0) return [];
-
-  const tickSpacing = Number(poolData.tickSpacing);
-  const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+  // Continue with V3 tick simulation
+  const tickSpacing = Number(v3Data.tickSpacing);
+  const baseTick = Math.floor(Number(v3Data.tick) / tickSpacing) * tickSpacing;
   const feeFreeRoutes = [];
 
   for (let i = 0; i < 3; i++) {
     const testTick = baseTick + i * tickSpacing;
     try {
       const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-      const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
-
       const simulation = await simulateWithQuoter({
         tokenIn: CBBTC,
         tokenOut: USDC,
         fee: bestPool.fee,
         amountIn: amountInWei,
-        sqrtPriceLimitX96
+        sqrtPriceLimitX96,
       });
 
       if (simulation && simulation > 0n) {
         console.log(`✅ Route at tick ${testTick} is valid. Estimated out: ${ethers.formatUnits(simulation, 6)} USDC`);
         console.log(`🧮 Succeeded sqrtPriceX96: ${sqrtPriceLimitX96.toString()}`);
-        feeFreeRoutes.push({ poolAddress: bestPool.poolAddress, fee: bestPool.fee, sqrtPriceLimitX96, poolData, tick: testTick });
+        feeFreeRoutes.push({
+          poolAddress: bestPool.poolAddress,
+          fee: bestPool.fee,
+          sqrtPriceLimitX96,
+          poolData: v3Data,
+          tick: testTick,
+        });
       }
     } catch (err) {
       console.warn(`⚠️ Skip tick ${testTick}: ${err.message}`);
@@ -442,10 +498,11 @@ async function main() {
   // ✅ CBBTC amounts (8 decimals)
   const cbbtcAmounts = [
     0.002323, 
-    0.0120323, 
-    1.3233, 
-    0.50012345, 
-    2.12345678];
+    // 0.0120323, 
+    // 1.3233, 
+    // 0.50012345, 
+    // 2.12345678
+  ];
 
   let foundFeeFree = false; // Track if any fee-free route was found
 
