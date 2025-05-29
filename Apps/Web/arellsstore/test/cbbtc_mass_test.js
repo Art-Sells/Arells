@@ -10,6 +10,10 @@ dotenv.config();
 // ✅ Uniswap Contract Addresses
 const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
 const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
+const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
+const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
+const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
+const STATE_VIEW_ADDRESS = "0xD2729B8D2eAcF39fDc82c94b3bDee9Ef3BaAb8C2";
 
 // ✅ Token Addresses
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
@@ -194,55 +198,74 @@ async function simulateWithQuoter(params) {
   }
 }
 
+async function getTickSpacingFromStateView(poolId) {
+  const iface = new ethers.Interface([
+    "function getPoolTickSpacing(bytes32) view returns (int24)"
+  ]);
+
+  const callData = iface.encodeFunctionData("getPoolTickSpacing", [poolId]);
+
+  try {
+    const raw = await provider.call({
+      to: STATE_VIEW_ADDRESS,
+      data: callData,
+    });
+
+    const [tickSpacing] = iface.decodeFunctionResult("getPoolTickSpacing", raw);
+    return tickSpacing;
+  } catch (err) {
+    console.warn("❌ Failed to fetch tickSpacing from StateView:", err.message || err);
+    return null;
+  }
+}
+
 export async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
 
-  const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
-  const V4_POOL_MANAGER = "0x498581ff718922c3f8e6a244956af099b2652b2b";
-  const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
   const V4_FEE = 3000;
-  const V4_TICK_SPACING = 60;
+  const abiCoder = new ethers.AbiCoder();
+  const [token0, token1] = [USDC, CBBTC].sort((a, b) => a.toLowerCase() < b.toLowerCase() ? -1 : 1);
+  
+  const poolId = ethers.keccak256(
+    abiCoder.encode(["address", "address", "uint24", "address"], [token0, token1, V4_FEE, V4_HOOK_ADDRESS])
+  );
+  
+  const V4_TICK_SPACING = await getTickSpacingFromStateView(poolId);
+  if (V4_TICK_SPACING === null) {
+    console.warn("⚠️ Defaulting to V3 due to missing V4 tick spacing.");
+    return [];
+  }
 
   const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
 
-  // === UTILITIES ===
-  function getV4PoolId(tokenA, tokenB, fee, hook) {
-    const [token0, token1] = [tokenA, tokenB].sort((a, b) =>
-      a.toLowerCase() < b.toLowerCase() ? -1 : 1
-    );
+  // === V4 Slot0 Getter (inline ABI + poolId hash) ===
+  async function getV4SqrtPriceX96() {
+    const [token0, token1] = [USDC.toLowerCase(), CBBTC.toLowerCase()].sort();
+  
     const abiCoder = new ethers.AbiCoder();
-    const encoded = abiCoder.encode(["address", "address", "uint24", "address"], [token0, token1, fee, hook]);
-    return ethers.keccak256(encoded);
-  }
-
-  async function getV4SqrtPriceX96(manager, tokenA, tokenB, fee, hook) {
+    const encoded = abiCoder.encode(
+      ["address", "address", "uint24", "address"],
+      [token0, token1, V4_FEE, V4_HOOK_ADDRESS.toLowerCase()]
+    );
+    const poolId = ethers.keccak256(encoded);
+  
+    const iface = new ethers.Interface([
+      "function getSlot0(bytes32) view returns (tuple(uint160 sqrtPriceX96, int24 tick, uint16 fee0, uint16 fee1, bool unlocked))"
+    ]);
+  
+    const callData = iface.encodeFunctionData("getSlot0", [poolId]);
+  
     try {
-      const [token0, token1] = [tokenA, tokenB].sort((a, b) =>
-        a.toLowerCase() < b.toLowerCase() ? -1 : 1
-      );
-  
-      const abiCoder = new ethers.AbiCoder();
-      const poolId = ethers.keccak256(
-        abiCoder.encode(["address", "address", "uint24", "address"], [token0, token1, fee, hook])
-      );
-  
-      // ✅ INLINE ABI manually — not fetched
-      const poolManagerABI = [
-        "function getSlot0(bytes32 poolId) view returns (tuple(uint160 sqrtPriceX96, int24 tick, uint16 protocolFeesToken0, uint16 protocolFeesToken1, bool unlocked))"
-      ];
-  
-      const iface = new ethers.Interface(poolManagerABI);
-      const callData = iface.encodeFunctionData("getSlot0", [poolId]);
-  
-      const raw = await provider.call({ to: manager, data: callData });
+      const raw = await provider.call({
+        to: V4_POOL_MANAGER,
+        data: callData,
+      });
   
       const [slot0] = iface.decodeFunctionResult("getSlot0", raw);
-  
-      console.log("✅ getSlot0 succeeded:", slot0);
+      console.log("✅ V4 getSlot0:", slot0);
       return slot0.sqrtPriceX96;
-  
     } catch (err) {
-      console.error("❌ getSlot0 failed:", err.message);
+      console.error("❌ getSlot0 failed:", err.message || err);
       return null;
     }
   }
