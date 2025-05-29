@@ -11,9 +11,9 @@ dotenv.config();
 const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
 const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
-const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
+const V4_POOL_MANAGER = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4"; 
 const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
-const STATE_VIEW_ADDRESS = "0xD2729B8D2eAcF39fDc82c94b3bDee9Ef3BaAb8C2";
+const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
 
 // ✅ Token Addresses
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
@@ -223,18 +223,22 @@ export async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
 
   const V4_FEE = 3000;
-  const abiCoder = new ethers.AbiCoder();
   const [token0, token1] = [USDC, CBBTC].sort((a, b) => a.toLowerCase() < b.toLowerCase() ? -1 : 1);
-  
+
+  const abiCoder = new ethers.AbiCoder();
   const poolId = ethers.keccak256(
-    abiCoder.encode(["address", "address", "uint24", "address"], [token0, token1, V4_FEE, V4_HOOK_ADDRESS])
+    abiCoder.encode(
+      ["address", "address", "uint24", "address"],
+      [
+        token0.toLowerCase(),
+        token1.toLowerCase(),
+        V4_FEE,
+        V4_HOOK_ADDRESS.toLowerCase()
+      ]
+    )
   );
   
-  const V4_TICK_SPACING = await getTickSpacingFromStateView(poolId);
-  if (V4_TICK_SPACING === null) {
-    console.warn("⚠️ Defaulting to V3 due to missing V4 tick spacing.");
-    return [];
-  }
+  const V4_TICK_SPACING = 60; // for 0.3% pool
 
   const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
 
