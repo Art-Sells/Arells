@@ -217,13 +217,32 @@ export async function checkFeeFreeRoute(amountIn) {
 
   async function getV4SqrtPriceX96(manager, tokenA, tokenB, fee, hook) {
     try {
-      const poolId = getV4PoolId(tokenA, tokenB, fee, hook);
-      const abi = await fetchABI(manager);
-      const contract = new ethers.Contract(manager, abi, provider);
-      const slot0 = await contract.getSlot0(poolId);
+      const [token0, token1] = [tokenA, tokenB].sort((a, b) =>
+        a.toLowerCase() < b.toLowerCase() ? -1 : 1
+      );
+  
+      const abiCoder = new ethers.AbiCoder();
+      const poolId = ethers.keccak256(
+        abiCoder.encode(["address", "address", "uint24", "address"], [token0, token1, fee, hook])
+      );
+  
+      // ✅ INLINE ABI manually — not fetched
+      const poolManagerABI = [
+        "function getSlot0(bytes32 poolId) view returns (tuple(uint160 sqrtPriceX96, int24 tick, uint16 protocolFeesToken0, uint16 protocolFeesToken1, bool unlocked))"
+      ];
+  
+      const iface = new ethers.Interface(poolManagerABI);
+      const callData = iface.encodeFunctionData("getSlot0", [poolId]);
+  
+      const raw = await provider.call({ to: manager, data: callData });
+  
+      const [slot0] = iface.decodeFunctionResult("getSlot0", raw);
+  
+      console.log("✅ getSlot0 succeeded:", slot0);
       return slot0.sqrtPriceX96;
+  
     } catch (err) {
-      console.error(`❌ Failed to read v4 slot0: ${err.message}`);
+      console.error("❌ getSlot0 failed:", err.message);
       return null;
     }
   }
