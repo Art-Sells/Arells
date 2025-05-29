@@ -11,7 +11,7 @@ dotenv.config();
 const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
 const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
-const V4_POOL_MANAGER = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4"; 
+const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b"; 
 const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
 
@@ -198,27 +198,6 @@ async function simulateWithQuoter(params) {
   }
 }
 
-async function getTickSpacingFromStateView(poolId) {
-  const iface = new ethers.Interface([
-    "function getPoolTickSpacing(bytes32) view returns (int24)"
-  ]);
-
-  const callData = iface.encodeFunctionData("getPoolTickSpacing", [poolId]);
-
-  try {
-    const raw = await provider.call({
-      to: STATE_VIEW_ADDRESS,
-      data: callData,
-    });
-
-    const [tickSpacing] = iface.decodeFunctionResult("getPoolTickSpacing", raw);
-    return tickSpacing;
-  } catch (err) {
-    console.warn("❌ Failed to fetch tickSpacing from StateView:", err.message || err);
-    return null;
-  }
-}
-
 export async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
 
@@ -242,37 +221,37 @@ export async function checkFeeFreeRoute(amountIn) {
 
   const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
 
-  // === V4 Slot0 Getter (inline ABI + poolId hash) ===
-  async function getV4SqrtPriceX96() {
-    const [token0, token1] = [USDC.toLowerCase(), CBBTC.toLowerCase()].sort();
-  
-    const abiCoder = new ethers.AbiCoder();
-    const encoded = abiCoder.encode(
-      ["address", "address", "uint24", "address"],
-      [token0, token1, V4_FEE, V4_HOOK_ADDRESS.toLowerCase()]
-    );
-    const poolId = ethers.keccak256(encoded);
-  
-    const iface = new ethers.Interface([
-      "function getSlot0(bytes32) view returns (tuple(uint160 sqrtPriceX96, int24 tick, uint16 fee0, uint16 fee1, bool unlocked))"
+
+// === V4 PRICE & LIQUIDITY CHECK ===
+
+async function getV4Slot0AndLiquidity() {
+  const poolAddress = "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96"; // actual deployed v4 pool
+
+  const v4PoolABI = [
+    "function slot0() view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
+    "function liquidity() view returns (uint128)"
+  ];
+
+  try {
+    const v4Pool = new ethers.Contract(poolAddress, v4PoolABI, provider);
+    const [slot0, liquidity] = await Promise.all([
+      v4Pool.slot0(),
+      v4Pool.liquidity()
     ]);
-  
-    const callData = iface.encodeFunctionData("getSlot0", [poolId]);
-  
-    try {
-      const raw = await provider.call({
-        to: V4_POOL_MANAGER,
-        data: callData,
-      });
-  
-      const [slot0] = iface.decodeFunctionResult("getSlot0", raw);
-      console.log("✅ V4 getSlot0:", slot0);
-      return slot0.sqrtPriceX96;
-    } catch (err) {
-      console.error("❌ getSlot0 failed:", err.message || err);
-      return null;
-    }
+
+    console.log(`🔁 V4 slot0:`, slot0);
+    console.log(`💧 V4 liquidity: ${liquidity}`);
+
+    return {
+      sqrtPriceX96: slot0.sqrtPriceX96,
+      tick: slot0.tick,
+      liquidity
+    };
+  } catch (err) {
+    console.error("❌ Failed to fetch from deployed V4 pool:", err.message);
+    return null;
   }
+}
 
   // === V3 PRICE & LIQUIDITY ===
   const v3Data = await checkPoolLiquidity(V3_POOL_ADDRESS);
@@ -280,10 +259,10 @@ export async function checkFeeFreeRoute(amountIn) {
   console.log(`💲 Implied Price (V3 0.05%): $${v3Price.toFixed(2)} per CBBTC`);
 
   // === V4 PRICE CHECK ===
-  const v4SqrtPriceX96 = await getV4SqrtPriceX96(V4_POOL_MANAGER, USDC, CBBTC, V4_FEE, V4_HOOK_ADDRESS);
+  const v4Data = await getV4Slot0AndLiquidity();
 
-  if (v4SqrtPriceX96) {
-    const v4Price = (Number(v4SqrtPriceX96) / 2 ** 96) ** 2 * 1e2;
+  if (v4Data && v4Data.sqrtPriceX96) {
+    const v4Price = (Number(v4Data.sqrtPriceX96) / 2 ** 96) ** 2 * 1e2;
     console.log(`💲 Implied Price (V4 0.3%): $${v4Price.toFixed(2)} per CBBTC`);
 
     const v4Sim = await simulateWithQuoterV4({
