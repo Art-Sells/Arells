@@ -229,20 +229,9 @@ async function getV4Slot0FromStateView() {
     "function getSlot0(bytes32 poolId) view returns (tuple(uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee))"
   ]);
 
-  const abiCoder = new ethers.AbiCoder();
-  const poolId = ethers.keccak256(
-    abiCoder.encode(
-      ["address", "address", "uint24", "address"],
-      [
-        USDC.toLowerCase(),
-        CBBTC.toLowerCase(),
-        3000, // 0.3% fee
-        V4_HOOK_ADDRESS.toLowerCase()
-      ]
-    )
-  );
-
-  console.log(`📛 V4 poolId: ${poolId}`);
+  // ✅ HARDCODED poolId known to exist from Uniswap v4 UI
+  const poolId = "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96";
+  console.log(`📛 Hardcoded V4 poolId: ${poolId}`);
 
   const callData = iface.encodeFunctionData("getSlot0", [poolId]);
 
