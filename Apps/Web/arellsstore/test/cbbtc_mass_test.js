@@ -224,31 +224,40 @@ export async function checkFeeFreeRoute(amountIn) {
 
 // === V4 PRICE & LIQUIDITY CHECK ===
 
-async function getV4Slot0AndLiquidity() {
-  const poolAddress = "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96"; // actual deployed v4 pool
+async function getV4Slot0FromStateView() {
+  const iface = new ethers.Interface([
+    "function getSlot0(bytes32 poolId) view returns (tuple(uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee))"
+  ]);
 
-  const v4PoolABI = [
-    "function slot0() view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
-    "function liquidity() view returns (uint128)"
-  ];
+  const abiCoder = new ethers.AbiCoder();
+  const poolId = ethers.keccak256(
+    abiCoder.encode(
+      ["address", "address", "uint24", "address"],
+      [
+        USDC.toLowerCase(),
+        CBBTC.toLowerCase(),
+        3000, // 0.3% fee
+        V4_HOOK_ADDRESS.toLowerCase()
+      ]
+    )
+  );
+
+  console.log(`📛 V4 poolId: ${poolId}`);
+
+  const callData = iface.encodeFunctionData("getSlot0", [poolId]);
 
   try {
-    const v4Pool = new ethers.Contract(poolAddress, v4PoolABI, provider);
-    const [slot0, liquidity] = await Promise.all([
-      v4Pool.slot0(),
-      v4Pool.liquidity()
-    ]);
+    const result = await provider.call({
+      to: STATE_VIEW_ADDRESS,
+      data: callData
+    });
 
-    console.log(`🔁 V4 slot0:`, slot0);
-    console.log(`💧 V4 liquidity: ${liquidity}`);
+    const [slot0] = iface.decodeFunctionResult("getSlot0", result);
 
-    return {
-      sqrtPriceX96: slot0.sqrtPriceX96,
-      tick: slot0.tick,
-      liquidity
-    };
+    console.log("✅ StateView.getSlot0:", slot0);
+    return slot0;
   } catch (err) {
-    console.error("❌ Failed to fetch from deployed V4 pool:", err.message);
+    console.error("❌ StateView.getSlot0 failed:", err.message || err);
     return null;
   }
 }
@@ -259,7 +268,7 @@ async function getV4Slot0AndLiquidity() {
   console.log(`💲 Implied Price (V3 0.05%): $${v3Price.toFixed(2)} per CBBTC`);
 
   // === V4 PRICE CHECK ===
-  const v4Data = await getV4Slot0AndLiquidity();
+  const v4Data = await getV4Slot0FromStateView();
 
   if (v4Data && v4Data.sqrtPriceX96) {
     const v4Price = (Number(v4Data.sqrtPriceX96) / 2 ** 96) ** 2 * 1e2;
