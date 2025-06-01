@@ -224,19 +224,32 @@ function decodeLiquidityAmounts(liquidity, sqrtPriceX96, decimalsToken0 = 8, dec
   };
 }
 
-const ERC20_ABI = [
-  "function balanceOf(address owner) view returns (uint256)",
-  "function decimals() view returns (uint8)"
+const VAULT_ADDRESS = "0xbB08f90C03D9550C2e0619c5bD2940c88f76DDc8"; // Uniswap V4 Vault on Base
+
+const VAULT_ABI = [
+  "function getPoolBalances(bytes32[] calldata poolIds) view returns (uint256[][] balances, uint256[][] lastChangeBlock, bytes[] metadata)"
 ];
 
-// ✅ Helper: Get real token balance in a v4 pool
-async function getTokenBalance(tokenAddress, poolAddress) {
-  const token = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-  const [rawBalance, decimals] = await Promise.all([
-    token.balanceOf(poolAddress),
-    token.decimals()
-  ]);
-  return Number(rawBalance) / 10 ** decimals;
+async function getVaultBalances(poolId, provider) {
+  const vault = new ethers.Contract(VAULT_ADDRESS, VAULT_ABI, provider);
+  try {
+    const result = await vault.getPoolBalances([poolId]);
+    const balances = result.balances[0]; // balances[0] is the [cbBTC, USDC] for this pool
+
+    const cbBTC = ethers.formatUnits(balances[0], 8); // cbBTC is index 0
+    const usdc = ethers.formatUnits(balances[1], 6);  // USDC is index 1
+
+    return {
+      cbBTC,
+      usdc,
+    };
+  } catch (err) {
+    console.error(`❌ Failed to fetch vault balances for ${poolId}: ${err.message}`);
+    return {
+      cbBTC: "0.0000",
+      usdc: "0.00",
+    };
+  }
 }
 
 export async function checkFeeFreeRoute(amountIn) {
@@ -250,11 +263,13 @@ export async function checkFeeFreeRoute(amountIn) {
     {
       label: "V4 A (0.3%)",
       poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
+      poolAddress: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", // same for now
       hooks: V4_HOOK_ADDRESS,
     },
     {
       label: "V4 B (0.3%)",
       poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
+      poolAddress: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
       hooks: V4_HOOK_ADDRESS,
     },
   ];
@@ -281,7 +296,7 @@ export async function checkFeeFreeRoute(amountIn) {
   let bestV4Price = 0;
   let bestV4Label = null;
 
-  for (const { poolId, label, hooks } of V4_POOL_IDS) {
+  for (const { poolId, poolAddress, label, hooks } of V4_POOL_IDS) {
     console.log(`📛 Checking ${label}: ${poolId}`);
     const slot0Data = iface.encodeFunctionData("getSlot0", [poolId]);
     const liquidityData = iface.encodeFunctionData("getLiquidity", [poolId]);
@@ -305,12 +320,10 @@ export async function checkFeeFreeRoute(amountIn) {
       const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
       console.log(`💲 Implied Price (${label}): $${price.toFixed(2)} per CBBTC`);
 
-      const cbBTCBalance = await getTokenBalance(CBBTC, poolId);
-      const usdcBalance = await getTokenBalance(USDC, poolId);
-      
-      console.log(`   - V4 Liquidity (Real):`);
-      console.log(`     - CBBTC in Pool: ${cbBTCBalance.toFixed(4)} CBBTC`);
-      console.log(`     - USDC in Pool: ${usdcBalance.toLocaleString()} USDC`);
+      const { cbBTC, usdc } = await getVaultBalances(poolId, provider);
+      console.log(`   - V4 Liquidity (Real via Vault):`);
+      console.log(`     - CBBTC in Pool: ${cbBTC} CBBTC`);
+      console.log(`     - USDC in Pool: ${usdc} USDC`);
 
       const sim = await simulateWithQuoterV4({
         provider,
