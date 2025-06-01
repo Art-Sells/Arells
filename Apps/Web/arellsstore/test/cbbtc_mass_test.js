@@ -44,9 +44,19 @@ async function fetchABI(contractAddress) {
   }
 }
 
-function decodeSqrtPriceX96ToFloat(sqrtPriceX96) {
-  const price = (Number(sqrtPriceX96) / 2 ** 96) ** 2;
-  return price * 1e2; // adjust if CBBTC has 8 decimals and USDC has 6
+function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
+  const Q96 = BigInt(2) ** BigInt(96);
+  const sqrt = BigInt(sqrtPriceX96);
+
+  const numerator = sqrt * sqrt;
+  const denominator = Q96 * Q96;
+
+  const rawPrice = Number(numerator) / Number(denominator);
+
+  // ✅ Invert price and adjust for token decimals (USDC = 6, CBBTC = 8)
+  const adjustedPrice = (1 / rawPrice) * 10 ** (decimalsToken0 - decimalsToken1);
+
+  return adjustedPrice;
 }
 
 
@@ -198,92 +208,137 @@ async function simulateWithQuoter(params) {
   }
 }
 
+function decodeLiquidityAmounts(liquidity, sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
+  const Q96 = BigInt(2) ** BigInt(96);
+  const sqrtP = BigInt(sqrtPriceX96);
+  const L = BigInt(liquidity);
+
+  // From Uniswap formula: amount0 = L * (2^96) / sqrtPrice
+  const amount0 = (L * Q96) / sqrtP;
+  // amount1 = L * sqrtPrice / (2^96)
+  const amount1 = (L * sqrtP) / Q96;
+
+  return {
+    token0Amount: Number(amount0) / 10 ** decimalsToken0, // CBBTC
+    token1Amount: Number(amount1) / 10 ** decimalsToken1, // USDC
+  };
+}
+
+const ERC20_ABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function decimals() view returns (uint8)"
+];
+
+// ✅ Helper: Get real token balance in a v4 pool
+async function getTokenBalance(tokenAddress, poolAddress) {
+  const token = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+  const [rawBalance, decimals] = await Promise.all([
+    token.balanceOf(poolAddress),
+    token.decimals()
+  ]);
+  return Number(rawBalance) / 10 ** decimals;
+}
+
 export async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
 
   const V4_FEE = 3000;
-  const [token0, token1] = [USDC, CBBTC].sort((a, b) => a.toLowerCase() < b.toLowerCase() ? -1 : 1);
-
-  const abiCoder = new ethers.AbiCoder();
-  const poolId = ethers.keccak256(
-    abiCoder.encode(
-      ["address", "address", "uint24", "address"],
-      [
-        token0.toLowerCase(),
-        token1.toLowerCase(),
-        V4_FEE,
-        V4_HOOK_ADDRESS.toLowerCase()
-      ]
-    )
-  );
-  
   const V4_TICK_SPACING = 60; // for 0.3% pool
-
   const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
 
-
-// === V4 PRICE & LIQUIDITY CHECK ===
-
-async function getV4Slot0FromStateView() {
-  const iface = new ethers.Interface([
-    "function getSlot0(bytes32 poolId) view returns (tuple(uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee))"
-  ]);
-
-  // ✅ HARDCODED poolId known to exist from Uniswap v4 UI
-  const poolId = "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96";
-  console.log(`📛 Hardcoded V4 poolId: ${poolId}`);
-
-  const callData = iface.encodeFunctionData("getSlot0", [poolId]);
-
-  try {
-    const result = await provider.call({
-      to: STATE_VIEW_ADDRESS,
-      data: callData
-    });
-
-    const [slot0] = iface.decodeFunctionResult("getSlot0", result);
-
-    console.log("✅ StateView.getSlot0:", slot0);
-    return slot0;
-  } catch (err) {
-    console.error("❌ StateView.getSlot0 failed:", err.message || err);
-    return null;
-  }
-}
+  const V4_POOL_IDS = [
+    {
+      label: "V4 A (0.3%)",
+      poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
+      hooks: V4_HOOK_ADDRESS,
+    },
+    {
+      label: "V4 B (0.3%)",
+      poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
+      hooks: V4_HOOK_ADDRESS,
+    },
+  ];
 
   // === V3 PRICE & LIQUIDITY ===
   const v3Data = await checkPoolLiquidity(V3_POOL_ADDRESS);
-  const v3Price = (Number(v3Data.sqrtPriceX96) / 2 ** 96) ** 2 * 1e2;
+  const v3Price = decodeSqrtPriceX96ToFloat(v3Data.sqrtPriceX96);
   console.log(`💲 Implied Price (V3 0.05%): $${v3Price.toFixed(2)} per CBBTC`);
 
-  // === V4 PRICE CHECK ===
-  const v4Data = await getV4Slot0FromStateView();
+  const v3Liquidity = decodeLiquidityAmounts(
+    v3Data.liquidity,
+    v3Data.sqrtPriceX96
+  );
+  console.log(`   - V3 Liquidity: ${v3Data.liquidity}`);
+  console.log(`   - CBBTC in Pool: ${v3Liquidity.token0Amount.toFixed(6)} CBBTC`);
+  console.log(`   - USDC in Pool: ${v3Liquidity.token1Amount.toFixed(2)} USDC`);
 
-  if (v4Data && v4Data.sqrtPriceX96) {
-    const v4Price = (Number(v4Data.sqrtPriceX96) / 2 ** 96) ** 2 * 1e2;
-    console.log(`💲 Implied Price (V4 0.3%): $${v4Price.toFixed(2)} per CBBTC`);
+  const iface = new ethers.Interface([
+    "function getSlot0(bytes32 poolId) view returns (tuple(uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee))",
+    "function getLiquidity(bytes32 poolId) view returns (uint128)"
+  ]);
 
-    const v4Sim = await simulateWithQuoterV4({
-      provider,
-      tokenIn: CBBTC,
-      tokenOut: USDC,
-      amountIn: amountInWei,
-      fee: V4_FEE,
-      tickSpacing: V4_TICK_SPACING,
-      hooks: V4_HOOK_ADDRESS,
-    });
+  let bestV4Sim = null;
+  let bestV4Price = 0;
+  let bestV4Label = null;
 
-    if (v4Price > v3Price && v4Sim && v4Sim > 0n) {
-      console.log(`🏆 Best Pool: V4 (0.3%) with simulated out ${ethers.formatUnits(v4Sim, 6)} USDC`);
-      return [{ poolAddress: "v4", fee: V4_FEE, amountOut: v4Sim }];
-    } else {
-      console.log(`🏆 Best Pool: V3 (0.05%) remains better`);
+  for (const { poolId, label, hooks } of V4_POOL_IDS) {
+    console.log(`📛 Checking ${label}: ${poolId}`);
+    const slot0Data = iface.encodeFunctionData("getSlot0", [poolId]);
+    const liquidityData = iface.encodeFunctionData("getLiquidity", [poolId]);
+
+    try {
+      const [slot0Raw, liquidityRaw] = await Promise.all([
+        provider.call({ to: STATE_VIEW_ADDRESS, data: slot0Data }),
+        provider.call({ to: STATE_VIEW_ADDRESS, data: liquidityData })
+      ]);
+
+      const [slot0] = iface.decodeFunctionResult("getSlot0", slot0Raw);
+      const [liquidity] = iface.decodeFunctionResult("getLiquidity", liquidityRaw);
+
+      const { sqrtPriceX96, tick, protocolFee, lpFee } = slot0;
+      console.log(`✅ StateView.getSlot0 for ${label}:`);
+      console.log(`   - sqrtPriceX96: ${sqrtPriceX96}`);
+      console.log(`   - Tick: ${tick}`);
+      console.log(`   - Protocol Fee: ${protocolFee}`);
+      console.log(`   - LP Fee: ${lpFee}`);
+
+      const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+      console.log(`💲 Implied Price (${label}): $${price.toFixed(2)} per CBBTC`);
+
+      const cbBTCBalance = await getTokenBalance(CBBTC, poolId);
+      const usdcBalance = await getTokenBalance(USDC, poolId);
+      
+      console.log(`   - V4 Liquidity (Real):`);
+      console.log(`     - CBBTC in Pool: ${cbBTCBalance.toFixed(4)} CBBTC`);
+      console.log(`     - USDC in Pool: ${usdcBalance.toLocaleString()} USDC`);
+
+      const sim = await simulateWithQuoterV4({
+        provider,
+        tokenIn: CBBTC,
+        tokenOut: USDC,
+        amountIn: amountInWei,
+        fee: V4_FEE,
+        tickSpacing: V4_TICK_SPACING,
+        hooks,
+      });
+
+      if (sim && price > bestV4Price) {
+        bestV4Sim = sim;
+        bestV4Price = price;
+        bestV4Label = label;
+      }
+    } catch (err) {
+      console.warn(`❌ ${label} failed: ${err.message}`);
     }
-  } else {
-    console.warn(`⚠️ Failed to fetch V4 price. Defaulting to V3...`);
   }
 
-  // === FALLBACK TO V3 TICK SIMULATION ===
+  if (bestV4Sim) {
+    console.log(`🏆 Best Pool: ${bestV4Label} with simulated out ${ethers.formatUnits(bestV4Sim, 6)} USDC`);
+    return [{ poolAddress: bestV4Label, fee: V4_FEE, amountOut: bestV4Sim }];
+  } else {
+    console.warn(`⚠️ All V4 pool simulations failed or were worse than V3. Falling back to V3...`);
+  }
+
   const tickSpacing = Number(v3Data.tickSpacing);
   const baseTick = Math.floor(Number(v3Data.tick) / tickSpacing) * tickSpacing;
   const feeFreeRoutes = [];
