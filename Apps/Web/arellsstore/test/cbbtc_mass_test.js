@@ -28,19 +28,18 @@ const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 // Below for checking quotes:
 async function fetchABI(contractAddress) {
   try {
-      console.log(`🔍 Fetching ABI for ${contractAddress} from BaseScan...`);
-      const response = await axios.get(
-          `https://api.basescan.org/api?module=contract&action=getabi&address=${contractAddress}&apikey=${process.env.BASESCAN_API_KEY}`
-      );
+    console.log(`🔍 Fetching ABI for ${contractAddress} from BaseScan...`);
+    const response = await axios.get(
+      `https://api.basescan.org/api?module=contract&action=getabi&address=${contractAddress}&apikey=${process.env.BASESCAN_API_KEY}`
+    );
 
-      if (response.data.status !== "1") throw new Error(`BaseScan API Error: ${response.data.message}`);
+    if (response.data.status !== "1") throw new Error(`BaseScan API Error: ${response.data.message}`);
 
-      const abi = JSON.parse(response.data.result);
-
-      return abi;
+    const abi = JSON.parse(response.data.result);
+    return abi;
   } catch (error) {
-      console.error("❌ Failed to fetch ABI:", error.message);
-      return null;
+    console.error("❌ Failed to fetch ABI:", error.message);
+    return null;
   }
 }
 
@@ -53,11 +52,14 @@ function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsTok
 
   const rawPrice = Number(numerator) / Number(denominator);
 
-  // ✅ Invert price and adjust for token decimals (USDC = 6, CBBTC = 8)
-  const adjustedPrice = (1 / rawPrice) * 10 ** (decimalsToken0 - decimalsToken1);
+  // ✅ Adjust for token decimals (CBBTC = 8, USDC = 6)
+  const adjustedPrice = rawPrice * 10 ** (decimalsToken1 - decimalsToken0);
 
   return adjustedPrice;
 }
+
+// ... rest of the unchanged code
+
 
 
 async function getBestPricedPool() {
