@@ -168,18 +168,26 @@ async function simulateWithQuoter(params) {
   }
 }
 
-function decodeLiquidityAmounts(liquidity, sqrtPriceX96) {
-  if (!liquidity || !sqrtPriceX96) {
-    return { cbBTC: 0, usdc: 0 };
-  }
+function decodeLiquidityAmountsv3(liquidity, sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
+  const Q96 = BigInt(2) ** BigInt(96);
+  const sqrtP = BigInt(sqrtPriceX96);
+  const L = BigInt(liquidity);
 
+  // From Uniswap formula: amount0 = L * (2^96) / sqrtPrice
+  const amount0 = (L * Q96) / sqrtP;
+  // amount1 = L * sqrtPrice / (2^96)
+  const amount1 = (L * sqrtP) / Q96;
+
+  return {
+    token0Amount: Number(amount0) / 10 ** decimalsToken0, // CBBTC
+    token1Amount: Number(amount1) / 10 ** decimalsToken1, // USDC
+  };
+}
+
+function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
   const sqrtPrice = Number(sqrtPriceX96) / 2 ** 96;
   const price = sqrtPrice ** 2;
   const liquidityFloat = Number(liquidity);
-
-  if (isNaN(price) || isNaN(liquidityFloat)) {
-    return { cbBTC: 0, usdc: 0 };
-  }
 
   const amount0 = liquidityFloat / sqrtPrice; // USDC
   const amount1 = liquidityFloat * sqrtPrice; // CBBTC
@@ -223,7 +231,7 @@ export async function checkFeeFreeRoute(amountIn) {
   const v3Price = decodeSqrtPriceX96ToFloat(v3Data.sqrtPriceX96);
   console.log(`💲 Implied Price (V3 0.05%): $${v3Price.toFixed(2)} per CBBTC`);
 
-  const v3Liquidity = decodeLiquidityAmounts(
+  const v3Liquidity = decodeLiquidityAmountsv3(
     v3Data.liquidity,
     v3Data.sqrtPriceX96
   );
@@ -263,27 +271,10 @@ export async function checkFeeFreeRoute(amountIn) {
 
       const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
       console.log(`💲 Implied Price (${label}): $${price.toFixed(2)} per CBBTC`);
-      const decodedLiquidity = decodeLiquidityAmounts(liquidity, sqrtPriceX96);
-
-      if (decodedLiquidity) {
-        console.log(`   - V4 Liquidity (Decoded):`);
-        console.log("DEBUG decodedLiquidity:", decodedLiquidity);
-        console.log("typeof decodedLiquidity:", typeof decodedLiquidity);
-        console.log("decodedLiquidity.cbBTC:", decodedLiquidity?.cbBTC);
-        console.log("decodedLiquidity.usdc:", decodedLiquidity?.usdc);
-        if (
-          decodedLiquidity &&
-          typeof decodedLiquidity.cbBTC === "number" &&
-          typeof decodedLiquidity.usdc === "number"
-        ) {
-          console.log(`     - CBBTC in Pool: ${decodedLiquidity.cbBTC.toFixed(6)} CBBTC`);
-          console.log(`     - USDC in Pool: ${decodedLiquidity.usdc.toFixed(2)} USDC`);
-        } else {
-          console.log("⚠️ Liquidity decoding returned invalid result.");
-        }
-      } else {
-        console.log(`   - V4 Liquidity: ⚠️ Unable to decode.`);
-      }
+const decodedLiquidity = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
+console.log(`   - V4 Liquidity (Decoded):`);
+console.log(`     - CBBTC in Pool: ${decodedLiquidity.cbBTC.toFixed(6)} CBBTC`);
+console.log(`     - USDC in Pool: ${decodedLiquidity.usdc.toFixed(2)} USDC`);
       const sim = await simulateWithQuoterV4({
         provider,
         tokenIn: CBBTC,
