@@ -1,4 +1,4 @@
-import { ethers } from "ethers"; 
+import { ethers, toBeHex } from "ethers"; 
 import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
@@ -58,47 +58,6 @@ function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsTok
   return adjustedPrice;
 }
 
-
-
-async function getBestPricedPool() {
-  const poolConfigs = [
-    { poolAddress: "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef", fee: 500, label: "V3 (0.05%)" },
-    { poolAddress: "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4", fee: 3000, label: "V4 (0.3%)" }
-  ];
-
-  let bestPool = null;
-  let highestPrice = 0;
-
-  for (const { poolAddress, fee, label } of poolConfigs) {
-    const poolABI = await fetchABI(poolAddress);
-    if (!poolABI) continue;
-
-    try {
-      const pool = new ethers.Contract(poolAddress, poolABI, provider);
-      const slot0 = await pool.slot0();
-      const sqrtPriceX96 = BigInt(slot0[0].toString());
-
-      const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
-      console.log(`🔍 Pool ${label}: sqrtPriceX96 = ${sqrtPriceX96}`);
-      console.log(`💲 Implied Price (${label}): $${price.toFixed(2)} per CBBTC`);
-
-      if (price > highestPrice) {
-        highestPrice = price;
-        bestPool = { poolAddress, fee, label, sqrtPriceX96 };
-      }
-    } catch (err) {
-      console.warn(`⚠️ Failed to read from ${label}: ${err.message}`);
-    }
-  }
-
-  if (bestPool) {
-    console.log(`\n🏆 Best Pool: ${bestPool.label} with price $${highestPrice.toFixed(2)}`);
-    return bestPool;
-  }
-
-  console.error("❌ Could not determine best-priced pool.");
-  return null;
-}
 
 async function checkPoolLiquidity(poolAddress) {
   const poolABI = await fetchABI(poolAddress);
@@ -176,14 +135,7 @@ export async function simulateWithQuoterV4({
     return null;
   }
 }
-function computeV4PoolId(token0, token1, fee, hookAddress) {
-  return keccak256(
-    encodePacked(
-      ["address", "address", "uint24", "address"],
-      [getAddress(token0), getAddress(token1), fee, getAddress(hookAddress)]
-    )
-  );
-}
+
 
 
 
@@ -216,19 +168,25 @@ async function simulateWithQuoter(params) {
   }
 }
 
-function decodeLiquidityAmounts(liquidity, sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
-  const Q96 = BigInt(2) ** BigInt(96);
-  const sqrtP = BigInt(sqrtPriceX96);
-  const L = BigInt(liquidity);
+function decodeLiquidityAmounts(liquidity, sqrtPriceX96) {
+  if (!liquidity || !sqrtPriceX96) {
+    return { cbBTC: 0, usdc: 0 };
+  }
 
-  // From Uniswap formula: amount0 = L * (2^96) / sqrtPrice
-  const amount0 = (L * Q96) / sqrtP;
-  // amount1 = L * sqrtPrice / (2^96)
-  const amount1 = (L * sqrtP) / Q96;
+  const sqrtPrice = Number(sqrtPriceX96) / 2 ** 96;
+  const price = sqrtPrice ** 2;
+  const liquidityFloat = Number(liquidity);
+
+  if (isNaN(price) || isNaN(liquidityFloat)) {
+    return { cbBTC: 0, usdc: 0 };
+  }
+
+  const amount0 = liquidityFloat / sqrtPrice; // USDC
+  const amount1 = liquidityFloat * sqrtPrice; // CBBTC
 
   return {
-    token0Amount: Number(amount0) / 10 ** decimalsToken0, // CBBTC
-    token1Amount: Number(amount1) / 10 ** decimalsToken1, // USDC
+    cbBTC: amount1 / 1e8,
+    usdc: amount0 / 1e6,
   };
 }
 
@@ -237,47 +195,6 @@ const ERC20_ABI = [
   "function balanceOf(address owner) view returns (uint256)"
 ];
 
-
-// Hardcoded known vaults (same as before)
-
-const POOL_MANAGER_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
-const POOL_MANAGER_ABI = [
-  "function getVaultAddress(bytes32 poolId) view returns (address)"
-];
-
-// Replacement for getVaultBalances
-async function getVaultBalances(poolId, provider) {
-  const VAULT_MAPPING_SLOT = 4; // mapping(bytes32 => address) is at storage slot 4
-  const key = keccak256(
-    toBeHex(poolId, 32) + toBeHex(VAULT_MAPPING_SLOT, 32).slice(2) // pad and concat
-  );
-  let vaultAddressHex;
-  try {
-    vaultAddressHex = await provider.getStorage(POOL_MANAGER_ADDRESS, key);
-  } catch (err) {
-    console.error(`❌ Failed to read vault mapping slot: ${err.message}`);
-    return { cbBTC: "0.0000", usdc: "0.00" };
-  }
-
-  const vaultAddress = getAddress("0x" + vaultAddressHex.slice(-40)); // last 20 bytes
-  const usdcToken = new ethers.Contract(USDC, ERC20_ABI, provider);
-  const cbBTCtoken = new ethers.Contract(CBBTC, ERC20_ABI, provider);
-
-  try {
-    const [usdcRaw, cbBTCRaw] = await Promise.all([
-      usdcToken.balanceOf(vaultAddress),
-      cbBTCtoken.balanceOf(vaultAddress)
-    ]);
-
-    const usdc = ethers.formatUnits(usdcRaw, 6);
-    const cbBTC = ethers.formatUnits(cbBTCRaw, 8);
-
-    return { cbBTC, usdc };
-  } catch (err) {
-    console.error(`❌ Failed to fetch ERC20 balances for ${vaultAddress}: ${err.message}`);
-    return { cbBTC: "0.0000", usdc: "0.00" };
-  }
-}
 
 export async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
@@ -346,12 +263,27 @@ export async function checkFeeFreeRoute(amountIn) {
 
       const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
       console.log(`💲 Implied Price (${label}): $${price.toFixed(2)} per CBBTC`);
+      const decodedLiquidity = decodeLiquidityAmounts(liquidity, sqrtPriceX96);
 
-      const { cbBTC, usdc } = await getVaultBalances(poolId, provider);
-      console.log(`   - V4 Liquidity (Real via Vault):`);
-      console.log(`     - CBBTC in Pool: ${cbBTC} CBBTC`);
-      console.log(`     - USDC in Pool: ${usdc} USDC`);
-
+      if (decodedLiquidity) {
+        console.log(`   - V4 Liquidity (Decoded):`);
+        console.log("DEBUG decodedLiquidity:", decodedLiquidity);
+        console.log("typeof decodedLiquidity:", typeof decodedLiquidity);
+        console.log("decodedLiquidity.cbBTC:", decodedLiquidity?.cbBTC);
+        console.log("decodedLiquidity.usdc:", decodedLiquidity?.usdc);
+        if (
+          decodedLiquidity &&
+          typeof decodedLiquidity.cbBTC === "number" &&
+          typeof decodedLiquidity.usdc === "number"
+        ) {
+          console.log(`     - CBBTC in Pool: ${decodedLiquidity.cbBTC.toFixed(6)} CBBTC`);
+          console.log(`     - USDC in Pool: ${decodedLiquidity.usdc.toFixed(2)} USDC`);
+        } else {
+          console.log("⚠️ Liquidity decoding returned invalid result.");
+        }
+      } else {
+        console.log(`   - V4 Liquidity: ⚠️ Unable to decode.`);
+      }
       const sim = await simulateWithQuoterV4({
         provider,
         tokenIn: CBBTC,
