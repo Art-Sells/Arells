@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
+import { keccak256, encodePacked, getAddress } from "viem";
 
 
 
@@ -52,13 +53,10 @@ function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsTok
 
   const rawPrice = Number(numerator) / Number(denominator);
 
-  // ✅ Adjust for token decimals (CBBTC = 8, USDC = 6)
-  const adjustedPrice = rawPrice * 10 ** (decimalsToken1 - decimalsToken0);
+  const adjustedPrice = (1 / rawPrice) * 10 ** (decimalsToken0 - decimalsToken1); // ✅ Correct: Inverted & scaled
 
   return adjustedPrice;
 }
-
-// ... rest of the unchanged code
 
 
 
@@ -160,7 +158,7 @@ export async function simulateWithQuoterV4({
   };
 
   const iface = new ethers.Interface(QUOTER_V4_ABI);
-  const data = iface.encodeFunctionData("quoteExactInputSingle", [poolKey, true, amountIn, "0x"]);
+  const data = iface.encodeFunctionData("quoteExactInputSingle", [poolKey, true, ethers.toBeHex(amountIn), "0x"]);
 
   try {
     await provider.call({ to: V4_QUOTER_ADDRESS, data });
@@ -177,6 +175,14 @@ export async function simulateWithQuoterV4({
     console.error("❌ V4 Quoter simulation failed:", err.reason || err.message);
     return null;
   }
+}
+function computeV4PoolId(token0, token1, fee, hookAddress) {
+  return keccak256(
+    encodePacked(
+      ["address", "address", "uint24", "address"],
+      [getAddress(token0), getAddress(token1), fee, getAddress(hookAddress)]
+    )
+  );
 }
 
 
@@ -226,31 +232,50 @@ function decodeLiquidityAmounts(liquidity, sqrtPriceX96, decimalsToken0 = 8, dec
   };
 }
 
-const VAULT_ADDRESS = "0xbB08f90C03D9550C2e0619c5bD2940c88f76DDc8"; // Uniswap V4 Vault on Base
 
-const VAULT_ABI = [
-  "function getPoolBalances(bytes32[] calldata poolIds) view returns (uint256[][] balances, uint256[][] lastChangeBlock, bytes[] metadata)"
+const ERC20_ABI = [
+  "function balanceOf(address owner) view returns (uint256)"
 ];
 
+
+// Hardcoded known vaults (same as before)
+
+const POOL_MANAGER_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
+const POOL_MANAGER_ABI = [
+  "function getVaultAddress(bytes32 poolId) view returns (address)"
+];
+
+// Replacement for getVaultBalances
 async function getVaultBalances(poolId, provider) {
-  const vault = new ethers.Contract(VAULT_ADDRESS, VAULT_ABI, provider);
+  const VAULT_MAPPING_SLOT = 4; // mapping(bytes32 => address) is at storage slot 4
+  const key = keccak256(
+    toBeHex(poolId, 32) + toBeHex(VAULT_MAPPING_SLOT, 32).slice(2) // pad and concat
+  );
+  let vaultAddressHex;
   try {
-    const result = await vault.getPoolBalances([poolId]);
-    const balances = result.balances[0]; // balances[0] is the [cbBTC, USDC] for this pool
-
-    const cbBTC = ethers.formatUnits(balances[0], 8); // cbBTC is index 0
-    const usdc = ethers.formatUnits(balances[1], 6);  // USDC is index 1
-
-    return {
-      cbBTC,
-      usdc,
-    };
+    vaultAddressHex = await provider.getStorage(POOL_MANAGER_ADDRESS, key);
   } catch (err) {
-    console.error(`❌ Failed to fetch vault balances for ${poolId}: ${err.message}`);
-    return {
-      cbBTC: "0.0000",
-      usdc: "0.00",
-    };
+    console.error(`❌ Failed to read vault mapping slot: ${err.message}`);
+    return { cbBTC: "0.0000", usdc: "0.00" };
+  }
+
+  const vaultAddress = getAddress("0x" + vaultAddressHex.slice(-40)); // last 20 bytes
+  const usdcToken = new ethers.Contract(USDC, ERC20_ABI, provider);
+  const cbBTCtoken = new ethers.Contract(CBBTC, ERC20_ABI, provider);
+
+  try {
+    const [usdcRaw, cbBTCRaw] = await Promise.all([
+      usdcToken.balanceOf(vaultAddress),
+      cbBTCtoken.balanceOf(vaultAddress)
+    ]);
+
+    const usdc = ethers.formatUnits(usdcRaw, 6);
+    const cbBTC = ethers.formatUnits(cbBTCRaw, 8);
+
+    return { cbBTC, usdc };
+  } catch (err) {
+    console.error(`❌ Failed to fetch ERC20 balances for ${vaultAddress}: ${err.message}`);
+    return { cbBTC: "0.0000", usdc: "0.00" };
   }
 }
 
