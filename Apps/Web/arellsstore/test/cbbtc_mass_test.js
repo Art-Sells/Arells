@@ -15,6 +15,7 @@ const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
 const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b"; 
 const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
+const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
 
 // ✅ Token Addresses
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
@@ -79,8 +80,6 @@ async function checkPoolLiquidity(poolAddress) {
   }
 }
 
-const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
-
 const QUOTER_V4_ABI = [
   "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks), bool zeroForOne, uint256 exactAmount, bytes hookData)"
 ];
@@ -107,17 +106,27 @@ export async function simulateWithQuoterV4({
   tickSpacing,
   hooks = ethers.ZeroAddress
 }) {
+  const [currency0, currency1] = tokenIn.toLowerCase() < tokenOut.toLowerCase()
+    ? [tokenIn, tokenOut]
+    : [tokenOut, tokenIn];
+
+  const zeroForOne = tokenIn.toLowerCase() > tokenOut.toLowerCase();
 
   const poolKey = {
-    currency0: tokenOut,
-    currency1: tokenIn,
+    currency0,
+    currency1,
     fee,
     tickSpacing,
     hooks
   };
 
   const iface = new ethers.Interface(QUOTER_V4_ABI);
-  const data = iface.encodeFunctionData("quoteExactInputSingle", [poolKey, true, ethers.toBeHex(amountIn), "0x"]);
+  const data = iface.encodeFunctionData("quoteExactInputSingle", [
+    poolKey,
+    zeroForOne,
+    ethers.toBeHex(amountIn),
+    "0x"
+  ]);
 
   try {
     await provider.call({ to: V4_QUOTER_ADDRESS, data });
