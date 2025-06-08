@@ -84,7 +84,7 @@ const QUOTER_V4_ABI = [
   "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks), bool zeroForOne, uint256 exactAmount, bytes hookData)"
 ];
 
-const QUOTE_SWAP_ERROR = "error QuoteSwap(uint256 amount)";
+const QUOTE_SWAP_ERROR = "error QuoteSwfap(uint256 amount)";
 
 const parseQuoteRevert = (data) => {
   const iface = new ethers.Interface([QUOTE_SWAP_ERROR]);
