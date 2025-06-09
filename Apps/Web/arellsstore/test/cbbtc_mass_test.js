@@ -146,33 +146,56 @@ export async function simulateWithQuoterV4({
 }
 
 
+export async function simulateWithQuoterV4({
+  provider,
+  tokenIn,
+  tokenOut,
+  amountIn,
+  fee,
+  tickSpacing,
+  hooks = ethers.ZeroAddress
+}) {
+  const iface = new ethers.Interface(QUOTER_V4_ABI);
 
+  // Force lowercase for consistent comparison
+  const tokenInLower = tokenIn.toLowerCase();
+  const tokenOutLower = tokenOut.toLowerCase();
 
-async function simulateWithQuoter(params) {
-  const quoterABI = await fetchABI(QUOTER_ADDRESS);
-  if (!quoterABI) return null;
+  // Correct token ordering and zeroForOne flag
+  const [currency0, currency1] = tokenInLower < tokenOutLower
+    ? [tokenIn, tokenOut]
+    : [tokenOut, tokenIn];
 
-  const iface = new ethers.Interface(quoterABI);
+  const zeroForOne = tokenInLower > tokenOutLower;
 
-  const functionData = iface.encodeFunctionData("quoteExactInputSingle", [{
-    tokenIn: params.tokenIn,
-    tokenOut: params.tokenOut,
-    fee: params.fee,
-    amountIn: params.amountIn,
-    sqrtPriceLimitX96: params.sqrtPriceLimitX96
-  }]);
+  const poolKey = {
+    currency0,
+    currency1,
+    fee,
+    tickSpacing,
+    hooks
+  };
+
+  const data = iface.encodeFunctionData("quoteExactInputSingle", [
+    poolKey,
+    zeroForOne,
+    ethers.toBeHex(amountIn),
+    "0x"
+  ]);
 
   try {
-    const result = await provider.call({
-      to: QUOTER_ADDRESS,
-      data: functionData
-    });
-
-    const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", result);
-    console.log(`🔁 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-    return amountOut;
+    await provider.call({ to: V4_QUOTER_ADDRESS, data });
+    console.warn("⚠️ Expected revert with QuoteSwap but call succeeded unexpectedly.");
+    return null;
   } catch (err) {
-    console.warn("⚠️ QuoterV2 simulation failed:", err.reason || err.message || err);
+    if (err.code === "CALL_EXCEPTION" && err.data) {
+      const amountOut = parseQuoteRevert(err.data);
+      if (amountOut) {
+        console.log(`🔁 V4 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+        return amountOut;
+      }
+    }
+    console.error("❌ V4 Quoter simulation failed:", err.reason || err.message);
     return null;
   }
 }
