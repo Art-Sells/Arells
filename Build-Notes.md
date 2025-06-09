@@ -74,6 +74,7 @@
 - - Add "Discord" section for any questions
 - Team:
 - - Fund Arells Fee Funder with 150 USD in ETH on Base (check and replenish everyweek/day until BASE L3 is complete)
+- - Future LPP Graphs for MASS v2 marking by seconds
 - - review ##Base
 - - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
 
