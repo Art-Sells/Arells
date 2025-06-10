@@ -113,7 +113,7 @@ async function simulateWithQuoterV4({
   };
 
   const callData = iface.encodeFunctionData("quoteExactInputSingle", [
-    poolKey,
+    [currency0, currency1, fee, tickSpacing, hooks], // ← 👈 encode as array, not object
     zeroForOne,
     amountIn,
     "0x"
@@ -602,6 +602,9 @@ async function main() {
 
 
 main().catch(console.error);
+
+
+// TEST #1 first and onward from #3 - #5 individually...
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
 
