@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
 import { keccak256, encodePacked, getAddress } from "viem";
+import { exitCode } from "process";
+import { unlink } from "fs";
 
 
 
@@ -80,37 +82,27 @@ async function checkPoolLiquidity(poolAddress) {
   }
 }
 
-const QUOTER_V4_ABI = [
-  "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks), bool zeroForOne, uint256 exactAmount, bytes hookData)"
-];
 
-const QUOTE_SWAP_ERROR = "error QuoteSwfap(uint256 amount)";
-
-const parseQuoteRevert = (data) => {
-  const iface = new ethers.Interface([QUOTE_SWAP_ERROR]);
-  try {
-    const decoded = iface.decodeErrorResult("QuoteSwap", data);
-    return decoded.amount;
-  } catch (err) {
-    console.warn("Failed to decode QuoteSwap revert:", err.message);
-    return null;
-  }
-};
-
-export async function simulateWithQuoterV4({
+async function simulateWithQuoterV4({
   provider,
   tokenIn,
   tokenOut,
   amountIn,
   fee,
   tickSpacing,
-  hooks = ethers.ZeroAddress
+  hooks = V4_HOOK_ADDRESS
 }) {
-  const [currency0, currency1] = tokenIn.toLowerCase() < tokenOut.toLowerCase()
-    ? [tokenIn, tokenOut]
-    : [tokenOut, tokenIn];
+  const iface = new ethers.Interface([
+    "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks), bool zeroForOne, uint256 exactAmount, bytes hookData)",
+    "error QuoteSwap(uint256 amount)"
+  ]);
 
-  const zeroForOne = tokenIn.toLowerCase() > tokenOut.toLowerCase();
+  const tokenInLower = tokenIn.toLowerCase();
+  const tokenOutLower = tokenOut.toLowerCase();
+  const sorted = [tokenInLower, tokenOutLower].sort();
+  const currency0 = sorted[0];
+  const currency1 = sorted[1];
+  const zeroForOne = tokenInLower === currency1;
 
   const poolKey = {
     currency0,
@@ -120,82 +112,68 @@ export async function simulateWithQuoterV4({
     hooks
   };
 
-  const iface = new ethers.Interface(QUOTER_V4_ABI);
-  const data = iface.encodeFunctionData("quoteExactInputSingle", [
+  const callData = iface.encodeFunctionData("quoteExactInputSingle", [
     poolKey,
     zeroForOne,
-    ethers.toBeHex(amountIn),
+    amountIn,
     "0x"
   ]);
 
   try {
-    await provider.call({ to: V4_QUOTER_ADDRESS, data });
-    console.warn("⚠️ Expected revert with QuoteSwap but call succeeded unexpectedly.");
+    await provider.call({
+      to: V4_QUOTER_ADDRESS,
+      data: callData
+    });
+
+    console.warn("⚠️ Unexpected success: V4 Quoter call did not revert.");
     return null;
   } catch (err) {
-    if (err.code === "CALL_EXCEPTION" && err.data) {
-      const amountOut = parseQuoteRevert(err.data);
-      if (amountOut) {
-        console.log(`🔁 V4 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-        return amountOut;
+    if (err.code === "CALL_EXCEPTION") {
+      if (err.data) {
+        try {
+          const decoded = iface.decodeErrorResult("QuoteSwap", err.data);
+          const amountOut = decoded.amount || decoded[0];
+          console.log(`🔁 V4 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+          return amountOut;
+        } catch (decodeErr) {
+          console.warn("❌ Failed to decode QuoteSwap:", decodeErr.message);
+        }
+      } else {
+        console.warn("❌ CALL_EXCEPTION but no revert data — likely invalid path or hook failure.");
       }
     }
-    console.error("❌ V4 Quoter simulation failed:", err.reason || err.message);
+
+    console.error("❌ V4 Quoter simulation failed:", err.reason || err.message || err);
     return null;
   }
 }
 
 
-export async function simulateWithQuoterV4({
-  provider,
-  tokenIn,
-  tokenOut,
-  amountIn,
-  fee,
-  tickSpacing,
-  hooks = ethers.ZeroAddress
-}) {
-  const iface = new ethers.Interface(QUOTER_V4_ABI);
+async function simulateWithQuoter(params) {
+  const quoterABI = await fetchABI(QUOTER_ADDRESS);
+  if (!quoterABI) return null;
 
-  // Force lowercase for consistent comparison
-  const tokenInLower = tokenIn.toLowerCase();
-  const tokenOutLower = tokenOut.toLowerCase();
+  const iface = new ethers.Interface(quoterABI);
 
-  // Correct token ordering and zeroForOne flag
-  const [currency0, currency1] = tokenInLower < tokenOutLower
-    ? [tokenIn, tokenOut]
-    : [tokenOut, tokenIn];
-
-  const zeroForOne = tokenInLower > tokenOutLower;
-
-  const poolKey = {
-    currency0,
-    currency1,
-    fee,
-    tickSpacing,
-    hooks
-  };
-
-  const data = iface.encodeFunctionData("quoteExactInputSingle", [
-    poolKey,
-    zeroForOne,
-    ethers.toBeHex(amountIn),
-    "0x"
-  ]);
+  const functionData = iface.encodeFunctionData("quoteExactInputSingle", [{
+    tokenIn: params.tokenIn,
+    tokenOut: params.tokenOut,
+    fee: params.fee,
+    amountIn: params.amountIn,
+    sqrtPriceLimitX96: params.sqrtPriceLimitX96
+  }]);
 
   try {
-    await provider.call({ to: V4_QUOTER_ADDRESS, data });
-    console.warn("⚠️ Expected revert with QuoteSwap but call succeeded unexpectedly.");
-    return null;
+    const result = await provider.call({
+      to: QUOTER_ADDRESS,
+      data: functionData
+    });
+
+    const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", result);
+    console.log(`🔁 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+    return amountOut;
   } catch (err) {
-    if (err.code === "CALL_EXCEPTION" && err.data) {
-      const amountOut = parseQuoteRevert(err.data);
-      if (amountOut) {
-        console.log(`🔁 V4 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-        return amountOut;
-      }
-    }
-    console.error("❌ V4 Quoter simulation failed:", err.reason || err.message);
+    console.warn("⚠️ QuoterV2 simulation failed:", err.reason || err.message || err);
     return null;
   }
 }
@@ -310,7 +288,7 @@ export async function checkFeeFreeRoute(amountIn) {
         amountIn: amountInWei,
         fee: V4_FEE,
         tickSpacing: V4_TICK_SPACING,
-        hooks,
+        hooks : V4_HOOK_ADDRESS,
       });
 
       if (sim && price > bestV4Price) {
@@ -626,3 +604,4 @@ async function main() {
 main().catch(console.error);
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
+
