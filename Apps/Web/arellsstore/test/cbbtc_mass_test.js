@@ -554,32 +554,32 @@ throw lastError;
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
 async function main() {
-  console.log("\n🔍 Checking for a Fee-Free Quote...");
-  // ✅ CBBTC amounts (8 decimals)
-  const cbbtcAmounts = [
-    0.002323, 
-    // 0.0120323, 
-    // 1.3233, 
-    // 0.50012345, 
-    // 2.12345678
-  ];
+  // console.log("\n🔍 Checking for a Fee-Free Quote...");
+  // // ✅ CBBTC amounts (8 decimals)
+  // const cbbtcAmounts = [
+  //   0.002323, 
+  //   // 0.0120323, 
+  //   // 1.3233, 
+  //   // 0.50012345, 
+  //   // 2.12345678
+  // ];
 
-  let foundFeeFree = false; // Track if any fee-free route was found
+  // let foundFeeFree = false; // Track if any fee-free route was found
 
-  // ✅ Check for CBBTC → USDC
-  for (const amount of cbbtcAmounts) {
-      const feeFree = await checkFeeFreeRoute(amount, "CBBTC", "USDC", 8);
+  // // ✅ Check for CBBTC → USDC
+  // for (const amount of cbbtcAmounts) {
+  //     const feeFree = await checkFeeFreeRoute(amount, "CBBTC", "USDC", 8);
 
-      if (feeFree) {
-          console.log(`\n✅ **Fee-Free Quote Found at ${amount} CBBTC!** 🚀`);
-          foundFeeFree = true;
-      }
-  }
-  if (!foundFeeFree) {
-    console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
-  } else {
-      console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
-  }
+  //     if (feeFree) {
+  //         console.log(`\n✅ **Fee-Free Quote Found at ${amount} CBBTC!** 🚀`);
+  //         foundFeeFree = true;
+  //     }
+  // }
+  // if (!foundFeeFree) {
+  //   console.log("\n❌ **No Fee-Free Quote Available for Any Checked Amounts.** Try Again Later.");
+  // } else {
+  //     console.log("\n🎉 **Fee-Free Routes Checked for All Amounts!** 🚀");
+  // }
 
   // const cbbtcAmountToTrade = 0.00007024;
 
@@ -595,14 +595,62 @@ async function main() {
   //     await new Promise(res => setTimeout(res, 15000));
   //   }
   // }
+  const iface = new ethers.Interface([
+    "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks), bool zeroForOne, uint256 exactAmount, bytes hookData)",
+    "error QuoteSwap(uint256 amount)"
+  ]);
+  
+  const poolKey = {
+    currency0: USDC,
+    currency1: CBBTC,
+    fee: 3000,
+    tickSpacing: 60,
+    hooks: "0x0000000000000000000000000000000000000000"
+  };
+  
+  const zeroForOne = false; // ✅ CBBTC → USDC
+  const amountIn = ethers.parseUnits("0.002323", 8);
+  
+  const callData = iface.encodeFunctionData("quoteExactInputSingle", [
+    [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks],
+    zeroForOne,
+    amountIn,
+    "0x"
+  ]);
+  
+  try {
+    const result = await provider.call({
+      to: V4_QUOTER_ADDRESS,
+      data: callData
+    });
+    console.warn("⚠️ Unexpected success — did not revert");
+    console.log("Returned raw data:", result);
+  } catch (err) {
+    if (err.code === "CALL_EXCEPTION" && err.data) {
+      try {
+        const decoded = iface.decodeErrorResult("QuoteSwap", err.data);
+        console.log(`✅ Simulated USDC Output: ${ethers.formatUnits(decoded.amount, 6)} USDC`);
+      } catch {
+        console.warn("❌ Revert occurred, but not QuoteSwap.");
+      }
+    } else {
+      console.error("❌ Raw Quoter call failed:", err.message || err);
+    }
+  }
+
 }
 
 
 
 main().catch(console.error);
 
+// 🔍 Possible Final Remaining Issues
+// 	1.	PoolManager might not recognize the pool as “ready” if a parameter is slightly off.
+// 	2.	tickSpacing might be misaligned with actual pool (try reading it via StateView.getPoolTickSpacing(poolId)).
+// 	3.	V4 Quoter might require ETH balance on-chain to simulate (unlikely, but possible).
+// 	4.	You might need to simulate via a wrapper function from Uniswap’s own deployment if the contract uses internal revert expectations (vs. public ABI simulation).
+// 	5.	Hook logic might reject the simulation pre-conditionally (e.g., on token balance, sender, etc.).
 
-// TEST #1 first and onward from #3 - #5 individually
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
 
