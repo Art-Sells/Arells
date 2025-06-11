@@ -90,12 +90,21 @@ async function simulateWithQuoterV4({
   amountIn,
   fee,
   tickSpacing,
-  hooks = V4_HOOK_ADDRESS
+  poolId
 }) {
   const iface = new ethers.Interface([
     "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks), bool zeroForOne, uint256 exactAmount, bytes hookData)",
     "error QuoteSwap(uint256 amount)"
   ]);
+
+  const stateViewIface = new ethers.Interface([
+    "function getPoolHook(bytes32 poolId) view returns (address)"
+  ]);
+
+  // Fetch the hook using poolId
+  const callData = stateViewIface.encodeFunctionData("getPoolHook", [poolId]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: callData });
+  const [hookAddress] = stateViewIface.decodeFunctionResult("getPoolHook", result);
 
   const tokenInLower = tokenIn.toLowerCase();
   const tokenOutLower = tokenOut.toLowerCase();
@@ -104,16 +113,9 @@ async function simulateWithQuoterV4({
   const currency1 = sorted[1];
   const zeroForOne = tokenInLower === currency1;
 
-  const poolKey = {
-    currency0,
-    currency1,
-    fee,
-    tickSpacing,
-    hooks
-  };
-
-  const callData = iface.encodeFunctionData("quoteExactInputSingle", [
-    [currency0, currency1, fee, tickSpacing, hooks], // ← 👈 encode as array, not object
+  const poolKey = [currency0, currency1, fee, tickSpacing, hookAddress];
+  const encodedCall = iface.encodeFunctionData("quoteExactInputSingle", [
+    poolKey,
     zeroForOne,
     amountIn,
     "0x"
@@ -122,24 +124,20 @@ async function simulateWithQuoterV4({
   try {
     await provider.call({
       to: V4_QUOTER_ADDRESS,
-      data: callData
+      data: encodedCall
     });
 
-    console.warn("⚠️ Unexpected success: V4 Quoter call did not revert.");
+    console.warn("⚠️ Unexpected success — V4 Quoter did not revert.");
     return null;
   } catch (err) {
-    if (err.code === "CALL_EXCEPTION") {
-      if (err.data) {
-        try {
-          const decoded = iface.decodeErrorResult("QuoteSwap", err.data);
-          const amountOut = decoded.amount || decoded[0];
-          console.log(`🔁 V4 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-          return amountOut;
-        } catch (decodeErr) {
-          console.warn("❌ Failed to decode QuoteSwap:", decodeErr.message);
-        }
-      } else {
-        console.warn("❌ CALL_EXCEPTION but no revert data — likely invalid path or hook failure.");
+    if (err.code === "CALL_EXCEPTION" && err.data) {
+      try {
+        const decoded = iface.decodeErrorResult("QuoteSwap", err.data);
+        const amountOut = decoded.amount || decoded[0];
+        console.log(`🔁 V4 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+        return amountOut;
+      } catch (decodeErr) {
+        console.warn("❌ Revert occurred, but not QuoteSwap — possibly invalid hook or call.");
       }
     }
 
@@ -288,7 +286,7 @@ export async function checkFeeFreeRoute(amountIn) {
         amountIn: amountInWei,
         fee: V4_FEE,
         tickSpacing: V4_TICK_SPACING,
-        hooks : V4_HOOK_ADDRESS,
+        poolId
       });
 
       if (sim && price > bestV4Price) {
@@ -604,7 +602,7 @@ async function main() {
 main().catch(console.error);
 
 
-// TEST #1 first and onward from #3 - #5 individually...
+// TEST #1 first and onward from #3 - #5 individually
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
 
