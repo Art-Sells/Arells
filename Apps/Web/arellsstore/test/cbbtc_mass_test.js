@@ -1,4 +1,4 @@
-import { ethers, toBeHex } from "ethers"; 
+import { ethers, toBeHex, zeroPadValue } from "ethers"; 
 import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
@@ -11,20 +11,34 @@ import { unlink } from "fs";
 dotenv.config();
 
 // ✅ Uniswap Contract Addresses
-const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
-const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
-const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
-const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b"; 
-const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
-const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
-const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
+// const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
+// const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
+// const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
+// const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b"; 
+// const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
+// const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
+// const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
+// const V4_POOL_IDS = [
+//   {
+//     label: "V4 A (0.3%)",
+//     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
+//     poolAddress: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", // same for now
+//     hooks: V4_HOOK_ADDRESS,
+//   },
+//   {
+//     label: "V4 B (0.3%)",
+//     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
+//     poolAddress: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
+//     hooks: V4_HOOK_ADDRESS,
+//   },
+// ];
 
-// ✅ Token Addresses
-const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
-const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
+// // ✅ Token Addresses
+// const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
+// const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
-// ✅ Set Up Ethereum Provider & Wallet
-const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+// // ✅ Set Up Ethereum Provider & Wallet
+// const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 
 
 
@@ -219,20 +233,6 @@ export async function checkFeeFreeRoute(amountIn) {
   const V4_TICK_SPACING = 60; // for 0.3% pool
   const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
 
-  const V4_POOL_IDS = [
-    {
-      label: "V4 A (0.3%)",
-      poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
-      poolAddress: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", // same for now
-      hooks: V4_HOOK_ADDRESS,
-    },
-    {
-      label: "V4 B (0.3%)",
-      poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-      poolAddress: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-      hooks: V4_HOOK_ADDRESS,
-    },
-  ];
 
   // === V3 PRICE & LIQUIDITY ===
   const v3Data = await checkPoolLiquidity(V3_POOL_ADDRESS);
@@ -552,6 +552,79 @@ throw lastError;
 
 
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
+const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
+const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
+const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
+const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b"; 
+const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
+const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
+const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
+const V4_POOL_IDS = [
+  {
+    label: "V4 A (0.3%)",
+    poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
+    poolAddress: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", // same for now
+    hooks: V4_HOOK_ADDRESS,
+  },
+  {
+    label: "V4 B (0.3%)",
+    poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
+    poolAddress: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
+    hooks: V4_HOOK_ADDRESS,
+  },
+];
+
+// ✅ Token Addresses
+const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
+const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
+
+// ✅ Set Up Ethereum Provider & Wallet
+const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+
+const stateViewInterface = new ethers.Interface([
+  "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)"
+]);
+async function fetchTickSpacing(poolId) {
+  const poolIdBytes32 = ethers.hexZeroPad(poolId, 32); // 👈 fix
+  const callData = stateViewInterface.encodeFunctionData("getPoolTickSpacing", [poolIdBytes32]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: callData });
+  const [tickSpacing] = stateViewInterface.decodeFunctionResult("getPoolTickSpacing", result);
+  console.log(`✅ Tick Spacing for poolId ${poolId}: ${tickSpacing}`);
+  return tickSpacing;
+}
+
+async function verifyPoolId(poolId) {
+  const poolIdBytes32 = zeroPadValue(poolId, 32);
+  const callData = stateViewInterface.encodeFunctionData("getSlot0", [poolIdBytes32]);
+
+  try {
+    const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: callData });
+    const [slot0] = stateViewInterface.decodeFunctionResult("getSlot0", result);
+    console.log(`✅ getSlot0 succeeded:`, slot0);
+  } catch (err) {
+    console.error(`❌ getSlot0 failed for poolId ${poolId}:`, err.message || err);
+  }
+}
+
+const poolManagerInterface = new ethers.Interface([
+  "function getPool(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee, int24 tickSpacing)"
+]);
+
+async function getTickSpacingFromPoolManager(poolId) {
+  const poolIdBytes32 = zeroPadValue(poolId, 32);
+  const callData = poolManagerInterface.encodeFunctionData("getPool", [poolIdBytes32]);
+
+  try {
+    const result = await provider.call({ to: V4_POOL_MANAGER, data: callData });
+    const decoded = poolManagerInterface.decodeFunctionResult("getPool", result);
+    const tickSpacing = decoded[4]; // index 4 is tickSpacing
+    console.log(`✅ Tick Spacing from PoolManager: ${tickSpacing}`);
+    return tickSpacing;
+  } catch (err) {
+    console.error("❌ Failed to fetch from PoolManager:", err.message || err);
+    return null;
+  }
+}
 
 async function main() {
   // console.log("\n🔍 Checking for a Fee-Free Quote...");
@@ -595,22 +668,35 @@ async function main() {
   //     await new Promise(res => setTimeout(res, 15000));
   //   }
   // }
+
+
+  const { poolId } = V4_POOL_IDS[0]; // or [1] for the other pool
+  await verifyPoolId(poolId);
+
+
   const iface = new ethers.Interface([
     "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks), bool zeroForOne, uint256 exactAmount, bytes hookData)",
     "error QuoteSwap(uint256 amount)"
   ]);
   
+  const { hooks } = V4_POOL_IDS[0]; // or V4_POOL_IDS[1] for the second pool
+
+  const actualTickSpacing = await getTickSpacingFromPoolManager(poolId);
+  
+  const sorted = [USDC.toLowerCase(), CBBTC.toLowerCase()].sort();
+  const currency0 = sorted[0];
+  const currency1 = sorted[1];
+  const zeroForOne = USDC.toLowerCase() === currency1;
+  
   const poolKey = {
-    currency0: USDC,
-    currency1: CBBTC,
+    currency0,
+    currency1,
     fee: 3000,
-    tickSpacing: 60,
-    hooks: "0x0000000000000000000000000000000000000000"
+    tickSpacing: actualTickSpacing,
+    hooks
   };
   
-  const zeroForOne = false; // ✅ CBBTC → USDC
   const amountIn = ethers.parseUnits("0.002323", 8);
-  
   const callData = iface.encodeFunctionData("quoteExactInputSingle", [
     [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks],
     zeroForOne,
@@ -637,6 +723,8 @@ async function main() {
       console.error("❌ Raw Quoter call failed:", err.message || err);
     }
   }
+
+
 
 }
 

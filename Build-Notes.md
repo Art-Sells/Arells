@@ -77,6 +77,7 @@
 - - Future LPP Graphs for MASS v2 marking by seconds
 - - review ##Base
 - - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
+- CBBTC (if price decreases execute mass), or USDC import (if price increase execute mass), change import slogan (add export info of why only in USDC) 6% (raise prices if needed)
 
 
 ### Other (if Time Permits)
