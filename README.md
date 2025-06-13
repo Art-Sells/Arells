@@ -2,12 +2,12 @@
 
 
 # [Arells](https://arells.com)
-## Bitcoin investments that render bear markets obsolete.
+## Renders bear markets obsolete.
 
-Arells exists because it believes ***investments should never lose value and investors should never lose money selling assets***, especially during Bear Markets.
+Arells exists because it believes ***investments should never lose value***, especially during Bear Markets.
 
 ### Solution:
-A Bitcoin marketplace that ensures Bitcoin investments render bear markets obsolete. Arells is working on achieving this through an invention called:
+A Bitcoin marketplace that renders bear markets obsolete. Arells is working on achieving this through an invention called:
 
 <img src="https://github.com/Art-Sells/Arells/blob/test/Art/General/HPMLogoDisplay.png" width="200px"> 
 
@@ -48,7 +48,7 @@ _______________________________________________________________________
 - **May 2023 - Dec 2023**
   - [X] Arells 0.9 *[[Complete]](https://arells.com)*
 
-- **May 2024 - March 2025**
+- **May 2024 - TBD**
   - [ ] Arells 1.0 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
 
 _______________________________________________________________________
