@@ -66,7 +66,7 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner">Bitcoin investments that never lose value.</p>
+        <p id="descriptioner">Bitcoin investments that render bear markets obsolete.</p>
       </div>
 
 
@@ -82,11 +82,6 @@ const Index = () => {
         <Link href="/login" passHref>
           <button id="login">LOGIN</button>
         </Link> */}
-
-      <div id="buy-info-wrapping">
-          <p id="buy-info">
-            Import bitcoin and never lose money selling.</p>
-        </div>
 
     </>
   );
