@@ -407,7 +407,7 @@ const HPMConcept: React.FC = () => {
         |
       </span>
       <span id="concept-title-description">
-        Bitcoin investments that never lose value
+        Bitcoin investments that render bear markets obsolete
       </span>
     </div>
 
