@@ -551,6 +551,21 @@ throw lastError;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
 const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
@@ -580,6 +595,7 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 // ✅ Set Up Ethereum Provider & Wallet
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 
 const stateViewInterface = new ethers.Interface([
   "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)"
@@ -624,6 +640,18 @@ async function getTickSpacingFromPoolManager(poolId) {
     console.error("❌ Failed to fetch from PoolManager:", err.message || err);
     return null;
   }
+}
+
+async function fetchQuoterV4Abi() {
+  const res = await axios.get(
+    `https://api.basescan.org/api?module=contract&action=getabi&address=${V4_QUOTER_ADDRESS}&apikey=${process.env.BASESCAN_API_KEY}`
+  );
+  if (res.data.status !== "1") {
+    throw new Error(`Failed to fetch ABI: ${res.data.message}`);
+  }
+  const abi = JSON.parse(res.data.result);
+  console.log(JSON.stringify(abi, null, 2));
+  return abi;
 }
 
 async function main() {
@@ -673,15 +701,17 @@ async function main() {
   const { poolId } = V4_POOL_IDS[0]; // or [1] for the other pool
   await verifyPoolId(poolId);
 
+  // await fetchQuoterV4Abi();
+
 
   const iface = new ethers.Interface([
-    "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks), bool zeroForOne, uint256 exactAmount, bytes hookData)",
+    "function quoteExactInputSingle(tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) poolKey, bool zeroForOne, uint128 exactAmount, bytes hookData) view returns (uint256 amountOut, uint256 gasEstimate)",
     "error QuoteSwap(uint256 amount)"
   ]);
   
   const { hooks } = V4_POOL_IDS[0]; // or V4_POOL_IDS[1] for the second pool
 
-  const actualTickSpacing = await getTickSpacingFromPoolManager(poolId);
+  const actualTickSpacing = 60; // fallback to known good value
   
   const sorted = [USDC.toLowerCase(), CBBTC.toLowerCase()].sort();
   const currency0 = sorted[0];
@@ -696,16 +726,15 @@ async function main() {
     hooks
   };
   
+  
   const amountIn = ethers.parseUnits("0.002323", 8);
   const callData = iface.encodeFunctionData("quoteExactInputSingle", [
-    [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks],
-    zeroForOne,
-    amountIn,
-    "0x"
+    poolKey, zeroForOne, amountIn, "0x"
   ]);
+  console.log("Method selector:", callData.slice(0, 10)); // Should be 0x81fd588a
   
   try {
-    const result = await provider.call({
+    const result = await wallet.call({
       to: V4_QUOTER_ADDRESS,
       data: callData
     });
