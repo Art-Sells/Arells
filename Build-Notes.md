@@ -37,7 +37,7 @@
 - CoinGecko API for Chart
 
 ### Account
-- "Import Bitcoin to ensure your investments never lose value"
+- "Renders bear markets obsolete." <- and HOME
 - - Import button triggers "Create Wallets" <- use function from MASSTester.tsx
 - If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value"
 - - Price: HPAP (formatPrice from HPMMASSTester.tsx)
@@ -47,14 +47,14 @@
 - - - Error Message Modal visible: if Base network congestion error (from executeSupplication), if executeSupplication successful, then invisible.
 
 #### Import (Page)
-- Import Bitcoin to ensure your investments never lose value (through Coinbase/Base) (Base Address)
+- Import Bitcoin (through Coinbase/Base) (Base Address)
 - - Modal: Preparing (B) Wallet (to create wallet (take from MASSTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
 
 #### Metatags/ Description
-- Alter: "Import Small Amounts of Bitcoin, ensure they never lose value."
+- Alter: "Import Small Amounts of Bitcoin, render bear markets obsolete."
 
 #### Description (Home/Account)
-- Alter: "Import Small Amounts of Bitcoin, ensure they never lose value."
+- Alter: "Import Small Amounts of Bitcoin, render bear markets obsolete."
 
 #### Concept
 - Look at main/ and copy/paste the HPMArchitecture (replace all "concept" functions in test to concept)
