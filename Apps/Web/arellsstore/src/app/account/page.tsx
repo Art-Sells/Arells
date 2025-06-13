@@ -8,11 +8,11 @@ import type { Metadata } from 'next';
 import Account from '../../components/Account/Account';
 export const metadata: Metadata = {
   title: "Arells",
-  description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+  description: "Bitcoin investments that render bear markets obsolete.",
   robots: "noimageindex",
   openGraph: {
     title: "Arells",
-    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+    description: "Bitcoin investments that render bear markets obsolete.",
     url: "https://arells.com/account",
     type: "website",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Arells",
-    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+    description: "Bitcoin investments that render bear markets obsolete.",
     card: "summary_large_image",
     images: [
       {
