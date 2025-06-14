@@ -3,6 +3,11 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
+"use client";
+
+import React, { useState } from 'react';
+import Image from 'next/image';
+import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import '../../app/css/modals/buy/buy-modal.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
@@ -10,157 +15,107 @@ import Link from 'next/link';
 import { signUp, signIn, fetchUserAttributes, signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
-import { generateWallet } from '../../lib/bitcoin';
-import { createS3Folder } from '../../../aws-config';
-import CryptoJS from 'crypto-js';
-
-interface Attribute {
-    Name: string;
-    Value: string;
-}
 
 const Signup: React.FC = () => {
-    const imageLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
-        return `/${src}?w=${width}&q=${quality || 100}`;
-    };
+  const router = useRouter();
+  const { setEmail } = useUser();
+  const [email, setEmailState] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [showPasswordsError, setPasswordsError] = useState<boolean>(false);
+  const [showEmailError, setEmailError] = useState<boolean>(false);
+  const [showMissingFields, setMissingFields] = useState<boolean>(false);
+  const [showSigningUp, setSigningUp] = useState<boolean>(false);
+  const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
+  const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
+  const [showSignedUp, setSignedUp] = useState<boolean>(false);
 
-    const router = useRouter();
-    const { setEmail, setBitcoinAddress, setBitcoinPrivateKey } = useUser();
-    const [email, setEmailState] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [confirmPassword, setConfirmPassword] = useState<string>('');
-    const [showPasswordsError, setPasswordsError] = useState<boolean>(false);
-    const [showEmailError, setEmailError] = useState<boolean>(false);
-    const [showMissingFields, setMissingFields] = useState<boolean>(false);
-    const [showSigningUp, setSigningUp] = useState<boolean>(false);
-    const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
-    const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
-    const [showSignedUp, setSignedUp] = useState<boolean>(false);
+  const closeEmailExistsError = () => setEmailExistsError(false);
+  const closePasswordsDontMatchError = () => setPasswordsDontMatchError(false);
+  const closePasswordsError = () => setPasswordsError(false);
+  const closeEmailError = () => setEmailError(false);
+  const closeSignedUp = () => setSignedUp(false);
+  const closeMissingFields = () => setMissingFields(false);
 
-    const closeEmailExistsError = () => setEmailExistsError(false);
-    const closePasswordsDontMatchError = () => setPasswordsDontMatchError(false);
-    const closePasswordsError = () => setPasswordsError(false);
-    const closeEmailError = () => setEmailError(false);
-    const closeSignedUp = () => setSignedUp(false);
-    const closeMissingFields = () => setMissingFields(false);
-
-    const validateEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    const validatePassword = (password: string) => {
-        const minLength = 8;
-        const hasLetter = /[a-zA-Z]/.test(password);
-        const hasNumber = /[0-9]/.test(password);
-        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-        return password.length >= minLength && hasLetter && hasNumber && hasSpecialChar;
-    };
-
-    const decryptPrivateKey = (encryptedPrivateKey: string, password: string) => {
-      try {
-          const bytes = CryptoJS.AES.decrypt(encryptedPrivateKey, password);
-          const originalPrivateKey = bytes.toString(CryptoJS.enc.Utf8);
-          return originalPrivateKey;
-      } catch (error) {
-          console.error('Error decrypting private key:', error);
-          return null;
-      }
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
-  
+
+  const validatePassword = (password: string) => {
+    const minLength = 8;
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return password.length >= minLength && hasLetter && hasNumber && hasSpecialChar;
+  };
+
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-  
-      setEmailExistsError(false);
-      setPasswordsDontMatchError(false);
-      setPasswordsError(false);
-      setMissingFields(false);
-      setEmailError(false);
-  
-      if (!email || !password || !confirmPassword) {
-          setMissingFields(true);
-          return;
-      }
-  
-      if (!validateEmail(email)) {
-          setEmailError(true);
-          return;
-      }
-  
-      if (!validatePassword(password)) {
-          setPasswordsError(true);
-          return;
-      }
-  
-      if (password !== confirmPassword) {
-          setPasswordsDontMatchError(true);
-          return;
-      }
-  
-      try {
-          await signOut();
-          setSigningUp(true);
-  
-          const wallet = await generateWallet();
-  
-          // Encrypt the private key
-          const encryptedPrivateKey = CryptoJS.AES.encrypt(wallet.privateKey, password).toString();
-  
-          const { isSignUpComplete } = await signUp({
-              username: email,
-              password,
-              options: {
-                  userAttributes: {
-                      email,
-                      'custom:bitcoinAddress': wallet.address,
-                      'custom:bitcoinPrivateKey': encryptedPrivateKey,
-                  },
-              },
+    e.preventDefault();
+
+    setEmailExistsError(false);
+    setPasswordsDontMatchError(false);
+    setPasswordsError(false);
+    setMissingFields(false);
+    setEmailError(false);
+
+    if (!email || !password || !confirmPassword) {
+      setMissingFields(true);
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setEmailError(true);
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setPasswordsError(true);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setPasswordsDontMatchError(true);
+      return;
+    }
+
+    try {
+      await signOut();
+      setSigningUp(true);
+
+      const { isSignUpComplete } = await signUp({
+        username: email,
+        password,
+        options: {
+          userAttributes: { email },
+        },
+      });
+
+      if (isSignUpComplete) {
+        try {
+          const user = await signIn({ username: email, password });
+          const attributesResponse = await fetchUserAttributes();
+          const emailAttribute = attributesResponse['email'];
+
+          if (emailAttribute) setEmail(emailAttribute);
+
+          setTimeout(() => {
+            setSigningUp(false);
+            setSignedUp(true);
           });
-  
-          if (isSignUpComplete) {
-  
-              try {
-                  const user = await signIn({ username: email, password });
-  
-                  // Fetch user attributes
-                  const attributesResponse = await fetchUserAttributes();
-  
-                  const bitcoinAddress = attributesResponse['custom:bitcoinAddress'];
-                  const encryptedBitcoinPrivateKey: string | undefined = attributesResponse['custom:bitcoinPrivateKey'];
-  
-                  // Decrypt the private key
-                  if (encryptedBitcoinPrivateKey) {
-                      const bitcoinPrivateKey = decryptPrivateKey(encryptedBitcoinPrivateKey, password);
-                      if (bitcoinAddress && bitcoinPrivateKey) {
-                          setEmail(email);
-                          setBitcoinAddress(bitcoinAddress);
-                          setBitcoinPrivateKey(bitcoinPrivateKey);
-                      } else {
-                          console.log('Bitcoin attributes not found or decryption failed');
-                      }
-                  }
-  
-                  // Create an empty JSON file in the S3 bucket
-                  await createS3Folder(email);
-  
-                  setTimeout(() => {
-                      setSigningUp(false);
-                      setSignedUp(true);
-                  });
-              } catch (error) {
-                  setSigningUp(false);
-              }
-          }
-      } catch (error: any) {
-          if (error.name === 'UsernameExistsException' || error.code === 'UsernameExistsException') {
-              setEmailExistsError(true);
-          } else {
-              console.log('Error signing up:', error);
-          }
+        } catch (error) {
           setSigningUp(false);
+        }
       }
+    } catch (error: any) {
+      if (error.name === 'UsernameExistsException' || error.code === 'UsernameExistsException') {
+        setEmailExistsError(true);
+      } else {
+        console.log('Error signing up:', error);
+      }
+      setSigningUp(false);
+    }
   };
 
   return (
@@ -278,7 +233,7 @@ const Signup: React.FC = () => {
       <div id="sign-up">
         <form id="myForm" onSubmit={handleSignUp} noValidate>
           <div id="enter-content">
-          <input
+            <input
               name="email"
               type="email"
               id="email-input"
@@ -317,10 +272,11 @@ const Signup: React.FC = () => {
           By signing-up you agree to our
         </p>
         <Link 
-        href="/privacy-policy" 
-        id="privacy-link"
-        passHref
-        > Privacy Policy
+          href="/privacy-policy" 
+          id="privacy-link"
+          passHref
+        >
+          Privacy Policy
         </Link>
       </div>
     </>
