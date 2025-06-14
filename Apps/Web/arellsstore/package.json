@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
+  "volta": {
+    "node": "18.18.0",
+    "yarn": "1.22.22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
