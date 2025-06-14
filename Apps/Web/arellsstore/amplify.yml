@@ -1,19 +1,28 @@
-version: 1.0
+version: 1
 applications:
-  - appRoot: Apps/Web/arellsstore
-    frontend:
+  - frontend:
       phases:
         preBuild:
           commands:
+            # Install Volta
             - curl https://get.volta.sh | bash
             - export VOLTA_HOME="$HOME/.volta"
             - export PATH="$VOLTA_HOME/bin:$PATH"
-            - volta install node@18.17.0
-            - volta install yarn@1.22.22  # Ensure the same Yarn version as local
-            - yarn install --immutable --immutable-cache
+            - export VOLTA_LOGLEVEL=debug
+            # Wait for Volta to finish setting up
+            - sleep 3
+            # Manually install Node and Yarn
+            - volta install node@20.11.1
+            - volta install yarn@1.22.22
+            # Confirm the correct versions
+            - node -v
+            - yarn -v
+            # Continue with build
+            - yarn install
+            - npx hardhat compile
         build:
           commands:
-            - yarn build
+            - yarn run build
       artifacts:
         baseDirectory: .next
         files:
@@ -21,4 +30,4 @@ applications:
       cache:
         paths:
           - node_modules/**/*
-          - .next/cache/**/*
+    appRoot: Apps/Web/arellsstore
