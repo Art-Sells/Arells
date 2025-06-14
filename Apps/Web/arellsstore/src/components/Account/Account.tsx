@@ -13,7 +13,7 @@ import styles from '../../app/css/modals/loader/accountloader.module.css';
 import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useHPM } from '../../context/concept/HPMContextConcept';
+import { useHPM } from '../../context/HPMarchitecture';
 
 const Account: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -327,13 +327,13 @@ const Account: React.FC = () => {
 
       {walletNotConnected && (
           <p id="amount-sold-number-account-num-null">
-          Bitcoin investments that never lose value.
+          Renders bear markets obsolete.
         </p>    
       )}
 
       {awaitingApprovals && (
           <p id="amount-sold-number-account-num-null">
-          Bitcoin investments that never lose value.
+          Renders bear markets obsolete.
         </p>    
       )}
 
