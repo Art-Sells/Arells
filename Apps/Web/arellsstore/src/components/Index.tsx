@@ -82,7 +82,7 @@ const Index = () => {
 
       <div id="buy-info-wrapping">
           <p id="buy-info">
-            Import bitcoin and never worry about bear market losses.</p>
+            Import bitcoin and never experience bear market losses.</p>
         </div>
 
     </>
