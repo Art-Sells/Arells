@@ -10,11 +10,11 @@ import Signup from '../../components/LoginSignup/Signup';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
     title: "Sign Up",
-    description: "Sign Up to ensure your Bitcoin investments never lose value.",
+    description: "Sign Up to ensure your Bitcoin investments never experience bear market losses.",
     robots: "noimageindex",
     openGraph: {
       title: "Sign Up",
-      description: "Sign Up to ensure your Bitcoin investments never lose value.",
+      description: "Sign Up to ensure your Bitcoin investments never experience bear market losses.",
       url: "https://arells.com/signup",
       type: "website",
       images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     },
     twitter: {
       title: "Sign Up",
-      description: "Sign Up to ensure your Bitcoin investments never lose value.",
+      description: "Sign Up to ensure your Bitcoin investments never experience bear market losses.",
       card: "summary_large_image",
       images: [
         {
