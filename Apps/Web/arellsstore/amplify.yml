@@ -1,6 +1,6 @@
 version: 1
 applications:
-  - appRoot: Arells/Apps/Web/arellsstore
+  - appRoot: Apps/Web/arellsstore
     frontend:
       phases:
         preBuild:
