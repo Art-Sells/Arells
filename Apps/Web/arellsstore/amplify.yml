@@ -31,3 +31,4 @@ applications:
         paths:
           - node_modules/**/*
     appRoot: Apps/Web/arellsstore
+    
