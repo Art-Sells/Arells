@@ -703,56 +703,54 @@ async function main() {
 
   // await fetchQuoterV4Abi();
 
-
   const iface = new ethers.Interface([
-    "function quoteExactInputSingle(tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) poolKey, bool zeroForOne, uint128 exactAmount, bytes hookData) view returns (uint256 amountOut, uint256 gasEstimate)",
+    "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) poolKey, bool zeroForOne, uint128 exactAmount, bytes hookData) view returns (uint256 amountOut, uint256 gasEstimate)",
     "error QuoteSwap(uint256 amount)"
   ]);
-  
-  const { hooks } = V4_POOL_IDS[0]; // or V4_POOL_IDS[1] for the second pool
 
-  const actualTickSpacing = 60; // fallback to known good value
-  
-  const sorted = [USDC.toLowerCase(), CBBTC.toLowerCase()].sort();
-  const currency0 = sorted[0];
-  const currency1 = sorted[1];
-  const zeroForOne = USDC.toLowerCase() === currency1;
-  
+  const [currency0, currency1] = [USDC, CBBTC].sort((a, b) =>
+    a.toLowerCase() < b.toLowerCase() ? -1 : 1
+  );
+
   const poolKey = {
     currency0,
     currency1,
     fee: 3000,
-    tickSpacing: actualTickSpacing,
-    hooks
+    tickSpacing: 60,
+    hooks: V4_HOOK_ADDRESS,
   };
-  
-  
-  const amountIn = ethers.parseUnits("0.002323", 8);
+
+  const zeroForOne = USDC.toLowerCase() === currency1.toLowerCase();
+  const amountIn = ethers.parseUnits("0.002323", 8); // 8 decimals
+
   const callData = iface.encodeFunctionData("quoteExactInputSingle", [
-    poolKey, zeroForOne, amountIn, "0x"
+    poolKey,
+    zeroForOne,
+    amountIn,
+    "0x"
   ]);
-  console.log("Method selector:", callData.slice(0, 10)); // Should be 0x81fd588a
-  
+
+  console.log("✅ Correct selector should be:", callData.slice(0, 10)); // MUST be 0x81fd588a
+
   try {
-    const result = await wallet.call({
+    const result = await provider.call({
       to: V4_QUOTER_ADDRESS,
-      data: callData
+      data: callData,
     });
-    console.warn("⚠️ Unexpected success — did not revert");
-    console.log("Returned raw data:", result);
+
+    console.log("✅ Got result:", result);
   } catch (err) {
     if (err.code === "CALL_EXCEPTION" && err.data) {
       try {
         const decoded = iface.decodeErrorResult("QuoteSwap", err.data);
-        console.log(`✅ Simulated USDC Output: ${ethers.formatUnits(decoded.amount, 6)} USDC`);
+        console.log(`✅ Simulated USDC output: ${ethers.formatUnits(decoded.amount, 6)} USDC`);
       } catch {
-        console.warn("❌ Revert occurred, but not QuoteSwap.");
+        console.warn("❌ Unknown revert; not QuoteSwap");
       }
     } else {
-      console.error("❌ Raw Quoter call failed:", err.message || err);
+      console.error("❌ Raw revert:", err.message || err);
     }
   }
-
 
 
 }

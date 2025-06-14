@@ -74,7 +74,7 @@
 - - Add "Discord" section for any questions
 - Team:
 - - Fund Arells Fee Funder with 150 USD in ETH on Base (check and replenish everyweek/day until BASE L3 is complete)
-- - Future LPP Graphs for MASS v2 marking by seconds
+- - Future LPP Graphs for MASS v2 marking by seconds: 5-6 differing liquidity pools LPP v2 (pool amounts [large amounts] can be shifted between pools)
 - - review ##Base
 - - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
 - CBBTC (if price decreases execute mass), or USDC import (if price increase execute mass), change import slogan (add export info of why only in USDC) 6% (raise prices if needed)
