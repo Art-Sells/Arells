@@ -1,8 +1,4 @@
-"use client";
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import '../../app/css/loginsignup/loginsignup.css';
 "use client";
 
 import React, { useState } from 'react';
