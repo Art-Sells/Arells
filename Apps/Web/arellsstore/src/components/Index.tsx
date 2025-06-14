@@ -66,22 +66,24 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner">Renders bear markets obsolete.</p>
+        <p id="descriptioner">Renders bear markets obsolete</p>
       </div>
 
-
-
-        <br></br>
+        {/* <br></br>
         <h5>Currently being upgraded.</h5>
         <h5>Thank you for your patience.</h5>
 
-        <br></br>
+        <br></br> */}
 
-        {/* <BitcoinChart /> */}
-{/* 
+        <BitcoinChart /> 
         <Link href="/login" passHref>
           <button id="login">LOGIN</button>
-        </Link> */}
+        </Link> 
+
+      <div id="buy-info-wrapping">
+          <p id="buy-info">
+            Import bitcoin and never worry about bear market losses.</p>
+        </div>
 
     </>
   );
