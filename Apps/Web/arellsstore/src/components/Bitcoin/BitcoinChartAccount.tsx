@@ -69,17 +69,18 @@ const BitcoinChart: React.FC = () => {
         }
 
         const maxDate = latestDate.getTime();
-        const minDate = new Date(maxDate - 364 * 24 * 60 * 60 * 1000).getTime();
+        const minDate = new Date(maxDate - 5 * 365 * 24 * 60 * 60 * 1000).getTime(); // Last 5 years
 
         filteredPrices = filteredPrices.filter(price => price.x.getTime() >= minDate);
 
         setMinDate(minDate);
         setMaxDate(maxDate);
 
-        const minPrice = Math.min(...filteredPrices.map(price => price.y));
+        // Get the first price on or after the 5-year mark
+        const initialPrice = filteredPrices.find(p => p.x.getTime() >= minDate)?.y || 0;
         const maxPrice = Math.max(...filteredPrices.map(price => price.y));
 
-        const percentageIncrease = ((maxPrice - minPrice) / minPrice) * 100;
+        const percentageIncrease = ((maxPrice - initialPrice) / initialPrice) * 100;
 
         setPercentageIncrease(percentageIncrease);
 
@@ -202,7 +203,7 @@ const BitcoinChart: React.FC = () => {
           <div className={styles.percentageLabel}>
             <span id="plus-home">+</span>
             <span>
-              {`${percentageIncrease.toFixed(2)}`}
+            {percentageIncrease.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
             </span>
             <span id="percentage-home">%</span>
           </div>
@@ -218,7 +219,7 @@ const BitcoinChart: React.FC = () => {
           src="images/howitworks/up-arrow-ebony.png"
         />
       </div>
-      <p className={styles.lastThirtyDays}>1 YEAR</p>
+      <p className={styles.lastThirtyDays}>5 YEARS</p>
       <div className={styles.lineChartWrapper}>
         <Line
           id="bitcoinChart"
