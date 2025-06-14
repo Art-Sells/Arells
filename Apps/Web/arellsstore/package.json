@@ -19,7 +19,7 @@
     "@coinbase/onchainkit": "^0.36.6",
     "@coinbase/wallet-sdk": "^3.7.2",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
-    "@openzeppelin/contracts": "^5.1.0",
+    "@openzeppelin/contracts": "^4.9.5"
     "@swc/helpers": "^0.5.11",
     "@types/formidable": "2.0.4",
     "@uniswap/sdk-core": "3",
