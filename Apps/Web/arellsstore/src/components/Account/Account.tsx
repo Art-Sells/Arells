@@ -13,6 +13,7 @@ import styles from '../../app/css/modals/loader/accountloader.module.css';
 import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useHPM } from '../../context/HPMarchitecture';
 
 const Account: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -20,6 +21,7 @@ const Account: React.FC = () => {
   };
 
   const [price, setNewPrice] = useState<number | undefined>(undefined);
+  const {vatopCombinations, hpap} = useHPM();
   const [showLoading, setLoading] = useState<boolean>(true);
   const [walletConnected, setWalletConnected] = useState<boolean>(false);
   const [readyToSell, setReadyToSell] = useState<boolean>(false);
@@ -353,5 +355,7 @@ const Account: React.FC = () => {
 const formatCurrency = (value: number): string => {
   return `${value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 };
+
+export default Account;
 
 export default Account;
