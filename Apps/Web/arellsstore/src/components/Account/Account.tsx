@@ -13,7 +13,6 @@ import styles from '../../app/css/modals/loader/accountloader.module.css';
 import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useHPM } from '../../context/HPMarchitecture';
 
 const Account: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
