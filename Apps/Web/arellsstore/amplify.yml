@@ -5,6 +5,11 @@ applications:
       phases:
         preBuild:
           commands:
+            - echo "🧹 Clearing build cache..."
+            - rm -rf .next
+            - rm -rf node_modules/.cache
+            - rm -rf dist
+
             - echo "🔧 Setting up Volta for Node & Yarn..."
             - curl -sSf https://get.volta.sh | bash
             - export VOLTA_HOME="$HOME/.volta"
@@ -28,6 +33,11 @@ applications:
         baseDirectory: .next
         files:
           - '**/*'
+
+      cache:
+        paths:
+          # optional: remove cache reuse completely if needed
+          # - node_modules/**/*
 
       cache:
         paths:
