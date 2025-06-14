@@ -1,34 +1,20 @@
 version: 1
-applications:
-  - frontend:
-      phases:
-        preBuild:
-          commands:
-            # Install Volta
-            - curl https://get.volta.sh | bash
-            - export VOLTA_HOME="$HOME/.volta"
-            - export PATH="$VOLTA_HOME/bin:$PATH"
-            - export VOLTA_LOGLEVEL=debug
-            # Wait for Volta to finish setting up
-            - sleep 3
-            # Manually install Node and Yarn
-            - volta install node@20.11.1
-            - volta install yarn@1.22.22
-            # Confirm the correct versions
-            - node -v
-            - yarn -v
-            # Continue with build
-            - yarn install
-            - npx hardhat compile
-        build:
-          commands:
-            - yarn run build
-      artifacts:
-        baseDirectory: .next
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
-    appRoot: Apps/Web/arellsstore
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - node -v  # This should say v20.x
+        - yarn -v
+        - yarn install
+        - npx hardhat compile
+    build:
+      commands:
+        - yarn run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
     
