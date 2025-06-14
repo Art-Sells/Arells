@@ -38,7 +38,3 @@ applications:
         paths:
           # optional: remove cache reuse completely if needed
           # - node_modules/**/*
-
-      cache:
-        paths:
-          - node_modules/**/*
