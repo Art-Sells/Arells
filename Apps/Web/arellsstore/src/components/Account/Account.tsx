@@ -20,7 +20,6 @@ const Account: React.FC = () => {
   };
 
   const [price, setNewPrice] = useState<number | undefined>(undefined);
-  const {vatopCombinations, hpap} = useHPM();
   const [showLoading, setLoading] = useState<boolean>(true);
   const [walletConnected, setWalletConnected] = useState<boolean>(false);
   const [readyToSell, setReadyToSell] = useState<boolean>(false);
