@@ -10,11 +10,11 @@ import Login from '../../components/LoginSignup/Login';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
     title: "Login",
-    description: "Login to ensure your Bitcoin investments never lose value.",
+    description: "Login to ensure your Bitcoin investments never experience bear market losses.",
     robots: "noimageindex",
     openGraph: {
       title: "Login",
-      description: "Login to ensure your Bitcoin investments never lose value.",
+    description: "Login to ensure your Bitcoin investments never experience bear market losses.",
       url: "https://arells.com/login",
       type: "website",
       images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     },
     twitter: {
       title: "Login",
-      description: "Login to ensure your Bitcoin investments never lose value.",
+    description: "Login to ensure your Bitcoin investments never experience bear market losses.",
       card: "summary_large_image",
       images: [
         {
