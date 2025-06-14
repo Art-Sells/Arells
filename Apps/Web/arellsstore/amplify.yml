@@ -1,6 +1,6 @@
 version: 1
 applications:
-  - appRoot: Apps/Web/arellsstore
+  - appRoot: Arells/Apps/Web/arellsstore
     frontend:
       phases:
         preBuild:
@@ -13,9 +13,8 @@ applications:
             - volta install yarn@1.22.22
             - node -v
             - yarn -v
-
+            - echo "🔍 Validating required environment variables..."
             - |
-              echo "🔍 Validating required environment variables..."
               REQUIRED_VARS=(
                 ARELLS_PRIVATE_KEY
                 COGNITO_USER_POOL_ID
@@ -40,22 +39,15 @@ applications:
                   echo "✅ $VAR is set"
                 fi
               done
-
-            - echo "📦 Installing dependencies..."
             - yarn install
-            - echo "🛠️ Compiling Hardhat contracts..."
             - npx hardhat compile
-
         build:
           commands:
-            - echo "🚀 Building Next.js app..."
             - yarn run build
-
       artifacts:
         baseDirectory: .next
         files:
           - '**/*'
-
       cache:
         paths:
           - node_modules/**/*
