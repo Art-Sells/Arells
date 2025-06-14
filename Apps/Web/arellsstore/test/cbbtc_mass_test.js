@@ -654,6 +654,11 @@ async function fetchQuoterV4Abi() {
   return abi;
 }
 
+async function getQuoterContract() {
+  const abi = await fetchQuoterV4Abi();
+  return new ethers.Contract(V4_QUOTER_ADDRESS, abi, wallet); // use wallet, NOT provider
+}
+
 async function main() {
   // console.log("\n🔍 Checking for a Fee-Free Quote...");
   // // ✅ CBBTC amounts (8 decimals)
@@ -701,6 +706,19 @@ async function main() {
   const { poolId } = V4_POOL_IDS[0]; // or [1] for the other pool
   await verifyPoolId(poolId);
 
+  console.log("\n🔍 Fetching V4 Quoter ABI to validate function type...");
+
+  const abi = await fetchQuoterV4Abi();
+  const quoteFn = abi.find(f => f.name === "quoteExactInputSingle");
+
+  if (!quoteFn) {
+    console.error("❌ Function 'quoteExactInputSingle' not found in ABI!");
+  } else if (quoteFn.stateMutability !== "view") {
+    console.warn(`❌ Function 'quoteExactInputSingle' is '${quoteFn.stateMutability}' — must be 'view' for simulation to work.`);
+  } else {
+    console.log("✅ ABI check: 'quoteExactInputSingle' is view function — should be simulatable.");
+  }
+
   // await fetchQuoterV4Abi();
 
   const iface = new ethers.Interface([
@@ -712,44 +730,48 @@ async function main() {
     a.toLowerCase() < b.toLowerCase() ? -1 : 1
   );
 
+  let spacing;
+  try {
+    spacing = await getTickSpacingFromPoolManager(poolId);
+    if (!spacing || isNaN(spacing)) throw new Error("Tick spacing is null or invalid");
+  } catch (err) {
+    console.warn("⚠️ Falling back to manual tickSpacing: 60");
+    spacing = 60; // default fallback
+  }
   const poolKey = {
     currency0,
     currency1,
     fee: 3000,
-    tickSpacing: 60,
+    tickSpacing: spacing,
     hooks: V4_HOOK_ADDRESS,
   };
 
   const zeroForOne = USDC.toLowerCase() === currency1.toLowerCase();
   const amountIn = ethers.parseUnits("0.002323", 8); // 8 decimals
 
-  const callData = iface.encodeFunctionData("quoteExactInputSingle", [
-    poolKey,
-    zeroForOne,
-    amountIn,
-    "0x"
-  ]);
+  const abiCoder = new ethers.AbiCoder();
 
-  console.log("✅ Correct selector should be:", callData.slice(0, 10)); // MUST be 0x81fd588a
+  const quoter = await getQuoterContract();
 
   try {
-    const result = await provider.call({
-      to: V4_QUOTER_ADDRESS,
-      data: callData,
-    });
-
-    console.log("✅ Got result:", result);
+    const result = await quoter.callStatic.quoteExactInputSingle(
+      {
+        currency0: poolKey.currency0,
+        currency1: poolKey.currency1,
+        fee: poolKey.fee,
+        tickSpacing: poolKey.tickSpacing,
+        hooks: poolKey.hooks,
+      },
+      zeroForOne,
+      amountIn,
+      "0x" // hookData
+    );
+  
+    const [amountOut, gasEstimate] = result;
+    console.log(`✅ Simulated USDC amountOut: ${ethers.formatUnits(amountOut, 6)}`);
+    console.log(`⛽ Gas Estimate: ${gasEstimate.toString()}`);
   } catch (err) {
-    if (err.code === "CALL_EXCEPTION" && err.data) {
-      try {
-        const decoded = iface.decodeErrorResult("QuoteSwap", err.data);
-        console.log(`✅ Simulated USDC output: ${ethers.formatUnits(decoded.amount, 6)} USDC`);
-      } catch {
-        console.warn("❌ Unknown revert; not QuoteSwap");
-      }
-    } else {
-      console.error("❌ Raw revert:", err.message || err);
-    }
+    console.error("❌ Simulation failed:", err.message || err);
   }
 
 
@@ -761,10 +783,15 @@ main().catch(console.error);
 
 // 🔍 Possible Final Remaining Issues
 // 	1.	PoolManager might not recognize the pool as “ready” if a parameter is slightly off.
+// STEP 1: Ensure the hookData is NOT required
+// STEP 2: Try Using StateView’s simulateSwap(...)
+// STEP 3: Try Reversing zeroForOne
+// STEP 4: If All Else Fails, Use callStatic on a Wrapper
 // 	2.	tickSpacing might be misaligned with actual pool (try reading it via StateView.getPoolTickSpacing(poolId)).
 // 	3.	V4 Quoter might require ETH balance on-chain to simulate (unlikely, but possible).
 // 	4.	You might need to simulate via a wrapper function from Uniswap’s own deployment if the contract uses internal revert expectations (vs. public ABI simulation).
 // 	5.	Hook logic might reject the simulation pre-conditionally (e.g., on token balance, sender, etc.).
+
 
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
