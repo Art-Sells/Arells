@@ -1,27 +1,58 @@
 version: 1
-applications:
-  - appRoot: Apps/Web/arellsstore
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - curl https://get.volta.sh | bash
-            - export VOLTA_HOME="$HOME/.volta"
-            - export PATH="$VOLTA_HOME/bin:$PATH"
-            - volta install node@20.11.1
-            - volta install yarn@1.22.22
-            - node -v
-            - yarn -v
-            - yarn install
-            - npx hardhat compile
-        build:
-          commands:
-            - yarn run build
-      artifacts:
-        baseDirectory: .next
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "🔧 Setting up Volta for Node & Yarn..."
+        - curl https://get.volta.sh | bash
+        - export VOLTA_HOME="$HOME/.volta"
+        - export PATH="$VOLTA_HOME/bin:$PATH"
+        - volta install node@20.11.1
+        - volta install yarn@1.22.22
+        - node -v
+        - yarn -v
+
+        # ✅ Validate required env vars (without showing values)
+        - |
+          echo "🔍 Validating required environment variables..."
+          REQUIRED_VARS=(
+            ARELLS_PRIVATE_KEY
+            COGNITO_USER_POOL_ID
+            DYNAMODB_ACCESS_KEY_ID
+            DYNAMODB_SECRET_ACCESS_KEY
+            DYNAMODB_TABLE_NAME
+            NEXTAUTH_SECRET
+            NEXT_PUBLIC_AWS_ACCESS_KEY_ID
+            NEXT_PUBLIC_AWS_REGION
+            NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
+            NEXT_PUBLIC_BASE_URL
+            NEXT_PUBLIC_COINGECKO_API_KEY
+            NEXT_PUBLIC_GRAPH_URL
+            NEXT_PUBLIC_RPC_URL
+            NEXT_PUBLIC_S3_BUCKET_NAME
+          )
+          for VAR in "${REQUIRED_VARS[@]}"; do
+            if [ -z "${!VAR}" ]; then
+              echo "❌ ERROR: Missing required env var: $VAR"
+              exit 1
+            else
+              echo "✅ $VAR is set"
+            fi
+          done
+
+        - yarn install
+        - npx hardhat compile
+
+    build:
+      commands:
+        - yarn run build
+
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+
+  cache:
+    paths:
+      - node_modules/**/*
     
