@@ -4,8 +4,7 @@
   "private": true,
   "license": "MIT",
   "volta": {
-    "node": "18.18.0",
-    "yarn": "1.22.22"
+    "node": "18.18.0"
   },
   "scripts": {
     "dev": "next dev",
