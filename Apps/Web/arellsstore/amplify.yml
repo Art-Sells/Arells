@@ -14,7 +14,7 @@ applications:
             - node -v
             - yarn -v
 
-            # ✅ Validate required env vars (without showing values)
+            # ✅ Validate required env vars
             - |
               echo "🔍 Validating required environment variables..."
               REQUIRED_VARS=(
@@ -42,6 +42,8 @@ applications:
                 fi
               done
 
+            - echo "📦 Installing dependencies in app root..."
+            - cd Apps/Web/arellsstore
             - yarn install
             - npx hardhat compile
 
@@ -57,4 +59,3 @@ applications:
       cache:
         paths:
           - node_modules/**/*
-    
