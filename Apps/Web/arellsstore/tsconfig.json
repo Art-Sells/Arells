@@ -1,41 +1,53 @@
 {
-    "compilerOptions": {
-      "jsx": "preserve",
-      "target": "es2020",
-      "module": "commonjs",
-      "esModuleInterop": true,
-      "forceConsistentCasingInFileNames": true,
-      "strict": true,
-      "skipLibCheck": true,
-      "resolveJsonModule": true,
-      "lib": [
-        "dom",
-        "dom.iterable",
-        "esnext"
-      ],
-      "allowJs": true,
-      "noEmit": true,
-      "incremental": true,
-      "moduleResolution": "node",
-      "isolatedModules": true,
-      "typeRoots": [
-        "./types",
-        "./node_modules/@types"
-      ],
-      "plugins": [
-        {
-          "name": "next"
-        }
-      ]
-    },
-    "include": [
-      "next-env.d.ts",
-      ".next/types/**/*.ts",
-      "**/*.ts",
-      "**/*.tsx"
+  "compilerOptions": {
+    "jsx": "preserve",
+    "target": "es2020",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "noEmit": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
     ],
-    "exclude": [
-      "node_modules"
+    "allowJs": true,
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types",
+            "./node_modules/@nomicfoundation/hardhat-ethers/src"
+    ],
+    "paths": {
+      "ethers": [
+        "./node_modules/ethers/lib.esm/index.d.ts",
+      ],
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
     ]
-  }
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "test/index.js", 
+    "contracts/**/*.sol", 
+    "scripts/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "artifacts",
+    "cache"
+  ]
+}
   
