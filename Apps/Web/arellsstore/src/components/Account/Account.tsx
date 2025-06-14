@@ -357,5 +357,3 @@ const formatCurrency = (value: number): string => {
 };
 
 export default Account;
-
-export default Account;
