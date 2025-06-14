@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config, { isServer }) => {
     config.experiments = {
@@ -21,11 +22,7 @@ const nextConfig = {
         destination: `https://pro-api.coingecko.com/api/v3/:path*`,
       },
     ];
-  },
-  env: {
-    NEXT_PUBLIC_KRAKEN_API_KEY: process.env.NEXT_PUBLIC_KRAKEN_API_KEY,
-    NEXT_PUBLIC_KRAKEN_API_SECRET: process.env.NEXT_PUBLIC_KRAKEN_API_SECRET,
-  },
+  }
 };
 
 export default nextConfig;
