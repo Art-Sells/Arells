@@ -56,11 +56,9 @@
 #### Description (Home/Account)
 - Alter: "Import Small Amounts of Bitcoin, render bear markets obsolete."
 
-#### Concept
-- Look at main/ and copy/paste the HPMArchitecture (replace all "concept" functions in test to concept)
-
 #### Deployment Amplify/S3 Login
-- Ensure that NEXT_PUBLIC is not invoked!
+- create SSRs and see if can delete other .envs, if so delete (look at main deployment)
+- Remove .env hardhat config expositions
 - Delete MASS address info from MASStester and console.logs from all signer.
 - Restructure decryption process in readMASS and readBTC apis
 
@@ -84,7 +82,7 @@
 - Remove loops in CBBTC/USDC supplication tests executeSupplication, clean up "cbBTC mass test for first failure before confirmation"
 - Remove BTC Wallet & Key creations in signup and login
 - Remove all "2 second delay for buttons"
-- Fix (signOut /sign-up/log-in issue) loading  after button click success stays true forever... add "await"?
+- Fix (signOut/sign-up/log-in issue) loading after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - emailConfirmed attribute
 - - if null, emailUnConfirmed(true){}, emailConfirmed(false){};

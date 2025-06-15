@@ -5,20 +5,36 @@ applications:
       phases:
         preBuild:
           commands:
-            - curl https://get.volta.sh | bash
+            - echo "🧹 Clearing build cache..."
+            - rm -rf .next
+            - rm -rf node_modules/.cache
+            - rm -rf dist
+
+            - echo "🔧 Setting up Volta for Node & Yarn..."
+            - curl -sSf https://get.volta.sh | bash
             - export VOLTA_HOME="$HOME/.volta"
             - export PATH="$VOLTA_HOME/bin:$PATH"
-            - volta install node@18.17.0
-            - volta install yarn@1.22.22  # Ensure the same Yarn version as local
-            - yarn install --immutable --immutable-cache
+            - volta install node@20.11.1
+            - volta install yarn@1.22.22
+            - node -v && yarn -v
+
+            - echo "📦 Installing dependencies..."
+            - yarn install --frozen-lockfile
+
+            - echo "🛠️ Compiling Hardhat contracts..."
+            - npx hardhat compile
+
         build:
           commands:
-            - yarn build
+            - echo "🚀 Building Next.js app..."
+            - yarn run build
+
       artifacts:
         baseDirectory: .next
         files:
           - '**/*'
+
       cache:
         paths:
-          - node_modules/**/*
-          - .next/cache/**/*
+          # optional: remove cache reuse completely if needed
+          # - node_modules/**/*

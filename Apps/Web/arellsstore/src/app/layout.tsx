@@ -2,13 +2,13 @@ import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
 import { HPMProvider } from '../context/HPMarchitecture';
+import { HPMConceptProvider } from '../context/concept/HPMContextConcept';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
 import dotenv from 'dotenv';
 import { MASSProvider } from '../context/MASSarchitecture';
 import { SignerProvider } from "../state/signer";
-import { OnchainProvider } from '../state/providers';
 
 dotenv.config();
 Amplify.configure(awsmobile);
@@ -35,15 +35,14 @@ const RootLayout = ({ children }: LayoutProps) => {
         <BitcoinPriceProvider>
           <UserProvider>
             <SignerProvider>
-              <OnchainProvider>
               
               <HPMProvider>
                 <MASSProvider>
-                  {children}
+                  <HPMConceptProvider>
+                    {children}
+                  </HPMConceptProvider>
                 </MASSProvider>
               </HPMProvider>
-
-              </OnchainProvider>
             </SignerProvider>
           </UserProvider>
         </BitcoinPriceProvider>

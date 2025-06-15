@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useHPM } from '../../context/HPMarchitecture';
+import { useHPM } from '../../context/concept/HPMContextConcept';
 import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
 import '../../app/css/account/Account.css';
@@ -52,11 +52,11 @@ const HPMConcept: React.FC = () => {
     setBuyAmount,
     sellAmount,
     setSellAmount,
-    handleBuyConcept,
-    handleSellConcept,
+    handleBuy,
+    handleSell,
     setManualBitcoinPrice,
     email,
-    soldAmounts,
+    soldAmount,
   } = useHPM();
   const [showImportSuccess, setImportSuccess] = useState<boolean>(false);
   const [showImportSuccessSell, setImportSuccessSell] = useState<boolean>(false);
@@ -138,7 +138,7 @@ const HPMConcept: React.FC = () => {
       }, 2000);
   
       setBuyAmount(buyAmount);
-      handleBuyConcept(buyAmount);
+      handleBuy(buyAmount);
     } else {
       setMissingFields(true); // Show missing fields message
     }
@@ -164,7 +164,7 @@ const HPMConcept: React.FC = () => {
         setInputSellAmount(''); // Clear the input field
       }, 2000);
   
-      handleSellConcept(sellAmount);
+      handleSell(sellAmount);
     } else {
       setMissingFields(true); // Show error if sellAmount is invalid
     }
@@ -407,7 +407,7 @@ const HPMConcept: React.FC = () => {
         |
       </span>
       <span id="concept-title-description">
-        Bitcoin investments that never lose value
+        Renders bear markets obsolete
       </span>
     </div>
 
@@ -602,8 +602,7 @@ const HPMConcept: React.FC = () => {
               </div>
               <button 
                 id="sell-account-conceptt"
-                onClick={handleSellClick}
-              >
+                onClick={handleSellClick}>
                 SELL
               </button>
             </>
@@ -653,7 +652,7 @@ const HPMConcept: React.FC = () => {
           />
         </span>
         <span id="amount-sold-number-account-num-concept">
-          {formatCurrency(soldAmounts)}
+          {formatCurrency(soldAmount)}
         </span>
       </div>
     </div>

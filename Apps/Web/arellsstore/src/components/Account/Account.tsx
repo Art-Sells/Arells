@@ -327,13 +327,13 @@ const Account: React.FC = () => {
 
       {walletNotConnected && (
           <p id="amount-sold-number-account-num-null">
-          Bitcoin investments that never lose value.
+          Renders bear markets obsolete.
         </p>    
       )}
 
       {awaitingApprovals && (
           <p id="amount-sold-number-account-num-null">
-          Bitcoin investments that never lose value.
+          Renders bear markets obsolete.
         </p>    
       )}
 
