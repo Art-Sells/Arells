@@ -8,11 +8,11 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Arells",
-  description: "Renders bear markets obsolete. Import bitcoin and never experience bear market losses.",
+  description: "Investments immune to bear markets. Import bitcoin and never experience bear market losses.",
   robots: "noimageindex",
   openGraph: {
     title: "Arells",
-  description: "Renders bear markets obsolete. Import bitcoin and never experience bear market losses.",
+  description: "Investments immune to bear markets.  Import bitcoin and never experience bear market losses.",
     url: "https://arells.com",
     type: "website",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Arells",
-  description: "Renders bear markets obsolete. Import bitcoin and never experience bear market losses.",
+  description: "Investments immune to bear markets.  Import bitcoin and never experience bear market losses.",
     card: "summary_large_image",
     images: [
       {
