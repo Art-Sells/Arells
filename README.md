@@ -2,7 +2,7 @@
 
 
 # [Arells](https://arells.com)
-## Renders bear markets obsolete.
+## Investments immune to bear markets.
 
 Arells exists because it believes ***investments should never lose value***, especially during Bear Markets.
 
