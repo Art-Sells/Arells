@@ -18,6 +18,9 @@ applications:
             - volta install yarn@1.22.22
             - node -v && yarn -v
 
+            - echo "🔍 ENV Vars from SSM:"
+            - printenv | grep -i 'PRIVATE\|NEXT\|BASE'
+
             - echo "📦 Installing dependencies..."
             - yarn install --frozen-lockfile
 
