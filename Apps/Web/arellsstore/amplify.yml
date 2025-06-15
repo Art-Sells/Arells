@@ -20,8 +20,6 @@ applications:
 
             - echo "🔐 Injecting secrets from AWS SSM..."
 
-            - export AMPLIFY_DIFF_DEPLOY=$(aws ssm get-parameter --name "/amplify/dsd9y475h7ce2/main/AMPLIFY_DIFF_DEPLOY" --query Parameter.Value --output text)
-            - export AMPLIFY_MONOREPO_APP_ROOT=$(aws ssm get-parameter --name "/amplify/dsd9y475h7ce2/main/AMPLIFY_MONOREPO_APP_ROOT" --query Parameter.Value --output text)
             - export ARELLS_PRIVATE_KEY=$(aws ssm get-parameter --name "/amplify/dsd9y475h7ce2/main/ARELLS_PRIVATE_KEY" --with-decryption --query Parameter.Value --output text)
             - export COGNITO_USER_POOL_ID=$(aws ssm get-parameter --name "/amplify/dsd9y475h7ce2/main/COGNITO_USER_POOL_ID" --query Parameter.Value --output text)
             - export DYNAMODB_ACCESS_KEY_ID=$(aws ssm get-parameter --name "/amplify/dsd9y475h7ce2/main/DYNAMODB_ACCESS_KEY_ID" --with-decryption --query Parameter.Value --output text)
