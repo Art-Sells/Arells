@@ -18,6 +18,12 @@ applications:
             - volta install yarn@1.22.22
             - node -v && yarn -v
 
+            - echo "🛠 Installing AWS CLI..."
+            - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            - unzip awscliv2.zip
+            - sudo ./aws/install
+            - export PATH=$PATH:/usr/local/bin
+
             - echo "🔐 Injecting secrets from AWS SSM..."
 
             - export ARELLS_PRIVATE_KEY=$(aws ssm get-parameter --name "/amplify/dsd9y475h7ce2/main/ARELLS_PRIVATE_KEY" --with-decryption --query Parameter.Value --output text)
