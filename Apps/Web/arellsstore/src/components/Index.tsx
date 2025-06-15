@@ -66,7 +66,7 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner">Renders bear markets obsolete</p>
+        <p id="descriptioner">Investments immune to bear markets</p>
       </div>
 
         {/* <br></br>
