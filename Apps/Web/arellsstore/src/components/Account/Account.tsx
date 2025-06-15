@@ -333,7 +333,7 @@ const Account: React.FC = () => {
 
       {awaitingApprovals && (
           <p id="amount-sold-number-account-num-null">
-          Renders bear markets obsolete.
+          Investments immune to bear markets.
         </p>    
       )}
 
