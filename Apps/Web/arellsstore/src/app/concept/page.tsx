@@ -10,11 +10,11 @@ import HPMconcept from '../../components/HPM/HPMconcept';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Concept",
-  description: "Renders bear markets obsolete.",
+  description: "Investments immune to bear markets.",
   robots: "noimageindex",
   openGraph: {
     title: "Concept",
-    description: "Renders bear markets obsolete.",
+    description: "Investments immune to bear markets.",
     url: "https://arells.com/concept",
     type: "website",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Concept",
-    description: "Renders bear markets obsolete.",
+    description: "Investments immune to bear markets.",
     card: "summary_large_image",
     images: [
       {
