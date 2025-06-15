@@ -5,6 +5,7 @@ import { HPMConceptProvider } from '../context/concept/HPMContextConcept';
 import { HPMProvider } from '../context/HPMarchitecture';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
+import { SignerProvider } from "../state/signer";
 import awsmobile from '../aws-exports';
 import dotenv from 'dotenv';
 
@@ -52,11 +53,13 @@ const RootLayout = ({ children }: LayoutProps) => {
         <ConfigureAmplifyClientSide />
         <BitcoinPriceProvider>
           <UserProvider>
-            <HPMProvider>
-              <HPMConceptProvider>
-                {children}
-              </HPMConceptProvider>
-            </HPMProvider>
+            <SignerProvider>
+              <HPMProvider>
+                <HPMConceptProvider>
+                  {children}
+                </HPMConceptProvider>
+              </HPMProvider>
+            </SignerProvider>
           </UserProvider>
         </BitcoinPriceProvider>
       </body>
