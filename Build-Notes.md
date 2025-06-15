@@ -57,10 +57,10 @@
 - Alter: "Import Small Amounts of Bitcoin, render bear markets obsolete."
 
 #### Deployment Amplify/S3 Login
-- create SSRs and see if can delete other .envs, if so delete (look at main deployment)
-- Remove .env hardhat config expositions
+- Ensure that NEXT_PUBLIC is not invoked and remove .env hardhat config expositions
 - Delete MASS address info from MASStester and console.logs from all signer.
 - Restructure decryption process in readMASS and readBTC apis
+- Compare Main ENV with Test ENV before deployments
 
 ## Final Test
 - 2-3 accounts
@@ -115,7 +115,7 @@
 
 
 
-## BASE L3 (possibly after v1.5):
+## START WORK ON BASE L3 (possibly after v1.5):
 - Phase 1: 
 - - Abstract Transaction Fees to $0~
 - - Replace Transaction Fees from MASS profits (calculate previous cdVatops from new cdVatops and if +15% or more, subtract 5% into Base L3 and other 5% into Arells (should work the same as selling logic)). 
@@ -196,8 +196,8 @@
 ### Confirm
 - - - Ensure Private Key is Encrypted (if successful)
 
-#### Metatags/ Description (Home)
-- Alter: "Import Small Amounts of Bitcoin, ensure that they never lose value."
+#### Deployment Amplify/S3 Login
+- Restructure P/K ENV NAME
 
 ### After Completion
 - Users:
