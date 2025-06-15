@@ -50,11 +50,8 @@
 - Import Bitcoin (through Coinbase/Base) (Base Address)
 - - Modal: Preparing (B) Wallet (to create wallet (take from MASSTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
 
-#### Metatags/ Description
-- Alter: "Import Small Amounts of Bitcoin, render bear markets obsolete."
-
-#### Description (Home/Account)
-- Alter: "Import Small Amounts of Bitcoin, render bear markets obsolete."
+#### Metatags/ Description (all pages.tsx & components)
+- Alter: Descriptions & Images (see /main)
 
 #### Deployment Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked and remove .env hardhat config expositions
