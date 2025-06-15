@@ -407,7 +407,7 @@ const HPMConcept: React.FC = () => {
         |
       </span>
       <span id="concept-title-description">
-        Renders bear markets obsolete
+        Investments immune to bear markets
       </span>
     </div>
 
