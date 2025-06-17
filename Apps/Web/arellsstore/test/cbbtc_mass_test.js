@@ -598,7 +598,7 @@ const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 
 const stateViewInterface = new ethers.Interface([
-  "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)"
+  "function simulateSwap((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks) key,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes hookData) view returns (int256 amount0, int256 amount1, uint160 sqrtPriceX96After, int24 tickAfter, uint128 liquidityAfter)"
 ]);
 
 async function verifyPoolId(poolId) {
@@ -638,6 +638,35 @@ async function getTickSpacingFromPoolManager(poolId) {
 async function getQuoterContract() {
   const abi = await fetchQuoterV4Abi();
   return new ethers.Contract(V4_QUOTER_ADDRESS, abi, wallet); // use wallet, NOT provider
+}
+
+async function simulateSwapCall(poolKey, amountIn, sqrtPriceLimitX96, zeroForOne) {
+  const callData = stateViewInterface.encodeFunctionData("simulateSwap", [
+    poolKey,
+    zeroForOne,
+    amountIn,               // int256
+    sqrtPriceLimitX96,      // uint160
+    "0x"                    // hookData (empty for now)
+  ]);
+
+  try {
+    const result = await provider.call({
+      to: STATE_VIEW_ADDRESS,
+      data: callData,
+    });
+
+    const decoded = stateViewInterface.decodeFunctionResult("simulateSwap", result);
+    const [amount0, amount1, sqrtPriceAfter, tickAfter, liquidityAfter] = decoded;
+
+    console.log("✅ simulateSwap result:");
+    console.log("→ amount0:", amount0.toString());
+    console.log("→ amount1:", amount1.toString());
+    console.log("→ sqrtPriceAfter:", sqrtPriceAfter.toString());
+    console.log("→ tickAfter:", tickAfter);
+    console.log("→ liquidityAfter:", liquidityAfter.toString());
+  } catch (err) {
+    console.error("❌ simulateSwap failed:", err.reason || err.message);
+  }
 }
 
 async function main() {
@@ -683,71 +712,8 @@ async function main() {
   //   }
   // }
 
-
-  const { poolId } = V4_POOL_IDS[0]; // or [1] for the other pool
-  await verifyPoolId(poolId);
-
-  console.log("\n🔍 Fetching V4 Quoter ABI to validate function type...");
-
-  const abi = await fetchQuoterV4Abi();
-  const quoteFn = abi.find(f => f.name === "quoteExactInputSingle");
-
-  if (!quoteFn) {
-    console.error("❌ Function 'quoteExactInputSingle' not found in ABI!");
-  } else if (quoteFn.stateMutability !== "view") {
-    console.warn(`❌ Function 'quoteExactInputSingle' is '${quoteFn.stateMutability}' — must be 'view' for simulation to work.`);
-  } else {
-    console.log("✅ ABI check: 'quoteExactInputSingle' is view function — should be simulatable.");
-  }
-
-  // await fetchQuoterV4Abi();
-
-
-  const [currency0, currency1] = [USDC, CBBTC].sort((a, b) =>
-    a.toLowerCase() < b.toLowerCase() ? -1 : 1
-  );
-
-  let spacing;
-  try {
-    spacing = await getTickSpacingFromPoolManager(poolId);
-    if (!spacing || isNaN(spacing)) throw new Error("Tick spacing is null or invalid");
-  } catch (err) {
-    console.warn("⚠️ Falling back to manual tickSpacing: 60");
-    spacing = 60; // default fallback
-  }
-  const poolKey = {
-    currency0,
-    currency1,
-    fee: 3000,
-    tickSpacing: spacing,
-    hooks: V4_HOOK_ADDRESS,
-  };
-
-  const zeroForOne = USDC.toLowerCase() === currency1.toLowerCase();
-  const amountIn = ethers.parseUnits("0.002323", 8); // 8 decimals
-
-  const quoter = await getQuoterContract();
-
-  try {
-    const result = await quoter.callStatic.quoteExactInputSingle(
-      {
-        currency0: poolKey.currency0,
-        currency1: poolKey.currency1,
-        fee: poolKey.fee,
-        tickSpacing: poolKey.tickSpacing,
-        hooks: poolKey.hooks,
-      },
-      zeroForOne,
-      amountIn,
-      "0x" // hookData
-    );
-  
-    const [amountOut, gasEstimate] = result;
-    console.log(`✅ Simulated USDC amountOut: ${ethers.formatUnits(amountOut, 6)}`);
-    console.log(`⛽ Gas Estimate: ${gasEstimate.toString()}`);
-  } catch (err) {
-    console.error("❌ Simulation failed:", err.message || err);
-  }
+  const sqrtPriceLimitX96 = 0n; // or use pool’s current price or boundary
+  await simulateSwapCall(poolKey, amountIn * BigInt(-1), sqrtPriceLimitX96, zeroForOne);
 
 
 }
@@ -758,7 +724,6 @@ main().catch(console.error);
 
 // 🔍 Possible Final Remaining Issues
 // 	1.	PoolManager might not recognize the pool as “ready” if a parameter is slightly off.
-// STEP 1: Ensure the hookData is NOT required
 // STEP 2: Try Using StateView’s simulateSwap(...)
 // STEP 3: Try Reversing zeroForOne
 // STEP 4: If All Else Fails, Use callStatic on a Wrapper
