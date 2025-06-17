@@ -600,14 +600,6 @@ const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 const stateViewInterface = new ethers.Interface([
   "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)"
 ]);
-async function fetchTickSpacing(poolId) {
-  const poolIdBytes32 = ethers.hexZeroPad(poolId, 32); // 👈 fix
-  const callData = stateViewInterface.encodeFunctionData("getPoolTickSpacing", [poolIdBytes32]);
-  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: callData });
-  const [tickSpacing] = stateViewInterface.decodeFunctionResult("getPoolTickSpacing", result);
-  console.log(`✅ Tick Spacing for poolId ${poolId}: ${tickSpacing}`);
-  return tickSpacing;
-}
 
 async function verifyPoolId(poolId) {
   const poolIdBytes32 = zeroPadValue(poolId, 32);
@@ -642,17 +634,6 @@ async function getTickSpacingFromPoolManager(poolId) {
   }
 }
 
-async function fetchQuoterV4Abi() {
-  const res = await axios.get(
-    `https://api.basescan.org/api?module=contract&action=getabi&address=${V4_QUOTER_ADDRESS}&apikey=${process.env.BASESCAN_API_KEY}`
-  );
-  if (res.data.status !== "1") {
-    throw new Error(`Failed to fetch ABI: ${res.data.message}`);
-  }
-  const abi = JSON.parse(res.data.result);
-  console.log(JSON.stringify(abi, null, 2));
-  return abi;
-}
 
 async function getQuoterContract() {
   const abi = await fetchQuoterV4Abi();
@@ -721,10 +702,6 @@ async function main() {
 
   // await fetchQuoterV4Abi();
 
-  const iface = new ethers.Interface([
-    "function quoteExactInputSingle((address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) poolKey, bool zeroForOne, uint128 exactAmount, bytes hookData) view returns (uint256 amountOut, uint256 gasEstimate)",
-    "error QuoteSwap(uint256 amount)"
-  ]);
 
   const [currency0, currency1] = [USDC, CBBTC].sort((a, b) =>
     a.toLowerCase() < b.toLowerCase() ? -1 : 1
@@ -748,8 +725,6 @@ async function main() {
 
   const zeroForOne = USDC.toLowerCase() === currency1.toLowerCase();
   const amountIn = ethers.parseUnits("0.002323", 8); // 8 decimals
-
-  const abiCoder = new ethers.AbiCoder();
 
   const quoter = await getQuoterContract();
 
