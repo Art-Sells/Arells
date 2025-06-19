@@ -595,50 +595,49 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 // ✅ Set Up Ethereum Provider & Wallet
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
+// const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 
 const stateViewInterface = new ethers.Interface([
   "function simulateSwap((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks) key,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes hookData) view returns (int256 amount0, int256 amount1, uint160 sqrtPriceX96After, int24 tickAfter, uint128 liquidityAfter)"
 ]);
 
-async function verifyPoolId(poolId) {
-  const poolIdBytes32 = zeroPadValue(poolId, 32);
-  const callData = stateViewInterface.encodeFunctionData("getSlot0", [poolIdBytes32]);
+// async function verifyPoolId(poolId) {
+//   const poolIdBytes32 = zeroPadValue(poolId, 32);
+//   const callData = stateViewInterface.encodeFunctionData("getSlot0", [poolIdBytes32]);
 
-  try {
-    const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: callData });
-    const [slot0] = stateViewInterface.decodeFunctionResult("getSlot0", result);
-    console.log(`✅ getSlot0 succeeded:`, slot0);
-  } catch (err) {
-    console.error(`❌ getSlot0 failed for poolId ${poolId}:`, err.message || err);
-  }
-}
+//   try {
+//     const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: callData });
+//     const [slot0] = stateViewInterface.decodeFunctionResult("getSlot0", result);
+//     console.log(`✅ getSlot0 succeeded:`, slot0);
+//   } catch (err) {
+//     console.error(`❌ getSlot0 failed for poolId ${poolId}:`, err.message || err);
+//   }
+// }
 
-const poolManagerInterface = new ethers.Interface([
-  "function getPool(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee, int24 tickSpacing)"
+// const poolManagerInterface = new ethers.Interface([
+//   "function getPool(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee, int24 tickSpacing)"
+// ]);
+
+const stateViewTickInterface = new ethers.Interface([
+  "function getPoolTickSpacing(bytes32 poolId) view returns (int24)"
 ]);
 
-async function getTickSpacingFromPoolManager(poolId) {
-  const poolIdBytes32 = zeroPadValue(poolId, 32);
-  const callData = poolManagerInterface.encodeFunctionData("getPool", [poolIdBytes32]);
-
-  try {
-    const result = await provider.call({ to: V4_POOL_MANAGER, data: callData });
-    const decoded = poolManagerInterface.decodeFunctionResult("getPool", result);
-    const tickSpacing = decoded[4]; // index 4 is tickSpacing
-    console.log(`✅ Tick Spacing from PoolManager: ${tickSpacing}`);
-    return tickSpacing;
-  } catch (err) {
-    console.error("❌ Failed to fetch from PoolManager:", err.message || err);
-    return null;
-  }
+async function getTickSpacingFromStateView(poolId) {
+  const callData = stateViewTickInterface.encodeFunctionData("getPoolTickSpacing", [poolId]);
+  const result = await provider.call({
+    to: STATE_VIEW_ADDRESS,
+    data: callData,
+  });
+  const [tickSpacing] = stateViewTickInterface.decodeFunctionResult("getPoolTickSpacing", result);
+  console.log("✅ Tick Spacing (StateView):", tickSpacing.toString());
+  return tickSpacing;
 }
 
 
-async function getQuoterContract() {
-  const abi = await fetchQuoterV4Abi();
-  return new ethers.Contract(V4_QUOTER_ADDRESS, abi, wallet); // use wallet, NOT provider
-}
+// async function getQuoterContract() {
+//   const abi = await fetchQuoterV4Abi();
+//   return new ethers.Contract(V4_QUOTER_ADDRESS, abi, wallet); // use wallet, NOT provider
+// }
 
 
 
@@ -667,7 +666,11 @@ async function simulateSwapCall(poolKey, amountIn, sqrtPriceLimitX96, zeroForOne
     console.log("→ tickAfter:", tickAfter);
     console.log("→ liquidityAfter:", liquidityAfter.toString());
   } catch (err) {
-    console.error("❌ simulateSwap failed:", err.reason || err.message);
+    console.error("❌ simulateSwap failed:");
+    console.error("→ call data:", callData);
+    console.error("→ poolKey:", poolKey);
+    console.error("→ amountIn:", amountIn.toString()); // ✅ FIXED
+    console.error("→ zeroForOne:", zeroForOne);
   }
 }
 
@@ -714,34 +717,62 @@ async function main() {
   //   }
   // }
 
+
   const [currency0, currency1] = [USDC, CBBTC].sort((a, b) =>
     a.toLowerCase() < b.toLowerCase() ? -1 : 1
   );
 
   const poolId = V4_POOL_IDS[0].poolId; // use whichever pool you're testing
 
+  const slot0Interface = new ethers.Interface([
+    "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 hookFee)"
+  ]);
+  
+  const callData = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
+  
+  const result = await provider.call({
+    to: STATE_VIEW_ADDRESS,
+    data: callData,
+  });
+  const decoded = slot0Interface.decodeFunctionResult("getSlot0", result);
+  console.log("✅ getSlot0 StateView:", decoded);
+
+
+
   let spacing;
   try {
-    spacing = await getTickSpacingFromPoolManager(poolId);
+    spacing = await getTickSpacingFromStateView(poolId);
     if (!spacing || isNaN(spacing)) throw new Error("Tick spacing is null or invalid");
   } catch (err) {
     console.warn("⚠️ Falling back to manual tickSpacing: 60");
     spacing = 60;
   }
 
-  const poolKey = {
+  console.log("🧪 Constructed poolKey:", {
     currency0,
     currency1,
     fee: 3000,
     tickSpacing: spacing,
     hooks: V4_HOOK_ADDRESS,
-  };
+  });
 
+  const amountIn = ethers.parseUnits("0.002323", 8); // or your test value
   const zeroForOne = USDC.toLowerCase() === currency1.toLowerCase();
-  const amountIn = ethers.parseUnits("0.002323", 8); // 8 decimals
-  const sqrtPriceLimitX96 = 0n;
-
-  await simulateSwapCall(poolKey, amountIn * BigInt(-1), sqrtPriceLimitX96, zeroForOne);
+  
+  const sqrtPriceLimitX96 = zeroForOne ? 0n : (2n ** 160n - 1n); // direction-aware limit
+  
+  await simulateSwapCall(
+    {
+      currency0,
+      currency1,
+      fee: 3000,
+      tickSpacing: spacing,
+      hooks: V4_HOOK_ADDRESS,
+    },
+    zeroForOne ? -amountIn : amountIn, // sign correctly
+    sqrtPriceLimitX96,
+    zeroForOne
+  );
 
 }
 
