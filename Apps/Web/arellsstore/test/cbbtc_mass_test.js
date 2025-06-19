@@ -546,30 +546,28 @@ throw lastError;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
-const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
-const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
-const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b"; 
 const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
@@ -674,6 +672,46 @@ async function simulateSwapCall(poolKey, amountIn, sqrtPriceLimitX96, zeroForOne
   }
 }
 
+
+async function simulateWithV4Quoter(poolKey, amountIn, zeroForOne, sqrtPriceLimitX96) {
+  const quoterInterface = new ethers.Interface([
+    "function quote(address sender, bytes hookData, bytes inputData) view returns (bytes outputData)",
+    "function swap((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks) poolKey,(address recipient,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes data) params) external"
+  ]);
+
+  const inputData = quoterInterface.encodeFunctionData("swap", [
+    poolKey,
+    {
+      recipient: "0x0000000000000000000000000000000000000000", // address doesn't matter for simulation
+      zeroForOne,
+      amountSpecified: zeroForOne ? -amountIn : amountIn,
+      sqrtPriceLimitX96,
+      data: "0x"
+    }
+  ]);
+
+  const callData = quoterInterface.encodeFunctionData("quote", [
+    "0x0000000000000000000000000000000000000000", // sender (doesn’t matter)
+    "0x", // hookData
+    inputData
+  ]);
+
+  try {
+    const result = await provider.call({
+      to: V4_QUOTER_ADDRESS,
+      data: callData,
+    });
+
+    const [output] = quoterInterface.decodeFunctionResult("quote", result);
+
+    console.log("✅ V4 Quoter quote result:");
+    console.log("→ output (raw):", output);
+    // Optionally decode `output` if you know the structure (e.g., abi.decode((int256, int256, uint160, int24, uint128), output))
+  } catch (err) {
+    console.error("❌ V4 Quoter quote failed:", err.message || err);
+  }
+}
+
 async function main() {
   // console.log("\n🔍 Checking for a Fee-Free Quote...");
   // // ✅ CBBTC amounts (8 decimals)
@@ -757,11 +795,12 @@ async function main() {
   });
 
   const amountIn = ethers.parseUnits("0.002323", 8); // or your test value
-  const zeroForOne = USDC.toLowerCase() === currency1.toLowerCase();
+  const zeroForOne = true;
   
   const sqrtPriceLimitX96 = zeroForOne ? 0n : (2n ** 160n - 1n); // direction-aware limit
-  
-  await simulateSwapCall(
+
+  // ✅ V4 Quoter Simulation (quote)
+  await simulateWithV4Quoter(
     {
       currency0,
       currency1,
@@ -769,9 +808,9 @@ async function main() {
       tickSpacing: spacing,
       hooks: V4_HOOK_ADDRESS,
     },
-    zeroForOne ? -amountIn : amountIn, // sign correctly
-    sqrtPriceLimitX96,
-    zeroForOne
+    amountIn,
+    zeroForOne,
+    sqrtPriceLimitX96
   );
 
 }
@@ -784,7 +823,6 @@ main().catch(console.error);
 // 	1.	PoolManager might not recognize the pool as “ready” if a parameter is slightly off.
 // STEP 2: Try Using StateView’s simulateSwap(...)
 // STEP 3: Try Reversing zeroForOne
-// STEP 4: If All Else Fails, Use callStatic on a Wrapper
 // 	2.	tickSpacing might be misaligned with actual pool (try reading it via StateView.getPoolTickSpacing(poolId)).
 // 	3.	V4 Quoter might require ETH balance on-chain to simulate (unlikely, but possible).
 // 	4.	You might need to simulate via a wrapper function from Uniswap’s own deployment if the contract uses internal revert expectations (vs. public ABI simulation).
