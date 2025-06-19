@@ -673,7 +673,22 @@ async function simulateSwapCall(poolKey, amountIn, sqrtPriceLimitX96, zeroForOne
 }
 
 
-async function simulateWithV4Quoter(poolKey, amountIn, zeroForOne, sqrtPriceLimitX96) {
+async function simulateWithV4Quoter(poolKey, amountIn, zeroForOne, sqrtPriceLimitX96, customPrivateKey = null) {
+  const privateKeyToUse = process.env.PRIVATE_KEY_TEST;
+  const userWallet = new ethers.Wallet(privateKeyToUse, provider);
+  console.log(`✅ Using Test Wallet: ${userWallet.address}`);
+
+  // Fetch CBBTC balance
+  const CBBTCContract = new ethers.Contract(CBBTC, [
+    "function balanceOf(address) view returns (uint256)"
+  ], userWallet);
+
+  const cbbtcBalanceRaw = await CBBTCContract.balanceOf(userWallet.address);
+  const ethBalanceRaw = await provider.getBalance(userWallet.address);
+
+  console.log(`💰 CBBTC Balance: ${ethers.formatUnits(cbbtcBalanceRaw, 8)} CBBTC`);
+  console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalanceRaw)} ETH`);
+
   const quoterInterface = new ethers.Interface([
     "function quote(address sender, bytes hookData, bytes inputData) view returns (bytes outputData)",
     "function swap((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks) poolKey,(address recipient,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes data) params) external"
@@ -682,7 +697,7 @@ async function simulateWithV4Quoter(poolKey, amountIn, zeroForOne, sqrtPriceLimi
   const inputData = quoterInterface.encodeFunctionData("swap", [
     poolKey,
     {
-      recipient: "0x0000000000000000000000000000000000000000", // address doesn't matter for simulation
+      recipient: "0x0000000000000000000000000000000000000000",
       zeroForOne,
       amountSpecified: zeroForOne ? -amountIn : amountIn,
       sqrtPriceLimitX96,
@@ -691,8 +706,8 @@ async function simulateWithV4Quoter(poolKey, amountIn, zeroForOne, sqrtPriceLimi
   ]);
 
   const callData = quoterInterface.encodeFunctionData("quote", [
-    "0x0000000000000000000000000000000000000000", // sender (doesn’t matter)
-    "0x", // hookData
+    userWallet.address, // sender address must match simulated caller
+    "0x",
     inputData
   ]);
 
@@ -703,12 +718,16 @@ async function simulateWithV4Quoter(poolKey, amountIn, zeroForOne, sqrtPriceLimi
     });
 
     const [output] = quoterInterface.decodeFunctionResult("quote", result);
-
     console.log("✅ V4 Quoter quote result:");
     console.log("→ output (raw):", output);
-    // Optionally decode `output` if you know the structure (e.g., abi.decode((int256, int256, uint160, int24, uint128), output))
   } catch (err) {
-    console.error("❌ V4 Quoter quote failed:", err.message || err);
+    console.error("❌ V4 Quoter quote failed:");
+    console.error("→ error:", err.message || err);
+    console.error("→ call data:", callData);
+    console.error("→ poolKey:", poolKey);
+    console.error("→ amountIn:", amountIn.toString());
+    console.error("→ zeroForOne:", zeroForOne);
+    console.error("→ sqrtPriceLimitX96:", sqrtPriceLimitX96.toString());
   }
 }
 
