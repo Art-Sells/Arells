@@ -640,6 +640,8 @@ async function getQuoterContract() {
   return new ethers.Contract(V4_QUOTER_ADDRESS, abi, wallet); // use wallet, NOT provider
 }
 
+
+
 async function simulateSwapCall(poolKey, amountIn, sqrtPriceLimitX96, zeroForOne) {
   const callData = stateViewInterface.encodeFunctionData("simulateSwap", [
     poolKey,
@@ -712,9 +714,34 @@ async function main() {
   //   }
   // }
 
-  const sqrtPriceLimitX96 = 0n; // or use pool’s current price or boundary
-  await simulateSwapCall(poolKey, amountIn * BigInt(-1), sqrtPriceLimitX96, zeroForOne);
+  const [currency0, currency1] = [USDC, CBBTC].sort((a, b) =>
+    a.toLowerCase() < b.toLowerCase() ? -1 : 1
+  );
 
+  const poolId = V4_POOL_IDS[0].poolId; // use whichever pool you're testing
+
+  let spacing;
+  try {
+    spacing = await getTickSpacingFromPoolManager(poolId);
+    if (!spacing || isNaN(spacing)) throw new Error("Tick spacing is null or invalid");
+  } catch (err) {
+    console.warn("⚠️ Falling back to manual tickSpacing: 60");
+    spacing = 60;
+  }
+
+  const poolKey = {
+    currency0,
+    currency1,
+    fee: 3000,
+    tickSpacing: spacing,
+    hooks: V4_HOOK_ADDRESS,
+  };
+
+  const zeroForOne = USDC.toLowerCase() === currency1.toLowerCase();
+  const amountIn = ethers.parseUnits("0.002323", 8); // 8 decimals
+  const sqrtPriceLimitX96 = 0n;
+
+  await simulateSwapCall(poolKey, amountIn * BigInt(-1), sqrtPriceLimitX96, zeroForOne);
 
 }
 
