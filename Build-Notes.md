@@ -7,6 +7,7 @@
 ## Test
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
+- Resolve Sign-up issue
 - USDC -> CBBTC (from pool with lowest price), then factor in changes to "Bitcoin that renders Bear Markets Obsolete"
 - Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Problems: 
