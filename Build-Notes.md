@@ -7,7 +7,7 @@
 ## Test
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
-- Resolve Sign-up issue
+- Resolve Sign-up issue (remove passwords and MFA from IAM?)
 - USDC -> CBBTC (from pool with lowest price), then factor in changes to "Bitcoin that renders Bear Markets Obsolete"
 - Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Problems: 
@@ -50,6 +50,9 @@
 #### Import (Page)
 - Import Bitcoin (through Coinbase/Base) (Base Address)
 - - Modal: Preparing (B) Wallet (to create wallet (take from MASSTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
+
+#### Import (Page)
+- word-logo: 100 px margin top (after log-in re-introduction)
 
 #### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & Images (see /main)
@@ -121,6 +124,7 @@
 - Phase 2:
 - - Txns/s need to be in 1000s-10000s per second for meme-coins to benefit (reference HPM Efficiency charts).
 - HPM-Liquidity System (Brainstorm)
+- - Research whether injecting USDC (only) will grow AUM?
 
 
 
@@ -207,6 +211,7 @@
 - - Fund Arells Fee Funder with 150 USD in ETH on Base (check and replenish everyweek/day until BASE L3 is complete)
 - - review ##Base
 - - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
+
 
 ### Last Resort
 - Create separate Wallet to handle where we get our 3% fee...
