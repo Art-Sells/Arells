@@ -7,7 +7,7 @@
 	margin-bottom: 0%;
 	padding-top: 0px;
 	border-radius: 30px;
-	padding-bottom: 110px;
+	padding-bottom: 90px;
 	background: rgb(255, 251, 245);
 	-webkit-animation-name: animatetop;
 	-webkit-animation-duration: 1.00s;
@@ -37,7 +37,7 @@
 		  to {center:0; opacity:1}
 		}
 	  #word-logoo {
-		  margin-top: 100px;
+		  margin-top: 80px;
 		  width: 105px;	
 		  height: 33px;
 		  -webkit-animation-name: animatetop;
@@ -95,7 +95,7 @@
 				font-weight: 200;
 				letter-spacing: 18px;
 				margin-left: 18px; 
-				opacity: 1;
+				opacity: .7;
 				color: gray;
 				word-spacing: 0px;
 				display: inline-block;
@@ -165,6 +165,12 @@
 	  	
 	  
 
+
+
+
+
+
+
 	@media screen and (max-height: 600px) {
 		#connected-spacing {
 			padding-top: 0px;
@@ -173,6 +179,19 @@
 			margin-top: 40px;
 		}  
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 	  
   @media screen and (max-width: 650px) {
 	#overlayy {
@@ -224,11 +243,3 @@
 	}	
 	  
 	}	
-  
-  
-  
-
-  
-  
-  
-
