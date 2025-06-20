@@ -88,11 +88,24 @@
 				display: inline-block;
 			}
 
+
+			#coming-soon {
+				margin-top: 25px;
+				font-size: 8px;
+				font-weight: 200;
+				letter-spacing: 18px;
+				margin-left: 18px; 
+				opacity: 1;
+				color: gray;
+				word-spacing: 0px;
+				display: inline-block;
+			}	
+
 	
 
 
 	#login {
-		margin-top: 25px;
+	margin-top: 15px;
 	  background: rgba(204, 116, 0);
 	  text-decoration: none;
 	  color: white;
@@ -203,6 +216,12 @@
 		width: 240px;
 		font-size: 11px; 			  
 		}
+
+	#coming-soon {
+		font-size: 7.3px;
+		letter-spacing: 15px;
+		margin-left: 15px; 
+	}	
 	  
 	}	
   
@@ -212,3 +231,4 @@
   
   
   
+
