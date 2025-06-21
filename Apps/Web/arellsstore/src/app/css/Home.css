@@ -92,12 +92,12 @@
 			#coming-soon {
 				margin-top: 25px;
 				font-size: 8px;
-				font-weight: 200;
-				letter-spacing: 18px;
-				margin-left: 18px; 
-				opacity: .7;
-				color: gray;
-				word-spacing: 0px;
+				font-weight: 600;
+				letter-spacing: -.1px;
+				margin-left: -.1px; 
+				opacity: 1;
+				color: black;
+				word-spacing: 2px;
 				display: inline-block;
 			}	
 
@@ -105,7 +105,7 @@
 
 
 	#login {
-	margin-top: 15px;
+	margin-top: 10px;
 	  background: rgba(204, 116, 0);
 	  text-decoration: none;
 	  color: white;
@@ -236,11 +236,6 @@
 		font-size: 11px; 			  
 		}
 
-	#coming-soon {
-		font-size: 7.3px;
-		letter-spacing: 15px;
-		margin-left: 15px; 
-	}	
 	  
 	}	
   
