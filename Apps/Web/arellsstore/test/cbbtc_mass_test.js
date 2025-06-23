@@ -671,39 +671,33 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) 
     }
   ]);
 
-  const callData = quoterInterface.encodeFunctionData("quote", [
-    userWallet.address,
-    "0x00", // ✅ hookData not empty
-    inputData,
-  ]);
+// 🔁 Create the contract using the userWallet (must be connected)
+const quoterContract = new ethers.Contract(V4_QUOTER_ADDRESS, quoterInterface, userWallet);
 
-  try {
-    const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: callData });
-    const [output] = quoterInterface.decodeFunctionResult("quote", result);
-    console.log("✅ V4 Quoter quote result:");
-    console.log("→ output (raw):", output);
-  } catch (err) {
-    console.error("❌ V4 Quoter quote failed:");
-    console.error("→ message:", err.message);
-    if (err.data) {
-      console.error("→ raw revert data:", err.data);
-  
-      try {
-        const reason = ethers.toUtf8String("0x" + err.data.slice(138));
-        console.log("⛔ Decoded revert reason:", reason);
-      } catch (e) {
-        console.warn("⚠️ Could not decode revert reason. Possibly raw assembly or non-standard revert.");
-      }
-    } else {
-      console.warn("⚠️ No revert data — likely silent revert due to hook or poolKey mismatch.");
+try {
+  const outputData = await quoterContract.callStatic.quote(
+    userWallet.address,
+    "0x", // or use dummy hookData later
+    inputData
+  );
+
+  console.log("✅ callStatic.quote success:");
+  console.log("→ output (raw):", outputData);
+} catch (err) {
+  console.error("❌ callStatic.quote reverted:");
+  console.error("→ Message:", err.message);
+  if (err.data) {
+    console.error("→ Revert data:", err.data);
+    try {
+      const reason = ethers.toUtf8String("0x" + err.data.slice(138));
+      console.log("⛔ Decoded revert reason:", reason);
+    } catch {
+      console.warn("⚠️ Could not decode revert reason.");
     }
-  
-    console.error("→ call data:", callData);
-    console.error("→ poolKey:", poolKey);
-    console.error("→ amountIn:", amountIn.toString());
-    console.error("→ zeroForOne:", zeroForOne);
-    console.error("→ sqrtPriceLimitX96:", sqrtPriceLimitX96.toString());
+  } else {
+    console.warn("⚠️ No revert data at all.");
   }
+}
 }
 
 async function main() {
