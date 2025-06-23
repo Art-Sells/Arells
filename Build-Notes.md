@@ -7,7 +7,6 @@
 ## Test
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
-- Resolve Sign-up issue (remove passwords and MFA from IAM?)
 - USDC -> CBBTC (from pool with lowest price), then factor in changes to "Bitcoin that renders Bear Markets Obsolete"
 - Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Problems: 
@@ -28,6 +27,15 @@
 - - 3. HPM: Fetch Vatop Group/save Vatop Group
 - - 4. MASS: Run functions
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
+- create new:
+- - ARELLS_PRIVATE_KEY	
+- - DYNAMODB_ACCESS_KEY_ID
+- - DYNAMODB_SECRET_ACCESS_KEY
+- - DYNAMODB_TABLE_NAME	ArellsUsers
+- - - copy/paste from old TABLE_NAME: ArellsUsers
+- Add Firewall to Testnet
+
+Arells Wallet and change all Variables
 - Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 1 week.
 - If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateCBBTCtoUSDCs are true then start time)… Update every 168~ hours. 
 - Build HPM Assets (line-chart with profits, etc) based on VatopGroup info.

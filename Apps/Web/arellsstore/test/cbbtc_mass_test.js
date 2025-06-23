@@ -639,55 +639,21 @@ async function getTickSpacingFromStateView(poolId) {
 
 
 
-async function simulateSwapCall(poolKey, amountIn, sqrtPriceLimitX96, zeroForOne) {
-  const callData = stateViewInterface.encodeFunctionData("simulateSwap", [
-    poolKey,
-    zeroForOne,
-    amountIn,               // int256
-    sqrtPriceLimitX96,      // uint160
-    "0x"                    // hookData (empty for now)
-  ]);
 
-  try {
-    const result = await provider.call({
-      to: STATE_VIEW_ADDRESS,
-      data: callData,
-    });
-
-    const decoded = stateViewInterface.decodeFunctionResult("simulateSwap", result);
-    const [amount0, amount1, sqrtPriceAfter, tickAfter, liquidityAfter] = decoded;
-
-    console.log("✅ simulateSwap result:");
-    console.log("→ amount0:", amount0.toString());
-    console.log("→ amount1:", amount1.toString());
-    console.log("→ sqrtPriceAfter:", sqrtPriceAfter.toString());
-    console.log("→ tickAfter:", tickAfter);
-    console.log("→ liquidityAfter:", liquidityAfter.toString());
-  } catch (err) {
-    console.error("❌ simulateSwap failed:");
-    console.error("→ call data:", callData);
-    console.error("→ poolKey:", poolKey);
-    console.error("→ amountIn:", amountIn.toString()); // ✅ FIXED
-    console.error("→ zeroForOne:", zeroForOne);
-  }
-}
-
-
-async function simulateWithV4Quoter(poolKey, amountIn, zeroForOne, sqrtPriceLimitX96, customPrivateKey = null) {
-  const privateKeyToUse = process.env.PRIVATE_KEY_TEST;
+async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) {
+  const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
   const userWallet = new ethers.Wallet(privateKeyToUse, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
-  // Fetch CBBTC balance
-  const CBBTCContract = new ethers.Contract(CBBTC, [
-    "function balanceOf(address) view returns (uint256)"
-  ], userWallet);
-
+  // Fetch balances
+  const CBBTCContract = new ethers.Contract(CBBTC, ["function balanceOf(address) view returns (uint256)"], userWallet);
   const cbbtcBalanceRaw = await CBBTCContract.balanceOf(userWallet.address);
   const ethBalanceRaw = await provider.getBalance(userWallet.address);
-
   console.log(`💰 CBBTC Balance: ${ethers.formatUnits(cbbtcBalanceRaw, 8)} CBBTC`);
   console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalanceRaw)} ETH`);
+
+  const zeroForOne = false; // 🔁 CBBTC → USDC
+  const sqrtPriceLimitX96 = zeroForOne ? 0n : (2n ** 160n - 1n); // safest upper bound for this direction
 
   const quoterInterface = new ethers.Interface([
     "function quote(address sender, bytes hookData, bytes inputData) view returns (bytes outputData)",
@@ -697,26 +663,22 @@ async function simulateWithV4Quoter(poolKey, amountIn, zeroForOne, sqrtPriceLimi
   const inputData = quoterInterface.encodeFunctionData("swap", [
     poolKey,
     {
-      recipient: "0x0000000000000000000000000000000000000000",
+      recipient: userWallet.address,
       zeroForOne,
-      amountSpecified: zeroForOne ? -amountIn : amountIn,
+      amountSpecified: amountIn, // ✅ already in correct direction
       sqrtPriceLimitX96,
-      data: "0x"
+      data: "0x",
     }
   ]);
 
   const callData = quoterInterface.encodeFunctionData("quote", [
-    userWallet.address, // sender address must match simulated caller
-    "0x",
-    inputData
+    userWallet.address,
+    "0x00", // ✅ hookData not empty
+    inputData,
   ]);
 
   try {
-    const result = await provider.call({
-      to: V4_QUOTER_ADDRESS,
-      data: callData,
-    });
-
+    const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: callData });
     const [output] = quoterInterface.decodeFunctionResult("quote", result);
     console.log("✅ V4 Quoter quote result:");
     console.log("→ output (raw):", output);
@@ -774,63 +736,42 @@ async function main() {
   //   }
   // }
 
-
   const [currency0, currency1] = [USDC, CBBTC].sort((a, b) =>
     a.toLowerCase() < b.toLowerCase() ? -1 : 1
   );
 
-  const poolId = V4_POOL_IDS[0].poolId; // use whichever pool you're testing
+  const poolId = V4_POOL_IDS[0].poolId;
 
   const slot0Interface = new ethers.Interface([
     "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 hookFee)"
   ]);
-  
-  const callData = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
-  
-  const result = await provider.call({
-    to: STATE_VIEW_ADDRESS,
-    data: callData,
-  });
+
+  const slotCall = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: slotCall });
   const decoded = slot0Interface.decodeFunctionResult("getSlot0", result);
   console.log("✅ getSlot0 StateView:", decoded);
-
-
 
   let spacing;
   try {
     spacing = await getTickSpacingFromStateView(poolId);
-    if (!spacing || isNaN(spacing)) throw new Error("Tick spacing is null or invalid");
-  } catch (err) {
+  } catch {
     console.warn("⚠️ Falling back to manual tickSpacing: 60");
     spacing = 60;
   }
 
-  console.log("🧪 Constructed poolKey:", {
+  const amountIn = ethers.parseUnits("0.002323", 8); // 8 decimals for CBBTC
+
+  const poolKey = {
     currency0,
     currency1,
     fee: 3000,
     tickSpacing: spacing,
     hooks: V4_HOOK_ADDRESS,
-  });
+  };
 
-  const amountIn = ethers.parseUnits("0.002323", 8); // or your test value
-  const zeroForOne = true;
-  
-  const sqrtPriceLimitX96 = zeroForOne ? 0n : (2n ** 160n - 1n); // direction-aware limit
+  console.log("🧪 Constructed poolKey:", poolKey);
 
-  // ✅ V4 Quoter Simulation (quote)
-  await simulateWithV4Quoter(
-    {
-      currency0,
-      currency1,
-      fee: 3000,
-      tickSpacing: spacing,
-      hooks: V4_HOOK_ADDRESS,
-    },
-    amountIn,
-    zeroForOne,
-    sqrtPriceLimitX96
-  );
+  await simulateWithV4Quoter(poolKey, amountIn);
 
 }
 
@@ -838,16 +779,7 @@ async function main() {
 
 main().catch(console.error);
 
-// 🔍 Possible Final Remaining Issues
-// 	1.	PoolManager might not recognize the pool as “ready” if a parameter is slightly off.
-// STEP 2: Try Using StateView’s simulateSwap(...)
-// STEP 3: Try Reversing zeroForOne
-// 	2.	tickSpacing might be misaligned with actual pool (try reading it via StateView.getPoolTickSpacing(poolId)).
-// 	3.	V4 Quoter might require ETH balance on-chain to simulate (unlikely, but possible).
-// 	4.	You might need to simulate via a wrapper function from Uniswap’s own deployment if the contract uses internal revert expectations (vs. public ABI simulation).
-// 	5.	Hook logic might reject the simulation pre-conditionally (e.g., on token balance, sender, etc.).
 
 
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
-
