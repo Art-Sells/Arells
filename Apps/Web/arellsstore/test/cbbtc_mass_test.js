@@ -684,7 +684,20 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) 
     console.log("→ output (raw):", output);
   } catch (err) {
     console.error("❌ V4 Quoter quote failed:");
-    console.error("→ error:", err.message || err);
+    console.error("→ message:", err.message);
+    if (err.data) {
+      console.error("→ raw revert data:", err.data);
+  
+      try {
+        const reason = ethers.toUtf8String("0x" + err.data.slice(138));
+        console.log("⛔ Decoded revert reason:", reason);
+      } catch (e) {
+        console.warn("⚠️ Could not decode revert reason. Possibly raw assembly or non-standard revert.");
+      }
+    } else {
+      console.warn("⚠️ No revert data — likely silent revert due to hook or poolKey mismatch.");
+    }
+  
     console.error("→ call data:", callData);
     console.error("→ poolKey:", poolKey);
     console.error("→ amountIn:", amountIn.toString());
