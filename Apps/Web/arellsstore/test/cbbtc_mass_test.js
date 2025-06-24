@@ -652,75 +652,42 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) 
   console.log(`💰 CBBTC Balance: ${ethers.formatUnits(cbbtcBalanceRaw, 8)} CBBTC`);
   console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalanceRaw)} ETH`);
 
-  const zeroForOne = false; // 🔁 CBBTC → USDC
-  const sqrtPriceLimitX96 = zeroForOne ? 0n : (2n ** 160n - 1n); // safest upper bound for this direction
+  const zeroForOne = false;
+  const sqrtPriceLimitX96 = zeroForOne ? 0n : (2n ** 160n - 1n);
 
   const quoterInterface = new ethers.Interface([
-    "function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)",
-    "function swap((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks) poolKey,(address recipient,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes data) params) external"
+    "function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"
   ]);
 
-  const inputData = quoterInterface.encodeFunctionData("swap", [
-    poolKey,
-    {
-      recipient: userWallet.address,
-      zeroForOne,
-      amountSpecified: amountIn, // ✅ already in correct direction
-      sqrtPriceLimitX96,
-      data: "0x",
-    }
-  ]);
+  // 🔧 Encode swap struct manually
+  const encodedSwapStruct = ethers.AbiCoder.defaultAbiCoder().encode(
+    [
+      "tuple(address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks)",
+      "tuple(address recipient,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes data)"
+    ],
+    [
+      [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks],
+      [userWallet.address, zeroForOne, amountIn, sqrtPriceLimitX96, "0x"]
+    ]
+  );
 
-// 🔁 Create the contract using the userWallet (must be connected)
-const quoterContract = new ethers.Contract(V4_QUOTER_ADDRESS, quoterInterface, userWallet);
-
-try {
   const encodedCall = quoterInterface.encodeFunctionData("quote", [
     userWallet.address,
-    "0x", // dummy hookData
-    inputData
+    "0x", // hookData
+    encodedSwapStruct
   ]);
-  
-  try {
-    const result = await userWallet.call({
-      to: V4_QUOTER_ADDRESS,
-      data: encodedCall
-    });
-  
-    console.log("✅ callStatic.quote success:");
-    console.log("→ raw outputData:", result);
-  } catch (err) {
-    console.error("❌ callStatic.quote failed:");
-    console.error("→ Message:", err.message);
-    if (err.data) {
-      try {
-        const reason = ethers.toUtf8String("0x" + err.data.slice(138));
-        console.log("⛔ Decoded revert reason:", reason);
-      } catch {
-        console.warn("⚠️ Could not decode revert reason.");
-      }
-    } else {
-      console.warn("⚠️ No revert data at all.");
-    }
-  }
+
+  const result = await provider.call({
+    to: V4_QUOTER_ADDRESS,
+    data: encodedCall
+  });
 
   console.log("✅ callStatic.quote success:");
-  console.log("→ output (raw):", outputData);
-} catch (err) {
-  console.error("❌ callStatic.quote reverted:");
-  console.error("→ Message:", err.message);
-  if (err.data) {
-    console.error("→ Revert data:", err.data);
-    try {
-      const reason = ethers.toUtf8String("0x" + err.data.slice(138));
-      console.log("⛔ Decoded revert reason:", reason);
-    } catch {
-      console.warn("⚠️ Could not decode revert reason.");
-    }
-  } else {
-    console.warn("⚠️ No revert data at all.");
-  }
-}
+  console.log("→ raw outputData:", result);
+
+  // decode output
+  const [amountOut] = ethers.AbiCoder.defaultAbiCoder().decode(["uint256"], result);
+  console.log("→ decoded amountOut:", amountOut.toString());
 }
 
 async function main() {
