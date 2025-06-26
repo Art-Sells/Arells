@@ -700,9 +700,10 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) 
     encodedSwapStruct
   ]);
 
-  const result = await userWallet.call({
+  const result = await provider.call({
     to: V4_QUOTER_ADDRESS,
-    data: encodedCall
+    data: encodedCall,
+    from: userWallet.address // Optional, but may be required for hook logic
   });
 
   console.log("✅ callStatic.quote success:");
