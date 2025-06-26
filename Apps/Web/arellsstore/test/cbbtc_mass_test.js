@@ -659,15 +659,38 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) 
     "function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"
   ]);
 
-  // 🔧 Encode swap struct manually
-  const encodedSwapStruct = ethers.AbiCoder.defaultAbiCoder().encode(
+  const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+
+  const swapKey = [
+    poolKey.currency0,
+    poolKey.currency1,
+    poolKey.fee,
+    poolKey.tickSpacing,
+    poolKey.hooks,
+  ];
+  
+  const swapParams = [
+    V4_QUOTER_ADDRESS,        // <-- try this instead of userWallet.address
+    zeroForOne,
+    -amountIn,
+    sqrtPriceLimitX96,
+    "0x"
+  ];
+  
+  const encodedSwapStruct = abiCoder.encode(
     [
-      "tuple(address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks)",
-      "tuple(address recipient,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes data)"
+      "tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks)",
+      "tuple(address recipient, bool zeroForOne, int256 amountSpecified, uint160 sqrtPriceLimitX96, bytes data)"
     ],
     [
-      [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks],
-      [userWallet.address, zeroForOne, amountIn, sqrtPriceLimitX96, "0x"]
+      swapKey,
+      [
+        V4_QUOTER_ADDRESS,    // ← here too
+        zeroForOne,
+        -amountIn,
+        sqrtPriceLimitX96,
+        "0x"
+      ]
     ]
   );
 
@@ -677,7 +700,7 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) 
     encodedSwapStruct
   ]);
 
-  const result = await provider.call({
+  const result = await userWallet.call({
     to: V4_QUOTER_ADDRESS,
     data: encodedCall
   });
@@ -759,8 +782,8 @@ async function main() {
   const amountIn = ethers.parseUnits("0.002323", 8); // 8 decimals for CBBTC
 
   const poolKey = {
-    currency0,
-    currency1,
+    currency0: CBBTC,
+    currency1: USDC,
     fee: 3000,
     tickSpacing: spacing,
     hooks: V4_HOOK_ADDRESS,

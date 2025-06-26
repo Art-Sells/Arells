@@ -7,8 +7,10 @@
 ## Test
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
-- USDC -> CBBTC (from pool with lowest price), then factor in changes to "Bitcoin that renders Bear Markets Obsolete"
-- Import CBBTC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
+- Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
+- Import wallet (create import wallet)
+- MASS wallet (create MASS wallet)
+- Export wallet (create export wallet)
 - - Problems: 
 - - - Test Fee Free Route (Set Time to increase API Rate Limit on Infura (Even After Launch))
 - - After Problems solved:
@@ -56,10 +58,15 @@ Arells Wallet and change all Variables
 - - - Error Message Modal visible: if Base network congestion error (from executeSupplication), if executeSupplication successful, then invisible.
 
 #### Import (Page)
-- Import Bitcoin (through Coinbase/Base) (Base Address)
+- Import 
+- - ($)->(A)(B)
+- - ($) USDC Address (Base)
+- - Ensure you use a Coinbase (Base) Address (only) to import your USDC.
 - - Modal: Preparing (B) Wallet (to create wallet (take from MASSTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
-
-#### Import (Page)
+- - - Import wallet (create import wallet)
+- - - MASS wallet (create MASS wallet)
+- - - Export wallet (create export wallet)
+- - Modal: Importing your $ will convert it into A-B and can be exported back into $ when needed.
 - word-logo: 100 px margin top (after log-in re-introduction)
 
 #### Metatags/ Description (all pages.tsx & components)
@@ -144,7 +151,6 @@ Arells Wallet and change all Variables
 ## Arells 1.5 (Sell/Export USDC)
 
 ### Test
-- Add function to compare total amount in USDC & CBBTC with Vatop Groups and if it doesn't match, then delete correspondingly (in case anyone transacts with their wallet-address outside HPM-MASS)
 - Create New Export Wallet Address for Selling and Exporting USDC/CBBTC
 - **fix Selling Discrepancy Issue (VERY IMPORTANT)**
 - Sell Test (HPMContext)
