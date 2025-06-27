@@ -640,7 +640,7 @@ async function getTickSpacingFromStateView(poolId) {
 
 
 
-async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) {
+async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, sqrtPriceLimitX96) {
   const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
   const userWallet = new ethers.Wallet(privateKeyToUse, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
@@ -653,7 +653,6 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) 
   console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalanceRaw)} ETH`);
 
   const zeroForOne = false;
-  const sqrtPriceLimitX96 = zeroForOne ? 0n : (2n ** 160n - 1n);
 
   const quoterInterface = new ethers.Interface([
     "function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"
@@ -677,21 +676,27 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null) 
     "0x"
   ];
   
+  const amountSpecified = zeroForOne ? -amountIn : amountIn;
+
   const encodedSwapStruct = abiCoder.encode(
-    [
-      "tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks)",
-      "tuple(address recipient, bool zeroForOne, int256 amountSpecified, uint160 sqrtPriceLimitX96, bytes data)"
-    ],
-    [
+    [`
+      tuple(
+        tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) key,
+        address recipient,
+        bool zeroForOne,
+        int256 amountSpecified,
+        uint160 sqrtPriceLimitX96,
+        bytes data
+      )
+    `],
+    [[
       swapKey,
-      [
-        V4_QUOTER_ADDRESS,    // ← here too
-        zeroForOne,
-        -amountIn,
-        sqrtPriceLimitX96,
-        "0x"
-      ]
-    ]
+      userWallet.address,  // ✅ Use test wallet, not quoter address
+      zeroForOne,
+      amountSpecified,
+      sqrtPriceLimitX96,
+      "0x"
+    ]]
   );
 
   const encodedCall = quoterInterface.encodeFunctionData("quote", [
@@ -792,7 +797,8 @@ async function main() {
 
   console.log("🧪 Constructed poolKey:", poolKey);
 
-  await simulateWithV4Quoter(poolKey, amountIn);
+  const sqrtPriceX96 = decoded[0];
+  await simulateWithV4Quoter(poolKey, amountIn, null, sqrtPriceX96);
 
 }
 
