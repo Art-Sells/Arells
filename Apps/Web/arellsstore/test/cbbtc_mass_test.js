@@ -676,50 +676,30 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, 
     "0x"
   ];
   
-  const amountSpecified = amountIn; // ✅ No negative sign since zeroForOne = false
+  const amountSpecified = zeroForOne ? -amountIn : amountIn;
 
   const encodedSwapStruct = abiCoder.encode(
-    [{
-      type: "tuple",
-      name: "swap",
-      components: [
-        {
-          name: "key",
-          type: "tuple",
-          components: [
-            { name: "currency0", type: "address" },
-            { name: "currency1", type: "address" },
-            { name: "fee", type: "uint24" },
-            { name: "tickSpacing", type: "int24" },
-            { name: "hooks", type: "address" }
-          ]
-        },
-        { name: "recipient", type: "address" },
-        { name: "zeroForOne", type: "bool" },
-        { name: "amountSpecified", type: "int256" },
-        { name: "sqrtPriceLimitX96", type: "uint160" },
-        { name: "data", type: "bytes" }
-      ]
-    }],
-    [[
-      [
-        poolKey.currency0,
-        poolKey.currency1,
-        poolKey.fee,
-        poolKey.tickSpacing,
-        poolKey.hooks,
-      ],
-      ethers.ZeroAddress, // ✅ for simulation only
+    [
+      "tuple(address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks)",
+      "address",
+      "bool",
+      "int256",
+      "uint160",
+      "bytes"
+    ],
+    [
+      swapKey,
+      ethers.ZeroAddress,
       zeroForOne,
       amountSpecified,
       sqrtPriceLimitX96,
-      "0x"
-    ]]
+      "0x" // or specific hookData if needed
+    ]
   );
-
+  
   const encodedCall = quoterInterface.encodeFunctionData("quote", [
-    userWallet.address,
-    "0x", // hookData
+    ethers.ZeroAddress, // sender
+    "0x",
     encodedSwapStruct
   ]);
 
