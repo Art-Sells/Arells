@@ -660,47 +660,33 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, 
 
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
 
-  const swapKey = [
-    poolKey.currency0,
-    poolKey.currency1,
-    poolKey.fee,
-    poolKey.tickSpacing,
-    poolKey.hooks,
-  ];
-  
-  const swapParams = [
-    V4_QUOTER_ADDRESS,        // <-- try this instead of userWallet.address
-    zeroForOne,
-    -amountIn,
-    sqrtPriceLimitX96,
-    "0x"
-  ];
-  
-  const amountSpecified = zeroForOne ? -amountIn : amountIn;
-
-  const encodedSwapStruct = abiCoder.encode(
+  const encodedKey = abiCoder.encode(
+    ["address", "address", "uint24", "int24", "address"],
     [
-      "tuple(address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks)",
-      "address",
-      "bool",
-      "int256",
-      "uint160",
-      "bytes"
-    ],
+      poolKey.currency0,
+      poolKey.currency1,
+      poolKey.fee,
+      poolKey.tickSpacing,
+      poolKey.hooks
+    ]
+  );
+  
+  const encodedSwapParams = abiCoder.encode(
+    ["bytes", "address", "bool", "int256", "uint160", "bytes"],
     [
-      swapKey,
-      ethers.ZeroAddress,
+      encodedKey,
+      ethers.ZeroAddress,         // sender
       zeroForOne,
-      amountSpecified,
+      amountIn,                   // input direction
       sqrtPriceLimitX96,
-      "0x" // or specific hookData if needed
+      "0x"
     ]
   );
   
   const encodedCall = quoterInterface.encodeFunctionData("quote", [
     ethers.ZeroAddress, // sender
-    "0x",
-    encodedSwapStruct
+    "0x",               // hookData
+    encodedSwapParams   // fully encoded inner struct as raw bytes
   ]);
 
   const result = await provider.call({
