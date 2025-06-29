@@ -2,11 +2,9 @@ import { ethers, toBeHex, zeroPadValue } from "ethers";
 import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
-import { keccak256, encodePacked, getAddress } from "viem";
+import { keccak256, encodePacked, getAddress, solidityPacked } from "viem";
 import { exitCode } from "process";
 import { unlink } from "fs";
-
-
 
 dotenv.config();
 
@@ -600,22 +598,26 @@ const stateViewInterface = new ethers.Interface([
   "function simulateSwap((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks) key,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes hookData) view returns (int256 amount0, int256 amount1, uint160 sqrtPriceX96After, int24 tickAfter, uint128 liquidityAfter)"
 ]);
 
-// async function verifyPoolId(poolId) {
-//   const poolIdBytes32 = zeroPadValue(poolId, 32);
-//   const callData = stateViewInterface.encodeFunctionData("getSlot0", [poolIdBytes32]);
+const poolManagerInterface = new ethers.Interface([
+  "function getPool(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee, int24 tickSpacing)"
+]);
 
-//   try {
-//     const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: callData });
-//     const [slot0] = stateViewInterface.decodeFunctionResult("getSlot0", result);
-//     console.log(`✅ getSlot0 succeeded:`, slot0);
-//   } catch (err) {
-//     console.error(`❌ getSlot0 failed for poolId ${poolId}:`, err.message || err);
-//   }
-// }
-
-// const poolManagerInterface = new ethers.Interface([
-//   "function getPool(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee, int24 tickSpacing)"
-// ]);
+async function readActualPoolKey(poolId) {
+  const callData = poolManagerInterface.encodeFunctionData("getPool", [poolId]);
+  const result = await provider.call({
+    to: V4_POOL_MANAGER,
+    data: callData,
+  });
+  const [sqrtPrice, tick, protocolFee, lpFee, tickSpacing] =
+    poolManagerInterface.decodeFunctionResult("getPool", result);
+  console.log("🧪 Live Deployed Pool Parameters:");
+  console.log("→ sqrtPriceX96:", sqrtPrice.toString());
+  console.log("→ tick:", tick);
+  console.log("→ protocolFee:", protocolFee);
+  console.log("→ lpFee:", lpFee);
+  console.log("→ tickSpacing:", tickSpacing);
+  return Number(tickSpacing);
+}
 
 const stateViewTickInterface = new ethers.Interface([
   "function getPoolTickSpacing(bytes32 poolId) view returns (int24)"
@@ -639,7 +641,14 @@ async function getTickSpacingFromStateView(poolId) {
 // }
 
 
-
+function computePoolId({ currency0, currency1, fee, tickSpacing, hooks }) {
+  return keccak256(
+    encodePacked(
+      ["address", "address", "uint24", "int24", "address"],
+      [currency0, currency1, fee, tickSpacing, hooks]
+    )
+  );
+}
 
 async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, sqrtPriceLimitX96) {
   const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
@@ -745,13 +754,28 @@ const updatedEncodedSwapParams = abiCoder.encode(
 
 }
 
-async function main() {
-
-
-  const [currency0, currency1] = [USDC, CBBTC].sort((a, b) =>
-    a.toLowerCase() < b.toLowerCase() ? -1 : 1
+// DEBUG FUNCTION: Encodes poolKey manually and hashes to compare
+function debugPoolIdEncoding(poolKey) {
+  const encoded = encodePacked(
+    ["address", "address", "uint24", "int24", "address"],
+    [
+      poolKey.currency0,
+      poolKey.currency1,
+      poolKey.fee,
+      poolKey.tickSpacing,
+      poolKey.hooks,
+    ]
   );
-  
+  const hashed = keccak256(encoded);
+  console.log("🔍 Step 1 — encodePacked bytes:", encoded);
+  console.log("🔐 Step 1 — keccak256(poolKey):", hashed);
+  return hashed;
+}
+
+async function main() {
+  const currency0 = CBBTC;
+  const currency1 = USDC;
+
   console.log("📦 Token Order:");
   console.log("→ currency0:", currency0 === USDC ? "USDC" : "CBBTC");
   console.log("→ currency1:", currency1 === USDC ? "USDC" : "CBBTC");
@@ -775,11 +799,9 @@ async function main() {
     spacing = 60;
   }
 
-  const amountIn = ethers.parseUnits("0.002323", 8); // 8 decimals for CBBTC
-
   const poolKey = {
-    currency0,
-    currency1,
+    currency0: USDC,
+    currency1: CBBTC,
     fee: 3000,
     tickSpacing: spacing,
     hooks: V4_HOOK_ADDRESS,
@@ -787,10 +809,32 @@ async function main() {
 
   console.log("🧪 Constructed poolKey:", poolKey);
 
-  const sqrtPriceX96 = decoded[0];
-  await simulateWithV4Quoter(poolKey, amountIn, null, sqrtPriceX96);
+  const calculatedId = computePoolId(poolKey);
+  console.log("✅ Computed poolId:", calculatedId);
+  console.log("✅ Expected poolId:", poolId);
 
+  const debugHash = debugPoolIdEncoding(poolKey);
+  if (debugHash === calculatedId) {
+    console.log("✅ debugHash matches computed poolId.");
+  } else {
+    console.warn("❌ debugHash DOES NOT match computed poolId.");
+  }
+
+  const liveTickSpacing = await readActualPoolKey(poolId);
+  if (liveTickSpacing !== poolKey.tickSpacing) {
+    console.warn(`❌ Live tickSpacing (${liveTickSpacing}) doesn't match poolKey.tickSpacing (${poolKey.tickSpacing})`);
+  } else {
+    console.log("✅ tickSpacing matches live pool.");
+  }
+
+  const amountIn = ethers.parseUnits("0.002323", 8);
+  const sqrtPriceX96 = decoded[0];
+
+  // You can now uncomment to run simulation if needed
+  // await simulateWithV4Quoter(poolKey, amountIn, null, sqrtPriceX96);
 }
+
+
 
 
 
