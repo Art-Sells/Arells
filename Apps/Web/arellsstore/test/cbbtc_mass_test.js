@@ -717,27 +717,32 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, 
     userWallet
   );
   
-  try {
-    const result = await provider.call({
-      to: V4_QUOTER_ADDRESS,
-      data: encodedCall,
-      from: userWallet.address,
-    });
+// 🔥 Step 3 — SIGN amountIn properly
+const signedAmountIn = zeroForOne ? BigInt(amountIn) : -BigInt(amountIn);
+
+const updatedEncodedSwapParams = abiCoder.encode(
+  ["bytes", "address", "bool", "int256", "uint160", "bytes"],
+  [
+    encodedKey,
+    ethers.ZeroAddress,
+    zeroForOne,
+    signedAmountIn,
+    sqrtPriceLimitX96,
+    hookData
+  ]
+);
   
-    console.log("✅ callStatic.quote success:");
-    console.log("→ raw outputData:", result);
+  const result = await quoter.quote(
+    userWallet.address,
+    hookData,
+    updatedEncodedSwapParams
+  );
   
-    const [amountOut] = ethers.AbiCoder.defaultAbiCoder().decode(["uint256"], result);
-    console.log("→ decoded amountOut:", amountOut.toString());
+  const [amountOut] = ethers.AbiCoder.defaultAbiCoder().decode(["uint256"], result);
+  console.log("→ decoded amountOut:", amountOut.toString());
   
-  } catch (err) {
-    console.error("❌ QuoterV4 reverted:");
-    console.error("→ error.code:", err.code);
-    console.error("→ error.reason:", err.reason);
-    console.error("→ error.data:", err.data);
-    console.error("→ error.shortMessage:", err.shortMessage);
-    console.error("→ full error:", err);
-  }
+
+
 }
 
 async function main() {
