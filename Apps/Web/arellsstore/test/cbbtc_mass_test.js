@@ -635,6 +635,8 @@ async function getTickSpacingFromStateView(poolId) {
 }
 
 
+
+
 // async function getQuoterContract() {
 //   const abi = await fetchQuoterV4Abi();
 //   return new ethers.Contract(V4_QUOTER_ADDRESS, abi, wallet); // use wallet, NOT provider
@@ -773,8 +775,8 @@ function debugPoolIdEncoding(poolKey) {
 }
 
 async function main() {
-  const currency0 = CBBTC;
-  const currency1 = USDC;
+  const currency0 = USDC;
+  const currency1 = CBBTC;
 
   console.log("📦 Token Order:");
   console.log("→ currency0:", currency0 === USDC ? "USDC" : "CBBTC");
@@ -783,20 +785,25 @@ async function main() {
   const poolId = V4_POOL_IDS[0].poolId;
 
   const slot0Interface = new ethers.Interface([
-    "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 hookFee)"
+    "function getSlot0(bytes32) view returns (uint160, int24, uint16, uint16)"
   ]);
-
+  
   const slotCall = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
-  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: slotCall });
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: slotCall }); // ✅ correct!
   const decoded = slot0Interface.decodeFunctionResult("getSlot0", result);
   console.log("✅ getSlot0 StateView:", decoded);
-
   let spacing;
   try {
-    spacing = await getTickSpacingFromStateView(poolId);
-  } catch {
-    console.warn("⚠️ Falling back to manual tickSpacing: 60");
-    spacing = 60;
+    spacing = Number(await getTickSpacingFromStateView(poolId));
+    console.log("✅ tickSpacing from StateView:", spacing);
+  } catch (e) {
+    console.warn("⚠️ Failed to fetch tickSpacing from StateView. Falling back to PoolManager...");
+    try {
+      spacing = await readActualPoolKey(poolId); // PoolManager fallback
+      console.log("✅ tickSpacing from PoolManager:", spacing);
+    } catch {
+      throw new Error("❌ Failed to fetch tickSpacing from both StateView and PoolManager.");
+    }
   }
 
   const poolKey = {
