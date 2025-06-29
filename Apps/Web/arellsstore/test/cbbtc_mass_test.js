@@ -5,8 +5,6 @@ import { TickMath } from "@uniswap/v3-sdk";
 import { keccak256, encodePacked, getAddress, solidityPacked } from "viem";
 import { exitCode } from "process";
 import { unlink } from "fs";
-import { getSlot0 } from './yourStateViewHelpers';
-import { decodeLiquidityAmountsv4 } from './yourLiquidityDecoder'; // assumes you have this
 import { Token } from '@uniswap/sdk-core';
 
 dotenv.config();
@@ -641,13 +639,6 @@ async function getTickSpacingFromStateView(poolId) {
 
 
 
-
-// async function getQuoterContract() {
-//   const abi = await fetchQuoterV4Abi();
-//   return new ethers.Contract(V4_QUOTER_ADDRESS, abi, wallet); // use wallet, NOT provider
-// }
-
-
 function computePoolId({ currency0, currency1, fee, tickSpacing, hooks }) {
   return keccak256(
     encodePacked(
@@ -789,6 +780,17 @@ function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
   };
 }
 
+function filterPoolsByPriceAndLiquidity(pools, priceThresholdUSD, minCbBTC, minUSDC) {
+  return pools.filter(pool => {
+    const { price, reserves } = pool;
+    return (
+      price >= priceThresholdUSD &&
+      reserves.cbBTC >= minCbBTC &&
+      reserves.usdc >= minUSDC
+    );
+  });
+}
+
 // DEBUG FUNCTION: Encodes poolKey manually and hashes to compare
 function debugPoolIdEncoding(poolKey) {
   const encoded = encodePacked(
@@ -805,6 +807,27 @@ function debugPoolIdEncoding(poolKey) {
   console.log("🔍 Step 1 — encodePacked bytes:", encoded);
   console.log("🔐 Step 1 — keccak256(poolKey):", hashed);
   return hashed;
+}
+
+const slot0Interface = new ethers.Interface([
+  "function getSlot0(bytes32) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 lpFee)"
+]);
+
+const liquidityInterface = new ethers.Interface([
+  "function getLiquidity(bytes32 poolId) view returns (uint128)"
+]);
+
+async function getSlot0FromStateView(poolId) {
+  const data = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
+  return slot0Interface.decodeFunctionResult("getSlot0", result);
+}
+
+async function getLiquidity(poolId) {
+  const data = liquidityInterface.encodeFunctionData("getLiquidity", [poolId]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
+  const [liquidity] = liquidityInterface.decodeFunctionResult("getLiquidity", result);
+  return liquidity;
 }
 
 async function testAllPoolKeyPermutations() {
@@ -849,61 +872,25 @@ async function testAllPoolKeyPermutations() {
   }
 }
 
+
+
 async function main() {
-  await testAllPoolKeyPermutations(); 
-  const currency0 = USDC;
-  const currency1 = CBBTC;
+  const allPools = await testAllPoolKeyPermutations();
 
-  console.log("📦 Token Order:");
-  console.log("→ currency0:", currency0 === USDC ? "USDC" : "CBBTC");
-  console.log("→ currency1:", currency1 === USDC ? "USDC" : "CBBTC");
+  const filtered = filterPoolsByPriceAndLiquidity(
+    allPools,
+    95000,     // min cbBTC price
+    0.001,     // min cbBTC reserve
+    100        // min USDC reserve
+  );
 
-  const poolId = V4_POOL_IDS[0].poolId;
-
-  const slot0Interface = new ethers.Interface([
-    "function getSlot0(bytes32) view returns (uint160, int24, uint16, uint16)"
-  ]);
-  
-  const slotCall = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
-  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: slotCall }); // ✅ correct!
-  const decoded = slot0Interface.decodeFunctionResult("getSlot0", result);
-  console.log("✅ getSlot0 StateView:", decoded);
-  let spacing = V4_POOL_IDS[0].tickSpacing; // ✅ use hardcoded first
-  if (!spacing) {
-    try {
-      spacing = Number(await getTickSpacingFromStateView(poolId));
-      console.log("✅ tickSpacing from StateView:", spacing);
-    } catch (e) {
-      console.warn("⚠️ Failed to fetch from StateView. Trying PoolManager...");
-      try {
-        spacing = await readActualPoolKey(poolId);
-        console.log("✅ tickSpacing from PoolManager:", spacing);
-      } catch {
-        console.warn("⚠️ All attempts failed. Falling back to default tickSpacing = 60.");
-        spacing = 60;
-      }
-    }
-  }
-
-  const poolKey = {
-    currency0: USDC,
-    currency1: CBBTC,
-    fee: 3000,
-    tickSpacing: spacing,
-    hooks: V4_HOOK_ADDRESS,
-  };
-
-  console.log("🧪 Constructed poolKey:", poolKey);
-
-  const calculatedId = computePoolId(poolKey);
-  console.log("✅ Computed poolId:", calculatedId);
-  console.log("✅ Expected poolId:", poolId);
-
-  const debugHash = debugPoolIdEncoding(poolKey);
-  if (debugHash === calculatedId) {
-    console.log("✅ debugHash matches computed poolId.");
-  } else {
-    console.warn("❌ debugHash DOES NOT match computed poolId.");
+  console.log(`\n🌊 Filtered Pools (min $95k, ≥0.001 cbBTC, ≥100 USDC):`);
+  for (const pool of filtered) {
+    console.log(`\n💧 ${pool.label}`);
+    console.log(`→ Price: $${pool.price.toFixed(2)}`);
+    console.log(`→ cbBTC: ${pool.reserves.cbBTC.toFixed(6)}`);
+    console.log(`→ USDC: ${pool.reserves.usdc.toFixed(2)}`);
+    console.log(`→ Pool ID: ${pool.poolId}`);
   }
 
   const amountIn = ethers.parseUnits("0.002323", 8);
