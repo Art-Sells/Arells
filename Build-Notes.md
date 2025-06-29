@@ -21,6 +21,7 @@
 - - - Test release MASS 5-10 minutes after also (see if supplications will run with latest bitcoin prices and if vatopGroups will update accordingly check wallet)
 - - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 - - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
+- Incorporate Sell/Withdraw (look at Arells 1.5)
 
 ### Online:
 - Establish background useEffects order
@@ -83,6 +84,7 @@ Arells Wallet and change all Variables
 
 ### After Completion
 - Users:
+- Set Launch Date (and announce the features)
 - - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
 - - Accepting only the first 150 Investors (until our L3 is built) talk about releasing Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
 - - Add "Discord" section for any questions
