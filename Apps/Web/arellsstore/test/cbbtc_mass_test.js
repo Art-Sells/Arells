@@ -565,6 +565,10 @@ dotenv.config();
 
 
 
+
+
+
+
 const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b"; 
 const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
@@ -596,6 +600,22 @@ const stateViewInterface = new ethers.Interface([
   "function simulateSwap((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks) key,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes hookData) view returns (int256 amount0, int256 amount1, uint160 sqrtPriceX96After, int24 tickAfter, uint128 liquidityAfter)"
 ]);
 
+// async function verifyPoolId(poolId) {
+//   const poolIdBytes32 = zeroPadValue(poolId, 32);
+//   const callData = stateViewInterface.encodeFunctionData("getSlot0", [poolIdBytes32]);
+
+//   try {
+//     const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: callData });
+//     const [slot0] = stateViewInterface.decodeFunctionResult("getSlot0", result);
+//     console.log(`✅ getSlot0 succeeded:`, slot0);
+//   } catch (err) {
+//     console.error(`❌ getSlot0 failed for poolId ${poolId}:`, err.message || err);
+//   }
+// }
+
+// const poolManagerInterface = new ethers.Interface([
+//   "function getPool(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee, int24 tickSpacing)"
+// ]);
 
 const stateViewTickInterface = new ethers.Interface([
   "function getPoolTickSpacing(bytes32 poolId) view returns (int24)"
@@ -603,21 +623,21 @@ const stateViewTickInterface = new ethers.Interface([
 
 async function getTickSpacingFromStateView(poolId) {
   const callData = stateViewTickInterface.encodeFunctionData("getPoolTickSpacing", [poolId]);
-
-  try {
-    const result = await provider.call({
-      to: STATE_VIEW_ADDRESS,
-      data: callData,
-    });
-    const [tickSpacing] = stateViewTickInterface.decodeFunctionResult("getPoolTickSpacing", result);
-    console.log("✅ Tick Spacing (StateView):", tickSpacing.toString());
-    return tickSpacing;
-  } catch (e) {
-    console.error("❌ getTickSpacingFromStateView failed:", e.reason || e.message);
-    console.error("↪️ Revert data:", e.data || "(none)");
-    throw e;
-  }
+  const result = await provider.call({
+    to: STATE_VIEW_ADDRESS,
+    data: callData,
+  });
+  const [tickSpacing] = stateViewTickInterface.decodeFunctionResult("getPoolTickSpacing", result);
+  console.log("✅ Tick Spacing (StateView):", tickSpacing.toString());
+  return tickSpacing;
 }
+
+
+// async function getQuoterContract() {
+//   const abi = await fetchQuoterV4Abi();
+//   return new ethers.Contract(V4_QUOTER_ADDRESS, abi, wallet); // use wallet, NOT provider
+// }
+
 
 
 
@@ -697,31 +717,31 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, 
     userWallet
   );
   
-  let result;
   try {
-    result = await quoter.quote(
-      ethers.ZeroAddress,
-      hookData,
-      encodedSwapParams
-    );
+    const result = await provider.call({
+      to: V4_QUOTER_ADDRESS,
+      data: encodedCall,
+      from: userWallet.address,
+    });
+  
     console.log("✅ callStatic.quote success:");
     console.log("→ raw outputData:", result);
   
     const [amountOut] = ethers.AbiCoder.defaultAbiCoder().decode(["uint256"], result);
     console.log("→ decoded amountOut:", amountOut.toString());
-  } catch (e) {
-    console.error("❌ quoter.quote reverted:", e.reason || e.message || e);
+  
+  } catch (err) {
+    console.error("❌ QuoterV4 reverted:");
+    console.error("→ error.code:", err.code);
+    console.error("→ error.reason:", err.reason);
+    console.error("→ error.data:", err.data);
+    console.error("→ error.shortMessage:", err.shortMessage);
+    console.error("→ full error:", err);
   }
-
-  console.log("✅ callStatic.quote success:");
-  console.log("→ raw outputData:", result);
-
-  // decode output
-  const [amountOut] = ethers.AbiCoder.defaultAbiCoder().decode(["uint256"], result);
-  console.log("→ decoded amountOut:", amountOut.toString());
 }
 
 async function main() {
+
 
   const [currency0, currency1] = [USDC, CBBTC].sort((a, b) =>
     a.toLowerCase() < b.toLowerCase() ? -1 : 1
@@ -731,44 +751,20 @@ async function main() {
   console.log("→ currency0:", currency0 === USDC ? "USDC" : "CBBTC");
   console.log("→ currency1:", currency1 === USDC ? "USDC" : "CBBTC");
 
-  const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-
-  const encodedPoolKey = abiCoder.encode(
-    ["address", "address", "uint24", "int24", "address"],
-    [currency0, currency1, 3000, 60, V4_HOOK_ADDRESS] // You must match tickSpacing manually here if not known yet
-  );
-  
-  const poolId = ethers.keccak256(encodedPoolKey);
-  console.log("✅ Re-derived poolId:", poolId);
+  const poolId = V4_POOL_IDS[0].poolId;
 
   const slot0Interface = new ethers.Interface([
     "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 hookFee)"
   ]);
 
   const slotCall = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
-  let decoded;
-  try {
-    let result;
-    try {
-      result = await provider.call({ to: STATE_VIEW_ADDRESS, data: slotCall });
-      decoded = slot0Interface.decodeFunctionResult("getSlot0", result);
-      console.log("✅ getSlot0 StateView:", decoded);
-    } catch (err) {
-      console.error("❌ Revert during getSlot0:", err?.reason || err?.message || err);
-      return;
-    }
-  } catch (err) {
-    console.error("❌ Revert during getSlot0:", err?.reason || err?.message || err);
-    return;
-  }
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: slotCall });
+  const decoded = slot0Interface.decodeFunctionResult("getSlot0", result);
+  console.log("✅ getSlot0 StateView:", decoded);
+
   let spacing;
   try {
     spacing = await getTickSpacingFromStateView(poolId);
-    const encodedPoolKey = abiCoder.encode(
-      ["address", "address", "uint24", "int24", "address"],
-      [currency0, currency1, 3000, spacing, V4_HOOK_ADDRESS]
-    );
-    const poolId = ethers.keccak256(encodedPoolKey);
   } catch {
     console.warn("⚠️ Falling back to manual tickSpacing: 60");
     spacing = 60;
@@ -799,5 +795,4 @@ main().catch(console.error);
 
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
-
 
