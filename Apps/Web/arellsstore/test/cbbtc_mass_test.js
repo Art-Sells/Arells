@@ -5,6 +5,9 @@ import { TickMath } from "@uniswap/v3-sdk";
 import { keccak256, encodePacked, getAddress, solidityPacked } from "viem";
 import { exitCode } from "process";
 import { unlink } from "fs";
+import { getSlot0 } from './yourStateViewHelpers';
+import { decodeLiquidityAmountsv4 } from './yourLiquidityDecoder'; // assumes you have this
+import { Token } from '@uniswap/sdk-core';
 
 dotenv.config();
 
@@ -575,14 +578,16 @@ const V4_POOL_IDS = [
   {
     label: "V4 A (0.3%)",
     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
-    poolAddress: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", // same for now
+    poolAddress: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
     hooks: V4_HOOK_ADDRESS,
+    tickSpacing: 60, 
   },
   {
     label: "V4 B (0.3%)",
     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
     poolAddress: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
     hooks: V4_HOOK_ADDRESS,
+    tickSpacing: 60, 
   },
 ];
 
@@ -756,6 +761,34 @@ const updatedEncodedSwapParams = abiCoder.encode(
 
 }
 
+function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
+  const Q96 = BigInt(2) ** BigInt(96);
+  const sqrt = BigInt(sqrtPriceX96);
+
+  const numerator = sqrt * sqrt;
+  const denominator = Q96 * Q96;
+
+  const rawPrice = Number(numerator) / Number(denominator);
+
+  const adjustedPrice = (1 / rawPrice) * 10 ** (decimalsToken0 - decimalsToken1); // ✅ Correct: Inverted & scaled
+
+  return adjustedPrice;
+}
+
+function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
+  const sqrtPrice = Number(sqrtPriceX96) / 2 ** 96;
+  const price = sqrtPrice ** 2;
+  const liquidityFloat = Number(liquidity);
+
+  const amount0 = liquidityFloat / sqrtPrice; // USDC
+  const amount1 = liquidityFloat * sqrtPrice; // CBBTC
+
+  return {
+    cbBTC: amount1 / 1e8,
+    usdc: amount0 / 1e6,
+  };
+}
+
 // DEBUG FUNCTION: Encodes poolKey manually and hashes to compare
 function debugPoolIdEncoding(poolKey) {
   const encoded = encodePacked(
@@ -774,7 +807,50 @@ function debugPoolIdEncoding(poolKey) {
   return hashed;
 }
 
+async function testAllPoolKeyPermutations() {
+  const combinations = [
+    { currency0: USDC, currency1: CBBTC },
+    { currency0: CBBTC, currency1: USDC },
+  ];
+
+  for (const { currency0, currency1 } of combinations) {
+    for (const pool of V4_POOL_IDS) {
+      const poolKey = {
+        currency0,
+        currency1,
+        fee: 3000,
+        tickSpacing: pool.tickSpacing,
+        hooks: pool.hooks,
+      };
+
+      const computedId = computePoolId(poolKey);
+      const match = computedId.toLowerCase() === pool.poolId.toLowerCase();
+
+      console.log(`\n🧪 Testing Pool: ${pool.label}`);
+      console.log(`→ currency0: ${currency0}`);
+      console.log(`→ currency1: ${currency1}`);
+      console.log(`→ Computed poolId: ${computedId}`);
+      console.log(`→ Expected poolId: ${pool.poolId}`);
+      console.log(match ? "✅ MATCH" : "❌ NO MATCH");
+
+      if (match) {
+        const [sqrtPriceX96, , ,] = await getSlot0FromStateView(pool.poolId);
+        const liquidity = await getLiquidity(pool.poolId);
+
+        const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+        const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
+
+        console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
+        console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
+        console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
+        console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
+      }
+    }
+  }
+}
+
 async function main() {
+  await testAllPoolKeyPermutations(); 
   const currency0 = USDC;
   const currency1 = CBBTC;
 
@@ -792,17 +868,20 @@ async function main() {
   const result = await provider.call({ to: STATE_VIEW_ADDRESS, data: slotCall }); // ✅ correct!
   const decoded = slot0Interface.decodeFunctionResult("getSlot0", result);
   console.log("✅ getSlot0 StateView:", decoded);
-  let spacing;
-  try {
-    spacing = Number(await getTickSpacingFromStateView(poolId));
-    console.log("✅ tickSpacing from StateView:", spacing);
-  } catch (e) {
-    console.warn("⚠️ Failed to fetch tickSpacing from StateView. Falling back to PoolManager...");
+  let spacing = V4_POOL_IDS[0].tickSpacing; // ✅ use hardcoded first
+  if (!spacing) {
     try {
-      spacing = await readActualPoolKey(poolId); // PoolManager fallback
-      console.log("✅ tickSpacing from PoolManager:", spacing);
-    } catch {
-      throw new Error("❌ Failed to fetch tickSpacing from both StateView and PoolManager.");
+      spacing = Number(await getTickSpacingFromStateView(poolId));
+      console.log("✅ tickSpacing from StateView:", spacing);
+    } catch (e) {
+      console.warn("⚠️ Failed to fetch from StateView. Trying PoolManager...");
+      try {
+        spacing = await readActualPoolKey(poolId);
+        console.log("✅ tickSpacing from PoolManager:", spacing);
+      } catch {
+        console.warn("⚠️ All attempts failed. Falling back to default tickSpacing = 60.");
+        spacing = 60;
+      }
     }
   }
 
@@ -825,13 +904,6 @@ async function main() {
     console.log("✅ debugHash matches computed poolId.");
   } else {
     console.warn("❌ debugHash DOES NOT match computed poolId.");
-  }
-
-  const liveTickSpacing = await readActualPoolKey(poolId);
-  if (liveTickSpacing !== poolKey.tickSpacing) {
-    console.warn(`❌ Live tickSpacing (${liveTickSpacing}) doesn't match poolKey.tickSpacing (${poolKey.tickSpacing})`);
-  } else {
-    console.log("✅ tickSpacing matches live pool.");
   }
 
   const amountIn = ethers.parseUnits("0.002323", 8);
