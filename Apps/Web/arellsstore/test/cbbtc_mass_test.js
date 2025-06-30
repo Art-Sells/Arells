@@ -828,6 +828,8 @@ async function testAllPoolKeyPermutations() {
         poolId: pool.poolId,
         price,
         reserves,
+        tickSpacing: pool.tickSpacing, // ✅ Include this
+        hooks: pool.hooks              // ✅ Include this
       });
     } catch (err) {
       console.log(`❌ Failed to fetch info for poolId: ${pool.poolId}`);
@@ -845,9 +847,9 @@ async function main() {
 
   const filtered = filterPoolsByPriceAndLiquidity(
     allPools,
-    95000,     // min cbBTC price
-    0.001,     // min cbBTC reserve
-    100        // min USDC reserve
+    95000,
+    0.001,
+    100
   );
 
   console.log(`\n🌊 Filtered Pools (min $95k, ≥0.001 cbBTC, ≥100 USDC):`);
@@ -857,13 +859,21 @@ async function main() {
     console.log(`→ cbBTC: ${pool.reserves.cbBTC.toFixed(6)}`);
     console.log(`→ USDC: ${pool.reserves.usdc.toFixed(2)}`);
     console.log(`→ Pool ID: ${pool.poolId}`);
+
+    const poolKey = {
+      currency0: USDC,
+      currency1: CBBTC,
+      fee: 3000,
+      tickSpacing: pool.tickSpacing,
+      hooks: pool.hooks
+    };
+
+    const sqrtPriceX96 = await getSlot0FromStateView(pool.poolId).then(res => res[0]);
+    const amountIn = ethers.parseUnits("0.002323", 8);
+
+    console.log(`\n🚀 Simulating Quote for: ${pool.label}`);
+    await simulateWithV4Quoter(poolKey, amountIn, null, sqrtPriceX96);
   }
-
-  const amountIn = ethers.parseUnits("0.002323", 8);
-  //const sqrtPriceX96 = decoded[0];
-
-  // You can now uncomment to run simulation if needed
-  // await simulateWithV4Quoter(poolKey, amountIn, null, sqrtPriceX96);
 }
 
 
