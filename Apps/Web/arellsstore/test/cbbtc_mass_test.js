@@ -792,16 +792,39 @@ const liquidityInterface = new ethers.Interface([
 ]);
 
 async function getSlot0FromStateView(poolId) {
-  const data = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
-  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
-  return slot0Interface.decodeFunctionResult("getSlot0", result);
+  try {
+    const data = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
+
+    const result = await provider.call({
+      to: STATE_VIEW_ADDRESS, // ✅ Must be StateView
+      data,
+    });
+
+    const decoded = slot0Interface.decodeFunctionResult("getSlot0", result);
+
+    return decoded; // returns [sqrtPriceX96, tick, protocolFee, lpFee]
+  } catch (err) {
+    console.error(`🛑 Error in getSlot0FromStateView for ${poolId}:`, err.reason || err.message || err);
+    throw err;
+  }
 }
 
 async function getLiquidity(poolId) {
-  const data = liquidityInterface.encodeFunctionData("getLiquidity", [poolId]);
-  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
-  const [liquidity] = liquidityInterface.decodeFunctionResult("getLiquidity", result);
-  return liquidity;
+  try {
+    const data = liquidityInterface.encodeFunctionData("getLiquidity", [poolId]);
+
+    const result = await provider.call({
+      to: STATE_VIEW_ADDRESS, // ✅ Must be StateView
+      data,
+    });
+
+    const [liquidity] = liquidityInterface.decodeFunctionResult("getLiquidity", result);
+
+    return liquidity;
+  } catch (err) {
+    console.error(`🛑 Error in getLiquidity for ${poolId}:`, err.reason || err.message || err);
+    throw err;
+  }
 }
 
 async function testAllPoolKeyPermutations() {
@@ -828,7 +851,8 @@ async function testAllPoolKeyPermutations() {
         poolId: pool.poolId,
         price,
         reserves,
-        tickSpacing: pool.tickSpacing, // ✅ Include this
+        sqrtPriceX96,
+        tickSpacing: await getTickSpacingFromStateView(pool.poolId),
         hooks: pool.hooks              // ✅ Include this
       });
     } catch (err) {
@@ -860,19 +884,35 @@ async function main() {
     console.log(`→ USDC: ${pool.reserves.usdc.toFixed(2)}`);
     console.log(`→ Pool ID: ${pool.poolId}`);
 
+    const tickSpacing = await getTickSpacingFromStateView(pool.poolId); // ✅ fetch it on-chain
+
     const poolKey = {
       currency0: USDC,
       currency1: CBBTC,
       fee: 3000,
-      tickSpacing: pool.tickSpacing,
-      hooks: pool.hooks
+      tickSpacing,
+      hooks: pool.hooks,
     };
 
-    const sqrtPriceX96 = await getSlot0FromStateView(pool.poolId).then(res => res[0]);
-    const amountIn = ethers.parseUnits("0.002323", 8);
+  const sqrtFromTestPermutations = allPools.find(p => p.poolId.toLowerCase() === pool.poolId.toLowerCase())?.sqrtPriceX96;
+  const freshSqrtFromStateView = await getSlot0FromStateView(pool.poolId).then(res => res[0]);
 
-    console.log(`\n🚀 Simulating Quote for: ${pool.label}`);
-    await simulateWithV4Quoter(poolKey, amountIn, null, sqrtPriceX96);
+  if (sqrtFromTestPermutations && freshSqrtFromStateView) {
+    const a = BigInt(sqrtFromTestPermutations);
+    const b = BigInt(freshSqrtFromStateView);
+    const isMatch = a === b;
+
+    console.log(`🔍 sqrtPriceX96 Match Check for ${pool.label}`);
+    console.log(`→ From testAllPoolKeyPermutations(): ${a.toString()}`);
+    console.log(`→ From getSlot0FromStateView():       ${b.toString()}`);
+    console.log(isMatch ? "✅ MATCH" : "❌ MISMATCH");
+  }
+
+    // const sqrtPriceX96 = await getSlot0FromStateView(pool.poolId).then(res => res[0]);
+    // const amountIn = ethers.parseUnits("0.002323", 8);
+
+    // console.log(`\n🚀 Simulating Quote for: ${pool.label}`);
+    // await simulateWithV4Quoter(poolKey, amountIn, null, sqrtPriceX96);
   }
 }
 
