@@ -638,16 +638,6 @@ async function getTickSpacingFromStateView(poolId) {
 }
 
 
-
-function computePoolId({ currency0, currency1, fee, tickSpacing, hooks }) {
-  return keccak256(
-    encodePacked(
-      ["address", "address", "uint24", "int24", "address"],
-      [currency0, currency1, fee, tickSpacing, hooks]
-    )
-  );
-}
-
 async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, sqrtPriceLimitX96) {
   const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
   const userWallet = new ethers.Wallet(privateKeyToUse, provider);
@@ -792,22 +782,6 @@ function filterPoolsByPriceAndLiquidity(pools, priceThresholdUSD, minCbBTC, minU
 }
 
 // DEBUG FUNCTION: Encodes poolKey manually and hashes to compare
-function debugPoolIdEncoding(poolKey) {
-  const encoded = encodePacked(
-    ["address", "address", "uint24", "int24", "address"],
-    [
-      poolKey.currency0,
-      poolKey.currency1,
-      poolKey.fee,
-      poolKey.tickSpacing,
-      poolKey.hooks,
-    ]
-  );
-  const hashed = keccak256(encoded);
-  console.log("🔍 Step 1 — encodePacked bytes:", encoded);
-  console.log("🔐 Step 1 — keccak256(poolKey):", hashed);
-  return hashed;
-}
 
 const slot0Interface = new ethers.Interface([
   "function getSlot0(bytes32) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 lpFee)"
@@ -831,45 +805,37 @@ async function getLiquidity(poolId) {
 }
 
 async function testAllPoolKeyPermutations() {
-  const combinations = [
-    { currency0: USDC, currency1: CBBTC },
-    { currency0: CBBTC, currency1: USDC },
-  ];
+  const matchedPools = [];
 
-  for (const { currency0, currency1 } of combinations) {
-    for (const pool of V4_POOL_IDS) {
-      const poolKey = {
-        currency0,
-        currency1,
-        fee: 3000,
-        tickSpacing: pool.tickSpacing,
-        hooks: pool.hooks,
-      };
+  for (const pool of V4_POOL_IDS) {
+    console.log(`\n🧪 Testing Pool: ${pool.label}`);
+    console.log(`→ poolId: ${pool.poolId}`);
 
-      const computedId = computePoolId(poolKey);
-      const match = computedId.toLowerCase() === pool.poolId.toLowerCase();
+    // Fetch info from expected poolId only
+    try {
+      const [sqrtPriceX96, , ,] = await getSlot0FromStateView(pool.poolId);
+      const liquidity = await getLiquidity(pool.poolId);
+      const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+      const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
 
-      console.log(`\n🧪 Testing Pool: ${pool.label}`);
-      console.log(`→ currency0: ${currency0}`);
-      console.log(`→ currency1: ${currency1}`);
-      console.log(`→ Computed poolId: ${computedId}`);
-      console.log(`→ Expected poolId: ${pool.poolId}`);
-      console.log(match ? "✅ MATCH" : "❌ NO MATCH");
+      console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
+      console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
+      console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
+      console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
 
-      if (match) {
-        const [sqrtPriceX96, , ,] = await getSlot0FromStateView(pool.poolId);
-        const liquidity = await getLiquidity(pool.poolId);
-
-        const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
-        const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
-
-        console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
-        console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
-        console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
-        console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
-      }
+      matchedPools.push({
+        label: pool.label,
+        poolId: pool.poolId,
+        price,
+        reserves,
+      });
+    } catch (err) {
+      console.log(`❌ Failed to fetch info for poolId: ${pool.poolId}`);
+      console.error(err.message || err);
     }
   }
+
+  return matchedPools;
 }
 
 
@@ -894,7 +860,7 @@ async function main() {
   }
 
   const amountIn = ethers.parseUnits("0.002323", 8);
-  const sqrtPriceX96 = decoded[0];
+  //const sqrtPriceX96 = decoded[0];
 
   // You can now uncomment to run simulation if needed
   // await simulateWithV4Quoter(poolKey, amountIn, null, sqrtPriceX96);
