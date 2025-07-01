@@ -894,14 +894,14 @@ async function main() {
       hooks: pool.hooks,
     };
 
-  const sqrtFromTestPermutations = allPools.find(p => p.poolId.toLowerCase() === pool.poolId.toLowerCase())?.sqrtPriceX96;
+    const sqrtFromTestPermutations = pool.sqrtPriceX96;
   const freshSqrtFromStateView = await getSlot0FromStateView(pool.poolId).then(res => res[0]);
 
   if (sqrtFromTestPermutations && freshSqrtFromStateView) {
     const a = BigInt(sqrtFromTestPermutations);
     const b = BigInt(freshSqrtFromStateView);
     const isMatch = a === b;
-
+  
     console.log(`🔍 sqrtPriceX96 Match Check for ${pool.label}`);
     console.log(`→ From testAllPoolKeyPermutations(): ${a.toString()}`);
     console.log(`→ From getSlot0FromStateView():       ${b.toString()}`);
