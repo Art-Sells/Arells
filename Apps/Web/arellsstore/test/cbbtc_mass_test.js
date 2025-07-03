@@ -568,82 +568,71 @@ dotenv.config();
 
 
 
-const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b"; 
+const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
 const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
 const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
+
+const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
+const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
+
+const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+
 const V4_POOL_IDS = [
   {
     label: "V4 A (0.3%)",
     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
-    poolAddress: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
     hooks: V4_HOOK_ADDRESS,
-    tickSpacing: 60, 
+    tickSpacing: 60,
   },
   {
     label: "V4 B (0.3%)",
     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-    poolAddress: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
     hooks: V4_HOOK_ADDRESS,
-    tickSpacing: 60, 
+    tickSpacing: 60,
   },
 ];
 
-// ✅ Token Addresses
-const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
-const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
-
-// ✅ Set Up Ethereum Provider & Wallet
-const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-// const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-
-const stateViewInterface = new ethers.Interface([
-  "function simulateSwap((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks) key,bool zeroForOne,int256 amountSpecified,uint160 sqrtPriceLimitX96,bytes hookData) view returns (int256 amount0, int256 amount1, uint160 sqrtPriceX96After, int24 tickAfter, uint128 liquidityAfter)"
+const slot0Interface = new ethers.Interface([
+  "function getSlot0(bytes32) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 lpFee)",
 ]);
 
-const poolManagerInterface = new ethers.Interface([
-  "function getPool(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee, int24 tickSpacing)"
+const liquidityInterface = new ethers.Interface([
+  "function getLiquidity(bytes32 poolId) view returns (uint128)",
 ]);
 
-async function readActualPoolKey(poolId) {
-  const callData = poolManagerInterface.encodeFunctionData("getPool", [poolId]);
-  const result = await provider.call({
-    to: V4_POOL_MANAGER,
-    data: callData,
-  });
-  const [sqrtPrice, tick, protocolFee, lpFee, tickSpacing] =
-    poolManagerInterface.decodeFunctionResult("getPool", result);
-  console.log("🧪 Live Deployed Pool Parameters:");
-  console.log("→ sqrtPriceX96:", sqrtPrice.toString());
-  console.log("→ tick:", tick);
-  console.log("→ protocolFee:", protocolFee);
-  console.log("→ lpFee:", lpFee);
-  console.log("→ tickSpacing:", tickSpacing);
-  return Number(tickSpacing);
+async function getSlot0FromStateView(poolId) {
+  const data = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
+  return slot0Interface.decodeFunctionResult("getSlot0", result);
 }
 
-const stateViewTickInterface = new ethers.Interface([
-  "function getPoolTickSpacing(bytes32 poolId) view returns (int24)"
-]);
-
-async function getTickSpacingFromStateView(poolId) {
-  const callData = stateViewTickInterface.encodeFunctionData("getPoolTickSpacing", [poolId]);
-  const result = await provider.call({
-    to: STATE_VIEW_ADDRESS,
-    data: callData,
-  });
-  const [tickSpacing] = stateViewTickInterface.decodeFunctionResult("getPoolTickSpacing", result);
-  console.log("✅ Tick Spacing (StateView):", tickSpacing.toString());
-  return tickSpacing;
+async function getLiquidity(poolId) {
+  const data = liquidityInterface.encodeFunctionData("getLiquidity", [poolId]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
+  return liquidityInterface.decodeFunctionResult("getLiquidity", result)[0];
 }
 
+function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
+  const Q96 = BigInt(2) ** BigInt(96);
+  const sqrt = BigInt(sqrtPriceX96);
+  const rawPrice = Number(sqrt * sqrt) / Number(Q96 * Q96);
+  return (1 / rawPrice) * 10 ** (decimalsToken0 - decimalsToken1);
+}
+
+function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
+  const sqrtPrice = Number(sqrtPriceX96) / 2 ** 96;
+  const liquidityFloat = Number(liquidity);
+  return {
+    cbBTC: (liquidityFloat * sqrtPrice) / 1e8,
+    usdc: (liquidityFloat / sqrtPrice) / 1e6,
+  };
+}
 
 async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, sqrtPriceLimitX96) {
-  const privateKeyToUse = customPrivateKey || process.env.PRIVATE_KEY_TEST;
-  const userWallet = new ethers.Wallet(privateKeyToUse, provider);
+  const userWallet = new ethers.Wallet(customPrivateKey || process.env.PRIVATE_KEY_TEST, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
-  // Fetch balances
   const CBBTCContract = new ethers.Contract(CBBTC, ["function balanceOf(address) view returns (uint256)"], userWallet);
   const cbbtcBalanceRaw = await CBBTCContract.balanceOf(userWallet.address);
   const ethBalanceRaw = await provider.getBalance(userWallet.address);
@@ -651,192 +640,36 @@ async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, 
   console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalanceRaw)} ETH`);
 
   const zeroForOne = false;
-
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-
   const encodedKey = abiCoder.encode(
     ["address", "address", "uint24", "int24", "address"],
-    [
-      poolKey.currency0,
-      poolKey.currency1,
-      poolKey.fee,
-      poolKey.tickSpacing,
-      poolKey.hooks
-    ]
+    [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks]
   );
-
-  console.log("🔍 Step 1 — Encoded `poolKey`:", encodedKey);
-
-  const decodedKey = abiCoder.decode(
-    ["address", "address", "uint24", "int24", "address"],
-    encodedKey
-  );
-
-  console.log("✅ Decoded `poolKey`:");
-  console.log("→ currency0:", decodedKey[0]);
-  console.log("→ currency1:", decodedKey[1]);
-  console.log("→ fee:", decodedKey[2].toString());
-  console.log("→ tickSpacing:", decodedKey[3].toString());
-  console.log("→ hooks:", decodedKey[4]);
 
   const hookData = abiCoder.encode(["bytes"], ["0x"]);
-  
+  const signedAmountIn = zeroForOne ? BigInt(amountIn) : -BigInt(amountIn);
   const encodedSwapParams = abiCoder.encode(
     ["bytes", "address", "bool", "int256", "uint160", "bytes"],
-    [
-      encodedKey,
-      ethers.ZeroAddress,         // sender
-      zeroForOne,
-      amountIn,                   // input direction
-      sqrtPriceLimitX96,
-      hookData
-    ]
+    [encodedKey, ethers.ZeroAddress, zeroForOne, signedAmountIn, sqrtPriceLimitX96, hookData]
   );
 
-  console.log("🔍 Step 2 — Encoded Swap Params:", encodedSwapParams);
+  const quoter = new ethers.Contract(V4_QUOTER_ADDRESS, [
+    "function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)",
+  ], userWallet);
 
-  const decodedSwap = abiCoder.decode(
-    ["bytes", "address", "bool", "int256", "uint160", "bytes"],
-    encodedSwapParams
-  );
-
-  console.log("✅ Decoded Swap Params:");
-  console.log("→ encodedKey:", decodedSwap[0]);
-  console.log("→ sender:", decodedSwap[1]);
-  console.log("→ zeroForOne:", decodedSwap[2]);
-  console.log("→ amountSpecified:", decodedSwap[3].toString());
-  console.log("→ sqrtPriceLimitX96:", decodedSwap[4].toString());
-  console.log("→ hookData:", decodedSwap[5]);
-  
-  const quoter = new ethers.Contract(
-    V4_QUOTER_ADDRESS,
-    ["function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"],
-    userWallet
-  );
-  
-// 🔥 Step 3 — SIGN amountIn properly
-const signedAmountIn = zeroForOne ? BigInt(amountIn) : -BigInt(amountIn);
-
-const updatedEncodedSwapParams = abiCoder.encode(
-  ["bytes", "address", "bool", "int256", "uint160", "bytes"],
-  [
-    encodedKey,
-    ethers.ZeroAddress,
-    zeroForOne,
-    signedAmountIn,
-    sqrtPriceLimitX96,
-    hookData
-  ]
-);
-  
-  const result = await quoter.quote(
-    userWallet.address,
-    hookData,
-    updatedEncodedSwapParams
-  );
-  
-  const [amountOut] = ethers.AbiCoder.defaultAbiCoder().decode(["uint256"], result);
+  const result = await quoter.quote(userWallet.address, hookData, encodedSwapParams);
+  const [amountOut] = abiCoder.decode(["uint256"], result);
   console.log("→ decoded amountOut:", amountOut.toString());
-  
-
-
-}
-
-function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
-  const Q96 = BigInt(2) ** BigInt(96);
-  const sqrt = BigInt(sqrtPriceX96);
-
-  const numerator = sqrt * sqrt;
-  const denominator = Q96 * Q96;
-
-  const rawPrice = Number(numerator) / Number(denominator);
-
-  const adjustedPrice = (1 / rawPrice) * 10 ** (decimalsToken0 - decimalsToken1); // ✅ Correct: Inverted & scaled
-
-  return adjustedPrice;
-}
-
-function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
-  const sqrtPrice = Number(sqrtPriceX96) / 2 ** 96;
-  const price = sqrtPrice ** 2;
-  const liquidityFloat = Number(liquidity);
-
-  const amount0 = liquidityFloat / sqrtPrice; // USDC
-  const amount1 = liquidityFloat * sqrtPrice; // CBBTC
-
-  return {
-    cbBTC: amount1 / 1e8,
-    usdc: amount0 / 1e6,
-  };
-}
-
-function filterPoolsByPriceAndLiquidity(pools, priceThresholdUSD, minCbBTC, minUSDC) {
-  return pools.filter(pool => {
-    const { price, reserves } = pool;
-    return (
-      price >= priceThresholdUSD &&
-      reserves.cbBTC >= minCbBTC &&
-      reserves.usdc >= minUSDC
-    );
-  });
-}
-
-// DEBUG FUNCTION: Encodes poolKey manually and hashes to compare
-
-const slot0Interface = new ethers.Interface([
-  "function getSlot0(bytes32) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 lpFee)"
-]);
-
-const liquidityInterface = new ethers.Interface([
-  "function getLiquidity(bytes32 poolId) view returns (uint128)"
-]);
-
-async function getSlot0FromStateView(poolId) {
-  try {
-    const data = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
-
-    const result = await provider.call({
-      to: STATE_VIEW_ADDRESS, // ✅ Must be StateView
-      data,
-    });
-
-    const decoded = slot0Interface.decodeFunctionResult("getSlot0", result);
-
-    return decoded; // returns [sqrtPriceX96, tick, protocolFee, lpFee]
-  } catch (err) {
-    console.error(`🛑 Error in getSlot0FromStateView for ${poolId}:`, err.reason || err.message || err);
-    throw err;
-  }
-}
-
-async function getLiquidity(poolId) {
-  try {
-    const data = liquidityInterface.encodeFunctionData("getLiquidity", [poolId]);
-
-    const result = await provider.call({
-      to: STATE_VIEW_ADDRESS, // ✅ Must be StateView
-      data,
-    });
-
-    const [liquidity] = liquidityInterface.decodeFunctionResult("getLiquidity", result);
-
-    return liquidity;
-  } catch (err) {
-    console.error(`🛑 Error in getLiquidity for ${poolId}:`, err.reason || err.message || err);
-    throw err;
-  }
 }
 
 async function testAllPoolKeyPermutations() {
-  const matchedPools = [];
+  const poolsWithData = [];
 
   for (const pool of V4_POOL_IDS) {
     console.log(`\n🧪 Testing Pool: ${pool.label}`);
     console.log(`→ poolId: ${pool.poolId}`);
-
-    // Fetch info from expected poolId only
     try {
-      const [sqrtPriceX96, , ,] = await getSlot0FromStateView(pool.poolId);
+      const [sqrtPriceX96] = await getSlot0FromStateView(pool.poolId);
       const liquidity = await getLiquidity(pool.poolId);
       const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
       const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
@@ -846,79 +679,35 @@ async function testAllPoolKeyPermutations() {
       console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
       console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
 
-      matchedPools.push({
-        label: pool.label,
-        poolId: pool.poolId,
-        price,
-        reserves,
-        sqrtPriceX96,
-        tickSpacing: await getTickSpacingFromStateView(pool.poolId),
-        hooks: pool.hooks              // ✅ Include this
-      });
+      poolsWithData.push({ ...pool, price, reserves, sqrtPriceX96 });
     } catch (err) {
       console.log(`❌ Failed to fetch info for poolId: ${pool.poolId}`);
       console.error(err.message || err);
     }
   }
 
-  return matchedPools;
+  return poolsWithData;
 }
-
-
 
 async function main() {
-  const allPools = await testAllPoolKeyPermutations();
+  await testAllPoolKeyPermutations();
 
-  const filtered = filterPoolsByPriceAndLiquidity(
-    allPools,
-    95000,
-    0.001,
-    100
-  );
+  // const allPools = await testAllPoolKeyPermutations();
 
-  console.log(`\n🌊 Filtered Pools (min $95k, ≥0.001 cbBTC, ≥100 USDC):`);
-  for (const pool of filtered) {
-    console.log(`\n💧 ${pool.label}`);
-    console.log(`→ Price: $${pool.price.toFixed(2)}`);
-    console.log(`→ cbBTC: ${pool.reserves.cbBTC.toFixed(6)}`);
-    console.log(`→ USDC: ${pool.reserves.usdc.toFixed(2)}`);
-    console.log(`→ Pool ID: ${pool.poolId}`);
+  // for (const pool of allPools) {
+  //   const poolKey = {
+  //     currency0: USDC,
+  //     currency1: CBBTC,
+  //     fee: 3000,
+  //     tickSpacing: pool.tickSpacing,
+  //     hooks: pool.hooks,
+  //   };
 
-    const tickSpacing = await getTickSpacingFromStateView(pool.poolId); // ✅ fetch it on-chain
-
-    const poolKey = {
-      currency0: USDC,
-      currency1: CBBTC,
-      fee: 3000,
-      tickSpacing,
-      hooks: pool.hooks,
-    };
-
-    const sqrtFromTestPermutations = pool.sqrtPriceX96;
-  const freshSqrtFromStateView = await getSlot0FromStateView(pool.poolId).then(res => res[0]);
-
-  if (sqrtFromTestPermutations && freshSqrtFromStateView) {
-    const a = BigInt(sqrtFromTestPermutations);
-    const b = BigInt(freshSqrtFromStateView);
-    const isMatch = a === b;
-  
-    console.log(`🔍 sqrtPriceX96 Match Check for ${pool.label}`);
-    console.log(`→ From testAllPoolKeyPermutations(): ${a.toString()}`);
-    console.log(`→ From getSlot0FromStateView():       ${b.toString()}`);
-    console.log(isMatch ? "✅ MATCH" : "❌ MISMATCH");
-  }
-
-    // const sqrtPriceX96 = await getSlot0FromStateView(pool.poolId).then(res => res[0]);
-    // const amountIn = ethers.parseUnits("0.002323", 8);
-
-    // console.log(`\n🚀 Simulating Quote for: ${pool.label}`);
-    // await simulateWithV4Quoter(poolKey, amountIn, null, sqrtPriceX96);
-  }
+  //   const amountIn = ethers.parseUnits("0.002323", 8);
+  //   console.log(`\n🚀 Simulating Quote for: ${pool.label}`);
+  //   await simulateWithV4Quoter(poolKey, amountIn, null, pool.sqrtPriceX96);
+  // }
 }
-
-
-
-
 
 main().catch(console.error);
 
