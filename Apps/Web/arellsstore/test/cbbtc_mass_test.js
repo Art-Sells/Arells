@@ -563,6 +563,11 @@ dotenv.config();
 
 
 
+
+
+
+
+const TICK_SPACING_VIEW_ADDRESS = "0x1E35C58b1CF4a42Ffc4F8eAebf3F9495c87F2f44";
 const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
 const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
@@ -572,29 +577,44 @@ const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+
+const V4_POOL_IDS = [
+  {
+    label: "V4 A (0.3%)",
+    poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
+    hooks: V4_HOOK_ADDRESS,
+    tickSpacing: 60,
+  },
+  {
+    label: "V4 B (0.3%)",
+    poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
+    hooks: V4_HOOK_ADDRESS,
+    tickSpacing: 60,
+  },
+];
 
 const slot0Interface = new ethers.Interface([
   "function getSlot0(bytes32) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 lpFee)",
+]);
+
+const tickSpacingInterface = new ethers.Interface([
+  "function getPoolTickSpacing(bytes32 poolId) view returns (int24)"
 ]);
 
 const liquidityInterface = new ethers.Interface([
   "function getLiquidity(bytes32 poolId) view returns (uint128)",
 ]);
 
-function computePoolId(currency0, currency1, fee, tickSpacing, hook) {
-  const encoded = abiCoder.encode(
-    ["address", "address", "uint24", "int24", "address"],
-    [currency0, currency1, fee, tickSpacing, hook]
-  );
-  return ethers.keccak256(encoded);
-}
-
-async function getSlot0(poolId) {
+async function getSlot0FromStateView(poolId) {
   const data = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
   const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
   return slot0Interface.decodeFunctionResult("getSlot0", result);
+}
+
+async function getTickSpacing(poolId) {
+  const data = tickSpacingInterface.encodeFunctionData("getPoolTickSpacing", [poolId]);
+  const result = await provider.call({ to: TICK_SPACING_VIEW_ADDRESS, data });
+  return tickSpacingInterface.decodeFunctionResult("getPoolTickSpacing", result)[0];
 }
 
 async function getLiquidity(poolId) {
@@ -603,109 +623,110 @@ async function getLiquidity(poolId) {
   return liquidityInterface.decodeFunctionResult("getLiquidity", result)[0];
 }
 
-async function simulateWithV4Quoter(poolKey, amountIn, sqrtPriceLimitX96 = 0n) {
-  const quoter = new ethers.Contract(
-    V4_QUOTER_ADDRESS,
-    ["function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"],
-    wallet
-  );
+function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
+  const Q96 = BigInt(2) ** BigInt(96);
+  const sqrt = BigInt(sqrtPriceX96);
+  const rawPrice = Number(sqrt * sqrt) / Number(Q96 * Q96);
+  return (1 / rawPrice) * 10 ** (decimalsToken0 - decimalsToken1);
+}
 
+function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
+  const sqrtPrice = Number(sqrtPriceX96) / 2 ** 96;
+  const liquidityFloat = Number(liquidity);
+  return {
+    cbBTC: (liquidityFloat * sqrtPrice) / 1e8,
+    usdc: (liquidityFloat / sqrtPrice) / 1e6,
+  };
+}
+
+async function simulateWithV4Quoter(poolKey, amountIn, customPrivateKey = null, sqrtPriceLimitX96) {
+  const userWallet = new ethers.Wallet(customPrivateKey || process.env.PRIVATE_KEY_TEST, provider);
+  console.log(`✅ Using Test Wallet: ${userWallet.address}`);
+
+  const CBBTCContract = new ethers.Contract(CBBTC, ["function balanceOf(address) view returns (uint256)"], userWallet);
+  const cbbtcBalanceRaw = await CBBTCContract.balanceOf(userWallet.address);
+  const ethBalanceRaw = await provider.getBalance(userWallet.address);
+  console.log(`💰 CBBTC Balance: ${ethers.formatUnits(cbbtcBalanceRaw, 8)} CBBTC`);
+  console.log(`💰 ETH Balance: ${ethers.formatEther(ethBalanceRaw)} ETH`);
+
+  const zeroForOne = false;
+  const abiCoder = ethers.AbiCoder.defaultAbiCoder();
   const encodedKey = abiCoder.encode(
     ["address", "address", "uint24", "int24", "address"],
     [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks]
   );
 
   const hookData = abiCoder.encode(["bytes"], ["0x"]);
-  const signedAmountIn = poolKey.zeroForOne ? BigInt(amountIn) : -BigInt(amountIn);
-
+  const signedAmountIn = zeroForOne ? BigInt(amountIn) : -BigInt(amountIn);
   const encodedSwapParams = abiCoder.encode(
     ["bytes", "address", "bool", "int256", "uint160", "bytes"],
-    [encodedKey, ethers.ZeroAddress, poolKey.zeroForOne, signedAmountIn, sqrtPriceLimitX96, hookData]
+    [encodedKey, ethers.ZeroAddress, zeroForOne, signedAmountIn, sqrtPriceLimitX96, hookData]
   );
 
-  const result = await quoter.quote(wallet.address, hookData, encodedSwapParams);
+  const quoter = new ethers.Contract(V4_QUOTER_ADDRESS, [
+    "function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)",
+  ], userWallet);
+
+  const result = await quoter.quote(userWallet.address, hookData, encodedSwapParams);
   const [amountOut] = abiCoder.decode(["uint256"], result);
-  console.log(`💬 Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+  console.log("→ decoded amountOut:", amountOut.toString());
 }
 
-async function quoteKnownPools() {
-  const knownPoolIds = [
-    "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
-    "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-  ];
+async function testAllPoolKeyPermutations() {
+  const poolsWithData = [];
 
-  for (const poolId of knownPoolIds) {
-    console.log(`\n🔍 Checking known poolId: ${poolId}`);
-
+  for (const pool of V4_POOL_IDS) {
+    console.log(`\n🧪 Testing Pool: ${pool.label}`);
+    console.log(`→ poolId: ${pool.poolId}`);
     try {
-      const [sqrtPriceX96, tick, protocolFee, lpFee] = await getSlot0(poolId);
-      const liquidity = await getLiquidity(poolId);
-      if (sqrtPriceX96 === 0n || liquidity === 0n) {
-        console.log("❌ Pool exists but not initialized or has no liquidity.");
-        continue;
-      }
+      const [sqrtPriceX96] = await getSlot0FromStateView(pool.poolId);
+      const liquidity = await getLiquidity(pool.poolId);
+      const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+      const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
 
-      let matched = false;
+      console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
+      console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
+      console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
+      console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
 
-      for (let tickSpacing = 1; tickSpacing <= 60; tickSpacing++) {
-        const forward = computePoolId(USDC, CBBTC, 3000, tickSpacing, V4_HOOK_ADDRESS);
-        const reverse = computePoolId(CBBTC, USDC, 3000, tickSpacing, V4_HOOK_ADDRESS);
-        if (forward === poolId || reverse === poolId) {
-          const token0 = USDC < CBBTC ? USDC : CBBTC;
-          const token1 = USDC > CBBTC ? USDC : CBBTC;
-          const poolKey = {
-            currency0: token0,
-            currency1: token1,
-            fee: 3000,
-            tickSpacing,
-            hooks: V4_HOOK_ADDRESS,
-            zeroForOne: token0 === CBBTC,
-          };
-
-          console.log(`✅ Matched Tick Spacing: ${tickSpacing}`);
-          console.log(`🧩 PoolKey:`, poolKey);
-
-          const amountIn = ethers.parseUnits("0.00002", 8); // 0.00002 CBBTC
-          await simulateWithV4Quoter(poolKey, amountIn);
-          matched = true;
-          break;
-        }
-      }
-
-      if (!matched) {
-        console.log("⚠️  No tick spacing matched! Trying fallback tickSpacing: 10");
-        const token0 = USDC < CBBTC ? USDC : CBBTC;
-        const token1 = USDC > CBBTC ? USDC : CBBTC;
-        const swapFrom = CBBTC; // you want to sell cbBTC → USDC
-        const zeroForOne = swapFrom === token0;
-        
-        const poolKey = {
-          currency0: token0,
-          currency1: token1,
-          fee: 3000,
-          tickSpacing: 10,
-          hooks: V4_HOOK_ADDRESS,
-          zeroForOne,
-        };
-        const amountIn = ethers.parseUnits("0.00002", 8);
-        await simulateWithV4Quoter(poolKey, amountIn);
-      }
-
+      const tickSpacing = await getTickSpacing(pool.poolId);
+      console.log(`✅ Tick Spacing: ${tickSpacing}`);
+      poolsWithData.push({ ...pool, price, reserves, sqrtPriceX96, tickSpacing });
     } catch (err) {
-      console.log(`❌ Failed on pool ${poolId}:`, err.message);
+      console.log(`❌ Failed to fetch info for poolId: ${pool.poolId}`);
+      console.error(err.message || err);
     }
   }
+
+  return poolsWithData;
 }
 
-// ✅ MAIN ENTRY
 async function main() {
-  await quoteKnownPools();
+  await testAllPoolKeyPermutations();
+
+  // const allPools = await testAllPoolKeyPermutations();
+
+  // for (const pool of allPools) {
+  //   const poolKey = {
+  //     currency0: USDC,
+  //     currency1: CBBTC,
+  //     fee: 3000,
+  //     tickSpacing: pool.tickSpacing,
+  //     hooks: pool.hooks,
+  //   };
+
+  //   const amountIn = ethers.parseUnits("0.002323", 8);
+  //   console.log(`\n🚀 Simulating Quote for: ${pool.label}`);
+  //   await simulateWithV4Quoter(poolKey, amountIn, null, pool.sqrtPriceX96);
+  // }
 }
 
 main().catch(console.error);
 
-//to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
 
+
+
+//to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
 
 // The v4 quote() function doesn’t take poolId as input.
 
