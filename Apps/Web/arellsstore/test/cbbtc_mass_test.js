@@ -611,10 +611,14 @@ async function getSlot0FromStateView(poolId) {
   return slot0Interface.decodeFunctionResult("getSlot0", result);
 }
 
-async function getTickSpacing(poolId) {
-  const data = tickSpacingInterface.encodeFunctionData("getPoolTickSpacing", [poolId]);
-  const result = await provider.call({ to: TICK_SPACING_VIEW_ADDRESS, data });
-  return tickSpacingInterface.decodeFunctionResult("getPoolTickSpacing", result)[0];
+async function getTickSpacingFromStateView(token0, token1, fee, hook) {
+  const stateView = new ethers.Contract(
+    STATE_VIEW_ADDRESS,
+    ["function getPoolTickSpacing(address token0, address token1, uint24 fee, address hook) view returns (int24)"],
+    provider
+  );
+
+  return await stateView.getPoolTickSpacing(token0, token1, fee, hook);
 }
 
 async function getLiquidity(poolId) {
@@ -689,7 +693,7 @@ async function testAllPoolKeyPermutations() {
       console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
       console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
 
-      const tickSpacing = await getTickSpacing(pool.poolId);
+      const tickSpacing = await getTickSpacingFromStateView(USDC, CBBTC, 3000, pool.hooks);
       console.log(`✅ Tick Spacing: ${tickSpacing}`);
       poolsWithData.push({ ...pool, price, reserves, sqrtPriceX96, tickSpacing });
     } catch (err) {
