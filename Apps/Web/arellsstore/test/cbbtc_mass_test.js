@@ -581,14 +581,14 @@ const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 const V4_POOL_IDS = [
   {
     label: "V4 A (0.3%)",
-    poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
-    hooks: V4_HOOK_ADDRESS,
+    poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", 
+    hooks: getAddress(V4_HOOK_ADDRESS), 
     tickSpacing: 60,
   },
   {
     label: "V4 B (0.3%)",
     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-    hooks: V4_HOOK_ADDRESS,
+    hooks: getAddress(V4_HOOK_ADDRESS),
     tickSpacing: 60,
   },
 ];
@@ -613,7 +613,7 @@ async function getSlot0FromStateView(poolId) {
 
 async function getTickSpacingFromStateView(token0, token1, fee, hook) {
   const stateView = new ethers.Contract(
-    STATE_VIEW_ADDRESS,
+    ethers.getAddress("0x2a0f29cF3dF0Cdb2B5Ec8767C7997A21f267b6fB") // checksummed
     ["function getPoolTickSpacing(address token0, address token1, uint24 fee, address hook) view returns (int24)"],
     provider
   );
