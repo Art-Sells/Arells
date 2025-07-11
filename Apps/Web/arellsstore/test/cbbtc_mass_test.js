@@ -569,8 +569,9 @@ dotenv.config();
 const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
 const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
-const TICK_SPACING_VIEW_ADDRESS = "0x1E35C58b1CF4a42Ffc4F8eAebf3F9495c87F2f44";
 const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
+const TICK_SPACING_VIEW_ADDRESS = "0x1E35C58b1CF4a42Ffc4F8eAebf3F9495c87F2f44";
+
 
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
@@ -582,7 +583,7 @@ const V4_POOL_IDS = [
     label: "V4 A (0.3%)",
     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", 
     hooks: getAddress(V4_HOOK_ADDRESS), 
-    tickSpacing: 60,
+    tickSpacing: 200,
   },
   {
     label: "V4 B (0.3%)",
@@ -600,6 +601,10 @@ const tickSpacingInterface = new ethers.Interface([
   "function getPoolTickSpacing(bytes32 poolId) view returns (int24)"
 ]);
 
+const poolKeyInterface = new ethers.Interface([
+  "function getPoolKey(bytes32 poolId) view returns (address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks)"
+]);
+
 const liquidityInterface = new ethers.Interface([
   "function getLiquidity(bytes32 poolId) view returns (uint128)",
 ]);
@@ -610,19 +615,14 @@ async function getSlot0FromStateView(poolId) {
   return slot0Interface.decodeFunctionResult("getSlot0", result);
 }
 
-async function getTickSpacingFromStateView(token0, token1, fee, hook) {
+async function getTickSpacingViaPoolId(poolId) {
   const stateView = new ethers.Contract(
-    getAddress("0x2A0F29cF3Df0CdB2b5eC8767C7997A21f267b6Fb"),
-    ["function getPoolTickSpacing(address token0, address token1, uint24 fee, address hook) view returns (int24)"],
+    STATE_VIEW_ADDRESS,
+    ["function getPoolTickSpacing(bytes32 poolId) view returns (int24)"],
     provider
   );
 
-  return await stateView.getPoolTickSpacing(
-    getAddress(token0),
-    getAddress(token1),
-    fee,
-    getAddress(hook)
-  );
+  return await stateView.getPoolTickSpacing(poolId);
 }
 
 async function getLiquidity(poolId) {
@@ -644,6 +644,20 @@ function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
   return {
     cbBTC: (liquidityFloat * sqrtPrice) / 1e8,
     usdc: (liquidityFloat / sqrtPrice) / 1e6,
+  };
+}
+
+async function getPoolKey(poolId) {
+  const data = poolKeyInterface.encodeFunctionData("getPoolKey", [poolId]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
+  const decoded = poolKeyInterface.decodeFunctionResult("getPoolKey", result);
+
+  return {
+    currency0: decoded[0],
+    currency1: decoded[1],
+    fee: decoded[2],
+    tickSpacing: decoded[3],
+    hooks: decoded[4],
   };
 }
 
@@ -697,9 +711,11 @@ async function testAllPoolKeyPermutations() {
       console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
       console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
 
-      const tickSpacing = await getTickSpacingFromStateView(USDC, CBBTC, 3000, pool.hooks);
-      console.log(`✅ Tick Spacing: ${tickSpacing}`);
-      poolsWithData.push({ ...pool, price, reserves, sqrtPriceX96, tickSpacing });
+      const poolKey = await getPoolKey(pool.poolId);
+      console.log(`✅ Matched Tick Spacing: ${poolKey.tickSpacing}`);
+      console.log(`🧩 PoolKey:`, poolKey);
+      
+      poolsWithData.push({ ...pool, price, reserves, sqrtPriceX96, tickSpacing: poolKey.tickSpacing, poolKey });
     } catch (err) {
       console.log(`❌ Failed to fetch info for poolId: ${pool.poolId}`);
       console.error(err.message || err);
@@ -709,8 +725,64 @@ async function testAllPoolKeyPermutations() {
   return poolsWithData;
 }
 
+async function bruteForceTickSpacingMatch() {
+  const POOL_ID_A = "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96".toLowerCase(); // V4 A (0.3%)
+  const POOL_ID_B = "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5".toLowerCase(); // V4 B (0.3%)
+
+  const tickSpacingsToTry = [10, 60, 100, 200, 500, 1800];
+  const feesToTry = [100, 300, 500, 1000, 3000, 5000, 10000];
+
+  let foundA = false;
+  let foundB = false;
+
+  for (const fee of feesToTry) {
+    for (const tickSpacing of tickSpacingsToTry) {
+      for (const [token0, token1] of [
+        [USDC, CBBTC],
+        [CBBTC, USDC],
+      ]) {
+        const encoded = ethers.AbiCoder.defaultAbiCoder().encode(
+          ["address", "address", "uint24", "int24", "address"],
+          [token0, token1, fee, tickSpacing, V4_HOOK_ADDRESS]
+        );
+        const poolId = ethers.keccak256(encoded).toLowerCase();
+
+        if (poolId === POOL_ID_A && !foundA) {
+          foundA = true;
+          console.log(`🔵 MATCH FOUND FOR POOL A`);
+          console.log(`→ TickSpacing: ${tickSpacing}`);
+          console.log(`→ Fee: ${fee}`);
+          console.log(`→ token0: ${token0}`);
+          console.log(`→ token1: ${token1}`);
+          console.log(`→ poolId: ${poolId}`);
+          console.log("---------------------------------------------------");
+        }
+
+        if (poolId === POOL_ID_B && !foundB) {
+          foundB = true;
+          console.log(`🟠 MATCH FOUND FOR POOL B`);
+          console.log(`→ TickSpacing: ${tickSpacing}`);
+          console.log(`→ Fee: ${fee}`);
+          console.log(`→ token0: ${token0}`);
+          console.log(`→ token1: ${token1}`);
+          console.log(`→ poolId: ${poolId}`);
+          console.log("---------------------------------------------------");
+        }
+      }
+    }
+  }
+
+  if (!foundA) {
+    console.warn("❌ No match found for POOL A");
+  }
+  if (!foundB) {
+    console.warn("❌ No match found for POOL B");
+  }
+}
+
 async function main() {
-  await testAllPoolKeyPermutations();
+  await bruteForceTickSpacingMatch();
+  //await testAllPoolKeyPermutations();
 
   // const allPools = await testAllPoolKeyPermutations();
 
