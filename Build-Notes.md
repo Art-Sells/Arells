@@ -7,7 +7,6 @@
 ## Test
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
-- Test compare SQRTPrices
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - Import wallet (create import wallet)
 - MASS wallet (create MASS wallet)
@@ -23,6 +22,7 @@
 - - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 - - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
 - Incorporate Sell/Withdraw (look at Arells 1.5)
+- Can only Dcd PK with P (from nv)… Do extensive research on this, see if can cd and dcd from json and without P.
 
 ### Online:
 - Establish background useEffects order
@@ -142,6 +142,7 @@ Arells Wallet and change all Variables
 - Phase 2:
 - - Txns/s need to be in 1000s-10000s per second for meme-coins to benefit (reference HPM Efficiency charts).
 - HPM-Liquidity System (Brainstorm)
+- - Reference V3 (addresses for contract and API info)
 - - Research whether injecting USDC (only) will grow AUM?
 
 

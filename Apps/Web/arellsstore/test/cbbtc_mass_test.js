@@ -566,11 +566,10 @@ dotenv.config();
 
 
 
-
-const TICK_SPACING_VIEW_ADDRESS = "0x1E35C58b1CF4a42Ffc4F8eAebf3F9495c87F2f44";
 const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
 const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
+const TICK_SPACING_VIEW_ADDRESS = "0x1E35C58b1CF4a42Ffc4F8eAebf3F9495c87F2f44";
 const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
 
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
@@ -613,12 +612,17 @@ async function getSlot0FromStateView(poolId) {
 
 async function getTickSpacingFromStateView(token0, token1, fee, hook) {
   const stateView = new ethers.Contract(
-    ethers.getAddress("0x2a0f29cF3dF0Cdb2B5Ec8767C7997A21f267b6fB") // checksummed
+    getAddress("0x2A0F29cF3Df0CdB2b5eC8767C7997A21f267b6Fb"),
     ["function getPoolTickSpacing(address token0, address token1, uint24 fee, address hook) view returns (int24)"],
     provider
   );
 
-  return await stateView.getPoolTickSpacing(token0, token1, fee, hook);
+  return await stateView.getPoolTickSpacing(
+    getAddress(token0),
+    getAddress(token1),
+    fee,
+    getAddress(hook)
+  );
 }
 
 async function getLiquidity(poolId) {
