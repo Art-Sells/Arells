@@ -14,7 +14,8 @@ dotenv.config();
 // // const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
 // // const V3_POOL_ADDRESS = "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef";
 // // const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b"; 
-// // const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
+// // const V4_POOL_A_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
+// // const V4_POOL_B_HOOK_ADDRESS = "0x0000000000000000000000000000000000000000";
 // // const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
 // // const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
 // // const V4_POOL_IDS = [
@@ -22,13 +23,13 @@ dotenv.config();
 // //     label: "V4 A (0.3%)",
 // //     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
 // //     poolAddress: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", // same for now
-// //     hooks: V4_HOOK_ADDRESS,
+// //     hooks: V4_POOL_A_HOOK_ADDRESS,
 // //   },
 // //   {
 // //     label: "V4 B (0.3%)",
 // //     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
 // //     poolAddress: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-// //     hooks: V4_HOOK_ADDRESS,
+// //     hooks: V4_POOL_B_HOOK_ADDRESS,
 // //   },
 // // ];
 
@@ -567,7 +568,8 @@ dotenv.config();
 
 
 const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
-const V4_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
+const V4_POOL_A_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
+const V4_POOL_B_HOOK_ADDRESS = "0x0000000000000000000000000000000000000000";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
 const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
 const TICK_SPACING_VIEW_ADDRESS = "0x1E35C58b1CF4a42Ffc4F8eAebf3F9495c87F2f44";
@@ -582,13 +584,13 @@ const V4_POOL_IDS = [
   {
     label: "V4 A (0.3%)",
     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", 
-    hooks: getAddress(V4_HOOK_ADDRESS), 
+    hooks: getAddress(V4_POOL_A_HOOK_ADDRESS), 
     tickSpacing: 200,
   },
   {
     label: "V4 B (0.3%)",
     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-    hooks: getAddress(V4_HOOK_ADDRESS),
+    hooks: getAddress(V4_POOL_B_HOOK_ADDRESS),
     tickSpacing: 60,
   },
 ];
@@ -684,53 +686,40 @@ async function getPoolKey(poolId) {
 //   console.log("→ decoded amountOut:", amountOut.toString());
 // }
 
-// async function testAllPoolKeyPermutations() {
-//   const poolsWithData = [];
-
-//   for (const pool of V4_POOL_IDS) {
-//     console.log(`\n🧪 Testing Pool: ${pool.label}`);
-//     console.log(`→ poolId: ${pool.poolId}`);
-//     try {
-//       const [sqrtPriceX96] = await getSlot0FromStateView(pool.poolId);
-//       const liquidity = await getLiquidity(pool.poolId);
-//       const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
-//       const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
-
-//       console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
-//       console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
-//       console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
-//       console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
-
-//       const poolKey = await getPoolKey(pool.poolId);
-//       console.log(`✅ Matched Tick Spacing: ${poolKey.tickSpacing}`);
-//       console.log(`🧩 PoolKey:`, poolKey);
-      
-//       poolsWithData.push({ ...pool, price, reserves, sqrtPriceX96, tickSpacing: poolKey.tickSpacing, poolKey });
-//     } catch (err) {
-//       console.log(`❌ Failed to fetch info for poolId: ${pool.poolId}`);
-//       console.error(err.message || err);
-//     }
-//   }
-
-//   return poolsWithData;
-// }
-
-async function getDeployedTickSpacings() {
-  const contract = new ethers.Contract(STATE_VIEW_ADDRESS, tickSpacingInterface, provider);
+async function testAllPoolKeyPermutations() {
+  const poolsWithData = [];
 
   for (const pool of V4_POOL_IDS) {
+    console.log(`\n🧪 Testing Pool: ${pool.label}`);
+    console.log(`→ poolId: ${pool.poolId}`);
     try {
-      const spacing = await contract.getPoolTickSpacing(pool.poolId);
-      console.log(`✅ ${pool.label}: TickSpacing = ${spacing}`);
-    } catch (e) {
-      console.error(`❌ ${pool.label}: Failed to fetch tick spacing`, e.reason || e.message);
+      const [sqrtPriceX96] = await getSlot0FromStateView(pool.poolId);
+      const liquidity = await getLiquidity(pool.poolId);
+      const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+      const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
+
+      console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
+      console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
+      console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
+      console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
+
+      const poolKey = await getPoolKey(pool.poolId);
+      console.log(`✅ Matched Tick Spacing: ${poolKey.tickSpacing}`);
+      console.log(`🧩 PoolKey:`, poolKey);
+      
+      poolsWithData.push({ ...pool, price, reserves, sqrtPriceX96, tickSpacing: poolKey.tickSpacing, poolKey });
+    } catch (err) {
+      console.log(`❌ Failed to fetch info for poolId: ${pool.poolId}`);
+      console.error(err.message || err);
     }
   }
+
+  return poolsWithData;
 }
 
+
 async function main() {
-  await getDeployedTickSpacings(); 
-  //await testAllPoolKeyPermutations();
+  await testAllPoolKeyPermutations();
 
   // const allPools = await testAllPoolKeyPermutations();
 
