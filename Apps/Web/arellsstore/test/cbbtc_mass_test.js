@@ -703,7 +703,13 @@ async function testAllPoolKeyPermutations() {
       console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
       console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
 
-      const poolKey = await getPoolKey(pool.poolId);
+      const poolKey = {
+        currency0: USDC,
+        currency1: CBBTC,
+        fee: 3000,
+        tickSpacing: pool.tickSpacing,
+        hooks: pool.hooks,
+      };
       console.log(`✅ Matched Tick Spacing: ${poolKey.tickSpacing}`);
       console.log(`🧩 PoolKey:`, poolKey);
       
