@@ -600,7 +600,9 @@ const slot0Interface = new ethers.Interface([
 const liquidityInterface = new ethers.Interface([
   "function getLiquidity(bytes32 poolId) view returns (uint128)",
 ]);
-
+const tickInfoInterface = new ethers.Interface([
+  "function getTickInfo(bytes32 poolId, int24 tick) view returns (uint128 liquidityGross, int128 liquidityNet, uint256 feeGrowthOutside0, uint256 feeGrowthOutside1)"
+]);
 async function getSlot0FromStateView(poolId) {
   const data = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
   const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
@@ -611,6 +613,19 @@ async function getLiquidity(poolId) {
   const data = liquidityInterface.encodeFunctionData("getLiquidity", [poolId]);
   const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
   return liquidityInterface.decodeFunctionResult("getLiquidity", result)[0];
+}
+
+async function getTickInfo(poolId, tick) {
+  const data = tickInfoInterface.encodeFunctionData("getTickInfo", [poolId, tick]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
+  const decoded = tickInfoInterface.decodeFunctionResult("getTickInfo", result);
+
+  return {
+    liquidityGross: decoded[0],
+    liquidityNet: decoded[1],
+    feeGrowthOutside0: decoded[2],
+    feeGrowthOutside1: decoded[3],
+  };
 }
 
 function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
@@ -629,21 +644,6 @@ function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
   };
 }
 
-const tickSpacingInterface = new ethers.Interface([
-  "function getPoolTickSpacing((address currency0, address currency1, uint24 fee, address hooks)) view returns (int24)"
-]);
-
-async function getTickSpacingFromPoolKey(poolKey) {
-  const data = tickSpacingInterface.encodeFunctionData("getPoolTickSpacing", [[
-    poolKey.currency0,
-    poolKey.currency1,
-    poolKey.fee,
-    poolKey.hooks,
-  ]]); // ← fixed: wrap the struct in an array
-
-  const result = await provider.call({ to: V4_POOL_MANAGER, data });
-  return tickSpacingInterface.decodeFunctionResult("getPoolTickSpacing", result)[0];
-}
 
 async function testAllPoolKeyPermutations() {
   const poolsWithData = [];
@@ -652,17 +652,17 @@ async function testAllPoolKeyPermutations() {
     console.log(`\n🧪 Testing Pool: ${pool.label}`);
     console.log(`→ poolId: ${pool.poolId}`);
     try {
-      const [sqrtPriceX96] = await getSlot0FromStateView(pool.poolId);
+      const [sqrtPriceX96, currentTick] = await getSlot0FromStateView(pool.poolId);
       const liquidity = await getLiquidity(pool.poolId);
     
-      const partialPoolKey = {
+      const poolKey = {
         currency0: CBBTC,
         currency1: USDC,
-        fee: 300,
+        fee: 3000,
         hooks: pool.hooks,
+        tickSpacing: pool.tickSpacing,
       };
-      
-      const realTickSpacing = await getTickSpacingFromPoolKey(partialPoolKey);
+
       const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
       const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
     
@@ -670,14 +670,22 @@ async function testAllPoolKeyPermutations() {
       console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
       console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
       console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
-      console.log(`🎯 Actual Tick Spacing from PoolManager: ${realTickSpacing}`);
+      console.log(`🎯 Using Hardcoded Tick Spacing: ${pool.tickSpacing}`);
+      console.log(`📊 Checking ticks near ${currentTick}:`);
+
+      for (let t = currentTick - 3 * pool.tickSpacing; t <= currentTick + 3 * pool.tickSpacing; t += pool.tickSpacing) {
+        const tickInfo = await getTickInfo(pool.poolId, t);
+        if (tickInfo.liquidityGross > 0n) {
+          console.log(`🔹 Tick ${t}: liquidityGross=${tickInfo.liquidityGross}, liquidityNet=${tickInfo.liquidityNet}`);
+        }
+      }
     
       poolsWithData.push({
         ...pool,
         price,
         reserves,
         sqrtPriceX96,
-        tickSpacing: Number(realTickSpacing),
+        tickSpacing: pool.tickSpacing,
         poolKey,
       });
     } catch (err) {
