@@ -634,7 +634,13 @@ const tickSpacingInterface = new ethers.Interface([
 ]);
 
 async function getTickSpacingFromPoolKey(poolKey) {
-  const data = tickSpacingInterface.encodeFunctionData("getPoolTickSpacing", [poolKey]);
+  const data = tickSpacingInterface.encodeFunctionData("getPoolTickSpacing", [[
+    poolKey.currency0,
+    poolKey.currency1,
+    poolKey.fee,
+    poolKey.hooks,
+  ]]); // ← fixed: wrap the struct in an array
+
   const result = await provider.call({ to: V4_POOL_MANAGER, data });
   return tickSpacingInterface.decodeFunctionResult("getPoolTickSpacing", result)[0];
 }
@@ -650,9 +656,9 @@ async function testAllPoolKeyPermutations() {
       const liquidity = await getLiquidity(pool.poolId);
     
       const partialPoolKey = {
-        currency0: USDC,
-        currency1: CBBTC,
-        fee: 3000,
+        currency0: CBBTC,
+        currency1: USDC,
+        fee: 300,
         hooks: pool.hooks,
       };
       
