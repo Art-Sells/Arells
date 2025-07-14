@@ -584,12 +584,14 @@ const V4_POOL_IDS = [
     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", 
     hooks: getAddress(V4_POOL_A_HOOK_ADDRESS), 
     tickSpacing: 200,
+    fee: 3000,
   },
   {
     label: "V4 B (0.3%)",
     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
     hooks: getAddress(V4_POOL_B_HOOK_ADDRESS),
     tickSpacing: 60,
+    fee: 3000,
   },
 ];
 
@@ -674,7 +676,7 @@ async function testAllPoolKeyPermutations() {
       console.log(`🎯 Using Hardcoded Tick Spacing: ${pool.tickSpacing}`);
       console.log(`📊 Checking ticks near ${currentTick}:`);
 
-      for (let t = currentTick - 3 * pool.tickSpacing; t <= currentTick + 3 * pool.tickSpacing; t += pool.tickSpacing) {
+      for (let t = currentTick - 0 * pool.tickSpacing; t <= currentTick + 0 * pool.tickSpacing; t += pool.tickSpacing) {
         const tickInfo = await getTickInfo(pool.poolId, t);
         const gross = BigInt(tickInfo.liquidityGross.toString());
         const net = BigInt(tickInfo.liquidityNet.toString());
@@ -698,25 +700,53 @@ async function testAllPoolKeyPermutations() {
   return poolsWithData;
 }
 
+
 async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
+  // 🔹 Log CBBTC Balance
+  const erc20ABI = [
+    "function balanceOf(address owner) view returns (uint256)",
+    "function decimals() view returns (uint8)"
+  ];
+  const cbBtcContract = new ethers.Contract(CBBTC, erc20ABI, provider);
+  const balance = await cbBtcContract.balanceOf(userWallet.address);
+  const formattedBalance = ethers.formatUnits(balance, 8);
+  console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
+
+  // 🧮 Prepare Swap Params
   const zeroForOne = true; // cbBTC → USDC
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-  const encodedKey = abiCoder.encode(
-    ["address", "address", "uint24", "int24", "address"],
-    [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks]
-  );
-
-  const hookData = abiCoder.encode(["bytes"], ["0x"]);
+  const hookData = "0x";
   const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
 
   const encodedSwapParams = abiCoder.encode(
-    ["bytes", "address", "bool", "int256", "uint160", "bytes"],
-    [encodedKey, ethers.ZeroAddress, zeroForOne, signedAmountIn, sqrtPriceLimitX96, hookData]
+    [
+      "tuple(address currency0, address currency1, uint24 fee, address hooks, int24 tickSpacing)",
+      "address",
+      "bool",
+      "int256",
+      "uint160",
+      "bytes",
+    ],
+    [
+      [
+        poolKey.currency0,
+        poolKey.currency1,
+        poolKey.fee,
+        poolKey.hooks,
+        poolKey.tickSpacing,
+      ],
+      ethers.ZeroAddress,
+      zeroForOne,
+      signedAmountIn,
+      sqrtPriceLimitX96,
+      hookData,
+    ]
   );
 
+  // 🔍 Simulate Swap
   const quoter = new ethers.Contract(
     V4_QUOTER_ADDRESS,
     ["function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"],
@@ -737,11 +767,11 @@ async function main() {
     const poolKey = {
       currency0: CBBTC,
       currency1: USDC,
-      fee: 3000,
+      fee: pool.fee,
       tickSpacing: pool.tickSpacing,
       hooks: pool.hooks,
     };
-
+  
     console.log(`\n🧪 Simulating Quote for ${pool.label}`);
     await simulateWithV4Quoter(poolKey, amountInCBBTC);
   }
