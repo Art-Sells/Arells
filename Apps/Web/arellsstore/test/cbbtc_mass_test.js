@@ -690,13 +690,21 @@ async function testAllPoolKeyPermutations() {
         if (initializedTicks.length > 0) {
           console.log(`🧠 Tick Bitmap [wordPosition=${wp}]: ${binary}`);
           console.log(`🧵 Initialized Ticks in wordPosition ${wp}:`, initializedTicks);
+          let nonZeroLiquidityTicks = 0;
+
           for (const t of initializedTicks) {
             const tickInfo = await getTickInfo(pool.poolId, t);
             const gross = BigInt(tickInfo.liquidityGross.toString());
             const net = BigInt(tickInfo.liquidityNet.toString());
+          
             if (gross > 0n || net !== 0n) {
+              nonZeroLiquidityTicks++;
               console.log(`🔹 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
             }
+          }
+          
+          if (nonZeroLiquidityTicks === 0) {
+            console.log(`⚠️ All initialized ticks in wordPosition ${wp} have zero liquidity — skipping logs.`);
           }
         }
       }
