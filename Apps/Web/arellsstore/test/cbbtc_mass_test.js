@@ -681,9 +681,25 @@ async function testAllPoolKeyPermutations() {
       console.log(`🧮 Current Tick: ${currentTick}`);
 
       const wordPosition = Math.floor(currentTick / pool.tickSpacing / 256);
-      const bitmap = await getTickBitmap(pool.poolId, wordPosition);
-      console.log(`🧠 Tick Bitmap [wordPosition=${wordPosition}]: ${bitmap.toString(2).padStart(256, "0")}`);
-
+      console.log(`🔍 Scanning Tick Bitmaps from wordPosition ${wordPosition - 10} to ${wordPosition + 10}:`);
+      
+      for (let wp = wordPosition - 10; wp <= wordPosition + 10; wp++) {
+        const bitmap = await getTickBitmap(pool.poolId, wp);
+        const binary = bitmap.toString(2).padStart(256, "0");
+        const initializedTicks = getInitializedTicksFromBitmap(bitmap, wp, pool.tickSpacing);
+        if (initializedTicks.length > 0) {
+          console.log(`🧠 Tick Bitmap [wordPosition=${wp}]: ${binary}`);
+          console.log(`🧵 Initialized Ticks in wordPosition ${wp}:`, initializedTicks);
+          for (const t of initializedTicks) {
+            const tickInfo = await getTickInfo(pool.poolId, t);
+            const gross = BigInt(tickInfo.liquidityGross.toString());
+            const net = BigInt(tickInfo.liquidityNet.toString());
+            if (gross > 0n || net !== 0n) {
+              console.log(`🔹 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
+            }
+          }
+        }
+      }
       const liquidity = await getLiquidity(pool.poolId);
     
       const poolKey = {
@@ -706,24 +722,6 @@ async function testAllPoolKeyPermutations() {
 
       console.log(`✅ Matched Tick Spacing: ${poolKey.tickSpacing}`);
       console.log(`🧩 PoolKey:`, poolKey);
-
-      console.log(`📊 Checking ticks near ${currentTick}:`);
-
-      for (let wp = wordPosition - 3; wp <= wordPosition + 3; wp++) {
-        const bitmap = await getTickBitmap(pool.poolId, wp);
-        const initializedTicks = getInitializedTicksFromBitmap(bitmap, wp, pool.tickSpacing);
-        if (initializedTicks.length > 0) {
-          console.log(`🧵 Initialized Ticks in wordPosition ${wp}:`, initializedTicks);
-          for (const t of initializedTicks) {
-            const tickInfo = await getTickInfo(pool.poolId, t);
-            const gross = BigInt(tickInfo.liquidityGross.toString());
-            const net = BigInt(tickInfo.liquidityNet.toString());
-            if (gross > 0n || net !== 0n) {
-              console.log(`🔹 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
-            }
-          }
-        }
-      }
     
       poolsWithData.push({
         ...pool,

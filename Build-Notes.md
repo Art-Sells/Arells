@@ -6,6 +6,8 @@
 
 ## Test
 
+- Test (increase initialized Ticks in wordPosition to find fee free route)
+
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - Import wallet (create import wallet)
