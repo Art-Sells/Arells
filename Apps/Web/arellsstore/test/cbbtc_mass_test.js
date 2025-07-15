@@ -709,16 +709,19 @@ async function testAllPoolKeyPermutations() {
 
       console.log(`📊 Checking ticks near ${currentTick}:`);
 
-      const initializedTicks = getInitializedTicksFromBitmap(bitmap, wordPosition, pool.tickSpacing);
-      console.log(`🧵 Initialized Ticks in wordPosition ${wordPosition}:`, initializedTicks);
-      
-      for (const t of initializedTicks) {
-        const tickInfo = await getTickInfo(pool.poolId, t);
-        const gross = BigInt(tickInfo.liquidityGross.toString());
-        const net = BigInt(tickInfo.liquidityNet.toString());
-      
-        if (gross > 0n || net !== 0n) {
-          console.log(`🔹 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
+      for (let wp = wordPosition - 3; wp <= wordPosition + 3; wp++) {
+        const bitmap = await getTickBitmap(pool.poolId, wp);
+        const initializedTicks = getInitializedTicksFromBitmap(bitmap, wp, pool.tickSpacing);
+        if (initializedTicks.length > 0) {
+          console.log(`🧵 Initialized Ticks in wordPosition ${wp}:`, initializedTicks);
+          for (const t of initializedTicks) {
+            const tickInfo = await getTickInfo(pool.poolId, t);
+            const gross = BigInt(tickInfo.liquidityGross.toString());
+            const net = BigInt(tickInfo.liquidityNet.toString());
+            if (gross > 0n || net !== 0n) {
+              console.log(`🔹 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
+            }
+          }
         }
       }
     
