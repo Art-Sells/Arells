@@ -590,7 +590,7 @@ const V4_POOL_IDS = [
     label: "V4 B (0.3%)",
     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
     hooks: getAddress(V4_POOL_B_HOOK_ADDRESS),
-    tickSpacing: 60,
+    tickSpacing: 200,
     fee: 3000,
   },
 ];
@@ -674,13 +674,27 @@ async function testAllPoolKeyPermutations() {
       console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
       console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
       console.log(`🎯 Using Hardcoded Tick Spacing: ${pool.tickSpacing}`);
+
+
+      console.log(`✅ Matched Tick Spacing: ${poolKey.tickSpacing}`);
+      console.log(`🧩 PoolKey:`, poolKey);
+
       console.log(`📊 Checking ticks near ${currentTick}:`);
 
-      for (let t = currentTick - 0 * pool.tickSpacing; t <= currentTick + 0 * pool.tickSpacing; t += pool.tickSpacing) {
+      const scanRange = 50; // scan 10 ticks above and below
+      for (
+        let t = currentTick - scanRange * pool.tickSpacing;
+        t <= currentTick + scanRange * pool.tickSpacing;
+        t += pool.tickSpacing
+      ) {
         const tickInfo = await getTickInfo(pool.poolId, t);
         const gross = BigInt(tickInfo.liquidityGross.toString());
         const net = BigInt(tickInfo.liquidityNet.toString());
-        console.log(`🔸 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
+      
+        // Only log non-zero liquidity
+        if (gross > 0n || net !== 0n) {
+          console.log(`🔹 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
+        }
       }
     
       poolsWithData.push({
@@ -761,25 +775,23 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
 
 async function main() {
   await testAllPoolKeyPermutations();
-  const amountInCBBTC = ethers.parseUnits("0.000023", 8);
+  // const amountInCBBTC = ethers.parseUnits("0.000023", 8);
 
-  for (const pool of V4_POOL_IDS) {
-    const poolKey = {
-      currency0: CBBTC,
-      currency1: USDC,
-      fee: pool.fee,
-      tickSpacing: pool.tickSpacing,
-      hooks: pool.hooks,
-    };
+  // for (const pool of V4_POOL_IDS) {
+  //   const poolKey = {
+  //     currency0: CBBTC,
+  //     currency1: USDC,
+  //     fee: pool.fee,
+  //     tickSpacing: pool.tickSpacing,
+  //     hooks: pool.hooks,
+  //   };
   
-    console.log(`\n🧪 Simulating Quote for ${pool.label}`);
-    await simulateWithV4Quoter(poolKey, amountInCBBTC);
-  }
+  //   console.log(`\n🧪 Simulating Quote for ${pool.label}`);
+  //   await simulateWithV4Quoter(poolKey, amountInCBBTC);
+  // }
 }
 
 main().catch(console.error);
-
-
 
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
