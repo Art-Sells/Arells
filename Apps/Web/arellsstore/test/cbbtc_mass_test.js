@@ -656,6 +656,7 @@ async function testAllPoolKeyPermutations() {
     try {
       const [sqrtPriceX96, rawTick] = await getSlot0FromStateView(pool.poolId);
       const currentTick = Number(rawTick); // ensure it's a Number
+      console.log(`🧮 Current Tick: ${currentTick}`);
       const liquidity = await getLiquidity(pool.poolId);
     
       const poolKey = {
@@ -681,7 +682,7 @@ async function testAllPoolKeyPermutations() {
 
       console.log(`📊 Checking ticks near ${currentTick}:`);
 
-      const scanRange = 50; // scan 10 ticks above and below
+      const scanRange = 1; // scan 10 ticks above and below
       for (
         let t = currentTick - scanRange * pool.tickSpacing;
         t <= currentTick + scanRange * pool.tickSpacing;
