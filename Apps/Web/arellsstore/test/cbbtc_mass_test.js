@@ -605,6 +605,15 @@ const liquidityInterface = new ethers.Interface([
 const tickInfoInterface = new ethers.Interface([
   "function getTickInfo(bytes32 poolId, int24 tick) view returns (uint128 liquidityGross, int128 liquidityNet, uint256 feeGrowthOutside0, uint256 feeGrowthOutside1)"
 ]);
+const tickBitmapInterface = new ethers.Interface([
+  "function getTickBitmap(bytes32 poolId, int16 wordPosition) view returns (uint256)"
+]);
+
+async function getTickBitmap(poolId, wordPosition) {
+  const data = tickBitmapInterface.encodeFunctionData("getTickBitmap", [poolId, wordPosition]);
+  const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
+  return tickBitmapInterface.decodeFunctionResult("getTickBitmap", result)[0];
+}
 async function getSlot0FromStateView(poolId) {
   const data = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
   const result = await provider.call({ to: STATE_VIEW_ADDRESS, data });
@@ -646,6 +655,18 @@ function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
   };
 }
 
+function getInitializedTicksFromBitmap(bitmap, wordPosition, tickSpacing) {
+  const ticks = [];
+  const binary = bitmap.toString(2).padStart(256, "0");
+
+  for (let i = 0; i < 256; i++) {
+    if (binary[255 - i] === "1") { // reverse bit order
+      const tick = (wordPosition * 256 + i) * tickSpacing;
+      ticks.push(tick);
+    }
+  }
+  return ticks;
+}
 
 async function testAllPoolKeyPermutations() {
   const poolsWithData = [];
@@ -655,8 +676,14 @@ async function testAllPoolKeyPermutations() {
     console.log(`→ poolId: ${pool.poolId}`);
     try {
       const [sqrtPriceX96, rawTick] = await getSlot0FromStateView(pool.poolId);
+
       const currentTick = Number(rawTick); // ensure it's a Number
       console.log(`🧮 Current Tick: ${currentTick}`);
+
+      const wordPosition = Math.floor(currentTick / pool.tickSpacing / 256);
+      const bitmap = await getTickBitmap(pool.poolId, wordPosition);
+      console.log(`🧠 Tick Bitmap [wordPosition=${wordPosition}]: ${bitmap.toString(2).padStart(256, "0")}`);
+
       const liquidity = await getLiquidity(pool.poolId);
     
       const poolKey = {
@@ -682,17 +709,14 @@ async function testAllPoolKeyPermutations() {
 
       console.log(`📊 Checking ticks near ${currentTick}:`);
 
-      const scanRange = 1; // scan 10 ticks above and below
-      for (
-        let t = currentTick - scanRange * pool.tickSpacing;
-        t <= currentTick + scanRange * pool.tickSpacing;
-        t += pool.tickSpacing
-      ) {
+      const initializedTicks = getInitializedTicksFromBitmap(bitmap, wordPosition, pool.tickSpacing);
+      console.log(`🧵 Initialized Ticks in wordPosition ${wordPosition}:`, initializedTicks);
+      
+      for (const t of initializedTicks) {
         const tickInfo = await getTickInfo(pool.poolId, t);
         const gross = BigInt(tickInfo.liquidityGross.toString());
         const net = BigInt(tickInfo.liquidityNet.toString());
       
-        // Only log non-zero liquidity
         if (gross > 0n || net !== 0n) {
           console.log(`🔹 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
         }
