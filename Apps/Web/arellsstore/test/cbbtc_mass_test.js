@@ -807,6 +807,7 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
 }
 
 
+
 async function main() {
   await testAllPoolKeyPermutations();
   // const amountInCBBTC = ethers.parseUnits("0.000023", 8);
