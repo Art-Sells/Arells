@@ -747,6 +747,72 @@ async function testAllPoolKeyPermutations() {
   return poolsWithData;
 }
 
+const vaultInterface = new ethers.Interface([
+  "function getVaultAddress(bytes32 poolId) view returns (address)"
+]);
+
+const erc20ABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function decimals() view returns (uint8)"
+];
+
+async function confirmFullRangeLiquidity(poolId) {
+  const MIN_TICK = -887272;
+  const MAX_TICK = 887272;
+  const ticksToTest = [MIN_TICK, 0, MAX_TICK];
+
+  const vaultInterface = new ethers.Interface([
+    "function getVaultAddress(bytes32 poolId) view returns (address)"
+  ]);
+  const erc20ABI = [
+    "function balanceOf(address owner) view returns (uint256)",
+    "function decimals() view returns (uint8)"
+  ];
+
+  console.log(`\n🔎 Confirming full-range liquidity for poolId: ${poolId}`);
+
+  for (const tick of ticksToTest) {
+    const { liquidityGross, liquidityNet } = await getTickInfo(poolId, tick);
+    console.log(`Tick ${tick}: liquidityGross = ${liquidityGross}, liquidityNet = ${liquidityNet}`);
+  }
+
+  const liquidity = await getLiquidity(poolId);
+  console.log(`\n📦 Total Pool Liquidity: ${liquidity}`);
+
+  const vaultData = vaultInterface.encodeFunctionData("getVaultAddress", [poolId]);
+  const vaultResult = await provider.call({ to: V4_POOL_MANAGER, data: vaultData });
+  const vaultAddress = vaultInterface.decodeFunctionResult("getVaultAddress", vaultResult)[0];
+  console.log(`\n🏛 Vault Address: ${vaultAddress}`);
+
+  const cbBTCcontract = new ethers.Contract(CBBTC, erc20ABI, provider);
+  const usdcContract = new ethers.Contract(USDC, erc20ABI, provider);
+
+  const cbbtcBal = await cbBTCcontract.balanceOf(vaultAddress);
+  const usdcBal = await usdcContract.balanceOf(vaultAddress);
+
+  console.log(`💰 cbBTC Vault Balance: ${ethers.formatUnits(cbbtcBal, 8)} cbBTC`);
+  console.log(`💰 USDC Vault Balance: ${ethers.formatUnits(usdcBal, 6)} USDC`);
+
+  const isTickless = await Promise.all(
+    ticksToTest.map(async tick => {
+      const { liquidityGross, liquidityNet } = await getTickInfo(poolId, tick);
+      return liquidityGross === 0n && liquidityNet === 0n;
+    })
+  );
+
+  const result = {
+    tickless: isTickless.every(Boolean),
+    hasLiquidity: liquidity > 0n,
+    vaultBalances: {
+      cbBTC: ethers.formatUnits(cbbtcBal, 8),
+      USDC: ethers.formatUnits(usdcBal, 6),
+    },
+  };
+
+  console.log(`\n✅ Full-range liquidity confirmed: ${result.tickless && result.hasLiquidity ? "YES" : "NO"}`);
+  return result;
+}
+
 
 async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
@@ -808,7 +874,8 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
 
 
 async function main() {
-  await testAllPoolKeyPermutations();
+  await confirmFullRangeLiquidity("0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5");
+  // await testAllPoolKeyPermutations();
   // const amountInCBBTC = ethers.parseUnits("0.000023", 8);
 
   // for (const pool of V4_POOL_IDS) {
