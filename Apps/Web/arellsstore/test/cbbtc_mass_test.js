@@ -579,13 +579,13 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 
 const V4_POOL_IDS = [
-  {
-    label: "V4 A (0.3%)",
-    poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", 
-    hooks: getAddress(V4_POOL_A_HOOK_ADDRESS), 
-    tickSpacing: 200,
-    fee: 3000,
-  },
+  // {
+  //   label: "V4 A (0.3%)",
+  //   poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", 
+  //   hooks: getAddress(V4_POOL_A_HOOK_ADDRESS), 
+  //   tickSpacing: 200,
+  //   fee: 3000,
+  // },
   {
     label: "V4 B (0.3%)",
     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
@@ -681,10 +681,11 @@ async function testAllPoolKeyPermutations() {
       console.log(`🧮 Current Tick: ${currentTick}`);
 
       const wordPosition = Math.floor(currentTick / pool.tickSpacing / 256);
-      console.log(`🔍 Scanning Tick Bitmaps from wordPosition ${wordPosition - 10} to ${wordPosition + 10}:`);
+      console.log(`🔍 Scanning Tick Bitmaps from wordPosition ${wordPosition - 100} to ${wordPosition + 100}:`);
       
-      for (let wp = wordPosition - 10; wp <= wordPosition + 10; wp++) {
+      for (let wp = wordPosition - 100; wp <= wordPosition + 100; wp++) {
         const bitmap = await getTickBitmap(pool.poolId, wp);
+        if (bitmap === 0n) continue;
         const binary = bitmap.toString(2).padStart(256, "0");
         const initializedTicks = getInitializedTicksFromBitmap(bitmap, wp, pool.tickSpacing);
         if (initializedTicks.length > 0) {
@@ -696,9 +697,7 @@ async function testAllPoolKeyPermutations() {
             const tickInfo = await getTickInfo(pool.poolId, t);
             const gross = BigInt(tickInfo.liquidityGross.toString());
             const net = BigInt(tickInfo.liquidityNet.toString());
-          
             if (gross > 0n || net !== 0n) {
-              nonZeroLiquidityTicks++;
               console.log(`🔹 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
             }
           }
@@ -831,7 +830,9 @@ main().catch(console.error);
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
 
-// The v4 quote() function doesn’t take poolId as input.
+// The v4 quote() function doesn’t take poolId as input
+// if above fails, 
+// look for other public quote functions with external from quoter
 
 // It takes:
 // 	•	A poolKey (token0, token1, fee, tickSpacing, hook)
