@@ -674,6 +674,12 @@ async function testAllPoolKeyPermutations() {
   for (const pool of V4_POOL_IDS) {
     console.log(`\n🧪 Testing Pool: ${pool.label}`);
     console.log(`→ poolId: ${pool.poolId}`);
+
+    if (pool.hooks === "0x0000000000000000000000000000000000000000") {
+      console.log(`⚠️ Pool ${pool.label} has no hook (hook = 0x0). Tick liquidity tracking may be disabled or delayed.`);
+    } else {
+      console.log(`✅ Pool ${pool.label} has hook enabled: ${pool.hooks}`);
+    }
     try {
       const [sqrtPriceX96, rawTick] = await getSlot0FromStateView(pool.poolId);
 
@@ -699,6 +705,7 @@ async function testAllPoolKeyPermutations() {
             const net = BigInt(tickInfo.liquidityNet.toString());
             if (gross > 0n || net !== 0n) {
               console.log(`🔹 Tick ${t}: liquidityGross=${gross}, liquidityNet=${net}`);
+              nonZeroLiquidityTicks++;
             }
           }
           
@@ -708,6 +715,7 @@ async function testAllPoolKeyPermutations() {
         }
       }
       const liquidity = await getLiquidity(pool.poolId);
+      console.log(`🧪 Pool Liquidity (getLiquidity): ${liquidity}`); 
     
       const poolKey = {
         currency0: CBBTC,
