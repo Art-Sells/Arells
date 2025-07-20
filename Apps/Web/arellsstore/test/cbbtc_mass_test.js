@@ -814,21 +814,25 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
 
 
 async function main() {
-  await testAllPoolKeyPermutations();
-  // const amountInCBBTC = ethers.parseUnits("0.000023", 8);
+  //await testAllPoolKeyPermutations();
+  const amountInCBBTC = ethers.parseUnits("0.000023", 8);
 
-  // for (const pool of V4_POOL_IDS) {
-  //   const poolKey = {
-  //     currency0: CBBTC,
-  //     currency1: USDC,
-  //     fee: pool.fee,
-  //     tickSpacing: pool.tickSpacing,
-  //     hooks: pool.hooks,
-  //   };
+  for (const pool of V4_POOL_IDS) {
+    const poolKey = {
+      currency0: CBBTC,
+      currency1: USDC,
+      fee: pool.fee,
+      tickSpacing: pool.tickSpacing,
+      hooks: pool.hooks,
+    };
   
-  //   console.log(`\n🧪 Simulating Quote for ${pool.label}`);
-  //   await simulateWithV4Quoter(poolKey, amountInCBBTC);
-  // }
+    const liquidity = await getLiquidity(pool.poolId);
+    if (liquidity === 0n) {
+      console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
+    } else {
+      await simulateWithV4Quoter(poolKey, amountInCBBTC);
+    }
+  }
 }
 
 main().catch(console.error);
