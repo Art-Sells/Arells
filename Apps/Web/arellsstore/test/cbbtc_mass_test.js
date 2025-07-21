@@ -1,4 +1,11 @@
-import { ethers, toBeHex, zeroPadValue } from "ethers"; 
+
+import { 
+  ethers, 
+  keccak256, 
+  getAddress, 
+  toBeHex,
+  hexConcat, zeroPadValue, 
+  toBeHex } from "ethers";
 import dotenv from "dotenv";
 import axios from "axios";
 import { TickMath } from "@uniswap/v3-sdk";
@@ -755,6 +762,17 @@ async function testAllPoolKeyPermutations() {
   return poolsWithData;
 }
 
+
+function computeV4PoolId(currency0, currency1, fee, hooks) {
+  const packed = hexConcat([
+    zeroPadValue(currency0, 20),
+    zeroPadValue(currency1, 20),
+    zeroPadValue(toBeHex(fee, 3), 3),
+    zeroPadValue(hooks, 20),
+  ]);
+  return keccak256(packed);
+}
+
 async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
@@ -814,25 +832,36 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
 
 
 async function main() {
-  //await testAllPoolKeyPermutations();
-  const amountInCBBTC = ethers.parseUnits("0.000023", 8);
+  const token0 = getAddress(CBBTC);
+const token1 = getAddress(USDC);
+const fee = 500;
+const hooks = getAddress(V4_POOL_A_HOOK_ADDRESS);
 
-  for (const pool of V4_POOL_IDS) {
-    const poolKey = {
-      currency0: CBBTC,
-      currency1: USDC,
-      fee: pool.fee,
-      tickSpacing: pool.tickSpacing,
-      hooks: pool.hooks,
-    };
+const [currency0, currency1] = token0.toLowerCase() < token1.toLowerCase()
+  ? [token0, token1]
+  : [token1, token0];
+
+const poolId = computeV4PoolId(currency0, currency1, fee, hooks);
+console.log(`🔍 Computed V4 Pool ID (fee = ${fee}): ${poolId}`);
+  //await testAllPoolKeyPermutations();
+  // const amountInCBBTC = ethers.parseUnits("0.000023", 8);
+
+  // for (const pool of V4_POOL_IDS) {
+  //   const poolKey = {
+  //     currency0: CBBTC,
+  //     currency1: USDC,
+  //     fee: pool.fee,
+  //     tickSpacing: pool.tickSpacing,
+  //     hooks: pool.hooks,
+  //   };
   
-    const liquidity = await getLiquidity(pool.poolId);
-    if (liquidity === 0n) {
-      console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
-    } else {
-      await simulateWithV4Quoter(poolKey, amountInCBBTC);
-    }
-  }
+  //   const liquidity = await getLiquidity(pool.poolId);
+  //   if (liquidity === 0n) {
+  //     console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
+  //   } else {
+  //     await simulateWithV4Quoter(poolKey, amountInCBBTC);
+  //   }
+  // }
 }
 
 main().catch(console.error);

@@ -6,8 +6,8 @@
 
 ## Test
 
+- find "500" v4 cbbtc/usdc pool (look at UI)
 - Test (increase initialized Ticks in wordPosition to find fee free route)
-- Test pool B simulateWithQuote first since it doesn't have a hook address to get ticks from pool liquidity
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
