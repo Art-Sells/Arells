@@ -764,15 +764,58 @@ async function testAllPoolKeyPermutations() {
 
 
 function computeV4PoolId(currency0, currency1, fee, hooks) {
-  const packed = hexConcat([
-    zeroPadValue(currency0, 20),
-    zeroPadValue(currency1, 20),
-    zeroPadValue(toBeHex(fee, 3), 3),
-    zeroPadValue(hooks, 20),
-  ]);
+  const paddedCurrency0 = zeroPadValue(currency0, 20); // 20 bytes = 40 hex chars
+  const paddedCurrency1 = zeroPadValue(currency1, 20);
+  const paddedFee = zeroPadValue(toBeHex(fee, 3), 3);  // 3 bytes = 6 hex chars
+  const paddedHooks = zeroPadValue(hooks, 20);
+
+  // Manually concatenate hex strings (remove leading "0x", then prefix final result)
+  const packed = "0x" +
+    paddedCurrency0.slice(2) +
+    paddedCurrency1.slice(2) +
+    paddedFee.slice(2) +
+    paddedHooks.slice(2);
+
   return keccak256(packed);
 }
+async function scanForLiquidityOnFee500Pools() {
+  const token0 = getAddress(CBBTC);
+  const token1 = getAddress(USDC);
+  const fee = 500;
+  const hookAddresses = [V4_POOL_A_HOOK_ADDRESS, V4_POOL_B_HOOK_ADDRESS];
 
+  for (const hook of hookAddresses) {
+    const hooks = getAddress(hook);
+    const [currency0, currency1] =
+      token0.toLowerCase() < token1.toLowerCase()
+        ? [token0, token1]
+        : [token1, token0];
+
+    const poolId = computeV4PoolId(currency0, currency1, fee, hooks);
+    console.log(`🔍 Checking Pool ID (fee = ${fee}, hook = ${hooks}): ${poolId}`);
+
+    try {
+      const [sqrtPriceX96] = await getSlot0FromStateView(poolId);
+      const liquidity = await getLiquidity(poolId);
+
+      if (liquidity === 0n) {
+        console.log(`🚫 No liquidity found for pool: ${poolId}`);
+      } else {
+        const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+        const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
+
+        console.log(`✅ Pool with liquidity found!`);
+        console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
+        console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
+        console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
+        console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
+      }
+    } catch (e) {
+      console.log(`❌ Failed to fetch data for poolId: ${poolId}`);
+      console.error(e.message || e);
+    }
+  }
+}
 async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
@@ -832,17 +875,8 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
 
 
 async function main() {
-  const token0 = getAddress(CBBTC);
-const token1 = getAddress(USDC);
-const fee = 500;
-const hooks = getAddress(V4_POOL_A_HOOK_ADDRESS);
-
-const [currency0, currency1] = token0.toLowerCase() < token1.toLowerCase()
-  ? [token0, token1]
-  : [token1, token0];
-
-const poolId = computeV4PoolId(currency0, currency1, fee, hooks);
-console.log(`🔍 Computed V4 Pool ID (fee = ${fee}): ${poolId}`);
+  await scanForLiquidityOnFee500Pools();
+ 
   //await testAllPoolKeyPermutations();
   // const amountInCBBTC = ethers.parseUnits("0.000023", 8);
 
