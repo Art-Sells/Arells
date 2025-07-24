@@ -589,7 +589,7 @@ const V4_POOL_IDS = [
   {
     label: "V4 A (0.3%)",
     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", 
-    hooks: getAddress(V4_POOL_A_HOOK_ADDRESS), 
+    hooks: "0x5cd525c621afca515bf58631d4733fba7b72aae4",
     tickSpacing: 200,
     fee: 3000,
   },
@@ -608,6 +608,21 @@ const tickInfoInterface = new ethers.Interface([
 const tickBitmapInterface = new ethers.Interface([
   "function getTickBitmap(bytes32 poolId, int16 wordPosition) view returns (uint256)"
 ]);
+
+function computePoolId(poolKey) {
+  const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+  const encodedKey = abiCoder.encode(
+    ["address", "address", "uint24", "int24", "address"],
+    [
+      poolKey.currency0,
+      poolKey.currency1,
+      poolKey.fee,
+      poolKey.tickSpacing,
+      poolKey.hooks,
+    ]
+  );
+  return ethers.keccak256(encodedKey);
+}
 
 async function getTickBitmap(poolId, wordPosition) {
   const data = tickBitmapInterface.encodeFunctionData("getTickBitmap", [poolId, wordPosition]);
@@ -759,7 +774,7 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
-  // 🔹 Log CBBTC Balance
+  // Check token balances
   const erc20ABI = [
     "function balanceOf(address owner) view returns (uint256)",
     "function decimals() view returns (uint8)"
@@ -769,12 +784,13 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
   const formattedBalance = ethers.formatUnits(balance, 8);
   console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
 
-  // 🧮 Prepare Swap Params
-  const zeroForOne = true; // cbBTC → USDC
+  // Use callStatic.quote to avoid revert throwing tx
+  const zeroForOne = true; // CBBTC → USDC
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
   const hookData = "0x";
   const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
 
+  // Encode input for the v4 quote() function
   const encodedSwapParams = abiCoder.encode(
     [
       "tuple(address currency0, address currency1, uint24 fee, address hooks, int24 tickSpacing)",
@@ -792,7 +808,7 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
         poolKey.hooks,
         poolKey.tickSpacing,
       ],
-      ethers.ZeroAddress,
+      userWallet.address,
       zeroForOne,
       signedAmountIn,
       sqrtPriceLimitX96,
@@ -800,16 +816,37 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
     ]
   );
 
-  // 🔍 Simulate Swap
   const quoter = new ethers.Contract(
     V4_QUOTER_ADDRESS,
     ["function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"],
-    userWallet
+    provider
   );
 
-  const result = await quoter.quote(userWallet.address, hookData, encodedSwapParams);
-  const [amountOut] = abiCoder.decode(["uint256"], result);
-  console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+  try {
+    const result = await quoter.callStatic.quote(userWallet.address, hookData, encodedSwapParams);
+    const [amountOut] = abiCoder.decode(["uint256"], result);
+    console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+  } catch (err) {
+    console.error("❌ Quote Reverted:", err.reason || err.message || err);
+  }
+
+  // Optional: Log pool reserves and price
+  try {
+    const poolId = await computePoolId(poolKey); // Your existing helper
+    const [sqrtPriceX96] = await stateView.getSlot0(poolId);
+    const liquidity = await stateView.getLiquidity(poolId);
+
+    const price = (Number(sqrtPriceX96) ** 2) / (2 ** 192); // Rough decode
+    const cbBTCReserve = Math.sqrt(Number(liquidity)) / 1e8;
+    const usdcReserve = Math.sqrt(Number(liquidity)) * price / 1e6;
+
+    console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
+    console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
+    console.log(`📦 cbBTC Reserve: ${cbBTCReserve.toFixed(6)} cbBTC`);
+    console.log(`📦 USDC Reserve: ${usdcReserve.toFixed(2)} USDC`);
+  } catch (e) {
+    console.warn("⚠️ Could not fetch reserves/price:", e.message || e);
+  }
 }
 
 
