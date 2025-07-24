@@ -798,26 +798,25 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks]
   );
 
-  const hookData = abiCoder.encode(["bytes"], ["0x"]);
   const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
 
-  const encodedSwapParams = abiCoder.encode(
+  const encodedInput = abiCoder.encode(
     ["bytes", "address", "bool", "int256", "uint160", "bytes"],
-    [encodedKey, ethers.ZeroAddress, zeroForOne, signedAmountIn, sqrtPriceLimitX96, hookData]
+    [encodedKey, userWallet.address, zeroForOne, signedAmountIn, sqrtPriceLimitX96, "0x"]
   );
 
   const quoter = new ethers.Contract(
     V4_QUOTER_ADDRESS,
-    ["function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"],
+    ["function quote(address, bytes, bytes) view returns (bytes)"],
     userWallet
   );
 
   try {
-    const result = await quoter.quote(userWallet.address, hookData, encodedSwapParams);
+    const result = await quoter.callStatic.quote(userWallet.address, "0x", encodedInput);
     const [amountOut] = abiCoder.decode(["uint256"], result);
     console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
   } catch (err) {
-    console.error("❌ Quote Reverted:", err.reason || err.message || err);
+    console.error("❌ Quote reverted:", err.reason || err.message || err);
   }
 
   // 🔍 Fetch pool slot0 + reserves (using actual computed poolId)
@@ -837,6 +836,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     console.warn("⚠️ Could not fetch reserves/price:", e.message || e);
   }
 }
+
 
 async function main() {
   const amountInCBBTC = ethers.parseUnits("0.000023", 8);
