@@ -584,12 +584,17 @@ const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+const stateViewABI = [
+  "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 lpFee)",
+  "function getLiquidity(bytes32 poolId) view returns (uint128)"
+];
 
+const stateView = new ethers.Contract(STATE_VIEW_ADDRESS, stateViewABI, provider);
 const V4_POOL_IDS = [
   {
     label: "V4 A (0.3%)",
     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", 
-    hooks: "0x5cd525c621afca515bf58631d4733fba7b72aae4",
+    hooks: getAddress(V4_POOL_A_HOOK_ADDRESS), 
     tickSpacing: 200,
     fee: 3000,
   },
@@ -770,11 +775,11 @@ async function testAllPoolKeyPermutations() {
   return poolsWithData;
 }
 
-async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
+async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
   console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
-  // Check token balances
+  // 🔹 Check cbBTC Balance
   const erc20ABI = [
     "function balanceOf(address owner) view returns (uint256)",
     "function decimals() view returns (uint8)"
@@ -784,13 +789,12 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
   const formattedBalance = ethers.formatUnits(balance, 8);
   console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
 
-  // Use callStatic.quote to avoid revert throwing tx
-  const zeroForOne = true; // CBBTC → USDC
+  // 🔹 Prepare Swap Params
+  const zeroForOne = true; // cbBTC → USDC
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
   const hookData = "0x";
   const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
 
-  // Encode input for the v4 quote() function
   const encodedSwapParams = abiCoder.encode(
     [
       "tuple(address currency0, address currency1, uint24 fee, address hooks, int24 tickSpacing)",
@@ -830,25 +834,24 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
     console.error("❌ Quote Reverted:", err.reason || err.message || err);
   }
 
-  // Optional: Log pool reserves and price
+  // 🔍 Fetch poolId, reserves, and sqrtPriceX96 from the computedPoolId
   try {
-    const poolId = await computePoolId(poolKey); // Your existing helper
-    const [sqrtPriceX96] = await stateView.getSlot0(poolId);
-    const liquidity = await stateView.getLiquidity(poolId);
+    console.log(`🆔 Computed Pool ID: ${computedPoolId}`);
 
-    const price = (Number(sqrtPriceX96) ** 2) / (2 ** 192); // Rough decode
-    const cbBTCReserve = Math.sqrt(Number(liquidity)) / 1e8;
-    const usdcReserve = Math.sqrt(Number(liquidity)) * price / 1e6;
+    const [sqrtPriceX96] = await stateView.getSlot0(computedPoolId);
+    const liquidity = await stateView.getLiquidity(computedPoolId);
 
+    const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+    const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
+    
     console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
     console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
-    console.log(`📦 cbBTC Reserve: ${cbBTCReserve.toFixed(6)} cbBTC`);
-    console.log(`📦 USDC Reserve: ${usdcReserve.toFixed(2)} USDC`);
+    console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
+    console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
   } catch (e) {
     console.warn("⚠️ Could not fetch reserves/price:", e.message || e);
   }
 }
-
 
 async function main() {
   const amountInCBBTC = ethers.parseUnits("0.000023", 8);
@@ -894,7 +897,7 @@ async function main() {
     if (liquidity === 0n) {
       console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
     } else {
-      await simulateWithV4Quoter(poolKey, amountInCBBTC);
+      await simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC);
     }
   }
 }
