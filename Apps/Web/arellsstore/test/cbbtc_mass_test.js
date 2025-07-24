@@ -789,61 +789,46 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   const formattedBalance = ethers.formatUnits(balance, 8);
   console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
 
-  // 🔹 Prepare Swap Params
+  // 🔹 Encode swap input for Quoter (matching your working example)
   const zeroForOne = true; // cbBTC → USDC
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-  const hookData = "0x";
+
+  const encodedKey = abiCoder.encode(
+    ["address", "address", "uint24", "int24", "address"],
+    [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks]
+  );
+
+  const hookData = abiCoder.encode(["bytes"], ["0x"]);
   const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
 
   const encodedSwapParams = abiCoder.encode(
-    [
-      "tuple(address currency0, address currency1, uint24 fee, address hooks, int24 tickSpacing)",
-      "address",
-      "bool",
-      "int256",
-      "uint160",
-      "bytes",
-    ],
-    [
-      [
-        poolKey.currency0,
-        poolKey.currency1,
-        poolKey.fee,
-        poolKey.hooks,
-        poolKey.tickSpacing,
-      ],
-      userWallet.address,
-      zeroForOne,
-      signedAmountIn,
-      sqrtPriceLimitX96,
-      hookData,
-    ]
+    ["bytes", "address", "bool", "int256", "uint160", "bytes"],
+    [encodedKey, ethers.ZeroAddress, zeroForOne, signedAmountIn, sqrtPriceLimitX96, hookData]
   );
 
   const quoter = new ethers.Contract(
     V4_QUOTER_ADDRESS,
     ["function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"],
-    provider
+    userWallet
   );
 
   try {
-    const result = await quoter.callStatic.quote(userWallet.address, hookData, encodedSwapParams);
+    const result = await quoter.quote(userWallet.address, hookData, encodedSwapParams);
     const [amountOut] = abiCoder.decode(["uint256"], result);
     console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
   } catch (err) {
     console.error("❌ Quote Reverted:", err.reason || err.message || err);
   }
 
-  // 🔍 Fetch poolId, reserves, and sqrtPriceX96 from the computedPoolId
+  // 🔍 Fetch pool slot0 + reserves (using actual computed poolId)
   try {
     console.log(`🆔 Computed Pool ID: ${computedPoolId}`);
-
     const [sqrtPriceX96] = await stateView.getSlot0(computedPoolId);
     const liquidity = await stateView.getLiquidity(computedPoolId);
 
     const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
     const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
-    
+
     console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
     console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
     console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
