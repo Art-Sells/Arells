@@ -814,19 +814,45 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
 
 
 async function main() {
-
-  //await testAllPoolKeyPermutations();
   const amountInCBBTC = ethers.parseUnits("0.000023", 8);
 
   for (const pool of V4_POOL_IDS) {
+    const token0 = CBBTC.toLowerCase() < USDC.toLowerCase() ? CBBTC : USDC;
+    const token1 = CBBTC.toLowerCase() < USDC.toLowerCase() ? USDC : CBBTC;
+    
     const poolKey = {
-      currency0: CBBTC,
-      currency1: USDC,
+      currency0: token0,
+      currency1: token1,
       fee: pool.fee,
       tickSpacing: pool.tickSpacing,
       hooks: pool.hooks,
     };
-  
+
+    // 🔒 Compute poolId manually from poolKey
+    const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+    const encodedKey = abiCoder.encode(
+      ["address", "address", "uint24", "int24", "address"],
+      [
+        poolKey.currency0,
+        poolKey.currency1,
+        poolKey.fee,
+        poolKey.tickSpacing,
+        poolKey.hooks,
+      ]
+    );
+    const computedPoolId = ethers.keccak256(encodedKey);
+
+    console.log(`\n🔎 ${pool.label}`);
+    console.log(`• Manual poolId:   ${pool.poolId}`);
+    console.log(`• Computed poolId: ${computedPoolId}`);
+
+    if (computedPoolId.toLowerCase() === pool.poolId.toLowerCase()) {
+      console.log("✅ Match! The computed poolId is correct.");
+    } else {
+      console.log("❌ Mismatch! Check token order, fee, spacing, and hook.");
+      continue; // ⛔ Skip simulation if mismatch
+    }
+
     const liquidity = await getLiquidity(pool.poolId);
     if (liquidity === 0n) {
       console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
