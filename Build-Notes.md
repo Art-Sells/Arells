@@ -5,8 +5,6 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-
-- find "500" v4 cbbtc/usdc pool (look at UI)
 - Test (increase initialized Ticks in wordPosition to find fee free route)
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)

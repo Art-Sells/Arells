@@ -593,13 +593,6 @@ const V4_POOL_IDS = [
     tickSpacing: 200,
     fee: 3000,
   },
-  // {
-  //   label: "V4 B (0.3%)",
-  //   poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-  //   hooks: getAddress(V4_POOL_B_HOOK_ADDRESS),
-  //   tickSpacing: 200,
-  //   fee: 3000,
-  // },
 ];
 
 const slot0Interface = new ethers.Interface([
@@ -696,7 +689,7 @@ async function testAllPoolKeyPermutations() {
       const wordPosition = Math.floor(currentTick / pool.tickSpacing / 256);
       console.log(`🔍 Scanning Tick Bitmaps from wordPosition ${wordPosition - 100} to ${wordPosition + 100}:`);
       
-      for (let wp = wordPosition - 100; wp <= wordPosition + 100; wp++) {
+      for (let wp = wordPosition - 10; wp <= wordPosition + 10; wp++) {
         const bitmap = await getTickBitmap(pool.poolId, wp);
         if (bitmap === 0n) continue;
         const binary = bitmap.toString(2).padStart(256, "0");
@@ -822,25 +815,25 @@ async function simulateWithV4Quoter(poolKey, amountInCBBTC, sqrtPriceLimitX96 = 
 
 async function main() {
 
-  await testAllPoolKeyPermutations();
-  // const amountInCBBTC = ethers.parseUnits("0.000023", 8);
+  //await testAllPoolKeyPermutations();
+  const amountInCBBTC = ethers.parseUnits("0.000023", 8);
 
-  // for (const pool of V4_POOL_IDS) {
-  //   const poolKey = {
-  //     currency0: CBBTC,
-  //     currency1: USDC,
-  //     fee: pool.fee,
-  //     tickSpacing: pool.tickSpacing,
-  //     hooks: pool.hooks,
-  //   };
+  for (const pool of V4_POOL_IDS) {
+    const poolKey = {
+      currency0: CBBTC,
+      currency1: USDC,
+      fee: pool.fee,
+      tickSpacing: pool.tickSpacing,
+      hooks: pool.hooks,
+    };
   
-  //   const liquidity = await getLiquidity(pool.poolId);
-  //   if (liquidity === 0n) {
-  //     console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
-  //   } else {
-  //     await simulateWithV4Quoter(poolKey, amountInCBBTC);
-  //   }
-  // }
+    const liquidity = await getLiquidity(pool.poolId);
+    if (liquidity === 0n) {
+      console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
+    } else {
+      await simulateWithV4Quoter(poolKey, amountInCBBTC);
+    }
+  }
 }
 
 main().catch(console.error);
