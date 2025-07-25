@@ -805,9 +805,13 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     [encodedKey, userWallet.address, zeroForOne, signedAmountIn, sqrtPriceLimitX96, "0x"]
   );
 
+  const quoterABI = [
+    "function quote(address sender, bytes context, bytes input) view returns (bytes)"
+  ];
+
   const quoter = new ethers.Contract(
     V4_QUOTER_ADDRESS,
-    ["function quote(address, bytes, bytes) view returns (bytes)"],
+    quoterABI,
     userWallet
   );
 
