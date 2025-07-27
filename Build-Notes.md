@@ -24,6 +24,7 @@
 - - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
 - Incorporate Sell/Withdraw (look at Arells 1.5)
 - Can only Dcd PK with P (from nv)… Do extensive research on this, see if can cd and dcd from json and without P.
+- Integrate import CAP (so to not exceed 1 USDC liquidity pool)
 
 ### Online:
 - Establish background useEffects order
