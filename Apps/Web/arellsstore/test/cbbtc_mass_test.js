@@ -586,7 +586,8 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 const stateViewABI = [
   "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 lpFee)",
-  "function getLiquidity(bytes32 poolId) view returns (uint128)"
+  "function getLiquidity(bytes32 poolId) view returns (uint128)",
+  "function getHookData(bytes32 poolId) view returns (bytes)"
 ];
 
 const stateView = new ethers.Contract(STATE_VIEW_ADDRESS, stateViewABI, provider);
@@ -613,6 +614,16 @@ const tickInfoInterface = new ethers.Interface([
 const tickBitmapInterface = new ethers.Interface([
   "function getTickBitmap(bytes32 poolId, int16 wordPosition) view returns (uint256)"
 ]);
+async function getHookData(poolId) {
+  try {
+    const data = await stateView.getHookData(poolId);
+    console.log(`🪝 Hook Data for ${poolId}: ${data}`);
+    return data;
+  } catch (err) {
+    console.error(`❌ Failed to fetch hook data for ${poolId}:`, err.message || err);
+    return null;
+  }
+}
 
 function computePoolId(poolKey) {
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
@@ -878,10 +889,12 @@ async function main() {
       ]
     );
     const computedPoolId = ethers.keccak256(encodedKey);
+    const hookData = await getHookData(pool.poolId);
 
     console.log(`\n🔎 ${pool.label}`);
     console.log(`• Manual poolId:   ${pool.poolId}`);
     console.log(`• Computed poolId: ${computedPoolId}`);
+    console.log(`• Hook Date: ${hookData}`);
 
     if (computedPoolId.toLowerCase() === pool.poolId.toLowerCase()) {
       console.log("✅ Match! The computed poolId is correct.");
@@ -913,3 +926,6 @@ main().catch(console.error);
 // 	•	Then internally computes the poolId using that key
 // 	•	And tries to find the pool on-chain
 
+// 1. Try reading real hook data from StateView.getHookData(poolId) if exposed, or from previous quote logs if known.
+// 2. change userWallet.address
+//     to ethers.ZeroAddress
