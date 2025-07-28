@@ -776,8 +776,8 @@ async function testAllPoolKeyPermutations() {
 }
 
 async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
-  const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-  console.log(`✅ Using Test Wallet: ${userWallet.address}`);
+  const userWallet = { address: ethers.ZeroAddress };
+  console.log(`✅ Using ZeroAddress for quote simulation`);
 
   // 🔹 Check cbBTC Balance
   const erc20ABI = [

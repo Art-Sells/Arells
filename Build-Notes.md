@@ -88,8 +88,8 @@ Arells Wallet and change all Variables
 ### After Completion
 - Users:
 - Set Launch Date (and announce the features)
-- - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
-- - Accepting only the first 150 Investors (until our L3 is built) talk about releasing Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
+- - Import USDC using (Base), it's free to and will cost pennies to export.
+- - Accepting only the first 150 Investors (until our L3 is built) talk about releasing Sell CBBTC to USDC and ability to export it into any DEX/CEX
 - - Add "Discord" section for any questions
 - Team:
 - - Fund Arells Fee Funder with 150 USD in ETH on Base (check and replenish everyweek/day until BASE L3 is complete)
@@ -139,12 +139,13 @@ Arells Wallet and change all Variables
 
 ## START WORK ON BASE L3 (possibly after v1.5):
 - Phase 1: 
+- - Reference Base (and UI) Repos
 - - Abstract Transaction Fees to $0~
 - - Replace Transaction Fees from MASS profits (calculate previous cdVatops from new cdVatops and if +15% or more, subtract 5% into Base L3 and other 5% into Arells (should work the same as selling logic)). 
 - Phase 2:
 - - Txns/s need to be in 1000s-10000s per second for meme-coins to benefit (reference HPM Efficiency charts).
 - HPM-Liquidity System (Brainstorm)
-- - Reference V3 (addresses for contract and API info)
+- - Reference V3 U*P (and UI) Repos(addresses for contract and API info)
 - - Research whether injecting USDC (only) will grow AUM?
 
 
@@ -221,17 +222,6 @@ Arells Wallet and change all Variables
 
 #### Deployment Amplify/S3 Login
 - Restructure P/K ENV NAME
-
-### After Completion
-- Users:
-- - Import Bitcoin using Coinbase (Base), it's free to and will cost pennies to export.
-- - Accepting only the first 150 Investors (until our L3 is built) talk about releasing Sell CBBTC to USDC and ability to export it into any DEX/CEX, then work on Export BTC(CBBTC)
-- - Add "Discord" section for any questions
-- Team:
-- - Fund Arells Fee Funder with 150 USD in ETH on Base (check and replenish everyweek/day until BASE L3 is complete)
-- - review ##Base
-- - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
-
 
 ### Last Resort
 - Create separate Wallet to handle where we get our 3% fee...
