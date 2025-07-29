@@ -683,6 +683,7 @@ function getInitializedTicksFromBitmap(bitmap, wordPosition, tickSpacing) {
     if (binary[255 - i] === "1") { // reverse bit order
       const tick = (wordPosition * 256 + i) * tickSpacing;
       ticks.push(tick);
+      
     }
   }
   return ticks;
