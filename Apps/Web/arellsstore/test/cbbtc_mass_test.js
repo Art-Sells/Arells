@@ -794,7 +794,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
   const hookData = "0x";
 
-  const quoterABI = [
+  const quoteABI = [
     `function quote(
       address sender,
       tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) key,
@@ -803,33 +803,38 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     ) view returns (uint256 amountOut, uint160 sqrtPriceX96After, int24 tickAfter)`
   ];
 
-  const quoter = new ethers.Contract(V4_QUOTER_ADDRESS, quoterABI, userWallet);
+  const quoteIface = new ethers.Interface(quoteABI);
 
-  try {
-    const result = await quoter.quote(
-      ethers.ZeroAddress,
-      {
-        currency0: poolKey.currency0,
-        currency1: poolKey.currency1,
-        fee: poolKey.fee,
-        tickSpacing: poolKey.tickSpacing,
-        hooks: poolKey.hooks,
-      },
-      hookData,
-      {
-        zeroForOne,
-        amountSpecified: signedAmountIn,
-        sqrtPriceLimitX96,
-      }
-    );
+  // ✅ Encode manually like we did for exactInputSingle
+  const calldata = quoteIface.encodeFunctionData("quote", [
+    ethers.ZeroAddress,
+    {
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1,
+      fee: poolKey.fee,
+      tickSpacing: poolKey.tickSpacing,
+      hooks: poolKey.hooks,
+    },
+    "0x", // hookData
+    {
+      zeroForOne: true,
+      amountSpecified: signedAmountIn,
+      sqrtPriceLimitX96,
+    }
+  ]);
 
-    const [amountOut, sqrtPriceAfter, tickAfter] = result;
-    console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-    console.log(`📈 sqrtPriceX96 After: ${sqrtPriceAfter}`);
-    console.log(`📊 Tick After: ${tickAfter}`);
-  } catch (err) {
-    console.error("❌ Quote Reverted:", err.reason || err.message || err);
-  }
+  // 🔁 Make the low-level call
+  const result = await provider.call({
+    to: V4_QUOTER_ADDRESS,
+    data: calldata,
+  });
+
+  // 🧩 Decode result manually
+  const [amountOut, sqrtPriceAfter, tickAfter] = quoteIface.decodeFunctionResult("quote", result);
+
+  console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+  console.log(`📈 sqrtPriceX96 After: ${sqrtPriceAfter}`);
+  console.log(`📊 Tick After: ${tickAfter}`);
 
   // 🔍 Fetch reserves using computedPoolId
   try {
