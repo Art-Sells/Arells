@@ -194,8 +194,8 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     hookData: "0x",
     params: {
       zeroForOne: true,
-      amountSpecified: signedAmountIn,
-      sqrtPriceLimitX96,
+      amountSpecified: BigInt(signedAmountIn ?? 0),
+      sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96 ?? 0),
     }
   }, { depth: null });
 
