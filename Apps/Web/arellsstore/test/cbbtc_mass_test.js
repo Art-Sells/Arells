@@ -150,8 +150,8 @@ function getInitializedTicksFromBitmap(bitmap, wordPosition, tickSpacing) {
 
 
 async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
-  const userWallet = { address: ethers.ZeroAddress };
-  console.log(`✅ Using ZeroAddress for quote simulation`);
+  const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
+  console.log(`✅ Using userWallet for quote simulation`);
 
   // 🔹 Check cbBTC Balance
   const erc20ABI = [
@@ -168,44 +168,58 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
   const hookData = "0x";
 
-  const quoteABI = [
-    `function quote(
-      address sender,
-      tuple(address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks) key,
-      bytes hookData,
-      tuple(bool zeroForOne, int256 amountSpecified, uint160 sqrtPriceLimitX96) params
-    ) view returns (uint256 amountOut, uint160 sqrtPriceX96After, int24 tickAfter)`
-  ];
+  // Fetch ABI from BaseScan or static file (you can cache locally for performance)
+  async function fetchABI(address) {
+    const apiKey = process.env.BASESCAN_API_KEY;
+    const url = `https://api.basescan.org/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
+    const response = await axios.get(url);
+    if (response.data.status !== "1") throw new Error("Failed to fetch ABI from BaseScan");
+    return JSON.parse(response.data.result);
+  }
 
-  const quoteIface = new ethers.Interface(quoteABI);
+  // Inside simulateWithV4Quoter:
+  const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
+  const quoteIface = new ethers.Interface(quoterABI);
 
-  // ✅ Encode manually like we did for exactInputSingle
-  const calldata = quoteIface.encodeFunctionData("quote", [
-    ethers.ZeroAddress,
-    {
+  console.log("🚧 DEBUG INPUT for quoteExactInputSingle:");
+  console.dir({
+    sender: userWallet.address,
+    poolKey: {
       currency0: poolKey.currency0,
       currency1: poolKey.currency1,
       fee: poolKey.fee,
       tickSpacing: poolKey.tickSpacing,
       hooks: poolKey.hooks,
     },
-    "0x", // hookData
-    {
+    hookData: "0x",
+    params: {
       zeroForOne: true,
       amountSpecified: signedAmountIn,
       sqrtPriceLimitX96,
     }
-  ]);
+  }, { depth: null });
 
-  // 🔁 Make the low-level call
-  const result = await provider.call({
-    to: V4_QUOTER_ADDRESS,
-    data: calldata,
-  });
-
-  // 🧩 Decode result manually
-  const [amountOut, sqrtPriceAfter, tickAfter] = quoteIface.decodeFunctionResult("quote", result);
-
+  // ✅ Encode manually like we did for exactInputSingle
+  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
+    sender: userWallet.address,
+    poolKey: {
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1,
+      fee: poolKey.fee,
+      tickSpacing: poolKey.tickSpacing,
+      hooks: poolKey.hooks,
+    },
+    hookData: "0x",
+    params: {
+      zeroForOne: true,
+      amountSpecified: signedAmountIn,
+      sqrtPriceLimitX96,
+    }
+  }]);
+  
+  const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
+  const [amountOut, sqrtPriceAfter, tickAfter] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
+  
   console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
   console.log(`📈 sqrtPriceX96 After: ${sqrtPriceAfter}`);
   console.log(`📊 Tick After: ${tickAfter}`);
@@ -292,6 +306,3 @@ main().catch(console.error);
 // 	•	Then internally computes the poolId using that key
 // 	•	And tries to find the pool on-chain
 
-// 1. Try reading real hook data from StateView.getHookData(poolId) if exposed, or from previous quote logs if known.
-// 2. change userWallet.address
-//     to ethers.ZeroAddress

@@ -5,6 +5,7 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
+- quoteExactInputSingle not quote works
 - Test (increase initialized Ticks in wordPosition to find fee free route)
 - revert back to "testKeyPermutations commit for v3/v4 ref"
 
