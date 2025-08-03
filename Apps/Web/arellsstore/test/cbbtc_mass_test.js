@@ -200,22 +200,22 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   }, { depth: null });
 
   // ✅ Encode manually like we did for exactInputSingle
-  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [
-    userWallet.address,
-    {
+  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
+    sender: userWallet.address,
+    poolKey: {
       currency0: poolKey.currency0,
-      currency1: poolKey.currency1, 
-      fee: Number(poolKey.fee), 
-      tickSpacing: Number(poolKey.tickSpacing), 
-      hooks: poolKey.hooks 
+      currency1: poolKey.currency1,
+      fee: poolKey.fee,
+      tickSpacing: poolKey.tickSpacing,
+      hooks: poolKey.hooks
     },
-    "0x", 
-    {
-      zeroForOne: true, 
-      amountSpecified: BigInt(signedAmountIn), 
+    hookData: "0x",
+    params: {
+      zeroForOne: true,
+      amountSpecified: BigInt(signedAmountIn),
       sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96)
     }
-  ]);
+  }]);
 
   console.dir([
     userWallet.address,
@@ -229,7 +229,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     "0x",
     {
       zeroForOne: true,
-      amountSpecified: BigInt(signedAmountIn),
+      amountSpecified: BigInt(signedAmountIn !== null && signedAmountIn !== undefined ? signedAmountIn : 0),
       sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96),
     }
   ], { depth: null });
