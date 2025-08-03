@@ -200,22 +200,39 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   }, { depth: null });
 
   // ✅ Encode manually like we did for exactInputSingle
-  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
-    sender: userWallet.address,
-    poolKey: {
+  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [
+    userWallet.address,
+    {
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1, 
+      fee: Number(poolKey.fee), 
+      tickSpacing: Number(poolKey.tickSpacing), 
+      hooks: poolKey.hooks 
+    },
+    "0x", 
+    {
+      zeroForOne: true, 
+      amountSpecified: BigInt(signedAmountIn), 
+      sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96)
+    }
+  ]);
+
+  console.dir([
+    userWallet.address,
+    {
       currency0: poolKey.currency0,
       currency1: poolKey.currency1,
-      fee: poolKey.fee,
-      tickSpacing: poolKey.tickSpacing,
+      fee: Number(poolKey.fee),
+      tickSpacing: Number(poolKey.tickSpacing),
       hooks: poolKey.hooks,
     },
-    hookData: "0x",
-    params: {
+    "0x",
+    {
       zeroForOne: true,
-      amountSpecified: signedAmountIn,
-      sqrtPriceLimitX96,
+      amountSpecified: BigInt(signedAmountIn),
+      sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96),
     }
-  }]);
+  ], { depth: null });
   
   const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
   const [amountOut, sqrtPriceAfter, tickAfter] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
