@@ -177,6 +177,9 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
 
   // 🔹 Prepare Quote Params
   const zeroForOne = true; // cbBTC → USDC
+  if (amountInCBBTC == null) throw new Error("❌ amountInCBBTC is null or undefined");
+  if (sqrtPriceLimitX96 == null) throw new Error("❌ sqrtPriceLimitX96 is null or undefined");
+  
   const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
   const hookData = "0x";
 
@@ -241,23 +244,23 @@ console.log("🔍 sqrtPriceLimitX96 =", sqrtPriceLimitX96);
       },
     },
   ]);
-
-  console.dir([
-    userWallet.address,
-    {
+  
+  console.dir({
+    sender: userWallet.address,
+    poolKey: {
       currency0: poolKey.currency0,
       currency1: poolKey.currency1,
       fee: Number(poolKey.fee),
       tickSpacing: Number(poolKey.tickSpacing),
       hooks: poolKey.hooks,
     },
-    "0x",
-    {
+    hookData: "0x",
+    params: {
       zeroForOne: true,
       amountSpecified: safeBigInt(signedAmountIn),
       sqrtPriceLimitX96: safeBigInt(sqrtPriceLimitX96),
-    }
-  ], { depth: null });
+    },
+  }, { depth: null });
   
   const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
   const [amountOut, sqrtPriceAfter, tickAfter] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
