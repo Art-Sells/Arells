@@ -148,6 +148,18 @@ function getInitializedTicksFromBitmap(bitmap, wordPosition, tickSpacing) {
   return ticks;
 }
 
+function safeBigInt(value, label = "value") {
+  if (value === null || value === undefined) {
+    console.trace(`❌ CRITICAL: ${label} is null or undefined`);
+    throw new Error(`❌ Invalid BigInt input: ${label} is null or undefined`);
+  }
+  try {
+    return BigInt(value);
+  } catch (e) {
+    console.error(`❌ Failed to convert ${label} to BigInt. Value:`, value);
+    throw e;
+  }
+}
 
 async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
@@ -177,6 +189,9 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     return JSON.parse(response.data.result);
   }
 
+  console.log("🔍 signedAmountIn =", signedAmountIn);
+console.log("🔍 sqrtPriceLimitX96 =", sqrtPriceLimitX96);
+
   // Inside simulateWithV4Quoter:
   const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
   const quoteIface = new ethers.Interface(quoterABI);
@@ -184,38 +199,48 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   console.log("🚧 DEBUG INPUT for quoteExactInputSingle:");
   console.dir({
     sender: userWallet.address,
-    poolKey: {
-      currency0: poolKey.currency0,
-      currency1: poolKey.currency1,
-      fee: poolKey.fee,
-      tickSpacing: poolKey.tickSpacing,
-      hooks: poolKey.hooks,
-    },
-    hookData: "0x",
-    params: {
-      zeroForOne: true,
-      amountSpecified: BigInt(signedAmountIn ?? 0),
-      sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96 ?? 0),
-    }
+    currency0: poolKey.currency0,
+    currency1: poolKey.currency1,
+    fee: Number(poolKey.fee),
+    tickSpacing: Number(poolKey.tickSpacing),
+    hooks: poolKey.hooks,
+    amountSpecified: signedAmountIn,
+    sqrtPriceLimitX96: sqrtPriceLimitX96,
   }, { depth: null });
+  
+  if (
+    !userWallet.address || 
+    !poolKey.currency0 || 
+    !poolKey.currency1 || 
+    poolKey.fee == null || 
+    poolKey.tickSpacing == null || 
+    !poolKey.hooks || 
+    signedAmountIn == null || 
+    sqrtPriceLimitX96 == null
+  ) {
+    throw new Error("🚨 One or more required quote parameters are null or undefined.");
+  }
 
-  // ✅ Encode manually like we did for exactInputSingle
-  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
-    sender: userWallet.address,
-    poolKey: {
-      currency0: poolKey.currency0,
-      currency1: poolKey.currency1,
-      fee: poolKey.fee,
-      tickSpacing: poolKey.tickSpacing,
-      hooks: poolKey.hooks
+
+  
+  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [
+    {
+      sender: userWallet.address,
+      poolKey: {
+        currency0: poolKey.currency0,
+        currency1: poolKey.currency1,
+        fee: Number(poolKey.fee),
+        tickSpacing: Number(poolKey.tickSpacing),
+        hooks: poolKey.hooks,
+      },
+      hookData: "0x",
+      params: {
+        zeroForOne: true,
+        amountSpecified: safeBigInt(signedAmountIn),
+        sqrtPriceLimitX96: safeBigInt(sqrtPriceLimitX96),
+      },
     },
-    hookData: "0x",
-    params: {
-      zeroForOne: true,
-      amountSpecified: BigInt(signedAmountIn),
-      sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96)
-    }
-  }]);
+  ]);
 
   console.dir([
     userWallet.address,
@@ -229,8 +254,8 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     "0x",
     {
       zeroForOne: true,
-      amountSpecified: BigInt(signedAmountIn !== null && signedAmountIn !== undefined ? signedAmountIn : 0),
-      sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96),
+      amountSpecified: safeBigInt(signedAmountIn),
+      sqrtPriceLimitX96: safeBigInt(sqrtPriceLimitX96),
     }
   ], { depth: null });
   
@@ -304,7 +329,7 @@ async function main() {
     if (liquidity === 0n) {
       console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
     } else {
-      await simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC);
+      await simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, 0n);
     }
   }
 }
