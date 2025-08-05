@@ -191,23 +191,22 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   }
 
   console.log("🔍 signedAmountIn =", signedAmountIn);
-console.log("🔍 sqrtPriceLimitX96 =", sqrtPriceLimitX96);
+  console.log("🔍 sqrtPriceLimitX96 =", sqrtPriceLimitX96);
 
   // Inside simulateWithV4Quoter:
   const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
   const quoteIface = new ethers.Interface(quoterABI);
 
-  console.log("🚧 DEBUG INPUT for quoteExactInputSingle:");
-  console.dir({
-    sender: userWallet.address,
-    currency0: poolKey.currency0,
-    currency1: poolKey.currency1,
-    fee: Number(poolKey.fee),
-    tickSpacing: Number(poolKey.tickSpacing),
-    hooks: poolKey.hooks,
-    amountSpecified: signedAmountIn,
-    sqrtPriceLimitX96: sqrtPriceLimitX96,
-  }, { depth: null });
+  console.log("✅ Pre-Encode Sanity Check:");
+  console.log("→ sender:", userWallet.address);
+  console.log("→ currency0:", poolKey.currency0);
+  console.log("→ currency1:", poolKey.currency1);
+  console.log("→ fee:", poolKey.fee);
+  console.log("→ tickSpacing:", poolKey.tickSpacing);
+  console.log("→ hooks:", poolKey.hooks);
+  console.log("→ zeroForOne:", zeroForOne);
+  console.log("→ amountSpecified:", signedAmountIn);
+  console.log("→ sqrtPriceLimitX96:", sqrtPriceLimitX96);
   
   if (
     !userWallet.address || 
@@ -227,19 +226,15 @@ console.log("🔍 sqrtPriceLimitX96 =", sqrtPriceLimitX96);
   const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [
     {
       sender: userWallet.address,
-      poolKey: {
-        currency0: poolKey.currency0,
-        currency1: poolKey.currency1,
-        fee: Number(poolKey.fee),
-        tickSpacing: Number(poolKey.tickSpacing),
-        hooks: poolKey.hooks,
-      },
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1,
+      fee: Number(poolKey.fee),
+      tickSpacing: Number(poolKey.tickSpacing),
+      hooks: poolKey.hooks,
       hookData: "0x",
-      params: {
-        zeroForOne: true,
-        amountSpecified: safeBigInt(signedAmountIn),
-        sqrtPriceLimitX96: safeBigInt(sqrtPriceLimitX96),
-      },
+      zeroForOne: zeroForOne,
+      amountSpecified: safeBigInt(signedAmountIn),
+      sqrtPriceLimitX96: safeBigInt(sqrtPriceLimitX96),
     },
   ]);
   
@@ -254,7 +249,7 @@ console.log("🔍 sqrtPriceLimitX96 =", sqrtPriceLimitX96);
     },
     hookData: "0x",
     params: {
-      zeroForOne: true,
+      zeroForOne: zeroForOne,
       amountSpecified: safeBigInt(signedAmountIn),
       sqrtPriceLimitX96: safeBigInt(sqrtPriceLimitX96),
     },
