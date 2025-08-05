@@ -153,6 +153,7 @@ function safeBigInt(value, label = "value") {
     console.trace(`❌ CRITICAL: ${label} is null or undefined`);
     throw new Error(`❌ Invalid BigInt input: ${label} is null or undefined`);
   }
+  if (typeof value === "bigint") return value; // ✅ already valid
   try {
     return BigInt(value);
   } catch (e) {
@@ -176,10 +177,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
 
   // 🔹 Prepare Quote Params
-  const zeroForOne = true; // cbBTC → USDC
-  if (amountInCBBTC == null) throw new Error("❌ amountInCBBTC is null or undefined");
-  if (sqrtPriceLimitX96 == null) throw new Error("❌ sqrtPriceLimitX96 is null or undefined");
-  
+  const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
   const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
   const hookData = "0x";
 
