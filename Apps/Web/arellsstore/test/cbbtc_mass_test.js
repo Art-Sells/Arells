@@ -211,9 +211,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
       hookData: "0x",
       params: {
         zeroForOne,
-        amountSpecified: zeroForOne
-        ? ethers.parseUnits(amountInCBBTC.toString(), 8)
-        : -ethers.parseUnits(amountInCBBTC.toString(), 8),
+        amountSpecified: ethers.parseUnits(amountInCBBTC.toString(), 8),
         sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
       },
     },
@@ -281,24 +279,24 @@ assertNotNull("amountInCBBTC", amountInCBBTC);
 assertNotNull("sqrtPriceLimitX96", sqrtPriceLimitX96);
 
   
-  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [
-    [
-      userWallet.address,
-      [
-        poolKey.currency0,
-        poolKey.currency1,
-        poolKey.fee,
-        poolKey.tickSpacing,
-        poolKey.hooks
-      ],
-      "0x",
-      [
-        true,
-        BigInt(amountInCBBTC),
-        sqrtPriceLimitX96 ?? 0n
-      ]
-    ]
-  ]);
+const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [
+  {
+    sender: userWallet.address,
+    poolKey: {
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1,
+      fee: poolKey.fee,
+      tickSpacing: poolKey.tickSpacing,
+      hooks: poolKey.hooks,
+    },
+    hookData: "0x",
+    params: {
+      zeroForOne: true,
+      amountSpecified: ethers.parseUnits(amountInCBBTC.toString(), 8), // ✅ updated
+      sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
+    },
+  },
+]);
   
   const inputStruct = {
     sender: userWallet.address,
