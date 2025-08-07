@@ -178,7 +178,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
 
   // 🔹 Prepare Quote Params
   const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
-  const signedAmountIn = zeroForOne ? BigInt(amountInCBBTC) : -BigInt(amountInCBBTC);
+  const signedAmountIn = BigInt(amountInCBBTC);
   const hookData = "0x";
 
   // Fetch ABI from BaseScan or static file (you can cache locally for performance)
@@ -213,7 +213,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
       hookData: "0x",
       params: {
         zeroForOne,
-        amountSpecified: zeroForOne ? parsedAmount : -parsedAmount,
+        amountSpecified: parsedAmount,
         sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
       },
     },
@@ -295,7 +295,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     hookData: "0x",
     params: {
       zeroForOne: true,
-      amountSpecified: zeroForOne ? parsedAmount : -parsedAmount,
+      amountSpecified: parsedAmount,
       sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
     }
   }]);
@@ -312,7 +312,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     hookData: "0x",
     params: {
       zeroForOne,
-      amountSpecified: zeroForOne ? parsedAmount : -parsedAmount,
+      amountSpecified: parsedAmount,
       sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
     },
   };

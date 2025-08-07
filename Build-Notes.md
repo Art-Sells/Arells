@@ -5,8 +5,7 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- quoteExactInputSingle works for v4
-- exactQuoteInputSingle works, see if it’ll work with pool b. Reintegrate manualPoolId
+- quoteExactInputSingle works for v4, see if it’ll work with pool b. Reintegrate manualPoolId
 - Test (increase initialized Ticks in wordPosition to find fee free route)
 - revert back to "testKeyPermutations commit for v3/v4 ref"
 
