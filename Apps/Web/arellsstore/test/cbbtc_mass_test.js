@@ -199,6 +199,9 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
 
   const parsedAmount = (() => {
     try {
+      if (typeof amountInCBBTC === "bigint") {
+        return amountInCBBTC;
+      }
       return ethers.parseUnits(amountInCBBTC.toString(), 8);
     } catch (e) {
       throw new Error(`❌ Failed to parse amountInCBBTC (${amountInCBBTC}): ${e.message}`);
