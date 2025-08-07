@@ -197,6 +197,14 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
   const quoteIface = new ethers.Interface(quoterABI);
 
+  const parsedAmount = (() => {
+    try {
+      return ethers.parseUnits(amountInCBBTC.toString(), 8);
+    } catch (e) {
+      throw new Error(`❌ Failed to parse amountInCBBTC (${amountInCBBTC}): ${e.message}`);
+    }
+  })();
+
   console.log("✅ Pre-Encode Sanity Check:");
   console.dir({
     encodingCall: {
@@ -211,7 +219,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
       hookData: "0x",
       params: {
         zeroForOne,
-        amountSpecified: ethers.parseUnits(amountInCBBTC.toString(), 8),
+        amountSpecified: zeroForOne ? parsedAmount : -parsedAmount,
         sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
       },
     },
@@ -247,40 +255,41 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   console.log("✅ amountSpecified:", amountSpecified);
 
   console.log("🧪 Full Encode Sanity Check:");
-console.log("sender:", userWallet.address);
-console.log("currency0:", poolKey.currency0);
-console.log("currency1:", poolKey.currency1);
-console.log("fee:", poolKey.fee, typeof poolKey.fee);
-console.log("tickSpacing:", poolKey.tickSpacing, typeof poolKey.tickSpacing);
-console.log("hooks:", poolKey.hooks);
-console.log("zeroForOne:", true);
-console.log("amountSpecified:", amountInCBBTC, typeof amountInCBBTC);
-console.log("sqrtPriceLimitX96:", sqrtPriceLimitX96, typeof sqrtPriceLimitX96);
+  console.log("sender:", userWallet.address);
+  console.log("currency0:", poolKey.currency0);
+  console.log("currency1:", poolKey.currency1);
+  console.log("fee:", poolKey.fee, typeof poolKey.fee);
+  console.log("tickSpacing:", poolKey.tickSpacing, typeof poolKey.tickSpacing);
+  console.log("hooks:", poolKey.hooks);
+  console.log("zeroForOne:", true);
+  console.log("amountSpecified:", amountInCBBTC, typeof amountInCBBTC);
+  console.log("sqrtPriceLimitX96:", sqrtPriceLimitX96, typeof sqrtPriceLimitX96);
 
-function assertNotNull(label, val) {
-  if (val === null || val === undefined) {
-    throw new Error(`❌ ${label} is NULL or UNDEFINED`);
+  function assertNotNull(label, val) {
+    if (val === null || val === undefined) {
+      throw new Error(`❌ ${label} is NULL or UNDEFINED`);
+    }
   }
-}
 
-// Check sender
-assertNotNull("userWallet.address", userWallet.address);
+  // Check sender
+  assertNotNull("userWallet.address", userWallet.address);
 
-// Check poolKey fields
-assertNotNull("poolKey.currency0", poolKey.currency0);
-assertNotNull("poolKey.currency1", poolKey.currency1);
-assertNotNull("poolKey.fee", poolKey.fee);
-assertNotNull("poolKey.tickSpacing", poolKey.tickSpacing);
-assertNotNull("poolKey.hooks", poolKey.hooks);
+  // Check poolKey fields
+  assertNotNull("poolKey.currency0", poolKey.currency0);
+  assertNotNull("poolKey.currency1", poolKey.currency1);
+  assertNotNull("poolKey.fee", poolKey.fee);
+  assertNotNull("poolKey.tickSpacing", poolKey.tickSpacing);
+  assertNotNull("poolKey.hooks", poolKey.hooks);
 
-// Check params
-assertNotNull("zeroForOne", zeroForOne);
-assertNotNull("amountInCBBTC", amountInCBBTC);
-assertNotNull("sqrtPriceLimitX96", sqrtPriceLimitX96);
+  // Check params
+  assertNotNull("zeroForOne", zeroForOne);
+  assertNotNull("amountInCBBTC", amountInCBBTC);
+  assertNotNull("sqrtPriceLimitX96", sqrtPriceLimitX96);
+
+
 
   
-const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [
-  {
+  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
     sender: userWallet.address,
     poolKey: {
       currency0: poolKey.currency0,
@@ -292,11 +301,10 @@ const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [
     hookData: "0x",
     params: {
       zeroForOne: true,
-      amountSpecified: ethers.parseUnits(amountInCBBTC.toString(), 8), // ✅ updated
+      amountSpecified: zeroForOne ? parsedAmount : -parsedAmount,
       sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
-    },
-  },
-]);
+    }
+  }]);
   
   const inputStruct = {
     sender: userWallet.address,
@@ -310,9 +318,7 @@ const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [
     hookData: "0x",
     params: {
       zeroForOne,
-      amountSpecified: zeroForOne
-      ? ethers.parseUnits(amountInCBBTC.toString(), 8)
-      : -ethers.parseUnits(amountInCBBTC.toString(), 8),
+      amountSpecified: zeroForOne ? parsedAmount : -parsedAmount,
       sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
     },
   };
