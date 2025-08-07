@@ -197,16 +197,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
   const quoteIface = new ethers.Interface(quoterABI);
 
-  const parsedAmount = (() => {
-    try {
-      if (typeof amountInCBBTC === "bigint") {
-        return amountInCBBTC;
-      }
-      return ethers.parseUnits(amountInCBBTC.toString(), 8);
-    } catch (e) {
-      throw new Error(`❌ Failed to parse amountInCBBTC (${amountInCBBTC}): ${e.message}`);
-    }
-  })();
+  const parsedAmount = BigInt(amountInCBBTC);
 
   console.log("✅ Pre-Encode Sanity Check:");
   console.dir({
