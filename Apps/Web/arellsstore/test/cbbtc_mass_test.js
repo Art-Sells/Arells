@@ -187,7 +187,16 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     const url = `https://api.basescan.org/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
     const response = await axios.get(url);
     if (response.data.status !== "1") throw new Error("Failed to fetch ABI from BaseScan");
-    return JSON.parse(response.data.result);
+  
+    const abi = JSON.parse(response.data.result);
+  
+    // 🔍 Log the quoteExactInputSingle function ABI
+    const quoteFragment = abi.find(
+      (entry) => entry.name === "quoteExactInputSingle" && entry.type === "function"
+    );
+    console.log("🔍 quoteExactInputSingle ABI fragment:", quoteFragment);
+  
+    return abi;
   }
 
   console.log("🔍 signedAmountIn =", signedAmountIn);
@@ -198,6 +207,18 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   const quoteIface = new ethers.Interface(quoterABI);
 
   const parsedAmount = BigInt(amountInCBBTC);
+
+  // 🔹 Fetch current slot0 price from StateView
+  try {
+    const [currentSqrtPriceX96] = await stateView.getSlot0(computedPoolId);
+    sqrtPriceLimitX96 = currentSqrtPriceX96;
+
+    console.log("📈 Current sqrtPriceX96:", currentSqrtPriceX96.toString());
+    console.log("📈 Applied sqrtPriceLimitX96:", sqrtPriceLimitX96.toString());
+  } catch (e) {
+    console.warn("⚠️ Failed to fetch slot0. Falling back to 0n sqrtPriceLimitX96");
+    sqrtPriceLimitX96 = 0n;
+  }
 
   console.log("✅ Pre-Encode Sanity Check:");
   console.dir({
@@ -280,8 +301,31 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   assertNotNull("amountInCBBTC", amountInCBBTC);
   assertNotNull("sqrtPriceLimitX96", sqrtPriceLimitX96);
 
-
-
+  const encodeInput = {
+    sender: userWallet.address,
+    poolKey,
+    hookData: "0x",
+    params: {
+      zeroForOne: true,
+      amountSpecified: amountInCBBTC,
+      sqrtPriceLimitX96,
+    },
+  };
+  
+  console.log("✅ Final object being passed to encodeFunctionData:");
+  console.dir(encodeInput, { depth: null });
+  
+  for (const [section, obj] of Object.entries(encodeInput)) {
+    if (typeof obj === 'object') {
+      for (const [k, v] of Object.entries(obj)) {
+        console.log(`${section}.${k} =`, v, `(type: ${typeof v})`);
+        if (v == null) throw new Error(`❌ ${section}.${k} is ${v}`);
+      }
+    } else {
+      console.log(`${section} =`, obj, `(type: ${typeof obj})`);
+      if (obj == null) throw new Error(`❌ ${section} is ${obj}`);
+    }
+  }
   
   const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
     sender: userWallet.address,
