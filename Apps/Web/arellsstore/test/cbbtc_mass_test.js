@@ -235,7 +235,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
       params: {
         zeroForOne,
         amountSpecified: parsedAmount,
-        sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
+        sqrtPriceLimitX96: sqrtPriceLimitX96,
       },
     },
     types: {
@@ -332,8 +332,8 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     poolKey: {
       currency0: poolKey.currency0,
       currency1: poolKey.currency1,
-      fee: poolKey.fee,
-      tickSpacing: poolKey.tickSpacing,
+      fee: BigInt(poolKey.fee),
+      tickSpacing: BigInt(poolKey.tickSpacing),
       hooks: poolKey.hooks,
     },
     hookData: "0x",
@@ -349,8 +349,8 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     poolKey: {
       currency0: poolKey.currency0,
       currency1: poolKey.currency1,
-      fee: poolKey.fee,
-      tickSpacing: poolKey.tickSpacing,
+      fee: BigInt(poolKey.fee),
+      tickSpacing: BigInt(poolKey.tickSpacing),
       hooks: poolKey.hooks,
     },
     hookData: "0x",
