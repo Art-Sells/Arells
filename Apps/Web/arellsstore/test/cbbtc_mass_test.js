@@ -307,7 +307,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
     hookData: "0x",
     params: {
       zeroForOne: true,
-      amountSpecified: amountInCBBTC,
+      amountSpecified: parsedAmount,
       sqrtPriceLimitX96,
     },
   };
