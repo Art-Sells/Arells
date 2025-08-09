@@ -44,7 +44,7 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 const stateViewABI = [
-  "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 lpFee)",
+  "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
   "function getLiquidity(bytes32 poolId) view returns (uint128)"
 ];
 
@@ -328,48 +328,23 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   }
   
   const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
-    sender: userWallet.address,
     poolKey: {
       currency0: poolKey.currency0,
       currency1: poolKey.currency1,
-      fee: BigInt(poolKey.fee),
+      fee:       BigInt(poolKey.fee),
       tickSpacing: BigInt(poolKey.tickSpacing),
-      hooks: poolKey.hooks,
+      hooks:     poolKey.hooks,
     },
+    zeroForOne,                          // true if swapping currency0 -> currency1
+    exactAmount: parsedAmount,            // uint128, POSITIVE
     hookData: "0x",
-    params: {
-      zeroForOne: true,
-      amountSpecified: parsedAmount,
-      sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
-    }
   }]);
   
-  const inputStruct = {
-    sender: userWallet.address,
-    poolKey: {
-      currency0: poolKey.currency0,
-      currency1: poolKey.currency1,
-      fee: BigInt(poolKey.fee),
-      tickSpacing: BigInt(poolKey.tickSpacing),
-      hooks: poolKey.hooks,
-    },
-    hookData: "0x",
-    params: {
-      zeroForOne,
-      amountSpecified: parsedAmount,
-      sqrtPriceLimitX96: sqrtPriceLimitX96 ?? 0n,
-    },
-  };
-  
-  console.log("🧪 Final Input to Quoter:");
-  console.dir(inputStruct, { depth: null });
-  
   const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
-  const [amountOut, sqrtPriceAfter, tickAfter] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
+  const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
   
   console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-  console.log(`📈 sqrtPriceX96 After: ${sqrtPriceAfter}`);
-  console.log(`📊 Tick After: ${tickAfter}`);
+  console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
 
   // 🔍 Fetch reserves using computedPoolId
   try {
