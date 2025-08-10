@@ -252,7 +252,7 @@ Arells Wallet and change all Variables
 
 
 
-## Arells 1.7 (Export Bitcoin)
+## Arells 1.7 (Export Bitcoin?)
 
 ### Email
 - Check "Main-Inv" folder in email
@@ -311,6 +311,8 @@ Arells Wallet and change all Variables
 
 
 ## Arells 2 & Beyond
+
+### iOS & Android App
 
 ### Important:
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
