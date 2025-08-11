@@ -57,6 +57,13 @@ const V4_POOL_IDS = [
     tickSpacing: 200,
     fee: 3000,
   },
+  {
+    label: "V4 B (0.3%)",
+    poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
+    hooks: getAddress(V4_POOL_B_HOOK_ADDRESS),
+    tickSpacing: 200,
+    fee: 3000,
+  },
 ];
 
 const slot0Interface = new ethers.Interface([
@@ -162,7 +169,7 @@ function safeBigInt(value, label = "value") {
   }
 }
 
-async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
+async function simulateWithV4Quoter(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
   console.log(`✅ Using userWallet for quote simulation`);
 
@@ -210,7 +217,7 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
 
   // 🔹 Fetch current slot0 price from StateView
   try {
-    const [currentSqrtPriceX96] = await stateView.getSlot0(computedPoolId);
+    const [currentSqrtPriceX96] = await stateView.getSlot0(poolId);
     sqrtPriceLimitX96 = currentSqrtPriceX96;
 
     console.log("📈 Current sqrtPriceX96:", currentSqrtPriceX96.toString());
@@ -346,11 +353,11 @@ async function simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, sqrt
   console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
   console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
 
-  // 🔍 Fetch reserves using computedPoolId
+  // 🔍 Fetch reserves using poolId
   try {
-    console.log(`🆔 Computed Pool ID: ${computedPoolId}`);
-    const [sqrtPriceX96] = await stateView.getSlot0(computedPoolId);
-    const liquidity = await stateView.getLiquidity(computedPoolId);
+    console.log(`🆔 Pool ID: ${poolId}`);
+    const [sqrtPriceX96] = await stateView.getSlot0(poolId);
+    const liquidity = await stateView.getLiquidity(poolId);
 
     const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
     const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
@@ -371,7 +378,7 @@ async function main() {
   for (const pool of V4_POOL_IDS) {
     const token0 = CBBTC.toLowerCase() < USDC.toLowerCase() ? CBBTC : USDC;
     const token1 = CBBTC.toLowerCase() < USDC.toLowerCase() ? USDC : CBBTC;
-    
+
     const poolKey = {
       currency0: token0,
       currency1: token1,
@@ -380,36 +387,14 @@ async function main() {
       hooks: pool.hooks,
     };
 
-    // 🔒 Compute poolId manually from poolKey
-    const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-    const encodedKey = abiCoder.encode(
-      ["address", "address", "uint24", "int24", "address"],
-      [
-        poolKey.currency0,
-        poolKey.currency1,
-        poolKey.fee,
-        poolKey.tickSpacing,
-        poolKey.hooks,
-      ]
-    );
-    const computedPoolId = ethers.keccak256(encodedKey);
-
     console.log(`\n🔎 ${pool.label}`);
-    console.log(`• Manual poolId:   ${pool.poolId}`);
-    console.log(`• Computed poolId: ${computedPoolId}`);
-
-    if (computedPoolId.toLowerCase() === pool.poolId.toLowerCase()) {
-      console.log("✅ Match! The computed poolId is correct.");
-    } else {
-      console.log("❌ Mismatch! Check token order, fee, spacing, and hook.");
-      continue; // ⛔ Skip simulation if mismatch
-    }
+    console.log(`• Using manual poolId: ${pool.poolId}`);
 
     const liquidity = await getLiquidity(pool.poolId);
     if (liquidity === 0n) {
       console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
     } else {
-      await simulateWithV4Quoter(poolKey, computedPoolId, amountInCBBTC, 0n);
+      await simulateWithV4Quoter(poolKey, pool.poolId, amountInCBBTC, 0n);
     }
   }
 }
