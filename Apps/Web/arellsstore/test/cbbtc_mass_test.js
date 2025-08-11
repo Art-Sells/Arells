@@ -377,6 +377,12 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     console.warn("⚠️ Could not fetch reserves/price:", e.message || e);
   }
 }
+
+
+
+
+
+
 async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
   console.log(`✅ Using userWallet for Pool B quote simulation`);
@@ -510,6 +516,8 @@ async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPri
   assertNotNull("poolKey.fee", poolKey.fee);
   assertNotNull("poolKey.tickSpacing", poolKey.tickSpacing);
   assertNotNull("poolKey.hooks", poolKey.hooks);
+
+  poolKey.hooks = "0x0000000000000000000000000000000000000000";
 
   // Check params
   assertNotNull("zeroForOne", zeroForOne);
