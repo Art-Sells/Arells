@@ -56,13 +56,13 @@ const V4_POOL_IDS = [
     tickSpacing: 200,
     fee: 3000,
   },
-  {
-    label: "V4 B (0.3%)",
-    poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-    hooks: getAddress(V4_POOL_AB_HOOK_ADDRESS),
-    tickSpacing: 200,
-    fee: 3000,
-  },
+  // {
+  //   label: "V4 B (0.3%)",
+  //   poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
+  //   hooks: getAddress(V4_POOL_AB_HOOK_ADDRESS),
+  //   tickSpacing: 200,
+  //   fee: 3000,
+  // },
 ];
 
 const slot0Interface = new ethers.Interface([
@@ -382,129 +382,129 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
 
 
 
-async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
-  const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-  console.log(`✅ Using userWallet for ${poolId} quote simulation`);
+// async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
+//   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
+//   console.log(`✅ Using userWallet for ${poolId} quote simulation`);
 
-  // 🔹 ERC-20 Balance Check
-  const erc20ABI = [
-    "function balanceOf(address owner) view returns (uint256)",
-    "function decimals() view returns (uint8)"
-  ];
-  const cbBtcContract = new ethers.Contract(CBBTC, erc20ABI, provider);
-  const balance = await cbBtcContract.balanceOf(userWallet.address);
-  const formattedBalance = ethers.formatUnits(balance, 8);
-  console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
+//   // 🔹 ERC-20 Balance Check
+//   const erc20ABI = [
+//     "function balanceOf(address owner) view returns (uint256)",
+//     "function decimals() view returns (uint8)"
+//   ];
+//   const cbBtcContract = new ethers.Contract(CBBTC, erc20ABI, provider);
+//   const balance = await cbBtcContract.balanceOf(userWallet.address);
+//   const formattedBalance = ethers.formatUnits(balance, 8);
+//   console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
 
-  // Detect zeroForOne direction
-  const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
-  const parsedAmount = BigInt(amountInCBBTC);
-  const hookData = "0x";
+//   // Detect zeroForOne direction
+//   const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
+//   const parsedAmount = BigInt(amountInCBBTC);
+//   const hookData = "0x";
 
-  // Fetch ABI dynamically
-  async function fetchABI(address) {
-    const apiKey = process.env.BASESCAN_API_KEY;
-    const url = `https://api.basescan.org/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
-    const response = await axios.get(url);
-    if (response.data.status !== "1") throw new Error("Failed to fetch ABI from BaseScan");
+//   // Fetch ABI dynamically
+//   async function fetchABI(address) {
+//     const apiKey = process.env.BASESCAN_API_KEY;
+//     const url = `https://api.basescan.org/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
+//     const response = await axios.get(url);
+//     if (response.data.status !== "1") throw new Error("Failed to fetch ABI from BaseScan");
 
-    const abi = JSON.parse(response.data.result);
-    //console.log("🔍 Full V4 Quoter ABI:\n", JSON.stringify(abi, null, 2));
-    const quoteFragment = abi.find(
-      (entry) => entry.name === "quoteExactInputSingle" && entry.type === "function"
-    );
-    console.log("🔍 quoteExactInputSingle ABI fragment:", quoteFragment);
+//     const abi = JSON.parse(response.data.result);
+//     //console.log("🔍 Full V4 Quoter ABI:\n", JSON.stringify(abi, null, 2));
+//     const quoteFragment = abi.find(
+//       (entry) => entry.name === "quoteExactInputSingle" && entry.type === "function"
+//     );
+//     console.log("🔍 quoteExactInputSingle ABI fragment:", quoteFragment);
 
-    return abi;
-  }
+//     return abi;
+//   }
 
-  console.log("🔍 signedAmountIn =", parsedAmount);
-  console.log("🔍 sqrtPriceLimitX96 (initial) =", sqrtPriceLimitX96);
+//   console.log("🔍 signedAmountIn =", parsedAmount);
+//   console.log("🔍 sqrtPriceLimitX96 (initial) =", sqrtPriceLimitX96);
 
-  const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
-  const quoteIface = new ethers.Interface(quoterABI);
+//   const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
+//   const quoteIface = new ethers.Interface(quoterABI);
 
-  // 🔹 Fetch current slot0
-  try {
-    const [currentSqrtPriceX96] = await stateView.getSlot0(poolId);
-    sqrtPriceLimitX96 = currentSqrtPriceX96;
-    console.log("📈 Current sqrtPriceX96:", currentSqrtPriceX96.toString());
-    console.log("📈 Applied sqrtPriceLimitX96:", sqrtPriceLimitX96.toString());
-  } catch (e) {
-    console.warn("⚠️ Failed to fetch slot0. Using default 0n");
-    sqrtPriceLimitX96 = 0n;
-  }
+//   // 🔹 Fetch current slot0
+//   try {
+//     const [currentSqrtPriceX96] = await stateView.getSlot0(poolId);
+//     sqrtPriceLimitX96 = currentSqrtPriceX96;
+//     console.log("📈 Current sqrtPriceX96:", currentSqrtPriceX96.toString());
+//     console.log("📈 Applied sqrtPriceLimitX96:", sqrtPriceLimitX96.toString());
+//   } catch (e) {
+//     console.warn("⚠️ Failed to fetch slot0. Using default 0n");
+//     sqrtPriceLimitX96 = 0n;
+//   }
 
-  // ✅ Sanity Checks
-  function assertNotNull(label, val) {
-    if (val === null || val === undefined) {
-      throw new Error(`❌ ${label} is NULL or UNDEFINED`);
-    }
-  }
-  assertNotNull("userWallet.address", userWallet.address);
-  assertNotNull("poolKey.currency0", poolKey.currency0);
-  assertNotNull("poolKey.currency1", poolKey.currency1);
-  assertNotNull("poolKey.fee", poolKey.fee);
-  assertNotNull("poolKey.tickSpacing", poolKey.tickSpacing);
-  assertNotNull("amountInCBBTC", parsedAmount);
-  assertNotNull("sqrtPriceLimitX96", sqrtPriceLimitX96);
+//   // ✅ Sanity Checks
+//   function assertNotNull(label, val) {
+//     if (val === null || val === undefined) {
+//       throw new Error(`❌ ${label} is NULL or UNDEFINED`);
+//     }
+//   }
+//   assertNotNull("userWallet.address", userWallet.address);
+//   assertNotNull("poolKey.currency0", poolKey.currency0);
+//   assertNotNull("poolKey.currency1", poolKey.currency1);
+//   assertNotNull("poolKey.fee", poolKey.fee);
+//   assertNotNull("poolKey.tickSpacing", poolKey.tickSpacing);
+//   assertNotNull("amountInCBBTC", parsedAmount);
+//   assertNotNull("sqrtPriceLimitX96", sqrtPriceLimitX96);
 
-  console.log("✅ Pre-Encode Sanity Check:");
-  console.dir({
-    sender: userWallet.address,
-    poolKey,
-    zeroForOne,
-    parsedAmount,
-    sqrtPriceLimitX96
-  }, { depth: null });
+//   console.log("✅ Pre-Encode Sanity Check:");
+//   console.dir({
+//     sender: userWallet.address,
+//     poolKey,
+//     zeroForOne,
+//     parsedAmount,
+//     sqrtPriceLimitX96
+//   }, { depth: null });
 
-// encode params for V4 quoter
-const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
-  poolKey: {
-    currency0: poolKey.currency0,
-    currency1: poolKey.currency1,      // address
-    fee: BigInt(poolKey.fee),          // uint24 -> pass as BigInt
-    tickSpacing: BigInt(poolKey.tickSpacing), // int24 -> pass as BigInt
-    hooks: poolKey.hooks
-  },
-  zeroForOne,        // bool (based on input token == currency0)
-  exactAmount: parsedAmount,   // uint128
-  hookData: "0x"
-}]);
+// // encode params for V4 quoter
+// const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
+//   poolKey: {
+//     currency0: poolKey.currency0,
+//     currency1: poolKey.currency1,      // address
+//     fee: BigInt(poolKey.fee),          // uint24 -> pass as BigInt
+//     tickSpacing: BigInt(poolKey.tickSpacing), // int24 -> pass as BigInt
+//     hooks: poolKey.hooks
+//   },
+//   zeroForOne,        // bool (based on input token == currency0)
+//   exactAmount: parsedAmount,   // uint128
+//   hookData: "0x"
+// }]);
 
-  // Try calling the quoter
-  try {
-    const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
-    const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
+//   // Try calling the quoter
+//   try {
+//     const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
+//     const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
 
-    console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-    console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
-  } catch (err) {
-    console.error("❌ Pool B Quoter call reverted:", err.reason || err.message || err);
-    return;
-  }
+//     console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+//     console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
+//   } catch (err) {
+//     console.error("❌ Pool B Quoter call reverted:", err.reason || err.message || err);
+//     return;
+//   }
 
-  // Reserve/Price Fetch
-  try {
-    console.log(`🆔 Pool ID: ${poolId}`);
-    const [sqrtPriceX96] = await stateView.getSlot0(poolId);
-    const liquidity = await stateView.getLiquidity(poolId);
+//   // Reserve/Price Fetch
+//   try {
+//     console.log(`🆔 Pool ID: ${poolId}`);
+//     const [sqrtPriceX96] = await stateView.getSlot0(poolId);
+//     const liquidity = await stateView.getLiquidity(poolId);
 
-    const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
-    const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
+//     const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+//     const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
 
-    console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
-    console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
-    console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
-    console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
-  } catch (e) {
-    console.warn("⚠️ Could not fetch reserves/price:", e.message || e);
-  }
-}
+//     console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
+//     console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
+//     console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
+//     console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
+//   } catch (e) {
+//     console.warn("⚠️ Could not fetch reserves/price:", e.message || e);
+//   }
+// }
 
 
 async function main() {
-  const amountInCBBTC = ethers.parseUnits("0.000023", 8);
+  const amountInCBBTC = ethers.parseUnits("1", 8);
 
   for (const pool of V4_POOL_IDS) {
     const token0 = CBBTC.toLowerCase() < USDC.toLowerCase() ? CBBTC : USDC;
@@ -528,7 +528,7 @@ async function main() {
       if (pool.label.startsWith("V4 A")) {
         await simulateWithV4QuoterPoolA(poolKey, pool.poolId, amountInCBBTC, 0n);
       } else if (pool.label.startsWith("V4 B")) {
-        await simulateWithV4QuoterPoolB(poolKey, pool.poolId, amountInCBBTC, 0n);
+      //  await simulateWithV4QuoterPoolB(poolKey, pool.poolId, amountInCBBTC, 0n);
       }
     }
   }
