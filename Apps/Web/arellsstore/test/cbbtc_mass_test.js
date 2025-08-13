@@ -34,8 +34,7 @@ dotenv.config();
 
 
 const V4_POOL_MANAGER = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
-const V4_POOL_A_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
-const V4_POOL_B_HOOK_ADDRESS = "0x0000000000000000000000000000000000000000";
+const V4_POOL_AB_HOOK_ADDRESS = "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4";
 const STATE_VIEW_ADDRESS = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
 const V4_QUOTER_ADDRESS = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
 
@@ -53,14 +52,14 @@ const V4_POOL_IDS = [
   {
     label: "V4 A (0.3%)",
     poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96", 
-    hooks: getAddress(V4_POOL_A_HOOK_ADDRESS), 
+    hooks: getAddress(V4_POOL_AB_HOOK_ADDRESS), 
     tickSpacing: 200,
     fee: 3000,
   },
   {
     label: "V4 B (0.3%)",
     poolId: "0x179492f1f9c7b2e2518a01eda215baab8adf0b02dd3a90fe68059c0cac5686f5",
-    hooks: getAddress(V4_POOL_B_HOOK_ADDRESS),
+    hooks: getAddress(V4_POOL_AB_HOOK_ADDRESS),
     tickSpacing: 200,
     fee: 3000,
   },
@@ -459,29 +458,6 @@ async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPri
     sqrtPriceLimitX96
   }, { depth: null });
 
-  // 🛠 Detect if poolKey.hooks is the zero address
-  const hookless = !poolKey.hooks || poolKey.hooks.toLowerCase() === "0x0000000000000000000000000000000000000000";
-  console.log(`🔍 Pool is ${hookless ? "HOOKLESS" : "HOOK-ENABLED"}`);
-
-  // 🛠 Build calldata dynamically (omit hooks for hookless pool)
-  const poolKeyForCall = hookless
-    ? {
-        currency0: poolKey.currency0,
-        currency1: poolKey.currency1,
-        fee: BigInt(poolKey.fee),
-        tickSpacing: BigInt(poolKey.tickSpacing)
-      }
-    : {
-        currency0: poolKey.currency0,
-        currency1: poolKey.currency1,
-        fee: BigInt(poolKey.fee),
-        tickSpacing: BigInt(poolKey.tickSpacing),
-        hooks: poolKey.hooks
-      };
-
-  console.log("✅ Final poolKey for call:", poolKeyForCall);
-
-  // Build calldata for quoteExactInputSingle
 // encode params for V4 quoter
 const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
   poolKey: {
@@ -489,7 +465,7 @@ const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
     currency1: poolKey.currency1,      // address
     fee: BigInt(poolKey.fee),          // uint24 -> pass as BigInt
     tickSpacing: BigInt(poolKey.tickSpacing), // int24 -> pass as BigInt
-    hooks: "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4",
+    hooks: poolKey.hooks
   },
   zeroForOne,        // bool (based on input token == currency0)
   exactAmount: parsedAmount,   // uint128
@@ -550,7 +526,7 @@ async function main() {
       console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
     } else {
       if (pool.label.startsWith("V4 A")) {
-        //await simulateWithV4QuoterPoolA(poolKey, pool.poolId, amountInCBBTC, 0n);
+        await simulateWithV4QuoterPoolA(poolKey, pool.poolId, amountInCBBTC, 0n);
       } else if (pool.label.startsWith("V4 B")) {
         await simulateWithV4QuoterPoolB(poolKey, pool.poolId, amountInCBBTC, 0n);
       }
