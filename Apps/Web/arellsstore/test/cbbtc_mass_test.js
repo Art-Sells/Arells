@@ -182,7 +182,7 @@ function getInitializedTicksFromBitmap(bitmap, wordPosition, tickSpacing) {
 
 async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-  console.log(`✅ Using userWallet for Pool B quote simulation`);
+  console.log(`✅ Using userWallet for Pool A quote simulation`);
 
   // 🔹 Check cbBTC Balance
   const erc20ABI = [
@@ -194,25 +194,38 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
   const formattedBalance = ethers.formatUnits(balance, 8);
   console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
 
+  // 🔹 Compute canonical Pool ID
+  const canonicalPoolId = computePoolId({
+    currency0: ethers.getAddress(poolKey.currency0),
+    currency1: ethers.getAddress(poolKey.currency1),
+    fee: BigInt(poolKey.fee),
+    tickSpacing: BigInt(poolKey.tickSpacing),
+    hooks: ethers.getAddress(poolKey.hooks),
+  });
+  if (canonicalPoolId.toLowerCase() !== poolId.toLowerCase()) {
+    console.warn("⚠️ poolId mismatch! manual vs computed");
+    console.warn("   manual   :", poolId);
+    console.warn("   computed :", canonicalPoolId);
+  } else {
+    console.log("✅ poolId matches:", canonicalPoolId);
+  }
+  const targetPoolId = canonicalPoolId;
+
   // 🔹 Prepare Quote Params
   const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
-  const signedAmountIn = BigInt(amountInCBBTC);
+  const parsedAmount = BigInt(amountInCBBTC);
   const hookData = "0x";
 
-  console.log("🔍 signedAmountIn =", signedAmountIn);
+  console.log("🔍 signedAmountIn =", parsedAmount);
   console.log("🔍 sqrtPriceLimitX96 =", sqrtPriceLimitX96);
 
-  // Inside simulateWithV4Quoter:
   const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
   const quoteIface = new ethers.Interface(quoterABI);
 
-  const parsedAmount = BigInt(amountInCBBTC);
-
-  // 🔹 Fetch current slot0 price from StateView
+  // 🔹 Fetch current slot0 price
   try {
-    const [currentSqrtPriceX96] = await stateView.getSlot0(poolId);
+    const [currentSqrtPriceX96] = await stateView.getSlot0(targetPoolId);
     sqrtPriceLimitX96 = currentSqrtPriceX96;
-
     console.log("📈 Current sqrtPriceX96:", currentSqrtPriceX96.toString());
     console.log("📈 Applied sqrtPriceLimitX96:", sqrtPriceLimitX96.toString());
   } catch (e) {
@@ -220,141 +233,55 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     sqrtPriceLimitX96 = 0n;
   }
 
-  console.log("✅ Pre-Encode Sanity Check:");
-  console.dir({
-    encodingCall: {
-      sender: userWallet.address,
-      poolKey: {
-        currency0: poolKey.currency0,
-        currency1: poolKey.currency1,
-        fee: poolKey.fee,
-        tickSpacing: poolKey.tickSpacing,
-        hooks: poolKey.hooks,
-      },
-      hookData: "0x",
-      params: {
-        zeroForOne,
-        amountSpecified: parsedAmount,
-        sqrtPriceLimitX96: sqrtPriceLimitX96,
-      },
-    },
-    types: {
-      sender: typeof userWallet.address,
-      currency0: typeof poolKey.currency0,
-      currency1: typeof poolKey.currency1,
-      fee: typeof poolKey.fee,
-      tickSpacing: typeof poolKey.tickSpacing,
-      hooks: typeof poolKey.hooks,
-      zeroForOne: typeof true,
-      amountSpecified: typeof amountInCBBTC,
-      sqrtPriceLimitX96: typeof sqrtPriceLimitX96,
-    },
-  }, { depth: null });
-  
-  if (
-    !userWallet.address ||
-    !poolKey.currency0 ||
-    !poolKey.currency1 ||
-    poolKey.fee == null ||
-    poolKey.tickSpacing == null ||
-    !poolKey.hooks ||
-    amountInCBBTC == null
-  ) {
-    throw new Error("❌ One or more required quote parameters are null or undefined.");
-  }
-  console.log(`🧪 amountInCBBTC at quote time:`, amountInCBBTC);
-  if (amountInCBBTC === null || amountInCBBTC === undefined || typeof amountInCBBTC !== 'bigint') {
-    throw new Error(`❌ amountInCBBTC is invalid or not a BigInt: ${amountInCBBTC}`);
-  }
-  const amountSpecified = BigInt(amountInCBBTC);
-  console.log("✅ amountSpecified:", amountSpecified);
-
-  console.log("🧪 Full Encode Sanity Check:");
-  console.log("sender:", userWallet.address);
-  console.log("currency0:", poolKey.currency0);
-  console.log("currency1:", poolKey.currency1);
-  console.log("fee:", poolKey.fee, typeof poolKey.fee);
-  console.log("tickSpacing:", poolKey.tickSpacing, typeof poolKey.tickSpacing);
-  console.log("hooks:", poolKey.hooks);
-  console.log("zeroForOne:", true);
-  console.log("amountSpecified:", amountInCBBTC, typeof amountInCBBTC);
-  console.log("sqrtPriceLimitX96:", sqrtPriceLimitX96, typeof sqrtPriceLimitX96);
-
+  // ✅ Checks
   function assertNotNull(label, val) {
     if (val === null || val === undefined) {
       throw new Error(`❌ ${label} is NULL or UNDEFINED`);
     }
   }
-
-  // Check sender
   assertNotNull("userWallet.address", userWallet.address);
-
-  // Check poolKey fields
   assertNotNull("poolKey.currency0", poolKey.currency0);
   assertNotNull("poolKey.currency1", poolKey.currency1);
   assertNotNull("poolKey.fee", poolKey.fee);
   assertNotNull("poolKey.tickSpacing", poolKey.tickSpacing);
   assertNotNull("poolKey.hooks", poolKey.hooks);
-
-  // Check params
-  assertNotNull("zeroForOne", zeroForOne);
   assertNotNull("amountInCBBTC", amountInCBBTC);
   assertNotNull("sqrtPriceLimitX96", sqrtPriceLimitX96);
 
-  const encodeInput = {
+  console.log("🧪 Full Encode Sanity Check:");
+  console.dir({
     sender: userWallet.address,
     poolKey,
-    hookData: "0x",
-    params: {
-      zeroForOne: true,
-      amountSpecified: parsedAmount,
-      sqrtPriceLimitX96,
-    },
-  };
-  
-  console.log("✅ Final object being passed to encodeFunctionData:");
-  console.dir(encodeInput, { depth: null });
-  
-  for (const [section, obj] of Object.entries(encodeInput)) {
-    if (typeof obj === 'object') {
-      for (const [k, v] of Object.entries(obj)) {
-        console.log(`${section}.${k} =`, v, `(type: ${typeof v})`);
-        if (v == null) throw new Error(`❌ ${section}.${k} is ${v}`);
-      }
-    } else {
-      console.log(`${section} =`, obj, `(type: ${typeof obj})`);
-      if (obj == null) throw new Error(`❌ ${section} is ${obj}`);
-    }
-  }
-  
+    zeroForOne,
+    parsedAmount,
+    sqrtPriceLimitX96
+  }, { depth: null });
+
   const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
     poolKey: {
       currency0: poolKey.currency0,
       currency1: poolKey.currency1,
-      fee:       BigInt(poolKey.fee),
+      fee: BigInt(poolKey.fee),
       tickSpacing: BigInt(poolKey.tickSpacing),
-      hooks:     poolKey.hooks,
+      hooks: poolKey.hooks,
     },
-    zeroForOne,                          // true if swapping currency0 -> currency1
-    exactAmount: parsedAmount,            // uint128, POSITIVE
-    hookData: "0x",
+    zeroForOne,
+    exactAmount: parsedAmount,
+    hookData
   }]);
-  
+
   const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
   const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
-  
   console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
   console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
 
-  // 🔍 Fetch reserves using poolId
+  // 🔍 Fetch reserves using computed id
   try {
-    console.log(`🆔 Pool ID: ${poolId}`);
-    const [sqrtPriceX96] = await stateView.getSlot0(poolId);
-    const liquidity = await stateView.getLiquidity(poolId);
-
+    console.log(`🆔 Pool ID (computed): ${targetPoolId}`);
+    const [sqrtPriceX96] = await stateView.getSlot0(targetPoolId);
+    const liquidity = await stateView.getLiquidity(targetPoolId);
     const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
     const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
-
     console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
     console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
     console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
@@ -371,7 +298,7 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
 
 async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-  console.log(`✅ Using userWallet for ${poolId} quote simulation`);
+  console.log(`✅ Using userWallet for Pool B quote simulation`);
 
   // 🔹 ERC-20 Balance Check
   const erc20ABI = [
@@ -382,6 +309,23 @@ async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPri
   const balance = await cbBtcContract.balanceOf(userWallet.address);
   const formattedBalance = ethers.formatUnits(balance, 8);
   console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
+
+  // 🔹 Compute canonical Pool ID
+  const canonicalPoolId = computePoolId({
+    currency0: ethers.getAddress(poolKey.currency0),
+    currency1: ethers.getAddress(poolKey.currency1),
+    fee: BigInt(poolKey.fee),
+    tickSpacing: BigInt(poolKey.tickSpacing),
+    hooks: ethers.getAddress(poolKey.hooks),
+  });
+  if (canonicalPoolId.toLowerCase() !== poolId.toLowerCase()) {
+    console.warn("⚠️ poolId mismatch! manual vs computed");
+    console.warn("   manual   :", poolId);
+    console.warn("   computed :", canonicalPoolId);
+  } else {
+    console.log("✅ poolId matches:", canonicalPoolId);
+  }
+  const targetPoolId = canonicalPoolId;
 
   // Detect zeroForOne direction
   const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
@@ -396,7 +340,7 @@ async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPri
 
   // 🔹 Fetch current slot0
   try {
-    const [currentSqrtPriceX96] = await stateView.getSlot0(poolId);
+    const [currentSqrtPriceX96] = await stateView.getSlot0(targetPoolId);
     sqrtPriceLimitX96 = currentSqrtPriceX96;
     console.log("📈 Current sqrtPriceX96:", currentSqrtPriceX96.toString());
     console.log("📈 Applied sqrtPriceLimitX96:", sqrtPriceLimitX96.toString());
@@ -405,7 +349,7 @@ async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPri
     sqrtPriceLimitX96 = 0n;
   }
 
-  // ✅ Sanity Checks
+  // ✅ Checks
   function assertNotNull(label, val) {
     if (val === null || val === undefined) {
       throw new Error(`❌ ${label} is NULL or UNDEFINED`);
@@ -428,25 +372,23 @@ async function simulateWithV4QuoterPoolB(poolKey, poolId, amountInCBBTC, sqrtPri
     sqrtPriceLimitX96
   }, { depth: null });
 
-// encode params for V4 quoter
-const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
-  poolKey: {
-    currency0: poolKey.currency0,
-    currency1: poolKey.currency1,      // address
-    fee: BigInt(poolKey.fee),          // uint24 -> pass as BigInt
-    tickSpacing: BigInt(poolKey.tickSpacing), // int24 -> pass as BigInt
-    hooks: poolKey.hooks
-  },
-  zeroForOne,        // bool (based on input token == currency0)
-  exactAmount: parsedAmount,   // uint128
-  hookData: "0x"
-}]);
+  // encode params for V4 quoter
+  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
+    poolKey: {
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1,
+      fee: BigInt(poolKey.fee),
+      tickSpacing: BigInt(poolKey.tickSpacing),
+      hooks: poolKey.hooks
+    },
+    zeroForOne,
+    exactAmount: parsedAmount,
+    hookData
+  }]);
 
-  // Try calling the quoter
   try {
     const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
     const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
-
     console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
     console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
   } catch (err) {
@@ -454,15 +396,13 @@ const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
     return;
   }
 
-  // Reserve/Price Fetch
+  // Reserve/Price Fetch using computed id
   try {
-    console.log(`🆔 Pool ID: ${poolId}`);
-    const [sqrtPriceX96] = await stateView.getSlot0(poolId);
-    const liquidity = await stateView.getLiquidity(poolId);
-
+    console.log(`🆔 Pool ID (computed): ${targetPoolId}`);
+    const [sqrtPriceX96] = await stateView.getSlot0(targetPoolId);
+    const liquidity = await stateView.getLiquidity(targetPoolId);
     const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
     const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
-
     console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
     console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
     console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
@@ -498,7 +438,7 @@ async function main() {
       if (pool.label.startsWith("V4 A")) {
         await simulateWithV4QuoterPoolA(poolKey, pool.poolId, amountInCBBTC, 0n);
       } else if (pool.label.startsWith("V4 B")) {
-        await simulateWithV4QuoterPoolB(poolKey, pool.poolId, amountInCBBTC, 0n);
+        //await simulateWithV4QuoterPoolB(poolKey, pool.poolId, amountInCBBTC, 0n);
       }
     }
   }
