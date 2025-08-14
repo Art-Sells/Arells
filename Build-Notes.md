@@ -5,6 +5,7 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
+- 1 entire token test to ensure pool match
 - Test (increase initialized Ticks in wordPosition to find fee free route)
 - revert back to "testKeyPermutations commit for v3/v4 ref"
 
@@ -148,6 +149,7 @@ Arells Wallet and change all Variables
 - HPM-Liquidity System (Brainstorm)
 - - Reference V3 U*P (and UI) Repos(addresses for contract and API info)
 - - Research whether injecting USDC (only) will grow AUM?
+- Crypto Exchange/Wallet License (for iOS/Android App)
 
 
 
@@ -156,9 +158,10 @@ Arells Wallet and change all Variables
 
 
 
-## Arells 1.5 (Sell/Export USDC)
+## Arells 1.5 (Sell/Export USDC) (and other token pairs)
 
 ### Test
+- 1 entire token test to ensure pool match
 - Create New Export Wallet Address for Selling and Exporting USDC/CBBTC
 - **fix Selling Discrepancy Issue (VERY IMPORTANT)**
 - Sell Test (HPMContext)
