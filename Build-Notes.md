@@ -5,7 +5,8 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- 1 entire token test to ensure pool match
+- 1 entire token test to ensure pool match:
+	•	In a constant-product/concentrated-liquidity AMM, if you try to sell 1 cbBTC into a range that only holds ~10.386 cbBTC, you are trying to remove ~9.6% of the token-1 inventory that’s currently active. That moves price a lot.
 - Test (increase initialized Ticks in wordPosition to find fee free route)
 - revert back to "testKeyPermutations commit for v3/v4 ref"
 
