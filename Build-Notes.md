@@ -11,7 +11,7 @@
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - 1 entire token test:
-	•	In a constant-product/concentrated-liquidity AMM, if you try to sell 1 cbBTC into a range that only holds ~10.386 cbBTC, you are trying to remove ~9.6% of the token-1 inventory that’s currently active. That moves price a lot, so I'm going to have to re-write HPM acronyms to break apart each "supplication" from the token-to-fiat (calculate which supplication will not diminish the value of the investment (i.e if the supplication (based on the token-pair-price) then do not supplicate (leave USDC)))
+	•	In a constant-product/concentrated-liquidity AMM, if you try to sell 1 cbBTC into a range that only holds ~10.386 cbBTC, you are trying to remove ~9.6% of the token-1 inventory that’s currently active. That moves price a lot, so I'm going to have to re-write HPM acronyms to break apart each "supplication" from the token-to-fiat (calculate which supplication will not diminish the value of the investment (i.e if the supplication (based on the token-pair-price) then do not supplicate (leave USDC ***importing USDC into the system (first) ensures this problem is mitigated***)))
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - Import wallet (create import wallet)
 - MASS wallet (create MASS wallet)

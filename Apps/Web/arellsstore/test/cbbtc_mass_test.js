@@ -173,121 +173,115 @@ function getInitializedTicksFromBitmap(bitmap, wordPosition, tickSpacing) {
 
 
 
-// --- V4 quoter "quote" with explicit sqrtPriceLimitX96 (lets us probe specific ticks) ---
-async function simulateWithV4QuoterAtLimit({
-  poolKey,            // {currency0, currency1, fee, tickSpacing, hooks}
-  zeroForOne,         // true: token0->token1
-  amountInCBBTC,      // uint128 (8 dp base units)
-  sqrtPriceLimitX96,  // uint160 limit
-  sender,             // address
-}) {
-  const abi = ["function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"];
-  const quoter = new ethers.Contract(V4_QUOTER_ADDRESS, abi, provider);
-  const abiCoder = ethers.AbiCoder.defaultAbiCoder();
+async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
+  const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
+  console.log(`✅ Using userWallet for Pool A quote simulation`);
 
-  // match PoolManager.swap params encoding the V4 Quoter expects
-  const inputData = abiCoder.encode(
-    [
-      "tuple(address currency0, address currency1, uint24 fee, address hooks, int24 tickSpacing)", // PoolKey
-      "address",   // sender (ignored for read)
-      "bool",      // zeroForOne
-      "int256",    // amountSpecified (positive => exact input)
-      "uint160",   // sqrtPriceLimitX96
-      "bytes",     // hookData
-    ],
-    [
-      [ poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.hooks, poolKey.tickSpacing ],
-      ethers.ZeroAddress, // or sender, not relevant in quote()
-      zeroForOne,
-      BigInt(amountInCBBTC),
-      BigInt(sqrtPriceLimitX96),
-      "0x"
-    ]
-  );
+  // 🔹 Check cbBTC Balance
+  const erc20ABI = [
+    "function balanceOf(address owner) view returns (uint256)",
+    "function decimals() view returns (uint8)"
+  ];
+  const cbBtcContract = new ethers.Contract(CBBTC, erc20ABI, provider);
+  const balance = await cbBtcContract.balanceOf(userWallet.address);
+  const formattedBalance = ethers.formatUnits(balance, 8);
+  console.log(`💰 CBBTC Balance: ${formattedBalance} CBBTC`);
 
-  const raw = await quoter.quote(sender, "0x", inputData);
-  // The v4 quoter returns encoded bytes; for single-hop exact input this decodes to (uint256 amountOut)
-  const [amountOut] = abiCoder.decode(["uint256"], raw);
-  return amountOut; // bigint
-}
-
-// --- scan initialized ticks in current bitmap word & probe them with the quoter ---
-async function probeInitializedTicksForFeeFreeV4({
-  poolId,
-  poolKey,
-  amountInHuman,       // e.g. 1 for "1 cbBTC"
-  maxCandidates = 12,  // probe up to this many nearest initialized ticks
-}) {
-  const sender = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider).address;
-
-  // read slot0 + lpFee & basic direction
-  const [sqrtX, tick, , lpFee] = await stateView.getSlot0(poolId);
-  const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
-  const spacing = Number(poolKey.tickSpacing);
-  const currentTick = Number(tick);
-  const baseWord = Math.trunc(currentTick / spacing / 256); // same approach as your bitmap reader
-
-  // pull initialized ticks in this word
-  const bitmap = await getTickBitmap(poolId, baseWord);
-  const initTicks = getInitializedTicksFromBitmap(bitmap, baseWord, spacing);
-
-  if (!initTicks.length) {
-    console.log("⚠️ No initialized ticks found in the current word.");
-    return [];
-  }
-
-  // sort by distance to current tick & keep the closest few, respecting direction
-  const dirFilter = zeroForOne
-    ? (t) => t <= currentTick  // for token0->token1, price moves to lower ticks
-    : (t) => t >= currentTick; // token1->token0 moves to higher ticks
-
-  const candidates = initTicks
-    .filter(dirFilter)
-    .sort((a, b) => Math.abs(a - currentTick) - Math.abs(b - currentTick))
-    .slice(0, maxCandidates);
-
-  console.log(`🧵 Initialized ticks (nearest, dir-filtered): ${candidates.join(", ")}`);
-  console.log(`🔎 lpFee now: ${lpFee} (0 == fee-free) | currentTick: ${currentTick}`);
-
-  const amountInCBBTC = ethers.parseUnits(String(amountInHuman), 8);
-  const results = [];
-
-  for (const t of candidates) {
-    let limit;
-    try {
-      // Use v3 TickMath to compute the sqrt limit for that tick
-      limit = BigInt(TickMath.getSqrtRatioAtTick(t).toString());
-    } catch (e) {
-      console.warn(`⚠️ skip tick ${t}: ${e.message}`);
-      continue;
-    }
-
-    try {
-      const out = await simulateWithV4QuoterAtLimit({
-        poolKey,
-        zeroForOne,
-        amountInCBBTC,
-        sqrtPriceLimitX96: limit,
-        sender,
-      });
-      const outHuman = Number(ethers.formatUnits(out, 6));
-      console.log(`✅ tick ${t}: out ≈ ${outHuman.toFixed(6)} USDC (limit=${limit})`);
-      results.push({ tick: t, limit, amountOut: out, outHuman });
-    } catch (err) {
-      console.log(`❌ tick ${t} revert:`, err.reason || err.message || err);
-    }
-  }
-
-  // pick best by amountOut
-  results.sort((a, b) => (a.amountOut > b.amountOut ? -1 : 1));
-  if (results[0]) {
-    const best = results[0];
-    console.log(`🏁 Best initialized-tick probe → tick ${best.tick} | ${best.outHuman.toFixed(6)} USDC`);
+  // 🔹 Compute canonical Pool ID
+  const canonicalPoolId = computePoolId({
+    currency0: ethers.getAddress(poolKey.currency0),
+    currency1: ethers.getAddress(poolKey.currency1),
+    fee: BigInt(poolKey.fee),
+    tickSpacing: BigInt(poolKey.tickSpacing),
+    hooks: ethers.getAddress(poolKey.hooks),
+  });
+  if (canonicalPoolId.toLowerCase() !== poolId.toLowerCase()) {
+    console.warn("⚠️ poolId mismatch! manual vs computed");
+    console.warn("   manual   :", poolId);
+    console.warn("   computed :", canonicalPoolId);
   } else {
-    console.log("😕 No successful quotes at probed initialized ticks.");
+    console.log("✅ poolId matches:", canonicalPoolId);
+  }
+  const targetPoolId = canonicalPoolId;
+
+  // 🔹 Prepare Quote Params
+  const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
+  const parsedAmount = BigInt(amountInCBBTC);
+  const hookData = "0x";
+
+  console.log("🔍 signedAmountIn =", parsedAmount);
+  console.log("🔍 sqrtPriceLimitX96 =", sqrtPriceLimitX96);
+
+  const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
+  const quoteIface = new ethers.Interface(quoterABI);
+
+  // 🔹 Fetch current slot0 price
+  try {
+    const [currentSqrtPriceX96] = await stateView.getSlot0(targetPoolId);
+    sqrtPriceLimitX96 = currentSqrtPriceX96;
+    console.log("📈 Current sqrtPriceX96:", currentSqrtPriceX96.toString());
+    console.log("📈 Applied sqrtPriceLimitX96:", sqrtPriceLimitX96.toString());
+  } catch (e) {
+    console.warn("⚠️ Failed to fetch slot0. Falling back to 0n sqrtPriceLimitX96");
+    sqrtPriceLimitX96 = 0n;
   }
 
-  return results;
+  // ✅ Checks
+  function assertNotNull(label, val) {
+    if (val === null || val === undefined) {
+      throw new Error(`❌ ${label} is NULL or UNDEFINED`);
+    }
+  }
+  assertNotNull("userWallet.address", userWallet.address);
+  assertNotNull("poolKey.currency0", poolKey.currency0);
+  assertNotNull("poolKey.currency1", poolKey.currency1);
+  assertNotNull("poolKey.fee", poolKey.fee);
+  assertNotNull("poolKey.tickSpacing", poolKey.tickSpacing);
+  assertNotNull("poolKey.hooks", poolKey.hooks);
+  assertNotNull("amountInCBBTC", amountInCBBTC);
+  assertNotNull("sqrtPriceLimitX96", sqrtPriceLimitX96);
+
+  console.log("🧪 Full Encode Sanity Check:");
+  console.dir({
+    sender: userWallet.address,
+    poolKey,
+    zeroForOne,
+    parsedAmount,
+    sqrtPriceLimitX96
+  }, { depth: null });
+
+  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
+    poolKey: {
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1,
+      fee: BigInt(poolKey.fee),
+      tickSpacing: BigInt(poolKey.tickSpacing),
+      hooks: poolKey.hooks,
+    },
+    zeroForOne,
+    exactAmount: parsedAmount,
+    hookData
+  }]);
+
+  const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
+  const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
+  console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+  console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
+
+  // 🔍 Fetch reserves using computed id
+  try {
+    console.log(`🆔 Pool ID (computed): ${targetPoolId}`);
+    const [sqrtPriceX96] = await stateView.getSlot0(targetPoolId);
+    const liquidity = await stateView.getLiquidity(targetPoolId);
+    const price = decodeSqrtPriceX96ToFloat(sqrtPriceX96);
+    const reserves = decodeLiquidityAmountsv4(liquidity, sqrtPriceX96);
+    console.log(`📈 sqrtPriceX96: ${sqrtPriceX96}`);
+    console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
+    console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
+    console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
+  } catch (e) {
+    console.warn("⚠️ Could not fetch reserves/price:", e.message || e);
+  }
 }
 
 
@@ -311,27 +305,12 @@ async function main() {
     console.log(`\n🔎 ${pool.label}`);
     console.log(`• Using manual poolId: ${pool.poolId}`);
 
-
-    const liq = await getLiquidity(pool.poolId);
-    if (liq === 0n) {
-      console.log(`🚫 Skipping ${pool.label} — zero global liquidity.`);
-      continue;
+    const liquidity = await getLiquidity(pool.poolId);
+    if (liquidity === 0n) {
+      console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
+    } else {
+      await simulateWithV4QuoterPoolA(poolKey, pool.poolId, amountInCBBTC, 0n);
     }
-  
-    console.log(`\n🚀 Checking initialized-tick fee-free probes for ${pool.label} …`);
-    await probeInitializedTicksForFeeFreeV4({
-      poolId: pool.poolId,
-      poolKey: {
-        currency0: CBBTC.toLowerCase() < USDC.toLowerCase() ? CBBTC : USDC,
-        currency1: CBBTC.toLowerCase() < USDC.toLowerCase() ? USDC : CBBTC,
-        fee: BigInt(pool.fee),
-        tickSpacing: BigInt(pool.tickSpacing),
-        hooks: pool.hooks,
-      },
-      amountInHuman: 1,      // try with your actual input size (in cbBTC units)
-      maxCandidates: 12,     // adjust if you want to probe more
-    });
-
   }
 }
 
