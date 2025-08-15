@@ -173,87 +173,121 @@ function getInitializedTicksFromBitmap(bitmap, wordPosition, tickSpacing) {
 
 
 
-// --- V4 fee-free route probe helpers ---
+// --- V4 quoter "quote" with explicit sqrtPriceLimitX96 (lets us probe specific ticks) ---
+async function simulateWithV4QuoterAtLimit({
+  poolKey,            // {currency0, currency1, fee, tickSpacing, hooks}
+  zeroForOne,         // true: token0->token1
+  amountInCBBTC,      // uint128 (8 dp base units)
+  sqrtPriceLimitX96,  // uint160 limit
+  sender,             // address
+}) {
+  const abi = ["function quote(address sender, bytes hookData, bytes inputData) view returns (bytes)"];
+  const quoter = new ethers.Contract(V4_QUOTER_ADDRESS, abi, provider);
+  const abiCoder = ethers.AbiCoder.defaultAbiCoder();
 
-// Build + call V4 quoter for a single (limit) tick
-async function simulateWithV4QuoterSingle({ poolKey, zeroForOne, amountInCBBTC, sqrtPriceLimitX96 }) {
-  const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
-  const iface = new ethers.Interface(quoterABI);
+  // match PoolManager.swap params encoding the V4 Quoter expects
+  const inputData = abiCoder.encode(
+    [
+      "tuple(address currency0, address currency1, uint24 fee, address hooks, int24 tickSpacing)", // PoolKey
+      "address",   // sender (ignored for read)
+      "bool",      // zeroForOne
+      "int256",    // amountSpecified (positive => exact input)
+      "uint160",   // sqrtPriceLimitX96
+      "bytes",     // hookData
+    ],
+    [
+      [ poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.hooks, poolKey.tickSpacing ],
+      ethers.ZeroAddress, // or sender, not relevant in quote()
+      zeroForOne,
+      BigInt(amountInCBBTC),
+      BigInt(sqrtPriceLimitX96),
+      "0x"
+    ]
+  );
 
-  const calldata = iface.encodeFunctionData("quoteExactInputSingle", [{
-    poolKey: {
-      currency0: poolKey.currency0,
-      currency1: poolKey.currency1,
-      fee: BigInt(poolKey.fee),
-      tickSpacing: BigInt(poolKey.tickSpacing),
-      hooks: poolKey.hooks,
-    },
-    zeroForOne,
-    exactAmount: BigInt(amountInCBBTC),   // cbBTC (8 decimals) in base units
-    hookData: "0x",
-  }]);
-
-  try {
-    const raw = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
-    const [amountOut, gasEstimate] = iface.decodeFunctionResult("quoteExactInputSingle", raw);
-    return { ok: true, amountOut, gasEstimate };
-  } catch (err) {
-    return { ok: false, error: err };
-  }
+  const raw = await quoter.quote(sender, "0x", inputData);
+  // The v4 quoter returns encoded bytes; for single-hop exact input this decodes to (uint256 amountOut)
+  const [amountOut] = abiCoder.decode(["uint256"], raw);
+  return amountOut; // bigint
 }
 
-// Probe around current tick; report whether pool is fee-free now and return best route
-async function checkFeeFreeRouteV4(amountInHuman, poolKey, poolId) {
-  console.log(`\n🚀 Checking V4 Fee-Free Route @ amount=${amountInHuman} cbBTC ...`);
-  // convert cbBTC (8 dp) to base units
-  const amountInCBBTC = ethers.parseUnits(String(amountInHuman), 8);
+// --- scan initialized ticks in current bitmap word & probe them with the quoter ---
+async function probeInitializedTicksForFeeFreeV4({
+  poolId,
+  poolKey,
+  amountInHuman,       // e.g. 1 for "1 cbBTC"
+  maxCandidates = 12,  // probe up to this many nearest initialized ticks
+}) {
+  const sender = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider).address;
 
-  // current slot0 (+ lpFee) from StateView
-  const [sqrtPriceX96, tick, , lpFee] = await stateView.getSlot0(poolId);
-  const isFeeFreeNow = (BigInt(lpFee) === 0n);
-  console.log(`🔎 lpFee (current): ${lpFee} ${isFeeFreeNow ? "(fee-free now ✅)" : ""}`);
-
+  // read slot0 + lpFee & basic direction
+  const [sqrtX, tick, , lpFee] = await stateView.getSlot0(poolId);
   const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
-  const tickSpacing = Number(poolKey.tickSpacing);
-  const baseTick = Math.floor(Number(tick) / tickSpacing) * tickSpacing;
+  const spacing = Number(poolKey.tickSpacing);
+  const currentTick = Number(tick);
+  const baseWord = Math.trunc(currentTick / spacing / 256); // same approach as your bitmap reader
 
-  const candidates = [];
-  for (let i = -2; i <= 2; i++) {
-    const testTick = baseTick + i * tickSpacing;
+  // pull initialized ticks in this word
+  const bitmap = await getTickBitmap(poolId, baseWord);
+  const initTicks = getInitializedTicksFromBitmap(bitmap, baseWord, spacing);
+
+  if (!initTicks.length) {
+    console.log("⚠️ No initialized ticks found in the current word.");
+    return [];
+  }
+
+  // sort by distance to current tick & keep the closest few, respecting direction
+  const dirFilter = zeroForOne
+    ? (t) => t <= currentTick  // for token0->token1, price moves to lower ticks
+    : (t) => t >= currentTick; // token1->token0 moves to higher ticks
+
+  const candidates = initTicks
+    .filter(dirFilter)
+    .sort((a, b) => Math.abs(a - currentTick) - Math.abs(b - currentTick))
+    .slice(0, maxCandidates);
+
+  console.log(`🧵 Initialized ticks (nearest, dir-filtered): ${candidates.join(", ")}`);
+  console.log(`🔎 lpFee now: ${lpFee} (0 == fee-free) | currentTick: ${currentTick}`);
+
+  const amountInCBBTC = ethers.parseUnits(String(amountInHuman), 8);
+  const results = [];
+
+  for (const t of candidates) {
     let limit;
     try {
-      // reuse TickMath (from your V3 codebase) to get sqrtRatio for the probe tick
-      limit = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+      // Use v3 TickMath to compute the sqrt limit for that tick
+      limit = BigInt(TickMath.getSqrtRatioAtTick(t).toString());
     } catch (e) {
-      console.warn(`⚠️ skip tick ${testTick}: ${e.message}`);
+      console.warn(`⚠️ skip tick ${t}: ${e.message}`);
       continue;
     }
 
-    const sim = await simulateWithV4QuoterSingle({
-      poolKey, zeroForOne, amountInCBBTC, sqrtPriceLimitX96: limit
-    });
-
-    if (sim.ok) {
-      const outHuman = Number(ethers.formatUnits(sim.amountOut, 6));
-      console.log(`✅ tick ${testTick} → out ~ ${outHuman.toFixed(6)} USDC (gas=${sim.gasEstimate.toString()})`);
-      candidates.push({ testTick, limit, ...sim, outHuman });
-    } else {
-      // uncomment to see all failures:
-      // console.log(`❌ tick ${testTick} failed:`, sim.error?.reason || sim.error?.message || sim.error);
+    try {
+      const out = await simulateWithV4QuoterAtLimit({
+        poolKey,
+        zeroForOne,
+        amountInCBBTC,
+        sqrtPriceLimitX96: limit,
+        sender,
+      });
+      const outHuman = Number(ethers.formatUnits(out, 6));
+      console.log(`✅ tick ${t}: out ≈ ${outHuman.toFixed(6)} USDC (limit=${limit})`);
+      results.push({ tick: t, limit, amountOut: out, outHuman });
+    } catch (err) {
+      console.log(`❌ tick ${t} revert:`, err.reason || err.message || err);
     }
   }
 
-  if (candidates.length === 0) {
-    console.log("❌ No viable ticks around current price (or quoter reverts).");
-    return { feeFreeNow: isFeeFreeNow, best: null };
+  // pick best by amountOut
+  results.sort((a, b) => (a.amountOut > b.amountOut ? -1 : 1));
+  if (results[0]) {
+    const best = results[0];
+    console.log(`🏁 Best initialized-tick probe → tick ${best.tick} | ${best.outHuman.toFixed(6)} USDC`);
+  } else {
+    console.log("😕 No successful quotes at probed initialized ticks.");
   }
 
-  // choose best by raw amountOut
-  candidates.sort((a, b) => (a.amountOut > b.amountOut ? -1 : 1));
-  const best = candidates[0];
-  console.log(`🏁 Best probe tick ${best.testTick} → ${best.outHuman.toFixed(6)} USDC`);
-
-  return { feeFreeNow: isFeeFreeNow, best };
+  return results;
 }
 
 
@@ -277,31 +311,26 @@ async function main() {
     console.log(`\n🔎 ${pool.label}`);
     console.log(`• Using manual poolId: ${pool.poolId}`);
 
-    const liquidity = await getLiquidity(pool.poolId);
-    if (liquidity === 0n) {
-      console.log(`🚫 Skipping ${pool.label} — pool has zero global liquidity.`);
-    } else {
-      const { feeFreeNow, best } = await checkFeeFreeRouteV4(amountInCBBTC, poolKey, pool.poolId);
 
-      if (best) {
-        // also log reserves & slot0 for context (you already have these helpers)
-        const [sqrtX] = await stateView.getSlot0(pool.poolId);
-        const liq = await stateView.getLiquidity(pool.poolId);
-        const px = decodeSqrtPriceX96ToFloat(sqrtX);
-        const reserves = decodeLiquidityAmountsv4(liq, sqrtX);
-  
-        console.log(`→ Fee-free now? ${feeFreeNow ? "YES" : "NO"} | BestOut: ${best.outHuman.toFixed(6)} USDC`);
-        console.log(`📈 sqrtPriceX96: ${sqrtX}`);
-        console.log(`💰 cbBTC/USDC Price: $${px.toFixed(2)}`);
-        console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
-        console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
-  
-        // (optional) compare mid vs exec:
-        // logMidVsExec(ethers.parseUnits(String(probeAmount), 8), best.amountOut, sqrtX);
-      } else {
-        console.log("⚠️ No best tick chosen (no viable quotes).");
-      }
+    const liq = await getLiquidity(pool.poolId);
+    if (liq === 0n) {
+      console.log(`🚫 Skipping ${pool.label} — zero global liquidity.`);
+      continue;
     }
+  
+    console.log(`\n🚀 Checking initialized-tick fee-free probes for ${pool.label} …`);
+    await probeInitializedTicksForFeeFreeV4({
+      poolId: pool.poolId,
+      poolKey: {
+        currency0: CBBTC.toLowerCase() < USDC.toLowerCase() ? CBBTC : USDC,
+        currency1: CBBTC.toLowerCase() < USDC.toLowerCase() ? USDC : CBBTC,
+        fee: BigInt(pool.fee),
+        tickSpacing: BigInt(pool.tickSpacing),
+        hooks: pool.hooks,
+      },
+      amountInHuman: 1,      // try with your actual input size (in cbBTC units)
+      maxCandidates: 12,     // adjust if you want to probe more
+    });
 
   }
 }
