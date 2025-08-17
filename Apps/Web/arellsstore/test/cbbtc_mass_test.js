@@ -196,6 +196,7 @@ async function quoteV4({
   poolKey,
   zeroForOne,
   exactAmount,
+  sqrtPriceLimitX96,   // NEW: pass the limit to the quoter
   hookData = "0x",
 }) {
   const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
@@ -208,6 +209,7 @@ async function quoteV4({
     },
     zeroForOne,
     exactAmount: BigInt(exactAmount),
+    sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96 ?? 0n), // <— IMPORTANT
     hookData
   }]);
 
@@ -237,82 +239,75 @@ async function getNearbyInitializedTicks(poolId, tickSpacing, baseTick, radiusWo
 async function probeByInitializedTicks({
   poolId,
   poolKey,
-  amountInCBBTC,      // BigInt (cbBTC base units, 8dp)
-  userWantsZeroForOne // from your fixed token order test
+  amountInCBBTC,       // BigInt (cbBTC 8dp) — unchanged
+  userWantsZeroForOne  // from your fixed token order check
 }) {
   const quoteIface = await buildQuoterInterface();
 
   // current state
-  const [sqrtP, tick] = await getSlot0FromStateView(poolId); // sqrtPriceX96, current tick
-  const L = await getLiquidity(poolId);
-
-  const zeroForOne = userWantsZeroForOne; // do NOT change token order per your rule
+  const [sqrtP, tick] = await getSlot0FromStateView(poolId);
+  const zeroForOne = userWantsZeroForOne;
   const tickSpacing = Number(poolKey.tickSpacing);
   const baseTick = Math.floor(Number(tick) / tickSpacing) * tickSpacing;
 
-  const inHuman = Number(ethers.formatUnits(amountInCBBTC, 8));
-  console.log(`🔎 Tick-probe around tick=${Number(tick)} (base=${baseTick}), in=${inHuman} cbBTC`);
+  console.log(`🔎 Tick-probe around tick=${Number(tick)} (base=${baseTick}), in=${Number(ethers.formatUnits(amountInCBBTC, 8))} cbBTC`);
 
+  // gather initialized ticks near the current word ±2
   const initTicks = await getNearbyInitializedTicks(poolId, tickSpacing, baseTick, 2);
-  if (initTicks.length === 0) {
-    console.log("⚠️ No initialized ticks found nearby; skipping probe.");
+  if (!initTicks.length) {
+    console.log("⚠️ No initialized ticks nearby; skipping probe.");
     return null;
   }
 
-  // Choose a small window of bands around current
-  const window = initTicks.filter(t => Math.abs(t - baseTick) <= tickSpacing * 6);
+  // We only want ticks on the correct side of the current price:
+  // - zeroForOne (token0→token1) drives price DOWN → limit must be BELOW current
+  // - oneForZero (token1→token0) drives price UP   → limit must be ABOVE current
+  const candidatesTicks = initTicks.filter(t =>
+    zeroForOne ? (t < baseTick) : (t > baseTick)
+  ).slice(0, 12); // keep it small
 
   const candidates = [];
-  for (const t of window) {
-    // pick a sqrt target a hair inside the band we want to “end near”
-    // for zeroForOne (price down), we need sqrtQ just BELOW sqrtP
-    // for oneForZero (price up), sqrtQ just ABOVE sqrtP
-    const sqrtTarget = tickToSqrtRatioX96(t + (zeroForOne ? -1 : +1));
+  for (const t of candidatesTicks) {
+    // put the limit a hair inside that band so the sim *can* hit it
+    // e.g., for oneForZero (price up) we use tick+1; for zeroForOne (price down) tick-1
+    const limitTick = zeroForOne ? (t - 1) : (t + 1);
 
-    let estInBase;
-    if (zeroForOne) {
-      if (sqrtTarget >= sqrtP) continue; // invalid direction
-      // amountIn is cbBTC? In your fixed order, you’re swapping cbBTC->USDC,
-      // so cbBTC is token0 or token1 depending on addresses. We keep your direction:
-      // For zeroForOne, formula uses token0-in; if your cbBTC is token0, this matches.
-      estInBase = amount0ForPriceMove(BigInt(sqrtP), sqrtTarget, BigInt(L));
-    } else {
-      if (sqrtTarget <= sqrtP) continue;
-      estInBase = amount1ForPriceMove(BigInt(sqrtP), sqrtTarget, BigInt(L));
+    let sqrtLimit;
+    try {
+      sqrtLimit = BigInt(TickMath.getSqrtRatioAtTick(limitTick).toString());
+    } catch (e) {
+      continue;
     }
 
-    // floor/clip to a sane range: 0 < est <= 5x user amount
-    if (estInBase <= 0n) continue;
-    const maxEst = amountInCBBTC * 5n;
-    const est = estInBase > maxEst ? maxEst : estInBase;
+    // Sanity: enforce direction
+    if (zeroForOne && sqrtLimit >= BigInt(sqrtP)) continue; // must be below current
+    if (!zeroForOne && sqrtLimit <= BigInt(sqrtP)) continue; // must be above current
 
     try {
       const { amountOut, gasEstimate } = await quoteV4({
-        quoteIface, poolKey, zeroForOne, exactAmount: est, hookData: "0x"
+        quoteIface,
+        poolKey,
+        zeroForOne,
+        exactAmount: amountInCBBTC,     // do NOT change amountIn
+        sqrtPriceLimitX96: sqrtLimit,   // <— the whole point
+        hookData: "0x"
       });
       const outHuman = Number(ethers.formatUnits(amountOut, 6));
-      candidates.push({
-        tick: t,
-        estIn: est,
-        outHuman,
-        gas: gasEstimate
-      });
-      console.log(`✅ tick ${t} → estIn≈${Number(ethers.formatUnits(est, 8)).toFixed(6)} cbBTC → out≈${outHuman.toFixed(6)} USDC (gas=${gasEstimate})`);
-    } catch (e) {
+      console.log(`✅ limit @ tick ${limitTick} → ~${outHuman.toFixed(6)} USDC (gas=${gasEstimate})`);
+      candidates.push({ limitTick, sqrtLimit, outHuman, gas: gasEstimate, amountOut });
+    } catch {
       // ignore individual failures
     }
   }
 
   if (!candidates.length) {
-    console.log("⚠️ No viable tick-limited amounts produced a quote.");
+    console.log("⚠️ No viable limit-tick quotes (hook ignores limit, or all reverts).");
     return null;
   }
 
-  // Best by amountOut
   candidates.sort((a, b) => (a.outHuman > b.outHuman ? -1 : 1));
   const best = candidates[0];
-
-  console.log(`🏁 Tick-probe best @ tick ${best.tick} | in≈${Number(ethers.formatUnits(best.estIn, 8)).toFixed(6)} cbBTC → out≈${best.outHuman.toFixed(6)} USDC`);
+  console.log(`🏁 Tick-probe best @ tick ${best.limitTick} → ${best.outHuman.toFixed(6)} USDC`);
   return best;
 }
 
@@ -407,6 +402,28 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     sqrtPriceLimitX96 = 0n;
   }
 
+  // Decide the limit we’ll actually use for the main quote:
+  // try the initialized-tick probe first; if it yields a limit, use it.
+  // otherwise, fall back to the current price (no-op limit).
+  let effectiveLimit = sqrtPriceLimitX96;
+  let bestProbe = null;
+  try {
+    bestProbe = await probeByInitializedTicks({
+      poolId: targetPoolId,
+      poolKey,
+      amountInCBBTC: parsedAmount,      // same amount you’re quoting
+      userWantsZeroForOne: zeroForOne
+    });
+    if (bestProbe?.sqrtLimit) {
+      effectiveLimit = bestProbe.sqrtLimit; // use the probe’s limit
+      console.log(`🧭 Using tick-probe limit sqrtPriceLimitX96=${effectiveLimit.toString()}`);
+    } else {
+      console.log(`🧭 No probe limit; using slot0 as limit`);
+    }
+  } catch (e) {
+    console.warn("⚠️ Tick-probe failed:", e.message || e);
+  }
+
   // ✅ Checks
   function assertNotNull(label, val) {
     if (val === null || val === undefined) {
@@ -441,6 +458,7 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     },
     zeroForOne,
     exactAmount: parsedAmount,
+    sqrtPriceLimitX96: BigInt(effectiveLimit),  // ← add the limit here
     hookData
   }]);
 
