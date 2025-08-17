@@ -483,6 +483,63 @@ async function findMaxZeroFeeChunk({
   return ans; // largest fee-free chunk size (base units of cbBTC)
 }
 
+async function findMaxZeroFeeChunk({
+  poolKey, zeroForOne, limitX96, quoteIface, // quoter bits
+  priceUSDCperBTC,                           // from slot0 decode
+  decimalsIn = 8, decimalsOut = 6,
+  maxTry = 100000000n                         // cap search up to 1 cbBTC here (1e8)
+}) {
+  // Treat “fee-free” as “implied fee < 0.05%” (tunable)
+  const THRESH_PPM = 500n; // 0.05%
+  const one = 10_0000_0000n; // helper scale (not units)
+  
+  const impliedFeePpm = (amtIn, amtOut) => {
+    // expected out (no price move) = amtIn * price
+    // amtIn is 8dp cbBTC; priceUSDCperBTC is a JS number
+    const expOut = BigInt(Math.floor(Number(amtIn) * priceUSDCperBTC / (10 ** decimalsIn) * (10 ** decimalsOut)));
+    if (expOut === 0n) return 1_000_000n;
+    const diff = expOut > amtOut ? (expOut - amtOut) : 0n;
+    return (diff * 1_000_000n) / expOut; // ppm
+  };
+
+  async function q(amt) {
+    const { amountOut } = await quoteV4({
+      quoteIface, poolKey, zeroForOne,
+      exactAmount: amt,
+      sqrtPriceLimitX96: limitX96,
+      hookData: "0x"
+    });
+    return amountOut;
+  }
+
+  // quick ladder up by 10x until fee is clearly > threshold
+  let current = 1_000n; // 1e3 sats = 0.00001 cbBTC
+  let lastGood = 0n;
+  while (current <= maxTry) {
+    const out = await q(current);
+    const feePpm = impliedFeePpm(current, out);
+    if (feePpm <= THRESH_PPM) {
+      lastGood = current;
+      current *= 10n;
+    } else break;
+  }
+  if (lastGood === 0n) return 0n; // no fee-free size
+
+  // binary search between lastGood..min(current,maxTry)
+  let lo = lastGood, hi = current <= maxTry ? current : maxTry, ans = lastGood;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1n;
+    const out = await q(mid);
+    const feePpm = impliedFeePpm(mid, out);
+    if (feePpm <= THRESH_PPM) {
+      ans = mid; lo = mid + 1n;
+    } else {
+      hi = mid - 1n;
+    }
+  }
+  return ans; // largest fee-free chunk size (base units of cbBTC)
+}
+
 
 
 async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
@@ -559,6 +616,35 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     }
   } catch (e) {
     console.warn("⚠️ Tick-probe failed:", e.message || e);
+  }
+
+  // --- NEW: detect a fee-free size band (if any) and propose chunking ---
+  try {
+    const [sqrtP] = await stateView.getSlot0(targetPoolId);
+    const midPrice = decodeSqrtPriceX96ToFloat(sqrtP); // USDC per 1 cbBTC
+
+    const quoteIface = await buildQuoterInterface();   // ensure we pass fetched ABI
+    const feeFreeChunk = await findMaxZeroFeeChunk({
+      poolKey,
+      zeroForOne,
+      limitX96: BigInt(effectiveLimit),
+      quoteIface,
+      priceUSDCperBTC: midPrice,
+      maxTry: parsedAmount // don’t search beyond your intended size
+    });
+
+    if (feeFreeChunk > 0n && feeFreeChunk < parsedAmount) {
+      const chunks = (parsedAmount + feeFreeChunk - 1n) / feeFreeChunk;
+      console.log(`🎯 Detected fee-free chunk ≈ ${ethers.formatUnits(feeFreeChunk, 8)} cbBTC`);
+      console.log(`🧩 Plan: split ${ethers.formatUnits(parsedAmount, 8)} cbBTC into ${chunks} chunk(s) of ≤ ${ethers.formatUnits(feeFreeChunk, 8)} cbBTC`);
+      console.log(`   (Use same poolKey/limit/hookData=0x for each sub-quote/swap)`);
+    } else if (feeFreeChunk >= parsedAmount) {
+      console.log(`🎯 Entire amount appears fee-free at this limit (rare but possible).`);
+    } else {
+      console.log(`🚫 No fee-free size band detected at this limit.`);
+    }
+  } catch (e) {
+    console.warn("⚠️ fee-free size detection failed:", e.message || e);
   }
 
   // ✅ Checks
