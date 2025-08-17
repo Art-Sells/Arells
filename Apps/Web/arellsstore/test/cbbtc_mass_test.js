@@ -164,17 +164,40 @@ function getInitializedTicksFromBitmap(bitmap, wordPosition, tickSpacing) {
   return ticks;
 }
 
-
-// Pads a hex string to 32 bytes (no 0x), then re-add 0x
-function pad32(hexNo0x) {
-  return "0x" + hexNo0x.padStart(64, "0");
+// ---- math helpers (V3 math applies to V4 pools per tick) ----
+function tickToSqrtRatioX96(tick) {
+  // TickMath from @uniswap/v3-sdk returns JSBI; convert to BigInt
+  return BigInt(TickMath.getSqrtRatioAtTick(tick).toString());
 }
 
-// Single-shot v4 quote with specific hookData (keeps your encodeFunctionData path)
-async function quoteV4WithHookData({ poolKey, zeroForOne, amountInCBBTC, hookDataHex }) {
-  const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
-  const quoteIface = new ethers.Interface(quoterABI);
+// amount0 to move price DOWN (zeroForOne) from sqrtP to sqrtQ (sqrtQ < sqrtP):
+// amt0 = L * (sqrtP - sqrtQ) / (sqrtQ * sqrtP)
+function amount0ForPriceMove(sqrtP, sqrtQ, L) {
+  // all BigInt; do division last
+  const num = L * (sqrtP - sqrtQ);
+  const den = (sqrtQ * sqrtP) >> 0n; // exact BigInt multiply
+  return num * (1n << 96n) / (den / (1n << 96n)); // keep precision ~Q192
+}
 
+// amount1 to move price UP (oneForZero) from sqrtP to sqrtQ (sqrtQ > sqrtP):
+// amt1 = L * (sqrtQ - sqrtP)
+function amount1ForPriceMove(sqrtP, sqrtQ, L) {
+  return L * (sqrtQ - sqrtP) / 1n; // BigInt
+}
+
+async function buildQuoterInterface() {
+  const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
+  return new ethers.Interface(quoterABI);
+}
+
+// Quote helper that ALWAYS uses fetched ABI and your current params
+async function quoteV4({
+  quoteIface,
+  poolKey,
+  zeroForOne,
+  exactAmount,
+  hookData = "0x",
+}) {
   const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
     poolKey: {
       currency0: poolKey.currency0,
@@ -184,73 +207,149 @@ async function quoteV4WithHookData({ poolKey, zeroForOne, amountInCBBTC, hookDat
       hooks: poolKey.hooks,
     },
     zeroForOne,
-    exactAmount: BigInt(amountInCBBTC),
-    hookData: hookDataHex
+    exactAmount: BigInt(exactAmount),
+    hookData
   }]);
 
-  try {
-    const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
-    const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
-    return { ok: true, amountOut, gasEstimate, hookDataHex };
-  } catch (err) {
-    return { ok: false, error: err, hookDataHex };
-  }
+  const raw = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
+  const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", raw);
+  return { amountOut, gasEstimate };
 }
 
-// Try a curated set of hookData payloads; pick the one with the highest amountOut
-async function searchHookDataForBestQuote(poolKey, poolId, amountInCBBTC, zeroForOne, userWallet) {
-  // Baseline (what you already send)
-  const candidates = new Set([
-    "0x",                // your current default
-    "0x00",
-    "0x01",
-    "0xff",
-  ]);
+// Get a handful of initialized ticks around the current tick
+async function getNearbyInitializedTicks(poolId, tickSpacing, baseTick, radiusWords = 2) {
+  const wordOf = (t) => Math.floor(t / tickSpacing / 256);
+  const baseWord = wordOf(baseTick);
+  const ticks = new Set();
 
-  // Add structured candidates that often matter for hooks:
-  // - your address
-  // - poolId
-  // - amount (8 bytes)
-  // - some short tags (padded)
-  const addr = ethers.getAddress(userWallet.address).slice(2); // no 0x
-  candidates.add(pad32(addr));
+  for (let w = baseWord - radiusWords; w <= baseWord + radiusWords; w++) {
+    const bm = await getTickBitmap(poolId, w);
+    const arr = getInitializedTicksFromBitmap(bm, w, tickSpacing);
+    arr.forEach(t => ticks.add(t));
+  }
 
-  const poolIdHex = poolId.slice(2);
-  candidates.add("0x" + poolIdHex);
-  candidates.add(pad32(poolIdHex));
+  // Sort numerically
+  return Array.from(ticks).sort((a, b) => a - b);
+}
 
-  const amtHex = BigInt(amountInCBBTC).toString(16);
-  candidates.add(pad32(amtHex));
+// Probe by initialized ticks: estimate input needed to land near tick bands,
+// then re-quote using those estimated amounts (still using fetched ABI).
+async function probeByInitializedTicks({
+  poolId,
+  poolKey,
+  amountInCBBTC,      // BigInt (cbBTC base units, 8dp)
+  userWantsZeroForOne // from your fixed token order test
+}) {
+  const quoteIface = await buildQuoterInterface();
 
-  // short ASCII tags -> keccak and/or raw padded
-  const tagToHex32 = (s) => pad32(Buffer.from(s, "utf8").toString("hex"));
-  candidates.add(tagToHex32("ARELLS"));
-  candidates.add(tagToHex32("FEEFREE"));
-  candidates.add(tagToHex32("DISCOUNT"));
+  // current state
+  const [sqrtP, tick] = await getSlot0FromStateView(poolId); // sqrtPriceX96, current tick
+  const L = await getLiquidity(poolId);
 
-  // Also try keccak(tag)
-  const k = (s) => ethers.keccak256(ethers.getBytes(ethers.toUtf8Bytes(s)));
-  candidates.add(k("ARELLS"));
-  candidates.add(k("FEEFREE"));
-  candidates.add(k("DISCOUNT"));
+  const zeroForOne = userWantsZeroForOne; // do NOT change token order per your rule
+  const tickSpacing = Number(poolKey.tickSpacing);
+  const baseTick = Math.floor(Number(tick) / tickSpacing) * tickSpacing;
 
-  let best = null;
+  const inHuman = Number(ethers.formatUnits(amountInCBBTC, 8));
+  console.log(`🔎 Tick-probe around tick=${Number(tick)} (base=${baseTick}), in=${inHuman} cbBTC`);
 
-  for (const hookDataHex of candidates) {
-    const res = await quoteV4WithHookData({ poolKey, zeroForOne, amountInCBBTC, hookDataHex });
-    if (!res.ok) {
-      // Uncomment to see failures
-      // console.log(`❌ hookData ${hookDataHex} reverted:`, res.error?.reason || res.error?.message || res.error);
-      continue;
+  const initTicks = await getNearbyInitializedTicks(poolId, tickSpacing, baseTick, 2);
+  if (initTicks.length === 0) {
+    console.log("⚠️ No initialized ticks found nearby; skipping probe.");
+    return null;
+  }
+
+  // Choose a small window of bands around current
+  const window = initTicks.filter(t => Math.abs(t - baseTick) <= tickSpacing * 6);
+
+  const candidates = [];
+  for (const t of window) {
+    // pick a sqrt target a hair inside the band we want to “end near”
+    // for zeroForOne (price down), we need sqrtQ just BELOW sqrtP
+    // for oneForZero (price up), sqrtQ just ABOVE sqrtP
+    const sqrtTarget = tickToSqrtRatioX96(t + (zeroForOne ? -1 : +1));
+
+    let estInBase;
+    if (zeroForOne) {
+      if (sqrtTarget >= sqrtP) continue; // invalid direction
+      // amountIn is cbBTC? In your fixed order, you’re swapping cbBTC->USDC,
+      // so cbBTC is token0 or token1 depending on addresses. We keep your direction:
+      // For zeroForOne, formula uses token0-in; if your cbBTC is token0, this matches.
+      estInBase = amount0ForPriceMove(BigInt(sqrtP), sqrtTarget, BigInt(L));
+    } else {
+      if (sqrtTarget <= sqrtP) continue;
+      estInBase = amount1ForPriceMove(BigInt(sqrtP), sqrtTarget, BigInt(L));
     }
-    const outNum = Number(ethers.formatUnits(res.amountOut, 6));
-    console.log(`🔬 hookData=${hookDataHex} → ${outNum.toFixed(6)} USDC (gas=${res.gasEstimate.toString()})`);
-    if (!best || res.amountOut > best.amountOut) {
-      best = res;
+
+    // floor/clip to a sane range: 0 < est <= 5x user amount
+    if (estInBase <= 0n) continue;
+    const maxEst = amountInCBBTC * 5n;
+    const est = estInBase > maxEst ? maxEst : estInBase;
+
+    try {
+      const { amountOut, gasEstimate } = await quoteV4({
+        quoteIface, poolKey, zeroForOne, exactAmount: est, hookData: "0x"
+      });
+      const outHuman = Number(ethers.formatUnits(amountOut, 6));
+      candidates.push({
+        tick: t,
+        estIn: est,
+        outHuman,
+        gas: gasEstimate
+      });
+      console.log(`✅ tick ${t} → estIn≈${Number(ethers.formatUnits(est, 8)).toFixed(6)} cbBTC → out≈${outHuman.toFixed(6)} USDC (gas=${gasEstimate})`);
+    } catch (e) {
+      // ignore individual failures
     }
   }
 
-  return best; // may be null if everything reverted (unlikely)
+  if (!candidates.length) {
+    console.log("⚠️ No viable tick-limited amounts produced a quote.");
+    return null;
+  }
+
+  // Best by amountOut
+  candidates.sort((a, b) => (a.outHuman > b.outHuman ? -1 : 1));
+  const best = candidates[0];
+
+  console.log(`🏁 Tick-probe best @ tick ${best.tick} | in≈${Number(ethers.formatUnits(best.estIn, 8)).toFixed(6)} cbBTC → out≈${best.outHuman.toFixed(6)} USDC`);
+  return best;
+}
+
+// Time-separated quotes: wait for N new blocks (or delays) and re-quote
+async function timeSeparatedQuotes({
+  poolKey,
+  poolId,
+  amountInCBBTC,
+  zeroForOne,
+  rounds = 3,
+  minBlocksBetween = 1
+}) {
+  const quoteIface = await buildQuoterInterface();
+  const results = [];
+  let lastBlock = await provider.getBlockNumber();
+
+  for (let i = 0; i < rounds; i++) {
+    // wait for block(s)
+    while (true) {
+      const b = await provider.getBlockNumber();
+      if (b >= lastBlock + minBlocksBetween) {
+        lastBlock = b;
+        break;
+      }
+      // small sleep
+      await new Promise(r => setTimeout(r, 400));
+    }
+
+    const { amountOut, gasEstimate } = await quoteV4({
+      quoteIface, poolKey, zeroForOne, exactAmount: amountInCBBTC, hookData: "0x"
+    });
+
+    const outHuman = Number(ethers.formatUnits(amountOut, 6));
+    results.push({ round: i + 1, outHuman, gas: gasEstimate, block: lastBlock });
+    console.log(`⏱️ round ${i + 1} (block ${lastBlock}) → ${outHuman.toFixed(6)} USDC (gas=${gasEstimate})`);
+  }
+  return results;
 }
 
 
@@ -332,34 +431,23 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     sqrtPriceLimitX96
   }, { depth: null });
 
-  // 🔎 Try a few hookData payloads to see if the hook gives better (possibly fee-free) terms
-  const best = await searchHookDataForBestQuote(poolKey, targetPoolId, parsedAmount, zeroForOne, userWallet);
+  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
+    poolKey: {
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1,
+      fee: BigInt(poolKey.fee),
+      tickSpacing: BigInt(poolKey.tickSpacing),
+      hooks: poolKey.hooks,
+    },
+    zeroForOne,
+    exactAmount: parsedAmount,
+    hookData
+  }]);
 
-  if (best) {
-    const bestOut = Number(ethers.formatUnits(best.amountOut, 6));
-    console.log(`🏆 Best hookData found: ${best.hookDataHex}`);
-    console.log(`→ Quoted amountOut: ${bestOut.toFixed(6)} USDC`);
-    console.log(`⛽ Gas estimate (units): ${best.gasEstimate.toString()}`);
-  } else {
-    // Fallback to your original call with empty hookData
-    const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
-      poolKey: {
-        currency0: poolKey.currency0,
-        currency1: poolKey.currency1,
-        fee: BigInt(poolKey.fee),
-        tickSpacing: BigInt(poolKey.tickSpacing),
-        hooks: poolKey.hooks,
-      },
-      zeroForOne,
-      exactAmount: parsedAmount,
-      hookData: "0x",
-    }]);
-
-    const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
-    const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
-    console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-    console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
-  }
+  const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
+  const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
+  console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+  console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
 
   // 🔍 Fetch reserves using computed id
   try {
@@ -372,6 +460,36 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     console.log(`💰 cbBTC/USDC Price: $${price.toFixed(2)}`);
     console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
     console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
+
+    // --- extra experiments you asked for ---
+// keep your token order, derive direction the same way you already do
+const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
+
+// (a) Initialized-tick probe (try to land near bands)
+try {
+  await probeByInitializedTicks({
+    poolId: targetPoolId,
+    poolKey,
+    amountInCBBTC: parsedAmount,       // use the SAME amount you input
+    userWantsZeroForOne: zeroForOne
+  });
+} catch (e) {
+  console.warn("⚠️ Tick-probe failed:", e.message || e);
+}
+
+// (b) Time-separated quotes (rare promo windows)
+try {
+  await timeSeparatedQuotes({
+    poolKey,
+    poolId: targetPoolId,
+    amountInCBBTC: parsedAmount,
+    zeroForOne,
+    rounds: 3,              // do 3 spaced quotes
+    minBlocksBetween: 1     // wait ≥1 new block between quotes
+  });
+} catch (e) {
+  console.warn("⚠️ Time-separated quotes failed:", e.message || e);
+}
   } catch (e) {
     console.warn("⚠️ Could not fetch reserves/price:", e.message || e);
   }
