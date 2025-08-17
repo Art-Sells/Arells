@@ -253,7 +253,8 @@ async function probeByInitializedTicks({
   console.log(`🔎 Tick-probe around tick=${Number(tick)} (base=${baseTick}), in=${Number(ethers.formatUnits(amountInCBBTC, 8))} cbBTC`);
 
   // gather initialized ticks near the current word ±2
-  const initTicks = await getNearbyInitializedTicks(poolId, tickSpacing, baseTick, 2);
+// was: radiusWords = 2
+const initTicks = await getNearbyInitializedTicks(poolId, tickSpacing, baseTick, 10);
   if (!initTicks.length) {
     console.log("⚠️ No initialized ticks nearby; skipping probe.");
     return null;
@@ -268,35 +269,31 @@ async function probeByInitializedTicks({
 
   const candidates = [];
   for (const t of candidatesTicks) {
-    // put the limit a hair inside that band so the sim *can* hit it
-    // e.g., for oneForZero (price up) we use tick+1; for zeroForOne (price down) tick-1
-    const limitTick = zeroForOne ? (t - 1) : (t + 1);
+    const nudges = zeroForOne
+      ? [t - 1, t - (tickSpacing - 1)]        // price down → below current
+      : [t + 1, t + (tickSpacing - 1)];       // price up   → above current
 
-    let sqrtLimit;
-    try {
-      sqrtLimit = BigInt(TickMath.getSqrtRatioAtTick(limitTick).toString());
-    } catch (e) {
-      continue;
-    }
+    for (const limitTick of nudges) {
+      let sqrtLimit;
+      try {
+        sqrtLimit = BigInt(TickMath.getSqrtRatioAtTick(limitTick).toString());
+      } catch { continue; }
 
-    // Sanity: enforce direction
-    if (zeroForOne && sqrtLimit >= BigInt(sqrtP)) continue; // must be below current
-    if (!zeroForOne && sqrtLimit <= BigInt(sqrtP)) continue; // must be above current
+      // enforce direction
+      if (zeroForOne && sqrtLimit >= BigInt(sqrtP)) continue;
+      if (!zeroForOne && sqrtLimit <= BigInt(sqrtP)) continue;
 
-    try {
-      const { amountOut, gasEstimate } = await quoteV4({
-        quoteIface,
-        poolKey,
-        zeroForOne,
-        exactAmount: amountInCBBTC,     // do NOT change amountIn
-        sqrtPriceLimitX96: sqrtLimit,   // <— the whole point
-        hookData: "0x"
-      });
-      const outHuman = Number(ethers.formatUnits(amountOut, 6));
-      console.log(`✅ limit @ tick ${limitTick} → ~${outHuman.toFixed(6)} USDC (gas=${gasEstimate})`);
-      candidates.push({ limitTick, sqrtLimit, outHuman, gas: gasEstimate, amountOut });
-    } catch {
-      // ignore individual failures
+      try {
+        const { amountOut, gasEstimate } = await quoteV4({
+          quoteIface, poolKey, zeroForOne,
+          exactAmount: amountInCBBTC,
+          sqrtPriceLimitX96: sqrtLimit,
+          hookData: "0x"
+        });
+        const outHuman = Number(ethers.formatUnits(amountOut, 6));
+        console.log(`✅ limit @ tick ${limitTick} → ~${outHuman.toFixed(6)} USDC (gas=${gasEstimate})`);
+        candidates.push({ limitTick, sqrtLimit, outHuman, gas: gasEstimate, amountOut });
+      } catch {/* ignore */}
     }
   }
 
@@ -347,6 +344,145 @@ async function timeSeparatedQuotes({
   return results;
 }
 
+async function sweepArithmeticTicks({
+  poolId, poolKey, amountInCBBTC, zeroForOne,
+  baseTick, tickSpacing, steps = 80 // ~80*200=16k ticks swept
+}) {
+  const quoteIface = await buildQuoterInterface();
+  const [sqrtP] = await getSlot0FromStateView(poolId);
+  const dir = zeroForOne ? -1 : +1;
+
+  let best = null;
+
+  for (let i = 1; i <= steps; i++) {
+    const t = baseTick + dir * i * tickSpacing;
+
+    // try both “inside” and “edge-outside”
+    const tries = zeroForOne ? [t - 1, t - (tickSpacing - 1)] : [t + 1, t + (tickSpacing - 1)];
+
+    for (const limitTick of tries) {
+      let sqrtLimit;
+      try { sqrtLimit = BigInt(TickMath.getSqrtRatioAtTick(limitTick).toString()); }
+      catch { continue; }
+
+      if (zeroForOne && sqrtLimit >= BigInt(sqrtP)) continue;
+      if (!zeroForOne && sqrtLimit <= BigInt(sqrtP)) continue;
+
+      try {
+        const { amountOut } = await quoteV4({
+          quoteIface, poolKey, zeroForOne,
+          exactAmount: amountInCBBTC,
+          sqrtPriceLimitX96: sqrtLimit,
+          hookData: "0x"
+        });
+        const outHuman = Number(ethers.formatUnits(amountOut, 6));
+        if (!best || outHuman > best.outHuman) {
+          best = { limitTick, sqrtLimit, outHuman };
+          console.log(`🌊 sweep better @ ${limitTick} → ${outHuman.toFixed(6)} USDC`);
+        }
+      } catch {/* ignore */}
+    }
+  }
+  return best;
+}
+
+
+function* hookDataVariants({ user, poolId, amountInCBBTC }) {
+  // ultra-cheap set; expand as you like
+  yield "0x";                                    // empty
+  yield "0x00"; yield "0x01"; yield "0xff";      // 1-byte tags
+  // user address (left-padded to 32 bytes)
+  yield "0x" + "0".repeat(24) + user.toLowerCase().replace(/^0x/, "");
+  // poolId raw (32 bytes already)
+  yield poolId;
+  // amountIn as 32-byte BE
+  yield "0x" + BigInt(amountInCBBTC).toString(16).padStart(64, "0");
+}
+
+async function searchHookDataForBestQuote({
+  poolKey, zeroForOne, amountInCBBTC, sqrtPriceLimitX96, user, poolId
+}) {
+  const quoteIface = await buildQuoterInterface();
+  let best = null;
+
+  for (const hookData of hookDataVariants({ user, poolId, amountInCBBTC })) {
+    try {
+      const { amountOut, gasEstimate } = await quoteV4({
+        quoteIface, poolKey, zeroForOne,
+        exactAmount: amountInCBBTC,
+        sqrtPriceLimitX96,
+        hookData
+      });
+      const outHuman = Number(ethers.formatUnits(amountOut, 6));
+      console.log(`🔬 hookData=${hookData.slice(0,18)}… → ${outHuman.toFixed(6)} USDC (gas=${gasEstimate})`);
+      if (!best || outHuman > best.outHuman) {
+        best = { hookData, amountOut, outHuman, gasEstimate };
+      }
+    } catch (e) {
+      // ignore reverts; keep scanning
+    }
+  }
+  return best;
+}
+
+
+async function findMaxZeroFeeChunk({
+  poolKey, zeroForOne, limitX96, quoteIface, // quoter bits
+  priceUSDCperBTC,                           // from slot0 decode
+  decimalsIn = 8, decimalsOut = 6,
+  maxTry = 100000000n                         // cap search up to 1 cbBTC here (1e8)
+}) {
+  // Treat “fee-free” as “implied fee < 0.05%” (tunable)
+  const THRESH_PPM = 500n; // 0.05%
+  const one = 10_0000_0000n; // helper scale (not units)
+  
+  const impliedFeePpm = (amtIn, amtOut) => {
+    // expected out (no price move) = amtIn * price
+    // amtIn is 8dp cbBTC; priceUSDCperBTC is a JS number
+    const expOut = BigInt(Math.floor(Number(amtIn) * priceUSDCperBTC / (10 ** decimalsIn) * (10 ** decimalsOut)));
+    if (expOut === 0n) return 1_000_000n;
+    const diff = expOut > amtOut ? (expOut - amtOut) : 0n;
+    return (diff * 1_000_000n) / expOut; // ppm
+  };
+
+  async function q(amt) {
+    const { amountOut } = await quoteV4({
+      quoteIface, poolKey, zeroForOne,
+      exactAmount: amt,
+      sqrtPriceLimitX96: limitX96,
+      hookData: "0x"
+    });
+    return amountOut;
+  }
+
+  // quick ladder up by 10x until fee is clearly > threshold
+  let current = 1_000n; // 1e3 sats = 0.00001 cbBTC
+  let lastGood = 0n;
+  while (current <= maxTry) {
+    const out = await q(current);
+    const feePpm = impliedFeePpm(current, out);
+    if (feePpm <= THRESH_PPM) {
+      lastGood = current;
+      current *= 10n;
+    } else break;
+  }
+  if (lastGood === 0n) return 0n; // no fee-free size
+
+  // binary search between lastGood..min(current,maxTry)
+  let lo = lastGood, hi = current <= maxTry ? current : maxTry, ans = lastGood;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1n;
+    const out = await q(mid);
+    const feePpm = impliedFeePpm(mid, out);
+    if (feePpm <= THRESH_PPM) {
+      ans = mid; lo = mid + 1n;
+    } else {
+      hi = mid - 1n;
+    }
+  }
+  return ans; // largest fee-free chunk size (base units of cbBTC)
+}
+
 
 
 async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
@@ -393,10 +529,11 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
 
   // 🔹 Fetch current slot0 price
   try {
-    const [currentSqrtPriceX96] = await stateView.getSlot0(targetPoolId);
+    const [currentSqrtPriceX96, currentTick, protocolFee, lpFee] = await stateView.getSlot0(targetPoolId);
     sqrtPriceLimitX96 = currentSqrtPriceX96;
-    console.log("📈 Current sqrtPriceX96:", currentSqrtPriceX96.toString());
-    console.log("📈 Applied sqrtPriceLimitX96:", sqrtPriceLimitX96.toString());
+
+    console.log(`📈 Current sqrtPriceX96: ${currentSqrtPriceX96.toString()}`);
+    console.log(`🧾 Fees (ppm): lpFee=${Number(lpFee)} protocolFee=${Number(protocolFee)}`);
   } catch (e) {
     console.warn("⚠️ Failed to fetch slot0. Falling back to 0n sqrtPriceLimitX96");
     sqrtPriceLimitX96 = 0n;
@@ -448,24 +585,48 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     sqrtPriceLimitX96
   }, { depth: null });
 
-  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
-    poolKey: {
-      currency0: poolKey.currency0,
-      currency1: poolKey.currency1,
-      fee: BigInt(poolKey.fee),
-      tickSpacing: BigInt(poolKey.tickSpacing),
-      hooks: poolKey.hooks,
-    },
+  // Try to improve with hookData variants (same amount + limit)
+  let bestHook = null;
+  try {
+    bestHook = await searchHookDataForBestQuote({
+      poolKey,
+      zeroForOne,
+      amountInCBBTC: parsedAmount,
+      sqrtPriceLimitX96: effectiveLimit,
+      user: userWallet.address,
+      poolId: targetPoolId,
+    });
+    if (bestHook) {
+      console.log(`🎯 Best hookData improved? ${bestHook.outHuman.toFixed(6)} USDC`);
+    }
+  } catch (e) {
+    console.warn("⚠️ hookData scan failed:", e.message || e);
+  }
+
+  // --- BASELINE QUOTE (hookData = 0x), then upgrade with bestHook if better ---
+  const baseline = await quoteV4({
+    quoteIface,
+    poolKey,
     zeroForOne,
     exactAmount: parsedAmount,
-    sqrtPriceLimitX96: BigInt(effectiveLimit),  // ← add the limit here
-    hookData
-  }]);
+    sqrtPriceLimitX96: effectiveLimit,
+    hookData: "0x"
+  });
 
-  const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
-  const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
-  console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-  console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
+  let chosen = { ...baseline, hookData: "0x" };
+
+  // if hookData search found better, use it
+  if (bestHook && bestHook.amountOut > baseline.amountOut) {
+    chosen = {
+      amountOut: bestHook.amountOut,
+      gasEstimate: bestHook.gasEstimate,
+      hookData: bestHook.hookData
+    };
+    console.log(`✅ Using improved hookData=${bestHook.hookData.slice(0,18)}…`);
+  }
+
+  console.log(`→ Quoted amountOut: ${ethers.formatUnits(chosen.amountOut, 6)} USDC`);
+  console.log(`⛽ Gas estimate (units): ${chosen.gasEstimate.toString()}`);
 
   // 🔍 Fetch reserves using computed id
   try {
@@ -479,6 +640,9 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     console.log(`📦 cbBTC Reserve: ${reserves.cbBTC.toFixed(6)} cbBTC`);
     console.log(`📦 USDC Reserve: ${reserves.usdc.toFixed(2)} USDC`);
 
+    const [sqrtPriceX96_2, tick_2, protocolFee2, lpFee2] = await stateView.getSlot0(targetPoolId);
+    console.log(`🧾 Post-quote fees (ppm): lpFee=${Number(lpFee2)} protocolFee=${Number(protocolFee2)}`);
+
     // --- extra experiments you asked for ---
 // keep your token order, derive direction the same way you already do
 const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
@@ -491,8 +655,57 @@ try {
     amountInCBBTC: parsedAmount,       // use the SAME amount you input
     userWantsZeroForOne: zeroForOne
   });
+  if (!bestProbe) {
+    const tickSpacingNum = Number(poolKey.tickSpacing);
+    const [, curTick] = await getSlot0FromStateView(targetPoolId);
+    const baseTick = Math.floor(Number(curTick) / tickSpacingNum) * tickSpacingNum;
+
+    const sweepBest = await sweepArithmeticTicks({
+      poolId: targetPoolId,
+      poolKey,
+      amountInCBBTC: parsedAmount,
+      zeroForOne,
+      baseTick,
+      tickSpacing: tickSpacingNum,
+      steps: 80
+    });
+
+    if (sweepBest && sweepBest.outHuman > Number(ethers.formatUnits(amountOut ?? 0n, 6))) {
+      effectiveLimit = sweepBest.sqrtLimit;
+      console.log(`🧭 Using sweep limit sqrtPriceLimitX96=${effectiveLimit.toString()}`);
+    }
+  }
 } catch (e) {
   console.warn("⚠️ Tick-probe failed:", e.message || e);
+}
+
+// --- NEW: detect a fee-free size band (if any) and propose chunking ---
+try {
+  const [sqrtP] = await stateView.getSlot0(targetPoolId);
+  const midPrice = decodeSqrtPriceX96ToFloat(sqrtP); // USDC per 1 cbBTC
+
+  const quoteIface = await buildQuoterInterface();   // ensure we pass fetched ABI
+  const feeFreeChunk = await findMaxZeroFeeChunk({
+    poolKey,
+    zeroForOne,
+    limitX96: BigInt(effectiveLimit),
+    quoteIface,
+    priceUSDCperBTC: midPrice,
+    maxTry: parsedAmount // don’t search beyond your intended size
+  });
+
+  if (feeFreeChunk > 0n && feeFreeChunk < parsedAmount) {
+    const chunks = (parsedAmount + feeFreeChunk - 1n) / feeFreeChunk;
+    console.log(`🎯 Detected fee-free chunk ≈ ${ethers.formatUnits(feeFreeChunk, 8)} cbBTC`);
+    console.log(`🧩 Plan: split ${ethers.formatUnits(parsedAmount, 8)} cbBTC into ${chunks} chunk(s) of ≤ ${ethers.formatUnits(feeFreeChunk, 8)} cbBTC`);
+    console.log(`   (Use same poolKey/limit/hookData=0x for each sub-quote/swap)`);
+  } else if (feeFreeChunk >= parsedAmount) {
+    console.log(`🎯 Entire amount appears fee-free at this limit (rare but possible).`);
+  } else {
+    console.log(`🚫 No fee-free size band detected at this limit.`);
+  }
+} catch (e) {
+  console.warn("⚠️ fee-free size detection failed:", e.message || e);
 }
 
 // (b) Time-separated quotes (rare promo windows)
@@ -547,12 +760,3 @@ main().catch(console.error);
 
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
-
-// The v4 quote() function doesn’t take poolId as input
-// if above fails, 
-// look for other public quote functions with external from quoter
-
-// It takes:
-// 	•	A poolKey (token0, token1, fee, tickSpacing, hook)
-// 	•	Then internally computes the poolId using that key
-// 	•	And tries to find the pool on-chain
