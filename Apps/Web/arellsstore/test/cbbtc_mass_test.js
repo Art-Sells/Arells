@@ -89,13 +89,6 @@ const tickBitmapInterface = new ethers.Interface([
     return abi;
   }
 
-// 🔹 Helper to fetch PoolKey from poolId
-async function fetchPoolKeyFromId(poolManager, poolId) {
-  const poolKey = await poolManager.getPoolKey(poolId);
-  console.log("🔍 On-chain PoolKey for", poolId, ":", poolKey);
-  return poolKey;
-}
-
 function computePoolId(poolKey) {
   const abiCoder = ethers.AbiCoder.defaultAbiCoder();
   const encodedKey = abiCoder.encode(
@@ -169,6 +162,95 @@ function getInitializedTicksFromBitmap(bitmap, wordPosition, tickSpacing) {
     }
   }
   return ticks;
+}
+
+
+// Pads a hex string to 32 bytes (no 0x), then re-add 0x
+function pad32(hexNo0x) {
+  return "0x" + hexNo0x.padStart(64, "0");
+}
+
+// Single-shot v4 quote with specific hookData (keeps your encodeFunctionData path)
+async function quoteV4WithHookData({ poolKey, zeroForOne, amountInCBBTC, hookDataHex }) {
+  const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
+  const quoteIface = new ethers.Interface(quoterABI);
+
+  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
+    poolKey: {
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1,
+      fee: BigInt(poolKey.fee),
+      tickSpacing: BigInt(poolKey.tickSpacing),
+      hooks: poolKey.hooks,
+    },
+    zeroForOne,
+    exactAmount: BigInt(amountInCBBTC),
+    hookData: hookDataHex
+  }]);
+
+  try {
+    const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
+    const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
+    return { ok: true, amountOut, gasEstimate, hookDataHex };
+  } catch (err) {
+    return { ok: false, error: err, hookDataHex };
+  }
+}
+
+// Try a curated set of hookData payloads; pick the one with the highest amountOut
+async function searchHookDataForBestQuote(poolKey, poolId, amountInCBBTC, zeroForOne, userWallet) {
+  // Baseline (what you already send)
+  const candidates = new Set([
+    "0x",                // your current default
+    "0x00",
+    "0x01",
+    "0xff",
+  ]);
+
+  // Add structured candidates that often matter for hooks:
+  // - your address
+  // - poolId
+  // - amount (8 bytes)
+  // - some short tags (padded)
+  const addr = ethers.getAddress(userWallet.address).slice(2); // no 0x
+  candidates.add(pad32(addr));
+
+  const poolIdHex = poolId.slice(2);
+  candidates.add("0x" + poolIdHex);
+  candidates.add(pad32(poolIdHex));
+
+  const amtHex = BigInt(amountInCBBTC).toString(16);
+  candidates.add(pad32(amtHex));
+
+  // short ASCII tags -> keccak and/or raw padded
+  const tagToHex32 = (s) => pad32(Buffer.from(s, "utf8").toString("hex"));
+  candidates.add(tagToHex32("ARELLS"));
+  candidates.add(tagToHex32("FEEFREE"));
+  candidates.add(tagToHex32("DISCOUNT"));
+
+  // Also try keccak(tag)
+  const k = (s) => ethers.keccak256(ethers.getBytes(ethers.toUtf8Bytes(s)));
+  candidates.add(k("ARELLS"));
+  candidates.add(k("FEEFREE"));
+  candidates.add(k("DISCOUNT"));
+
+  let best = null;
+
+  for (const hookDataHex of candidates) {
+    const res = await quoteV4WithHookData({ poolKey, zeroForOne, amountInCBBTC, hookDataHex });
+    if (!res.ok) {
+      // Uncomment to see failures
+      // console.log(`❌ hookData ${hookDataHex} reverted:`, res.error?.reason || res.error?.message || res.error);
+      continue;
+    }
+    const outNum = Number(ethers.formatUnits(res.amountOut, 6));
+    console.log(`🔬 hookData=${hookDataHex} → ${outNum.toFixed(6)} USDC (gas=${res.gasEstimate.toString()})`);
+    if (!best || res.amountOut > best.amountOut) {
+      best = res;
+    }
+  }
+
+  return best; // may be null if everything reverted (unlikely)
 }
 
 
@@ -250,23 +332,34 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     sqrtPriceLimitX96
   }, { depth: null });
 
-  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
-    poolKey: {
-      currency0: poolKey.currency0,
-      currency1: poolKey.currency1,
-      fee: BigInt(poolKey.fee),
-      tickSpacing: BigInt(poolKey.tickSpacing),
-      hooks: poolKey.hooks,
-    },
-    zeroForOne,
-    exactAmount: parsedAmount,
-    hookData
-  }]);
+  // 🔎 Try a few hookData payloads to see if the hook gives better (possibly fee-free) terms
+  const best = await searchHookDataForBestQuote(poolKey, targetPoolId, parsedAmount, zeroForOne, userWallet);
 
-  const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
-  const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
-  console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
-  console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
+  if (best) {
+    const bestOut = Number(ethers.formatUnits(best.amountOut, 6));
+    console.log(`🏆 Best hookData found: ${best.hookDataHex}`);
+    console.log(`→ Quoted amountOut: ${bestOut.toFixed(6)} USDC`);
+    console.log(`⛽ Gas estimate (units): ${best.gasEstimate.toString()}`);
+  } else {
+    // Fallback to your original call with empty hookData
+    const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
+      poolKey: {
+        currency0: poolKey.currency0,
+        currency1: poolKey.currency1,
+        fee: BigInt(poolKey.fee),
+        tickSpacing: BigInt(poolKey.tickSpacing),
+        hooks: poolKey.hooks,
+      },
+      zeroForOne,
+      exactAmount: parsedAmount,
+      hookData: "0x",
+    }]);
+
+    const result = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
+    const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", result);
+    console.log(`→ Quoted amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+    console.log(`⛽ Gas estimate (units): ${gasEstimate.toString()}`);
+  }
 
   // 🔍 Fetch reserves using computed id
   try {
