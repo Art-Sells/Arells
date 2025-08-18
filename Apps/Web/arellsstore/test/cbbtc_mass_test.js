@@ -13,6 +13,7 @@ import { keccak256, encodePacked, getAddress, solidityPacked } from "viem";
 import { exitCode } from "process";
 import { unlink } from "fs";
 import { Token } from '@uniswap/sdk-core';
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -46,6 +47,8 @@ const stateViewABI = [
   "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
   "function getLiquidity(bytes32 poolId) view returns (uint128)"
 ];
+
+const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 
 const stateView = new ethers.Contract(STATE_VIEW_ADDRESS, stateViewABI, provider);
 const V4_POOL_IDS = [
@@ -192,12 +195,8 @@ async function buildQuoterInterface() {
 
 // Quote helper that ALWAYS uses fetched ABI and your current params
 async function quoteV4({
-  quoteIface,
-  poolKey,
-  zeroForOne,
-  exactAmount,
-  sqrtPriceLimitX96,   // NEW: pass the limit to the quoter
-  hookData = "0x",
+  quoteIface, poolKey, zeroForOne, exactAmount,
+  sqrtPriceLimitX96, hookData = "0x", callFrom
 }) {
   const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
     poolKey: {
@@ -209,13 +208,47 @@ async function quoteV4({
     },
     zeroForOne,
     exactAmount: BigInt(exactAmount),
-    sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96 ?? 0n), // <— IMPORTANT
+    sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96 ?? 0n),
     hookData
   }]);
 
-  const raw = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata });
+  const raw = await provider.call({
+    to: V4_QUOTER_ADDRESS,
+    data: calldata,
+    ...(callFrom ? { from: callFrom } : {})   // ← key line
+  });
+
   const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", raw);
   return { amountOut, gasEstimate };
+}
+
+// Try sender-gated promos by varying the eth_call 'from'
+const fromCandidates = [
+  userWallet.address,
+  // Add any router addresses you might actually execute through:
+  // "0x...UNIVERSAL_ROUTER",
+  // "0x...ONEINCH_ROUTER",
+  // "0x...0x_ROUTER",
+];
+let chosenFrom = undefined;
+let bestFrom = null;
+for (const f of fromCandidates) {
+  try {
+    const r = quoteV4({
+      quoteIface, poolKey, zeroForOne,
+      exactAmount: parsedAmount,
+      sqrtPriceLimitX96: effectiveLimit,
+      hookData: "0x",
+      callFrom: f
+    });
+    const out = Number(ethers.formatUnits(r.amountOut, 6));
+    console.log(`👤 from=${f.slice(0,10)}… → ${out.toFixed(6)} USDC`);
+    if (!bestFrom || out > bestFrom.out) bestFrom = { f, out, r };
+  } catch {}
+}
+if (bestFrom) {
+  chosenFrom = bestFrom.f;
+  console.log(`🏆 Best 'from'=${chosenFrom} → ${bestFrom.out.toFixed(6)} USDC`);
 }
 
 // Get a handful of initialized ticks around the current tick
@@ -483,67 +516,9 @@ async function findMaxZeroFeeChunk({
   return ans; // largest fee-free chunk size (base units of cbBTC)
 }
 
-async function findMaxZeroFeeChunk({
-  poolKey, zeroForOne, limitX96, quoteIface, // quoter bits
-  priceUSDCperBTC,                           // from slot0 decode
-  decimalsIn = 8, decimalsOut = 6,
-  maxTry = 100000000n                         // cap search up to 1 cbBTC here (1e8)
-}) {
-  // Treat “fee-free” as “implied fee < 0.05%” (tunable)
-  const THRESH_PPM = 500n; // 0.05%
-  const one = 10_0000_0000n; // helper scale (not units)
-  
-  const impliedFeePpm = (amtIn, amtOut) => {
-    // expected out (no price move) = amtIn * price
-    // amtIn is 8dp cbBTC; priceUSDCperBTC is a JS number
-    const expOut = BigInt(Math.floor(Number(amtIn) * priceUSDCperBTC / (10 ** decimalsIn) * (10 ** decimalsOut)));
-    if (expOut === 0n) return 1_000_000n;
-    const diff = expOut > amtOut ? (expOut - amtOut) : 0n;
-    return (diff * 1_000_000n) / expOut; // ppm
-  };
-
-  async function q(amt) {
-    const { amountOut } = await quoteV4({
-      quoteIface, poolKey, zeroForOne,
-      exactAmount: amt,
-      sqrtPriceLimitX96: limitX96,
-      hookData: "0x"
-    });
-    return amountOut;
-  }
-
-  // quick ladder up by 10x until fee is clearly > threshold
-  let current = 1_000n; // 1e3 sats = 0.00001 cbBTC
-  let lastGood = 0n;
-  while (current <= maxTry) {
-    const out = await q(current);
-    const feePpm = impliedFeePpm(current, out);
-    if (feePpm <= THRESH_PPM) {
-      lastGood = current;
-      current *= 10n;
-    } else break;
-  }
-  if (lastGood === 0n) return 0n; // no fee-free size
-
-  // binary search between lastGood..min(current,maxTry)
-  let lo = lastGood, hi = current <= maxTry ? current : maxTry, ans = lastGood;
-  while (lo <= hi) {
-    const mid = (lo + hi) >> 1n;
-    const out = await q(mid);
-    const feePpm = impliedFeePpm(mid, out);
-    if (feePpm <= THRESH_PPM) {
-      ans = mid; lo = mid + 1n;
-    } else {
-      hi = mid - 1n;
-    }
-  }
-  return ans; // largest fee-free chunk size (base units of cbBTC)
-}
-
 
 
 async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
-  const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
   console.log(`✅ Using userWallet for Pool A quote simulation`);
 
   // 🔹 Check cbBTC Balance
@@ -672,6 +647,7 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
   }, { depth: null });
 
   // Try to improve with hookData variants (same amount + limit)
+  // 1) Structured tiny set
   let bestHook = null;
   try {
     bestHook = await searchHookDataForBestQuote({
@@ -681,34 +657,54 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
       sqrtPriceLimitX96: effectiveLimit,
       user: userWallet.address,
       poolId: targetPoolId,
+      callFrom: chosenFrom
     });
-    if (bestHook) {
-      console.log(`🎯 Best hookData improved? ${bestHook.outHuman.toFixed(6)} USDC`);
-    }
+    if (bestHook) console.log(`🎯 Structured best → ${bestHook.outHuman?.toFixed?.(6) ?? Number(ethers.formatUnits(bestHook.amountOut,6)).toFixed(6)} USDC`);
   } catch (e) {
     console.warn("⚠️ hookData scan failed:", e.message || e);
   }
 
+  // 2) Brute tiny-random hookData (2 bytes × 1024 = fast)
+  let brute = null;
+  try {
+    brute = await bruteHookDataForBest({
+      poolKey,
+      zeroForOne,
+      amountInCBBTC: parsedAmount,
+      sqrtPriceLimitX96: effectiveLimit,
+      quoteIface,
+      callFrom: chosenFrom,
+      rounds: 1024,
+      bytes: 2
+    });
+    if (brute) console.log(`🥊 Brute best → ${brute.out.toFixed(6)} USDC`);
+  } catch (e) {
+    console.warn("⚠️ bruteHookData failed:", e.message || e);
+  }
+
+
   // --- BASELINE QUOTE (hookData = 0x), then upgrade with bestHook if better ---
+  // --- Baseline (hookData=0x) with chosenFrom
   const baseline = await quoteV4({
     quoteIface,
     poolKey,
     zeroForOne,
     exactAmount: parsedAmount,
     sqrtPriceLimitX96: effectiveLimit,
-    hookData: "0x"
+    hookData: "0x",
+    callFrom: chosenFrom
   });
+  let chosen = { amountOut: baseline.amountOut, gasEstimate: baseline.gasEstimate, hookData: "0x" };
 
-  let chosen = { ...baseline, hookData: "0x" };
-
-  // if hookData search found better, use it
-  if (bestHook && bestHook.amountOut > baseline.amountOut) {
-    chosen = {
-      amountOut: bestHook.amountOut,
-      gasEstimate: bestHook.gasEstimate,
-      hookData: bestHook.hookData
-    };
-    console.log(`✅ Using improved hookData=${bestHook.hookData.slice(0,18)}…`);
+  // Compare to structured + brute
+  const cmp = (x) => (x ? BigInt(x.amountOut ?? x.amountOut) : 0n);
+  if (bestHook && cmp(bestHook) > chosen.amountOut) {
+    chosen = { amountOut: bestHook.amountOut, gasEstimate: bestHook.gasEstimate, hookData: bestHook.hookData };
+    console.log(`✅ Using structured hookData=${bestHook.hookData.slice(0,18)}…`);
+  }
+  if (brute && BigInt(brute.amountOut) > chosen.amountOut) {
+    chosen = { amountOut: brute.amountOut, gasEstimate: brute.gasEstimate, hookData: brute.hookData };
+    console.log(`✅ Using brute hookData=${brute.hookData.slice(0,18)}…`);
   }
 
   console.log(`→ Quoted amountOut: ${ethers.formatUnits(chosen.amountOut, 6)} USDC`);
