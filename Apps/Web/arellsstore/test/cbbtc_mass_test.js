@@ -62,7 +62,7 @@ const V4_POOL_IDS = [
 ];
 
 const slot0Interface = new ethers.Interface([
-  "function getSlot0(bytes32) view returns (uint160 sqrtPriceX96, int24 tick, uint16 protocolFee, uint16 lpFee)",
+  "function getSlot0(bytes32) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
 ]);
 
 const liquidityInterface = new ethers.Interface([
@@ -220,35 +220,6 @@ async function quoteV4({
 
   const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", raw);
   return { amountOut, gasEstimate };
-}
-
-// Try sender-gated promos by varying the eth_call 'from'
-const fromCandidates = [
-  userWallet.address,
-  // Add any router addresses you might actually execute through:
-  // "0x...UNIVERSAL_ROUTER",
-  // "0x...ONEINCH_ROUTER",
-  // "0x...0x_ROUTER",
-];
-let chosenFrom = undefined;
-let bestFrom = null;
-for (const f of fromCandidates) {
-  try {
-    const r = quoteV4({
-      quoteIface, poolKey, zeroForOne,
-      exactAmount: parsedAmount,
-      sqrtPriceLimitX96: effectiveLimit,
-      hookData: "0x",
-      callFrom: f
-    });
-    const out = Number(ethers.formatUnits(r.amountOut, 6));
-    console.log(`👤 from=${f.slice(0,10)}… → ${out.toFixed(6)} USDC`);
-    if (!bestFrom || out > bestFrom.out) bestFrom = { f, out, r };
-  } catch {}
-}
-if (bestFrom) {
-  chosenFrom = bestFrom.f;
-  console.log(`🏆 Best 'from'=${chosenFrom} → ${bestFrom.out.toFixed(6)} USDC`);
 }
 
 // Get a handful of initialized ticks around the current tick
@@ -433,7 +404,7 @@ function* hookDataVariants({ user, poolId, amountInCBBTC }) {
 }
 
 async function searchHookDataForBestQuote({
-  poolKey, zeroForOne, amountInCBBTC, sqrtPriceLimitX96, user, poolId
+  poolKey, zeroForOne, amountInCBBTC, sqrtPriceLimitX96, user, poolId, callFrom
 }) {
   const quoteIface = await buildQuoterInterface();
   let best = null;
@@ -444,16 +415,15 @@ async function searchHookDataForBestQuote({
         quoteIface, poolKey, zeroForOne,
         exactAmount: amountInCBBTC,
         sqrtPriceLimitX96,
-        hookData
+        hookData,
+        callFrom                   // ← pass through
       });
       const outHuman = Number(ethers.formatUnits(amountOut, 6));
       console.log(`🔬 hookData=${hookData.slice(0,18)}… → ${outHuman.toFixed(6)} USDC (gas=${gasEstimate})`);
       if (!best || outHuman > best.outHuman) {
         best = { hookData, amountOut, outHuman, gasEstimate };
       }
-    } catch (e) {
-      // ignore reverts; keep scanning
-    }
+    } catch {}
   }
   return best;
 }
@@ -524,7 +494,7 @@ async function bruteHookDataForBest({
   amountInCBBTC,         // BigInt
   sqrtPriceLimitX96,     // BigInt
   callFrom,              // optional 'from' for eth_call sender-gates
-  rounds = 1024,         // how many random trials
+  rounds = 300,         // how many random trials
   bytes = 2,             // how many random bytes to stuff after 0x
   logEvery = 128         // throttle logs
 }) {
@@ -561,10 +531,45 @@ async function bruteHookDataForBest({
   return best; // { hookData, amountOut (BigInt), gasEstimate (BigInt), out (Number) } or null
 }
 
+async function scanLpFeeWindows(poolId, blocksBack = 200) {
+  const latest = await provider.getBlockNumber();
+  const hits = [];
+  const batchSize = 25; // tune for your RPC
+  const data = slot0Interface.encodeFunctionData("getSlot0", [poolId]);
 
+  for (let start = latest; start > latest - blocksBack; start -= batchSize) {
+    const end = Math.max(latest - blocksBack + 1, start - batchSize + 1);
+    const tags = [];
+    for (let b = start; b >= end; b--) tags.push(b);
+
+    const results = await Promise.allSettled(
+      tags.map(b => provider.call({ to: STATE_VIEW_ADDRESS, data }, b))
+    );
+
+    results.forEach((res, i) => {
+      if (res.status === "fulfilled") {
+        try {
+          const [, , , lpFee] = slot0Interface.decodeFunctionResult("getSlot0", res.value);
+          if (BigInt(lpFee) === 0n) hits.push(tags[i]);
+        } catch {}
+      }
+    });
+
+    const done = latest - end + 1;
+    process.stdout.write(`\r🔁 lpFee scan: ${done}/${blocksBack} blocks`);
+  }
+
+  console.log(
+    hits.length
+      ? `\n🎁 lpFee==0 at blocks: ${hits.join(", ")}`
+      : `\n🚫 No lpFee==0 window in last ${blocksBack} blocks`
+  );
+  return hits;
+}
 
 async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
   console.log(`✅ Using userWallet for Pool A quote simulation`);
+  const LPFEE_SCAN_BLOCKS = Number(process.env.LPFEE_SCAN_BLOCKS ?? "300"); // 0 = disabled
 
   // 🔹 Check cbBTC Balance
   const erc20ABI = [
@@ -592,6 +597,11 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     console.log("✅ poolId matches:", canonicalPoolId);
   }
   const targetPoolId = canonicalPoolId;
+
+  if (LPFEE_SCAN_BLOCKS > 0) {
+    console.log(`🔎 Scanning last ${LPFEE_SCAN_BLOCKS} blocks for lpFee==0…`);
+    await scanLpFeeWindows(targetPoolId, LPFEE_SCAN_BLOCKS);
+  }
 
   // 🔹 Prepare Quote Params
   const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
@@ -636,6 +646,32 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     }
   } catch (e) {
     console.warn("⚠️ Tick-probe failed:", e.message || e);
+  }
+
+  // Try sender-gated promos by varying the eth_call 'from'
+  const fromCandidates = [
+    userWallet.address,
+  ];
+
+  let chosenFrom = undefined;
+  let bestFrom = null;
+  for (const f of fromCandidates) {
+    try {
+      const r = await quoteV4({             // ← await!
+        quoteIface, poolKey, zeroForOne,
+        exactAmount: parsedAmount,
+        sqrtPriceLimitX96: effectiveLimit,
+        hookData: "0x",
+        callFrom: f
+      });
+      const out = Number(ethers.formatUnits(r.amountOut, 6));
+      console.log(`👤 from=${f.slice(0,10)}… → ${out.toFixed(6)} USDC`);
+      if (!bestFrom || out > bestFrom.out) bestFrom = { f, out, r };
+    } catch {}
+  }
+  if (bestFrom) {
+    chosenFrom = bestFrom.f;
+    console.log(`🏆 Best 'from'=${chosenFrom} → ${bestFrom.out.toFixed(6)} USDC`);
   }
 
   // --- NEW: detect a fee-free size band (if any) and propose chunking ---
@@ -725,6 +761,25 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
     if (brute) console.log(`🥊 Brute best → ${brute.out.toFixed(6)} USDC`);
   } catch (e) {
     console.warn("⚠️ bruteHookData failed:", e.message || e);
+  }
+
+  // Tiny wide probe (4 bytes, 128 rounds)
+  try {
+    const bruteWide = await bruteHookDataForBest({
+      poolKey, zeroForOne,
+      amountInCBBTC: parsedAmount,
+      sqrtPriceLimitX96: effectiveLimit,
+      quoteIface,
+      callFrom: chosenFrom,
+      rounds: 128,
+      bytes: 4
+    });
+    if (bruteWide && BigInt(bruteWide.amountOut) > BigInt(chosen.amountOut ?? 0n)) {
+      console.log(`🧪 Wide probe best → ${bruteWide.out.toFixed(6)} USDC`);
+      chosen = { amountOut: bruteWide.amountOut, gasEstimate: bruteWide.gasEstimate, hookData: bruteWide.hookData };
+    }
+  } catch (e) {
+    console.warn("⚠️ wide brute failed:", e.message || e);
   }
 
 
