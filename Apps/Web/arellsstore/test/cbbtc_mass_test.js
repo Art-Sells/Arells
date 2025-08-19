@@ -516,6 +516,51 @@ async function findMaxZeroFeeChunk({
   return ans; // largest fee-free chunk size (base units of cbBTC)
 }
 
+// Brute-force tiny random hookData to see if any hook path gives better quotes
+async function bruteHookDataForBest({
+  quoteIface,
+  poolKey,
+  zeroForOne,
+  amountInCBBTC,         // BigInt
+  sqrtPriceLimitX96,     // BigInt
+  callFrom,              // optional 'from' for eth_call sender-gates
+  rounds = 1024,         // how many random trials
+  bytes = 2,             // how many random bytes to stuff after 0x
+  logEvery = 128         // throttle logs
+}) {
+  let best = null;
+
+  for (let i = 0; i < rounds; i++) {
+    // random small payload like 0xA1B2 (tunable via 'bytes')
+    const hookData = "0x" + crypto.randomBytes(bytes).toString("hex");
+
+    try {
+      const { amountOut, gasEstimate } = await quoteV4({
+        quoteIface,
+        poolKey,
+        zeroForOne,
+        exactAmount: amountInCBBTC,
+        sqrtPriceLimitX96,
+        hookData,
+        callFrom
+      });
+
+      const outHuman = Number(ethers.formatUnits(amountOut, 6));
+      if (!best || outHuman > best.out) {
+        best = { hookData, amountOut, gasEstimate, out: outHuman };
+      }
+
+      if (i % logEvery === 0) {
+        console.log(`🥊 brute ${i}/${rounds}: best so far ~${best?.out?.toFixed(6)} USDC (hookData=${best?.hookData?.slice?.(0,18)}…)`);
+      }
+    } catch {
+      // ignore reverts and keep trying other random bytes
+    }
+  }
+
+  return best; // { hookData, amountOut (BigInt), gasEstimate (BigInt), out (Number) } or null
+}
+
 
 
 async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPriceLimitX96 = 0n) {
