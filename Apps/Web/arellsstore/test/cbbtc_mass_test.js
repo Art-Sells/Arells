@@ -98,11 +98,12 @@ function computePoolId(poolKey) {
   return ethers.keccak256(encodedKey);
 }
 
+
 function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
-  const Q96 = 2n ** 96n;
+  const Q96 = BigInt(2) ** BigInt(96);
   const sqrt = BigInt(sqrtPriceX96);
-  const raw = Number((sqrt * sqrt) / (Q96 * Q96));
-  return (1 / raw) * 10 ** (decimalsToken0 - decimalsToken1);
+  const rawPrice = Number(sqrt * sqrt) / Number(Q96 * Q96);
+  return (1 / rawPrice) * 10 ** (decimalsToken0 - decimalsToken1);
 }
 
 function decodeLiquidityAmountsv4(liquidity, sqrtPriceX96) {
@@ -190,6 +191,28 @@ async function fetchABI(address) {
 async function buildQuoterInterface() {
   const quoterABI = await fetchABI(V4_QUOTER_ADDRESS);
   return new ethers.Interface(quoterABI);
+}
+
+const ZERO32 = "0x" + "00".repeat(64);
+
+async function fetchHookABI(address) {
+  const apiKey = process.env.BASESCAN_API_KEY;
+  const url = `https://api.basescan.org/api?module=contract&action=getabi&address=${address}&apikey=${apiKey}`;
+  const response = await axios.get(url);
+  if (response.data.status !== "1") throw new Error("Failed to fetch ABI from BaseScan");
+  const abi  = JSON.parse(response.data.result);
+  const frag  = abi.find((e) => e.name === "hookFeesEnabled" && e.type === "function");
+  const frag1 = abi.find((e) => e.name === "hookFees" && e.type === "function");
+  const frag2 = abi.find((e) => e.name === "quoters" && e.type === "function");
+  console.log("🔍 hookFeesEnabled ABI fragment:", frag);
+  console.log("🔍 hookFees ABI fragment:", frag1);
+  console.log("🔍 quoters ABI fragment:", frag2);
+  return abi;
+}
+
+async function buildHookInterface() {
+  const hookABI = await fetchHookABI(V4_POOL_AB_HOOK_ADDRESS);
+  return new ethers.Interface(hookABI);
 }
 
 async function quoteV4({ quoteIface, poolKey, zeroForOne, exactAmount, sqrtPriceLimitX96, hookData = "0x", callFrom }) {
@@ -324,6 +347,58 @@ async function tinyTickProbe({ poolId, poolKey, zeroForOne, amountInCBBTC }) {
   return best.sqrtLimit;
 }
 
+async function readHookMeta(poolId) {
+  const hookIface = await buildHookInterface();
+
+  const out = {
+    enabled: false,
+    poolFeeBips: 0,
+    defaultFeeBips: 0,
+    effBips: 0,
+    quoterAllowed: true,
+  };
+
+  // hookFeesEnabled(bytes32) -> bool
+  try {
+    const data = hookIface.encodeFunctionData("hookFeesEnabled", [poolId]);
+    const raw  = await rpcCall({ to: V4_POOL_AB_HOOK_ADDRESS, data });
+    const [enabled] = hookIface.decodeFunctionResult("hookFeesEnabled", raw);
+    out.enabled = Boolean(enabled);
+  } catch {}
+
+  // hookFees(bytes32) -> uint?? (bips)  — for this poolId
+  try {
+    const data = hookIface.encodeFunctionData("hookFees", [poolId]);
+    const raw  = await rpcCall({ to: V4_POOL_AB_HOOK_ADDRESS, data });
+    const dec  = hookIface.decodeFunctionResult("hookFees", raw);
+    const v    = Array.isArray(dec) ? dec[0] : dec;
+    out.poolFeeBips = Number(v);
+  } catch {}
+
+  // hookFees(0x00..00) -> default bips (global/default)
+  try {
+    const data = hookIface.encodeFunctionData("hookFees", [ZERO32]);
+    const raw  = await rpcCall({ to: V4_POOL_AB_HOOK_ADDRESS, data });
+    const dec  = hookIface.decodeFunctionResult("hookFees", raw);
+    const v    = Array.isArray(dec) ? dec[0] : dec;
+    out.defaultFeeBips = Number(v);
+  } catch {}
+
+  // quoters(address) -> bool (mapping), if ABI has it
+  try {
+    // Will throw if function not in ABI
+    hookIface.getFunction("quoters");
+    const data = hookIface.encodeFunctionData("quoters", [V4_QUOTER_ADDRESS]);
+    const raw  = await rpcCall({ to: V4_POOL_AB_HOOK_ADDRESS, data });
+    const [allowed] = hookIface.decodeFunctionResult("quoters", raw);
+    out.quoterAllowed = Boolean(allowed);
+  } catch {}
+
+  out.effBips = out.poolFeeBips || out.defaultFeeBips || 0;
+
+  return out;
+}
+
 // ──────────────────────────────────────────────────────────────────────────────
 // Main simulation
 // ──────────────────────────────────────────────────────────────────────────────
@@ -356,62 +431,125 @@ async function simulateWithV4QuoterPoolA(poolKey, poolId, amountInCBBTC, sqrtPri
   }
   const targetPoolId = canonicalPoolId;
 
-  // Optional fee window scan (default off)
-  if (LPFEE_SCAN_BLOCKS > 0) {
-    console.log(`🔎 (slow) scanning last ${LPFEE_SCAN_BLOCKS} blocks for lpFee==0 is DISCOURAGED here`);
+  // ── Hook meta (fast gate; manual encode/decode path) ────────────────────────
+  const hookMeta = await readHookMeta(targetPoolId);
+  console.log(
+    `🪝 Hook meta → enabled=${hookMeta.enabled}, poolBips=${hookMeta.poolFeeBips}, ` +
+    `defaultBips=${hookMeta.defaultFeeBips}, effectiveBips=${hookMeta.effBips}, ` +
+    `quoterAllowed=${hookMeta.quoterAllowed}`
+  );
+
+  // If hook is enforcing a non-zero fee, there is nothing to “manipulate”.
+  if (hookMeta.enabled && hookMeta.effBips > 0) {
+    console.log("⛔ Hook fee enforced & non-zero — skipping (no zero-fee route possible).");
+    return; // ← quiet exit
+  }
+  if (hookMeta.quoterAllowed === false) {
+    console.log("⛔ Quoter not allowed by hook — skipping.");
+    return; // ← quiet exit
   }
 
-  // Slot0 + fees
+  // Slot0 (+ lp/protocol fee)
   const [currentSqrtPriceX96, , protocolFee, lpFee] = await stateView.getSlot0(targetPoolId);
-  sqrtPriceLimitX96 = currentSqrtPriceX96;
+  let effectiveLimit = currentSqrtPriceX96;
   console.log(`📈 Current sqrtPriceX96: ${currentSqrtPriceX96.toString()}`);
   console.log(`🧾 Fees (ppm): lpFee=${Number(lpFee)} protocolFee=${Number(protocolFee)}`);
 
-  // Optional: tiny tick limit probe to avoid obviously bad limits
-  let effectiveLimit = sqrtPriceLimitX96;
+  // Optional tiny tick-limit probe
   if (ENABLE_TICK_PROBE) {
-    const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
-    const probe = await tinyTickProbe({ poolId: targetPoolId, poolKey, zeroForOne, amountInCBBTC });
+    const dirZeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
+    const probe = await tinyTickProbe({
+      poolId: targetPoolId,
+      poolKey,
+      zeroForOne: dirZeroForOne,
+      amountInCBBTC
+    });
     if (probe) effectiveLimit = probe;
   }
 
   // Build quoter iface
   const quoteIface = await buildQuoterInterface();
 
-  // Direction & params
-  const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
+  // Direction & amount
+  const zeroForOne   = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase();
   const parsedAmount = BigInt(amountInCBBTC);
 
-  // Baseline (hookData=0x) — do this ONCE
-  const baseline = await quoteV4({ quoteIface, poolKey, zeroForOne, exactAmount: parsedAmount, sqrtPriceLimitX96: effectiveLimit, hookData: "0x", callFrom: userWallet.address });
-  console.log(`🔭 Baseline → ${ethers.formatUnits(baseline.amountOut, 6)} USDC (gas=${baseline.gasEstimate})`);
+  // Baseline (hookData=0x) — single call (required for zero-fee detection math)
+  const baseline = await quoteV4({
+    quoteIface,
+    poolKey,
+    zeroForOne,
+    exactAmount: parsedAmount,
+    sqrtPriceLimitX96: effectiveLimit,
+    hookData: "0x",
+    callFrom: userWallet.address
+  });
+  console.log(`🔭 Baseline → ${ethers.formatUnits(baseline.amountOut, 6)} USDC`);
 
-  // Structured tiny set first (parallel)
+  // Try very small structured set in parallel
   let best = { ...baseline, hookData: "0x" };
   if (HOOK_STRUCTURED_FIRST) {
-    const structured = await tryStructuredHookData({ quoteIface, poolKey, zeroForOne, amountInCBBTC: parsedAmount, sqrtPriceLimitX96: effectiveLimit, callFrom: userWallet.address, baselineOut: baseline.amountOut, lpFeePpm: lpFee });
+    const structured = await tryStructuredHookData({
+      quoteIface,
+      poolKey,
+      zeroForOne,
+      amountInCBBTC: parsedAmount,
+      sqrtPriceLimitX96: effectiveLimit,
+      callFrom: userWallet.address,
+      baselineOut: baseline.amountOut,
+      lpFeePpm: lpFee,
+      poolId: targetPoolId
+    });
     if (structured && structured.amountOut > best.amountOut) {
       best = { ...structured, hookData: structured.hookData };
-      console.log(`🎯 Structured best → ${ethers.formatUnits(best.amountOut, 6)} USDC (hook=${best.hookData.slice(0,10)}…)`);
     }
   }
 
-  // If not near-zero-fee yet, do a small brute (parallel)
-  const hitZeroish = nearZeroFeeHit({ baselineOut: baseline.amountOut, candidateOut: best.amountOut, lpFeePpm: lpFee, tolerancePpm: 50n });
-  if (!hitZeroish && HOOK_BRUTE_ROUNDS > 0) {
-    const brute = await tryBruteHookData({ quoteIface, poolKey, zeroForOne, amountInCBBTC: parsedAmount, sqrtPriceLimitX96: effectiveLimit, callFrom: userWallet.address, rounds: HOOK_BRUTE_ROUNDS, bytes: HOOK_BRUTE_BYTES, baselineOut: baseline.amountOut, lpFeePpm: lpFee });
+  // If still not “near no-LP-fee”, try a tiny brute
+  let zeroFeeFound = nearZeroFeeHit({
+    baselineOut: baseline.amountOut,
+    candidateOut: best.amountOut,
+    lpFeePpm: lpFee,
+    tolerancePpm: 50n
+  });
+
+  if (!zeroFeeFound && HOOK_BRUTE_ROUNDS > 0) {
+    const brute = await tryBruteHookData({
+      quoteIface,
+      poolKey,
+      zeroForOne,
+      amountInCBBTC: parsedAmount,
+      sqrtPriceLimitX96: effectiveLimit,
+      callFrom: userWallet.address,
+      rounds: HOOK_BRUTE_ROUNDS,
+      bytes: HOOK_BRUTE_BYTES,
+      baselineOut: baseline.amountOut,
+      lpFeePpm: lpFee
+    });
     if (brute && brute.amountOut > best.amountOut) {
       best = { ...brute, hookData: brute.hookData };
-      console.log(`🥊 Brute best → ${ethers.formatUnits(best.amountOut, 6)} USDC (hook=${best.hookData.slice(0,10)}…)`);
     }
+    zeroFeeFound = nearZeroFeeHit({
+      baselineOut: baseline.amountOut,
+      candidateOut: best.amountOut,
+      lpFeePpm: lpFee,
+      tolerancePpm: 50n
+    });
   }
 
-  // Final reporting
-  console.log(`→ Chosen amountOut: ${ethers.formatUnits(best.amountOut, 6)} USDC`);
-  console.log(`⛽ Gas estimate (units): ${best.gasEstimate.toString()}`);
-  console.log(`🔖 hookData used: ${best.hookData ?? "0x"}`);
+  // If no zero-fee-ish improvement was found, exit quietly (no final calc/report)
+  if (!zeroFeeFound) {
+    console.log("🚫 No zero-fee-looking path detected — exiting without output.");
+    return; // ← quiet exit (no reserves, no chosen numbers)
+  }
 
-  // Reserves snapshot (for context)
+  // Otherwise, report the zero-fee-ish result (and ONLY then show details)
+  console.log(`🎉 Zero-fee-looking route found!`);
+  console.log(`→ AmountOut: ${ethers.formatUnits(best.amountOut, 6)} USDC`);
+  console.log(`⛽ Gas (units): ${best.gasEstimate.toString()}`);
+  console.log(`🔖 hookData: ${best.hookData ?? "0x"}`);
+
+  // (Optional) reserves snapshot for context
   try {
     console.log(`🆔 Pool ID (computed): ${targetPoolId}`);
     const [sqrtPriceX96] = await stateView.getSlot0(targetPoolId);
@@ -462,4 +600,6 @@ main().catch((e) => {
   process.exitCode = 1;
 });
 
-// Run with: yarn hardhat run test/cbbtc_mass_test.js --network base
+
+
+//to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
