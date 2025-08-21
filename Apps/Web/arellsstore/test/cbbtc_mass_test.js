@@ -32,6 +32,7 @@ const POOL = {
 // ──────────────────────────────────────────────────────────────────────────────
 const stateViewABI = [
   "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
+  "function getLiquidity(bytes32 poolId) view returns (uint128)"
 ];
 const stateView = new ethers.Contract(STATE_VIEW_ADDRESS, stateViewABI, provider);
 
@@ -44,7 +45,7 @@ function computePoolId(poolKey) {
   return ethers.keccak256(enc);
 }
 
-async function fetchQuoterABI(address) {
+async function fetchQuoterIface(address) {
   const url  = `https://api.basescan.org/api?module=contract&action=getabi&address=${address}&apikey=${process.env.BASESCAN_API_KEY}`;
   const resp = await axios.get(url);
   if (resp.data.status !== "1") throw new Error("Failed to fetch Quoter ABI from BaseScan");
@@ -54,7 +55,7 @@ async function fetchQuoterABI(address) {
   return new ethers.Interface(abi);
 }
 
-// YOUR decoder (left exactly as requested)
+// ── KEEP THIS LOGIC UNCHANGED (as requested)
 function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsToken1 = 6) {
   const Q96 = BigInt(2) ** BigInt(96);
   const sqrt = BigInt(sqrtPriceX96);
@@ -62,7 +63,7 @@ function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 8, decimalsTok
   return (1 / rawPrice) * 10 ** (decimalsToken0 - decimalsToken1);
 }
 
-// Choose a limit INSIDE the current tick so we don't cross a boundary
+// Pick a limit **inside** the current tick so we never cross a boundary
 function limitInsideCurrentTick({ tick, tickSpacing, zeroForOne }) {
   const baseTick = Math.floor(Number(tick) / tickSpacing) * tickSpacing;
   let limitTick;
@@ -76,7 +77,21 @@ function limitInsideCurrentTick({ tick, tickSpacing, zeroForOne }) {
   return BigInt(TickMath.getSqrtRatioAtTick(limitTick).toString());
 }
 
-async function quoteV4({ quoteIface, poolKey, zeroForOne, exactAmount, sqrtPriceLimitX96, hookData = "0x" }) {
+// Limit just beyond the next boundary (to force a cross)
+function limitBeyondNextBoundary({ tick, tickSpacing, zeroForOne }) {
+  const baseTick = Math.floor(Number(tick) / tickSpacing) * tickSpacing;
+  let targetTick;
+  if (zeroForOne) {
+    // For token0->token1 (price down), push to just **below** the lower boundary
+    targetTick = baseTick - tickSpacing + 1;
+  } else {
+    // For token1->token0 (price up), push to just **above** the upper boundary
+    targetTick = baseTick + tickSpacing + (tickSpacing - 1);
+  }
+  return BigInt(TickMath.getSqrtRatioAtTick(targetTick).toString());
+}
+
+async function quoteV4({ quoteIface, poolKey, zeroForOne, exactAmount, sqrtPriceLimitX96 }) {
   const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
     poolKey: {
       currency0: poolKey.currency0,
@@ -88,7 +103,7 @@ async function quoteV4({ quoteIface, poolKey, zeroForOne, exactAmount, sqrtPrice
     zeroForOne,
     exactAmount: BigInt(exactAmount),
     sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96),
-    hookData,
+    hookData: "0x",
   }]);
 
   const raw = await provider.call({
@@ -96,8 +111,27 @@ async function quoteV4({ quoteIface, poolKey, zeroForOne, exactAmount, sqrtPrice
     data: calldata,
     from: userWallet.address
   });
-  const [amountOut] = quoteIface.decodeFunctionResult("quoteExactInputSingle", raw);
-  return amountOut; // BigInt (USDC 6dp)
+  const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", raw);
+  return { amountOut, gasEstimate }; // amountOut in tokenOut decimals (USDC=6)
+}
+
+// Amount of token1 (cbBTC) required to move from sqrtP to upper boundary sqrtU (oneForZero)
+// dy = ceil( L * (sqrtU - sqrtP) / Q96 )
+function dyToUpperBoundary({ L, sqrtP, sqrtU }) {
+  const Q96 = 2n ** 96n;
+  const num = (BigInt(L) * (BigInt(sqrtU) - BigInt(sqrtP)));
+  return (num + Q96 - 1n) / Q96; // ceil
+}
+
+// Amount of token0 required to move from sqrtP to lower boundary for zeroForOne (not used here)
+function dxToLowerBoundary({ L, sqrtP, sqrtL }) {
+  // dx = ceil( L * ( (sqrtP - sqrtL) / (sqrtP * sqrtL) ) * Q96 )
+  const Q96 = 2n ** 96n;
+  const sP = BigInt(sqrtP);
+  const sL = BigInt(sqrtL);
+  const num = BigInt(L) * (sP - sL) * Q96;
+  const den = sP * sL;
+  return (num + den - 1n) / den;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -125,46 +159,110 @@ async function main() {
       : `⚠️ poolId mismatch! ${computedId}`
   );
 
-  // slot0 → get current tick & lpFee
+  // slot0 + active liquidity
   const [sqrtP, tick, , lpFeePpm] = await stateView.getSlot0(POOL.poolId);
+  const Lactive = await stateView.getLiquidity(POOL.poolId);
+
   console.log(`📈 Current sqrtPriceX96: ${sqrtP}`);
   console.log(`🧾 lpFee (ppm): ${Number(lpFeePpm)}`);
+  console.log(`💧 Active Liquidity: ${Lactive.toString()}`);
 
-  // derive limit **inside** current tick
-  const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase(); // false for cbBTC→USDC here
-  const sqrtLimit  = limitInsideCurrentTick({ tick, tickSpacing: poolKey.tickSpacing, zeroForOne });
-  console.log(`🧭 Using in-tick sqrtPriceLimitX96=${sqrtLimit}`);
+  // Swap direction on this pair:
+  // cbBTC→USDC is token1 -> token0 => zeroForOne = false when token0=USDC, token1=cbBTC
+  const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase(); // false here
 
-  // YOUR amount line (left intact so you can change it directly)
+  // Boundaries of current tick
+  const baseTick  = Math.floor(Number(tick) / POOL.tickSpacing) * POOL.tickSpacing;
+  const lowerTick = baseTick;
+  const upperTick = baseTick + POOL.tickSpacing;
+
+  const sqrtLower = BigInt(TickMath.getSqrtRatioAtTick(lowerTick).toString());
+  const sqrtUpper = BigInt(TickMath.getSqrtRatioAtTick(upperTick).toString());
+
+  console.log(`🪵 Tick range: [${lowerTick}, ${upperTick})`);
+  console.log(`  sqrt(lower)=${sqrtLower}`);
+  console.log(`  sqrt(upper)=${sqrtUpper}`);
+
+  // Limits for the two experiments
+  const sqrtLimitInTick   = limitInsideCurrentTick({ tick, tickSpacing: POOL.tickSpacing, zeroForOne });
+  const sqrtLimitCrossing = limitBeyondNextBoundary({ tick, tickSpacing: POOL.tickSpacing, zeroForOne });
+  console.log(`🧭 In-tick  limit:  ${sqrtLimitInTick}`);
+  console.log(`🧭 Cross-tick limit: ${sqrtLimitCrossing}`);
+
+  // Amount of cbBTC required to reach the **upper** boundary (since zeroForOne=false)
+  const needToUpper = dyToUpperBoundary({ L: Lactive, sqrtP, sqrtU: sqrtUpper });
+  console.log(`📌 cbBTC needed to hit upper boundary (≈cross): ${needToUpper.toString()} sats = ${ethers.formatUnits(needToUpper, 8)} cbBTC`);
+
+  // YOUR amount line (kept intact so you can change it freely)
   let amountInCBBTC = ethers.parseUnits("1", 8);
 
-  // quoter call (single step)
-  const quoter = await fetchQuoterABI(V4_QUOTER_ADDRESS);
-  const out = await quoteV4({
+  // Build quoter iface
+  const quoter = await fetchQuoterIface(V4_QUOTER_ADDRESS);
+
+  // 1) In-tick quote (no crossing): use min(amount, needToUpper-1) and in-tick limit
+  const amtInNoCross = needToUpper > 0n ? (amountInCBBTC < needToUpper ? amountInCBBTC : (needToUpper - 1n)) : amountInCBBTC;
+  const { amountOut: outInTick } = await quoteV4({
     quoteIface: quoter,
     poolKey,
-    zeroForOne,                   // cbBTC → USDC on this pool => false
-    exactAmount: amountInCBBTC,   // use your amount directly
-    sqrtPriceLimitX96: sqrtLimit, // stay within tick
-    hookData: "0x",
+    zeroForOne,                   // false (cbBTC → USDC)
+    exactAmount: amtInNoCross,
+    sqrtPriceLimitX96: sqrtLimitInTick,
   });
 
-  // Compare to mid-price (expected no-fee output for this single call)
+  // 2) Cross-tick quote: use max(amount, needToUpper+1) and a limit beyond boundary
+  const oneSat = 1n;
+  const amtInCross = amountInCBBTC > (needToUpper + oneSat) ? amountInCBBTC : (needToUpper + oneSat);
+  const { amountOut: outCross } = await quoteV4({
+    quoteIface: quoter,
+    poolKey,
+    zeroForOne,                   // false (cbBTC → USDC)
+    exactAmount: amtInCross,
+    sqrtPriceLimitX96: sqrtLimitCrossing,
+  });
+
+  // Mid-price helper (for rough expectation)
   const dec0 = token0.toLowerCase() === CBBTC.toLowerCase() ? 8 : 6;
   const dec1 = token1.toLowerCase() === CBBTC.toLowerCase() ? 8 : 6;
-  const priceUSDCperCbBTC = decodeSqrtPriceX96ToFloat(sqrtP, dec1, dec0);
+  const midUSDCperCbBTC = decodeSqrtPriceX96ToFloat(sqrtP, 8, 6);
 
-  const expOutNoFee = BigInt(
-    Math.floor(Number(amountInCBBTC) * priceUSDCperCbBTC / 1e8 * 1e6) // cbBTC(8) -> USDC(6)
-  );
+const expInTickNoFee = BigInt(Math.floor(Number(amtInNoCross) * midUSDCperCbBTC / 100));
+const expCrossNoFee  = BigInt(Math.floor(Number(amtInCross)   * midUSDCperCbBTC / 100));
 
-  const diff = expOutNoFee > out ? (expOutNoFee - out) : 0n;
-  const feePpmImplied = expOutNoFee === 0n ? 0n : (diff * 1_000_000n) / expOutNoFee;
+  const feeInTick  = expInTickNoFee > outInTick ? (expInTickNoFee - outInTick) : 0n;
+  const feeCross   = expCrossNoFee  > outCross  ? (expCrossNoFee  - outCross)  : 0n;
 
-  console.log(`→ Quoted out: ${ethers.formatUnits(out, 6)} USDC`);
-  console.log(`→ Expected (no-fee, mid): ${ethers.formatUnits(expOutNoFee, 6)} USDC`);
-  console.log(`≈ Implied fee: ${feePpmImplied.toString()} ppm`);
+  const ppm = (exp, fee) => (exp === 0n ? 0n : (fee * 1_000_000n) / exp);
+
+  console.log("\n──────── Slot-by-slot Fee Readout ────────");
+  console.log(`In-tick  swap (no crossing):`);
+  console.log(`  amountIn  = ${ethers.formatUnits(amtInNoCross, 8)} cbBTC`);
+  console.log(`  amountOut = ${ethers.formatUnits(outInTick, 6)} USDC`);
+  console.log(`  mid(no-fee est) = ${ethers.formatUnits(expInTickNoFee, 6)} USDC`);
+  console.log(`  implied fee ≈ ${ethers.formatUnits(feeInTick, 6)} USDC (${ppm(expInTickNoFee, feeInTick).toString()} ppm)`);
+
+  console.log(`\nCross-tick swap (forces crossing):`);
+  console.log(`  amountIn  = ${ethers.formatUnits(amtInCross, 8)} cbBTC`);
+  console.log(`  amountOut = ${ethers.formatUnits(outCross, 6)} USDC`);
+  console.log(`  mid(no-fee est) = ${ethers.formatUnits(expCrossNoFee, 6)} USDC`);
+  console.log(`  implied fee ≈ ${ethers.formatUnits(feeCross, 6)} USDC (${ppm(expCrossNoFee, feeCross).toString()} ppm)`);
+
+  console.log("\nΔ When forcing a cross (vs in-tick):");
+  const effRateInTick  = Number(outInTick) / Number(amtInNoCross === 0n ? 1n : amtInNoCross);
+  const effRateCross   = Number(outCross)  / Number(amtInCross  === 0n ? 1n : amtInCross);
+  console.log(`  effective USDC per sat (in-tick):  ${effRateInTick}`);
+  console.log(`  effective USDC per sat (crossing): ${effRateCross}`);
+  console.log("  (Crossing usually shows more fee taken due to how V4 applies fees without the V3 step-flooring behavior.)");
+  // Put this right after computing: outInTick, expInTickNoFee
+  const PASS_PPM = 5n; // treat ≤5 ppm as "fee-free" for practical purposes
+  const feeInTickPpm = expInTickNoFee === 0n ? 0n : ((expInTickNoFee - outInTick > 0n ? expInTickNoFee - outInTick : 0n) * 1_000_000n) / expInTickNoFee;
+
+  if (feeInTickPpm <= PASS_PPM) {
+    console.log(`✅ FEE-FREE ROUTE (in-tick): ${feeInTickPpm.toString()} ppm`);
+  } else {
+    console.log(`❌ Not fee-free in-tick: ${feeInTickPpm.toString()} ppm`);
+  }
 }
+
 
 main().catch((e) => {
   console.error(e);
