@@ -6,8 +6,8 @@
 
 ## Test
 - Test (increase initialized Ticks in wordPosition to find fee free route)
+- Test the AmountOut quoted for .5 btc in V3 (after v4 fee free)…
 - revert back to "testKeyPermutations commit for v3/v4 ref"
-
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - 1 entire token test:
@@ -141,7 +141,7 @@ Arells Wallet and change all Variables
 
 
 
-## START WORK ON BASE L3 (possibly after v1.5):
+## START WORK ON BASE L3 (in accordance with v1.5 [get other engineer for this?]):
 - Phase 1: 
 - - Reference Base (and UI) Repos
 - - Abstract Transaction Fees to $0~
@@ -230,9 +230,10 @@ Arells Wallet and change all Variables
 - Restructure P/K ENV NAME
 
 ### Last Resort
-- Create separate Wallet to handle where we get our 3% fee...
+- Create separate Wallet to handle where we get our 6% fee...
 
-
+### Expand into other Base Tokens
+- look for other token pairs and expand Arells (sell to other holders) to that.
 
 
 
