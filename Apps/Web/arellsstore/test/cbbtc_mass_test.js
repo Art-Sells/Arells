@@ -2,6 +2,7 @@
 import { ethers } from "ethers";
 import dotenv from "dotenv";
 import axios from "axios";
+import { TickMath } from "@uniswap/v3-sdk";
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 
 const ZERO32 = "0x" + "00".repeat(32);
 
-// Pool config (fixed for this test)
+// Pool meta (fixed)
 const POOL = {
   label: "V4 A (0.3%)",
   poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
@@ -33,6 +34,7 @@ const POOL = {
 // ──────────────────────────────────────────────────────────────────────────────
 const stateViewABI = [
   "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
+  "function getLiquidity(bytes32 poolId) view returns (uint128)"
 ];
 const stateView = new ethers.Contract(STATE_VIEW_ADDRESS, stateViewABI, provider);
 
@@ -50,8 +52,11 @@ async function fetchQuoterIface(address) {
   const resp = await axios.get(url);
   if (resp.data.status !== "1") throw new Error("Failed to fetch Quoter ABI from BaseScan");
   const abi  = JSON.parse(resp.data.result);
-  const frag = abi.find((e) => e.name === "quoteExactInputSingle" && e.type === "function");
-  console.log("🔍 quoteExactInputSingle ABI fragment:", frag);
+  // We’ll use both if present
+  const fIn  = abi.find((e) => e.name === "quoteExactInputSingle"  && e.type === "function");
+  const fOut = abi.find((e) => e.name === "quoteExactOutputSingle" && e.type === "function");
+  console.log("🔍 quoteExactInputSingle ABI fragment:", fIn || "n/a");
+  console.log("🔍 quoteExactOutputSingle ABI fragment:", fOut || "n/a");
   return new ethers.Interface(abi);
 }
 
@@ -81,13 +86,14 @@ function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 6, decimalsTok
   return (1 / rawPrice) * 10 ** (decimalsToken1 - decimalsToken0);
 }
 
-// ε-limit (one unit in the favorable direction: ~zero price movement)
+// Limit: epsilon (one ULP in favorable direction)
 function epsilonLimit({ sqrtP, zeroForOne }) {
   return zeroForOne ? (BigInt(sqrtP) - 1n) : (BigInt(sqrtP) + 1n);
 }
 
-async function quoteExactInput({ quoteIface, poolKey, zeroForOne, exactAmount, sqrtPriceLimitX96 }) {
-  const calldata = quoteIface.encodeFunctionData("quoteExactInputSingle", [{
+// Exact-input (primary)
+async function quoteExactInput({ iface, zeroForOne, poolKey, exactAmount, sqrtPriceLimitX96, hookData = "0x" }) {
+  const calldata = iface.encodeFunctionData("quoteExactInputSingle", [{
     poolKey: {
       currency0: poolKey.currency0,
       currency1: poolKey.currency1,
@@ -98,37 +104,36 @@ async function quoteExactInput({ quoteIface, poolKey, zeroForOne, exactAmount, s
     zeroForOne,
     exactAmount: BigInt(exactAmount),
     sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96),
-    hookData: "0x",
+    hookData,
   }]);
-
-  const raw = await provider.call({
-    to: V4_QUOTER_ADDRESS,
-    data: calldata,
-    from: userWallet.address
-  });
-  const [amountOut, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactInputSingle", raw);
+  const raw = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata, from: userWallet.address });
+  const [amountOut, gasEstimate] = iface.decodeFunctionResult("quoteExactInputSingle", raw);
   return { amountOut, gasEstimate };
 }
 
-// Candidate generator around a base amount (targets USDC micro-unit boundaries)
-function* boundaryCandidates({ baseSats, midUSDCperCbBTC, spreadMicro = 200 }) {
-  const baseMicro = BigInt(Math.floor(Number(baseSats) * midUSDCperCbBTC / 100));
-  const mid = midUSDCperCbBTC; // Number
-  const lo = baseMicro - BigInt(spreadMicro);
-  const hi = baseMicro + BigInt(spreadMicro);
-  const seen = new Set();
-  for (let m = lo; m <= hi; m++) {
-    const sats = BigInt(Math.ceil(Number(m) * 100 / mid));
-    if (sats <= 0n) continue;
-    const key = sats.toString();
-    if (!seen.has(key)) {
-      seen.add(key);
-      yield sats;
-    }
-  }
+// Exact-output (optional if ABI present)
+async function quoteExactOutput({ iface, zeroForOne, poolKey, exactAmount, sqrtPriceLimitX96, hookData = "0x" }) {
+  const fn = iface.getFunction("quoteExactOutputSingle");
+  if (!fn) throw new Error("quoteExactOutputSingle not present in quoter");
+  const calldata = iface.encodeFunctionData("quoteExactOutputSingle", [{
+    poolKey: {
+      currency0: poolKey.currency0,
+      currency1: poolKey.currency1,
+      fee: BigInt(poolKey.fee),
+      tickSpacing: BigInt(poolKey.tickSpacing),
+      hooks: poolKey.hooks,
+    },
+    zeroForOne,
+    exactAmount: BigInt(exactAmount),
+    sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96),
+    hookData,
+  }]);
+  const raw = await provider.call({ to: V4_QUOTER_ADDRESS, data: calldata, from: userWallet.address });
+  const [amountIn, gasEstimate] = iface.decodeFunctionResult("quoteExactOutputSingle", raw);
+  return { amountIn, gasEstimate };
 }
 
-// Pretty ppm
+// ppm helper on micro-USDC (USDC 6dp)
 function ppm(exp, out) {
   if (exp === 0n) return "n/a";
   const fee = exp > out ? (exp - out) : 0n;
@@ -137,7 +142,7 @@ function ppm(exp, out) {
 
 // ──────────────────────────────────────────────────────────────────────────────
 async function main() {
-  // Token order (token0 = min address)
+  // Token order: FIXED as requested
   const token0 = USDC.toLowerCase();
   const token1 = CBBTC.toLowerCase();
 
@@ -152,20 +157,17 @@ async function main() {
   console.log(`\n🔎 ${POOL.label}`);
   console.log(`• Using manual poolId: ${POOL.poolId}`);
 
-  // Sanity: computed id should match
+  // Sanity poolId
   const computedId = computePoolId(poolKey);
-  console.log(
-    computedId.toLowerCase() === POOL.poolId.toLowerCase()
-      ? `✅ poolId matches: ${computedId}`
-      : `⚠️ poolId mismatch! ${computedId}`
-  );
+  console.log(computedId.toLowerCase() === POOL.poolId.toLowerCase()
+    ? `✅ poolId matches: ${computedId}` : `⚠️ poolId mismatch! ${computedId}`);
 
-  // slot0: current price + fees
-  const [sqrtP, , protocolFeePpm, lpFeePpm] = await stateView.getSlot0(POOL.poolId);
+  // slot0
+  const [sqrtP, tick, protocolFeePpm, lpFeePpm] = await stateView.getSlot0(POOL.poolId);
   console.log(`📈 Current sqrtPriceX96: ${sqrtP}`);
   console.log(`🧾 Fees (ppm): lpFee=${Number(lpFeePpm)} protocolFee=${Number(protocolFeePpm)}`);
 
-  // Hook fee sanity (best-effort; depends on ABI)
+  // Hook fee sanity
   try {
     const hookIface = await fetchHookIface(POOL.hooks);
     if (hookIface) {
@@ -205,100 +207,131 @@ async function main() {
     console.log("🪝 Hook meta → error fetching (skipping).");
   }
 
-  // Direction: cbBTC→USDC is token1 -> token0 => zeroForOne = false
-  const zeroForOne = poolKey.currency0.toLowerCase() === CBBTC.toLowerCase(); // false here
+  // Direction: cbBTC→USDC (token1 -> token0) => zeroForOne = false
+  const zeroForOne = false;
 
-  // ε-movement limit: ~no price impact
+  // Tick bounds (to keep our limit inside the current tick)
+  const baseTick  = Math.floor(Number(tick) / POOL.tickSpacing) * POOL.tickSpacing;
+  const lowerTick = baseTick;
+  const upperTick = baseTick + POOL.tickSpacing;
+  const sqrtLower = BigInt(TickMath.getSqrtRatioAtTick(lowerTick).toString());
+  const sqrtUpper = BigInt(TickMath.getSqrtRatioAtTick(upperTick).toString());
+
+  // ε-limit
   const sqrtLimitEps = epsilonLimit({ sqrtP, zeroForOne });
-  console.log(`🧭 Using ε-limit sqrtPriceX96=${sqrtLimitEps.toString()}`);
+  // Clamp ε to the tick (just in case)
+  const sqrtLimitInTick = zeroForOne
+    ? (sqrtLimitEps > sqrtLower ? sqrtLimitEps : (sqrtLower + 1n))
+    : (sqrtLimitEps < sqrtUpper ? sqrtLimitEps : (sqrtUpper - 1n));
+
+  console.log(`🧭 ε-limit (in-tick) sqrtPriceX96=${sqrtLimitInTick.toString()}`);
 
   // Build quoter
   const quoter = await fetchQuoterIface(V4_QUOTER_ADDRESS);
+  const hasExactOut = (() => { try { quoter.getFunction("quoteExactOutputSingle"); return true; } catch { return false; } })();
 
+  // Mid price: USDC per cbBTC (token0=USDC(6), token1=cbBTC(8))
   const midUSDCperCbBTC = decodeSqrtPriceX96ToFloat(sqrtP, 6, 8);
-
-  // Expected (no-fee) in USDC micro-units for sats: floor(sats * mid / 100)
-  const expMicro = (sats) => BigInt(Math.floor(Number(sats) * midUSDCperCbBTC / 100));
+  const expMicro = (sats) => BigInt(Math.floor(Number(sats) * midUSDCperCbBTC / 100)); // USDC micro-units
 
   // ── YOUR AMOUNT LINE (kept exactly as requested)
   let amountInCBBTC = ethers.parseUnits("1", 8);
 
-  // Baseline at ε-limit
-  const { amountOut: outMain } = await quoteExactInput({
-    quoteIface: quoter,
+  // Baseline
+  const { amountOut: outBaseline } = await quoteExactInput({
+    iface: quoter,
     poolKey,
     zeroForOne,
     exactAmount: amountInCBBTC,
-    sqrtPriceLimitX96: sqrtLimitEps,
+    sqrtPriceLimitX96: sqrtLimitInTick,
   });
-  const expMainMicro = expMicro(amountInCBBTC);
-  const feeMainMicro = expMainMicro > outMain ? (expMainMicro - outMain) : 0n;
-  const ppmMain = ppm(expMainMicro, outMain);
+  const expBaseline = expMicro(amountInCBBTC);
+  const feeBaseline = expBaseline > outBaseline ? (expBaseline - outBaseline) : 0n;
+  const ppmBaseline = ppm(expBaseline, outBaseline);
 
-  console.log("\n──── Baseline (ε-limit) ────");
+  console.log("\n──── Baseline (ε/in-tick) ────");
   console.log(`amountIn  = ${ethers.formatUnits(amountInCBBTC, 8)} cbBTC`);
-  console.log(`amountOut = ${ethers.formatUnits(outMain, 6)} USDC`);
-  console.log(`mid(no-fee) = ${ethers.formatUnits(expMainMicro, 6)} USDC`);
-  console.log(`implied fee ≈ ${ethers.formatUnits(feeMainMicro, 6)} USDC (${ppmMain} ppm)`);
+  console.log(`amountOut = ${ethers.formatUnits(outBaseline, 6)} USDC`);
+  console.log(`mid(no-fee) = ${ethers.formatUnits(expBaseline, 6)} USDC`);
+  console.log(`implied fee ≈ ${ethers.formatUnits(feeBaseline, 6)} USDC (${ppmBaseline} ppm)`);
 
-  // ── Deterministic chunk-size optimizer (no brute)
-  console.log("\n──── Chunk-size optimizer (ε-limit) ────");
-  console.log("sats_in, usdc_out, mid_no_fee, fee_usdc, fee_ppm");
+  // ────────────────────────────────────────────────────────────────────────────
+  // 1) LIMIT MICRO-TILT SWEEP (inside the same tick, vary δ=1..N ULP)
+  // ────────────────────────────────────────────────────────────────────────────
+  console.log("\n──── Limit micro-tilt sweep (in-tick) ────");
+  console.log("delta_ulp, usdc_out, mid_no_fee, fee_usdc, fee_ppm");
 
-  const candidateSet = new Set();
-
-  // 1) Boundary candidates around your *total* amount
-  for (const s of boundaryCandidates({ baseSats: amountInCBBTC, midUSDCperCbBTC, spreadMicro: 200 })) {
-    candidateSet.add(s.toString());
-  }
-
-  // 2) Also probe boundaries around small sat sizes (possible rounding sweet spots)
-  const smallMicro = [1,2,3,5,8,13,21,34,55,89,144,233,377,610,987].map(n => BigInt(n));
-  for (const m of smallMicro) {
-    const s = BigInt(Math.ceil(Number(m) * 100 / midUSDCperCbBTC));
-    if (s > 0n) candidateSet.add(s.toString());
-  }
-
-  // 3) Add a few evenly spaced small sat sizes
-  for (let s = 1n; s <= 2000n; s += 199n) candidateSet.add(s.toString());
-
-  const candidates = [...candidateSet].map(x => BigInt(x)).sort((a,b) => (a<b?-1:1)).slice(0, 300);
-
-  const rows = [];
-  for (const sats of candidates) {
+  const deltas = [1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597].map(n => BigInt(n));
+  const results = [];
+  for (const d of deltas) {
+    let limit = BigInt(sqrtP) + d;             // zeroForOne=false → price up
+    if (limit >= sqrtUpper) limit = sqrtUpper - 1n; // keep in-tick
     const { amountOut } = await quoteExactInput({
-      quoteIface: quoter,
-      poolKey,
-      zeroForOne,
-      exactAmount: sats,
-      sqrtPriceLimitX96: sqrtLimitEps,
+      iface: quoter, poolKey, zeroForOne, exactAmount: amountInCBBTC, sqrtPriceLimitX96: limit,
     });
-    const exp = expMicro(sats);
+    const exp = expBaseline; // near-mid assumption at ε-style limits
     const fee = exp > amountOut ? (exp - amountOut) : 0n;
-    const line = [
-      sats.toString(),
-      ethers.formatUnits(amountOut, 6),
-      ethers.formatUnits(exp, 6),
-      ethers.formatUnits(fee, 6),
-      ppm(exp, amountOut),
-    ];
-    console.log(line.join(","));
-    rows.push({ sats, out: amountOut, exp, fee, ppm: (exp === 0n ? 1_000_000_000n : ((exp - amountOut > 0n ? exp - amountOut : 0n) * 1_000_000n) / exp) });
+    const row = {
+      d: d.toString(),
+      out: amountOut,
+      exp,
+      fee,
+      ppm: (exp === 0n ? 1_000_000_000n : ((exp - amountOut > 0n ? exp - amountOut : 0n) * 1_000_000n) / exp)
+    };
+    results.push(row);
+    console.log(
+      [
+        d.toString(),
+        ethers.formatUnits(amountOut, 6),
+        ethers.formatUnits(exp, 6),
+        ethers.formatUnits(fee, 6),
+        (exp === 0n ? "n/a" : ((row.ppm).toString()))
+      ].join(",")
+    );
   }
 
-  // Pick the best chunk size (min ppm)
-  rows.sort((a,b) => (a.ppm < b.ppm ? -1 : 1));
-  const best = rows[0];
-  console.log("\n🏁 Best chunk (by implied ppm):");
-  console.log(`sats=${best.sats.toString()} → ppm≈${best.ppm.toString()} (${ethers.formatUnits(best.fee,6)} USDC fee on ${ethers.formatUnits(best.exp,6)} USDC mid)`);
+  // pick best δ (min ppm)
+  results.sort((a,b) => (a.ppm < b.ppm ? -1 : 1));
+  const best = results[0];
+  console.log("\n🏁 Best micro-tilt:");
+  console.log(`δ=${best.d} ULP → ppm≈${best.ppm.toString()} (${ethers.formatUnits(best.fee,6)} USDC fee on ${ethers.formatUnits(best.exp,6)} USDC mid)`);
 
-  // Proposed split plan for your total amount
-  const nChunks = amountInCBBTC / best.sats;
-  const rem     = amountInCBBTC % best.sats;
-  console.log(`\n📦 Proposed split for ${ethers.formatUnits(amountInCBBTC,8)} cbBTC:`);
-  console.log(`• ${nChunks.toString()} chunks of ${ethers.formatUnits(best.sats,8)} cbBTC`);
-  if (rem > 0n) console.log(`• 1 remainder chunk of ${ethers.formatUnits(rem,8)} cbBTC`);
-  console.log("Note: This is a *theoretical* quoter plan; on-chain execution has gas costs.");
+  // ────────────────────────────────────────────────────────────────────────────
+  // 2) EXACT-OUTPUT ε-PROBE (if ABI present)
+  // ────────────────────────────────────────────────────────────────────────────
+  if (hasExactOut) {
+    console.log("\n──── Exact-output ε-probe (if present) ────");
+    console.log("usdc_micro_out, cbBTC_in, mid_no_fee_in, fee_cbBTC, fee_ppm_in_terms_of_mid");
+
+    const outsMicro = [1,2,3,5,8,13,21,34,55,89,144,233,377,610,987].map(n => BigInt(n)); // tiny USDC micro outputs
+    for (const mOut of outsMicro) {
+      const sqrtLimit = sqrtLimitInTick; // keep ε/in-tick
+      const { amountIn } = await quoteExactOutput({
+        iface: quoter,
+        poolKey,
+        zeroForOne,                        // cbBTC -> USDC (exact-out asks: how many sats?)
+        exactAmount: mOut,                 // USDC micro-units desired
+        sqrtPriceLimitX96: sqrtLimit,
+      });
+      // Mid-no-fee input (sats): ceil( mOut * 100 / mid )
+      const expInSats = BigInt(Math.ceil(Number(mOut) * 100 / midUSDCperCbBTC));
+      const feeSats   = amountIn > expInSats ? (amountIn - expInSats) : 0n;
+      const ppmIn     = (expInSats === 0n ? "n/a" : ((feeSats * 1_000_000n) / expInSats).toString());
+      console.log(
+        [
+          mOut.toString(),
+          ethers.formatUnits(amountIn, 8),
+          ethers.formatUnits(expInSats, 8),
+          ethers.formatUnits(feeSats, 8),
+          ppmIn
+        ].join(",")
+      );
+    }
+  } else {
+    console.log("\nℹ️ Quoter lacks quoteExactOutputSingle — skipping exact-output probe.");
+  }
+
+  console.log("\nℹ️ If any δ or exact-output target shows ppm ≪ fee tier, that’s a rounding ‘sweet spot’. Otherwise, fees are effectively proportional on this pool (no v3-style floor).");
 }
 
 main().catch((e) => {
