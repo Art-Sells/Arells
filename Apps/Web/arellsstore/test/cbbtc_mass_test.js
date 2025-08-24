@@ -6,14 +6,19 @@ import { TickMath } from "@uniswap/v3-sdk";
 
 dotenv.config();
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Network & addresses (Base)
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Network & addresses (Base)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 const STATE_VIEW_ADDRESS  = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
 const V4_POOL_MANAGER     = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
 const V4_QUOTER_ADDRESS   = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
 const V4_ROUTER_ADDRESS   = "0x6ff5693b99212da76ad316178a184ab56d299b43";
-const PERMIT2 = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
+const PERMIT2             = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
+
+// Universal Router v4 single-pool exact-input command byte
+const CMD_V4_SWAP_EXACT_IN_SINGLE = "0x06";
 
 const USDC  = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"; // 6dp
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf"; // 8dp
@@ -29,9 +34,11 @@ const POOL = {
   fee:    3000,
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// BaseScan ABI fetch
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * BaseScan ABI fetch
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 async function fetchABI(addr) {
   const url = `https://api.basescan.org/api?module=contract&action=getabi&address=${addr}&apikey=${process.env.BASESCAN_API_KEY}`;
   const resp = await axios.get(url);
@@ -39,7 +46,11 @@ async function fetchABI(addr) {
   return JSON.parse(resp.data.result);
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * PoolId helpers (infer tickSpacing by recomputing ids)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 function computePoolId(poolKey) {
   const abi = ethers.AbiCoder.defaultAbiCoder();
   const enc = abi.encode(
@@ -58,9 +69,11 @@ function inferTickSpacingFromPoolId({ token0, token1, fee, hooks, poolId }) {
   throw new Error("Could not infer tickSpacing from poolId.");
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// StateView helpers (no manual ABI)
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * StateView helpers (no manual ABI)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 async function getSlot0(poolId) {
   const abi = await fetchABI(STATE_VIEW_ADDRESS);
   const iface = new ethers.Interface(abi);
@@ -80,23 +93,34 @@ async function getLiquidity(poolId) {
   return L;
 }
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Router iface helper (and pretty print once)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+let __routerPrinted = false;
 async function fetchRouter() {
   const abi   = await fetchABI(V4_ROUTER_ADDRESS);
   const iface = new ethers.Interface(abi);
-  const exec  = abi.find(f => f.type === "function" && f.name === "execute");
-  if (!exec) throw new Error("Router has no execute(bytes,bytes[])");
-  console.log(`\n🧾 Router ABI fetched. Total entries: ${abi.length}`);
-  abi.filter(x => x.type === "function").forEach(f => {
-    const ins  = (f.inputs  || []).map(inp => inp.type).join(", ");
-    const outs = (f.outputs || []).map(o => o.type).join(", ");
-    console.log(`   - ${f.name}(${ins})${outs ? " returns " + outs : ""}`);
-  });
-  return { abi, iface, exec };
+  if (!__routerPrinted) {
+    const exec2 = abi.find(f => f.type === "function" && f.name === "execute" && f.inputs?.length === 2);
+    if (!exec2) throw new Error("Router has no execute(bytes,bytes[])");
+    console.log(`\n🧾 Router ABI fetched. Total entries: ${abi.length}`);
+    abi.filter(x => x.type === "function").forEach(f => {
+      const ins  = (f.inputs  || []).map(inp => inp.type).join(", ");
+      const outs = (f.outputs || []).map(o => o.type).join(", ");
+      console.log(`   - ${f.name}(${ins})${outs ? " returns " + outs : ""}`);
+    });
+    __routerPrinted = true;
+  }
+  return { abi, iface };
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Quoter v4 (sanity check)
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Quoter v4 (sanity check)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 async function v4Quote({ poolKey, zeroForOne, exactAmount, sqrtPriceLimitX96 }) {
   const abi = await fetchABI(V4_QUOTER_ADDRESS);
   const iface = new ethers.Interface(abi);
@@ -118,9 +142,11 @@ async function v4Quote({ poolKey, zeroForOne, exactAmount, sqrtPriceLimitX96 }) 
   return amountOut; // 6dp USDC
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Decode sqrtPrice (keep exactly as you asked)
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Decode sqrtPrice (unchanged)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 6, decimalsToken1 = 8) {
   const Q96 = 2n ** 96n;
   const sqrt = BigInt(sqrtPriceX96);
@@ -128,9 +154,11 @@ function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 6, decimalsTok
   return (1 / raw) * 10 ** (decimalsToken1 - decimalsToken0);
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Approvals & gas checks (pulled from your v3 and wired for v4 PoolManager)
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Approvals & gas checks (v3-style approvals wired to v4)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 async function checkCBBTCBalance() {
   const c = new ethers.Contract(CBBTC, ["function balanceOf(address) view returns (uint256)"], provider);
   const bal = await c.balanceOf(userWallet.address);
@@ -158,6 +186,7 @@ async function approveCBBTC(amountInFloat) {
     console.error("❌ ERROR: Insufficient CBBTC balance!");
     return false;
   }
+  // Approve Router and PoolManager (UR flows may require router funding steps)
   await ensureApproval(V4_ROUTER_ADDRESS, amountBaseUnits);
   const c = new ethers.Contract(
     CBBTC,
@@ -189,9 +218,11 @@ async function checkETHBalance() {
   return true;
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Build poolKey & an in-tick sqrtPriceLimitX96 (cbBTC -> USDC, zeroForOne=false)
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Build poolKey & an in-tick sqrtPriceLimitX96 (cbBTC -> USDC, zeroForOne=false)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 async function buildLimitAndPoolKey() {
   const token0 = USDC.toLowerCase();
   const token1 = CBBTC.toLowerCase();
@@ -221,8 +252,12 @@ async function buildLimitAndPoolKey() {
   return { poolKey, sqrtPriceX96, tickSpacing, baseTick, limitX96 };
 }
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Encode the single-pool exact-input v4 swap payload (UR v4 input)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 function encodeUR_V4_SwapExactIn(poolKey, { zeroForOne, amountIn, sqrtPriceLimitX96, recipient }) {
-  // Router’s v4 swap input packing (per UR v4 spec): 
   // abi.encode(
   //   (address,address,uint24,int24,address) poolKey,
   //   bool zeroForOne,
@@ -255,44 +290,11 @@ function encodeUR_V4_SwapExactIn(poolKey, { zeroForOne, amountIn, sqrtPriceLimit
   );
 }
 
-async function discoverV4SwapOpcode({ poolKey, sqrtPriceLimitX96, amountIn, recipient }) {
-  const { abi, iface } = await fetchRouter();
-  const exec = iface.getFunction("execute(bytes,bytes[])");
-
-  // Build the single-input payload for v4 swap exact-in
-  const input = encodeUR_V4_SwapExactIn(poolKey, {
-    zeroForOne: false,                // cbBTC -> USDC (token1 -> token0)
-    amountIn,
-    sqrtPriceLimitX96,
-    recipient
-  });
-
-  // Try all 256 command bytes via eth_call; collect the ones that "do something" (i.e. a distinct revert or non-zero returndata)
-  const good = [];
-  for (let op = 0; op < 256; op++) {
-    try {
-      const commands = "0x" + op.toString(16).padStart(2,"0");
-      const data = iface.encodeFunctionData(exec, [commands, [input]]);
-      const ret  = await provider.call({ to: V4_ROUTER_ADDRESS, data, from: recipient });
-      // If call didn’t revert, we almost certainly hit a valid op (might still revert on-chain without funds).
-      good.push({ op, ret });
-    } catch (e) {
-      // If the revert reason changes for a particular op, it’s often the right one.
-      const msg = (e?.reason || e?.shortMessage || e?.message || "").slice(0,120);
-      if (msg && !/invalid|unknown|length|selector/i.test(msg)) {
-        good.push({ op, err: msg });
-      }
-    }
-  }
-
-  // pick the first candidate; you can refine by checking `err` text if multiple candidates appear
-  if (good.length === 0) throw new Error("Could not discover a v4 swap opcode on this Router.");
-  const chosen = good[0].op;
-  console.log("🔎 Discovered candidate v4 swap opcode:", "0x" + chosen.toString(16).padStart(2,"0"), good[0].err ? `(${good[0].err})` : "");
-  return chosen;
-}
-
-// V4 tick-anchor checker (mirrors your V3 loop). No PPMs — just “>0” quotes.
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * V4 tick-anchor checker (mirrors V3: “>0” quote)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 async function checkFeeFreeRouteV4(amountInFloat) {
   const token0 = USDC.toLowerCase();
   const token1 = CBBTC.toLowerCase();
@@ -330,6 +332,11 @@ async function checkFeeFreeRouteV4(amountInFloat) {
   return candidates;
 }
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Execute via Universal Router with fixed command 0x06
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 async function executeSupplicationV4(amountInFloat) {
   console.log(`\n🚀 Executing via Universal Router: ${amountInFloat} cbBTC → USDC`);
 
@@ -340,7 +347,7 @@ async function executeSupplicationV4(amountInFloat) {
 
   // 1) choose a tick-anchored sqrtPriceLimit from your checker (or fallback in-tick)
   let chosen;
-  const routes = await checkFeeFreeRouteV4(amountInFloat);  // you already have this
+  const routes = await checkFeeFreeRouteV4(amountInFloat);
   if (routes.length > 0) {
     chosen = routes[0];
     console.log(`✅ Using checker tick=${chosen.tick} | sqrtLimit=${chosen.sqrtPriceLimitX96.toString()}`);
@@ -367,12 +374,7 @@ async function executeSupplicationV4(amountInFloat) {
     console.log(`🔎 Quoter @ limit: ${ethers.formatUnits(sanity, 6)} USDC`);
   } catch {}
 
-  // 2) Find the router’s v4-swap opcode
-  const op = await discoverV4SwapOpcode({
-    poolKey, sqrtPriceLimitX96, amountIn, recipient: userWallet.address
-  });
-
-  // 3) Build router inputs & send execute
+  // 2) Build router input for single-pool exact-in and call execute(bytes,bytes[])
   const urInput = encodeUR_V4_SwapExactIn(poolKey, {
     zeroForOne: false,
     amountIn,
@@ -380,9 +382,13 @@ async function executeSupplicationV4(amountInFloat) {
     recipient: userWallet.address
   });
 
-  const { iface } = await fetchRouter();
-  const commands = "0x" + op.toString(16).padStart(2,"0");
-  const calldata = iface.encodeFunctionData("execute", [commands, [urInput]]);
+  const { iface: routerIface } = await fetchRouter();
+  const commands = CMD_V4_SWAP_EXACT_IN_SINGLE; // "0x06"
+
+  const calldata = routerIface.encodeFunctionData(
+    "execute(bytes,bytes[])",
+    [commands, [urInput]]
+  );
 
   const feeData = await provider.getFeeData();
   const tx = await userWallet.sendTransaction({
@@ -398,10 +404,11 @@ async function executeSupplicationV4(amountInFloat) {
   console.log("✅ Confirmed:", rcpt.hash);
 }
 
-
-// ──────────────────────────────────────────────────────────────────────────────
-// Main
-// ──────────────────────────────────────────────────────────────────────────────
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Main
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 async function main() {
   console.log(`\n🔎 ${POOL.label}`);
   console.log(`• Using manual poolId: ${POOL.poolId}`);

@@ -383,10 +383,7 @@ Arells Wallet and change all Variables
 ## HPM SDK
 - Free SDK for any developer to adopt and integrate into their financial and market based systems.
 
-## Code Name: Project Omega
-
-### Problem: AI is on track to displace many jobs.
-
-### Solution: A marketplace that creates new jobs for people in a AI job displacing world.
+### Pro-Natalism
+- P/T 25-30 hrs for prnts with kids (research slry). 40+ for those without (apart from Executive positions)
 
 
