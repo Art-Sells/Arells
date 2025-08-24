@@ -12,6 +12,8 @@ dotenv.config();
 const STATE_VIEW_ADDRESS  = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
 const V4_POOL_MANAGER     = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
 const V4_QUOTER_ADDRESS   = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
+const V4_ROUTER_ADDRESS   = "0x6ff5693b99212da76ad316178a184ab56d299b43";
+const PERMIT2 = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 
 const USDC  = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"; // 6dp
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf"; // 8dp
@@ -78,6 +80,20 @@ async function getLiquidity(poolId) {
   return L;
 }
 
+async function fetchRouter() {
+  const abi   = await fetchABI(V4_ROUTER_ADDRESS);
+  const iface = new ethers.Interface(abi);
+  const exec  = abi.find(f => f.type === "function" && f.name === "execute");
+  if (!exec) throw new Error("Router has no execute(bytes,bytes[])");
+  console.log(`\n🧾 Router ABI fetched. Total entries: ${abi.length}`);
+  abi.filter(x => x.type === "function").forEach(f => {
+    const ins  = (f.inputs  || []).map(inp => inp.type).join(", ");
+    const outs = (f.outputs || []).map(o => o.type).join(", ");
+    console.log(`   - ${f.name}(${ins})${outs ? " returns " + outs : ""}`);
+  });
+  return { abi, iface, exec };
+}
+
 // ──────────────────────────────────────────────────────────────────────────────
 // Quoter v4 (sanity check)
 // ──────────────────────────────────────────────────────────────────────────────
@@ -122,6 +138,18 @@ async function checkCBBTCBalance() {
   return bal;
 }
 
+async function ensureApproval(toAddr, amountBaseUnits) {
+  const erc = new ethers.Contract(
+    CBBTC,
+    ["function approve(address,uint256)","function allowance(address,address) view returns (uint256)"],
+    userWallet
+  );
+  const cur = await erc.allowance(userWallet.address, toAddr);
+  if (cur >= amountBaseUnits) return;
+  const tx = await erc.approve(toAddr, amountBaseUnits);
+  await tx.wait();
+}
+
 async function approveCBBTC(amountInFloat) {
   console.log(`🔑 Approving PoolManager to spend ${amountInFloat} CBBTC...`);
   const amountBaseUnits = ethers.parseUnits(amountInFloat.toString(), 8);
@@ -130,6 +158,7 @@ async function approveCBBTC(amountInFloat) {
     console.error("❌ ERROR: Insufficient CBBTC balance!");
     return false;
   }
+  await ensureApproval(V4_ROUTER_ADDRESS, amountBaseUnits);
   const c = new ethers.Contract(
     CBBTC,
     ["function approve(address,uint256)","function allowance(address,address) view returns (uint256)"],
@@ -192,34 +221,75 @@ async function buildLimitAndPoolKey() {
   return { poolKey, sqrtPriceX96, tickSpacing, baseTick, limitX96 };
 }
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Encode args for PoolManager.swap from fetched ABI (NO manual ABI)
-// swap(PoolKey, SwapParams, bytes)
-//   PoolKey: (address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks)
-//   SwapParams: (bool zeroForOne, int256 amountSpecified, uint160 sqrtPriceLimitX96)
-// NOTE: v4 exact-input uses NEGATIVE amountSpecified
-// ──────────────────────────────────────────────────────────────────────────────
-function buildSwapArgs(fnFragment, poolKey, { zeroForOne, amountIn, sqrtPriceLimitX96 }) {
-  if (fnFragment.inputs?.length !== 3) throw new Error("unexpected swap signature shape");
-
-  // PoolKey ordered tuple
+function encodeUR_V4_SwapExactIn(poolKey, { zeroForOne, amountIn, sqrtPriceLimitX96, recipient }) {
+  // Router’s v4 swap input packing (per UR v4 spec): 
+  // abi.encode(
+  //   (address,address,uint24,int24,address) poolKey,
+  //   bool zeroForOne,
+  //   int256 amountSpecified,        // negative => exact input
+  //   uint160 sqrtPriceLimitX96,
+  //   address recipient,
+  //   bytes hookData
+  // )
+  const coder = ethers.AbiCoder.defaultAbiCoder();
   const keyTuple = [
     poolKey.currency0,
     poolKey.currency1,
     BigInt(poolKey.fee),
-    BigInt(poolKey.tickSpacing),  // int24 in ABI; positive is fine
-    poolKey.hooks,
+    BigInt(poolKey.tickSpacing),
+    poolKey.hooks
   ];
-
-  // v4 exact-input => amountSpecified < 0
-  const paramsTuple = [
-    Boolean(zeroForOne),
-    -BigInt(amountIn),                 // negative exact input
-    BigInt(sqrtPriceLimitX96),
-  ];
-
+  const amountSpecified = -BigInt(amountIn); // exact input = negative
   const hookData = "0x";
-  return [keyTuple, paramsTuple, hookData];
+
+  return coder.encode(
+    [
+      "tuple(address,address,uint24,int24,address)",
+      "bool",
+      "int256",
+      "uint160",
+      "address",
+      "bytes"
+    ],
+    [ keyTuple, Boolean(zeroForOne), amountSpecified, BigInt(sqrtPriceLimitX96), recipient, hookData ]
+  );
+}
+
+async function discoverV4SwapOpcode({ poolKey, sqrtPriceLimitX96, amountIn, recipient }) {
+  const { abi, iface } = await fetchRouter();
+  const exec = iface.getFunction("execute(bytes,bytes[])");
+
+  // Build the single-input payload for v4 swap exact-in
+  const input = encodeUR_V4_SwapExactIn(poolKey, {
+    zeroForOne: false,                // cbBTC -> USDC (token1 -> token0)
+    amountIn,
+    sqrtPriceLimitX96,
+    recipient
+  });
+
+  // Try all 256 command bytes via eth_call; collect the ones that "do something" (i.e. a distinct revert or non-zero returndata)
+  const good = [];
+  for (let op = 0; op < 256; op++) {
+    try {
+      const commands = "0x" + op.toString(16).padStart(2,"0");
+      const data = iface.encodeFunctionData(exec, [commands, [input]]);
+      const ret  = await provider.call({ to: V4_ROUTER_ADDRESS, data, from: recipient });
+      // If call didn’t revert, we almost certainly hit a valid op (might still revert on-chain without funds).
+      good.push({ op, ret });
+    } catch (e) {
+      // If the revert reason changes for a particular op, it’s often the right one.
+      const msg = (e?.reason || e?.shortMessage || e?.message || "").slice(0,120);
+      if (msg && !/invalid|unknown|length|selector/i.test(msg)) {
+        good.push({ op, err: msg });
+      }
+    }
+  }
+
+  // pick the first candidate; you can refine by checking `err` text if multiple candidates appear
+  if (good.length === 0) throw new Error("Could not discover a v4 swap opcode on this Router.");
+  const chosen = good[0].op;
+  console.log("🔎 Discovered candidate v4 swap opcode:", "0x" + chosen.toString(16).padStart(2,"0"), good[0].err ? `(${good[0].err})` : "");
+  return chosen;
 }
 
 // V4 tick-anchor checker (mirrors your V3 loop). No PPMs — just “>0” quotes.
@@ -261,27 +331,26 @@ async function checkFeeFreeRouteV4(amountInFloat) {
 }
 
 async function executeSupplicationV4(amountInFloat) {
-  console.log(`\n🚀 Executing v4 supplication (swap): ${amountInFloat} cbBTC → USDC`);
+  console.log(`\n🚀 Executing via Universal Router: ${amountInFloat} cbBTC → USDC`);
 
+  // approvals + gas
+  const amountIn = ethers.parseUnits(amountInFloat.toString(), 8);
   if (!(await approveCBBTC(amountInFloat))) return;
   if (!(await checkETHBalance())) return;
 
-  // 1) query tick anchors (like your V3 check)
-  const routes = await checkFeeFreeRouteV4(amountInFloat);
-
-  // 2) fallback: build in-tick limit if no candidate
+  // 1) choose a tick-anchored sqrtPriceLimit from your checker (or fallback in-tick)
   let chosen;
+  const routes = await checkFeeFreeRouteV4(amountInFloat);  // you already have this
   if (routes.length > 0) {
-    // pick the first positive-quote candidate (or add your own selection rule)
     chosen = routes[0];
-    console.log(`✅ Using checker tick=${chosen.tick} (sqrtLimit=${chosen.sqrtPriceX96?.toString?.() ?? chosen.sqrtPriceLimitX96.toString()})`);
+    console.log(`✅ Using checker tick=${chosen.tick} | sqrtLimit=${chosen.sqrtPriceLimitX96.toString()}`);
   } else {
     const { poolKey, limitX96, tickSpacing, baseTick } = await buildLimitAndPoolKey();
     chosen = { poolKey, sqrtPriceLimitX96: limitX96, tickSpacing, baseTick };
-    console.log("ℹ️ No checker candidates. Falling back to in-tick limit.");
+    console.log("ℹ️ No checker candidates; using in-tick limit.");
   }
 
-  // ensure we have poolKey + sqrtPriceLimitX96
+  // ensure poolKey
   const poolKey = chosen.poolKey ?? (() => {
     const token0 = USDC.toLowerCase();
     const token1 = CBBTC.toLowerCase();
@@ -290,47 +359,43 @@ async function executeSupplicationV4(amountInFloat) {
     });
     return { currency0: token0, currency1: token1, fee: POOL.fee, tickSpacing: ts, hooks: POOL.hooks };
   })();
-
   const sqrtPriceLimitX96 = BigInt(chosen.sqrtPriceLimitX96);
-  const amountIn = ethers.parseUnits(amountInFloat.toString(), 8);
 
   // (optional) quoter sanity
   try {
-    const quoted = await v4Quote({
-      poolKey, zeroForOne: false, exactAmount: amountIn, sqrtPriceLimitX96
-    });
-    console.log(`🔎 Quoter @ tick limit: ${ethers.formatUnits(quoted, 6)} USDC`);
+    const sanity = await v4Quote({ poolKey, zeroForOne: false, exactAmount: amountIn, sqrtPriceLimitX96 });
+    console.log(`🔎 Quoter @ limit: ${ethers.formatUnits(sanity, 6)} USDC`);
   } catch {}
 
-  // 3) encode & send PoolManager.swap (EOA note: needs router/callback to actually settle)
-  const pmAbi = await fetchABI(V4_POOL_MANAGER);
-  const swapFn = pmAbi.find(f => f.type === "function" && f.name === "swap");
-  if (!swapFn) throw new Error("swap() not found on PoolManager ABI");
-  const pmIf  = new ethers.Interface(pmAbi);
+  // 2) Find the router’s v4-swap opcode
+  const op = await discoverV4SwapOpcode({
+    poolKey, sqrtPriceLimitX96, amountIn, recipient: userWallet.address
+  });
 
-  const args  = buildSwapArgs(swapFn, poolKey, {
+  // 3) Build router inputs & send execute
+  const urInput = encodeUR_V4_SwapExactIn(poolKey, {
     zeroForOne: false,
     amountIn,
     sqrtPriceLimitX96,
+    recipient: userWallet.address
   });
-  const data  = pmIf.encodeFunctionData("swap", args);
-  const fee   = await provider.getFeeData();
 
-  try {
-    const tx = await userWallet.sendTransaction({
-      to: V4_POOL_MANAGER,
-      data,
-      gasLimit: 1_200_000,
-      maxFeePerGas: fee.maxFeePerGas,
-      maxPriorityFeePerGas: fee.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
-    });
-    console.log(`⏳ Broadcasting… ${tx.hash}`);
-    const rcpt = await tx.wait();
-    console.log("✅ Confirmed:", rcpt.hash);
-  } catch (err) {
-    console.error("❌ swap reverted. PoolManager.swap from an EOA needs a router/callback to settle.");
-    console.error(err.reason || err.message || err);
-  }
+  const { iface } = await fetchRouter();
+  const commands = "0x" + op.toString(16).padStart(2,"0");
+  const calldata = iface.encodeFunctionData("execute", [commands, [urInput]]);
+
+  const feeData = await provider.getFeeData();
+  const tx = await userWallet.sendTransaction({
+    to: V4_ROUTER_ADDRESS,
+    data: calldata,
+    gasLimit: 1_300_000,
+    maxFeePerGas: feeData.maxFeePerGas,
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
+  });
+
+  console.log(`⏳ Broadcasting… ${tx.hash}`);
+  const rcpt = await tx.wait();
+  console.log("✅ Confirmed:", rcpt.hash);
 }
 
 
