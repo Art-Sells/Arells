@@ -5,8 +5,7 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- Test (increase initialized Ticks in wordPosition to find fee free route)
-- Test the AmountOut quoted for .5 btc in V3 (after v4 fee free)…
+- Test actual quotes for v4 (on Uniswap and on Arells to test for fees)
 - revert back to "testKeyPermutations commit for v3/v4 ref"
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
