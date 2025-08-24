@@ -2,6 +2,7 @@
 import { ethers } from "ethers";
 import dotenv from "dotenv";
 import axios from "axios";
+import { TickMath } from "@uniswap/v3-sdk";
 
 dotenv.config();
 
@@ -17,22 +18,29 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 const provider   = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 
-// For completeness (not used by the quoter itself)
+// Known pool (we'll infer tickSpacing from poolId)
 const POOL = {
   label: "V4 A (0.3%)",
   poolId: "0x64f978ef116d3c2e1231cfd8b80a369dcd8e91b28037c9973b65b59fd2cbbb96",
   hooks: "0x5cd525c621AFCa515Bf58631D4733fbA7B72Aae4",
-  tickSpacing: 200,
   fee: 3000,
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Minimal ABIs / helpers
+// ABIs & helpers
 // ──────────────────────────────────────────────────────────────────────────────
 const stateViewABI = [
   "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
+  // (getLiquidity exists on this contract, but not required for this routine)
 ];
 const stateView = new ethers.Contract(STATE_VIEW_ADDRESS, stateViewABI, provider);
+
+async function fetchABI(contract) {
+  const url = `https://api.basescan.org/api?module=contract&action=getabi&address=${contract}&apikey=${process.env.BASESCAN_API_KEY}`;
+  const resp = await axios.get(url);
+  if (resp.data.status !== "1") throw new Error(`Failed to fetch ABI for ${contract}`);
+  return JSON.parse(resp.data.result);
+}
 
 function computePoolId(poolKey) {
   const abi = ethers.AbiCoder.defaultAbiCoder();
@@ -43,20 +51,23 @@ function computePoolId(poolKey) {
   return ethers.keccak256(enc);
 }
 
+const TICK_SPACING_CANDIDATES = [1, 5, 10, 20, 40, 60, 100, 120, 200];
+function inferTickSpacingFromPoolId({ token0, token1, fee, hooks, poolId }) {
+  for (const ts of TICK_SPACING_CANDIDATES) {
+    const id = computePoolId({ currency0: token0, currency1: token1, fee, tickSpacing: ts, hooks });
+    if (id.toLowerCase() === poolId.toLowerCase()) return ts;
+  }
+  throw new Error("Could not infer tickSpacing from poolId.");
+}
+
 async function fetchQuoterIface(address) {
-  const url  = `https://api.basescan.org/api?module=contract&action=getabi&address=${address}&apikey=${process.env.BASESCAN_API_KEY}`;
-  const resp = await axios.get(url);
-  if (resp.data.status !== "1") throw new Error("Failed to fetch Quoter ABI from BaseScan");
-  const abi  = JSON.parse(resp.data.result);
-
-  const fragOut = abi.find((e) => e.name === "quoteExactOutputSingle" && e.type === "function");
-  if (!fragOut) throw new Error("IV4Quoter.quoteExactOutputSingle not found on this quoter");
-  console.log("🔍 quoteExactOutputSingle ABI fragment:", fragOut);
-
+  const abi = await fetchABI(address);
+  const frag = abi.find((e) => e.name === "quoteExactInputSingle" && e.type === "function");
+  console.log("🔍 quoteExactInputSingle ABI fragment:", frag);
   return new ethers.Interface(abi);
 }
 
-// KEEP THIS LOGIC UNCHANGED (your requested signature/order)
+// ── KEEP THIS LOGIC UNCHANGED (requested)
 function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 6, decimalsToken1 = 8) {
   const Q96 = BigInt(2) ** BigInt(96);
   const sqrt = BigInt(sqrtPriceX96);
@@ -64,14 +75,10 @@ function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 6, decimalsTok
   return (1 / rawPrice) * 10 ** (decimalsToken1 - decimalsToken0);
 }
 
-// ε-limit: nudge 1 ULP in favorable direction (zeroForOne=false → +1)
-function epsilonLimit({ sqrtP, zeroForOne }) {
-  return zeroForOne ? (BigInt(sqrtP) - 1n) : (BigInt(sqrtP) + 1n);
-}
-
-// exact-output quote (amountOut in tokenOut units; here tokenOut=USDC with 6 dp)
-async function quoteExactOutput({ quoteIface, poolKey, zeroForOne, exactAmountOut, sqrtPriceLimitX96 }) {
-  const data = quoteIface.encodeFunctionData("quoteExactOutputSingle", [{
+// V4 quoter call (exact-input single)
+async function simulateWithQuoterV4({ poolKey, zeroForOne, amountIn, sqrtPriceLimitX96 }) {
+  const iface = await fetchQuoterIface(V4_QUOTER_ADDRESS);
+  const calldata = iface.encodeFunctionData("quoteExactInputSingle", [{
     poolKey: {
       currency0: poolKey.currency0,
       currency1: poolKey.currency1,
@@ -80,137 +87,160 @@ async function quoteExactOutput({ quoteIface, poolKey, zeroForOne, exactAmountOu
       hooks: poolKey.hooks,
     },
     zeroForOne,
-    exactAmount: BigInt(exactAmountOut),
+    exactAmount: BigInt(amountIn),
     sqrtPriceLimitX96: BigInt(sqrtPriceLimitX96),
     hookData: "0x",
   }]);
 
-  const raw = await provider.call({
-    to: V4_QUOTER_ADDRESS,
-    data,
-    from: userWallet.address,
-  });
-  const [amountIn, gasEstimate] = quoteIface.decodeFunctionResult("quoteExactOutputSingle", raw);
-  return { amountIn, gasEstimate }; // amountIn is cbBTC sats (8 dp)
+  try {
+    const raw = await provider.call({
+      to: V4_QUOTER_ADDRESS,
+      data: calldata,
+      from: userWallet.address,
+    });
+    const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", raw);
+    console.log(`🔁 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
+    return amountOut;
+  } catch (err) {
+    console.warn("⚠️ V4 quoter simulation failed:", err.reason || err.message || err);
+    return null;
+  }
 }
 
-// Pretty ppm on the INPUT side: (feeSats/expSats)*1e6
-function ppm(expSats, gotSats) {
-  if (expSats === 0n) return "n/a";
-  const feeSats = gotSats > expSats ? (gotSats - expSats) : 0n;
-  return ((feeSats * 1_000_000n) / expSats).toString();
+// Slot0 helper
+async function getPoolSlot0(poolId) {
+  const [sqrtPriceX96, tick, protocolFee, lpFee] = await stateView.getSlot0(poolId);
+  return { sqrtPriceX96, tick, protocolFee, lpFee };
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-async function main() {
-  // Token order (force as requested)
-  const token0 = USDC.toLowerCase();  // USDC
-  const token1 = CBBTC.toLowerCase(); // cbBTC
+// V4 checkFeeFreeRoute — mirrors your V3 structure (no PPMs, just “> 0” test)
+// ──────────────────────────────────────────────────────────────────────────────
+async function checkFeeFreeRoute(amountIn) {
+  console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC (V4)`);
+
+  // Token order fixed exactly as requested
+  const token0 = USDC.toLowerCase();
+  const token1 = CBBTC.toLowerCase();
+
+  // We already know the pool; infer tickSpacing and recompute poolId sanity
+  const tickSpacing = inferTickSpacingFromPoolId({
+    token0, token1, fee: POOL.fee, hooks: POOL.hooks, poolId: POOL.poolId,
+  });
 
   const poolKey = {
     currency0: token0,
     currency1: token1,
     fee: POOL.fee,
-    tickSpacing: POOL.tickSpacing,
+    tickSpacing,
+    hooks: POOL.hooks,
+  };
+
+  const recomputed = computePoolId(poolKey);
+  if (recomputed.toLowerCase() !== POOL.poolId.toLowerCase()) {
+    console.warn("⚠️ poolId mismatch with inferred tickSpacing; aborting.");
+    return [];
+  }
+
+  // Pull slot0 (tick) from the state view (V4 analogue of “pool.slot0()” in V3)
+  const slot0 = await getPoolSlot0(POOL.poolId);
+  if (!slot0) return [];
+  const baseTick = Math.floor(Number(slot0.tick) / tickSpacing) * tickSpacing;
+
+  const feeFreeRoutes = [];
+  // Per your V3 loop: check baseTick, baseTick + tickSpacing, baseTick + 2*tickSpacing
+  for (let i = 0; i < 3; i++) {
+    const testTick = baseTick + i * tickSpacing;
+    try {
+      const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+      const amountInSats = ethers.parseUnits(amountIn.toString(), 8);
+
+      // Direction: cbBTC (token1) → USDC (token0) => zeroForOne = false
+      const zeroForOne = false;
+
+      const simulation = await simulateWithQuoterV4({
+        poolKey,
+        zeroForOne,
+        amountIn: amountInSats,
+        sqrtPriceLimitX96,
+      });
+
+      if (simulation && simulation > 0n) {
+        console.log(
+          `✅ Route at tick ${testTick} is valid. Estimated out: ${ethers.formatUnits(simulation, 6)} USDC`
+        );
+        feeFreeRoutes.push({
+          poolId: POOL.poolId,
+          fee: POOL.fee,
+          sqrtPriceLimitX96,
+          tick: testTick,
+          poolKey,
+        });
+      } else {
+        // console.log(`❌ Route at tick ${testTick} returned zero or failed`);
+      }
+    } catch (err) {
+      console.warn(`⚠️ Skip tick ${testTick}: ${err.message}`);
+    }
+  }
+
+  return feeFreeRoutes;
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Main
+// ──────────────────────────────────────────────────────────────────────────────
+async function main() {
+  // Keep this exact token order (as requested)
+  const token0 = USDC.toLowerCase();
+  const token1 = CBBTC.toLowerCase();
+
+  // Infer tickSpacing and verify poolId
+  const tickSpacing = inferTickSpacingFromPoolId({
+    token0, token1, fee: POOL.fee, hooks: POOL.hooks, poolId: POOL.poolId,
+  });
+
+  const poolKey = {
+    currency0: token0,
+    currency1: token1,
+    fee: POOL.fee,
+    tickSpacing,
     hooks: POOL.hooks,
   };
 
   console.log(`\n🔎 ${POOL.label}`);
   console.log(`• Using manual poolId: ${POOL.poolId}`);
-
-  // Confirm poolId (sanity)
-  const computedId = computePoolId(poolKey);
+  const computed = computePoolId(poolKey);
   console.log(
-    computedId.toLowerCase() === POOL.poolId.toLowerCase()
-      ? `✅ poolId matches: ${computedId}`
-      : `⚠️ poolId mismatch! ${computedId}`
+    computed.toLowerCase() === POOL.poolId.toLowerCase()
+      ? `✅ poolId matches: ${computed}`
+      : `⚠️ poolId mismatch! ${computed}`
   );
+  console.log(`🧮 tickSpacing=${tickSpacing}`);
 
-  // slot0 + fee readout
-  const [sqrtP, , protocolFeePpm, lpFeePpm] = await stateView.getSlot0(POOL.poolId);
-  console.log(`📈 Current sqrtPriceX96: ${sqrtP}`);
-  console.log(`🧾 Fees (ppm): lpFee=${Number(lpFeePpm)} protocolFee=${Number(protocolFeePpm)}`);
+  // slot0 info (just logging; not needed for the fee-free “>0” check)
+  const { sqrtPriceX96, tick, protocolFee, lpFee } = await getPoolSlot0(POOL.poolId);
+  console.log(`📈 Current sqrtPriceX96: ${sqrtPriceX96}`);
+  console.log(`🧾 Fees (ppm): lpFee=${Number(lpFee)} protocolFee=${Number(protocolFee)}`);
 
-  // Direction: cbBTC → USDC means token1 -> token0, so zeroForOne = false (with our forced order)
-  const zeroForOne = false;
-
-  // ε-limit (to minimize price impact; helpful for tiny exact outputs)
-  const sqrtLimit = epsilonLimit({ sqrtP, zeroForOne });
-  console.log(`🧭 Using ε-limit sqrtPriceX96=${sqrtLimit.toString()}`);
-
-  // Quoter iface
-  const quoter = await fetchQuoterIface(V4_QUOTER_ADDRESS);
-
-  // Mid price USDC per cbBTC using your decoder (token0=USDC(6), token1=cbBTC(8))
-  const midUSDCperCbBTC = decodeSqrtPriceX96ToFloat(sqrtP, 6, 8);
-
-  // Helper: given microUSDC target, expected no-fee input sats
-  // microUSDC = (sats * mid) / 100   →   sats = ceil(microUSDC * 100 / mid)
-  const expSatsForMicroOut = (micro) => {
-    const x = Number(micro) * 100 / midUSDCperCbBTC;
-    return BigInt(Math.ceil(x));
-  };
-
-  // ── YOUR AMOUNT LINE (kept exactly as requested; not used in exact-output search)
+  // ── KEEP THIS EXACT LINE (your request)
   let amountInCBBTC = ethers.parseUnits("1", 8);
 
-  // Boundary set: exact-output micro targets
-  //  - Tiny outputs (to isolate rounding)
-  //  - A few denser points (powers of 10) for variety
-  const fibMicro = [1n,2n,3n,5n,8n,13n,21n,34n,55n,89n,144n,233n,377n,610n,987n,1597n,2584n,4181n,6765n];
-  const pow10Micro = [10n,100n,1_000n,10_000n,100_000n,1_000_000n]; // up to 1 USDC
-  const targets = [...new Set([...fibMicro, ...pow10Micro])].sort((a,b)=> (a<b?-1:1));
+  // Run the V3-style checker on V4 (no ppm, just “> 0”)
+  const amountInFloat = Number(ethers.formatUnits(amountInCBBTC, 8));
+  const routes = await checkFeeFreeRoute(amountInFloat);
 
-  console.log("\n──── Exact-output boundary search (ε-limit) ────");
-  console.log("usdc_micro_out, cbBTC_in_sats, mid_no_fee_in_sats, fee_sats, fee_ppm");
-
-  let best = null;
-
-  for (const micro of targets) {
-    // Ask for EXACTLY `micro` micro-USDC out
-    const { amountIn } = await quoteExactOutput({
-      quoteIface: quoter,
-      poolKey,
-      zeroForOne,
-      exactAmountOut: micro,          // tokenOut = USDC(6dp), so 1 = 1 micro USDC
-      sqrtPriceLimitX96: sqrtLimit,   // ε-limit to minimize price impact
-    });
-
-    const expSats = expSatsForMicroOut(micro);
-    const feeSats = amountIn > expSats ? (amountIn - expSats) : 0n;
-    const p = ppm(expSats, amountIn);
-
-    console.log(
-      [
-        micro.toString(),
-        amountIn.toString(),
-        expSats.toString(),
-        feeSats.toString(),
-        p
-      ].join(",")
-    );
-
-    // keep the lowest ppm (as a candidate “sweet spot”)
-    if (p !== "n/a") {
-      const pBig = BigInt(p);
-      if (!best || pBig < best.ppm) {
-        best = { micro, amountIn, expSats, feeSats, ppm: pBig };
-      }
+  if (!routes || routes.length === 0) {
+    console.log("\n❌ No candidate routes returned a positive quote at those tick anchors.");
+  } else {
+    console.log("\n✅ Candidate routes (positive quotes):");
+    for (const r of routes) {
+      console.log(`• tick=${r.tick} | sqrtLimit=${r.sqrtPriceLimitX96.toString()}`);
     }
   }
 
-  if (best) {
-    console.log("\n🏁 Best exact-output boundary (ε-limit):");
-    console.log(
-      `micro_out=${best.micro.toString()} → ppm≈${best.ppm.toString()} (fee ${best.feeSats.toString()} sats on expected ${best.expSats.toString()} sats)`
-    );
-  } else {
-    console.log("\n(no finite ppm found in this boundary set)");
-  }
-
-  console.log("\nℹ️ Interpretation:");
-  console.log("If none of these exact-output micro boundaries produce ppm ≪ lpFee,");
-  console.log("then rounding doesn’t yield ‘fee-free’ sweet spots on this v4 pool at ε-limit.");
+  // Decoder is kept here per your requirement (not used in this routine directly)
+  // Example (do nothing): decodeSqrtPriceX96ToFloat(sqrtPriceX96, 6, 8);
 }
 
 main().catch((e) => {
