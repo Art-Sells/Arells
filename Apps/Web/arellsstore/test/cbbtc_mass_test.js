@@ -6,19 +6,14 @@ import { TickMath } from "@uniswap/v3-sdk";
 
 dotenv.config();
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * Network & addresses (Base)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
+// Network & addresses (Base)
+// ──────────────────────────────────────────────────────────────────────────────
 const STATE_VIEW_ADDRESS  = "0xa3c0c9b65bad0b08107aa264b0f3db444b867a71";
 const V4_POOL_MANAGER     = "0x498581fF718922c3f8e6A244956aF099B2652b2b";
 const V4_QUOTER_ADDRESS   = "0x0d5e0f971ed27fbff6c2837bf31316121532048d";
 const V4_ROUTER_ADDRESS   = "0x6ff5693b99212da76ad316178a184ab56d299b43";
 const PERMIT2             = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
-
-// Universal Router v4 single-pool exact-input command byte
-const CMD_V4_SWAP_EXACT_IN_SINGLE = "0x06";
 
 const USDC  = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"; // 6dp
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf"; // 8dp
@@ -34,11 +29,12 @@ const POOL = {
   fee:    3000,
 };
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * BaseScan ABI fetch
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// Universal Router v4 single-pool exact-input (we previously confirmed this works)
+const CMD_V4_SWAP_EXACT_IN_SINGLE = "0x06";
+
+// ──────────────────────────────────────────────────────────────────────────────
+// BaseScan ABI fetch
+// ──────────────────────────────────────────────────────────────────────────────
 async function fetchABI(addr) {
   const url = `https://api.basescan.org/api?module=contract&action=getabi&address=${addr}&apikey=${process.env.BASESCAN_API_KEY}`;
   const resp = await axios.get(url);
@@ -46,11 +42,7 @@ async function fetchABI(addr) {
   return JSON.parse(resp.data.result);
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * PoolId helpers (infer tickSpacing by recomputing ids)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
 function computePoolId(poolKey) {
   const abi = ethers.AbiCoder.defaultAbiCoder();
   const enc = abi.encode(
@@ -69,11 +61,9 @@ function inferTickSpacingFromPoolId({ token0, token1, fee, hooks, poolId }) {
   throw new Error("Could not infer tickSpacing from poolId.");
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * StateView helpers (no manual ABI)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
+// StateView helpers
+// ──────────────────────────────────────────────────────────────────────────────
 async function getSlot0(poolId) {
   const abi = await fetchABI(STATE_VIEW_ADDRESS);
   const iface = new ethers.Interface(abi);
@@ -93,11 +83,9 @@ async function getLiquidity(poolId) {
   return L;
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * Router iface helper (and pretty print once)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
+// Router iface (for execute)
+// ──────────────────────────────────────────────────────────────────────────────
 let __routerPrinted = false;
 async function fetchRouter() {
   const abi   = await fetchABI(V4_ROUTER_ADDRESS);
@@ -116,11 +104,9 @@ async function fetchRouter() {
   return { abi, iface };
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * Quoter v4 (sanity check)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
+// Quoter v4 (sanity check)
+// ──────────────────────────────────────────────────────────────────────────────
 async function v4Quote({ poolKey, zeroForOne, exactAmount, sqrtPriceLimitX96 }) {
   const abi = await fetchABI(V4_QUOTER_ADDRESS);
   const iface = new ethers.Interface(abi);
@@ -142,11 +128,7 @@ async function v4Quote({ poolKey, zeroForOne, exactAmount, sqrtPriceLimitX96 }) 
   return amountOut; // 6dp USDC
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * Decode sqrtPrice (unchanged)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
 function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 6, decimalsToken1 = 8) {
   const Q96 = 2n ** 96n;
   const sqrt = BigInt(sqrtPriceX96);
@@ -154,11 +136,9 @@ function decodeSqrtPriceX96ToFloat(sqrtPriceX96, decimalsToken0 = 6, decimalsTok
   return (1 / raw) * 10 ** (decimalsToken1 - decimalsToken0);
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * Approvals & gas checks (v3-style approvals wired to v4)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
+// Approvals & gas checks
+// ──────────────────────────────────────────────────────────────────────────────
 async function checkCBBTCBalance() {
   const c = new ethers.Contract(CBBTC, ["function balanceOf(address) view returns (uint256)"], provider);
   const bal = await c.balanceOf(userWallet.address);
@@ -179,31 +159,28 @@ async function ensureApproval(toAddr, amountBaseUnits) {
 }
 
 async function approveCBBTC(amountInFloat) {
-  console.log(`🔑 Approving PoolManager to spend ${amountInFloat} CBBTC...`);
+  console.log(`🔑 Approving Router & PoolManager to spend ${amountInFloat} CBBTC...`);
   const amountBaseUnits = ethers.parseUnits(amountInFloat.toString(), 8);
   const bal = await checkCBBTCBalance();
   if (bal < amountBaseUnits) {
     console.error("❌ ERROR: Insufficient CBBTC balance!");
     return false;
   }
-  // Approve Router and PoolManager (UR flows may require router funding steps)
+  // Direct ERC20 allowance so the router can pull via its TRANSFER_FROM command
   await ensureApproval(V4_ROUTER_ADDRESS, amountBaseUnits);
+
+  // PoolManager allowance not strictly necessary for router-mediated flows,
+  // but keep your original behavior:
+  await ensureApproval(V4_POOL_MANAGER, amountBaseUnits);
+
   const c = new ethers.Contract(
     CBBTC,
-    ["function approve(address,uint256)","function allowance(address,address) view returns (uint256)"],
-    userWallet
+    ["function allowance(address,address) view returns (uint256)"],
+    provider
   );
-  const current = await c.allowance(userWallet.address, V4_POOL_MANAGER);
-  console.log(`📎 BEFORE Approval: ${ethers.formatUnits(current, 8)} CBBTC`);
-  if (current < amountBaseUnits) {
-    const tx = await c.approve(V4_POOL_MANAGER, amountBaseUnits);
-    const rc = await tx.wait();
-    console.log("✅ Approval Successful!", rc.transactionHash);
-  } else {
-    console.log("✅ Approval already sufficient.");
-  }
-  const after = await c.allowance(userWallet.address, V4_POOL_MANAGER);
-  console.log(`📎 AFTER Approval: ${ethers.formatUnits(after, 8)} CBBTC`);
+  const allowR = await c.allowance(userWallet.address, V4_ROUTER_ADDRESS);
+  const allowP = await c.allowance(userWallet.address, V4_POOL_MANAGER);
+  console.log(`📎 AFTER Approval — Router: ${ethers.formatUnits(allowR, 8)} | PoolManager: ${ethers.formatUnits(allowP, 8)} CBBTC`);
   return true;
 }
 
@@ -218,11 +195,9 @@ async function checkETHBalance() {
   return true;
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * Build poolKey & an in-tick sqrtPriceLimitX96 (cbBTC -> USDC, zeroForOne=false)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
+// Build poolKey & an in-tick sqrtPriceLimitX96 (cbBTC -> USDC, zeroForOne=false)
+// ──────────────────────────────────────────────────────────────────────────────
 async function buildLimitAndPoolKey() {
   const token0 = USDC.toLowerCase();
   const token1 = CBBTC.toLowerCase();
@@ -252,11 +227,9 @@ async function buildLimitAndPoolKey() {
   return { poolKey, sqrtPriceX96, tickSpacing, baseTick, limitX96 };
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * Encode the single-pool exact-input v4 swap payload (UR v4 input)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
+// Encode router inputs
+// ──────────────────────────────────────────────────────────────────────────────
 function encodeUR_V4_SwapExactIn(poolKey, { zeroForOne, amountIn, sqrtPriceLimitX96, recipient }) {
   // abi.encode(
   //   (address,address,uint24,int24,address) poolKey,
@@ -290,16 +263,47 @@ function encodeUR_V4_SwapExactIn(poolKey, { zeroForOne, amountIn, sqrtPriceLimit
   );
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * V4 tick-anchor checker (mirrors V3: “>0” quote)
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// Simple ERC20 transferFrom(input) the router can use to pull from the EOA.
+// We’ll try several plausible opcodes for this shape.
+function encodeUR_ERC20_TransferFrom({ token, from, to, amount }) {
+  const coder = ethers.AbiCoder.defaultAbiCoder();
+  return coder.encode(
+    ["address","address","address","uint256"],
+    [ token, from, to, BigInt(amount) ]
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// “Discover” the router’s TRANSFER_FROM opcode quickly by trying a few candidates
+// (We already know 0x06 works for v4 single-pool exact-in on your router)
+// ──────────────────────────────────────────────────────────────────────────────
+async function discoverUR_TransferFromOpcode({ tfInput, swapInput }) {
+  const { iface } = await fetchRouter();
+  const candidates = [
+    0x03, 0x09, 0x0b, 0x05, 0x01, 0x0a, 0x0c, 0x12 // small plausible set
+  ];
+  for (const op of candidates) {
+    try {
+      const cmd = "0x" + op.toString(16).padStart(2,"0") + CMD_V4_SWAP_EXACT_IN_SINGLE.slice(2);
+      const data = iface.encodeFunctionData("execute(bytes,bytes[])", [cmd, [tfInput, swapInput]]);
+      // staticcall: we only need a distinctive non-generic revert/behaviour
+      await provider.call({ to: V4_ROUTER_ADDRESS, data, from: userWallet.address });
+      console.log(`🔎 TRANSFER_FROM opcode candidate accepted by eth_call: 0x${op.toString(16).padStart(2,"0")}`);
+      return "0x" + op.toString(16).padStart(2,"0");
+    } catch (e) {
+      // Try the next candidate
+    }
+  }
+  throw new Error("Could not discover a working TRANSFER_FROM opcode from candidate set.");
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// V4 tick-anchor checker (mirrors your V3 loop). No PPMs — just “>0” quotes.
+// ──────────────────────────────────────────────────────────────────────────────
 async function checkFeeFreeRouteV4(amountInFloat) {
   const token0 = USDC.toLowerCase();
   const token1 = CBBTC.toLowerCase();
 
-  // infer tickSpacing + poolKey + baseTick
   const tickSpacing = inferTickSpacingFromPoolId({
     token0, token1, fee: POOL.fee, hooks: POOL.hooks, poolId: POOL.poolId,
   });
@@ -327,16 +331,14 @@ async function checkFeeFreeRouteV4(amountInFloat) {
       if (out && out > 0n) {
         candidates.push({ tick: testTick, sqrtPriceLimitX96, amountOut: out, poolKey, tickSpacing, baseTick });
       }
-    } catch { /* ignore this anchor */ }
+    } catch { /* ignore */ }
   }
   return candidates;
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * Execute via Universal Router with fixed command 0x06
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
+// Execute: TRANSFER_FROM (router pulls cbBTC from your wallet) + V4_SWAP_EXACT_IN
+// ──────────────────────────────────────────────────────────────────────────────
 async function executeSupplicationV4(amountInFloat) {
   console.log(`\n🚀 Executing via Universal Router: ${amountInFloat} cbBTC → USDC`);
 
@@ -345,7 +347,7 @@ async function executeSupplicationV4(amountInFloat) {
   if (!(await approveCBBTC(amountInFloat))) return;
   if (!(await checkETHBalance())) return;
 
-  // 1) choose a tick-anchored sqrtPriceLimit from your checker (or fallback in-tick)
+  // choose a tick-anchored sqrtPriceLimit
   let chosen;
   const routes = await checkFeeFreeRouteV4(amountInFloat);
   if (routes.length > 0) {
@@ -357,7 +359,7 @@ async function executeSupplicationV4(amountInFloat) {
     console.log("ℹ️ No checker candidates; using in-tick limit.");
   }
 
-  // ensure poolKey
+  // poolKey (ensure present)
   const poolKey = chosen.poolKey ?? (() => {
     const token0 = USDC.toLowerCase();
     const token1 = CBBTC.toLowerCase();
@@ -368,33 +370,38 @@ async function executeSupplicationV4(amountInFloat) {
   })();
   const sqrtPriceLimitX96 = BigInt(chosen.sqrtPriceLimitX96);
 
-  // (optional) quoter sanity
+  // optional sanity quote
   try {
     const sanity = await v4Quote({ poolKey, zeroForOne: false, exactAmount: amountIn, sqrtPriceLimitX96 });
     console.log(`🔎 Quoter @ limit: ${ethers.formatUnits(sanity, 6)} USDC`);
   } catch {}
 
-  // 2) Build router input for single-pool exact-in and call execute(bytes,bytes[])
-  const urInput = encodeUR_V4_SwapExactIn(poolKey, {
+  // Build inputs
+  const tfInput   = encodeUR_ERC20_TransferFrom({
+    token: CBBTC, from: userWallet.address, to: V4_ROUTER_ADDRESS, amount: amountIn
+  });
+  const swapInput = encodeUR_V4_SwapExactIn(poolKey, {
     zeroForOne: false,
     amountIn,
     sqrtPriceLimitX96,
     recipient: userWallet.address
   });
 
-  const { iface: routerIface } = await fetchRouter();
-  const commands = CMD_V4_SWAP_EXACT_IN_SINGLE; // "0x06"
+  // Discover TRANSFER_FROM opcode from a small candidate set
+  const tfOpcode = await discoverUR_TransferFromOpcode({ tfInput, swapInput });
+  const commands = tfOpcode + CMD_V4_SWAP_EXACT_IN_SINGLE.slice(2); // e.g. "0x0b06"
 
+  const { iface: routerIface } = await fetchRouter();
   const calldata = routerIface.encodeFunctionData(
     "execute(bytes,bytes[])",
-    [commands, [urInput]]
+    [commands, [tfInput, swapInput]]
   );
 
   const feeData = await provider.getFeeData();
   const tx = await userWallet.sendTransaction({
     to: V4_ROUTER_ADDRESS,
     data: calldata,
-    gasLimit: 1_300_000,
+    gasLimit: 1_400_000,
     maxFeePerGas: feeData.maxFeePerGas,
     maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
   });
@@ -402,13 +409,16 @@ async function executeSupplicationV4(amountInFloat) {
   console.log(`⏳ Broadcasting… ${tx.hash}`);
   const rcpt = await tx.wait();
   console.log("✅ Confirmed:", rcpt.hash);
+
+  // (optional) post balances
+  const usdc = new ethers.Contract(USDC, ["function balanceOf(address) view returns (uint256)"], provider);
+  const usdcBal = await usdc.balanceOf(userWallet.address);
+  console.log(`💵 USDC Balance (post): ${ethers.formatUnits(usdcBal, 6)} USDC`);
 }
 
-/**
- * ─────────────────────────────────────────────────────────────────────────────
- * Main
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ──────────────────────────────────────────────────────────────────────────────
+// Main
+// ──────────────────────────────────────────────────────────────────────────────
 async function main() {
   console.log(`\n🔎 ${POOL.label}`);
   console.log(`• Using manual poolId: ${POOL.poolId}`);
