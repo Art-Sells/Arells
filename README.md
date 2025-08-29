@@ -22,6 +22,14 @@ Records the highest price of an asset after its import or purchase limiting the 
 <img src="https://github.com/Art-Sells/Arells/blob/test/Art/Marketing/BeforeandAfterArellss.png" width="400px"> 
 
 ### Concept: [arells.com/concept](https://arells.com/concept)
+_______________________________________
+
+#### Maximum Bear Market Investment losses 
+
+- With HPM: -1%~
+- Without HPM: -100%~
+
+*See **[LPP](https://github.com/Art-Sells/HPM/tree/main/HPMCodeBase/MASS/LPP)** for more info.*
 _______________________________________________________________________
 
 ## FAQ:

@@ -5,13 +5,11 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- Test actual quotes for v4 (on Uniswap and on Arells to test for fees)
-- revert back to "testKeyPermutations commit for v3/v4 ref"
+- integrate other v3 pool
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.
-- 1 entire token test,
-	•	In a constant-product/concentrated-liquidity AMM, if you try to sell 1 cbBTC into a range that only holds ~10.386 cbBTC, you are trying to remove ~9.6% of the token-1 inventory that’s currently active. That moves price a lot, (but price is stabalized by AMMA (automated market maker arbitrager MEV bots)) leave USDC ***importing USDC into the system (first) ensures this problem is mitigated (or, have the system cap out the number of USDC -> CBBTC MASS applications, possibly $1,000k (max) per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this])***
+-  ***importing USDC into the system (first), $4k max per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this]***
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - Import wallet (create import wallet)
 - MASS wallet (create MASS wallet)
@@ -28,7 +26,7 @@
 - - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
 - Incorporate Sell/Withdraw (look at Arells 1.5)
 - Can only Dcd PK with P (from nv)… Do extensive research on this, see if can cd and dcd from json and without P.
-- Integrate import CAP (so to not exceed 1 USDC liquidity pool)
+- Integrate import CAP to STOP if main Wallet is drained too quickly, if not, set lever to increase (
 
 ### Online:
 - Establish background useEffects order
@@ -105,6 +103,7 @@ Arells Wallet and change all Variables
 - - review ##Base
 - - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
 - CBBTC (if price decreases execute mass), or USDC import (if price increase execute mass), change import slogan (add export info of why only in USDC) 6% (raise prices if needed)
+- Measure AUM handled within system.
 
 
 ### Other (if Time Permits)
