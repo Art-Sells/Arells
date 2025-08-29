@@ -81,8 +81,8 @@ const BitcoinChart: React.FC = () => {
         const maxPrice = Math.max(...filteredPrices.map(price => price.y));
 
         const percentageIncrease = ((maxPrice - initialPrice) / initialPrice) * 100;
-
-        setPercentageIncrease(percentageIncrease);
+        const dividedPercentage = percentageIncrease / 3;
+        setPercentageIncrease(dividedPercentage);
 
         setChartData({
           datasets: [{

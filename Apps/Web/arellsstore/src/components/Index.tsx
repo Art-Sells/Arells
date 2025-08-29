@@ -66,7 +66,7 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner">Renders bear markets obsolete</p>
+        <p id="descriptioner">Investments immune to bear markets</p>
       </div>
 
         {/* <br></br>
@@ -84,7 +84,7 @@ const Index = () => {
 
       <div id="buy-info-wrapping">
           <p id="buy-info">
-            Import bitcoin and never worry about bear market losses.</p>
+            Invest and never worry about catastrophic bear market losses again.</p>
         </div>
 
     </>

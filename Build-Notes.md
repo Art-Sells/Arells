@@ -11,7 +11,7 @@
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.
 - 1 entire token test,
-	•	In a constant-product/concentrated-liquidity AMM, if you try to sell 1 cbBTC into a range that only holds ~10.386 cbBTC, you are trying to remove ~9.6% of the token-1 inventory that’s currently active. That moves price a lot, so I'm going to have to re-write HPM acronyms to break apart each "supplication" from the token-to-fiat (calculate which supplication will not diminish the value of the investment (i.e if the supplication (based on the token-pair-price) then do not supplicate (leave USDC ***importing USDC into the system (first) ensures this problem is mitigated (or, have the system cap out the number of USDC -> CBBTC MASS applications, possibly $1,000k (max) per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this])***)))
+	•	In a constant-product/concentrated-liquidity AMM, if you try to sell 1 cbBTC into a range that only holds ~10.386 cbBTC, you are trying to remove ~9.6% of the token-1 inventory that’s currently active. That moves price a lot, (but price is stabalized by AMMA (automated market maker arbitrager MEV bots)) leave USDC ***importing USDC into the system (first) ensures this problem is mitigated (or, have the system cap out the number of USDC -> CBBTC MASS applications, possibly $1,000k (max) per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this])***
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - Import wallet (create import wallet)
 - MASS wallet (create MASS wallet)
@@ -79,6 +79,8 @@ Arells Wallet and change all Variables
 
 #### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & Images (see /main)
+- - Investments immune to bear markets. Invest and never worry about bear market losses again.
+- Refactor Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 
 #### Deployment Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked and remove .env hardhat config expositions
@@ -91,6 +93,7 @@ Arells Wallet and change all Variables
 
 ### After Completion
 - Users:
+- Get Leads (search AI automoated options [use same format] from X, etc)
 - Set Launch Date (and announce the features)
 - - Import USDC using (Base), it's free to and will cost pennies to export.
 - - Accepting only the first 150 Investors (until our L3 is built) talk about releasing Sell CBBTC to USDC and ability to export it into any DEX/CEX
@@ -150,7 +153,7 @@ Arells Wallet and change all Variables
 - - Txns/s need to be in 1000s-10000s per second for meme-coins to benefit (reference HPM Efficiency charts).
 - HPM-Liquidity System (Brainstorm)
 - - Reference V3 U*P (and UI) Repos(addresses for contract and API info)
-- - Research whether injecting USDC (only) will grow AUM?
+- **remove dividedPercentageIncreases in the tokenCharts.ts to reflect maximum profits**
 - Crypto Exchange/Wallet License (for iOS/Android App)
 
 
