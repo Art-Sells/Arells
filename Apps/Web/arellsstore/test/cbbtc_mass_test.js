@@ -9,6 +9,11 @@ dotenv.config();
 
 const __abiCache = new Map(); // address(lowercased) -> abi array
 
+const POOLS = {
+  500: "0xfBB6Eed8e7aa03B138556eeDaF5D271A5E1e43ef",
+  3000: "0xeC558e484cC9f2210714E345298fdc53B253c27D",
+};
+
 // ✅ Uniswap Contract Addresses
 const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
 const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
@@ -371,62 +376,35 @@ throw lastError;
 }
 
 
-
-
-
-
-
-
 const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
-const FEE_TIERS = [500, 3000]; // 0.05% and 0.3%
-
-async function quoteAcrossFees(amountInCBBTC) {
-  console.log(`\n==============================`);
-  console.log(`💰 Checking amount: ${amountInCBBTC} CBBTC`);
-  console.log(`==============================`);
-
-  const factoryABI = await fetchABI(FACTORY_ADDRESS);
-  if (!factoryABI) {
-    console.log("❌ Could not fetch Factory ABI");
-    return;
-  }
-
-  const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
+async function quotePoolsForAmount(amountInCBBTC) {
   const amountInWei = ethers.parseUnits(amountInCBBTC.toString(), 8);
+  const results = [];
 
-  for (const fee of FEE_TIERS) {
-    try {
-      const poolAddress = await factory.getPool(USDC, CBBTC, fee);
-      if (poolAddress === ethers.ZeroAddress) {
-        console.log(`❌ No pool for fee ${fee}`);
-        continue;
-      }
-      console.log(`✅ Pool for fee ${fee}: ${poolAddress}`);
+  for (const [fee, poolAddress] of Object.entries(POOLS)) {
+    const poolData = await checkPoolLiquidity(poolAddress);
+    if (!poolData || poolData.liquidity === 0n) {
+      results.push({ amount: amountInCBBTC, pool: fee, usdc: "❌ No liquidity" });
+      continue;
+    }
 
-      const poolData = await checkPoolLiquidity(poolAddress);
-      if (!poolData || poolData.liquidity === 0n) {
-        console.log(`❌ Skipping fee ${fee}: no liquidity`);
-        continue;
-      }
+    const out = await simulateWithQuoter({
+      tokenIn: CBBTC,
+      tokenOut: USDC,
+      fee: Number(fee),
+      amountIn: amountInWei,
+      sqrtPriceLimitX96: 0n, // straight quote
+    });
 
-      const out = await simulateWithQuoter({
-        tokenIn: CBBTC,
-        tokenOut: USDC,
-        fee,
-        amountIn: amountInWei,
-        sqrtPriceLimitX96: 0n, // straight quote
-      });
-
-      if (out && out > 0n) {
-        console.log(`🔁 Quote @ fee ${fee}: ${ethers.formatUnits(out, 6)} USDC`);
-      } else {
-        console.log(`❌ Quote failed/zero @ fee ${fee}`);
-      }
-    } catch (err) {
-      console.warn(`⚠️ Error quoting @ fee ${fee}:`, err.reason || err.message || err);
+    if (out && out > 0n) {
+      results.push({ amount: amountInCBBTC, pool: fee, usdc: ethers.formatUnits(out, 6) });
+    } else {
+      results.push({ amount: amountInCBBTC, pool: fee, usdc: "❌ Quote failed" });
     }
   }
+
+  console.table(results);
 }
 
 async function main() {
@@ -445,7 +423,9 @@ async function main() {
     console.log(`💰 Checking amount: ${amount} CBBTC`);
     console.log(`==============================`);
 
-    const routes = await checkFeeFreeRoute(amount);
+    await quotePoolsForAmount(amount); // 👈 side-by-side summary
+
+    const routes = await checkFeeFreeRoute(amount); // 👈 optional: keep detailed tick logs
     if (routes.length === 0) {
       console.log(`❌ No valid quotes found for ${amount} CBBTC at either fee tier.`);
     } else {

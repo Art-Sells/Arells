@@ -6,7 +6,7 @@
 
 ## Test
 - integrate other v3 pool
-- Test different L3 pool amounts to see if individual pool price makes a difference. 
+- Remove Quoterv2 SPL error...
 - Change HPM acronyms to anticipate losses.
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
