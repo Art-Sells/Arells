@@ -25,10 +25,10 @@ Records the highest price of an asset after its import or purchase limiting the 
 
 _______________________________________
 
-#### Maximum Bear Market Investment losses 
+#### Bear Market Investments
 
-- With HPM: -1%~
-- Without HPM: -100%~
+- **With HPM:** +0.009%-1%~ minimum profits, 0% losses.
+- **Without HPM:** -100% maximum losses.
 
 *See **[LPP](https://github.com/Art-Sells/HPM/tree/main/HPMCodeBase/MASS/LPP)** for more info.*
 _______________________________________________________________________
