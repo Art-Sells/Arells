@@ -6,6 +6,8 @@
 
 ## Test
 - integrate other v3 pool
+- Test different L3 pool amounts to see if individual pool price makes a difference. 
+- Change HPM acronyms to anticipate losses.
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.
@@ -26,7 +28,7 @@
 - - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
 - Incorporate Sell/Withdraw (look at Arells 1.5)
 - Can only Dcd PK with P (from nv)… Do extensive research on this, see if can cd and dcd from json and without P.
-- Integrate import CAP to STOP if main Wallet is drained too quickly, if not, set lever to increase (
+- Integrate import CAP to STOP if main Wallet is drained too quickly, if not, set lever to increase
 
 ### Online:
 - Establish background useEffects order
