@@ -39,19 +39,39 @@ async function fetchABI(contractAddress) {
   if (__abiCache.has(key)) return __abiCache.get(key);
 
   try {
+    // If it's a known pool, just reuse the ABI of any pool you already fetched
+    if (Object.values(POOLS).map(a => a.toLowerCase()).includes(key)) {
+      if (__abiCache.has("uniswapPoolABI")) {
+        return __abiCache.get("uniswapPoolABI");
+      }
+    }
+
     console.log(`🔍 Fetching ABI for ${contractAddress} from BaseScan...`);
     const response = await axios.get(
       `https://api.basescan.org/api?module=contract&action=getabi&address=${contractAddress}&apikey=${process.env.BASESCAN_API_KEY}`
     );
-
-    if (response.data.status !== "1") throw new Error(`BaseScan API Error: ${response.data.message}`);
+    if (response.data.status !== "1") {
+      throw new Error(`BaseScan API Error: ${response.data.message}`);
+    }
 
     const abi = JSON.parse(response.data.result);
-    __abiCache.set(key, abi);          // ✅ cache it
+
+    // Cache pool ABI under a generic key so it can be reused
+    if (abi.some(item => item.name === "slot0" && item.inputs.length === 0)) {
+      __abiCache.set("uniswapPoolABI", abi);
+    }
+
+    __abiCache.set(key, abi);
     return abi;
   } catch (error) {
     console.error("❌ Failed to fetch ABI:", error.message);
-    // Do NOT cache null; allow later retries if a transient throttle occurred
+
+    // Fallback: reuse cached pool ABI if available
+    if (__abiCache.has("uniswapPoolABI")) {
+      console.log("♻️ Reusing cached Uniswap pool ABI");
+      return __abiCache.get("uniswapPoolABI");
+    }
+
     return null;
   }
 }
@@ -438,6 +458,7 @@ async function main() {
   await Promise.all([
     fetchABI(FACTORY_ADDRESS),
     fetchABI(QUOTER_ADDRESS),
+    ...Object.values(POOLS).map(addr => fetchABI(addr))
   ]);
 
   const cbbtcAmounts = [0.002323, 0.0120323, 1.3233, 0.50012345, 2.12345678];
