@@ -5,8 +5,8 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- integrate other v3 pool
-- Remove Quoterv2 SPL error...
+- integrate other v3 pool and rename functions to LPP
+- - Complete LPP v1 Testing
 - Change HPM acronyms to anticipate losses.
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
