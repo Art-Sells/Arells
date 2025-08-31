@@ -38,41 +38,42 @@ async function fetchABI(contractAddress) {
   const key = contractAddress.toLowerCase();
   if (__abiCache.has(key)) return __abiCache.get(key);
 
-  try {
-    // If it's a known pool, just reuse the ABI of any pool you already fetched
-    if (Object.values(POOLS).map(a => a.toLowerCase()).includes(key)) {
-      if (__abiCache.has("uniswapPoolABI")) {
-        return __abiCache.get("uniswapPoolABI");
-      }
-    }
+  // reuse a previously learned pool ABI for known pool addresses
+  const knownPools = Object.values(POOLS).map(a => a.toLowerCase());
+  if (knownPools.includes(key) && __abiCache.has("uniswapPoolABI")) {
+    return __abiCache.get("uniswapPoolABI");
+  }
 
+  const attempt = async () => {
     console.log(`🔍 Fetching ABI for ${contractAddress} from BaseScan...`);
-    const response = await axios.get(
+    const { data } = await axios.get(
       `https://api.basescan.org/api?module=contract&action=getabi&address=${contractAddress}&apikey=${process.env.BASESCAN_API_KEY}`
     );
-    if (response.data.status !== "1") {
-      throw new Error(`BaseScan API Error: ${response.data.message}`);
-    }
+    if (data.status !== "1") throw new Error(`BaseScan API Error: ${data.message}`);
+    const abi = JSON.parse(data.result);
 
-    const abi = JSON.parse(response.data.result);
-
-    // Cache pool ABI under a generic key so it can be reused
-    if (abi.some(item => item.name === "slot0" && item.inputs.length === 0)) {
+    if (abi.some(i => i.name === "slot0" && Array.isArray(i.inputs) && i.inputs.length === 0)) {
       __abiCache.set("uniswapPoolABI", abi);
     }
-
     __abiCache.set(key, abi);
     return abi;
-  } catch (error) {
-    console.error("❌ Failed to fetch ABI:", error.message);
+  };
 
-    // Fallback: reuse cached pool ABI if available
-    if (__abiCache.has("uniswapPoolABI")) {
-      console.log("♻️ Reusing cached Uniswap pool ABI");
-      return __abiCache.get("uniswapPoolABI");
+  try {
+    return await attempt();
+  } catch (e1) {
+    // brief backoff; avoids NOTOK bursts without adding manual ABIs
+    await new Promise(r => setTimeout(r, 200));
+    try {
+      return await attempt();
+    } catch (e2) {
+      console.error("❌ Failed to fetch ABI:", e2.message);
+      if (__abiCache.has("uniswapPoolABI") && knownPools.includes(key)) {
+        console.log("♻️ Reusing cached Uniswap pool ABI");
+        return __abiCache.get("uniswapPoolABI");
+      }
+      return null;
     }
-
-    return null;
   }
 }
 
@@ -81,7 +82,7 @@ async function getPoolAddress() {
     if (!factoryABI) return null;
 
     const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-    const feeTiers = [500]; // 0.01%, 0.05%, 0.3%, 1%
+    const feeTiers = [500];
 
     for (let fee of feeTiers) {
         try {
@@ -420,46 +421,27 @@ async function quotePoolsForAmount(amountInCBBTC) {
   const amountInWei = ethers.parseUnits(amountInCBBTC.toString(), 8);
   const results = [];
 
-  for (const [fee, poolAddress] of Object.entries(POOLS)) {
-    const poolData = await checkPoolLiquidity(poolAddress);
-    if (!poolData || poolData.liquidity === 0n) {
-      results.push({ amount: amountInCBBTC, pool: fee, usdc: "❌ No liquidity" });
-      continue;
-    }
-
-    // ✅ Always use 0n so Uniswap simulates the full pool range
+  for (const [fee] of Object.entries(POOLS)) {
     const out = await simulateWithQuoter({
       tokenIn: CBBTC,
       tokenOut: USDC,
       fee: Number(fee),
       amountIn: amountInWei,
-      sqrtPriceLimitX96: 0n,
+      sqrtPriceLimitX96: 0n, // safe default
     });
 
     if (out && out > 0n) {
-      results.push({
-        amount: amountInCBBTC,
-        pool: fee,
-        usdc: ethers.formatUnits(out, 6),
-      });
+      results.push({ amount: amountInCBBTC, pool: fee, usdc: ethers.formatUnits(out, 6) });
     } else {
       results.push({ amount: amountInCBBTC, pool: fee, usdc: "❌ Quote failed" });
     }
   }
 
-  // 👇 This gives you the nice side-by-side output
   console.table(results);
 }
 
 async function main() {
   console.log("\n🔍 Checking for Fee-Free Quotes across fee tiers 500 (0.05%) & 3000 (0.3%)...");
-
-  // Warm common ABIs once
-  await Promise.all([
-    fetchABI(FACTORY_ADDRESS),
-    fetchABI(QUOTER_ADDRESS),
-    ...Object.values(POOLS).map(addr => fetchABI(addr))
-  ]);
 
   const cbbtcAmounts = [0.002323, 0.0120323, 1.3233, 0.50012345, 2.12345678];
 
