@@ -140,6 +140,7 @@ async function checkFeeFreeRoute(amountIn) {
   const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
   const feeFreeRoutes = [];
   const feeTiers = [500, 3000]; // check both pools
+  const results = [];
 
   for (let fee of feeTiers) {
     console.log(`\n--- 🌊 Checking Pool Fee Tier: ${fee} ---`);
@@ -147,17 +148,24 @@ async function checkFeeFreeRoute(amountIn) {
       const poolAddress = await factory.getPool(USDC, CBBTC, fee);
       if (poolAddress === ethers.ZeroAddress) {
         console.log(`❌ No pool for fee tier ${fee}`);
+        results.push({ amount: amountIn, pool: fee, usdc: "❌ Pool not deployed" });
         continue;
       }
 
       const poolData = await checkPoolLiquidity(poolAddress);
-      if (!poolData || poolData.liquidity === 0) {
+      if (!poolData) {
+        results.push({ amount: amountIn, pool: fee, usdc: "⚠️ ABI unavailable" });
+        continue;
+      }
+      if (poolData.liquidity === 0n) {
         console.log(`❌ Skipping fee ${fee}: no liquidity`);
+        results.push({ amount: amountIn, pool: fee, usdc: "❌ No liquidity" });
         continue;
       }
 
       const tickSpacing = Number(poolData.tickSpacing);
       const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+      let bestQuote = null;
 
       // Test 3 ticks around base
       for (let i = 0; i < 3; i++) {
@@ -175,10 +183,12 @@ async function checkFeeFreeRoute(amountIn) {
           });
 
           if (simulation && simulation > 0n) {
-            console.log(
-              `✅ Pool ${fee}: Tick ${testTick} → ${ethers.formatUnits(simulation, 6)} USDC`
-            );
+            const formatted = ethers.formatUnits(simulation, 6);
+            console.log(`✅ Pool ${fee}: Tick ${testTick} → ${formatted} USDC`);
             feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData, tick: testTick });
+
+            // keep the last non-zero simulation for table summary
+            bestQuote = formatted;
           } else {
             console.log(`❌ Pool ${fee}: Tick ${testTick} returned zero or failed`);
           }
@@ -186,10 +196,18 @@ async function checkFeeFreeRoute(amountIn) {
           console.warn(`⚠️ Pool ${fee}: skip tick ${testTick} → ${err.message}`);
         }
       }
+
+      // if we got any valid quote, add to table
+      results.push({ amount: amountIn, pool: fee, usdc: bestQuote ?? "❌ Quote failed" });
+
     } catch (err) {
       console.warn(`⚠️ Fee tier ${fee} skipped: ${err.message}`);
+      results.push({ amount: amountIn, pool: fee, usdc: "⚠️ Factory error" });
     }
   }
+
+  // 📊 side-by-side summary
+  console.table(results);
 
   return feeFreeRoutes;
 }
