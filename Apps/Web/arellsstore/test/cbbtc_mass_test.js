@@ -389,21 +389,27 @@ async function quotePoolsForAmount(amountInCBBTC) {
       continue;
     }
 
+    // ✅ Always use 0n so Uniswap simulates the full pool range
     const out = await simulateWithQuoter({
       tokenIn: CBBTC,
       tokenOut: USDC,
       fee: Number(fee),
       amountIn: amountInWei,
-      sqrtPriceLimitX96: 0n, // straight quote
+      sqrtPriceLimitX96: 0n,
     });
 
     if (out && out > 0n) {
-      results.push({ amount: amountInCBBTC, pool: fee, usdc: ethers.formatUnits(out, 6) });
+      results.push({
+        amount: amountInCBBTC,
+        pool: fee,
+        usdc: ethers.formatUnits(out, 6),
+      });
     } else {
       results.push({ amount: amountInCBBTC, pool: fee, usdc: "❌ Quote failed" });
     }
   }
 
+  // 👇 This gives you the nice side-by-side output
   console.table(results);
 }
 
@@ -423,9 +429,9 @@ async function main() {
     console.log(`💰 Checking amount: ${amount} CBBTC`);
     console.log(`==============================`);
 
-    await quotePoolsForAmount(amount); // 👈 side-by-side summary
+    await quotePoolsForAmount(amount);
 
-    const routes = await checkFeeFreeRoute(amount); // 👈 optional: keep detailed tick logs
+    const routes = await checkFeeFreeRoute(amount); 
     if (routes.length === 0) {
       console.log(`❌ No valid quotes found for ${amount} CBBTC at either fee tier.`);
     } else {
