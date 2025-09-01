@@ -562,4 +562,4 @@ async function main() {
 
 main().catch(console.error);
 
-//to test run: yarn hardhat run src/context/MASS/cbbtc/cbbtc_mass.js --network base
+//to test run: yarn hardhat run **insert-file-route-here** --network base
