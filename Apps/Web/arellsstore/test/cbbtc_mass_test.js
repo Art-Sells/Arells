@@ -14,15 +14,17 @@ const POOLS = {
   3000: "0xeC558e484cC9f2210714E345298fdc53B253c27D",
 };
 
-// ✅ Uniswap Contract Addresses
+// Contract Addresses
 const QUOTER_ADDRESS = "0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a";
 const FACTORY_ADDRESS = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
+const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
 
-// ✅ Token Addresses
+
+// Token Addresses
 const USDC = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
-// ✅ Set Up Ethereum Provider & Wallet
+// Set Up Ethereum Provider & Wallet
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 console.log(`✅ Using Test Wallet: ${userWallet.address}`);
@@ -77,43 +79,35 @@ async function fetchABI(contractAddress) {
   }
 }
 
-async function getPoolAddress() {
-    const factoryABI = await fetchABI(FACTORY_ADDRESS);
-    if (!factoryABI) return null;
-
-    const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-    const feeTiers = [500];
-
-    for (let fee of feeTiers) {
-        try {
-            const poolAddress = await factory.getPool(USDC, CBBTC, fee);
-            if (poolAddress !== ethers.ZeroAddress) {
-                console.log(`✅ Found Pool for fee tier ${fee}: ${poolAddress}`);
-                return { poolAddress, fee };
-            }
-        } catch (error) {
-            console.warn(`⚠️ Failed to get pool for fee tier ${fee}: ${error.message}`);
-        }
-    }
-
-    console.error("❌ No Uniswap V3 Pool found for USDC-CBBTC.");
-    return null;
-}
-
 async function checkPoolLiquidity(poolAddress) {
   const poolABI = await fetchABI(poolAddress);
   if (!poolABI) return null;
+
   const pool = new ethers.Contract(poolAddress, poolABI, provider);
+
   try {
-    const slot0 = await pool.slot0();
-    const liquidity = await pool.liquidity();
+    const slot0       = await pool.slot0();
     const tickSpacing = await pool.tickSpacing();
+
+    // ✅ Fetch **CBBTC balance** held in this pool contract
+    const cbbtcContract = new ethers.Contract(CBBTC, [
+      "function balanceOf(address) view returns (uint256)"
+    ], provider);
+
+    const cbbtcBalance = await cbbtcContract.balanceOf(poolAddress);
+
     console.log("\n🔍 Pool Liquidity Data:");
     console.log(`   - sqrtPriceX96: ${slot0[0]}`);
     console.log(`   - Current Tick: ${slot0[1]}`);
-    console.log(`   - Liquidity: ${liquidity}`);
+    console.log(`   - CBBTC Liquidity (actual token balance): ${ethers.formatUnits(cbbtcBalance, 8)} CBBTC`);
     console.log(`   - Tick Spacing: ${tickSpacing}`);
-    return { liquidity, sqrtPriceX96: slot0[0], tick: slot0[1], tickSpacing };
+
+    return {
+      cbbtcLiquidity: cbbtcBalance,  // raw BigInt
+      sqrtPriceX96: slot0[0],
+      tick: slot0[1],
+      tickSpacing
+    };
   } catch (error) {
     console.error("❌ Failed to fetch liquidity:", error.message);
     return null;
@@ -142,7 +136,6 @@ async function simulateWithQuoter(params) {
     });
 
     const [amountOut] = iface.decodeFunctionResult("quoteExactInputSingle", result);
-    console.log(`🔁 Simulated amountOut: ${ethers.formatUnits(amountOut, 6)} USDC`);
     return amountOut;
   } catch (err) {
     // console.warn("⚠️ QuoterV2 simulation failed:", err.reason || err.message || err);
@@ -150,7 +143,24 @@ async function simulateWithQuoter(params) {
   }
 }
 
+function decodeSqrtPrice(sqrtPriceX96) {
+  // Convert to bigint if not already
+  const sqrt = BigInt(sqrtPriceX96);
 
+  // (sqrtPriceX96^2) / 2^192
+  const numerator   = sqrt * sqrt;
+  const denominator = 1n << 192n;
+  const rawPrice    = Number(numerator) / Number(denominator);
+
+  // Token decimals
+  const usdcDecimals  = 6;
+  const cbbtcDecimals = 8;
+
+  // Flip to USDC per CBBTC and adjust decimals
+  const adjustedPrice = (1 / rawPrice) * (10 ** (cbbtcDecimals - usdcDecimals));
+
+  return adjustedPrice;
+}
 
 async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
@@ -184,6 +194,15 @@ async function checkFeeFreeRoute(amountIn) {
         continue;
       }
 
+      try {
+        const decodedPrice = decodeSqrtPrice(poolData.sqrtPriceX96);
+        console.log(`💵 Decoded price (fee ${fee}): ${decodedPrice.toLocaleString()} USDC/CBBTC`);
+      } catch (e) {
+        console.warn(`⚠️ Failed to decode sqrtPrice for fee ${fee}: ${e.message}`);
+      }
+
+      console.log(`\n--- 🐝 LPP v1 Quoting 🐝 ---`);
+
       const tickSpacing = Number(poolData.tickSpacing);
       const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
       let bestQuote = null;
@@ -211,14 +230,13 @@ async function checkFeeFreeRoute(amountIn) {
             // keep the last non-zero simulation for table summary
             bestQuote = formatted;
           } else {
-            console.log(`❌ Pool ${fee}: Tick ${testTick} returned zero or failed`);
+            console.log(`⚠️ Skipping Pool ${fee}: Tick ${testTick} returned zero or failed`);
           }
         } catch (err) {
           console.warn(`⚠️ Pool ${fee}: skip tick ${testTick} → ${err.message}`);
         }
       }
 
-      // if we got any valid quote, add to table
       results.push({ amount: amountIn, pool: fee, usdc: bestQuote ?? "❌ Quote failed" });
 
     } catch (err) {
@@ -241,36 +259,6 @@ async function checkCBBTCBalance() {
   const balance = await proxyCBBTCContract.balanceOf(userWallet.address);
   console.log(`💰 CBBTC Balance: ${ethers.formatUnits(balance, 8)} CBBTC`);
   return balance;
-}
-
-async function getBalances() {
-  const usdcBalance = await USDCContract.balanceOf(userWallet.address);
-  const cbbtcBalance = await checkCBBTCBalance();
-  return {
-    usdc: ethers.formatUnits(usdcBalance, 6),
-    cbbtc: ethers.formatUnits(cbbtcBalance, 8)
-  };
-}
-
-async function getCurrentPoolPrice(poolAddress) {
-  const poolABI = await fetchABI(poolAddress);
-  if (!poolABI) throw new Error("Pool ABI unavailable");
-  
-  const pool = new ethers.Contract(poolAddress, poolABI, provider);
-  const slot0 = await pool.slot0();
-  const sqrtPriceX96 = BigInt(slot0[0]);
-
-  // Decode sqrtPriceX96 into raw price (Q64.96 → Q192)
-  const numerator = sqrtPriceX96 * sqrtPriceX96;
-  const denominator = 1n << 192n;
-  const rawPrice = Number(numerator) / Number(denominator);
-
-  // Adjust for token decimals (USDC: 6, CBBTC: 8)
-  const usdcDecimals = 6;
-  const cbbtcDecimals = 8;
-  const adjustedPrice = (1 / rawPrice) * (10 ** (cbbtcDecimals - usdcDecimals));
-
-  return adjustedPrice;
 }
 
 async function approveCBBTC(amountIn) {
@@ -315,139 +303,6 @@ async function checkETHBalance() {
   return true;
 }
 
-export async function executeSupplication(amountIn) {
-  console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
-
-  // 1) Balance & gas checks
-  const balance = await checkCBBTCBalance();
-  if (balance < ethers.parseUnits(amountIn.toString(), 8)) {
-    console.error(`❌ ERROR: Insufficient CBBTC balance!`);
-    return;
-  }
-  if (!(await checkETHBalance())) return;
-
-  // 2) Compare pool prices
-  const poolPrices = [];
-  for (const [fee, poolAddress] of Object.entries(POOLS)) {
-    try {
-      const price = await getCurrentPoolPrice(poolAddress);
-      poolPrices.push({ fee: Number(fee), poolAddress, price });
-    } catch (err) {
-      console.warn(`⚠️ Could not decode price for pool ${fee}: ${err.message}`);
-    }
-  }
-
-  if (poolPrices.length === 0) {
-    console.error("❌ No pools available to compare prices.");
-    return;
-  }
-
-  poolPrices.sort((a, b) => b.price - a.price);
-  const chosenPool = poolPrices[0];
-
-  console.log(`✅ Highest price pool selected: fee ${chosenPool.fee}`);
-  console.log(`💵 Price: ${chosenPool.price.toLocaleString()} USDC per CBBTC`);
-  console.log(`📍 Pool Address: ${chosenPool.poolAddress}`);
-
-  // 3) Get fee-free routes and filter only those for the chosen pool
-  const allRoutes = await checkFeeFreeRoute(amountIn);
-  if (!allRoutes || allRoutes.length === 0) {
-    console.error("❌ No fee-free routes available.");
-    return;
-  }
-
-  const chosenRoutes = allRoutes.filter(r =>
-    Number(r.fee) === chosenPool.fee &&
-    r.poolAddress.toLowerCase() === chosenPool.poolAddress.toLowerCase()
-  );
-
-  if (chosenRoutes.length === 0) {
-    console.error("❌ No fee-free routes on the highest-price pool.");
-    return;
-  }
-
-  console.log(`🔢 Found ${chosenRoutes.length} fee-free tick(s) on the highest-price pool.`);
-
-  // 4) Approve CBBTC
-  await approveCBBTC(amountIn);
-
-  // 5) Attempt swap using the chosen pool’s routes
-  let lastError = null;
-  const before = await checkCBBTCBalance();
-
-  for (const route of chosenRoutes) {
-    const { fee, tick, poolData } = route;
-
-    const tickSpacing = Number(poolData.tickSpacing);
-    const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
-
-    for (let i = 0; i < 3; i++) {
-      const testTick = baseTick + i * tickSpacing;
-      console.log(`🔁 Trying fee ${fee} at tick ${testTick}`);
-
-      let limitX96;
-      try {
-        limitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-      } catch (err) {
-        console.warn(`⚠️ Failed sqrtPriceLimitX96 for tick ${testTick}: ${err.message}`);
-        lastError = err;
-        continue;
-      }
-
-      const params = {
-        tokenIn: CBBTC,
-        tokenOut: USDC,
-        fee,
-        recipient: userWallet.address,
-        deadline: Math.floor(Date.now() / 1000) + 600,
-        amountIn: ethers.parseUnits(amountIn.toString(), 8),
-        amountOutMinimum: ethers.parseUnits("0.01", 6),
-        sqrtPriceLimitX96: limitX96,
-      };
-
-      console.log("🔍 Attempting supplication with params:", params);
-
-      const swapRouterABI = await fetchABI(swapRouterAddress);
-      if (!swapRouterABI) {
-        console.error("❌ Swap router ABI unavailable.");
-        return;
-      }
-      const iface = new ethers.Interface(swapRouterABI);
-      const functionData = iface.encodeFunctionData("exactInputSingle", [params]);
-
-      try {
-        const feeData = await provider.getFeeData();
-        const tx = await userWallet.sendTransaction({
-          to: swapRouterAddress,
-          data: functionData,
-          gasLimit: 300000,
-          maxFeePerGas: feeData.maxFeePerGas,
-          maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
-        });
-
-        console.log("⏳ Waiting for confirmation...");
-        const receipt = await tx.wait();
-        console.log("✅ Supplication Transaction Confirmed:");
-        console.log(`🔗 Tx Hash: ${receipt.hash}`);
-
-        const after = await checkCBBTCBalance();
-        const used = before - after;
-        console.log(`⚠️ Actually used: ${ethers.formatUnits(used, 8)} CBBTC`);
-        return;
-      } catch (err) {
-        console.error(`❌ Supplication failed at tick ${testTick}:`, err.reason || err.message || err);
-        lastError = err;
-      }
-    }
-  }
-
-  console.error("❌ All attempts on the highest-price pool failed.");
-  throw lastError;
-}
-
-
-const swapRouterAddress = "0x2626664c2603336E57B271c5C0b26F421741e481";
-
 async function quotePoolsForAmount(amountInCBBTC) {
   const amountInWei = ethers.parseUnits(amountInCBBTC.toString(), 8);
   const results = [];
@@ -471,6 +326,136 @@ async function quotePoolsForAmount(amountInCBBTC) {
   console.table(results);
 }
 
+// LPP (Liquidity Pool Polination) v1 logic below
+async function LPPv1(amountIn) {
+  const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
+  const routes = await checkFeeFreeRoute(amountIn);
+  if (!routes || routes.length === 0) return [];
+
+  const scored = [];
+  for (const r of routes) {
+    const out = await simulateWithQuoter({
+      tokenIn: CBBTC,
+      tokenOut: USDC,
+      fee: r.fee,
+      amountIn: amountInWei,
+      sqrtPriceLimitX96: r.sqrtPriceLimitX96, // match how we'll actually swap
+    });
+    if (out && out > 0n) {
+      scored.push({ ...r, amountOut: out });
+    }
+  }
+
+  console.log(`\n--- 🐝 LPP v1 Sorting 🐝 ---`);
+  scored.sort((a, b) => (a.amountOut === b.amountOut ? 0 : (a.amountOut < b.amountOut ? 1 : -1)));
+
+
+  console.table(
+    scored.map(s => ({
+      fee: s.fee,
+      tick: s.tick,
+      usdcOut: ethers.formatUnits(s.amountOut, 6),
+      pool: s.poolAddress,
+    }))
+  );
+
+  return scored;
+}
+// LPP (Liquidity Pool Polination) v1 logic above
+
+
+
+
+export async function executeSupplication(amountIn) {
+  console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
+
+  // 1) Balance & gas checks
+  const bal = await checkCBBTCBalance();
+  if (bal < ethers.parseUnits(amountIn.toString(), 8)) {
+    console.error(`❌ ERROR: Insufficient CBBTC balance!`);
+    return;
+  }
+  if (!(await checkETHBalance())) return;
+
+  // 2) LPP
+  const lpp = await LPPv1(amountIn);
+  if (lpp.length === 0) {
+    console.error("❌ LPP quote failed for this amount.");
+    return;
+  }
+
+  // 3) Approve (once) before attempting swaps
+  await approveCBBTC(amountIn);
+
+  // 4) Try routes from best to worst (highest USDC first)
+  const before = await checkCBBTCBalance();
+  const swapRouterABI = await fetchABI(swapRouterAddress);
+  if (!swapRouterABI) {
+    console.error("❌ Swap router ABI unavailable.");
+    return;
+  }
+  const iface = new ethers.Interface(swapRouterABI);
+
+  for (const route of lpp) {
+    const { fee, sqrtPriceLimitX96, tick } = route;
+
+    // dynamic minOut: 0.5% slippage guard (and never below 0.01 USDC)
+    const minOut = (() => {
+      const calc = (route.amountOut * 995n) / 1000n;
+      const floor = ethers.parseUnits("0.01", 6);
+      return calc > floor ? calc : floor;
+    })();
+
+    const params = {
+      tokenIn: CBBTC,
+      tokenOut: USDC,
+      fee,
+      recipient: userWallet.address,
+      deadline: Math.floor(Date.now() / 1000) + 600,
+      amountIn: ethers.parseUnits(amountIn.toString(), 8),
+      amountOutMinimum: minOut,
+      sqrtPriceLimitX96, // exactly what we quoted with
+    };
+
+    console.log(
+      `🔁 Trying best route: fee ${fee}, tick ${tick}, minOut ${ethers.formatUnits(minOut, 6)} USDC`
+    );
+    // console.log("🔍 Params:", params);
+
+    const data = iface.encodeFunctionData("exactInputSingle", [params]);
+
+    try {
+      const feeData = await provider.getFeeData();
+      const tx = await userWallet.sendTransaction({
+        to: swapRouterAddress,
+        data,
+        gasLimit: 300000,
+        maxFeePerGas: feeData.maxFeePerGas,
+        maxPriorityFeePerGas: feeData.maxPriorityFeePerGas ?? ethers.parseUnits("1", "gwei"),
+      });
+
+      console.log("⏳ Waiting for confirmation...");
+      const receipt = await tx.wait();
+      console.log("✅ Swap Confirmed!");
+      console.log(`🔗 Tx Hash: ${receipt.hash}`);
+
+      const after = await checkCBBTCBalance();
+      const used = before - after;
+      console.log(`⚠️ Actually used: ${ethers.formatUnits(used, 8)} CBBTC`);
+      return;
+    } catch (err) {
+      console.error(
+        `❌ Route failed (fee ${fee}, tick ${tick}):`,
+        err.reason || err.message || err
+      );
+    }
+  }
+
+  console.error("❌ All fee-free routes (by highest Quoter amount) failed.");
+}
+
+
+
 async function main() {
   // console.log("\n🔍 Checking for Fee-Free Quotes across fee tiers 500 (0.05%) & 3000 (0.3%)...");
 
@@ -491,8 +476,15 @@ async function main() {
   //   }
   // }
 
+  // await checkFeeFreeRoute(0.0000358);
+
   await executeSupplication(0.0000358);
 }
+
+main().catch((err) => {
+  console.error("❌ Script failed:", err);
+  process.exitCode = 1;
+});
 
 //to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
 

@@ -5,13 +5,12 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- integrate other v3 pool and rename functions to LPP
-- - Complete LPP v1 Testing
+- Test MASS APIs (then update MASS github)
 - Change HPM acronyms to anticipate losses.
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.
--  ***importing USDC into the system (first), $4k max per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this]***
+- ***importing USDC into the system (first), $4k~ (do more research on this) max per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this]***
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - Import wallet (create import wallet)
 - MASS wallet (create MASS wallet)
@@ -23,12 +22,12 @@
 - - Only change MASS booleans info if transactions are successful, keep trying transaction until successful, if transaction reverts, try transaction again (break transaction in .js files to test this).
 - - replace cVactTa and acVactTas with cVactDat and acVactDat (to USD total)
 - - Test releaseMASS and holdMASS booleans (releases all of the VatopGroups (not individuals only))
-- - - Test release MASS 5-10 minutes after also (see if supplications will run with latest bitcoin prices and if vatopGroups will update accordingly check wallet)
+- - - Test release MASS (create lever to change frequency (minutes, days)) 5-10 minutes after also (see if supplications will run with latest bitcoin prices and if vatopGroups will update accordingly check wallet)
 - - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 - - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
 - Incorporate Sell/Withdraw (look at Arells 1.5)
 - Can only Dcd PK with P (from nv)… Do extensive research on this, see if can cd and dcd from json and without P.
-- Integrate import CAP to STOP if main Wallet is drained too quickly, if not, set lever to increase
+- Set up API (system) to log the date and times of Decoded price that was used of each pool and usdcOut/cbbtcOut from LPP to capture changes (offline/online versions) (including AUM from first wallet into the 2nd)
 
 ### Online:
 - Establish background useEffects order
@@ -44,6 +43,7 @@
 - - DYNAMODB_TABLE_NAME	ArellsUsers
 - - - copy/paste from old TABLE_NAME: ArellsUsers
 - Add Firewall to Testnet
+- Run MASS for a week [hourly supplications] (with small amounts multiple accounts) and create chart to test system.
 
 Arells Wallet and change all Variables
 - Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 1 week.

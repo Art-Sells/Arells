@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { cbBitcoinAmount, massAddress, massPrivateKey, cpVact } = req.body;
+  const { cbBitcoinAmount, massAddress, massPrivateKey, cVactDat } = req.body;
   
   if (
     typeof cbBitcoinAmount !== 'number' ||
@@ -31,8 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
-  if (!cpVact || typeof cpVact !== "number" || cpVact <= 0) {
-    return res.status(400).json({ error: "Missing or invalid cpVact." });
+  if (!cVactDat || typeof cVactDat !== "number" || cVactDat <= 0) {
+    return res.status(400).json({ error: "Missing or invalid cVactDat." });
   }
 
   try {
@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
 
     // Step 2: Execute the Uniswap V3 swap (fee-free route) from CBBTC to USDC
-    await executeSupplication(Number(cbBitcoinAmount.toFixed(8)), massPrivateKey, cpVact);
+    await executeSupplication(Number(cbBitcoinAmount.toFixed(8)), cVactDat, massPrivateKey,);
 
     return res.status(200).json({ message: `Supplication executed: ${cbBitcoinAmount} CBBTC → USDC` });
   } catch (error: any) {
