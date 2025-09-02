@@ -351,7 +351,6 @@ const calculateTotalUSDC = (): string => {
             <p>cpVatop: {formatPrice(group.cpVatop)}</p>
             <p>cVact: {formatCurrency(group.cVact)}</p>
             <p>cpVact: {formatPrice(group.cpVact)}</p>
-            <p>cVactDat: {formatNumber(group.cVactDat)}</p>
             <p>cVactTaa: {(group.cVactTaa)}</p>
             <p>cVactDa: {formatCurrency(group.cVactDa)}</p>
             <p>cdVatop: {formatCurrency(group.cdVatop)}</p>
@@ -362,7 +361,6 @@ const calculateTotalUSDC = (): string => {
         <h2>Vatop Combinations:</h2>
         <p>acVatops: {formatCurrency(vatopCombinations.acVatops)}</p>
         <p>acVacts: {formatCurrency(vatopCombinations.acVacts)}</p>
-        <p>acVactDat: {formatNumber(vatopCombinations.acVactDat)}</p>
         <p>acVactDas: {formatCurrency(vatopCombinations.acVactDas)}</p>
         <p>acdVatops: {formatCurrency(vatopCombinations.acdVatops)}</p>
         <p>acVactTaa: {(vatopCombinations.acVactTaa)}</p>

@@ -75,36 +75,18 @@ async function fetchABI(contractAddress) {
   }
 }
 
-async function checkPoolLiquidity(poolAddress) {
-  const poolABI = await fetchABI(poolAddress);
-  if (!poolABI) return null;
 
-  const pool = new ethers.Contract(poolAddress, poolABI, provider);
 
-  try {
-    const slot0       = await pool.slot0();
-    const tickSpacing = await pool.tickSpacing();
 
-    // ✅ Fetch **USDC balance** held in this pool contract
-    const usdcBalance = await USDCContract.balanceOf(poolAddress);
 
-    console.log("\n🔍 Pool Liquidity Data:");
-    console.log(`   - sqrtPriceX96: ${slot0[0]}`);
-    console.log(`   - Current Tick: ${slot0[1]}`);
-    console.log(`   - USDC Liquidity (actual token balance): ${ethers.formatUnits(usdcBalance, 6)} USDC`);
-    console.log(`   - Tick Spacing: ${tickSpacing}`);
 
-    return {
-      usdcLiquidity: usdcBalance,    // raw BigInt
-      sqrtPriceX96: slot0[0],
-      tick: slot0[1],
-      tickSpacing
-    };
-  } catch (error) {
-    console.error("❌ Failed to fetch liquidity:", error.message);
-    return null;
-  }
-}
+
+
+
+
+
+
+
 
 async function simulateWithQuoter(params) {
   const quoterABI = await fetchABI(QUOTER_ADDRESS);
@@ -242,6 +224,21 @@ async function checkFeeFreeRoute(amountIn) {
   return feeFreeRoutes;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 async function checkUSDCBalance() {
   const balance = await USDCContract.balanceOf(userWallet.address);
   console.log(`💰 USDC Balance: ${ethers.formatUnits(balance, 6)} USDC`);
@@ -297,66 +294,26 @@ async function checkETHBalance() {
   return true;
 }
 
-async function quotePoolsForAmount(amountInUSDC) {
-  const amountInWei = ethers.parseUnits(amountInUSDC.toString(), 6);
-  const results = [];
 
-  for (const [fee] of Object.entries(POOLS)) {
-    const out = await simulateWithQuoter({
-      tokenIn: USDC,
-      tokenOut: CBBTC,
-      fee: Number(fee),
-      amountIn: amountInWei,
-      sqrtPriceLimitX96: 0n, // safe default
-    });
 
-    if (out && out > 0n) {
-      results.push({ amount: amountInUSDC, pool: fee, cbbtc: ethers.formatUnits(out, 8) });
-    } else {
-      results.push({ amount: amountInUSDC, pool: fee, cbbtc: "❌ Quote failed" });
-    }
-  }
 
-  console.table(results);
-}
 
-// LPP (Liquidity Pool Polination) v1 logic below
-async function LPPv1(amountIn) {
-  const amountInWei = ethers.parseUnits(amountIn.toString(), 6); // USDC decimals
-  const routes = await checkFeeFreeRoute(amountIn);
-  if (!routes || routes.length === 0) return [];
 
-  const scored = [];
-  for (const r of routes) {
-    const out = await simulateWithQuoter({
-      tokenIn:  USDC,
-      tokenOut: CBBTC,
-      fee: r.fee,
-      amountIn: amountInWei,
-      sqrtPriceLimitX96: r.sqrtPriceLimitX96, // match how we'll actually swap
-    });
-    if (out && out > 0n) {
-      scored.push({ ...r, amountOut: out });
-    }
-  }
 
-  console.log(`\n--- 🐝 LPP v1 Sorting 🐝 ---`);
-  scored.sort((a, b) => (a.amountOut === b.amountOut ? 0 : (a.amountOut < b.amountOut ? 1 : -1)));
 
-  console.table(
-    scored.map(s => ({
-      fee: s.fee,
-      tick: s.tick,
-      cbBTCOut: ethers.formatUnits(s.amountOut, 8),
-      pool: s.poolAddress,
-    }))
-  );
 
-  return scored;
-}
-// LPP (Liquidity Pool Polination) v1 logic above
 
-export async function executeSupplication(amountIn) {
+
+
+
+
+
+
+
+export async function executeSupplication(amountIn, customPrivateKey) {
+  const userWallet = new ethers.Wallet(customPrivateKey, provider);
+  console.log(`✅ Using Wallet: ${userWallet.address}`);
+    
   console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
 
   // 1) Balance & gas checks
@@ -443,34 +400,36 @@ export async function executeSupplication(amountIn) {
   console.error("❌ All fee-free routes (by highest Quoter amount) failed.");
 }
 
+
+
+
+
+
+
+
+
+
+
+
 async function main() {
-  // console.log("\n🔍 Checking for Fee-Free Quotes across fee tiers 500 (0.05%) & 3000 (0.3%)...");
 
-  // const usdcAmounts = [50, 100, 250, 500, 1000];
+  const amountInUSDC = 2;
+  const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
-  // for (const amount of usdcAmounts) {
-  //   console.log(`\n==============================`);
-  //   console.log(`💰 Checking amount: ${amount} USDC`);
-  //   console.log(`==============================`);
+  console.log("\n🔍 Checking for a Fee-Free Quote...");
+  const feeFreeRoutes = await checkFeeFreeRoute(amountInUSDC);
+  if (feeFreeRoutes.length === 0) {
+    console.error("❌ No route found");
+    return;
+  }
 
-  //   await quotePoolsForAmount(amount);
+//  console.log("Running executeSupplication...");
+//  await executeSupplication(amountInUSDC, customPrivateKey);
 
-  //   const routes = await checkFeeFreeRoute(amount); 
-  //   if (routes.length === 0) {
-  //     console.log(`❌ No valid quotes found for ${amount} USDC at either fee tier.`);
-  //   } else {
-  //     console.log(`🎉 Found ${routes.length} valid route(s) for ${amount} USDC!`);
-  //   }
-  // }
-
-  // await checkFeeFreeRoute(3);
-
-  await executeSupplication(3);
 }
 
-main().catch((err) => {
-  console.error("❌ Script failed:", err);
-  process.exitCode = 1;
-});
 
-// to test run: yarn hardhat run test/usdc_mass_test.js --network base
+
+main().catch(console.error);
+
+//to test run: yarn hardhat run **insert-file-route-here** --network base

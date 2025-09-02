@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import "dotenv/config";
 import { ethers } from "ethers";
-import { executeSupplication } from "../../context/MASS/cbbtc/usdc_mass"; 
+import { executeSupplication } from "../../context/LPP/cbbtc/usdc_lpp"; 
 
 const BASE_RPC_URL = process.env.BASE_RPC_URL!;
 const TRANSFER_FEE_WALLET_PRIVATE_KEY = process.env.ARELLS_PRIVATE_KEY!;
@@ -22,10 +22,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
-  if (!cpVact || typeof cpVact !== "number" || cpVact <= 0) {
-    return res.status(400).json({ error: "Missing or invalid cpVact." });
-  }
-
   try {
     console.log("\n🚀 Starting USDC to CBBTC Supplication...");
 
@@ -38,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: "Invalid usdcAmount" });
     }
     
-    await executeSupplication(usdcAmount, massPrivateKey, cpVact);
+    await executeSupplication(usdcAmount, massPrivateKey);
 
     return res.status(200).json({ message: `Supplication executed for ${usdcAmount} USDC` });
   } catch (error: any) {

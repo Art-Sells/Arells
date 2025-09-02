@@ -326,7 +326,6 @@ async function quotePoolsForAmount(amountInCBBTC) {
   console.table(results);
 }
 
-// LPP (Liquidity Pool Polination) v1 logic below
 async function LPPv1(amountIn) {
   const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
   const routes = await checkFeeFreeRoute(amountIn);
@@ -361,7 +360,6 @@ async function LPPv1(amountIn) {
 
   return scored;
 }
-// LPP (Liquidity Pool Polination) v1 logic above
 
 
 
@@ -486,6 +484,6 @@ main().catch((err) => {
   process.exitCode = 1;
 });
 
-//to test run: yarn hardhat run test/cbbtc_mass_test.js --network base
+//to test run: yarn hardhat run test/cbbtc_lpp_test.js --network base
 
 

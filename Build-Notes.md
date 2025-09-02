@@ -6,7 +6,10 @@
 
 ## Test
 - Test MASS APIs (then update MASS github)
-- Change HPM acronyms to anticipate losses.
+- Change HPM acronyms to anticipate losses
+- - If Arells User (USDC) address !== 0, then create a new MASS address and upload up-to $4k into the new MASS address (that creates a new VatopGroup), then use to supplicate into cbBTC from lowest pool price immediately
+- - VatopGroups each have an individual MASS address & key
+- - - cVactTaa = cbBTC MASS address amount, cVactDa = USDC MASS address amount
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.
@@ -54,6 +57,7 @@ Arells Wallet and change all Variables
 ## After Test
 - Remove P/K & P/K Test from e en vee (check decoding proces (in console.logs) for each individual account to prevent external P/K decoding (MASSTester.tsx and HPMTester.tsx?))
 - CoinGecko API for Chart
+- Upload new HPM/MASSArchitecture to GitHub
 
 ### Account
 - "Renders bear markets obsolete." <- and HOME

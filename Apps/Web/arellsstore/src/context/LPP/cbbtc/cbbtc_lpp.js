@@ -176,20 +176,16 @@ function decodeSqrtPrice(sqrtPriceX96) {
   return adjustedPrice;
 }
 
-async function checkFeeFreeRoute(amountInCBBTC, cVactDat) {
-  console.log(`\n🚀 Checking Fee-Free Routes for ${amountInCBBTC} CBBTC → USDC (sweep amountOut ≥ ${cVactDat})`);
+async function checkFeeFreeRoute(amountIn) {
+  console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} CBBTC → USDC`);
 
   const factoryABI = await fetchABI(FACTORY_ADDRESS);
   if (!factoryABI) return [];
 
-  const factory  = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
-  const feeTiers = [500, 3000];
-  const routes   = [];
-  const results  = [];
-
-  const amountInWei = ethers.parseUnits(amountInCBBTC.toString(), 8);
-  const stepUSDC    = 0.10;   // sweep increment in USDC
-  const attempts    = 50;     // max sweep steps
+  const factory = new ethers.Contract(FACTORY_ADDRESS, factoryABI, provider);
+  const feeFreeRoutes = [];
+  const feeTiers = [500, 3000]; // check both pools
+  const results = [];
 
   for (let fee of feeTiers) {
     console.log(`\n--- 🌊 Checking Pool Fee Tier: ${fee} ---`);
@@ -197,89 +193,76 @@ async function checkFeeFreeRoute(amountInCBBTC, cVactDat) {
       const poolAddress = await factory.getPool(USDC, CBBTC, fee);
       if (poolAddress === ethers.ZeroAddress) {
         console.log(`❌ No pool for fee tier ${fee}`);
-        results.push({ target: cVactDat, pool: fee, usdc: "❌ Pool not deployed" });
+        results.push({ amount: amountIn, pool: fee, usdc: "❌ Pool not deployed" });
         continue;
       }
 
       const poolData = await checkPoolLiquidity(poolAddress);
-      if (!poolData || poolData.liquidity === 0n) {
+      if (!poolData) {
+        results.push({ amount: amountIn, pool: fee, usdc: "⚠️ ABI unavailable" });
+        continue;
+      }
+      if (poolData.liquidity === 0n) {
         console.log(`❌ Skipping fee ${fee}: no liquidity`);
-        results.push({ target: cVactDat, pool: fee, usdc: "❌ No liquidity" });
+        results.push({ amount: amountIn, pool: fee, usdc: "❌ No liquidity" });
         continue;
       }
 
-      // 🔹 still decode sqrtPrice like before
       try {
         const decodedPrice = decodeSqrtPrice(poolData.sqrtPriceX96);
         console.log(`💵 Decoded price (fee ${fee}): ${decodedPrice.toLocaleString()} USDC/CBBTC`);
       } catch (e) {
-        console.warn(`⚠️ Failed to decode sqrtPrice: ${e.message}`);
+        console.warn(`⚠️ Failed to decode sqrtPrice for fee ${fee}: ${e.message}`);
       }
+
+      console.log(`\n--- 🐝 LPP v1 Quoting 🐝 ---`);
 
       const tickSpacing = Number(poolData.tickSpacing);
-      const baseTick    = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+      const baseTick = Math.floor(Number(poolData.tick) / tickSpacing) * tickSpacing;
+      let bestQuote = null;
 
-      let bestForFee = null;
-
+      // Test 3 ticks around base
       for (let i = 0; i < 3; i++) {
         const testTick = baseTick + i * tickSpacing;
-        let sqrtPriceLimitX96;
         try {
-          sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
-        } catch {
-          continue;
-        }
+          const sqrtPriceLimitX96 = BigInt(TickMath.getSqrtRatioAtTick(testTick).toString());
+          const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
 
-        // 🔄 Sweep amountOut starting at cVactDat upward
-        for (let j = 0; j < attempts; j++) {
-          const targetOutUSDC = cVactDat + stepUSDC * j;
-          const outWei        = ethers.parseUnits(targetOutUSDC.toFixed(6), 6);
-
-          // quoteExactOutputSingle: how much CBBTC required for this USDC
-          const requiredIn = await simulateWithQuoter({
-            tokenIn:  CBBTC,
+          const simulation = await simulateWithQuoter({
+            tokenIn: CBBTC,
             tokenOut: USDC,
             fee,
-            amountOut: outWei,
+            amountIn: amountInWei,
             sqrtPriceLimitX96
           });
-          if (!requiredIn) continue;
 
-          if (requiredIn <= amountInWei) {
-            // valid match: amountOut ≥ cVactDat and within our budget
-            bestForFee = {
-              poolAddress,
-              fee,
-              tick: testTick,
-              sqrtPriceLimitX96,
-              amountOut: outWei,
-              amountIn: requiredIn
-            };
+          if (simulation && simulation > 0n) {
+            const formatted = ethers.formatUnits(simulation, 6);
+            console.log(`✅ Pool ${fee}: Tick ${testTick} → ${formatted} USDC`);
+            feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData, tick: testTick });
+
+            // keep the last non-zero simulation for table summary
+            bestQuote = formatted;
           } else {
-            // once required input exceeds budget, break
-            break;
+            console.log(`⚠️ Skipping Pool ${fee}: Tick ${testTick} returned zero or failed`);
           }
+        } catch (err) {
+          console.warn(`⚠️ Pool ${fee}: skip tick ${testTick} → ${err.message}`);
         }
       }
 
-      if (bestForFee) {
-        console.log(`✅ Fee ${fee} best: ${ethers.formatUnits(bestForFee.amountOut, 6)} USDC for ${ethers.formatUnits(bestForFee.amountIn, 8)} CBBTC`);
-        results.push({ target: cVactDat, pool: fee, usdc: ethers.formatUnits(bestForFee.amountOut, 6) });
-        routes.push(bestForFee);
-      } else {
-        console.warn(`⚠️ No valid match ≥ ${cVactDat} USDC within ${amountInCBBTC} CBBTC`);
-        results.push({ target: cVactDat, pool: fee, usdc: "❌ No match" });
-      }
+      results.push({ amount: amountIn, pool: fee, usdc: bestQuote ?? "❌ Quote failed" });
 
     } catch (err) {
       console.warn(`⚠️ Fee tier ${fee} skipped: ${err.message}`);
-      results.push({ target: cVactDat, pool: fee, usdc: "⚠️ Factory error" });
+      results.push({ amount: amountIn, pool: fee, usdc: "⚠️ Factory error" });
     }
   }
 
+  // 📊 side-by-side summary
   console.table(results);
-  routes.sort((a, b) => (a.amountOut > b.amountOut ? -1 : 1));
-  return routes;
+
+  return feeFreeRoutes;
 }
 
 
@@ -361,9 +344,9 @@ async function checkETHBalance() {
 
 
 // LPP (Liquidity Pool Polination) v1 logic below
-async function LPPv1(cVactTaa, cVactDat) {
-  const amountInWei = ethers.parseUnits(cVactTaa.toString(), 8);
-  const routes = await checkFeeFreeRoute(cVactTaa, cVactDat);
+async function LPPv1(amountIn) {
+  const amountInWei = ethers.parseUnits(amountIn.toString(), 8);
+  const routes = await checkFeeFreeRoute(amountIn);
   if (!routes || routes.length === 0) return [];
 
   const scored = [];
@@ -439,7 +422,7 @@ async function LPPv1(cVactTaa, cVactDat) {
 
 
 
-export async function executeSupplication(cVactTaa, cVactDat, customPrivateKey) {
+export async function executeSupplication(amountIn, customPrivateKey) {
   const userWallet = new ethers.Wallet(customPrivateKey, provider);
   console.log(`✅ Using Wallet: ${userWallet.address}`);
   
@@ -454,14 +437,14 @@ export async function executeSupplication(cVactTaa, cVactDat, customPrivateKey) 
   if (!(await checkETHBalance())) return;
 
   // 2) LPP
-  const lpp = await LPPv1(cVactTaa, cVactDat);
+  const lpp = await LPPv1(amountIn);
   if (lpp.length === 0) {
     console.error("❌ LPP quote failed for this amount.");
     return;
   }
 
   // 3) Approve (once) before attempting swaps
-  await approveCBBTC(cVactTaa);
+  await approveCBBTC(amountIn);
 
   // 4) Try routes from best to worst (highest USDC first)
   const before = await checkCBBTCBalance();
@@ -543,18 +526,17 @@ export async function executeSupplication(cVactTaa, cVactDat, customPrivateKey) 
 async function main() {
 
   const amountInCBBTC = 0.00002;
-  const cVactDat = 2.08;
   const customPrivateKey = process.env.PRIVATE_KEY_TEST;
 
   console.log("\n🔍 Checking for a Fee-Free Quote...");
-  const feeFreeRoutes = await checkFeeFreeRoute(amountInCBBTC, cVactDat);
+  const feeFreeRoutes = await checkFeeFreeRoute(amountInCBBTC);
   if (feeFreeRoutes.length === 0) {
     console.error("❌ No route found");
     return;
   }
 
 //  console.log("Running executeSupplication...");
-//  await executeSupplication(cVactTaa, cVactDat, customPrivateKey);
+//  await executeSupplication(amountInCBBTC, customPrivateKey);
 
 }
 

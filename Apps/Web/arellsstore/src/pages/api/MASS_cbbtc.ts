@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import "dotenv/config";
 import { ethers } from "ethers";
-import { executeSupplication } from "../../context/MASS/cbbtc/cbbtc_mass"; 
+import { executeSupplication } from "../../context/LPP/cbbtc/cbbtc_lpp"; 
 
 const BASE_RPC_URL = process.env.BASE_RPC_URL!;
 const TRANSFER_FEE_WALLET_PRIVATE_KEY = process.env.ARELLS_PRIVATE_KEY!;
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { cbBitcoinAmount, massAddress, massPrivateKey, cVactDat } = req.body;
+  const { cbBitcoinAmount, massAddress, massPrivateKey } = req.body;
   
   if (
     typeof cbBitcoinAmount !== 'number' ||
@@ -31,10 +31,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
-  if (!cVactDat || typeof cVactDat !== "number" || cVactDat <= 0) {
-    return res.status(400).json({ error: "Missing or invalid cVactDat." });
-  }
-
   try {
     console.log("\n🚀 Starting CBBTC → USDC Supplication...");
 
@@ -43,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`✅ Gas Fees Funded: ${fundingTxHash}`);
 
     // Step 2: Execute the Uniswap V3 swap (fee-free route) from CBBTC to USDC
-    await executeSupplication(Number(cbBitcoinAmount.toFixed(8)), cVactDat, massPrivateKey,);
+    await executeSupplication(Number(cbBitcoinAmount.toFixed(8)), massPrivateKey,);
 
     return res.status(200).json({ message: `Supplication executed: ${cbBitcoinAmount} CBBTC → USDC` });
   } catch (error: any) {
