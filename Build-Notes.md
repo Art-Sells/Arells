@@ -9,7 +9,7 @@
 - Change HPM acronyms to anticipate losses
 - - If Arells User (USDC) address !== 0, then create a new MASS address and upload up-to $4k into the new MASS address (that creates a new VatopGroup), then use to supplicate into cbBTC from lowest pool price immediately
 - - VatopGroups each have an individual MASS address & key
-- - - cVactTaa = cbBTC MASS address amount, cVactDa = USDC MASS address amount
+- - - in HPMarchitecture: cVactTaa = cbBTC MASS address amount, cVactDa = USDC MASS address amount
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.
