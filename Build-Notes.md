@@ -5,11 +5,18 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- Test MASS APIs (then update MASS github)
 - Change HPM acronyms to anticipate losses
+- - in HPMarchitecture & HPM Mechanics: 
+- - - cVactTaa = cbBTC MASS address amount, 
+- - - cVactDa = USDC MASS address amount,
+- - - cpVact = price of pool with best quote used to supplicate CBBTC into USDC
+- - - cVact = If cVact != 0, then = cVactDa, else cpVact / cVactTaa
+- - - cpVatop = price of pool with best quote used to supplicate USDC into CBBTC (never changes)
+- - - cVatop = amount of CBBTC purchased from quote / price of pool with best quote used (never changes)
+- - - - If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactTaa != 0, then create cpVatop/cVatop (per description).
 - - If Arells User (USDC) address !== 0, then create a new MASS address and upload up-to $4k into the new MASS address (that creates a new VatopGroup), then use to supplicate into cbBTC from lowest pool price immediately
 - - VatopGroups each have an individual MASS address & key
-- - - in HPMarchitecture: cVactTaa = cbBTC MASS address amount, cVactDa = USDC MASS address amount
+- Test MASS APIs (then update MASS github)
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.
