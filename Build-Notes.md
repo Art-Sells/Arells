@@ -5,18 +5,66 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- Change HPM acronyms to anticipate losses
-- - in HPMarchitecture & HPM Mechanics: 
-- - - cVactTaa = cbBTC MASS address amount, 
-- - - cVactDa = USDC MASS address amount,
-- - - cpVact = price of pool with best quote used to supplicate CBBTC into USDC
-- - - cVact = If cVact != 0, then = cVactDa, else cpVact / cVactTaa
-- - - cpVatop = price of pool with best quote used to supplicate USDC into CBBTC (never changes)
-- - - cVatop = amount of CBBTC purchased from quote / price of pool with best quote used (never changes)
-- - - - amountToImport (might have to delete aBTC)= 
-- - - - If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactTaa != 0, then cpVatop/cVatop (per description).
-- - If Arells User (USDC) address !== 0, then create a new MASS address and upload up-to $4k into the new MASS address (that creates a new VatopGroup), then use to supplicate into cbBTC from lowest pool price immediately
-- - VatopGroups each have an individual MASS address & key
+- HPMarchitecture process for LPP v1
+1. Reads from arellsUserAddress (USDC)
+2. If arellsUserAddress (USDC) !== 0, then create a new massAddress
+3. Transfer anything from $0-$4k total USDC from arellsUserAddress to massAddress (triggers new VatopGroup creation of which massAddress & massPrivateKey is attached (check import function (delete aBTC APIs from UserContext and folder APIs if necessary) in HPMarchitecture and update save/updateVatopGroups as well as)).
+4. VatopGroup
+- cVatop: number = 0
+- cpVatop: number = 0
+- cdVatop: number = 0
+- cVact: numbe = 0
+- cpVact: number = 0
+- cVactDa: number = massAddress USDC balance
+- cVactTaa: number = 0
+- HAP: number = 0
+- supplicateCBBTCtoUSD: boolean = false
+- supplicateUSDtoCBBTC: boolean = false
+- holdMASS: boolean = false
+5. Run (create) MASS initiation function: If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactDa != 0, then initiate executeSupplication from MASS_USDC API.
+- cpVatop = price of pool with best quote used to supplicate USDC into CBBTC
+- cVatop = amount of CBBTC purchased from quote / price of pool with best quote used
+- cdVatop = cVact - cVatop
+- - cVact = cVactDa if cVactDa != 0, else = cpVact / cVactTaa
+- - cpVact = price of pool with best quote used to supplicate USDC
+- - cVactDa = massAddress USDC balance
+- - cVactTaa = massAddress CBBTC balance
+- - HAP = bitcoinPrice;
+- - supplicateCBBTCtoUSD = false
+- - supplicateUSDtoCBBTC = true
+- - holdMASS = false
+- - - updateVatopGroups
+- - - fetchVatopGroups
+6. If current bitcoinPrice < HAP then initiate executeSupplication from MASS_CBBTC API.
+- cpVatop = no change
+- cVatop = no change
+- cdVatop = cVact - cVatop
+- - cVact = cVactDa if cVactDa != 0, else = cpVact / cVactTaa
+- - cpVact = price of pool with best quote used to supplicate CBBTC
+- - cVactDa = massAddress USDC balance
+- - cVactTaa = massAddress CBBTC balance
+- - HAP = No Change;
+- - supplicateCBBTCtoUSD: boolean = true
+- - supplicateUSDtoCBBTC: boolean = false
+- - holdMASS: boolean = true
+- - - updateVatopGroups
+- - - fetchVatopGroups
+7. Compare HAP/bitcoinPrice
+- If bitcoinPrice > HAP: releaseMASS button changes holdMASS to false.
+8. If current bitcoinPrice >= HAP then initiate executeSupplication from MASS_USDC API.
+- cpVatop = no change
+- cVatop = no change
+- cdVatop = cVact - cVatop
+- - cVact = cVactDa if cVactDa != 0, else = cpVact / cVactTaa
+- - cpVact = price of pool with best quote used to supplicate CBBTC
+- - cVactDa = massAddress USDC balance
+- - cVactTaa = massAddress CBBTC balance
+- - HAP = bitcoinPrice;
+- - supplicateCBBTCtoUSD: boolean = false
+- - supplicateUSDtoCBBTC: boolean = true
+- - holdMASS: boolean = false
+- - - updateVatopGroups
+- - - fetchVatopGroups
 - Test MASS APIs (then update MASS github)
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
