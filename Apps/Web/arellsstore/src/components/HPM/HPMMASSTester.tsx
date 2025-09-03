@@ -13,10 +13,6 @@ const HPMMASSTester: React.FC = () => {
     vatopGroups,
     vatopCombinations,
     hpap,
-    handleBuy,
-    handleSell,
-    handleImportABTC,
-    readABTCFile,
     soldAmounts,
   } = useHPM();
 
@@ -41,13 +37,6 @@ const HPMMASSTester: React.FC = () => {
   const { releaseMASS } = useMASS();
 
 
-  useEffect(() => {
-    const fetchABTC = async () => {
-      const fetchedABTC = await readABTCFile();
-      setABTC(fetchedABTC || 0);
-    };
-    fetchABTC();
-  }, [readABTCFile]);
 
   const formatCurrency = (value: number | null | undefined): string => {
     if (value == null || isNaN(value)) {

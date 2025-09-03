@@ -13,7 +13,8 @@
 - - - cVact = If cVact != 0, then = cVactDa, else cpVact / cVactTaa
 - - - cpVatop = price of pool with best quote used to supplicate USDC into CBBTC (never changes)
 - - - cVatop = amount of CBBTC purchased from quote / price of pool with best quote used (never changes)
-- - - - If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactTaa != 0, then create cpVatop/cVatop (per description).
+- - - - amountToImport (might have to delete aBTC)= 
+- - - - If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactTaa != 0, then cpVatop/cVatop (per description).
 - - If Arells User (USDC) address !== 0, then create a new MASS address and upload up-to $4k into the new MASS address (that creates a new VatopGroup), then use to supplicate into cbBTC from lowest pool price immediately
 - - VatopGroups each have an individual MASS address & key
 - Test MASS APIs (then update MASS github)

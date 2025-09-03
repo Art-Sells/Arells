@@ -38,19 +38,10 @@ interface HPMarchitectureType {
   vatopGroups: VatopGroup[];
   vatopCombinations: VatopCombinations;
   hpap: number;
-  buyAmount: number;
-  sellAmount: number;
-  setBuyAmount: (amount: number) => void;
-  setSellAmount: (amount: number) => void;
-  handleBuy: (amount: number) => void;
-  handleImportABTC: (amount: number) => void;
-  handleSell: (amount: number) => void;
   toggleSupplicateWBTCtoUSD: (groupId: string, value: boolean) => void; // Updated type
   setManualBitcoinPrice: (price: number | ((currentPrice: number) => number)) => void;
   soldAmounts: number;
   email: string;
-  readABTCFile: () => Promise<number | null>;
-  updateABTCFile: (amount: number) => Promise<number>;
 }
 
 const HPMarchitecture = createContext<HPMarchitectureType | undefined>(undefined);
@@ -652,28 +643,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   
 
-  const handleBuy = async (amount: number) => {
-    console.log("⚠️ handleBuy called with amount:", amount);
-    if (amount <= 0) return;
-  
-    const newVatop: VatopGroup = {
-      id: uuidv4(), 
-      cVatop: amount,
-      cpVatop: bitcoinPrice,
-      cVact: amount,
-      cpVact: bitcoinPrice,
-      cVactDa: amount,
-      cdVatop: 0,
-      cVactTaa: amount / bitcoinPrice,
-      HAP: bitcoinPrice,
-      supplicateCBBTCtoUSD: false,
-      supplicateUSDtoCBBTC: true,
-      holdMASS: false,
-    };
-  
-    const updatedVatopGroups = [...vatopGroups, newVatop];
-    await updateAllState(bitcoinPrice, email);
-  };
+
 
   const handleImportABTC = async (amount: number) => {
     if (amount < 0.01) {
@@ -845,19 +815,10 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         vatopGroups,
         vatopCombinations,
         hpap,
-        buyAmount,
-        sellAmount,
-        setBuyAmount,
-        setSellAmount,
-        handleBuy,
-        handleImportABTC,
-        handleSell,
         setManualBitcoinPrice,
         toggleSupplicateWBTCtoUSD, 
         email,
         soldAmounts,
-        readABTCFile, 
-        updateABTCFile
       }}
     >
       {children}
