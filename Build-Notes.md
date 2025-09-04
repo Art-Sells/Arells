@@ -7,6 +7,11 @@
 ## Test
 - HPMarchitecture process for LPP v1
 1. Reads from arellsUserAddress (USDC)
+- API:
+- - saveUserWallet
+- - readUserWallet
+- - saveMASS (creates new mass address and labels it id 1,2,3,etc)
+- - readMASS
 2. If arellsUserAddress (USDC) !== 0, then create a new massAddress
 3. Transfer anything from $0-$4k total USDC from arellsUserAddress to massAddress (triggers new VatopGroup creation of which massAddress & massPrivateKey is attached (check import function (delete aBTC APIs from UserContext and folder APIs if necessary) in HPMarchitecture and update save/updateVatopGroups as well as)).
 4. VatopGroup
