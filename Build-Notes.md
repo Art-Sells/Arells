@@ -5,12 +5,18 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
+- LogIn & SignUp
+1. after button is clicked, initiate createUserWallet from signer.tsx
+- MASSTester:
+1. integrate createMASSWallet from signer.tsx
+1. create initiateMASS in signer.tsx to use
+2. create Mass id display to show id, and MASS balances.
+3. test initiateMASS with $1 maximum from userAddress (then set to increate to $4k)
 - HPMMASSTester:
 1. refactor USDC/CBBTC equivalents (might not need)
-2. handleCBBTCSupplication: change to createMASSWallets button
 - HPMarchitecture process for LPP v1
-1. If userAddress (USDC) !== 0, then createMASSWallet from signer.tsx
-2. create signer.tsx function that initiates (transfers) anything from $0-$4k (test with $1 maximum) total USDC from userAddress to massAddress (triggers new VatopGroup creation of which massAddress & massPrivateKey is attached (check import function (delete aBTC APIs from UserContext and folder APIs if necessary) in HPMarchitecture and update save/updateVatopGroups as well as)).
+1. If userAddress (USDC) !== 0, then createMASSWallet from signer.tsx, then initiateMASS from same wallet
+2. Integrate into initiateMASS: create new VatopGroup of which massAddress is attached (check import function (delete aBTC APIs from UserContext and folder APIs if necessary) in HPMarchitecture and update save/updateVatopGroups as well as).
 3. VatopGroup
 - cVatop: number = 0
 - cpVatop: number = 0
@@ -24,7 +30,7 @@
 - supplicateUSDtoCBBTC: boolean = false
 - holdMASS: boolean = false
 - MASSid: = readMASS id number
-4. Run (create) MASS initiation function: If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactDa != 0, then run executeSupplication from MASS_USDC API.
+4. useEffect: If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactDa != 0, then run executeSupplication from MASS_USDC API.
 - cpVatop = price of pool with best quote used to supplicate USDC into CBBTC
 - cVatop = amount of CBBTC purchased from quote / price of pool with best quote used
 - cdVatop = cVact - cVatop
@@ -38,7 +44,7 @@
 - - holdMASS = false
 - - - updateVatopGroups
 - - - fetchVatopGroups
-5. If current bitcoinPrice < HAP then initiate executeSupplication from MASS_CBBTC API.
+5. useEffect: If current bitcoinPrice < HAP then initiate executeSupplication from MASS_CBBTC API.
 - cpVatop = no change
 - cVatop = no change
 - cdVatop = cVact - cVatop
@@ -52,9 +58,9 @@
 - - holdMASS: boolean = true
 - - - updateVatopGroups
 - - - fetchVatopGroups
-6. Compare HAP/bitcoinPrice
-- If bitcoinPrice > HAP: releaseMASS button changes holdMASS to false.
-7. If current bitcoinPrice >= HAP then initiate executeSupplication from MASS_USDC API.
+6. useEffect: Compare HAP/bitcoinPrice
+- useEffect: If bitcoinPrice > HAP: releaseMASS button changes holdMASS to false.
+7. useEffect: If current bitcoinPrice >= HAP then initiate executeSupplication from MASS_USDC API.
 - cpVatop = no change
 - cVatop = no change
 - cdVatop = cVact - cVatop
@@ -69,8 +75,7 @@
 - - - updateVatopGroups
 - - - fetchVatopGroups
 - Test MASS APIs (then update MASS github)
-- LogIn & SignUp
-1. after button is clicked, initiate createUserWallet from signer.tsx
+
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.

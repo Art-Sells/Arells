@@ -112,6 +112,44 @@ const MASSTester: React.FC = () => {
       <h2>MASS Wallet Tester</h2>
       <p>Email: {email}</p>
       <hr />
+
+
+
+
+
+      <div>
+        <h3>User Wallet Address</h3>
+        <p>{userAddress || 'Not Available'}</p>
+        <p>User Private Key:</p>
+        <pre>{userPrivateKey || 'Not Available'}</pre>
+        <hr/>
+
+        <p>Balance (USDC/BASE): ${balances.USDC_BASE} USDC</p>
+        
+        <div>
+          <div>
+            <label>USDC Amount:</label>
+            <input
+              type="text"
+              id="usdcAmount"
+              value={dollarAmount}
+              onChange={(e) => handleUSDCInputChange(e.target.value)}
+              placeholder="Enter amount in USDC"
+            />
+          </div>
+        </div>
+
+      </div>
+
+
+
+
+      <hr />
+      <button onClick={createMASSWallets}>Create MASS Wallet</button>
+      <hr />
+
+
+
       <h3>MASS Wallet Address</h3>
       <p>{MASSaddress || 'Not Available'}</p>
       <p>MASS Private Key:</p>
@@ -166,8 +204,6 @@ const MASSTester: React.FC = () => {
           </pre>
         )}
       </div> */}
-      <hr />
-      <button onClick={createMASSWallets}>Create MASS Wallet</button>
     </div>
   );
 };

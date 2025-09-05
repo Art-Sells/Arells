@@ -378,7 +378,6 @@ const calculateTotalUSDC = (): string => {
               onChange={(e) => handleUSDCInputChange(e.target.value)}
               placeholder="Enter amount in USDC"
             />
-            <p>BTC Equivalent: {cbbtcConversion} CBBTC</p>
           </div>
           <button onClick={handleCBBTCsupplication} disabled={isSupplicating}>
             {isSupplicating ? 'Supplicating...' : 'Manually Supplicate CBBTC to USD'}
@@ -408,15 +407,14 @@ const calculateTotalUSDC = (): string => {
         <p>Balance (BTC/BASE): {balances.BTC_BASE} BTC</p>
         <div>
           <div>
-            <label>USDC Amount:</label>
+            <label>CBBTC Amount:</label>
             <input
               type="text"
-              id="usdcAmount"
-              value={dollarAmount}
-              onChange={(e) => handleUSDCInputChange(e.target.value)}
-              placeholder="Enter amount in USDC"
+              id="cbbtcAmount"
+              value={cbBitcoinAmount}
+              onChange={(e) => handleCBBTCInputChange(e.target.value)}
+              placeholder="Enter amount in BTC"
             />
-            <p>BTC Equivalent: {cbbtcConversion} CBBTC</p>
           </div>
           <button onClick={handleCBBTCsupplication} disabled={isSupplicating}>
             {isSupplicating ? 'Supplicating...' : 'Manually Supplicate CBBTC to USD'}
@@ -431,15 +429,14 @@ const calculateTotalUSDC = (): string => {
         
         <div>
           <div>
-            <label>CBBTC Amount:</label>
+            <label>USDC Amount:</label>
             <input
               type="text"
-              id="cbbtcAmount"
-              value={cbBitcoinAmount}
-              onChange={(e) => handleCBBTCInputChange(e.target.value)}
-              placeholder="Enter amount in BTC"
+              id="usdcAmount"
+              value={dollarAmount}
+              onChange={(e) => handleUSDCInputChange(e.target.value)}
+              placeholder="Enter amount in USDC"
             />
-            <p>USD Equivalent: ${usdcAmount} USDC</p>
           </div>
           <button onClick={handleUSDCsupplication} disabled={isSupplicating}>
             {isSupplicating ? 'Supplicating...' : 'Manually Supplicate USDC to CBBTC'}
