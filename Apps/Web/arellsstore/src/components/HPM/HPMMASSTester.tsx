@@ -17,9 +17,12 @@ const HPMMASSTester: React.FC = () => {
   } = useHPM();
 
   const {
-    createWallets,
     MASSaddress,
     MASSPrivateKey,
+    userAddress,
+    userPrivateKey,
+    createWallet,
+    createMASSWallets,
     balances,
     email,
   } = useSigner();
@@ -33,7 +36,6 @@ const HPMMASSTester: React.FC = () => {
   const [inputBuyAmount, setInputBuyAmount] = useState<string>('');
   const [inputSellAmount, setInputSellAmount] = useState<string>('');
   const [inputImportAmount, setInputImportAmount] = useState<string>('');
-  const [aBTC, setABTC] = useState<number>(0);
   const { releaseMASS } = useMASS();
 
 
@@ -101,7 +103,7 @@ const HPMMASSTester: React.FC = () => {
   const [supplicationError, setSupplicationError] = useState<string | null>(null);
   const [isSupplicating, setIsSupplicating] = useState<boolean>(false);
   const [cbbtcConversion, setCbbtcConversion] = useState<string>('0.00000000');
-  const [usdcConversion, setUsdcConversion] = useState<string>('0.00');
+  const [usdcAmount, setUsdcAmount] = useState<string>('0.00');
 
 
 // supplicateCBTCtoUSDC functions
@@ -141,14 +143,10 @@ const HPMMASSTester: React.FC = () => {
     setIsSupplicating(true);
 
     try {
-      // Convert dollars to CBBTC equivalent
-      const cbbtcEquivalent = dollarInput / bitcoinPrice; // CBBTC equivalent of dollarInput
-
       const payload = {
-        cbBitcoinAmount: parseFloat(cbbtcEquivalent.toFixed(8)), // Amount in satoshis
+        cbBitcoinAmount: cbBitcoinAmount,
         massAddress: MASSaddress,
         massPrivateKey: MASSPrivateKey,
-        cpVact: bitcoinPrice,
       };
 
       console.log('🚀 Sending Payload:', payload);
@@ -177,9 +175,9 @@ const HPMMASSTester: React.FC = () => {
 
     if (!isNaN(parsedAmount) && parsedAmount > 0 && bitcoinPrice > 0) {
       const usdcEquivalent = getUSDCEquivalent(parsedAmount, bitcoinPrice); // Convert CBBTC to USDC
-      setUsdcConversion(usdcEquivalent.toFixed(2)); // Format USDC value
+      setUsdcAmount(usdcEquivalent.toFixed(2)); // Format USDC value
     } else {
-      setUsdcConversion('0.00'); // Reset if input is invalid
+      setUsdcAmount('0.00'); // Reset if input is invalid
     }
   };
 
@@ -214,27 +212,19 @@ const HPMMASSTester: React.FC = () => {
     setIsSupplicating(true);
   
     try {
-      // Calculate USDC equivalent
-      const usdcEquivalent = getUSDCEquivalent(Number(cbBitcoinAmount), bitcoinPrice);
-  
-      if (usdcEquivalent === 0) {
-        setSupplicationError('Calculated USDC amount is too small.');
-        return;
-      }
   
       const payload = {
-        usdcAmount: usdcEquivalent,
+        usdcAmount: usdcAmount,
         massPrivateKey: MASSPrivateKey,
         massAddress: MASSaddress,
-        cpVact: bitcoinPrice,
       };
   
       console.log('🚀 Sending Payload:', payload);
       console.log("📤 Final Payload (frontend):", payload);
   
-      const response = await axios.post('/api/MASS_usdc', payload);
+      await axios.post('/api/MASS_usdc', payload);
   
-      const { receivedAmount, txId } = response.data;
+
       setSupplicationResult(`CBBTC -> USDC Supplication successful!`);
     } catch (error: any) {
       console.error('❌ API Error:', error.response?.data || error.message);
@@ -324,14 +314,6 @@ const calculateTotalUSDC = (): string => {
         <h3 id="HPAP-HPM-MASS-Tester">${formatPrice(hpap)}</h3>
       </div>
       <div>
-      <div>
-      <h2>Total USD:</h2>
-        <p>${calculateTotalUSDC()} USD</p>
-      </div>
-        <h2>aBTC in USD:</h2>
-        <p>{formatCurrency(aBTC)}</p>
-      </div>
-      <div>
         <h2>Vatop Groups:</h2>
         {vatopGroups.map((group, index) => (
           <div key={index}>
@@ -359,6 +341,63 @@ const calculateTotalUSDC = (): string => {
         <h2>Sold Amount</h2>
         <p id="amount-sold-number-account-num-concept">{formatCurrency(soldAmounts)}</p>
       </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+      <div>
+        <h3>User Wallet Address</h3>
+        <p>{userAddress || 'Not Available'}</p>
+        <p>User Private Key:</p>
+        <pre>{userPrivateKey || 'Not Available'}</pre>
+        <hr/>
+
+        <p>Balance (USDC/BASE): ${balances.USDC_BASE} USDC</p>
+        
+        <div>
+          <div>
+            <label>USDC Amount:</label>
+            <input
+              type="text"
+              id="usdcAmount"
+              value={dollarAmount}
+              onChange={(e) => handleUSDCInputChange(e.target.value)}
+              placeholder="Enter amount in USDC"
+            />
+            <p>BTC Equivalent: {cbbtcConversion} CBBTC</p>
+          </div>
+          <button onClick={handleCBBTCsupplication} disabled={isSupplicating}>
+            {isSupplicating ? 'Supplicating...' : 'Manually Supplicate CBBTC to USD'}
+          </button>
+        </div>
+
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
       <div>
         <h3>MASS Wallet Address</h3>
@@ -400,7 +439,7 @@ const calculateTotalUSDC = (): string => {
               onChange={(e) => handleCBBTCInputChange(e.target.value)}
               placeholder="Enter amount in BTC"
             />
-            <p>USD Equivalent: ${usdcConversion} USDC</p>
+            <p>USD Equivalent: ${usdcAmount} USDC</p>
           </div>
           <button onClick={handleUSDCsupplication} disabled={isSupplicating}>
             {isSupplicating ? 'Supplicating...' : 'Manually Supplicate USDC to CBBTC'}
@@ -410,6 +449,15 @@ const calculateTotalUSDC = (): string => {
         </div>
 
       </div>
+
+
+
+
+
+
+
+
+
     </div>
   );
 };

@@ -6,14 +6,12 @@
 
 ## Test
 - HPMarchitecture process for LPP v1
-1. Reads from arellsUserAddress (USDC)
-- API:
-- - saveUserWallet
-- - readUserWallet
-- - saveMASS (creates new mass address and labels it id 1,2,3,etc)
-- - readMASS
-2. If arellsUserAddress (USDC) !== 0, then create a new massAddress
-3. Transfer anything from $0-$4k total USDC from arellsUserAddress to massAddress (triggers new VatopGroup creation of which massAddress & massPrivateKey is attached (check import function (delete aBTC APIs from UserContext and folder APIs if necessary) in HPMarchitecture and update save/updateVatopGroups as well as)).
+1. Reads from userWallet (USDC)
+- HPMMASSTester:
+- - refactor USDC/CBBTC equivalents (might not need)
+- - handleCBBTCSupplication: change to createMASSWallets button
+2. If userAddress (USDC) !== 0, then createMASSWallet from signer.tsx
+3. Transfer anything from $0-$4k into (test with $1 maximum) total USDC from userAddress to massAddress (triggers new VatopGroup creation of which massAddress & massPrivateKey is attached (check import function (delete aBTC APIs from UserContext and folder APIs if necessary) in HPMarchitecture and update save/updateVatopGroups as well as)).
 4. VatopGroup
 - cVatop: number = 0
 - cpVatop: number = 0
@@ -26,7 +24,8 @@
 - supplicateCBBTCtoUSD: boolean = false
 - supplicateUSDtoCBBTC: boolean = false
 - holdMASS: boolean = false
-5. Run (create) MASS initiation function: If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactDa != 0, then initiate executeSupplication from MASS_USDC API.
+- MASSid: = readMASS id number
+5. Run (create) MASS initiation function: If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactDa != 0, then run executeSupplication from MASS_USDC API.
 - cpVatop = price of pool with best quote used to supplicate USDC into CBBTC
 - cVatop = amount of CBBTC purchased from quote / price of pool with best quote used
 - cdVatop = cVact - cVatop
@@ -150,7 +149,7 @@ Arells Wallet and change all Variables
 #### Deployment Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked and remove .env hardhat config expositions
 - Delete MASS address info from MASStester and console.logs from all signer.
-- Restructure decryption process in readMASS and readBTC apis
+- Restructure decryption (readUserWallet, readMASS) process in apis
 - Compare Main ENV with Test ENV before deployments
 
 ## Final Test

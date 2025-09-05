@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { usdcAmount, massPrivateKey, massAddress, cpVact } = req.body;
+  const { usdcAmount, massPrivateKey, massAddress } = req.body;
 
   if (!usdcAmount || !massPrivateKey || !massAddress) {
     return res.status(400).json({ error: "Missing required parameters" });

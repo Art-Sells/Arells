@@ -1,18 +1,18 @@
-// pages/api/saveMASS.ts
+// pages/api/saveUserWallet.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
 
-export default async function saveMASS(req: NextApiRequest, res: NextApiResponse) {
+export default async function saveUserWallet(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const { USERaddress, USERkey } = req.body as {
-        USERaddress: string;
-        USERkey: string;
+    const { userAddress, userKey } = req.body as {
+        userAddress: string;
+        userKey: string;
     };
     const { email, amount } = req.body;
 
@@ -20,7 +20,7 @@ export default async function saveMASS(req: NextApiRequest, res: NextApiResponse
       return res.status(400).json({ error: 'Email is required' });
     }
 
-    const key = `${email}/USERwallet.json`;
+    const key = `${email}/userWallet.json`;
 
     try {
         await s3.headObject({
@@ -33,7 +33,7 @@ export default async function saveMASS(req: NextApiRequest, res: NextApiResponse
             await s3.putObject({
                 Bucket: BUCKET_NAME,
                 Key: key,
-                Body: JSON.stringify({ USERaddress, USERkey }),
+                Body: JSON.stringify({ userAddress, userKey }),
                 ContentType: 'application/json'
             }).promise();
             return res.status(201).json({ message: 'Wallet saved successfully' });

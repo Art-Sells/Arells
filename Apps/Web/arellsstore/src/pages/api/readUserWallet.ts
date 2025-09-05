@@ -1,8 +1,7 @@
-// pages/api/readMASS.ts
+// pages/api/readUserWallet.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 import CryptoJS from 'crypto-js';
-import { v4 as uuidv4 } from 'uuid';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
@@ -13,47 +12,34 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const { email } = req.query as { email: string };
+
   if (!email) {
     return res.status(400).json({ error: 'Email query parameter is required' });
   }
 
-  const key = `${email}/MASSwallet.json`;
+  const key = `${email}/userWallet.json`;
 
   try {
     const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+    
+    // Check if the response body is not undefined
+    if (response.Body) {
+      const walletData = JSON.parse(response.Body.toString());
 
-    if (!response.Body) {
+      // Optionally decrypt data if encrypted, such as the private key
+      if (walletData.encryptedPrivateKey) {
+        const decryptedPrivateKey = CryptoJS.AES.decrypt(walletData.encryptedPrivateKey, 'your-secret-key').toString(CryptoJS.enc.Utf8);
+        walletData.privateKey = decryptedPrivateKey;  // Or handle decryption client-side as needed
+      }
+
+      return res.status(200).json(walletData);
+    } else {
+      // Handle the case where the body is undefined
       console.warn('No data found for the specified key:', key);
       return res.status(404).json({ error: 'Wallet not found' });
     }
-
-    const walletData = JSON.parse(response.Body.toString());
-
-    // Optional: decrypt if you stored an encrypted field with a different property
-    if (walletData.encryptedPrivateKey) {
-      const decryptedPrivateKey = CryptoJS.AES.decrypt(
-        walletData.encryptedPrivateKey,
-        'your-secret-key'
-      ).toString(CryptoJS.enc.Utf8);
-      walletData.privateKey = decryptedPrivateKey;
-    }
-
-    // Backfill ID for legacy files
-    if (!walletData.id) {
-      walletData.id = uuidv4();
-      walletData.migratedAt = new Date().toISOString();
-
-      await s3.putObject({
-        Bucket: BUCKET_NAME,
-        Key: key,
-        Body: JSON.stringify(walletData),
-        ContentType: 'application/json',
-      }).promise();
-    }
-
-    return res.status(200).json(walletData);
   } catch (error: any) {
-    if (error.code === 'NoSuchKey' || error.code === 'NotFound') {
+    if (error.code === 'NoSuchKey') {
       console.warn(`${key} not found. Returning default data.`);
       return res.status(404).json({ error: 'Wallet not found' });
     }
