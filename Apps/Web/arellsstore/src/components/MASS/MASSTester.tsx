@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const MASSTester: React.FC = () => {
   const {
-    createWallets,
+    createMASSWallets,
     MASSaddress,
     MASSPrivateKey,
     balances,
@@ -167,7 +167,7 @@ const MASSTester: React.FC = () => {
         )}
       </div> */}
       <hr />
-      <button onClick={createWallets}>Create Wallets</button>
+      <button onClick={createMASSWallets}>Create MASS Wallet</button>
     </div>
   );
 };

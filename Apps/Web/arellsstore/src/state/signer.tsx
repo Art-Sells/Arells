@@ -107,7 +107,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   const checkUserWalletExists = async (): Promise<boolean> => {
     if (!email) {
-      console.warn('Email is not set. Cannot check MASS wallet file existence.');
+      console.warn('Email is not set. Cannot check User Wallet file existence.');
       return false;
     }
   
