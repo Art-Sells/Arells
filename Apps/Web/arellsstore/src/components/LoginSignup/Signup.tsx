@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { signUp, signIn, fetchUserAttributes, signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
+import { useSigner } from '../../state/signer';
 
 const Signup: React.FC = () => {
   const router = useRouter();
@@ -24,6 +25,7 @@ const Signup: React.FC = () => {
   const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
   const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
   const [showSignedUp, setSignedUp] = useState<boolean>(false);
+  const { createWallet } = useSigner();
 
   const closeEmailExistsError = () => setEmailExistsError(false);
   const closePasswordsDontMatchError = () => setPasswordsDontMatchError(false);

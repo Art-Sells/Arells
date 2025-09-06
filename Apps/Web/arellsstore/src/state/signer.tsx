@@ -27,7 +27,7 @@ interface SignerContextType {
     BTC_BASE: string;
     USDC_BASE: string;
   };
-  createWallet: () => Promise<void>;
+  createWallet: (emailOverride?: string) => Promise<void>; 
   createMASSWallets: () => Promise<void>;
   loadBalances: () => Promise<void>;
 }
@@ -105,42 +105,49 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   };
 
-  const checkUserWalletExists = async (): Promise<boolean> => {
-    if (!email) {
+
+  const checkUserWalletExists = async (emailOverride?: string): Promise<boolean> => {
+    const effectiveEmail = emailOverride ?? email;
+    if (!effectiveEmail) {
       console.warn('Email is not set. Cannot check User Wallet file existence.');
       return false;
     }
-  
+
     try {
-      await axios.get(`/api/readUserWallet`, { params: { email } });
+      await axios.get(`/api/readUserWallet`, { params: { email: effectiveEmail } });
       console.log('User Wallet exists');
-      return true; // File exists
+      return true;
     } catch (error: any) {
       if (error.response && error.response.status === 404) {
         console.log('User Wallet does not exist.');
-        return false; // File does not exist
+        return false;
       }
       console.error('Error checking User Wallet file existence:', error);
       throw error;
     }
   };
 
-  const createUserWallet = async () => {
+  const createUserWallet = async (emailOverride?: string) => {
     try {
-      const fileExists = await checkUserWalletExists();
+      const effectiveEmail = emailOverride ?? email;
+      if (!effectiveEmail) {
+        console.warn('No email available for wallet creation.');
+        return;
+      }
+
+      const fileExists = await checkUserWalletExists(effectiveEmail);
       if (fileExists) {
         console.log('Skipping User Wallet creation.');
         return;
       }
 
       const newWallet = ethers.Wallet.createRandom();
-      const encryptedPrivateKey = CryptoJS.AES.encrypt(newWallet.privateKey, 'your-secret-key').toString();
+      const encryptedPrivateKey = CryptoJS.AES.encrypt(
+        newWallet.privateKey,
+        'your-secret-key'
+      ).toString();
 
-      await saveUserWalletDetails(
-        newWallet.address,
-        encryptedPrivateKey,
-        email
-      );
+      await saveUserWalletDetails(newWallet.address, encryptedPrivateKey, effectiveEmail);
       setUserAddress(newWallet.address);
     } catch (error) {
       console.error('Error creating User Wallet:', error);
@@ -150,21 +157,15 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const saveUserWalletDetails = async (
     userAddress: string,
     userKey: string,
-    email: string
+    emailParam: string
   ) => {
     try {
-      const response = await fetch('/api/saveUserWallet', {
+      await fetch('/api/saveUserWallet', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userAddress,
-          userKey,
-          email,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userAddress, userKey, email: emailParam }),
       });
-      console.log(' User Wallet saved');
+      console.log('User Wallet saved');
     } catch (error) {
       console.error('Error saving User Wallet details:', error);
     }
@@ -282,11 +283,11 @@ const saveMASSWalletDetails = async (
 
 
   // User/MASS Wallet functions:
-  const createWallet = async () => {
+  const createWallet = async (emailOverride?: string) => {
     try {
-      await createUserWallet();
+      await createUserWallet(emailOverride);
     } catch (error) {
-      console.error("Error creating User Wallet:", error);
+      console.error('Error creating User Wallet:', error);
     }
   };
 
