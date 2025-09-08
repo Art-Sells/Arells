@@ -7,7 +7,7 @@
 Arells exists because it believes ***investments should never lose value***, especially during Bear Markets.
 
 ### Solution:
-A Bitcoin marketplace that renders bear markets obsolete. Arells is working on achieving this through an invention called:
+A marketplace that renders bear markets obsolete. Arells is working on achieving this through an invention called:
 
 <img src="https://github.com/Art-Sells/Arells/blob/test/Art/General/HPMLogoDisplay.png" width="200px"> 
 
