@@ -5,7 +5,7 @@ import CryptoJS from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
 
 const s3 = new AWS.S3();
-const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
+const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {

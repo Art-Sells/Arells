@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
 
 const s3 = new AWS.S3();
-const BUCKET_NAME = process.env.NEXT_PUBLIC_S3_BUCKET_NAME!;
+const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {

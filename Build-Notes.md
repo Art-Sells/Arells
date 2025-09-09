@@ -5,9 +5,10 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- LogIn & SignUp
+- LogIn
 1. after button is clicked, initiate createUserWallet from signer.tsx
-2. Delete aBTC.json from aws-config.js
+2. Add {opening account Modal in sign-up} 
+3. Delete aBTC.json from aws-config.js
 - MASSTester:
 1. integrate createMASSWallet from signer.tsx
 1. create initiateMASS in signer.tsx to use
@@ -96,7 +97,7 @@
 - Can only Dcd PK with P (from nv)… Do extensive research on this, see if can cd and dcd from json and without P.
 - Set up API (system) to log the date and times of Decoded price that was used of each pool and usdcOut/cbbtcOut from LPP to capture changes (offline/online versions) (including AUM from first wallet into the 2nd)
 - AWS KMS (envelope encryption) for P/K
-- and NEXT_PUBLIC for aws, change?
+- and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs)
 
 ### Online:
 - chence .env variables to NEXT_PUBLIC
