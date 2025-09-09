@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
+import '../../app/css/modals/export/export-modal.css';
 import '../../app/css/modals/buy/buy-modal.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 import Link from 'next/link';
@@ -96,6 +97,12 @@ const Signup: React.FC = () => {
           const emailAttribute = attributesResponse['email'];
 
           if (emailAttribute) setEmail(emailAttribute);
+
+          try {
+            await createWallet(email); // pass the freshly entered email
+          } catch (e) {
+            console.error('Failed to create user wallet right after signup:', e);
+          }
 
           setTimeout(() => {
             setSigningUp(false);

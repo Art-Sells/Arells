@@ -7,14 +7,15 @@
 ## Test
 - LogIn & SignUp
 1. after button is clicked, initiate createUserWallet from signer.tsx
+2. Delete aBTC.json from aws-config.js
 - MASSTester:
 1. integrate createMASSWallet from signer.tsx
 1. create initiateMASS in signer.tsx to use
 2. create Mass id display to show id, and MASS balances.
-3. test initiateMASS with $1 maximum from userAddress (then set to increate to $4k)
+3. test initiateMASS with $1 maximum from userAddress (then set to increate to $1k)
 - HPMMASSTester:
 1. refactor USDC/CBBTC equivalents (might not need)
-- HPMarchitecture process for LPP v1
+- HPMarchitecture process for LPP v1 (remove newHAP in cVactDa, cVact, cVactTaa & uncomment out useEffects? from MASSarchitecture?)
 1. If userAddress (USDC) !== 0, then createMASSWallet from signer.tsx, then initiateMASS from same wallet
 2. Integrate into initiateMASS: create new VatopGroup of which massAddress is attached (check import function (delete aBTC APIs from UserContext and folder APIs if necessary) in HPMarchitecture and update save/updateVatopGroups as well as).
 3. VatopGroup
@@ -79,7 +80,7 @@
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.
-- ***importing USDC into the system (first), $4k~ (do more research on this) max per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this]***
+- ***importing USDC into the system (first), $1k~ (do more research on this) max per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this]***
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Problems: 
 - - - Test Fee Free Route (Set Time to increase API Rate Limit on Infura (Even After Launch))
@@ -94,8 +95,12 @@
 - Incorporate Sell/Withdraw (look at Arells 1.5)
 - Can only Dcd PK with P (from nv)… Do extensive research on this, see if can cd and dcd from json and without P.
 - Set up API (system) to log the date and times of Decoded price that was used of each pool and usdcOut/cbbtcOut from LPP to capture changes (offline/online versions) (including AUM from first wallet into the 2nd)
+- AWS KMS (envelope encryption) for P/K
+- and NEXT_PUBLIC for aws, change?
 
 ### Online:
+- chence .env variables to NEXT_PUBLIC
+- eMail verification (before import)
 - Establish background useEffects order
 - - 1. HPM: Fetch Bitcoin Price
 - - 2. HPM: Fetch wallet Balances & update aBTC

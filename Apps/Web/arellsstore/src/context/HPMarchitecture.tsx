@@ -150,165 +150,165 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
 
-  useEffect(() => {
-    let isFetchingGroups = false;
+  // useEffect(() => {
+  //   let isFetchingGroups = false;
   
-    const fetchVatopGroups = async (latestPrice: number) => {
-      if (!email) {
-        console.warn("Email is not set, cannot fetch vatopGroups.");
-        return;
-      }
+  //   const fetchVatopGroups = async (latestPrice: number) => {
+  //     if (!email) {
+  //       console.warn("Email is not set, cannot fetch vatopGroups.");
+  //       return;
+  //     }
   
-      // Prevent overlapping calls
-      if (isFetchingGroups) {
-        console.warn("fetchVatopGroups is already in progress. Skipping this call.");
-        return;
-      }
+  //     // Prevent overlapping calls
+  //     if (isFetchingGroups) {
+  //       console.warn("fetchVatopGroups is already in progress. Skipping this call.");
+  //       return;
+  //     }
   
-      isFetchingGroups = true;
+  //     isFetchingGroups = true;
   
-      try {
-        const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
-        const fetchedVatopGroups = response.data.vatopGroups || [];
-        const fetchedSoldAmounts = response.data.soldAmounts || 0;
+  //     try {
+  //       const response = await axios.get("/api/fetchVatopGroups", { params: { email } });
+  //       const fetchedVatopGroups = response.data.vatopGroups || [];
+  //       const fetchedSoldAmounts = response.data.soldAmounts || 0;
   
-        // Update existing groups with fetched data
-        const updatedVatopGroups = fetchedVatopGroups.map((fetchedGroup: VatopGroup) => {
-          if (fetchedGroup.holdMASS) {
-            return fetchedGroup;
-          }
+  //       // Update existing groups with fetched data
+  //       const updatedVatopGroups = fetchedVatopGroups.map((fetchedGroup: VatopGroup) => {
+  //         if (fetchedGroup.holdMASS) {
+  //           return fetchedGroup;
+  //         }
 
-          const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, latestPrice);
+  //         const newHAP = Math.max(fetchedGroup.HAP || fetchedGroup.cpVatop, latestPrice);
         
-          const cpVact = fetchedGroup.supplicateUSDtoCBBTC
-            ? newHAP
-            : fetchedGroup.cpVact;
+  //         const cpVact = fetchedGroup.supplicateUSDtoCBBTC
+  //           ? newHAP
+  //           : fetchedGroup.cpVact;
         
-          const cVactTaa = Number((fetchedGroup.cVactTaa).toFixed(8)); 
-          const cVactDa = Number((fetchedGroup.cVactDa).toFixed(6)); 
-          const cVact = cVactDa;
+  //         const cVactTaa = Number((fetchedGroup.cVactTaa).toFixed(8)); 
+  //         const cVactDa = Number((fetchedGroup.cVactDa).toFixed(6)); 
+  //         const cVact = cVactDa;
       
         
-          const cdVatop = parseFloat((cVact - fetchedGroup.cVatop).toFixed(6));
+  //         const cdVatop = parseFloat((cVact - fetchedGroup.cVatop).toFixed(6));
         
-          return {
-            ...fetchedGroup,
-            HAP: newHAP,
-            cpVact,
-            cVact,
-            cVactTaa,
-            cVactDa,
-            cdVatop,
-          };
-        });
+  //         return {
+  //           ...fetchedGroup,
+  //           HAP: newHAP,
+  //           cpVact,
+  //           cVact,
+  //           cVactTaa,
+  //           cVactDa,
+  //           cdVatop,
+  //         };
+  //       });
   
 
-        setVatopGroups(updatedVatopGroups);
-        setSoldAmounts(fetchedSoldAmounts);
+  //       setVatopGroups(updatedVatopGroups);
+  //       setSoldAmounts(fetchedSoldAmounts);
 
-        // Recalculate combinations directly from backend data
-        const combinations = updateVatopCombinations(fetchedVatopGroups);
-        setVatopCombinations(combinations);
+  //       // Recalculate combinations directly from backend data
+  //       const combinations = updateVatopCombinations(fetchedVatopGroups);
+  //       setVatopCombinations(combinations);
 
-        // Update HPAP based on backend data
-        const maxCpVact = Math.max(...fetchedVatopGroups.map((group: { cpVact: any; }) => group.cpVact || 0));
-        setHpap(maxCpVact);
+  //       // Update HPAP based on backend data
+  //       const maxCpVact = Math.max(...fetchedVatopGroups.map((group: { cpVact: any; }) => group.cpVact || 0));
+  //       setHpap(maxCpVact);
 
-        // Save updated data to backend
-        await saveVatopGroups({
-          email,
-          vatopGroups: updatedVatopGroups,
-          vatopCombinations: combinations,
-          soldAmounts: fetchedSoldAmounts,
-        });
-        return fetchedVatopGroups; 
-      } catch (error) {
-        console.warn("Awaiting Vatop Group fetching");
-      } finally {
-        isFetchingGroups = false;
-      }
-    };
+  //       // Save updated data to backend
+  //       await saveVatopGroups({
+  //         email,
+  //         vatopGroups: updatedVatopGroups,
+  //         vatopCombinations: combinations,
+  //         soldAmounts: fetchedSoldAmounts,
+  //       });
+  //       return fetchedVatopGroups; 
+  //     } catch (error) {
+  //       console.warn("Awaiting Vatop Group fetching");
+  //     } finally {
+  //       isFetchingGroups = false;
+  //     }
+  //   };
 
-    const interval = setInterval(() => {
-      fetchVatopGroups(bitcoinPrice); 
-    }, 3500);
-    return () => clearInterval(interval);
-  }, [email, bitcoinPrice]);
+  //   const interval = setInterval(() => {
+  //     fetchVatopGroups(bitcoinPrice); 
+  //   }, 3500);
+  //   return () => clearInterval(interval);
+  // }, [email, bitcoinPrice]);
 
-  useEffect(() => {
-    if (!email || bitcoinPrice <= 0) return;
+  // useEffect(() => {
+  //   if (!email || bitcoinPrice <= 0) return;
   
-    const isImportingRef = { current: false };
+  //   const isImportingRef = { current: false };
   
-    const importIfNeeded = async () => {
-      if (!email || bitcoinPrice <= 0) return;
-      if (isImportingRef.current) return;
+  //   const importIfNeeded = async () => {
+  //     if (!email || bitcoinPrice <= 0) return;
+  //     if (isImportingRef.current) return;
   
-      isImportingRef.current = true;
+  //     isImportingRef.current = true;
   
-      try {
-        const aBTC = await readABTCFile();
-        if (aBTC === null) return;
+  //     try {
+  //       const aBTC = await readABTCFile();
+  //       if (aBTC === null) return;
   
-        const normalizedABTC = aBTC; 
-        const normalizedAcVactDas = vatopCombinations.acVactDas; 
-        const amountToImport = normalizedABTC - normalizedAcVactDas; 
+  //       const normalizedABTC = aBTC; 
+  //       const normalizedAcVactDas = vatopCombinations.acVactDas; 
+  //       const amountToImport = normalizedABTC - normalizedAcVactDas; 
   
-        console.log("🚦 Checking Import Logic:", {
-          aBTC: normalizedABTC,
-          acVactDas: normalizedAcVactDas,
-          amountToImport,
-        });
+  //       console.log("🚦 Checking Import Logic:", {
+  //         aBTC: normalizedABTC,
+  //         acVactDas: normalizedAcVactDas,
+  //         amountToImport,
+  //       });
   
-        if (amountToImport <= 0.01) {
-          console.log("🚫 No meaningful amount to import.");
-          return;
-        }
+  //       if (amountToImport <= 0.01) {
+  //         console.log("🚫 No meaningful amount to import.");
+  //         return;
+  //       }
   
-        console.log("🚀 Importing new Vatop group...");
+  //       console.log("🚀 Importing new Vatop group...");
   
-        const cVactDa = Number((amountToImport));
+  //       const cVactDa = Number((amountToImport));
         
-        const newGroup = { 
-          id: uuidv4(),
-          cVatop: amountToImport,
-          cpVatop: bitcoinPrice,
-          cVact: cVactDa,
-          cpVact: bitcoinPrice,
-          cVactDa: cVactDa,
-          cdVatop: 0,
-          cVactTaa: 0,
-          HAP: bitcoinPrice,
-          supplicateCBBTCtoUSD: false,
-          supplicateUSDtoCBBTC: true,
-          holdMASS: false,
-        };
+  //       const newGroup = { 
+  //         id: uuidv4(),
+  //         cVatop: amountToImport,
+  //         cpVatop: bitcoinPrice,
+  //         cVact: cVactDa,
+  //         cpVact: bitcoinPrice,
+  //         cVactDa: cVactDa,
+  //         cdVatop: 0,
+  //         cVactTaa: 0,
+  //         HAP: bitcoinPrice,
+  //         supplicateCBBTCtoUSD: false,
+  //         supplicateUSDtoCBBTC: true,
+  //         holdMASS: false,
+  //       };
   
-        const updatedGroups = [...vatopGroups, newGroup];
-        setVatopGroups(updatedGroups);
+  //       const updatedGroups = [...vatopGroups, newGroup];
+  //       setVatopGroups(updatedGroups);
   
-        const updatedCombinations = updateVatopCombinations(updatedGroups);
-        setVatopCombinations(updatedCombinations);
+  //       const updatedCombinations = updateVatopCombinations(updatedGroups);
+  //       setVatopCombinations(updatedCombinations);
   
-        await axios.post("/api/addVatopGroups", {
-          email,
-          newVatopGroups: [newGroup],
-          vatopCombinations: updatedCombinations,
-          soldAmounts,
-        });
-      } catch (error) {
-        console.error("❌ Import failed:", error);
-      } finally {
-        isImportingRef.current = false;
-      }
-    };
+  //       await axios.post("/api/addVatopGroups", {
+  //         email,
+  //         newVatopGroups: [newGroup],
+  //         vatopCombinations: updatedCombinations,
+  //         soldAmounts,
+  //       });
+  //     } catch (error) {
+  //       console.error("❌ Import failed:", error);
+  //     } finally {
+  //       isImportingRef.current = false;
+  //     }
+  //   };
   
-    const interval = setInterval(() => {
-      importIfNeeded();
-    }, 5000); // ✅ Run every 5 seconds
+  //   const interval = setInterval(() => {
+  //     importIfNeeded();
+  //   }, 5000); // ✅ Run every 5 seconds
   
-    return () => clearInterval(interval); // ✅ Clear interval on unmount
-  }, [email, bitcoinPrice, vatopCombinations]);
+  //   return () => clearInterval(interval); // ✅ Clear interval on unmount
+  // }, [email, bitcoinPrice, vatopCombinations]);
 
 
 
@@ -421,29 +421,29 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   
 
-  useEffect(() => {
-    if (!vatopUpdateTrigger) return; // Only run if triggered
+  // useEffect(() => {
+  //   if (!vatopUpdateTrigger) return; // Only run if triggered
   
-    const updatedVatopGroups = vatopGroups
-      .map((group) => ({
-        ...group,
-        cVact: group.cVactDa, // Reflect cpVact in cVact
-        cdVatop: group.cVact - group.cVatop,
-      }))
-      .filter((group) => group.cVact > 0); // Filter valid groups
+  //   const updatedVatopGroups = vatopGroups
+  //     .map((group) => ({
+  //       ...group,
+  //       cVact: group.cVactDa, // Reflect cpVact in cVact
+  //       cdVatop: group.cVact - group.cVatop,
+  //     }))
+  //     .filter((group) => group.cVact > 0); // Filter valid groups
   
-    setVatopGroups(updatedVatopGroups);
-    updateVatopCombinations(updatedVatopGroups); // Update combinations
-    setVatopUpdateTrigger(false); // Reset the trigger
-  }, [vatopUpdateTrigger]); 
-  useEffect(() => {
-    if (!vatopGroups.length) {
-      return;
-    }
+  //   setVatopGroups(updatedVatopGroups);
+  //   updateVatopCombinations(updatedVatopGroups); // Update combinations
+  //   setVatopUpdateTrigger(false); // Reset the trigger
+  // }, [vatopUpdateTrigger]); 
+  // useEffect(() => {
+  //   if (!vatopGroups.length) {
+  //     return;
+  //   }
   
-    const highestCpVact = Math.max(...vatopGroups.map((group) => group.cpVact || 0));
-    setHpap(highestCpVact);
-  }, [vatopGroups]); // Depend on vatopGroups and bitcoinPrice
+  //   const highestCpVact = Math.max(...vatopGroups.map((group) => group.cpVact || 0));
+  //   setHpap(highestCpVact);
+  // }, [vatopGroups]); // Depend on vatopGroups and bitcoinPrice
 
 
 
@@ -505,10 +505,10 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ? newHAP // If supplicateUSDtoCBBTC is true, use newHAP
         : fetchedGroup.cpVact; // Otherwise, use the existing cpVact
   
-        const cVactDa = ;
-        const cVact = cVactDa;
+        const cVactDa = newHAP;
+        const cVact = newHAP;
   
-        const cVactTaa = ;
+        const cVactTaa = newHAP;
   
         const cdVatop = parseFloat((cVact - fetchedGroup.cVatop).toFixed(2));
   
@@ -658,42 +658,42 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const balancesRef = useRef(balances);
-  useEffect(() => {
-    balancesRef.current = balances; 
-  }, [balances]);
+  // useEffect(() => {
+  //   balancesRef.current = balances; 
+  // }, [balances]);
   
-  useEffect(() => {
-    if (!email || !bitcoinPrice || bitcoinPrice <= 0) {
-      console.warn("Skipping interval: Missing email or valid Bitcoin price.");
-      return;
-    }
-    if (!balances.BTC_BASE && !balances.USDC_BASE) {
-      console.warn("Skipping interval: Balances not loaded.");
-      return;
-    }
+  // useEffect(() => {
+  //   if (!email || !bitcoinPrice || bitcoinPrice <= 0) {
+  //     console.warn("Skipping interval: Missing email or valid Bitcoin price.");
+  //     return;
+  //   }
+  //   if (!balances.BTC_BASE && !balances.USDC_BASE) {
+  //     console.warn("Skipping interval: Balances not loaded.");
+  //     return;
+  //   }
   
-    const interval = setInterval(async () => {
-      console.log("Running balance fetch interval...");
-      await loadBalances();
+  //   const interval = setInterval(async () => {
+  //     console.log("Running balance fetch interval...");
+  //     await loadBalances();
   
-      const btcBalance = parseFloat(balancesRef.current?.BTC_BASE || "0");
-      const usdBalance = parseFloat(balancesRef.current?.USDC_BASE || "0");
-      console.log("Balances in interval:", { btcBalance, usdBalance });
+  //     const btcBalance = parseFloat(balancesRef.current?.BTC_BASE || "0");
+  //     const usdBalance = parseFloat(balancesRef.current?.USDC_BASE || "0");
+  //     console.log("Balances in interval:", { btcBalance, usdBalance });
   
-      const usdFromBTC = btcBalance * bitcoinPrice;
-      const totalUSDC = usdBalance + usdFromBTC;
+  //     const usdFromBTC = btcBalance * bitcoinPrice;
+  //     const totalUSDC = usdBalance + usdFromBTC;
   
-      console.log("Total USDC calculated:", totalUSDC);
+  //     console.log("Total USDC calculated:", totalUSDC);
   
-      try {
-        await axios.post("/api/saveABTC", { email, amount: totalUSDC });
-      } catch (error) {
-        console.error("Error importing aBTC:", error);
-      }
-    }, 2000);
+  //     try {
+  //       await axios.post("/api/saveABTC", { email, amount: totalUSDC });
+  //     } catch (error) {
+  //       console.error("Error importing aBTC:", error);
+  //     }
+  //   }, 2000);
   
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, [email, bitcoinPrice]);
+  //   return () => clearInterval(interval); // Cleanup interval on unmount
+  // }, [email, bitcoinPrice]);
 
 
   
