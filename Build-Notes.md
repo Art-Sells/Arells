@@ -5,10 +5,8 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- LogIn
-1. after button is clicked, initiate createUserWallet from signer.tsx
-2. Add {opening account Modal in sign-up} 
-3. Delete aBTC.json from aws-config.js
+- LogIn/Sign-Up
+1. Add {opening account Modal in sign-up} 
 - MASSTester:
 1. integrate createMASSWallet from signer.tsx
 1. create initiateMASS in signer.tsx to use
@@ -83,7 +81,7 @@
 - General Price is median exterior price and all MASS logic functions are dependent on this.
 - ***importing USDC into the system (first), $1k~ (do more research on this) max per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this]***
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
-- - Problems: 
+- - Problems (if double addition for Vatop Data happens, reference back to aws-congif.js)
 - - - Test Fee Free Route (Set Time to increase API Rate Limit on Infura (Even After Launch))
 - - After Problems solved:
 - - - Check TXN (and amount in Wallet .json calculate if fees taken)
@@ -97,7 +95,7 @@
 - Can only Dcd PK with P (from nv)… Do extensive research on this, see if can cd and dcd from json and without P.
 - Set up API (system) to log the date and times of Decoded price that was used of each pool and usdcOut/cbbtcOut from LPP to capture changes (offline/online versions) (including AUM from first wallet into the 2nd)
 - AWS KMS (envelope encryption) for P/K
-- and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs)
+- and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs & aws-config)
 
 ### Online:
 - chence .env variables to NEXT_PUBLIC

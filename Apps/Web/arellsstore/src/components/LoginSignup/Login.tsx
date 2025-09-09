@@ -37,10 +37,7 @@ const Login: React.FC = () => {
 
       if (emailAttribute) setEmail(emailAttribute);
 
-      setTimeout(() => {
-        setLoggingIn(false);
-        router.push('/account');
-      });
+      router.push('/account');
     } catch (error) {
       console.log('Error logging in:', error);
       setLoggingIn(false);

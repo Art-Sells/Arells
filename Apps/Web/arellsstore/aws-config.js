@@ -3,9 +3,9 @@ require('dotenv').config(); // Load .env variables
 
 // Configure AWS SDK
 AWS.config.update({
-  accessKeyId: process.env.NEXT_PUBLIC_WS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.NEXT_PUBLIC_WS_SECRET_ACCESS_KEY,
-  region: process.env.NEXT_PUBLIC_WS_REGION,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
 });
 
 const s3 = new AWS.S3();
@@ -17,7 +17,7 @@ const s3 = new AWS.S3();
  * @param {string} fileName - The name of the file to create (default: 'vatop-data.json').
  */
 const createS3Folder = async (email, fileName = 'vatop-data.json') => {
-  const bucketName = process.env.NEXT_PUBLIC_S3_BUCKET_NAME;
+  const bucketName = process.env.S3_BUCKET_NAME;
 
   if (!bucketName) {
     console.error('S3 Bucket name is not defined in environment variables.');
@@ -27,9 +27,7 @@ const createS3Folder = async (email, fileName = 'vatop-data.json') => {
   const fileKey = `${email}/${fileName}`;
 
   // Define different file bodies based on the file name
-  const fileBody = fileName === 'aBTC.json'
-    ? JSON.stringify({ aBTC: 0 }) // Body for aBTC.json
-    : JSON.stringify({ vatopGroups: [], vatopCombinations: {}, soldAmounts: 0, transactions: [] }); // Body for vatop-data.json
+  const fileBody = JSON.stringify({ vatopGroups: [], vatopCombinations: {}, soldAmounts: 0, transactions: [] }); // Body for vatop-data.json
 
   const params = {
     Bucket: bucketName,

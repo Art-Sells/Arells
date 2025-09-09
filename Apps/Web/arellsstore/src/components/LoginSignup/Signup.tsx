@@ -26,6 +26,7 @@ const Signup: React.FC = () => {
   const [showEmailExistsError, setEmailExistsError] = useState<boolean>(false);
   const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
   const [showSignedUp, setSignedUp] = useState<boolean>(false);
+  const [showLoggingIn, setLoggingIn] = useState<boolean>(false);
   const { createWallet } = useSigner();
 
   const closeEmailExistsError = () => setEmailExistsError(false);
@@ -34,6 +35,12 @@ const Signup: React.FC = () => {
   const closeEmailError = () => setEmailError(false);
   const closeSignedUp = () => setSignedUp(false);
   const closeMissingFields = () => setMissingFields(false);
+
+  const viewAccount = () => {
+    setLoggingIn(true);      // show loading modal
+    setSignedUp(false);      // reset "signed up" modal
+    router.push('/account'); // navigate to account page
+  };
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -155,6 +162,21 @@ const Signup: React.FC = () => {
           </div>
         </div>
       )}
+      {showLoggingIn && (
+        <div id="buying-wrapper">
+          <div id="buying-content">
+            <Image
+              alt=""
+              width={22}
+              height={22}
+              id="buying-image"
+              src="/images/market/open-door.png"
+            />
+            <div className={stylings.marketplaceloader}></div>
+            <p id="buying-words">logging in</p>
+          </div>
+        </div>
+      )}
       {showMissingFields && (
         <div id="export-failed-wrapper">
           <div id="missing-fields-content">
@@ -226,9 +248,8 @@ const Signup: React.FC = () => {
           <div id="account-created-content">
             <Image alt="" width={35} height={35} id="account-created-image" src="/images/market/checkmark-ebony.png" />
             <p id="account-created-words">Account Created</p>
-            <Link href="/account" passHref>
-              <button id="account-created-close">VIEW ACCOUNT</button>
-            </Link>
+            <button id="account-created-close"
+            onClick={viewAccount} >VIEW ACCOUNT</button>
           </div>
         </div>
       )}
