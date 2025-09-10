@@ -5,13 +5,11 @@
 ## Arells v1 (Import/Custody Bitcoin)
 
 ## Test
-- LogIn/Sign-Up
-1. Add {opening account Modal in sign-up} 
 - MASSTester:
 1. integrate createMASSWallet from signer.tsx
-1. create initiateMASS in signer.tsx to use
-2. create Mass id display to show id, and MASS balances.
-3. test initiateMASS with $1 maximum from userAddress (then set to increate to $1k)
+2. create initiateMASS in signer.tsx to use
+3. create Mass id display to show id, and MASS balances.
+4. test initiateMASS with $1 maximum from userAddress (then set to increate to $1k)
 - HPMMASSTester:
 1. refactor USDC/CBBTC equivalents (might not need)
 - HPMarchitecture process for LPP v1 (remove newHAP in cVactDa, cVact, cVactTaa & uncomment out useEffects? from MASSarchitecture?)

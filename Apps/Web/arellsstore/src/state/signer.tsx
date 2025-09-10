@@ -85,25 +85,30 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
     //User Wallet functions:
-  const readUserFile = async (): Promise<{
-    userAddress: string;
-    userKey: string;
-  } | null> => {
-    try {
-      if (!email) {
-        console.warn("Reading email... Please wait");
+    const readUserFile = async (): Promise<{
+      userAddress: string;
+      encryptedPrivateKey?: string;  // preferred
+      privateKey?: string;           // server may send already decrypted
+      userKey?: string;              // legacy client-encrypted field
+    } | null> => {
+      try {
+        if (!email) {
+          console.warn("Reading email... Please wait");
+          return null;
+        }
+        const response = await axios.get('/api/readUserWallet', { params: { email } });
+        const data = response.data;
+
+        // Keep canonical address in state
+        if (data?.userAddress) setUserAddress(data.userAddress);
+
+        return data;
+      } catch (error) {
+        console.error('Error reading User File:', error);
         return null;
       }
-  
-      const response = await axios.get('/api/readUserWallet', { params: { email } });
-      const data = response.data;
-      setUserAddress(data.userAddress);
-      return data;
-    } catch (error) {
-      console.error('Error reading User File:', error);
-      return null;
-    }
-  };
+    };
+
 
 
   const checkUserWalletExists = async (emailOverride?: string): Promise<boolean> => {
@@ -342,33 +347,49 @@ const saveMASSWalletDetails = async (
     }
   };
 
-  useEffect(() => {
-    const fetchWalletDetails = async () => {
-      try {
-        // Fetch User details
-        const userWalletDetails = await readUserFile();
-        if (userWalletDetails) {
-          setUserAddress(userWalletDetails.userAddress);
-          setUserPrivateKey(
-            CryptoJS.AES.decrypt(userWalletDetails.userKey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
-          );
-        }
-        // Fetch MASS details
-        const massDetails = await readMASSFile();
-        if (massDetails) {
-          setMASSaddress(massDetails.MASSaddress);
-          setMASSPrivateKey(
-            CryptoJS.AES.decrypt(massDetails.MASSkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
-          );
-        }
+useEffect(() => {
+  const fetchWalletDetails = async () => {
+    try {
+      // USER
+      const userWalletDetails = await readUserFile();
+      if (userWalletDetails) {
+        const {
+          userAddress,
+          privateKey,               
+          encryptedPrivateKey,     
+          userKey,                  
+        } = userWalletDetails;
 
-      } catch (error) {
-        console.error('Error fetching user attributes or wallet details:', error);
+        if (userAddress) setUserAddress(userAddress);
+
+        // Prefer server-sent decoded key if present
+        if (privateKey) {
+          setUserPrivateKey(privateKey);
+        } else {
+          // Otherwise decrypt locally (works for encryptedPrivateKey or legacy userKey)
+          const cipher = encryptedPrivateKey ?? userKey ?? '';
+          const maybeDec = cipher
+            ? CryptoJS.AES.decrypt(cipher, 'your-secret-key').toString(CryptoJS.enc.Utf8)
+            : '';
+          setUserPrivateKey(maybeDec || '');
+        }
       }
-    };
-  
-    fetchWalletDetails();
-  }, [readMASSFile, readUserFile]);
+
+      // MASS
+      const massDetails = await readMASSFile();
+      if (massDetails) {
+        setMASSaddress(massDetails.MASSaddress);
+        setMASSPrivateKey(
+          CryptoJS.AES.decrypt(massDetails.MASSkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching user attributes or wallet details:', error);
+    }
+  };
+
+  fetchWalletDetails();
+}, []);
 
   return (
     <SignerContext.Provider
