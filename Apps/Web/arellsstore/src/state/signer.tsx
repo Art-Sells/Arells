@@ -16,10 +16,19 @@ const provider_BASE = new ethers.JsonRpcProvider(
   `https://base-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68`
 );
 
+type MassWallet = {
+  id: string;
+  createdAt: string;
+  MASSaddress: string;
+  MASSkey: string; // encrypted
+};
+
 interface SignerContextType {
   MASSaddress: string;
   MASSPrivateKey: string;
   userAddress: string;
+  massWallets: MassWallet[];
+  refreshMassWallets: () => Promise<void>;
   userPrivateKey: string;
   MASSWalletId: string;
   email: string;
@@ -41,6 +50,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [userAddress, setUserAddress] = useState<string>("");
   const [userPrivateKey, setUserPrivateKey] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [massWallets, setMassWallets] = useState<MassWallet[]>([]);
   const [balances, setBalances] = useState({
     BTC_BASE: "0",
     USDC_BASE: "0",
@@ -200,19 +210,19 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
   //MASS wallet functions:
-  const readMASSFile = async (): Promise<{
-    MASSaddress: string;
-    MASSkey: string;
-  } | null> => {
+  const readMASSFile = async (): Promise<any | null> => {
     try {
-      if (!email) {
-        console.warn("Reading email... Please wait");
-        return null;
-      }
+      if (!email) return null;
       const response = await axios.get('/api/readMASS', { params: { email } });
       const data = response.data;
-      setMASSaddress(data.MASSaddress);
-      if (data.id) setMASSWalletId(data.id); 
+
+      // existing fields
+      if (data?.MASSaddress) setMASSaddress(data.MASSaddress);
+      if (data?.id) setMASSWalletId(data.id);
+
+      // NEW: all wallets
+      if (Array.isArray(data.wallets)) setMassWallets(data.wallets);
+
       return data;
     } catch (error) {
       console.error('Error reading MASS file:', error);
@@ -220,49 +230,53 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   };
 
+  const refreshMassWallets = async () => {
+    if (!email) return;
+    try {
+      const { data } = await axios.get('/api/readMASS', { params: { email } });
+      setMassWallets(Array.isArray(data.wallets) ? data.wallets : []);
+      if (data?.MASSaddress) setMASSaddress(data.MASSaddress);
+      if (data?.id) setMASSWalletId(data.id);
+    } catch (e) {
+      console.error('refreshMassWallets failed:', e);
+    }
+  };
 
-const createMASSWallet = async () => {
-  try {
-    const newWallet = ethers.Wallet.createRandom();
-    const encryptedPrivateKey = CryptoJS.AES.encrypt(
-      newWallet.privateKey,
-      "your-secret-key"
-    ).toString();
+  // When creating, append the new wallet locally so UI updates immediately
+  const createMASSWallet = async () => {
+    try {
+      const newWallet = ethers.Wallet.createRandom();
+      const encryptedPrivateKey = CryptoJS.AES.encrypt(
+        newWallet.privateKey,
+        'your-secret-key'
+      ).toString();
 
-    const MASSid = uuidv4(); 
+      const resp = await fetch('/api/saveMASS', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ MASSaddress: newWallet.address, MASSkey: encryptedPrivateKey, email }),
+      });
+      const json = await resp.json();
 
-    await saveMASSWalletDetails(
-      newWallet.address,
-      encryptedPrivateKey,
-      email,
-      MASSid
-    );
+      // keep “latest” fields for backwards-compat views
+      setMASSaddress(newWallet.address);
+      setMASSPrivateKey(newWallet.privateKey);
+      if (json?.id) setMASSWalletId(json.id);
 
-    setMASSaddress(newWallet.address);
-  } catch (error) {
-    console.error("Error creating MASS wallet:", error);
-  }
-};
-
-const saveMASSWalletDetails = async (
-  MASSaddress: string,
-  MASSkey: string,
-  email: string,
-  MASSid: string
-) => {
-  try {
-    const response = await fetch('/api/saveMASS', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ MASSaddress, MASSkey, email }),
-    });
-    const json = await response.json();
-    if (json?.id) setMASSWalletId(json.id);
-    console.log('MASS Wallet saved');
-  } catch (error) {
-    console.error("Error saving MASS wallet details:", error);
-  }
-};
+      // add to array
+      setMassWallets(prev => [
+        ...prev,
+        {
+          id: json?.id ?? crypto.randomUUID?.() ?? `${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          MASSaddress: newWallet.address,
+          MASSkey: encryptedPrivateKey,
+        },
+      ]);
+    } catch (error) {
+      console.error('Error creating MASS wallet:', error);
+    }
+  };
 
 
 
@@ -303,6 +317,10 @@ const saveMASSWalletDetails = async (
       console.error("Error creating MASS Wallet/s:", error);
     }
   };
+
+
+
+
 
   useEffect(() => {
     const fetchWalletDetails = async () => {
@@ -347,49 +365,33 @@ const saveMASSWalletDetails = async (
     }
   };
 
-useEffect(() => {
-  const fetchWalletDetails = async () => {
-    try {
-      // USER
-      const userWalletDetails = await readUserFile();
-      if (userWalletDetails) {
-        const {
-          userAddress,
-          privateKey,               
-          encryptedPrivateKey,     
-          userKey,                  
-        } = userWalletDetails;
-
-        if (userAddress) setUserAddress(userAddress);
-
-        // Prefer server-sent decoded key if present
-        if (privateKey) {
-          setUserPrivateKey(privateKey);
-        } else {
-          // Otherwise decrypt locally (works for encryptedPrivateKey or legacy userKey)
-          const cipher = encryptedPrivateKey ?? userKey ?? '';
-          const maybeDec = cipher
-            ? CryptoJS.AES.decrypt(cipher, 'your-secret-key').toString(CryptoJS.enc.Utf8)
-            : '';
-          setUserPrivateKey(maybeDec || '');
+  useEffect(() => {
+    const fetchWalletDetails = async () => {
+      try {
+        // Fetch User details
+        const userWalletDetails = await readUserFile();
+        if (userWalletDetails) {
+          setUserAddress(userWalletDetails.userAddress);
+          setUserPrivateKey(
+            CryptoJS.AES.decrypt(userWalletDetails.userKey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
+          );
         }
-      }
+        // Fetch MASS details
+        const massDetails = await readMASSFile();
+        if (massDetails) {
+          setMASSaddress(massDetails.MASSaddress);
+          setMASSPrivateKey(
+            CryptoJS.AES.decrypt(massDetails.MASSkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
+          );
+        }
 
-      // MASS
-      const massDetails = await readMASSFile();
-      if (massDetails) {
-        setMASSaddress(massDetails.MASSaddress);
-        setMASSPrivateKey(
-          CryptoJS.AES.decrypt(massDetails.MASSkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
-        );
+      } catch (error) {
+        console.error('Error fetching user attributes or wallet details:', error);
       }
-    } catch (error) {
-      console.error('Error fetching user attributes or wallet details:', error);
-    }
-  };
-
-  fetchWalletDetails();
-}, []);
+    };
+  
+    fetchWalletDetails();
+  }, [readMASSFile, readUserFile]);
 
   return (
     <SignerContext.Provider
@@ -401,6 +403,8 @@ useEffect(() => {
         userPrivateKey,
         email,
         balances,
+        massWallets,
+        refreshMassWallets,
         createWallet,
         createMASSWallets,
         loadBalances,

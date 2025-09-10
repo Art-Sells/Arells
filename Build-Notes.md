@@ -6,9 +6,9 @@
 
 ## Test
 - MASSTester:
-1. integrate createMASSWallet from signer.tsx
-2. create initiateMASS in signer.tsx to use
-3. create Mass id display to show id, and MASS balances.
+1. MASS (withid) & UserWallet Balances Display. 
+2. test createMASSWallet from signer.tsx (ensure it doesn't read endlessly in API readMASSwallet)
+3. create initiateMASS in signer.tsx to use
 4. test initiateMASS with $1 maximum from userAddress (then set to increate to $1k)
 - HPMMASSTester:
 1. refactor USDC/CBBTC equivalents (might not need)
