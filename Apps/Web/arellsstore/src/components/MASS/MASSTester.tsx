@@ -1,21 +1,36 @@
 // components/MASSTester.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSigner } from '../../state/signer';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
+import { ethers } from 'ethers';
+
+const TOKEN_ADDRESSES = {
+  BTC_BASE: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+  USDC_BASE: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+};
+
+const provider_BASE = new ethers.JsonRpcProvider(
+  'https://base-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68'
+);
+
+const ERC20_ABI = ['function balanceOf(address owner) view returns (uint256)'];
+
+type PerWalletBalances = Record<string, { BTC_BASE?: string; USDC_BASE?: string }>;
 
 const MASSTester: React.FC = () => {
   const {
     createMASSWallets,
-    MASSaddress,
-    MASSPrivateKey,
+    refreshMassWallets,
+    massWallets,
     userAddress,
     userPrivateKey,
+    MASSaddress,
+    MASSPrivateKey,
     balances,
     email,
-    // (optional) loadBalances if you want to refresh after creation
-    loadBalances,
   } = useSigner();
 
   const [wrappedBitcoinAmount, setWrappedBitcoinAmount] = useState<number | string>('');
@@ -24,18 +39,60 @@ const MASSTester: React.FC = () => {
   const [conversionError, setConversionError] = useState<string | null>(null);
   const [isConverting, setIsConverting] = useState<boolean>(false);
 
-  // NEW: creation state
+  const [perWalletBalances, setPerWalletBalances] = useState<PerWalletBalances>({});
   const [isCreatingMASS, setIsCreatingMASS] = useState(false);
   const [createMASSError, setCreateMASSError] = useState<string | null>(null);
+
+  async function fetchBalancesForAddress(address: string) {
+    const btc = new ethers.Contract(TOKEN_ADDRESSES.BTC_BASE, ERC20_ABI, provider_BASE);
+    const usdc = new ethers.Contract(TOKEN_ADDRESSES.USDC_BASE, ERC20_ABI, provider_BASE);
+    const [btcBal, usdcBal] = await Promise.all([
+      btc.balanceOf(address),
+      usdc.balanceOf(address),
+    ]);
+    return {
+      BTC_BASE: ethers.formatUnits(btcBal, 8),
+      USDC_BASE: ethers.formatUnits(usdcBal, 6),
+    };
+  }
+
+  // Load balances for every MASS wallet
+  useEffect(() => {
+    let cancelled = false;
+    async function loadAll() {
+      if (!Array.isArray(massWallets) || massWallets.length === 0) {
+        setPerWalletBalances({});
+        return;
+      }
+      const entries = await Promise.all(
+        massWallets.map(async (w) => {
+          try {
+            const b = await fetchBalancesForAddress(w.MASSaddress);
+            return [w.MASSaddress, b] as const;
+          } catch {
+            return [w.MASSaddress, { BTC_BASE: '0', USDC_BASE: '0' }] as const;
+          }
+        })
+      );
+      if (!cancelled) {
+        const map: PerWalletBalances = {};
+        for (const [addr, b] of entries) map[addr] = b;
+        setPerWalletBalances(map);
+      }
+    }
+    loadAll();
+    return () => {
+      cancelled = true;
+    };
+  }, [massWallets]);
 
   const handleCreateMASS = async () => {
     setIsCreatingMASS(true);
     setCreateMASSError(null);
     try {
       await createMASSWallets();
-      // optionally refresh balances after creating
-      if (typeof loadBalances === 'function') {
-        await loadBalances();
+      if (typeof refreshMassWallets === 'function') {
+        await refreshMassWallets();
       }
     } catch (e: any) {
       setCreateMASSError(e?.message || 'Failed to create MASS wallet');
@@ -103,12 +160,11 @@ const MASSTester: React.FC = () => {
       <h3>User Wallet</h3>
       <p>Address: {userAddress || 'Not Available'}</p>
       <p>Private Key: {userPrivateKey || 'Not Available'}</p>
+      <p>Balance (USDC/BASE): {balances.USDC_BASE} USDC</p>
+      <p>Balance (BTC/BASE): {balances.BTC_BASE} cbBTC</p>
       <hr />
 
-      <h3>MASS Wallet</h3>
-      <p>Address: {MASSaddress || 'Not Available'}</p>
-      <p>Private Key: {MASSPrivateKey || 'Not Available'}</p>
-
+      <h3>MASS Wallets</h3>
       <button onClick={handleCreateMASS} disabled={isCreatingMASS}>
         {isCreatingMASS ? 'Creating…' : 'Create MASS Wallet'}
       </button>
@@ -116,9 +172,31 @@ const MASSTester: React.FC = () => {
 
       <hr />
 
-      <p>Balance (USDC/BASE): {balances.USDC_BASE} USDC</p>
-      <p>Balance (BTC/BASE): {balances.BTC_BASE} BTC</p>
+      {Array.isArray(massWallets) && massWallets.length > 0 ? (
+        <ul>
+          {massWallets.map((w) => {
+            const decryptedPk = CryptoJS.AES.decrypt(
+              w.MASSkey,
+              'your-secret-key'
+            ).toString(CryptoJS.enc.Utf8);
+            const b = perWalletBalances[w.MASSaddress] || {};
+            return (
+              <li key={w.id}>
+                <div>ID: {w.id}</div>
+                <div>Address: {w.MASSaddress}</div>
+                <div>Private Key: {decryptedPk || ''}</div>
+                <div>Balance (USDC/BASE): {b.USDC_BASE ?? '0'} USDC</div>
+                <div>Balance (BTC/BASE): {b.BTC_BASE ?? '0'} cbBTC</div>
+                <hr />
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p>No MASS wallets yet.</p>
+      )}
 
+      {/* Supplication actions */}
       <div>
         <input
           type="tel"

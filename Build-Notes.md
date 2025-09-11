@@ -6,8 +6,7 @@
 
 ## Test
 - MASSTester:
-1. MASS (withid) & UserWallet Balances Display. 
-2. test createMASSWallet from signer.tsx (ensure it doesn't read endlessly in API readMASSwallet)
+1. Ensure readMASSwallet doesn't read endlessly in API readMASSwallet [5 second interval?], then add useEffect into MASSarchitecture.
 3. create initiateMASS in signer.tsx to use
 4. test initiateMASS with $1 maximum from userAddress (then set to increate to $1k)
 - HPMMASSTester:
