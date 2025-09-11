@@ -1,7 +1,7 @@
 // components/MASSTester.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSigner } from '../../state/signer';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
@@ -56,50 +56,20 @@ const MASSTester: React.FC = () => {
     };
   }
 
-  // Load balances for every MASS wallet
-  useEffect(() => {
-    let cancelled = false;
-    async function loadAll() {
-      if (!Array.isArray(massWallets) || massWallets.length === 0) {
-        setPerWalletBalances({});
-        return;
+    const handleCreateMASS = async () => {
+      setIsCreatingMASS(true);
+      setCreateMASSError(null);
+      try {
+        await createMASSWallets();
+        if (typeof refreshMassWallets === 'function') {
+          await refreshMassWallets();
+        }
+      } catch (e: any) {
+        setCreateMASSError(e?.message || 'Failed to create MASS wallet');
+      } finally {
+        setIsCreatingMASS(false);
       }
-      const entries = await Promise.all(
-        massWallets.map(async (w) => {
-          try {
-            const b = await fetchBalancesForAddress(w.MASSaddress);
-            return [w.MASSaddress, b] as const;
-          } catch {
-            return [w.MASSaddress, { BTC_BASE: '0', USDC_BASE: '0' }] as const;
-          }
-        })
-      );
-      if (!cancelled) {
-        const map: PerWalletBalances = {};
-        for (const [addr, b] of entries) map[addr] = b;
-        setPerWalletBalances(map);
-      }
-    }
-    loadAll();
-    return () => {
-      cancelled = true;
     };
-  }, [massWallets]);
-
-  const handleCreateMASS = async () => {
-    setIsCreatingMASS(true);
-    setCreateMASSError(null);
-    try {
-      await createMASSWallets();
-      if (typeof refreshMassWallets === 'function') {
-        await refreshMassWallets();
-      }
-    } catch (e: any) {
-      setCreateMASSError(e?.message || 'Failed to create MASS wallet');
-    } finally {
-      setIsCreatingMASS(false);
-    }
-  };
 
   const handleCBBTCsupplication = async () => {
     if (!wrappedBitcoinAmount || parseFloat(wrappedBitcoinAmount as string) <= 0) {

@@ -1,6 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext, useContext, useState, useEffect, ReactNode, useCallback
+} from "react";
 import { ethers } from "ethers";
 import CryptoJS from "crypto-js";
 import axios from "axios";
@@ -95,29 +97,22 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
     //User Wallet functions:
-    const readUserFile = async (): Promise<{
-      userAddress: string;
-      encryptedPrivateKey?: string;  // preferred
-      privateKey?: string;           // server may send already decrypted
-      userKey?: string;              // legacy client-encrypted field
-    } | null> => {
-      try {
-        if (!email) {
-          console.warn("Reading email... Please wait");
-          return null;
-        }
-        const response = await axios.get('/api/readUserWallet', { params: { email } });
-        const data = response.data;
-
-        // Keep canonical address in state
-        if (data?.userAddress) setUserAddress(data.userAddress);
-
-        return data;
-      } catch (error) {
-        console.error('Error reading User File:', error);
-        return null;
-      }
-    };
+const readUserFile = useCallback(async (): Promise<{
+  userAddress: string;
+  encryptedPrivateKey?: string;
+  privateKey?: string;
+  userKey?: string;
+} | null> => {
+  try {
+    if (!email) return null;
+    const { data } = await axios.get('/api/readUserWallet', { params: { email } });
+    if (data?.userAddress) setUserAddress(data.userAddress);
+    return data;
+  } catch (err) {
+    console.error('Error reading User File:', err);
+    return null;
+  }
+}, [email]);
 
 
 
@@ -321,21 +316,6 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
 
-
-  useEffect(() => {
-    const fetchWalletDetails = async () => {
-      try {
-        await readUserFile();
-        await readMASSFile();
-      } catch (error) {
-        console.error('Error fetching wallet details:', error);
-      }
-    };
-
-    fetchWalletDetails();
-  }, []);
-
-
   const loadBalances = async () => {
     try {
 
@@ -366,32 +346,66 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   };
 
   useEffect(() => {
+    if (!email) return;
+
+    let cancelled = false;
+    let timer: NodeJS.Timeout | null = null;
+    let inFlight = false;
+
     const fetchWalletDetails = async () => {
+      if (cancelled || inFlight) return;
+      inFlight = true;
+
       try {
-        // Fetch User details
-        const userWalletDetails = await readUserFile();
-        if (userWalletDetails) {
-          setUserAddress(userWalletDetails.userAddress);
-          setUserPrivateKey(
-            CryptoJS.AES.decrypt(userWalletDetails.userKey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
-          );
-        }
-        // Fetch MASS details
-        const massDetails = await readMASSFile();
-        if (massDetails) {
-          setMASSaddress(massDetails.MASSaddress);
-          setMASSPrivateKey(
-            CryptoJS.AES.decrypt(massDetails.MASSkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
-          );
+        // fetch in parallel
+        const [userResp, massResp] = await Promise.all([
+          axios.get('/api/readUserWallet', { params: { email } }).catch(() => null),
+          axios.get('/api/readMASS', { params: { email } }).catch(() => null),
+        ]);
+
+        if (userResp?.data) {
+          const u = userResp.data;
+          setUserAddress(u.userAddress || '');
+          if (u.userKey) {
+            setUserPrivateKey(
+              CryptoJS.AES.decrypt(u.userKey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
+            );
+          }
         }
 
-      } catch (error) {
-        console.error('Error fetching user attributes or wallet details:', error);
+        if (massResp?.data) {
+          const m = massResp.data;
+          if (m.MASSaddress) setMASSaddress(m.MASSaddress);
+          if (m.MASSkey) {
+            setMASSPrivateKey(
+              CryptoJS.AES.decrypt(m.MASSkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
+            );
+          }
+          if (Array.isArray(m.wallets)) setMassWallets(m.wallets);
+        }
+
+        // optional: balances
+        if (MASSaddress) {
+          try { await loadBalances(); } catch {}
+        }
+      } catch (err) {
+        console.error('[poll] fetchWalletDetails failed:', err);
+      } finally {
+        inFlight = false;
+        if (!cancelled) {
+          timer = setTimeout(fetchWalletDetails, 5000); // schedule next tick
+        }
       }
     };
-  
+
+    // kick off immediately
     fetchWalletDetails();
-  }, [readMASSFile, readUserFile]);
+
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [email]); 
 
   return (
     <SignerContext.Provider

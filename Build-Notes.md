@@ -6,8 +6,7 @@
 
 ## Test
 - MASSTester:
-1. Ensure readMASSwallet doesn't read endlessly in API readMASSwallet [5 second interval?], then add useEffect into MASSarchitecture.
-3. create initiateMASS in signer.tsx to use
+3. create initiateMASS in signer.tsx to use in MASStester
 4. test initiateMASS with $1 maximum from userAddress (then set to increate to $1k)
 - HPMMASSTester:
 1. refactor USDC/CBBTC equivalents (might not need)
