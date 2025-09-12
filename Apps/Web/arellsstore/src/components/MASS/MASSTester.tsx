@@ -29,7 +29,7 @@ const MASSTester: React.FC = () => {
     userPrivateKey,
     MASSaddress,
     MASSPrivateKey,
-    balances,
+    userBalances,
     email,
     initiateMASS
   } = useSigner();
@@ -72,25 +72,21 @@ const MASSTester: React.FC = () => {
       }
     };
 
-    const handleInitiateMASS = async () => {
-      try {
-        if (!dollarAmount || Number(dollarAmount) <= 0) {
-          setConversionError('Enter a valid USDC amount');
-          return;
-        }
-        setIsConverting(true);
-        setConversionError(null);
-        const { txHash, massId, massAddress } = await initiateMASS(dollarAmount);
-        setConversionResult(`MASS created (${massId}) and USDC sent to ${massAddress}. tx=${txHash}`);
-        if (typeof refreshMassWallets === 'function') {
-          await refreshMassWallets();
-        }
-      } catch (e: any) {
-        setConversionError(e?.message || 'initiateMASS failed');
-      } finally {
-        setIsConverting(false);
-      }
-    };
+const handleInitiateMASS = async () => {
+  try {
+    setIsConverting(true);
+    setConversionError(null);
+    const { txHash, massId, massAddress } = await initiateMASS(); // <- no args
+    setConversionResult(`MASS created (${massId}) and USDC sent to ${massAddress}. tx=${txHash}`);
+    if (typeof refreshMassWallets === 'function') {
+      await refreshMassWallets();
+    }
+  } catch (e: any) {
+    setConversionError(e?.message || 'initiateMASS failed');
+  } finally {
+    setIsConverting(false);
+  }
+};
 
   const handleCBBTCsupplication = async () => {
     if (!wrappedBitcoinAmount || parseFloat(wrappedBitcoinAmount as string) <= 0) {
@@ -151,20 +147,20 @@ const MASSTester: React.FC = () => {
       <h3>User Wallet</h3>
       <p>Address: {userAddress || 'Not Available'}</p>
       <p>Private Key: {userPrivateKey || 'Not Available'}</p>
-      <p>Balance (USDC/BASE): {balances.USDC_BASE} USDC</p>
-      <p>Balance (BTC/BASE): {balances.BTC_BASE} cbBTC</p>
+      <p>Balance (USDC/BASE): {userBalances.USDC_BASE} USDC</p>
+      <p>Balance (BTC/BASE): {userBalances.BTC_BASE} cbBTC</p>
       <button onClick={handleInitiateMASS} disabled={isConverting}>
         {isConverting ? 'Initiating…' : 'Initiate MASS (send USDC to MASS Wallet)'}
       </button>
       <hr />
 
       <h3>MASS Wallets</h3>
-      <button onClick={handleCreateMASS} disabled={isCreatingMASS}>
+      {/* <button onClick={handleCreateMASS} disabled={isCreatingMASS}>
         {isCreatingMASS ? 'Creating…' : 'Create MASS Wallet'}
       </button>
       {createMASSError && <p>{createMASSError}</p>}
 
-      <hr />
+      <hr /> */}
 
       {Array.isArray(massWallets) && massWallets.length > 0 ? (
         <ul>
@@ -181,6 +177,33 @@ const MASSTester: React.FC = () => {
                 <div>Private Key: {decryptedPk || ''}</div>
                 <div>Balance (USDC/BASE): {b.USDC_BASE ?? '0'} USDC</div>
                 <div>Balance (BTC/BASE): {b.BTC_BASE ?? '0'} cbBTC</div>
+                      {/* Supplication actions below */}
+                <div>
+                  <input
+                    type="tel"
+                    value={wrappedBitcoinAmount}
+                    onChange={(e) => setWrappedBitcoinAmount(e.target.value)}
+                    placeholder="Enter amount in BTC"
+                  />
+                  <button onClick={handleCBBTCsupplication} disabled={isConverting}>
+                    {isConverting ? 'Supplicating...' : 'Supplicate CBBTC to USD'}
+                  </button>
+                </div>
+
+                <div>
+                  <input
+                    type="tel"
+                    value={dollarAmount}
+                    onChange={(e) => setDollarAmount(e.target.value)}
+                    placeholder="Enter amount in USD"
+                  />
+                  <button onClick={handleUSDCsupplication} disabled={isConverting}>
+                    {isConverting ? 'Supplicating...' : 'Supplicate USDC to CBBTC'}
+                  </button>
+                </div>
+
+                {conversionError && <p>{conversionError}</p>}
+                {conversionResult && <p>{conversionResult}</p>}
                 <hr />
               </li>
             );
@@ -190,33 +213,6 @@ const MASSTester: React.FC = () => {
         <p>No MASS wallets yet.</p>
       )}
 
-      {/* Supplication actions */}
-      <div>
-        <input
-          type="tel"
-          value={wrappedBitcoinAmount}
-          onChange={(e) => setWrappedBitcoinAmount(e.target.value)}
-          placeholder="Enter amount in BTC"
-        />
-        <button onClick={handleCBBTCsupplication} disabled={isConverting}>
-          {isConverting ? 'Supplicating...' : 'Supplicate CBBTC to USD'}
-        </button>
-      </div>
-
-      <div>
-        <input
-          type="tel"
-          value={dollarAmount}
-          onChange={(e) => setDollarAmount(e.target.value)}
-          placeholder="Enter amount in USD"
-        />
-        <button onClick={handleUSDCsupplication} disabled={isConverting}>
-          {isConverting ? 'Supplicating...' : 'Supplicate USDC to CBBTC'}
-        </button>
-      </div>
-
-      {conversionError && <p>{conversionError}</p>}
-      {conversionResult && <p>{conversionResult}</p>}
     </div>
   );
 };

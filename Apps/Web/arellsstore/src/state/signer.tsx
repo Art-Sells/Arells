@@ -49,8 +49,11 @@ interface SignerContextType {
   };
   createWallet: (emailOverride?: string) => Promise<void>; 
   createMASSWallets: () => Promise<void>;
-  loadBalances: () => Promise<void>;
-  initiateMASS: (usdcAmount: number | string) => Promise<{ txHash: string; massId: string; massAddress: string }>;
+  userBalances: { BTC_BASE: string; USDC_BASE: string };
+  loadBalances: (address: string) => Promise<{ BTC_BASE: string; USDC_BASE: string }>;
+  refreshUserBalances: () => Promise<void>;
+  refreshMassBalances: () => Promise<void>;
+  initiateMASS: () => Promise<{ txHash: string; massId: string; massAddress: string }>;
 }
 
 const SignerContext = createContext<SignerContextType | undefined>(undefined);
@@ -67,6 +70,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     BTC_BASE: "0",
     USDC_BASE: "0",
   });
+  const [userBalances, setUserBalances] = useState({ BTC_BASE: "0", USDC_BASE: "0" });
 
   useEffect(() => {
     const fetchAttributes = async () => {
@@ -83,8 +87,6 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     if(!MASSaddress || !userAddress) {
       return;
     }
-
-    loadBalances();
   }, []);
 
 
@@ -240,41 +242,32 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
   };
 
-  const initiateMASS = async (usdcAmount: number | string) => {
-    // validate input
-    const n = Number(usdcAmount);
-    if (!n || n <= 0) throw new Error('Invalid USDC amount');
+const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAddress: string }> => {
+  const MAX_INITIATE_USDC = 1;
 
-    if (!userPrivateKey || !userAddress) {
-      throw new Error('User wallet not available');
-    }
+  if (!userPrivateKey || !userAddress) {
+    throw new Error('User wallet not available');
+  }
 
-    // 1) create MASS & get the fresh address
-    const { id: massId, address: massAddress } = await createMASSWalletAndReturn();
+  // 1) create MASS wallet
+  const { id: massId, address: massAddress } = await createMASSWalletAndReturn();
+  try { await refreshMassWallets(); } catch {}
 
-    // 2) (optional) read back from S3 to be sure it’s persisted
-    try { await refreshMassWallets(); } catch {}
+  // 2) transfer EXACTLY MAX_INITIATE_USDC USDC from user -> MASS
+  const signer = new ethers.Wallet(userPrivateKey, provider_BASE);
+  const usdc = usdcWith(signer);
 
-    // 3) transfer USDC from user wallet -> new MASS wallet
-    const signer = new ethers.Wallet(userPrivateKey, provider_BASE);
-    const usdc = usdcWith(signer);
+  const amt = ethers.parseUnits(String(MAX_INITIATE_USDC), 6); // USDC has 6 decimals
+  const bal = await usdc.balanceOf(userAddress);
+  if (bal < amt) {
+    throw new Error(`Insufficient USDC: have ${ethers.formatUnits(bal, 6)}, need ${MAX_INITIATE_USDC}`);
+  }
 
-    // ensure user has enough USDC
-    const bal = await usdc.balanceOf(userAddress);
-    const amt = ethers.parseUnits(String(usdcAmount), 6); // USDC has 6 decimals
-    if (bal < amt) {
-      throw new Error(`Insufficient USDC: have ${ethers.formatUnits(bal, 6)}, need ${usdcAmount}`);
-    }
+  const tx = await usdc.transfer(massAddress, amt);
+  const receipt = await tx.wait();
 
-    // NOTE: user must have ETH on Base for gas
-    const tx = await usdc.transfer(massAddress, amt);
-    const receipt = await tx.wait();
-
-    // optionally refresh balances
-    try { await loadBalances(); } catch {}
-
-    return { txHash: receipt.hash, massId, massAddress };
-  };
+  return { txHash: receipt.hash, massId, massAddress };
+};
 
   const refreshMassWallets = async () => {
     if (!email) return;
@@ -289,40 +282,40 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   };
 
   // When creating, append the new wallet locally so UI updates immediately
-  const createMASSWallet = async () => {
-    try {
-      const newWallet = ethers.Wallet.createRandom();
-      const encryptedPrivateKey = CryptoJS.AES.encrypt(
-        newWallet.privateKey,
-        'your-secret-key'
-      ).toString();
+  // const createMASSWallet = async () => {
+  //   try {
+  //     const newWallet = ethers.Wallet.createRandom();
+  //     const encryptedPrivateKey = CryptoJS.AES.encrypt(
+  //       newWallet.privateKey,
+  //       'your-secret-key'
+  //     ).toString();
 
-      const resp = await fetch('/api/saveMASS', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ MASSaddress: newWallet.address, MASSkey: encryptedPrivateKey, email }),
-      });
-      const json = await resp.json();
+  //     const resp = await fetch('/api/saveMASS', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ MASSaddress: newWallet.address, MASSkey: encryptedPrivateKey, email }),
+  //     });
+  //     const json = await resp.json();
 
-      // keep “latest” fields for backwards-compat views
-      setMASSaddress(newWallet.address);
-      setMASSPrivateKey(newWallet.privateKey);
-      if (json?.id) setMASSWalletId(json.id);
+  //     // keep “latest” fields for backwards-compat views
+  //     setMASSaddress(newWallet.address);
+  //     setMASSPrivateKey(newWallet.privateKey);
+  //     if (json?.id) setMASSWalletId(json.id);
 
-      // add to array
-      setMassWallets(prev => [
-        ...prev,
-        {
-          id: json?.id ?? crypto.randomUUID?.() ?? `${Date.now()}`,
-          createdAt: new Date().toISOString(),
-          MASSaddress: newWallet.address,
-          MASSkey: encryptedPrivateKey,
-        },
-      ]);
-    } catch (error) {
-      console.error('Error creating MASS wallet:', error);
-    }
-  };
+  //     // add to array
+  //     setMassWallets(prev => [
+  //       ...prev,
+  //       {
+  //         id: json?.id ?? crypto.randomUUID?.() ?? `${Date.now()}`,
+  //         createdAt: new Date().toISOString(),
+  //         MASSaddress: newWallet.address,
+  //         MASSkey: encryptedPrivateKey,
+  //       },
+  //     ]);
+  //   } catch (error) {
+  //     console.error('Error creating MASS wallet:', error);
+  //   }
+  // };
 
 
 
@@ -358,7 +351,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   const createMASSWallets = async () => {
     try {
-      await createMASSWallet();
+      //await createMASSWallet();
     } catch (error) {
       console.error("Error creating MASS Wallet/s:", error);
     }
@@ -367,9 +360,9 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
 
-  const loadBalances = async () => {
+  const loadBalances = async (address: string) => {
+    if (!address) return { BTC_BASE: "0", USDC_BASE: "0" };
     try {
-
       const BTCContract_BASE = new ethers.Contract(
         TOKEN_ADDRESSES.BTC_BASE,
         ["function balanceOf(address owner) view returns (uint256)"],
@@ -382,18 +375,33 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         provider_BASE
       );
 
-      const [BTC_BASE, USDC_BASE] = await Promise.all([
-        BTCContract_BASE.balanceOf(MASSaddress), // BTC on Base
-        USDCContract_BASE.balanceOf(MASSaddress), // USDC on Base
+      const [btc, usdc] = await Promise.all([
+        BTCContract_BASE.balanceOf(address),
+        USDCContract_BASE.balanceOf(address),
       ]);
 
-      setBalances({
-        BTC_BASE: ethers.formatUnits(BTC_BASE, 8),
-        USDC_BASE: ethers.formatUnits(USDC_BASE, 6),
-      });
+      return {
+        BTC_BASE: ethers.formatUnits(btc, 8),
+        USDC_BASE: ethers.formatUnits(usdc, 6),
+      };
     } catch (error) {
-      console.error("Error fetching balances:", error);
+      console.error("Error fetching balances for", address, error);
+      return { BTC_BASE: "0", USDC_BASE: "0" };
     }
+  };
+
+  // updates the *user* balances state
+  const refreshUserBalances = async () => {
+    if (!userAddress) return;
+    const b = await loadBalances(userAddress);
+    setUserBalances(b); // <- you'll need userBalances state (see below)
+  };
+
+  // updates the *current MASS* balances state
+  const refreshMassBalances = async () => {
+    if (!MASSaddress) return;
+    const b = await loadBalances(MASSaddress);
+    setBalances(b); // your existing MASS balances state
   };
 
   useEffect(() => {
@@ -435,10 +443,6 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
           if (Array.isArray(m.wallets)) setMassWallets(m.wallets);
         }
 
-        // optional: balances
-        if (MASSaddress) {
-          try { await loadBalances(); } catch {}
-        }
       } catch (err) {
         console.error('[poll] fetchWalletDetails failed:', err);
       } finally {
@@ -458,6 +462,30 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
   }, [email]); 
 
+  useEffect(() => {
+    if (!userAddress) return;
+    let cancelled = false, t: ReturnType<typeof setTimeout> | null = null;
+    const tick = async () => {
+      try { await refreshUserBalances(); } finally {
+        if (!cancelled) t = setTimeout(tick, 5000);
+      }
+    };
+    tick();
+    return () => { cancelled = true; if (t) clearTimeout(t); };
+  }, [userAddress]);
+
+  useEffect(() => {
+    if (!MASSaddress) return;
+    let cancelled = false, t: ReturnType<typeof setTimeout> | null = null;
+    const tick = async () => {
+      try { await refreshMassBalances(); } finally {
+        if (!cancelled) t = setTimeout(tick, 5000);
+      }
+    };
+    tick();
+    return () => { cancelled = true; if (t) clearTimeout(t); };
+  }, [MASSaddress]);
+
   return (
     <SignerContext.Provider
       value={{
@@ -472,7 +500,10 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         refreshMassWallets,
         createWallet,
         createMASSWallets,
+        userBalances,
         loadBalances,
+        refreshUserBalances,
+        refreshMassBalances,
         initiateMASS
       }}
     >
