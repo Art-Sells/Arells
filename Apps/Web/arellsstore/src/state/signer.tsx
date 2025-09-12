@@ -18,11 +18,20 @@ const provider_BASE = new ethers.JsonRpcProvider(
   `https://base-mainnet.infura.io/v3/4885ed01637e4a6f91c2c7fcd1714f68`
 );
 
+// ERC20 for USDC transfers
+const ERC20_ABI_X = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function transfer(address to, uint256 amount) returns (bool)"
+];
+
+const usdcWith = (signerOrProvider: ethers.Signer | ethers.Provider) =>
+  new ethers.Contract(TOKEN_ADDRESSES.USDC_BASE, ERC20_ABI_X, signerOrProvider);
+
 type MassWallet = {
   id: string;
   createdAt: string;
   MASSaddress: string;
-  MASSkey: string; // encrypted
+  MASSkey: string;
 };
 
 interface SignerContextType {
@@ -41,6 +50,7 @@ interface SignerContextType {
   createWallet: (emailOverride?: string) => Promise<void>; 
   createMASSWallets: () => Promise<void>;
   loadBalances: () => Promise<void>;
+  initiateMASS: (usdcAmount: number | string) => Promise<{ txHash: string; massId: string; massAddress: string }>;
 }
 
 const SignerContext = createContext<SignerContextType | undefined>(undefined);
@@ -97,23 +107,6 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
     //User Wallet functions:
-const readUserFile = useCallback(async (): Promise<{
-  userAddress: string;
-  encryptedPrivateKey?: string;
-  privateKey?: string;
-  userKey?: string;
-} | null> => {
-  try {
-    if (!email) return null;
-    const { data } = await axios.get('/api/readUserWallet', { params: { email } });
-    if (data?.userAddress) setUserAddress(data.userAddress);
-    return data;
-  } catch (err) {
-    console.error('Error reading User File:', err);
-    return null;
-  }
-}, [email]);
-
 
 
   const checkUserWalletExists = async (emailOverride?: string): Promise<boolean> => {
@@ -205,24 +198,82 @@ const readUserFile = useCallback(async (): Promise<{
 
 
   //MASS wallet functions:
-  const readMASSFile = async (): Promise<any | null> => {
-    try {
-      if (!email) return null;
-      const response = await axios.get('/api/readMASS', { params: { email } });
-      const data = response.data;
+  const createMASSWalletAndReturn = async () => {
+    const newWallet = ethers.Wallet.createRandom();
+    const encryptedPrivateKey = CryptoJS.AES.encrypt(
+      newWallet.privateKey,
+      "your-secret-key"
+    ).toString();
 
-      // existing fields
-      if (data?.MASSaddress) setMASSaddress(data.MASSaddress);
-      if (data?.id) setMASSWalletId(data.id);
+    const resp = await fetch('/api/saveMASS', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        MASSaddress: newWallet.address,
+        MASSkey: encryptedPrivateKey,
+        email,
+      }),
+    });
+    const json = await resp.json();
 
-      // NEW: all wallets
-      if (Array.isArray(data.wallets)) setMassWallets(data.wallets);
+    // keep latest in state
+    setMASSaddress(newWallet.address);
+    setMASSPrivateKey(newWallet.privateKey);
+    if (json?.id) setMASSWalletId(json.id);
 
-      return data;
-    } catch (error) {
-      console.error('Error reading MASS file:', error);
-      return null;
+    // append to array
+    setMassWallets(prev => [
+      ...prev,
+      {
+        id: json?.id ?? crypto.randomUUID?.() ?? `${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        MASSaddress: newWallet.address,
+        MASSkey: encryptedPrivateKey,
+      },
+    ]);
+
+    return {
+      id: json?.id ?? '',
+      address: newWallet.address,
+      encryptedKey: encryptedPrivateKey,
+      plainKey: newWallet.privateKey,
+    };
+  };
+
+  const initiateMASS = async (usdcAmount: number | string) => {
+    // validate input
+    const n = Number(usdcAmount);
+    if (!n || n <= 0) throw new Error('Invalid USDC amount');
+
+    if (!userPrivateKey || !userAddress) {
+      throw new Error('User wallet not available');
     }
+
+    // 1) create MASS & get the fresh address
+    const { id: massId, address: massAddress } = await createMASSWalletAndReturn();
+
+    // 2) (optional) read back from S3 to be sure it’s persisted
+    try { await refreshMassWallets(); } catch {}
+
+    // 3) transfer USDC from user wallet -> new MASS wallet
+    const signer = new ethers.Wallet(userPrivateKey, provider_BASE);
+    const usdc = usdcWith(signer);
+
+    // ensure user has enough USDC
+    const bal = await usdc.balanceOf(userAddress);
+    const amt = ethers.parseUnits(String(usdcAmount), 6); // USDC has 6 decimals
+    if (bal < amt) {
+      throw new Error(`Insufficient USDC: have ${ethers.formatUnits(bal, 6)}, need ${usdcAmount}`);
+    }
+
+    // NOTE: user must have ETH on Base for gas
+    const tx = await usdc.transfer(massAddress, amt);
+    const receipt = await tx.wait();
+
+    // optionally refresh balances
+    try { await loadBalances(); } catch {}
+
+    return { txHash: receipt.hash, massId, massAddress };
   };
 
   const refreshMassWallets = async () => {
@@ -422,6 +473,7 @@ const readUserFile = useCallback(async (): Promise<{
         createWallet,
         createMASSWallets,
         loadBalances,
+        initiateMASS
       }}
     >
       {children}

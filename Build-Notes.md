@@ -12,7 +12,7 @@
 1. refactor USDC/CBBTC equivalents (might not need)
 - HPMarchitecture process for LPP v1 (remove newHAP in cVactDa, cVact, cVactTaa & uncomment out useEffects? from MASSarchitecture?)
 1. If userAddress (USDC) !== 0, then createMASSWallet from signer.tsx, then initiateMASS from same wallet
-2. Integrate into initiateMASS: create new VatopGroup of which massAddress is attached (check import function (delete aBTC APIs from UserContext and folder APIs if necessary) in HPMarchitecture and update save/updateVatopGroups as well as).
+2. Integrate into initiateMASS: createMASS and new VatopGroup of which massAddress is attached (check import function (delete aBTC APIs from UserContext and folder APIs if necessary) in HPMarchitecture and update save/updateVatopGroups as well as).
 3. VatopGroup
 - cVatop: number = 0
 - cpVatop: number = 0
@@ -70,7 +70,7 @@
 - - holdMASS: boolean = false
 - - - updateVatopGroups
 - - - fetchVatopGroups
-- Test MASS APIs (then update MASS github)
+- Test MASS APIs (then update MASS github and add state/readme|signer.tsx to HPM Mechanics) 
 
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)

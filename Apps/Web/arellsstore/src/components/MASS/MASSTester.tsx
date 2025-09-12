@@ -31,6 +31,7 @@ const MASSTester: React.FC = () => {
     MASSPrivateKey,
     balances,
     email,
+    initiateMASS
   } = useSigner();
 
   const [wrappedBitcoinAmount, setWrappedBitcoinAmount] = useState<number | string>('');
@@ -68,6 +69,26 @@ const MASSTester: React.FC = () => {
         setCreateMASSError(e?.message || 'Failed to create MASS wallet');
       } finally {
         setIsCreatingMASS(false);
+      }
+    };
+
+    const handleInitiateMASS = async () => {
+      try {
+        if (!dollarAmount || Number(dollarAmount) <= 0) {
+          setConversionError('Enter a valid USDC amount');
+          return;
+        }
+        setIsConverting(true);
+        setConversionError(null);
+        const { txHash, massId, massAddress } = await initiateMASS(dollarAmount);
+        setConversionResult(`MASS created (${massId}) and USDC sent to ${massAddress}. tx=${txHash}`);
+        if (typeof refreshMassWallets === 'function') {
+          await refreshMassWallets();
+        }
+      } catch (e: any) {
+        setConversionError(e?.message || 'initiateMASS failed');
+      } finally {
+        setIsConverting(false);
       }
     };
 
@@ -132,6 +153,9 @@ const MASSTester: React.FC = () => {
       <p>Private Key: {userPrivateKey || 'Not Available'}</p>
       <p>Balance (USDC/BASE): {balances.USDC_BASE} USDC</p>
       <p>Balance (BTC/BASE): {balances.BTC_BASE} cbBTC</p>
+      <button onClick={handleInitiateMASS} disabled={isConverting}>
+        {isConverting ? 'Initiating…' : 'Initiate MASS (send USDC to MASS Wallet)'}
+      </button>
       <hr />
 
       <h3>MASS Wallets</h3>
