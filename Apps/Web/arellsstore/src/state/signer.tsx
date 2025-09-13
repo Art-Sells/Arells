@@ -246,8 +246,12 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
   };
 
+  const fundMassGas = async (recipient: string, targetUsd = 0.05) => {
+    await axios.post("/api/fundMassGas", { recipientAddress: recipient, targetUsd });
+  };
+
   const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAddress: string }> => {
-    const MAX_INITIATE_USDC = 1;
+    const MAX_INITIATE_USDC = 1000;
 
     if (!userPrivateKey || !userAddress) {
       throw new Error('User wallet not available');
@@ -261,14 +265,16 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const signer = new ethers.Wallet(userPrivateKey, provider_BASE);
     const usdc = usdcWith(signer);
 
-    const amt = ethers.parseUnits(String(MAX_INITIATE_USDC), 6); // USDC has 6 decimals
+    const amt = ethers.parseUnits(String(MAX_INITIATE_USDC), 6);
     const bal = await usdc.balanceOf(userAddress);
     if (bal < amt) {
       throw new Error(`Insufficient USDC: have ${ethers.formatUnits(bal, 6)}, need ${MAX_INITIATE_USDC}`);
     }
 
     const tx = await usdc.transfer(massAddress, amt);
-    const receipt = await tx.wait();
+    const receipt = await tx.wait();   // ✅ ensure success before moving on
+
+    await fundMassGas(massAddress, 0.05);
 
     return { txHash: receipt.hash, massId, massAddress };
   };

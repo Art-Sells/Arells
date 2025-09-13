@@ -6,8 +6,7 @@
 
 ## Test
 - MASSTester:
-1. test initiateMASS funds each wallet with .eth (2 cents)?
-2. increate initiateMASS to $1k
+1. test supplications
 - HPMMASSTester:
 1. refactor USDC/CBBTC equivalents (might not need)
 - HPMarchitecture process for LPP v1 (remove newHAP in cVactDa, cVact, cVactTaa & uncomment out useEffects? from MASSarchitecture?)
@@ -40,7 +39,7 @@
 - - holdMASS = false
 - - - updateVatopGroups
 - - - fetchVatopGroups
-5. useEffect: If current bitcoinPrice < HAP then initiate executeSupplication from MASS_CBBTC API (Arells Fee funder checks if wallet has less than .3 cents in ETH).
+5. useEffect: If current bitcoinPrice < HAP then initiate executeSupplication from MASS_CBBTC API .
 - cpVatop = no change
 - cVatop = no change
 - cdVatop = cVact - cVatop
@@ -56,7 +55,7 @@
 - - - fetchVatopGroups
 6. useEffect: Compare HAP/bitcoinPrice
 - useEffect: If bitcoinPrice > HAP: releaseMASS button changes holdMASS to false.
-7. useEffect: If current bitcoinPrice >= HAP then initiate executeSupplication from MASS_USDC API (Arells Fee funder checks if wallet has less than .3 cents in ETH).
+7. useEffect: If current bitcoinPrice >= HAP then initiate executeSupplication from MASS_USDC API .
 - cpVatop = no change
 - cVatop = no change
 - cdVatop = cVact - cVatop
@@ -70,7 +69,7 @@
 - - holdMASS: boolean = false
 - - - updateVatopGroups
 - - - fetchVatopGroups
-- Test MASS APIs (then update MASS github and add state/readme(explain userWallet and MASSwallet, and initiateMASS and why the MAX is capped|signer.tsx to HPM Mechanics) )
+- Test MASS APIs (then update MASS github (fundMassGas) and add state/readme(explain userWallet and MASSwallet, and initiateMASS and why the MAX is capped|signer.tsx to HPM Mechanics) )
 
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
