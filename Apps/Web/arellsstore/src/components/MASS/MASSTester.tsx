@@ -41,22 +41,29 @@ const MASSTester: React.FC = () => {
   const [conversionError, setConversionError] = useState<string | null>(null);
   const [isConverting, setIsConverting] = useState<boolean>(false);
 
-  const [perWalletBalances, setPerWalletBalances] = useState<PerWalletBalances>({});
-  const [isCreatingMASS, setIsCreatingMASS] = useState(false);
-  const [createMASSError, setCreateMASSError] = useState<string | null>(null);
+  // Per-wallet inputs
+  const [perUsd, setPerUsd] = useState<Record<string, string>>({});
+  const [perBtc, setPerBtc] = useState<Record<string, string>>({});
 
-  async function fetchBalancesForAddress(address: string) {
-    const btc = new ethers.Contract(TOKEN_ADDRESSES.BTC_BASE, ERC20_ABI, provider_BASE);
-    const usdc = new ethers.Contract(TOKEN_ADDRESSES.USDC_BASE, ERC20_ABI, provider_BASE);
-    const [btcBal, usdcBal] = await Promise.all([
-      btc.balanceOf(address),
-      usdc.balanceOf(address),
-    ]);
-    return {
-      BTC_BASE: ethers.formatUnits(btcBal, 8),
-      USDC_BASE: ethers.formatUnits(usdcBal, 6),
-    };
-  }
+  // Per-wallet UI state
+  const [isWorkingById, setIsWorkingById] = useState<Record<string, boolean>>({});
+  const [errorById, setErrorById] = useState<Record<string, string | null>>({});
+  const [resultById, setResultById] = useState<Record<string, string | null>>({});
+
+  const setUsdFor = (id: string, v: string) =>
+  setPerUsd(prev => ({ ...prev, [id]: v }));
+
+  const setBtcFor = (id: string, v: string) =>
+    setPerBtc(prev => ({ ...prev, [id]: v }));
+
+  const setWorking = (id: string, v: boolean) =>
+    setIsWorkingById(prev => ({ ...prev, [id]: v }));
+
+  const setErr = (id: string, msg: string | null) =>
+    setErrorById(prev => ({ ...prev, [id]: msg }));
+
+  const setRes = (id: string, msg: string | null) =>
+    setResultById(prev => ({ ...prev, [id]: msg }));
 
     // const handleCreateMASS = async () => {
     //   setIsCreatingMASS(true);
@@ -89,55 +96,66 @@ const handleInitiateMASS = async () => {
   }
 };
 
-  const handleCBBTCsupplication = async () => {
-    if (!wrappedBitcoinAmount || parseFloat(wrappedBitcoinAmount as string) <= 0) {
-      setConversionError('Please enter a valid Bitcoin amount.');
-      return;
-    }
-    if (!MASSaddress) {
-      setConversionError('Wallet information is missing.');
-      return;
-    }
-    setConversionError(null);
-    setIsConverting(true);
-    try {
-      await axios.post('/api/MASS_cbbtc', {
-        cbBitcoinAmount: parseFloat(wrappedBitcoinAmount as string),
-        massAddress: MASSaddress,
-        massPrivateKey: MASSPrivateKey,
-      });
-      setConversionResult('Supplication successful!');
-    } catch (error: any) {
-      setConversionError(error.response?.data?.error || 'Conversion failed. Please try again.');
-    } finally {
-      setIsConverting(false);
-    }
-  };
+// USDC -> CBBTC for a specific MASS wallet
+const supplicateUSDCFor = async (w: { id: string; MASSaddress: string; MASSkey: string }) => {
+  const amountStr = perUsd[w.id] ?? "";
+  const amount = parseFloat(amountStr);
+  if (!amount || amount <= 0) {
+    setErr(w.id, "Please enter a valid USDC amount.");
+    return;
+  }
 
-  const handleUSDCsupplication = async () => {
-    if (!dollarAmount || isNaN(Number(dollarAmount)) || Number(dollarAmount) <= 0) {
-      setConversionError('Please enter a valid USDC amount.');
-      return;
-    }
-    if (!MASSPrivateKey || !MASSaddress) {
-      setConversionError('Wallet information is missing.');
-      return;
-    }
-    setIsConverting(true);
-    setConversionError(null);
-    try {
-      await axios.post('/api/MASS_usdc', {
-        usdcAmount: parseFloat(dollarAmount as string),
-        massAddress: MASSaddress,
-        massPrivateKey: MASSPrivateKey,
-      });
-      setConversionResult('Supplication successful!');
-    } catch {
-      setConversionError('Supplication failed. Please try again.');
-    } finally {
-      setIsConverting(false);
-    }
-  };
+  // decrypt this wallet's PK
+  const massPrivateKey = CryptoJS.AES.decrypt(w.MASSkey, "your-secret-key").toString(CryptoJS.enc.Utf8);
+
+  setWorking(w.id, true);
+  setErr(w.id, null);
+  setRes(w.id, null);
+
+  try {
+    await axios.post("/api/MASS_usdc", {
+      usdcAmount: amount,
+      massAddress: w.MASSaddress,
+      massPrivateKey,
+    });
+
+    setRes(w.id, `Supplication successful for ${amount} USDC.`);
+  } catch (e: any) {
+    setErr(w.id, e?.response?.data?.error || "Supplication failed. Please try again.");
+  } finally {
+    setWorking(w.id, false);
+  }
+};
+
+// CBBTC -> USD for a specific MASS wallet
+const supplicateCBBTCFor = async (w: { id: string; MASSaddress: string; MASSkey: string }) => {
+  const amountStr = perBtc[w.id] ?? "";
+  const amount = parseFloat(amountStr);
+  if (!amount || amount <= 0) {
+    setErr(w.id, "Please enter a valid BTC amount.");
+    return;
+  }
+
+  const massPrivateKey = CryptoJS.AES.decrypt(w.MASSkey, "your-secret-key").toString(CryptoJS.enc.Utf8);
+
+  setWorking(w.id, true);
+  setErr(w.id, null);
+  setRes(w.id, null);
+
+  try {
+    await axios.post("/api/MASS_cbbtc", {
+      cbBitcoinAmount: amount,
+      massAddress: w.MASSaddress,
+      massPrivateKey,
+    });
+
+    setRes(w.id, `Supplication successful for ${amount} BTC.`);
+  } catch (e: any) {
+    setErr(w.id, e?.response?.data?.error || "Conversion failed. Please try again.");
+  } finally {
+    setWorking(w.id, false);
+  }
+};
 
   return (
     <div>
@@ -182,29 +200,29 @@ const handleInitiateMASS = async () => {
                 <div>
                   <input
                     type="tel"
-                    value={wrappedBitcoinAmount}
-                    onChange={(e) => setWrappedBitcoinAmount(e.target.value)}
+                    value={perBtc[w.id] ?? ""}
+                    onChange={(e) => setBtcFor(w.id, e.target.value)}
                     placeholder="Enter amount in BTC"
                   />
-                  <button onClick={handleCBBTCsupplication} disabled={isConverting}>
-                    {isConverting ? 'Supplicating...' : 'Supplicate CBBTC to USD'}
+                  <button onClick={() => supplicateCBBTCFor(w)} disabled={!!isWorkingById[w.id]}>
+                    {isWorkingById[w.id] ? "Supplicating..." : "Supplicate CBBTC to USD"}
                   </button>
                 </div>
 
                 <div>
                   <input
                     type="tel"
-                    value={dollarAmount}
-                    onChange={(e) => setDollarAmount(e.target.value)}
+                    value={perUsd[w.id] ?? ""}
+                    onChange={(e) => setUsdFor(w.id, e.target.value)}
                     placeholder="Enter amount in USD"
                   />
-                  <button onClick={handleUSDCsupplication} disabled={isConverting}>
-                    {isConverting ? 'Supplicating...' : 'Supplicate USDC to CBBTC'}
+                  <button onClick={() => supplicateUSDCFor(w)} disabled={!!isWorkingById[w.id]}>
+                    {isWorkingById[w.id] ? "Supplicating..." : "Supplicate USDC to CBBTC"}
                   </button>
                 </div>
 
-                {conversionError && <p>{conversionError}</p>}
-                {conversionResult && <p>{conversionResult}</p>}
+                {errorById[w.id] && <p>{errorById[w.id]}</p>}
+                {resultById[w.id] && <p>{resultById[w.id]}</p>}
                 <hr />
               </li>
             );
