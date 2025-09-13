@@ -52,7 +52,8 @@ interface SignerContextType {
   userBalances: { BTC_BASE: string; USDC_BASE: string };
   loadBalances: (address: string) => Promise<{ BTC_BASE: string; USDC_BASE: string }>;
   refreshUserBalances: () => Promise<void>;
-  refreshMassBalances: () => Promise<void>;
+  perMassBalances: Record<string, { BTC_BASE: string; USDC_BASE: string }>;
+  refreshAllMassBalances: () => Promise<void>;
   initiateMASS: () => Promise<{ txHash: string; massId: string; massAddress: string }>;
 }
 
@@ -71,6 +72,9 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     USDC_BASE: "0",
   });
   const [userBalances, setUserBalances] = useState({ BTC_BASE: "0", USDC_BASE: "0" });
+  const [perMassBalances, setPerMassBalances] = useState<
+  Record<string, { BTC_BASE: string; USDC_BASE: string }>
+  >({});
 
   useEffect(() => {
     const fetchAttributes = async () => {
@@ -242,32 +246,32 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
   };
 
-const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAddress: string }> => {
-  const MAX_INITIATE_USDC = 1;
+  const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAddress: string }> => {
+    const MAX_INITIATE_USDC = 1;
 
-  if (!userPrivateKey || !userAddress) {
-    throw new Error('User wallet not available');
-  }
+    if (!userPrivateKey || !userAddress) {
+      throw new Error('User wallet not available');
+    }
 
-  // 1) create MASS wallet
-  const { id: massId, address: massAddress } = await createMASSWalletAndReturn();
-  try { await refreshMassWallets(); } catch {}
+    // 1) create MASS wallet
+    const { id: massId, address: massAddress } = await createMASSWalletAndReturn();
+    try { await refreshMassWallets(); } catch {}
 
-  // 2) transfer EXACTLY MAX_INITIATE_USDC USDC from user -> MASS
-  const signer = new ethers.Wallet(userPrivateKey, provider_BASE);
-  const usdc = usdcWith(signer);
+    // 2) transfer EXACTLY MAX_INITIATE_USDC USDC from user -> MASS
+    const signer = new ethers.Wallet(userPrivateKey, provider_BASE);
+    const usdc = usdcWith(signer);
 
-  const amt = ethers.parseUnits(String(MAX_INITIATE_USDC), 6); // USDC has 6 decimals
-  const bal = await usdc.balanceOf(userAddress);
-  if (bal < amt) {
-    throw new Error(`Insufficient USDC: have ${ethers.formatUnits(bal, 6)}, need ${MAX_INITIATE_USDC}`);
-  }
+    const amt = ethers.parseUnits(String(MAX_INITIATE_USDC), 6); // USDC has 6 decimals
+    const bal = await usdc.balanceOf(userAddress);
+    if (bal < amt) {
+      throw new Error(`Insufficient USDC: have ${ethers.formatUnits(bal, 6)}, need ${MAX_INITIATE_USDC}`);
+    }
 
-  const tx = await usdc.transfer(massAddress, amt);
-  const receipt = await tx.wait();
+    const tx = await usdc.transfer(massAddress, amt);
+    const receipt = await tx.wait();
 
-  return { txHash: receipt.hash, massId, massAddress };
-};
+    return { txHash: receipt.hash, massId, massAddress };
+  };
 
   const refreshMassWallets = async () => {
     if (!email) return;
@@ -360,15 +364,15 @@ const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAdd
 
 
 
-  const loadBalances = async (address: string) => {
+  const loadBalances = useCallback(async (address: string) => {
     if (!address) return { BTC_BASE: "0", USDC_BASE: "0" };
+
     try {
       const BTCContract_BASE = new ethers.Contract(
         TOKEN_ADDRESSES.BTC_BASE,
         ["function balanceOf(address owner) view returns (uint256)"],
         provider_BASE
       );
-
       const USDCContract_BASE = new ethers.Contract(
         TOKEN_ADDRESSES.USDC_BASE,
         ["function balanceOf(address owner) view returns (uint256)"],
@@ -388,7 +392,7 @@ const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAdd
       console.error("Error fetching balances for", address, error);
       return { BTC_BASE: "0", USDC_BASE: "0" };
     }
-  };
+  }, []);
 
   // updates the *user* balances state
   const refreshUserBalances = async () => {
@@ -397,12 +401,21 @@ const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAdd
     setUserBalances(b); // <- you'll need userBalances state (see below)
   };
 
-  // updates the *current MASS* balances state
-  const refreshMassBalances = async () => {
-    if (!MASSaddress) return;
-    const b = await loadBalances(MASSaddress);
-    setBalances(b); // your existing MASS balances state
-  };
+  const refreshAllMassBalances = useCallback(async () => {
+    if (!massWallets || massWallets.length === 0) {
+      setPerMassBalances({});
+      return;
+    }
+
+    const entries = await Promise.all(
+      massWallets.map(async (w) => {
+        const b = await loadBalances(w.MASSaddress);
+        return [w.MASSaddress, b] as const;
+      })
+    );
+
+    setPerMassBalances(Object.fromEntries(entries));
+  }, [massWallets, loadBalances]);
 
   useEffect(() => {
     if (!email) return;
@@ -475,16 +488,24 @@ const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAdd
   }, [userAddress]);
 
   useEffect(() => {
-    if (!MASSaddress) return;
-    let cancelled = false, t: ReturnType<typeof setTimeout> | null = null;
+    let cancelled = false;
+    let t: ReturnType<typeof setTimeout> | null = null;
+
     const tick = async () => {
-      try { await refreshMassBalances(); } finally {
-        if (!cancelled) t = setTimeout(tick, 5000);
+      try { await refreshAllMassBalances(); }
+      finally {
+        if (!cancelled) t = setTimeout(tick, 5000); // every 5s
       }
     };
+
+    // run immediately and then poll
     tick();
-    return () => { cancelled = true; if (t) clearTimeout(t); };
-  }, [MASSaddress]);
+
+    return () => {
+      cancelled = true;
+      if (t) clearTimeout(t);
+    };
+  }, [refreshAllMassBalances]);
 
   return (
     <SignerContext.Provider
@@ -503,7 +524,8 @@ const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAdd
         userBalances,
         loadBalances,
         refreshUserBalances,
-        refreshMassBalances,
+        perMassBalances,
+        refreshAllMassBalances,
         initiateMASS
       }}
     >

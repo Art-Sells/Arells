@@ -31,6 +31,7 @@ const MASSTester: React.FC = () => {
     MASSPrivateKey,
     userBalances,
     email,
+    perMassBalances,
     initiateMASS
   } = useSigner();
 
@@ -57,20 +58,20 @@ const MASSTester: React.FC = () => {
     };
   }
 
-    const handleCreateMASS = async () => {
-      setIsCreatingMASS(true);
-      setCreateMASSError(null);
-      try {
-        await createMASSWallets();
-        if (typeof refreshMassWallets === 'function') {
-          await refreshMassWallets();
-        }
-      } catch (e: any) {
-        setCreateMASSError(e?.message || 'Failed to create MASS wallet');
-      } finally {
-        setIsCreatingMASS(false);
-      }
-    };
+    // const handleCreateMASS = async () => {
+    //   setIsCreatingMASS(true);
+    //   setCreateMASSError(null);
+    //   try {
+    //     await createMASSWallets();
+    //     if (typeof refreshMassWallets === 'function') {
+    //       await refreshMassWallets();
+    //     }
+    //   } catch (e: any) {
+    //     setCreateMASSError(e?.message || 'Failed to create MASS wallet');
+    //   } finally {
+    //     setIsCreatingMASS(false);
+    //   }
+    // };
 
 const handleInitiateMASS = async () => {
   try {
@@ -169,7 +170,7 @@ const handleInitiateMASS = async () => {
               w.MASSkey,
               'your-secret-key'
             ).toString(CryptoJS.enc.Utf8);
-            const b = perWalletBalances[w.MASSaddress] || {};
+            const b = perMassBalances[w.MASSaddress] || { USDC_BASE: "0", BTC_BASE: "0" };
             return (
               <li key={w.id}>
                 <div>ID: {w.id}</div>
