@@ -27,12 +27,6 @@ const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
 const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
 console.log(`✅ Using Test Wallet: ${userWallet.address}`);
 
-const USDCContract = new ethers.Contract(USDC, [
-  "function balanceOf(address) view returns (uint256)",
-  "function approve(address, uint256)",
-  "function allowance(address, address) view returns (uint256)"
-], userWallet);
-
 
 async function fetchABI(contractAddress) {
   const key = contractAddress.toLowerCase();
