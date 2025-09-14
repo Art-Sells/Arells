@@ -430,37 +430,3 @@ export async function executeSupplication(amountIn, customPrivateKey) {
 
   throw new Error("All routes failed.");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-async function main() {
-
-  const amountInUSDC = 2;
-  const customPrivateKey = process.env.PRIVATE_KEY_TEST;
-
-  console.log("\n🔍 Checking for a Fee-Free Quote...");
-  const feeFreeRoutes = await checkFeeFreeRoute(amountInUSDC);
-  if (feeFreeRoutes.length === 0) {
-    console.error("❌ No route found");
-    return;
-  }
-
-//  console.log("Running executeSupplication...");
-//  await executeSupplication(amountInUSDC, customPrivateKey);
-
-}
-
-
-
-main().catch(console.error);
-
-//to test run: yarn hardhat run **insert-file-route-here** --network base

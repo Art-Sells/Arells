@@ -24,8 +24,21 @@ const CBBTC = "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf";
 
 // Set Up Ethereum Provider & Wallet
 const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
-const userWallet = new ethers.Wallet(process.env.PRIVATE_KEY_TEST, provider);
-console.log(`✅ Using Test Wallet: ${userWallet.address}`);
+// INSERT below:  const provider = new ethers.JsonRpcProvider(process.env.BASE_RPC_URL);
+
+function mkContracts(customPrivateKey) {
+  const wallet = new ethers.Wallet(customPrivateKey, provider);
+  const CBBTCContract = new ethers.Contract(
+    CBBTC,
+    [
+      "function balanceOf(address) view returns (uint256)",
+      "function approve(address spender, uint256 value) returns (bool)",
+      "function allowance(address owner, address spender) view returns (uint256)"
+    ],
+    wallet
+  );
+  return { wallet, CBBTCContract };
+}
 
 
 async function fetchABI(contractAddress) {
@@ -285,35 +298,27 @@ async function checkFeeFreeRoute(amountIn) {
 
 
 
-async function checkCBBTCBalance() {
-  const proxyCBBTCContract = new ethers.Contract(CBBTC, [
-    "function balanceOf(address) view returns (uint256)"
-  ], provider);
-  const balance = await proxyCBBTCContract.balanceOf(userWallet.address);
-  console.log(`💰 CBBTC Balance: ${ethers.formatUnits(balance, 8)} CBBTC`);
+
+async function checkCBBTCBalance(CBBTCContract, wallet) {
+  const balance = await CBBTCContract.balanceOf(wallet.address);
+  console.log(`💰 CBBTC Balance for ${wallet.address}: ${ethers.formatUnits(balance, 8)} CBBTC`);
   return balance;
 }
 
-async function approveCBBTC(amountIn) {
+async function approveCBBTC(amountIn, CBBTCContract, wallet) {
   console.log(`🔑 Approving Swap Router to spend ${amountIn} CBBTC...`);
-  const balance = await checkCBBTCBalance();
   const amountBaseUnits = ethers.parseUnits(amountIn.toString(), 8);
 
+  const balance = await checkCBBTCBalance(CBBTCContract, wallet);
   if (balance < amountBaseUnits) {
-    console.error(`❌ ERROR: Insufficient CBBTC balance!`);
-    return;
+    throw new Error(`Insufficient CBBTC: have ${ethers.formatUnits(balance, 8)}, need ${amountIn}`);
   }
 
-  const proxyCBBTCContract = new ethers.Contract(CBBTC, [
-    "function approve(address, uint256)",
-    "function allowance(address, address) view returns (uint256)"
-  ], userWallet);
-
-  const currentAllowance = await proxyCBBTCContract.allowance(userWallet.address, swapRouterAddress);
+  const currentAllowance = await CBBTCContract.allowance(wallet.address, swapRouterAddress);
   console.log(`📎 BEFORE Approval: ${ethers.formatUnits(currentAllowance, 8)} CBBTC`);
 
   if (currentAllowance < amountBaseUnits) {
-    const tx = await proxyCBBTCContract.approve(swapRouterAddress, amountBaseUnits);
+    const tx = await CBBTCContract.approve(swapRouterAddress, amountBaseUnits);
     const receipt = await tx.wait();
     console.log("✅ Approval Successful!");
     console.log("📎 Approval Logs:", receipt.logs);
@@ -321,16 +326,19 @@ async function approveCBBTC(amountIn) {
     console.log("✅ Approval already sufficient.");
   }
 
-  const postAllowance = await proxyCBBTCContract.allowance(userWallet.address, swapRouterAddress);
+  const postAllowance = await CBBTCContract.allowance(wallet.address, swapRouterAddress);
   console.log(`📎 AFTER Approval: ${ethers.formatUnits(postAllowance, 8)} CBBTC`);
 }
 
-async function checkETHBalance() {
-  const ethBalance = await provider.getBalance(userWallet.address);
+async function checkETHBalance(wallet) {
+  const ethBalance = await provider.getBalance(wallet.address);
   const feeData = await provider.getFeeData();
-  const requiredGasETH = feeData.gasPrice * 70000n;
+  // rough cap: 70k gas
+  const requiredGasETH = (feeData.gasPrice ?? 0n) * 70000n;
+
+  console.log(`💰 ETH Balance for ${wallet.address}: ${ethers.formatEther(ethBalance)} ETH`);
   if (ethBalance < requiredGasETH) {
-    console.error(`❌ Not enough ETH for gas fees! Required: ${ethers.formatEther(requiredGasETH)} ETH`);
+    console.error(`❌ Not enough ETH for gas. Need ~${ethers.formatEther(requiredGasETH)} ETH`);
     return false;
   }
   return true;
@@ -417,44 +425,42 @@ async function LPPv1(amountIn) {
 
 
 export async function executeSupplication(amountIn, customPrivateKey) {
-  const userWallet = new ethers.Wallet(customPrivateKey, provider);
-  console.log(`✅ Using Wallet: ${userWallet.address}`);
-  
-  console.log(`\n🚀 Executing Swap: ${cVactTaa} CBBTC → USDC`);
+  // Bind everything to the MASS wallet passed in
+  const { wallet, CBBTCContract } = mkContracts(customPrivateKey);
+  console.log(`✅ Using Wallet: ${wallet.address}`);
+  console.log(`\n🚀 Executing Swap: ${amountIn} CBBTC → USDC`);
 
   // 1) Balance & gas checks
-  const bal = await checkCBBTCBalance();
-  if (bal < ethers.parseUnits(amountIn.toString(), 8)) {
-    console.error(`❌ ERROR: Insufficient CBBTC balance!`);
-    return;
+  const need = ethers.parseUnits(amountIn.toString(), 8);
+  const bal  = await checkCBBTCBalance(CBBTCContract, wallet);
+  if (bal < need) {
+    throw new Error(`Insufficient CBBTC: have ${ethers.formatUnits(bal, 8)}, need ${amountIn}`);
   }
-  if (!(await checkETHBalance())) return;
+  if (!(await checkETHBalance(wallet))) {
+    throw new Error("Not enough ETH for gas on MASS wallet");
+  }
 
   // 2) LPP
   const lpp = await LPPv1(amountIn);
-  if (lpp.length === 0) {
-    console.error("❌ LPP quote failed for this amount.");
-    return;
+  if (!lpp || lpp.length === 0) {
+    throw new Error("LPP quote failed for this amount.");
   }
 
-  // 3) Approve (once) before attempting swaps
-  await approveCBBTC(amountIn);
+  // 3) Approve before swap
+  await approveCBBTC(amountIn, CBBTCContract, wallet);
 
-  // 4) Try routes from best to worst (highest USDC first)
-  const before = await checkCBBTCBalance();
+  // 4) Try routes from best to worst
+  const before = await CBBTCContract.balanceOf(wallet.address);
   const swapRouterABI = await fetchABI(swapRouterAddress);
-  if (!swapRouterABI) {
-    console.error("❌ Swap router ABI unavailable.");
-    return;
-  }
+  if (!swapRouterABI) throw new Error("Swap router ABI unavailable.");
   const iface = new ethers.Interface(swapRouterABI);
 
   for (const route of lpp) {
-    const { fee, sqrtPriceLimitX96, tick } = route;
+    const { fee, sqrtPriceLimitX96, tick, amountOut } = route;
 
-    // dynamic minOut: 0.5% slippage guard (and never below 0.01 USDC)
+    // 0.5% slippage guard, min $0.01
     const minOut = (() => {
-      const calc = (route.amountOut * 995n) / 1000n;
+      const calc  = (amountOut * 995n) / 1000n;
       const floor = ethers.parseUnits("0.01", 6);
       return calc > floor ? calc : floor;
     })();
@@ -463,23 +469,22 @@ export async function executeSupplication(amountIn, customPrivateKey) {
       tokenIn: CBBTC,
       tokenOut: USDC,
       fee,
-      recipient: userWallet.address,
+      recipient: wallet.address,
       deadline: Math.floor(Date.now() / 1000) + 600,
-      amountIn: ethers.parseUnits(amountIn.toString(), 8),
+      amountIn: need,
       amountOutMinimum: minOut,
-      sqrtPriceLimitX96, // exactly what we quoted with
+      sqrtPriceLimitX96,
     };
 
     console.log(
-      `🔁 Trying best route: fee ${fee}, tick ${tick}, minOut ${ethers.formatUnits(minOut, 6)} USDC`
+      `🔁 Trying route: fee ${fee}, tick ${tick}, minOut ${ethers.formatUnits(minOut, 6)} USDC`
     );
-    // console.log("🔍 Params:", params);
 
     const data = iface.encodeFunctionData("exactInputSingle", [params]);
 
     try {
       const feeData = await provider.getFeeData();
-      const tx = await userWallet.sendTransaction({
+      const tx = await wallet.sendTransaction({
         to: swapRouterAddress,
         data,
         gasLimit: 300000,
@@ -492,50 +497,16 @@ export async function executeSupplication(amountIn, customPrivateKey) {
       console.log("✅ Swap Confirmed!");
       console.log(`🔗 Tx Hash: ${receipt.hash}`);
 
-      const after = await checkCBBTCBalance();
+      const after = await CBBTCContract.balanceOf(wallet.address);
       const used = before - after;
       console.log(`⚠️ Actually used: ${ethers.formatUnits(used, 8)} CBBTC`);
       return;
     } catch (err) {
-      console.error(
-        `❌ Route failed (fee ${fee}, tick ${tick}):`,
-        err.reason || err.message || err
-      );
+      console.error(`❌ Route failed (fee ${fee}, tick ${tick}):`, err.reason || err.message || err);
     }
   }
 
-  console.error("❌ All fee-free routes (by highest Quoter amount) failed.");
+  throw new Error("All routes failed.");
 }
 
 
-
-
-
-
-
-
-
-
-
-async function main() {
-
-  const amountInCBBTC = 0.00002;
-  const customPrivateKey = process.env.PRIVATE_KEY_TEST;
-
-  console.log("\n🔍 Checking for a Fee-Free Quote...");
-  const feeFreeRoutes = await checkFeeFreeRoute(amountInCBBTC);
-  if (feeFreeRoutes.length === 0) {
-    console.error("❌ No route found");
-    return;
-  }
-
-//  console.log("Running executeSupplication...");
-//  await executeSupplication(amountInCBBTC, customPrivateKey);
-
-}
-
-
-
-main().catch(console.error);
-
-//to test run: yarn hardhat run **insert-file-route-here** --network base
