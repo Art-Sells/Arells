@@ -153,6 +153,28 @@ function decodeSqrtPrice(sqrtPriceX96) {
   return adjustedPrice;
 }
 
+function noFeeNoSlipOut_USDC_to_CBBTC(amountInUSDC, sqrtPriceX96) {
+  const sqrt = BigInt(sqrtPriceX96);
+  const price_num = sqrt * sqrt;    // Q192 numerator
+  const price_den = 1n << 192n;     // 2^192
+
+  const amount0_raw = ethers.parseUnits(amountInUSDC.toString(), 6); // USDC raw
+  const amount1_raw = (amount0_raw * price_num) / price_den;         // cbBTC raw (8dp)
+  return amount1_raw;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 async function checkFeeFreeRoute(amountIn) {
   console.log(`\n🚀 Checking Fee-Free Routes for ${amountIn} USDC → CBBTC`);
 
@@ -179,6 +201,9 @@ async function checkFeeFreeRoute(amountIn) {
         results.push({ amount: amountIn, pool: fee, cbbtc: "⚠️ ABI unavailable" });
         continue;
       }
+      // 🧪 Pre-quote (no fee/no slippage) at the *current* price
+      const preQuoteUnits = noFeeNoSlipOut_USDC_to_CBBTC(amountIn, poolData.sqrtPriceX96);
+      const preQuoteCbBTC = ethers.formatUnits(preQuoteUnits, 8);
       if (poolData.liquidity === 0n) {
         console.log(`❌ Skipping fee ${fee}: no liquidity`);
         results.push({ amount: amountIn, pool: fee, cbbtc: "❌ No liquidity" });
@@ -216,6 +241,15 @@ async function checkFeeFreeRoute(amountIn) {
           if (simulation && simulation > 0n) {
             const formatted = ethers.formatUnits(simulation, 8);
             console.log(`✅ Pool ${fee}: Tick ${testTick} → ${formatted} cbBTC`);
+            // 🧮 Compare to pre-quote (no-fee/no-slippage) amount
+            const postQuoteUnits = simulation; // BigInt (8dps)
+            const deltaUnits     = preQuoteUnits - postQuoteUnits;
+            const deltaBps       = preQuoteUnits > 0n
+              ? Number((deltaUnits * 10_000n) / preQuoteUnits)
+              : 0;
+            console.log(
+              `   ↳ Pre-quote: ${preQuoteCbBTC} cbBTC | Quoter: ${formatted} cbBTC | Δ: -${ethers.formatUnits(deltaUnits < 0n ? 0n : deltaUnits, 8)} cbBTC (~${deltaBps} bps)`
+            );
             feeFreeRoutes.push({ poolAddress, fee, sqrtPriceLimitX96, poolData, tick: testTick });
 
             // keep the last non-zero simulation for table summary
@@ -320,6 +354,7 @@ async function quotePoolsForAmount(amountInUSDC) {
   console.table(results);
 }
 
+
 async function LPPv1(amountIn) {
   const amountInWei = ethers.parseUnits(amountIn.toString(), 6); // USDC decimals
   const routes = await checkFeeFreeRoute(amountIn);
@@ -354,13 +389,15 @@ async function LPPv1(amountIn) {
   return scored;
 }
 
+
+
 export async function executeSupplication(amountIn) {
   console.log(`\n🚀 Executing Swap: ${amountIn} USDC → CBBTC`);
 
   // 1) Balance & gas checks
   const bal = await checkUSDCBalance();
-  if (bal < ethers.parseUnits(amountIn.toString(), 8)) {
-    console.error(`❌ ERROR: Insufficient CBBTC balance!`);
+  if (bal < ethers.parseUnits(amountIn.toString(), 6)) {
+    console.error(`❌ ERROR: Insufficient USDC balance!`);
     return;
   }
   if (!(await checkETHBalance())) return;
@@ -461,9 +498,9 @@ async function main() {
   //   }
   // }
 
-  // await checkFeeFreeRoute(3);
+  await checkFeeFreeRoute(3);
 
-  await executeSupplication(3);
+  //await executeSupplication(3);
 }
 
 main().catch((err) => {

@@ -474,9 +474,9 @@ async function main() {
   //   }
   // }
 
-  // await checkFeeFreeRoute(0.0000358);
+  // await checkFeeFreeRoute(0.00003);
 
-  await executeSupplication(0.0000358);
+  await executeSupplication(0.00003);
 }
 
 main().catch((err) => {
