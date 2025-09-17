@@ -4,6 +4,45 @@
 
 ## Arells v1 (Import/Custody Bitcoin)
 
+### FeeFree route Brainstorming:
+1) “dust-slicing” to probe integer-rounding of fees (no LP)
+
+thesis: v3 computes the fee as an integer proportion of the input. if the per-swap input is tiny enough, the computed fee (in token’s smallest unit) may round down to 0. if true, splitting a swap into many micro-swaps could make the sum of charged fees ≈ 0 (gas is the trade-off).
+	•	for a pool with fee f (in ppm, e.g., 500 for 0.05%), and a token with d decimals (USDC = 6), let U = 10^d (micro-units for USDC).
+	•	the per-chunk amount in micro-units A must satisfy: floor(A * f / 1_000_000) = 0.
+	•	equivalently: A < 1_000_000 / f.
+	•	examples (USDC, 6 decimals):
+	•	0.05% (500 ppm): A < 2,000 micro-units ⇒ per-chunk < 0.002000 USDC.
+	•	0.30% (3000 ppm): A < 333 micro-units ⇒ per-chunk < 0.000333 USDC.
+
+what to try:
+	•	split your 3 USDC into chunks of 0.001999 USDC on a 500-ppm pool and do a tight-limit exactInputSingle in a loop in a single tx; measure fee paid from events/amount deltas.
+	•	if every chunk’s fee rounds to 0, total protocol fee might be ≈ 0. (you’ll pay gas and endure price creep; you must cap total slippage via sqrtPriceLimitX96.)
+
+reality checks:
+	•	v3 may effectively “round up” internally depending on the step math—this experiment empirically tells us the truth on Base cbBTC/USDC.
+	•	gas could dominate; we only care about feasibility (can protocol math zero-out fee), then optimize (batching tricks, fewer/larger chunks while still fee-zero).
+
+2) “flash vs swap” fee trade study (no LP)
+
+thesis: flash on v3 pools charges a different fee path than swap. if the pool’s flash fee (per token side) is strictly less than the swap fee impact for our desired direction/size (or exhibits favorable rounding), we can structure:
+	•	flash-borrow the output token → hand to user instantly,
+	•	repay inside the callback by swapping just enough input (with tight price limits),
+	•	total flash+swap fee might be lower than a straight swap—and in some corner cases could approach zero when rounding/prices align.
+
+what to try:
+	•	a measurement harness that calls pool.flash() for a few “quoted” sizes and logs the exact fee owed vs. an equivalent pool.swap() path for the same effective conversion.
+	•	if flash fee < swap fee for your direction/size (or rounds to zero for dust sizes), you’ve got a lever. if not, we discard fast.
+
+3) “tick-pinned exactOutput ladder” (no LP)
+
+thesis: when doing exactOutput, the pool computes how much input (plus fee) is needed while walking price. if you pin sqrtPriceLimitX96 so each leg stays within one tick and choose an output ladder where per-leg fee computation rounds down, the sum of legs could converge to near-zero fee (again with gas/slippage constraints).
+
+what to try:
+	•	split a target output into a ladder of per-leg outputs that keep the price within a single tick (use pool’s current tick, TickMath, and liquidity() to size).
+	•	check if the per-leg fee charged (on input side) rounds to 0 for some leg granularity.
+	•	compare total fee vs. single-shot exactOutput.
+
 ## Test
 - MASSTester:
 1. test supplications
