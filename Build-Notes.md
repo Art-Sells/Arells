@@ -2,9 +2,12 @@
 
 ## Arells Cryptocurrency Marketplace MVP
 
-## Arells v1 (Import/Custody Bitcoin)
+## Arells v1
+
+## Build LPPv1 Infrastructure
 
 ## Test
+- Test with $5 injections for mass
 1. Update HPM/MASS/LPP Codebase Readmes
 - MASSTester:
 1. test supplications
@@ -75,7 +78,7 @@
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
 - General Price is median exterior price and all MASS logic functions are dependent on this.
-- ***importing USDC into the system (first), $1k~ (do more research on this) max per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this]***
+- ***importing USDC into the system (first), $5~ (do more research on this) max per daily injections into HPM-MASS-LPP [Might have to create separate wallet for this]***
 - Import USDC into hpmtester account and test through HPMMASSTester.tsx (compare/contrast MASSTester.tsx api and adjust changes accordingly) (console.log transacton hash always add Fee Funder to new APIs (look at fee funding logic from old APIs))
 - - Problems (if double addition for Vatop Data happens, reference back to aws-congif.js)
 - - - Test Fee Free Route (Set Time to increase API Rate Limit on Infura (Even After Launch))
