@@ -5,7 +5,8 @@
 ## Arells v1
 
 ## Build LPPv1 Infrastructure
-
+- re-write cbbtc/usdc_tests, etc
+- update MASS-LPP APIs/tests/etc
 ## Test
 - Test with $5 injections for mass
 1. Update HPM/MASS/LPP Codebase Readmes
