@@ -7,8 +7,9 @@
 ## Build LPPv1 Infrastructure
 - re-write cbbtc/usdc_tests, etc
 - update MASS-LPP APIs/tests/etc
+- write API to track LPP/MEV-Arbitrage Revenue-sharing and TVL growth
 ## Test
-- Test with $5 injections for mass
+- Test with $5 injections for mass and ramp up after launching based on TVL growth.
 1. Update HPM/MASS/LPP Codebase Readmes
 - MASSTester:
 1. test supplications
