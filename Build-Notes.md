@@ -463,7 +463,9 @@ Arells Wallet and change all Variables
 ## HPM SDK
 - Free SDK for any developer to adopt and integrate into their financial and market based systems.
 
-### Pro-Natalism
+### Pro-Natalism + Building Healthy Mind
+- Daily Recommendation: 7-8~ hrs of daily sleep and a personal daily gratitude journal.
 - P/T 25-30 hrs for prnts with kids (research slry). 40+ for those without (apart from Executive positions)
+
 
 
