@@ -76,6 +76,7 @@
 - - - updateVatopGroups
 - - - fetchVatopGroups
 - Test MASS APIs (then update MASS github (fundMassGas) and add state/readme(explain userWallet and MASSwallet, and initiateMASS and why the MAX is capped|signer.tsx to HPM Mechanics) )
+- set Infrastructure/periphery/contracts/LPPMigrator (look into v2 to see how to migrate liquidity from v1 to v2 of LPP)
 
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
