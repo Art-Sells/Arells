@@ -7,39 +7,18 @@
 Arells exists because it believes ***investments should never lose value***, especially during Bear Markets.
 
 ### Solution:
-A marketplace that renders bear markets obsolete. Arells is working on achieving this through an invention called:
+A marketplace that renders bear markets obsolete. Arells achieves this through an invention called:
 
-<img src="https://github.com/Art-Sells/Arells/blob/test/Art/General/HPMLogoDisplay.png" width="200px"> 
-
-## HPM (Holding Price Mechanism)
-Records the highest price of an asset after its import or purchase limiting the erasure of an investment’s value thus introducing new mechanisms to help it achieve this feat: **[HPM Mechanics](https://github.com/Art-Sells/HPM/blob/main/Mechanics.md)**
-
-**HPM is a Bear Market obfuscating financial architecture that introduces a new kind of marketplace and market dynamics:**
-
-- **Solid Marketplace: a marketplace in which investments either stagnate or increase. This is achieved through a Stablecoin-to-Financial-Asset(or Crypto Asset) Market Automated Supplication System or [MASS](https://github.com/Art-Sells/HPM/tree/main/MASS). In solid marketplaces, bear markets don't exist.**
-- **Sloth Market: a market in which investments stagnate.**
-
-<img src="https://github.com/Art-Sells/Arells/blob/test/Art/Marketing/BeforeandAfterArellss.png" width="400px"> 
-
-### Concept: [arells.com/concept](https://arells.com/concept)
-
-_______________________________________
-
-#### Bear Market Investments
-
-- **With HPM:** +0.009%-1%~ minimum profits, 0% losses.
-- **Without HPM:** -100% maximum losses.
-
-*See **[LPP](https://github.com/Art-Sells/HPM/tree/main/MASS/LPP)** for more info.*
+### [HPM (Holding Price Mechanism)](https://github.com/Art-Sells/HPM)
 _______________________________________________________________________
 
 ## FAQ:
 
 ***Can I sell my investment regardless of price?***
-You'll always be able to sell your investment at any time and at any price that is held through the HPM.
+You'll always be able to sell your investment at any time and at any price that is held through HPM.
 
 ***How would transferring my finances out of Arells impact my investment?***
-If the token price (outside the parameters of the HPM) decreases, the value of your investment will also decrease. The transfer fees of the network (whether it be Bitcoin, Ethereum or any other cryptocurrency) will be also be evident.
+If the token price (outside the parameters of the HPM) decreases, the value of your investment will also decrease. The transfer fees of the network (whether it be Bitcoin, Ethereum or any other asset) will be also be evident.
 
 _______________________________________________________________________
 
