@@ -8,7 +8,9 @@
 - re-write cbbtc/usdc_tests, etc
 - update MASS-LPP APIs/tests/etc
 - write API to track LPP/MEV-Arbitrage Revenue-sharing and TVL growth
+- Remove Under Construction READMEs Periphery/Protocol Github, update all other HPM/MASS/LPP codebase Readmes
 ## Test
+- Import Wallet (integrate into)
 - Test with $5 injections for mass and ramp up after launching based on TVL growth.
 1. Update HPM/MASS/LPP Codebase Readmes
 - MASSTester:
@@ -21,9 +23,9 @@
 3. VatopGroup
 - cVatop: number = 0
 - cpVatop: number = 0
-- cdVatop: number = 0
-- cVact: numbe = 0
-- cpVact: number = 0
+- cdVatop: number = 0 
+- cVact: number = 0
+- cpVact: number = 0 
 - cVactDa: number = massAddress USDC balance
 - cVactTaa: number = 0
 - HAP: number = 0
@@ -37,8 +39,8 @@
 - cdVatop = cVact - cVatop
 - - cVact = cVactDa if cVactDa != 0, else = cpVact / cVactTaa
 - - cpVact = price of pool with best quote used to supplicate USDC
-- - cVactDa = massAddress USDC balance
-- - cVactTaa = massAddress CBBTC balance
+- - cVactDa = massAddress USDC balance (as small as the smallest decimal it'll show)
+- - cVactTaa = massAddress CBBTC balance (as small as the smallest decimal it'll show)
 - - HAP = bitcoinPrice;
 - - supplicateCBBTCtoUSD = false
 - - supplicateUSDtoCBBTC = true
@@ -51,8 +53,8 @@
 - cdVatop = cVact - cVatop
 - - cVact = cVactDa if cVactDa != 0, else = cpVact / cVactTaa
 - - cpVact = price of pool with best quote used to supplicate CBBTC
-- - cVactDa = massAddress USDC balance
-- - cVactTaa = massAddress CBBTC balance
+- - cVactDa = massAddress USDC balance (as small as the smallest decimal it'll show)
+- - cVactTaa = massAddress CBBTC balance (as small as the smallest decimal it'll show)
 - - HAP = No Change;
 - - supplicateCBBTCtoUSD: boolean = true
 - - supplicateUSDtoCBBTC: boolean = false
@@ -67,16 +69,32 @@
 - cdVatop = cVact - cVatop
 - - cVact = cVactDa if cVactDa != 0, else = cpVact / cVactTaa
 - - cpVact = price of pool with best quote used to supplicate CBBTC
-- - cVactDa = massAddress USDC balance
-- - cVactTaa = massAddress CBBTC balance
+- - cVactDa = massAddress USDC balance (as small as the smallest decimal it'll show)
+- - cVactTaa = massAddress CBBTC balance (as small as the smallest decimal it'll show)
 - - HAP = bitcoinPrice;
 - - supplicateCBBTCtoUSD: boolean = false
 - - supplicateUSDtoCBBTC: boolean = true
 - - holdMASS: boolean = false
 - - - updateVatopGroups
 - - - fetchVatopGroups
+8. Add USDC into Vatop Group, monitor change (cVact, cVactDa should increase)
+9. Add CBBTC into Vatop Group, monitor change (cVactTaa should increase)
+10. useEffect: If cVatop != 0 && cVactDa != 0, holdMASS: false, then run executeSupplication from MASS_CBBTC API.
+- cpVatop = no change
+- cVatop = no change
+- cdVatop = cVact - cVatop
+- - cVact = cVactDa if cVactDa != 0, else = cpVact / cVactTaa
+- - cpVact = price of pool with best quote used to supplicate CBBTC
+- - cVactDa = massAddress USDC balance (as small as the smallest decimal it'll show)
+- - cVactTaa = massAddress CBBTC balance (as small as the smallest decimal it'll show)
+- - HAP = bitcoinPrice;
+- - supplicateCBBTCtoUSD: boolean = true
+- - supplicateUSDtoCBBTC: boolean = false
+- - holdMASS: boolean = true
+- - - updateVatopGroups
+- - - fetchVatopGroups
 - Test MASS APIs (then update MASS github (fundMassGas) and add state/readme(explain userWallet and MASSwallet, and initiateMASS and why the MAX is capped|signer.tsx to HPM Mechanics) )
-- set Infrastructure/periphery/contracts/LPPMigrator (look into v2 to see how to migrate liquidity from v1 to v2 of LPP)
+- Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
 
 
 ### Offline (test network transactions daily and verify amounts in DEX UI)
@@ -93,7 +111,8 @@
 - - - Test release MASS (create lever to change frequency (minutes, days)) 5-10 minutes after also (see if supplications will run with latest bitcoin prices and if vatopGroups will update accordingly check wallet)
 - - - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
 - - - Add endless 15 second loop incase Base network is down (break transaction in test files to test this) (if Base Network is congested add error message (if successful, then error message is invisible))
-- Incorporate Export (look at Arells 1.5)
+- Add (eve)
+- Incorporate Export (look at Arells 1.5):
 - - initiateMASS (sets repopulatingMASS function as false until transaction successful)
 - - delete MASS wallets that USDC/CBBTC are both 0
 - Can only Dcd PK with P (from nv)… Do extensive research on this, see if can cd and dcd from json and without P 
@@ -106,7 +125,7 @@
 - eMail verification (before import)
 - Establish background useEffects order
 - - 1. HPM: Fetch Bitcoin Price
-- - 2. HPM: Fetch wallet Balances & update aBTC
+- - 2. HPM: Fetch wallet Balances
 - - 3. HPM: Fetch Vatop Group/save Vatop Group
 - - 4. MASS: Run functions
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons)
@@ -121,10 +140,10 @@
 - save/update .json info every second to ext Dsk (then every day save/update cold)
 
 Arells Wallet and change all Variables
-- Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 1 week.
+- Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 1 week (if MEV bot churn rate remains stable, do not update LPPrebate.sol, if not stable, update)
 - If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateCBBTCtoUSDCs are true then start time)… Update every 168~ hours. 
-- Build HPM Assets (line-chart with profits, etc) based on VatopGroup info.
-
+- Build Arells/HPM Notion (line-chart with TVL/AUM-HPM(Solid Marketplace), revenue, profits, etc) based on VatopGroup info and HPM-API revenue graph {Make it live updating every second?} TVL/AUM (solid (bull/sloth) vs liquid (bull/bear) totals)
+- Updates (oDAO, FndrsINC, etc)
 
 ## After Test
 - Remove P/K & P/K Test from e en vee (check decoding proces (in console.logs) for each individual account to prevent external P/K decoding (MASSTester.tsx and HPMTester.tsx?))
@@ -134,12 +153,13 @@ Arells Wallet and change all Variables
 ### Account
 - "Renders bear markets obsolete." <- and HOME
 - - Import button triggers "Create Wallets" <- use function from MASSTester.tsx
-- If aBTC > 0, then hide "Import Bitcoin to ensure your investments never lose value"
+- If acVatops != 0, then hide "Import USDC to begin"
 - - Price: HPAP (formatPrice from HPMMASSTester.tsx)
-- - Wallet: acVacts (formatCurrency from HPMMASSTester.tsx)
-- - Profits: acdVatops (formatCurrency from HPMMASSTester.tsx)
-- - Wallet Balance Updated every 1~ week
-- - - Error Message Modal visible: if Base network congestion error (from executeSupplication), if executeSupplication successful, then invisible.
+- - Wallet: acVacts + Import Wallet Amount (formatCurrency from HPMMASSTester.tsx)
+- - Profits: acdVatops (formatCurrency from HPMMASSTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - ( VIEW MY (SOLID MARKETPLACE) ) (button) If acVatops == 0, then hide
+- - - Balance Updated every 1~ week
+- - - - Error Message Modal visible: if Base network congestion error (from executeSupplication), if executeSupplication successful, then invisible.
 
 #### Import (Page)
 - Import 
@@ -153,6 +173,22 @@ Arells Wallet and change all Variables
 - - Modal: Importing your $ will convert it into A-B and can be exported back into $ when needed.
 - word-logo: 100 px margin top (after log-in re-introduction)
 
+#### My Solid Marketplace (Page)
+- My | Solid Marketplace
+- Wallets
+- - View (wallet) Address
+- - - Modal: 
+- - - Address # (copy)
+- - - Caution: This Wallet Address is only meant to review balances on blockchain explorers, DO NOT add any funds to this wallet address otherwise it will affect your profits.
+- - % Number: cVact - cVatop = (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - % Line: cVact - cVatop. Timeline starts by seconds, minutes, days, etc. Adjust line verticals based on how small or large the percentage increase
+- - Total: cVact (formatCurrency from HPMMASSTester.tsx)
+- - Profits: cdVatop (formatCurrency from HPMMASSTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - Market Status: 
+- - - Bull (if CBBTC is not 0 from Vatop Group): Show explanation
+- - - Sloth (if USDC is not 0 from Vatop Group): Show explanation
+- - Load More (?numbers)
+
 #### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & Images (see /main)
 - - Investments immune to bear markets. Invest and never worry about bear market losses again.
@@ -165,7 +201,7 @@ Arells Wallet and change all Variables
 - Compare Main ENV with Test ENV before deployments
 
 ## Final Test
-- 2-3 accounts
+- 2-3 accounts, multiple vatop groups, multiple imports and exports (monitor for 2-weeks)
 
 ### After Completion
 - Users:
@@ -181,7 +217,8 @@ Arells Wallet and change all Variables
 - - review ##Base
 - - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
 - CBBTC (if price decreases execute mass), or USDC import (if price increase execute mass), change import slogan (add export info of why only in USDC) 6% (raise prices if needed)
-- Measure AUM handled within system.
+- Notion (Liquid vs Solid Marketplace dynamics (water-cohesive-investments vs rocks-individualized-investments))
+- set Infrastructure/periphery/contracts/LPPMigrator (look into v2 to see how to migrate liquidity from v1 to v2 of LPP for next version of LPPv2)
 
 
 ### Other (if Time Permits)
@@ -222,6 +259,8 @@ Arells Wallet and change all Variables
 
 
 ## START WORK ON BASE L3 (in accordance with v1.5 [get other engineer for this?]):
+- Phase 0:
+- - dev specifically for safety (to consistently test exploits before new LPP protocol is launched)
 - Phase 1: 
 - - Reference Base (and UI) Repos
 - - Abstract Transaction Fees to $0~
@@ -247,7 +286,7 @@ Arells Wallet and change all Variables
 - Create New Export Wallet Address for Selling and Exporting USDC/CBBTC
 - **fix Selling Discrepancy Issue (VERY IMPORTANT)**
 - Sell Test (HPMContext)
-- - (start here first since taking from highest HPAP) if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) from aBTC before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).
+- - (start here first since taking from highest HPAP) if acVactTaa > 0.00000, subtract $sellAmount + 3% (in BTC format) before initiating vatopGroups selling algo and incrementing into soldAmounts. Then initiate sellWBTC"Function"(from Smart Contract).
 - - (if acVactTaa <= 0.00000, then else here) if acVactDas > 0.00, increment $sellAmount into soldAmounts(this is already baked into the HPM algorithm). Then initiate sellUSDC"Function"(from Smart Contract).
 - Test Sell (without HPM) 
 - Testnet (with HPM (Increase/Decrease Bitcoin Price)) WBTC/USDC trading/swapping based on MASS & FA(Fee Arbitration)
