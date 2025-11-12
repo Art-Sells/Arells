@@ -256,9 +256,12 @@ Arells Wallet and change all Variables
 
 
 
-
-
-## START WORK ON BASE L3 (in accordance with v1.5 [get other engineer for this?]):
+### iOS & Android App & L3 (work on this together)
+- iOS App (UI Layer)
+- - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, logic is handled by autonomous smart contracts and AWS-based coordination
+- - HPM/MASS/LPP (API Layer)
+- - LPP Infrastructure (Blockchain Layer)
+- L3 in accordance with v1.5 [get other engineer for this?]:
 - Phase 0:
 - - dev specifically for safety (to consistently test exploits before new LPP protocol is launched)
 - Phase 1: 
@@ -435,8 +438,6 @@ Arells Wallet and change all Variables
 
 
 ## Arells 2 & Beyond
-
-### iOS & Android App
 
 ### Important:
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
