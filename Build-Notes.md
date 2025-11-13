@@ -258,7 +258,9 @@ Arells Wallet and change all Variables
 
 ### iOS & Android App & L3 (work on this together)
 - iOS App (UI Layer)
-- - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, logic is handled by autonomous smart contracts and AWS-based coordination
+- - Tagline: Built to prevent bear market losses.
+- - Desc: Custody a Stablecoin (USDC) with Arells, and watch as it automatically facilitates supplications to and from Assets during market downturns protecting your investments and finances. 
+- - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, custodial transactions are handled by autonomous smart contracts and AWS-based coordinations.
 - - HPM/MASS/LPP (API Layer)
 - - LPP Infrastructure (Blockchain Layer)
 - L3 in accordance with v1.5 [get other engineer for this?]:
