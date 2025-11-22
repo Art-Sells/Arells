@@ -33,7 +33,8 @@
 - supplicateUSDtoCBBTC: boolean = false
 - holdMASS: boolean = false
 - MASSid: = readMASS id number
-4. useEffect: If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactDa != 0, then run executeSupplication from MASS_USDC API.
+- HPMpause = false
+4. useEffect: If cVatop = 0 && cVactDa = 0, do nothing, else if cVatop = 0 && cVactDa != 0 && HPMpause == false, then run executeSupplication from MASS_USDC API.
 - cpVatop = price of pool with best quote used to supplicate USDC into CBBTC
 - cVatop = amount of CBBTC purchased from quote / price of pool with best quote used
 - cdVatop = cVact - cVatop
@@ -47,7 +48,7 @@
 - - holdMASS = false
 - - - updateVatopGroups
 - - - fetchVatopGroups
-5. useEffect: If current bitcoinPrice < HAP then initiate executeSupplication from MASS_CBBTC API .
+5. useEffect: If current bitcoinPrice < HAP and HPMpause == false, then initiate executeSupplication from MASS_CBBTC API .
 - cpVatop = no change
 - cVatop = no change
 - cdVatop = cVact - cVatop
@@ -62,7 +63,7 @@
 - - - updateVatopGroups
 - - - fetchVatopGroups
 6. useEffect: Compare HAP/bitcoinPrice
-- useEffect: If bitcoinPrice > HAP: releaseMASS button changes holdMASS to false.
+- useEffect: If bitcoinPrice > HAP && HPMpause == false: releaseMASS button changes holdMASS to false.
 7. useEffect: If current bitcoinPrice >= HAP then initiate executeSupplication from MASS_USDC API .
 - cpVatop = no change
 - cVatop = no change
@@ -79,7 +80,7 @@
 - - - fetchVatopGroups
 8. Add USDC into Vatop Group, monitor change (cVact, cVactDa should increase)
 9. Add CBBTC into Vatop Group, monitor change (cVactTaa should increase)
-10. useEffect: If cVatop != 0 && cVactDa != 0, holdMASS: false, then run executeSupplication from MASS_CBBTC API.
+10. useEffect: If cVatop != 0 && cVactDa != 0 && HPMpause == false, holdMASS: false, then run executeSupplication from MASS_CBBTC API.
 - cpVatop = no change
 - cVatop = no change
 - cdVatop = cVact - cVatop
@@ -93,6 +94,22 @@
 - - holdMASS: boolean = true
 - - - updateVatopGroups
 - - - fetchVatopGroups
+11. pauseHPM function (executed only by Treasury Address/PrivateKey) run executeSupplication from MASS_CBBTC API, then HPMpause = true, monitor all approved addresses on LPP, if everything is USDC, then execute pauseSwitch from Treasury Contracts.
+- cpVatop = no change
+- cVatop = no change
+- cdVatop = cVact - cVatop
+- - cVact = cVactDa if cVactDa != 0, else = cpVact / cVactTaa
+- - cpVact = price of pool with best quote used to supplicate CBBTC
+- - cVactDa = massAddress USDC balance (as small as the smallest decimal it'll show)
+- - cVactTaa = massAddress CBBTC balance (as small as the smallest decimal it'll show)
+- - HAP = bitcoinPrice;
+- - supplicateCBBTCtoUSD: boolean = true
+- - supplicateUSDtoCBBTC: boolean = false
+- - holdMASS: boolean = true
+- - - updateVatopGroups
+- - - fetchVatopGroups
+- - HPMpause = true
+12. restartHPM function (executed only by Treasury Address/PrivateKey) HPMpause = false, execute resetSwitch from Treasury Contracts..
 - Test MASS APIs (then update MASS github (fundMassGas) and add state/readme(explain userWallet and MASSwallet, and initiateMASS and why the MAX is capped|signer.tsx to HPM Mechanics) )
 - Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
 
