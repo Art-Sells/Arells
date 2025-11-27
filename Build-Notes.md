@@ -164,7 +164,7 @@ Arells Wallet and change all Variables
 
 ## After Test
 - Remove P/K & P/K Test from e en vee (check decoding proces (in console.logs) for each individual account to prevent external P/K decoding (MASSTester.tsx and HPMTester.tsx?))
-- CoinGecko API for Chart
+- CoinGecko API for Chart (remove half/barrier)
 - Upload new HPM/MASSArchitecture to GitHub
 
 ### Account
