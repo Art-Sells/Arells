@@ -6,7 +6,7 @@
 
 ## Build LPPv1 Infrastructure
 - re-write cbbtc/usdc_tests, etc
-- update MASS-LPP APIs/tests/etc (swaps opposite of supplications USDCtoCBBTC/CBBTCtoUSDC (look at FAFE))
+- update MASS-LPP APIs/tests/etc
 - write API to track LPP/MEV-Arbitrage Revenue-sharing and TVL growth
 - Remove Under Construction READMEs Periphery/Protocol Github, update all other HPM/MASS/LPP codebase Readmes
 ## Test
