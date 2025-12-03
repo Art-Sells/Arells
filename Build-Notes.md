@@ -4,6 +4,10 @@
 
 ## Arells v1
 
+## Re-build build-notes
+- start work on Arells HPM chart (for Bitcoin), add mechanism to HPM and update Readme (Main and Test)
+- Go through and rebuild this entire checklist ("My Solid Marketplace" for Bull/Sloth chart) Import/Export (no selling, Decentralized Wallets (do not save private key info on json, only address, create new wallet (in case P/K was lost)))
+
 ## Build LPPv1 Infrastructure
 - re-write cbbtc/usdc_tests, etc
 - update MASS-LPP APIs/tests/etc
