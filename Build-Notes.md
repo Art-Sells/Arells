@@ -5,8 +5,9 @@
 ## Arells v1
 
 ## Re-build build-notes
-- start work on Arells HPM chart (for Bitcoin), add mechanism to HPM and update Readme (Main and Test)
-- Go through and rebuild this entire checklist ("My Solid Marketplace" for Bull/Sloth chart) Import/Export (no selling, Decentralized Wallets (do not save private key info on json, only address, create new wallet (in case P/K was lost)))
+- start work on Arells Vavity chart (for Bitcoin), add mechanism to Vavity and update Readme (Main and Test) (change all HPMs to Vavity)
+- Go through and rebuild this entire checklist ("My Solid Marketplace" for Bull/Sloth chart) Import/Export (no selling, Decentralized Wallets (do not save private key info on json, only address, create new wallet (in case P/K was lost)), Powered by Vavity (website))
+- - Liquid Marketplace (exterior) TVL/revenue || Solid Marketplace (interior) TVL/revenue
 
 ## Build LPPv1 Infrastructure
 - re-write cbbtc/usdc_tests, etc
