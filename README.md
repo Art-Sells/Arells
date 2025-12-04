@@ -7,9 +7,7 @@
 Arells exists because it believes ***investments should never lose value***, especially during Bear Markets.
 
 ### Solution:
-A marketplace that renders bear markets obsolete. Arells achieves this through an invention called:
-
-### [HPM (Holding Price Mechanism)](https://github.com/Art-Sells/HPM)
+A marketplace that renders bear markets obsolete. Achieved using **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________
 
 ## FAQ:
