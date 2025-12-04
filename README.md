@@ -4,19 +4,18 @@
 # [Arells](https://arells.com)
 ## Investments immune to bear markets.
 
-Arells exists because it believes ***investments should never lose value***, especially during Bear Markets.
+Arells believes ***investments should never lose value***.
 
 ### Solution:
-A marketplace that renders bear markets obsolete. Achieved using **[Vavity](https://github.com/Art-Sells/Vavity)**
+A marketplace that renders bear markets obsolete.
+
+Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________
 
 ## FAQ:
 
-***Can I sell my investment regardless of price?***
-You'll always be able to sell your investment at any time and at any price that is held through HPM.
-
 ***How would transferring my finances out of Arells impact my investment?***
-If the token price (outside the parameters of the HPM) decreases, the value of your investment will also decrease. The transfer fees of the network (whether it be Bitcoin, Ethereum or any other asset) will be also be evident.
+If the asset price (outside Arells) decreases, the value of your investment will also decrease. The transfer fees of the network (whether it be Bitcoin, Ethereum or any other asset) will be also be evident.
 
 _______________________________________________________________________
 
