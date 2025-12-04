@@ -6,7 +6,7 @@
 
 ## Re-build build-notes
 - start work on Arells Vavity chart (for Bitcoin), add mechanism to Vavity and update Readme (Main and Test) (change all HPMs to Vavity)
-- Go through and rebuild this entire checklist ("My Solid Marketplace" for Bull/Sloth chart) Import/Export (no selling, Decentralized Wallets (do not save private key info on json, only address, create new wallet (in case P/K was lost)), Powered by Vavity (website))
+- Go through and rebuild this entire checklist ("My Solid Marketplace" for Bull/Sloth chart) Import/Export (no selling, Decentralized Wallets (do not save private key info on json, only address, create new wallet (in case P/K was lost)), Powered by Vavity (website vavity.info))
 - - Liquid Marketplace (exterior) TVL/revenue || Solid Marketplace (interior) TVL/revenue
 
 ## Build LPPv1 Infrastructure
@@ -296,7 +296,6 @@ Arells Wallet and change all Variables
 - - Txns/s need to be in 1000s-10000s per second for meme-coins to benefit (reference HPM Efficiency charts).
 - HPM-Liquidity System (Brainstorm)
 - - Reference V3 U*P (and UI) Repos(addresses for contract and API info)
-- **remove dividedPercentageIncreases in the tokenCharts.ts to reflect maximum profits**
 - Crypto Exchange/Wallet License (for iOS/Android App)
 
 

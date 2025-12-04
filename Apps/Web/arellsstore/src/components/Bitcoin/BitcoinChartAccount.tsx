@@ -81,8 +81,7 @@ const BitcoinChart: React.FC = () => {
         const maxPrice = Math.max(...filteredPrices.map(price => price.y));
 
         const percentageIncrease = ((maxPrice - initialPrice) / initialPrice) * 100;
-        const dividedPercentage = percentageIncrease / 3;
-        setPercentageIncrease(dividedPercentage);
+        setPercentageIncrease(percentageIncrease);
 
 
         setChartData({
@@ -173,24 +172,12 @@ const BitcoinChart: React.FC = () => {
     <div className={styles.chartContainerAccount}>
       <div id="b-logo-home">
         <span>
-          <div id="a-how-wrapper">
-            <Image
-              loader={imageLoader}
-              alt=""
-              width={30}
-              height={30}
-              id="arells-b-home"
-              src="images/howitworks/ArellsBitcoin.png"
-            />
-          </div>
-        </span>
-        <span>
           <div id="b-how-wrapper">
             <Image
               loader={imageLoader}
               alt=""
-              width={30}
-              height={30}
+              width={50}
+              height={50}
               id="bitcoin-b-home"
               src="images/howitworks/Bitcoin.png"
             />
