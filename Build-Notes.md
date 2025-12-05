@@ -5,13 +5,11 @@
 ## Arells v1
 
 ## Re-build build-notes
-- start work on Arells Vavity chart (for Bitcoin), add mechanism to Vavity and update Readme (Main and Test) (change all HPMs to Vavity)
-- Go through and rebuild this entire checklist ("My Solid Marketplace" for Bull/Sloth chart) Import/Export (no selling, Decentralized Wallets (do not save private key info on json, only address, create new wallet (in case P/K was lost)), Powered by Vavity (website vavity.info))
+- Go through and rebuild this entire checklist based on new terminologies (Keep profits with overall percentage gained (after first initial import) and remove Arells Bitcoin Price…. In chart, add Market Status: Bull (🐂) or Sloth (🦥)… Exporting your investment will subject you to bear market losses (in calculate -$ losses compared to exterior price), if no losses, don’t show calculations "My Solid Marketplace" for Bull/Sloth chart) Import/Export (no selling, Decentralized Wallets (do not save private key info on json, only address, create new wallet (in case P/K was lost)), Powered by Vavity (website vavity.info))
 - - Liquid Marketplace (exterior) TVL/revenue || Solid Marketplace (interior) TVL/revenue
+- - - After accumulating lots of people, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 
-## Build LPPv1 Infrastructure
-- re-write cbbtc/usdc_tests, etc
-- update MASS-LPP APIs/tests/etc
+## Build Vavity Architecture
 - write API to track LPP/MEV-Arbitrage Revenue-sharing and TVL growth
 - Remove Under Construction READMEs Periphery/Protocol Github, update all other HPM/MASS/LPP codebase Readmes
 ## Test
@@ -115,7 +113,7 @@
 - - - fetchVatopGroups
 - - HPMpause = true
 12. restartHPM function (executed only by Treasury Address/PrivateKey) HPMpause = false, execute resetSwitch from Treasury Contracts..
-- Test MASS APIs (then update MASS github (fundMassGas) and add state/readme(explain userWallet and MASSwallet, and initiateMASS and why the MAX is capped|signer.tsx to HPM Mechanics) )
+- Test MASS APIs (then update Vavity Architecture github (fundMassGas) and add state/readme(explain userWallet and MASSwallet, and initiateMASS and why the MAX is capped|signer.tsx to HPM Mechanics) )
 - Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
 
 
@@ -141,6 +139,7 @@
 - Set up API (system) to log the date and times of Decoded price that was used of each pool and usdcOut/cbbtcOut from LPP to capture changes (offline/online versions) (including AUM from first wallet into the 2nd)
 - AWS KMS (envelope encryption) for P/K
 - and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs & aws-config)
+- - Separate VavityCodeBase architecture Offline (for testing) and prepare online version (for deployment)
 
 ### Online:
 - chence .env variables to NEXT_PUBLIC
@@ -165,7 +164,8 @@ Arells Wallet and change all Variables
 - Build Back-End Lambda code for setInterval logic from HPMarchitecture and MASSarchitecture (check "Total WBTC Calculation" from GPT History) and adjust logic for every 1 week (if MEV bot churn rate remains stable, do not update LPPrebate.sol, if not stable, update)
 - If holdMASS is true for all vatopGroups, then start internal countdown (test with simple 30 second countdown) until reset holdMASS to false after countdown API connected to email (always todays date Hawaiian time) [mm/dd/yr], next update replaces Date? (only if all supplicateCBBTCtoUSDCs are true then start time)… Update every 168~ hours. 
 - Build Arells/HPM Notion (line-chart with TVL/AUM-HPM(Solid Marketplace), revenue, profits, etc) based on VatopGroup info and HPM-API revenue graph {Make it live updating every second?} TVL/AUM (solid (bull/sloth) vs liquid (bull/bear) totals)
-- Updates (oDAO, FndrsINC, etc)
+- - - Save VavityCodeBase architecture Offline (for testing) and online version (for deployment)
+
 
 ## After Test
 - Remove P/K & P/K Test from e en vee (check decoding proces (in console.logs) for each individual account to prevent external P/K decoding (MASSTester.tsx and HPMTester.tsx?))
@@ -240,6 +240,7 @@ Arells Wallet and change all Variables
 - - Review HPM Assets (Number of Investors, etc amd remove sign-up if 150~ MAU/I is hit)
 - CBBTC (if price decreases execute mass), or USDC import (if price increase execute mass), change import slogan (add export info of why only in USDC) 6% (raise prices if needed)
 - Notion (Liquid vs Solid Marketplace dynamics (water-cohesive-investments vs rocks-individualized-investments))
+- Updates (oDAO, FndrsINC, etc)
 - set Infrastructure/periphery/contracts/LPPMigrator (look into v2 to see how to migrate liquidity from v1 to v2 of LPP for next version of LPPv2)
 
 
