@@ -5,9 +5,36 @@
 ## Arells v1
 
 ## Re-build build-notes
-- Go through and rebuild this entire checklist based on new terminologies (Keep profits with overall percentage gained (after first initial import) and remove Arells Bitcoin Price…. In chart, add Market Status: Bull (🐂) or Sloth (🦥)… Exporting your investment will subject you to bear market losses (in calculate -$ losses compared to exterior price), if no losses, don’t show calculations "My Solid Marketplace" for Bull/Sloth chart) Import/Export (no selling, Decentralized Wallets (do not save private key info on json, only address, create new wallet (in case P/K was lost)), Powered by Vavity (website vavity.info))
-- - Liquid Marketplace (exterior) TVL/revenue || Solid Marketplace (interior) TVL/revenue
-- - - After accumulating lots of people, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
+- Go through and rebuild this entire checklist based on new terminologies 
+- - In Terminologies\
+- - - wallet (ids)
+- - - - VAPA combinations
+- - In Test:
+- - - Import/Export: 
+- - - - no selling, Decentralized Wallets
+- - - Create Wallet: 
+- - - - do not save private key info on json, only address,
+- - - - Wallet ID: Wallet 1/2 and Wallet Totals (json)
+- - In Wallet: 
+- - - Keep profits with overall percentage gained (after first initial import) and remove Arells Bitcoin Price…. 
+- - - change Vatop groups to VAPA combinations
+- - In create wallet:
+- - - - Closing Modal:
+- - - - - Did you save your private key? if not, you will lose access to your finds.
+- - In chart: 
+- - - add Market Status: Bull (🐂) or Sloth (🦥)… 
+- - In export: 
+- - - Opening Modal: 
+- - - - Exporting your investment will subject you to bear market losses, are you sure? (yes) (no)<- Back to account
+- - - As numbers typed in amounts compare external and internal value, if no losses, don’t show calculations
+- - In notion:  
+- - - Solid Marketplace (interior) TVL/revenue & Liquid Marketplace (exterior) TVL/revenue
+- - Everythere: 
+- - - Powered by Vavity (website vavity.info)
+- - After launch
+- - - Save Vavity JSON file data everyday offline (in case of breach)
+- - Arells v2.0 and bayond:
+- - - After user accumulation and scaling, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 
 ## Build Vavity Architecture
 - write API to track LPP/MEV-Arbitrage Revenue-sharing and TVL growth
