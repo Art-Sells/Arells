@@ -5,9 +5,9 @@
 ## Arells v1
 
 ### Test Offline 
-- refactor MASStester.tsx & HPMMASSTester.tsx to VavityTester
+- refactor HPMMASSTester.tsx to VavityTester
 - remove all MASS/LPP files, APIs and functions
-- change all HPM files and functions to Vavity
+- rename all HPM files and functions to Vavity
 - copy/paste Aggregator into arellsstore
 - refactor APIs for new Aggregator functions
 - replace orange favicon with general favicon
@@ -33,6 +33,8 @@ Create wallet (new addition for extra wallets):
 
 Chart (Home/Account): 
 - add Market Status: Bull (🐂) or Sloth (🦥)… 
+- add price and (5 yr, 1 yr, 1 month, 1 week, 1 day) clickers
+- add node on chart that historically shows price and changes Bull/Sloth
 
 
 Vavity Architecture:

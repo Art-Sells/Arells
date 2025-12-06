@@ -2,12 +2,10 @@ import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
 import { HPMProvider } from '../context/HPMarchitecture';
-import { HPMConceptProvider } from '../context/concept/HPMContextConcept';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
 import dotenv from 'dotenv';
-import { MASSProvider } from '../context/MASSarchitecture';
 import { SignerProvider } from "../state/signer";
 
 dotenv.config();
@@ -37,11 +35,7 @@ const RootLayout = ({ children }: LayoutProps) => {
             <SignerProvider>
               
               <HPMProvider>
-                <MASSProvider>
-                  <HPMConceptProvider>
                     {children}
-                  </HPMConceptProvider>
-                </MASSProvider>
               </HPMProvider>
             </SignerProvider>
           </UserProvider>

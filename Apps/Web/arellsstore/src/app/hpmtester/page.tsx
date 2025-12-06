@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import '../css/import/import.css';
 
 
-import HPMTester from '../../components/HPM/HPMTester';
+import HPMTester from '../../components/Vavity/HPMTester';
 
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
