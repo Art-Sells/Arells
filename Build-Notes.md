@@ -6,17 +6,16 @@
 
 ## Re-build build-notes
 - Go through and rebuild this entire checklist based on new terminologies 
-- - In Terminologies\
-- - - wallet (ids)
-- - - - VAPA combinations
 - - In Test:
 - - - Import/Export: 
 - - - - no selling, Decentralized Wallets
 - - - Create Wallet: 
 - - - - do not save private key info on json, only address,
 - - - - Wallet ID: Wallet 1/2 and Wallet Totals (json)
+- - - In Vavity Architecture:
+- - - - Save entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
 - - In Wallet: 
-- - - Keep profits with overall percentage gained (after first initial import) and remove Arells Bitcoin Price…. 
+- - - Keep profits with overall percentage gained (after first initial import) and remove Arells Bitcoin Price…
 - - - change Vatop groups to VAPA combinations
 - - In create wallet:
 - - - - Closing Modal:
@@ -30,10 +29,12 @@
 - - In notion:  
 - - - Solid Marketplace (interior) TVL/revenue & Liquid Marketplace (exterior) TVL/revenue
 - - Everythere: 
+- - - replace orange favicon with general favicon
 - - - Powered by Vavity (website vavity.info)
 - - After launch
 - - - Save Vavity JSON file data everyday offline (in case of breach)
 - - Arells v2.0 and bayond:
+- - - Lost Key: Hide wallet balance... in case wallet privete key lost
 - - - After user accumulation and scaling, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 
 ## Build Vavity Architecture
