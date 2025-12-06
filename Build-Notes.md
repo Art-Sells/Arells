@@ -4,10 +4,6 @@
 
 ## Arells v1
 
-## Re-build build-notes
-- Go through and rebuild this entire checklist based on new terminologies 
-
-
 ### Test Offline 
 - refactor MASStester.tsx & HPMMASSTester.tsx to VavityTester
 - remove all MASS/LPP files, APIs and functions
