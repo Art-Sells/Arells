@@ -103,7 +103,9 @@ Add Market Status: Bull (🐂) or Sloth (🦥)…
 - Compare Main ENV with Test ENV before deployments
 
 ## Final Test
+- Remove typos from Arells/Vavity readmes, and UI
 - 2-3 accounts, multiple imports and exports (monitor for 2-3 days)
+
 
 ### After Completion
 Save Vavity JSON file data everyday offline (in case of breach)
@@ -121,6 +123,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - Remove console.logs from all files...
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages)
+
 
 
 
