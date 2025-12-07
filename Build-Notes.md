@@ -5,9 +5,6 @@
 ## Arells v1
 
 ### Test Offline 
-- copy/paste Aggregator into arellsstore
-- refactor APIs for new Aggregator functions
-- replace orange favicon with general favicon
 - Powered by Vavity (website vavity.info)
 - Remove BTC Wallet & Key creations in signup and login
 
@@ -121,7 +118,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 - Fix (signOut/sign-up/log-in issue) loading after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - Remove console.logs from all files...
-- Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages)
+- Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
 
 
 

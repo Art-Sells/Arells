@@ -13,7 +13,7 @@ import styles from '../../app/css/modals/loader/accountloader.module.css';
 import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useVavity } from '../../context/Vavityarchitecture';
+import { useVavity } from '../../context/VavityAggregator';
 
 const Account: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -223,7 +223,7 @@ const Account: React.FC = () => {
                     width={20}
                     height={20}
                     id="arells-account"
-                    src="images/howitworks/ArellsBitcoin.png"
+                    src="images/howitworks/ArellsIcoIcon.png"
                   />
                 </div>
               </span>

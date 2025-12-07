@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useVavity } from '../../context/Vavityarchitecture';
+import { useVavity } from '../../context/VavityAggregator';
 import { useSigner } from '../../state/signer';
 
 const VavityTester: React.FC = () => {

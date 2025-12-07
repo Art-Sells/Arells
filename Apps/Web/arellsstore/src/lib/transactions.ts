@@ -59,7 +59,7 @@ const createTransactionStringTwo = (date: string, amount: number, link: string):
 
 const appendTransaction = async (email: string, newTransaction: Transactions): Promise<void> => {
   try {
-    const response = await axios.get(`/api/fetchVatopGroups?email=${email}`);
+    const response = await axios.get(`/api/fetchVavityAggregator?email=${email}`);
     const currentTransactions = response.data.transactions || [];
     const transactionsArray: Transactions[] = Array.isArray(currentTransactions) ? currentTransactions : [];
     const updatedTransactions = [...transactionsArray, newTransaction];
@@ -67,7 +67,7 @@ const appendTransaction = async (email: string, newTransaction: Transactions): P
       email,
       transactions: updatedTransactions,
     };
-    await axios.post('/api/saveVatopGroups', payload);
+    await axios.post('/api/saveVavityAggregator', payload);
   } catch (error) {
     console.error('Error appending transaction:', error);
     throw new Error('Could not append transaction');

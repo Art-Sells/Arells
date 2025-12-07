@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
-import { VavityProvider } from '../context/Vavityarchitecture';
+import { VavityProvider } from '../context/VavityAggregator';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';

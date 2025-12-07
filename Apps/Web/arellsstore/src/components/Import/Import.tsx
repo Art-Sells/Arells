@@ -91,7 +91,7 @@ const Import: React.FC = () => {
                 width={23}
                 height={23}
                 id="import-account-navigation"
-                src="images/howitworks/ArellsBitcoin.png"
+                src="images/howitworks/ArellsIcoIcon.png"
               />
             </Link>							
             <Link href="/buy" id="import-cart-link">

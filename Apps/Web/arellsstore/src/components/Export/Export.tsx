@@ -197,7 +197,7 @@ const Export: React.FC = () => {
                   width={23}
                   height={23}
                   id="export-account-navigation"
-                  src="images/howitworks/ArellsBitcoin.png"
+                  src="images/howitworks/ArellsIcoIcon.png"
                 />
             </Link>							
             <Link href="/buy" id="export-cart-link">
