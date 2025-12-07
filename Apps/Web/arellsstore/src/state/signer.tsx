@@ -27,54 +27,31 @@ const ERC20_ABI_X = [
 const usdcWith = (signerOrProvider: ethers.Signer | ethers.Provider) =>
   new ethers.Contract(TOKEN_ADDRESSES.USDC_BASE, ERC20_ABI_X, signerOrProvider);
 
-type MassWallet = {
-  id: string;
-  createdAt: string;
-  MASSaddress: string;
-  MASSkey: string;
-};
-
 interface SignerContextType {
-  MASSaddress: string;
-  MASSPrivateKey: string;
   userAddress: string;
-  massWallets: MassWallet[];
-  refreshMassWallets: () => Promise<void>;
   userPrivateKey: string;
-  MASSWalletId: string;
   email: string;
   balances: {
     BTC_BASE: string;
     USDC_BASE: string;
   };
   createWallet: (emailOverride?: string) => Promise<void>; 
-  createMASSWallets: () => Promise<void>;
   userBalances: { BTC_BASE: string; USDC_BASE: string };
   loadBalances: (address: string) => Promise<{ BTC_BASE: string; USDC_BASE: string }>;
   refreshUserBalances: () => Promise<void>;
-  perMassBalances: Record<string, { BTC_BASE: string; USDC_BASE: string }>;
-  refreshAllMassBalances: () => Promise<void>;
-  initiateMASS: () => Promise<{ txHash: string; massId: string; massAddress: string }>;
 }
 
 const SignerContext = createContext<SignerContextType | undefined>(undefined);
 
 export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [MASSWalletId, setMASSWalletId] = useState<string>("");
-  const [MASSaddress, setMASSaddress] = useState<string>("");
-  const [MASSPrivateKey, setMASSPrivateKey] = useState<string>("");
   const [userAddress, setUserAddress] = useState<string>("");
   const [userPrivateKey, setUserPrivateKey] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [massWallets, setMassWallets] = useState<MassWallet[]>([]);
   const [balances, setBalances] = useState({
     BTC_BASE: "0",
     USDC_BASE: "0",
   });
   const [userBalances, setUserBalances] = useState({ BTC_BASE: "0", USDC_BASE: "0" });
-  const [perMassBalances, setPerMassBalances] = useState<
-  Record<string, { BTC_BASE: string; USDC_BASE: string }>
-  >({});
 
   useEffect(() => {
     const fetchAttributes = async () => {
@@ -87,10 +64,6 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
 
     fetchAttributes();
-
-    if(!MASSaddress || !userAddress) {
-      return;
-    }
   }, []);
 
 
@@ -203,129 +176,6 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
 
-  //MASS wallet functions:
-  const createMASSWalletAndReturn = async () => {
-    const newWallet = ethers.Wallet.createRandom();
-    const encryptedPrivateKey = CryptoJS.AES.encrypt(
-      newWallet.privateKey,
-      "your-secret-key"
-    ).toString();
-
-    const resp = await fetch('/api/saveMASS', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        MASSaddress: newWallet.address,
-        MASSkey: encryptedPrivateKey,
-        email,
-      }),
-    });
-    const json = await resp.json();
-
-    // keep latest in state
-    setMASSaddress(newWallet.address);
-    setMASSPrivateKey(newWallet.privateKey);
-    if (json?.id) setMASSWalletId(json.id);
-
-    // append to array
-    setMassWallets(prev => [
-      ...prev,
-      {
-        id: json?.id ?? crypto.randomUUID?.() ?? `${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        MASSaddress: newWallet.address,
-        MASSkey: encryptedPrivateKey,
-      },
-    ]);
-
-    return {
-      id: json?.id ?? '',
-      address: newWallet.address,
-      encryptedKey: encryptedPrivateKey,
-      plainKey: newWallet.privateKey,
-    };
-  };
-
-  const fundMassGas = async (recipient: string, targetUsd = 0.05) => {
-    await axios.post("/api/fundMassGas", { recipientAddress: recipient, targetUsd });
-  };
-
-  const initiateMASS = async (): Promise<{ txHash: string; massId: string; massAddress: string }> => {
-    const MAX_INITIATE_USDC = 1000;
-
-    if (!userPrivateKey || !userAddress) {
-      throw new Error('User wallet not available');
-    }
-
-    // 1) create MASS wallet
-    const { id: massId, address: massAddress } = await createMASSWalletAndReturn();
-    try { await refreshMassWallets(); } catch {}
-
-    // 2) transfer EXACTLY MAX_INITIATE_USDC USDC from user -> MASS
-    const signer = new ethers.Wallet(userPrivateKey, provider_BASE);
-    const usdc = usdcWith(signer);
-
-    const amt = ethers.parseUnits(String(MAX_INITIATE_USDC), 6);
-    const bal = await usdc.balanceOf(userAddress);
-    if (bal < amt) {
-      throw new Error(`Insufficient USDC: have ${ethers.formatUnits(bal, 6)}, need ${MAX_INITIATE_USDC}`);
-    }
-
-    const tx = await usdc.transfer(massAddress, amt);
-    const receipt = await tx.wait();   // ✅ ensure success before moving on
-
-    await fundMassGas(massAddress, 0.05);
-
-    return { txHash: receipt.hash, massId, massAddress };
-  };
-
-  const refreshMassWallets = async () => {
-    if (!email) return;
-    try {
-      const { data } = await axios.get('/api/readMASS', { params: { email } });
-      setMassWallets(Array.isArray(data.wallets) ? data.wallets : []);
-      if (data?.MASSaddress) setMASSaddress(data.MASSaddress);
-      if (data?.id) setMASSWalletId(data.id);
-    } catch (e) {
-      console.error('refreshMassWallets failed:', e);
-    }
-  };
-
-  // When creating, append the new wallet locally so UI updates immediately
-  // const createMASSWallet = async () => {
-  //   try {
-  //     const newWallet = ethers.Wallet.createRandom();
-  //     const encryptedPrivateKey = CryptoJS.AES.encrypt(
-  //       newWallet.privateKey,
-  //       'your-secret-key'
-  //     ).toString();
-
-  //     const resp = await fetch('/api/saveMASS', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ MASSaddress: newWallet.address, MASSkey: encryptedPrivateKey, email }),
-  //     });
-  //     const json = await resp.json();
-
-  //     // keep “latest” fields for backwards-compat views
-  //     setMASSaddress(newWallet.address);
-  //     setMASSPrivateKey(newWallet.privateKey);
-  //     if (json?.id) setMASSWalletId(json.id);
-
-  //     // add to array
-  //     setMassWallets(prev => [
-  //       ...prev,
-  //       {
-  //         id: json?.id ?? crypto.randomUUID?.() ?? `${Date.now()}`,
-  //         createdAt: new Date().toISOString(),
-  //         MASSaddress: newWallet.address,
-  //         MASSkey: encryptedPrivateKey,
-  //       },
-  //     ]);
-  //   } catch (error) {
-  //     console.error('Error creating MASS wallet:', error);
-  //   }
-  // };
 
 
 
@@ -350,20 +200,12 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
 
-  // User/MASS Wallet functions:
+  // User Wallet functions:
   const createWallet = async (emailOverride?: string) => {
     try {
       await createUserWallet(emailOverride);
     } catch (error) {
       console.error('Error creating User Wallet:', error);
-    }
-  };
-
-  const createMASSWallets = async () => {
-    try {
-      //await createMASSWallet();
-    } catch (error) {
-      console.error("Error creating MASS Wallet/s:", error);
     }
   };
 
@@ -407,21 +249,6 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setUserBalances(b); // <- you'll need userBalances state (see below)
   };
 
-  const refreshAllMassBalances = useCallback(async () => {
-    if (!massWallets || massWallets.length === 0) {
-      setPerMassBalances({});
-      return;
-    }
-
-    const entries = await Promise.all(
-      massWallets.map(async (w) => {
-        const b = await loadBalances(w.MASSaddress);
-        return [w.MASSaddress, b] as const;
-      })
-    );
-
-    setPerMassBalances(Object.fromEntries(entries));
-  }, [massWallets, loadBalances]);
 
   useEffect(() => {
     if (!email) return;
@@ -435,11 +262,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       inFlight = true;
 
       try {
-        // fetch in parallel
-        const [userResp, massResp] = await Promise.all([
-          axios.get('/api/readUserWallet', { params: { email } }).catch(() => null),
-          axios.get('/api/readMASS', { params: { email } }).catch(() => null),
-        ]);
+        const userResp = await axios.get('/api/readUserWallet', { params: { email } }).catch(() => null);
 
         if (userResp?.data) {
           const u = userResp.data;
@@ -449,17 +272,6 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
               CryptoJS.AES.decrypt(u.userKey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
             );
           }
-        }
-
-        if (massResp?.data) {
-          const m = massResp.data;
-          if (m.MASSaddress) setMASSaddress(m.MASSaddress);
-          if (m.MASSkey) {
-            setMASSPrivateKey(
-              CryptoJS.AES.decrypt(m.MASSkey, 'your-secret-key').toString(CryptoJS.enc.Utf8)
-            );
-          }
-          if (Array.isArray(m.wallets)) setMassWallets(m.wallets);
         }
 
       } catch (err) {
@@ -493,46 +305,18 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     return () => { cancelled = true; if (t) clearTimeout(t); };
   }, [userAddress]);
 
-  useEffect(() => {
-    let cancelled = false;
-    let t: ReturnType<typeof setTimeout> | null = null;
-
-    const tick = async () => {
-      try { await refreshAllMassBalances(); }
-      finally {
-        if (!cancelled) t = setTimeout(tick, 5000); // every 5s
-      }
-    };
-
-    // run immediately and then poll
-    tick();
-
-    return () => {
-      cancelled = true;
-      if (t) clearTimeout(t);
-    };
-  }, [refreshAllMassBalances]);
 
   return (
     <SignerContext.Provider
       value={{
-        MASSWalletId,
-        MASSaddress,
-        MASSPrivateKey,
         userAddress,
         userPrivateKey,
         email,
         balances,
-        massWallets,
-        refreshMassWallets,
         createWallet,
-        createMASSWallets,
         userBalances,
         loadBalances,
         refreshUserBalances,
-        perMassBalances,
-        refreshAllMassBalances,
-        initiateMASS
       }}
     >
       {children}

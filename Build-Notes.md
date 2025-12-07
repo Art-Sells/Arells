@@ -5,9 +5,6 @@
 ## Arells v1
 
 ### Test Offline 
-- refactor HPMMASSTester.tsx to VavityTester
-- remove all MASS/LPP files, APIs and functions
-- rename all HPM files and functions to Vavity
 - copy/paste Aggregator into arellsstore
 - refactor APIs for new Aggregator functions
 - replace orange favicon with general favicon

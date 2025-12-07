@@ -188,26 +188,26 @@ const Export: React.FC = () => {
         </div>
       )}
 
-        <div id="header-navigation">
-            <Link href="/account" id="home-link">
-              <Image
-                loader={imageLoader}
-                onLoad={() => handleImageLoaded('accountLogo')}
-                alt=""
-                width={23}
-                height={23}
-                id="account-navigation"
-                src="images/howitworks/ArellsBitcoin.png"
-              />
+        <div id="export-header-navigation">
+            <Link href="/account" id="export-home-link">
+                <Image
+                  loader={imageLoader}
+                  onLoad={() => handleImageLoaded('accountLogo')}
+                  alt=""
+                  width={23}
+                  height={23}
+                  id="export-account-navigation"
+                  src="images/howitworks/ArellsBitcoin.png"
+                />
             </Link>							
-            <Link href="/buy" id="cart-link">
+            <Link href="/buy" id="export-cart-link">
               <Image
                   loader={imageLoader}
                   onLoad={() => handleImageLoaded('buyLogo')}
                   alt=""
                   width={23}
                   height={23}
-                  id="buy-navigation"
+                  id="export-buy-navigation"
                   src="images/howitworks/Bitcoin.png"
                 />
             </Link>	

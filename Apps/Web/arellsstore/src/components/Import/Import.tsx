@@ -82,26 +82,26 @@ const Import: React.FC = () => {
         </div>
       )}
 
-        <div id="header-navigation">
-            <Link href="/account" id="home-link">
+        <div id="import-header-navigation">
+            <Link href="/account" id="import-home-link">
               <Image
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('accountLogo')}
                 alt=""
                 width={23}
                 height={23}
-                id="account-navigation"
+                id="import-account-navigation"
                 src="images/howitworks/ArellsBitcoin.png"
               />
             </Link>							
-            <Link href="/buy" id="cart-link">
+            <Link href="/buy" id="import-cart-link">
               <Image
                   loader={imageLoader}
                   onLoad={() => handleImageLoaded('buyLogo')}
                   alt=""
                   width={23}
                   height={23}
-                  id="buy-navigation"
+                  id="import-buy-navigation"
                   src="images/howitworks/Bitcoin.png"
                 />
             </Link>	

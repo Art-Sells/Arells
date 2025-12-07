@@ -5,17 +5,17 @@ import React, { useEffect, useMemo, useState } from 'react';
 import '../css/import/import.css';
 
 
-import HPMMASSTester from '../../components/Vavity/HPMMASSTester';
+import VavityTester from '../../components/Vavity/VavityTester';
 
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
-  title: "HPM & MASS Tester",
+  title: "Vavity Tester",
   description: "Wrapped Bitcoin investments that never lose value. Import Wrapped Bitcoin and never lose value on your investment.",
   robots: "noimageindex",
   openGraph: {
-    title: "HPM & MASS Tester",
+    title: "Vavity Tester",
     description: "Wrapped Bitcoin investments that never lose value. Import Wrapped Bitcoin and never lose value on your investment.",
-    url: "https://arells.com/hpmmasstester",
+    url: "https://arells.com/vavitytester",
     type: "website",
     images: [
       {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     ]
   },
   twitter: {
-    title: "HPM & MASS Tester",
+    title: "Vavity Tester",
     description: "Wrapped Bitcoin investments that never lose value. Import Wrapped Bitcoin and never lose value on your investment.",
     card: "summary_large_image",
     images: [
@@ -35,17 +35,17 @@ export const metadata: Metadata = {
   }
 };
 
-const HPMMASSTesterPage = () => {
+const VavityTesterPage = () => {
   
 
   return (
     <>
 
       <div id="import-wrapper">
-            <HPMMASSTester/>
+            <VavityTester/>
       </div>
     </>
   );
 }
 
-export default HPMMASSTesterPage;
+export default VavityTesterPage;

@@ -43,7 +43,7 @@
 	   to {center:0; opacity:1}
 	 }
 
-	 #header-navigation {
+	 #import-header-navigation {
 		display: flex;
 		justify-content: center;
 		margin-left: -8px;
@@ -56,7 +56,7 @@
 		z-index: 100;
 	}
 
-		#home-link{
+		#import-home-link{
 			display: inline-block;
 			text-decoration: none;
 			margin-right: 100px;
@@ -72,14 +72,14 @@
 			opacity: .9;
 				background: white;					
 		}
-		#home-link:hover,
-		#home-link:focus {
+		#import-home-link:hover,
+		#import-home-link:focus {
 			transition: 1s;
 			cursor: pointer;
 			border-color: rgb(0, 0, 0, 0.05);
 			box-shadow: none;
 			}		
-			#account-navigation {
+			#import-account-navigation {
 				height: 23px;
 				width: 23px;
 				-webkit-animation-name: animatetop;
@@ -97,7 +97,7 @@
 				from {center:0; opacity:0}
 				to {center:0; opacity:1}
 			}
-		#cart-link{
+		#import-cart-link{
 			display: inline-block;
 			text-decoration: none;
 			text-decoration: none;
@@ -114,7 +114,7 @@
 			background: white;	
 			box-shadow: 0px 5px 20px -8px rgb(198, 112, 0, 1); 	 						
 		}
-			#bitcoin-navigation {
+			#import-buy-navigation {
 				height: 23px;
 				width: 23px;
 				-webkit-animation-name: animatetop;
@@ -122,8 +122,8 @@
 				animation-name: animatetop;
 				animation-duration: 1.00s;
 			}
-			#cart-link:hover,
-			#cart-link:focus {
+			#import-cart-link:hover,
+			#import-cart-link:focus {
 				transition: 1s;
 				cursor: pointer;
 				border-color: rgb(255, 170, 60, 0.2);

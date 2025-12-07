@@ -22,7 +22,6 @@ interface VatopGroup {
   HAP: number;
   supplicateCBBTCtoUSD: boolean;
   supplicateUSDtoCBBTC: boolean;
-  holdMASS: boolean;
 }
 
 interface VatopCombinations {
@@ -33,22 +32,24 @@ interface VatopCombinations {
   acVactTaa: number; 
 }
 
-interface HPMarchitectureType {
+interface VavityarchitectureType {
   bitcoinPrice: number;
   vatopGroups: VatopGroup[];
   vatopCombinations: VatopCombinations;
-  hpap: number;
+  vavityPrice: number;
   toggleSupplicateWBTCtoUSD: (groupId: string, value: boolean) => void; // Updated type
   setManualBitcoinPrice: (price: number | ((currentPrice: number) => number)) => void;
   soldAmounts: number;
   email: string;
+  buyAmount: number;
+  setBuyAmount: (amount: number) => void;
+  handleBuy: (amount: number) => Promise<void>;
 }
 
-const HPMarchitecture = createContext<HPMarchitectureType | undefined>(undefined);
+const Vavityarchitecture = createContext<VavityarchitectureType | undefined>(undefined);
 
-export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const {
-      MASSaddress,
       balances,
       loadBalances,
     } = useSigner();
@@ -69,7 +70,7 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     acVactTaa: 0.00000000,
   });
 
-  const [hpap, setHpap] = useState<number>(bitcoinPrice);
+  const [vavityPrice, setVavityPrice] = useState<number>(bitcoinPrice);
   const [soldAmounts, setSoldAmounts] = useState<number>(0);
 
   useEffect(() => {
@@ -523,9 +524,9 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
       });
 
-      // Recalculate HPAP
+      // Recalculate Vavity Price
       const maxCpVact = Math.max(...updatedVatopGroups.map((group) => group.cpVact || 0));
-      setHpap(maxCpVact);
+      setVavityPrice(maxCpVact);
       // Update state and backend
       updateVatopGroupsAndCombinations(updatedVatopGroups);
       setSoldAmounts(fetchedSoldAmounts);
@@ -808,30 +809,38 @@ export const HPMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
 
+  const handleBuy = async (amount: number) => {
+    // Placeholder - implement buy logic as needed
+    console.log('Buy function called with amount:', amount);
+  };
+
   return (
-    <HPMarchitecture.Provider
+    <Vavityarchitecture.Provider
       value={{
         bitcoinPrice,
         vatopGroups,
         vatopCombinations,
-        hpap,
+        vavityPrice,
         setManualBitcoinPrice,
         toggleSupplicateWBTCtoUSD, 
         email,
         soldAmounts,
+        buyAmount,
+        setBuyAmount,
+        handleBuy,
       }}
     >
       {children}
-    </HPMarchitecture.Provider>
+    </Vavityarchitecture.Provider>
   );
 };
 
-export const useHPM = () => {
+export const useVavity = () => {
   const context = useContext(
-    HPMarchitecture
+    Vavityarchitecture
   );
   if (context === undefined) {
-    throw new Error('useHPM must be used within an HPMProvider');
+    throw new Error('useVavity must be used within a VavityProvider');
   }
   return context;
 };

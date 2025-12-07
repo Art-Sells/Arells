@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
-import { HPMProvider } from '../context/HPMarchitecture';
+import { VavityProvider } from '../context/Vavityarchitecture';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
@@ -34,9 +34,9 @@ const RootLayout = ({ children }: LayoutProps) => {
           <UserProvider>
             <SignerProvider>
               
-              <HPMProvider>
+              <VavityProvider>
                     {children}
-              </HPMProvider>
+              </VavityProvider>
             </SignerProvider>
           </UserProvider>
         </BitcoinPriceProvider>

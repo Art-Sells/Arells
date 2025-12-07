@@ -27,7 +27,7 @@
 	   to {center:0; opacity:1}
 	 }
 
-	 #header-navigation {
+	 #export-header-navigation {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -40,7 +40,7 @@
 		z-index: 100;
 	}
 
-		#home-link{
+		#export-home-link{
 			display: inline-block;
 			text-decoration: none;
 			margin-right: 100px;
@@ -56,14 +56,14 @@
 			opacity: .9;
 				background: white;					
 		}
-		#home-link:hover,
-		#home-link:focus {
+		#export-home-link:hover,
+		#export-home-link:focus {
 			transition: 1s;
 			cursor: pointer;
 			border-color: rgb(0, 0, 0, 0.05);
 			box-shadow: none;
 			}		
-			#account-navigation {
+			#export-account-navigation {
 				height: 23px;
 				width: 23px;
 				-webkit-animation-name: animatetop;
@@ -81,7 +81,7 @@
 				from {center:0; opacity:0}
 				to {center:0; opacity:1}
 			}
-		#cart-link{
+		#export-cart-link{
 			display: inline-block;
 			text-decoration: none;
 			text-decoration: none;
@@ -98,7 +98,7 @@
 			background: white;	
 			box-shadow: 0px 5px 20px -8px rgb(198, 112, 0, 1); 	 						
 		}
-			#bitcoin-navigation {
+			#export-buy-navigation {
 				height: 23px;
 				width: 23px;
 				-webkit-animation-name: animatetop;
@@ -106,8 +106,8 @@
 				animation-name: animatetop;
 				animation-duration: 1.00s;
 			}
-			#cart-link:hover,
-			#cart-link:focus {
+			#export-cart-link:hover,
+			#export-cart-link:focus {
 				transition: 1s;
 				cursor: pointer;
 				border-color: rgb(255, 170, 60, 0.2);
@@ -183,13 +183,6 @@
 					padding-bottom: 25px;
 					box-shadow: 0px 10px 15px -15px rgba(204, 116, 0, 0.4);
 				}
-
-					#arells-icon-export{
-						margin-left: 1.5px;
-						width: 20px;
-						height: 20px;
-
-					}
 
 					#wallet-icon-export {
 						opacity: .3;
@@ -392,14 +385,6 @@
 				margin-bottom: -3.5px;
 				margin-right: -2px;
 			}
-			#wallet-account-losses {
-				color: black;
-				font-size: 12px;
-				font-weight: 200;
-				margin-left: 0px;
-				opacity: .5;
-
-			}	
 			#wallet-number-losses {
 				color: gray;
 				font-size: 13px;

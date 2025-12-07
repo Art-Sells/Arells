@@ -13,7 +13,7 @@ import styles from '../../app/css/modals/loader/accountloader.module.css';
 import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useHPM } from '../../context/HPMarchitecture';
+import { useVavity } from '../../context/Vavityarchitecture';
 
 const Account: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -21,7 +21,7 @@ const Account: React.FC = () => {
   };
 
   const [price, setNewPrice] = useState<number | undefined>(undefined);
-  const {vatopCombinations, hpap} = useHPM();
+  const {vatopCombinations, vavityPrice} = useVavity();
   const [showLoading, setLoading] = useState<boolean>(true);
   const [walletConnected, setWalletConnected] = useState<boolean>(false);
   const [readyToSell, setReadyToSell] = useState<boolean>(false);
@@ -243,7 +243,7 @@ const Account: React.FC = () => {
               <span id="holding-price-account">Price:</span>
               <span id="holding-price-number-account">$
                 <span id="holding-price-number-account-num">
-                {formatCurrency(hpap)}
+                {formatCurrency(vavityPrice)}
                 </span>
               </span>
             </div>
