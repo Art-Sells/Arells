@@ -61,6 +61,10 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - - - (current) number of email created, date, time, etc
 - - - chart
 
+## Loading Modules & all words/components in all pages
+- All of them fade in and out (same as modules and pages in vavity.info)
+
+
 ## After Test
 - Save VavityCodeBase architecture Offline (for testing) and online version (for deployment)
 
