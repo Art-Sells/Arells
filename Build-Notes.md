@@ -5,7 +5,6 @@
 ## Arells v1
 
 ### Test Offline 
-- Powered by Vavity (website vavity.info)
 - Remove BTC Wallet & Key creations in signup and login
 
 VavityTester (previously MASStester)
@@ -61,20 +60,38 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - - - (current) number of email created, date, time, etc
 - - - chart
 
-## Loading Modules & all words/components in all pages
+## Loading Modules in all pages
 - All of them fade in and out (same as modules and pages in vavity.info)
 
 
 ## After Test
 - Save VavityCodeBase architecture Offline (for testing) and online version (for deployment)
 
+
+#### Chart (Home/Account):
+– - (B)
+– - Price 
+- - -  $5,000   ->   $90,000
+- - - 05/02/15      12/10/25
+– - Line Chart
+– - (5years/1year/1month/1week) Profits: + $85,000
+Add Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- Bull: Show modal explanation
+- Sloth: Show modal explanation
+
+### Home
+- Make Phsychological slogan larger
+- Powered By Vavity replces bottom "import words"
+
 ### Account
+- Make Phsychological slogan larger
 - - Import button triggers "Create Wallets" <- use function from VavityTester.tsx
 - If acVatoi != 0, then hide "Import Bitcoin to begin"
 - - Price: VAPA (formatPrice from VavityTester.tsx)
 - - Wallet: acVact + Import Wallet Amount (formatCurrency from VavityTester.tsx)
 - - Profits: acdVatoi (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
 - - ( Create New Wallet? ) (button)
+- Powered by Vavity (V) (link)
 
 #### Import (Page)
 - Import 
@@ -82,37 +99,43 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - - (B) Address
 - - Modal: Preparing (B) Wallet (to create wallet (take from VavityTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
 - Fee (mention .5% import fee)
+- Powered by Vavity (V) (link)
 
-#### Chart (Home/Account):
-Add Market Status: Bull (🐂) or Sloth (🦥)… 
-- Bull: Show modal explanation
-- Sloth: Show modal explanation
 
 #### Export: 
 - Opening Modal: 
-- - Exporting your investment will subject you to bear market losses, are you sure? (yes) (no)<- Back to account
+- - Warning: exporting your investments out of Arells and into any financial system that hasn’t adopted Vavity (V) will psychologically subject your investments to bear-market losses, are you sure? (yes) (Back To Account)<- Back to account
 - - As numbers typed in amounts compare external and internal value, if no losses, don’t show calculations
+- Powered by Vavity (V) (link)
 
 #### Metatags/ Description (all pages.tsx & components)
-- Alter: Descriptions & Images (see /main)
-- - Investments immune to bear markets. Import you assets and never worry about bear market losses again.
-- Refactor Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
+- Alter: Descriptions & BannerImages (remove Bitcoin Arells)
+- - Investments immune to bear markets. Import investments and psychologically protect them from bear market losses.
+- Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
+- - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
+- - Create a sitemap.xml: Helps Google discover all pages
+- - Add a robots.txt: Allows crawlers to access your site
+- - Build backlinks: Share your site to get it indexed faster
 
-#### Deployment Amplify/S3 Login
+#### Deployment (Test) Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked and remove .env hardhat config expositions
 - Compare Main ENV with Test ENV before deployments
+- Test (with vavity.info) on socials (DM's/etc)
 
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
 - 2-3 accounts, multiple imports and exports (monitor for 2-3 days)
 
+#### Deployment (Main) Amplify/S3 Login
+- Test (with vavity.info) on socials (DM's/etc)
+- Email/X-Twitter/LinkedIn/: Investments psychologically immune to bear markets. A custodian that psychologically prevents investments from bear market losses
 
 ### After Completion
 Save Vavity JSON file data everyday offline (in case of breach)
 Users:
 - Get Leads (search AI automoated options [use same format] from X, etc)
 - Set Launch Date (and announce the features)
-- - Import Bitcoin and experience no bear market losses.
+- - Psychologcally protect our investments from bear market losses.
 - - Add "Discord" section for any questions
 Keep marketing, dependent on growth after 1-2 weeks:
 - Updates (oDAO, FndrsINC, etc)
@@ -137,8 +160,8 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 ### iOS & Android App(work on this together)
 - iOS App (UI Layer)
-- - Tagline: Built to prevent bear market losses.
-- - Desc: Custody Digital Assets with Arells, and watch as it autonomously protectins your investments from downturns. 
+- - Tagline: Psychologically protects investments from bear market losses.
+- - Desc: Custody Digital Assets with Arells, and watch as it autonomously protects your investments from downturns. 
 - - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, custodial transactions are handled by an autonomous system and AWS-based coordinations.
 
 
@@ -160,6 +183,8 @@ Keep marketing, dependent on growth after 1-2 weeks:
 - Contact us (Account/Home): Email
 - Clean up Lagging Pages
 
+### Chart
+(Solid Marketplace / Bull&Bear)
 
 ### Pro-Natalism + Building Healthy Mind
 - Daily Recommendation: 7-8~ hrs of daily sleep and a personal daily gratitude journal.

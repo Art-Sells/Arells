@@ -1,12 +1,12 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Investments immune to bear markets.
+## Investments psychologically immune to bear markets.
 
 Arells believes ***investments should never lose value***.
 
 ### Solution:
-A marketplace that renders bear markets obsolete.
+A custodian that psychologically protects our investments from bear market losses.
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________

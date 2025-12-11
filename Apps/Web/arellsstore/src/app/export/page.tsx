@@ -10,11 +10,11 @@ import Export from '../../components/Export/Export';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Export",
-  description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+  description: "Bitcoin investments that never lose value. Psychologically prevents investments from bear market losses.",
   robots: "noimageindex",
   openGraph: {
     title: "Export",
-    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+    description: "Bitcoin investments that never lose value. Psychologically prevents investments from bear market losses.",
     url: "https://arells.com/export",
     type: "website",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Export",
-    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+    description: "Bitcoin investments that never lose value. Psychologically prevents investments from bear market losses.",
     card: "summary_large_image",
     images: [
       {
