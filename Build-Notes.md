@@ -63,18 +63,17 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 
 ### Home
 - Make Phsychological slogan larger
+- Chart:
+- - Left
+– - - (B) (5 year/ 1 year/ 1 month/ 1 week)
+- - - Investment: $4,000 (many random amounts)
+- - - Profits: + $85,000
+- - Right
+- - - Line Graph
+- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - - Bull: Show modal explanation
+- - - Sloth: Show modal explanation
 - Powered By Vavity replces bottom "import words"
-
-#### Chart (Home):
-– - (B)
-– - Price 
-- - -  $5,000   ->   $90,000
-- - - 05/02/15      12/10/25
-– - Line Chart
-– - (5years/1year/1month/1week) Profits: + $85,000
-Add Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
-- Bull: Show modal explanation
-- Sloth: Show modal explanation
 
 ### Account
 (A) ------- (Wallets)
@@ -82,29 +81,29 @@ Add Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits
 - Create Wallet to Begin button  takes you to "Wallets" page 
 - If acVatoi != 0, then hide "Import Bitcoin to begin"
 - Chart (Account):
-– - (B)
-– - Price (VAPA)
-- - - $90,000
-– - Line Chart
-- - Wallet: acVact $0
-– - Profits: acdVatoi + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
-Add Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - Left
+– - - (B) (VAPA): $90,000
+- - - Investment: acVact $0
+– - - Profits: acdVatoi + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - Right
+- - - Line Graph
+- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - Bull: Show modal explanation
 - - - Sloth: Show modal explanation
 - ( Import )  
 - ( Export ) 
 - Powered by Vavity (V) (link)
 ___________________________________
-- Chart (Home/Account Duplicate):
-– - (B)
-– - Price 
-- - -  $5,000   ->   $90,000
-- - - 05/02/15      12/10/25
-– - Line Chart
-– - (5years/1year/1month/1week) Profits: + $85,000
-Add Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
-- Bull: Show modal explanation
-- Sloth: Show modal explanation
+- Chart:
+- - Left
+– - - (B) (5 year/ 1 year/ 1 month/ 1week)
+- - - Investment: $4,000 (many random amounts)
+- - - Profits: + $85,000
+- - Right
+- - - Line Graph
+- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - - Bull: Show modal explanation
+- - - Sloth: Show modal explanation
 
 ### Import (Page)
 - Import 
