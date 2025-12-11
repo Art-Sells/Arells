@@ -9,14 +9,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, vatopCombinations, vatopGroups } = req.body;
+  const { email, vavityCombinations, wallets } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: 'Missing email' });
   }
 
   try {
-    const key = `${email}/vatop-data.json`;
+    const key = `${email}/VavityAggregate.json`;
 
     // Fetch existing data from S3
     let existingData: any = {};
@@ -26,16 +26,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (err: any) {
       if (err.code === 'NoSuchKey') {
         console.warn("⚠️ No existing data found for user:", email);
-        existingData = { vatopGroups: [], vatopCombinations: {}, soldAmounts: 0, transactions: [] };
+        existingData = { wallets: [], vapa: 0, soldAmounts: 0, transactions: [] };
       } else {
         throw err;
       }
     }
 
-    // ✅ REPLACE vatopGroups with latest from frontend
+    // ✅ REPLACE wallets with latest from frontend
     const newData = {
-      vatopGroups, // ← trust the incoming frontend data
-      vatopCombinations,
+      wallets, // ← trust the incoming frontend data
+      vavityCombinations,
+      vapa: existingData.vapa ?? 0,
       soldAmounts: existingData.soldAmounts ?? 0,
       transactions: existingData.transactions ?? [],
     };

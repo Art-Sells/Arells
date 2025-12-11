@@ -11,7 +11,6 @@ import Link from 'next/link';
 import { signUp, signIn, fetchUserAttributes, signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
-import { useSigner } from '../../state/signer';
 
 const Signup: React.FC = () => {
   const router = useRouter();
@@ -27,7 +26,6 @@ const Signup: React.FC = () => {
   const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
   const [showSignedUp, setSignedUp] = useState<boolean>(false);
   const [showLoggingIn, setLoggingIn] = useState<boolean>(false);
-  const { createWallet } = useSigner();
 
   const closeEmailExistsError = () => setEmailExistsError(false);
   const closePasswordsDontMatchError = () => setPasswordsDontMatchError(false);
@@ -104,12 +102,6 @@ const Signup: React.FC = () => {
           const emailAttribute = attributesResponse['email'];
 
           if (emailAttribute) setEmail(emailAttribute);
-
-          try {
-            await createWallet(email); // pass the freshly entered email
-          } catch (e) {
-            console.error('Failed to create user wallet right after signup:', e);
-          }
 
           setTimeout(() => {
             setSigningUp(false);

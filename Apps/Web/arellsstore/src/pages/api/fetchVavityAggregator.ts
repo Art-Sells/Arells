@@ -15,7 +15,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ error: 'Email query parameter is required' });
   }
 
-  const key = `${email}/vatop-data.json`;
+  const key = `${email}/VavityAggregate.json`;
 
   try {
     const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();

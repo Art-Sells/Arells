@@ -4,20 +4,14 @@
 
 ## Arells v1
 
-### Test Offline 
-- Remove BTC Wallet & Key creations in signup and login
-
-VavityTester (previously MASStester)
-Create Wallet:
-- creates VavityAggregate.json with accronyms (reference Vavity readme)
-- do not save private key info on json, only address
-- Multiple wallet creations
-- - Import/Export: 
+### Test Offline
+VavityTester:
+- - Import/Export:
 - - - Test import, export
 - Test import and export with acronyms with "fake" price uptick/downtick
 - - .5% import fee (into Arells Bitcoin Wallet)
 
-Account Wallet: 
+Account Wallet:
 - Keep profits with overall percentage gained (after first initial import) and remove Arells Bitcoin Price…
 
 Create wallet (new addition for extra wallets):
