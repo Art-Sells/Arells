@@ -52,7 +52,7 @@ const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefin
 
 export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [email, setEmail] = useState<string>('');
-  const [assetPrice, setAssetPrice] = useState<number>(60000);
+  const [assetPrice, setAssetPrice] = useState<number>(0);
   const [importAmount, setImportAmount] = useState<number>(0);
   const [exportAmount, setExportAmount] = useState<number>(0);
   const [exportedAmounts, setExportedAmounts] = useState<number>(0);
@@ -97,7 +97,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     acVactTaa: 0,
   });
 
-  const [vapa, setVapa] = useState<number>(assetPrice);
+  const [vapa, setVapa] = useState<number>(0);
 
   useEffect(() => {
     const fetchEmail = async () => {

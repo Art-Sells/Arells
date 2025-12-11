@@ -91,9 +91,9 @@ const VavityTester: React.FC = () => {
   };
 
   const calculateVapa = (walletList: WalletData[]): number => {
-    if (walletList.length === 0) return assetPrice || 60000;
+    if (walletList.length === 0) return assetPrice || 0;
     const maxCpVact = Math.max(...walletList.map(w => w.cpVact || 0));
-    return Math.max(maxCpVact, assetPrice || 60000);
+    return Math.max(maxCpVact, assetPrice || 0);
   };
 
   const handleCreateWallet = async () => {
@@ -113,13 +113,15 @@ const VavityTester: React.FC = () => {
       
       // Initialize wallet data with default values
       // When a wallet is first created, it has no assets, so values start at 0
+      // cpVatoi should be set to VAPA at the time of import (current VAPA)
+      const currentVapa = Math.max(vapa || 0, assetPrice || 0);
       const walletData: WalletData = {
         walletId: newWallet.walletId,
         address: newWallet.address,
         cVatoi: 0, // Will be set when assets are imported
-        cpVatoi: assetPrice || 60000, // Default to current asset price
+        cpVatoi: currentVapa, // Set to VAPA at the time of import (not current asset price)
         cVact: 0, // Starts at 0, increases as assets are imported
-        cpVact: assetPrice || 60000, // Starts at current asset price, increases with VAPA
+        cpVact: currentVapa, // Starts at current VAPA, increases with VAPA
         cVactTaa: 0, // Token amount starts at 0
         cdVatoi: 0, // Difference starts at 0
       };
@@ -247,8 +249,8 @@ const VavityTester: React.FC = () => {
       )}
 
       <div style={{ marginBottom: '20px' }}>
-        <h2>Bitcoin Price: ${formatPrice(assetPrice || 60000)}</h2>
-        <h3>VAPA: ${formatPrice(Math.max(vapa || 0, localVapa || 0, assetPrice || 60000))}</h3>
+        <h2>Bitcoin Price: ${formatPrice(assetPrice || 0)}</h2>
+        <h3>VAPA: ${formatPrice(Math.max(vapa || 0, localVapa || 0, assetPrice || 0))}</h3>
       </div>
 
       {wallets.length > 0 && (
