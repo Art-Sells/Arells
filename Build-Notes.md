@@ -57,12 +57,15 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 ## Loading Modules in all pages
 - All of them fade in and out (same as modules and pages in vavity.info)
 
-
 ## After Test
 - Save VavityCodeBase architecture Offline (for testing) and online version (for deployment)
 
 
-#### Chart (Home/Account):
+### Home
+- Make Phsychological slogan larger
+- Powered By Vavity replces bottom "import words"
+
+#### Chart (Home):
 – - (B)
 – - Price 
 - - -  $5,000   ->   $90,000
@@ -73,36 +76,64 @@ Add Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits
 - Bull: Show modal explanation
 - Sloth: Show modal explanation
 
-### Home
-- Make Phsychological slogan larger
-- Powered By Vavity replces bottom "import words"
-
 ### Account
+(A) ------- (Wallets)
 - Make Phsychological slogan larger
-- - Import button triggers "Create Wallets" <- use function from VavityTester.tsx
+- Create Wallet to Begin button  takes you to "Wallets" page 
 - If acVatoi != 0, then hide "Import Bitcoin to begin"
-- - Price: VAPA (formatPrice from VavityTester.tsx)
-- - Wallet: acVact + Import Wallet Amount (formatCurrency from VavityTester.tsx)
-- - Profits: acdVatoi (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
-- - ( Create New Wallet? ) (button)
+- Chart (Account):
+– - (B)
+– - Price (VAPA)
+- - - $90,000
+– - Line Chart
+- - Wallet: acVact $0
+– - Profits: acdVatoi + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+Add Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - - Bull: Show modal explanation
+- - - Sloth: Show modal explanation
+- ( Import )  
+- ( Export ) 
 - Powered by Vavity (V) (link)
+___________________________________
+- Chart (Home/Account Duplicate):
+– - (B)
+– - Price 
+- - -  $5,000   ->   $90,000
+- - - 05/02/15      12/10/25
+– - Line Chart
+– - (5years/1year/1month/1week) Profits: + $85,000
+Add Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- Bull: Show modal explanation
+- Sloth: Show modal explanation
 
-#### Import (Page)
+### Import (Page)
 - Import 
 - - (B)
+Choose Wallet (1, 2, 3, etc)
 - - (B) Address
-- - Modal: Preparing (B) Wallet (to create wallet (take from VavityTester)) {loads in signer.tsx when createBTCwallet is invoked after first if try event}
+- - Ensure the private key you saved while creating this wallet matches this wallet address before importing funds to this wallet
 - Fee (mention .5% import fee)
 - Powered by Vavity (V) (link)
 
-
-#### Export: 
+### Export: 
 - Opening Modal: 
 - - Warning: exporting your investments out of Arells and into any financial system that hasn’t adopted Vavity (V) will psychologically subject your investments to bear-market losses, are you sure? (yes) (Back To Account)<- Back to account
 - - As numbers typed in amounts compare external and internal value, if no losses, don’t show calculations
 - Powered by Vavity (V) (link)
 
-#### Metatags/ Description (all pages.tsx & components)
+### Wallets
+"Create New Wallet" (triggered if no wallets exist from json) <- use function from VavityTester.tsx
+- Lists Wallet Addresses and cVactTaa and cVact
+- Create New Wallet
+- - Modal: Preparing (B) Wallet (to create wallet (take from VavityTester)) 
+- - Modal: Wallet Created, IMPORTANT: Copy This Address & Private Key and save them offline and do not lose them (for security purposes, we do not save your Private Key in our database). If you lose your Private Key, you will lose access to your funds.
+Do not reload this page or close it until you've followed the instructions above.
+- - - (Ok)
+- - - Modal: Did you copy & save your private key and address? 
+- - - - (yes) - and take to import
+- - - - (no) - close modal and reveal prior modal
+
+### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages (remove Bitcoin Arells)
 - - Investments immune to bear markets. Import investments and psychologically protect them from bear market losses.
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
@@ -111,7 +142,7 @@ Add Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits
 - - Add a robots.txt: Allows crawlers to access your site
 - - Build backlinks: Share your site to get it indexed faster
 
-#### Deployment (Test) Amplify/S3 Login
+### Deployment (Test) Amplify/S3 Login
 - Ensure that NEXT_PUBLIC is not invoked and remove .env hardhat config expositions
 - Compare Main ENV with Test ENV before deployments
 - Test (with vavity.info) on socials (DM's/etc)
