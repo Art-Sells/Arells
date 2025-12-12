@@ -66,7 +66,7 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner">Investments psychologically immune to bear markets</p>
+        <p id="descriptioner">Emotionally protects your investments from bear markets</p>
       </div>
 
         {/* <br></br>
@@ -84,7 +84,7 @@ const Index = () => {
 
       <div id="buy-info-wrapping">
           <p id="buy-info">
-            Psychologically prevents investments from bear market losses.</p>
+            Import investments and emotionally protect yourself from bear market losses.</p>
         </div>
 
     </>

@@ -10,11 +10,11 @@ import Import from '../../components/Import/Import';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Import",
-  description: "Bitcoin investments that never lose value. Psychologically prevents investments from bear market losses.",
+  description: "Emotionally protects your investments from bear markets. Import investments and emotionally protect yourself from bear market losses.",
   robots: "noimageindex",
   openGraph: {
     title: "Import",
-    description: "Bitcoin investments that never lose value. Psychologically prevents investments from bear market losses.",
+    description: "Emotionally protects your investments from bear markets. Import investments and emotionally protect yourself from bear market losses.",
     url: "https://arells.com/import",
     type: "website",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Import",
-    description: "Bitcoin investments that never lose value. Psychologically prevents investments from bear market losses.",
+    description: "Emotionally protects your investments from bear markets. Import investments and emotionally protect yourself from bear market losses.",
     card: "summary_large_image",
     images: [
       {

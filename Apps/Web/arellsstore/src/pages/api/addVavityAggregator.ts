@@ -66,7 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // Calculate new vavity combinations
     const updatedVavityCombinations = calculateVavityCombinations(updatedWallets);
 
-    // Calculate VAPA (highest cpVact)
+    // Calculate VAPA (highest asset price recorded always)
     const allCpVacts = updatedWallets.map((w: any) => w.cpVact || 0);
     const vapa = Math.max(...allCpVacts, existingData.vapa || 0);
 

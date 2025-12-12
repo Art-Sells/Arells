@@ -65,24 +65,26 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - Make Phsychological slogan larger
 - Chart:
 - - Left
-– - - (B) (5 year/ 1 year/ 1 month/ 1 week)
+– - - (B)
 - - - Investment: $4,000 (many random amounts)
 - - - Profits: + $85,000
 - - Right
 - - - Line Graph
-- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
-- - - Bull: Show modal explanation
-- - - Sloth: Show modal explanation
+- - - (5 year/ 1 year/ 1 month/ 1week)
+- - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - - - Bull: Show modal explanation
+- - - - Sloth: Show modal explanation
 - Powered By Vavity replces bottom "import words"
 
 ### Account
 (A) ------- (Wallets)
 - Make Phsychological slogan larger
+– (B) (VAPA): $90,000
 - Create Wallet to Begin button  takes you to "Wallets" page 
 - If acVatoi != 0, then hide "Import Bitcoin to begin"
 - Chart (Account):
 - - Left
-– - - (B) (VAPA): $90,000
+- - - My Portfolio
 - - - Investment: acVact $0
 – - - Profits: acdVatoi + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
 - - Right
@@ -96,14 +98,15 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 ___________________________________
 - Chart:
 - - Left
-– - - (B) (5 year/ 1 year/ 1 month/ 1week)
+– - - (B)
 - - - Investment: $4,000 (many random amounts)
 - - - Profits: + $85,000
 - - Right
 - - - Line Graph
-- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
-- - - Bull: Show modal explanation
-- - - Sloth: Show modal explanation
+- - - (5 year/ 1 year/ 1 month/ 1week)
+- - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - - - Bull: Show modal explanation
+- - - - Sloth: Show modal explanation
 
 ### Import (Page)
 - Import 
@@ -116,8 +119,9 @@ Choose Wallet (1, 2, 3, etc)
 
 ### Export: 
 - Opening Modal: 
-- - Warning: exporting your investments out of Arells and into any financial system that hasn’t adopted Vavity (V) will psychologically subject your investments to bear-market losses, are you sure? (yes) (Back To Account)<- Back to account
+- - Warning: exporting your investments out of Arells and into any financial system that hasn’t adopted Vavity (V) will emotionally subject your investments to bear-market losses, are you sure? (yes) (Back To Account)<- Back to account
 - - As numbers typed in amounts compare external and internal value, if no losses, don’t show calculations
+losses not based on profits, based off external pricing vs internal pricing
 - Powered by Vavity (V) (link)
 
 ### Wallets
@@ -134,7 +138,7 @@ Do not reload this page or close it until you've followed the instructions above
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages (remove Bitcoin Arells)
-- - Investments immune to bear markets. Import investments and psychologically protect them from bear market losses.
+- - Emotionally protects your investments from bear markets. Import investments and emotionally protect yourself from bear market losses.
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
 - - Create a sitemap.xml: Helps Google discover all pages
@@ -152,14 +156,15 @@ Do not reload this page or close it until you've followed the instructions above
 
 #### Deployment (Main) Amplify/S3 Login
 - Test (with vavity.info) on socials (DM's/etc)
-- Email/X-Twitter/LinkedIn/: Investments psychologically immune to bear markets. A custodian that psychologically prevents investments from bear market losses
+- Email/X-Twitter/LinkedIn/: Emotionally protects your investments from bear markets. 
 
 ### After Completion
 Save Vavity JSON file data everyday offline (in case of breach)
 Users:
 - Get Leads (search AI automoated options [use same format] from X, etc)
 - Set Launch Date (and announce the features)
-- - Psychologcally protect our investments from bear market losses.
+- - Review notes on phone
+- - Emotionally protects your investments from bear markets. 
 - - Add "Discord" section for any questions
 Keep marketing, dependent on growth after 1-2 weeks:
 - Updates (oDAO, FndrsINC, etc)
@@ -184,8 +189,8 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 ### iOS & Android App(work on this together)
 - iOS App (UI Layer)
-- - Tagline: Psychologically protects investments from bear market losses.
-- - Desc: Custody Digital Assets with Arells, and watch as it autonomously protects your investments from downturns. 
+- - Tagline: Emotionlly protects your investments from bear market losses.
+- - Desc: Custody Digital Assets with Arells, and watch as it emotionally protects your investments from downturns. 
 - - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, custodial transactions are handled by an autonomous system and AWS-based coordinations.
 
 

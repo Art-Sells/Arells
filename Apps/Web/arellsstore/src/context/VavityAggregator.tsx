@@ -30,7 +30,7 @@ interface VavityaggregatorType {
   vatoi: VatoiState;
   vact: VactState;
   totals: TotalsState;
-  vapa: number; // Valued Asset Price Anchored (highest cpVact)
+  vapa: number; // Valued Asset Price Anchored (highest asset price recorded always)
   importAmount: number;
   exportAmount: number;
   setImportAmount: (amount: number) => void;
@@ -168,7 +168,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
   }, [vatoi.cVatoi, vatoi.cdVatoi, vact.cVact, vact.cVactTaa]);
 
-  // Update cpVact based on VAPA (highest price observed)
+  // Update cpVact based on VAPA (highest asset price recorded always)
   useEffect(() => {
     const newCpVact = Math.max(vact.cpVact, assetPrice);
     if (newCpVact !== vact.cpVact) {
