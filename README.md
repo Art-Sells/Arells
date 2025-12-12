@@ -2,12 +2,12 @@
 
 
 # [Arells](https://arells.com)
-## Investments psychologically immune to bear markets.
+## Emotionally protect your investments from bear markets.
 
 Arells believes ***investments should never lose value***.
 
 ### Solution:
-A custodian that psychologically protects our investments from bear market losses.
+A custodian that emotionally protects our investments from bear market losses.
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________
