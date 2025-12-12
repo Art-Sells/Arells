@@ -58,13 +58,23 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [exportedAmounts, setExportedAmounts] = useState<number>(0);
   
   // Fetch Bitcoin price from CoinGecko on mount and periodically
+  // The API now returns the HIGHEST price ever recorded (like VAPA)
+  // Display shows highest price, but we also track current price for VAPA updates
   useEffect(() => {
     const fetchPrice = async () => {
       try {
-        const price = await fetchBitcoinPrice();
-        setAssetPrice(price);
-        // Update VAPA if it's lower than the new price
-        setVapa(prev => Math.max(prev, price));
+        const response = await axios.get('/api/fetchBitcoinPrice');
+        const bitcoinData = response.data?.['bitcoin'];
+        
+        if (bitcoinData) {
+          // Display the highest price ever recorded (like the chart)
+          const highestPrice = bitcoinData.highestPriceEver || bitcoinData.usd;
+          setAssetPrice(highestPrice);
+          
+          // Use current price for VAPA calculations (so VAPA can still increase)
+          const currentPrice = bitcoinData.currentPrice || bitcoinData.usd;
+          setVapa(prev => Math.max(prev, currentPrice));
+        }
       } catch (error) {
         console.error('Error fetching Bitcoin price:', error);
         // Keep default price on error
@@ -255,7 +265,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
       // Only log actual errors, not missing files
       if (error?.response?.status !== 404) {
-        console.error('Error reading aASSET.json:', error);
+      console.error('Error reading aASSET.json:', error);
       }
       return null;
     }

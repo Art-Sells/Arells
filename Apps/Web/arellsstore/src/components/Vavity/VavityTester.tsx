@@ -55,6 +55,50 @@ const VavityTester: React.FC = () => {
     }
   }, [email]);
 
+  // Update wallets' cpVact when VAPA increases
+  useEffect(() => {
+    if (wallets.length === 0 || !email) return;
+
+    const currentVapa = Math.max(vapa || 0, assetPrice || 0, localVapa || 0);
+    
+    // Check if any wallet's cpVact needs updating (only if VAPA increased)
+    const needsUpdate = wallets.some(w => {
+      const walletCpVact = w.cpVact || 0;
+      return walletCpVact < currentVapa;
+    });
+    
+    if (needsUpdate && currentVapa > 0) {
+      const updatedWallets = wallets.map(wallet => {
+        const newCpVact = Math.max(wallet.cpVact || 0, currentVapa);
+        // Recalculate cVact based on new cpVact
+        const newCVact = parseFloat(((wallet.cVactTaa || 0) * newCpVact).toFixed(2));
+        // Recalculate cdVatoi
+        const newCdVatoi = parseFloat((newCVact - (wallet.cVatoi || 0)).toFixed(2));
+        
+        return {
+          ...wallet,
+          cpVact: newCpVact,
+          cVact: newCVact,
+          cdVatoi: newCdVatoi,
+        };
+      });
+
+      // Calculate new combinations
+      const newCombinations = calculateCombinations(updatedWallets);
+      const newVapa = Math.max(...updatedWallets.map(w => w.cpVact || 0), currentVapa);
+
+      // Update local state
+      setWallets(updatedWallets);
+      setVavityCombinations(newCombinations);
+      setLocalVapa(newVapa);
+
+      // Save to backend
+      saveVavityAggregator(email, updatedWallets, newCombinations).catch(err => {
+        console.error('Error saving updated wallets:', err);
+      });
+    }
+  }, [vapa, assetPrice]);
+
   const loadWallets = async () => {
     try {
       const data = await fetchVavityAggregator(email);
