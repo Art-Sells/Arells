@@ -171,6 +171,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 
 ### Other (if Time Permits)
+- Flip sloth pngs horizontally
 - Fix (signOut/sign-up/log-in issue) loading after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - Remove console.logs from all files...
