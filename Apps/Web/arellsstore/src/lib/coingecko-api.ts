@@ -18,15 +18,14 @@ export const fetchBitcoinPrice = async (): Promise<number> => {
   try {
     const response = await axios.get('/api/fetchBitcoinPrice');
 
-    // The API now returns highestPriceEver as the main usd value
-    // This ensures we always get the highest price recorded (like VAPA)
+    // The API now returns the current Bitcoin price
     const bitcoinData = response.data?.['bitcoin'];
     if (!bitcoinData) {
       throw new Error('Invalid response structure from API');
     }
 
-    // Return the highest price ever (the API sets usd to highestPriceEver)
-    return bitcoinData.highestPriceEver || bitcoinData.usd;
+    // Return the current price
+    return bitcoinData.usd;
   } catch (error) {
     console.error('Error fetching Bitcoin price:', error);
     throw new Error('Could not fetch Bitcoin price');

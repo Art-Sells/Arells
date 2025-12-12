@@ -121,7 +121,7 @@ Choose Wallet (1, 2, 3, etc)
 - Opening Modal: 
 - - Warning: exporting your investments out of Arells and into any financial system that hasn’t adopted Vavity (V) will emotionally subject your investments to bear-market losses, are you sure? (yes) (Back To Account)<- Back to account
 - - As numbers typed in amounts compare external and internal value, if no losses, don’t show calculations
-losses not based on profits, based off external pricing vs internal pricing
+losses not based on profits, based off external pricing vs internal pricing (get from VavityTester.tsx)
 - Powered by Vavity (V) (link)
 
 ### Wallets

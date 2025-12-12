@@ -58,31 +58,33 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [exportedAmounts, setExportedAmounts] = useState<number>(0);
   
   // Fetch Bitcoin price from CoinGecko on mount and periodically
-  // The API now returns the HIGHEST price ever recorded (like VAPA)
-  // Display shows highest price, but we also track current price for VAPA updates
+  // assetPrice = current Bitcoin price
+  // VAPA = highest Bitcoin price ever from CoinGecko historical data
   useEffect(() => {
-    const fetchPrice = async () => {
+    const fetchPrices = async () => {
       try {
-        const response = await axios.get('/api/fetchBitcoinPrice');
-        const bitcoinData = response.data?.['bitcoin'];
-        
-        if (bitcoinData) {
-          // Display the highest price ever recorded (like the chart)
-          const highestPrice = bitcoinData.highestPriceEver || bitcoinData.usd;
-          setAssetPrice(highestPrice);
-          
-          // Use current price for VAPA calculations (so VAPA can still increase)
-          const currentPrice = bitcoinData.currentPrice || bitcoinData.usd;
-          setVapa(prev => Math.max(prev, currentPrice));
+        // Fetch current Bitcoin price
+        const currentPriceResponse = await axios.get('/api/fetchBitcoinPrice');
+        const currentPrice = currentPriceResponse.data?.['bitcoin']?.usd;
+        if (currentPrice) {
+          setAssetPrice(currentPrice);
+        }
+
+        // Fetch highest Bitcoin price ever from historical data
+        const highestPriceResponse = await axios.get('/api/fetchHighestBitcoinPrice');
+        const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
+        if (highestPriceEver) {
+          // VAPA should be the highest price ever from CoinGecko
+          setVapa(prev => Math.max(prev, highestPriceEver));
         }
       } catch (error) {
-        console.error('Error fetching Bitcoin price:', error);
+        console.error('Error fetching Bitcoin prices:', error);
         // Keep default price on error
       }
     };
 
-    fetchPrice(); // Initial fetch
-    const interval = setInterval(fetchPrice, 30000); // Update every 30 seconds
+    fetchPrices(); // Initial fetch
+    const interval = setInterval(fetchPrices, 30000); // Update every 30 seconds
 
     return () => clearInterval(interval);
   }, []);

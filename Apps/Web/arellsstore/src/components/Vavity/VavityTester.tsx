@@ -293,8 +293,8 @@ const VavityTester: React.FC = () => {
       )}
 
       <div style={{ marginBottom: '20px' }}>
-        <h2>Bitcoin Price: ${formatPrice(assetPrice || 0)}</h2>
-        <h3>VAPA: ${formatPrice(Math.max(vapa || 0, localVapa || 0, assetPrice || 0))}</h3>
+        <h2>External Bitcoin Price: ${formatPrice(assetPrice || 0)}</h2>
+        <h3>Internal Bitcoin Price (VAPA): ${formatPrice(Math.max(vapa || 0, localVapa || 0, assetPrice || 0))}</h3>
       </div>
 
       {wallets.length > 0 && (
