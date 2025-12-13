@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
-import '../../app/css/modals/export/export-modal.css';
+import '../../app/css/modals/send/send-modal.css';
 import '../../app/css/modals/buy/buy-modal.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 import Link from 'next/link';
@@ -170,7 +170,7 @@ const Signup: React.FC = () => {
         </div>
       )}
       {showMissingFields && (
-        <div id="export-failed-wrapper">
+        <div id="send-failed-wrapper">
           <div id="missing-fields-content">
             <Image 
               alt="" 
@@ -180,7 +180,7 @@ const Signup: React.FC = () => {
               src="/images/prototype/EnterNameErrorImage.png" 
             />  
             <p id="missing-fields-words">enter information</p>
-            <button id="export-failed-close" onClick={closeMissingFields}>OK</button> 
+            <button id="send-failed-close" onClick={closeMissingFields}>OK</button> 
           </div>
         </div>
       )}

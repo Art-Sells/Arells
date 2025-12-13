@@ -5,12 +5,12 @@ import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
 import Link from 'next/link';
 
-import '../../app/css/import/import.css';
-import '../../app/css/modals/import/import-modal.css';
+import '../../app/css/receive/receive.css';
+import '../../app/css/modals/receive/receive-modal.css';
 import '../../app/css/modals/loader/accountloaderbackground.css';
 import styles from '../../app/css/modals/loader/accountloader.module.css';
 
-const Import: React.FC = () => {
+const Receive: React.FC = () => {
 
   const [showCopied, setCopied] = useState<boolean>(false);
   const [createdWallet, setCreatedWallet] = useState<{ address: string; privateKey: string } | null>(null);
@@ -82,35 +82,35 @@ const Import: React.FC = () => {
         </div>
       )}
 
-        <div id="import-header-navigation">
-            <Link href="/account" id="import-home-link">
+        <div id="receive-header-navigation">
+            <Link href="/account" id="receive-home-link">
               <Image
                 loader={imageLoader}
                 onLoad={() => handleImageLoaded('accountLogo')}
                 alt=""
                 width={23}
                 height={23}
-                id="import-account-navigation"
+                id="receive-account-navigation"
                 src="images/howitworks/ArellsIcoIcon.png"
               />
             </Link>							
-            <Link href="/buy" id="import-cart-link">
+            <Link href="/buy" id="receive-cart-link">
               <Image
                   loader={imageLoader}
                   onLoad={() => handleImageLoaded('buyLogo')}
                   alt=""
                   width={23}
                   height={23}
-                  id="import-buy-navigation"
+                  id="receive-buy-navigation"
                   src="images/howitworks/Bitcoin.png"
                 />
             </Link>	
         </div>
                         
-        <p id="import-title">IMPORT</p>
-        <div id="import-instructions-wrapper">
-          <p id="import-instructions">Copy address. Paste it 
-          into the "send Bitcoin to" address box in another exchange to import Bitcoin
+        <p id="receive-title">RECEIVE</p>
+        <div id="receive-instructions-wrapper">
+          <p id="receive-instructions">Copy address. Paste it 
+          into the "send Bitcoin to" address box in another exchange to receive Bitcoin
           into Arells.
           </p>
         </div>
@@ -131,4 +131,4 @@ const Import: React.FC = () => {
   );
 };
 
-export default Import;
+export default Receive;

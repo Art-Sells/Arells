@@ -5,17 +5,17 @@ import React, { useEffect, useMemo, useState } from 'react';
 import '../css/receive/receive.css';
 
 
-import VavityTester from '../../components/Vavity/VavityTester';
+import Receive from '../../components/Receive/Receive';
 
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
-  title: "Vavity Tester",
+  title: "Receive",
   description: "Emotionally protects your investments from bear markets. Receive investments and emotionally protect yourself from bear market losses.",
   robots: "noimageindex",
   openGraph: {
-    title: "Vavity Tester",
+    title: "Receive",
     description: "Emotionally protects your investments from bear markets. Receive investments and emotionally protect yourself from bear market losses.",
-    url: "https://arells.com/vavitytester",
+    url: "https://arells.com/receive",
     type: "website",
     images: [
       {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     ]
   },
   twitter: {
-    title: "Vavity Tester",
+    title: "Receive",
     description: "Emotionally protects your investments from bear markets. Receive investments and emotionally protect yourself from bear market losses.",
     card: "summary_large_image",
     images: [
@@ -35,17 +35,17 @@ export const metadata: Metadata = {
   }
 };
 
-const VavityTesterPage = () => {
+const ReceivePage = () => {
   
 
   return (
     <>
 
       <div id="receive-wrapper">
-            <VavityTester/>
+            <Receive/>
       </div>
     </>
   );
 }
 
-export default VavityTesterPage;
+export default ReceivePage;

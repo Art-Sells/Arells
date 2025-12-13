@@ -106,8 +106,8 @@ const VavityTester: React.FC = () => {
               const newCpVatoi = currentVapa;
               const newCpVact = currentVapa;
               const newCVact = newCVactTaa * newCpVact;
-              const newCVatoi = newCVact; // cVatoi equals cVact at import time
-              const newCdVatoi = newCVact - newCVatoi; // Should be 0 at import
+              const newCVatoi = newCVact; // cVatoi equals cVact at receive time
+              const newCdVatoi = newCVact - newCVatoi; // Should be 0 at receive
 
               return {
                 ...wallet,
@@ -129,7 +129,7 @@ const VavityTester: React.FC = () => {
                 cVactTaa: newCVactTaa,
                 cVact: newCVact,
                 cdVatoi: newCdVatoi,
-                // cpVatoi and cVatoi don't change after import
+                // cpVatoi and cVatoi don't change after receive
                 cpVatoi: wallet.cpVatoi || 0,
                 cVatoi: wallet.cVatoi || 0,
               };
@@ -276,13 +276,13 @@ const VavityTester: React.FC = () => {
       
       // Initialize wallet data with default values
       // When a wallet is first created, it has no assets, so ALL values start at 0
-      // cpVatoi and cpVact will be set to VAPA only when cVactTaa is not 0 (when assets are imported)
+      // cpVatoi and cpVact will be set to VAPA only when cVactTaa is not 0 (when assets are received)
       const walletData: WalletData = {
         walletId: newWallet.walletId,
         address: newWallet.address,
-        cVatoi: 0, // Will be set when assets are imported
+        cVatoi: 0, // Will be set when assets are received
         cpVatoi: 0, // Set to 0 until cVactTaa is not 0
-        cVact: 0, // Starts at 0, increases as assets are imported
+        cVact: 0, // Starts at 0, increases as assets are received
         cpVact: 0, // Set to 0 until cVactTaa is not 0
         cVactTaa: 0, // Token amount starts at 0
         cdVatoi: 0, // Difference starts at 0

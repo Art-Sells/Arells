@@ -6,13 +6,13 @@
 
 ### Test Offline
 VavityTester:
-- - Import/Export:
-- - - Test import, export
-- Test import and export with acronyms with "fake" price uptick/downtick
-- - .5% import fee (into Arells Bitcoin Wallet)
+- - Receive/Send:
+- - - Test receive, send
+- Test receive and send with acronyms with "fake" price uptick/downtick
+- - .5% receive fee (into Arells Bitcoin Wallet)
 
 Account Wallet:
-- Keep profits with overall percentage gained (after first initial import) and remove Arells Bitcoin Price…
+- Keep profits with overall percentage gained (after first initial receive) and remove Arells Bitcoin Price…
 
 Create wallet (new addition for extra wallets):
 - Closing Modal:
@@ -34,7 +34,7 @@ Home
 Account
 – (B) (VAPA): $90,000
 - Create Wallet to Begin button  takes you to "Wallets" page 
-- If acVatoi != 0, then hide "Import Bitcoin to begin"
+- If acVatoi != 0, then hide "Receive Bitcoin to begin"
 - Chart (Account):
 - - Left
 - - - My Portfolio
@@ -58,7 +58,7 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 
 ### Test Online:
 - change .env variables from NEXT_PUBLIC
-- eMail verification (before import)
+- eMail verification (before receive)
 - Establish background useEffects order
 - - 1. Vavity: Fetch Bitcoin Price
 - - 2. Vavity: Fetch wallet Balances
@@ -103,14 +103,14 @@ powered by
 - - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
-- Powered By Vavity replces bottom "import words"
+- Powered By Vavity replces bottom "receive words"
 
 ### Account
 (A) ------- (Wallets)
 - Make Phsychological slogan larger
 – (B) (VAPA): $90,000
 - Create Wallet to Begin button  takes you to "Wallets" page 
-- If acVatoi != 0, then hide "Import Bitcoin to begin"
+- If acVatoi != 0, then hide "Receive Bitcoin to begin"
 - Chart (Account):
 - - Left
 - - - My Portfolio
@@ -121,8 +121,8 @@ powered by
 - - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - Bull: Show modal explanation
 - - - Sloth: Show modal explanation
-- ( Import )  
-- ( Export ) 
+- ( Receive )  
+- ( Send ) 
 - Powered by Vavity (V) (link)
 ___________________________________
 - Chart:
@@ -137,18 +137,18 @@ ___________________________________
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
 
-### Import (Page)
-- Import 
+### Receive (Page)
+- Receive 
 - - (B)
 Choose Wallet (1, 2, 3, etc)
 - - (B) Address
-- - Ensure the private key you saved while creating this wallet matches this wallet address before importing funds to this wallet
-- Fee (mention .5% import fee)
+- - Ensure the private key you saved while creating this wallet matches this wallet address before receiving funds to this wallet
+- Fee (mention .5% receive fee)
 - Powered by Vavity (V) (link)
 
-### Export: 
+### Send: 
 - Opening Modal: 
-- - Warning: exporting your investments out of Arells and into any financial system that hasn’t adopted Vavity (V) will emotionally subject your investments to bear-market losses, are you sure? (yes) (Back To Account)<- Back to account
+- - Warning: sending your investments out of Arells and into any financial system that hasn't adopted Vavity (V) will emotionally subject your investments to bear-market losses, are you sure? (yes) (Back To Account)<- Back to account
 - - As numbers typed in amounts compare external and internal value, if no losses, don’t show calculations
 losses not based on profits, based off external pricing vs internal pricing (get from VavityTester.tsx)
 - Powered by Vavity (V) (link)
@@ -162,12 +162,12 @@ losses not based on profits, based off external pricing vs internal pricing (get
 Do not reload this page or close it until you've followed the instructions above.
 - - - (Ok)
 - - - Modal: Did you copy & save your private key and address? 
-- - - - (yes) - and take to import
+- - - - (yes) - and take to receive
 - - - - (no) - close modal and reveal prior modal
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages [large slogan] (remove Bitcoin Arells)
-- - Emotionally protects your investments from bear markets. Import investments and emotionally protect yourself from bear market losses.
+- - Emotionally protects your investments from bear markets. Receive investments and emotionally protect yourself from bear market losses.
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
 - - Create a sitemap.xml: Helps Google discover all pages
@@ -181,7 +181,7 @@ Do not reload this page or close it until you've followed the instructions above
 
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
-- 2-3 accounts, multiple imports and exports (monitor for 2-3 days)with real-api
+- 2-3 accounts, multiple receives and sends (monitor for 2-3 days)with real-api
 
 #### Deployment (Main) Amplify/S3 Login
 - Test (with vavity.info) on socials (DM's/etc)
@@ -232,7 +232,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 - Lost Key: Hide wallet balance... in case wallet privete key lost
 - After user accumulation and scaling, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
-- Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Export/VavityContext
+- Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Send/VavityContext
 
 ### UserContextWrapped
 - if logged in for more than 5 minutes without use, automatically sign out and take to homepage.

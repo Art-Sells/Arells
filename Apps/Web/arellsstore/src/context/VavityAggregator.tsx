@@ -7,8 +7,8 @@ import { fetchBitcoinPrice, setManualBitcoinPrice as setManualBitcoinPriceApi } 
 import { fetchUserAttributes } from 'aws-amplify/auth';
 
 interface VatoiState {
-  cVatoi: number; // Value of the asset investment at the time of import
-  cpVatoi: number; // Asset price at the time of import
+  cVatoi: number; // Value of the asset investment at the time of receive
+  cpVatoi: number; // Asset price at the time of receive
   cdVatoi: number; // Difference between cVact and cVatoi: cdVatoi = cVact - cVatoi
 }
 
@@ -31,15 +31,15 @@ interface VavityaggregatorType {
   vact: VactState;
   totals: TotalsState;
   vapa: number; // Valued Asset Price Anchored (highest asset price recorded always)
-  importAmount: number;
-  exportAmount: number;
-  setImportAmount: (amount: number) => void;
-  setExportAmount: (amount: number) => void;
-  handleImport: (amount: number) => void;
-  handleImportASSET: (amount: number) => void;
-  handleExport: (amount: number) => void;
+  receiveAmount: number;
+  sendAmount: number;
+  setReceiveAmount: (amount: number) => void;
+  setSendAmount: (amount: number) => void;
+  handleReceive: (amount: number) => void;
+  handleReceiveASSET: (amount: number) => void;
+  handleSend: (amount: number) => void;
   setManualAssetPrice: (price: number | ((currentPrice: number) => number)) => void;
-  exportedAmounts: number;
+  sentAmounts: number;
   email: string;
   readASSETFile: () => Promise<number | null>;
   updateASSETFile: (amount: number) => Promise<number>;
@@ -53,9 +53,9 @@ const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefin
 export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [email, setEmail] = useState<string>('');
   const [assetPrice, setAssetPrice] = useState<number>(0);
-  const [importAmount, setImportAmount] = useState<number>(0);
-  const [exportAmount, setExportAmount] = useState<number>(0);
-  const [exportedAmounts, setExportedAmounts] = useState<number>(0);
+  const [receiveAmount, setReceiveAmount] = useState<number>(0);
+  const [sendAmount, setSendAmount] = useState<number>(0);
+  const [sentAmounts, setSentAmounts] = useState<number>(0);
   
   // Fetch Bitcoin price from CoinGecko on mount and periodically
   // assetPrice = current Bitcoin price
@@ -138,12 +138,12 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const fetchedVatoi = response.data.vatoi || { cVatoi: 0, cpVatoi: 0, cdVatoi: 0 };
         const fetchedVact = response.data.vact || { cVact: 0, cpVact: 0, cVactTaa: 0 };
         const fetchedVapa = response.data.vapa || assetPrice;
-        const fetchedExportedAmounts = response.data.exportedAmounts || 0;
-  
+        const fetchedSentAmounts = response.data.sentAmounts || 0;
+
         setVatoi(fetchedVatoi);
         setVact(fetchedVact);
         setVapa(fetchedVapa);
-        setExportedAmounts(fetchedExportedAmounts);
+        setSentAmounts(fetchedSentAmounts);
       } catch (error) {
         console.error('Error fetching vatoi state:', error);
       }
@@ -288,7 +288,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   let isUpdating = false;
 
-  const handleImport = async (amount: number) => {
+  const handleReceive = async (amount: number) => {
     if (isUpdating) {
       return;
     }
@@ -315,16 +315,16 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
   
       if (aASSET > currentVactTaa) {
-        const amountToImport = parseFloat((aASSET - currentVactTaa).toFixed(8));
-        const importValue = amountToImport * assetPrice;
-  
-        // Update Vatoi: accumulate the import value
-        const newCVatoi = vatoi.cVatoi + importValue;
-        // cpVatoi should be the price at which the first import happened, or current price if first import
+        const amountToReceive = parseFloat((aASSET - currentVactTaa).toFixed(8));
+        const receiveValue = amountToReceive * assetPrice;
+
+        // Update Vatoi: accumulate the receive value
+        const newCVatoi = vatoi.cVatoi + receiveValue;
+        // cpVatoi should be the price at which the first receive happened, or current price if first receive
         const newCpVatoi = vatoi.cpVatoi === 0 ? assetPrice : vatoi.cpVatoi;
   
         // Update Vact: add tokens and recalculate value
-        const newCVactTaa = vact.cVactTaa + amountToImport;
+        const newCVactTaa = vact.cVactTaa + amountToReceive;
         const newCpVact = Math.max(vact.cpVact, assetPrice); // VAPA behavior
         const newCVact = newCVactTaa * newCpVact;
   
@@ -343,7 +343,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         await updateAllState(assetPrice, updatedVatoi, updatedVact, email);
       }
     } catch (error) {
-      console.error("Error during handleImport:", error);
+      console.error("Error during handleReceive:", error);
     } finally {
       isUpdating = false;
     }
@@ -365,7 +365,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   
   //     try {
   //       await readASSETFile();
-  //       await handleImport(0); // Trigger import check
+  //       await handleReceive(0); // Trigger receive check
   //     } catch (error) {
   //       // Silently handle errors - don't spam console
   //       // console.error("Error in interval execution:", error);
@@ -377,9 +377,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   //   return () => clearInterval(interval);
   // }, [vact.cVactTaa, email]);
 
-  const handleImportASSET = async (amount: number) => {
+  const handleReceiveASSET = async (amount: number) => {
     if (amount < 0.0001) {
-      alert('The minimum import amount is 0.0001 ASSET.');
+      alert('The minimum receive amount is 0.0001 ASSET.');
       return;
     }
     try {
@@ -394,13 +394,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     vatoi,
     vact,
     vapa,
-    exportedAmounts,
+    sentAmounts,
   }: {
     email: string;
     vatoi: VatoiState;
     vact: VactState;
     vapa: number;
-    exportedAmounts: number;
+    sentAmounts: number;
   }) => {
     try {
       const payload = {
@@ -408,7 +408,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         vatoi,
         vact,
         vapa,
-        exportedAmounts,
+        sentAmounts,
       };
   
       await axios.post('/api/saveVatoiState', payload);
@@ -417,7 +417,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  const handleExport = async (amount: number) => {
+  const handleSend = async (amount: number) => {
     if (isUpdating) return;
   
     isUpdating = true;
@@ -426,12 +426,12 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const assetAmount = parseFloat((amount / assetPrice).toFixed(8));
   
       if (amount > vact.cVact) {
-        alert(`Insufficient funds! You tried to export $${amount}, but only $${vact.cVact} is available.`);
+        alert(`Insufficient funds! You tried to send $${amount}, but only $${vact.cVact} is available.`);
         return;
       }
   
       if (assetAmount > vact.cVactTaa) {
-        alert(`Insufficient tokens! You tried to export ${assetAmount} ASSET, but only ${vact.cVactTaa} ASSET is available.`);
+        alert(`Insufficient tokens! You tried to send ${assetAmount} ASSET, but only ${vact.cVactTaa} ASSET is available.`);
         return;
       }
   
@@ -442,8 +442,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const newCVact = newCVactTaa * vact.cpVact;
       
       // Update Vatoi: reduce cVatoi proportionally
-      const exportRatio = assetAmount / vact.cVactTaa;
-      const newCVatoi = vatoi.cVatoi * (1 - exportRatio);
+      const sendRatio = assetAmount / vact.cVactTaa;
+      const newCVatoi = vatoi.cVatoi * (1 - sendRatio);
   
       const updatedVact: VactState = {
         cVact: parseFloat(newCVact.toFixed(2)),
@@ -453,23 +453,23 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   
       const updatedVatoi: VatoiState = {
         cVatoi: parseFloat(newCVatoi.toFixed(2)),
-        cpVatoi: vatoi.cpVatoi, // Keep original import price
+        cpVatoi: vatoi.cpVatoi, // Keep original receive price
         cdVatoi: 0, // Will be recalculated
       };
   
       setVact(updatedVact);
       setVatoi(updatedVatoi);
-      setExportedAmounts((prev) => prev + amount);
+      setSentAmounts((prev) => prev + amount);
   
       await saveVatoiState({
         email,
         vatoi: updatedVatoi,
         vact: updatedVact,
         vapa,
-        exportedAmounts: exportedAmounts + amount,
+        sentAmounts: sentAmounts + amount,
       });
     } catch (error) {
-      console.error("Error during export operation:", error);
+      console.error("Error during send operation:", error);
     } finally {
       isUpdating = false;
     }
@@ -529,16 +529,16 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         vact,
         totals,
         vapa,
-        importAmount,
-        exportAmount,
-        setImportAmount,
-        setExportAmount,
-        handleImport,
-        handleImportASSET,
-        handleExport,
+        receiveAmount,
+        sendAmount,
+        setReceiveAmount,
+        setSendAmount,
+        handleReceive,
+        handleReceiveASSET,
+        handleSend,
         setManualAssetPrice,
         email,
-        exportedAmounts,
+        sentAmounts,
         readASSETFile, 
         updateASSETFile,
         fetchVavityAggregator,
