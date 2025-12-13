@@ -4,23 +4,19 @@ import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 
-const calculateVatopCombinations = (groups: any[]) => {
-  return groups.reduce(
-    (acc, group) => {
-      acc.acVatops += group.cVatop || 0;
-      acc.acVacts += group.cVact || 0;
-      acc.acVactDat += group.cVactDat || 0;
-      acc.acVactDas += group.cVactDa || 0;
-      acc.acdVatops += group.cVact - group.cVatop > 0 ? group.cVact - group.cVatop : 0;
-      acc.acVactTaa += group.cVactTaa || 0;
+const calculateVavityCombinations = (wallets: any[]) => {
+  return wallets.reduce(
+    (acc, wallet) => {
+      acc.acVatoi += wallet.cVatoi || 0;
+      acc.acVacts += wallet.cVact || 0;
+      acc.acdVatoi += wallet.cdVatoi || 0;
+      acc.acVactTaa += wallet.cVactTaa || 0;
       return acc;
     },
     {
-      acVatops: 0,
+      acVatoi: 0,
       acVacts: 0,
-      acVactDat: 0,
-      acVactDas: 0,
-      acdVatops: 0,
+      acdVatoi: 0,
       acVactTaa: 0,
     }
   );
@@ -31,15 +27,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, newVatopGroups } = req.body;
+  const { email, newWallets } = req.body;
 
-  if (!email || !Array.isArray(newVatopGroups) || newVatopGroups.length === 0) {
-    console.error("Invalid request data:", { email, newVatopGroups });
-    return res.status(400).json({ error: 'Invalid request: Missing email or newVatopGroups' });
+  if (!email || !Array.isArray(newWallets) || newWallets.length === 0) {
+    console.error("Invalid request data:", { email, newWallets });
+    return res.status(400).json({ error: 'Invalid request: Missing email or newWallets' });
   }
 
   try {
-    const key = `${email}/vatop-data.json`;
+    const key = `${email}/VavityAggregate.json`;
 
     // Fetch existing data from S3
     let existingData: any = {};
@@ -54,26 +50,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    const existingGroups = Array.isArray(existingData.vatopGroups) ? existingData.vatopGroups : [];
+    const existingWallets = Array.isArray(existingData.wallets) ? existingData.wallets : [];
 
-    // Filter out groups with duplicate IDs
-    const validNewGroups = newVatopGroups.filter(
-      (group: any) => group.id && !existingGroups.some((existingGroup: any) => existingGroup.id === group.id)
+    // Filter out wallets with duplicate IDs
+    const validNewWallets = newWallets.filter(
+      (wallet: any) => wallet.walletId && !existingWallets.some((existingWallet: any) => existingWallet.walletId === wallet.walletId)
     );
 
-    if (validNewGroups.length === 0) {
-      return res.status(400).json({ error: 'No valid groups to add' });
+    if (validNewWallets.length === 0) {
+      return res.status(400).json({ error: 'No valid wallets to add' });
     }
 
-    const updatedVatopGroups = [...existingGroups, ...validNewGroups];
+    const updatedWallets = [...existingWallets, ...validNewWallets];
 
-    // Calculate new vatop combinations
-    const updatedVatopCombinations = calculateVatopCombinations(updatedVatopGroups);
+    // Calculate new vavity combinations
+    const updatedVavityCombinations = calculateVavityCombinations(updatedWallets);
+
+    // Calculate VAPA (highest asset price recorded always)
+    const allCpVacts = updatedWallets.map((w: any) => w.cpVact || 0);
+    const vapa = Math.max(...allCpVacts, existingData.vapa || 0);
 
     const newData = {
       ...existingData,
-      vatopGroups: updatedVatopGroups,
-      vatopCombinations: updatedVatopCombinations,
+      wallets: updatedWallets,
+      vavityCombinations: updatedVavityCombinations,
+      vapa: vapa,
     };
 
     await s3

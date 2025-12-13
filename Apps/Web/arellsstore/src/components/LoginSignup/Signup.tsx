@@ -4,14 +4,13 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
-import '../../app/css/modals/export/export-modal.css';
+import '../../app/css/modals/disconnect/disconnect-modal.css';
 import '../../app/css/modals/buy/buy-modal.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 import Link from 'next/link';
 import { signUp, signIn, fetchUserAttributes, signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
-import { useSigner } from '../../state/signer';
 
 const Signup: React.FC = () => {
   const router = useRouter();
@@ -27,7 +26,6 @@ const Signup: React.FC = () => {
   const [showPasswordsDontMatchError, setPasswordsDontMatchError] = useState<boolean>(false);
   const [showSignedUp, setSignedUp] = useState<boolean>(false);
   const [showLoggingIn, setLoggingIn] = useState<boolean>(false);
-  const { createWallet } = useSigner();
 
   const closeEmailExistsError = () => setEmailExistsError(false);
   const closePasswordsDontMatchError = () => setPasswordsDontMatchError(false);
@@ -105,12 +103,6 @@ const Signup: React.FC = () => {
 
           if (emailAttribute) setEmail(emailAttribute);
 
-          try {
-            await createWallet(email); // pass the freshly entered email
-          } catch (e) {
-            console.error('Failed to create user wallet right after signup:', e);
-          }
-
           setTimeout(() => {
             setSigningUp(false);
             setSignedUp(true);
@@ -178,7 +170,7 @@ const Signup: React.FC = () => {
         </div>
       )}
       {showMissingFields && (
-        <div id="export-failed-wrapper">
+        <div id="disconnect-failed-wrapper">
           <div id="missing-fields-content">
             <Image 
               alt="" 
@@ -188,7 +180,7 @@ const Signup: React.FC = () => {
               src="/images/prototype/EnterNameErrorImage.png" 
             />  
             <p id="missing-fields-words">enter information</p>
-            <button id="export-failed-close" onClick={closeMissingFields}>OK</button> 
+            <button id="disconnect-failed-close" onClick={closeMissingFields}>OK</button> 
           </div>
         </div>
       )}

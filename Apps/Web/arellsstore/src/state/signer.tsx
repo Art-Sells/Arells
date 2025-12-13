@@ -35,7 +35,7 @@ interface SignerContextType {
     BTC_BASE: string;
     USDC_BASE: string;
   };
-  createWallet: (emailOverride?: string) => Promise<void>; 
+  connectWallet: (emailOverride?: string) => Promise<void>; 
   userBalances: { BTC_BASE: string; USDC_BASE: string };
   loadBalances: (address: string) => Promise<{ BTC_BASE: string; USDC_BASE: string }>;
   refreshUserBalances: () => Promise<void>;
@@ -201,11 +201,11 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
   // User Wallet functions:
-  const createWallet = async (emailOverride?: string) => {
+  const connectWallet = async (emailOverride?: string) => {
     try {
       await createUserWallet(emailOverride);
     } catch (error) {
-      console.error('Error creating User Wallet:', error);
+      console.error('Error connecting User Wallet:', error);
     }
   };
 
@@ -313,7 +313,7 @@ export const SignerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         userPrivateKey,
         email,
         balances,
-        createWallet,
+        connectWallet,
         userBalances,
         loadBalances,
         refreshUserBalances,

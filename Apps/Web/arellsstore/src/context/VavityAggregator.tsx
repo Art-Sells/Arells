@@ -7,8 +7,8 @@ import { fetchBitcoinPrice, setManualBitcoinPrice as setManualBitcoinPriceApi } 
 import { fetchUserAttributes } from 'aws-amplify/auth';
 
 interface VatoiState {
-  cVatoi: number; // Value of the asset investment at the time of import
-  cpVatoi: number; // Asset price at the time of import
+  cVatoi: number; // Value of the asset investment at the time of connect
+  cpVatoi: number; // Asset price at the time of connect
   cdVatoi: number; // Difference between cVact and cVatoi: cdVatoi = cVact - cVatoi
 }
 
@@ -30,32 +30,58 @@ interface VavityaggregatorType {
   vatoi: VatoiState;
   vact: VactState;
   totals: TotalsState;
-  vapa: number; // Valued Asset Price Anchored (highest cpVact)
-  importAmount: number;
-  exportAmount: number;
-  setImportAmount: (amount: number) => void;
-  setExportAmount: (amount: number) => void;
-  handleImport: (amount: number) => void;
-  handleImportASSET: (amount: number) => void;
-  handleExport: (amount: number) => void;
+  vapa: number; // Valued Asset Price Anchored (highest asset price recorded always)
+  connectAmount: number;
+  setConnectAmount: (amount: number) => void;
+  handleConnect: (amount: number) => void;
+  handleConnectASSET: (amount: number) => void;
   setManualAssetPrice: (price: number | ((currentPrice: number) => number)) => void;
-  exportedAmounts: number;
   email: string;
   readASSETFile: () => Promise<number | null>;
   updateASSETFile: (amount: number) => Promise<number>;
   fetchVavityAggregator: (email: string) => Promise<any>;
-  addVavityAggregator: (email: string, newVatopGroups: any[]) => Promise<any>;
-  saveVavityAggregator: (email: string, vatopGroups: any[], vatopCombinations: any) => Promise<any>;
+  addVavityAggregator: (email: string, newWallets: any[]) => Promise<any>;
+  saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any) => Promise<any>;
 }
 
 const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefined);
 
 export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [email, setEmail] = useState<string>('');
-  const [assetPrice, setAssetPrice] = useState<number>(60000);
-  const [importAmount, setImportAmount] = useState<number>(0);
-  const [exportAmount, setExportAmount] = useState<number>(0);
-  const [exportedAmounts, setExportedAmounts] = useState<number>(0);
+  const [assetPrice, setAssetPrice] = useState<number>(0);
+  const [connectAmount, setConnectAmount] = useState<number>(0);
+  
+  // Fetch Bitcoin price from CoinGecko on mount and periodically
+  // assetPrice = current Bitcoin price
+  // VAPA = highest Bitcoin price ever from CoinGecko historical data
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        // Fetch current Bitcoin price
+        const currentPriceResponse = await axios.get('/api/fetchBitcoinPrice');
+        const currentPrice = currentPriceResponse.data?.['bitcoin']?.usd;
+        if (currentPrice) {
+          setAssetPrice(currentPrice);
+        }
+
+        // Fetch highest Bitcoin price ever from historical data
+        const highestPriceResponse = await axios.get('/api/fetchHighestBitcoinPrice');
+        const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
+        if (highestPriceEver) {
+          // VAPA should be the highest price ever from CoinGecko
+          setVapa(prev => Math.max(prev, highestPriceEver));
+        }
+      } catch (error) {
+        console.error('Error fetching Bitcoin prices:', error);
+        // Keep default price on error
+      }
+    };
+
+    fetchPrices(); // Initial fetch
+    const interval = setInterval(fetchPrices, 1000); // Update every 1 second
+
+    return () => clearInterval(interval);
+  }, []);
   
   // Single aggregated state instead of groups
   const [vatoi, setVatoi] = useState<VatoiState>({
@@ -77,7 +103,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     acVactTaa: 0,
   });
 
-  const [vapa, setVapa] = useState<number>(60000);
+  const [vapa, setVapa] = useState<number>(0);
 
   useEffect(() => {
     const fetchEmail = async () => {
@@ -106,12 +132,10 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const fetchedVatoi = response.data.vatoi || { cVatoi: 0, cpVatoi: 0, cdVatoi: 0 };
         const fetchedVact = response.data.vact || { cVact: 0, cpVact: 0, cVactTaa: 0 };
         const fetchedVapa = response.data.vapa || assetPrice;
-        const fetchedExportedAmounts = response.data.exportedAmounts || 0;
-  
+
         setVatoi(fetchedVatoi);
         setVact(fetchedVact);
         setVapa(fetchedVapa);
-        setExportedAmounts(fetchedExportedAmounts);
       } catch (error) {
         console.error('Error fetching vatoi state:', error);
       }
@@ -120,10 +144,10 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     fetchVatoiState();
   }, [email, assetPrice]);
 
-  // Update VAPA when cpVact changes
+  // Update VAPA when cpVact changes or assetPrice updates
   useEffect(() => {
     if (vact.cpVact > 0) {
-      setVapa(Math.max(vapa, vact.cpVact));
+      setVapa(Math.max(vapa, vact.cpVact, assetPrice));
     } else {
       setVapa(assetPrice); // Default to current Asset price if no assets exist
     }
@@ -148,7 +172,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
   }, [vatoi.cVatoi, vatoi.cdVatoi, vact.cVact, vact.cVactTaa]);
 
-  // Update cpVact based on VAPA (highest price observed)
+  // Update cpVact based on VAPA (highest asset price recorded always)
   useEffect(() => {
     const newCpVact = Math.max(vact.cpVact, assetPrice);
     if (newCpVact !== vact.cpVact) {
@@ -221,12 +245,22 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const readASSETFile = async (): Promise<number | null> => {
     try {
-      if (!email) throw new Error("Email is not set in context.");
+      if (!email) {
+        // Email not set yet, return null silently (not an error)
+        return null;
+      }
       
       const response = await axios.get('/api/readASSET', { params: { email } });
       return response.data.aASSET || 0;
-    } catch (error) {
+    } catch (error: any) {
+      // If file doesn't exist (404), that's normal for new users
+      if (error?.response?.status === 404) {
+        return 0; // Return 0 instead of null for new users
+      }
+      // Only log actual errors, not missing files
+      if (error?.response?.status !== 404) {
       console.error('Error reading aASSET.json:', error);
+      }
       return null;
     }
   };
@@ -246,8 +280,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   let isUpdating = false;
 
-  const handleImport = async (amount: number) => {
+  const handleConnect = async (amount: number) => {
     if (isUpdating) {
+      return;
+    }
+
+    // Skip if email is not set yet
+    if (!email) {
       return;
     }
   
@@ -256,8 +295,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       const aASSET = await readASSETFile();
   
+      // If aASSET is null, it means there was an error or email not set - skip silently
       if (aASSET === null) {
-        console.error("Invalid state: aASSET is null.");
         return;
       }
   
@@ -268,16 +307,16 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
   
       if (aASSET > currentVactTaa) {
-        const amountToImport = parseFloat((aASSET - currentVactTaa).toFixed(8));
-        const importValue = amountToImport * assetPrice;
-  
-        // Update Vatoi: accumulate the import value
-        const newCVatoi = vatoi.cVatoi + importValue;
-        // cpVatoi should be the price at which the first import happened, or current price if first import
+        const amountToConnect = parseFloat((aASSET - currentVactTaa).toFixed(8));
+        const connectValue = amountToConnect * assetPrice;
+
+        // Update Vatoi: accumulate the connect value
+        const newCVatoi = vatoi.cVatoi + connectValue;
+        // cpVatoi should be the price at which the first connect happened, or current price if first connect
         const newCpVatoi = vatoi.cpVatoi === 0 ? assetPrice : vatoi.cpVatoi;
   
         // Update Vact: add tokens and recalculate value
-        const newCVactTaa = vact.cVactTaa + amountToImport;
+        const newCVactTaa = vact.cVactTaa + amountToConnect;
         const newCpVact = Math.max(vact.cpVact, assetPrice); // VAPA behavior
         const newCVact = newCVactTaa * newCpVact;
   
@@ -296,36 +335,43 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         await updateAllState(assetPrice, updatedVatoi, updatedVact, email);
       }
     } catch (error) {
-      console.error("Error during handleImport:", error);
+      console.error("Error during handleConnect:", error);
     } finally {
       isUpdating = false;
     }
   };
 
-  useEffect(() => {
-    let isSyncing = false;
-  
-    const interval = setInterval(async () => {
-      if (isSyncing) return;
-  
-      isSyncing = true;
-  
-      try {
-        await readASSETFile();
-        await handleImport(0); // Trigger import check
-      } catch (error) {
-        console.error("Error in interval execution:", error);
-      } finally {
-        isSyncing = false;
-      }
-    }, 3000);
-  
-    return () => clearInterval(interval);
-  }, [vact.cVactTaa, email]);
+  // Disabled aASSET.json reading - not needed for wallet creation
+  // useEffect(() => {
+  //   // Don't start interval if email is not set
+  //   if (!email) {
+  //     return;
+  //   }
 
-  const handleImportASSET = async (amount: number) => {
+  //   let isSyncing = false;
+  
+  //   const interval = setInterval(async () => {
+  //     if (isSyncing || !email) return;
+  
+  //     isSyncing = true;
+  
+  //     try {
+  //       await readASSETFile();
+  //       await handleConnect(0); // Trigger connect check
+  //     } catch (error) {
+  //       // Silently handle errors - don't spam console
+  //       // console.error("Error in interval execution:", error);
+  //     } finally {
+  //       isSyncing = false;
+  //     }
+  //   }, 3000);
+  
+  //   return () => clearInterval(interval);
+  // }, [vact.cVactTaa, email]);
+
+  const handleConnectASSET = async (amount: number) => {
     if (amount < 0.0001) {
-      alert('The minimum import amount is 0.0001 ASSET.');
+      alert('The minimum connect amount is 0.0001 ASSET.');
       return;
     }
     try {
@@ -340,13 +386,11 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     vatoi,
     vact,
     vapa,
-    exportedAmounts,
   }: {
     email: string;
     vatoi: VatoiState;
     vact: VactState;
     vapa: number;
-    exportedAmounts: number;
   }) => {
     try {
       const payload = {
@@ -354,70 +398,11 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         vatoi,
         vact,
         vapa,
-        exportedAmounts,
       };
   
       await axios.post('/api/saveVatoiState', payload);
     } catch (error) {
       console.error('Error saving vatoi state:', error);
-    }
-  };
-
-  const handleExport = async (amount: number) => {
-    if (isUpdating) return;
-  
-    isUpdating = true;
-  
-    try {
-      const assetAmount = parseFloat((amount / assetPrice).toFixed(8));
-  
-      if (amount > vact.cVact) {
-        alert(`Insufficient funds! You tried to export $${amount}, but only $${vact.cVact} is available.`);
-        return;
-      }
-  
-      if (assetAmount > vact.cVactTaa) {
-        alert(`Insufficient tokens! You tried to export ${assetAmount} ASSET, but only ${vact.cVactTaa} ASSET is available.`);
-        return;
-      }
-  
-      const newASSET = await updateASSETFile(-assetAmount);
-  
-      // Calculate new token amount and values
-      const newCVactTaa = vact.cVactTaa - assetAmount;
-      const newCVact = newCVactTaa * vact.cpVact;
-      
-      // Update Vatoi: reduce cVatoi proportionally
-      const exportRatio = assetAmount / vact.cVactTaa;
-      const newCVatoi = vatoi.cVatoi * (1 - exportRatio);
-  
-      const updatedVact: VactState = {
-        cVact: parseFloat(newCVact.toFixed(2)),
-        cpVact: vact.cpVact, // Keep same price (VAPA)
-        cVactTaa: parseFloat(newCVactTaa.toFixed(8)),
-      };
-  
-      const updatedVatoi: VatoiState = {
-        cVatoi: parseFloat(newCVatoi.toFixed(2)),
-        cpVatoi: vatoi.cpVatoi, // Keep original import price
-        cdVatoi: 0, // Will be recalculated
-      };
-  
-      setVact(updatedVact);
-      setVatoi(updatedVatoi);
-      setExportedAmounts((prev) => prev + amount);
-  
-      await saveVatoiState({
-        email,
-        vatoi: updatedVatoi,
-        vact: updatedVact,
-        vapa,
-        exportedAmounts: exportedAmounts + amount,
-      });
-    } catch (error) {
-      console.error("Error during export operation:", error);
-    } finally {
-      isUpdating = false;
     }
   };
 
@@ -434,14 +419,14 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  const addVavityAggregator = async (email: string, newVatopGroups: any[]): Promise<any> => {
+  const addVavityAggregator = async (email: string, newWallets: any[]): Promise<any> => {
     try {
-      if (!email || !Array.isArray(newVatopGroups) || newVatopGroups.length === 0) {
-        throw new Error('Email and non-empty newVatopGroups array are required');
+      if (!email || !Array.isArray(newWallets) || newWallets.length === 0) {
+        throw new Error('Email and non-empty newWallets array are required');
       }
       const response = await axios.post('/api/addVavityAggregator', {
         email,
-        newVatopGroups,
+        newWallets,
       });
       return response.data;
     } catch (error) {
@@ -450,15 +435,15 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  const saveVavityAggregator = async (email: string, vatopGroups: any[], vatopCombinations: any): Promise<any> => {
+  const saveVavityAggregator = async (email: string, wallets: any[], vavityCombinations: any): Promise<any> => {
     try {
       if (!email) {
         throw new Error('Email is required');
       }
       const response = await axios.post('/api/saveVavityAggregator', {
         email,
-        vatopGroups,
-        vatopCombinations,
+        wallets,
+        vavityCombinations,
       });
       return response.data;
     } catch (error) {
@@ -475,16 +460,12 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         vact,
         totals,
         vapa,
-        importAmount,
-        exportAmount,
-        setImportAmount,
-        setExportAmount,
-        handleImport,
-        handleImportASSET,
-        handleExport,
+        connectAmount,
+        setConnectAmount,
+        handleConnect,
+        handleConnectASSET,
         setManualAssetPrice,
         email,
-        exportedAmounts,
         readASSETFile, 
         updateASSETFile,
         fetchVavityAggregator,

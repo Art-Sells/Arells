@@ -66,7 +66,7 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner">Investments immune to bear markets</p>
+        <p id="descriptioner" style={{ fontSize: '1.2em', letterSpacing: '0px', marginLeft: '0px' }}>emotionally protect your investments from bear markets</p>
       </div>
 
         {/* <br></br>
@@ -76,7 +76,6 @@ const Index = () => {
         <br></br> */}
 
         <BitcoinChart /> 
-        <p id="coming-soon">COMING SOON</p>
         <br></br>
         <Link href="/concept" passHref>
           <button id="login">VIEW CONCEPT</button>
@@ -84,7 +83,7 @@ const Index = () => {
 
       <div id="buy-info-wrapping">
           <p id="buy-info">
-            Invest and never worry about catastrophic bear market losses again.</p>
+          </p>
         </div>
 
     </>

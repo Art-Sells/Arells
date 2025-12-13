@@ -18,11 +18,14 @@ export const fetchBitcoinPrice = async (): Promise<number> => {
   try {
     const response = await axios.get('/api/fetchBitcoinPrice');
 
-    if (!response.data?.['bitcoin']?.usd) {
+    // The API now returns the current Bitcoin price
+    const bitcoinData = response.data?.['bitcoin'];
+    if (!bitcoinData) {
       throw new Error('Invalid response structure from API');
     }
 
-    return response.data['bitcoin'].usd;
+    // Return the current price
+    return bitcoinData.usd;
   } catch (error) {
     console.error('Error fetching Bitcoin price:', error);
     throw new Error('Could not fetch Bitcoin price');

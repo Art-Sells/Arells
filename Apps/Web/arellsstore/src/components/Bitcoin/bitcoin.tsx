@@ -302,7 +302,7 @@ const Bitcoin: React.FC = () => {
 
       {/* <div>
         <label>
-          Bitcoin Price: ${bitcoinPrice.toFixed(2)}
+          External Bitcoin Price: ${bitcoinPrice.toFixed(2)}
         </label>
         <input
           type="text"

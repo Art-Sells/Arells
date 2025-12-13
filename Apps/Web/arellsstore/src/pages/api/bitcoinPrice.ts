@@ -4,7 +4,7 @@ import axios from 'axios';
 const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
 let cachedPrice: number | null = null;
 let cacheTimestamp: number | null = null;
-const CACHE_DURATION = 60000; // 1 minute in milliseconds
+const CACHE_DURATION = 5000; // 5 seconds in milliseconds
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const currentTime = Date.now();

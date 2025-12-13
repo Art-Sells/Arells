@@ -6,7 +6,7 @@ import Image from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import '../../app/css/modals/buy/buy-modal.css';
-import '../../app/css/modals/export/export-modal.css';
+import '../../app/css/modals/disconnect/disconnect-modal.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
 import Link from 'next/link';
 import { signIn, signOut, fetchUserAttributes } from 'aws-amplify/auth';

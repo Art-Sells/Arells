@@ -1,20 +1,14 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Investments immune to bear markets.
+## Emotionally protect your investments from bear markets.
 
 Arells believes ***investments should never lose value***.
 
 ### Solution:
-A marketplace that renders bear markets obsolete.
+Emotionally protects our investments from bear market losses.
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
-_______________________________________________________________________
-
-## FAQ:
-
-***How would transferring my finances out of Arells impact my investment?***
-If the asset price (outside Arells) decreases, the value of your investment will also decrease. The transfer fees of the network (whether it be Bitcoin, Ethereum or any other asset) will be also be evident.
 _______________________________________________________________________
 
 ## Roadmap

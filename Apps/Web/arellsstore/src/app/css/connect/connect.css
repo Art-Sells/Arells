@@ -1,5 +1,5 @@
 
-#import-wrapper {
+#connect-wrapper {
 	padding-top: 20px; 
 	text-align: center;
 	font-family: Arial;
@@ -16,7 +16,7 @@
 		padding-bottom: 80px; 
    }
 
-   #import-wrapper-concept {
+   #connect-wrapper-concept {
 	padding-top: 20px; 
 	text-align: center;
 	font-family: Arial;
@@ -43,7 +43,7 @@
 	   to {center:0; opacity:1}
 	 }
 
-	 #import-header-navigation {
+	 #connect-header-navigation {
 		display: flex;
 		justify-content: center;
 		margin-left: -8px;
@@ -56,7 +56,7 @@
 		z-index: 100;
 	}
 
-		#import-home-link{
+		#connect-home-link{
 			display: inline-block;
 			text-decoration: none;
 			margin-right: 100px;
@@ -72,14 +72,14 @@
 			opacity: .9;
 				background: white;					
 		}
-		#import-home-link:hover,
-		#import-home-link:focus {
+		#connect-home-link:hover,
+		#connect-home-link:focus {
 			transition: 1s;
 			cursor: pointer;
 			border-color: rgb(0, 0, 0, 0.05);
 			box-shadow: none;
 			}		
-			#import-account-navigation {
+			#connect-account-navigation {
 				height: 23px;
 				width: 23px;
 				-webkit-animation-name: animatetop;
@@ -97,7 +97,7 @@
 				from {center:0; opacity:0}
 				to {center:0; opacity:1}
 			}
-		#import-cart-link{
+		#connect-cart-link{
 			display: inline-block;
 			text-decoration: none;
 			text-decoration: none;
@@ -114,7 +114,7 @@
 			background: white;	
 			box-shadow: 0px 5px 20px -8px rgb(198, 112, 0, 1); 	 						
 		}
-			#import-buy-navigation {
+			#connect-buy-navigation {
 				height: 23px;
 				width: 23px;
 				-webkit-animation-name: animatetop;
@@ -122,8 +122,8 @@
 				animation-name: animatetop;
 				animation-duration: 1.00s;
 			}
-			#import-cart-link:hover,
-			#import-cart-link:focus {
+			#connect-cart-link:hover,
+			#connect-cart-link:focus {
 				transition: 1s;
 				cursor: pointer;
 				border-color: rgb(255, 170, 60, 0.2);
@@ -131,7 +131,7 @@
 				}	
 		
 
-	 #import-title {
+	 #connect-title {
 		margin-top: 25px;
 		color: black; 
 		margin-left: auto;	
@@ -147,7 +147,7 @@
 
 
 	
-	#import-instructions-wrapper {
+	#connect-instructions-wrapper {
 		margin-top: 120px;
 		background: none; 
 		border-radius: 30px;
@@ -162,7 +162,7 @@
 		box-shadow: 0px 5px 20px -6px rgba(204, 116, 0, 0.0);  	
 	}
 		
-		#import-instructions {
+		#connect-instructions {
 			width: 250px;
 			color: black;
 			margin-left: auto;	
@@ -251,7 +251,7 @@
 
 
 @media screen and (max-height: 620px) {
-	#import-instructions-wrapper {
+	#connect-instructions-wrapper {
 		margin-top: 50px;
 	}
 	#bitcoin-address-wrapper {

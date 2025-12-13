@@ -8,11 +8,11 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Arells",
-  description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+  description: "Emotionally protects your investments from bear markets. Import investments and emotionally protect yourself from bear market losses.",
   robots: "noimageindex",
   openGraph: {
     title: "Arells",
-    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+    description: "Emotionally protects your investments from bear markets. Import investments and emotionally protect yourself from bear market losses.",
     url: "https://arells.com",
     type: "website",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Arells",
-    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+    description: "Emotionally protects your investments from bear markets. Import investments and emotionally protect yourself from bear market losses.",
     card: "summary_large_image",
     images: [
       {
