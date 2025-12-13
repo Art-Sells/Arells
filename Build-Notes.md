@@ -43,7 +43,7 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Bitcoin Wallet amount)
 - create new:
 - - ARELLS_PRIVATE_KEY	
-- - Run Vavity for 2-3 days to test system (with small amounts multiple accounts) .
+- - Run Vavity for 2-3 days (with synthetic-api) to test system (with small amounts multiple accounts) .
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 (view all s3 jsons and check Arells Bitcoin Wallet amount)
 - In notion:  
@@ -62,7 +62,13 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 
 
 ### Home
-- Make Phsychological slogan larger
+- Make slogan larger
+arells 
+    [ Slogan
+        [ chart ]
+        [ Login ]
+    ]
+powered by
 - Chart:
 - - Left
 – - - (B)
@@ -137,7 +143,7 @@ Do not reload this page or close it until you've followed the instructions above
 - - - - (no) - close modal and reveal prior modal
 
 ### Metatags/ Description (all pages.tsx & components)
-- Alter: Descriptions & BannerImages (remove Bitcoin Arells)
+- Alter: Descriptions & BannerImages [large slogan] (remove Bitcoin Arells)
 - - Emotionally protects your investments from bear markets. Import investments and emotionally protect yourself from bear market losses.
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
@@ -152,7 +158,7 @@ Do not reload this page or close it until you've followed the instructions above
 
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
-- 2-3 accounts, multiple imports and exports (monitor for 2-3 days)
+- 2-3 accounts, multiple imports and exports (monitor for 2-3 days)with real-api
 
 #### Deployment (Main) Amplify/S3 Login
 - Test (with vavity.info) on socials (DM's/etc)

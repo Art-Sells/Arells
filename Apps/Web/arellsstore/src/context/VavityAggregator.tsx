@@ -84,7 +84,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
 
     fetchPrices(); // Initial fetch
-    const interval = setInterval(fetchPrices, 30000); // Update every 30 seconds
+    const interval = setInterval(fetchPrices, 1000); // Update every 1 second
 
     return () => clearInterval(interval);
   }, []);
