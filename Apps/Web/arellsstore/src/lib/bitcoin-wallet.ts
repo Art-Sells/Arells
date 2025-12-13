@@ -1,6 +1,10 @@
 // Bitcoin wallet generation utility using bitcoinjs-lib
 import * as bitcoin from 'bitcoinjs-lib';
+import { ECPairFactory } from 'ecpair';
+import * as ecc from 'tiny-secp256k1';
 import { v4 as uuidv4 } from 'uuid';
+
+const ECPair = ECPairFactory(ecc);
 
 export interface BitcoinWallet {
   address: string;
@@ -26,7 +30,7 @@ export const generateBitcoinWallet = (): BitcoinWallet => {
   try {
     // Generate a random key pair using ECPair
     // Using makeRandom ensures proper key generation
-    const keyPair = bitcoin.ECPair.makeRandom({ 
+    const keyPair = ECPair.makeRandom({ 
       network: bitcoin.networks.bitcoin 
     });
     
@@ -34,13 +38,29 @@ export const generateBitcoinWallet = (): BitcoinWallet => {
       throw new Error('Failed to generate private key');
     }
     
-    // Get the private key as a hex string (32 bytes = 64 hex characters)
-    const privateKey = keyPair.privateKey.toString('hex');
+    // Get the private key as a Buffer and convert to hex
+    // The private key should be 32 bytes, but Buffer.toString('hex') handles it correctly
+    const privateKeyBuffer = Buffer.from(keyPair.privateKey);
     
-    // Ensure private key is 64 characters (32 bytes)
-    if (privateKey.length !== 64) {
-      throw new Error('Invalid private key length');
+    // Ensure we have exactly 32 bytes (remove any leading zeros if present)
+    let privateKeyHex = privateKeyBuffer.toString('hex');
+    
+    // If the buffer was 33 bytes with a leading 0x00, remove it
+    if (privateKeyHex.length === 66 && privateKeyHex.startsWith('00')) {
+      privateKeyHex = privateKeyHex.substring(2);
     }
+    
+    // Pad with leading zeros if needed to ensure 64 hex characters (32 bytes)
+    while (privateKeyHex.length < 64) {
+      privateKeyHex = '0' + privateKeyHex;
+    }
+    
+    // Ensure private key is exactly 64 characters (32 bytes)
+    if (privateKeyHex.length !== 64) {
+      throw new Error(`Invalid private key length: ${privateKeyHex.length} (expected 64)`);
+    }
+    
+    const privateKey = privateKeyHex;
     
     // Get the public key
     const publicKey = keyPair.publicKey;

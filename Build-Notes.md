@@ -19,9 +19,32 @@ Create wallet (new addition for extra wallets):
 - - Did you save your private key? if not, you will lose access to your finds.
 
 Chart (Home/Account): 
-- add Market Status: Bull (🐂) or Sloth (🦥)… 
-- add price and (5 yr, 1 yr, 1 month, 1 week, 1 day) clickers
-- add node on chart that historically shows price and changes Bull/Sloth
+Home
+- Chart:
+- - Left
+– - - (B)
+- - - Investment: $4,000 (many random amounts)
+- - - Profits: + $85,000
+- - Right
+- - - Line Graph
+- - - (5 year/ 1 year/ 1 month/ 1week)
+- - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - - - Bull: Show modal explanation
+- - - - Sloth: Show modal explanation
+Account
+– (B) (VAPA): $90,000
+- Create Wallet to Begin button  takes you to "Wallets" page 
+- If acVatoi != 0, then hide "Import Bitcoin to begin"
+- Chart (Account):
+- - Left
+- - - My Portfolio
+- - - Investment: acVact $0
+– - - Profits: acdVatoi + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - Right
+- - - Line Graph
+- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - - Bull: Show modal explanation
+- - - Sloth: Show modal explanation
 
 
 Vavity Architecture:
@@ -43,7 +66,7 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Bitcoin Wallet amount)
 - create new:
 - - ARELLS_PRIVATE_KEY	
-- - Run Vavity for 2-3 days (with synthetic-api) to test system (with small amounts multiple accounts) .
+- - Run Vavity for a few minutes (with synthetic-api) to test system (with small amounts multiple accounts) ().
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 (view all s3 jsons and check Arells Bitcoin Wallet amount)
 - In notion:  

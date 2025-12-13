@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useVavity } from '../../context/VavityAggregator';
 import { useSigner } from '../../state/signer';
-import { generateBitcoinWallet, BitcoinWallet } from '../../lib/bitcoin-wallet';
+import { BitcoinWallet } from '../../lib/bitcoin-wallet';
 import axios from 'axios';
 
 interface WalletData {
@@ -48,6 +48,121 @@ const VavityTester: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const calculateCombinations = (walletList: WalletData[]): VavityCombinations => {
+    return walletList.reduce(
+      (acc, wallet) => {
+        acc.acVatoi += wallet.cVatoi || 0;
+        acc.acVacts += wallet.cVact || 0;
+        acc.acdVatoi += wallet.cdVatoi || 0;
+        acc.acVactTaa += wallet.cVactTaa || 0;
+        return acc;
+      },
+      {
+        acVatoi: 0,
+        acVacts: 0,
+        acdVatoi: 0,
+        acVactTaa: 0,
+      }
+    );
+  };
+
+  const calculateVapa = (walletList: WalletData[]): number => {
+    if (walletList.length === 0) return assetPrice || 0;
+    const maxCpVact = Math.max(...walletList.map(w => w.cpVact || 0));
+    return Math.max(maxCpVact, assetPrice || 0);
+  };
+
+  // Sync wallet balances from blockchain
+  const syncWalletBalances = useCallback(async () => {
+    if (wallets.length === 0 || !email) {
+      console.log('[Sync] Skipping - no wallets or email');
+      return;
+    }
+
+    console.log('[Sync] Starting balance sync for', wallets.length, 'wallets');
+
+    try {
+      const updatedWallets = await Promise.all(
+        wallets.map(async (wallet) => {
+          try {
+            // Fetch balance from blockchain
+            const res = await fetch(`/api/balance?address=${wallet.address}`);
+            if (!res.ok) {
+              console.error(`[Sync] Failed to fetch balance for ${wallet.address}:`, res.status);
+              return wallet;
+            }
+            const balanceInSatoshis = await res.json();
+            const balanceInBTC = balanceInSatoshis / 100000000; // Convert satoshis to BTC
+            
+            console.log(`[Sync] Wallet ${wallet.address}: ${balanceInBTC} BTC (${balanceInSatoshis} satoshis)`);
+
+            const currentVapa = Math.max(vapa || 0, assetPrice || 0, localVapa || 0);
+            const previousCVactTaa = wallet.cVactTaa || 0;
+            const newCVactTaa = balanceInBTC;
+
+            // If balance changed from 0 to a value, initialize cpVatoi and cpVact
+            if (previousCVactTaa === 0 && newCVactTaa > 0) {
+              // First time assets detected - set cpVatoi and cpVact to current VAPA
+              const newCpVatoi = currentVapa;
+              const newCpVact = currentVapa;
+              const newCVact = newCVactTaa * newCpVact;
+              const newCVatoi = newCVact; // cVatoi equals cVact at import time
+              const newCdVatoi = newCVact - newCVatoi; // Should be 0 at import
+
+              return {
+                ...wallet,
+                cVactTaa: newCVactTaa,
+                cpVatoi: newCpVatoi,
+                cpVact: newCpVact,
+                cVact: newCVact,
+                cVatoi: newCVatoi,
+                cdVatoi: newCdVatoi,
+              };
+            } else if (newCVactTaa !== previousCVactTaa) {
+              // Balance changed - recalculate values
+              const currentCpVact = wallet.cpVact || 0;
+              const newCVact = newCVactTaa * currentCpVact;
+              const newCdVatoi = newCVact - (wallet.cVatoi || 0);
+
+              return {
+                ...wallet,
+                cVactTaa: newCVactTaa,
+                cVact: newCVact,
+                cdVatoi: newCdVatoi,
+                // cpVatoi and cVatoi don't change after import
+                cpVatoi: wallet.cpVatoi || 0,
+                cVatoi: wallet.cVatoi || 0,
+              };
+            }
+
+            // No change in balance
+            return wallet;
+          } catch (error) {
+            console.error(`Error fetching balance for wallet ${wallet.address}:`, error);
+            return wallet; // Return unchanged wallet on error
+          }
+        })
+      );
+
+      // Check if any wallet was updated
+      const hasChanges = updatedWallets.some((w, i) => {
+        const old = wallets[i];
+        return (w.cVactTaa || 0) !== (old.cVactTaa || 0);
+      });
+
+      if (hasChanges) {
+        const newCombinations = calculateCombinations(updatedWallets);
+        setWallets(updatedWallets);
+        setVavityCombinations(newCombinations);
+        
+        // Save to backend
+        await saveVavityAggregator(email, updatedWallets, newCombinations);
+      }
+    } catch (error) {
+      console.error('Error syncing wallet balances:', error);
+    }
+  }, [wallets, email, vapa, assetPrice, localVapa, saveVavityAggregator]);
+
   // Fetch existing wallets on mount
   useEffect(() => {
     if (email) {
@@ -55,20 +170,47 @@ const VavityTester: React.FC = () => {
     }
   }, [email]);
 
+  // Sync wallet balances periodically
+  useEffect(() => {
+    if (wallets.length === 0 || !email) return;
+
+    // Sync immediately after wallets load
+    const timeoutId = setTimeout(() => {
+      syncWalletBalances();
+    }, 2000); // Wait 2 seconds after wallets load
+
+    // Then sync every 30 seconds
+    const interval = setInterval(() => {
+      syncWalletBalances();
+    }, 30000);
+
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(interval);
+    };
+  }, [wallets.length, email, syncWalletBalances]); // Re-run when wallets are added/removed or email changes
+
   // Update wallets' cpVact when VAPA increases
+  // Only update wallets that have assets (cVactTaa > 0)
   useEffect(() => {
     if (wallets.length === 0 || !email) return;
 
     const currentVapa = Math.max(vapa || 0, assetPrice || 0, localVapa || 0);
     
-    // Check if any wallet's cpVact needs updating (only if VAPA increased)
+    // Check if any wallet with assets (cVactTaa > 0) needs cpVact updating
     const needsUpdate = wallets.some(w => {
+      const hasAssets = (w.cVactTaa || 0) > 0;
       const walletCpVact = w.cpVact || 0;
-      return walletCpVact < currentVapa;
+      return hasAssets && walletCpVact < currentVapa;
     });
     
     if (needsUpdate && currentVapa > 0) {
       const updatedWallets = wallets.map(wallet => {
+        // Only update wallets that have assets (cVactTaa > 0)
+        if ((wallet.cVactTaa || 0) === 0) {
+          return wallet; // Keep wallet unchanged if no assets
+        }
+        
         const newCpVact = Math.max(wallet.cpVact || 0, currentVapa);
         // Recalculate cVact based on new cpVact
         const newCVact = parseFloat(((wallet.cVactTaa || 0) * newCpVact).toFixed(2));
@@ -116,30 +258,6 @@ const VavityTester: React.FC = () => {
     }
   };
 
-  const calculateCombinations = (walletList: WalletData[]): VavityCombinations => {
-    return walletList.reduce(
-      (acc, wallet) => {
-        acc.acVatoi += wallet.cVatoi || 0;
-        acc.acVacts += wallet.cVact || 0;
-        acc.acdVatoi += wallet.cdVatoi || 0;
-        acc.acVactTaa += wallet.cVactTaa || 0;
-        return acc;
-      },
-      {
-        acVatoi: 0,
-        acVacts: 0,
-        acdVatoi: 0,
-        acVactTaa: 0,
-      }
-    );
-  };
-
-  const calculateVapa = (walletList: WalletData[]): number => {
-    if (walletList.length === 0) return assetPrice || 0;
-    const maxCpVact = Math.max(...walletList.map(w => w.cpVact || 0));
-    return Math.max(maxCpVact, assetPrice || 0);
-  };
-
   const handleCreateWallet = async () => {
     setError(null);
     setSuccess(null);
@@ -152,20 +270,20 @@ const VavityTester: React.FC = () => {
     setIsCreating(true);
     try {
       console.log('Creating wallet for email:', email);
-      // Generate new Bitcoin wallet
-      const newWallet = generateBitcoinWallet();
+      // Generate new Bitcoin wallet via API (server-side only)
+      const response = await axios.post('/api/generateBitcoinWallet');
+      const newWallet: BitcoinWallet = response.data;
       
       // Initialize wallet data with default values
-      // When a wallet is first created, it has no assets, so values start at 0
-      // cpVatoi should be set to VAPA at the time of import (current VAPA)
-      const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+      // When a wallet is first created, it has no assets, so ALL values start at 0
+      // cpVatoi and cpVact will be set to VAPA only when cVactTaa is not 0 (when assets are imported)
       const walletData: WalletData = {
         walletId: newWallet.walletId,
         address: newWallet.address,
         cVatoi: 0, // Will be set when assets are imported
-        cpVatoi: currentVapa, // Set to VAPA at the time of import (not current asset price)
+        cpVatoi: 0, // Set to 0 until cVactTaa is not 0
         cVact: 0, // Starts at 0, increases as assets are imported
-        cpVact: currentVapa, // Starts at current VAPA, increases with VAPA
+        cpVact: 0, // Set to 0 until cVactTaa is not 0
         cVactTaa: 0, // Token amount starts at 0
         cdVatoi: 0, // Difference starts at 0
       };
@@ -234,7 +352,7 @@ const VavityTester: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <p><strong>Email:</strong> {email || 'Not signed in'}</p>
         </div>
-        <button
+          <button
           onClick={handleCreateWallet}
           disabled={isCreating || !email}
           style={{
