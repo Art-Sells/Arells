@@ -3,12 +3,12 @@ import { Line } from 'react-chartjs-2';
 import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
-import styles from '../../app/css/bitcoin/BitcoinChart.module.css';
-import '../../app/css/bitcoin/bitcoinchart.css';
+import styles from '../../../app/css/bitcoin/BitcoinChart.module.css';
+import '../../../app/css/bitcoin/bitcoinchart.css';
 
 import type { ImageLoaderProps } from 'next/image';
 import Image from 'next/image';
-import { fetchBitcoinPriceData, fetchHistoricalData, filterPriceData } from '../../lib/coingecko-api';
+import { fetchBitcoinPriceData, fetchHistoricalData, filterPriceData } from '../../../lib/coingecko-api';
 
 interface PricePoint {
   x: Date;

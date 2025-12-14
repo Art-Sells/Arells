@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useVavity } from '../../context/VavityAggregator';
+import { useWalletConnection } from '../../context/WalletConnectionContext';
 import { ethers } from 'ethers';
 import axios from 'axios';
-import { connectWallet, WalletType } from '../../utils/walletConnection';
+import { WalletType } from '../../utils/walletConnection';
 
 interface WalletData {
   walletId: string;
@@ -44,13 +45,14 @@ const VavityTester: React.FC = () => {
   });
   const [localVapa, setLocalVapa] = useState<number>(0);
   const [newlyConnectedWallet, setNewlyConnectedWallet] = useState<{ address: string; balance: number } | null>(null);
-  const [isConnectingMetaMask, setIsConnectingMetaMask] = useState<boolean>(false);
-  const [isConnectingBase, setIsConnectingBase] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   
   // Connect Wallet state
   const [connectedAddress, setConnectedAddress] = useState<string>('');
+  
+  // Get wallet connection from provider
+  const { connectWallet: connectWalletFromProvider, isConnectingMetaMask, isConnectingBase, connectedMetaMask, connectedBase } = useWalletConnection();
 
   const calculateCombinations = (walletList: WalletData[]): VavityCombinations => {
     return walletList.reduce(
@@ -262,154 +264,23 @@ const VavityTester: React.FC = () => {
     }
   };
 
-  // Helper function to connect a wallet (uses shared wallet connection infrastructure)
+  // Helper function to connect a wallet (uses provider's centralized connection logic)
   const handleWalletConnection = async (walletType: WalletType) => {
     setError(null);
     setSuccess(null);
     setConnectedAddress(''); // Clear previous address
 
-    if (!email) {
-      setError('Email is required to connect a wallet. Please sign in first.');
-      return;
-    }
-
-    // Set the appropriate connecting state
-    if (walletType === 'metamask') {
-      setIsConnectingMetaMask(true);
-    } else {
-      setIsConnectingBase(true);
-    }
-
     try {
-      console.log(`Requesting ${walletType} wallet connection...`);
+      // Use the provider's connectWallet function (handles everything including reload)
+      await connectWalletFromProvider(walletType);
       
-      // Use the shared wallet connection infrastructure
-      const { accounts } = await connectWallet(walletType);
-      
-      console.log('Accounts received:', accounts);
-      
-      if (!accounts || accounts.length === 0) {
-        setError(`No accounts found. Please approve the connection in ${walletType === 'metamask' ? 'MetaMask' : 'Base'}.`);
-        if (walletType === 'metamask') {
-          setIsConnectingMetaMask(false);
-        } else {
-          setIsConnectingBase(false);
-        }
-        return;
-      }
-
-      const walletAddress = accounts[0];
-      console.log('Wallet address from request:', walletAddress);
-      
-      // NOTE: This is an Ethereum-compatible address (0x...) from MetaMask/Base wallet
-      // MetaMask and Base wallets are Ethereum wallets and provide Ethereum addresses
-      // To get actual Bitcoin addresses, you would need a Bitcoin wallet library
-      
-      // Check if wallet address is already connected
-      const existingData = await fetchVavityAggregator(email);
-      const existingWallets = existingData.wallets || [];
-      const addressAlreadyConnected = existingWallets.some(
-        (wallet: any) => wallet.address?.toLowerCase() === walletAddress.toLowerCase()
-      );
-
-      if (addressAlreadyConnected) {
-        setError('This wallet address is already connected. You can connect multiple different wallet addresses.');
-        if (walletType === 'metamask') {
-          setIsConnectingMetaMask(false);
-        } else {
-          setIsConnectingBase(false);
-        }
-        setConnectedAddress(''); // Clear address on error
-        return;
-      }
-      
-      // Fetch balance from blockchain (MetaMask/Base wallets are Ethereum wallets)
-      // NOTE: This fetches ETH balance, not actual Bitcoin balance
-      // The address is an Ethereum address (0x...), not a Bitcoin address
-      const balanceResponse = await fetch(`/api/ethBalance?address=${walletAddress}`);
-      if (!balanceResponse.ok) {
-        throw new Error('Failed to fetch wallet balance');
-      }
-      const balanceData = await balanceResponse.json();
-      const balanceInETH = parseFloat(balanceData.balance);
-      
-      if (balanceInETH <= 0) {
-        setError('This wallet has no balance. Please connect a wallet with funds.');
-        if (walletType === 'metamask') {
-          setIsConnectingMetaMask(false);
-        } else {
-          setIsConnectingBase(false);
-        }
-        setConnectedAddress(''); // Clear address on error
-        return;
-      }
-      
-      // Convert ETH balance to BTC for display (using 1:1 ratio for now)
-      // NOTE: This is a placeholder - actual conversion would need exchange rates
-      const balanceInBTC = balanceInETH;
-
-      // Get current asset price for calculations
-      const currentVapa = Math.max(vapa || 0, assetPrice || 0, localVapa || 0);
-      const currentAssetPrice = assetPrice || currentVapa;
-      
-      // Initialize wallet data with fetched balance
-      const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const newCVactTaa = balanceInBTC; // Stored as BTC equivalent
-      const newCpVact = currentVapa;
-      const newCVact = newCVactTaa * newCpVact;
-      const newCVatoi = newCVact; // cVatoi equals cVact at connect time
-      const newCpVatoi = currentAssetPrice; // Price at connect time
-      const newCdVatoi = newCVact - newCVatoi; // Should be 0 at connect
-      
-      const walletData: WalletData = {
-        walletId: walletId,
-        address: walletAddress,
-        cVatoi: newCVatoi,
-        cpVatoi: newCpVatoi,
-        cVact: newCVact,
-        cpVact: newCpVact,
-        cVactTaa: newCVactTaa,
-        cdVatoi: newCdVatoi,
-      };
-
-      // Add the connected wallet to the list
-      const updatedWallets = [...wallets, walletData];
-      
-      // Calculate new combinations
-      const newCombinations = calculateCombinations(updatedWallets);
-      const newVapa = calculateVapa(updatedWallets);
-
-      // Save to API
-      await addVavityAggregator(email, [walletData]);
-
-      // Update local state
-      setWallets(updatedWallets);
-      setVavityCombinations(newCombinations);
-      setLocalVapa(newVapa);
-      
-      // Only set connected address AFTER successful connection
-      setConnectedAddress(walletAddress);
-      
-      // Show the connected wallet info
-      setNewlyConnectedWallet({ address: walletAddress, balance: balanceInBTC });
-      setSuccess(`${walletType === 'metamask' ? 'MetaMask' : 'Base'} wallet connected! Address: ${walletAddress.substring(0, 6)}...${walletAddress.substring(38)} (Ethereum address). Balance: ${balanceInBTC.toFixed(6)} BTC equivalent.`);
-      
-      // Clear success message after 5 seconds
-      setTimeout(() => {
-        setSuccess(null);
-      }, 5000);
+      // If we get here, the page should reload, but just in case show success
+      setSuccess(`${walletType === 'metamask' ? 'MetaMask' : 'Base'} wallet connected successfully!`);
     } catch (error: any) {
       console.error(`Error connecting ${walletType} wallet:`, error);
       const errorMessage = error?.response?.data?.error || error?.message || `Failed to connect ${walletType === 'metamask' ? 'MetaMask' : 'Base'} wallet. Please try again.`;
       setError(errorMessage);
       setConnectedAddress(''); // Clear address on error
-    } finally {
-      // Always reset connecting state
-      if (walletType === 'metamask') {
-        setIsConnectingMetaMask(false);
-      } else {
-        setIsConnectingBase(false);
-      }
     }
   };
 
@@ -457,35 +328,35 @@ const VavityTester: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px' }}>
               <button
                 onClick={handleConnectMetaMask}
-                disabled={isConnectingMetaMask || isConnectingBase || !email}
+                disabled={connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email}
                 style={{
                   padding: '15px 20px',
                   fontSize: '16px',
                   fontWeight: 'bold',
-                  backgroundColor: (email && !isConnectingMetaMask && !isConnectingBase) ? '#f6851b' : '#ccc',
+                  backgroundColor: connectedMetaMask ? '#28a745' : (email && !isConnectingMetaMask && !isConnectingBase && !connectedMetaMask) ? '#f6851b' : '#ccc',
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
-                  cursor: (isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
+                  cursor: (connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
                 }}
               >
-                {isConnectingMetaMask ? 'CONNECTING METAMASK...' : 'CONNECT METAMASK'}
+                {connectedMetaMask ? 'CONNECTED TO METAMASK' : (isConnectingMetaMask ? 'CONNECTING METAMASK...' : 'CONNECT METAMASK')}
               </button>
               <button
                 onClick={handleConnectBase}
-                disabled={isConnectingMetaMask || isConnectingBase || !email}
+                disabled={connectedBase || isConnectingMetaMask || isConnectingBase || !email}
                 style={{
                   padding: '15px 20px',
                   fontSize: '16px',
                   fontWeight: 'bold',
-                  backgroundColor: (email && !isConnectingMetaMask && !isConnectingBase) ? '#0052ff' : '#ccc',
+                  backgroundColor: connectedBase ? '#28a745' : (email && !isConnectingMetaMask && !isConnectingBase && !connectedBase) ? '#0052ff' : '#ccc',
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
-                  cursor: (isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
+                  cursor: (connectedBase || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
                 }}
               >
-                {isConnectingBase ? 'CONNECTING BASE...' : 'CONNECT BASE'}
+                {connectedBase ? 'CONNECTED TO BASE' : (isConnectingBase ? 'CONNECTING BASE...' : 'CONNECT BASE')}
               </button>
             </div>
             {connectedAddress && !isConnectingMetaMask && !isConnectingBase && (
@@ -506,7 +377,8 @@ const VavityTester: React.FC = () => {
             )}
             <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
               <p>Status: MetaMask={String(isConnectingMetaMask)}, Base={String(isConnectingBase)}, email={email ? '✓' : '✗'}</p>
-              <p>Buttons enabled: {(!isConnectingMetaMask && !isConnectingBase && email) ? 'YES' : 'NO'}</p>
+              <p>Connected: MetaMask={String(connectedMetaMask)}, Base={String(connectedBase)}</p>
+              <p>Buttons enabled: {(!isConnectingMetaMask && !isConnectingBase && email && !connectedMetaMask && !connectedBase) ? 'YES' : 'NO'}</p>
             </div>
           </div>
         {error && (

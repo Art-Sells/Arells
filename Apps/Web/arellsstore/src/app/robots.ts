@@ -13,7 +13,6 @@ export default function robots(): MetadataRoute.Robots {
                     "/buy",
                     "/howitworks",
                     "/hpmtester",
-                    "/connect",
                     "/privacy-policy",
                     "/sell",
                     "/transactions",

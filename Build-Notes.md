@@ -114,6 +114,7 @@ powered by Chart:
 - - [Enter Bitcoin Address] 
 - - Modal: .5% one-time fee, etc, etc, agree?
 - - Modal: Connecting/connected (ok)
+- - Modal: Connection Canceled
 - If acVatoi != 0, then hide "Connect Bitcoin to begin"
 - Chart (after wallet connection):
 - - Left

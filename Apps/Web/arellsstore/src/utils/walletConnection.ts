@@ -89,62 +89,79 @@ export async function connectMetaMask(): Promise<WalletConnectionResult> {
  * Tries desktop extension first, then mobile app via SDK
  */
 export async function connectCoinbaseWallet(): Promise<WalletConnectionResult> {
-  // First, check if Coinbase Wallet extension is available directly
-  let ethereum: any = null;
+  // Always initialize SDK first to set app logo/metadata
+  // Get the current origin to construct the logo URL
+  const logoUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/ArellsIcoIcon.png`
+    : 'https://arells.com/ArellsIcoIcon.png';
   
-  // Check if there are multiple providers
-  if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
-    // Multiple wallets installed - find Coinbase Wallet specifically
-    ethereum = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
-    console.log('Multiple wallets detected, found Coinbase Wallet/Base:', !!ethereum);
-  } 
-  // Check if Coinbase Wallet/Base is the primary provider
-  else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
-    ethereum = (window as any).ethereum;
-    console.log('Coinbase Wallet/Base is primary provider');
-  }
-  
-  if (ethereum && (ethereum.isCoinbaseWallet || ethereum.isBase)) {
-    // Desktop extension is available - use it directly
-    console.log('Coinbase Wallet/Base extension confirmed, requesting connection...');
-    console.log('Coinbase Wallet/Base provider:', ethereum);
-    
-    // Directly request accounts - this WILL prompt if site is not connected
-    console.log('Calling eth_requestAccounts on Coinbase Wallet/Base provider...');
-    const accounts = await ethereum.request({ 
-      method: 'eth_requestAccounts' // This prompts the user if not connected
-    });
-    
-    console.log('Coinbase Wallet/Base accounts received:', accounts);
-    
-    return {
-      accounts,
-      provider: ethereum
-    };
-  } else {
-    // No extension - use Coinbase Wallet SDK to open mobile app
-    console.log('Coinbase Wallet/Base extension not found, using SDK to open mobile app...');
-    const coinbaseWallet = new CoinbaseWalletSDK({
-      appName: 'Arells',
-      appLogoUrl: 'https://arells.com/images/Arells-Icon.png',
-      darkMode: false
-    });
+  const coinbaseWallet = new CoinbaseWalletSDK({
+    appName: 'Arells',
+    appLogoUrl: logoUrl,
+    darkMode: false
+  });
 
-    // Use Coinbase Wallet SDK which will open mobile app if extension not available
-    const ethereumProvider = coinbaseWallet.makeWeb3Provider();
-    console.log('Requesting Base/Coinbase Wallet connection via SDK (will open mobile app if needed)...');
+  // Get provider from SDK - this will use extension if available, otherwise mobile
+  // The SDK automatically handles the correct provider selection and includes logo metadata
+  const ethereumProvider = coinbaseWallet.makeWeb3Provider();
+  
+  // Check if we're using the extension or mobile
+  const isExtension = ethereumProvider.isCoinbaseWallet || ethereumProvider.isBase;
+  
+  if (isExtension) {
+    console.log('Coinbase Wallet/Base extension detected, using SDK provider with logo...');
     
-    const accounts = await ethereumProvider.request({ 
-      method: 'eth_requestAccounts'
-    });
-    
-    console.log('Coinbase Wallet/Base accounts received via SDK:', accounts);
-    
-    return {
-      accounts,
-      provider: ethereumProvider
-    };
+    // Coinbase Wallet doesn't support wallet_getPermissions, so we'll try a different approach
+    // First, check if already connected using eth_accounts (non-prompting)
+    let existingAccounts: string[] = [];
+    try {
+      existingAccounts = await ethereumProvider.request({ method: 'eth_accounts' });
+      if (existingAccounts && existingAccounts.length > 0) {
+        console.log('Coinbase Wallet/Base already connected to:', existingAccounts);
+        
+        // Try to revoke permissions to force a new prompt
+        try {
+          await ethereumProvider.request({
+            method: 'wallet_revokePermissions',
+            params: [{ eth_accounts: {} }],
+          });
+          console.log('Coinbase Wallet/Base permissions revoked, will request new connection');
+          // Wait a moment for revocation to take effect
+          await new Promise(resolve => setTimeout(resolve, 100));
+        } catch (revokeError: any) {
+          console.log('Could not revoke permissions (Coinbase Wallet does not support this):', revokeError);
+          // Coinbase Wallet doesn't support revocation, so we need to tell the user to disconnect manually
+          throw new Error(
+            `Coinbase Wallet is already connected to ${existingAccounts[0]}. ` +
+            `Please disconnect this site in your Coinbase Wallet extension first, then try connecting again. ` +
+            `(Go to Coinbase Wallet extension → Settings → Connected Sites → Remove this site)`
+          );
+        }
+      }
+    } catch (checkError: any) {
+      // If it's our custom error about needing to disconnect, re-throw it
+      if (checkError.message && checkError.message.includes('already connected')) {
+        throw checkError;
+      }
+      console.log('Could not check existing connection:', checkError);
+    }
+  } else {
+    console.log('Coinbase Wallet/Base extension not found, using SDK for mobile app...');
   }
+  
+  // Use SDK provider which includes logo metadata
+  console.log('Requesting Base/Coinbase Wallet connection via SDK (with logo)...');
+  
+  const accounts = await ethereumProvider.request({ 
+    method: 'eth_requestAccounts'
+  });
+  
+  console.log('Coinbase Wallet/Base accounts received:', accounts);
+  
+  return {
+    accounts,
+    provider: ethereumProvider
+  };
 }
 
 /**

@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
+import { WalletConnectionProvider } from '../context/WalletConnectionContext';
 import { VavityProvider } from '../context/VavityAggregator';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
@@ -18,21 +19,19 @@ const RootLayout = ({ children }: LayoutProps) => {
 
   return (
     <html lang="en">
-      {/* <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
-        />
-        <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-        <link rel="icon" href="/favicon.ico" />
-        // CAUTION!: favicon.ico might show up "blurry on google"
-      </head> */}
+      <head>
+        <link rel="icon" type="image/png" href="/ArellsIcoIcon.png" />
+        <link rel="shortcut icon" type="image/png" href="/ArellsIcoIcon.png" />
+        <link rel="apple-touch-icon" href="/ArellsIcoIcon.png" />
+      </head>
       <body>
         <ConfigureAmplifyClientSide />
         <BitcoinPriceProvider>
           <UserProvider>
             <VavityProvider>
-              {children}
+              <WalletConnectionProvider>
+                {children}
+              </WalletConnectionProvider>
             </VavityProvider>
           </UserProvider>
         </BitcoinPriceProvider>
