@@ -6,7 +6,6 @@ import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyCl
 import { Amplify } from 'aws-amplify';
 import awsmobile from '../aws-exports';
 import dotenv from 'dotenv';
-import { SignerProvider } from "../state/signer";
 
 dotenv.config();
 Amplify.configure(awsmobile);
@@ -32,12 +31,9 @@ const RootLayout = ({ children }: LayoutProps) => {
         <ConfigureAmplifyClientSide />
         <BitcoinPriceProvider>
           <UserProvider>
-            <SignerProvider>
-              
-              <VavityProvider>
-                    {children}
-              </VavityProvider>
-            </SignerProvider>
+            <VavityProvider>
+              {children}
+            </VavityProvider>
           </UserProvider>
         </BitcoinPriceProvider>
       </body>

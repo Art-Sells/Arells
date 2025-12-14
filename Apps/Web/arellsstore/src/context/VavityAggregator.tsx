@@ -51,9 +51,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [assetPrice, setAssetPrice] = useState<number>(0);
   const [connectAmount, setConnectAmount] = useState<number>(0);
   
-  // Fetch Bitcoin price from CoinGecko on mount and periodically
+  // Fetch Bitcoin price on mount and periodically
   // assetPrice = current Bitcoin price
-  // VAPA = highest Bitcoin price ever from CoinGecko historical data
+  // VAPA = highest Bitcoin price ever from historical data
   useEffect(() => {
     const fetchPrices = async () => {
       try {
@@ -68,7 +68,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const highestPriceResponse = await axios.get('/api/fetchHighestBitcoinPrice');
         const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
         if (highestPriceEver) {
-          // VAPA should be the highest price ever from CoinGecko
+          // VAPA should be the highest price ever
           setVapa(prev => Math.max(prev, highestPriceEver));
         }
       } catch (error) {

@@ -16,35 +16,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (cachedPrice && cacheTimestamp && currentTime - cacheTimestamp < CACHE_DURATION) {
     currentPrice = cachedPrice;
   } else {
-    // OLD CODE - COMMENTED OUT
-    // try {
-    //   const response = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
-    //     params: {
-    //       ids: 'bitcoin',
-    //       vs_currencies: 'usd'
-    //     },
-    //     headers: {
-    //       'x-cg-pro-api-key': COINGECKO_API_KEY
-    //     }
-    //   });
-    //
-    //   currentPrice = response.data['bitcoin'].usd;
-    //   cachedPrice = currentPrice;
-    //   cacheTimestamp = currentTime;
-    // } catch (error) {
-    //   console.error('Error fetching Bitcoin price:', error);
-    //   // If fetch fails but we have a cached price, use that
-    //   if (cachedPrice) {
-    //     currentPrice = cachedPrice;
-    //   } else {
-    //     return res.status(500).json({ error: 'Error fetching Bitcoin price' });
-    //   }
-    // }
-
-    // NEW CODE - Using synthetic price API
+    // NEW CODE - Using synthetic price API (for Bitcoin)
     try {
       const syntheticResponse = getSyntheticPriceResponse();
-      currentPrice = syntheticResponse['bitcoin'].usd;
+      currentPrice = syntheticResponse['bitcoin'].usd; // Using same synthetic API structure
       cachedPrice = currentPrice;
       cacheTimestamp = currentTime;
     } catch (error) {

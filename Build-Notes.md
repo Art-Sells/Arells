@@ -8,8 +8,7 @@
 VavityTester:
 - - Connect/Disconnect:
 - When fixing price mechanism, stop git
-- - .5% one-time connection fee (into Arells Bitcoin Wallet)
-
+- - .5% one-time connection fee (into Arells)
 
 Account Wallet:
 - Keep profits with overall percentage gained (after first initial connect) and remove Arells Bitcoin Price…
@@ -54,7 +53,7 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - - Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
 - Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
 
-### Test Online:
+### Test Online (both desktop/mobile):
 - change .env variables from NEXT_PUBLIC
 - eMail verification (before connect)
  VavityAggregator
@@ -111,7 +110,7 @@ powered by Chart:
 - - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
-- Connect Bitcoin Wallet to begin
+- Connect (B) Wallet to begin <- use function from VavityTester.tsx
 - - [Enter Bitcoin Address] 
 - - Modal: .5% one-time fee, etc, etc, agree?
 - - Modal: Connecting/connected (ok)
@@ -136,7 +135,6 @@ powered by Chart:
 - - Modal: Preparing (B) Wallet (to connect wallet (take from VavityTester)) 
 - - Modal: .5% one-time fee, etc, etc, agree?
 - - Modal: Connecting/connected (ok)
-
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages [large slogan] (remove Bitcoin Arells)

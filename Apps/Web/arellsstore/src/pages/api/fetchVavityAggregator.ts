@@ -22,8 +22,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const userData = JSON.parse(data.Body!.toString());
 
     return res.status(200).json(userData);
-  } catch (error) {
-    const errorMessage = (error as Error).message || 'Could not fetch user data';
+  } catch (error: any) {
+    // If the file doesn't exist, return empty data structure
+    if (error.code === 'NoSuchKey' || error.statusCode === 404) {
+      console.log('No existing data found for user:', email, '- returning empty structure');
+      return res.status(200).json({
+        wallets: [],
+        vavityCombinations: {
+          acVatoi: 0,
+          acVacts: 0,
+          acdVatoi: 0,
+          acVactTaa: 0,
+        },
+        vapa: 0,
+      });
+    }
+    
+    const errorMessage = error.message || 'Could not fetch user data';
     console.error('Error fetching data:', errorMessage);
     return res.status(500).json({ error: errorMessage });
   }

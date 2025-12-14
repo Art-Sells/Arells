@@ -10,31 +10,6 @@ const HIGHEST_PRICE_CACHE_DURATION = 5000; // 5 seconds in milliseconds
 // Fetch the highest Bitcoin price from synthetic historical data
 const fetchHighestPriceFromHistory = async (): Promise<number> => {
   try {
-    // OLD CODE - COMMENTED OUT
-    // // Fetch historical data (5 years) to find the highest price
-    // const response = await axios.get('https://pro-api.coingecko.com/api/v3/coins/bitcoin/market_chart', {
-    //   params: {
-    //     vs_currency: 'usd',
-    //     days: 1825 // 5 years of data
-    //   },
-    //   headers: {
-    //     'x-cg-pro-api-key': COINGECKO_API_KEY
-    //   }
-    // });
-    //
-    // // Find the highest price in the historical data
-    // const prices = response.data.prices || [];
-    // let highestPrice = 0;
-    // 
-    // for (const priceData of prices) {
-    //   const price = priceData[1]; // [timestamp, price]
-    //   if (price > highestPrice) {
-    //     highestPrice = price;
-    //   }
-    // }
-    //
-    // return highestPrice;
-
     // NEW CODE - Using synthetic market chart API
     const syntheticData = getSyntheticMarketChart();
     return syntheticData.highestPrice;
@@ -47,21 +22,21 @@ const fetchHighestPriceFromHistory = async (): Promise<number> => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const currentTime = Date.now();
 
-  // Get the highest price from CoinGecko historical data
-  // Cache it for 1 hour since historical data doesn't change often
+  // Get the highest price from historical data
+  // Cache it for 5 seconds since historical data doesn't change often
   let highestPriceEver: number;
   
   if (cachedHighestPrice && highestPriceCacheTimestamp && 
       currentTime - highestPriceCacheTimestamp < HIGHEST_PRICE_CACHE_DURATION) {
     highestPriceEver = cachedHighestPrice;
   } else {
-    // Fetch from CoinGecko historical data
+    // Fetch from historical data
     highestPriceEver = await fetchHighestPriceFromHistory();
     cachedHighestPrice = highestPriceEver;
     highestPriceCacheTimestamp = currentTime;
   }
 
-  // Return the highest price ever recorded from CoinGecko
+  // Return the highest price ever recorded
   res.status(200).json({ 
     highestPriceEver: highestPriceEver
   });

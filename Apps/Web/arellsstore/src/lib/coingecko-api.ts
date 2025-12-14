@@ -18,7 +18,7 @@ export const fetchBitcoinPrice = async (): Promise<number> => {
   try {
     const response = await axios.get('/api/fetchBitcoinPrice');
 
-    // The API now returns the current Bitcoin price
+    // The API returns the current Bitcoin price
     const bitcoinData = response.data?.['bitcoin'];
     if (!bitcoinData) {
       throw new Error('Invalid response structure from API');
@@ -80,22 +80,3 @@ export const updateManualBitcoinPrice = async (): Promise<number> => {
   setManualBitcoinPrice(price);
   return price;
 };
-
-// Example usage: Manually set the Bitcoin price
-(async () => {
-  try {
-    //Set manual Bitcoin price 
-    setManualBitcoinPrice(70000);
-
-    // Fetch current price (should return 70000)
-    let currentPrice = await fetchBitcoinPrice();
-
-    // Reset to live price
-    setManualBitcoinPrice(null);
-
-    // // Fetch current price (should fetch live price)
-    currentPrice = await fetchBitcoinPrice();
-  } catch (error) {
-    console.error('Error updating manual Bitcoin price:', error);
-  }
-})();
