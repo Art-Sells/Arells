@@ -10,32 +10,32 @@ const CACHE_DURATION = 1000; // 1 second in milliseconds (to see decreases in sy
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const currentTime = Date.now();
 
-  // Fetch current Bitcoin price
+  // Fetch current Ethereum price
   let currentPrice: number;
   
   if (cachedPrice && cacheTimestamp && currentTime - cacheTimestamp < CACHE_DURATION) {
     currentPrice = cachedPrice;
   } else {
-    // NEW CODE - Using synthetic price API (for Bitcoin)
+    // NEW CODE - Using synthetic price API (for Ethereum)
     try {
       const syntheticResponse = getSyntheticPriceResponse();
-      currentPrice = syntheticResponse['bitcoin'].usd; // Using same synthetic API structure
+      currentPrice = syntheticResponse['ethereum'].usd; // Using same synthetic API structure
       cachedPrice = currentPrice;
       cacheTimestamp = currentTime;
     } catch (error) {
-      console.error('Error fetching synthetic Bitcoin price:', error);
+      console.error('Error fetching synthetic Ethereum price:', error);
       // If fetch fails but we have a cached price, use that
       if (cachedPrice) {
         currentPrice = cachedPrice;
       } else {
-        return res.status(500).json({ error: 'Error fetching Bitcoin price' });
+        return res.status(500).json({ error: 'Error fetching Ethereum price' });
       }
     }
   }
 
-  // Return the current Bitcoin price
+  // Return the current Ethereum price
   res.status(200).json({ 
-    'bitcoin': { 
+    'ethereum': { 
       usd: currentPrice // Return current price
     } 
   });

@@ -7,14 +7,14 @@ let cachedHighestPrice: number | null = null;
 let highestPriceCacheTimestamp: number | null = null;
 const HIGHEST_PRICE_CACHE_DURATION = 5000; // 5 seconds in milliseconds
 
-// Fetch the highest Bitcoin price from synthetic historical data
+// Fetch the highest Ethereum price from synthetic historical data
 const fetchHighestPriceFromHistory = async (): Promise<number> => {
   try {
     // NEW CODE - Using synthetic market chart API
     const syntheticData = getSyntheticMarketChart();
     return syntheticData.highestPrice;
   } catch (error) {
-    console.error('Error fetching historical Bitcoin price:', error);
+    console.error('Error fetching historical Ethereum price:', error);
     return 0;
   }
 };

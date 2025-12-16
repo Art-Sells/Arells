@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 // Simulate a database for storing users
-const users: Array<{ email: string; password: string; bitcoinAddress: string; bitcoinPrivateKey: string, vatopGroups: any[] }> = [];
+const users: Array<{ email: string; password: string; vatopGroups: any[] }> = [];
 
 // Get user data by email
 const getUserByEmail = (email: string) => {

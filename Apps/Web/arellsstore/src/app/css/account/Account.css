@@ -144,7 +144,7 @@
 			justify-content: center; 
 			align-items: center;
 		}
-			#bitcoin-account{
+			#ethereum-account{
 				width: 20px;
 				height: 20px;
 				border-radius: 100px;
@@ -467,10 +467,10 @@
 									animation-name: animatetop;
 									animation-duration: 1.00s;		  
 								}	
-								#import-bitcoin-to-sell-two{
+								#import-ethereum-to-sell-two{
 									margin-top: -10px;
 								}
-								#import-bitcoin-to-sell-three{
+								#import-ethereum-to-sell-three{
 									margin-top: -10px;
 								}
 						
@@ -610,7 +610,7 @@
 		
 					}
 
-					#bitcoin-account-wallet{
+					#ethereum-account-wallet{
 						margin-left: -1.5px;
 						width: 20px;
 						height: 20px;
@@ -618,7 +618,7 @@
 						box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.0); 
 		
 					}
-					#bitcoin-account-wallet-concept{
+					#ethereum-account-wallet-concept{
 						margin-left: -3.7px;
 						width: 35px;
 						height: 35px;
@@ -965,7 +965,7 @@
 		box-shadow: 0px 20px 40px -25px rgba(204, 116, 0, 0.0);
 	}	
 
-	#bitcoin-chart-account-wrapper-footer{
+	#ethereum-chart-account-wrapper-footer{
 		margin-top: 45px;
 		padding-top: 50px;
 		height: 360px;

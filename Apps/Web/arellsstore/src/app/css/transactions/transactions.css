@@ -124,7 +124,7 @@
 				}
 
 
-					#bitcoin-transactions{
+					#ethereum-transactions{
 						width: 15px;
 						height: 15px;
 						border-radius: 100px;
@@ -132,14 +132,14 @@
 						opacity: 1; 
 						margin-top: 2px;
 					}
-					#bitcoin-amount-transactions {
+					#ethereum-amount-transactions {
 						color: black;
 						font-size: 10px;
 						font-weight: 200;
 						margin-left: 4px;
 						opacity: .3;
 					}
-					#bitcoin-amount-transactions-exported {
+					#ethereum-amount-transactions-exported {
 						color: black;
 						font-size: 10px;
 						font-weight: 200;
@@ -161,15 +161,15 @@
 					}
 					
 
-					#bitcoin-amount-number-sold,
-					#bitcoin-amount-number-bought {
+					#ethereum-amount-number-sold,
+					#ethereum-amount-number-bought {
 						color: black;
 						font-size: 12px;
 						font-weight: 600;
 						margin-left: 2px;
 
 					}
-					#bitcoin-amount-number-exported {
+					#ethereum-amount-number-exported {
 						color: black;
 						font-size: 12px;
 						font-weight: 600;

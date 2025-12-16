@@ -70,7 +70,7 @@
 			justify-content: center; 
 			align-items: center;
 		}
-			#bitcoin-how{
+			#ethereum-how{
 				width: 20px;
 				height: 20px;
 				border-radius: 100px;
@@ -156,7 +156,7 @@
 		
 					}
 
-					#bitcoin-how-wallet{
+					#ethereum-how-wallet{
 						margin-left: -1.5px;
 						width: 20px;
 						height: 20px;

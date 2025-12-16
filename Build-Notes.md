@@ -7,11 +7,12 @@
 ### Test Offline
 VavityTester:
 - - Connect/Disconnect:
+- - - if you deposit/withdraw funds in each wallet, (after disconnection), the funds should reflect that
 - When fixing price mechanism, stop git
 - - .5% one-time connection fee (into Arells)
 
 Account Wallet:
-- Keep profits with overall percentage gained (after first initial connect) and remove Arells Bitcoin Price…
+- Keep profits with overall percentage gained (after first initial connect) and remove Arells Ethereum Price…
 - Connect Wallet (new addition for extra wallets):
 - - Connect existing wallet by entering address
 - - - Gets wallet address and funds, inserts those funds into VavityAggregator cVactTaa
@@ -43,7 +44,6 @@ Account
 - - - Bull: Show modal explanation
 - - - Sloth: Show modal explanation
 
-
 Vavity Architecture:
 - Save entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
 
@@ -57,10 +57,10 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - change .env variables from NEXT_PUBLIC
 - eMail verification (before connect)
  VavityAggregator
-- test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Bitcoin Wallet amount)
+- test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Ethereum Wallet amount)
 - - Run Vavity for a few minutes (with synthetic-api) to test system (with small amounts multiple accounts) ().
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
-(view all s3 jsons and check Arells Bitcoin Wallet amount)
+(view all s3 jsons and check Arells Ethereum Wallet amount)
 - In notion:  
 - - TVL/Revenue
 - - - (current) Solid Marketplace (interior) & Liquid Marketplace (exterior)
@@ -76,6 +76,7 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - Save VavityCodeBase architecture Offline (for testing) and online version (for deployment)
 
 ### Home
+- Change color scheme (for modals also) to Purpple
 - Make slogan larger
 arells 
     [ Slogan
@@ -84,7 +85,7 @@ arells
     ]
 powered by Chart:
 - - Left
-– - - (B)
+– - - (ETH)
 - - - Investment: $4,000 (many random amounts)
 - - - Profits: + $85,000
 - - Right
@@ -96,6 +97,7 @@ powered by Chart:
 - Powered By Vavity replces bottom "connect words"
 
 ### Account
+- Change color scheme (for modals also) to Purpple
 (A) ------- (Wallets)
 - Make Phsychological slogan larger
 – (B) (VAPA): $90,000
@@ -111,11 +113,10 @@ powered by Chart:
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
 - Connect (B) Wallet to begin <- use function from VavityTester.tsx
-- - [Enter Bitcoin Address] 
-- - Modal: .5% one-time fee, etc, etc, agree?
-- - Modal: Connecting/connected (ok)
+- - Modal: .5% one-time fee, etc, etc, agree (metamask/base)?
+- - Modal: Connecting (until wallet balances have been fetched, otherwise connection cancelled)/connected (ok)
 - - Modal: Connection Canceled
-- If acVatoi != 0, then hide "Connect Bitcoin to begin"
+- If acVatoi != 0, then hide "Connect Wallet to begin"
 - Chart (after wallet connection):
 - - Left
 - - - My Portfolio
@@ -130,6 +131,7 @@ powered by Chart:
 - Powered by Vavity (V) (link)
 
 ### Wallets
+- Change color scheme (for modals also) to Purpple
 "Connect New Wallet" (triggered if no wallets exist from json) <- use function from VavityTester.tsx
 - Lists Wallet Addresses and cVactTaa and cVact
 - Connect New Wallet
@@ -138,7 +140,7 @@ powered by Chart:
 - - Modal: Connecting/connected (ok)
 
 ### Metatags/ Description (all pages.tsx & components)
-- Alter: Descriptions & BannerImages [large slogan] (remove Bitcoin Arells)
+- Alter: Descriptions & BannerImages [large slogan] (changge Bitcoin to Ethereum)
 - - Emotionally protects your investments from bear markets. Connect your wallet and emotionally protect yourself from bear market losses.
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
@@ -169,6 +171,7 @@ Users:
 - - Add "Discord" section for any questions
 Keep marketing, dependent on growth after 1-2 weeks:
 - Updates (oDAO, FndrsINC, etc)
+- Increase ETHEREUM_RPC-URL
 
 
 ### Other (if Time Permits)

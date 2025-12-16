@@ -32,11 +32,108 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
   const [autoConnectedBase, setAutoConnectedBase] = useState<string | null>(null);
   const [isConnectingMetaMask, setIsConnectingMetaMask] = useState<boolean>(false);
   const [isConnectingBase, setIsConnectingBase] = useState<boolean>(false);
-  const [connectedMetaMask, setConnectedMetaMask] = useState<boolean>(false);
-  const [connectedBase, setConnectedBase] = useState<boolean>(false);
+  
+  // Initialize connected state from localStorage on mount
+  const [connectedMetaMask, setConnectedMetaMask] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return !!localStorage.getItem('lastConnectedMetaMask');
+    }
+    return false;
+  });
+  const [connectedBase, setConnectedBase] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return !!localStorage.getItem('lastConnectedBase');
+    }
+    return false;
+  });
   
   // Get VavityAggregator context for wallet operations
   const { email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator } = useVavity();
+  
+  // Process pending wallet after reload - only run once per pending wallet
+  useEffect(() => {
+    let isProcessing = false;
+    let hasProcessed = false;
+    
+    const processPendingWallet = async () => {
+      if (!email || typeof window === 'undefined') return;
+      if (isProcessing || hasProcessed) return; // Prevent multiple executions
+      
+      const pendingAddress = sessionStorage.getItem('pendingWalletAddress');
+      const pendingType = sessionStorage.getItem('pendingWalletType');
+      
+      if (!pendingAddress || !pendingType) return;
+      
+      // Check if we've already processed this address
+      const processedKey = `processed_${pendingAddress.toLowerCase()}`;
+      if (sessionStorage.getItem(processedKey)) {
+        console.log('Pending wallet already processed, clearing flags');
+        sessionStorage.removeItem('pendingWalletAddress');
+        sessionStorage.removeItem('pendingWalletType');
+        return;
+      }
+      
+      isProcessing = true;
+      console.log('Processing pending wallet after reload:', pendingAddress);
+      
+      try {
+        // Check if wallet is already connected
+        const existingData = await fetchVavityAggregator(email);
+        const existingWallets = existingData.wallets || [];
+        const addressAlreadyConnected = existingWallets.some(
+          (wallet: any) => wallet.address?.toLowerCase() === pendingAddress.toLowerCase()
+        );
+
+        if (addressAlreadyConnected) {
+          console.log('Pending wallet already in VavityAggregator, skipping');
+          sessionStorage.setItem(processedKey, 'true');
+          sessionStorage.removeItem('pendingWalletAddress');
+          sessionStorage.removeItem('pendingWalletType');
+          isProcessing = false;
+          hasProcessed = true;
+          return;
+        }
+
+        // Create wallet data (balance will be fetched by VavityAggregator)
+        const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+        const currentAssetPrice = assetPrice || currentVapa;
+        const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const newCVactTaa = 0; // Balance will be fetched by VavityAggregator
+        const newCpVact = currentVapa;
+        const newCVact = newCVactTaa * newCpVact;
+        const newCVatoi = newCVact;
+        const newCpVatoi = currentAssetPrice;
+        const newCdVatoi = newCVact - newCVatoi;
+        
+        const walletData = {
+          walletId: walletId,
+          address: pendingAddress,
+          cVatoi: newCVatoi,
+          cpVatoi: newCpVatoi,
+          cVact: newCVact,
+          cpVact: newCpVact,
+          cVactTaa: newCVactTaa,
+          cdVatoi: newCdVatoi,
+        };
+
+        // Add to VavityAggregator
+        await addVavityAggregator(email, [walletData]);
+        console.log('Pending wallet added to VavityAggregator');
+        
+        // Mark as processed and clear pending flags
+        sessionStorage.setItem(processedKey, 'true');
+        sessionStorage.removeItem('pendingWalletAddress');
+        sessionStorage.removeItem('pendingWalletType');
+        hasProcessed = true;
+      } catch (error) {
+        console.error('Error processing pending wallet:', error);
+      } finally {
+        isProcessing = false;
+      }
+    };
+    
+    processPendingWallet();
+  }, [email]); // Only depend on email to prevent multiple runs
   
   // Check connected wallets on mount and when email changes
   useEffect(() => {
@@ -55,7 +152,9 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
         
         // Also check if wallet is actually connected to the extension
         let metaMaskExtensionConnected = false;
+        let metaMaskAccount: string | null = null;
         let baseExtensionConnected = false;
+        let baseAccount: string | null = null;
         
         if (typeof window !== 'undefined' && (window as any).ethereum) {
           // Check MetaMask
@@ -70,7 +169,17 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
             try {
               const accounts = await metamaskProvider.request({ method: 'eth_accounts' });
               if (accounts && accounts.length > 0) {
-                metaMaskExtensionConnected = lastConnectedMetaMask?.toLowerCase() === accounts[0].toLowerCase();
+                metaMaskAccount = accounts[0];
+                // If we have a stored address, check if it matches
+                if (lastConnectedMetaMask) {
+                  metaMaskExtensionConnected = lastConnectedMetaMask.toLowerCase() === metaMaskAccount.toLowerCase();
+                } else {
+                  // If no stored address but extension has accounts, it's connected
+                  metaMaskExtensionConnected = true;
+                  // Auto-set localStorage if extension is connected but we don't have it stored
+                  console.log('[WalletConnection] MetaMask extension connected but not in localStorage, setting it now');
+                  localStorage.setItem('lastConnectedMetaMask', metaMaskAccount);
+                }
               }
             } catch (error) {
               console.log('Could not check MetaMask connection:', error);
@@ -89,7 +198,17 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
             try {
               const accounts = await coinbaseProvider.request({ method: 'eth_accounts' });
               if (accounts && accounts.length > 0) {
-                baseExtensionConnected = lastConnectedBase?.toLowerCase() === accounts[0].toLowerCase();
+                baseAccount = accounts[0];
+                // If we have a stored address, check if it matches
+                if (lastConnectedBase) {
+                  baseExtensionConnected = lastConnectedBase.toLowerCase() === baseAccount.toLowerCase();
+                } else {
+                  // If no stored address but extension has accounts, it's connected
+                  baseExtensionConnected = true;
+                  // Auto-set localStorage if extension is connected but we don't have it stored
+                  console.log('[WalletConnection] Base extension connected but not in localStorage, setting it now');
+                  localStorage.setItem('lastConnectedBase', baseAccount);
+                }
               }
             } catch (error) {
               console.log('Could not check Base connection:', error);
@@ -104,7 +223,9 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
         console.log('[WalletConnection] Checking connected wallets. Total wallets:', wallets.length);
         console.log('[WalletConnection] Last connected MetaMask:', lastConnectedMetaMask);
         console.log('[WalletConnection] Last connected Base:', lastConnectedBase);
+        console.log('[WalletConnection] MetaMask extension account:', metaMaskAccount);
         console.log('[WalletConnection] MetaMask extension connected:', metaMaskExtensionConnected);
+        console.log('[WalletConnection] Base extension account:', baseAccount);
         console.log('[WalletConnection] Base extension connected:', baseExtensionConnected);
         
         // Check if wallets match stored addresses
@@ -124,18 +245,20 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
         }
         
         // Show as connected if:
-        // 1. Address is in localStorage AND
-        // 2. Either wallet is in VavityAggregator OR extension is still connected
-        const metaMaskConnected = lastConnectedMetaMask && (metaMaskInWallets || metaMaskExtensionConnected);
-        const baseConnected = lastConnectedBase && (baseInWallets || baseExtensionConnected);
+        // 1. Address is in localStorage (this means user connected, even if not yet in VavityAggregator)
+        // 2. OR wallet is in VavityAggregator
+        // 3. OR extension is still connected
+        const metaMaskConnected = !!(lastConnectedMetaMask || metaMaskInWallets || metaMaskExtensionConnected);
+        const baseConnected = !!(lastConnectedBase || baseInWallets || baseExtensionConnected);
         
-        // If extension is disconnected, clear the state
+        // If extension is disconnected AND wallet not in VavityAggregator, clear the state
         if (lastConnectedMetaMask && !metaMaskExtensionConnected && !metaMaskInWallets) {
           console.log('[WalletConnection] MetaMask disconnected - clearing state');
           localStorage.removeItem('lastConnectedMetaMask');
           setConnectedMetaMask(false);
         } else {
-          setConnectedMetaMask(!!metaMaskConnected);
+          // Set connected state based on any of the conditions
+          setConnectedMetaMask(metaMaskConnected);
         }
         
         if (lastConnectedBase && !baseExtensionConnected && !baseInWallets) {
@@ -143,10 +266,12 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
           localStorage.removeItem('lastConnectedBase');
           setConnectedBase(false);
         } else {
-          setConnectedBase(!!baseConnected);
+          // Set connected state based on any of the conditions
+          setConnectedBase(baseConnected);
         }
         
         console.log('[WalletConnection] Final state - MetaMask:', metaMaskConnected, 'Base:', baseConnected);
+        console.log('[WalletConnection] State set - connectedMetaMask:', metaMaskConnected, 'connectedBase:', baseConnected);
       } catch (error) {
         console.error('[WalletConnection] Error checking connected wallets:', error);
         setConnectedMetaMask(false);
@@ -371,81 +496,7 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
       const walletAddress = accounts[0];
       console.log('Wallet address from request:', walletAddress);
       
-      // Store which wallet type was connected in localStorage BEFORE processing
-      if (walletType === 'metamask') {
-        localStorage.setItem('lastConnectedMetaMask', walletAddress);
-        setConnectedMetaMask(true); // Set state immediately
-      } else {
-        localStorage.setItem('lastConnectedBase', walletAddress);
-        setConnectedBase(true); // Set state immediately
-      }
-      
-      // RELOAD IMMEDIATELY AFTER RECEIVING ACCOUNTS
-      console.log('RELOADING PAGE NOW - accounts received!');
-      window.location.reload();
-      return; // Exit early - page will reload
-
-      // Step 2: Check if wallet is already connected (unreachable after reload)
-      console.log('Checking if wallet already connected...');
-      const existingData = await fetchVavityAggregator(email);
-      const existingWallets = existingData.wallets || [];
-      const addressAlreadyConnected = existingWallets.some(
-        (wallet: any) => wallet.address?.toLowerCase() === walletAddress.toLowerCase()
-      );
-
-      if (addressAlreadyConnected) {
-        throw new Error('This wallet address is already connected. You can connect multiple different wallet addresses.');
-      }
-
-      // Step 3: Fetch balance
-      console.log('Fetching Bitcoin balance...');
-      const balanceResponse = await fetch(`/api/ethBalance?address=${walletAddress}`);
-      if (!balanceResponse.ok) {
-        const errorData = await balanceResponse.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to fetch wallet balance');
-      }
-      const balanceData = await balanceResponse.json();
-      const balanceInBTC = parseFloat(balanceData.balance);
-      
-      console.log('Balance fetched:', balanceInBTC);
-      
-      if (balanceInBTC <= 0) {
-        throw new Error('This wallet has no balance. Please connect a wallet with Bitcoin.');
-      }
-
-      // Step 4: Create wallet data
-      console.log('Creating wallet data...');
-      const currentVapa = Math.max(vapa || 0, assetPrice || 0);
-      const currentAssetPrice = assetPrice || currentVapa;
-      
-      const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const newCVactTaa = balanceInBTC;
-      const newCpVact = currentVapa;
-      const newCVact = newCVactTaa * newCpVact;
-      const newCVatoi = newCVact; // cVatoi equals cVact at connect time
-      const newCpVatoi = currentAssetPrice; // Price at connect time
-      const newCdVatoi = newCVact - newCVatoi; // Should be 0 at connect
-      
-      const walletData = {
-        walletId: walletId,
-        address: walletAddress,
-        cVatoi: newCVatoi,
-        cpVatoi: newCpVatoi,
-        cVact: newCVact,
-        cpVact: newCpVact,
-        cVactTaa: newCVactTaa,
-        cdVatoi: newCdVatoi,
-      };
-
-      console.log('Wallet data created:', walletData);
-
-      // Step 5: Add to VavityAggregator
-      console.log('Adding wallet to VavityAggregator...');
-      await addVavityAggregator(email, [walletData]);
-      
-      console.log('Wallet added successfully!');
-      
-      // Store which wallet type was connected in localStorage
+      // IMMEDIATELY set connected state and store in localStorage so buttons update right away
       if (walletType === 'metamask') {
         localStorage.setItem('lastConnectedMetaMask', walletAddress);
         setConnectedMetaMask(true);
@@ -453,26 +504,87 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
         localStorage.setItem('lastConnectedBase', walletAddress);
         setConnectedBase(true);
       }
+      console.log('Connected state set immediately for', walletType);
       
-      // Step 6: Reload page after wallet is added - FORCE RELOAD
-      console.log('RELOADING PAGE NOW - wallet added!');
-      // Force reload - use multiple methods to ensure it works
-      if (typeof window !== 'undefined') {
-        // Method 1: Direct reload
-        window.location.reload();
-        // Method 2: Fallback - change location
-        setTimeout(() => {
-          window.location.href = window.location.href;
-        }, 100);
+      // Reset connecting state
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
       }
-      return; // Exit early - page will reload
+      
+      // RELOAD IMMEDIATELY - don't wait for balance fetch or VavityAggregator
+      console.log('RELOADING PAGE IMMEDIATELY after wallet connection!');
+      if (typeof window !== 'undefined') {
+        // Store wallet address and type for post-reload processing
+        sessionStorage.setItem('pendingWalletAddress', walletAddress);
+        sessionStorage.setItem('pendingWalletType', walletType);
+        // Immediate reload - no delays
+        window.location.reload();
+        return; // Exit immediately
+      }
+      
+      // This code won't execute due to reload, but keeping for structure
+      // Process wallet in background after reload
+      (async () => {
+        try {
+          // Step 2: Check if wallet is already connected
+          const existingData = await fetchVavityAggregator(email);
+          const existingWallets = existingData.wallets || [];
+          const addressAlreadyConnected = existingWallets.some(
+            (wallet: any) => wallet.address?.toLowerCase() === walletAddress.toLowerCase()
+          );
+
+          if (addressAlreadyConnected) {
+            console.log('Wallet already connected in VavityAggregator');
+            return;
+          }
+
+          // Step 3: Create wallet data (balance will be fetched by VavityAggregator)
+          const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+          const currentAssetPrice = assetPrice || currentVapa;
+          const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          const newCVactTaa = 0; // Balance will be fetched by VavityAggregator
+          const newCpVact = currentVapa;
+          const newCVact = newCVactTaa * newCpVact;
+          const newCVatoi = newCVact;
+          const newCpVatoi = currentAssetPrice;
+          const newCdVatoi = newCVact - newCVatoi;
+          
+          const walletData = {
+            walletId: walletId,
+            address: walletAddress,
+            cVatoi: newCVatoi,
+            cpVatoi: newCpVatoi,
+            cVact: newCVact,
+            cpVact: newCpVact,
+            cVactTaa: newCVactTaa,
+            cdVatoi: newCdVatoi,
+          };
+
+          // Step 5: Add to VavityAggregator
+          await addVavityAggregator(email, [walletData]);
+          console.log('Wallet added to VavityAggregator in background');
+        } catch (error) {
+          console.error('Error processing wallet in background:', error);
+        }
+      })();
       
     } catch (error: any) {
+      console.error('Error in connectWallet:', error);
       // Reset connecting state on error
       if (walletType === 'metamask') {
         setIsConnectingMetaMask(false);
       } else {
         setIsConnectingBase(false);
+      }
+      // Even on error, if we got the wallet address, try to reload
+      const walletAddress = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
+      if (walletAddress) {
+        console.log('Error occurred but wallet was connected, reloading anyway...');
+        if (typeof window !== 'undefined') {
+          window.location.reload();
+        }
       }
       throw error;
     }

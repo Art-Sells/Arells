@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
+import { EthereumPriceProvider } from '../context/EthereumPriceContext';
 import { UserProvider } from '../context/UserContext';
 import { WalletConnectionProvider } from '../context/WalletConnectionContext';
 import { VavityProvider } from '../context/VavityAggregator';
@@ -26,15 +26,15 @@ const RootLayout = ({ children }: LayoutProps) => {
       </head>
       <body>
         <ConfigureAmplifyClientSide />
-        <BitcoinPriceProvider>
+        <EthereumPriceProvider>
           <UserProvider>
-            <VavityProvider>
-              <WalletConnectionProvider>
-                {children}
-              </WalletConnectionProvider>
-            </VavityProvider>
+              <VavityProvider>
+                <WalletConnectionProvider>
+                    {children}
+                </WalletConnectionProvider>
+              </VavityProvider>
           </UserProvider>
-        </BitcoinPriceProvider>
+        </EthereumPriceProvider>
       </body>
     </html>
   );

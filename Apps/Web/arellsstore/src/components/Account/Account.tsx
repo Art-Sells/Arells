@@ -4,8 +4,8 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
-import { useBitcoinPrice } from '../../context/BitcoinPriceContext';
-import BitcoinChartAccount from '../../components/Bitcoin/BitcoinChartAccount';
+import { useEthereumPrice } from '../../context/EthereumPriceContext';
+import EthereumChartAccount from '../../components/Assets/Ethereum/EthereumChartAccount';
 import '../../app/css/account/Account.css';
 import '../../app/css/modals/account/account-modal.css';
 import '../../app/css/modals/loader/accountloaderbackground.css';
@@ -52,9 +52,9 @@ const Account: React.FC = () => {
   
   // Then in the component where readyToSell and holding are used, it should now dynamically set their values.
 
-  const bitcoinPrice = useBitcoinPrice(); // Use the hook directly
+  const ethereumPrice = useEthereumPrice(); // Use the hook directly
 
-  const formattedPrice = bitcoinPrice ? Math.round(bitcoinPrice).toLocaleString('en-US') : '...';
+  const formattedPrice = ethereumPrice ? Math.round(ethereumPrice).toLocaleString('en-US') : '...';
   
 
   const router = useRouter();
@@ -95,7 +95,7 @@ const Account: React.FC = () => {
 
       {/* <div id="account-slogan-wrapper">
           <p id="account-slogan">Always sell</p>
-          <p id="ada-account-slogan">Bitcoin</p>
+          <p id="ada-account-slogan">Ethereum</p>
           <p id="ada-account-slogan-two">for Profits</p>
       </div> */}
 
@@ -110,8 +110,8 @@ const Account: React.FC = () => {
                 alt=""
                 width={20}
                 height={20}
-                id="bitcoin-account"
-                src="images/howitworks/Bitcoin.png"
+                id="ethereum-account"
+                src="images/howitworks/Ethereum.png"
               />
             </div>
           </span>
@@ -148,8 +148,8 @@ const Account: React.FC = () => {
                 alt=""
                 width={20}
                 height={20}
-                id="bitcoin-account"
-                src="images/howitworks/Bitcoin.png"
+                id="ethereum-account"
+                src="images/howitworks/Ethereum.png"
               />
             </div>
           </span>
@@ -162,7 +162,7 @@ const Account: React.FC = () => {
 
 
         <div id="amount-sold-account-wrapper-null">
-          <button id="withdraw-account-null">IMPORT BITCOIN</button>
+          <button id="withdraw-account-null">IMPORT ETHEREUM</button>
         </div>
       </div>
         )}
@@ -177,8 +177,8 @@ const Account: React.FC = () => {
                   alt=""
                   width={20}
                   height={20}
-                  id="bitcoin-account"
-                  src="images/howitworks/Bitcoin.png"
+                  id="ethereum-account"
+                  src="images/howitworks/Ethereum.png"
                 />
               </div>
             </span>
@@ -235,8 +235,8 @@ const Account: React.FC = () => {
                     alt=""
                     width={20}
                     height={20}
-                    id="bitcoin-account-wallet"
-                    src="images/howitworks/Bitcoin.png"
+                    id="ethereum-account-wallet"
+                    src="images/howitworks/Ethereum.png"
                   />
                 </div>
               </span>
@@ -323,7 +323,7 @@ const Account: React.FC = () => {
         </div>
         )}
 
-      <div id="bitcoin-chart-account-wrapper-footer">
+      <div id="ethereum-chart-account-wrapper-footer">
 
       {walletNotConnected && (
           <p id="amount-sold-number-account-num-null">
@@ -337,7 +337,7 @@ const Account: React.FC = () => {
         </p>    
       )}
 
-        <BitcoinChartAccount />
+        <EthereumChartAccount />
       </div>
 
       <div id="footer">

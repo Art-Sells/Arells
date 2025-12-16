@@ -89,22 +89,22 @@ const VavityTester: React.FC = () => {
 
     try {
       const updatedWallets = await Promise.all(
-             wallets.map(async (wallet) => {
-                 try {
-                   // Fetch balance from blockchain
+        wallets.map(async (wallet) => {
+          try {
+            // Fetch balance from blockchain
                    const res = await fetch(`/api/ethBalance?address=${wallet.address}`);
-                   if (!res.ok) {
-                     console.error(`[Sync] Failed to fetch balance for ${wallet.address}:`, res.status);
-                     return wallet;
-                   }
+            if (!res.ok) {
+              console.error(`[Sync] Failed to fetch balance for ${wallet.address}:`, res.status);
+              return wallet;
+            }
                    const balanceData = await res.json();
                    const balanceInBTC = parseFloat(balanceData.balance);
-
+            
                    console.log(`[Sync] Wallet ${wallet.address}: ${balanceInBTC} BTC`);
 
-                   const currentVapa = Math.max(vapa || 0, assetPrice || 0, localVapa || 0);
-                   const previousCVactTaa = wallet.cVactTaa || 0;
-                   const newCVactTaa = balanceInBTC;
+            const currentVapa = Math.max(vapa || 0, assetPrice || 0, localVapa || 0);
+            const previousCVactTaa = wallet.cVactTaa || 0;
+            const newCVactTaa = balanceInBTC;
 
             // If balance changed from 0 to a value, initialize cpVatoi and cpVact
             if (previousCVactTaa === 0 && newCVactTaa > 0) {
@@ -273,7 +273,7 @@ const VavityTester: React.FC = () => {
     try {
       // Use the provider's connectWallet function (handles everything including reload)
       await connectWalletFromProvider(walletType);
-      
+
       // If we get here, the page should reload, but just in case show success
       setSuccess(`${walletType === 'metamask' ? 'MetaMask' : 'Base'} wallet connected successfully!`);
     } catch (error: any) {
@@ -285,10 +285,24 @@ const VavityTester: React.FC = () => {
   };
 
   const handleConnectMetaMask = () => {
+    // Prevent execution if already connected or connecting
+    const isDisabled = connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email;
+    console.log('[MetaMask Button] Clicked. connectedMetaMask:', connectedMetaMask, 'isDisabled:', isDisabled);
+    if (isDisabled) {
+      console.log('MetaMask button clicked but disabled - ignoring');
+      return;
+    }
     handleWalletConnection('metamask');
   };
 
   const handleConnectBase = () => {
+    // Prevent execution if already connected or connecting
+    const isDisabled = connectedBase || isConnectingMetaMask || isConnectingBase || !email;
+    console.log('[Base Button] Clicked. connectedBase:', connectedBase, 'isDisabled:', isDisabled);
+    if (isDisabled) {
+      console.log('Base button clicked but disabled - ignoring');
+      return;
+    }
     handleWalletConnection('base');
   };
 
@@ -338,26 +352,30 @@ const VavityTester: React.FC = () => {
                   border: 'none',
                   borderRadius: '5px',
                   cursor: (connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
+                  opacity: (connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email) ? (connectedMetaMask ? 1 : 0.6) : 1,
+                  pointerEvents: (connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email) ? 'none' : 'auto',
                 }}
               >
                 {connectedMetaMask ? 'CONNECTED TO METAMASK' : (isConnectingMetaMask ? 'CONNECTING METAMASK...' : 'CONNECT METAMASK')}
               </button>
-              <button
+          <button
                 onClick={handleConnectBase}
                 disabled={connectedBase || isConnectingMetaMask || isConnectingBase || !email}
-                style={{
+          style={{
                   padding: '15px 20px',
-                  fontSize: '16px',
+            fontSize: '16px',
                   fontWeight: 'bold',
                   backgroundColor: connectedBase ? '#28a745' : (email && !isConnectingMetaMask && !isConnectingBase && !connectedBase) ? '#0052ff' : '#ccc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
                   cursor: (connectedBase || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
-                }}
-              >
+                  opacity: (connectedBase || isConnectingMetaMask || isConnectingBase || !email) ? (connectedBase ? 1 : 0.6) : 1,
+                  pointerEvents: (connectedBase || isConnectingMetaMask || isConnectingBase || !email) ? 'none' : 'auto',
+          }}
+        >
                 {connectedBase ? 'CONNECTED TO BASE' : (isConnectingBase ? 'CONNECTING BASE...' : 'CONNECT BASE')}
-              </button>
+        </button>
             </div>
             {connectedAddress && !isConnectingMetaMask && !isConnectingBase && (
               <div style={{
@@ -425,8 +443,8 @@ const VavityTester: React.FC = () => {
       )}
 
       <div style={{ marginBottom: '20px' }}>
-        <h2>External Bitcoin Price: ${formatPrice(assetPrice || 0)}</h2>
-        <h3>Internal Bitcoin Price (VAPA): ${formatPrice(Math.max(vapa || 0, localVapa || 0, assetPrice || 0))}</h3>
+        <h2>External Ethereum Price: ${formatPrice(assetPrice || 0)}</h2>
+        <h3>Internal Ethereum Price (VAPA): ${formatPrice(Math.max(vapa || 0, localVapa || 0, assetPrice || 0))}</h3>
       </div>
 
       {wallets.length > 0 && (

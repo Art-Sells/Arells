@@ -3,12 +3,12 @@ import { Line } from 'react-chartjs-2';
 import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
-import styles from '../../app/css/bitcoin/BitcoinChart.module.css';
-import '../../app/css/bitcoin/bitcoinchart.css';
+import styles from '../../../app/css/ethereum/EthereumChart.module.css';
+import '../../../app/css/ethereum/ethereumchart.css';
 
 import type { ImageLoaderProps } from 'next/image';
 import Image from 'next/image';
-import { fetchBitcoinPriceData, fetchHistoricalData, filterPriceData } from '../../lib/coingecko-api';
+import { fetchEthereumPriceData, fetchHistoricalData, filterPriceData } from '../../../lib/coingecko-api';
 
 interface PricePoint {
   x: Date;
@@ -37,7 +37,7 @@ const customPlugin = {
   },
 };
 
-const BitcoinChart: React.FC = () => {
+const EthereumChart: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   };
@@ -54,7 +54,7 @@ const BitcoinChart: React.FC = () => {
     const updateChartData = async () => {
       try {
         const historicalPrices = await fetchHistoricalData();
-        const latestPrice = await fetchBitcoinPriceData();
+        const latestPrice = await fetchEthereumPriceData();
 
         const latestDate = new Date();
         let allPrices = [...historicalPrices, latestPrice];
@@ -83,12 +83,11 @@ const BitcoinChart: React.FC = () => {
         const percentageIncrease = ((maxPrice - initialPrice) / initialPrice) * 100;
         setPercentageIncrease(percentageIncrease);
 
-
         setChartData({
           datasets: [{
-            label: 'Bitcoin',
+            label: 'Ethereum',
             data: filteredPrices,
-            borderColor: 'rgb(248, 141, 0, 1)',
+            borderColor: 'rgb(248, 141, 0, 0.7)',
             backgroundColor: 'rgba(75,192,192, 1)',
             pointRadius: 0,
             pointHoverRadius: 0,
@@ -96,7 +95,7 @@ const BitcoinChart: React.FC = () => {
             cubicInterpolationMode: 'monotone',
             tension: 0.4,
             fill: false,
-            borderWidth: 1,
+            borderWidth: 7,
           }]
         });
         setError(false); // Reset error state if successful
@@ -169,7 +168,7 @@ const BitcoinChart: React.FC = () => {
   };
 
   return (
-    <div className={styles.chartContainerAccount}>
+    <div className={styles.chartContainer}>
       <div id="b-logo-home">
         <span>
           <div id="b-how-wrapper">
@@ -178,8 +177,8 @@ const BitcoinChart: React.FC = () => {
               alt=""
               width={50}
               height={50}
-              id="bitcoin-b-home"
-              src="images/howitworks/Bitcoin.png"
+              id="ethereum-b-home"
+              src="images/howitworks/Ethereum.png"
             />
           </div>
         </span>
@@ -210,7 +209,7 @@ const BitcoinChart: React.FC = () => {
       <p className={styles.lastThirtyDays}>5 YEARS</p>
       <div className={styles.lineChartWrapper}>
         <Line
-          id="bitcoinChart"
+          id="ethereumChart"
           className={styles.line}
           data={chartData}
           options={options}
@@ -221,4 +220,4 @@ const BitcoinChart: React.FC = () => {
   );
 };
 
-export default BitcoinChart;
+export default EthereumChart;

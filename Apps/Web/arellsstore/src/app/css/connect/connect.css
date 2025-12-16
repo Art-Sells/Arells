@@ -177,7 +177,7 @@
 
 
 
-	#bitcoin-address-wrapper {
+	#ethereum-address-wrapper {
 		margin-top: 120px;
 		padding-top: 30px;
 		background-color: none;
@@ -189,10 +189,10 @@
 		margin-right: auto;  
 	}
 
-		#copy-bitcoin-input-wrapper {
+		#copy-ethereum-input-wrapper {
 			margin-top: 10px;
 		}
-			#copy-bitcoin-input { 
+			#copy-ethereum-input { 
 				text-align: center;  	   
 				padding-top: 20px;
 				padding-bottom: 20px;
@@ -210,18 +210,18 @@
 				opacity: 1;
 				margin-bottom: 10px;  
 			}
-			#copy-bitcoin-input::placeholder { 
+			#copy-ethereum-input::placeholder { 
 				color: white; /* Change the placeholder text color */
 				font-size: 15px; /* Change the font size */
 				}
 	
-			#copy-bitcoin-input:focus {
+			#copy-ethereum-input:focus {
 				outline: none;
 				transition: 1s;
 				background: rgba(0, 0, 0, 0.4);			    
 			}       	   
 	
-			#copy-bitcoin-button {
+			#copy-ethereum-button {
 				background-color: black;
 				text-decoration: none;
 				color: white;
@@ -240,8 +240,8 @@
 				opacity: 1;
 				box-shadow: 0px 8px 12px -6px black;  			  
 			}
-			#copy-bitcoin-button:hover,
-			#copy-bitcoin-button:focus {
+			#copy-ethereum-button:hover,
+			#copy-ethereum-button:focus {
 				background-color: gray;
 				box-shadow: 0px 8px 12px -6px gray;  
 				color: silver;	
@@ -254,7 +254,7 @@
 	#connect-instructions-wrapper {
 		margin-top: 50px;
 	}
-	#bitcoin-address-wrapper {
+	#ethereum-address-wrapper {
 		margin-top: 50px;
 	}
 }

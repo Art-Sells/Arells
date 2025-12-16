@@ -52,13 +52,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const existingWallets = Array.isArray(existingData.wallets) ? existingData.wallets : [];
 
-    // Filter out wallets with duplicate IDs
-    const validNewWallets = newWallets.filter(
-      (wallet: any) => wallet.walletId && !existingWallets.some((existingWallet: any) => existingWallet.walletId === wallet.walletId)
-    );
+    // Filter out wallets with duplicate IDs OR duplicate addresses
+    const validNewWallets = newWallets.filter((wallet: any) => {
+      if (!wallet.walletId || !wallet.address) {
+        return false; // Skip wallets without required fields
+      }
+      
+      // Check for duplicate walletId
+      const hasDuplicateId = existingWallets.some((existingWallet: any) => existingWallet.walletId === wallet.walletId);
+      if (hasDuplicateId) {
+        console.log(`Skipping wallet with duplicate ID: ${wallet.walletId}`);
+        return false;
+      }
+      
+      // Check for duplicate address (case-insensitive)
+      const hasDuplicateAddress = existingWallets.some((existingWallet: any) => 
+        existingWallet.address?.toLowerCase() === wallet.address?.toLowerCase()
+      );
+      if (hasDuplicateAddress) {
+        console.log(`Skipping wallet with duplicate address: ${wallet.address}`);
+        return false;
+      }
+      
+      return true;
+    });
 
     if (validNewWallets.length === 0) {
-      return res.status(400).json({ error: 'No valid wallets to add' });
+      return res.status(400).json({ error: 'No valid wallets to add - all wallets are duplicates' });
     }
 
     const updatedWallets = [...existingWallets, ...validNewWallets];

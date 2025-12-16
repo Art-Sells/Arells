@@ -1,4 +1,4 @@
-// Synthetic Bitcoin Market Chart API
+// Synthetic Ethereum Market Chart API
 // Generates historical prices from 5 years ago ($500) to today ($200,000)
 
 const START_PRICE = 500;

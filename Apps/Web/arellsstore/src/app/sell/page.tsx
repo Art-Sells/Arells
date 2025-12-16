@@ -8,11 +8,11 @@ import Sell from '../../components/Sell/Sell';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
     title: "Sell",
-    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+    description: "Ethereum investments that never lose value. Import ethereum and never lose money selling.",
     robots: "noimageindex",
     openGraph: {
       title: "Sell",
-      description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+      description: "Ethereum investments that never lose value. Import ethereum and never lose money selling.",
       url: "https://arells.com/sell",
       type: "website",
       images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     },
     twitter: {
       title: "Sell",
-      description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
+      description: "Ethereum investments that never lose value. Import ethereum and never lose money selling.",
       card: "summary_large_image",
       images: [
         {
