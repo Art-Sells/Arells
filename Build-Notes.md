@@ -7,9 +7,9 @@
 ### Test Offline
 VavityTester:
 - - Connect/Disconnect:
-- - - if you deposit/withdraw funds in each wallet, (after disconnection), the funds should reflect that
 - When fixing price mechanism, stop git
 - - .5% one-time connection fee (into Arells)
+- - if you deposit/withdraw funds in each wallet, (after disconnection), the funds should reflect that
 
 Account Wallet:
 - Keep profits with overall percentage gained (after first initial connect) and remove Arells Ethereum Price…
@@ -204,7 +204,11 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 ## Arells 2 & Beyond
 
-- Lost Key: Hide wallet balance... in case wallet privete key lost
+
+- Add new assets (VAPA/wallet-connection)
+- - Assets have their own page (connect asset)
+
+
 - After user accumulation and scaling, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
 - Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Disconnect/VavityContext
