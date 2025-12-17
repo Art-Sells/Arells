@@ -33,21 +33,41 @@ export const fetchBalance = async ({
 
     console.log(`[fetchBalance] Fetching balances for ${wallets.length} wallet(s)`);
 
-    // Fetch balances for all wallets in parallel
-    const balancePromises = wallets.map(async (wallet: any) => {
+    // Filter wallets to only fetch balances for those where depositPaid is true
+    const walletsToFetch = wallets.filter((wallet: any) => {
+      const depositPaid = wallet.depositPaid === true;
+      if (!depositPaid) {
+        console.log(`[fetchBalance] Skipping wallet ${wallet.address} - deposit not paid (depositPaid: ${wallet.depositPaid})`);
+      }
+      return depositPaid;
+    });
+
+    if (walletsToFetch.length === 0) {
+      console.log('[fetchBalance] No wallets with depositPaid=true, skipping balance fetch');
+      return;
+    }
+
+    console.log(`[fetchBalance] Fetching balances for ${walletsToFetch.length} wallet(s) with depositPaid=true`);
+
+    // Fetch balances for wallets with depositPaid=true in parallel
+    const balancePromises = walletsToFetch.map(async (wallet: any) => {
       if (!wallet.address) {
         console.log(`[fetchBalance] Skipping wallet without address`);
         return {
           address: null,
-          balanceInETH: 0,
+          balance: 0,
+          vapaa: null,
         };
       }
       
+      // Get VAPAA (token address) from wallet, default to native ETH
+      const vapaa = wallet.vapaa || '0x0000000000000000000000000000000000000000';
+      
       try {
-        console.log(`[fetchBalance] Fetching balance for ${wallet.address}...`);
+        console.log(`[fetchBalance] Fetching balance for ${wallet.address} (VAPAA: ${vapaa})...`);
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // Increased timeout
-        const balanceResponse = await fetch(`/api/ethBalance?address=${wallet.address}`, {
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const balanceResponse = await fetch(`/api/tokenBalance?address=${wallet.address}&tokenAddress=${vapaa}`, {
           signal: controller.signal
         });
         clearTimeout(timeoutId);
@@ -58,27 +78,30 @@ export const fetchBalance = async ({
           // Return 0 balance on error instead of null
           return {
             address: wallet.address,
-            balanceInETH: 0,
+            balance: 0,
+            vapaa: vapaa,
           };
         }
         
         const balanceData = await balanceResponse.json();
-        const balanceInETH = parseFloat(balanceData.balance || '0');
+        const balance = parseFloat(balanceData.balance || '0');
         
-        console.log(`[fetchBalance] Balance fetched for ${wallet.address}: ${balanceInETH} ETH (current: ${wallet.cVactTaa || 0} ETH)`);
-        console.log(`[fetchBalance] Full balance response:`, balanceData);
+        const tokenName = vapaa === '0x0000000000000000000000000000000000000000' ? 'ETH' : 'tokens';
+        console.log(`[fetchBalance] Balance fetched for ${wallet.address}: ${balance} ${tokenName} (current: ${wallet.cVactTaa || 0})`);
         
         // Always return the balance, even if it's 0 or unchanged
         return {
           address: wallet.address,
-          balanceInETH: balanceInETH,
+          balance: balance,
+          vapaa: vapaa,
         };
       } catch (error: any) {
         console.error(`[fetchBalance] Error fetching balance for ${wallet.address}:`, error);
         // Return 0 balance on error instead of null so we still update the wallet
         return {
           address: wallet.address,
-          balanceInETH: 0,
+          balance: 0,
+          vapaa: vapaa,
         };
       }
     });
@@ -94,23 +117,30 @@ export const fetchBalance = async ({
     if (wallets.length > 0) {
       console.log(`[fetchBalance] Updating ${wallets.length} wallet(s) with balances`);
       
-      // Update wallets with new balances
+      // Update wallets with new balances (only for wallets with depositPaid=true)
       const allWallets = wallets.map((wallet: any) => {
+        // Only update wallets where depositPaid is true
+        if (wallet.depositPaid !== true) {
+          return wallet; // Return unchanged if deposit not paid
+        }
         const balanceUpdate = balancesToUpdate.find(
-          (b: any) => b.address?.toLowerCase() === wallet.address?.toLowerCase()
+          (b: any) => b.address?.toLowerCase() === wallet.address?.toLowerCase() &&
+                      b.vapaa?.toLowerCase() === (wallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()
         );
         
         if (balanceUpdate) {
           // Recalculate wallet values based on new balance
-          const newCVactTaa = balanceUpdate.balanceInETH;
+          const newCVactTaa = balanceUpdate.balance;
           const newCpVact = Math.max(wallet.cpVact || 0, assetPrice);
           const newCVact = newCVactTaa * newCpVact;
           const newCdVatoi = newCVact - (wallet.cVatoi || 0);
           
-          console.log(`[fetchBalance] Updating wallet ${wallet.address}: cVactTaa=${newCVactTaa}, cVact=${newCVact.toFixed(2)}`);
+          console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): cVactTaa=${newCVactTaa}, cVact=${newCVact.toFixed(2)}`);
           
           return {
             ...wallet,
+            vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000', // Ensure VAPAA is set
+            depositPaid: wallet.depositPaid !== undefined ? wallet.depositPaid : true, // Preserve depositPaid
             cVactTaa: newCVactTaa,
             cpVact: newCpVact,
             cVact: parseFloat(newCVact.toFixed(2)),
@@ -118,7 +148,11 @@ export const fetchBalance = async ({
           };
         }
         // If no balance update found, keep wallet as is but ensure it has the right structure
-        return wallet;
+        return {
+          ...wallet,
+          vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000', // Ensure VAPAA is set
+          depositPaid: wallet.depositPaid !== undefined ? wallet.depositPaid : false, // Preserve depositPaid
+        };
       });
 
       // Save updated wallets back to VavityAggregator

@@ -28,12 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       console.log('No existing data found for user:', email, '- returning empty structure');
       return res.status(200).json({
         wallets: [],
-        vavityCombinations: {
-          acVatoi: 0,
-          acVacts: 0,
-          acdVatoi: 0,
-          acVactTaa: 0,
-        },
+        vavityCombinations: {}, // Empty object - will be keyed by VAPAA
         vapa: 0,
       });
     }

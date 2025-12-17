@@ -52,7 +52,16 @@ const VavityTester: React.FC = () => {
   const [connectedAddress, setConnectedAddress] = useState<string>('');
   
   // Get wallet connection from provider
-  const { connectWallet: connectWalletFromProvider, isConnectingMetaMask, isConnectingBase, connectedMetaMask, connectedBase } = useWalletConnection();
+  const { 
+    connectWallet: connectWalletFromProvider, 
+    isConnectingMetaMask, 
+    isConnectingBase, 
+    connectedMetaMask, 
+    connectedBase,
+    pendingMetaMask,
+    pendingBase,
+    connectAssetForWallet
+  } = useWalletConnection();
 
   const calculateCombinations = (walletList: WalletData[]): VavityCombinations => {
     return walletList.reduce(
@@ -284,7 +293,19 @@ const VavityTester: React.FC = () => {
     }
   };
 
-  const handleConnectMetaMask = () => {
+  const handleConnectMetaMask = async () => {
+    // If there's a pending wallet, trigger connect asset flow (deposit + balance fetch)
+    if (pendingMetaMask) {
+      try {
+        setError(null);
+        await connectAssetForWallet('metamask');
+      } catch (error: any) {
+        console.error('Error connecting asset:', error);
+        setError(error?.message || 'Failed to connect asset');
+      }
+      return;
+    }
+
     // Prevent execution if already connected or connecting
     const isDisabled = connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email;
     console.log('[MetaMask Button] Clicked. connectedMetaMask:', connectedMetaMask, 'isDisabled:', isDisabled);
@@ -295,7 +316,19 @@ const VavityTester: React.FC = () => {
     handleWalletConnection('metamask');
   };
 
-  const handleConnectBase = () => {
+  const handleConnectBase = async () => {
+    // If there's a pending wallet, trigger connect asset flow (deposit + balance fetch)
+    if (pendingBase) {
+      try {
+        setError(null);
+        await connectAssetForWallet('base');
+      } catch (error: any) {
+        console.error('Error connecting asset:', error);
+        setError(error?.message || 'Failed to connect asset');
+      }
+      return;
+    }
+
     // Prevent execution if already connected or connecting
     const isDisabled = connectedBase || isConnectingMetaMask || isConnectingBase || !email;
     console.log('[Base Button] Clicked. connectedBase:', connectedBase, 'isDisabled:', isDisabled);
@@ -342,7 +375,7 @@ const VavityTester: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px' }}>
               <button
                 onClick={handleConnectMetaMask}
-                disabled={connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email}
+                disabled={(connectedMetaMask && !pendingMetaMask) || isConnectingMetaMask || isConnectingBase || !email}
                 style={{
                   padding: '15px 20px',
                   fontSize: '16px',
@@ -351,16 +384,18 @@ const VavityTester: React.FC = () => {
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
-                  cursor: (connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
-                  opacity: (connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email) ? (connectedMetaMask ? 1 : 0.6) : 1,
-                  pointerEvents: (connectedMetaMask || isConnectingMetaMask || isConnectingBase || !email) ? 'none' : 'auto',
+                  cursor: ((connectedMetaMask && !pendingMetaMask) || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
+                  opacity: ((connectedMetaMask && !pendingMetaMask) || isConnectingMetaMask || isConnectingBase || !email) ? (connectedMetaMask ? 1 : 0.6) : 1,
+                  pointerEvents: ((connectedMetaMask && !pendingMetaMask) || isConnectingMetaMask || isConnectingBase || !email) ? 'none' : 'auto',
                 }}
               >
-                {connectedMetaMask ? 'CONNECTED TO METAMASK' : (isConnectingMetaMask ? 'CONNECTING METAMASK...' : 'CONNECT METAMASK')}
+                {connectedMetaMask ? 'CONNECTED TO METAMASK' : 
+                 pendingMetaMask ? 'CONNECT (MM)(ETH) Asset' :
+                 isConnectingMetaMask ? 'CONNECTING METAMASK...' : 'CONNECT METAMASK'}
               </button>
           <button
                 onClick={handleConnectBase}
-                disabled={connectedBase || isConnectingMetaMask || isConnectingBase || !email}
+                disabled={(connectedBase && !pendingBase) || isConnectingMetaMask || isConnectingBase || !email}
           style={{
                   padding: '15px 20px',
             fontSize: '16px',
@@ -369,12 +404,14 @@ const VavityTester: React.FC = () => {
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-                  cursor: (connectedBase || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
-                  opacity: (connectedBase || isConnectingMetaMask || isConnectingBase || !email) ? (connectedBase ? 1 : 0.6) : 1,
-                  pointerEvents: (connectedBase || isConnectingMetaMask || isConnectingBase || !email) ? 'none' : 'auto',
+                  cursor: ((connectedBase && !pendingBase) || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
+                  opacity: ((connectedBase && !pendingBase) || isConnectingMetaMask || isConnectingBase || !email) ? (connectedBase ? 1 : 0.6) : 1,
+                  pointerEvents: ((connectedBase && !pendingBase) || isConnectingMetaMask || isConnectingBase || !email) ? 'none' : 'auto',
           }}
         >
-                {connectedBase ? 'CONNECTED TO BASE' : (isConnectingBase ? 'CONNECTING BASE...' : 'CONNECT BASE')}
+                {connectedBase ? 'CONNECTED TO BASE' : 
+                 pendingBase ? 'CONNECT (CB)(ETH) Asset' :
+                 isConnectingBase ? 'CONNECTING BASE...' : 'CONNECT BASE'}
         </button>
             </div>
             {connectedAddress && !isConnectingMetaMask && !isConnectingBase && (

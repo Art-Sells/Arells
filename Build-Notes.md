@@ -6,9 +6,10 @@
 
 ### Test Offline
 VavityTester:
-- - Connect/Disconnect:
+- Connect-wallet/Disconnect-wallet:
 - When fixing price mechanism, stop git
-- - .5% one-time connection fee (into Arells)
+- Connect (MM)(ETH) Asset to begin (if Metamask or other wallet not connected, automatically try to connect wallet)
+- - Afer wallet connection, if asset connection canceled, no wallet balances should show...
 - - if you deposit/withdraw funds in each wallet, (after disconnection), the funds should reflect that
 
 Account Wallet:
@@ -112,11 +113,14 @@ powered by Chart:
 - - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
-- Connect (B) Wallet to begin <- use function from VavityTester.tsx
-- - Modal: .5% one-time fee, etc, etc, agree (metamask/base)?
-- - Modal: Connecting (until wallet balances have been fetched, otherwise connection cancelled)/connected (ok)
-- - Modal: Connection Canceled
-- If acVatoi != 0, then hide "Connect Wallet to begin"
+- Connect (ETH) Wallet to begin (choose Metamask/Base) <- use function from VavityTester.tsx
+- - Modal: Connecting (until wallet address have been fetched, otherwise connection cancelled)/connected (ok)
+- - Modal: Connection Canceled 
+- - - Connect (MM)(ETH) Asset replaces Connect (MM) Wallet
+- - Modal: Connecting Asset (ETHEREUM).5% one-time fee, etc, etc, agree (metamask/base)?
+- - Modal: Connection Canceled 
+- Connect (MM)(ETH) Asset to begin <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
+- If acVatoi != 0, then hide "Connect (MM)(ETH) Asset to begin"
 - Chart (after wallet connection):
 - - Left
 - - - My Portfolio
@@ -135,8 +139,8 @@ powered by Chart:
 "Connect New Wallet" (triggered if no wallets exist from json) <- use function from VavityTester.tsx
 - Lists Wallet Addresses and cVactTaa and cVact
 - Connect New Wallet
-- - Modal: Preparing (B) Wallet (to connect wallet (take from VavityTester)) 
-- - Modal: .5% one-time fee, etc, etc, agree?
+- - Modal: Preparing (ETH) Wallet (to connect wallet (take from VavityTester)) 
+- - Modal: Connecting Asset (ETHEREUM).5% one-time fee, etc, etc, agree (metamask/base)?
 - - Modal: Connecting/connected (ok)
 
 ### Metatags/ Description (all pages.tsx & components)

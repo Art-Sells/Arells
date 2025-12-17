@@ -4,22 +4,36 @@ import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 
+// Calculate vavity combinations per VAPAA (token address)
+// Returns an object keyed by VAPAA, each containing totals for that token
 const calculateVavityCombinations = (wallets: any[]) => {
-  return wallets.reduce(
-    (acc, wallet) => {
-      acc.acVatoi += wallet.cVatoi || 0;
-      acc.acVacts += wallet.cVact || 0;
-      acc.acdVatoi += wallet.cdVatoi || 0;
-      acc.acVactTaa += wallet.cVactTaa || 0;
-      return acc;
-    },
-    {
-      acVatoi: 0,
-      acVacts: 0,
-      acdVatoi: 0,
-      acVactTaa: 0,
+  const combinationsByVapaa: Record<string, {
+    acVatoi: number;
+    acVact: number;
+    acdVatoi: number;
+    acVactTaa: number;
+  }> = {};
+
+  wallets.forEach((wallet) => {
+    // Use VAPAA (token address) as the key, default to native ETH if not provided
+    const vapaa = wallet.vapaa || '0x0000000000000000000000000000000000000000';
+    
+    if (!combinationsByVapaa[vapaa]) {
+      combinationsByVapaa[vapaa] = {
+        acVatoi: 0,
+        acVact: 0,
+        acdVatoi: 0,
+        acVactTaa: 0,
+      };
     }
-  );
+
+    combinationsByVapaa[vapaa].acVatoi += wallet.cVatoi || 0;
+    combinationsByVapaa[vapaa].acVact += wallet.cVact || 0;
+    combinationsByVapaa[vapaa].acdVatoi += wallet.cdVatoi || 0;
+    combinationsByVapaa[vapaa].acVactTaa += wallet.cVactTaa || 0;
+  });
+
+  return combinationsByVapaa;
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -58,6 +72,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return false; // Skip wallets without required fields
       }
       
+      // Ensure VAPAA is set (default to native ETH if not provided)
+      if (!wallet.vapaa) {
+        wallet.vapaa = '0x0000000000000000000000000000000000000000';
+      }
+      
+      // Ensure depositPaid is set (default to false if not provided)
+      if (wallet.depositPaid === undefined) {
+        wallet.depositPaid = false;
+      }
+      
       // Check for duplicate walletId
       const hasDuplicateId = existingWallets.some((existingWallet: any) => existingWallet.walletId === wallet.walletId);
       if (hasDuplicateId) {
@@ -83,8 +107,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const updatedWallets = [...existingWallets, ...validNewWallets];
 
-    // Calculate new vavity combinations
-    const updatedVavityCombinations = calculateVavityCombinations(updatedWallets);
+    // Calculate new vavity combinations per VAPAA
+    const newVavityCombinations = calculateVavityCombinations(updatedWallets);
+    
+    // Merge with existing vavityCombinations (preserve existing VAPAAs)
+    const existingVavityCombinations = existingData.vavityCombinations || {};
+    const updatedVavityCombinations = { ...existingVavityCombinations };
+    
+    // Update or add VAPAA combinations
+    Object.keys(newVavityCombinations).forEach((vapaa) => {
+      if (updatedVavityCombinations[vapaa]) {
+        // Merge existing totals
+        updatedVavityCombinations[vapaa] = {
+          acVatoi: updatedVavityCombinations[vapaa].acVatoi + newVavityCombinations[vapaa].acVatoi,
+          acVact: updatedVavityCombinations[vapaa].acVact + newVavityCombinations[vapaa].acVact,
+          acdVatoi: updatedVavityCombinations[vapaa].acdVatoi + newVavityCombinations[vapaa].acdVatoi,
+          acVactTaa: updatedVavityCombinations[vapaa].acVactTaa + newVavityCombinations[vapaa].acVactTaa,
+        };
+      } else {
+        // Add new VAPAA
+        updatedVavityCombinations[vapaa] = newVavityCombinations[vapaa];
+      }
+    });
 
     // Calculate VAPA (highest asset price recorded always)
     const allCpVacts = updatedWallets.map((w: any) => w.cpVact || 0);
