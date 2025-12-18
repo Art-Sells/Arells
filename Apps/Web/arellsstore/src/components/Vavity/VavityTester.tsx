@@ -60,8 +60,85 @@ const VavityTester: React.FC = () => {
     connectedBase,
     pendingMetaMask,
     pendingBase,
-    connectAssetForWallet
+    connectAssetForWallet,
+    setPendingMetaMask,
+    setPendingBase,
+    setIsConnectingMetaMask,
+    setIsConnectingBase
   } = useAssetConnect();
+  
+  // Check sessionStorage for pending wallets (to disable button even after reload)
+  // This prevents double-clicks - if there's a pending wallet, button should be disabled
+  const [hasPendingMetaMaskInStorage, setHasPendingMetaMaskInStorage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !!sessionStorage.getItem('pendingMetaMask');
+    }
+    return false;
+  });
+  const [hasPendingBaseInStorage, setHasPendingBaseInStorage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !!sessionStorage.getItem('pendingBase');
+    }
+    return false;
+  });
+  
+  // Check if wallet extension is actually connected (has accounts)
+  const [metaMaskExtensionConnected, setMetaMaskExtensionConnected] = useState(false);
+  const [baseExtensionConnected, setBaseExtensionConnected] = useState(false);
+  
+  // Update pending state from sessionStorage and check wallet extension connection
+  useEffect(() => {
+    const checkPending = async () => {
+      if (typeof window !== 'undefined') {
+        setHasPendingMetaMaskInStorage(!!sessionStorage.getItem('pendingMetaMask'));
+        setHasPendingBaseInStorage(!!sessionStorage.getItem('pendingBase'));
+        
+        // Check if MetaMask extension is connected
+        if ((window as any).ethereum) {
+          let metamaskProvider: any = null;
+          if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+            metamaskProvider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+          } else if ((window as any).ethereum?.isMetaMask) {
+            metamaskProvider = (window as any).ethereum;
+          }
+          
+          if (metamaskProvider) {
+            try {
+              const accounts = await metamaskProvider.request({ method: 'eth_accounts' });
+              setMetaMaskExtensionConnected(accounts && accounts.length > 0);
+            } catch (e) {
+              setMetaMaskExtensionConnected(false);
+            }
+          } else {
+            setMetaMaskExtensionConnected(false);
+          }
+          
+          // Check if Base extension is connected
+          let baseProvider: any = null;
+          if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+            baseProvider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+          } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+            baseProvider = (window as any).ethereum;
+          }
+          
+          if (baseProvider) {
+            try {
+              const accounts = await baseProvider.request({ method: 'eth_accounts' });
+              setBaseExtensionConnected(accounts && accounts.length > 0);
+            } catch (e) {
+              setBaseExtensionConnected(false);
+            }
+          } else {
+            setBaseExtensionConnected(false);
+          }
+        }
+      }
+    };
+    
+    checkPending();
+    const interval = setInterval(checkPending, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const calculateCombinations = (walletList: WalletData[]): VavityCombinations => {
     return walletList.reduce(
@@ -341,9 +418,12 @@ const VavityTester: React.FC = () => {
         const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         const pendingWalletData = { address: walletAddress, walletId };
         
+        // Set pending wallet state immediately so button shows "WAITING FOR DEPOSIT..."
         if (walletType === 'metamask') {
+          setPendingMetaMask(pendingWalletData);
           sessionStorage.setItem('pendingMetaMask', JSON.stringify(pendingWalletData));
         } else {
+          setPendingBase(pendingWalletData);
           sessionStorage.setItem('pendingBase', JSON.stringify(pendingWalletData));
         }
         
@@ -365,6 +445,12 @@ const VavityTester: React.FC = () => {
       // If wallet extension is not connected, connect it first (this will reload the page)
       if (!walletExtensionConnected) {
         console.log(`[Connect Asset] Wallet extension not connected, connecting wallet first...`);
+        // Set connecting state immediately to disable button
+        if (walletType === 'metamask') {
+          setIsConnectingMetaMask(true);
+        } else {
+          setIsConnectingBase(true);
+        }
         await connectAssetFromProvider(walletType);
         // Page will reload after connection, and deposit flow will trigger automatically
         return;
@@ -375,6 +461,12 @@ const VavityTester: React.FC = () => {
       const errorMessage = error?.response?.data?.error || error?.message || `Failed to connect ${walletType === 'metamask' ? 'MetaMask' : 'Base'} Ethereum asset. Please try again.`;
       setError(errorMessage);
       setConnectedAddress(''); // Clear address on error
+      // Reset connecting state on error
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
     }
   };
 
@@ -422,41 +514,47 @@ const VavityTester: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px' }}>
               <button
                 onClick={handleConnectMetaMask}
-                disabled={(connectedMetaMask && !pendingMetaMask) || isConnectingMetaMask || isConnectingBase || !email}
+                disabled={(connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)}
                 style={{
                   padding: '15px 20px',
                   fontSize: '16px',
                   fontWeight: 'bold',
-                  backgroundColor: connectedMetaMask ? '#28a745' : (email && !isConnectingMetaMask && !isConnectingBase && !connectedMetaMask) ? '#f6851b' : '#ccc',
+                  backgroundColor: connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage ? '#28a745' : 
+                                   ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected) ? '#ffc107' :
+                                   (email && !isConnectingMetaMask && !isConnectingBase && !connectedMetaMask && !((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)) ? '#f6851b' : '#ccc',
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
-                  cursor: ((connectedMetaMask && !pendingMetaMask) || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
-                  opacity: ((connectedMetaMask && !pendingMetaMask) || isConnectingMetaMask || isConnectingBase || !email) ? (connectedMetaMask ? 1 : 0.6) : 1,
-                  pointerEvents: ((connectedMetaMask && !pendingMetaMask) || isConnectingMetaMask || isConnectingBase || !email) ? 'none' : 'auto',
+                  cursor: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)) ? 'not-allowed' : 'pointer',
+                  opacity: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)) ? (connectedMetaMask ? 1 : 0.6) : 1,
+                  pointerEvents: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)) ? 'none' : 'auto',
                 }}
               >
-                {connectedMetaMask && !pendingMetaMask ? 'CONNECTED TO METAMASK' : 
+                {connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage ? 'CONNECTED TO METAMASK' : 
+                 ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected) ? 'WAITING FOR DEPOSIT...' :
                  isConnectingMetaMask ? 'CONNECTING...' : 
                  'CONNECT ETHEREUM WITH METAMASK'}
               </button>
           <button
                 onClick={handleConnectBase}
-                disabled={(connectedBase && !pendingBase) || isConnectingMetaMask || isConnectingBase || !email}
+                disabled={(connectedBase && !pendingBase && !hasPendingBaseInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)}
           style={{
                   padding: '15px 20px',
             fontSize: '16px',
                   fontWeight: 'bold',
-                  backgroundColor: connectedBase ? '#28a745' : (email && !isConnectingMetaMask && !isConnectingBase && !connectedBase) ? '#0052ff' : '#ccc',
+                  backgroundColor: connectedBase && !pendingBase && !hasPendingBaseInStorage ? '#28a745' : 
+                                   ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected) ? '#ffc107' :
+                                   (email && !isConnectingMetaMask && !isConnectingBase && !connectedBase && !((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)) ? '#0052ff' : '#ccc',
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-                  cursor: ((connectedBase && !pendingBase) || isConnectingMetaMask || isConnectingBase || !email) ? 'not-allowed' : 'pointer',
-                  opacity: ((connectedBase && !pendingBase) || isConnectingMetaMask || isConnectingBase || !email) ? (connectedBase ? 1 : 0.6) : 1,
-                  pointerEvents: ((connectedBase && !pendingBase) || isConnectingMetaMask || isConnectingBase || !email) ? 'none' : 'auto',
+                  cursor: ((connectedBase && !pendingBase && !hasPendingBaseInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)) ? 'not-allowed' : 'pointer',
+                  opacity: ((connectedBase && !pendingBase && !hasPendingBaseInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)) ? (connectedBase ? 1 : 0.6) : 1,
+                  pointerEvents: ((connectedBase && !pendingBase && !hasPendingBaseInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)) ? 'none' : 'auto',
           }}
         >
-                {connectedBase && !pendingBase ? 'CONNECTED TO BASE' : 
+                {connectedBase && !pendingBase && !hasPendingBaseInStorage ? 'CONNECTED TO BASE' : 
+                 ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected) ? 'WAITING FOR DEPOSIT...' :
                  isConnectingBase ? 'CONNECTING...' : 
                  'CONNECT ETHEREUM WITH BASE'}
         </button>
