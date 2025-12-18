@@ -1,12 +1,12 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Emotionally protect your investments from bear markets.
+## Protect investments from bear markets.
 
 Arells believes ***investments should never lose value***.
 
 ### Solution:
-Emotionally protects our investments from bear market losses.
+Protects our investments from bear market losses.
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________
