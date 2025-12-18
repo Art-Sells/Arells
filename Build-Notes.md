@@ -6,17 +6,11 @@
 
 ### Test Offline
 VavityTester:
-- Connect-wallet/Disconnect-wallet:
+- Connect-asset/Disconnect-wallet:
 - When fixing price mechanism, stop git
-- Connect (MM)(ETH) Asset to begin (if Metamask or other wallet not connected, automatically try to connect wallet)
+- Connect Ethereum with Metamask/Base to begin (if Metamask or other wallet not connected, automatically try to connect asset (wallet))
 - - Afer wallet connection, if asset connection canceled, no wallet balances should show...
 - - if you deposit/withdraw funds in each wallet, (after disconnection), the funds should reflect that
-
-Account Wallet:
-- Keep profits with overall percentage gained (after first initial connect) and remove Arells Ethereum Price…
-- Connect Wallet (new addition for extra wallets):
-- - Connect existing wallet by entering address
-- - - Gets wallet address and funds, inserts those funds into VavityAggregator cVactTaa
 
 Chart (Home/Account): 
 Home
@@ -113,14 +107,12 @@ powered by Chart:
 - - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
-- Connect (ETH) Wallet to begin (choose Metamask/Base) <- use function from VavityTester.tsx
-- - Modal: Connecting (until wallet address have been fetched, otherwise connection cancelled)/connected (ok)
+- Connect Ethereum to begin (choose (with Metamask/Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
+- - Modal: Connecting Wallet (until wallet address have been fetched, otherwise connection cancelled)/connected (ok)
 - - Modal: Connection Canceled 
-- - - Connect (MM)(ETH) Asset replaces Connect (MM) Wallet
-- - Modal: Connecting Asset (ETHEREUM).5% one-time fee, etc, etc, agree (metamask/base)?
+- - Modal: Wallet Connection Successful, Connecting Ethereum .5% one-time fee, etc, etc, agree (metamask/base)?
 - - Modal: Connection Canceled 
-- Connect (MM)(ETH) Asset to begin <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
-- If acVatoi != 0, then hide "Connect (MM)(ETH) Asset to begin"
+- If acVatoi != 0, then hide "Connect Ethereum to begin"
 - Chart (after wallet connection):
 - - Left
 - - - My Portfolio
@@ -138,8 +130,8 @@ powered by Chart:
 - Change color scheme (for modals also) to Purpple
 "Connect New Wallet" (triggered if no wallets exist from json) <- use function from VavityTester.tsx
 - Lists Wallet Addresses and cVactTaa and cVact
-- Connect New Wallet
-- - Modal: Preparing (ETH) Wallet (to connect wallet (take from VavityTester)) 
+- Connect New Asset
+- - Modal: Preparing (ETH) Wallet (to connect asset (take from VavityTester)) 
 - - Modal: Connecting Asset (ETHEREUM).5% one-time fee, etc, etc, agree (metamask/base)?
 - - Modal: Connecting/connected (ok)
 
@@ -227,7 +219,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 - Clean up Lagging Pages
 
 ### Wallets
-- Disconnect Wallet (only if they ask)
+- Disconnect Asset (only if they ask)
 - Modal: 
 - - Warning: disconnecting this wallet from Arells will subject you and investments to bear-market losses of [show losses based on cVactTaa(multiplied-by)cpVact - cVactTaa(multiplied-by)ExternalPrice ]? (yes) (no)<- close
 - Powered by Vavity (V) (link)

@@ -27,30 +27,46 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
   const { provider, walletAddress, tokenAddress, email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator } = params;
 
   // Step 1: Fetch current balance
-  const tokenAddr = tokenAddress || '0x0000000000000000000000000000000000000000';
-  const balanceResponse = await fetch(`/api/tokenBalance?address=${walletAddress}&tokenAddress=${tokenAddr}`);
-  if (!balanceResponse.ok) {
-    throw new Error('Failed to fetch wallet balance');
-  }
-  const balanceData = await balanceResponse.json();
-  const balance = parseFloat(balanceData.balance || '0');
+  // For native ETH, use zero address
+  const NATIVE_ETH_ADDRESS = '0x0000000000000000000000000000000000000000';
+  const tokenAddr = tokenAddress || NATIVE_ETH_ADDRESS;
+  console.log(`[connectAsset] Fetching balance for address: ${walletAddress}, tokenAddress: ${tokenAddr} (original: ${tokenAddress})`);
+  
+  let balance: number;
+  try {
+    // Always pass tokenAddress in URL - use zero address for native ETH
+    const balanceResponse = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddr)}`);
+    
+    if (!balanceResponse.ok) {
+      const errorText = await balanceResponse.text();
+      console.error(`[connectAsset] Balance API error (${balanceResponse.status}):`, errorText);
+      throw new Error(`Failed to fetch wallet balance: ${balanceResponse.status} ${balanceResponse.statusText}. ${errorText}`);
+    }
+    
+    const balanceData = await balanceResponse.json();
+    console.log(`[connectAsset] Balance API response:`, balanceData);
+    balance = parseFloat(balanceData.balance || '0');
+    
+    if (isNaN(balance)) {
+      throw new Error(`Invalid balance returned from API: ${balanceData.balance}`);
+    }
 
-  console.log(`[connectAsset] Balance for ${walletAddress}: ${balance}`);
+    console.log(`[connectAsset] Balance for ${walletAddress}: ${balance}`);
+  } catch (error: any) {
+    console.error(`[connectAsset] Error fetching balance:`, error);
+    if (error.message && error.message.includes('Failed to fetch wallet balance')) {
+      throw error; // Re-throw our formatted error
+    }
+    throw new Error(`Failed to fetch wallet balance: ${error.message || error}`);
+  }
 
   // Step 2: Calculate deposit amount (0.5% of balance)
   const depositAmount = calculateDepositAmount(balance);
   console.log(`[connectAsset] Deposit amount (0.5%): ${depositAmount}`);
 
-  // Step 3: Prompt user for deposit
-  const depositConfirmed = window.confirm(
-    `To connect your asset, please deposit 0.5% of your balance (${depositAmount.toFixed(6)} ${tokenAddr === '0x0000000000000000000000000000000000000000' ? 'ETH' : 'tokens'}) to the deposit address.\n\n` +
-    `Deposit Address: ${DEPOSIT_ADDRESS}\n\n` +
-    `Click OK to proceed with the deposit transaction.`
-  );
-
-  if (!depositConfirmed) {
-    throw new Error('Deposit cancelled by user');
-  }
+  // Step 3: Send deposit transaction directly (wallet will prompt user)
+  // No need for window.confirm - the wallet extension will show the transaction prompt
+  console.log(`[connectAsset] Proceeding with deposit transaction. Amount: ${depositAmount.toFixed(6)} ${tokenAddr === '0x0000000000000000000000000000000000000000' ? 'ETH' : 'tokens'}, Address: ${DEPOSIT_ADDRESS}`);
 
   // Step 4: Send deposit transaction and wait for confirmation
   const { txHash, receipt } = await completeDepositFlow({

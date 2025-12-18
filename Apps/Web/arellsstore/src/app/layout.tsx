@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { EthereumPriceProvider } from '../context/EthereumPriceContext';
 import { UserProvider } from '../context/UserContext';
-import { WalletConnectionProvider } from '../context/WalletConnectionContext';
+import { AssetConnectProvider } from '../context/AssetConnectContext';
 import { VavityProvider } from '../context/VavityAggregator';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
@@ -29,9 +29,9 @@ const RootLayout = ({ children }: LayoutProps) => {
         <EthereumPriceProvider>
           <UserProvider>
               <VavityProvider>
-                <WalletConnectionProvider>
+                <AssetConnectProvider>
                     {children}
-                </WalletConnectionProvider>
+                </AssetConnectProvider>
               </VavityProvider>
           </UserProvider>
         </EthereumPriceProvider>

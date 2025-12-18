@@ -69,7 +69,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     } else {
       // Fetch ERC20 token balance
-      if (!ethers.isAddress(tokenAddress as string)) {
+      // Validate tokenAddress is a string and a valid address
+      if (!tokenAddress || typeof tokenAddress !== 'string' || !ethers.isAddress(tokenAddress)) {
+        console.error(`[tokenBalance API] Invalid tokenAddress:`, tokenAddress, typeof tokenAddress);
         return res.status(400).json({ error: 'Invalid token address' });
       }
 
