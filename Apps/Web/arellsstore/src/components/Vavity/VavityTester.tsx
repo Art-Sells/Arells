@@ -294,8 +294,15 @@ const VavityTester: React.FC = () => {
   };
 
   const handleConnectMetaMask = async () => {
-    // If there's a pending wallet, trigger connect asset flow (deposit + balance fetch)
-    if (pendingMetaMask) {
+    // If there's a pending wallet but wallet is not connected, connect wallet first
+    if (pendingMetaMask && !connectedMetaMask) {
+      console.log('[MetaMask Button] Pending wallet exists but wallet not connected, connecting wallet first...');
+      await handleWalletConnection('metamask');
+      return; // Page will reload after connection
+    }
+
+    // If there's a pending wallet and wallet is connected, trigger connect asset flow (deposit + balance fetch)
+    if (pendingMetaMask && connectedMetaMask) {
       try {
         setError(null);
         await connectAssetForWallet('metamask');
@@ -304,6 +311,13 @@ const VavityTester: React.FC = () => {
         setError(error?.message || 'Failed to connect asset');
       }
       return;
+    }
+
+    // If wallet is not connected and no pending wallet, connect it first
+    if (!connectedMetaMask && !pendingMetaMask) {
+      console.log('[MetaMask Button] Wallet not connected, connecting wallet first...');
+      await handleWalletConnection('metamask');
+      return; // Page will reload after connection
     }
 
     // Prevent execution if already connected or connecting
@@ -317,8 +331,15 @@ const VavityTester: React.FC = () => {
   };
 
   const handleConnectBase = async () => {
-    // If there's a pending wallet, trigger connect asset flow (deposit + balance fetch)
-    if (pendingBase) {
+    // If there's a pending wallet but wallet is not connected, connect wallet first
+    if (pendingBase && !connectedBase) {
+      console.log('[Base Button] Pending wallet exists but wallet not connected, connecting wallet first...');
+      await handleWalletConnection('base');
+      return; // Page will reload after connection
+    }
+
+    // If there's a pending wallet and wallet is connected, trigger connect asset flow (deposit + balance fetch)
+    if (pendingBase && connectedBase) {
       try {
         setError(null);
         await connectAssetForWallet('base');
@@ -327,6 +348,13 @@ const VavityTester: React.FC = () => {
         setError(error?.message || 'Failed to connect asset');
       }
       return;
+    }
+
+    // If wallet is not connected and no pending wallet, connect it first
+    if (!connectedBase && !pendingBase) {
+      console.log('[Base Button] Wallet not connected, connecting wallet first...');
+      await handleWalletConnection('base');
+      return; // Page will reload after connection
     }
 
     // Prevent execution if already connected or connecting

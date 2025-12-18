@@ -145,7 +145,7 @@ powered by Chart:
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages [large slogan] (changge Bitcoin to Ethereum)
-- - Emotionally protects your investments from bear markets. Connect your wallet and emotionally protect yourself from bear market losses.
+- - Protects investments from bear markets. Connect your wallet and protect yourself from bear market losses.
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
 - - Create a sitemap.xml: Helps Google discover all pages
@@ -163,15 +163,16 @@ powered by Chart:
 
 #### Deployment (Main) Amplify/S3 Login
 - Test (with vavity.info) on socials (DM's/etc)
-- Email/X-Twitter/LinkedIn/: Emotionally protects your investments from bear markets. 
+- Email/X-Twitter/LinkedIn/: Protects investments from bear markets. 
 
 ### After Completion
-Save Vavity JSON file data everyday offline (in case of breach)
+- Always Save Vavity JSON file data everyday offline (in case of breach)
+- Delete Arells Readme roadmap
 Users:
 - Get Leads (search AI automoated options [use same format] from X, etc)
 - Set Launch Date (and announce the features)
 - - Review notes on phone
-- - Emotionally protects your investments from bear markets. 
+- - Protects investments from bear markets. 
 - - Add "Discord" section for any questions
 Keep marketing, dependent on growth after 1-2 weeks:
 - Updates (oDAO, FndrsINC, etc)
@@ -198,8 +199,8 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 ### iOS & Android App(work on this together)
 - iOS App (UI Layer)
-- - Tagline: Emotionlly protects your investments from bear market losses.
-- - Desc: Connect Digital Assets and watch as it emotionally protects your investments from downturns. 
+- - Tagline: Protects investments from bear market losses.
+- - Desc: Connect Digital Assets and watch as it protects investments from downturns. 
 - - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, transactions are handled by the associated blockchain.
 
 
@@ -228,7 +229,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 ### Wallets
 - Disconnect Wallet (only if they ask)
 - Modal: 
-- - Warning: disconnecting this wallet from Arells will emotionally subject you and your investments to bear-market losses of [show losses based on cVactTaa(multiplied-by)cpVact - cVactTaa(multiplied-by)ExternalPrice ]? (yes) (no)<- close
+- - Warning: disconnecting this wallet from Arells will subject you and investments to bear-market losses of [show losses based on cVactTaa(multiplied-by)cpVact - cVactTaa(multiplied-by)ExternalPrice ]? (yes) (no)<- close
 - Powered by Vavity (V) (link)
 
 ### Pro-Natalism + Building Healthy Mind

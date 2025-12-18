@@ -20,10 +20,10 @@ const calculateVavityCombinations = (wallets: any[]) => {
     
     if (!combinationsByVapaa[vapaa]) {
       combinationsByVapaa[vapaa] = {
-        acVatoi: 0,
+      acVatoi: 0,
         acVact: 0,
-        acdVatoi: 0,
-        acVactTaa: 0,
+      acdVatoi: 0,
+      acVactTaa: 0,
       };
     }
 

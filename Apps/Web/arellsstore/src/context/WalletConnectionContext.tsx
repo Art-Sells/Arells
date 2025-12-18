@@ -76,7 +76,7 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
   });
   
   // Get VavityAggregator context for wallet operations
-  const { email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator } = useVavity();
+  const { email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator } = useVavity();
   
   // Process pending wallet after reload - only run once per pending wallet
   useEffect(() => {
@@ -152,119 +152,125 @@ export const WalletConnectionProvider: React.FC<{ children: React.ReactNode }> =
           throw new Error('Wallet provider not found');
         }
 
-        // Step 2: Fetch balance (for now, fetch native ETH balance)
-        // TODO: In future, this could be extended to detect which token the user wants to connect
-        const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
-        const balanceResponse = await fetch(`/api/tokenBalance?address=${pendingAddress}&tokenAddress=${tokenAddress}`);
-        if (!balanceResponse.ok) {
-          throw new Error('Failed to fetch wallet balance');
-        }
-        const balanceData = await balanceResponse.json();
-        const balance = parseFloat(balanceData.balance || '0');
-
-        console.log(`[processPendingWallet] Balance for ${pendingAddress}: ${balance}`);
-
-        // Step 3: Calculate deposit amount (0.5% of balance)
-        const depositAmount = calculateDepositAmount(balance);
-        console.log(`[processPendingWallet] Deposit amount (0.5%): ${depositAmount}`);
-
-        // Step 4: Prompt user and handle deposit transaction
+        // Step 2: Automatically trigger connectAsset flow (deposit + balance fetch)
+        // This will prompt user for deposit, process transaction, and save wallet
         if (!depositCompleted) {
-          const depositConfirmed = window.confirm(
-            `To complete wallet connection, please deposit 0.5% of your balance (${depositAmount.toFixed(6)} ${tokenAddress === '0x0000000000000000000000000000000000000000' ? 'ETH' : 'tokens'}) to the deposit address.\n\n` +
-            `Deposit Address: 0x3DfA7Ea24570148a6B4A3FADC5DFE373b1ecD70B\n\n` +
-            `Click OK to proceed with the deposit transaction.`
-          );
+          try {
+            const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+            console.log('[processPendingWallet] Automatically triggering connectAsset flow...');
+            
+            // Use connectAsset which handles deposit prompt, transaction, and balance fetching
+            const { txHash, receipt, walletData } = await connectAsset({
+              provider,
+              walletAddress: pendingAddress,
+              tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
+              email,
+              assetPrice,
+              vapa,
+              addVavityAggregator,
+              fetchVavityAggregator,
+              saveVavityAggregator,
+            });
 
-          if (!depositConfirmed) {
-            console.log('User cancelled deposit, wallet ID created but not saved');
-            // Keep pending wallet info so button shows "CONNECT (MM)(ETH) Asset" or "CONNECT (CB)(ETH) Asset"
-            // Clear the processing flags but keep pending wallet in sessionStorage
-            // The pending wallet info (address, walletId) should already be in sessionStorage from connectWallet
+            console.log(`[processPendingWallet] Asset connected successfully: ${txHash}`);
+            
+            // Mark deposit as confirmed for this wallet type
+            if (pendingType === 'metamask') {
+              sessionStorage.setItem('depositConfirmedMetaMask', 'true');
+              setConnectedMetaMask(true);
+              setPendingMetaMask(null);
+              sessionStorage.removeItem('pendingMetaMask');
+            } else {
+              sessionStorage.setItem('depositConfirmedBase', 'true');
+              setConnectedBase(true);
+              setPendingBase(null);
+              sessionStorage.removeItem('pendingBase');
+            }
+            
+            sessionStorage.setItem(processedKey, 'true');
             sessionStorage.removeItem('pendingWalletAddress');
             sessionStorage.removeItem('pendingWalletType');
             sessionStorage.removeItem('pendingWalletId');
             sessionStorage.removeItem('depositCompleted');
-            // Keep pendingMetaMask/pendingBase in sessionStorage so button shows new text
-            isProcessing = false;
             hasProcessed = true;
-            return;
-          }
-
-          try {
-            // Send deposit transaction and wait for confirmation
-            const { txHash, receipt } = await completeDepositFlow({
-              provider,
-              walletAddress: pendingAddress,
-              tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
-              balance,
-            });
-
-            console.log(`[processPendingWallet] Deposit transaction confirmed: ${txHash}`);
-            sessionStorage.setItem('depositCompleted', 'true');
-            // Mark deposit as confirmed for this wallet type
-            if (pendingType === 'metamask') {
-              sessionStorage.setItem('depositConfirmedMetaMask', 'true');
-            } else {
-              sessionStorage.setItem('depositConfirmedBase', 'true');
+          } catch (connectError: any) {
+            console.error('[processPendingWallet] Connect asset failed:', connectError);
+            
+            // If user cancelled, keep pending wallet so button shows "CONNECT (MM)(ETH) Asset"
+            if (connectError.message?.includes('cancelled') || connectError.message?.includes('Deposit cancelled')) {
+              console.log('User cancelled deposit, keeping pending wallet for retry');
+              sessionStorage.removeItem('pendingWalletAddress');
+              sessionStorage.removeItem('pendingWalletType');
+              sessionStorage.removeItem('pendingWalletId');
+              sessionStorage.removeItem('depositCompleted');
+              // Keep pendingMetaMask/pendingBase in sessionStorage so button shows new text
+              isProcessing = false;
+              hasProcessed = true;
+              return;
             }
-          } catch (depositError: any) {
-            console.error('[processPendingWallet] Deposit transaction failed:', depositError);
-            alert(`Deposit transaction failed: ${depositError.message || 'Unknown error'}\n\nPlease try connecting your wallet again.`);
-            // Keep pending wallet so user can retry
+            
+            // For other errors, show alert and keep pending wallet for retry
+            alert(`Failed to connect asset: ${connectError.message || 'Unknown error'}\n\nPlease try connecting your wallet again.`);
             sessionStorage.removeItem('pendingWalletAddress');
             sessionStorage.removeItem('pendingWalletType');
+            sessionStorage.removeItem('pendingWalletId');
             sessionStorage.removeItem('depositCompleted');
             isProcessing = false;
             hasProcessed = true;
             return;
           }
-        }
-
-        // Step 5: Create wallet data with VAPAA (use the wallet ID from sessionStorage)
-        const currentVapa = Math.max(vapa || 0, assetPrice || 0);
-        const currentAssetPrice = assetPrice || currentVapa;
-        const newCVactTaa = balance; // Use the fetched balance
-        const newCpVact = currentVapa;
-        const newCVact = newCVactTaa * newCpVact;
-        const newCVatoi = newCVact;
-        const newCpVatoi = currentAssetPrice;
-        const newCdVatoi = newCVact - newCVatoi;
-        
-        const walletData = {
-          walletId: pendingWalletId, // Use the wallet ID created during connection
-          address: pendingAddress,
-          vapaa: tokenAddress, // VAPAA: token address (native ETH in this case)
-          depositPaid: true, // Deposit was confirmed, so set to true
-          cVatoi: newCVatoi,
-          cpVatoi: newCpVatoi,
-          cVact: newCVact,
-          cpVact: newCpVact,
-          cVactTaa: newCVactTaa,
-          cdVatoi: newCdVatoi,
-        };
-
-        // Step 6: Add to VavityAggregator
-        await addVavityAggregator(email, [walletData]);
-        console.log('Pending wallet added to VavityAggregator with VAPAA:', tokenAddress);
-        
-        // Step 7: Mark as connected and clear pending flags
-        if (pendingType === 'metamask') {
-          setConnectedMetaMask(true);
-          setPendingMetaMask(null);
-          sessionStorage.removeItem('pendingMetaMask');
         } else {
-          setConnectedBase(true);
-          setPendingBase(null);
-          sessionStorage.removeItem('pendingBase');
+          // Deposit was already completed, just add wallet to VavityAggregator
+          const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+          const balanceResponse = await fetch(`/api/tokenBalance?address=${pendingAddress}&tokenAddress=${tokenAddress}`);
+          if (!balanceResponse.ok) {
+            throw new Error('Failed to fetch wallet balance');
+          }
+          const balanceData = await balanceResponse.json();
+          const balance = parseFloat(balanceData.balance || '0');
+
+          const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+          const currentAssetPrice = assetPrice || currentVapa;
+          const newCVactTaa = balance;
+          const newCpVact = currentVapa;
+          const newCVact = newCVactTaa * newCpVact;
+          const newCVatoi = newCVact;
+          const newCpVatoi = currentAssetPrice;
+          const newCdVatoi = newCVact - newCVatoi;
+          
+          const walletData = {
+            walletId: pendingWalletId,
+            address: pendingAddress,
+            vapaa: tokenAddress,
+            depositPaid: true,
+            cVatoi: newCVatoi,
+            cpVatoi: newCpVatoi,
+            cVact: newCVact,
+            cpVact: newCpVact,
+            cVactTaa: newCVactTaa,
+            cdVatoi: newCdVatoi,
+          };
+
+          await addVavityAggregator(email, [walletData]);
+          console.log('Pending wallet added to VavityAggregator with VAPAA:', tokenAddress);
+          
+          if (pendingType === 'metamask') {
+            setConnectedMetaMask(true);
+            setPendingMetaMask(null);
+            sessionStorage.removeItem('pendingMetaMask');
+          } else {
+            setConnectedBase(true);
+            setPendingBase(null);
+            sessionStorage.removeItem('pendingBase');
+          }
+          
+          sessionStorage.setItem(processedKey, 'true');
+          sessionStorage.removeItem('pendingWalletAddress');
+          sessionStorage.removeItem('pendingWalletType');
+          sessionStorage.removeItem('pendingWalletId');
+          sessionStorage.removeItem('depositCompleted');
+          hasProcessed = true;
         }
-        
-        sessionStorage.setItem(processedKey, 'true');
-        sessionStorage.removeItem('pendingWalletAddress');
-        sessionStorage.removeItem('pendingWalletType');
-        sessionStorage.removeItem('pendingWalletId');
-        sessionStorage.removeItem('depositCompleted');
-        hasProcessed = true;
       } catch (error) {
         console.error('Error processing pending wallet:', error);
         // Clear pending flags on error

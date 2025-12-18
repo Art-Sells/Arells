@@ -64,7 +64,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Recalculate vavityCombinations from wallets if not provided or if wallets structure changed
     const calculatedVavityCombinations = vavityCombinations || calculateVavityCombinations(wallets);
-    
+
     // ✅ REPLACE wallets with latest from frontend
     const newData = {
       wallets, // ← trust the incoming frontend data
