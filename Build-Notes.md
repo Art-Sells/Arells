@@ -71,14 +71,15 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - Save VavityCodeBase architecture Offline (for testing) and online version (for deployment)
 
 ### Home
-- Change color scheme (for modals also) to Purpple
-- Make slogan larger
 arells 
     [ Slogan
         [ chart ]
         [ Login ]
     ]
-powered by Chart:
+powered by 
+- Change color scheme (for modals also) to Purpple
+- Make slogan larger
+- Chart:
 - - Left
 – - - (ETH)
 - - - Investment: $4,000 (many random amounts)
@@ -107,7 +108,7 @@ powered by Chart:
 - - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
-- Connect Ethereum to begin (choose (with Metamask/Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
+- Connect Ethereum to begin <-words (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
 - - Modal: Connecting Wallet (until wallet address have been fetched, otherwise connection cancelled)/connected (ok)
 - - Modal: Connection Canceled 
 - - Modal: Wallet Connection Successful, Connecting Ethereum .5% one-time fee, etc, etc, agree (metamask/base)?

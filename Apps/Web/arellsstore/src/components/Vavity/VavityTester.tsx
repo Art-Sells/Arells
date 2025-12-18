@@ -407,7 +407,28 @@ const VavityTester: React.FC = () => {
       // If wallet extension is connected and has pending wallet, trigger deposit flow
       if (walletExtensionConnected && pendingWallet) {
         console.log(`[Connect Asset] Wallet extension connected with pending deposit, triggering deposit flow...`);
-        await connectAssetForWallet(walletType);
+        try {
+          await connectAssetForWallet(walletType);
+        } catch (error: any) {
+          // Check for cancellation errors (various formats)
+          const errorMsg = String(error?.message || error?.toString() || '');
+          const isCancelled = 
+            errorMsg.toLowerCase().includes('cancelled') || 
+            errorMsg.toLowerCase().includes('rejected') || 
+            errorMsg.toLowerCase().includes('user rejected') ||
+            errorMsg.toLowerCase().includes('user rejected the request') ||
+            errorMsg.toLowerCase().includes('action rejected') ||
+            error?.code === 4001 ||
+            error?.code === 'ACTION_REJECTED';
+          
+          // If user cancelled, don't show error - just return silently
+          if (isCancelled) {
+            console.log('User cancelled deposit in connectAssetForWallet');
+            return;
+          }
+          // For other errors, show them
+          throw error;
+        }
         return;
       }
 

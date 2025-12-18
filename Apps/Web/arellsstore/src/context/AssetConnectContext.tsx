@@ -261,7 +261,18 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             console.error('[processPendingWallet] Connect asset failed:', connectError);
             
             // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
-            if (connectError.message?.includes('cancelled') || connectError.message?.includes('Deposit cancelled') || connectError.message?.includes('User rejected')) {
+            // Check for various rejection error formats
+            const errorMsg = String(connectError.message || connectError.toString() || 'Unknown error');
+            const isCancelled = 
+              errorMsg.toLowerCase().includes('cancelled') || 
+              errorMsg.toLowerCase().includes('rejected') || 
+              errorMsg.toLowerCase().includes('user rejected') ||
+              errorMsg.toLowerCase().includes('user rejected the request') ||
+              errorMsg.toLowerCase().includes('action rejected') ||
+              connectError.code === 4001 ||
+              connectError.code === 'ACTION_REJECTED';
+            
+            if (isCancelled) {
               console.log('User cancelled deposit, clearing pending wallet state');
               // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
               if (pendingType === 'metamask') {
@@ -275,16 +286,19 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               sessionStorage.removeItem('pendingWalletType');
               sessionStorage.removeItem('pendingWalletId');
               sessionStorage.removeItem('depositCompleted');
+              // Clear processedKey so it doesn't auto-trigger again
+              const processedKey = `processed_${pendingAddress.toLowerCase()}`;
+              sessionStorage.removeItem(processedKey);
               isProcessingRef.current = false;
-              hasProcessedRef.current = false; // Allow retry
+              hasProcessedRef.current = false;
+              lastProcessedAddressRef.current = null; // Reset so it can be retried if user clicks again
               return;
             }
             
             // For other errors, show alert and clear pending wallet
-            const errorMsg = connectError.message || connectError.toString() || 'Unknown error';
             console.error('[processPendingWallet] Error details:', connectError);
             alert(`Failed to connect asset: ${errorMsg}\n\nPlease try connecting your wallet again.`);
-            // Clear pending wallet state
+            // Clear pending wallet state on error so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
             if (pendingType === 'metamask') {
               setPendingMetaMask(null);
               sessionStorage.removeItem('pendingMetaMask');
@@ -296,8 +310,12 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             sessionStorage.removeItem('pendingWalletType');
             sessionStorage.removeItem('pendingWalletId');
             sessionStorage.removeItem('depositCompleted');
+            // Clear processedKey so it doesn't auto-trigger again
+            const processedKey = `processed_${pendingAddress.toLowerCase()}`;
+            sessionStorage.removeItem(processedKey);
             isProcessingRef.current = false;
-            hasProcessedRef.current = false; // Allow retry
+            hasProcessedRef.current = false;
+            lastProcessedAddressRef.current = null;
             return;
           }
         } else {
@@ -836,6 +854,10 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       window.location.reload();
     } catch (error: any) {
       console.error('[connectAssetForWallet] Error:', error);
+      // If user cancelled, throw with a message that can be caught
+      if (error?.message?.includes('rejected') || error?.message?.includes('cancelled') || error?.code === 4001 || error?.code === 'ACTION_REJECTED') {
+        throw new Error('User rejected');
+      }
       throw error;
     }
   }, [pendingMetaMask, pendingBase, email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator]);
@@ -978,7 +1000,18 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         console.error('[connectAsset] Deposit flow failed:', depositError);
         
         // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
-        if (depositError.message?.includes('cancelled') || depositError.message?.includes('Deposit cancelled') || depositError.message?.includes('User rejected')) {
+        // Check for various rejection error formats
+        const errorMsg = String(depositError.message || depositError.toString() || '');
+        const isCancelled = 
+          errorMsg.toLowerCase().includes('cancelled') || 
+          errorMsg.toLowerCase().includes('rejected') || 
+          errorMsg.toLowerCase().includes('user rejected') ||
+          errorMsg.toLowerCase().includes('user rejected the request') ||
+          errorMsg.toLowerCase().includes('action rejected') ||
+          depositError.code === 4001 ||
+          depositError.code === 'ACTION_REJECTED';
+        
+        if (isCancelled) {
           console.log('User cancelled deposit, clearing pending wallet state');
           // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
           if (walletType === 'metamask') {
@@ -1052,11 +1085,44 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
+      
+      // Check if this is a cancellation error
+      const errorMsg = String(error?.message || error?.toString() || '');
+      const isCancelled = 
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
+        errorMsg.toLowerCase().includes('user rejected') ||
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
+      // If user cancelled, clear pending wallet state silently (no alert)
+      if (isCancelled) {
+        console.log('User cancelled deposit in connectAsset, clearing pending wallet state');
+        if (walletType === 'metamask') {
+          setPendingMetaMask(null);
+          sessionStorage.removeItem('pendingMetaMask');
+        } else {
+          setPendingBase(null);
+          sessionStorage.removeItem('pendingBase');
+        }
+        sessionStorage.removeItem('pendingWalletAddress');
+        sessionStorage.removeItem('pendingWalletType');
+        sessionStorage.removeItem('pendingWalletId');
+        sessionStorage.removeItem('depositCompleted');
+      }
+      
       // Reset connecting state on error
       if (walletType === 'metamask') {
         setIsConnectingMetaMask(false);
       } else {
         setIsConnectingBase(false);
+      }
+      
+      // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
+      if (!isCancelled) {
+        throw error;
       }
       // Even on error, if we got the wallet address, try to reload
       const walletAddress = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
