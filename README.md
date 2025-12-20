@@ -7,7 +7,7 @@
 Bear markets erase lots of intrinsic value from assets.
 
 ### Solution:
-Arells: a social experimentation company discovering whether we are ready to let go of bear markets.
+Arells: a social experiment digital asset company discovering whether we are ready to let go of bear markets.
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________
