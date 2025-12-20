@@ -10,11 +10,11 @@ import VavityTester from '../../components/Vavity/VavityTester';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Vavity Tester",
-  description: "Protects investments from bear markets. Connect your wallet and protect yourself from bear market losses.",
+  description: "Are you ready to let go of bear markets? Connect your investments.",
   robots: "noimageindex",
   openGraph: {
     title: "Vavity Tester",
-    description: "Protects investments from bear markets. Connect your wallet and protect yourself from bear market losses.",
+    description: "Are you ready to let go of bear markets? Connect your investments.",
     url: "https://arells.com/vavitytester",
     type: "website",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Vavity Tester",
-    description: "Protects investments from bear markets. Connect your wallet and protect yourself from bear market losses.",
+    description: "Are you ready to let go of bear markets? Connect your investments.",
     card: "summary_large_image",
     images: [
       {

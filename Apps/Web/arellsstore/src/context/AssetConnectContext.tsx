@@ -131,13 +131,80 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         depositConfirmed 
       });
       
+      // Check if wallet already exists in VavityAggregator with depositPaid = true
+      // This handles the case where wallet was disconnected and reconnected
+      const existingData = await fetchVavityAggregator(email);
+      const existingWallets = existingData.wallets || [];
+      const existingWalletWithDeposit = existingWallets.find(
+        (wallet: any) => wallet.address?.toLowerCase() === pendingAddress.toLowerCase() && wallet.depositPaid === true
+      );
+
+      // If wallet already exists with depositPaid = true, skip deposit flow and just mark as connected
+      if (existingWalletWithDeposit) {
+        console.log('[AssetConnect] Wallet already exists with depositPaid=true, skipping deposit flow');
+        
+        // Update balance without asking for deposit
+        const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+        try {
+          const balanceResponse = await fetch(`/api/tokenBalance?address=${encodeURIComponent(pendingAddress)}&tokenAddress=${encodeURIComponent(tokenAddress)}`);
+          if (balanceResponse.ok) {
+            const balanceData = await balanceResponse.json();
+            const balance = parseFloat(balanceData.balance || '0');
+            
+            // Update wallet balance
+            const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+            const newCVactTaa = balance;
+            const newCpVact = Math.max(existingWalletWithDeposit.cpVact || 0, currentVapa);
+            const newCVact = newCVactTaa * newCpVact;
+            const newCdVatoi = newCVact - (existingWalletWithDeposit.cVatoi || 0);
+            
+            const updatedWallet = {
+              ...existingWalletWithDeposit,
+              cVactTaa: newCVactTaa,
+              cpVact: newCpVact,
+              cVact: parseFloat(newCVact.toFixed(2)),
+              cdVatoi: parseFloat(newCdVatoi.toFixed(2)),
+            };
+            
+            const updatedWallets = existingWallets.map((w: any) => 
+              w.walletId === existingWalletWithDeposit.walletId ? updatedWallet : w
+            );
+            
+            const vavityCombinations = existingData.vavityCombinations || {};
+            await saveVavityAggregator(email, updatedWallets, vavityCombinations);
+            console.log('[AssetConnect] Updated wallet balance without deposit');
+          }
+        } catch (error) {
+          console.error('[AssetConnect] Error updating wallet balance:', error);
+        }
+        
+        // Mark as connected without deposit flow
+        if (pendingType === 'metamask') {
+          sessionStorage.setItem('depositConfirmedMetaMask', 'true');
+          setConnectedMetaMask(true);
+          setPendingMetaMask(null);
+          sessionStorage.removeItem('pendingMetaMask');
+        } else {
+          sessionStorage.setItem('depositConfirmedBase', 'true');
+          setConnectedBase(true);
+          setPendingBase(null);
+          sessionStorage.removeItem('pendingBase');
+        }
+        
+        sessionStorage.setItem(processedKey, 'true');
+        sessionStorage.removeItem('pendingWalletAddress');
+        sessionStorage.removeItem('pendingWalletType');
+        sessionStorage.removeItem('pendingWalletId');
+        sessionStorage.removeItem('depositCompleted');
+        hasProcessedRef.current = true;
+        isProcessingRef.current = false;
+        return;
+      }
+
       // Only skip if deposit was confirmed AND we've processed it AND wallet is in VavityAggregator
-      // First check if wallet is actually in VavityAggregator
-        const existingData = await fetchVavityAggregator(email);
-        const existingWallets = existingData.wallets || [];
       const addressInVavity = existingWallets.some(
         (wallet: any) => wallet.address?.toLowerCase() === pendingAddress.toLowerCase() && wallet.depositPaid === true
-        );
+      );
 
       if (sessionStorage.getItem(processedKey) && depositConfirmed && addressInVavity) {
         console.log('[AssetConnect] Pending wallet already processed with confirmed deposit and in VavityAggregator, clearing flags');

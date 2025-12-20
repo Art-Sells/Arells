@@ -10,7 +10,14 @@ VavityTester:
 - When fixing price mechanism, stop git
 - Connect Ethereum with Metamask/Base to begin (if Metamask or other wallet not connected, automatically try to connect asset (wallet))
 - - Afer wallet connection, if asset connection canceled, no wallet balances should show...
-- - if you deposit/withdraw funds in each wallet, (after disconnection), the funds should reflect that
+- - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
+- - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
+- - - message/alert: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
+- - if you deposit/withdraw funds in each wallet, (after disconnection), the funds should reflect that.
+- Fix: check to see (after first page load), if metamask/base wallet is connected (after undocking git program)
+- check if cpVatoi/cpVact (only references AFTER deposit is paid)?
+- Login/Signup with Google/Apple (reconfigure pages)
+
 
 Chart (Home/Account): 
 Home
@@ -42,11 +49,19 @@ Account
 Vavity Architecture:
 - Save entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
 
+Login/Signup with Google/Apple (re-configure LoginSignup pages):
+- They don’t have to verify emails
+– Account not found, create account.
 Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Bitcoin Wallet amount)
 
 - and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs & aws-config)
 - - Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
 - Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
+
+
+
+
+
 
 ### Test Online (both desktop/mobile):
 - change .env variables from NEXT_PUBLIC
@@ -114,6 +129,9 @@ powered by
 - - Modal: Wallet Connection Successful, Connecting Ethereum .5% one-time fee, etc, etc, agree (metamask/base)?
 - - Modal: Connection Canceled 
 - If acVatoi != 0, then hide "Connect Ethereum to begin"
+- Get From VavityTester: Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
+- - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
+- - - Modal: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
 - Chart (after wallet connection):
 - - Left
 - - - My Portfolio
@@ -138,7 +156,7 @@ powered by
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages [large slogan] (changge Bitcoin to Ethereum)
-- - Protects investments from bear markets. Connect your wallet and protect yourself from bear market losses.
+- - Are you ready to let go of bear markets? Connect your investments.
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
 - - Create a sitemap.xml: Helps Google discover all pages
@@ -156,7 +174,7 @@ powered by
 
 #### Deployment (Main) Amplify/S3 Login
 - Test (with vavity.info) on socials (DM's/etc)
-- Email/X-Twitter/LinkedIn/: Protects investments from bear markets. 
+- Email/X-Twitter/LinkedIn+crunchbase(compeny-type: social experiment, assets, digital-assets)/: Are you ready to let go of bear markets? 
 
 ### After Completion
 - Always Save Vavity JSON file data everyday offline (in case of breach)
@@ -165,7 +183,7 @@ Users:
 - Get Leads (search AI automoated options [use same format] from X, etc)
 - Set Launch Date (and announce the features)
 - - Review notes on phone
-- - Protects investments from bear markets. 
+- - Look at notes for openings. 
 - - Add "Discord" section for any questions
 Keep marketing, dependent on growth after 1-2 weeks:
 - Updates (oDAO, FndrsINC, etc)
@@ -190,11 +208,6 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 
 
-### iOS & Android App(work on this together)
-- iOS App (UI Layer)
-- - Tagline: Protects investments from bear market losses.
-- - Desc: Connect Digital Assets and watch as it protects investments from downturns. 
-- - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, transactions are handled by the associated blockchain.
 
 
 
@@ -205,7 +218,6 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 - Add new assets (VAPA/wallet-connection)
 - - Assets have their own page (connect asset)
-
 
 - After user accumulation and scaling, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
@@ -219,11 +231,14 @@ Keep marketing, dependent on growth after 1-2 weeks:
 - Contact us (Account/Home): Email
 - Clean up Lagging Pages
 
-### Wallets
-- Disconnect Asset (only if they ask)
-- Modal: 
-- - Warning: disconnecting this wallet from Arells will subject you and investments to bear-market losses of [show losses based on cVactTaa(multiplied-by)cpVact - cVactTaa(multiplied-by)ExternalPrice ]? (yes) (no)<- close
-- Powered by Vavity (V) (link)
+
+### iOS & Android App (Chrome Extension) Wallet (after 1-2 years?)
+Recommend Arells wallet and sunset all other wallets when Arells app revenue overtakes them
+- iOS App (UI Layer)
+- - Tagline: Are you ready to let go of bear markets?
+- - Desc: Connect Digital Assets af you're ready to never see your investments lose value from bear markets losses. 
+- - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, transactions are handled by the associated blockchain.
+- Import Wallet
 
 ### Pro-Natalism + Building Healthy Mind
 - Daily Recommendation: 7-8~ hrs of daily sleep and a personal daily gratitude journal.

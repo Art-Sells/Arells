@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useVavity } from '../../context/VavityAggregator';
 import { useAssetConnect } from '../../context/AssetConnectContext';
 import { ethers } from 'ethers';
@@ -50,6 +50,10 @@ const VavityTester: React.FC = () => {
   
   // Connect Wallet state
   const [connectedAddress, setConnectedAddress] = useState<string>('');
+  
+  // Track previous connection states to detect when a wallet becomes connected
+  const prevConnectedMetaMaskRef = useRef<boolean>(false);
+  const prevConnectedBaseRef = useRef<boolean>(false);
   
   // Get wallet connection from provider
   const { 
@@ -255,12 +259,48 @@ const VavityTester: React.FC = () => {
     }
   }, [wallets, email, vapa, assetPrice, localVapa, saveVavityAggregator]);
 
+  // Initialize refs with current connection states on mount
+  useEffect(() => {
+    prevConnectedMetaMaskRef.current = connectedMetaMask;
+    prevConnectedBaseRef.current = connectedBase;
+  }, []); // Only run once on mount
+
   // Fetch existing wallets on mount
   useEffect(() => {
     if (email) {
       loadWallets();
     }
   }, [email]);
+
+  // Refetch wallets when a wallet connection is successfully completed (after deposit)
+  // Only trigger when transitioning from false to true (new connection)
+  useEffect(() => {
+    if (!email) return;
+    
+    const metaMaskJustConnected = connectedMetaMask && !prevConnectedMetaMaskRef.current;
+    const baseJustConnected = connectedBase && !prevConnectedBaseRef.current;
+    
+    if (metaMaskJustConnected || baseJustConnected) {
+      console.log('[VavityTester] Wallet connection detected, refetching wallets...', {
+        metaMaskJustConnected,
+        baseJustConnected
+      });
+      // Add a small delay to ensure backend has saved the wallet data
+      const timeoutId = setTimeout(() => {
+        loadWallets();
+      }, 1000);
+      
+      // Update refs
+      prevConnectedMetaMaskRef.current = connectedMetaMask;
+      prevConnectedBaseRef.current = connectedBase;
+      
+      return () => clearTimeout(timeoutId);
+    } else {
+      // Update refs even if not triggering refetch
+      prevConnectedMetaMaskRef.current = connectedMetaMask;
+      prevConnectedBaseRef.current = connectedBase;
+    }
+  }, [connectedMetaMask, connectedBase, email]);
 
   // Sync wallet balances periodically
   useEffect(() => {

@@ -1,12 +1,13 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Protect investments from bear markets.
+## Are you ready to let go of bear markets?
 
-Arells believes ***investments should never lose value***.
+### Problem: Bear markets erase lots of intrinsic value from assets.
+
 
 ### Solution:
-Protects our investments from bear market losses.
+Arells: a social experimentation company discovering whether we are ready to let go of bear markets.
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________

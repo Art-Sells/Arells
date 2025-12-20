@@ -66,7 +66,7 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner" style={{ fontSize: '1.2em', letterSpacing: '0px', marginLeft: '0px' }}>protect investments from bear markets</p>
+        <p id="descriptioner" style={{ fontSize: '1.2em', letterSpacing: '0px', marginLeft: '0px' }}>Are you ready to let go of bear markets?</p>
       </div>
 
         {/* <br></br>

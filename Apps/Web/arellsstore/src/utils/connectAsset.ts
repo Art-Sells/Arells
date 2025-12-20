@@ -60,15 +60,62 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     throw new Error(`Failed to fetch wallet balance: ${error.message || error}`);
   }
 
-  // Step 2: Calculate deposit amount (0.5% of balance)
+  // Step 2: Check if wallet already exists with depositPaid = true BEFORE sending deposit
+  const existingDataBeforeDeposit = await fetchVavityAggregator(email);
+  const existingWalletsBeforeDeposit = existingDataBeforeDeposit.wallets || [];
+  const existingWalletBeforeDeposit = existingWalletsBeforeDeposit.find(
+    (w: any) => w.address?.toLowerCase() === walletAddress.toLowerCase() &&
+                (w.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase() === tokenAddr.toLowerCase() &&
+                w.depositPaid === true
+  );
+
+  // If wallet already has depositPaid = true, skip deposit and just update balance
+  if (existingWalletBeforeDeposit) {
+    console.log(`[connectAsset] Wallet ${walletAddress} already has depositPaid=true, skipping deposit transaction`);
+    
+    // Update wallet balance without deposit
+    const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+    const newCVactTaa = balance; // Use balance before deposit (no deposit was sent)
+    const newCpVact = Math.max(existingWalletBeforeDeposit.cpVact || 0, currentVapa);
+    const newCVact = newCVactTaa * newCpVact;
+    const newCdVatoi = newCVact - (existingWalletBeforeDeposit.cVatoi || 0);
+
+    const walletData = {
+      ...existingWalletBeforeDeposit,
+      depositPaid: true, // Keep depositPaid as true
+      cVactTaa: newCVactTaa,
+      cpVact: newCpVact,
+      cVact: parseFloat(newCVact.toFixed(2)),
+      cdVatoi: parseFloat(newCdVatoi.toFixed(2)),
+    };
+
+    // Update the wallet in the array
+    const updatedWallets = existingWalletsBeforeDeposit.map((w: any) => 
+      w.walletId === existingWalletBeforeDeposit.walletId ? walletData : w
+    );
+
+    // Recalculate vavityCombinations
+    const vavityCombinations = existingDataBeforeDeposit.vavityCombinations || {};
+    await saveVavityAggregator(email, updatedWallets, vavityCombinations);
+    
+    // Return early without deposit transaction
+    console.log(`[connectAsset] Wallet reconnected without deposit:`, walletData);
+    return { 
+      txHash: 'skipped-deposit-already-paid', 
+      receipt: null, 
+      walletData 
+    };
+  }
+
+  // Step 3: Calculate deposit amount (0.5% of balance)
   const depositAmount = calculateDepositAmount(balance);
   console.log(`[connectAsset] Deposit amount (0.5%): ${depositAmount}`);
 
-  // Step 3: Send deposit transaction directly (wallet will prompt user)
+  // Step 4: Send deposit transaction directly (wallet will prompt user)
   // No need for window.confirm - the wallet extension will show the transaction prompt
   console.log(`[connectAsset] Proceeding with deposit transaction. Amount: ${depositAmount.toFixed(6)} ${tokenAddr === '0x0000000000000000000000000000000000000000' ? 'ETH' : 'tokens'}, Address: ${DEPOSIT_ADDRESS}`);
 
-  // Step 4: Send deposit transaction and wait for confirmation
+  // Step 5: Send deposit transaction and wait for confirmation
   const { txHash, receipt } = await completeDepositFlow({
     provider,
     walletAddress,
@@ -78,7 +125,33 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
 
   console.log(`[connectAsset] Deposit transaction confirmed: ${txHash}`);
 
-  // Step 5: Check if wallet already exists in VavityAggregator
+  // Step 6: Fetch balance again AFTER deposit to get the actual current balance
+  let balanceAfterDeposit: number;
+  try {
+    const balanceResponseAfterDeposit = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddr)}`);
+    
+    if (!balanceResponseAfterDeposit.ok) {
+      const errorText = await balanceResponseAfterDeposit.text();
+      console.error(`[connectAsset] Balance API error after deposit (${balanceResponseAfterDeposit.status}):`, errorText);
+      throw new Error(`Failed to fetch wallet balance after deposit: ${balanceResponseAfterDeposit.status} ${balanceResponseAfterDeposit.statusText}. ${errorText}`);
+    }
+    
+    const balanceDataAfterDeposit = await balanceResponseAfterDeposit.json();
+    balanceAfterDeposit = parseFloat(balanceDataAfterDeposit.balance || '0');
+    
+    if (isNaN(balanceAfterDeposit)) {
+      throw new Error(`Invalid balance returned from API after deposit: ${balanceDataAfterDeposit.balance}`);
+    }
+
+    console.log(`[connectAsset] Balance after deposit for ${walletAddress}: ${balanceAfterDeposit} (was ${balance} before deposit)`);
+  } catch (error: any) {
+    console.error(`[connectAsset] Error fetching balance after deposit:`, error);
+    // Fallback to using the balance before deposit if we can't fetch after
+    console.warn(`[connectAsset] Using balance before deposit as fallback`);
+    balanceAfterDeposit = balance;
+  }
+
+  // Step 7: Check if wallet already exists in VavityAggregator (for wallets that don't have depositPaid yet)
   const existingData = await fetchVavityAggregator(email);
   const existingWallets = existingData.wallets || [];
   const existingWallet = existingWallets.find(
@@ -91,8 +164,10 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
   const currentAssetPrice = assetPrice || currentVapa;
 
   if (existingWallet) {
+    // Wallet exists but depositPaid is false, proceed with deposit
     // Update existing wallet: set depositPaid to true and update balance
-    const newCVactTaa = balance;
+    // Use balance AFTER deposit for accurate calculations
+    const newCVactTaa = balanceAfterDeposit;
     const newCpVact = Math.max(existingWallet.cpVact || 0, currentVapa);
     const newCVact = newCVactTaa * newCpVact;
     const newCdVatoi = newCVact - (existingWallet.cVatoi || 0);
@@ -116,13 +191,14 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     await saveVavityAggregator(email, updatedWallets, vavityCombinations);
   } else {
     // Create new wallet with depositPaid = true
+    // Use balance AFTER deposit for accurate calculations
     const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const newCVactTaa = balance;
+    const newCVactTaa = balanceAfterDeposit;
     const newCpVact = currentVapa;
     const newCVact = newCVactTaa * newCpVact;
-    const newCVatoi = newCVact;
+    const newCVatoi = newCVact; // cVatoi should equal cVact at connection time (after deposit)
     const newCpVatoi = currentAssetPrice;
-    const newCdVatoi = newCVact - newCVatoi;
+    const newCdVatoi = newCVact - newCVatoi; // Should be 0 at connection time
 
     walletData = {
       walletId: walletId,
