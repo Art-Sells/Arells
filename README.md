@@ -7,7 +7,7 @@
 
 
 ### Solution:
-Arells: a social experimentation company discovering whether we are ready to let go of bear markets.
+Arells: a social experiment financial technology company discovering whether we are ready to let go of bear markets.
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________

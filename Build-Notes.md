@@ -72,7 +72,7 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 (view all s3 jsons and check Arells Ethereum Wallet amount)
 - In notion:  
-- - TVL/Revenue
+- - TAV(Tracked Asset Value)/Revenue
 - - - (current) Solid Marketplace (interior) & Liquid Marketplace (exterior)
 - - - chart
 - - Users
@@ -86,13 +86,13 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - Save VavityCodeBase architecture Offline (for testing) and online version (for deployment)
 
 ### Home
-arells 
-    [ Slogan
+Slogan
+    [ Logo
         [ chart ]
         [ Login ]
+      powered by 
     ]
-powered by 
-- Change color scheme (for modals also) to Purpple
+- Change color scheme (for modals also) to Purple
 - Make slogan larger
 - Chart:
 - - Left
@@ -110,7 +110,9 @@ powered by
 ### Account
 - Change color scheme (for modals also) to Purpple
 (A) ------- (Wallets)
-- Make Phsychological slogan larger
+- Are you 
+ready to let go 
+of bear markets?
 – (B) (VAPA): $90,000
 - Chart (before wallet connection):
 - - Left
@@ -239,6 +241,9 @@ Recommend Arells wallet and sunset all other wallets when Arells app revenue ove
 - - Desc: Connect Digital Assets af you're ready to never see your investments lose value from bear markets losses. 
 - - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, transactions are handled by the associated blockchain.
 - Import Wallet
+
+### Vavity-API (after 3-4 years)
+....
 
 ### Pro-Natalism + Building Healthy Mind
 - Daily Recommendation: 7-8~ hrs of daily sleep and a personal daily gratitude journal.
