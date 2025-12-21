@@ -6,14 +6,16 @@
 
 ### Test Offline
 VavityTester:
-- Connect-asset/Disconnect-wallet:
+- Connect Ethereum with Metamask/Base to begin.
 - When fixing price mechanism, stop git
-- Connect Ethereum with Metamask/Base to begin (if Metamask or other wallet not connected, automatically try to connect asset (wallet))
+- - Fix cpVatoc VAPA issue
+- - Test to see after asking for wallet connection, if I reload the page after confirmation (before wallet ID creation), if issues preside...
 - - Afer wallet connection, if asset connection canceled, no wallet balances should show...
 - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
 - - - message/alert: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
 - - if you deposit/withdraw funds in each wallet, (after disconnection), the funds should reflect that.
+- - Test multiple account switches (inside wallets), how it affects
 - Fix: check to see (after first page load), if metamask/base wallet is connected (after undocking git program)
 - check if cpVatoi/cpVact (only references AFTER deposit is paid)?
 - Login/Signup with Google/Apple (reconfigure pages)
@@ -87,11 +89,10 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 
 ### Home
 Slogan
-    [ Logo
-        [ chart ]
+    [   [ chart ]
         [ Login ]
-      powered by 
     ]
+Arells powered by Vavity 
 - Change color scheme (for modals also) to Purple
 - Make slogan larger
 - Chart:
@@ -194,6 +195,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 ### Other (if Time Permits)
 - Flip sloth pngs horizontally
+- Fix (if VavityAggregator jsons are deleted (wallet connected (connect asset not poping up issue) ))
 - Fix (signOut/sign-up/log-in issue) loading after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - Remove console.logs from all files...
@@ -243,7 +245,9 @@ Recommend Arells wallet and sunset all other wallets when Arells app revenue ove
 - Import Wallet
 
 ### Vavity-API (after 3-4 years)
-....
+.... (vavity ...c
+... Are you ready to let go of bear markets?
+... (Integrate Vavity))
 
 ### Pro-Natalism + Building Healthy Mind
 - Daily Recommendation: 7-8~ hrs of daily sleep and a personal daily gratitude journal.

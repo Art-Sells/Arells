@@ -229,13 +229,27 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           const balanceData = await balanceResponse.json();
           const balance = parseFloat(balanceData.balance || '0');
 
-          const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+          // Fetch actual VAPA at time of connection to ensure cpVatoc is set correctly
+          let actualVapa: number;
+          try {
+            const highestPriceResponse = await fetch('/api/fetchHighestEthereumPrice');
+            const highestPriceData = await highestPriceResponse.json();
+            const highestPriceEver = highestPriceData?.highestPriceEver || 0;
+            // VAPA should be the maximum of: passed vapa, fetched highest price, or current assetPrice
+            actualVapa = Math.max(vapa || 0, highestPriceEver || 0, assetPrice || 0);
+          } catch (error) {
+            console.error('[WalletConnection] Error fetching VAPA, using fallback:', error);
+            // Fallback to using passed vapa or assetPrice
+            actualVapa = Math.max(vapa || 0, assetPrice || 0);
+          }
+          
+          const currentVapa = actualVapa;
           const currentAssetPrice = assetPrice || currentVapa;
           const newCVactTaa = balance;
           const newCpVact = currentVapa;
           const newCVact = newCVactTaa * newCpVact;
           const newCVatoc = newCVact;
-          const newCpVatoc = currentAssetPrice;
+          const newCpVatoc = currentVapa; // cpVatoc should always be VAPA at time of connection
           const newCdVatoc = newCVact - newCVatoc;
           
           const walletData = {
@@ -803,7 +817,21 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
           // Step 3: Create wallet data (balance will be fetched by VavityAggregator)
           // NOTE: This code path should not execute due to immediate reload, but included for safety
-          const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+          // Fetch actual VAPA at time of connection to ensure cpVatoc is set correctly
+          let actualVapa: number;
+          try {
+            const highestPriceResponse = await fetch('/api/fetchHighestEthereumPrice');
+            const highestPriceData = await highestPriceResponse.json();
+            const highestPriceEver = highestPriceData?.highestPriceEver || 0;
+            // VAPA should be the maximum of: passed vapa, fetched highest price, or current assetPrice
+            actualVapa = Math.max(vapa || 0, highestPriceEver || 0, assetPrice || 0);
+          } catch (error) {
+            console.error('[WalletConnection] Error fetching VAPA, using fallback:', error);
+            // Fallback to using passed vapa or assetPrice
+            actualVapa = Math.max(vapa || 0, assetPrice || 0);
+          }
+          
+          const currentVapa = actualVapa;
           const currentAssetPrice = assetPrice || currentVapa;
           const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
           const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH (default)
@@ -811,7 +839,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           const newCpVact = currentVapa;
           const newCVact = newCVactTaa * newCpVact;
           const newCVatoc = newCVact;
-          const newCpVatoc = currentAssetPrice;
+          const newCpVatoc = currentVapa; // cpVatoc should always be VAPA at time of connection
           const newCdVatoc = newCVact - newCVatoc;
           
           const walletData = {

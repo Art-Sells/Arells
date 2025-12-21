@@ -313,8 +313,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   
         // Update Vatoc: accumulate the connect value
         const newCVatoc = vatoc.cVatoc + connectValue;
-        // cpVatoc should be the price at which the first connect happened, or current price if first connect
-        const newCpVatoc = vatoc.cpVatoc === 0 ? assetPrice : vatoc.cpVatoc;
+        // cpVatoc should always be VAPA at time of connection
+        const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+        const newCpVatoc = vatoc.cpVatoc === 0 ? currentVapa : vatoc.cpVatoc;
   
         // Update Vact: add tokens and recalculate value
         const newCVactTaa = vact.cVactTaa + amountToConnect;

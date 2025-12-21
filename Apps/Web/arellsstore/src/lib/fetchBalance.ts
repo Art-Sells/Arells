@@ -137,12 +137,17 @@ export const fetchBalance = async ({
           
           console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): cVactTaa=${newCVactTaa}, cVact=${newCVact.toFixed(2)}`);
           
+          // Ensure cpVatoc is set - if it's 0 or missing, set it to current cpVact (VAPA at time of connection)
+          // cpVatoc should be the VAPA at time of first connection, so only set if it's missing
+          const newCpVatoc = wallet.cpVatoc && wallet.cpVatoc > 0 ? wallet.cpVatoc : newCpVact;
+          
           return {
             ...wallet,
             vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000', // Ensure VAPAA is set
             depositPaid: wallet.depositPaid !== undefined ? wallet.depositPaid : true, // Preserve depositPaid
             cVactTaa: newCVactTaa,
             cpVact: newCpVact,
+            cpVatoc: newCpVatoc, // Ensure cpVatoc is set if it was missing
             cVact: parseFloat(newCVact.toFixed(2)),
             cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
           };

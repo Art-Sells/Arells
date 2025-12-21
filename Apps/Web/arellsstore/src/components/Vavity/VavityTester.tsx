@@ -91,11 +91,15 @@ const VavityTester: React.FC = () => {
   const [baseExtensionConnected, setBaseExtensionConnected] = useState(false);
   
   // Update pending state from sessionStorage and check wallet extension connection
+  // This effect runs on mount and whenever pendingMetaMask/pendingBase changes
   useEffect(() => {
     const checkPending = async () => {
       if (typeof window !== 'undefined') {
-        setHasPendingMetaMaskInStorage(!!sessionStorage.getItem('pendingMetaMask'));
-        setHasPendingBaseInStorage(!!sessionStorage.getItem('pendingBase'));
+        // Always check sessionStorage directly to get the latest value
+        const hasPendingMetaMask = !!sessionStorage.getItem('pendingMetaMask');
+        const hasPendingBase = !!sessionStorage.getItem('pendingBase');
+        setHasPendingMetaMaskInStorage(hasPendingMetaMask);
+        setHasPendingBaseInStorage(hasPendingBase);
         
         // Check if MetaMask extension is connected
         if ((window as any).ethereum) {
@@ -461,12 +465,52 @@ const VavityTester: React.FC = () => {
             error?.code === 4001 ||
             error?.code === 'ACTION_REJECTED';
           
-          // If user cancelled, don't show error - just return silently
+          // If user cancelled, clear pending wallet state and return silently
           if (isCancelled) {
-            console.log('User cancelled deposit in connectAssetForWallet');
+            console.log('User cancelled deposit in connectAssetForWallet, clearing pending wallet state');
+            
+            // Get wallet address before clearing state
+            const walletAddress = walletType === 'metamask' ? pendingMetaMask?.address : pendingBase?.address;
+            
+            // Clear ALL sessionStorage items FIRST (before state updates)
+            // This ensures the setInterval check will see cleared values
+            sessionStorage.removeItem('pendingMetaMask');
+            sessionStorage.removeItem('pendingBase');
+            sessionStorage.removeItem('pendingWalletAddress');
+            sessionStorage.removeItem('pendingWalletType');
+            sessionStorage.removeItem('pendingWalletId');
+            sessionStorage.removeItem('depositCompleted');
+            sessionStorage.removeItem('depositConfirmedMetaMask');
+            sessionStorage.removeItem('depositConfirmedBase');
+            
+            // Clear processed flags for both wallet types (to be safe)
+            if (walletAddress) {
+              const processedKey = `processed_${walletAddress.toLowerCase()}`;
+              sessionStorage.removeItem(processedKey);
+            }
+            
+            // Verify sessionStorage is cleared
+            const verifyPendingMetaMask = sessionStorage.getItem('pendingMetaMask');
+            const verifyPendingBase = sessionStorage.getItem('pendingBase');
+            console.log('Verification - pendingMetaMask in sessionStorage:', verifyPendingMetaMask, 'pendingBase:', verifyPendingBase);
+            
+            // Clear React state AFTER sessionStorage is cleared
+            // Clear BOTH wallet types' state to be safe (in case of any cross-contamination)
+            setPendingMetaMask(null);
+            setPendingBase(null);
+            setHasPendingMetaMaskInStorage(false);
+            setHasPendingBaseInStorage(false);
+            setIsConnectingMetaMask(false);
+            setIsConnectingBase(false);
+            
+            // Clear any error state
+            setError(null);
+            
+            console.log('Pending wallet state cleared after cancellation. sessionStorage cleared, state updated.');
             return;
           }
           // For other errors, show them
+          setError(errorMsg);
           throw error;
         }
         return;
@@ -519,6 +563,25 @@ const VavityTester: React.FC = () => {
 
     } catch (error: any) {
       console.error(`[Connect Asset] Error connecting ${walletType} asset:`, error);
+      
+      // Check if this is a cancellation error - don't show error for cancellations
+      const errorMsg = String(error?.message || error?.toString() || '');
+      const isCancelled = 
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
+        errorMsg.toLowerCase().includes('user rejected') ||
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
+      if (isCancelled) {
+        // User cancelled - don't show error, state should already be cleared
+        console.log('[Connect Asset] User cancelled, error already handled');
+        return;
+      }
+      
+      // For other errors, show them
       const errorMessage = error?.response?.data?.error || error?.message || `Failed to connect ${walletType === 'metamask' ? 'MetaMask' : 'Base'} Ethereum asset. Please try again.`;
       setError(errorMessage);
       setConnectedAddress(''); // Clear address on error

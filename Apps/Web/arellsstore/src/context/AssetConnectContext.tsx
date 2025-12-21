@@ -362,9 +362,21 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               return;
             }
             
-            // For other errors, show alert and clear pending wallet
-            console.error('[processPendingWallet] Error details:', connectError);
-            alert(`Failed to connect asset: ${errorMsg}\n\nPlease try connecting your wallet again.`);
+            // For other errors, check if it's a critical error that should show an alert
+            // Don't show alert for non-critical errors (like VavityAggregator fetch failures after deposit)
+            const isCriticalError = 
+              !errorMsg.toLowerCase().includes('vavityaggregator') &&
+              !errorMsg.toLowerCase().includes('fetchhighestethereumprice') &&
+              !errorMsg.toLowerCase().includes('vapa fetch') &&
+              !errorMsg.toLowerCase().includes('timeout');
+            
+            if (isCriticalError) {
+              console.error('[processPendingWallet] Critical error details:', connectError);
+              alert(`Failed to connect asset: ${errorMsg}\n\nPlease try connecting your wallet again.`);
+            } else {
+              console.warn('[processPendingWallet] Non-critical error (continuing):', connectError);
+              // Don't show alert for non-critical errors, but log them
+            }
             // Clear pending wallet state on error so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
             if (pendingType === 'metamask') {
               setPendingMetaMask(null);
@@ -395,14 +407,37 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           const balanceData = await balanceResponse.json();
           const balance = parseFloat(balanceData.balance || '0');
 
-          const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+          // Fetch actual VAPA at time of connection to ensure cpVatoc is set correctly
+          let actualVapa: number;
+          try {
+            const highestPriceResponse = await fetch('/api/fetchHighestEthereumPrice');
+            const highestPriceData = await highestPriceResponse.json();
+            const highestPriceEver = highestPriceData?.highestPriceEver || 0;
+            // VAPA should be the maximum of: passed vapa, fetched highest price, or current assetPrice
+            actualVapa = Math.max(vapa || 0, highestPriceEver || 0, assetPrice || 0);
+          } catch (error) {
+            console.error('[AssetConnect] Error fetching VAPA, using fallback:', error);
+            // Fallback to using passed vapa or assetPrice
+            actualVapa = Math.max(vapa || 0, assetPrice || 0);
+          }
+          
+          const currentVapa = actualVapa;
           const currentAssetPrice = assetPrice || currentVapa;
           const newCVactTaa = balance;
           const newCpVact = currentVapa;
           const newCVact = newCVactTaa * newCpVact;
           const newCVatoc = newCVact;
-          const newCpVatoc = currentAssetPrice;
+          const newCpVatoc = currentVapa; // cpVatoc should always be VAPA at time of connection
           const newCdVatoc = newCVact - newCVatoc;
+          
+          console.log('[AssetConnect] Creating wallet with:', {
+            newCpVatoc,
+            newCpVact,
+            currentVapa,
+            'cpVatoc equals cpVact?': newCpVatoc === newCpVact,
+            'cpVatoc equals currentVapa?': newCpVatoc === currentVapa,
+            'cpVact equals currentVapa?': newCpVact === currentVapa,
+          });
           
           const walletData = {
             walletId: pendingWalletId,
@@ -861,7 +896,22 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     
     console.log(`[connectAssetForWallet] Called with walletType:`, walletType, 'type:', typeof walletType);
     
-    const pendingWallet = walletType === 'metamask' ? pendingMetaMask : pendingBase;
+    // Check state first, then fallback to sessionStorage (in case state hasn't updated yet)
+    let pendingWallet = walletType === 'metamask' ? pendingMetaMask : pendingBase;
+    if (!pendingWallet) {
+      // Try reading from sessionStorage as fallback
+      const sessionKey = walletType === 'metamask' ? 'pendingMetaMask' : 'pendingBase';
+      const sessionData = sessionStorage.getItem(sessionKey);
+      if (sessionData) {
+        try {
+          pendingWallet = JSON.parse(sessionData);
+          console.log(`[connectAssetForWallet] Found pending wallet in sessionStorage:`, pendingWallet);
+        } catch (error) {
+          console.error('[connectAssetForWallet] Error parsing sessionStorage data:', error);
+        }
+      }
+    }
+    
     if (!pendingWallet) {
       console.error('[connectAssetForWallet] No pending wallet found. pendingMetaMask:', pendingMetaMask, 'pendingBase:', pendingBase);
       throw new Error('No pending wallet found');
@@ -1118,7 +1168,21 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
           // Step 3: Create wallet data (balance will be fetched by VavityAggregator)
           // NOTE: This code path should not execute due to immediate reload, but included for safety
-          const currentVapa = Math.max(vapa || 0, assetPrice || 0);
+          // Fetch actual VAPA at time of connection to ensure cpVatoc is set correctly
+          let actualVapa: number;
+          try {
+            const highestPriceResponse = await fetch('/api/fetchHighestEthereumPrice');
+            const highestPriceData = await highestPriceResponse.json();
+            const highestPriceEver = highestPriceData?.highestPriceEver || 0;
+            // VAPA should be the maximum of: passed vapa, fetched highest price, or current assetPrice
+            actualVapa = Math.max(vapa || 0, highestPriceEver || 0, assetPrice || 0);
+          } catch (error) {
+            console.error('[AssetConnect] Error fetching VAPA, using fallback:', error);
+            // Fallback to using passed vapa or assetPrice
+            actualVapa = Math.max(vapa || 0, assetPrice || 0);
+          }
+          
+          const currentVapa = actualVapa;
           const currentAssetPrice = assetPrice || currentVapa;
           const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
           const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH (default)
@@ -1126,7 +1190,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           const newCpVact = currentVapa;
           const newCVact = newCVactTaa * newCpVact;
           const newCVatoc = newCVact;
-          const newCpVatoc = currentAssetPrice;
+          const newCpVatoc = currentVapa; // cpVatoc should always be VAPA at time of connection
           const newCdVatoc = newCVact - newCVatoc;
           
           const walletData = {
