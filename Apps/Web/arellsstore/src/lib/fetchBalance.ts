@@ -133,7 +133,7 @@ export const fetchBalance = async ({
           const newCVactTaa = balanceUpdate.balance;
           const newCpVact = Math.max(wallet.cpVact || 0, assetPrice);
           const newCVact = newCVactTaa * newCpVact;
-          const newCdVatoi = newCVact - (wallet.cVatoi || 0);
+          const newCdVatoc = newCVact - (wallet.cVatoc || 0);
           
           console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): cVactTaa=${newCVactTaa}, cVact=${newCVact.toFixed(2)}`);
           
@@ -144,7 +144,7 @@ export const fetchBalance = async ({
             cVactTaa: newCVactTaa,
             cpVact: newCpVact,
             cVact: parseFloat(newCVact.toFixed(2)),
-            cdVatoi: parseFloat(newCdVatoi.toFixed(2)),
+            cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
           };
         }
         // If no balance update found, keep wallet as is but ensure it has the right structure

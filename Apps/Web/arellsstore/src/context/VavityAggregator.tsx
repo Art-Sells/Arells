@@ -7,10 +7,10 @@ import { fetchEthereumPrice, setManualEthereumPrice as setManualEthereumPriceApi
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { fetchBalance } from '../lib/fetchBalance';
 
-interface VatoiState {
-  cVatoi: number; // Value of the asset investment at the time of connect
-  cpVatoi: number; // Asset price at the time of connect
-  cdVatoi: number; // Difference between cVact and cVatoi: cdVatoi = cVact - cVatoi
+interface VatocState {
+  cVatoc: number; // Value of the asset investment at the time of connect
+  cpVatoc: number; // Asset price at the time of connect
+  cdVatoc: number; // Difference between cVact and cVatoc: cdVatoc = cVact - cVatoc
 }
 
 interface VactState {
@@ -20,15 +20,15 @@ interface VactState {
 }
 
 interface TotalsState {
-  acVatoi: number; // Combination of all the cVatois
-  acdVatoi: number; // Combination of all the cdVatois
+  acVatoc: number; // Combination of all the cVatocs
+  acdVatoc: number; // Combination of all the cdVatocs
   acVact: number; // Combination of all cVacts
   acVactTaa: number; // Combination of all cVactTaas
 }
 
 interface VavityaggregatorType {
   assetPrice: number;
-  vatoi: VatoiState;
+  vatoc: VatocState;
   vact: VactState;
   totals: TotalsState;
   vapa: number; // Valued Asset Price Anchored (highest asset price recorded always)
@@ -85,10 +85,10 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
   
   // Single aggregated state instead of groups
-  const [vatoi, setVatoi] = useState<VatoiState>({
-    cVatoi: 0,
-    cpVatoi: 0,
-    cdVatoi: 0,
+  const [vatoc, setVatoc] = useState<VatocState>({
+    cVatoc: 0,
+    cpVatoc: 0,
+    cdVatoc: 0,
   });
 
   const [vact, setVact] = useState<VactState>({
@@ -98,8 +98,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
 
   const [totals, setTotals] = useState<TotalsState>({
-    acVatoi: 0,
-    acdVatoi: 0,
+    acVatoc: 0,
+    acdVatoc: 0,
     acVact: 0,
     acVactTaa: 0,
   });
@@ -122,27 +122,27 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
 
   useEffect(() => {
-    const fetchVatoiState = async () => {
+    const fetchVatocState = async () => {
       try {
         if (!email) {
-          console.warn('No email provided, skipping fetchVatoiState');
+          console.warn('No email provided, skipping fetchVatocState');
           return;
         }
   
-        const response = await axios.get('/api/fetchVatoiState', { params: { email } });
-        const fetchedVatoi = response.data.vatoi || { cVatoi: 0, cpVatoi: 0, cdVatoi: 0 };
+        const response = await axios.get('/api/fetchVatocState', { params: { email } });
+        const fetchedVatoc = response.data.vatoc || { cVatoc: 0, cpVatoc: 0, cdVatoc: 0 };
         const fetchedVact = response.data.vact || { cVact: 0, cpVact: 0, cVactTaa: 0 };
         const fetchedVapa = response.data.vapa || assetPrice;
   
-        setVatoi(fetchedVatoi);
+        setVatoc(fetchedVatoc);
         setVact(fetchedVact);
         setVapa(fetchedVapa);
       } catch (error) {
-        console.error('Error fetching vatoi state:', error);
+        console.error('Error fetching vatoc state:', error);
       }
     };
   
-    fetchVatoiState();
+    fetchVatocState();
   }, [email, assetPrice]);
 
   // Update VAPA when cpVact changes or assetPrice updates
@@ -154,24 +154,24 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [vact.cpVact, assetPrice]);
 
-  // Update cdVatoi when cVact or cVatoi changes
+  // Update cdVatoc when cVact or cVatoc changes
   useEffect(() => {
-    const newCdVatoi = vact.cVact - vatoi.cVatoi;
-    setVatoi((prev) => ({
+    const newCdVatoc = vact.cVact - vatoc.cVatoc;
+    setVatoc((prev) => ({
       ...prev,
-      cdVatoi: parseFloat(newCdVatoi.toFixed(2)),
+      cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
     }));
-  }, [vact.cVact, vatoi.cVatoi]);
+  }, [vact.cVact, vatoc.cVatoc]);
 
-  // Update totals when vatoi or vact changes
+  // Update totals when vatoc or vact changes
   useEffect(() => {
     setTotals({
-      acVatoi: vatoi.cVatoi,
-      acdVatoi: vatoi.cdVatoi,
+      acVatoc: vatoc.cVatoc,
+      acdVatoc: vatoc.cdVatoc,
       acVact: vact.cVact,
       acVactTaa: vact.cVactTaa,
     });
-  }, [vatoi.cVatoi, vatoi.cdVatoi, vact.cVact, vact.cVactTaa]);
+  }, [vatoc.cVatoc, vatoc.cdVatoc, vact.cVact, vact.cVactTaa]);
 
   // Update cpVact based on VAPA (highest asset price recorded always)
   useEffect(() => {
@@ -188,7 +188,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const updateAllState = async (
     newAssetPrice: number,
-    updatedVatoi: VatoiState,
+    updatedVatoc: VatocState,
     updatedVact: VactState,
     email: string
   ) => {
@@ -203,24 +203,24 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       cVactTaa: updatedVact.cVactTaa,
     };
 
-    const finalVatoi: VatoiState = {
-      ...updatedVatoi,
-      cdVatoi: parseFloat((newCVact - updatedVatoi.cVatoi).toFixed(2)),
+    const finalVatoc: VatocState = {
+      ...updatedVatoc,
+      cdVatoc: parseFloat((newCVact - updatedVatoc.cVatoc).toFixed(2)),
     };
 
     setVact(finalVact);
-    setVatoi(finalVatoi);
+    setVatoc(finalVatoc);
     setVapa(newVapa);
 
     try {
-      await axios.post('/api/saveVatoiState', {
+      await axios.post('/api/saveVatocState', {
         email,
-        vatoi: finalVatoi,
+        vatoc: finalVatoc,
         vact: finalVact,
         vapa: newVapa,
       });
     } catch (error) {
-      console.error("Error saving vatoi state:", error);
+      console.error("Error saving vatoc state:", error);
     }
   };
 
@@ -241,7 +241,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       cVactTaa: vact.cVactTaa,
     };
   
-    await updateAllState(newPrice, vatoi, updatedVact, email);
+    await updateAllState(newPrice, vatoc, updatedVact, email);
   };
 
   const readASSETFile = async (): Promise<number | null> => {
@@ -311,20 +311,20 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const amountToConnect = parseFloat((aASSET - currentVactTaa).toFixed(8));
         const connectValue = amountToConnect * assetPrice;
   
-        // Update Vatoi: accumulate the connect value
-        const newCVatoi = vatoi.cVatoi + connectValue;
-        // cpVatoi should be the price at which the first connect happened, or current price if first connect
-        const newCpVatoi = vatoi.cpVatoi === 0 ? assetPrice : vatoi.cpVatoi;
+        // Update Vatoc: accumulate the connect value
+        const newCVatoc = vatoc.cVatoc + connectValue;
+        // cpVatoc should be the price at which the first connect happened, or current price if first connect
+        const newCpVatoc = vatoc.cpVatoc === 0 ? assetPrice : vatoc.cpVatoc;
   
         // Update Vact: add tokens and recalculate value
         const newCVactTaa = vact.cVactTaa + amountToConnect;
         const newCpVact = Math.max(vact.cpVact, assetPrice); // VAPA behavior
         const newCVact = newCVactTaa * newCpVact;
   
-        const updatedVatoi: VatoiState = {
-          cVatoi: parseFloat(newCVatoi.toFixed(2)),
-          cpVatoi: newCpVatoi,
-          cdVatoi: 0, // Will be recalculated
+        const updatedVatoc: VatocState = {
+          cVatoc: parseFloat(newCVatoc.toFixed(2)),
+          cpVatoc: newCpVatoc,
+          cdVatoc: 0, // Will be recalculated
         };
   
         const updatedVact: VactState = {
@@ -333,7 +333,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           cVactTaa: parseFloat(newCVactTaa.toFixed(8)),
         };
   
-        await updateAllState(assetPrice, updatedVatoi, updatedVact, email);
+        await updateAllState(assetPrice, updatedVatoc, updatedVact, email);
       }
     } catch (error) {
       console.error("Error during handleConnect:", error);
@@ -382,28 +382,28 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  const saveVatoiState = async ({
+  const saveVatocState = async ({
     email,
-    vatoi,
+    vatoc,
     vact,
     vapa,
   }: {
     email: string;
-    vatoi: VatoiState;
+    vatoc: VatocState;
     vact: VactState;
     vapa: number;
   }) => {
     try {
       const payload = {
         email,
-        vatoi,
+        vatoc,
         vact,
         vapa,
       };
   
-      await axios.post('/api/saveVatoiState', payload);
+      await axios.post('/api/saveVatocState', payload);
     } catch (error) {
-      console.error('Error saving vatoi state:', error);
+      console.error('Error saving vatoc state:', error);
     }
   };
 
@@ -492,7 +492,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     <Vavityaggregator.Provider
       value={{
         assetPrice,
-        vatoi,
+        vatoc,
         vact,
         totals,
         vapa,

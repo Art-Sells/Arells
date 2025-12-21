@@ -7,9 +7,9 @@ const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 // Calculate vavity combinations per VAPAA (token address)
 const calculateVavityCombinations = (wallets: any[]) => {
   const combinationsByVapaa: Record<string, {
-    acVatoi: number;
+    acVatoc: number;
     acVact: number;
-    acdVatoi: number;
+    acdVatoc: number;
     acVactTaa: number;
   }> = {};
 
@@ -18,16 +18,16 @@ const calculateVavityCombinations = (wallets: any[]) => {
     
     if (!combinationsByVapaa[vapaa]) {
       combinationsByVapaa[vapaa] = {
-        acVatoi: 0,
+        acVatoc: 0,
         acVact: 0,
-        acdVatoi: 0,
+        acdVatoc: 0,
         acVactTaa: 0,
       };
     }
 
-    combinationsByVapaa[vapaa].acVatoi += wallet.cVatoi || 0;
+    combinationsByVapaa[vapaa].acVatoc += wallet.cVatoc || 0;
     combinationsByVapaa[vapaa].acVact += wallet.cVact || 0;
-    combinationsByVapaa[vapaa].acdVatoi += wallet.cdVatoi || 0;
+    combinationsByVapaa[vapaa].acdVatoc += wallet.cdVatoc || 0;
     combinationsByVapaa[vapaa].acVactTaa += wallet.cVactTaa || 0;
   });
 

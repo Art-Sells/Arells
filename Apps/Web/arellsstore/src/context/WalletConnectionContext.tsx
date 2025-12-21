@@ -234,21 +234,21 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           const newCVactTaa = balance;
           const newCpVact = currentVapa;
           const newCVact = newCVactTaa * newCpVact;
-          const newCVatoi = newCVact;
-          const newCpVatoi = currentAssetPrice;
-          const newCdVatoi = newCVact - newCVatoi;
+          const newCVatoc = newCVact;
+          const newCpVatoc = currentAssetPrice;
+          const newCdVatoc = newCVact - newCVatoc;
           
           const walletData = {
             walletId: pendingWalletId,
             address: pendingAddress,
             vapaa: tokenAddress,
             depositPaid: true,
-            cVatoi: newCVatoi,
-            cpVatoi: newCpVatoi,
+            cVatoc: newCVatoc,
+            cpVatoc: newCpVatoc,
             cVact: newCVact,
             cpVact: newCpVact,
             cVactTaa: newCVactTaa,
-            cdVatoi: newCdVatoi,
+            cdVatoc: newCdVatoc,
           };
 
           await addVavityAggregator(email, [walletData]);
@@ -810,21 +810,21 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           const newCVactTaa = 0; // Balance will be fetched by VavityAggregator
           const newCpVact = currentVapa;
           const newCVact = newCVactTaa * newCpVact;
-          const newCVatoi = newCVact;
-          const newCpVatoi = currentAssetPrice;
-          const newCdVatoi = newCVact - newCVatoi;
+          const newCVatoc = newCVact;
+          const newCpVatoc = currentAssetPrice;
+          const newCdVatoc = newCVact - newCVatoc;
           
           const walletData = {
             walletId: walletId,
             address: walletAddress,
             vapaa: tokenAddress, // VAPAA: token address
             depositPaid: false, // Default to false (deposit not paid yet)
-            cVatoi: newCVatoi,
-            cpVatoi: newCpVatoi,
+            cVatoc: newCVatoc,
+            cpVatoc: newCpVatoc,
             cVact: newCVact,
             cpVact: newCpVact,
             cVactTaa: newCVactTaa,
-            cdVatoi: newCdVatoi,
+            cdVatoc: newCdVatoc,
           };
 
           // Step 5: Add to VavityAggregator

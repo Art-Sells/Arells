@@ -11,17 +11,17 @@ interface WalletData {
   walletId: string;
   address: string;
   // Private key is NOT stored, only displayed once after creation
-  cVatoi: number;
-  cpVatoi: number;
+  cVatoc: number;
+  cpVatoc: number;
   cVact: number;
   cpVact: number;
   cVactTaa: number;
-  cdVatoi: number;
+  cdVatoc: number;
 }
 
 interface VavityCombinations {
-  acVatoi: number;
-  acdVatoi: number;
+  acVatoc: number;
+  acdVatoc: number;
   acVact: number;
   acVactTaa: number;
 }
@@ -38,8 +38,8 @@ const VavityTester: React.FC = () => {
 
   const [wallets, setWallets] = useState<WalletData[]>([]);
   const [vavityCombinations, setVavityCombinations] = useState<VavityCombinations>({
-    acVatoi: 0,
-    acdVatoi: 0,
+    acVatoc: 0,
+    acdVatoc: 0,
     acVact: 0,
     acVactTaa: 0,
   });
@@ -147,16 +147,16 @@ const VavityTester: React.FC = () => {
   const calculateCombinations = (walletList: WalletData[]): VavityCombinations => {
     return walletList.reduce(
       (acc, wallet) => {
-        acc.acVatoi += wallet.cVatoi || 0;
+        acc.acVatoc += wallet.cVatoc || 0;
         acc.acVact += wallet.cVact || 0;
-        acc.acdVatoi += wallet.cdVatoi || 0;
+        acc.acdVatoc += wallet.cdVatoc || 0;
         acc.acVactTaa += wallet.cVactTaa || 0;
         return acc;
       },
       {
-        acVatoi: 0,
+        acVatoc: 0,
         acVact: 0,
-        acdVatoi: 0,
+        acdVatoc: 0,
         acVactTaa: 0,
       }
     );
@@ -196,38 +196,38 @@ const VavityTester: React.FC = () => {
             const previousCVactTaa = wallet.cVactTaa || 0;
             const newCVactTaa = balanceInBTC;
 
-            // If balance changed from 0 to a value, initialize cpVatoi and cpVact
+            // If balance changed from 0 to a value, initialize cpVatoc and cpVact
             if (previousCVactTaa === 0 && newCVactTaa > 0) {
-              // First time assets detected - set cpVatoi and cpVact to current VAPA
-              const newCpVatoi = currentVapa;
+              // First time assets detected - set cpVatoc and cpVact to current VAPA
+              const newCpVatoc = currentVapa;
               const newCpVact = currentVapa;
               const newCVact = newCVactTaa * newCpVact;
-              const newCVatoi = newCVact; // cVatoi equals cVact at connect time
-              const newCdVatoi = newCVact - newCVatoi; // Should be 0 at connect
+              const newCVatoc = newCVact; // cVatoc equals cVact at connect time
+              const newCdVatoc = newCVact - newCVatoc; // Should be 0 at connect
 
               return {
                 ...wallet,
                 cVactTaa: newCVactTaa,
-                cpVatoi: newCpVatoi,
+                cpVatoc: newCpVatoc,
                 cpVact: newCpVact,
                 cVact: newCVact,
-                cVatoi: newCVatoi,
-                cdVatoi: newCdVatoi,
+                cVatoc: newCVatoc,
+                cdVatoc: newCdVatoc,
               };
             } else if (newCVactTaa !== previousCVactTaa) {
               // Balance changed - recalculate values
               const currentCpVact = wallet.cpVact || 0;
               const newCVact = newCVactTaa * currentCpVact;
-              const newCdVatoi = newCVact - (wallet.cVatoi || 0);
+              const newCdVatoc = newCVact - (wallet.cVatoc || 0);
 
               return {
                 ...wallet,
                 cVactTaa: newCVactTaa,
                 cVact: newCVact,
-                cdVatoi: newCdVatoi,
-                // cpVatoi and cVatoi don't change after connect
-                cpVatoi: wallet.cpVatoi || 0,
-                cVatoi: wallet.cVatoi || 0,
+                cdVatoc: newCdVatoc,
+                // cpVatoc and cVatoc don't change after connect
+                cpVatoc: wallet.cpVatoc || 0,
+                cVatoc: wallet.cVatoc || 0,
               };
             }
 
@@ -346,14 +346,14 @@ const VavityTester: React.FC = () => {
         const newCpVact = Math.max(wallet.cpVact || 0, currentVapa);
         // Recalculate cVact based on new cpVact
         const newCVact = parseFloat(((wallet.cVactTaa || 0) * newCpVact).toFixed(2));
-        // Recalculate cdVatoi
-        const newCdVatoi = parseFloat((newCVact - (wallet.cVatoi || 0)).toFixed(2));
+        // Recalculate cdVatoc
+        const newCdVatoc = parseFloat((newCVact - (wallet.cVatoc || 0)).toFixed(2));
         
         return {
           ...wallet,
           cpVact: newCpVact,
           cVact: newCVact,
-          cdVatoi: newCdVatoi,
+          cdVatoc: newCdVatoc,
         };
       });
 
@@ -702,8 +702,8 @@ const VavityTester: React.FC = () => {
             }}>
               <h3>Wallet ID {index + 1}:</h3>
               <p><strong>Address:</strong> {wallet.address}</p>
-              <p>cVatoi = ${formatCurrency(wallet.cVatoi)}, cpVatoi = ${formatPrice(wallet.cpVatoi)}, cVact = ${formatCurrency(wallet.cVact)}, cpVact = ${formatPrice(wallet.cpVact)}.</p>
-              <p>cVactTaa = {formatNumber(wallet.cVactTaa)}, cdVatoi = ${formatCurrency(wallet.cdVatoi)}.</p>
+              <p>cVatoc = ${formatCurrency(wallet.cVatoc)}, cpVatoc = ${formatPrice(wallet.cpVatoc)}, cVact = ${formatCurrency(wallet.cVact)}, cpVact = ${formatPrice(wallet.cpVact)}.</p>
+              <p>cVactTaa = {formatNumber(wallet.cVactTaa)}, cdVatoc = ${formatCurrency(wallet.cdVatoc)}.</p>
             </div>
           ))}
         </div>
@@ -717,8 +717,8 @@ const VavityTester: React.FC = () => {
           borderRadius: '5px',
         }}>
           <h2>Wallet Totals:</h2>
-          <p>acVatoi = ${formatCurrency(vavityCombinations.acVatoi)} ({wallets.map(w => `$${formatCurrency(w.cVatoi)}`).join(' + ')})</p>
-          <p>acdVatoi = ${formatCurrency(vavityCombinations.acdVatoi)} ({wallets.map(w => `$${formatCurrency(w.cdVatoi)}`).join(' + ')})</p>
+          <p>acVatoc = ${formatCurrency(vavityCombinations.acVatoc)} ({wallets.map(w => `$${formatCurrency(w.cVatoc)}`).join(' + ')})</p>
+          <p>acdVatoc = ${formatCurrency(vavityCombinations.acdVatoc)} ({wallets.map(w => `$${formatCurrency(w.cdVatoc)}`).join(' + ')})</p>
           <p>acVact = ${formatCurrency(vavityCombinations.acVact)} ({wallets.map(w => `$${formatCurrency(w.cVact)}`).join(' + ')})</p>
           <p>acVactTaa = {formatNumber(vavityCombinations.acVactTaa)} ({wallets.map(w => formatNumber(w.cVactTaa)).join(' + ')})</p>
         </div>

@@ -8,9 +8,9 @@ const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 // Returns an object keyed by VAPAA, each containing totals for that token
 const calculateVavityCombinations = (wallets: any[]) => {
   const combinationsByVapaa: Record<string, {
-    acVatoi: number;
+    acVatoc: number;
     acVact: number;
-    acdVatoi: number;
+    acdVatoc: number;
     acVactTaa: number;
   }> = {};
 
@@ -20,16 +20,16 @@ const calculateVavityCombinations = (wallets: any[]) => {
     
     if (!combinationsByVapaa[vapaa]) {
       combinationsByVapaa[vapaa] = {
-      acVatoi: 0,
+      acVatoc: 0,
         acVact: 0,
-      acdVatoi: 0,
+      acdVatoc: 0,
       acVactTaa: 0,
       };
     }
 
-    combinationsByVapaa[vapaa].acVatoi += wallet.cVatoi || 0;
+    combinationsByVapaa[vapaa].acVatoc += wallet.cVatoc || 0;
     combinationsByVapaa[vapaa].acVact += wallet.cVact || 0;
-    combinationsByVapaa[vapaa].acdVatoi += wallet.cdVatoi || 0;
+    combinationsByVapaa[vapaa].acdVatoc += wallet.cdVatoc || 0;
     combinationsByVapaa[vapaa].acVactTaa += wallet.cVactTaa || 0;
   });
 
@@ -119,9 +119,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (updatedVavityCombinations[vapaa]) {
         // Merge existing totals
         updatedVavityCombinations[vapaa] = {
-          acVatoi: updatedVavityCombinations[vapaa].acVatoi + newVavityCombinations[vapaa].acVatoi,
+          acVatoc: updatedVavityCombinations[vapaa].acVatoc + newVavityCombinations[vapaa].acVatoc,
           acVact: updatedVavityCombinations[vapaa].acVact + newVavityCombinations[vapaa].acVact,
-          acdVatoi: updatedVavityCombinations[vapaa].acdVatoi + newVavityCombinations[vapaa].acdVatoi,
+          acdVatoc: updatedVavityCombinations[vapaa].acdVatoc + newVavityCombinations[vapaa].acdVatoc,
           acVactTaa: updatedVavityCombinations[vapaa].acVactTaa + newVavityCombinations[vapaa].acVactTaa,
         };
       } else {

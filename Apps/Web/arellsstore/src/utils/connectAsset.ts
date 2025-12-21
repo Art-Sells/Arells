@@ -78,7 +78,7 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     const newCVactTaa = balance; // Use balance before deposit (no deposit was sent)
     const newCpVact = Math.max(existingWalletBeforeDeposit.cpVact || 0, currentVapa);
     const newCVact = newCVactTaa * newCpVact;
-    const newCdVatoi = newCVact - (existingWalletBeforeDeposit.cVatoi || 0);
+    const newCdVatoc = newCVact - (existingWalletBeforeDeposit.cVatoc || 0);
 
     const walletData = {
       ...existingWalletBeforeDeposit,
@@ -86,7 +86,7 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
       cVactTaa: newCVactTaa,
       cpVact: newCpVact,
       cVact: parseFloat(newCVact.toFixed(2)),
-      cdVatoi: parseFloat(newCdVatoi.toFixed(2)),
+      cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
     };
 
     // Update the wallet in the array
@@ -170,7 +170,7 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     const newCVactTaa = balanceAfterDeposit;
     const newCpVact = Math.max(existingWallet.cpVact || 0, currentVapa);
     const newCVact = newCVactTaa * newCpVact;
-    const newCdVatoi = newCVact - (existingWallet.cVatoi || 0);
+    const newCdVatoc = newCVact - (existingWallet.cVatoc || 0);
 
     walletData = {
       ...existingWallet,
@@ -178,7 +178,7 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
       cVactTaa: newCVactTaa,
       cpVact: newCpVact,
       cVact: parseFloat(newCVact.toFixed(2)),
-      cdVatoi: parseFloat(newCdVatoi.toFixed(2)),
+      cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
     };
 
     // Update the wallet in the array
@@ -196,21 +196,21 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     const newCVactTaa = balanceAfterDeposit;
     const newCpVact = currentVapa;
     const newCVact = newCVactTaa * newCpVact;
-    const newCVatoi = newCVact; // cVatoi should equal cVact at connection time (after deposit)
-    const newCpVatoi = currentAssetPrice;
-    const newCdVatoi = newCVact - newCVatoi; // Should be 0 at connection time
+    const newCVatoc = newCVact; // cVatoc should equal cVact at connection time (after deposit)
+    const newCpVatoc = currentAssetPrice;
+    const newCdVatoc = newCVact - newCVatoc; // Should be 0 at connection time
 
     walletData = {
       walletId: walletId,
       address: walletAddress,
       vapaa: tokenAddr,
       depositPaid: true, // Mark deposit as paid
-      cVatoi: newCVatoi,
-      cpVatoi: newCpVatoi,
+      cVatoc: newCVatoc,
+      cpVatoc: newCpVatoc,
       cVact: newCVact,
       cpVact: newCpVact,
       cVactTaa: newCVactTaa,
-      cdVatoi: newCdVatoi,
+      cdVatoc: newCdVatoc,
     };
 
     // Add new wallet to VavityAggregator
