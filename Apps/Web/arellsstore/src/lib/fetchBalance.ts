@@ -129,13 +129,17 @@ export const fetchBalance = async ({
         );
         
         if (balanceUpdate) {
-          // Recalculate wallet values based on new balance
-          const newCVactTaa = balanceUpdate.balance;
+          // Recalculate wallet values based on current balance
+          // NOTE: cVactTaa should NOT be updated here - it's a snapshot at connection time (balanceAfterDeposit)
+          // cVactTaa = balance at time of connection (after deposit), never changes
+          // Only update cVact, cpVact, and cdVatoc based on current balance
+          const currentBalance = balanceUpdate.balance;
           const newCpVact = Math.max(wallet.cpVact || 0, assetPrice);
-          const newCVact = newCVactTaa * newCpVact;
+          // Calculate cVact using current balance (not cVactTaa, which is connection-time snapshot)
+          const newCVact = currentBalance * newCpVact;
           const newCdVatoc = newCVact - (wallet.cVatoc || 0);
           
-          console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): cVactTaa=${newCVactTaa}, cVact=${newCVact.toFixed(2)}`);
+          console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): currentBalance=${currentBalance}, cVactTaa=${wallet.cVactTaa} (preserved - connection-time snapshot), cVact=${newCVact.toFixed(2)}`);
           
           // Ensure cpVatoc is set - if it's 0 or missing, set it to current cpVact (VAPA at time of connection)
           // cpVatoc should be the VAPA at time of first connection, so only set if it's missing
@@ -145,7 +149,7 @@ export const fetchBalance = async ({
             ...wallet,
             vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000', // Ensure VAPAA is set
             depositPaid: wallet.depositPaid !== undefined ? wallet.depositPaid : true, // Preserve depositPaid
-            cVactTaa: newCVactTaa,
+            cVactTaa: wallet.cVactTaa, // PRESERVE cVactTaa - it's a snapshot at connection time (balanceAfterDeposit), never update it
             cpVact: newCpVact,
             cpVatoc: newCpVatoc, // Ensure cpVatoc is set if it was missing
             cVact: parseFloat(newCVact.toFixed(2)),

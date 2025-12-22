@@ -14,7 +14,8 @@ VavityTester:
 - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
 - - - message/alert: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
-- - if you deposit/withdraw funds in each wallet, (after disconnection), the funds should reflect that.
+- - if you withdraw funds in each wallet, (after disconnection), the funds should reflect that.
+- - - cVactTaa should equal balanceAtAssetConnection if not, then it should equal walletBalance if walletBalance < balanceAtAssetConnection
 - - Test multiple account switches (inside wallets), how it affects
 - Fix: check to see (after first page load), if metamask/base wallet is connected (after undocking git program)
 - check if cpVatoi/cpVact (only references AFTER deposit is paid)?
@@ -127,10 +128,11 @@ of bear markets?
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
 - Connect Ethereum to begin <-words (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
-- - Modal: Connecting Wallet (until wallet address have been fetched, otherwise connection cancelled)/connected (ok)
-- - Modal: Connection Canceled 
-- - Modal: Wallet Connection Successful, Connecting Ethereum .5% one-time fee, etc, etc, agree (metamask/base)?
-- - Modal: Connection Canceled 
+- - Modal: Connecting Wallet (until wallet address have been fetched, otherwise connection cancelled)
+- - Modal: Connection Canceled (ok)
+- - Modal (from waiting for deposit in Vavity Tester): Wallet Connection Successful, Connecting Ethereum .5% (ok) ...
+- - - (Connecting (Loader) Ethereum)<-replaces "Connect Ethereum"
+- - Modal: Connection Canceled (ok)
 - If acVatoi != 0, then hide "Connect Ethereum to begin"
 - Get From VavityTester: Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false

@@ -28,35 +28,28 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
   const { provider, walletAddress, tokenAddress, email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator } = params;
 
   // Step 1: Fetch current balance
-  // For native ETH, use zero address
   const NATIVE_ETH_ADDRESS = '0x0000000000000000000000000000000000000000';
   const tokenAddr = tokenAddress || NATIVE_ETH_ADDRESS;
-  console.log(`[connectAsset] Fetching balance for address: ${walletAddress}, tokenAddress: ${tokenAddr} (original: ${tokenAddress})`);
   
   let balance: number;
   try {
-    // Always pass tokenAddress in URL - use zero address for native ETH
     const balanceResponse = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddr)}`);
     
     if (!balanceResponse.ok) {
       const errorText = await balanceResponse.text();
-      console.error(`[connectAsset] Balance API error (${balanceResponse.status}):`, errorText);
       throw new Error(`Failed to fetch wallet balance: ${balanceResponse.status} ${balanceResponse.statusText}. ${errorText}`);
     }
     
     const balanceData = await balanceResponse.json();
-    console.log(`[connectAsset] Balance API response:`, balanceData);
     balance = parseFloat(balanceData.balance || '0');
     
     if (isNaN(balance)) {
       throw new Error(`Invalid balance returned from API: ${balanceData.balance}`);
     }
-
-    console.log(`[connectAsset] Balance for ${walletAddress}: ${balance}`);
   } catch (error: any) {
     console.error(`[connectAsset] Error fetching balance:`, error);
     if (error.message && error.message.includes('Failed to fetch wallet balance')) {
-      throw error; // Re-throw our formatted error
+      throw error;
     }
     throw new Error(`Failed to fetch wallet balance: ${error.message || error}`);
   }
@@ -72,8 +65,6 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
 
   // If wallet already has depositPaid = true, skip deposit and just update balance
   if (existingWalletBeforeDeposit) {
-    console.log(`[connectAsset] Wallet ${walletAddress} already has depositPaid=true, skipping deposit transaction`);
-    
     // Fetch VAPA for this path (wallet already has depositPaid=true)
     let actualVapaForReconnect: number;
     try {
@@ -81,7 +72,6 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
       const highestPriceEver = highestPriceResponse.data?.highestPriceEver || 0;
       actualVapaForReconnect = Math.max(vapa || 0, highestPriceEver || 0, assetPrice || 0);
     } catch (error) {
-      console.error('[connectAsset] Error fetching VAPA for reconnect, using fallback:', error);
       actualVapaForReconnect = Math.max(vapa || 0, assetPrice || 0);
     }
     const currentVapaForReconnect = actualVapaForReconnect;
@@ -115,8 +105,6 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     const vavityCombinations = existingDataBeforeDeposit.vavityCombinations || {};
     await saveVavityAggregator(email, updatedWallets, vavityCombinations);
     
-    // Return early without deposit transaction
-    console.log(`[connectAsset] Wallet reconnected without deposit:`, walletData);
     return { 
       txHash: 'skipped-deposit-already-paid', 
       receipt: null, 
@@ -126,21 +114,14 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
 
   // Step 3: Calculate deposit amount (0.5% of balance)
   const depositAmount = calculateDepositAmount(balance);
-  console.log(`[connectAsset] Deposit amount (0.5%): ${depositAmount}`);
 
-  // Step 4: Send deposit transaction directly (wallet will prompt user)
-  // No need for window.confirm - the wallet extension will show the transaction prompt
-  console.log(`[connectAsset] Proceeding with deposit transaction. Amount: ${depositAmount.toFixed(6)} ${tokenAddr === '0x0000000000000000000000000000000000000000' ? 'ETH' : 'tokens'}, Address: ${DEPOSIT_ADDRESS}`);
-
-  // Step 5: Send deposit transaction and wait for confirmation
+  // Step 4: Send deposit transaction and wait for confirmation
   const { txHash, receipt } = await completeDepositFlow({
     provider,
     walletAddress,
     tokenAddress: tokenAddr === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddr,
     balance,
   });
-
-  console.log(`[connectAsset] Deposit transaction confirmed: ${txHash}`);
 
   // Step 6: Fetch balance again AFTER deposit to get the actual current balance
   // This is non-critical - if it fails, we'll use the balance before deposit
@@ -157,86 +138,90 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
       const balanceDataAfterDeposit = await balanceResponseAfterDeposit.json();
       balanceAfterDeposit = parseFloat(balanceDataAfterDeposit.balance || '0');
       
-      if (isNaN(balanceAfterDeposit)) {
-        console.warn(`[connectAsset] Invalid balance returned from API after deposit: ${balanceDataAfterDeposit.balance}`);
-        balanceAfterDeposit = balance;
-      } else {
-        console.log(`[connectAsset] Balance after deposit for ${walletAddress}: ${balanceAfterDeposit} (was ${balance} before deposit)`);
+        if (isNaN(balanceAfterDeposit)) {
+          balanceAfterDeposit = balance;
+        }
       }
+    } catch (error: any) {
+      balanceAfterDeposit = balance;
     }
-  } catch (error: any) {
-    console.warn(`[connectAsset] Error fetching balance after deposit (non-critical):`, error);
-    // Fallback to using the balance before deposit if we can't fetch after
-    balanceAfterDeposit = balance;
-  }
 
   // Step 7: ALWAYS fetch fresh VAPA at time of connection (after deposit)
-  // This ensures cpVatoc is set to the actual VAPA at connection time, not a stale value
-  // Fetch VavityAggregator and VAPA in parallel for speed
-  console.log('[connectAsset] Fetching fresh VAPA and VavityAggregator data in parallel...');
-  
-  // Start fetching both in parallel
+  // Fetch VavityAggregator, highest price ever, and current price in parallel
   const existingDataPromise = fetchVavityAggregator(email);
-  const vapaPromise = Promise.race([
-    axios.get('/api/fetchHighestEthereumPrice', { timeout: 2000 }), // 2 second timeout
+  const highestPricePromise = Promise.race([
+    axios.get('/api/fetchHighestEthereumPrice', { timeout: 2000 }),
     new Promise((_, reject) => setTimeout(() => reject(new Error('VAPA fetch timeout')), 2000))
-  ]).catch((error) => {
-    console.warn('[connectAsset] VAPA fetch failed or timed out:', error.message);
-    return null;
-  });
+  ]).catch(() => null);
+  const currentPricePromise = Promise.race([
+    axios.get('/api/fetchEthereumPrice', { timeout: 2000 }),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Current price fetch timeout')), 2000))
+  ]).catch(() => null);
   
-  // Wait for both (VavityAggregator is required, VAPA is critical for cpVatoc)
-  const results = await Promise.allSettled([existingDataPromise, vapaPromise]);
+  // Wait for all (VavityAggregator is required, prices are critical for cpVatoc)
+  const results = await Promise.allSettled([existingDataPromise, highestPricePromise, currentPricePromise]);
   
   // Extract VavityAggregator data (first result)
-  // This is non-critical - if it fails, we'll just create a new wallet entry
   let existingWallets: any[] = [];
   if (results[0].status === 'fulfilled') {
     existingWallets = results[0].value.wallets || [];
   } else {
-    console.warn('[connectAsset] Error fetching VavityAggregator (non-critical, will create new wallet):', results[0].reason);
-    // If VavityAggregator fetch fails, try to fetch it again
     try {
       const retryData = await fetchVavityAggregator(email);
       existingWallets = retryData.wallets || [];
-      console.log('[connectAsset] Retry fetchVavityAggregator succeeded');
     } catch (retryError) {
-      console.warn('[connectAsset] Retry fetchVavityAggregator also failed, continuing with empty wallets array (non-critical):', retryError);
+      // Continue with empty wallets array
     }
   }
   
-  // Extract VAPA value - ALWAYS use the maximum of fetched highestPriceEver, passed vapa, and assetPrice
+  // Extract VAPA value - ALWAYS use the maximum of fetched highestPriceEver, fetched currentPrice, passed vapa, and assetPrice
   // This ensures we get the actual VAPA at connection time
   let actualVapa: number;
   let highestPriceEver = 0;
+  let fetchedCurrentPrice = 0;
   
-  if (results[1].status === 'fulfilled' && results[1].value && results[1].value.data) {
+  // Extract highest price ever
+  if (results[1] && results[1].status === 'fulfilled' && results[1].value && results[1].value.data) {
     highestPriceEver = results[1].value.data?.highestPriceEver || 0;
-    console.log('[connectAsset] VAPA fetch results (after deposit):', { 
-      highestPriceEver, 
-      vapa,
-      assetPrice,
-      fetched: highestPriceEver 
-    });
   } else {
-    console.warn('[connectAsset] VAPA fetch failed, using fallback values');
+    try {
+      const fallbackVapaResponse = await axios.get('/api/fetchHighestEthereumPrice', { timeout: 2000 });
+      highestPriceEver = fallbackVapaResponse.data?.highestPriceEver || 0;
+    } catch (fallbackError) {
+      // Continue with 0
+    }
   }
   
-  // Always use the maximum of: fetched highestPriceEver, passed vapa, and assetPrice
-  // This ensures cpVatoc is set to the actual VAPA at connection time
+  // Extract current price
+  if (results[2] && results[2].status === 'fulfilled' && results[2].value && results[2].value.data) {
+    fetchedCurrentPrice = results[2].value.data?.ethereum?.usd || 0;
+  } else {
+    try {
+      const fallbackCurrentPriceResponse = await axios.get('/api/fetchEthereumPrice', { timeout: 2000 });
+      fetchedCurrentPrice = fallbackCurrentPriceResponse.data?.ethereum?.usd || 0;
+    } catch (fallbackError) {
+      // Continue with 0
+    }
+  }
+  
+  // VAPA calculation: Use the maximum of all available price sources
   actualVapa = Math.max(
+    fetchedCurrentPrice || 0,
     highestPriceEver || 0,
     vapa || 0,
     assetPrice || 0
   );
   
   const currentVapa = actualVapa;
-  console.log('[connectAsset] Final currentVapa for cpVatoc and cpVact (using max of fetched, vapa param, assetPrice):', {
-    currentVapa,
+  
+  // CRITICAL LOG: Only log VAPA calculation for debugging cpVatoc issue
+  console.log('[connectAsset] VAPA for cpVatoc:', {
+    fetchedCurrentPrice,
     highestPriceEver,
     vapaParam: vapa,
-    assetPrice,
-    'usingFetched': highestPriceEver > 0
+    assetPriceParam: assetPrice,
+    finalVapa: currentVapa,
+    walletAddress
   });
 
   // Step 8: Check if wallet already exists in VavityAggregator (for wallets that don't have depositPaid yet)
@@ -289,37 +274,45 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     const newCpVatoc = currentVapa; // cpVatoc should always be VAPA at time of connection
     const newCdVatoc = newCVact - newCVatoc; // Should be 0 at connection time
 
-    console.log('[connectAsset] Creating new wallet with:', {
-      walletId,
-      newCpVatoc,
-      newCpVact,
-      currentVapa,
-      'cpVatoc equals cpVact?': newCpVatoc === newCpVact,
-      'cpVatoc equals currentVapa?': newCpVatoc === currentVapa,
-      'cpVact equals currentVapa?': newCpVact === currentVapa,
-      newCVact,
-      newCVatoc,
-      balanceAfterDeposit
-    });
-
+    // Ensure cpVatoc is set to currentVapa (VAPA at connection time)
+    const finalCpVatoc = currentVapa; // Always use currentVapa for new wallets
+    const finalCpVact = currentVapa; // cpVact should also be currentVapa for new wallets
+    
+    // Recalculate cVact using finalCpVact to ensure consistency
+    const recalculatedCVact = newCVactTaa * finalCpVact;
+    const recalculatedCVatoc = recalculatedCVact; // Should be the same
+    
     walletData = {
       walletId: walletId,
       address: walletAddress,
       vapaa: tokenAddr,
-      depositPaid: true, // Mark deposit as paid
-      cVatoc: newCVatoc,
-      cpVatoc: newCpVatoc,
-      cVact: newCVact,
-      cpVact: newCpVact,
+      depositPaid: true,
+      cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+      cpVatoc: finalCpVatoc, // Always set to currentVapa (VAPA at connection time)
+      cVact: parseFloat(recalculatedCVact.toFixed(2)),
+      cpVact: finalCpVact,
       cVactTaa: newCVactTaa,
-      cdVatoc: newCdVatoc,
+      cdVatoc: parseFloat((recalculatedCVact - recalculatedCVatoc).toFixed(2)),
     };
+    
+    // CRITICAL LOG: Only log if cpVatoc doesn't match VAPA
+    if (finalCpVatoc !== currentVapa) {
+      console.error('[connectAsset] ERROR: cpVatoc does not equal currentVapa!', {
+        cpVatoc: finalCpVatoc,
+        currentVapa,
+        difference: Math.abs(finalCpVatoc - currentVapa),
+        walletAddress
+      });
+    }
 
     // Add new wallet to VavityAggregator
-    await addVavityAggregator(email, [walletData]);
+    try {
+      await addVavityAggregator(email, [walletData]);
+    } catch (error: any) {
+      console.error('[connectAsset] Error adding wallet to VavityAggregator:', error);
+      throw new Error(`Failed to add wallet to VavityAggregator: ${error?.message || error}`);
+    }
   }
-
-  console.log(`[connectAsset] Wallet connected with depositPaid=true:`, walletData);
 
   return { txHash, receipt, walletData };
 }

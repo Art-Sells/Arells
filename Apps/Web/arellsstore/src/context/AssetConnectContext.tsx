@@ -93,10 +93,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   useEffect(() => {
     
     const processPendingWallet = async () => {
-      console.log('[AssetConnect] processPendingWallet called. email:', email, 'window:', typeof window !== 'undefined');
-      
       if (!email || typeof window === 'undefined') {
-        console.log('[AssetConnect] Skipping - no email or not in browser');
         return;
       }
       
@@ -104,17 +101,39 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const pendingType = sessionStorage.getItem('pendingWalletType');
       const depositCompleted = sessionStorage.getItem('depositCompleted') === 'true';
       
-      console.log('[AssetConnect] Pending wallet check:', { pendingAddress, pendingType, depositCompleted });
-      
       if (!pendingAddress || !pendingType) {
-        console.log('[AssetConnect] No pending wallet found in sessionStorage');
+        return;
+      }
+      
+      // Check if deposit was cancelled FIRST - before any state updates
+      const depositCancelledKey = `depositCancelled_${pendingType}_${pendingAddress.toLowerCase()}`;
+      const depositCancelled = sessionStorage.getItem(depositCancelledKey);
+      if (depositCancelled === 'true') {
+        // Clear ALL pending wallet state since it was cancelled
+        if (pendingType === 'metamask') {
+          setPendingMetaMask(null);
+          sessionStorage.removeItem('pendingMetaMask');
+        } else {
+          setPendingBase(null);
+          sessionStorage.removeItem('pendingBase');
+        }
+        sessionStorage.removeItem('pendingWalletAddress');
+        sessionStorage.removeItem('pendingWalletType');
+        sessionStorage.removeItem('pendingWalletId');
+        sessionStorage.removeItem('depositCompleted');
+        sessionStorage.removeItem('depositConfirmedMetaMask');
+        sessionStorage.removeItem('depositConfirmedBase');
+        // Clear processedKey
+        const processedKey = `processed_${pendingAddress.toLowerCase()}`;
+        sessionStorage.removeItem(processedKey);
+        isProcessingRef.current = false;
+        hasProcessedRef.current = false;
         return;
       }
       
       // Double-check to prevent race conditions
       if (isProcessingRef.current || hasProcessedRef.current) {
-        console.log('[AssetConnect] Skipping - already processing or processed (double-check)');
-        return; // Prevent multiple executions
+        return;
       }
       
       // Check if we've already processed this address (only if deposit was completed)
@@ -124,25 +143,16 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         : 'depositConfirmedBase';
       const depositConfirmed = sessionStorage.getItem(depositConfirmedKey) === 'true';
       
-      console.log('[AssetConnect] Checking processedKey:', { 
-        processedKey, 
-        hasProcessedKey: !!sessionStorage.getItem(processedKey),
-        depositConfirmedKey,
-        depositConfirmed 
-      });
-      
       // Check if wallet already exists in VavityAggregator with depositPaid = true
       // This handles the case where wallet was disconnected and reconnected
-      const existingData = await fetchVavityAggregator(email);
-      const existingWallets = existingData.wallets || [];
+        const existingData = await fetchVavityAggregator(email);
+        const existingWallets = existingData.wallets || [];
       const existingWalletWithDeposit = existingWallets.find(
         (wallet: any) => wallet.address?.toLowerCase() === pendingAddress.toLowerCase() && wallet.depositPaid === true
       );
 
       // If wallet already exists with depositPaid = true, skip deposit flow and just mark as connected
       if (existingWalletWithDeposit) {
-        console.log('[AssetConnect] Wallet already exists with depositPaid=true, skipping deposit flow');
-        
         // Update balance without asking for deposit
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         try {
@@ -172,7 +182,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             
             const vavityCombinations = existingData.vavityCombinations || {};
             await saveVavityAggregator(email, updatedWallets, vavityCombinations);
-            console.log('[AssetConnect] Updated wallet balance without deposit');
           }
         } catch (error) {
           console.error('[AssetConnect] Error updating wallet balance:', error);
@@ -191,15 +200,15 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           sessionStorage.removeItem('pendingBase');
         }
         
-        sessionStorage.setItem(processedKey, 'true');
-        sessionStorage.removeItem('pendingWalletAddress');
-        sessionStorage.removeItem('pendingWalletType');
+          sessionStorage.setItem(processedKey, 'true');
+          sessionStorage.removeItem('pendingWalletAddress');
+          sessionStorage.removeItem('pendingWalletType');
         sessionStorage.removeItem('pendingWalletId');
-        sessionStorage.removeItem('depositCompleted');
+          sessionStorage.removeItem('depositCompleted');
         hasProcessedRef.current = true;
         isProcessingRef.current = false;
-        return;
-      }
+          return;
+        }
 
       // Only skip if deposit was confirmed AND we've processed it AND wallet is in VavityAggregator
       const addressInVavity = existingWallets.some(
@@ -207,7 +216,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       );
 
       if (sessionStorage.getItem(processedKey) && depositConfirmed && addressInVavity) {
-        console.log('[AssetConnect] Pending wallet already processed with confirmed deposit and in VavityAggregator, clearing flags');
           sessionStorage.removeItem('pendingWalletAddress');
           sessionStorage.removeItem('pendingWalletType');
           sessionStorage.removeItem('depositCompleted');
@@ -218,17 +226,13 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       
       // Clear processedKey and depositConfirmed if wallet is not in VavityAggregator (retry scenario)
       if ((sessionStorage.getItem(processedKey) || depositConfirmed) && !addressInVavity) {
-        console.log('[AssetConnect] Found processedKey/depositConfirmed but wallet not in VavityAggregator, clearing for retry');
         sessionStorage.removeItem(processedKey);
         sessionStorage.removeItem(depositConfirmedKey);
       }
       
       isProcessingRef.current = true;
-      console.log('[AssetConnect] Processing pending wallet after reload:', pendingAddress, 'Type:', pendingType);
       
       // Add a delay to ensure wallet provider is ready after page reload
-      // Wait a bit longer to ensure wallet extension is fully loaded
-      console.log('[AssetConnect] Waiting for wallet provider to be ready...');
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       try {
@@ -238,7 +242,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         // Get pending wallet ID from sessionStorage
         const pendingWalletId = sessionStorage.getItem('pendingWalletId');
         if (!pendingWalletId) {
-          console.log('[AssetConnect] No pending wallet ID found, skipping');
           isProcessingRef.current = false;
           return;
         }
@@ -252,26 +255,20 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           setPendingBase(pendingWalletData);
           sessionStorage.setItem('pendingBase', JSON.stringify(pendingWalletData));
         }
-        console.log('[AssetConnect] Set pending wallet state for button update');
 
         // Step 1: Get wallet provider to fetch balance and send transaction
-        console.log('[AssetConnect] Looking for wallet provider. Type:', pendingType);
         let provider: any = null;
         if (pendingType === 'metamask') {
           if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
             provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
-            console.log('[AssetConnect] Found MetaMask in providers array');
           } else if ((window as any).ethereum?.isMetaMask) {
             provider = (window as any).ethereum;
-            console.log('[AssetConnect] Found MetaMask as main ethereum object');
           }
         } else if (pendingType === 'base') {
           if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
             provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
-            console.log('[AssetConnect] Found Base in providers array');
           } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
             provider = (window as any).ethereum;
-            console.log('[AssetConnect] Found Base as main ethereum object');
           }
         }
 
@@ -279,15 +276,12 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           console.error('[AssetConnect] Wallet provider not found! ethereum object:', !!((window as any).ethereum));
           throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
         }
-        
-        console.log('[AssetConnect] Wallet provider found, proceeding with deposit flow...');
 
         // Step 2: Automatically trigger connectAsset flow (deposit + balance fetch)
         // This will prompt user for deposit, process transaction, and save wallet
         if (!depositCompleted) {
           try {
             const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
-            console.log('[processPendingWallet] Automatically triggering connectAsset flow...');
             
             // Use connectAssetUtil which handles deposit prompt, transaction, and balance fetching
             const { txHash, receipt, walletData } = await connectAssetUtil({
@@ -301,8 +295,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               fetchVavityAggregator,
               saveVavityAggregator,
             });
-
-            console.log(`[processPendingWallet] Asset connected successfully: ${txHash}`);
             
             // Mark deposit as confirmed for this wallet type
             if (pendingType === 'metamask') {
@@ -340,25 +332,34 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               connectError.code === 'ACTION_REJECTED';
             
             if (isCancelled) {
-              console.log('User cancelled deposit, clearing pending wallet state');
-              // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
-              if (pendingType === 'metamask') {
-                setPendingMetaMask(null);
-                sessionStorage.removeItem('pendingMetaMask');
-              } else {
-                setPendingBase(null);
-                sessionStorage.removeItem('pendingBase');
-              }
+              // Set cancellation flag to prevent auto-trigger on reload
+              const depositCancelledKey = `depositCancelled_${pendingType}_${pendingAddress.toLowerCase()}`;
+              sessionStorage.setItem(depositCancelledKey, 'true');
+              
+              // Clear ALL sessionStorage items FIRST
+              sessionStorage.removeItem('pendingMetaMask');
+              sessionStorage.removeItem('pendingBase');
               sessionStorage.removeItem('pendingWalletAddress');
               sessionStorage.removeItem('pendingWalletType');
               sessionStorage.removeItem('pendingWalletId');
               sessionStorage.removeItem('depositCompleted');
+              sessionStorage.removeItem('depositConfirmedMetaMask');
+              sessionStorage.removeItem('depositConfirmedBase');
+              
               // Clear processedKey so it doesn't auto-trigger again
               const processedKey = `processed_${pendingAddress.toLowerCase()}`;
               sessionStorage.removeItem(processedKey);
+              
+              // Clear React state AFTER sessionStorage is cleared
+              // Clear BOTH wallet types to be safe
+              setPendingMetaMask(null);
+              setPendingBase(null);
+              
+              // Reset processing flags
               isProcessingRef.current = false;
               hasProcessedRef.current = false;
               lastProcessedAddressRef.current = null; // Reset so it can be retried if user clicks again
+              
               return;
             }
             
@@ -430,15 +431,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           const newCpVatoc = currentVapa; // cpVatoc should always be VAPA at time of connection
           const newCdVatoc = newCVact - newCVatoc;
           
-          console.log('[AssetConnect] Creating wallet with:', {
-            newCpVatoc,
-            newCpVact,
-            currentVapa,
-            'cpVatoc equals cpVact?': newCpVatoc === newCpVact,
-            'cpVatoc equals currentVapa?': newCpVatoc === currentVapa,
-            'cpVact equals currentVapa?': newCpVact === currentVapa,
-          });
-          
           const walletData = {
             walletId: pendingWalletId,
             address: pendingAddress,
@@ -453,7 +445,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           };
 
           await addVavityAggregator(email, [walletData]);
-          console.log('Pending wallet added to VavityAggregator with VAPAA:', tokenAddress);
           
           if (pendingType === 'metamask') {
             setConnectedMetaMask(true);
@@ -492,7 +483,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       // Check if this is a different pending wallet than we last processed
       const isNewPendingWallet = lastProcessedAddressRef.current !== pendingAddress.toLowerCase();
       if (isNewPendingWallet) {
-        console.log('[AssetConnect] New pending wallet detected, resetting processing flags and clearing deposit confirmed flags');
         hasProcessedRef.current = false;
         isProcessingRef.current = false;
         lastProcessedAddressRef.current = pendingAddress.toLowerCase();
@@ -506,10 +496,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         console.log('[AssetConnect] Found pending wallet, processing automatically...');
     processPendingWallet();
       } else {
-        console.log('[AssetConnect] Skipping - already processed/processing. hasProcessed:', hasProcessedRef.current, 'isProcessing:', isProcessingRef.current);
       }
     } else {
-      console.log('[AssetConnect] No pending wallet found');
       // Reset refs if no pending wallet
       hasProcessedRef.current = false;
       isProcessingRef.current = false;
@@ -1005,20 +993,14 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         throw new Error('Please sign in first to connect a wallet.');
       }
 
-      console.log(`[connectAsset] Requesting ${walletType} wallet connection...`);
-      console.log(`[connectAsset] walletType type:`, typeof walletType, 'value:', walletType);
-      
       // Step 1: Connect to wallet
       const { accounts } = await connectWalletUtil(walletType);
-      
-      console.log('Accounts received:', accounts);
       
       if (!accounts || accounts.length === 0) {
         throw new Error(`No accounts found. Please approve the connection in ${walletType === 'metamask' ? 'MetaMask' : 'Base'}.`);
       }
 
       const walletAddress = accounts[0];
-      console.log('Wallet address from request:', walletAddress);
       
       // Create wallet ID immediately (but don't mark as connected yet)
       const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -1055,7 +1037,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
       
       // Get wallet provider to trigger deposit flow immediately (no reload needed)
-      console.log('[connectAsset] Wallet connected, triggering deposit flow immediately...');
       let provider: any = null;
       if (walletType === 'metamask') {
         if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
@@ -1079,7 +1060,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       // Trigger deposit flow immediately
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
-        console.log('[connectAsset] Automatically triggering deposit flow...');
         
         const { txHash, receipt, walletData } = await connectAssetUtil({
           provider,
@@ -1092,8 +1072,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           fetchVavityAggregator,
           saveVavityAggregator,
         });
-        
-        console.log(`[connectAsset] Asset connected successfully: ${txHash}`);
         
         // Mark deposit as confirmed
         if (walletType === 'metamask') {

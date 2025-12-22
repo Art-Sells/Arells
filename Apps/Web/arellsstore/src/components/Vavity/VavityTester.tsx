@@ -51,6 +51,9 @@ const VavityTester: React.FC = () => {
   // Connect Wallet state
   const [connectedAddress, setConnectedAddress] = useState<string>('');
   
+  // Force update counter to trigger re-render when cancellation happens
+  const [forceUpdate, setForceUpdate] = useState(0);
+  
   // Track previous connection states to detect when a wallet becomes connected
   const prevConnectedMetaMaskRef = useRef<boolean>(false);
   const prevConnectedBaseRef = useRef<boolean>(false);
@@ -472,6 +475,13 @@ const VavityTester: React.FC = () => {
             // Get wallet address before clearing state
             const walletAddress = walletType === 'metamask' ? pendingMetaMask?.address : pendingBase?.address;
             
+            // Set cancellation flag to prevent auto-trigger on reload
+            if (walletAddress) {
+              const depositCancelledKey = `depositCancelled_${walletType}_${walletAddress.toLowerCase()}`;
+              sessionStorage.setItem(depositCancelledKey, 'true');
+              console.log('Set cancellation flag:', depositCancelledKey);
+            }
+            
             // Clear ALL sessionStorage items FIRST (before state updates)
             // This ensures the setInterval check will see cleared values
             sessionStorage.removeItem('pendingMetaMask');
@@ -494,19 +504,44 @@ const VavityTester: React.FC = () => {
             const verifyPendingBase = sessionStorage.getItem('pendingBase');
             console.log('Verification - pendingMetaMask in sessionStorage:', verifyPendingMetaMask, 'pendingBase:', verifyPendingBase);
             
-            // Clear React state AFTER sessionStorage is cleared
+            // Clear React state IMMEDIATELY - do this synchronously
             // Clear BOTH wallet types' state to be safe (in case of any cross-contamination)
+            console.log('Clearing React state immediately...');
+            
+            // Clear context state first
             setPendingMetaMask(null);
             setPendingBase(null);
+            
+            // Clear local state
             setHasPendingMetaMaskInStorage(false);
             setHasPendingBaseInStorage(false);
             setIsConnectingMetaMask(false);
             setIsConnectingBase(false);
-            
-            // Clear any error state
             setError(null);
             
-            console.log('Pending wallet state cleared after cancellation. sessionStorage cleared, state updated.');
+            // Force a re-render by updating the forceUpdate counter
+            setForceUpdate(prev => prev + 1);
+            
+            // Double-check sessionStorage is cleared and update state again
+            // Use requestAnimationFrame to ensure this happens after React's state updates
+            requestAnimationFrame(() => {
+              const hasPendingMetaMask = !!sessionStorage.getItem('pendingMetaMask');
+              const hasPendingBase = !!sessionStorage.getItem('pendingBase');
+              console.log('Post-cancellation check - hasPendingMetaMask:', hasPendingMetaMask, 'hasPendingBase:', hasPendingBase);
+              
+              if (hasPendingMetaMask || hasPendingBase) {
+                console.warn('SessionStorage still has pending wallet after cancellation, clearing again');
+                sessionStorage.removeItem('pendingMetaMask');
+                sessionStorage.removeItem('pendingBase');
+              }
+              
+              setHasPendingMetaMaskInStorage(false);
+              setHasPendingBaseInStorage(false);
+              setPendingMetaMask(null);
+              setPendingBase(null);
+            });
+            
+            console.log('Pending wallet state cleared after cancellation. sessionStorage cleared, state updated. Cancellation flag set to prevent auto-trigger on reload.');
             return;
           }
           // For other errors, show them
@@ -519,6 +554,12 @@ const VavityTester: React.FC = () => {
       // If wallet extension is connected but no pending wallet and not fully connected, create pending wallet
       if (walletExtensionConnected && !pendingWallet && !isFullyConnected && walletAddress) {
         console.log(`[Connect Asset] Wallet extension connected but no pending wallet, creating pending wallet...`);
+        
+        // Clear any previous cancellation flag for this wallet address (user is trying again)
+        const depositCancelledKey = `depositCancelled_${walletType}_${walletAddress.toLowerCase()}`;
+        sessionStorage.removeItem(depositCancelledKey);
+        console.log('Cleared previous cancellation flag:', depositCancelledKey);
+        
         // Create pending wallet info
         const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         const pendingWalletData = { address: walletAddress, walletId };
@@ -576,8 +617,53 @@ const VavityTester: React.FC = () => {
         error?.code === 'ACTION_REJECTED';
       
       if (isCancelled) {
-        // User cancelled - don't show error, state should already be cleared
-        console.log('[Connect Asset] User cancelled, error already handled');
+        // User cancelled - clear all state immediately
+        console.log('[Connect Asset] User cancelled, clearing all state');
+        
+        // Get wallet address before clearing
+        const walletAddress = walletType === 'metamask' ? pendingMetaMask?.address : pendingBase?.address;
+        
+        // Set cancellation flag to prevent auto-trigger on reload
+        if (walletAddress) {
+          const depositCancelledKey = `depositCancelled_${walletType}_${walletAddress.toLowerCase()}`;
+          sessionStorage.setItem(depositCancelledKey, 'true');
+        }
+        
+        // Clear ALL sessionStorage items
+        sessionStorage.removeItem('pendingMetaMask');
+        sessionStorage.removeItem('pendingBase');
+        sessionStorage.removeItem('pendingWalletAddress');
+        sessionStorage.removeItem('pendingWalletType');
+        sessionStorage.removeItem('pendingWalletId');
+        sessionStorage.removeItem('depositCompleted');
+        sessionStorage.removeItem('depositConfirmedMetaMask');
+        sessionStorage.removeItem('depositConfirmedBase');
+        
+        if (walletAddress) {
+          const processedKey = `processed_${walletAddress.toLowerCase()}`;
+          sessionStorage.removeItem(processedKey);
+        }
+        
+        // Clear React state IMMEDIATELY
+        setPendingMetaMask(null);
+        setPendingBase(null);
+        setHasPendingMetaMaskInStorage(false);
+        setHasPendingBaseInStorage(false);
+        setIsConnectingMetaMask(false);
+        setIsConnectingBase(false);
+        setError(null);
+        
+        // Force immediate re-check
+        requestAnimationFrame(() => {
+          const hasPendingMetaMask = !!sessionStorage.getItem('pendingMetaMask');
+          const hasPendingBase = !!sessionStorage.getItem('pendingBase');
+          setHasPendingMetaMaskInStorage(hasPendingMetaMask);
+          setHasPendingBaseInStorage(hasPendingBase);
+          if (!hasPendingMetaMask) setPendingMetaMask(null);
+          if (!hasPendingBase) setPendingBase(null);
+        });
+        
+        console.log('[Connect Asset] State cleared after cancellation');
         return;
       }
       
@@ -654,10 +740,21 @@ const VavityTester: React.FC = () => {
                   pointerEvents: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)) ? 'none' : 'auto',
                 }}
               >
-                {connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage ? 'CONNECTED TO METAMASK' : 
-                 ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected) ? 'WAITING FOR DEPOSIT...' :
-                 isConnectingMetaMask ? 'CONNECTING...' : 
-                 'CONNECT ETHEREUM WITH METAMASK'}
+                {(() => {
+                  // Check if there's actually a pending wallet (double-check sessionStorage)
+                  const actuallyPending = sessionStorage.getItem('pendingMetaMask') || pendingMetaMask;
+                  const shouldShowWaiting = actuallyPending && metaMaskExtensionConnected;
+                  
+                  if (connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage && !actuallyPending) {
+                    return 'CONNECTED TO METAMASK';
+                  } else if (shouldShowWaiting) {
+                    return 'WAITING FOR DEPOSIT...';
+                  } else if (isConnectingMetaMask) {
+                    return 'CONNECTING...';
+                  } else {
+                    return 'CONNECT ETHEREUM WITH METAMASK';
+                  }
+                })()}
               </button>
           <button
                 onClick={handleConnectBase}
@@ -677,10 +774,21 @@ const VavityTester: React.FC = () => {
                   pointerEvents: ((connectedBase && !pendingBase && !hasPendingBaseInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)) ? 'none' : 'auto',
           }}
         >
-                {connectedBase && !pendingBase && !hasPendingBaseInStorage ? 'CONNECTED TO BASE' : 
-                 ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected) ? 'WAITING FOR DEPOSIT...' :
-                 isConnectingBase ? 'CONNECTING...' : 
-                 'CONNECT ETHEREUM WITH BASE'}
+                {(() => {
+                  // Check if there's actually a pending wallet (double-check sessionStorage)
+                  const actuallyPending = sessionStorage.getItem('pendingBase') || pendingBase;
+                  const shouldShowWaiting = actuallyPending && baseExtensionConnected;
+                  
+                  if (connectedBase && !pendingBase && !hasPendingBaseInStorage && !actuallyPending) {
+                    return 'CONNECTED TO BASE';
+                  } else if (shouldShowWaiting) {
+                    return 'WAITING FOR DEPOSIT...';
+                  } else if (isConnectingBase) {
+                    return 'CONNECTING...';
+                  } else {
+                    return 'CONNECT ETHEREUM WITH BASE';
+                  }
+                })()}
         </button>
             </div>
             {connectedAddress && !isConnectingMetaMask && !isConnectingBase && (
