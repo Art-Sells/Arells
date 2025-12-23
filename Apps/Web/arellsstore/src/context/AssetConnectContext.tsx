@@ -1,10 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
+import axios from 'axios';
 import { connectWallet as connectWalletUtil, WalletType } from '../utils/walletConnection';
 import { useVavity } from './VavityAggregator';
 import { completeDepositFlow, calculateDepositAmount } from '../utils/depositTransaction';
 import { connectAsset as connectAssetUtil } from '../utils/connectAsset';
+import { checkExistingDepositTransaction, verifyTransactionExists } from '../utils/checkDepositTransaction';
 
 interface AssetConnectContextType {
   // Auto-connected wallets (detected on page load)
@@ -48,41 +50,102 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [isConnectingMetaMask, setIsConnectingMetaMask] = useState<boolean>(false);
   const [isConnectingBase, setIsConnectingBase] = useState<boolean>(false);
   
-  // Pending wallets (connected but deposit not confirmed)
-  const [pendingMetaMask, setPendingMetaMask] = useState<{ address: string; walletId: string } | null>(() => {
-    if (typeof window !== 'undefined') {
-      const pending = sessionStorage.getItem('pendingMetaMask');
-      return pending ? JSON.parse(pending) : null;
-    }
-    return null;
-  });
-  const [pendingBase, setPendingBase] = useState<{ address: string; walletId: string } | null>(() => {
-    if (typeof window !== 'undefined') {
-      const pending = sessionStorage.getItem('pendingBase');
-      return pending ? JSON.parse(pending) : null;
-    }
-    return null;
-  });
+  // Pending wallets (connected but deposit not confirmed) - initialized from backend JSON
+  const [pendingMetaMask, setPendingMetaMask] = useState<{ address: string; walletId: string } | null>(null);
+  const [pendingBase, setPendingBase] = useState<{ address: string; walletId: string } | null>(null);
   
-  // Initialize connected state from localStorage on mount (only if deposit was confirmed)
-  const [connectedMetaMask, setConnectedMetaMask] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      // Only mark as connected if deposit was confirmed (check sessionStorage)
-      const depositConfirmed = sessionStorage.getItem('depositConfirmedMetaMask') === 'true';
-      return depositConfirmed && !!localStorage.getItem('lastConnectedMetaMask');
-    }
-    return false;
-  });
-  const [connectedBase, setConnectedBase] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const depositConfirmed = sessionStorage.getItem('depositConfirmedBase') === 'true';
-      return depositConfirmed && !!localStorage.getItem('lastConnectedBase');
-    }
-    return false;
-  });
+  // Initialize connected state from backend JSON on mount
+  const [connectedMetaMask, setConnectedMetaMask] = useState<boolean>(false);
+  const [connectedBase, setConnectedBase] = useState<boolean>(false);
   
   // Get VavityAggregator context for wallet operations
   const { email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator } = useVavity();
+
+  // Helper function to save pending connection to backend
+  const savePendingConnectionToBackend = async (address: string, walletId: string, walletType: 'metamask' | 'base') => {
+    if (!email) return;
+    try {
+      await axios.post('/api/savePendingConnection', {
+        email,
+        pendingConnection: {
+          address,
+          walletId,
+          walletType,
+          timestamp: Date.now(),
+        },
+      });
+    } catch (error) {
+      console.error('[AssetConnect] Error saving pending connection to backend:', error);
+    }
+  };
+
+  // Helper function to remove pending connection from backend
+  const removePendingConnectionFromBackend = async (address: string, walletType: 'metamask' | 'base') => {
+    if (!email) return;
+    try {
+      await axios.delete('/api/savePendingConnection', {
+        data: { email, address, walletType },
+      });
+    } catch (error) {
+      console.error('[AssetConnect] Error removing pending connection from backend:', error);
+    }
+  };
+
+  // Helper function to fetch pending connections from backend
+  const fetchPendingConnectionsFromBackend = async (): Promise<any[]> => {
+    if (!email) return [];
+    try {
+      const response = await axios.get('/api/savePendingConnection', { params: { email } });
+      return response.data.pendingConnections || [];
+    } catch (error) {
+      console.error('[AssetConnect] Error fetching pending connections from backend:', error);
+      return [];
+    }
+  };
+  
+  // Initialize button state from backend JSON on mount
+  useEffect(() => {
+    const initializeButtonStateFromBackend = async () => {
+      if (!email || typeof window === 'undefined') return;
+      
+      try {
+        const pendingConnections = await fetchPendingConnectionsFromBackend();
+        const activePending = pendingConnections.filter(
+          (pc: any) => !pc.depositCancelled && !pc.depositCompleted
+        );
+        
+        // Set pending wallet state from backend JSON
+        const pendingMetaMaskConn = activePending.find((pc: any) => pc.walletType === 'metamask');
+        const pendingBaseConn = activePending.find((pc: any) => pc.walletType === 'base');
+        
+        if (pendingMetaMaskConn) {
+          setPendingMetaMask({ address: pendingMetaMaskConn.address, walletId: pendingMetaMaskConn.walletId });
+        }
+        if (pendingBaseConn) {
+          setPendingBase({ address: pendingBaseConn.address, walletId: pendingBaseConn.walletId });
+        }
+        
+        // Set connected state from backend JSON (if deposit was completed)
+        const completedMetaMask = pendingConnections.find(
+          (pc: any) => pc.walletType === 'metamask' && pc.depositCompleted && !pc.depositCancelled
+        );
+        const completedBase = pendingConnections.find(
+          (pc: any) => pc.walletType === 'base' && pc.depositCompleted && !pc.depositCancelled
+        );
+        
+        if (completedMetaMask && localStorage.getItem('lastConnectedMetaMask')) {
+          setConnectedMetaMask(true);
+        }
+        if (completedBase && localStorage.getItem('lastConnectedBase')) {
+          setConnectedBase(true);
+        }
+      } catch (error) {
+        console.error('[AssetConnect] Error initializing button state from backend:', error);
+      }
+    };
+    
+    initializeButtonStateFromBackend();
+  }, [email]);
   
   // Use refs to prevent multiple executions (persist across re-renders but reset on mount)
   const hasProcessedRef = useRef(false);
@@ -97,35 +160,79 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         return;
       }
       
-      const pendingAddress = sessionStorage.getItem('pendingWalletAddress');
-      const pendingType = sessionStorage.getItem('pendingWalletType');
-      const depositCompleted = sessionStorage.getItem('depositCompleted') === 'true';
+      // CRITICAL: Check backend FIRST for pending connections (independent of page reloads)
+      // This JSON tracks deposits per wallet type (metamask vs base) and address
+      let pendingConnection = null;
+      let completedConnectionForThisWallet = null;
+      try {
+        const backendPendingConnections = await fetchPendingConnectionsFromBackend();
+        
+        // Get current pending wallet from React state (initialized from backend JSON)
+        const currentPendingMetaMask = pendingMetaMask;
+        const currentPendingBase = pendingBase;
+        const pendingAddressFromStorage = currentPendingMetaMask?.address || currentPendingBase?.address;
+        const pendingTypeFromStorage = currentPendingMetaMask ? 'metamask' : (currentPendingBase ? 'base' : null) as WalletType | null;
+        
+        // Find connection matching current address AND wallet type
+        const matchingConnection = backendPendingConnections.find(
+          (pc: any) => 
+            pc.address?.toLowerCase() === pendingAddressFromStorage?.toLowerCase() &&
+            pc.walletType === pendingTypeFromStorage
+        );
+        
+        if (matchingConnection) {
+          // If deposit was completed for this specific wallet type, use it
+          if (matchingConnection.depositCompleted && !matchingConnection.depositCancelled) {
+            completedConnectionForThisWallet = matchingConnection;
+            console.log('[AssetConnect] Found completed deposit in JSON for', pendingTypeFromStorage, 'wallet:', matchingConnection.address);
+          } else if (!matchingConnection.depositCancelled && !matchingConnection.depositCompleted) {
+            // Still pending
+            pendingConnection = matchingConnection;
+          }
+        }
+        
+        // Fallback: Get the most recent pending connection that hasn't been cancelled (if no match found)
+        if (!pendingConnection && !completedConnectionForThisWallet) {
+          const activeConnections = backendPendingConnections.filter(
+            (pc: any) => !pc.depositCancelled && !pc.depositCompleted
+          );
+          if (activeConnections.length > 0) {
+            activeConnections.sort((a: any, b: any) => b.timestamp - a.timestamp);
+            pendingConnection = activeConnections[0];
+          }
+        }
+      } catch (error) {
+        console.error('[AssetConnect] Error fetching pending connections from backend:', error);
+      }
+      
+      // If we have a completed connection for this wallet type, use that (deposit was done, just need to create wallet)
+      if (completedConnectionForThisWallet && !pendingConnection) {
+        pendingConnection = completedConnectionForThisWallet;
+      }
+      
+      // Get pending info from backend JSON ONLY (no sessionStorage fallback)
+      const pendingAddress = pendingConnection?.address;
+      const pendingType = pendingConnection?.walletType as WalletType | undefined;
+      const pendingWalletId = pendingConnection?.walletId;
+      const depositCompleted = pendingConnection?.depositCompleted || false;
+      const depositConfirmed = pendingConnection?.depositCompleted || false;
       
       if (!pendingAddress || !pendingType) {
         return;
       }
       
-      // Check if deposit was cancelled FIRST - before any state updates
-      const depositCancelledKey = `depositCancelled_${pendingType}_${pendingAddress.toLowerCase()}`;
-      const depositCancelled = sessionStorage.getItem(depositCancelledKey);
-      if (depositCancelled === 'true') {
+      // Check if deposit was cancelled FIRST - before any state updates (from backend JSON ONLY)
+      const depositCancelled = pendingConnection?.depositCancelled || false;
+      if (depositCancelled) {
+        // Remove from backend FIRST (independent of page reloads)
+        await removePendingConnectionFromBackend(pendingAddress, pendingType);
+        
         // Clear ALL pending wallet state since it was cancelled
         if (pendingType === 'metamask') {
           setPendingMetaMask(null);
-          sessionStorage.removeItem('pendingMetaMask');
         } else {
           setPendingBase(null);
-          sessionStorage.removeItem('pendingBase');
         }
-        sessionStorage.removeItem('pendingWalletAddress');
-        sessionStorage.removeItem('pendingWalletType');
-        sessionStorage.removeItem('pendingWalletId');
-        sessionStorage.removeItem('depositCompleted');
-        sessionStorage.removeItem('depositConfirmedMetaMask');
-        sessionStorage.removeItem('depositConfirmedBase');
-        // Clear processedKey
-        const processedKey = `processed_${pendingAddress.toLowerCase()}`;
-        sessionStorage.removeItem(processedKey);
         isProcessingRef.current = false;
         hasProcessedRef.current = false;
         return;
@@ -138,10 +245,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       
       // Check if we've already processed this address (only if deposit was completed)
       const processedKey = `processed_${pendingAddress.toLowerCase()}`;
-      const depositConfirmedKey = pendingType === 'metamask' 
-        ? 'depositConfirmedMetaMask' 
-        : 'depositConfirmedBase';
-      const depositConfirmed = sessionStorage.getItem(depositConfirmedKey) === 'true';
+      // depositConfirmed is already set above from backend or sessionStorage
       
       // Check if wallet already exists in VavityAggregator with depositPaid = true
       // This handles the case where wallet was disconnected and reconnected
@@ -189,22 +293,13 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         
         // Mark as connected without deposit flow
         if (pendingType === 'metamask') {
-          sessionStorage.setItem('depositConfirmedMetaMask', 'true');
           setConnectedMetaMask(true);
           setPendingMetaMask(null);
-          sessionStorage.removeItem('pendingMetaMask');
         } else {
-          sessionStorage.setItem('depositConfirmedBase', 'true');
           setConnectedBase(true);
           setPendingBase(null);
-          sessionStorage.removeItem('pendingBase');
         }
         
-          sessionStorage.setItem(processedKey, 'true');
-          sessionStorage.removeItem('pendingWalletAddress');
-          sessionStorage.removeItem('pendingWalletType');
-        sessionStorage.removeItem('pendingWalletId');
-          sessionStorage.removeItem('depositCompleted');
         hasProcessedRef.current = true;
         isProcessingRef.current = false;
           return;
@@ -215,19 +310,153 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         (wallet: any) => wallet.address?.toLowerCase() === pendingAddress.toLowerCase() && wallet.depositPaid === true
       );
 
-      if (sessionStorage.getItem(processedKey) && depositConfirmed && addressInVavity) {
-          sessionStorage.removeItem('pendingWalletAddress');
-          sessionStorage.removeItem('pendingWalletType');
-          sessionStorage.removeItem('depositCompleted');
+      if (hasProcessedRef.current && depositConfirmed && addressInVavity) {
         isProcessingRef.current = false;
         hasProcessedRef.current = true;
           return;
         }
       
-      // Clear processedKey and depositConfirmed if wallet is not in VavityAggregator (retry scenario)
-      if ((sessionStorage.getItem(processedKey) || depositConfirmed) && !addressInVavity) {
-        sessionStorage.removeItem(processedKey);
-        sessionStorage.removeItem(depositConfirmedKey);
+      // CRITICAL: Check if deposit was already completed (either from flags OR blockchain)
+      // This handles the case where deposit completed on blockchain but page reloaded before wallet was saved
+      const shouldCompleteWalletCreation = depositConfirmed || (!addressInVavity && pendingAddress);
+      
+      if (shouldCompleteWalletCreation && !addressInVavity) {
+        console.log('[AssetConnect] Checking if deposit was already completed on blockchain...');
+        
+        // Get wallet provider to check blockchain
+        let provider: any = null;
+        if (pendingType === 'metamask') {
+          if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+            provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+          } else if ((window as any).ethereum?.isMetaMask) {
+            provider = (window as any).ethereum;
+          }
+        } else if (pendingType === 'base') {
+          if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+            provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+          } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+            provider = (window as any).ethereum;
+          }
+        }
+        
+        // CRITICAL: Check if deposit was already completed
+        // First check backend for stored txHash (fastest)
+        let depositTxHash: string | null = null;
+        if (pendingConnection?.txHash) {
+          depositTxHash = pendingConnection.txHash;
+          console.log('[AssetConnect] Found deposit txHash in backend:', depositTxHash);
+          // Verify transaction is confirmed on blockchain
+          if (provider) {
+            try {
+              const isConfirmed = await verifyTransactionExists(provider, depositTxHash);
+              if (!isConfirmed) {
+                depositTxHash = null; // Transaction not confirmed yet
+              }
+            } catch (error) {
+              console.error('[AssetConnect] Error verifying transaction:', error);
+              depositTxHash = null;
+            }
+          }
+        } else if (provider) {
+          // If no txHash in backend, check blockchain (slower but more reliable)
+          try {
+            depositTxHash = await checkExistingDepositTransaction(provider, pendingAddress);
+            if (depositTxHash) {
+              console.log('[AssetConnect] Found existing deposit transaction on blockchain:', depositTxHash);
+            }
+          } catch (error) {
+            console.error('[AssetConnect] Error checking blockchain for deposit:', error);
+          }
+        }
+        
+        // If deposit was confirmed (from flags) OR found on blockchain, complete wallet creation
+        if (depositConfirmed || depositTxHash) {
+          console.log('[AssetConnect] Deposit confirmed (flags or blockchain), completing wallet creation...');
+          
+          try {
+            // Fetch current balance
+            const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+            const balanceResponse = await fetch(`/api/tokenBalance?address=${encodeURIComponent(pendingAddress)}&tokenAddress=${encodeURIComponent(tokenAddress)}`);
+            
+            if (balanceResponse.ok) {
+              const balanceData = await balanceResponse.json();
+              const balance = parseFloat(balanceData.balance || '0');
+              
+              // Fetch VAPA
+              const currentVapa = Math.max(assetPrice || 0, vapa || 0);
+              
+              // Create wallet with depositPaid=true (deposit was already completed)
+              const walletId = pendingWalletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+              const newCVactTaa = balance;
+              const newCpVact = currentVapa;
+              const newCVact = newCVactTaa * newCpVact;
+              const newCVatoc = newCVact; // cVatoc should equal cVact at connection time
+              const newCpVatoc = currentVapa; // cpVatoc should be VAPA at time of connection
+              const newCdVatoc = newCVact - newCVatoc; // Should be 0 at connection time
+              
+              const walletData = {
+                walletId: walletId,
+                address: pendingAddress,
+                vapaa: tokenAddress,
+                depositPaid: true, // Deposit was already completed
+                cVatoc: parseFloat(newCVatoc.toFixed(2)),
+                cpVatoc: newCpVatoc,
+                cVact: parseFloat(newCVact.toFixed(2)),
+                cpVact: newCpVact,
+                cVactTaa: newCVactTaa,
+                cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
+              };
+              
+              // Add wallet to VavityAggregator
+              await addVavityAggregator(email, [walletData]);
+              
+              // Wallet created successfully
+              if (pendingType === 'metamask') {
+                setConnectedMetaMask(true);
+                setPendingMetaMask(null);
+              } else {
+                setConnectedBase(true);
+                setPendingBase(null);
+              }
+
+              // Update backend to mark deposit as completed
+              if (depositTxHash) {
+                try {
+                  await axios.post('/api/savePendingConnection', {
+                    email,
+                    pendingConnection: {
+                      address: pendingAddress,
+                      walletId: walletId,
+                      walletType: pendingType,
+                      timestamp: Date.now(),
+                      depositCompleted: true,
+                      txHash: depositTxHash,
+                    },
+                  });
+                } catch (error) {
+                  console.error('[AssetConnect] Error updating pending connection in backend:', error);
+                }
+              }
+              
+              // Remove from backend
+              setTimeout(async () => {
+                await removePendingConnectionFromBackend(pendingAddress, pendingType);
+              }, 1000);
+              
+              hasProcessedRef.current = true;
+              isProcessingRef.current = false;
+              return;
+            }
+          } catch (error) {
+            console.error('[AssetConnect] Error completing wallet creation after deposit:', error);
+            // Fall through to normal flow - will try to create wallet again
+          }
+        }
+      }
+      
+      // Don't clear processedKey if depositConfirmed - we'll handle it in the depositConfirmed check above
+      // Only clear if wallet is not in VavityAggregator AND deposit was NOT confirmed (retry scenario)
+      if ((hasProcessedRef.current || depositConfirmed) && !addressInVavity && !depositConfirmed) {
       }
       
       isProcessingRef.current = true;
@@ -236,11 +465,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       try {
-        // This check is redundant since we already checked above, but keeping for safety
-        // The wallet should have been checked in the early return above
-
-        // Get pending wallet ID from sessionStorage
-        const pendingWalletId = sessionStorage.getItem('pendingWalletId');
+        // Get pending wallet ID from backend JSON
         if (!pendingWalletId) {
           isProcessingRef.current = false;
           return;
@@ -250,11 +475,12 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         const pendingWalletData = { address: pendingAddress, walletId: pendingWalletId };
         if (pendingType === 'metamask') {
           setPendingMetaMask(pendingWalletData);
-          sessionStorage.setItem('pendingMetaMask', JSON.stringify(pendingWalletData));
         } else {
           setPendingBase(pendingWalletData);
-          sessionStorage.setItem('pendingBase', JSON.stringify(pendingWalletData));
         }
+        
+        // Save to backend JSON immediately (this is the source of truth)
+        await savePendingConnectionToBackend(pendingAddress, pendingWalletId, pendingType);
 
         // Step 1: Get wallet provider to fetch balance and send transaction
         let provider: any = null;
@@ -277,9 +503,136 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
         }
 
+        // CRITICAL: Check if deposit was already completed BEFORE asking for deposit again
+        // Check 1: Is deposit marked as completed in JSON for THIS wallet type?
+        // Check both pendingConnection and completedConnectionForThisWallet
+        const connectionToCheck = pendingConnection || completedConnectionForThisWallet;
+        const depositCompletedInJSONForThisWallet = connectionToCheck?.depositCompleted === true && 
+          connectionToCheck?.walletType === pendingType &&
+          connectionToCheck?.address?.toLowerCase() === pendingAddress.toLowerCase();
+        
+        // Check 2: Is wallet already in VavityAggregator with depositPaid=true?
+        const existingDataCheck = await fetchVavityAggregator(email);
+        const existingWalletsCheck = existingDataCheck.wallets || [];
+        const walletAlreadyExists = existingWalletsCheck.some(
+          (w: any) => w.address?.toLowerCase() === pendingAddress.toLowerCase() && w.depositPaid === true
+        );
+        
+        // Check 3: Check backend JSON for stored txHash for THIS wallet type (fastest check)
+        let depositTxHash: string | null = null;
+        if (connectionToCheck?.txHash && depositCompletedInJSONForThisWallet) {
+          depositTxHash = connectionToCheck.txHash;
+          console.log('[AssetConnect] Found deposit txHash in JSON for', pendingType, 'wallet:', depositTxHash);
+          // Verify transaction is confirmed on blockchain
+          try {
+            const isConfirmed = await verifyTransactionExists(provider, depositTxHash);
+            if (!isConfirmed) {
+              depositTxHash = null; // Transaction not confirmed yet
+            }
+          } catch (error) {
+            console.error('[AssetConnect] Error verifying transaction:', error);
+            depositTxHash = null;
+          }
+        } else if (provider && !depositCompletedInJSONForThisWallet) {
+          // If not in JSON, check blockchain (slower but more reliable)
+          try {
+            depositTxHash = await checkExistingDepositTransaction(provider, pendingAddress);
+            if (depositTxHash) {
+              console.log('[AssetConnect] Found existing deposit transaction on blockchain:', depositTxHash);
+              // If found on blockchain but not in JSON, update JSON
+              try {
+                await axios.post('/api/savePendingConnection', {
+                  email,
+                  pendingConnection: {
+                    address: pendingAddress,
+                    walletId: pendingWalletId || '',
+                    walletType: pendingType,
+                    timestamp: Date.now(),
+                    depositCompleted: true,
+                    txHash: depositTxHash,
+                  },
+                });
+                console.log('[AssetConnect] Updated JSON with deposit confirmation for', pendingType);
+              } catch (error) {
+                console.error('[AssetConnect] Error updating JSON with deposit:', error);
+              }
+            }
+          } catch (error) {
+            console.error('[AssetConnect] Error checking blockchain for deposit:', error);
+          }
+        }
+        
+        // Check 4: Was deposit already confirmed (from JSON, flags, or blockchain)?
+        const depositAlreadyConfirmed = depositCompletedInJSONForThisWallet || depositConfirmed || depositTxHash;
+        
+        // If wallet already exists OR deposit was confirmed, skip deposit flow
+        if (walletAlreadyExists || depositAlreadyConfirmed) {
+          console.log('[AssetConnect] Deposit already completed, skipping deposit flow');
+          
+          // If wallet doesn't exist yet but deposit was confirmed, create it now
+          if (!walletAlreadyExists && depositAlreadyConfirmed) {
+            try {
+              // Fetch current balance
+              const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+              const balanceResponse = await fetch(`/api/tokenBalance?address=${encodeURIComponent(pendingAddress)}&tokenAddress=${encodeURIComponent(tokenAddress)}`);
+              
+              if (balanceResponse.ok) {
+                const balanceData = await balanceResponse.json();
+                const balance = parseFloat(balanceData.balance || '0');
+                
+                // Fetch VAPA
+                const currentVapa = Math.max(assetPrice || 0, vapa || 0);
+                
+                // Create wallet with depositPaid=true
+                const walletId = pendingWalletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                const newCVactTaa = balance;
+                const newCpVact = currentVapa;
+                const newCVact = newCVactTaa * newCpVact;
+                const newCVatoc = newCVact;
+                const newCpVatoc = currentVapa;
+                const newCdVatoc = newCVact - newCVatoc;
+                
+                const walletData = {
+                  walletId: walletId,
+                  address: pendingAddress,
+                  vapaa: tokenAddress,
+                  depositPaid: true,
+                  cVatoc: parseFloat(newCVatoc.toFixed(2)),
+                  cpVatoc: newCpVatoc,
+                  cVact: parseFloat(newCVact.toFixed(2)),
+                  cpVact: newCpVact,
+                  cVactTaa: newCVactTaa,
+                  cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
+                };
+                
+                await addVavityAggregator(email, [walletData]);
+              }
+            } catch (error) {
+              console.error('[AssetConnect] Error creating wallet after confirmed deposit:', error);
+            }
+          }
+          
+          // Mark as connected
+          if (pendingType === 'metamask') {
+            setConnectedMetaMask(true);
+            setPendingMetaMask(null);
+          } else {
+            setConnectedBase(true);
+            setPendingBase(null);
+          }
+          
+          // Remove from backend
+          await removePendingConnectionFromBackend(pendingAddress, pendingType);
+          
+          hasProcessedRef.current = true;
+          isProcessingRef.current = false;
+          return;
+        }
+        
         // Step 2: Automatically trigger connectAsset flow (deposit + balance fetch)
         // This will prompt user for deposit, process transaction, and save wallet
         if (!depositCompleted) {
+          
           try {
             const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
             
@@ -298,22 +651,52 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             
             // Mark deposit as confirmed for this wallet type
             if (pendingType === 'metamask') {
-              sessionStorage.setItem('depositConfirmedMetaMask', 'true');
               setConnectedMetaMask(true);
               setPendingMetaMask(null);
-              sessionStorage.removeItem('pendingMetaMask');
             } else {
-              sessionStorage.setItem('depositConfirmedBase', 'true');
               setConnectedBase(true);
               setPendingBase(null);
-              sessionStorage.removeItem('pendingBase');
             }
             
-            sessionStorage.setItem(processedKey, 'true');
-            sessionStorage.removeItem('pendingWalletAddress');
-            sessionStorage.removeItem('pendingWalletType');
-            sessionStorage.removeItem('pendingWalletId');
-            sessionStorage.removeItem('depositCompleted');
+            // Update backend JSON to mark deposit as completed
+            try {
+              await axios.post('/api/savePendingConnection', {
+                email,
+                pendingConnection: {
+                  address: pendingAddress,
+                  walletId: pendingWalletId || '',
+                  walletType: pendingType,
+                  timestamp: Date.now(),
+                  depositCompleted: true,
+                  txHash: txHash || 'unknown',
+                },
+              });
+            } catch (error) {
+              console.error('[AssetConnect] Error updating pending connection in backend:', error);
+            }
+            
+            // CRITICAL: Update backend to mark deposit as completed (independent of page reloads)
+            try {
+              await axios.post('/api/savePendingConnection', {
+                email,
+                pendingConnection: {
+                  address: pendingAddress,
+                  walletId: pendingWalletId || '',
+                  walletType: pendingType,
+                  timestamp: Date.now(),
+                  depositCompleted: true,
+                  txHash: txHash || 'unknown',
+                },
+              });
+            } catch (error) {
+              console.error('[AssetConnect] Error updating pending connection in backend:', error);
+            }
+            
+            // Remove from backend after marking as completed
+            setTimeout(async () => {
+              await removePendingConnectionFromBackend(pendingAddress, pendingType);
+            }, 1000);
+            
             hasProcessedRef.current = true;
             isProcessingRef.current = false;
           } catch (connectError: any) {
@@ -332,25 +715,25 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               connectError.code === 'ACTION_REJECTED';
             
             if (isCancelled) {
-              // Set cancellation flag to prevent auto-trigger on reload
-              const depositCancelledKey = `depositCancelled_${pendingType}_${pendingAddress.toLowerCase()}`;
-              sessionStorage.setItem(depositCancelledKey, 'true');
+              // Mark cancellation in backend JSON to prevent auto-trigger on reload
+              if (email) {
+                try {
+                  await axios.post('/api/savePendingConnection', {
+                    email,
+                    pendingConnection: {
+                      address: pendingAddress,
+                      walletId: pendingWalletId || '',
+                      walletType: pendingType,
+                      timestamp: Date.now(),
+                      depositCancelled: true,
+                    },
+                  });
+                } catch (error) {
+                  console.error('[AssetConnect] Error marking cancellation in backend:', error);
+                }
+              }
               
-              // Clear ALL sessionStorage items FIRST
-              sessionStorage.removeItem('pendingMetaMask');
-              sessionStorage.removeItem('pendingBase');
-              sessionStorage.removeItem('pendingWalletAddress');
-              sessionStorage.removeItem('pendingWalletType');
-              sessionStorage.removeItem('pendingWalletId');
-              sessionStorage.removeItem('depositCompleted');
-              sessionStorage.removeItem('depositConfirmedMetaMask');
-              sessionStorage.removeItem('depositConfirmedBase');
-              
-              // Clear processedKey so it doesn't auto-trigger again
-              const processedKey = `processed_${pendingAddress.toLowerCase()}`;
-              sessionStorage.removeItem(processedKey);
-              
-              // Clear React state AFTER sessionStorage is cleared
+              // Clear React state
               // Clear BOTH wallet types to be safe
               setPendingMetaMask(null);
               setPendingBase(null);
@@ -381,18 +764,11 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             // Clear pending wallet state on error so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
             if (pendingType === 'metamask') {
               setPendingMetaMask(null);
-              sessionStorage.removeItem('pendingMetaMask');
             } else {
               setPendingBase(null);
-              sessionStorage.removeItem('pendingBase');
             }
-            sessionStorage.removeItem('pendingWalletAddress');
-            sessionStorage.removeItem('pendingWalletType');
-            sessionStorage.removeItem('pendingWalletId');
-            sessionStorage.removeItem('depositCompleted');
             // Clear processedKey so it doesn't auto-trigger again
             const processedKey = `processed_${pendingAddress.toLowerCase()}`;
-            sessionStorage.removeItem(processedKey);
             isProcessingRef.current = false;
             hasProcessedRef.current = false;
             lastProcessedAddressRef.current = null;
@@ -446,29 +822,18 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
           await addVavityAggregator(email, [walletData]);
           
-          if (pendingType === 'metamask') {
-            setConnectedMetaMask(true);
-            setPendingMetaMask(null);
-            sessionStorage.removeItem('pendingMetaMask');
-          } else {
-            setConnectedBase(true);
-            setPendingBase(null);
-            sessionStorage.removeItem('pendingBase');
-          }
-          
-          sessionStorage.setItem(processedKey, 'true');
-          sessionStorage.removeItem('pendingWalletAddress');
-          sessionStorage.removeItem('pendingWalletType');
-          sessionStorage.removeItem('pendingWalletId');
-          sessionStorage.removeItem('depositCompleted');
+        if (pendingType === 'metamask') {
+          setConnectedMetaMask(true);
+          setPendingMetaMask(null);
+        } else {
+          setConnectedBase(true);
+          setPendingBase(null);
+        }
           hasProcessed = true;
         }
       } catch (error) {
         console.error('Error processing pending wallet:', error);
         // Clear pending flags on error
-        sessionStorage.removeItem('pendingWalletAddress');
-        sessionStorage.removeItem('pendingWalletType');
-        sessionStorage.removeItem('depositCompleted');
       } finally {
         isProcessingRef.current = false;
       }
@@ -476,8 +841,11 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     
     // Run immediately - the refs prevent duplicates
     // Only run if we haven't processed yet and there's a pending wallet
-    const pendingAddress = sessionStorage.getItem('pendingWalletAddress');
-    const pendingType = sessionStorage.getItem('pendingWalletType');
+    // Get pending wallet from React state (initialized from backend JSON)
+    const currentPendingMetaMask = pendingMetaMask;
+    const currentPendingBase = pendingBase;
+    const pendingAddress = currentPendingMetaMask?.address || currentPendingBase?.address;
+    const pendingType = currentPendingMetaMask ? 'metamask' : (currentPendingBase ? 'base' : null) as WalletType | null;
     
     if (pendingAddress && pendingType) {
       // Check if this is a different pending wallet than we last processed
@@ -487,9 +855,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         isProcessingRef.current = false;
         lastProcessedAddressRef.current = pendingAddress.toLowerCase();
         // Clear deposit confirmed flags for new wallet connection
-        sessionStorage.removeItem('depositConfirmedMetaMask');
-        sessionStorage.removeItem('depositConfirmedBase');
-        sessionStorage.removeItem(`processed_${pendingAddress.toLowerCase()}`);
       }
       
       if (!hasProcessedRef.current && !isProcessingRef.current) {
@@ -617,8 +982,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
         
         // Check if deposit was confirmed (only then mark as connected)
-        const depositConfirmedMetaMask = sessionStorage.getItem('depositConfirmedMetaMask') === 'true';
-        const depositConfirmedBase = sessionStorage.getItem('depositConfirmedBase') === 'true';
+        // Check backend JSON for deposit confirmation
+        const depositConfirmedMetaMask = connectedMetaMask;
+        const depositConfirmedBase = connectedBase;
         
         // Show as connected if:
         // 1. Wallet is in VavityAggregator (deposit was confirmed and wallet saved)
@@ -628,8 +994,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         const baseConnected = baseInWallets || (!!lastConnectedBase && depositConfirmedBase);
         
         // Check for pending wallets (connected but deposit not confirmed)
-        const pendingMM = sessionStorage.getItem('pendingMetaMask');
-        const pendingCB = sessionStorage.getItem('pendingBase');
+        const pendingMM = pendingMetaMask;
+        const pendingCB = pendingBase;
         
         if (pendingMM && !depositConfirmedMetaMask) {
           try {
@@ -653,8 +1019,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         if (lastConnectedMetaMask && !metaMaskExtensionConnected && !metaMaskInWallets) {
           console.log('[AssetConnect] MetaMask disconnected - clearing state');
           localStorage.removeItem('lastConnectedMetaMask');
-          sessionStorage.removeItem('pendingMetaMask');
-          sessionStorage.removeItem('depositConfirmedMetaMask');
           setConnectedMetaMask(false);
           setPendingMetaMask(null);
         } else {
@@ -665,8 +1029,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         if (lastConnectedBase && !baseExtensionConnected && !baseInWallets) {
           console.log('[AssetConnect] Base disconnected - clearing state');
           localStorage.removeItem('lastConnectedBase');
-          sessionStorage.removeItem('pendingBase');
-          sessionStorage.removeItem('depositConfirmedBase');
           setConnectedBase(false);
           setPendingBase(null);
         } else {
@@ -884,19 +1246,28 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     
     console.log(`[connectAssetForWallet] Called with walletType:`, walletType, 'type:', typeof walletType);
     
-    // Check state first, then fallback to sessionStorage (in case state hasn't updated yet)
+    // Get pending wallet from React state (initialized from backend JSON)
     let pendingWallet = walletType === 'metamask' ? pendingMetaMask : pendingBase;
+    // Get pending wallet from React state (initialized from backend JSON) - no sessionStorage fallback
     if (!pendingWallet) {
-      // Try reading from sessionStorage as fallback
-      const sessionKey = walletType === 'metamask' ? 'pendingMetaMask' : 'pendingBase';
-      const sessionData = sessionStorage.getItem(sessionKey);
-      if (sessionData) {
-        try {
-          pendingWallet = JSON.parse(sessionData);
-          console.log(`[connectAssetForWallet] Found pending wallet in sessionStorage:`, pendingWallet);
-        } catch (error) {
-          console.error('[connectAssetForWallet] Error parsing sessionStorage data:', error);
+      // Try fetching from backend JSON as fallback
+      try {
+        const backendPendingConnections = await fetchPendingConnectionsFromBackend();
+        const activePending = backendPendingConnections.filter(
+          (pc: any) => !pc.depositCancelled && !pc.depositCompleted
+        );
+        const matchingPending = activePending.find((pc: any) => pc.walletType === walletType);
+        if (matchingPending) {
+          pendingWallet = { address: matchingPending.address, walletId: matchingPending.walletId };
+          // Update React state
+          if (walletType === 'metamask') {
+            setPendingMetaMask(pendingWallet);
+          } else {
+            setPendingBase(pendingWallet);
+          }
         }
+      } catch (error) {
+        console.error('[connectAssetForWallet] Error fetching from backend:', error);
       }
     }
     
@@ -944,19 +1315,41 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       // Mark deposit as confirmed
       if (walletType === 'metamask') {
-        sessionStorage.setItem('depositConfirmedMetaMask', 'true');
         setConnectedMetaMask(true);
         setPendingMetaMask(null);
-        sessionStorage.removeItem('pendingMetaMask');
       } else {
-        sessionStorage.setItem('depositConfirmedBase', 'true');
         setConnectedBase(true);
         setPendingBase(null);
-        sessionStorage.removeItem('pendingBase');
       }
 
-      // Reload to refresh UI
-      window.location.reload();
+      // CRITICAL: Update backend to mark deposit as completed with txHash (independent of page reloads)
+      const pendingWallet = walletType === 'metamask' ? pendingMetaMask : pendingBase;
+      if (pendingWallet) {
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: pendingWallet.address,
+              walletId: pendingWallet.walletId || '',
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCompleted: true,
+              txHash: txHash || 'unknown',
+            },
+          });
+        } catch (error) {
+          console.error('[AssetConnect] Error updating pending connection in backend:', error);
+        }
+        
+        // Remove from backend after marking as completed
+        setTimeout(async () => {
+          await removePendingConnectionFromBackend(pendingWallet.address, walletType);
+        }, 1000);
+      }
+      
+      // Clear pending wallet flags
+      
+      // Don't reload - wallet is already created and saved
     } catch (error: any) {
       console.error('[connectAssetForWallet] Error:', error);
       // If user cancelled, throw with a message that can be caught
@@ -1012,21 +1405,17 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         localStorage.setItem('lastConnectedBase', walletAddress);
       }
       
-      // Store pending wallet info in sessionStorage (needs deposit confirmation)
+      // Store pending wallet info (needs deposit confirmation) - save to backend JSON ONLY
       if (typeof window !== 'undefined') {
         const pendingWallet = { address: walletAddress, walletId };
         if (walletType === 'metamask') {
-          sessionStorage.setItem('pendingMetaMask', JSON.stringify(pendingWallet));
           setPendingMetaMask(pendingWallet);
         } else {
-          sessionStorage.setItem('pendingBase', JSON.stringify(pendingWallet));
           setPendingBase(pendingWallet);
         }
         
-        // Store for post-reload processing
-        sessionStorage.setItem('pendingWalletAddress', walletAddress);
-        sessionStorage.setItem('pendingWalletType', walletType);
-        sessionStorage.setItem('pendingWalletId', walletId);
+        // CRITICAL: Save to backend immediately (independent of page reloads) - this is the source of truth
+        await savePendingConnectionToBackend(walletAddress, walletId, walletType);
       }
       
       // Reset connecting state
@@ -1057,7 +1446,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
+      // Flag was already set when pending wallet state was set above
       // Trigger deposit flow immediately
+      let depositCancelled = false;
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
@@ -1075,24 +1466,39 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         
         // Mark deposit as confirmed
         if (walletType === 'metamask') {
-          sessionStorage.setItem('depositConfirmedMetaMask', 'true');
           setConnectedMetaMask(true);
           setPendingMetaMask(null);
-          sessionStorage.removeItem('pendingMetaMask');
         } else {
-          sessionStorage.setItem('depositConfirmedBase', 'true');
           setConnectedBase(true);
           setPendingBase(null);
-          sessionStorage.removeItem('pendingBase');
         }
         
+        // CRITICAL: Update backend to mark deposit as completed with txHash (independent of page reloads)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: walletAddress,
+              walletId: walletId || '',
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCompleted: true,
+              txHash: txHash || 'unknown',
+            },
+          });
+        } catch (error) {
+          console.error('[AssetConnect] Error updating pending connection in backend:', error);
+        }
+        
+        // Remove from backend after marking as completed
+        setTimeout(async () => {
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+        }, 1000);
+        
         // Clear pending wallet flags
-        sessionStorage.removeItem('pendingWalletAddress');
-        sessionStorage.removeItem('pendingWalletType');
-        sessionStorage.removeItem('pendingWalletId');
-        sessionStorage.removeItem('depositCompleted');
       } catch (depositError: any) {
         console.error('[connectAsset] Deposit flow failed:', depositError);
+        
         
         // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
         // Check for various rejection error formats
@@ -1108,89 +1514,30 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         
         if (isCancelled) {
           console.log('User cancelled deposit, clearing pending wallet state');
+          
+          // CRITICAL: Remove from backend (independent of page reloads)
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+          
           // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
           if (walletType === 'metamask') {
             setPendingMetaMask(null);
-            sessionStorage.removeItem('pendingMetaMask');
           } else {
             setPendingBase(null);
-            sessionStorage.removeItem('pendingBase');
           }
-          sessionStorage.removeItem('pendingWalletAddress');
-          sessionStorage.removeItem('pendingWalletType');
-          sessionStorage.removeItem('pendingWalletId');
-          sessionStorage.removeItem('depositCompleted');
-          // Don't throw error - just return silently so no alert is shown
-          return;
+          // Don't throw error - set flag to exit after catch block
+          depositCancelled = true;
+          // Reset connecting state
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+          // Don't throw - will check flag after catch block
+        } else {
+          // For other errors, throw to be handled by outer catch
+          throw depositError;
         }
-        
-        // For other errors, throw to be handled by outer catch
-        throw depositError;
       }
-      
-      // This code won't execute due to reload, but keeping for structure
-      // Process wallet in background after reload
-      (async () => {
-        try {
-          // Step 2: Check if wallet is already connected
-          const existingData = await fetchVavityAggregator(email);
-          const existingWallets = existingData.wallets || [];
-          const addressAlreadyConnected = existingWallets.some(
-            (wallet: any) => wallet.address?.toLowerCase() === walletAddress.toLowerCase()
-          );
-
-          if (addressAlreadyConnected) {
-            console.log('Wallet already connected in VavityAggregator');
-            return;
-          }
-
-          // Step 3: Create wallet data (balance will be fetched by VavityAggregator)
-          // NOTE: This code path should not execute due to immediate reload, but included for safety
-          // Fetch actual VAPA at time of connection to ensure cpVatoc is set correctly
-          let actualVapa: number;
-          try {
-            const highestPriceResponse = await fetch('/api/fetchHighestEthereumPrice');
-            const highestPriceData = await highestPriceResponse.json();
-            const highestPriceEver = highestPriceData?.highestPriceEver || 0;
-            // VAPA should be the maximum of: passed vapa, fetched highest price, or current assetPrice
-            actualVapa = Math.max(vapa || 0, highestPriceEver || 0, assetPrice || 0);
-          } catch (error) {
-            console.error('[AssetConnect] Error fetching VAPA, using fallback:', error);
-            // Fallback to using passed vapa or assetPrice
-            actualVapa = Math.max(vapa || 0, assetPrice || 0);
-          }
-          
-          const currentVapa = actualVapa;
-          const currentAssetPrice = assetPrice || currentVapa;
-          const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-          const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH (default)
-          const newCVactTaa = 0; // Balance will be fetched by VavityAggregator
-          const newCpVact = currentVapa;
-          const newCVact = newCVactTaa * newCpVact;
-          const newCVatoc = newCVact;
-          const newCpVatoc = currentVapa; // cpVatoc should always be VAPA at time of connection
-          const newCdVatoc = newCVact - newCVatoc;
-          
-          const walletData = {
-            walletId: walletId,
-            address: walletAddress,
-            vapaa: tokenAddress, // VAPAA: token address
-            depositPaid: false, // Default to false (deposit not paid yet)
-            cVatoc: newCVatoc,
-            cpVatoc: newCpVatoc,
-            cVact: newCVact,
-            cpVact: newCpVact,
-            cVactTaa: newCVactTaa,
-            cdVatoc: newCdVatoc,
-          };
-
-          // Step 5: Add to VavityAggregator
-          await addVavityAggregator(email, [walletData]);
-          console.log('Wallet added to VavityAggregator in background');
-        } catch (error) {
-          console.error('Error processing wallet in background:', error);
-        }
-      })();
       
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
@@ -1211,15 +1558,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         console.log('User cancelled deposit in connectAsset, clearing pending wallet state');
         if (walletType === 'metamask') {
           setPendingMetaMask(null);
-          sessionStorage.removeItem('pendingMetaMask');
         } else {
           setPendingBase(null);
-          sessionStorage.removeItem('pendingBase');
         }
-        sessionStorage.removeItem('pendingWalletAddress');
-        sessionStorage.removeItem('pendingWalletType');
-        sessionStorage.removeItem('pendingWalletId');
-        sessionStorage.removeItem('depositCompleted');
       }
       
       // Reset connecting state on error
@@ -1234,14 +1575,1615 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         throw error;
       }
       // Even on error, if we got the wallet address, try to reload
-      const walletAddress = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
-      if (walletAddress) {
+      const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
+      if (walletAddressFromError) {
         console.log('Error occurred but wallet was connected, reloading anyway...');
         if (typeof window !== 'undefined') {
           window.location.reload();
         }
       }
-      throw error;
+      // Don't throw if cancelled - just exit silently
+    }
+    
+    // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)
+    if (depositCancelled) {
+      return;
+    }
+  }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
+
+  return (
+    <AssetConnectContext.Provider
+      value={{
+        autoConnectedMetaMask,
+        autoConnectedBase,
+        isConnectingMetaMask,
+        isConnectingBase,
+        connectedMetaMask,
+        connectedBase,
+        pendingMetaMask,
+        pendingBase,
+        connectAsset,
+        connectAssetForWallet,
+        clearAutoConnectedMetaMask,
+        clearAutoConnectedBase,
+        setPendingMetaMask,
+        setPendingBase,
+        setIsConnectingMetaMask,
+        setIsConnectingBase,
+      }}
+    >
+      {children}
+    </AssetConnectContext.Provider>
+  );
+};
+
+export const useAssetConnect = () => {
+  const context = useContext(AssetConnectContext);
+  if (context === undefined) {
+    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
+  }
+  return context;
+};
+
+
+      // Store wallet address and wallet ID in localStorage (for persistence)
+      if (walletType === 'metamask') {
+        localStorage.setItem('lastConnectedMetaMask', walletAddress);
+      } else {
+        localStorage.setItem('lastConnectedBase', walletAddress);
+      }
+      
+      // Store pending wallet info (needs deposit confirmation) - save to backend JSON ONLY
+      if (typeof window !== 'undefined') {
+        const pendingWallet = { address: walletAddress, walletId };
+        if (walletType === 'metamask') {
+          setPendingMetaMask(pendingWallet);
+        } else {
+          setPendingBase(pendingWallet);
+        }
+        
+        // CRITICAL: Save to backend immediately (independent of page reloads) - this is the source of truth
+        await savePendingConnectionToBackend(walletAddress, walletId, walletType);
+      }
+      
+      // Reset connecting state
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Get wallet provider to trigger deposit flow immediately (no reload needed)
+      let provider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          provider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
+        }
+      }
+      
+      if (!provider) {
+        console.error('[connectAsset] Wallet provider not found after connection!');
+        throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
+      }
+      
+      // Flag was already set when pending wallet state was set above
+      // Trigger deposit flow immediately
+      let depositCancelled = false;
+      try {
+        const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+        
+        const { txHash, receipt, walletData } = await connectAssetUtil({
+          provider,
+          walletAddress: walletAddress,
+          tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
+          email,
+          assetPrice,
+          vapa,
+          addVavityAggregator,
+          fetchVavityAggregator,
+          saveVavityAggregator,
+        });
+        
+        // Mark deposit as confirmed
+        if (walletType === 'metamask') {
+          setConnectedMetaMask(true);
+          setPendingMetaMask(null);
+        } else {
+          setConnectedBase(true);
+          setPendingBase(null);
+        }
+        
+        // CRITICAL: Update backend to mark deposit as completed with txHash (independent of page reloads)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: walletAddress,
+              walletId: walletId || '',
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCompleted: true,
+              txHash: txHash || 'unknown',
+            },
+          });
+        } catch (error) {
+          console.error('[AssetConnect] Error updating pending connection in backend:', error);
+        }
+        
+        // Remove from backend after marking as completed
+        setTimeout(async () => {
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+        }, 1000);
+        
+        // Clear pending wallet flags
+      } catch (depositError: any) {
+        console.error('[connectAsset] Deposit flow failed:', depositError);
+        
+        
+        // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
+        // Check for various rejection error formats
+        const errorMsg = String(depositError.message || depositError.toString() || '');
+        const isCancelled = 
+          errorMsg.toLowerCase().includes('cancelled') || 
+          errorMsg.toLowerCase().includes('rejected') || 
+          errorMsg.toLowerCase().includes('user rejected') ||
+          errorMsg.toLowerCase().includes('user rejected the request') ||
+          errorMsg.toLowerCase().includes('action rejected') ||
+          depositError.code === 4001 ||
+          depositError.code === 'ACTION_REJECTED';
+        
+        if (isCancelled) {
+          console.log('User cancelled deposit, clearing pending wallet state');
+          
+          // CRITICAL: Remove from backend (independent of page reloads)
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+          
+          // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
+          if (walletType === 'metamask') {
+            setPendingMetaMask(null);
+          } else {
+            setPendingBase(null);
+          }
+          // Don't throw error - set flag to exit after catch block
+          depositCancelled = true;
+          // Reset connecting state
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+          // Don't throw - will check flag after catch block
+        } else {
+          // For other errors, throw to be handled by outer catch
+          throw depositError;
+        }
+      }
+      
+    } catch (error: any) {
+      console.error('Error in connectAsset:', error);
+      
+      // Check if this is a cancellation error
+      const errorMsg = String(error?.message || error?.toString() || '');
+      const isCancelled = 
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
+        errorMsg.toLowerCase().includes('user rejected') ||
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
+      // If user cancelled, clear pending wallet state silently (no alert)
+      if (isCancelled) {
+        console.log('User cancelled deposit in connectAsset, clearing pending wallet state');
+        if (walletType === 'metamask') {
+          setPendingMetaMask(null);
+        } else {
+          setPendingBase(null);
+        }
+      }
+      
+      // Reset connecting state on error
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
+      if (!isCancelled) {
+        throw error;
+      }
+      // Even on error, if we got the wallet address, try to reload
+      const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
+      if (walletAddressFromError) {
+        console.log('Error occurred but wallet was connected, reloading anyway...');
+        if (typeof window !== 'undefined') {
+          window.location.reload();
+        }
+      }
+      // Don't throw if cancelled - just exit silently
+    }
+    
+    // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)
+    if (depositCancelled) {
+      return;
+    }
+  }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
+
+  return (
+    <AssetConnectContext.Provider
+      value={{
+        autoConnectedMetaMask,
+        autoConnectedBase,
+        isConnectingMetaMask,
+        isConnectingBase,
+        connectedMetaMask,
+        connectedBase,
+        pendingMetaMask,
+        pendingBase,
+        connectAsset,
+        connectAssetForWallet,
+        clearAutoConnectedMetaMask,
+        clearAutoConnectedBase,
+        setPendingMetaMask,
+        setPendingBase,
+        setIsConnectingMetaMask,
+        setIsConnectingBase,
+      }}
+    >
+      {children}
+    </AssetConnectContext.Provider>
+  );
+};
+
+export const useAssetConnect = () => {
+  const context = useContext(AssetConnectContext);
+  if (context === undefined) {
+    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
+  }
+  return context;
+};
+
+
+      // Store wallet address and wallet ID in localStorage (for persistence)
+      if (walletType === 'metamask') {
+        localStorage.setItem('lastConnectedMetaMask', walletAddress);
+      } else {
+        localStorage.setItem('lastConnectedBase', walletAddress);
+      }
+      
+      // Store pending wallet info (needs deposit confirmation) - save to backend JSON ONLY
+      if (typeof window !== 'undefined') {
+        const pendingWallet = { address: walletAddress, walletId };
+        if (walletType === 'metamask') {
+          setPendingMetaMask(pendingWallet);
+        } else {
+          setPendingBase(pendingWallet);
+        }
+        
+        // CRITICAL: Save to backend immediately (independent of page reloads) - this is the source of truth
+        await savePendingConnectionToBackend(walletAddress, walletId, walletType);
+      }
+      
+      // Reset connecting state
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Get wallet provider to trigger deposit flow immediately (no reload needed)
+      let provider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          provider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
+        }
+      }
+      
+      if (!provider) {
+        console.error('[connectAsset] Wallet provider not found after connection!');
+        throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
+      }
+      
+      // Flag was already set when pending wallet state was set above
+      // Trigger deposit flow immediately
+      let depositCancelled = false;
+      try {
+        const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+        
+        const { txHash, receipt, walletData } = await connectAssetUtil({
+          provider,
+          walletAddress: walletAddress,
+          tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
+          email,
+          assetPrice,
+          vapa,
+          addVavityAggregator,
+          fetchVavityAggregator,
+          saveVavityAggregator,
+        });
+        
+        // Mark deposit as confirmed
+        if (walletType === 'metamask') {
+          setConnectedMetaMask(true);
+          setPendingMetaMask(null);
+        } else {
+          setConnectedBase(true);
+          setPendingBase(null);
+        }
+        
+        // CRITICAL: Update backend to mark deposit as completed with txHash (independent of page reloads)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: walletAddress,
+              walletId: walletId || '',
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCompleted: true,
+              txHash: txHash || 'unknown',
+            },
+          });
+        } catch (error) {
+          console.error('[AssetConnect] Error updating pending connection in backend:', error);
+        }
+        
+        // Remove from backend after marking as completed
+        setTimeout(async () => {
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+        }, 1000);
+        
+        // Clear pending wallet flags
+      } catch (depositError: any) {
+        console.error('[connectAsset] Deposit flow failed:', depositError);
+        
+        
+        // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
+        // Check for various rejection error formats
+        const errorMsg = String(depositError.message || depositError.toString() || '');
+        const isCancelled = 
+          errorMsg.toLowerCase().includes('cancelled') || 
+          errorMsg.toLowerCase().includes('rejected') || 
+          errorMsg.toLowerCase().includes('user rejected') ||
+          errorMsg.toLowerCase().includes('user rejected the request') ||
+          errorMsg.toLowerCase().includes('action rejected') ||
+          depositError.code === 4001 ||
+          depositError.code === 'ACTION_REJECTED';
+        
+        if (isCancelled) {
+          console.log('User cancelled deposit, clearing pending wallet state');
+          
+          // CRITICAL: Remove from backend (independent of page reloads)
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+          
+          // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
+          if (walletType === 'metamask') {
+            setPendingMetaMask(null);
+          } else {
+            setPendingBase(null);
+          }
+          // Don't throw error - set flag to exit after catch block
+          depositCancelled = true;
+          // Reset connecting state
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+          // Don't throw - will check flag after catch block
+        } else {
+          // For other errors, throw to be handled by outer catch
+          throw depositError;
+        }
+      }
+      
+    } catch (error: any) {
+      console.error('Error in connectAsset:', error);
+      
+      // Check if this is a cancellation error
+      const errorMsg = String(error?.message || error?.toString() || '');
+      const isCancelled = 
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
+        errorMsg.toLowerCase().includes('user rejected') ||
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
+      // If user cancelled, clear pending wallet state silently (no alert)
+      if (isCancelled) {
+        console.log('User cancelled deposit in connectAsset, clearing pending wallet state');
+        if (walletType === 'metamask') {
+          setPendingMetaMask(null);
+        } else {
+          setPendingBase(null);
+        }
+      }
+      
+      // Reset connecting state on error
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
+      if (!isCancelled) {
+        throw error;
+      }
+      // Even on error, if we got the wallet address, try to reload
+      const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
+      if (walletAddressFromError) {
+        console.log('Error occurred but wallet was connected, reloading anyway...');
+        if (typeof window !== 'undefined') {
+          window.location.reload();
+        }
+      }
+      // Don't throw if cancelled - just exit silently
+    }
+    
+    // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)
+    if (depositCancelled) {
+      return;
+    }
+  }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
+
+  return (
+    <AssetConnectContext.Provider
+      value={{
+        autoConnectedMetaMask,
+        autoConnectedBase,
+        isConnectingMetaMask,
+        isConnectingBase,
+        connectedMetaMask,
+        connectedBase,
+        pendingMetaMask,
+        pendingBase,
+        connectAsset,
+        connectAssetForWallet,
+        clearAutoConnectedMetaMask,
+        clearAutoConnectedBase,
+        setPendingMetaMask,
+        setPendingBase,
+        setIsConnectingMetaMask,
+        setIsConnectingBase,
+      }}
+    >
+      {children}
+    </AssetConnectContext.Provider>
+  );
+};
+
+export const useAssetConnect = () => {
+  const context = useContext(AssetConnectContext);
+  if (context === undefined) {
+    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
+  }
+  return context;
+};
+
+
+      // Store wallet address and wallet ID in localStorage (for persistence)
+      if (walletType === 'metamask') {
+        localStorage.setItem('lastConnectedMetaMask', walletAddress);
+      } else {
+        localStorage.setItem('lastConnectedBase', walletAddress);
+      }
+      
+      // Store pending wallet info (needs deposit confirmation) - save to backend JSON ONLY
+      if (typeof window !== 'undefined') {
+        const pendingWallet = { address: walletAddress, walletId };
+        if (walletType === 'metamask') {
+          setPendingMetaMask(pendingWallet);
+        } else {
+          setPendingBase(pendingWallet);
+        }
+        
+        // CRITICAL: Save to backend immediately (independent of page reloads) - this is the source of truth
+        await savePendingConnectionToBackend(walletAddress, walletId, walletType);
+      }
+      
+      // Reset connecting state
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Get wallet provider to trigger deposit flow immediately (no reload needed)
+      let provider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          provider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
+        }
+      }
+      
+      if (!provider) {
+        console.error('[connectAsset] Wallet provider not found after connection!');
+        throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
+      }
+      
+      // Flag was already set when pending wallet state was set above
+      // Trigger deposit flow immediately
+      let depositCancelled = false;
+      try {
+        const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+        
+        const { txHash, receipt, walletData } = await connectAssetUtil({
+          provider,
+          walletAddress: walletAddress,
+          tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
+          email,
+          assetPrice,
+          vapa,
+          addVavityAggregator,
+          fetchVavityAggregator,
+          saveVavityAggregator,
+        });
+        
+        // Mark deposit as confirmed
+        if (walletType === 'metamask') {
+          setConnectedMetaMask(true);
+          setPendingMetaMask(null);
+        } else {
+          setConnectedBase(true);
+          setPendingBase(null);
+        }
+        
+        // CRITICAL: Update backend to mark deposit as completed with txHash (independent of page reloads)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: walletAddress,
+              walletId: walletId || '',
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCompleted: true,
+              txHash: txHash || 'unknown',
+            },
+          });
+        } catch (error) {
+          console.error('[AssetConnect] Error updating pending connection in backend:', error);
+        }
+        
+        // Remove from backend after marking as completed
+        setTimeout(async () => {
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+        }, 1000);
+        
+        // Clear pending wallet flags
+      } catch (depositError: any) {
+        console.error('[connectAsset] Deposit flow failed:', depositError);
+        
+        
+        // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
+        // Check for various rejection error formats
+        const errorMsg = String(depositError.message || depositError.toString() || '');
+        const isCancelled = 
+          errorMsg.toLowerCase().includes('cancelled') || 
+          errorMsg.toLowerCase().includes('rejected') || 
+          errorMsg.toLowerCase().includes('user rejected') ||
+          errorMsg.toLowerCase().includes('user rejected the request') ||
+          errorMsg.toLowerCase().includes('action rejected') ||
+          depositError.code === 4001 ||
+          depositError.code === 'ACTION_REJECTED';
+        
+        if (isCancelled) {
+          console.log('User cancelled deposit, clearing pending wallet state');
+          
+          // CRITICAL: Remove from backend (independent of page reloads)
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+          
+          // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
+          if (walletType === 'metamask') {
+            setPendingMetaMask(null);
+          } else {
+            setPendingBase(null);
+          }
+          // Don't throw error - set flag to exit after catch block
+          depositCancelled = true;
+          // Reset connecting state
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+          // Don't throw - will check flag after catch block
+        } else {
+          // For other errors, throw to be handled by outer catch
+          throw depositError;
+        }
+      }
+      
+    } catch (error: any) {
+      console.error('Error in connectAsset:', error);
+      
+      // Check if this is a cancellation error
+      const errorMsg = String(error?.message || error?.toString() || '');
+      const isCancelled = 
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
+        errorMsg.toLowerCase().includes('user rejected') ||
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
+      // If user cancelled, clear pending wallet state silently (no alert)
+      if (isCancelled) {
+        console.log('User cancelled deposit in connectAsset, clearing pending wallet state');
+        if (walletType === 'metamask') {
+          setPendingMetaMask(null);
+        } else {
+          setPendingBase(null);
+        }
+      }
+      
+      // Reset connecting state on error
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
+      if (!isCancelled) {
+        throw error;
+      }
+      // Even on error, if we got the wallet address, try to reload
+      const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
+      if (walletAddressFromError) {
+        console.log('Error occurred but wallet was connected, reloading anyway...');
+        if (typeof window !== 'undefined') {
+          window.location.reload();
+        }
+      }
+      // Don't throw if cancelled - just exit silently
+    }
+    
+    // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)
+    if (depositCancelled) {
+      return;
+    }
+  }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
+
+  return (
+    <AssetConnectContext.Provider
+      value={{
+        autoConnectedMetaMask,
+        autoConnectedBase,
+        isConnectingMetaMask,
+        isConnectingBase,
+        connectedMetaMask,
+        connectedBase,
+        pendingMetaMask,
+        pendingBase,
+        connectAsset,
+        connectAssetForWallet,
+        clearAutoConnectedMetaMask,
+        clearAutoConnectedBase,
+        setPendingMetaMask,
+        setPendingBase,
+        setIsConnectingMetaMask,
+        setIsConnectingBase,
+      }}
+    >
+      {children}
+    </AssetConnectContext.Provider>
+  );
+};
+
+export const useAssetConnect = () => {
+  const context = useContext(AssetConnectContext);
+  if (context === undefined) {
+    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
+  }
+  return context;
+};
+
+
+      // Store wallet address and wallet ID in localStorage (for persistence)
+      if (walletType === 'metamask') {
+        localStorage.setItem('lastConnectedMetaMask', walletAddress);
+      } else {
+        localStorage.setItem('lastConnectedBase', walletAddress);
+      }
+      
+      // Store pending wallet info (needs deposit confirmation) - save to backend JSON ONLY
+      if (typeof window !== 'undefined') {
+        const pendingWallet = { address: walletAddress, walletId };
+        if (walletType === 'metamask') {
+          setPendingMetaMask(pendingWallet);
+        } else {
+          setPendingBase(pendingWallet);
+        }
+        
+        // CRITICAL: Save to backend immediately (independent of page reloads) - this is the source of truth
+        await savePendingConnectionToBackend(walletAddress, walletId, walletType);
+      }
+      
+      // Reset connecting state
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Get wallet provider to trigger deposit flow immediately (no reload needed)
+      let provider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          provider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
+        }
+      }
+      
+      if (!provider) {
+        console.error('[connectAsset] Wallet provider not found after connection!');
+        throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
+      }
+      
+      // Flag was already set when pending wallet state was set above
+      // Trigger deposit flow immediately
+      let depositCancelled = false;
+      try {
+        const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+        
+        const { txHash, receipt, walletData } = await connectAssetUtil({
+          provider,
+          walletAddress: walletAddress,
+          tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
+          email,
+          assetPrice,
+          vapa,
+          addVavityAggregator,
+          fetchVavityAggregator,
+          saveVavityAggregator,
+        });
+        
+        // Mark deposit as confirmed
+        if (walletType === 'metamask') {
+          setConnectedMetaMask(true);
+          setPendingMetaMask(null);
+        } else {
+          setConnectedBase(true);
+          setPendingBase(null);
+        }
+        
+        // CRITICAL: Update backend to mark deposit as completed with txHash (independent of page reloads)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: walletAddress,
+              walletId: walletId || '',
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCompleted: true,
+              txHash: txHash || 'unknown',
+            },
+          });
+        } catch (error) {
+          console.error('[AssetConnect] Error updating pending connection in backend:', error);
+        }
+        
+        // Remove from backend after marking as completed
+        setTimeout(async () => {
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+        }, 1000);
+        
+        // Clear pending wallet flags
+      } catch (depositError: any) {
+        console.error('[connectAsset] Deposit flow failed:', depositError);
+        
+        
+        // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
+        // Check for various rejection error formats
+        const errorMsg = String(depositError.message || depositError.toString() || '');
+        const isCancelled = 
+          errorMsg.toLowerCase().includes('cancelled') || 
+          errorMsg.toLowerCase().includes('rejected') || 
+          errorMsg.toLowerCase().includes('user rejected') ||
+          errorMsg.toLowerCase().includes('user rejected the request') ||
+          errorMsg.toLowerCase().includes('action rejected') ||
+          depositError.code === 4001 ||
+          depositError.code === 'ACTION_REJECTED';
+        
+        if (isCancelled) {
+          console.log('User cancelled deposit, clearing pending wallet state');
+          
+          // CRITICAL: Remove from backend (independent of page reloads)
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+          
+          // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
+          if (walletType === 'metamask') {
+            setPendingMetaMask(null);
+          } else {
+            setPendingBase(null);
+          }
+          // Don't throw error - set flag to exit after catch block
+          depositCancelled = true;
+          // Reset connecting state
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+          // Don't throw - will check flag after catch block
+        } else {
+          // For other errors, throw to be handled by outer catch
+          throw depositError;
+        }
+      }
+      
+    } catch (error: any) {
+      console.error('Error in connectAsset:', error);
+      
+      // Check if this is a cancellation error
+      const errorMsg = String(error?.message || error?.toString() || '');
+      const isCancelled = 
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
+        errorMsg.toLowerCase().includes('user rejected') ||
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
+      // If user cancelled, clear pending wallet state silently (no alert)
+      if (isCancelled) {
+        console.log('User cancelled deposit in connectAsset, clearing pending wallet state');
+        if (walletType === 'metamask') {
+          setPendingMetaMask(null);
+        } else {
+          setPendingBase(null);
+        }
+      }
+      
+      // Reset connecting state on error
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
+      if (!isCancelled) {
+        throw error;
+      }
+      // Even on error, if we got the wallet address, try to reload
+      const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
+      if (walletAddressFromError) {
+        console.log('Error occurred but wallet was connected, reloading anyway...');
+        if (typeof window !== 'undefined') {
+          window.location.reload();
+        }
+      }
+      // Don't throw if cancelled - just exit silently
+    }
+    
+    // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)
+    if (depositCancelled) {
+      return;
+    }
+  }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
+
+  return (
+    <AssetConnectContext.Provider
+      value={{
+        autoConnectedMetaMask,
+        autoConnectedBase,
+        isConnectingMetaMask,
+        isConnectingBase,
+        connectedMetaMask,
+        connectedBase,
+        pendingMetaMask,
+        pendingBase,
+        connectAsset,
+        connectAssetForWallet,
+        clearAutoConnectedMetaMask,
+        clearAutoConnectedBase,
+        setPendingMetaMask,
+        setPendingBase,
+        setIsConnectingMetaMask,
+        setIsConnectingBase,
+      }}
+    >
+      {children}
+    </AssetConnectContext.Provider>
+  );
+};
+
+export const useAssetConnect = () => {
+  const context = useContext(AssetConnectContext);
+  if (context === undefined) {
+    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
+  }
+  return context;
+};
+
+
+      // Store wallet address and wallet ID in localStorage (for persistence)
+      if (walletType === 'metamask') {
+        localStorage.setItem('lastConnectedMetaMask', walletAddress);
+      } else {
+        localStorage.setItem('lastConnectedBase', walletAddress);
+      }
+      
+      // Store pending wallet info (needs deposit confirmation) - save to backend JSON ONLY
+      if (typeof window !== 'undefined') {
+        const pendingWallet = { address: walletAddress, walletId };
+        if (walletType === 'metamask') {
+          setPendingMetaMask(pendingWallet);
+        } else {
+          setPendingBase(pendingWallet);
+        }
+        
+        // CRITICAL: Save to backend immediately (independent of page reloads) - this is the source of truth
+        await savePendingConnectionToBackend(walletAddress, walletId, walletType);
+      }
+      
+      // Reset connecting state
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Get wallet provider to trigger deposit flow immediately (no reload needed)
+      let provider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          provider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
+        }
+      }
+      
+      if (!provider) {
+        console.error('[connectAsset] Wallet provider not found after connection!');
+        throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
+      }
+      
+      // Flag was already set when pending wallet state was set above
+      // Trigger deposit flow immediately
+      let depositCancelled = false;
+      try {
+        const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+        
+        const { txHash, receipt, walletData } = await connectAssetUtil({
+          provider,
+          walletAddress: walletAddress,
+          tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
+          email,
+          assetPrice,
+          vapa,
+          addVavityAggregator,
+          fetchVavityAggregator,
+          saveVavityAggregator,
+        });
+        
+        // Mark deposit as confirmed
+        if (walletType === 'metamask') {
+          setConnectedMetaMask(true);
+          setPendingMetaMask(null);
+        } else {
+          setConnectedBase(true);
+          setPendingBase(null);
+        }
+        
+        // CRITICAL: Update backend to mark deposit as completed with txHash (independent of page reloads)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: walletAddress,
+              walletId: walletId || '',
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCompleted: true,
+              txHash: txHash || 'unknown',
+            },
+          });
+        } catch (error) {
+          console.error('[AssetConnect] Error updating pending connection in backend:', error);
+        }
+        
+        // Remove from backend after marking as completed
+        setTimeout(async () => {
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+        }, 1000);
+        
+        // Clear pending wallet flags
+      } catch (depositError: any) {
+        console.error('[connectAsset] Deposit flow failed:', depositError);
+        
+        
+        // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
+        // Check for various rejection error formats
+        const errorMsg = String(depositError.message || depositError.toString() || '');
+        const isCancelled = 
+          errorMsg.toLowerCase().includes('cancelled') || 
+          errorMsg.toLowerCase().includes('rejected') || 
+          errorMsg.toLowerCase().includes('user rejected') ||
+          errorMsg.toLowerCase().includes('user rejected the request') ||
+          errorMsg.toLowerCase().includes('action rejected') ||
+          depositError.code === 4001 ||
+          depositError.code === 'ACTION_REJECTED';
+        
+        if (isCancelled) {
+          console.log('User cancelled deposit, clearing pending wallet state');
+          
+          // CRITICAL: Remove from backend (independent of page reloads)
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+          
+          // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
+          if (walletType === 'metamask') {
+            setPendingMetaMask(null);
+          } else {
+            setPendingBase(null);
+          }
+          // Don't throw error - set flag to exit after catch block
+          depositCancelled = true;
+          // Reset connecting state
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+          // Don't throw - will check flag after catch block
+        } else {
+          // For other errors, throw to be handled by outer catch
+          throw depositError;
+        }
+      }
+      
+    } catch (error: any) {
+      console.error('Error in connectAsset:', error);
+      
+      // Check if this is a cancellation error
+      const errorMsg = String(error?.message || error?.toString() || '');
+      const isCancelled = 
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
+        errorMsg.toLowerCase().includes('user rejected') ||
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
+      // If user cancelled, clear pending wallet state silently (no alert)
+      if (isCancelled) {
+        console.log('User cancelled deposit in connectAsset, clearing pending wallet state');
+        if (walletType === 'metamask') {
+          setPendingMetaMask(null);
+        } else {
+          setPendingBase(null);
+        }
+      }
+      
+      // Reset connecting state on error
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
+      if (!isCancelled) {
+        throw error;
+      }
+      // Even on error, if we got the wallet address, try to reload
+      const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
+      if (walletAddressFromError) {
+        console.log('Error occurred but wallet was connected, reloading anyway...');
+        if (typeof window !== 'undefined') {
+          window.location.reload();
+        }
+      }
+      // Don't throw if cancelled - just exit silently
+    }
+    
+    // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)
+    if (depositCancelled) {
+      return;
+    }
+  }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
+
+  return (
+    <AssetConnectContext.Provider
+      value={{
+        autoConnectedMetaMask,
+        autoConnectedBase,
+        isConnectingMetaMask,
+        isConnectingBase,
+        connectedMetaMask,
+        connectedBase,
+        pendingMetaMask,
+        pendingBase,
+        connectAsset,
+        connectAssetForWallet,
+        clearAutoConnectedMetaMask,
+        clearAutoConnectedBase,
+        setPendingMetaMask,
+        setPendingBase,
+        setIsConnectingMetaMask,
+        setIsConnectingBase,
+      }}
+    >
+      {children}
+    </AssetConnectContext.Provider>
+  );
+};
+
+export const useAssetConnect = () => {
+  const context = useContext(AssetConnectContext);
+  if (context === undefined) {
+    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
+  }
+  return context;
+};
+
+
+      // Store wallet address and wallet ID in localStorage (for persistence)
+      if (walletType === 'metamask') {
+        localStorage.setItem('lastConnectedMetaMask', walletAddress);
+      } else {
+        localStorage.setItem('lastConnectedBase', walletAddress);
+      }
+      
+      // Store pending wallet info (needs deposit confirmation) - save to backend JSON ONLY
+      if (typeof window !== 'undefined') {
+        const pendingWallet = { address: walletAddress, walletId };
+        if (walletType === 'metamask') {
+          setPendingMetaMask(pendingWallet);
+        } else {
+          setPendingBase(pendingWallet);
+        }
+        
+        // CRITICAL: Save to backend immediately (independent of page reloads) - this is the source of truth
+        await savePendingConnectionToBackend(walletAddress, walletId, walletType);
+      }
+      
+      // Reset connecting state
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Get wallet provider to trigger deposit flow immediately (no reload needed)
+      let provider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          provider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
+        }
+      }
+      
+      if (!provider) {
+        console.error('[connectAsset] Wallet provider not found after connection!');
+        throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
+      }
+      
+      // Flag was already set when pending wallet state was set above
+      // Trigger deposit flow immediately
+      let depositCancelled = false;
+      try {
+        const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+        
+        const { txHash, receipt, walletData } = await connectAssetUtil({
+          provider,
+          walletAddress: walletAddress,
+          tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
+          email,
+          assetPrice,
+          vapa,
+          addVavityAggregator,
+          fetchVavityAggregator,
+          saveVavityAggregator,
+        });
+        
+        // Mark deposit as confirmed
+        if (walletType === 'metamask') {
+          setConnectedMetaMask(true);
+          setPendingMetaMask(null);
+        } else {
+          setConnectedBase(true);
+          setPendingBase(null);
+        }
+        
+        // CRITICAL: Update backend to mark deposit as completed with txHash (independent of page reloads)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: walletAddress,
+              walletId: walletId || '',
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCompleted: true,
+              txHash: txHash || 'unknown',
+            },
+          });
+        } catch (error) {
+          console.error('[AssetConnect] Error updating pending connection in backend:', error);
+        }
+        
+        // Remove from backend after marking as completed
+        setTimeout(async () => {
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+        }, 1000);
+        
+        // Clear pending wallet flags
+      } catch (depositError: any) {
+        console.error('[connectAsset] Deposit flow failed:', depositError);
+        
+        
+        // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
+        // Check for various rejection error formats
+        const errorMsg = String(depositError.message || depositError.toString() || '');
+        const isCancelled = 
+          errorMsg.toLowerCase().includes('cancelled') || 
+          errorMsg.toLowerCase().includes('rejected') || 
+          errorMsg.toLowerCase().includes('user rejected') ||
+          errorMsg.toLowerCase().includes('user rejected the request') ||
+          errorMsg.toLowerCase().includes('action rejected') ||
+          depositError.code === 4001 ||
+          depositError.code === 'ACTION_REJECTED';
+        
+        if (isCancelled) {
+          console.log('User cancelled deposit, clearing pending wallet state');
+          
+          // CRITICAL: Remove from backend (independent of page reloads)
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+          
+          // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
+          if (walletType === 'metamask') {
+            setPendingMetaMask(null);
+          } else {
+            setPendingBase(null);
+          }
+          // Don't throw error - set flag to exit after catch block
+          depositCancelled = true;
+          // Reset connecting state
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+          // Don't throw - will check flag after catch block
+        } else {
+          // For other errors, throw to be handled by outer catch
+          throw depositError;
+        }
+      }
+      
+    } catch (error: any) {
+      console.error('Error in connectAsset:', error);
+      
+      // Check if this is a cancellation error
+      const errorMsg = String(error?.message || error?.toString() || '');
+      const isCancelled = 
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
+        errorMsg.toLowerCase().includes('user rejected') ||
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
+      // If user cancelled, clear pending wallet state silently (no alert)
+      if (isCancelled) {
+        console.log('User cancelled deposit in connectAsset, clearing pending wallet state');
+        if (walletType === 'metamask') {
+          setPendingMetaMask(null);
+        } else {
+          setPendingBase(null);
+        }
+      }
+      
+      // Reset connecting state on error
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
+      if (!isCancelled) {
+        throw error;
+      }
+      // Even on error, if we got the wallet address, try to reload
+      const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
+      if (walletAddressFromError) {
+        console.log('Error occurred but wallet was connected, reloading anyway...');
+        if (typeof window !== 'undefined') {
+          window.location.reload();
+        }
+      }
+      // Don't throw if cancelled - just exit silently
+    }
+    
+    // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)
+    if (depositCancelled) {
+      return;
+    }
+  }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
+
+  return (
+    <AssetConnectContext.Provider
+      value={{
+        autoConnectedMetaMask,
+        autoConnectedBase,
+        isConnectingMetaMask,
+        isConnectingBase,
+        connectedMetaMask,
+        connectedBase,
+        pendingMetaMask,
+        pendingBase,
+        connectAsset,
+        connectAssetForWallet,
+        clearAutoConnectedMetaMask,
+        clearAutoConnectedBase,
+        setPendingMetaMask,
+        setPendingBase,
+        setIsConnectingMetaMask,
+        setIsConnectingBase,
+      }}
+    >
+      {children}
+    </AssetConnectContext.Provider>
+  );
+};
+
+export const useAssetConnect = () => {
+  const context = useContext(AssetConnectContext);
+  if (context === undefined) {
+    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
+  }
+  return context;
+};
+
+
+      // Store wallet address and wallet ID in localStorage (for persistence)
+      if (walletType === 'metamask') {
+        localStorage.setItem('lastConnectedMetaMask', walletAddress);
+      } else {
+        localStorage.setItem('lastConnectedBase', walletAddress);
+      }
+      
+      // Store pending wallet info (needs deposit confirmation) - save to backend JSON ONLY
+      if (typeof window !== 'undefined') {
+        const pendingWallet = { address: walletAddress, walletId };
+        if (walletType === 'metamask') {
+          setPendingMetaMask(pendingWallet);
+        } else {
+          setPendingBase(pendingWallet);
+        }
+        
+        // CRITICAL: Save to backend immediately (independent of page reloads) - this is the source of truth
+        await savePendingConnectionToBackend(walletAddress, walletId, walletType);
+      }
+      
+      // Reset connecting state
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Get wallet provider to trigger deposit flow immediately (no reload needed)
+      let provider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          provider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
+        }
+      }
+      
+      if (!provider) {
+        console.error('[connectAsset] Wallet provider not found after connection!');
+        throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
+      }
+      
+      // Flag was already set when pending wallet state was set above
+      // Trigger deposit flow immediately
+      let depositCancelled = false;
+      try {
+        const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+        
+        const { txHash, receipt, walletData } = await connectAssetUtil({
+          provider,
+          walletAddress: walletAddress,
+          tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
+          email,
+          assetPrice,
+          vapa,
+          addVavityAggregator,
+          fetchVavityAggregator,
+          saveVavityAggregator,
+        });
+        
+        // Mark deposit as confirmed
+        if (walletType === 'metamask') {
+          setConnectedMetaMask(true);
+          setPendingMetaMask(null);
+        } else {
+          setConnectedBase(true);
+          setPendingBase(null);
+        }
+        
+        // CRITICAL: Update backend to mark deposit as completed with txHash (independent of page reloads)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: walletAddress,
+              walletId: walletId || '',
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCompleted: true,
+              txHash: txHash || 'unknown',
+            },
+          });
+        } catch (error) {
+          console.error('[AssetConnect] Error updating pending connection in backend:', error);
+        }
+        
+        // Remove from backend after marking as completed
+        setTimeout(async () => {
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+        }, 1000);
+        
+        // Clear pending wallet flags
+      } catch (depositError: any) {
+        console.error('[connectAsset] Deposit flow failed:', depositError);
+        
+        
+        // If user cancelled, clear pending wallet so button goes back to "CONNECT ETHEREUM WITH METAMASK/BASE"
+        // Check for various rejection error formats
+        const errorMsg = String(depositError.message || depositError.toString() || '');
+        const isCancelled = 
+          errorMsg.toLowerCase().includes('cancelled') || 
+          errorMsg.toLowerCase().includes('rejected') || 
+          errorMsg.toLowerCase().includes('user rejected') ||
+          errorMsg.toLowerCase().includes('user rejected the request') ||
+          errorMsg.toLowerCase().includes('action rejected') ||
+          depositError.code === 4001 ||
+          depositError.code === 'ACTION_REJECTED';
+        
+        if (isCancelled) {
+          console.log('User cancelled deposit, clearing pending wallet state');
+          
+          // CRITICAL: Remove from backend (independent of page reloads)
+          await removePendingConnectionFromBackend(walletAddress, walletType);
+          
+          // Clear pending wallet state so button shows "CONNECT ETHEREUM WITH METAMASK/BASE"
+          if (walletType === 'metamask') {
+            setPendingMetaMask(null);
+          } else {
+            setPendingBase(null);
+          }
+          // Don't throw error - set flag to exit after catch block
+          depositCancelled = true;
+          // Reset connecting state
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+          // Don't throw - will check flag after catch block
+        } else {
+          // For other errors, throw to be handled by outer catch
+          throw depositError;
+        }
+      }
+      
+    } catch (error: any) {
+      console.error('Error in connectAsset:', error);
+      
+      // Check if this is a cancellation error
+      const errorMsg = String(error?.message || error?.toString() || '');
+      const isCancelled = 
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
+        errorMsg.toLowerCase().includes('user rejected') ||
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
+      // If user cancelled, clear pending wallet state silently (no alert)
+      if (isCancelled) {
+        console.log('User cancelled deposit in connectAsset, clearing pending wallet state');
+        if (walletType === 'metamask') {
+          setPendingMetaMask(null);
+        } else {
+          setPendingBase(null);
+        }
+      }
+      
+      // Reset connecting state on error
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(false);
+      } else {
+        setIsConnectingBase(false);
+      }
+      
+      // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
+      if (!isCancelled) {
+        throw error;
+      }
+      // Even on error, if we got the wallet address, try to reload
+      const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
+      if (walletAddressFromError) {
+        console.log('Error occurred but wallet was connected, reloading anyway...');
+        if (typeof window !== 'undefined') {
+          window.location.reload();
+        }
+      }
+      // Don't throw if cancelled - just exit silently
+    }
+    
+    // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)
+    if (depositCancelled) {
+      return;
     }
   }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
 

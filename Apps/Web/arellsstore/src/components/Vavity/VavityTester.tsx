@@ -74,35 +74,71 @@ const VavityTester: React.FC = () => {
     setIsConnectingBase
   } = useAssetConnect();
   
-  // Check sessionStorage for pending wallets (to disable button even after reload)
+  // Check backend JSON ONLY for pending wallets (to disable button even after reload)
   // This prevents double-clicks - if there's a pending wallet, button should be disabled
-  const [hasPendingMetaMaskInStorage, setHasPendingMetaMaskInStorage] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return !!sessionStorage.getItem('pendingMetaMask');
-    }
-    return false;
-  });
-  const [hasPendingBaseInStorage, setHasPendingBaseInStorage] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return !!sessionStorage.getItem('pendingBase');
-    }
-    return false;
-  });
+  // Backend JSON persists across browser sessions and page reloads
+  const [hasPendingMetaMaskInBackend, setHasPendingMetaMaskInBackend] = useState(false);
+  const [hasPendingBaseInBackend, setHasPendingBaseInBackend] = useState(false);
   
   // Check if wallet extension is actually connected (has accounts)
   const [metaMaskExtensionConnected, setMetaMaskExtensionConnected] = useState(false);
   const [baseExtensionConnected, setBaseExtensionConnected] = useState(false);
   
-  // Update pending state from sessionStorage and check wallet extension connection
-  // This effect runs on mount and whenever pendingMetaMask/pendingBase changes
+  // Check for pending wallet/deposit on mount and show alert (ONLY from backend JSON)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !email) return;
+    
+    const checkPendingOnMount = async () => {
+      // ONLY check backend JSON for pending connections
+      try {
+        const response = await axios.get('/api/savePendingConnection', { params: { email } });
+        const pendingConnections = response.data.pendingConnections || [];
+        const activePending = pendingConnections.filter(
+          (pc: any) => !pc.depositCancelled && !pc.depositCompleted
+        );
+        
+        // Update button state based on backend JSON
+        const pendingMetaMask = activePending.find((pc: any) => pc.walletType === 'metamask');
+        const pendingBase = activePending.find((pc: any) => pc.walletType === 'base');
+        
+        setHasPendingMetaMaskInBackend(!!pendingMetaMask);
+        setHasPendingBaseInBackend(!!pendingBase);
+        
+        // If there's a pending wallet/deposit, show alert
+        if (activePending.length > 0) {
+          setTimeout(() => {
+            alert('Check wallet - A transaction may be pending. Please check your wallet extension.');
+          }, 1000); // Small delay to ensure page is loaded
+        }
+      } catch (error) {
+        console.error('[VavityTester] Error checking pending connections from backend:', error);
+      }
+    };
+    
+    checkPendingOnMount();
+  }, [email]); // Run when email is available
+  
+  // Update pending state from backend JSON and check wallet extension connection
+  // This effect runs on mount and whenever email changes
   useEffect(() => {
     const checkPending = async () => {
-      if (typeof window !== 'undefined') {
-        // Always check sessionStorage directly to get the latest value
-        const hasPendingMetaMask = !!sessionStorage.getItem('pendingMetaMask');
-        const hasPendingBase = !!sessionStorage.getItem('pendingBase');
-        setHasPendingMetaMaskInStorage(hasPendingMetaMask);
-        setHasPendingBaseInStorage(hasPendingBase);
+      if (typeof window !== 'undefined' && email) {
+        // ONLY check backend JSON for pending connections
+        try {
+          const response = await axios.get('/api/savePendingConnection', { params: { email } });
+          const pendingConnections = response.data.pendingConnections || [];
+          const activePending = pendingConnections.filter(
+            (pc: any) => !pc.depositCancelled && !pc.depositCompleted
+          );
+          
+          const pendingMetaMask = activePending.find((pc: any) => pc.walletType === 'metamask');
+          const pendingBase = activePending.find((pc: any) => pc.walletType === 'base');
+          
+          setHasPendingMetaMaskInBackend(!!pendingMetaMask);
+          setHasPendingBaseInBackend(!!pendingBase);
+        } catch (error) {
+          console.error('[VavityTester] Error fetching pending connections:', error);
+        }
         
         // Check if MetaMask extension is connected
         if ((window as any).ethereum) {
@@ -476,33 +512,23 @@ const VavityTester: React.FC = () => {
             const walletAddress = walletType === 'metamask' ? pendingMetaMask?.address : pendingBase?.address;
             
             // Set cancellation flag to prevent auto-trigger on reload
-            if (walletAddress) {
-              const depositCancelledKey = `depositCancelled_${walletType}_${walletAddress.toLowerCase()}`;
-              sessionStorage.setItem(depositCancelledKey, 'true');
-              console.log('Set cancellation flag:', depositCancelledKey);
+            // Mark cancellation in backend JSON
+            if (walletAddress && email) {
+              try {
+                await axios.post('/api/savePendingConnection', {
+                  email,
+                  pendingConnection: {
+                    address: walletAddress,
+                    walletId: walletId || '',
+                    walletType: walletType,
+                    timestamp: Date.now(),
+                    depositCancelled: true,
+                  },
+                });
+              } catch (error) {
+                console.error('[VavityTester] Error marking cancellation in backend:', error);
+              }
             }
-            
-            // Clear ALL sessionStorage items FIRST (before state updates)
-            // This ensures the setInterval check will see cleared values
-            sessionStorage.removeItem('pendingMetaMask');
-            sessionStorage.removeItem('pendingBase');
-            sessionStorage.removeItem('pendingWalletAddress');
-            sessionStorage.removeItem('pendingWalletType');
-            sessionStorage.removeItem('pendingWalletId');
-            sessionStorage.removeItem('depositCompleted');
-            sessionStorage.removeItem('depositConfirmedMetaMask');
-            sessionStorage.removeItem('depositConfirmedBase');
-            
-            // Clear processed flags for both wallet types (to be safe)
-            if (walletAddress) {
-              const processedKey = `processed_${walletAddress.toLowerCase()}`;
-              sessionStorage.removeItem(processedKey);
-            }
-            
-            // Verify sessionStorage is cleared
-            const verifyPendingMetaMask = sessionStorage.getItem('pendingMetaMask');
-            const verifyPendingBase = sessionStorage.getItem('pendingBase');
-            console.log('Verification - pendingMetaMask in sessionStorage:', verifyPendingMetaMask, 'pendingBase:', verifyPendingBase);
             
             // Clear React state IMMEDIATELY - do this synchronously
             // Clear BOTH wallet types' state to be safe (in case of any cross-contamination)
@@ -512,9 +538,9 @@ const VavityTester: React.FC = () => {
             setPendingMetaMask(null);
             setPendingBase(null);
             
-            // Clear local state
-            setHasPendingMetaMaskInStorage(false);
-            setHasPendingBaseInStorage(false);
+            // Clear local state (from backend JSON)
+            setHasPendingMetaMaskInBackend(false);
+            setHasPendingBaseInBackend(false);
             setIsConnectingMetaMask(false);
             setIsConnectingBase(false);
             setError(null);
@@ -522,26 +548,39 @@ const VavityTester: React.FC = () => {
             // Force a re-render by updating the forceUpdate counter
             setForceUpdate(prev => prev + 1);
             
-            // Double-check sessionStorage is cleared and update state again
+            // Re-check backend JSON to ensure state is updated
             // Use requestAnimationFrame to ensure this happens after React's state updates
-            requestAnimationFrame(() => {
-              const hasPendingMetaMask = !!sessionStorage.getItem('pendingMetaMask');
-              const hasPendingBase = !!sessionStorage.getItem('pendingBase');
-              console.log('Post-cancellation check - hasPendingMetaMask:', hasPendingMetaMask, 'hasPendingBase:', hasPendingBase);
-              
-              if (hasPendingMetaMask || hasPendingBase) {
-                console.warn('SessionStorage still has pending wallet after cancellation, clearing again');
-                sessionStorage.removeItem('pendingMetaMask');
-                sessionStorage.removeItem('pendingBase');
+            requestAnimationFrame(async () => {
+              if (email) {
+                try {
+                  const response = await axios.get('/api/savePendingConnection', { params: { email } });
+                  const pendingConnections = response.data.pendingConnections || [];
+                  const activePending = pendingConnections.filter(
+                    (pc: any) => !pc.depositCancelled && !pc.depositCompleted
+                  );
+                  
+                  const pendingMetaMask = activePending.find((pc: any) => pc.walletType === 'metamask');
+                  const pendingBase = activePending.find((pc: any) => pc.walletType === 'base');
+                  
+                  setHasPendingMetaMaskInBackend(!!pendingMetaMask);
+                  setHasPendingBaseInBackend(!!pendingBase);
+                  
+                  if (pendingMetaMask || pendingBase) {
+                    console.warn('Backend JSON still has pending wallet after cancellation');
+                  }
+                  
+                  // Clear state regardless
+                  setHasPendingMetaMaskInBackend(false);
+                  setHasPendingBaseInBackend(false);
+                  setPendingMetaMask(null);
+                  setPendingBase(null);
+                } catch (error) {
+                  console.error('[VavityTester] Error re-checking backend after cancellation:', error);
+                }
               }
-              
-              setHasPendingMetaMaskInStorage(false);
-              setHasPendingBaseInStorage(false);
-              setPendingMetaMask(null);
-              setPendingBase(null);
             });
             
-            console.log('Pending wallet state cleared after cancellation. sessionStorage cleared, state updated. Cancellation flag set to prevent auto-trigger on reload.');
+            console.log('Pending wallet state cleared after cancellation. Backend JSON updated, state updated.');
             return;
           }
           // For other errors, show them
@@ -555,11 +594,6 @@ const VavityTester: React.FC = () => {
       if (walletExtensionConnected && !pendingWallet && !isFullyConnected && walletAddress) {
         console.log(`[Connect Asset] Wallet extension connected but no pending wallet, creating pending wallet...`);
         
-        // Clear any previous cancellation flag for this wallet address (user is trying again)
-        const depositCancelledKey = `depositCancelled_${walletType}_${walletAddress.toLowerCase()}`;
-        sessionStorage.removeItem(depositCancelledKey);
-        console.log('Cleared previous cancellation flag:', depositCancelledKey);
-        
         // Create pending wallet info
         const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         const pendingWalletData = { address: walletAddress, walletId };
@@ -567,15 +601,28 @@ const VavityTester: React.FC = () => {
         // Set pending wallet state immediately so button shows "WAITING FOR DEPOSIT..."
         if (walletType === 'metamask') {
           setPendingMetaMask(pendingWalletData);
-          sessionStorage.setItem('pendingMetaMask', JSON.stringify(pendingWalletData));
         } else {
           setPendingBase(pendingWalletData);
-          sessionStorage.setItem('pendingBase', JSON.stringify(pendingWalletData));
         }
         
-        sessionStorage.setItem('pendingWalletAddress', walletAddress);
-        sessionStorage.setItem('pendingWalletType', walletType);
-        sessionStorage.setItem('pendingWalletId', walletId);
+        // Save to backend JSON immediately (this is the source of truth)
+        if (email) {
+          try {
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: {
+                address: walletAddress,
+                walletId,
+                walletType,
+                timestamp: Date.now(),
+                depositCancelled: false,
+                depositCompleted: false,
+              },
+            });
+          } catch (error) {
+            console.error('[VavityTester] Error saving pending connection to backend:', error);
+          }
+        }
         
         // Trigger deposit flow
         await connectAssetForWallet(walletType);
@@ -623,44 +670,54 @@ const VavityTester: React.FC = () => {
         // Get wallet address before clearing
         const walletAddress = walletType === 'metamask' ? pendingMetaMask?.address : pendingBase?.address;
         
-        // Set cancellation flag to prevent auto-trigger on reload
-        if (walletAddress) {
-          const depositCancelledKey = `depositCancelled_${walletType}_${walletAddress.toLowerCase()}`;
-          sessionStorage.setItem(depositCancelledKey, 'true');
-        }
-        
-        // Clear ALL sessionStorage items
-        sessionStorage.removeItem('pendingMetaMask');
-        sessionStorage.removeItem('pendingBase');
-        sessionStorage.removeItem('pendingWalletAddress');
-        sessionStorage.removeItem('pendingWalletType');
-        sessionStorage.removeItem('pendingWalletId');
-        sessionStorage.removeItem('depositCompleted');
-        sessionStorage.removeItem('depositConfirmedMetaMask');
-        sessionStorage.removeItem('depositConfirmedBase');
-        
-        if (walletAddress) {
-          const processedKey = `processed_${walletAddress.toLowerCase()}`;
-          sessionStorage.removeItem(processedKey);
+        // Mark cancellation in backend JSON
+        if (walletAddress && email) {
+          try {
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: {
+                address: walletAddress,
+                walletId: walletId || '',
+                walletType: walletType,
+                timestamp: Date.now(),
+                depositCancelled: true,
+              },
+            });
+          } catch (error) {
+            console.error('[VavityTester] Error marking cancellation in backend:', error);
+          }
         }
         
         // Clear React state IMMEDIATELY
         setPendingMetaMask(null);
         setPendingBase(null);
-        setHasPendingMetaMaskInStorage(false);
-        setHasPendingBaseInStorage(false);
+        setHasPendingMetaMaskInBackend(false);
+        setHasPendingBaseInBackend(false);
         setIsConnectingMetaMask(false);
         setIsConnectingBase(false);
         setError(null);
         
-        // Force immediate re-check
-        requestAnimationFrame(() => {
-          const hasPendingMetaMask = !!sessionStorage.getItem('pendingMetaMask');
-          const hasPendingBase = !!sessionStorage.getItem('pendingBase');
-          setHasPendingMetaMaskInStorage(hasPendingMetaMask);
-          setHasPendingBaseInStorage(hasPendingBase);
-          if (!hasPendingMetaMask) setPendingMetaMask(null);
-          if (!hasPendingBase) setPendingBase(null);
+        // Force immediate re-check from backend JSON
+        requestAnimationFrame(async () => {
+          if (email) {
+            try {
+              const response = await axios.get('/api/savePendingConnection', { params: { email } });
+              const pendingConnections = response.data.pendingConnections || [];
+              const activePending = pendingConnections.filter(
+                (pc: any) => !pc.depositCancelled && !pc.depositCompleted
+              );
+              
+              const pendingMetaMask = activePending.find((pc: any) => pc.walletType === 'metamask');
+              const pendingBase = activePending.find((pc: any) => pc.walletType === 'base');
+              
+              setHasPendingMetaMaskInBackend(!!pendingMetaMask);
+              setHasPendingBaseInBackend(!!pendingBase);
+              if (!pendingMetaMask) setPendingMetaMask(null);
+              if (!pendingBase) setPendingBase(null);
+            } catch (error) {
+              console.error('[VavityTester] Error re-checking backend after cancellation:', error);
+            }
+          }
         });
         
         console.log('[Connect Asset] State cleared after cancellation');
@@ -724,30 +781,30 @@ const VavityTester: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px' }}>
               <button
                 onClick={handleConnectMetaMask}
-                disabled={(connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)}
+                disabled={(connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInBackend) || isConnectingMetaMask || isConnectingBase || !email || (hasPendingMetaMaskInBackend || pendingMetaMask)}
                 style={{
                   padding: '15px 20px',
                   fontSize: '16px',
                   fontWeight: 'bold',
-                  backgroundColor: connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage ? '#28a745' : 
-                                   ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected) ? '#ffc107' :
-                                   (email && !isConnectingMetaMask && !isConnectingBase && !connectedMetaMask && !((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)) ? '#f6851b' : '#ccc',
+                  backgroundColor: connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInBackend ? '#28a745' : 
+                                   ((hasPendingMetaMaskInBackend || pendingMetaMask) && metaMaskExtensionConnected) ? '#ffc107' :
+                                   (hasPendingMetaMaskInBackend || pendingMetaMask) ? '#ccc' :
+                                   (email && !isConnectingMetaMask && !isConnectingBase && !connectedMetaMask && !(hasPendingMetaMaskInBackend || pendingMetaMask)) ? '#f6851b' : '#ccc',
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
-                  cursor: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)) ? 'not-allowed' : 'pointer',
-                  opacity: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)) ? (connectedMetaMask ? 1 : 0.6) : 1,
-                  pointerEvents: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingMetaMaskInStorage || pendingMetaMask) && metaMaskExtensionConnected)) ? 'none' : 'auto',
+                  cursor: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInBackend) || isConnectingMetaMask || isConnectingBase || !email || (hasPendingMetaMaskInBackend || pendingMetaMask)) ? 'not-allowed' : 'pointer',
+                  opacity: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInBackend) || isConnectingMetaMask || isConnectingBase || !email || (hasPendingMetaMaskInBackend || pendingMetaMask)) ? (connectedMetaMask ? 1 : 0.6) : 1,
+                  pointerEvents: ((connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInBackend) || isConnectingMetaMask || isConnectingBase || !email || (hasPendingMetaMaskInBackend || pendingMetaMask)) ? 'none' : 'auto',
                 }}
               >
                 {(() => {
-                  // Check if there's actually a pending wallet (double-check sessionStorage)
-                  const actuallyPending = sessionStorage.getItem('pendingMetaMask') || pendingMetaMask;
-                  const shouldShowWaiting = actuallyPending && metaMaskExtensionConnected;
+                  // Check if there's a pending wallet (from backend JSON or React state)
+                  const actuallyPending = hasPendingMetaMaskInBackend || pendingMetaMask;
                   
-                  if (connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInStorage && !actuallyPending) {
+                  if (connectedMetaMask && !pendingMetaMask && !hasPendingMetaMaskInBackend && !actuallyPending) {
                     return 'CONNECTED TO METAMASK';
-                  } else if (shouldShowWaiting) {
+                  } else if (actuallyPending) {
                     return 'WAITING FOR DEPOSIT...';
                   } else if (isConnectingMetaMask) {
                     return 'CONNECTING...';
@@ -758,30 +815,30 @@ const VavityTester: React.FC = () => {
               </button>
           <button
                 onClick={handleConnectBase}
-                disabled={(connectedBase && !pendingBase && !hasPendingBaseInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)}
+                disabled={(connectedBase && !pendingBase && !hasPendingBaseInBackend) || isConnectingMetaMask || isConnectingBase || !email || (hasPendingBaseInBackend || pendingBase)}
           style={{
                   padding: '15px 20px',
             fontSize: '16px',
                   fontWeight: 'bold',
-                  backgroundColor: connectedBase && !pendingBase && !hasPendingBaseInStorage ? '#28a745' : 
-                                   ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected) ? '#ffc107' :
-                                   (email && !isConnectingMetaMask && !isConnectingBase && !connectedBase && !((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)) ? '#0052ff' : '#ccc',
+                  backgroundColor: connectedBase && !pendingBase && !hasPendingBaseInBackend ? '#28a745' : 
+                                   ((hasPendingBaseInBackend || pendingBase) && baseExtensionConnected) ? '#ffc107' :
+                                   (hasPendingBaseInBackend || pendingBase) ? '#ccc' :
+                                   (email && !isConnectingMetaMask && !isConnectingBase && !connectedBase && !(hasPendingBaseInBackend || pendingBase)) ? '#0052ff' : '#ccc',
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-                  cursor: ((connectedBase && !pendingBase && !hasPendingBaseInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)) ? 'not-allowed' : 'pointer',
-                  opacity: ((connectedBase && !pendingBase && !hasPendingBaseInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)) ? (connectedBase ? 1 : 0.6) : 1,
-                  pointerEvents: ((connectedBase && !pendingBase && !hasPendingBaseInStorage) || isConnectingMetaMask || isConnectingBase || !email || ((hasPendingBaseInStorage || pendingBase) && baseExtensionConnected)) ? 'none' : 'auto',
+                  cursor: ((connectedBase && !pendingBase && !hasPendingBaseInBackend) || isConnectingMetaMask || isConnectingBase || !email || (hasPendingBaseInBackend || pendingBase)) ? 'not-allowed' : 'pointer',
+                  opacity: ((connectedBase && !pendingBase && !hasPendingBaseInBackend) || isConnectingMetaMask || isConnectingBase || !email || (hasPendingBaseInBackend || pendingBase)) ? (connectedBase ? 1 : 0.6) : 1,
+                  pointerEvents: ((connectedBase && !pendingBase && !hasPendingBaseInBackend) || isConnectingMetaMask || isConnectingBase || !email || (hasPendingBaseInBackend || pendingBase)) ? 'none' : 'auto',
           }}
         >
                 {(() => {
-                  // Check if there's actually a pending wallet (double-check sessionStorage)
-                  const actuallyPending = sessionStorage.getItem('pendingBase') || pendingBase;
-                  const shouldShowWaiting = actuallyPending && baseExtensionConnected;
+                  // Check if there's a pending wallet (from backend JSON or React state)
+                  const actuallyPending = hasPendingBaseInBackend || pendingBase;
                   
-                  if (connectedBase && !pendingBase && !hasPendingBaseInStorage && !actuallyPending) {
+                  if (connectedBase && !pendingBase && !hasPendingBaseInBackend && !actuallyPending) {
                     return 'CONNECTED TO BASE';
-                  } else if (shouldShowWaiting) {
+                  } else if (actuallyPending) {
                     return 'WAITING FOR DEPOSIT...';
                   } else if (isConnectingBase) {
                     return 'CONNECTING...';
