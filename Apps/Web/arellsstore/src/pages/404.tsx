@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import '../app/css/error-style.css';
-import PageError from '../components/error/404/PageError';
 import React from 'react';
 
 export const metadata: Metadata = {
@@ -35,7 +34,11 @@ export default function Custom404() {
   return (
     <>
       <div id="error-overlay">
-        <PageError />
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <h1>404</h1>
+          <h2>Page Not Found</h2>
+          <p>The page you are looking for does not exist.</p>
+        </div>
       </div>
     </>
   );

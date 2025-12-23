@@ -992,7 +992,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       if (!email) {
         throw new Error('Please sign in first to connect a wallet.');
       }
-
+      
       // Step 1: Connect to wallet
       const { accounts } = await connectWalletUtil(walletType);
       

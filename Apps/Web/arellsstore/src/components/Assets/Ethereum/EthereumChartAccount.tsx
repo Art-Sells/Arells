@@ -3,12 +3,12 @@ import { Line } from 'react-chartjs-2';
 import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
-import styles from '../../app/css/ethereum/EthereumChart.module.css';
-import '../../app/css/ethereum/ethereumchart.css';
+import styles from '../../../app/css/ethereum/EthereumChart.module.css';
+import '../../../app/css/ethereum/ethereumchart.css';
 
 import type { ImageLoaderProps } from 'next/image';
 import Image from 'next/image';
-import { fetchEthereumPriceData, fetchHistoricalData, filterPriceData } from '../../lib/coingecko-api';
+import { fetchEthereumPriceData, fetchHistoricalData, filterPriceData } from '../../../lib/coingecko-api';
 
 interface PricePoint {
   x: Date;

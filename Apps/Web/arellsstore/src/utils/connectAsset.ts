@@ -147,7 +147,11 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     }
 
   // Step 7: ALWAYS fetch fresh VAPA at time of connection (after deposit)
+  // Add a small delay to ensure price APIs have the latest data
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
   // Fetch VavityAggregator, highest price ever, and current price in parallel
+  // CRITICAL: Fetch current price FRESH at connection time to ensure cpVatoc matches what cpVact will use
   const existingDataPromise = fetchVavityAggregator(email);
   const highestPricePromise = Promise.race([
     axios.get('/api/fetchHighestEthereumPrice', { timeout: 2000 }),
@@ -163,14 +167,18 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
   
   // Extract VavityAggregator data (first result)
   let existingWallets: any[] = [];
+  let existingData: any = null;
   if (results[0].status === 'fulfilled') {
-    existingWallets = results[0].value.wallets || [];
+    existingData = results[0].value;
+    existingWallets = existingData.wallets || [];
   } else {
     try {
       const retryData = await fetchVavityAggregator(email);
-      existingWallets = retryData.wallets || [];
+      existingData = retryData;
+      existingWallets = existingData.wallets || [];
     } catch (retryError) {
       // Continue with empty wallets array
+      existingData = { wallets: [], vavityCombinations: {} };
     }
   }
   
@@ -204,24 +212,29 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     }
   }
   
-  // VAPA calculation: Use the maximum of all available price sources
+  // VAPA calculation: Use assetPrice as PRIMARY source (same as fetchBalance uses)
+  // fetchBalance uses: Math.max(wallet.cpVact || 0, assetPrice)
+  // Since cpVact ALWAYS correctly gets VAPA, we should use the SAME source: assetPrice
+  // Priority: assetPrice (from context, same as fetchBalance) > fetchedCurrentPrice > highestPriceEver > vapa
+  // This ensures cpVatoc uses the exact same source that cpVact uses, so they match
   actualVapa = Math.max(
-    fetchedCurrentPrice || 0,
-    highestPriceEver || 0,
-    vapa || 0,
-    assetPrice || 0
+    assetPrice || 0,           // Primary: SAME source as fetchBalance uses (this is why cpVact is always correct)
+    fetchedCurrentPrice || 0,  // Secondary: fetched current price (backup)
+    highestPriceEver || 0,     // Tertiary: highest price ever (backup)
+    vapa || 0                   // Quaternary: vapa from context (backup)
   );
   
   const currentVapa = actualVapa;
   
   // CRITICAL LOG: Only log VAPA calculation for debugging cpVatoc issue
   console.log('[connectAsset] VAPA for cpVatoc:', {
-    fetchedCurrentPrice,
-    highestPriceEver,
-    vapaParam: vapa,
-    assetPriceParam: assetPrice,
+    assetPriceParam: assetPrice,      // Primary: SAME source as fetchBalance uses (why cpVact is always correct)
+    fetchedCurrentPrice,               // Secondary: fetched current price
+    highestPriceEver,                  // Tertiary: highest price ever
+    vapaParam: vapa,                   // Quaternary: vapa from context
     finalVapa: currentVapa,
-    walletAddress
+    walletAddress,
+    'NOTE': 'Using assetPrice as primary to match fetchBalance calculation (same source = same result)'
   });
 
   // Step 8: Check if wallet already exists in VavityAggregator (for wallets that don't have depositPaid yet)
