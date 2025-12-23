@@ -1446,9 +1446,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
-      // Flag was already set when pending wallet state was set above
       // Trigger deposit flow immediately
-      let depositCancelled = false;
+      let shouldExit = false;
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
@@ -1524,21 +1523,19 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           } else {
             setPendingBase(null);
           }
-          // Don't throw error - set flag to exit after catch block
-          depositCancelled = true;
           // Reset connecting state
           if (walletType === 'metamask') {
             setIsConnectingMetaMask(false);
           } else {
             setIsConnectingBase(false);
           }
-          // Don't throw - will check flag after catch block
+          // Set flag to exit function after catch block
+          shouldExit = true;
         } else {
           // For other errors, throw to be handled by outer catch
           throw depositError;
         }
       }
-      
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
@@ -1674,9 +1671,8 @@ export const useAssetConnect = () => {
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
-      // Flag was already set when pending wallet state was set above
       // Trigger deposit flow immediately
-      let depositCancelled = false;
+      let shouldExit = false;
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
@@ -1752,21 +1748,19 @@ export const useAssetConnect = () => {
           } else {
             setPendingBase(null);
           }
-          // Don't throw error - set flag to exit after catch block
-          depositCancelled = true;
           // Reset connecting state
           if (walletType === 'metamask') {
             setIsConnectingMetaMask(false);
           } else {
             setIsConnectingBase(false);
           }
-          // Don't throw - will check flag after catch block
+          // Set flag to exit function after catch block
+          shouldExit = true;
         } else {
           // For other errors, throw to be handled by outer catch
           throw depositError;
         }
       }
-      
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
@@ -1902,9 +1896,8 @@ export const useAssetConnect = () => {
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
-      // Flag was already set when pending wallet state was set above
       // Trigger deposit flow immediately
-      let depositCancelled = false;
+      let shouldExit = false;
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
@@ -1980,21 +1973,19 @@ export const useAssetConnect = () => {
           } else {
             setPendingBase(null);
           }
-          // Don't throw error - set flag to exit after catch block
-          depositCancelled = true;
           // Reset connecting state
           if (walletType === 'metamask') {
             setIsConnectingMetaMask(false);
           } else {
             setIsConnectingBase(false);
           }
-          // Don't throw - will check flag after catch block
+          // Set flag to exit function after catch block
+          shouldExit = true;
         } else {
           // For other errors, throw to be handled by outer catch
           throw depositError;
         }
       }
-      
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
@@ -2130,9 +2121,8 @@ export const useAssetConnect = () => {
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
-      // Flag was already set when pending wallet state was set above
       // Trigger deposit flow immediately
-      let depositCancelled = false;
+      let shouldExit = false;
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
@@ -2208,21 +2198,19 @@ export const useAssetConnect = () => {
           } else {
             setPendingBase(null);
           }
-          // Don't throw error - set flag to exit after catch block
-          depositCancelled = true;
           // Reset connecting state
           if (walletType === 'metamask') {
             setIsConnectingMetaMask(false);
           } else {
             setIsConnectingBase(false);
           }
-          // Don't throw - will check flag after catch block
+          // Set flag to exit function after catch block
+          shouldExit = true;
         } else {
           // For other errors, throw to be handled by outer catch
           throw depositError;
         }
       }
-      
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
@@ -2358,9 +2346,8 @@ export const useAssetConnect = () => {
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
-      // Flag was already set when pending wallet state was set above
       // Trigger deposit flow immediately
-      let depositCancelled = false;
+      let shouldExit = false;
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
@@ -2436,21 +2423,19 @@ export const useAssetConnect = () => {
           } else {
             setPendingBase(null);
           }
-          // Don't throw error - set flag to exit after catch block
-          depositCancelled = true;
           // Reset connecting state
           if (walletType === 'metamask') {
             setIsConnectingMetaMask(false);
           } else {
             setIsConnectingBase(false);
           }
-          // Don't throw - will check flag after catch block
+          // Set flag to exit function after catch block
+          shouldExit = true;
         } else {
           // For other errors, throw to be handled by outer catch
           throw depositError;
         }
       }
-      
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
@@ -2586,9 +2571,8 @@ export const useAssetConnect = () => {
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
-      // Flag was already set when pending wallet state was set above
       // Trigger deposit flow immediately
-      let depositCancelled = false;
+      let shouldExit = false;
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
@@ -2664,21 +2648,19 @@ export const useAssetConnect = () => {
           } else {
             setPendingBase(null);
           }
-          // Don't throw error - set flag to exit after catch block
-          depositCancelled = true;
           // Reset connecting state
           if (walletType === 'metamask') {
             setIsConnectingMetaMask(false);
           } else {
             setIsConnectingBase(false);
           }
-          // Don't throw - will check flag after catch block
+          // Set flag to exit function after catch block
+          shouldExit = true;
         } else {
           // For other errors, throw to be handled by outer catch
           throw depositError;
         }
       }
-      
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
@@ -2814,9 +2796,8 @@ export const useAssetConnect = () => {
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
-      // Flag was already set when pending wallet state was set above
       // Trigger deposit flow immediately
-      let depositCancelled = false;
+      let shouldExit = false;
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
@@ -2892,21 +2873,19 @@ export const useAssetConnect = () => {
           } else {
             setPendingBase(null);
           }
-          // Don't throw error - set flag to exit after catch block
-          depositCancelled = true;
           // Reset connecting state
           if (walletType === 'metamask') {
             setIsConnectingMetaMask(false);
           } else {
             setIsConnectingBase(false);
           }
-          // Don't throw - will check flag after catch block
+          // Set flag to exit function after catch block
+          shouldExit = true;
         } else {
           // For other errors, throw to be handled by outer catch
           throw depositError;
         }
       }
-      
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
@@ -3042,9 +3021,8 @@ export const useAssetConnect = () => {
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
-      // Flag was already set when pending wallet state was set above
       // Trigger deposit flow immediately
-      let depositCancelled = false;
+      let shouldExit = false;
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
@@ -3120,21 +3098,19 @@ export const useAssetConnect = () => {
           } else {
             setPendingBase(null);
           }
-          // Don't throw error - set flag to exit after catch block
-          depositCancelled = true;
           // Reset connecting state
           if (walletType === 'metamask') {
             setIsConnectingMetaMask(false);
           } else {
             setIsConnectingBase(false);
           }
-          // Don't throw - will check flag after catch block
+          // Set flag to exit function after catch block
+          shouldExit = true;
         } else {
           // For other errors, throw to be handled by outer catch
           throw depositError;
         }
       }
-      
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
