@@ -115,6 +115,13 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const response = await axios.get('/api/savePendingConnection', { params: { email } });
       const pendingConnections = response.data.pendingConnections || [];
       console.log('[AssetConnect markPendingConnectionAsCancelled] Found connections:', pendingConnections.length);
+      console.log('[AssetConnect markPendingConnectionAsCancelled] ALL connections in backend:', pendingConnections.map((pc: any) => ({
+        address: pc.address,
+        walletType: pc.walletType,
+        depositCancelled: pc.depositCancelled,
+        depositCompleted: pc.depositCompleted,
+        timestamp: pc.timestamp
+      })));
       
       // CRITICAL: Find ALL pending connections for this wallet type that aren't already cancelled/completed
       // Don't filter by address - mark ALL of them as cancelled to ensure we catch it
@@ -126,7 +133,18 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         // REMOVED address filter - always mark ALL pending connections for this wallet type
       );
       
-      console.log('[AssetConnect markPendingConnectionAsCancelled] Connections to cancel:', connectionsToCancel.length, connectionsToCancel.map((pc: any) => ({ address: pc.address, depositCancelled: pc.depositCancelled })));
+      console.log('[AssetConnect markPendingConnectionAsCancelled] Connections to cancel:', connectionsToCancel.length);
+      console.log('[AssetConnect markPendingConnectionAsCancelled] Connections to cancel details:', connectionsToCancel.map((pc: any) => ({ 
+        address: pc.address, 
+        walletType: pc.walletType,
+        depositCancelled: pc.depositCancelled,
+        depositCompleted: pc.depositCompleted
+      })));
+      
+      if (connectionsToCancel.length === 0) {
+        console.warn('[AssetConnect markPendingConnectionAsCancelled] WARNING: No connections found to cancel for walletType:', walletType);
+        console.warn('[AssetConnect markPendingConnectionAsCancelled] All connections for this wallet type:', pendingConnections.filter((pc: any) => pc.walletType === walletType));
+      }
       
       // Mark all found connections as cancelled
       for (const connectionToCancel of connectionsToCancel) {
@@ -139,6 +157,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             depositCancelled: true,
           };
           console.log('[AssetConnect markPendingConnectionAsCancelled] POSTing updated connection:', JSON.stringify(updatedConnection, null, 2));
+          console.log('[AssetConnect markPendingConnectionAsCancelled] CRITICAL: depositCancelled value being sent:', updatedConnection.depositCancelled);
           
           const response = await axios.post('/api/savePendingConnection', {
             email,
@@ -148,14 +167,41 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           console.log('[AssetConnect] POST response:', response.status, response.data);
           console.log('[AssetConnect] Marked connection as cancelled in backend:', connectionToCancel.address, walletType);
           
-          // Verify it was saved by fetching again
+          // CRITICAL: Wait a moment for S3 to propagate before verifying
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // Verify it was saved by fetching again - check ALL connections to see what's actually in backend
           try {
             const verifyResponse = await axios.get('/api/savePendingConnection', { params: { email } });
             const verifyConnections = verifyResponse.data.pendingConnections || [];
+            console.log('[AssetConnect] Verification - ALL connections in backend:', verifyConnections.map((pc: any) => ({
+              address: pc.address,
+              walletType: pc.walletType,
+              depositCancelled: pc.depositCancelled,
+              depositCompleted: pc.depositCompleted
+            })));
+            
             const verifyConn = verifyConnections.find(
               (pc: any) => pc.address?.toLowerCase() === connectionToCancel.address.toLowerCase() && pc.walletType === walletType
             );
-            console.log('[AssetConnect] Verification - connection after save:', verifyConn ? { address: verifyConn.address, depositCancelled: verifyConn.depositCancelled } : 'NOT FOUND');
+            if (verifyConn) {
+              console.log('[AssetConnect] Verification - connection after save:', {
+                address: verifyConn.address,
+                walletType: verifyConn.walletType,
+                depositCancelled: verifyConn.depositCancelled,
+                depositCompleted: verifyConn.depositCompleted,
+                ALL_FIELDS: verifyConn
+              });
+              
+              if (!verifyConn.depositCancelled) {
+                console.error('[AssetConnect] ERROR: depositCancelled is NOT true after save! Connection:', verifyConn);
+              }
+            } else {
+              console.error('[AssetConnect] ERROR: Connection NOT FOUND after save! Expected:', {
+                address: connectionToCancel.address,
+                walletType: walletType
+              });
+            }
           } catch (verifyErr) {
             console.error('[AssetConnect] Error verifying cancellation:', verifyErr);
           }
@@ -196,7 +242,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   };
   
-  // Initialize button state from backend JSON on mount
+  // Initialize button state from backend JSON on mount AND periodically check for updates
+  // This ensures connected state is always in sync with backend JSON
   useEffect(() => {
     const initializeButtonStateFromBackend = async () => {
       if (!email || typeof window === 'undefined') return;
@@ -218,8 +265,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           setPendingBase({ address: pendingBaseConn.address, walletId: pendingBaseConn.walletId });
         }
         
-        // Set connected state from backend JSON (if deposit was completed)
-        // CRITICAL: Use backend JSON as source of truth - don't require localStorage
+        // CRITICAL: Set connected state from backend JSON (if deposit was completed)
+        // Backend JSON is the source of truth - check for completed connections
         const completedMetaMask = pendingConnections.find(
           (pc: any) => pc.walletType === 'metamask' && pc.depositCompleted && !pc.depositCancelled
         );
@@ -229,27 +276,40 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         
         // If deposit is completed in backend JSON, mark as connected (backend is source of truth)
         if (completedMetaMask) {
-          console.log('[AssetConnect] Found completed MetaMask connection in backend, setting connected state');
+          console.log('[AssetConnect initializeButtonStateFromBackend] Found completed MetaMask connection in backend, setting connected state');
           setConnectedMetaMask(true);
           // Also update localStorage to match backend state
           if (completedMetaMask.address && typeof window !== 'undefined') {
             localStorage.setItem('lastConnectedMetaMask', completedMetaMask.address);
           }
+        } else {
+          // If no completed connection in backend, clear connected state
+          setConnectedMetaMask(false);
         }
+        
         if (completedBase) {
-          console.log('[AssetConnect] Found completed Base connection in backend, setting connected state');
+          console.log('[AssetConnect initializeButtonStateFromBackend] Found completed Base connection in backend, setting connected state');
           setConnectedBase(true);
           // Also update localStorage to match backend state
           if (completedBase.address && typeof window !== 'undefined') {
             localStorage.setItem('lastConnectedBase', completedBase.address);
           }
+        } else {
+          // If no completed connection in backend, clear connected state
+          setConnectedBase(false);
         }
       } catch (error) {
         console.error('[AssetConnect] Error initializing button state from backend:', error);
       }
     };
     
+    // Run immediately on mount
     initializeButtonStateFromBackend();
+    
+    // Also run periodically to catch updates (every 2 seconds)
+    const intervalId = setInterval(initializeButtonStateFromBackend, 2000);
+    
+    return () => clearInterval(intervalId);
   }, [email]);
   
   // Use refs to prevent multiple executions (persist across re-renders but reset on mount)
@@ -1300,14 +1360,37 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           );
         }
         
-        // Check if deposit was confirmed (only then mark as connected)
-        // Check backend JSON for deposit confirmation
-        const depositConfirmedMetaMask = connectedMetaMask;
-        const depositConfirmedBase = connectedBase;
+        // CRITICAL: Check backend JSON for deposit confirmation (source of truth)
+        // This ensures connected state is always in sync with backend
+        let depositConfirmedMetaMask = false;
+        let depositConfirmedBase = false;
+        try {
+          const backendConnections = await fetchPendingConnectionsFromBackend();
+          const completedMetaMask = backendConnections.find(
+            (pc: any) => pc.walletType === 'metamask' && pc.depositCompleted && !pc.depositCancelled
+          );
+          const completedBase = backendConnections.find(
+            (pc: any) => pc.walletType === 'base' && pc.depositCompleted && !pc.depositCancelled
+          );
+          depositConfirmedMetaMask = !!completedMetaMask;
+          depositConfirmedBase = !!completedBase;
+          
+          // Update connected state from backend JSON
+          if (completedMetaMask) {
+            console.log('[AssetConnect checkConnectedWallets] Found completed MetaMask in backend, setting connected state');
+            setConnectedMetaMask(true);
+          }
+          if (completedBase) {
+            console.log('[AssetConnect checkConnectedWallets] Found completed Base in backend, setting connected state');
+            setConnectedBase(true);
+          }
+        } catch (error) {
+          console.error('[AssetConnect] Error checking backend for completed connections:', error);
+        }
         
         // Show as connected if:
         // 1. Wallet is in VavityAggregator (deposit was confirmed and wallet saved)
-        // 2. OR (address is in localStorage AND deposit was confirmed)
+        // 2. OR (address is in localStorage AND deposit was confirmed in backend JSON)
         // Note: We don't mark as connected just because extension is connected - need deposit confirmation
         const metaMaskConnected = metaMaskInWallets || (!!lastConnectedMetaMask && depositConfirmedMetaMask);
         const baseConnected = baseInWallets || (!!lastConnectedBase && depositConfirmedBase);
@@ -1773,7 +1856,16 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
         
         // CRITICAL: Save to backend immediately (independent of page reloads) - this is the source of truth
-        await savePendingConnectionToBackend(walletAddress, walletId, walletType);
+        console.log('[connectAsset] About to save pending connection to backend:', { walletAddress, walletId, walletType, email });
+        try {
+          await savePendingConnectionToBackend(walletAddress, walletId, walletType);
+          console.log('[connectAsset] Successfully saved pending connection to backend');
+        } catch (error) {
+          console.error('[connectAsset] Failed to save pending connection to backend:', error);
+          // Don't throw - continue with deposit flow even if save fails
+        }
+      } else {
+        console.warn('[connectAsset] window is undefined, cannot save pending connection');
       }
       
       // Reset connecting state
@@ -1805,8 +1897,17 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
       
       // Trigger deposit flow immediately
+      console.log('[connectAsset] About to trigger deposit flow for wallet:', walletAddress, walletType);
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+        
+        console.log('[connectAsset] Calling connectAssetUtil with:', {
+          walletAddress,
+          walletType,
+          walletId,
+          email,
+          hasProvider: !!provider
+        });
         
         const { txHash, receipt, walletData } = await connectAssetUtil({
           provider,
@@ -1821,6 +1922,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           walletId: walletId,
           walletType: walletType,
         });
+        
+        console.log('[connectAsset] Deposit flow completed successfully:', { txHash, hasReceipt: !!receipt });
         
         // Mark deposit as confirmed
         if (walletType === 'metamask') {
@@ -1844,14 +1947,13 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               txHash: txHash || 'unknown',
             },
           });
+          console.log('[AssetConnect] Marked deposit as completed in backend - keeping connection in JSON');
         } catch (error) {
           console.error('[AssetConnect] Error updating pending connection in backend:', error);
         }
         
-        // Remove from backend after marking as completed
-        setTimeout(async () => {
-          await removePendingConnectionFromBackend(walletAddress, walletType);
-        }, 1000);
+        // CRITICAL: DO NOT remove completed connections - keep them in JSON with depositCompleted: true
+        // This allows state to persist across reloads and button to show "CONNECTED" state
         
         // Clear pending wallet flags
       } catch (depositError: any) {
