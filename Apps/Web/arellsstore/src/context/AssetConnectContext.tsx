@@ -109,14 +109,33 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           console.log('[AssetConnect markPendingConnectionAsCancelled] Marking as cancelled:', connectionToCancel.address);
           // Update it with depositCancelled: true
           // The POST endpoint will remove the old one and add this updated one
-          await axios.post('/api/savePendingConnection', {
+          const updatedConnection = {
+            ...connectionToCancel,
+            depositCancelled: true,
+          };
+          console.log('[AssetConnect markPendingConnectionAsCancelled] POSTing updated connection:', JSON.stringify(updatedConnection, null, 2));
+          
+          const response = await axios.post('/api/savePendingConnection', {
             email,
-            pendingConnection: {
-              ...connectionToCancel,
-              depositCancelled: true,
-            },
+            pendingConnection: updatedConnection,
           });
+          
+          console.log('[AssetConnect] POST response:', response.status, response.data);
           console.log('[AssetConnect] Marked connection as cancelled in backend:', connectionToCancel.address, walletType);
+          
+          // Verify it was saved by fetching again
+          try {
+            const verifyResponse = await axios.get('/api/savePendingConnection', { params: { email } });
+            const verifyConnections = verifyResponse.data.pendingConnections || [];
+            const verifyConn = verifyConnections.find(
+              (pc: any) => pc.address?.toLowerCase() === connectionToCancel.address.toLowerCase() && pc.walletType === walletType
+            );
+            console.log('[AssetConnect] Verification - connection after save:', verifyConn ? { address: verifyConn.address, depositCancelled: verifyConn.depositCancelled } : 'NOT FOUND');
+          } catch (verifyErr) {
+            console.error('[AssetConnect] Error verifying cancellation:', verifyErr);
+          }
+        } else {
+          console.log('[AssetConnect markPendingConnectionAsCancelled] Connection already cancelled:', connectionToCancel.address);
         }
       }
       
@@ -1842,19 +1861,20 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             }
           }
           
+          // Set cancellation refs IMMEDIATELY to prevent any re-processing
+          // This works even if backend update fails
           if (addressToCancel) {
-            // Set cancellation refs IMMEDIATELY to prevent any re-processing
-            // This works even if backend update fails
             lastCancelledAddressRef.current = addressToCancel.toLowerCase();
-            lastCancelledTypeRef.current = walletType;
-            lastCancelledTimestampRef.current = Date.now();
-            
-            // Try to mark in backend (non-blocking - don't wait for it)
-            // This helps checkPending detect it, but state is already cleared above
-            markPendingConnectionAsCancelled(addressToCancel, walletType).catch(err => {
-              console.error('[connectAsset] Error marking cancelled connection (non-blocking):', err);
-            });
           }
+          lastCancelledTypeRef.current = walletType;
+          lastCancelledTimestampRef.current = Date.now();
+          
+          // CRITICAL: Mark ALL pending connections for this wallet type as cancelled
+          // Pass null if address not found - this will mark ALL connections for this wallet type
+          // This ensures cancellation is detected even if address doesn't match
+          markPendingConnectionAsCancelled(addressToCancel || null, walletType).catch(err => {
+            console.error('[connectAsset] Error marking cancelled connection (non-blocking):', err);
+          });
           
           // Remove from backend after delay (non-blocking)
           // Keep it longer (30 seconds) so checkPending can detect cancellation after reload
@@ -1989,98 +2009,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         autoConnectedBase,
         isConnectingMetaMask,
         isConnectingBase,
-        connectedMetaMask,
-        connectedBase,
-        pendingMetaMask,
-        pendingBase,
-        connectAsset,
-        connectAssetForWallet,
-        clearAutoConnectedMetaMask,
-        clearAutoConnectedBase,
-        setPendingMetaMask,
-        setPendingBase,
-        setIsConnectingMetaMask,
-        setIsConnectingBase,
-      }}
-    >
-      {children}
-    </AssetConnectContext.Provider>
-  );
-};
-
-export const useAssetConnect = () => {
-  const context = useContext(AssetConnectContext);
-  if (context === undefined) {
-    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
-  }
-  return context;
-};
-
-        connectedMetaMask,
-        connectedBase,
-        pendingMetaMask,
-        pendingBase,
-        connectAsset,
-        connectAssetForWallet,
-        clearAutoConnectedMetaMask,
-        clearAutoConnectedBase,
-        setPendingMetaMask,
-        setPendingBase,
-        setIsConnectingMetaMask,
-        setIsConnectingBase,
-      }}
-    >
-      {children}
-    </AssetConnectContext.Provider>
-  );
-};
-
-export const useAssetConnect = () => {
-  const context = useContext(AssetConnectContext);
-  if (context === undefined) {
-    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
-  }
-  return context;
-};
-
-      return;
-    }
-  }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
-
-  return (
-    <AssetConnectContext.Provider
-      value={{
-        autoConnectedMetaMask,
-        autoConnectedBase,
-        isConnectingMetaMask,
-        isConnectingBase,
-        connectedMetaMask,
-        connectedBase,
-        pendingMetaMask,
-        pendingBase,
-        connectAsset,
-        connectAssetForWallet,
-        clearAutoConnectedMetaMask,
-        clearAutoConnectedBase,
-        setPendingMetaMask,
-        setPendingBase,
-        setIsConnectingMetaMask,
-        setIsConnectingBase,
-      }}
-    >
-      {children}
-    </AssetConnectContext.Provider>
-  );
-};
-
-export const useAssetConnect = () => {
-  const context = useContext(AssetConnectContext);
-  if (context === undefined) {
-    throw new Error('useAssetConnect must be used within an AssetConnectProvider');
-  }
-  return context;
-};
-
         connectedMetaMask,
         connectedBase,
         pendingMetaMask,

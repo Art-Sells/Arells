@@ -50,10 +50,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       );
 
       // Add new pending connection
+      // Preserve all fields from pendingConnection, only update timestamp if not provided
       pendingConnections.push({
         ...pendingConnection,
-        timestamp: Date.now(),
+        timestamp: pendingConnection.timestamp || Date.now(),
       });
+      
+      // Log for debugging cancellation updates
+      if (pendingConnection.depositCancelled) {
+        console.log('[savePendingConnection] Marking connection as cancelled:', {
+          address: pendingConnection.address,
+          walletType: pendingConnection.walletType,
+          depositCancelled: pendingConnection.depositCancelled
+        });
+      }
 
       // Save to S3
       await s3.putObject({
