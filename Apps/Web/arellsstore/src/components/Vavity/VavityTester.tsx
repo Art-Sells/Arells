@@ -191,6 +191,39 @@ const VavityTester: React.FC = () => {
         const metamaskConnOnMount = pendingConnections.find((pc: any) => pc.walletType === 'metamask');
         const baseConnOnMount = pendingConnections.find((pc: any) => pc.walletType === 'base');
         
+        // DEBUG: Log all connection details to understand what's happening
+        console.log('[VavityTester checkPendingOnMount] Connection detection:', {
+          totalConnections: pendingConnections.length,
+          activePendingCount: activePending.length,
+          activePending: activePending.map((pc: any) => ({
+            address: pc.address,
+            walletType: pc.walletType,
+            depositCancelled: pc.depositCancelled,
+            depositCompleted: pc.depositCompleted,
+            txHash: pc.txHash
+          })),
+          pendingMetaMaskFromBackend: pendingMetaMaskFromBackend ? {
+            address: pendingMetaMaskFromBackend.address,
+            depositCancelled: pendingMetaMaskFromBackend.depositCancelled,
+            depositCompleted: pendingMetaMaskFromBackend.depositCompleted
+          } : null,
+          pendingBaseFromBackend: pendingBaseFromBackend ? {
+            address: pendingBaseFromBackend.address,
+            depositCancelled: pendingBaseFromBackend.depositCancelled,
+            depositCompleted: pendingBaseFromBackend.depositCompleted
+          } : null,
+          metamaskConnOnMount: metamaskConnOnMount ? {
+            address: metamaskConnOnMount.address,
+            depositCancelled: metamaskConnOnMount.depositCancelled,
+            depositCompleted: metamaskConnOnMount.depositCompleted
+          } : null,
+          baseConnOnMount: baseConnOnMount ? {
+            address: baseConnOnMount.address,
+            depositCancelled: baseConnOnMount.depositCancelled,
+            depositCompleted: baseConnOnMount.depositCompleted
+          } : null
+        });
+        
         // CRITICAL: If cancelled connection exists, ALWAYS clear flag
         // ALSO: If connection exists but is NOT in activePending (filtered out = cancelled/completed), clear flag
         if (cancelledMetaMask) {
@@ -201,7 +234,9 @@ const VavityTester: React.FC = () => {
           console.log('[VavityTester checkPendingOnMount] Clearing hasPendingMetaMaskInBackend - connection exists but not active (cancelled/completed)');
           setHasPendingMetaMaskInBackend(false);
         } else {
-          setHasPendingMetaMaskInBackend(!!pendingMetaMaskFromBackend);
+          const shouldSetPending = !!pendingMetaMaskFromBackend;
+          console.log('[VavityTester checkPendingOnMount] Setting hasPendingMetaMaskInBackend to:', shouldSetPending);
+          setHasPendingMetaMaskInBackend(shouldSetPending);
         }
         
         if (cancelledBase) {
@@ -212,7 +247,9 @@ const VavityTester: React.FC = () => {
           console.log('[VavityTester checkPendingOnMount] Clearing hasPendingBaseInBackend - connection exists but not active (cancelled/completed)');
           setHasPendingBaseInBackend(false);
         } else {
-          setHasPendingBaseInBackend(!!pendingBaseFromBackend);
+          const shouldSetPending = !!pendingBaseFromBackend;
+          console.log('[VavityTester checkPendingOnMount] Setting hasPendingBaseInBackend to:', shouldSetPending);
+          setHasPendingBaseInBackend(shouldSetPending);
         }
         
         // CRITICAL: Check for cancelled connections FIRST - if any exist, don't show alert
@@ -311,6 +348,53 @@ const VavityTester: React.FC = () => {
           const pendingMetaMaskFromBackend = activePending.find((pc: any) => pc.walletType === 'metamask');
           const pendingBaseFromBackend = activePending.find((pc: any) => pc.walletType === 'base');
           
+          // Check for completed connections (should stay in JSON with depositCompleted: true)
+          const completedMetaMask = pendingConnections.find(
+            (pc: any) => pc.walletType === 'metamask' && pc.depositCompleted && !pc.depositCancelled
+          );
+          const completedBase = pendingConnections.find(
+            (pc: any) => pc.walletType === 'base' && pc.depositCompleted && !pc.depositCancelled
+          );
+          
+          // DEBUG: Log connection detection details
+          console.log('[VavityTester checkPending] Connection detection:', {
+            totalConnections: pendingConnections.length,
+            activePendingCount: activePending.length,
+            activePending: activePending.map((pc: any) => ({
+              address: pc.address,
+              walletType: pc.walletType,
+              depositCancelled: pc.depositCancelled,
+              depositCompleted: pc.depositCompleted,
+              txHash: pc.txHash
+            })),
+            completedConnections: pendingConnections.filter((pc: any) => pc.depositCompleted && !pc.depositCancelled).map((pc: any) => ({
+              address: pc.address,
+              walletType: pc.walletType,
+              depositCompleted: pc.depositCompleted,
+              txHash: pc.txHash
+            })),
+            completedMetaMask: completedMetaMask ? {
+              address: completedMetaMask.address,
+              depositCompleted: completedMetaMask.depositCompleted,
+              txHash: completedMetaMask.txHash
+            } : null,
+            completedBase: completedBase ? {
+              address: completedBase.address,
+              depositCompleted: completedBase.depositCompleted,
+              txHash: completedBase.txHash
+            } : null,
+            pendingMetaMaskFromBackend: pendingMetaMaskFromBackend ? {
+              address: pendingMetaMaskFromBackend.address,
+              depositCancelled: pendingMetaMaskFromBackend.depositCancelled,
+              depositCompleted: pendingMetaMaskFromBackend.depositCompleted
+            } : null,
+            pendingBaseFromBackend: pendingBaseFromBackend ? {
+              address: pendingBaseFromBackend.address,
+              depositCancelled: pendingBaseFromBackend.depositCancelled,
+              depositCompleted: pendingBaseFromBackend.depositCompleted
+            } : null
+          });
+          
           // CRITICAL: Button state comes ONLY from backend JSON
           // If cancelled connection exists, ALWAYS clear flag (even if there's also an active one)
           // This ensures button updates immediately when cancelled
@@ -320,24 +404,42 @@ const VavityTester: React.FC = () => {
             console.log('[VavityTester checkPending] Clearing hasPendingMetaMaskInBackend because cancelled connection found');
             setHasPendingMetaMaskInBackend(false);
           } else if (metamaskConn && !pendingMetaMaskFromBackend) {
-            // Connection exists but is not in activePending - means it was cancelled/completed and should be cleared
-            console.log('[VavityTester checkPending] Clearing hasPendingMetaMaskInBackend - connection exists but not active (likely cancelled)');
+            // Connection exists but is not in activePending - could be cancelled or completed
+            // If it's completed, we should NOT set pending (correct), but connected state should be set by context
+            // If it's cancelled, we should clear pending (correct)
+            const isCompleted = metamaskConn.depositCompleted && !metamaskConn.depositCancelled;
+            if (isCompleted) {
+              console.log('[VavityTester checkPending] Connection is completed (not pending) - hasPendingMetaMaskInBackend should be false');
+            } else {
+              console.log('[VavityTester checkPending] Clearing hasPendingMetaMaskInBackend - connection exists but not active (likely cancelled)');
+            }
             setHasPendingMetaMaskInBackend(false);
           } else {
             // Only set to true if there's an active pending connection AND no cancelled one
-            setHasPendingMetaMaskInBackend(!!pendingMetaMaskFromBackend);
+            const shouldSetPending = !!pendingMetaMaskFromBackend;
+            console.log('[VavityTester checkPending] Setting hasPendingMetaMaskInBackend to:', shouldSetPending);
+            setHasPendingMetaMaskInBackend(shouldSetPending);
           }
           
           if (cancelledBase) {
             console.log('[VavityTester checkPending] Clearing hasPendingBaseInBackend because cancelled connection found');
             setHasPendingBaseInBackend(false);
           } else if (baseConn && !pendingBaseFromBackend) {
-            // Connection exists but is not in activePending - means it was cancelled/completed and should be cleared
-            console.log('[VavityTester checkPending] Clearing hasPendingBaseInBackend - connection exists but not active (likely cancelled)');
+            // Connection exists but is not in activePending - could be cancelled or completed
+            // If it's completed, we should NOT set pending (correct), but connected state should be set by context
+            // If it's cancelled, we should clear pending (correct)
+            const isCompleted = baseConn.depositCompleted && !baseConn.depositCancelled;
+            if (isCompleted) {
+              console.log('[VavityTester checkPending] Connection is completed (not pending) - hasPendingBaseInBackend should be false');
+            } else {
+              console.log('[VavityTester checkPending] Clearing hasPendingBaseInBackend - connection exists but not active (likely cancelled)');
+            }
             setHasPendingBaseInBackend(false);
           } else {
             // Only set to true if there's an active pending connection AND no cancelled one
-            setHasPendingBaseInBackend(!!pendingBaseFromBackend);
+            const shouldSetPending = !!pendingBaseFromBackend;
+            console.log('[VavityTester checkPending] Setting hasPendingBaseInBackend to:', shouldSetPending);
+            setHasPendingBaseInBackend(shouldSetPending);
           }
         } catch (error) {
           console.error('[VavityTester] Error fetching pending connections:', error);
