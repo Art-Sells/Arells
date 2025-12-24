@@ -73,7 +73,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           setVapa(prev => Math.max(prev, highestPriceEver));
         }
       } catch (error) {
-        console.error('Error fetching Ethereum prices:', error);
+        // console.error('Error fetching Ethereum prices:', error);
         // Keep default price on error
       }
     };
@@ -115,7 +115,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           setEmail(emailAttribute);
         }
       } catch (error) {
-        console.error('Error fetching user attributes:', error);
+        // console.error('Error fetching user attributes:', error);
       }
     };
     fetchEmail();
@@ -125,7 +125,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const fetchVatocState = async () => {
       try {
         if (!email) {
-          console.warn('No email provided, skipping fetchVatocState');
+          // console.warn('No email provided, skipping fetchVatocState');
           return;
         }
   
@@ -138,7 +138,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setVact(fetchedVact);
         setVapa(fetchedVapa);
       } catch (error) {
-        console.error('Error fetching vatoc state:', error);
+        // console.error('Error fetching vatoc state:', error);
       }
     };
   
@@ -220,7 +220,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         vapa: newVapa,
       });
     } catch (error) {
-      console.error("Error saving vatoc state:", error);
+      // console.error("Error saving vatoc state:", error);
     }
   };
 
@@ -260,7 +260,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
       // Only log actual errors, not missing files
       if (error?.response?.status !== 404) {
-      console.error('Error reading aASSET.json:', error);
+      // console.error('Error reading aASSET.json:', error);
       }
       return null;
     }
@@ -274,7 +274,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   
       return response.data.aASSET;
     } catch (error) {
-      console.error('Error updating aASSET.json:', error);
+      // console.error('Error updating aASSET.json:', error);
       throw error;
     }
   };
@@ -337,7 +337,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         await updateAllState(assetPrice, updatedVatoc, updatedVact, email);
       }
     } catch (error) {
-      console.error("Error during handleConnect:", error);
+      // console.error("Error during handleConnect:", error);
     } finally {
       isUpdating = false;
     }
@@ -379,7 +379,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       await axios.post('/api/saveASSET', { email, amount });
     } catch (error) {
-      console.error('Error saving to aASSET.json:', error);
+      // console.error('Error saving to aASSET.json:', error);
     }
   };
 
@@ -404,7 +404,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   
       await axios.post('/api/saveVatocState', payload);
     } catch (error) {
-      console.error('Error saving vatoc state:', error);
+      // console.error('Error saving vatoc state:', error);
     }
   };
 
@@ -416,7 +416,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const response = await axios.get(`/api/fetchVavityAggregator`, { params: { email } });
       return response.data;
     } catch (error) {
-      console.error('Error fetching Vavity Aggregator data:', error);
+      // console.error('Error fetching Vavity Aggregator data:', error);
       throw error;
     }
   }, []);
@@ -432,7 +432,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
       return response.data;
     } catch (error) {
-      console.error('Error adding Vavity Aggregator data:', error);
+      // console.error('Error adding Vavity Aggregator data:', error);
       throw error;
     }
   }, []);
@@ -442,16 +442,16 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (!email) {
         throw new Error('Email is required');
       }
-      console.log('[VavityAggregator] Saving wallets:', wallets.length, 'wallets');
+      // console.log('[VavityAggregator] Saving wallets:', wallets.length, 'wallets');
       const response = await axios.post('/api/saveVavityAggregator', {
         email,
         wallets,
         vavityCombinations,
       });
-      console.log('[VavityAggregator] Successfully saved wallets');
+      // console.log('[VavityAggregator] Successfully saved wallets');
       return response.data;
     } catch (error) {
-      console.error('Error saving Vavity Aggregator data:', error);
+      // console.error('Error saving Vavity Aggregator data:', error);
       throw error;
     }
   }, []);
@@ -459,23 +459,23 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Fetch and update balances for all wallet addresses
   useEffect(() => {
     if (!email) {
-      console.log('[VavityAggregator] Balance fetch useEffect: No email, skipping');
+      // console.log('[VavityAggregator] Balance fetch useEffect: No email, skipping');
       return;
     }
 
-    console.log('[VavityAggregator] Balance fetch useEffect: Starting balance fetch');
+    // console.log('[VavityAggregator] Balance fetch useEffect: Starting balance fetch');
     const fetchWalletBalances = async () => {
       try {
-        console.log('[VavityAggregator] Calling fetchBalance...');
+        // console.log('[VavityAggregator] Calling fetchBalance...');
         await fetchBalance({
           email,
           assetPrice,
           fetchVavityAggregator,
           saveVavityAggregator,
         });
-        console.log('[VavityAggregator] fetchBalance completed');
+        // console.log('[VavityAggregator] fetchBalance completed');
       } catch (error) {
-        console.error('[VavityAggregator] Error in fetchWalletBalances:', error);
+        // console.error('[VavityAggregator] Error in fetchWalletBalances:', error);
       }
     };
 
@@ -484,7 +484,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Update balances every 10 seconds
     const interval = setInterval(fetchWalletBalances, 10000);
     return () => {
-      console.log('[VavityAggregator] Cleaning up balance fetch interval');
+      // console.log('[VavityAggregator] Cleaning up balance fetch interval');
       clearInterval(interval);
     };
   }, [email, assetPrice, fetchVavityAggregator, saveVavityAggregator]);

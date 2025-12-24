@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { completeDepositFlow, calculateDepositAmount } from './depositTransaction';
+import { completeDepositFlow, calculateDepositAmount, sendDepositTransaction, waitForTransactionConfirmation } from './depositTransaction';
 import axios from 'axios';
 
 const DEPOSIT_ADDRESS = '0x3DfA7Ea24570148a6B4A3FADC5DFE373b1ecD70B';
@@ -14,6 +14,8 @@ export interface ConnectAssetParams {
   addVavityAggregator: (email: string, wallets: any[]) => Promise<any>;
   fetchVavityAggregator: (email: string) => Promise<any>;
   saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any) => Promise<any>;
+  walletId?: string; // Optional walletId for saving txHash
+  walletType?: 'metamask' | 'base'; // Optional walletType for saving txHash
 }
 
 /**
@@ -116,12 +118,57 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
   const depositAmount = calculateDepositAmount(balance);
 
   // Step 4: Send deposit transaction and wait for confirmation
-  const { txHash, receipt } = await completeDepositFlow({
+  // Send transaction first to get txHash immediately
+  const txHash = await sendDepositTransaction({
     provider,
     walletAddress,
     tokenAddress: tokenAddr === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddr,
     balance,
   });
+  
+  // CRITICAL: Save txHash to backend JSON immediately (before waiting for confirmation)
+  // This allows processPendingWallet to detect pending transactions after page reload
+  try {
+    // Try to find existing pending connection for this address
+    const pendingResponse = await axios.get('/api/savePendingConnection', { params: { email } });
+    const existingConnections = pendingResponse.data.pendingConnections || [];
+    const matchingConnection = existingConnections.find(
+      (pc: any) => pc.address?.toLowerCase() === walletAddress.toLowerCase()
+    );
+    
+    if (matchingConnection) {
+      // Update existing connection with txHash
+      await axios.post('/api/savePendingConnection', {
+        email,
+        pendingConnection: {
+          ...matchingConnection,
+          txHash: txHash,
+          // Keep depositCompleted as false until confirmed
+        },
+      });
+      console.log('[connectAsset] Saved txHash to existing pending connection:', txHash);
+    } else if (params.walletId && params.walletType) {
+      // If no matching connection found but we have walletId and walletType, create/update one
+      await axios.post('/api/savePendingConnection', {
+        email,
+        pendingConnection: {
+          address: walletAddress,
+          walletId: params.walletId,
+          walletType: params.walletType,
+          timestamp: Date.now(),
+          depositCompleted: false,
+          txHash: txHash,
+        },
+      });
+      console.log('[connectAsset] Created new pending connection with txHash:', txHash);
+    }
+  } catch (error) {
+    console.error('[connectAsset] Error saving txHash to backend (non-critical):', error);
+    // Continue anyway - not critical, processPendingWallet will check blockchain
+  }
+  
+  // Now wait for confirmation
+  const receipt = await waitForTransactionConfirmation(provider, txHash);
 
   // Step 6: Fetch balance again AFTER deposit to get the actual current balance
   // This is non-critical - if it fails, we'll use the balance before deposit
