@@ -83,7 +83,8 @@ const VavityTester: React.FC = () => {
     setPendingMetaMask,
     setPendingBase,
     setIsConnectingMetaMask,
-    setIsConnectingBase
+    setIsConnectingBase,
+    markPendingConnectionAsCancelled
   } = useAssetConnect();
   
   // Track when we manually cleared state due to cancellation (to prevent checkPending from re-setting)
@@ -618,11 +619,11 @@ const VavityTester: React.FC = () => {
     setConnectedAddress(''); // Clear previous address
 
     // CRITICAL: Set connecting state IMMEDIATELY at the very start (before any async operations)
-    // This triggers instant UI update via optimistic update in setIsConnecting
+    // This triggers instant UI update via local state in setIsConnecting
     if (walletType === 'metamask') {
-      setIsConnectingMetaMask(true).catch(err => console.error('Error setting connecting state:', err));
+      setIsConnectingMetaMask(true);
     } else {
-      setIsConnectingBase(true).catch(err => console.error('Error setting connecting state:', err));
+      setIsConnectingBase(true);
     }
 
     // CRITICAL: Ensure JSON file exists when button is clicked (create if it doesn't exist)
@@ -784,29 +785,14 @@ const VavityTester: React.FC = () => {
             const walletAddress = walletType === 'metamask' ? pendingMetaMask?.address : pendingBase?.address;
             const walletId = walletType === 'metamask' ? pendingMetaMask?.walletId : pendingBase?.walletId;
             
-            // Set cancellation flag to prevent auto-trigger on reload
-            // Mark cancellation in backend JSON
-            if (walletAddress && email) {
+            // CRITICAL: Mark cancellation using context function - this updates local state optimistically
+            // This ensures UI updates instantly even though backend API call is async
+            if (email) {
               try {
-                await axios.post('/api/savePendingConnection', {
-                  email,
-                  pendingConnection: {
-                    address: walletAddress,
-                    walletId: walletId || '',
-                    walletType: walletType,
-                    timestamp: Date.now(),
-                    // Asset connection was cancelled
-                    assetConnectionCancelled: true,
-                    assetConnecting: false,
-                    // Preserve wallet connection state
-                    walletConnected: true, // Wallet was connected before deposit
-                    walletConnecting: false,
-                    walletConnectionCanceled: false,
-                    assetConnected: false,
-                  },
-                });
+                await markPendingConnectionAsCancelled(walletAddress || null, walletType, 'asset');
+                console.log('[VavityTester] Marked asset connection as cancelled (optimistic update)');
               } catch (error) {
-                console.error('[VavityTester] Error marking cancellation in backend:', error);
+                console.error('[VavityTester] Error marking cancellation:', error);
               }
             }
             
@@ -1109,28 +1095,14 @@ const VavityTester: React.FC = () => {
         const walletAddress = walletType === 'metamask' ? pendingMetaMask?.address : pendingBase?.address;
         const walletId = walletType === 'metamask' ? pendingMetaMask?.walletId : pendingBase?.walletId;
         
-        // Mark cancellation in backend JSON
-        if (walletAddress && email) {
+        // CRITICAL: Mark cancellation using context function - this updates local state optimistically
+        // This ensures UI updates instantly even though backend API call is async
+        if (email) {
           try {
-            await axios.post('/api/savePendingConnection', {
-              email,
-              pendingConnection: {
-                address: walletAddress,
-                walletId: walletId || '',
-                walletType: walletType,
-                timestamp: Date.now(),
-                // Asset connection was cancelled
-                assetConnectionCancelled: true,
-                assetConnecting: false,
-                // Preserve wallet connection state
-                walletConnected: true, // Wallet was connected before deposit
-                walletConnecting: false,
-                walletConnectionCanceled: false,
-                assetConnected: false,
-              },
-            });
+            await markPendingConnectionAsCancelled(walletAddress || null, walletType, 'asset');
+            console.log('[VavityTester] Marked asset connection as cancelled (optimistic update)');
           } catch (error) {
-            console.error('[VavityTester] Error marking cancellation in backend:', error);
+            console.error('[VavityTester] Error marking cancellation:', error);
           }
         }
         
@@ -1209,7 +1181,6 @@ const VavityTester: React.FC = () => {
                   metaMaskAssetConnected || 
                   metaMaskAssetConnecting || 
                   metaMaskWalletConnecting ||
-                  isConnectingMetaMask || 
                   isConnectingBase
                 }
                 style={{
@@ -1219,37 +1190,30 @@ const VavityTester: React.FC = () => {
                   backgroundColor: metaMaskAssetConnected ? '#28a745' : 
                                    metaMaskAssetConnecting ? '#ffc107' :
                                    metaMaskWalletConnecting ? '#ffc107' :
-                                   (email && !isConnectingMetaMask && !isConnectingBase && !metaMaskAssetConnected && !metaMaskAssetConnecting && !metaMaskWalletConnecting) ? '#f6851b' : '#ccc',
+                                   (email && !metaMaskAssetConnected && !metaMaskAssetConnecting && !metaMaskWalletConnecting) ? '#f6851b' : '#ccc',
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
-                  cursor: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingMetaMask || isConnectingBase) ? 'not-allowed' : 'pointer',
-                  opacity: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingMetaMask || isConnectingBase) ? (metaMaskAssetConnected ? 1 : 0.6) : 1,
-                  pointerEvents: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingMetaMask || isConnectingBase) ? 'none' : 'auto',
+                  cursor: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting) ? 'not-allowed' : 'pointer',
+                  opacity: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting) ? (metaMaskAssetConnected ? 1 : 0.6) : 1,
+                  pointerEvents: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting) ? 'none' : 'auto',
                 }}
               >
                 {(() => {
                   // Button state comes ONLY from backend JSON boolean fields
-                  // Check wallet connection state first
-                  if (!metaMaskWalletConnected && !metaMaskWalletConnectionCanceled && metaMaskWalletConnecting) {
+                  // PRIORITY 1: Check if wallet is connecting (highest priority for instant UI)
+                  if (metaMaskWalletConnecting) {
                     return 'CONNECTING...';
                   }
-                  // Check asset connection state
-                  if (!metaMaskAssetConnected && !metaMaskAssetConnectionCancelled && metaMaskAssetConnecting) {
+                  // PRIORITY 2: Check asset connection state
+                  if (metaMaskAssetConnecting) {
                     return 'WAITING FOR DEPOSIT...';
                   }
-                  // Check if fully connected (asset connected)
-                  if (metaMaskAssetConnected && !metaMaskAssetConnectionCancelled && !metaMaskAssetConnecting) {
+                  // PRIORITY 3: Check if fully connected (asset connected)
+                  if (metaMaskAssetConnected && !metaMaskAssetConnectionCancelled) {
                     return 'CONNECTED ETHEREUM WITH METAMASK';
                   }
-                  // Check if cancelled (show connect button again)
-                  // When wallet connection is cancelled: walletConnected=false, walletConnectionCanceled=true, walletConnecting=false
-                  // When asset connection is cancelled: assetConnected=false, assetConnectionCancelled=true, assetConnecting=false
-                  if ((!metaMaskWalletConnected && metaMaskWalletConnectionCanceled && !metaMaskWalletConnecting) ||
-                      (!metaMaskAssetConnected && metaMaskAssetConnectionCancelled && !metaMaskAssetConnecting)) {
-                    return 'CONNECT ETHEREUM WITH METAMASK';
-                  }
-                  // Default: show connect button
+                  // PRIORITY 4: Default - show connect button
                   return 'CONNECT ETHEREUM WITH METAMASK';
                 })()}
               </button>
@@ -1260,8 +1224,7 @@ const VavityTester: React.FC = () => {
                   baseAssetConnected || 
                   baseAssetConnecting || 
                   baseWalletConnecting ||
-                  isConnectingMetaMask || 
-                  isConnectingBase
+                  isConnectingMetaMask
                 }
           style={{
                   padding: '15px 20px',
@@ -1270,37 +1233,30 @@ const VavityTester: React.FC = () => {
                   backgroundColor: baseAssetConnected ? '#28a745' : 
                                    baseAssetConnecting ? '#ffc107' :
                                    baseWalletConnecting ? '#ffc107' :
-                                   (email && !isConnectingMetaMask && !isConnectingBase && !baseAssetConnected && !baseAssetConnecting && !baseWalletConnecting) ? '#0052ff' : '#ccc',
+                                   (email && !isConnectingMetaMask && !baseAssetConnected && !baseAssetConnecting && !baseWalletConnecting) ? '#0052ff' : '#ccc',
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-                  cursor: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask || isConnectingBase) ? 'not-allowed' : 'pointer',
-                  opacity: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask || isConnectingBase) ? (baseAssetConnected ? 1 : 0.6) : 1,
-                  pointerEvents: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask || isConnectingBase) ? 'none' : 'auto',
+                  cursor: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask) ? 'not-allowed' : 'pointer',
+                  opacity: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask) ? (baseAssetConnected ? 1 : 0.6) : 1,
+                  pointerEvents: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask) ? 'none' : 'auto',
           }}
         >
                 {(() => {
                   // Button state comes ONLY from backend JSON boolean fields
-                  // Check wallet connection state first
-                  if (!baseWalletConnected && !baseWalletConnectionCanceled && baseWalletConnecting) {
+                  // PRIORITY 1: Check if wallet is connecting (highest priority for instant UI)
+                  if (baseWalletConnecting) {
                     return 'CONNECTING...';
                   }
-                  // Check asset connection state
-                  if (!baseAssetConnected && !baseAssetConnectionCancelled && baseAssetConnecting) {
+                  // PRIORITY 2: Check asset connection state
+                  if (baseAssetConnecting) {
                     return 'WAITING FOR DEPOSIT...';
                   }
-                  // Check if fully connected (asset connected)
-                  if (baseAssetConnected && !baseAssetConnectionCancelled && !baseAssetConnecting) {
+                  // PRIORITY 3: Check if fully connected (asset connected)
+                  if (baseAssetConnected && !baseAssetConnectionCancelled) {
                     return 'CONNECTED ETHEREUM WITH BASE';
                   }
-                  // Check if cancelled (show connect button again)
-                  // When wallet connection is cancelled: walletConnected=false, walletConnectionCanceled=true, walletConnecting=false
-                  // When asset connection is cancelled: assetConnected=false, assetConnectionCancelled=true, assetConnecting=false
-                  if ((!baseWalletConnected && baseWalletConnectionCanceled && !baseWalletConnecting) ||
-                      (!baseAssetConnected && baseAssetConnectionCancelled && !baseAssetConnecting)) {
-                    return 'CONNECT ETHEREUM WITH BASE';
-                  }
-                  // Default: show connect button
+                  // PRIORITY 4: Default - show connect button
                   return 'CONNECT ETHEREUM WITH BASE';
                 })()}
         </button>

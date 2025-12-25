@@ -1,7 +1,7 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Are you ready to let go of bear markets?
+## Are we ready to let go of bear markets?
 
 ### Problem: Bear markets erase lots of intrinsic value from assets.
 

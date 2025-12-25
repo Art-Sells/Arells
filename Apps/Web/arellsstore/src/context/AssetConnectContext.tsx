@@ -51,12 +51,15 @@ interface AssetConnectContextType {
   clearAutoConnectedMetaMask: () => void;
   clearAutoConnectedBase: () => void;
   
-  // Setters for connecting state (updates JSON, not local state)
-  // These update the JSON file which triggers re-computation of derived state
-  setIsConnectingMetaMask: (isConnecting: boolean) => void;
-  setIsConnectingBase: (isConnecting: boolean) => void;
+  // Setters for connecting state (updates local state immediately, then syncs with JSON)
+  // These update local state instantly for UI, then sync with backend JSON
+  setIsConnectingMetaMask: (isConnecting: boolean) => Promise<void>;
+  setIsConnectingBase: (isConnecting: boolean) => Promise<void>;
   setPendingMetaMask: (wallet: { address: string; walletId: string } | null) => void;
   setPendingBase: (wallet: { address: string; walletId: string } | null) => void;
+  
+  // Mark connection as cancelled (updates local state immediately, then syncs with backend)
+  markPendingConnectionAsCancelled: (address: string | null, walletType: 'metamask' | 'base', cancellationType?: 'wallet' | 'asset') => Promise<void>;
 }
 
 const AssetConnectContext = createContext<AssetConnectContextType | undefined>(undefined);
@@ -111,64 +114,135 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     );
   }, [backendConnections]);
   
-  // Derived connecting states from JSON
+  // Derived connecting states - include local state for instant UI
   const isConnectingMetaMask = React.useMemo(() => {
-    return backendConnections.some((pc: any) => 
-      pc.walletType === 'metamask' && (pc.walletConnecting || pc.assetConnecting)
-    );
-  }, [backendConnections]);
+    // Check local state first (instant UI), then backend
+    return localWalletConnecting.metamask || 
+           backendConnections.some((pc: any) => 
+             pc.walletType === 'metamask' && (pc.walletConnecting || pc.assetConnecting)
+           );
+  }, [backendConnections, localWalletConnecting.metamask]);
   
   const isConnectingBase = React.useMemo(() => {
-    return backendConnections.some((pc: any) => 
-      pc.walletType === 'base' && (pc.walletConnecting || pc.assetConnecting)
-    );
-  }, [backendConnections]);
+    // Check local state first (instant UI), then backend
+    return localWalletConnecting.base || 
+           backendConnections.some((pc: any) => 
+             pc.walletType === 'base' && (pc.walletConnecting || pc.assetConnecting)
+           );
+  }, [backendConnections, localWalletConnecting.base]);
   
   // Derived JSON boolean states for MetaMask
   // CRITICAL: If multiple connections exist, prefer the one with walletConnecting: true or the most recent one
+  // If local cancellation is true, prefer the cancelled connection to ensure derived state is correct
   const metaMaskConn = React.useMemo(() => {
     const metamaskConnections = backendConnections.filter((pc: any) => pc.walletType === 'metamask');
     if (metamaskConnections.length === 0) return undefined;
     if (metamaskConnections.length === 1) return metamaskConnections[0];
     
+    // CRITICAL: If local cancellation is true, prefer the cancelled connection OR any connection that's NOT connecting
+    // This prevents selecting a connection with walletConnecting: true when cancellation is active
+    if (localWalletConnectionCanceled.metamask) {
+      const cancelledConn = metamaskConnections.find((pc: any) => pc.walletConnectionCanceled === true);
+      if (cancelledConn) return cancelledConn;
+      // If no cancelled connection found yet, prefer one that's NOT connecting (to prevent flickering)
+      const notConnectingConn = metamaskConnections.find((pc: any) => !pc.walletConnecting);
+      if (notConnectingConn) return notConnectingConn;
+    }
+    
     // If multiple, prefer the one with walletConnecting: true (active connection)
-    const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
-    if (activeConn) return activeConn;
+    // BUT only if local cancellation is NOT true
+    if (!localWalletConnectionCanceled.metamask) {
+      const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
+      if (activeConn) return activeConn;
+    }
     
     // Otherwise, return the most recent one (highest timestamp)
     return metamaskConnections.reduce((latest, current) => 
       (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
     );
-  }, [backendConnections]);
+  }, [backendConnections, localWalletConnectionCanceled.metamask]);
   
   const metaMaskWalletConnected = metaMaskConn?.walletConnected ?? false;
-  const metaMaskWalletConnectionCanceled = metaMaskConn?.walletConnectionCanceled ?? false;
-  const metaMaskWalletConnecting = metaMaskConn?.walletConnecting ?? false;
+  // Use local state for instant UI, fallback to backend for persistence
+  const metaMaskWalletConnectionCanceled = localWalletConnectionCanceled.metamask || (metaMaskConn?.walletConnectionCanceled ?? false);
+  // CRITICAL: If local cancellation is true, walletConnecting must be false (prevents flickering back to "Connecting")
+  // Also check backendConnections directly as an extra safeguard
+  const metaMaskWalletConnecting = React.useMemo(() => {
+    const isCancelled = localWalletConnectionCanceled.metamask;
+    if (isCancelled) {
+      // Local cancellation is true - MUST be false, no matter what
+      // Add console log to debug if this is being called
+      console.log('[AssetConnect metaMaskWalletConnecting] Local cancellation is true, forcing walletConnecting to false');
+      return false;
+    }
+    // Check if ANY MetaMask connection in backendConnections has walletConnecting: true
+    // This is an extra safeguard in case metaMaskConn selection is wrong
+    const anyConnecting = backendConnections.some(
+      (pc: any) => pc.walletType === 'metamask' && pc.walletConnecting === true && !pc.walletConnectionCanceled
+    );
+    const result = localWalletConnecting.metamask || anyConnecting || (metaMaskConn?.walletConnecting ?? false);
+    if (result) {
+      console.log('[AssetConnect metaMaskWalletConnecting] Returning true:', {
+        localConnecting: localWalletConnecting.metamask,
+        anyConnecting,
+        metaMaskConnWalletConnecting: metaMaskConn?.walletConnecting,
+        localCancelled: localWalletConnectionCanceled.metamask
+      });
+    }
+    return result;
+  }, [localWalletConnectionCanceled.metamask, localWalletConnecting.metamask, backendConnections, metaMaskConn?.walletConnecting]);
   const metaMaskAssetConnected = metaMaskConn?.assetConnected ?? false;
   const metaMaskAssetConnectionCancelled = metaMaskConn?.assetConnectionCancelled ?? false;
   const metaMaskAssetConnecting = metaMaskConn?.assetConnecting ?? false;
   
   // Derived JSON boolean states for Base
   // CRITICAL: If multiple connections exist, prefer the one with walletConnecting: true or the most recent one
+  // If local cancellation is true, prefer the cancelled connection to ensure derived state is correct
   const baseConn = React.useMemo(() => {
     const baseConnections = backendConnections.filter((pc: any) => pc.walletType === 'base');
     if (baseConnections.length === 0) return undefined;
     if (baseConnections.length === 1) return baseConnections[0];
     
+    // CRITICAL: If local cancellation is true, prefer the cancelled connection OR any connection that's NOT connecting
+    // This prevents selecting a connection with walletConnecting: true when cancellation is active
+    if (localWalletConnectionCanceled.base) {
+      const cancelledConn = baseConnections.find((pc: any) => pc.walletConnectionCanceled === true);
+      if (cancelledConn) return cancelledConn;
+      // If no cancelled connection found yet, prefer one that's NOT connecting (to prevent flickering)
+      const notConnectingConn = baseConnections.find((pc: any) => !pc.walletConnecting);
+      if (notConnectingConn) return notConnectingConn;
+    }
+    
     // If multiple, prefer the one with walletConnecting: true (active connection)
-    const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
-    if (activeConn) return activeConn;
+    // BUT only if local cancellation is NOT true
+    if (!localWalletConnectionCanceled.base) {
+      const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
+      if (activeConn) return activeConn;
+    }
     
     // Otherwise, return the most recent one (highest timestamp)
     return baseConnections.reduce((latest, current) => 
       (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
     );
-  }, [backendConnections]);
+  }, [backendConnections, localWalletConnectionCanceled.base]);
   
   const baseWalletConnected = baseConn?.walletConnected ?? false;
   // Use local state for instant UI, fallback to backend for persistence
-  const baseWalletConnectionCanceled = localWalletConnectionCanceled.base || baseConn?.walletConnectionCanceled ?? false;
-  const baseWalletConnecting = localWalletConnecting.base || baseConn?.walletConnecting ?? false;
+  const baseWalletConnectionCanceled = localWalletConnectionCanceled.base || (baseConn?.walletConnectionCanceled ?? false);
+  // CRITICAL: If local cancellation is true, walletConnecting must be false (prevents flickering back to "Connecting")
+  // Also check backendConnections directly as an extra safeguard
+  const baseWalletConnecting = React.useMemo(() => {
+    if (localWalletConnectionCanceled.base) {
+      // Local cancellation is true - MUST be false, no matter what
+      return false;
+    }
+    // Check if ANY Base connection in backendConnections has walletConnecting: true
+    // This is an extra safeguard in case baseConn selection is wrong
+    const anyConnecting = backendConnections.some(
+      (pc: any) => pc.walletType === 'base' && pc.walletConnecting === true && !pc.walletConnectionCanceled
+    );
+    return localWalletConnecting.base || anyConnecting || (baseConn?.walletConnecting ?? false);
+  }, [localWalletConnectionCanceled.base, localWalletConnecting.base, backendConnections, baseConn?.walletConnecting]);
   const baseAssetConnected = baseConn?.assetConnected ?? false;
   const baseAssetConnectionCancelled = baseConn?.assetConnectionCancelled ?? false;
   const baseAssetConnecting = baseConn?.assetConnecting ?? false;
@@ -311,14 +385,14 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setIsConnectingBase = useCallback(async (isConnecting: boolean) => {
     if (!email) return;
     
-    // OPTIMISTIC UPDATE FIRST: Update local state immediately for instant UI feedback
-    // This happens SYNCHRONOUSLY BEFORE any async operations, so UI updates instantly
-    // Use functional update to always get the latest state
+    // INSTANT UI UPDATE: Update local state immediately (standard React pattern)
+    setLocalWalletConnecting(prev => ({ ...prev, base: isConnecting }));
     if (isConnecting) {
-      // Track optimistic update to prevent polling from overwriting it
-      optimisticUpdateRef.current = { walletType: 'base', timestamp: Date.now() };
+      // Reset cancellation flag when starting to connect
+      setLocalWalletConnectionCanceled(prev => ({ ...prev, base: false }));
     }
     
+    // Update backend JSON in background (non-blocking)
     setBackendConnections((prev: any[]) => {
       const baseConn = prev.find((pc: any) => pc.walletType === 'base');
       
@@ -362,22 +436,29 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           walletConnectionCanceled: isConnecting ? false : baseConn.walletConnectionCanceled,
         };
         
-        await axios.post('/api/savePendingConnection', {
+        // Update backend in background (non-blocking)
+        axios.post('/api/savePendingConnection', {
           email,
           pendingConnection: updatedConnection,
-        });
-        console.log('[AssetConnect] Updated Base walletConnecting to:', isConnecting, 'walletConnectionCanceled reset to:', isConnecting ? false : baseConn.walletConnectionCanceled);
-        
-        // Clear optimistic flag since backend update succeeded
-        if (isConnecting) {
-          optimisticUpdateRef.current = { walletType: null, timestamp: 0 };
-        }
-        
-        // Refresh from backend to ensure consistency (non-blocking)
-        fetchPendingConnectionsFromBackend().then(connections => {
-          setBackendConnections(connections);
+        }).then(() => {
+          console.log('[AssetConnect] Backend updated Base walletConnecting to:', isConnecting);
+          // Sync local state with backend after successful update
+          fetchPendingConnectionsFromBackend().then(connections => {
+            setBackendConnections(connections);
+            // Clear local state if backend confirms
+            if (isConnecting) {
+              const backendConn = connections.find((pc: any) => pc.walletType === 'base');
+              if (backendConn?.walletConnecting) {
+                setLocalWalletConnecting(prev => ({ ...prev, base: false })); // Backend has it now
+              }
+            }
+          }).catch(err => {
+            console.error('[AssetConnect] Error refreshing after update:', err);
+          });
         }).catch(err => {
-          console.error('[AssetConnect] Error refreshing after update:', err);
+          console.error('[AssetConnect] Error updating backend:', err);
+          // Revert local state on error
+          setLocalWalletConnecting(prev => ({ ...prev, base: !isConnecting }));
         });
       } else {
         console.warn('[AssetConnect] No Base connection found to update walletConnecting state');
@@ -596,11 +677,60 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           if (cancellationType === 'wallet') {
             updatedConnection.walletConnectionCanceled = true;
             updatedConnection.walletConnecting = false; // CRITICAL: Stop wallet connecting when cancelled
-            console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting walletConnectionCanceled=true and walletConnecting=false for wallet cancellation`);
+            // OPTIMISTIC UPDATE: Update local state AND backendConnections immediately for instant UI
+            if (walletType === 'metamask') {
+              setLocalWalletConnectionCanceled(prev => ({ ...prev, metamask: true }));
+              setLocalWalletConnecting(prev => ({ ...prev, metamask: false }));
+              // Also update backendConnections optimistically so derived state reflects cancellation immediately
+              // CRITICAL: Update ALL MetaMask connections (not just by address) to handle multiple connections
+              setBackendConnections((prev: any[]) => {
+                return prev.map((pc: any) => {
+                  if (pc.walletType === 'metamask') {
+                    return {
+                      ...pc,
+                      walletConnectionCanceled: true,
+                      walletConnecting: false,
+                    };
+                  }
+                  return pc;
+                });
+              });
+            } else {
+              setLocalWalletConnectionCanceled(prev => ({ ...prev, base: true }));
+              setLocalWalletConnecting(prev => ({ ...prev, base: false }));
+              // Also update backendConnections optimistically so derived state reflects cancellation immediately
+              // CRITICAL: Update ALL Base connections (not just by address) to handle multiple connections
+              setBackendConnections((prev: any[]) => {
+                return prev.map((pc: any) => {
+                  if (pc.walletType === 'base') {
+                    return {
+                      ...pc,
+                      walletConnectionCanceled: true,
+                      walletConnecting: false,
+                    };
+                  }
+                  return pc;
+                });
+              });
+            }
+            console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting walletConnectionCanceled=true and walletConnecting=false for wallet cancellation (optimistic update)`);
           } else {
             updatedConnection.assetConnectionCancelled = true;
             updatedConnection.assetConnecting = false; // Stop asset connecting when cancelled
-            console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting assetConnectionCancelled=true and assetConnecting=false for asset cancellation`);
+            // OPTIMISTIC UPDATE: Update backendConnections immediately for instant UI
+            setBackendConnections((prev: any[]) => {
+              return prev.map((pc: any) => {
+                if (pc.walletType === walletType && pc.address?.toLowerCase() === connectionToCancel.address?.toLowerCase()) {
+                  return {
+                    ...pc,
+                    assetConnectionCancelled: true,
+                    assetConnecting: false,
+                  };
+                }
+                return pc;
+              });
+            });
+            console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting assetConnectionCancelled=true and assetConnecting=false for asset cancellation (optimistic update)`);
           }
           console.log(`[AssetConnect markPendingConnectionAsCancelled] POSTing updated connection (${cancellationType} cancellation):`, JSON.stringify(updatedConnection, null, 2));
           console.log(`[AssetConnect markPendingConnectionAsCancelled] CRITICAL: walletConnectionCanceled=${updatedConnection.walletConnectionCanceled}, walletConnecting=${updatedConnection.walletConnecting}, assetConnectionCancelled=${updatedConnection.assetConnectionCancelled}, assetConnecting=${updatedConnection.assetConnecting}`);
@@ -714,37 +844,91 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       try {
         const pendingConnections = await fetchPendingConnectionsFromBackend();
         
-        // CRITICAL: Don't overwrite optimistic updates that just happened
-        // If we did an optimistic update in the last 3 seconds, merge the optimistic state with backend
-        const now = Date.now();
-        const timeSinceOptimistic = now - optimisticUpdateRef.current.timestamp;
-        const isRecentOptimistic = timeSinceOptimistic < 3000 && optimisticUpdateRef.current.walletType !== null;
+        // CRITICAL: If local cancellation state is true, check if backend has confirmed it
+        // If backend hasn't confirmed yet, DON'T update backendConnections at all to prevent flickering
+        const backendMetaMaskCancelled = pendingConnections.some(
+          (pc: any) => pc.walletType === 'metamask' && pc.walletConnectionCanceled === true
+        );
+        const backendBaseCancelled = pendingConnections.some(
+          (pc: any) => pc.walletType === 'base' && pc.walletConnectionCanceled === true
+        );
         
-        if (isRecentOptimistic) {
-          // Merge: keep optimistic update for the wallet type that was just updated
-          setBackendConnections((prev: any[]) => {
-            const optimisticWalletType = optimisticUpdateRef.current.walletType!;
-            const optimisticConn = prev.find((pc: any) => pc.walletType === optimisticWalletType);
-            const backendConn = pendingConnections.find((pc: any) => pc.walletType === optimisticWalletType);
-            
-            // If backend has the update (walletConnecting: true), use backend
-            // Otherwise, keep the optimistic update
-            if (backendConn && backendConn.walletConnecting === true) {
-              // Backend caught up, clear optimistic flag and use backend
-              optimisticUpdateRef.current = { walletType: null, timestamp: 0 };
-              return pendingConnections;
-            } else if (optimisticConn && optimisticConn.walletConnecting === true) {
-              // Backend hasn't caught up yet, merge optimistic with backend
-              const otherConnections = pendingConnections.filter((pc: any) => pc.walletType !== optimisticWalletType);
-              return [...otherConnections, optimisticConn];
-            }
-            return pendingConnections;
+        // CRITICAL: Only update backendConnections if backend has confirmed cancellation OR local cancellation is false
+        // This prevents polling from overwriting optimistic updates and causing flickering
+        const shouldSkipMetaMask = localWalletConnectionCanceled.metamask && !backendMetaMaskCancelled;
+        const shouldSkipBase = localWalletConnectionCanceled.base && !backendBaseCancelled;
+        
+        // CRITICAL: When local cancellation is true and backend hasn't confirmed, COMPLETELY SKIP ALL UPDATES
+        // This is the most aggressive fix - don't update backendConnections OR local state sync
+        // Just keep the optimistic state completely intact until backend confirms
+        if (shouldSkipMetaMask || shouldSkipBase) {
+          // Local says cancelled but backend hasn't confirmed - DON'T update ANYTHING
+          // This prevents ANY possibility of flickering by keeping the optimistic state intact
+          console.log('[AssetConnect syncStateFromBackend] COMPLETELY SKIPPING ALL UPDATES - waiting for backend to confirm cancellation', {
+            metaMaskWaiting: shouldSkipMetaMask,
+            baseWaiting: shouldSkipBase,
+            localMetaMaskCancelled: localWalletConnectionCanceled.metamask,
+            localBaseCancelled: localWalletConnectionCanceled.base,
+            localMetaMaskConnecting: localWalletConnecting.metamask,
+            localBaseConnecting: localWalletConnecting.base
           });
+          // Exit early - don't update backendConnections, don't sync local state, don't do anything
+          // Keep the optimistic state completely frozen until backend confirms
+          return;
         } else {
-          // No recent optimistic update, use backend state directly
-          optimisticUpdateRef.current = { walletType: null, timestamp: 0 };
+          // Safe to update - backend has confirmed or no optimistic cancellation
           setBackendConnections(pendingConnections);
         }
+        
+        // Sync local state with backend - respect local state for instant UI updates
+        // NOTE: This only runs if we didn't skip updates above
+        // CRITICAL: Don't overwrite local cancellation state until backend confirms it
+        // CRITICAL: Don't set localWalletConnecting to true if local cancellation is true (prevents flickering)
+        pendingConnections.forEach((pc: any) => {
+          if (pc.walletType === 'metamask') {
+            // Only initialize local state from backend if local state is not actively set
+            // This ensures backend state is used after page reload, but local state wins for immediate updates
+            // CRITICAL: Don't set connecting to true if local cancellation is true (prevents flickering back to "Connecting")
+            if (pc.walletConnecting && !localWalletConnecting.metamask && !localWalletConnectionCanceled.metamask) {
+              setLocalWalletConnecting(prev => ({ ...prev, metamask: true }));
+            }
+            // CRITICAL: Only sync cancellation from backend if:
+            // 1. Local cancellation is false (not actively cancelled), OR
+            // 2. Backend confirms cancellation (then clear local state to sync)
+            if (pc.walletConnectionCanceled) {
+              if (!localWalletConnectionCanceled.metamask) {
+                // Backend says cancelled but local doesn't - sync from backend (page reload scenario)
+                setLocalWalletConnectionCanceled(prev => ({ ...prev, metamask: true }));
+              } else {
+                // Both local and backend say cancelled - backend has confirmed, keep local state
+                // Local state will persist until user clicks connect again (which resets it)
+              }
+            } else if (localWalletConnectionCanceled.metamask) {
+              // Local says cancelled but backend doesn't yet - keep local state (waiting for backend to catch up)
+              // Don't clear local state until backend confirms
+            }
+          } else if (pc.walletType === 'base') {
+            // CRITICAL: Don't set connecting to true if local cancellation is true (prevents flickering back to "Connecting")
+            if (pc.walletConnecting && !localWalletConnecting.base && !localWalletConnectionCanceled.base) {
+              setLocalWalletConnecting(prev => ({ ...prev, base: true }));
+            }
+            // CRITICAL: Only sync cancellation from backend if:
+            // 1. Local cancellation is false (not actively cancelled), OR
+            // 2. Backend confirms cancellation (then clear local state to sync)
+            if (pc.walletConnectionCanceled) {
+              if (!localWalletConnectionCanceled.base) {
+                // Backend says cancelled but local doesn't - sync from backend (page reload scenario)
+                setLocalWalletConnectionCanceled(prev => ({ ...prev, base: true }));
+              } else {
+                // Both local and backend say cancelled - backend has confirmed, keep local state
+                // Local state will persist until user clicks connect again (which resets it)
+              }
+            } else if (localWalletConnectionCanceled.base) {
+              // Local says cancelled but backend doesn't yet - keep local state (waiting for backend to catch up)
+              // Don't clear local state until backend confirms
+            }
+          }
+        });
         
         // Update localStorage to match backend state (for wallet extension checks)
         const completedMetaMask = pendingConnections.find(
@@ -772,7 +956,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const intervalId = setInterval(syncStateFromBackend, 500);
     
     return () => clearInterval(intervalId);
-  }, [email]);
+  }, [email, localWalletConnectionCanceled]);
   
   // Use refs to prevent multiple executions (persist across re-renders but reset on mount)
   const hasProcessedRef = useRef(false);
@@ -2901,6 +3085,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         setPendingBase,
         setIsConnectingMetaMask,
         setIsConnectingBase,
+        markPendingConnectionAsCancelled,
       }}
     >
       {children}
