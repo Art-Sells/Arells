@@ -8,6 +8,71 @@
 VavityTester:
 - Connect Ethereum with Metamask/Base to begin.
 - When fixing price mechanism, stop git
+
+In the json do this after the json is creationed:
+
+all these should start of as exactly like this for each Metamask and Base wallet:
+
+walletConnected: false <- (this should change to false after successful wallet disconnection)
+walletConnectionCanceled: false <- (this should change to true after wallet connection canceledc and back to false after wallet connection button clicked again)
+walletConnecting: true <- (this should change to false  if walletConnected is true and back to true if walletConnected is false)
+
+assetConnected: false <- (this should change to true after successful asset disconnection)
+assetConnectionCancelled: false <- (this should change to true after asset connection canceled and back to false after asset connection (deposit) is clicked )
+assetConnecting: false <- (this should change to true if asset connection (deposit) is clicked and back to false after deposit)
+
+if 
+
+walletConnected: false
+walletConnectionCanceled: false
+walletConnecting: true
+
+then
+
+(connecing) button placeholder should show...
+
+if
+
+assetConnected: false
+assetConnectionCancelled: false
+assetConnecting: true
+
+then
+
+(waiting for deposit) button placeholder should show...
+
+if 
+
+walletConnected: true
+walletConnectionCanceled: false
+walletConnecting: false 
+
+then
+
+(Connect Ethereum with Metamask/Base) button should show
+
+if 
+
+assetConnected: true
+assetConnectionCancelled: false
+assetConnecting: false
+
+(Connected Ethereum with Metamask/Base) button placeholder should show
+
+if 
+
+walletConnected: false
+walletConnectionCanceled: true
+walletConnecting: true
+
+or if 
+
+assetConnected: false
+assetConnectionCancelled: true
+assetConnecting: false
+
+(Connect Ethereum with Metamask/Base)  button should show
+
 - - Fix cpVatoc VAPA issue
 - - Test to see after asking for wallet connection, if I reload the page after confirmation (before wallet ID creation), if issues preside...
 - - Afer wallet connection, if asset connection canceled, no wallet balances should show...

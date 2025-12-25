@@ -10,9 +10,17 @@ interface PendingConnection {
   walletId: string;
   walletType: 'metamask' | 'base';
   timestamp: number;
-  depositCompleted?: boolean;
-  depositCancelled?: boolean;
   txHash?: string; // Store transaction hash when deposit completes
+  
+  // Wallet connection states
+  walletConnected: boolean; // true after successful wallet connection, false after disconnection
+  walletConnectionCanceled: boolean; // true after wallet connection canceled, false when button clicked again
+  walletConnecting: boolean; // true when connecting, false when walletConnected is true or after cancel
+  
+  // Asset connection states (replacing depositCompleted/depositCancelled)
+  assetConnected: boolean; // true after successful asset connection (deposit), false after disconnection
+  assetConnectionCancelled: boolean; // true after asset connection canceled, false when deposit button clicked again
+  assetConnecting: boolean; // true when deposit is clicked, false after deposit completes or cancels
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -51,17 +59,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Add new pending connection
       // Preserve all fields from pendingConnection, only update timestamp if not provided
-      pendingConnections.push({
+      // Ensure all boolean fields have default values if not provided (for backward compatibility)
+      const connectionToAdd: any = {
         ...pendingConnection,
         timestamp: pendingConnection.timestamp || Date.now(),
-      });
+        // Default values for new boolean fields if not provided (backward compatibility)
+        walletConnected: (pendingConnection as any).walletConnected ?? false,
+        walletConnectionCanceled: (pendingConnection as any).walletConnectionCanceled ?? false,
+        walletConnecting: (pendingConnection as any).walletConnecting ?? false,
+        assetConnected: (pendingConnection as any).assetConnected ?? false,
+        assetConnectionCancelled: (pendingConnection as any).assetConnectionCancelled ?? false,
+        assetConnecting: (pendingConnection as any).assetConnecting ?? false,
+      };
       
-      // Log for debugging cancellation updates
-      if (pendingConnection.depositCancelled) {
+      // Migrate old fields to new fields if present
+      if ((pendingConnection as any).depositCompleted !== undefined) {
+        connectionToAdd.assetConnected = (pendingConnection as any).depositCompleted;
+      }
+      if ((pendingConnection as any).depositCancelled !== undefined) {
+        connectionToAdd.assetConnectionCancelled = (pendingConnection as any).depositCancelled;
+      }
+      
+      // Remove old fields if they exist
+      delete connectionToAdd.depositCompleted;
+      delete connectionToAdd.depositCancelled;
+      delete connectionToAdd.walletExtensionConnected;
+      
+      pendingConnections.push(connectionToAdd);
+      
+      // Log for debugging state updates
+      if (connectionToAdd.assetConnectionCancelled || connectionToAdd.walletConnectionCanceled) {
         console.log('[savePendingConnection] Marking connection as cancelled:', {
-          address: pendingConnection.address,
-          walletType: pendingConnection.walletType,
-          depositCancelled: pendingConnection.depositCancelled
+          address: connectionToAdd.address,
+          walletType: connectionToAdd.walletType,
+          walletConnectionCanceled: connectionToAdd.walletConnectionCanceled,
+          assetConnectionCancelled: connectionToAdd.assetConnectionCancelled
         });
       }
 

@@ -58,29 +58,56 @@ export async function sendDepositTransaction(params: DepositParams): Promise<str
 
   let tx: ethers.ContractTransactionResponse;
 
-  if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
-    // Send native ETH
-    // Format deposit amount to avoid precision issues
-    const depositAmountFormatted = depositAmount.toFixed(18);
-    const txResponse = await signer.sendTransaction({
-      to: DEPOSIT_ADDRESS,
-      value: ethers.parseEther(depositAmountFormatted),
-    });
-    tx = txResponse;
-  } else {
-    // Send ERC20 token
-    const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
-    
-    // Get token decimals
-    const decimals = await tokenContract.decimals();
-    const amountInWei = ethers.parseUnits(depositAmount.toFixed(18), decimals);
-    
-    // Send transfer transaction
-    tx = await tokenContract.transfer(DEPOSIT_ADDRESS, amountInWei);
-  }
+  try {
+    if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
+      // Send native ETH
+      // Format deposit amount to avoid precision issues
+      const depositAmountFormatted = depositAmount.toFixed(18);
+      const txResponse = await signer.sendTransaction({
+        to: DEPOSIT_ADDRESS,
+        value: ethers.parseEther(depositAmountFormatted),
+      });
+      tx = txResponse;
+    } else {
+      // Send ERC20 token
+      const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
+      
+      // Get token decimals
+      const decimals = await tokenContract.decimals();
+      const amountInWei = ethers.parseUnits(depositAmount.toFixed(18), decimals);
+      
+      // Send transfer transaction
+      tx = await tokenContract.transfer(DEPOSIT_ADDRESS, amountInWei);
+    }
 
-  console.log(`[depositTransaction] Transaction sent: ${tx.hash}`);
-  return tx.hash;
+    console.log(`[depositTransaction] Transaction sent: ${tx.hash}`);
+    return tx.hash;
+  } catch (error: any) {
+    // Check if user cancelled the transaction
+    const errorMsg = String(error?.message || error?.toString() || '');
+    const errorCode = error?.code || error?.error?.code;
+    const isCancelled = 
+      errorMsg.toLowerCase().includes('cancelled') || 
+      errorMsg.toLowerCase().includes('rejected') || 
+      errorMsg.toLowerCase().includes('user rejected') ||
+      errorMsg.toLowerCase().includes('user rejected the request') ||
+      errorMsg.toLowerCase().includes('action rejected') ||
+      errorCode === 4001 ||
+      errorCode === 'ACTION_REJECTED' ||
+      error?.error?.code === 4001;
+    
+    if (isCancelled) {
+      console.log('[depositTransaction] User cancelled deposit transaction');
+      // Re-throw with a clear cancellation message so it can be caught upstream
+      const cancellationError: any = new Error('User rejected the deposit transaction');
+      cancellationError.code = 4001;
+      cancellationError.isCancelled = true;
+      throw cancellationError;
+    }
+    
+    // Re-throw other errors as-is
+    throw error;
+  }
 }
 
 /**

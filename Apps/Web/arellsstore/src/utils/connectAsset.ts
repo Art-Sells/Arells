@@ -119,15 +119,32 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
 
   // Step 4: Send deposit transaction and wait for confirmation
   // Send transaction first to get txHash immediately
-  const txHash = await sendDepositTransaction({
-    provider,
-    walletAddress,
-    tokenAddress: tokenAddr === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddr,
-    balance,
-  });
+  let txHash: string;
+  try {
+    txHash = await sendDepositTransaction({
+      provider,
+      walletAddress,
+      tokenAddress: tokenAddr === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddr,
+      balance,
+    });
+  } catch (error: any) {
+    // Check if this is a cancellation error from sendDepositTransaction
+    if (error?.isCancelled === true || error?.code === 4001) {
+      console.log('[connectAsset] User cancelled deposit transaction - re-throwing with cancellation flag');
+      // Re-throw with cancellation flag so it can be caught upstream
+      const cancellationError: any = new Error('User rejected the deposit transaction');
+      cancellationError.code = 4001;
+      cancellationError.isCancelled = true;
+      throw cancellationError;
+    }
+    // Re-throw other errors as-is
+    throw error;
+  }
   
   // CRITICAL: Save txHash to backend JSON immediately (before waiting for confirmation)
   // This allows processPendingWallet to detect pending transactions after page reload
+  // NOTE: This only UPDATES the JSON file - it does NOT create it
+  // The JSON file should be created when buttons are clicked (in VavityTester.tsx)
   try {
     // Try to find existing pending connection for this address
     const pendingResponse = await axios.get('/api/savePendingConnection', { params: { email } });
@@ -148,7 +165,10 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
       });
       console.log('[connectAsset] Saved txHash to existing pending connection:', txHash);
     } else if (params.walletId && params.walletType) {
-      // If no matching connection found but we have walletId and walletType, create/update one
+      // If no matching connection found but we have walletId and walletType, update/create one
+      // NOTE: JSON file should already exist (created when button was clicked)
+      // If it doesn't exist, this will create it, but it shouldn't happen
+      console.warn('[connectAsset] No matching connection found - JSON file should have been created when button was clicked');
       await axios.post('/api/savePendingConnection', {
         email,
         pendingConnection: {
@@ -160,7 +180,7 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
           txHash: txHash,
         },
       });
-      console.log('[connectAsset] Created new pending connection with txHash:', txHash);
+      console.log('[connectAsset] Created/updated pending connection with txHash:', txHash);
     }
   } catch (error) {
     console.error('[connectAsset] Error saving txHash to backend (non-critical):', error);

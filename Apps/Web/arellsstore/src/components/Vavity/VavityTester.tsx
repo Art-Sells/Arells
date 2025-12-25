@@ -748,6 +748,78 @@ const VavityTester: React.FC = () => {
     setSuccess(null);
     setConnectedAddress(''); // Clear previous address
 
+    // CRITICAL: Set connecting state immediately when button is clicked (shows "CONNECTING..." placeholder)
+    if (walletType === 'metamask') {
+      setIsConnectingMetaMask(true);
+    } else {
+      setIsConnectingBase(true);
+    }
+
+    // CRITICAL: Ensure JSON file exists when button is clicked (create if it doesn't exist)
+    // This ensures the file structure is ready before we save any connections
+    if (email) {
+      try {
+        // Check if file exists by making a GET request
+        const response = await axios.get('/api/savePendingConnection', { params: { email } });
+        const existingConnections = response.data.pendingConnections || [];
+        
+        // If file doesn't exist or is empty, create it by making a POST with a temporary connection
+        // The API will create the file structure when we POST
+        // We'll update this with the real connection data immediately after
+        if (existingConnections.length === 0) {
+          console.log('[VavityTester] JSON file doesn\'t exist, creating it...');
+          // Create a temporary connection that will be updated with real data
+          // Use a placeholder address that we'll replace when we get the real wallet address
+          const tempAddress = '0x0000000000000000000000000000000000000000';
+          const tempWalletId = `temp-init-${Date.now()}`;
+          
+          try {
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: {
+                address: tempAddress,
+                walletId: tempWalletId,
+                walletType: walletType,
+                timestamp: Date.now(),
+                depositCancelled: false,
+                depositCompleted: false,
+              },
+            });
+            console.log('[VavityTester] JSON file created successfully');
+            // The temporary connection will be replaced/updated when we save the real connection
+            // The API filters by address+walletType, so the real connection will replace this one
+          } catch (createError) {
+            console.error('[VavityTester] Error creating JSON file:', createError);
+            // Continue anyway - the file will be created when we save the first connection
+          }
+        } else {
+          console.log('[VavityTester] JSON file already exists with', existingConnections.length, 'connections');
+        }
+      } catch (error: any) {
+        // If GET fails, try to create the file anyway
+        console.log('[VavityTester] Error checking JSON file, attempting to create it...', error?.message);
+        try {
+          const tempAddress = '0x0000000000000000000000000000000000000000';
+          const tempWalletId = `temp-init-${Date.now()}`;
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: tempAddress,
+              walletId: tempWalletId,
+              walletType: walletType,
+              timestamp: Date.now(),
+              depositCancelled: false,
+              depositCompleted: false,
+            },
+          });
+          console.log('[VavityTester] JSON file created after error check');
+        } catch (createError) {
+          console.error('[VavityTester] Error creating JSON file after error:', createError);
+          // Continue anyway - the file will be created when we save the first connection
+        }
+      }
+    }
+
     try {
       // Check if wallet extension is already connected
       let walletExtensionConnected = false;
@@ -801,6 +873,12 @@ const VavityTester: React.FC = () => {
         console.log(`[Connect Asset] Wallet extension connected with pending deposit, triggering deposit flow...`);
         try {
           await connectAssetForWallet(walletType);
+          // Clear connecting state after successful deposit flow
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
         } catch (error: any) {
           // Check for cancellation errors (various formats)
           const errorMsg = String(error?.message || error?.toString() || '');
@@ -917,6 +995,35 @@ const VavityTester: React.FC = () => {
         // Save to backend JSON immediately (this is the source of truth)
         if (email) {
           try {
+            // Check if wallet extension is actually connected
+            let walletExtensionConnected = false;
+            if (typeof window !== 'undefined' && (window as any).ethereum) {
+              let provider: any = null;
+              if (walletType === 'metamask') {
+                if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+                  provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+                } else if ((window as any).ethereum?.isMetaMask) {
+                  provider = (window as any).ethereum;
+                }
+              } else if (walletType === 'base') {
+                if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+                  provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+                } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+                  provider = (window as any).ethereum;
+                }
+              }
+              
+              if (provider) {
+                try {
+                  const accounts = await provider.request({ method: 'eth_accounts' });
+                  walletExtensionConnected = accounts && accounts.length > 0 && 
+                    accounts.some((acc: string) => acc.toLowerCase() === walletAddress.toLowerCase());
+                } catch (e) {
+                  walletExtensionConnected = false;
+                }
+              }
+            }
+            
             await axios.post('/api/savePendingConnection', {
               email,
               pendingConnection: {
@@ -926,6 +1033,7 @@ const VavityTester: React.FC = () => {
                 timestamp: Date.now(),
                 depositCancelled: false,
                 depositCompleted: false,
+                walletExtensionConnected: walletExtensionConnected, // Track if wallet extension is connected
               },
             });
           } catch (error) {
@@ -934,7 +1042,23 @@ const VavityTester: React.FC = () => {
         }
         
         // Trigger deposit flow
-        await connectAssetForWallet(walletType);
+        try {
+          await connectAssetForWallet(walletType);
+          // Clear connecting state after successful deposit flow
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+        } catch (depositError: any) {
+          // Clear connecting state on error
+          if (walletType === 'metamask') {
+            setIsConnectingMetaMask(false);
+          } else {
+            setIsConnectingBase(false);
+          }
+          throw depositError; // Re-throw to be caught by outer catch
+        }
         return;
       }
 
@@ -945,14 +1069,9 @@ const VavityTester: React.FC = () => {
       }
 
       // If wallet extension is not connected, connect it first (this will reload the page)
+      // Note: Connecting state is already set at the beginning of this function
       if (!walletExtensionConnected) {
         console.log(`[Connect Asset] Wallet extension not connected, connecting wallet first...`);
-        // Set connecting state immediately to disable button
-        if (walletType === 'metamask') {
-          setIsConnectingMetaMask(true);
-        } else {
-          setIsConnectingBase(true);
-        }
         await connectAssetFromProvider(walletType);
         // Page will reload after connection, and deposit flow will trigger automatically
         return;
@@ -961,8 +1080,147 @@ const VavityTester: React.FC = () => {
     } catch (error: any) {
       console.error(`[Connect Asset] Error connecting ${walletType} asset:`, error);
       
-      // Check if this is a cancellation error - don't show error for cancellations
       const errorMsg = String(error?.message || error?.toString() || '');
+      
+      // Check if this is the "already pending" error - if so, check if wallet is actually connected
+      const isAlreadyPending = errorMsg.toLowerCase().includes('already pending') || 
+                               errorMsg.toLowerCase().includes('wallet_requestPermissions');
+      
+      if (isAlreadyPending) {
+        console.log(`[Connect Asset] "Already pending" error detected - checking if wallet is actually connected...`);
+        
+        // Check if wallet is actually connected now (the pending request might have completed)
+        let walletExtensionConnected = false;
+        let walletAddress: string | null = null;
+        
+        if (typeof window !== 'undefined' && (window as any).ethereum) {
+          let provider: any = null;
+          if (walletType === 'metamask') {
+            if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+              provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+            } else if ((window as any).ethereum?.isMetaMask) {
+              provider = (window as any).ethereum;
+            }
+          } else if (walletType === 'base') {
+            if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+              provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+            } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+              provider = (window as any).ethereum;
+            }
+          }
+          
+          if (provider) {
+            try {
+              const accounts = await provider.request({ method: 'eth_accounts' });
+              if (accounts && accounts.length > 0) {
+                walletExtensionConnected = true;
+                walletAddress = accounts[0];
+                console.log(`[Connect Asset] Wallet is actually connected after "already pending" error:`, walletAddress);
+              }
+            } catch (e) {
+              console.log(`[Connect Asset] Could not check ${walletType} connection after error:`, e);
+            }
+          }
+        }
+        
+        // If wallet is connected, create pending wallet and trigger deposit
+        if (walletExtensionConnected && walletAddress) {
+          const isFullyConnected = walletType === 'metamask' ? connectedMetaMask : connectedBase;
+          const pendingWallet = walletType === 'metamask' ? pendingMetaMask : pendingBase;
+          
+          console.log(`[Connect Asset] Wallet connected after "already pending" error, checking if we should trigger deposit...`, {
+            isFullyConnected,
+            hasPendingWallet: !!pendingWallet,
+            walletAddress
+          });
+          
+          // If not fully connected and no pending wallet, create one and trigger deposit
+          if (!isFullyConnected && !pendingWallet) {
+            console.log(`[Connect Asset] Creating pending wallet and triggering deposit after "already pending" error...`);
+            
+            // Create pending wallet info
+            const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const pendingWalletData = { address: walletAddress, walletId };
+            
+            // Set pending wallet state
+            if (walletType === 'metamask') {
+              setPendingMetaMask(pendingWalletData);
+            } else {
+              setPendingBase(pendingWalletData);
+            }
+            
+            // Save to backend JSON immediately
+            if (email) {
+              try {
+                // Check if wallet extension is actually connected (we just verified it is)
+                const walletExtensionConnected = true; // Since we just checked and it's connected
+                
+                await axios.post('/api/savePendingConnection', {
+                  email,
+                  pendingConnection: {
+                    address: walletAddress,
+                    walletId,
+                    walletType,
+                    timestamp: Date.now(),
+                    depositCancelled: false,
+                    depositCompleted: false,
+                    walletExtensionConnected: walletExtensionConnected, // Track if wallet extension is connected
+                  },
+                });
+                console.log(`[Connect Asset] Saved pending connection to backend after "already pending" error`);
+              } catch (error) {
+                console.error('[VavityTester] Error saving pending connection to backend:', error);
+              }
+            }
+            
+            // Trigger deposit flow
+            try {
+              await connectAssetForWallet(walletType);
+              // Clear connecting state after successful deposit flow
+              if (walletType === 'metamask') {
+                setIsConnectingMetaMask(false);
+              } else {
+                setIsConnectingBase(false);
+              }
+              return; // Success - exit early
+            } catch (depositError: any) {
+              // Clear connecting state on error
+              if (walletType === 'metamask') {
+                setIsConnectingMetaMask(false);
+              } else {
+                setIsConnectingBase(false);
+              }
+              
+              // Handle deposit cancellation/errors
+              const depositErrorMsg = String(depositError?.message || depositError?.toString() || '');
+              const isDepositCancelled = 
+                depositErrorMsg.toLowerCase().includes('cancelled') || 
+                depositErrorMsg.toLowerCase().includes('rejected') ||
+                depositError?.code === 4001;
+              
+              if (isDepositCancelled) {
+                console.log('[Connect Asset] User cancelled deposit after "already pending" error');
+                // Clear state will be handled by the cancellation handler
+                return;
+              }
+              // Re-throw other deposit errors
+              throw depositError;
+            }
+          }
+        }
+        
+        // Show the "already pending" error message
+        setError(errorMsg);
+        // Clear connecting state since we're showing an error
+        if (walletType === 'metamask') {
+          setIsConnectingMetaMask(false);
+        } else {
+          setIsConnectingBase(false);
+        }
+        return;
+      }
+      
+      // Check if this is a cancellation error - don't show error for cancellations
       const isCancelled = 
         errorMsg.toLowerCase().includes('cancelled') || 
         errorMsg.toLowerCase().includes('rejected') || 
