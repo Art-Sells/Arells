@@ -67,18 +67,24 @@ const VavityTester: React.FC = () => {
     connectedBase,
     pendingMetaMask,
     pendingBase,
+    metaMaskWalletConnected,
+    metaMaskWalletConnectionCanceled,
+    metaMaskWalletConnecting,
+    metaMaskAssetConnected,
+    metaMaskAssetConnectionCancelled,
+    metaMaskAssetConnecting,
+    baseWalletConnected,
+    baseWalletConnectionCanceled,
+    baseWalletConnecting,
+    baseAssetConnected,
+    baseAssetConnectionCancelled,
+    baseAssetConnecting,
     connectAssetForWallet,
     setPendingMetaMask,
     setPendingBase,
     setIsConnectingMetaMask,
     setIsConnectingBase
   } = useAssetConnect();
-  
-  // Check backend JSON ONLY for pending wallets (to disable button even after reload)
-  // This prevents double-clicks - if there's a pending wallet, button should be disabled
-  // Backend JSON persists across browser sessions and page reloads
-  const [hasPendingMetaMaskInBackend, setHasPendingMetaMaskInBackend] = useState(false);
-  const [hasPendingBaseInBackend, setHasPendingBaseInBackend] = useState(false);
   
   // Track when we manually cleared state due to cancellation (to prevent checkPending from re-setting)
   const cancelledMetaMaskRef = useRef(false);
@@ -103,10 +109,10 @@ const VavityTester: React.FC = () => {
         // CRITICAL: Check for cancelled connections FIRST - before setting any flags
         // This ensures button state updates correctly when a deposit is cancelled
         const cancelledMetaMask = pendingConnections.find(
-          (pc: any) => pc.walletType === 'metamask' && pc.depositCancelled === true
+          (pc: any) => pc.walletType === 'metamask' && pc.assetConnectionCancelled === true
         );
         const cancelledBase = pendingConnections.find(
-          (pc: any) => pc.walletType === 'base' && pc.depositCancelled === true
+          (pc: any) => pc.walletType === 'base' && pc.assetConnectionCancelled === true
         );
         
         // DEBUG: Log cancellation detection
@@ -127,19 +133,17 @@ const VavityTester: React.FC = () => {
         if (cancelledMetaMask) {
           console.log('[VavityTester] Detected cancelled MetaMask connection on mount, clearing all state');
           setPendingMetaMask(null);
-          setHasPendingMetaMaskInBackend(false); // CRITICAL: Clear backend flag so button updates
         }
         if (cancelledBase) {
           console.log('[VavityTester] Detected cancelled Base connection on mount, clearing all state');
           setPendingBase(null);
-          setHasPendingBaseInBackend(false); // CRITICAL: Clear backend flag so button updates
         }
         
         // Filter for active pending connections
         // CRITICAL: Include ALL pending connections that aren't cancelled/completed
         // Don't filter by timestamp - if it's in backend and not cancelled/completed, it's active
         const activePending = pendingConnections.filter((pc: any) => {
-          if (pc.depositCancelled || pc.depositCompleted) return false;
+          if (pc.assetConnectionCancelled || pc.assetConnected) return false;
           // Include all active pending connections (they're in backend for a reason)
           return true;
         });
@@ -198,71 +202,54 @@ const VavityTester: React.FC = () => {
           activePending: activePending.map((pc: any) => ({
             address: pc.address,
             walletType: pc.walletType,
-            depositCancelled: pc.depositCancelled,
-            depositCompleted: pc.depositCompleted,
+            assetConnectionCancelled: pc.assetConnectionCancelled,
+            assetConnected: pc.assetConnected,
             txHash: pc.txHash
           })),
           pendingMetaMaskFromBackend: pendingMetaMaskFromBackend ? {
             address: pendingMetaMaskFromBackend.address,
-            depositCancelled: pendingMetaMaskFromBackend.depositCancelled,
-            depositCompleted: pendingMetaMaskFromBackend.depositCompleted
+            assetConnectionCancelled: pendingMetaMaskFromBackend.assetConnectionCancelled,
+            assetConnected: pendingMetaMaskFromBackend.assetConnected
           } : null,
           pendingBaseFromBackend: pendingBaseFromBackend ? {
             address: pendingBaseFromBackend.address,
-            depositCancelled: pendingBaseFromBackend.depositCancelled,
-            depositCompleted: pendingBaseFromBackend.depositCompleted
+            assetConnectionCancelled: pendingBaseFromBackend.assetConnectionCancelled,
+            assetConnected: pendingBaseFromBackend.assetConnected
           } : null,
           metamaskConnOnMount: metamaskConnOnMount ? {
             address: metamaskConnOnMount.address,
-            depositCancelled: metamaskConnOnMount.depositCancelled,
-            depositCompleted: metamaskConnOnMount.depositCompleted
+            assetConnectionCancelled: metamaskConnOnMount.assetConnectionCancelled,
+            assetConnected: metamaskConnOnMount.assetConnected
           } : null,
           baseConnOnMount: baseConnOnMount ? {
             address: baseConnOnMount.address,
-            depositCancelled: baseConnOnMount.depositCancelled,
-            depositCompleted: baseConnOnMount.depositCompleted
+            assetConnectionCancelled: baseConnOnMount.assetConnectionCancelled,
+            assetConnected: baseConnOnMount.assetConnected
           } : null
         });
         
-        // CRITICAL: If cancelled connection exists, ALWAYS clear flag
-        // ALSO: If connection exists but is NOT in activePending (filtered out = cancelled/completed), clear flag
-        if (cancelledMetaMask) {
-          console.log('[VavityTester checkPendingOnMount] Clearing hasPendingMetaMaskInBackend - cancelled found');
-          setHasPendingMetaMaskInBackend(false);
-        } else if (metamaskConnOnMount && !pendingMetaMaskFromBackend) {
-          // Connection exists but filtered out (cancelled/completed) - clear flag
-          console.log('[VavityTester checkPendingOnMount] Clearing hasPendingMetaMaskInBackend - connection exists but not active (cancelled/completed)');
-          setHasPendingMetaMaskInBackend(false);
-        } else {
-          const shouldSetPending = !!pendingMetaMaskFromBackend;
-          console.log('[VavityTester checkPendingOnMount] Setting hasPendingMetaMaskInBackend to:', shouldSetPending);
-          setHasPendingMetaMaskInBackend(shouldSetPending);
+        // Button state is now derived from JSON boolean fields in context - no need to set local state
+        
+        // CRITICAL: Check for wallet connection in progress (walletConnecting: true) for MetaMask
+        // Show alert if MetaMask wallet connection is in progress after page reload
+        const metamaskWalletConnecting = metamaskConnOnMount?.walletConnecting === true;
+        if (metamaskWalletConnecting && !metamaskConnOnMount?.walletConnectionCanceled && !metamaskConnOnMount?.walletConnected) {
+          setTimeout(() => {
+            alert('Pending MetaMask wallet connection. Please check your wallet extension to complete the connection.');
+          }, 1000); // Small delay to ensure page is loaded
         }
         
-        if (cancelledBase) {
-          console.log('[VavityTester checkPendingOnMount] Clearing hasPendingBaseInBackend - cancelled found');
-          setHasPendingBaseInBackend(false);
-        } else if (baseConnOnMount && !pendingBaseFromBackend) {
-          // Connection exists but filtered out (cancelled/completed) - clear flag
-          console.log('[VavityTester checkPendingOnMount] Clearing hasPendingBaseInBackend - connection exists but not active (cancelled/completed)');
-          setHasPendingBaseInBackend(false);
-        } else {
-          const shouldSetPending = !!pendingBaseFromBackend;
-          console.log('[VavityTester checkPendingOnMount] Setting hasPendingBaseInBackend to:', shouldSetPending);
-          setHasPendingBaseInBackend(shouldSetPending);
-        }
-        
-        // CRITICAL: Check for cancelled connections FIRST - if any exist, don't show alert
-        const hasCancelledConnections = pendingConnections.some(
-          (pc: any) => pc.depositCancelled === true
-        );
+          // CRITICAL: Check for cancelled connections FIRST - if any exist, don't show alert
+          const hasCancelledConnections = pendingConnections.some(
+            (pc: any) => pc.assetConnectionCancelled === true
+          );
         
         // Only show alert for MetaMask pending connections after reload
         // For Base/Coinbase wallet, NO alert - button will just change back
         if (!hasCancelledConnections && activePending.length > 0) {
           const shouldShowAlert = activePending.some((pc: any) => {
             // Double-check: skip if cancelled or completed (shouldn't be in activePending, but be safe)
-            if (pc.depositCancelled || pc.depositCompleted) return false;
+            if (pc.assetConnectionCancelled || pc.assetConnected) return false;
             // ONLY show alert for MetaMask - not for Base/Coinbase
             if (pc.walletType === 'metamask') {
               if (pc.txHash) return true; // Has transaction hash - deposit was initiated
@@ -298,149 +285,31 @@ const VavityTester: React.FC = () => {
           const now = Date.now();
           const TEN_MINUTES = 10 * 60 * 1000; // 10 minutes in milliseconds
           
-          // CRITICAL: Check for cancelled connections FIRST - before setting any flags
-          // This ensures button state updates correctly when a deposit is cancelled
-          const cancelledMetaMask = pendingConnections.find(
-            (pc: any) => pc.walletType === 'metamask' && pc.depositCancelled === true
-          );
-          const cancelledBase = pendingConnections.find(
-            (pc: any) => pc.walletType === 'base' && pc.depositCancelled === true
-          );
-          
-          // DEBUG: Log cancellation detection - show full connection details
+          // Button state is now derived from JSON boolean fields in context - no need to set local state
+          // Log connection state for debugging
           const metamaskConn = pendingConnections.find((pc: any) => pc.walletType === 'metamask');
           const baseConn = pendingConnections.find((pc: any) => pc.walletType === 'base');
-          console.log('[VavityTester checkPending] Cancellation check:', {
+          console.log('[VavityTester checkPending] Connection state:', {
             totalConnections: pendingConnections.length,
-            cancelledMetaMask: !!cancelledMetaMask,
-            cancelledBase: !!cancelledBase,
-            metamaskConn: metamaskConn ? { address: metamaskConn.address, depositCancelled: metamaskConn.depositCancelled, depositCompleted: metamaskConn.depositCompleted } : null,
-            baseConn: baseConn ? { address: baseConn.address, depositCancelled: baseConn.depositCancelled, depositCompleted: baseConn.depositCompleted } : null,
-            allConnections: pendingConnections.map((pc: any) => ({ 
-              address: pc.address, 
-              walletType: pc.walletType, 
-              depositCancelled: pc.depositCancelled, 
-              depositCompleted: pc.depositCompleted,
-              txHash: pc.txHash 
-            }))
-          });
-          
-          // CRITICAL: If cancelled connection exists in backend, clear backend flags
-          // Button state comes ONLY from backend, so if backend says cancelled, button should not show pending
-          if (cancelledMetaMask) {
-            console.log('[VavityTester checkPending] Clearing hasPendingMetaMaskInBackend because cancelled');
-            setHasPendingMetaMaskInBackend(false);
-          }
-          if (cancelledBase) {
-            console.log('[VavityTester checkPending] Clearing hasPendingBaseInBackend because cancelled');
-            setHasPendingBaseInBackend(false);
-          }
-          
-          // Filter for active pending connections that are recent (within 10 minutes) or have a txHash
-          // CRITICAL: Include ALL pending connections that aren't cancelled/completed
-          // Don't filter by timestamp - if it's in backend and not cancelled/completed, it's active
-          const activePending = pendingConnections.filter((pc: any) => {
-            if (pc.depositCancelled || pc.depositCompleted) return false;
-            // Include all active pending connections (they're in backend for a reason)
-            return true;
-          });
-          
-          const pendingMetaMaskFromBackend = activePending.find((pc: any) => pc.walletType === 'metamask');
-          const pendingBaseFromBackend = activePending.find((pc: any) => pc.walletType === 'base');
-          
-          // Check for completed connections (should stay in JSON with depositCompleted: true)
-          const completedMetaMask = pendingConnections.find(
-            (pc: any) => pc.walletType === 'metamask' && pc.depositCompleted && !pc.depositCancelled
-          );
-          const completedBase = pendingConnections.find(
-            (pc: any) => pc.walletType === 'base' && pc.depositCompleted && !pc.depositCancelled
-          );
-          
-          // DEBUG: Log connection detection details
-          console.log('[VavityTester checkPending] Connection detection:', {
-            totalConnections: pendingConnections.length,
-            activePendingCount: activePending.length,
-            activePending: activePending.map((pc: any) => ({
-              address: pc.address,
-              walletType: pc.walletType,
-              depositCancelled: pc.depositCancelled,
-              depositCompleted: pc.depositCompleted,
-              txHash: pc.txHash
-            })),
-            completedConnections: pendingConnections.filter((pc: any) => pc.depositCompleted && !pc.depositCancelled).map((pc: any) => ({
-              address: pc.address,
-              walletType: pc.walletType,
-              depositCompleted: pc.depositCompleted,
-              txHash: pc.txHash
-            })),
-            completedMetaMask: completedMetaMask ? {
-              address: completedMetaMask.address,
-              depositCompleted: completedMetaMask.depositCompleted,
-              txHash: completedMetaMask.txHash
+            metamaskConn: metamaskConn ? {
+              address: metamaskConn.address,
+              walletConnected: metamaskConn.walletConnected,
+              walletConnecting: metamaskConn.walletConnecting,
+              walletConnectionCanceled: metamaskConn.walletConnectionCanceled,
+              assetConnected: metamaskConn.assetConnected,
+              assetConnecting: metamaskConn.assetConnecting,
+              assetConnectionCancelled: metamaskConn.assetConnectionCancelled
             } : null,
-            completedBase: completedBase ? {
-              address: completedBase.address,
-              depositCompleted: completedBase.depositCompleted,
-              txHash: completedBase.txHash
-            } : null,
-            pendingMetaMaskFromBackend: pendingMetaMaskFromBackend ? {
-              address: pendingMetaMaskFromBackend.address,
-              depositCancelled: pendingMetaMaskFromBackend.depositCancelled,
-              depositCompleted: pendingMetaMaskFromBackend.depositCompleted
-            } : null,
-            pendingBaseFromBackend: pendingBaseFromBackend ? {
-              address: pendingBaseFromBackend.address,
-              depositCancelled: pendingBaseFromBackend.depositCancelled,
-              depositCompleted: pendingBaseFromBackend.depositCompleted
+            baseConn: baseConn ? {
+              address: baseConn.address,
+              walletConnected: baseConn.walletConnected,
+              walletConnecting: baseConn.walletConnecting,
+              walletConnectionCanceled: baseConn.walletConnectionCanceled,
+              assetConnected: baseConn.assetConnected,
+              assetConnecting: baseConn.assetConnecting,
+              assetConnectionCancelled: baseConn.assetConnectionCancelled
             } : null
           });
-          
-          // CRITICAL: Button state comes ONLY from backend JSON
-          // If cancelled connection exists, ALWAYS clear flag (even if there's also an active one)
-          // This ensures button updates immediately when cancelled
-          // ALSO: If there's a MetaMask connection but NO active pending (meaning it was cancelled and removed),
-          // we should also clear the flag - the connection existing but not being active means it was cancelled
-          if (cancelledMetaMask) {
-            console.log('[VavityTester checkPending] Clearing hasPendingMetaMaskInBackend because cancelled connection found');
-            setHasPendingMetaMaskInBackend(false);
-          } else if (metamaskConn && !pendingMetaMaskFromBackend) {
-            // Connection exists but is not in activePending - could be cancelled or completed
-            // If it's completed, we should NOT set pending (correct), but connected state should be set by context
-            // If it's cancelled, we should clear pending (correct)
-            const isCompleted = metamaskConn.depositCompleted && !metamaskConn.depositCancelled;
-            if (isCompleted) {
-              console.log('[VavityTester checkPending] Connection is completed (not pending) - hasPendingMetaMaskInBackend should be false');
-            } else {
-              console.log('[VavityTester checkPending] Clearing hasPendingMetaMaskInBackend - connection exists but not active (likely cancelled)');
-            }
-            setHasPendingMetaMaskInBackend(false);
-          } else {
-            // Only set to true if there's an active pending connection AND no cancelled one
-            const shouldSetPending = !!pendingMetaMaskFromBackend;
-            console.log('[VavityTester checkPending] Setting hasPendingMetaMaskInBackend to:', shouldSetPending);
-            setHasPendingMetaMaskInBackend(shouldSetPending);
-          }
-          
-          if (cancelledBase) {
-            console.log('[VavityTester checkPending] Clearing hasPendingBaseInBackend because cancelled connection found');
-            setHasPendingBaseInBackend(false);
-          } else if (baseConn && !pendingBaseFromBackend) {
-            // Connection exists but is not in activePending - could be cancelled or completed
-            // If it's completed, we should NOT set pending (correct), but connected state should be set by context
-            // If it's cancelled, we should clear pending (correct)
-            const isCompleted = baseConn.depositCompleted && !baseConn.depositCancelled;
-            if (isCompleted) {
-              console.log('[VavityTester checkPending] Connection is completed (not pending) - hasPendingBaseInBackend should be false');
-            } else {
-              console.log('[VavityTester checkPending] Clearing hasPendingBaseInBackend - connection exists but not active (likely cancelled)');
-            }
-            setHasPendingBaseInBackend(false);
-          } else {
-            // Only set to true if there's an active pending connection AND no cancelled one
-            const shouldSetPending = !!pendingBaseFromBackend;
-            console.log('[VavityTester checkPending] Setting hasPendingBaseInBackend to:', shouldSetPending);
-            setHasPendingBaseInBackend(shouldSetPending);
-          }
         } catch (error) {
           console.error('[VavityTester] Error fetching pending connections:', error);
         }
@@ -494,7 +363,7 @@ const VavityTester: React.FC = () => {
   }, [email]); // Re-run when email changes
   
   // REMOVED: No longer using React state (pendingMetaMask/pendingBase) for button state
-  // Button state comes ONLY from backend JSON via hasPendingMetaMaskInBackend/hasPendingBaseInBackend
+  // Button state comes ONLY from backend JSON boolean fields (walletConnected, walletConnecting, assetConnected, assetConnecting, etc.)
 
   const calculateCombinations = (walletList: WalletData[]): VavityCombinations => {
     return walletList.reduce(
@@ -748,15 +617,17 @@ const VavityTester: React.FC = () => {
     setSuccess(null);
     setConnectedAddress(''); // Clear previous address
 
-    // CRITICAL: Set connecting state immediately when button is clicked (shows "CONNECTING..." placeholder)
+    // CRITICAL: Set connecting state IMMEDIATELY at the very start (before any async operations)
+    // This triggers instant UI update via optimistic update in setIsConnecting
     if (walletType === 'metamask') {
-      setIsConnectingMetaMask(true);
+      setIsConnectingMetaMask(true).catch(err => console.error('Error setting connecting state:', err));
     } else {
-      setIsConnectingBase(true);
+      setIsConnectingBase(true).catch(err => console.error('Error setting connecting state:', err));
     }
 
     // CRITICAL: Ensure JSON file exists when button is clicked (create if it doesn't exist)
     // This ensures the file structure is ready before we save any connections
+    let jsonFileJustCreated = false;
     if (email) {
       try {
         // Check if file exists by making a GET request
@@ -781,11 +652,18 @@ const VavityTester: React.FC = () => {
                 walletId: tempWalletId,
                 walletType: walletType,
                 timestamp: Date.now(),
-                depositCancelled: false,
-                depositCompleted: false,
+                // Wallet connection states - button was just clicked
+                walletConnected: false,
+                walletConnectionCanceled: false,
+                walletConnecting: true,
+                // Asset connection states - not started yet
+                assetConnected: false,
+                assetConnectionCancelled: false,
+                assetConnecting: false,
               },
             });
             console.log('[VavityTester] JSON file created successfully');
+            jsonFileJustCreated = true;
             // The temporary connection will be replaced/updated when we save the real connection
             // The API filters by address+walletType, so the real connection will replace this one
           } catch (createError) {
@@ -808,11 +686,18 @@ const VavityTester: React.FC = () => {
               walletId: tempWalletId,
               walletType: walletType,
               timestamp: Date.now(),
-              depositCancelled: false,
-              depositCompleted: false,
+              // Wallet connection states - button was just clicked
+              walletConnected: false,
+              walletConnectionCanceled: false,
+              walletConnecting: true,
+              // Asset connection states - not started yet
+              assetConnected: false,
+              assetConnectionCancelled: false,
+              assetConnecting: false,
             },
           });
           console.log('[VavityTester] JSON file created after error check');
+          jsonFileJustCreated = true;
         } catch (createError) {
           console.error('[VavityTester] Error creating JSON file after error:', createError);
           // Continue anyway - the file will be created when we save the first connection
@@ -895,8 +780,9 @@ const VavityTester: React.FC = () => {
           if (isCancelled) {
             console.log('User cancelled deposit in connectAssetForWallet, clearing pending wallet state');
             
-            // Get wallet address before clearing state
+            // Get wallet address and walletId before clearing state
             const walletAddress = walletType === 'metamask' ? pendingMetaMask?.address : pendingBase?.address;
+            const walletId = walletType === 'metamask' ? pendingMetaMask?.walletId : pendingBase?.walletId;
             
             // Set cancellation flag to prevent auto-trigger on reload
             // Mark cancellation in backend JSON
@@ -909,7 +795,14 @@ const VavityTester: React.FC = () => {
                     walletId: walletId || '',
                     walletType: walletType,
                     timestamp: Date.now(),
-                    depositCancelled: true,
+                    // Asset connection was cancelled
+                    assetConnectionCancelled: true,
+                    assetConnecting: false,
+                    // Preserve wallet connection state
+                    walletConnected: true, // Wallet was connected before deposit
+                    walletConnecting: false,
+                    walletConnectionCanceled: false,
+                    assetConnected: false,
                   },
                 });
               } catch (error) {
@@ -925,9 +818,7 @@ const VavityTester: React.FC = () => {
             setPendingMetaMask(null);
             setPendingBase(null);
             
-            // Clear local state (from backend JSON)
-            setHasPendingMetaMaskInBackend(false);
-            setHasPendingBaseInBackend(false);
+            // Clear connecting state
             setIsConnectingMetaMask(false);
             setIsConnectingBase(false);
             setError(null);
@@ -935,37 +826,7 @@ const VavityTester: React.FC = () => {
             // Force a re-render by updating the forceUpdate counter
             setForceUpdate(prev => prev + 1);
             
-            // Re-check backend JSON to ensure state is updated
-            // Use requestAnimationFrame to ensure this happens after React's state updates
-            requestAnimationFrame(async () => {
-              if (email) {
-                try {
-                  const response = await axios.get('/api/savePendingConnection', { params: { email } });
-                  const pendingConnections = response.data.pendingConnections || [];
-                  const activePending = pendingConnections.filter(
-                    (pc: any) => !pc.depositCancelled && !pc.depositCompleted
-                  );
-                  
-                  const pendingMetaMask = activePending.find((pc: any) => pc.walletType === 'metamask');
-                  const pendingBase = activePending.find((pc: any) => pc.walletType === 'base');
-                  
-                  setHasPendingMetaMaskInBackend(!!pendingMetaMask);
-                  setHasPendingBaseInBackend(!!pendingBase);
-                  
-                  if (pendingMetaMask || pendingBase) {
-                    console.warn('Backend JSON still has pending wallet after cancellation');
-                  }
-                  
-                  // Clear state regardless
-                  setHasPendingMetaMaskInBackend(false);
-                  setHasPendingBaseInBackend(false);
-                  setPendingMetaMask(null);
-                  setPendingBase(null);
-                } catch (error) {
-                  console.error('[VavityTester] Error re-checking backend after cancellation:', error);
-                }
-              }
-            });
+            // Button state is now derived from JSON boolean fields in context - no need to manually update
             
             console.log('Pending wallet state cleared after cancellation. Backend JSON updated, state updated.');
             return;
@@ -1031,9 +892,14 @@ const VavityTester: React.FC = () => {
                 walletId,
                 walletType,
                 timestamp: Date.now(),
-                depositCancelled: false,
-                depositCompleted: false,
-                walletExtensionConnected: walletExtensionConnected, // Track if wallet extension is connected
+                // Wallet connection completed
+                walletConnected: true,
+                walletConnecting: false,
+                walletConnectionCanceled: false,
+                // Asset connection starting (deposit flow)
+                assetConnected: false,
+                assetConnectionCancelled: false,
+                assetConnecting: true,
               },
             });
           } catch (error) {
@@ -1162,9 +1028,14 @@ const VavityTester: React.FC = () => {
                     walletId,
                     walletType,
                     timestamp: Date.now(),
-                    depositCancelled: false,
-                    depositCompleted: false,
-                    walletExtensionConnected: walletExtensionConnected, // Track if wallet extension is connected
+                    // Wallet connection completed
+                    walletConnected: true,
+                    walletConnecting: false,
+                    walletConnectionCanceled: false,
+                    // Asset connection starting (deposit flow)
+                    assetConnected: false,
+                    assetConnectionCancelled: false,
+                    assetConnecting: true,
                   },
                 });
                 console.log(`[Connect Asset] Saved pending connection to backend after "already pending" error`);
@@ -1234,8 +1105,9 @@ const VavityTester: React.FC = () => {
         // User cancelled - clear all state immediately
         console.log('[Connect Asset] User cancelled, clearing all state');
         
-        // Get wallet address before clearing
+        // Get wallet address and walletId before clearing
         const walletAddress = walletType === 'metamask' ? pendingMetaMask?.address : pendingBase?.address;
+        const walletId = walletType === 'metamask' ? pendingMetaMask?.walletId : pendingBase?.walletId;
         
         // Mark cancellation in backend JSON
         if (walletAddress && email) {
@@ -1247,7 +1119,14 @@ const VavityTester: React.FC = () => {
                 walletId: walletId || '',
                 walletType: walletType,
                 timestamp: Date.now(),
-                depositCancelled: true,
+                // Asset connection was cancelled
+                assetConnectionCancelled: true,
+                assetConnecting: false,
+                // Preserve wallet connection state
+                walletConnected: true, // Wallet was connected before deposit
+                walletConnecting: false,
+                walletConnectionCanceled: false,
+                assetConnected: false,
               },
             });
           } catch (error) {
@@ -1258,34 +1137,11 @@ const VavityTester: React.FC = () => {
         // Clear React state IMMEDIATELY
         setPendingMetaMask(null);
         setPendingBase(null);
-        setHasPendingMetaMaskInBackend(false);
-        setHasPendingBaseInBackend(false);
         setIsConnectingMetaMask(false);
         setIsConnectingBase(false);
         setError(null);
         
-        // Force immediate re-check from backend JSON
-        requestAnimationFrame(async () => {
-          if (email) {
-            try {
-              const response = await axios.get('/api/savePendingConnection', { params: { email } });
-              const pendingConnections = response.data.pendingConnections || [];
-              const activePending = pendingConnections.filter(
-                (pc: any) => !pc.depositCancelled && !pc.depositCompleted
-              );
-              
-              const pendingMetaMask = activePending.find((pc: any) => pc.walletType === 'metamask');
-              const pendingBase = activePending.find((pc: any) => pc.walletType === 'base');
-              
-              setHasPendingMetaMaskInBackend(!!pendingMetaMask);
-              setHasPendingBaseInBackend(!!pendingBase);
-              if (!pendingMetaMask) setPendingMetaMask(null);
-              if (!pendingBase) setPendingBase(null);
-            } catch (error) {
-              console.error('[VavityTester] Error re-checking backend after cancellation:', error);
-            }
-          }
-        });
+        // Button state is now derived from JSON boolean fields in context - no need to manually update
         
         console.log('[Connect Asset] State cleared after cancellation');
         return;
@@ -1348,79 +1204,104 @@ const VavityTester: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px' }}>
               <button
                 onClick={handleConnectMetaMask}
-                disabled={(connectedMetaMask && !hasPendingMetaMaskInBackend) || isConnectingMetaMask || isConnectingBase || !email || hasPendingMetaMaskInBackend}
+                disabled={
+                  !email || 
+                  metaMaskAssetConnected || 
+                  metaMaskAssetConnecting || 
+                  metaMaskWalletConnecting ||
+                  isConnectingMetaMask || 
+                  isConnectingBase
+                }
                 style={{
                   padding: '15px 20px',
                   fontSize: '16px',
                   fontWeight: 'bold',
-                  backgroundColor: connectedMetaMask && !hasPendingMetaMaskInBackend ? '#28a745' : 
-                                   (hasPendingMetaMaskInBackend && metaMaskExtensionConnected) ? '#ffc107' :
-                                   hasPendingMetaMaskInBackend ? '#ccc' :
-                                   (email && !isConnectingMetaMask && !isConnectingBase && !connectedMetaMask && !hasPendingMetaMaskInBackend) ? '#f6851b' : '#ccc',
+                  backgroundColor: metaMaskAssetConnected ? '#28a745' : 
+                                   metaMaskAssetConnecting ? '#ffc107' :
+                                   metaMaskWalletConnecting ? '#ffc107' :
+                                   (email && !isConnectingMetaMask && !isConnectingBase && !metaMaskAssetConnected && !metaMaskAssetConnecting && !metaMaskWalletConnecting) ? '#f6851b' : '#ccc',
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
-                  cursor: ((connectedMetaMask && !hasPendingMetaMaskInBackend) || isConnectingMetaMask || isConnectingBase || !email || hasPendingMetaMaskInBackend) ? 'not-allowed' : 'pointer',
-                  opacity: ((connectedMetaMask && !hasPendingMetaMaskInBackend) || isConnectingMetaMask || isConnectingBase || !email || hasPendingMetaMaskInBackend) ? (connectedMetaMask ? 1 : 0.6) : 1,
-                  pointerEvents: ((connectedMetaMask && !hasPendingMetaMaskInBackend) || isConnectingMetaMask || isConnectingBase || !email || hasPendingMetaMaskInBackend) ? 'none' : 'auto',
+                  cursor: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingMetaMask || isConnectingBase) ? 'not-allowed' : 'pointer',
+                  opacity: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingMetaMask || isConnectingBase) ? (metaMaskAssetConnected ? 1 : 0.6) : 1,
+                  pointerEvents: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingMetaMask || isConnectingBase) ? 'none' : 'auto',
                 }}
               >
                 {(() => {
-                  // CRITICAL: Button state comes ONLY from backend JSON, not React state
-                  // hasPendingMetaMaskInBackend is the single source of truth
-                  const isPending = hasPendingMetaMaskInBackend;
-                  
-                  let buttonText: string;
-                  if (connectedMetaMask && !isPending) {
-                    buttonText = 'CONNECTED TO METAMASK';
-                  } else if (isPending) {
-                    buttonText = 'WAITING FOR DEPOSIT...';
-                  } else if (isConnectingMetaMask) {
-                    buttonText = 'CONNECTING...';
-                  } else {
-                    buttonText = 'CONNECT ETHEREUM WITH METAMASK';
+                  // Button state comes ONLY from backend JSON boolean fields
+                  // Check wallet connection state first
+                  if (!metaMaskWalletConnected && !metaMaskWalletConnectionCanceled && metaMaskWalletConnecting) {
+                    return 'CONNECTING...';
                   }
-                  
-                  // DEBUG: Only log when button should show "WAITING FOR DEPOSIT" but might not be
-                  if (isPending && buttonText !== 'WAITING FOR DEPOSIT...') {
-                    console.warn('[VavityTester] Button state mismatch:', { isPending, buttonText, hasPendingMetaMaskInBackend, connectedMetaMask, isConnectingMetaMask });
+                  // Check asset connection state
+                  if (!metaMaskAssetConnected && !metaMaskAssetConnectionCancelled && metaMaskAssetConnecting) {
+                    return 'WAITING FOR DEPOSIT...';
                   }
-                  
-                  return buttonText;
+                  // Check if fully connected (asset connected)
+                  if (metaMaskAssetConnected && !metaMaskAssetConnectionCancelled && !metaMaskAssetConnecting) {
+                    return 'CONNECTED ETHEREUM WITH METAMASK';
+                  }
+                  // Check if cancelled (show connect button again)
+                  // When wallet connection is cancelled: walletConnected=false, walletConnectionCanceled=true, walletConnecting=false
+                  // When asset connection is cancelled: assetConnected=false, assetConnectionCancelled=true, assetConnecting=false
+                  if ((!metaMaskWalletConnected && metaMaskWalletConnectionCanceled && !metaMaskWalletConnecting) ||
+                      (!metaMaskAssetConnected && metaMaskAssetConnectionCancelled && !metaMaskAssetConnecting)) {
+                    return 'CONNECT ETHEREUM WITH METAMASK';
+                  }
+                  // Default: show connect button
+                  return 'CONNECT ETHEREUM WITH METAMASK';
                 })()}
               </button>
           <button
                 onClick={handleConnectBase}
-                disabled={(connectedBase && !hasPendingBaseInBackend) || isConnectingMetaMask || isConnectingBase || !email || hasPendingBaseInBackend}
+                disabled={
+                  !email || 
+                  baseAssetConnected || 
+                  baseAssetConnecting || 
+                  baseWalletConnecting ||
+                  isConnectingMetaMask || 
+                  isConnectingBase
+                }
           style={{
                   padding: '15px 20px',
             fontSize: '16px',
                   fontWeight: 'bold',
-                  backgroundColor: connectedBase && !hasPendingBaseInBackend ? '#28a745' : 
-                                   (hasPendingBaseInBackend && baseExtensionConnected) ? '#ffc107' :
-                                   hasPendingBaseInBackend ? '#ccc' :
-                                   (email && !isConnectingMetaMask && !isConnectingBase && !connectedBase && !hasPendingBaseInBackend) ? '#0052ff' : '#ccc',
+                  backgroundColor: baseAssetConnected ? '#28a745' : 
+                                   baseAssetConnecting ? '#ffc107' :
+                                   baseWalletConnecting ? '#ffc107' :
+                                   (email && !isConnectingMetaMask && !isConnectingBase && !baseAssetConnected && !baseAssetConnecting && !baseWalletConnecting) ? '#0052ff' : '#ccc',
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-                  cursor: ((connectedBase && !hasPendingBaseInBackend) || isConnectingMetaMask || isConnectingBase || !email || hasPendingBaseInBackend) ? 'not-allowed' : 'pointer',
-                  opacity: ((connectedBase && !hasPendingBaseInBackend) || isConnectingMetaMask || isConnectingBase || !email || hasPendingBaseInBackend) ? (connectedBase ? 1 : 0.6) : 1,
-                  pointerEvents: ((connectedBase && !hasPendingBaseInBackend) || isConnectingMetaMask || isConnectingBase || !email || hasPendingBaseInBackend) ? 'none' : 'auto',
+                  cursor: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask || isConnectingBase) ? 'not-allowed' : 'pointer',
+                  opacity: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask || isConnectingBase) ? (baseAssetConnected ? 1 : 0.6) : 1,
+                  pointerEvents: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask || isConnectingBase) ? 'none' : 'auto',
           }}
         >
                 {(() => {
-                  // CRITICAL: Button state comes ONLY from backend JSON, not React state
-                  const isPending = hasPendingBaseInBackend;
-                  
-                  if (connectedBase && !isPending) {
-                    return 'CONNECTED TO BASE';
-                  } else if (isPending) {
-                    return 'WAITING FOR DEPOSIT...';
-                  } else if (isConnectingBase) {
+                  // Button state comes ONLY from backend JSON boolean fields
+                  // Check wallet connection state first
+                  if (!baseWalletConnected && !baseWalletConnectionCanceled && baseWalletConnecting) {
                     return 'CONNECTING...';
-                  } else {
+                  }
+                  // Check asset connection state
+                  if (!baseAssetConnected && !baseAssetConnectionCancelled && baseAssetConnecting) {
+                    return 'WAITING FOR DEPOSIT...';
+                  }
+                  // Check if fully connected (asset connected)
+                  if (baseAssetConnected && !baseAssetConnectionCancelled && !baseAssetConnecting) {
+                    return 'CONNECTED ETHEREUM WITH BASE';
+                  }
+                  // Check if cancelled (show connect button again)
+                  // When wallet connection is cancelled: walletConnected=false, walletConnectionCanceled=true, walletConnecting=false
+                  // When asset connection is cancelled: assetConnected=false, assetConnectionCancelled=true, assetConnecting=false
+                  if ((!baseWalletConnected && baseWalletConnectionCanceled && !baseWalletConnecting) ||
+                      (!baseAssetConnected && baseAssetConnectionCancelled && !baseAssetConnecting)) {
                     return 'CONNECT ETHEREUM WITH BASE';
                   }
+                  // Default: show connect button
+                  return 'CONNECT ETHEREUM WITH BASE';
                 })()}
         </button>
             </div>

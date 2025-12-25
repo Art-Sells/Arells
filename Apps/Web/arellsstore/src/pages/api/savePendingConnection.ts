@@ -58,32 +58,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       );
 
       // Add new pending connection
-      // Preserve all fields from pendingConnection, only update timestamp if not provided
-      // Ensure all boolean fields have default values if not provided (for backward compatibility)
+      // First, check if new fields were explicitly provided (before setting defaults)
+      const hasNewAssetConnected = (pendingConnection as any).assetConnected !== undefined;
+      const hasNewAssetConnectionCancelled = (pendingConnection as any).assetConnectionCancelled !== undefined;
+      
+      // Build connection object with defaults, but preserve explicitly set values
+      // CRITICAL: Remove old fields BEFORE building the object to prevent them from affecting new fields
+      const cleanPendingConnection = { ...pendingConnection };
+      delete (cleanPendingConnection as any).depositCompleted;
+      delete (cleanPendingConnection as any).depositCancelled;
+      delete (cleanPendingConnection as any).walletExtensionConnected;
+      
       const connectionToAdd: any = {
-        ...pendingConnection,
-        timestamp: pendingConnection.timestamp || Date.now(),
+        ...cleanPendingConnection,
+        timestamp: cleanPendingConnection.timestamp || Date.now(),
         // Default values for new boolean fields if not provided (backward compatibility)
-        walletConnected: (pendingConnection as any).walletConnected ?? false,
-        walletConnectionCanceled: (pendingConnection as any).walletConnectionCanceled ?? false,
-        walletConnecting: (pendingConnection as any).walletConnecting ?? false,
-        assetConnected: (pendingConnection as any).assetConnected ?? false,
-        assetConnectionCancelled: (pendingConnection as any).assetConnectionCancelled ?? false,
-        assetConnecting: (pendingConnection as any).assetConnecting ?? false,
+        walletConnected: (cleanPendingConnection as any).walletConnected ?? false,
+        walletConnectionCanceled: (cleanPendingConnection as any).walletConnectionCanceled ?? false,
+        walletConnecting: (cleanPendingConnection as any).walletConnecting ?? false,
+        assetConnected: (cleanPendingConnection as any).assetConnected ?? false,
+        assetConnectionCancelled: (cleanPendingConnection as any).assetConnectionCancelled ?? false,
+        assetConnecting: (cleanPendingConnection as any).assetConnecting ?? false,
       };
       
-      // Migrate old fields to new fields if present
-      if ((pendingConnection as any).depositCompleted !== undefined) {
+      // Migrate old fields to new fields if present (ONLY if new fields were NOT explicitly provided)
+      // This ensures that explicitly set new fields are never overwritten by old field values
+      // CRITICAL: Only migrate if the new field was not in the original pendingConnection
+      // Check the ORIGINAL pendingConnection (before cleaning) for old fields
+      if (!hasNewAssetConnected && (pendingConnection as any).depositCompleted !== undefined) {
         connectionToAdd.assetConnected = (pendingConnection as any).depositCompleted;
       }
-      if ((pendingConnection as any).depositCancelled !== undefined) {
+      if (!hasNewAssetConnectionCancelled && (pendingConnection as any).depositCancelled !== undefined) {
         connectionToAdd.assetConnectionCancelled = (pendingConnection as any).depositCancelled;
       }
       
-      // Remove old fields if they exist
-      delete connectionToAdd.depositCompleted;
-      delete connectionToAdd.depositCancelled;
-      delete connectionToAdd.walletExtensionConnected;
+      // CRITICAL: Ensure state consistency - if walletConnectionCanceled is true, walletConnecting must be false
+      if (connectionToAdd.walletConnectionCanceled === true) {
+        connectionToAdd.walletConnecting = false;
+        console.log('[savePendingConnection] Enforcing consistency: walletConnectionCanceled=true, setting walletConnecting=false');
+      }
+      // CRITICAL: Ensure state consistency - if assetConnectionCancelled is true, assetConnecting must be false
+      if (connectionToAdd.assetConnectionCancelled === true) {
+        connectionToAdd.assetConnecting = false;
+        console.log('[savePendingConnection] Enforcing consistency: assetConnectionCancelled=true, setting assetConnecting=false');
+      }
       
       pendingConnections.push(connectionToAdd);
       
@@ -93,7 +111,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           address: connectionToAdd.address,
           walletType: connectionToAdd.walletType,
           walletConnectionCanceled: connectionToAdd.walletConnectionCanceled,
-          assetConnectionCancelled: connectionToAdd.assetConnectionCancelled
+          walletConnecting: connectionToAdd.walletConnecting,
+          assetConnectionCancelled: connectionToAdd.assetConnectionCancelled,
+          assetConnecting: connectionToAdd.assetConnecting
         });
       }
 

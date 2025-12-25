@@ -155,12 +155,19 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
     
     if (matchingConnection) {
       // Update existing connection with txHash
+      // Preserve all boolean states, assetConnecting should already be true (deposit in progress)
       await axios.post('/api/savePendingConnection', {
         email,
         pendingConnection: {
           ...matchingConnection,
           txHash: txHash,
-          // Keep depositCompleted as false until confirmed
+          // Preserve all boolean states from matchingConnection
+          walletConnected: matchingConnection.walletConnected ?? true,
+          walletConnecting: matchingConnection.walletConnecting ?? false,
+          walletConnectionCanceled: matchingConnection.walletConnectionCanceled ?? false,
+          assetConnected: matchingConnection.assetConnected ?? false,
+          assetConnecting: matchingConnection.assetConnecting ?? true, // Deposit in progress
+          assetConnectionCancelled: matchingConnection.assetConnectionCancelled ?? false,
         },
       });
       console.log('[connectAsset] Saved txHash to existing pending connection:', txHash);
@@ -176,7 +183,13 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
           walletId: params.walletId,
           walletType: params.walletType,
           timestamp: Date.now(),
-          depositCompleted: false,
+          // Wallet connection completed, deposit in progress
+          walletConnected: true,
+          walletConnecting: false,
+          walletConnectionCanceled: false,
+          assetConnected: false,
+          assetConnecting: true, // Deposit in progress
+          assetConnectionCancelled: false,
           txHash: txHash,
         },
       });

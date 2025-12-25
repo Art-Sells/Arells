@@ -193,12 +193,12 @@ of bear markets?
 - - - - Sloth: Show modal explanation
 - Connect Ethereum to begin <-words (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
 - - Modal: Connecting Wallet (until wallet address have been fetched, otherwise connection cancelled)
-- - Modal (if page reloads before connection asked): Check Wallet (ok) <--- should dissapear after connection successful {should replace this from VavityTester: Request of type 'wallet_requestPermissions' already pending for origin http://localhost:3000. Please wait.}
+- - Modal (if page reloads before connection asked(only for Metamask)): Check Wallet (ok) <--- should dissapear after connection successful
 - - Modal: Connection Canceled (ok)
-- - Modal (from waiting for deposit in Vavity Tester): Wallet Connection Successful, Connecting Ethereum .5% (ok) ...
-- - - (Connecting (Loader) Ethereum)<-replaces "Connect Ethereum"
+- - Modal (from waiting for deposit in Vavity Tester): Wallet Connection Successful, Connecting Ethereum .5% (ok)
+- - - (Connecting (Loader) Ethereum)<-replaces "Waiting for Deposit"
 - - Modal: Connection Canceled (ok)
-- - Modal (if page reloads before connection asked): Check Wallet (ok) <--- should dissapear after connection successful {should replace this from VavityTester: Request of type 'wallet_requestPermissions' already pending for origin http://localhost:3000. Please wait.}
+- - Modal (if page reloads before connection asked): Check Wallet (ok) <--- should dissapear after connection successful
 - If acVatoi != 0, then hide "Connect Ethereum to begin"
 - Get From VavityTester: Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
