@@ -70,6 +70,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // isConnectingMetaMask and isConnectingBase are now derived from backendConnections (see useMemo below)
   
   // Store backend connections and compute pending/connected from them
+  // CRITICAL: Initialize as empty array - will be populated from backend on mount
+  // If page reloads before backend saves optimistic update, this ensures buttons reset correctly
   const [backendConnections, setBackendConnections] = useState<any[]>([]);
   
   // Track last fetched JSON to detect actual changes in backend
@@ -201,70 +203,25 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   } | null>(null);
   
   // Setters for connecting state - these update backend JSON only
-  // NO optimistic updates - buttons will update when frontend fetcher detects JSON changes
+  // CRITICAL: Optimistic updates happen FIRST (synchronously) for instant UI feedback
+  // Then API calls happen in background (non-blocking)
   const setIsConnectingMetaMask = useCallback(async (isConnecting: boolean) => {
     if (!email) return;
     
-    try {
-      const response = await axios.get('/api/savePendingConnection', { params: { email } });
-      const existingConnections = response.data.pendingConnections || [];
-      const metamaskConn = existingConnections.find((pc: any) => pc.walletType === 'metamask');
+    // CRITICAL: Do optimistic update FIRST (synchronously) before any async operations
+    // This ensures instant UI feedback
+    setBackendConnections((prev: any[]) => {
+      const metamaskConn = prev.find((pc: any) => pc.walletType === 'metamask');
       if (metamaskConn) {
         const updatedConnection = {
           ...metamaskConn,
           walletConnecting: isConnecting,
-          // CRITICAL: When starting to connect, reset cancellation flag
           walletConnectionCanceled: isConnecting ? false : metamaskConn.walletConnectionCanceled,
         };
-        
-        // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
-        setBackendConnections((prev: any[]) => {
-          const filtered = prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.address === metamaskConn.address));
-          return [...filtered, updatedConnection];
-        });
-        
-        // Mark as optimistic update - this will freeze backend updates until confirmed
-        optimisticUpdateRef.current = {
-          walletType: 'metamask',
-          field: 'walletConnecting',
-          expectedValue: isConnecting,
-          status: 'pending',
-          timestamp: Date.now()
-        };
-        
-        // ✅ WAIT for API response (not fire-and-forget)
-        try {
-          await axios.post('/api/savePendingConnection', {
-            email,
-            pendingConnection: updatedConnection,
-          });
-          
-          // API succeeded - mark as "sent"
-          if (optimisticUpdateRef.current) {
-            optimisticUpdateRef.current.status = 'sent';
-            optimisticUpdateRef.current.sentAt = Date.now();
-          }
-          
-          // Wait for S3 propagation (200-300ms)
-          await new Promise(resolve => setTimeout(resolve, 250));
-          
-          console.log('[AssetConnect] Backend updated MetaMask walletConnecting to:', isConnecting);
-        } catch (apiError) {
-          // Rollback optimistic update on API error
-          console.error('[AssetConnect] Error updating backend:', apiError);
-          
-          // Revert optimistic state
-          setBackendConnections((prev: any[]) => {
-            const filtered = prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.address === metamaskConn.address));
-            return [...filtered, metamaskConn]; // Restore original connection
-          });
-          
-          optimisticUpdateRef.current = null;
-        }
+        const filtered = prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.address === metamaskConn.address));
+        return [...filtered, updatedConnection];
       } else {
-        console.warn('[AssetConnect] No MetaMask connection found to update walletConnecting state');
-        // If no MetaMask connection exists, create one with walletConnecting state
-        // This handles cases where the connection wasn't created yet
+        // No connection exists yet - create one optimistically
         const tempAddress = '0x0000000000000000000000000000000000000000';
         const tempWalletId = `temp-connecting-${Date.now()}`;
         const newConnection = {
@@ -279,117 +236,124 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           assetConnectionCancelled: false,
           assetConnecting: false,
         };
-        
-        // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
-        setBackendConnections((prev: any[]) => [...prev, newConnection]);
-        
-        // Mark as optimistic update - this will freeze backend updates until confirmed
-        optimisticUpdateRef.current = {
-          walletType: 'metamask',
-          field: 'walletConnecting',
-          expectedValue: isConnecting,
-          status: 'pending',
-          timestamp: Date.now()
-        };
-        
-        // ✅ WAIT for API response (not fire-and-forget)
-        try {
-          await axios.post('/api/savePendingConnection', {
-            email,
-            pendingConnection: newConnection,
-          });
-          
-          // API succeeded - mark as "sent"
-          if (optimisticUpdateRef.current) {
-            optimisticUpdateRef.current.status = 'sent';
-            optimisticUpdateRef.current.sentAt = Date.now();
-          }
-          
-          // Wait for S3 propagation (200-300ms)
-          await new Promise(resolve => setTimeout(resolve, 250));
-          
-          console.log('[AssetConnect] Created MetaMask connection with walletConnecting:', isConnecting);
-        } catch (apiError) {
-          // Rollback optimistic update on API error
-          console.error('[AssetConnect] Error creating backend connection:', apiError);
-          
-          // Revert optimistic state
-          setBackendConnections((prev: any[]) => {
-            return prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.walletId === newConnection.walletId));
-          });
-          
-          optimisticUpdateRef.current = null;
-        }
+        return [...prev, newConnection];
       }
-    } catch (error) {
-      console.error('[AssetConnect] Error updating walletConnecting state:', error);
-    }
+    });
+    
+    // Mark as optimistic update immediately
+    optimisticUpdateRef.current = {
+      walletType: 'metamask',
+      field: 'walletConnecting',
+      expectedValue: isConnecting,
+      status: 'pending',
+      timestamp: Date.now()
+    };
+    
+    // Now do API calls in background (non-blocking)
+    // Don't await - let it happen in background
+    (async () => {
+      try {
+        const response = await axios.get('/api/savePendingConnection', { params: { email } });
+        const existingConnections = response.data.pendingConnections || [];
+        const metamaskConn = existingConnections.find((pc: any) => pc.walletType === 'metamask');
+        if (metamaskConn) {
+          const updatedConnection = {
+            ...metamaskConn,
+            walletConnecting: isConnecting,
+            walletConnectionCanceled: isConnecting ? false : metamaskConn.walletConnectionCanceled,
+          };
+          
+          // Update backend (non-blocking)
+          try {
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: updatedConnection,
+            });
+            
+            // API succeeded - mark as "sent"
+            if (optimisticUpdateRef.current) {
+              optimisticUpdateRef.current.status = 'sent';
+              optimisticUpdateRef.current.sentAt = Date.now();
+            }
+            
+            console.log('[AssetConnect] Backend updated MetaMask walletConnecting to:', isConnecting);
+          } catch (apiError) {
+            // Rollback optimistic update on API error
+            console.error('[AssetConnect] Error updating backend:', apiError);
+            
+            // Revert optimistic state
+            setBackendConnections((prev: any[]) => {
+              const filtered = prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.address === metamaskConn.address));
+              return [...filtered, metamaskConn]; // Restore original connection
+            });
+            
+            optimisticUpdateRef.current = null;
+          }
+        } else {
+          // No connection exists - create one
+          const tempAddress = '0x0000000000000000000000000000000000000000';
+          const tempWalletId = `temp-connecting-${Date.now()}`;
+          const newConnection = {
+            address: tempAddress,
+            walletId: tempWalletId,
+            walletType: 'metamask' as const,
+            timestamp: Date.now(),
+            walletConnected: false,
+            walletConnectionCanceled: false,
+            walletConnecting: isConnecting,
+            assetConnected: false,
+            assetConnectionCancelled: false,
+            assetConnecting: false,
+          };
+          
+          try {
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: newConnection,
+            });
+            
+            // API succeeded - mark as "sent"
+            if (optimisticUpdateRef.current) {
+              optimisticUpdateRef.current.status = 'sent';
+              optimisticUpdateRef.current.sentAt = Date.now();
+            }
+            
+            console.log('[AssetConnect] Created MetaMask connection with walletConnecting:', isConnecting);
+          } catch (apiError) {
+            console.error('[AssetConnect] Error creating backend connection:', apiError);
+            
+            // Revert optimistic state
+            setBackendConnections((prev: any[]) => {
+              return prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.walletId === newConnection.walletId));
+            });
+            
+            optimisticUpdateRef.current = null;
+          }
+        }
+      } catch (error) {
+        console.error('[AssetConnect] Error fetching connections:', error);
+        // Don't rollback on GET error - optimistic update stays
+      }
+    })();
   }, [email]);
   
   const setIsConnectingBase = useCallback(async (isConnecting: boolean) => {
     if (!email) return;
     
-    // NO optimistic updates - buttons will update when frontend fetcher detects JSON changes
-    try {
-      const response = await axios.get('/api/savePendingConnection', { params: { email } });
-      const existingConnections = response.data.pendingConnections || [];
-      const baseConn = existingConnections.find((pc: any) => pc.walletType === 'base');
+    // CRITICAL: Do optimistic update FIRST (synchronously) before any async operations
+    // This ensures instant UI feedback
+    setBackendConnections((prev: any[]) => {
+      const baseConn = prev.find((pc: any) => pc.walletType === 'base');
       if (baseConn) {
         const updatedConnection = {
           ...baseConn,
           walletConnecting: isConnecting,
-          // CRITICAL: When starting to connect, reset cancellation flag
           walletConnectionCanceled: isConnecting ? false : baseConn.walletConnectionCanceled,
         };
-        
-        // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
-        setBackendConnections((prev: any[]) => {
-          const filtered = prev.filter((pc: any) => !(pc.walletType === 'base' && pc.address === baseConn.address));
-          return [...filtered, updatedConnection];
-        });
-        
-        // Mark as optimistic update - this will freeze backend updates until confirmed
-        optimisticUpdateRef.current = {
-          walletType: 'base',
-          field: 'walletConnecting',
-          expectedValue: isConnecting,
-          status: 'pending',
-          timestamp: Date.now()
-        };
-        
-        // ✅ WAIT for API response (not fire-and-forget)
-        try {
-          await axios.post('/api/savePendingConnection', {
-            email,
-            pendingConnection: updatedConnection,
-          });
-          
-          // API succeeded - mark as "sent"
-          if (optimisticUpdateRef.current) {
-            optimisticUpdateRef.current.status = 'sent';
-            optimisticUpdateRef.current.sentAt = Date.now();
-          }
-          
-          // Wait for S3 propagation (200-300ms)
-          await new Promise(resolve => setTimeout(resolve, 250));
-          
-          console.log('[AssetConnect] Backend updated Base walletConnecting to:', isConnecting);
-        } catch (apiError) {
-          // Rollback optimistic update on API error
-          console.error('[AssetConnect] Error updating backend:', apiError);
-          
-          // Revert optimistic state
-          setBackendConnections((prev: any[]) => {
-            const filtered = prev.filter((pc: any) => !(pc.walletType === 'base' && pc.address === baseConn.address));
-            return [...filtered, baseConn]; // Restore original connection
-          });
-          
-          optimisticUpdateRef.current = null;
-        }
+        const filtered = prev.filter((pc: any) => !(pc.walletType === 'base' && pc.address === baseConn.address));
+        return [...filtered, updatedConnection];
       } else {
-        console.warn('[AssetConnect] No Base connection found to update walletConnecting state');
-        // If no Base connection exists, create one with walletConnecting state
-        // This handles cases where the connection wasn't created yet
+        // No connection exists yet - create one optimistically
         const tempAddress = '0x0000000000000000000000000000000000000000';
         const tempWalletId = `temp-connecting-${Date.now()}`;
         const newConnection = {
@@ -404,51 +368,105 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           assetConnectionCancelled: false,
           assetConnecting: false,
         };
-        
-        // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
-        setBackendConnections((prev: any[]) => [...prev, newConnection]);
-        
-        // Mark as optimistic update
-        optimisticUpdateRef.current = {
-          walletType: 'base',
-          field: 'walletConnecting',
-          expectedValue: isConnecting,
-          status: 'pending',
-          timestamp: Date.now()
-        };
-        
-        // ✅ WAIT for API response (not fire-and-forget)
-        try {
-          await axios.post('/api/savePendingConnection', {
-            email,
-            pendingConnection: newConnection,
-          });
-          
-          // API succeeded - mark as "sent"
-          if (optimisticUpdateRef.current) {
-            optimisticUpdateRef.current.status = 'sent';
-            optimisticUpdateRef.current.sentAt = Date.now();
-          }
-          
-          // Wait for S3 propagation (200-300ms)
-          await new Promise(resolve => setTimeout(resolve, 250));
-          
-          console.log('[AssetConnect] Created Base connection with walletConnecting:', isConnecting);
-        } catch (apiError) {
-          // Rollback optimistic update on API error
-          console.error('[AssetConnect] Error creating backend connection:', apiError);
-          
-          // Revert optimistic state
-          setBackendConnections((prev: any[]) => {
-            return prev.filter((pc: any) => !(pc.walletType === 'base' && pc.walletId === newConnection.walletId));
-          });
-          
-          optimisticUpdateRef.current = null;
-        }
+        return [...prev, newConnection];
       }
-    } catch (error) {
-      console.error('[AssetConnect] Error updating walletConnecting state:', error);
-    }
+    });
+    
+    // Mark as optimistic update immediately
+    optimisticUpdateRef.current = {
+      walletType: 'base',
+      field: 'walletConnecting',
+      expectedValue: isConnecting,
+      status: 'pending',
+      timestamp: Date.now()
+    };
+    
+    // Now do API calls in background (non-blocking)
+    // Don't await - let it happen in background
+    (async () => {
+      try {
+        const response = await axios.get('/api/savePendingConnection', { params: { email } });
+        const existingConnections = response.data.pendingConnections || [];
+        const baseConn = existingConnections.find((pc: any) => pc.walletType === 'base');
+        if (baseConn) {
+          const updatedConnection = {
+            ...baseConn,
+            walletConnecting: isConnecting,
+            walletConnectionCanceled: isConnecting ? false : baseConn.walletConnectionCanceled,
+          };
+          
+          // Update backend (non-blocking)
+          try {
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: updatedConnection,
+            });
+            
+            // API succeeded - mark as "sent"
+            if (optimisticUpdateRef.current) {
+              optimisticUpdateRef.current.status = 'sent';
+              optimisticUpdateRef.current.sentAt = Date.now();
+            }
+            
+            console.log('[AssetConnect] Backend updated Base walletConnecting to:', isConnecting);
+          } catch (apiError) {
+            // Rollback optimistic update on API error
+            console.error('[AssetConnect] Error updating backend:', apiError);
+            
+            // Revert optimistic state
+            setBackendConnections((prev: any[]) => {
+              const filtered = prev.filter((pc: any) => !(pc.walletType === 'base' && pc.address === baseConn.address));
+              return [...filtered, baseConn]; // Restore original connection
+            });
+            
+            optimisticUpdateRef.current = null;
+          }
+        } else {
+          // No connection exists - create one
+          const tempAddress = '0x0000000000000000000000000000000000000000';
+          const tempWalletId = `temp-connecting-${Date.now()}`;
+          const newConnection = {
+            address: tempAddress,
+            walletId: tempWalletId,
+            walletType: 'base' as const,
+            timestamp: Date.now(),
+            walletConnected: false,
+            walletConnectionCanceled: false,
+            walletConnecting: isConnecting,
+            assetConnected: false,
+            assetConnectionCancelled: false,
+            assetConnecting: false,
+          };
+          
+          try {
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: newConnection,
+            });
+            
+            // API succeeded - mark as "sent"
+            if (optimisticUpdateRef.current) {
+              optimisticUpdateRef.current.status = 'sent';
+              optimisticUpdateRef.current.sentAt = Date.now();
+            }
+            
+            console.log('[AssetConnect] Created Base connection with walletConnecting:', isConnecting);
+          } catch (apiError) {
+            console.error('[AssetConnect] Error creating backend connection:', apiError);
+            
+            // Revert optimistic state
+            setBackendConnections((prev: any[]) => {
+              return prev.filter((pc: any) => !(pc.walletType === 'base' && pc.walletId === newConnection.walletId));
+            });
+            
+            optimisticUpdateRef.current = null;
+          }
+        }
+      } catch (error) {
+        console.error('[AssetConnect] Error fetching connections:', error);
+        // Don't rollback on GET error - optimistic update stays
+      }
+    })();
   }, [email]);
 
   // Helper function to save pending connection to backend
@@ -1062,7 +1080,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
     };
   
-    // Run immediately on mount
+    // CRITICAL: Run immediately on mount to initialize from backend
+    // If page reloaded before backend saved optimistic update, buttons will reset correctly
+    // because backendConnections will only contain what backend actually has
     syncStateFromBackend();
     
     // Run periodically to catch updates (every 100ms for faster responsiveness)

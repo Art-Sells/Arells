@@ -1192,7 +1192,7 @@ const VavityTester: React.FC = () => {
                   metaMaskAssetConnected || 
                   metaMaskAssetConnecting || 
                   metaMaskWalletConnecting ||
-                  isConnectingBase
+                  isConnectingBase || baseWalletConnecting // Disable if Base is connecting
                 }
           style={{
                   padding: '15px 20px',
@@ -1200,38 +1200,32 @@ const VavityTester: React.FC = () => {
                   fontWeight: 'bold',
                   backgroundColor: metaMaskAssetConnected ? '#28a745' : 
                                    metaMaskAssetConnecting ? '#ffc107' :
-                                   (metaMaskWalletConnecting && !isConnectingBase) ? '#ffc107' :
-                                   (isConnectingBase || baseWalletConnecting) ? '#ccc' :
-                                   (email && !metaMaskAssetConnected && !metaMaskAssetConnecting && !metaMaskWalletConnecting && !isConnectingBase) ? '#f6851b' : '#ccc',
+                                   // Grey out if either wallet is connecting
+                                   (metaMaskWalletConnecting || baseWalletConnecting || isConnectingBase || isConnectingMetaMask) ? '#ccc' :
+                                   (email && !metaMaskAssetConnected && !metaMaskAssetConnecting && !metaMaskWalletConnecting && !isConnectingBase && !baseWalletConnecting && !isConnectingMetaMask) ? '#f6851b' : '#ccc',
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-                  cursor: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingBase) ? 'not-allowed' : 'pointer',
-                  opacity: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingBase) ? (metaMaskAssetConnected ? 1 : 0.6) : 1,
-                  pointerEvents: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingBase) ? 'none' : 'auto',
+                  cursor: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingBase || baseWalletConnecting || isConnectingMetaMask) ? 'not-allowed' : 'pointer',
+                  opacity: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingBase || baseWalletConnecting || isConnectingMetaMask) ? (metaMaskAssetConnected ? 1 : 0.6) : 1,
+                  pointerEvents: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingBase || baseWalletConnecting || isConnectingMetaMask) ? 'none' : 'auto',
           }}
         >
                 {(() => {
                   // Button state comes ONLY from backend JSON boolean fields
-                  // PRIORITY 0: If Base is connecting, show default text (button is disabled)
-                  if (isConnectingBase || baseWalletConnecting) {
+                  // PRIORITY 0: If either wallet is connecting, show default text (button is disabled and greyed out)
+                  if (isConnectingBase || baseWalletConnecting || metaMaskWalletConnecting || isConnectingMetaMask) {
                     return 'CONNECT ETHEREUM WITH METAMASK';
                   }
-                  // PRIORITY 1: Check if THIS wallet is connecting (highest priority for instant UI)
-                  console.log('[VavityTester Button Text] metaMaskWalletConnecting:', metaMaskWalletConnecting, 'metaMaskWalletConnectionCanceled:', metaMaskWalletConnectionCanceled);
-                  if (metaMaskWalletConnecting) {
-                    console.log('[VavityTester Button Text] RETURNING CONNECTING because metaMaskWalletConnecting is true');
-                    return 'CONNECTING...';
-                  }
-                  // PRIORITY 2: Check asset connection state
+                  // PRIORITY 1: Check asset connection state
                   if (metaMaskAssetConnecting) {
                     return 'WAITING FOR DEPOSIT...';
                   }
-                  // PRIORITY 3: Check if fully connected (asset connected)
+                  // PRIORITY 2: Check if fully connected (asset connected)
                   if (metaMaskAssetConnected && !metaMaskAssetConnectionCancelled) {
                     return 'CONNECTED ETHEREUM WITH METAMASK';
                   }
-                  // PRIORITY 4: Default - show connect button
+                  // PRIORITY 3: Default - show connect button
                   return 'CONNECT ETHEREUM WITH METAMASK';
                 })()}
         </button>
@@ -1242,7 +1236,7 @@ const VavityTester: React.FC = () => {
                   baseAssetConnected || 
                   baseAssetConnecting || 
                   baseWalletConnecting ||
-                  isConnectingMetaMask
+                  isConnectingMetaMask || metaMaskWalletConnecting // Disable if MetaMask is connecting
                 }
           style={{
                   padding: '15px 20px',
@@ -1250,36 +1244,32 @@ const VavityTester: React.FC = () => {
                   fontWeight: 'bold',
                   backgroundColor: baseAssetConnected ? '#28a745' : 
                                    baseAssetConnecting ? '#ffc107' :
-                                   (baseWalletConnecting && !isConnectingMetaMask) ? '#ffc107' :
-                                   (isConnectingMetaMask || metaMaskWalletConnecting) ? '#ccc' :
-                                   (email && !isConnectingMetaMask && !baseAssetConnected && !baseAssetConnecting && !baseWalletConnecting) ? '#0052ff' : '#ccc',
+                                   // Grey out if either wallet is connecting
+                                   (baseWalletConnecting || metaMaskWalletConnecting || isConnectingMetaMask || isConnectingBase) ? '#ccc' :
+                                   (email && !isConnectingMetaMask && !metaMaskWalletConnecting && !baseAssetConnected && !baseAssetConnecting && !baseWalletConnecting && !isConnectingBase) ? '#0052ff' : '#ccc',
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-                  cursor: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask) ? 'not-allowed' : 'pointer',
-                  opacity: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask) ? (baseAssetConnected ? 1 : 0.6) : 1,
-                  pointerEvents: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask) ? 'none' : 'auto',
+                  cursor: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask || metaMaskWalletConnecting || isConnectingBase) ? 'not-allowed' : 'pointer',
+                  opacity: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask || metaMaskWalletConnecting || isConnectingBase) ? (baseAssetConnected ? 1 : 0.6) : 1,
+                  pointerEvents: (!email || baseAssetConnected || baseAssetConnecting || baseWalletConnecting || isConnectingMetaMask || metaMaskWalletConnecting || isConnectingBase) ? 'none' : 'auto',
           }}
         >
                 {(() => {
                   // Button state comes ONLY from backend JSON boolean fields
-                  // PRIORITY 0: If MetaMask is connecting, show default text (button is disabled)
-                  if (isConnectingMetaMask || metaMaskWalletConnecting) {
+                  // PRIORITY 0: If either wallet is connecting, show default text (button is disabled and greyed out)
+                  if (isConnectingMetaMask || metaMaskWalletConnecting || baseWalletConnecting || isConnectingBase) {
                     return 'CONNECT ETHEREUM WITH BASE';
                   }
-                  // PRIORITY 1: Check if THIS wallet is connecting (highest priority for instant UI)
-                  if (baseWalletConnecting) {
-                    return 'CONNECTING...';
-                  }
-                  // PRIORITY 2: Check asset connection state
+                  // PRIORITY 1: Check asset connection state
                   if (baseAssetConnecting) {
                     return 'WAITING FOR DEPOSIT...';
                   }
-                  // PRIORITY 3: Check if fully connected (asset connected)
+                  // PRIORITY 2: Check if fully connected (asset connected)
                   if (baseAssetConnected && !baseAssetConnectionCancelled) {
                     return 'CONNECTED ETHEREUM WITH BASE';
                   }
-                  // PRIORITY 4: Default - show connect button
+                  // PRIORITY 3: Default - show connect button
                   return 'CONNECT ETHEREUM WITH BASE';
                 })()}
         </button>
