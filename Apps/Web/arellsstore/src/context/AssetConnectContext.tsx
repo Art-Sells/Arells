@@ -72,17 +72,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // Store backend connections and compute pending/connected from them
   const [backendConnections, setBackendConnections] = useState<any[]>([]);
   
-  // LOCAL STATE for instant UI updates (standard React pattern)
-  // These update immediately when buttons are clicked, then sync with backend
-  const [localWalletConnecting, setLocalWalletConnecting] = useState<{
-    metamask: boolean;
-    base: boolean;
-  }>({ metamask: false, base: false });
-  
-  const [localWalletConnectionCanceled, setLocalWalletConnectionCanceled] = useState<{
-    metamask: boolean;
-    base: boolean;
-  }>({ metamask: false, base: false });
+  // Track last fetched JSON to detect actual changes in backend
+  // Only process JSON if it's different from what we last fetched
+  const lastFetchedJsonRef = React.useRef<string>('');
   
   // Computed values from backend JSON (derived, not stored in state)
   // Use new boolean fields: assetConnected, assetConnectionCancelled, walletConnected, walletConnectionCanceled
@@ -114,135 +106,63 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     );
   }, [backendConnections]);
   
-  // Derived connecting states - include local state for instant UI
+  // Derived connecting states - only from backend JSON
   const isConnectingMetaMask = React.useMemo(() => {
-    // Check local state first (instant UI), then backend
-    return localWalletConnecting.metamask || 
-           backendConnections.some((pc: any) => 
-             pc.walletType === 'metamask' && (pc.walletConnecting || pc.assetConnecting)
-           );
-  }, [backendConnections, localWalletConnecting.metamask]);
+    return backendConnections.some((pc: any) => 
+      pc.walletType === 'metamask' && (pc.walletConnecting || pc.assetConnecting)
+    );
+  }, [backendConnections]);
   
   const isConnectingBase = React.useMemo(() => {
-    // Check local state first (instant UI), then backend
-    return localWalletConnecting.base || 
-           backendConnections.some((pc: any) => 
-             pc.walletType === 'base' && (pc.walletConnecting || pc.assetConnecting)
-           );
-  }, [backendConnections, localWalletConnecting.base]);
+    return backendConnections.some((pc: any) => 
+      pc.walletType === 'base' && (pc.walletConnecting || pc.assetConnecting)
+    );
+  }, [backendConnections]);
   
   // Derived JSON boolean states for MetaMask
-  // CRITICAL: If multiple connections exist, prefer the one with walletConnecting: true or the most recent one
-  // If local cancellation is true, prefer the cancelled connection to ensure derived state is correct
+  // If multiple connections exist, prefer the one with walletConnecting: true or the most recent one
   const metaMaskConn = React.useMemo(() => {
     const metamaskConnections = backendConnections.filter((pc: any) => pc.walletType === 'metamask');
     if (metamaskConnections.length === 0) return undefined;
     if (metamaskConnections.length === 1) return metamaskConnections[0];
     
-    // CRITICAL: If local cancellation is true, prefer the cancelled connection OR any connection that's NOT connecting
-    // This prevents selecting a connection with walletConnecting: true when cancellation is active
-    if (localWalletConnectionCanceled.metamask) {
-      const cancelledConn = metamaskConnections.find((pc: any) => pc.walletConnectionCanceled === true);
-      if (cancelledConn) return cancelledConn;
-      // If no cancelled connection found yet, prefer one that's NOT connecting (to prevent flickering)
-      const notConnectingConn = metamaskConnections.find((pc: any) => !pc.walletConnecting);
-      if (notConnectingConn) return notConnectingConn;
-    }
-    
     // If multiple, prefer the one with walletConnecting: true (active connection)
-    // BUT only if local cancellation is NOT true
-    if (!localWalletConnectionCanceled.metamask) {
-      const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
-      if (activeConn) return activeConn;
-    }
+    const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
+    if (activeConn) return activeConn;
     
     // Otherwise, return the most recent one (highest timestamp)
     return metamaskConnections.reduce((latest, current) => 
       (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
     );
-  }, [backendConnections, localWalletConnectionCanceled.metamask]);
+  }, [backendConnections]);
   
   const metaMaskWalletConnected = metaMaskConn?.walletConnected ?? false;
-  // Use local state for instant UI, fallback to backend for persistence
-  const metaMaskWalletConnectionCanceled = localWalletConnectionCanceled.metamask || (metaMaskConn?.walletConnectionCanceled ?? false);
-  // CRITICAL: If local cancellation is true, walletConnecting must be false (prevents flickering back to "Connecting")
-  // Also check backendConnections directly as an extra safeguard
-  const metaMaskWalletConnecting = React.useMemo(() => {
-    const isCancelled = localWalletConnectionCanceled.metamask;
-    if (isCancelled) {
-      // Local cancellation is true - MUST be false, no matter what
-      // Add console log to debug if this is being called
-      console.log('[AssetConnect metaMaskWalletConnecting] Local cancellation is true, forcing walletConnecting to false');
-      return false;
-    }
-    // Check if ANY MetaMask connection in backendConnections has walletConnecting: true
-    // This is an extra safeguard in case metaMaskConn selection is wrong
-    const anyConnecting = backendConnections.some(
-      (pc: any) => pc.walletType === 'metamask' && pc.walletConnecting === true && !pc.walletConnectionCanceled
-    );
-    const result = localWalletConnecting.metamask || anyConnecting || (metaMaskConn?.walletConnecting ?? false);
-    if (result) {
-      console.log('[AssetConnect metaMaskWalletConnecting] Returning true:', {
-        localConnecting: localWalletConnecting.metamask,
-        anyConnecting,
-        metaMaskConnWalletConnecting: metaMaskConn?.walletConnecting,
-        localCancelled: localWalletConnectionCanceled.metamask
-      });
-    }
-    return result;
-  }, [localWalletConnectionCanceled.metamask, localWalletConnecting.metamask, backendConnections, metaMaskConn?.walletConnecting]);
+  const metaMaskWalletConnectionCanceled = metaMaskConn?.walletConnectionCanceled ?? false;
+  const metaMaskWalletConnecting = metaMaskConn?.walletConnecting ?? false;
   const metaMaskAssetConnected = metaMaskConn?.assetConnected ?? false;
   const metaMaskAssetConnectionCancelled = metaMaskConn?.assetConnectionCancelled ?? false;
   const metaMaskAssetConnecting = metaMaskConn?.assetConnecting ?? false;
   
   // Derived JSON boolean states for Base
-  // CRITICAL: If multiple connections exist, prefer the one with walletConnecting: true or the most recent one
-  // If local cancellation is true, prefer the cancelled connection to ensure derived state is correct
+  // If multiple connections exist, prefer the one with walletConnecting: true or the most recent one
   const baseConn = React.useMemo(() => {
     const baseConnections = backendConnections.filter((pc: any) => pc.walletType === 'base');
     if (baseConnections.length === 0) return undefined;
     if (baseConnections.length === 1) return baseConnections[0];
     
-    // CRITICAL: If local cancellation is true, prefer the cancelled connection OR any connection that's NOT connecting
-    // This prevents selecting a connection with walletConnecting: true when cancellation is active
-    if (localWalletConnectionCanceled.base) {
-      const cancelledConn = baseConnections.find((pc: any) => pc.walletConnectionCanceled === true);
-      if (cancelledConn) return cancelledConn;
-      // If no cancelled connection found yet, prefer one that's NOT connecting (to prevent flickering)
-      const notConnectingConn = baseConnections.find((pc: any) => !pc.walletConnecting);
-      if (notConnectingConn) return notConnectingConn;
-    }
-    
     // If multiple, prefer the one with walletConnecting: true (active connection)
-    // BUT only if local cancellation is NOT true
-    if (!localWalletConnectionCanceled.base) {
-      const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
-      if (activeConn) return activeConn;
-    }
+    const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
+    if (activeConn) return activeConn;
     
     // Otherwise, return the most recent one (highest timestamp)
     return baseConnections.reduce((latest, current) => 
       (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
     );
-  }, [backendConnections, localWalletConnectionCanceled.base]);
+  }, [backendConnections]);
   
   const baseWalletConnected = baseConn?.walletConnected ?? false;
-  // Use local state for instant UI, fallback to backend for persistence
-  const baseWalletConnectionCanceled = localWalletConnectionCanceled.base || (baseConn?.walletConnectionCanceled ?? false);
-  // CRITICAL: If local cancellation is true, walletConnecting must be false (prevents flickering back to "Connecting")
-  // Also check backendConnections directly as an extra safeguard
-  const baseWalletConnecting = React.useMemo(() => {
-    if (localWalletConnectionCanceled.base) {
-      // Local cancellation is true - MUST be false, no matter what
-      return false;
-    }
-    // Check if ANY Base connection in backendConnections has walletConnecting: true
-    // This is an extra safeguard in case baseConn selection is wrong
-    const anyConnecting = backendConnections.some(
-      (pc: any) => pc.walletType === 'base' && pc.walletConnecting === true && !pc.walletConnectionCanceled
-    );
-    return localWalletConnecting.base || anyConnecting || (baseConn?.walletConnecting ?? false);
-  }, [localWalletConnectionCanceled.base, localWalletConnecting.base, backendConnections, baseConn?.walletConnecting]);
+  const baseWalletConnectionCanceled = baseConn?.walletConnectionCanceled ?? false;
+  const baseWalletConnecting = baseConn?.walletConnecting ?? false;
   const baseAssetConnected = baseConn?.assetConnected ?? false;
   const baseAssetConnectionCancelled = baseConn?.assetConnectionCancelled ?? false;
   const baseAssetConnecting = baseConn?.assetConnecting ?? false;
@@ -263,48 +183,27 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // State will update automatically when backend JSON changes (polled every 1 second)
   }, []);
   
-  // Setters for connecting state - these update local state immediately, then sync with backend
+  // Track optimistic updates to prevent flickering
+  // Key insight: We need to match optimistic updates with backend confirmations using exact state comparison
+  // Instead of merging, we completely skip backend updates until backend confirms the optimistic state
+  // Status tracking: 'pending' → 'sent' → 'confirmed'
+  // - 'pending': Optimistic update made, API call not started yet
+  // - 'sent': API call succeeded, backend received it (but S3 might not be ready yet)
+  // - 'confirmed': Polling confirmed backend has the update
+  const optimisticUpdateRef = React.useRef<{
+    walletType: 'metamask' | 'base' | null;
+    field: string;
+    expectedValue: boolean; // The value we optimistically set
+    optimisticState: any; // The exact state we set optimistically (for comparison)
+    status: 'pending' | 'sent' | 'confirmed'; // Track status of optimistic update
+    timestamp: number; // When optimistic update was made
+    sentAt?: number; // When API call succeeded (status = 'sent')
+  } | null>(null);
+  
+  // Setters for connecting state - these update backend JSON only
+  // NO optimistic updates - buttons will update when frontend fetcher detects JSON changes
   const setIsConnectingMetaMask = useCallback(async (isConnecting: boolean) => {
     if (!email) return;
-    
-    // INSTANT UI UPDATE: Update local state immediately (standard React pattern)
-    setLocalWalletConnecting(prev => ({ ...prev, metamask: isConnecting }));
-    if (isConnecting) {
-      // Reset cancellation flag when starting to connect
-      setLocalWalletConnectionCanceled(prev => ({ ...prev, metamask: false }));
-    }
-    
-    // Update backend JSON in background (non-blocking)
-    setBackendConnections((prev: any[]) => {
-      const metamaskConn = prev.find((pc: any) => pc.walletType === 'metamask');
-      
-      if (metamaskConn) {
-        const updatedConnection = {
-          ...metamaskConn,
-          walletConnecting: isConnecting,
-          // CRITICAL: When starting to connect, reset cancellation flag
-          walletConnectionCanceled: isConnecting ? false : metamaskConn.walletConnectionCanceled,
-        };
-        const filtered = prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.address === metamaskConn.address));
-        return [...filtered, updatedConnection];
-      } else if (isConnecting) {
-        // If connection doesn't exist yet and we're setting connecting=true, create it optimistically
-        const tempConnection = {
-          address: '0x0000000000000000000000000000000000000000',
-          walletId: `temp-connecting-${Date.now()}`,
-          walletType: 'metamask' as const,
-          timestamp: Date.now(),
-          walletConnected: false,
-          walletConnectionCanceled: false,
-          walletConnecting: true,
-          assetConnected: false,
-          assetConnectionCancelled: false,
-          assetConnecting: false,
-        };
-        return [...prev, tempConnection];
-      }
-      return prev;
-    });
     
     try {
       const response = await axios.get('/api/savePendingConnection', { params: { email } });
@@ -318,30 +217,50 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           walletConnectionCanceled: isConnecting ? false : metamaskConn.walletConnectionCanceled,
         };
         
-        // Update backend in background (non-blocking)
-        axios.post('/api/savePendingConnection', {
-          email,
-          pendingConnection: updatedConnection,
-        }).then(() => {
-          console.log('[AssetConnect] Backend updated MetaMask walletConnecting to:', isConnecting);
-          // Sync local state with backend after successful update
-          fetchPendingConnectionsFromBackend().then(connections => {
-            setBackendConnections(connections);
-            // Clear local state if backend confirms
-            if (isConnecting) {
-              const backendConn = connections.find((pc: any) => pc.walletType === 'metamask');
-              if (backendConn?.walletConnecting) {
-                setLocalWalletConnecting(prev => ({ ...prev, metamask: false })); // Backend has it now
-              }
-            }
-          }).catch(err => {
-            console.error('[AssetConnect] Error refreshing after update:', err);
-          });
-        }).catch(err => {
-          console.error('[AssetConnect] Error updating backend:', err);
-          // Revert local state on error
-          setLocalWalletConnecting(prev => ({ ...prev, metamask: !isConnecting }));
+        // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
+        setBackendConnections((prev: any[]) => {
+          const filtered = prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.address === metamaskConn.address));
+          return [...filtered, updatedConnection];
         });
+        
+        // Mark as optimistic update - this will freeze backend updates until confirmed
+        optimisticUpdateRef.current = {
+          walletType: 'metamask',
+          field: 'walletConnecting',
+          expectedValue: isConnecting,
+          status: 'pending',
+          timestamp: Date.now()
+        };
+        
+        // ✅ WAIT for API response (not fire-and-forget)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: updatedConnection,
+          });
+          
+          // API succeeded - mark as "sent"
+          if (optimisticUpdateRef.current) {
+            optimisticUpdateRef.current.status = 'sent';
+            optimisticUpdateRef.current.sentAt = Date.now();
+          }
+          
+          // Wait for S3 propagation (200-300ms)
+          await new Promise(resolve => setTimeout(resolve, 250));
+          
+          console.log('[AssetConnect] Backend updated MetaMask walletConnecting to:', isConnecting);
+        } catch (apiError) {
+          // Rollback optimistic update on API error
+          console.error('[AssetConnect] Error updating backend:', apiError);
+          
+          // Revert optimistic state
+          setBackendConnections((prev: any[]) => {
+            const filtered = prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.address === metamaskConn.address));
+            return [...filtered, metamaskConn]; // Restore original connection
+          });
+          
+          optimisticUpdateRef.current = null;
+        }
       } else {
         console.warn('[AssetConnect] No MetaMask connection found to update walletConnecting state');
         // If no MetaMask connection exists, create one with walletConnecting state
@@ -361,21 +280,46 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           assetConnecting: false,
         };
         
-        // OPTIMISTIC UPDATE: Update local state immediately for instant UI feedback
+        // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
         setBackendConnections((prev: any[]) => [...prev, newConnection]);
         
-        await axios.post('/api/savePendingConnection', {
-          email,
-          pendingConnection: newConnection,
-        });
-        console.log('[AssetConnect] Created MetaMask connection with walletConnecting:', isConnecting);
+        // Mark as optimistic update - this will freeze backend updates until confirmed
+        optimisticUpdateRef.current = {
+          walletType: 'metamask',
+          field: 'walletConnecting',
+          expectedValue: isConnecting,
+          status: 'pending',
+          timestamp: Date.now()
+        };
         
-        // Refresh from backend to ensure consistency (non-blocking)
-        fetchPendingConnectionsFromBackend().then(connections => {
-          setBackendConnections(connections);
-        }).catch(err => {
-          console.error('[AssetConnect] Error refreshing after create:', err);
-        });
+        // ✅ WAIT for API response (not fire-and-forget)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: newConnection,
+          });
+          
+          // API succeeded - mark as "sent"
+          if (optimisticUpdateRef.current) {
+            optimisticUpdateRef.current.status = 'sent';
+            optimisticUpdateRef.current.sentAt = Date.now();
+          }
+          
+          // Wait for S3 propagation (200-300ms)
+          await new Promise(resolve => setTimeout(resolve, 250));
+          
+          console.log('[AssetConnect] Created MetaMask connection with walletConnecting:', isConnecting);
+        } catch (apiError) {
+          // Rollback optimistic update on API error
+          console.error('[AssetConnect] Error creating backend connection:', apiError);
+          
+          // Revert optimistic state
+          setBackendConnections((prev: any[]) => {
+            return prev.filter((pc: any) => !(pc.walletType === 'metamask' && pc.walletId === newConnection.walletId));
+          });
+          
+          optimisticUpdateRef.current = null;
+        }
       }
     } catch (error) {
       console.error('[AssetConnect] Error updating walletConnecting state:', error);
@@ -385,45 +329,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setIsConnectingBase = useCallback(async (isConnecting: boolean) => {
     if (!email) return;
     
-    // INSTANT UI UPDATE: Update local state immediately (standard React pattern)
-    setLocalWalletConnecting(prev => ({ ...prev, base: isConnecting }));
-    if (isConnecting) {
-      // Reset cancellation flag when starting to connect
-      setLocalWalletConnectionCanceled(prev => ({ ...prev, base: false }));
-    }
-    
-    // Update backend JSON in background (non-blocking)
-    setBackendConnections((prev: any[]) => {
-      const baseConn = prev.find((pc: any) => pc.walletType === 'base');
-      
-      if (baseConn) {
-        const updatedConnection = {
-          ...baseConn,
-          walletConnecting: isConnecting,
-          // CRITICAL: When starting to connect, reset cancellation flag
-          walletConnectionCanceled: isConnecting ? false : baseConn.walletConnectionCanceled,
-        };
-        const filtered = prev.filter((pc: any) => !(pc.walletType === 'base' && pc.address === baseConn.address));
-        return [...filtered, updatedConnection];
-      } else if (isConnecting) {
-        // If connection doesn't exist yet and we're setting connecting=true, create it optimistically
-        const tempConnection = {
-          address: '0x0000000000000000000000000000000000000000',
-          walletId: `temp-connecting-${Date.now()}`,
-          walletType: 'base' as const,
-          timestamp: Date.now(),
-          walletConnected: false,
-          walletConnectionCanceled: false,
-          walletConnecting: true,
-          assetConnected: false,
-          assetConnectionCancelled: false,
-          assetConnecting: false,
-        };
-        return [...prev, tempConnection];
-      }
-      return prev;
-    });
-    
+    // NO optimistic updates - buttons will update when frontend fetcher detects JSON changes
     try {
       const response = await axios.get('/api/savePendingConnection', { params: { email } });
       const existingConnections = response.data.pendingConnections || [];
@@ -436,30 +342,50 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           walletConnectionCanceled: isConnecting ? false : baseConn.walletConnectionCanceled,
         };
         
-        // Update backend in background (non-blocking)
-        axios.post('/api/savePendingConnection', {
-          email,
-          pendingConnection: updatedConnection,
-        }).then(() => {
-          console.log('[AssetConnect] Backend updated Base walletConnecting to:', isConnecting);
-          // Sync local state with backend after successful update
-          fetchPendingConnectionsFromBackend().then(connections => {
-            setBackendConnections(connections);
-            // Clear local state if backend confirms
-            if (isConnecting) {
-              const backendConn = connections.find((pc: any) => pc.walletType === 'base');
-              if (backendConn?.walletConnecting) {
-                setLocalWalletConnecting(prev => ({ ...prev, base: false })); // Backend has it now
-              }
-            }
-          }).catch(err => {
-            console.error('[AssetConnect] Error refreshing after update:', err);
-          });
-        }).catch(err => {
-          console.error('[AssetConnect] Error updating backend:', err);
-          // Revert local state on error
-          setLocalWalletConnecting(prev => ({ ...prev, base: !isConnecting }));
+        // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
+        setBackendConnections((prev: any[]) => {
+          const filtered = prev.filter((pc: any) => !(pc.walletType === 'base' && pc.address === baseConn.address));
+          return [...filtered, updatedConnection];
         });
+        
+        // Mark as optimistic update - this will freeze backend updates until confirmed
+        optimisticUpdateRef.current = {
+          walletType: 'base',
+          field: 'walletConnecting',
+          expectedValue: isConnecting,
+          status: 'pending',
+          timestamp: Date.now()
+        };
+        
+        // ✅ WAIT for API response (not fire-and-forget)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: updatedConnection,
+          });
+          
+          // API succeeded - mark as "sent"
+          if (optimisticUpdateRef.current) {
+            optimisticUpdateRef.current.status = 'sent';
+            optimisticUpdateRef.current.sentAt = Date.now();
+          }
+          
+          // Wait for S3 propagation (200-300ms)
+          await new Promise(resolve => setTimeout(resolve, 250));
+          
+          console.log('[AssetConnect] Backend updated Base walletConnecting to:', isConnecting);
+        } catch (apiError) {
+          // Rollback optimistic update on API error
+          console.error('[AssetConnect] Error updating backend:', apiError);
+          
+          // Revert optimistic state
+          setBackendConnections((prev: any[]) => {
+            const filtered = prev.filter((pc: any) => !(pc.walletType === 'base' && pc.address === baseConn.address));
+            return [...filtered, baseConn]; // Restore original connection
+          });
+          
+          optimisticUpdateRef.current = null;
+        }
       } else {
         console.warn('[AssetConnect] No Base connection found to update walletConnecting state');
         // If no Base connection exists, create one with walletConnecting state
@@ -479,21 +405,46 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           assetConnecting: false,
         };
         
-        // OPTIMISTIC UPDATE: Update local state immediately for instant UI feedback
+        // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
         setBackendConnections((prev: any[]) => [...prev, newConnection]);
         
-        await axios.post('/api/savePendingConnection', {
-          email,
-          pendingConnection: newConnection,
-        });
-        console.log('[AssetConnect] Created Base connection with walletConnecting:', isConnecting);
+        // Mark as optimistic update
+        optimisticUpdateRef.current = {
+          walletType: 'base',
+          field: 'walletConnecting',
+          expectedValue: isConnecting,
+          status: 'pending',
+          timestamp: Date.now()
+        };
         
-        // Refresh from backend to ensure consistency (non-blocking)
-        fetchPendingConnectionsFromBackend().then(connections => {
-          setBackendConnections(connections);
-        }).catch(err => {
-          console.error('[AssetConnect] Error refreshing after create:', err);
-        });
+        // ✅ WAIT for API response (not fire-and-forget)
+        try {
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: newConnection,
+          });
+          
+          // API succeeded - mark as "sent"
+          if (optimisticUpdateRef.current) {
+            optimisticUpdateRef.current.status = 'sent';
+            optimisticUpdateRef.current.sentAt = Date.now();
+          }
+          
+          // Wait for S3 propagation (200-300ms)
+          await new Promise(resolve => setTimeout(resolve, 250));
+          
+          console.log('[AssetConnect] Created Base connection with walletConnecting:', isConnecting);
+        } catch (apiError) {
+          // Rollback optimistic update on API error
+          console.error('[AssetConnect] Error creating backend connection:', apiError);
+          
+          // Revert optimistic state
+          setBackendConnections((prev: any[]) => {
+            return prev.filter((pc: any) => !(pc.walletType === 'base' && pc.walletId === newConnection.walletId));
+          });
+          
+          optimisticUpdateRef.current = null;
+        }
       }
     } catch (error) {
       console.error('[AssetConnect] Error updating walletConnecting state:', error);
@@ -677,47 +628,36 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           if (cancellationType === 'wallet') {
             updatedConnection.walletConnectionCanceled = true;
             updatedConnection.walletConnecting = false; // CRITICAL: Stop wallet connecting when cancelled
-            // OPTIMISTIC UPDATE: Update local state AND backendConnections immediately for instant UI
-            if (walletType === 'metamask') {
-              setLocalWalletConnectionCanceled(prev => ({ ...prev, metamask: true }));
-              setLocalWalletConnecting(prev => ({ ...prev, metamask: false }));
-              // Also update backendConnections optimistically so derived state reflects cancellation immediately
-              // CRITICAL: Update ALL MetaMask connections (not just by address) to handle multiple connections
-              setBackendConnections((prev: any[]) => {
-                return prev.map((pc: any) => {
-                  if (pc.walletType === 'metamask') {
-                    return {
-                      ...pc,
-                      walletConnectionCanceled: true,
-                      walletConnecting: false,
-                    };
-                  }
-                  return pc;
-                });
+            
+            // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
+            setBackendConnections((prev: any[]) => {
+              return prev.map((pc: any) => {
+                if (pc.walletType === walletType) {
+                  return {
+                    ...pc,
+                    walletConnectionCanceled: true,
+                    walletConnecting: false,
+                  };
+                }
+                return pc;
               });
-            } else {
-              setLocalWalletConnectionCanceled(prev => ({ ...prev, base: true }));
-              setLocalWalletConnecting(prev => ({ ...prev, base: false }));
-              // Also update backendConnections optimistically so derived state reflects cancellation immediately
-              // CRITICAL: Update ALL Base connections (not just by address) to handle multiple connections
-              setBackendConnections((prev: any[]) => {
-                return prev.map((pc: any) => {
-                  if (pc.walletType === 'base') {
-                    return {
-                      ...pc,
-                      walletConnectionCanceled: true,
-                      walletConnecting: false,
-                    };
-                  }
-                  return pc;
-                });
-              });
-            }
-            console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting walletConnectionCanceled=true and walletConnecting=false for wallet cancellation (optimistic update)`);
+            });
+            
+            // Mark as optimistic update
+            optimisticUpdateRef.current = {
+              walletType: walletType,
+              field: 'walletConnectionCanceled',
+              expectedValue: true,
+              status: 'pending',
+              timestamp: Date.now()
+            };
+            
+            console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting walletConnectionCanceled=true and walletConnecting=false for wallet cancellation`);
           } else {
             updatedConnection.assetConnectionCancelled = true;
             updatedConnection.assetConnecting = false; // Stop asset connecting when cancelled
-            // OPTIMISTIC UPDATE: Update backendConnections immediately for instant UI
+            
+            // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
             setBackendConnections((prev: any[]) => {
               return prev.map((pc: any) => {
                 if (pc.walletType === walletType && pc.address?.toLowerCase() === connectionToCancel.address?.toLowerCase()) {
@@ -730,21 +670,77 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
                 return pc;
               });
             });
-            console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting assetConnectionCancelled=true and assetConnecting=false for asset cancellation (optimistic update)`);
+            
+            // Mark as optimistic update
+            optimisticUpdateRef.current = {
+              walletType: walletType,
+              field: 'assetConnectionCancelled',
+              expectedValue: true,
+              status: 'pending',
+              timestamp: Date.now()
+            };
+            
+            console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting assetConnectionCancelled=true and assetConnecting=false for asset cancellation`);
           }
           console.log(`[AssetConnect markPendingConnectionAsCancelled] POSTing updated connection (${cancellationType} cancellation):`, JSON.stringify(updatedConnection, null, 2));
           console.log(`[AssetConnect markPendingConnectionAsCancelled] CRITICAL: walletConnectionCanceled=${updatedConnection.walletConnectionCanceled}, walletConnecting=${updatedConnection.walletConnecting}, assetConnectionCancelled=${updatedConnection.assetConnectionCancelled}, assetConnecting=${updatedConnection.assetConnecting}`);
           
-          const response = await axios.post('/api/savePendingConnection', {
-            email,
-            pendingConnection: updatedConnection,
-          });
-          
-          console.log('[AssetConnect] POST response:', response.status, response.data);
-          console.log('[AssetConnect] Marked connection as cancelled in backend:', connectionToCancel.address, walletType);
-          
-          // CRITICAL: Wait a moment for S3 to propagate before verifying
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          try {
+            const response = await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: updatedConnection,
+            });
+            
+            // API succeeded - mark as "sent"
+            if (optimisticUpdateRef.current) {
+              optimisticUpdateRef.current.status = 'sent';
+              optimisticUpdateRef.current.sentAt = Date.now();
+            }
+            
+            console.log('[AssetConnect] POST response:', response.status, response.data);
+            console.log('[AssetConnect] Marked connection as cancelled in backend:', connectionToCancel.address, walletType);
+            
+            // Wait for S3 propagation (200-300ms)
+            await new Promise(resolve => setTimeout(resolve, 250));
+            
+            // CRITICAL: Wait a moment for S3 to propagate before verifying
+            await new Promise(resolve => setTimeout(resolve, 750)); // Total 1 second wait
+          } catch (apiError) {
+            // Rollback optimistic update on API error
+            console.error('[AssetConnect] Error updating backend for cancellation:', apiError);
+            
+            // Revert optimistic state
+            if (cancellationType === 'wallet') {
+              setBackendConnections((prev: any[]) => {
+                return prev.map((pc: any) => {
+                  if (pc.walletType === walletType) {
+                    return {
+                      ...pc,
+                      walletConnectionCanceled: connectionToCancel.walletConnectionCanceled ?? false,
+                      walletConnecting: connectionToCancel.walletConnecting ?? false,
+                    };
+                  }
+                  return pc;
+                });
+              });
+            } else {
+              setBackendConnections((prev: any[]) => {
+                return prev.map((pc: any) => {
+                  if (pc.walletType === walletType && pc.address?.toLowerCase() === connectionToCancel.address?.toLowerCase()) {
+                    return {
+                      ...pc,
+                      assetConnectionCancelled: connectionToCancel.assetConnectionCancelled ?? false,
+                      assetConnecting: connectionToCancel.assetConnecting ?? false,
+                    };
+                  }
+                  return pc;
+                });
+              });
+            }
+            
+            optimisticUpdateRef.current = null;
+            throw apiError; // Re-throw to let caller handle it
+          }
           
           // Verify it was saved by fetching again - check ALL connections to see what's actually in backend
           try {
@@ -844,91 +840,162 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       try {
         const pendingConnections = await fetchPendingConnectionsFromBackend();
         
-        // CRITICAL: If local cancellation state is true, check if backend has confirmed it
-        // If backend hasn't confirmed yet, DON'T update backendConnections at all to prevent flickering
-        const backendMetaMaskCancelled = pendingConnections.some(
-          (pc: any) => pc.walletType === 'metamask' && pc.walletConnectionCanceled === true
-        );
-        const backendBaseCancelled = pendingConnections.some(
-          (pc: any) => pc.walletType === 'base' && pc.walletConnectionCanceled === true
-        );
-        
-        // CRITICAL: Only update backendConnections if backend has confirmed cancellation OR local cancellation is false
-        // This prevents polling from overwriting optimistic updates and causing flickering
-        const shouldSkipMetaMask = localWalletConnectionCanceled.metamask && !backendMetaMaskCancelled;
-        const shouldSkipBase = localWalletConnectionCanceled.base && !backendBaseCancelled;
-        
-        // CRITICAL: When local cancellation is true and backend hasn't confirmed, COMPLETELY SKIP ALL UPDATES
-        // This is the most aggressive fix - don't update backendConnections OR local state sync
-        // Just keep the optimistic state completely intact until backend confirms
-        if (shouldSkipMetaMask || shouldSkipBase) {
-          // Local says cancelled but backend hasn't confirmed - DON'T update ANYTHING
-          // This prevents ANY possibility of flickering by keeping the optimistic state intact
-          console.log('[AssetConnect syncStateFromBackend] COMPLETELY SKIPPING ALL UPDATES - waiting for backend to confirm cancellation', {
-            metaMaskWaiting: shouldSkipMetaMask,
-            baseWaiting: shouldSkipBase,
-            localMetaMaskCancelled: localWalletConnectionCanceled.metamask,
-            localBaseCancelled: localWalletConnectionCanceled.base,
-            localMetaMaskConnecting: localWalletConnecting.metamask,
-            localBaseConnecting: localWalletConnecting.base
-          });
-          // Exit early - don't update backendConnections, don't sync local state, don't do anything
-          // Keep the optimistic state completely frozen until backend confirms
+        // CRITICAL: Compare fetched JSON with last fetched JSON (not current state)
+        // Only process/read JSON if it actually changed in the backend
+        const currentJsonString = JSON.stringify(pendingConnections);
+        if (currentJsonString === lastFetchedJsonRef.current) {
+          // JSON hasn't changed since last fetch - don't process it at all
+          console.log('[AssetConnect syncStateFromBackend] JSON unchanged, skipping all processing');
           return;
-        } else {
-          // Safe to update - backend has confirmed or no optimistic cancellation
-          setBackendConnections(pendingConnections);
         }
         
-        // Sync local state with backend - respect local state for instant UI updates
-        // NOTE: This only runs if we didn't skip updates above
-        // CRITICAL: Don't overwrite local cancellation state until backend confirms it
-        // CRITICAL: Don't set localWalletConnecting to true if local cancellation is true (prevents flickering)
-        pendingConnections.forEach((pc: any) => {
-          if (pc.walletType === 'metamask') {
-            // Only initialize local state from backend if local state is not actively set
-            // This ensures backend state is used after page reload, but local state wins for immediate updates
-            // CRITICAL: Don't set connecting to true if local cancellation is true (prevents flickering back to "Connecting")
-            if (pc.walletConnecting && !localWalletConnecting.metamask && !localWalletConnectionCanceled.metamask) {
-              setLocalWalletConnecting(prev => ({ ...prev, metamask: true }));
+        // JSON has changed - update ref and process it
+        console.log('[AssetConnect syncStateFromBackend] JSON changed, processing updates');
+        lastFetchedJsonRef.current = currentJsonString;
+        
+        // CRITICAL: Check if we have a recent optimistic update
+        // If so, only update if backend confirms it OR if optimistic update is older than 2 seconds
+        const optimistic = optimisticUpdateRef.current;
+        const timeSinceOptimistic = optimistic ? Date.now() - optimistic.timestamp : Infinity;
+        const shouldRespectOptimistic = optimistic && timeSinceOptimistic < 2000;
+        
+        // CRITICAL: Compare fetched JSON with current backendConnections to detect changes
+        // Only update UI if there are actual changes in boolean values
+        // Use functional setState to get current state value (avoids stale closure)
+        setBackendConnections((currentBackendConnections: any[]) => {
+          // Compare fetched data with current state
+          const hasChanges = (() => {
+            // If lengths are different, there's a change
+            if (pendingConnections.length !== currentBackendConnections.length) {
+              return true;
             }
-            // CRITICAL: Only sync cancellation from backend if:
-            // 1. Local cancellation is false (not actively cancelled), OR
-            // 2. Backend confirms cancellation (then clear local state to sync)
-            if (pc.walletConnectionCanceled) {
-              if (!localWalletConnectionCanceled.metamask) {
-                // Backend says cancelled but local doesn't - sync from backend (page reload scenario)
-                setLocalWalletConnectionCanceled(prev => ({ ...prev, metamask: true }));
-              } else {
-                // Both local and backend say cancelled - backend has confirmed, keep local state
-                // Local state will persist until user clicks connect again (which resets it)
+            
+            // Compare each connection's boolean values
+            for (const fetchedPc of pendingConnections) {
+              const currentPc = currentBackendConnections.find(
+                (pc: any) => 
+                  pc.walletType === fetchedPc.walletType && 
+                  pc.address?.toLowerCase() === fetchedPc.address?.toLowerCase()
+              );
+              
+              // If connection doesn't exist in current state, there's a change
+              if (!currentPc) {
+                return true;
               }
-            } else if (localWalletConnectionCanceled.metamask) {
-              // Local says cancelled but backend doesn't yet - keep local state (waiting for backend to catch up)
-              // Don't clear local state until backend confirms
-            }
-          } else if (pc.walletType === 'base') {
-            // CRITICAL: Don't set connecting to true if local cancellation is true (prevents flickering back to "Connecting")
-            if (pc.walletConnecting && !localWalletConnecting.base && !localWalletConnectionCanceled.base) {
-              setLocalWalletConnecting(prev => ({ ...prev, base: true }));
-            }
-            // CRITICAL: Only sync cancellation from backend if:
-            // 1. Local cancellation is false (not actively cancelled), OR
-            // 2. Backend confirms cancellation (then clear local state to sync)
-            if (pc.walletConnectionCanceled) {
-              if (!localWalletConnectionCanceled.base) {
-                // Backend says cancelled but local doesn't - sync from backend (page reload scenario)
-                setLocalWalletConnectionCanceled(prev => ({ ...prev, base: true }));
-              } else {
-                // Both local and backend say cancelled - backend has confirmed, keep local state
-                // Local state will persist until user clicks connect again (which resets it)
+              
+              // Compare all boolean fields - if any differ, there's a change
+              if (
+                currentPc.walletConnected !== fetchedPc.walletConnected ||
+                currentPc.walletConnectionCanceled !== fetchedPc.walletConnectionCanceled ||
+                currentPc.walletConnecting !== fetchedPc.walletConnecting ||
+                currentPc.assetConnected !== fetchedPc.assetConnected ||
+                currentPc.assetConnectionCancelled !== fetchedPc.assetConnectionCancelled ||
+                currentPc.assetConnecting !== fetchedPc.assetConnecting
+              ) {
+                return true;
               }
-            } else if (localWalletConnectionCanceled.base) {
-              // Local says cancelled but backend doesn't yet - keep local state (waiting for backend to catch up)
-              // Don't clear local state until backend confirms
+            }
+            
+            // Check if any current connections are missing from fetched (deleted)
+            for (const currentPc of currentBackendConnections) {
+              const fetchedPc = pendingConnections.find(
+                (pc: any) => 
+                  pc.walletType === currentPc.walletType && 
+                  pc.address?.toLowerCase() === currentPc.address?.toLowerCase()
+              );
+              if (!fetchedPc) {
+                return true;
+              }
+            }
+            
+            return false; // No changes detected
+          })();
+          
+          // If no changes detected, return current state (no update, prevents unnecessary re-renders)
+          if (!hasChanges) {
+            console.log('[AssetConnect syncStateFromBackend] No changes detected in JSON, skipping UI update');
+            return currentBackendConnections; // Return current state, no update
+          }
+          
+          console.log('[AssetConnect syncStateFromBackend] Changes detected in JSON, applying to UI');
+          
+          // If we have a recent optimistic update, check if backend confirms it
+          if (shouldRespectOptimistic && optimistic) {
+            const backendConn = pendingConnections.find(
+              (pc: any) => pc.walletType === optimistic.walletType
+            );
+            
+            // CRITICAL: Different handling based on status
+            // - 'pending': API call not completed yet - skip update completely
+            // - 'sent': API succeeded, but S3 might not be ready - check if backend confirms
+            // - 'confirmed': Already confirmed - use backend data
+            if (optimistic.status === 'pending') {
+              // API call still in progress - skip update completely
+              console.log('[AssetConnect syncStateFromBackend] Optimistic update still pending (API call in progress), SKIPPING update');
+              return currentBackendConnections;
+            }
+            
+            if (optimistic.status === 'sent' && optimistic.sentAt) {
+              // API succeeded, but S3 might not be ready yet
+              const timeSinceSent = Date.now() - optimistic.sentAt;
+              
+              if (backendConn) {
+                let backendValue: boolean | undefined;
+                
+                if (optimistic.field === 'walletConnecting') {
+                  backendValue = backendConn.walletConnecting;
+                } else if (optimistic.field === 'walletConnectionCanceled') {
+                  backendValue = backendConn.walletConnectionCanceled;
+                } else if (optimistic.field === 'assetConnectionCancelled') {
+                  backendValue = backendConn.assetConnectionCancelled;
+                }
+                
+                // Backend confirms if the value matches what we optimistically set
+                if (backendValue === optimistic.expectedValue) {
+                  // Backend confirmed! Clear optimistic flag and use backend data (fully synced)
+                  console.log('[AssetConnect syncStateFromBackend] Backend confirmed optimistic update, clearing flag and syncing');
+                  optimisticUpdateRef.current = null;
+                  return pendingConnections; // Use backend data - it's confirmed
+                } else {
+                  // Backend hasn't confirmed yet
+                  if (timeSinceSent < 1000) {
+                    // Still within reasonable time (1 second) - keep optimistic state
+                    console.log('[AssetConnect syncStateFromBackend] Backend hasn\'t confirmed yet (sent', timeSinceSent, 'ms ago), keeping optimistic state');
+                    return currentBackendConnections; // Keep optimistic state
+                  } else {
+                    // Too long - something went wrong, use backend data
+                    console.log('[AssetConnect syncStateFromBackend] Backend hasn\'t confirmed after 1 second, using backend data');
+                    optimisticUpdateRef.current = null;
+                    return pendingConnections;
+                  }
+                }
+              } else {
+                // Connection not found in backend yet
+                if (timeSinceSent < 1000) {
+                  // Still within reasonable time - keep optimistic state
+                  console.log('[AssetConnect syncStateFromBackend] Connection not found in backend yet (sent', timeSinceSent, 'ms ago), preserving optimistic state');
+                  return currentBackendConnections;
+                } else {
+                  // Too long - something went wrong
+                  console.log('[AssetConnect syncStateFromBackend] Connection not found after 1 second, clearing optimistic flag');
+                  optimisticUpdateRef.current = null;
+                  return pendingConnections;
+                }
+              }
             }
           }
+          
+          // No optimistic update or it's been more than 3 seconds - safe to update from backend
+          // This is a safety timeout in case backend never confirms
+          if (optimistic && timeSinceOptimistic >= 3000) {
+            console.log('[AssetConnect syncStateFromBackend] Optimistic update expired (3 seconds), clearing flag and using backend');
+            optimisticUpdateRef.current = null;
+            // Now safe to use backend data
+          }
+          
+          return pendingConnections;
         });
+        
         
         // Update localStorage to match backend state (for wallet extension checks)
         const completedMetaMask = pendingConnections.find(
@@ -952,11 +1019,11 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // Run immediately on mount
     syncStateFromBackend();
     
-    // Run periodically to catch updates (every 500ms for faster responsiveness)
-    const intervalId = setInterval(syncStateFromBackend, 500);
+    // Run periodically to catch updates (every 100ms for faster responsiveness)
+    const intervalId = setInterval(syncStateFromBackend, 100);
     
     return () => clearInterval(intervalId);
-  }, [email, localWalletConnectionCanceled]);
+  }, [email]);
   
   // Use refs to prevent multiple executions (persist across re-renders but reset on mount)
   const hasProcessedRef = useRef(false);
@@ -2722,10 +2789,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           await savePendingConnectionToBackend(walletAddress, walletId, walletType);
           console.log('[connectAsset] Successfully saved pending connection to backend');
           
-          // Trigger a refresh of backend connections to update UI immediately
-          // The polling useEffect will pick it up, but we can also manually trigger it
-          const backendConnections = await fetchPendingConnectionsFromBackend();
-          setBackendConnections(backendConnections);
+          // NO optimistic updates - frontend fetcher will detect JSON changes and update buttons
+          // The polling useEffect will pick up the changes automatically
         } catch (error) {
           console.error('[connectAsset] Failed to save pending connection to backend:', error);
           // Don't throw - continue with deposit flow even if save fails

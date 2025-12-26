@@ -634,7 +634,7 @@ const VavityTester: React.FC = () => {
         // Check if file exists by making a GET request
         const response = await axios.get('/api/savePendingConnection', { params: { email } });
         const existingConnections = response.data.pendingConnections || [];
-        
+      
         // If file doesn't exist or is empty, create it by making a POST with a temporary connection
         // The API will create the file structure when we POST
         // We'll update this with the real connection data immediately after
@@ -765,7 +765,7 @@ const VavityTester: React.FC = () => {
           } else {
             setIsConnectingBase(false);
           }
-        } catch (error: any) {
+    } catch (error: any) {
           // Check for cancellation errors (various formats)
           const errorMsg = String(error?.message || error?.toString() || '');
           const isCancelled = 
@@ -1128,7 +1128,7 @@ const VavityTester: React.FC = () => {
         setIsConnectingMetaMask(false);
       } else {
         setIsConnectingBase(false);
-      }
+    }
     }
   };
 
@@ -1174,7 +1174,7 @@ const VavityTester: React.FC = () => {
         </div>
           <div style={{ marginBottom: '10px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px' }}>
-              <button
+          <button
                 onClick={handleConnectMetaMask}
                 disabled={
                   !email || 
@@ -1183,26 +1183,33 @@ const VavityTester: React.FC = () => {
                   metaMaskWalletConnecting ||
                   isConnectingBase
                 }
-                style={{
+          style={{
                   padding: '15px 20px',
-                  fontSize: '16px',
+            fontSize: '16px',
                   fontWeight: 'bold',
                   backgroundColor: metaMaskAssetConnected ? '#28a745' : 
                                    metaMaskAssetConnecting ? '#ffc107' :
-                                   metaMaskWalletConnecting ? '#ffc107' :
-                                   (email && !metaMaskAssetConnected && !metaMaskAssetConnecting && !metaMaskWalletConnecting) ? '#f6851b' : '#ccc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting) ? 'not-allowed' : 'pointer',
-                  opacity: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting) ? (metaMaskAssetConnected ? 1 : 0.6) : 1,
-                  pointerEvents: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting) ? 'none' : 'auto',
-                }}
-              >
+                                   (metaMaskWalletConnecting && !isConnectingBase) ? '#ffc107' :
+                                   (isConnectingBase || baseWalletConnecting) ? '#ccc' :
+                                   (email && !metaMaskAssetConnected && !metaMaskAssetConnecting && !metaMaskWalletConnecting && !isConnectingBase) ? '#f6851b' : '#ccc',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+                  cursor: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingBase) ? 'not-allowed' : 'pointer',
+                  opacity: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingBase) ? (metaMaskAssetConnected ? 1 : 0.6) : 1,
+                  pointerEvents: (!email || metaMaskAssetConnected || metaMaskAssetConnecting || metaMaskWalletConnecting || isConnectingBase) ? 'none' : 'auto',
+          }}
+        >
                 {(() => {
                   // Button state comes ONLY from backend JSON boolean fields
-                  // PRIORITY 1: Check if wallet is connecting (highest priority for instant UI)
+                  // PRIORITY 0: If Base is connecting, show default text (button is disabled)
+                  if (isConnectingBase || baseWalletConnecting) {
+                    return 'CONNECT ETHEREUM WITH METAMASK';
+                  }
+                  // PRIORITY 1: Check if THIS wallet is connecting (highest priority for instant UI)
+                  console.log('[VavityTester Button Text] metaMaskWalletConnecting:', metaMaskWalletConnecting, 'metaMaskWalletConnectionCanceled:', metaMaskWalletConnectionCanceled);
                   if (metaMaskWalletConnecting) {
+                    console.log('[VavityTester Button Text] RETURNING CONNECTING because metaMaskWalletConnecting is true');
                     return 'CONNECTING...';
                   }
                   // PRIORITY 2: Check asset connection state
@@ -1216,7 +1223,7 @@ const VavityTester: React.FC = () => {
                   // PRIORITY 4: Default - show connect button
                   return 'CONNECT ETHEREUM WITH METAMASK';
                 })()}
-              </button>
+        </button>
           <button
                 onClick={handleConnectBase}
                 disabled={
@@ -1232,7 +1239,8 @@ const VavityTester: React.FC = () => {
                   fontWeight: 'bold',
                   backgroundColor: baseAssetConnected ? '#28a745' : 
                                    baseAssetConnecting ? '#ffc107' :
-                                   baseWalletConnecting ? '#ffc107' :
+                                   (baseWalletConnecting && !isConnectingMetaMask) ? '#ffc107' :
+                                   (isConnectingMetaMask || metaMaskWalletConnecting) ? '#ccc' :
                                    (email && !isConnectingMetaMask && !baseAssetConnected && !baseAssetConnecting && !baseWalletConnecting) ? '#0052ff' : '#ccc',
             color: 'white',
             border: 'none',
@@ -1244,7 +1252,11 @@ const VavityTester: React.FC = () => {
         >
                 {(() => {
                   // Button state comes ONLY from backend JSON boolean fields
-                  // PRIORITY 1: Check if wallet is connecting (highest priority for instant UI)
+                  // PRIORITY 0: If MetaMask is connecting, show default text (button is disabled)
+                  if (isConnectingMetaMask || metaMaskWalletConnecting) {
+                    return 'CONNECT ETHEREUM WITH BASE';
+                  }
+                  // PRIORITY 1: Check if THIS wallet is connecting (highest priority for instant UI)
                   if (baseWalletConnecting) {
                     return 'CONNECTING...';
                   }
@@ -1373,5 +1385,5 @@ const VavityTester: React.FC = () => {
     </div>
   );
 };
-
 export default VavityTester;
+
