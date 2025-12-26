@@ -240,23 +240,34 @@ const VavityTester: React.FC = () => {
           }, 1000); // Small delay to ensure page is loaded
         }
         
+        // CRITICAL: Check for wallet connection in progress (walletConnecting: true) for Base
+        // Show alert if Base wallet connection is in progress after page reload
+        const baseWalletConnecting = baseConnOnMount?.walletConnecting === true;
+        if (baseWalletConnecting && !baseConnOnMount?.walletConnectionCanceled && !baseConnOnMount?.walletConnected) {
+          setTimeout(() => {
+            alert('Pending Base wallet connection. Please check your wallet extension to complete the connection.');
+          }, 1000); // Small delay to ensure page is loaded
+        }
+        
           // CRITICAL: Check for cancelled connections FIRST - if any exist, don't show alert
           const hasCancelledConnections = pendingConnections.some(
             (pc: any) => pc.assetConnectionCancelled === true
           );
         
-        // Only show alert for MetaMask pending connections after reload
-        // For Base/Coinbase wallet, NO alert - button will just change back
+        // Show alert for both MetaMask and Base pending connections after reload
         if (!hasCancelledConnections && activePending.length > 0) {
           const shouldShowAlert = activePending.some((pc: any) => {
             // Double-check: skip if cancelled or completed (shouldn't be in activePending, but be safe)
             if (pc.assetConnectionCancelled || pc.assetConnected) return false;
-            // ONLY show alert for MetaMask - not for Base/Coinbase
+            // Show alert for both MetaMask and Base
             if (pc.walletType === 'metamask') {
               if (pc.txHash) return true; // Has transaction hash - deposit was initiated
               if (metamaskConnected) return true; // Recent and MetaMask connected
             }
-            // Base/Coinbase wallet: no alert, just let button change back
+            if (pc.walletType === 'base') {
+              if (pc.txHash) return true; // Has transaction hash - deposit was initiated
+              if (baseConnected) return true; // Recent and Base connected
+            }
             return false;
           });
           

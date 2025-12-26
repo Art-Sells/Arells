@@ -189,3 +189,4 @@ Instead of polling, use WebSockets:
 4. **Rollback optimistic state** on API errors
 5. **Consider WebSockets** for future improvements
 
+

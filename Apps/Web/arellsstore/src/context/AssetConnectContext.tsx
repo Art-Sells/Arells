@@ -920,19 +920,37 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           console.log('[AssetConnect syncStateFromBackend] Changes detected in JSON, applying to UI');
           
           // If we have a recent optimistic update, check if backend confirms it
+          // CRITICAL: We need to merge backend updates with optimistic state
+          // Only preserve the optimistic field's value, but apply all other backend changes
           if (shouldRespectOptimistic && optimistic) {
             const backendConn = pendingConnections.find(
               (pc: any) => pc.walletType === optimistic.walletType
             );
             
             // CRITICAL: Different handling based on status
-            // - 'pending': API call not completed yet - skip update completely
-            // - 'sent': API succeeded, but S3 might not be ready - check if backend confirms
+            // - 'pending': API call not completed yet - merge backend but preserve optimistic field
+            // - 'sent': API succeeded, but S3 might not be ready - merge backend but preserve optimistic field if not confirmed
             // - 'confirmed': Already confirmed - use backend data
             if (optimistic.status === 'pending') {
-              // API call still in progress - skip update completely
-              console.log('[AssetConnect syncStateFromBackend] Optimistic update still pending (API call in progress), SKIPPING update');
-              return currentBackendConnections;
+              // API call still in progress - merge backend updates but preserve optimistic field
+              console.log('[AssetConnect syncStateFromBackend] Optimistic update still pending (API call in progress), merging backend updates but preserving optimistic field');
+              
+              // Merge: Use backend data but preserve the optimistic field from current state
+              const merged = pendingConnections.map((backendPc: any) => {
+                if (backendPc.walletType === optimistic.walletType) {
+                  const optimisticPc = currentBackendConnections.find(
+                    (pc: any) => pc.walletType === optimistic.walletType
+                  );
+                  if (optimisticPc) {
+                    return {
+                      ...backendPc,
+                      [optimistic.field]: optimisticPc[optimistic.field], // Preserve optimistic field
+                    };
+                  }
+                }
+                return backendPc; // Use backend data for all other connections and fields
+              });
+              return merged;
             }
             
             if (optimistic.status === 'sent' && optimistic.sentAt) {
@@ -957,11 +975,27 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
                   optimisticUpdateRef.current = null;
                   return pendingConnections; // Use backend data - it's confirmed
                 } else {
-                  // Backend hasn't confirmed yet
+                  // Backend hasn't confirmed yet - merge but preserve optimistic field
                   if (timeSinceSent < 1000) {
-                    // Still within reasonable time (1 second) - keep optimistic state
-                    console.log('[AssetConnect syncStateFromBackend] Backend hasn\'t confirmed yet (sent', timeSinceSent, 'ms ago), keeping optimistic state');
-                    return currentBackendConnections; // Keep optimistic state
+                    // Still within reasonable time (1 second) - merge backend but preserve optimistic field
+                    console.log('[AssetConnect syncStateFromBackend] Backend hasn\'t confirmed yet (sent', timeSinceSent, 'ms ago), merging backend updates but preserving optimistic field');
+                    
+                    // Merge: Use backend data but preserve the optimistic field from current state
+                    const merged = pendingConnections.map((backendPc: any) => {
+                      if (backendPc.walletType === optimistic.walletType) {
+                        const optimisticPc = currentBackendConnections.find(
+                          (pc: any) => pc.walletType === optimistic.walletType
+                        );
+                        if (optimisticPc) {
+                          return {
+                            ...backendPc,
+                            [optimistic.field]: optimisticPc[optimistic.field], // Preserve optimistic field
+                          };
+                        }
+                      }
+                      return backendPc; // Use backend data for all other connections and fields
+                    });
+                    return merged;
                   } else {
                     // Too long - something went wrong, use backend data
                     console.log('[AssetConnect syncStateFromBackend] Backend hasn\'t confirmed after 1 second, using backend data');
@@ -972,8 +1006,20 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               } else {
                 // Connection not found in backend yet
                 if (timeSinceSent < 1000) {
-                  // Still within reasonable time - keep optimistic state
-                  console.log('[AssetConnect syncStateFromBackend] Connection not found in backend yet (sent', timeSinceSent, 'ms ago), preserving optimistic state');
+                  // Still within reasonable time - keep optimistic state but merge other connections
+                  console.log('[AssetConnect syncStateFromBackend] Connection not found in backend yet (sent', timeSinceSent, 'ms ago), preserving optimistic state but merging other connections');
+                  
+                  // Merge: Keep optimistic connection, but add any new connections from backend
+                  const optimisticPc = currentBackendConnections.find(
+                    (pc: any) => pc.walletType === optimistic.walletType
+                  );
+                  if (optimisticPc) {
+                    // Keep optimistic connection, add other backend connections
+                    const otherBackendConnections = pendingConnections.filter(
+                      (pc: any) => pc.walletType !== optimistic.walletType
+                    );
+                    return [optimisticPc, ...otherBackendConnections];
+                  }
                   return currentBackendConnections;
                 } else {
                   // Too long - something went wrong
