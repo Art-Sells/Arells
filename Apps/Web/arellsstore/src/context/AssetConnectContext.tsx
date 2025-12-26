@@ -817,7 +817,10 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         // If so, only update if backend confirms it OR if optimistic update is older than 2 seconds
         const optimistic = optimisticUpdateRef.current;
         const timeSinceOptimistic = optimistic ? Date.now() - optimistic.timestamp : Infinity;
-        const shouldRespectOptimistic = optimistic && timeSinceOptimistic < 2000;
+        // CRITICAL: Extend the window to 3 seconds for 'pending' status to account for React state update delays
+        const shouldRespectOptimistic = optimistic && (
+          optimistic.status === 'pending' ? timeSinceOptimistic < 3000 : timeSinceOptimistic < 2000
+        );
         
         // CRITICAL: Compare fetched JSON with current backendConnections to detect changes
         // Only update UI if there are actual changes in boolean values
@@ -888,29 +891,36 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             );
             
             // CRITICAL: Different handling based on status
-            // - 'pending': API call not completed yet - merge backend but preserve optimistic field
+            // - 'pending': API call not completed yet - preserve optimistic state completely
             // - 'sent': API succeeded, but S3 might not be ready - merge backend but preserve optimistic field if not confirmed
             // - 'confirmed': Already confirmed - use backend data
             if (optimistic.status === 'pending') {
-              // API call still in progress - merge backend updates but preserve optimistic field
-              console.log('[AssetConnect syncStateFromBackend] Optimistic update still pending (API call in progress), merging backend updates but preserving optimistic field');
+              // API call still in progress - preserve optimistic state completely
+              console.log('[AssetConnect syncStateFromBackend] Optimistic update still pending (API call in progress), preserving optimistic state completely');
               
-              // Merge: Use backend data but preserve the optimistic field from current state
-              const merged = pendingConnections.map((backendPc: any) => {
-                if (backendPc.walletType === optimistic.walletType) {
-                  const optimisticPc = currentBackendConnections.find(
-                    (pc: any) => pc.walletType === optimistic.walletType
-                  );
-                  if (optimisticPc) {
-                    return {
-                      ...backendPc,
-                      [optimistic.field]: optimisticPc[optimistic.field], // Preserve optimistic field
-                    };
-                  }
-                }
-                return backendPc; // Use backend data for all other connections and fields
-              });
-              return merged;
+              // CRITICAL: When status is 'pending', the API call hasn't even completed yet
+              // So backend definitely doesn't have the update - preserve optimistic state completely
+              // Use functional setState to get the absolute latest state (avoids stale closure)
+              const optimisticPc = currentBackendConnections.find(
+                (pc: any) => pc.walletType === optimistic.walletType
+              );
+              
+              if (optimisticPc) {
+                // CRITICAL: Replace backend connection of same walletType with optimistic one
+                // Filter out backend connection of same walletType to avoid duplicates
+                // This ensures optimistic state (walletConnecting: true, walletConnectionCanceled: false) is preserved
+                const otherBackendConnections = pendingConnections.filter(
+                  (pc: any) => pc.walletType !== optimistic.walletType
+                );
+                // Put optimistic connection first to ensure it's used
+                return [optimisticPc, ...otherBackendConnections];
+              } else {
+                // Optimistic connection not found in current state
+                // This can happen if polling runs before React processes the optimistic update
+                // In this case, skip this update entirely to avoid overwriting the optimistic update
+                console.log('[AssetConnect syncStateFromBackend] Optimistic connection not found yet (React state update pending), skipping this polling cycle');
+                return currentBackendConnections; // Keep current state, don't update
+              }
             }
             
             if (optimistic.status === 'sent' && optimistic.sentAt) {
