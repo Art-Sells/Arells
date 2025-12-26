@@ -576,16 +576,63 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // CRITICAL: This marks ALL pending connections for the wallet type, regardless of address
   // This ensures cancellation works even after page reload when address might not match
   // cancellationType: 'wallet' = wallet connection cancelled, 'asset' = deposit/asset connection cancelled
+  // CRITICAL: Optimistic update happens FIRST (synchronously) for instant UI feedback
+  // Then API calls happen in background (non-blocking)
   const markPendingConnectionAsCancelled = async (address: string | null, walletType: 'metamask' | 'base', cancellationType: 'wallet' | 'asset' = 'asset') => {
     console.log('[AssetConnect markPendingConnectionAsCancelled] FUNCTION CALLED with:', { address, walletType, email, hasEmail: !!email });
     if (!email) {
       console.error('[AssetConnect markPendingConnectionAsCancelled] ERROR: No email, cannot mark as cancelled!');
       return;
     }
-    try {
-      // Fetch existing connections
-      const response = await axios.get('/api/savePendingConnection', { params: { email } });
-      const pendingConnections = response.data.pendingConnections || [];
+    
+    // CRITICAL: Do optimistic update FIRST (synchronously) using current backendConnections state
+    // This ensures instant UI feedback before any async operations
+    setBackendConnections((prev: any[]) => {
+      return prev.map((pc: any) => {
+        if (pc.walletType === walletType) {
+          if (cancellationType === 'wallet') {
+            return {
+              ...pc,
+              walletConnectionCanceled: true,
+              walletConnecting: false,
+            };
+          } else {
+            // For asset cancellation, match by address if provided
+            if (address && pc.address?.toLowerCase() === address.toLowerCase()) {
+              return {
+                ...pc,
+                assetConnectionCancelled: true,
+                assetConnecting: false,
+              };
+            } else if (!address) {
+              // If no address provided, cancel all of this wallet type
+              return {
+                ...pc,
+                assetConnectionCancelled: true,
+                assetConnecting: false,
+              };
+            }
+          }
+        }
+        return pc;
+      });
+    });
+    
+    // Mark as optimistic update immediately
+    optimisticUpdateRef.current = {
+      walletType: walletType,
+      field: cancellationType === 'wallet' ? 'walletConnectionCanceled' : 'assetConnectionCancelled',
+      expectedValue: true,
+      status: 'pending',
+      timestamp: Date.now()
+    };
+    
+    // Now do API calls in background (non-blocking)
+    (async () => {
+      try {
+        // Fetch existing connections
+        const response = await axios.get('/api/savePendingConnection', { params: { email } });
+        const pendingConnections = response.data.pendingConnections || [];
       console.log('[AssetConnect markPendingConnectionAsCancelled] Found connections:', pendingConnections.length);
       console.log('[AssetConnect markPendingConnectionAsCancelled] ALL connections in backend:', pendingConnections.map((pc: any) => ({
         address: pc.address,
@@ -646,63 +693,17 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           if (cancellationType === 'wallet') {
             updatedConnection.walletConnectionCanceled = true;
             updatedConnection.walletConnecting = false; // CRITICAL: Stop wallet connecting when cancelled
-            
-            // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
-            setBackendConnections((prev: any[]) => {
-              return prev.map((pc: any) => {
-                if (pc.walletType === walletType) {
-                  return {
-                    ...pc,
-                    walletConnectionCanceled: true,
-                    walletConnecting: false,
-                  };
-                }
-                return pc;
-              });
-            });
-            
-            // Mark as optimistic update
-            optimisticUpdateRef.current = {
-              walletType: walletType,
-              field: 'walletConnectionCanceled',
-              expectedValue: true,
-              status: 'pending',
-              timestamp: Date.now()
-            };
-            
             console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting walletConnectionCanceled=true and walletConnecting=false for wallet cancellation`);
           } else {
             updatedConnection.assetConnectionCancelled = true;
             updatedConnection.assetConnecting = false; // Stop asset connecting when cancelled
-            
-            // OPTIMISTIC UPDATE: Update UI immediately for instant feedback
-            setBackendConnections((prev: any[]) => {
-              return prev.map((pc: any) => {
-                if (pc.walletType === walletType && pc.address?.toLowerCase() === connectionToCancel.address?.toLowerCase()) {
-                  return {
-                    ...pc,
-                    assetConnectionCancelled: true,
-                    assetConnecting: false,
-                  };
-                }
-                return pc;
-              });
-            });
-            
-            // Mark as optimistic update
-            optimisticUpdateRef.current = {
-              walletType: walletType,
-              field: 'assetConnectionCancelled',
-              expectedValue: true,
-              status: 'pending',
-              timestamp: Date.now()
-            };
-            
             console.log(`[AssetConnect markPendingConnectionAsCancelled] Setting assetConnectionCancelled=true and assetConnecting=false for asset cancellation`);
           }
           console.log(`[AssetConnect markPendingConnectionAsCancelled] POSTing updated connection (${cancellationType} cancellation):`, JSON.stringify(updatedConnection, null, 2));
           console.log(`[AssetConnect markPendingConnectionAsCancelled] CRITICAL: walletConnectionCanceled=${updatedConnection.walletConnectionCanceled}, walletConnecting=${updatedConnection.walletConnecting}, assetConnectionCancelled=${updatedConnection.assetConnectionCancelled}, assetConnecting=${updatedConnection.assetConnecting}`);
           
+          // CRITICAL: Do API call in background (non-blocking) so optimistic update is instant
+          // The optimistic update already happened at the start of the function, so UI updates immediately
           try {
             const response = await axios.post('/api/savePendingConnection', {
               email,
@@ -717,12 +718,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             
             console.log('[AssetConnect] POST response:', response.status, response.data);
             console.log('[AssetConnect] Marked connection as cancelled in backend:', connectionToCancel.address, walletType);
-            
-            // Wait for S3 propagation (200-300ms)
-            await new Promise(resolve => setTimeout(resolve, 250));
-            
-            // CRITICAL: Wait a moment for S3 to propagate before verifying
-            await new Promise(resolve => setTimeout(resolve, 750)); // Total 1 second wait
           } catch (apiError) {
             // Rollback optimistic update on API error
             console.error('[AssetConnect] Error updating backend for cancellation:', apiError);
@@ -757,60 +752,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             }
             
             optimisticUpdateRef.current = null;
-            throw apiError; // Re-throw to let caller handle it
-          }
-          
-          // Verify it was saved by fetching again - check ALL connections to see what's actually in backend
-          try {
-            const verifyResponse = await axios.get('/api/savePendingConnection', { params: { email } });
-            const verifyConnections = verifyResponse.data.pendingConnections || [];
-            console.log('[AssetConnect] Verification - ALL connections in backend:', verifyConnections.map((pc: any) => ({
-              address: pc.address,
-              walletType: pc.walletType,
-              assetConnectionCancelled: pc.assetConnectionCancelled,
-              assetConnected: pc.assetConnected
-            })));
-            
-            const verifyConn = verifyConnections.find(
-              (pc: any) => pc.address?.toLowerCase() === connectionToCancel.address.toLowerCase() && pc.walletType === walletType
-            );
-            if (verifyConn) {
-              console.log('[AssetConnect] Verification - connection after save:', {
-                address: verifyConn.address,
-                walletType: verifyConn.walletType,
-                walletConnectionCanceled: verifyConn.walletConnectionCanceled,
-                walletConnecting: verifyConn.walletConnecting,
-                assetConnectionCancelled: verifyConn.assetConnectionCancelled,
-                assetConnecting: verifyConn.assetConnecting,
-                assetConnected: verifyConn.assetConnected,
-                ALL_FIELDS: verifyConn
-              });
-              
-              // Verify wallet cancellation
-              if (cancellationType === 'wallet') {
-                if (!verifyConn.walletConnectionCanceled) {
-                  console.error(`[AssetConnect] ERROR: walletConnectionCanceled is NOT true after save! Connection:`, verifyConn);
-                }
-                if (verifyConn.walletConnecting !== false) {
-                  console.error(`[AssetConnect] ERROR: walletConnecting is NOT false after wallet cancellation! Expected false, got:`, verifyConn.walletConnecting, 'Connection:', verifyConn);
-                }
-              } else {
-                // Verify asset cancellation
-                if (!verifyConn.assetConnectionCancelled) {
-                  console.error(`[AssetConnect] ERROR: assetConnectionCancelled is NOT true after save! Connection:`, verifyConn);
-                }
-                if (verifyConn.assetConnecting !== false) {
-                  console.error(`[AssetConnect] ERROR: assetConnecting is NOT false after asset cancellation! Expected false, got:`, verifyConn.assetConnecting, 'Connection:', verifyConn);
-                }
-              }
-            } else {
-              console.error('[AssetConnect] ERROR: Connection NOT FOUND after save! Expected:', {
-                address: connectionToCancel.address,
-                walletType: walletType
-              });
-            }
-          } catch (verifyErr) {
-            console.error('[AssetConnect] Error verifying cancellation:', verifyErr);
           }
         } else {
           console.log('[AssetConnect markPendingConnectionAsCancelled] Connection already cancelled:', connectionToCancel.address);
@@ -820,10 +761,11 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       if (connectionsToCancel.length === 0) {
         console.log('[AssetConnect] No connections found to mark as cancelled for:', walletType);
       }
-    } catch (error) {
-      console.error('[AssetConnect] Error marking pending connection as cancelled:', error);
-      // Don't throw - we still want to set cancellation refs even if backend update fails
-    }
+      } catch (error) {
+        console.error('[AssetConnect] Error marking pending connection as cancelled:', error);
+        // Don't throw - we still want to set cancellation refs even if backend update fails
+      }
+    })();
   };
 
   const removePendingConnectionFromBackend = async (address: string, walletType: 'metamask' | 'base') => {

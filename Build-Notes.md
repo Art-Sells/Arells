@@ -8,6 +8,7 @@
 VavityTester:
 - Connect Ethereum with Metamask/Base to begin.
 - When fixing price mechanism, stop git
+- Wallet back-end and front-end connection issues resolved, trace back to this for fixing wallet cancelation issues
 
 In the json do this after the json is creationed:
 
