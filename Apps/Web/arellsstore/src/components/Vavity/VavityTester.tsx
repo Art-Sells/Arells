@@ -629,13 +629,9 @@ const VavityTester: React.FC = () => {
     setSuccess(null);
     setConnectedAddress(''); // Clear previous address
 
-    // CRITICAL: Set connecting state IMMEDIATELY at the very start (before any async operations)
-    // This triggers instant UI update via local state in setIsConnecting
-    if (walletType === 'metamask') {
-      setIsConnectingMetaMask(true);
-    } else {
-      setIsConnectingBase(true);
-    }
+    // NOTE: Do NOT call setIsConnectingMetaMask/setIsConnectingBase here
+    // connectAsset() in AssetConnectContext already calls it, and calling it twice causes
+    // the same connection to be updated twice, leading to flickering
 
     // CRITICAL: Ensure JSON file exists when button is clicked (create if it doesn't exist)
     // This ensures the file structure is ready before we save any connections
