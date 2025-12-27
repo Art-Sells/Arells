@@ -646,69 +646,164 @@ const VavityTester: React.FC = () => {
         const response = await axios.get('/api/savePendingConnection', { params: { email } });
         const existingConnections = response.data.pendingConnections || [];
       
-        // If file doesn't exist or is empty, create it by making a POST with a temporary connection
+        // If file doesn't exist or is empty, create it by making POSTs with temporary connections for BOTH wallet types
         // The API will create the file structure when we POST
         // We'll update this with the real connection data immediately after
         if (existingConnections.length === 0) {
-          console.log('[VavityTester] JSON file doesn\'t exist, creating it...');
-          // Create a temporary connection that will be updated with real data
+          console.log('[VavityTester] JSON file doesn\'t exist, creating it with entries for both MetaMask and Base...');
+          // Create temporary connections for BOTH wallet types
           // Use a placeholder address that we'll replace when we get the real wallet address
           const tempAddress = '0x0000000000000000000000000000000000000000';
-          const tempWalletId = `temp-init-${Date.now()}`;
+          const baseTimestamp = Date.now();
+          const metamaskTimestamp = baseTimestamp + 1; // Slightly different timestamps
           
           try {
+            // Create Base entry
+            const baseWalletConnecting = walletType === 'base'; // Only true if Base button clicked
+            console.log('[VavityTester] Creating Base entry with walletConnecting:', baseWalletConnecting, 'walletType param:', walletType);
             await axios.post('/api/savePendingConnection', {
               email,
               pendingConnection: {
                 address: tempAddress,
-                walletId: tempWalletId,
-                walletType: walletType,
-                timestamp: Date.now(),
-                // Wallet connection states - button was just clicked
+                walletId: `temp-init-base-${baseTimestamp}`,
+                walletType: 'base',
+                timestamp: baseTimestamp,
+                // Wallet connection states - only true if Base button was clicked
                 walletConnected: false,
                 walletConnectionCanceled: false,
-                walletConnecting: true,
+                walletConnecting: baseWalletConnecting,
                 // Asset connection states - not started yet
                 assetConnected: false,
                 assetConnectionCancelled: false,
                 assetConnecting: false,
               },
             });
-            console.log('[VavityTester] JSON file created successfully');
+            
+            // Create MetaMask entry
+            const metamaskWalletConnecting = walletType === 'metamask'; // Only true if MetaMask button clicked
+            console.log('[VavityTester] Creating MetaMask entry with walletConnecting:', metamaskWalletConnecting, 'walletType param:', walletType);
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: {
+                address: tempAddress,
+                walletId: `temp-init-metamask-${metamaskTimestamp}`,
+                walletType: 'metamask',
+                timestamp: metamaskTimestamp,
+                // Wallet connection states - only true if MetaMask button was clicked
+                walletConnected: false,
+                walletConnectionCanceled: false,
+                walletConnecting: metamaskWalletConnecting,
+                // Asset connection states - not started yet
+                assetConnected: false,
+                assetConnectionCancelled: false,
+                assetConnecting: false,
+              },
+            });
+            
+            console.log('[VavityTester] JSON file created successfully with both MetaMask and Base entries');
             jsonFileJustCreated = true;
-            // The temporary connection will be replaced/updated when we save the real connection
-            // The API filters by address+walletType, so the real connection will replace this one
+            // The temporary connections will be replaced/updated when we save the real connections
+            // The API filters by address+walletType, so the real connections will replace these
           } catch (createError) {
             console.error('[VavityTester] Error creating JSON file:', createError);
             // Continue anyway - the file will be created when we save the first connection
           }
         } else {
           console.log('[VavityTester] JSON file already exists with', existingConnections.length, 'connections');
+          
+          // Ensure both wallet types exist in the JSON
+          const hasMetaMask = existingConnections.some((pc: any) => pc.walletType === 'metamask');
+          const hasBase = existingConnections.some((pc: any) => pc.walletType === 'base');
+          
+          if (!hasMetaMask) {
+            console.log('[VavityTester] MetaMask entry missing, creating it...');
+            try {
+              await axios.post('/api/savePendingConnection', {
+                email,
+                pendingConnection: {
+                  address: '0x0000000000000000000000000000000000000000',
+                  walletId: `temp-init-metamask-${Date.now()}`,
+                  walletType: 'metamask',
+                  timestamp: Date.now(),
+                  walletConnected: false,
+                  walletConnectionCanceled: false,
+                  walletConnecting: walletType === 'metamask', // Only true if MetaMask button clicked
+                  assetConnected: false,
+                  assetConnectionCancelled: false,
+                  assetConnecting: false,
+                },
+              });
+            } catch (err) {
+              console.error('[VavityTester] Error creating MetaMask entry:', err);
+            }
+          }
+          
+          if (!hasBase) {
+            console.log('[VavityTester] Base entry missing, creating it...');
+            try {
+              await axios.post('/api/savePendingConnection', {
+                email,
+                pendingConnection: {
+                  address: '0x0000000000000000000000000000000000000000',
+                  walletId: `temp-init-base-${Date.now()}`,
+                  walletType: 'base',
+                  timestamp: Date.now(),
+                  walletConnected: false,
+                  walletConnectionCanceled: false,
+                  walletConnecting: walletType === 'base', // Only true if Base button clicked
+                  assetConnected: false,
+                  assetConnectionCancelled: false,
+                  assetConnecting: false,
+                },
+              });
+            } catch (err) {
+              console.error('[VavityTester] Error creating Base entry:', err);
+            }
+          }
         }
       } catch (error: any) {
-        // If GET fails, try to create the file anyway
-        console.log('[VavityTester] Error checking JSON file, attempting to create it...', error?.message);
+        // If GET fails, try to create the file anyway with entries for BOTH wallet types
+        console.log('[VavityTester] Error checking JSON file, attempting to create it with both MetaMask and Base entries...', error?.message);
         try {
           const tempAddress = '0x0000000000000000000000000000000000000000';
-          const tempWalletId = `temp-init-${Date.now()}`;
+          const baseTimestamp = Date.now();
+          const metamaskTimestamp = baseTimestamp + 1;
+          
+          // Create Base entry
           await axios.post('/api/savePendingConnection', {
             email,
             pendingConnection: {
               address: tempAddress,
-              walletId: tempWalletId,
-              walletType: walletType,
-              timestamp: Date.now(),
-              // Wallet connection states - button was just clicked
+              walletId: `temp-init-base-${baseTimestamp}`,
+              walletType: 'base',
+              timestamp: baseTimestamp,
               walletConnected: false,
               walletConnectionCanceled: false,
-              walletConnecting: true,
-              // Asset connection states - not started yet
+              walletConnecting: walletType === 'base', // Only true if Base button clicked
               assetConnected: false,
               assetConnectionCancelled: false,
               assetConnecting: false,
             },
           });
-          console.log('[VavityTester] JSON file created after error check');
+          
+          // Create MetaMask entry
+          await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: {
+              address: tempAddress,
+              walletId: `temp-init-metamask-${metamaskTimestamp}`,
+              walletType: 'metamask',
+              timestamp: metamaskTimestamp,
+              walletConnected: false,
+              walletConnectionCanceled: false,
+              walletConnecting: walletType === 'metamask', // Only true if MetaMask button clicked
+              assetConnected: false,
+              assetConnectionCancelled: false,
+              assetConnecting: false,
+            },
+          });
+          
+          console.log('[VavityTester] JSON file created after error check with both MetaMask and Base entries');
           jsonFileJustCreated = true;
         } catch (createError) {
           console.error('[VavityTester] Error creating JSON file after error:', createError);
