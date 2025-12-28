@@ -26,22 +26,12 @@ interface PendingConnection {
 
   
 
-  // Wallet connection states
-
+  // Wallet connection states (4-boolean system)
   walletConnected: boolean; // true after successful wallet connection, false after disconnection
-
-  walletConnectionCanceled: boolean; // true after wallet connection canceled, false when button clicked again
-
   walletConnecting: boolean; // true when connecting, false when walletConnected is true or after cancel
 
-  
-
-  // Asset connection states (replacing depositCompleted/depositCancelled)
-
+  // Asset connection states (4-boolean system)
   assetConnected: boolean; // true after successful asset connection (deposit), false after disconnection
-
-  assetConnectionCancelled: boolean; // true after asset connection canceled, false when deposit button clicked again
-
   assetConnecting: boolean; // true when deposit is clicked, false after deposit completes or cancels
 
 }
@@ -140,23 +130,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       
 
+      // CRITICAL: Remove old cancellation fields (4-boolean system only)
+      delete (cleanPendingConnection as any).walletConnectionCanceled;
+      delete (cleanPendingConnection as any).assetConnectionCancelled;
+      
       const connectionToAdd: any = {
 
         ...cleanPendingConnection,
 
         timestamp: cleanPendingConnection.timestamp || Date.now(),
 
-        // Default values for new boolean fields if not provided (backward compatibility)
+        // Default values for 4-boolean system only (no cancellation booleans)
 
         walletConnected: (cleanPendingConnection as any).walletConnected ?? false,
-
-        walletConnectionCanceled: (cleanPendingConnection as any).walletConnectionCanceled ?? false,
 
         walletConnecting: (cleanPendingConnection as any).walletConnecting ?? false,
 
         assetConnected: (cleanPendingConnection as any).assetConnected ?? false,
-
-        assetConnectionCancelled: (cleanPendingConnection as any).assetConnectionCancelled ?? false,
 
         assetConnecting: (cleanPendingConnection as any).assetConnecting ?? false,
 
@@ -186,53 +176,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       
 
-      // CRITICAL: Ensure state consistency - if walletConnectionCanceled is true, walletConnecting must be false
-
-      if (connectionToAdd.walletConnectionCanceled === true) {
-
+      // CRITICAL: Ensure state consistency - if walletConnected is true, walletConnecting must be false
+      if (connectionToAdd.walletConnected === true) {
         connectionToAdd.walletConnecting = false;
-
-        console.log('[savePendingConnection] Enforcing consistency: walletConnectionCanceled=true, setting walletConnecting=false');
-
       }
-
-      // CRITICAL: Ensure state consistency - if assetConnectionCancelled is true, assetConnecting must be false
-
-      if (connectionToAdd.assetConnectionCancelled === true) {
-
+      // CRITICAL: Ensure state consistency - if assetConnected is true, assetConnecting must be false
+      if (connectionToAdd.assetConnected === true) {
         connectionToAdd.assetConnecting = false;
-
-        console.log('[savePendingConnection] Enforcing consistency: assetConnectionCancelled=true, setting assetConnecting=false');
-
       }
-
-      
 
       pendingConnections.push(connectionToAdd);
-
-      
-
-      // Log for debugging state updates
-
-      if (connectionToAdd.assetConnectionCancelled || connectionToAdd.walletConnectionCanceled) {
-
-        console.log('[savePendingConnection] Marking connection as cancelled:', {
-
-          address: connectionToAdd.address,
-
-          walletType: connectionToAdd.walletType,
-
-          walletConnectionCanceled: connectionToAdd.walletConnectionCanceled,
-
-          walletConnecting: connectionToAdd.walletConnecting,
-
-          assetConnectionCancelled: connectionToAdd.assetConnectionCancelled,
-
-          assetConnecting: connectionToAdd.assetConnecting
-
-        });
-
-      }
 
 
 

@@ -197,14 +197,15 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // Setters for connecting state - these update backend JSON only
   // CRITICAL: Optimistic updates happen FIRST (synchronously) for instant UI feedback
   // Then API calls happen in background (non-blocking)
+  // DECOUPLED: Only handles MetaMask connection - Base is handled independently
   const setIsConnectingMetaMask = useCallback(async (isConnecting: boolean) => {
     if (!email) return;
     
     // CRITICAL: Do optimistic update FIRST (synchronously) before any async operations
     // This ensures instant UI feedback
-    // CRITICAL: Update BOTH MetaMask AND Base walletConnecting booleans - they must stay in sync
+    // DECOUPLED: Only update MetaMask walletConnecting boolean, but ensure BOTH connections exist
     setBackendConnections((prev: any[]) => {
-      // Find both MetaMask and Base connections
+      // Find both MetaMask and Base connections (both should exist)
       const metamaskConnections = prev.filter((pc: any) => pc.walletType === 'metamask');
       const baseConnections = prev.filter((pc: any) => pc.walletType === 'base');
       
@@ -223,43 +224,25 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
       }
       
-      // Find Base connection
+      // Find Base connection (to ensure it exists, but don't update its walletConnecting)
       if (baseConnections.length > 0) {
-        const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
-        if (activeConn) {
-          baseConn = activeConn;
-        } else {
-          baseConn = baseConnections.reduce((latest, current) => 
-            (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
-          );
-        }
+        baseConn = baseConnections.reduce((latest, current) => 
+          (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+        );
       }
       
       let updated = [...prev];
       
-      // Update MetaMask connection
+      // Update MetaMask connection walletConnecting boolean only
       if (metamaskConn) {
         const updatedMetaMask = {
           ...metamaskConn,
-          walletConnecting: isConnecting && !metamaskConn.walletConnected,
+          walletConnecting: isConnecting ? (!metamaskConn.walletConnected) : false,
         };
         updated = updated.filter((pc: any) => !(pc.walletType === 'metamask' && pc.address === metamaskConn.address));
         updated.push(updatedMetaMask);
-      }
-      
-      // Update Base connection (same walletConnecting value as MetaMask)
-      if (baseConn) {
-        const updatedBase = {
-          ...baseConn,
-          walletConnecting: isConnecting && !baseConn.walletConnected, // Same value as MetaMask
-        };
-        updated = updated.filter((pc: any) => !(pc.walletType === 'base' && pc.address === baseConn.address));
-        updated.push(updatedBase);
-      }
-      
-      // If neither connection exists, create both
-      if (!metamaskConn && !baseConn) {
-        // No connection exists yet - create BOTH MetaMask and Base optimistically
+      } else {
+        // If MetaMask connection doesn't exist, create it
         const tempAddress = '0x0000000000000000000000000000000000000000';
         const now = Date.now();
         const newMetaMaskConnection = {
@@ -272,23 +255,30 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           assetConnected: false,
           assetConnecting: false,
         };
+        updated.push(newMetaMaskConnection);
+      }
+      
+      // Ensure Base connection exists (but don't update its walletConnecting boolean)
+      if (!baseConn) {
+        const tempAddress = '0x0000000000000000000000000000000000000000';
+        const now = Date.now();
         const newBaseConnection = {
           address: tempAddress,
           walletId: `temp-connecting-base-${now + 1}`,
           walletType: 'base' as const,
           timestamp: now + 1,
           walletConnected: false,
-          walletConnecting: isConnecting, // Same value as MetaMask
+          walletConnecting: false, // Keep Base walletConnecting as false (independent)
           assetConnected: false,
           assetConnecting: false,
         };
-        return [...prev, newMetaMaskConnection, newBaseConnection];
+        updated.push(newBaseConnection);
       }
       
-      console.log('[AssetConnect setIsConnectingMetaMask] Optimistic update - BOTH wallet types:', {
+      console.log('[AssetConnect setIsConnectingMetaMask] Optimistic update - MetaMask walletConnecting updated, Base connection ensured:', {
         isConnecting,
-        metamask: metamaskConn ? { walletId: metamaskConn.walletId, walletConnecting: isConnecting && !metamaskConn.walletConnected } : 'not found',
-        base: baseConn ? { walletId: baseConn.walletId, walletConnecting: isConnecting && !baseConn.walletConnected } : 'not found'
+        metamask: metamaskConn ? { walletId: metamaskConn.walletId, walletConnecting: isConnecting ? (!metamaskConn.walletConnected) : false } : 'created new',
+        base: baseConn ? { walletId: baseConn.walletId, walletConnecting: baseConn.walletConnecting } : 'created new (walletConnecting: false)'
       });
       
       return updated;
@@ -306,9 +296,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     
     // Now do API calls - AWAIT to ensure they complete
     // This ensures the JSON is created before the wallet connection proceeds
-    // Store the promise so we can await it if needed
+    // DECOUPLED: Only update MetaMask walletConnecting boolean, but ensure BOTH connections exist
     const backendUpdatePromise = (async () => {
-      console.log('[AssetConnect setIsConnectingMetaMask] 🚀 Starting async backend update, isConnecting:', isConnecting, 'email:', email);
+      console.log('[AssetConnect setIsConnectingMetaMask] 🚀 Starting async backend update (MetaMask walletConnecting only, but ensure both exist), isConnecting:', isConnecting, 'email:', email);
       let metamaskConn: any = null;
       let baseConn: any = null;
       
@@ -339,10 +329,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           }))
         });
         
-        // CRITICAL: Find MetaMask connection the same way optimistic update does
-        // If isConnecting is true, prefer active connection or create new one (don't reuse cancelled ones)
-        // If isConnecting is false, find any connection to update
-        // CRITICAL: Find BOTH MetaMask AND Base connections to update both walletConnecting booleans
+        // Find both MetaMask and Base connections (both should exist)
         const metamaskConnections = existingConnections.filter((pc: any) => pc.walletType === 'metamask');
         const baseConnections = existingConnections.filter((pc: any) => pc.walletType === 'base');
         console.log('[AssetConnect setIsConnectingMetaMask] Filtered connections:', {
@@ -351,35 +338,41 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         });
         
         // Find MetaMask connection
+        // CRITICAL: When isConnecting is false (cancellation), find ANY connection to update (not just active ones)
+        // When isConnecting is true, prefer active connection
         if (metamaskConnections.length > 0) {
-          const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
-          if (activeConn) {
-            metamaskConn = activeConn;
+          if (isConnecting) {
+            // When connecting, prefer active connection
+            const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
+            if (activeConn) {
+              metamaskConn = activeConn;
+            } else {
+              metamaskConn = metamaskConnections.reduce((latest, current) => 
+                (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+              );
+            }
           } else {
-            metamaskConn = metamaskConnections.reduce((latest, current) => 
-              (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
-            );
+            // When cancelling (isConnecting is false), find ANY connection to update
+            // Prefer active ones first, but if none exist, use the most recent one
+            const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
+            if (activeConn) {
+              metamaskConn = activeConn;
+            } else {
+              // No active connection - use most recent one to update
+              metamaskConn = metamaskConnections.reduce((latest, current) => 
+                (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+              );
+            }
           }
         }
         
-        // Find Base connection
-        if (baseConnections.length > 0) {
-          const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
-          if (activeConn) {
-            baseConn = activeConn;
-          } else {
-            baseConn = baseConnections.reduce((latest, current) => 
-              (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
-            );
-          }
-        }
       } catch (error: any) {
-        // GET failed (timeout, 401, 500, NoSuchKey, etc.) - treat as "file doesn't exist" and create both connections
+        // GET failed (timeout, 401, 500, NoSuchKey, etc.) - try to use current backendConnections state as fallback
         // CRITICAL: Email is still available from function parameter, not from GET response
         const isTimeout = error?.code === 'ECONNABORTED' || error?.message?.includes('timeout');
         const isFileNotFound = error?.response?.status === 404 || error?.code === 'NoSuchKey';
         
-        console.log('[AssetConnect setIsConnectingMetaMask] ⚠️ GET request failed (treating as "no connections exist", will create both):', {
+        console.log('[AssetConnect setIsConnectingMetaMask] ⚠️ GET request failed, trying to use current backendConnections state as fallback:', {
           status: error?.response?.status,
           statusText: error?.response?.statusText,
           message: error?.message,
@@ -387,22 +380,128 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           isTimeout,
           isFileNotFound,
           email: email, // Email is still available - it's from function parameter
-          note: 'Will proceed to create both MetaMask and Base connections'
+          backendConnectionsCount: backendConnections.length
         });
-        // metamaskConn and baseConn remain null, so both will be created
-        // Email is still available from the function parameter, so we can create connections
+        
+        // CRITICAL: If GET fails but we have connections in state, use them as fallback
+        // This handles the case where page reloaded and GET times out, but state still has connections
+        // Find both MetaMask and Base connections
+        if (backendConnections.length > 0) {
+          console.log('[AssetConnect setIsConnectingMetaMask] ✅ Using backendConnections state as fallback (GET failed but state has connections)');
+          const metamaskConnections = backendConnections.filter((pc: any) => pc.walletType === 'metamask');
+          const baseConnections = backendConnections.filter((pc: any) => pc.walletType === 'base');
+          
+          // Find MetaMask connection from state
+          if (metamaskConnections.length > 0) {
+            if (isConnecting) {
+              const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
+              if (activeConn) {
+                metamaskConn = activeConn;
+              } else {
+                metamaskConn = metamaskConnections.reduce((latest, current) => 
+                  (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+                );
+              }
+            } else {
+              // When cancelling, find ANY connection to update
+              const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
+              if (activeConn) {
+                metamaskConn = activeConn;
+              } else {
+                metamaskConn = metamaskConnections.reduce((latest, current) => 
+                  (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+                );
+              }
+            }
+          }
+          
+          // Find Base connection from state (to ensure it exists)
+          if (baseConnections.length > 0) {
+            baseConn = baseConnections.reduce((latest, current) => 
+              (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+            );
+          }
+          
+          console.log('[AssetConnect setIsConnectingMetaMask] ✅ Fallback complete - metamaskConn exists:', !!metamaskConn, 'baseConn exists:', !!baseConn);
+        } else {
+          console.log('[AssetConnect setIsConnectingMetaMask] ⚠️ No connections in state either - will create both connections');
+          // Both will be created
+        }
+        // Email is still available from the function parameter, so we can create/update connections
       }
       
       console.log('[AssetConnect setIsConnectingMetaMask] 🔍 After filtering - metamaskConn exists:', !!metamaskConn, 'baseConn exists:', !!baseConn);
       console.log('[AssetConnect setIsConnectingMetaMask] 🔄 Continuing to create/update connections (GET completed or failed)...');
       
-      // CRITICAL: Always ensure BOTH MetaMask AND Base connections exist
-      // Update existing ones and create missing ones
-      // Execute SEQUENTIALLY to avoid race conditions when reading/writing the same JSON file
+      // CRITICAL: If metamaskConn is null and isConnecting is false (cancellation), try multiple times to fetch from backend
+      // This ensures we find the existing MetaMask connection to update after a reload
+      if (!metamaskConn && !isConnecting) {
+        console.log('[AssetConnect setIsConnectingMetaMask] ⚠️ MetaMask connection not found but cancelling - trying multiple methods to find it');
+        
+        // Method 1: Try GET request with retry
+        try {
+          const retryResponse = await axios.get('/api/savePendingConnection', { 
+            params: { email },
+            timeout: 2000 // Increased timeout for cancellation
+          });
+          const retryConnections = retryResponse.data.pendingConnections || [];
+          const metamaskConnections = retryConnections.filter((pc: any) => pc.walletType === 'metamask');
+          if (metamaskConnections.length > 0) {
+            // Find any MetaMask connection to update (prefer active one with walletConnecting: true)
+            const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
+            metamaskConn = activeConn || metamaskConnections.reduce((latest, current) => 
+              (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+            );
+            console.log('[AssetConnect setIsConnectingMetaMask] ✅ Found MetaMask connection on GET retry:', !!metamaskConn, 'walletConnecting:', metamaskConn?.walletConnecting);
+          }
+        } catch (retryErr: any) {
+          console.log('[AssetConnect setIsConnectingMetaMask] ⚠️ GET retry failed:', retryErr?.response?.status || retryErr.message);
+        }
+        
+        // Method 2: If still not found, try backendConnections state (might have synced by now)
+        if (!metamaskConn && backendConnections.length > 0) {
+          console.log('[AssetConnect setIsConnectingMetaMask] 🔍 Trying backendConnections state (length:', backendConnections.length, ')');
+          const metamaskConnections = backendConnections.filter((pc: any) => pc.walletType === 'metamask');
+          if (metamaskConnections.length > 0) {
+            // Prefer connection with walletConnecting: true, otherwise get latest
+            const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
+            metamaskConn = activeConn || metamaskConnections.reduce((latest, current) => 
+              (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+            );
+            console.log('[AssetConnect setIsConnectingMetaMask] ✅ Found MetaMask connection in backendConnections state:', !!metamaskConn, 'walletConnecting:', metamaskConn?.walletConnecting);
+          }
+        }
+        
+        // Method 3: If still not found, wait a bit and try one more GET (backend might still be syncing)
+        if (!metamaskConn) {
+          console.log('[AssetConnect setIsConnectingMetaMask] ⏳ Connection still not found, waiting 500ms and trying one more GET...');
+          await new Promise(resolve => setTimeout(resolve, 500));
+          try {
+            const finalRetryResponse = await axios.get('/api/savePendingConnection', { 
+              params: { email },
+              timeout: 2000
+            });
+            const finalRetryConnections = finalRetryResponse.data.pendingConnections || [];
+            const finalMetamaskConnections = finalRetryConnections.filter((pc: any) => pc.walletType === 'metamask');
+            if (finalMetamaskConnections.length > 0) {
+              const activeConn = finalMetamaskConnections.find((pc: any) => pc.walletConnecting === true);
+              metamaskConn = activeConn || finalMetamaskConnections.reduce((latest, current) => 
+                (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+              );
+              console.log('[AssetConnect setIsConnectingMetaMask] ✅ Found MetaMask connection on final GET retry:', !!metamaskConn, 'walletConnecting:', metamaskConn?.walletConnecting);
+            }
+          } catch (finalRetryErr: any) {
+            console.log('[AssetConnect setIsConnectingMetaMask] ⚠️ Final GET retry also failed:', finalRetryErr?.response?.status || finalRetryErr.message);
+          }
+        }
+      }
+      
+      // CRITICAL: Ensure BOTH MetaMask AND Base connections exist
+      // But only update MetaMask walletConnecting boolean (Base stays independent)
       const tempAddress = '0x0000000000000000000000000000000000000000';
       const now = Date.now();
       
-      console.log('[AssetConnect setIsConnectingMetaMask] 📝 About to update/create connections sequentially - MetaMask exists:', !!metamaskConn, 'Base exists:', !!baseConn);
+      console.log('[AssetConnect setIsConnectingMetaMask] 📝 About to update/create connections - MetaMask exists:', !!metamaskConn, 'Base exists:', !!baseConn);
       
       try {
         // Update or create MetaMask connection FIRST
@@ -421,90 +520,97 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           });
           console.log('[AssetConnect] ✅ Backend updated MetaMask - Response status:', metaMaskResponse.status, 'walletConnecting:', updatedMetaMask.walletConnecting);
         } else {
-          // Create new MetaMask connection
-          console.log('[AssetConnect setIsConnectingMetaMask] ➕ Creating new MetaMask connection');
-          const newMetaMaskConnection = {
-            address: tempAddress,
-            walletId: `temp-init-metamask-${now}`,
-            walletType: 'metamask' as const,
-            timestamp: now,
-            walletConnected: false,
-            walletConnecting: isConnecting,
-            assetConnected: false,
-            assetConnecting: false,
-          };
-          console.log('[AssetConnect setIsConnectingMetaMask] 📤 POST /api/savePendingConnection for MetaMask (new) - Connection data:', newMetaMaskConnection);
-          try {
-            const metaMaskResponse = await axios.post('/api/savePendingConnection', {
-              email,
-              pendingConnection: newMetaMaskConnection,
-            });
-            console.log('[AssetConnect] ✅ Backend created MetaMask connection - Response status:', metaMaskResponse.status, 'walletConnecting:', isConnecting);
-          } catch (metaErr: any) {
-            console.error('[AssetConnect] ❌ Error creating MetaMask connection:', metaErr?.response?.status || metaErr.message);
-            // Don't throw here - continue to create Base connection even if MetaMask fails
-            console.log('[AssetConnect] ⚠️ Continuing to create Base connection despite MetaMask error');
+          // Create new MetaMask connection (only if isConnecting is true)
+          if (isConnecting) {
+            console.log('[AssetConnect setIsConnectingMetaMask] ➕ Creating new MetaMask connection');
+            const newMetaMaskConnection = {
+              address: tempAddress,
+              walletId: `temp-init-metamask-${now}`,
+              walletType: 'metamask' as const,
+              timestamp: now,
+              walletConnected: false,
+              walletConnecting: isConnecting,
+              assetConnected: false,
+              assetConnecting: false,
+            };
+            console.log('[AssetConnect setIsConnectingMetaMask] 📤 POST /api/savePendingConnection for MetaMask (new) - Connection data:', newMetaMaskConnection);
+            try {
+              const metaMaskResponse = await axios.post('/api/savePendingConnection', {
+                email,
+                pendingConnection: newMetaMaskConnection,
+              });
+              console.log('[AssetConnect] ✅ Backend created MetaMask connection - Response status:', metaMaskResponse.status, 'walletConnecting:', isConnecting);
+            } catch (metaErr: any) {
+              console.error('[AssetConnect] ❌ Error creating MetaMask connection:', metaErr?.response?.status || metaErr.message);
+              // Don't throw - continue to ensure Base connection exists
+              console.log('[AssetConnect] ⚠️ Continuing to ensure Base connection exists despite MetaMask error');
+            }
+          } else {
+            // Cancelling but MetaMask connection not found after all retries
+            // CRITICAL: Create a new connection with walletConnecting: false to ensure state is correct
+            // This handles the edge case where the connection exists in backend but we can't fetch it
+            console.log('[AssetConnect setIsConnectingMetaMask] ⚠️ Cancelling but MetaMask connection not found after all retries - creating new connection with walletConnecting: false to ensure state is correct');
+            const cancelMetaMaskConnection = {
+              address: tempAddress,
+              walletId: `temp-cancel-metamask-${now}`,
+              walletType: 'metamask' as const,
+              timestamp: now,
+              walletConnected: false,
+              walletConnecting: false, // CRITICAL: Set to false for cancellation
+              assetConnected: false,
+              assetConnecting: false,
+            };
+            try {
+              const cancelResponse = await axios.post('/api/savePendingConnection', {
+                email,
+                pendingConnection: cancelMetaMaskConnection,
+              });
+              console.log('[AssetConnect setIsConnectingMetaMask] ✅ Created cancellation connection - Response status:', cancelResponse.status);
+            } catch (cancelErr: any) {
+              console.error('[AssetConnect setIsConnectingMetaMask] ❌ Error creating cancellation connection:', cancelErr?.response?.status || cancelErr.message);
+              // Don't throw - continue to ensure Base connection exists
+            }
           }
         }
         
-        // Update or create Base connection SECOND (after MetaMask to avoid race condition)
-        // CRITICAL: Always create Base connection, even if MetaMask creation failed
-        // CRITICAL: Always update Base connection, even if not found (create it)
-        console.log('[AssetConnect setIsConnectingMetaMask] 🔄 About to create/update Base connection - baseConn exists:', !!baseConn, 'isConnecting:', isConnecting);
+        // Ensure Base connection exists (but don't update its walletConnecting boolean)
         if (baseConn) {
-          // Update existing Base connection
-          console.log('[AssetConnect setIsConnectingMetaMask] 🔄 Updating existing Base connection');
-          // CRITICAL: When isConnecting is false, set walletConnecting to false (don't use && logic)
-          const updatedBase = {
-            ...baseConn,
-            walletConnecting: isConnecting ? (!baseConn.walletConnected) : false, // If isConnecting is false, always set to false
-          };
-          console.log('[AssetConnect setIsConnectingMetaMask] 📤 POST /api/savePendingConnection for Base (update) - isConnecting:', isConnecting, 'walletConnecting will be:', updatedBase.walletConnecting, 'baseConn found:', true);
-          try {
-            const baseResponse = await axios.post('/api/savePendingConnection', {
-              email,
-              pendingConnection: updatedBase,
-            });
-            console.log('[AssetConnect] ✅ Backend updated Base - Response status:', baseResponse.status, 'walletConnecting:', updatedBase.walletConnecting);
-          } catch (baseErr: any) {
-            console.error('[AssetConnect] ❌ Error updating Base connection:', baseErr?.response?.status || baseErr.message);
-            throw baseErr; // Re-throw to trigger outer catch
-          }
+          // Base connection exists - no need to update it (walletConnecting stays independent)
+          console.log('[AssetConnect setIsConnectingMetaMask] ✅ Base connection already exists, no update needed (walletConnecting stays independent)');
         } else {
-          // Create new Base connection
-          console.log('[AssetConnect setIsConnectingMetaMask] ➕ Creating new Base connection (not found in backend)');
+          // Create Base connection if it doesn't exist
+          console.log('[AssetConnect setIsConnectingMetaMask] ➕ Creating Base connection (not found in backend)');
           const newBaseConnection = {
             address: tempAddress,
             walletId: `temp-init-base-${now + 1}`,
             walletType: 'base' as const,
             timestamp: now + 1,
             walletConnected: false,
-            walletConnecting: isConnecting, // Same value as MetaMask
+            walletConnecting: false, // Keep Base walletConnecting as false (independent)
             assetConnected: false,
             assetConnecting: false,
           };
-          console.log('[AssetConnect setIsConnectingMetaMask] 📤 POST /api/savePendingConnection for Base (new) - Connection data:', newBaseConnection);
+          console.log('[AssetConnect setIsConnectingMetaMask] 📤 POST /api/savePendingConnection for Base (new) - walletConnecting will be false');
           try {
             const baseResponse = await axios.post('/api/savePendingConnection', {
               email,
               pendingConnection: newBaseConnection,
             });
-            console.log('[AssetConnect] ✅ Backend created Base connection - Response status:', baseResponse.status, 'walletConnecting:', isConnecting);
+            console.log('[AssetConnect] ✅ Backend created Base connection - Response status:', baseResponse.status, 'walletConnecting: false (independent)');
           } catch (baseErr: any) {
             console.error('[AssetConnect] ❌ Error creating Base connection:', baseErr?.response?.status || baseErr.message);
-            throw baseErr; // Re-throw to trigger outer catch
+            // Don't throw - MetaMask was updated successfully
           }
         }
         
-        console.log('[AssetConnect setIsConnectingMetaMask] ✅ Both connections updated/created successfully');
-        // API succeeded - mark as "sent" ONLY after BOTH connections are created/updated
-        // This tells syncStateFromBackend that it's safe to read from backend now
+        console.log('[AssetConnect setIsConnectingMetaMask] ✅ Both connections ensured, MetaMask walletConnecting updated');
+        // API succeeded - mark as "sent"
         if (optimisticUpdateRef.current) {
           optimisticUpdateRef.current.status = 'sent';
           optimisticUpdateRef.current.sentAt = Date.now();
           console.log('[AssetConnect setIsConnectingMetaMask] ✅ Marked optimistic update as "sent" - backend sync can now proceed');
         }
-        console.log('[AssetConnect] ✅ Backend updated/created BOTH wallet types - walletConnecting:', isConnecting, {
+        console.log('[AssetConnect] ✅ Backend updated/created - MetaMask walletConnecting:', isConnecting, 'Base connection ensured (walletConnecting independent)', {
           hadMetaMask: !!metamaskConn,
           hadBase: !!baseConn,
         });
@@ -531,7 +637,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // CRITICAL: This ensures ALL wallet connections and optimistic updates are done before allowing sync
     try {
       await backendUpdatePromise;
-      console.log('[AssetConnect setIsConnectingMetaMask] ✅ Backend update promise completed - both connections created/updated, optimistic update marked as "sent"');
+      console.log('[AssetConnect setIsConnectingMetaMask] ✅ Backend update promise completed - MetaMask connection created/updated, optimistic update marked as "sent"');
       console.log('[AssetConnect setIsConnectingMetaMask] ✅ syncStateFromBackend can now safely read from backend');
     } catch (error: any) {
       console.error('[AssetConnect setIsConnectingMetaMask] ❌ Backend update promise failed:', error);
@@ -541,18 +647,305 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       // Don't throw - optimistic update already applied, so UI is correct
       // But log the error so we can debug why Base connection isn't being created
     }
-  }, [email]);
+  }, [email, backendConnections]); // Include backendConnections for fallback when GET fails
   
+  // DECOUPLED: Only handles Base connection - MetaMask is handled independently
   const setIsConnectingBase = useCallback(async (isConnecting: boolean) => {
     if (!email) return;
     
     // CRITICAL: Do optimistic update FIRST (synchronously) before any async operations
     // This ensures instant UI feedback
-    // CRITICAL: Update BOTH MetaMask AND Base walletConnecting booleans - they must stay in sync
-    // Since both should be the same, just call setIsConnectingMetaMask which already updates both
-    setIsConnectingMetaMask(isConnecting);
-  }, [email, setIsConnectingMetaMask]);
-
+    // DECOUPLED: Only update Base walletConnecting boolean, but ensure BOTH connections exist
+    setBackendConnections((prev: any[]) => {
+      // Find both MetaMask and Base connections (both should exist)
+      const metamaskConnections = prev.filter((pc: any) => pc.walletType === 'metamask');
+      const baseConnections = prev.filter((pc: any) => pc.walletType === 'base');
+      
+      let metamaskConn: any = null;
+      let baseConn: any = null;
+      
+      // Find MetaMask connection (to ensure it exists, but don't update its walletConnecting)
+      if (metamaskConnections.length > 0) {
+        metamaskConn = metamaskConnections.reduce((latest, current) => 
+          (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+        );
+      }
+      
+      // Find Base connection
+      if (baseConnections.length > 0) {
+        const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
+        if (activeConn) {
+          baseConn = activeConn;
+        } else {
+          baseConn = baseConnections.reduce((latest, current) => 
+            (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+          );
+        }
+      }
+      
+      let updated = [...prev];
+      
+      // Update Base connection walletConnecting boolean only
+      if (baseConn) {
+        const updatedBase = {
+          ...baseConn,
+          walletConnecting: isConnecting ? (!baseConn.walletConnected) : false,
+        };
+        updated = updated.filter((pc: any) => !(pc.walletType === 'base' && pc.address === baseConn.address));
+        updated.push(updatedBase);
+      } else {
+        // If Base connection doesn't exist, create it
+        const tempAddress = '0x0000000000000000000000000000000000000000';
+        const now = Date.now();
+        const newBaseConnection = {
+          address: tempAddress,
+          walletId: `temp-connecting-base-${now}`,
+          walletType: 'base' as const,
+          timestamp: now,
+          walletConnected: false,
+          walletConnecting: isConnecting,
+          assetConnected: false,
+          assetConnecting: false,
+        };
+        updated.push(newBaseConnection);
+      }
+      
+      // Ensure MetaMask connection exists (but don't update its walletConnecting boolean)
+      if (!metamaskConn) {
+        const tempAddress = '0x0000000000000000000000000000000000000000';
+        const now = Date.now();
+        const newMetaMaskConnection = {
+          address: tempAddress,
+          walletId: `temp-connecting-metamask-${now + 1}`,
+          walletType: 'metamask' as const,
+          timestamp: now + 1,
+          walletConnected: false,
+          walletConnecting: false, // Keep MetaMask walletConnecting as false (independent)
+          assetConnected: false,
+          assetConnecting: false,
+        };
+        updated.push(newMetaMaskConnection);
+      }
+      
+      console.log('[AssetConnect setIsConnectingBase] Optimistic update - Base walletConnecting updated, MetaMask connection ensured:', {
+        isConnecting,
+        base: baseConn ? { walletId: baseConn.walletId, walletConnecting: isConnecting ? (!baseConn.walletConnected) : false } : 'created new',
+        metamask: metamaskConn ? { walletId: metamaskConn.walletId, walletConnecting: metamaskConn.walletConnecting } : 'created new (walletConnecting: false)'
+      });
+      
+      return updated;
+    });
+    
+    // Mark as optimistic update immediately
+    optimisticUpdateRef.current = {
+      walletType: 'base',
+      field: 'walletConnecting',
+      expectedValue: isConnecting,
+      optimisticState: isConnecting,
+      status: 'pending',
+      timestamp: Date.now()
+    };
+    
+    // Now do API calls - AWAIT to ensure they complete
+    // DECOUPLED: Only update Base walletConnecting boolean, but ensure BOTH connections exist
+    const backendUpdatePromise = (async () => {
+      console.log('[AssetConnect setIsConnectingBase] 🚀 Starting async backend update (Base walletConnecting only, but ensure both exist), isConnecting:', isConnecting, 'email:', email);
+      let metamaskConn: any = null;
+      let baseConn: any = null;
+      
+      // Try to fetch existing connections, but continue even if it fails
+      try {
+        console.log('[AssetConnect setIsConnectingBase] 📡 Fetching existing connections from API...', 'email:', email);
+        if (!email) {
+          console.error('[AssetConnect setIsConnectingBase] ❌ No email available - cannot create connections');
+          throw new Error('Email is required');
+        }
+        
+        const getPromise = axios.get('/api/savePendingConnection', { 
+          params: { email },
+          timeout: 1000
+        });
+        const response = await getPromise;
+        console.log('[AssetConnect setIsConnectingBase] ✅ GET request succeeded, status:', response.status);
+        const existingConnections = response.data.pendingConnections || [];
+        
+        // Find both MetaMask and Base connections (both should exist)
+        const metamaskConnections = existingConnections.filter((pc: any) => pc.walletType === 'metamask');
+        const baseConnections = existingConnections.filter((pc: any) => pc.walletType === 'base');
+        console.log('[AssetConnect setIsConnectingBase] Filtered connections:', {
+          metamaskCount: metamaskConnections.length,
+          baseCount: baseConnections.length
+        });
+        
+        // Find Base connection
+        if (baseConnections.length > 0) {
+          if (isConnecting) {
+            const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
+            if (activeConn) {
+              baseConn = activeConn;
+            } else {
+              baseConn = baseConnections.reduce((latest, current) => 
+                (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+              );
+            }
+          } else {
+            // When cancelling, find ANY connection to update
+            const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
+            if (activeConn) {
+              baseConn = activeConn;
+            } else {
+              baseConn = baseConnections.reduce((latest, current) => 
+                (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+              );
+            }
+          }
+        }
+        
+        // Find MetaMask connection (to ensure it exists, but don't update its walletConnecting)
+        if (metamaskConnections.length > 0) {
+          metamaskConn = metamaskConnections.reduce((latest, current) => 
+            (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+          );
+        }
+      } catch (error: any) {
+        // GET failed - try to use current backendConnections state as fallback
+        console.log('[AssetConnect setIsConnectingBase] ⚠️ GET request failed, trying to use current backendConnections state as fallback');
+        
+        if (backendConnections.length > 0) {
+          const metamaskConnections = backendConnections.filter((pc: any) => pc.walletType === 'metamask');
+          const baseConnections = backendConnections.filter((pc: any) => pc.walletType === 'base');
+          
+          // Find Base connection from state
+          if (baseConnections.length > 0) {
+            if (isConnecting) {
+              const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
+              if (activeConn) {
+                baseConn = activeConn;
+              } else {
+                baseConn = baseConnections.reduce((latest, current) => 
+                  (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+                );
+              }
+            } else {
+              const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
+              if (activeConn) {
+                baseConn = activeConn;
+              } else {
+                baseConn = baseConnections.reduce((latest, current) => 
+                  (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+                );
+              }
+            }
+          }
+          
+          // Find MetaMask connection from state (to ensure it exists)
+          if (metamaskConnections.length > 0) {
+            metamaskConn = metamaskConnections.reduce((latest, current) => 
+              (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+            );
+          }
+          
+          console.log('[AssetConnect setIsConnectingBase] ✅ Fallback complete - baseConn exists:', !!baseConn, 'metamaskConn exists:', !!metamaskConn);
+        }
+      }
+      
+      const tempAddress = '0x0000000000000000000000000000000000000000';
+      const now = Date.now();
+      
+      try {
+        // Update or create Base connection
+        if (baseConn) {
+          const updatedBase = {
+            ...baseConn,
+            walletConnecting: isConnecting ? (!baseConn.walletConnected) : false,
+          };
+          console.log('[AssetConnect setIsConnectingBase] 📤 POST /api/savePendingConnection for Base (update)');
+          const baseResponse = await axios.post('/api/savePendingConnection', {
+            email,
+            pendingConnection: updatedBase,
+          });
+          console.log('[AssetConnect] ✅ Backend updated Base - Response status:', baseResponse.status, 'walletConnecting:', updatedBase.walletConnecting);
+        } else {
+          if (isConnecting) {
+            const newBaseConnection = {
+              address: tempAddress,
+              walletId: `temp-init-base-${now}`,
+              walletType: 'base' as const,
+              timestamp: now,
+              walletConnected: false,
+              walletConnecting: isConnecting,
+              assetConnected: false,
+              assetConnecting: false,
+            };
+            console.log('[AssetConnect setIsConnectingBase] 📤 POST /api/savePendingConnection for Base (new)');
+            const baseResponse = await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: newBaseConnection,
+            });
+            console.log('[AssetConnect] ✅ Backend created Base connection - Response status:', baseResponse.status, 'walletConnecting:', isConnecting);
+          }
+        }
+        
+        // Ensure MetaMask connection exists (but don't update its walletConnecting boolean)
+        if (metamaskConn) {
+          // MetaMask connection exists - no need to update it (walletConnecting stays independent)
+          console.log('[AssetConnect setIsConnectingBase] ✅ MetaMask connection already exists, no update needed (walletConnecting stays independent)');
+        } else {
+          // Create MetaMask connection if it doesn't exist
+          console.log('[AssetConnect setIsConnectingBase] ➕ Creating MetaMask connection (not found in backend)');
+          const newMetaMaskConnection = {
+            address: tempAddress,
+            walletId: `temp-init-metamask-${now + 1}`,
+            walletType: 'metamask' as const,
+            timestamp: now + 1,
+            walletConnected: false,
+            walletConnecting: false, // Keep MetaMask walletConnecting as false (independent)
+            assetConnected: false,
+            assetConnecting: false,
+          };
+          console.log('[AssetConnect setIsConnectingBase] 📤 POST /api/savePendingConnection for MetaMask (new) - walletConnecting will be false');
+          try {
+            const metaMaskResponse = await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: newMetaMaskConnection,
+            });
+            console.log('[AssetConnect] ✅ Backend created MetaMask connection - Response status:', metaMaskResponse.status, 'walletConnecting: false (independent)');
+          } catch (metaErr: any) {
+            console.error('[AssetConnect] ❌ Error creating MetaMask connection:', metaErr?.response?.status || metaErr.message);
+            // Don't throw - Base was updated successfully
+          }
+        }
+        
+        console.log('[AssetConnect setIsConnectingBase] ✅ Both connections ensured, Base walletConnecting updated');
+        if (optimisticUpdateRef.current) {
+          optimisticUpdateRef.current.status = 'sent';
+          optimisticUpdateRef.current.sentAt = Date.now();
+        }
+        console.log('[AssetConnect] ✅ Backend updated/created - Base walletConnecting:', isConnecting, 'MetaMask connection ensured (walletConnecting independent)', {
+          hadBase: !!baseConn,
+          hadMetaMask: !!metamaskConn,
+        });
+      } catch (apiError: any) {
+        console.error('[AssetConnect] ❌ Error updating/creating Base connection:', apiError);
+        optimisticUpdateRef.current = null;
+        throw apiError;
+      }
+    })();
+    
+    try {
+      await backendUpdatePromise;
+      console.log('[AssetConnect setIsConnectingBase] ✅ Backend update promise completed');
+    } catch (error: any) {
+      console.error('[AssetConnect setIsConnectingBase] ❌ Backend update promise failed:', error);
+      optimisticUpdateRef.current = null;
+    }
+  }, [email, backendConnections]);
+  
+  // Update ref when setIsConnectingBase is available
+  useEffect(() => {
+    setIsConnectingBaseRef.current = setIsConnectingBase;
+  }, [setIsConnectingBase]);
+  
   // Helper function to save pending connection to backend
   // NOTE: This only UPDATES the JSON file - it does NOT create it
   // The JSON file should be created when buttons are clicked (in VavityTester.tsx)
@@ -1102,6 +1495,92 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const lastCancelledAddressRef = useRef<string | null>(null);
   const lastCancelledTypeRef = useRef<WalletType | null>(null);
   const lastCancelledTimestampRef = useRef<number>(0);
+  const pendingConnectionAlertShownRef = useRef(false); // Track if alert has been shown for pending connection on reload
+  const hasCheckedOnMountRef = useRef(false); // Track if we've checked on initial mount
+  const setIsConnectingBaseRef = useRef<((isConnecting: boolean) => Promise<void>) | null>(null);
+  
+  // CRITICAL: Alert user if MetaMask is pending connection after reload
+  // AND: Always reset Base walletConnecting to false on mount
+  // Separate useEffect that watches backendConnections to detect pending state
+  // Only checks once when backendConnections is first populated from backend (on mount/reload)
+  // CRITICAL: Use a delay to ensure this only runs after initial backend sync, not on user button clicks
+  useEffect(() => {
+    if (!email || typeof window === 'undefined') return;
+    
+    // CRITICAL: Only check once on mount when backendConnections is first populated
+    // Track if we've already checked to prevent multiple alerts
+    if (!hasCheckedOnMountRef.current && backendConnections.length > 0) {
+      hasCheckedOnMountRef.current = true;
+      
+      // Wait a bit for initial backend sync to fully complete
+      const checkTimeout = setTimeout(async () => {
+        // CRITICAL: Always reset Base walletConnecting to false on mount
+        const baseConn = backendConnections.find((pc: any) => pc.walletType === 'base');
+        if (baseConn && baseConn.walletConnecting === true) {
+          console.log('[AssetConnect] Base walletConnecting is true on mount - resetting to false');
+          try {
+            if (setIsConnectingBaseRef.current) {
+              await setIsConnectingBaseRef.current(false);
+              console.log('[AssetConnect] ✅ Base walletConnecting reset to false on mount');
+            } else {
+              console.error('[AssetConnect] ❌ setIsConnectingBaseRef.current is null - cannot reset Base walletConnecting');
+            }
+          } catch (err) {
+            console.error('[AssetConnect] ❌ Error resetting Base walletConnecting on mount:', err);
+          }
+        }
+        
+        // Check directly from backendConnections for pending MetaMask connection
+        // CRITICAL: Only show alert if connection was already pending (from previous session)
+        // Don't show if it's a new connection attempt (user just clicked button)
+        if (!pendingConnectionAlertShownRef.current) {
+          const pendingMetaMaskConn = backendConnections.find(
+            (pc: any) => 
+              pc.walletType === 'metamask' && 
+              pc.walletConnecting === true && 
+              pc.walletConnected === false
+          );
+          
+          if (pendingMetaMaskConn) {
+            // CRITICAL: Only show alert if this connection has a timestamp from before this session
+            // If timestamp is very recent (within last 2 seconds), it's likely from a button click, not a reload
+            const connectionAge = Date.now() - (pendingMetaMaskConn.timestamp || 0);
+            const isRecentConnection = connectionAge < 2000; // Less than 2 seconds old
+            
+            if (!isRecentConnection) {
+              console.log('[AssetConnect] Pending MetaMask connection detected on reload, showing alert', {
+                walletId: pendingMetaMaskConn.walletId,
+                address: pendingMetaMaskConn.address,
+                walletConnecting: pendingMetaMaskConn.walletConnecting,
+                walletConnected: pendingMetaMaskConn.walletConnected,
+                connectionAge: connectionAge,
+                timestamp: pendingMetaMaskConn.timestamp,
+                currentTime: Date.now()
+              });
+              alert('MetaMask connection is pending. Please complete the connection process.');
+              pendingConnectionAlertShownRef.current = true; // Mark as shown
+            } else {
+              console.log('[AssetConnect] Pending MetaMask connection is too recent (likely from button click), not showing alert', {
+                connectionAge: connectionAge,
+                timestamp: pendingMetaMaskConn.timestamp,
+                currentTime: Date.now()
+              });
+            }
+          }
+        }
+      }, 1000); // Wait 1 second for initial backend sync to complete
+      
+      return () => {
+        clearTimeout(checkTimeout);
+      };
+    }
+    
+    // Reset flags on unmount so it can check again on next mount/reload
+    return () => {
+      pendingConnectionAlertShownRef.current = false;
+      hasCheckedOnMountRef.current = false;
+    };
+  }, [email, backendConnections.length]); // Watch backendConnections.length to detect when it's first populated
   
   // Process pending wallet after reload - only run once per pending wallet
   useEffect(() => {
@@ -2862,27 +3341,26 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         if (isCancelled) {
           console.log('[connectAsset] User cancelled wallet connection - resetting walletConnecting to false');
           
-          // CRITICAL: Update BOTH MetaMask AND Base walletConnecting to false when either is cancelled
-          // They must stay in sync
-          // Let setIsConnectingMetaMask handle the backend update - it's more reliable
-          console.log('[connectAsset] Calling setIsConnectingMetaMask(false) to reset walletConnecting state...');
-          try {
-            await setIsConnectingMetaMask(false);
-            console.log('[connectAsset] ✅ setIsConnectingMetaMask(false) completed');
-          } catch (err) {
-            console.error('[connectAsset] ❌ Error calling setIsConnectingMetaMask(false):', err);
+          // DECOUPLED: Only reset the specific wallet type that was cancelled
+          if (walletType === 'metamask') {
+            console.log('[connectAsset] Calling setIsConnectingMetaMask(false) to reset walletConnecting state...');
+            try {
+              await setIsConnectingMetaMask(false);
+              console.log('[connectAsset] ✅ setIsConnectingMetaMask(false) completed');
+            } catch (err) {
+              console.error('[connectAsset] ❌ Error calling setIsConnectingMetaMask(false):', err);
+            }
+            setPendingMetaMask(null);
+          } else {
+            console.log('[connectAsset] Calling setIsConnectingBase(false) to reset walletConnecting state...');
+            try {
+              await setIsConnectingBase(false);
+              console.log('[connectAsset] ✅ setIsConnectingBase(false) completed');
+            } catch (err) {
+              console.error('[connectAsset] ❌ Error calling setIsConnectingBase(false):', err);
+            }
+            setPendingBase(null);
           }
-          
-          console.log('[connectAsset] Calling setIsConnectingBase(false) to reset walletConnecting state...');
-          try {
-            await setIsConnectingBase(false);
-            console.log('[connectAsset] ✅ setIsConnectingBase(false) completed');
-          } catch (err) {
-            console.error('[connectAsset] ❌ Error calling setIsConnectingBase(false):', err);
-          }
-          
-          setPendingMetaMask(null);
-          setPendingBase(null);
           
           console.log('[connectAsset] Cancellation complete - state reset, throwing error to notify caller');
           // Throw error so VavityTester's catch block can handle it
@@ -3162,16 +3640,23 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
-      // Check if this is a cancellation error
+      // Check if this is a cancellation error - check both error message and nested error structure
       const errorMsg = String(error?.message || error?.toString() || '');
+      const nestedErrorMsg = String(error?.error?.message || error?.error?.toString() || '');
+      const errorCode = error?.code || error?.error?.code;
       const isCancelled = 
-        errorMsg.toLowerCase().includes('cancelled') || 
-        errorMsg.toLowerCase().includes('rejected') || 
+        errorCode === 4001 || // Standard EIP-1193 user rejection
+        errorCode === 'ACTION_REJECTED' || // Some wallets use this
+        errorCode === 4900 || // Some wallets use this for user rejection
         errorMsg.toLowerCase().includes('user rejected') ||
-        errorMsg.toLowerCase().includes('user rejected the request') ||
-        errorMsg.toLowerCase().includes('action rejected') ||
-        error?.code === 4001 ||
-        error?.code === 'ACTION_REJECTED';
+        errorMsg.toLowerCase().includes('user cancelled') ||
+        errorMsg.toLowerCase().includes('user denied') ||
+        errorMsg.toLowerCase().includes('rejected') ||
+        errorMsg.toLowerCase().includes('cancelled') ||
+        nestedErrorMsg.toLowerCase().includes('user rejected') ||
+        nestedErrorMsg.toLowerCase().includes('user cancelled') ||
+        nestedErrorMsg.toLowerCase().includes('rejected') ||
+        (error?.isCancelled === true);
       
       // CRITICAL: Reset connecting state FIRST (so button updates immediately)
       if (walletType === 'metamask') {
@@ -3265,11 +3750,29 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
       }
       
+      // CRITICAL: Check if this is a cancellation by checking the error message
+      // isCancelled is a local variable in the inner try-catch, so we need to check the error message here
+      const cancellationErrorMsg = String(error?.message || error?.toString() || '');
+      const isCancellation = 
+        cancellationErrorMsg === 'User rejected' ||
+        cancellationErrorMsg.toLowerCase().includes('user rejected') ||
+        cancellationErrorMsg.toLowerCase().includes('user cancelled') ||
+        cancellationErrorMsg.toLowerCase().includes('user denied') ||
+        cancellationErrorMsg.toLowerCase().includes('rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
+      
       // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
-      if (!isCancelled) {
+      if (!isCancellation) {
         throw error;
       }
-      // Even on error, if we got the wallet address, try to reload
+      
+      // CRITICAL: Don't reload on cancellation - user explicitly rejected the connection
+      console.log('[connectAsset] User cancelled - NOT reloading page');
+      return; // Exit early on cancellation, don't reload
+      
+      // Even on error (but not cancellation), if we got the wallet address, try to reload
+      // (This code is unreachable if cancellation, but kept for non-cancellation errors)
       const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
       if (walletAddressFromError) {
         console.log('Error occurred but wallet was connected, reloading anyway...');
@@ -3277,7 +3780,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           window.location.reload();
         }
       }
-      // Don't throw if cancelled - just exit silently
     }
     
     // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)

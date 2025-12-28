@@ -90,16 +90,17 @@ const VavityTester: React.FC = () => {
       // This avoids race conditions from parallel API calls
       console.log('[VavityTester handleConnectAsset] About to call setIsConnectingMetaMask(true) to create/update both connections');
       
-      // Set connecting state for both (this updates local state and backend JSON)
-      // This will create/update both MetaMask and Base connections with walletConnecting: true
-      // NOTE: setIsConnectingMetaMask starts async work but doesn't await it
-      // We need to wait a bit to ensure the JSON is created before proceeding
-      setIsConnectingMetaMask(true);
-      console.log('[VavityTester handleConnectAsset] setIsConnectingMetaMask(true) called (async work started)');
+      // Set connecting state for the specific wallet type (decoupled - each wallet is independent)
+      if (walletType === 'metamask') {
+        setIsConnectingMetaMask(true);
+        console.log('[VavityTester handleConnectAsset] setIsConnectingMetaMask(true) called (async work started)');
+      } else {
+        setIsConnectingBase(true);
+        console.log('[VavityTester handleConnectAsset] setIsConnectingBase(true) called (async work started)');
+      }
       
       // Give the async function a moment to start executing
       await new Promise(resolve => setTimeout(resolve, 100));
-      // setIsConnectingBase just calls setIsConnectingMetaMask, so we don't need to call it separately
       
       // Then proceed with actual wallet connection
       console.log('[VavityTester handleConnectAsset] Starting wallet connection');
@@ -116,9 +117,13 @@ const VavityTester: React.FC = () => {
       console.log('[VavityTester handleConnectAsset] Is user rejection?', isUserRejection);
       
       // Reset connecting state when user cancels or connection fails
-      console.log('[VavityTester handleConnectAsset] Resetting connecting state to false for both wallets');
-      await setIsConnectingMetaMask(false);
-      await setIsConnectingBase(false);
+      // DECOUPLED: Only reset the specific wallet type that failed
+      console.log('[VavityTester handleConnectAsset] Resetting connecting state to false for', walletType);
+      if (walletType === 'metamask') {
+        await setIsConnectingMetaMask(false);
+      } else {
+        await setIsConnectingBase(false);
+      }
       console.log('[VavityTester handleConnectAsset] Connecting state reset complete');
       
       // Silently handle HTTP errors (401, 500, etc.) - API endpoint may not be accessible
@@ -144,14 +149,14 @@ const VavityTester: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <button
             onClick={() => handleConnectAsset('metamask')}
-            disabled={metaMaskWalletConnecting}
+            disabled={metaMaskWalletConnecting || baseWalletConnecting}
             style={{
               padding: '10px 20px',
-              backgroundColor: metaMaskWalletConnecting ? '#333333' : '#0066cc',
+              backgroundColor: (metaMaskWalletConnecting || baseWalletConnecting) ? '#333333' : '#0066cc',
               color: '#ffffff',
               border: 'none',
               borderRadius: '5px',
-              cursor: metaMaskWalletConnecting ? 'not-allowed' : 'pointer',
+              cursor: (metaMaskWalletConnecting || baseWalletConnecting) ? 'not-allowed' : 'pointer',
               marginRight: '10px',
             }}
           >
@@ -171,14 +176,14 @@ const VavityTester: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <button
             onClick={() => handleConnectAsset('base')}
-            disabled={baseWalletConnecting}
+            disabled={metaMaskWalletConnecting || baseWalletConnecting}
             style={{
               padding: '10px 20px',
-              backgroundColor: baseWalletConnecting ? '#333333' : '#0066cc',
+              backgroundColor: (metaMaskWalletConnecting || baseWalletConnecting) ? '#333333' : '#0066cc',
               color: '#ffffff',
               border: 'none',
               borderRadius: '5px',
-              cursor: baseWalletConnecting ? 'not-allowed' : 'pointer',
+              cursor: (metaMaskWalletConnecting || baseWalletConnecting) ? 'not-allowed' : 'pointer',
               marginRight: '10px',
             }}
           >
