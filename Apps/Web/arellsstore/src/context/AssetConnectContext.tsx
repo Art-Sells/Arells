@@ -312,9 +312,14 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       let baseConn: any = null;
       
       // Try to fetch existing connections, but continue even if it fails
+      // Add timeout to prevent hanging
       try {
         console.log('[AssetConnect setIsConnectingMetaMask] 📡 Fetching existing connections from API...');
-        const response = await axios.get('/api/savePendingConnection', { params: { email } });
+        const getPromise = axios.get('/api/savePendingConnection', { 
+          params: { email },
+          timeout: 5000 // 5 second timeout
+        });
+        const response = await getPromise;
         console.log('[AssetConnect setIsConnectingMetaMask] ✅ GET request succeeded, status:', response.status);
         const existingConnections = response.data.pendingConnections || [];
         console.log('[AssetConnect setIsConnectingMetaMask] ✅ Fetched existing connections:', {
@@ -373,6 +378,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
       
       console.log('[AssetConnect setIsConnectingMetaMask] 🔍 After filtering - metamaskConn exists:', !!metamaskConn, 'baseConn exists:', !!baseConn);
+      console.log('[AssetConnect setIsConnectingMetaMask] 🔄 Continuing to create/update connections (GET completed or failed)...');
       
       // CRITICAL: Always ensure BOTH MetaMask AND Base connections exist
       // Update existing ones and create missing ones
