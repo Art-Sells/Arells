@@ -8,24 +8,20 @@
 VavityTester:
 - Connect Ethereum with Metamask/Base to begin.
 - When fixing price mechanism, stop git
-- Wallet back-end and front-end connection issues resolved, trace back to this for fixing wallet cancelation issues
 
 In the json do this after the json is creationed:
 
 all these should start of as exactly like this for each Metamask and Base wallet:
 
-walletConnected: false <- (this should change to false after successful wallet disconnection)
-walletConnectionCanceled: false <- (this should change to true after wallet connection canceledc and back to false after wallet connection button clicked again)
-walletConnecting: true <- (this should change to false  if walletConnected is true and back to true if walletConnected is false)
+walletConnected: false <- (this should change to true after successful wallet connection and false after successful wallet disconnection)
+walletConnecting: true <- (this should change to false if walletConnected is true and back to true if walletConnected is false and also false if wallet connection is canceled)
 
-assetConnected: false <- (this should change to true after successful asset disconnection)
-assetConnectionCancelled: false <- (this should change to true after asset connection canceled and back to false after asset connection (deposit) is clicked )
-assetConnecting: false <- (this should change to true if asset connection (deposit) is clicked and back to false after deposit)
+assetConnected: false <- (this should change to true if wallet balance for asset matches cVactTaa and back to false if it doesn't)
+assetConnecting: false <- (this should change to true if asset connection (deposit) is clicked and back to false after deposit is met)
 
 if 
 
 walletConnected: false
-walletConnectionCanceled: false
 walletConnecting: true
 
 then
@@ -35,7 +31,6 @@ then
 if
 
 assetConnected: false
-assetConnectionCancelled: false
 assetConnecting: true
 
 then
@@ -45,7 +40,6 @@ then
 if 
 
 walletConnected: true
-walletConnectionCanceled: false
 walletConnecting: false 
 
 then
@@ -55,21 +49,13 @@ then
 if 
 
 assetConnected: true
-assetConnectionCancelled: false
 assetConnecting: false
 
-(Connected Ethereum with Metamask/Base) button placeholder should show
+(Asset Connected) button placeholder should show
 
-if 
-
-walletConnected: false
-walletConnectionCanceled: true
-walletConnecting: true
-
-or if 
+if
 
 assetConnected: false
-assetConnectionCancelled: true
 assetConnecting: false
 
 (Connect Ethereum with Metamask/Base)  button should show

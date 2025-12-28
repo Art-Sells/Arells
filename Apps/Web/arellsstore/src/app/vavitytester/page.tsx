@@ -1,47 +1,39 @@
-import React, { useEffect, useMemo, useState } from 'react';
+'use client';
 
-
-// Import other necessary components and hooks
+import React from 'react';
 import '../css/connect/connect.css';
-
-
 import VavityTester from '../../components/Vavity/VavityTester';
 
-import type { Metadata } from 'next';
-export const metadata: Metadata = {
-  title: "Vavity Tester",
-  description: "Are you ready to let go of bear markets? Connect your investments.",
-  robots: "noimageindex",
-  openGraph: {
-    title: "Vavity Tester",
-    description: "Are you ready to let go of bear markets? Connect your investments.",
-    url: "https://arells.com/vavitytester",
-    type: "website",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/ArellsBitcoinBannerThree.jpg"
-      }
-    ]
-  },
-  twitter: {
-    title: "Vavity Tester",
-    description: "Are you ready to let go of bear markets? Connect your investments.",
-    card: "summary_large_image",
-    images: [
-      {
-        url: "https://arellsimages.s3.us-west-1.amazonaws.com/icons&images/metadata-images/ArellsBitcoinBannerThree.jpg"
-      }
-    ]
-  }
-};
-
 const VavityTesterPage = () => {
-  
-
   return (
     <>
-
-      <div id="connect-wrapper">
+      <style jsx global>{`
+        body {
+          background-color: #000000 !important;
+          color: #ffffff !important;
+        }
+        #connect-wrapper {
+          background-color: #000000 !important;
+          color: #ffffff !important;
+        }
+        #connect-wrapper * {
+          color: #ffffff !important;
+        }
+        #connect-wrapper button {
+          color: #ffffff !important;
+        }
+        #connect-wrapper input {
+          background-color: #1a1a1a !important;
+          color: #ffffff !important;
+          border-color: #333333 !important;
+        }
+        #connect-wrapper select {
+          background-color: #1a1a1a !important;
+          color: #ffffff !important;
+          border-color: #333333 !important;
+        }
+      `}</style>
+      <div id="connect-wrapper" style={{ backgroundColor: '#000000', color: '#ffffff', minHeight: '100vh' }}>
             <VavityTester/>
       </div>
     </>
