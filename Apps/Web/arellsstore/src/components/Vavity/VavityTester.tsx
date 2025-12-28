@@ -92,9 +92,13 @@ const VavityTester: React.FC = () => {
       
       // Set connecting state for both (this updates local state and backend JSON)
       // This will create/update both MetaMask and Base connections with walletConnecting: true
-      await setIsConnectingMetaMask(true);
-      console.log('[VavityTester handleConnectAsset] setIsConnectingMetaMask(true) completed');
-      console.log('[VavityTester handleConnectAsset] setIsConnectingMetaMask(true) completed');
+      // NOTE: setIsConnectingMetaMask starts async work but doesn't await it
+      // We need to wait a bit to ensure the JSON is created before proceeding
+      setIsConnectingMetaMask(true);
+      console.log('[VavityTester handleConnectAsset] setIsConnectingMetaMask(true) called (async work started)');
+      
+      // Give the async function a moment to start executing
+      await new Promise(resolve => setTimeout(resolve, 100));
       // setIsConnectingBase just calls setIsConnectingMetaMask, so we don't need to call it separately
       
       // Then proceed with actual wallet connection
