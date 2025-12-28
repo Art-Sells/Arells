@@ -86,78 +86,16 @@ const VavityTester: React.FC = () => {
     console.log('[VavityTester handleConnectAsset] Starting connection for:', walletType);
 
     try {
-      // Create initial JSON entries for BOTH wallet types
-      const tempAddress = '0x0000000000000000000000000000000000000000';
-      const timestamp = Date.now();
+      // Don't create connections here - let setIsConnectingMetaMask handle it
+      // This avoids race conditions from parallel API calls
+      console.log('[VavityTester handleConnectAsset] About to call setIsConnectingMetaMask(true) to create/update both connections');
       
-      const metamaskConnection = {
-        address: tempAddress,
-        walletId: `temp-init-metamask-${timestamp}`,
-        walletType: 'metamask' as const,
-        timestamp,
-        walletConnected: false,
-        walletConnecting: true, // Set to true for both when either button is clicked
-        assetConnected: false,
-        assetConnecting: false,
-      };
-      
-      const baseConnection = {
-        address: tempAddress,
-        walletId: `temp-init-base-${timestamp}`,
-        walletType: 'base' as const,
-        timestamp,
-        walletConnected: false,
-        walletConnecting: true, // Set to true for both when either button is clicked
-        assetConnected: false,
-        assetConnecting: false,
-      };
-      
-      console.log('[VavityTester handleConnectAsset] Creating connections:', { metamaskConnection, baseConnection });
-      
-      // Create both connections in backend - try to create but don't block on failure
-      // Log the attempts so we can see if they're being made
-      console.log('[VavityTester] Attempting to create JSON connections via API...');
-      let successCount = 0;
-      let failureCount = 0;
-      
-      Promise.all([
-        axios.post('/api/savePendingConnection', {
-          email,
-          pendingConnection: metamaskConnection,
-        }).then(() => {
-          successCount++;
-          console.log('[VavityTester] ✅ MetaMask connection JSON created successfully');
-        }).catch((err) => {
-          failureCount++;
-          console.log('[VavityTester] ❌ MetaMask connection JSON creation failed:', err?.response?.status || err.message);
-        }),
-        axios.post('/api/savePendingConnection', {
-          email,
-          pendingConnection: baseConnection,
-        }).then(() => {
-          successCount++;
-          console.log('[VavityTester] ✅ Base connection JSON created successfully');
-        }).catch((err) => {
-          failureCount++;
-          console.log('[VavityTester] ❌ Base connection JSON creation failed:', err?.response?.status || err.message);
-        }),
-      ]).then(() => {
-        if (successCount === 2) {
-          console.log('[VavityTester] ✅ Both connection JSONs created successfully');
-        } else if (failureCount === 2) {
-          console.log('[VavityTester] ❌ Both connection JSONs creation failed - API endpoint may not exist or return 401');
-        } else {
-          console.log('[VavityTester] ⚠️ Partial success -', successCount, 'succeeded,', failureCount, 'failed');
-        }
-      }).catch((err) => {
-        console.log('[VavityTester] ❌ Connection JSON creation had errors:', err);
-      });
-      
-      console.log('[VavityTester handleConnectAsset] Connection creation initiated (non-blocking), setting connecting state');
-      
-      // Set connecting state for both (this updates local state, not dependent on API)
+      // Set connecting state for both (this updates local state and backend JSON)
+      // This will create/update both MetaMask and Base connections with walletConnecting: true
       await setIsConnectingMetaMask(true);
-      await setIsConnectingBase(true);
+      console.log('[VavityTester handleConnectAsset] setIsConnectingMetaMask(true) completed');
+      console.log('[VavityTester handleConnectAsset] setIsConnectingMetaMask(true) completed');
+      // setIsConnectingBase just calls setIsConnectingMetaMask, so we don't need to call it separately
       
       // Then proceed with actual wallet connection
       console.log('[VavityTester handleConnectAsset] Starting wallet connection');
