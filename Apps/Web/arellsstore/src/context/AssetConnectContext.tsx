@@ -313,9 +313,15 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       let baseConn: any = null;
       
       // Try to fetch existing connections, but continue even if it fails
-      // Use shorter timeout to avoid delays - if it fails, we'll create both connections anyway
+      // CRITICAL: If JSON doesn't exist or GET fails, treat as "no connections exist" and create both
+      // The email is available from function parameter, not from GET response, so it's always available
       try {
-        console.log('[AssetConnect setIsConnectingMetaMask] 📡 Fetching existing connections from API...');
+        console.log('[AssetConnect setIsConnectingMetaMask] 📡 Fetching existing connections from API...', 'email:', email);
+        if (!email) {
+          console.error('[AssetConnect setIsConnectingMetaMask] ❌ No email available - cannot create connections');
+          throw new Error('Email is required');
+        }
+        
         const getPromise = axios.get('/api/savePendingConnection', { 
           params: { email },
           timeout: 1000 // 1 second timeout - very short to avoid delays
@@ -368,14 +374,23 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           }
         }
       } catch (error: any) {
-        // GET failed (401, 500, etc.) - continue anyway and create both connections
-        console.log('[AssetConnect setIsConnectingMetaMask] ⚠️ GET request failed (will create both connections):', {
+        // GET failed (timeout, 401, 500, NoSuchKey, etc.) - treat as "file doesn't exist" and create both connections
+        // CRITICAL: Email is still available from function parameter, not from GET response
+        const isTimeout = error?.code === 'ECONNABORTED' || error?.message?.includes('timeout');
+        const isFileNotFound = error?.response?.status === 404 || error?.code === 'NoSuchKey';
+        
+        console.log('[AssetConnect setIsConnectingMetaMask] ⚠️ GET request failed (treating as "no connections exist", will create both):', {
           status: error?.response?.status,
           statusText: error?.response?.statusText,
           message: error?.message,
-          code: error?.code
+          code: error?.code,
+          isTimeout,
+          isFileNotFound,
+          email: email, // Email is still available - it's from function parameter
+          note: 'Will proceed to create both MetaMask and Base connections'
         });
         // metamaskConn and baseConn remain null, so both will be created
+        // Email is still available from the function parameter, so we can create connections
       }
       
       console.log('[AssetConnect setIsConnectingMetaMask] 🔍 After filtering - metamaskConn exists:', !!metamaskConn, 'baseConn exists:', !!baseConn);
@@ -482,10 +497,12 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
         
         console.log('[AssetConnect setIsConnectingMetaMask] ✅ Both connections updated/created successfully');
-        // API succeeded - mark as "sent"
+        // API succeeded - mark as "sent" ONLY after BOTH connections are created/updated
+        // This tells syncStateFromBackend that it's safe to read from backend now
         if (optimisticUpdateRef.current) {
           optimisticUpdateRef.current.status = 'sent';
           optimisticUpdateRef.current.sentAt = Date.now();
+          console.log('[AssetConnect setIsConnectingMetaMask] ✅ Marked optimistic update as "sent" - backend sync can now proceed');
         }
         console.log('[AssetConnect] ✅ Backend updated/created BOTH wallet types - walletConnecting:', isConnecting, {
           hadMetaMask: !!metamaskConn,
@@ -502,6 +519,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           method: apiError?.config?.method,
           whichConnection: apiError?.config?.data ? JSON.parse(apiError?.config?.data)?.pendingConnection?.walletType : 'unknown'
         });
+        // Clear optimistic update on error - allow sync to proceed with whatever is in backend
         optimisticUpdateRef.current = null;
         // Re-throw so caller knows it failed
         throw apiError;
@@ -510,12 +528,16 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     
     // AWAIT the promise to ensure backend update completes before function returns
     // This is critical for cancellation - we need to wait for walletConnecting to be set to false
+    // CRITICAL: This ensures ALL wallet connections and optimistic updates are done before allowing sync
     try {
       await backendUpdatePromise;
-      console.log('[AssetConnect setIsConnectingMetaMask] ✅ Backend update promise completed - both connections should be created/updated');
+      console.log('[AssetConnect setIsConnectingMetaMask] ✅ Backend update promise completed - both connections created/updated, optimistic update marked as "sent"');
+      console.log('[AssetConnect setIsConnectingMetaMask] ✅ syncStateFromBackend can now safely read from backend');
     } catch (error: any) {
       console.error('[AssetConnect setIsConnectingMetaMask] ❌ Backend update promise failed:', error);
       console.error('[AssetConnect setIsConnectingMetaMask] ❌ This means one or both connections failed to create/update');
+      // Clear optimistic update on error - allow sync to proceed
+      optimisticUpdateRef.current = null;
       // Don't throw - optimistic update already applied, so UI is correct
       // But log the error so we can debug why Base connection isn't being created
     }
@@ -672,24 +694,21 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const syncStateFromBackend = async () => {
       if (!email || typeof window === 'undefined') return;
       
-      // CRITICAL: Skip backend reads if there's an optimistic update in progress AND connections already exist
-      // This prevents race conditions where we read stale data while an update is being written
-      // BUT: If no connections exist, we should still read to allow initial creation
-      if (optimisticUpdateRef.current && (optimisticUpdateRef.current.status === 'pending' || optimisticUpdateRef.current.status === 'sent')) {
-        // Check if connections exist first - only skip if they do
-        try {
-          const existingConnections = await fetchPendingConnectionsFromBackend();
-          if (existingConnections.length > 0) {
-            console.log('[AssetConnect syncStateFromBackend] ⏸️ Skipping - optimistic update in progress and connections exist:', optimisticUpdateRef.current.status);
-            return;
-          } else {
-            console.log('[AssetConnect syncStateFromBackend] ⚠️ Optimistic update in progress but no connections exist - continuing to allow creation');
-            // Continue below to process the empty connections array
-          }
-        } catch (checkError) {
-          // If check fails, continue anyway - don't block on errors
-          console.log('[AssetConnect syncStateFromBackend] ⚠️ Error checking existing connections, continuing anyway');
+      // CRITICAL: Skip backend reads if there's an optimistic update in progress (status: 'pending')
+      // Only allow reads once the update is marked as 'sent' (meaning ALL wallet connections are done)
+      // This ensures we wait for ALL wallet pending connections and optimistic updates to complete
+      if (optimisticUpdateRef.current) {
+        if (optimisticUpdateRef.current.status === 'pending') {
+          // Update is still in progress - wait for ALL wallet connections (MetaMask AND Base) to complete
+          console.log('[AssetConnect syncStateFromBackend] ⏸️ Skipping - optimistic update still in progress (pending), waiting for ALL wallet connections to complete');
+          return;
+        } else if (optimisticUpdateRef.current.status === 'sent') {
+          // Update is marked as 'sent' - this means BOTH MetaMask AND Base connections are done
+          // Allow sync to proceed now that all wallet pending connections are complete
+          console.log('[AssetConnect syncStateFromBackend] ✅ Optimistic update marked as "sent" - ALL wallet connections completed, allowing sync');
+          // Continue to sync - will mark as 'confirmed' after successful read below
         }
+        // If status is 'confirmed', continue normally (no special handling needed)
       }
       
       try {
