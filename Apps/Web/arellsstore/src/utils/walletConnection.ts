@@ -71,17 +71,34 @@ export async function connectMetaMask(): Promise<WalletConnectionResult> {
   }
   
   // Directly request accounts - this WILL prompt if site is not connected
-  console.log('Calling eth_requestAccounts on MetaMask provider...');
-  const accounts = await ethereum.request({ 
-    method: 'eth_requestAccounts' // This prompts the user if not connected
-  });
-  
-  console.log('MetaMask accounts received:', accounts);
-  
-  return {
-    accounts,
-    provider: ethereum
-  };
+  console.log('[connectMetaMask] 🚀 Calling eth_requestAccounts on MetaMask provider...');
+  console.log('[connectMetaMask] 🚀 If user cancels, error will be thrown here');
+  try {
+    const accounts = await ethereum.request({ 
+      method: 'eth_requestAccounts' // This prompts the user if not connected
+    });
+    console.log('[connectMetaMask] ✅ eth_requestAccounts succeeded, accounts:', accounts);
+    return {
+      accounts,
+      provider: ethereum
+    };
+  } catch (error: any) {
+    console.error('[connectMetaMask] ❌❌❌ ERROR FROM eth_requestAccounts:', {
+      error,
+      errorType: typeof error,
+      errorConstructor: error?.constructor?.name,
+      message: error?.message,
+      code: error?.code,
+      errorError: error?.error,
+      errorErrorCode: error?.error?.code,
+      errorErrorMessage: error?.error?.message,
+      errorString: String(error),
+      errorJSON: JSON.stringify(error, null, 2),
+      stack: error?.stack
+    });
+    console.error('[connectMetaMask] ❌ About to re-throw this error to connectAsset catch block...');
+    throw error;
+  }
 }
 
 /**
@@ -168,12 +185,29 @@ export async function connectCoinbaseWallet(): Promise<WalletConnectionResult> {
  * Main wallet connection function
  */
 export async function connectWallet(walletType: WalletType): Promise<WalletConnectionResult> {
-  if (walletType === 'metamask') {
-    return await connectMetaMask();
-  } else if (walletType === 'base') {
-    return await connectCoinbaseWallet();
-  } else {
-    throw new Error(`Unknown wallet type: ${walletType}`);
+  console.log('[connectWallet] 🚀 Function called with walletType:', walletType);
+  console.log('[connectWallet] 🚀 About to call connectMetaMask/connectCoinbaseWallet');
+  try {
+    if (walletType === 'metamask') {
+      const result = await connectMetaMask();
+      console.log('[connectWallet] ✅ connectMetaMask succeeded');
+      return result;
+    } else if (walletType === 'base') {
+      const result = await connectCoinbaseWallet();
+      console.log('[connectWallet] ✅ connectCoinbaseWallet succeeded');
+      return result;
+    } else {
+      throw new Error(`Unknown wallet type: ${walletType}`);
+    }
+  } catch (error: any) {
+    console.error('[connectWallet] ❌❌❌ ERROR CAUGHT - About to re-throw to connectAsset:', {
+      error,
+      errorMessage: error?.message,
+      errorCode: error?.code,
+      errorError: error?.error,
+      stack: error?.stack
+    });
+    throw error;
   }
 }
 

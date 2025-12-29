@@ -26,18 +26,12 @@ interface AssetConnectContextType {
   pendingBase: { address: string; walletId: string } | null;
   
   // JSON boolean states for MetaMask (derived from backendConnections)
-  // Simplified to only 4 booleans per wallet type
   metaMaskWalletConnected: boolean;
-  metaMaskWalletConnecting: boolean;
   metaMaskAssetConnected: boolean;
-  metaMaskAssetConnecting: boolean;
   
   // JSON boolean states for Base (derived from backendConnections)
-  // Simplified to only 4 booleans per wallet type
   baseWalletConnected: boolean;
-  baseWalletConnecting: boolean;
   baseAssetConnected: boolean;
-  baseAssetConnecting: boolean;
   
   // Connect Asset: Handles wallet connection, deposit, and fetches balances
   connectAsset: (walletType: WalletType) => Promise<void>;
@@ -49,10 +43,6 @@ interface AssetConnectContextType {
   clearAutoConnectedMetaMask: () => void;
   clearAutoConnectedBase: () => void;
   
-  // Setters for connecting state (updates local state immediately, then syncs with JSON)
-  // These update local state instantly for UI, then sync with backend JSON
-  setIsConnectingMetaMask: (isConnecting: boolean) => Promise<void>;
-  setIsConnectingBase: (isConnecting: boolean) => Promise<void>;
   setPendingMetaMask: (wallet: { address: string; walletId: string } | null) => void;
   setPendingBase: (wallet: { address: string; walletId: string } | null) => void;
   
@@ -104,62 +94,41 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     );
   }, [backendConnections]);
   
-  // Derived connecting states - only from backend JSON
-  const isConnectingMetaMask = React.useMemo(() => {
-    return backendConnections.some((pc: any) => 
-      pc.walletType === 'metamask' && (pc.walletConnecting || pc.assetConnecting)
-    );
-  }, [backendConnections]);
-  
-  const isConnectingBase = React.useMemo(() => {
-    return backendConnections.some((pc: any) => 
-      pc.walletType === 'base' && (pc.walletConnecting || pc.assetConnecting)
-    );
-  }, [backendConnections]);
+  // Derived connecting states - removed (no longer tracking connecting state)
+  const isConnectingMetaMask = false;
+  const isConnectingBase = false;
   
   // Derived JSON boolean states for MetaMask
-  // If multiple connections exist, prefer the one with walletConnecting: true or the most recent one
+  // Return the most recent connection
   const metaMaskConn = React.useMemo(() => {
     const metamaskConnections = backendConnections.filter((pc: any) => pc.walletType === 'metamask');
     if (metamaskConnections.length === 0) return undefined;
     if (metamaskConnections.length === 1) return metamaskConnections[0];
     
-    // If multiple, prefer the one with walletConnecting: true (active connection)
-    const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
-    if (activeConn) return activeConn;
-    
-    // Otherwise, return the most recent one (highest timestamp)
+    // Return the most recent one (highest timestamp)
     return metamaskConnections.reduce((latest, current) => 
       (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
     );
   }, [backendConnections]);
   
   const metaMaskWalletConnected = metaMaskConn?.walletConnected ?? false;
-  const metaMaskWalletConnecting = metaMaskConn?.walletConnecting ?? false;
   const metaMaskAssetConnected = metaMaskConn?.assetConnected ?? false;
-  const metaMaskAssetConnecting = metaMaskConn?.assetConnecting ?? false;
   
   // Derived JSON boolean states for Base
-  // If multiple connections exist, prefer the one with walletConnecting: true or the most recent one
+  // Return the most recent connection
   const baseConn = React.useMemo(() => {
     const baseConnections = backendConnections.filter((pc: any) => pc.walletType === 'base');
     if (baseConnections.length === 0) return undefined;
     if (baseConnections.length === 1) return baseConnections[0];
     
-    // If multiple, prefer the one with walletConnecting: true (active connection)
-    const activeConn = baseConnections.find((pc: any) => pc.walletConnecting === true);
-    if (activeConn) return activeConn;
-    
-    // Otherwise, return the most recent one (highest timestamp)
+    // Return the most recent one (highest timestamp)
     return baseConnections.reduce((latest, current) => 
       (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
     );
   }, [backendConnections]);
   
   const baseWalletConnected = baseConn?.walletConnected ?? false;
-  const baseWalletConnecting = baseConn?.walletConnecting ?? false;
   const baseAssetConnected = baseConn?.assetConnected ?? false;
-  const baseAssetConnecting = baseConn?.assetConnecting ?? false;
   
   // Get VavityAggregator context for wallet operations (must be before callbacks that use email)
   const { email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator } = useVavity();
@@ -194,44 +163,79 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     sentAt?: number; // When API call succeeded (status = 'sent')
   } | null>(null);
   
-  // Setters for connecting state - these update backend JSON only
-  // CRITICAL: Optimistic updates happen FIRST (synchronously) for instant UI feedback
-  // Then API calls happen in background (non-blocking)
-  // DECOUPLED: Only handles MetaMask connection - Base is handled independently
+  // setIsConnectingMetaMask and setIsConnectingBase removed - walletConnecting and assetConnecting booleans removed from JSON
   const setIsConnectingMetaMask = useCallback(async (isConnecting: boolean) => {
-    if (!email) return;
+    // Stub - no longer used (walletConnecting and assetConnecting removed from JSON)
+    return;
+  }, [email]);
+  
+  const setIsConnectingBase = useCallback(async (isConnecting: boolean) => {
+    // Stub - no longer used (walletConnecting and assetConnecting removed from JSON)
+    return;
+  }, [email]);
+  
+  // Remove ref update for setIsConnectingBase - no longer needed
+  
+  // Helper function to save pending connection to backend
+  // NOTE: This only UPDATES the JSON file - it does NOT create it
+  // The JSON file should be created when buttons are clicked (in VavityTester.tsx)
+  const savePendingConnectionToBackend = async (address: string, walletId: string, walletType: 'metamask' | 'base') => {
+    if (!email) {
+      console.log('[AssetConnect savePendingConnectionToBackend] No email, skipping');
+      return;
+    }
+    console.log('[AssetConnect savePendingConnectionToBackend] Updating connection in JSON:', { address, walletId, walletType, email });
     
-    // CRITICAL: Do optimistic update FIRST (synchronously) before any async operations
-    // This ensures instant UI feedback
-    // DECOUPLED: Only update MetaMask walletConnecting boolean, but ensure BOTH connections exist
-    setBackendConnections((prev: any[]) => {
-      // Find both MetaMask and Base connections (both should exist)
-      const metamaskConnections = prev.filter((pc: any) => pc.walletType === 'metamask');
-      const baseConnections = prev.filter((pc: any) => pc.walletType === 'base');
-      
-      let metamaskConn: any = null;
-      let baseConn: any = null;
-      
-      // Find MetaMask connection
-      if (metamaskConnections.length > 0) {
-        const activeConn = metamaskConnections.find((pc: any) => pc.walletConnecting === true);
-        if (activeConn) {
-          metamaskConn = activeConn;
-        } else {
-          metamaskConn = metamaskConnections.reduce((latest, current) => 
-            (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
-          );
+    // Check if wallet extension is actually connected
+    let walletExtensionConnected = false;
+    if (typeof window !== 'undefined' && (window as any).ethereum) {
+      let provider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          provider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
         }
       }
       
-      // Find Base connection (to ensure it exists, but don't update its walletConnecting)
-      if (baseConnections.length > 0) {
-        baseConn = baseConnections.reduce((latest, current) => 
-          (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
-        );
+      if (provider) {
+        try {
+          const accounts = await provider.request({ method: 'eth_accounts' });
+          walletExtensionConnected = accounts && accounts.length > 0 && 
+            accounts.some((acc: string) => acc.toLowerCase() === address.toLowerCase());
+        } catch (e) {
+          walletExtensionConnected = false;
+        }
       }
-      
-      let updated = [...prev];
+    }
+    
+    // First, check if JSON file exists - if not, log warning (should have been created by button click)
+    try {
+      const checkResponse = await axios.get('/api/savePendingConnection', { params: { email } });
+      const existingConnections = checkResponse.data.pendingConnections || [];
+      if (existingConnections.length === 0) {
+        console.warn('[AssetConnect savePendingConnectionToBackend] WARNING: JSON file appears empty - it should have been created when button was clicked');
+      }
+    } catch (checkError) {
+      console.warn('[AssetConnect savePendingConnectionToBackend] WARNING: Could not verify JSON file exists - it should have been created when button was clicked');
+      // Continue anyway - API will create it if needed, but this shouldn't happen
+    }
+    
+    try {
+      // Get existing connection to preserve boolean states
+      let existingConnection: any = null;
+      try {
+        const getResponse = await axios.get('/api/savePendingConnection', { params: { email } });
+        const existingConnections = getResponse.data.pendingConnections || [];
+        existingConnection = existingConnections.find(
+          (pc: any) => pc.walletType === walletType && pc.address.toLowerCase() === address.toLowerCase()
+        );
       
       // Update MetaMask connection walletConnecting boolean only
       if (metamaskConn) {
@@ -283,16 +287,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       
       return updated;
     });
-    
-    // Mark as optimistic update immediately
-    optimisticUpdateRef.current = {
-      walletType: 'metamask',
-      field: 'walletConnecting',
-      expectedValue: isConnecting,
-      optimisticState: isConnecting, // The exact state we set optimistically
-      status: 'pending',
-      timestamp: Date.now()
-    };
     
     // Now do API calls - AWAIT to ensure they complete
     // This ensures the JSON is created before the wallet connection proceeds
@@ -653,9 +647,10 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setIsConnectingBase = useCallback(async (isConnecting: boolean) => {
     if (!email) return;
     
-    // CRITICAL: Do optimistic update FIRST (synchronously) before any async operations
+    // CRITICAL: Do optimistic update (synchronously) before any async operations
     // This ensures instant UI feedback
     // DECOUPLED: Only update Base walletConnecting boolean, but ensure BOTH connections exist
+    let optimisticValue = false;
     setBackendConnections((prev: any[]) => {
       // Find both MetaMask and Base connections (both should exist)
       const metamaskConnections = prev.filter((pc: any) => pc.walletType === 'metamask');
@@ -682,6 +677,19 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           );
         }
       }
+      
+      // Calculate optimistic value now that we have baseConn
+      optimisticValue = isConnecting ? (!baseConn?.walletConnected) : false;
+      
+      // CRITICAL: Set optimistic update ref INSIDE setState to ensure we have baseConn
+      optimisticUpdateRef.current = {
+        walletType: 'base',
+        field: 'walletConnecting',
+        expectedValue: optimisticValue,
+        optimisticState: optimisticValue,
+        status: 'pending',
+        timestamp: Date.now()
+      };
       
       let updated = [...prev];
       
@@ -735,16 +743,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       
       return updated;
     });
-    
-    // Mark as optimistic update immediately
-    optimisticUpdateRef.current = {
-      walletType: 'base',
-      field: 'walletConnecting',
-      expectedValue: isConnecting,
-      optimisticState: isConnecting,
-      status: 'pending',
-      timestamp: Date.now()
-    };
     
     // Now do API calls - AWAIT to ensure they complete
     // DECOUPLED: Only update Base walletConnecting boolean, but ensure BOTH connections exist
@@ -1087,13 +1085,20 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const syncStateFromBackend = async () => {
       if (!email || typeof window === 'undefined') return;
       
-      // CRITICAL: Skip backend reads if there's an optimistic update in progress (status: 'pending')
+      // CRITICAL: Check optimistic update FIRST (before any backend fetch)
+      // Skip backend reads if there's an optimistic update in progress (status: 'pending')
       // Only allow reads once the update is marked as 'sent' (meaning ALL wallet connections are done)
       // This ensures we wait for ALL wallet pending connections and optimistic updates to complete
       if (optimisticUpdateRef.current) {
         if (optimisticUpdateRef.current.status === 'pending') {
           // Update is still in progress - wait for ALL wallet connections (MetaMask AND Base) to complete
-          console.log('[AssetConnect syncStateFromBackend] ⏸️ Skipping - optimistic update still in progress (pending), waiting for ALL wallet connections to complete');
+          // CRITICAL: Skip ENTIRE function (don't fetch from backend at all)
+          const timeSinceOptimistic = Date.now() - optimisticUpdateRef.current.timestamp;
+          if (timeSinceOptimistic < 5000) {
+            console.log('[AssetConnect syncStateFromBackend] ⏸️ Skipping ENTIRE sync - optimistic update still in progress (pending), waiting for API call to complete. Time since optimistic:', timeSinceOptimistic, 'ms');
+            return;
+          }
+          // More than 5 seconds - API call might be stuck, but still skip to preserve optimistic state
           return;
         } else if (optimisticUpdateRef.current.status === 'sent') {
           // Update is marked as 'sent' - this means BOTH MetaMask AND Base connections are done
@@ -1176,8 +1181,27 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         
         // CRITICAL: Compare fetched JSON with current backendConnections to detect changes
         // Only update UI if there are actual changes in boolean values
+        // CRITICAL: Double-check optimistic update BEFORE processing any changes
+        // This prevents race conditions where optimistic update might be cleared between checks
+        const currentOptimistic = optimisticUpdateRef.current;
+        if (currentOptimistic && currentOptimistic.status === 'pending') {
+          const timeSinceOptimistic = Date.now() - currentOptimistic.timestamp;
+          if (timeSinceOptimistic < 5000) {
+            return; // Skip entire function - don't call setBackendConnections at all
+          }
+        }
+        
         // Use functional setState to get current state value (avoids stale closure)
         setBackendConnections((currentBackendConnections: any[]) => {
+          // CRITICAL: Triple-check optimistic update INSIDE setState to prevent overwrites
+          const insideOptimistic = optimisticUpdateRef.current;
+          if (insideOptimistic && insideOptimistic.status === 'pending') {
+            const timeSinceOptimistic = Date.now() - insideOptimistic.timestamp;
+            if (timeSinceOptimistic < 5000) {
+              return currentBackendConnections; // Return current state without changes
+            }
+          }
+          
           // Log BEFORE state for comparison
           console.log('[AssetConnect syncStateFromBackend] BEFORE state:', {
             currentConnections: currentBackendConnections.map((pc: any) => ({
@@ -1211,39 +1235,51 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               return true;
             }
             
-            // Compare each connection's boolean values
-            const changes: any[] = [];
-            for (const fetchedPc of pendingConnections) {
-              const currentPc = currentBackendConnections.find(
-                (pc: any) => 
-                  pc.walletType === fetchedPc.walletType && 
-                  pc.address?.toLowerCase() === fetchedPc.address?.toLowerCase()
-              );
-              
-              // If connection doesn't exist in current state, there's a change
-              if (!currentPc) {
-                changes.push({
-                  type: 'new_connection',
-                  walletType: fetchedPc.walletType,
-                  address: fetchedPc.address
-                });
-                return true;
-              }
-              
-              // Compare all boolean fields - if any differ, there's a change
-              const fieldChanges: any = {};
-              if (currentPc.walletConnected !== fetchedPc.walletConnected) {
-                fieldChanges.walletConnected = { from: currentPc.walletConnected, to: fetchedPc.walletConnected };
-              }
-              if (currentPc.walletConnecting !== fetchedPc.walletConnecting) {
+          // CRITICAL: If there's an optimistic update with 'pending' status, ignore changes to that field
+          // This prevents overwriting optimistic state with stale backend data
+          const optimistic = optimisticUpdateRef.current;
+          const shouldIgnoreOptimisticField = optimistic && optimistic.status === 'pending';
+          
+          // Compare each connection's boolean values
+          const changes: any[] = [];
+          for (const fetchedPc of pendingConnections) {
+            const currentPc = currentBackendConnections.find(
+              (pc: any) => 
+                pc.walletType === fetchedPc.walletType && 
+                pc.address?.toLowerCase() === fetchedPc.address?.toLowerCase()
+            );
+            
+            // If connection doesn't exist in current state, there's a change
+            if (!currentPc) {
+              changes.push({
+                type: 'new_connection',
+                walletType: fetchedPc.walletType,
+                address: fetchedPc.address
+              });
+              return true;
+            }
+            
+            // Compare all boolean fields - if any differ, there's a change
+            // CRITICAL: Ignore changes to the optimistic field if status is 'pending'
+            const fieldChanges: any = {};
+            if (currentPc.walletConnected !== fetchedPc.walletConnected) {
+              fieldChanges.walletConnected = { from: currentPc.walletConnected, to: fetchedPc.walletConnected };
+            }
+            if (currentPc.walletConnecting !== fetchedPc.walletConnecting) {
+              // CRITICAL: Ignore this change if it's the optimistic field and status is 'pending'
+              if (!(shouldIgnoreOptimisticField && optimistic?.walletType === fetchedPc.walletType && optimistic?.field === 'walletConnecting')) {
                 fieldChanges.walletConnecting = { from: currentPc.walletConnecting, to: fetchedPc.walletConnecting };
               }
-              if (currentPc.assetConnected !== fetchedPc.assetConnected) {
-                fieldChanges.assetConnected = { from: currentPc.assetConnected, to: fetchedPc.assetConnected };
-              }
-              if (currentPc.assetConnecting !== fetchedPc.assetConnecting) {
+            }
+            if (currentPc.assetConnected !== fetchedPc.assetConnected) {
+              fieldChanges.assetConnected = { from: currentPc.assetConnected, to: fetchedPc.assetConnected };
+            }
+            if (currentPc.assetConnecting !== fetchedPc.assetConnecting) {
+              // CRITICAL: Ignore this change if it's the optimistic field and status is 'pending'
+              if (!(shouldIgnoreOptimisticField && optimistic?.walletType === fetchedPc.walletType && optimistic?.field === 'assetConnecting')) {
                 fieldChanges.assetConnecting = { from: currentPc.assetConnecting, to: fetchedPc.assetConnecting };
               }
+            }
               
               if (Object.keys(fieldChanges).length > 0) {
                 changes.push({
@@ -1421,10 +1457,41 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             }
           }
           
-          // No optimistic update or it's been more than 3 seconds - safe to update from backend
+          // CRITICAL: If optimistic update is still 'pending', preserve the optimistic field
+          // Don't overwrite it with backend data until the API call completes
+          if (optimistic && optimistic.status === 'pending' && timeSinceOptimistic < 5000) {
+            console.log('[AssetConnect syncStateFromBackend] Optimistic update still pending, preserving optimistic field:', optimistic.field);
+            // Merge backend data but preserve the optimistic field from current state
+            const merged = pendingConnections.map((backendPc: any) => {
+              if (backendPc.walletType === optimistic.walletType) {
+                const optimisticPc = currentBackendConnections.find(
+                  (pc: any) => pc.walletType === optimistic.walletType
+                );
+                if (optimisticPc) {
+                  return {
+                    ...backendPc,
+                    [optimistic.field]: optimisticPc[optimistic.field], // Preserve optimistic field
+                  };
+                }
+              }
+              return backendPc;
+            });
+            // Add any connections from current state that aren't in backend
+            currentBackendConnections.forEach((currentPc: any) => {
+              const existsInBackend = pendingConnections.some(
+                (pc: any) => pc.walletType === currentPc.walletType
+              );
+              if (!existsInBackend) {
+                merged.push(currentPc);
+              }
+            });
+            return merged;
+          }
+          
+          // No optimistic update or it's been more than 5 seconds - safe to update from backend
           // This is a safety timeout in case backend never confirms
-          if (optimistic && timeSinceOptimistic >= 3000) {
-            console.log('[AssetConnect syncStateFromBackend] Optimistic update expired (3 seconds), clearing flag and using backend');
+          if (optimistic && timeSinceOptimistic >= 5000) {
+            console.log('[AssetConnect syncStateFromBackend] Optimistic update expired (5 seconds), clearing flag and using backend');
             optimisticUpdateRef.current = null;
             // Now safe to use backend data
           }
@@ -1495,92 +1562,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const lastCancelledAddressRef = useRef<string | null>(null);
   const lastCancelledTypeRef = useRef<WalletType | null>(null);
   const lastCancelledTimestampRef = useRef<number>(0);
-  const pendingConnectionAlertShownRef = useRef(false); // Track if alert has been shown for pending connection on reload
   const hasCheckedOnMountRef = useRef(false); // Track if we've checked on initial mount
-  const setIsConnectingBaseRef = useRef<((isConnecting: boolean) => Promise<void>) | null>(null);
-  
-  // CRITICAL: Alert user if MetaMask is pending connection after reload
-  // AND: Always reset Base walletConnecting to false on mount
-  // Separate useEffect that watches backendConnections to detect pending state
-  // Only checks once when backendConnections is first populated from backend (on mount/reload)
-  // CRITICAL: Use a delay to ensure this only runs after initial backend sync, not on user button clicks
-  useEffect(() => {
-    if (!email || typeof window === 'undefined') return;
-    
-    // CRITICAL: Only check once on mount when backendConnections is first populated
-    // Track if we've already checked to prevent multiple alerts
-    if (!hasCheckedOnMountRef.current && backendConnections.length > 0) {
-      hasCheckedOnMountRef.current = true;
-      
-      // Wait a bit for initial backend sync to fully complete
-      const checkTimeout = setTimeout(async () => {
-        // CRITICAL: Always reset Base walletConnecting to false on mount
-        const baseConn = backendConnections.find((pc: any) => pc.walletType === 'base');
-        if (baseConn && baseConn.walletConnecting === true) {
-          console.log('[AssetConnect] Base walletConnecting is true on mount - resetting to false');
-          try {
-            if (setIsConnectingBaseRef.current) {
-              await setIsConnectingBaseRef.current(false);
-              console.log('[AssetConnect] ✅ Base walletConnecting reset to false on mount');
-            } else {
-              console.error('[AssetConnect] ❌ setIsConnectingBaseRef.current is null - cannot reset Base walletConnecting');
-            }
-          } catch (err) {
-            console.error('[AssetConnect] ❌ Error resetting Base walletConnecting on mount:', err);
-          }
-        }
-        
-        // Check directly from backendConnections for pending MetaMask connection
-        // CRITICAL: Only show alert if connection was already pending (from previous session)
-        // Don't show if it's a new connection attempt (user just clicked button)
-        if (!pendingConnectionAlertShownRef.current) {
-          const pendingMetaMaskConn = backendConnections.find(
-            (pc: any) => 
-              pc.walletType === 'metamask' && 
-              pc.walletConnecting === true && 
-              pc.walletConnected === false
-          );
-          
-          if (pendingMetaMaskConn) {
-            // CRITICAL: Only show alert if this connection has a timestamp from before this session
-            // If timestamp is very recent (within last 2 seconds), it's likely from a button click, not a reload
-            const connectionAge = Date.now() - (pendingMetaMaskConn.timestamp || 0);
-            const isRecentConnection = connectionAge < 2000; // Less than 2 seconds old
-            
-            if (!isRecentConnection) {
-              console.log('[AssetConnect] Pending MetaMask connection detected on reload, showing alert', {
-                walletId: pendingMetaMaskConn.walletId,
-                address: pendingMetaMaskConn.address,
-                walletConnecting: pendingMetaMaskConn.walletConnecting,
-                walletConnected: pendingMetaMaskConn.walletConnected,
-                connectionAge: connectionAge,
-                timestamp: pendingMetaMaskConn.timestamp,
-                currentTime: Date.now()
-              });
-              alert('MetaMask connection is pending. Please complete the connection process.');
-              pendingConnectionAlertShownRef.current = true; // Mark as shown
-            } else {
-              console.log('[AssetConnect] Pending MetaMask connection is too recent (likely from button click), not showing alert', {
-                connectionAge: connectionAge,
-                timestamp: pendingMetaMaskConn.timestamp,
-                currentTime: Date.now()
-              });
-            }
-          }
-        }
-      }, 1000); // Wait 1 second for initial backend sync to complete
-      
-      return () => {
-        clearTimeout(checkTimeout);
-      };
-    }
-    
-    // Reset flags on unmount so it can check again on next mount/reload
-    return () => {
-      pendingConnectionAlertShownRef.current = false;
-      hasCheckedOnMountRef.current = false;
-    };
-  }, [email, backendConnections.length]); // Watch backendConnections.length to detect when it's first populated
+  // Mount reset removed - walletConnecting and assetConnecting booleans removed from JSON
   
   // Process pending wallet after reload - only run once per pending wallet
   useEffect(() => {
@@ -3268,9 +3251,11 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   }, [pendingMetaMask, pendingBase, email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator]);
 
-  // Connect Asset function that handles entire connection flow (wallet connection + deposit)
-  const connectAsset = useCallback(async (walletType: WalletType): Promise<void> => {
-    console.log('[connectAsset] FUNCTION CALLED with walletType:', walletType, 'email:', email);
+    // Connect Asset function that handles entire connection flow (wallet connection + deposit)
+    const connectAsset = useCallback(async (walletType: WalletType): Promise<void> => {
+      console.log('[connectAsset] 🚀🚀🚀 FUNCTION CALLED with walletType:', walletType, 'email:', email);
+      console.log('[connectAsset] 🚀 Timestamp:', Date.now());
+      console.log('[connectAsset] 🚀 Stack trace:', new Error().stack?.split('\n').slice(0, 5).join('\n'));
     
     // Validate walletType
     if (typeof walletType !== 'string') {
@@ -3285,12 +3270,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
     
     console.log('[connectAsset] Setting connecting state for:', walletType);
-    // Set connecting state
-    if (walletType === 'metamask') {
-      setIsConnectingMetaMask(true);
-    } else {
-      setIsConnectingBase(true);
-    }
+    // Connecting state removed - no longer tracking
 
     // Declare shouldExit before try block so it's accessible after catch
     let shouldExit = false;
@@ -3302,15 +3282,38 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
       // Step 1: Connect to wallet
       let accounts: string[] = [];
       try {
+        console.log('[connectAsset] 🚀 About to await connectWalletUtil - if error is thrown, it should be caught below');
         const result = await connectWalletUtil(walletType);
+        console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
         accounts = result.accounts;
       } catch (walletError: any) {
+        console.error('[connectAsset] ⚠️⚠️⚠️ CATCH BLOCK EXECUTED! ⚠️⚠️⚠️');
+        console.error('[connectAsset] ⚠️ This means the error WAS thrown and IS being caught');
+        // CRITICAL: This catch block MUST catch cancellations after page reload
+        console.error('[connectAsset] ⚠️⚠️⚠️ CATCH BLOCK REACHED! ⚠️⚠️⚠️');
+        console.error('[connectAsset] ⚠️ This means the error WAS thrown and IS being caught');
+        console.error('[connectAsset] ⚠️ WALLET ERROR CAUGHT - Full error object:', walletError);
+        console.error('[connectAsset] ⚠️ Error type:', typeof walletError);
+        console.error('[connectAsset] ⚠️ Error constructor:', walletError?.constructor?.name);
+        console.error('[connectAsset] ⚠️ Error keys:', Object.keys(walletError || {}));
+        
         // If user cancels wallet connection, just clear local state - DO NOT mark as cancelled in backend
         // The user can explicitly cancel later if needed, but we shouldn't automatically cancel
         // CRITICAL: Only treat as cancellation if it's a confirmed user rejection
         // Error code 4001 is the standard EIP-1193 user rejection code
         const errorMsg = String(walletError?.message || walletError?.toString() || '');
-        const errorCode = walletError?.code;
+        const nestedErrorMsg = String(walletError?.error?.message || walletError?.error?.toString() || '');
+        const errorCode = walletError?.code || walletError?.error?.code;
+        
+        console.error('[connectAsset] ⚠️ Error message extraction:', {
+          errorMsg,
+          nestedErrorMsg,
+          errorCode,
+          walletError,
+          walletErrorError: walletError?.error,
+          walletErrorString: String(walletError),
+          walletErrorJSON: JSON.stringify(walletError, null, 2)
+        });
         
         // Only treat as cancellation if it's a confirmed user rejection
         // This prevents treating other errors (like network errors, missing extension, etc.) as cancellations
@@ -3341,24 +3344,10 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         if (isCancelled) {
           console.log('[connectAsset] User cancelled wallet connection - resetting walletConnecting to false');
           
-          // DECOUPLED: Only reset the specific wallet type that was cancelled
+          // Reset pending state
           if (walletType === 'metamask') {
-            console.log('[connectAsset] Calling setIsConnectingMetaMask(false) to reset walletConnecting state...');
-            try {
-              await setIsConnectingMetaMask(false);
-              console.log('[connectAsset] ✅ setIsConnectingMetaMask(false) completed');
-            } catch (err) {
-              console.error('[connectAsset] ❌ Error calling setIsConnectingMetaMask(false):', err);
-            }
             setPendingMetaMask(null);
           } else {
-            console.log('[connectAsset] Calling setIsConnectingBase(false) to reset walletConnecting state...');
-            try {
-              await setIsConnectingBase(false);
-              console.log('[connectAsset] ✅ setIsConnectingBase(false) completed');
-            } catch (err) {
-              console.error('[connectAsset] ❌ Error calling setIsConnectingBase(false):', err);
-            }
             setPendingBase(null);
           }
           
@@ -3413,12 +3402,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         console.warn('[connectAsset] window is undefined, cannot save pending connection');
       }
       
-      // Reset connecting state
-      if (walletType === 'metamask') {
-        setIsConnectingMetaMask(false);
-      } else {
-        setIsConnectingBase(false);
-      }
+      // Connecting state removed - no longer tracking
       
       // Get wallet provider to trigger deposit flow immediately (no reload needed)
       let provider: any = null;
@@ -3560,12 +3544,10 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           console.log('[connectAsset] User cancelled deposit - clearing state immediately');
           
           // CRITICAL: Clear state FIRST (immediate button update) - ALWAYS, regardless of backend
-          // Reset connecting state immediately
+          // Reset pending state immediately
           if (walletType === 'metamask') {
-            setIsConnectingMetaMask(false);
             setPendingMetaMask(null);
           } else {
-            setIsConnectingBase(false);
             setPendingBase(null);
           }
           
@@ -3640,30 +3622,18 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } catch (error: any) {
       console.error('Error in connectAsset:', error);
       
-      // Check if this is a cancellation error - check both error message and nested error structure
+      // Check if this is a cancellation error
       const errorMsg = String(error?.message || error?.toString() || '');
-      const nestedErrorMsg = String(error?.error?.message || error?.error?.toString() || '');
-      const errorCode = error?.code || error?.error?.code;
       const isCancelled = 
-        errorCode === 4001 || // Standard EIP-1193 user rejection
-        errorCode === 'ACTION_REJECTED' || // Some wallets use this
-        errorCode === 4900 || // Some wallets use this for user rejection
+        errorMsg.toLowerCase().includes('cancelled') || 
+        errorMsg.toLowerCase().includes('rejected') || 
         errorMsg.toLowerCase().includes('user rejected') ||
-        errorMsg.toLowerCase().includes('user cancelled') ||
-        errorMsg.toLowerCase().includes('user denied') ||
-        errorMsg.toLowerCase().includes('rejected') ||
-        errorMsg.toLowerCase().includes('cancelled') ||
-        nestedErrorMsg.toLowerCase().includes('user rejected') ||
-        nestedErrorMsg.toLowerCase().includes('user cancelled') ||
-        nestedErrorMsg.toLowerCase().includes('rejected') ||
-        (error?.isCancelled === true);
+        errorMsg.toLowerCase().includes('user rejected the request') ||
+        errorMsg.toLowerCase().includes('action rejected') ||
+        error?.code === 4001 ||
+        error?.code === 'ACTION_REJECTED';
       
-      // CRITICAL: Reset connecting state FIRST (so button updates immediately)
-      if (walletType === 'metamask') {
-        setIsConnectingMetaMask(false);
-      } else {
-        setIsConnectingBase(false);
-      }
+      // Connecting state removed - no longer tracking
       
       // If user cancelled, clear pending wallet state silently (no alert)
       if (isCancelled) {
@@ -3800,21 +3770,15 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         pendingMetaMask,
         pendingBase,
         metaMaskWalletConnected,
-        metaMaskWalletConnecting,
         metaMaskAssetConnected,
-        metaMaskAssetConnecting,
         baseWalletConnected,
-        baseWalletConnecting,
         baseAssetConnected,
-        baseAssetConnecting,
         connectAsset,
         connectAssetForWallet,
         clearAutoConnectedMetaMask,
         clearAutoConnectedBase,
         setPendingMetaMask,
         setPendingBase,
-        setIsConnectingMetaMask,
-        setIsConnectingBase,
       }}
     >
       {children}

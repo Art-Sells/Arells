@@ -26,13 +26,15 @@ interface PendingConnection {
 
   
 
-  // Wallet connection states (4-boolean system)
-  walletConnected: boolean; // true after successful wallet connection, false after disconnection
-  walletConnecting: boolean; // true when connecting, false when walletConnected is true or after cancel
+  // Wallet connection states
 
-  // Asset connection states (4-boolean system)
+  walletConnected: boolean; // true after successful wallet connection, false after disconnection
+
+  
+
+  // Asset connection states
+
   assetConnected: boolean; // true after successful asset connection (deposit), false after disconnection
-  assetConnecting: boolean; // true when deposit is clicked, false after deposit completes or cancels
 
 }
 
@@ -108,14 +110,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Add new pending connection
 
-      // First, check if new fields were explicitly provided (before setting defaults)
-
-      const hasNewAssetConnected = (pendingConnection as any).assetConnected !== undefined;
-
-      const hasNewAssetConnectionCancelled = (pendingConnection as any).assetConnectionCancelled !== undefined;
-
-      
-
       // Build connection object with defaults, but preserve explicitly set values
 
       // CRITICAL: Remove old fields BEFORE building the object to prevent them from affecting new fields
@@ -128,62 +122,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       delete (cleanPendingConnection as any).walletExtensionConnected;
 
+      delete (cleanPendingConnection as any).walletConnectionCanceled;
+
+      delete (cleanPendingConnection as any).assetConnectionCancelled;
+
       
 
-      // CRITICAL: Remove old cancellation fields (4-boolean system only)
-      delete (cleanPendingConnection as any).walletConnectionCanceled;
-      delete (cleanPendingConnection as any).assetConnectionCancelled;
-      
       const connectionToAdd: any = {
 
         ...cleanPendingConnection,
 
         timestamp: cleanPendingConnection.timestamp || Date.now(),
 
-        // Default values for 4-boolean system only (no cancellation booleans)
+        // Default values for boolean fields if not provided (backward compatibility)
 
         walletConnected: (cleanPendingConnection as any).walletConnected ?? false,
 
-        walletConnecting: (cleanPendingConnection as any).walletConnecting ?? false,
-
         assetConnected: (cleanPendingConnection as any).assetConnected ?? false,
 
-        assetConnecting: (cleanPendingConnection as any).assetConnecting ?? false,
-
       };
+      
+      // Remove walletConnecting and assetConnecting if they exist (cleanup old data)
+      delete connectionToAdd.walletConnecting;
+      delete connectionToAdd.assetConnecting;
 
       
 
-      // Migrate old fields to new fields if present (ONLY if new fields were NOT explicitly provided)
+      // Migrate old depositCompleted field if present
 
-      // This ensures that explicitly set new fields are never overwritten by old field values
-
-      // CRITICAL: Only migrate if the new field was not in the original pendingConnection
-
-      // Check the ORIGINAL pendingConnection (before cleaning) for old fields
-
-      if (!hasNewAssetConnected && (pendingConnection as any).depositCompleted !== undefined) {
+      if ((pendingConnection as any).depositCompleted !== undefined && connectionToAdd.assetConnected === false) {
 
         connectionToAdd.assetConnected = (pendingConnection as any).depositCompleted;
 
       }
 
-      if (!hasNewAssetConnectionCancelled && (pendingConnection as any).depositCancelled !== undefined) {
-
-        connectionToAdd.assetConnectionCancelled = (pendingConnection as any).depositCancelled;
-
-      }
-
       
-
-      // CRITICAL: Ensure state consistency - if walletConnected is true, walletConnecting must be false
-      if (connectionToAdd.walletConnected === true) {
-        connectionToAdd.walletConnecting = false;
-      }
-      // CRITICAL: Ensure state consistency - if assetConnected is true, assetConnecting must be false
-      if (connectionToAdd.assetConnected === true) {
-        connectionToAdd.assetConnecting = false;
-      }
 
       pendingConnections.push(connectionToAdd);
 

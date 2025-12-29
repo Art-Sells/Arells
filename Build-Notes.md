@@ -22,25 +22,14 @@ assetConnecting: false <- (this should change to true if asset connection (depos
 if 
 
 walletConnected: false
-walletConnecting: true
 
 then
 
-(connecing) button placeholder should show...
-
-if
-
-assetConnected: false
-assetConnecting: true
-
-then
-
-(waiting for deposit) button placeholder should show...
+(Connect Metamask/Base) button...
 
 if 
 
 walletConnected: true
-walletConnecting: false 
 
 then
 
@@ -49,21 +38,18 @@ then
 if 
 
 assetConnected: true
-assetConnecting: false
 
 (Asset Connected) button placeholder should show
 
 if
 
 assetConnected: false
-assetConnecting: false
 
 (Connect Ethereum with Metamask/Base)  button should show
 
-- - Fix cpVatoc VAPA issue
-- - Test to see after asking for wallet connection, if I reload the page after confirmation (before wallet ID creation), if issues preside...
+- - Check once logged out, it should reset walletConnecting and assetConnecting (all of them on logout as: false)
 - - Afer wallet connection, if asset connection canceled, no wallet balances should show...
-- - If page reloads before connect assets (deposit) or connecti wallet is confirmed or cancelled, buttons (of Metamask or Base) should remain prior to what they were "waiting for deposit" or unclicbable and an aleart should pop up saying "check wallet" 
+- - Fix cpVatoc VAPA issue
 - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
 - - - message/alert: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
@@ -180,12 +166,11 @@ of bear markets?
 - - - - Sloth: Show modal explanation
 - Connect Ethereum to begin <-words (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
 - - Modal: Connecting Wallet (until wallet address have been fetched, otherwise connection cancelled)
-- - Modal (if page reloads before connection asked(only for Metamask)): Check Wallet (ok) <--- should dissapear after connection successful
+- - Modal for Alert (from Vavity tester): Error connecting metamask: Request of type 'wallet_requestPermissions' already pending for origin http://localhost:3000. Please wait.
 - - Modal: Connection Canceled (ok)
-- - Modal (from waiting for deposit in Vavity Tester): Wallet Connection Successful, Connecting Ethereum .5% (ok)
+- - Modal: Wallet Connection Successful, Connecting Ethereum .5% (ok)
 - - - (Connecting (Loader) Ethereum)<-replaces "Waiting for Deposit"
 - - Modal: Connection Canceled (ok)
-- - Modal (if page reloads before connection asked): Check Wallet (ok) <--- should dissapear after connection successful
 - If acVatoi != 0, then hide "Connect Ethereum to begin"
 - Get From VavityTester: Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
@@ -243,6 +228,9 @@ Users:
 - - Review notes on phone
 - - Look at notes for openings. 
 - - Add "Discord" section for any questions
+- - FAQ: 
+- - - External vs Internal (Arells) Pricing system: Arells is an experimental company created to see whether we are ready to let go of bear markets.
+- - - Asking for deposit more than once: Only if you log-out and log back in withouht accepting or denying the deposit
 Keep marketing, dependent on growth after 1-2 weeks:
 - Updates (oDAO, FndrsINC, etc)
 - Increase ETHEREUM_RPC-URL

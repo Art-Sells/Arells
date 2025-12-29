@@ -164,10 +164,8 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
           // Preserve all boolean states from matchingConnection
           walletConnected: matchingConnection.walletConnected ?? true,
           walletConnecting: matchingConnection.walletConnecting ?? false,
-          walletConnectionCanceled: matchingConnection.walletConnectionCanceled ?? false,
           assetConnected: matchingConnection.assetConnected ?? false,
           assetConnecting: matchingConnection.assetConnecting ?? true, // Deposit in progress
-          assetConnectionCancelled: matchingConnection.assetConnectionCancelled ?? false,
         },
       });
       console.log('[connectAsset] Saved txHash to existing pending connection:', txHash);
@@ -186,10 +184,8 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
           // Wallet connection completed, deposit in progress
           walletConnected: true,
           walletConnecting: false,
-          walletConnectionCanceled: false,
           assetConnected: false,
           assetConnecting: true, // Deposit in progress
-          assetConnectionCancelled: false,
           txHash: txHash,
         },
       });
