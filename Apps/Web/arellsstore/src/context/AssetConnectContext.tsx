@@ -26,11 +26,9 @@ interface AssetConnectContextType {
   pendingBase: { address: string; walletId: string } | null;
   
   // JSON boolean states for MetaMask (derived from backendConnections)
-  metaMaskWalletConnected: boolean;
   metaMaskAssetConnected: boolean;
   
   // JSON boolean states for Base (derived from backendConnections)
-  baseWalletConnected: boolean;
   baseAssetConnected: boolean;
   
   // Connect Asset: Handles wallet connection, deposit, and fetches balances
@@ -111,7 +109,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     );
   }, [backendConnections]);
   
-  const metaMaskWalletConnected = metaMaskConn?.walletConnected ?? false;
   const metaMaskAssetConnected = metaMaskConn?.assetConnected ?? false;
   
   // Derived JSON boolean states for Base
@@ -127,7 +124,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     );
   }, [backendConnections]);
   
-  const baseWalletConnected = baseConn?.walletConnected ?? false;
   const baseAssetConnected = baseConn?.assetConnected ?? false;
   
   // Get VavityAggregator context for wallet operations (must be before callbacks that use email)
@@ -247,8 +243,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           walletId,
           walletType,
           timestamp: Date.now(),
-          // Preserve existing boolean states or use defaults
-          walletConnected: existingConnection?.walletConnected ?? false,
+          // Preserve existing assetConnected state or use default
           assetConnected: existingConnection?.assetConnected ?? false,
         },
       });
@@ -2149,8 +2144,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // Check periodically every 2 seconds
     const intervalId = setInterval(checkWalletConnection, 2000);
     
-    const handleAccountsChanged = (accounts: string[]) => {
+    const handleAccountsChanged = async (accounts: string[]) => {
       console.log('[AssetConnect] Accounts changed:', accounts);
+      // Just re-check wallet connection state - no walletConnected updates needed
       checkWalletConnection();
     };
     
@@ -2193,46 +2189,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     };
   }, []);
 
-  // Check for auto-connected wallets on mount - DISABLED
-  // We don't want to auto-connect wallets - user must explicitly click the connect button
-  // This prevents unwanted auto-connection prompts
-  // useEffect(() => {
-  //   const checkAutoConnectedWallets = async () => {
-  //     // Only check on client side
-  //     if (typeof window === 'undefined') return;
-
-  //     try {
-  //       // Check for MetaMask
-  //       if ((window as any).ethereum) {
-  //         let metamaskProvider: any = null;
-          
-  //         // Check if there are multiple providers
-  //         if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
-  //           metamaskProvider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
-  //         } else if ((window as any).ethereum?.isMetaMask) {
-  //           metamaskProvider = (window as any).ethereum;
-  //         }
-
-  //         if (metamaskProvider) {
-  //           try {
-  //             // Use eth_accounts (non-prompting) to check if already connected
-  //             const accounts = await metamaskProvider.request({ method: 'eth_accounts' });
-  //             if (accounts && accounts.length > 0) {
-  //               console.log('MetaMask auto-connected:', accounts[0]);
-  //               setAutoConnectedMetaMask(accounts[0]);
-  //             }
-  //           } catch (error) {
-  //             console.log('Could not check MetaMask auto-connection:', error);
-  //           }
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error checking auto-connected wallets:', error);
-  //     }
-  //   };
-
-  //   checkAutoConnectedWallets();
-  // }, []);
 
   const clearAutoConnectedMetaMask = useCallback(() => {
     setAutoConnectedMetaMask(null);
@@ -2378,9 +2334,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               // Deposit completed
               assetConnected: true,
               assetConnecting: false,
-              // Wallet was connected before deposit
-              walletConnected: true,
-              walletConnecting: false,
               txHash: txHash || 'unknown',
             },
           });
@@ -2490,16 +2443,126 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         throw new Error('Please sign in first to connect a wallet.');
       }
       
-      // Step 1: Connect to wallet
+      // Step 1: Check if wallet is already connected, if not connect it
       let accounts: string[] = [];
-      try {
-        console.log('[connectAsset] 🚀 About to await connectWalletUtil - if error is thrown, it should be caught below');
+      let walletAddress: string = '';
+      let walletId: string = '';
+      let provider: any = null;
+      
+      // First, check if wallet is already connected using eth_accounts (non-prompting)
+      console.log('[connectAsset] 🚀 Checking if wallet is already connected:', walletType);
+      let walletProvider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          walletProvider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          walletProvider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          walletProvider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          walletProvider = (window as any).ethereum;
+        }
+      }
+      
+      if (walletProvider) {
+        try {
+          // Try to get accounts without prompting (eth_accounts doesn't prompt)
+          const existingAccounts = await walletProvider.request({ method: 'eth_accounts' });
+          if (existingAccounts && existingAccounts.length > 0) {
+            console.log('[connectAsset] ✅ Wallet already connected, using existing accounts:', existingAccounts);
+            accounts = existingAccounts;
+            walletAddress = accounts[0];
+            // Skip connection step and proceed directly to deposit
+            // Set provider for deposit flow
+            provider = walletProvider;
+          } else {
+            // Wallet not connected - need to connect
+            console.log('[connectAsset] 🚀 Wallet not connected, connecting now...');
+            const result = await connectWalletUtil(walletType);
+            console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
+            accounts = result.accounts;
+            if (!accounts || accounts.length === 0) {
+              throw new Error(`No accounts found. Please approve the connection in ${walletType === 'metamask' ? 'MetaMask' : 'Base'}.`);
+            }
+            walletAddress = accounts[0];
+          }
+        } catch (checkError: any) {
+          // If eth_accounts fails, try to connect
+          console.log('[connectAsset] ⚠️ Could not check existing connection, will connect:', checkError);
+          const result = await connectWalletUtil(walletType);
+          console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
+          accounts = result.accounts;
+          if (!accounts || accounts.length === 0) {
+            throw new Error(`No accounts found. Please approve the connection in ${walletType === 'metamask' ? 'MetaMask' : 'Base'}.`);
+          }
+          walletAddress = accounts[0];
+        }
+      } else {
+        // Provider not found - need to connect
+        console.log('[connectAsset] 🚀 Provider not found, connecting wallet:', walletType);
         const result = await connectWalletUtil(walletType);
         console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
         accounts = result.accounts;
+        if (!accounts || accounts.length === 0) {
+          throw new Error(`No accounts found. Please approve the connection in ${walletType === 'metamask' ? 'MetaMask' : 'Base'}.`);
+        }
+        walletAddress = accounts[0];
+      }
+      
+      // At this point, we have walletAddress and accounts (either from existing connection or new connection)
+      if (!walletAddress || !accounts || accounts.length === 0) {
+        throw new Error(`No wallet address found. Please connect your wallet.`);
+      }
+      
+      // Save connection to backend JSON (without walletConnected - we don't track that anymore)
+      console.log('[connectAsset] ✅ Wallet connected/verified, saving to JSON');
+      try {
+        try {
+          // Get existing connection
+          const getResponse = await axios.get('/api/savePendingConnection', { params: { email } });
+          const existingConnections = getResponse.data.pendingConnections || [];
+          const existingConnection = existingConnections.find((pc: any) => pc.walletType === walletType);
+          
+          if (existingConnection) {
+            // Update existing connection
+            walletId = existingConnection.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: {
+                ...existingConnection,
+                address: walletAddress,
+                walletId: walletId,
+              },
+            });
+            console.log('[connectAsset] ✅ Updated connection in JSON');
+          } else {
+            // Create new connection
+            walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            await axios.post('/api/savePendingConnection', {
+              email,
+              pendingConnection: {
+                address: walletAddress,
+                walletId: walletId,
+                walletType: walletType,
+                timestamp: Date.now(),
+                assetConnected: false,
+              },
+            });
+            console.log('[connectAsset] ✅ Created connection in JSON');
+          }
+        } catch (updateError: any) {
+          console.error('[connectAsset] ⚠️ Failed to save connection in JSON:', updateError?.response?.status || updateError?.message);
+          // Don't throw - continue with deposit flow
+          // Generate walletId as fallback
+          if (!walletId) {
+            walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          }
+        }
       } catch (walletError: any) {
-        console.error('[connectAsset] ⚠️⚠️⚠️ CATCH BLOCK EXECUTED! ⚠️⚠️⚠️');
-        console.error('[connectAsset] ⚠️ This means the error WAS thrown and IS being caught');
+          console.error('[connectAsset] ⚠️⚠️⚠️ CATCH BLOCK EXECUTED! ⚠️⚠️⚠️');
+          console.error('[connectAsset] ⚠️ This means the error WAS thrown and IS being caught');
         // CRITICAL: This catch block MUST catch cancellations after page reload
         console.error('[connectAsset] ⚠️⚠️⚠️ CATCH BLOCK REACHED! ⚠️⚠️⚠️');
         console.error('[connectAsset] ⚠️ This means the error WAS thrown and IS being caught');
@@ -2565,21 +2628,22 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           console.log('[connectAsset] Cancellation complete - state reset, throwing error to notify caller');
           // Throw error so VavityTester's catch block can handle it
           throw new Error('User rejected');
+        } else {
+          // Not a cancellation - log and re-throw
+          console.log('[connectAsset] Wallet connection failed (not a cancellation), re-throwing error');
+          throw walletError;
         }
-        
-        // Not a cancellation - log and re-throw
-        console.log('[connectAsset] Wallet connection failed (not a cancellation), re-throwing error');
-        throw walletError;
       }
       
-      if (!accounts || accounts.length === 0) {
-        throw new Error(`No accounts found. Please approve the connection in ${walletType === 'metamask' ? 'MetaMask' : 'Base'}.`);
+      // At this point, walletAddress should be set (either from existing connection or new connection)
+      if (!walletAddress || !accounts || accounts.length === 0) {
+        throw new Error(`No wallet address found. Please connect your wallet.`);
       }
-
-      const walletAddress = accounts[0];
       
-      // Create wallet ID immediately (but don't mark as connected yet)
-      const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      // Ensure walletId is set
+      if (!walletId) {
+        walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      }
       
       // Store wallet address and wallet ID in localStorage (for persistence)
       if (walletType === 'metamask') {
@@ -2588,46 +2652,23 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         localStorage.setItem('lastConnectedBase', walletAddress);
       }
       
-      // CRITICAL: Save to backend JSON immediately (independent of page reloads) - this is the source of truth
-      // State comes from backend JSON only - no local state setters needed
-      if (typeof window !== 'undefined') {
-        console.log('[connectAsset] About to save pending connection to backend:', { walletAddress, walletId, walletType, email, hasEmail: !!email });
-        
-        if (!email) {
-          console.error('[connectAsset] ERROR: Email is not available! Cannot save pending connection to backend.');
-          throw new Error('Email is required to save pending connection. Please ensure you are logged in.');
-        }
-        
-        try {
-          await savePendingConnectionToBackend(walletAddress, walletId, walletType);
-          console.log('[connectAsset] Successfully saved pending connection to backend');
-          
-          // NO optimistic updates - frontend fetcher will detect JSON changes and update buttons
-          // The polling useEffect will pick up the changes automatically
-        } catch (error) {
-          console.error('[connectAsset] Failed to save pending connection to backend:', error);
-          // Don't throw - continue with deposit flow even if save fails
-          // But log it clearly so we can debug
-        }
-      } else {
-        console.warn('[connectAsset] window is undefined, cannot save pending connection');
-      }
-      
       // Connecting state removed - no longer tracking
       
       // Get wallet provider to trigger deposit flow immediately (no reload needed)
-      let provider: any = null;
-      if (walletType === 'metamask') {
-        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
-          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
-        } else if ((window as any).ethereum?.isMetaMask) {
-          provider = (window as any).ethereum;
-        }
-      } else if (walletType === 'base') {
-        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
-          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
-        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
-          provider = (window as any).ethereum;
+      // If provider wasn't set from the already-connected check, get it now
+      if (!provider) {
+        if (walletType === 'metamask') {
+          if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+            provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+          } else if ((window as any).ethereum?.isMetaMask) {
+            provider = (window as any).ethereum;
+          }
+        } else if (walletType === 'base') {
+          if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+            provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+          } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+            provider = (window as any).ethereum;
+          }
         }
       }
       
@@ -2713,9 +2754,6 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               // Deposit completed
               assetConnected: true,
               assetConnecting: false,
-              // Wallet was connected before deposit
-              walletConnected: true,
-              walletConnecting: false,
               txHash: txHash || 'unknown',
             },
           });
@@ -2969,6 +3007,110 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
 
+  // Auto-trigger deposit if wallet is already connected but deposit not completed
+  // DISABLED: User wants to manually click buttons, not auto-trigger
+  // This was causing multiple deposit prompts when clicking buttons
+  // const autoTriggeredRef = useRef<{ metamask: boolean; base: boolean }>({ metamask: false, base: false });
+  
+  // useEffect(() => {
+  //   const autoTriggerDepositIfNeeded = async () => {
+  //     // Only check on client side
+  //     if (typeof window === 'undefined' || !email) return;
+  //     
+  //     // Wait a bit for backend JSON to load
+  //     await new Promise(resolve => setTimeout(resolve, 1000));
+  //     
+  //     try {
+  //       // Check backend JSON for deposit status
+  //       const getResponse = await axios.get('/api/savePendingConnection', { params: { email } });
+  //       const existingConnections = getResponse.data.pendingConnections || [];
+  //       
+  //       // Check MetaMask
+  //       if (!autoTriggeredRef.current.metamask) {
+  //         let metamaskProvider: any = null;
+  //         if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+  //           metamaskProvider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+  //         } else if ((window as any).ethereum?.isMetaMask) {
+  //           metamaskProvider = (window as any).ethereum;
+  //         }
+  //         
+  //         if (metamaskProvider) {
+  //           try {
+  //             const accounts = await metamaskProvider.request({ method: 'eth_accounts' });
+  //             if (accounts && accounts.length > 0) {
+  //               const walletAddress = accounts[0];
+  //               const metamaskConn = existingConnections.find(
+  //                 (pc: any) => pc.walletType === 'metamask' && 
+  //                 pc.address?.toLowerCase() === walletAddress.toLowerCase()
+  //               );
+  //               
+  //               // If wallet is connected but deposit not completed (or no connection exists), auto-trigger deposit
+  //               if (!metamaskConn || !metamaskConn.assetConnected) {
+  //                 console.log('[AssetConnect] MetaMask already connected, auto-triggering deposit');
+  //                 autoTriggeredRef.current.metamask = true;
+  //                 try {
+  //                   await connectAsset('metamask');
+  //                 } catch (error: any) {
+  //                   console.error('[AssetConnect] Auto-trigger deposit failed for MetaMask:', error);
+  //                   // Reset flag on error so it can retry
+  //                   autoTriggeredRef.current.metamask = false;
+  //                 }
+  //               }
+  //             }
+  //           } catch (error) {
+  //             console.log('[AssetConnect] Could not check MetaMask auto-connection:', error);
+  //           }
+  //         }
+  //       }
+  //       
+  //       // Check Base
+  //       if (!autoTriggeredRef.current.base) {
+  //         let baseProvider: any = null;
+  //         if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+  //           baseProvider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+  //         } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+  //           baseProvider = (window as any).ethereum;
+  //         }
+  //         
+  //         if (baseProvider) {
+  //           try {
+  //             const accounts = await baseProvider.request({ method: 'eth_accounts' });
+  //             if (accounts && accounts.length > 0) {
+  //               const walletAddress = accounts[0];
+  //               const baseConn = existingConnections.find(
+  //                 (pc: any) => pc.walletType === 'base' && 
+  //                 pc.address?.toLowerCase() === walletAddress.toLowerCase()
+  //               );
+  //               
+  //               // If wallet is connected but deposit not completed (or no connection exists), auto-trigger deposit
+  //               if (!baseConn || !baseConn.assetConnected) {
+  //                 console.log('[AssetConnect] Base already connected, auto-triggering deposit');
+  //                 autoTriggeredRef.current.base = true;
+  //                 try {
+  //                   await connectAsset('base');
+  //                 } catch (error: any) {
+  //                   console.error('[AssetConnect] Auto-trigger deposit failed for Base:', error);
+  //                   // Reset flag on error so it can retry
+  //                   autoTriggeredRef.current.base = false;
+  //                 }
+  //               }
+  //             }
+  //           } catch (error) {
+  //             console.log('[AssetConnect] Could not check Base auto-connection:', error);
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('[AssetConnect] Error checking auto-trigger deposit:', error);
+  //     }
+  //   };
+
+  //   // Only auto-trigger once after mount and backend JSON is loaded
+  //   if (email && backendConnections.length > 0) {
+  //     autoTriggerDepositIfNeeded();
+  //   }
+  // }, [email, backendConnections.length, connectAsset]);
+
   return (
     <AssetConnectContext.Provider
       value={{
@@ -2980,9 +3122,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         connectedBase,
         pendingMetaMask,
         pendingBase,
-        metaMaskWalletConnected,
         metaMaskAssetConnected,
-        baseWalletConnected,
         baseAssetConnected,
         connectAsset,
         connectAssetForWallet,

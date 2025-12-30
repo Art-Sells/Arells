@@ -8,14 +8,14 @@ import axios from 'axios';
 const VavityTester: React.FC = () => {
   const { email } = useVavity();
   const {
-    metaMaskWalletConnected,
     metaMaskAssetConnected,
-    baseWalletConnected,
     baseAssetConnected,
     connectAsset,
   } = useAssetConnect();
 
   const [connectionState, setConnectionState] = useState<any>(null);
+  const [loadingMetaMask, setLoadingMetaMask] = useState<boolean>(false);
+  const [loadingBase, setLoadingBase] = useState<boolean>(false);
 
   // Check pending connections - use useCallback to memoize
   const checkPending = useCallback(async () => {
@@ -29,17 +29,26 @@ const VavityTester: React.FC = () => {
       const response = await axios.get('/api/savePendingConnection', { params: { email } });
       const connections = response.data.pendingConnections || [];
       
-      const metamaskConn = connections.find((pc: any) => pc.walletType === 'metamask') || {
-        address: '0x0000000000000000000000000000000000000000',
-        walletConnected: false,
-        assetConnected: false,
-      };
+      // Use most recent connection
+      const metamaskConnections = connections.filter((pc: any) => pc.walletType === 'metamask');
+      const metamaskConn = metamaskConnections.length > 0
+        ? metamaskConnections.reduce((latest, current) => 
+            (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+          )
+        : {
+            address: '0x0000000000000000000000000000000000000000',
+            assetConnected: false,
+          };
       
-      const baseConn = connections.find((pc: any) => pc.walletType === 'base') || {
-        address: '0x0000000000000000000000000000000000000000',
-        walletConnected: false,
-        assetConnected: false,
-      };
+      const baseConnections = connections.filter((pc: any) => pc.walletType === 'base');
+      const baseConn = baseConnections.length > 0
+        ? baseConnections.reduce((latest, current) => 
+            (current.timestamp || 0) > (latest.timestamp || 0) ? current : latest
+          )
+        : {
+            address: '0x0000000000000000000000000000000000000000',
+            assetConnected: false,
+          };
       
       const state = {
         totalConnections: connections.length,
@@ -73,99 +82,31 @@ const VavityTester: React.FC = () => {
       return;
     }
 
-    console.log('[VavityTester handleConnectAsset] Starting connection for:', walletType);
+    // Set loading state
+    if (walletType === 'metamask') {
+      setLoadingMetaMask(true);
+    } else {
+      setLoadingBase(true);
+    }
 
+    // Simply connect wallet and trigger deposit - no walletConnected checks needed
+    console.log('[VavityTester handleConnectAsset] Connecting wallet and triggering deposit for:', walletType);
     try {
-      // Create/ensure both MetaMask and Base connections exist in JSON before connecting
-      console.log('[VavityTester handleConnectAsset] Creating/updating both connections in JSON...');
-      
-      const tempAddress = '0x0000000000000000000000000000000000000000';
-      const now = Date.now();
-      
-      // First, try to get existing connections
-      let existingConnections: any[] = [];
-      try {
-        const getResponse = await axios.get('/api/savePendingConnection', { params: { email } });
-        existingConnections = getResponse.data.pendingConnections || [];
-        console.log('[VavityTester handleConnectAsset] ✅ GET succeeded, found', existingConnections.length, 'existing connections');
-      } catch (getError: any) {
-        // If GET fails, treat as no connections exist
-        console.log('[VavityTester handleConnectAsset] ⚠️ GET failed (will create new connections):', getError?.response?.status || getError?.message);
-      }
-      
-      const metamaskConn = existingConnections.find((pc: any) => pc.walletType === 'metamask');
-      const baseConn = existingConnections.find((pc: any) => pc.walletType === 'base');
-      
-      // Create/update MetaMask connection
-      if (!metamaskConn) {
-        console.log('[VavityTester handleConnectAsset] ➕ Creating MetaMask connection');
-        try {
-          const metaMaskResponse = await axios.post('/api/savePendingConnection', {
-            email,
-            pendingConnection: {
-              address: tempAddress,
-              walletId: `temp-init-metamask-${now}`,
-              walletType: 'metamask',
-              timestamp: now,
-              walletConnected: false,
-              assetConnected: false,
-            },
-          });
-          console.log('[VavityTester handleConnectAsset] ✅ MetaMask connection created, status:', metaMaskResponse.status);
-        } catch (metaMaskError: any) {
-          console.error('[VavityTester handleConnectAsset] ❌ Failed to create MetaMask connection:', metaMaskError?.response?.status || metaMaskError?.message);
-          throw metaMaskError; // Re-throw to be caught by outer catch
-        }
-      } else {
-        console.log('[VavityTester handleConnectAsset] ✅ MetaMask connection already exists');
-      }
-      
-      // Create/update Base connection
-      if (!baseConn) {
-        console.log('[VavityTester handleConnectAsset] ➕ Creating Base connection');
-        try {
-          const baseResponse = await axios.post('/api/savePendingConnection', {
-            email,
-            pendingConnection: {
-              address: tempAddress,
-              walletId: `temp-init-base-${now + 1}`,
-              walletType: 'base',
-              timestamp: now + 1,
-              walletConnected: false,
-              assetConnected: false,
-            },
-          });
-          console.log('[VavityTester handleConnectAsset] ✅ Base connection created, status:', baseResponse.status);
-        } catch (baseError: any) {
-          console.error('[VavityTester handleConnectAsset] ❌ Failed to create Base connection:', baseError?.response?.status || baseError?.message);
-          throw baseError; // Re-throw to be caught by outer catch
-        }
-      } else {
-        console.log('[VavityTester handleConnectAsset] ✅ Base connection already exists');
-      }
-      
-      console.log('[VavityTester handleConnectAsset] ✅ Both connections ensured in JSON');
-      
-      // Proceed with actual wallet connection
-      console.log('[VavityTester handleConnectAsset] Starting wallet connection');
       await connectAsset(walletType);
     } catch (error: any) {
-      console.log('[VavityTester handleConnectAsset] Error caught:', error.message, error);
+      console.error('[VavityTester handleConnectAsset] Error:', error);
+      const isUserRejection = error?.code === 4001 || error?.message?.includes('rejected') || error?.message === 'User rejected';
       
-      // Check if it's a user rejection/cancellation
-      const isUserRejection = error.message === 'User rejected' || 
-                              error.message?.includes('User rejected') ||
-                              error.message?.includes('rejected') ||
-                              error.code === 4001;
-      
-      console.log('[VavityTester handleConnectAsset] Is user rejection?', isUserRejection);
-      
-      // Connecting state removed - no longer tracking walletConnecting/assetConnecting
-      
-      // Silently handle HTTP errors (401, 500, etc.) - API endpoint may not be accessible
-      // Only show alerts for unexpected errors, not for "User rejected" or HTTP errors
+      // Silently handle user rejections and HTTP errors
       if (!isUserRejection && !error?.response) {
         alert(`Error connecting ${walletType}: ${error.message}`);
+      }
+    } finally {
+      // Clear loading state
+      if (walletType === 'metamask') {
+        setLoadingMetaMask(false);
+      } else {
+        setLoadingBase(false);
       }
     }
   };
@@ -185,21 +126,22 @@ const VavityTester: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <button
             onClick={() => handleConnectAsset('metamask')}
+            disabled={loadingMetaMask}
             style={{
               padding: '10px 20px',
-              backgroundColor: '#0066cc',
+              backgroundColor: loadingMetaMask ? '#666666' : '#0066cc',
               color: '#ffffff',
               border: 'none',
               borderRadius: '5px',
-              cursor: 'pointer',
+              cursor: loadingMetaMask ? 'not-allowed' : 'pointer',
               marginRight: '10px',
+              opacity: loadingMetaMask ? 0.6 : 1,
             }}
           >
-            CONNECT ETHEREUM
+            {loadingMetaMask ? 'PROCESSING...' : 'CONNECT ETHEREUM'}
           </button>
         </div>
         <div style={{ fontSize: '14px', color: '#ffffff' }}>
-          <div>Wallet Connected: {metaMaskWalletConnected ? 'Yes' : 'No'}</div>
           <div>Asset Connected: {metaMaskAssetConnected ? 'Yes' : 'No'}</div>
         </div>
       </div>
@@ -209,21 +151,22 @@ const VavityTester: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <button
             onClick={() => handleConnectAsset('base')}
+            disabled={loadingBase}
             style={{
               padding: '10px 20px',
-              backgroundColor: '#0066cc',
+              backgroundColor: loadingBase ? '#666666' : '#0066cc',
               color: '#ffffff',
               border: 'none',
               borderRadius: '5px',
-              cursor: 'pointer',
+              cursor: loadingBase ? 'not-allowed' : 'pointer',
               marginRight: '10px',
+              opacity: loadingBase ? 0.6 : 1,
             }}
           >
-            CONNECT ETHEREUM
+            {loadingBase ? 'PROCESSING...' : 'CONNECT ETHEREUM'}
           </button>
         </div>
         <div style={{ fontSize: '14px', color: '#ffffff' }}>
-          <div>Wallet Connected: {baseWalletConnected ? 'Yes' : 'No'}</div>
           <div>Asset Connected: {baseAssetConnected ? 'Yes' : 'No'}</div>
         </div>
       </div>

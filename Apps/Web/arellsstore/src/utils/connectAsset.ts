@@ -161,8 +161,7 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
         pendingConnection: {
           ...matchingConnection,
           txHash: txHash,
-          // Preserve all boolean states from matchingConnection
-          walletConnected: matchingConnection.walletConnected ?? true,
+          // Preserve assetConnected state from matchingConnection
           assetConnected: matchingConnection.assetConnected ?? false,
         },
       });
@@ -179,8 +178,7 @@ export async function connectAsset(params: ConnectAssetParams): Promise<{
           walletId: params.walletId,
           walletType: params.walletType,
           timestamp: Date.now(),
-          // Wallet connection completed, deposit in progress
-          walletConnected: true,
+          // Deposit in progress
           assetConnected: false,
           txHash: txHash,
         },

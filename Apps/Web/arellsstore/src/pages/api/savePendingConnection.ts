@@ -26,12 +26,6 @@ interface PendingConnection {
 
   
 
-  // Wallet connection states
-
-  walletConnected: boolean; // true after successful wallet connection, false after disconnection
-
-  
-
   // Asset connection states
 
   assetConnected: boolean; // true after successful asset connection (deposit), false after disconnection
@@ -136,15 +130,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Default values for boolean fields if not provided (backward compatibility)
 
-        walletConnected: (cleanPendingConnection as any).walletConnected ?? false,
-
         assetConnected: (cleanPendingConnection as any).assetConnected ?? false,
 
       };
       
-      // Remove walletConnecting and assetConnecting if they exist (cleanup old data)
+      // Remove walletConnecting, assetConnecting, and walletConnected if they exist (cleanup old data)
       delete connectionToAdd.walletConnecting;
       delete connectionToAdd.assetConnecting;
+      delete connectionToAdd.walletConnected;
 
       
 

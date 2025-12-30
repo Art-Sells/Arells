@@ -13,24 +13,10 @@ In the json do this after the json is creatied:
 
 all these should start of as exactly like this for each Metamask and Base wallet:
 
-walletConnected: false <- (this should change to true after successful wallet connection and false after successful wallet disconnection)
-
-
 assetConnected: false <- (this should change to true if wallet balance for asset matches cVactTaa and back to false if it doesn't)
 
 if 
 
-walletConnected: false
-
-then
-
-(Connect Metamask/Base) button...
-
-if 
-
-walletConnected: true
-
-then
 
 (Connect Ethereum with Metamask/Base) button should show
 
@@ -51,7 +37,7 @@ assetConnected: false
 - - Fix cpVatoc VAPA issue
 - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
-- - - message/alert: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
+- - - Wallet Page SamPle Alert (per wallet) "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
 - - if you withdraw funds in each wallet, (after disconnection), the funds should reflect that.
 - - - cVactTaa should equal balanceAtAssetConnection if not, then it should equal walletBalance if walletBalance < balanceAtAssetConnection
 - - Test multiple account switches (inside wallets), how it affects
@@ -151,6 +137,7 @@ Arells powered by Vavity
 - Are you 
 ready to let go 
 of bear markets?
+- Message up-top (if cVactTaa =! wallet amount): "Your "ETH" amount increased in some of your wallet/s" (Connect More (ETH)) Button -> takes to wallet
 – (B) (VAPA): $90,000
 - Chart (before wallet connection):
 - - Left
@@ -168,12 +155,10 @@ of bear markets?
 - - Modal for Alert (from Vavity tester): Error connecting metamask: Request of type 'wallet_requestPermissions' already pending for origin http://localhost:3000. Please wait.
 - - Modal: Connection Canceled (ok)
 - - Modal: Wallet Connection Successful, Connecting Ethereum .5% (do not reload page)
-- - - (Connecting (Loader) Ethereum)<-replaces "Waiting for Deposit"
+- - - (Connecting (Loader) Ethereum)<- placeholder from vavitytester
 - - Modal: Connection Canceled (ok)
 - If acVatoi != 0, then hide "Connect Ethereum to begin"
 - Get From VavityTester: Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
-- - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
-- - - Modal: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
 - Chart (after wallet connection):
 - - Left
 - - - My Portfolio
@@ -190,8 +175,13 @@ of bear markets?
 ### Wallets
 - Change color scheme (for modals also) to Purpple
 "Connect New Wallet" (triggered if no wallets exist from json) <- use function from VavityTester.tsx
-- Lists Wallet Addresses and cVactTaa and cVact
-- Connect New Asset
+- (connect ethereum to begin): if json has no wallets
+- - (if cVactTaa =! wallet amount): New section: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (Connect More Eth) <- button opens up new deposit ask and if its complete, then the new deposit
+- - For connected wallets & assets: Lists Wallet Addresses and cVactTaa and cVact
+- - For connected wallets, not connected assets:
+- - - (Connect Eth)
+- - For non-connected wallets
+- - - (Connect More Wallets (metamask-base))
 - - Modal: Preparing (ETH) Wallet (to connect asset (take from VavityTester)) 
 - - Modal: Connecting Asset (ETHEREUM).5% one-time fee.
 
