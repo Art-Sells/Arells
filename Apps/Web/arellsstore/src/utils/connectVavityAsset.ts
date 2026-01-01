@@ -186,7 +186,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
     
     if (matchingConnection) {
       // Update existing connection with txHash
-      // Preserve all boolean states and VAPA
+      // Preserve all boolean states
       await axios.post('/api/saveVavityConnection', {
         email,
         vavityConnection: {
@@ -194,8 +194,6 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
           txHash: txHash,
           // Preserve assetConnected state from matchingConnection
           assetConnected: matchingConnection.assetConnected ?? false,
-          // Preserve VAPA (it's already the highest value)
-          vapa: matchingConnection.vapa,
         },
       });
       console.log('[connectVavityAsset] Saved txHash to existing vavity connection:', txHash);
@@ -328,47 +326,53 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         }
       }
       
-      // Get VAPA from VavityConnection.json first (persistent VAPA that never decreases)
-      let persistentVapa = 0;
+      // Get VAPA from global /api/vapa endpoint (persistent VAPA that never decreases)
+      // This is the PRIMARY and ONLY source for VAPA - it's the single source of truth
+      let globalVapa = 0;
       try {
-        const vavityResponse = await axios.get('/api/saveVavityConnection', { params: { email } });
-        persistentVapa = vavityResponse.data.vapa || 0;
+        const vapaResponse = await axios.get('/api/vapa');
+        globalVapa = vapaResponse.data?.vapa || 0;
       } catch (error) {
-        // Ignore errors - will use calculated VAPA
+        console.error('[connectVavityAsset] Error fetching global VAPA, using fallback:', error);
+        // Fallback: use highest of other sources
+        globalVapa = Math.max(
+          assetPrice || 0,
+          fetchedCurrentPrice || 0,
+          highestPriceEver || 0,
+          vapa || 0
+        );
       }
       
-      // VAPA calculation: Use persistent VAPA as PRIMARY source (never decreases)
-      // Priority: persistentVapa (from VavityConnection.json) > assetPrice > fetchedCurrentPrice > highestPriceEver > vapa
-      // This ensures VAPA never decreases even if APIs reset
-      actualVapa = Math.max(
-        persistentVapa || 0,       // Primary: Persistent VAPA from VavityConnection.json (never resets)
-        assetPrice || 0,            // Secondary: SAME source as fetchBalance uses
-        fetchedCurrentPrice || 0,   // Tertiary: fetched current price (backup)
-        highestPriceEver || 0,      // Quaternary: highest price ever (backup)
-        vapa || 0                   // Quinary: vapa from context (backup)
-      );
+      // VAPA calculation: ALWAYS use global VAPA as PRIMARY source
+      // If global VAPA exists, use it. Otherwise, calculate from other sources and save to global
+      if (globalVapa > 0) {
+        actualVapa = globalVapa; // Use global VAPA (single source of truth)
+      } else {
+        // Global VAPA doesn't exist yet - calculate from sources
+        actualVapa = Math.max(
+          assetPrice || 0,
+          fetchedCurrentPrice || 0,
+          highestPriceEver || 0,
+          vapa || 0
+        );
+        // Save calculated VAPA to global endpoint
+        try {
+          await axios.post('/api/vapa', { vapa: actualVapa });
+        } catch (error) {
+          console.error('[connectVavityAsset] Error saving calculated VAPA to global:', error);
+        }
+      }
       
       const currentVapa = actualVapa;
       
-      // Save VAPA to VavityConnection.json (persistent storage)
+      // Save VAPA to global /api/vapa endpoint (persistent storage)
       try {
-        const vavityResponse = await axios.get('/api/saveVavityConnection', { params: { email } });
-        const connections = vavityResponse.data.vavityConnections || [];
-        const matchingConnection = connections.find(
-          (vc: any) => vc.address?.toLowerCase() === walletAddress.toLowerCase()
-        );
-        
-        if (matchingConnection) {
-          await axios.post('/api/saveVavityConnection', {
-            email,
-            vavityConnection: {
-              ...matchingConnection,
-              vapa: currentVapa, // Save VAPA to VavityConnection.json (will use Math.max in API)
-            },
-          });
-        }
+        await axios.post('/api/vapa', {
+          vapa: currentVapa, // Save VAPA to global endpoint (will use Math.max in API)
+        });
+        console.log('[connectVavityAsset] Saved VAPA to global endpoint:', currentVapa);
       } catch (error) {
-        console.error('[connectVavityAsset] Error saving VAPA to VavityConnection:', error);
+        console.error('[connectVavityAsset] Error saving VAPA to global endpoint:', error);
       }
       
       // CRITICAL LOG: Only log VAPA calculation for debugging cpVatoc issue
@@ -395,9 +399,17 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         // Update existing wallet: set depositPaid to true and update balance
         // Use balance AFTER deposit for accurate calculations
         const newCVactTaa = balanceAfterDeposit;
-        // CRITICAL: cpVact should always be >= VAPA (currentVapa)
-        // Use Math.max to ensure cpVact never goes below VAPA
-        const newCpVact = Math.max(existingWallet.cpVact || 0, currentVapa);
+        // CRITICAL: cpVact should always be >= global VAPA
+        // Fetch global VAPA again to ensure we have the latest (it might have been updated)
+        let latestGlobalVapa = currentVapa;
+        try {
+          const latestVapaResponse = await axios.get('/api/vapa');
+          latestGlobalVapa = latestVapaResponse.data?.vapa || currentVapa;
+        } catch (error) {
+          // Use currentVapa if fetch fails
+        }
+        // Use Math.max to ensure cpVact never goes below global VAPA
+        const newCpVact = Math.max(existingWallet.cpVact || 0, latestGlobalVapa);
         const newCVact = newCVactTaa * newCpVact;
         const newCdVatoc = newCVact - (existingWallet.cVatoc || 0);
         
@@ -430,15 +442,23 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         // Use balance AFTER deposit for accurate calculations
         const walletId = params.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         const newCVactTaa = balanceAfterDeposit;
-        const newCpVact = currentVapa;
+        // Fetch global VAPA to ensure cpVact matches it
+        let latestGlobalVapa = currentVapa;
+        try {
+          const latestVapaResponse = await axios.get('/api/vapa');
+          latestGlobalVapa = latestVapaResponse.data?.vapa || currentVapa;
+        } catch (error) {
+          // Use currentVapa if fetch fails
+        }
+        const newCpVact = latestGlobalVapa; // Always use global VAPA for new wallets
         const newCVact = newCVactTaa * newCpVact;
         const newCVatoc = newCVact; // cVatoc should equal cVact at connection time (after deposit)
         const newCpVatoc = currentVapa; // cpVatoc should always be VAPA at time of connection
         const newCdVatoc = newCVact - newCVatoc; // Should be 0 at connection time
 
-        // Ensure cpVatoc is set to currentVapa (VAPA at connection time)
-        const finalCpVatoc = currentVapa; // Always use currentVapa for new wallets
-        const finalCpVact = currentVapa; // cpVact should also be currentVapa for new wallets
+        // Ensure cpVatoc and cpVact are set to global VAPA (at connection time)
+        const finalCpVatoc = latestGlobalVapa; // Always use global VAPA for new wallets
+        const finalCpVact = latestGlobalVapa; // cpVact should also be global VAPA for new wallets
         
         // Recalculate cVact using finalCpVact to ensure consistency
         const recalculatedCVact = newCVactTaa * finalCpVact;
@@ -486,7 +506,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         }
       }
 
-      // Update backend to mark deposit as completed and save VAPA
+      // Update backend to mark deposit as completed
       try {
         const vavityResponse = await axios.get('/api/saveVavityConnection', { params: { email } });
         const connections = vavityResponse.data.vavityConnections || [];
@@ -501,7 +521,6 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
               ...matchingConnection,
               assetConnected: true,
               txHash: txHash,
-              vapa: currentVapa, // Save VAPA (API will use Math.max to ensure it never decreases)
             },
           });
         } else {
@@ -515,10 +534,20 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
               timestamp: Date.now(),
               assetConnected: true,
               txHash: txHash,
-              vapa: currentVapa,
             },
           });
         }
+        
+        // Save VAPA to global endpoint separately
+        try {
+          await axios.post('/api/vapa', {
+            vapa: currentVapa, // Save VAPA to global endpoint (will use Math.max in API)
+          });
+          console.log('[connectVavityAsset] Saved VAPA to global endpoint (background):', currentVapa);
+        } catch (vapaError) {
+          console.error('[connectVavityAsset] Error saving VAPA to global endpoint (background):', vapaError);
+        }
+        
         console.log('[connectVavityAsset] Marked deposit as completed in backend (background)');
       } catch (error) {
         console.error('[connectVavityAsset] Error updating backend after confirmation (background):', error);
@@ -534,212 +563,3 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
 
 // Export connectAsset as alias for backward compatibility during migration
 export const connectAsset = connectVavityAsset;
-
-
-  // Step 6: Fetch balance again AFTER deposit to get the actual current balance
-  // This is non-critical - if it fails, we'll use the balance before deposit
-  let balanceAfterDeposit: number;
-  try {
-    const balanceResponseAfterDeposit = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddr)}`);
-    
-    if (!balanceResponseAfterDeposit.ok) {
-      const errorText = await balanceResponseAfterDeposit.text();
-      console.warn(`[connectAsset] Balance API error after deposit (${balanceResponseAfterDeposit.status}):`, errorText);
-      // Don't throw - use fallback instead
-      balanceAfterDeposit = balance;
-    } else {
-      const balanceDataAfterDeposit = await balanceResponseAfterDeposit.json();
-      balanceAfterDeposit = parseFloat(balanceDataAfterDeposit.balance || '0');
-      
-        if (isNaN(balanceAfterDeposit)) {
-          balanceAfterDeposit = balance;
-        }
-      }
-    } catch (error: any) {
-      balanceAfterDeposit = balance;
-    }
-
-  // Step 7: ALWAYS fetch fresh VAPA at time of connection (after deposit)
-  // Add a small delay to ensure price APIs have the latest data
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  // Fetch VavityAggregator, highest price ever, and current price in parallel
-  // CRITICAL: Fetch current price FRESH at connection time to ensure cpVatoc matches what cpVact will use
-  const existingDataPromise = fetchVavityAggregator(email);
-  const highestPricePromise = Promise.race([
-    axios.get('/api/fetchHighestEthereumPrice', { timeout: 2000 }),
-    new Promise((_, reject) => setTimeout(() => reject(new Error('VAPA fetch timeout')), 2000))
-  ]).catch(() => null);
-  const currentPricePromise = Promise.race([
-    axios.get('/api/fetchEthereumPrice', { timeout: 2000 }),
-    new Promise((_, reject) => setTimeout(() => reject(new Error('Current price fetch timeout')), 2000))
-  ]).catch(() => null);
-  
-  // Wait for all (VavityAggregator is required, prices are critical for cpVatoc)
-  const results = await Promise.allSettled([existingDataPromise, highestPricePromise, currentPricePromise]);
-  
-  // Extract VavityAggregator data (first result)
-  let existingWallets: any[] = [];
-  let existingData: any = null;
-  if (results[0].status === 'fulfilled') {
-    existingData = results[0].value;
-    existingWallets = existingData.wallets || [];
-  } else {
-    try {
-      const retryData = await fetchVavityAggregator(email);
-      existingData = retryData;
-      existingWallets = existingData.wallets || [];
-    } catch (retryError) {
-      // Continue with empty wallets array
-      existingData = { wallets: [], vavityCombinations: {} };
-    }
-  }
-  
-  // Extract VAPA value - ALWAYS use the maximum of fetched highestPriceEver, fetched currentPrice, passed vapa, and assetPrice
-  // This ensures we get the actual VAPA at connection time
-  let actualVapa: number;
-  let highestPriceEver = 0;
-  let fetchedCurrentPrice = 0;
-  
-  // Extract highest price ever
-  if (results[1] && results[1].status === 'fulfilled' && results[1].value && results[1].value.data) {
-    highestPriceEver = results[1].value.data?.highestPriceEver || 0;
-  } else {
-    try {
-      const fallbackVapaResponse = await axios.get('/api/fetchHighestEthereumPrice', { timeout: 2000 });
-      highestPriceEver = fallbackVapaResponse.data?.highestPriceEver || 0;
-    } catch (fallbackError) {
-      // Continue with 0
-    }
-  }
-  
-  // Extract current price
-  if (results[2] && results[2].status === 'fulfilled' && results[2].value && results[2].value.data) {
-    fetchedCurrentPrice = results[2].value.data?.ethereum?.usd || 0;
-  } else {
-    try {
-      const fallbackCurrentPriceResponse = await axios.get('/api/fetchEthereumPrice', { timeout: 2000 });
-      fetchedCurrentPrice = fallbackCurrentPriceResponse.data?.ethereum?.usd || 0;
-    } catch (fallbackError) {
-      // Continue with 0
-    }
-  }
-  
-  // VAPA calculation: Use assetPrice as PRIMARY source (same as fetchBalance uses)
-  // fetchBalance uses: Math.max(wallet.cpVact || 0, assetPrice)
-  // Since cpVact ALWAYS correctly gets VAPA, we should use the SAME source: assetPrice
-  // Priority: assetPrice (from context, same as fetchBalance) > fetchedCurrentPrice > highestPriceEver > vapa
-  // This ensures cpVatoc uses the exact same source that cpVact uses, so they match
-  actualVapa = Math.max(
-    assetPrice || 0,           // Primary: SAME source as fetchBalance uses (this is why cpVact is always correct)
-    fetchedCurrentPrice || 0,  // Secondary: fetched current price (backup)
-    highestPriceEver || 0,     // Tertiary: highest price ever (backup)
-    vapa || 0                   // Quaternary: vapa from context (backup)
-  );
-  
-  const currentVapa = actualVapa;
-  
-  // CRITICAL LOG: Only log VAPA calculation for debugging cpVatoc issue
-  console.log('[connectAsset] VAPA for cpVatoc:', {
-    assetPriceParam: assetPrice,      // Primary: SAME source as fetchBalance uses (why cpVact is always correct)
-    fetchedCurrentPrice,               // Secondary: fetched current price
-    highestPriceEver,                  // Tertiary: highest price ever
-    vapaParam: vapa,                   // Quaternary: vapa from context
-    finalVapa: currentVapa,
-    walletAddress,
-    'NOTE': 'Using assetPrice as primary to match fetchBalance calculation (same source = same result)'
-  });
-
-  // Step 8: Check if wallet already exists in VavityAggregator (for wallets that don't have depositPaid yet)
-  const existingWallet = existingWallets.find(
-    (w: any) => w.address?.toLowerCase() === walletAddress.toLowerCase() &&
-                (w.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase() === tokenAddr.toLowerCase()
-  );
-
-  let walletData: any;
-
-  if (existingWallet) {
-    // Wallet exists but depositPaid is false, proceed with deposit
-    // Update existing wallet: set depositPaid to true and update balance
-    // Use balance AFTER deposit for accurate calculations
-    const newCVactTaa = balanceAfterDeposit;
-    const newCpVact = Math.max(existingWallet.cpVact || 0, currentVapa);
-    const newCVact = newCVactTaa * newCpVact;
-    const newCdVatoc = newCVact - (existingWallet.cVatoc || 0);
-    
-    // Update cpVatoc if it's 0 or missing (should be VAPA at time of first connection)
-    const shouldUpdateCpVatoc = !existingWallet.cpVatoc || existingWallet.cpVatoc === 0;
-    const newCpVatoc = shouldUpdateCpVatoc ? currentVapa : existingWallet.cpVatoc;
-
-    walletData = {
-      ...existingWallet,
-      depositPaid: true, // Mark deposit as paid
-      cVactTaa: newCVactTaa,
-      cpVact: newCpVact,
-      cpVatoc: newCpVatoc, // Update if it was 0 or missing
-      cVact: parseFloat(newCVact.toFixed(2)),
-      cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
-    };
-
-    // Update the wallet in the array
-    const updatedWallets = existingWallets.map((w: any) => 
-      w.walletId === existingWallet.walletId ? walletData : w
-    );
-
-    // Recalculate vavityCombinations
-    const vavityCombinations = existingData.vavityCombinations || {};
-    await saveVavityAggregator(email, updatedWallets, vavityCombinations);
-  } else {
-    // Create new wallet with depositPaid = true
-    // Use balance AFTER deposit for accurate calculations
-    const walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const newCVactTaa = balanceAfterDeposit;
-    const newCpVact = currentVapa;
-    const newCVact = newCVactTaa * newCpVact;
-    const newCVatoc = newCVact; // cVatoc should equal cVact at connection time (after deposit)
-    const newCpVatoc = currentVapa; // cpVatoc should always be VAPA at time of connection
-    const newCdVatoc = newCVact - newCVatoc; // Should be 0 at connection time
-
-    // Ensure cpVatoc is set to currentVapa (VAPA at connection time)
-    const finalCpVatoc = currentVapa; // Always use currentVapa for new wallets
-    const finalCpVact = currentVapa; // cpVact should also be currentVapa for new wallets
-    
-    // Recalculate cVact using finalCpVact to ensure consistency
-    const recalculatedCVact = newCVactTaa * finalCpVact;
-    const recalculatedCVatoc = recalculatedCVact; // Should be the same
-    
-    walletData = {
-      walletId: walletId,
-      address: walletAddress,
-      vapaa: tokenAddr,
-      depositPaid: true,
-      cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
-      cpVatoc: finalCpVatoc, // Always set to currentVapa (VAPA at connection time)
-      cVact: parseFloat(recalculatedCVact.toFixed(2)),
-      cpVact: finalCpVact,
-      cVactTaa: newCVactTaa,
-      cdVatoc: parseFloat((recalculatedCVact - recalculatedCVatoc).toFixed(2)),
-    };
-    
-    // CRITICAL LOG: Only log if cpVatoc doesn't match VAPA
-    if (finalCpVatoc !== currentVapa) {
-      console.error('[connectAsset] ERROR: cpVatoc does not equal currentVapa!', {
-        cpVatoc: finalCpVatoc,
-        currentVapa,
-        difference: Math.abs(finalCpVatoc - currentVapa),
-        walletAddress
-      });
-    }
-
-    // Add new wallet to VavityAggregator
-    try {
-      await addVavityAggregator(email, [walletData]);
-    } catch (error: any) {
-      console.error('[connectAsset] Error adding wallet to VavityAggregator:', error);
-      throw new Error(`Failed to add wallet to VavityAggregator: ${error?.message || error}`);
-    }
-  }
-
-  return { txHash, receipt, walletData };
-}
-

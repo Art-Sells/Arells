@@ -3,6 +3,8 @@
  * and updates the wallet data with the latest balances.
  */
 
+import axios from 'axios';
+
 interface FetchBalanceParams {
   email: string;
   assetPrice: number;
@@ -48,6 +50,16 @@ export const fetchBalance = async ({
     }
 
     console.log(`[fetchBalance] Fetching balances for ${walletsToFetch.length} wallet(s) with depositPaid=true`);
+
+    // Fetch global VAPA once (used for all wallets)
+    let globalVapa = assetPrice; // Fallback to assetPrice
+    try {
+      const vapaResponse = await axios.get('/api/vapa');
+      globalVapa = vapaResponse.data?.vapa || assetPrice;
+      console.log(`[fetchBalance] Global VAPA: ${globalVapa}`);
+    } catch (error) {
+      console.warn('[fetchBalance] Error fetching global VAPA, using assetPrice:', error);
+    }
 
     // Fetch balances for wallets with depositPaid=true in parallel
     const balancePromises = walletsToFetch.map(async (wallet: any) => {
@@ -134,7 +146,9 @@ export const fetchBalance = async ({
           // cVactTaa = balance at time of connection (after deposit), never changes
           // Only update cVact, cpVact, and cdVatoc based on current balance
           const currentBalance = balanceUpdate.balance;
-          const newCpVact = Math.max(wallet.cpVact || 0, assetPrice);
+          
+          // cpVact should always be >= global VAPA (fetched once above)
+          const newCpVact = Math.max(wallet.cpVact || 0, globalVapa);
           // Calculate cVact using current balance (not cVactTaa, which is connection-time snapshot)
           const newCVact = currentBalance * newCpVact;
           const newCdVatoc = newCVact - (wallet.cVatoc || 0);
@@ -165,11 +179,12 @@ export const fetchBalance = async ({
       });
 
       // Save updated wallets back to VavityAggregator
-      const vavityCombinations = aggregatorData?.vavityCombinations || {};
+      // Note: vavityCombinations will be recalculated from wallets in saveVavityAggregator
+      // Pass empty object to let the API recalculate from updated wallets
       console.log(`[fetchBalance] About to save ${allWallets.length} wallet(s) with updated balances`);
       console.log(`[fetchBalance] Sample wallet data:`, allWallets[0]);
       try {
-        const result = await saveVavityAggregator(email, allWallets, vavityCombinations);
+        const result = await saveVavityAggregator(email, allWallets, {});
         console.log(`[fetchBalance] Save result:`, result);
         console.log(`[fetchBalance] Successfully updated ${balancesToUpdate.length} wallet balance(s) in VavityAggregator`);
       } catch (saveError) {

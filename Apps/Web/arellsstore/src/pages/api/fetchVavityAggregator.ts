@@ -29,7 +29,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(200).json({
         wallets: [],
         vavityCombinations: {}, // Empty object - will be keyed by VAPAA
-        vapa: 0,
       });
     }
     

@@ -56,22 +56,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (err: any) {
       if (err.code === 'NoSuchKey') {
         console.warn("⚠️ No existing data found for user:", email);
-        existingData = { wallets: [], vapa: 0, soldAmounts: 0, transactions: [] };
+        existingData = { wallets: [] };
       } else {
         throw err;
       }
     }
 
-    // Recalculate vavityCombinations from wallets if not provided or if wallets structure changed
-    const calculatedVavityCombinations = vavityCombinations || calculateVavityCombinations(wallets);
+    // Always recalculate vavityCombinations from wallets to ensure accuracy
+    // This ensures acdVatoc and other totals are always correct based on current wallet data
+    const calculatedVavityCombinations = calculateVavityCombinations(wallets);
 
     // ✅ REPLACE wallets with latest from frontend
     const newData = {
       wallets, // ← trust the incoming frontend data
       vavityCombinations: calculatedVavityCombinations,
-      vapa: existingData.vapa ?? 0,
-      soldAmounts: existingData.soldAmounts ?? 0,
-      transactions: existingData.transactions ?? [],
     };
 
     // Save the updated data back to S3

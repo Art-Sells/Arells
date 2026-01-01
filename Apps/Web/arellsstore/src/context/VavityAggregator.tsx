@@ -65,12 +65,21 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           setAssetPrice(currentPrice);
         }
 
-        // Fetch highest Ethereum price ever from historical data
-        const highestPriceResponse = await axios.get('/api/fetchHighestEthereumPrice');
-        const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
-        if (highestPriceEver) {
-          // VAPA should be the highest price ever
-          setVapa(prev => Math.max(prev, highestPriceEver));
+        // Fetch VAPA from global /api/vapa endpoint (persistent, never decreases)
+        // VAPA is now global and doesn't depend on user email
+        try {
+          const vapaResponse = await axios.get('/api/vapa');
+          const persistentVapa = vapaResponse.data?.vapa;
+          if (persistentVapa) {
+            setVapa(prev => Math.max(prev, persistentVapa));
+          }
+        } catch (error) {
+          // Fallback to highest price ever if VAPA API doesn't exist yet
+          const highestPriceResponse = await axios.get('/api/fetchHighestEthereumPrice');
+          const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
+          if (highestPriceEver) {
+            setVapa(prev => Math.max(prev, highestPriceEver));
+          }
         }
       } catch (error) {
         // console.error('Error fetching Ethereum prices:', error);
@@ -82,7 +91,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const interval = setInterval(fetchPrices, 1000); // Update every 1 second
 
     return () => clearInterval(interval);
-  }, []);
+  }, []); // VAPA is now global, no email dependency
   
   // Single aggregated state instead of groups
   const [vatoc, setVatoc] = useState<VatocState>({

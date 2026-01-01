@@ -8,14 +8,13 @@
 VavityTester:
 - When fixing price mechanism, stop git
 - - Fix cpVatoc VAPA issue
+- - - cVactTaa should equal balanceAtAssetConnection if not, then it should equal walletBalance if walletBalance < balanceAtAssetConnection
 - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
 - - - Wallet Page SamPle Alert (per wallet) "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
 - - if you withdraw funds in each wallet, (after disconnection), the funds should reflect that.
-- - - cVactTaa should equal balanceAtAssetConnection if not, then it should equal walletBalance if walletBalance < balanceAtAssetConnection
 - - Test multiple account switches (inside wallets), how it affects
 - Fix: check to see (after first page load), if metamask/base wallet is connected (after undocking git program)
-- check if cpVatoi/cpVact (only references AFTER deposit is paid)?
 - Login/Signup with Google/Apple (reconfigure pages)
 
 

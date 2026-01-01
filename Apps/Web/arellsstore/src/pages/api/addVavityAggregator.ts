@@ -89,12 +89,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return false;
       }
       
-      // Check for duplicate address (case-insensitive)
-      const hasDuplicateAddress = existingWallets.some((existingWallet: any) => 
-        existingWallet.address?.toLowerCase() === wallet.address?.toLowerCase()
-      );
+      // Check for duplicate address (case-insensitive) AND same VAPAA
+      // Allow same address with different VAPAA (different tokens)
+      const hasDuplicateAddress = existingWallets.some((existingWallet: any) => {
+        const existingVapaa = existingWallet.vapaa || '0x0000000000000000000000000000000000000000';
+        const newVapaa = wallet.vapaa || '0x0000000000000000000000000000000000000000';
+        return existingWallet.address?.toLowerCase() === wallet.address?.toLowerCase() &&
+               existingVapaa.toLowerCase() === newVapaa.toLowerCase();
+      });
       if (hasDuplicateAddress) {
-        console.log(`Skipping wallet with duplicate address: ${wallet.address}`);
+        console.log(`Skipping wallet with duplicate address and VAPAA: ${wallet.address}, VAPAA: ${wallet.vapaa || '0x0000...'}`);
         return false;
       }
       
@@ -102,7 +106,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (validNewWallets.length === 0) {
-      return res.status(400).json({ error: 'No valid wallets to add - all wallets are duplicates' });
+      console.log('[addVavityAggregator] All wallets are duplicates, but continuing to return existing data');
+      // Return existing data instead of error - wallet might already exist
+      return res.status(200).json({ 
+        message: 'All wallets already exist', 
+        data: existingData 
+      });
     }
 
     const updatedWallets = [...existingWallets, ...validNewWallets];
@@ -130,15 +139,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     });
 
-    // Calculate VAPA (highest asset price recorded always)
-    const allCpVacts = updatedWallets.map((w: any) => w.cpVact || 0);
-    const vapa = Math.max(...allCpVacts, existingData.vapa || 0);
-
+    // VAPA is now stored in global /api/vapa endpoint, not in VavityAggregate.json
     const newData = {
       ...existingData,
       wallets: updatedWallets,
       vavityCombinations: updatedVavityCombinations,
-      vapa: vapa,
     };
 
     await s3

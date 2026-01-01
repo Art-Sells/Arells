@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { connectWallet as connectWalletUtil, WalletType } from '../utils/walletConnection';
 import { useVavity } from './VavityAggregator';
 import { completeDepositFlow, calculateDepositAmount } from '../utils/depositTransaction';
-import { connectAsset } from '../utils/connectAsset';
+import { connectVavityAsset as connectAsset } from '../utils/connectVavityAsset';
 
 interface AssetConnectContextType {
   // Auto-connected wallets (detected on page load)
