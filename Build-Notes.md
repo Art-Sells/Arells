@@ -6,34 +6,7 @@
 
 ### Test Offline
 VavityTester:
-- Connect Ethereum with Metamask/Base to begin.
 - When fixing price mechanism, stop git
-
-In the json do this after the json is creatied:
-
-all these should start of as exactly like this for each Metamask and Base wallet:
-
-assetConnected: false <- (this should change to true if wallet balance for asset matches cVactTaa and back to false if it doesn't)
-
-if 
-
-
-(Connect Ethereum with Metamask/Base) button should show
-
-if 
-
-assetConnected: true
-
-(Asset Connected) button placeholder should show
-
-if
-
-assetConnected: false
-
-(Connect Ethereum with Metamask/Base)  button should show
-
-- - Instantly ask for deposit (after wallet connecton)
-- - Afer wallet connection, if asset connection canceled, no wallet balances should show...
 - - Fix cpVatoc VAPA issue
 - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - - - "Connect More (ETH) with (MM)/(CB)” Button appears and Ignores the funded:true/false
@@ -153,10 +126,11 @@ of bear markets?
 - Connect Ethereum to begin <-words (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
 - - Modal: Connecting Wallet (until wallet address have been fetched, otherwise connection cancelled)
 - - Modal for Alert (from Vavity tester): Error connecting metamask: Request of type 'wallet_requestPermissions' already pending for origin http://localhost:3000. Please wait.
-- - Modal: Connection Canceled (ok)
-- - Modal: Wallet Connection Successful, Connecting Ethereum .5% (do not reload page)
-- - - (Connecting (Loader) Ethereum)<- placeholder from vavitytester
-- - Modal: Connection Canceled (ok)
+- - Modal: Connection Canceled (ok [reloads page]) <- get alert from VavityTester
+- - Modal (for new wallet connection): Wallet Connection Successful, Connect Ethereum to Begin .5% fee per new assets. (Yes) <- opens asset connection (no) <- closes modal (get from vavitytester)
+- - Modal (for already connected wallet connected): Connect Ethereum to Begin .5% fee per new assets. (Yes) <- opens asset connection (no) <- closes modal (get from vavitytester)
+- - Modal: Connecting (Loader) Ethereum (do not reload page) <- get from vavity tester
+- - Modal: Connection Canceled (ok [reloads page]) <- get aleart from VavityTester
 - If acVatoi != 0, then hide "Connect Ethereum to begin"
 - Get From VavityTester: Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
 - Chart (after wallet connection):
@@ -183,7 +157,7 @@ of bear markets?
 - - For non-connected wallets
 - - - (Connect More Wallets (metamask-base))
 - - Modal: Preparing (ETH) Wallet (to connect asset (take from VavityTester)) 
-- - Modal: Connecting Asset (ETHEREUM).5% one-time fee.
+- - Modal: Connecting (ETHEREUM) Asset .5% fee per new assets.
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages [large slogan] (changge Bitcoin to Ethereum)

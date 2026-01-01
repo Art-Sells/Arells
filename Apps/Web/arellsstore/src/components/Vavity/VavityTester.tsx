@@ -11,11 +11,16 @@ const VavityTester: React.FC = () => {
     metaMaskAssetConnected,
     baseAssetConnected,
     connectAsset,
+    triggerDeposit,
   } = useAssetConnect();
 
   const [connectionState, setConnectionState] = useState<any>(null);
   const [loadingMetaMask, setLoadingMetaMask] = useState<boolean>(false);
   const [loadingBase, setLoadingBase] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [modalWalletType, setModalWalletType] = useState<'metamask' | 'base' | null>(null);
+  const [isWalletAlreadyConnected, setIsWalletAlreadyConnected] = useState<boolean>(false);
+  const [showConnectingModal, setShowConnectingModal] = useState<boolean>(false);
 
   // Check pending connections - use useCallback to memoize
   const checkPending = useCallback(async () => {
@@ -89,16 +94,65 @@ const VavityTester: React.FC = () => {
       setLoadingBase(true);
     }
 
-    // Simply connect wallet and trigger deposit - no walletConnected checks needed
-    console.log('[VavityTester handleConnectAsset] Connecting wallet and triggering deposit for:', walletType);
+    // Check if wallet is already connected
+    let walletAlreadyConnected = false;
+    try {
+      let provider: any = null;
+      if (walletType === 'metamask') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        } else if ((window as any).ethereum?.isMetaMask) {
+          provider = (window as any).ethereum;
+        }
+      } else if (walletType === 'base') {
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
+        }
+      }
+      
+      if (provider) {
+        const accounts = await provider.request({ method: 'eth_accounts' });
+        walletAlreadyConnected = accounts && accounts.length > 0;
+      }
+    } catch (error) {
+      console.log('[VavityTester] Could not check if wallet is connected:', error);
+      walletAlreadyConnected = false;
+    }
+
+    if (walletAlreadyConnected) {
+      // Wallet is already connected - show simpler modal directly
+      console.log('[VavityTester] Wallet already connected, showing deposit modal');
+      setIsWalletAlreadyConnected(true);
+      setModalWalletType(walletType);
+      setShowModal(true);
+      
+      // Clear loading state
+      if (walletType === 'metamask') {
+        setLoadingMetaMask(false);
+      } else {
+        setLoadingBase(false);
+      }
+      return;
+    }
+
+    // Wallet not connected - connect it first
+    console.log('[VavityTester handleConnectAsset] Connecting wallet for:', walletType);
     try {
       await connectAsset(walletType);
+      // On successful connection, show modal with "Wallet Connection Successful"
+      setIsWalletAlreadyConnected(false);
+      setModalWalletType(walletType);
+      setShowModal(true);
     } catch (error: any) {
       console.error('[VavityTester handleConnectAsset] Error:', error);
       const isUserRejection = error?.code === 4001 || error?.message?.includes('rejected') || error?.message === 'User rejected';
       
-      // Silently handle user rejections and HTTP errors
-      if (!isUserRejection && !error?.response) {
+      if (isUserRejection) {
+        // Show alert for cancellation
+        alert('Wallet connection canceled');
+      } else if (!error?.response) {
         alert(`Error connecting ${walletType}: ${error.message}`);
       }
     } finally {
@@ -109,6 +163,56 @@ const VavityTester: React.FC = () => {
         setLoadingBase(false);
       }
     }
+  };
+
+  const handleModalYes = async () => {
+    if (!modalWalletType) return;
+    
+    const walletType = modalWalletType;
+    
+    // Close confirmation modal and show connecting modal
+    setShowModal(false);
+    setShowConnectingModal(true);
+    setModalWalletType(null);
+    
+    // Set loading state
+    if (walletType === 'metamask') {
+      setLoadingMetaMask(true);
+    } else {
+      setLoadingBase(true);
+    }
+    
+    try {
+      await triggerDeposit(walletType);
+      // Refresh connection state to update button
+      await checkPending();
+      // Hide connecting modal after successful deposit
+      setShowConnectingModal(false);
+    } catch (error: any) {
+      console.error('[VavityTester handleModalYes] Error:', error);
+      // Hide connecting modal on error
+      setShowConnectingModal(false);
+      const isUserRejection = error?.code === 4001 || error?.message?.includes('rejected') || error?.message === 'User rejected';
+      
+      if (isUserRejection) {
+        alert('Wallet connection canceled');
+      } else {
+        alert(`Error connecting asset: ${error.message}`);
+      }
+    } finally {
+      // Clear loading state
+      if (walletType === 'metamask') {
+        setLoadingMetaMask(false);
+      } else {
+        setLoadingBase(false);
+      }
+    }
+  };
+
+  const handleModalNo = () => {
+    setShowModal(false);
+    setModalWalletType(null);
+    setIsWalletAlreadyConnected(false);
   };
 
   return (
@@ -126,19 +230,19 @@ const VavityTester: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <button
             onClick={() => handleConnectAsset('metamask')}
-            disabled={loadingMetaMask}
+            disabled={loadingMetaMask || metaMaskAssetConnected}
             style={{
               padding: '10px 20px',
-              backgroundColor: loadingMetaMask ? '#666666' : '#0066cc',
+              backgroundColor: metaMaskAssetConnected ? '#28a745' : (loadingMetaMask ? '#666666' : '#0066cc'),
               color: '#ffffff',
               border: 'none',
               borderRadius: '5px',
-              cursor: loadingMetaMask ? 'not-allowed' : 'pointer',
+              cursor: (loadingMetaMask || metaMaskAssetConnected) ? 'not-allowed' : 'pointer',
               marginRight: '10px',
-              opacity: loadingMetaMask ? 0.6 : 1,
+              opacity: (loadingMetaMask || metaMaskAssetConnected) ? 0.8 : 1,
             }}
           >
-            {loadingMetaMask ? 'PROCESSING...' : 'CONNECT ETHEREUM'}
+            {loadingMetaMask ? 'PROCESSING...' : (metaMaskAssetConnected ? 'CONNECTED' : 'CONNECT ETHEREUM')}
           </button>
         </div>
         <div style={{ fontSize: '14px', color: '#ffffff' }}>
@@ -151,19 +255,19 @@ const VavityTester: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <button
             onClick={() => handleConnectAsset('base')}
-            disabled={loadingBase}
+            disabled={loadingBase || baseAssetConnected}
             style={{
               padding: '10px 20px',
-              backgroundColor: loadingBase ? '#666666' : '#0066cc',
+              backgroundColor: baseAssetConnected ? '#28a745' : (loadingBase ? '#666666' : '#0066cc'),
               color: '#ffffff',
               border: 'none',
               borderRadius: '5px',
-              cursor: loadingBase ? 'not-allowed' : 'pointer',
+              cursor: (loadingBase || baseAssetConnected) ? 'not-allowed' : 'pointer',
               marginRight: '10px',
-              opacity: loadingBase ? 0.6 : 1,
+              opacity: (loadingBase || baseAssetConnected) ? 0.8 : 1,
             }}
           >
-            {loadingBase ? 'PROCESSING...' : 'CONNECT ETHEREUM'}
+            {loadingBase ? 'PROCESSING...' : (baseAssetConnected ? 'CONNECTED' : 'CONNECT ETHEREUM')}
           </button>
         </div>
         <div style={{ fontSize: '14px', color: '#ffffff' }}>
@@ -178,6 +282,138 @@ const VavityTester: React.FC = () => {
             {JSON.stringify(connectionState, null, 2)}
           </pre>
         </div>
+      )}
+
+      {/* Modal for wallet connection success */}
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+          onClick={handleModalNo}
+        >
+          <div
+            style={{
+              backgroundColor: '#1a1a1a',
+              padding: '30px',
+              borderRadius: '10px',
+              maxWidth: '500px',
+              width: '90%',
+              border: '2px solid #0066cc',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {!isWalletAlreadyConnected && (
+              <h2 style={{ color: '#ffffff', marginBottom: '20px', textAlign: 'center' }}>
+                Wallet Connection Successful
+              </h2>
+            )}
+            <p style={{ color: '#ffffff', marginBottom: '30px', textAlign: 'center', fontSize: '16px' }}>
+              Connect Ethereum to Begin .5% fee per new assets.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '15px' }}>
+              <button
+                onClick={handleModalYes}
+                style={{
+                  padding: '12px 30px',
+                  backgroundColor: '#0066cc',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                }}
+              >
+                Yes
+              </button>
+              <button
+                onClick={handleModalNo}
+                style={{
+                  padding: '12px 30px',
+                  backgroundColor: '#666666',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for connecting ethereum */}
+      {showConnectingModal && (
+        <>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+            .spinner {
+              animation: spin 1s linear infinite;
+            }
+          `}</style>
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1001,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: '#1a1a1a',
+                padding: '30px',
+                borderRadius: '10px',
+                maxWidth: '400px',
+                width: '90%',
+                border: '2px solid #0066cc',
+                textAlign: 'center',
+              }}
+            >
+              <h2 style={{ color: '#ffffff', marginBottom: '20px' }}>
+                Connecting Ethereum
+              </h2>
+              <p style={{ color: '#ffffff', fontSize: '14px', marginBottom: '20px' }}>
+                Do not reload this page to ensure successful connection
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <div
+                  className="spinner"
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    border: '4px solid #333',
+                    borderTop: '4px solid #0066cc',
+                    borderRadius: '50%',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

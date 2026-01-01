@@ -83,6 +83,21 @@ export async function connectMetaMask(): Promise<WalletConnectionResult> {
       provider: ethereum
     };
   } catch (error: any) {
+    const errorCode = error?.code || error?.error?.code;
+    const isUserRejection = errorCode === 4001 || 
+                           error?.message?.toLowerCase().includes('user rejected') ||
+                           error?.error?.message?.toLowerCase().includes('user rejected');
+    
+    if (isUserRejection) {
+      console.log('[connectMetaMask] User rejected connection - returning empty accounts');
+      // Return empty accounts for user rejection instead of throwing
+      return {
+        accounts: [],
+        provider: ethereum
+      };
+    }
+    
+    // For other errors, still throw
     console.error('[connectMetaMask] ❌❌❌ ERROR FROM eth_requestAccounts:', {
       error,
       errorType: typeof error,
@@ -96,7 +111,6 @@ export async function connectMetaMask(): Promise<WalletConnectionResult> {
       errorJSON: JSON.stringify(error, null, 2),
       stack: error?.stack
     });
-    console.error('[connectMetaMask] ❌ About to re-throw this error to connectAsset catch block...');
     throw error;
   }
 }
@@ -169,16 +183,35 @@ export async function connectCoinbaseWallet(): Promise<WalletConnectionResult> {
   // Use SDK provider which includes logo metadata
   console.log('Requesting Base/Coinbase Wallet connection via SDK (with logo)...');
   
-  const accounts = await ethereumProvider.request({ 
-    method: 'eth_requestAccounts'
-  });
-  
-  console.log('Coinbase Wallet/Base accounts received:', accounts);
-  
-  return {
-    accounts,
-    provider: ethereumProvider
-  };
+  try {
+    const accounts = await ethereumProvider.request({ 
+      method: 'eth_requestAccounts'
+    });
+    
+    console.log('Coinbase Wallet/Base accounts received:', accounts);
+    
+    return {
+      accounts,
+      provider: ethereumProvider
+    };
+  } catch (error: any) {
+    const errorCode = error?.code || error?.error?.code;
+    const isUserRejection = errorCode === 4001 || 
+                           error?.message?.toLowerCase().includes('user rejected') ||
+                           error?.error?.message?.toLowerCase().includes('user rejected');
+    
+    if (isUserRejection) {
+      console.log('[connectCoinbaseWallet] User rejected connection - returning empty accounts');
+      // Return empty accounts for user rejection instead of throwing
+      return {
+        accounts: [],
+        provider: ethereumProvider
+      };
+    }
+    
+    // For other errors, still throw
+    throw error;
+  }
 }
 
 /**
@@ -200,6 +233,21 @@ export async function connectWallet(walletType: WalletType): Promise<WalletConne
       throw new Error(`Unknown wallet type: ${walletType}`);
     }
   } catch (error: any) {
+    const errorCode = error?.code || error?.error?.code;
+    const isUserRejection = errorCode === 4001 || 
+                           error?.message?.toLowerCase().includes('user rejected') ||
+                           error?.error?.message?.toLowerCase().includes('user rejected');
+    
+    if (isUserRejection) {
+      console.log('[connectWallet] User rejected connection - returning empty accounts');
+      // Return empty accounts for user rejection instead of throwing
+      return {
+        accounts: [],
+        provider: null
+      };
+    }
+    
+    // For other errors, still throw
     console.error('[connectWallet] ❌❌❌ ERROR CAUGHT - About to re-throw to connectAsset:', {
       error,
       errorMessage: error?.message,

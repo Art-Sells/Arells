@@ -31,8 +31,11 @@ interface AssetConnectContextType {
   // JSON boolean states for Base (derived from backendConnections)
   baseAssetConnected: boolean;
   
-  // Connect Asset: Handles wallet connection, deposit, and fetches balances
+  // Connect Asset: Handles wallet connection only (no deposit)
   connectAsset: (walletType: WalletType) => Promise<void>;
+  
+  // Trigger Deposit: Triggers the deposit flow for a connected wallet
+  triggerDeposit: (walletType: WalletType) => Promise<void>;
   
   // Connect Asset for pending wallet: Handles deposit and fetches balances for pending wallet
   connectAssetForWallet: (walletType: WalletType) => Promise<void>;
@@ -2484,7 +2487,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
             accounts = result.accounts;
             if (!accounts || accounts.length === 0) {
-              throw new Error(`No accounts found. Please approve the connection in ${walletType === 'metamask' ? 'MetaMask' : 'Base'}.`);
+              // User rejected - return early without throwing
+              console.log('[connectAsset] User rejected connection, returning early');
+              return;
             }
             walletAddress = accounts[0];
           }
@@ -2495,7 +2500,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
           console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
           accounts = result.accounts;
           if (!accounts || accounts.length === 0) {
-            throw new Error(`No accounts found. Please approve the connection in ${walletType === 'metamask' ? 'MetaMask' : 'Base'}.`);
+            // User rejected - return early without throwing
+            console.log('[connectAsset] User rejected connection, returning early');
+            return;
           }
           walletAddress = accounts[0];
         }
@@ -2506,7 +2513,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
         accounts = result.accounts;
         if (!accounts || accounts.length === 0) {
-          throw new Error(`No accounts found. Please approve the connection in ${walletType === 'metamask' ? 'MetaMask' : 'Base'}.`);
+          // User rejected - return early without throwing
+          console.log('[connectAsset] User rejected connection, returning early');
+          return;
         }
         walletAddress = accounts[0];
       }
@@ -2677,6 +2686,12 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
       }
       
+      // Wallet connection complete - return without triggering deposit
+      // Deposit will be triggered via modal confirmation
+      console.log('[connectAsset] Wallet connection complete, returning without deposit');
+      return;
+      
+      // DEPRECATED: Deposit flow moved to triggerDeposit function
       // Trigger deposit flow immediately
       console.log('[connectAsset] About to trigger deposit flow for wallet:', walletAddress, walletType);
       try {
@@ -3007,6 +3022,110 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator]);
 
+  // Trigger Deposit: Triggers the deposit flow for a connected wallet
+  const triggerDeposit = useCallback(async (walletType: WalletType): Promise<void> => {
+    console.log('[triggerDeposit] 🚀 Function called with walletType:', walletType);
+    
+    if (!email) {
+      throw new Error('Please sign in first to connect a wallet.');
+    }
+    
+    // Get wallet address and provider
+    let walletAddress: string = '';
+    let walletId: string = '';
+    let provider: any = null;
+    
+    // Get wallet address from backend or localStorage
+    try {
+      const response = await axios.get('/api/savePendingConnection', { params: { email } });
+      const connections = response.data.pendingConnections || [];
+      const connection = connections.find((pc: any) => pc.walletType === walletType);
+      
+      if (connection) {
+        walletAddress = connection.address;
+        walletId = connection.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      } else {
+        // Fallback to localStorage
+        walletAddress = localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase') || '';
+        walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      }
+    } catch (error) {
+      // Fallback to localStorage
+      walletAddress = localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase') || '';
+      walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    }
+    
+    if (!walletAddress) {
+      throw new Error(`No wallet address found for ${walletType}. Please connect your wallet first.`);
+    }
+    
+    // Get provider
+    if (walletType === 'metamask') {
+      if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+        provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+      } else if ((window as any).ethereum?.isMetaMask) {
+        provider = (window as any).ethereum;
+      }
+    } else if (walletType === 'base') {
+      if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+        provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+      } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+        provider = (window as any).ethereum;
+      }
+    }
+    
+    if (!provider) {
+      throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
+    }
+    
+    // Trigger deposit flow
+    console.log('[triggerDeposit] About to trigger deposit flow for wallet:', walletAddress, walletType);
+    try {
+      const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+      
+      const { txHash, receipt, walletData } = await connectAssetUtil({
+        provider,
+        walletAddress: walletAddress,
+        tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
+        email,
+        assetPrice,
+        vapa,
+        addVavityAggregator,
+        fetchVavityAggregator,
+        saveVavityAggregator,
+        walletId: walletId,
+        walletType: walletType,
+      });
+      
+      console.log('[triggerDeposit] Deposit flow completed successfully:', { txHash, hasReceipt: !!receipt });
+      
+      // Update backend to mark deposit as completed
+      try {
+        await axios.post('/api/savePendingConnection', {
+          email,
+          pendingConnection: {
+            address: walletAddress,
+            walletId: walletId || '',
+            walletType: walletType,
+            timestamp: Date.now(),
+            assetConnected: true,
+            assetConnecting: false,
+            txHash: txHash || 'unknown',
+          },
+        });
+        console.log('[triggerDeposit] Marked deposit as completed in backend');
+      } catch (error) {
+        console.error('[triggerDeposit] Error updating pending connection in backend:', error);
+      }
+      
+      // Don't reload page - let the UI update from backend state
+      console.log('[triggerDeposit] Deposit completed successfully, UI will update from backend state');
+    } catch (depositError: any) {
+      console.error('[triggerDeposit] Deposit flow failed:', depositError);
+      throw depositError; // Re-throw so caller can handle
+    }
+  }, [email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator]);
+
   // Auto-trigger deposit if wallet is already connected but deposit not completed
   // DISABLED: User wants to manually click buttons, not auto-trigger
   // This was causing multiple deposit prompts when clicking buttons
@@ -3125,6 +3244,7 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
         metaMaskAssetConnected,
         baseAssetConnected,
         connectAsset,
+        triggerDeposit,
         connectAssetForWallet,
         clearAutoConnectedMetaMask,
         clearAutoConnectedBase,
