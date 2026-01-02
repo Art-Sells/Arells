@@ -202,13 +202,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
     try {
-
       const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
 
-      
-
       if (response.Body) {
-
         let vavityConnections = JSON.parse(response.Body.toString());
 
         // CRITICAL: Check VavityAggregator to automatically set assetConnected: true
@@ -228,7 +224,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               );
               
               if (matchingWallet && !conn.assetConnected) {
-                console.log(`[saveVavityConnection] Auto-setting assetConnected: true for ${conn.address} (wallet found in VavityAggregator with depositPaid: true)`);
                 return {
                   ...conn,
                   assetConnected: true,
@@ -262,7 +257,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 Body: JSON.stringify(vavityConnections),
                 ContentType: 'application/json',
               }).promise();
-              console.log(`[saveVavityConnection] Updated connections with assetConnected status from VavityAggregator`);
             }
           }
         } catch (aggregatorError: any) {

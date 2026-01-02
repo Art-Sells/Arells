@@ -424,7 +424,6 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       
       // CRITICAL LOG: Only log VAPA calculation for debugging cpVatoc issue
       console.log('[connectVavityAsset] VAPA for cpVatoc (background):', {
-        persistentVapa,
         assetPriceParam: assetPrice,
         fetchedCurrentPrice,
         highestPriceEver,
@@ -597,7 +596,19 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         }
       }
 
-      // Update backend to mark deposit as completed
+      // CRITICAL: Save VAPA to global endpoint BEFORE setting assetConnected
+      // This ensures all VavityAggregator data is complete before marking as connected
+      try {
+        await axios.post('/api/vapa', {
+          vapa: currentVapa, // Save VAPA to global endpoint (will use Math.max in API)
+        });
+        console.log('[connectVavityAsset] Saved VAPA to global endpoint (background):', currentVapa);
+      } catch (vapaError) {
+        console.error('[connectVavityAsset] Error saving VAPA to global endpoint (background):', vapaError);
+      }
+
+      // CRITICAL: Set assetConnected: true LAST - after all VavityAggregator data is set
+      // This ensures the modal closes only when everything is complete
       try {
         const vavityResponse = await axios.get('/api/saveVavityConnection', { params: { email } });
         const connections = vavityResponse.data.vavityConnections || [];
@@ -610,10 +621,11 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
             email,
             vavityConnection: {
               ...matchingConnection,
-              assetConnected: true,
+              assetConnected: true, // Set LAST after all VavityAggregator updates
               txHash: txHash,
             },
           });
+          console.log('[connectVavityAsset] Set assetConnected: true (LAST step)');
         } else {
           // Create new connection if it doesn't exist
           await axios.post('/api/saveVavityConnection', {
@@ -623,20 +635,11 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
               walletId: finalWalletData.walletId || params.walletId || '',
               walletType: params.walletType,
               timestamp: Date.now(),
-              assetConnected: true,
+              assetConnected: true, // Set LAST after all VavityAggregator updates
               txHash: txHash,
             },
           });
-        }
-        
-        // Save VAPA to global endpoint separately
-        try {
-          await axios.post('/api/vapa', {
-            vapa: currentVapa, // Save VAPA to global endpoint (will use Math.max in API)
-          });
-          console.log('[connectVavityAsset] Saved VAPA to global endpoint (background):', currentVapa);
-        } catch (vapaError) {
-          console.error('[connectVavityAsset] Error saving VAPA to global endpoint (background):', vapaError);
+          console.log('[connectVavityAsset] Created connection with assetConnected: true (LAST step)');
         }
         
         console.log('[connectVavityAsset] Marked deposit as completed in backend (background)');
@@ -651,7 +654,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       try {
         console.log('[connectVavityAsset] Attempting fallback wallet creation...');
         const fallbackBalance = balance || 0;
-        const fallbackVapa = currentVapa || assetPrice || 0;
+        const fallbackVapa = actualVapa || assetPrice || 0;
         const fallbackCVactTaa = fallbackBalance;
         const fallbackCpVact = fallbackVapa;
         const fallbackCVact = fallbackCVactTaa * fallbackCpVact;
@@ -681,10 +684,10 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
             address: walletAddress,
             vapaa: tokenAddr,
             depositPaid: true,
-            cVatoc: parseFloat((balance * (currentVapa || assetPrice || 0)).toFixed(2)),
-            cpVatoc: currentVapa || assetPrice || 0,
-            cVact: parseFloat((balance * (currentVapa || assetPrice || 0)).toFixed(2)),
-            cpVact: currentVapa || assetPrice || 0,
+            cVatoc: parseFloat((balance * (actualVapa || assetPrice || 0)).toFixed(2)),
+            cpVatoc: actualVapa || assetPrice || 0,
+            cVact: parseFloat((balance * (actualVapa || assetPrice || 0)).toFixed(2)),
+            cpVact: actualVapa || assetPrice || 0,
             cVactTaa: balance || 0,
             cdVatoc: 0,
           };

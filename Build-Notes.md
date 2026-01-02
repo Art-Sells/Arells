@@ -7,7 +7,7 @@
 ### Test Offline
 VavityTester:
 - When fixing price mechanism, stop git
-*revert back to this commit for successful wallet connection implementations: Wallet Connection Tests Complete"*
+*revert back to this commit for successful wallet connection implementations: Wallet Connection Tests Complete*
 - - - cVactTaa should equal balanceAtAssetConnection ONLY
 - - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is less than Wallet Address amount then: "Connect More Ethereum” Button {which should act the same as the connect ethereum button} replaces "connected" place holder and Ignores the depositPaid:true only if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount
 - - - Wallet Page SamPle Alert (per wallet) "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit

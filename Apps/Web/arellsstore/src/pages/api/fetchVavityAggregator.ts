@@ -23,9 +23,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json(userData);
   } catch (error: any) {
-    // If the file doesn't exist, return empty data structure
+    // If the file doesn't exist, return empty data structure (this is normal for new users)
     if (error.code === 'NoSuchKey' || error.statusCode === 404) {
-      console.log('No existing data found for user:', email, '- returning empty structure');
+      // Don't log - this is expected behavior for new users
       return res.status(200).json({
         wallets: [],
         vavityCombinations: {}, // Empty object - will be keyed by VAPAA
