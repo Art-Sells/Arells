@@ -2970,23 +2970,51 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
     let provider: any = null;
     
     // Get provider first
+    console.log(`[triggerDeposit] 🔍 Looking for ${walletType} provider...`);
     if (walletType === 'metamask') {
       if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
         provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
+        console.log(`[triggerDeposit] Found MetaMask in providers array:`, !!provider);
       } else if ((window as any).ethereum?.isMetaMask) {
         provider = (window as any).ethereum;
+        console.log(`[triggerDeposit] Found MetaMask as main ethereum:`, !!provider);
       }
     } else if (walletType === 'base') {
-      if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
-        provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
-      } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
-        provider = (window as any).ethereum;
+      // For Base wallet, use CoinbaseWalletSDK to get the provider (same as connectCoinbaseWallet)
+      console.log(`[triggerDeposit] Using CoinbaseWalletSDK for Base wallet...`);
+      try {
+        const { CoinbaseWalletSDK } = await import('@coinbase/wallet-sdk');
+        const logoUrl = typeof window !== 'undefined' 
+          ? `${window.location.origin}/ArellsIcoIcon.png`
+          : 'https://arells.com/ArellsIcoIcon.png';
+        
+        const coinbaseWallet = new CoinbaseWalletSDK({
+          appName: 'Arells',
+          appLogoUrl: logoUrl,
+          darkMode: false
+        });
+        
+        // Get provider from SDK - this will use extension if available, otherwise mobile
+        provider = coinbaseWallet.makeWeb3Provider();
+        console.log(`[triggerDeposit] ✅ Got Base wallet provider from SDK:`, !!provider);
+      } catch (sdkError: any) {
+        console.error(`[triggerDeposit] ❌ Error initializing CoinbaseWalletSDK:`, sdkError);
+        // Fallback to window.ethereum detection
+        if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
+          provider = (window as any).ethereum.providers.find((p: any) => p.isCoinbaseWallet || p.isBase);
+          console.log(`[triggerDeposit] Fallback: Found Base in providers array:`, !!provider);
+        } else if ((window as any).ethereum?.isCoinbaseWallet || (window as any).ethereum?.isBase) {
+          provider = (window as any).ethereum;
+          console.log(`[triggerDeposit] Fallback: Found Base as main ethereum:`, !!provider);
+        }
       }
     }
     
     if (!provider) {
+      console.error(`[triggerDeposit] ❌ Provider not found for ${walletType}`);
       throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
     }
+    console.log(`[triggerDeposit] ✅ Provider found for ${walletType}`);
     
     // Get wallet address directly from provider using eth_accounts (non-prompting)
     try {

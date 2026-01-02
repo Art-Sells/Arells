@@ -484,20 +484,49 @@ const VavityTester: React.FC = () => {
       setLoadingBase(true);
     }
     
+    // CRITICAL: Wait for React to render the modal before triggering deposit
+    // This ensures the modal is visible even if triggerDeposit throws an error immediately
+    // Use requestAnimationFrame twice to ensure the render cycle completes
+    await new Promise(resolve => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          resolve(undefined);
+        });
+      });
+    });
+    
     try {
       console.log(`[VavityTester] 🚀 About to trigger deposit for ${walletType}`);
       // Trigger deposit - this returns as soon as txHash is received
       await triggerDeposit(walletType);
-      console.log(`[VavityTester] ✅ Deposit triggered`);
+      console.log(`[VavityTester] ✅ Deposit triggered successfully`);
     } catch (error: any) {
+      console.error(`[VavityTester] ❌ Error in triggerDeposit for ${walletType}:`, error);
       // Hide connecting modal on error
       setShowConnectingModal(false);
-      const isUserRejection = error?.code === 4001 || error?.message?.includes('rejected') || error?.message === 'User rejected';
+      setConnectingWalletType(null);
+      
+      const errorMessage = String(error?.message || error?.toString() || 'Unknown error');
+      const errorCode = error?.code || error?.error?.code;
+      const isUserRejection = 
+        errorCode === 4001 || 
+        errorCode === 'ACTION_REJECTED' ||
+        errorMessage.toLowerCase().includes('user rejected') ||
+        errorMessage.toLowerCase().includes('user cancelled') ||
+        errorMessage.toLowerCase().includes('user denied') ||
+        errorMessage.toLowerCase().includes('rejected') ||
+        errorMessage.toLowerCase().includes('cancelled') ||
+        errorMessage.toLowerCase().includes('denied');
       
       if (isUserRejection) {
         alert('Wallet connection canceled');
       } else {
-        alert(`Error connecting asset: ${error.message}`);
+        console.error(`[VavityTester] Full error details:`, {
+          message: errorMessage,
+          code: errorCode,
+          error: error
+        });
+        alert(`Error connecting asset: ${errorMessage}`);
       }
     } finally {
       // Clear loading state
