@@ -2487,22 +2487,44 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
             console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
             accounts = result.accounts;
             if (!accounts || accounts.length === 0) {
-              // User rejected - return early without throwing
-              console.log('[connectAsset] User rejected connection, returning early');
-              return;
+              // User rejected - throw error so it's caught by handleConnectAsset
+              console.error('[connectAsset] ❌❌❌ USER REJECTED - throwing error NOW');
+              const rejectionError = new Error('User rejected');
+              console.error('[connectAsset] ❌ Error object:', rejectionError);
+              console.error('[connectAsset] ❌ Error message:', rejectionError.message);
+              throw rejectionError;
             }
             walletAddress = accounts[0];
           }
         } catch (checkError: any) {
-          // If eth_accounts fails, try to connect
+          // Check if this is a user rejection - if so, re-throw immediately without trying again
+          const errorMsg = String(checkError?.message || checkError?.toString() || '');
+          const errorCode = checkError?.code || checkError?.error?.code;
+          const isUserRejection = 
+            errorCode === 4001 ||
+            errorCode === 'ACTION_REJECTED' ||
+            errorMsg.toLowerCase().includes('user rejected') ||
+            errorMsg.toLowerCase().includes('user cancelled') ||
+            errorMsg.toLowerCase().includes('user denied');
+          
+          if (isUserRejection) {
+            console.error('[connectAsset] ❌❌❌ USER REJECTED in checkError catch, re-throwing immediately');
+            const rejectionError = new Error('User rejected');
+            console.error('[connectAsset] ❌ Re-throwing error:', rejectionError);
+            throw rejectionError;
+          }
+          
+          // If eth_accounts fails (not a user rejection), try to connect
           console.log('[connectAsset] ⚠️ Could not check existing connection, will connect:', checkError);
           const result = await connectWalletUtil(walletType);
           console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
           accounts = result.accounts;
           if (!accounts || accounts.length === 0) {
-            // User rejected - return early without throwing
-            console.log('[connectAsset] User rejected connection, returning early');
-            return;
+            // User rejected - throw error so it's caught by handleConnectAsset
+            console.error('[connectAsset] ❌❌❌ USER REJECTED - throwing error NOW (catch block)');
+            const rejectionError = new Error('User rejected');
+            console.error('[connectAsset] ❌ Error object:', rejectionError);
+            throw rejectionError;
           }
           walletAddress = accounts[0];
         }
@@ -2513,9 +2535,11 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
         console.log('[connectAsset] ✅ connectWalletUtil succeeded, got accounts:', result.accounts);
         accounts = result.accounts;
         if (!accounts || accounts.length === 0) {
-          // User rejected - return early without throwing
-          console.log('[connectAsset] User rejected connection, returning early');
-          return;
+          // User rejected - throw error so it's caught by handleConnectAsset
+          console.error('[connectAsset] ❌❌❌ USER REJECTED - throwing error NOW (provider not found)');
+          const rejectionError = new Error('User rejected');
+          console.error('[connectAsset] ❌ Error object:', rejectionError);
+          throw rejectionError;
         }
         walletAddress = accounts[0];
       }
@@ -2688,7 +2712,13 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
       
       // Wallet connection complete - return without triggering deposit
       // Deposit will be triggered via modal confirmation
-      console.log('[connectAsset] Wallet connection complete, returning without deposit');
+      console.log('[connectAsset] ✅✅✅ Wallet connection complete, returning without deposit');
+      console.log('[connectAsset] ✅ walletAddress:', walletAddress, 'accounts:', accounts);
+      // CRITICAL: Double-check that we actually have a wallet address before returning successfully
+      if (!walletAddress || !accounts || accounts.length === 0) {
+        console.error('[connectAsset] ❌❌❌ ERROR: Trying to return successfully but no wallet address!');
+        throw new Error('Wallet connection failed: No wallet address found');
+      }
       return;
       
       // DEPRECATED: Deposit flow moved to triggerDeposit function
@@ -2899,9 +2929,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
       
       // Connecting state removed - no longer tracking
       
-      // If user cancelled, clear pending wallet state silently (no alert)
+      // If user cancelled, clear pending wallet state and RE-THROW error so handleConnectAsset can show alert
       if (isCancelled) {
-        console.log('User cancelled wallet connection/deposit in connectAsset, clearing all state and marking as cancelled in backend');
+        console.log('User cancelled wallet connection/deposit in connectAsset, clearing all state');
         
         // Clear pending state immediately
         if (walletType === 'metamask') {
@@ -2910,110 +2940,14 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
           setPendingBase(null);
         }
         
-        // CRITICAL: Get address from backend pending connection if not available from error/localStorage
-        // This handles the case where user cancels after page reload
-        let walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
-        
-        if (!walletAddressFromError && email) {
-          try {
-            const response = await axios.get('/api/savePendingConnection', { params: { email } });
-            const pendingConnections = response.data.pendingConnections || [];
-            const pendingConn = pendingConnections.find(
-              (pc: any) => pc.walletType === walletType && !pc.assetConnected
-            );
-            if (pendingConn) {
-              walletAddressFromError = pendingConn.address;
-              console.log('[connectAsset] Found address from backend pending connection:', walletAddressFromError);
-            }
-          } catch (err) {
-            console.error('[connectAsset] Error fetching pending connection for cancellation:', err);
-          }
-        }
-        
-        if (email) {
-          // Set cancellation refs IMMEDIATELY to prevent any re-processing
-          if (walletAddressFromError) {
-            lastCancelledAddressRef.current = walletAddressFromError.toLowerCase();
-            lastCancelledTypeRef.current = walletType;
-            lastCancelledTimestampRef.current = Date.now();
-          }
-          
-          // Simplified: Just set assetConnecting to false when cancelled
-          if (walletAddressFromError && email) {
-            try {
-              const response = await axios.get('/api/savePendingConnection', { params: { email } });
-              const connections = response.data.pendingConnections || [];
-              const connToUpdate = connections.find((pc: any) => 
-                pc.walletType === walletType && 
-                pc.address?.toLowerCase() === walletAddressFromError.toLowerCase() &&
-                pc.assetConnecting === true
-              );
-              if (connToUpdate) {
-                await axios.post('/api/savePendingConnection', {
-                  email,
-                  pendingConnection: {
-                    ...connToUpdate,
-                    assetConnecting: false,
-                  },
-                });
-              }
-            } catch (err) {
-              console.error('[connectAsset] Error updating assetConnecting to false:', err);
-            }
-          }
-          
-          // Remove from backend after delay (non-blocking)
-          if (walletAddressFromError) {
-            setTimeout(async () => {
-              try {
-                await removeVavityConnectionFromBackend(walletAddressFromError, walletType);
-              } catch (err) {
-                console.error('[connectAsset] Error removing cancelled connection:', err);
-              }
-            }, 30000); // Increased to 30 seconds to allow checkPending to detect cancellation after reload
-          }
-        }
-        
-        // Also clear localStorage if wallet connection was cancelled (before deposit)
-        if (typeof window !== 'undefined') {
-          if (walletType === 'metamask') {
-            localStorage.removeItem('lastConnectedMetaMask');
-          } else {
-            localStorage.removeItem('lastConnectedBase');
-          }
-        }
-      }
-      
-      // CRITICAL: Check if this is a cancellation by checking the error message
-      // isCancelled is a local variable in the inner try-catch, so we need to check the error message here
-      const cancellationErrorMsg = String(error?.message || error?.toString() || '');
-      const isCancellation = 
-        cancellationErrorMsg === 'User rejected' ||
-        cancellationErrorMsg.toLowerCase().includes('user rejected') ||
-        cancellationErrorMsg.toLowerCase().includes('user cancelled') ||
-        cancellationErrorMsg.toLowerCase().includes('user denied') ||
-        cancellationErrorMsg.toLowerCase().includes('rejected') ||
-        error?.code === 4001 ||
-        error?.code === 'ACTION_REJECTED';
-      
-      // Only throw error if it's not a cancellation (so outer handlers can show alert for real errors)
-      if (!isCancellation) {
+        // CRITICAL: RE-THROW the error so handleConnectAsset's catch block can show the alert
+        console.log('[connectAsset] Re-throwing user rejection error to handleConnectAsset');
         throw error;
       }
       
-      // CRITICAL: Don't reload on cancellation - user explicitly rejected the connection
-      console.log('[connectAsset] User cancelled - NOT reloading page');
-      return; // Exit early on cancellation, don't reload
-      
-      // Even on error (but not cancellation), if we got the wallet address, try to reload
-      // (This code is unreachable if cancellation, but kept for non-cancellation errors)
-      const walletAddressFromError = error?.walletAddress || (typeof window !== 'undefined' && localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase'));
-      if (walletAddressFromError) {
-        console.log('Error occurred but wallet was connected, reloading anyway...');
-        if (typeof window !== 'undefined') {
-          window.location.reload();
-        }
-      }
+      // For non-cancellation errors, also re-throw so handleConnectAsset can handle them
+      console.log('[connectAsset] Re-throwing error to handleConnectAsset');
+      throw error;
     }
     
     // If deposit was cancelled, exit function early (after try-catch to avoid syntax error)
@@ -3030,36 +2964,12 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
       throw new Error('Please sign in first to connect a wallet.');
     }
     
-    // Get wallet address and provider
+    // Get wallet address and provider - ALWAYS from provider, not localStorage or backend
     let walletAddress: string = '';
     let walletId: string = '';
     let provider: any = null;
     
-    // Get wallet address from backend or localStorage
-    try {
-      const response = await axios.get('/api/savePendingConnection', { params: { email } });
-      const connections = response.data.pendingConnections || [];
-      const connection = connections.find((pc: any) => pc.walletType === walletType);
-      
-      if (connection) {
-        walletAddress = connection.address;
-        walletId = connection.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      } else {
-        // Fallback to localStorage
-        walletAddress = localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase') || '';
-        walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      }
-    } catch (error) {
-      // Fallback to localStorage
-      walletAddress = localStorage.getItem(walletType === 'metamask' ? 'lastConnectedMetaMask' : 'lastConnectedBase') || '';
-      walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    }
-    
-    if (!walletAddress) {
-      throw new Error(`No wallet address found for ${walletType}. Please connect your wallet first.`);
-    }
-    
-    // Get provider
+    // Get provider first
     if (walletType === 'metamask') {
       if ((window as any).ethereum?.providers && Array.isArray((window as any).ethereum.providers)) {
         provider = (window as any).ethereum.providers.find((p: any) => p.isMetaMask);
@@ -3076,6 +2986,60 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
     
     if (!provider) {
       throw new Error('Wallet provider not found. Please ensure your wallet extension is installed and unlocked.');
+    }
+    
+    // Get wallet address directly from provider using eth_accounts (non-prompting)
+    try {
+      const accounts = await provider.request({ method: 'eth_accounts' });
+      if (accounts && accounts.length > 0) {
+        walletAddress = accounts[0];
+        console.log('[triggerDeposit] ✅ Got wallet address from provider:', walletAddress);
+      } else {
+        // If no accounts, try to connect (this will prompt user)
+        console.log('[triggerDeposit] No accounts found, attempting to connect...');
+        const result = await connectWalletUtil(walletType);
+        if (result.accounts && result.accounts.length > 0) {
+          walletAddress = result.accounts[0];
+          provider = result.provider || provider;
+          console.log('[triggerDeposit] ✅ Connected and got wallet address:', walletAddress);
+        } else {
+          throw new Error('User rejected wallet connection');
+        }
+      }
+    } catch (error: any) {
+      console.error('[triggerDeposit] Error getting wallet address from provider:', error);
+      // If eth_accounts fails, try to connect
+      try {
+        const result = await connectWalletUtil(walletType);
+        if (result.accounts && result.accounts.length > 0) {
+          walletAddress = result.accounts[0];
+          provider = result.provider || provider;
+          console.log('[triggerDeposit] ✅ Connected after error and got wallet address:', walletAddress);
+        } else {
+          throw new Error('User rejected wallet connection');
+        }
+      } catch (connectError: any) {
+        throw new Error(`Failed to get wallet address: ${connectError.message || 'Please connect your wallet first.'}`);
+      }
+    }
+    
+    if (!walletAddress) {
+      throw new Error(`No wallet address found for ${walletType}. Please connect your wallet first.`);
+    }
+    
+    // Get walletId from backend if available (for tracking), but don't rely on it
+    try {
+      const response = await axios.get('/api/saveVavityConnection', { params: { email } });
+      const connections = response.data.vavityConnections || {};
+      const connection = walletType === 'metamask' ? connections.metamaskConn : connections.baseConn;
+      if (connection && connection.walletId) {
+        walletId = connection.walletId;
+      } else {
+        walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      }
+    } catch (error) {
+      // If backend lookup fails, generate a new walletId
+      walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     }
     
     // Trigger deposit flow

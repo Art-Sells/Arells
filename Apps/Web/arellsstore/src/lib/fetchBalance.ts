@@ -149,15 +149,18 @@ export const fetchBalance = async ({
           
           // cpVact should always be >= global VAPA (fetched once above)
           const newCpVact = Math.max(wallet.cpVact || 0, globalVapa);
-          // Calculate cVact using current balance (not cVactTaa, which is connection-time snapshot)
-          const newCVact = currentBalance * newCpVact;
-          const newCdVatoc = newCVact - (wallet.cVatoc || 0);
+          // CRITICAL: Calculate cVact using formula: cVact = cVactTaa * cpVact
+          // cVactTaa is the token amount at connection time (after deposit), never changes
+          const newCVact = (wallet.cVactTaa || 0) * newCpVact;
           
-          console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): currentBalance=${currentBalance}, cVactTaa=${wallet.cVactTaa} (preserved - connection-time snapshot), cVact=${newCVact.toFixed(2)}`);
-          
-          // Ensure cpVatoc is set - if it's 0 or missing, set it to current cpVact (VAPA at time of connection)
+          // CRITICAL: Calculate cVatoc using formula: cVatoc = cVactTaa * cpVatoc
           // cpVatoc should be the VAPA at time of first connection, so only set if it's missing
           const newCpVatoc = wallet.cpVatoc && wallet.cpVatoc > 0 ? wallet.cpVatoc : newCpVact;
+          const newCVatoc = (wallet.cVactTaa || 0) * newCpVatoc;
+          
+          const newCdVatoc = newCVact - newCVatoc;
+          
+          console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): currentBalance=${currentBalance}, cVactTaa=${wallet.cVactTaa} (preserved - connection-time snapshot), cVact=${newCVact.toFixed(2)} (cVactTaa * cpVact), cVatoc=${newCVatoc.toFixed(2)} (cVactTaa * cpVatoc)`);
           
           return {
             ...wallet,
@@ -167,6 +170,7 @@ export const fetchBalance = async ({
             cpVact: newCpVact,
             cpVatoc: newCpVatoc, // Ensure cpVatoc is set if it was missing
             cVact: parseFloat(newCVact.toFixed(2)),
+            cVatoc: parseFloat(newCVatoc.toFixed(2)), // CRITICAL: Recalculate cVatoc using formula
             cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
           };
         }

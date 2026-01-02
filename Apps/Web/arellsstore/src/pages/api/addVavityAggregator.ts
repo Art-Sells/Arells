@@ -118,7 +118,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Calculate new vavity combinations per VAPAA
     const newVavityCombinations = calculateVavityCombinations(updatedWallets);
-    
+
     // Merge with existing vavityCombinations (preserve existing VAPAAs)
     const existingVavityCombinations = existingData.vavityCombinations || {};
     const updatedVavityCombinations = { ...existingVavityCombinations };

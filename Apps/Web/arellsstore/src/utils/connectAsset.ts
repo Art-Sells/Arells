@@ -743,3 +743,4 @@ export const connectAsset = connectVavityAsset;
   return { txHash, receipt, walletData };
 }
 
+

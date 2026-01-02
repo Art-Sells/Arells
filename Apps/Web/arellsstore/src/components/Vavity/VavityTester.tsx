@@ -137,33 +137,41 @@ const VavityTester: React.FC = () => {
     if (!email || !fetchVavityAggregator) return;
     try {
       const data = await fetchVavityAggregator(email);
-      // Trust backend values - only recalculate if backend values are missing or invalid
+      // Trust backend values - but ALWAYS recalculate using correct formulas
       if (data.wallets && Array.isArray(data.wallets)) {
         data.wallets = data.wallets.map((wallet: any) => {
-          // Only recalculate cdVatoc if it's missing or invalid
-          const calculatedCdVatoc = (wallet.cVact || 0) - (wallet.cVatoc || 0);
-          const finalCdVatoc = wallet.cdVatoc !== undefined && wallet.cdVatoc !== null 
-            ? wallet.cdVatoc 
-            : parseFloat(calculatedCdVatoc.toFixed(2));
+          // CRITICAL: Always recalculate using correct formulas
+          // cVact = cVactTaa * cpVact
+          // cVatoc = cVactTaa * cpVatoc
+          const cVactTaa = wallet.cVactTaa || 0;
+          const cpVact = wallet.cpVact || 0;
+          const cpVatoc = wallet.cpVatoc || cpVact; // Use cpVact as fallback if cpVatoc is missing
           
-          // Ensure cVact is not 0 if cVactTaa and cpVact exist
-          let finalCVact = wallet.cVact || 0;
-          if (finalCVact === 0 && wallet.cVactTaa && wallet.cpVact) {
-            finalCVact = wallet.cVactTaa * wallet.cpVact;
-            console.warn('[VavityTester] cVact was 0, recalculated from cVactTaa * cpVact:', finalCVact);
+          // Recalculate using correct formulas
+          const recalculatedCVact = cVactTaa * cpVact;
+          const recalculatedCVatoc = cVactTaa * cpVatoc;
+          const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
+          
+          // Log if values don't match (for debugging)
+          if (wallet.cVact && Math.abs(wallet.cVact - recalculatedCVact) > 0.01) {
+            console.warn('[VavityTester] cVact mismatch - backend:', wallet.cVact, 'recalculated:', recalculatedCVact);
+          }
+          if (wallet.cVatoc && Math.abs(wallet.cVatoc - recalculatedCVatoc) > 0.01) {
+            console.warn('[VavityTester] cVatoc mismatch - backend:', wallet.cVatoc, 'recalculated:', recalculatedCVatoc);
           }
           
           // Ensure cpVact matches VAPA if it's significantly different
           // VAPA should be the highest price, so cpVact should be >= VAPA
-          const finalCpVact = wallet.cpVact || 0;
+          const finalCpVact = cpVact;
           if (vapa && finalCpVact > 0 && finalCpVact < vapa * 0.9) {
             console.warn('[VavityTester] cpVact is lower than VAPA, this may indicate a sync issue');
           }
           
           return {
             ...wallet,
-            cdVatoc: finalCdVatoc,
-            cVact: finalCVact,
+            cVact: parseFloat(recalculatedCVact.toFixed(2)),
+            cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+            cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
             // Ensure vapaa is always set
             vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000',
           };
@@ -282,19 +290,65 @@ const VavityTester: React.FC = () => {
 
     // Wallet not connected - connect it first
     console.log('[VavityTester handleConnectAsset] Connecting wallet for:', walletType);
+    // CRITICAL: Clear modal state before attempting connection to prevent stale state
+    setShowModal(false);
+    setModalWalletType(null);
+    
+    let connectionSuccessful = false;
+    let errorOccurred = false;
     try {
       await connectAsset(walletType);
-      // On successful connection, show modal with "Wallet Connection Successful"
-      setIsWalletAlreadyConnected(false);
-      setModalWalletType(walletType);
-      setShowModal(true);
+      // Only mark as successful if we got here without throwing AND no error occurred
+      if (!errorOccurred) {
+        connectionSuccessful = true;
+        // On successful connection, show modal with "Wallet Connection Successful"
+        // Only show modal if connection was actually successful (not cancelled)
+        console.log('[VavityTester handleConnectAsset] Connection successful, showing modal');
+        setIsWalletAlreadyConnected(false);
+        setModalWalletType(walletType);
+        setShowModal(true);
+      } else {
+        console.error('[VavityTester handleConnectAsset] Error occurred, NOT showing success modal');
+        setShowModal(false);
+        setModalWalletType(null);
+      }
     } catch (error: any) {
-      console.error('[VavityTester handleConnectAsset] Error:', error);
-      const isUserRejection = error?.code === 4001 || error?.message?.includes('rejected') || error?.message === 'User rejected';
+      // CRITICAL: Clear modal state immediately on error to prevent success modal from showing
+      errorOccurred = true;
+      connectionSuccessful = false;
+      setShowModal(false);
+      setModalWalletType(null);
+      console.error('[VavityTester handleConnectAsset] Error caught:', error);
+      console.error('[VavityTester handleConnectAsset] Error details:', {
+        message: error?.message,
+        code: error?.code,
+        error: error?.error,
+        toString: String(error),
+        type: typeof error,
+      });
+      
+      // Check for user rejection/cancellation - be more thorough
+      const errorMessage = String(error?.message || error?.toString() || '');
+      const errorCode = error?.code || error?.error?.code;
+      const isUserRejection = 
+        errorCode === 4001 || 
+        errorCode === 'ACTION_REJECTED' ||
+        errorMessage.toLowerCase().includes('user rejected') ||
+        errorMessage.toLowerCase().includes('user cancelled') ||
+        errorMessage.toLowerCase().includes('user denied') ||
+        errorMessage.toLowerCase().includes('rejected') ||
+        errorMessage.toLowerCase().includes('cancelled') ||
+        errorMessage.toLowerCase().includes('denied');
+      
+      console.log('[VavityTester handleConnectAsset] isUserRejection:', isUserRejection, 'errorMessage:', errorMessage);
       
       if (isUserRejection) {
-        // Show alert for cancellation
+        // Show alert for cancellation - same for both MetaMask and Base
+        console.log('[VavityTester handleConnectAsset] Showing cancellation alert');
         alert('Wallet connection canceled');
+        // Make sure modal is not shown
+        setShowModal(false);
+        setModalWalletType(null);
       } else if (!error?.response) {
         alert(`Error connecting ${walletType}: ${error.message}`);
       }
@@ -337,44 +391,137 @@ const VavityTester: React.FC = () => {
       if (walletAddress) {
         let pollCount = 0;
         const maxPolls = 30; // Poll for up to 60 seconds (30 * 2 seconds)
-        const checkWalletCreated = setInterval(async () => {
-          pollCount++;
-          await checkPending();
-          await fetchVavityData();
-          
-          // Check if wallet was created in VavityAggregator with correct values
+        // Helper function to check if wallet is ready
+        const checkWalletReady = async (): Promise<boolean> => {
           try {
+            // Check backend directly - this is the source of truth
             const data = await fetchVavityAggregator(email);
             const wallets = data?.wallets || [];
+            console.log('[VavityTester checkWalletReady] Checking wallets:', {
+              totalWallets: wallets.length,
+              lookingFor: walletAddress?.toLowerCase(),
+              wallets: wallets.map((w: any) => ({
+                address: w.address?.toLowerCase(),
+                depositPaid: w.depositPaid,
+                cpVact: w.cpVact
+              }))
+            });
+            
             const wallet = wallets.find((w: any) => 
               w.address?.toLowerCase() === walletAddress?.toLowerCase() &&
               w.depositPaid === true
             );
             
-            // Check if wallet exists with depositPaid and has valid cpVact (VAPA)
-            // cVact might be 0 if balance is very small, so we only check cpVact
-            if (wallet && wallet.depositPaid === true && wallet.cpVact > 0) {
-              // Wallet exists with valid values - close modal immediately
-              console.log('[VavityTester] Wallet found in backend with correct values, closing modal', {
+            // Check if wallet exists with depositPaid (cpVact might be 0 initially, that's okay)
+            if (wallet && wallet.depositPaid === true) {
+              console.log('[VavityTester] ✅ Wallet found with depositPaid=true, closing modal', {
                 address: wallet.address,
                 depositPaid: wallet.depositPaid,
                 cpVact: wallet.cpVact,
                 cVact: wallet.cVact
               });
-              setShowConnectingModal(false);
-              clearInterval(checkWalletCreated);
-              return;
+              return true;
+            } else {
+              console.log('[VavityTester] ⏳ Wallet not ready yet:', {
+                walletFound: !!wallet,
+                depositPaid: wallet?.depositPaid,
+                address: wallet?.address
+              });
             }
           } catch (error) {
             console.error('[VavityTester] Error checking wallet creation:', error);
           }
+          return false;
+        };
+        
+        // Helper function to check if frontend matches backend
+        const checkFrontendMatchesBackend = async (): Promise<boolean> => {
+          try {
+            // Get backend data
+            const backendData = await fetchVavityAggregator(email);
+            const backendWallets = backendData?.wallets || [];
+            const backendWallet = backendWallets.find((w: any) => 
+              w.address?.toLowerCase() === walletAddress?.toLowerCase() &&
+              w.depositPaid === true
+            );
+            
+            // Get frontend data (from state - must be updated first)
+            const frontendWallets = vavityData?.wallets || [];
+            const frontendWallet = frontendWallets.find((w: any) => 
+              w.address?.toLowerCase() === walletAddress?.toLowerCase() &&
+              w.depositPaid === true
+            );
+            
+            // Check if both exist and match
+            if (backendWallet && frontendWallet && backendWallet.depositPaid === true && frontendWallet.depositPaid === true) {
+              // Compare key values to ensure they match
+              const cpVactMatch = Math.abs((backendWallet.cpVact || 0) - (frontendWallet.cpVact || 0)) < 0.01;
+              const cVactMatch = Math.abs((backendWallet.cVact || 0) - (frontendWallet.cVact || 0)) < 0.01;
+              
+              if (cpVactMatch && cVactMatch) {
+                console.log('[VavityTester] ✅ Frontend matches backend, closing modal', {
+                  address: backendWallet.address,
+                  backendCpVact: backendWallet.cpVact,
+                  frontendCpVact: frontendWallet.cpVact,
+                  backendCVact: backendWallet.cVact,
+                  frontendCVact: frontendWallet.cVact
+                });
+                return true;
+              } else {
+                if (pollCount % 10 === 0) { // Log every 5 seconds
+                  console.log('[VavityTester] Waiting: Frontend/backend values don\'t match yet:', {
+                    backendCpVact: backendWallet.cpVact,
+                    frontendCpVact: frontendWallet.cpVact,
+                    backendCVact: backendWallet.cVact,
+                    frontendCVact: frontendWallet.cVact
+                  });
+                }
+              }
+            } else {
+                if (pollCount % 10 === 0) { // Log every 5 seconds
+                  console.log('[VavityTester] Waiting: Wallet not found in both frontend and backend:', {
+                    backendFound: !!backendWallet,
+                    frontendFound: !!frontendWallet
+                  });
+                }
+            }
+          } catch (error) {
+            console.error('[VavityTester] Error checking frontend/backend match:', error);
+          }
+          return false;
+        };
+        
+        // Check immediately first (before starting interval)
+        await checkPending();
+        await fetchVavityData();
+        
+        // Check if frontend matches backend immediately
+        if (await checkFrontendMatchesBackend()) {
+          setShowConnectingModal(false);
+          return; // Exit early if they already match
+        }
+        
+        // If not matching yet, start aggressive polling (every 500ms)
+        const checkWalletCreated = setInterval(async () => {
+          pollCount++;
+          
+          // Update frontend data first
+          await fetchVavityData();
+          
+          // Check if frontend matches backend
+          if (await checkFrontendMatchesBackend()) {
+            // Frontend matches backend - close modal immediately
+            clearInterval(checkWalletCreated);
+            setShowConnectingModal(false);
+            return;
+          }
           
           if (pollCount >= maxPolls) {
             console.warn('[VavityTester] Max polls reached, closing modal anyway');
-            setShowConnectingModal(false);
             clearInterval(checkWalletCreated);
+            setShowConnectingModal(false);
           }
-        }, 2000);
+        }, 500); // Poll every 500ms
       } else {
         // No wallet address - close modal after short delay
         setTimeout(() => {

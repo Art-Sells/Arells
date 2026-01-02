@@ -67,18 +67,26 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         // Fetch VAPA from global /api/vapa endpoint (persistent, never decreases)
         // VAPA is now global and doesn't depend on user email
+        // This is the SINGLE SOURCE OF TRUTH for VAPA - always use it directly
         try {
           const vapaResponse = await axios.get('/api/vapa');
           const persistentVapa = vapaResponse.data?.vapa;
-          if (persistentVapa) {
-            setVapa(prev => Math.max(prev, persistentVapa));
+          if (persistentVapa !== undefined && persistentVapa !== null) {
+            // Always use the global VAPA value directly (don't use Math.max with prev)
+            // The global VAPA is already the highest value, so we should trust it
+            setVapa(persistentVapa);
           }
         } catch (error) {
           // Fallback to highest price ever if VAPA API doesn't exist yet
-          const highestPriceResponse = await axios.get('/api/fetchHighestEthereumPrice');
-          const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
-          if (highestPriceEver) {
-            setVapa(prev => Math.max(prev, highestPriceEver));
+          try {
+            const highestPriceResponse = await axios.get('/api/fetchHighestEthereumPrice');
+            const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
+            if (highestPriceEver) {
+              setVapa(highestPriceEver);
+            }
+          } catch (fallbackError) {
+            // If both fail, keep current VAPA or use assetPrice as last resort
+            console.warn('[VavityAggregator] Could not fetch VAPA from any source');
           }
         }
       } catch (error) {
@@ -141,11 +149,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const response = await axios.get('/api/fetchVatocState', { params: { email } });
         const fetchedVatoc = response.data.vatoc || { cVatoc: 0, cpVatoc: 0, cdVatoc: 0 };
         const fetchedVact = response.data.vact || { cVact: 0, cpVact: 0, cVactTaa: 0 };
-        const fetchedVapa = response.data.vapa || assetPrice;
+        // Don't set VAPA from fetchVatocState - VAPA should only come from global /api/vapa endpoint
+        // const fetchedVapa = response.data.vapa || assetPrice;
   
         setVatoc(fetchedVatoc);
         setVact(fetchedVact);
-        setVapa(fetchedVapa);
+        // VAPA is now managed separately via global /api/vapa endpoint (see useEffect above)
+        // setVapa(fetchedVapa);
       } catch (error) {
         // console.error('Error fetching vatoc state:', error);
       }
@@ -154,14 +164,15 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     fetchVatocState();
   }, [email, assetPrice]);
 
-  // Update VAPA when cpVact changes or assetPrice updates
-  useEffect(() => {
-    if (vact.cpVact > 0) {
-      setVapa(Math.max(vapa, vact.cpVact, assetPrice));
-    } else {
-      setVapa(assetPrice); // Default to current Asset price if no assets exist
-    }
-  }, [vact.cpVact, assetPrice]);
+  // VAPA is now managed exclusively by the global /api/vapa endpoint
+  // This useEffect is removed - VAPA should only be updated via the global endpoint
+  // useEffect(() => {
+  //   if (vact.cpVact > 0) {
+  //     setVapa(Math.max(vapa, vact.cpVact, assetPrice));
+  //   } else {
+  //     setVapa(assetPrice); // Default to current Asset price if no assets exist
+  //   }
+  // }, [vact.cpVact, assetPrice]);
 
   // Update cdVatoc when cVact or cVatoc changes
   useEffect(() => {

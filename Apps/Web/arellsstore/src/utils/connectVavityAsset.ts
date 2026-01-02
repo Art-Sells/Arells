@@ -223,16 +223,63 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
   
   // Return immediately after transaction is sent - don't wait for confirmation
   // This allows the UI to update quickly while confirmation happens in background
+  const walletId = params.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const walletData = {
-    walletId: params.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    walletId: walletId,
     address: walletAddress,
     vapaa: tokenAddr,
     depositPaid: false, // Will be updated after confirmation
   };
 
+  // CRITICAL: Try to create wallet immediately (synchronously) with basic data
+  // This ensures wallet exists even if background process fails
+  (async () => {
+    try {
+      console.log('[connectVavityAsset] Creating wallet immediately (synchronous fallback)...');
+      // Fetch VAPA for immediate wallet creation
+      let immediateVapa = Math.max(vapa || 0, assetPrice || 0);
+      try {
+        const vapaResponse = await axios.get('/api/vapa', { timeout: 2000 });
+        immediateVapa = Math.max(immediateVapa, vapaResponse.data?.vapa || 0);
+      } catch (vapaError) {
+        // Use fallback VAPA if fetch fails
+        console.warn('[connectVavityAsset] Could not fetch VAPA for immediate creation, using fallback:', immediateVapa);
+      }
+      
+      const immediateWalletData = {
+        walletId: walletId,
+        address: walletAddress,
+        vapaa: tokenAddr,
+        depositPaid: true, // Mark as paid since transaction was sent
+        cVatoc: parseFloat((balance * immediateVapa).toFixed(2)),
+        cpVatoc: immediateVapa,
+        cVact: parseFloat((balance * immediateVapa).toFixed(2)),
+        cpVact: immediateVapa,
+        cVactTaa: balance,
+        cdVatoc: 0,
+      };
+      await addVavityAggregator(email, [immediateWalletData]);
+      console.log('[connectVavityAsset] Immediate wallet creation successful');
+    } catch (immediateError: any) {
+      // If duplicate, that's fine - wallet might already exist
+      if (immediateError?.response?.data?.error?.includes('duplicate') || 
+          immediateError?.response?.data?.message?.includes('already exist')) {
+        console.log('[connectVavityAsset] Wallet already exists (immediate creation), will update in background');
+      } else {
+        console.error('[connectVavityAsset] Immediate wallet creation failed (non-critical, background will retry):', immediateError);
+      }
+    }
+  })();
+
   // Continue confirmation and wallet updates in the background (non-blocking)
   (async () => {
     try {
+      console.log('[connectVavityAsset] ===== BACKGROUND PROCESS STARTED =====', {
+        txHash,
+        walletAddress,
+        email,
+        tokenAddr,
+      });
       // Wait for confirmation in background
       const receipt = await waitForTransactionConfirmation(provider, txHash);
       console.log('[connectVavityAsset] Transaction confirmed in background:', txHash);
@@ -349,7 +396,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         actualVapa = globalVapa; // Use global VAPA (single source of truth)
       } else {
         // Global VAPA doesn't exist yet - calculate from sources
-        actualVapa = Math.max(
+      actualVapa = Math.max(
           assetPrice || 0,
           fetchedCurrentPrice || 0,
           highestPriceEver || 0,
@@ -410,12 +457,16 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         }
         // Use Math.max to ensure cpVact never goes below global VAPA
         const newCpVact = Math.max(existingWallet.cpVact || 0, latestGlobalVapa);
+        // CRITICAL: Calculate cVact using formula: cVact = cVactTaa * cpVact
         const newCVact = newCVactTaa * newCpVact;
-        const newCdVatoc = newCVact - (existingWallet.cVatoc || 0);
-        
-        // Update cpVatoc if it's 0 or missing (should be VAPA at time of first connection)
-        const shouldUpdateCpVatoc = !existingWallet.cpVatoc || existingWallet.cpVatoc === 0;
-        const newCpVatoc = shouldUpdateCpVatoc ? currentVapa : existingWallet.cpVatoc;
+        // For existing wallets, cVatoc should remain unchanged (it's the value at time of connection)
+        // But if it's missing or 0, recalculate it using the formula: cVatoc = cVactTaa * cpVatoc
+        const shouldRecalculateCVatoc = !existingWallet.cVatoc || existingWallet.cVatoc === 0;
+        const newCpVatoc = shouldRecalculateCVatoc ? currentVapa : existingWallet.cpVatoc;
+        const newCVatoc = shouldRecalculateCVatoc 
+          ? newCVactTaa * newCpVatoc  // Recalculate if missing
+          : existingWallet.cVatoc;     // Keep existing value (it's the value at time of connection)
+        const newCdVatoc = newCVact - newCVatoc;
 
         finalWalletData = {
           ...existingWallet,
@@ -423,6 +474,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
           cVactTaa: newCVactTaa,
           cpVact: newCpVact, // Always >= currentVapa (VAPA)
           cpVatoc: newCpVatoc, // Update if it was 0 or missing
+          cVatoc: parseFloat(newCVatoc.toFixed(2)), // Use calculated or existing value
           cVact: parseFloat(newCVact.toFixed(2)),
           cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
           // Ensure vapaa is always set
@@ -460,9 +512,12 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         const finalCpVatoc = latestGlobalVapa; // Always use global VAPA for new wallets
         const finalCpVact = latestGlobalVapa; // cpVact should also be global VAPA for new wallets
         
-        // Recalculate cVact using finalCpVact to ensure consistency
+        // CRITICAL: Calculate cVact and cVatoc using their respective formulas
+        // cVact = cVactTaa * cpVact (current value at current price)
+        // cVatoc = cVactTaa * cpVatoc (current value at time of connection price)
+        // At connection time, cpVatoc = cpVact = VAPA, so cVatoc = cVact
         const recalculatedCVact = newCVactTaa * finalCpVact;
-        const recalculatedCVatoc = recalculatedCVact; // Should be the same
+        const recalculatedCVatoc = newCVactTaa * finalCpVatoc; // Use explicit formula: cVactTaa * cpVatoc
         
         finalWalletData = {
           walletId: walletId,
@@ -494,14 +549,50 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
             walletId: finalWalletData.walletId,
             walletType: params.walletType,
             depositPaid: finalWalletData.depositPaid,
+            walletData: finalWalletData,
           });
-          await addVavityAggregator(email, [finalWalletData]);
-          console.log('[connectVavityAsset] Successfully added wallet to VavityAggregator (background)');
+          const result = await addVavityAggregator(email, [finalWalletData]);
+          console.log('[connectVavityAsset] Successfully added wallet to VavityAggregator (background):', result);
         } catch (error: any) {
           console.error('[connectVavityAsset] Error adding wallet to VavityAggregator (background):', error);
+          console.error('[connectVavityAsset] Error details:', {
+            message: error?.message,
+            response: error?.response?.data,
+            status: error?.response?.status,
+          });
           // If it's a duplicate error, that's okay - wallet might already exist
-          if (error?.response?.data?.error?.includes('duplicate')) {
-            console.log('[connectVavityAsset] Wallet already exists in VavityAggregator, continuing...');
+          // But we should still try to update it via saveVavityAggregator
+          if (error?.response?.data?.error?.includes('duplicate') || error?.response?.data?.message?.includes('already exist')) {
+            console.log('[connectVavityAsset] Wallet already exists, updating via saveVavityAggregator...');
+            try {
+              // Fetch existing wallets and update the one that matches
+              const existingData = await fetchVavityAggregator(email);
+              const existingWallets = existingData?.wallets || [];
+              const walletIndex = existingWallets.findIndex(
+                (w: any) => w.address?.toLowerCase() === walletAddress.toLowerCase() &&
+                            (w.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase() === tokenAddr.toLowerCase()
+              );
+              
+              if (walletIndex >= 0) {
+                // Update existing wallet
+                existingWallets[walletIndex] = finalWalletData;
+                await saveVavityAggregator(email, existingWallets, {});
+                console.log('[connectVavityAsset] Successfully updated existing wallet in VavityAggregator');
+              } else {
+                // Wallet doesn't exist but addVavityAggregator said it does - force add it
+                console.log('[connectVavityAsset] Wallet not found in existing wallets, forcing add...');
+                existingWallets.push(finalWalletData);
+                await saveVavityAggregator(email, existingWallets, {});
+                console.log('[connectVavityAsset] Successfully force-added wallet to VavityAggregator');
+              }
+            } catch (updateError) {
+              console.error('[connectVavityAsset] Error updating wallet after duplicate error:', updateError);
+              // Re-throw to ensure we know about this failure
+              throw updateError;
+            }
+          } else {
+            // Not a duplicate error - re-throw to ensure we know about it
+            throw error;
           }
         }
       }
@@ -553,7 +644,57 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         console.error('[connectVavityAsset] Error updating backend after confirmation (background):', error);
       }
     } catch (error) {
-      console.error('[connectVavityAsset] Error in background confirmation process:', error);
+      console.error('[connectVavityAsset] ===== CRITICAL ERROR in background confirmation process =====', error);
+      console.error('[connectVavityAsset] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      // CRITICAL: Even if background process fails, try to create wallet as fallback
+      // This ensures wallet is always created even if confirmation process has issues
+      try {
+        console.log('[connectVavityAsset] Attempting fallback wallet creation...');
+        const fallbackBalance = balance || 0;
+        const fallbackVapa = currentVapa || assetPrice || 0;
+        const fallbackCVactTaa = fallbackBalance;
+        const fallbackCpVact = fallbackVapa;
+        const fallbackCVact = fallbackCVactTaa * fallbackCpVact;
+        const fallbackWalletData = {
+          walletId: params.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          address: walletAddress,
+          vapaa: tokenAddr,
+          depositPaid: true,
+          cVatoc: parseFloat(fallbackCVact.toFixed(2)),
+          cpVatoc: fallbackVapa,
+          cVact: parseFloat(fallbackCVact.toFixed(2)),
+          cpVact: fallbackCpVact,
+          cVactTaa: fallbackCVactTaa,
+          cdVatoc: 0,
+        };
+        console.log('[connectVavityAsset] Fallback wallet data:', fallbackWalletData);
+        await addVavityAggregator(email, [fallbackWalletData]);
+        console.log('[connectVavityAsset] Fallback wallet creation successful');
+      } catch (fallbackError) {
+        console.error('[connectVavityAsset] ===== FALLBACK WALLET CREATION ALSO FAILED =====', fallbackError);
+        // Last resort: try saveVavityAggregator directly
+        try {
+          const existingData = await fetchVavityAggregator(email);
+          const existingWallets = existingData?.wallets || [];
+          const fallbackWalletData = {
+            walletId: params.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            address: walletAddress,
+            vapaa: tokenAddr,
+            depositPaid: true,
+            cVatoc: parseFloat((balance * (currentVapa || assetPrice || 0)).toFixed(2)),
+            cpVatoc: currentVapa || assetPrice || 0,
+            cVact: parseFloat((balance * (currentVapa || assetPrice || 0)).toFixed(2)),
+            cpVact: currentVapa || assetPrice || 0,
+            cVactTaa: balance || 0,
+            cdVatoc: 0,
+          };
+          existingWallets.push(fallbackWalletData);
+          await saveVavityAggregator(email, existingWallets, {});
+          console.log('[connectVavityAsset] Last resort wallet creation via saveVavityAggregator successful');
+        } catch (lastResortError) {
+          console.error('[connectVavityAsset] ===== ALL WALLET CREATION ATTEMPTS FAILED =====', lastResortError);
+        }
+      }
     }
   })();
 

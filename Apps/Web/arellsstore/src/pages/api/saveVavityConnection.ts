@@ -209,7 +209,68 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       if (response.Body) {
 
-        const vavityConnections = JSON.parse(response.Body.toString());
+        let vavityConnections = JSON.parse(response.Body.toString());
+
+        // CRITICAL: Check VavityAggregator to automatically set assetConnected: true
+        // if a wallet exists with depositPaid: true
+        try {
+          const aggregatorKey = `${email}/VavityAggregate.json`;
+          const aggregatorResponse = await s3.getObject({ Bucket: BUCKET_NAME, Key: aggregatorKey }).promise();
+          if (aggregatorResponse.Body) {
+            const aggregatorData = JSON.parse(aggregatorResponse.Body.toString());
+            const wallets = aggregatorData.wallets || [];
+            
+            // Update connections that have matching wallets with depositPaid: true
+            vavityConnections = vavityConnections.map((conn: VavityConnection) => {
+              const matchingWallet = wallets.find(
+                (w: any) => w.address?.toLowerCase() === conn.address?.toLowerCase() &&
+                            w.depositPaid === true
+              );
+              
+              if (matchingWallet && !conn.assetConnected) {
+                console.log(`[saveVavityConnection] Auto-setting assetConnected: true for ${conn.address} (wallet found in VavityAggregator with depositPaid: true)`);
+                return {
+                  ...conn,
+                  assetConnected: true,
+                };
+              }
+              return conn;
+            });
+            
+            // Save updated connections if any were changed
+            const originalConnections = JSON.parse(response.Body!.toString());
+            let hasChanges = false;
+            
+            for (let i = 0; i < vavityConnections.length; i++) {
+              const updatedConn = vavityConnections[i];
+              const originalConn = originalConnections.find(
+                (oc: VavityConnection) => 
+                  oc.address?.toLowerCase() === updatedConn.address?.toLowerCase() &&
+                  oc.walletType === updatedConn.walletType
+              );
+              
+              if (originalConn && updatedConn.assetConnected !== originalConn.assetConnected) {
+                hasChanges = true;
+                break;
+              }
+            }
+            
+            if (hasChanges) {
+              await s3.putObject({
+                Bucket: BUCKET_NAME,
+                Key: key,
+                Body: JSON.stringify(vavityConnections),
+                ContentType: 'application/json',
+              }).promise();
+              console.log(`[saveVavityConnection] Updated connections with assetConnected status from VavityAggregator`);
+            }
+          }
+        } catch (aggregatorError: any) {
+          // If VavityAggregator doesn't exist or can't be read, continue with original connections
+          if (aggregatorError.code !== 'NoSuchKey') {
+            console.warn('[saveVavityConnection] Could not check VavityAggregator:', aggregatorError.message);
+          }
+        }
 
         return res.status(200).json({ 
           vavityConnections

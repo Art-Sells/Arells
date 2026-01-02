@@ -62,13 +62,34 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    // Always recalculate vavityCombinations from wallets to ensure accuracy
+    // CRITICAL: Recalculate cVact and cVatoc for all wallets using correct formulas
+    // cVact = cVactTaa * cpVact
+    // cVatoc = cVactTaa * cpVatoc
+    const validatedWallets = wallets.map((wallet: any) => {
+      const cVactTaa = wallet.cVactTaa || 0;
+      const cpVact = wallet.cpVact || 0;
+      const cpVatoc = wallet.cpVatoc || cpVact; // Use cpVact as fallback if cpVatoc is missing
+      
+      // Recalculate using correct formulas
+      const recalculatedCVact = cVactTaa * cpVact;
+      const recalculatedCVatoc = cVactTaa * cpVatoc;
+      const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
+      
+      return {
+        ...wallet,
+        cVact: parseFloat(recalculatedCVact.toFixed(2)),
+        cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+        cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+      };
+    });
+    
+    // Always recalculate vavityCombinations from validated wallets to ensure accuracy
     // This ensures acdVatoc and other totals are always correct based on current wallet data
-    const calculatedVavityCombinations = calculateVavityCombinations(wallets);
+    const calculatedVavityCombinations = calculateVavityCombinations(validatedWallets);
 
-    // ✅ REPLACE wallets with latest from frontend
+    // ✅ REPLACE wallets with validated wallets (recalculated using correct formulas)
     const newData = {
-      wallets, // ← trust the incoming frontend data
+      wallets: validatedWallets, // ← use validated wallets with correct calculations
       vavityCombinations: calculatedVavityCombinations,
     };
 
