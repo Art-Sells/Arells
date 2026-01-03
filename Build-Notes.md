@@ -8,11 +8,11 @@
 VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for Wallet and Asset connection implementations: Wallet and Asset connection offline tests complete*
-- - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is less than Wallet Address amount then: changes the assetConnected: to false and "Connect More Ethereum” Button {which should act the same as the connect ethereum button} replaces "connected" place holder only if cVactTaa of matching Wallet Address is less than Wallet Address amount
+- - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is less than Wallet Address amount then: changes the assetConnected: to false and "Connect More Ethereum” Button {which should act the same as the connect ethereum button} replaces "connected" place holder only if cVactTaa of matching Wallet Address is less than Wallet Address amount ... Connect More Ethereum modals add "more" between connect and ethereum and function exactly like "connect ethereum"
 - - - Wallet Page SamPle Alert (per wallet) "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
 - - if you withdraw funds in each wallet, (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount
 - - Test Connect More Eth when wallets are all disconnected...
-- - Test multiple account switches (inside wallets), how it affects
+- - Test multiple account switches (inside wallets (and wallet connections)), how it affects
 - - Test to see if you don't have enough eth and try to connect what it does.
 - - remove this alert (right before asset connecting modal appears): Error connecting asset: Failed to fetch
 - Fix: check to see (after first page load), if metamask/base wallet is connected (after undocking git program)
@@ -47,27 +47,27 @@ Account
 - - - Bull: Show modal explanation
 - - - Sloth: Show modal explanation
 
-Vavity Architecture:
-- Save entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
 
 Login/Signup with Google/Apple (re-configure LoginSignup pages):
 - They don’t have to verify emails
 – Account not found, create account.
 Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Bitcoin Wallet amount)
 
-- and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs & aws-config)
-- - Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
-- Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
 
 
 
 
-
-
-### Test Online (both desktop/mobile):
+### Test Online (both desktop(multiple browsers)/mobile):
 - change .env variables from NEXT_PUBLIC
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Ethereum Wallet amount)
+- - Test multiple wallet/asset connection scenarios (throw everything at it....)
+- - - Decrease walletBalance
+- - - Increase wallet Balance
+- - - Change wallet addresses to see what it does for the buttons (try and connect using the wallet only)
 - - Run Vavity for a few minutes (with synthetic-api) to test system (with small amounts multiple accounts) ().
+- and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs & aws-config)
+- Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
+
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 (view all s3 jsons and check Arells Ethereum Wallet amount)
 - In notion:  
@@ -82,7 +82,9 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 - All of them fade in and out (same as modules and pages in vavity.info)
 
 ## After Test
-- Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment)
+- Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
+Vavity Architecture:
+Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
 
 ### Home
 Slogan
