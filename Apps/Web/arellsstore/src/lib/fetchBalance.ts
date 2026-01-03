@@ -142,31 +142,43 @@ export const fetchBalance = async ({
         
         if (balanceUpdate) {
           // Recalculate wallet values based on current balance
-          // NOTE: cVactTaa should NOT be updated here - it's a snapshot at connection time (balanceAfterDeposit)
-          // cVactTaa = balance at time of connection (after deposit), never changes
-          // Only update cVact, cpVact, and cdVatoc based on current balance
+          // CRITICAL: cVactTaa should ONLY be updated:
+          // 1. After transaction hash is received (set to wallet token balance) - handled in connectVavityAsset.ts
+          // 2. If current balance < cVactTaa, update cVactTaa to current balance (can decrease if user sends tokens out)
+          // NEVER increase cVactTaa - it should only be set after transaction confirmation
           const currentBalance = balanceUpdate.balance;
+          const currentCVactTaa = wallet.cVactTaa || 0;
+          
+          // Update cVactTaa: only allow decrease, never increase
+          let newCVactTaa: number;
+          if (currentBalance < currentCVactTaa) {
+            // Balance decreased - update cVactTaa to reflect the lower balance
+            newCVactTaa = currentBalance;
+            console.log(`[fetchBalance] 📝 cVactTaa UPDATE: ${wallet.address} | ${currentCVactTaa} -> ${newCVactTaa} | Reason: balance decreased`);
+          } else {
+            // Balance is same or higher - preserve original cVactTaa (connection-time snapshot)
+            newCVactTaa = currentCVactTaa;
+          }
           
           // cpVact should always be >= global VAPA (fetched once above)
           const newCpVact = Math.max(wallet.cpVact || 0, globalVapa);
           // CRITICAL: Calculate cVact using formula: cVact = cVactTaa * cpVact
-          // cVactTaa is the token amount at connection time (after deposit), never changes
-          const newCVact = (wallet.cVactTaa || 0) * newCpVact;
+          const newCVact = newCVactTaa * newCpVact;
           
           // CRITICAL: Calculate cVatoc using formula: cVatoc = cVactTaa * cpVatoc
           // cpVatoc should be the VAPA at time of first connection, so only set if it's missing
           const newCpVatoc = wallet.cpVatoc && wallet.cpVatoc > 0 ? wallet.cpVatoc : newCpVact;
-          const newCVatoc = (wallet.cVactTaa || 0) * newCpVatoc;
+          const newCVatoc = newCVactTaa * newCpVatoc;
           
           const newCdVatoc = newCVact - newCVatoc;
           
-          console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): currentBalance=${currentBalance}, cVactTaa=${wallet.cVactTaa} (preserved - connection-time snapshot), cVact=${newCVact.toFixed(2)} (cVactTaa * cpVact), cVatoc=${newCVatoc.toFixed(2)} (cVactTaa * cpVatoc)`);
+          console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): currentBalance=${currentBalance}, cVactTaa=${currentCVactTaa} -> ${newCVactTaa}, cVact=${newCVact.toFixed(2)} (cVactTaa * cpVact), cVatoc=${newCVatoc.toFixed(2)} (cVactTaa * cpVatoc)`);
           
           return {
             ...wallet,
             vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000', // Ensure VAPAA is set
             depositPaid: wallet.depositPaid !== undefined ? wallet.depositPaid : true, // Preserve depositPaid
-            cVactTaa: wallet.cVactTaa, // PRESERVE cVactTaa - it's a snapshot at connection time (balanceAfterDeposit), never update it
+            cVactTaa: newCVactTaa, // Update if balance decreased, otherwise preserve
             cpVact: newCpVact,
             cpVatoc: newCpVatoc, // Ensure cpVatoc is set if it was missing
             cVact: parseFloat(newCVact.toFixed(2)),

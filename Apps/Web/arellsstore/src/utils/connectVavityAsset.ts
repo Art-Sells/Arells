@@ -255,7 +255,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         cpVatoc: immediateVapa,
         cVact: parseFloat((balance * immediateVapa).toFixed(2)),
         cpVact: immediateVapa,
-        cVactTaa: balance,
+        cVactTaa: balance, // ⚠️ TEMPORARY: This will be updated by background process with balanceAfterDeposit AFTER transaction confirmation
         cdVatoc: 0,
       };
       await addVavityAggregator(email, [immediateWalletData]);
@@ -443,8 +443,10 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       if (existingWallet) {
         // Wallet exists but depositPaid is false, proceed with deposit
         // Update existing wallet: set depositPaid to true and update balance
-        // Use balance AFTER deposit for accurate calculations
+        // CRITICAL: cVactTaa should ONLY be set to balanceAfterDeposit AFTER transaction confirmation
+        // This ensures cVactTaa reflects the actual balance after the deposit transaction completes
         const newCVactTaa = balanceAfterDeposit;
+        console.log(`[connectVavityAsset] ✅✅✅ SETTING cVactTaa AFTER TRANSACTION CONFIRMATION (EXISTING WALLET): ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | old cVactTaa=${existingWallet.cVactTaa || 0} | new cVactTaa=${newCVactTaa} | txHash=${txHash}`);
         // CRITICAL: cpVact should always be >= global VAPA
         // Fetch global VAPA again to ensure we have the latest (it might have been updated)
         let latestGlobalVapa = currentVapa;
@@ -490,9 +492,11 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         await saveVavityAggregator(email, updatedWallets, vavityCombinations);
       } else {
         // Create new wallet with depositPaid = true
-        // Use balance AFTER deposit for accurate calculations
+        // CRITICAL: cVactTaa should ONLY be set to balanceAfterDeposit AFTER transaction confirmation
+        // This ensures cVactTaa reflects the actual balance after the deposit transaction completes
         const walletId = params.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         const newCVactTaa = balanceAfterDeposit;
+        console.log(`[connectVavityAsset] ✅✅✅ SETTING cVactTaa AFTER TRANSACTION CONFIRMATION (NEW WALLET): ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | new cVactTaa=${newCVactTaa} | txHash=${txHash}`);
         // Fetch global VAPA to ensure cpVact matches it
         let latestGlobalVapa = currentVapa;
         try {

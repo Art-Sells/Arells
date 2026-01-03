@@ -23,6 +23,10 @@ const VavityTester: React.FC = () => {
   const [showConnectingModal, setShowConnectingModal] = useState<boolean>(false);
   const [connectingWalletType, setConnectingWalletType] = useState<'metamask' | 'base' | null>(null);
   const [vavityData, setVavityData] = useState<any>(null);
+  const [showConnectMoreMetaMask, setShowConnectMoreMetaMask] = useState<boolean>(false);
+  const [showConnectMoreBase, setShowConnectMoreBase] = useState<boolean>(false);
+  const [metaMaskDepositPaid, setMetaMaskDepositPaid] = useState<boolean>(false);
+  const [baseDepositPaid, setBaseDepositPaid] = useState<boolean>(false);
 
   // Check pending connections - use useCallback to memoize
   const checkPending = useCallback(async () => {
@@ -349,6 +353,9 @@ const VavityTester: React.FC = () => {
       return;
     }
 
+    // Check if this is a "Connect More Ethereum" action
+    const isConnectMore = (walletType === 'metamask' && showConnectMoreMetaMask) || (walletType === 'base' && showConnectMoreBase);
+
     // Set loading state
     if (walletType === 'metamask') {
       setLoadingMetaMask(true);
@@ -466,7 +473,8 @@ const VavityTester: React.FC = () => {
     }
     
     const walletType = modalWalletType;
-    console.log(`[VavityTester] 🎯 Wallet type: ${walletType}`);
+    const isConnectMore = (walletType === 'metamask' && showConnectMoreMetaMask) || (walletType === 'base' && showConnectMoreBase);
+    console.log(`[VavityTester] 🎯 Wallet type: ${walletType}, isConnectMore: ${isConnectMore}`);
     
     // Close confirmation modal and show connecting modal
     setShowModal(false);
@@ -565,19 +573,19 @@ const VavityTester: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <button
             onClick={() => handleConnectAsset('metamask')}
-            disabled={loadingMetaMask || metaMaskAssetConnected}
+            disabled={loadingMetaMask || (metaMaskDepositPaid && !showConnectMoreMetaMask)}
             style={{
               padding: '10px 20px',
-              backgroundColor: metaMaskAssetConnected ? '#28a745' : (loadingMetaMask ? '#666666' : '#0066cc'),
+              backgroundColor: showConnectMoreMetaMask ? '#ff9800' : (metaMaskDepositPaid ? '#28a745' : (loadingMetaMask ? '#666666' : '#0066cc')),
               color: '#ffffff',
               border: 'none',
               borderRadius: '5px',
-              cursor: (loadingMetaMask || metaMaskAssetConnected) ? 'not-allowed' : 'pointer',
+              cursor: (loadingMetaMask || (metaMaskDepositPaid && !showConnectMoreMetaMask)) ? 'not-allowed' : 'pointer',
               marginRight: '10px',
-              opacity: (loadingMetaMask || metaMaskAssetConnected) ? 0.8 : 1,
+              opacity: (loadingMetaMask || (metaMaskDepositPaid && !showConnectMoreMetaMask)) ? 0.8 : 1,
             }}
           >
-            {loadingMetaMask ? 'PROCESSING...' : (metaMaskAssetConnected ? 'CONNECTED' : 'CONNECT ETHEREUM')}
+            {loadingMetaMask ? 'PROCESSING...' : (showConnectMoreMetaMask ? 'CONNECT MORE ETHEREUM' : (metaMaskDepositPaid ? 'CONNECTED' : 'CONNECT ETHEREUM'))}
           </button>
         </div>
         <div style={{ fontSize: '14px', color: '#ffffff' }}>
@@ -590,19 +598,19 @@ const VavityTester: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <button
             onClick={() => handleConnectAsset('base')}
-            disabled={loadingBase || baseAssetConnected}
+            disabled={loadingBase || (baseDepositPaid && !showConnectMoreBase)}
             style={{
               padding: '10px 20px',
-              backgroundColor: baseAssetConnected ? '#28a745' : (loadingBase ? '#666666' : '#0066cc'),
+              backgroundColor: showConnectMoreBase ? '#ff9800' : (baseDepositPaid ? '#28a745' : (loadingBase ? '#666666' : '#0066cc')),
               color: '#ffffff',
               border: 'none',
               borderRadius: '5px',
-              cursor: (loadingBase || baseAssetConnected) ? 'not-allowed' : 'pointer',
+              cursor: (loadingBase || (baseDepositPaid && !showConnectMoreBase)) ? 'not-allowed' : 'pointer',
               marginRight: '10px',
-              opacity: (loadingBase || baseAssetConnected) ? 0.8 : 1,
+              opacity: (loadingBase || (baseDepositPaid && !showConnectMoreBase)) ? 0.8 : 1,
             }}
           >
-            {loadingBase ? 'PROCESSING...' : (baseAssetConnected ? 'CONNECTED' : 'CONNECT ETHEREUM')}
+            {loadingBase ? 'PROCESSING...' : (showConnectMoreBase ? 'CONNECT MORE ETHEREUM' : (baseDepositPaid ? 'CONNECTED' : 'CONNECT ETHEREUM'))}
           </button>
         </div>
         <div style={{ fontSize: '14px', color: '#ffffff' }}>
@@ -710,7 +718,9 @@ const VavityTester: React.FC = () => {
               </h2>
             )}
             <p style={{ color: '#ffffff', marginBottom: '30px', textAlign: 'center', fontSize: '16px' }}>
-              Connect Ethereum to Begin .5% fee per new assets.
+              {((modalWalletType === 'metamask' && showConnectMoreMetaMask) || (modalWalletType === 'base' && showConnectMoreBase)) 
+                ? 'Connect More Ethereum to Begin .5% fee per new assets.'
+                : 'Connect Ethereum to Begin .5% fee per new assets.'}
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '15px' }}>
               <button
@@ -786,7 +796,9 @@ const VavityTester: React.FC = () => {
               }}
             >
               <h2 style={{ color: '#ffffff', marginBottom: '20px' }}>
-                Connecting Ethereum
+                {((connectingWalletType === 'metamask' && showConnectMoreMetaMask) || (connectingWalletType === 'base' && showConnectMoreBase))
+                  ? 'Connecting More Ethereum'
+                  : 'Connecting Ethereum'}
               </h2>
               <p style={{ color: '#ffffff', fontSize: '14px', marginBottom: '20px' }}>
                 Do not reload this page to ensure successful connection

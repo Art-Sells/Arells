@@ -8,10 +8,10 @@
 VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for Wallet and Asset connection implementations: Wallet and Asset connection offline tests complete*
-- - - cVactTaa should equal balanceAtAssetConnection ONLY
-- - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is less than Wallet Address amount then: "Connect More Ethereum” Button {which should act the same as the connect ethereum button} replaces "connected" place holder and Ignores the depositPaid:true only if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount
+- - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is less than Wallet Address amount then: changes the assetConnected: to false and "Connect More Ethereum” Button {which should act the same as the connect ethereum button} replaces "connected" place holder only if cVactTaa of matching Wallet Address is less than Wallet Address amount
 - - - Wallet Page SamPle Alert (per wallet) "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
-- - if you withdraw funds in each wallet, (after disconnection), the funds should reflect that.
+- - if you withdraw funds in each wallet, (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount
+- - Test Connect More Eth when wallets are all disconnected...
 - - Test multiple account switches (inside wallets), how it affects
 - - Test to see if you don't have enough eth and try to connect what it does.
 - - remove this alert (right before asset connecting modal appears): Error connecting asset: Failed to fetch
@@ -39,7 +39,8 @@ Account
 - - Left
 - - - My Portfolio
 - - - Investment: acVact $0
-– - - Profits: acdVatoi + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+– - - Losses (default): $0
+– - - Profits (replaces losses only if acdVatoc is > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
 - - Right
 - - - Line Graph
 - - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
@@ -137,7 +138,8 @@ of bear markets?
 - - Left
 - - - My Portfolio
 - - - Investment: acVact $0
-– - - Profits: acdVatoi + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+– - - Losses (default): $0
+– - - Profits (replaced Losses only if acdVatoc > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
 - - Right
 - - - Line Graph
 - - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
@@ -150,7 +152,7 @@ of bear markets?
 - Change color scheme (for modals also) to Purpple
 "Connect New Wallet" (triggered if no wallets exist from json) <- use function from VavityTester.tsx
 - (connect ethereum to begin): if json has no wallets
-- - (if cVactTaa =! wallet amount): New section: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (Connect More Eth) <- button opens up new deposit ask and if its complete, then the new deposit
+- - (if cVactTaa =! wallet amount): New section: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (Connect More Eth) <- button opens up new deposit ask and if its complete, then the new deposit <-get from VavityTester
 - - For connected wallets & assets: Lists Wallet Addresses and cVactTaa and cVact
 - - For connected wallets, not connected assets:
 - - - (Connect Eth)
