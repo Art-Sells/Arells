@@ -445,7 +445,21 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         // Update existing wallet: set depositPaid to true and update balance
         // CRITICAL: cVactTaa should ONLY be set to balanceAfterDeposit AFTER transaction confirmation
         // This ensures cVactTaa reflects the actual balance after the deposit transaction completes
-        const newCVactTaa = balanceAfterDeposit;
+        // CRITICAL: Never set cVactTaa to 0 - if balanceAfterDeposit is <= 1 wei, preserve existing cVactTaa
+        // Ethereum has 18 decimals, smallest unit is 1 wei = 0.000000000000000001 ETH
+        const MIN_BALANCE_THRESHOLD = 0.000000000000000001; // 1 wei
+        let newCVactTaa: number;
+        if (balanceAfterDeposit > MIN_BALANCE_THRESHOLD) {
+          newCVactTaa = balanceAfterDeposit;
+        } else if (existingWallet.cVactTaa && existingWallet.cVactTaa > MIN_BALANCE_THRESHOLD) {
+          // balanceAfterDeposit is <= 1 wei but we have an existing cVactTaa > 1 wei - preserve it
+          newCVactTaa = existingWallet.cVactTaa;
+          console.warn(`[connectVavityAsset] ⚠️ balanceAfterDeposit is <= 1 wei, preserving existing cVactTaa: ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | preserved cVactTaa=${newCVactTaa} | txHash=${txHash}`);
+        } else {
+          // Both are <= 1 wei - this shouldn't happen, but preserve existing value
+          newCVactTaa = existingWallet.cVactTaa || 0;
+          console.error(`[connectVavityAsset] ❌ CRITICAL: balanceAfterDeposit is <= 1 wei and no existing cVactTaa > 1 wei for ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | existing cVactTaa=${existingWallet.cVactTaa || 0} | txHash=${txHash}`);
+        }
         console.log(`[connectVavityAsset] ✅✅✅ SETTING cVactTaa AFTER TRANSACTION CONFIRMATION (EXISTING WALLET): ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | old cVactTaa=${existingWallet.cVactTaa || 0} | new cVactTaa=${newCVactTaa} | txHash=${txHash}`);
         // CRITICAL: cpVact should always be >= global VAPA
         // Fetch global VAPA again to ensure we have the latest (it might have been updated)
@@ -494,7 +508,14 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         // Create new wallet with depositPaid = true
         // CRITICAL: cVactTaa should ONLY be set to balanceAfterDeposit AFTER transaction confirmation
         // This ensures cVactTaa reflects the actual balance after the deposit transaction completes
+        // CRITICAL: Never set cVactTaa to 0 for new wallets - balanceAfterDeposit should always be > 1 wei after a deposit
+        // Ethereum has 18 decimals, smallest unit is 1 wei = 0.000000000000000001 ETH
+        const MIN_BALANCE_THRESHOLD = 0.000000000000000001; // 1 wei
         const walletId = params.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        if (balanceAfterDeposit <= MIN_BALANCE_THRESHOLD) {
+          console.error(`[connectVavityAsset] ❌ CRITICAL ERROR: balanceAfterDeposit is ${balanceAfterDeposit} (<= 1 wei) for new wallet ${walletAddress} | txHash=${txHash}`);
+          throw new Error(`Cannot create wallet with cVactTaa <= 1 wei. balanceAfterDeposit is ${balanceAfterDeposit}. This should never happen after a successful deposit.`);
+        }
         const newCVactTaa = balanceAfterDeposit;
         console.log(`[connectVavityAsset] ✅✅✅ SETTING cVactTaa AFTER TRANSACTION CONFIRMATION (NEW WALLET): ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | new cVactTaa=${newCVactTaa} | txHash=${txHash}`);
         // Fetch global VAPA to ensure cpVact matches it

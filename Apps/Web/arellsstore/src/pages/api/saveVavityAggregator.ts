@@ -83,13 +83,53 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       };
     });
     
-    // Always recalculate vavityCombinations from validated wallets to ensure accuracy
+    // ✅ MERGE wallets: Update existing wallets or add new ones
+    // This prevents overwriting wallets that aren't in the validatedWallets array
+    const existingWallets = existingData.wallets || [];
+    const mergedWallets: any[] = [];
+    
+    // Create a map of existing wallets by address+vapaa for quick lookup
+    const existingWalletsMap = new Map<string, any>();
+    existingWallets.forEach((wallet: any) => {
+      const key = `${wallet.address?.toLowerCase() || ''}_${(wallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()}`;
+      existingWalletsMap.set(key, wallet);
+    });
+    
+    // Process validated wallets (from fetchBalance or other sources)
+    const processedKeys = new Set<string>();
+    validatedWallets.forEach((validatedWallet: any) => {
+      const key = `${validatedWallet.address?.toLowerCase() || ''}_${(validatedWallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()}`;
+      processedKeys.add(key);
+      mergedWallets.push(validatedWallet);
+    });
+    
+    // Add existing wallets that weren't in validatedWallets (preserve wallets not being updated)
+    existingWallets.forEach((existingWallet: any) => {
+      const key = `${existingWallet.address?.toLowerCase() || ''}_${(existingWallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()}`;
+      if (!processedKeys.has(key)) {
+        // Recalculate this wallet's values too (for consistency)
+        const cVactTaa = existingWallet.cVactTaa || 0;
+        const cpVact = existingWallet.cpVact || 0;
+        const cpVatoc = existingWallet.cpVatoc || cpVact;
+        const recalculatedCVact = cVactTaa * cpVact;
+        const recalculatedCVatoc = cVactTaa * cpVatoc;
+        const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
+        
+        mergedWallets.push({
+          ...existingWallet,
+          cVact: parseFloat(recalculatedCVact.toFixed(2)),
+          cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+          cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+        });
+      }
+    });
+    
+    // Always recalculate vavityCombinations from merged wallets to ensure accuracy
     // This ensures acdVatoc and other totals are always correct based on current wallet data
-    const calculatedVavityCombinations = calculateVavityCombinations(validatedWallets);
+    const calculatedVavityCombinations = calculateVavityCombinations(mergedWallets);
 
-    // ✅ REPLACE wallets with validated wallets (recalculated using correct formulas)
     const newData = {
-      wallets: validatedWallets, // ← use validated wallets with correct calculations
+      wallets: mergedWallets, // ← merged wallets (updated + preserved)
       vavityCombinations: calculatedVavityCombinations,
     };
 
@@ -113,3 +153,121 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 export default handler;
 
+
+        
+        mergedWallets.push({
+          ...existingWallet,
+          cVact: parseFloat(recalculatedCVact.toFixed(2)),
+          cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+          cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+        });
+      }
+    });
+    
+    // Always recalculate vavityCombinations from merged wallets to ensure accuracy
+    // This ensures acdVatoc and other totals are always correct based on current wallet data
+    const calculatedVavityCombinations = calculateVavityCombinations(mergedWallets);
+
+    const newData = {
+      wallets: mergedWallets, // ← merged wallets (updated + preserved)
+      vavityCombinations: calculatedVavityCombinations,
+    };
+
+    // Save the updated data back to S3
+    await s3
+      .putObject({
+        Bucket: BUCKET_NAME,
+        Key: key,
+        Body: JSON.stringify(newData),
+        ContentType: 'application/json',
+        ACL: 'private',
+      })
+      .promise();
+
+    return res.status(200).json({ message: 'Data saved successfully', data: newData });
+  } catch (error) {
+    console.error('❌ Error during processing:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export default handler;
+
+        
+        mergedWallets.push({
+          ...existingWallet,
+          cVact: parseFloat(recalculatedCVact.toFixed(2)),
+          cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+          cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+        });
+      }
+    });
+    
+    // Always recalculate vavityCombinations from merged wallets to ensure accuracy
+    // This ensures acdVatoc and other totals are always correct based on current wallet data
+    const calculatedVavityCombinations = calculateVavityCombinations(mergedWallets);
+
+    const newData = {
+      wallets: mergedWallets, // ← merged wallets (updated + preserved)
+      vavityCombinations: calculatedVavityCombinations,
+    };
+
+    // Save the updated data back to S3
+    await s3
+      .putObject({
+        Bucket: BUCKET_NAME,
+        Key: key,
+        Body: JSON.stringify(newData),
+        ContentType: 'application/json',
+        ACL: 'private',
+      })
+      .promise();
+
+    return res.status(200).json({ message: 'Data saved successfully', data: newData });
+  } catch (error) {
+    console.error('❌ Error during processing:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export default handler;
+
+
+        
+        mergedWallets.push({
+          ...existingWallet,
+          cVact: parseFloat(recalculatedCVact.toFixed(2)),
+          cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+          cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+        });
+      }
+    });
+    
+    // Always recalculate vavityCombinations from merged wallets to ensure accuracy
+    // This ensures acdVatoc and other totals are always correct based on current wallet data
+    const calculatedVavityCombinations = calculateVavityCombinations(mergedWallets);
+
+    const newData = {
+      wallets: mergedWallets, // ← merged wallets (updated + preserved)
+      vavityCombinations: calculatedVavityCombinations,
+    };
+
+    // Save the updated data back to S3
+    await s3
+      .putObject({
+        Bucket: BUCKET_NAME,
+        Key: key,
+        Body: JSON.stringify(newData),
+        ContentType: 'application/json',
+        ACL: 'private',
+      })
+      .promise();
+
+    return res.status(200).json({ message: 'Data saved successfully', data: newData });
+  } catch (error) {
+    console.error('❌ Error during processing:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export default handler;

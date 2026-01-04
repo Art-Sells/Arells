@@ -501,8 +501,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // Run immediately
     fetchWalletBalances();
-    // Update balances every 10 seconds
-    const interval = setInterval(fetchWalletBalances, 10000);
+    // Update balances every 5 seconds
+    const interval = setInterval(fetchWalletBalances, 5000);
     return () => {
       // console.log('[VavityAggregator] Cleaning up balance fetch interval');
       clearInterval(interval);
