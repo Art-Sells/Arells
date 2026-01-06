@@ -290,6 +290,141 @@ const VavityTester: React.FC = () => {
     }
   }, [vavityData, connectionState]);
 
+  // Auto-check: Compare wallet balance with cVactTaa and set "Connect More Ethereum" if balance > cVactTaa
+  useEffect(() => {
+    const checkConnectMore = async () => {
+      // Safety check: Don't run if connecting modal is open (prevents interference)
+      if (showConnectingModal) {
+        return;
+      }
+
+      if (!vavityData || !connectionState || !email) {
+        setShowConnectMoreMetaMask(false);
+        setShowConnectMoreBase(false);
+        return;
+      }
+
+      const wallets = vavityData.wallets || [];
+      const metamaskConn = connectionState.metamaskConn;
+      const baseConn = connectionState.baseConn;
+      const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
+
+      // Check MetaMask
+      if (metamaskConn && metamaskConn.address && metamaskConn.address !== '0x0000000000000000000000000000000000000000') {
+        // Safety check: Skip if this wallet is currently being connected
+        if (connectingWalletTypeForModal !== 'metamask') {
+          const walletAddress = metamaskConn.address.toLowerCase();
+          const matchingWallet = wallets.find((w: any) => 
+            w.address?.toLowerCase() === walletAddress &&
+            w.depositPaid === true
+          );
+
+        // Only check wallets that are connected (depositPaid === true and assetConnected === true)
+        if (matchingWallet && metamaskConn.assetConnected === true) {
+          try {
+            // Fetch current wallet balance
+            const balanceResponse = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddress)}`);
+            if (balanceResponse.ok) {
+              const balanceData = await balanceResponse.json();
+              const currentBalance = parseFloat(balanceData.balance || '0');
+              const cVactTaa = matchingWallet.cVactTaa || 0;
+
+              // Compare: if currentBalance > cVactTaa, set assetConnected: false and show "Connect More" button
+              if (currentBalance > cVactTaa) {
+                console.log(`[VavityTester] Connect More check: MetaMask balance (${currentBalance}) > cVactTaa (${cVactTaa}), setting assetConnected: false`);
+                
+                // Set assetConnected: false in connection state
+                try {
+                  await axios.post('/api/saveVavityConnection', {
+                    email,
+                    vavityConnection: {
+                      ...metamaskConn,
+                      assetConnected: false,
+                    },
+                  });
+                } catch (error) {
+                  console.error('[VavityTester] Error updating MetaMask connection:', error);
+                }
+
+                // Show "Connect More Ethereum" button
+                setShowConnectMoreMetaMask(true);
+              } else {
+                // Balance <= cVactTaa, hide "Connect More" button
+                setShowConnectMoreMetaMask(false);
+              }
+            }
+          } catch (error) {
+            console.error('[VavityTester] Error checking MetaMask balance for Connect More:', error);
+          }
+        } else {
+          // Wallet not connected or doesn't have depositPaid, hide "Connect More" button
+          setShowConnectMoreMetaMask(false);
+        }
+        }
+      } else {
+        setShowConnectMoreMetaMask(false);
+      }
+
+      // Check Base
+      if (baseConn && baseConn.address && baseConn.address !== '0x0000000000000000000000000000000000000000') {
+        // Safety check: Skip if this wallet is currently being connected
+        if (connectingWalletTypeForModal !== 'base') {
+          const walletAddress = baseConn.address.toLowerCase();
+          const matchingWallet = wallets.find((w: any) => 
+            w.address?.toLowerCase() === walletAddress &&
+            w.depositPaid === true
+          );
+
+          // Only check wallets that are connected (depositPaid === true and assetConnected === true)
+          if (matchingWallet && baseConn.assetConnected === true) {
+            try {
+              // Fetch current wallet balance
+              const balanceResponse = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddress)}`);
+              if (balanceResponse.ok) {
+                const balanceData = await balanceResponse.json();
+                const currentBalance = parseFloat(balanceData.balance || '0');
+                const cVactTaa = matchingWallet.cVactTaa || 0;
+
+                // Compare: if currentBalance > cVactTaa, set assetConnected: false and show "Connect More" button
+                if (currentBalance > cVactTaa) {
+                  console.log(`[VavityTester] Connect More check: Base balance (${currentBalance}) > cVactTaa (${cVactTaa}), setting assetConnected: false`);
+                  
+                  // Set assetConnected: false in connection state
+                  try {
+                    await axios.post('/api/saveVavityConnection', {
+                      email,
+                      vavityConnection: {
+                        ...baseConn,
+                        assetConnected: false,
+                      },
+                    });
+                  } catch (error) {
+                    console.error('[VavityTester] Error updating Base connection:', error);
+                  }
+
+                  // Show "Connect More Ethereum" button
+                  setShowConnectMoreBase(true);
+                } else {
+                  // Balance <= cVactTaa, hide "Connect More" button
+                  setShowConnectMoreBase(false);
+                }
+              }
+            } catch (error) {
+              console.error('[VavityTester] Error checking Base balance for Connect More:', error);
+            }
+          } else {
+            // Wallet not connected or doesn't have depositPaid, hide "Connect More" button
+            setShowConnectMoreBase(false);
+          }
+        }
+      } else {
+        setShowConnectMoreBase(false);
+      }
+    };
+
+    checkConnectMore();
+  }, [vavityData, connectionState, email, showConnectingModal, connectingWalletTypeForModal]);
+
   const handleConnectAsset = async (walletType: 'metamask' | 'base') => {
     if (!email) {
       return;

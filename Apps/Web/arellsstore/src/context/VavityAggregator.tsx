@@ -80,8 +80,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           // Fallback to highest price ever if VAPA API doesn't exist yet
           try {
             const highestPriceResponse = await axios.get('/api/fetchHighestEthereumPrice');
-            const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
-            if (highestPriceEver) {
+        const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
+        if (highestPriceEver) {
               setVapa(highestPriceEver);
             }
           } catch (fallbackError) {
