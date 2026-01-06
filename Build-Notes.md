@@ -8,9 +8,11 @@
 VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for Wallet and Asset connection implementations: Wallet and Asset connection offline tests complete*
+- - - Fix Connecting Modal UX issue
+- - - Fix wallet creation/deletion issues after 2nd wallet creations (test for metamask/base vice versa)
 - - - Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is less than Wallet Address amount then: changes the assetConnected: to false and "Connect More Ethereum” Button {which should act the same as the connect ethereum button} replaces "connected" place holder only if cVactTaa of matching Wallet Address is less than Wallet Address amount ... Connect More Ethereum modals add "more" between connect and ethereum and function exactly like "connect ethereum"
 - - - Wallet Page SamPle Alert (per wallet) "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
-- - if you withdraw funds in each wallet, (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount
+- - if you withdraw funds in each wallet (all the wau up to zero), (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount... cVactTaa should neevr go below 1 wei
 - - Test Connect More Eth when wallets are all disconnected...
 - - Test multiple account switches (inside wallets (and wallet connections)), how it affects
 - - Test to see if you don't have enough eth and try to connect what it does.
@@ -34,6 +36,7 @@ Home
 - - - - Sloth: Show modal explanation
 Account
 – (B) (VAPA): $90,000
+- Button and Chart (loading) stays loading until Vapa appears <- get from VavityTester
 - If acVatoi != 0, then hide "Connect Bitcoin to begin"
 - Chart (Account):
 - - Left
@@ -230,7 +233,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 
 - Add new assets (VAPA/wallet-connection)
-- - Assets have their own page (connect asset)
+- - Assets have their own page and token values (that should be implemented in fetchBalance and everywhere these token values are used) (connect asset)
 
 - After user accumulation and scaling, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)

@@ -679,7 +679,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       try {
         console.log('[connectVavityAsset] Attempting fallback wallet creation...');
         const fallbackBalance = balance || 0;
-        const fallbackVapa = actualVapa || assetPrice || 0;
+        const fallbackVapa = vapa || assetPrice || 0;
         const fallbackCVactTaa = fallbackBalance;
         const fallbackCpVact = fallbackVapa;
         const fallbackCVact = fallbackCVactTaa * fallbackCpVact;

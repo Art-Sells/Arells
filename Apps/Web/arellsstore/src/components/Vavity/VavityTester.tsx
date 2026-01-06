@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useVavityAssetConnect } from '../../context/VavityAssetConnectContext';
 import { useVavity } from '../../context/VavityAggregator';
 import axios from 'axios';
@@ -15,6 +15,7 @@ const VavityTester: React.FC = () => {
   } = useVavityAssetConnect();
 
   const [connectionState, setConnectionState] = useState<any>(null);
+  const connectionStateRef = React.useRef<any>(null);
   const [loadingMetaMask, setLoadingMetaMask] = useState<boolean>(false);
   const [loadingBase, setLoadingBase] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -66,6 +67,7 @@ const VavityTester: React.FC = () => {
       };
       
       setConnectionState(state);
+      connectionStateRef.current = state; // Update ref for closure access
     } catch (error: any) {
       // Silently handle HTTP errors - don't log to console to avoid spam
       if (error?.response?.status !== 401 && error?.response?.status !== 500) {
@@ -448,8 +450,8 @@ const VavityTester: React.FC = () => {
       await triggerDeposit(walletType);
       console.log(`[VavityTester] ✅ Deposit triggered successfully`);
       
-      // Keep modal open and poll until wallet appears in backend with correct values
-      // This ensures frontend numbers match backend before closing (matches original code)
+      // Keep modal open and poll until assetConnected: true is detected in connection state
+      // This matches the original code structure - assetConnected is set LAST after all VavityAggregator updates
       const connection = connectionState?.[walletType === 'metamask' ? 'metamaskConn' : 'baseConn'];
       const walletAddress = connection?.address;
       
@@ -457,127 +459,60 @@ const VavityTester: React.FC = () => {
         let pollCount = 0;
         const maxPolls = 120; // Poll for up to 60 seconds (120 * 500ms)
         
-        // Helper function to check if wallet is ready
-        const checkWalletReady = async (): Promise<boolean> => {
-          try {
-            // Check backend directly - this is the source of truth
-            const data = await fetchVavityAggregator(email);
-            const wallets = data?.wallets || [];
-            
-            const wallet = wallets.find((w: any) => 
-              w.address?.toLowerCase() === walletAddress?.toLowerCase() &&
-              w.depositPaid === true
-            );
-            
-            // Check if wallet exists with depositPaid (cpVact might be 0 initially, that's okay)
-            if (wallet && wallet.depositPaid === true) {
-              console.log('[VavityTester] ✅ Wallet found with depositPaid=true, closing modal', {
-                address: wallet.address,
-                depositPaid: wallet.depositPaid,
-                cpVact: wallet.cpVact,
-                cVact: wallet.cVact
-              });
-              return true;
-            } else {
-              console.log('[VavityTester] ⏳ Wallet not ready yet:', {
-                walletFound: !!wallet,
-                depositPaid: wallet?.depositPaid,
-                address: wallet?.address
-              });
-            }
-          } catch (error) {
-            console.error('[VavityTester] Error checking wallet creation:', error);
-          }
-          return false;
-        };
-        
-        // Helper function to check if frontend matches backend
-        const checkFrontendMatchesBackend = async (): Promise<boolean> => {
-          try {
-            // Get backend data
-            const backendData = await fetchVavityAggregator(email);
-            const backendWallets = backendData?.wallets || [];
-            const backendWallet = backendWallets.find((w: any) => 
-              w.address?.toLowerCase() === walletAddress?.toLowerCase() &&
-              w.depositPaid === true
-            );
-            
-            // Get frontend data (from state - must be updated first)
-            const frontendWallets = vavityData?.wallets || [];
-            const frontendWallet = frontendWallets.find((w: any) => 
-              w.address?.toLowerCase() === walletAddress?.toLowerCase() &&
-              w.depositPaid === true
-            );
-            
-            // Check if both exist and match
-            if (backendWallet && frontendWallet && backendWallet.depositPaid === true && frontendWallet.depositPaid === true) {
-              // Compare key values to ensure they match
-              const cpVactMatch = Math.abs((backendWallet.cpVact || 0) - (frontendWallet.cpVact || 0)) < 0.01;
-              const cVactMatch = Math.abs((backendWallet.cVact || 0) - (frontendWallet.cVact || 0)) < 0.01;
-              
-              if (cpVactMatch && cVactMatch) {
-                console.log('[VavityTester] ✅ Frontend matches backend, closing modal', {
-                  address: backendWallet.address,
-                  backendCpVact: backendWallet.cpVact,
-                  frontendCpVact: frontendWallet.cpVact,
-                  backendCVact: backendWallet.cVact,
-                  frontendCVact: frontendWallet.cVact
-                });
-                return true;
-              } else {
-                if (pollCount % 10 === 0) { // Log every 5 seconds
-                  console.log('[VavityTester] Waiting: Frontend/backend values don\'t match yet:', {
-                    backendCpVact: backendWallet.cpVact,
-                    frontendCpVact: frontendWallet.cpVact,
-                    backendCVact: backendWallet.cVact,
-                    frontendCVact: frontendWallet.cVact
-                  });
-                }
-              }
-            } else {
-                if (pollCount % 10 === 0) { // Log every 5 seconds
-                  console.log('[VavityTester] Waiting: Wallet not found in both frontend and backend:', {
-                    backendFound: !!backendWallet,
-                    frontendFound: !!frontendWallet
-                  });
-                }
-            }
-          } catch (error) {
-            console.error('[VavityTester] Error checking frontend/backend match:', error);
-          }
-          return false;
-        };
-        
         // Check immediately first (before starting interval)
         await checkPending();
         await fetchVavityData();
         
-        // Check if frontend matches backend immediately
-        if (await checkFrontendMatchesBackend()) {
+        // Check if assetConnected is already true from connectionStateRef (after checkPending updated it)
+        const currentState = connectionStateRef.current;
+        const currentConnection = currentState?.[walletType === 'metamask' ? 'metamaskConn' : 'baseConn'];
+        if (currentConnection?.assetConnected === true) {
+          console.log('[VavityTester] ✅ assetConnected=true found, closing modal', {
+            walletType,
+            address: currentConnection.address,
+            assetConnected: currentConnection.assetConnected
+          });
           setShowConnectingModal(false);
           setConnectingWalletTypeForModal(null);
-          return; // Exit early if they already match
+          return; // Exit early if already connected
         }
         
-        // If not matching yet, start aggressive polling (every 500ms)
-        const checkWalletCreated = setInterval(async () => {
+        // If not connected yet, start aggressive polling (every 500ms)
+        const checkAssetConnectedInterval = setInterval(async () => {
           pollCount++;
           
-          // Update frontend data first
-          await fetchVavityData();
+          // Update connectionState by calling checkPending() - this updates both state and ref
+          await checkPending();
           
-          // Check if frontend matches backend
-          if (await checkFrontendMatchesBackend()) {
-            // Frontend matches backend - close modal immediately
-            clearInterval(checkWalletCreated);
+          // Check assetConnected from connectionStateRef (always has latest value, avoids closure issue)
+          const currentState = connectionStateRef.current;
+          const updatedConnection = currentState?.[walletType === 'metamask' ? 'metamaskConn' : 'baseConn'];
+          
+          // Check if assetConnected is true
+          if (updatedConnection?.assetConnected === true) {
+            console.log('[VavityTester] ✅ assetConnected=true found, closing modal', {
+              walletType,
+              address: updatedConnection.address,
+              assetConnected: updatedConnection.assetConnected
+            });
+            // assetConnected is true - close modal immediately
+            clearInterval(checkAssetConnectedInterval);
             setShowConnectingModal(false);
             setConnectingWalletTypeForModal(null);
             return;
+          } else {
+            if (pollCount % 10 === 0) { // Log every 5 seconds
+              console.log('[VavityTester] ⏳ Waiting for assetConnected: true', {
+                walletType,
+                address: updatedConnection?.address,
+                assetConnected: updatedConnection?.assetConnected
+              });
+            }
           }
           
           if (pollCount >= maxPolls) {
             console.warn('[VavityTester] Max polls reached, closing modal anyway');
-            clearInterval(checkWalletCreated);
+            clearInterval(checkAssetConnectedInterval);
             setShowConnectingModal(false);
             setConnectingWalletTypeForModal(null);
           }
