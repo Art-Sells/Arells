@@ -24,7 +24,7 @@ export interface ConnectVavityAssetParams {
  */
 export async function connectVavityAsset(params: ConnectVavityAssetParams): Promise<{
   txHash: string;
-  receipt: ethers.ContractTransactionReceipt | null;
+  receipt: ethers.TransactionReceipt | null;
   walletData: any;
 }> {
   const { provider, walletAddress, tokenAddress, email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator } = params;
@@ -50,7 +50,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
   // Process balance result (required)
   let balance: number;
   if (balanceResult.status === 'fulfilled') {
-    const balanceResponse = balanceResult.value;
+    const balanceResponse = balanceResult.value as Response;
     if (!balanceResponse.ok) {
       const errorText = await balanceResponse.text();
       throw new Error(`Failed to fetch wallet balance: ${balanceResponse.status} ${balanceResponse.statusText}. ${errorText}`);
@@ -99,34 +99,33 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
     console.warn('[connectVavityAsset] Wallet existence check failed or timed out, will fetch data again if needed');
   }
 
-  // If wallet already has depositPaid = true, check assetConnected status
-  // Only skip deposit if depositPaid === true AND assetConnected === true
-  // If assetConnected === false, proceed with deposit (Connect More Ethereum case)
+  // If wallet already has depositPaid = true, check if this is a "Connect More Ethereum" case
+  // Connect More case: balance > cVactTaa (user has more balance than what's connected)
+  // Only skip deposit if depositPaid === true AND balance <= cVactTaa (fully connected)
   if (existingWalletBeforeDeposit) {
-    // Check assetConnected status from connection state
-    let assetConnected = true; // Default to true if we can't check
-    try {
-      const vavityResponse = await axios.get('/api/saveVavityConnection', { params: { email } });
-      const connections = vavityResponse.data.vavityConnections || [];
-      const matchingConnection = connections.find(
-        (vc: any) => vc.address?.toLowerCase() === walletAddress.toLowerCase() &&
-                    vc.walletType === params.walletType
-      );
-      assetConnected = matchingConnection?.assetConnected ?? true;
-      console.log('[connectVavityAsset] Found existing wallet, checking assetConnected:', { 
-        walletAddress, 
-        assetConnected,
-        depositPaid: existingWalletBeforeDeposit.depositPaid 
-      });
-    } catch (error) {
-      console.warn('[connectVavityAsset] Could not check assetConnected status, defaulting to true:', error);
-    }
+    // CRITICAL: Check balance vs cVactTaa directly to bypass API's auto-setting of assetConnected
+    // The API automatically sets assetConnected: true if depositPaid: true, but we need to check
+    // if balance > cVactTaa to determine if it's actually a "Connect More" case
+    const cVactTaa = existingWalletBeforeDeposit.cVactTaa || 0;
+    const isConnectMoreCase = balance > cVactTaa;
+    
+    console.log('[connectVavityAsset] Found existing wallet, checking Connect More case:', { 
+      walletAddress, 
+      balance,
+      cVactTaa,
+      isConnectMoreCase,
+      depositPaid: existingWalletBeforeDeposit.depositPaid 
+    });
 
-    // Only skip deposit if depositPaid === true AND assetConnected === true
-    // If assetConnected === false, proceed with deposit (Connect More Ethereum case)
-    if (assetConnected === true) {
-      console.log('[connectVavityAsset] Wallet has depositPaid=true and assetConnected=true, skipping deposit');
-      // Fetch VAPA for this path (wallet already has depositPaid=true and assetConnected=true)
+    // If balance > cVactTaa, this is "Connect More Ethereum" - proceed with deposit
+    if (isConnectMoreCase) {
+      console.log('[connectVavityAsset] Connect More Ethereum case detected (balance > cVactTaa), proceeding with deposit');
+      // Continue to deposit flow below (don't return early)
+    } else {
+      // balance <= cVactTaa, wallet is fully connected - skip deposit
+      console.log('[connectVavityAsset] Wallet is fully connected (balance <= cVactTaa), skipping deposit');
+      
+      // Fetch VAPA for this path (wallet already has depositPaid=true and fully connected)
       let actualVapaForReconnect: number;
       try {
         const highestPriceResponse = await axios.get('/api/fetchHighestEthereumPrice');
@@ -177,16 +176,12 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       const vavityCombinations = existingDataBeforeDeposit.vavityCombinations || {};
       await saveVavityAggregator(email, updatedWallets, vavityCombinations);
       
-      console.log('[connectVavityAsset] Skipping deposit - wallet has depositPaid=true and assetConnected=true');
+      console.log('[connectVavityAsset] Skipping deposit - wallet is fully connected (balance <= cVactTaa)');
       return { 
         txHash: 'skipped-deposit-already-paid', 
         receipt: null, 
         walletData 
       };
-    } else {
-      // assetConnected === false (Connect More Ethereum case)
-      // Proceed with deposit even though depositPaid === true
-      console.log('[connectVavityAsset] Proceeding with deposit - wallet has depositPaid=true but assetConnected=false (Connect More Ethereum)');
     }
   }
 
@@ -395,8 +390,11 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       let fetchedCurrentPrice = 0;
       
       // Extract highest price ever
-      if (results[1] && results[1].status === 'fulfilled' && results[1].value && results[1].value.data) {
-        highestPriceEver = results[1].value.data?.highestPriceEver || 0;
+      if (results[1] && results[1].status === 'fulfilled' && results[1].value) {
+        const value = results[1].value as any;
+        if (value.data) {
+          highestPriceEver = value.data?.highestPriceEver || 0;
+        }
       } else {
         try {
           const fallbackVapaResponse = await axios.get('/api/fetchHighestEthereumPrice', { timeout: 2000 });
@@ -407,8 +405,11 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       }
       
       // Extract current price
-      if (results[2] && results[2].status === 'fulfilled' && results[2].value && results[2].value.data) {
-        fetchedCurrentPrice = results[2].value.data?.ethereum?.usd || 0;
+      if (results[2] && results[2].status === 'fulfilled' && results[2].value) {
+        const value = results[2].value as any;
+        if (value.data) {
+          fetchedCurrentPrice = value.data?.ethereum?.usd || 0;
+        }
       } else {
         try {
           const fallbackCurrentPriceResponse = await axios.get('/api/fetchEthereumPrice', { timeout: 2000 });
@@ -786,15 +787,16 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         try {
           const existingData = await fetchVavityAggregator(email);
           const existingWallets = existingData?.wallets || [];
+          const fallbackVapa = Math.max(assetPrice || 0, vapa || 0);
           const fallbackWalletData = {
             walletId: params.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             address: walletAddress,
             vapaa: tokenAddr,
             depositPaid: true,
-            cVatoc: parseFloat((balance * (actualVapa || assetPrice || 0)).toFixed(2)),
-            cpVatoc: actualVapa || assetPrice || 0,
-            cVact: parseFloat((balance * (actualVapa || assetPrice || 0)).toFixed(2)),
-            cpVact: actualVapa || assetPrice || 0,
+            cVatoc: parseFloat((balance * fallbackVapa).toFixed(2)),
+            cpVatoc: fallbackVapa,
+            cVact: parseFloat((balance * fallbackVapa).toFixed(2)),
+            cpVact: fallbackVapa,
             cVactTaa: balance || 0,
             cdVatoc: 0,
           };

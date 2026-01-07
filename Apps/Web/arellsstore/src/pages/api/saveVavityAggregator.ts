@@ -39,7 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, vavityCombinations, wallets } = req.body;
+  const { email, vavityCombinations, wallets, balances, globalVapa } = req.body; // balances: array of { address, balance, vapaa }, globalVapa: optional global VAPA value
 
   if (!email) {
     return res.status(400).json({ error: 'Missing email' });
@@ -62,26 +62,120 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    // CRITICAL: Recalculate cVact and cVatoc for all wallets using correct formulas
-    // cVact = cVactTaa * cpVact
-    // cVatoc = cVactTaa * cpVatoc
-    const validatedWallets = wallets.map((wallet: any) => {
-      const cVactTaa = wallet.cVactTaa || 0;
-      const cpVact = wallet.cpVact || 0;
-      const cpVatoc = wallet.cpVatoc || cpVact; // Use cpVact as fallback if cpVatoc is missing
-      
-      // Recalculate using correct formulas
-      const recalculatedCVact = cVactTaa * cpVact;
-      const recalculatedCVatoc = cVactTaa * cpVatoc;
-      const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
-      
-      return {
-        ...wallet,
-        cVact: parseFloat(recalculatedCVact.toFixed(2)),
-        cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
-        cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
-      };
-    });
+    // If balances are provided, update wallets with balance-based calculations
+    // Otherwise, just recalculate cVact, cVatoc, cdVatoc from existing cVactTaa
+    let validatedWallets: any[];
+    
+    // CRITICAL: Choose which wallets to use based on whether balances are provided
+    // - When balances ARE provided (from fetchBalance): Use existingData.wallets (fresh from S3) to get latest cVactTaa
+    // - When balances are NOT provided (from connectVavityAsset): Use wallets passed in (they have the new cVactTaa)
+    const walletsToProcess = (balances && Array.isArray(balances) && balances.length > 0) 
+      ? (existingData.wallets || wallets)  // fetchBalance: use S3 data
+      : wallets;  // connectVavityAsset: use passed-in wallets with new cVactTaa
+    
+    if (balances && Array.isArray(balances) && balances.length > 0) {
+      // Update wallets with balance-based calculations (from fetchBalance)
+      // Use walletsToProcess (fresh from S3) to get latest cVactTaa values
+      validatedWallets = walletsToProcess.map((wallet: any) => {
+        // Only update wallets where depositPaid is true
+        if (wallet.depositPaid !== true) {
+          // Just recalculate cVact, cVatoc, cdVatoc from existing values
+          const cVactTaa = wallet.cVactTaa || 0;
+          const cpVact = wallet.cpVact || 0;
+          const cpVatoc = wallet.cpVatoc || cpVact;
+          const recalculatedCVact = cVactTaa * cpVact;
+          const recalculatedCVatoc = cVactTaa * cpVatoc;
+          const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
+          
+          return {
+            ...wallet,
+            cVact: parseFloat(recalculatedCVact.toFixed(2)),
+            cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+            cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+          };
+        }
+        
+        // Find balance for this wallet
+        const balanceData = balances.find(
+          (b: any) => b.address?.toLowerCase() === wallet.address?.toLowerCase() &&
+                      (b.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase() === 
+                      (wallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()
+        );
+        
+        if (balanceData) {
+          const currentBalance = balanceData.balance || 0;
+          const currentCVactTaa = wallet.cVactTaa || 0;
+          
+          // Update cVactTaa: only allow decrease, never increase
+          let newCVactTaa: number;
+          if (currentBalance < currentCVactTaa) {
+            // Balance decreased - update cVactTaa to reflect the lower balance
+            newCVactTaa = currentBalance;
+            console.log(`[saveVavityAggregator] 📝 cVactTaa UPDATE: ${wallet.address} | ${currentCVactTaa} -> ${newCVactTaa} | Reason: balance decreased`);
+          } else {
+            // Balance is same or higher - preserve original cVactTaa (connection-time snapshot)
+            newCVactTaa = currentCVactTaa;
+          }
+          
+          // cpVact should always be >= global VAPA (if provided)
+          const newCpVact = globalVapa ? Math.max(wallet.cpVact || 0, globalVapa) : (wallet.cpVact || 0);
+          const newCpVatoc = wallet.cpVatoc && wallet.cpVatoc > 0 ? wallet.cpVatoc : newCpVact;
+          
+          // Calculate cVact, cVatoc, cdVatoc using formulas
+          const newCVact = newCVactTaa * newCpVact;
+          const newCVatoc = newCVactTaa * newCpVatoc;
+          const newCdVatoc = newCVact - newCVatoc;
+          
+          console.log(`[saveVavityAggregator] Updating wallet ${wallet.address}: balance=${currentBalance}, cVactTaa=${currentCVactTaa} -> ${newCVactTaa}`);
+          
+          return {
+            ...wallet,
+            vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000',
+            depositPaid: wallet.depositPaid !== undefined ? wallet.depositPaid : true,
+            cVactTaa: newCVactTaa,
+            cpVact: newCpVact,
+            cpVatoc: newCpVatoc,
+            cVact: parseFloat(newCVact.toFixed(2)),
+            cVatoc: parseFloat(newCVatoc.toFixed(2)),
+            cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
+          };
+        }
+        
+        // No balance data found, just recalculate from existing values
+        const cVactTaa = wallet.cVactTaa || 0;
+        const cpVact = wallet.cpVact || 0;
+        const cpVatoc = wallet.cpVatoc || cpVact;
+        const recalculatedCVact = cVactTaa * cpVact;
+        const recalculatedCVatoc = cVactTaa * cpVatoc;
+        const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
+        
+        return {
+          ...wallet,
+          cVact: parseFloat(recalculatedCVact.toFixed(2)),
+          cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+          cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+        };
+      });
+    } else {
+      // No balances provided, just recalculate cVact, cVatoc, cdVatoc from existing cVactTaa
+      // Use walletsToProcess (fresh from S3) to get latest cVactTaa values
+      validatedWallets = walletsToProcess.map((wallet: any) => {
+        const cVactTaa = wallet.cVactTaa || 0;
+        const cpVact = wallet.cpVact || 0;
+        const cpVatoc = wallet.cpVatoc || cpVact;
+        
+        const recalculatedCVact = cVactTaa * cpVact;
+        const recalculatedCVatoc = cVactTaa * cpVatoc;
+        const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
+        
+        return {
+          ...wallet,
+          cVact: parseFloat(recalculatedCVact.toFixed(2)),
+          cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+          cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+        };
+      });
+    }
     
     // ✅ MERGE wallets: Update existing wallets or add new ones
     // This prevents overwriting wallets that aren't in the validatedWallets array
@@ -143,6 +237,74 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         ACL: 'private',
       })
       .promise();
+
+    // Update assetConnected in VavityConnection based on balance > cVactTaa
+    // Only if balances were provided (from fetchBalance)
+    if (balances && Array.isArray(balances) && balances.length > 0) {
+      try {
+        const connectionKey = `${email}/VavityConnection.json`;
+        
+        // Fetch current connections
+        let vavityConnections: any[] = [];
+        try {
+          const connectionResponse = await s3.getObject({ Bucket: BUCKET_NAME, Key: connectionKey }).promise();
+          if (connectionResponse.Body) {
+            vavityConnections = JSON.parse(connectionResponse.Body.toString());
+          }
+        } catch (err: any) {
+          if (err.code !== 'NoSuchKey') {
+            console.warn('[saveVavityAggregator] Could not fetch VavityConnection:', err.message);
+          }
+        }
+
+        // For each wallet with depositPaid=true, update matching connections
+        const walletsWithDepositPaid = mergedWallets.filter((w: any) => w.depositPaid === true);
+        let hasConnectionChanges = false;
+
+        for (const wallet of walletsWithDepositPaid) {
+          // Find balance for this wallet
+          const balanceData = balances.find(
+            (b: any) => b.address?.toLowerCase() === wallet.address?.toLowerCase() &&
+                        (b.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase() === 
+                        (wallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()
+          );
+
+          if (!balanceData) continue;
+
+          const currentBalance = balanceData.balance || 0;
+          const cVactTaa = wallet.cVactTaa || 0;
+          const shouldBeConnected = currentBalance <= cVactTaa;
+
+          // Find all matching connections (could be multiple if same address has both metamask/base)
+          const matchingConnections = vavityConnections.filter(
+            (conn: any) => conn.address?.toLowerCase() === wallet.address?.toLowerCase()
+          );
+
+          // Update each matching connection
+          for (const conn of matchingConnections) {
+            if (conn.assetConnected !== shouldBeConnected) {
+              conn.assetConnected = shouldBeConnected;
+              hasConnectionChanges = true;
+              console.log(`[saveVavityAggregator] Updated assetConnected for ${conn.address} (${conn.walletType}): ${!shouldBeConnected} -> ${shouldBeConnected} (balance: ${currentBalance}, cVactTaa: ${cVactTaa})`);
+            }
+          }
+        }
+
+        // Save updated connections if any were changed
+        if (hasConnectionChanges) {
+          await s3.putObject({
+            Bucket: BUCKET_NAME,
+            Key: connectionKey,
+            Body: JSON.stringify(vavityConnections),
+            ContentType: 'application/json',
+          }).promise();
+          console.log('[saveVavityAggregator] Successfully updated assetConnected values in VavityConnection');
+        }
+      } catch (connectionError) {
+        // Non-critical error - log but don't throw (wallet updates already succeeded)
+        console.warn('[saveVavityAggregator] Error updating assetConnected (non-critical, wallet updates succeeded):', connectionError);
+      }
+    }
 
     return res.status(200).json({ message: 'Data saved successfully', data: newData });
   } catch (error) {

@@ -32,6 +32,8 @@ interface VavityaggregatorType {
   vact: VactState;
   totals: TotalsState;
   vapa: number; // Valued Asset Price Anchored (highest asset price recorded always)
+  vatopCombinations: { acVatops: number; acVacts: number; acdVatops: number }; // Alias for totals (legacy compatibility)
+  vavityPrice: number; // Alias for vapa (legacy compatibility)
   connectAmount: number;
   setConnectAmount: (amount: number) => void;
   handleConnect: (amount: number) => void;
@@ -42,7 +44,7 @@ interface VavityaggregatorType {
   updateASSETFile: (amount: number) => Promise<number>;
   fetchVavityAggregator: (email: string) => Promise<any>;
   addVavityAggregator: (email: string, newWallets: any[]) => Promise<any>;
-  saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any) => Promise<any>;
+  saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any, balances?: any[], globalVapa?: number) => Promise<any>;
 }
 
 const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefined);
@@ -457,7 +459,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, []);
 
-  const saveVavityAggregator = useCallback(async (email: string, wallets: any[], vavityCombinations: any): Promise<any> => {
+  const saveVavityAggregator = useCallback(async (email: string, wallets: any[], vavityCombinations: any, balances?: any[], globalVapa?: number): Promise<any> => {
     try {
       if (!email) {
         throw new Error('Email is required');
@@ -467,6 +469,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         email,
         wallets,
         vavityCombinations,
+        balances,
+        globalVapa,
       });
       // console.log('[VavityAggregator] Successfully saved wallets');
       return response.data;
@@ -517,6 +521,12 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         vact,
         totals,
         vapa,
+        vatopCombinations: {
+          acVatops: totals.acVatoc,
+          acVacts: totals.acVact,
+          acdVatops: totals.acdVatoc
+        },
+        vavityPrice: vapa,
         connectAmount,
         setConnectAmount,
         handleConnect,

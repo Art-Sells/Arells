@@ -561,8 +561,10 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                   // that might not be in backend yet (e.g., Base connection when MetaMask is being updated)
                   const merged = pendingConnections.map((backendPc: any) => backendPc);
                   // Add any connections from current state that aren't in backend (for other wallet types)
+                  // optimistic is guaranteed to be non-null here due to the outer if check
+                  const optimisticWalletType = optimistic!.walletType;
                   currentBackendConnections.forEach((currentPc: any) => {
-                    if (currentPc.walletType !== optimistic.walletType) {
+                    if (currentPc.walletType !== optimisticWalletType) {
                       const existsInBackend = pendingConnections.some(
                         (pc: any) => pc.walletType === currentPc.walletType
                       );
@@ -1071,7 +1073,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
           depositTxHash = pendingConnection.txHash;
           console.log('[AssetConnect] Found deposit txHash in backend:', depositTxHash);
           // Verify transaction is confirmed on blockchain
-          if (provider) {
+          if (provider && depositTxHash) {
             try {
               const isConfirmed = await verifyTransactionExists(provider, depositTxHash);
               if (!isConfirmed) {
@@ -1224,7 +1226,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
         }
         
         // CRITICAL: Double-check backend for cancellation flag before setting state
-        const backendConnections = await fetchPendingConnectionsFromBackend();
+        const backendConnections = await fetchVavityConnectionsFromBackend();
         const thisConnection = backendConnections.find((pc: any) => 
           pc.address?.toLowerCase() === pendingAddress.toLowerCase() && 
           pc.walletType === pendingType
@@ -1297,9 +1299,10 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
           depositTxHash = connectionToCheck.txHash;
           console.log('[AssetConnect] Found deposit txHash in JSON for', pendingType, 'wallet:', depositTxHash);
           // Verify transaction is confirmed on blockchain
-          try {
-            const isConfirmed = await verifyTransactionExists(provider, depositTxHash);
-            if (isConfirmed) {
+          if (depositTxHash) {
+            try {
+              const isConfirmed = await verifyTransactionExists(provider, depositTxHash);
+              if (isConfirmed) {
               // Transaction is confirmed - mark as completed
               console.log('[AssetConnect] Transaction confirmed, marking as completed');
               // Update JSON to mark as completed
@@ -1325,9 +1328,10 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               txHashExistsButNotConfirmed = true;
               depositTxHash = null; // Will be set after confirmation
             }
-          } catch (error) {
-            console.error('[AssetConnect] Error verifying transaction:', error);
-            depositTxHash = null;
+            } catch (error) {
+              console.error('[AssetConnect] Error verifying transaction:', error);
+              depositTxHash = null;
+            }
           }
         } else if (provider && !depositCompletedInJSONForThisWallet) {
           // If not in JSON, check blockchain (slower but more reliable)
@@ -1803,14 +1807,16 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               if (accounts && accounts.length > 0) {
                 metaMaskAccount = accounts[0];
                 // If we have a stored address, check if it matches
-                if (lastConnectedMetaMask) {
+                if (lastConnectedMetaMask && metaMaskAccount) {
                   metaMaskExtensionConnected = lastConnectedMetaMask.toLowerCase() === metaMaskAccount.toLowerCase();
                 } else {
                   // If no stored address but extension has accounts, it's connected
                   metaMaskExtensionConnected = true;
                   // Auto-set localStorage if extension is connected but we don't have it stored
-                  console.log('[AssetConnect] MetaMask extension connected but not in localStorage, setting it now');
-                  localStorage.setItem('lastConnectedMetaMask', metaMaskAccount);
+                  if (metaMaskAccount) {
+                    console.log('[AssetConnect] MetaMask extension connected but not in localStorage, setting it now');
+                    localStorage.setItem('lastConnectedMetaMask', metaMaskAccount);
+                  }
                 }
               }
             } catch (error) {
@@ -1832,14 +1838,16 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               if (accounts && accounts.length > 0) {
                 baseAccount = accounts[0];
                 // If we have a stored address, check if it matches
-                if (lastConnectedBase) {
+                if (lastConnectedBase && baseAccount) {
                   baseExtensionConnected = lastConnectedBase.toLowerCase() === baseAccount.toLowerCase();
                 } else {
                   // If no stored address but extension has accounts, it's connected
                   baseExtensionConnected = true;
                   // Auto-set localStorage if extension is connected but we don't have it stored
-                  console.log('[AssetConnect] Base extension connected but not in localStorage, setting it now');
-                  localStorage.setItem('lastConnectedBase', baseAccount);
+                  if (baseAccount) {
+                    console.log('[AssetConnect] Base extension connected but not in localStorage, setting it now');
+                    localStorage.setItem('lastConnectedBase', baseAccount);
+                  }
                 }
               }
             } catch (error) {
@@ -1927,18 +1935,18 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               
               if (connection.walletType === 'metamask') {
                 // Check if MetaMask extension is connected and address matches
-                newExtensionConnected = metaMaskExtensionConnected && 
+                newExtensionConnected = !!(metaMaskExtensionConnected && 
                   (connection.address?.toLowerCase() === metaMaskAccount?.toLowerCase() || 
-                   (lastConnectedMetaMask && connection.address?.toLowerCase() === lastConnectedMetaMask.toLowerCase()));
+                   (lastConnectedMetaMask && connection.address?.toLowerCase() === lastConnectedMetaMask.toLowerCase())));
                 // Update if status changed
                 if (connection.walletExtensionConnected !== newExtensionConnected) {
                   shouldUpdate = true;
                 }
               } else if (connection.walletType === 'base') {
                 // Check if Base extension is connected and address matches
-                newExtensionConnected = baseExtensionConnected && 
+                newExtensionConnected = !!(baseExtensionConnected && 
                   (connection.address?.toLowerCase() === baseAccount?.toLowerCase() || 
-                   (lastConnectedBase && connection.address?.toLowerCase() === lastConnectedBase.toLowerCase()));
+                   (lastConnectedBase && connection.address?.toLowerCase() === lastConnectedBase.toLowerCase())));
                 // Update if status changed
                 if (connection.walletExtensionConnected !== newExtensionConnected) {
                   shouldUpdate = true;
@@ -2727,7 +2735,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
       try {
         const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
         
-        console.log('[connectAsset] Calling connectAssetUtil with:', {
+        console.log('[connectAsset] Calling connectAsset with:', {
           walletAddress,
           walletType,
           walletId,
@@ -2735,7 +2743,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
           hasProvider: !!provider
         });
         
-        const { txHash, receipt, walletData } = await connectAssetUtil({
+        const { txHash, receipt, walletData } = await connectVavityAssetUtil({
           provider,
           walletAddress: walletAddress,
           tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,

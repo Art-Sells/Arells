@@ -137,7 +137,7 @@ export async function connectCoinbaseWallet(): Promise<WalletConnectionResult> {
   const ethereumProvider = coinbaseWallet.makeWeb3Provider();
   
   // Check if we're using the extension or mobile
-  const isExtension = ethereumProvider.isCoinbaseWallet || ethereumProvider.isBase;
+  const isExtension = ethereumProvider.isCoinbaseWallet || (ethereumProvider as any).isBase;
   
   if (isExtension) {
     console.log('Coinbase Wallet/Base extension detected, using SDK provider with logo...');
@@ -191,7 +191,7 @@ export async function connectCoinbaseWallet(): Promise<WalletConnectionResult> {
     console.log('Coinbase Wallet/Base accounts received:', accounts);
     
     return {
-      accounts,
+      accounts: accounts as string[],
       provider: ethereumProvider
     };
   } catch (error: any) {

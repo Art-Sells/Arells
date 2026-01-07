@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { connectWallet as connectWalletUtil, WalletType } from '../utils/walletConnection';
 import { useVavity } from './VavityAggregator';
 import { completeDepositFlow, calculateDepositAmount } from '../utils/depositTransaction';
-import { connectVavityAsset as connectAsset } from '../utils/connectVavityAsset';
+import { connectVavityAsset as connectVavityAssetUtil } from '../utils/connectVavityAsset';
 
 interface AssetConnectContextType {
   // Auto-connected wallets (detected on page load)
@@ -159,8 +159,8 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
             const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
             console.log('[processPendingWallet] Automatically triggering connectAsset flow...');
             
-            // Use connectAsset which handles deposit prompt, transaction, and balance fetching
-            const { txHash, receipt, walletData } = await connectAsset({
+            // Use connectVavityAssetUtil which handles deposit prompt, transaction, and balance fetching
+            const { txHash, receipt, walletData } = await connectVavityAssetUtil({
               provider,
               walletAddress: pendingAddress,
               tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,
@@ -335,14 +335,16 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               if (accounts && accounts.length > 0) {
                 metaMaskAccount = accounts[0];
                 // If we have a stored address, check if it matches
-                if (lastConnectedMetaMask) {
+                if (lastConnectedMetaMask && metaMaskAccount) {
                   metaMaskExtensionConnected = lastConnectedMetaMask.toLowerCase() === metaMaskAccount.toLowerCase();
                 } else {
                   // If no stored address but extension has accounts, it's connected
                   metaMaskExtensionConnected = true;
                   // Auto-set localStorage if extension is connected but we don't have it stored
-                  console.log('[AssetConnect] MetaMask extension connected but not in localStorage, setting it now');
-                  localStorage.setItem('lastConnectedMetaMask', metaMaskAccount);
+                  if (metaMaskAccount) {
+                    console.log('[AssetConnect] MetaMask extension connected but not in localStorage, setting it now');
+                    localStorage.setItem('lastConnectedMetaMask', metaMaskAccount);
+                  }
                 }
               }
             } catch (error) {
@@ -364,14 +366,16 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
               if (accounts && accounts.length > 0) {
                 baseAccount = accounts[0];
                 // If we have a stored address, check if it matches
-                if (lastConnectedBase) {
+                if (lastConnectedBase && baseAccount) {
                   baseExtensionConnected = lastConnectedBase.toLowerCase() === baseAccount.toLowerCase();
                 } else {
                   // If no stored address but extension has accounts, it's connected
                   baseExtensionConnected = true;
                   // Auto-set localStorage if extension is connected but we don't have it stored
-                  console.log('[AssetConnect] Base extension connected but not in localStorage, setting it now');
-                  localStorage.setItem('lastConnectedBase', baseAccount);
+                  if (baseAccount) {
+                    console.log('[AssetConnect] Base extension connected but not in localStorage, setting it now');
+                    localStorage.setItem('lastConnectedBase', baseAccount);
+                  }
                 }
               }
             } catch (error) {
@@ -692,9 +696,9 @@ export const AssetConnectProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
 
     try {
-      // Use connectAsset function which handles deposit and balance fetching
+      // Use connectVavityAssetUtil function which handles deposit and balance fetching
       const tokenAddress = '0x0000000000000000000000000000000000000000'; // Native ETH
-      const { txHash, receipt, walletData } = await connectAsset({
+      const { txHash, receipt, walletData } = await connectVavityAssetUtil({
         provider,
         walletAddress: pendingWallet.address,
         tokenAddress: tokenAddress === '0x0000000000000000000000000000000000000000' ? undefined : tokenAddress,

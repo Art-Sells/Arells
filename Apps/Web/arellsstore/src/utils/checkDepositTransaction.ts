@@ -35,16 +35,19 @@ export async function checkExistingDepositTransaction(
             for (const tx of block.transactions) {
               if (typeof tx === 'string') continue;
               
+              // Type assertion: tx is a TransactionResponse after string check
+              const txObj = tx as ethers.TransactionResponse;
+              
               // Check if transaction is from our wallet to deposit address
               if (
-                tx.from?.toLowerCase() === walletAddress.toLowerCase() &&
-                tx.to?.toLowerCase() === DEPOSIT_ADDRESS.toLowerCase() &&
-                tx.value && tx.value > 0n
+                txObj.from?.toLowerCase() === walletAddress.toLowerCase() &&
+                txObj.to?.toLowerCase() === DEPOSIT_ADDRESS.toLowerCase() &&
+                txObj.value && txObj.value > 0n
               ) {
                 // Found a deposit transaction - verify it's confirmed
-                const receipt = await browserProvider.getTransactionReceipt(tx.hash);
+                const receipt = await browserProvider.getTransactionReceipt(txObj.hash);
                 if (receipt && receipt.status === 1) {
-                  return tx.hash;
+                  return txObj.hash;
                 }
               }
             }

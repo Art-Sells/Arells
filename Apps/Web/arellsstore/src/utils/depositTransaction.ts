@@ -56,7 +56,7 @@ export async function sendDepositTransaction(params: DepositParams): Promise<str
     console.log(`[depositTransaction] Token: ${tokenAddress || 'Native ETH'}`);
   }
 
-  let tx: ethers.ContractTransactionResponse;
+  let tx: ethers.TransactionResponse | ethers.ContractTransactionResponse;
 
   try {
     if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
@@ -118,7 +118,7 @@ export async function waitForTransactionConfirmation(
   provider: any,
   txHash: string,
   confirmations: number = 1
-): Promise<ethers.ContractTransactionReceipt | null> {
+): Promise<ethers.TransactionReceipt | null> {
   console.log(`[depositTransaction] Waiting for confirmation of ${txHash}...`);
   
   try {
@@ -138,7 +138,7 @@ export async function waitForTransactionConfirmation(
  */
 export async function completeDepositFlow(params: DepositParams): Promise<{
   txHash: string;
-  receipt: ethers.ContractTransactionReceipt | null;
+  receipt: ethers.TransactionReceipt | null;
 }> {
   const txHash = await sendDepositTransaction(params);
   const receipt = await waitForTransactionConfirmation(params.provider, txHash);

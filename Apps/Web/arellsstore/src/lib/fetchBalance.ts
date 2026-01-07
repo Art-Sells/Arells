@@ -10,7 +10,7 @@ interface FetchBalanceParams {
   email: string;
   assetPrice: number;
   fetchVavityAggregator: (email: string) => Promise<any>;
-  saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any) => Promise<any>;
+  saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any, balances?: any[], globalVapa?: number) => Promise<any>;
 }
 
 export const fetchBalance = async ({
@@ -52,7 +52,7 @@ export const fetchBalance = async ({
 
     console.log(`[fetchBalance] Fetching balances for ${walletsToFetch.length} wallet(s) with depositPaid=true`);
 
-    // Fetch global VAPA once (used for all wallets)
+    // Fetch global VAPA once (used for backend calculations)
     let globalVapa = assetPrice; // Fallback to assetPrice
     try {
       const vapaResponse = await axios.get('/api/vapa');
@@ -61,6 +61,8 @@ export const fetchBalance = async ({
     } catch (error) {
       console.warn('[fetchBalance] Error fetching global VAPA, using assetPrice:', error);
     }
+    
+    // Note: VAPA will be passed to backend for cpVact calculations
 
     // Fetch balances for wallets with depositPaid=true in parallel
     const balancePromises = walletsToFetch.map(async (wallet: any) => {
@@ -126,84 +128,12 @@ export const fetchBalance = async ({
     console.log(`[fetchBalance] Balance results:`, balanceResults);
     console.log(`[fetchBalance] Balances to update:`, balancesToUpdate);
     
-    // Always update wallets, even if balance is 0 or unchanged
-    if (wallets.length > 0) {
-      console.log(`[fetchBalance] Updating ${wallets.length} wallet(s) with balances`);
-      
-      // Update wallets with new balances (only for wallets with depositPaid=true)
-      const allWallets = wallets.map((wallet: any) => {
-        // Only update wallets where depositPaid is true
-        if (wallet.depositPaid !== true) {
-          return wallet; // Return unchanged if deposit not paid
-        }
-        const balanceUpdate = balancesToUpdate.find(
-          (b: any) => b.address?.toLowerCase() === wallet.address?.toLowerCase() &&
-                      b.vapaa?.toLowerCase() === (wallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()
-        );
-        
-        if (balanceUpdate) {
-          // Recalculate wallet values based on current balance
-          // CRITICAL: cVactTaa should ONLY be updated:
-          // 1. After transaction hash is received (set to wallet token balance) - handled in connectVavityAsset.ts
-          // 2. If current balance < cVactTaa, update cVactTaa to current balance (can decrease if user sends tokens out)
-          // NEVER increase cVactTaa - it should only be set after transaction confirmation
-          const currentBalance = balanceUpdate.balance;
-          const currentCVactTaa = wallet.cVactTaa || 0;
-          
-          // Update cVactTaa: only allow decrease, never increase
-          let newCVactTaa: number;
-          if (currentBalance < currentCVactTaa) {
-            // Balance decreased - update cVactTaa to reflect the lower balance
-            newCVactTaa = currentBalance;
-            console.log(`[fetchBalance] 📝 cVactTaa UPDATE: ${wallet.address} | ${currentCVactTaa} -> ${newCVactTaa} | Reason: balance decreased`);
-          } else {
-            // Balance is same or higher - preserve original cVactTaa (connection-time snapshot)
-            newCVactTaa = currentCVactTaa;
-          }
-          
-          // cpVact should always be >= global VAPA (fetched once above)
-          const newCpVact = Math.max(wallet.cpVact || 0, globalVapa);
-          // CRITICAL: Calculate cVact using formula: cVact = cVactTaa * cpVact
-          const newCVact = newCVactTaa * newCpVact;
-          
-          // CRITICAL: Calculate cVatoc using formula: cVatoc = cVactTaa * cpVatoc
-          // cpVatoc should be the VAPA at time of first connection, so only set if it's missing
-          const newCpVatoc = wallet.cpVatoc && wallet.cpVatoc > 0 ? wallet.cpVatoc : newCpVact;
-          const newCVatoc = newCVactTaa * newCpVatoc;
-          
-          const newCdVatoc = newCVact - newCVatoc;
-          
-          console.log(`[fetchBalance] Updating wallet ${wallet.address} (VAPAA: ${wallet.vapaa || '0x0000...'}): currentBalance=${currentBalance}, cVactTaa=${currentCVactTaa} -> ${newCVactTaa}, cVact=${newCVact.toFixed(2)} (cVactTaa * cpVact), cVatoc=${newCVatoc.toFixed(2)} (cVactTaa * cpVatoc)`);
-          
-          return {
-            ...wallet,
-            vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000', // Ensure VAPAA is set
-            depositPaid: wallet.depositPaid !== undefined ? wallet.depositPaid : true, // Preserve depositPaid
-            cVactTaa: newCVactTaa, // Update if balance decreased, otherwise preserve
-            cpVact: newCpVact,
-            cpVatoc: newCpVatoc, // Ensure cpVatoc is set if it was missing
-            cVact: parseFloat(newCVact.toFixed(2)),
-            cVatoc: parseFloat(newCVatoc.toFixed(2)), // CRITICAL: Recalculate cVatoc using formula
-            cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
-          };
-        }
-        // If no balance update found, keep wallet as is but ensure it has the right structure
-        return {
-          ...wallet,
-          vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000', // Ensure VAPAA is set
-          depositPaid: wallet.depositPaid !== undefined ? wallet.depositPaid : false, // Preserve depositPaid
-        };
-      });
-
-      // Save updated wallets back to VavityAggregator
-      // Note: vavityCombinations will be recalculated from wallets in saveVavityAggregator
-      // Pass empty object to let the API recalculate from updated wallets
-      console.log(`[fetchBalance] About to save ${allWallets.length} wallet(s) with updated balances`);
-      console.log(`[fetchBalance] Sample wallet data:`, allWallets[0]);
+    // Pass wallets and balances to backend - backend will do all calculations
+    if (wallets.length > 0 && balancesToUpdate.length > 0) {
+      console.log(`[fetchBalance] Passing ${wallets.length} wallet(s) and ${balancesToUpdate.length} balance(s) to backend for calculation`);
       try {
-        const result = await saveVavityAggregator(email, allWallets, {});
-        console.log(`[fetchBalance] Save result:`, result);
-        console.log(`[fetchBalance] Successfully updated ${balancesToUpdate.length} wallet balance(s) in VavityAggregator`);
+        const result = await saveVavityAggregator(email, wallets, {}, balancesToUpdate, globalVapa);
+        console.log(`[fetchBalance] Backend processed wallets and balances successfully`);
       } catch (saveError) {
         console.error(`[fetchBalance] Error saving wallets:`, saveError);
         throw saveError;
