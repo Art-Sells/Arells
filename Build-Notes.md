@@ -9,6 +9,7 @@ VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for Wallet and Asset connection implementations: Wallet and Asset connection offline tests complete*
 - *revert back to this commit for Wallet and Asset connection implementations before Auto Checks: Wallet and Asset Connection Auto Check*
+- *revert back to this commit for Metamsk Connect More Asset implementation: Ready to test Base Connect More Ethereum*
 - - - Auto checks: if cVactTaa of matching Wallet Address is less than Wallet Address amount then: changes the assetConnected: to false and "Connect More Ethereum” Button {which should act the same as the connect ethereum button} replaces "connected" place holder only if cVactTaa of matching Wallet Address is less than Wallet Address amount ... Connect More Ethereum modals add "more" between connect and ethereum and function exactly like "connect ethereum"
 - - - Wallet Page SamPle Alert (per wallet) "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
 - - if you withdraw funds in each wallet (all the way up to zero even with Connect More Ethereum), (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount... cVactTaa should neevr go below 1 wei
