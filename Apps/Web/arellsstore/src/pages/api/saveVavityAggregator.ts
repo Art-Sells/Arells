@@ -161,6 +161,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // Use walletsToProcess (fresh from S3) to get latest cVactTaa values
       validatedWallets = walletsToProcess.map((wallet: any) => {
         const cVactTaa = wallet.cVactTaa || 0;
+        
+        // If cVactTaa is 0 or missing, preserve existing values (don't recalculate to avoid zeroing out)
+        if (!cVactTaa || cVactTaa === 0) {
+          return wallet; // Return wallet as-is, preserving existing values
+        }
+        
         const cpVact = wallet.cpVact || 0;
         const cpVatoc = wallet.cpVatoc || cpVact;
         
@@ -203,6 +209,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (!processedKeys.has(key)) {
         // Recalculate this wallet's values too (for consistency)
         const cVactTaa = existingWallet.cVactTaa || 0;
+        
+        // If cVactTaa is 0 or missing, preserve existing values (don't recalculate to avoid zeroing out)
+        if (!cVactTaa || cVactTaa === 0) {
+          mergedWallets.push(existingWallet); // Preserve wallet as-is
+          return;
+        }
+        
         const cpVact = existingWallet.cpVact || 0;
         const cpVatoc = existingWallet.cpVatoc || cpVact;
         const recalculatedCVact = cVactTaa * cpVact;

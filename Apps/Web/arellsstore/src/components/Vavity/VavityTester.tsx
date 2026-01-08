@@ -224,7 +224,7 @@ const VavityTester: React.FC = () => {
 
   // Display "Connect More Ethereum" button based on assetConnected from backend
   useEffect(() => {
-    if (!connectionState) {
+    if (!connectionState || !vavityData) {
       setShowConnectMoreMetaMask(false);
       setShowConnectMoreBase(false);
       return;
@@ -232,11 +232,104 @@ const VavityTester: React.FC = () => {
 
     const metamaskConn = connectionState.metamaskConn;
     const baseConn = connectionState.baseConn;
+    const wallets = vavityData.wallets || [];
 
-    // Show "Connect More" button if assetConnected === false (from backend)
-    setShowConnectMoreMetaMask(metamaskConn?.assetConnected === false);
-    setShowConnectMoreBase(baseConn?.assetConnected === false);
-  }, [connectionState]);
+    // Check MetaMask: Show "Connect More" only if assetConnected === false AND depositPaid === true AND wallet exists with cVactTaa > 0
+    if (metamaskConn && metamaskConn.address && metamaskConn.address !== '0x0000000000000000000000000000000000000000') {
+      const walletAddress = metamaskConn.address.toLowerCase();
+      const matchingWallet = wallets.find((w: any) => 
+        w.address?.toLowerCase() === walletAddress &&
+        w.depositPaid === true
+      );
+      const hasExistingConnection = matchingWallet && (matchingWallet.cVactTaa || 0) > 0;
+      setShowConnectMoreMetaMask(
+        metamaskConn.assetConnected === false && 
+        metaMaskDepositPaid === true && 
+        hasExistingConnection === true
+      );
+    } else {
+      setShowConnectMoreMetaMask(false);
+    }
+
+    // Check Base: Show "Connect More" only if assetConnected === false AND depositPaid === true AND wallet exists with cVactTaa > 0
+    if (baseConn && baseConn.address && baseConn.address !== '0x0000000000000000000000000000000000000000') {
+      const walletAddress = baseConn.address.toLowerCase();
+      const matchingWallet = wallets.find((w: any) => 
+        w.address?.toLowerCase() === walletAddress &&
+        w.depositPaid === true
+      );
+      const hasExistingConnection = matchingWallet && (matchingWallet.cVactTaa || 0) > 0;
+      setShowConnectMoreBase(
+        baseConn.assetConnected === false && 
+        baseDepositPaid === true && 
+        hasExistingConnection === true
+      );
+    } else {
+      setShowConnectMoreBase(false);
+    }
+  }, [connectionState, vavityData, metaMaskDepositPaid, baseDepositPaid]);
+
+  // Component to fetch and display balance on-demand for "Connect More ETH" section
+  const ConnectMoreEthSection: React.FC<{
+    walletAddress: string;
+    walletType: 'metamask' | 'base';
+    cVactTaa: number;
+    onConnectClick: () => void;
+  }> = ({ walletAddress, walletType, cVactTaa, onConnectClick }) => {
+    const [currentBalance, setCurrentBalance] = useState<number | null>(null);
+    const tokenAddress = '0x0000000000000000000000000000000000000000';
+
+    useEffect(() => {
+      const fetchBalance = async () => {
+        try {
+          const response = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddress)}`);
+          if (response.ok) {
+            const data = await response.json();
+            const balance = parseFloat(data.balance || '0');
+            setCurrentBalance(balance);
+          }
+        } catch (error) {
+          // Silently handle errors
+        }
+      };
+
+      fetchBalance();
+    }, [walletAddress]);
+
+    if (currentBalance === null || currentBalance <= cVactTaa) {
+      return null;
+    }
+
+    const increaseAmount = currentBalance - cVactTaa;
+
+    return (
+      <div style={{ 
+        marginBottom: '15px', 
+        padding: '15px', 
+        backgroundColor: '#2d2d2d', 
+        borderRadius: '5px',
+        border: '1px solid #ff9800'
+      }}>
+        <div style={{ color: '#ffffff', marginBottom: '10px', fontSize: '14px' }}>
+          Your "ETH" amount increased +{increaseAmount.toFixed(8)} ETH
+        </div>
+        <div style={{ color: '#ffffff', fontSize: '14px' }}>
+          Would you like to see your full "{currentBalance.toFixed(8)}" ETH protected from bear markets?{' '}
+          <span
+            onClick={onConnectClick}
+            style={{
+              color: '#ff9800',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              fontWeight: 'bold',
+            }}
+          >
+            (Connect More Eth)
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   const handleConnectAsset = async (walletType: 'metamask' | 'base') => {
     if (!email) {
@@ -599,22 +692,57 @@ const VavityTester: React.FC = () => {
           {vavityData.wallets && Array.isArray(vavityData.wallets) && vavityData.wallets.length > 0 && (
             <div style={{ marginBottom: '20px' }}>
               <h4 style={{ color: '#ffffff', marginBottom: '10px' }}>Wallets:</h4>
-              {vavityData.wallets.map((wallet: any, index: number) => (
-                <div key={index} style={{ marginBottom: '15px', padding: '10px', backgroundColor: '#2a2a2a', borderRadius: '5px' }}>
-                  <div style={{ color: '#ffffff', fontWeight: 'bold', marginBottom: '8px' }}>
-                    Wallet {index + 1}: {wallet.address?.substring(0, 6)}...{wallet.address?.substring(wallet.address.length - 4)}
+              {vavityData.wallets.map((wallet: any, index: number) => {
+                // Determine wallet type and assetConnected status
+                const walletAddress = wallet.address?.toLowerCase();
+                const metamaskConn = connectionState?.metamaskConn;
+                const baseConn = connectionState?.baseConn;
+                
+                let walletType: 'metamask' | 'base' | null = null;
+                let assetConnected = true;
+                
+                if (metamaskConn && metamaskConn.address?.toLowerCase() === walletAddress) {
+                  walletType = 'metamask';
+                  assetConnected = metamaskConn.assetConnected !== false;
+                } else if (baseConn && baseConn.address?.toLowerCase() === walletAddress) {
+                  walletType = 'base';
+                  assetConnected = baseConn.assetConnected !== false;
+                }
+
+                // Check if this wallet needs "Connect More ETH" section
+                const needsConnectMore = wallet.depositPaid === true && !assetConnected && walletType !== null;
+                const cVactTaa = wallet.cVactTaa || 0;
+
+                return (
+                  <div key={index}>
+                    {/* "Connect More ETH" Section - Only shown for wallets with assetConnected === false */}
+                    {needsConnectMore && walletType && (
+                      <ConnectMoreEthSection
+                        walletAddress={wallet.address}
+                        walletType={walletType}
+                        cVactTaa={cVactTaa}
+                        onConnectClick={() => handleConnectAsset(walletType)}
+                      />
+                    )}
+                    
+                    {/* Wallet Card */}
+                    <div style={{ marginBottom: '15px', padding: '10px', backgroundColor: '#2a2a2a', borderRadius: '5px' }}>
+                      <div style={{ color: '#ffffff', fontWeight: 'bold', marginBottom: '8px' }}>
+                        Wallet {index + 1}: {wallet.address?.substring(0, 6)}...{wallet.address?.substring(wallet.address.length - 4)}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#cccccc', marginLeft: '10px' }}>
+                        <div>VAPAA: {wallet.vapaa || '0x0000000000000000000000000000000000000000'}</div>
+                        <div>cVatoc: ${(wallet.cVatoc || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div>cpVatoc: ${(wallet.cpVatoc || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div>cVact: ${(wallet.cVact || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div>cpVact: ${(wallet.cpVact || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div>cVactTaa: {(wallet.cVactTaa || 0).toFixed(5)}</div>
+                        <div>cdVatoc: ${(wallet.cdVatoc || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ fontSize: '12px', color: '#cccccc', marginLeft: '10px' }}>
-                    <div>VAPAA: {wallet.vapaa || '0x0000000000000000000000000000000000000000'}</div>
-                    <div>cVatoc: ${(wallet.cVatoc || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                    <div>cpVatoc: ${(wallet.cpVatoc || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                    <div>cVact: ${(wallet.cVact || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                    <div>cpVact: ${(wallet.cpVact || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                    <div>cVactTaa: {(wallet.cVactTaa || 0).toFixed(5)}</div>
-                    <div>cdVatoc: ${(wallet.cdVatoc || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 

@@ -923,9 +923,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
           if (thisConnection && thisConnection.assetConnecting) {
             // Update connection to set assetConnecting: false
             try {
-              await axios.post('/api/savePendingConnection', {
+              await axios.post('/api/saveVavityConnection', {
                 email,
-                pendingConnection: {
+                vavityConnection: {
                   ...thisConnection,
                   assetConnecting: false,
                 },
@@ -1149,9 +1149,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               // Update backend to mark deposit as completed
               if (depositTxHash) {
                 try {
-                  await axios.post('/api/savePendingConnection', {
+                  await axios.post('/api/saveVavityConnection', {
                     email,
-                    pendingConnection: {
+                    vavityConnection: {
                       address: pendingAddress,
                       walletId: walletId,
                       walletType: pendingType,
@@ -1307,9 +1307,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               console.log('[AssetConnect] Transaction confirmed, marking as completed');
               // Update JSON to mark as completed
               try {
-                await axios.post('/api/savePendingConnection', {
+                await axios.post('/api/saveVavityConnection', {
                   email,
-                  pendingConnection: {
+                  vavityConnection: {
                     address: pendingAddress,
                     walletId: pendingWalletId || '',
                     walletType: pendingType,
@@ -1341,9 +1341,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               console.log('[AssetConnect] Found existing deposit transaction on blockchain:', depositTxHash);
               // If found on blockchain but not in JSON, update JSON
               try {
-                await axios.post('/api/savePendingConnection', {
+                await axios.post('/api/saveVavityConnection', {
                   email,
-                  pendingConnection: {
+                  vavityConnection: {
                     address: pendingAddress,
                     walletId: pendingWalletId || '',
                     walletType: pendingType,
@@ -1377,9 +1377,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                 depositTxHash = connectionToCheck.txHash;
                 // Update JSON to mark as completed
                 try {
-                  await axios.post('/api/savePendingConnection', {
+                  await axios.post('/api/saveVavityConnection', {
                     email,
-                    pendingConnection: {
+                    vavityConnection: {
                       address: pendingAddress,
                       walletId: pendingWalletId || '',
                       walletType: pendingType,
@@ -1520,9 +1520,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
             
             // Update backend JSON to mark deposit as completed
             try {
-              await axios.post('/api/savePendingConnection', {
+              await axios.post('/api/saveVavityConnection', {
                 email,
-              pendingConnection: {
+              vavityConnection: {
                 address: pendingAddress,
                 walletId: pendingWalletId || '',
                 walletType: pendingType,
@@ -1542,9 +1542,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
             
             // CRITICAL: Update backend to mark deposit as completed (independent of page reloads)
             try {
-              await axios.post('/api/savePendingConnection', {
+              await axios.post('/api/saveVavityConnection', {
                 email,
-              pendingConnection: {
+              vavityConnection: {
                 address: pendingAddress,
                 walletId: pendingWalletId || '',
                 walletType: pendingType,
@@ -1612,16 +1612,16 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               // Simplified: Just set assetConnecting to false when cancelled
               // Find and update the connection
               try {
-                const response = await axios.get('/api/savePendingConnection', { params: { email } });
-                const connections = response.data.pendingConnections || [];
+                const response = await axios.get('/api/saveVavityConnection', { params: { email } });
+                const connections = response.data.vavityConnections || [];
                 const connToUpdate = connections.find((pc: any) => 
                   pc.walletType === pendingType && 
                   (pendingAddress ? pc.address?.toLowerCase() === pendingAddress.toLowerCase() : pc.assetConnecting === true)
                 );
                 if (connToUpdate && connToUpdate.assetConnecting) {
-                  await axios.post('/api/savePendingConnection', {
+                  await axios.post('/api/saveVavityConnection', {
                     email,
-                    pendingConnection: {
+                    vavityConnection: {
                       ...connToUpdate,
                       assetConnecting: false,
                     },
@@ -1965,9 +1965,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                   baseAccount
                 });
                 try {
-                  await axios.post('/api/savePendingConnection', {
+                  await axios.post('/api/saveVavityConnection', {
                     email,
-                    pendingConnection: {
+                    vavityConnection: {
                       ...connection,
                       walletExtensionConnected: newExtensionConnected,
                     },
@@ -1994,9 +1994,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                   localStorage.removeItem('lastConnectedMetaMask');
                 }
                 try {
-                  await axios.post('/api/savePendingConnection', {
+                  await axios.post('/api/saveVavityConnection', {
                     email,
-                    pendingConnection: {
+                    vavityConnection: {
                       ...pendingMetaMaskConn,
                       walletConnected: false,
                     },
@@ -2024,9 +2024,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                   localStorage.removeItem('lastConnectedBase');
                 }
                 try {
-                  await axios.post('/api/savePendingConnection', {
+                  await axios.post('/api/saveVavityConnection', {
                     email,
-                    pendingConnection: {
+                    vavityConnection: {
                       ...pendingBaseConn,
                       walletConnected: false,
                     },
@@ -2335,9 +2335,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
             }
           }
           
-          await axios.post('/api/savePendingConnection', {
+          await axios.post('/api/saveVavityConnection', {
             email,
-            pendingConnection: {
+            vavityConnection: {
               address: pendingWallet.address,
               walletId: pendingWallet.walletId || '',
               walletType: walletType,
@@ -2392,15 +2392,15 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
         // Simplified: Just set assetConnecting to false when cancelled
         if (email) {
           try {
-            const response = await axios.get('/api/savePendingConnection', { params: { email } });
-            const connections = response.data.pendingConnections || [];
+            const response = await axios.get('/api/saveVavityConnection', { params: { email } });
+            const connections = response.data.vavityConnections || [];
             const connToUpdate = connections.find((pc: any) => 
               pc.walletType === walletType && pc.assetConnecting === true
             );
             if (connToUpdate) {
-              await axios.post('/api/savePendingConnection', {
+              await axios.post('/api/saveVavityConnection', {
                 email,
-                pendingConnection: {
+                vavityConnection: {
                   ...connToUpdate,
                   assetConnecting: false,
                 },
@@ -2562,16 +2562,16 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
       try {
         try {
           // Get existing connection
-          const getResponse = await axios.get('/api/savePendingConnection', { params: { email } });
-          const existingConnections = getResponse.data.pendingConnections || [];
+          const getResponse = await axios.get('/api/saveVavityConnection', { params: { email } });
+          const existingConnections = getResponse.data.vavityConnections || [];
           const existingConnection = existingConnections.find((pc: any) => pc.walletType === walletType);
           
           if (existingConnection) {
             // Update existing connection
             walletId = existingConnection.walletId || `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-            await axios.post('/api/savePendingConnection', {
+            await axios.post('/api/saveVavityConnection', {
               email,
-              pendingConnection: {
+              vavityConnection: {
                 ...existingConnection,
                 address: walletAddress,
                 walletId: walletId,
@@ -2581,9 +2581,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
           } else {
             // Create new connection
             walletId = `connected-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-            await axios.post('/api/savePendingConnection', {
+            await axios.post('/api/saveVavityConnection', {
               email,
-              pendingConnection: {
+              vavityConnection: {
                 address: walletAddress,
                 walletId: walletId,
                 walletType: walletType,
@@ -2797,9 +2797,9 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
             }
           }
           
-          await axios.post('/api/savePendingConnection', {
+          await axios.post('/api/saveVavityConnection', {
             email,
-            pendingConnection: {
+            vavityConnection: {
               address: walletAddress,
               walletId: walletId || '',
               walletType: walletType,
@@ -2858,17 +2858,17 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
           let addressToCancel = walletAddress;
           if (!addressToCancel && email) {
             try {
-              const response = await axios.get('/api/savePendingConnection', { params: { email } });
-              const pendingConnections = response.data.pendingConnections || [];
-              const pendingConn = pendingConnections.find(
+              const response = await axios.get('/api/saveVavityConnection', { params: { email } });
+              const vavityConnections = response.data.vavityConnections || [];
+              const vavityConn = vavityConnections.find(
                 (pc: any) => pc.walletType === walletType && !pc.assetConnected
               );
-              if (pendingConn) {
-                addressToCancel = pendingConn.address;
-                console.log('[connectAsset] Found address from backend pending connection:', addressToCancel);
+              if (vavityConn) {
+                addressToCancel = vavityConn.address;
+                console.log('[connectAsset] Found address from backend vavity connection:', addressToCancel);
         }
             } catch (err) {
-              console.error('[connectAsset] Error fetching pending connection for cancellation:', err);
+              console.error('[connectAsset] Error fetching vavity connection for cancellation:', err);
             }
           }
           
@@ -2883,17 +2883,17 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
           // Simplified: Just set assetConnecting to false when cancelled
           if (addressToCancel && email) {
             try {
-              const response = await axios.get('/api/savePendingConnection', { params: { email } });
-              const connections = response.data.pendingConnections || [];
+              const response = await axios.get('/api/saveVavityConnection', { params: { email } });
+              const connections = response.data.vavityConnections || [];
               const connToUpdate = connections.find((pc: any) => 
                 pc.walletType === walletType && 
                 pc.address?.toLowerCase() === addressToCancel.toLowerCase() &&
                 pc.assetConnecting === true
               );
               if (connToUpdate) {
-                await axios.post('/api/savePendingConnection', {
+                await axios.post('/api/saveVavityConnection', {
                   email,
-                  pendingConnection: {
+                  vavityConnection: {
                     ...connToUpdate,
                     assetConnecting: false,
                   },
