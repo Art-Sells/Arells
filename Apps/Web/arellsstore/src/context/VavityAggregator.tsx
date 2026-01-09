@@ -45,6 +45,8 @@ interface VavityaggregatorType {
   fetchVavityAggregator: (email: string) => Promise<any>;
   addVavityAggregator: (email: string, newWallets: any[]) => Promise<any>;
   saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any, balances?: any[], globalVapa?: number) => Promise<any>;
+  setIsConnectingAsset: (isConnecting: boolean) => void;
+  walletBalances: { [address: string]: number }; // Temporary display-only balances from fetchBalance (never stored in wallet objects)
 }
 
 const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefined);
@@ -53,6 +55,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [email, setEmail] = useState<string>('');
   const [assetPrice, setAssetPrice] = useState<number>(0);
   const [connectAmount, setConnectAmount] = useState<number>(0);
+  const [isConnectingAsset, setIsConnectingAsset] = useState<boolean>(false);
+  const [walletBalances, setWalletBalances] = useState<{ [address: string]: number }>({}); // Temporary display-only balances
   
   // Fetch Ethereum price on mount and periodically
   // assetPrice = current Ethereum price
@@ -124,6 +128,11 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
 
   const [vapa, setVapa] = useState<number>(0);
+
+  // Initialize isConnectingAsset to false on page load/reload
+  useEffect(() => {
+    setIsConnectingAsset(false);
+  }, []);
 
   useEffect(() => {
     const fetchEmail = async () => {
@@ -492,6 +501,10 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // console.log('[VavityAggregator] Balance fetch useEffect: Starting balance fetch');
     const fetchWalletBalances = async () => {
+      if (isConnectingAsset) {
+        console.log('[VavityAggregator] Skipping fetchBalance - connectVavityAsset is running');
+        return;
+      }
       try {
         // console.log('[VavityAggregator] Calling fetchBalance...');
         await fetchBalance({
@@ -499,6 +512,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           assetPrice,
           fetchVavityAggregator,
           saveVavityAggregator,
+          setWalletBalances, // Pass callback to update display-only balances
         });
         // console.log('[VavityAggregator] fetchBalance completed');
       } catch (error) {
@@ -514,7 +528,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // console.log('[VavityAggregator] Cleaning up balance fetch interval');
       clearInterval(interval);
     };
-  }, [email, assetPrice, fetchVavityAggregator, saveVavityAggregator]);
+  }, [email, assetPrice, fetchVavityAggregator, saveVavityAggregator, isConnectingAsset]);
 
   return (
     <Vavityaggregator.Provider
@@ -540,7 +554,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         updateASSETFile,
         fetchVavityAggregator,
         addVavityAggregator,
-        saveVavityAggregator
+        saveVavityAggregator,
+        setIsConnectingAsset,
+        walletBalances
       }}
     >
       {children}

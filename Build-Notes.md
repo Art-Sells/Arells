@@ -8,9 +8,11 @@
 VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for Wallet and Asset connection implementations: Wallet and Asset connection offline tests complete*
-- *revert back to this commit for Wallet and Asset connection implementations before Auto Checks: Asset Connection Auto Check*
-- *revert back to this commit for Metamsk Connect More Asset implementation: Ready to test Base Connect More Ethereum*
-- - - Ok, so the "connect more eth", lets place that button above the unique wallet that has a section above it that says: "Your “ETH” amount increased +"wallet amount - cVactTaa" ETH Would you like to see your full “total wallet amount” ETH protected from bear markets? (Connect More Eth) ... this entire section should act the same as the prior "connect more eth"
+- *revert back to this commit for Wallet and Asset connection implementations before Auto Checks: Metamask wallet connection successful test*
+- - - Remove the +....
+- - - connected wallet: your ETH amount: before connection: asset price dollar amount, after connection: vapa dollar amount (Connect Ethereum)
+- - - Your “ETH” amount increased. Before connection: asset price dollar amount. After connection: vapa dollar amount. (Connect More Eth)
+- - - Aggregate Section "Your "ETH" amount increased in some of your wallet/s. Before connection: total asset wallet amount from assetConnected no. After connection: Total vapa wallet amount from assetConnected no" (connect more eth) 
 - - if you withdraw funds in each wallet (all the way up to zero even with Connect More Ethereum), (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount... cVactTaa should neevr go below 1 wei
 - - Test import wallets (that are already connected) (from base/metamask and vice versa)
 - - Test Connect More Eth when wallets are all disconnected...
@@ -156,7 +158,7 @@ Arells powered by Vavity
 - Are you 
 ready to let go 
 of bear markets?
-- Message up-top (if cVactTaa =! wallet amount): "Your "ETH" amount increased in some of your wallet/s" (Connect More (ETH)) Button -> takes to wallet
+- Message up-top (if cVactTaa =! wallet amount) "Your "ETH" amount increased in some of your wallet/s. ETH amount before connection: total wallet amount from assetConnected no, after connection: total vapa wallet amount from assetConnected no"  (Connect More (ETH)) Button -> takes to wallet
 – (B) (VAPA): $90,000
 - Chart (before wallet connection):
 - - Left
@@ -169,11 +171,12 @@ of bear markets?
 - - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
-- Connect Ethereum to begin <-words (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
+- (random {rotated} asset price dollar amount), with Arells it would be worth (vapa dollar amount) (Connect Ethereum) (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
 - - Modal: Connecting Wallet (until wallet address have been fetched, otherwise connection cancelled)
 - - Modal for Alert (from Vavity tester): Error connecting metamask: Request of type 'wallet_requestPermissions' already pending for origin http://localhost:3000. Please wait.
 - - Modal: Connection Canceled (ok [reloads page]) <- get alert from VavityTester ... it should also pop up if this shows: 
 - - Modal (for new wallet connection): Wallet Connection Successful, Connect Ethereum to Begin .5% fee per new assets. (Yes) <- opens asset connection (no) <- closes modal (get from vavitytester)
+- connected wallet: your ETH amount: before connection: asset price dollar amount, after connection: vapa dollar amount (Connect Ethereum) (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
 - - Modal (for already connected wallet connected): Connect Ethereum to Begin .5% fee per new assets. (Yes) <- opens asset connection (no) <- closes modal (get from vavitytester)
 - - Modal: Connecting (Loader) Ethereum, please wait... (do not reload page) <- get from vavity tester
 - - Modal: Connection Canceled (ok [reloads page]) <- get aleart from VavityTester
@@ -197,7 +200,7 @@ of bear markets?
 - Change color scheme (for modals also) to Purpple
 "Connect New Wallet" (triggered if no wallets exist from json) <- use function from VavityTester.tsx
 - (connect ethereum to begin): if json has no wallets
-- - (if cVactTaa =! wallet amount): New section: "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (Connect More Eth) <- button opens up new deposit ask and if its complete, then the new deposit <-get from VavityTester
+- - (if cVactTaa =! wallet amount): New section: "Your “ETH” amount increased, before connection: asset price dollar amount, after connection: vapa dollar amount (Connect More Eth) <- button opens up new deposit ask and if its complete, then the new deposit <-get from VavityTester
 - - For connected wallets & assets: Lists Wallet Addresses and cVactTaa and cVact
 - - For connected wallets, not connected assets:
 - - - (Connect Eth)

@@ -16,6 +16,7 @@ export interface ConnectVavityAssetParams {
   saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any) => Promise<any>;
   walletId?: string; // Optional walletId for saving txHash
   walletType?: 'metamask' | 'base'; // Optional walletType for saving txHash
+  setIsConnectingAsset?: (isConnecting: boolean) => void; // Optional function to pause/resume fetchBalance
 }
 
 /**
@@ -27,7 +28,12 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
   receipt: ethers.TransactionReceipt | null;
   walletData: any;
 }> {
-  const { provider, walletAddress, tokenAddress, email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator } = params;
+  const { provider, walletAddress, tokenAddress, email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator, setIsConnectingAsset } = params;
+  
+  // Set isConnectingAsset to true to pause fetchBalance
+  if (setIsConnectingAsset) {
+    setIsConnectingAsset(true);
+  }
 
   // Step 1 & 2: Fetch balance and check wallet existence in parallel for faster response
   const NATIVE_ETH_ADDRESS = '0x0000000000000000000000000000000000000000';
@@ -115,92 +121,6 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
     console.warn('[connectVavityAsset] Wallet existence check failed or timed out, will fetch data again if needed');
   }
 
-  // If wallet already has depositPaid = true, check if this is a "Connect More Ethereum" case
-  // Connect More case: balance > cVactTaa (user has more balance than what's connected)
-  // Only skip deposit if depositPaid === true AND balance <= cVactTaa (fully connected)
-  if (existingWalletBeforeDeposit) {
-    // CRITICAL: Check balance vs cVactTaa directly to bypass API's auto-setting of assetConnected
-    // The API automatically sets assetConnected: true if depositPaid: true, but we need to check
-    // if balance > cVactTaa to determine if it's actually a "Connect More" case
-    const cVactTaa = existingWalletBeforeDeposit.cVactTaa || 0;
-    const isConnectMoreCase = balance > cVactTaa;
-    
-    console.log('[connectVavityAsset] Found existing wallet, checking Connect More case:', { 
-      walletAddress, 
-      balance,
-      cVactTaa,
-      isConnectMoreCase,
-      depositPaid: existingWalletBeforeDeposit.depositPaid 
-    });
-
-    // If balance > cVactTaa, this is "Connect More Ethereum" - proceed with deposit
-    if (isConnectMoreCase) {
-      console.log('[connectVavityAsset] Connect More Ethereum case detected (balance > cVactTaa), proceeding with deposit');
-      // Continue to deposit flow below (don't return early)
-    } else {
-      // balance <= cVactTaa, wallet is fully connected - skip deposit
-      console.log('[connectVavityAsset] Wallet is fully connected (balance <= cVactTaa), skipping deposit');
-      
-      // Fetch VAPA for this path (wallet already has depositPaid=true and fully connected)
-      let actualVapaForReconnect: number;
-      try {
-        const highestPriceResponse = await axios.get('/api/fetchHighestEthereumPrice');
-        const highestPriceEver = highestPriceResponse.data?.highestPriceEver || 0;
-        actualVapaForReconnect = Math.max(vapa || 0, highestPriceEver || 0, assetPrice || 0);
-      } catch (error) {
-        actualVapaForReconnect = Math.max(vapa || 0, assetPrice || 0);
-      }
-      const currentVapaForReconnect = actualVapaForReconnect;
-      
-      const newCVactTaa = balance; // Use balance before deposit (no deposit was sent)
-      const newCpVact = Math.max(existingWalletBeforeDeposit.cpVact || 0, currentVapaForReconnect);
-      const newCVact = newCVactTaa * newCpVact;
-      const newCdVatoc = newCVact - (existingWalletBeforeDeposit.cVatoc || 0);
-      
-      // Update cpVatoc if it's 0 or if it's significantly different from current VAPA (was set incorrectly)
-      // cpVatoc should be the VAPA at time of first connection, so only update if it's clearly wrong (0 or way off)
-      const shouldUpdateCpVatoc = !existingWalletBeforeDeposit.cpVatoc || existingWalletBeforeDeposit.cpVatoc === 0;
-      const newCpVatoc = shouldUpdateCpVatoc ? currentVapaForReconnect : existingWalletBeforeDeposit.cpVatoc;
-
-      const walletData = {
-        ...existingWalletBeforeDeposit,
-        depositPaid: true, // Keep depositPaid as true
-        cVactTaa: newCVactTaa,
-        cpVact: newCpVact,
-        cpVatoc: newCpVatoc, // Update if it was 0 or missing
-        cVact: parseFloat(newCVact.toFixed(2)),
-        cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
-      };
-
-      // If we don't have existingWalletsBeforeDeposit, fetch it now
-      if (!existingWalletsBeforeDeposit || existingWalletsBeforeDeposit.length === 0 || !existingDataBeforeDeposit) {
-        try {
-          existingDataBeforeDeposit = await fetchVavityAggregator(email);
-          existingWalletsBeforeDeposit = existingDataBeforeDeposit?.wallets || [];
-        } catch (error) {
-          console.error('[connectVavityAsset] Error fetching VavityAggregator data:', error);
-          throw new Error('Failed to fetch wallet data for update');
-        }
-      }
-
-      // Update the wallet in the array
-      const updatedWallets = existingWalletsBeforeDeposit.map((w: any) => 
-        w.walletId === existingWalletBeforeDeposit.walletId ? walletData : w
-      );
-
-      // Recalculate vavityCombinations
-      const vavityCombinations = existingDataBeforeDeposit.vavityCombinations || {};
-      await saveVavityAggregator(email, updatedWallets, vavityCombinations);
-      
-      console.log('[connectVavityAsset] Skipping deposit - wallet is fully connected (balance <= cVactTaa)');
-      return { 
-        txHash: 'skipped-deposit-already-paid', 
-        receipt: null, 
-        walletData 
-      };
-    }
-  }
-
   // Step 3: Calculate deposit amount (0.5% of balance)
   const depositAmount = calculateDepositAmount(balance);
 
@@ -248,8 +168,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         vavityConnection: {
           ...matchingConnection,
           txHash: txHash,
-          // Preserve assetConnected state from matchingConnection
-          assetConnected: matchingConnection.assetConnected ?? false,
+          // assetConnected is preserved from matchingConnection and will be updated by fetchBalance
         },
       });
       console.log('[connectVavityAsset] Saved txHash to existing vavity connection:', txHash);
@@ -265,8 +184,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
           walletId: params.walletId,
           walletType: params.walletType,
           timestamp: Date.now(),
-          // Deposit in progress
-          assetConnected: false,
+          // Deposit in progress (assetConnected will be set by fetchBalance)
           txHash: txHash,
         },
       });
@@ -641,6 +559,47 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
           });
           const result = await addVavityAggregator(email, [finalWalletData]);
           console.log('[connectVavityAsset] Successfully added wallet to VavityAggregator (background):', result);
+          
+          // After VavityAggregator update, check if balance equals cVactTaa
+          // If yes, set assetConnected to true
+          if (balanceAfterDeposit === finalWalletData.cVactTaa) {
+            try {
+              const vavityResponse = await axios.get('/api/saveVavityConnection', { params: { email } });
+              const connections = vavityResponse.data.vavityConnections || [];
+              const matchingConnection = connections.find(
+                (vc: any) => vc.address?.toLowerCase() === walletAddress.toLowerCase() &&
+                            vc.walletType === params.walletType
+              );
+              
+              if (matchingConnection) {
+                await axios.post('/api/saveVavityConnection', {
+                  email,
+                  vavityConnection: {
+                    ...matchingConnection,
+                    txHash: txHash,
+                    assetConnected: true,  // Set to true when balance === cVactTaa
+                  },
+                });
+                console.log(`[connectVavityAsset] Set assetConnected to true (balanceAfterDeposit=${balanceAfterDeposit} === cVactTaa=${finalWalletData.cVactTaa})`);
+              } else {
+                // Create connection if it doesn't exist
+                await axios.post('/api/saveVavityConnection', {
+                  email,
+                  vavityConnection: {
+                    address: walletAddress,
+                    walletId: finalWalletData.walletId || params.walletId || '',
+                    walletType: params.walletType,
+                    timestamp: Date.now(),
+                    txHash: txHash,
+                    assetConnected: true,  // Set to true when balance === cVactTaa
+                  },
+                });
+                console.log(`[connectVavityAsset] Created connection with assetConnected=true (balanceAfterDeposit=${balanceAfterDeposit} === cVactTaa=${finalWalletData.cVactTaa})`);
+              }
+            } catch (error) {
+              console.error('[connectVavityAsset] Error setting assetConnected to true:', error);
+            }
+          }
         } catch (error: any) {
           console.error('[connectVavityAsset] Error adding wallet to VavityAggregator (background):', error);
           console.error('[connectVavityAsset] Error details:', {
@@ -673,6 +632,47 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
                 await saveVavityAggregator(email, existingWallets, {});
                 console.log('[connectVavityAsset] Successfully force-added wallet to VavityAggregator');
               }
+              
+              // After VavityAggregator update, check if balance equals cVactTaa
+              // If yes, set assetConnected to true
+              if (balanceAfterDeposit === finalWalletData.cVactTaa) {
+                try {
+                  const vavityResponse = await axios.get('/api/saveVavityConnection', { params: { email } });
+                  const connections = vavityResponse.data.vavityConnections || [];
+                  const matchingConnection = connections.find(
+                    (vc: any) => vc.address?.toLowerCase() === walletAddress.toLowerCase() &&
+                                vc.walletType === params.walletType
+                  );
+                  
+                  if (matchingConnection) {
+                    await axios.post('/api/saveVavityConnection', {
+                      email,
+                      vavityConnection: {
+                        ...matchingConnection,
+                        txHash: txHash,
+                        assetConnected: true,  // Set to true when balance === cVactTaa
+                      },
+                    });
+                    console.log(`[connectVavityAsset] Set assetConnected to true (balanceAfterDeposit=${balanceAfterDeposit} === cVactTaa=${finalWalletData.cVactTaa})`);
+                  } else {
+                    // Create connection if it doesn't exist
+                    await axios.post('/api/saveVavityConnection', {
+                      email,
+                      vavityConnection: {
+                        address: walletAddress,
+                        walletId: finalWalletData.walletId || params.walletId || '',
+                        walletType: params.walletType,
+                        timestamp: Date.now(),
+                        txHash: txHash,
+                        assetConnected: true,  // Set to true when balance === cVactTaa
+                      },
+                    });
+                    console.log(`[connectVavityAsset] Created connection with assetConnected=true (balanceAfterDeposit=${balanceAfterDeposit} === cVactTaa=${finalWalletData.cVactTaa})`);
+                  }
+                } catch (error) {
+                  console.error('[connectVavityAsset] Error setting assetConnected to true:', error);
+                }
+              }
             } catch (updateError) {
               console.error('[connectVavityAsset] Error updating wallet after duplicate error:', updateError);
               // Re-throw to ensure we know about this failure
@@ -685,8 +685,8 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         }
       }
 
-      // CRITICAL: Save VAPA to global endpoint BEFORE setting assetConnected
-      // This ensures all VavityAggregator data is complete before marking as connected
+      // CRITICAL: Save VAPA to global endpoint
+      // This ensures all VavityAggregator data is complete
       try {
         await axios.post('/api/vapa', {
           vapa: currentVapa, // Save VAPA to global endpoint (will use Math.max in API)
@@ -696,10 +696,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         console.error('[connectVavityAsset] Error saving VAPA to global endpoint (background):', vapaError);
       }
 
-      // CRITICAL: Set assetConnected LAST - after all VavityAggregator data is set
-      // For "Connect More Ethereum" case: Check if balanceAfterDeposit > cVactTaa
-      // If yes, set assetConnected: false (user still has more balance to connect)
-      // If no, set assetConnected: true (balance matches cVactTaa now)
+      // CRITICAL: Save txHash to connection (assetConnected will be set by fetchBalance)
       try {
         const vavityResponse = await axios.get('/api/saveVavityConnection', { params: { email } });
         const connections = vavityResponse.data.vavityConnections || [];
@@ -708,61 +705,17 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
                       vc.walletType === params.walletType
         );
         
-        // Check if this is a "Connect More Ethereum" case (was assetConnected: false before)
-        const wasAssetConnectedFalse = matchingConnection?.assetConnected === false;
-        
-        // Determine assetConnected value:
-        // - If wasAssetConnectedFalse (Connect More case), check if balanceAfterDeposit > cVactTaa
-        // - Otherwise, set to true (normal connection)
-        let assetConnectedValue = true;
-        if (wasAssetConnectedFalse && finalWalletData.cVactTaa) {
-          // For Connect More: Check if balanceAfterDeposit > cVactTaa
-          // Note: balanceAfterDeposit is already set as cVactTaa in finalWalletData
-          // So we need to fetch current balance and compare with cVactTaa
-          try {
-            const currentBalanceResponse = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddr)}`);
-            if (currentBalanceResponse.ok) {
-              const currentBalanceData = await currentBalanceResponse.json();
-              if (!currentBalanceData.balance || currentBalanceData.balance === null || currentBalanceData.balance === undefined) {
-                return;
-              }
-              const currentBalance = parseFloat(currentBalanceData.balance);
-              if (isNaN(currentBalance)) {
-                return;
-              }
-              const cVactTaa = finalWalletData.cVactTaa;
-              if (!cVactTaa) {
-                return;
-              }
-              
-              if (currentBalance > cVactTaa) {
-                // User still has more balance - keep assetConnected: false
-                assetConnectedValue = false;
-                console.log(`[connectVavityAsset] Connect More: currentBalance (${currentBalance}) > cVactTaa (${cVactTaa}), setting assetConnected: false`);
-              } else {
-                // Balance matches cVactTaa - set assetConnected: true
-                assetConnectedValue = true;
-                console.log(`[connectVavityAsset] Connect More: currentBalance (${currentBalance}) <= cVactTaa (${cVactTaa}), setting assetConnected: true`);
-              }
-            }
-          } catch (error) {
-            console.warn('[connectVavityAsset] Could not check balance for Connect More, defaulting to true:', error);
-            assetConnectedValue = true;
-          }
-        }
-        
         if (matchingConnection) {
           await axios.post('/api/saveVavityConnection', {
             email,
             vavityConnection: {
               ...matchingConnection,
-              assetConnected: assetConnectedValue, // Set based on Connect More check or true
               txHash: txHash,
             },
           });
-          console.log(`[connectVavityAsset] Set assetConnected: ${assetConnectedValue} (LAST step)`);
+          console.log(`[connectVavityAsset] Saved txHash to connection (assetConnected will be set by fetchBalance)`);
         } else {
-          // Create new connection if it doesn't exist
+          // Create new connection if it doesn't exist (assetConnected will be set by fetchBalance)
           await axios.post('/api/saveVavityConnection', {
             email,
             vavityConnection: {
@@ -770,11 +723,10 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
               walletId: finalWalletData.walletId || params.walletId || '',
               walletType: params.walletType,
               timestamp: Date.now(),
-              assetConnected: assetConnectedValue, // Set based on Connect More check or true
               txHash: txHash,
             },
           });
-          console.log(`[connectVavityAsset] Created connection with assetConnected: ${assetConnectedValue} (LAST step)`);
+          console.log(`[connectVavityAsset] Created connection with txHash (assetConnected will be set by fetchBalance)`);
         }
         
         console.log('[connectVavityAsset] Marked deposit as completed in backend (background)');

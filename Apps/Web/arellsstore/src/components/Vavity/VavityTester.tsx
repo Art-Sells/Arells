@@ -6,7 +6,7 @@ import { useVavity } from '../../context/VavityAggregator';
 import axios from 'axios';
 
 const VavityTester: React.FC = () => {
-  const { email, vapa, assetPrice, fetchVavityAggregator, addVavityAggregator } = useVavity();
+  const { email, vapa, assetPrice, fetchVavityAggregator, addVavityAggregator, setIsConnectingAsset, walletBalances } = useVavity();
   const {
     metaMaskAssetConnected,
     baseAssetConnected,
@@ -269,38 +269,23 @@ const VavityTester: React.FC = () => {
     }
   }, [connectionState, vavityData, metaMaskDepositPaid, baseDepositPaid]);
 
-  // Component to fetch and display balance on-demand for "Connect More ETH" section
+  // Component to display balance from fetchBalance (display-only, never stored)
   const ConnectMoreEthSection: React.FC<{
     walletAddress: string;
     walletType: 'metamask' | 'base';
     cVactTaa: number;
     onConnectClick: () => void;
   }> = ({ walletAddress, walletType, cVactTaa, onConnectClick }) => {
-    const [currentBalance, setCurrentBalance] = useState<number | null>(null);
-    const tokenAddress = '0x0000000000000000000000000000000000000000';
+    // Get balance from fetchBalance's temporary display-only state (never stored in wallet objects)
+    const currentBalance = walletBalances[walletAddress.toLowerCase()] ?? null;
 
-    useEffect(() => {
-      const fetchBalance = async () => {
-        try {
-          const response = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddress)}`);
-          if (response.ok) {
-            const data = await response.json();
-            const balance = parseFloat(data.balance || '0');
-            setCurrentBalance(balance);
-          }
-        } catch (error) {
-          // Silently handle errors
-        }
-      };
-
-      fetchBalance();
-    }, [walletAddress]);
-
-    if (currentBalance === null || currentBalance <= cVactTaa) {
-      return null;
-    }
-
-    const increaseAmount = currentBalance - cVactTaa;
+    // Calculate increase amount - use 0 if balance not loaded yet or <= cVactTaa
+    const increaseAmount = currentBalance !== null && currentBalance > cVactTaa 
+      ? currentBalance - cVactTaa 
+      : 0;
+    
+    // Always use actual wallet balance from fetchBalance - show loading state if not available yet
+    const displayBalance = currentBalance !== null ? currentBalance : '...';
 
     return (
       <div style={{ 
@@ -311,10 +296,12 @@ const VavityTester: React.FC = () => {
         border: '1px solid #ff9800'
       }}>
         <div style={{ color: '#ffffff', marginBottom: '10px', fontSize: '14px' }}>
-          Your "ETH" amount increased +{increaseAmount.toFixed(8)} ETH
+          {increaseAmount > 0 
+            ? `Your "ETH" amount increased +${increaseAmount.toFixed(8)} ETH`
+            : 'Your "ETH" amount increased'}
         </div>
         <div style={{ color: '#ffffff', fontSize: '14px' }}>
-          Would you like to see your full "{currentBalance.toFixed(8)}" ETH protected from bear markets?{' '}
+          Would you like to see your full "{typeof displayBalance === 'number' ? displayBalance.toFixed(8) : displayBalance}" ETH protected from bear markets?{' '}
           <span
             onClick={onConnectClick}
             style={{
@@ -515,6 +502,7 @@ const VavityTester: React.FC = () => {
           });
           setShowConnectingModal(false);
           setConnectingWalletTypeForModal(null);
+          setIsConnectingAsset(false);
           return; // Exit early if already connected
         }
         
@@ -540,6 +528,7 @@ const VavityTester: React.FC = () => {
             clearInterval(checkAssetConnectedInterval);
             setShowConnectingModal(false);
             setConnectingWalletTypeForModal(null);
+            setIsConnectingAsset(false);
             return;
           } else {
             if (pollCount % 10 === 0) { // Log every 5 seconds
@@ -556,6 +545,7 @@ const VavityTester: React.FC = () => {
             clearInterval(checkAssetConnectedInterval);
             setShowConnectingModal(false);
             setConnectingWalletTypeForModal(null);
+            setIsConnectingAsset(false);
           }
         }, 500); // Poll every 500ms
       } else {
@@ -563,6 +553,7 @@ const VavityTester: React.FC = () => {
         setTimeout(() => {
           setShowConnectingModal(false);
           setConnectingWalletTypeForModal(null);
+          setIsConnectingAsset(false);
         }, 2000);
       }
     } catch (error: any) {
@@ -571,6 +562,7 @@ const VavityTester: React.FC = () => {
       // Hide connecting modal on error
       setShowConnectingModal(false);
       setConnectingWalletTypeForModal(null);
+      setIsConnectingAsset(false);
       
       const errorMessage = String(error?.message || error?.toString() || 'Unknown error');
       const errorCode = error?.code || error?.error?.code;
@@ -677,7 +669,7 @@ const VavityTester: React.FC = () => {
       )}
       
       {/* VAPA and Wallet Breakdown */}
-      {vavityData && (
+      {vavityData && vapa > 0 && (
         <div style={{ marginTop: '30px', padding: '15px', backgroundColor: '#1a1a1a', borderRadius: '5px' }}>
           <h3 style={{ color: '#ffffff', marginBottom: '15px' }}>VAPA Breakdown</h3>
           
@@ -710,7 +702,22 @@ const VavityTester: React.FC = () => {
                 }
 
                 // Check if this wallet needs "Connect More ETH" section
-                const needsConnectMore = wallet.depositPaid === true && !assetConnected && walletType !== null;
+                // Use EXACT same conditions as "Connect More Ethereum" button (lines 245-249, 262-266)
+                const hasExistingConnection = wallet && (wallet.cVactTaa || 0) > 0;
+                let needsConnectMore = false;
+                
+                if (walletType === 'metamask' && metamaskConn && metamaskConn.address && metamaskConn.address !== '0x0000000000000000000000000000000000000000') {
+                  needsConnectMore = 
+                    metamaskConn.assetConnected === false && 
+                    metaMaskDepositPaid === true && 
+                    hasExistingConnection === true;
+                } else if (walletType === 'base' && baseConn && baseConn.address && baseConn.address !== '0x0000000000000000000000000000000000000000') {
+                  needsConnectMore = 
+                    baseConn.assetConnected === false && 
+                    baseDepositPaid === true && 
+                    hasExistingConnection === true;
+                }
+                
                 const cVactTaa = wallet.cVactTaa || 0;
 
                 return (

@@ -11,6 +11,7 @@ interface FetchBalanceParams {
   assetPrice: number;
   fetchVavityAggregator: (email: string) => Promise<any>;
   saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any, balances?: any[], globalVapa?: number) => Promise<any>;
+  setWalletBalances?: (balances: { [address: string]: number }) => void; // Optional callback to update display-only balances
 }
 
 export const fetchBalance = async ({
@@ -18,6 +19,7 @@ export const fetchBalance = async ({
   assetPrice,
   fetchVavityAggregator,
   saveVavityAggregator,
+  setWalletBalances,
 }: FetchBalanceParams): Promise<void> => {
   if (!email) {
     console.log('[fetchBalance] No email provided, skipping');
@@ -119,6 +121,18 @@ export const fetchBalance = async ({
     
     console.log(`[fetchBalance] Balance results:`, balanceResults);
     console.log(`[fetchBalance] Balances to update:`, balancesToUpdate);
+    
+    // Update temporary display-only balances (never stored in wallet objects)
+    if (setWalletBalances) {
+      const balanceMap: { [address: string]: number } = {};
+      balancesToUpdate.forEach((b: any) => {
+        if (b.address && b.balance !== null && b.balance !== undefined) {
+          balanceMap[b.address.toLowerCase()] = b.balance;
+        }
+      });
+      setWalletBalances(balanceMap);
+      console.log(`[fetchBalance] Updated display-only balances for ${Object.keys(balanceMap).length} wallet(s)`);
+    }
     
     // Pass wallets and balances to backend - backend will do all calculations
     if (wallets.length > 0 && balancesToUpdate.length > 0) {

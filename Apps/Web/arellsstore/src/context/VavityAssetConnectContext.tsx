@@ -130,7 +130,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
   const baseAssetConnected = baseConn?.assetConnected ?? false;
   
   // Get VavityAggregator context for wallet operations (must be before callbacks that use email)
-  const { email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator } = useVavity();
+  const { email, assetPrice, vapa, addVavityAggregator, fetchVavityAggregator, saveVavityAggregator, setIsConnectingAsset } = useVavity();
   
   // Stub setters that do nothing - state comes from backend JSON only
   // These are kept for backward compatibility but don't actually set state
@@ -1156,8 +1156,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                       walletId: walletId,
                       walletType: pendingType,
                       timestamp: Date.now(),
-                      // Deposit completed
-                      assetConnected: true,
+                      // Deposit completed (assetConnected will be set by fetchBalance)
                       assetConnecting: false,
                       // Wallet was connected before deposit
                       walletConnected: true,
@@ -1314,7 +1313,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                     walletId: pendingWalletId || '',
                     walletType: pendingType,
                     timestamp: connectionToCheck.timestamp || Date.now(),
-                    assetConnected: true,
+                    // assetConnected will be set by fetchBalance
                     assetConnecting: false,
                     txHash: depositTxHash,
                   },
@@ -1348,7 +1347,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                     walletId: pendingWalletId || '',
                     walletType: pendingType,
                     timestamp: Date.now(),
-                    assetConnected: true,
+                    // assetConnected will be set by fetchBalance
                     assetConnecting: false,
                     txHash: depositTxHash,
                   },
@@ -1384,8 +1383,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                       walletId: pendingWalletId || '',
                       walletType: pendingType,
                       timestamp: connectionToCheck.timestamp || Date.now(),
-                      // Deposit completed
-                      assetConnected: true,
+                      // Deposit completed (assetConnected will be set by fetchBalance)
                       assetConnecting: false,
                       // Wallet was connected before deposit
                       walletConnected: true,
@@ -1506,6 +1504,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               saveVavityAggregator,
               walletId: pendingWalletId || '',
               walletType: pendingType,
+              setIsConnectingAsset,
             });
             console.log('[processPendingWallet] connectVavityAssetUtil completed successfully');
             
@@ -1527,8 +1526,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                 walletId: pendingWalletId || '',
                 walletType: pendingType,
                 timestamp: Date.now(),
-                // Deposit completed
-                assetConnected: true,
+                // Deposit completed (assetConnected will be set by fetchBalance)
                 assetConnecting: false,
                 // Wallet was connected before deposit
                 walletConnected: true,
@@ -1549,8 +1547,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                 walletId: pendingWalletId || '',
                 walletType: pendingType,
                 timestamp: Date.now(),
-                // Deposit completed
-                assetConnected: true,
+                // Deposit completed (assetConnected will be set by fetchBalance)
                 assetConnecting: false,
                 // Wallet was connected before deposit
                 walletConnected: true,
@@ -2290,6 +2287,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
         saveVavityAggregator,
         walletId: pendingWallet.walletId,
         walletType: walletType,
+        setIsConnectingAsset,
       });
 
       console.log(`[connectAssetForWallet] Asset connected successfully: ${txHash}`);
@@ -2342,8 +2340,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               walletId: pendingWallet.walletId || '',
               walletType: walletType,
               timestamp: Date.now(),
-              // Deposit completed
-              assetConnected: true,
+              // Deposit completed (assetConnected will be set by fetchBalance)
               assetConnecting: false,
               txHash: txHash || 'unknown',
             },
@@ -2588,7 +2585,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
                 walletId: walletId,
                 walletType: walletType,
                 timestamp: Date.now(),
-                assetConnected: false,
+                // assetConnected will be set by fetchBalance
               },
             });
             console.log('[connectAsset] ✅ Created connection in JSON');
@@ -2755,6 +2752,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
           saveVavityAggregator,
             walletId: walletId,
           walletType: walletType,
+          setIsConnectingAsset,
         });
         
         console.log('[connectAsset] Deposit flow completed successfully:', { txHash, hasReceipt: !!receipt });
@@ -2804,8 +2802,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
               walletId: walletId || '',
               walletType: walletType,
               timestamp: Date.now(),
-              // Deposit completed
-              assetConnected: true,
+              // Deposit completed (assetConnected will be set by fetchBalance)
               assetConnecting: false,
               txHash: txHash || 'unknown',
             },
@@ -3097,6 +3094,7 @@ export const VavityAssetConnectProvider: React.FC<{ children: React.ReactNode }>
         saveVavityAggregator,
         walletId: walletId,
         walletType: walletType,
+        setIsConnectingAsset,
       });
       
       console.log('[triggerDeposit] Transaction sent successfully:', { txHash });
