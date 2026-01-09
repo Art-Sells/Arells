@@ -68,11 +68,7 @@ export const fetchBalance = async ({
     const balancePromises = walletsToFetch.map(async (wallet: any) => {
       if (!wallet.address) {
         console.log(`[fetchBalance] Skipping wallet without address`);
-        return {
-          address: null,
-          balance: 0,
-          vapaa: null,
-        };
+        return null;
       }
       
       // Get VAPAA (token address) from wallet, default to native ETH
@@ -90,19 +86,20 @@ export const fetchBalance = async ({
         if (!balanceResponse.ok) {
           const errorText = await balanceResponse.text();
           console.error(`[fetchBalance] API error for ${wallet.address}: ${balanceResponse.status} - ${errorText}`);
-          // Return 0 balance on error instead of null
-          return {
-            address: wallet.address,
-            balance: 0,
-            vapaa: vapaa,
-          };
+          return null;
         }
         
         const balanceData = await balanceResponse.json();
-        const balance = parseFloat(balanceData.balance || '0');
+        if (!balanceData.balance || balanceData.balance === null || balanceData.balance === undefined) {
+          return null;
+        }
+        const balance = parseFloat(balanceData.balance);
+        if (isNaN(balance)) {
+          return null;
+        }
         
         const tokenName = vapaa === '0x0000000000000000000000000000000000000000' ? 'ETH' : 'tokens';
-        console.log(`[fetchBalance] Balance fetched for ${wallet.address}: ${balance} ${tokenName} (current: ${wallet.cVactTaa || 0})`);
+        console.log(`[fetchBalance] Balance fetched for ${wallet.address}: ${balance} ${tokenName} (current: ${wallet.cVactTaa ?? 0})`);
         
         // Always return the balance, even if it's 0 or unchanged
         return {
@@ -112,18 +109,13 @@ export const fetchBalance = async ({
         };
       } catch (error: any) {
         console.error(`[fetchBalance] Error fetching balance for ${wallet.address}:`, error);
-        // Return 0 balance on error instead of null so we still update the wallet
-        return {
-          address: wallet.address,
-          balance: 0,
-          vapaa: vapaa,
-        };
+        return null;
       }
     });
 
     const balanceResults = await Promise.all(balancePromises);
-    // Filter out null addresses but keep all balance results
-    const balancesToUpdate = balanceResults.filter((b: any) => b !== null && b.address !== null);
+    // Filter out null results (errors, missing balances, etc.)
+    const balancesToUpdate = balanceResults.filter((b: any) => b !== null && b.address !== null && b.balance !== null);
     
     console.log(`[fetchBalance] Balance results:`, balanceResults);
     console.log(`[fetchBalance] Balances to update:`, balancesToUpdate);

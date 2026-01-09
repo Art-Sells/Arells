@@ -323,7 +323,10 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return;
       }
   
-      const currentVactTaa = vact.cVactTaa || 0;
+      const currentVactTaa = vact.cVactTaa;
+      if (!currentVactTaa) {
+        return; // Skip if cVactTaa is missing
+      }
   
       if (aASSET - currentVactTaa < 0.00001) {
         return;

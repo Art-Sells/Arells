@@ -8,18 +8,17 @@
 VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for Wallet and Asset connection implementations: Wallet and Asset connection offline tests complete*
-- *revert back to this commit for Wallet and Asset connection implementations before Auto Checks: Wallet and Asset Connection Auto Check*
+- *revert back to this commit for Wallet and Asset connection implementations before Auto Checks: Asset Connection Auto Check*
 - *revert back to this commit for Metamsk Connect More Asset implementation: Ready to test Base Connect More Ethereum*
-- - - Auto checks: if cVactTaa of matching Wallet Address is less than Wallet Address amount then: changes the assetConnected: to false and "Connect More Ethereum” Button {which should act the same as the connect ethereum button} replaces "connected" place holder only if cVactTaa of matching Wallet Address is less than Wallet Address amount ... Connect More Ethereum modals add "more" between connect and ethereum and function exactly like "connect ethereum"
-- - - Wallet Page SamPle Alert (per wallet) "Your “ETH” amount increased +"add wallet amount - cVactTaa here" Would you like to see your full (ETH) “total wallet amount” protected from bear markets? (YES) <- button opens up new deposit ask and if its complete, then the new deposit
+- - - Ok, so the "connect more eth", lets place that button above the unique wallet that has a section above it that says: "Your “ETH” amount increased +"wallet amount - cVactTaa" ETH Would you like to see your full “total wallet amount” ETH protected from bear markets? (Connect More Eth) ... this entire section should act the same as the prior "connect more eth"
 - - if you withdraw funds in each wallet (all the way up to zero even with Connect More Ethereum), (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount... cVactTaa should neevr go below 1 wei
 - - Test import wallets (that are already connected) (from base/metamask and vice versa)
 - - Test Connect More Eth when wallets are all disconnected...
-- - Test multiple account switches (inside wallets (and wallet connections)), how it affects
+- - Test multiple account switches (inside wallets (and wallet connections)), how it affects "Connect New Wallet" (triggered if no wallets exist from json) 
+- - Delete Metamask/base extensions and test (on safari)
+- - - Create "Metamask/base needed" modal" (integrate into mobile/desktop online test)
 - - Test to see if you don't have enough eth and try to connect what it does.
 - - MAYBE remove this alert (right before asset connecting modal appears): Error connecting asset: Failed to fetch 
-- Fix: check to see (after first page load), if metamask/base wallet is connected (after undocking git program)
-- Login/Signup with Google/Apple (reconfigure pages)
 
 
 Chart (Home/Account): 
@@ -51,11 +50,36 @@ Account
 - - - Bull: Show modal explanation
 - - - Sloth: Show modal explanation
 
-
-Login/Signup with Google/Apple (re-configure LoginSignup pages):
-- They don’t have to verify emails
-– Account not found, create account.
-Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Bitcoin Wallet amount)
+Login-Signup pages (Test with 2-3 accounts):
+- Login/Signup with Google/Apple (reconfigure pages)
+- Go back and test again
+- - Connect
+- - - Reload
+- - - Cancel
+- - - Confirm
+- - Connect More 
+- - - Reload
+- - - Cancel
+- - - Confirm
+- - Withdraw
+- - Import wallets (to and from)
+- - Multiple wallets (not connected)
+- - - Connect
+- - - - Reload
+- - - - Cancel
+- - - - Confirm
+- - - Connect More 
+- - - - Reload
+- - - - Cancel
+- - - - Confirm
+- Allow Vapa to increase (if possible) and watch chart and profits/losses
+- In notion:  
+- - TTA(Total Tracked Assets)/Revenue
+- - - (current) Solid Marketplace (interior) & Liquid Marketplace (exterior)
+- - - chart
+- - Users
+- - - (current) number of email created, date, time, etc
+- - - chart
 
 
 
@@ -64,23 +88,38 @@ Test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons
 ### Test Online (both desktop(multiple browsers)/mobile):
 - change .env variables from NEXT_PUBLIC
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Ethereum Wallet amount)
-- - Test multiple wallet/asset connection scenarios (throw everything at it....)
-- - - Decrease walletBalance
-- - - Increase wallet Balance
-- - - Change wallet addresses to see what it does for the buttons (try and connect using the wallet only)
-- - Run Vavity for a few minutes (with synthetic-api) to test system (with small amounts multiple accounts) ().
-- and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs & aws-config)
-- Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
-
-- - save/update .json info every second to ext Dsk (then every day save/update cold)
-(view all s3 jsons and check Arells Ethereum Wallet amount)
-- In notion:  
+- - Connect
+- - - Reload
+- - - Cancel
+- - - Confirm
+- - Connect More 
+- - - Reload
+- - - Cancel
+- - - Confirm
+- - Withdraw
+- - Import wallets (to and from)
+- - Multiple wallets (not connected)
+- - - Connect
+- - - - Reload
+- - - - Cancel
+- - - - Confirm
+- - - Connect More 
+- - - - Reload
+- - - - Cancel
+- - - - Confirm
+- - Allow Vapa to increase (if possible) and watch chart and profits/losses
+- - In notion:  
 - - TTA(Total Tracked Assets)/Revenue
 - - - (current) Solid Marketplace (interior) & Liquid Marketplace (exterior)
 - - - chart
 - - Users
 - - - (current) number of email created, date, time, etc
 - - - chart
+- and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs & aws-config)
+- Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
+- - save/update .json info every second to ext Dsk (then every day save/update cold)
+(view all s3 jsons and check Arells Ethereum Wallet amount)
+
 
 ## Loading Modules in all pages
 - All of them fade in and out (same as modules and pages in vavity.info)
@@ -183,7 +222,36 @@ of bear markets?
 
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
+- Replace VAPA api with real API and test (connections) on VavityTester
 - 2-3 accounts, multiple connects (monitor for 2-3 days)with real-api
+- - Connect
+- - - Reload
+- - - Cancel
+- - - Confirm
+- - Connect More 
+- - - Reload
+- - - Cancel
+- - - Confirm
+- - Withdraw
+- - Import wallets (to and from)
+- - Multiple wallets (not connected)
+- - - Connect
+- - - - Reload
+- - - - Cancel
+- - - - Confirm
+- - - Connect More 
+- - - - Reload
+- - - - Cancel
+- - - - Confirm
+- - Allow Vapa to increase (if possible) and watch chart and profits/losses
+- - In notion:  
+- - TTA(Total Tracked Assets)/Revenue
+- - - (current) Solid Marketplace (interior) & Liquid Marketplace (exterior)
+- - - chart
+- - Users
+- - - (current) number of email created, date, time, etc
+- - - chart
+
 
 #### Deployment (Main) Amplify/S3 Login
 - Test (with vavity.info) on socials (DM's/etc)

@@ -30,7 +30,7 @@ const calculateVavityCombinations = (wallets: any[]) => {
     combinationsByVapaa[vapaa].acVatoc += wallet.cVatoc || 0;
     combinationsByVapaa[vapaa].acVact += wallet.cVact || 0;
     combinationsByVapaa[vapaa].acdVatoc += wallet.cdVatoc || 0;
-    combinationsByVapaa[vapaa].acVactTaa += wallet.cVactTaa || 0;
+    combinationsByVapaa[vapaa].acVactTaa += wallet.cVactTaa ?? 0;
   });
 
   return combinationsByVapaa;

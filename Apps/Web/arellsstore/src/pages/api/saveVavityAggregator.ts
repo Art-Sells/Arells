@@ -28,7 +28,7 @@ const calculateVavityCombinations = (wallets: any[]) => {
     combinationsByVapaa[vapaa].acVatoc += wallet.cVatoc || 0;
     combinationsByVapaa[vapaa].acVact += wallet.cVact || 0;
     combinationsByVapaa[vapaa].acdVatoc += wallet.cdVatoc || 0;
-    combinationsByVapaa[vapaa].acVactTaa += wallet.cVactTaa || 0;
+    combinationsByVapaa[vapaa].acVactTaa += wallet.cVactTaa ?? 0;
   });
 
   return combinationsByVapaa;
@@ -80,7 +80,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         // Only update wallets where depositPaid is true
         if (wallet.depositPaid !== true) {
           // Just recalculate cVact, cVatoc, cdVatoc from existing values
-          const cVactTaa = wallet.cVactTaa || 0;
+          const cVactTaa = wallet.cVactTaa;
+          if (!cVactTaa) {
+            throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
+          }
           const cpVact = wallet.cpVact || 0;
           const cpVatoc = wallet.cpVatoc || cpVact;
           const recalculatedCVact = cVactTaa * cpVact;
@@ -103,8 +106,49 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         );
         
         if (balanceData) {
-          const currentBalance = balanceData.balance || 0;
-          const currentCVactTaa = wallet.cVactTaa || 0;
+          if (balanceData.balance === null || balanceData.balance === undefined) {
+            // No balance data, recalculate from existing values
+            const cVactTaa = wallet.cVactTaa;
+            if (!cVactTaa) {
+              throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
+            }
+            const cpVact = wallet.cpVact || 0;
+            const cpVatoc = wallet.cpVatoc || cpVact;
+            const recalculatedCVact = cVactTaa * cpVact;
+            const recalculatedCVatoc = cVactTaa * cpVatoc;
+            const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
+            
+            return {
+              ...wallet,
+              cVact: parseFloat(recalculatedCVact.toFixed(2)),
+              cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+              cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+            };
+          }
+          const currentBalance = parseFloat(balanceData.balance);
+          if (isNaN(currentBalance)) {
+            // Invalid balance, recalculate from existing values
+            const cVactTaa = wallet.cVactTaa;
+            if (!cVactTaa) {
+              throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
+            }
+            const cpVact = wallet.cpVact || 0;
+            const cpVatoc = wallet.cpVatoc || cpVact;
+            const recalculatedCVact = cVactTaa * cpVact;
+            const recalculatedCVatoc = cVactTaa * cpVatoc;
+            const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
+            
+            return {
+              ...wallet,
+              cVact: parseFloat(recalculatedCVact.toFixed(2)),
+              cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
+              cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
+            };
+          }
+          const currentCVactTaa = wallet.cVactTaa;
+          if (!currentCVactTaa) {
+            throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
+          }
           
           // Update cVactTaa: only allow decrease, never increase
           let newCVactTaa: number;
@@ -142,7 +186,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
         
         // No balance data found, just recalculate from existing values
-        const cVactTaa = wallet.cVactTaa || 0;
+        const cVactTaa = wallet.cVactTaa;
+        if (!cVactTaa) {
+          throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
+        }
         const cpVact = wallet.cpVact || 0;
         const cpVatoc = wallet.cpVatoc || cpVact;
         const recalculatedCVact = cVactTaa * cpVact;
@@ -160,11 +207,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // No balances provided, just recalculate cVact, cVatoc, cdVatoc from existing cVactTaa
       // Use walletsToProcess (fresh from S3) to get latest cVactTaa values
       validatedWallets = walletsToProcess.map((wallet: any) => {
-        const cVactTaa = wallet.cVactTaa || 0;
+        const cVactTaa = wallet.cVactTaa;
         
-        // If cVactTaa is 0 or missing, preserve existing values (don't recalculate to avoid zeroing out)
-        if (!cVactTaa || cVactTaa === 0) {
-          return wallet; // Return wallet as-is, preserving existing values
+        // cVactTaa must be valid - throw error if missing
+        if (!cVactTaa) {
+          throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
         }
         
         const cpVact = wallet.cpVact || 0;
@@ -208,12 +255,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const key = `${existingWallet.address?.toLowerCase() || ''}_${(existingWallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()}`;
       if (!processedKeys.has(key)) {
         // Recalculate this wallet's values too (for consistency)
-        const cVactTaa = existingWallet.cVactTaa || 0;
+        const cVactTaa = existingWallet.cVactTaa;
         
-        // If cVactTaa is 0 or missing, preserve existing values (don't recalculate to avoid zeroing out)
-        if (!cVactTaa || cVactTaa === 0) {
-          mergedWallets.push(existingWallet); // Preserve wallet as-is
-          return;
+        // Skip this wallet if cVactTaa is missing
+        if (!cVactTaa) {
+          console.error(`[saveVavityAggregator] Skipping wallet ${existingWallet.address} with missing cVactTaa. cVactTaa must be valid.`);
+          return; // Skip this wallet - don't include it in mergedWallets
         }
         
         const cpVact = existingWallet.cpVact || 0;
@@ -284,8 +331,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           if (!balanceData) continue;
 
-          const currentBalance = balanceData.balance || 0;
-          const cVactTaa = wallet.cVactTaa || 0;
+          if (balanceData.balance === null || balanceData.balance === undefined) {
+            continue;
+          }
+          const currentBalance = parseFloat(balanceData.balance);
+          if (isNaN(currentBalance)) {
+            continue;
+          }
+          const cVactTaa = wallet.cVactTaa;
+          if (!cVactTaa) {
+            console.error(`[saveVavityAggregator] Skipping assetConnected update for wallet ${wallet.address} with missing cVactTaa`);
+            continue; // Skip this wallet
+          }
           const shouldBeConnected = currentBalance <= cVactTaa;
 
           // Find all matching connections (could be multiple if same address has both metamask/base)

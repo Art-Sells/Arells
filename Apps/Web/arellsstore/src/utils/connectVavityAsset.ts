@@ -56,10 +56,18 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       throw new Error(`Failed to fetch wallet balance: ${balanceResponse.status} ${balanceResponse.statusText}. ${errorText}`);
     }
     const balanceData = await balanceResponse.json();
-    balance = parseFloat(balanceData.balance || '0');
+    if (!balanceData.balance || balanceData.balance === null || balanceData.balance === undefined) {
+      return;
+    }
+    balance = parseFloat(balanceData.balance);
     
     if (isNaN(balance)) {
-      throw new Error(`Invalid balance returned from API: ${balanceData.balance}`);
+      return;
+    }
+    
+    const MIN_BALANCE_THRESHOLD = 0.000000000000000001; // 1 wei
+    if (balance <= MIN_BALANCE_THRESHOLD) {
+      return;
     }
   } else {
     // Balance fetch failed or timed out - try once more without timeout
@@ -70,10 +78,18 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       throw new Error(`Failed to fetch wallet balance: ${retryResponse.status} ${retryResponse.statusText}. ${errorText}`);
     }
     const balanceData = await retryResponse.json();
-    balance = parseFloat(balanceData.balance || '0');
+    if (!balanceData.balance || balanceData.balance === null || balanceData.balance === undefined) {
+      return;
+    }
+    balance = parseFloat(balanceData.balance);
     
     if (isNaN(balance)) {
-      throw new Error(`Invalid balance returned from API: ${balanceData.balance}`);
+      return;
+    }
+    
+    const MIN_BALANCE_THRESHOLD = 0.000000000000000001; // 1 wei
+    if (balance <= MIN_BALANCE_THRESHOLD) {
+      return;
     }
   }
 
@@ -337,10 +353,13 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
           balanceAfterDeposit = balance;
         } else {
           const balanceDataAfterDeposit = await balanceResponseAfterDeposit.json();
-          balanceAfterDeposit = parseFloat(balanceDataAfterDeposit.balance || '0');
+          if (!balanceDataAfterDeposit.balance || balanceDataAfterDeposit.balance === null || balanceDataAfterDeposit.balance === undefined) {
+            return;
+          }
+          balanceAfterDeposit = parseFloat(balanceDataAfterDeposit.balance);
           
           if (isNaN(balanceAfterDeposit)) {
-            balanceAfterDeposit = balance;
+            return;
           }
         }
       } catch (error: any) {
@@ -502,11 +521,10 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
           newCVactTaa = existingWallet.cVactTaa;
           console.warn(`[connectVavityAsset] ⚠️ balanceAfterDeposit is <= 1 wei, preserving existing cVactTaa: ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | preserved cVactTaa=${newCVactTaa} | txHash=${txHash}`);
         } else {
-          // Both are <= 1 wei - this shouldn't happen, but preserve existing value
-          newCVactTaa = existingWallet.cVactTaa || 0;
-          console.error(`[connectVavityAsset] ❌ CRITICAL: balanceAfterDeposit is <= 1 wei and no existing cVactTaa > 1 wei for ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | existing cVactTaa=${existingWallet.cVactTaa || 0} | txHash=${txHash}`);
+          // Both are <= MIN_BALANCE_THRESHOLD - this shouldn't happen, return early
+          return;
         }
-        console.log(`[connectVavityAsset] ✅✅✅ SETTING cVactTaa AFTER TRANSACTION CONFIRMATION (EXISTING WALLET): ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | old cVactTaa=${existingWallet.cVactTaa || 0} | new cVactTaa=${newCVactTaa} | txHash=${txHash}`);
+        console.log(`[connectVavityAsset] ✅✅✅ SETTING cVactTaa AFTER TRANSACTION CONFIRMATION (EXISTING WALLET): ${walletAddress} | balanceAfterDeposit=${balanceAfterDeposit} | old cVactTaa=${existingWallet.cVactTaa} | new cVactTaa=${newCVactTaa} | txHash=${txHash}`);
         // CRITICAL: cpVact should always be >= global VAPA
         // Fetch global VAPA again to ensure we have the latest (it might have been updated)
         let latestGlobalVapa = currentVapa;
@@ -705,8 +723,17 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
             const currentBalanceResponse = await fetch(`/api/tokenBalance?address=${encodeURIComponent(walletAddress)}&tokenAddress=${encodeURIComponent(tokenAddr)}`);
             if (currentBalanceResponse.ok) {
               const currentBalanceData = await currentBalanceResponse.json();
-              const currentBalance = parseFloat(currentBalanceData.balance || '0');
-              const cVactTaa = finalWalletData.cVactTaa || 0;
+              if (!currentBalanceData.balance || currentBalanceData.balance === null || currentBalanceData.balance === undefined) {
+                return;
+              }
+              const currentBalance = parseFloat(currentBalanceData.balance);
+              if (isNaN(currentBalance)) {
+                return;
+              }
+              const cVactTaa = finalWalletData.cVactTaa;
+              if (!cVactTaa) {
+                return;
+              }
               
               if (currentBalance > cVactTaa) {
                 // User still has more balance - keep assetConnected: false
@@ -761,7 +788,14 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
       // This ensures wallet is always created even if confirmation process has issues
       try {
         console.log('[connectVavityAsset] Attempting fallback wallet creation...');
-        const fallbackBalance = balance || 0;
+        if (!balance) {
+          return;
+        }
+        const MIN_BALANCE_THRESHOLD = 0.000000000000000001; // 1 wei
+        if (balance <= MIN_BALANCE_THRESHOLD) {
+          return;
+        }
+        const fallbackBalance = balance;
         const fallbackVapa = vapa || assetPrice || 0;
         const fallbackCVactTaa = fallbackBalance;
         const fallbackCpVact = fallbackVapa;
@@ -785,6 +819,13 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
         console.error('[connectVavityAsset] ===== FALLBACK WALLET CREATION ALSO FAILED =====', fallbackError);
         // Last resort: try saveVavityAggregator directly
         try {
+          if (!balance) {
+            return;
+          }
+          const MIN_BALANCE_THRESHOLD = 0.000000000000000001; // 1 wei
+          if (balance <= MIN_BALANCE_THRESHOLD) {
+            return;
+          }
           const existingData = await fetchVavityAggregator(email);
           const existingWallets = existingData?.wallets || [];
           const fallbackVapa = Math.max(assetPrice || 0, vapa || 0);
@@ -797,7 +838,7 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
             cpVatoc: fallbackVapa,
             cVact: parseFloat((balance * fallbackVapa).toFixed(2)),
             cpVact: fallbackVapa,
-            cVactTaa: balance || 0,
+            cVactTaa: balance,
             cdVatoc: 0,
           };
           existingWallets.push(fallbackWalletData);
