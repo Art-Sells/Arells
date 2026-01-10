@@ -28,9 +28,8 @@ For each qualifying wallet, show:
 Hide: Initial connection section content for this wallet
 B. Initial Connection Section (when depositPaid === false OR depositPaid === null)
 Display header ONLY if depositPaid === null (for any wallet):
-"$ [assetPrice] (rotated/styled text)"
-"with Arells it would be worth: $ [vapa]"
-"$ [assetPrice] (rotated/styled text)"
+"(ETH) $ [assetPrice] "
+"(ETH) with Arells: $ [vapa]"
 Otherwise (depositPaid === false), continue with wallet-specific info:
 Structure:
   MetaMask (if depositPaid === false for MetaMask wallet)  [Show wallet-specific info]  [CONNECT ETHEREUM button]  Asset Connected: [Yes/No]    Base (if depositPaid === false for Base wallet)  [Show wallet-specific info]  [CONNECT ETHEREUM button]  Asset Connected: [Yes/No]

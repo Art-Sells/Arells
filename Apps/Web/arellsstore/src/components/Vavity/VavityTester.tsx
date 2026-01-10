@@ -739,7 +739,7 @@ const VavityTester: React.FC = () => {
         return sections.length > 0 ? <div style={{ marginBottom: '30px' }}>{sections}</div> : null;
       })()}
       
-      {/* Initial Connection Section - Above VAPA Breakdown */}
+      {/* Initial Connection Section OR Connected Section - Above VAPA Breakdown */}
       {vapa > 0 && !showConnectMoreMetaMask && !showConnectMoreBase && (() => {
         const metamaskDepositPaidStatus = getDepositPaidStatus('metamask');
         const baseDepositPaidStatus = getDepositPaidStatus('base');
@@ -748,12 +748,18 @@ const VavityTester: React.FC = () => {
         const showMetaMaskSection = metamaskDepositPaidStatus === 'false' || metamaskDepositPaidStatus === 'null';
         const showBaseSection = baseDepositPaidStatus === 'false' || baseDepositPaidStatus === 'null';
         
+        // Check for fully connected wallets (State 3: depositPaid === true && assetConnected === true)
+        const metamaskConn = connectionState?.metamaskConn;
+        const baseConn = connectionState?.baseConn;
+        const showMetaMaskConnected = metamaskDepositPaidStatus === 'true' && metamaskConn?.assetConnected === true;
+        const showBaseConnected = baseDepositPaidStatus === 'true' && baseConn?.assetConnected === true;
+        
         // Only show wallet-specific info when depositPaid === false (not null)
         const showMetaMaskInfo = metamaskDepositPaidStatus === 'false' && connectionState?.metamaskConn?.address && connectionState.metamaskConn.address !== '0x0000000000000000000000000000000000000000';
         const showBaseInfo = baseDepositPaidStatus === 'false' && connectionState?.baseConn?.address && connectionState.baseConn.address !== '0x0000000000000000000000000000000000000000';
         
-        // Don't show section if no wallets need initial connection
-        if (!showMetaMaskSection && !showBaseSection && !showInitialHeader) {
+        // Don't show section if no wallets need initial connection AND no wallets are connected
+        if (!showMetaMaskSection && !showBaseSection && !showInitialHeader && !showMetaMaskConnected && !showBaseConnected) {
           return null;
         }
         
@@ -769,15 +775,15 @@ const VavityTester: React.FC = () => {
                   marginBottom: '15px',
                   textAlign: 'center'
                 }}>
-                  ${assetPrice ? assetPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                  Ethereum: ${assetPrice ? assetPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                 </div>
                 <div style={{ color: '#ffffff', fontSize: '16px', marginBottom: '30px', textAlign: 'center' }}>
-                  with Arells it would be worth: ${vapa ? vapa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                  Ethereum with Arells: ${vapa ? vapa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                 </div>
               </>
             )}
             
-            {/* MetaMask Section */}
+            {/* MetaMask Section - Initial Connection */}
             {showMetaMaskSection && (
               <div style={{ marginBottom: '30px' }}>
                 <h2 style={{ color: '#ffffff', marginBottom: '10px' }}>MetaMask</h2>
@@ -830,7 +836,34 @@ const VavityTester: React.FC = () => {
               </div>
             )}
             
-            {/* Base Section */}
+            {/* MetaMask Section - Connected Placeholder (State 3) */}
+            {showMetaMaskConnected && (
+              <div style={{ marginBottom: '30px' }}>
+                <h2 style={{ color: '#ffffff', marginBottom: '10px' }}>MetaMask</h2>
+                <div style={{ marginBottom: '10px' }}>
+                  <button
+                    disabled={true}
+                    style={{
+                      padding: '10px 20px',
+                      backgroundColor: '#28a745',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'not-allowed',
+                      marginRight: '10px',
+                      opacity: 0.8,
+                    }}
+                  >
+                    CONNECTED
+                  </button>
+                </div>
+                <div style={{ fontSize: '14px', color: '#ffffff' }}>
+                  <div>Asset Connected: Yes</div>
+                </div>
+              </div>
+            )}
+            
+            {/* Base Section - Initial Connection */}
             {showBaseSection && (
               <div style={{ marginBottom: '30px' }}>
                 <h2 style={{ color: '#ffffff', marginBottom: '10px' }}>Base</h2>
@@ -879,6 +912,33 @@ const VavityTester: React.FC = () => {
                 </div>
                 <div style={{ fontSize: '14px', color: '#ffffff' }}>
                   <div>Asset Connected: {baseAssetConnected ? 'Yes' : 'No'}</div>
+                </div>
+              </div>
+            )}
+            
+            {/* Base Section - Connected Placeholder (State 3) */}
+            {showBaseConnected && (
+              <div style={{ marginBottom: '30px' }}>
+                <h2 style={{ color: '#ffffff', marginBottom: '10px' }}>Base</h2>
+                <div style={{ marginBottom: '10px' }}>
+                  <button
+                    disabled={true}
+                    style={{
+                      padding: '10px 20px',
+                      backgroundColor: '#28a745',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'not-allowed',
+                      marginRight: '10px',
+                      opacity: 0.8,
+                    }}
+                  >
+                    CONNECTED
+                  </button>
+                </div>
+                <div style={{ fontSize: '14px', color: '#ffffff' }}>
+                  <div>Asset Connected: Yes</div>
                 </div>
               </div>
             )}
