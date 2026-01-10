@@ -269,23 +269,43 @@ const VavityTester: React.FC = () => {
     }
   }, [connectionState, vavityData, metaMaskDepositPaid, baseDepositPaid]);
 
+  // Helper function to determine depositPaid status for a wallet
+  const getDepositPaidStatus = useCallback((walletType: 'metamask' | 'base'): 'null' | 'false' | 'true' => {
+    if (!vavityData || !connectionState) return 'null';
+    
+    const wallets = vavityData.wallets || [];
+    const conn = walletType === 'metamask' ? connectionState.metamaskConn : connectionState.baseConn;
+    
+    if (!conn || !conn.address || conn.address === '0x0000000000000000000000000000000000000000') {
+      return 'null';
+    }
+    
+    const walletAddress = conn.address.toLowerCase();
+    const matchingWallet = wallets.find((w: any) => w.address?.toLowerCase() === walletAddress);
+    
+    if (!matchingWallet) {
+      return 'null'; // Wallet doesn't exist yet
+    }
+    
+    if (matchingWallet.depositPaid === true) {
+      return 'true';
+    }
+    
+    return 'false'; // Wallet exists but depositPaid is not true
+  }, [vavityData, connectionState]);
+
   // Component to display balance from fetchBalance (display-only, never stored)
   const ConnectMoreEthSection: React.FC<{
     walletAddress: string;
     walletType: 'metamask' | 'base';
-    cVactTaa: number;
     onConnectClick: () => void;
-  }> = ({ walletAddress, walletType, cVactTaa, onConnectClick }) => {
+  }> = ({ walletAddress, walletType, onConnectClick }) => {
     // Get balance from fetchBalance's temporary display-only state (never stored in wallet objects)
     const currentBalance = walletBalances[walletAddress.toLowerCase()] ?? null;
 
-    // Calculate increase amount - use 0 if balance not loaded yet or <= cVactTaa
-    const increaseAmount = currentBalance !== null && currentBalance > cVactTaa 
-      ? currentBalance - cVactTaa 
-      : 0;
-    
-    // Always use actual wallet balance from fetchBalance - show loading state if not available yet
-    const displayBalance = currentBalance !== null ? currentBalance : '...';
+    // Calculate before and after dollar amounts
+    const beforeConnection = currentBalance !== null ? currentBalance * assetPrice : 0;
+    const afterConnection = currentBalance !== null ? currentBalance * vapa : 0;
 
     return (
       <div style={{ 
@@ -296,12 +316,15 @@ const VavityTester: React.FC = () => {
         border: '1px solid #ff9800'
       }}>
         <div style={{ color: '#ffffff', marginBottom: '10px', fontSize: '14px' }}>
-          {increaseAmount > 0 
-            ? `Your "ETH" amount increased +${increaseAmount.toFixed(8)} ETH`
-            : 'Your "ETH" amount increased'}
+          Your "ETH" amount increased.
+        </div>
+        <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '5px' }}>
+          Before connection: ${beforeConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
+        </div>
+        <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '10px' }}>
+          After connection: ${afterConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
         </div>
         <div style={{ color: '#ffffff', fontSize: '14px' }}>
-          Would you like to see your full "{typeof displayBalance === 'number' ? displayBalance.toFixed(8) : displayBalance}" ETH protected from bear markets?{' '}
           <span
             onClick={onConnectClick}
             style={{
@@ -613,60 +636,255 @@ const VavityTester: React.FC = () => {
         </div>
       </div>
       
-      {/* Only show buttons when VAPA is loaded */}
-      {vapa > 0 && (
-        <>
-          <div style={{ marginBottom: '30px' }}>
-            <h2 style={{ color: '#ffffff', marginBottom: '10px' }}>MetaMask</h2>
-            <div style={{ marginBottom: '10px' }}>
-              <button
-                onClick={() => handleConnectAsset('metamask')}
-                disabled={loadingMetaMask || (metaMaskDepositPaid && !showConnectMoreMetaMask)}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: showConnectMoreMetaMask ? '#ff9800' : (metaMaskDepositPaid ? '#28a745' : (loadingMetaMask ? '#666666' : '#0066cc')),
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: (loadingMetaMask || (metaMaskDepositPaid && !showConnectMoreMetaMask)) ? 'not-allowed' : 'pointer',
-                  marginRight: '10px',
-                  opacity: (loadingMetaMask || (metaMaskDepositPaid && !showConnectMoreMetaMask)) ? 0.8 : 1,
-                }}
-              >
-                {loadingMetaMask ? 'PROCESSING...' : (showConnectMoreMetaMask ? 'CONNECT MORE ETHEREUM' : (metaMaskDepositPaid ? 'CONNECTED' : 'CONNECT ETHEREUM'))}
-              </button>
-            </div>
-            <div style={{ fontSize: '14px', color: '#ffffff' }}>
-              <div>Asset Connected: {metaMaskAssetConnected ? 'Yes' : 'No'}</div>
-            </div>
-          </div>
+      {/* Aggregate Section - Show if any wallets need "Connect More" */}
+      {vapa > 0 && vavityData && connectionState && (() => {
+        const wallets = vavityData.wallets || [];
+        const metamaskConn = connectionState.metamaskConn;
+        const baseConn = connectionState.baseConn;
+        
+        // Find all wallets that need "Connect More" (assetConnected === false && depositPaid === true)
+        const walletsNeedingConnection = wallets.filter((wallet: any) => {
+          const walletAddress = wallet.address?.toLowerCase();
+          let needsConnection = false;
           
-          <div style={{ marginBottom: '30px' }}>
-            <h2 style={{ color: '#ffffff', marginBottom: '10px' }}>Base</h2>
-            <div style={{ marginBottom: '10px' }}>
-              <button
-                onClick={() => handleConnectAsset('base')}
-                disabled={loadingBase || (baseDepositPaid && !showConnectMoreBase)}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: showConnectMoreBase ? '#ff9800' : (baseDepositPaid ? '#28a745' : (loadingBase ? '#666666' : '#0066cc')),
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: (loadingBase || (baseDepositPaid && !showConnectMoreBase)) ? 'not-allowed' : 'pointer',
-                  marginRight: '10px',
-                  opacity: (loadingBase || (baseDepositPaid && !showConnectMoreBase)) ? 0.8 : 1,
-                }}
-              >
-                {loadingBase ? 'PROCESSING...' : (showConnectMoreBase ? 'CONNECT MORE ETHEREUM' : (baseDepositPaid ? 'CONNECTED' : 'CONNECT ETHEREUM'))}
-              </button>
+          if (metamaskConn && metamaskConn.address?.toLowerCase() === walletAddress) {
+            needsConnection = metamaskConn.assetConnected === false && metaMaskDepositPaid === true && (wallet.cVactTaa || 0) > 0;
+          } else if (baseConn && baseConn.address?.toLowerCase() === walletAddress) {
+            needsConnection = baseConn.assetConnected === false && baseDepositPaid === true && (wallet.cVactTaa || 0) > 0;
+          }
+          
+          return needsConnection;
+        });
+        
+        if (walletsNeedingConnection.length === 0) return null;
+        
+        // Calculate aggregate totals
+        let totalBeforeConnection = 0;
+        let totalAfterConnection = 0;
+        
+        walletsNeedingConnection.forEach((wallet: any) => {
+          const walletAddress = wallet.address?.toLowerCase();
+          const balance = walletBalances[walletAddress] ?? 0;
+          
+          if (balance > 0) {
+            totalBeforeConnection += balance * assetPrice;
+            totalAfterConnection += balance * vapa;
+          }
+        });
+        
+        return (
+          <div style={{ marginBottom: '30px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '5px', border: '1px solid #ff9800' }}>
+            <div style={{ color: '#ffffff', marginBottom: '10px', fontSize: '16px', fontWeight: 'bold' }}>
+              Your 'ETH' amount increased in some of your wallet/s.
             </div>
-            <div style={{ fontSize: '14px', color: '#ffffff' }}>
-              <div>Asset Connected: {baseAssetConnected ? 'Yes' : 'No'}</div>
+            <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '5px' }}>
+              Before connection: ${totalBeforeConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
+            </div>
+            <div style={{ color: '#ffffff', fontSize: '14px' }}>
+              After connection: ${totalAfterConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
             </div>
           </div>
-        </>
-      )}
+        );
+      })()}
+      
+      {/* Connect More Ethereum Sections - Above VAPA Breakdown */}
+      {vapa > 0 && vavityData && connectionState && (() => {
+        const wallets = vavityData.wallets || [];
+        const metamaskConn = connectionState.metamaskConn;
+        const baseConn = connectionState.baseConn;
+        const sections: JSX.Element[] = [];
+        
+        // Check MetaMask wallet
+        if (metamaskConn && metamaskConn.address && metamaskConn.address !== '0x0000000000000000000000000000000000000000') {
+          const walletAddress = metamaskConn.address.toLowerCase();
+          const matchingWallet = wallets.find((w: any) => 
+            w.address?.toLowerCase() === walletAddress &&
+            w.depositPaid === true &&
+            (w.cVactTaa || 0) > 0
+          );
+          
+          if (metamaskConn.assetConnected === false && metaMaskDepositPaid === true && matchingWallet) {
+            sections.push(
+              <ConnectMoreEthSection
+                key="metamask-connect-more"
+                walletAddress={metamaskConn.address}
+                walletType="metamask"
+                onConnectClick={() => handleConnectAsset('metamask')}
+              />
+            );
+          }
+        }
+        
+        // Check Base wallet
+        if (baseConn && baseConn.address && baseConn.address !== '0x0000000000000000000000000000000000000000') {
+          const walletAddress = baseConn.address.toLowerCase();
+          const matchingWallet = wallets.find((w: any) => 
+            w.address?.toLowerCase() === walletAddress &&
+            w.depositPaid === true &&
+            (w.cVactTaa || 0) > 0
+          );
+          
+          if (baseConn.assetConnected === false && baseDepositPaid === true && matchingWallet) {
+            sections.push(
+              <ConnectMoreEthSection
+                key="base-connect-more"
+                walletAddress={baseConn.address}
+                walletType="base"
+                onConnectClick={() => handleConnectAsset('base')}
+              />
+            );
+          }
+        }
+        
+        return sections.length > 0 ? <div style={{ marginBottom: '30px' }}>{sections}</div> : null;
+      })()}
+      
+      {/* Initial Connection Section - Above VAPA Breakdown */}
+      {vapa > 0 && !showConnectMoreMetaMask && !showConnectMoreBase && (() => {
+        const metamaskDepositPaidStatus = getDepositPaidStatus('metamask');
+        const baseDepositPaidStatus = getDepositPaidStatus('base');
+        const showInitialHeader = metamaskDepositPaidStatus === 'null' || baseDepositPaidStatus === 'null';
+        // Show MetaMask/Base sections when depositPaid is null OR false, regardless of address existence
+        const showMetaMaskSection = metamaskDepositPaidStatus === 'false' || metamaskDepositPaidStatus === 'null';
+        const showBaseSection = baseDepositPaidStatus === 'false' || baseDepositPaidStatus === 'null';
+        
+        // Only show wallet-specific info when depositPaid === false (not null)
+        const showMetaMaskInfo = metamaskDepositPaidStatus === 'false' && connectionState?.metamaskConn?.address && connectionState.metamaskConn.address !== '0x0000000000000000000000000000000000000000';
+        const showBaseInfo = baseDepositPaidStatus === 'false' && connectionState?.baseConn?.address && connectionState.baseConn.address !== '0x0000000000000000000000000000000000000000';
+        
+        // Don't show section if no wallets need initial connection
+        if (!showMetaMaskSection && !showBaseSection && !showInitialHeader) {
+          return null;
+        }
+        
+        return (
+          <div style={{ marginBottom: '30px' }}>
+            {/* Header - Only show if depositPaid === null for at least one wallet */}
+            {showInitialHeader && (
+              <>
+                <div style={{ 
+                  color: '#ffffff', 
+                  fontSize: '16px', 
+                  fontWeight: 'bold',
+                  marginBottom: '15px',
+                  textAlign: 'center'
+                }}>
+                  ${assetPrice ? assetPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                </div>
+                <div style={{ color: '#ffffff', fontSize: '16px', marginBottom: '30px', textAlign: 'center' }}>
+                  with Arells it would be worth: ${vapa ? vapa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+                </div>
+              </>
+            )}
+            
+            {/* MetaMask Section */}
+            {showMetaMaskSection && (
+              <div style={{ marginBottom: '30px' }}>
+                <h2 style={{ color: '#ffffff', marginBottom: '10px' }}>MetaMask</h2>
+                {showMetaMaskInfo && (() => {
+                  const walletAddress = connectionState.metamaskConn.address.toLowerCase();
+                  const balance = walletBalances[walletAddress] ?? null;
+                  
+                  if (balance !== null && balance >= 0.0000001) {
+                    const beforeConnection = balance * assetPrice;
+                    const afterConnection = balance * vapa;
+                    return (
+                      <>
+                        <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '5px' }}>
+                          before connection: ${beforeConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
+                        </div>
+                        <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '10px' }}>
+                          after connection: ${afterConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
+                        </div>
+                      </>
+                    );
+                  } else {
+                    return (
+                      <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '10px' }}>
+                        Add Eth to your wallet to calculate
+                      </div>
+                    );
+                  }
+                })()}
+                <div style={{ marginBottom: '10px' }}>
+                  <button
+                    onClick={() => handleConnectAsset('metamask')}
+                    disabled={loadingMetaMask || (metaMaskDepositPaid && !showConnectMoreMetaMask)}
+                    style={{
+                      padding: '10px 20px',
+                      backgroundColor: metaMaskDepositPaid ? '#28a745' : (loadingMetaMask ? '#666666' : '#0066cc'),
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: (loadingMetaMask || (metaMaskDepositPaid && !showConnectMoreMetaMask)) ? 'not-allowed' : 'pointer',
+                      marginRight: '10px',
+                      opacity: (loadingMetaMask || (metaMaskDepositPaid && !showConnectMoreMetaMask)) ? 0.8 : 1,
+                    }}
+                  >
+                    {loadingMetaMask ? 'PROCESSING...' : (metaMaskDepositPaid ? 'CONNECTED' : 'CONNECT ETHEREUM')}
+                  </button>
+                </div>
+                <div style={{ fontSize: '14px', color: '#ffffff' }}>
+                  <div>Asset Connected: {metaMaskAssetConnected ? 'Yes' : 'No'}</div>
+                </div>
+              </div>
+            )}
+            
+            {/* Base Section */}
+            {showBaseSection && (
+              <div style={{ marginBottom: '30px' }}>
+                <h2 style={{ color: '#ffffff', marginBottom: '10px' }}>Base</h2>
+                {showBaseInfo && (() => {
+                  const walletAddress = connectionState.baseConn.address.toLowerCase();
+                  const balance = walletBalances[walletAddress] ?? null;
+                  
+                  if (balance !== null && balance >= 0.0000001) {
+                    const beforeConnection = balance * assetPrice;
+                    const afterConnection = balance * vapa;
+                    return (
+                      <>
+                        <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '5px' }}>
+                          before connection: ${beforeConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
+                        </div>
+                        <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '10px' }}>
+                          after connection: ${afterConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
+                        </div>
+                      </>
+                    );
+                  } else {
+                    return (
+                      <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '10px' }}>
+                        Add Eth to your wallet to calculate
+                      </div>
+                    );
+                  }
+                })()}
+                <div style={{ marginBottom: '10px' }}>
+                  <button
+                    onClick={() => handleConnectAsset('base')}
+                    disabled={loadingBase || (baseDepositPaid && !showConnectMoreBase)}
+                    style={{
+                      padding: '10px 20px',
+                      backgroundColor: baseDepositPaid ? '#28a745' : (loadingBase ? '#666666' : '#0066cc'),
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: (loadingBase || (baseDepositPaid && !showConnectMoreBase)) ? 'not-allowed' : 'pointer',
+                      marginRight: '10px',
+                      opacity: (loadingBase || (baseDepositPaid && !showConnectMoreBase)) ? 0.8 : 1,
+                    }}
+                  >
+                    {loadingBase ? 'PROCESSING...' : (baseDepositPaid ? 'CONNECTED' : 'CONNECT ETHEREUM')}
+                  </button>
+                </div>
+                <div style={{ fontSize: '14px', color: '#ffffff' }}>
+                  <div>Asset Connected: {baseAssetConnected ? 'Yes' : 'No'}</div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
       
       {/* VAPA and Wallet Breakdown */}
       {vavityData && vapa > 0 && (
@@ -701,37 +919,8 @@ const VavityTester: React.FC = () => {
                   assetConnected = baseConn.assetConnected !== false;
                 }
 
-                // Check if this wallet needs "Connect More ETH" section
-                // Use EXACT same conditions as "Connect More Ethereum" button (lines 245-249, 262-266)
-                const hasExistingConnection = wallet && (wallet.cVactTaa || 0) > 0;
-                let needsConnectMore = false;
-                
-                if (walletType === 'metamask' && metamaskConn && metamaskConn.address && metamaskConn.address !== '0x0000000000000000000000000000000000000000') {
-                  needsConnectMore = 
-                    metamaskConn.assetConnected === false && 
-                    metaMaskDepositPaid === true && 
-                    hasExistingConnection === true;
-                } else if (walletType === 'base' && baseConn && baseConn.address && baseConn.address !== '0x0000000000000000000000000000000000000000') {
-                  needsConnectMore = 
-                    baseConn.assetConnected === false && 
-                    baseDepositPaid === true && 
-                    hasExistingConnection === true;
-                }
-                
-                const cVactTaa = wallet.cVactTaa || 0;
-
                 return (
                   <div key={index}>
-                    {/* "Connect More ETH" Section - Only shown for wallets with assetConnected === false */}
-                    {needsConnectMore && walletType && (
-                      <ConnectMoreEthSection
-                        walletAddress={wallet.address}
-                        walletType={walletType}
-                        cVactTaa={cVactTaa}
-                        onConnectClick={() => handleConnectAsset(walletType)}
-                      />
-                    )}
-                    
                     {/* Wallet Card */}
                     <div style={{ marginBottom: '15px', padding: '10px', backgroundColor: '#2a2a2a', borderRadius: '5px' }}>
                       <div style={{ color: '#ffffff', fontWeight: 'bold', marginBottom: '8px' }}>

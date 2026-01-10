@@ -9,10 +9,48 @@ VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for Wallet and Asset connection implementations: Wallet and Asset connection offline tests complete*
 - *revert back to this commit for Wallet and Asset connection implementations before Auto Checks: Metamask wallet connection successful test*
-- - - Remove the +....
-- - - connected wallet: your ETH amount: before connection: asset price dollar amount, after connection: vapa dollar amount (Connect Ethereum)
-- - - Your “ETH” amount increased. Before connection: asset price dollar amount. After connection: vapa dollar amount. (Connect More Eth)
-- - - Aggregate Section "Your "ETH" amount increased in some of your wallet/s. Before connection: total asset wallet amount from assetConnected no. After connection: Total vapa wallet amount from assetConnected no" (connect more eth) 
+1. Aggregate Section (Top of page, above everything)
+Display: When any wallet has assetConnected === false && depositPaid === true
+Text:
+"Your 'ETH' amount increased in some of your wallet/s."
+"Before connection: $ [sum of wallet balances * assetPrice]" — sum walletBalances[address] * assetPrice for all wallets needing connection
+"After connection: $ [sum of wallet balances * vapa]" — sum walletBalances[address] * vapa for all wallets needing connection
+2. Initial Connection Section OR "Connect More Ethereum" Section (Above "VAPA Breakdown")
+Location: Above the "VAPA Breakdown" section, below aggregate section
+Logic: Per wallet type (MetaMask/Base) — show one or the other, mutually exclusive
+A. "Connect More Ethereum" Section (when depositPaid === true && assetConnected === false)
+Display: When wallet has assetConnected === false && depositPaid === true
+For each qualifying wallet, show:
+"Your 'ETH' amount increased."
+"Before connection: $ [walletBalance * assetPrice]" — use walletBalances[walletAddress] * assetPrice
+"After connection: $ [walletBalance * vapa]" — use walletBalances[walletAddress] * vapa
+"Connect More Eth" button (calls handleConnectAsset(walletType))
+Hide: Initial connection section content for this wallet
+B. Initial Connection Section (when depositPaid === false OR depositPaid === null)
+Display header ONLY if depositPaid === null (for any wallet):
+"$ [assetPrice] (rotated/styled text)"
+"with Arells it would be worth: $ [vapa]"
+"$ [assetPrice] (rotated/styled text)"
+Otherwise (depositPaid === false), continue with wallet-specific info:
+Structure:
+  MetaMask (if depositPaid === false for MetaMask wallet)  [Show wallet-specific info]  [CONNECT ETHEREUM button]  Asset Connected: [Yes/No]    Base (if depositPaid === false for Base wallet)  [Show wallet-specific info]  [CONNECT ETHEREUM button]  Asset Connected: [Yes/No]
+Wallet-specific info (only if depositPaid === false for that wallet):
+If walletBalances[address] >= 0.0000001:
+"before connection: $ [walletBalance * assetPrice]"
+"after connection: $ [walletBalance * vapa]"
+If walletBalances[address] < 0.0000001 or balance is null:
+"Add Eth to your wallet to calculate"
+3. "VAPA Breakdown" Section
+Location: Below all the sections above (keep current location, lines 672-776)
+Remove: The ConnectMoreEthSection component that appears above each wallet card inside the loop (lines 726-733)
+Keep: All other wallet display logic as-is
+Order of Sections (top to bottom):
+Aggregate Section (if any wallets need "Connect More")
+Initial Connection Section OR "Connect More Ethereum" Section (mutually exclusive per wallet type)
+Shows "Connect More Ethereum" if depositPaid === true && assetConnected === false
+Shows Initial Connection if depositPaid === false
+Shows header (rotated assetPrice) ONLY if depositPaid === null (at least one wallet)
+VAPA Breakdown Section (with wallet cards — no Connect More sections inside) 
 - - if you withdraw funds in each wallet (all the way up to zero even with Connect More Ethereum), (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount... cVactTaa should neevr go below 1 wei
 - - Test import wallets (that are already connected) (from base/metamask and vice versa)
 - - Test Connect More Eth when wallets are all disconnected...
@@ -122,9 +160,13 @@ Login-Signup pages (Test with 2-3 accounts):
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 (view all s3 jsons and check Arells Ethereum Wallet amount)
 
+## Privacy Policy
+- Look
+
 
 ## Loading Modules in all pages
 - All of them fade in and out (same as modules and pages in vavity.info)
+- Ethereum png at center in every page apart from home, sign-up/log-in, privacy policy
 
 ## After Test
 - Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
@@ -144,6 +186,7 @@ Arells powered by Vavity
 – - - (ETH)
 - - - Investment: $4,000 (many random amounts)
 - - - Profits: + $85,000
+- - - Losses: (for sloth) $0
 - - Right
 - - - Line Graph
 - - - (5 year/ 1 year/ 1 month/ 1week)
