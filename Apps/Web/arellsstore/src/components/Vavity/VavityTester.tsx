@@ -503,7 +503,9 @@ const VavityTester: React.FC = () => {
       
       // Keep modal open and poll until assetConnected: true is detected in connection state
       // This matches the original code structure - assetConnected is set LAST after all VavityAggregator updates
-      const connection = connectionState?.[walletType === 'metamask' ? 'metamaskConn' : 'baseConn'];
+      // Use connectionStateRef.current to get the latest connection state (not stale closure)
+      const currentStateForAddress = connectionStateRef.current;
+      const connection = currentStateForAddress?.[walletType === 'metamask' ? 'metamaskConn' : 'baseConn'];
       const walletAddress = connection?.address;
       
       if (walletAddress) {
@@ -526,6 +528,9 @@ const VavityTester: React.FC = () => {
           setShowConnectingModal(false);
           setConnectingWalletTypeForModal(null);
           setIsConnectingAsset(false);
+          // Refresh state after closing modal
+          await checkPending();
+          await fetchVavityData();
           return; // Exit early if already connected
         }
         
@@ -552,6 +557,9 @@ const VavityTester: React.FC = () => {
             setShowConnectingModal(false);
             setConnectingWalletTypeForModal(null);
             setIsConnectingAsset(false);
+            // Refresh state after closing modal
+            await checkPending();
+            await fetchVavityData();
             return;
           } else {
             if (pollCount % 10 === 0) { // Log every 5 seconds
@@ -569,14 +577,20 @@ const VavityTester: React.FC = () => {
             setShowConnectingModal(false);
             setConnectingWalletTypeForModal(null);
             setIsConnectingAsset(false);
+            // Refresh state after closing modal
+            checkPending().catch(() => {});
+            fetchVavityData().catch(() => {});
           }
         }, 500); // Poll every 500ms
       } else {
         // No wallet address - close modal after short delay
-        setTimeout(() => {
+        setTimeout(async () => {
           setShowConnectingModal(false);
           setConnectingWalletTypeForModal(null);
           setIsConnectingAsset(false);
+          // Refresh state after closing modal
+          await checkPending();
+          await fetchVavityData();
         }, 2000);
       }
     } catch (error: any) {
@@ -586,6 +600,9 @@ const VavityTester: React.FC = () => {
       setShowConnectingModal(false);
       setConnectingWalletTypeForModal(null);
       setIsConnectingAsset(false);
+      // Refresh state after closing modal
+      checkPending().catch(() => {});
+      fetchVavityData().catch(() => {});
       
       const errorMessage = String(error?.message || error?.toString() || 'Unknown error');
       const errorCode = error?.code || error?.error?.code;
@@ -637,7 +654,7 @@ const VavityTester: React.FC = () => {
       </div>
       
       {/* Aggregate Section - Show if any wallets need "Connect More" */}
-      {vapa > 0 && vavityData && connectionState && (() => {
+      {vapa > 0 && vavityData && connectionState && !showConnectingModal && (() => {
         const wallets = vavityData.wallets || [];
         const metamaskConn = connectionState.metamaskConn;
         const baseConn = connectionState.baseConn;
@@ -688,7 +705,7 @@ const VavityTester: React.FC = () => {
       })()}
       
       {/* Connect More Ethereum Sections - Above VAPA Breakdown */}
-      {vapa > 0 && vavityData && connectionState && (() => {
+      {vapa > 0 && vavityData && connectionState && !showConnectingModal && (() => {
         const wallets = vavityData.wallets || [];
         const metamaskConn = connectionState.metamaskConn;
         const baseConn = connectionState.baseConn;

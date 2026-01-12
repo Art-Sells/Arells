@@ -803,6 +803,12 @@ export async function connectVavityAsset(params: ConnectVavityAssetParams): Prom
     }
   })();
 
+  // CRITICAL: Set isConnectingAsset to false so fetchBalance can run and update assetConnected
+  // This allows the modal polling to detect assetConnected === true and close the modal
+  if (setIsConnectingAsset) {
+    setIsConnectingAsset(false);
+  }
+
   // Return immediately with txHash - UI can update right away
   return { txHash, receipt: null, walletData };
 }
