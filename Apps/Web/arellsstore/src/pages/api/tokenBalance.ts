@@ -47,7 +47,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const balance = await Promise.race([balancePromise, timeoutPromise]);
           return parseFloat(ethers.formatEther(balance));
         } catch (error) {
-          console.log(`[tokenBalance API] ${networkName} balance fetch failed or timed out:`, error);
           return 0;
         }
       };
@@ -58,8 +57,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ]);
 
       const balanceInETH = Math.max(ethereumBalance, baseBalance);
-      
-      console.log(`[tokenBalance API] Native ETH balance for ${address}: ${balanceInETH} ETH`);
 
       return res.status(200).json({ 
         balance: balanceInETH.toString(),
@@ -71,7 +68,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Fetch ERC20 token balance
       // Validate tokenAddress is a string and a valid address
       if (!tokenAddress || typeof tokenAddress !== 'string' || !ethers.isAddress(tokenAddress)) {
-        console.error(`[tokenBalance API] Invalid tokenAddress:`, tokenAddress, typeof tokenAddress);
         return res.status(400).json({ error: 'Invalid token address' });
       }
 
@@ -87,10 +83,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           ]);
 
           const balanceFormatted = parseFloat(ethers.formatUnits(balance, decimals));
-          console.log(`[tokenBalance API] ${networkName} token balance for ${address}: ${balanceFormatted}`);
           return balanceFormatted;
         } catch (error) {
-          console.log(`[tokenBalance API] ${networkName} token balance fetch failed:`, error);
           return 0;
         }
       };
@@ -103,8 +97,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Use the higher balance (token will typically exist on one network)
       const balance = Math.max(ethereumBalance, baseBalance);
-      
-      console.log(`[tokenBalance API] Token ${tokenAddress} balance for ${address}: ${balance}`);
 
       return res.status(200).json({ 
         balance: balance.toString(),
@@ -114,7 +106,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
   } catch (error: any) {
-    console.error('[tokenBalance API] Error fetching token balance:', error);
     res.status(500).json({ error: error.message || 'Failed to fetch token balance' });
   }
 }

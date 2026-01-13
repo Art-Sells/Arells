@@ -502,7 +502,6 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // console.log('[VavityAggregator] Balance fetch useEffect: Starting balance fetch');
     const fetchWalletBalances = async () => {
       if (isConnectingAsset) {
-        console.log('[VavityAggregator] Skipping fetchBalance - connectVavityAsset is running');
         return;
       }
       try {

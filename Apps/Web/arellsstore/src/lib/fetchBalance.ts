@@ -22,7 +22,6 @@ export const fetchBalance = async ({
   setWalletBalances,
 }: FetchBalanceParams): Promise<void> => {
   if (!email) {
-    console.log('[fetchBalance] No email provided, skipping');
     return;
   }
 
@@ -32,36 +31,25 @@ export const fetchBalance = async ({
     const wallets = aggregatorData?.wallets || [];
     
     if (wallets.length === 0) {
-      console.log('[fetchBalance] No wallets found');
       return;
     }
-
-    console.log(`[fetchBalance] Fetching balances for ${wallets.length} wallet(s)`);
 
     // Filter wallets to only fetch balances for those where depositPaid is true
     const walletsToFetch = wallets.filter((wallet: any) => {
-      const depositPaid = wallet.depositPaid === true;
-      if (!depositPaid) {
-        console.log(`[fetchBalance] Skipping wallet ${wallet.address} - deposit not paid (depositPaid: ${wallet.depositPaid})`);
-      }
-      return depositPaid;
+      return wallet.depositPaid === true;
     });
 
     if (walletsToFetch.length === 0) {
-      console.log('[fetchBalance] No wallets with depositPaid=true, skipping balance fetch');
       return;
     }
-
-    console.log(`[fetchBalance] Fetching balances for ${walletsToFetch.length} wallet(s) with depositPaid=true`);
 
     // Fetch global VAPA once (used for backend calculations)
     let globalVapa = assetPrice; // Fallback to assetPrice
     try {
       const vapaResponse = await axios.get('/api/vapa');
       globalVapa = vapaResponse.data?.vapa || assetPrice;
-      console.log(`[fetchBalance] Global VAPA: ${globalVapa}`);
     } catch (error) {
-      console.warn('[fetchBalance] Error fetching global VAPA, using assetPrice:', error);
+      // Use fallback assetPrice
     }
     
     // Note: VAPA will be passed to backend for cpVact calculations
@@ -69,7 +57,6 @@ export const fetchBalance = async ({
     // Fetch balances for wallets with depositPaid=true in parallel
     const balancePromises = walletsToFetch.map(async (wallet: any) => {
       if (!wallet.address) {
-        console.log(`[fetchBalance] Skipping wallet without address`);
         return null;
       }
       
@@ -77,7 +64,6 @@ export const fetchBalance = async ({
       const vapaa = wallet.vapaa || '0x0000000000000000000000000000000000000000';
       
       try {
-        console.log(`[fetchBalance] Fetching balance for ${wallet.address} (VAPAA: ${vapaa})...`);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
         const balanceResponse = await fetch(`/api/tokenBalance?address=${wallet.address}&tokenAddress=${vapaa}`, {
@@ -86,8 +72,6 @@ export const fetchBalance = async ({
         clearTimeout(timeoutId);
         
         if (!balanceResponse.ok) {
-          const errorText = await balanceResponse.text();
-          console.error(`[fetchBalance] API error for ${wallet.address}: ${balanceResponse.status} - ${errorText}`);
           return null;
         }
         
@@ -100,9 +84,6 @@ export const fetchBalance = async ({
           return null;
         }
         
-        const tokenName = vapaa === '0x0000000000000000000000000000000000000000' ? 'ETH' : 'tokens';
-        console.log(`[fetchBalance] Balance fetched for ${wallet.address}: ${balance} ${tokenName} (current: ${wallet.cVactTaa ?? 0})`);
-        
         // Always return the balance, even if it's 0 or unchanged
         return {
           address: wallet.address,
@@ -110,7 +91,6 @@ export const fetchBalance = async ({
           vapaa: vapaa,
         };
       } catch (error: any) {
-        console.error(`[fetchBalance] Error fetching balance for ${wallet.address}:`, error);
         return null;
       }
     });
@@ -118,9 +98,6 @@ export const fetchBalance = async ({
     const balanceResults = await Promise.all(balancePromises);
     // Filter out null results (errors, missing balances, etc.)
     const balancesToUpdate = balanceResults.filter((b: any) => b !== null && b.address !== null && b.balance !== null);
-    
-    console.log(`[fetchBalance] Balance results:`, balanceResults);
-    console.log(`[fetchBalance] Balances to update:`, balancesToUpdate);
     
     // Update temporary display-only balances (never stored in wallet objects)
     if (setWalletBalances) {
@@ -131,24 +108,18 @@ export const fetchBalance = async ({
         }
       });
       setWalletBalances(balanceMap);
-      console.log(`[fetchBalance] Updated display-only balances for ${Object.keys(balanceMap).length} wallet(s)`);
     }
     
     // Pass wallets and balances to backend - backend will do all calculations
     if (wallets.length > 0 && balancesToUpdate.length > 0) {
-      console.log(`[fetchBalance] Passing ${wallets.length} wallet(s) and ${balancesToUpdate.length} balance(s) to backend for calculation`);
       try {
-        const result = await saveVavityAggregator(email, wallets, {}, balancesToUpdate, globalVapa);
-        console.log(`[fetchBalance] Backend processed wallets and balances successfully`);
+        await saveVavityAggregator(email, wallets, {}, balancesToUpdate, globalVapa);
       } catch (saveError) {
-        console.error(`[fetchBalance] Error saving wallets:`, saveError);
         throw saveError;
       }
-    } else {
-      console.log(`[fetchBalance] No balances to update and no wallets found`);
     }
   } catch (error) {
-    console.error('[fetchBalance] Error fetching wallet balances:', error);
+    // Silent error handling
   }
 };
 

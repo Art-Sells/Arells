@@ -303,9 +303,16 @@ const VavityTester: React.FC = () => {
     // Get balance from fetchBalance's temporary display-only state (never stored in wallet objects)
     const currentBalance = walletBalances[walletAddress.toLowerCase()] ?? null;
 
+    // Don't show if balance hasn't been fetched yet or is zero
+    if (currentBalance === null || currentBalance === 0) return null;
+
+    // Check if this wallet type is currently loading or if any modal is open
+    const isLoading = (walletType === 'metamask' && loadingMetaMask) || (walletType === 'base' && loadingBase);
+    const isDisabled = isLoading || showModal || showConnectingModal;
+
     // Calculate before and after dollar amounts
-    const beforeConnection = currentBalance !== null ? currentBalance * assetPrice : 0;
-    const afterConnection = currentBalance !== null ? currentBalance * vapa : 0;
+    const beforeConnection = currentBalance * assetPrice;
+    const afterConnection = currentBalance * vapa;
 
     return (
       <div style={{ 
@@ -326,12 +333,13 @@ const VavityTester: React.FC = () => {
         </div>
         <div style={{ color: '#ffffff', fontSize: '14px' }}>
           <span
-            onClick={onConnectClick}
+            onClick={isDisabled ? undefined : onConnectClick}
             style={{
-              color: '#ff9800',
-              cursor: 'pointer',
+              color: isDisabled ? '#666666' : '#ff9800',
+              cursor: isDisabled ? 'not-allowed' : 'pointer',
               textDecoration: 'underline',
               fontWeight: 'bold',
+              opacity: isDisabled ? 0.6 : 1,
             }}
           >
             (Connect More Eth)
@@ -654,7 +662,7 @@ const VavityTester: React.FC = () => {
       </div>
       
       {/* Aggregate Section - Show if any wallets need "Connect More" */}
-      {vapa > 0 && vavityData && connectionState && !showConnectingModal && (() => {
+      {vapa > 0 && vavityData && connectionState && (() => {
         const wallets = vavityData.wallets || [];
         const metamaskConn = connectionState.metamaskConn;
         const baseConn = connectionState.baseConn;
@@ -689,6 +697,9 @@ const VavityTester: React.FC = () => {
           }
         });
         
+        // Only show if we have valid balances calculated
+        if (totalBeforeConnection === 0) return null;
+        
         return (
           <div style={{ marginBottom: '30px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '5px', border: '1px solid #ff9800' }}>
             <div style={{ color: '#ffffff', marginBottom: '10px', fontSize: '16px', fontWeight: 'bold' }}>
@@ -705,7 +716,7 @@ const VavityTester: React.FC = () => {
       })()}
       
       {/* Connect More Ethereum Sections - Above VAPA Breakdown */}
-      {vapa > 0 && vavityData && connectionState && !showConnectingModal && (() => {
+      {vapa > 0 && vavityData && connectionState && (() => {
         const wallets = vavityData.wallets || [];
         const metamaskConn = connectionState.metamaskConn;
         const baseConn = connectionState.baseConn;

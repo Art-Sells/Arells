@@ -9,7 +9,7 @@ VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for Wallet and Asset connection implementations: Wallet and Asset connection offline tests complete*
 - *revert back to this commit for Wallet and Asset connection implementations before Auto Checks: Metamask wallet connection successful test*
-1. Aggregate Section (Top of page, above everything)
+- 1. Aggregate Section (Top of page, above everything)
 Display: When any wallet has assetConnected === false && depositPaid === true
 Text:
 "Your 'ETH' amount increased in some of your wallet/s."

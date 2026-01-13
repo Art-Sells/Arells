@@ -329,8 +329,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         (wallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()
           );
 
-          if (!balanceData) continue;
-
+          if (!balanceData) {
+            continue;
+          }
+          
           if (balanceData.balance === null || balanceData.balance === undefined) {
             continue;
           }
@@ -340,7 +342,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           }
           const cVactTaa = wallet.cVactTaa;
           if (!cVactTaa) {
-            console.error(`[saveVavityAggregator] Skipping assetConnected update for wallet ${wallet.address} with missing cVactTaa`);
             continue; // Skip this wallet
           }
           const shouldBeConnected = currentBalance <= cVactTaa;
@@ -355,7 +356,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (conn.assetConnected !== shouldBeConnected) {
               conn.assetConnected = shouldBeConnected;
               hasConnectionChanges = true;
-              console.log(`[saveVavityAggregator] Updated assetConnected for ${conn.address} (${conn.walletType}): ${!shouldBeConnected} -> ${shouldBeConnected} (balance: ${currentBalance}, cVactTaa: ${cVactTaa})`);
             }
           }
         }
@@ -368,11 +368,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             Body: JSON.stringify(vavityConnections),
             ContentType: 'application/json',
           }).promise();
-          console.log('[saveVavityAggregator] Successfully updated assetConnected values in VavityConnection');
         }
       } catch (connectionError) {
-        // Non-critical error - log but don't throw (wallet updates already succeeded)
-        console.warn('[saveVavityAggregator] Error updating assetConnected (non-critical, wallet updates succeeded):', connectionError);
+        // Non-critical error - silent handling
       }
     }
 
