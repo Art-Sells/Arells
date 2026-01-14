@@ -200,10 +200,10 @@ const VavityTester: React.FC = () => {
       );
       const depositPaid = matchingWallet?.depositPaid === true;
       setMetaMaskDepositPaid(depositPaid);
-      console.log(`[VavityTester] MetaMask depositPaid check: address=${walletAddress}, found=${!!matchingWallet}, depositPaid=${depositPaid}`);
+      // console.log(`[VavityTester] MetaMask depositPaid check: address=${walletAddress}, found=${!!matchingWallet}, depositPaid=${depositPaid}`);
     } else {
       setMetaMaskDepositPaid(false);
-      console.log(`[VavityTester] MetaMask depositPaid check: no valid connection`, { metamaskConn });
+      // console.log(`[VavityTester] MetaMask depositPaid check: no valid connection`, { metamaskConn });
     }
 
     // Check Base
@@ -215,10 +215,10 @@ const VavityTester: React.FC = () => {
       );
       const depositPaid = matchingWallet?.depositPaid === true;
       setBaseDepositPaid(depositPaid);
-      console.log(`[VavityTester] Base depositPaid check: address=${walletAddress}, found=${!!matchingWallet}, depositPaid=${depositPaid}`);
+      // console.log(`[VavityTester] Base depositPaid check: address=${walletAddress}, found=${!!matchingWallet}, depositPaid=${depositPaid}`);
     } else {
       setBaseDepositPaid(false);
-      console.log(`[VavityTester] Base depositPaid check: no valid connection`, { baseConn });
+      // console.log(`[VavityTester] Base depositPaid check: no valid connection`, { baseConn });
     }
   }, [vavityData, connectionState]);
 
@@ -467,15 +467,15 @@ const VavityTester: React.FC = () => {
   };
 
   const handleModalYes = async () => {
-    console.log('[VavityTester] 🎯 handleModalYes called');
+//     console.log('[VavityTester] 🎯 handleModalYes called');
     if (!modalWalletType) {
-      console.log('[VavityTester] ⚠️ No modalWalletType, returning');
+//       console.log('[VavityTester] ⚠️ No modalWalletType, returning');
       return;
     }
     
     const walletType = modalWalletType;
     const isConnectMore = (walletType === 'metamask' && showConnectMoreMetaMask) || (walletType === 'base' && showConnectMoreBase);
-    console.log(`[VavityTester] 🎯 Wallet type: ${walletType}, isConnectMore: ${isConnectMore}`);
+//     console.log(`[VavityTester] 🎯 Wallet type: ${walletType}, isConnectMore: ${isConnectMore}`);
     
     // Close confirmation modal and show connecting modal
     setShowModal(false);
@@ -504,10 +504,10 @@ const VavityTester: React.FC = () => {
     });
     
     try {
-      console.log(`[VavityTester] 🚀 About to trigger deposit for ${walletType}`);
+//       console.log(`[VavityTester] 🚀 About to trigger deposit for ${walletType}`);
       // Trigger deposit - this returns as soon as txHash is received
       await triggerDeposit(walletType);
-      console.log(`[VavityTester] ✅ Deposit triggered successfully`);
+//       console.log(`[VavityTester] ✅ Deposit triggered successfully`);
       
       // Keep modal open and poll until assetConnected: true is detected in connection state
       // This matches the original code structure - assetConnected is set LAST after all VavityAggregator updates
@@ -528,11 +528,11 @@ const VavityTester: React.FC = () => {
         const currentState = connectionStateRef.current;
         const currentConnection = currentState?.[walletType === 'metamask' ? 'metamaskConn' : 'baseConn'];
         if (currentConnection?.assetConnected === true) {
-          console.log('[VavityTester] ✅ assetConnected=true found, closing modal', {
-            walletType,
-            address: currentConnection.address,
-            assetConnected: currentConnection.assetConnected
-          });
+//           console.log('[VavityTester] ✅ assetConnected=true found, closing modal', {
+//             walletType,
+//             address: currentConnection.address,
+//             assetConnected: currentConnection.assetConnected
+//           });
           setShowConnectingModal(false);
           setConnectingWalletTypeForModal(null);
           setIsConnectingAsset(false);
@@ -555,11 +555,11 @@ const VavityTester: React.FC = () => {
           
           // Check if assetConnected is true
           if (updatedConnection?.assetConnected === true) {
-            console.log('[VavityTester] ✅ assetConnected=true found, closing modal', {
-              walletType,
-              address: updatedConnection.address,
-              assetConnected: updatedConnection.assetConnected
-            });
+//             console.log('[VavityTester] ✅ assetConnected=true found, closing modal', {
+//               walletType,
+//               address: updatedConnection.address,
+//               assetConnected: updatedConnection.assetConnected
+//             });
             // assetConnected is true - close modal immediately
             clearInterval(checkAssetConnectedInterval);
             setShowConnectingModal(false);
@@ -571,16 +571,16 @@ const VavityTester: React.FC = () => {
             return;
           } else {
             if (pollCount % 10 === 0) { // Log every 5 seconds
-              console.log('[VavityTester] ⏳ Waiting for assetConnected: true', {
-                walletType,
-                address: updatedConnection?.address,
-                assetConnected: updatedConnection?.assetConnected
-              });
+//               console.log('[VavityTester] ⏳ Waiting for assetConnected: true', {
+//                 walletType,
+//                 address: updatedConnection?.address,
+//                 assetConnected: updatedConnection?.assetConnected
+//               });
             }
           }
           
           if (pollCount >= maxPolls) {
-            console.warn('[VavityTester] Max polls reached, closing modal anyway');
+//             console.warn('[VavityTester] Max polls reached, closing modal anyway');
             clearInterval(checkAssetConnectedInterval);
             setShowConnectingModal(false);
             setConnectingWalletTypeForModal(null);
@@ -602,7 +602,7 @@ const VavityTester: React.FC = () => {
         }, 2000);
       }
     } catch (error: any) {
-      console.error(`[VavityTester] ❌ Error in triggerDeposit for ${walletType}:`, error);
+//       console.error(`[VavityTester] ❌ Error in triggerDeposit for ${walletType}:`, error);
       
       // Hide connecting modal on error
       setShowConnectingModal(false);
