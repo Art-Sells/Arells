@@ -7,54 +7,11 @@
 ### Test Offline
 VavityTester:
 - When fixing price mechanism, stop git
-- *revert back to this commit for Wallet and Asset connection implementations: Wallet and Asset connection offline tests complete*
-- *revert back to this commit for Wallet and Asset connection implementations before Auto Checks: Metamask wallet connection successful test*
-- Base Wallet not working (but Metamask working) for bottom:
-- 1. Aggregate Section (Top of page, above everything)
-Display: When any wallet has assetConnected === false && depositPaid === true
-Text:
-"Your 'ETH' amount increased in some of your wallet/s."
-"Before connection: $ [sum of wallet balances * assetPrice]" — sum walletBalances[address] * assetPrice for all wallets needing connection
-"After connection: $ [sum of wallet balances * vapa]" — sum walletBalances[address] * vapa for all wallets needing connection
-2. Initial Connection Section OR "Connect More Ethereum" Section (Above "VAPA Breakdown")
-Location: Above the "VAPA Breakdown" section, below aggregate section
-Logic: Per wallet type (MetaMask/Base) — show one or the other, mutually exclusive
-A. "Connect More Ethereum" Section (when depositPaid === true && assetConnected === false)
-Display: When wallet has assetConnected === false && depositPaid === true
-For each qualifying wallet, show:
-"Your 'ETH' amount increased."
-"Before connection: $ [walletBalance * assetPrice]" — use walletBalances[walletAddress] * assetPrice
-"After connection: $ [walletBalance * vapa]" — use walletBalances[walletAddress] * vapa
-"Connect More Eth" button (calls handleConnectAsset(walletType))
-Hide: Initial connection section content for this wallet
-B. Initial Connection Section (when depositPaid === false OR depositPaid === null)
-Display header ONLY if depositPaid === null (for any wallet):
-"(ETH) $ [assetPrice] "
-"(ETH) with Arells: $ [vapa]"
-Otherwise (depositPaid === false), continue with wallet-specific info:
-Structure:
-  MetaMask (if depositPaid === false for MetaMask wallet)  [Show wallet-specific info]  [CONNECT ETHEREUM button]  Asset Connected: [Yes/No]    Base (if depositPaid === false for Base wallet)  [Show wallet-specific info]  [CONNECT ETHEREUM button]  Asset Connected: [Yes/No]
-Wallet-specific info (only if depositPaid === false for that wallet):
-If walletBalances[address] >= 0.0000001:
-"before connection: $ [walletBalance * assetPrice]"
-"after connection: $ [walletBalance * vapa]"
-If walletBalances[address] < 0.0000001 or balance is null:
-"Add Eth to your wallet to calculate"
-3. "VAPA Breakdown" Section
-Location: Below all the sections above (keep current location, lines 672-776)
-Remove: The ConnectMoreEthSection component that appears above each wallet card inside the loop (lines 726-733)
-Keep: All other wallet display logic as-is
-Order of Sections (top to bottom):
-Aggregate Section (if any wallets need "Connect More")
-Initial Connection Section OR "Connect More Ethereum" Section (mutually exclusive per wallet type)
-Shows "Connect More Ethereum" if depositPaid === true && assetConnected === false
-Shows Initial Connection if depositPaid === false
-Shows header (rotated assetPrice) ONLY if depositPaid === null (at least one wallet)
-VAPA Breakdown Section (with wallet cards — no Connect More sections inside) 
+- *revert back to this commit for wallet and asset connection and connect more implementations before double check: First connect more eth test complete* 
 - - if you withdraw funds in each wallet (all the way up to zero even with Connect More Ethereum), (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount... cVactTaa should neevr go below 1 wei
 - - Test import wallets (that are already connected) (from base/metamask and vice versa)
 - - Test Connect More Eth when wallets are all disconnected...
-- - Test multiple account switches (inside wallets (and wallet connections)), how it affects "Connect New Wallet" (triggered if no wallets exist from json) 
+- - Test multiple account switches (inside wallets (and wallet connections)), how it affects "Connect Wallet" and "Connect Eth or Connect More Eth (will most likely have to create "Connection Canceled, your wallet address needs to be: 0x44848 double check your wallet" ) 
 - - Delete Metamask/base extensions and test (on safari)
 - - - Create "Metamask/base needed" modal" (integrate into mobile/desktop online test)
 - - Test to see if you don't have enough eth and try to connect what it does.
@@ -215,7 +172,7 @@ of bear markets?
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
 - (random {rotated} asset price dollar amount), with Arells it would be worth (vapa dollar amount) (Connect Ethereum) (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
-- - Modal: Connecting Wallet (until wallet address have been fetched, otherwise connection cancelled)
+- - Modal: Connecting Wallet, please wait... (until wallet address have been fetched, otherwise connection cancelled)
 - - Modal for Alert (from Vavity tester): Error connecting metamask: Request of type 'wallet_requestPermissions' already pending for origin http://localhost:3000. Please wait.
 - - Modal: Connection Canceled (ok [reloads page]) <- get alert from VavityTester ... it should also pop up if this shows: 
 - - Modal (for new wallet connection): Wallet Connection Successful, Connect Ethereum to Begin .5% fee per new assets. (Yes) <- opens asset connection (no) <- closes modal (get from vavitytester)
@@ -223,8 +180,8 @@ of bear markets?
 - - Modal (for already connected wallet connected): Connect Ethereum to Begin .5% fee per new assets. (Yes) <- opens asset connection (no) <- closes modal (get from vavitytester)
 - - Modal: Connecting (Loader) Ethereum, please wait... (do not reload page) <- get from vavity tester
 - - Modal: Connection Canceled (ok [reloads page]) <- get aleart from VavityTester
-- If acVatoi != 0, then hide "Connect Ethereum to begin"
-- Get From VavityTester: Auto checks (every 10 or so seconds): if cVactTaa of matching Wallet Address is not 0 and is less than Wallet Address amount, if so then:
+- If acVatoc != 0, then hide "Connect Ethereum to begin"
+- Get From VavityTester: fetchBalance?
 - Chart (after wallet connection):
 - - Left
 - - - My Portfolio
@@ -246,11 +203,11 @@ of bear markets?
 - - (if cVactTaa =! wallet amount): New section: "Your “ETH” amount increased, before connection: asset price dollar amount, after connection: vapa dollar amount (Connect More Eth) <- button opens up new deposit ask and if its complete, then the new deposit <-get from VavityTester
 - - For connected wallets & assets: Lists Wallet Addresses and cVactTaa and cVact
 - - For connected wallets, not connected assets:
-- - - (Connect Eth)
+- - - (Connect Eth) (connect More Eth) < - get all modals from Account
 - - For non-connected wallets
 - - - (Connect More Wallets (metamask-base))
-- - Modal: Preparing (ETH) Wallet (to connect asset (take from VavityTester)) 
-- - Modal: Connecting (ETHEREUM) Asset .5% fee per new assets.
+- - Modal: Connecting Wallet, please wait (add this) <- get all modals from Account
+- - Modal: Connecting (ETHEREUM) Asset (please wait) .5% fee per new assets. <- get all modals from Account>
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages [large slogan] (changge Bitcoin to Ethereum)

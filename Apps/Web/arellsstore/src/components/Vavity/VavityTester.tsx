@@ -306,9 +306,8 @@ const VavityTester: React.FC = () => {
     // Don't show if balance hasn't been fetched yet or is zero
     if (currentBalance === null || currentBalance === 0) return null;
 
-    // Check if this wallet type is currently loading or if any modal is open
-    const isLoading = (walletType === 'metamask' && loadingMetaMask) || (walletType === 'base' && loadingBase);
-    const isDisabled = isLoading || showModal || showConnectingModal;
+    // Check if any modal is open (disabled only when modals are showing)
+    const isDisabled = showModal || showConnectingModal;
 
     // Calculate before and after dollar amounts
     const beforeConnection = currentBalance * assetPrice;
