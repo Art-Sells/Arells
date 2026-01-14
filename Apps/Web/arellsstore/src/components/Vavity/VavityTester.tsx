@@ -23,6 +23,8 @@ const VavityTester: React.FC = () => {
   const [isWalletAlreadyConnected, setIsWalletAlreadyConnected] = useState<boolean>(false);
   const [showConnectingModal, setShowConnectingModal] = useState<boolean>(false);
   const [connectingWalletTypeForModal, setConnectingWalletTypeForModal] = useState<'metamask' | 'base' | null>(null);
+  const [showConnectingWalletModal, setShowConnectingWalletModal] = useState<boolean>(false);
+  const [connectingWalletTypeForWalletModal, setConnectingWalletTypeForWalletModal] = useState<'metamask' | 'base' | null>(null);
   const [vavityData, setVavityData] = useState<any>(null);
   const [showConnectMoreMetaMask, setShowConnectMoreMetaMask] = useState<boolean>(false);
   const [showConnectMoreBase, setShowConnectMoreBase] = useState<boolean>(false);
@@ -269,6 +271,21 @@ const VavityTester: React.FC = () => {
     }
   }, [connectionState, vavityData, metaMaskDepositPaid, baseDepositPaid]);
 
+  // Show "Connecting wallet" modal when loading states change
+  useEffect(() => {
+    if (loadingMetaMask) {
+      setShowConnectingWalletModal(true);
+      setConnectingWalletTypeForWalletModal('metamask');
+    } else if (loadingBase) {
+      setShowConnectingWalletModal(true);
+      setConnectingWalletTypeForWalletModal('base');
+    } else {
+      // Both are false, hide modal
+      setShowConnectingWalletModal(false);
+      setConnectingWalletTypeForWalletModal(null);
+    }
+  }, [loadingMetaMask, loadingBase]);
+
   // Helper function to determine depositPaid status for a wallet
   const getDepositPaidStatus = useCallback((walletType: 'metamask' | 'base'): 'null' | 'false' | 'true' => {
     if (!vavityData || !connectionState) return 'null';
@@ -443,12 +460,13 @@ const VavityTester: React.FC = () => {
         errorMessage.toLowerCase().includes('user denied') ||
         errorMessage.toLowerCase().includes('rejected') ||
         errorMessage.toLowerCase().includes('cancelled') ||
-        errorMessage.toLowerCase().includes('denied');
+        errorMessage.toLowerCase().includes('denied') ||
+        errorMessage.toLowerCase().includes('failed to fetch');
       
       
       if (isUserRejection) {
         // Show alert for cancellation - same for both MetaMask and Base
-        alert('Wallet connection canceled');
+        alert('connection cancelled');
         // Make sure modal is not shown
         setShowModal(false);
         setModalWalletType(null);
@@ -621,10 +639,11 @@ const VavityTester: React.FC = () => {
         errorMessage.toLowerCase().includes('user denied') ||
         errorMessage.toLowerCase().includes('rejected') ||
         errorMessage.toLowerCase().includes('cancelled') ||
-        errorMessage.toLowerCase().includes('denied');
+        errorMessage.toLowerCase().includes('denied') ||
+        errorMessage.toLowerCase().includes('failed to fetch');
       
       if (isUserRejection) {
-        alert('Wallet connection canceled');
+        alert('connection cancelled');
       } else {
         alert(`Error connecting asset: ${errorMessage}`);
       }
@@ -1178,6 +1197,66 @@ const VavityTester: React.FC = () => {
               </h2>
               <p style={{ color: '#ffffff', fontSize: '14px', marginBottom: '20px' }}>
                 Do not reload this page to ensure successful connection
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <div
+                  className="spinner"
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    border: '4px solid #333',
+                    borderTop: '4px solid #0066cc',
+                    borderRadius: '50%',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Modal for connecting wallet */}
+      {showConnectingWalletModal && (
+        <>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+            .spinner {
+              animation: spin 1s linear infinite;
+            }
+          `}</style>
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1002,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: '#1a1a1a',
+                padding: '30px',
+                borderRadius: '10px',
+                maxWidth: '400px',
+                width: '90%',
+                border: '2px solid #0066cc',
+                textAlign: 'center',
+              }}
+            >
+              <h2 style={{ color: '#ffffff', marginBottom: '20px' }}>
+                Connecting wallet
+              </h2>
+              <p style={{ color: '#ffffff', fontSize: '14px', marginBottom: '20px' }}>
+                Please approve the connection in your wallet
               </p>
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                 <div

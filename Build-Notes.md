@@ -8,6 +8,7 @@
 VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for wallet and asset connection and connect more implementations before double check: First connect more eth test complete* 
+- Double testing the entire process until:
 - - if you withdraw funds in each wallet (all the way up to zero even with Connect More Ethereum), (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount... cVactTaa should neevr go below 1 wei
 - - Test import wallets (that are already connected) (from base/metamask and vice versa)
 - - Test Connect More Eth when wallets are all disconnected...
