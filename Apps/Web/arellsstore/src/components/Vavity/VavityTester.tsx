@@ -23,8 +23,7 @@ const VavityTester: React.FC = () => {
   const [isWalletAlreadyConnected, setIsWalletAlreadyConnected] = useState<boolean>(false);
   const [showConnectingModal, setShowConnectingModal] = useState<boolean>(false);
   const [connectingWalletTypeForModal, setConnectingWalletTypeForModal] = useState<'metamask' | 'base' | null>(null);
-  const [showConnectingWalletModal, setShowConnectingWalletModal] = useState<boolean>(false);
-  const [connectingWalletTypeForWalletModal, setConnectingWalletTypeForWalletModal] = useState<'metamask' | 'base' | null>(null);
+  const [isConnectMoreForModal, setIsConnectMoreForModal] = useState<boolean>(false);
   const [vavityData, setVavityData] = useState<any>(null);
   const [showConnectMoreMetaMask, setShowConnectMoreMetaMask] = useState<boolean>(false);
   const [showConnectMoreBase, setShowConnectMoreBase] = useState<boolean>(false);
@@ -232,6 +231,14 @@ const VavityTester: React.FC = () => {
       return;
     }
 
+    // Don't show "Connect More" if we're still processing (deposit just completed)
+    // This prevents race condition where useEffect runs before loading state is cleared
+    if (loadingMetaMask || loadingBase) {
+      setShowConnectMoreMetaMask(false);
+      setShowConnectMoreBase(false);
+      return;
+    }
+
     const metamaskConn = connectionState.metamaskConn;
     const baseConn = connectionState.baseConn;
     const wallets = vavityData.wallets || [];
@@ -271,20 +278,9 @@ const VavityTester: React.FC = () => {
     }
   }, [connectionState, vavityData, metaMaskDepositPaid, baseDepositPaid]);
 
-  // Show "Connecting wallet" modal when loading states change
-  useEffect(() => {
-    if (loadingMetaMask) {
-      setShowConnectingWalletModal(true);
-      setConnectingWalletTypeForWalletModal('metamask');
-    } else if (loadingBase) {
-      setShowConnectingWalletModal(true);
-      setConnectingWalletTypeForWalletModal('base');
-    } else {
-      // Both are false, hide modal
-      setShowConnectingWalletModal(false);
-      setConnectingWalletTypeForWalletModal(null);
-    }
-  }, [loadingMetaMask, loadingBase]);
+  // Compute "Connecting wallet" modal visibility
+  // Show only during wallet connection phase (not during deposit phase)
+  const showConnectingWalletModal = (loadingMetaMask || loadingBase) && !showConnectingModal;
 
   // Helper function to determine depositPaid status for a wallet
   const getDepositPaidStatus = useCallback((walletType: 'metamask' | 'base'): 'null' | 'false' | 'true' => {
@@ -320,15 +316,11 @@ const VavityTester: React.FC = () => {
     // Get balance from fetchBalance's temporary display-only state (never stored in wallet objects)
     const currentBalance = walletBalances[walletAddress.toLowerCase()] ?? null;
 
-    // Don't show if balance hasn't been fetched yet or is zero
-    if (currentBalance === null || currentBalance === 0) return null;
-
-    // Check if any modal is open (disabled only when modals are showing)
-    const isDisabled = showModal || showConnectingModal;
+    const showAmounts = currentBalance !== null && currentBalance > 0;
 
     // Calculate before and after dollar amounts
-    const beforeConnection = currentBalance * assetPrice;
-    const afterConnection = currentBalance * vapa;
+    const beforeConnection = showAmounts ? currentBalance * assetPrice : 0;
+    const afterConnection = showAmounts ? currentBalance * vapa : 0;
 
     return (
       <div style={{ 
@@ -341,21 +333,28 @@ const VavityTester: React.FC = () => {
         <div style={{ color: '#ffffff', marginBottom: '10px', fontSize: '14px' }}>
           Your "ETH" amount increased.
         </div>
-        <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '5px' }}>
-          Before connection: ${beforeConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
-        </div>
-        <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '10px' }}>
-          After connection: ${afterConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
-        </div>
+        {showAmounts ? (
+          <>
+            <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '5px' }}>
+              Before connection: ${beforeConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
+            </div>
+            <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '10px' }}>
+              After connection: ${afterConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
+            </div>
+          </>
+        ) : (
+          <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '10px' }}>
+            Calculating your updated ETH amount...
+          </div>
+        )}
         <div style={{ color: '#ffffff', fontSize: '14px' }}>
           <span
-            onClick={isDisabled ? undefined : onConnectClick}
+            onClick={onConnectClick}
             style={{
-              color: isDisabled ? '#666666' : '#ff9800',
-              cursor: isDisabled ? 'not-allowed' : 'pointer',
+              color: '#ff9800',
+              cursor: 'pointer',
               textDecoration: 'underline',
               fontWeight: 'bold',
-              opacity: isDisabled ? 0.6 : 1,
             }}
           >
             (Connect More Eth)
@@ -500,6 +499,7 @@ const VavityTester: React.FC = () => {
     
     // Close confirmation modal and show connecting modal
     setConnectingWalletTypeForModal(walletType); // Store for modal title
+    setIsConnectMoreForModal(isConnectMore); // Lock modal title to action type
     setShowConnectingModal(true);
     
     // Set loading state
@@ -552,7 +552,14 @@ const VavityTester: React.FC = () => {
 //           });
           setShowConnectingModal(false);
           setConnectingWalletTypeForModal(null);
+          setIsConnectMoreForModal(false);
           setIsConnectingAsset(false);
+          // Clear loading state immediately to prevent "Connecting wallet" modal from appearing
+          if (walletType === 'metamask') {
+            setLoadingMetaMask(false);
+          } else {
+            setLoadingBase(false);
+          }
           // Refresh state after closing modal
           await checkPending();
           await fetchVavityData();
@@ -581,7 +588,14 @@ const VavityTester: React.FC = () => {
             clearInterval(checkAssetConnectedInterval);
             setShowConnectingModal(false);
             setConnectingWalletTypeForModal(null);
+            setIsConnectMoreForModal(false);
             setIsConnectingAsset(false);
+            // Clear loading state immediately to prevent "Connecting wallet" modal from appearing
+            if (walletType === 'metamask') {
+              setLoadingMetaMask(false);
+            } else {
+              setLoadingBase(false);
+            }
             // Refresh state after closing modal
             await checkPending();
             await fetchVavityData();
@@ -601,7 +615,14 @@ const VavityTester: React.FC = () => {
             clearInterval(checkAssetConnectedInterval);
             setShowConnectingModal(false);
             setConnectingWalletTypeForModal(null);
+            setIsConnectMoreForModal(false);
             setIsConnectingAsset(false);
+            // Clear loading state immediately to prevent "Connecting wallet" modal from appearing
+            if (walletType === 'metamask') {
+              setLoadingMetaMask(false);
+            } else {
+              setLoadingBase(false);
+            }
             // Refresh state after closing modal
             checkPending().catch(() => {});
             fetchVavityData().catch(() => {});
@@ -612,7 +633,14 @@ const VavityTester: React.FC = () => {
         setTimeout(async () => {
           setShowConnectingModal(false);
           setConnectingWalletTypeForModal(null);
+          setIsConnectMoreForModal(false);
           setIsConnectingAsset(false);
+          // Clear loading state immediately to prevent "Connecting wallet" modal from appearing
+          if (walletType === 'metamask') {
+            setLoadingMetaMask(false);
+          } else {
+            setLoadingBase(false);
+          }
           // Refresh state after closing modal
           await checkPending();
           await fetchVavityData();
@@ -624,7 +652,14 @@ const VavityTester: React.FC = () => {
       // Hide connecting modal on error
       setShowConnectingModal(false);
       setConnectingWalletTypeForModal(null);
+      setIsConnectMoreForModal(false);
       setIsConnectingAsset(false);
+      // Clear loading state immediately to prevent "Connecting wallet" modal from appearing
+      if (walletType === 'metamask') {
+        setLoadingMetaMask(false);
+      } else {
+        setLoadingBase(false);
+      }
       // Refresh state after closing modal
       checkPending().catch(() => {});
       fetchVavityData().catch(() => {});
@@ -681,6 +716,7 @@ const VavityTester: React.FC = () => {
       
       {/* Aggregate Section - Show if any wallets need "Connect More" */}
       {vapa > 0 && vavityData && connectionState && (() => {
+        if (showConnectingModal) return null;
         const wallets = vavityData.wallets || [];
         const metamaskConn = connectionState.metamaskConn;
         const baseConn = connectionState.baseConn;
@@ -735,6 +771,7 @@ const VavityTester: React.FC = () => {
       
       {/* Connect More Ethereum Sections - Above VAPA Breakdown */}
       {vapa > 0 && vavityData && connectionState && (() => {
+        if (showConnectingModal) return null;
         const wallets = vavityData.wallets || [];
         const metamaskConn = connectionState.metamaskConn;
         const baseConn = connectionState.baseConn;
@@ -1153,6 +1190,66 @@ const VavityTester: React.FC = () => {
         </div>
       )}
 
+      {/* Modal for connecting wallet */}
+      {showConnectingWalletModal && (
+        <>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+            .spinner {
+              animation: spin 1s linear infinite;
+            }
+          `}</style>
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1000,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: '#1a1a1a',
+                padding: '30px',
+                borderRadius: '10px',
+                maxWidth: '400px',
+                width: '90%',
+                border: '2px solid #0066cc',
+                textAlign: 'center',
+              }}
+            >
+              <h2 style={{ color: '#ffffff', marginBottom: '20px' }}>
+                Connecting wallet
+              </h2>
+              <p style={{ color: '#ffffff', fontSize: '14px', marginBottom: '20px' }}>
+                Please approve the connection in your wallet
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <div
+                  className="spinner"
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    border: '4px solid #333',
+                    borderTop: '4px solid #0066cc',
+                    borderRadius: '50%',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Modal for connecting ethereum */}
       {showConnectingModal && (
         <>
@@ -1191,72 +1288,10 @@ const VavityTester: React.FC = () => {
               }}
             >
               <h2 style={{ color: '#ffffff', marginBottom: '20px' }}>
-                {((connectingWalletTypeForModal === 'metamask' && showConnectMoreMetaMask) || (connectingWalletTypeForModal === 'base' && showConnectMoreBase))
-                  ? 'Connecting More Ethereum'
-                  : 'Connecting Ethereum'}
+                {isConnectMoreForModal ? 'Connecting More Ethereum' : 'Connecting Ethereum'}
               </h2>
               <p style={{ color: '#ffffff', fontSize: '14px', marginBottom: '20px' }}>
                 Do not reload this page to ensure successful connection
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                <div
-                  className="spinner"
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    border: '4px solid #333',
-                    borderTop: '4px solid #0066cc',
-                    borderRadius: '50%',
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Modal for connecting wallet */}
-      {showConnectingWalletModal && (
-        <>
-          <style>{`
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-            .spinner {
-              animation: spin 1s linear infinite;
-            }
-          `}</style>
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 1002,
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: '#1a1a1a',
-                padding: '30px',
-                borderRadius: '10px',
-                maxWidth: '400px',
-                width: '90%',
-                border: '2px solid #0066cc',
-                textAlign: 'center',
-              }}
-            >
-              <h2 style={{ color: '#ffffff', marginBottom: '20px' }}>
-                Connecting wallet
-              </h2>
-              <p style={{ color: '#ffffff', fontSize: '14px', marginBottom: '20px' }}>
-                Please approve the connection in your wallet
               </p>
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                 <div

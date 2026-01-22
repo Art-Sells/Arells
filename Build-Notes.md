@@ -8,7 +8,7 @@
 VavityTester:
 - When fixing price mechanism, stop git
 - *revert back to this commit for wallet and asset connection and connect more implementations before double check: First connect more eth test complete* 
-- Double testing the entire process until:
+- Double test the entire process until (withdraw test)
 - - if you withdraw funds in each wallet (all the way up to zero even with Connect More Ethereum), (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount... cVactTaa should neevr go below 1 wei
 - - Test import wallets (that are already connected) (from base/metamask and vice versa)
 - - Test Connect More Eth when wallets are all disconnected...
@@ -24,8 +24,8 @@ Home
 - Chart:
 - - Left
 – - - (B)
-- - - Investment: $4,000 (many random amounts)
-- - - Profits: + $85,000
+- - - Investment: $4,000 (many random amounts (back and 3 seconds losses/profits forth))
+- - - Profits: + $85,000 | Losses: $0
 - - Right
 - - - Line Graph
 - - - (5 year/ 1 year/ 1 month/ 1week)
@@ -40,7 +40,7 @@ Account
 - - Left
 - - - My Portfolio
 - - - Investment: acVact $0
-– - - Losses (default): $0
+– - - Losses (default): $0 
 – - - Profits (replaces losses only if acdVatoc is > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
 - - Right
 - - - Line Graph
@@ -274,7 +274,6 @@ Users:
 - - - External vs Internal (Arells) Pricing system: Arells is an experimental company created to see whether we are ready to let go of bear markets.
 - - - Asking for deposit more than once: Only if you log-out and log back in withouht accepting or denying the deposit
 Keep marketing, dependent on growth after 1-2 weeks:
-- Updates (oDAO, FndrsINC, etc)
 - Increase ETHEREUM_RPC-URL
 
 
@@ -306,8 +305,10 @@ Keep marketing, dependent on growth after 1-2 weeks:
 ## Arells 2 & Beyond
 
 
-- Add new assets (VAPA/wallet-connection)
+- Add 1 new asset a week (VAPA/wallet-connection) (and home page with Market Cap (VAPA))
 - - Assets have their own page and token values (that should be implemented in fetchBalance and everywhere these token values are used) (connect asset)
+- - Announce
+- Wait at least 2 months to track numbers (and prioject with new asset additions/etc) Updates (oDAO, FndrsINC, etc)
 
 - After user accumulation and scaling, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
