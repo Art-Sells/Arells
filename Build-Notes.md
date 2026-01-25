@@ -72,12 +72,11 @@ Login-Signup pages (Test with 2-3 accounts):
 - - - - Confirm
 - Allow Vapa to increase (if possible) and watch chart and profits/losses
 - In notion:  
-- - TTA(Total Tracked Assets)/Revenue
+- - CA(Connected Assets)
 - - - (current) Solid Marketplace (interior) & Liquid Marketplace (exterior)
-- - - chart
-- - Users
-- - - (current) number of email created, date, time, etc
-- - - chart
+- - - Revenur (private)
+- - Users (WoW growth chart/line)
+- - - Find out a way to calculate and see when each e-mail opens or reloads page and which percentage
 
 
 
@@ -304,11 +303,11 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 ## Arells 2 & Beyond
 
-
+- Wait at least 2 months to track numbers (adjust plan based on feedback), Updates (oDAO, FndrsINC, etc, ETH-FND (ppr, alx)):
+- - Compare Retention rate (in bear markets WoM only (percentages)) and market dominance of solid marketplaces: Projections (with current trajectory) with/without inv/asset additions (WoW percentage comparisons)
 - Add 1 new asset a week (VAPA/wallet-connection) (and home page with Market Cap (VAPA))
 - - Assets have their own page and token values (that should be implemented in fetchBalance and everywhere these token values are used) (connect asset)
 - - Announce
-- Wait at least 2 months to track numbers (and prioject with new asset additions/etc) Updates (oDAO, FndrsINC, etc)
 
 - After user accumulation and scaling, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)

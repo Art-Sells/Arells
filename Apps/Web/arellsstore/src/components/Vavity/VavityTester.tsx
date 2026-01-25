@@ -322,6 +322,12 @@ const VavityTester: React.FC = () => {
     const beforeConnection = showAmounts ? currentBalance * assetPrice : 0;
     const afterConnection = showAmounts ? currentBalance * vapa : 0;
 
+    const handleConnectMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      onConnectClick();
+    };
+
     return (
       <div style={{ 
         marginBottom: '15px', 
@@ -342,14 +348,10 @@ const VavityTester: React.FC = () => {
               After connection: ${afterConnection.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.
             </div>
           </>
-        ) : (
-          <div style={{ color: '#ffffff', fontSize: '14px', marginBottom: '10px' }}>
-            Calculating your updated ETH amount...
-          </div>
-        )}
+        ) : null}
         <div style={{ color: '#ffffff', fontSize: '14px' }}>
           <span
-            onClick={onConnectClick}
+            onMouseDown={handleConnectMouseDown}
             style={{
               color: '#ff9800',
               cursor: 'pointer',
@@ -785,8 +787,15 @@ const VavityTester: React.FC = () => {
             w.depositPaid === true &&
             (w.cVactTaa || 0) > 0
           );
+          const walletBalance = walletBalances[walletAddress] ?? 0;
+          const hasCalculatedBalances = walletBalance > 0;
           
-          if (metamaskConn.assetConnected === false && metaMaskDepositPaid === true && matchingWallet) {
+          if (
+            metamaskConn.assetConnected === false &&
+            metaMaskDepositPaid === true &&
+            matchingWallet &&
+            hasCalculatedBalances
+          ) {
             sections.push(
               <ConnectMoreEthSection
                 key="metamask-connect-more"
@@ -806,8 +815,15 @@ const VavityTester: React.FC = () => {
             w.depositPaid === true &&
             (w.cVactTaa || 0) > 0
           );
+          const walletBalance = walletBalances[walletAddress] ?? 0;
+          const hasCalculatedBalances = walletBalance > 0;
           
-          if (baseConn.assetConnected === false && baseDepositPaid === true && matchingWallet) {
+          if (
+            baseConn.assetConnected === false &&
+            baseDepositPaid === true &&
+            matchingWallet &&
+            hasCalculatedBalances
+          ) {
             sections.push(
               <ConnectMoreEthSection
                 key="base-connect-more"

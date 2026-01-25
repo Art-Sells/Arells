@@ -1,0 +1,28 @@
+
+
+.exportingloader {
+  position: absolute;
+    display: block;
+    justify-content: left;
+    border: 2px solid rgba(255, 170, 60);
+    border-radius: 50%;
+    border-top: 2px solid rgba(255, 170, 60, 0.0);
+    width: 20px;
+    height: 20px;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+    left: -67.5px;
+    margin-top: -2.5px;
+    margin-left: 50%;
+    margin-right: 50%;
+  }
+  
+    @-webkit-keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }

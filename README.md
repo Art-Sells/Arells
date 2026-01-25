@@ -26,7 +26,7 @@ _______________________________________________________________________
 - **May 2023 - Dec 2023**
   - [X] Arells 0.9 *[[Complete]](https://arells.com)*
 
-- **May 2024 - March 2025**
+- **May 2024 - TBD**
   - [ ] Arells 1.0 *[[In-Development]](https://github.com/Art-Sells/Arells/commits/test)*
 
 _______________________________________________________________________
