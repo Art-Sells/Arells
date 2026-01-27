@@ -1,20 +1,20 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { fetchEthereumPrice } from '../lib/coingecko-api';
+import { fetchBitcoinPrice } from '../lib/coingecko-api';
 
-const EthereumPriceContext = createContext<number | undefined>(undefined);
+const BitcoinPriceContext = createContext<number | undefined>(undefined);
 
-export const EthereumPriceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const BitcoinPriceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [price, setPrice] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     const getPrice = async () => {
       try {
-        const fetchedPrice = await fetchEthereumPrice();
+        const fetchedPrice = await fetchBitcoinPrice();
         setPrice(fetchedPrice);
       } catch (error) {
-        console.error('Error fetching Ethereum price:', error);
+        console.error('Error fetching Bitcoin price:', error);
         setPrice(undefined); // Reset to undefined on error
       }
     };
@@ -29,12 +29,12 @@ export const EthereumPriceProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <EthereumPriceContext.Provider value={price}>
+    <BitcoinPriceContext.Provider value={price}>
       {children}
-    </EthereumPriceContext.Provider>
+    </BitcoinPriceContext.Provider>
   );
 };
 
-export const useEthereumPrice = () => {
-  return useContext(EthereumPriceContext);
+export const useBitcoinPrice = () => {
+  return useContext(BitcoinPriceContext);
 };

@@ -67,14 +67,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let validatedWallets: any[];
     
     // CRITICAL: Choose which wallets to use based on whether balances are provided
-    // - When balances ARE provided (from fetchBalance): Use existingData.wallets (fresh from S3) to get latest cVactTaa
-    // - When balances are NOT provided (from connectVavityAsset): Use wallets passed in (they have the new cVactTaa)
+    // - When balances ARE provided: Use existingData.wallets (fresh from S3) to get latest cVactTaa
+    // - When balances are NOT provided: Use wallets passed in (they have the updated cVactTaa)
     const walletsToProcess = (balances && Array.isArray(balances) && balances.length > 0) 
-      ? (existingData.wallets || wallets)  // fetchBalance: use S3 data
-      : wallets;  // connectVavityAsset: use passed-in wallets with new cVactTaa
+      ? (existingData.wallets || wallets)
+      : wallets;
     
     if (balances && Array.isArray(balances) && balances.length > 0) {
-      // Update wallets with balance-based calculations (from fetchBalance)
+      // Update wallets with balance-based calculations
       // Use walletsToProcess (fresh from S3) to get latest cVactTaa values
       validatedWallets = walletsToProcess.map((wallet: any) => {
         // Only update wallets where depositPaid is true
@@ -242,7 +242,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       existingWalletsMap.set(key, wallet);
     });
     
-    // Process validated wallets (from fetchBalance or other sources)
+    // Process validated wallets (from balance updates or other sources)
     const processedKeys = new Set<string>();
     validatedWallets.forEach((validatedWallet: any) => {
       const key = `${validatedWallet.address?.toLowerCase() || ''}_${(validatedWallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()}`;
@@ -297,82 +297,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         ACL: 'private',
       })
       .promise();
-
-    // Update assetConnected in VavityConnection based on balance > cVactTaa
-    // Only if balances were provided (from fetchBalance)
-    if (balances && Array.isArray(balances) && balances.length > 0) {
-      try {
-        const connectionKey = `${email}/VavityConnection.json`;
-        
-        // Fetch current connections
-        let vavityConnections: any[] = [];
-        try {
-          const connectionResponse = await s3.getObject({ Bucket: BUCKET_NAME, Key: connectionKey }).promise();
-          if (connectionResponse.Body) {
-            vavityConnections = JSON.parse(connectionResponse.Body.toString());
-          }
-        } catch (err: any) {
-          if (err.code !== 'NoSuchKey') {
-            console.warn('[saveVavityAggregator] Could not fetch VavityConnection:', err.message);
-          }
-        }
-
-        // For each wallet with depositPaid=true, update matching connections
-        const walletsWithDepositPaid = mergedWallets.filter((w: any) => w.depositPaid === true);
-        let hasConnectionChanges = false;
-
-        for (const wallet of walletsWithDepositPaid) {
-          // Find balance for this wallet
-          const balanceData = balances.find(
-            (b: any) => b.address?.toLowerCase() === wallet.address?.toLowerCase() &&
-                        (b.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase() === 
-                        (wallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()
-          );
-
-          if (!balanceData) {
-            continue;
-          }
-          
-          if (balanceData.balance === null || balanceData.balance === undefined) {
-            continue;
-          }
-          const currentBalance = parseFloat(balanceData.balance);
-          if (isNaN(currentBalance)) {
-            continue;
-          }
-          const cVactTaa = wallet.cVactTaa;
-          if (!cVactTaa) {
-            continue; // Skip this wallet
-          }
-          const shouldBeConnected = currentBalance <= cVactTaa;
-
-          // Find all matching connections (could be multiple if same address has both metamask/base)
-          const matchingConnections = vavityConnections.filter(
-            (conn: any) => conn.address?.toLowerCase() === wallet.address?.toLowerCase()
-          );
-
-          // Update each matching connection
-          for (const conn of matchingConnections) {
-            if (conn.assetConnected !== shouldBeConnected) {
-              conn.assetConnected = shouldBeConnected;
-              hasConnectionChanges = true;
-            }
-          }
-        }
-
-        // Save updated connections if any were changed
-        if (hasConnectionChanges) {
-          await s3.putObject({
-            Bucket: BUCKET_NAME,
-            Key: connectionKey,
-            Body: JSON.stringify(vavityConnections),
-            ContentType: 'application/json',
-          }).promise();
-        }
-      } catch (connectionError) {
-        // Non-critical error - silent handling
-      }
-    }
 
     return res.status(200).json({ message: 'Data saved successfully', data: newData });
   } catch (error) {

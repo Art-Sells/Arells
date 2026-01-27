@@ -10,11 +10,11 @@ import HPMconcept from '../../components/Vavity/HPMconcept';
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "Concept",
-  description: "Ethereum investments that never lose value. Import ethereum and never lose money selling.",
+  description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
   robots: "noimageindex",
   openGraph: {
     title: "Concept",
-    description: "Ethereum investments that never lose value. Import ethereum and never lose money selling.",
+    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
     url: "https://arells.com/concept",
     type: "website",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Concept",
-    description: "Ethereum investments that never lose value. Import ethereum and never lose money selling.",
+    description: "Bitcoin investments that never lose value. Import bitcoin and never lose money selling.",
     card: "summary_large_image",
     images: [
       {

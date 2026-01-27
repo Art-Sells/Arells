@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
-import { EthereumPriceProvider } from '../context/EthereumPriceContext';
+import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
-import { VavityAssetConnectProvider } from '../context/VavityAssetConnectContext';
 import { VavityProvider } from '../context/VavityAggregator';
 import ConfigureAmplifyClientSide from '../components/Amplify/ConfigureAmplifyClientSide';
 import { Amplify } from 'aws-amplify';
@@ -26,15 +25,13 @@ const RootLayout = ({ children }: LayoutProps) => {
       </head>
       <body>
         <ConfigureAmplifyClientSide />
-        <EthereumPriceProvider>
+        <BitcoinPriceProvider>
           <UserProvider>
               <VavityProvider>
-                <VavityAssetConnectProvider>
-                    {children}
-                </VavityAssetConnectProvider>
+                {children}
               </VavityProvider>
           </UserProvider>
-        </EthereumPriceProvider>
+        </BitcoinPriceProvider>
       </body>
     </html>
   );

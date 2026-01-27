@@ -15,7 +15,7 @@ const calculateVavityCombinations = (wallets: any[]) => {
   }> = {};
 
   wallets.forEach((wallet) => {
-    // Use VAPAA (token address) as the key, default to native ETH if not provided
+    // Use VAPAA (token address) as the key, default to native BTC if not provided
     const vapaa = wallet.vapaa || '0x0000000000000000000000000000000000000000';
     
     if (!combinationsByVapaa[vapaa]) {
@@ -72,7 +72,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return false; // Skip wallets without required fields
       }
       
-      // Ensure VAPAA is set (default to native ETH if not provided)
+      // Ensure VAPAA is set (default to native BTC if not provided)
       if (!wallet.vapaa) {
         wallet.vapaa = '0x0000000000000000000000000000000000000000';
       }

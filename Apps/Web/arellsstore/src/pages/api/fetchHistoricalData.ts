@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // OLD CODE - COMMENTED OUT
-    // const response = await axios.get('https://pro-api.coingecko.com/api/v3/coins/ethereum/market_chart', {
+    // const response = await axios.get('https://pro-api.coingecko.com/api/v3/coins/bitcoin/market_chart', {
     //   params: {
     //     vs_currency: 'usd',
     //     days: 1825 

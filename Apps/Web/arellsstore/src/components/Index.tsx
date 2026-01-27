@@ -2,7 +2,7 @@
 
 import type { ImageLoaderProps } from 'next/image';
 import '../app/css/Home.css';
-import EthereumChart from '../components/Assets/Ethereum/EthereumChart';
+import BitcoinChart from '../components/Assets/Bitcoin/BitcoinChart';
 import '../app/css/modals/loader/accountloaderbackground.css';
 import styles from '../app/css/modals/loader/accountloader.module.css';
 import { useState, useEffect } from 'react';
@@ -75,7 +75,7 @@ const Index = () => {
 
         <br></br> */}
 
-        <EthereumChart /> 
+        <BitcoinChart /> 
         <br></br>
         <Link href="/concept" passHref>
           <button id="login">VIEW CONCEPT</button>

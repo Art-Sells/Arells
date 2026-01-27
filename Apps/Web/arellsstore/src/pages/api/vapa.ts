@@ -9,7 +9,7 @@ const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 const VAPA_KEY = 'vavity/VAPA.json';
 
 /**
- * Fetch current Ethereum price and update VAPA if higher
+ * Fetch current Bitcoin price and update VAPA if higher
  * This ensures VAPA is always up-to-date and never decreases
  */
 async function fetchAndUpdateVAPA(): Promise<number> {
@@ -31,16 +31,16 @@ async function fetchAndUpdateVAPA(): Promise<number> {
   }
   
   try {
-    // Fetch current Ethereum price
+    // Fetch current Bitcoin price
     let currentPrice = 0;
     try {
-      const currentPriceResponse = await axios.get('http://localhost:3000/api/fetchEthereumPrice', { 
+      const currentPriceResponse = await axios.get('http://localhost:3000/api/fetchBitcoinPrice', { 
         timeout: 3000 
       }).catch(() => {
         // Try relative URL if localhost fails (for production)
-        return axios.get('/api/fetchEthereumPrice', { timeout: 3000 });
+        return axios.get('/api/fetchBitcoinPrice', { timeout: 3000 });
       });
-      currentPrice = currentPriceResponse.data?.ethereum?.usd || 0;
+      currentPrice = currentPriceResponse.data?.bitcoin?.usd || 0;
     } catch (error) {
       console.warn('[vapa] Failed to fetch current price, using stored value or 0');
     }
@@ -48,11 +48,11 @@ async function fetchAndUpdateVAPA(): Promise<number> {
     // Also fetch highest price ever as backup
     let highestPriceEver = 0;
     try {
-      const highestPriceResponse = await axios.get('http://localhost:3000/api/fetchHighestEthereumPrice', { 
+      const highestPriceResponse = await axios.get('http://localhost:3000/api/fetchHighestBitcoinPrice', { 
         timeout: 3000 
       }).catch(() => {
         // Try relative URL if localhost fails (for production)
-        return axios.get('/api/fetchHighestEthereumPrice', { timeout: 3000 });
+        return axios.get('/api/fetchHighestBitcoinPrice', { timeout: 3000 });
       });
       highestPriceEver = highestPriceResponse.data?.highestPriceEver || 0;
     } catch (error) {
@@ -62,7 +62,7 @@ async function fetchAndUpdateVAPA(): Promise<number> {
     // Calculate new VAPA: use Math.max to ensure it never decreases
     const newVAPA = Math.max(
       storedVAPA,      // Current stored VAPA (never decreases)
-      currentPrice,    // Current Ethereum price
+      currentPrice,    // Current Bitcoin price
       highestPriceEver // Highest price ever (backup)
     );
     

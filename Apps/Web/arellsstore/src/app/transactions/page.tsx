@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 // Import other necessary components and hooks
-import '../css/transactions/transactions.css';
 
 import Transactions from '../../components/Transactions/Transactions';
 

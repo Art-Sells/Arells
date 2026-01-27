@@ -3,9 +3,7 @@
 import { useUser } from './UserContext';
 import axios from 'axios';
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { fetchEthereumPrice, setManualEthereumPrice as setManualEthereumPriceApi } from '../lib/coingecko-api';
 import { fetchUserAttributes } from 'aws-amplify/auth';
-import { fetchBalance } from '../lib/fetchBalance';
 
 interface VatocState {
   cVatoc: number; // Value of the asset investment at the time of connect
@@ -45,8 +43,6 @@ interface VavityaggregatorType {
   fetchVavityAggregator: (email: string) => Promise<any>;
   addVavityAggregator: (email: string, newWallets: any[]) => Promise<any>;
   saveVavityAggregator: (email: string, wallets: any[], vavityCombinations: any, balances?: any[], globalVapa?: number) => Promise<any>;
-  setIsConnectingAsset: (isConnecting: boolean) => void;
-  walletBalances: { [address: string]: number }; // Temporary display-only balances from fetchBalance (never stored in wallet objects)
 }
 
 const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefined);
@@ -55,18 +51,16 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [email, setEmail] = useState<string>('');
   const [assetPrice, setAssetPrice] = useState<number>(0);
   const [connectAmount, setConnectAmount] = useState<number>(0);
-  const [isConnectingAsset, setIsConnectingAsset] = useState<boolean>(false);
-  const [walletBalances, setWalletBalances] = useState<{ [address: string]: number }>({}); // Temporary display-only balances
   
-  // Fetch Ethereum price on mount and periodically
-  // assetPrice = current Ethereum price
-  // VAPA = highest Ethereum price ever from historical data
+  // Fetch Bitcoin price on mount and periodically
+  // assetPrice = current Bitcoin price
+  // VAPA = highest Bitcoin price ever from historical data
   useEffect(() => {
     const fetchPrices = async () => {
       try {
-        // Fetch current Ethereum price
-        const currentPriceResponse = await axios.get('/api/fetchEthereumPrice');
-        const currentPrice = currentPriceResponse.data?.['ethereum']?.usd;
+        // Fetch current Bitcoin price
+        const currentPriceResponse = await axios.get('/api/fetchBitcoinPrice');
+        const currentPrice = currentPriceResponse.data?.['bitcoin']?.usd;
         if (currentPrice) {
           setAssetPrice(currentPrice);
         }
@@ -85,7 +79,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         } catch (error) {
           // Fallback to highest price ever if VAPA API doesn't exist yet
           try {
-            const highestPriceResponse = await axios.get('/api/fetchHighestEthereumPrice');
+            const highestPriceResponse = await axios.get('/api/fetchHighestBitcoinPrice');
         const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
         if (highestPriceEver) {
               setVapa(highestPriceEver);
@@ -96,7 +90,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           }
         }
       } catch (error) {
-        // console.error('Error fetching Ethereum prices:', error);
+        // console.error('Error fetching Bitcoin prices:', error);
         // Keep default price on error
       }
     };
@@ -128,11 +122,6 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
 
   const [vapa, setVapa] = useState<number>(0);
-
-  // Initialize isConnectingAsset to false on page load/reload
-  useEffect(() => {
-    setIsConnectingAsset(false);
-  }, []);
 
   useEffect(() => {
     const fetchEmail = async () => {
@@ -492,43 +481,6 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, []);
 
-  // Fetch and update balances for all wallet addresses
-  useEffect(() => {
-    if (!email) {
-      // console.log('[VavityAggregator] Balance fetch useEffect: No email, skipping');
-      return;
-    }
-
-    // console.log('[VavityAggregator] Balance fetch useEffect: Starting balance fetch');
-    const fetchWalletBalances = async () => {
-      if (isConnectingAsset) {
-        return;
-      }
-      try {
-        // console.log('[VavityAggregator] Calling fetchBalance...');
-        await fetchBalance({
-          email,
-          assetPrice,
-          fetchVavityAggregator,
-          saveVavityAggregator,
-          setWalletBalances, // Pass callback to update display-only balances
-        });
-        // console.log('[VavityAggregator] fetchBalance completed');
-      } catch (error) {
-        // console.error('[VavityAggregator] Error in fetchWalletBalances:', error);
-      }
-    };
-
-    // Run immediately
-    fetchWalletBalances();
-    // Update balances every 5 seconds
-    const interval = setInterval(fetchWalletBalances, 5000);
-    return () => {
-      // console.log('[VavityAggregator] Cleaning up balance fetch interval');
-      clearInterval(interval);
-    };
-  }, [email, assetPrice, fetchVavityAggregator, saveVavityAggregator, isConnectingAsset]);
-
   return (
     <Vavityaggregator.Provider
       value={{
@@ -553,9 +505,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         updateASSETFile,
         fetchVavityAggregator,
         addVavityAggregator,
-        saveVavityAggregator,
-        setIsConnectingAsset,
-        walletBalances
+        saveVavityAggregator
       }}
     >
       {children}

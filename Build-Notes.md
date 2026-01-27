@@ -6,21 +6,26 @@
 
 ### Test Offline
 VavityTester:
-- When fixing price mechanism, stop git
-- *revert back to this commit for wallet and asset connection and connect more implementations before double check: First connect more eth test complete* 
-- Double test the entire process until (withdraw test)
-- - if you withdraw funds in each wallet (all the way up to zero even with Connect More Ethereum), (after disconnection), the funds should reflect that based on: cVactTaa should equal balanceAtAssetConnection, but if wallet amount is less than cVactTaa, then cVactTaa should equal wallet amount... cVactTaa should neevr go below 1 wei
-- - Test import wallets (that are already connected) (from base/metamask and vice versa)
-- - Test Connect More Eth when wallets are all disconnected...
-- - Test multiple account switches (inside wallets (and wallet connections)), how it affects "Connect Wallet" and "Connect Eth or Connect More Eth (will most likely have to create "Connection Canceled, your wallet address needs to be: 0x44848 double check your wallet" ) 
-- - Delete Metamask/base extensions and test (on safari)
-- - - Create "Metamask/base needed" modal" (integrate into mobile/desktop online test)
-- - Test to see if you don't have enough eth and try to connect what it does.
-- - MAYBE remove this alert (right before asset connecting modal appears): Error connecting asset: Failed to fetch 
-
-
-Chart (Home/Account): 
-Home
+- Keep Vapa/ before/after Vapa prices
+- Remove all ETH wallet addresses or wallet connection json locations
+- Remove all wallet connection modals/displays or anything dealing with wallet connections (jsons/etc)
+- Account
+– (B) (VAPA): $90,000
+- If acVatoi != 0, then hide "Connect Bitcoin to begin"
+- Chart (Account):
+- - - My Portfolio
+- - - Investment: acVact $0
+– - - Losses (default): $0 
+– - - Profits (replaces losses only if acdVatoc is > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - Right
+- - - Line Graph (daily/weekly/yrly)
+- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - - Bull: Show modal explanation
+- - - Sloth: Show modal explanation
+- (add)
+- - - Purchase Date (mm/dd/yy): 
+- (investment list)
+- Home
 - Chart:
 - - Left
 – - - (B)
@@ -32,83 +37,22 @@ Home
 - - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
-Account
-– (B) (VAPA): $90,000
-- Button and Chart (loading) stays loading until Vapa appears <- get from VavityTester
-- If acVatoi != 0, then hide "Connect Bitcoin to begin"
-- Chart (Account):
-- - Left
-- - - My Portfolio
-- - - Investment: acVact $0
-– - - Losses (default): $0 
-– - - Profits (replaces losses only if acdVatoc is > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
-- - Right
-- - - Line Graph
-- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
-- - - Bull: Show modal explanation
-- - - Sloth: Show modal explanation
+
 
 Login-Signup pages (Test with 2-3 accounts):
 - Login/Signup with Google/Apple (reconfigure pages)
 - Go back and test again
-- - Connect
-- - - Reload
-- - - Cancel
-- - - Confirm
-- - Connect More 
-- - - Reload
-- - - Cancel
-- - - Confirm
-- - Withdraw
-- - Import wallets (to and from)
-- - Multiple wallets (not connected)
-- - - Connect
-- - - - Reload
-- - - - Cancel
-- - - - Confirm
-- - - Connect More 
-- - - - Reload
-- - - - Cancel
-- - - - Confirm
 - Allow Vapa to increase (if possible) and watch chart and profits/losses
 - In notion:  
-- - CA(Connected Assets)
-- - - (current) Solid Marketplace (interior) & Liquid Marketplace (exterior)
-- - - Revenur (private)
 - - Users (WoW growth chart/line)
 - - - Find out a way to calculate and see when each e-mail opens or reloads page and which percentage
-
-
-
 
 
 ### Test Online (both desktop(multiple browsers)/mobile):
 - change .env variables from NEXT_PUBLIC
 - test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Ethereum Wallet amount)
-- - Connect
-- - - Reload
-- - - Cancel
-- - - Confirm
-- - Connect More 
-- - - Reload
-- - - Cancel
-- - - Confirm
-- - Withdraw
-- - Import wallets (to and from)
-- - Multiple wallets (not connected)
-- - - Connect
-- - - - Reload
-- - - - Cancel
-- - - - Confirm
-- - - Connect More 
-- - - - Reload
-- - - - Cancel
-- - - - Confirm
 - - Allow Vapa to increase (if possible) and watch chart and profits/losses
-- - In notion:  
-- - TTA(Total Tracked Assets)/Revenue
-- - - (current) Solid Marketplace (interior) & Liquid Marketplace (exterior)
-- - - chart
+- - In notion:
 - - Users
 - - - (current) number of email created, date, time, etc
 - - - chart
@@ -123,7 +67,7 @@ Login-Signup pages (Test with 2-3 accounts):
 
 ## Loading Modules in all pages
 - All of them fade in and out (same as modules and pages in vavity.info)
-- Ethereum png at center in every page apart from home, sign-up/log-in, privacy policy
+- Bitcoin png at center in every page apart from home, sign-up/log-in, privacy policy
 
 ## After Test
 - Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
@@ -140,7 +84,7 @@ Arells powered by Vavity
 - Make slogan larger
 - Chart:
 - - Left
-– - - (ETH)
+– - - (BTC)
 - - - Investment: $4,000 (many random amounts)
 - - - Profits: + $85,000
 - - - Losses: (for sloth) $0
@@ -158,60 +102,38 @@ Arells powered by Vavity
 - Are you 
 ready to let go 
 of bear markets?
-- Message up-top (if cVactTaa =! wallet amount) "Your "ETH" amount increased in some of your wallet/s. ETH amount before connection: total wallet amount from assetConnected no, after connection: total vapa wallet amount from assetConnected no"  (Connect More (ETH)) Button -> takes to wallet
-– (B) (VAPA): $90,000
-- Chart (before wallet connection):
-- - Left
-– - - (B)
-- - - Investment: $4,000 (many random amounts)
-- - - Profits: + $85,000
+- My Portfolio
+- - Investment: acVact $0
+– - Losses (default): $0
+- - Profits (replaced Losses only if acdVatoc > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
 - - Right
-- - - Line Graph
-- - - (5 year/ 1 year/ 1 month/ 1week)
-- - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
-- - - - Bull: Show modal explanation
-- - - - Sloth: Show modal explanation
-- (random {rotated} asset price dollar amount), with Arells it would be worth (vapa dollar amount) (Connect Ethereum) (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
-- - Modal: Connecting Wallet, please wait... (until wallet address have been fetched, otherwise connection cancelled)
-- - Modal for Alert (from Vavity tester): Error connecting metamask: Request of type 'wallet_requestPermissions' already pending for origin http://localhost:3000. Please wait.
-- - Modal: Connection Canceled (ok [reloads page]) <- get alert from VavityTester ... it should also pop up if this shows: 
-- - Modal (for new wallet connection): Wallet Connection Successful, Connect Ethereum to Begin .5% fee per new assets. (Yes) <- opens asset connection (no) <- closes modal (get from vavitytester)
-- connected wallet: your ETH amount: before connection: asset price dollar amount, after connection: vapa dollar amount (Connect Ethereum) (with (Metamask)/(Base)) <- use function from VavityTester.tsx (if Metamask or other wallet not connected, automatically try to connect wallet)
-- - Modal (for already connected wallet connected): Connect Ethereum to Begin .5% fee per new assets. (Yes) <- opens asset connection (no) <- closes modal (get from vavitytester)
-- - Modal: Connecting (Loader) Ethereum, please wait... (do not reload page) <- get from vavity tester
-- - Modal: Connection Canceled (ok [reloads page]) <- get aleart from VavityTester
-- If acVatoc != 0, then hide "Connect Ethereum to begin"
-- Get From VavityTester: fetchBalance?
-- Chart (after wallet connection):
-- - Left
-- - - My Portfolio
-- - - Investment: acVact $0
-– - - Losses (default): $0
-– - - Profits (replaced Losses only if acdVatoc > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
-- - Right
-- - - Line Graph
+- - - Line Graph (daily/weekly/yrly)
 - - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - Bull: Show modal explanation
 - - - Sloth: Show modal explanation
-- ( Wallets )  
+- (add)
+- - - Purchase Date (mm/dd/yy): 
+- (investment list)
+________
+- Chart
+- - Left
+– - - (B): Vapa
+- - - Percentage Increase
+- - Right
+- - - Line Graph
+- - - (5 year/ 1 year/ 1 month/ 1week)
+- - - Market Status: Bull (🐂) {for any profits} or Sloth (🦥) {for no profits}… 
+- - - - Bull: Show modal explanation
+- - - - Sloth: Show modal explanation
 - Powered by Vavity (V) (link)
 
-### Wallets
-- Change color scheme (for modals also) to Purpple
-"Connect New Wallet" (triggered if no wallets exist from json) <- use function from VavityTester.tsx
-- (connect ethereum to begin): if json has no wallets
-- - (if cVactTaa =! wallet amount): New section: "Your “ETH” amount increased, before connection: asset price dollar amount, after connection: vapa dollar amount (Connect More Eth) <- button opens up new deposit ask and if its complete, then the new deposit <-get from VavityTester
-- - For connected wallets & assets: Lists Wallet Addresses and cVactTaa and cVact
-- - For connected wallets, not connected assets:
-- - - (Connect Eth) (connect More Eth) < - get all modals from Account
-- - For non-connected wallets
-- - - (Connect More Wallets (metamask-base))
-- - Modal: Connecting Wallet, please wait (add this) <- get all modals from Account
-- - Modal: Connecting (ETHEREUM) Asset (please wait) .5% fee per new assets. <- get all modals from Account>
+### Investment Lists
+- Purchase Date (mm/dd/yy): 
+- - (edit) (delete)
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages [large slogan] (changge Bitcoin to Ethereum)
-- - Are you ready to let go of bear markets? Connect your investments.
+- - Are you ready to let go of bear markets? Login/Signup
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
 - - Create a sitemap.xml: Helps Google discover all pages
@@ -227,30 +149,8 @@ of bear markets?
 - Remove typos from Arells/Vavity readmes, and UI
 - Replace VAPA api with real API and test (connections) on VavityTester
 - 2-3 accounts, multiple connects (monitor for 2-3 days)with real-api
-- - Connect
-- - - Reload
-- - - Cancel
-- - - Confirm
-- - Connect More 
-- - - Reload
-- - - Cancel
-- - - Confirm
-- - Withdraw
-- - Import wallets (to and from)
-- - Multiple wallets (not connected)
-- - - Connect
-- - - - Reload
-- - - - Cancel
-- - - - Confirm
-- - - Connect More 
-- - - - Reload
-- - - - Cancel
-- - - - Confirm
 - - Allow Vapa to increase (if possible) and watch chart and profits/losses
 - - In notion:  
-- - TTA(Total Tracked Assets)/Revenue
-- - - (current) Solid Marketplace (interior) & Liquid Marketplace (exterior)
-- - - chart
 - - Users
 - - - (current) number of email created, date, time, etc
 - - - chart
@@ -270,16 +170,12 @@ Users:
 - - Look at notes for openings. 
 - - Add "Discord" section for any questions
 - - FAQ: 
-- - - External vs Internal (Arells) Pricing system: Arells is an experimental company created to see whether we are ready to let go of bear markets.
-- - - Asking for deposit more than once: Only if you log-out and log back in withouht accepting or denying the deposit
 Keep marketing, dependent on growth after 1-2 weeks:
-- Increase ETHEREUM_RPC-URL
 
 
 ### Other (if Time Permits)
 - Flip sloth pngs horizontally
 - Fix (if VavityAggregator jsons are deleted (wallet connected (connect asset not poping up issue) ))
-- Error connecting asset: existingWalletsBeforeDeposit is not defined (Modal?) <-vavityTester
 - Fix (signOut/sign-up/log-in issue) loading after button click success stays true forever... add "await"?
 - Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - Remove console.logs from all files...
@@ -313,8 +209,6 @@ Keep marketing, dependent on growth after 1-2 weeks:
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
 - Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Disconnect/VavityContext
 
-### UserContextWrapped
-- if logged in for more than 5 minutes without use, automatically sign out and take to homepage.
 
 ### Home/Account
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
@@ -322,13 +216,12 @@ Keep marketing, dependent on growth after 1-2 weeks:
 - Clean up Lagging Pages
 
 
-### iOS & Android App (Chrome Extension) Wallet (after 1-2 years?)
+### iOS & Android App (after 1-2 years?)
 Recommend Arells wallet and sunset all other wallets when Arells app revenue overtakes them
 - iOS App (UI Layer)
 - - Tagline: Are you ready to let go of bear markets?
-- - Desc: Connect Digital Assets af you're ready to never see your investments lose value from bear markets losses. 
-- - submission: A blockchain interface app that connects users to decentralized protocols. The app itself performs no custody or transactions, transactions are handled by the associated blockchain.
-- Import Wallet
+- - Desc: Join Arells if you're ready to let go of bear markets. 
+- - submission: An accounting ledger containing investment information for users.
 
 ### Vavity-API (after 3-4 years)
 .... (vavity ...c

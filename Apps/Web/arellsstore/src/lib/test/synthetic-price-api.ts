@@ -1,4 +1,4 @@
-// Synthetic Ethereum Price API
+// Synthetic Bitcoin Price API
 // Pattern: Start at 205,000, increase by 500 every second for 5 seconds, 
 // then alternate: decrease 200, increase 500, decrease 200, increase 500, etc.
 
@@ -64,7 +64,7 @@ export const getSyntheticPrice = (): number => {
 // Returns price in the same format as CoinGecko API
 export const getSyntheticPriceResponse = () => {
   return {
-    'ethereum': {
+    'bitcoin': {
       usd: getSyntheticPrice()
     }
   };

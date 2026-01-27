@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import '../css/connect/connect.css';
 import VavityTester from '../../components/Vavity/VavityTester';
 
 const VavityTesterPage = () => {
