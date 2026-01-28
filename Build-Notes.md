@@ -5,6 +5,7 @@
 ## Arells v1
 
 ### Test Offline
+*Set back to fetching current bitcoin prices then, set to revert back to current price fetching after home*
 VavityTester:
 – (Bitcoin) (VAPA): $dollar price 
 - - My Portfolio (before anything is added)
@@ -23,7 +24,7 @@ VavityTester:
 - - - - amount: $ in dollars (creates new cVact group)
 - - - - Date purchased (mm/dd/yy) (added to the cVact group)
 - - - - (Submit)
-^do not delete until right is complete
+^do not delete until home is complete
 
 
 - - Right
@@ -222,7 +223,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 
 ## Arells 2 & Beyond
 
-- Wait at least 2 months to track numbers (adjust plan based on feedback), Updates (oDAO, FndrsINC, etc, ETH-FND (ppr, alx)):
+- Wait at least 2 months to track numbers (adjust plan based on feedback), Updates (oDAO, FndrsINC, etc, (New?)):
 - - Compare Retention rate (in bear markets WoM only (percentages)) and market dominance of solid marketplaces: Projections (with current trajectory) with/without inv/asset additions (WoW percentage comparisons)
 - Add 1 new asset a week (VAPA/wallet-connection) (and home page with Market Cap (VAPA))
 - - Assets have their own page and token values (that should be implemented in fetchBalance and everywhere these token values are used) (connect asset)
