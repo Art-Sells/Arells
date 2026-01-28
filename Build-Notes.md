@@ -6,25 +6,41 @@
 
 ### Test Offline
 VavityTester:
-- Keep Vapa/ before/after Vapa prices
-- Remove all ETH wallet addresses or wallet connection json locations
-- Remove all wallet connection modals/displays or anything dealing with wallet connections (jsons/etc)
+Keep Vapa/ before/after Vapa prices
+Remove all ETH wallet addresses or wallet connection json locations
+Remove all wallet connection modals/displays or anything dealing with wallet connections (jsons/etc)
+In the vavityAggregator API (and all the VavityAggregator files functions) change everything ending with oc to op so for example, cVatoc will change to cVatop, etc
+Create a section that shows this:
 - Account
-– (B) (VAPA): $90,000
-- If acVatoi != 0, then hide "Connect Bitcoin to begin"
-- Chart (Account):
-- - - My Portfolio
+– (Bitcoin) (VAPA): $dollar price 
+- - My Portfolio (before anything is added)
+- - - (Add Investments)
+- - - - when button above clicked, it shows:
+- - - - bitcoin amount (section to enter bitcoin in token amounts (satoshis)) cVactTaa
+- - - - Date purchased (section to choose mm/dd/yy) (added to the cVact group)
+- - - - $ Amount: automatically displays Bitcoin Amount at the time of purchase (this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA) x bitcoin amount entered
+- - - - (Submit)
+- - My Porfolio (after investments added)
 - - - Investment: acVact $0
 – - - Losses (default): $0 
 – - - Profits (replaces losses only if acdVatoc is > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - (add more investments) 
+- - - - when button above clicked, it shows:
+- - - - amount: $ in dollars (creates new cVact group)
+- - - - Date purchased (mm/dd/yy) (added to the cVact group)
+- - - - (Submit)
+^do not delete until right is complete
+
+
 - - Right
 - - - Line Graph (daily/weekly/yrly)
 - - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - Bull: Show modal explanation
 - - - Sloth: Show modal explanation
-- (add)
-- - - Purchase Date (mm/dd/yy): 
-- (investment list)
+- - (investment list)
+- - - lists cVactGroups when clicked
+^Add above after test/completions
+
 - Home
 - Chart:
 - - Left
@@ -94,7 +110,8 @@ Arells powered by Vavity
 - - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
-- Powered By Vavity replces bottom "connect words"
+- (How It Works)
+- Powered By V
 
 ### Account
 - Change color scheme (for modals also) to Purpple
@@ -125,11 +142,23 @@ ________
 - - - Market Status: Bull (🐂) {for any profits} or Sloth (🦥) {for no profits}… 
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
-- Powered by Vavity (V) (link)
+- (How It Works)
+- Powered by (V)
 
 ### Investment Lists
 - Purchase Date (mm/dd/yy): 
 - - (edit) (delete)
+- (How It Works)
+- Powered by (V)
+
+### How It Works:
+    Financial instutions will reliquish bear markets only if you (the investor) are also willing to do the same. 
+
+    Arells was created to see whether you are ready to let go of bear markets. 
+
+    Powered by (Vavity V); An autonomous pricing system that anchors asset prices before they fall, financial insitutions adopting Vavity into their buying and selling mechanisms (ensuring your investments never experience bear market losses) will be dependent on how often you use (and share) your Arells portfolio. 
+
+    Are you ready to let go of bear markets? (Login) or (View Account)
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages [large slogan] (changge Bitcoin to Ethereum)
@@ -161,6 +190,7 @@ ________
 - Email/X-Twitter/LinkedIn+crunchbase(compeny-type: social experiment, assets, digital-assets)/: Are you ready to let go of bear markets? 
 
 ### After Completion
+- Cancel Infura/Metamask
 - Always Save Vavity JSON file data everyday offline (in case of breach)
 - Delete Arells Readme roadmap
 Users:

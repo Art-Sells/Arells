@@ -27,8 +27,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (error.code === 'NoSuchKey' || error.statusCode === 404) {
       // Don't log - this is expected behavior for new users
       return res.status(200).json({
-        wallets: [],
-        vavityCombinations: {}, // Empty object - will be keyed by VAPAA
+        investments: [],
+        totals: {
+          acVatop: 0,
+          acVact: 0,
+          acdVatop: 0,
+          acVactTaa: 0,
+        },
       });
     }
     

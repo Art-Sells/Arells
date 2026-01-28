@@ -38,7 +38,7 @@ const VavityTester: React.FC = () => {
     };
   }, [email, fetchVavityAggregator]);
 
-  const addresses = vavityData?.wallets || [];
+  const investments = vavityData?.investments || [];
 
   return (
     <div style={{ padding: '24px' }}>
@@ -61,26 +61,29 @@ const VavityTester: React.FC = () => {
       </div>
 
       <div>
-        <h2 style={{ marginBottom: '12px' }}>Stored Addresses</h2>
+        <h2 style={{ marginBottom: '12px' }}>Stored Investments</h2>
         {loading && <div>Loading...</div>}
-        {!loading && addresses.length === 0 && <div>No addresses found.</div>}
-        {!loading && addresses.length > 0 && (
+        {!loading && investments.length === 0 && <div>No investments found.</div>}
+        {!loading && investments.length > 0 && (
           <div style={{ display: 'grid', gap: '12px' }}>
-            {addresses.map((entry: any) => {
-              const address = entry.address || 'Unknown address';
+            {investments.map((entry: any, idx: number) => {
               const amount = entry.cVactTaa ?? 0;
               return (
                 <div
-                  key={entry.walletId || address}
+                  key={idx}
                   style={{
                     border: '1px solid #333',
                     borderRadius: '8px',
                     padding: '12px'
                   }}
                 >
-                  <div>Address: {address}</div>
+                  <div>VAPA at Purchase (cpVatop): {entry.cpVatop ?? 0}</div>
+                  <div>Value at Purchase (cVatop): {entry.cVatop ?? 0}</div>
+                  <div>Current Price (cpVact): {entry.cpVact ?? 0}</div>
+                  <div>Current Value (cVact): {entry.cVact ?? 0}</div>
+                  <div>Delta (cdVatop): {entry.cdVatop ?? 0}</div>
                   <div>
-                    BTC Amount:{' '}
+                    Token Amount (cVactTaa):{' '}
                     {Number(amount).toLocaleString('en-US', {
                       minimumFractionDigits: 8,
                       maximumFractionDigits: 8

@@ -18,7 +18,7 @@ const Account: React.FC = () => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   };
 
-  const { vavityPrice, vatopCombinations } = useVavity();
+  const { vavityPrice, totals } = useVavity();
   const bitcoinPrice = useBitcoinPrice();
   const formattedPrice = bitcoinPrice ? Math.round(bitcoinPrice).toLocaleString('en-US') : '...';
 
@@ -88,7 +88,7 @@ const Account: React.FC = () => {
           }
         </div>
         <div style={{ marginBottom: '24px' }}>
-          Total BTC: {vatopCombinations?.acVactTaa?.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 }) || '0.00000000'}
+          Total BTC: {totals?.acVactTaa?.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 }) || '0.00000000'}
         </div>
 
         <BitcoinChartAccount />

@@ -4,36 +4,23 @@ import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 
-// Calculate vavity combinations per VAPAA (token address)
-// Returns an object keyed by VAPAA, each containing totals for that token
-const calculateVavityCombinations = (wallets: any[]) => {
-  const combinationsByVapaa: Record<string, {
-    acVatoc: number;
-    acVact: number;
-    acdVatoc: number;
-    acVactTaa: number;
-  }> = {};
-
-  wallets.forEach((wallet) => {
-    // Use VAPAA (token address) as the key, default to native BTC if not provided
-    const vapaa = wallet.vapaa || '0x0000000000000000000000000000000000000000';
-    
-    if (!combinationsByVapaa[vapaa]) {
-      combinationsByVapaa[vapaa] = {
-      acVatoc: 0,
-        acVact: 0,
-      acdVatoc: 0,
-      acVactTaa: 0,
+// Calculate totals for investments
+const calculateTotals = (investments: any[]) => {
+  return investments.reduce(
+    (acc, inv) => {
+      const cVatop = inv.cVatop || 0;
+      const cVact = inv.cVact || 0;
+      const cdVatop = inv.cdVatop || 0;
+      const cVactTaa = inv.cVactTaa ?? 0;
+      return {
+        acVatop: acc.acVatop + cVatop,
+        acVact: acc.acVact + cVact,
+        acdVatop: acc.acdVatop + cdVatop,
+        acVactTaa: acc.acVactTaa + cVactTaa,
       };
-    }
-
-    combinationsByVapaa[vapaa].acVatoc += wallet.cVatoc || 0;
-    combinationsByVapaa[vapaa].acVact += wallet.cVact || 0;
-    combinationsByVapaa[vapaa].acdVatoc += wallet.cdVatoc || 0;
-    combinationsByVapaa[vapaa].acVactTaa += wallet.cVactTaa ?? 0;
-  });
-
-  return combinationsByVapaa;
+    },
+    { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 }
+  );
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -41,11 +28,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, newWallets } = req.body;
+  const { email, newInvestments } = req.body;
 
-  if (!email || !Array.isArray(newWallets) || newWallets.length === 0) {
-    console.error("Invalid request data:", { email, newWallets });
-    return res.status(400).json({ error: 'Invalid request: Missing email or newWallets' });
+  if (!email || !Array.isArray(newInvestments) || newInvestments.length === 0) {
+    console.error("Invalid request data:", { email, newInvestments });
+    return res.status(400).json({ error: 'Invalid request: Missing email or newInvestments' });
   }
 
   try {
@@ -64,86 +51,32 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    const existingWallets = Array.isArray(existingData.wallets) ? existingData.wallets : [];
+    const existingInvestments = Array.isArray(existingData.investments) ? existingData.investments : [];
 
-    // Filter out wallets with duplicate IDs OR duplicate addresses
-    const validNewWallets = newWallets.filter((wallet: any) => {
-      if (!wallet.walletId || !wallet.address) {
-        return false; // Skip wallets without required fields
-      }
-      
-      // Ensure VAPAA is set (default to native BTC if not provided)
-      if (!wallet.vapaa) {
-        wallet.vapaa = '0x0000000000000000000000000000000000000000';
-      }
-      
-      // Ensure depositPaid is set (default to false if not provided)
-      if (wallet.depositPaid === undefined) {
-        wallet.depositPaid = false;
-      }
-      
-      // Check for duplicate walletId
-      const hasDuplicateId = existingWallets.some((existingWallet: any) => existingWallet.walletId === wallet.walletId);
-      if (hasDuplicateId) {
-        console.log(`Skipping wallet with duplicate ID: ${wallet.walletId}`);
-        return false;
-      }
-      
-      // Check for duplicate address (case-insensitive) AND same VAPAA
-      // Allow same address with different VAPAA (different tokens)
-      const hasDuplicateAddress = existingWallets.some((existingWallet: any) => {
-        const existingVapaa = existingWallet.vapaa || '0x0000000000000000000000000000000000000000';
-        const newVapaa = wallet.vapaa || '0x0000000000000000000000000000000000000000';
-        return existingWallet.address?.toLowerCase() === wallet.address?.toLowerCase() &&
-               existingVapaa.toLowerCase() === newVapaa.toLowerCase();
-      });
-      if (hasDuplicateAddress) {
-        console.log(`Skipping wallet with duplicate address and VAPAA: ${wallet.address}, VAPAA: ${wallet.vapaa || '0x0000...'}`);
-        return false;
-      }
-      
-      return true;
+    const normalizedNewInvestments = newInvestments.map((inv: any) => {
+      const cVatop = inv.cVatop ?? 0;
+      const cpVatop = inv.cpVatop ?? 0;
+      const cVactTaa = inv.cVactTaa ?? 0;
+      const cpVact = inv.cpVact ?? cpVatop;
+      const cVact = inv.cVact ?? cVactTaa * cpVact;
+      const cdVatop = inv.cdVatop ?? (cVact - cVatop);
+      return {
+        ...inv,
+        cVatop: parseFloat(cVatop.toFixed(2)),
+        cpVatop: cpVatop,
+        cVactTaa: parseFloat(cVactTaa.toFixed(8)),
+        cpVact: cpVact,
+        cVact: parseFloat(cVact.toFixed(2)),
+        cdVatop: parseFloat(cdVatop.toFixed(2)),
+      };
     });
 
-    if (validNewWallets.length === 0) {
-      console.log('[addVavityAggregator] All wallets are duplicates, but continuing to return existing data');
-      // Return existing data instead of error - wallet might already exist
-      return res.status(200).json({ 
-        message: 'All wallets already exist', 
-        data: existingData 
-      });
-    }
+    const updatedInvestments = [...existingInvestments, ...normalizedNewInvestments];
+    const totals = calculateTotals(updatedInvestments);
 
-    const updatedWallets = [...existingWallets, ...validNewWallets];
-
-    // Calculate new vavity combinations per VAPAA
-    const newVavityCombinations = calculateVavityCombinations(updatedWallets);
-
-    // Merge with existing vavityCombinations (preserve existing VAPAAs)
-    const existingVavityCombinations = existingData.vavityCombinations || {};
-    const updatedVavityCombinations = { ...existingVavityCombinations };
-    
-    // Update or add VAPAA combinations
-    Object.keys(newVavityCombinations).forEach((vapaa) => {
-      if (updatedVavityCombinations[vapaa]) {
-        // Merge existing totals
-        updatedVavityCombinations[vapaa] = {
-          acVatoc: updatedVavityCombinations[vapaa].acVatoc + newVavityCombinations[vapaa].acVatoc,
-          acVact: updatedVavityCombinations[vapaa].acVact + newVavityCombinations[vapaa].acVact,
-          acdVatoc: updatedVavityCombinations[vapaa].acdVatoc + newVavityCombinations[vapaa].acdVatoc,
-          acVactTaa: updatedVavityCombinations[vapaa].acVactTaa + newVavityCombinations[vapaa].acVactTaa,
-        };
-      } else {
-        // Add new VAPAA
-        updatedVavityCombinations[vapaa] = newVavityCombinations[vapaa];
-      }
-    });
-
-    // VAPA is now stored in global /api/vapa endpoint, not in VavityAggregate.json
     const newData = {
-      ...existingData,
-      wallets: updatedWallets,
-      vavityCombinations: updatedVavityCombinations,
+      investments: updatedInvestments,
+      totals,
     };
 
     await s3

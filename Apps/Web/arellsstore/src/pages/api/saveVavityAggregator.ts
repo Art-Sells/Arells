@@ -4,34 +4,23 @@ import AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 
-// Calculate vavity combinations per VAPAA (token address)
-const calculateVavityCombinations = (wallets: any[]) => {
-  const combinationsByVapaa: Record<string, {
-    acVatoc: number;
-    acVact: number;
-    acdVatoc: number;
-    acVactTaa: number;
-  }> = {};
-
-  wallets.forEach((wallet) => {
-    const vapaa = wallet.vapaa || '0x0000000000000000000000000000000000000000';
-    
-    if (!combinationsByVapaa[vapaa]) {
-      combinationsByVapaa[vapaa] = {
-        acVatoc: 0,
-        acVact: 0,
-        acdVatoc: 0,
-        acVactTaa: 0,
+// Calculate totals for investments
+const calculateTotals = (investments: any[]) => {
+  return investments.reduce(
+    (acc, inv) => {
+      const cVatop = inv.cVatop || 0;
+      const cVact = inv.cVact || 0;
+      const cdVatop = inv.cdVatop || 0;
+      const cVactTaa = inv.cVactTaa ?? 0;
+      return {
+        acVatop: acc.acVatop + cVatop,
+        acVact: acc.acVact + cVact,
+        acdVatop: acc.acdVatop + cdVatop,
+        acVactTaa: acc.acVactTaa + cVactTaa,
       };
-    }
-
-    combinationsByVapaa[vapaa].acVatoc += wallet.cVatoc || 0;
-    combinationsByVapaa[vapaa].acVact += wallet.cVact || 0;
-    combinationsByVapaa[vapaa].acdVatoc += wallet.cdVatoc || 0;
-    combinationsByVapaa[vapaa].acVactTaa += wallet.cVactTaa ?? 0;
-  });
-
-  return combinationsByVapaa;
+    },
+    { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 }
+  );
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -39,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, vavityCombinations, wallets, balances, globalVapa } = req.body; // balances: array of { address, balance, vapaa }, globalVapa: optional global VAPA value
+  const { email, investments } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: 'Missing email' });
@@ -56,235 +45,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (err: any) {
       if (err.code === 'NoSuchKey') {
         console.warn("⚠️ No existing data found for user:", email);
-        existingData = { wallets: [] };
+        existingData = { investments: [] };
       } else {
         throw err;
       }
     }
 
-    // If balances are provided, update wallets with balance-based calculations
-    // Otherwise, just recalculate cVact, cVatoc, cdVatoc from existing cVactTaa
-    let validatedWallets: any[];
-    
-    // CRITICAL: Choose which wallets to use based on whether balances are provided
-    // - When balances ARE provided: Use existingData.wallets (fresh from S3) to get latest cVactTaa
-    // - When balances are NOT provided: Use wallets passed in (they have the updated cVactTaa)
-    const walletsToProcess = (balances && Array.isArray(balances) && balances.length > 0) 
-      ? (existingData.wallets || wallets)
-      : wallets;
-    
-    if (balances && Array.isArray(balances) && balances.length > 0) {
-      // Update wallets with balance-based calculations
-      // Use walletsToProcess (fresh from S3) to get latest cVactTaa values
-      validatedWallets = walletsToProcess.map((wallet: any) => {
-        // Only update wallets where depositPaid is true
-        if (wallet.depositPaid !== true) {
-          // Just recalculate cVact, cVatoc, cdVatoc from existing values
-          const cVactTaa = wallet.cVactTaa;
-          if (!cVactTaa) {
-            throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
-          }
-          const cpVact = wallet.cpVact || 0;
-          const cpVatoc = wallet.cpVatoc || cpVact;
-          const recalculatedCVact = cVactTaa * cpVact;
-          const recalculatedCVatoc = cVactTaa * cpVatoc;
-          const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
-          
-          return {
-            ...wallet,
-            cVact: parseFloat(recalculatedCVact.toFixed(2)),
-            cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
-            cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
-          };
-        }
-        
-        // Find balance for this wallet
-        const balanceData = balances.find(
-          (b: any) => b.address?.toLowerCase() === wallet.address?.toLowerCase() &&
-                      (b.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase() === 
-                      (wallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()
-        );
-        
-        if (balanceData) {
-          if (balanceData.balance === null || balanceData.balance === undefined) {
-            // No balance data, recalculate from existing values
-            const cVactTaa = wallet.cVactTaa;
-            if (!cVactTaa) {
-              throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
-            }
-            const cpVact = wallet.cpVact || 0;
-            const cpVatoc = wallet.cpVatoc || cpVact;
-            const recalculatedCVact = cVactTaa * cpVact;
-            const recalculatedCVatoc = cVactTaa * cpVatoc;
-            const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
-            
-            return {
-              ...wallet,
-              cVact: parseFloat(recalculatedCVact.toFixed(2)),
-              cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
-              cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
-            };
-          }
-          const currentBalance = parseFloat(balanceData.balance);
-          if (isNaN(currentBalance)) {
-            // Invalid balance, recalculate from existing values
-            const cVactTaa = wallet.cVactTaa;
-            if (!cVactTaa) {
-              throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
-            }
-            const cpVact = wallet.cpVact || 0;
-            const cpVatoc = wallet.cpVatoc || cpVact;
-            const recalculatedCVact = cVactTaa * cpVact;
-            const recalculatedCVatoc = cVactTaa * cpVatoc;
-            const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
-            
-            return {
-              ...wallet,
-              cVact: parseFloat(recalculatedCVact.toFixed(2)),
-              cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
-              cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
-            };
-          }
-          const currentCVactTaa = wallet.cVactTaa;
-          if (!currentCVactTaa) {
-            throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
-          }
-          
-          // Update cVactTaa: only allow decrease, never increase
-          let newCVactTaa: number;
-          if (currentBalance < currentCVactTaa) {
-            // Balance decreased - update cVactTaa to reflect the lower balance
-            newCVactTaa = currentBalance;
-            console.log(`[saveVavityAggregator] 📝 cVactTaa UPDATE: ${wallet.address} | ${currentCVactTaa} -> ${newCVactTaa} | Reason: balance decreased`);
-          } else {
-            // Balance is same or higher - preserve original cVactTaa (connection-time snapshot)
-            newCVactTaa = currentCVactTaa;
-          }
-          
-          // cpVact should always be >= global VAPA (if provided)
-          const newCpVact = globalVapa ? Math.max(wallet.cpVact || 0, globalVapa) : (wallet.cpVact || 0);
-          const newCpVatoc = wallet.cpVatoc && wallet.cpVatoc > 0 ? wallet.cpVatoc : newCpVact;
-          
-          // Calculate cVact, cVatoc, cdVatoc using formulas
-          const newCVact = newCVactTaa * newCpVact;
-          const newCVatoc = newCVactTaa * newCpVatoc;
-          const newCdVatoc = newCVact - newCVatoc;
-          
-          console.log(`[saveVavityAggregator] Updating wallet ${wallet.address}: balance=${currentBalance}, cVactTaa=${currentCVactTaa} -> ${newCVactTaa}`);
-          
-          return {
-            ...wallet,
-            vapaa: wallet.vapaa || '0x0000000000000000000000000000000000000000',
-            depositPaid: wallet.depositPaid !== undefined ? wallet.depositPaid : true,
-            cVactTaa: newCVactTaa,
-            cpVact: newCpVact,
-            cpVatoc: newCpVatoc,
-            cVact: parseFloat(newCVact.toFixed(2)),
-            cVatoc: parseFloat(newCVatoc.toFixed(2)),
-            cdVatoc: parseFloat(newCdVatoc.toFixed(2)),
-          };
-        }
-        
-        // No balance data found, just recalculate from existing values
-        const cVactTaa = wallet.cVactTaa;
-        if (!cVactTaa) {
-          throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
-        }
-        const cpVact = wallet.cpVact || 0;
-        const cpVatoc = wallet.cpVatoc || cpVact;
-        const recalculatedCVact = cVactTaa * cpVact;
-        const recalculatedCVatoc = cVactTaa * cpVatoc;
-        const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
-        
-        return {
-          ...wallet,
-          cVact: parseFloat(recalculatedCVact.toFixed(2)),
-          cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
-          cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
-        };
-      });
-    } else {
-      // No balances provided, just recalculate cVact, cVatoc, cdVatoc from existing cVactTaa
-      // Use walletsToProcess (fresh from S3) to get latest cVactTaa values
-      validatedWallets = walletsToProcess.map((wallet: any) => {
-        const cVactTaa = wallet.cVactTaa;
-        
-        // cVactTaa must be valid - throw error if missing
-        if (!cVactTaa) {
-          throw new Error(`Wallet ${wallet.address} has missing cVactTaa. cVactTaa must be valid.`);
-        }
-        
-        const cpVact = wallet.cpVact || 0;
-        const cpVatoc = wallet.cpVatoc || cpVact;
-        
-        const recalculatedCVact = cVactTaa * cpVact;
-        const recalculatedCVatoc = cVactTaa * cpVatoc;
-        const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
-        
-        return {
-          ...wallet,
-          cVact: parseFloat(recalculatedCVact.toFixed(2)),
-          cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
-          cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
-        };
-      });
-    }
-    
-    // ✅ MERGE wallets: Update existing wallets or add new ones
-    // This prevents overwriting wallets that aren't in the validatedWallets array
-    const existingWallets = existingData.wallets || [];
-    const mergedWallets: any[] = [];
-    
-    // Create a map of existing wallets by address+vapaa for quick lookup
-    const existingWalletsMap = new Map<string, any>();
-    existingWallets.forEach((wallet: any) => {
-      const key = `${wallet.address?.toLowerCase() || ''}_${(wallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()}`;
-      existingWalletsMap.set(key, wallet);
+    const existingInvestments = Array.isArray(existingData.investments) ? existingData.investments : [];
+    const incomingInvestments = Array.isArray(investments) ? investments : existingInvestments;
+
+    const normalizedInvestments = incomingInvestments.map((inv: any) => {
+      const cVatop = inv.cVatop ?? 0;
+      const cpVatop = inv.cpVatop ?? 0;
+      const cVactTaa = inv.cVactTaa ?? 0;
+      const cpVact = inv.cpVact ?? cpVatop;
+      const cVact = inv.cVact ?? cVactTaa * cpVact;
+      const cdVatop = inv.cdVatop ?? (cVact - cVatop);
+      return {
+        ...inv,
+        cVatop: parseFloat(cVatop.toFixed(2)),
+        cpVatop,
+        cVactTaa: parseFloat(cVactTaa.toFixed(8)),
+        cpVact,
+        cVact: parseFloat(cVact.toFixed(2)),
+        cdVatop: parseFloat(cdVatop.toFixed(2)),
+      };
     });
-    
-    // Process validated wallets (from balance updates or other sources)
-    const processedKeys = new Set<string>();
-    validatedWallets.forEach((validatedWallet: any) => {
-      const key = `${validatedWallet.address?.toLowerCase() || ''}_${(validatedWallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()}`;
-      processedKeys.add(key);
-      mergedWallets.push(validatedWallet);
-    });
-    
-    // Add existing wallets that weren't in validatedWallets (preserve wallets not being updated)
-    existingWallets.forEach((existingWallet: any) => {
-      const key = `${existingWallet.address?.toLowerCase() || ''}_${(existingWallet.vapaa || '0x0000000000000000000000000000000000000000').toLowerCase()}`;
-      if (!processedKeys.has(key)) {
-        // Recalculate this wallet's values too (for consistency)
-        const cVactTaa = existingWallet.cVactTaa;
-        
-        // Skip this wallet if cVactTaa is missing
-        if (!cVactTaa) {
-          console.error(`[saveVavityAggregator] Skipping wallet ${existingWallet.address} with missing cVactTaa. cVactTaa must be valid.`);
-          return; // Skip this wallet - don't include it in mergedWallets
-        }
-        
-        const cpVact = existingWallet.cpVact || 0;
-        const cpVatoc = existingWallet.cpVatoc || cpVact;
-        const recalculatedCVact = cVactTaa * cpVact;
-        const recalculatedCVatoc = cVactTaa * cpVatoc;
-        const recalculatedCdVatoc = recalculatedCVact - recalculatedCVatoc;
-        
-        mergedWallets.push({
-          ...existingWallet,
-          cVact: parseFloat(recalculatedCVact.toFixed(2)),
-          cVatoc: parseFloat(recalculatedCVatoc.toFixed(2)),
-          cdVatoc: parseFloat(recalculatedCdVatoc.toFixed(2)),
-        });
-      }
-    });
-    
-    // Always recalculate vavityCombinations from merged wallets to ensure accuracy
-    // This ensures acdVatoc and other totals are always correct based on current wallet data
-    const calculatedVavityCombinations = calculateVavityCombinations(mergedWallets);
+
+    const totals = calculateTotals(normalizedInvestments);
 
     const newData = {
-      wallets: mergedWallets, // ← merged wallets (updated + preserved)
-      vavityCombinations: calculatedVavityCombinations,
+      investments: normalizedInvestments,
+      totals,
     };
 
     // Save the updated data back to S3
