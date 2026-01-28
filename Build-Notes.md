@@ -78,7 +78,7 @@ Login-Signup pages (Test with 2-3 accounts):
 (view all s3 jsons and check Arells Ethereum Wallet amount)
 
 ## Privacy Policy
-- Look
+- Look and edit (remove all crypto and fintech stuf)
 
 
 ## Loading Modules in all pages
@@ -111,7 +111,6 @@ Arells powered by Vavity
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
 - (How It Works)
-- Powered By V
 
 ### Account
 - Change color scheme (for modals also) to Purpple
@@ -143,22 +142,22 @@ ________
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
 - (How It Works)
-- Powered by (V)
 
 ### Investment Lists
 - Purchase Date (mm/dd/yy): 
 - - (edit) (delete)
 - (How It Works)
-- Powered by (V)
 
 ### How It Works:
     Financial instutions will reliquish bear markets only if you (the investor) are also willing to do the same. 
 
     Arells was created to see whether you are ready to let go of bear markets. 
 
-    Powered by (Vavity V); An autonomous pricing system that anchors asset prices before they fall, financial insitutions adopting Vavity into their buying and selling mechanisms (ensuring your investments never experience bear market losses) will be dependent on how often you use (and share) your Arells portfolio. 
+    Powered by Vavity; An autonomous pricing system that anchors asset prices before they fall, the likelihood of financial insitutions adopting Vavity into their buying and selling mechanisms (ensuring your investments never experience bear market losses) will be dependent on how often you use (and share) your Arells portfolio. 
 
     Are you ready to let go of bear markets? (Login) or (View Account)
+
+    Powered by (Vavity (V))
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages [large slogan] (changge Bitcoin to Ethereum)
