@@ -6,14 +6,16 @@
 
 ### Test Offline
 *Set back to fetching current bitcoin prices then, set to revert back to current price fetching after home*
+- 
 VavityTester:
 – (Bitcoin) (VAPA): $dollar price 
 - - My Portfolio (before anything is added)
 - - - (Add Investments)
 - - - - when button above clicked, it shows:
-- - - - bitcoin amount (section to enter bitcoin in token amounts (satoshis)) cVactTaa
+- - - - $ Amount: automatically displays Bitcoin Amount at the time of purchase (this should correspond and get the bitcoin price from the "date purchased" section) (this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA) x bitcoin amount entered ... If for example VAPA after 01/05/26 is greater than bitcoinPrice on 01/10/26, then $ Amount should be based on VAPA and not bitcoin Price
+– - - - $ Profits (default when no activity inside bitcoin amount section): (VAPA x bitcoinAmount) minus (Bitcoin Price x bitcoinAmount)  
+- - - - bitcoin amount (section to enter bitcoin in token amounts (satoshis)) cVactTaa (formatCurrency (display only) 000,000,000.000(max sats))
 - - - - Date purchased (section to choose mm/dd/yy) (added to the cVact group)
-- - - - $ Amount: automatically displays Bitcoin Amount at the time of purchase (this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA) x bitcoin amount entered
 - - - - (Submit)
 - - My Porfolio (after investments added)
 - - - Investment: acVact $0
@@ -26,7 +28,6 @@ VavityTester:
 - - - - (Submit)
 ^do not delete until home is complete
 
-
 - - Right
 - - - Line Graph (daily/weekly/yrly)
 - - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
@@ -34,7 +35,7 @@ VavityTester:
 - - - Sloth: Show modal explanation
 - - (investment list)
 - - - lists cVactGroups when clicked
-^Add above after test/completions
+^Add above after revert/test/completions
 
 - Home
 - Chart:
@@ -49,6 +50,7 @@ VavityTester:
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
 
+- Revert back to commit (to test above): before current Bitcoin price API set
 
 Login-Signup pages (Test with 2-3 accounts):
 - Login/Signup with Google/Apple (reconfigure pages)
