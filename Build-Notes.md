@@ -6,12 +6,6 @@
 
 ### Test Offline
 VavityTester:
-Keep Vapa/ before/after Vapa prices
-Remove all ETH wallet addresses or wallet connection json locations
-Remove all wallet connection modals/displays or anything dealing with wallet connections (jsons/etc)
-In the vavityAggregator API (and all the VavityAggregator files functions) change everything ending with oc to op so for example, cVatoc will change to cVatop, etc
-Create a section that shows this:
-- Account
 – (Bitcoin) (VAPA): $dollar price 
 - - My Portfolio (before anything is added)
 - - - (Add Investments)
