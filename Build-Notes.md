@@ -12,15 +12,14 @@ VavityTester:
 - - My Portfolio (before anything is added)
 - - - (Add Investments)
 - - - - when button above clicked, it shows:
-- - - - $ Amount: automatically displays Bitcoin Amount at the time of purchase (this should correspond and get the bitcoin price from the "date purchased" section) (this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA) x bitcoin amount entered ... If for example VAPA after 01/05/26 is greater than bitcoinPrice on 01/10/26, then $ Amount should be based on VAPA and not bitcoin Price
-– - - - $ Profits (default when no activity inside bitcoin amount section): (VAPA x bitcoinAmount) minus (Bitcoin Price x bitcoinAmount)  
+- - - - $ Amount (add to test UI display for lots of bitcoin): automatically displays Bitcoin Amount at the time of purchase (this should correspond and get the bitcoin price from the "date purchased" section) (this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA) x bitcoin amount entered ... If for example VAPA after 01/05/26 is greater than bitcoinPrice on 01/10/26, then $ Amount should be based on VAPA and not bitcoin Price
+– - - - $ Profits/Losses (add to test UI display for lots of bitcoin) (default when no activity inside bitcoin amount section): (VAPA x bitcoinAmount) minus (VAPAHistoricalPrice x bitcoinAmount)  changes to $ Losses: $ 0, when date is chosen and profits are zero
 - - - - bitcoin amount (section to enter bitcoin in token amounts (satoshis)) cVactTaa (formatCurrency (display only) 000,000,000.000(max sats))
 - - - - Date purchased (section to choose mm/dd/yy) (added to the cVact group)
 - - - - (Submit)
 - - My Porfolio (after investments added)
-- - - Investment: acVact $0
-– - - Losses (default): $0 
-– - - Profits (replaces losses only if acdVatoc is > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - - Investment (add to test UI display for lots of bitcoin): acVact $0
+– - - Profits/Losses (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
 - - (add more investments) 
 - - - - when button above clicked, it shows:
 - - - - amount: $ in dollars (creates new cVact group)
@@ -99,8 +98,7 @@ Arells powered by Vavity
 - - Left
 – - - (BTC)
 - - - Investment: $4,000 (many random amounts)
-- - - Profits: + $85,000
-- - - Losses: (for sloth) $0
+- - - Profits/Losses: + $85,000
 - - Right
 - - - Line Graph
 - - - (5 year/ 1 year/ 1 month/ 1week)
@@ -117,8 +115,7 @@ ready to let go
 of bear markets?
 - My Portfolio
 - - Investment: acVact $0
-– - Losses (default): $0
-- - Profits (replaced Losses only if acdVatoc > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - Profits/Losses (replaced Losses only if acdVatoc > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
 - - Right
 - - - Line Graph (daily/weekly/yrly)
 - - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
@@ -173,7 +170,7 @@ ________
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
 - Replace VAPA api with real API and test (connections) on VavityTester
-- 2-3 accounts, multiple connects (monitor for 2-3 days)with real-api
+- 2-3 accounts, multiple connects (monitor for 2-3 days)with real-api 
 - - Allow Vapa to increase (if possible) and watch chart and profits/losses
 - - In notion:  
 - - Users
@@ -183,7 +180,7 @@ ________
 
 #### Deployment (Main) Amplify/S3 Login
 - Test (with vavity.info) on socials (DM's/etc)
-- Email/X-Twitter/LinkedIn+crunchbase(compeny-type: social experiment, assets, digital-assets)/: Are you ready to let go of bear markets? 
+- Email/X-Twitter/LinkedIn+crunchbase+CSC(compeny-type: social experiment,Financial Technology)/: Are you ready to let go of bear markets? 
 
 ### After Completion
 - Cancel Infura/Metamask
@@ -226,6 +223,7 @@ Keep marketing, dependent on growth after 1-2 weeks:
 ## Arells 2 & Beyond
 
 - Wait at least 2 months to track numbers (adjust plan based on feedback), Updates (oDAO, FndrsINC, etc, (New?)):
+- - increase CG API limit? (track)
 - - Compare Retention rate (in bear markets WoM only (percentages)) and market dominance of solid marketplaces: Projections (with current trajectory) with/without inv/asset additions (WoW percentage comparisons)
 - Add 1 new asset a week (VAPA/wallet-connection) (and home page with Market Cap (VAPA))
 - - Assets have their own page and token values (that should be implemented in fetchBalance and everywhere these token values are used) (connect asset)
@@ -249,12 +247,12 @@ Recommend Arells wallet and sunset all other wallets when Arells app revenue ove
 - - Desc: Join Arells if you're ready to let go of bear markets. 
 - - submission: An accounting ledger containing investment information for users.
 
-### Vavity-API (after 3-4 years)
+### Vavity-API (after 3-4 years?)
 .... (vavity ...c
 ... Are you ready to let go of bear markets?
 ... (Integrate Vavity))
 
-### Pro-Natalism + Building Healthy Mind
+### Pro-Natalism + Building Healthy Mind ?
 - Daily Recommendation: 7-8~ hrs of daily sleep and a personal daily gratitude journal.
 - P/T 25-30 hrs for prnts with kids (research slry). 40+ for those without (apart from Executive positions)
 

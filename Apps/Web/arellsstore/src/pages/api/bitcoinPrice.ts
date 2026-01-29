@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const response = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
+    const response = await axios.get('https://pro-api.coingecko.com/api/v3/simple/price', {
       params: {
         ids: 'bitcoin',
         vs_currencies: 'usd'
@@ -31,6 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json(response.data);
   } catch (error) {
     console.error('Error fetching Bitcoin price:', error);
+    if (cachedPrice !== null) {
+      res.status(200).json({ 'bitcoin': { usd: cachedPrice } });
+      return;
+    }
     res.status(500).json({ error: 'Error fetching Bitcoin price' });
   }
 }

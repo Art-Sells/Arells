@@ -24,6 +24,7 @@ interface TotalsState {
 interface VavityaggregatorType {
   assetPrice: number;
   vapa: number;
+  vapaDate: string | null;
   investments: Investment[];
   totals: TotalsState;
   vavityPrice: number; // Alias for vapa (legacy compatibility)
@@ -40,6 +41,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [email, setEmail] = useState<string>('');
   const [assetPrice, setAssetPrice] = useState<number>(0);
   const [vapa, setVapa] = useState<number>(0);
+  const [vapaDate, setVapaDate] = useState<string | null>(null);
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [totals, setTotals] = useState<TotalsState>({
     acVatop: 0,
@@ -55,7 +57,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const fetchPrices = async () => {
       try {
         // Fetch current Bitcoin price
-        const currentPriceResponse = await axios.get('/api/fetchBitcoinPrice');
+        const currentPriceResponse = await axios.get('/api/bitcoinPrice');
         const currentPrice = currentPriceResponse.data?.['bitcoin']?.usd;
         if (currentPrice) {
           setAssetPrice(currentPrice);
@@ -67,10 +69,12 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         try {
           const vapaResponse = await axios.get('/api/vapa');
           const persistentVapa = vapaResponse.data?.vapa;
+          const persistentVapaDate = vapaResponse.data?.vapaDate ?? null;
           if (persistentVapa !== undefined && persistentVapa !== null) {
             // Always use the global VAPA value directly (don't use Math.max with prev)
             // The global VAPA is already the highest value, so we should trust it
             setVapa(persistentVapa);
+            setVapaDate(persistentVapaDate);
           }
         } catch (error) {
           // Fallback to highest price ever if VAPA API doesn't exist yet
@@ -79,6 +83,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
         if (highestPriceEver) {
               setVapa(highestPriceEver);
+              setVapaDate(highestPriceResponse.data?.highestPriceDate ?? null);
             }
           } catch (fallbackError) {
             // If both fail, keep current VAPA or use assetPrice as last resort
@@ -92,7 +97,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
 
     fetchPrices(); // Initial fetch
-    const interval = setInterval(fetchPrices, 1000); // Update every 1 second
+    const interval = setInterval(fetchPrices, 60000); // Update every 60 seconds
 
     return () => clearInterval(interval);
   }, []); // VAPA is now global, no email dependency
@@ -117,7 +122,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   ) => {
     const newPrice = typeof price === "function" ? price(assetPrice) : price;
     setAssetPrice(newPrice);
-    setVapa((prev) => Math.max(prev, newPrice));
+    setVapa((prev) => {
+      const next = Math.max(prev, newPrice);
+      if (next !== prev) {
+        setVapaDate(new Date().toISOString());
+      }
+      return next;
+    });
   };
 
   const fetchVavityAggregator = useCallback(async (email: string): Promise<any> => {
@@ -166,6 +177,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         investments,
         totals,
         vapa,
+        vapaDate,
         vavityPrice: vapa,
         setManualAssetPrice,
         email,

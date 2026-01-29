@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import axios from 'axios';
 import { useVavity } from '../../context/VavityAggregator';
 
 const VavityTester: React.FC = () => {
@@ -12,6 +13,8 @@ const VavityTester: React.FC = () => {
   const [showAddMoreForm, setShowAddMoreForm] = useState<boolean>(false);
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [purchaseDate, setPurchaseDate] = useState<string>('');
+  const [historicalPrice, setHistoricalPrice] = useState<number | null>(null);
+  const [historicalLoading, setHistoricalLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!email || !fetchVavityAggregator) return;
@@ -55,23 +58,84 @@ const VavityTester: React.FC = () => {
     });
   }, []);
 
-  const formCpVatop = useMemo(() => vapa || assetPrice || 0, [vapa, assetPrice]);
+  const normalizeTokenInput = useCallback((value: string) => {
+    const cleaned = value.replace(/,/g, '').replace(/[^\d.]/g, '');
+    const hasDot = cleaned.includes('.');
+    const [rawInt = '', rawDec = ''] = cleaned.split('.');
+    const intPart = rawInt.replace(/^0+(?=\d)/, '');
+    const decPart = rawDec.slice(0, 8);
+    const formattedInt = intPart ? intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
+    const prefix = formattedInt || (hasDot ? '0' : '');
+    return hasDot ? `${prefix}.${decPart}` : prefix;
+  }, []);
+
+  const parseTokenAmount = useCallback((value: string) => {
+    const cleaned = value.replace(/,/g, '');
+    const parsed = parseFloat(cleaned);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadHistorical = async () => {
+      if (!purchaseDate) {
+        if (isMounted) {
+          setHistoricalPrice(null);
+          setHistoricalLoading(false);
+        }
+        return;
+      }
+
+      setHistoricalLoading(true);
+      try {
+        const response = await axios.get('/api/vapaHistoricalPrice', {
+          params: { date: purchaseDate }
+        });
+        const price = response.data?.price;
+        if (isMounted) {
+          setHistoricalPrice(typeof price === 'number' ? price : null);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setHistoricalPrice(null);
+        }
+      } finally {
+        if (isMounted) {
+          setHistoricalLoading(false);
+        }
+      }
+    };
+
+    loadHistorical();
+    return () => {
+      isMounted = false;
+    };
+  }, [purchaseDate]);
+
+  const formCpVatop = useMemo(() => {
+    if (!purchaseDate) {
+      return vapa || 0;
+    }
+    const datePrice = historicalPrice ?? assetPrice ?? 0;
+    return Math.max(datePrice, vapa || 0);
+  }, [purchaseDate, historicalPrice, assetPrice, vapa]);
+
   const formCVatop = useMemo(() => {
-    const amt = parseFloat(tokenAmount || '0');
-    if (isNaN(amt)) return 0;
+    const amt = parseTokenAmount(tokenAmount || '0');
+    if (Number.isNaN(amt)) return 0;
     return amt * formCpVatop;
-  }, [tokenAmount, formCpVatop]);
+  }, [tokenAmount, formCpVatop, parseTokenAmount]);
 
   const handleSubmitInvestment = async () => {
     if (!email) return;
-    const amt = parseFloat(tokenAmount || '0');
+    const amt = parseTokenAmount(tokenAmount || '0');
     if (!amt || amt <= 0) return;
     if (!purchaseDate) return;
 
     const cVactTaa = parseFloat(amt.toFixed(8));
     const cpVatop = formCpVatop;
     const cVatop = parseFloat((cVactTaa * cpVatop).toFixed(2));
-    const cpVact = cpVatop;
+    const cpVact = vapa || cpVatop;
     const cVact = parseFloat((cVactTaa * cpVact).toFixed(2));
     const cdVatop = parseFloat((cVact - cVatop).toFixed(2));
 
@@ -104,30 +168,61 @@ const VavityTester: React.FC = () => {
   const renderAddForm = (label: string) => (
     <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginTop: '12px', maxWidth: '420px' }}>
       <div style={{ marginBottom: '8px', fontWeight: 600 }}>{label}</div>
+      <div style={{ marginBottom: '12px' }}>
+        $ Amount: {tokenAmount ? `$${formatCurrency(formCVatop)}` : '...'}
+        {purchaseDate && historicalLoading && <span style={{ marginLeft: '8px' }}>(Loading price...)</span>}
+      </div>
+      <div style={{ marginBottom: '12px' }}>
+        {(() => {
+          if (!tokenAmount) {
+            return 'Profits/Losses: ...';
+          }
+          const basePrice = purchaseDate ? (historicalPrice ?? assetPrice ?? 0) : (vapa || 0);
+          const profitValue = (vapa - basePrice) * parseTokenAmount(tokenAmount || '0');
+          const label = profitValue > 0 ? 'Profits' : 'Losses';
+          const formattedValue =
+            profitValue > 0
+              ? formatCurrency(profitValue)
+              : Math.abs(profitValue).toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                });
+          return `${label}: $${formattedValue}`;
+        })()}
+      </div>
       <div style={{ marginBottom: '8px' }}>
-        Bitcoin Amount (cVactTaa):
+        bitcoin amount:
         <input
-          type="number"
-          step="0.00000001"
+          type="text"
+          inputMode="decimal"
+          pattern="^[0-9]*\.?[0-9]*$"
           value={tokenAmount}
-          onChange={(e) => setTokenAmount(e.target.value)}
+          onChange={(e) => setTokenAmount(normalizeTokenInput(e.target.value))}
           style={{ marginLeft: '8px' }}
         />
       </div>
       <div style={{ marginBottom: '8px' }}>
-        Date purchased (mm/dd/yy):
+        Date purchased:
         <input
-          type="text"
-          placeholder="mm/dd/yy"
+          type="date"
           value={purchaseDate}
           onChange={(e) => setPurchaseDate(e.target.value)}
           style={{ marginLeft: '8px' }}
         />
       </div>
-      <div style={{ marginBottom: '12px' }}>
-        $ Amount (cVatop): ${formatCurrency(formCVatop)}
-      </div>
-      <button onClick={handleSubmitInvestment} disabled={submitLoading || !tokenAmount || !purchaseDate}>
+      <button
+        onClick={handleSubmitInvestment}
+        disabled={submitLoading || !tokenAmount || !purchaseDate}
+        style={{
+          padding: '8px 14px',
+          background: '#00e5ff',
+          color: '#000',
+          border: 'none',
+          borderRadius: '6px',
+          fontWeight: 600,
+          opacity: submitLoading || !tokenAmount || !purchaseDate ? 0.6 : 1
+        }}
+      >
         {submitLoading ? 'Submitting...' : 'Submit'}
       </button>
     </div>
@@ -174,6 +269,12 @@ const VavityTester: React.FC = () => {
           background: '#161616'
         }}
       >
+        <div style={{ marginBottom: '8px' }}>
+          (Bitcoin) (VAPA):{' '}
+          <strong>
+            ${vapa ? vapa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+          </strong>
+        </div>
         <h2 style={{ marginBottom: '12px' }}>My Portfolio</h2>
         {investments.length === 0 && (
           <>
@@ -183,7 +284,7 @@ const VavityTester: React.FC = () => {
                 style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
                 onClick={() => setShowAddForm(true)}
               >
-                Add Investments
+                (Add Investments)
               </button>
             )}
             {showAddForm && renderAddForm('Add Investment')}
@@ -192,17 +293,21 @@ const VavityTester: React.FC = () => {
 
         {investments.length > 0 && (
           <>
-            <div style={{ marginBottom: '8px' }}>Investment: ${formatCurrency(totals.acVact || 0)}</div>
+            <div style={{ marginBottom: '8px' }}>Investment: acVact ${formatCurrency(totals.acVact || 0)}</div>
             <div style={{ marginBottom: '12px' }}>
-              {totals.acdVatop > 0
-                ? `Profits: ${formatCurrency(totals.acdVatop)} + $0`
-                : 'Losses (default): $0'}
+              {(() => {
+                if (totals.acdVatop > 0) {
+                  return `Profits: ${formatCurrency(totals.acdVatop)} + $0`;
+                }
+                const defaultProfit = Math.max(0, (vapa - assetPrice) * (totals.acVactTaa || 0));
+                return `Profits: ${formatCurrency(defaultProfit)} + $0`;
+              })()}
             </div>
             <button
               style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
               onClick={() => setShowAddMoreForm((prev) => !prev)}
             >
-              {showAddMoreForm ? 'Hide add more investments' : 'Add more investments'}
+              {showAddMoreForm ? 'Hide add more investments' : '(add more investments)'}
             </button>
             {showAddMoreForm && renderAddForm('Add more investments')}
           </>

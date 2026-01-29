@@ -16,7 +16,7 @@ export const fetchBitcoinPrice = async (): Promise<number> => {
   }
 
   try {
-    const response = await axios.get('/api/fetchBitcoinPrice');
+    const response = await axios.get('/api/bitcoinPrice');
 
     // The API returns the current Bitcoin price
     const bitcoinData = response.data?.['bitcoin'];
@@ -35,7 +35,7 @@ export const fetchBitcoinPrice = async (): Promise<number> => {
 // Function to fetch the Bitcoin price data (with date)
 export const fetchBitcoinPriceData = async (): Promise<{ x: Date, y: number }> => {
   try {
-    const response = await axios.get('/api/fetchBitcoinPrice');
+    const response = await axios.get('/api/bitcoinPrice');
     return { x: new Date(), y: response.data['bitcoin'].usd };
   } catch (error) {
     console.error('Error fetching Bitcoin price data:', error);
