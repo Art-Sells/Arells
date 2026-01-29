@@ -17,19 +17,20 @@ VavityTester:
 - - - - bitcoin amount (section to enter bitcoin in token amounts (satoshis)) cVactTaa (formatCurrency (display only) 000,000,000.000(max sats))
 - - - - Date purchased (section to choose mm/dd/yy) (added to the cVact group)
 - - - - (Submit)
+
 - - My Porfolio (after investments added)
-- - - Investment (add to test UI display for lots of bitcoin): acVact $0
-– - - Profits/Losses (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - - Investments: should be acVacts
+– - - Profits/Losses: should be acdVatops
 - - (add more investments) 
 - - - - when button above clicked, it shows:
-- - - - amount: $ in dollars (creates new cVact group)
-- - - - Date purchased (mm/dd/yy) (added to the cVact group)
+- - - - amount: $ in dollars (creates new Investment group inside VavityAggregator json)
+- - - - Date purchased (mm/dd/yy) (creates new Investment group inside VavityAggregator json)
 - - - - (Submit)
 ^do not delete until home is complete
 
-- - Right
+- - Right (add also when calculating profits/losses enter amount)
 - - - Line Graph (daily/weekly/yrly)
-- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
+- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for losses (no profits)}… 
 - - - Bull: Show modal explanation
 - - - Sloth: Show modal explanation
 - - (investment list)
@@ -115,7 +116,7 @@ ready to let go
 of bear markets?
 - My Portfolio
 - - Investment: acVact $0
-- - Profits/Losses (replaced Losses only if acdVatoc > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx) (as small as the smallest decimal it'll show. if it increases, then raise the decimal)
+- - Profits/Losses (replaced Losses only if acdVatoc > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx)
 - - Right
 - - - Line Graph (daily/weekly/yrly)
 - - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
