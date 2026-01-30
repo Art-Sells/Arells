@@ -4,7 +4,7 @@
 ## If no bear markets existed.
 
 ### Problem: 
-Bear markets erase lots of intrinsic value from investments.
+Investors feel pain during bear markets.
 
 ### Solution:
 A ledger that shows how investments would look if bear markets never existed. 
