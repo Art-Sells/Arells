@@ -7,7 +7,7 @@
 Bear markets erase lots of intrinsic value from investments.
 
 ### Solution:
-A ledger that portrays how investments would look if no bear markets existed. 
+A ledger that shows how investments would look if bear markets never existed. 
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________
