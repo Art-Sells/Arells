@@ -66,7 +66,7 @@ const Index = () => {
       />
 
       <div id="descriptioner-wrapper">
-        <p id="descriptioner" style={{ fontSize: '1.2em', letterSpacing: '0px', marginLeft: '0px' }}>If no bear markets existed</p>
+        <p id="descriptioner" style={{ fontSize: '1.2em', letterSpacing: '0px', marginLeft: '0px' }}>If bear markets never existed</p>
       </div>
 
         {/* <br></br>

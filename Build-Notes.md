@@ -40,7 +40,7 @@ VavityTester:
 - Home
 - Chart:
 – - - (BTC)
-- - - Investment: $4,000 (3 seconds meander from 2 profits to 1 losses back and forth)
+- - - Investments: $4,000 (3 seconds meander from 2 profits to 1 losses back and forth)
 - - - Profits/Losses: + $1,000
 - - - Date Purchased: mm/dd/yy
 
@@ -91,7 +91,7 @@ arells
 [ Login ] [ view account]
 - Chart:
 – - - (BTC)
-- - - Investment: $4,000 (3 seconds meander from 2 profits to 1 losses back and forth)
+- - - Investments: $4,000 (3 seconds meander from 2 profits to 1 losses back and forth)
 - - - Profits/Losses: + $1,000
 - - - Date Purchased: mm/dd/yy
 
@@ -99,7 +99,7 @@ arells
 (A(home)) ------- (List Icon (greyed out if VavityAggregator doesn't exist {test}))
 - If no bear markets existed
 - Portfolio
-- - Investment: acVact 
+- - Investments: acVact 
 - - Profits/Losses (replaced Losses only if acdVatop > 0.00)(formatCurrency from VavityTester.tsx)
 - - (daily/weekly/yrly) buttons (greyed out if vavityaggregator doesn't exist or is empty...)
 - - (add investment) (add more investments)
@@ -119,7 +119,7 @@ arells
 - (A) <- back to account (or home if no email (logged out ){test})
 - - if no Investments 0
 - - - [insert add investments from account here] dissapear if investments:
-- - Investment: cVact
+- - Investments: cVact
 - - Profits/Losses (should work exactly the same as from account): cdVatop
 - - Purchase Date (mm/dd/yy): 
 - - (edit) (delete)

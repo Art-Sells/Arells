@@ -8,11 +8,11 @@ import type { Metadata } from 'next';
 import Account from '../../components/Account/Account';
 export const metadata: Metadata = {
   title: "Arells",
-  description: "If no bear markets existed Connect your investments.",
+  description: "If bear markets never existed Connect your investments.",
   robots: "noimageindex",
   openGraph: {
     title: "Arells",
-    description: "If no bear markets existed Connect your investments.",
+    description: "If bear markets never existed Connect your investments.",
     url: "https://arells.com/account",
     type: "website",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Arells",
-    description: "If no bear markets existed Connect your investments.",
+    description: "If bear markets never existed Connect your investments.",
     card: "summary_large_image",
     images: [
       {
