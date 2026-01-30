@@ -21,6 +21,7 @@ VavityTester:
 - - My Porfolio (after investments added)
 - - - Investments: should be acVacts
 – - - Profits/Losses: should be acdVatops
+- - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ 5 yrs) buttons (each should dissapear and re-appear dependent on date of oldest investment... so if oldest investment was 1 year ago, then 5 yrs greys out, etc, etc)
 - - (add more investments) 
 - - - - when button above clicked, it shows:
 - - - - amount: $ in dollars (creates new Investment group inside VavityAggregator json)
@@ -35,20 +36,15 @@ VavityTester:
 - - - Sloth: Show modal explanation
 - - (investment list)
 - - - lists cVactGroups when clicked
-^Add above after revert/test/completions
 
 - Home
 - Chart:
-- - Left
-– - - (B)
-- - - Investment: $4,000 (many random amounts (back and 3 seconds losses/profits forth))
-- - - Profits: + $85,000 | Losses: $0
-- - Right
-- - - Line Graph
-- - - (5 year/ 1 year/ 1 month/ 1week)
-- - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
-- - - - Bull: Show modal explanation
-- - - - Sloth: Show modal explanation
+– - - (BTC)
+- - - Investment: $4,000 (3 seconds meander from 2 profits to 1 losses back and forth)
+- - - Profits/Losses: + $1,000
+- - - Date Purchased: mm/dd/yy
+
+^ Reconfigure UI below for HOME/ACCOUNT before deleting
 
 - Revert back to commit (to test above): before current Bitcoin price API set
 
@@ -88,75 +84,55 @@ Vavity Architecture:
 Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
 
 ### Home
-Slogan
-    [   [ chart ]
-        [ Login ]
-    ]
-Arells powered by Vavity 
-- Change color scheme (for modals also) to Purple
-- Make slogan larger
+arells
+[  if no bear markets existed
+   [ chart ]
+]
+[ Login ] [ view account]
 - Chart:
-- - Left
 – - - (BTC)
-- - - Investment: $4,000 (many random amounts)
-- - - Profits/Losses: + $85,000
-- - Right
-- - - Line Graph
-- - - (5 year/ 1 year/ 1 month/ 1week)
-- - - Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
-- - - - Bull: Show modal explanation
-- - - - Sloth: Show modal explanation
-- (How It Works)
+- - - Investment: $4,000 (3 seconds meander from 2 profits to 1 losses back and forth)
+- - - Profits/Losses: + $1,000
+- - - Date Purchased: mm/dd/yy
 
 ### Account
-- Change color scheme (for modals also) to Purpple
-(A) ------- (Wallets)
-- Are you 
-ready to let go 
-of bear markets?
-- My Portfolio
-- - Investment: acVact $0
-- - Profits/Losses (replaced Losses only if acdVatoc > 0.00000): acdVatoc + $0 (formatCurrency from VavityTester.tsx)
-- - Right
-- - - Line Graph (daily/weekly/yrly)
-- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for no profits}… 
-- - - Bull: Show modal explanation
-- - - Sloth: Show modal explanation
-- (add)
-- - - Purchase Date (mm/dd/yy): 
-- (investment list)
-________
+(A(home)) ------- (List Icon (greyed out if VavityAggregator doesn't exist {test}))
+- If no bear markets existed
+- Portfolio
+- - Investment: acVact 
+- - Profits/Losses (replaced Losses only if acdVatop > 0.00)(formatCurrency from VavityTester.tsx)
+- - (daily/weekly/yrly) buttons (greyed out if vavityaggregator doesn't exist or is empty...)
+- - (add investment) (add more investments)
 - Chart
 - - Left
-– - - (B): Vapa
-- - - Percentage Increase
+– - - (B): VAPA
+- - - - Market Status: Bull (🐂(clickable for explanation)) {for percentage increase} or Sloth (🦥(clickable for explanation)) {for no percentage increase}… 
+- - - - Percentage Increase
+- - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ 5 yrs) buttons
 - - Right
-- - - Line Graph
-- - - (5 year/ 1 year/ 1 month/ 1week)
-- - - Market Status: Bull (🐂) {for any profits} or Sloth (🦥) {for no profits}… 
+- - - Line Graph (clickable)
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
 - (How It Works)
 
 ### Investment Lists
-- Purchase Date (mm/dd/yy): 
+- (A) <- back to account (or home if no email (logged out ){test})
+- - if no Investments 0
+- - - [insert add investments from account here] dissapear if investments:
+- - Investment: cVact
+- - Profits/Losses (should work exactly the same as from account): cdVatop
+- - Purchase Date (mm/dd/yy): 
 - - (edit) (delete)
-- (How It Works)
+- (How it works)
 
 ### How It Works:
-    Financial instutions will reliquish bear markets only if you (the investor) are also willing to do the same. 
-
-    Arells was created to see whether you are ready to let go of bear markets. 
-
-    Powered by Vavity; An autonomous pricing system that anchors asset prices before they fall, the likelihood of financial insitutions adopting Vavity into their buying and selling mechanisms (ensuring your investments never experience bear market losses) will be dependent on how often you use (and share) your Arells portfolio. 
-
-    Are you ready to let go of bear markets? (Login) or (View Account)
+    Arells is a ledger that portrays how your investments would look if no bear markets existed.
 
     Powered by (Vavity (V))
 
 ### Metatags/ Description (all pages.tsx & components)
-- Alter: Descriptions & BannerImages [large slogan] (changge Bitcoin to Ethereum)
-- - Are you ready to let go of bear markets? Login/Signup
+- Alter: Descriptions & BannerImages
+- - If no bear markets existed
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
 - - Create a sitemap.xml: Helps Google discover all pages
@@ -178,10 +154,9 @@ ________
 - - - (current) number of email created, date, time, etc
 - - - chart
 
-
 #### Deployment (Main) Amplify/S3 Login
 - Test (with vavity.info) on socials (DM's/etc)
-- Email/X-Twitter/LinkedIn+crunchbase+CSC(compeny-type: social experiment,Financial Technology)/: Are you ready to let go of bear markets? 
+- Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If no bear markets existed
 
 ### After Completion
 - Cancel Infura/Metamask
@@ -193,8 +168,7 @@ Users:
 - - Review notes on phone
 - - Look at notes for openings. 
 - - Add "Discord" section for any questions
-- - FAQ: 
-Keep marketing, dependent on growth after 1-2 weeks:
+- - - Discord welcome to Arells: is a ledger that portrays how your investments would look if no bear markets existed.
 
 
 ### Other (if Time Permits)
@@ -244,13 +218,13 @@ Keep marketing, dependent on growth after 1-2 weeks:
 ### iOS & Android App (after 1-2 years?)
 Recommend Arells wallet and sunset all other wallets when Arells app revenue overtakes them
 - iOS App (UI Layer)
-- - Tagline: Are you ready to let go of bear markets?
+- - Tagline: If no bear markets existed
 - - Desc: Join Arells if you're ready to let go of bear markets. 
 - - submission: An accounting ledger containing investment information for users.
 
 ### Vavity-API (after 3-4 years?)
 .... (vavity ...c
-... Are you ready to let go of bear markets?
+... If no bear markets existed
 ... (Integrate Vavity))
 
 ### Pro-Natalism + Building Healthy Mind ?

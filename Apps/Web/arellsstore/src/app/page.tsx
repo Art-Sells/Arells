@@ -8,11 +8,11 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Arells",
-  description: "Are you ready to let go of bear markets? Connect your investments.",
+  description: "If no bear markets existed Connect your investments.",
   robots: "noimageindex",
   openGraph: {
     title: "Arells",
-    description: "Are you ready to let go of bear markets? Connect your investments.",
+    description: "If no bear markets existed Connect your investments.",
     url: "https://arells.com",
     type: "website",
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Arells",
-    description: "Are you ready to let go of bear markets? Connect your investments.",
+    description: "If no bear markets existed Connect your investments.",
     card: "summary_large_image",
     images: [
       {

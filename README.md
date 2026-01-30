@@ -1,13 +1,13 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## Are we ready to let go of bear markets?
+## If no bear markets existed.
 
 ### Problem: Bear markets erase lots of intrinsic value from assets.
 
 
 ### Solution:
-Arells: a social experiment financial technology company discovering whether we are ready to let go of bear markets.
+A ledger that portrays how investments would look if no bear markets existed. 
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________
