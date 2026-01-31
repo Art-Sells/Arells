@@ -122,8 +122,8 @@ const VavityTester: React.FC = () => {
   const formCVatop = useMemo(() => {
     const amt = parseTokenAmount(tokenAmount || '0');
     if (Number.isNaN(amt)) return 0;
-    return amt * formCpVatop;
-  }, [tokenAmount, formCpVatop, parseTokenAmount]);
+    return amt * (vapa || 0);
+  }, [tokenAmount, parseTokenAmount, vapa]);
 
   const handleSubmitInvestment = async () => {
     if (!email) return;
@@ -285,10 +285,10 @@ const VavityTester: React.FC = () => {
             <div style={{ marginBottom: '12px' }}>
               {(() => {
                 if (totals.acdVatop > 0) {
-                  return `Profits: ${formatCurrency(totals.acdVatop)} + $0`;
+                  return `Profits: ${formatCurrency(totals.acdVatop)}`;
                 }
                 const defaultProfit = Math.max(0, (vapa - assetPrice) * (totals.acVactTaa || 0));
-                return `Profits: ${formatCurrency(defaultProfit)} + $0`;
+                return `Profits: ${formatCurrency(defaultProfit)}`;
               })()}
             </div>
             <button
