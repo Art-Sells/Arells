@@ -1,8 +1,71 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AWS from 'aws-sdk';
+import axios from 'axios';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
+const VAPA_KEY = 'vavity/VAPA.json';
+
+const normalizeToIsoDay = (value: string): string | null => {
+  if (!value) return null;
+  if (value.includes('/')) {
+    const parts = value.split('/');
+    if (parts.length !== 3) return null;
+    const [month, day, year] = parts;
+    if (!year || !month || !day) return null;
+    return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  if (value.includes('-')) {
+    const parts = value.split('-');
+    if (parts.length !== 3) return null;
+    const [year, month, day] = parts;
+    if (!year || !month || !day) return null;
+    return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  return null;
+};
+
+const getNearestHistoricalPrice = (
+  history: { date: string; price: number }[],
+  targetDate: string
+): { date: string; price: number } | null => {
+  if (!history.length) return null;
+  const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
+  let selected: { date: string; price: number } | null = null;
+  for (const entry of sorted) {
+    if (entry.date <= targetDate) {
+      selected = entry;
+    } else {
+      break;
+    }
+  }
+  return selected;
+};
+
+const loadVapaData = async (): Promise<{ vapa: number; history: { date: string; price: number }[] }> => {
+  try {
+    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: VAPA_KEY }).promise();
+    const data = response.Body ? JSON.parse(response.Body.toString()) : {};
+    return {
+      vapa: typeof data.vapa === 'number' ? data.vapa : 0,
+      history: Array.isArray(data.history) ? data.history : [],
+    };
+  } catch (error) {
+    return { vapa: 0, history: [] };
+  }
+};
+
+const loadCurrentBitcoinPrice = async (): Promise<number | null> => {
+  try {
+    const response = await axios
+      .get('http://localhost:3000/api/bitcoinPrice', { timeout: 5000 })
+      .catch(() => axios.get('/api/bitcoinPrice', { timeout: 5000 }));
+    const price = response.data?.bitcoin?.usd;
+    return typeof price === 'number' ? price : null;
+  } catch (error) {
+    return null;
+  }
+};
 
 // Calculate totals for investments
 const calculateTotals = (investments: any[]) => {
@@ -54,21 +117,39 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const existingInvestments = Array.isArray(existingData.investments) ? existingData.investments : [];
     const incomingInvestments = Array.isArray(investments) ? investments : existingInvestments;
 
+    const vapaData = await loadVapaData();
+    const currentPrice = await loadCurrentBitcoinPrice();
+
     const normalizedInvestments = incomingInvestments.map((inv: any) => {
-      const cVatop = inv.cVatop ?? 0;
-      const cpVatop = inv.cpVatop ?? 0;
-      const cVactTaa = inv.cVactTaa ?? 0;
-      const cpVact = inv.cpVact ?? cpVatop;
-      const cVact = inv.cVact ?? cVactTaa * cpVact;
-      const cdVatop = inv.cdVatop ?? (cVact - cVatop);
+      const rawAmount = inv.cVactTaa ?? 0;
+      const cVactTaa = typeof rawAmount === 'number' ? rawAmount : Number(rawAmount) || 0;
+      const normalizedDate = typeof inv.date === 'string' ? normalizeToIsoDay(inv.date) : null;
+      const hasDateAndAmount = Boolean(normalizedDate) && cVactTaa > 0;
+
+      let cpVatop = typeof inv.cpVatop === 'number' ? inv.cpVatop : 0;
+      if (hasDateAndAmount) {
+        const historical = getNearestHistoricalPrice(vapaData.history, normalizedDate as string);
+        if (historical) {
+          cpVatop = historical.price;
+        } else if (currentPrice !== null) {
+          cpVatop = currentPrice;
+        }
+      }
+
+      const cpVact = vapaData.vapa || cpVatop;
+      const cVatop = hasDateAndAmount ? cVactTaa * cpVatop : inv.cVatop ?? cVactTaa * cpVatop;
+      const cVact = hasDateAndAmount ? cVactTaa * cpVact : inv.cVact ?? cVactTaa * cpVact;
+      const cdVatop = hasDateAndAmount ? cVact - cVatop : inv.cdVatop ?? cVact - cVatop;
+
       return {
         ...inv,
-        cVatop: parseFloat(cVatop.toFixed(2)),
+        date: normalizedDate ?? inv.date,
+        cVatop: parseFloat(Number(cVatop).toFixed(2)),
         cpVatop,
-        cVactTaa: parseFloat(cVactTaa.toFixed(8)),
+        cVactTaa: parseFloat(Number(cVactTaa).toFixed(8)),
         cpVact,
-        cVact: parseFloat(cVact.toFixed(2)),
-        cdVatop: parseFloat(cdVatop.toFixed(2)),
+        cVact: parseFloat(Number(cVact).toFixed(2)),
+        cdVatop: parseFloat(Number(cdVatop).toFixed(2)),
       };
     });
 

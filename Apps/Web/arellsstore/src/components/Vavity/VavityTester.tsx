@@ -116,8 +116,7 @@ const VavityTester: React.FC = () => {
     if (!purchaseDate) {
       return vapa || 0;
     }
-    const datePrice = historicalPrice ?? assetPrice ?? 0;
-    return Math.max(datePrice, vapa || 0);
+    return historicalPrice ?? assetPrice ?? 0;
   }, [purchaseDate, historicalPrice, assetPrice, vapa]);
 
   const formCVatop = useMemo(() => {
@@ -133,19 +132,8 @@ const VavityTester: React.FC = () => {
     if (!purchaseDate) return;
 
     const cVactTaa = parseFloat(amt.toFixed(8));
-    const cpVatop = formCpVatop;
-    const cVatop = parseFloat((cVactTaa * cpVatop).toFixed(2));
-    const cpVact = vapa || cpVatop;
-    const cVact = parseFloat((cVactTaa * cpVact).toFixed(2));
-    const cdVatop = parseFloat((cVact - cVatop).toFixed(2));
-
     const newInvestment = {
-      cVatop,
-      cpVatop,
       cVactTaa,
-      cpVact,
-      cVact,
-      cdVatop,
       date: purchaseDate,
     };
 
@@ -339,7 +327,7 @@ const VavityTester: React.FC = () => {
                     background: '#1f1f1f'
                   }}
                 >
-                  <div>VAPA at Purchase (cpVatop): {entry.cpVatop ?? 0}</div>
+                  <div>Price at Purchase (cpVatop): {entry.cpVatop ?? 0}</div>
                   <div>Value at Purchase (cVatop): {entry.cVatop ?? 0}</div>
                   <div>Current Price (cpVact): {entry.cpVact ?? 0}</div>
                   <div>Current Value (cVact): {entry.cVact ?? 0}</div>
