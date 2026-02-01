@@ -165,7 +165,10 @@ const VavityTester: React.FC = () => {
           if (!tokenAmount) {
             return 'Profits/Losses: ...';
           }
-          const basePrice = purchaseDate ? (historicalPrice ?? assetPrice ?? 0) : (vapa || 0);
+          if (purchaseDate && historicalPrice == null) {
+            return 'Profits/Losses: ...';
+          }
+          const basePrice = purchaseDate ? (historicalPrice ?? 0) : (vapa || 0);
           const profitValue = (vapa - basePrice) * parseTokenAmount(tokenAmount || '0');
           const label = profitValue > 0 ? 'Profits' : 'Losses';
           const formattedValue =
