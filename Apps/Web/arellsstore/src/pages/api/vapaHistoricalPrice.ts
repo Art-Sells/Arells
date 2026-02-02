@@ -3,7 +3,7 @@ import AWS from 'aws-sdk';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
-const VAPA_KEY = 'vavity/VAPA.json';
+const BITCOIN_VAPA_KEY = 'vavity/bitcoinVAPA.json';
 
 const normalizeToIsoDay = (value: string): string | null => {
   if (!value) return null;
@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: VAPA_KEY }).promise();
+    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
     if (!response.Body) {
       return res.status(404).json({ error: 'VAPA history not found.' });
     }

@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
-const VAPA_KEY = 'vavity/VAPA.json';
+const BITCOIN_VAPA_KEY = 'vavity/bitcoinVAPA.json';
 
 const normalizeToIsoDay = (value: string): string | null => {
   if (!value) return null;
@@ -44,7 +44,7 @@ const getNearestHistoricalPrice = (
 
 const loadVapaData = async (): Promise<{ vapa: number; history: { date: string; price: number }[] }> => {
   try {
-    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: VAPA_KEY }).promise();
+    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
     const data = response.Body ? JSON.parse(response.Body.toString()) : {};
     return {
       vapa: typeof data.vapa === 'number' ? data.vapa : 0,

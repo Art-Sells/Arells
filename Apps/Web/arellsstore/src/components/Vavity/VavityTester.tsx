@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useVavity } from '../../context/VavityAggregator';
+import BitcoinChart from '../Assets/Bitcoin/BitcoinChart';
 
 const VavityTester: React.FC = () => {
   const { email, vapa, assetPrice, fetchVavityAggregator, addVavityAggregator } = useVavity();
@@ -18,6 +19,9 @@ const VavityTester: React.FC = () => {
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
   const [rangeHistoricalPrice, setRangeHistoricalPrice] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState<boolean>(false);
+  const [mockEntries, setMockEntries] = useState<any[]>([]);
+  const [mockStep, setMockStep] = useState<number>(0);
+  const [chartReady, setChartReady] = useState<boolean>(false);
 
   useEffect(() => {
     if (!email || !fetchVavityAggregator) return;
@@ -170,6 +174,41 @@ const VavityTester: React.FC = () => {
 
   useEffect(() => {
     let isMounted = true;
+    const loadMock = async () => {
+      try {
+        const resp = await axios.get('/api/mockPortfolio');
+        const portfolio = Array.isArray(resp.data?.portfolio) ? resp.data.portfolio : [];
+        if (isMounted) {
+          setMockEntries(portfolio);
+        }
+      } catch {
+        // ignore errors for mock load
+      }
+    };
+    loadMock();
+    const interval = setInterval(() => {
+      setMockStep((s) => s + 1);
+    }, 3000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  const formatDate = useCallback((iso: string) => {
+    if (!iso) return '...';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '...';
+    return d.toLocaleDateString('en-US');
+  }, []);
+
+  const currentMockEntry = useMemo(() => {
+    if (!mockEntries.length) return null;
+    return mockEntries[mockStep % mockEntries.length];
+  }, [mockEntries, mockStep]);
+
+  useEffect(() => {
+    let isMounted = true;
     const loadHistorical = async () => {
       if (!purchaseDate) {
         if (isMounted) {
@@ -250,14 +289,14 @@ const VavityTester: React.FC = () => {
     <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginTop: '12px', maxWidth: '420px' }}>
       <div style={{ marginBottom: '8px', fontWeight: 600 }}>{label}</div>
       <div style={{ marginBottom: '12px' }}>
-        Past Investment Value:{' '}
+        Purchased Value:{' '}
         {tokenAmount && purchaseDate && historicalPrice != null
           ? `$${formatCurrency(parseTokenAmount(tokenAmount || '0') * historicalPrice)}`
           : '...'}
         {purchaseDate && historicalLoading && <span style={{ marginLeft: '8px' }}>(Loading price...)</span>}
       </div>
       <div style={{ marginBottom: '12px' }}>
-        Current Investment Value: {tokenAmount ? `$${formatCurrency(formCVatop)}` : '...'}
+        Current Value: {tokenAmount ? `$${formatCurrency(formCVatop)}` : '...'}
       </div>
       <div style={{ marginBottom: '12px' }}>
         {(() => {
@@ -360,12 +399,6 @@ const VavityTester: React.FC = () => {
           background: '#161616'
         }}
       >
-        <div style={{ marginBottom: '8px' }}>
-          (Bitcoin) (VAPA):{' '}
-          <strong>
-            ${vapa ? vapa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
-          </strong>
-        </div>
         <h2 style={{ marginBottom: '12px' }}>My Portfolio</h2>
         {investments.length === 0 && (
           <>
@@ -385,10 +418,10 @@ const VavityTester: React.FC = () => {
         {investments.length > 0 && (
           <>
             <div style={{ marginBottom: '8px' }}>
-              Past Investment Value: ${formatCurrency(totals.acVatop || 0)}
+              Purchased Value: ${formatCurrency(totals.acVatop || 0)}
             </div>
             <div style={{ marginBottom: '8px' }}>
-              Current Investment Value: ${formatCurrency(totals.acVact || 0)}
+              Current Value: ${formatCurrency(totals.acVact || 0)}
             </div>
             <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
               <div style={{ marginBottom: '12px' }}>
@@ -450,6 +483,45 @@ const VavityTester: React.FC = () => {
             </button>
             {showAddMoreForm && renderAddForm('Add more investments')}
           </>
+        )}
+      </div>
+
+      <div
+        style={{
+          marginBottom: '24px',
+          border: '1px solid #333',
+          borderRadius: '8px',
+          padding: '12px',
+          background: '#161616'
+        }}
+      >
+        <BitcoinChart />
+      </div>
+
+      <div
+        style={{
+          marginBottom: '24px',
+          border: '1px solid #333',
+          borderRadius: '8px',
+          padding: '12px',
+          background: '#161616'
+        }}
+      >
+        <h3 style={{ marginBottom: '12px' }}>Mock Portfolio</h3>
+        {currentMockEntry ? (
+          <div style={{ display: 'grid', gap: '6px' }}>
+            <div>(BTC)</div>
+            <div>Purchased Value: ${formatCurrency(currentMockEntry.purchasedValue || 0)}</div>
+            <div>Current Value: ${formatCurrency(currentMockEntry.currentValue || 0)}</div>
+            <div>
+              {currentMockEntry.profitLoss > 0
+                ? `Profits: +$${formatCurrency(currentMockEntry.profitLoss)}`
+                : 'Losses: $0.00'}
+            </div>
+            <div>Date Purchased: {formatDate(currentMockEntry.datePurchased)}</div>
+          </div>
+        ) : (
+          <div>Loading mock portfolio...</div>
         )}
       </div>
 

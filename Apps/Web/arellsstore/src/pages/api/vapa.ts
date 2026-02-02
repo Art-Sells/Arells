@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
-const VAPA_KEY = 'vavity/VAPA.json';
+const BITCOIN_VAPA_KEY = 'vavity/bitcoinVAPA.json';
 const HISTORY_REFRESH_MS = 24 * 60 * 60 * 1000;
 
 const isoDateFromDay = (day: string): string => `${day}T00:00:00.000Z`;
@@ -54,7 +54,7 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
   let storedHistoryLastUpdated: number | null = null;
   let fileExists = false;
   try {
-    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: VAPA_KEY }).promise();
+    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
     if (response.Body) {
       const data = JSON.parse(response.Body.toString());
       storedVAPA = data.vapa || 0;
@@ -142,7 +142,7 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
       // File doesn't exist - create it with current VAPA (even if 0)
       await s3.putObject({
         Bucket: BUCKET_NAME,
-        Key: VAPA_KEY,
+        Key: BITCOIN_VAPA_KEY,
         Body: JSON.stringify({
           vapa: newVAPA,
           vapaDate: newVapaDate,
@@ -156,7 +156,7 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
       // File exists - update if VAPA is higher or history refreshed
       await s3.putObject({
         Bucket: BUCKET_NAME,
-        Key: VAPA_KEY,
+        Key: BITCOIN_VAPA_KEY,
         Body: JSON.stringify({
           vapa: newVAPA,
           vapaDate: newVapaDate,
@@ -178,7 +178,7 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
     let storedHistoryLastUpdated: number | null = null;
     let fileExists = false;
     try {
-      const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: VAPA_KEY }).promise();
+    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
       if (response.Body) {
         const data = JSON.parse(response.Body.toString());
         storedVAPA = data.vapa || 0;
@@ -193,7 +193,7 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
         try {
           await s3.putObject({
             Bucket: BUCKET_NAME,
-            Key: VAPA_KEY,
+        Key: BITCOIN_VAPA_KEY,
             Body: JSON.stringify({ vapa: 0, vapaDate: null, history: [], historyLastUpdated: null }),
             ContentType: 'application/json',
           }).promise();
@@ -214,7 +214,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // First, ensure file exists - create it if it doesn't
       let fileExists = false;
       try {
-        await s3.headObject({ Bucket: BUCKET_NAME, Key: VAPA_KEY }).promise();
+        await s3.headObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
         fileExists = true;
       } catch (error: any) {
         if (error.code === 'NoSuchKey') {
@@ -222,7 +222,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const initialVapa = 0;
           await s3.putObject({
             Bucket: BUCKET_NAME,
-            Key: VAPA_KEY,
+        Key: BITCOIN_VAPA_KEY,
             Body: JSON.stringify({ vapa: initialVapa, vapaDate: null, history: [], historyLastUpdated: null }),
             ContentType: 'application/json',
           }).promise();
@@ -237,26 +237,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       
       // File exists - fetch and update
       const { vapa, vapaDate } = await fetchAndUpdateVAPA();
-      return res.status(200).json({ vapa, vapaDate });
+      // After update, load stored history to return to clients
+      try {
+        const stored = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
+        if (stored.Body) {
+          const data = JSON.parse(stored.Body.toString());
+          return res.status(200).json({
+            vapa,
+            vapaDate,
+            history: Array.isArray(data.history) ? data.history : [],
+            historyLastUpdated: data.historyLastUpdated ?? null
+          });
+        }
+      } catch (readErr) {
+        // fall through to default return if history read fails
+      }
+      return res.status(200).json({ vapa, vapaDate, history: [], historyLastUpdated: null });
     } catch (error: any) {
       console.error('[vapa] Error in GET handler:', error);
       // Even on error, try to return stored value or create file
       try {
-        const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: VAPA_KEY }).promise();
+      const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
         if (response.Body) {
           const data = JSON.parse(response.Body.toString());
-          return res.status(200).json({ vapa: data.vapa || 0, vapaDate: data.vapaDate ?? data.lastUpdated ?? null });
+          return res.status(200).json({
+            vapa: data.vapa || 0,
+            vapaDate: data.vapaDate ?? data.lastUpdated ?? null,
+            history: Array.isArray(data.history) ? data.history : [],
+            historyLastUpdated: data.historyLastUpdated ?? null
+          });
         }
       } catch (err: any) {
         // File doesn't exist - create it with 0
         if (err.code === 'NoSuchKey') {
           await s3.putObject({
             Bucket: BUCKET_NAME,
-            Key: VAPA_KEY,
+            Key: BITCOIN_VAPA_KEY,
             Body: JSON.stringify({ vapa: 0, vapaDate: null, history: [], historyLastUpdated: null }),
             ContentType: 'application/json',
           }).promise();
-          return res.status(200).json({ vapa: 0, vapaDate: null });
+          return res.status(200).json({ vapa: 0, vapaDate: null, history: [], historyLastUpdated: null });
         }
       }
       return res.status(500).json({ error: 'Failed to fetch VAPA', details: error.message });
@@ -273,7 +293,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       let storedHistoryLastUpdated: number | null = null;
       let fileExists = false;
       try {
-        const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: VAPA_KEY }).promise();
+        const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
         if (response.Body) {
           const data = JSON.parse(response.Body.toString());
           storedVAPA = data.vapa || 0;
@@ -309,7 +329,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // File doesn't exist - create it with final VAPA (even if 0)
         await s3.putObject({
           Bucket: BUCKET_NAME,
-          Key: VAPA_KEY,
+          Key: BITCOIN_VAPA_KEY,
           Body: JSON.stringify({
             vapa: finalVAPA,
             vapaDate: finalVapaDate,
@@ -323,7 +343,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // File exists - only update if final VAPA is higher
         await s3.putObject({
           Bucket: BUCKET_NAME,
-          Key: VAPA_KEY,
+          Key: BITCOIN_VAPA_KEY,
           Body: JSON.stringify({
             vapa: finalVAPA,
             vapaDate: finalVapaDate,
