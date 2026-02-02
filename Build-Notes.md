@@ -12,16 +12,19 @@ VavityTester:
 - - My Portfolio (before anything is added)
 - - - (Add Investments)
 - - - - when button above clicked, it shows:
-- - - - $ Amount (add to test UI display for lots of bitcoin): automatically displays Bitcoin Amount at the time of purchase (this should correspond and get the bitcoin price from the "date purchased" section) this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA x bitcoin amount entered ... If for example VAPA after 01/05/26 is greater than bitcoinPrice on 01/10/26, then $ Amount should be based on VAPA and not bitcoin Price
+- - - - $ Curent Investment Value (add to test UI display for lots of bitcoin): automatically displays Bitcoin Amount at the time of purchase (this should correspond and get the bitcoin price from the "date purchased" section) this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA x bitcoin amount entered ... If for example VAPA after 01/05/26 is greater than bitcoinPrice on 01/10/26, then $ Amount should be based on VAPA and not bitcoin Price
+- - - - $ Past Investment Value: VAPAHistoricalPrice x bitcoinAmount
 – - - - $ Profits/Losses (add to test UI display for lots of bitcoin) (default when no activity inside bitcoin amount section): (VAPA x bitcoinAmount) minus (VAPAHistoricalPrice x bitcoinAmount)  changes to $ Losses: $ 0, when date is chosen and profits are zero
 - - - - bitcoin amount (section to enter bitcoin in token amounts (satoshis)) cVactTaa (formatCurrency (display only) 000,000,000.000(max sats))
 - - - - Date purchased (section to choose mm/dd/yy) (added to the cVact group)
 - - - - (Submit)
 
+
 - - My Porfolio (after investments added)
-- - - Investments: should be acVacts
+- - - Past Investment Value: acVatops
+- - - Current Investment Value: should be acVacts
 – - - Profits/Losses: should be acdVatops
-- - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ 5 yrs) buttons (each should dissapear and re-appear dependent on date of oldest investment... so if oldest investment was 1 year ago, then 5 yrs greys out, etc, etc)
+- - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons (each should dissapear and re-appear dependent on date of oldest investment... so if oldest investment was 3 mnths ago, 1 yr greys out, etc, etc)
 - - (add more investments) 
 - - - - when button above clicked, it shows:
 - - - - amount: $ in dollars (creates new Investment group inside VavityAggregator json)
@@ -29,18 +32,22 @@ VavityTester:
 - - - - (Submit)
 ^do not delete until home is complete
 
-- - Right (add also when calculating profits/losses enter amount)
-- - - Line Graph (daily/weekly/yrly)
-- - -  Market Status: Bull (🐂) {for any prifits} or Sloth (🦥) {for losses (no profits)}… 
-- - - Bull: Show modal explanation
-- - - Sloth: Show modal explanation
-- - (investment list)
-- - - lists cVactGroups when clicked
+- Chart
+- - Left
+– - - (B): VAPA
+- - - - Market Status: Bull (🐂(clickable for explanation)) {for percentage increase} or Sloth (🦥(clickable for explanation)) {for no percentage increase}… 
+- - - - Percentage Increase
+- - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons
+- - Right
+- - - Line Graph (clickable)
+- - - - Bull: Show modal explanation
+- - - - Sloth: Show modal explanation
 
 - Home
-- Chart:
+- Chart (3 seconds meander from 2 profits to 1 losses back and forth)
 – - - (BTC)
-- - - Investments: $4,000 (3 seconds meander from 2 profits to 1 losses back and forth)
+- - - Past Investment Value:
+- - - Current Investment Value: $4,000 
 - - - Profits/Losses: + $1,000
 - - - Date Purchased: mm/dd/yy
 
@@ -108,7 +115,7 @@ arells
 – - - (B): VAPA
 - - - - Market Status: Bull (🐂(clickable for explanation)) {for percentage increase} or Sloth (🦥(clickable for explanation)) {for no percentage increase}… 
 - - - - Percentage Increase
-- - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ 5 yrs) buttons
+- - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons
 - - Right
 - - - Line Graph (clickable)
 - - - - Bull: Show modal explanation

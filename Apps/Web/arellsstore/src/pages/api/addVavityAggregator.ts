@@ -143,12 +143,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return {
         ...inv,
         date: normalizedDate ?? inv.date,
-        cVatop: parseFloat(Number(cVatop).toFixed(2)),
+        cVatop,
         cpVatop,
-        cVactTaa: parseFloat(Number(cVactTaa).toFixed(8)),
+        cVactTaa,
         cpVact,
-        cVact: parseFloat(Number(cVact).toFixed(2)),
-        cdVatop: parseFloat(Number(cdVatop).toFixed(2)),
+        cVact,
+        cdVatop,
       };
     });
 

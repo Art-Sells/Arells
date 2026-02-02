@@ -1,7 +1,7 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## If no bear markets existed.
+## If bear markets never existed.
 
 ### Problem: 
 Investors feel pain during bear markets.

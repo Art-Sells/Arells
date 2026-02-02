@@ -15,6 +15,9 @@ const VavityTester: React.FC = () => {
   const [purchaseDate, setPurchaseDate] = useState<string>('');
   const [historicalPrice, setHistoricalPrice] = useState<number | null>(null);
   const [historicalLoading, setHistoricalLoading] = useState<boolean>(false);
+  const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
+  const [rangeHistoricalPrice, setRangeHistoricalPrice] = useState<number | null>(null);
+  const [rangeLoading, setRangeLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!email || !fetchVavityAggregator) return;
@@ -48,6 +51,96 @@ const VavityTester: React.FC = () => {
 
   const investments = vavityData?.investments || [];
   const totals = vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
+  const oldestInvestmentDate = useMemo(() => {
+    if (investments.length === 0) return null;
+    const dates = investments
+      .map((entry: any) => entry?.date)
+      .filter((value: any) => typeof value === 'string' && value.length > 0)
+      .map((value: string) => new Date(value))
+      .filter((date: Date) => !Number.isNaN(date.getTime()));
+    if (dates.length === 0) return null;
+    return new Date(Math.min(...dates.map((date) => date.getTime())));
+  }, [investments]);
+  const oldestInvestmentAgeDays = useMemo(() => {
+    if (!oldestInvestmentDate) return 0;
+    const diffMs = Date.now() - oldestInvestmentDate.getTime();
+    return diffMs > 0 ? diffMs / (1000 * 60 * 60 * 24) : 0;
+  }, [oldestInvestmentDate]);
+  const portfolioRanges = useMemo(
+    () => [
+      { label: '24 hours', days: 1 },
+      { label: '1 wk', days: 7 },
+      { label: '1 mnth', days: 30 },
+      { label: '3 mnths', days: 90 },
+      { label: '1 yr', days: 365 },
+      { label: 'All', days: null }
+    ],
+    []
+  );
+  useEffect(() => {
+    let isMounted = true;
+    const loadRangePrice = async () => {
+      if (!selectedRangeDays) {
+        if (isMounted) {
+          setRangeHistoricalPrice(null);
+          setRangeLoading(false);
+        }
+        return;
+      }
+      setRangeLoading(true);
+      const targetDate = new Date(Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000);
+      const isoDate = targetDate.toISOString().split('T')[0];
+      try {
+        const response = await axios.get('/api/vapaHistoricalPrice', {
+          params: { date: isoDate }
+        });
+        const price = response.data?.price;
+        if (isMounted) {
+          setRangeHistoricalPrice(typeof price === 'number' ? price : null);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setRangeHistoricalPrice(null);
+        }
+      } finally {
+        if (isMounted) {
+          setRangeLoading(false);
+        }
+      }
+    };
+    loadRangePrice();
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedRangeDays]);
+  const filteredTotals = useMemo(() => {
+    if (!selectedRangeDays) {
+      return totals;
+    }
+    if (rangeHistoricalPrice == null) {
+      return totals;
+    }
+    const rangeStart = Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000;
+    return investments.reduce(
+      (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
+        const amount = Number(entry.cVactTaa) || 0;
+        const currentValue = Number(entry.cVact) || amount * (vapa || 0);
+        const purchaseTime = entry?.date ? new Date(entry.date).getTime() : null;
+        const hasValidPurchaseTime = typeof purchaseTime === 'number' && !Number.isNaN(purchaseTime);
+        const pastValue =
+          hasValidPurchaseTime && purchaseTime > rangeStart
+            ? Number(entry.cVatop) || amount * (entry.cpVatop || rangeHistoricalPrice)
+            : amount * rangeHistoricalPrice;
+
+        acc.acVatop += pastValue;
+        acc.acVact += currentValue;
+        acc.acdVatop += currentValue - pastValue;
+        acc.acVactTaa += amount;
+        return acc;
+      },
+      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
+    );
+  }, [investments, rangeHistoricalPrice, selectedRangeDays, totals, vapa]);
 
   const formatCurrency = useCallback((value: number) => {
     const abs = Math.abs(value);
@@ -157,8 +250,14 @@ const VavityTester: React.FC = () => {
     <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginTop: '12px', maxWidth: '420px' }}>
       <div style={{ marginBottom: '8px', fontWeight: 600 }}>{label}</div>
       <div style={{ marginBottom: '12px' }}>
-        $ Amount: {tokenAmount ? `$${formatCurrency(formCVatop)}` : '...'}
+        Past Investment Value:{' '}
+        {tokenAmount && purchaseDate && historicalPrice != null
+          ? `$${formatCurrency(parseTokenAmount(tokenAmount || '0') * historicalPrice)}`
+          : '...'}
         {purchaseDate && historicalLoading && <span style={{ marginLeft: '8px' }}>(Loading price...)</span>}
+      </div>
+      <div style={{ marginBottom: '12px' }}>
+        Current Investment Value: {tokenAmount ? `$${formatCurrency(formCVatop)}` : '...'}
       </div>
       <div style={{ marginBottom: '12px' }}>
         {(() => {
@@ -178,7 +277,8 @@ const VavityTester: React.FC = () => {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 });
-          return `${label}: $${formattedValue}`;
+          const prefix = profitValue > 0 ? '+$' : '$';
+          return `${label}: ${prefix}${formattedValue}`;
         })()}
       </div>
       <div style={{ marginBottom: '8px' }}>
@@ -284,15 +384,63 @@ const VavityTester: React.FC = () => {
 
         {investments.length > 0 && (
           <>
-            <div style={{ marginBottom: '8px' }}>Investment: acVact ${formatCurrency(totals.acVact || 0)}</div>
-            <div style={{ marginBottom: '12px' }}>
-              {(() => {
-                if (totals.acdVatop > 0) {
-                  return `Profits: ${formatCurrency(totals.acdVatop)}`;
-                }
-                const defaultProfit = Math.max(0, (vapa - assetPrice) * (totals.acVactTaa || 0));
-                return `Profits: ${formatCurrency(defaultProfit)}`;
-              })()}
+            <div style={{ marginBottom: '8px' }}>
+              Past Investment Value: ${formatCurrency(totals.acVatop || 0)}
+            </div>
+            <div style={{ marginBottom: '8px' }}>
+              Current Investment Value: ${formatCurrency(totals.acVact || 0)}
+            </div>
+            <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
+              <div style={{ marginBottom: '12px' }}>
+                {(() => {
+                  if (selectedRangeDays && rangeLoading) {
+                    return 'Profits/Losses: ...';
+                  }
+                  if (selectedRangeDays && rangeHistoricalPrice != null) {
+                    const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
+                    const profitValue = (totals.acVact || 0) - pastValue;
+                    const prefix = profitValue > 0 ? '+$' : '$';
+                    const formattedValue =
+                      profitValue > 0
+                        ? formatCurrency(profitValue)
+                        : Math.abs(profitValue).toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          });
+                    const label = profitValue > 0 ? 'Profits' : 'Losses';
+                    return `${label}: ${prefix}${formattedValue}`;
+                  }
+                  if (totals.acdVatop > 0) {
+                    return `Profits: +$${formatCurrency(totals.acdVatop)}`;
+                  }
+                  const defaultProfit = Math.max(0, (vapa - assetPrice) * (totals.acVactTaa || 0));
+                  return `Profits: +$${formatCurrency(defaultProfit)}`;
+                })()}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {portfolioRanges.map((range) => {
+                  const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
+                  const isActive = selectedRangeDays === range.days;
+                  return (
+                    <button
+                      key={range.label}
+                      type="button"
+                      disabled={!isEnabled}
+                      onClick={() => setSelectedRangeDays(isActive ? null : range.days)}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: '6px',
+                        border: isActive ? '1px solid #00e5ff' : '1px solid #333',
+                        background: isEnabled ? (isActive ? '#0b2f33' : '#202020') : '#111',
+                        color: isEnabled ? (isActive ? '#00e5ff' : '#f5f5f5') : '#666',
+                        cursor: isEnabled ? 'pointer' : 'not-allowed'
+                      }}
+                    >
+                      {range.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <button
               style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
