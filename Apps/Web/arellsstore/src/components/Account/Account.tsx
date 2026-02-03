@@ -46,12 +46,12 @@ const Account: React.FC = () => {
   }, [imagesLoaded]);
 
   const handleSignOut = async () => {
-    try {
+      try {
       await signOut();
       router.push('/');
-    } catch (error) {
-      console.log('Error signing out:', error);
-    }
+      } catch (error) {
+          console.log('Error signing out:', error);
+      }
   };
 
   return (
@@ -97,7 +97,7 @@ const Account: React.FC = () => {
           <button id="signout-account" onClick={handleSignOut}>
             Sign out
           </button>
-        </div>
+      </div>
       </div>
     </>
   );

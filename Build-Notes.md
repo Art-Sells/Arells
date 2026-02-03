@@ -38,7 +38,7 @@ VavityTester:
 - - - - +12.00%, etc, etc
 - - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons
 - - Right
-- - - Line Graph
+- - - Line Graph 
 ------
 - Home
 - Mock Portfolio section with differing sampled amounts (3 seconds meander from 2 profits to 1 losses back and forth):
@@ -110,7 +110,7 @@ arells
 - - - - +3.00%, etc, etc
 - - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons
 - - Right
-- - - Line Graph
+- - - Line Graph (clickable and hoverable {look at VavityTester for example}) (test horizontal desktop resize)
 - - - - Bull: Show modal explanation
 - - - - Sloth: Show modal explanation
 ---------
