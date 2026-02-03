@@ -5,11 +5,13 @@
 ## Arells v1
 
 ### Test Offline
-*Set back to fetching current bitcoin prices then, set to revert back to current price fetching after home*
+= Delete All Login/Signup/PrivacyPolicy
+- Rename everything that says "Account" meaning the links, files, functions/etc with bitcoin or Bitcoin
+- Reconfigure State for get and save vavity (not by email, by session?, saves in Json by sessions?)
 - 
 VavityTester:
 – (Bitcoin) (VAPA): $dollar price 
-- - My Portfolio (before anything is added)
+- - Portfolio (before anything is added)
 - - - (Add Investments)
 - - - - when button above clicked, it shows:
 - - - - $ Curent Investment Value (add to test UI display for lots of bitcoin): automatically displays Bitcoin Amount at the time of purchase (this should correspond and get the bitcoin price from the "date purchased" section) this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA x bitcoin amount entered ... If for example VAPA after 01/05/26 is greater than bitcoinPrice on 01/10/26, then $ Amount should be based on VAPA and not bitcoin Price
@@ -48,19 +50,10 @@ VavityTester:
 - - Profits/Losses:
 - - Date Purchased: mm/dd/yy
 
-^ Reconfigure UI below for HOME/ACCOUNT before deleting
-
-Login-Signup pages (Test with 2-3 accounts):
-- Login/Signup with Google/Apple (reconfigure pages)
-- Go back and test again
-- Allow Vapa to increase (if possible) and watch chart and profits/losses
-- In notion:  
-- - Users (WoW growth chart/line)
-- - - Find out a way to calculate and see when each e-mail opens or reloads page and which percentage
+^ Reconfigure UI below for HOME/BITCOIN before deleting
 
 ### Test Online (both desktop(multiple browsers)/mobile):
 - change .env variables from NEXT_PUBLIC
-- test with 2-3 masstester@gmail.com accounts differing amounts (view all s3 jsons and check Arells Ethereum Wallet amount)
 - - Allow Vapa to increase (if possible) and watch chart and profits/losses
 - - In notion:
 - - Users
@@ -71,8 +64,6 @@ Login-Signup pages (Test with 2-3 accounts):
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 (view all s3 jsons and check Arells Ethereum Wallet amount)
 
-## Privacy Policy
-- Look and edit (remove all crypto and fintech stuf)
 
 ## Loading Modules in all pages
 - All of them fade in and out (same as modules and pages in vavity.info)
@@ -84,24 +75,13 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 
 ### Home
 arells
-[  if no bear markets existed
-   [ chart ]
-]
-[ Login ] [ view account]
-- Chart:
-– - - (BTC)
-- - - Investments: $4,000 (3 seconds meander from 2 profits to 1 losses back and forth)
-- - - Profits/Losses: + $1,000
-- - - Date Purchased: mm/dd/yy
+(
+    (View (B) Bitcoin)
+    If bear markets never existed
+)
 
-### Account
-(A(home)) ------- (List Icon (greyed out if VavityAggregator doesn't exist {test}))
-- If no bear markets existed
-- Portfolio
-- - Investments: acVact 
-- - Profits/Losses (replaced Losses only if acdVatop > 0.00)(formatCurrency from VavityTester.tsx)
-- - (daily/weekly/yrly) buttons (greyed out if vavityaggregator doesn't exist or is empty...)
-- - (add investment) (add more investments)
+### Bitcoin
+- If bear markets never existed
 ---------
 - Chart
 - - Left
@@ -121,10 +101,13 @@ arells
 - - Profits/Losses:
 - - Date Purchased: mm/dd/yy
 --------
-- (How It Works)
-
-### Investment Lists
-- (A) <- back to account (or home if no email (logged out ){test})
+- Portfolio
+- - Investments: acVact 
+- - Profits/Losses (replaced Losses only if acdVatop > 0.00)(formatCurrency from VavityTester.tsx)
+- - (daily/weekly/yrly) buttons (greyed out if vavityaggregator doesn't exist or is empty...)
+- - (add investment) (add more investments)
+-------------------
+- - (Investment List)
 - - if no Investments 0
 - - - [insert add investments from account here] dissapear if investments:
 - - Purchased Value: cVatop
@@ -133,7 +116,8 @@ arells
 - - Token Amount:
 - - Purchase Date (mm/dd/yy): 
 - - (delete)
-- (How it works)
+-------------------
+- (How It Works)
 
 ### How It Works:
     Arells is a ledger that portrays how your investments would look if no bear markets existed.
@@ -142,7 +126,7 @@ arells
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages
-- - If no bear markets existed
+- - If bear markets never existed (Bitcoin - If bear markets never existed)
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
 - - Create a sitemap.xml: Helps Google discover all pages
@@ -156,17 +140,14 @@ arells
 
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
-- Replace VAPA api with real API and test (connections) on VavityTester
-- 2-3 accounts, multiple connects (monitor for 2-3 days)with real-api 
-- - Allow Vapa to increase (if possible) and watch chart and profits/losses
 - - In notion:  
 - - Users
-- - - (current) number of email created, date, time, etc
+- - - (current) number of sessions (unique users?) created/interacted/etc
 - - - chart
 
 #### Deployment (Main) Amplify/S3 Login
 - Test (with vavity.info) on socials (DM's/etc)
-- Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If no bear markets existed
+- Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If bear markets never existed
 
 ### After Completion
 - Cancel Infura/Metamask
@@ -184,8 +165,6 @@ Users:
 ### Other (if Time Permits)
 - Flip sloth pngs horizontally
 - Fix (if VavityAggregator jsons are deleted (wallet connected (connect asset not poping up issue) ))
-- Fix (signOut/sign-up/log-in issue) loading after button click success stays true forever... add "await"?
-- Fix (View Account) slowness issue (Add Preparing Account loading we time out at least 2 seconds before this loads)
 - Remove console.logs from all files...
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
 
@@ -210,7 +189,7 @@ Users:
 - Wait at least 2 months to track numbers (adjust plan based on feedback), Updates (oDAO, FndrsINC, etc, (New?)):
 - - increase CG API limit? (track)
 - - Compare Retention rate (in bear markets WoM only (percentages)) and market dominance of solid marketplaces: Projections (with current trajectory) with/without inv/asset additions (WoW percentage comparisons)
-- Add 1 new asset a week (VAPA/wallet-connection) (and home page with Market Cap (VAPA))
+- Add 1 new asset a week (VAPA)
 - - Assets have their own page and token values (that should be implemented in fetchBalance and everywhere these token values are used) (connect asset)
 - - Announce
 
@@ -219,22 +198,21 @@ Users:
 - Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Disconnect/VavityContext
 
 
-### Home/Account
+### Home/Asset-Name
 - Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
 - Contact us (Account/Home): Email
 - Clean up Lagging Pages
 
 
 ### iOS & Android App (after 1-2 years?)
-Recommend Arells wallet and sunset all other wallets when Arells app revenue overtakes them
-- iOS App (UI Layer)
-- - Tagline: If no bear markets existed
-- - Desc: Join Arells if you're ready to let go of bear markets. 
-- - submission: An accounting ledger containing investment information for users.
+- iOS App 
+- - Tagline: If bear markets never existed
+- - Desc: This is how your investments would look if bear markets never existed.
+- - submission: An accounting ledger that shows how investments would look if bear markets never existed. 
 
 ### Vavity-API (after 3-4 years?)
 .... (vavity ...c
-... If no bear markets existed
+... If bear markets never existed
 ... (Integrate Vavity))
 
 ### Pro-Natalism + Building Healthy Mind ?
