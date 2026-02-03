@@ -2,8 +2,6 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import React, { useCallback, useEffect, useState } from 'react';
-import { fetchUserAttributes } from 'aws-amplify/auth';
-import CryptoJS from 'crypto-js';
 
 const Bitcoin: React.FC = () => {
 
@@ -23,28 +21,9 @@ const Bitcoin: React.FC = () => {
   // const [dollarAmount, setDollarAmount] = useState<string>('');
 
   useEffect(() => {
-    const fetchAttributes = async () => {
-        try {
-            const attributesResponse = await fetchUserAttributes();
-            const emailAttribute = attributesResponse.email;
-            const bitcoinAddressAttribute = attributesResponse['custom:bitcoinAddress'];
-            const bitcoinPrivateKeyAttribute = attributesResponse['custom:bitcoinPrivateKey'];
-
-            if (emailAttribute) setEmail(emailAttribute);
-            if (bitcoinAddressAttribute) setBitcoinAddress(bitcoinAddressAttribute);
-
-            // Decrypt the private key
-            if (bitcoinPrivateKeyAttribute) {
-                const decryptedPrivateKey = CryptoJS.AES.decrypt(bitcoinPrivateKeyAttribute).toString(CryptoJS.enc.Utf8);
-                setBitcoinPrivateKey(decryptedPrivateKey);
-            }
-        } catch (error) {
-            console.error('Error fetching user attributes:', error);
-        }
-    };
-
-    fetchAttributes();
-}, [setEmail, setBitcoinAddress, setBitcoinPrivateKey]);
+    const storedEmail = window.localStorage.getItem('arells_email');
+    if (storedEmail) setEmail(storedEmail);
+  }, [setEmail]);
 
   useEffect(() => {
     if (bitcoinAddress) {

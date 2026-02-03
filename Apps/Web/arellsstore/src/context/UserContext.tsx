@@ -1,8 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import AWS from 'aws-sdk';
-import { fetchUserAttributes } from 'aws-amplify/auth';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 
 interface UserContextType {
   email: string;
@@ -10,40 +8,41 @@ interface UserContextType {
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
+const AUTH_EMAIL_KEY = 'arells_email';
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmail] = useState<string>('');
+  const setEmailWithStorage = useCallback((value: string) => {
+    setEmail(value);
+    if (typeof window !== 'undefined') {
+      if (value) {
+        window.localStorage.setItem(AUTH_EMAIL_KEY, value);
+      } else {
+        window.localStorage.removeItem(AUTH_EMAIL_KEY);
+      }
+    }
+  }, []);
 
-  const s3 = new AWS.S3({
-    accessKeyId: process.env.NEXT_PUBLIC_WS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.NEXT_PUBLIC_WS_SECRET_ACCESS_KEY,
-    region: process.env.NEXT_PUBLIC_WS_REGION,
-  });
-
-  // Fetch the email and user attributes when the component mounts
   useEffect(() => {
-    const fetchUserEmail = async () => {
-      try {
-        const attributesResponse = await fetchUserAttributes();
-        const emailAttribute = attributesResponse.email;
-        if (emailAttribute) {
-          setEmail(emailAttribute);
-        } else {
-          console.warn('Email attribute not found.');
-        }
-      } catch (error) {
-        console.error('Error fetching user attributes:', error);
+    if (typeof window === 'undefined') return;
+    const stored = window.localStorage.getItem(AUTH_EMAIL_KEY);
+    if (stored) {
+      setEmail(stored);
+    }
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === AUTH_EMAIL_KEY) {
+        setEmail(event.newValue ?? '');
       }
     };
-
-    fetchUserEmail();
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   return (
     <UserContext.Provider
       value={{
         email,
-        setEmail,
+        setEmail: setEmailWithStorage,
       }}
     >
       {children}

@@ -9,9 +9,9 @@ import '../../app/css/account/Account.css';
 import '../../app/css/modals/account/account-modal.css';
 import '../../app/css/modals/loader/accountloaderbackground.css';
 import styles from '../../app/css/modals/loader/accountloader.module.css';
-import { signOut } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { useVavity } from '../../context/VavityAggregator';
+import { useUser } from '../../context/UserContext';
 
 const Account: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -28,6 +28,7 @@ const Account: React.FC = () => {
   });
 
   const router = useRouter();
+  const { setEmail } = useUser();
 
   const handleImageLoaded = (imageName: string) => {
     setImagesLoaded((prevState) => ({
@@ -46,12 +47,8 @@ const Account: React.FC = () => {
   }, [imagesLoaded]);
 
   const handleSignOut = async () => {
-      try {
-      await signOut();
+      setEmail('');
       router.push('/');
-      } catch (error) {
-          console.log('Error signing out:', error);
-      }
   };
 
   return (

@@ -1,53 +1,118 @@
+/* eslint-disable @next/next/no-sync-scripts */
 'use client';
 
 // components/Login.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import '../../app/css/loginsignup/loginsignup.css';
 import '../../app/css/modals/loginsignup/loginsignup-modal.css';
 import '../../app/css/modals/buy/buy-modal.css';
 import '../../app/css/modals/disconnect/disconnect-modal.css';
 import stylings from '../../app/css/modals/loading/marketplaceloader.module.css';
-import Link from 'next/link';
-import { signIn, signOut, fetchUserAttributes } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
+
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
 
 const Login: React.FC = () => {
   const router = useRouter();
   const { setEmail } = useUser();
-  const [email, setEmailState] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
   const [showLoggingIn, setLoggingIn] = useState<boolean>(false);
   const [showLoginError, setLoginError] = useState<boolean>(false);
+  const [showGoogleError, setGoogleError] = useState<boolean>(false);
+  const loginButtonRef = useRef<HTMLDivElement | null>(null);
+  const signupButtonRef = useRef<HTMLDivElement | null>(null);
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-  const logIn = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    setLoginError(false);
-
-    try {
-      // Sign out any existing user
-      setLoggingIn(true);
-      const user = await signIn({ username: email, password });
-
-      // Fetch user attributes
-      const attributesResponse = await fetchUserAttributes();
-      const emailAttribute = attributesResponse['email'];
-
-      if (emailAttribute) setEmail(emailAttribute);
-
-      router.push('/account');
-    } catch (error) {
-      console.log('Error logging in:', error);
-      setLoggingIn(false);
-      setLoginError(true);
-    }
+  const parseJwt = (token: string) => {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`)
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
   };
 
+  const handleGoogleCredential = useCallback(
+    (response: { credential?: string }) => {
+      setLoginError(false);
+      setGoogleError(false);
+      if (!response?.credential) {
+        setLoginError(true);
+        return;
+      }
+      try {
+        setLoggingIn(true);
+        const payload = parseJwt(response.credential);
+        const email = payload?.email;
+        if (!email) {
+          setLoginError(true);
+          setLoggingIn(false);
+          return;
+        }
+        setEmail(email);
+        router.push('/account');
+      } catch (error) {
+        setLoginError(true);
+        setLoggingIn(false);
+      }
+    },
+    [router, setEmail]
+  );
+
+  const initGoogle = useCallback(() => {
+    if (!googleClientId || !window.google || !loginButtonRef.current || !signupButtonRef.current) {
+      return;
+    }
+    window.google.accounts.id.initialize({
+      client_id: googleClientId,
+      callback: handleGoogleCredential,
+    });
+    loginButtonRef.current.innerHTML = '';
+    signupButtonRef.current.innerHTML = '';
+    window.google.accounts.id.renderButton(loginButtonRef.current, {
+      theme: 'outline',
+      size: 'large',
+      text: 'signin_with',
+      width: 260,
+    });
+    window.google.accounts.id.renderButton(signupButtonRef.current, {
+      theme: 'outline',
+      size: 'large',
+      text: 'signup_with',
+      width: 260,
+    });
+  }, [googleClientId, handleGoogleCredential]);
+
   useEffect(() => {
-    signOut();
-  }, []);
+    if (!googleClientId) {
+      setGoogleError(true);
+      return;
+    }
+    if (window.google?.accounts?.id) {
+      initGoogle();
+      return;
+    }
+    const scriptId = 'google-identity-script';
+    if (document.getElementById(scriptId)) {
+      return;
+    }
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = initGoogle;
+    script.onerror = () => setGoogleError(true);
+    document.body.appendChild(script);
+  }, [googleClientId, initGoogle]);
 
   const closeLoginError = () => {
     setLoginError(false);
@@ -89,35 +154,16 @@ const Login: React.FC = () => {
       )}
       <p id="login-title">LOGIN</p>
       <div id="log-in">
-        <form id="myForm" onSubmit={logIn}>
-          <div id="enter-content">
-            <input 
-              name="email" 
-              type="email" 
-              placeholder="email"
-              id="email-input"
-              value={email}
-              onChange={(e) => setEmailState(e.target.value)}
-            />
-          </div>
-          <div id="enter-content">
-            <input 
-              name="password" 
-              type="password" 
-              placeholder="password"
-              id="password-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <button id="login-button" type="submit">LOGIN</button>
-        </form>
+        <div id="enter-content" style={{ display: 'flex', justifyContent: 'center' }}>
+          <div ref={loginButtonRef} />
+        </div>
       </div>
 
       <p id="no-account">NO ACCOUNT? SIGN UP</p>
-      <Link href="/signup" passHref>
-        <button id="signup-button">SIGN UP</button>
-      </Link> 
+      <div id="enter-content" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div ref={signupButtonRef} />
+      </div>
+      {showGoogleError && <p id="login-error-words">Google sign-in is unavailable.</p>}
     </>
   );
 };

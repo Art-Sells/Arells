@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { fetchUserAttributes } from 'aws-amplify/auth';
+import { useUser } from './UserContext';
 
 interface Investment {
   cVatop: number;   // Value at time of purchase
@@ -38,7 +38,7 @@ interface VavityaggregatorType {
 const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefined);
 
 export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [email, setEmail] = useState<string>('');
+  const { email } = useUser();
   const [assetPrice, setAssetPrice] = useState<number>(0);
   const [vapa, setVapa] = useState<number>(0);
   const [vapaDate, setVapaDate] = useState<string | null>(null);
@@ -102,20 +102,6 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => clearInterval(interval);
   }, []); // VAPA is now global, no email dependency
   
-  useEffect(() => {
-    const fetchEmail = async () => {
-      try {
-        const attributesResponse = await fetchUserAttributes();
-        const emailAttribute = attributesResponse.email;
-        if (emailAttribute) {
-          setEmail(emailAttribute);
-        }
-      } catch (error) {
-        // console.error('Error fetching user attributes:', error);
-      }
-    };
-    fetchEmail();
-  }, []);
 
   const setManualAssetPrice = async (
     price: number | ((currentPrice: number) => number)

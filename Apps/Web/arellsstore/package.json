@@ -13,8 +13,6 @@
     "proxy": "https://pro-api.coingecko.com"
   },
   "dependencies": {
-    "@aws-amplify/auth": "^6.3.7",
-    "@aws-amplify/core": "^6.3.7",
     "@aws-sdk/client-s3": "^3.616.0",
     "@openzeppelin/contracts": "^5.3.0",
     "@swc/helpers": "^0.5.11",
@@ -23,7 +21,6 @@
     "@uniswap/v3-core": "^1.0.1",
     "@uniswap/v3-periphery": "^1.4.4",
     "@uniswap/v3-sdk": "3",
-    "aws-amplify": "^6.10.2",
     "aws-sdk": "^2.1659.0",
     "axios": "^1.7.2",
     "axios-retry": "^4.4.2",
