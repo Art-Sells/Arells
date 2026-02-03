@@ -80,17 +80,18 @@ const BitcoinChart: React.FC = () => {
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [selectedX, setSelectedX] = useState<number | null>(null);
+  const [selectedY, setSelectedY] = useState<number | null>(null);
   const selectedXRef = useRef<number | null>(null);
-  const frontChartRef = useRef<Chart<'line'> | null>(null);
-  const backChartRef = useRef<Chart<'line'> | null>(null);
+  const chartRef = useRef<Chart<'line'> | null>(null);
   const chartContainerRef = useRef<HTMLDivElement | null>(null);
-  const fadeTimeoutRef = useRef<number | null>(null);
-  const [frontHistory, setFrontHistory] = useState<PricePoint[]>([]);
-  const [backHistory, setBackHistory] = useState<PricePoint[]>([]);
-  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
-  const frontSignatureRef = useRef<string>('');
   const [displayHistory, setDisplayHistory] = useState<PricePoint[]>([]);
   const displayedSignatureRef = useRef<string>('');
+  const pendingHistoryRef = useRef<PricePoint[] | null>(null);
+  const pendingSignatureRef = useRef<string>('');
+  const [chartOpacity, setChartOpacity] = useState<number>(0);
+  const [opacityDuration] = useState<string>('0.7s');
+  const initialFadeRef = useRef<boolean>(false);
+  const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
 
   useEffect(() => {
     if (!filteredHistory.length) {
@@ -108,6 +109,7 @@ const BitcoinChart: React.FC = () => {
     if (eventX == null) {
       setSelectedIndex(null);
       setSelectedX(null);
+      setSelectedY(null);
       selectedXRef.current = null;
       chart.draw();
       return;
@@ -117,16 +119,16 @@ const BitcoinChart: React.FC = () => {
     setSelectedX(clampedX);
     selectedXRef.current = clampedX;
     const ts = scales.x.getValueForPixel(clampedX) as number;
-    if (!filteredHistory.length || !Number.isFinite(ts)) {
+    if (!displayHistory.length || !Number.isFinite(ts)) {
       setSelectedIndex(null);
       chart.draw();
       return;
     }
     let lo = 0;
-    let hi = filteredHistory.length - 1;
+    let hi = displayHistory.length - 1;
     while (lo < hi) {
       const mid = Math.floor((lo + hi) / 2);
-      if (filteredHistory[mid].x.getTime() < ts) {
+      if (displayHistory[mid].x.getTime() < ts) {
         lo = mid + 1;
       } else {
         hi = mid;
@@ -134,13 +136,15 @@ const BitcoinChart: React.FC = () => {
     }
     let idx = lo;
     if (idx > 0) {
-      const prev = filteredHistory[idx - 1].x.getTime();
-      const curr = filteredHistory[idx].x.getTime();
+      const prev = displayHistory[idx - 1].x.getTime();
+      const curr = displayHistory[idx].x.getTime();
       if (Math.abs(ts - prev) <= Math.abs(curr - ts)) {
         idx = idx - 1;
       }
     }
     setSelectedIndex(idx);
+    const element = chart.getDatasetMeta(0).data[idx] as any;
+    setSelectedY(element?.y ?? null);
     chart.draw();
   };
 
@@ -148,23 +152,13 @@ const BitcoinChart: React.FC = () => {
     const el = chartContainerRef.current;
     if (!el) return;
     const observer = new ResizeObserver(() => {
-      if (frontChartRef.current) {
-        frontChartRef.current.resize();
-      }
-      if (backChartRef.current) {
-        backChartRef.current.resize();
+      if (chartRef.current) {
+        chartRef.current.resize();
       }
     });
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
-
-  const scheduleSwap = (callback: () => void, delay: number) => {
-    if (fadeTimeoutRef.current != null) {
-      window.clearTimeout(fadeTimeoutRef.current);
-    }
-    fadeTimeoutRef.current = window.setTimeout(callback, delay);
-  };
 
   const filteredSignature = useMemo(() => {
     if (!filteredHistory.length) return 'empty';
@@ -175,44 +169,42 @@ const BitcoinChart: React.FC = () => {
 
   useEffect(() => {
     if (!filteredHistory.length) {
-      setFrontHistory([]);
-      setBackHistory([]);
-      setIsTransitioning(false);
-      frontSignatureRef.current = 'empty';
+      setDisplayHistory([]);
+      setChartOpacity(1);
+      setIsFadingOut(false);
+      pendingHistoryRef.current = null;
+      pendingSignatureRef.current = '';
+      displayedSignatureRef.current = 'empty';
       return;
     }
-    if (!frontHistory.length) {
-      setFrontHistory(filteredHistory);
-      setBackHistory([]);
-      setIsTransitioning(false);
-      frontSignatureRef.current = filteredSignature;
+    if (!displayHistory.length) {
+      setDisplayHistory(filteredHistory);
+      setIsFadingOut(false);
+      displayedSignatureRef.current = filteredSignature;
+      if (!initialFadeRef.current) {
+        initialFadeRef.current = true;
+        setChartOpacity(0);
+        requestAnimationFrame(() => {
+          window.setTimeout(() => setChartOpacity(1), 30);
+        });
+      } else {
+        setChartOpacity(1);
+      }
       return;
     }
-    if (frontSignatureRef.current === filteredSignature) {
+    if (displayedSignatureRef.current === filteredSignature) {
       return;
     }
     setSelectedIndex(null);
     setSelectedX(null);
     selectedXRef.current = null;
-    setBackHistory(filteredHistory);
-    setIsTransitioning(true);
-    scheduleSwap(() => {
-      setFrontHistory(filteredHistory);
-      setBackHistory([]);
-      setIsTransitioning(false);
-      frontSignatureRef.current = filteredSignature;
-    }, 350);
-  }, [filteredHistory, filteredSignature, frontHistory.length]);
+    pendingHistoryRef.current = filteredHistory;
+    pendingSignatureRef.current = filteredSignature;
+    setIsFadingOut(true);
+    setChartOpacity(0);
+  }, [filteredHistory, filteredSignature, displayHistory.length]);
 
-  useEffect(() => {
-    return () => {
-      if (fadeTimeoutRef.current != null) {
-        window.clearTimeout(fadeTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const interactiveHistory = isTransitioning ? backHistory : frontHistory;
+  const interactiveHistory = displayHistory;
 
   const activePoint = useMemo(() => {
     if (!interactiveHistory.length) return null;
@@ -237,14 +229,15 @@ const BitcoinChart: React.FC = () => {
     return percentageIncrease > 0 ? 'Bull' : 'Sloth';
   }, [percentageIncrease]);
 
-  const frontChartData: ChartData<'line', PricePoint[]> = useMemo(
+  const chartData: ChartData<'line', PricePoint[]> = useMemo(
     () => ({
       datasets: [
         {
           label: 'Bitcoin',
-          data: frontHistory,
+          data: displayHistory,
           borderColor: 'rgba(248, 141, 0, 0.9)',
           backgroundColor: 'rgba(248, 141, 0, 0.15)',
+          borderCapStyle: 'round',
           pointRadius: 0,
           pointHoverRadius: 0,
           pointHitRadius: 25,
@@ -259,32 +252,7 @@ const BitcoinChart: React.FC = () => {
         }
       ]
     }),
-    [frontHistory]
-  );
-
-  const backChartData: ChartData<'line', PricePoint[]> = useMemo(
-    () => ({
-      datasets: [
-        {
-          label: 'Bitcoin',
-          data: backHistory,
-          borderColor: 'rgba(248, 141, 0, 0.9)',
-          backgroundColor: 'rgba(248, 141, 0, 0.15)',
-          pointRadius: 0,
-          pointHoverRadius: 0,
-          pointHitRadius: 25,
-          pointBorderWidth: 0,
-          pointHoverBackgroundColor: 'rgba(248, 141, 0, 0.95)',
-          pointHoverBorderColor: 'rgba(248, 141, 0, 0)',
-          pointHoverBorderWidth: 0,
-          cubicInterpolationMode: 'monotone',
-          tension: 0.25,
-          fill: false,
-          borderWidth: 3
-        }
-      ]
-    }),
-    [backHistory]
+    [displayHistory]
   );
 
   const options: ChartOptions<'line'> = useMemo(
@@ -293,6 +261,9 @@ const BitcoinChart: React.FC = () => {
       maintainAspectRatio: false,
       animation: false,
       events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+      layout: {
+        padding: { top: 10, bottom: 10 }
+      },
       scales: {
         x: {
           type: 'time',
@@ -416,21 +387,43 @@ const BitcoinChart: React.FC = () => {
           position: 'relative',
           minWidth: 0,
           width: '100%',
-          transition: 'opacity 350ms ease'
+          opacity: chartOpacity,
+          transition: `opacity ${opacityDuration} ease`
         }}
-        onMouseLeave={() => updateSelection(isTransitioning ? backChartRef.current : frontChartRef.current, null)}
-        onTouchEnd={() => updateSelection(isTransitioning ? backChartRef.current : frontChartRef.current, null)}
+        onMouseLeave={() => updateSelection(chartRef.current, null)}
+        onTouchEnd={() => updateSelection(chartRef.current, null)}
+        onTransitionEnd={(event) => {
+          if (event.propertyName !== 'opacity') return;
+          if (!isFadingOut) return;
+          const pending = pendingHistoryRef.current;
+          if (!pending || !pending.length) {
+            setIsFadingOut(false);
+            setChartOpacity(1);
+            return;
+          }
+          setDisplayHistory(pending);
+          displayedSignatureRef.current = pendingSignatureRef.current;
+          pendingHistoryRef.current = null;
+          pendingSignatureRef.current = '';
+          setIsFadingOut(false);
+          requestAnimationFrame(() => setChartOpacity(1));
+        }}
       >
         <div
           style={{
             position: 'absolute',
             top: 8,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: '12px',
+            left: 8,
+            transform: 'none',
+            fontSize: 'inherit',
             color: '#f5f5f5',
+            background: '#161616',
+            border: '1px solid #333',
+            borderRadius: '6px',
+            padding: '4px 8px',
             zIndex: 2,
-            pointerEvents: 'none'
+            pointerEvents: 'none',
+            opacity: selectedX != null && activePoint ? 1 : 0
           }}
         >
           {selectedX != null && activePoint
@@ -445,12 +438,14 @@ const BitcoinChart: React.FC = () => {
           <div
             style={{
               position: 'absolute',
-              top: 0,
-              bottom: 0,
               left: selectedX,
-              width: '2px',
-              background: 'rgba(248, 141, 0, 0.45)',
-              transform: 'translateX(-1px)',
+              top: selectedY ?? 0,
+              width: '20px',
+              height: '20px',
+              borderRadius: '50%',
+              background: '#1e1e1e',
+              border: '3px solid rgba(248, 141, 0, 0.9)',
+              transform: 'translate(-10px, -13px)',
               pointerEvents: 'none',
               zIndex: 1
             }}
@@ -458,64 +453,43 @@ const BitcoinChart: React.FC = () => {
         )}
         {loading && <div>Loading chart...</div>}
         {error && !loading && <div>Error loading chart</div>}
-        {!loading && !error && frontHistory.length > 0 && (
-          <div style={{ position: 'relative', height: 200 }}>
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                opacity: isTransitioning ? 0 : 1,
-                transition: 'opacity 350ms ease',
-                pointerEvents: isTransitioning ? 'none' : 'auto'
-              }}
-            >
-              <Line ref={frontChartRef} data={frontChartData} options={options} height={200} />
-            </div>
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                opacity: isTransitioning ? 1 : 0,
-                transition: 'opacity 350ms ease',
-                pointerEvents: isTransitioning ? 'auto' : 'none'
-              }}
-            >
-              <Line ref={backChartRef} data={backChartData} options={options} height={200} />
-            </div>
-            <div
-              style={{ position: 'absolute', inset: 0 }}
-              onMouseMove={(event) => {
-                const chart = isTransitioning ? backChartRef.current : frontChartRef.current;
-                if (!chart) return;
-                const rect = chart.canvas.getBoundingClientRect();
-                const eventX = event.nativeEvent.clientX - rect.left;
-                updateSelection(chart, eventX);
-              }}
-              onClick={(event) => {
-                const chart = isTransitioning ? backChartRef.current : frontChartRef.current;
-                if (!chart) return;
-                const rect = chart.canvas.getBoundingClientRect();
-                const eventX = event.nativeEvent.clientX - rect.left;
-                updateSelection(chart, eventX);
-              }}
-              onTouchMove={(event) => {
-                const chart = isTransitioning ? backChartRef.current : frontChartRef.current;
-                if (!chart) return;
-                const rect = chart.canvas.getBoundingClientRect();
-                const touch = event.touches[0];
-                const eventX = touch ? touch.clientX - rect.left : null;
-                updateSelection(chart, eventX);
-              }}
-              onTouchStart={(event) => {
-                const chart = isTransitioning ? backChartRef.current : frontChartRef.current;
-                if (!chart) return;
-                const rect = chart.canvas.getBoundingClientRect();
-                const touch = event.touches[0];
-                const eventX = touch ? touch.clientX - rect.left : null;
-                updateSelection(chart, eventX);
-              }}
-            />
-          </div>
+        {!loading && !error && displayHistory.length > 0 && (
+          <Line
+            ref={chartRef}
+            data={chartData}
+            options={options}
+            height={200}
+            onMouseMove={(event) => {
+              const chart = chartRef.current;
+              if (!chart) return;
+              const rect = chart.canvas.getBoundingClientRect();
+              const eventX = event.nativeEvent.clientX - rect.left;
+              updateSelection(chart, eventX);
+            }}
+            onClick={(event) => {
+              const chart = chartRef.current;
+              if (!chart) return;
+              const rect = chart.canvas.getBoundingClientRect();
+              const eventX = event.nativeEvent.clientX - rect.left;
+              updateSelection(chart, eventX);
+            }}
+            onTouchMove={(event) => {
+              const chart = chartRef.current;
+              if (!chart) return;
+              const rect = chart.canvas.getBoundingClientRect();
+              const touch = event.touches[0];
+              const eventX = touch ? touch.clientX - rect.left : null;
+              updateSelection(chart, eventX);
+            }}
+            onTouchStart={(event) => {
+              const chart = chartRef.current;
+              if (!chart) return;
+              const rect = chart.canvas.getBoundingClientRect();
+              const touch = event.touches[0];
+              const eventX = touch ? touch.clientX - rect.left : null;
+              updateSelection(chart, eventX);
+            }}
+          />
         )}
         {!loading && !error && filteredHistory.length === 0 && <div>No data</div>}
       </div>
