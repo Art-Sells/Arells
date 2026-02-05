@@ -26,7 +26,7 @@ const RANGE_PRESETS: { label: string; days: RangeDays }[] = [
 const BitcoinChart: React.FC = () => {
   const [vapa, setVapa] = useState<number>(0);
   const [history, setHistory] = useState<PricePoint[]>([]);
-  const [marketCaps, setMarketCaps] = useState<PricePoint[]>([]);
+  const [vapaMarketCap, setVapaMarketCap] = useState<number[]>([]);
   const [rangeDays, setRangeDays] = useState<RangeDays>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -38,12 +38,8 @@ const BitcoinChart: React.FC = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const [vapaResponse, marketResponse] = await Promise.all([
-          axios.get('/api/vapa'),
-          axios.get('/api/fetchHistoricalData')
-        ]);
+        const vapaResponse = await axios.get('/api/vapa');
         const data = vapaResponse.data || {};
-        const marketData = marketResponse.data || {};
         const hist = Array.isArray(data.history) ? data.history : [];
         const parsedHistory: PricePoint[] = hist
           .map((entry: any) => {
@@ -54,22 +50,10 @@ const BitcoinChart: React.FC = () => {
           })
           .filter(Boolean) as PricePoint[];
         parsedHistory.sort((a, b) => a.x.getTime() - b.x.getTime());
-        const caps = Array.isArray(marketData.market_caps) ? marketData.market_caps : [];
-        const parsedCaps: PricePoint[] = caps
-          .map((entry: any) => {
-            if (!Array.isArray(entry) || entry.length < 2) return null;
-            const [timestamp, cap] = entry;
-            const d = new Date(timestamp);
-            const value = Number(cap);
-            if (Number.isNaN(d.getTime()) || Number.isNaN(value)) return null;
-            return { x: d, y: value };
-          })
-          .filter(Boolean) as PricePoint[];
-        parsedCaps.sort((a, b) => a.x.getTime() - b.x.getTime());
         if (isMounted) {
           setVapa(typeof data.vapa === 'number' ? data.vapa : 0);
           setHistory(parsedHistory);
-          setMarketCaps(parsedCaps);
+          setVapaMarketCap(Array.isArray(data.vapaMarketCap) ? data.vapaMarketCap : []);
           setError(false);
         }
       } catch (err) {
@@ -248,20 +232,11 @@ const BitcoinChart: React.FC = () => {
   }, [percentageIncrease]);
 
   const activeMarketCap = useMemo(() => {
-    if (!marketCaps.length || !activePoint?.x) return null;
-    const targetTs = activePoint.x.getTime();
-    let lo = 0;
-    let hi = marketCaps.length - 1;
-    while (lo < hi) {
-      const mid = Math.ceil((lo + hi) / 2);
-      if (marketCaps[mid].x.getTime() <= targetTs) {
-        lo = mid;
-      } else {
-        hi = mid - 1;
-      }
-    }
-    return marketCaps[lo]?.y ?? null;
-  }, [activePoint, marketCaps]);
+    if (!activePoint || !history.length || !vapaMarketCap.length) return null;
+    const idx = history.findIndex((h) => h.x.getTime() === activePoint.x.getTime());
+    if (idx === -1) return null;
+    return typeof vapaMarketCap[idx] === 'number' ? vapaMarketCap[idx] : null;
+  }, [activePoint, history, vapaMarketCap]);
 
   const chartData: ChartData<'line', PricePoint[]> = useMemo(
     () => ({
@@ -374,52 +349,54 @@ const BitcoinChart: React.FC = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: 0 }}>
         <div>(Bitcoin)</div>
         <div>
-          Price(add-this): $
+          Price: $
           {formatCurrency(activePoint?.y ?? vapa)}
         </div>
         <div>Market Cap: ${formatMarketCap(activeMarketCap)}</div>
-        <div>+{formatPercent(percentageIncrease)}%</div>
-        <div>
-          <button
-            type="button"
-            onClick={() => {
-              setStatusModalMode(marketStatus === 'Bull' ? 'Bull' : 'Sloth');
-              setShowStatusModal(true);
-            }}
-            style={{
-              background: 'transparent',
-              color: '#00e5ff',
-              border: '1px solid #00e5ff',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: 600,
-              padding: '4px 10px'
-            }}
-          >
-            {marketStatus === 'Bull' ? 'Bull 🐂 Market' : 'Sloth 🦥 Market'}
-          </button>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-          {RANGE_PRESETS.map((r) => {
-            const isActive = rangeDays === r.days;
-            return (
-              <button
-                key={r.label}
-                type="button"
-                onClick={() => setRangeDays(isActive ? null : r.days)}
-                style={{
-                  padding: '6px 10px',
-                  borderRadius: '6px',
-                  border: isActive ? '1px solid #00e5ff' : '1px solid #333',
-                  background: isActive ? '#0b2f33' : '#202020',
-                  color: isActive ? '#00e5ff' : '#f5f5f5',
-                  cursor: 'pointer'
-                }}
-              >
-                {r.label}
-              </button>
-            );
-          })}
+        <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '10px', display: 'grid', gap: '10px' }}>
+          <div>+{formatPercent(percentageIncrease)}%</div>
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                setStatusModalMode(marketStatus === 'Bull' ? 'Bull' : 'Sloth');
+                setShowStatusModal(true);
+              }}
+              style={{
+                background: 'transparent',
+                color: '#00e5ff',
+                border: '1px solid #00e5ff',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                padding: '4px 10px'
+              }}
+            >
+              {marketStatus === 'Bull' ? 'Bull 🐂 Market' : 'Sloth 🦥 Market'}
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {RANGE_PRESETS.map((r) => {
+              const isActive = rangeDays === r.days;
+              return (
+                <button
+                  key={r.label}
+                  type="button"
+                  onClick={() => setRangeDays(isActive ? null : r.days)}
+                  style={{
+                    padding: '6px 10px',
+                    borderRadius: '6px',
+                    border: isActive ? '1px solid #00e5ff' : '1px solid #333',
+                    background: isActive ? '#0b2f33' : '#202020',
+                    color: isActive ? '#00e5ff' : '#f5f5f5',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {r.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
       <div

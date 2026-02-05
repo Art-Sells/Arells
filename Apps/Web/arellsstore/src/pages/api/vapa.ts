@@ -11,17 +11,25 @@ const HISTORY_REFRESH_MS = 24 * 60 * 60 * 1000;
 
 const isoDateFromDay = (day: string): string => `${day}T00:00:00.000Z`;
 
-const buildMonotonicHistory = (prices: [number, number][]) => {
+const buildMonotonicHistory = (prices: [number, number][], marketCaps: [number, number][]) => {
   const dailyMap = new Map<string, number>();
+  const dailyCapMap = new Map<string, number>();
   for (const entry of prices) {
     const [timestamp, price] = entry;
     if (typeof price !== 'number') continue;
     const day = new Date(timestamp).toISOString().slice(0, 10);
     dailyMap.set(day, price);
   }
+  for (const entry of marketCaps) {
+    const [timestamp, cap] = entry;
+    if (typeof cap !== 'number') continue;
+    const day = new Date(timestamp).toISOString().slice(0, 10);
+    dailyCapMap.set(day, cap);
+  }
 
   const dailyEntries = Array.from(dailyMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   const history: { date: string; price: number }[] = [];
+  const vapaMarketCap: number[] = [];
   let maxPrice = 0;
   let maxDate: string | null = null;
 
@@ -29,6 +37,10 @@ const buildMonotonicHistory = (prices: [number, number][]) => {
     const lastPrice = history.length ? history[history.length - 1].price : 0;
     const adjusted = Math.max(price, lastPrice);
     history.push({ date, price: adjusted });
+    const cap = dailyCapMap.get(date);
+    const supply = cap && price > 0 ? cap / price : null;
+    const computedMarketCap = supply ? adjusted * supply : null;
+    vapaMarketCap.push(typeof computedMarketCap === 'number' ? computedMarketCap : 0);
     if (adjusted > maxPrice) {
       maxPrice = adjusted;
       maxDate = date;
@@ -37,6 +49,7 @@ const buildMonotonicHistory = (prices: [number, number][]) => {
 
   return {
     history,
+    vapaMarketCap,
     highestPriceEver: maxPrice,
     highestPriceDate: maxDate ? isoDateFromDay(maxDate) : null
   };
@@ -52,6 +65,7 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
   let storedVapaDate: string | null = null;
   let storedHistory: { date: string; price: number }[] = [];
   let storedHistoryLastUpdated: number | null = null;
+let storedVapaMarketCap: number[] = [];
   let fileExists = false;
   try {
     const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
@@ -61,6 +75,7 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
       storedVapaDate = data.vapaDate ?? data.lastUpdated ?? null;
       storedHistory = Array.isArray(data.history) ? data.history : [];
       storedHistoryLastUpdated = typeof data.historyLastUpdated === 'number' ? data.historyLastUpdated : null;
+    storedVapaMarketCap = Array.isArray(data.vapaMarketCap) ? data.vapaMarketCap : [];
       fileExists = true;
     }
   } catch (error: any) {
@@ -90,22 +105,26 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
     let highestPriceEver = 0;
     let highestPriceDate: string | null = null;
     let history: { date: string; price: number }[] = storedHistory;
+    let vapaMarketCap: number[] = storedVapaMarketCap;
     let historyLastUpdated: number | null = storedHistoryLastUpdated;
+    const missingVapaMarketCap = !Array.isArray(storedVapaMarketCap) || storedVapaMarketCap.length === 0;
     const shouldRefreshHistory =
       !storedHistory.length ||
       !storedHistoryLastUpdated ||
       Date.now() - storedHistoryLastUpdated > HISTORY_REFRESH_MS;
     try {
-      if (shouldRefreshHistory) {
+      if (shouldRefreshHistory || missingVapaMarketCap) {
         const historicalResponse = await axios.get('http://localhost:3000/api/fetchHistoricalData', {
           timeout: 5000
         }).catch(() => {
           return axios.get('/api/fetchHistoricalData', { timeout: 5000 });
         });
         const prices: [number, number][] = historicalResponse.data?.prices || [];
+        const caps: [number, number][] = historicalResponse.data?.market_caps || [];
         if (prices.length > 0) {
-          const result = buildMonotonicHistory(prices);
+          const result = buildMonotonicHistory(prices, caps);
           history = result.history;
+          vapaMarketCap = result.vapaMarketCap;
           historyLastUpdated = Date.now();
           highestPriceEver = result.highestPriceEver;
           highestPriceDate = result.highestPriceDate;
@@ -147,12 +166,13 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
           vapa: newVAPA,
           vapaDate: newVapaDate,
           history,
+          vapaMarketCap,
           historyLastUpdated
         }),
         ContentType: 'application/json',
       }).promise();
       console.log('[vapa] Created VAPA file:', { vapa: newVAPA });
-    } else if (newVAPA > storedVAPA || shouldRefreshHistory) {
+    } else if (newVAPA > storedVAPA || shouldRefreshHistory || missingVapaMarketCap) {
       // File exists - update if VAPA is higher or history refreshed
       await s3.putObject({
         Bucket: BUCKET_NAME,
@@ -161,6 +181,7 @@ async function fetchAndUpdateVAPA(): Promise<{ vapa: number; vapaDate: string | 
           vapa: newVAPA,
           vapaDate: newVapaDate,
           history,
+          vapaMarketCap,
           historyLastUpdated
         }),
         ContentType: 'application/json',
@@ -222,8 +243,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const initialVapa = 0;
           await s3.putObject({
             Bucket: BUCKET_NAME,
-        Key: BITCOIN_VAPA_KEY,
-            Body: JSON.stringify({ vapa: initialVapa, vapaDate: null, history: [], historyLastUpdated: null }),
+            Key: BITCOIN_VAPA_KEY,
+            Body: JSON.stringify({ vapa: initialVapa, vapaDate: null, history: [], vapaMarketCap: [], historyLastUpdated: null }),
             ContentType: 'application/json',
           }).promise();
           console.log('[vapa] Created VAPA file on first GET request');
@@ -246,13 +267,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             vapa,
             vapaDate,
             history: Array.isArray(data.history) ? data.history : [],
+            vapaMarketCap: Array.isArray(data.vapaMarketCap) ? data.vapaMarketCap : [],
             historyLastUpdated: data.historyLastUpdated ?? null
           });
         }
       } catch (readErr) {
         // fall through to default return if history read fails
       }
-      return res.status(200).json({ vapa, vapaDate, history: [], historyLastUpdated: null });
+      return res.status(200).json({ vapa, vapaDate, history: [], vapaMarketCap: [], historyLastUpdated: null });
     } catch (error: any) {
       console.error('[vapa] Error in GET handler:', error);
       // Even on error, try to return stored value or create file

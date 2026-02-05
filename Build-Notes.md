@@ -5,10 +5,7 @@
 ## Arells v1
 
 ### Test Offline
-= Delete All Login/Signup/PrivacyPolicy
-- Rename everything that says "Account" meaning the links, files, functions/etc with bitcoin or Bitcoin
-- Reconfigure State for get and save vavity (not by email, by session?, saves in Json by sessions?)
-- 
+
 VavityTester:
 – (Bitcoin) (VAPA): $dollar price 
 - - Portfolio (before anything is added)
