@@ -3,8 +3,8 @@
 import type { ImageLoaderProps } from 'next/image';
 import '../app/css/Home.css';
 import BitcoinChart from '../components/Assets/Bitcoin/BitcoinChart';
-import '../app/css/modals/loader/accountloaderbackground.css';
-import styles from '../app/css/modals/loader/accountloader.module.css';
+import '../app/css/modals/loader/bitcoindashboardloaderbackground.css';
+import styles from '../app/css/modals/loader/bitcoindashboardloader.module.css';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import React from 'react';
@@ -42,16 +42,16 @@ const Index = () => {
   return (
     <>
       {showLoading && (
-        <div id="accountloaderbackground">
+        <div id="bitcoindashboardloaderbackground">
           <Image
             loader={imageLoader}
             alt=""
             width={29}
             height={30}
-            id="arells-loader-icon-account"
+            id="arells-loader-icon-bitcoin"
             src="images/Arells-Icon.png"
           />
-          <div id={styles.accountloader}></div>
+          <div className={styles.bitcoindashboardloader}></div>
         </div>
       )}
 

@@ -37,7 +37,7 @@ const customPlugin = {
   },
 };
 
-const BitcoinChart: React.FC = () => {
+const BitcoinChartPanel: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   };
@@ -169,7 +169,7 @@ const BitcoinChart: React.FC = () => {
   };
 
   return (
-    <div className={styles.chartContainerAccount}>
+    <div className={styles.chartContainer}>
       <div id="b-logo-home">
         <span>
           <div id="b-how-wrapper">
@@ -221,4 +221,4 @@ const BitcoinChart: React.FC = () => {
   );
 };
 
-export default BitcoinChart;
+export default BitcoinChartPanel;

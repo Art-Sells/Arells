@@ -26,6 +26,7 @@ const RANGE_PRESETS: { label: string; days: RangeDays }[] = [
 const BitcoinChart: React.FC = () => {
   const [vapa, setVapa] = useState<number>(0);
   const [history, setHistory] = useState<PricePoint[]>([]);
+  const [marketCaps, setMarketCaps] = useState<PricePoint[]>([]);
   const [rangeDays, setRangeDays] = useState<RangeDays>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -37,8 +38,12 @@ const BitcoinChart: React.FC = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const res = await axios.get('/api/vapa');
-        const data = res.data || {};
+        const [vapaResponse, marketResponse] = await Promise.all([
+          axios.get('/api/vapa'),
+          axios.get('/api/fetchHistoricalData')
+        ]);
+        const data = vapaResponse.data || {};
+        const marketData = marketResponse.data || {};
         const hist = Array.isArray(data.history) ? data.history : [];
         const parsedHistory: PricePoint[] = hist
           .map((entry: any) => {
@@ -49,9 +54,22 @@ const BitcoinChart: React.FC = () => {
           })
           .filter(Boolean) as PricePoint[];
         parsedHistory.sort((a, b) => a.x.getTime() - b.x.getTime());
+        const caps = Array.isArray(marketData.market_caps) ? marketData.market_caps : [];
+        const parsedCaps: PricePoint[] = caps
+          .map((entry: any) => {
+            if (!Array.isArray(entry) || entry.length < 2) return null;
+            const [timestamp, cap] = entry;
+            const d = new Date(timestamp);
+            const value = Number(cap);
+            if (Number.isNaN(d.getTime()) || Number.isNaN(value)) return null;
+            return { x: d, y: value };
+          })
+          .filter(Boolean) as PricePoint[];
+        parsedCaps.sort((a, b) => a.x.getTime() - b.x.getTime());
         if (isMounted) {
           setVapa(typeof data.vapa === 'number' ? data.vapa : 0);
           setHistory(parsedHistory);
+          setMarketCaps(parsedCaps);
           setError(false);
         }
       } catch (err) {
@@ -229,6 +247,22 @@ const BitcoinChart: React.FC = () => {
     return percentageIncrease > 0 ? 'Bull' : 'Sloth';
   }, [percentageIncrease]);
 
+  const activeMarketCap = useMemo(() => {
+    if (!marketCaps.length || !activePoint?.x) return null;
+    const targetTs = activePoint.x.getTime();
+    let lo = 0;
+    let hi = marketCaps.length - 1;
+    while (lo < hi) {
+      const mid = Math.ceil((lo + hi) / 2);
+      if (marketCaps[mid].x.getTime() <= targetTs) {
+        lo = mid;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    return marketCaps[lo]?.y ?? null;
+  }, [activePoint, marketCaps]);
+
   const chartData: ChartData<'line', PricePoint[]> = useMemo(
     () => ({
       datasets: [
@@ -330,13 +364,21 @@ const BitcoinChart: React.FC = () => {
     return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
+  const formatMarketCap = (value: number | null) => {
+    if (value == null) return '...';
+    return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  };
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '16px', border: '1px solid #333', borderRadius: '8px', padding: '16px', background: '#161616', opacity: loading ? 0.6 : 1 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: 0 }}>
+        <div>(Bitcoin)</div>
         <div>
-          (Bitcoin): $
+          Price(add-this): $
           {formatCurrency(activePoint?.y ?? vapa)}
         </div>
+        <div>Market Cap: ${formatMarketCap(activeMarketCap)}</div>
+        <div>+{formatPercent(percentageIncrease)}%</div>
         <div>
           <button
             type="button"
@@ -357,7 +399,6 @@ const BitcoinChart: React.FC = () => {
             {marketStatus === 'Bull' ? 'Bull 🐂 Market' : 'Sloth 🦥 Market'}
           </button>
         </div>
-        <div>+{formatPercent(percentageIncrease)}%</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {RANGE_PRESETS.map((r) => {
             const isActive = rangeDays === r.days;

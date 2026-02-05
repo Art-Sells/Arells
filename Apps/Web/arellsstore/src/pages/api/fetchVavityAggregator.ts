@@ -9,13 +9,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { email } = req.query;
+  const rawSessionId = req.query.sessionId;
+  const sessionId = Array.isArray(rawSessionId) ? rawSessionId[0] : rawSessionId;
 
-  if (!email) {
-    return res.status(400).json({ error: 'Email query parameter is required' });
+  if (!sessionId) {
+    return res.status(400).json({ error: 'sessionId query parameter is required' });
   }
 
-  const key = `${email}/VavityAggregate.json`;
+  const key = `sessions/${sessionId}/VavityAggregate.json`;
 
   try {
     const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();

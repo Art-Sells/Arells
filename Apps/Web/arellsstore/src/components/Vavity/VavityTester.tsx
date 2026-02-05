@@ -6,7 +6,7 @@ import { useVavity } from '../../context/VavityAggregator';
 import BitcoinChart from '../Assets/Bitcoin/BitcoinChart';
 
 const VavityTester: React.FC = () => {
-  const { email, vapa, assetPrice, fetchVavityAggregator, addVavityAggregator } = useVavity();
+  const { sessionId, vapa, assetPrice, fetchVavityAggregator, addVavityAggregator } = useVavity();
   const [vavityData, setVavityData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
@@ -24,14 +24,14 @@ const VavityTester: React.FC = () => {
   const [chartReady, setChartReady] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!email || !fetchVavityAggregator) return;
+    if (!sessionId || !fetchVavityAggregator) return;
 
     let isMounted = true;
 
     const loadData = async () => {
       setLoading(true);
       try {
-        const data = await fetchVavityAggregator(email);
+        const data = await fetchVavityAggregator(sessionId);
         if (isMounted) {
           setVavityData(data);
         }
@@ -51,7 +51,7 @@ const VavityTester: React.FC = () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [email, fetchVavityAggregator]);
+  }, [fetchVavityAggregator, sessionId]);
 
   const investments = vavityData?.investments || [];
   const totals = vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
@@ -89,12 +89,12 @@ const VavityTester: React.FC = () => {
           setRangeHistoricalPrice(null);
           setRangeLoading(false);
         }
-        return;
-      }
+      return;
+    }
       setRangeLoading(true);
       const targetDate = new Date(Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000);
       const isoDate = targetDate.toISOString().split('T')[0];
-      try {
+    try {
         const response = await axios.get('/api/vapaHistoricalPrice', {
           params: { date: isoDate }
         });
@@ -123,7 +123,7 @@ const VavityTester: React.FC = () => {
     }
     if (rangeHistoricalPrice == null) {
       return totals;
-    }
+            }
     const rangeStart = Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000;
     return investments.reduce(
       (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
@@ -230,11 +230,11 @@ const VavityTester: React.FC = () => {
       } catch (error) {
         if (isMounted) {
           setHistoricalPrice(null);
-        }
+      }
       } finally {
         if (isMounted) {
           setHistoricalLoading(false);
-        }
+      }
       }
     };
 
@@ -258,7 +258,7 @@ const VavityTester: React.FC = () => {
   }, [tokenAmount, parseTokenAmount, vapa]);
 
   const handleSubmitInvestment = async () => {
-    if (!email) return;
+    if (!sessionId) return;
     const amt = parseTokenAmount(tokenAmount || '0');
     if (!amt || amt <= 0) return;
     if (!purchaseDate) return;
@@ -271,8 +271,8 @@ const VavityTester: React.FC = () => {
 
     setSubmitLoading(true);
     try {
-      await addVavityAggregator(email, [newInvestment]);
-      const refreshed = await fetchVavityAggregator(email);
+      await addVavityAggregator(sessionId, [newInvestment]);
+      const refreshed = await fetchVavityAggregator(sessionId);
       setVavityData(refreshed);
       setTokenAmount('');
       setPurchaseDate('');
@@ -361,7 +361,7 @@ const VavityTester: React.FC = () => {
   return (
     <div style={{ padding: '24px', color: '#f5f5f5', background: '#111', minHeight: '100vh' }}>
       <h1 style={{ marginBottom: '12px' }}>Vavity Tester</h1>
-
+      
       <div
         style={{
           display: 'grid',
@@ -387,11 +387,11 @@ const VavityTester: React.FC = () => {
             ${vapa ? vapa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
           </strong>
         </div>
-        <div>User Email: {email || 'Not available'}</div>
+        <div>Session: {sessionId || 'Not available'}</div>
       </div>
 
       <div
-        style={{
+          style={{
           marginBottom: '24px',
           border: '1px solid #333',
           borderRadius: '8px',
@@ -407,9 +407,9 @@ const VavityTester: React.FC = () => {
               <button
                 style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
                 onClick={() => setShowAddForm(true)}
-              >
+        >
                 (Add Investments)
-              </button>
+        </button>
             )}
             {showAddForm && renderAddForm('Add Investment')}
           </>
@@ -474,7 +474,7 @@ const VavityTester: React.FC = () => {
                   );
                 })}
               </div>
-            </div>
+          </div>
             <button
               style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
               onClick={() => setShowAddMoreForm((prev) => !prev)}
@@ -486,15 +486,7 @@ const VavityTester: React.FC = () => {
         )}
       </div>
 
-      <div
-        style={{
-          marginBottom: '24px',
-          border: '1px solid #333',
-          borderRadius: '8px',
-          padding: '12px',
-          background: '#161616'
-        }}
-      >
+      <div style={{ marginBottom: '24px' }}>
         <BitcoinChart />
       </div>
 
@@ -519,7 +511,7 @@ const VavityTester: React.FC = () => {
                 : 'Losses: $0.00'}
             </div>
             <div>Date Purchased: {formatDate(currentMockEntry.datePurchased)}</div>
-          </div>
+        </div>
         ) : (
           <div>Loading mock portfolio...</div>
         )}
@@ -566,9 +558,9 @@ const VavityTester: React.FC = () => {
                 </div>
               );
             })}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
+        </div>
     </div>
   );
 };

@@ -5,11 +5,7 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://arells.com/login</loc>
-    <changefreq>daily</changefreq>
-  </url>
-    <url>
-    <loc>https://arells.com/signup</loc>
+    <loc>https://arells.com/bitcoin</loc>
     <changefreq>daily</changefreq>
   </url>
 </urlset>

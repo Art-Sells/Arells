@@ -29,16 +29,16 @@ interface VavityaggregatorType {
   totals: TotalsState;
   vavityPrice: number; // Alias for vapa (legacy compatibility)
   setManualAssetPrice: (price: number | ((currentPrice: number) => number)) => void;
-  email: string;
-  fetchVavityAggregator: (email: string) => Promise<any>;
-  addVavityAggregator: (email: string, newInvestments: any[]) => Promise<any>;
-  saveVavityAggregator: (email: string, investments: any[]) => Promise<any>;
+  sessionId: string;
+  fetchVavityAggregator: (sessionId: string) => Promise<any>;
+  addVavityAggregator: (sessionId: string, newInvestments: any[]) => Promise<any>;
+  saveVavityAggregator: (sessionId: string, investments: any[]) => Promise<any>;
 }
 
 const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefined);
 
 export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { email } = useUser();
+  const { sessionId } = useUser();
   const [assetPrice, setAssetPrice] = useState<number>(0);
   const [vapa, setVapa] = useState<number>(0);
   const [vapaDate, setVapaDate] = useState<string | null>(null);
@@ -117,9 +117,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
   };
 
-  const fetchVavityAggregator = useCallback(async (email: string): Promise<any> => {
-    if (!email) throw new Error('Email is required');
-    const response = await axios.get(`/api/fetchVavityAggregator`, { params: { email } });
+  const fetchVavityAggregator = useCallback(async (currentSessionId: string): Promise<any> => {
+    if (!currentSessionId) throw new Error('Session ID is required');
+    const response = await axios.get(`/api/fetchVavityAggregator`, { params: { sessionId: currentSessionId } });
     const data = response.data || {};
     const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
     const fetchedTotals: TotalsState = data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
@@ -128,12 +128,12 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return data;
   }, []);
 
-  const addVavityAggregator = useCallback(async (email: string, newInvestments: any[]): Promise<any> => {
-    if (!email || !Array.isArray(newInvestments) || newInvestments.length === 0) {
-      throw new Error('Email and non-empty newInvestments array are required');
+  const addVavityAggregator = useCallback(async (currentSessionId: string, newInvestments: any[]): Promise<any> => {
+    if (!currentSessionId || !Array.isArray(newInvestments) || newInvestments.length === 0) {
+      throw new Error('Session ID and non-empty newInvestments array are required');
     }
     const response = await axios.post('/api/addVavityAggregator', {
-      email,
+      sessionId: currentSessionId,
       newInvestments,
     });
     const data = response.data?.data || {};
@@ -142,12 +142,12 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return response.data;
   }, []);
 
-  const saveVavityAggregator = useCallback(async (email: string, updatedInvestments: any[]): Promise<any> => {
-    if (!email) {
-      throw new Error('Email is required');
+  const saveVavityAggregator = useCallback(async (currentSessionId: string, updatedInvestments: any[]): Promise<any> => {
+    if (!currentSessionId) {
+      throw new Error('Session ID is required');
     }
     const response = await axios.post('/api/saveVavityAggregator', {
-      email,
+      sessionId: currentSessionId,
       investments: updatedInvestments,
     });
     const data = response.data?.data || {};
@@ -166,7 +166,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         vapaDate,
         vavityPrice: vapa,
         setManualAssetPrice,
-        email,
+        sessionId,
         fetchVavityAggregator,
         addVavityAggregator,
         saveVavityAggregator

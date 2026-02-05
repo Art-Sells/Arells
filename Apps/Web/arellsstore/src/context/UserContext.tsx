@@ -3,46 +3,65 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 
 interface UserContextType {
-  email: string;
-  setEmail: (email: string) => void;
+  sessionId: string;
+  setSessionId: (value: string) => void;
+  resetSessionId: () => string;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
-const AUTH_EMAIL_KEY = 'arells_email';
+const SESSION_KEY = 'arells_session_id';
+
+const generateSessionId = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `sess-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+};
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [email, setEmail] = useState<string>('');
-  const setEmailWithStorage = useCallback((value: string) => {
-    setEmail(value);
+  const [sessionId, setSessionIdState] = useState<string>('');
+
+  const setSessionId = useCallback((value: string) => {
+    setSessionIdState(value);
     if (typeof window !== 'undefined') {
       if (value) {
-        window.localStorage.setItem(AUTH_EMAIL_KEY, value);
+        window.localStorage.setItem(SESSION_KEY, value);
       } else {
-        window.localStorage.removeItem(AUTH_EMAIL_KEY);
+        window.localStorage.removeItem(SESSION_KEY);
       }
     }
   }, []);
 
+  const resetSessionId = useCallback(() => {
+    const next = generateSessionId();
+    setSessionId(next);
+    return next;
+  }, [setSessionId]);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const stored = window.localStorage.getItem(AUTH_EMAIL_KEY);
+    const stored = window.localStorage.getItem(SESSION_KEY);
     if (stored) {
-      setEmail(stored);
+      setSessionIdState(stored);
+    } else {
+      const next = generateSessionId();
+      setSessionId(next);
     }
     const handleStorage = (event: StorageEvent) => {
-      if (event.key === AUTH_EMAIL_KEY) {
-        setEmail(event.newValue ?? '');
+      if (event.key === SESSION_KEY) {
+        setSessionIdState(event.newValue ?? '');
       }
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
-  }, []);
+  }, [setSessionId]);
 
   return (
     <UserContext.Provider
       value={{
-        email,
-        setEmail: setEmailWithStorage,
+        sessionId,
+        setSessionId,
+        resetSessionId,
       }}
     >
       {children}

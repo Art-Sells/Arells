@@ -91,14 +91,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, investments } = req.body;
+  const { sessionId, investments } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: 'Missing email' });
+  if (!sessionId) {
+    return res.status(400).json({ error: 'Missing sessionId' });
   }
 
   try {
-    const key = `${email}/VavityAggregate.json`;
+    const key = `sessions/${sessionId}/VavityAggregate.json`;
 
     // Fetch existing data from S3
     let existingData: any = {};

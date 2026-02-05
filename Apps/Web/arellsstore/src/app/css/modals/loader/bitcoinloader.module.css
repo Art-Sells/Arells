@@ -1,4 +1,4 @@
-#accountloader {
+#bitcoinloader {
     position: fixed;
     display: block;
     justify-content: center;
@@ -18,7 +18,7 @@
   }
   
   @media screen and (max-height: 550px) {
-    #accountloader{
+    #bitcoinloader{
       margin-top: -45px;
     }
   }

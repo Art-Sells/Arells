@@ -2,18 +2,18 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 
 // Import other necessary components and hooks
-import '../css/account/Account.css';
+import '../css/bitcoin-dashboard/BitcoinDashboard.css';
 
 import type { Metadata } from 'next';
-import Account from '../../components/Account/Account';
+import BitcoinDashboard from '../../components/BitcoinDashboard/BitcoinDashboard';
 export const metadata: Metadata = {
-  title: "Arells",
-  description: "If bear markets never existed Connect your investments.",
+  title: "Arells Bitcoin",
+  description: "Bitcoin dashboard for Arells.",
   robots: "noimageindex",
   openGraph: {
-    title: "Arells",
-    description: "If bear markets never existed Connect your investments.",
-    url: "https://arells.com/account",
+    title: "Arells Bitcoin",
+    description: "Bitcoin dashboard for Arells.",
+    url: "https://arells.com/bitcoin",
     type: "website",
     images: [
       {
@@ -33,17 +33,17 @@ export const metadata: Metadata = {
   }
 };
 
-const AccountPage = () => {
+  const BitcoinPage = () => {
   
 
   return (
     <>
 
       <div id="account-wrapper">
-            <Account/>
+            <BitcoinDashboard/>
       </div>
     </>
   );
 }
 
-export default AccountPage;
+export default BitcoinPage;

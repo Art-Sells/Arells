@@ -75,12 +75,12 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 
 ### Home
 arells
-(
-    (View (B) Bitcoin)
-    If bear markets never existed
-)
+looks exactly like CoinMarketCap (simplified / Market Cap)...
+Assets| (24hr)(1wk),etc, MarketCap
+- more assets coming soon...
 
-### Bitcoin
+### Bitcoin (test ETH version to release both, implement into Home)
+(columns if more than 700 px, rows if less)
 - If bear markets never existed
 ---------
 - Chart
@@ -126,7 +126,7 @@ arells
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages
-- - If bear markets never existed (Bitcoin - If bear markets never existed)
+- - If bear markets never existed (Bitcoin/Ethereum - If bear markets never existed)
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
 - - Create a sitemap.xml: Helps Google discover all pages

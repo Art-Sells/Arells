@@ -8,12 +8,11 @@ export default function robots(): MetadataRoute.Robots {
             allow: "/",
             disallow: 
                 [
-                    "/account", 
+                    "/bitcoin", 
                     "/bankaccount",
                     "/buy",
                     "/howitworks",
                     "/hpmtester",
-                    "/privacy-policy",
                     "/sell",
                     "/transactions",
                     "/wallettester",

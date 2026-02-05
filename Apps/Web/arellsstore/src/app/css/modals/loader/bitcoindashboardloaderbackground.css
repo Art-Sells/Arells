@@ -1,5 +1,5 @@
 
-#accountloaderbackground {
+#bitcoindashboardloaderbackground {
     position: fixed; /* Stay in place */
     text-align: center;
     z-index: 200; /* Sit on top */
@@ -28,7 +28,7 @@
   }
 
 
-  #arells-loader-icon-account {
+  #arells-loader-icon-bitcoin {
     margin-top: 220px;
     opacity: .3;
   }
@@ -36,7 +36,7 @@
 
   @media screen and (max-height: 550px) {
 
-    #arells-loader-icon-account {
+    #arells-loader-icon-bitcoin {
       margin-top: 120px;
     }
 

@@ -91,15 +91,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, newInvestments } = req.body;
+  const { sessionId, newInvestments } = req.body;
 
-  if (!email || !Array.isArray(newInvestments) || newInvestments.length === 0) {
-    console.error("Invalid request data:", { email, newInvestments });
-    return res.status(400).json({ error: 'Invalid request: Missing email or newInvestments' });
+  if (!sessionId || !Array.isArray(newInvestments) || newInvestments.length === 0) {
+    console.error("Invalid request data:", { sessionId, newInvestments });
+    return res.status(400).json({ error: 'Invalid request: Missing sessionId or newInvestments' });
   }
 
   try {
-    const key = `${email}/VavityAggregate.json`;
+    const key = `sessions/${sessionId}/VavityAggregate.json`;
 
     // Fetch existing data from S3
     let existingData: any = {};
@@ -108,7 +108,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       existingData = JSON.parse(data.Body!.toString());
     } catch (err: any) {
       if (err.code === 'NoSuchKey') {
-        console.warn("No existing data found for user:", email);
+        console.warn("No existing data found for session:", sessionId);
       } else {
         throw err;
       }

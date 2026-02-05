@@ -4,16 +4,16 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
 import { useBitcoinPrice } from '../../context/BitcoinPriceContext';
-import BitcoinChartAccount from '../../components/Assets/Bitcoin/BitcoinChartAccount';
-import '../../app/css/account/Account.css';
-import '../../app/css/modals/account/account-modal.css';
-import '../../app/css/modals/loader/accountloaderbackground.css';
-import styles from '../../app/css/modals/loader/accountloader.module.css';
+import BitcoinChartPanel from '../../components/Assets/Bitcoin/BitcoinChartPanel';
+import '../../app/css/bitcoin-account/BitcoinAccount.css';
+import '../../app/css/modals/bitcoin-account/bitcoin-account-modal.css';
+import '../../app/css/modals/loader/bitcoinaccountloaderbackground.css';
+import styles from '../../app/css/modals/loader/bitcoinaccountloader.module.css';
 import { useRouter } from 'next/navigation';
 import { useVavity } from '../../context/VavityAggregator';
 import { useUser } from '../../context/UserContext';
 
-const Account: React.FC = () => {
+const BitcoinAccount: React.FC = () => {
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     return `/${src}?w=${width}&q=${quality || 100}`;
   };
@@ -28,7 +28,7 @@ const Account: React.FC = () => {
   });
 
   const router = useRouter();
-  const { setEmail } = useUser();
+  const { resetSessionId } = useUser();
 
   const handleImageLoaded = (imageName: string) => {
     setImagesLoaded((prevState) => ({
@@ -47,8 +47,8 @@ const Account: React.FC = () => {
   }, [imagesLoaded]);
 
   const handleSignOut = async () => {
-      setEmail('');
-      router.push('/');
+    resetSessionId();
+    router.push('/');
   };
 
   return (
@@ -88,7 +88,7 @@ const Account: React.FC = () => {
           Total BTC: {totals?.acVactTaa?.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 }) || '0.00000000'}
         </div>
 
-        <BitcoinChartAccount />
+        <BitcoinChartPanel />
 
         <div style={{ marginTop: '24px' }}>
           <button id="signout-account" onClick={handleSignOut}>
@@ -100,4 +100,4 @@ const Account: React.FC = () => {
   );
 };
 
-export default Account;
+export default BitcoinAccount;
