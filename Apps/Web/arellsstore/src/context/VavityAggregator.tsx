@@ -12,6 +12,7 @@ interface Investment {
   cVactTaa: number; // Token amount
   cdVatop: number;  // cVact - cVatop
   date?: string;    // Optional date purchased
+  asset?: string;   // Asset identifier (e.g., bitcoin)
 }
 
 interface TotalsState {

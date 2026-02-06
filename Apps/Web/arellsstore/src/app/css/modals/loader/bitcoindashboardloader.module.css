@@ -17,11 +17,11 @@
     margin-right: 50%;
   }
   
-@media screen and (max-height: 550px) {
+  @media screen and (max-height: 550px) {
   .bitcoindashboardloader{
-    margin-top: -45px;
+      margin-top: -45px;
+    }
   }
-}
   
     @-webkit-keyframes spin {
       0% { transform: rotate(0deg); }

@@ -1,65 +1,14 @@
 # Arells Build Notes...
 
-## Arells Cryptocurrency Marketplace MVP
-
 ## Arells v1
 
-### Test Offline
-
-VavityTester:
-– (Bitcoin) (VAPA): $dollar price 
-- - Portfolio (before anything is added)
-- - - (Add Investments)
-- - - - when button above clicked, it shows:
-- - - - $ Curent Investment Value (add to test UI display for lots of bitcoin): automatically displays Bitcoin Amount at the time of purchase (this should correspond and get the bitcoin price from the "date purchased" section) this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA x bitcoin amount entered ... If for example VAPA after 01/05/26 is greater than bitcoinPrice on 01/10/26, then $ Amount should be based on VAPA and not bitcoin Price
-- - - - $ Purchased Value: VAPAHistoricalPrice x bitcoinAmount
-– - - - $ Profits/Losses (add to test UI display for lots of bitcoin) (default when no activity inside bitcoin amount section): (VAPA x bitcoinAmount) minus (VAPAHistoricalPrice x bitcoinAmount)  changes to $ Losses: $ 0, when date is chosen and profits are zero
-- - - - bitcoin amount (section to enter bitcoin in token amounts (satoshis)) cVactTaa (formatCurrency (display only) 000,000,000.000(max sats))
-- - - - Date purchased (section to choose mm/dd/yy) (added to the cVact group)
-- - - - (Submit)
-
-- - My Porfolio (after investments added)
-- - - Purchased Value: acVatops
-- - - Current Value: should be acVacts
-– - - Profits/Losses: should be acdVatops
-- - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons (each should dissapear and re-appear dependent on date of oldest investment... so if oldest investment was 3 mnths ago, 1 y greys out, etc, etc)
-- - (add more investments) 
-- - - - when button above clicked, it shows:
-- - - - amount: $ in dollars (creates new Investment group inside VavityAggregator json)
-- - - - Date purchased (mm/dd/yy) (creates new Investment group inside VavityAggregator json)
-- - - - (Submit)
-^do not delete until home is complete
------
-- Line Chart
-- - On the Left:
-– - - (Bitcoin): $ (VAPA)
-- - - -  Bull (🐂(clickable for explanation)) Market {for percentage increase} or Sloth (🦥(clickable for explanation)) Market {for no percentage increase}… 
-- - - - +12.00%, etc, etc
-- - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons
-- - Right
-- - - Line Graph 
-------
-- Home
-- Mock Portfolio section with differing sampled amounts (3 seconds meander from 2 profits to 1 losses back and forth):
-- - (BTC)
-- - Purchased Value:
-- - Current Value:
-- - Profits/Losses:
-- - Date Purchased: mm/dd/yy
-
-^ Reconfigure UI below for HOME/BITCOIN before deleting
-
-### Test Online (both desktop(multiple browsers)/mobile):
-- change .env variables from NEXT_PUBLIC
-- - Allow Vapa to increase (if possible) and watch chart and profits/losses
-- - In notion:
+### Test Online 
+-  both desktop(multiple browsers)/mobile
+- In notion:
 - - Users
 - - - (current) number of email created, date, time, etc
 - - - chart
-- and NEXT_PUBLIC for AWS (change back then change back to AWS for local tests *always* in all APIs & aws-config)
-- Change AWS Access Key from PUBLIC to PRIVATE (find all files that have this and change them)
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
-(view all s3 jsons and check Arells Ethereum Wallet amount)
 
 
 ## Loading Modules in all pages
@@ -71,26 +20,27 @@ Vavity Architecture:
 Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
 
 ### Home
+- Loading Modal (3 seconds (A) logo with loader circling it)
 arells
 looks exactly like CoinMarketCap (simplified / Market Cap)...
 Assets| (24hr)(1wk),etc, MarketCap
 - more assets coming soon...
 
 ### Bitcoin (test ETH version to release both, implement into Home)
-(columns if more than 700 px, rows if less)
+(columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)
+- Loading Modal (3 seconds (B/E) logo with loader circling it)
 - If bear markets never existed
 ---------
-- Chart
-- - Left
-– - - (B): VAPA
-- - - - Bull (🐂(clickable for explanation)) Market {for percentage increase} or Sloth (🦥(clickable for explanation)) Market{for no percentage increase}… 
-- - - - +3.00%, etc, etc
+- Line Chart {look at VavityTester for example}
+- - On the Left:
+– - - (Bitcoin)
+- - - Price: $ (VAPA)
+- - - Market Cap: $
+- - - - +12.00%, etc, etc
+- - - -  Bull (🐂(clickable for explanation)) Market {for percentage increase} or Sloth (🦥(clickable for explanation)) Market {for no percentage increase}… 
 - - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons
 - - Right
-- - - Line Graph (clickable and hoverable {look at VavityTester for example}) (test horizontal desktop resize)
-- - - - Bull: Show modal explanation
-- - - - Sloth: Show modal explanation
----------
+- - - Line Graph (with date on the left)
 - Mock Portfolio section with differing sampled amounts (3 seconds meander from 2 profits to 1 losses back and forth):
 - - (BTC)
 - - Purchased Value:
@@ -98,13 +48,27 @@ Assets| (24hr)(1wk),etc, MarketCap
 - - Profits/Losses:
 - - Date Purchased: mm/dd/yy
 --------
-- Portfolio
-- - Investments: acVact 
-- - Profits/Losses (replaced Losses only if acdVatop > 0.00)(formatCurrency from VavityTester.tsx)
-- - (daily/weekly/yrly) buttons (greyed out if vavityaggregator doesn't exist or is empty...)
-- - (add investment) (add more investments)
+- - Portfolio (before anything is added) {look at VavityTester for example}, add /ethereum/bitcoin to porfolio session loader so it loads the correct amounts
+- - - (Add Investments) 
+- - - - when button above clicked, it shows:
+- - - - $ Purchased Value: VAPAHistoricalPrice x bitcoinAmount
+- - - - $ Curent Value (add to test UI display for lots of bitcoin): automatically displays Bitcoin Amount at the time of purchase (this should correspond and get the bitcoin price from the "date purchased" section) this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA x bitcoin amount entered ... If for example VAPA after 01/05/26 is greater than bitcoinPrice on 01/10/26, then $ Amount should be based on VAPA and not bitcoin Price
+– - - - $ Profits/Losses (add to test UI display for lots of bitcoin) (default when no activity inside bitcoin amount section): (VAPA x bitcoinAmount) minus (VAPAHistoricalPrice x bitcoinAmount)  changes to $ Losses: $ 0, when date is chosen and profits are zero
+- - - - bitcoin amount (section to enter bitcoin in token amounts (satoshis)) cVactTaa (formatCurrency (display only) 000,000,000.000(max sats))
+- - - - Date purchased (section to choose mm/dd/yy) (added to the cVact group)
+- - - - (Submit)
+- Porfolio (after investments added)
+- - - Purchased Value: acVatops
+- - - Current Value: should be acVacts
+– - - Profits/Losses: should be acdVatops
+- - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons (each should dissapear and re-appear dependent on date of oldest investment... so if oldest investment was 3 mnths ago, 1 y greys out, etc, etc)
+- - (add more investments) 
+- - - - when button above clicked, it shows:
+- - - - amount: $ in dollars (creates new Investment group inside VavityAggregator json)
+- - - - Date purchased (mm/dd/yy) (creates new Investment group inside VavityAggregator json)
+- - - - (Submit)
 -------------------
-- - (Investment List)
+- (Investment List)
 - - if no Investments 0
 - - - [insert add investments from account here] dissapear if investments:
 - - Purchased Value: cVatop
@@ -157,7 +121,7 @@ Users:
 - - Look at notes for openings. 
 - - Add "Discord" section for any questions
 - - - Discord welcome to Arells: is a ledger that portrays how your investments would look if no bear markets existed.
-
+- - Test to see if can implement NEXT_PUBLIC to something else in test...
 
 ### Other (if Time Permits)
 - Flip sloth pngs horizontally

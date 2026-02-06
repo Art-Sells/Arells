@@ -150,6 +150,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         cpVact,
         cVact,
         cdVatop,
+        asset: 'bitcoin',
       };
     });
 

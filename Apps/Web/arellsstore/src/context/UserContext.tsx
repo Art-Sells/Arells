@@ -43,10 +43,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const stored = window.localStorage.getItem(SESSION_KEY);
     if (stored) {
       setSessionIdState(stored);
-    } else {
+        } else {
       const next = generateSessionId();
       setSessionId(next);
-    }
+        }
     const handleStorage = (event: StorageEvent) => {
       if (event.key === SESSION_KEY) {
         setSessionIdState(event.newValue ?? '');

@@ -48,7 +48,7 @@ const BitcoinAccount: React.FC = () => {
 
   const handleSignOut = async () => {
     resetSessionId();
-    router.push('/');
+      router.push('/');
   };
 
   return (
