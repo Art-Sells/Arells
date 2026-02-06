@@ -31,9 +31,9 @@ interface VavityaggregatorType {
   vavityPrice: number; // Alias for vapa (legacy compatibility)
   setManualAssetPrice: (price: number | ((currentPrice: number) => number)) => void;
   sessionId: string;
-  fetchVavityAggregator: (sessionId: string) => Promise<any>;
-  addVavityAggregator: (sessionId: string, newInvestments: any[]) => Promise<any>;
-  saveVavityAggregator: (sessionId: string, investments: any[]) => Promise<any>;
+  fetchVavityAggregator: (sessionId: string, asset?: string) => Promise<any>;
+  addVavityAggregator: (sessionId: string, newInvestments: any[], asset?: string) => Promise<any>;
+  saveVavityAggregator: (sessionId: string, investments: any[], asset?: string) => Promise<any>;
 }
 
 const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefined);
@@ -118,9 +118,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
   };
 
-  const fetchVavityAggregator = useCallback(async (currentSessionId: string): Promise<any> => {
+  const fetchVavityAggregator = useCallback(async (currentSessionId: string, asset = 'bitcoin'): Promise<any> => {
     if (!currentSessionId) throw new Error('Session ID is required');
-    const response = await axios.get(`/api/fetchVavityAggregator`, { params: { sessionId: currentSessionId } });
+    const response = await axios.get(`/api/fetchVavityAggregator`, { params: { sessionId: currentSessionId, asset } });
     const data = response.data || {};
     const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
     const fetchedTotals: TotalsState = data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
@@ -129,13 +129,14 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return data;
   }, []);
 
-  const addVavityAggregator = useCallback(async (currentSessionId: string, newInvestments: any[]): Promise<any> => {
+  const addVavityAggregator = useCallback(async (currentSessionId: string, newInvestments: any[], asset = 'bitcoin'): Promise<any> => {
     if (!currentSessionId || !Array.isArray(newInvestments) || newInvestments.length === 0) {
       throw new Error('Session ID and non-empty newInvestments array are required');
     }
     const response = await axios.post('/api/addVavityAggregator', {
       sessionId: currentSessionId,
       newInvestments,
+      asset,
     });
     const data = response.data?.data || {};
     setInvestments(data.investments || []);
@@ -143,13 +144,14 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return response.data;
   }, []);
 
-  const saveVavityAggregator = useCallback(async (currentSessionId: string, updatedInvestments: any[]): Promise<any> => {
+  const saveVavityAggregator = useCallback(async (currentSessionId: string, updatedInvestments: any[], asset = 'bitcoin'): Promise<any> => {
     if (!currentSessionId) {
       throw new Error('Session ID is required');
     }
     const response = await axios.post('/api/saveVavityAggregator', {
       sessionId: currentSessionId,
       investments: updatedInvestments,
+      asset,
     });
     const data = response.data?.data || {};
     setInvestments(data.investments || updatedInvestments || []);

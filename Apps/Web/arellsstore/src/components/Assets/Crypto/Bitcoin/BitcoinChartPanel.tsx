@@ -8,7 +8,7 @@ import '../../../app/css/bitcoin/bitcoinchart.css';
 
 import type { ImageLoaderProps } from 'next/image';
 import Image from 'next/image';
-import { fetchBitcoinPriceData, fetchHistoricalData, filterPriceData } from '../../../lib/coingecko-api';
+import { fetchBitcoinPriceData, fetchHistoricalData, filterPriceData } from '../../../../lib/coingecko-api';
 
 interface PricePoint {
   x: Date;

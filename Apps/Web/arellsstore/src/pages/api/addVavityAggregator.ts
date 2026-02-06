@@ -4,7 +4,10 @@ import axios from 'axios';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
-const BITCOIN_VAPA_KEY = 'vavity/bitcoinVAPA.json';
+const VAPA_KEYS: Record<string, string> = {
+  bitcoin: 'vavity/bitcoinVAPA.json',
+  ethereum: 'vavity/ethereumVAPA.json'
+};
 
 const normalizeToIsoDay = (value: string): string | null => {
   if (!value) return null;
@@ -42,9 +45,10 @@ const getNearestHistoricalPrice = (
   return selected;
 };
 
-const loadVapaData = async (): Promise<{ vapa: number; history: { date: string; price: number }[] }> => {
+const loadVapaData = async (asset: string): Promise<{ vapa: number; history: { date: string; price: number }[] }> => {
+  const key = VAPA_KEYS[asset] || VAPA_KEYS.bitcoin;
   try {
-    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: BITCOIN_VAPA_KEY }).promise();
+    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
     const data = response.Body ? JSON.parse(response.Body.toString()) : {};
     return {
       vapa: typeof data.vapa === 'number' ? data.vapa : 0,
@@ -55,12 +59,15 @@ const loadVapaData = async (): Promise<{ vapa: number; history: { date: string; 
   }
 };
 
-const loadCurrentBitcoinPrice = async (): Promise<number | null> => {
+const loadCurrentPrice = async (asset: string): Promise<number | null> => {
+  const endpoint = asset === 'ethereum' ? 'ethereumPrice' : 'bitcoinPrice';
   try {
     const response = await axios
-      .get('http://localhost:3000/api/bitcoinPrice', { timeout: 5000 })
-      .catch(() => axios.get('/api/bitcoinPrice', { timeout: 5000 }));
-    const price = response.data?.bitcoin?.usd;
+      .get(`http://localhost:3000/api/${endpoint}`, { timeout: 5000 })
+      .catch(() => axios.get(`/api/${endpoint}`, { timeout: 5000 }));
+    const payload = response.data || {};
+    const priceObj = asset === 'ethereum' ? payload.ethereum : payload.bitcoin;
+    const price = priceObj?.usd;
     return typeof price === 'number' ? price : null;
   } catch (error) {
     return null;
@@ -91,7 +98,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { sessionId, newInvestments } = req.body;
+  const { sessionId, newInvestments, asset: rawAsset } = req.body;
+  const asset = typeof rawAsset === 'string' && rawAsset.length ? rawAsset.toLowerCase() : 'bitcoin';
 
   if (!sessionId || !Array.isArray(newInvestments) || newInvestments.length === 0) {
     console.error("Invalid request data:", { sessionId, newInvestments });
@@ -116,8 +124,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const existingInvestments = Array.isArray(existingData.investments) ? existingData.investments : [];
 
-    const vapaData = await loadVapaData();
-    const currentPrice = await loadCurrentBitcoinPrice();
+    const vapaData = await loadVapaData(asset);
+    const currentPrice = await loadCurrentPrice(asset);
 
     const normalizedNewInvestments = newInvestments.map((inv: any) => {
       const rawAmount = inv.cVactTaa ?? 0;
@@ -149,7 +157,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         cpVact,
         cVact,
         cdVatop,
-        asset: 'bitcoin',
+        asset,
       };
     });
 

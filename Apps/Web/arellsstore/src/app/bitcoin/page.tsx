@@ -5,7 +5,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import '../css/bitcoin-dashboard/BitcoinDashboard.css';
 
 import type { Metadata } from 'next';
-import BitcoinDashboard from '../../components/BitcoinDashboard/BitcoinDashboard';
 export const metadata: Metadata = {
   title: "Arells Bitcoin",
   description: "Bitcoin dashboard for Arells.",
@@ -38,9 +37,8 @@ export const metadata: Metadata = {
 
   return (
     <>
-
       <div id="account-wrapper">
-            <BitcoinDashboard/>
+        <div style={{ padding: '24px', color: '#fff' }}>Bitcoin dashboard is unavailable.</div>
       </div>
     </>
   );

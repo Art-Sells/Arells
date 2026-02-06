@@ -2,7 +2,7 @@
 
 import type { ImageLoaderProps } from 'next/image';
 import '../app/css/Home.css';
-import BitcoinChart from '../components/Assets/Bitcoin/BitcoinChart';
+import BitcoinChart from './Assets/Crypto/Bitcoin/BitcoinChart';
 import '../app/css/modals/loader/bitcoindashboardloaderbackground.css';
 import styles from '../app/css/modals/loader/bitcoindashboardloader.module.css';
 import { useState, useEffect } from 'react';

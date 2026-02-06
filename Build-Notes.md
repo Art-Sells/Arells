@@ -26,7 +26,7 @@ looks exactly like CoinMarketCap (simplified / Market Cap)...
 Assets| (24hr)(1wk),etc, MarketCap
 - more assets coming soon...
 
-### Bitcoin (test ETH version to release both, implement into Home)
+### Bitcoin (test Ethereum version to release both, implement into Home)
 (columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)
 - Loading Modal (3 seconds (B/E) logo with loader circling it)
 - If bear markets never existed

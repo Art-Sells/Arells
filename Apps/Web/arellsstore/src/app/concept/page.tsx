@@ -5,7 +5,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import '../css/import/import.css';
 
 
-import HPMconcept from '../../components/Vavity/HPMconcept';
 
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
@@ -42,7 +41,7 @@ const HPMConceptPage = () => {
     <>
 
       <div id="import-wrapper-concept">
-            <HPMconcept/>
+        <div style={{ padding: '24px', color: '#fff' }}>Concept page is unavailable.</div>
       </div>
     </>
   );

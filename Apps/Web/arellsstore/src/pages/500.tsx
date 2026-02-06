@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import '../app/css/error-style.css';
-import PageError from '../components/error/500/ServerError';
 import React from 'react';
 
 export const metadata: Metadata = {
@@ -35,7 +34,10 @@ export default function Custom500() {
   return (
     <>
       <div id="error-overlay">
-        <PageError />
+        <div style={{ color: '#fff', padding: '32px', textAlign: 'center' }}>
+          <h1>Server Error</h1>
+          <p>Something went wrong.</p>
+        </div>
       </div>
     </>
   );

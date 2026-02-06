@@ -2,10 +2,10 @@
 
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import axios from 'axios';
-import { useVavity } from '../../context/VavityAggregator';
-import BitcoinChart from '../Assets/Bitcoin/BitcoinChart';
+import { useVavity } from '../../../../../context/VavityAggregator';
+import BitcoinChart from '../../../../Assets/Crypto/Bitcoin/BitcoinChart';
 
-const VavityTester: React.FC = () => {
+const VavityTesterBitcoin: React.FC = () => {
   const { sessionId, vapa, assetPrice, fetchVavityAggregator, addVavityAggregator } = useVavity();
   const [vavityData, setVavityData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -54,6 +54,7 @@ const VavityTester: React.FC = () => {
   }, [fetchVavityAggregator, sessionId]);
 
   const investments = vavityData?.investments || [];
+  const displayHistory = vavityData?.history || [];
   const totals = vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
   const oldestInvestmentDate = useMemo(() => {
     if (investments.length === 0) return null;
@@ -63,7 +64,7 @@ const VavityTester: React.FC = () => {
       .map((value: string) => new Date(value))
       .filter((date: Date) => !Number.isNaN(date.getTime()));
     if (dates.length === 0) return null;
-    return new Date(Math.min(...dates.map((date) => date.getTime())));
+    return new Date(Math.min(...dates.map((date: Date) => date.getTime())));
   }, [investments]);
   const oldestInvestmentAgeDays = useMemo(() => {
     if (!oldestInvestmentDate) return 0;
@@ -487,7 +488,7 @@ const VavityTester: React.FC = () => {
       </div>
 
       <div style={{ marginBottom: '24px' }}>
-        <BitcoinChart />
+        <BitcoinChart history={displayHistory || []} color="rgba(248, 141, 0, 0.9)" />
       </div>
 
       <div
@@ -565,4 +566,4 @@ const VavityTester: React.FC = () => {
   );
 };
 
-export default VavityTester;
+export default VavityTesterBitcoin;

@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import VavityTester from '../../components/Vavity/VavityTester';
+import VavityTesterEthereum from '../../components/Vavity/Assets/Crypto/Ethereum/VavityTesterEthereum';
 
-const VavityTesterPage = () => {
+const VavityTesterEthereumPage = () => {
   return (
     <>
       <style jsx global>{`
@@ -33,10 +33,10 @@ const VavityTesterPage = () => {
         }
       `}</style>
       <div id="connect-wrapper" style={{ backgroundColor: '#000000', color: '#ffffff', minHeight: '100vh' }}>
-            <VavityTester/>
+        <VavityTesterEthereum />
       </div>
     </>
   );
-}
+};
 
-export default VavityTesterPage;
+export default VavityTesterEthereumPage;
