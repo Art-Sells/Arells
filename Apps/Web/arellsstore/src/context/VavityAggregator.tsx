@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useUser } from './UserContext';
 
 interface Investment {
@@ -22,14 +22,22 @@ interface TotalsState {
   acVactTaa: number;
 }
 
-interface VavityaggregatorType {
-  assetPrice: number;
+type AssetSnapshot = {
+  price: number;
   vapa: number;
   vapaDate: string | null;
+  history: { date: string; price: number }[];
+  vapaMarketCap: number[];
+  historyLastUpdated: number | null;
+};
+
+interface VavityaggregatorType {
+  assets: Record<string, AssetSnapshot>;
+  getAsset: (assetId: string) => AssetSnapshot | undefined;
+  refreshAsset: (assetId: string) => Promise<void>;
+  refreshAllAssets: () => Promise<void>;
   investments: Investment[];
   totals: TotalsState;
-  vavityPrice: number; // Alias for vapa (legacy compatibility)
-  setManualAssetPrice: (price: number | ((currentPrice: number) => number)) => void;
   sessionId: string;
   fetchVavityAggregator: (sessionId: string, asset?: string) => Promise<any>;
   addVavityAggregator: (sessionId: string, newInvestments: any[], asset?: string) => Promise<any>;
@@ -40,9 +48,7 @@ const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefin
 
 export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { sessionId } = useUser();
-  const [assetPrice, setAssetPrice] = useState<number>(0);
-  const [vapa, setVapa] = useState<number>(0);
-  const [vapaDate, setVapaDate] = useState<string | null>(null);
+  const [assets, setAssets] = useState<Record<string, AssetSnapshot>>({});
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [totals, setTotals] = useState<TotalsState>({
     acVatop: 0,
@@ -50,73 +56,37 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     acVact: 0,
     acVactTaa: 0,
   });
-  
-  // Fetch Bitcoin price on mount and periodically
-  // assetPrice = current Bitcoin price
-  // VAPA = highest Bitcoin price ever from historical data
+  const assetIds = useMemo(() => ['bitcoin', 'ethereum'], []);
+
+  const refreshAsset = useCallback(async (assetId: string) => {
+    try {
+      const response = await axios.get(`/api/assets/crypto/${assetId}/${assetId}vapa`);
+      const data = response.data || {};
+      const snapshot: AssetSnapshot = {
+        price: typeof data.price === 'number' ? data.price : 0,
+        vapa: typeof data.vapa === 'number' ? data.vapa : 0,
+        vapaDate: data.vapaDate ?? null,
+        history: Array.isArray(data.history) ? data.history : [],
+        vapaMarketCap: Array.isArray(data.vapaMarketCap) ? data.vapaMarketCap : [],
+        historyLastUpdated: typeof data.historyLastUpdated === 'number' ? data.historyLastUpdated : null,
+      };
+      setAssets((prev) => ({ ...prev, [assetId]: snapshot }));
+    } catch {
+      // keep previous snapshot
+    }
+  }, []);
+
+  const refreshAllAssets = useCallback(async () => {
+    await Promise.all(assetIds.map((assetId) => refreshAsset(assetId)));
+  }, [assetIds, refreshAsset]);
+
   useEffect(() => {
-    const fetchPrices = async () => {
-      try {
-        // Fetch current Bitcoin price
-        const currentPriceResponse = await axios.get('/api/bitcoinPrice');
-        const currentPrice = currentPriceResponse.data?.['bitcoin']?.usd;
-        if (currentPrice) {
-          setAssetPrice(currentPrice);
-        }
-
-        // Fetch VAPA from global /api/vapa endpoint (persistent, never decreases)
-        // VAPA is now global and doesn't depend on user email
-        // This is the SINGLE SOURCE OF TRUTH for VAPA - always use it directly
-        try {
-          const vapaResponse = await axios.get('/api/vapa');
-          const persistentVapa = vapaResponse.data?.vapa;
-          const persistentVapaDate = vapaResponse.data?.vapaDate ?? null;
-          if (persistentVapa !== undefined && persistentVapa !== null) {
-            // Always use the global VAPA value directly (don't use Math.max with prev)
-            // The global VAPA is already the highest value, so we should trust it
-            setVapa(persistentVapa);
-            setVapaDate(persistentVapaDate);
-          }
-        } catch (error) {
-          // Fallback to highest price ever if VAPA API doesn't exist yet
-          try {
-            const highestPriceResponse = await axios.get('/api/fetchHighestBitcoinPrice');
-        const highestPriceEver = highestPriceResponse.data?.highestPriceEver;
-        if (highestPriceEver) {
-              setVapa(highestPriceEver);
-              setVapaDate(highestPriceResponse.data?.highestPriceDate ?? null);
-            }
-          } catch (fallbackError) {
-            // If both fail, keep current VAPA or use assetPrice as last resort
-            console.warn('[VavityAggregator] Could not fetch VAPA from any source');
-          }
-        }
-      } catch (error) {
-        // console.error('Error fetching Bitcoin prices:', error);
-        // Keep default price on error
-      }
-    };
-
-    fetchPrices(); // Initial fetch
-    const interval = setInterval(fetchPrices, 60000); // Update every 60 seconds
-
+    refreshAllAssets();
+    const interval = setInterval(refreshAllAssets, 60000);
     return () => clearInterval(interval);
-  }, []); // VAPA is now global, no email dependency
-  
+  }, [refreshAllAssets]);
 
-  const setManualAssetPrice = async (
-    price: number | ((currentPrice: number) => number)
-  ) => {
-    const newPrice = typeof price === "function" ? price(assetPrice) : price;
-    setAssetPrice(newPrice);
-    setVapa((prev) => {
-      const next = Math.max(prev, newPrice);
-      if (next !== prev) {
-        setVapaDate(new Date().toISOString());
-      }
-      return next;
-    });
-  };
+  const getAsset = useCallback((assetId: string) => assets[assetId], [assets]);
 
   const fetchVavityAggregator = useCallback(async (currentSessionId: string, asset = 'bitcoin'): Promise<any> => {
     if (!currentSessionId) throw new Error('Session ID is required');
@@ -162,13 +132,12 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   return (
     <Vavityaggregator.Provider
       value={{
-        assetPrice,
         investments,
         totals,
-        vapa,
-        vapaDate,
-        vavityPrice: vapa,
-        setManualAssetPrice,
+        assets,
+        getAsset,
+        refreshAsset,
+        refreshAllAssets,
         sessionId,
         fetchVavityAggregator,
         addVavityAggregator,

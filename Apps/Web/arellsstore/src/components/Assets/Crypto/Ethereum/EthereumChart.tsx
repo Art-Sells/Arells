@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -36,7 +36,6 @@ const EthereumChart: React.FC<Props> = ({
 }) => {
   const chartRef = useRef<ChartJS<'line', PricePoint[], unknown> | null>(null);
   const markerRef = useRef<HTMLDivElement | null>(null);
-  const [hoverPoint, setHoverPoint] = useState<PricePoint | null>(null);
 
   const dataPoints = useMemo<PricePoint[]>(() => {
     return (history || []).map((item) => ({ x: new Date(item.date), y: item.price }));
@@ -143,51 +142,74 @@ const EthereumChart: React.FC<Props> = ({
     }
   }, [chartData]);
 
+  const updateMarker = useCallback(
+    (pixel: { x: number; y: number } | null, point: PricePoint | null, idx: number | null) => {
+      const marker = markerRef.current;
+      if (!marker) return;
+      if (!pixel || !point) {
+        marker.style.display = 'none';
+        onPointHover?.(null, null);
+        return;
+      }
+      marker.style.left = `${pixel.x - 13.5}px`;
+      marker.style.top = `${pixel.y - 13.5}px`;
+      marker.style.display = 'block';
+      onPointHover?.(point, idx);
+    },
+    [onPointHover]
+  );
+
+  const handlePointer = useCallback(
+    (clientX: number, clientY: number, target: HTMLDivElement) => {
+      const rect = target.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+        updateMarker(null, null, null);
+        return;
+      }
+      const resolved = resolvePointAtPixel(x);
+      if (resolved) {
+        updateMarker(resolved.pixel, resolved.point, resolved.idx);
+      } else {
+        updateMarker(null, null, null);
+      }
+    },
+    [resolvePointAtPixel, updateMarker]
+  );
+
   return (
     <div
       style={{ height, position: 'relative' }}
       onMouseMove={(e) => {
-        const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-          setHoverPoint(null);
-          onPointHover?.(null, null);
-          return;
-        }
-        const resolved = resolvePointAtPixel(x);
-        if (resolved) {
-          setHoverPoint(resolved.point);
-          onPointHover?.(resolved.point, resolved.idx);
-        }
+        handlePointer(e.clientX, e.clientY, e.currentTarget as HTMLDivElement);
       }}
       onTouchMove={(e) => {
         const touch = e.touches?.[0];
         if (!touch) return;
-        const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
-        if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-          setHoverPoint(null);
-          onPointHover?.(null, null);
-          return;
-        }
-        const resolved = resolvePointAtPixel(x);
-        if (resolved) {
-          setHoverPoint(resolved.point);
-          onPointHover?.(resolved.point, resolved.idx);
-        }
+        handlePointer(touch.clientX, touch.clientY, e.currentTarget as HTMLDivElement);
       }}
       onMouseLeave={() => {
-        setHoverPoint(null);
-        onPointHover?.(null, null);
+        updateMarker(null, null, null);
       }}
       onTouchEnd={() => {
-        setHoverPoint(null);
-        onPointHover?.(null, null);
+        updateMarker(null, null, null);
       }}
     >
       <Line ref={chartRef as any} data={chartData} options={options} />
+      <div
+        ref={markerRef}
+        style={{
+          position: 'absolute',
+          width: 23,
+          height: 23,
+          borderRadius: '50%',
+          border: `2px solid ${color}`,
+          background: backgroundColor,
+          pointerEvents: 'none',
+          display: 'none',
+        }}
+      />
     </div>
   );
 };

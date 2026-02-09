@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import { BitcoinPriceProvider } from '../context/BitcoinPriceContext';
 import { UserProvider } from '../context/UserContext';
 import { VavityProvider } from '../context/VavityAggregator';
+import { AssetsProvider } from '../context/Assets/AssetsProvider';
 
 type LayoutProps = {
   children: ReactNode;
@@ -17,13 +17,11 @@ const RootLayout = ({ children }: LayoutProps) => {
         <link rel="apple-touch-icon" href="/ArellsIcoIcon.png" />
       </head>
       <body>
-        <BitcoinPriceProvider>
+        <AssetsProvider>
           <UserProvider>
-              <VavityProvider>
-                {children}
-              </VavityProvider>
+            <VavityProvider>{children}</VavityProvider>
           </UserProvider>
-        </BitcoinPriceProvider>
+        </AssetsProvider>
       </body>
     </html>
   );

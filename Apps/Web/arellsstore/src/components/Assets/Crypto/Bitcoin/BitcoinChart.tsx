@@ -149,7 +149,6 @@ const BitcoinChart: React.FC<Props> = ({
         }
       },
       onHover: () => {},
-      events: [] as string[], // disable Chart.js internal hover handling
     };
   }, []);
 
@@ -170,8 +169,8 @@ const BitcoinChart: React.FC<Props> = ({
         onPointHover?.(null, null);
         return;
       }
-      marker.style.left = `${pixel.x - 7.5}px`;
-      marker.style.top = `${pixel.y - 7.5}px`;
+      marker.style.left = `${pixel.x - 13.5}px`;
+      marker.style.top = `${pixel.y - 13.5}px`;
       marker.style.display = 'block';
       onPointHover?.(point, idx);
     },
@@ -220,8 +219,8 @@ const BitcoinChart: React.FC<Props> = ({
         ref={markerRef}
         style={{
           position: 'absolute',
-          width: 15,
-          height: 15,
+          width: 23,
+          height: 23,
           borderRadius: '50%',
           border: `2px solid ${color}`,
           background: backgroundColor,

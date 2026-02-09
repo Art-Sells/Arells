@@ -6,7 +6,7 @@ import { useVavity } from '../../../../../context/VavityAggregator';
 import EthereumChart from '../../../../Assets/Crypto/Ethereum/EthereumChart';
 
 const VavityTesterEthereum: React.FC = () => {
-  const { sessionId, fetchVavityAggregator, addVavityAggregator } = useVavity();
+  const { sessionId, fetchVavityAggregator, addVavityAggregator, getAsset } = useVavity();
   const [vavityData, setVavityData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
@@ -22,64 +22,14 @@ const VavityTesterEthereum: React.FC = () => {
   const [mockEntries, setMockEntries] = useState<any[]>([]);
   const [mockStep, setMockStep] = useState<number>(0);
 
-  const [assetPrice, setAssetPrice] = useState<number>(0);
-  const [vapa, setVapa] = useState<number>(0);
-  const [history, setHistory] = useState<{ date: string; price: number }[]>([]);
-  const [vapaMarketCap, setVapaMarketCap] = useState<number[]>([]);
+  const assetSnapshot = getAsset('ethereum');
+  const assetPrice = assetSnapshot?.price ?? 0;
+  const vapa = assetSnapshot?.vapa ?? 0;
+  const history = assetSnapshot?.history ?? [];
+  const vapaMarketCap = assetSnapshot?.vapaMarketCap ?? [];
   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
   const [marketModal, setMarketModal] = useState<'bull' | 'sloth' | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    const fetchPrices = async () => {
-      try {
-        const currentPriceResponse = await axios.get('/api/ethereumPrice');
-        const currentPrice = currentPriceResponse.data?.ethereum?.usd;
-        if (isMounted && typeof currentPrice === 'number') {
-          setAssetPrice(currentPrice);
-        }
-        const vapaResponse = await axios.get('/api/ethereumVapa');
-        const ethVapa = vapaResponse.data?.vapa;
-        if (isMounted && typeof ethVapa === 'number') {
-          setVapa(ethVapa);
-        }
-        const hist = Array.isArray(vapaResponse.data?.history) ? vapaResponse.data.history : [];
-        const caps = Array.isArray(vapaResponse.data?.vapaMarketCap) ? vapaResponse.data.vapaMarketCap : [];
-        if (isMounted) {
-          setHistory(hist);
-          setVapaMarketCap(caps);
-        }
-      } catch (err) {
-        // surface for debugging VAPA population
-        console.warn('[VavityTesterEthereum] Failed to fetch ETH price/VAPA', err);
-      }
-    };
-    fetchPrices();
-    const interval = setInterval(fetchPrices, 60000);
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, []);
-
-  // Warm the ethereumVapa endpoint explicitly so the JSON populates on first load.
-  useEffect(() => {
-    let isMounted = true;
-    const warmVapa = async () => {
-      try {
-        await axios.get('/api/ethereumVapa');
-      } catch (err) {
-        if (isMounted) {
-          console.warn('[VavityTesterEthereum] Warm-up ethereumVapa failed', err);
-        }
-      }
-    };
-    warmVapa();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     if (!sessionId || !fetchVavityAggregator) return;
@@ -156,7 +106,7 @@ const VavityTesterEthereum: React.FC = () => {
       const targetDate = new Date(Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000);
       const isoDate = targetDate.toISOString().split('T')[0];
       try {
-        const response = await axios.get('/api/ethereumVapaHistoricalPrice', {
+        const response = await axios.get('/api/assets/crypto/ethereum/ethereumVapaHistoricalPrice', {
           params: { date: isoDate }
         });
         const price = response.data?.price;
@@ -335,7 +285,7 @@ const VavityTesterEthereum: React.FC = () => {
     let isMounted = true;
     const loadMock = async () => {
       try {
-        const resp = await axios.get('/api/mockPortfolio');
+        const resp = await axios.get('/api/assets/crypto/ethereum/ethereumMockPortfolio');
         const portfolio = Array.isArray(resp.data?.portfolio) ? resp.data.portfolio : [];
         if (isMounted) {
           setMockEntries(portfolio);
@@ -352,6 +302,13 @@ const VavityTesterEthereum: React.FC = () => {
       isMounted = false;
       clearInterval(interval);
     };
+  }, []);
+
+  const formatDate = useCallback((iso: string) => {
+    if (!iso) return '...';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '...';
+    return d.toLocaleDateString('en-US');
   }, []);
 
   const currentMockEntry = useMemo(() => {
@@ -372,7 +329,7 @@ const VavityTesterEthereum: React.FC = () => {
 
       setHistoricalLoading(true);
       try {
-        const response = await axios.get('/api/ethereumVapaHistoricalPrice', {
+        const response = await axios.get('/api/assets/crypto/ethereum/ethereumVapaHistoricalPrice', {
           params: { date: purchaseDate }
         });
         const price = response.data?.price;
@@ -623,7 +580,7 @@ const VavityTesterEthereum: React.FC = () => {
               color="rgba(125, 92, 255, 0.9)"
               height={320}
               backgroundColor="#161616"
-              onPointHover={(point, idx) => {
+              onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
                 setChartHoverIndex(idx ?? null);
               }}
             />
@@ -642,8 +599,15 @@ const VavityTesterEthereum: React.FC = () => {
           <h3 style={{ marginBottom: '12px' }}>Mock Portfolio</h3>
           {currentMockEntry ? (
             <div style={{ display: 'grid', gap: '6px' }}>
-              <div>{currentMockEntry.name ?? '(ETH)'}</div>
-              <div>{currentMockEntry.value ?? 'N/A'}</div>
+              <div>(ETH)</div>
+              <div>Purchased Value: ${formatCurrency(currentMockEntry.purchasedValue || 0)}</div>
+              <div>Current Value: ${formatCurrency(currentMockEntry.currentValue || 0)}</div>
+              <div>
+                {currentMockEntry.profitLoss > 0
+                  ? `Profits: +$${formatCurrency(currentMockEntry.profitLoss)}`
+                  : 'Losses: $0.00'}
+              </div>
+              <div>Date Purchased: {formatDate(currentMockEntry.datePurchased)}</div>
             </div>
           ) : (
             <div>Loading mock portfolio...</div>
@@ -744,6 +708,51 @@ const VavityTesterEthereum: React.FC = () => {
             </button>
             {showAddMoreForm && renderAddForm('Add more investments')}
           </>
+        )}
+      </div>
+
+      <div
+        style={{
+          border: '1px solid #333',
+          borderRadius: '8px',
+          padding: '12px',
+          background: '#161616'
+        }}
+      >
+        <h2 style={{ marginBottom: '12px' }}>Stored Investments</h2>
+        {loading && <div>Loading...</div>}
+        {!loading && investments.length === 0 && <div>No investments found.</div>}
+        {!loading && investments.length > 0 && (
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {investments.map((entry: any, idx: number) => {
+              const amount = entry.cVactTaa ?? 0;
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    border: '1px solid #333',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    background: '#1f1f1f'
+                  }}
+                >
+                  <div>Price at Purchase (cpVatop): {entry.cpVatop ?? 0}</div>
+                  <div>Value at Purchase (cVatop): {entry.cVatop ?? 0}</div>
+                  <div>Current Price (cpVact): {entry.cpVact ?? 0}</div>
+                  <div>Current Value (cVact): {entry.cVact ?? 0}</div>
+                  <div>Delta (cdVatop): {entry.cdVatop ?? 0}</div>
+                  <div>
+                    Token Amount (cVactTaa):{' '}
+                    {Number(amount).toLocaleString('en-US', {
+                      minimumFractionDigits: 8,
+                      maximumFractionDigits: 8
+                    })}
+                  </div>
+                  {entry.date && <div>Date: {entry.date}</div>}
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 

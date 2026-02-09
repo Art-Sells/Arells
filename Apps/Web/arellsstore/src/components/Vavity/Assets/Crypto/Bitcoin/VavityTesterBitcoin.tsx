@@ -6,7 +6,7 @@ import { useVavity } from '../../../../../context/VavityAggregator';
 import BitcoinChart from '../../../../Assets/Crypto/Bitcoin/BitcoinChart';
 
 const VavityTesterBitcoin: React.FC = () => {
-  const { sessionId, vapa, assetPrice, fetchVavityAggregator, addVavityAggregator } = useVavity();
+  const { sessionId, fetchVavityAggregator, addVavityAggregator, getAsset } = useVavity();
   const [vavityData, setVavityData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
@@ -22,8 +22,11 @@ const VavityTesterBitcoin: React.FC = () => {
   const [mockEntries, setMockEntries] = useState<any[]>([]);
   const [mockStep, setMockStep] = useState<number>(0);
   const [chartReady, setChartReady] = useState<boolean>(false);
-  const [history, setHistory] = useState<{ date: string; price: number }[]>([]);
-  const [vapaMarketCap, setVapaMarketCap] = useState<number[]>([]);
+  const assetSnapshot = getAsset('bitcoin');
+  const assetPrice = assetSnapshot?.price ?? 0;
+  const vapa = assetSnapshot?.vapa ?? 0;
+  const history = assetSnapshot?.history ?? [];
+  const vapaMarketCap = assetSnapshot?.vapaMarketCap ?? [];
   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
   const [marketModal, setMarketModal] = useState<'bull' | 'sloth' | null>(null);
@@ -36,7 +39,7 @@ const VavityTesterBitcoin: React.FC = () => {
     const loadData = async () => {
       setLoading(true);
       try {
-        const data = await fetchVavityAggregator(sessionId);
+        const data = await fetchVavityAggregator(sessionId, 'bitcoin');
         if (isMounted) {
           setVavityData(data);
         }
@@ -88,21 +91,6 @@ const VavityTesterBitcoin: React.FC = () => {
   );
   useEffect(() => {
     let isMounted = true;
-    const loadVapaHistory = async () => {
-      try {
-        const response = await axios.get('/api/vapa');
-        const hist = Array.isArray(response.data?.history) ? response.data.history : [];
-        const caps = Array.isArray(response.data?.vapaMarketCap) ? response.data.vapaMarketCap : [];
-        if (isMounted) {
-          setHistory(hist);
-          setVapaMarketCap(caps);
-        }
-      } catch (error) {
-        // keep quiet; chart can render empty history
-      }
-    };
-    loadVapaHistory();
-
     const loadRangePrice = async () => {
       if (!selectedRangeDays) {
         if (isMounted) {
@@ -115,7 +103,7 @@ const VavityTesterBitcoin: React.FC = () => {
       const targetDate = new Date(Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000);
       const isoDate = targetDate.toISOString().split('T')[0];
     try {
-        const response = await axios.get('/api/vapaHistoricalPrice', {
+        const response = await axios.get('/api/assets/crypto/bitcoin/bitcoinVapaHistoricalPrice', {
           params: { date: isoDate }
         });
         const price = response.data?.price;
@@ -294,7 +282,7 @@ const VavityTesterBitcoin: React.FC = () => {
     let isMounted = true;
     const loadMock = async () => {
       try {
-        const resp = await axios.get('/api/mockPortfolio');
+        const resp = await axios.get('/api/assets/crypto/bitcoin/bitcoinMockPortfolio');
         const portfolio = Array.isArray(resp.data?.portfolio) ? resp.data.portfolio : [];
         if (isMounted) {
           setMockEntries(portfolio);
@@ -338,7 +326,7 @@ const VavityTesterBitcoin: React.FC = () => {
 
       setHistoricalLoading(true);
       try {
-        const response = await axios.get('/api/vapaHistoricalPrice', {
+        const response = await axios.get('/api/assets/crypto/bitcoin/bitcoinVapaHistoricalPrice', {
           params: { date: purchaseDate }
         });
         const price = response.data?.price;
@@ -389,8 +377,8 @@ const VavityTesterBitcoin: React.FC = () => {
 
     setSubmitLoading(true);
     try {
-      await addVavityAggregator(sessionId, [newInvestment]);
-      const refreshed = await fetchVavityAggregator(sessionId);
+      await addVavityAggregator(sessionId, [newInvestment], 'bitcoin');
+      const refreshed = await fetchVavityAggregator(sessionId, 'bitcoin');
       setVavityData(refreshed);
       setTokenAmount('');
       setPurchaseDate('');
@@ -515,7 +503,7 @@ const VavityTesterBitcoin: React.FC = () => {
                       padding: '8px 12px',
                       borderRadius: '6px',
                       border: 'none',
-                      background: '#0f9d58',
+                      background: 'rgba(248, 141, 0, 0.9)',
                       color: '#fff',
                       cursor: 'pointer',
                       width: '100%',
@@ -554,9 +542,9 @@ const VavityTesterBitcoin: React.FC = () => {
                       style={{
                         padding: '6px 10px',
                         borderRadius: '6px',
-                        border: isActive ? '1px solid #00e5ff' : '1px solid #333',
-                        background: isActive ? '#0b2f33' : '#202020',
-                        color: isActive ? '#00e5ff' : '#f5f5f5',
+                        border: isActive ? '1px solid rgba(248, 141, 0, 0.9)' : '1px solid #333',
+                        background: isActive ? 'rgba(248, 141, 0, 0.18)' : '#202020',
+                        color: isActive ? 'rgba(248, 141, 0, 0.95)' : '#f5f5f5',
                         cursor: 'pointer'
                       }}
                     >
@@ -697,9 +685,9 @@ const VavityTesterBitcoin: React.FC = () => {
                       style={{
                         padding: '6px 10px',
                         borderRadius: '6px',
-                        border: isActive ? '1px solid #00e5ff' : '1px solid #333',
-                        background: isEnabled ? (isActive ? '#0b2f33' : '#202020') : '#111',
-                        color: isEnabled ? (isActive ? '#00e5ff' : '#f5f5f5') : '#666',
+                        border: isActive ? '1px solid rgba(248, 141, 0, 0.9)' : '1px solid #333',
+                        background: isEnabled ? (isActive ? 'rgba(248, 141, 0, 0.18)' : '#202020') : '#111',
+                        color: isEnabled ? (isActive ? 'rgba(248, 141, 0, 0.95)' : '#f5f5f5') : '#666',
                         cursor: isEnabled ? 'pointer' : 'not-allowed'
                       }}
                     >

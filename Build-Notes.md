@@ -2,31 +2,14 @@
 
 ## Arells v1
 
-### Test Ethereum/Bitcoin
 
-### Test Online 
--  both desktop(multiple browsers)/mobile
-- In notion:
-- - Users
-- - - (current) number of email created, date, time, etc
-- - - chart
-- - save/update .json info every second to ext Dsk (then every day save/update cold)
-
-## Loading Modules in all pages
-- All of them fade in and out (same as modules and pages in vavity.info)
-
-## After Test
-- Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
-Vavity Architecture:
-Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
 
 ### Home
 - Loading Modal (3 seconds (A) logo with loader circling it)
 - arells
 - If bear markets never existed
 - 2 new assets added weekly (colorful)
-
-looks exactly like CoinMarketCap (simplified / Market Cap)...
+- looks exactly like CoinMarketCap (simplified / Market Cap)...
 Assets| (24hr)(1wk),etc, MarketCap
 
 ### Bitcoin (test Ethereum version to release both, implement into Home)
@@ -102,6 +85,22 @@ Assets| (24hr)(1wk),etc, MarketCap
 - Compare Main ENV with Test ENV before deployments
 - Test (with vavity.info) on socials (DM's/etc)
 
+### Test Online 
+-  both desktop(multiple browsers)/mobile
+- In notion:
+- - Users
+- - - (current) number of email created, date, time, etc
+- - - chart
+- - save/update .json info every second to ext Dsk (then every day save/update cold)
+
+## Loading Modules in all pages
+- All of them fade in and out (same as modules and pages in vavity.info)
+
+## After Test
+- Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
+Vavity Architecture:
+Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
+
 ## Final Test
 - Remove typos from Arells/Vavity readmes, and UI
 - - In notion:  
@@ -122,7 +121,7 @@ Users:
 - Set Launch Date (and announce the features)
 - - Review notes on phone
 - - Look at notes for openings. 
-- - 
+- - components/api/context/vavity crypto/assets ... test, and add (shouldn't take a while to complete)
 - - Test to see if can implement NEXT_PUBLIC to something else in test...
 
 ### Other (if Time Permits)

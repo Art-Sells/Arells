@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import type { ImageLoaderProps } from 'next/image';
-import { useBitcoinPrice } from '../../../../context/Assets/Crypto/Bitcoin/BitcoinPriceContext';
+import { useBitcoinPrice } from '../../../../../context/Assets/Crypto/Bitcoin/BitcoinPriceContext';
 import '../../../../../app/css/bitcoin-dashboard/BitcoinDashboard.css';
 import '../../../../../app/css/modals/bitcoin-dashboard/bitcoin-dashboard-modal.css';
 
