@@ -24,6 +24,11 @@ const VavityTesterEthereum: React.FC = () => {
 
   const [assetPrice, setAssetPrice] = useState<number>(0);
   const [vapa, setVapa] = useState<number>(0);
+  const [history, setHistory] = useState<{ date: string; price: number }[]>([]);
+  const [vapaMarketCap, setVapaMarketCap] = useState<number[]>([]);
+  const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
+  const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
+  const [marketModal, setMarketModal] = useState<'bull' | 'sloth' | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -38,6 +43,12 @@ const VavityTesterEthereum: React.FC = () => {
         const ethVapa = vapaResponse.data?.vapa;
         if (isMounted && typeof ethVapa === 'number') {
           setVapa(ethVapa);
+        }
+        const hist = Array.isArray(vapaResponse.data?.history) ? vapaResponse.data.history : [];
+        const caps = Array.isArray(vapaResponse.data?.vapaMarketCap) ? vapaResponse.data.vapaMarketCap : [];
+        if (isMounted) {
+          setHistory(hist);
+          setVapaMarketCap(caps);
         }
       } catch (err) {
         // surface for debugging VAPA population
@@ -197,6 +208,18 @@ const VavityTesterEthereum: React.FC = () => {
     );
   }, [investments, rangeHistoricalPrice, selectedRangeDays, totals, vapa]);
 
+  const chartRanges = useMemo(
+    () => [
+      { label: '24 hours', days: 1 },
+      { label: '1 wk', days: 7 },
+      { label: '1 mnth', days: 30 },
+      { label: '3 mnths', days: 90 },
+      { label: '1 yr', days: 365 },
+      { label: 'All', days: null },
+    ],
+    []
+  );
+
   const formatCurrency = useCallback((value: number) => {
     const abs = Math.abs(value);
     const decimals = abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
@@ -204,6 +227,16 @@ const VavityTesterEthereum: React.FC = () => {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals
     });
+  }, []);
+
+  const formatMarketCap = useCallback((value: number | null) => {
+    if (value == null || Number.isNaN(value)) return '0';
+    return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  }, []);
+
+  const formatPercent = useCallback((value: number) => {
+    const sign = value > 0 ? '+' : '';
+    return `${sign}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
   }, []);
 
   const normalizeTokenInput = useCallback((value: string) => {
@@ -222,6 +255,81 @@ const VavityTesterEthereum: React.FC = () => {
     const parsed = parseFloat(cleaned);
     return Number.isNaN(parsed) ? 0 : parsed;
   }, []);
+
+  const chartHistory = useMemo(() => {
+    if (!chartRangeDays || !history.length) return history;
+    const cutoff = Date.now() - chartRangeDays * 24 * 60 * 60 * 1000;
+    const filtered = history.filter((item) => {
+      const t = new Date(item.date).getTime();
+      return !Number.isNaN(t) && t >= cutoff;
+    });
+    if (filtered.length >= 2) return filtered;
+    if (history.length >= 2) {
+      return history.slice(-2);
+    }
+    if (history.length === 1) {
+      return history;
+    }
+    return filtered;
+  }, [chartRangeDays, history]);
+
+  const chartMarketCaps = useMemo(() => {
+    if (!chartRangeDays || !history.length || !vapaMarketCap.length) return vapaMarketCap;
+    const cutoff = Date.now() - chartRangeDays * 24 * 60 * 60 * 1000;
+    const filtered = history
+      .map((item, idx) => ({ ...item, cap: vapaMarketCap[idx] }))
+      .filter((entry) => {
+        const t = new Date(entry.date).getTime();
+        return !Number.isNaN(t) && t >= cutoff;
+      })
+      .map((entry) => entry.cap);
+    if (filtered.length >= 2) return filtered;
+    if (vapaMarketCap.length >= 2) {
+      return vapaMarketCap.slice(-2);
+    }
+    if (vapaMarketCap.length === 1) {
+      return vapaMarketCap;
+    }
+    return filtered;
+  }, [chartRangeDays, history, vapaMarketCap]);
+
+  const activeIndex = useMemo(() => {
+    if (!chartHistory.length) return null;
+    if (chartHoverIndex != null) return chartHoverIndex;
+    return chartHistory.length - 1;
+  }, [chartHistory, chartHoverIndex]);
+
+  const activePoint = useMemo(() => {
+    if (activeIndex == null) {
+      return history.length ? history[history.length - 1] : null;
+    }
+    return chartHistory[activeIndex] ?? history[history.length - 1] ?? null;
+  }, [activeIndex, chartHistory, history]);
+
+  const activeMarketCap = useMemo(() => {
+    if (activeIndex != null && chartMarketCaps.length) {
+      const val = chartMarketCaps[activeIndex];
+      if (typeof val === 'number' && !Number.isNaN(val)) return val;
+    }
+    const fallback = vapaMarketCap.length ? vapaMarketCap[vapaMarketCap.length - 1] : null;
+    return typeof fallback === 'number' && !Number.isNaN(fallback) ? fallback : null;
+  }, [activeIndex, chartMarketCaps, vapaMarketCap]);
+
+  const percentageIncrease = useMemo(() => {
+    const series =
+      chartHistory.length >= 2
+        ? chartHistory
+        : history.length >= 2
+        ? history.slice(-2)
+        : chartHistory.length
+        ? chartHistory
+        : history;
+    if (!series || !series.length) return 0;
+    const start = series[0]?.price ?? 0;
+    const latest = activePoint?.price ?? series[series.length - 1]?.price ?? 0;
+    if (!start) return 0;
+    return ((latest - start) / start) * 100;
+  }, [chartHistory, activePoint, history]);
 
   useEffect(() => {
     let isMounted = true;
@@ -405,33 +513,142 @@ const VavityTesterEthereum: React.FC = () => {
   return (
     <div style={{ padding: '24px', color: '#f5f5f5', background: '#111', minHeight: '100vh' }}>
       <h1 style={{ marginBottom: '12px' }}>Vavity Tester (Ethereum)</h1>
-      
+
       <div
         style={{
-          display: 'grid',
-          gap: '8px',
-          marginBottom: '24px',
           border: '1px solid #333',
-          borderRadius: '8px',
-          padding: '12px',
-          background: '#1a1a1a'
+          borderRadius: '10px',
+          padding: '14px',
+          marginBottom: '24px',
+          background: '#141414'
         }}
       >
-        <div>
-          Current Ethereum Price:{' '}
-          <strong>
-            ${assetPrice
-              ? assetPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-              : '0.00'}
-          </strong>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap' }}>
+          <div
+            style={{
+              flex: '0 0 340px',
+              padding: '12px',
+              background: 'transparent',
+              display: 'grid',
+              gap: '8px'
+            }}
+          >
+            <div style={{ fontWeight: 700 }}>(Ethereum)</div>
+            <div>
+              Price: ${formatCurrency(activePoint?.price ?? vapa ?? 0)}
+            </div>
+            <div>Market Cap: ${formatMarketCap(activeMarketCap)}</div>
+            <div>{formatPercent(percentageIncrease)}</div>
+            <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '8px', marginTop: '4px' }}>
+              <div style={{ marginBottom: '8px' }}>
+                {percentageIncrease > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => setMarketModal('bull')}
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      background: '#7d5cff',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      width: '100%',
+                      fontWeight: 700
+                    }}
+                  >
+                    Bull 🐂 Market
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setMarketModal('sloth')}
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      background: '#5e5e5e',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      width: '100%',
+                      fontWeight: 700
+                    }}
+                  >
+                    Sloth 🦥 Market
+                  </button>
+                )}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {chartRanges.map((range) => {
+                  const isActive = chartRangeDays === range.days;
+                  return (
+                    <button
+                      key={range.label}
+                      type="button"
+                      onClick={() => setChartRangeDays(isActive ? null : range.days)}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: '6px',
+                        border: isActive ? '1px solid #7d5cff' : '1px solid #333',
+                        background: isActive ? '#251a48' : '#202020',
+                        color: isActive ? '#7d5cff' : '#f5f5f5',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {range.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              minWidth: '280px',
+              padding: '12px',
+              background: 'transparent',
+              border: '1px solid #333',
+              borderRadius: '8px',
+              position: 'relative'
+            }}
+          >
+            {chartHoverIndex != null && activePoint && (
+              <div style={{ position: 'absolute', top: 8, left: 12, color: '#f5f5f5', fontSize: '13px', opacity: 0.9 }}>
+                {new Date(activePoint.date).toLocaleDateString('en-US')}
+              </div>
+            )}
+            <EthereumChart
+              history={chartHistory || []}
+              color="rgba(125, 92, 255, 0.9)"
+              height={320}
+              backgroundColor="#161616"
+              onPointHover={(point, idx) => {
+                setChartHoverIndex(idx ?? null);
+              }}
+            />
+          </div>
         </div>
-        <div>
-          VAPA (Ethereum):{' '}
-          <strong>
-            ${vapa ? vapa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
-          </strong>
+
+        <div
+          style={{
+            marginTop: '16px',
+            border: '1px solid #333',
+            borderRadius: '8px',
+            padding: '12px',
+            background: '#161616'
+          }}
+        >
+          <h3 style={{ marginBottom: '12px' }}>Mock Portfolio</h3>
+          {currentMockEntry ? (
+            <div style={{ display: 'grid', gap: '6px' }}>
+              <div>{currentMockEntry.name ?? '(ETH)'}</div>
+              <div>{currentMockEntry.value ?? 'N/A'}</div>
+            </div>
+          ) : (
+            <div>Loading mock portfolio...</div>
+          )}
         </div>
-        <div>Session: {sessionId || 'Not available'}</div>
       </div>
 
       <div
@@ -443,139 +660,145 @@ const VavityTesterEthereum: React.FC = () => {
           background: '#161616'
         }}
       >
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => setShowAddForm((prev) => !prev)}
-            style={{
-              padding: '8px 14px',
-              background: '#7d5cff',
-              color: '#000',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 600
-            }}
-          >
-            Add Investment
-          </button>
-          <button
-            onClick={() => setShowAddMoreForm((prev) => !prev)}
-            style={{
-              padding: '8px 14px',
-              background: '#4bb3fd',
-              color: '#000',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 600
-            }}
-          >
-            Add More Investments
-          </button>
-          <div style={{ fontSize: '12px', opacity: 0.7 }}>
-            Oldest investment age: {oldestInvestmentAgeDays.toFixed(0)} days
-          </div>
-        </div>
-
-        {showAddForm && renderAddForm('Add a single investment')}
-        {showAddMoreForm && renderAddForm('Add more investments')}
-      </div>
-
-      <div style={{ marginBottom: '24px' }}>
-        <EthereumChart history={vavityData?.history || []} color="rgba(125, 92, 255, 0.9)" />
-      </div>
-
-      <div
-        style={{
-          display: 'grid',
-          gap: '12px',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          marginBottom: '24px'
-        }}
-      >
-        <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', background: '#1a1a1a' }}>
-          <div style={{ fontWeight: 600, marginBottom: '8px' }}>Totals (All)</div>
-          <div>acVatop: ${filteredTotals.acVatop.toLocaleString('en-US', { maximumFractionDigits: 2 })}</div>
-          <div>acVact: ${filteredTotals.acVact.toLocaleString('en-US', { maximumFractionDigits: 2 })}</div>
-          <div>acdVatop: ${filteredTotals.acdVatop.toLocaleString('en-US', { maximumFractionDigits: 2 })}</div>
-          <div>acVactTaa: {filteredTotals.acVactTaa.toLocaleString('en-US', { maximumFractionDigits: 4 })} ETH</div>
-        </div>
-
-        <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', background: '#1a1a1a' }}>
-          <div style={{ fontWeight: 600, marginBottom: '8px' }}>Range Filters</div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {portfolioRanges.map((r) => (
+        <h2 style={{ marginBottom: '12px' }}>My Portfolio</h2>
+        {investments.length === 0 && (
+          <>
+            <div style={{ marginBottom: '12px' }}>(Add Investments)</div>
+            {!showAddForm && (
               <button
-                key={r.label}
-                onClick={() => setSelectedRangeDays(r.days)}
+                style={{ padding: '8px 12px', background: '#7d5cff', color: '#000', border: 'none', borderRadius: '6px' }}
+                onClick={() => setShowAddForm(true)}
+              >
+                (Add Investments)
+              </button>
+            )}
+            {showAddForm && renderAddForm('Add Investment')}
+          </>
+        )}
+
+        {investments.length > 0 && (
+          <>
+            <div style={{ marginBottom: '8px' }}>
+              Purchased Value: ${formatCurrency(totals.acVatop || 0)}
+            </div>
+            <div style={{ marginBottom: '8px' }}>
+              Current Value: ${formatCurrency(totals.acVact || 0)}
+            </div>
+            <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
+              <div style={{ marginBottom: '12px' }}>
+                {(() => {
+                  if (selectedRangeDays && rangeLoading) {
+                    return 'Profits/Losses: ...';
+                  }
+                  if (selectedRangeDays && rangeHistoricalPrice != null) {
+                    const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
+                    const profitValue = (totals.acVact || 0) - pastValue;
+                    const prefix = profitValue > 0 ? '+$' : '$';
+                    const formattedValue =
+                      profitValue > 0
+                        ? formatCurrency(profitValue)
+                        : Math.abs(profitValue).toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          });
+                    const label = profitValue > 0 ? 'Profits' : 'Losses';
+                    return `${label}: ${prefix}${formattedValue}`;
+                  }
+                  if (totals.acdVatop > 0) {
+                    return `Profits: +$${formatCurrency(totals.acdVatop)}`;
+                  }
+                  const defaultProfit = Math.max(0, (vapa - assetPrice) * (totals.acVactTaa || 0));
+                  return `Profits: +$${formatCurrency(defaultProfit)}`;
+                })()}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {portfolioRanges.map((range) => {
+                  const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
+                  const isActive = selectedRangeDays === range.days;
+                  return (
+                    <button
+                      key={range.label}
+                      type="button"
+                      disabled={!isEnabled}
+                      onClick={() => setSelectedRangeDays(isActive ? null : range.days)}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: '6px',
+                        border: isActive ? '1px solid #7d5cff' : '1px solid #333',
+                        background: isEnabled ? (isActive ? '#251a48' : '#202020') : '#111',
+                        color: isEnabled ? (isActive ? '#7d5cff' : '#f5f5f5') : '#666',
+                        cursor: isEnabled ? 'pointer' : 'not-allowed'
+                      }}
+                    >
+                      {range.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <button
+              style={{ padding: '8px 12px', background: '#7d5cff', color: '#000', border: 'none', borderRadius: '6px' }}
+              onClick={() => setShowAddMoreForm((prev) => !prev)}
+            >
+              {showAddMoreForm ? 'Hide add more investments' : '(add more investments)'}
+            </button>
+            {showAddMoreForm && renderAddForm('Add more investments')}
+          </>
+        )}
+      </div>
+
+      {marketModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000
+          }}
+          onClick={() => setMarketModal(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#1e1e1e',
+              color: '#fff',
+              padding: '16px',
+              borderRadius: '8px',
+              border: '1px solid #333',
+              width: '320px',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.5)'
+            }}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: '8px' }}>
+              {marketModal === 'bull' ? 'Bull Market' : 'Sloth Market'}
+            </h3>
+            <p style={{ margin: 0 }}>
+              {marketModal === 'bull'
+                ? 'A market in which investments increase.'
+                : 'A market in which investments stagnate.'}
+            </p>
+            <div style={{ marginTop: '12px', textAlign: 'right' }}>
+              <button
+                type="button"
+                onClick={() => setMarketModal(null)}
                 style={{
                   padding: '6px 10px',
                   borderRadius: '6px',
-                  border: selectedRangeDays === r.days ? '1px solid #7d5cff' : '1px solid #333',
-                  background: selectedRangeDays === r.days ? '#251a48' : '#202020',
-                  color: '#f5f5f5',
+                  border: '1px solid #444',
+                  background: '#2a2a2a',
+                  color: '#fff',
                   cursor: 'pointer'
                 }}
               >
-                {r.label}
+                Close
               </button>
-            ))}
-          </div>
-          {rangeLoading && <div style={{ marginTop: '8px' }}>Loading range price...</div>}
-        </div>
-
-        <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', background: '#1a1a1a' }}>
-          <div style={{ fontWeight: 600, marginBottom: '8px' }}>Mock Portfolio</div>
-          {currentMockEntry ? (
-            <div>
-              <div>{currentMockEntry.name}</div>
-              <div>{currentMockEntry.value}</div>
             </div>
-          ) : (
-            <div>Loading mock portfolio...</div>
-          )}
+          </div>
         </div>
-      </div>
-
-      <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', background: '#161616' }}>
-        <div style={{ fontWeight: 600, marginBottom: '8px' }}>Investments (Ethereum)</div>
-        {loading ? (
-          <div>Loading...</div>
-        ) : investments.length === 0 ? (
-          <div>No investments yet.</div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={{ textAlign: 'left', padding: '6px', borderBottom: '1px solid #333' }}>Date</th>
-                <th style={{ textAlign: 'right', padding: '6px', borderBottom: '1px solid #333' }}>Amount</th>
-                <th style={{ textAlign: 'right', padding: '6px', borderBottom: '1px solid #333' }}>cVatop</th>
-                <th style={{ textAlign: 'right', padding: '6px', borderBottom: '1px solid #333' }}>cVact</th>
-                <th style={{ textAlign: 'right', padding: '6px', borderBottom: '1px solid #333' }}>cdVatop</th>
-              </tr>
-            </thead>
-            <tbody>
-              {investments.map((entry: any, idx: number) => (
-                <tr key={`${entry.date}-${idx}`}>
-                  <td style={{ padding: '6px', borderBottom: '1px solid #222' }}>
-                    {entry.date ? new Date(entry.date).toLocaleDateString('en-US') : 'N/A'}
-                  </td>
-                  <td style={{ padding: '6px', borderBottom: '1px solid #222', textAlign: 'right' }}>
-                    {Number(entry.cVactTaa || 0).toLocaleString('en-US', { maximumFractionDigits: 8 })} ETH
-                  </td>
-                  <td style={{ padding: '6px', borderBottom: '1px solid #222', textAlign: 'right' }}>
-                    ${Number(entry.cVatop || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}
-                  </td>
-                  <td style={{ padding: '6px', borderBottom: '1px solid #222', textAlign: 'right' }}>
-                    ${Number(entry.cVact || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}
-                  </td>
-                  <td style={{ padding: '6px', borderBottom: '1px solid #222', textAlign: 'right' }}>
-                    ${Number(entry.cdVatop || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      )}
     </div>
   );
 };

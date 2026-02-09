@@ -5,26 +5,38 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  TimeScale,
   PointElement,
   LineElement,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 } from 'chart.js';
+import 'chartjs-adapter-date-fns';
 import { Line } from 'react-chartjs-2';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Filler);
+ChartJS.register(CategoryScale, LinearScale, TimeScale, PointElement, LineElement, Tooltip, Legend, Filler);
 
 type PricePoint = { x: Date; y: number };
 
 type Props = {
   history?: { date: string; price: number }[];
   color?: string;
+  height?: number;
+  onPointHover?: (point: PricePoint | null, index: number | null) => void;
+  backgroundColor?: string;
 };
 
-const BitcoinChart: React.FC<Props> = ({ history = [], color = 'rgba(248, 141, 0, 0.9)' }) => {
+const BitcoinChart: React.FC<Props> = ({
+  history = [],
+  color = 'rgba(248, 141, 0, 0.9)',
+  height = 240,
+  onPointHover,
+  backgroundColor = '#161616',
+}) => {
   const chartRef = useRef<ChartJS<'line', PricePoint[], unknown> | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const markerRef = useRef<HTMLDivElement | null>(null);
+  const [hoverPoint, setHoverPoint] = useState<PricePoint | null>(null);
 
   const dataPoints = useMemo<PricePoint[]>(() => {
     return (history || []).map((item) => ({ x: new Date(item.date), y: item.price }));
@@ -40,55 +52,106 @@ const BitcoinChart: React.FC<Props> = ({ history = [], color = 'rgba(248, 141, 0
           backgroundColor: 'rgba(248, 141, 0, 0.1)',
           fill: true,
           pointRadius: 0,
+          pointHoverRadius: 0, // disable Chart.js hover dot; we render our own
+          pointHoverBorderWidth: 0,
+          pointHoverBorderColor: color,
+          pointHoverBackgroundColor: backgroundColor,
+          pointHitRadius: 20,
           tension: 0.25,
         },
+        ...(hoverPoint
+          ? [
+              {
+                label: 'hover',
+                data: [hoverPoint],
+                borderColor: color,
+                backgroundColor: backgroundColor,
+                pointRadius: 7.5,
+          pointHoverRadius: 0, // disable Chart.js hover dot; we render our own
+          pointHoverBorderWidth: 0,
+          pointHoverBorderColor: color,
+          pointHoverBackgroundColor: backgroundColor,
+                showLine: false,
+              },
+            ]
+          : []),
       ],
     };
-  }, [dataPoints, color]);
+  }, [dataPoints, color, backgroundColor, hoverPoint]);
 
-  const options = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        enabled: true,
-        mode: 'index',
-        intersect: false,
-        callbacks: {
-          label: (ctx: any) => {
-            const v = ctx?.parsed?.y;
-            return typeof v === 'number' ? `$${v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
-          }
-        }
+  const resolvePointAtPixel = useCallback(
+    (pixelX: number | null) => {
+      const chart = chartRef.current;
+      if (!chart || pixelX == null) return null;
+      const xScale: any = chart.scales?.x;
+      const yScale: any = chart.scales?.y;
+      if (!xScale || !yScale) return null;
+      let xVal: any = xScale.getValueForPixel(pixelX);
+      if (xVal == null) return null;
+      let time = typeof xVal === 'number' ? xVal : new Date(xVal).getTime();
+      const min = typeof xScale.min === 'number' ? xScale.min : null;
+      const max = typeof xScale.max === 'number' ? xScale.max : null;
+      if (min != null && max != null) {
+        if (!Number.isFinite(time)) return null;
+        time = Math.min(Math.max(time, min), max);
       }
+      if (!Number.isFinite(time)) return null;
+      const sorted = dataPoints;
+      if (!sorted.length) return null;
+
+      let nearestIdx = 0;
+      for (let i = 0; i < sorted.length; i += 1) {
+        if (sorted[i].x.getTime() >= time) {
+          nearestIdx = i;
+          break;
+        }
+        nearestIdx = i;
+      }
+
+      const left = sorted[nearestIdx] ?? sorted[sorted.length - 1];
+      const right = sorted[nearestIdx + 1] ?? left;
+      let y = left.y;
+      if (right && right !== left) {
+        const x0 = left.x.getTime();
+        const x1 = right.x.getTime();
+        const t = x1 !== x0 ? (time - x0) / (x1 - x0) : 0;
+        y = left.y + (right.y - left.y) * Math.min(Math.max(t, 0), 1);
+      }
+
+      return {
+        point: { x: new Date(time), y },
+        idx: nearestIdx,
+        pixel: { x: xScale.getPixelForValue(time), y: yScale.getPixelForValue(y) },
+      };
     },
-    scales: {
-      x: {
-        type: 'time',
-        time: { unit: 'day' },
-        grid: { display: false },
-        ticks: { maxRotation: 0, autoSkip: true }
+    [dataPoints]
+  );
+
+  const options = useMemo(() => {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'nearest' as const, intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
       },
-      y: {
-        grid: { color: 'rgba(255,255,255,0.08)' },
-        ticks: {
-          callback: (value: number | string) => {
-            const num = typeof value === 'number' ? value : Number(value);
-            return `$${num.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
-          }
+      scales: {
+        x: {
+          type: 'time' as const,
+          time: { unit: 'day' as const },
+          grid: { display: false, drawBorder: false },
+          ticks: { display: false }
+        },
+        y: {
+          grid: { display: false, drawBorder: false },
+          ticks: { display: false }
         }
-      }
-    },
-    onHover: (event: any, active: any[]) => {
-      if (active?.length) {
-        setSelectedIndex(active[0].index);
-      } else {
-        setSelectedIndex(null);
-      }
-    }
-  }), [setSelectedIndex]);
+      },
+      onHover: () => {},
+      events: [] as string[], // disable Chart.js internal hover handling
+    };
+  }, []);
 
   // Keep ref in sync for Line
   useEffect(() => {
@@ -98,15 +161,74 @@ const BitcoinChart: React.FC<Props> = ({ history = [], color = 'rgba(248, 141, 0
     }
   }, [chartData]);
 
+  const updateMarker = useCallback(
+    (pixel: { x: number; y: number } | null, point: PricePoint | null, idx: number | null) => {
+      const marker = markerRef.current;
+      if (!marker) return;
+      if (!pixel || !point) {
+        marker.style.display = 'none';
+        onPointHover?.(null, null);
+        return;
+      }
+      marker.style.left = `${pixel.x - 7.5}px`;
+      marker.style.top = `${pixel.y - 7.5}px`;
+      marker.style.display = 'block';
+      onPointHover?.(point, idx);
+    },
+    [onPointHover]
+  );
+
+  const handlePointer = useCallback(
+    (clientX: number, clientY: number, target: HTMLDivElement) => {
+      const rect = target.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+        updateMarker(null, null, null);
+        return;
+      }
+      const resolved = resolvePointAtPixel(x);
+      if (resolved) {
+        updateMarker(resolved.pixel, resolved.point, resolved.idx);
+      } else {
+        updateMarker(null, null, null);
+      }
+    },
+    [resolvePointAtPixel, updateMarker]
+  );
+
   return (
-    <div style={{ height: 240 }}>
+    <div
+      style={{ height, position: 'relative' }}
+      onMouseMove={(e) => {
+        handlePointer(e.clientX, e.clientY, e.currentTarget as HTMLDivElement);
+      }}
+      onTouchMove={(e) => {
+        const touch = e.touches?.[0];
+        if (!touch) return;
+        handlePointer(touch.clientX, touch.clientY, e.currentTarget as HTMLDivElement);
+      }}
+      onMouseLeave={() => {
+        updateMarker(null, null, null);
+      }}
+      onTouchEnd={() => {
+        updateMarker(null, null, null);
+      }}
+    >
       <Line ref={chartRef as any} data={chartData} options={options} />
-      {selectedIndex != null && dataPoints[selectedIndex] && (
-        <div style={{ marginTop: 8, color: '#f5f5f5' }}>
-          {dataPoints[selectedIndex].x.toLocaleDateString('en-US')}: $
-          {dataPoints[selectedIndex].y.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </div>
-      )}
+      <div
+        ref={markerRef}
+        style={{
+          position: 'absolute',
+          width: 15,
+          height: 15,
+          borderRadius: '50%',
+          border: `2px solid ${color}`,
+          background: backgroundColor,
+          pointerEvents: 'none',
+          display: 'none',
+        }}
+      />
     </div>
   );
 };

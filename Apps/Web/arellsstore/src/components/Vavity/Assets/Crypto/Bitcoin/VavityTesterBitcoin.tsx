@@ -22,6 +22,11 @@ const VavityTesterBitcoin: React.FC = () => {
   const [mockEntries, setMockEntries] = useState<any[]>([]);
   const [mockStep, setMockStep] = useState<number>(0);
   const [chartReady, setChartReady] = useState<boolean>(false);
+  const [history, setHistory] = useState<{ date: string; price: number }[]>([]);
+  const [vapaMarketCap, setVapaMarketCap] = useState<number[]>([]);
+  const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
+  const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
+  const [marketModal, setMarketModal] = useState<'bull' | 'sloth' | null>(null);
 
   useEffect(() => {
     if (!sessionId || !fetchVavityAggregator) return;
@@ -54,7 +59,6 @@ const VavityTesterBitcoin: React.FC = () => {
   }, [fetchVavityAggregator, sessionId]);
 
   const investments = vavityData?.investments || [];
-  const displayHistory = vavityData?.history || [];
   const totals = vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
   const oldestInvestmentDate = useMemo(() => {
     if (investments.length === 0) return null;
@@ -84,6 +88,21 @@ const VavityTesterBitcoin: React.FC = () => {
   );
   useEffect(() => {
     let isMounted = true;
+    const loadVapaHistory = async () => {
+      try {
+        const response = await axios.get('/api/vapa');
+        const hist = Array.isArray(response.data?.history) ? response.data.history : [];
+        const caps = Array.isArray(response.data?.vapaMarketCap) ? response.data.vapaMarketCap : [];
+        if (isMounted) {
+          setHistory(hist);
+          setVapaMarketCap(caps);
+        }
+      } catch (error) {
+        // keep quiet; chart can render empty history
+      }
+    };
+    loadVapaHistory();
+
     const loadRangePrice = async () => {
       if (!selectedRangeDays) {
         if (isMounted) {
@@ -118,6 +137,104 @@ const VavityTesterBitcoin: React.FC = () => {
       isMounted = false;
     };
   }, [selectedRangeDays]);
+
+  const chartHistory = useMemo(() => {
+    if (!chartRangeDays || !history.length) return history;
+    const cutoff = Date.now() - chartRangeDays * 24 * 60 * 60 * 1000;
+    const filtered = history.filter((item) => {
+      const t = new Date(item.date).getTime();
+      return !Number.isNaN(t) && t >= cutoff;
+    });
+    // Ensure we always have at least two points so a line renders
+    if (filtered.length >= 2) return filtered;
+    if (history.length >= 2) {
+      return history.slice(-2);
+    }
+    if (history.length === 1) {
+      return history;
+    }
+    return filtered;
+  }, [chartRangeDays, history]);
+
+  const chartMarketCaps = useMemo(() => {
+    if (!chartRangeDays || !history.length || !vapaMarketCap.length) return vapaMarketCap;
+    const cutoff = Date.now() - chartRangeDays * 24 * 60 * 60 * 1000;
+    const filtered = history
+      .map((item, idx) => ({ ...item, cap: vapaMarketCap[idx] }))
+      .filter((entry) => {
+        const t = new Date(entry.date).getTime();
+        return !Number.isNaN(t) && t >= cutoff;
+      })
+      .map((entry) => entry.cap);
+    if (filtered.length >= 2) return filtered;
+    if (vapaMarketCap.length >= 2) {
+      return vapaMarketCap.slice(-2);
+    }
+    if (vapaMarketCap.length === 1) {
+      return vapaMarketCap;
+    }
+    return filtered;
+  }, [chartRangeDays, history, vapaMarketCap]);
+
+  const activeIndex = useMemo(() => {
+    if (!chartHistory.length) return null;
+    if (chartHoverIndex != null) return chartHoverIndex;
+    return chartHistory.length - 1;
+  }, [chartHistory, chartHoverIndex]);
+
+  const activePoint = useMemo(() => {
+    if (activeIndex == null) {
+      return history.length ? history[history.length - 1] : null;
+    }
+    return chartHistory[activeIndex] ?? history[history.length - 1] ?? null;
+  }, [activeIndex, chartHistory, history]);
+
+  const activeMarketCap = useMemo(() => {
+    if (activeIndex != null && chartMarketCaps.length) {
+      const val = chartMarketCaps[activeIndex];
+      if (typeof val === 'number' && !Number.isNaN(val)) return val;
+    }
+    const fallback = vapaMarketCap.length ? vapaMarketCap[vapaMarketCap.length - 1] : null;
+    return typeof fallback === 'number' && !Number.isNaN(fallback) ? fallback : null;
+  }, [activeIndex, chartMarketCaps, vapaMarketCap]);
+
+  const percentageIncrease = useMemo(() => {
+    const series =
+      chartHistory.length >= 2
+        ? chartHistory
+        : history.length >= 2
+        ? history.slice(-2)
+        : chartHistory.length
+        ? chartHistory
+        : history;
+    if (!series || !series.length) return 0;
+    const start = series[0]?.price ?? 0;
+    const latest = activePoint?.price ?? series[series.length - 1]?.price ?? 0;
+    if (!start) return 0;
+    return ((latest - start) / start) * 100;
+  }, [chartHistory, activePoint, history]);
+
+  const chartRanges = useMemo(
+    () => [
+      { label: '24 hours', days: 1 },
+      { label: '1 wk', days: 7 },
+      { label: '1 mnth', days: 30 },
+      { label: '3 mnths', days: 90 },
+      { label: '1 yr', days: 365 },
+      { label: 'All', days: null },
+    ],
+    []
+  );
+
+  const formatMarketCap = useCallback((value: number | null) => {
+    if (value == null || Number.isNaN(value)) return '0';
+    return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  }, []);
+
+  const formatPercent = useCallback((value: number) => {
+    const sign = value > 0 ? '+' : '';
+    return `${sign}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+  }, []);
   const filteredTotals = useMemo(() => {
     if (!selectedRangeDays) {
       return totals;
@@ -362,33 +479,149 @@ const VavityTesterBitcoin: React.FC = () => {
   return (
     <div style={{ padding: '24px', color: '#f5f5f5', background: '#111', minHeight: '100vh' }}>
       <h1 style={{ marginBottom: '12px' }}>Vavity Tester</h1>
-      
+
       <div
         style={{
-          display: 'grid',
-          gap: '8px',
-          marginBottom: '24px',
           border: '1px solid #333',
-          borderRadius: '8px',
-          padding: '12px',
-          background: '#1a1a1a'
+          borderRadius: '10px',
+          padding: '14px',
+          marginBottom: '24px',
+          background: '#141414'
         }}
       >
-        <div>
-          Current Bitcoin Price:{' '}
-          <strong>
-            ${assetPrice
-              ? assetPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-              : '0.00'}
-          </strong>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap' }}>
+          <div
+            style={{
+              flex: '0 0 340px',
+              padding: '12px',
+              background: 'transparent',
+              display: 'grid',
+              gap: '8px'
+            }}
+          >
+            <div style={{ fontWeight: 700 }}>(Bitcoin)</div>
+            <div>
+              Price: ${formatCurrency(activePoint?.price ?? vapa ?? 0)}
+            </div>
+            <div>Market Cap: ${formatMarketCap(activeMarketCap)}</div>
+            <div>{formatPercent(percentageIncrease)}</div>
+            <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '8px', marginTop: '4px' }}>
+              <div style={{ marginBottom: '8px' }}>
+                {percentageIncrease > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => setMarketModal('bull')}
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      background: '#0f9d58',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      width: '100%',
+                      fontWeight: 700
+                    }}
+                  >
+                    Bull 🐂 Market
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setMarketModal('sloth')}
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      background: '#5e5e5e',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      width: '100%',
+                      fontWeight: 700
+                    }}
+                  >
+                    Sloth 🦥 Market
+                  </button>
+                )}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {chartRanges.map((range) => {
+                  const isActive = chartRangeDays === range.days;
+                  return (
+                    <button
+                      key={range.label}
+                      type="button"
+                      onClick={() => setChartRangeDays(isActive ? null : range.days)}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: '6px',
+                        border: isActive ? '1px solid #00e5ff' : '1px solid #333',
+                        background: isActive ? '#0b2f33' : '#202020',
+                        color: isActive ? '#00e5ff' : '#f5f5f5',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {range.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              minWidth: '280px',
+              padding: '12px',
+              background: 'transparent',
+              border: '1px solid #333',
+              borderRadius: '8px',
+              position: 'relative'
+            }}
+          >
+            {chartHoverIndex != null && activePoint && (
+              <div style={{ position: 'absolute', top: 8, left: 12, color: '#f5f5f5', fontSize: '13px', opacity: 0.9 }}>
+                {new Date(activePoint.date).toLocaleDateString('en-US')}
+              </div>
+            )}
+            <BitcoinChart
+              history={chartHistory || []}
+              color="rgba(248, 141, 0, 0.9)"
+              height={320}
+              backgroundColor="#161616"
+              onPointHover={(point, idx) => {
+                setChartHoverIndex(idx ?? null);
+              }}
+            />
+          </div>
         </div>
-        <div>
-          VAPA (Bitcoin):{' '}
-          <strong>
-            ${vapa ? vapa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
-          </strong>
+
+        <div
+          style={{
+            marginTop: '16px',
+            border: '1px solid #333',
+            borderRadius: '8px',
+            padding: '12px',
+            background: '#161616'
+          }}
+        >
+          <h3 style={{ marginBottom: '12px' }}>Mock Portfolio</h3>
+          {currentMockEntry ? (
+            <div style={{ display: 'grid', gap: '6px' }}>
+              <div>(BTC)</div>
+              <div>Purchased Value: ${formatCurrency(currentMockEntry.purchasedValue || 0)}</div>
+              <div>Current Value: ${formatCurrency(currentMockEntry.currentValue || 0)}</div>
+              <div>
+                {currentMockEntry.profitLoss > 0
+                  ? `Profits: +$${formatCurrency(currentMockEntry.profitLoss)}`
+                  : 'Losses: $0.00'}
+              </div>
+              <div>Date Purchased: {formatDate(currentMockEntry.datePurchased)}</div>
+            </div>
+          ) : (
+            <div>Loading mock portfolio...</div>
+          )}
         </div>
-        <div>Session: {sessionId || 'Not available'}</div>
       </div>
 
       <div
@@ -408,9 +641,9 @@ const VavityTesterBitcoin: React.FC = () => {
               <button
                 style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
                 onClick={() => setShowAddForm(true)}
-        >
+              >
                 (Add Investments)
-        </button>
+              </button>
             )}
             {showAddForm && renderAddForm('Add Investment')}
           </>
@@ -475,7 +708,7 @@ const VavityTesterBitcoin: React.FC = () => {
                   );
                 })}
               </div>
-          </div>
+            </div>
             <button
               style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
               onClick={() => setShowAddMoreForm((prev) => !prev)}
@@ -484,37 +717,6 @@ const VavityTesterBitcoin: React.FC = () => {
             </button>
             {showAddMoreForm && renderAddForm('Add more investments')}
           </>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '24px' }}>
-        <BitcoinChart history={displayHistory || []} color="rgba(248, 141, 0, 0.9)" />
-      </div>
-
-      <div
-        style={{
-          marginBottom: '24px',
-          border: '1px solid #333',
-          borderRadius: '8px',
-          padding: '12px',
-          background: '#161616'
-        }}
-      >
-        <h3 style={{ marginBottom: '12px' }}>Mock Portfolio</h3>
-        {currentMockEntry ? (
-          <div style={{ display: 'grid', gap: '6px' }}>
-            <div>(BTC)</div>
-            <div>Purchased Value: ${formatCurrency(currentMockEntry.purchasedValue || 0)}</div>
-            <div>Current Value: ${formatCurrency(currentMockEntry.currentValue || 0)}</div>
-            <div>
-              {currentMockEntry.profitLoss > 0
-                ? `Profits: +$${formatCurrency(currentMockEntry.profitLoss)}`
-                : 'Losses: $0.00'}
-            </div>
-            <div>Date Purchased: {formatDate(currentMockEntry.datePurchased)}</div>
-        </div>
-        ) : (
-          <div>Loading mock portfolio...</div>
         )}
       </div>
 
@@ -562,6 +764,59 @@ const VavityTesterBitcoin: React.FC = () => {
         </div>
       )}
         </div>
+
+      {marketModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000
+          }}
+          onClick={() => setMarketModal(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#1e1e1e',
+              color: '#fff',
+              padding: '16px',
+              borderRadius: '8px',
+              border: '1px solid #333',
+              width: '320px',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.5)'
+            }}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: '8px' }}>
+              {marketModal === 'bull' ? 'Bull Market' : 'Sloth Market'}
+            </h3>
+            <p style={{ margin: 0 }}>
+              {marketModal === 'bull'
+                ? 'A market in which investments increase.'
+                : 'A market in which investments stagnate.'}
+            </p>
+            <div style={{ marginTop: '12px', textAlign: 'right' }}>
+              <button
+                type="button"
+                onClick={() => setMarketModal(null)}
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: '6px',
+                  border: '1px solid #444',
+                  background: '#2a2a2a',
+                  color: '#fff',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

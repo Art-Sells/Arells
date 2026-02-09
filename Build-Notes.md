@@ -2,6 +2,8 @@
 
 ## Arells v1
 
+### Test Ethereum/Bitcoin
+
 ### Test Online 
 -  both desktop(multiple browsers)/mobile
 - In notion:
@@ -9,7 +11,6 @@
 - - - (current) number of email created, date, time, etc
 - - - chart
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
-
 
 ## Loading Modules in all pages
 - All of them fade in and out (same as modules and pages in vavity.info)
@@ -21,10 +22,12 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 
 ### Home
 - Loading Modal (3 seconds (A) logo with loader circling it)
-arells
+- arells
+- If bear markets never existed
+- 2 new assets added weekly (colorful)
+
 looks exactly like CoinMarketCap (simplified / Market Cap)...
 Assets| (24hr)(1wk),etc, MarketCap
-- more assets coming soon...
 
 ### Bitcoin (test Ethereum version to release both, implement into Home)
 (columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)
@@ -119,8 +122,7 @@ Users:
 - Set Launch Date (and announce the features)
 - - Review notes on phone
 - - Look at notes for openings. 
-- - Add "Discord" section for any questions
-- - - Discord welcome to Arells: is a ledger that portrays how your investments would look if no bear markets existed.
+- - 
 - - Test to see if can implement NEXT_PUBLIC to something else in test...
 
 ### Other (if Time Permits)
