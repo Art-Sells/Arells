@@ -59,10 +59,10 @@
 - - (delete)
 - - (Load More 5 per list)
 -------------------
-- (How It Works)
+- (About)
 
-### How It Works:
-    Arells is a ledger that portrays how your investments would look if no bear markets existed.
+### About:
+    Arells is a ledger that shows how your investments would look if bear markets never existed.
 
     Powered by (Vavity (V))
 
