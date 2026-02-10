@@ -467,7 +467,7 @@ const VavityTesterBitcoin: React.FC = () => {
   return (
     <div style={{ padding: '24px', color: '#f5f5f5', background: '#111', minHeight: '100vh' }}>
       <h1 style={{ marginBottom: '12px' }}>Vavity Tester</h1>
-
+      
       <div
         style={{
           border: '1px solid #333',
@@ -481,14 +481,14 @@ const VavityTesterBitcoin: React.FC = () => {
           <div
             style={{
               flex: '0 0 340px',
-              padding: '12px',
+          padding: '12px',
               background: 'transparent',
               display: 'grid',
               gap: '8px'
-            }}
-          >
+        }}
+      >
             <div style={{ fontWeight: 700 }}>(Bitcoin)</div>
-            <div>
+        <div>
               Price: ${formatCurrency(activePoint?.price ?? vapa ?? 0)}
             </div>
             <div>Market Cap: ${formatMarketCap(activeMarketCap)}</div>
@@ -599,7 +599,7 @@ const VavityTesterBitcoin: React.FC = () => {
               <div>(BTC)</div>
               <div>Purchased Value: ${formatCurrency(currentMockEntry.purchasedValue || 0)}</div>
               <div>Current Value: ${formatCurrency(currentMockEntry.currentValue || 0)}</div>
-              <div>
+        <div>
                 {currentMockEntry.profitLoss > 0
                   ? `Profits: +$${formatCurrency(currentMockEntry.profitLoss)}`
                   : 'Losses: $0.00'}
@@ -629,9 +629,9 @@ const VavityTesterBitcoin: React.FC = () => {
               <button
                 style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
                 onClick={() => setShowAddForm(true)}
-              >
+        >
                 (Add Investments)
-              </button>
+        </button>
             )}
             {showAddForm && renderAddForm('Add Investment')}
           </>
@@ -696,7 +696,7 @@ const VavityTesterBitcoin: React.FC = () => {
                   );
                 })}
               </div>
-            </div>
+          </div>
             <button
               style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
               onClick={() => setShowAddMoreForm((prev) => !prev)}

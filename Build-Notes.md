@@ -2,8 +2,6 @@
 
 ## Arells v1
 
-
-
 ### Home
 - Loading Modal (3 seconds (A) logo with loader circling it)
 - arells
@@ -63,6 +61,7 @@ Assets| (24hr)(1wk),etc, MarketCap
 - - Token Amount:
 - - Purchase Date (mm/dd/yy): 
 - - (delete)
+- - (Load More 5 per list)
 -------------------
 - (How It Works)
 

@@ -8,7 +8,7 @@
 	padding-top: 0px;
 	border-radius: 30px;
 	padding-bottom: 90px;
-	background: rgb(255, 251, 245);
+	background: #ffffff;
 	-webkit-animation-name: animatetop;
 	-webkit-animation-duration: 1.00s;
 	animation-name: animatetop;
@@ -74,6 +74,131 @@
 				word-spacing: 0px;
 				display: inline-block;
 			}	
+
+			#descriptioner {
+				max-width: 520px;
+			}
+
+			.home-divider {
+				width: 72%;
+				max-width: 620px;
+				height: 1px;
+				background: rgba(0, 0, 0, 0.12);
+				margin: 12px auto;
+			}
+
+			.home-rainbow {
+				font-size: 12px;
+				font-weight: 600;
+				letter-spacing: 0.4px;
+				margin: 6px auto 10px;
+				width: fit-content;
+				background: repeating-linear-gradient(
+					90deg,
+					#ff0000 0%,
+					#ff7a00 16%,
+					#ffd500 32%,
+					#00c853 48%,
+					#0091ea 64%,
+					#7c4dff 80%,
+					#d500f9 96%,
+					#ff0000 112%
+				);
+				background-size: 400% 100%;
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+				animation: rainbowShift 8s linear infinite;
+			}
+
+			@keyframes rainbowShift {
+				0% {
+					background-position: 0% 50%;
+				}
+				100% {
+					background-position: 100% 50%;
+				}
+			}
+
+			.home-assets-list {
+				width: min(920px, 90%);
+				margin: 18px auto 0;
+				display: flex;
+				flex-direction: column;
+				gap: 14px;
+			}
+
+			.home-assets-header-row {
+				display: grid;
+				grid-template-columns: 42px repeat(6, minmax(0, 1fr));
+				align-items: center;
+				font-weight: 600;
+				font-size: 12px;
+				letter-spacing: 0.2px;
+			}
+
+			.home-assets-cell {
+				padding: 10px 10px;
+				text-align: center;
+				font-size: 12px;
+				color: #222;
+			}
+
+			.home-assets-index {
+				color: #666;
+			}
+
+			.home-assets-button {
+				background: transparent;
+				border: none;
+				padding: 0;
+				margin: 0;
+				font: inherit;
+				cursor: pointer;
+				color: #222;
+			}
+
+			.home-assets-button:hover,
+			.home-assets-button:focus {
+				color: #cc7400;
+			}
+
+			.home-asset-card {
+				display: grid;
+				grid-template-columns: 42px repeat(6, minmax(0, 1fr));
+				align-items: center;
+				background: #ffffff;
+				border-radius: 14px;
+				padding: 8px 0;
+				box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+				transition: transform 0.2s ease, box-shadow 0.2s ease;
+			}
+
+			.home-asset-card:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+			}
+
+			.home-asset-bitcoin {
+				box-shadow: 0 10px 24px rgba(248, 141, 0, 0.35);
+			}
+
+			.home-asset-ethereum {
+				box-shadow: 0 10px 24px rgba(0, 229, 255, 0.35);
+			}
+
+			.home-assets-link {
+				display: grid;
+				grid-template-columns: repeat(6, minmax(0, 1fr));
+				text-decoration: none;
+				color: inherit;
+				width: 100%;
+				grid-column: 2 / -1;
+			}
+
+			.home-assets-link:hover .home-assets-cell {
+				background: rgba(0, 0, 0, 0.04);
+			}
 
 			#ada-description {
 				margin-left: 3px; 
@@ -235,6 +360,24 @@
 		width: 240px;
 		font-size: 11px; 			  
 		}
+
+	.home-assets-list {
+		width: 94%;
+	}
+
+	.home-assets-header-row,
+	.home-asset-card {
+		grid-template-columns: 32px repeat(6, minmax(0, 1fr));
+	}
+
+	.home-assets-cell {
+		padding: 10px 6px;
+		font-size: 10px;
+	}
+
+	.home-rainbow {
+		font-size: 11px;
+	}
 
 	  
 	}	

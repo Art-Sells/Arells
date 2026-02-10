@@ -76,8 +76,8 @@ export async function refreshVapa(config: VapaAssetConfig) {
     }
   }
 
-  let currentPrice = storedVAPA;
-  try {
+    let currentPrice = storedVAPA;
+    try {
     const currentPriceResponse = await axios.get(config.priceUrl, {
       timeout: 5000,
       headers: COINGECKO_API_KEY ? { 'x-cg-pro-api-key': COINGECKO_API_KEY } : undefined
@@ -85,50 +85,50 @@ export async function refreshVapa(config: VapaAssetConfig) {
     const val = currentPriceResponse.data?.ethereum?.usd ?? currentPriceResponse.data?.bitcoin?.usd ?? currentPriceResponse.data?.[config.id]?.usd;
     if (typeof val === 'number') currentPrice = val;
   } catch {
-    // keep stored
-  }
+      // keep stored
+    }
 
-  let highestPriceEver = 0;
-  let highestPriceDate: string | null = null;
+    let highestPriceEver = 0;
+    let highestPriceDate: string | null = null;
   let history = storedHistory;
   let vapaMarketCap = storedVapaMarketCap;
   let historyLastUpdated = storedHistoryLastUpdated;
-  const missingVapaMarketCap = !Array.isArray(storedVapaMarketCap) || storedVapaMarketCap.length === 0;
-  const shouldRefreshHistory = !storedHistory.length || !storedHistoryLastUpdated || Date.now() - storedHistoryLastUpdated > HISTORY_REFRESH_MS;
+    const missingVapaMarketCap = !Array.isArray(storedVapaMarketCap) || storedVapaMarketCap.length === 0;
+    const shouldRefreshHistory = !storedHistory.length || !storedHistoryLastUpdated || Date.now() - storedHistoryLastUpdated > HISTORY_REFRESH_MS;
 
-  if (shouldRefreshHistory || missingVapaMarketCap) {
-    try {
+    if (shouldRefreshHistory || missingVapaMarketCap) {
+      try {
       const historicalResponse = await axios.get(config.historyUrl, {
         timeout: 8000,
         headers: COINGECKO_API_KEY ? { 'x-cg-pro-api-key': COINGECKO_API_KEY } : undefined
       });
-      const prices: [number, number][] = historicalResponse.data?.prices || [];
-      const caps: [number, number][] = historicalResponse.data?.market_caps || [];
-      if (prices.length > 0) {
-        const result = buildMonotonicHistory(prices, caps);
-        history = result.history;
-        vapaMarketCap = result.vapaMarketCap;
-        historyLastUpdated = Date.now();
-        highestPriceEver = result.highestPriceEver;
-        highestPriceDate = result.highestPriceDate;
-      }
-    } catch (err) {
+        const prices: [number, number][] = historicalResponse.data?.prices || [];
+        const caps: [number, number][] = historicalResponse.data?.market_caps || [];
+        if (prices.length > 0) {
+          const result = buildMonotonicHistory(prices, caps);
+          history = result.history;
+          vapaMarketCap = result.vapaMarketCap;
+          historyLastUpdated = Date.now();
+          highestPriceEver = result.highestPriceEver;
+          highestPriceDate = result.highestPriceDate;
+        }
+      } catch (err) {
       console.error(`[vapa:${config.id}] history fetch failed`, err);
+      }
     }
-  }
-  if (!highestPriceEver && history.length > 0) {
-    const lastEntry = history[history.length - 1];
-    highestPriceEver = lastEntry.price;
-    highestPriceDate = isoDateFromDay(lastEntry.date);
-  }
+    if (!highestPriceEver && history.length > 0) {
+      const lastEntry = history[history.length - 1];
+      highestPriceEver = lastEntry.price;
+      highestPriceDate = isoDateFromDay(lastEntry.date);
+    }
 
-  const newVAPA = Math.max(storedVAPA, currentPrice, highestPriceEver);
-  let newVapaDate = storedVapaDate;
+    const newVAPA = Math.max(storedVAPA, currentPrice, highestPriceEver);
+    let newVapaDate = storedVapaDate;
   const currentPriceDate = new Date().toISOString();
-  if (newVAPA > storedVAPA) {
+    if (newVAPA > storedVAPA) {
     if (newVAPA === highestPriceEver && highestPriceDate) newVapaDate = highestPriceDate;
     else newVapaDate = currentPriceDate;
-  }
+    }
 
   const shouldWrite = !fileExists || newVAPA > storedVAPA || shouldRefreshHistory || missingVapaMarketCap;
   if (shouldWrite) {

@@ -135,19 +135,19 @@ const BitcoinChart: React.FC<Props> = ({
       plugins: {
         legend: { display: false },
         tooltip: { enabled: false }
-      },
-      scales: {
-        x: {
+    },
+    scales: {
+      x: {
           type: 'time' as const,
           time: { unit: 'day' as const },
           grid: { display: false, drawBorder: false },
           ticks: { display: false }
-        },
-        y: {
+      },
+      y: {
           grid: { display: false, drawBorder: false },
           ticks: { display: false }
-        }
-      },
+      }
+    },
       onHover: () => {},
     };
   }, []);

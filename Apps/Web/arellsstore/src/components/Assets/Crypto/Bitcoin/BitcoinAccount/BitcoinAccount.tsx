@@ -43,7 +43,7 @@ const BitcoinAccount: React.FC = () => {
             <div className="btc-price-container">
               <div className="btc-price">
                 <div className="btc-logo">
-                  <Image
+      <Image
                     loader={bitcoinLoader}
                     src="bitcoin/bitcoin-256.png"
                     alt="Bitcoin"
@@ -72,10 +72,10 @@ const BitcoinAccount: React.FC = () => {
                 Bitcoin chart panel unavailable.
               </div>
             </div>
-          </div>
+        </div>
         </div>
       </div>
-    </div>
+      </div>
   );
 };
 
