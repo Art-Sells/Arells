@@ -30,6 +30,8 @@ const VavityTesterEthereum: React.FC = () => {
   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
   const [marketModal, setMarketModal] = useState<'bull' | 'sloth' | null>(null);
+  const ethereumAccent = '#6b72a8';
+  const ethereumAccentMuted = 'rgba(107, 114, 168, 0.14)';
 
   useEffect(() => {
     if (!sessionId || !fetchVavityAggregator) return;
@@ -454,8 +456,8 @@ const VavityTesterEthereum: React.FC = () => {
         disabled={submitLoading || !tokenAmount || !purchaseDate}
         style={{
           padding: '8px 14px',
-          background: '#7d5cff',
-          color: '#000',
+          background: ethereumAccent,
+          color: '#fff',
           border: 'none',
           borderRadius: '6px',
           fontWeight: 600,
@@ -506,7 +508,7 @@ const VavityTesterEthereum: React.FC = () => {
                       padding: '8px 12px',
                       borderRadius: '6px',
                       border: 'none',
-                      background: '#7d5cff',
+                      background: ethereumAccent,
                       color: '#fff',
                       cursor: 'pointer',
                       width: '100%',
@@ -545,9 +547,9 @@ const VavityTesterEthereum: React.FC = () => {
                       style={{
                         padding: '6px 10px',
                         borderRadius: '6px',
-                        border: isActive ? '1px solid #7d5cff' : '1px solid #333',
-                        background: isActive ? '#251a48' : '#202020',
-                        color: isActive ? '#7d5cff' : '#f5f5f5',
+                        border: isActive ? `1px solid ${ethereumAccent}` : '1px solid #333',
+                        background: isActive ? ethereumAccentMuted : '#202020',
+                        color: isActive ? ethereumAccent : '#f5f5f5',
                         cursor: 'pointer'
                       }}
                     >
@@ -577,7 +579,7 @@ const VavityTesterEthereum: React.FC = () => {
             )}
             <EthereumChart
               history={chartHistory || []}
-              color="rgba(125, 92, 255, 0.9)"
+              color="rgba(107, 114, 168, 0.9)"
               height={320}
               backgroundColor="#161616"
               onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
@@ -630,7 +632,7 @@ const VavityTesterEthereum: React.FC = () => {
             <div style={{ marginBottom: '12px' }}>(Add Investments)</div>
             {!showAddForm && (
               <button
-                style={{ padding: '8px 12px', background: '#7d5cff', color: '#000', border: 'none', borderRadius: '6px' }}
+                style={{ padding: '8px 12px', background: ethereumAccent, color: '#fff', border: 'none', borderRadius: '6px' }}
                 onClick={() => setShowAddForm(true)}
               >
                 (Add Investments)
@@ -688,9 +690,9 @@ const VavityTesterEthereum: React.FC = () => {
                       style={{
                         padding: '6px 10px',
                         borderRadius: '6px',
-                        border: isActive ? '1px solid #7d5cff' : '1px solid #333',
-                        background: isEnabled ? (isActive ? '#251a48' : '#202020') : '#111',
-                        color: isEnabled ? (isActive ? '#7d5cff' : '#f5f5f5') : '#666',
+                        border: isActive ? `1px solid ${ethereumAccent}` : '1px solid #333',
+                        background: isEnabled ? (isActive ? ethereumAccentMuted : '#202020') : '#111',
+                        color: isEnabled ? (isActive ? ethereumAccent : '#f5f5f5') : '#666',
                         cursor: isEnabled ? 'pointer' : 'not-allowed'
                       }}
                     >
@@ -701,7 +703,7 @@ const VavityTesterEthereum: React.FC = () => {
               </div>
             </div>
             <button
-              style={{ padding: '8px 12px', background: '#7d5cff', color: '#000', border: 'none', borderRadius: '6px' }}
+              style={{ padding: '8px 12px', background: ethereumAccent, color: '#fff', border: 'none', borderRadius: '6px' }}
               onClick={() => setShowAddMoreForm((prev) => !prev)}
             >
               {showAddMoreForm ? 'Hide add more investments' : '(add more investments)'}

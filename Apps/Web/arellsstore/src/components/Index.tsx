@@ -19,7 +19,7 @@ const Index = () => {
     wordLogo: false,
   });
   const { getAsset } = useVavity();
-  const [sortKey, setSortKey] = useState<'asset' | 'price' | 'change24h' | 'change90d' | 'changeAll' | 'marketCap'>('marketCap');
+  const [sortKey, setSortKey] = useState<'asset' | 'price' | 'change1w' | 'change1y' | 'changeAll'>('price');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
 
@@ -43,17 +43,8 @@ const Index = () => {
   const formatCurrency = (value: number) =>
     value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  const formatPercent = (value: number) => {
-    const sign = value > 0 ? '+' : value < 0 ? '-' : '';
-    return `${sign}${Math.abs(value).toFixed(2)}%`;
-  };
-
-  const getLatestMarketCap = (caps: number[]) => {
-    for (let i = caps.length - 1; i >= 0; i -= 1) {
-      if (caps[i] > 0) return caps[i];
-    }
-    return 0;
-  };
+  const formatPercent = (value: number) =>
+    `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
 
   const getPercentChange = (history: { date: string; price: number }[], days?: number) => {
     if (!history.length) return 0;
@@ -80,21 +71,19 @@ const Index = () => {
 
   const assetRows = useMemo(() => {
     const assets = [
-      { id: 'bitcoin', label: 'Bitcoin', href: '/bitcoin' },
-      { id: 'ethereum', label: 'Ethereum', href: '/ethereum' }
+      { id: 'bitcoin', label: 'Bitcoin', href: '/bitcoin', icon: 'images/assets/crypto/Bitcoin.png' },
+      { id: 'ethereum', label: 'Ethereum', href: '/ethereum', icon: 'images/assets/crypto/Ethereum.svg' }
     ];
 
     return assets.map((asset) => {
       const snapshot = getAsset(asset.id);
       const history = snapshot?.history ?? [];
-      const marketCap = snapshot?.vapaMarketCap ? getLatestMarketCap(snapshot.vapaMarketCap) : 0;
       const vapa = snapshot?.vapa ?? 0;
       return {
         ...asset,
         vapa,
-        marketCap,
-        change24h: getPercentChange(history, 1),
-        change90d: getPercentChange(history, 90),
+        change1w: getPercentChange(history, 7),
+        change1y: getPercentChange(history, 365),
         changeAll: getPercentChange(history),
       };
     });
@@ -111,19 +100,17 @@ const Index = () => {
         case 'price':
           comparison = a.vapa - b.vapa;
           break;
-        case 'change24h':
-          comparison = a.change24h - b.change24h;
+        case 'change1w':
+          comparison = a.change1w - b.change1w;
           break;
-        case 'change90d':
-          comparison = a.change90d - b.change90d;
+        case 'change1y':
+          comparison = a.change1y - b.change1y;
           break;
         case 'changeAll':
           comparison = a.changeAll - b.changeAll;
           break;
-        case 'marketCap':
         default:
-          comparison = a.marketCap - b.marketCap;
-          break;
+          comparison = 0;
       }
       return sortDir === 'asc' ? comparison : -comparison;
     });
@@ -156,61 +143,118 @@ const Index = () => {
         </div>
       )}
 
-      <Image
-        loader={imageLoader}
-        onLoad={() => handleImageLoaded('wordLogo')}
-        alt=""
-        width={100}
-        height={32}
-        id="word-logoo"
-        src="images/Arells-Logo-Ebony.png"
-      />
+      <div className="home-header-inner">
+        <Image
+          loader={imageLoader}
+          onLoad={() => handleImageLoaded('wordLogo')}
+          alt=""
+            width={70}
+            height={23}
+          id="word-logoo"
+          src="images/Arells-Logo-Ebony.png"
+        />
 
-      <div id="descriptioner-wrapper">
-        <p id="descriptioner" style={{ fontSize: '1.2em', letterSpacing: '0px', marginLeft: '0px' }}>
-          If bear markets never existed
-        </p>
+        <div id="descriptioner-wrapper">
+          <p id="descriptioner" style={{ letterSpacing: '0px', marginLeft: '0px' }}>
+            if bear markets never existed
+          </p>
+        </div>
       </div>
 
-      <div className="home-divider" />
-      <div className="home-rainbow">2 new assets added weekly</div>
+      <div className="home-section-line" />
 
-      <div className="home-assets-list">
-        <div className="home-assets-header-row">
-          <div className="home-assets-cell home-assets-index">#</div>
-          <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('asset')}>
-            Asset
-          </button>
-          <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('price')}>
-            Price
-          </button>
-          <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('change24h')}>
-            24hr
-          </button>
-          <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('change90d')}>
-            3 mnth
-          </button>
-          <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('changeAll')}>
-            all-time
-          </button>
-          <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('marketCap')}>
-            MarketCap
-          </button>
-        </div>
+      <div className="home-rainbow home-rainbow-left">2 new Assets added weekly</div>
 
-        {sortedRows.map((row, index) => (
-          <div key={row.id} className={`home-asset-card home-asset-${row.id}`}>
-            <div className="home-assets-cell home-assets-index">{index + 1}</div>
-            <Link href={row.href} className="home-assets-link">
-              <div className="home-assets-cell">{row.label}</div>
-              <div className="home-assets-cell">${formatCurrency(row.vapa)}</div>
-              <div className="home-assets-cell">{formatPercent(row.change24h)}</div>
-              <div className="home-assets-cell">{formatPercent(row.change90d)}</div>
-              <div className="home-assets-cell">{formatPercent(row.changeAll)}</div>
-              <div className="home-assets-cell">${formatCurrency(row.marketCap)}</div>
-            </Link>
+      <div className="home-assets-wrapper">
+        <div className="home-assets-list">
+          <div className="home-assets-header-row">
+            <div className="home-assets-cell home-assets-index"></div>
+            <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('asset')}>
+              Asset
+            </button>
+            <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('price')}>
+              Price
+            </button>
+            <button type="button" className="home-assets-cell home-assets-button home-assets-1w" onClick={() => handleSort('change1w')}>
+              1 wk
+            </button>
+            <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('change1y')}>
+              1 yr
+            </button>
+            <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('changeAll')}>
+              all-time
+            </button>
           </div>
-        ))}
+
+          {sortedRows.map((row, index) => (
+            <div key={row.id} className="home-asset-row">
+              <div className="home-assets-cell home-assets-index">{index + 1}</div>
+              <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
+                <span className="home-asset-icon-wrap">
+                  <Image
+                    loader={imageLoader}
+                    alt={`${row.label} logo`}
+                    width={18}
+                    height={18}
+                    className="home-asset-icon"
+                    src={row.icon}
+                  />
+                </span>
+                <div className="home-assets-cell home-assets-asset">
+                  <span className={`home-asset-label home-asset-label-${row.id}`}>
+                    <span className="home-asset-name">{row.label}</span>
+                  </span>
+                </div>
+                <div className="home-assets-cell">
+                  <span className="home-assets-currency home-assets-currency-dollar">$</span>
+                  <span className="home-assets-number">{formatCurrency(row.vapa)}</span>
+                </div>
+                <div className="home-assets-cell home-assets-percent home-assets-1w">
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={12}
+                    height={12}
+                    className="home-asset-arrow"
+                    src={row.change1w > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                  />
+                  <span className="home-assets-number">
+                    {formatPercent(row.change1w).replace('%', '')}
+                    <span className="home-assets-currency home-assets-currency-percent">%</span>
+                  </span>
+                </div>
+                <div className="home-assets-cell home-assets-percent">
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={12}
+                    height={12}
+                    className="home-asset-arrow"
+                    src={row.change1y > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                  />
+                  <span className="home-assets-number">
+                    {formatPercent(row.change1y).replace('%', '')}
+                    <span className="home-assets-currency home-assets-currency-percent">%</span>
+                  </span>
+                </div>
+                <div className="home-assets-cell home-assets-percent">
+                  <Image
+                    loader={imageLoader}
+                    alt=""
+                    width={12}
+                    height={12}
+                    className="home-asset-arrow"
+                    src={row.changeAll > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                  />
+                  <span className="home-assets-number">
+                    {formatPercent(row.changeAll).replace('%', '')}
+                    <span className="home-assets-currency home-assets-currency-percent">%</span>
+                  </span>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
 
     </>

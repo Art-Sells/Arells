@@ -6,13 +6,19 @@
 	margin-right: 0%;
 	margin-bottom: 0%;
 	padding-top: 0px;
-	border-radius: 30px;
+	border-radius: 0px;
 	padding-bottom: 90px;
 	background: #ffffff;
 	-webkit-animation-name: animatetop;
 	-webkit-animation-duration: 1.00s;
 	animation-name: animatetop;
 	animation-duration: 1.00s;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
 }
 
   
@@ -37,9 +43,9 @@
 		  to {center:0; opacity:1}
 		}
 	  #word-logoo {
-		  margin-top: 80px;
-		  width: 105px;	
-		  height: 33px;
+		  margin-top: 30px;
+		  width: 70px;	
+		  height: 23px;
 		  -webkit-animation-name: animatetop;
 		  -webkit-animation-duration: 1.00s;
 		  animation-name: animatetop;
@@ -60,19 +66,45 @@
 	  
 		#descriptioner-wrapper {
 			margin-top: 3px;
-			margin-left: auto;
-			margin-right: auto;
+			margin-right: 0;
 			font-size: 8px;
 			font-weight: 200;
 			padding-bottom: 5px;
+			margin-left: auto;
+			text-align: right;
+			margin-bottom: -40px;
+		}
+
+		.home-header-inner {
+			width: calc(min(920px, 90%) - 50px);
+			margin-left: auto;
+			margin-right: auto;
+			padding-left: 60px;
+			text-align: left;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			transform: translateX(10px);
+		}
+
+		.home-section-line {
+			width: calc(min(920px, 90%) - 50px);
+			height: 5px;
+			background: #c0c0c0;
+			opacity: 0.3;
+			border-radius: 999px;
+			margin: 5px auto 30px;
+			transform: translateX(10px);
 		}
 			#descriptioner {
 				letter-spacing: 0px;
-				margin-left: -2px; 
+				margin-left: 0px; 
 				opacity: 1;
 				color: gray;
 				word-spacing: 0px;
 				display: inline-block;
+				font-size: 14px;
+				margin-right: 50px;
 			}	
 
 			#descriptioner {
@@ -87,54 +119,59 @@
 				margin: 12px auto;
 			}
 
+
 			.home-rainbow {
-				font-size: 12px;
-				font-weight: 600;
+	font-size: 7px;
+	font-weight: 200;
 				letter-spacing: 0.4px;
-				margin: 6px auto 10px;
+	margin: 5px auto;
 				width: fit-content;
-				background: repeating-linear-gradient(
-					90deg,
-					#ff0000 0%,
-					#ff7a00 16%,
-					#ffd500 32%,
-					#00c853 48%,
-					#0091ea 64%,
-					#7c4dff 80%,
-					#d500f9 96%,
-					#ff0000 112%
-				);
-				background-size: 400% 100%;
-				-webkit-background-clip: text;
-				background-clip: text;
-				-webkit-text-fill-color: transparent;
-				animation: rainbowShift 8s linear infinite;
+	color: #000;
 			}
 
-			@keyframes rainbowShift {
-				0% {
-					background-position: 0% 50%;
-				}
-				100% {
-					background-position: 100% 50%;
-				}
-			}
+.home-rainbow-left {
+	width: calc(min(920px, 90%) - 50px);
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	padding-left: 0;
+	transform: translateX(10px);
+}
+
 
 			.home-assets-list {
 				width: min(920px, 90%);
 				margin: 18px auto 0;
+				transform: translateX(-10px);
 				display: flex;
 				flex-direction: column;
-				gap: 14px;
+				gap: 20px;
+			}
+
+			.home-assets-wrapper {
+				width: min(920px, 90%);
+				margin: 0 auto;
+				padding: 5px 5px 55px;
+				box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
+				border-radius: 12px;
 			}
 
 			.home-assets-header-row {
 				display: grid;
-				grid-template-columns: 42px repeat(6, minmax(0, 1fr));
+				grid-template-columns: 42px repeat(5, minmax(0, 1fr));
 				align-items: center;
 				font-weight: 600;
-				font-size: 12px;
+				font-size: 10px;
 				letter-spacing: 0.2px;
+				opacity: 0.7;
+				margin-bottom: -5px;
+			}
+
+			.home-asset-row {
+				display: grid;
+				grid-template-columns: 42px repeat(5, minmax(0, 1fr));
+				align-items: center;
+				column-gap: 10px;
 			}
 
 			.home-assets-cell {
@@ -145,7 +182,10 @@
 			}
 
 			.home-assets-index {
-				color: #666;
+				color: #c0c0c0;
+				font-weight: 700;
+				font-size: 10px;
+				opacity: 1;
 			}
 
 			.home-assets-button {
@@ -158,47 +198,148 @@
 				color: #222;
 			}
 
+			.home-assets-button:first-of-type {
+				text-align: left;
+				padding-left: 30px;
+			}
+
 			.home-assets-button:hover,
 			.home-assets-button:focus {
 				color: #cc7400;
 			}
 
 			.home-asset-card {
+				grid-column: 2 / -1;
 				display: grid;
-				grid-template-columns: 42px repeat(6, minmax(0, 1fr));
+				grid-template-columns: repeat(5, minmax(0, 1fr));
 				align-items: center;
 				background: #ffffff;
 				border-radius: 14px;
-				padding: 8px 0;
+				padding: 13px 10px 13px 0;
 				box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 				transition: transform 0.2s ease, box-shadow 0.2s ease;
+				text-decoration: none;
+				color: inherit;
+				position: relative;
 			}
 
 			.home-asset-card:hover {
 				transform: translateY(-2px);
-				box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
 			}
 
 			.home-asset-bitcoin {
-				box-shadow: 0 10px 24px rgba(248, 141, 0, 0.35);
+				background: rgba(248, 141, 0, 0.06);
+				box-shadow: -8px 0 14px rgba(248, 141, 0, 0.26), 0 2px 10px rgba(248, 141, 0, 0.18);
+			}
+
+			.home-asset-bitcoin:hover {
+				box-shadow: -8px 0 14px rgba(248, 141, 0, 0.28), 0 4px 14px rgba(248, 141, 0, 0.22);
 			}
 
 			.home-asset-ethereum {
-				box-shadow: 0 10px 24px rgba(0, 229, 255, 0.35);
+				background: rgba(107, 114, 168, 0.07);
+				box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);
 			}
 
-			.home-assets-link {
-				display: grid;
-				grid-template-columns: repeat(6, minmax(0, 1fr));
-				text-decoration: none;
-				color: inherit;
-				width: 100%;
-				grid-column: 2 / -1;
+			.home-asset-ethereum:hover {
+				box-shadow: -8px 0 14px rgba(107, 114, 168, 0.3), 0 4px 14px rgba(107, 114, 168, 0.24);
 			}
 
-			.home-assets-link:hover .home-assets-cell {
-				background: rgba(0, 0, 0, 0.04);
+			.home-assets-asset {
+				text-align: left;
 			}
+
+			.home-asset-label {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				padding-left: 13px;
+				font-weight: 700;
+			}
+
+			.home-asset-card {
+				border-top-left-radius: 999px;
+				border-bottom-left-radius: 999px;
+				border-top-right-radius: 400px;
+				border-bottom-right-radius: 400px;
+			}
+
+			.home-asset-icon {
+				width: 23px;
+				height: 23px;
+				display: block;
+			}
+
+			.home-asset-icon-wrap {
+				position: absolute;
+				left: 2px;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 26px;
+				height: 26px;
+			}
+
+			.home-asset-label-bitcoin .home-asset-icon {
+				filter: drop-shadow(0 8px 16px rgba(248, 141, 0, 0.7));
+			}
+
+			.home-asset-label-ethereum .home-asset-icon {
+				filter: drop-shadow(0 8px 16px rgba(107, 114, 168, 0.8));
+			}
+
+			.home-asset-label-bitcoin .home-asset-name {
+				color: #666;
+			}
+
+			.home-asset-label-ethereum .home-asset-name {
+				color: #666;
+			}
+
+			.home-assets-percent {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 0px;
+			}
+
+			.home-assets-number {
+				font-weight: 700;
+				color: #000;
+				opacity: 1;
+			}
+
+			.home-assets-percent .home-assets-number {
+				font-weight: 700;
+				font-size: 10px;
+			}
+
+			.home-assets-currency {
+				color: #444;
+				opacity: 0.7;
+				display: inline-block;
+			}
+
+			.home-assets-currency-dollar {
+				margin-right: 1.5px;
+			}
+
+			.home-assets-currency-percent {
+				margin-left: 1px;
+			}
+
+			.home-asset-arrow {
+				opacity: 0.8;
+			}
+
+			.home-asset-arrow {
+				width: 12px;
+				height: 12px;
+				display: block;
+			}
+
 
 			#ada-description {
 				margin-left: 3px; 
@@ -318,7 +459,7 @@
 
 
 	  
-  @media screen and (max-width: 650px) {
+  @media screen and (max-width: 700px) {
 	#overlayy {
 	  -webkit-text-size-adjust: none;
 	}  
@@ -329,13 +470,17 @@
 	  }
   
 	  #word-logoo {
-		  width: 95px;	
-		  height: 30px;
+		  width: 60px;	
+		  height: 20px;
 	  }  
 
 	  
 	  #descriptioner-wrapper {
 		font-size: 7.3px;
+	  }
+
+	  #descriptioner {
+		font-size: 12px;
 	  }
 
 		#ada-description {
@@ -361,26 +506,54 @@
 		font-size: 11px; 			  
 		}
 
-	.home-assets-list {
-		width: 94%;
+	.home-rainbow {
+		font-size: 7px;
 	}
 
-	.home-assets-header-row,
-	.home-asset-card {
-		grid-template-columns: 32px repeat(6, minmax(0, 1fr));
+	.home-assets-list {
+		gap: 15px;
 	}
 
 	.home-assets-cell {
-		padding: 10px 6px;
 		font-size: 10px;
 	}
 
-	.home-rainbow {
-		font-size: 11px;
+	.home-assets-index {
+		font-size: 8px;
+	}
+
+	.home-assets-percent .home-assets-number {
+		font-size: 8px;
+	}
+
+	.home-assets-header-row .home-assets-button {
+		font-size: 8.5px;
 	}
 
 	  
 	}	
+
+  @media screen and (min-width: 701px) {
+	.home-assets-header-row .home-assets-button {
+		font-size: 10px;
+	}
+  }
+
+  @media screen and (max-width: 600px) {
+	.home-assets-1w {
+		display: none !important;
+	}
+
+	.home-assets-header-row,
+	.home-asset-row {
+		grid-template-columns: 42px repeat(4, minmax(0, 1fr));
+	}
+
+	.home-asset-card {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+  }
+
   
   
   

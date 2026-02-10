@@ -29,7 +29,7 @@ type Props = {
 
 const EthereumChart: React.FC<Props> = ({
   history = [],
-  color = 'rgba(125, 92, 255, 0.9)',
+  color = 'rgba(107, 114, 168, 0.9)',
   height = 240,
   onPointHover,
   backgroundColor = '#161616',
@@ -48,7 +48,7 @@ const EthereumChart: React.FC<Props> = ({
           label: 'Price',
           data: dataPoints,
           borderColor: color,
-          backgroundColor: 'rgba(125, 92, 255, 0.1)',
+          backgroundColor: 'rgba(107, 114, 168, 0.12)',
           fill: true,
           pointRadius: 0,
           pointHoverRadius: 0, // disable Chart.js hover dot; we render our own

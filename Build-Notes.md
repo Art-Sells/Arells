@@ -4,11 +4,7 @@
 
 ### Home
 - Loading Modal (3 seconds (A) logo with loader circling it)
-- arells
-- If bear markets never existed
-- 2 new assets added weekly (colorful)
-- looks exactly like CoinMarketCap (simplified / Market Cap)...
-Assets| (24hr)(1wk),etc, MarketCap
+- Asset/Prices/etc (clickable downs and ups re-orientation)
 
 ### Bitcoin (test Ethereum version to release both, implement into Home)
 (columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)

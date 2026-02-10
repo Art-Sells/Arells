@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 
 // Import other necessary components and hooks
-import '../css/bitcoin-dashboard/BitcoinDashboard.css';
 
 import type { Metadata } from 'next';
 export const metadata: Metadata = {
