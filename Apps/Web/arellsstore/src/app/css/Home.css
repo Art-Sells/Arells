@@ -21,6 +21,44 @@ body {
 	padding: 0;
 }
 
+.home-loader-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.9);
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	padding-top: 80px;
+	z-index: 2000;
+	opacity: 0;
+	animation: homeLoaderIn 1s ease forwards;
+}
+
+.home-loader-ring {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	border: 2px solid #c0c0c0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 1;
+	transition: opacity 1s ease;
+}
+
+.home-loader-fade {
+	opacity: 0;
+}
+
+@keyframes homeLoaderIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
   
 	  #arells-iconn {
 		margin-top: 60px;
@@ -194,7 +232,7 @@ body {
 				padding: 0;
 				margin: 0;
 				font: inherit;
-				cursor: pointer;
+				cursor: default;
 				color: #222;
 			}
 
@@ -203,10 +241,6 @@ body {
 				padding-left: 30px;
 			}
 
-			.home-assets-button:hover,
-			.home-assets-button:focus {
-				color: #cc7400;
-			}
 
 			.home-asset-card {
 				grid-column: 2 / -1;
@@ -444,6 +478,9 @@ body {
 		#word-logoo {
 			margin-top: 40px;
 		}  
+		.home-loader-overlay {
+			padding-top: 30px;
+		}
 	}
 
 

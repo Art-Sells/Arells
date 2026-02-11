@@ -15,12 +15,11 @@ const Index = () => {
   };
 
   const [showLoading, setLoading] = useState<boolean>(true);
+  const [fadeOut, setFadeOut] = useState<boolean>(false);
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     wordLogo: false,
   });
   const { getAsset } = useVavity();
-  const [sortKey, setSortKey] = useState<'asset' | 'price' | 'change1w' | 'change1y' | 'changeAll'>('price');
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
 
   const handleImageLoaded = (imageName: string) => {
@@ -32,11 +31,19 @@ const Index = () => {
 
   useEffect(() => {
     if (Object.values(imagesLoaded).every(Boolean)) {
-      const timeoutId = setTimeout(() => {
+      const fadeTimer = setTimeout(() => {
+        setFadeOut(true);
+      }, 1000);
+
+      const hideTimer = setTimeout(() => {
         setLoading(false);
-      }, 2250); // Delay of 2 seconds
-  
-      return () => clearTimeout(timeoutId); // Clear timeout if component unmounts
+        setFadeOut(false);
+      }, 2000);
+
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(hideTimer);
+      };
     }
   }, [imagesLoaded]);
 
@@ -89,57 +96,22 @@ const Index = () => {
     });
   }, [getAsset]);
 
-  const sortedRows = useMemo(() => {
-    const rows = [...assetRows];
-    rows.sort((a, b) => {
-      let comparison = 0;
-      switch (sortKey) {
-        case 'asset':
-          comparison = a.label.localeCompare(b.label);
-          break;
-        case 'price':
-          comparison = a.vapa - b.vapa;
-          break;
-        case 'change1w':
-          comparison = a.change1w - b.change1w;
-          break;
-        case 'change1y':
-          comparison = a.change1y - b.change1y;
-          break;
-        case 'changeAll':
-          comparison = a.changeAll - b.changeAll;
-          break;
-        default:
-          comparison = 0;
-      }
-      return sortDir === 'asc' ? comparison : -comparison;
-    });
-    return rows;
-  }, [assetRows, sortKey, sortDir]);
-
-  const handleSort = (key: typeof sortKey) => {
-    setSortKey((prevKey) => {
-      if (prevKey === key) {
-        setSortDir((prevDir) => (prevDir === 'asc' ? 'desc' : 'asc'));
-        return prevKey;
-      }
-      setSortDir(key === 'asset' ? 'asc' : 'desc');
-      return key;
-    });
-  };
+  const sortedRows = assetRows;
 
   return (
     <>
       {showLoading && (
-        <div style={{ padding: '24px 0' }}>
-          <Image
-            loader={imageLoader}
-            alt=""
-            width={29}
-            height={30}
-            id="arells-loader-icon-bitcoin"
-            src="images/Arells-Icon.png"
-          />
+        <div className={`home-loader-overlay${fadeOut ? ' home-loader-overlay-fade' : ''}`}>
+          <div className={`home-loader-ring${fadeOut ? ' home-loader-fade' : ''}`}>
+            <Image
+              loader={imageLoader}
+              alt=""
+              width={29}
+              height={30}
+              id="arells-loader-icon-bitcoin"
+              src="images/Arells-Icon.png"
+            />
+          </div>
         </div>
       )}
 
@@ -169,24 +141,24 @@ const Index = () => {
         <div className="home-assets-list">
           <div className="home-assets-header-row">
             <div className="home-assets-cell home-assets-index"></div>
-            <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('asset')}>
+          <div className="home-assets-cell home-assets-button">
               Asset
-            </button>
-            <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('price')}>
+          </div>
+          <div className="home-assets-cell home-assets-button">
               Price
-            </button>
-            <button type="button" className="home-assets-cell home-assets-button home-assets-1w" onClick={() => handleSort('change1w')}>
+          </div>
+          <div className="home-assets-cell home-assets-button home-assets-1w">
               1 wk
-            </button>
-            <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('change1y')}>
+          </div>
+          <div className="home-assets-cell home-assets-button">
               1 yr
-            </button>
-            <button type="button" className="home-assets-cell home-assets-button" onClick={() => handleSort('changeAll')}>
+          </div>
+          <div className="home-assets-cell home-assets-button">
               all-time
-            </button>
+          </div>
           </div>
 
-          {sortedRows.map((row, index) => (
+        {sortedRows.map((row, index) => (
             <div key={row.id} className="home-asset-row">
               <div className="home-assets-cell home-assets-index">{index + 1}</div>
               <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
