@@ -1,9 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-
-
-// Import other necessary components and hooks
-
 import type { Metadata } from 'next';
+import BitcoinPageClient from '../../components/Assets/Crypto/Bitcoin/BitcoinPageClient';
 export const metadata: Metadata = {
   title: "Arells Bitcoin",
   description: "Bitcoin dashboard for Arells.",
@@ -31,16 +27,8 @@ export const metadata: Metadata = {
   }
 };
 
-  const BitcoinPage = () => {
-  
-
-  return (
-    <>
-      <div id="account-wrapper">
-        <div style={{ padding: '24px', color: '#fff' }}>Bitcoin dashboard is unavailable.</div>
-      </div>
-    </>
-  );
-}
+const BitcoinPage = () => {
+  return <BitcoinPageClient />;
+};
 
 export default BitcoinPage;
