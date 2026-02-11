@@ -4,7 +4,6 @@
 
 ### Home
 - Loading Modal (3 seconds (A) logo with loader circling it)
-- Asset/Prices/etc (clickable downs and ups re-orientation)
 
 ### Bitcoin (test Ethereum version to release both, implement into Home)
 (columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)
@@ -28,7 +27,7 @@
 - - Profits/Losses:
 - - Date Purchased: mm/dd/yy
 --------
-- - Portfolio (before anything is added) {look at VavityTester for example}, add /ethereum/bitcoin to porfolio session loader so it loads the correct amounts
+- - Portfolio (before anything is added) {look at VavityTester for example}, add /ethereum/bitcoin to porfolio session loader so it loads the correct amounts, *test for long numbers and ensure they are cut off*
 - - - (Add Investments) 
 - - - - when button above clicked, it shows:
 - - - - $ Purchased Value: VAPAHistoricalPrice x bitcoinAmount
@@ -120,8 +119,9 @@ Users:
 - - Test to see if can implement NEXT_PUBLIC to something else in test...
 
 ### Other (if Time Permits)
+- Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
 - Flip sloth pngs horizontally
-- Fix (if VavityAggregator jsons are deleted (wallet connected (connect asset not poping up issue) ))
+- Fix (if VavityAggregator jsons are deleted)
 - Remove console.logs from all files...
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
 
@@ -143,6 +143,7 @@ Users:
 
 ## Arells 2 & Beyond
 
+- Asset/Prices/etc sorting (default by Marketcap always)
 - Wait at least 2 months to track numbers (adjust plan based on feedback), Updates (oDAO, FndrsINC, etc, (New?)):
 - - increase CG API limit? (track)
 - - Compare Retention rate (in bear markets WoM only (percentages)) and market dominance of solid marketplaces: Projections (with current trajectory) with/without inv/asset additions (WoW percentage comparisons)
