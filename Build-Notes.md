@@ -81,9 +81,12 @@
 
 ### Test Online 
 -  both desktop(multiple browsers)/mobile
+- G4 analytics to test for humans/bots
+- - UniqueUsers/SessionDurations (more than 5 seconds = human)
+- - Scrolls/button-clicks(which-assets)/asset-events = human
 - In notion:
 - - Users
-- - - (current) number of email created, date, time, etc
+- - - (current) session creations (browswer/unique IP addresses)
 - - - chart
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 
