@@ -2,17 +2,13 @@
 
 ## Arells v1
 
-### Home
-- Loading Modal (3 seconds (A) logo with loader circling it)
-
 ### Bitcoin (test Ethereum version to release both, implement into Home)
 (columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)
 - Loading Modal (3 seconds (B/E) logo with loader circling it)
-- If bear markets never existed
+- top left Ethereum Symbol rounded left corner more rounded than others then Ethereum word... then: if bear markets never existed
 ---------
 - Line Chart {look at VavityTester for example}
 - - On the Left:
-– - - (Bitcoin)
 - - - Price: $ (VAPA)
 - - - Market Cap: $
 - - - - +12.00%, etc, etc
@@ -146,8 +142,10 @@ Users:
 
 ## Arells 2 & Beyond
 
+- Start tracking after 2 days (numbers)
+- After Week 1, if things look good, X-prsnl
 - Asset/Prices/etc sorting (default by Marketcap always)
-- Wait at least 2 months to track numbers (adjust plan based on feedback), Updates (oDAO, FndrsINC, etc, (New?)):
+- Wait at least 2 months to adjust plan based on feedback, Updates (oDAO, FndrsINC, etc, (New?)):
 - - increase CG API limit? (track)
 - - Compare Retention rate (in bear markets WoM only (percentages)) and market dominance of solid marketplaces: Projections (with current trajectory) with/without inv/asset additions (WoW percentage comparisons)
 - Add 1 new asset a week (VAPA)

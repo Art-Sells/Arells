@@ -101,8 +101,11 @@ const Index = () => {
   return (
     <>
       {showLoading && (
-        <div className={`home-loader-overlay${fadeOut ? ' home-loader-overlay-fade' : ''}`}>
+        <div className="home-loader-overlay">
           <div className={`home-loader-ring${fadeOut ? ' home-loader-fade' : ''}`}>
+            <svg className="home-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
+              <circle cx="30" cy="30" r="26" />
+            </svg>
             <Image
               loader={imageLoader}
               alt=""
@@ -133,10 +136,6 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="home-section-line" />
-
-      <div className="home-rainbow home-rainbow-left">2 new Assets added weekly</div>
-
       <div className="home-assets-wrapper">
         <div className="home-assets-list">
           <div className="home-assets-header-row">
@@ -144,13 +143,13 @@ const Index = () => {
           <div className="home-assets-cell home-assets-button">
               Asset
           </div>
-          <div className="home-assets-cell home-assets-button">
+          <div className="home-assets-cell home-assets-button home-assets-price-header">
               Price
           </div>
-          <div className="home-assets-cell home-assets-button home-assets-1w">
+          <div className="home-assets-cell home-assets-button home-assets-1w home-assets-1w-header">
               1 wk
           </div>
-          <div className="home-assets-cell home-assets-button">
+          <div className="home-assets-cell home-assets-button home-assets-1y">
               1 yr
           </div>
           <div className="home-assets-cell home-assets-button">
@@ -179,7 +178,7 @@ const Index = () => {
                 </div>
                 <div className="home-assets-cell">
                   <span className="home-assets-currency home-assets-currency-dollar">$</span>
-                  <span className="home-assets-number">{formatCurrency(row.vapa)}</span>
+                  <span className="home-assets-number home-assets-price">{formatCurrency(row.vapa)}</span>
                 </div>
                 <div className="home-assets-cell home-assets-percent home-assets-1w">
                   <Image
@@ -195,7 +194,7 @@ const Index = () => {
                     <span className="home-assets-currency home-assets-currency-percent">%</span>
                   </span>
                 </div>
-                <div className="home-assets-cell home-assets-percent">
+                <div className="home-assets-cell home-assets-percent home-assets-1y">
                   <Image
                     loader={imageLoader}
                     alt=""
@@ -226,6 +225,9 @@ const Index = () => {
               </Link>
             </div>
           ))}
+        </div>
+        <div className="home-assets-footer">
+          <div className="home-assets-footer-text">2 new Assets added weekly</div>
         </div>
       </div>
 
