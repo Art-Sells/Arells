@@ -2,8 +2,16 @@
 
 ## Arells v1
 
+###
+Replace 2 new assets with (A new asset added weekly)
+– Which would you like added next week [voting ends in (countdown)]?
+– ()() <once they click 
+– - Modal that shows (Solana is winning (or losing(no !)) with 100% of votes! Check back next week to see which asset won and was added (ok))
+Section disappears (logs session voted per asset)s3 
+
 ### Bitcoin (test Ethereum version to release both, implement into Home)
 (columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)
+- Add (A) at top left of Btc/Eth and for their banners create (or move the corresponding css files to their corresponding css crypto/assets folders)
 - Loading Modal (3 seconds (B/E) logo with loader circling it)
 - top left Ethereum Symbol rounded left corner more rounded than others then Ethereum word... then: if bear markets never existed
 ---------
@@ -62,7 +70,7 @@
     Powered by (Vavity (V))
 
 ### Metatags/ Description (all pages.tsx & components)
-- Alter: Descriptions & BannerImages
+- Alter: Descriptions & BannerImages (make [}{] images for promotions), add same color scheme on top behind logos.
 - - If bear markets never existed (Bitcoin/Ethereum - If bear markets never existed)
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing
@@ -70,13 +78,7 @@
 - - Add a robots.txt: Allows crawlers to access your site
 - - Build backlinks: Share your site to get it indexed faster
 
-### Deployment (Test) Amplify/S3 Login
-- Ensure that NEXT_PUBLIC is not invoked and remove .env hardhat config expositions
-- Compare Main ENV with Test ENV before deployments
-- Test (with vavity.info) on socials (DM's/etc)
-
-### Test Online 
--  both desktop(multiple browsers)/mobile
+### Analytics
 - G4 analytics to test for humans/bots
 - - UniqueUsers/SessionDurations (more than 5 seconds = human)
 - - Scrolls/button-clicks(which-assets)/asset-events = human
@@ -86,8 +88,11 @@
 - - - chart
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 
-## Loading Modules in all pages
-- All of them fade in and out (same as modules and pages in vavity.info)
+### Test Online 
+-  both desktop(multiple browsers)/mobile
+- Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
+- look at Analytics
+
 
 ## After Test
 - Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
@@ -101,66 +106,34 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 - - - (current) number of sessions (unique users?) created/interacted/etc
 - - - chart
 
-#### Deployment (Main) Amplify/S3 Login
-- Test (with vavity.info) on socials (DM's/etc)
+#### Update Links
 - Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If bear markets never existed
 
-### After Completion
-- Cancel Infura/Metamask
-- Always Save Vavity JSON file data everyday offline (in case of breach)
-- Delete Arells Readme roadmap
-Users:
-- Get Leads (search AI automoated options [use same format] from X, etc)
-- Set Launch Date (and announce the features)
+### After Launch
 - - Review notes on phone
 - - Look at notes for openings. 
-- - components/api/context/vavity crypto/assets ... test, and add (shouldn't take a while to complete)
-- - Test to see if can implement NEXT_PUBLIC to something else in test...
 
-### Other (if Time Permits)
-- Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
+### Day After Launch:
+- Cancel Infura/Metamask
+- Delete Arells Readme roadmap
+Users
 - Flip sloth pngs horizontally
-- Fix (if VavityAggregator jsons are deleted)
 - Remove console.logs from all files...
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
+- Prepare to launch new Voting Blocks and Winning asset (banner, etc)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Arells 2 & Beyond
-
+## 2 days after launch
 - Start tracking after 2 days (numbers)
 - After Week 1, if things look good, X-prsnl
+- - Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
+
+## 1 mnth and beyond:
 - Asset/Prices/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust plan based on feedback, Updates (oDAO, FndrsINC, etc, (New?)):
 - - increase CG API limit? (track)
 - - Compare Retention rate (in bear markets WoM only (percentages)) and market dominance of solid marketplaces: Projections (with current trajectory) with/without inv/asset additions (WoW percentage comparisons)
-- Add 1 new asset a week (VAPA)
-- - Assets have their own page and token values (that should be implemented in fetchBalance and everywhere these token values are used) (connect asset)
-- - Announce
-
-- After user accumulation and scaling, add Buy/Sell (add VatopGroups back), can buy high, can never sell below market price (sloth)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
-- Delete all Console Logs in LogIn/SignUp/Account/Buy/Sell/Disconnect/VavityContext
-
-
-### Home/Asset-Name
-- Account/Withdraw/Sell/Buy/Transactions/BankAccount/Confirm (if not logged in) Revert To Home
-- Contact us (Account/Home): Email
-- Clean up Lagging Pages
 
 
 ### iOS & Android App (after 1-2 years?)
