@@ -2,12 +2,6 @@
 
 ## Arells v1
 
-###
-– ()() <once they click 
-– - Modal that shows (Solana is winning (or losing(no !)) with 100% of votes! Check back next week to see which asset won and was added (ok))
-Section disappears (logs session voted per asset)s3 
-- - Test countdown modal (test with multiple browsers for differing sessions)
-
 ### Bitcoin (test Ethereum version to release both, implement into Home)
 (columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)
 - Add (A) at top left of Btc/Eth and for their banners create (or move the corresponding css files to their corresponding css crypto/assets folders)

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { fetchVotingBlock } from '../../../utils/votingBlock';
+import { ensureVotingBlock } from '../../../utils/votingBlock';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -8,11 +8,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const data = await fetchVotingBlock();
+    const result = await ensureVotingBlock();
+    const data = result.data;
     const now = Date.now();
     const remainingMs = Math.max(data.expiresAt - now, 0);
     return res.status(200).json({
       ...data,
+      created: result.created,
       remainingMs,
       isExpired: now >= data.expiresAt,
     });

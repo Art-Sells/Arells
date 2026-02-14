@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
-const VOTING_KEY = 'arellsusers/votingblock/VotingBlock.json';
+const VOTING_KEY = 'votingblock/VotingBlock.json';
 
 export type VotingBlockData = {
   expiresAt: number;
@@ -17,7 +17,7 @@ export type VotingBlockData = {
 const buildDefaultVotingBlock = (): VotingBlockData => {
   const now = Date.now();
   return {
-    expiresAt: now + 30 * 1000,
+    expiresAt: now + 60 * 1000,
     votes: {
       solana: 0,
       xrp: 0,
@@ -40,13 +40,30 @@ const normalizeVotingBlock = (data: any): VotingBlockData => {
   };
 };
 
+export const ensureVotingBlock = async (): Promise<{ data: VotingBlockData; created: boolean }> => {
+  try {
+    await s3.headObject({ Bucket: BUCKET_NAME, Key: VOTING_KEY }).promise();
+  } catch (error: any) {
+    const fallback = buildDefaultVotingBlock();
+    await saveVotingBlock(fallback);
+    return { data: fallback, created: true };
+  }
+
+  const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: VOTING_KEY }).promise();
+  if (response.Body) {
+    const parsed = JSON.parse(response.Body.toString());
+    return { data: normalizeVotingBlock(parsed), created: false };
+  }
+
+  const fallback = buildDefaultVotingBlock();
+  await saveVotingBlock(fallback);
+  return { data: fallback, created: true };
+};
+
 export const fetchVotingBlock = async (): Promise<VotingBlockData> => {
   try {
-    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: VOTING_KEY }).promise();
-    if (response.Body) {
-      const parsed = JSON.parse(response.Body.toString());
-      return normalizeVotingBlock(parsed);
-    }
+    const result = await ensureVotingBlock();
+    return result.data;
   } catch (error: any) {
     if (error.code !== 'NoSuchKey') {
       console.error('[voting] fetch error', error);

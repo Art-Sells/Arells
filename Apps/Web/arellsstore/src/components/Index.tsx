@@ -34,7 +34,7 @@ const Index = () => {
   const [votingHidden, setVotingHidden] = useState<boolean>(false);
   const [countdownMs, setCountdownMs] = useState<number>(0);
   const [voteModal, setVoteModal] = useState<null | { asset: VotingAsset; status: 'winning' | 'losing' | 'tied'; pct: number }>(
-    { asset: 'solana', status: 'winning', pct: 60 }
+    null
   );
   const [voteModalClosing, setVoteModalClosing] = useState<boolean>(false);
 
@@ -72,15 +72,18 @@ const Index = () => {
         const next: VotingBlockData = data;
         setVotingData(next);
         setCountdownMs(next.remainingMs || 0);
-        setVotingHidden(false);
+        const hasVoted = sessionId && next.sessions?.includes(sessionId);
+        if (next.isExpired || hasVoted) {
+          setVotingHidden(true);
+        } else {
+          setVotingHidden(false);
+        }
       } catch {
         setVotingHidden(true);
       }
     };
 
-    if (sessionId) {
-      fetchVoting();
-    }
+    fetchVoting();
   }, [sessionId]);
 
   useEffect(() => {
@@ -89,7 +92,7 @@ const Index = () => {
       setCountdownMs((prev) => {
         const next = Math.max(prev - 1000, 0);
         if (next <= 0) {
-          setVotingHidden(false);
+          setVotingHidden(true);
         }
         return next;
       });
@@ -339,7 +342,13 @@ const Index = () => {
       {voteModal && (
         <div className={`home-vote-modal-overlay${voteModalClosing ? ' is-fading' : ''}`}>
           <div className="home-vote-modal">
-            <Image className="home-vote-modal-icon" alt="Solana" width={22} height={22} src="/images/assets/crypto/solana.png" />
+            <Image
+              className="home-vote-modal-icon"
+              alt={voteModal.asset === 'solana' ? 'Solana' : 'XRP'}
+              width={22}
+              height={22}
+              src={voteModal.asset === 'solana' ? '/images/assets/crypto/solana.png' : '/images/assets/crypto/xrp.png'}
+            />
             <div className="home-vote-modal-title">
               {voteModal.asset === 'solana' ? 'Solana' : 'XRP'} is{' '}
               {voteModal.status === 'tied' ? 'tied' : voteModal.status === 'winning' ? 'winning' : 'losing'}
@@ -348,13 +357,15 @@ const Index = () => {
             <div className="home-vote-modal-body">Check back next week to see which asset won and was added.</div>
             <button
               type="button"
-              className="home-vote-modal-button"
+              className={`home-vote-modal-button ${
+                voteModal.asset === 'xrp' ? 'home-vote-modal-button--xrp' : 'home-vote-modal-button--solana'
+              }`}
               onClick={() => {
                 setVoteModalClosing(true);
                 setTimeout(() => {
-                  setVoteModal(null);
-                  setVoteModalClosing(false);
-                  setVotingHidden(false);
+                  if (typeof window !== 'undefined') {
+                    window.location.reload();
+                  }
                 }, 200);
               }}
             >
