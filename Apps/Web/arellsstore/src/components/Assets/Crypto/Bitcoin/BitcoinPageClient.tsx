@@ -24,10 +24,20 @@ const BitcoinPageClient: React.FC = () => {
   }, []);
 
   return (
-    <div className="asset-page">
+    <div className="asset-page asset-page--bitcoin">
+      <header className="asset-header asset-header--bitcoin">
+        <Link className="asset-home-button" href="/">
+          <Image alt="Arells" width={18} height={18} src="/images/Arells-Icon.png" />
+        </Link>
+        <div className="asset-header-title">Bitcoin</div>
+        <div className="asset-header-slogan">if bear markets never existed</div>
+      </header>
       {showLoading && (
         <div className={`asset-loader-overlay asset-loader-overlay--bitcoin${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
           <div className={`asset-loader-ring asset-loader-ring--bitcoin${fadeOut ? ' asset-loader-fade' : ''}`}>
+            <svg className="asset-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
+              <circle cx="30" cy="30" r="26" />
+            </svg>
             <Image alt="Bitcoin" width={30} height={30} src="/images/assets/crypto/Bitcoin.png" />
           </div>
         </div>

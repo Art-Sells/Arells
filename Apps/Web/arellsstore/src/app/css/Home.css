@@ -91,45 +91,225 @@ body {
 	background: #fff;
 }
 
+.asset-page--bitcoin {
+	background: rgba(248, 141, 0, 0.06);
+}
+
+.asset-page--ethereum {
+	background: rgba(107, 114, 168, 0.07);
+}
+
+.asset-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px 8px;
+	gap: 12px;
+}
+
+.asset-header-title {
+	font-weight: 700;
+	color: #222;
+}
+
+.asset-header-slogan {
+	color: gray;
+	font-size: 14px;
+}
+
+.asset-home-button {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: #fff;
+	box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.asset-page-content {
+	padding: 16px 20px 30px;
+	color: #222;
+}
+
+.asset-metric-number {
+	font-weight: 700;
+	color: #000;
+	font-size: 12px;
+}
+
+.asset-action-button {
+	border-radius: 8px;
+	padding: 8px 12px;
+	cursor: pointer;
+	font-weight: 700;
+	border: none;
+}
+
+.asset-action-button--bitcoin {
+	background: rgba(248, 141, 0, 0.12);
+	color: #111;
+	box-shadow: 0 6px 12px rgba(248, 141, 0, 0.35);
+}
+
+.asset-action-button--ethereum {
+	background: rgba(107, 114, 168, 0.16);
+	color: #111;
+	box-shadow: 0 6px 12px rgba(107, 114, 168, 0.35);
+}
+
+.asset-range-button {
+	border: none;
+	border-radius: 8px;
+	padding: 6px 10px;
+	cursor: pointer;
+	background: #fff;
+	color: #111;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.asset-range-button--bitcoin.is-active {
+	box-shadow: 0 6px 12px rgba(248, 141, 0, 0.45);
+}
+
+.asset-range-button--ethereum.is-active {
+	box-shadow: 0 6px 12px rgba(107, 114, 168, 0.45);
+}
+
+.asset-investments-list {
+	display: grid;
+	gap: 12px;
+}
+
+.asset-investments-wrap {
+	margin-top: -6px;
+	padding: 12px;
+	border-radius: 12px;
+	box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.12);
+	background: rgba(255, 255, 255, 0.6);
+}
+
+.asset-investments-wrap--bitcoin {
+	box-shadow: inset 0 6px 12px rgba(248, 141, 0, 0.25);
+}
+
+.asset-investments-wrap--ethereum {
+	box-shadow: inset 0 6px 12px rgba(107, 114, 168, 0.3);
+}
+
+.asset-delete-button {
+	margin-top: 8px;
+	border: none;
+	background: transparent;
+	color: #444;
+	cursor: pointer;
+}
+
+.asset-page-content--bitcoin * {
+	border: none !important;
+}
+
+.asset-page-content--ethereum * {
+	border: none !important;
+}
+
+.asset-panel {
+	background: #fff;
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+	border-radius: 14px;
+}
+
+.asset-panel--bitcoin {
+	background: rgba(248, 141, 0, 0.06);
+	box-shadow: -8px 0 14px rgba(248, 141, 0, 0.26), 0 2px 10px rgba(248, 141, 0, 0.18);
+}
+
+.asset-panel--ethereum {
+	background: rgba(107, 114, 168, 0.07);
+	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);
+}
+
+.asset-chart-icon {
+	position: absolute;
+	top: -20px;
+	left: -20px;
+	width: 70px;
+	height: 70px;
+	border-radius: 50%;
+}
+
+.asset-footer-about {
+	font-size: 12px;
+}
+
+.asset-page--bitcoin .asset-footer-about {
+	border-color: rgba(248, 141, 0, 0.35);
+	color: rgba(248, 141, 0, 0.75);
+}
+
+.asset-page--ethereum .asset-footer-about {
+	border-color: rgba(107, 114, 168, 0.45);
+	color: rgba(107, 114, 168, 0.9);
+}
+
 .asset-loader-overlay {
 	position: fixed;
 	inset: 0;
 	display: flex;
 	align-items: flex-start;
 	justify-content: center;
-	padding-top: 80px;
+	padding-top: 300px;
 	z-index: 2100;
-	opacity: 0;
-	animation: assetLoaderIn 1s ease forwards;
+	opacity: 1;
 }
 
 .asset-loader-overlay--bitcoin {
-	background: rgba(248, 141, 0, 0.2);
+	background: rgba(248, 141, 0, 0.95);
 }
 
 .asset-loader-overlay--ethereum {
-	background: rgba(107, 114, 168, 0.2);
+	background: rgba(107, 114, 168, 0.95);
 }
 
 .asset-loader-ring {
 	width: 60px;
 	height: 60px;
 	border-radius: 50%;
-	border: 2px solid #c0c0c0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	opacity: 1;
 	transition: opacity 1s ease;
-	background: rgba(255, 255, 255, 0.4);
+	position: relative;
 }
 
-.asset-loader-ring--bitcoin {
-	border-color: rgba(248, 141, 0, 0.9);
+.asset-loader-spinner {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	animation: homeLoaderSpin 1s linear infinite;
 }
 
-.asset-loader-ring--ethereum {
-	border-color: rgba(107, 114, 168, 0.9);
+.asset-loader-spinner circle {
+	stroke-width: 5;
+	stroke-linecap: round;
+	fill: none;
+	stroke-dasharray: 140 60;
+	opacity: 0.1;
+}
+
+.asset-loader-ring img {
+	opacity: 0.3;
+}
+
+.asset-loader-ring--bitcoin .asset-loader-spinner circle {
+	stroke: rgba(248, 141, 0, 1);
+}
+
+.asset-loader-ring--ethereum .asset-loader-spinner circle {
+	stroke: rgba(107, 114, 168, 1);
 }
 
 .asset-loader-overlay-fade .asset-loader-ring,
@@ -137,14 +317,6 @@ body {
 	opacity: 0;
 }
 
-@keyframes assetLoaderIn {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
 
 .asset-footer {
 	display: flex;
@@ -221,7 +393,7 @@ body {
 			margin-left: auto;
 			margin-right: auto;
 			padding-left: 60px;
-			margin-bottom: 10px;
+			margin-bottom: 2px;
 			text-align: left;
 			display: flex;
 			align-items: center;
@@ -268,6 +440,135 @@ body {
 				margin: auto;
 			}
 
+			.home-voting-block {
+				width: calc(90% - 60px);
+				max-width: 860px;
+				min-width: 350px;
+				margin: 0 auto -10px;
+				padding: 25px 30px 40px !important;
+				box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
+				border-radius: 12px;
+				display: grid;
+				gap: 13px;
+				background: #fff;
+				box-sizing: border-box;
+			}
+
+			.home-voting-title {
+				font-weight: 600;
+				letter-spacing: 0.2px;
+				color: #222;
+				opacity: 0.5;
+				font-size: 10px;
+				text-align: center;
+				margin-bottom: 0px;
+			}
+
+			.home-voting-options {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 13px;
+				padding: 0 30px;
+			}
+
+			.home-voting-button {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 8px;
+				border: none;
+				border-radius: 14px;
+				padding-left: 12px;
+				padding-right: 12px;
+				padding-top: 17px;
+				padding-bottom: 17px;
+				font-weight: 700;
+				color: #666;
+				cursor: pointer;
+				text-align: center;
+				transition: transform 0.2s ease, box-shadow 0.2s ease;
+			}
+
+			.home-voting-button:hover {
+				transform: translateY(-2px);
+			}
+
+			.home-voting-button--solana {
+				background: rgba(20, 241, 149, 0.12);
+				box-shadow: -8px 0 14px rgba(20, 241, 149, 0.21), 0 2px 10px rgba(20, 241, 149, 0.21);
+				border: 1px solid rgba(20, 241, 149, 0.5);
+			}
+
+			.home-voting-button--xrp {
+				background: rgba(255, 255, 255, 0.3);
+				box-shadow: -8px 0 14px rgba(191, 191, 191, 0.21), 0 2px 10px rgba(191, 191, 191, 0.21);
+				border: 1px solid rgba(191, 191, 191, 0.5);
+			}
+
+			.home-voting-icon {
+				height: 15px;
+				width: auto;
+			}
+
+			.home-voting-countdown {
+				font-weight: 600;
+				letter-spacing: 0.2px;
+				color: #222;
+				opacity: 0.2;
+				font-size: 13px;
+				text-align: center;
+				margin-top: 0px;
+				margin-bottom: 0px;
+			}
+
+			.home-voting-countdown span {
+				display: block;
+			}
+
+			.home-vote-modal-overlay {
+				position: fixed;
+				inset: 0;
+				background: rgba(255, 255, 255, 0.7);
+				display: flex;
+				justify-content: center;
+				align-items: flex-start;
+				padding-top: 300px;
+				z-index: 2100;
+			}
+
+			.home-vote-modal {
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
+				padding: 20px;
+				width: min(520px, 90%);
+				text-align: center;
+			}
+
+			.home-vote-modal-title {
+				font-weight: 700;
+				margin-bottom: 8px;
+			}
+
+			.home-vote-modal-subtitle {
+				margin-bottom: 12px;
+				color: #222;
+				opacity: 0.7;
+			}
+
+			.home-vote-modal-body {
+				margin-bottom: 16px;
+			}
+
+			.home-vote-modal-button {
+				border: none;
+				border-radius: 8px;
+				padding: 8px 14px;
+				background: #111;
+				color: #fff;
+				cursor: pointer;
+			}
+
 
 			.home-assets-list {
 				width: min(920px, 90%);
@@ -288,6 +589,7 @@ body {
 				padding-right: 10px;
 				box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
 				border-radius: 12px;
+				background: #ffffff;
 			}
 
 			.home-assets-header-row {
@@ -373,6 +675,7 @@ body {
 			.home-asset-bitcoin {
 				background: rgba(248, 141, 0, 0.06);
 				box-shadow: -8px 0 14px rgba(248, 141, 0, 0.26), 0 2px 10px rgba(248, 141, 0, 0.18);
+				border: 1px solid rgba(248, 141, 0, 0.26);
 			}
 
 			.home-asset-bitcoin .home-assets-cell + .home-assets-cell {
@@ -389,6 +692,7 @@ body {
 			.home-asset-ethereum {
 				background: rgba(107, 114, 168, 0.07);
 				box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);
+				border: 1px solid rgba(107, 114, 168, 0.28);
 			}
 
 			.home-asset-ethereum .home-assets-cell + .home-assets-cell {
@@ -609,8 +913,12 @@ body {
 			padding-top: 110px;
 		}
 
+		.home-vote-modal-overlay {
+			padding-top: 110px;
+		}
+
 	.asset-loader-overlay {
-		padding-top: 30px;
+		padding-top: 110px;
 	}
 	}
 
@@ -643,6 +951,9 @@ body {
 	  }  
 	  .home-assets-price-header {
 		padding-left: 7px;
+	}
+	.home-voting-block {
+		padding: 25px 30px 33px !important;
 	}
 	  
 	  #descriptioner-wrapper {
@@ -697,6 +1008,28 @@ body {
 
 	.home-assets-header-row .home-assets-button {
 		font-size: 8.5px;
+	}
+
+	.home-voting-title
+	{
+		font-size: 8.5px;
+	}
+	.home-voting-countdown {
+		margin-top: 5px;
+		opacity: .25;
+		font-size: 10px;
+	}
+
+	.home-voting-button {
+		padding-top: 17px;
+		padding-bottom: 17px;
+		padding-left: 12px;
+		padding-right: 12px;
+		font-size: 11px;
+	}
+
+	.asset-metric-number {
+		font-size: 10px;
 	}
 
 	  

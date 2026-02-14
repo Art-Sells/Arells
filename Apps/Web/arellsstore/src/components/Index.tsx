@@ -8,6 +8,16 @@ import React from 'react';
 import Link from 'next/link';
 import { useVavity } from '../context/VavityAggregator';
 
+type VotingAsset = 'solana' | 'xrp';
+
+type VotingBlockData = {
+  expiresAt: number;
+  votes: { solana: number; xrp: number };
+  sessions: string[];
+  remainingMs: number;
+  isExpired: boolean;
+};
+
 const Index = () => {
   // Loader Functions
   const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
@@ -19,7 +29,13 @@ const Index = () => {
   const [imagesLoaded, setImagesLoaded] = useState<{ [key: string]: boolean }>({
     wordLogo: false,
   });
-  const { getAsset } = useVavity();
+  const { getAsset, sessionId } = useVavity();
+  const [votingData, setVotingData] = useState<VotingBlockData | null>(null);
+  const [votingHidden, setVotingHidden] = useState<boolean>(false);
+  const [countdownMs, setCountdownMs] = useState<number>(0);
+  const [voteModal, setVoteModal] = useState<null | { asset: VotingAsset; status: 'winning' | 'losing' | 'tied'; pct: number }>(
+    null
+  );
 
 
   const handleImageLoaded = (imageName: string) => {
@@ -46,6 +62,74 @@ const Index = () => {
       };
     }
   }, [imagesLoaded]);
+
+  useEffect(() => {
+    const fetchVoting = async () => {
+      try {
+        const res = await fetch('/api/votingBlock/getVotingBlock');
+        const data = await res.json();
+        const next: VotingBlockData = data;
+        setVotingData(next);
+        setCountdownMs(next.remainingMs || 0);
+        setVotingHidden(false);
+      } catch {
+        setVotingHidden(true);
+      }
+    };
+
+    if (sessionId) {
+      fetchVoting();
+    }
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (votingHidden || !votingData) return;
+    const interval = setInterval(() => {
+      setCountdownMs((prev) => {
+        const next = Math.max(prev - 1000, 0);
+        if (next <= 0) {
+          setVotingHidden(false);
+        }
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [votingHidden, votingData]);
+
+  const formatCountdown = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const days = Math.floor(totalSeconds / (60 * 60 * 24));
+    const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+    const seconds = totalSeconds % 60;
+    return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+  };
+
+  const handleVote = async (asset: VotingAsset) => {
+    if (!sessionId || votingHidden) return;
+    try {
+      const res = await fetch('/api/votingBlock/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ asset, sessionId }),
+      });
+      const data = await res.json();
+      const next: VotingBlockData = data;
+      setVotingData(next);
+      const totalVotes = (next.votes?.solana || 0) + (next.votes?.xrp || 0);
+      const assetVotes = next.votes?.[asset] || 0;
+      const pct = totalVotes > 0 ? Math.round((assetVotes / totalVotes) * 100) : 0;
+      let status: 'winning' | 'losing' | 'tied' = 'tied';
+      if (next.votes.solana > next.votes.xrp) {
+        status = asset === 'solana' ? 'winning' : 'losing';
+      } else if (next.votes.xrp > next.votes.solana) {
+        status = asset === 'xrp' ? 'winning' : 'losing';
+      }
+      setVoteModal({ asset, status, pct });
+    } catch {
+      // ignore for now
+    }
+  };
 
   const formatCurrency = (value: number) =>
     value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -135,6 +219,26 @@ const Index = () => {
           </p>
         </div>
       </div>
+
+      {!votingHidden && votingData && (
+        <div className="home-voting-block">
+          <div className="home-voting-title">Which should we add next week?</div>
+          <div className="home-voting-options">
+            <button type="button" className="home-voting-button home-voting-button--solana" onClick={() => handleVote('solana')}>
+              <Image className="home-voting-icon" alt="Solana" width={22} height={22} src="/images/assets/crypto/solana.png" />
+              <span>Solana</span>
+            </button>
+            <button type="button" className="home-voting-button home-voting-button--xrp" onClick={() => handleVote('xrp')}>
+              <Image className="home-voting-icon" alt="XRP" width={22} height={22} src="/images/assets/crypto/xrp.png" />
+              <span>XRP</span>
+            </button>
+          </div>
+          <div className="home-voting-countdown">
+            <span>Voting ends</span>
+            <span>{formatCountdown(countdownMs)}</span>
+          </div>
+        </div>
+      )}
 
       <div className="home-assets-wrapper">
         <div className="home-assets-list">
@@ -227,9 +331,32 @@ const Index = () => {
           ))}
         </div>
         <div className="home-assets-footer">
-          <div className="home-assets-footer-text">2 new Assets added weekly</div>
+          <div className="home-assets-footer-text">A new asset added weekly</div>
         </div>
       </div>
+
+      {voteModal && (
+        <div className="home-vote-modal-overlay">
+          <div className="home-vote-modal">
+            <div className="home-vote-modal-title">
+              {voteModal.asset === 'solana' ? 'Solana' : 'XRP'} is{' '}
+              {voteModal.status === 'tied' ? 'tied' : voteModal.status === 'winning' ? 'winning' : 'losing'}!
+            </div>
+            <div className="home-vote-modal-subtitle">{voteModal.pct}% of votes</div>
+            <div className="home-vote-modal-body">Check back next week to see which asset won and was added.</div>
+            <button
+              type="button"
+              className="home-vote-modal-button"
+              onClick={() => {
+                setVoteModal(null);
+                setVotingHidden(false);
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
 
     </>
   );

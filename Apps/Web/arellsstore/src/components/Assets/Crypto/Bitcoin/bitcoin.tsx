@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import VavityTesterBitcoin from '../../../Vavity/Assets/Crypto/Bitcoin/VavityTesterBitcoin';
+import VavityBitcoin from '../../../Vavity/Assets/Crypto/Bitcoin/VavityBitcoin';
 
 const Bitcoin: React.FC = () => {
-  return <VavityTesterBitcoin />;
+  return <VavityBitcoin />;
 };
 
 export default Bitcoin;

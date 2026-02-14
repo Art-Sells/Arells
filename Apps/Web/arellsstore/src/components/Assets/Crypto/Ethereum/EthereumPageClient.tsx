@@ -24,10 +24,20 @@ const EthereumPageClient: React.FC = () => {
   }, []);
 
   return (
-    <div className="asset-page">
+    <div className="asset-page asset-page--ethereum">
+      <header className="asset-header asset-header--ethereum">
+        <Link className="asset-home-button" href="/">
+          <Image alt="Arells" width={18} height={18} src="/images/Arells-Icon.png" />
+        </Link>
+        <div className="asset-header-title">Ethereum</div>
+        <div className="asset-header-slogan">if bear markets never existed</div>
+      </header>
       {showLoading && (
         <div className={`asset-loader-overlay asset-loader-overlay--ethereum${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
           <div className={`asset-loader-ring asset-loader-ring--ethereum${fadeOut ? ' asset-loader-fade' : ''}`}>
+            <svg className="asset-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
+              <circle cx="30" cy="30" r="26" />
+            </svg>
             <Image alt="Ethereum" width={30} height={30} src="/images/assets/crypto/Ethereum.svg" />
           </div>
         </div>

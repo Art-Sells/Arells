@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import Image from 'next/image';
 import axios from 'axios';
 import { useVavity } from '../../../../../context/VavityAggregator';
 import EthereumChart from '../../../../Assets/Crypto/Ethereum/EthereumChart';
 
 const VavityEthereum: React.FC = () => {
-  const { sessionId, fetchVavityAggregator, addVavityAggregator, getAsset } = useVavity();
+  const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
   const [vavityData, setVavityData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
@@ -30,6 +31,8 @@ const VavityEthereum: React.FC = () => {
   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
   const [marketModal, setMarketModal] = useState<'bull' | 'sloth' | null>(null);
+  const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
+  const [visibleInvestments, setVisibleInvestments] = useState<number>(5);
   const ethereumAccent = '#6b72a8';
   const ethereumAccentMuted = 'rgba(107, 114, 168, 0.14)';
 
@@ -313,6 +316,13 @@ const VavityEthereum: React.FC = () => {
     return d.toLocaleDateString('en-US');
   }, []);
 
+  const formatShortDate = useCallback((iso?: string) => {
+    if (!iso) return '...';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '...';
+    return d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
+  }, []);
+
   const currentMockEntry = useMemo(() => {
     if (!mockEntries.length) return null;
     return mockEntries[mockStep % mockEntries.length];
@@ -396,6 +406,16 @@ const VavityEthereum: React.FC = () => {
     }
   };
 
+  const handleDeleteInvestment = async (indexToRemove: number) => {
+    if (!sessionId) return;
+    const updated = investments.filter((_: any, idx: number) => idx !== indexToRemove);
+    await saveVavityAggregator(sessionId, updated, 'ethereum');
+    if (updated.length === 0) {
+      setShowInvestmentsList(false);
+      setVisibleInvestments(5);
+    }
+  };
+
   const renderAddForm = (label: string) => (
     <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginTop: '12px', maxWidth: '420px' }}>
       <div style={{ marginBottom: '8px', fontWeight: 600 }}>{label}</div>
@@ -470,18 +490,8 @@ const VavityEthereum: React.FC = () => {
   );
 
   return (
-    <div style={{ padding: '24px', color: '#f5f5f5', background: '#111', minHeight: '100vh' }}>
-      <h1 style={{ marginBottom: '12px' }}>Vavity Tester (Ethereum)</h1>
-
-      <div
-        style={{
-          border: '1px solid #333',
-          borderRadius: '10px',
-          padding: '14px',
-          marginBottom: '24px',
-          background: '#141414'
-        }}
-      >
+    <div className="asset-page-content asset-page-content--ethereum">
+      <div className="asset-panel asset-panel--ethereum" style={{ padding: '14px', marginBottom: '24px' }}>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap' }}>
           <div
             style={{
@@ -494,11 +504,13 @@ const VavityEthereum: React.FC = () => {
           >
             <div style={{ fontWeight: 700 }}>(Ethereum)</div>
             <div>
-              Price: ${formatCurrency(activePoint?.price ?? vapa ?? 0)}
+              Price: <span className="asset-metric-number">${formatCurrency(activePoint?.price ?? vapa ?? 0)}</span>
             </div>
-            <div>Market Cap: ${formatMarketCap(activeMarketCap)}</div>
-            <div>{formatPercent(percentageIncrease)}</div>
-            <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '8px', marginTop: '4px' }}>
+            <div>
+              Market Cap: <span className="asset-metric-number">${formatMarketCap(activeMarketCap)}</span>
+            </div>
+            <div className="asset-metric-number">{formatPercent(percentageIncrease)}</div>
+            <div className="asset-panel asset-panel--ethereum" style={{ padding: '8px', marginTop: '4px' }}>
               <div style={{ marginBottom: '8px' }}>
                 {percentageIncrease > 0 ? (
                   <button
@@ -515,7 +527,10 @@ const VavityEthereum: React.FC = () => {
                       fontWeight: 700
                     }}
                   >
-                    Bull 🐂 Market
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <Image alt="Bull" width={16} height={16} src="/images/bull.png" />
+                      Bull Market
+                    </span>
                   </button>
                 ) : (
                   <button
@@ -532,7 +547,10 @@ const VavityEthereum: React.FC = () => {
                       fontWeight: 700
                     }}
                   >
-                    Sloth 🦥 Market
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <Image alt="Sloth" width={16} height={16} src="/images/sloth.png" />
+                      Sloth Market
+                    </span>
                   </button>
                 )}
               </div>
@@ -562,18 +580,17 @@ const VavityEthereum: React.FC = () => {
           </div>
 
           <div
+            className="asset-panel asset-panel--ethereum"
             style={{
               flex: 1,
               minWidth: '280px',
               padding: '12px',
-              background: 'transparent',
-              border: '1px solid #333',
-              borderRadius: '8px',
               position: 'relative'
             }}
           >
+            <Image className="asset-chart-icon" alt="Ethereum" width={70} height={70} src="/images/assets/crypto/Ethereum.svg" />
             {chartHoverIndex != null && activePoint && (
-              <div style={{ position: 'absolute', top: 8, left: 12, color: '#f5f5f5', fontSize: '13px', opacity: 0.9 }}>
+              <div style={{ position: 'absolute', top: 8, left: 12, color: '#222', fontSize: '13px', opacity: 0.9 }}>
                 {new Date(activePoint.date).toLocaleDateString('en-US')}
               </div>
             )}
@@ -581,7 +598,7 @@ const VavityEthereum: React.FC = () => {
               history={chartHistory || []}
               color="rgba(107, 114, 168, 0.9)"
               height={320}
-              backgroundColor="#161616"
+              backgroundColor="rgba(107, 114, 168, 0.07)"
               onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
                 setChartHoverIndex(idx ?? null);
               }}
@@ -589,21 +606,17 @@ const VavityEthereum: React.FC = () => {
           </div>
         </div>
 
-        <div
-          style={{
-            marginTop: '16px',
-            border: '1px solid #333',
-            borderRadius: '8px',
-            padding: '12px',
-            background: '#161616'
-          }}
-        >
+      <div className="asset-panel asset-panel--ethereum" style={{ marginTop: '16px', padding: '12px' }}>
           <h3 style={{ marginBottom: '12px' }}>Mock Portfolio</h3>
           {currentMockEntry ? (
             <div style={{ display: 'grid', gap: '6px' }}>
               <div>(ETH)</div>
-              <div>Purchased Value: ${formatCurrency(currentMockEntry.purchasedValue || 0)}</div>
-              <div>Current Value: ${formatCurrency(currentMockEntry.currentValue || 0)}</div>
+              <div>
+                Purchased Value: <span className="asset-metric-number">${formatCurrency(currentMockEntry.purchasedValue || 0)}</span>
+              </div>
+              <div>
+                Current Value: <span className="asset-metric-number">${formatCurrency(currentMockEntry.currentValue || 0)}</span>
+              </div>
               <div>
                 {currentMockEntry.profitLoss > 0
                   ? `Profits: +$${formatCurrency(currentMockEntry.profitLoss)}`
@@ -617,44 +630,31 @@ const VavityEthereum: React.FC = () => {
         </div>
       </div>
 
-      <div
-          style={{
-          marginBottom: '24px',
-          border: '1px solid #333',
-          borderRadius: '8px',
-          padding: '12px',
-          background: '#161616'
-        }}
-      >
+      <div className="asset-panel asset-panel--ethereum" style={{ marginBottom: '24px', padding: '12px' }}>
         <h2 style={{ marginBottom: '12px' }}>My Portfolio</h2>
-        {investments.length === 0 && (
+        {investments.length === 0 ? (
           <>
-            <div style={{ marginBottom: '12px' }}>(Add Investments)</div>
             {!showAddForm && (
-              <button
-                style={{ padding: '8px 12px', background: ethereumAccent, color: '#fff', border: 'none', borderRadius: '6px' }}
-                onClick={() => setShowAddForm(true)}
-              >
+              <button className="asset-action-button asset-action-button--ethereum" onClick={() => setShowAddForm(true)}>
                 (Add Investments)
               </button>
             )}
             {showAddForm && renderAddForm('Add Investment')}
           </>
-        )}
-
-        {investments.length > 0 && (
+        ) : (
           <>
             <div style={{ marginBottom: '8px' }}>
-              Purchased Value: ${formatCurrency(totals.acVatop || 0)}
+              Purchased Value: <span className="asset-metric-number">${formatCurrency(totals.acVatop || 0)}</span>
             </div>
             <div style={{ marginBottom: '8px' }}>
-              Current Value: ${formatCurrency(totals.acVact || 0)}
+              Current Value: <span className="asset-metric-number">${formatCurrency(totals.acVact || 0)}</span>
             </div>
-            <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
-              <div style={{ marginBottom: '12px' }}>
+            <div style={{ marginBottom: '8px' }}>
+              Profits/Losses:{' '}
+              <span className="asset-metric-number">
                 {(() => {
                   if (selectedRangeDays && rangeLoading) {
-                    return 'Profits/Losses: ...';
+                    return '...';
                   }
                   if (selectedRangeDays && rangeHistoricalPrice != null) {
                     const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
@@ -667,94 +667,79 @@ const VavityEthereum: React.FC = () => {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
                           });
-                    const label = profitValue > 0 ? 'Profits' : 'Losses';
-                    return `${label}: ${prefix}${formattedValue}`;
+                    return `${prefix}${formattedValue}`;
                   }
-                  if (totals.acdVatop > 0) {
-                    return `Profits: +$${formatCurrency(totals.acdVatop)}`;
-                  }
-                  const defaultProfit = Math.max(0, (vapa - assetPrice) * (totals.acVactTaa || 0));
-                  return `Profits: +$${formatCurrency(defaultProfit)}`;
+                  const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
+                  return `${defaultProfit >= 0 ? '+$' : '$'}${formatCurrency(Math.abs(defaultProfit))}`;
                 })()}
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {portfolioRanges.map((range) => {
-                  const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
-                  const isActive = selectedRangeDays === range.days;
+              </span>
+            </div>
+            <div style={{ marginBottom: '12px' }}>
+              Date Purchased: <span className="asset-metric-number">{formatShortDate(oldestInvestmentDate?.toISOString())}</span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+              {portfolioRanges.map((range) => {
+                const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
+                const isActive = selectedRangeDays === range.days;
+                return (
+                  <button
+                    key={range.label}
+                    type="button"
+                    disabled={!isEnabled}
+                    onClick={() => setSelectedRangeDays(isActive ? null : range.days)}
+                    className={`asset-range-button asset-range-button--ethereum${isActive ? ' is-active' : ''}`}
+                  >
+                    {range.label}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+              <button
+                className="asset-action-button asset-action-button--ethereum"
+                onClick={() => setShowAddMoreForm((prev) => !prev)}
+              >
+                {showAddMoreForm ? 'Hide add more investments' : 'Add more investments'}
+              </button>
+              <button
+                className="asset-action-button asset-action-button--ethereum"
+                onClick={() => setShowInvestmentsList((prev) => !prev)}
+              >
+                {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
+              </button>
+            </div>
+            {showAddMoreForm && renderAddForm('Add more investments')}
+            {showInvestmentsList && (
+              <div className="asset-investments-wrap asset-investments-wrap--ethereum">
+                <div className="asset-investments-list">
+                {investments.slice(0, visibleInvestments).map((entry: any, idx: number) => {
+                  const amount = entry.cVactTaa ?? 0;
                   return (
-                    <button
-                      key={range.label}
-                      type="button"
-                      disabled={!isEnabled}
-                      onClick={() => setSelectedRangeDays(isActive ? null : range.days)}
-                      style={{
-                        padding: '6px 10px',
-                        borderRadius: '6px',
-                        border: isActive ? `1px solid ${ethereumAccent}` : '1px solid #333',
-                        background: isEnabled ? (isActive ? ethereumAccentMuted : '#202020') : '#111',
-                        color: isEnabled ? (isActive ? ethereumAccent : '#f5f5f5') : '#666',
-                        cursor: isEnabled ? 'pointer' : 'not-allowed'
-                      }}
-                    >
-                      {range.label}
-                    </button>
+                    <div key={idx} className="asset-panel asset-panel--ethereum" style={{ padding: '12px' }}>
+                      <div>Purchased Value: ${formatCurrency(entry.cVatop ?? 0)}</div>
+                      <div>Current Value: ${formatCurrency(entry.cVact ?? 0)}</div>
+                      <div>Profits/Losses: ${formatCurrency(entry.cdVatop ?? 0)}</div>
+                      <div>Token Amount: {Number(amount).toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 })}</div>
+                      <div>Purchase Date: {formatShortDate(entry.date)}</div>
+                      <button type="button" className="asset-delete-button" onClick={() => handleDeleteInvestment(idx)}>
+                        (delete)
+                      </button>
+                    </div>
                   );
                 })}
-              </div>
-            </div>
-            <button
-              style={{ padding: '8px 12px', background: ethereumAccent, color: '#fff', border: 'none', borderRadius: '6px' }}
-              onClick={() => setShowAddMoreForm((prev) => !prev)}
-            >
-              {showAddMoreForm ? 'Hide add more investments' : '(add more investments)'}
-            </button>
-            {showAddMoreForm && renderAddForm('Add more investments')}
-          </>
-        )}
-      </div>
-
-      <div
-        style={{
-          border: '1px solid #333',
-          borderRadius: '8px',
-          padding: '12px',
-          background: '#161616'
-        }}
-      >
-        <h2 style={{ marginBottom: '12px' }}>Stored Investments</h2>
-        {loading && <div>Loading...</div>}
-        {!loading && investments.length === 0 && <div>No investments found.</div>}
-        {!loading && investments.length > 0 && (
-          <div style={{ display: 'grid', gap: '12px' }}>
-            {investments.map((entry: any, idx: number) => {
-              const amount = entry.cVactTaa ?? 0;
-              return (
-                <div
-                  key={idx}
-                  style={{
-                    border: '1px solid #333',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    background: '#1f1f1f'
-                  }}
-                >
-                  <div>Price at Purchase (cpVatop): {entry.cpVatop ?? 0}</div>
-                  <div>Value at Purchase (cVatop): {entry.cVatop ?? 0}</div>
-                  <div>Current Price (cpVact): {entry.cpVact ?? 0}</div>
-                  <div>Current Value (cVact): {entry.cVact ?? 0}</div>
-                  <div>Delta (cdVatop): {entry.cdVatop ?? 0}</div>
-                  <div>
-                    Token Amount (cVactTaa):{' '}
-                    {Number(amount).toLocaleString('en-US', {
-                      minimumFractionDigits: 8,
-                      maximumFractionDigits: 8
-                    })}
-                  </div>
-                  {entry.date && <div>Date: {entry.date}</div>}
+                {investments.length > visibleInvestments && (
+                  <button
+                    type="button"
+                    className="asset-action-button asset-action-button--ethereum"
+                    onClick={() => setVisibleInvestments((prev) => prev + 5)}
+                  >
+                    Load more 5 per list
+                  </button>
+                )}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -763,7 +748,7 @@ const VavityEthereum: React.FC = () => {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0,0,0,0.6)',
+            background: 'rgba(107, 114, 168, 0.2)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -773,19 +758,24 @@ const VavityEthereum: React.FC = () => {
         >
           <div
             onClick={(e) => e.stopPropagation()}
+            className="asset-panel asset-panel--ethereum"
             style={{
-              background: '#1e1e1e',
-              color: '#fff',
               padding: '16px',
-              borderRadius: '8px',
-              border: '1px solid #333',
               width: '320px',
-              boxShadow: '0 8px 30px rgba(0,0,0,0.5)'
             }}
           >
             <h3 style={{ marginTop: 0, marginBottom: '8px' }}>
               {marketModal === 'bull' ? 'Bull Market' : 'Sloth Market'}
             </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <Image
+                alt={marketModal === 'bull' ? 'Bull' : 'Sloth'}
+                width={20}
+                height={20}
+                src={marketModal === 'bull' ? '/images/bull.png' : '/images/sloth.png'}
+              />
+              <span>{marketModal === 'bull' ? 'Bull' : 'Sloth'}</span>
+            </div>
             <p style={{ margin: 0 }}>
               {marketModal === 'bull'
                 ? 'A market in which investments increase.'

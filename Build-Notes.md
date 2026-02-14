@@ -3,11 +3,10 @@
 ## Arells v1
 
 ###
-Replace 2 new assets with (A new asset added weekly)
-– Which would you like added next week [voting ends in (countdown)]?
 – ()() <once they click 
 – - Modal that shows (Solana is winning (or losing(no !)) with 100% of votes! Check back next week to see which asset won and was added (ok))
 Section disappears (logs session voted per asset)s3 
+- - Test countdown modal (test with multiple browsers for differing sessions)
 
 ### Bitcoin (test Ethereum version to release both, implement into Home)
 (columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)
@@ -120,7 +119,7 @@ Users
 - Flip sloth pngs horizontally
 - Remove console.logs from all files...
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
-- Prepare to launch new Voting Blocks and Winning asset (banner, etc)
+- Prepare to launch new Voting Blocks and Winning asset (banner, shadow opacities should always match (check) etc)
 
 
 ## 2 days after launch
