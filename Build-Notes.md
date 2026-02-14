@@ -56,11 +56,11 @@ Section disappears (logs session voted per asset)s3
 - - - [insert add investments from account here] dissapear if investments:
 - - Purchased Value: cVatop
 - - Current Value: cVact
-- - Profits/Losses (should work exactly the same as from account): cdVatop
-- - Token Amount:
+- - Profits/Losses: cdVatop
+- - Token Amount: (number of tokens)
 - - Purchase Date (mm/dd/yy): 
-- - (delete)
-- - (Load More 5 per list)
+- - (delete) *test this*
+- - (Load More 5 per list) *test this*
 -------------------
 - (About)
 
@@ -68,6 +68,8 @@ Section disappears (logs session voted per asset)s3
     Arells is a ledger that shows how your investments would look if bear markets never existed.
 
     Powered by (Vavity (V))
+
+### Vavity (EXACT copy from vavity.info (get everything and create a vavity.tsx inside components/vavity and /vavity/rules rules.tsx inside components/vavity))
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages (make [}{] images for promotions), add same color scheme on top behind logos.
