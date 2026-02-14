@@ -121,7 +121,6 @@ Users
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
 - Prepare to launch new Voting Blocks and Winning asset (banner, shadow opacities should always match (check) etc)
 
-
 ## 2 days after launch
 - Start tracking after 2 days (numbers)
 - After Week 1, if things look good, X-prsnl

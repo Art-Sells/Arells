@@ -34,8 +34,9 @@ const Index = () => {
   const [votingHidden, setVotingHidden] = useState<boolean>(false);
   const [countdownMs, setCountdownMs] = useState<number>(0);
   const [voteModal, setVoteModal] = useState<null | { asset: VotingAsset; status: 'winning' | 'losing' | 'tied'; pct: number }>(
-    null
+    { asset: 'solana', status: 'winning', pct: 60 }
   );
+  const [voteModalClosing, setVoteModalClosing] = useState<boolean>(false);
 
 
   const handleImageLoaded = (imageName: string) => {
@@ -118,7 +119,7 @@ const Index = () => {
       setVotingData(next);
       const totalVotes = (next.votes?.solana || 0) + (next.votes?.xrp || 0);
       const assetVotes = next.votes?.[asset] || 0;
-      const pct = totalVotes > 0 ? Math.round((assetVotes / totalVotes) * 100) : 0;
+      const pct = totalVotes > 0 ? Number(((assetVotes / totalVotes) * 100).toFixed(2)) : 0;
       let status: 'winning' | 'losing' | 'tied' = 'tied';
       if (next.votes.solana > next.votes.xrp) {
         status = asset === 'solana' ? 'winning' : 'losing';
@@ -336,11 +337,12 @@ const Index = () => {
       </div>
 
       {voteModal && (
-        <div className="home-vote-modal-overlay">
+        <div className={`home-vote-modal-overlay${voteModalClosing ? ' is-fading' : ''}`}>
           <div className="home-vote-modal">
+            <Image className="home-vote-modal-icon" alt="Solana" width={22} height={22} src="/images/assets/crypto/solana.png" />
             <div className="home-vote-modal-title">
               {voteModal.asset === 'solana' ? 'Solana' : 'XRP'} is{' '}
-              {voteModal.status === 'tied' ? 'tied' : voteModal.status === 'winning' ? 'winning' : 'losing'}!
+              {voteModal.status === 'tied' ? 'tied' : voteModal.status === 'winning' ? 'winning' : 'losing'}
             </div>
             <div className="home-vote-modal-subtitle">{voteModal.pct}% of votes</div>
             <div className="home-vote-modal-body">Check back next week to see which asset won and was added.</div>
@@ -348,8 +350,12 @@ const Index = () => {
               type="button"
               className="home-vote-modal-button"
               onClick={() => {
-                setVoteModal(null);
-                setVotingHidden(false);
+                setVoteModalClosing(true);
+                setTimeout(() => {
+                  setVoteModal(null);
+                  setVoteModalClosing(false);
+                  setVotingHidden(false);
+                }, 200);
               }}
             >
               OK

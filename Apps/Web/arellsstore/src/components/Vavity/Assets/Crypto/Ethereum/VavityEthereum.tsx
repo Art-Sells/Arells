@@ -676,29 +676,29 @@ const VavityEthereum: React.FC = () => {
             </div>
             <div style={{ marginBottom: '12px' }}>
               Date Purchased: <span className="asset-metric-number">{formatShortDate(oldestInvestmentDate?.toISOString())}</span>
-            </div>
+              </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-              {portfolioRanges.map((range) => {
-                const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
-                const isActive = selectedRangeDays === range.days;
-                return (
-                  <button
-                    key={range.label}
-                    type="button"
-                    disabled={!isEnabled}
-                    onClick={() => setSelectedRangeDays(isActive ? null : range.days)}
+                {portfolioRanges.map((range) => {
+                  const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
+                  const isActive = selectedRangeDays === range.days;
+                  return (
+                    <button
+                      key={range.label}
+                      type="button"
+                      disabled={!isEnabled}
+                      onClick={() => setSelectedRangeDays(isActive ? null : range.days)}
                     className={`asset-range-button asset-range-button--ethereum${isActive ? ' is-active' : ''}`}
-                  >
-                    {range.label}
-                  </button>
-                );
-              })}
-            </div>
+                    >
+                      {range.label}
+                    </button>
+                  );
+                })}
+              </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-              <button
+            <button
                 className="asset-action-button asset-action-button--ethereum"
-                onClick={() => setShowAddMoreForm((prev) => !prev)}
-              >
+              onClick={() => setShowAddMoreForm((prev) => !prev)}
+            >
                 {showAddMoreForm ? 'Hide add more investments' : 'Add more investments'}
               </button>
               <button
@@ -706,15 +706,15 @@ const VavityEthereum: React.FC = () => {
                 onClick={() => setShowInvestmentsList((prev) => !prev)}
               >
                 {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
-              </button>
+            </button>
             </div>
             {showAddMoreForm && renderAddForm('Add more investments')}
             {showInvestmentsList && (
               <div className="asset-investments-wrap asset-investments-wrap--ethereum">
                 <div className="asset-investments-list">
                 {investments.slice(0, visibleInvestments).map((entry: any, idx: number) => {
-                  const amount = entry.cVactTaa ?? 0;
-                  return (
+              const amount = entry.cVactTaa ?? 0;
+              return (
                     <div key={idx} className="asset-panel asset-panel--ethereum" style={{ padding: '12px' }}>
                       <div>Purchased Value: ${formatCurrency(entry.cVatop ?? 0)}</div>
                       <div>Current Value: ${formatCurrency(entry.cVact ?? 0)}</div>
@@ -724,9 +724,9 @@ const VavityEthereum: React.FC = () => {
                       <button type="button" className="asset-delete-button" onClick={() => handleDeleteInvestment(idx)}>
                         (delete)
                       </button>
-                    </div>
-                  );
-                })}
+                </div>
+              );
+            })}
                 {investments.length > visibleInvestments && (
                   <button
                     type="button"
@@ -737,7 +737,7 @@ const VavityEthereum: React.FC = () => {
                   </button>
                 )}
                 </div>
-              </div>
+          </div>
             )}
           </>
         )}
