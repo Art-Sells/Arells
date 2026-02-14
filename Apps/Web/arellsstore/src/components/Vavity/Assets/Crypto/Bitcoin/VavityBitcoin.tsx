@@ -3,9 +3,9 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useVavity } from '../../../../../context/VavityAggregator';
-import EthereumChart from '../../../../Assets/Crypto/Ethereum/EthereumChart';
+import BitcoinChart from '../../../../Assets/Crypto/Bitcoin/BitcoinChart';
 
-const VavityTesterEthereum: React.FC = () => {
+const VavityBitcoin: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, getAsset } = useVavity();
   const [vavityData, setVavityData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -21,8 +21,8 @@ const VavityTesterEthereum: React.FC = () => {
   const [rangeLoading, setRangeLoading] = useState<boolean>(false);
   const [mockEntries, setMockEntries] = useState<any[]>([]);
   const [mockStep, setMockStep] = useState<number>(0);
-
-  const assetSnapshot = getAsset('ethereum');
+  const [chartReady, setChartReady] = useState<boolean>(false);
+  const assetSnapshot = getAsset('bitcoin');
   const assetPrice = assetSnapshot?.price ?? 0;
   const vapa = assetSnapshot?.vapa ?? 0;
   const history = assetSnapshot?.history ?? [];
@@ -30,41 +30,39 @@ const VavityTesterEthereum: React.FC = () => {
   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
   const [marketModal, setMarketModal] = useState<'bull' | 'sloth' | null>(null);
-  const ethereumAccent = '#6b72a8';
-  const ethereumAccentMuted = 'rgba(107, 114, 168, 0.14)';
 
   useEffect(() => {
     if (!sessionId || !fetchVavityAggregator) return;
+
     let isMounted = true;
+
     const loadData = async () => {
       setLoading(true);
       try {
-        const data = await fetchVavityAggregator(sessionId, 'ethereum');
+        const data = await fetchVavityAggregator(sessionId, 'bitcoin');
         if (isMounted) {
           setVavityData(data);
         }
-      } catch {
-        // quiet
+      } catch (error) {
+        // Intentionally quiet to avoid UI noise
       } finally {
         if (isMounted) {
           setLoading(false);
         }
       }
     };
+
     loadData();
     const interval = setInterval(loadData, 5000);
+
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
   }, [fetchVavityAggregator, sessionId]);
 
-  const investments = useMemo(
-    () => (vavityData?.investments || []).filter((entry: any) => (entry?.asset || 'bitcoin') === 'ethereum'),
-    [vavityData]
-  );
-  const totals = useMemo(() => vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }, [vavityData]);
-
+  const investments = vavityData?.investments || [];
+  const totals = vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
   const oldestInvestmentDate = useMemo(() => {
     if (investments.length === 0) return null;
     const dates = investments
@@ -75,13 +73,11 @@ const VavityTesterEthereum: React.FC = () => {
     if (dates.length === 0) return null;
     return new Date(Math.min(...dates.map((date: Date) => date.getTime())));
   }, [investments]);
-
   const oldestInvestmentAgeDays = useMemo(() => {
     if (!oldestInvestmentDate) return 0;
     const diffMs = Date.now() - oldestInvestmentDate.getTime();
     return diffMs > 0 ? diffMs / (1000 * 60 * 60 * 24) : 0;
   }, [oldestInvestmentDate]);
-
   const portfolioRanges = useMemo(
     () => [
       { label: '24 hours', days: 1 },
@@ -93,7 +89,6 @@ const VavityTesterEthereum: React.FC = () => {
     ],
     []
   );
-
   useEffect(() => {
     let isMounted = true;
     const loadRangePrice = async () => {
@@ -102,13 +97,13 @@ const VavityTesterEthereum: React.FC = () => {
           setRangeHistoricalPrice(null);
           setRangeLoading(false);
         }
-        return;
-      }
+      return;
+    }
       setRangeLoading(true);
       const targetDate = new Date(Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000);
       const isoDate = targetDate.toISOString().split('T')[0];
-      try {
-        const response = await axios.get('/api/assets/crypto/ethereum/ethereumVapaHistoricalPrice', {
+    try {
+        const response = await axios.get('/api/assets/crypto/bitcoin/bitcoinVapaHistoricalPrice', {
           params: { date: isoDate }
         });
         const price = response.data?.price;
@@ -131,83 +126,6 @@ const VavityTesterEthereum: React.FC = () => {
     };
   }, [selectedRangeDays]);
 
-  const filteredTotals = useMemo(() => {
-    if (!selectedRangeDays) {
-      return totals;
-    }
-    if (rangeHistoricalPrice == null) {
-      return totals;
-    }
-    const rangeStart = Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000;
-    return investments.reduce(
-      (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
-        const amount = Number(entry.cVactTaa) || 0;
-        const currentValue = Number(entry.cVact) || amount * (vapa || 0);
-        const purchaseTime = entry?.date ? new Date(entry.date).getTime() : null;
-        const hasValidPurchaseTime = typeof purchaseTime === 'number' && !Number.isNaN(purchaseTime);
-        const pastValue =
-          hasValidPurchaseTime && purchaseTime > rangeStart
-            ? Number(entry.cVatop) || amount * (entry.cpVatop || rangeHistoricalPrice)
-            : amount * rangeHistoricalPrice;
-
-        acc.acVatop += pastValue;
-        acc.acVact += currentValue;
-        acc.acdVatop += currentValue - pastValue;
-        acc.acVactTaa += amount;
-        return acc;
-      },
-      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
-    );
-  }, [investments, rangeHistoricalPrice, selectedRangeDays, totals, vapa]);
-
-  const chartRanges = useMemo(
-    () => [
-      { label: '24 hours', days: 1 },
-      { label: '1 wk', days: 7 },
-      { label: '1 mnth', days: 30 },
-      { label: '3 mnths', days: 90 },
-      { label: '1 yr', days: 365 },
-      { label: 'All', days: null },
-    ],
-    []
-  );
-
-  const formatCurrency = useCallback((value: number) => {
-    const abs = Math.abs(value);
-    const decimals = abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
-    return value.toLocaleString('en-US', {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
-    });
-  }, []);
-
-  const formatMarketCap = useCallback((value: number | null) => {
-    if (value == null || Number.isNaN(value)) return '0';
-    return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
-  }, []);
-
-  const formatPercent = useCallback((value: number) => {
-    const sign = value > 0 ? '+' : '';
-    return `${sign}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
-  }, []);
-
-  const normalizeTokenInput = useCallback((value: string) => {
-    const cleaned = value.replace(/,/g, '').replace(/[^\d.]/g, '');
-    const hasDot = cleaned.includes('.');
-    const [rawInt = '', rawDec = ''] = cleaned.split('.');
-    const intPart = rawInt.replace(/^0+(?=\d)/, '');
-    const decPart = rawDec.slice(0, 8);
-    const formattedInt = intPart ? intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
-    const prefix = formattedInt || (hasDot ? '0' : '');
-    return hasDot ? `${prefix}.${decPart}` : prefix;
-  }, []);
-
-  const parseTokenAmount = useCallback((value: string) => {
-    const cleaned = value.replace(/,/g, '');
-    const parsed = parseFloat(cleaned);
-    return Number.isNaN(parsed) ? 0 : parsed;
-  }, []);
-
   const chartHistory = useMemo(() => {
     if (!chartRangeDays || !history.length) return history;
     const cutoff = Date.now() - chartRangeDays * 24 * 60 * 60 * 1000;
@@ -215,6 +133,7 @@ const VavityTesterEthereum: React.FC = () => {
       const t = new Date(item.date).getTime();
       return !Number.isNaN(t) && t >= cutoff;
     });
+    // Ensure we always have at least two points so a line renders
     if (filtered.length >= 2) return filtered;
     if (history.length >= 2) {
       return history.slice(-2);
@@ -283,11 +202,87 @@ const VavityTesterEthereum: React.FC = () => {
     return ((latest - start) / start) * 100;
   }, [chartHistory, activePoint, history]);
 
+  const chartRanges = useMemo(
+    () => [
+      { label: '24 hours', days: 1 },
+      { label: '1 wk', days: 7 },
+      { label: '1 mnth', days: 30 },
+      { label: '3 mnths', days: 90 },
+      { label: '1 yr', days: 365 },
+      { label: 'All', days: null },
+    ],
+    []
+  );
+
+  const formatMarketCap = useCallback((value: number | null) => {
+    if (value == null || Number.isNaN(value)) return '0';
+    return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  }, []);
+
+  const formatPercent = useCallback((value: number) => {
+    const sign = value > 0 ? '+' : '';
+    return `${sign}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+  }, []);
+  const filteredTotals = useMemo(() => {
+    if (!selectedRangeDays) {
+      return totals;
+    }
+    if (rangeHistoricalPrice == null) {
+      return totals;
+            }
+    const rangeStart = Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000;
+    return investments.reduce(
+      (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
+        const amount = Number(entry.cVactTaa) || 0;
+        const currentValue = Number(entry.cVact) || amount * (vapa || 0);
+        const purchaseTime = entry?.date ? new Date(entry.date).getTime() : null;
+        const hasValidPurchaseTime = typeof purchaseTime === 'number' && !Number.isNaN(purchaseTime);
+        const pastValue =
+          hasValidPurchaseTime && purchaseTime > rangeStart
+            ? Number(entry.cVatop) || amount * (entry.cpVatop || rangeHistoricalPrice)
+            : amount * rangeHistoricalPrice;
+
+        acc.acVatop += pastValue;
+        acc.acVact += currentValue;
+        acc.acdVatop += currentValue - pastValue;
+        acc.acVactTaa += amount;
+        return acc;
+      },
+      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
+    );
+  }, [investments, rangeHistoricalPrice, selectedRangeDays, totals, vapa]);
+
+  const formatCurrency = useCallback((value: number) => {
+    const abs = Math.abs(value);
+    const decimals = abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
+    return value.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+  }, []);
+
+  const normalizeTokenInput = useCallback((value: string) => {
+    const cleaned = value.replace(/,/g, '').replace(/[^\d.]/g, '');
+    const hasDot = cleaned.includes('.');
+    const [rawInt = '', rawDec = ''] = cleaned.split('.');
+    const intPart = rawInt.replace(/^0+(?=\d)/, '');
+    const decPart = rawDec.slice(0, 8);
+    const formattedInt = intPart ? intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
+    const prefix = formattedInt || (hasDot ? '0' : '');
+    return hasDot ? `${prefix}.${decPart}` : prefix;
+  }, []);
+
+  const parseTokenAmount = useCallback((value: string) => {
+    const cleaned = value.replace(/,/g, '');
+    const parsed = parseFloat(cleaned);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     const loadMock = async () => {
       try {
-        const resp = await axios.get('/api/assets/crypto/ethereum/ethereumMockPortfolio');
+        const resp = await axios.get('/api/assets/crypto/bitcoin/bitcoinMockPortfolio');
         const portfolio = Array.isArray(resp.data?.portfolio) ? resp.data.portfolio : [];
         if (isMounted) {
           setMockEntries(portfolio);
@@ -331,7 +326,7 @@ const VavityTesterEthereum: React.FC = () => {
 
       setHistoricalLoading(true);
       try {
-        const response = await axios.get('/api/assets/crypto/ethereum/ethereumVapaHistoricalPrice', {
+        const response = await axios.get('/api/assets/crypto/bitcoin/bitcoinVapaHistoricalPrice', {
           params: { date: purchaseDate }
         });
         const price = response.data?.price;
@@ -341,11 +336,11 @@ const VavityTesterEthereum: React.FC = () => {
       } catch (error) {
         if (isMounted) {
           setHistoricalPrice(null);
-        }
+      }
       } finally {
         if (isMounted) {
           setHistoricalLoading(false);
-        }
+      }
       }
     };
 
@@ -382,14 +377,14 @@ const VavityTesterEthereum: React.FC = () => {
 
     setSubmitLoading(true);
     try {
-      await addVavityAggregator(sessionId, [newInvestment], 'ethereum');
-      const refreshed = await fetchVavityAggregator(sessionId, 'ethereum');
+      await addVavityAggregator(sessionId, [newInvestment], 'bitcoin');
+      const refreshed = await fetchVavityAggregator(sessionId, 'bitcoin');
       setVavityData(refreshed);
       setTokenAmount('');
       setPurchaseDate('');
       setShowAddForm(false);
       setShowAddMoreForm(false);
-    } catch {
+    } catch (err) {
       // Quiet failure per prior behavior
     } finally {
       setSubmitLoading(false);
@@ -432,11 +427,11 @@ const VavityTesterEthereum: React.FC = () => {
         })()}
       </div>
       <div style={{ marginBottom: '8px' }}>
-        ethereum amount:
+        bitcoin amount:
         <input
           type="text"
           inputMode="decimal"
-          pattern="^[0-9]*\\.?[0-9]*$"
+          pattern="^[0-9]*\.?[0-9]*$"
           value={tokenAmount}
           onChange={(e) => setTokenAmount(normalizeTokenInput(e.target.value))}
           style={{ marginLeft: '8px' }}
@@ -456,8 +451,8 @@ const VavityTesterEthereum: React.FC = () => {
         disabled={submitLoading || !tokenAmount || !purchaseDate}
         style={{
           padding: '8px 14px',
-          background: ethereumAccent,
-          color: '#fff',
+          background: '#00e5ff',
+          color: '#000',
           border: 'none',
           borderRadius: '6px',
           fontWeight: 600,
@@ -471,8 +466,8 @@ const VavityTesterEthereum: React.FC = () => {
 
   return (
     <div style={{ padding: '24px', color: '#f5f5f5', background: '#111', minHeight: '100vh' }}>
-      <h1 style={{ marginBottom: '12px' }}>Vavity Tester (Ethereum)</h1>
-
+      <h1 style={{ marginBottom: '12px' }}>Vavity Tester</h1>
+      
       <div
         style={{
           border: '1px solid #333',
@@ -486,14 +481,14 @@ const VavityTesterEthereum: React.FC = () => {
           <div
             style={{
               flex: '0 0 340px',
-              padding: '12px',
+          padding: '12px',
               background: 'transparent',
               display: 'grid',
               gap: '8px'
-            }}
-          >
-            <div style={{ fontWeight: 700 }}>(Ethereum)</div>
-            <div>
+        }}
+      >
+            <div style={{ fontWeight: 700 }}>(Bitcoin)</div>
+        <div>
               Price: ${formatCurrency(activePoint?.price ?? vapa ?? 0)}
             </div>
             <div>Market Cap: ${formatMarketCap(activeMarketCap)}</div>
@@ -508,7 +503,7 @@ const VavityTesterEthereum: React.FC = () => {
                       padding: '8px 12px',
                       borderRadius: '6px',
                       border: 'none',
-                      background: ethereumAccent,
+                      background: 'rgba(248, 141, 0, 0.9)',
                       color: '#fff',
                       cursor: 'pointer',
                       width: '100%',
@@ -547,9 +542,9 @@ const VavityTesterEthereum: React.FC = () => {
                       style={{
                         padding: '6px 10px',
                         borderRadius: '6px',
-                        border: isActive ? `1px solid ${ethereumAccent}` : '1px solid #333',
-                        background: isActive ? ethereumAccentMuted : '#202020',
-                        color: isActive ? ethereumAccent : '#f5f5f5',
+                        border: isActive ? '1px solid rgba(248, 141, 0, 0.9)' : '1px solid #333',
+                        background: isActive ? 'rgba(248, 141, 0, 0.18)' : '#202020',
+                        color: isActive ? 'rgba(248, 141, 0, 0.95)' : '#f5f5f5',
                         cursor: 'pointer'
                       }}
                     >
@@ -577,12 +572,12 @@ const VavityTesterEthereum: React.FC = () => {
                 {new Date(activePoint.date).toLocaleDateString('en-US')}
               </div>
             )}
-            <EthereumChart
+            <BitcoinChart
               history={chartHistory || []}
-              color="rgba(107, 114, 168, 0.9)"
+              color="rgba(248, 141, 0, 0.9)"
               height={320}
               backgroundColor="#161616"
-              onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
+              onPointHover={(point, idx) => {
                 setChartHoverIndex(idx ?? null);
               }}
             />
@@ -601,10 +596,10 @@ const VavityTesterEthereum: React.FC = () => {
           <h3 style={{ marginBottom: '12px' }}>Mock Portfolio</h3>
           {currentMockEntry ? (
             <div style={{ display: 'grid', gap: '6px' }}>
-              <div>(ETH)</div>
+              <div>(BTC)</div>
               <div>Purchased Value: ${formatCurrency(currentMockEntry.purchasedValue || 0)}</div>
               <div>Current Value: ${formatCurrency(currentMockEntry.currentValue || 0)}</div>
-              <div>
+        <div>
                 {currentMockEntry.profitLoss > 0
                   ? `Profits: +$${formatCurrency(currentMockEntry.profitLoss)}`
                   : 'Losses: $0.00'}
@@ -632,11 +627,11 @@ const VavityTesterEthereum: React.FC = () => {
             <div style={{ marginBottom: '12px' }}>(Add Investments)</div>
             {!showAddForm && (
               <button
-                style={{ padding: '8px 12px', background: ethereumAccent, color: '#fff', border: 'none', borderRadius: '6px' }}
+                style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
                 onClick={() => setShowAddForm(true)}
-              >
+        >
                 (Add Investments)
-              </button>
+        </button>
             )}
             {showAddForm && renderAddForm('Add Investment')}
           </>
@@ -690,9 +685,9 @@ const VavityTesterEthereum: React.FC = () => {
                       style={{
                         padding: '6px 10px',
                         borderRadius: '6px',
-                        border: isActive ? `1px solid ${ethereumAccent}` : '1px solid #333',
-                        background: isEnabled ? (isActive ? ethereumAccentMuted : '#202020') : '#111',
-                        color: isEnabled ? (isActive ? ethereumAccent : '#f5f5f5') : '#666',
+                        border: isActive ? '1px solid rgba(248, 141, 0, 0.9)' : '1px solid #333',
+                        background: isEnabled ? (isActive ? 'rgba(248, 141, 0, 0.18)' : '#202020') : '#111',
+                        color: isEnabled ? (isActive ? 'rgba(248, 141, 0, 0.95)' : '#f5f5f5') : '#666',
                         cursor: isEnabled ? 'pointer' : 'not-allowed'
                       }}
                     >
@@ -701,9 +696,9 @@ const VavityTesterEthereum: React.FC = () => {
                   );
                 })}
               </div>
-            </div>
+          </div>
             <button
-              style={{ padding: '8px 12px', background: ethereumAccent, color: '#fff', border: 'none', borderRadius: '6px' }}
+              style={{ padding: '8px 12px', background: '#ff9800', color: '#000', border: 'none', borderRadius: '6px' }}
               onClick={() => setShowAddMoreForm((prev) => !prev)}
             >
               {showAddMoreForm ? 'Hide add more investments' : '(add more investments)'}
@@ -754,9 +749,9 @@ const VavityTesterEthereum: React.FC = () => {
                 </div>
               );
             })}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
+        </div>
 
       {marketModal && (
         <div
@@ -814,4 +809,4 @@ const VavityTesterEthereum: React.FC = () => {
   );
 };
 
-export default VavityTesterEthereum;
+export default VavityBitcoin;

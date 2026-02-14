@@ -69,8 +69,6 @@ Section disappears (logs session voted per asset)s3
 
     Powered by (Vavity (V))
 
-### Vavity (EXACT copy from vavity.info (get everything and create a vavity.tsx inside components/vavity and /vavity/rules rules.tsx inside components/vavity))
-
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages (make [}{] images for promotions), add same color scheme on top behind logos.
 - - If bear markets never existed (Bitcoin/Ethereum - If bear markets never existed)
