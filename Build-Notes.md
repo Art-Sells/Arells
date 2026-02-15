@@ -24,7 +24,7 @@
 - - Profits/Losses:
 - - Date Purchased: mm/dd/yy
 --------
-- - Portfolio (before anything is added) {look at VavityTester for example}, add /ethereum/bitcoin to porfolio session loader so it loads the correct amounts, *test for long numbers and ensure they are cut off*
+- - Portfolio (before anything is added) {look at VavityTester for example}, add /ethereum/bitcoin to porfolio session loader so it loads the correct amounts,
 - - - (Add Investments) 
 - - - - when button above clicked, it shows:
 - - - - $ Purchased Value: VAPAHistoricalPrice x bitcoinAmount
@@ -57,10 +57,15 @@
 -------------------
 - (About)
 
+In Portfolios...
+*test for long numbers and ensure they are cut off*
+
 ### About:
     Arells is a ledger that shows how your investments would look if bear markets never existed.
 
     Powered by (Vavity (V))
+
+### Vavity (take everything from vavity.info)
 
 ### Metatags/ Description (all pages.tsx & components)
 - Alter: Descriptions & BannerImages (make [}{] images for promotions), add same color scheme on top behind logos.
@@ -82,17 +87,19 @@
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 
 ### Test Online 
+- Set voting blocks to 3 minutes
 -  both desktop(multiple browsers)/mobile
 - Test (with all links /, /bitcoin, /ethereum, /about, /vavity) on socials (DM's/etc)
 - look at Analytics
 
 
 ## After Test
-- Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git
+- Save VavityCodeBase (with everything that has "Vavity" from Arells) architecture Offline (for testing) and online version (for deployment) and entire vavity API (vapa-mechanism and aggregator), chart (bull/sloth), aggregator... Then update Vavity Git and vavity.info(change this or alter it)
 Vavity Architecture:
 Separate Vavity architecture Offline (for testing) and prepare online version (for deployment)
 
 ## Final Test
+- Set voting blocks to 7 days
 - Remove typos from Arells/Vavity readmes, and UI
 - - In notion:  
 - - Users

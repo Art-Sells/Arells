@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import BitcoinPageClient from '../../components/Assets/Crypto/Bitcoin/BitcoinPageClient';
 export const metadata: Metadata = {
-  title: "Arells Bitcoin",
-  description: "Bitcoin dashboard for Arells.",
+  title: "Bitcoin",
+  description: "If bear markets never existed.",
   robots: "noimageindex",
   openGraph: {
-    title: "Arells Bitcoin",
-    description: "Bitcoin dashboard for Arells.",
+    title: "Bitcoin",
+    description: "If bear markets never existed.",
     url: "https://arells.com/bitcoin",
     type: "website",
     images: [
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
     ]
   },
   twitter: {
-    title: "Arells",
-    description: "If bear markets never existed Connect your investments.",
+    title: "Bitcoin",
+    description: "If bear markets never existed.",
     card: "summary_large_image",
     images: [
       {

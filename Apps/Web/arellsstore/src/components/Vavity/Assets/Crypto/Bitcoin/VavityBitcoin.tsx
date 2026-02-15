@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import axios from 'axios';
 import { useVavity } from '../../../../../context/VavityAggregator';
 import BitcoinChart from '../../../../Assets/Crypto/Bitcoin/BitcoinChart';
@@ -311,6 +312,10 @@ const VavityBitcoin: React.FC = () => {
     return d.toLocaleDateString('en-US');
   }, []);
 
+  const formatMoneyFixed = useCallback((value: number) => {
+    return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }, []);
+
   const formatShortDate = useCallback((iso?: string) => {
     if (!iso) return '...';
     const d = new Date(iso);
@@ -489,19 +494,29 @@ const VavityBitcoin: React.FC = () => {
       <div className="asset-panel asset-panel--bitcoin" style={{ padding: '14px', marginBottom: '24px' }}>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap' }}>
           <div
+            className="asset-price-panel asset-price-panel--bitcoin"
             style={{
               flex: '0 0 340px',
-          padding: '12px',
+              padding: '12px',
               background: 'transparent',
               display: 'grid',
               gap: '8px'
-        }}
-      >
-            <div style={{ fontWeight: 700 }}>(Bitcoin)</div>
-        <div>
+            }}
+          >
+            <Link className="asset-home-button asset-home-button--section asset-home-button--bitcoin" href="/">
+              <Image
+                className="asset-home-icon asset-home-icon--bitcoin"
+                alt="Bitcoin"
+                width={31}
+                height={31}
+                src="/images/assets/crypto/Bitcoin.png"
+              />
+            </Link>
+            <div className="asset-header-title">Bitcoin</div>
+            <div className="asset-home-font-label">
               Price: <span className="asset-metric-number">${formatCurrency(activePoint?.price ?? vapa ?? 0)}</span>
             </div>
-            <div>
+            <div className="asset-home-font-label">
               Market Cap: <span className="asset-metric-number">${formatMarketCap(activeMarketCap)}</span>
             </div>
             <div className="asset-metric-number">{formatPercent(percentageIncrease)}</div>
@@ -583,7 +598,6 @@ const VavityBitcoin: React.FC = () => {
               position: 'relative'
             }}
           >
-            <Image className="asset-chart-icon" alt="Bitcoin" width={70} height={70} src="/images/assets/crypto/Bitcoin.png" />
             {chartHoverIndex != null && activePoint && (
               <div style={{ position: 'absolute', top: 8, left: 12, color: '#222', fontSize: '13px', opacity: 0.9 }}>
                 {new Date(activePoint.date).toLocaleDateString('en-US')}
@@ -601,32 +615,47 @@ const VavityBitcoin: React.FC = () => {
           </div>
         </div>
 
-      <div className="asset-panel asset-panel--bitcoin" style={{ marginTop: '16px', padding: '12px' }}>
-          <h3 style={{ marginBottom: '12px' }}>Mock Portfolio</h3>
+        <div className="asset-panel asset-panel--bitcoin asset-portfolio-center" style={{ marginTop: '16px', padding: '12px' }}>
+          <h3 className="asset-home-font-title" style={{ marginBottom: '12px' }}>
+            Mock Portfolio
+          </h3>
           {currentMockEntry ? (
-            <div style={{ display: 'grid', gap: '6px' }}>
-              <div>(BTC)</div>
-              <div>
+            <div className="asset-portfolio-center-grid">
+              <div className="asset-home-font-title">(BTC)</div>
+              <div className="asset-home-font-label">
                 Purchased Value: <span className="asset-metric-number">${formatCurrency(currentMockEntry.purchasedValue || 0)}</span>
               </div>
-              <div>
+              <div className="asset-home-font-label">
                 Current Value: <span className="asset-metric-number">${formatCurrency(currentMockEntry.currentValue || 0)}</span>
               </div>
-        <div>
-                {currentMockEntry.profitLoss > 0
-                  ? `Profits: +$${formatCurrency(currentMockEntry.profitLoss)}`
-                  : 'Losses: $0.00'}
+              <div className="asset-home-font-label">
+                {currentMockEntry.profitLoss > 0 ? (
+                  <>
+                    Profits: <span className="asset-metric-number">+${formatCurrency(currentMockEntry.profitLoss)}</span>
+                  </>
+                ) : (
+                  <>
+                    Losses: <span className="asset-metric-number">$0.00</span>
+                  </>
+                )}
               </div>
-              <div>Date Purchased: {formatDate(currentMockEntry.datePurchased)}</div>
+              <div className="asset-home-font-label">Date Purchased: {formatDate(currentMockEntry.datePurchased)}</div>
             </div>
           ) : (
-            <div>Loading mock portfolio...</div>
+            <div className="asset-home-font-label">Loading mock portfolio...</div>
           )}
         </div>
       </div>
 
-      <div className="asset-panel asset-panel--bitcoin" style={{ marginBottom: '24px', padding: '12px' }}>
-        <h2 style={{ marginBottom: '12px' }}>My Portfolio</h2>
+      <div className="asset-panel asset-panel--bitcoin asset-portfolio-center" style={{ marginBottom: '24px', padding: '12px' }}>
+        <h2
+          className="asset-home-font-title"
+          style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}
+        >
+          My
+          <Image src="/images/assets/crypto/bitcoin.png" alt="Bitcoin" width={30} height={30} />
+          Portfolio
+        </h2>
         {investments.length === 0 ? (
           <>
             {!showAddForm && (
@@ -641,41 +670,37 @@ const VavityBitcoin: React.FC = () => {
           </>
         ) : (
           <>
-            <div style={{ marginBottom: '8px' }}>
+            <div className="asset-home-font-label" style={{ marginBottom: '8px' }}>
               Purchased Value: <span className="asset-metric-number">${formatCurrency(totals.acVatop || 0)}</span>
             </div>
-            <div style={{ marginBottom: '8px' }}>
+            <div className="asset-home-font-label" style={{ marginBottom: '8px' }}>
               Current Value: <span className="asset-metric-number">${formatCurrency(totals.acVact || 0)}</span>
             </div>
-            <div style={{ marginBottom: '8px' }}>
-              Profits/Losses:{' '}
-              <span className="asset-metric-number">
-                {(() => {
-                  if (selectedRangeDays && rangeLoading) {
-                    return '...';
-                  }
-                  if (selectedRangeDays && rangeHistoricalPrice != null) {
-                    const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
-                    const profitValue = (totals.acVact || 0) - pastValue;
-                    const prefix = profitValue > 0 ? '+$' : '$';
-                    const formattedValue =
-                      profitValue > 0
-                        ? formatCurrency(profitValue)
-                        : Math.abs(profitValue).toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                          });
-                    return `${prefix}${formattedValue}`;
-                  }
-                  const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
-                  return `${defaultProfit >= 0 ? '+$' : '$'}${formatCurrency(Math.abs(defaultProfit))}`;
-                })()}
-              </span>
-            </div>
-            <div style={{ marginBottom: '12px' }}>
-              Date Purchased: <span className="asset-metric-number">{formatShortDate(oldestInvestmentDate?.toISOString())}</span>
+            <div className="asset-panel asset-panel--bitcoin" style={{ padding: '12px', marginBottom: '12px' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <span className="asset-metric-number">
+                  {(() => {
+                    if (selectedRangeDays && rangeLoading) {
+                      return 'Profits: ...';
+                    }
+                    if (selectedRangeDays && rangeHistoricalPrice != null) {
+                      const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
+                      const profitValue = (totals.acVact || 0) - pastValue;
+                      const isProfit = profitValue > 0.005;
+                      const label = isProfit ? 'Profits' : 'Losses';
+                      const formattedValue = formatMoneyFixed(Math.abs(profitValue));
+                      const prefix = isProfit ? '+$' : '$';
+                      return `${label}: ${prefix}${formattedValue}`;
+                    }
+                    const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
+                    const isProfit = defaultProfit > 0.005;
+                    const label = isProfit ? 'Profits' : 'Losses';
+                    const prefix = isProfit ? '+$' : '$';
+                    return `${label}: ${prefix}${formatMoneyFixed(Math.abs(defaultProfit))}`;
+                  })()}
+                </span>
               </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+              <div className="asset-range-buttons">
                 {portfolioRanges.map((range) => {
                   const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
                   const isActive = selectedRangeDays === range.days;
@@ -685,14 +710,15 @@ const VavityBitcoin: React.FC = () => {
                       type="button"
                       disabled={!isEnabled}
                       onClick={() => setSelectedRangeDays(isActive ? null : range.days)}
-                    className={`asset-range-button asset-range-button--bitcoin${isActive ? ' is-active' : ''}`}
+                      className={`asset-range-button asset-range-button--bitcoin${isActive ? ' is-active' : ''}`}
                     >
                       {range.label}
                     </button>
                   );
                 })}
               </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+            </div>
+            <div className="asset-portfolio-actions">
             <button
                 className="asset-action-button asset-action-button--bitcoin"
               onClick={() => setShowAddMoreForm((prev) => !prev)}
@@ -716,7 +742,15 @@ const VavityBitcoin: React.FC = () => {
                     <div key={idx} className="asset-panel asset-panel--bitcoin" style={{ padding: '12px' }}>
                       <div>Purchased Value: ${formatCurrency(entry.cVatop ?? 0)}</div>
                       <div>Current Value: ${formatCurrency(entry.cVact ?? 0)}</div>
-                      <div>Profits/Losses: ${formatCurrency(entry.cdVatop ?? 0)}</div>
+                      <div>
+                        {(() => {
+                          const value = Number(entry.cdVatop ?? 0);
+                          const isProfit = value > 0.005;
+                          const label = isProfit ? 'Profits' : 'Losses';
+                          const prefix = isProfit ? '+$' : '$';
+                          return `${label}: ${prefix}${formatMoneyFixed(Math.abs(value))}`;
+                        })()}
+                      </div>
                       <div>Token Amount: {Number(amount).toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 })}</div>
                       <div>Purchase Date: {formatShortDate(entry.date)}</div>
                       <button

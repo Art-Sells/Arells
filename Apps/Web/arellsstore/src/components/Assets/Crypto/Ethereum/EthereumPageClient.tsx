@@ -26,10 +26,7 @@ const EthereumPageClient: React.FC = () => {
   return (
     <div className="asset-page asset-page--ethereum">
       <header className="asset-header asset-header--ethereum">
-        <Link className="asset-home-button" href="/">
-          <Image alt="Arells" width={18} height={18} src="/images/Arells-Icon.png" />
-        </Link>
-        <div className="asset-header-title">Ethereum</div>
+        <div className="asset-header-left" />
         <div className="asset-header-slogan">if bear markets never existed</div>
       </header>
       {showLoading && (

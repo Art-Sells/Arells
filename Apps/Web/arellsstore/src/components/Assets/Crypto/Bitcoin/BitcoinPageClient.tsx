@@ -26,10 +26,7 @@ const BitcoinPageClient: React.FC = () => {
   return (
     <div className="asset-page asset-page--bitcoin">
       <header className="asset-header asset-header--bitcoin">
-        <Link className="asset-home-button" href="/">
-          <Image alt="Arells" width={18} height={18} src="/images/Arells-Icon.png" />
-        </Link>
-        <div className="asset-header-title">Bitcoin</div>
+        <div className="asset-header-left" />
         <div className="asset-header-slogan">if bear markets never existed</div>
       </header>
       {showLoading && (
