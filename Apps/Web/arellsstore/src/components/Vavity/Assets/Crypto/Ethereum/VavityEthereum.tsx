@@ -548,16 +548,22 @@ const VavityEthereum: React.FC = () => {
     </div>
   );
 
+  const visibleInvestmentCount = Math.min(visibleInvestments, investments.length);
+  const investmentsMaxHeight = investmentsListOpen ? `${visibleInvestmentCount * 240 + 120}px` : '0px';
+
   return (
     <div className="asset-page-content asset-page-content--ethereum page-slide-down">
-      <div className="asset-panel asset-panel--ethereum asset-header-panel asset-fade-in" style={{ padding: '5px 14px 14px', marginBottom: '24px' }}>
+      <div
+        className="asset-panel asset-panel--ethereum asset-header-panel asset-section-slide"
+        style={{ padding: '5px 14px 14px', marginBottom: '24px' }}
+      >
         <div className="asset-section-header">
           <div className="asset-header-title">Ethereum</div>
           <div className="asset-header-slogan">if bear markets never existed</div>
         </div>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap' }}>
           <div
-            className="asset-price-panel asset-price-panel--ethereum asset-fade-in"
+            className="asset-price-panel asset-price-panel--ethereum asset-section-slide"
             style={{
               flex: 1,
               minWidth: '300px',
@@ -587,7 +593,7 @@ const VavityEthereum: React.FC = () => {
             </div>
             <div className="asset-metric-number">{formatPercent(percentageIncrease)}</div>
             <div
-              className="asset-panel asset-panel--ethereum"
+              className="asset-panel asset-panel--ethereum asset-section-slide"
               style={{ padding: '8px', marginTop: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}
             >
               <div style={{ marginBottom: '8px', width: '100%' }}>
@@ -670,7 +676,7 @@ const VavityEthereum: React.FC = () => {
           </div>
 
           <div
-            className="asset-panel asset-panel--ethereum asset-fade-in"
+            className="asset-panel asset-panel--ethereum asset-section-slide"
             style={{
               flex: 1,
               minWidth: '280px',
@@ -697,7 +703,10 @@ const VavityEthereum: React.FC = () => {
 
       </div>
 
-      <div className="asset-panel asset-panel--ethereum asset-portfolio-center asset-fade-in" style={{ marginBottom: '24px', padding: '12px', maxWidth: '400px', minWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}>
+      <div
+        className="asset-panel asset-panel--ethereum asset-portfolio-center asset-section-slide"
+        style={{ marginBottom: '24px', padding: '12px', maxWidth: '400px', minWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}
+      >
         <h2
           className="asset-home-font-title"
           style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '5px', justifyContent: 'center' }}
@@ -727,7 +736,10 @@ const VavityEthereum: React.FC = () => {
             <div className="asset-home-font-label--ethereum" style={{ marginBottom: '8px' }}>
               Current Value: <span className="asset-metric-number">${formatCurrency(totals.acVact || 0)}</span>
             </div>
-            <div className="asset-panel asset-panel--ethereum asset-profit-block asset-slide-in" style={{ padding: '12px 12px 30px', marginBottom: '10px', width: '60%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <div
+              className="asset-panel asset-panel--ethereum asset-profit-block asset-slide-in asset-section-slide"
+              style={{ padding: '12px 12px 30px', marginBottom: '10px', width: '60%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}
+            >
               <div className="asset-profit-summary asset-profit-summary--ethereum">
                 <div className="asset-home-font-label--ethereum">
                 {(() => {
@@ -818,7 +830,7 @@ const VavityEthereum: React.FC = () => {
                     setInvestmentsListOpen(false);
                     setTimeout(() => {
                       setShowInvestmentsList(false);
-                    }, 1000);
+                    }, 2000);
                     return;
                   }
                   setShowInvestmentsList(true);
@@ -838,6 +850,7 @@ const VavityEthereum: React.FC = () => {
                 className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
                   investmentsListOpen ? ' is-open' : ''
                 }`}
+                style={{ maxHeight: investmentsMaxHeight }}
               >
                 <div className="asset-investments-list">
                 {investments.slice(0, visibleInvestments).map((entry: any, idx: number) => {
@@ -868,7 +881,7 @@ const VavityEthereum: React.FC = () => {
                           setTimeout(() => {
                             handleDeleteInvestment(idx);
                             setClosingInvestments((prev) => prev.filter((value) => value !== idx));
-                          }, 1000);
+                          }, 2000);
                         }}
                       >
                         (delete)

@@ -414,7 +414,7 @@ body {
 .asset-slide-panel {
 	max-height: 0;
 	overflow: hidden;
-	transition: max-height 1s ease;
+	transition: max-height 2s ease;
 	will-change: max-height;
 }
 
@@ -424,7 +424,7 @@ body {
 
 .asset-slide-panel--form.is-open {
 	max-height: 600px;
-	transition-duration: 1s;
+	transition-duration: 2s;
 }
 
 .asset-submit-status {
@@ -516,6 +516,11 @@ body {
 	animation-duration: 4s;
 	animation-delay: 0s;
 	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.asset-section-slide {
+	animation: pageSlideUp 4s ease;
 	animation-fill-mode: both;
 }
 
