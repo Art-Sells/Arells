@@ -681,30 +681,39 @@ const VavityEthereum: React.FC = () => {
             <div className="asset-home-font-label" style={{ marginBottom: '8px' }}>
               Current Value: <span className="asset-metric-number">${formatCurrency(totals.acVact || 0)}</span>
             </div>
-            <div className="asset-panel asset-panel--ethereum" style={{ padding: '12px 12px 20px', marginBottom: '12px', width: '60%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}>
-              <span className="asset-metric-number">
-                {(() => {
-                  if (selectedRangeDays && rangeLoading) {
-                    return 'Profits: ...';
-                  }
-                  if (selectedRangeDays && rangeHistoricalPrice != null) {
-                    const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
-                    const profitValue = (totals.acVact || 0) - pastValue;
-                    const isProfit = profitValue > 0.005;
+            <div className="asset-panel asset-panel--ethereum" style={{ padding: '12px 12px 30px', marginBottom: '10px', width: '60%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <div className="asset-profit-summary asset-profit-summary--ethereum">
+                <span className="asset-metric-number">
+                  {(() => {
+                    const formatRangeLabel = (days: number | null) => {
+                      if (days == null) return 'All-time';
+                      if (days === 7) return '1 week';
+                      if (days === 30) return '1 month';
+                      if (days === 90) return '3 months';
+                      if (days === 365) return '1 year';
+                      if (days === 1) return '24 hours';
+                      return `${days} days`;
+                    };
+                    if (selectedRangeDays && rangeLoading) {
+                      return '...';
+                    }
+                    if (selectedRangeDays && rangeHistoricalPrice != null) {
+                      const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
+                      const profitValue = (totals.acVact || 0) - pastValue;
+                      const isProfit = profitValue > 0.005;
+                      const label = isProfit ? 'Profits' : 'Losses';
+                      const formattedValue = formatMoneyFixed(Math.abs(profitValue));
+                      const prefix = isProfit ? '+$' : '$';
+                      return `${formatRangeLabel(selectedRangeDays)} ${label}: ${prefix}${formattedValue}`;
+                    }
+                    const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
+                    const isProfit = defaultProfit > 0.005;
                     const label = isProfit ? 'Profits' : 'Losses';
-                    const formattedValue = formatMoneyFixed(Math.abs(profitValue));
                     const prefix = isProfit ? '+$' : '$';
-                    return `${label}: ${prefix}${formattedValue}`;
-                  }
-                  const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
-                  const isProfit = defaultProfit > 0.005;
-                  const label = isProfit ? 'Profits' : 'Losses';
-                  const prefix = isProfit ? '+$' : '$';
-                  return `${label}: ${prefix}${formatMoneyFixed(Math.abs(defaultProfit))}`;
-                })()}
-              </span>
-            </div>
-            <div className="asset-panel asset-panel--ethereum" style={{ padding: '12px', marginBottom: '12px', marginTop: '-30px', background: 'rgba(107, 114, 168, 1)' }}>
+                    return `${formatRangeLabel(null)} ${label}: ${prefix}${formatMoneyFixed(Math.abs(defaultProfit))}`;
+                  })()}
+                </span>
+              </div>
               <div className="asset-range-buttons">
                 {portfolioRanges.map((range) => {
                   const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
