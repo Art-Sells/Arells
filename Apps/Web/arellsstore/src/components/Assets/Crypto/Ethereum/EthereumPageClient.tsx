@@ -25,10 +25,7 @@ const EthereumPageClient: React.FC = () => {
 
   return (
     <div className="asset-page asset-page--ethereum">
-      <header className="asset-header asset-header--ethereum">
-        <div className="asset-header-left" />
-        <div className="asset-header-slogan">if bear markets never existed</div>
-      </header>
+      <header className="asset-header asset-header--ethereum" />
       {showLoading && (
         <div className={`asset-loader-overlay asset-loader-overlay--ethereum${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
           <div className={`asset-loader-ring asset-loader-ring--ethereum${fadeOut ? ' asset-loader-fade' : ''}`}>

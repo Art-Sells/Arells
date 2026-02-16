@@ -25,10 +25,7 @@ const BitcoinPageClient: React.FC = () => {
 
   return (
     <div className="asset-page asset-page--bitcoin">
-      <header className="asset-header asset-header--bitcoin">
-        <div className="asset-header-left" />
-        <div className="asset-header-slogan">if bear markets never existed</div>
-      </header>
+      <header className="asset-header asset-header--bitcoin" />
       {showLoading && (
         <div className={`asset-loader-overlay asset-loader-overlay--bitcoin${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
           <div className={`asset-loader-ring asset-loader-ring--bitcoin${fadeOut ? ' asset-loader-fade' : ''}`}>

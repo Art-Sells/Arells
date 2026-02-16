@@ -59,6 +59,7 @@
 
 In Portfolios...
 *test for long numbers and ensure they are cut off*
+*test min-width when opening inspect*
 
 ### About:
     Arells is a ledger that shows how your investments would look if bear markets never existed.

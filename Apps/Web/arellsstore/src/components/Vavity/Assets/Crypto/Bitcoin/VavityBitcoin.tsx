@@ -491,7 +491,11 @@ const VavityBitcoin: React.FC = () => {
 
   return (
     <div className="asset-page-content asset-page-content--bitcoin">
-      <div className="asset-panel asset-panel--bitcoin" style={{ padding: '14px', marginBottom: '24px' }}>
+      <div className="asset-panel asset-panel--bitcoin asset-header-panel" style={{ padding: '5px 14px 14px', marginBottom: '24px' }}>
+        <div className="asset-section-header">
+          <div className="asset-header-title">Bitcoin</div>
+          <div className="asset-header-slogan">if bear markets never existed</div>
+        </div>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap' }}>
           <div
             className="asset-price-panel asset-price-panel--bitcoin"
@@ -507,12 +511,11 @@ const VavityBitcoin: React.FC = () => {
               <Image
                 className="asset-home-icon asset-home-icon--bitcoin"
                 alt="Bitcoin"
-                width={31}
-                height={31}
+                width={37}
+                height={37}
                 src="/images/assets/crypto/Bitcoin.png"
               />
             </Link>
-            <div className="asset-header-title">Bitcoin</div>
             <div className="asset-home-font-label">
               Price: <span className="asset-metric-number">${formatCurrency(activePoint?.price ?? vapa ?? 0)}</span>
             </div>
@@ -647,7 +650,7 @@ const VavityBitcoin: React.FC = () => {
         </div>
       </div>
 
-      <div className="asset-panel asset-panel--bitcoin asset-portfolio-center" style={{ marginBottom: '24px', padding: '12px' }}>
+      <div className="asset-panel asset-panel--bitcoin asset-portfolio-center" style={{ marginBottom: '24px', padding: '12px', maxWidth: '400px', minWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}>
         <h2
           className="asset-home-font-title"
           style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}
@@ -676,30 +679,30 @@ const VavityBitcoin: React.FC = () => {
             <div className="asset-home-font-label" style={{ marginBottom: '8px' }}>
               Current Value: <span className="asset-metric-number">${formatCurrency(totals.acVact || 0)}</span>
             </div>
-            <div className="asset-panel asset-panel--bitcoin" style={{ padding: '12px', marginBottom: '12px' }}>
-              <div style={{ marginBottom: '12px' }}>
-                <span className="asset-metric-number">
-                  {(() => {
-                    if (selectedRangeDays && rangeLoading) {
-                      return 'Profits: ...';
-                    }
-                    if (selectedRangeDays && rangeHistoricalPrice != null) {
-                      const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
-                      const profitValue = (totals.acVact || 0) - pastValue;
-                      const isProfit = profitValue > 0.005;
-                      const label = isProfit ? 'Profits' : 'Losses';
-                      const formattedValue = formatMoneyFixed(Math.abs(profitValue));
-                      const prefix = isProfit ? '+$' : '$';
-                      return `${label}: ${prefix}${formattedValue}`;
-                    }
-                    const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
-                    const isProfit = defaultProfit > 0.005;
+            <div className="asset-panel asset-panel--bitcoin" style={{ padding: '12px 12px 20px', marginBottom: '12px', width: '60%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <span className="asset-metric-number">
+                {(() => {
+                  if (selectedRangeDays && rangeLoading) {
+                    return 'Profits: ...';
+                  }
+                  if (selectedRangeDays && rangeHistoricalPrice != null) {
+                    const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
+                    const profitValue = (totals.acVact || 0) - pastValue;
+                    const isProfit = profitValue > 0.005;
                     const label = isProfit ? 'Profits' : 'Losses';
+                    const formattedValue = formatMoneyFixed(Math.abs(profitValue));
                     const prefix = isProfit ? '+$' : '$';
-                    return `${label}: ${prefix}${formatMoneyFixed(Math.abs(defaultProfit))}`;
-                  })()}
-                </span>
-              </div>
+                    return `${label}: ${prefix}${formattedValue}`;
+                  }
+                  const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
+                  const isProfit = defaultProfit > 0.005;
+                  const label = isProfit ? 'Profits' : 'Losses';
+                  const prefix = isProfit ? '+$' : '$';
+                  return `${label}: ${prefix}${formatMoneyFixed(Math.abs(defaultProfit))}`;
+                })()}
+              </span>
+            </div>
+            <div className="asset-panel asset-panel--bitcoin" style={{ padding: '12px', marginBottom: '12px', marginTop: '-30px', background: 'rgba(248, 141, 0, 1)' }}>
               <div className="asset-range-buttons">
                 {portfolioRanges.map((range) => {
                   const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
