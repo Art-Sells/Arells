@@ -33,6 +33,7 @@ body {
 	padding-top: 300px;
 	z-index: 2000;
 	opacity: 1;
+	transition: opacity 1s ease;
 }
 
 .home-loader-ring {
@@ -74,6 +75,10 @@ body {
 }
 
 .home-loader-fade {
+	opacity: 0;
+}
+
+.home-loader-overlay-fade {
 	opacity: 0;
 }
 
@@ -128,21 +133,23 @@ body {
 }
 
 .asset-header-slogan {
-	color: gray;
-	font-size: 12px;
+	font-size: 8px;
 	font-weight: 200;
 	margin-top: 20px;
 	margin-bottom: 0px;
 	margin-right: 13px;
+}
+
+.asset-page--bitcoin .asset-header-slogan,
+.asset-page--bitcoin .asset-home-font-title {
+	color: rgb(172, 97, 0);
 	opacity: 1;
 }
 
-.asset-page--bitcoin .asset-header-slogan {
-	color: rgba(248, 141, 0, .5);
-}
-
-.asset-page--ethereum .asset-header-slogan {
-	color: rgba(107, 114, 168, .5);
+.asset-page--ethereum .asset-header-slogan,
+.asset-page--ethereum .asset-home-font-title {
+	color: rgb(82, 87, 131);
+	opacity: 1;
 }
 
 .asset-home-button {
@@ -302,14 +309,21 @@ body {
 }
 
 .asset-home-font-title {
-	font-weight: 700;
-	color: #666;
-	font-size: 12px;
+	font-weight: 800;
+	color: #000000;
+	font-size: 10px;
 }
 
-.asset-home-font-label {
+.asset-home-font-label--bitcoin {
 	font-size: 12px;
-	color: #222;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+}
+
+.asset-home-font-label--ethereum {
+	font-size: 12px;
+	color: rgb(105, 105, 105);
+	opacity: 1;
 }
 
 .asset-action-button {
@@ -318,6 +332,12 @@ body {
 	cursor: pointer;
 	font-weight: 700;
 	border: none;
+	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
+		transform 0.5s ease;
+}
+
+.asset-action-button:hover {
+	transform: translateY(-5px);
 }
 
 .asset-action-button--bitcoin {
@@ -340,6 +360,11 @@ body {
 	background: #202020;
 	color: #f5f5f5;
 	box-shadow: none;
+	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
+
+.asset-range-button:hover {
+	transform: translateY(-5px);
 }
 
 .asset-range-button--bitcoin.is-active {
@@ -359,6 +384,153 @@ body {
 	gap: 12px;
 }
 
+
+@keyframes assetSlideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes assetSlideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.asset-slide-in {
+	animation: assetSlideUp 1s ease;
+}
+
+.asset-slide-panel {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 1s ease;
+	will-change: max-height;
+}
+
+.asset-slide-panel.is-open {
+	max-height: 2000px;
+}
+
+.asset-slide-panel--form.is-open {
+	max-height: 600px;
+	transition-duration: 1s;
+}
+
+.asset-submit-status {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 0;
+}
+
+.asset-submit-spinner {
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	border: 3px solid rgba(0, 0, 0, 0.2);
+	border-top-color: rgba(0, 0, 0, 0.6);
+	animation: assetSubmitSpin 1s linear infinite;
+}
+
+@keyframes assetSubmitSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.page-slide-down {
+	animation: pageSlideUp 4s cubic-bezier(0.2, 0.9, 0.2, 1.4);
+	animation-fill-mode: both;
+}
+
+.home-header-inner {
+	animation-name: pageSlideUp;
+	animation-duration: 4s;
+	animation-delay: 0s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.home-voting-block {
+	animation-name: pageSlideUp;
+	animation-duration: 4s;
+	animation-delay: 0s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.home-assets-wrapper {
+	animation-name: pageSlideUp;
+	animation-duration: 4s;
+	animation-delay: 0s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.asset-page-content > .asset-panel:nth-of-type(1) {
+	animation-name: pageSlideUp;
+	animation-duration: 4s;
+	animation-delay: 0s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.asset-page-content > .asset-panel:nth-of-type(2) {
+	animation-name: pageSlideUp;
+	animation-duration: 4s;
+	animation-delay: 0s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.asset-page-content > .asset-panel:nth-of-type(3) {
+	animation-name: pageSlideUp;
+	animation-duration: 4s;
+	animation-delay: 0s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.asset-page-content > .asset-panel:nth-of-type(4) {
+	animation-name: pageSlideUp;
+	animation-duration: 4s;
+	animation-delay: 0s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.asset-page-content > .asset-panel:nth-of-type(5) {
+	animation-name: pageSlideUp;
+	animation-duration: 4s;
+	animation-delay: 0s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+
+@keyframes pageSlideUp {
+	0% {
+		transform: translateY(40px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
 .asset-investments-wrap {
 	margin-top: -6px;
 	padding: 12px;
@@ -375,11 +547,20 @@ body {
 	box-shadow: inset 0 6px 12px rgba(107, 114, 168, 0.3);
 }
 
+.asset-home-font-label--bitcoin {
+	margin-top: 0px;
+	color: rgb(172, 97, 0);
+}
+.asset-home-font-label--ethereum{
+	margin-top: 0px;
+	color: rgb(82, 87, 131);
+
+}
 .asset-delete-button {
 	margin-top: 8px;
 	border: none;
 	background: transparent;
-	color: #444;
+	color: #3e3e3e;
 	cursor: pointer;
 }
 
@@ -397,6 +578,11 @@ body {
 	background: rgba(248, 141, 0, 0.06);
 	box-shadow: -5px 0 14px rgba(248, 141, 0, 0.26), 0 7px 10px rgba(248, 141, 0, 0.18);
 	border: 1px solid rgba(248, 141, 0, 0.3);
+}
+
+.asset-profit-block {
+	margin-bottom: 40px;
+	margin-top: 20px;
 }
 
 .asset-header-panel.asset-panel--bitcoin {
@@ -457,6 +643,7 @@ body {
 	padding-top: 300px;
 	z-index: 2100;
 	opacity: .98;
+	transition: opacity 1s ease;
 }
 
 .asset-loader-overlay--bitcoin {
@@ -532,11 +719,97 @@ body {
 	opacity: 0;
 }
 
+.asset-loader-overlay-fade {
+	opacity: 0;
+}
+
 
 .asset-footer {
 	display: flex;
 	justify-content: center;
 	padding: 24px 0 32px;
+}
+
+.asset-market-modal-overlay {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2000;
+	opacity: 1;
+	transition: opacity 1s ease;
+	animation: modalFadeIn 2s ease;
+}
+
+.asset-market-modal-overlay--bitcoin {
+	background: rgba(248, 141, 0, 0.2);
+}
+
+.asset-market-modal-overlay--ethereum {
+	background: rgba(107, 114, 168, 0.2);
+}
+
+.asset-market-modal-overlay.is-fading {
+	opacity: 0;
+}
+
+.asset-market-modal {
+	padding: 16px;
+	width: 320px;
+	opacity: 1;
+	transition: opacity 1s ease;
+	animation: modalFadeIn 2s ease;
+}
+
+.asset-market-modal.is-fading {
+	opacity: 0;
+}
+
+.asset-market-modal-close {
+	padding: 6px 10px;
+	border-radius: 6px;
+	border: 1px solid #444;
+	background: #2a2a2a;
+	color: #fff;
+	cursor: pointer;
+	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease;
+}
+
+.asset-market-modal-close:hover {
+	transform: translateY(-5px);
+}
+
+.asset-market-button {
+	transition: transform 0.5s ease;
+}
+
+.asset-market-button:hover {
+	transform: translateY(-5px);
+}
+
+.asset-fade-in {
+	animation: assetFadeIn 2s ease;
+}
+
+@keyframes assetFadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes modalFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .asset-footer-about {
@@ -749,8 +1022,9 @@ body {
 				align-items: flex-start;
 				padding-top: 150px;
 				z-index: 2100;
-				transition: opacity 0.2s ease;
+				transition: opacity 1s ease;
 				opacity: 1;
+				animation: modalFadeIn 2s ease;
 			}
 
 			.home-vote-modal-overlay.is-fading {
@@ -770,6 +1044,12 @@ body {
 				align-items: center;
 				justify-content: flex-start;
 				gap: 12px;
+				transition: opacity 1s ease;
+				animation: modalFadeIn 2s ease;
+			}
+
+			.home-vote-modal.is-fading {
+				opacity: 0;
 			}
 
 			.home-vote-modal-title {
@@ -806,6 +1086,8 @@ body {
 				font-weight: 700;
 				font-size: 15px;
 				cursor: pointer;
+				transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease,
+					opacity 0.5s ease;
 			}
 
 			.home-vote-modal-button--solana {
@@ -871,6 +1153,8 @@ body {
 				grid-template-columns: 42px repeat(5, minmax(0, 1fr));
 				align-items: center;
 				column-gap: 10px;
+				animation: pageSlideUp 4s ease;
+				animation-fill-mode: both;
 			}
 
 			.home-assets-cell {
@@ -1293,10 +1577,6 @@ body {
 		padding-left: 12px;
 		padding-right: 12px;
 		font-size: 11px;
-	}
-
-	.asset-metric-number {
-		font-size: 10px;
 	}
 
 	  

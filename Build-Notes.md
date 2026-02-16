@@ -17,12 +17,6 @@
 - - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons
 - - Right
 - - - Line Graph (with date on the left)
-- Mock Portfolio section with differing sampled amounts (3 seconds meander from 2 profits to 1 losses back and forth):
-- - (BTC)
-- - Purchased Value:
-- - Current Value:
-- - Profits/Losses:
-- - Date Purchased: mm/dd/yy
 --------
 - - Portfolio (before anything is added) {look at VavityTester for example}, add /ethereum/bitcoin to porfolio session loader so it loads the correct amounts,
 - - - (Add Investments) 
@@ -55,11 +49,12 @@
 - - (delete) *test this*
 - - (Load More 5 per list) *test this*
 -------------------
-- (About)
+- (About (A) arells)
 
 In Portfolios...
-*test for long numbers and ensure they are cut off*
+*test for long numbers and ensure they are (or not) cut off*
 *test min-width when opening inspect*
+*add loading circle on profits when buttons change and fade in of the entire page from opacity 0 to opacity 1*
 
 ### About:
     Arells is a ledger that shows how your investments would look if bear markets never existed.
@@ -137,7 +132,7 @@ Users
 
 
 ### iOS & Android App (after 1-2 years?)
-- iOS App 
+- iOS App (night/dark mode automatic (website) setting that reads your settings)
 - - Tagline: If bear markets never existed
 - - Desc: This is how your investments would look if bear markets never existed.
 - - submission: An accounting ledger that shows how investments would look if bear markets never existed. 

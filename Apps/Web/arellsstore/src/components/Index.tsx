@@ -189,7 +189,7 @@ const Index = () => {
   return (
     <>
       {showLoading && (
-        <div className="home-loader-overlay">
+        <div className={`home-loader-overlay${fadeOut ? ' home-loader-overlay-fade' : ''}`}>
           <div className={`home-loader-ring${fadeOut ? ' home-loader-fade' : ''}`}>
             <svg className="home-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
               <circle cx="30" cy="30" r="26" />
@@ -206,7 +206,7 @@ const Index = () => {
         </div>
       )}
 
-      <div className="home-header-inner">
+      <div className="home-header-inner page-slide-down">
         <Image
           loader={imageLoader}
           onLoad={() => handleImageLoaded('wordLogo')}
@@ -225,7 +225,7 @@ const Index = () => {
       </div>
 
       {!votingHidden && votingData && (
-        <div className="home-voting-block">
+        <div className="home-voting-block page-slide-down">
           <div className="home-voting-title">Which should we add next week?</div>
           <div className="home-voting-options">
             <button type="button" className="home-voting-button home-voting-button--solana" onClick={() => handleVote('solana')}>
@@ -244,7 +244,7 @@ const Index = () => {
         </div>
       )}
 
-      <div className="home-assets-wrapper">
+      <div className="home-assets-wrapper page-slide-down">
         <div className="home-assets-list">
           <div className="home-assets-header-row">
             <div className="home-assets-cell home-assets-index"></div>
@@ -341,7 +341,7 @@ const Index = () => {
 
       {voteModal && (
         <div className={`home-vote-modal-overlay${voteModalClosing ? ' is-fading' : ''}`}>
-          <div className="home-vote-modal">
+          <div className={`home-vote-modal${voteModalClosing ? ' is-fading' : ''}`}>
             <Image
               className="home-vote-modal-icon"
               alt={voteModal.asset === 'solana' ? 'Solana' : 'XRP'}
@@ -366,7 +366,7 @@ const Index = () => {
                   if (typeof window !== 'undefined') {
                     window.location.reload();
                   }
-                }, 200);
+                }, 1000);
               }}
             >
               OK
