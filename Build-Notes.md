@@ -2,59 +2,21 @@
 
 ## Arells v1
 
-### Bitcoin (test Ethereum version to release both, implement into Home)
-(columns if more than 700 px, rows if less, integrate "bitcoin" "ethereum" loaders for sessions if /bitcoin or /ethereum from loaders for portfolios)
-- Add (A) at top left of Btc/Eth and for their banners create (or move the corresponding css files to their corresponding css crypto/assets folders)
-- Loading Modal (3 seconds (B/E) logo with loader circling it)
-- top left Ethereum Symbol rounded left corner more rounded than others then Ethereum word... then: if bear markets never existed
----------
-- Line Chart {look at VavityTester for example}
-- - On the Left:
-- - - Price: $ (VAPA)
-- - - Market Cap: $
-- - - - +12.00%, etc, etc
-- - - -  Bull (🐂(clickable for explanation)) Market {for percentage increase} or Sloth (🦥(clickable for explanation)) Market {for no percentage increase}… 
-- - - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons
-- - Right
-- - - Line Graph (with date on the left)
---------
-- - Portfolio (before anything is added) {look at VavityTester for example}, add /ethereum/bitcoin to porfolio session loader so it loads the correct amounts,
-- - - (Add Investments) 
-- - - - when button above clicked, it shows:
-- - - - $ Purchased Value: VAPAHistoricalPrice x bitcoinAmount
-- - - - $ Curent Value (add to test UI display for lots of bitcoin): automatically displays Bitcoin Amount at the time of purchase (this should correspond and get the bitcoin price from the "date purchased" section) this will end up being the cVatop after the submit button is clicked while cVact will always be VAPA x bitcoin amount entered ... If for example VAPA after 01/05/26 is greater than bitcoinPrice on 01/10/26, then $ Amount should be based on VAPA and not bitcoin Price
-– - - - $ Profits/Losses (add to test UI display for lots of bitcoin) (default when no activity inside bitcoin amount section): (VAPA x bitcoinAmount) minus (VAPAHistoricalPrice x bitcoinAmount)  changes to $ Losses: $ 0, when date is chosen and profits are zero
-- - - - bitcoin amount (section to enter bitcoin in token amounts (satoshis)) cVactTaa (formatCurrency (display only) 000,000,000.000(max sats))
-- - - - Date purchased (section to choose mm/dd/yy) (added to the cVact group)
-- - - - (Submit)
-- Porfolio (after investments added)
-- - - Purchased Value: acVatops
-- - - Current Value: should be acVacts
-– - - Profits/Losses: should be acdVatops
-- - - (24 hours /1 wk / 1 mnth/ 3 mnths/ 1 yr/ All) buttons (each should dissapear and re-appear dependent on date of oldest investment... so if oldest investment was 3 mnths ago, 1 y greys out, etc, etc)
-- - (add more investments) 
-- - - - when button above clicked, it shows:
-- - - - amount: $ in dollars (creates new Investment group inside VavityAggregator json)
-- - - - Date purchased (mm/dd/yy) (creates new Investment group inside VavityAggregator json)
-- - - - (Submit)
--------------------
-- (Investment List)
-- - if no Investments 0
-- - - [insert add investments from account here] dissapear if investments:
-- - Purchased Value: cVatop
-- - Current Value: cVact
-- - Profits/Losses: cdVatop
-- - Token Amount: (number of tokens)
-- - Purchase Date (mm/dd/yy): 
+*fix line lagging behind page resizes*
+*test for long numbers and ensure they are (or not) cut off*
+*test min-width when opening inspect*
+*add loading circle on profits when buttons change and fade in of the entire page from opacity 0 to opacity 1*
+*do not add padding to show investments list or form due to pop-up height-up issue or form, add padding/margins only to their buttons outside*
+*add submitting icon and edit loading circle as well as submitted icon*
+*test multiple investment deletions...*
+
+### Investment list
 - - (delete) *test this*
 - - (Load More 5 per list) *test this*
 -------------------
 - (About (A) arells)
+- - Clean up UI (on Modals/buttons/everything)
 
-In Portfolios...
-*test for long numbers and ensure they are (or not) cut off*
-*test min-width when opening inspect*
-*add loading circle on profits when buttons change and fade in of the entire page from opacity 0 to opacity 1*
 
 ### About:
     Arells is a ledger that shows how your investments would look if bear markets never existed.
