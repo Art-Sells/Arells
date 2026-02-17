@@ -131,6 +131,11 @@ const BitcoinChart: React.FC<Props> = ({
     return {
       responsive: true,
       maintainAspectRatio: false,
+      resizeDelay: 0,
+      animation: { duration: 300, easing: 'linear' as const },
+      transitions: {
+        resize: { animation: { duration: 300, easing: 'linear' as const } },
+      },
       interaction: { mode: 'nearest' as const, intersect: false },
       plugins: {
         legend: { display: false },
@@ -159,6 +164,29 @@ const BitcoinChart: React.FC<Props> = ({
       chart.update('none');
     }
   }, [chartData]);
+
+  useEffect(() => {
+    const chart = chartRef.current;
+    const canvas = chart?.canvas;
+    const parent = canvas?.parentElement;
+    if (!chart || !parent) return;
+
+    let rafId: number | null = null;
+    const observer = new ResizeObserver(() => {
+      if (rafId != null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        chart.resize();
+        chart.update();
+      });
+    });
+
+    observer.observe(parent);
+    return () => {
+      if (rafId != null) cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
+  }, []);
 
   const updateMarker = useCallback(
     (pixel: { x: number; y: number } | null, point: PricePoint | null, idx: number | null) => {

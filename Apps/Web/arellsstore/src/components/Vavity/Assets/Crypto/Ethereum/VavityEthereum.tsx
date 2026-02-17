@@ -1055,6 +1055,7 @@ const VavityEthereum: React.FC = () => {
                     setInvestmentsListOpen(false);
                     setTimeout(() => {
                       setShowInvestmentsList(false);
+                      setVisibleInvestments(5);
                     }, 2000);
                   }
                   setSubmitPhase('idle');
@@ -1080,12 +1081,13 @@ const VavityEthereum: React.FC = () => {
                       setInvestmentsListOpen(false);
                       setTimeout(() => {
                         setShowInvestmentsList(false);
+                        setVisibleInvestments(5);
                       }, 2000);
                       return;
                     }
                     setShowInvestmentsList(true);
                     setTimeout(() => setInvestmentsListOpen(true), 0);
-                    scrollToBottom();
+                    scrollToBottom(2100);
                   }}
                 >
                   {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
@@ -1182,7 +1184,7 @@ const VavityEthereum: React.FC = () => {
                     className="asset-action-button asset-action-button--ethereum"
                     onClick={() => {
                       setVisibleInvestments((prev) => prev + 5);
-                      scrollToBottom();
+                      scrollToBottom(2100);
                     }}
                   >
                     Load more 5 per list

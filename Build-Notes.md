@@ -2,7 +2,7 @@
 
 ## Arells v1
 
-*fix line lagging behind page resizes*
+*fix line lagging behind page resizes (possibly make entire section solor below line and increase line width to resolve jacked edges) and the animation transition 1 s*
 *test for long numbers and ensure they are (or not) cut off*
 *test min-width when opening inspect*
 *add loading circle on profits when buttons change and fade in of the entire page from opacity 0 to opacity 1*
