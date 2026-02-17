@@ -906,6 +906,8 @@ const VavityBitcoin: React.FC = () => {
                 color="rgba(248, 141, 0, 0.9)"
                 height={200}
                 backgroundColor="rgba(248, 141, 0, 0.06)"
+                animateOn={chartReady && !forceChartLoader}
+                animateDelayMs={1000}
                 onPointHover={(point, idx) => {
                   setChartHoverIndex(idx ?? null);
                 }}

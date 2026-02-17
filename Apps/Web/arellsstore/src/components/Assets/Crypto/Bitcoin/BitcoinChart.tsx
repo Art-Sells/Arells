@@ -25,6 +25,8 @@ type Props = {
   height?: number;
   onPointHover?: (point: PricePoint | null, index: number | null) => void;
   backgroundColor?: string;
+  animateOn?: boolean;
+  animateDelayMs?: number;
 };
 
 const BitcoinChart: React.FC<Props> = ({
@@ -33,6 +35,8 @@ const BitcoinChart: React.FC<Props> = ({
   height = 240,
   onPointHover,
   backgroundColor = '#161616',
+  animateOn = true,
+  animateDelayMs = 0,
 }) => {
   const chartRef = useRef<ChartJS<'line', PricePoint[], unknown> | null>(null);
   const markerRef = useRef<HTMLDivElement | null>(null);
@@ -58,6 +62,8 @@ const BitcoinChart: React.FC<Props> = ({
           pointHoverBackgroundColor: backgroundColor,
           pointHitRadius: 20,
           tension: 0.25,
+          borderCapStyle: 'round' as const,
+          borderJoinStyle: 'round' as const,
         },
         ...(hoverPoint
           ? [
@@ -132,9 +138,9 @@ const BitcoinChart: React.FC<Props> = ({
       responsive: true,
       maintainAspectRatio: false,
       resizeDelay: 0,
-      animation: { duration: 300, easing: 'linear' as const },
+      animation: { duration: 1000, easing: 'linear' as const },
       transitions: {
-        resize: { animation: { duration: 300, easing: 'linear' as const } },
+        resize: { animation: { duration: 1000, easing: 'linear' as const } },
       },
       interaction: { mode: 'nearest' as const, intersect: false },
       plugins: {
@@ -157,13 +163,24 @@ const BitcoinChart: React.FC<Props> = ({
     };
   }, []);
 
-  // Keep ref in sync for Line
+  // Keep ref in sync for Line and allow animation on data updates
   useEffect(() => {
     const chart = chartRef.current;
     if (chart) {
-      chart.update('none');
+      chart.update();
     }
   }, [chartData]);
+
+  useEffect(() => {
+    if (!animateOn) return;
+    const chart = chartRef.current;
+    if (!chart) return;
+    const timer = window.setTimeout(() => {
+      chart.reset();
+      chart.update();
+    }, animateDelayMs);
+    return () => window.clearTimeout(timer);
+  }, [animateOn, animateDelayMs]);
 
   useEffect(() => {
     const chart = chartRef.current;
