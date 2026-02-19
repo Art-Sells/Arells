@@ -53,9 +53,24 @@ const VavityBitcoin: React.FC = () => {
   const investmentIdMapRef = useRef<Map<string, string>>(new Map());
   const investmentIdCounterRef = useRef(0);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
+  const chartWrapRef = useRef<HTMLDivElement | null>(null);
+  const headerPanelRef = useRef<HTMLDivElement | null>(null);
+  const sloganRef = useRef<HTMLDivElement | null>(null);
   const [summaryHeight, setSummaryHeight] = useState<number>(0);
   const investmentsListRef = useRef<HTMLDivElement | null>(null);
   const [investmentsListHeight, setInvestmentsListHeight] = useState<number>(0);
+  const [chartHeight, setChartHeight] = useState<number>(200);
+  const baseChartHeightRef = useRef<number | null>(null);
+  const lockedRowHeightRef = useRef<number | null>(null);
+  const [lockedRowHeight, setLockedRowHeight] = useState<number | null>(null);
+  const [lockedChartHeight, setLockedChartHeight] = useState<number | null>(null);
+  const [sloganMarginRight, setSloganMarginRight] = useState<number>(0);
+  const chartPadding = 90;
+  const chartProtrusion = 120;
+  const chartHeightAdjusted = Math.max(120, chartHeight - 0);
+  const chartPanelHeight = chartHeightAdjusted + chartPadding + chartProtrusion;
+  const chartWrapHeight = chartHeightAdjusted + chartPadding;
+  const chartCanvasHeight = chartHeightAdjusted + chartProtrusion;
   const forceChartLoader = false;
   const scrollToBottom = useCallback((delayMs = 500) => {
     if (typeof window === 'undefined') return;
@@ -113,6 +128,70 @@ const VavityBitcoin: React.FC = () => {
     }
     setAddFormOpen(false);
   }, [showAddForm]);
+
+  useEffect(() => {
+    const el = chartWrapRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const update = () => {
+      const width = el.getBoundingClientRect().width;
+      const responsive = Math.max(160, Math.round(width * 0.6));
+      const row = el.parentElement;
+      if (typeof window !== 'undefined' && window.innerWidth > 800) {
+        if (baseChartHeightRef.current == null) {
+          baseChartHeightRef.current = responsive;
+          setLockedChartHeight(responsive);
+          if (row) {
+            const rowHeight = row.getBoundingClientRect().height;
+            lockedRowHeightRef.current = rowHeight;
+            setLockedRowHeight(rowHeight);
+          }
+        }
+        const locked = lockedChartHeight ?? baseChartHeightRef.current;
+        if (locked != null) {
+          setChartHeight((prev) => (prev === locked ? prev : locked));
+        }
+        return;
+      }
+      setChartHeight((prev) => (prev === responsive ? prev : responsive));
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    window.addEventListener('resize', update);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = () => {
+      if (typeof window === 'undefined') return;
+      if (window.innerWidth <= 800) {
+        setSloganMarginRight(0);
+        return;
+      }
+      const header = headerPanelRef.current;
+      const chart = chartWrapRef.current;
+      if (!header || !chart) return;
+      const headerRect = header.getBoundingClientRect();
+      const chartRect = chart.getBoundingClientRect();
+      const desiredRight = chartRect.left - 10;
+      const marginRight = Math.max(0, headerRect.right - desiredRight);
+      const adjusted = marginRight + 35;
+      setSloganMarginRight((prev) => (prev === adjusted ? prev : adjusted));
+    };
+    update();
+    const chartObserver = new ResizeObserver(update);
+    if (chartWrapRef.current) {
+      chartObserver.observe(chartWrapRef.current);
+    }
+    window.addEventListener('resize', update);
+    return () => {
+      chartObserver.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, []);
 
   const investments = vavityData?.investments || [];
   const getInvestmentId = useCallback((entry: any) => {
@@ -172,7 +251,7 @@ const VavityBitcoin: React.FC = () => {
   useEffect(() => {
     const prevIds = prevInvestmentIdsRef.current;
     const nextIds = investmentIds;
-    const newIds = nextIds.filter((id) => !prevIds.includes(id));
+    const newIds = nextIds.filter((id: string) => !prevIds.includes(id));
     if (newIds.length) {
       if (showInvestmentsList && investmentsListOpen) {
         setCollapsedInvestments((prev) => Array.from(new Set([...prev, ...newIds])));
@@ -639,75 +718,75 @@ const VavityBitcoin: React.FC = () => {
     <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginTop: '12px', maxWidth: '420px' }}>
       <div className={`asset-submit-form${submitPhase !== 'idle' ? ' is-hidden' : ''}`}>
         <>
-          <div style={{ marginBottom: '8px', fontWeight: 600 }}>{label}</div>
-          <div style={{ marginBottom: '12px' }}>
-            Purchased Value:{' '}
-            {tokenAmount && purchaseDate && historicalPrice != null
-              ? `$${formatCurrency(parseTokenAmount(tokenAmount || '0') * historicalPrice)}`
-              : '...'}
-            {purchaseDate && historicalLoading && <span style={{ marginLeft: '8px' }}>(Loading price...)</span>}
-          </div>
-          <div style={{ marginBottom: '12px' }}>
-            Current Value: {tokenAmount ? `$${formatCurrency(formCVatop)}` : '...'}
-          </div>
-          <div style={{ marginBottom: '12px' }}>
-            {(() => {
-              if (!tokenAmount) {
-                return 'Profits/Losses: ...';
-              }
-              if (purchaseDate && historicalPrice == null) {
-                return 'Profits/Losses: ...';
-              }
-              const basePrice = purchaseDate ? (historicalPrice ?? 0) : (vapa || 0);
-              const profitValue = (vapa - basePrice) * parseTokenAmount(tokenAmount || '0');
-              const label = profitValue > 0 ? 'Profits' : 'Losses';
-              const formattedValue =
-                profitValue > 0
-                  ? formatCurrency(profitValue)
-                  : Math.abs(profitValue).toLocaleString('en-US', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
-                    });
-              const prefix = profitValue > 0 ? '+$' : '$';
-              return `${label}: ${prefix}${formattedValue}`;
-            })()}
-          </div>
-          <div style={{ marginBottom: '8px' }}>
-            bitcoin amount:
-            <input
-              type="text"
-              inputMode="decimal"
-              pattern="^[0-9]*\.?[0-9]*$"
-              value={tokenAmount}
-              onChange={(e) => setTokenAmount(normalizeTokenInput(e.target.value))}
-              style={{ marginLeft: '8px' }}
-            />
-          </div>
-          <div style={{ marginBottom: '8px' }}>
-            Date purchased:
-            <input
-              type="date"
-              value={purchaseDate}
-              onChange={(e) => setPurchaseDate(e.target.value)}
-              style={{ marginLeft: '8px' }}
-            />
-          </div>
-          <button
-            onClick={handleSubmitInvestment}
-            disabled={submitLoading || !tokenAmount || !purchaseDate}
+      <div style={{ marginBottom: '8px', fontWeight: 600 }}>{label}</div>
+      <div style={{ marginBottom: '12px' }}>
+        Purchased Value:{' '}
+        {tokenAmount && purchaseDate && historicalPrice != null
+          ? `$${formatCurrency(parseTokenAmount(tokenAmount || '0') * historicalPrice)}`
+          : '...'}
+        {purchaseDate && historicalLoading && <span style={{ marginLeft: '8px' }}>(Loading price...)</span>}
+      </div>
+      <div style={{ marginBottom: '12px' }}>
+        Current Value: {tokenAmount ? `$${formatCurrency(formCVatop)}` : '...'}
+      </div>
+      <div style={{ marginBottom: '12px' }}>
+        {(() => {
+          if (!tokenAmount) {
+            return 'Profits/Losses: ...';
+          }
+          if (purchaseDate && historicalPrice == null) {
+            return 'Profits/Losses: ...';
+          }
+          const basePrice = purchaseDate ? (historicalPrice ?? 0) : (vapa || 0);
+          const profitValue = (vapa - basePrice) * parseTokenAmount(tokenAmount || '0');
+          const label = profitValue > 0 ? 'Profits' : 'Losses';
+          const formattedValue =
+            profitValue > 0
+              ? formatCurrency(profitValue)
+              : Math.abs(profitValue).toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                });
+          const prefix = profitValue > 0 ? '+$' : '$';
+          return `${label}: ${prefix}${formattedValue}`;
+        })()}
+      </div>
+      <div style={{ marginBottom: '8px' }}>
+        bitcoin amount:
+        <input
+          type="text"
+          inputMode="decimal"
+          pattern="^[0-9]*\.?[0-9]*$"
+          value={tokenAmount}
+          onChange={(e) => setTokenAmount(normalizeTokenInput(e.target.value))}
+          style={{ marginLeft: '8px' }}
+        />
+      </div>
+      <div style={{ marginBottom: '8px' }}>
+        Date purchased:
+        <input
+          type="date"
+          value={purchaseDate}
+          onChange={(e) => setPurchaseDate(e.target.value)}
+          style={{ marginLeft: '8px' }}
+        />
+      </div>
+      <button
+        onClick={handleSubmitInvestment}
+        disabled={submitLoading || !tokenAmount || !purchaseDate}
             className={buttonClass}
-            style={{
-              padding: '8px 14px',
-              background: '#00e5ff',
-              color: '#000',
-              border: 'none',
-              borderRadius: '6px',
-              fontWeight: 600,
-              opacity: submitLoading || !tokenAmount || !purchaseDate ? 0.6 : 1
-            }}
-          >
-            {submitLoading ? 'Submitting...' : 'Submit'}
-          </button>
+        style={{
+          padding: '8px 14px',
+          background: '#00e5ff',
+          color: '#000',
+          border: 'none',
+          borderRadius: '6px',
+          fontWeight: 600,
+          opacity: submitLoading || !tokenAmount || !purchaseDate ? 0.6 : 1
+        }}
+      >
+        {submitLoading ? 'Submitting...' : 'Submit'}
+      </button>
         </>
       </div>
       {submitPhase !== 'idle' && (
@@ -745,23 +824,36 @@ const VavityBitcoin: React.FC = () => {
       <div
         className="asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide"
         style={{ padding: '5px 14px 14px', marginBottom: '24px' }}
+        ref={headerPanelRef}
       >
         <div className="asset-section-header">
           <div className="asset-header-title">Bitcoin</div>
-          <div className="asset-header-slogan">if bear markets never existed</div>
+          <div
+            className="asset-header-slogan"
+            ref={sloganRef}
+            style={sloganMarginRight ? { marginRight: `${sloganMarginRight}px` } : undefined}
+          >
+            if bear markets never existed
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap', overflow: 'visible' }}>
+        <div
+          className="asset-price-chart-row"
+          style={{
+            overflow: 'visible',
+            height:
+              typeof window !== 'undefined' && window.innerWidth > 800 && lockedRowHeight != null
+                ? `${lockedRowHeight}px`
+                : undefined
+          }}
+        >
           <div
             className="asset-price-panel asset-price-panel--bitcoin asset-section-slide"
             style={{
-              flex: 1,
-              minWidth: '300px',
               padding: '12px',
               background: 'transparent',
+              alignSelf: 'flex-start',
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
               gap: '8px'
             }}
           >
@@ -838,7 +930,7 @@ const VavityBitcoin: React.FC = () => {
                   </button>
                 )}
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
+              <div className="asset-price-button-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {chartRanges.map((range) => {
                   const isActive = chartRangeDays === range.days;
                   return (
@@ -864,57 +956,58 @@ const VavityBitcoin: React.FC = () => {
             </div>
           </div>
 
+          <div className="asset-chart-wrap" ref={chartWrapRef} style={{ height: `${chartWrapHeight}px` }}>
           <div
-            className="asset-panel asset-panel--bitcoin asset-section-slide asset-chart-panel"
+              className="asset-panel asset-panel--bitcoin asset-section-slide asset-chart-panel"
             style={{
-              flex: 1,
-              minWidth: '280px',
               padding: '12px',
-              position: 'relative'
+                position: 'relative',
+                height: `${chartPanelHeight}px`
             }}
           >
             {chartHoverIndex != null && activePoint && (
-              <div style={{ position: 'absolute', top: 8, left: 12, color: '#222', fontSize: '13px', opacity: 0.9 }}>
+                <div style={{ position: 'absolute', top: 8, left: 12, color: '#222', fontSize: '13px', opacity: 0.9 }}>
                 {new Date(activePoint.date).toLocaleDateString('en-US')}
               </div>
             )}
-            <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
-              <div
-                className="asset-chart-loader-ring"
-                style={{ borderColor: 'rgba(248, 141, 0, 0.2)', borderTopColor: 'rgba(248, 141, 0, 0.9)' }}
-              >
+              <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
                 <div
-                  className="asset-chart-loader-spinner"
+                  className="asset-chart-loader-ring"
                   style={{ borderColor: 'rgba(248, 141, 0, 0.2)', borderTopColor: 'rgba(248, 141, 0, 0.9)' }}
-                />
-                <Image
-                  className="asset-chart-loader-icon"
-                  alt="Loading chart"
-                  width={28}
-                  height={28}
-                  src="/images/vavity/SolidMarket-Ebony.png"
-                />
+                >
+                  <div
+                    className="asset-chart-loader-spinner"
+                    style={{ borderColor: 'rgba(248, 141, 0, 0.2)', borderTopColor: 'rgba(248, 141, 0, 0.9)' }}
+                  />
+                  <Image
+                    className="asset-chart-loader-icon"
+                    alt="Loading chart"
+                    width={28}
+                    height={28}
+                    src="/images/vavity/SolidMarket-Ebony.png"
+                  />
+                </div>
               </div>
-            </div>
-            <div
-              className={`asset-chart-fade asset-chart-interactive${
-                chartReady && !forceChartLoader ? ' is-visible' : ''
-              }${chartReady && !forceChartLoader ? '' : ' is-disabled'}`}
-            >
-              <BitcoinChart
-                history={chartHistory || []}
-                color="rgba(248, 141, 0, 0.5)"
-                height={200}
-                backgroundColor="rgba(248, 141, 0, 0.16)"
-                animateOn={chartReady && !forceChartLoader}
-                animateDelayMs={1000}
-                onPointHover={(point, idx) => {
-                  setChartHoverIndex(idx ?? null);
-                }}
-              />
-            </div>
+              <div
+                className={`asset-chart-fade asset-chart-interactive${
+                  chartReady && !forceChartLoader ? ' is-visible' : ''
+                }${chartReady && !forceChartLoader ? '' : ' is-disabled'}`}
+              >
+            <BitcoinChart
+              history={chartHistory || []}
+                  color="rgba(248, 141, 0, 0.5)"
+                  height={chartCanvasHeight}
+                  backgroundColor="rgba(248, 141, 0, 0.16)"
+                  animateOn={chartReady && !forceChartLoader}
+                  animateDelayMs={1000}
+              onPointHover={(point, idx) => {
+                setChartHoverIndex(idx ?? null);
+              }}
+            />
           </div>
         </div>
+              </div>
+            </div>
 
       </div>
 
@@ -941,15 +1034,15 @@ const VavityBitcoin: React.FC = () => {
                   setSubmitPhase('idle');
                   scrollToBottom();
                 }}
-              >
+        >
                 (Add Investments)
-              </button>
+        </button>
             )}
             {showEmptyAddForm && showAddForm && (
               <div className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}>
                 {renderAddForm('Add Investment', closeAddForm, 'asset-action-button asset-action-button--bitcoin')}
               </div>
-            )}
+        )}
           </>
         ) : (
           <>
@@ -960,17 +1053,17 @@ const VavityBitcoin: React.FC = () => {
               <div ref={summaryContentRef} style={{ paddingBottom: '20px' }}>
               <div className="asset-home-font-label--bitcoin" style={{ marginBottom: '8px' }}>
                 Purchased Value: <span className="asset-metric-number">${formatCurrency(totals.acVatop || 0)}</span>
-              </div>
+            </div>
               <div className="asset-home-font-label--bitcoin" style={{ marginBottom: '8px' }}>
                 Current Value: <span className="asset-metric-number">${formatCurrency(totals.acVact || 0)}</span>
-              </div>
+            </div>
               <div
                 className="asset-panel asset-panel--bitcoin asset-profit-block asset-slide-in asset-section-slide"
                 style={{ padding: '12px 12px 30px', marginBottom: '10px', width: '60%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}
               >
                 <div className="asset-profit-summary asset-profit-summary--bitcoin">
                   <div className="asset-home-font-label--bitcoin">
-                    {(() => {
+                {(() => {
                       const formatRangeLabel = (days: number | null) => {
                         if (days == null) return 'All-time';
                         if (days === 7) return '1 week';
@@ -980,12 +1073,12 @@ const VavityBitcoin: React.FC = () => {
                         if (days === 1) return '24 hours';
                         return `${days} days`;
                       };
-                      if (selectedRangeDays && rangeLoading) {
+                  if (selectedRangeDays && rangeLoading) {
                         return <span className="asset-metric-number">...</span>;
-                      }
-                      if (selectedRangeDays && rangeHistoricalPrice != null) {
-                        const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
-                        const profitValue = (totals.acVact || 0) - pastValue;
+                  }
+                  if (selectedRangeDays && rangeHistoricalPrice != null) {
+                    const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
+                    const profitValue = (totals.acVact || 0) - pastValue;
                         const isProfit = profitValue > 0.005;
                         const label = isProfit ? 'Profits' : 'Losses';
                         const formattedValue = formatMoneyFixed(Math.abs(profitValue));
@@ -999,7 +1092,7 @@ const VavityBitcoin: React.FC = () => {
                             </span>
                           </>
                         );
-                      }
+                  }
                       const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
                       const isProfit = defaultProfit > 0.005;
                       const label = isProfit ? 'Profits' : 'Losses';
@@ -1013,31 +1106,31 @@ const VavityBitcoin: React.FC = () => {
                           </span>
                         </>
                       );
-                    })()}
-                  </div>
+                })()}
+              </div>
                 </div>
                 <div className="asset-range-buttons">
-                  {portfolioRanges.map((range) => {
-                    const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
-                    const isActive = selectedRangeDays === range.days;
-                    return (
-                      <button
-                        key={range.label}
-                        type="button"
-                        disabled={!isEnabled}
-                        onClick={() => setSelectedRangeDays(isActive ? null : range.days)}
+                {portfolioRanges.map((range) => {
+                  const isEnabled = range.days == null ? true : oldestInvestmentAgeDays >= range.days;
+                  const isActive = selectedRangeDays === range.days;
+                  return (
+                    <button
+                      key={range.label}
+                      type="button"
+                      disabled={!isEnabled}
+                      onClick={() => setSelectedRangeDays(isActive ? null : range.days)}
                         className={`asset-range-button asset-range-button--bitcoin${isActive ? ' is-active' : ''}`}
-                      >
-                        {range.label}
-                      </button>
-                    );
-                  })}
-                </div>
+                    >
+                      {range.label}
+                    </button>
+                  );
+                })}
               </div>
+          </div>
             </div>
             </div>
             <div className="asset-portfolio-actions asset-slide-in">
-              <button
+            <button
                 className="asset-action-button asset-action-button--bitcoin"
                 onClick={() => {
                   if (showAddMoreForm) {
@@ -1059,15 +1152,15 @@ const VavityBitcoin: React.FC = () => {
                   setTimeout(() => setAddMoreOpen(true), 0);
                   scrollToBottom();
                 }}
-              >
+            >
                 {showAddMoreForm ? 'Hide add more investments' : 'Add more investments'}
-              </button>
+            </button>
             </div>
             {showAddMoreForm && (
               <div className={`asset-slide-panel asset-slide-panel--form${addMoreOpen ? ' is-open' : ''}`}>
                 {renderAddForm('Add more investments', closeAddMoreForm, 'asset-action-button asset-action-button--bitcoin')}
               </div>
-            )}
+        )}
             <div className="asset-slide-panel" style={{ maxHeight: summaryMaxHeight, transition: summaryTransition }}>
               <div className="asset-portfolio-actions asset-slide-in">
                 <button
@@ -1088,7 +1181,7 @@ const VavityBitcoin: React.FC = () => {
                 >
                   {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
                 </button>
-              </div>
+      </div>
             </div>
             {showInvestmentsList && (
               <div
@@ -1099,18 +1192,18 @@ const VavityBitcoin: React.FC = () => {
               >
                 <div className="asset-investments-list" ref={investmentsListRef}>
                 {investments.slice(0, visibleInvestments).map((entry: any, idx: number) => {
-                  const amount = entry.cVactTaa ?? 0;
+              const amount = entry.cVactTaa ?? 0;
                   const investmentId = investmentIds[idx];
                   const isClosing = closingInvestments.includes(investmentId);
                   const isCollapsed = collapsedInvestments.includes(investmentId);
                   const isDeleting = deletingInvestments.includes(investmentId);
                   const isNew = slowOpenInvestments.includes(investmentId);
-                  return (
-                    <div
+              return (
+                <div
                       key={investmentId}
                       className={`asset-slide-panel${!isClosing && !isCollapsed ? ' is-open' : ''}`}
                       style={isNew ? { transitionDuration: '3s' } : undefined}
-                    >
+                >
                       <div className="asset-panel asset-panel--bitcoin" style={{ padding: '12px' }}>
                         {isDeleting ? (
                           <div className="asset-delete-loader">
@@ -1130,7 +1223,7 @@ const VavityBitcoin: React.FC = () => {
                           <>
                             <div>Purchased Value: ${formatCurrency(entry.cVatop ?? 0)}</div>
                             <div>Current Value: ${formatCurrency(entry.cVact ?? 0)}</div>
-                            <div>
+                  <div>
                               {(() => {
                                 const value = Number(entry.cdVatop ?? 0);
                                 const isProfit = value > 0.005;
@@ -1141,11 +1234,11 @@ const VavityBitcoin: React.FC = () => {
                             </div>
                             <div>
                               Token Amount:{' '}
-                              {Number(amount).toLocaleString('en-US', {
-                                minimumFractionDigits: 8,
+                    {Number(amount).toLocaleString('en-US', {
+                      minimumFractionDigits: 8,
                                 maximumFractionDigits: 8,
-                              })}
-                            </div>
+                    })}
+                  </div>
                             <div>Purchase Date: {formatShortDate(entry.date)}</div>
                             <button
                               type="button"
@@ -1171,9 +1264,9 @@ const VavityBitcoin: React.FC = () => {
                           </>
                         )}
                       </div>
-                    </div>
-                  );
-                })}
+                </div>
+              );
+            })}
                 {investments.length > visibleInvestments && (
                   <button
                     type="button"
@@ -1187,7 +1280,7 @@ const VavityBitcoin: React.FC = () => {
                   </button>
                 )}
                 </div>
-              </div>
+        </div>
             )}
           </>
       )}

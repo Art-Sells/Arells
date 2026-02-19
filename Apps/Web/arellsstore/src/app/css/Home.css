@@ -175,6 +175,12 @@ body {
 
 .asset-price-panel {
 	position: relative;
+	align-items: flex-start;
+	text-align: left;
+}
+
+.asset-price-button-row {
+	justify-content: flex-start;
 }
 
 .asset-home-button--section {
@@ -207,6 +213,7 @@ body {
 }
 
 .asset-portfolio-center {
+	margin-top: 60px;
 	text-align: center;
 }
 
@@ -288,9 +295,9 @@ body {
 }
 
 .asset-page-content {
-	padding: 20px 40px 30px;
+	padding: 40px 40px 30px;
 	color: #222;
-	width: min(920px, 90%);
+	width: min(700px, 100%);
 	margin: 0 auto;
 	box-sizing: border-box;
 }
@@ -608,11 +615,75 @@ body {
 	border-radius: 14px;
 }
 
+.asset-price-chart-row {
+	display: grid;
+	grid-template-columns: 300px 280px;
+	column-gap: 0px;
+	align-items: flex-start;
+}
+
+.asset-price-chart-row > .asset-chart-wrap {
+	align-self: flex-start;
+}
+
+.asset-price-panel {
+	width: 250px;
+}
+
+.asset-chart-wrap {
+	flex: 1;
+	min-width: 300px;
+	overflow: visible;
+	align-self: stretch;
+}
+
 .asset-chart-panel {
-	width: calc(100% + 20px);
-	height: calc(100% + 20px);
+	width: calc(100% + 54px);
 	box-sizing: border-box;
 	align-self: stretch;
+	margin-left: -18px;
+	margin-top: -80px;
+}
+
+@media (min-width: 801px) {
+	.asset-price-chart-row {
+		margin-left: 20px;
+	}
+
+	.asset-home-button--section {
+		left: -55px;
+	}
+
+	.asset-chart-wrap {
+		min-width: 0;
+		width: 100%;
+		margin-left: -8px;
+	}
+
+}
+
+@media (max-width: 800px) {
+	.asset-price-chart-row {
+		align-items: stretch;
+		min-height: 360px;
+		grid-template-columns: 300px;
+		justify-content: center;
+		row-gap: 16px;
+	}
+
+	.asset-price-panel {
+		align-items: center;
+		text-align: center;
+		width: 300px;
+	}
+
+	.asset-chart-wrap {
+		width: 300px;
+	}
+
+	.asset-price-button-row {
+		justify-content: center;
+	}
 }
 
 .asset-header-panel {
@@ -663,7 +734,7 @@ body {
 .asset-chart-icon {
 	position: absolute;
 	top: -20px;
-	left: -20px;
+	left: -40px;
 	width: 70px;
 	height: 70px;
 	border-radius: 50%;
@@ -1256,7 +1327,7 @@ body {
 
 			.home-assets-wrapper {
 				width: min(920px, 90%);
-				min-width: 300px;
+				min-width: 280px;
 				margin: 0 auto;
 				padding-top: 5px;
 				padding-bottom: 45px;
@@ -1709,6 +1780,11 @@ body {
 		padding-left: 12px;
 		padding-right: 12px;
 		font-size: 11px;
+	}
+	.asset-chart-panel {
+		width: calc(100% + 80px);
+		margin-left: -40px;
+		margin-top: -0px;
 	}
 
 	  

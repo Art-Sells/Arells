@@ -137,6 +137,7 @@ const BitcoinChart: React.FC<Props> = ({
     return {
       responsive: true,
       maintainAspectRatio: false,
+      animation: { duration: 1000, easing: 'easeOutQuart' as const },
       interaction: { mode: 'nearest' as const, intersect: false },
       plugins: {
         legend: { display: false },

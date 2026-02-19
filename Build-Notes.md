@@ -9,6 +9,8 @@
 *do not add padding to show investments list or form due to pop-up height-up issue or form, add padding/margins only to their buttons outside*
 *add submitting icon and edit loading circle as well as submitted icon*
 *test multiple investment deletions...*
+*the 24hr buttons that show should not be clickable*
+*loading circle inside the line chart the same width as the line and the circle (including the icon inside) 5 px larger*
 
 ### Investment list
 - - (delete) *test this*

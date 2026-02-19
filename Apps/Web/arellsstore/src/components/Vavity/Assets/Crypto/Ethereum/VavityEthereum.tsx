@@ -54,9 +54,24 @@ const VavityEthereum: React.FC = () => {
   const investmentIdMapRef = useRef<Map<string, string>>(new Map());
   const investmentIdCounterRef = useRef(0);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
+  const chartWrapRef = useRef<HTMLDivElement | null>(null);
+  const headerPanelRef = useRef<HTMLDivElement | null>(null);
+  const sloganRef = useRef<HTMLDivElement | null>(null);
   const [summaryHeight, setSummaryHeight] = useState<number>(0);
   const investmentsListRef = useRef<HTMLDivElement | null>(null);
   const [investmentsListHeight, setInvestmentsListHeight] = useState<number>(0);
+  const [chartHeight, setChartHeight] = useState<number>(200);
+  const baseChartHeightRef = useRef<number | null>(null);
+  const lockedRowHeightRef = useRef<number | null>(null);
+  const [lockedRowHeight, setLockedRowHeight] = useState<number | null>(null);
+  const [lockedChartHeight, setLockedChartHeight] = useState<number | null>(null);
+  const [sloganMarginRight, setSloganMarginRight] = useState<number>(0);
+  const chartPadding = 24;
+  const chartProtrusion = 120;
+  const chartHeightAdjusted = Math.max(120, chartHeight - 0);
+  const chartPanelHeight = chartHeightAdjusted + chartPadding + chartProtrusion;
+  const chartWrapHeight = chartHeightAdjusted + chartPadding;
+  const chartCanvasHeight = chartHeightAdjusted + chartProtrusion;
   const forceChartLoader = false;
   const scrollToBottom = useCallback((delayMs = 500) => {
     if (typeof window === 'undefined') return;
@@ -113,6 +128,70 @@ const VavityEthereum: React.FC = () => {
     setAddFormOpen(false);
   }, [showAddForm]);
 
+  useEffect(() => {
+    const el = chartWrapRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const update = () => {
+      const width = el.getBoundingClientRect().width;
+      const responsive = Math.max(160, Math.round(width * 0.6));
+      const row = el.parentElement;
+      if (typeof window !== 'undefined' && window.innerWidth > 800) {
+        if (baseChartHeightRef.current == null) {
+          baseChartHeightRef.current = responsive;
+          setLockedChartHeight(responsive);
+          if (row) {
+            const rowHeight = row.getBoundingClientRect().height;
+            lockedRowHeightRef.current = rowHeight;
+            setLockedRowHeight(rowHeight);
+          }
+        }
+        const locked = lockedChartHeight ?? baseChartHeightRef.current;
+        if (locked != null) {
+          setChartHeight((prev) => (prev === locked ? prev : locked));
+        }
+        return;
+      }
+      setChartHeight((prev) => (prev === responsive ? prev : responsive));
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    window.addEventListener('resize', update);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = () => {
+      if (typeof window === 'undefined') return;
+      if (window.innerWidth <= 800) {
+        setSloganMarginRight(0);
+        return;
+      }
+      const header = headerPanelRef.current;
+      const chart = chartWrapRef.current;
+      if (!header || !chart) return;
+      const headerRect = header.getBoundingClientRect();
+      const chartRect = chart.getBoundingClientRect();
+      const desiredRight = chartRect.left - 10;
+      const marginRight = Math.max(0, headerRect.right - desiredRight);
+      const adjusted = marginRight + 10;
+      setSloganMarginRight((prev) => (prev === adjusted ? prev : adjusted));
+    };
+    update();
+    const chartObserver = new ResizeObserver(update);
+    if (chartWrapRef.current) {
+      chartObserver.observe(chartWrapRef.current);
+    }
+    window.addEventListener('resize', update);
+    return () => {
+      chartObserver.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
   const investments = useMemo(
     () => (vavityData?.investments || []).filter((entry: any) => (entry?.asset || 'bitcoin') === 'ethereum'),
     [vavityData]
@@ -164,7 +243,7 @@ const VavityEthereum: React.FC = () => {
   useEffect(() => {
     const prevIds = prevInvestmentIdsRef.current;
     const nextIds = investmentIds;
-    const newIds = nextIds.filter((id) => !prevIds.includes(id));
+    const newIds = nextIds.filter((id: string) => !prevIds.includes(id));
     if (newIds.length) {
       if (showInvestmentsList && investmentsListOpen) {
         setCollapsedInvestments((prev) => Array.from(new Set([...prev, ...newIds])));
@@ -751,23 +830,36 @@ const VavityEthereum: React.FC = () => {
       <div
         className="asset-panel asset-panel--ethereum asset-header-panel asset-section-slide"
         style={{ padding: '5px 14px 14px', marginBottom: '24px' }}
+        ref={headerPanelRef}
       >
         <div className="asset-section-header">
           <div className="asset-header-title">Ethereum</div>
-          <div className="asset-header-slogan">if bear markets never existed</div>
+          <div
+            className="asset-header-slogan"
+            ref={sloganRef}
+            style={sloganMarginRight ? { marginRight: `${sloganMarginRight}px` } : undefined}
+          >
+            if bear markets never existed
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap', overflow: 'visible' }}>
+        <div
+          className="asset-price-chart-row"
+          style={{
+            overflow: 'visible',
+            height:
+              typeof window !== 'undefined' && window.innerWidth > 800 && lockedRowHeight != null
+                ? `${lockedRowHeight}px`
+                : undefined
+          }}
+        >
           <div
             className="asset-price-panel asset-price-panel--ethereum asset-section-slide"
             style={{
-              flex: 1,
-              minWidth: '300px',
               padding: '12px',
               background: 'transparent',
+              alignSelf: 'flex-start',
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
               gap: '8px'
             }}
           >
@@ -844,7 +936,7 @@ const VavityEthereum: React.FC = () => {
                   </button>
                 )}
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
+              <div className="asset-price-button-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {chartRanges.map((range) => {
                   const isActive = chartRangeDays === range.days;
                   return (
@@ -870,52 +962,53 @@ const VavityEthereum: React.FC = () => {
             </div>
           </div>
 
-          <div
-            className="asset-panel asset-panel--ethereum asset-section-slide asset-chart-panel"
-            style={{
-              flex: 1,
-              minWidth: '280px',
-              padding: '12px',
-              position: 'relative'
-            }}
-          >
-            {chartHoverIndex != null && activePoint && (
-              <div style={{ position: 'absolute', top: 8, left: 12, color: '#222', fontSize: '13px', opacity: 0.9 }}>
-                {new Date(activePoint.date).toLocaleDateString('en-US')}
-              </div>
-            )}
-            <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
-              <div
-                className="asset-chart-loader-ring"
-                style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.9)' }}
-              >
-                <div
-                  className="asset-chart-loader-spinner"
-                  style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.9)' }}
-                />
-                <Image
-                  className="asset-chart-loader-icon"
-                  alt="Loading chart"
-                  width={28}
-                  height={28}
-                  src="/images/vavity/SolidMarket-Ebony.png"
-                />
-              </div>
-            </div>
+          <div className="asset-chart-wrap" ref={chartWrapRef} style={{ height: `${chartWrapHeight}px` }}>
             <div
-              className={`asset-chart-fade asset-chart-interactive${
-                chartReady && !forceChartLoader ? ' is-visible' : ''
-              }${chartReady && !forceChartLoader ? '' : ' is-disabled'}`}
-            >
-            <EthereumChart
-              history={chartHistory || []}
-              color="rgba(107, 114, 168, 0.5)"
-                height={200}
-                backgroundColor="rgba(107, 114, 168, 0.17)"
-              onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
-                setChartHoverIndex(idx ?? null);
+              className="asset-panel asset-panel--ethereum asset-section-slide asset-chart-panel"
+              style={{
+                padding: '12px',
+                position: 'relative',
+                height: `${chartPanelHeight}px`
               }}
-            />
+            >
+              {chartHoverIndex != null && activePoint && (
+                <div style={{ position: 'absolute', top: 8, left: 12, color: '#222', fontSize: '13px', opacity: 0.9 }}>
+                  {new Date(activePoint.date).toLocaleDateString('en-US')}
+                </div>
+              )}
+              <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
+                <div
+                  className="asset-chart-loader-ring"
+                  style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.9)' }}
+                >
+                  <div
+                    className="asset-chart-loader-spinner"
+                    style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.9)' }}
+                  />
+                  <Image
+                    className="asset-chart-loader-icon"
+                    alt="Loading chart"
+                    width={28}
+                    height={28}
+                    src="/images/vavity/SolidMarket-Ebony.png"
+                  />
+                </div>
+              </div>
+              <div
+                className={`asset-chart-fade asset-chart-interactive${
+                  chartReady && !forceChartLoader ? ' is-visible' : ''
+                }${chartReady && !forceChartLoader ? '' : ' is-disabled'}`}
+              >
+                <EthereumChart
+                  history={chartHistory || []}
+                  color="rgba(107, 114, 168, 0.5)"
+                  height={chartCanvasHeight}
+                  backgroundColor="rgba(107, 114, 168, 0.17)"
+                  onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
+                    setChartHoverIndex(idx ?? null);
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
