@@ -608,6 +608,13 @@ body {
 	border-radius: 14px;
 }
 
+.asset-chart-panel {
+	width: calc(100% + 20px);
+	height: calc(100% + 20px);
+	box-sizing: border-box;
+	align-self: stretch;
+}
+
 .asset-header-panel {
 	box-shadow: 0 0 24px rgba(0, 0, 0, 0.08);
 }
@@ -617,6 +624,8 @@ body {
 	box-shadow: -5px 0 14px rgba(248, 141, 0, 0.26), 0 7px 10px rgba(248, 141, 0, 0.18);
 	border: 1px solid rgba(248, 141, 0, 0.3);
 }
+
+
 
 .asset-profit-block {
 	margin-bottom: 40px;
@@ -632,6 +641,8 @@ body {
 	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 7px 10px rgba(107, 114, 168, 0.2);
 	border: 1px solid rgba(107, 114, 168, 0.3);
 }
+
+
 
 .asset-header-panel.asset-panel--ethereum {
 	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);

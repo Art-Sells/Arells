@@ -53,8 +53,7 @@ const BitcoinChart: React.FC<Props> = ({
           label: 'Price',
           data: dataPoints,
           borderColor: color,
-          backgroundColor: 'rgba(248, 141, 0, 0.1)',
-          fill: true,
+          fill: false,
           pointRadius: 0,
           pointHoverRadius: 0, // disable Chart.js hover dot; we render our own
           pointHoverBorderWidth: 0,
@@ -62,6 +61,7 @@ const BitcoinChart: React.FC<Props> = ({
           pointHoverBackgroundColor: backgroundColor,
           pointHitRadius: 20,
           tension: 0.25,
+          borderWidth: 6.5,
           borderCapStyle: 'round' as const,
           borderJoinStyle: 'round' as const,
         },
@@ -137,11 +137,6 @@ const BitcoinChart: React.FC<Props> = ({
     return {
       responsive: true,
       maintainAspectRatio: false,
-      resizeDelay: 0,
-      animation: { duration: 1000, easing: 'linear' as const },
-      transitions: {
-        resize: { animation: { duration: 1000, easing: 'linear' as const } },
-      },
       interaction: { mode: 'nearest' as const, intersect: false },
       plugins: {
         legend: { display: false },
@@ -152,10 +147,12 @@ const BitcoinChart: React.FC<Props> = ({
           type: 'time' as const,
           time: { unit: 'day' as const },
           grid: { display: false, drawBorder: false },
+          border: { display: false },
           ticks: { display: false }
       },
       y: {
           grid: { display: false, drawBorder: false },
+          border: { display: false },
           ticks: { display: false }
       }
     },

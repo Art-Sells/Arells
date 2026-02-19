@@ -48,8 +48,7 @@ const EthereumChart: React.FC<Props> = ({
           label: 'Price',
           data: dataPoints,
           borderColor: color,
-          backgroundColor: 'rgba(107, 114, 168, 0.12)',
-          fill: true,
+          fill: false,
           pointRadius: 0,
           pointHoverRadius: 0, // disable Chart.js hover dot; we render our own
           pointHoverBorderWidth: 0,
@@ -57,6 +56,7 @@ const EthereumChart: React.FC<Props> = ({
           pointHoverBackgroundColor: backgroundColor,
           pointHitRadius: 20,
           tension: 0.25,
+          borderWidth: 6.5,
         },
       ],
     };
@@ -124,10 +124,12 @@ const EthereumChart: React.FC<Props> = ({
           type: 'time' as const,
           time: { unit: 'day' as const },
           grid: { display: false, drawBorder: false },
+          border: { display: false },
           ticks: { display: false }
       },
       y: {
           grid: { display: false, drawBorder: false },
+          border: { display: false },
           ticks: { display: false }
       }
     },

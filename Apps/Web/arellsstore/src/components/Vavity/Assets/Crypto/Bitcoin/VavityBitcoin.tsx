@@ -750,7 +750,7 @@ const VavityBitcoin: React.FC = () => {
           <div className="asset-header-title">Bitcoin</div>
           <div className="asset-header-slogan">if bear markets never existed</div>
         </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'stretch', flexWrap: 'wrap', overflow: 'visible' }}>
           <div
             className="asset-price-panel asset-price-panel--bitcoin asset-section-slide"
             style={{
@@ -865,7 +865,7 @@ const VavityBitcoin: React.FC = () => {
           </div>
 
           <div
-            className="asset-panel asset-panel--bitcoin asset-section-slide"
+            className="asset-panel asset-panel--bitcoin asset-section-slide asset-chart-panel"
             style={{
               flex: 1,
               minWidth: '280px',
@@ -903,9 +903,9 @@ const VavityBitcoin: React.FC = () => {
             >
               <BitcoinChart
                 history={chartHistory || []}
-                color="rgba(248, 141, 0, 0.9)"
+                color="rgba(248, 141, 0, 0.5)"
                 height={200}
-                backgroundColor="rgba(248, 141, 0, 0.06)"
+                backgroundColor="rgba(248, 141, 0, 0.16)"
                 animateOn={chartReady && !forceChartLoader}
                 animateDelayMs={1000}
                 onPointHover={(point, idx) => {
