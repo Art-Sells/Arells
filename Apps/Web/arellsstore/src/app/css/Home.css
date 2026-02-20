@@ -174,6 +174,7 @@ body {
 }
 
 .asset-price-panel {
+	height: 243px;
 	position: relative;
 	align-items: flex-start;
 	text-align: left;
@@ -315,6 +316,28 @@ body {
 	font-size: 12px;
 }
 
+.asset-metric-value {
+	font-weight: 700;
+	color: #000;
+	font-size: 12px;
+}
+
+.asset-metric-inline-value {
+	font-weight: 700;
+	color: #000;
+	font-size: 12px;
+}
+
+.asset-metric-row {
+	display: flex;
+	align-items: baseline;
+	gap: 4px;
+}
+
+.asset-metric-inline-row {
+	display: inline;
+}
+
 .asset-home-font-title {
 	font-weight: 800;
 	color: #000000;
@@ -323,11 +346,38 @@ body {
 
 .asset-home-font-label--bitcoin {
 	font-size: 12px;
+	font-weight: 800;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+}
+
+.asset-metric-title--bitcoin {
+	font-size: 12px;
+	font-weight: 800;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+}
+
+.asset-metric-inline-title--bitcoin {
+	font-size: 12px;
+	font-weight: 800;
 	color: rgb(105, 105, 105);
 	opacity: 1;
 }
 
 .asset-home-font-label--ethereum {
+	font-size: 12px;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+}
+
+.asset-metric-title--ethereum {
+	font-size: 12px;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+}
+
+.asset-metric-inline-title--ethereum {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
@@ -592,13 +642,23 @@ body {
 	box-shadow: inset 0 6px 12px rgba(107, 114, 168, 0.3);
 }
 
-.asset-home-font-label--bitcoin {
+.asset-home-font-label--bitcoin,
+.asset-metric-title--bitcoin,
+.asset-metric-inline-title--bitcoin {
 	margin-top: 0px;
 	color: rgb(172, 97, 0);
+	opacity: .6;
+	font-size: 12px;
+	font-weight: 200;
 }
-.asset-home-font-label--ethereum{
+.asset-home-font-label--ethereum,
+.asset-metric-title--ethereum,
+.asset-metric-inline-title--ethereum {
 	margin-top: 0px;
 	color: rgb(82, 87, 131);
+	opacity: .8;
+	font-size: 12px;
+	font-weight: 200;
 
 }
 .asset-delete-button {
@@ -627,7 +687,7 @@ body {
 }
 
 .asset-price-panel {
-	width: 250px;
+	width: 210px;
 }
 
 .asset-chart-wrap {
@@ -638,11 +698,28 @@ body {
 }
 
 .asset-chart-panel {
-	width: calc(100% + 54px);
+	width: calc(100% + 47px);
 	box-sizing: border-box;
 	align-self: stretch;
 	margin-left: -18px;
 	margin-top: -80px;
+}
+
+.asset-chart-date-badge {
+	position: absolute;
+	top: 33px;
+	right: 35px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: 400;
+	color: #000;
+	background: transparent;
+	pointer-events: none;
+	z-index: 3;
 }
 
 @media (min-width: 801px) {

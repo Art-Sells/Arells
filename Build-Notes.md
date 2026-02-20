@@ -2,15 +2,16 @@
 
 ## Arells v1
 
-*fix line quickly loading on page mount and lagging behind page resizes (possibly make entire section solor below line and increase line width to resolve jacked edges)s*
-*test for long numbers and ensure they are (or not) cut off*
-*test min-width when opening inspect*
-*add loading circle on profits when buttons change and fade in of the entire page from opacity 0 to opacity 1*
-*do not add padding to show investments list or form due to pop-up height-up issue or form, add padding/margins only to their buttons outside*
-*add submitting icon and edit loading circle as well as submitted icon*
-*test multiple investment deletions...*
-*the 24hr buttons that show should not be clickable*
-*loading circle inside the line chart the same width as the line and the circle (including the icon inside) 5 px larger*
+- *fix line quickly loading on page mount and lagging behind page resizes (possibly make entire section solor below line and increase line width to resolve jacked edges)*
+- *test for long numbers and ensure they are (or not) cut off*
+- *test min-width when opening inspect*
+- *add loading circle on profits when buttons change and fade in of the entire page from opacity 0 to opacity 1*
+- *do not add padding to show investments list or form due to pop-up height-up issue or form, add padding/margins only to their buttons outside*
+- *add submitting icon and edit loading circle as well as submitted icon*
+- *test multiple investment deletions...*
+- *the 24hr buttons that show should not be clickable*
+- *loading circle inside the line chart the same width as the line and the circle (including the icon inside) 5 px larger*
+- *add decimals to the end of the marketcap*
 
 ### Investment list
 - - (delete) *test this*

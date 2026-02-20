@@ -65,11 +65,13 @@ const VavityBitcoin: React.FC = () => {
   const [lockedRowHeight, setLockedRowHeight] = useState<number | null>(null);
   const [lockedChartHeight, setLockedChartHeight] = useState<number | null>(null);
   const [sloganMarginRight, setSloganMarginRight] = useState<number>(0);
-  const chartPadding = 90;
-  const chartProtrusion = 120;
+  const chartTopPadding = 0;
+  const chartBottomPadding = 0;
+  const chartProtrusion = 215;
+  const chartExtraPanelHeight = 0;
   const chartHeightAdjusted = Math.max(120, chartHeight - 0);
-  const chartPanelHeight = chartHeightAdjusted + chartPadding + chartProtrusion;
-  const chartWrapHeight = chartHeightAdjusted + chartPadding;
+  const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartExtraPanelHeight + chartTopPadding + chartBottomPadding;
+  const chartWrapHeight = chartHeightAdjusted + chartExtraPanelHeight + chartTopPadding + chartBottomPadding;
   const chartCanvasHeight = chartHeightAdjusted + chartProtrusion;
   const forceChartLoader = false;
   const scrollToBottom = useCallback((delayMs = 500) => {
@@ -849,12 +851,12 @@ const VavityBitcoin: React.FC = () => {
           <div
             className="asset-price-panel asset-price-panel--bitcoin asset-section-slide"
             style={{
-              padding: '12px',
+              padding: '25px',
               background: 'transparent',
               alignSelf: 'flex-start',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px'
+              gap: '10px'
             }}
           >
             <Link className="asset-home-button asset-home-button--section asset-home-button--bitcoin" href="/">
@@ -866,11 +868,13 @@ const VavityBitcoin: React.FC = () => {
                 src="/images/assets/crypto/Bitcoin.png"
               />
             </Link>
-            <div className="asset-home-font-label--bitcoin">
-              Price: <span className="asset-metric-number">${formatCurrency(activePoint?.price ?? vapa ?? 0)}</span>
+            <div className="asset-metric-row">
+              <span className="asset-metric-title--bitcoin">Price:</span>
+              <span className="asset-metric-value">${formatCurrency(activePoint?.price ?? vapa ?? 0)}</span>
             </div>
-            <div className="asset-home-font-label--bitcoin">
-              Market Cap: <span className="asset-metric-number">${formatMarketCap(activeMarketCap)}</span>
+            <div className="asset-metric-row">
+              <span className="asset-metric-title--bitcoin">Market Cap:</span>
+              <span className="asset-metric-value">${formatMarketCap(activeMarketCap)}</span>
             </div>
             <div className="asset-metric-number">{formatPercent(percentageIncrease)}</div>
             <div
@@ -960,14 +964,15 @@ const VavityBitcoin: React.FC = () => {
           <div
               className="asset-panel asset-panel--bitcoin asset-section-slide asset-chart-panel"
             style={{
-              padding: '12px',
+              padding: '0px',
                 position: 'relative',
                 height: `${chartPanelHeight}px`
             }}
           >
             {chartHoverIndex != null && activePoint && (
-                <div style={{ position: 'absolute', top: 8, left: 12, color: '#222', fontSize: '13px', opacity: 0.9 }}>
-                {new Date(activePoint.date).toLocaleDateString('en-US')}
+                <div className="asset-chart-date-badge asset-chart-date-badge--bitcoin">
+                <span className="asset-metric-inline-title--bitcoin">Date:</span>{' '}
+                <span className="asset-metric-inline-value">{new Date(activePoint.date).toLocaleDateString('en-US')}</span>
               </div>
             )}
               <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
@@ -996,8 +1001,15 @@ const VavityBitcoin: React.FC = () => {
             <BitcoinChart
               history={chartHistory || []}
                   color="rgba(248, 141, 0, 0.5)"
+                  activeColor="rgba(248, 141, 0, 0.6)"
+                  markerColor="rgba(248, 141, 0, 1)"
+                  gridColor="rgba(248, 141, 0, 0.1)"
+                  gridSpacing={30}
                   height={chartCanvasHeight}
+                  interactiveHeight={chartPanelHeight}
+                  canvasOffsetTop={chartTopPadding}
                   backgroundColor="rgba(248, 141, 0, 0.16)"
+                  markerShadow="-5px 0 14px rgba(248, 141, 0, 0.26), 0 7px 10px rgba(248, 141, 0, 0.18)"
                   animateOn={chartReady && !forceChartLoader}
                   animateDelayMs={1000}
               onPointHover={(point, idx) => {
@@ -1051,18 +1063,20 @@ const VavityBitcoin: React.FC = () => {
               style={{ maxHeight: summaryMaxHeight, transition: summaryTransition }}
             >
               <div ref={summaryContentRef} style={{ paddingBottom: '20px' }}>
-              <div className="asset-home-font-label--bitcoin" style={{ marginBottom: '8px' }}>
-                Purchased Value: <span className="asset-metric-number">${formatCurrency(totals.acVatop || 0)}</span>
+              <div className="asset-metric-row" style={{ marginBottom: '8px' }}>
+                <span className="asset-metric-title--bitcoin">Purchased Value:</span>
+                <span className="asset-metric-value">${formatCurrency(totals.acVatop || 0)}</span>
             </div>
-              <div className="asset-home-font-label--bitcoin" style={{ marginBottom: '8px' }}>
-                Current Value: <span className="asset-metric-number">${formatCurrency(totals.acVact || 0)}</span>
+              <div className="asset-metric-row" style={{ marginBottom: '8px' }}>
+                <span className="asset-metric-title--bitcoin">Current Value:</span>
+                <span className="asset-metric-value">${formatCurrency(totals.acVact || 0)}</span>
             </div>
               <div
                 className="asset-panel asset-panel--bitcoin asset-profit-block asset-slide-in asset-section-slide"
                 style={{ padding: '12px 12px 30px', marginBottom: '10px', width: '60%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}
               >
                 <div className="asset-profit-summary asset-profit-summary--bitcoin">
-                  <div className="asset-home-font-label--bitcoin">
+                  <div className="asset-metric-inline-row">
                 {(() => {
                       const formatRangeLabel = (days: number | null) => {
                         if (days == null) return 'All-time';
@@ -1074,7 +1088,7 @@ const VavityBitcoin: React.FC = () => {
                         return `${days} days`;
                       };
                   if (selectedRangeDays && rangeLoading) {
-                        return <span className="asset-metric-number">...</span>;
+                        return <span className="asset-metric-inline-value">...</span>;
                   }
                   if (selectedRangeDays && rangeHistoricalPrice != null) {
                     const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
@@ -1085,8 +1099,10 @@ const VavityBitcoin: React.FC = () => {
                         const prefix = isProfit ? '+$' : '$';
                         return (
                           <>
-                            {formatRangeLabel(selectedRangeDays)} {label}:{' '}
-                            <span className="asset-metric-number">
+                            <span className="asset-metric-inline-title--bitcoin">
+                              {formatRangeLabel(selectedRangeDays)} {label}:
+                            </span>{' '}
+                            <span className="asset-metric-inline-value">
                               {prefix}
                               {formattedValue}
                             </span>
@@ -1099,8 +1115,10 @@ const VavityBitcoin: React.FC = () => {
                       const prefix = isProfit ? '+$' : '$';
                       return (
                         <>
-                          {formatRangeLabel(null)} {label}:{' '}
-                          <span className="asset-metric-number">
+                          <span className="asset-metric-inline-title--bitcoin">
+                            {formatRangeLabel(null)} {label}:
+                          </span>{' '}
+                          <span className="asset-metric-inline-value">
                             {prefix}
                             {formatMoneyFixed(Math.abs(defaultProfit))}
                           </span>

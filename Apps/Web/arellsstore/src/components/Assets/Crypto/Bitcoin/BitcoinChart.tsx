@@ -22,9 +22,16 @@ type PricePoint = { x: Date; y: number };
 type Props = {
   history?: { date: string; price: number }[];
   color?: string;
+  activeColor?: string;
+  markerColor?: string;
+  gridColor?: string;
+  gridSpacing?: number;
   height?: number;
+  interactiveHeight?: number;
+  canvasOffsetTop?: number;
   onPointHover?: (point: PricePoint | null, index: number | null) => void;
   backgroundColor?: string;
+  markerShadow?: string;
   animateOn?: boolean;
   animateDelayMs?: number;
 };
@@ -32,19 +39,44 @@ type Props = {
 const BitcoinChart: React.FC<Props> = ({
   history = [],
   color = 'rgba(248, 141, 0, 0.9)',
-  height = 240,
+  activeColor = 'rgba(248, 141, 0, 1)',
+  markerColor = 'rgba(248, 141, 0, 1)',
+  gridColor = 'rgba(248, 141, 0, 0.2)',
+  gridSpacing = 20,
+  height = 300,
+  interactiveHeight,
+  canvasOffsetTop = 0,
   onPointHover,
   backgroundColor = '#161616',
+  markerShadow = '-5px 0 14px rgba(248, 141, 0, 0.26), 0 7px 10px rgba(248, 141, 0, 0.18)',
   animateOn = true,
   animateDelayMs = 0,
 }) => {
   const chartRef = useRef<ChartJS<'line', PricePoint[], unknown> | null>(null);
   const markerRef = useRef<HTMLDivElement | null>(null);
-  const [hoverPoint, setHoverPoint] = useState<PricePoint | null>(null);
+  const [isInteracting, setIsInteracting] = useState(false);
 
   const dataPoints = useMemo<PricePoint[]>(() => {
     return (history || []).map((item) => ({ x: new Date(item.date), y: item.price }));
   }, [history]);
+
+  const yRange = useMemo(() => {
+    if (!dataPoints.length) return null;
+    const values = dataPoints.map((p) => p.y);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const baseRange = Math.max(max - min, Math.max(Math.abs(max), 1) * 0.05);
+    // Expand Y range to visually shorten the line without shrinking chart canvas height.
+    const pad = baseRange * 0.3;
+    return { min: min - pad, max: max + pad };
+  }, [dataPoints]);
+
+  const xRange = useMemo(() => {
+    if (!dataPoints.length) return null;
+    const times = dataPoints.map((p) => p.x.getTime()).filter((t) => Number.isFinite(t));
+    if (!times.length) return null;
+    return { min: Math.min(...times), max: Math.max(...times) };
+  }, [dataPoints]);
 
   const chartData = useMemo(() => {
     return {
@@ -52,7 +84,7 @@ const BitcoinChart: React.FC<Props> = ({
         {
           label: 'Price',
           data: dataPoints,
-          borderColor: color,
+          borderColor: isInteracting ? activeColor : color,
           fill: false,
           pointRadius: 0,
           pointHoverRadius: 0, // disable Chart.js hover dot; we render our own
@@ -62,28 +94,13 @@ const BitcoinChart: React.FC<Props> = ({
           pointHitRadius: 20,
           tension: 0.25,
           borderWidth: 6.5,
-          borderCapStyle: 'round' as const,
-          borderJoinStyle: 'round' as const,
+          borderCapStyle: 'butt' as const,
+          borderJoinStyle: 'miter' as const,
+          clip: 12,
         },
-        ...(hoverPoint
-          ? [
-              {
-                label: 'hover',
-                data: [hoverPoint],
-                borderColor: color,
-                backgroundColor: backgroundColor,
-                pointRadius: 7.5,
-          pointHoverRadius: 0, // disable Chart.js hover dot; we render our own
-          pointHoverBorderWidth: 0,
-          pointHoverBorderColor: color,
-          pointHoverBackgroundColor: backgroundColor,
-                showLine: false,
-              },
-            ]
-          : []),
       ],
     };
-  }, [dataPoints, color, backgroundColor, hoverPoint]);
+  }, [dataPoints, color, activeColor, backgroundColor, isInteracting]);
 
   const resolvePointAtPixel = useCallback(
     (pixelX: number | null) => {
@@ -137,6 +154,7 @@ const BitcoinChart: React.FC<Props> = ({
     return {
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: 0, autoPadding: false },
       animation: { duration: 1000, easing: 'easeOutQuart' as const },
       interaction: { mode: 'nearest' as const, intersect: false },
       plugins: {
@@ -145,13 +163,21 @@ const BitcoinChart: React.FC<Props> = ({
     },
     scales: {
       x: {
+          display: false,
           type: 'time' as const,
+          min: xRange?.min,
+          max: xRange?.max,
+          bounds: 'data' as const,
+          offset: false,
           time: { unit: 'day' as const },
           grid: { display: false, drawBorder: false },
           border: { display: false },
           ticks: { display: false }
       },
       y: {
+          display: false,
+          min: yRange?.min,
+          max: yRange?.max,
           grid: { display: false, drawBorder: false },
           border: { display: false },
           ticks: { display: false }
@@ -159,7 +185,7 @@ const BitcoinChart: React.FC<Props> = ({
     },
       onHover: () => {},
     };
-  }, []);
+  }, [xRange, yRange]);
 
   // Keep ref in sync for Line and allow animation on data updates
   useEffect(() => {
@@ -209,15 +235,19 @@ const BitcoinChart: React.FC<Props> = ({
       if (!marker) return;
       if (!pixel || !point) {
         marker.style.display = 'none';
+        setIsInteracting(false);
         onPointHover?.(null, null);
         return;
       }
-      marker.style.left = `${pixel.x - 13.5}px`;
-      marker.style.top = `${pixel.y - 13.5}px`;
+      setIsInteracting(true);
+      marker.style.left = `${pixel.x - 11.5}px`;
+      marker.style.top = `${canvasOffsetTop + pixel.y - 11.5}px`;
       marker.style.display = 'block';
+      marker.style.background = markerColor;
+      marker.style.boxShadow = markerShadow;
       onPointHover?.(point, idx);
     },
-    [onPointHover]
+    [onPointHover, markerColor, markerShadow, canvasOffsetTop]
   );
 
   const handlePointer = useCallback(
@@ -241,7 +271,7 @@ const BitcoinChart: React.FC<Props> = ({
 
   return (
     <div
-      style={{ height, position: 'relative' }}
+      style={{ height: interactiveHeight ?? height, position: 'relative' }}
       onMouseMove={(e) => {
         handlePointer(e.clientX, e.clientY, e.currentTarget as HTMLDivElement);
       }}
@@ -253,11 +283,33 @@ const BitcoinChart: React.FC<Props> = ({
       onMouseLeave={() => {
         updateMarker(null, null, null);
       }}
+      onMouseDown={(e) => {
+        handlePointer(e.clientX, e.clientY, e.currentTarget as HTMLDivElement);
+      }}
+      onClick={(e) => {
+        handlePointer(e.clientX, e.clientY, e.currentTarget as HTMLDivElement);
+      }}
       onTouchEnd={() => {
         updateMarker(null, null, null);
       }}
+      onTouchStart={(e) => {
+        const touch = e.touches?.[0];
+        if (!touch) return;
+        handlePointer(touch.clientX, touch.clientY, e.currentTarget as HTMLDivElement);
+      }}
     >
-      <Line ref={chartRef as any} data={chartData} options={options} />
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          zIndex: 0,
+          backgroundImage: `repeating-linear-gradient(to right, ${gridColor} 0px, ${gridColor} 1px, transparent 1px, transparent ${gridSpacing}px), repeating-linear-gradient(to bottom, ${gridColor} 0px, ${gridColor} 1px, transparent 1px, transparent ${gridSpacing}px)`,
+        }}
+      />
+      <div style={{ height, position: 'relative', marginTop: canvasOffsetTop }}>
+        <Line ref={chartRef as any} data={chartData} options={options} />
+      </div>
       <div
         ref={markerRef}
         style={{
@@ -265,10 +317,13 @@ const BitcoinChart: React.FC<Props> = ({
           width: 23,
           height: 23,
           borderRadius: '50%',
-          border: `2px solid ${color}`,
-          background: backgroundColor,
+          border: 'none',
+          background: markerColor,
+          boxShadow: markerShadow,
           pointerEvents: 'none',
           display: 'none',
+          zIndex: 2,
+          transition: 'background 1s ease, box-shadow 1s ease',
         }}
       />
     </div>

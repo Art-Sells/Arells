@@ -66,11 +66,12 @@ const VavityEthereum: React.FC = () => {
   const [lockedRowHeight, setLockedRowHeight] = useState<number | null>(null);
   const [lockedChartHeight, setLockedChartHeight] = useState<number | null>(null);
   const [sloganMarginRight, setSloganMarginRight] = useState<number>(0);
-  const chartPadding = 24;
+  const chartTopPadding = 24;
+  const chartBottomPadding = 0;
   const chartProtrusion = 120;
   const chartHeightAdjusted = Math.max(120, chartHeight - 0);
-  const chartPanelHeight = chartHeightAdjusted + chartPadding + chartProtrusion;
-  const chartWrapHeight = chartHeightAdjusted + chartPadding;
+  const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartTopPadding + chartBottomPadding;
+  const chartWrapHeight = chartHeightAdjusted + chartTopPadding + chartBottomPadding;
   const chartCanvasHeight = chartHeightAdjusted + chartProtrusion;
   const forceChartLoader = false;
   const scrollToBottom = useCallback((delayMs = 500) => {
@@ -855,7 +856,7 @@ const VavityEthereum: React.FC = () => {
           <div
             className="asset-price-panel asset-price-panel--ethereum asset-section-slide"
             style={{
-              padding: '12px',
+              padding: '15px',
               background: 'transparent',
               alignSelf: 'flex-start',
               display: 'flex',
@@ -872,11 +873,13 @@ const VavityEthereum: React.FC = () => {
                 src="/images/assets/crypto/Ethereum.svg"
               />
             </Link>
-            <div className="asset-home-font-label--ethereum">
-              Price: <span className="asset-metric-number">${formatCurrency(activePoint?.price ?? vapa ?? 0)}</span>
+            <div className="asset-metric-row">
+              <span className="asset-metric-title--ethereum">Price:</span>
+              <span className="asset-metric-value">${formatCurrency(activePoint?.price ?? vapa ?? 0)}</span>
             </div>
-            <div className="asset-home-font-label--ethereum">
-              Market Cap: <span className="asset-metric-number">${formatMarketCap(activeMarketCap)}</span>
+            <div className="asset-metric-row">
+              <span className="asset-metric-title--ethereum">Market Cap:</span>
+              <span className="asset-metric-value">${formatMarketCap(activeMarketCap)}</span>
             </div>
             <div className="asset-metric-number">{formatPercent(percentageIncrease)}</div>
             <div
@@ -966,14 +969,15 @@ const VavityEthereum: React.FC = () => {
             <div
               className="asset-panel asset-panel--ethereum asset-section-slide asset-chart-panel"
               style={{
-                padding: '12px',
+                padding: '0px',
                 position: 'relative',
                 height: `${chartPanelHeight}px`
               }}
             >
               {chartHoverIndex != null && activePoint && (
-                <div style={{ position: 'absolute', top: 8, left: 12, color: '#222', fontSize: '13px', opacity: 0.9 }}>
-                  {new Date(activePoint.date).toLocaleDateString('en-US')}
+                <div className="asset-chart-date-badge asset-chart-date-badge--ethereum">
+                  <span className="asset-metric-inline-title--ethereum">Date:</span>{' '}
+                  <span className="asset-metric-inline-value">{new Date(activePoint.date).toLocaleDateString('en-US')}</span>
                 </div>
               )}
               <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
@@ -1002,8 +1006,15 @@ const VavityEthereum: React.FC = () => {
                 <EthereumChart
                   history={chartHistory || []}
                   color="rgba(107, 114, 168, 0.5)"
+                  activeColor="rgba(107, 114, 168, 0.6)"
+                  markerColor="rgba(107, 114, 168, 1)"
+                  gridColor="rgba(107, 114, 168, 0.1)"
+                  gridSpacing={30}
                   height={chartCanvasHeight}
+                  interactiveHeight={chartPanelHeight}
+                  canvasOffsetTop={chartTopPadding}
                   backgroundColor="rgba(107, 114, 168, 0.17)"
+                  markerShadow="-8px 0 14px rgba(107, 114, 168, 0.28), 0 7px 10px rgba(107, 114, 168, 0.2)"
                   onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
                     setChartHoverIndex(idx ?? null);
                   }}
@@ -1055,18 +1066,20 @@ const VavityEthereum: React.FC = () => {
               style={{ maxHeight: summaryMaxHeight, transition: summaryTransition }}
             >
               <div ref={summaryContentRef} style={{ paddingBottom: '20px' }}>
-              <div className="asset-home-font-label--ethereum" style={{ marginBottom: '8px' }}>
-                Purchased Value: <span className="asset-metric-number">${formatCurrency(totals.acVatop || 0)}</span>
+              <div className="asset-metric-row" style={{ marginBottom: '8px' }}>
+                <span className="asset-metric-title--ethereum">Purchased Value:</span>
+                <span className="asset-metric-value">${formatCurrency(totals.acVatop || 0)}</span>
             </div>
-              <div className="asset-home-font-label--ethereum" style={{ marginBottom: '8px' }}>
-                Current Value: <span className="asset-metric-number">${formatCurrency(totals.acVact || 0)}</span>
+              <div className="asset-metric-row" style={{ marginBottom: '8px' }}>
+                <span className="asset-metric-title--ethereum">Current Value:</span>
+                <span className="asset-metric-value">${formatCurrency(totals.acVact || 0)}</span>
             </div>
               <div
                 className="asset-panel asset-panel--ethereum asset-profit-block asset-slide-in asset-section-slide"
                 style={{ padding: '12px 12px 30px', marginBottom: '10px', width: '60%', maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}
               >
                 <div className="asset-profit-summary asset-profit-summary--ethereum">
-                  <div className="asset-home-font-label--ethereum">
+                  <div className="asset-metric-inline-row">
                 {(() => {
                       const formatRangeLabel = (days: number | null) => {
                         if (days == null) return 'All-time';
@@ -1078,7 +1091,7 @@ const VavityEthereum: React.FC = () => {
                         return `${days} days`;
                       };
                   if (selectedRangeDays && rangeLoading) {
-                        return <span className="asset-metric-number">...</span>;
+                        return <span className="asset-metric-inline-value">...</span>;
                   }
                   if (selectedRangeDays && rangeHistoricalPrice != null) {
                     const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
@@ -1089,8 +1102,10 @@ const VavityEthereum: React.FC = () => {
                         const prefix = isProfit ? '+$' : '$';
                         return (
                           <>
-                            {formatRangeLabel(selectedRangeDays)} {label}:{' '}
-                            <span className="asset-metric-number">
+                            <span className="asset-metric-inline-title--ethereum">
+                              {formatRangeLabel(selectedRangeDays)} {label}:
+                            </span>{' '}
+                            <span className="asset-metric-inline-value">
                               {prefix}
                               {formattedValue}
                             </span>
@@ -1103,8 +1118,10 @@ const VavityEthereum: React.FC = () => {
                       const prefix = isProfit ? '+$' : '$';
                       return (
                         <>
-                          {formatRangeLabel(null)} {label}:{' '}
-                          <span className="asset-metric-number">
+                          <span className="asset-metric-inline-title--ethereum">
+                            {formatRangeLabel(null)} {label}:
+                          </span>{' '}
+                          <span className="asset-metric-inline-value">
                             {prefix}
                             {formatMoneyFixed(Math.abs(defaultProfit))}
                           </span>
