@@ -262,7 +262,8 @@ const EthereumChart: React.FC<Props> = ({
       <div
         style={{
           position: 'absolute',
-          inset: 0,
+          inset: 1,
+          borderRadius: 14,
           pointerEvents: 'none',
           zIndex: 0,
           backgroundImage: `repeating-linear-gradient(to right, ${gridColor} 0px, ${gridColor} 1px, transparent 1px, transparent ${gridSpacing}px), repeating-linear-gradient(to bottom, ${gridColor} 0px, ${gridColor} 1px, transparent 1px, transparent ${gridSpacing}px)`,

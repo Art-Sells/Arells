@@ -181,7 +181,24 @@ body {
 }
 
 .asset-price-button-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
 	justify-content: flex-start;
+}
+
+.asset-market-controls {
+	padding: 20px;
+	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.asset-market-controls-header {
+	margin-bottom: 8px;
+	width: 100%;
 }
 
 .asset-home-button--section {
@@ -248,13 +265,13 @@ body {
 
 .asset-profit-summary--bitcoin {
 	background: rgba(248, 141, 0, 0.06);
-	box-shadow: -5px 0 14px rgba(248, 141, 0, 0.26), 0 7px 10px rgba(248, 141, 0, 0.18);
+	box-shadow: -5px 0 14px rgba(248, 141, 0, 0.26), 0 2px 10px rgba(248, 141, 0, 0.18);
 	border: 1px solid rgba(248, 141, 0, 0.3);
 }
 
 .asset-profit-summary--ethereum {
 	background: rgba(107, 114, 168, 0.07);
-	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 7px 10px rgba(107, 114, 168, 0.2);
+	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);
 	border: 1px solid rgba(107, 114, 168, 0.3);
 }
 
@@ -365,6 +382,53 @@ body {
 	opacity: 1;
 }
 
+.asset-metric-symbol--bitcoin {
+	font-size: 12px;
+	font-weight: 800;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+	margin-right: -2px;
+}
+
+.asset-metric-percent-symbol--bitcoin {
+	margin-left: 0px;
+}
+
+.asset-metric-trend-icon {
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	background-color: currentColor;
+	-webkit-mask-image: url('/images/up-arrow-ebony.png');
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	-webkit-mask-size: contain;
+	mask-image: url('/images/up-arrow-ebony.png');
+	mask-repeat: no-repeat;
+	mask-position: center;
+	mask-size: contain;
+	transform: translateY(1px);
+	margin-right: -1px;
+}
+
+.asset-metric-trend-icon--bitcoin {
+	color: rgb(172, 97, 0);
+	opacity: .9;
+}
+
+.asset-metric-trend-icon--ethereum {
+	color: rgb(82, 87, 131);
+	opacity: 1;
+}
+
+.asset-metric-inline-symbol--bitcoin {
+	font-size: 12px;
+	font-weight: 800;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+	margin-left: -5px;
+}
+
 .asset-home-font-label--ethereum {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
@@ -383,12 +447,32 @@ body {
 	opacity: 1;
 }
 
+.asset-metric-symbol--ethereum {
+	font-size: 12px;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+	margin-right: -2px;
+}
+
+.asset-metric-percent-symbol--ethereum {
+	margin-left: -1px;
+}
+
+.asset-metric-inline-symbol--ethereum {
+	font-size: 12px;
+	color: rgb(105, 105, 105);
+	opacity: 1;
+}
+
 .asset-action-button {
-	border-radius: 8px;
-	padding: 8px 12px;
 	cursor: pointer;
-	font-weight: 700;
-	border: none;
+	border-radius: 6px;
+	padding: 6px 10px;
+	border: 1px solid #333;
+	background: #202020;
+	color: #f5f5f5;
+	font-size: 12px;
+	font-weight: 400;
 	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
 		transform 0.5s ease;
 }
@@ -398,26 +482,30 @@ body {
 }
 
 .asset-action-button--bitcoin {
-	background: rgba(248, 141, 0, 0.12);
-	color: #111;
-	box-shadow: 0 6px 12px rgba(248, 141, 0, 0.35);
+	border-color: rgba(248, 141, 0, 0.9);
+	background: rgba(248, 141, 0, 0.18);
+	color: rgba(248, 141, 0, 0.95);
 }
 
 .asset-action-button--ethereum {
-	background: rgba(107, 114, 168, 0.16);
-	color: #111;
-	box-shadow: 0 6px 12px rgba(107, 114, 168, 0.35);
+	border-color: rgba(107, 114, 168, 0.9);
+	background: rgba(107, 114, 168, 0.18);
+	color: rgba(107, 114, 168, 0.95);
 }
 
 .asset-range-button {
+	cursor: pointer;
 	border-radius: 6px;
 	padding: 6px 10px;
-	cursor: pointer;
 	border: 1px solid #333;
 	background: #202020;
 	color: #f5f5f5;
 	box-shadow: none;
-	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.1;
+	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
+		transform 0.5s ease;
 }
 
 .asset-range-button:hover {
@@ -425,15 +513,64 @@ body {
 }
 
 .asset-range-button--bitcoin.is-active {
+	border: none;
+	background: rgba(248, 141, 0, 0.18);
+	color: rgba(248, 141, 0, 0.95);
+	opacity: 0.6;
+	pointer-events: none;
+	cursor: default;
+	transform: none;
+}
+
+.asset-range-button--bitcoin:not(.is-active):not(:disabled) {
 	border-color: rgba(248, 141, 0, 0.9);
 	background: rgba(248, 141, 0, 0.18);
 	color: rgba(248, 141, 0, 0.95);
 }
 
+.asset-range-button--bitcoin:disabled {
+	background: rgba(248, 141, 0, 0.18);
+	color: rgba(248, 141, 0, 0.95);
+}
+
 .asset-range-button--ethereum.is-active {
+	border: none;
+	background: rgba(107, 114, 168, 0.18);
+	color: rgba(107, 114, 168, 0.95);
+	opacity: 0.6;
+	pointer-events: none;
+	cursor: default;
+	transform: none;
+}
+
+.asset-range-button--ethereum:not(.is-active):not(:disabled) {
 	border-color: rgba(107, 114, 168, 0.9);
 	background: rgba(107, 114, 168, 0.18);
 	color: rgba(107, 114, 168, 0.95);
+}
+
+.asset-range-button--ethereum:disabled {
+	background: rgba(107, 114, 168, 0.18);
+	color: rgba(107, 114, 168, 0.95);
+}
+
+.asset-range-button:disabled,
+.asset-action-button:disabled,
+.asset-market-button:disabled {
+	border: none;
+	opacity: 0.6;
+	pointer-events: none;
+	cursor: default;
+	transform: none;
+}
+
+/* Asset pages: ensure ALL disabled buttons match the Submit button disabled look */
+.asset-page-content button:disabled {
+	border: none !important;
+	opacity: 0.6 !important;
+	pointer-events: none !important;
+	cursor: default !important;
+	transform: none !important;
 }
 
 .asset-investments-list {
@@ -651,14 +788,28 @@ body {
 	font-size: 12px;
 	font-weight: 200;
 }
+
+.asset-metric-symbol--bitcoin,
+.asset-metric-inline-symbol--bitcoin {
+	margin-top: 0px;
+	color: rgb(172, 97, 0);
+	opacity: .5;
+}
 .asset-home-font-label--ethereum,
 .asset-metric-title--ethereum,
 .asset-metric-inline-title--ethereum {
 	margin-top: 0px;
 	color: rgb(82, 87, 131);
-	opacity: .8;
+	opacity: .7;
 	font-size: 12px;
 	font-weight: 200;
+}
+
+.asset-metric-symbol--ethereum,
+.asset-metric-inline-symbol--ethereum {
+	margin-top: 0px;
+	color: rgb(82, 87, 131);
+	opacity: .8;
 
 }
 .asset-delete-button {
@@ -708,7 +859,7 @@ body {
 .asset-chart-date-badge {
 	position: absolute;
 	top: 33px;
-	right: 35px;
+	right: 23px;
 	padding-left: 15px;
 	padding-right: 15px;
 	padding-top: 10px;
@@ -769,7 +920,7 @@ body {
 
 .asset-panel--bitcoin {
 	background: rgba(248, 141, 0, 0.06);
-	box-shadow: -5px 0 14px rgba(248, 141, 0, 0.26), 0 7px 10px rgba(248, 141, 0, 0.18);
+	box-shadow: 0px 0 0px rgba(248, 141, 0, 0.26), 0 0px 0px rgba(248, 141, 0, 0.18);
 	border: 1px solid rgba(248, 141, 0, 0.3);
 }
 
@@ -781,31 +932,58 @@ body {
 }
 
 .asset-header-panel.asset-panel--bitcoin {
-	box-shadow: -8px 0 14px rgba(248, 141, 0, 0.26), 0 2px 10px rgba(248, 141, 0, 0.18);
+	box-shadow: -8px 0 14px rgba(248, 141, 0, 0.26), 0 -3px 10px rgba(248, 141, 0, 0.18);
 }
 
 .asset-panel--ethereum {
 	background: rgba(107, 114, 168, 0.07);
-	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 7px 10px rgba(107, 114, 168, 0.2);
+	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);
 	border: 1px solid rgba(107, 114, 168, 0.3);
 }
 
 
 
 .asset-header-panel.asset-panel--ethereum {
-	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);
+	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 -3px 10px rgba(107, 114, 168, 0.2);
 }
 
 .asset-price-panel--bitcoin {
-	box-shadow: -8px 0 14px rgba(248, 141, 0, 0.26), 0 2px 10px rgba(248, 141, 0, 0.18);
+	box-shadow: -8px 0 14px rgba(248, 141, 0, 0.06), 0 -3px 10px rgba(248, 141, 0, 0.02);
 	border: 1px solid rgba(248, 141, 0, 0.3);
 	border-radius: 14px;
 }
 
+.asset-market-controls.asset-panel--bitcoin {
+	box-shadow: -5px 0 14px rgba(248, 141, 0, 0.06), 0 2px 10px rgba(248, 141, 0, 0.0);
+}
+
 .asset-price-panel--ethereum {
-	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);
+	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 -3px 10px rgba(107, 114, 168, 0.2);
 	border: 1px solid rgba(107, 114, 168, 0.3);
 	border-radius: 14px;
+}
+
+.asset-market-controls.asset-panel--bitcoin,
+.asset-market-controls.asset-panel--ethereum {
+	background: transparent;
+}
+
+/* Asset pages: remove ALL box-shadows everywhere (keep asset icon shadow which is done via filter: drop-shadow) */
+.asset-page-content,
+.asset-page-content *,
+.asset-page-content *::before,
+.asset-page-content *::after {
+	box-shadow: none !important;
+}
+
+/* Asset pages: remove icon drop-shadows too */
+.asset-page-content .asset-home-icon,
+.asset-page-content .asset-home-icon--bitcoin,
+.asset-page-content .asset-home-icon--ethereum,
+.asset-page-content .asset-header-asset-icon,
+.asset-page-content .asset-header-asset-icon--bitcoin,
+.asset-page-content .asset-header-asset-icon--ethereum {
+	filter: none !important;
 }
 
 .asset-chart-icon {
@@ -964,13 +1142,28 @@ body {
 }
 
 .asset-market-modal-close {
-	padding: 6px 10px;
-	border-radius: 6px;
-	border: 1px solid #444;
-	background: #2a2a2a;
-	color: #fff;
 	cursor: pointer;
-	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease;
+	border-radius: 6px;
+	padding: 6px 10px;
+	border: 1px solid #333;
+	background: #202020;
+	color: #f5f5f5;
+	font-size: 12px;
+	font-weight: 400;
+	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
+		transform 0.5s ease;
+}
+
+.asset-page-content--bitcoin .asset-market-modal-close {
+	border-color: rgba(248, 141, 0, 0.9);
+	background: rgba(248, 141, 0, 0.18);
+	color: rgba(248, 141, 0, 0.95);
+}
+
+.asset-page-content--ethereum .asset-market-modal-close {
+	border-color: rgba(107, 114, 168, 0.9);
+	background: rgba(107, 114, 168, 0.18);
+	color: rgba(107, 114, 168, 0.95);
 }
 
 .asset-market-modal-close:hover {
@@ -978,7 +1171,45 @@ body {
 }
 
 .asset-market-button {
-	transition: transform 0.5s ease;
+	border-radius: 6px;
+	padding: 6px 10px;
+	cursor: pointer;
+	border: 1px solid #333;
+	background: #202020;
+	color: #f5f5f5;
+	box-shadow: none;
+	width: 100%;
+	font-size: 12px;
+	font-weight: 400;
+	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
+		transform 0.5s ease;
+}
+
+.asset-market-button-label {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	line-height: 1.1;
+}
+
+.asset-market-button-icon {
+	width: 16px;
+	height: 16px;
+	object-fit: contain;
+	flex: 0 0 auto;
+}
+
+.asset-market-button--bitcoin {
+	border-color: rgba(248, 141, 0, 0.9);
+	background: rgba(248, 141, 0, 0.18);
+	color: rgba(248, 141, 0, 0.95);
+}
+
+.asset-market-button--ethereum {
+	border-color: rgba(107, 114, 168, 0.9);
+	background: rgba(107, 114, 168, 0.18);
+	color: rgba(107, 114, 168, 0.95);
 }
 
 .asset-market-button:hover {

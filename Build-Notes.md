@@ -11,7 +11,6 @@
 - *test multiple investment deletions...*
 - *the 24hr buttons that show should not be clickable*
 - *loading circle inside the line chart the same width as the line and the circle (including the icon inside) 5 px larger*
-- *add decimals to the end of the marketcap*
 
 ### Investment list
 - - (delete) *test this*
@@ -89,6 +88,7 @@ Users
 - - Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
 
 ## 1 mnth and beyond:
+- Fix long marketcap numbers/etc...
 - Asset/Prices/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust plan based on feedback, Updates (oDAO, FndrsINC, etc, (New?)):
 - - increase CG API limit? (track)
