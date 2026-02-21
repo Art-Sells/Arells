@@ -11,7 +11,7 @@
 - *test multiple investment deletions...*
 - *loading circle main for asset pages jigs when its transitioning colors, why?*
 - *bitcoin icon in assets pages should not be pixelated (should look like homepage bitcoin icon)*
-- *fix 1 wk to 1 week and 1 mnth to 1 month and 3 mnths to 3 months in the words displaus*
+- *hide investments hover up cuts off... fix...*
 
 ### Investment list
 - - (delete) *test this*
