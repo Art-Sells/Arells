@@ -243,6 +243,29 @@ body {
 	animation: assetFadeIn 1.5s ease;
 }
 
+.asset-profit-range-anim {
+	animation: assetFadeIn 1s ease;
+}
+
+.asset-mini-loader {
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 2px solid currentColor;
+	border-top-color: transparent;
+	animation: homeLoaderSpin 0.7s linear infinite;
+	vertical-align: middle;
+	opacity: 1;
+	transition: opacity 1s ease;
+	margin-top: -4px;
+}
+
+.asset-mini-loader.is-fading {
+	opacity: 0;
+}
+
 .asset-market-controls {
 	padding: 20px;
 	margin-top: 10px;
@@ -464,8 +487,11 @@ body {
 
 .asset-home-font-title {
 	font-weight: 800;
-	color: #000000;
-	font-size: 10px;
+	font-size: 25px;
+	margin-top:-5px;
+	padding-bottom:10px;
+	opacity: .3;
+	letter-spacing: -1px;
 }
 
 .asset-home-font-label--bitcoin {

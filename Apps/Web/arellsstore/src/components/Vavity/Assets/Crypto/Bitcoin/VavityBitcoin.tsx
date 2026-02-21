@@ -25,6 +25,11 @@ const VavityBitcoin: React.FC = () => {
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
   const [rangeHistoricalPrice, setRangeHistoricalPrice] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState<boolean>(false);
+  const [profitMiniLoaderVisible, setProfitMiniLoaderVisible] = useState<boolean>(false);
+  const [profitMiniLoaderFading, setProfitMiniLoaderFading] = useState<boolean>(false);
+  const profitMiniLoaderStartRef = useRef<number>(0);
+  const profitMiniLoaderTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const profitMiniLoaderArmedRef = useRef<boolean>(false);
   const [mockEntries, setMockEntries] = useState<any[]>([]);
   const [mockStep, setMockStep] = useState<number>(0);
   const [chartReady, setChartReady] = useState<boolean>(false);
@@ -75,6 +80,62 @@ const VavityBitcoin: React.FC = () => {
       window.scrollTo({ top: maxScroll, behavior: 'smooth' });
     }, delayMs);
   }, []);
+
+  const clearProfitMiniLoaderTimers = useCallback(() => {
+    profitMiniLoaderTimersRef.current.forEach((t) => clearTimeout(t));
+    profitMiniLoaderTimersRef.current = [];
+  }, []);
+
+  useEffect(() => {
+    // reset when leaving range mode
+    if (!selectedRangeDays) {
+      // If we're currently showing the loader (e.g. "All" pulse), let it finish fading out.
+      if (!profitMiniLoaderVisible) {
+        profitMiniLoaderArmedRef.current = false;
+        clearProfitMiniLoaderTimers();
+        setProfitMiniLoaderVisible(false);
+        setProfitMiniLoaderFading(false);
+      }
+      return;
+    }
+
+    if (rangeLoading) {
+      profitMiniLoaderArmedRef.current = true;
+      if (!profitMiniLoaderVisible) {
+        setProfitMiniLoaderVisible(true);
+        setProfitMiniLoaderFading(false);
+        profitMiniLoaderStartRef.current = Date.now();
+      }
+      return;
+    }
+
+    // Only fade out after we've actually been in a loading phase for this range
+    if (!rangeLoading && profitMiniLoaderVisible && profitMiniLoaderArmedRef.current) {
+      const elapsed = Date.now() - profitMiniLoaderStartRef.current;
+      const waitMs = Math.max(0, 1000 - elapsed);
+      clearProfitMiniLoaderTimers();
+      const t1 = setTimeout(() => {
+        setProfitMiniLoaderFading(true);
+        const t2 = setTimeout(() => {
+          setProfitMiniLoaderVisible(false);
+          setProfitMiniLoaderFading(false);
+        }, 1000);
+        profitMiniLoaderTimersRef.current.push(t2);
+      }, waitMs);
+      profitMiniLoaderTimersRef.current.push(t1);
+    }
+  }, [
+    clearProfitMiniLoaderTimers,
+    profitMiniLoaderVisible,
+    rangeLoading,
+    selectedRangeDays,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      clearProfitMiniLoaderTimers();
+    };
+  }, [clearProfitMiniLoaderTimers]);
 
   useEffect(() => {
     if (!sessionId || !fetchVavityAggregator) return;
@@ -976,11 +1037,11 @@ const VavityBitcoin: React.FC = () => {
       >
         <h2
           className="asset-home-font-title"
-          style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '5px', justifyContent: 'center' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '5px', justifyContent: 'center' }}
         >
-          My
+          my
           <Image src="/images/assets/crypto/bitcoin.png" alt="Bitcoin" width={17} height={17} />
-          Portfolio
+          portfolio
         </h2>
         {!hasInvestmentsUI ? (
           <>
@@ -1036,8 +1097,18 @@ const VavityBitcoin: React.FC = () => {
                         if (days === 1) return '24 hours';
                         return `${days} days`;
                       };
-                  if (selectedRangeDays && rangeLoading) {
-                        return <span className="asset-metric-inline-value">...</span>;
+                  if (selectedRangeDays && (rangeLoading || profitMiniLoaderVisible)) {
+                        return (
+                          <span
+                            key={`${selectedRangeDays}-loading`}
+                            className="asset-metric-inline-value asset-profit-range-anim"
+                          >
+                            <span
+                              className={`asset-mini-loader${profitMiniLoaderFading ? ' is-fading' : ''}`}
+                              aria-hidden="true"
+                            />
+                          </span>
+                        );
                   }
                   if (selectedRangeDays && rangeHistoricalPrice != null) {
                     const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
@@ -1046,30 +1117,33 @@ const VavityBitcoin: React.FC = () => {
                         const label = isProfit ? 'Profits' : 'Losses';
                         const formattedValue = formatMoneyFixed(Math.abs(profitValue));
                         return (
-                          <>
+                          <span
+                            key={`${selectedRangeDays}-${label}-${formattedValue}`}
+                            className="asset-profit-range-anim"
+                          >
                             <span className="asset-metric-inline-title--bitcoin">
                               {formatRangeLabel(selectedRangeDays)} {label}:
                             </span>{' '}
                             <span className="asset-metric-inline-symbol--bitcoin">{isProfit ? '+$' : '$'}</span>
-                            <span className="asset-metric-inline-value">
-                              {formattedValue}
-                            </span>
-                          </>
+                            <span className="asset-metric-inline-value">{formattedValue}</span>
+                          </span>
                         );
                   }
                       const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
                       const isProfit = defaultProfit > 0.005;
                       const label = isProfit ? 'Profits' : 'Losses';
+                      const formattedValue = formatMoneyFixed(Math.abs(defaultProfit));
                       return (
-                        <>
+                        <span
+                          key={`all-${label}-${formattedValue}`}
+                          className="asset-profit-range-anim"
+                        >
                           <span className="asset-metric-inline-title--bitcoin">
                             {formatRangeLabel(null)} {label}:
                           </span>{' '}
                           <span className="asset-metric-inline-symbol--bitcoin">{isProfit ? '+$' : '$'}</span>
-                          <span className="asset-metric-inline-value">
-                            {formatMoneyFixed(Math.abs(defaultProfit))}
-                          </span>
-                        </>
+                          <span className="asset-metric-inline-value">{formattedValue}</span>
+                        </span>
                       );
                 })()}
               </div>
@@ -1085,6 +1159,24 @@ const VavityBitcoin: React.FC = () => {
                       disabled={!isEnabled || isActive}
                       onClick={() => {
                         if (isActive) return;
+                        clearProfitMiniLoaderTimers();
+                        profitMiniLoaderArmedRef.current = false;
+                        setProfitMiniLoaderVisible(true);
+                        setProfitMiniLoaderFading(false);
+                        profitMiniLoaderStartRef.current = Date.now();
+
+                        // "All" doesn't fetch range data, so we pulse the loader for 1s then fade out 1s.
+                        if (range.days == null) {
+                          const t1 = setTimeout(() => {
+                            setProfitMiniLoaderFading(true);
+                            const t2 = setTimeout(() => {
+                              setProfitMiniLoaderVisible(false);
+                              setProfitMiniLoaderFading(false);
+                            }, 1000);
+                            profitMiniLoaderTimersRef.current.push(t2);
+                          }, 1000);
+                          profitMiniLoaderTimersRef.current.push(t1);
+                        }
                         setSelectedRangeDays(range.days);
                       }}
                         className={`asset-range-button asset-range-button--bitcoin${isActive ? ' is-active' : ''}`}
