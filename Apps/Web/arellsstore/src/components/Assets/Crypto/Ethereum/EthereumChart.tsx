@@ -63,7 +63,7 @@ const EthereumChart: React.FC<Props> = ({
     const max = Math.max(...values);
     const baseRange = Math.max(max - min, Math.max(Math.abs(max), 1) * 0.05);
     // Expand Y range to visually shorten the line without shrinking chart canvas height.
-    const pad = baseRange * 0.3;
+    const pad = baseRange * 2;
     return { min: min - pad, max: max + pad };
   }, [dataPoints]);
 
@@ -270,8 +270,8 @@ const EthereumChart: React.FC<Props> = ({
         }}
       />
       <div style={{ height, position: 'relative', marginTop: canvasOffsetTop }}>
-        <Line ref={chartRef as any} data={chartData} options={options} />
-      </div>
+      <Line ref={chartRef as any} data={chartData} options={options} />
+        </div>
       <div
         ref={markerRef}
         style={{

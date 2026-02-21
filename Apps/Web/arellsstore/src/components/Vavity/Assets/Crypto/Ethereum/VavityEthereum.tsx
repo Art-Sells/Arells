@@ -36,8 +36,6 @@ const VavityEthereum: React.FC = () => {
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
-  const [marketModal, setMarketModal] = useState<'bull' | 'sloth' | null>(null);
-  const [marketModalClosing, setMarketModalClosing] = useState(false);
   const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
   const [investmentsListOpen, setInvestmentsListOpen] = useState(false);
   const [closingInvestments, setClosingInvestments] = useState<string[]>([]);
@@ -62,13 +60,11 @@ const VavityEthereum: React.FC = () => {
   const [investmentsListHeight, setInvestmentsListHeight] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(200);
   const baseChartHeightRef = useRef<number | null>(null);
-  const lockedRowHeightRef = useRef<number | null>(null);
-  const [lockedRowHeight, setLockedRowHeight] = useState<number | null>(null);
   const [lockedChartHeight, setLockedChartHeight] = useState<number | null>(null);
   const [sloganMarginRight, setSloganMarginRight] = useState<number>(0);
-  const chartTopPadding = 24;
+  const chartTopPadding = 0;
   const chartBottomPadding = 0;
-  const chartProtrusion = 120;
+  const chartProtrusion = 170;
   const chartHeightAdjusted = Math.max(120, chartHeight - 0);
   const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartTopPadding + chartBottomPadding;
   const chartWrapHeight = chartHeightAdjusted + chartTopPadding + chartBottomPadding;
@@ -140,11 +136,6 @@ const VavityEthereum: React.FC = () => {
         if (baseChartHeightRef.current == null) {
           baseChartHeightRef.current = responsive;
           setLockedChartHeight(responsive);
-          if (row) {
-            const rowHeight = row.getBoundingClientRect().height;
-            lockedRowHeightRef.current = rowHeight;
-            setLockedRowHeight(rowHeight);
-          }
         }
         const locked = lockedChartHeight ?? baseChartHeightRef.current;
         if (locked != null) {
@@ -178,7 +169,7 @@ const VavityEthereum: React.FC = () => {
       const chartRect = chart.getBoundingClientRect();
       const desiredRight = chartRect.left - 10;
       const marginRight = Math.max(0, headerRect.right - desiredRight);
-      const adjusted = marginRight + 10;
+      const adjusted = marginRight + 0;
       setSloganMarginRight((prev) => (prev === adjusted ? prev : adjusted));
     };
     update();
@@ -835,19 +826,13 @@ const VavityEthereum: React.FC = () => {
           </div>
         </div>
         <div
-          className="asset-price-chart-row"
-          style={{
-            overflow: 'visible',
-            height:
-              typeof window !== 'undefined' && window.innerWidth > 800 && lockedRowHeight != null
-                ? `${lockedRowHeight}px`
-                : undefined
-          }}
-        >
+          className="asset-panel asset-panel--ethereum asset-price-chart-row asset-price-chart-row--combined"
+          style={{ overflow: 'visible' }}
+      >
           <div
             className="asset-price-panel asset-price-panel--ethereum asset-section-slide"
             style={{
-              padding: '15px',
+              padding: '30px',
               background: 'transparent',
               alignSelf: 'flex-start',
               display: 'flex',
@@ -875,10 +860,18 @@ const VavityEthereum: React.FC = () => {
               <span className="asset-metric-value">{formatMarketCap(activeMarketCap)}</span>
             </div>
             <div className="asset-metric-row">
-              {percentageIncrease > 0 && (
+              {percentageIncrease > 0 ? (
                 <span className="asset-metric-trend-icon asset-metric-trend-icon--ethereum" aria-hidden="true" />
-              )}
-              <span className="asset-metric-value">
+              ) : percentageIncrease === 0 ? (
+                <span
+                  className="asset-metric-trend-icon asset-metric-trend-icon--down asset-metric-trend-icon--ethereum"
+                  aria-hidden="true"
+                />
+              ) : null}
+              <span
+                key={chartRangeDays ?? 'all'}
+                className="asset-metric-value asset-percentage-value"
+              >
                 {formatPercent(percentageIncrease).replace('%', '').replace('+', '')}
               </span>
               <span className="asset-metric-symbol--ethereum asset-metric-percent-symbol--ethereum">%</span>
@@ -887,29 +880,31 @@ const VavityEthereum: React.FC = () => {
               className="asset-panel asset-panel--ethereum asset-section-slide asset-market-controls"
             >
               <div className="asset-market-controls-header">
-                {percentageIncrease > 0 ? (
-                  <button
-                    className="asset-market-button asset-market-button--ethereum"
-                    type="button"
-                    onClick={() => {
-                      setMarketModalClosing(false);
-                      setMarketModal('bull');
-                    }}
-                  >
-                    <span className="asset-market-button-label">Bull Market</span>
-                  </button>
-                ) : (
-                  <button
-                    className="asset-market-button asset-market-button--ethereum"
-                    type="button"
-                    onClick={() => {
-                      setMarketModalClosing(false);
-                      setMarketModal('sloth');
-                    }}
-                  >
-                    <span className="asset-market-button-label">Sloth Market</span>
-                  </button>
-                )}
+                <div className="asset-profit-summary asset-profit-summary--ethereum" style={{ marginBottom: 0 }}>
+                  <div className="asset-metric-inline-row">
+                    {(() => {
+                      const rawLabel = chartRanges.find((r) => r.days === chartRangeDays)?.label ?? 'All';
+                      const label = rawLabel === 'All' ? 'All-time' : rawLabel;
+                      const marketKey = `${label}-${percentageIncrease > 0 ? 'bull' : 'sloth'}`;
+                      return (
+                        <>
+                          <span
+                            key={label}
+                            className="asset-metric-inline-title--ethereum asset-market-status-title"
+                          >
+                            {label}:
+                          </span>{' '}
+                          <span
+                            key={marketKey}
+                            className="asset-metric-inline-value asset-market-status-value"
+                          >
+                            {percentageIncrease > 0 ? 'Bull Market' : 'Sloth Market'}
+                          </span>
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
               </div>
               <div className="asset-price-button-row">
                 {chartRanges.map((range) => {
@@ -934,45 +929,52 @@ const VavityEthereum: React.FC = () => {
           </div>
 
           <div className="asset-chart-wrap" ref={chartWrapRef} style={{ height: `${chartWrapHeight}px` }}>
-            <div
-              className="asset-panel asset-panel--ethereum asset-section-slide asset-chart-panel"
-              style={{
+          <div
+              className="asset-panel asset-panel--ethereum asset-section-slide asset-chart-panel asset-chart-panel--ethereum"
+            style={{
                 padding: '0px',
                 position: 'relative',
                 height: `${chartPanelHeight}px`
-              }}
-            >
-              {chartHoverIndex != null && activePoint && (
+            }}
+          >
+            {chartHoverIndex != null && activePoint && (
                 <div className="asset-chart-date-badge asset-chart-date-badge--ethereum">
                   <span className="asset-metric-inline-title--ethereum">Date:</span>{' '}
                   <span className="asset-metric-inline-value">{new Date(activePoint.date).toLocaleDateString('en-US')}</span>
-                </div>
-              )}
+              </div>
+            )}
               <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
                 <div
                   className="asset-chart-loader-ring"
-                  style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.9)' }}
+                  style={{ borderColor: 'rgba(107, 114, 168, 0.1)', borderTopColor: 'rgba(107, 114, 168, 0.4)' }}
                 >
                   <div
                     className="asset-chart-loader-spinner"
-                    style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.9)' }}
-                  />
-                  <Image
-                    className="asset-chart-loader-icon"
-                    alt="Loading chart"
-                    width={28}
-                    height={28}
-                    src="/images/vavity/SolidMarket-Ebony.png"
+                    style={{ borderColor: 'rgba(107, 114, 168, 0.1)', borderTopColor: 'rgba(107, 114, 168, 0.4)' }}
                   />
                 </div>
               </div>
+              {!(chartReady && !forceChartLoader) && (
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    inset: 1,
+                    borderRadius: 14,
+                    pointerEvents: 'none',
+                    zIndex: 0,
+                    backgroundImage:
+                      'repeating-linear-gradient(to right, rgba(107, 114, 168, 0.1) 0px, rgba(107, 114, 168, 0.1) 1px, transparent 1px, transparent 30px), repeating-linear-gradient(to bottom, rgba(107, 114, 168, 0.1) 0px, rgba(107, 114, 168, 0.1) 1px, transparent 1px, transparent 30px)',
+                  }}
+                />
+              )}
               <div
                 className={`asset-chart-fade asset-chart-interactive${
                   chartReady && !forceChartLoader ? ' is-visible' : ''
                 }${chartReady && !forceChartLoader ? '' : ' is-disabled'}`}
               >
-                <EthereumChart
-                  history={chartHistory || []}
+            <EthereumChart
+              history={chartHistory || []}
                   color="rgba(107, 114, 168, 0.5)"
                   activeColor="rgba(107, 114, 168, 0.6)"
                   markerColor="rgba(107, 114, 168, 1)"
@@ -983,14 +985,14 @@ const VavityEthereum: React.FC = () => {
                   canvasOffsetTop={chartTopPadding}
                   backgroundColor="rgba(107, 114, 168, 0.17)"
                   markerShadow="-8px 0 14px rgba(107, 114, 168, 0.28), 0 7px 10px rgba(107, 114, 168, 0.2)"
-                  onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
-                    setChartHoverIndex(idx ?? null);
-                  }}
-                />
-              </div>
-            </div>
+              onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
+                setChartHoverIndex(idx ?? null);
+              }}
+            />
           </div>
         </div>
+              </div>
+            </div>
 
       </div>
 
@@ -1201,7 +1203,7 @@ const VavityEthereum: React.FC = () => {
                           <div className="asset-delete-loader">
                             <div
                               className="asset-delete-loader-spinner"
-                              style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.9)' }}
+                              style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.5)' }}
                             />
                             <Image
                               className="asset-delete-loader-icon"
@@ -1278,60 +1280,6 @@ const VavityEthereum: React.FC = () => {
         )}
       </div>
 
-      {marketModal && (
-        <div
-          className={`asset-market-modal-overlay asset-market-modal-overlay--ethereum${
-            marketModalClosing ? ' is-fading' : ''
-          }`}
-          onClick={() => {
-            setMarketModalClosing(true);
-            setTimeout(() => {
-              setMarketModal(null);
-              setMarketModalClosing(false);
-            }, 1000);
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className={`asset-panel asset-panel--ethereum asset-market-modal${
-              marketModalClosing ? ' is-fading' : ''
-            }`}
-          >
-            <h3 style={{ marginTop: 0, marginBottom: '8px' }}>
-              {marketModal === 'bull' ? 'Bull Market' : 'Sloth Market'}
-            </h3>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <Image
-                alt={marketModal === 'bull' ? 'Bull' : 'Sloth'}
-                width={20}
-                height={20}
-                src={marketModal === 'bull' ? '/images/bull.png' : '/images/sloth.png'}
-              />
-              <span>{marketModal === 'bull' ? 'Bull' : 'Sloth'}</span>
-            </div>
-            <p style={{ margin: 0 }}>
-              {marketModal === 'bull'
-                ? 'A market in which investments increase.'
-                : 'A market in which investments stagnate.'}
-            </p>
-            <div style={{ marginTop: '12px', textAlign: 'right' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setMarketModalClosing(true);
-                  setTimeout(() => {
-                    setMarketModal(null);
-                    setMarketModalClosing(false);
-                  }, 1000);
-                }}
-                className="asset-market-modal-close"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -9,8 +9,9 @@
 - *do not add padding to show investments list or form due to pop-up height-up issue or form, add padding/margins only to their buttons outside*
 - *add submitting icon and edit loading circle as well as submitted icon*
 - *test multiple investment deletions...*
-- *the 24hr buttons that show should not be clickable*
-- *loading circle inside the line chart the same width as the line and the circle (including the icon inside) 5 px larger*
+- *loading circle main for asset pages jigs when its transitioning colors, why?*
+- *bitcoin icon in assets pages should not be pixelated (should look like homepage bitcoin icon)*
+- *fix 1 wk to 1 week and 1 mnth to 1 month and 3 mnths to 3 months in the words displaus*
 
 ### Investment list
 - - (delete) *test this*
@@ -28,6 +29,7 @@
 ### Vavity (take everything from vavity.info)
 
 ### Metatags/ Description (all pages.tsx & components)
+- Add unique favicons (and add to online tests)
 - Alter: Descriptions & BannerImages (make [}{] images for promotions), add same color scheme on top behind logos.
 - - If bear markets never existed (Bitcoin/Ethereum - If bear markets never existed)
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
