@@ -59,16 +59,12 @@ const VavityEthereum: React.FC = () => {
   const investmentsListRef = useRef<HTMLDivElement | null>(null);
   const [investmentsListHeight, setInvestmentsListHeight] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(200);
-  const baseChartHeightRef = useRef<number | null>(null);
-  const [lockedChartHeight, setLockedChartHeight] = useState<number | null>(null);
-  const [sloganMarginRight, setSloganMarginRight] = useState<number>(0);
   const chartTopPadding = 0;
   const chartBottomPadding = 0;
-  const chartProtrusion = 170;
+  const chartProtrusion = 0;
   const chartHeightAdjusted = Math.max(120, chartHeight - 0);
   const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartTopPadding + chartBottomPadding;
-  const chartWrapHeight = chartHeightAdjusted + chartTopPadding + chartBottomPadding;
-  const chartCanvasHeight = chartHeightAdjusted + chartProtrusion;
+  const chartCanvasHeight = chartHeightAdjusted;
   const forceChartLoader = false;
   const scrollToBottom = useCallback((delayMs = 500) => {
     if (typeof window === 'undefined') return;
@@ -129,21 +125,9 @@ const VavityEthereum: React.FC = () => {
     const el = chartWrapRef.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
     const update = () => {
-      const width = el.getBoundingClientRect().width;
-      const responsive = Math.max(160, Math.round(width * 0.6));
-      const row = el.parentElement;
-      if (typeof window !== 'undefined' && window.innerWidth > 800) {
-        if (baseChartHeightRef.current == null) {
-          baseChartHeightRef.current = responsive;
-          setLockedChartHeight(responsive);
-        }
-        const locked = lockedChartHeight ?? baseChartHeightRef.current;
-        if (locked != null) {
-          setChartHeight((prev) => (prev === locked ? prev : locked));
-        }
-        return;
-      }
-      setChartHeight((prev) => (prev === responsive ? prev : responsive));
+      const height = el.getBoundingClientRect().height;
+      const next = Math.max(120, Math.round(height));
+      setChartHeight((prev) => (prev === next ? prev : next));
     };
     update();
     const observer = new ResizeObserver(update);
@@ -151,35 +135,6 @@ const VavityEthereum: React.FC = () => {
     window.addEventListener('resize', update);
     return () => {
       observer.disconnect();
-      window.removeEventListener('resize', update);
-    };
-  }, []);
-
-  useEffect(() => {
-    const update = () => {
-      if (typeof window === 'undefined') return;
-      if (window.innerWidth <= 800) {
-        setSloganMarginRight(0);
-        return;
-      }
-      const header = headerPanelRef.current;
-      const chart = chartWrapRef.current;
-      if (!header || !chart) return;
-      const headerRect = header.getBoundingClientRect();
-      const chartRect = chart.getBoundingClientRect();
-      const desiredRight = chartRect.left - 10;
-      const marginRight = Math.max(0, headerRect.right - desiredRight);
-      const adjusted = marginRight + 0;
-      setSloganMarginRight((prev) => (prev === adjusted ? prev : adjusted));
-    };
-    update();
-    const chartObserver = new ResizeObserver(update);
-    if (chartWrapRef.current) {
-      chartObserver.observe(chartWrapRef.current);
-    }
-    window.addEventListener('resize', update);
-    return () => {
-      chartObserver.disconnect();
       window.removeEventListener('resize', update);
     };
   }, []);
@@ -812,7 +767,6 @@ const VavityEthereum: React.FC = () => {
     <div className="asset-page-content asset-page-content--ethereum page-slide-down">
       <div
         className="asset-panel asset-panel--ethereum asset-header-panel asset-section-slide"
-        style={{ padding: '5px 14px 14px', marginBottom: '24px' }}
         ref={headerPanelRef}
       >
         <div className="asset-section-header">
@@ -820,7 +774,6 @@ const VavityEthereum: React.FC = () => {
           <div
             className="asset-header-slogan"
             ref={sloganRef}
-            style={sloganMarginRight ? { marginRight: `${sloganMarginRight}px` } : undefined}
           >
             if bear markets never existed
           </div>
@@ -928,7 +881,7 @@ const VavityEthereum: React.FC = () => {
             </div>
           </div>
 
-          <div className="asset-chart-wrap" ref={chartWrapRef} style={{ height: `${chartWrapHeight}px` }}>
+          <div className="asset-chart-wrap" ref={chartWrapRef}>
           <div
               className="asset-panel asset-panel--ethereum asset-section-slide asset-chart-panel asset-chart-panel--ethereum"
             style={{
