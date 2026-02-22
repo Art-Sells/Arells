@@ -2,12 +2,11 @@
 
 ## Arells v1
 
-- *fix line quickly loading on page mount and lagging behind page resizes (possibly make entire section solor below line and increase line width to resolve jacked edges)*
-- *test for long numbers and ensure they are (or not) cut off, they flex down (in portfolio, invesment list and in marketcap asset percentages (test how this would affect UI))*
+- *Calendar same styling as asset page components*
+- *test for long numbers and ensure (add a width maximum for current/purchased/losses/profits sections in portfolio, invesment list and in marketcap asset percentages (test how this would affect UI))*
 - *test min-width when opening inspect*
-- *add loading circle on profits when buttons change and fade in of the entire page from opacity 0 to opacity 1*
 - *do not add padding to show investments list or form due to pop-up height-up issue or form, add padding/margins only to their buttons outside*
-- *add submitting icon and edit loading circle as well as submitted icon*
+- *add submitted icon*
 - *test multiple investment deletions...*
 - *loading circle main for asset pages jigs when its transitioning colors, why?*
 - *bitcoin icon in assets pages should not be pixelated (should look like homepage bitcoin icon)*
@@ -17,7 +16,7 @@
 - - (delete) *test this*
 - - (Load More 5 per list) *test this*
 -------------------
-- (About (A) arells)
+- (About arells)
 - - Clean up UI (on Modals/buttons/everything)
 
 

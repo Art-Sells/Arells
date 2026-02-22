@@ -244,7 +244,58 @@ body {
 }
 
 .asset-profit-range-anim {
-	animation: assetFadeIn 1s ease;
+	opacity: 1;
+	transition: opacity 1s ease;
+}
+
+.asset-profit-range-anim.is-hidden {
+	opacity: 0;
+}
+
+.asset-profit-inline-wrap {
+	position: relative;
+	display: block;
+	width: 100%;
+	min-height: 16px;
+}
+
+.asset-profit-inline-wrap .asset-mini-loader {
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	margin-top: 0;
+}
+
+.asset-profit-inline-wrap .asset-profit-range-anim {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	white-space: nowrap;
+}
+
+.asset-portfolio-title-muted {
+	margin-left: 5px;
+	opacity: 1;
+	letter-spacing: -2px;
+}
+
+.asset-portfolio-summary-box {
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 14px;
+	padding: 12px;
+	margin: 0 auto 12px;
+	background: transparent;
+	padding-top: 30px;
+}
+
+.asset-portfolio-summary-box--bitcoin {
+	border: 1px solid rgba(248, 141, 0, 0.3);
+}
+
+.asset-portfolio-summary-box--ethereum {
+	border: 1px solid rgba(107, 114, 168, 0.3);
 }
 
 .asset-mini-loader {
@@ -255,10 +306,10 @@ body {
 	border-radius: 50%;
 	border: 2px solid currentColor;
 	border-top-color: transparent;
-	animation: homeLoaderSpin 0.7s linear infinite;
+	animation: homeLoaderSpin 1s linear infinite;
 	vertical-align: middle;
 	opacity: 1;
-	transition: opacity 1s ease;
+	transition: opacity .5s ease;
 	margin-top: -4px;
 }
 
@@ -329,13 +380,27 @@ body {
 }
 
 .asset-portfolio-actions {
+	margin-top: 20px;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
 	justify-content: center;
-	margin-bottom: 12px;
+	margin-bottom: 5px;
 	transition: opacity 0.6s ease, transform 0.6s ease;
 	will-change: opacity, transform;
+	/* Prevent mount flash: hidden until the summary panel is actually opened */
+	opacity: 0;
+	transform: translateY(-6px);
+	pointer-events: none;
+}
+
+/* Control spacing for each portfolio action row separately */
+.asset-portfolio-actions--add {
+	margin-top: 20px;
+}
+
+.asset-portfolio-actions--show {
+	margin-top: 10px;
 }
 
 .asset-portfolio-center--summary-animating .asset-portfolio-actions {
@@ -347,6 +412,7 @@ body {
 .asset-portfolio-center--summary-open:not(.asset-portfolio-center--summary-animating) .asset-portfolio-actions {
 	opacity: 1;
 	transform: translateY(0);
+	pointer-events: auto;
 }
 
 .asset-profit-summary {
@@ -421,7 +487,7 @@ body {
 /* Top asset section (title+slogan + price/controls + chart) fixed sizing */
 .asset-page-content > .asset-header-panel {
 	width: 665px;
-	min-height: 100vh;
+	min-height: 96vh;
 	height: auto;
 	margin-left: auto;
 	margin-right: auto;
@@ -433,14 +499,14 @@ body {
 .asset-page-content--bitcoin .asset-header-panel {
 	padding-top: 5px;
 	padding-right: 35px;   /* <- edit this */
-	padding-bottom: 0px;
+	padding-bottom: 25px;
 	padding-left: 15px;
 }
 
 .asset-page-content--ethereum .asset-header-panel {
 	padding-top: 5px;
 	padding-right: 35px;   /* <- edit this */
-	padding-bottom: 0px;
+	padding-bottom: 25px;
 	padding-left: 15px;
   }
 
@@ -487,11 +553,11 @@ body {
 
 .asset-home-font-title {
 	font-weight: 800;
-	font-size: 25px;
-	margin-top:-5px;
-	padding-bottom:10px;
-	opacity: .3;
-	letter-spacing: -1px;
+	font-size: 32px;
+	margin-top:0px;
+	margin-left: -18px;
+	padding-bottom:5px;
+	letter-spacing: -0px;
 }
 
 .asset-home-font-label--bitcoin {
@@ -631,6 +697,291 @@ body {
 	color: rgba(107, 114, 168, 0.95);
 }
 
+/* Separate investment button padding (Add vs Show groups) */
+.asset-action-button--invest-add {
+	padding: 12px 25px;
+}
+
+.asset-action-button--invest-show {
+	padding: 10px 15px;
+}
+
+/* Add/More Investment forms (centered + same border/padding language as the page) */
+.asset-invest-form-box {
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	box-sizing: border-box;
+	border-radius: 14px;
+	padding: 16px;
+	background: transparent;
+}
+
+.asset-invest-form-box--bitcoin {
+	border: 1px solid rgba(248, 141, 0, 0.3);
+}
+
+.asset-invest-form-box--ethereum {
+	border: 1px solid rgba(107, 114, 168, 0.3);
+}
+
+.asset-invest-form {
+	text-align: center;
+}
+
+.asset-invest-form-heading {
+	justify-content: center;
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.asset-invest-form-row {
+	justify-content: center;
+	margin-bottom: 10px;
+}
+
+.asset-invest-form-input-row {
+	align-items: center;
+}
+
+.asset-invest-form-subnote {
+	font-size: 10px;
+	opacity: 0.9;
+}
+
+.asset-invest-input {
+	margin-left: 8px;
+	padding: 6px 10px;
+	border-radius: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.25);
+	background: transparent;
+	color: inherit;
+	font-size: 12px;
+	font-weight: 800;
+	outline: none;
+}
+
+.asset-invest-form-field {
+	margin-top: 10px;
+}
+
+.asset-invest-form-field-label {
+	justify-content: center;
+	margin-bottom: 8px;
+}
+
+.asset-invest-form-field-control {
+	display: flex;
+	justify-content: center;
+}
+
+.asset-invest-form-field-control .asset-invest-input {
+	margin-left: 0;
+	text-align: center;
+	min-width: 220px;
+}
+
+.asset-invest-input--bitcoin {
+	border-color: rgba(248, 141, 0, 0.45);
+}
+
+.asset-invest-input--ethereum {
+	border-color: rgba(107, 114, 168, 0.45);
+}
+
+/* Submit button: padding + edges like the Add Investments button */
+.asset-action-button--invest-submit {
+	padding: 10px 20px 10px 40px !important;
+	border-top-left-radius: 999px;
+	border-bottom-left-radius: 999px;
+	border-top-right-radius: 400px;
+	border-bottom-right-radius: 400px;
+	border-width: 0.3px !important;
+	font-weight: 800 !important;
+	margin-bottom: 20px;
+}
+
+/* Fully custom calendar (no native date picker constraints) */
+.asset-date-picker {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+}
+
+.asset-date-trigger {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 10px 14px;
+	border-radius: 14px;
+	border: 1px solid rgba(0, 0, 0, 0.25);
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	font-weight: 800;
+	box-sizing: border-box;
+}
+
+.asset-date-trigger.is-open {
+	/* focus tone like the All-time bull/sloth section */
+	outline: 3px solid rgba(248, 141, 0, 0.12);
+	outline-offset: 2px;
+}
+
+.asset-page--ethereum .asset-date-trigger.is-open {
+	outline: 3px solid rgba(107, 114, 168, 0.14);
+	outline-offset: 2px;
+}
+
+.asset-date-value.is-placeholder {
+	opacity: 0.7;
+	font-weight: 700;
+}
+
+.asset-date-icon {
+	display: inline-flex;
+	color: var(--asset-line-color);
+}
+
+.asset-date-popover {
+	position: absolute;
+	z-index: 50;
+	left: 50%;
+	top: calc(100% + 10px);
+	transform: translateX(-50%);
+	width: 320px;
+	padding: 14px;
+	border-radius: 16px;
+	border: 1px solid rgba(0, 0, 0, 0.18);
+	background: rgba(248, 141, 0, 0.06);
+	/* Use filter shadow (box-shadow is globally disabled on asset pages) */
+	filter: drop-shadow(-8px 0 14px rgba(248, 141, 0, 0.18)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.08));
+	box-sizing: border-box;
+}
+
+.asset-page--ethereum .asset-date-popover {
+	background: rgba(107, 114, 168, 0.07);
+	filter: drop-shadow(-8px 0 14px rgba(107, 114, 168, 0.18)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.08));
+}
+
+.asset-date-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.asset-date-month {
+	font-weight: 800;
+	letter-spacing: -0.5px;
+}
+
+.asset-date-nav {
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.18);
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	font-weight: 800;
+}
+
+.asset-date-weekdays {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 6px;
+	margin-bottom: 8px;
+}
+
+.asset-date-weekday {
+	text-align: center;
+	font-size: 10px;
+	font-weight: 800;
+	opacity: 0.9;
+}
+
+.asset-date-grid {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 6px;
+}
+
+.asset-date-day {
+	height: 34px;
+	border-radius: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	font-weight: 800;
+}
+
+.asset-date-day.is-outside {
+	opacity: 0.35;
+}
+
+.asset-date-day:hover {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+.asset-date-day.is-selected {
+	border-color: rgba(0, 0, 0, 0.25);
+	background: rgba(0, 0, 0, 0.06);
+}
+
+.asset-date-day:focus {
+	outline: none;
+	outline: 3px solid rgba(248, 141, 0, 0.14);
+	outline-offset: 1px;
+}
+
+.asset-page--ethereum .asset-date-day:focus {
+	outline: 3px solid rgba(107, 114, 168, 0.16);
+	outline-offset: 1px;
+}
+
+/* Empty-state "Add Investments" button: separate styling from all other buttons */
+.asset-action-button--add-investments {
+	width: 100%;
+	box-sizing: border-box;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 20px;
+	font-weight: 800;
+	font-size: 25px;
+	letter-spacing: -1.5px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	/* Match Home asset buttons: left side more rounded than right */
+	border-top-left-radius: 999px;
+	border-bottom-left-radius: 999px;
+	border-top-right-radius: 400px;
+	border-bottom-right-radius: 400px;
+	opacity: 1;
+	border-width: 1px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.asset-action-button--pulse {
+	animation: assetOpacityPulse 1s ease;
+}
+
+@keyframes assetOpacityPulse {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.35;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
 .asset-range-button {
 	cursor: pointer;
 	border-radius: 6px;
@@ -642,6 +993,7 @@ body {
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 1.1;
+	box-sizing: border-box;
 	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
 		transform 0.5s ease;
 }
@@ -651,7 +1003,7 @@ body {
 }
 
 .asset-range-button--bitcoin.is-active {
-	border: none;
+	border: 1px solid transparent;
 	background: rgba(248, 141, 0, 0.18);
 	color: rgba(248, 141, 0, 0.95);
 	opacity: 0.6;
@@ -672,7 +1024,7 @@ body {
 }
 
 .asset-range-button--ethereum.is-active {
-	border: none;
+	border: 1px solid transparent;
 	background: rgba(107, 114, 168, 0.18);
 	color: rgba(107, 114, 168, 0.95);
 	opacity: 0.6;
@@ -694,7 +1046,7 @@ body {
 
 .asset-range-button:disabled,
 .asset-action-button:disabled {
-	border: none;
+	border: 1px solid transparent;
 	opacity: 0.6;
 	pointer-events: none;
 	cursor: default;
@@ -708,6 +1060,11 @@ body {
 	pointer-events: none !important;
 	cursor: default !important;
 	transform: none !important;
+}
+
+/* Prevent range-button row "jitter": keep border width constant even when disabled/active */
+.asset-page-content .asset-range-button:disabled {
+	border: 1px solid transparent !important;
 }
 
 .asset-investments-list {
@@ -1110,8 +1467,8 @@ body {
 
 
 .asset-profit-block {
-	margin-bottom: 40px;
-	margin-top: 20px;
+	margin-bottom: 0px;
+	margin-top: 30px;
 	width: 100%;
 	max-width: none;
 	box-sizing: border-box;
@@ -1184,6 +1541,44 @@ body {
 
 .asset-page-content > .asset-header-panel.asset-panel--ethereum {
 	box-shadow: -30px 0px 40px rgba(107, 114, 168, 0.0) !important;
+}
+
+/* Re-enable shadow for the empty-state "Add Investments" button (matches chart line hue) */
+.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments {
+	box-shadow: -5px 0px 20px rgba(248, 141, 0, 0.4) !important;
+}
+
+.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments:hover {
+	/* Mimic Home asset button hover: shadow grows */
+	box-shadow: -7px -3px 20px rgba(248, 141, 0, 0.2), 0 4px 14px rgba(248, 141, 0, 0.2) !important;
+	transform: translateY(-4px);
+}
+
+.asset-page--bitcoin .asset-page-content .asset-action-button--invest-submit {
+	box-shadow: -5px 0px 20px rgba(248, 141, 0, 0.4) !important;
+}
+
+.asset-page--bitcoin .asset-page-content .asset-action-button--invest-submit:hover {
+	box-shadow: -7px -3px 20px rgba(248, 141, 0, 0.2), 0 4px 14px rgba(248, 141, 0, 0.2) !important;
+	transform: translateY(-4px);
+}
+
+.asset-page--ethereum .asset-page-content .asset-action-button--add-investments {
+	box-shadow: -5px 0px 20px rgba(107, 114, 168, 0.4) !important;
+}
+
+.asset-page--ethereum .asset-page-content .asset-action-button--add-investments:hover {
+	box-shadow: -7px -2px 20px rgba(107, 114, 168, 0.2), 0 4px 14px rgba(107, 114, 168, 0.2) !important;
+	transform: translateY(-4px);
+}
+
+.asset-page--ethereum .asset-page-content .asset-action-button--invest-submit {
+	box-shadow: -5px 0px 20px rgba(107, 114, 168, 0.4) !important;
+}
+
+.asset-page--ethereum .asset-page-content .asset-action-button--invest-submit:hover {
+	box-shadow: -7px -2px 20px rgba(107, 114, 168, 0.2), 0 4px 14px rgba(107, 114, 168, 0.2) !important;
+	transform: translateY(-4px);
 }
 
 /* Asset pages: remove icon drop-shadows too */

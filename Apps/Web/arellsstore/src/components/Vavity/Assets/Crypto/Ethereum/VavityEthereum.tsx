@@ -6,6 +6,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useVavity } from '../../../../../context/VavityAggregator';
 import EthereumChart from '../../../../Assets/Crypto/Ethereum/EthereumChart';
+import CustomDatePicker from '../../../../common/CustomDatePicker';
 
 const VavityEthereum: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
@@ -49,6 +50,13 @@ const VavityEthereum: React.FC = () => {
   const [collapsedInvestments, setCollapsedInvestments] = useState<string[]>([]);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryAnimating, setSummaryAnimating] = useState(false);
+  const [addMorePulse, setAddMorePulse] = useState(false);
+  const [showPulse, setShowPulse] = useState(false);
+  const pulseTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const didMountAddMorePulseRef = useRef(false);
+  const didMountShowPulseRef = useRef(false);
+  const addMorePulseActiveRef = useRef(false);
+  const showPulseActiveRef = useRef(false);
   const [isClearingInvestments, setIsClearingInvestments] = useState(false);
   const [slowOpenInvestments, setSlowOpenInvestments] = useState<string[]>([]);
   const isMutatingRef = useRef(false);
@@ -81,6 +89,62 @@ const VavityEthereum: React.FC = () => {
     }, delayMs);
   }, []);
 
+  const clearPulseTimers = useCallback(() => {
+    pulseTimersRef.current.forEach((t) => clearTimeout(t));
+    pulseTimersRef.current = [];
+  }, []);
+
+  useEffect(() => {
+    addMorePulseActiveRef.current = addMorePulse;
+  }, [addMorePulse]);
+
+  useEffect(() => {
+    showPulseActiveRef.current = showPulse;
+  }, [showPulse]);
+
+  const triggerAddMorePulse = useCallback(() => {
+    clearPulseTimers();
+    if (addMorePulseActiveRef.current) {
+      setAddMorePulse(false);
+      requestAnimationFrame(() => setAddMorePulse(true));
+    } else {
+      setAddMorePulse(true);
+    }
+    pulseTimersRef.current.push(setTimeout(() => setAddMorePulse(false), 1000));
+  }, [clearPulseTimers]);
+
+  const triggerShowPulse = useCallback(() => {
+    clearPulseTimers();
+    if (showPulseActiveRef.current) {
+      setShowPulse(false);
+      requestAnimationFrame(() => setShowPulse(true));
+    } else {
+      setShowPulse(true);
+    }
+    pulseTimersRef.current.push(setTimeout(() => setShowPulse(false), 1000));
+  }, [clearPulseTimers]);
+
+  useEffect(() => {
+    return () => clearPulseTimers();
+  }, [clearPulseTimers]);
+
+  // Pulse when the LABEL actually flips (open <-> hide), including the delayed "hide" after the collapse timeout.
+  useEffect(() => {
+    if (!didMountAddMorePulseRef.current) {
+      didMountAddMorePulseRef.current = true;
+      return;
+    }
+    triggerAddMorePulse();
+  }, [showAddMoreForm, triggerAddMorePulse]);
+
+  useEffect(() => {
+    if (!didMountShowPulseRef.current) {
+      didMountShowPulseRef.current = true;
+      return;
+    }
+    triggerShowPulse();
+  }, [showInvestmentsList, triggerShowPulse]);
+
   const clearProfitMiniLoaderTimers = useCallback(() => {
     profitMiniLoaderTimersRef.current.forEach((t) => clearTimeout(t));
     profitMiniLoaderTimersRef.current = [];
@@ -109,17 +173,23 @@ const VavityEthereum: React.FC = () => {
       return;
     }
 
-    // Only fade out after we've actually been in a loading phase for this range
-    if (!rangeLoading && profitMiniLoaderVisible && profitMiniLoaderArmedRef.current) {
+    // Only fade out after we've actually been in a loading phase for this range.
+    // Also ensure the range value is ready so we can crossfade loader -> text with no blank gap.
+    if (
+      !rangeLoading &&
+      profitMiniLoaderVisible &&
+      profitMiniLoaderArmedRef.current &&
+      (selectedRangeDays == null || rangeHistoricalPrice != null)
+    ) {
       const elapsed = Date.now() - profitMiniLoaderStartRef.current;
-      const waitMs = Math.max(0, 1000 - elapsed);
+      const waitMs = Math.max(0, 500 - elapsed);
       clearProfitMiniLoaderTimers();
       const t1 = setTimeout(() => {
         setProfitMiniLoaderFading(true);
         const t2 = setTimeout(() => {
           setProfitMiniLoaderVisible(false);
           setProfitMiniLoaderFading(false);
-        }, 1000);
+        }, 500);
         profitMiniLoaderTimersRef.current.push(t2);
       }, waitMs);
       profitMiniLoaderTimersRef.current.push(t1);
@@ -127,6 +197,7 @@ const VavityEthereum: React.FC = () => {
   }, [
     clearProfitMiniLoaderTimers,
     profitMiniLoaderVisible,
+    rangeHistoricalPrice,
     rangeLoading,
     selectedRangeDays,
   ]);
@@ -259,7 +330,7 @@ const VavityEthereum: React.FC = () => {
     if (nextHeight !== summaryHeight) {
       setSummaryHeight(nextHeight);
     }
-  }, [summaryOpen, isClearingInvestments, investments.length, summaryHeight]);
+  }, [summaryOpen, isClearingInvestments, investments.length, summaryHeight, showAddMoreForm, addMoreOpen]);
 
   useEffect(() => {
     const prevIds = prevInvestmentIdsRef.current;
@@ -741,88 +812,111 @@ const VavityEthereum: React.FC = () => {
     }, 2000);
   }, []);
 
-  const renderAddForm = (label: string, onClose: () => void, buttonClass: string) => (
-    <div style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', marginTop: '12px', maxWidth: '420px' }}>
-      <div className={`asset-submit-form${submitPhase !== 'idle' ? ' is-hidden' : ''}`}>
-        <>
-      <div style={{ marginBottom: '8px', fontWeight: 600 }}>{label}</div>
-      <div style={{ marginBottom: '12px' }}>
-        Purchased Value:{' '}
-        {tokenAmount && purchaseDate && historicalPrice != null
-          ? `$${formatCurrency(parseTokenAmount(tokenAmount || '0') * historicalPrice)}`
-          : '...'}
-        {purchaseDate && historicalLoading && <span style={{ marginLeft: '8px' }}>(Loading price...)</span>}
-      </div>
-      <div style={{ marginBottom: '12px' }}>
-        Current Value: {tokenAmount ? `$${formatCurrency(formCVatop)}` : '...'}
-      </div>
-      <div style={{ marginBottom: '12px' }}>
-        {(() => {
-          if (!tokenAmount) {
-            return 'Profits/Losses: ...';
-          }
-          if (purchaseDate && historicalPrice == null) {
-            return 'Profits/Losses: ...';
-          }
-          const basePrice = purchaseDate ? (historicalPrice ?? 0) : (vapa || 0);
-          const profitValue = (vapa - basePrice) * parseTokenAmount(tokenAmount || '0');
-          const label = profitValue > 0 ? 'Profits' : 'Losses';
-          const formattedValue =
-            profitValue > 0
-              ? formatCurrency(profitValue)
-              : Math.abs(profitValue).toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                });
-          const prefix = profitValue > 0 ? '+$' : '$';
-          return `${label}: ${prefix}${formattedValue}`;
-        })()}
-      </div>
-      <div style={{ marginBottom: '8px' }}>
-        ethereum amount:
-        <input
-          type="text"
-          inputMode="decimal"
-          pattern="^[0-9]*\\.?[0-9]*$"
-          value={tokenAmount}
-          onChange={(e) => setTokenAmount(normalizeTokenInput(e.target.value))}
-          style={{ marginLeft: '8px' }}
-        />
-      </div>
-      <div style={{ marginBottom: '8px' }}>
-        Date purchased:
-        <input
-          type="date"
-          value={purchaseDate}
-          onChange={(e) => setPurchaseDate(e.target.value)}
-          style={{ marginLeft: '8px' }}
-        />
-      </div>
-      <button
-        onClick={handleSubmitInvestment}
-        disabled={submitLoading || !tokenAmount || !purchaseDate}
-            className={buttonClass}
-      >
-        {submitLoading ? 'Submitting...' : 'Submit'}
-      </button>
-        </>
-      </div>
-      {submitPhase !== 'idle' && (
-        <div className="asset-submit-status">
-          <div className={`asset-submit-phase${submitPhase === 'submitting' ? ' is-active' : ''}`}>
-            <div className="asset-submit-spinner" />
-            <div className="asset-home-font-label--ethereum">Submitting...</div>
+  const renderAddForm = (label: string, onClose: () => void, buttonClass: string) => {
+    const purchasedValue =
+      tokenAmount && purchaseDate && historicalPrice != null
+        ? formatCurrency(parseTokenAmount(tokenAmount || '0') * historicalPrice)
+        : '...';
+
+    const currentValue = tokenAmount ? formatCurrency(formCVatop) : '...';
+
+    const profitRow = (() => {
+      if (!tokenAmount) return { title: 'Profits/Losses:', prefix: '', value: '...' };
+      if (purchaseDate && historicalPrice == null) return { title: 'Profits/Losses:', prefix: '', value: '...' };
+      const basePrice = purchaseDate ? (historicalPrice ?? 0) : (vapa || 0);
+      const profitValue = (vapa - basePrice) * parseTokenAmount(tokenAmount || '0');
+      const isProfit = profitValue > 0.005;
+      const title = isProfit ? 'Profits:' : 'Losses:';
+      const formattedValue =
+        profitValue > 0
+          ? formatCurrency(profitValue)
+          : Math.abs(profitValue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return { title, prefix: isProfit ? '+$' : '$', value: formattedValue };
+    })();
+
+    return (
+      <div className="asset-invest-form">
+        <div className={`asset-submit-form${submitPhase !== 'idle' ? ' is-hidden' : ''}`}>
+          <div className="asset-metric-row asset-invest-form-heading">
+            <span className="asset-metric-title--ethereum" style={{ fontWeight: 800 }}>
+              {label}
+            </span>
           </div>
-          <div className={`asset-submit-phase${submitPhase === 'submitted' ? ' is-active' : ''}`}>
-            <div className="asset-home-font-label--ethereum">Submitted.</div>
-            <button type="button" className={buttonClass} onClick={onClose}>
-              OK
-            </button>
+
+          <div className="asset-metric-row asset-invest-form-row">
+            <span className="asset-metric-title--ethereum">Purchased Value:</span>
+            <span className="asset-metric-symbol--ethereum">$</span>
+            <span className="asset-metric-value">{purchasedValue}</span>
+            {purchaseDate && historicalLoading && (
+              <span className="asset-metric-inline-value asset-invest-form-subnote">(Loading price...)</span>
+            )}
           </div>
+
+          <div className="asset-metric-row asset-invest-form-row">
+            <span className="asset-metric-title--ethereum">Current Value:</span>
+            <span className="asset-metric-symbol--ethereum">$</span>
+            <span className="asset-metric-value">{currentValue}</span>
+          </div>
+
+          <div className="asset-metric-row asset-invest-form-row">
+            <span className="asset-metric-title--ethereum">{profitRow.title}</span>
+            {profitRow.prefix ? (
+              <span className="asset-metric-inline-symbol--ethereum">{profitRow.prefix}</span>
+            ) : null}
+            <span className="asset-metric-value">{profitRow.value}</span>
+          </div>
+
+          <div className="asset-invest-form-field">
+            <div className="asset-metric-row asset-invest-form-field-label">
+              <span className="asset-metric-title--ethereum">Ethereum amount</span>
+            </div>
+            <div className="asset-invest-form-field-control">
+              <input
+                className="asset-invest-input asset-invest-input--ethereum"
+                type="text"
+                inputMode="decimal"
+                pattern="^[0-9]*\\.?[0-9]*$"
+                value={tokenAmount}
+                onChange={(e) => setTokenAmount(normalizeTokenInput(e.target.value))}
+              />
+            </div>
+          </div>
+
+          <div className="asset-invest-form-field">
+            <div className="asset-metric-row asset-invest-form-field-label">
+              <span className="asset-metric-title--ethereum">Date purchased</span>
+            </div>
+            <div className="asset-invest-form-field-control">
+              <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" />
+            </div>
+          </div>
+
+          <button
+            onClick={handleSubmitInvestment}
+            disabled={submitLoading || !tokenAmount || !purchaseDate}
+            className={`${buttonClass} asset-action-button--invest-submit`}
+          >
+            {submitLoading ? 'Submitting...' : 'Submit'}
+          </button>
         </div>
-      )}
-    </div>
-  );
+
+        {submitPhase !== 'idle' && (
+          <div className="asset-submit-status">
+            <div className={`asset-submit-phase${submitPhase === 'submitting' ? ' is-active' : ''}`}>
+              <div className="asset-submit-spinner" />
+              <div className="asset-home-font-label--ethereum">Submitting...</div>
+            </div>
+            <div className={`asset-submit-phase${submitPhase === 'submitted' ? ' is-active' : ''}`}>
+              <div className="asset-home-font-label--ethereum">Submitted.</div>
+              <button type="button" className={buttonClass} onClick={onClose}>
+                OK
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const visibleInvestmentCount = Math.min(visibleInvestments, investments.length);
   const investmentsMaxHeight = investmentsListOpen ? `${investmentsListHeight}px` : '0px';
@@ -1036,39 +1130,50 @@ const VavityEthereum: React.FC = () => {
         className={`asset-panel asset-panel--ethereum asset-portfolio-center asset-section-slide${
           summaryOpen && !isClearingInvestments ? ' asset-portfolio-center--summary-open' : ''
         }${summaryAnimating ? ' asset-portfolio-center--summary-animating' : ''}`}
-        style={{ marginBottom: '24px', padding: '12px' }}
+        style={{ 
+          marginBottom: '10px', 
+          paddingTop: '30px', 
+          paddingBottom: '10px',
+          paddingLeft: '20px',
+          paddingRight: '20px' }}
       >
         <h2
           className="asset-home-font-title"
           style={{display: 'flex', alignItems: 'center', gap: '5px', justifyContent: 'center' }}
         >
-          <map name=""></map>y
           <Image src="/images/assets/crypto/Ethereum.svg" alt="Ethereum" width={17} height={17} />
-          portfolio
+          <span className="asset-portfolio-title-muted">investments</span>
         </h2>
         {!hasInvestmentsUI ? (
           <>
             {!showEmptyAddForm && (
-              <button
-                className="asset-action-button asset-action-button--ethereum"
-                onClick={() => {
-                  setShowEmptyAddForm(true);
-                  setShowAddForm(true);
-                  setSubmitPhase('idle');
-                  scrollToBottom();
-                }}
-              >
-                (Add Investments)
-              </button>
+              <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
+                <button
+                  className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
+                  onClick={() => {
+                    setShowEmptyAddForm(true);
+                    setShowAddForm(true);
+                    setSubmitPhase('idle');
+                    scrollToBottom();
+                  }}
+                >
+                  Add Investments
+                </button>
+              </div>
             )}
             {showEmptyAddForm && showAddForm && (
-              <div className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}>
-                {renderAddForm('Add Investment', closeAddForm, 'asset-action-button asset-action-button--ethereum')}
+              <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
+                <div className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}>
+                  <div className="asset-invest-form-box asset-invest-form-box--ethereum">
+                    {renderAddForm('Add Investment', closeAddForm, 'asset-action-button asset-action-button--ethereum')}
+                  </div>
+                </div>
               </div>
         )}
           </>
         ) : (
           <>
+            <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
             <div
               className="asset-slide-panel"
               style={{ maxHeight: summaryMaxHeight, transition: summaryTransition }}
@@ -1086,7 +1191,7 @@ const VavityEthereum: React.FC = () => {
             </div>
               <div
                 className="asset-panel asset-panel--ethereum asset-profit-block asset-slide-in asset-section-slide"
-                style={{ padding: '12px 12px 30px', marginBottom: '10px', width: '100%', marginLeft: 'auto', marginRight: 'auto' }}
+                style={{ padding: '20px 20px 20px', marginBottom: '10px', width: '92%', marginLeft: 'auto', marginRight: 'auto' }}
               >
                 <div className="asset-profit-summary asset-profit-summary--ethereum">
                   <div className="asset-metric-inline-row">
@@ -1100,35 +1205,33 @@ const VavityEthereum: React.FC = () => {
                         if (days === 1) return '24 hours';
                         return `${days} days`;
                       };
-                  if (selectedRangeDays && (rangeLoading || profitMiniLoaderVisible)) {
-                        return (
-                          <span
-                            key={`${selectedRangeDays}-loading`}
-                            className="asset-metric-inline-value asset-profit-range-anim"
-                          >
-                            <span
-                              className={`asset-mini-loader${profitMiniLoaderFading ? ' is-fading' : ''}`}
-                              aria-hidden="true"
-                            />
-                          </span>
-                        );
-                  }
                   if (selectedRangeDays && rangeHistoricalPrice != null) {
                     const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
                     const profitValue = (totals.acVact || 0) - pastValue;
                         const isProfit = profitValue > 0.005;
                         const label = isProfit ? 'Profits' : 'Losses';
                         const formattedValue = formatMoneyFixed(Math.abs(profitValue));
+                        const showLoader = (selectedRangeDays && rangeLoading) || profitMiniLoaderVisible;
                         return (
-                          <span
-                            key={`${selectedRangeDays}-${label}-${formattedValue}`}
-                            className="asset-profit-range-anim"
-                          >
-                            <span className="asset-metric-inline-title--ethereum">
-                              {formatRangeLabel(selectedRangeDays)} {label}:
-                            </span>{' '}
-                            <span className="asset-metric-inline-symbol--ethereum">{isProfit ? '+$' : '$'}</span>
-                            <span className="asset-metric-inline-value">{formattedValue}</span>
+                          <span className="asset-profit-inline-wrap">
+                            {showLoader && (
+                              <span
+                                className={`asset-mini-loader${profitMiniLoaderFading ? ' is-fading' : ''}`}
+                                aria-hidden="true"
+                              />
+                            )}
+                            <span
+                              key={`${selectedRangeDays}-${label}-${formattedValue}`}
+                              className={`asset-profit-range-anim${
+                                showLoader && !profitMiniLoaderFading ? ' is-hidden' : ''
+                              }`}
+                            >
+                              <span className="asset-metric-inline-title--ethereum">
+                                {formatRangeLabel(selectedRangeDays)} {label}:
+                              </span>{' '}
+                              <span className="asset-metric-inline-symbol--ethereum">{isProfit ? '+$' : '$'}</span>
+                              <span className="asset-metric-inline-value">{formattedValue}</span>
+                            </span>
                           </span>
                         );
                   }
@@ -1136,16 +1239,27 @@ const VavityEthereum: React.FC = () => {
                       const isProfit = defaultProfit > 0.005;
                       const label = isProfit ? 'Profits' : 'Losses';
                       const formattedValue = formatMoneyFixed(Math.abs(defaultProfit));
+                      const showLoader = (selectedRangeDays && rangeLoading) || profitMiniLoaderVisible;
                       return (
-                        <span
-                          key={`all-${label}-${formattedValue}`}
-                          className="asset-profit-range-anim"
-                        >
-                          <span className="asset-metric-inline-title--ethereum">
-                            {formatRangeLabel(null)} {label}:
-                          </span>{' '}
-                          <span className="asset-metric-inline-symbol--ethereum">{isProfit ? '+$' : '$'}</span>
-                          <span className="asset-metric-inline-value">{formattedValue}</span>
+                        <span className="asset-profit-inline-wrap">
+                          {showLoader && (
+                            <span
+                              className={`asset-mini-loader${profitMiniLoaderFading ? ' is-fading' : ''}`}
+                              aria-hidden="true"
+                            />
+                          )}
+                          <span
+                            key={`all-${label}-${formattedValue}`}
+                            className={`asset-profit-range-anim${
+                              showLoader && !profitMiniLoaderFading ? ' is-hidden' : ''
+                            }`}
+                          >
+                            <span className="asset-metric-inline-title--ethereum">
+                              {formatRangeLabel(null)} {label}:
+                            </span>{' '}
+                            <span className="asset-metric-inline-symbol--ethereum">{isProfit ? '+$' : '$'}</span>
+                            <span className="asset-metric-inline-value">{formattedValue}</span>
+                          </span>
                         </span>
                       );
                 })()}
@@ -1168,16 +1282,16 @@ const VavityEthereum: React.FC = () => {
                         setProfitMiniLoaderFading(false);
                         profitMiniLoaderStartRef.current = Date.now();
 
-                        // "All" doesn't fetch range data, so we pulse the loader for 1s then fade out 1s.
+                        // "All" doesn't fetch range data, so we pulse the loader for 0.5s then fade out 1s.
                         if (range.days == null) {
                           const t1 = setTimeout(() => {
                             setProfitMiniLoaderFading(true);
                             const t2 = setTimeout(() => {
                               setProfitMiniLoaderVisible(false);
                               setProfitMiniLoaderFading(false);
-                            }, 1000);
+                            }, 500);
                             profitMiniLoaderTimersRef.current.push(t2);
-                          }, 1000);
+                          }, 500);
                           profitMiniLoaderTimersRef.current.push(t1);
                         }
                         setSelectedRangeDays(range.days);
@@ -1190,10 +1304,13 @@ const VavityEthereum: React.FC = () => {
                 })}
               </div>
             </div>
-                <div className="asset-portfolio-actions asset-slide-in">
+                <div className="asset-portfolio-actions asset-portfolio-actions--add">
                   <button
-                    className="asset-action-button asset-action-button--ethereum"
+                    className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-add${
+                      addMorePulse ? ' asset-action-button--pulse' : ''
+                    }`}
                     onClick={() => {
+                      triggerAddMorePulse();
                       if (showAddMoreForm) {
                         setAddMoreOpen(false);
                         setTimeout(() => {
@@ -1214,13 +1331,30 @@ const VavityEthereum: React.FC = () => {
                       scrollToBottom();
                     }}
                   >
-                    {showAddMoreForm ? 'Hide add more investments' : 'Add more investments'}
+                    {showAddMoreForm ? 'Hide add more Investments' : 'Add more Investments'}
                   </button>
                 </div>
-                <div className="asset-portfolio-actions asset-slide-in">
+                {showAddMoreForm && (
+                  <div
+                    className={`asset-slide-panel asset-slide-panel--form${addMoreOpen ? ' is-open' : ''}`}
+                    style={{ marginTop: '12px' }}
+                  >
+                    <div className="asset-invest-form-box asset-invest-form-box--ethereum">
+                      {renderAddForm(
+                        'Add more investments',
+                        closeAddMoreForm,
+                        'asset-action-button asset-action-button--ethereum'
+                      )}
+                    </div>
+                  </div>
+                )}
+                <div className="asset-portfolio-actions asset-portfolio-actions--show">
                   <button
-                    className="asset-action-button asset-action-button--ethereum"
+                    className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-show${
+                      showPulse ? ' asset-action-button--pulse' : ''
+                    }`}
                     onClick={() => {
+                      triggerShowPulse();
                       if (showInvestmentsList) {
                         setInvestmentsListOpen(false);
                         setTimeout(() => {
@@ -1239,11 +1373,7 @@ const VavityEthereum: React.FC = () => {
                 </div>
             </div>
             </div>
-            {showAddMoreForm && (
-              <div className={`asset-slide-panel asset-slide-panel--form${addMoreOpen ? ' is-open' : ''}`}>
-                {renderAddForm('Add more investments', closeAddMoreForm, 'asset-action-button asset-action-button--ethereum')}
-              </div>
-        )}
+            </div>
             {showInvestmentsList && (
               <div
                 className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
@@ -1282,25 +1412,44 @@ const VavityEthereum: React.FC = () => {
                           </div>
                         ) : (
                           <>
-                            <div>Purchased Value: ${formatCurrency(entry.cVatop ?? 0)}</div>
-                            <div>Current Value: ${formatCurrency(entry.cVact ?? 0)}</div>
-                  <div>
+                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
+                              <span className="asset-metric-title--ethereum">Purchased Value:</span>
+                              <span className="asset-metric-symbol--ethereum">$</span>
+                              <span className="asset-metric-value">{formatCurrency(entry.cVatop ?? 0)}</span>
+                            </div>
+                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
+                              <span className="asset-metric-title--ethereum">Current Value:</span>
+                              <span className="asset-metric-symbol--ethereum">$</span>
+                              <span className="asset-metric-value">{formatCurrency(entry.cVact ?? 0)}</span>
+                            </div>
+                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
                               {(() => {
                                 const value = Number(entry.cdVatop ?? 0);
                                 const isProfit = value > 0.005;
-                                const label = isProfit ? 'Profits' : 'Losses';
+                                const title = isProfit ? 'Profits:' : 'Losses:';
                                 const prefix = isProfit ? '+$' : '$';
-                                return `${label}: ${prefix}${formatMoneyFixed(Math.abs(value))}`;
+                                return (
+                                  <>
+                                    <span className="asset-metric-title--ethereum">{title}</span>
+                                    <span className="asset-metric-inline-symbol--ethereum">{prefix}</span>
+                                    <span className="asset-metric-value">{formatMoneyFixed(Math.abs(value))}</span>
+                                  </>
+                                );
                               })()}
                             </div>
-                            <div>
-                              Token Amount:{' '}
-                    {Number(amount).toLocaleString('en-US', {
-                      minimumFractionDigits: 8,
-                                maximumFractionDigits: 8,
-                    })}
-                  </div>
-                            <div>Purchase Date: {formatShortDate(entry.date)}</div>
+                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
+                              <span className="asset-metric-title--ethereum">Ethereum amount:</span>
+                              <span className="asset-metric-value">
+                                {Number(amount).toLocaleString('en-US', {
+                                  minimumFractionDigits: 8,
+                                  maximumFractionDigits: 8,
+                                })}
+                              </span>
+                            </div>
+                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
+                              <span className="asset-metric-title--ethereum">Date purchased:</span>
+                              <span className="asset-metric-value">{formatShortDate(entry.date)}</span>
+                            </div>
                             <button
                               type="button"
                               className="asset-delete-button"
