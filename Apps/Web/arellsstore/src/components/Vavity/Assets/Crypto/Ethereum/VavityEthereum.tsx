@@ -66,6 +66,7 @@ const VavityEthereum: React.FC = () => {
   const investmentIdMapRef = useRef<Map<string, string>>(new Map());
   const investmentIdCounterRef = useRef(0);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
+  const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
   const sloganRef = useRef<HTMLDivElement | null>(null);
@@ -326,7 +327,10 @@ const VavityEthereum: React.FC = () => {
     if (!summaryOpen || isClearingInvestments) return;
     const node = summaryContentRef.current;
     if (!node) return;
-    const nextHeight = node.scrollHeight;
+    let nextHeight = node.scrollHeight;
+    if (addMoreOpen && addMoreFormBoxRef.current) {
+      nextHeight = Math.max(nextHeight, node.scrollHeight + addMoreFormBoxRef.current.scrollHeight + 12);
+    }
     if (nextHeight !== summaryHeight) {
       setSummaryHeight(nextHeight);
     }
@@ -1339,7 +1343,7 @@ const VavityEthereum: React.FC = () => {
                     className={`asset-slide-panel asset-slide-panel--form${addMoreOpen ? ' is-open' : ''}`}
                     style={{ marginTop: '12px' }}
                   >
-                    <div className="asset-invest-form-box asset-invest-form-box--ethereum">
+                    <div ref={addMoreFormBoxRef} className="asset-invest-form-box asset-invest-form-box--ethereum">
                       {renderAddForm(
                         'Add more investments',
                         closeAddMoreForm,

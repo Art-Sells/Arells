@@ -65,6 +65,7 @@ const VavityBitcoin: React.FC = () => {
   const investmentIdMapRef = useRef<Map<string, string>>(new Map());
   const investmentIdCounterRef = useRef(0);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
+  const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
   const sloganRef = useRef<HTMLDivElement | null>(null);
@@ -327,7 +328,12 @@ const VavityBitcoin: React.FC = () => {
     if (!summaryOpen || isClearingInvestments) return;
     const node = summaryContentRef.current;
     if (!node) return;
-    const nextHeight = node.scrollHeight;
+    let nextHeight = node.scrollHeight;
+    // Ensure the parent height-down panel allocates space for the Add-more form immediately,
+    // even while the inner form panel is animating max-height from 0 -> 600.
+    if (addMoreOpen && addMoreFormBoxRef.current) {
+      nextHeight = Math.max(nextHeight, node.scrollHeight + addMoreFormBoxRef.current.scrollHeight + 12);
+    }
     if (nextHeight !== summaryHeight) {
       setSummaryHeight(nextHeight);
     }
@@ -1339,7 +1345,7 @@ const VavityBitcoin: React.FC = () => {
                   className={`asset-slide-panel asset-slide-panel--form${addMoreOpen ? ' is-open' : ''}`}
                   style={{ marginTop: '12px' }}
                 >
-                  <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
+                  <div ref={addMoreFormBoxRef} className="asset-invest-form-box asset-invest-form-box--bitcoin">
                     {renderAddForm(
                       'Add more investments',
                       closeAddMoreForm,
