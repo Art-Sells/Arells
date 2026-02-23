@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef, useLayoutEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
@@ -19,6 +19,7 @@ const VavityBitcoin: React.FC = () => {
   const [addFormOpen, setAddFormOpen] = useState(false);
   const [showAddMoreForm, setShowAddMoreForm] = useState<boolean>(false);
   const [addMoreOpen, setAddMoreOpen] = useState(false);
+  const [suppressSummaryTransition, setSuppressSummaryTransition] = useState(false);
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [purchaseDate, setPurchaseDate] = useState<string>('');
   const [historicalPrice, setHistoricalPrice] = useState<number | null>(null);
@@ -65,11 +66,16 @@ const VavityBitcoin: React.FC = () => {
   const investmentIdMapRef = useRef<Map<string, string>>(new Map());
   const investmentIdCounterRef = useRef(0);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
+  const addFormBoxRef = useRef<HTMLDivElement | null>(null);
   const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
+  const profitInlineAnimRef = useRef<HTMLSpanElement | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
   const sloganRef = useRef<HTMLDivElement | null>(null);
   const [summaryHeight, setSummaryHeight] = useState<number>(0);
+  const [addFormPanelHeight, setAddFormPanelHeight] = useState<number>(0);
+  const [addMoreFormPanelHeight, setAddMoreFormPanelHeight] = useState<number>(0);
+  const [profitInlineHeight, setProfitInlineHeight] = useState<number>(0);
   const investmentsListRef = useRef<HTMLDivElement | null>(null);
   const [investmentsListHeight, setInvestmentsListHeight] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(200);
@@ -88,6 +94,37 @@ const VavityBitcoin: React.FC = () => {
         document.documentElement?.scrollHeight || document.body?.scrollHeight || window.innerHeight;
       window.scrollTo({ top: maxScroll, behavior: 'smooth' });
     }, delayMs);
+  }, []);
+
+  // Keep the viewport pinned to the bottom while panels are height-animating (prevents scroll/height drift).
+  const followScrollUntilRef = useRef<number>(0);
+  const followScrollRafRef = useRef<number | null>(null);
+  const followScrollFor = useCallback((ms: number) => {
+    if (typeof window === 'undefined') return;
+    followScrollUntilRef.current = Date.now() + ms;
+    if (followScrollRafRef.current) {
+      window.cancelAnimationFrame(followScrollRafRef.current);
+      followScrollRafRef.current = null;
+    }
+    const tick = () => {
+      if (Date.now() >= followScrollUntilRef.current) {
+        followScrollRafRef.current = null;
+        return;
+      }
+      const maxScroll =
+        document.documentElement?.scrollHeight || document.body?.scrollHeight || window.innerHeight;
+      window.scrollTo({ top: maxScroll, behavior: 'auto' });
+      followScrollRafRef.current = window.requestAnimationFrame(tick);
+    };
+    tick();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (followScrollRafRef.current) {
+        window.cancelAnimationFrame(followScrollRafRef.current);
+      }
+    };
   }, []);
 
   const clearPulseTimers = useCallback(() => {
@@ -293,7 +330,10 @@ const VavityBitcoin: React.FC = () => {
   const totals = vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
   const hasInvestmentsUI = investments.length > 0 || isClearingInvestments;
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
-  const summaryTransition = 'max-height 2s ease';
+  // Add-more form lives inside the summary panel. If both the outer summary and the inner form
+  // animate max-height, it feels slower because the outer panel clips the inner one during its own expand.
+  // When Add-more is showing, snap the outer summary height and let only the inner form animate.
+  const summaryTransition = showAddMoreForm || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
 
   useEffect(() => {
     const prev = prevSummaryCountRef.current;
@@ -327,17 +367,67 @@ const VavityBitcoin: React.FC = () => {
   useEffect(() => {
     if (!summaryOpen || isClearingInvestments) return;
     const node = summaryContentRef.current;
-    if (!node) return;
-    let nextHeight = node.scrollHeight;
-    // Ensure the parent height-down panel allocates space for the Add-more form immediately,
-    // even while the inner form panel is animating max-height from 0 -> 600.
-    if (addMoreOpen && addMoreFormBoxRef.current) {
-      nextHeight = Math.max(nextHeight, node.scrollHeight + addMoreFormBoxRef.current.scrollHeight + 12);
+    if (!node || typeof ResizeObserver === 'undefined') {
+      // fallback: single measurement
+      setSummaryHeight(node?.scrollHeight ?? 0);
+      return;
     }
-    if (nextHeight !== summaryHeight) {
-      setSummaryHeight(nextHeight);
-    }
-  }, [summaryOpen, isClearingInvestments, investments.length, summaryHeight, showAddMoreForm, addMoreOpen]);
+
+    let raf = 0;
+    const measure = () => {
+      raf = window.requestAnimationFrame(() => {
+        const next = node.scrollHeight;
+        setSummaryHeight((prev) => (prev === next ? prev : next));
+        if (Date.now() < followScrollUntilRef.current) {
+          const maxScroll =
+            document.documentElement?.scrollHeight || document.body?.scrollHeight || window.innerHeight;
+          window.scrollTo({ top: maxScroll, behavior: 'auto' });
+        }
+      });
+    };
+
+    // Measure immediately, then keep in sync with any content growth (e.g. huge wrapped numbers).
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [summaryOpen, isClearingInvestments]);
+
+  useLayoutEffect(() => {
+    if (!addFormOpen || !addFormBoxRef.current) return;
+    const h = addFormBoxRef.current.scrollHeight;
+    const next = Math.max(0, h + 24);
+    setAddFormPanelHeight((prev) => (prev === next ? prev : next));
+  }, [addFormOpen, tokenAmount, purchaseDate, historicalLoading, historicalPrice, vapa]);
+
+  useLayoutEffect(() => {
+    if (!addMoreOpen || !addMoreFormBoxRef.current) return;
+    const h = addMoreFormBoxRef.current.scrollHeight;
+    const next = Math.max(0, h + 24);
+    setAddMoreFormPanelHeight((prev) => (prev === next ? prev : next));
+  }, [addMoreOpen, tokenAmount, purchaseDate, historicalLoading, historicalPrice, vapa]);
+
+  useLayoutEffect(() => {
+    const el = profitInlineAnimRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    let raf = 0;
+    const update = () => {
+      raf = window.requestAnimationFrame(() => {
+        const h = Math.max(16, Math.ceil(el.getBoundingClientRect().height));
+        setProfitInlineHeight((prev) => (prev === h ? prev : h));
+      });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [selectedRangeDays, rangeLoading, profitMiniLoaderVisible, profitMiniLoaderFading]);
   const oldestInvestmentDate = useMemo(() => {
     if (investments.length === 0) return null;
     const dates = investments
@@ -819,17 +909,18 @@ const VavityBitcoin: React.FC = () => {
     const purchasedValue =
       tokenAmount && purchaseDate && historicalPrice != null
         ? formatCurrency(parseTokenAmount(tokenAmount || '0') * historicalPrice)
-        : '...';
+        : '0.00';
 
-    const currentValue = tokenAmount ? formatCurrency(formCVatop) : '...';
+    const currentValue = tokenAmount ? formatCurrency(formCVatop) : '0.00';
 
     const profitRow = (() => {
-      if (!tokenAmount) return { title: 'Profits/Losses:', prefix: '', value: '...' };
-      if (purchaseDate && historicalPrice == null) return { title: 'Profits/Losses:', prefix: '', value: '...' };
+      // Keep `$` aligned with other rows (e.g. Current Value) even while the value is still loading/empty.
+      if (!tokenAmount) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
+      if (purchaseDate && historicalPrice == null) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
       const basePrice = purchaseDate ? (historicalPrice ?? 0) : (vapa || 0);
       const profitValue = (vapa - basePrice) * parseTokenAmount(tokenAmount || '0');
       const isProfit = profitValue > 0.005;
-      const title = isProfit ? 'Profits:' : 'Losses:';
+      const title = isProfit ? 'Profits' : 'Losses';
       const formattedValue =
         profitValue > 0
           ? formatCurrency(profitValue)
@@ -846,61 +937,93 @@ const VavityBitcoin: React.FC = () => {
             </span>
           </div>
 
-          <div className="asset-metric-row asset-invest-form-row">
-            <span className="asset-metric-title--bitcoin">Purchased Value:</span>
-            <span className="asset-metric-symbol--bitcoin">$</span>
-            <span className="asset-metric-value">{purchasedValue}</span>
-            {purchaseDate && historicalLoading && (
-              <span className="asset-metric-inline-value asset-invest-form-subnote">(Loading price...)</span>
-            )}
-          </div>
+          <div className="asset-invest-form-body asset-invest-form-body--bitcoin">
+            <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--bitcoin">
+              <div className="asset-invest-form-metrics">
+                <div className="asset-metric-row asset-invest-form-row">
+                  <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">Purchased Value</span>
+                  <span className="asset-money-wrap">
+                    <span className="asset-metric-symbol--bitcoin">$</span>
+                    <span className="asset-metric-value">{purchasedValue}</span>
+                  </span>
+                  <span
+                    className="asset-metric-inline-value asset-invest-form-subnote"
+                    style={{ visibility: 'hidden' }}
+                    aria-hidden="true"
+                  >
+                    {'\u00A0'}
+                  </span>
+                </div>
 
-          <div className="asset-metric-row asset-invest-form-row">
-            <span className="asset-metric-title--bitcoin">Current Value:</span>
-            <span className="asset-metric-symbol--bitcoin">$</span>
-            <span className="asset-metric-value">{currentValue}</span>
-          </div>
+                <div className="asset-metric-row asset-invest-form-row">
+                  <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">Current Value</span>
+                  <span className="asset-money-wrap">
+                    <span className="asset-metric-symbol--bitcoin">$</span>
+                    <span className="asset-metric-value">{currentValue}</span>
+                  </span>
+                  <span
+                    className="asset-metric-inline-value asset-invest-form-subnote"
+                    style={{ visibility: 'hidden' }}
+                    aria-hidden="true"
+                  >
+                    {'\u00A0'}
+                  </span>
+                </div>
 
-          <div className="asset-metric-row asset-invest-form-row">
-            <span className="asset-metric-title--bitcoin">{profitRow.title}</span>
-            {profitRow.prefix ? (
-              <span className="asset-metric-inline-symbol--bitcoin">{profitRow.prefix}</span>
-            ) : null}
-            <span className="asset-metric-value">{profitRow.value}</span>
-          </div>
-
-          <div className="asset-invest-form-field">
-            <div className="asset-metric-row asset-invest-form-field-label">
-              <span className="asset-metric-title--bitcoin">Bitcoin amount</span>
+                <div className="asset-metric-row asset-invest-form-row">
+                  <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">{profitRow.title}</span>
+                  <span className="asset-money-wrap">
+                    {profitRow.prefix ? (
+                      <span className="asset-metric-inline-symbol--bitcoin">{profitRow.prefix}</span>
+                    ) : null}
+                    <span className="asset-metric-value">{profitRow.value}</span>
+                  </span>
+                  <span
+                    className="asset-metric-inline-value asset-invest-form-subnote"
+                    style={{ visibility: 'hidden' }}
+                    aria-hidden="true"
+                  >
+                    {'\u00A0'}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="asset-invest-form-field-control">
-              <input
-                className="asset-invest-input asset-invest-input--bitcoin"
-                type="text"
-                inputMode="decimal"
-                pattern="^[0-9]*\\.?[0-9]*$"
-                value={tokenAmount}
-                onChange={(e) => setTokenAmount(normalizeTokenInput(e.target.value))}
-              />
+
+            <div className="asset-invest-form-controls asset-invest-form-controls--bitcoin">
+              <div className="asset-invest-form-field">
+                <div className="asset-metric-row asset-invest-form-field-label">
+                  <span className="asset-metric-title--bitcoin">Bitcoin amount</span>
+                </div>
+                <div className="asset-invest-form-field-control">
+                  <input
+                    className="asset-invest-input asset-invest-input--bitcoin"
+                    type="text"
+                    inputMode="decimal"
+                    pattern="^[0-9]*\\.?[0-9]*$"
+                    value={tokenAmount}
+                    onChange={(e) => setTokenAmount(normalizeTokenInput(e.target.value))}
+                  />
+                </div>
+              </div>
+
+              <div className="asset-invest-form-field">
+                <div className="asset-metric-row asset-invest-form-field-label">
+                  <span className="asset-metric-title--bitcoin">Date purchased</span>
+                </div>
+                <div className="asset-invest-form-field-control">
+                  <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" />
+                </div>
+              </div>
+
+              <button
+                onClick={handleSubmitInvestment}
+                disabled={submitLoading || !tokenAmount || !purchaseDate}
+                className={`${buttonClass} asset-action-button--invest-submit`}
+              >
+                {submitLoading ? 'Submitting...' : 'Submit'}
+              </button>
             </div>
           </div>
-
-          <div className="asset-invest-form-field">
-            <div className="asset-metric-row asset-invest-form-field-label">
-              <span className="asset-metric-title--bitcoin">Date purchased</span>
-            </div>
-            <div className="asset-invest-form-field-control">
-              <CustomDatePicker value={purchaseDate} onChange={setPurchaseDate} placeholder="MM/DD/YYYY" />
-            </div>
-          </div>
-
-          <button
-            onClick={handleSubmitInvestment}
-            disabled={submitLoading || !tokenAmount || !purchaseDate}
-            className={`${buttonClass} asset-action-button--invest-submit`}
-          >
-            {submitLoading ? 'Submitting...' : 'Submit'}
-          </button>
         </div>
 
         {submitPhase !== 'idle' && (
@@ -927,12 +1050,25 @@ const VavityBitcoin: React.FC = () => {
   useEffect(() => {
     if (!investmentsListOpen) return;
     const node = investmentsListRef.current;
-    if (!node) return;
-    const nextHeight = node.scrollHeight;
-    if (nextHeight !== investmentsListHeight) {
-      setInvestmentsListHeight(nextHeight);
+    if (!node || typeof ResizeObserver === 'undefined') {
+      setInvestmentsListHeight(node?.scrollHeight ?? 0);
+      return;
     }
-  }, [investmentsListOpen, visibleInvestmentCount, investments.length, investmentsListHeight]);
+    let raf = 0;
+    const measure = () => {
+      raf = window.requestAnimationFrame(() => {
+        const next = node.scrollHeight;
+        setInvestmentsListHeight((prev) => (prev === next ? prev : next));
+      });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [investmentsListOpen]);
 
   return (
     <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
@@ -1159,7 +1295,7 @@ const VavityBitcoin: React.FC = () => {
                     setShowEmptyAddForm(true);
                     setShowAddForm(true);
                     setSubmitPhase('idle');
-                    scrollToBottom();
+                    followScrollFor(1000);
                   }}
                 >
                   Add Investments
@@ -1168,8 +1304,11 @@ const VavityBitcoin: React.FC = () => {
             )}
             {showEmptyAddForm && showAddForm && (
               <div className="asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin">
-                <div className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}>
-                  <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
+                <div
+                  className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}
+                  style={{ maxHeight: addFormOpen ? `${Math.max(600, addFormPanelHeight)}px` : '0px' }}
+                >
+                  <div ref={addFormBoxRef} className="asset-invest-form-box asset-invest-form-box--bitcoin">
                     {renderAddForm('Add Investment', closeAddForm, 'asset-action-button asset-action-button--bitcoin')}
                   </div>
                 </div>
@@ -1184,15 +1323,19 @@ const VavityBitcoin: React.FC = () => {
               style={{ maxHeight: summaryMaxHeight, transition: summaryTransition }}
             >
               <div ref={summaryContentRef} style={{ paddingBottom: '20px' }}>
-              <div className="asset-metric-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--bitcoin">Purchased Value:</span>
-                <span className="asset-metric-symbol--bitcoin">$</span>
-                <span className="asset-metric-value">{formatCurrency(totals.acVatop || 0)}</span>
+              <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
+                <span className="asset-metric-title--bitcoin">Purchased Value</span>
+                <span className="asset-money-wrap">
+                  <span className="asset-metric-symbol--bitcoin">$</span>
+                  <span className="asset-metric-value">{formatCurrency(totals.acVatop || 0)}</span>
+                </span>
             </div>
-              <div className="asset-metric-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--bitcoin">Current Value:</span>
-                <span className="asset-metric-symbol--bitcoin">$</span>
-                <span className="asset-metric-value">{formatCurrency(totals.acVact || 0)}</span>
+              <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
+                <span className="asset-metric-title--bitcoin">Current Value</span>
+                <span className="asset-money-wrap">
+                  <span className="asset-metric-symbol--bitcoin">$</span>
+                  <span className="asset-metric-value">{formatCurrency(totals.acVact || 0)}</span>
+                </span>
             </div>
               <div
                 className="asset-panel asset-panel--bitcoin asset-profit-block asset-slide-in asset-section-slide"
@@ -1219,7 +1362,10 @@ const VavityBitcoin: React.FC = () => {
                         const formattedValue = formatMoneyFixed(Math.abs(profitValue));
                         const showLoader = (selectedRangeDays && rangeLoading) || profitMiniLoaderVisible;
                         return (
-                          <span className="asset-profit-inline-wrap">
+                          <span
+                            className="asset-profit-inline-wrap"
+                            style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
+                          >
                             {showLoader && (
                               <span
                                 className={`asset-mini-loader${profitMiniLoaderFading ? ' is-fading' : ''}`}
@@ -1227,16 +1373,19 @@ const VavityBitcoin: React.FC = () => {
                               />
                             )}
                             <span
+                              ref={profitInlineAnimRef}
                               key={`${selectedRangeDays}-${label}-${formattedValue}`}
                               className={`asset-profit-range-anim${
                                 showLoader && !profitMiniLoaderFading ? ' is-hidden' : ''
                               }`}
                             >
                               <span className="asset-metric-inline-title--bitcoin">
-                                {formatRangeLabel(selectedRangeDays)} {label}:
-                              </span>{' '}
-                              <span className="asset-metric-inline-symbol--bitcoin">{isProfit ? '+$' : '$'}</span>
-                              <span className="asset-metric-inline-value">{formattedValue}</span>
+                                {formatRangeLabel(selectedRangeDays)} {label}
+                              </span>
+                              <span className="asset-money-wrap">
+                                <span className="asset-metric-symbol--bitcoin">{isProfit ? '+$' : '$'}</span>
+                                <span className="asset-metric-inline-value">{formattedValue}</span>
+                              </span>
                             </span>
                           </span>
                         );
@@ -1247,7 +1396,10 @@ const VavityBitcoin: React.FC = () => {
                       const formattedValue = formatMoneyFixed(Math.abs(defaultProfit));
                       const showLoader = (selectedRangeDays && rangeLoading) || profitMiniLoaderVisible;
                       return (
-                        <span className="asset-profit-inline-wrap">
+                        <span
+                          className="asset-profit-inline-wrap"
+                          style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
+                        >
                           {showLoader && (
                             <span
                               className={`asset-mini-loader${profitMiniLoaderFading ? ' is-fading' : ''}`}
@@ -1255,16 +1407,19 @@ const VavityBitcoin: React.FC = () => {
                             />
                           )}
                           <span
+                            ref={profitInlineAnimRef}
                             key={`all-${label}-${formattedValue}`}
                             className={`asset-profit-range-anim${
                               showLoader && !profitMiniLoaderFading ? ' is-hidden' : ''
                             }`}
                           >
                             <span className="asset-metric-inline-title--bitcoin">
-                              {formatRangeLabel(null)} {label}:
-                            </span>{' '}
-                            <span className="asset-metric-inline-symbol--bitcoin">{isProfit ? '+$' : '$'}</span>
-                            <span className="asset-metric-inline-value">{formattedValue}</span>
+                              {formatRangeLabel(null)} {label}
+                            </span>
+                            <span className="asset-money-wrap">
+                              <span className="asset-metric-symbol--bitcoin">{isProfit ? '+$' : '$'}</span>
+                              <span className="asset-metric-inline-value">{formattedValue}</span>
+                            </span>
                           </span>
                         </span>
                       );
@@ -1319,8 +1474,11 @@ const VavityBitcoin: React.FC = () => {
                     triggerAddMorePulse();
                     if (showAddMoreForm) {
                       setAddMoreOpen(false);
+                      setSuppressSummaryTransition(true);
                       setTimeout(() => {
                         setShowAddMoreForm(false);
+                        // Let ResizeObserver-driven height updates settle before re-enabling the parent max-height transition.
+                        window.setTimeout(() => setSuppressSummaryTransition(false), 700);
                       }, 2000);
                       return;
                     }
@@ -1334,7 +1492,7 @@ const VavityBitcoin: React.FC = () => {
                     setSubmitPhase('idle');
                     setShowAddMoreForm(true);
                     setTimeout(() => setAddMoreOpen(true), 0);
-                    scrollToBottom();
+                    followScrollFor(2000);
                   }}
                 >
                   {showAddMoreForm ? 'Hide add more Investments' : 'Add more Investments'}
@@ -1343,7 +1501,7 @@ const VavityBitcoin: React.FC = () => {
               {showAddMoreForm && (
                 <div
                   className={`asset-slide-panel asset-slide-panel--form${addMoreOpen ? ' is-open' : ''}`}
-                  style={{ marginTop: '12px' }}
+                  style={{ marginTop: '12px', maxHeight: addMoreOpen ? `${Math.max(600, addMoreFormPanelHeight)}px` : '0px' }}
                 >
                   <div ref={addMoreFormBoxRef} className="asset-invest-form-box asset-invest-form-box--bitcoin">
                     {renderAddForm(
@@ -1354,31 +1512,31 @@ const VavityBitcoin: React.FC = () => {
                   </div>
                 </div>
               )}
-              <div className="asset-portfolio-actions asset-portfolio-actions--show">
-                <button
-                  className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-show${
-                    showPulse ? ' asset-action-button--pulse' : ''
-                  }`}
-                  onClick={() => {
-                    triggerShowPulse();
-                    if (showInvestmentsList) {
-                      setInvestmentsListOpen(false);
-                      setTimeout(() => {
-                        setShowInvestmentsList(false);
-                        setVisibleInvestments(5);
-                      }, 2000);
-                      return;
-                    }
-                    setShowInvestmentsList(true);
-                    setTimeout(() => setInvestmentsListOpen(true), 0);
-                    scrollToBottom(2100);
-                  }}
-                >
-                  {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
-                </button>
-              </div>
             </div>
             </div>
+            </div>
+            <div className="asset-portfolio-actions asset-portfolio-actions--show">
+              <button
+                className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-show${
+                  showPulse ? ' asset-action-button--pulse' : ''
+                }`}
+                onClick={() => {
+                  triggerShowPulse();
+                  if (showInvestmentsList) {
+                    setInvestmentsListOpen(false);
+                    setTimeout(() => {
+                      setShowInvestmentsList(false);
+                      setVisibleInvestments(5);
+                    }, 2000);
+                    return;
+                  }
+                  setShowInvestmentsList(true);
+                  setTimeout(() => setInvestmentsListOpen(true), 0);
+                  followScrollFor(2000);
+                }}
+              >
+                {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
+              </button>
             </div>
             {showInvestmentsList && (
               <div
@@ -1418,33 +1576,39 @@ const VavityBitcoin: React.FC = () => {
                           </div>
                         ) : (
                           <>
-                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
-                              <span className="asset-metric-title--bitcoin">Purchased Value:</span>
-                              <span className="asset-metric-symbol--bitcoin">$</span>
-                              <span className="asset-metric-value">{formatCurrency(entry.cVatop ?? 0)}</span>
+                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                              <span className="asset-metric-title--bitcoin">Purchased Value</span>
+                              <span className="asset-money-wrap">
+                                <span className="asset-metric-symbol--bitcoin">$</span>
+                                <span className="asset-metric-value">{formatCurrency(entry.cVatop ?? 0)}</span>
+                              </span>
                             </div>
-                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
-                              <span className="asset-metric-title--bitcoin">Current Value:</span>
-                              <span className="asset-metric-symbol--bitcoin">$</span>
-                              <span className="asset-metric-value">{formatCurrency(entry.cVact ?? 0)}</span>
+                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                              <span className="asset-metric-title--bitcoin">Current Value</span>
+                              <span className="asset-money-wrap">
+                                <span className="asset-metric-symbol--bitcoin">$</span>
+                                <span className="asset-metric-value">{formatCurrency(entry.cVact ?? 0)}</span>
+                              </span>
                             </div>
-                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
+                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                               {(() => {
                                 const value = Number(entry.cdVatop ?? 0);
                                 const isProfit = value > 0.005;
-                                const title = isProfit ? 'Profits:' : 'Losses:';
+                                const title = isProfit ? 'Profits' : 'Losses';
                                 const prefix = isProfit ? '+$' : '$';
                                 return (
                                   <>
                                     <span className="asset-metric-title--bitcoin">{title}</span>
-                                    <span className="asset-metric-inline-symbol--bitcoin">{prefix}</span>
-                                    <span className="asset-metric-value">{formatMoneyFixed(Math.abs(value))}</span>
+                                    <span className="asset-money-wrap">
+                                      <span className="asset-metric-inline-symbol--bitcoin">{prefix}</span>
+                                      <span className="asset-metric-value">{formatMoneyFixed(Math.abs(value))}</span>
+                                    </span>
                                   </>
                                 );
                               })()}
                             </div>
-                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
-                              <span className="asset-metric-title--bitcoin">Bitcoin amount:</span>
+                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                              <span className="asset-metric-title--bitcoin">Bitcoin amount</span>
                               <span className="asset-metric-value">
                                 {Number(amount).toLocaleString('en-US', {
                                   minimumFractionDigits: 8,
@@ -1452,8 +1616,8 @@ const VavityBitcoin: React.FC = () => {
                                 })}
                               </span>
                             </div>
-                            <div className="asset-metric-row" style={{ justifyContent: 'center' }}>
-                              <span className="asset-metric-title--bitcoin">Date purchased:</span>
+                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                              <span className="asset-metric-title--bitcoin">Date purchased</span>
                               <span className="asset-metric-value">{formatShortDate(entry.date)}</span>
                             </div>
                             <button
@@ -1489,7 +1653,7 @@ const VavityBitcoin: React.FC = () => {
                     className="asset-action-button asset-action-button--bitcoin"
                     onClick={() => {
                       setVisibleInvestments((prev) => prev + 5);
-                      scrollToBottom(2100);
+                      followScrollFor(2000);
                     }}
                   >
                     Load more 5 per list

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 type Props = {
   value: string; // YYYY-MM-DD or ''
@@ -66,13 +67,73 @@ const MONTHS = [
 export default function CustomDatePicker({ value, onChange, className, placeholder = 'Select date' }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const popoverRef = useRef<HTMLDivElement | null>(null);
+  const closeTimerRef = useRef<number | null>(null);
 
   const selected = useMemo(() => parseIsoYmd(value), [value]);
   const initialMonth = useMemo(() => selected ?? new Date(), [selected]);
   const [open, setOpen] = useState(false);
+  const [renderPopover, setRenderPopover] = useState(false);
+  const [popoverVisible, setPopoverVisible] = useState(false);
+  const [theme, setTheme] = useState<'bitcoin' | 'ethereum'>('bitcoin');
   const [viewYear, setViewYear] = useState(initialMonth.getFullYear());
   const [viewMonth, setViewMonth] = useState(initialMonth.getMonth());
   const [activeIso, setActiveIso] = useState<string>(value || '');
+  const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
+
+  useEffect(() => {
+    // Ensure the trigger is themed correctly immediately (even before opening),
+    // since the popover is portaled and we rely on injected CSS variables.
+    const root = rootRef.current;
+    const isEth = !!root?.closest('.asset-page--ethereum');
+    setTheme(isEth ? 'ethereum' : 'bitcoin');
+  }, []);
+
+  const themeVars = useMemo(() => {
+    // Must be set on the popover itself since it is portaled to document.body
+    // and won't inherit CSS variables from `.asset-page--bitcoin/ethereum`.
+    return theme === 'ethereum'
+      ? ({
+          '--asset-line-color': 'rgb(107, 114, 168)',
+          '--asset-slogan-color': 'rgb(82, 87, 131)',
+          // Match the asset amount input border tint
+          '--asset-border-color': 'rgba(107, 114, 168, 0.45)',
+        } as React.CSSProperties)
+      : ({
+          '--asset-line-color': 'rgb(209, 142, 55)',
+          '--asset-slogan-color': 'rgb(172, 97, 0)',
+          // Match the asset amount input border tint
+          '--asset-border-color': 'rgba(248, 141, 0, 0.45)',
+        } as React.CSSProperties);
+  }, [theme]);
+
+  const startClose = useCallback(() => {
+    setPopoverVisible(false);
+    setOpen(false);
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+    // Keep mounted for fade-out.
+    closeTimerRef.current = window.setTimeout(() => {
+      setRenderPopover(false);
+      closeTimerRef.current = null;
+    }, 500);
+  }, []);
+
+  const startOpen = useCallback(() => {
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    const root = rootRef.current;
+    const isEth = !!root?.closest('.asset-page--ethereum');
+    setTheme(isEth ? 'ethereum' : 'bitcoin');
+    setRenderPopover(true);
+    setOpen(true);
+    // Next frame to ensure transition runs from opacity 0 -> 1
+    requestAnimationFrame(() => setPopoverVisible(true));
+  }, []);
 
   useEffect(() => {
     // keep active cursor in sync with external value when closed
@@ -100,32 +161,80 @@ export default function CustomDatePicker({ value, onChange, className, placehold
     return result;
   }, [viewMonth, viewYear]);
 
-  const close = useCallback(() => setOpen(false), []);
+  const close = useCallback(() => startClose(), [startClose]);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        close();
+        startClose();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [close, open]);
+  }, [open, startClose]);
 
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
       const root = rootRef.current;
+      const pop = popoverRef.current;
       if (!root) return;
-      if (e.target instanceof Node && !root.contains(e.target)) {
-        close();
+      if (e.target instanceof Node && !root.contains(e.target) && !(pop && pop.contains(e.target))) {
+        startClose();
       }
     };
     window.addEventListener('mousedown', onDown);
     return () => window.removeEventListener('mousedown', onDown);
-  }, [close, open]);
+  }, [open, startClose]);
+
+  const updatePopoverPosition = useCallback(() => {
+    const btn = triggerRef.current;
+    if (!btn) return;
+    const r = btn.getBoundingClientRect();
+    const gap = 10;
+    // Fixed popup size for consistency across all screen sizes.
+    const desiredWidth = 200;
+    const desiredHeight = 300;
+    // Center under trigger, clamp to viewport with small padding.
+    const viewportPad = 10;
+    const leftIdeal = r.left + r.width / 2 - desiredWidth / 2;
+    const left = Math.min(
+      window.innerWidth - viewportPad - desiredWidth,
+      Math.max(viewportPad, leftIdeal)
+    );
+    const belowTop = r.bottom + gap;
+    const aboveTop = r.top - gap - desiredHeight;
+    const fitsBelow = belowTop + desiredHeight <= window.innerHeight - viewportPad;
+    const fitsAbove = aboveTop >= viewportPad;
+    const topIdeal = fitsBelow ? belowTop : fitsAbove ? aboveTop : belowTop;
+    const top = Math.min(
+      window.innerHeight - viewportPad - desiredHeight,
+      Math.max(viewportPad, topIdeal)
+    );
+    setPopoverStyle({
+      position: 'fixed',
+      left,
+      top,
+      width: desiredWidth,
+      height: desiredHeight,
+      zIndex: 9999,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    updatePopoverPosition();
+    const onWin = () => updatePopoverPosition();
+    window.addEventListener('resize', onWin);
+    // Capture scroll on any parent scroll container, not just window.
+    window.addEventListener('scroll', onWin, true);
+    return () => {
+      window.removeEventListener('resize', onWin);
+      window.removeEventListener('scroll', onWin, true);
+    };
+  }, [open, updatePopoverPosition]);
 
   useEffect(() => {
     if (!open) return;
@@ -153,7 +262,7 @@ export default function CustomDatePicker({ value, onChange, className, placehold
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       onChange(iso);
-      close();
+      startClose();
       return;
     }
     const key = e.key;
@@ -172,14 +281,19 @@ export default function CustomDatePicker({ value, onChange, className, placehold
       setViewYear(year);
       setViewMonth(month);
     }
-  }, [close, onChange, viewMonth, viewYear]);
+  }, [onChange, startClose, viewMonth, viewYear]);
 
   return (
-    <div ref={rootRef} className={`asset-date-picker${className ? ` ${className}` : ''}`}>
+    <div
+      ref={rootRef}
+      className={`asset-date-picker asset-date-picker--${theme}${className ? ` ${className}` : ''}`}
+      style={themeVars}
+    >
       <button
         type="button"
         className={`asset-date-trigger${open ? ' is-open' : ''}`}
-        onClick={() => setOpen((v) => !v)}
+        ref={triggerRef}
+        onClick={() => (open ? startClose() : startOpen())}
       >
         <span className={`asset-date-value${value ? '' : ' is-placeholder'}`}>
           {value ? formatDisplay(value) : placeholder}
@@ -194,55 +308,69 @@ export default function CustomDatePicker({ value, onChange, className, placehold
         </span>
       </button>
 
-      {open && (
-        <div className="asset-date-popover" role="dialog" aria-label="Calendar">
-          <div className="asset-date-header">
-            <button type="button" className="asset-date-nav" onClick={() => moveMonth(-1)} aria-label="Previous month">
-              ‹
-            </button>
-            <div className="asset-date-month">
-              {MONTHS[viewMonth]} {viewYear}
-            </div>
-            <button type="button" className="asset-date-nav" onClick={() => moveMonth(1)} aria-label="Next month">
-              ›
-            </button>
-          </div>
-
-          <div className="asset-date-weekdays">
-            {WEEKDAYS.map((d) => (
-              <div key={d} className="asset-date-weekday">
-                {d}
+      {renderPopover &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            className={`asset-date-popover asset-date-popover--${theme}${popoverVisible ? ' is-visible' : ''}`}
+            role="dialog"
+            aria-label="Calendar"
+            style={{ ...themeVars, ...popoverStyle }}
+          >
+            <div className="asset-date-header">
+              <button
+                type="button"
+                className="asset-date-nav"
+                onClick={() => moveMonth(-1)}
+                aria-label="Previous month"
+              >
+                ‹
+              </button>
+              <div className="asset-date-month">
+                {MONTHS[viewMonth]} {viewYear}
               </div>
-            ))}
-          </div>
+              <button type="button" className="asset-date-nav" onClick={() => moveMonth(1)} aria-label="Next month">
+                ›
+              </button>
+            </div>
 
-          <div ref={gridRef} className="asset-date-grid" role="grid">
-            {days.map((d) => {
-              const isSelected = !!value && d.iso === value;
-              const isActive = !!activeIso && d.iso === activeIso;
-              return (
-                <button
-                  key={d.iso}
-                  type="button"
-                  role="gridcell"
-                  data-iso={d.iso}
-                  className={`asset-date-day${d.inMonth ? '' : ' is-outside'}${isSelected ? ' is-selected' : ''}${
-                    isActive ? ' is-active' : ''
-                  }`}
-                  onKeyDown={onDayKeyDown}
-                  onMouseEnter={() => setActiveIso(d.iso)}
-                  onClick={() => {
-                    onChange(d.iso);
-                    close();
-                  }}
-                >
-                  {d.day}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+            <div className="asset-date-weekdays">
+              {WEEKDAYS.map((d) => (
+                <div key={d} className="asset-date-weekday">
+                  {d}
+                </div>
+              ))}
+            </div>
+
+            <div ref={gridRef} className="asset-date-grid" role="grid">
+              {days.map((d) => {
+                const isSelected = !!value && d.iso === value;
+                const isActive = !!activeIso && d.iso === activeIso;
+                return (
+                  <button
+                    key={d.iso}
+                    type="button"
+                    role="gridcell"
+                    data-iso={d.iso}
+                    className={`asset-date-day${d.inMonth ? '' : ' is-outside'}${isSelected ? ' is-selected' : ''}${
+                      isActive ? ' is-active' : ''
+                    }`}
+                    onKeyDown={onDayKeyDown}
+                    onMouseEnter={() => setActiveIso(d.iso)}
+                    onClick={() => {
+                      onChange(d.iso);
+                    startClose();
+                    }}
+                  >
+                    {d.day}
+                  </button>
+                );
+              })}
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

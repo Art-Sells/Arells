@@ -21,9 +21,21 @@
 
 
 ### About:
-    Arells is a ledger that shows how your investments would look if bear markets never existed.
 
-    Powered by (Vavity (V))
+    What is Arells?
+
+    Arells is a belief that investments should never lose value.
+    ______________________
+
+    This belief is powered by a ledger that shows how your investments would look if bear markets never existed.
+
+    This ledger is powered by a new psychological and technological invention called Vavity. Through Vavity, Arells created two new financial categories:
+        (sloth market png)
+            Sloth Markets
+        (Solid Marketplace png)
+            Solid Marketplaces
+
+    Learn more > (Vavity (V))
 
 ### Vavity (take everything from vavity.info)
 
@@ -43,7 +55,7 @@
 - - Scrolls/button-clicks(which-assets)/asset-events = human
 - In notion:
 - - Users
-- - - (current) session creations (browswer/unique IP addresses)
+- - - (current) session creations (browswer/unique IP addresses), retention graph....
 - - - chart
 - - save/update .json info every second to ext Dsk (then every day save/update cold)
 
@@ -65,7 +77,9 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 - - In notion:  
 - - Users
 - - - (current) number of sessions (unique users?) created/interacted/etc
-- - - chart
+- - - Growth chart
+- - - MAU Chart
+- - - Retention chart
 
 #### Update Links
 - Email/X-Twitter/LinkedIn+crunchbase+CSC(company-type: Financial Technology (remove blockchain services or anything blockchain))/: If bear markets never existed

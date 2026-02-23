@@ -1,13 +1,14 @@
 <img src="https://github.com/Ecare-Exchange/Arells/blob/main/Art/General/Arells-Icon-Ebony.png" width="70px"> 
 
 # [Arells](https://arells.com)
-## If bear markets never existed.
 
 ### Problem: 
 Investors feel pain during bear markets.
 
 ### Solution:
-A ledger that shows how investments would look if bear markets never existed. 
+A belief that investments should never lose value. 
+
+This belief uses a ledger that shows how investments would look if bear markets never existed. 
 
 Powered by **[Vavity](https://github.com/Art-Sells/Vavity)**
 _______________________________________________________________________

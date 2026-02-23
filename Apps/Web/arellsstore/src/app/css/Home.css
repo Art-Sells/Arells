@@ -255,23 +255,30 @@ body {
 .asset-profit-inline-wrap {
 	position: relative;
 	display: block;
-	width: 100%;
+	width: 300px;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
 	min-height: 16px;
+	overflow: hidden;
+	transition: height 0.5s ease;
 }
 
 .asset-profit-inline-wrap .asset-mini-loader {
 	position: absolute;
 	left: 50%;
-	transform: translate(-50%, -50%);
-	margin-top: 0;
+	margin-top: 8px;
 }
 
 .asset-profit-inline-wrap .asset-profit-range-anim {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	white-space: nowrap;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 2px;
+	text-align: center;
+	white-space: normal;
 }
 
 .asset-portfolio-title-muted {
@@ -416,7 +423,7 @@ body {
 }
 
 .asset-profit-summary {
-	padding: 10px;
+	padding: 10px 10px 12px;
 	border-radius: 10px;
 	text-align: center;
 	margin-bottom: 20px;
@@ -629,7 +636,8 @@ body {
 	color: rgb(105, 105, 105);
 	opacity: 1;
 	margin-left: 0px;
-	margin-right: 2px;
+	/* Match Purchased/Current $ spacing (asset-metric-symbol--bitcoin uses -2px) */
+	margin-right: -2px;
 }
 
 .asset-home-font-label--ethereum {
@@ -665,7 +673,8 @@ body {
 	font-size: 12px;
 	color: rgb(105, 105, 105);
 	opacity: 1;
-	margin-right: 2px;
+	/* Match Purchased/Current $ spacing (asset-metric-symbol--ethereum uses -2px) */
+	margin-right: -2px;
 }
 
 .asset-action-button {
@@ -714,6 +723,7 @@ body {
 	box-sizing: border-box;
 	border-radius: 14px;
 	padding: 16px;
+	margin-top: 12px;
 	background: transparent;
 }
 
@@ -731,8 +741,73 @@ body {
 
 .asset-invest-form-heading {
 	justify-content: center;
-	margin-top: 20px;
-	margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: -6.6px;
+}
+
+.asset-invest-form-heading .asset-metric-title--bitcoin,
+.asset-invest-form-heading .asset-metric-title--ethereum {
+	font-size: 28px;
+	letter-spacing: -2px;
+	opacity: 1;
+}
+
+.asset-invest-form-body {
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 14px;
+	padding-left: 16px;
+	padding-right: 16px;
+	padding-top: 16px;
+	padding-bottom: 16px;
+	border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.asset-invest-form-body--bitcoin {
+	border-color: rgba(248, 141, 0, 0.3);
+}
+
+.asset-invest-form-body--ethereum {
+	border-color: rgba(107, 114, 168, 0.3);
+}
+
+.asset-invest-form-metrics-panel {
+	border-radius: 14px;
+	padding-left: 16px;
+	padding-right: 16px;
+	padding-top: 30px;
+	padding-bottom: -5px;
+	border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.asset-invest-form-metrics-panel--bitcoin {
+	border-color: rgba(248, 141, 0, 0.3);
+}
+
+.asset-invest-form-metrics-panel--ethereum {
+	border-color: rgba(107, 114, 168, 0.3);
+}
+
+.asset-invest-form-metrics-panel .asset-invest-form-row:not(:last-child) {
+	margin-bottom: -10px;
+}
+
+.asset-invest-form-controls {
+	margin-top: 10px;
+	border-radius: 14px;
+	padding-left: 16px;
+	padding-right: 16px;
+	padding-top: 16px;
+	padding-bottom: 16px;
+	border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.asset-invest-form-controls--bitcoin {
+	border-color: rgba(248, 141, 0, 0.3);
+}
+
+.asset-invest-form-controls--ethereum {
+	border-color: rgba(107, 114, 168, 0.3);
 }
 
 .asset-invest-form-row {
@@ -749,9 +824,52 @@ body {
 	opacity: 0.9;
 }
 
+.asset-invest-form-metrics .asset-invest-form-metric-title {
+	font-weight: 200 !important;
+	opacity: 1;
+}
+
+.asset-invest-form-row {
+	width: 300px;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+}
+
+.asset-money-wrap {
+	display: inline-grid;
+	grid-template-columns: auto 1fr;
+	align-items: baseline;
+	gap: 4px;
+	min-width: 0;
+}
+
+.asset-money-wrap .asset-metric-value {
+	min-width: 0;
+}
+
+.asset-money-wrap .asset-metric-inline-value {
+	min-width: 0;
+}
+
+.asset-money-row {
+	width: 300px;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+}
+
 .asset-invest-input {
 	margin-left: 8px;
-	padding: 6px 10px;
+	padding: 10px;
 	border-radius: 10px;
 	border: 1px solid rgba(0, 0, 0, 0.25);
 	background: transparent;
@@ -759,6 +877,15 @@ body {
 	font-size: 12px;
 	font-weight: 800;
 	outline: none;
+	transition: background-color 0.5s ease;
+	box-sizing: border-box;
+	line-height: 1.2;
+}
+
+.asset-invest-input:focus,
+.asset-invest-input:focus-visible {
+	outline: none;
+	box-shadow: none;
 }
 
 .asset-invest-form-field {
@@ -778,7 +905,14 @@ body {
 .asset-invest-form-field-control .asset-invest-input {
 	margin-left: 0;
 	text-align: center;
-	min-width: 220px;
+	min-width: 200px;
+	width: 200px;
+	max-width: 100%;
+}
+
+/* Make the custom date picker control match the old input footprint (no tiny click target) */
+.asset-invest-form-field-control .asset-date-picker {
+	width: 200px;
 }
 
 .asset-invest-input--bitcoin {
@@ -789,16 +923,27 @@ body {
 	border-color: rgba(107, 114, 168, 0.45);
 }
 
+/* Input fill highlight ONLY when clicked/focused */
+.asset-invest-input--bitcoin:focus,
+.asset-invest-input--bitcoin:focus-visible {
+	background: rgba(248, 141, 0, 0.14);
+}
+
+.asset-invest-input--ethereum:focus,
+.asset-invest-input--ethereum:focus-visible {
+	background: rgba(107, 114, 168, 0.16);
+}
+
 /* Submit button: padding + edges like the Add Investments button */
 .asset-action-button--invest-submit {
-	padding: 10px 20px 10px 40px !important;
-	border-top-left-radius: 999px;
-	border-bottom-left-radius: 999px;
-	border-top-right-radius: 400px;
-	border-bottom-right-radius: 400px;
-	border-width: 0.3px !important;
-	font-weight: 800 !important;
+	/* Match Add more / Hide add more Investments button framework + typography */
+	padding: 12px 25px !important; /* same as `.asset-action-button--invest-add` */
+	font-size: 12px !important; /* same as base `.asset-action-button` */
+	font-weight: 400 !important; /* same as base `.asset-action-button` */
+	border-radius: 6px; /* same as base `.asset-action-button` */
+	margin-top: 20px;
 	margin-bottom: 20px;
+	box-shadow: none !important;
 }
 
 /* Fully custom calendar (no native date picker constraints) */
@@ -814,30 +959,51 @@ body {
 	align-items: center;
 	justify-content: space-between;
 	gap: 10px;
-	padding: 10px 14px;
-	border-radius: 14px;
-	border: 1px solid rgba(0, 0, 0, 0.25);
+	padding: 10px;
+	border-radius: 10px;
+	border: 1px solid var(--asset-border-color); /* match asset page themed borders */
 	background: transparent;
 	color: inherit;
 	cursor: pointer;
 	font-weight: 800;
 	box-sizing: border-box;
+	font-family: Arial, sans-serif;
+	transition: background-color 0.5s ease;
+	font-size: 12px;
+	line-height: 1.2;
 }
 
 .asset-date-trigger.is-open {
-	/* focus tone like the All-time bull/sloth section */
-	outline: 3px solid rgba(248, 141, 0, 0.12);
-	outline-offset: 2px;
+	outline: none;
 }
 
-.asset-page--ethereum .asset-date-trigger.is-open {
-	outline: 3px solid rgba(107, 114, 168, 0.14);
-	outline-offset: 2px;
+.asset-date-trigger:focus,
+.asset-date-trigger:focus-visible {
+	outline: none;
+}
+
+/* Date trigger fill highlight ONLY when clicked/open */
+.asset-date-picker--bitcoin .asset-date-trigger.is-open,
+.asset-date-picker--bitcoin .asset-date-trigger:focus,
+.asset-date-picker--bitcoin .asset-date-trigger:focus-visible {
+	background: rgba(248, 141, 0, 0.14);
+}
+
+.asset-date-picker--ethereum .asset-date-trigger.is-open,
+.asset-date-picker--ethereum .asset-date-trigger:focus,
+.asset-date-picker--ethereum .asset-date-trigger:focus-visible {
+	background: rgba(107, 114, 168, 0.16);
+}
+
+.asset-date-value {
+	color: var(--asset-line-color);
+	font-weight: 700; /* numbers/values */
 }
 
 .asset-date-value.is-placeholder {
-	opacity: 0.7;
-	font-weight: 700;
+	color: var(--asset-line-color);
+	opacity: 0.75;
+	font-weight: 200;
 }
 
 .asset-date-icon {
@@ -846,77 +1012,99 @@ body {
 }
 
 .asset-date-popover {
-	position: absolute;
-	z-index: 50;
-	left: 50%;
-	top: calc(100% + 10px);
-	transform: translateX(-50%);
-	width: 320px;
-	padding: 14px;
-	border-radius: 16px;
-	border: 1px solid rgba(0, 0, 0, 0.18);
-	background: rgba(248, 141, 0, 0.06);
-	/* Use filter shadow (box-shadow is globally disabled on asset pages) */
-	filter: drop-shadow(-8px 0 14px rgba(248, 141, 0, 0.18)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.08));
+	/* Positioned by JS (portal + fixed coords) */
+	padding: 18px;
+	border-radius: 12px;
+	border: 1px solid var(--asset-border-color);
 	box-sizing: border-box;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.5s ease;
+	color: var(--asset-line-color);
+	font-family: Arial, sans-serif;
 }
 
-.asset-page--ethereum .asset-date-popover {
-	background: rgba(107, 114, 168, 0.07);
-	filter: drop-shadow(-8px 0 14px rgba(107, 114, 168, 0.18)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.08));
+.asset-date-popover.is-visible {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Match the *visible* tint of the Sloth Market section background, but at alpha=0.8.
+   (Derived from `.asset-profit-summary--bitcoin` background rgba(248,141,0,0.06) on white) */
+.asset-date-popover--bitcoin {
+	background: rgba(255, 244, 232, 0.9);
+}
+
+/* Derived from `.asset-profit-summary--ethereum` background rgba(107,114,168,0.07) on white */
+.asset-date-popover--ethereum {
+	background: rgba(242, 243, 250, 0.9);
 }
 
 .asset-date-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 10px;
+	margin-bottom: 6px;
+	font-size: 11px;
 }
 
 .asset-date-month {
-	font-weight: 800;
+	color: var(--asset-line-color);
+	opacity: 0.85;
+	font-weight: 200; /* lighter than the numbers */
 	letter-spacing: -0.5px;
+	font-size: 11px;
 }
 
 .asset-date-nav {
-	width: 34px;
-	height: 34px;
-	border-radius: 10px;
-	border: 1px solid rgba(0, 0, 0, 0.18);
+	width: 22px;
+	height: 22px;
+	border-radius: 8px;
+	border: 1px solid var(--asset-border-color);
 	background: transparent;
 	color: inherit;
 	cursor: pointer;
 	font-weight: 800;
+	line-height: 1;
+	padding: 0;
+	transition: background 0.2s ease;
 }
 
 .asset-date-weekdays {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
-	gap: 6px;
-	margin-bottom: 8px;
+	gap: 4px;
+	margin-bottom: 6px;
 }
 
 .asset-date-weekday {
 	text-align: center;
-	font-size: 10px;
-	font-weight: 800;
-	opacity: 0.9;
+	font-size: 8px;
+	font-weight: 200; /* label tone */
+	color: var(--asset-line-color);
+	opacity: 0.85;
 }
 
 .asset-date-grid {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
-	gap: 6px;
+	gap: 4px;
+	flex: 1;
 }
 
 .asset-date-day {
-	height: 34px;
-	border-radius: 10px;
-	border: 1px solid rgba(0, 0, 0, 0.12);
+	height: 22px;
+	border-radius: 8px;
+	border: 1px solid var(--asset-border-color);
 	background: transparent;
-	color: inherit;
+	color: var(--asset-line-color);
 	cursor: pointer;
-	font-weight: 800;
+	font-weight: 700;
+	font-size: 10px;
+	padding: 0;
 }
 
 .asset-date-day.is-outside {
@@ -924,23 +1112,50 @@ body {
 }
 
 .asset-date-day:hover {
-	background: rgba(0, 0, 0, 0.05);
+	background: transparent;
 }
 
 .asset-date-day.is-selected {
-	border-color: rgba(0, 0, 0, 0.25);
-	background: rgba(0, 0, 0, 0.06);
+	border-color: var(--asset-border-color);
+	background: transparent;
+}
+
+/* Remove generic gray hover/selected fills; use asset-themed tints instead */
+.asset-date-popover--bitcoin .asset-date-day:hover {
+	background: rgba(248, 141, 0, 0.14);
+}
+
+.asset-date-popover--ethereum .asset-date-day:hover {
+	background: rgba(107, 114, 168, 0.16);
+}
+
+.asset-date-popover--bitcoin .asset-date-day.is-selected {
+	background: rgba(248, 141, 0, 0.18);
+}
+
+.asset-date-popover--ethereum .asset-date-day.is-selected {
+	background: rgba(107, 114, 168, 0.2);
+}
+
+/* Arrow buttons: match date hover/active highlight */
+.asset-date-popover--bitcoin .asset-date-nav:hover,
+.asset-date-popover--bitcoin .asset-date-nav:active,
+.asset-date-popover--bitcoin .asset-date-nav:focus {
+	background: rgba(248, 141, 0, 0.14);
+}
+
+.asset-date-popover--ethereum .asset-date-nav:hover,
+.asset-date-popover--ethereum .asset-date-nav:active,
+.asset-date-popover--ethereum .asset-date-nav:focus {
+	background: rgba(107, 114, 168, 0.16);
 }
 
 .asset-date-day:focus {
 	outline: none;
-	outline: 3px solid rgba(248, 141, 0, 0.14);
-	outline-offset: 1px;
 }
 
-.asset-page--ethereum .asset-date-day:focus {
-	outline: 3px solid rgba(107, 114, 168, 0.16);
-	outline-offset: 1px;
+.asset-date-popover--ethereum .asset-date-day:focus {
+	outline: none;
 }
 
 /* Empty-state "Add Investments" button: separate styling from all other buttons */
@@ -1112,7 +1327,8 @@ body {
 }
 
 .asset-slide-panel--form.is-open {
-	max-height: 600px;
+	/* Avoid clipping tall form content (e.g. huge currency numbers that wrap) */
+	max-height: 2000px;
 	transition-duration: 2s;
 }
 
@@ -1555,12 +1771,11 @@ body {
 }
 
 .asset-page--bitcoin .asset-page-content .asset-action-button--invest-submit {
-	box-shadow: -5px 0px 20px rgba(248, 141, 0, 0.4) !important;
+	box-shadow: none !important;
 }
 
 .asset-page--bitcoin .asset-page-content .asset-action-button--invest-submit:hover {
-	box-shadow: -7px -3px 20px rgba(248, 141, 0, 0.2), 0 4px 14px rgba(248, 141, 0, 0.2) !important;
-	transform: translateY(-4px);
+	box-shadow: none !important;
 }
 
 .asset-page--ethereum .asset-page-content .asset-action-button--add-investments {
@@ -1573,12 +1788,11 @@ body {
 }
 
 .asset-page--ethereum .asset-page-content .asset-action-button--invest-submit {
-	box-shadow: -5px 0px 20px rgba(107, 114, 168, 0.4) !important;
+	box-shadow: none !important;
 }
 
 .asset-page--ethereum .asset-page-content .asset-action-button--invest-submit:hover {
-	box-shadow: -7px -2px 20px rgba(107, 114, 168, 0.2), 0 4px 14px rgba(107, 114, 168, 0.2) !important;
-	transform: translateY(-4px);
+	box-shadow: none !important;
 }
 
 /* Asset pages: remove icon drop-shadows too */
