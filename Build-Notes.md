@@ -62,17 +62,13 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
     Arells is a belief that investments should never lose value.
     ______________________
 
-    This belief is powered by a ledger that shows how your investments would look if they never lost value.
-
-    This ledger is powered by a new psychological and technological invention called Vavity. Through Vavity, Arells created two new financial categories:
-        (sloth market png)
-            Sloth Markets
-        (Solid Marketplace png)
-            Solid Marketplaces
-
-    History shows that new economic systems begin not as laws or technologies, they begin as belief systems, they begin with you believing what is possible before they are implemented. 
+    History shows that new economic systems begin not as laws or technologies, they begin as beliefs, they begin with you believing what is possible. 
     
     And that is how investments never losing value begins, with a belief.
+
+    This belief is powered by a ledger that shows how your investments would look if they never lost value.
+
+    This ledger is powered by a new psychological and technological invention called Vavity.
 
     Learn more > (Vavity (V))
 
