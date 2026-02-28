@@ -5,15 +5,21 @@ import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
 import { useVavity } from '../../../../../context/VavityAggregator';
+import { useUser } from '../../../../../context/UserContext';
 import EthereumChart from '../../../../Assets/Crypto/Ethereum/EthereumChart';
 import CustomDatePicker from '../../../../common/CustomDatePicker';
 
 const VavityEthereum: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
+  const { email, isSignedIn, sessionReady, openSignIn, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [vavityData, setVavityData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [submitPhase, setSubmitPhase] = useState<'idle' | 'submitting' | 'submitted'>('idle');
+  const [submitPanelMaxHeight, setSubmitPanelMaxHeight] = useState<number | null>(null);
+  const submitTargetRef = useRef<'add' | 'addMore'>('add');
+  const prevSubmitPhaseRef = useRef<'idle' | 'submitting' | 'submitted'>('idle');
+  const [previewSubmit, setPreviewSubmit] = useState(false);
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
   const [showEmptyAddForm, setShowEmptyAddForm] = useState<boolean>(false);
   const [addFormOpen, setAddFormOpen] = useState(false);
@@ -248,13 +254,23 @@ const VavityEthereum: React.FC = () => {
   const ethereumAccentMuted = 'rgba(107, 114, 168, 0.14)';
 
   useEffect(() => {
-    if (!sessionId || !fetchVavityAggregator) return;
+    if (isSignedIn) {
+      if (!email) return;
+    } else {
+      if (!sessionReady || !sessionId || !fetchVavityAggregator) return;
+    }
     let isMounted = true;
     const loadData = async () => {
       if (isMutatingRef.current) return;
       setLoading(true);
       try {
-        const data = await fetchVavityAggregator(sessionId, 'ethereum');
+        const data = isSignedIn
+          ? await (async () => {
+              const params = new URLSearchParams({ email, asset: 'ethereum' });
+              const res = await fetch(`/api/fetchUserVavityAggregator?${params.toString()}`);
+              return await res.json();
+            })()
+          : await fetchVavityAggregator(sessionId, 'ethereum');
         if (isMounted) {
           setVavityData(data);
         }
@@ -272,7 +288,39 @@ const VavityEthereum: React.FC = () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [fetchVavityAggregator, sessionId]);
+  }, [fetchVavityAggregator, sessionId, sessionReady, isSignedIn, email]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const v = (params.get('previewSubmit') || '').toLowerCase();
+      setPreviewSubmit(v === '1' || v === 'true' || v === 'yes' || v === 'on');
+    } catch {
+      setPreviewSubmit(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!previewSubmit) return;
+    // Auto-mount a form panel so the submitting UI is visible without clicks.
+    setSubmitPhase('submitting');
+    setSubmitLoading(true);
+
+    const hasInvestments = (vavityData?.investments?.length ?? 0) > 0 || isClearingInvestments;
+    if (hasInvestments) {
+      submitTargetRef.current = 'addMore';
+      setShowAddMoreForm(true);
+      setTimeout(() => setAddMoreOpen(true), 0);
+      followScrollFor(2000);
+    } else {
+      submitTargetRef.current = 'add';
+      setShowEmptyAddForm(true);
+      setShowAddForm(true);
+      setTimeout(() => setAddFormOpen(true), 0);
+      followScrollFor(2000);
+    }
+  }, [previewSubmit, vavityData, isClearingInvestments, followScrollFor]);
 
   useEffect(() => {
     if (!history.length) {
@@ -283,13 +331,8 @@ const VavityEthereum: React.FC = () => {
     return () => clearTimeout(timer);
   }, [history.length]);
 
-  useEffect(() => {
-    if (showAddForm) {
-      const timer = setTimeout(() => setAddFormOpen(true), 0);
-      return () => clearTimeout(timer);
-    }
-    setAddFormOpen(false);
-  }, [showAddForm]);
+  // NOTE: `addFormOpen` is intentionally orchestrated alongside `showAddForm`
+  // in the click handler (mount, then open next tick) to match the Add-more form timing.
 
   useEffect(() => {
     const el = chartWrapRef.current;
@@ -773,7 +816,7 @@ const VavityEthereum: React.FC = () => {
   }, [tokenAmount, parseTokenAmount, vapa]);
 
   const handleSubmitInvestment = async () => {
-    if (!sessionId) return;
+    if (!isSignedIn && !sessionId) return;
     const amt = parseTokenAmount(tokenAmount || '0');
     if (!amt || amt <= 0) return;
     if (!purchaseDate) return;
@@ -782,15 +825,26 @@ const VavityEthereum: React.FC = () => {
     const newInvestment = {
       cVactTaa,
       date: purchaseDate,
+      asset: 'ethereum',
       clientId: `inv-${Date.now()}-${Math.random().toString(16).slice(2)}`
     };
 
     isMutatingRef.current = true;
     setSubmitLoading(true);
+    // Mark which panel is currently being submitted from, so we can collapse that panel for the status UI.
+    submitTargetRef.current = showAddMoreForm ? 'addMore' : 'add';
     setSubmitPhase('submitting');
     try {
-      await addVavityAggregator(sessionId, [newInvestment], 'ethereum');
-      const refreshed = await fetchVavityAggregator(sessionId, 'ethereum');
+      let refreshed: any = null;
+      if (isSignedIn) {
+        await addEmailInvestments('ethereum', [newInvestment]);
+        const params = new URLSearchParams({ email, asset: 'ethereum' });
+        const res = await fetch(`/api/fetchUserVavityAggregator?${params.toString()}`);
+        refreshed = await res.json();
+      } else {
+        await addVavityAggregator(sessionId, [newInvestment], 'ethereum');
+        refreshed = await fetchVavityAggregator(sessionId, 'ethereum');
+      }
       const refreshedInvestments = Array.isArray(refreshed?.investments)
         ? refreshed.investments.map((entry: any) => ({ ...entry }))
         : [];
@@ -842,7 +896,7 @@ const VavityEthereum: React.FC = () => {
   };
 
   const handleDeleteInvestment = async (investmentId: string) => {
-    if (!sessionId) return;
+    if (!isSignedIn && !sessionId) return;
     const indexToRemove = investmentIds.indexOf(investmentId);
     if (indexToRemove === -1) return;
     const updated = investments.filter((_: any, idx: number) => idx !== indexToRemove);
@@ -877,9 +931,17 @@ const VavityEthereum: React.FC = () => {
     isMutatingRef.current = true;
     try {
       setVavityData((prev: any) => (prev ? { ...prev, investments: updated } : prev));
-      await saveVavityAggregator(sessionId, updated, 'ethereum');
-      const refreshed = await fetchVavityAggregator(sessionId, 'ethereum');
-      setVavityData(refreshed);
+      if (isSignedIn) {
+        await saveEmailInvestmentsForAsset('ethereum', updated);
+        const params = new URLSearchParams({ email, asset: 'ethereum' });
+        const res = await fetch(`/api/fetchUserVavityAggregator?${params.toString()}`);
+        const refreshed = await res.json();
+        setVavityData(refreshed);
+      } else {
+        await saveVavityAggregator(sessionId, updated, 'ethereum');
+        const refreshed = await fetchVavityAggregator(sessionId, 'ethereum');
+        setVavityData(refreshed);
+      }
     } finally {
       isMutatingRef.current = false;
     }
@@ -891,7 +953,7 @@ const VavityEthereum: React.FC = () => {
       setShowAddForm(false);
       setShowEmptyAddForm(false);
       setSubmitPhase('idle');
-    }, 1000);
+    }, 2000);
   }, []);
 
   const closeAddMoreForm = useCallback(() => {
@@ -901,6 +963,59 @@ const VavityEthereum: React.FC = () => {
       setSubmitPhase('idle');
     }, 2000);
   }, []);
+
+  // Drive the outer slide-panel max-height during submit so the status view
+  // starts at the form's size and collapses down smoothly.
+  useEffect(() => {
+    const prevPhase = prevSubmitPhaseRef.current;
+    const phase = previewSubmit ? 'submitting' : submitPhase;
+    prevSubmitPhaseRef.current = phase;
+
+    if (phase === 'idle') {
+      setSubmitPanelMaxHeight(null);
+      return;
+    }
+
+    if (previewSubmit) {
+      const start = Math.max(600, submitTargetRef.current === 'addMore' ? addMoreFormPanelHeight : addFormPanelHeight);
+      setSubmitPanelMaxHeight(start);
+      return;
+    }
+
+    const target = submitTargetRef.current;
+    const start =
+      target === 'addMore' ? Math.max(600, addMoreFormPanelHeight) : Math.max(600, addFormPanelHeight);
+
+    if (phase === 'submitting') {
+      setSubmitPanelMaxHeight(start);
+      requestAnimationFrame(() => setSubmitPanelMaxHeight(300));
+    } else {
+      if (prevPhase === 'submitting') {
+        requestAnimationFrame(() => setSubmitPanelMaxHeight(0));
+      } else {
+        setSubmitPanelMaxHeight(start);
+        requestAnimationFrame(() => {
+          setSubmitPanelMaxHeight(300);
+          requestAnimationFrame(() => setSubmitPanelMaxHeight(0));
+        });
+      }
+    }
+
+    if (phase === 'submitted') {
+      const t = window.setTimeout(() => {
+        if (target === 'addMore') {
+          setAddMoreOpen(false);
+          setShowAddMoreForm(false);
+        } else {
+          setAddFormOpen(false);
+          setShowAddForm(false);
+          setShowEmptyAddForm(false);
+        }
+        setSubmitPhase('idle');
+      }, 2000);
+      return () => window.clearTimeout(t);
+    }
+  }, [submitPhase, previewSubmit, addFormPanelHeight, addMoreFormPanelHeight]);
 
   const renderAddForm = (label: string, onClose: () => void, buttonClass: string) => {
     const purchasedValue =
@@ -1022,17 +1137,14 @@ const VavityEthereum: React.FC = () => {
           </div>
         </div>
 
-        {submitPhase !== 'idle' && (
+        {(previewSubmit || submitPhase !== 'idle') && (
           <div className="asset-submit-status">
-            <div className={`asset-submit-phase${submitPhase === 'submitting' ? ' is-active' : ''}`}>
+            <div className={`asset-submit-phase${(previewSubmit || submitPhase === 'submitting') ? ' is-active' : ''}`}>
               <div className="asset-submit-spinner" />
               <div className="asset-home-font-label--ethereum">Submitting...</div>
             </div>
             <div className={`asset-submit-phase${submitPhase === 'submitted' ? ' is-active' : ''}`}>
               <div className="asset-home-font-label--ethereum">Submitted.</div>
-              <button type="button" className={buttonClass} onClick={onClose}>
-                OK
-              </button>
             </div>
           </div>
         )}
@@ -1078,7 +1190,7 @@ const VavityEthereum: React.FC = () => {
             className="asset-header-slogan"
             ref={sloganRef}
           >
-            if bear markets never existed
+            if investments never lost value
           </div>
         </div>
         <div
@@ -1272,42 +1384,61 @@ const VavityEthereum: React.FC = () => {
           paddingLeft: '20px',
           paddingRight: '20px' }}
       >
-        <h2
-          className="asset-home-font-title"
-          style={{display: 'flex', alignItems: 'center', gap: '5px', justifyContent: 'center' }}
-        >
-          <Image src="/images/assets/crypto/Ethereum.svg" alt="Ethereum" width={17} height={17} />
-          <span className="asset-portfolio-title-muted">investments</span>
-        </h2>
+        {hasInvestmentsUI && (
+          <h2
+            className="asset-home-font-title"
+            style={{display: 'flex', alignItems: 'center', gap: '5px', justifyContent: 'center' }}
+          >
+            <Image src="/images/assets/crypto/Ethereum.svg" alt="Ethereum" width={17} height={17} />
+            <span className="asset-portfolio-title-muted">investments</span>
+          </h2>
+        )}
         {!hasInvestmentsUI ? (
           <>
             {!showEmptyAddForm && (
-              <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
-                <button
-                  className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
-                  onClick={() => {
-                    setShowEmptyAddForm(true);
-                    setShowAddForm(true);
-                    setSubmitPhase('idle');
-                    followScrollFor(1000);
-                  }}
-                >
-                  Add Investments
-                </button>
-              </div>
+              <button
+                className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
+                onClick={() => {
+                  setShowEmptyAddForm(true);
+                  setShowAddForm(true);
+                  setTimeout(() => setAddFormOpen(true), 0);
+                  setSubmitPhase('idle');
+                  followScrollFor(2000);
+                }}
+              >
+                Add Investments
+              </button>
             )}
             {showEmptyAddForm && showAddForm && (
               <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
                 <div
                   className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}
-                  style={{ maxHeight: addFormOpen ? `${Math.max(600, addFormPanelHeight)}px` : '0px' }}
+                  style={{
+                    maxHeight:
+                      submitPhase !== 'idle' && submitTargetRef.current === 'add' && submitPanelMaxHeight != null
+                        ? `${submitPanelMaxHeight}px`
+                        : addFormOpen
+                          ? `${Math.max(600, addFormPanelHeight)}px`
+                          : '0px',
+                  }}
                 >
-                  <div ref={addFormBoxRef} className="asset-invest-form-box asset-invest-form-box--ethereum">
-                    {renderAddForm('Add Investment', closeAddForm, 'asset-action-button asset-action-button--ethereum')}
+                  <div ref={addFormBoxRef} className="asset-slide-panel-inner">
+                    <div className="asset-invest-form-box asset-invest-form-box--ethereum">
+                      {renderAddForm(
+                        'Add Investments',
+                        closeAddForm,
+                        'asset-action-button asset-action-button--ethereum'
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
         )}
+            {!isSignedIn && (
+              <button type="button" className="asset-action-button asset-action-button--save-signin" onClick={openSignIn}>
+                <span className="asset-save-signin-text">Sign In to Save Investments</span>
+              </button>
+            )}
           </>
         ) : (
           <>
@@ -1316,7 +1447,7 @@ const VavityEthereum: React.FC = () => {
               className="asset-slide-panel"
               style={{ maxHeight: summaryMaxHeight, transition: summaryTransition }}
             >
-              <div ref={summaryContentRef} style={{ paddingBottom: '20px' }}>
+              <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
                 <span className="asset-metric-title--ethereum">Purchased Value</span>
                 <span className="asset-money-wrap">
@@ -1494,15 +1625,35 @@ const VavityEthereum: React.FC = () => {
                 {showAddMoreForm && (
                   <div
                     className={`asset-slide-panel asset-slide-panel--form${addMoreOpen ? ' is-open' : ''}`}
-                    style={{ marginTop: '12px', maxHeight: addMoreOpen ? `${Math.max(600, addMoreFormPanelHeight)}px` : '0px' }}
+                    style={{
+                      maxHeight:
+                        submitPhase !== 'idle' && submitTargetRef.current === 'addMore' && submitPanelMaxHeight != null
+                          ? `${submitPanelMaxHeight}px`
+                          : addMoreOpen
+                            ? `${Math.max(600, addMoreFormPanelHeight)}px`
+                            : '0px',
+                    }}
                   >
-                    <div ref={addMoreFormBoxRef} className="asset-invest-form-box asset-invest-form-box--ethereum">
-                      {renderAddForm(
-                        'Add more investments',
-                        closeAddMoreForm,
-                        'asset-action-button asset-action-button--ethereum'
-                      )}
+                    <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
+                      <div className="asset-invest-form-box asset-invest-form-box--ethereum">
+                        {renderAddForm(
+                          'Add more investments',
+                          closeAddMoreForm,
+                          'asset-action-button asset-action-button--ethereum'
+                        )}
+                      </div>
                     </div>
+                  </div>
+                )}
+                {!isSignedIn && (
+                  <div className="asset-portfolio-actions asset-portfolio-actions--signin">
+                    <button
+                      type="button"
+                      className="asset-action-button asset-action-button--save-signin"
+                      onClick={openSignIn}
+                    >
+                      <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                    </button>
                   </div>
                 )}
             </div>

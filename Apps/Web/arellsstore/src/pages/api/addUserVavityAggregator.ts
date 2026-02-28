@@ -1,0 +1,189 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import AWS from 'aws-sdk';
+import axios from 'axios';
+
+const s3 = new AWS.S3();
+const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
+const VAPA_KEYS: Record<string, string> = {
+  bitcoin: 'vavity/bitcoinVAPA.json',
+  ethereum: 'vavity/ethereumVAPA.json',
+};
+
+const normalizeEmailKey = (raw: string) => encodeURIComponent(raw.trim().toLowerCase());
+
+const normalizeToIsoDay = (value: string): string | null => {
+  if (!value) return null;
+  if (value.includes('/')) {
+    const parts = value.split('/');
+    if (parts.length !== 3) return null;
+    const [month, day, year] = parts;
+    if (!year || !month || !day) return null;
+    return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  if (value.includes('-')) {
+    const parts = value.split('-');
+    if (parts.length !== 3) return null;
+    const [year, month, day] = parts;
+    if (!year || !month || !day) return null;
+    return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  return null;
+};
+
+const getNearestHistoricalPrice = (
+  history: { date: string; price: number }[],
+  targetDate: string
+): { date: string; price: number } | null => {
+  if (!history.length) return null;
+  const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
+  let selected: { date: string; price: number } | null = null;
+  for (const entry of sorted) {
+    if (entry.date <= targetDate) {
+      selected = entry;
+    } else {
+      break;
+    }
+  }
+  return selected;
+};
+
+const loadVapaData = async (asset: string): Promise<{ vapa: number; history: { date: string; price: number }[] }> => {
+  const key = VAPA_KEYS[asset] || VAPA_KEYS.bitcoin;
+  try {
+    const response = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+    const data = response.Body ? JSON.parse(response.Body.toString()) : {};
+    return {
+      vapa: typeof data.vapa === 'number' ? data.vapa : 0,
+      history: Array.isArray(data.history) ? data.history : [],
+    };
+  } catch {
+    return { vapa: 0, history: [] };
+  }
+};
+
+const loadCurrentPrice = async (asset: string): Promise<number | null> => {
+  const endpoint = asset === 'ethereum' ? 'ethereumPrice' : 'bitcoinPrice';
+  try {
+    const response = await axios
+      .get(`http://localhost:3000/api/${endpoint}`, { timeout: 5000 })
+      .catch(() => axios.get(`/api/${endpoint}`, { timeout: 5000 }));
+    const payload = response.data || {};
+    const priceObj = asset === 'ethereum' ? payload.ethereum : payload.bitcoin;
+    const price = priceObj?.usd;
+    return typeof price === 'number' ? price : null;
+  } catch {
+    return null;
+  }
+};
+
+const calculateTotals = (investments: any[]) => {
+  return investments.reduce(
+    (acc, inv) => {
+      const cVatop = inv.cVatop || 0;
+      const cVact = inv.cVact || 0;
+      const cdVatop = inv.cdVatop || 0;
+      const cVactTaa = inv.cVactTaa ?? 0;
+      return {
+        acVatop: acc.acVatop + cVatop,
+        acVact: acc.acVact + cVact,
+        acdVatop: acc.acdVatop + cdVatop,
+        acVactTaa: acc.acVactTaa + cVactTaa,
+      };
+    },
+    { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 }
+  );
+};
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { email, newInvestments, asset: rawAsset } = req.body;
+  const asset = typeof rawAsset === 'string' && rawAsset.length ? rawAsset.toLowerCase() : 'bitcoin';
+
+  if (!email || typeof email !== 'string' || !Array.isArray(newInvestments) || newInvestments.length === 0) {
+    return res.status(400).json({ error: 'Invalid request: Missing email or newInvestments' });
+  }
+
+  try {
+    const key = `users/${normalizeEmailKey(email)}/VavityAggregate.json`;
+
+    let existingData: any = {};
+    try {
+      const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+      existingData = JSON.parse(data.Body!.toString());
+    } catch (err: any) {
+      if (err.code === 'NoSuchKey') {
+        existingData = { investments: [] };
+      } else {
+        throw err;
+      }
+    }
+
+    const existingInvestments = Array.isArray(existingData.investments) ? existingData.investments : [];
+
+    const vapaData = await loadVapaData(asset);
+    const currentPrice = await loadCurrentPrice(asset);
+
+    const normalizedNewInvestments = newInvestments.map((inv: any) => {
+      const rawAmount = inv.cVactTaa ?? 0;
+      const cVactTaa = typeof rawAmount === 'number' ? rawAmount : Number(rawAmount) || 0;
+      const normalizedDate = typeof inv.date === 'string' ? normalizeToIsoDay(inv.date) : null;
+      const hasDateAndAmount = Boolean(normalizedDate) && cVactTaa > 0;
+
+      let cpVatop = typeof inv.cpVatop === 'number' ? inv.cpVatop : 0;
+      if (hasDateAndAmount) {
+        const historical = getNearestHistoricalPrice(vapaData.history, normalizedDate as string);
+        if (historical) {
+          cpVatop = historical.price;
+        } else if (currentPrice !== null) {
+          cpVatop = currentPrice;
+        }
+      }
+
+      const cpVact = vapaData.vapa || cpVatop;
+      const cVatop = hasDateAndAmount ? cVactTaa * cpVatop : inv.cVatop ?? cVactTaa * cpVatop;
+      const cVact = hasDateAndAmount ? cVactTaa * cpVact : inv.cVact ?? cVactTaa * cpVact;
+      const cdVatop = hasDateAndAmount ? cVact - cVatop : inv.cdVatop ?? cVact - cVatop;
+
+      return {
+        ...inv,
+        date: normalizedDate ?? inv.date,
+        cVatop,
+        cpVatop,
+        cVactTaa,
+        cpVact,
+        cVact,
+        cdVatop,
+        asset: (inv?.asset || asset || 'bitcoin').toLowerCase(),
+      };
+    });
+
+    const updatedInvestments = [...existingInvestments, ...normalizedNewInvestments];
+    const totals = calculateTotals(updatedInvestments);
+
+    const newData = {
+      investments: updatedInvestments,
+      totals,
+    };
+
+    await s3
+      .putObject({
+        Bucket: BUCKET_NAME,
+        Key: key,
+        Body: JSON.stringify(newData),
+        ContentType: 'application/json',
+        ACL: 'private',
+      })
+      .promise();
+
+    return res.status(200).json({ message: 'User groups added successfully', data: newData });
+  } catch (error) {
+    console.error('Error during user add processing:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export default handler;
+

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
 import { useVavity } from '../context/VavityAggregator';
+import { useUser } from '../context/UserContext';
 
 type VotingAsset = 'solana' | 'xrp';
 
@@ -30,6 +31,7 @@ const Index = () => {
     wordLogo: false,
   });
   const { getAsset, sessionId } = useVavity();
+  const { isSignedIn } = useUser();
   const [votingData, setVotingData] = useState<VotingBlockData | null>(null);
   const [votingHidden, setVotingHidden] = useState<boolean>(false);
   const [countdownMs, setCountdownMs] = useState<number>(0);
@@ -219,7 +221,7 @@ const Index = () => {
 
         <div id="descriptioner-wrapper">
           <p id="descriptioner" style={{ letterSpacing: '0px', marginLeft: '0px' }}>
-            if bear markets never existed
+            if investments never lost value
           </p>
         </div>
       </div>
@@ -373,6 +375,12 @@ const Index = () => {
             </button>
           </div>
         </div>
+      )}
+
+      {isSignedIn && (
+        <Link href="/my-investments" className="home-view-investments-float">
+          View My Investments
+        </Link>
       )}
 
     </>

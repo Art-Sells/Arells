@@ -3,11 +3,11 @@ import EthereumPageClient from '../../components/Assets/Crypto/Ethereum/Ethereum
 
 export const metadata: Metadata = {
   title: 'Ethereum',
-  description: 'If bear markets never existed.',
+  description: 'if investments never lost value.',
   robots: 'noimageindex',
   openGraph: {
     title: 'Ethereum',
-    description: 'If bear markets never existed.',
+    description: 'if investments never lost value.',
     url: 'https://arells.com/ethereum',
     type: 'website',
     images: [
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: 'Arells',
-    description: 'If bear markets never existed.',
+    description: 'if investments never lost value.',
     card: 'summary_large_image',
     images: [
       {

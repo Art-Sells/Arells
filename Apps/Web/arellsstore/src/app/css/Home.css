@@ -291,10 +291,26 @@ body {
 	width: 100%;
 	box-sizing: border-box;
 	border-radius: 14px;
-	padding: 12px;
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-bottom: 20px;
 	margin: 0 auto 12px;
 	background: transparent;
-	padding-top: 30px;
+	padding-top: 0px;
+}
+
+/* Empty-state: sign-in section uses its own wrapper so padding can be tuned without affecting Add Investments */
+.asset-portfolio-summary-box--signin {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+	/* Remove the section outline for the Sign-in CTA (overrides --bitcoin/--ethereum border) */
+	border: none !important;
+}
+
+/* Empty-state: remove border ONLY for the Add Investments button wrapper */
+.asset-portfolio-summary-box--add-investments {
+	border: none !important;
 }
 
 .asset-portfolio-summary-box--bitcoin {
@@ -494,7 +510,7 @@ body {
 /* Top asset section (title+slogan + price/controls + chart) fixed sizing */
 .asset-page-content > .asset-header-panel {
 	width: 665px;
-	min-height: 96vh;
+	min-height: 700px;
 	height: auto;
 	margin-left: auto;
 	margin-right: auto;
@@ -708,7 +724,8 @@ body {
 
 /* Separate investment button padding (Add vs Show groups) */
 .asset-action-button--invest-add {
-	padding: 12px 25px;
+	/* +2px vertical padding (Add more / Hide add more Investments) */
+	padding: 14px 25px;
 }
 
 .asset-action-button--invest-show {
@@ -755,12 +772,11 @@ body {
 .asset-invest-form-body {
 	width: 100%;
 	box-sizing: border-box;
-	border-radius: 14px;
-	padding-left: 16px;
-	padding-right: 16px;
-	padding-top: 16px;
-	padding-bottom: 16px;
-	border: 1px solid rgba(0, 0, 0, 0.18);
+	/* Remove the outer wrapper "section" box that wraps BOTH inner boxes together.
+	   Keep the individual boxes: `.asset-invest-form-metrics-panel` and `.asset-invest-form-controls`. */
+	border: none;
+	padding: 0;
+	border-radius: 0;
 }
 
 .asset-invest-form-body--bitcoin {
@@ -776,7 +792,7 @@ body {
 	padding-left: 16px;
 	padding-right: 16px;
 	padding-top: 30px;
-	padding-bottom: -5px;
+	padding-bottom: 5px;
 	border: 1px solid rgba(0, 0, 0, 0.18);
 }
 
@@ -789,7 +805,23 @@ body {
 }
 
 .asset-invest-form-metrics-panel .asset-invest-form-row:not(:last-child) {
-	margin-bottom: -10px;
+	margin-bottom: -30px;
+}
+
+.asset-invest-form-metrics-panel .asset-metric-value,
+.asset-invest-form-metrics-panel .asset-metric-inline-value {
+	font-size: 30px;
+	letter-spacing: -2px;
+}
+
+.asset-invest-form-metrics-panel .asset-metric-symbol--bitcoin,
+.asset-invest-form-metrics-panel .asset-metric-symbol--ethereum,
+.asset-invest-form-metrics-panel .asset-metric-inline-symbol--bitcoin,
+.asset-invest-form-metrics-panel .asset-metric-inline-symbol--ethereum {
+	font-size: 19px;
+	font-weight: 800;
+	transform: translateY(-2.7px);
+	opacity: 0.7;
 }
 
 .asset-invest-form-controls {
@@ -797,8 +829,8 @@ body {
 	border-radius: 14px;
 	padding-left: 16px;
 	padding-right: 16px;
-	padding-top: 16px;
-	padding-bottom: 16px;
+	padding-top: 20px;
+	padding-bottom: 5px;
 	border: 1px solid rgba(0, 0, 0, 0.18);
 }
 
@@ -812,7 +844,7 @@ body {
 
 .asset-invest-form-row {
 	justify-content: center;
-	margin-bottom: 10px;
+	margin-bottom: -10px;
 }
 
 .asset-invest-form-input-row {
@@ -869,7 +901,7 @@ body {
 
 .asset-invest-input {
 	margin-left: 8px;
-	padding: 10px;
+	padding: 13px 13px;
 	border-radius: 10px;
 	border: 1px solid rgba(0, 0, 0, 0.25);
 	background: transparent;
@@ -890,6 +922,11 @@ body {
 
 .asset-invest-form-field {
 	margin-top: 10px;
+}
+
+/* Extra space under the asset amount field only (Bitcoin/Ethereum amount) */
+.asset-invest-form-controls .asset-invest-form-field:first-child {
+	margin-bottom: 15px;
 }
 
 .asset-invest-form-field-label {
@@ -916,33 +953,42 @@ body {
 }
 
 .asset-invest-input--bitcoin {
-	border-color: rgba(248, 141, 0, 0.45);
+	/* Match button border opacity */
+	border-color: rgba(248, 141, 0, 0.0);
+	background: rgba(248, 141, 0, 0.14);
 }
 
 .asset-invest-input--ethereum {
-	border-color: rgba(107, 114, 168, 0.45);
+	/* Match button border opacity */
+	border-color: rgba(107, 114, 168, 0.0);
+	background: rgba(107, 114, 168, 0.16);
 }
 
-/* Input fill highlight ONLY when clicked/focused */
+/* Inputs: default tinted, but transparent when clicked/focused */
 .asset-invest-input--bitcoin:focus,
 .asset-invest-input--bitcoin:focus-visible {
-	background: rgba(248, 141, 0, 0.14);
+	background: transparent;
+	/* Match the surrounding section border tint/opacity while active */
+	border-color: rgba(248, 141, 0, 0.3);
 }
 
 .asset-invest-input--ethereum:focus,
 .asset-invest-input--ethereum:focus-visible {
-	background: rgba(107, 114, 168, 0.16);
+	background: transparent;
+	/* Match the surrounding section border tint/opacity while active */
+	border-color: rgba(107, 114, 168, 0.3);
 }
 
 /* Submit button: padding + edges like the Add Investments button */
 .asset-action-button--invest-submit {
 	/* Match Add more / Hide add more Investments button framework + typography */
-	padding: 12px 25px !important; /* same as `.asset-action-button--invest-add` */
+	/* +2px vertical padding (Submit) */
+	padding: 14px 25px !important; /* same as `.asset-action-button--invest-add` */
 	font-size: 12px !important; /* same as base `.asset-action-button` */
 	font-weight: 400 !important; /* same as base `.asset-action-button` */
 	border-radius: 6px; /* same as base `.asset-action-button` */
-	margin-top: 20px;
-	margin-bottom: 20px;
+	margin-top: 30px;
+	margin-bottom: 30px;
 	box-shadow: none !important;
 }
 
@@ -959,7 +1005,7 @@ body {
 	align-items: center;
 	justify-content: space-between;
 	gap: 10px;
-	padding: 10px;
+	padding: 13px 13px;
 	border-radius: 10px;
 	border: 1px solid var(--asset-border-color); /* match asset page themed borders */
 	background: transparent;
@@ -971,6 +1017,17 @@ body {
 	transition: background-color 0.5s ease;
 	font-size: 12px;
 	line-height: 1.2;
+}
+
+/* Date trigger: default tinted like the inputs + border opacity like the buttons */
+.asset-date-picker--bitcoin .asset-date-trigger {
+	border-color: rgba(248, 141, 0, 0.0);
+	background: rgba(248, 141, 0, 0.14);
+}
+
+.asset-date-picker--ethereum .asset-date-trigger {
+	border-color: rgba(107, 114, 168, 0.0);
+	background: rgba(107, 114, 168, 0.16);
 }
 
 .asset-date-trigger.is-open {
@@ -986,13 +1043,17 @@ body {
 .asset-date-picker--bitcoin .asset-date-trigger.is-open,
 .asset-date-picker--bitcoin .asset-date-trigger:focus,
 .asset-date-picker--bitcoin .asset-date-trigger:focus-visible {
-	background: rgba(248, 141, 0, 0.14);
+	background: transparent;
+	/* Match the surrounding section border tint/opacity while active */
+	border-color: rgba(248, 141, 0, 0.3);
 }
 
 .asset-date-picker--ethereum .asset-date-trigger.is-open,
 .asset-date-picker--ethereum .asset-date-trigger:focus,
 .asset-date-picker--ethereum .asset-date-trigger:focus-visible {
-	background: rgba(107, 114, 168, 0.16);
+	background: transparent;
+	/* Match the surrounding section border tint/opacity while active */
+	border-color: rgba(107, 114, 168, 0.3);
 }
 
 .asset-date-value {
@@ -1009,6 +1070,11 @@ body {
 .asset-date-icon {
 	display: inline-flex;
 	color: var(--asset-line-color);
+}
+
+/* Lift the calendar icon inside the date trigger slightly */
+.asset-date-trigger .asset-date-icon {
+	transform: translateY(-2px);
 }
 
 .asset-date-popover {
@@ -1160,12 +1226,13 @@ body {
 
 /* Empty-state "Add Investments" button: separate styling from all other buttons */
 .asset-action-button--add-investments {
-	width: 100%;
+	width: 97%;
 	box-sizing: border-box;
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 20px;
+	margin-top: 0px;
 	font-weight: 800;
 	font-size: 25px;
 	letter-spacing: -1.5px;
@@ -1179,6 +1246,73 @@ body {
 	opacity: 1;
 	border-width: 1px;
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Asset pages: "Sign In to Save Investments" CTA (same framework as Add Investments, but smaller text + full accent fill) */
+.asset-action-button--save-signin {
+	width: 97%;
+	box-sizing: border-box;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 30px;
+	margin-bottom: 25px;
+	font-weight: 800;
+	font-size: 15px; /* Add Investments is 25px */
+	letter-spacing: -.5px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	border-top-left-radius: 999px;
+	border-bottom-left-radius: 999px;
+	border-top-right-radius: 400px;
+	border-bottom-right-radius: 400px;
+	border: 1px solid transparent;
+	/* fallback if color-mix isn't supported */
+	transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+}
+
+/* Control WORD opacity independently from background */
+.asset-action-button--save-signin .asset-save-signin-text {
+	display: inline-block;
+	opacity: var(--asset-save-signin-text-opacity, .8);
+	transition: opacity 0.2s ease;
+	color: #fff !important;
+}
+
+.asset-portfolio-actions--signin {
+	margin-top: 18px;
+}
+
+/* Sign-in CTA: remove the button's default bottom margin so the wrapper controls spacing */
+.asset-portfolio-summary-box--signin .asset-action-button--save-signin,
+.asset-portfolio-actions--signin .asset-action-button--save-signin {
+	margin-bottom: 20px;
+}
+
+.asset-page--bitcoin .asset-page-content .asset-action-button--save-signin {
+	background: rgba(248, 141, 0, 1);
+	box-shadow: -5px 0px 20px rgba(248, 141, 0, 0.8) !important;
+	border-color: rgba(248, 141, 0, 1);
+	/* brighter "same hue" tint of the background */
+	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
+}
+
+.asset-page--bitcoin .asset-page-content .asset-action-button--save-signin:hover {
+	box-shadow: -7px -3px 20px rgba(248, 141, 0, 0.2), 0 4px 14px rgba(248, 141, 0, 0.2) !important;
+	transform: translateY(-4px);
+}
+
+.asset-page--ethereum .asset-page-content .asset-action-button--save-signin {
+	background: rgba(107, 114, 168, 1);
+	box-shadow: -5px 0px 20px rgba(107, 114, 168, 0.8) !important;
+	border-color: rgba(107, 114, 168, 1);
+	/* brighter "same hue" tint of the background */
+	color: color-mix(in srgb, rgba(107, 114, 168, 1) 18%, white 82%) !important;
+}
+
+.asset-page--ethereum .asset-page-content .asset-action-button--save-signin:hover {
+	box-shadow: -7px -2px 20px rgba(107, 114, 168, 0.2), 0 4px 14px rgba(107, 114, 168, 0.2) !important;
+	transform: translateY(-4px);
 }
 
 .asset-action-button--pulse {
@@ -1320,6 +1454,13 @@ body {
 	overflow-y: hidden;
 	transition: max-height 2s ease;
 	will-change: max-height;
+}
+
+/* Put top spacing on an inner wrapper (not on the collapsing panel itself),
+   so the panel can truly reach max-height: 0 without a leftover padding "stub". */
+.asset-slide-panel-inner {
+	padding-top: 12px;
+	box-sizing: border-box;
 }
 
 .asset-slide-panel.is-open {
@@ -1610,6 +1751,267 @@ body {
 	background: transparent;
 	pointer-events: none;
 	z-index: 3;
+}
+
+/* Home: floating My Investments button */
+.home-view-investments-float {
+	position: fixed;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 20px;
+	z-index: 2000;
+	text-decoration: none;
+	cursor: pointer;
+	border-radius: 999px;
+	padding: 14px 20px;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	background: rgba(255, 255, 255, 0.95);
+	box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
+	color: #222;
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: -0.2px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.home-view-investments-float:hover {
+	transform: translateX(-50%) translateY(-2px);
+}
+
+/* Global: sign-in modal */
+.arells-signin-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.86);
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	padding-top: 150px;
+	z-index: 2500;
+}
+
+.arells-signin-modal {
+	width: min(520px, 90%);
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
+	padding: 22px 22px 18px;
+	box-sizing: border-box;
+}
+
+.arells-signin-title {
+	font-weight: 800;
+	font-size: 18px;
+	letter-spacing: -0.5px;
+	color: #222;
+	margin-bottom: 6px;
+}
+
+.arells-signin-subtitle {
+	font-weight: 600;
+	font-size: 12px;
+	opacity: 0.6;
+	color: #222;
+	margin-bottom: 14px;
+}
+
+.arells-signin-input {
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	padding: 12px 12px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #222;
+	outline: none;
+}
+
+.arells-signin-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 14px;
+}
+
+.arells-signin-cancel,
+.arells-signin-confirm {
+	cursor: pointer;
+	border-radius: 10px;
+	padding: 10px 14px;
+	font-size: 12px;
+	font-weight: 700;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	background: rgba(255, 255, 255, 0.8);
+	color: #222;
+	transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.arells-signin-confirm {
+	background: rgba(0, 0, 0, 0.82);
+	color: #fff;
+	border-color: rgba(0, 0, 0, 0.28);
+}
+
+.arells-signin-cancel:hover,
+.arells-signin-confirm:hover {
+	transform: translateY(-1px);
+}
+
+/* My Investments page */
+.myinv-page {
+	min-height: 100vh;
+	padding-top: 40px;
+	padding-bottom: 60px;
+	box-sizing: border-box;
+}
+
+.myinv-slide {
+	width: 100%;
+}
+
+.myinv-wrapper {
+	width: min(920px, 90%);
+	min-width: 280px;
+	margin: 0 auto;
+	padding-top: 18px;
+	padding-bottom: 35px;
+	padding-left: 20px;
+	padding-right: 20px;
+	box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
+	border-radius: 12px;
+	background: #ffffff;
+	box-sizing: border-box;
+}
+
+.myinv-topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-height: 44px;
+}
+
+.myinv-home-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	border-radius: 12px;
+	padding: 6px;
+	transition: transform 0.2s ease;
+}
+
+.myinv-home-button:hover {
+	transform: translateY(-2px);
+}
+
+.myinv-header {
+	text-align: center;
+	margin-top: 12px;
+	margin-bottom: 22px;
+}
+
+.myinv-title {
+	font-weight: 800;
+	font-size: 34px;
+	letter-spacing: -2px;
+	color: #222;
+}
+
+.myinv-slogan {
+	margin-top: 10px;
+	font-weight: 600;
+	font-size: 12px;
+	opacity: 0.5;
+	color: #222;
+}
+
+.myinv-panel {
+	width: 100%;
+	box-sizing: border-box;
+	border: none;
+	background: transparent;
+	padding: 0;
+	margin-top: 18px;
+}
+
+.myinv-panel-title {
+	text-align: center;
+	font-weight: 800;
+	color: #222;
+	opacity: 0.85;
+	font-size: 18px;
+	letter-spacing: -0.8px;
+	margin-bottom: 14px;
+}
+
+.myinv-asset-buttons {
+	display: flex;
+	justify-content: center;
+	gap: 13px;
+	flex-wrap: wrap;
+}
+
+.myinv-asset-buttons.is-single {
+	justify-content: center;
+}
+
+.myinv-signin-button {
+	display: block;
+	margin: 0 auto;
+	border: none;
+	border-radius: 14px;
+	padding: 17px 22px;
+	font-weight: 800;
+	font-size: 14px;
+	cursor: pointer;
+	color: #222;
+	background: rgba(255, 255, 255, 0.8);
+	box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
+	transition: transform 0.2s ease;
+}
+
+.myinv-signin-button:hover {
+	transform: translateY(-2px);
+}
+
+.myinv-totals {
+	width: 100%;
+}
+
+.myinv-metric-title {
+	font-weight: 800;
+	font-size: 12px;
+	letter-spacing: -0.6px;
+	color: #222;
+	opacity: 0.8;
+	display: block;
+	text-align: center;
+}
+
+.myinv-metric-symbol,
+.myinv-metric-inline-symbol {
+	font-size: 12px;
+	font-weight: 800;
+	color: #222;
+	opacity: 0.55;
+	margin-right: -2px;
+}
+
+.myinv-metric-value {
+	font-size: 18px;
+	font-weight: 800;
+	color: #222;
+	letter-spacing: -0.8px;
+}
+
+.myinv-footnote {
+	margin-top: 18px;
+	text-align: center;
+	font-size: 11px;
+	font-weight: 600;
+	opacity: 0.35;
+	color: #222;
 }
 
 @media (min-width: 801px) {
@@ -2127,6 +2529,18 @@ body {
 				background: rgba(255, 255, 255, 0.3);
 				box-shadow: -8px 0 14px rgba(191, 191, 191, 0.21), 0 2px 10px rgba(191, 191, 191, 0.21);
 				border: 1px solid rgba(191, 191, 191, 0.5);
+			}
+
+			.home-voting-button--bitcoin {
+				background: rgba(248, 141, 0, 0.12);
+				box-shadow: -8px 0 14px rgba(248, 141, 0, 0.21), 0 2px 10px rgba(248, 141, 0, 0.21);
+				border: 1px solid rgba(248, 141, 0, 0.5);
+			}
+
+			.home-voting-button--ethereum {
+				background: rgba(107, 114, 168, 0.12);
+				box-shadow: -8px 0 14px rgba(107, 114, 168, 0.21), 0 2px 10px rgba(107, 114, 168, 0.21);
+				border: 1px solid rgba(107, 114, 168, 0.5);
 			}
 
 			.home-voting-icon {
