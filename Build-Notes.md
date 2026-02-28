@@ -73,7 +73,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
     Learn more > (Vavity (V))
 
 ### Vavity (take everything from vavity.info)
-- Change desc to: Investment losses are a human psychology issue (replace bear markets with investment losses in vavity info and readme) so Vavity solves this psychologically through technical autonomy. By eliminating investment losses etc etc (in github also...)
+- Change desc to: Investment losses are a human psychology issue (replace bear markets with investment losses in vavity info and readme) so Vavity solves this psychologically through technical autonomy. By eliminating investment losses etc etc (in github also..., remove "cryptocurrency" from it and make it simply (remove Bitcoin and make it general))
 
 ### Metatags/ Description (all pages.tsx & components)
 - Add unique favicons (and add to online tests)
