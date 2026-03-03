@@ -16,7 +16,7 @@ export const BitcoinPriceProvider: React.FC<{ children: React.ReactNode }> = ({ 
   useEffect(() => {
     const fetchPrice = async () => {
       try {
-        const response = await axios.get('/api/bitcoinPrice');
+        const response = await axios.get('/api/assets/crypto/bitcoin/bitcoinPrice');
         const price = response.data?.bitcoin?.usd;
         if (typeof price === 'number') {
           setBitcoinPrice(price);

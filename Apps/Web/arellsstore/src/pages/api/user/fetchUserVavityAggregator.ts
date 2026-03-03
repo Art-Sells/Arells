@@ -9,6 +9,8 @@ const VAPA_KEYS: Record<string, string> = {
   ethereum: 'vavity/ethereumVAPA.json',
 };
 
+const normalizeEmailKey = (raw: string) => encodeURIComponent(raw.trim().toLowerCase());
+
 const normalizeToIsoDay = (value: string): string | null => {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return null;
@@ -70,7 +72,7 @@ const loadCurrentPrice = async (asset: string): Promise<number | null> => {
 
 const calculateTotals = (investments: any[]) => {
   return investments.reduce(
-    (acc, inv) => {
+    (acc: any, inv: any) => {
       const cVatop = Number(inv.cVatop) || 0;
       const cVact = Number(inv.cVact) || 0;
       const cdVatop = Number(inv.cdVatop) || 0;
@@ -87,7 +89,7 @@ const calculateTotals = (investments: any[]) => {
 
 const calculateTotalsReality = (investments: any[]) => {
   return investments.reduce(
-    (acc, inv) => {
+    (acc: any, inv: any) => {
       const cVatop = Number(inv.rCVatop) || 0;
       const cVact = Number(inv.rCVact) || 0;
       const cdVatop = Number(inv.rCdVatop) || 0;
@@ -107,28 +109,28 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const rawSessionId = req.query.sessionId;
-  const sessionId = Array.isArray(rawSessionId) ? rawSessionId[0] : rawSessionId;
+  const rawEmail = req.query.email;
+  const email = Array.isArray(rawEmail) ? rawEmail[0] : rawEmail;
   const rawAsset = req.query.asset;
   const asset = Array.isArray(rawAsset) ? rawAsset[0] : rawAsset;
   const normalizedAsset = typeof asset === 'string' && asset.length ? asset.toLowerCase() : undefined;
 
-  if (!sessionId) {
-    return res.status(400).json({ error: 'sessionId query parameter is required' });
+  if (!email || typeof email !== 'string') {
+    return res.status(400).json({ error: 'email query parameter is required' });
   }
 
-  const key = `sessions/${sessionId}/VavityAggregate.json`;
+  const key = `users/${normalizeEmailKey(email)}/VavityAggregate.json`;
 
   try {
     const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
     const userData = JSON.parse(data.Body!.toString());
     const investmentsAll: any[] = Array.isArray(userData.investments) ? userData.investments : [];
 
-    // Recompute/update both Fantasy + Reality fields so stored JSON stays current as prices move.
-    const assetsToUpdate = normalizedAsset ? [normalizedAsset] : Array.from(new Set(investmentsAll.map((i) => (i?.asset || 'bitcoin').toLowerCase())));
+    const assetsToUpdate = normalizedAsset
+      ? [normalizedAsset]
+      : Array.from(new Set(investmentsAll.map((i) => (i?.asset || 'bitcoin').toLowerCase())));
     const vapaCache = new Map<string, Awaited<ReturnType<typeof loadVapaData>>>();
     const currentPriceCache = new Map<string, number | null>();
-
     for (const a of assetsToUpdate) {
       vapaCache.set(a, await loadVapaData(a));
       currentPriceCache.set(a, await loadCurrentPrice(a));
@@ -184,7 +186,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         rCdVatop,
       };
 
-      const keysToCheck = ['cVatop', 'cpVatop', 'cpVact', 'cVact', 'cdVatop', 'rCpVatop', 'rCpVact', 'rCVatop', 'rCVact', 'rCdVatop'] as const;
+      const keysToCheck = [
+        'cVatop',
+        'cpVatop',
+        'cpVact',
+        'cVact',
+        'cdVatop',
+        'rCpVatop',
+        'rCpVact',
+        'rCVatop',
+        'rCVact',
+        'rCdVatop',
+      ] as const;
       for (const k of keysToCheck) {
         const prev = Number(inv?.[k]);
         const nxt = Number(next?.[k]);
@@ -195,7 +208,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
       if (normalizedDate && inv?.date !== normalizedDate) didMutate = true;
       if (inv?.asset !== assetId) didMutate = true;
-
       return next;
     });
 
@@ -228,9 +240,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(200).json(newData);
   } catch (error: any) {
-    // If the file doesn't exist, return empty data structure (this is normal for new users)
     if (error.code === 'NoSuchKey' || error.statusCode === 404) {
-      // Don't log - this is expected behavior for new users
       return res.status(200).json({
         investments: [],
         totals: {
@@ -247,9 +257,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
     }
-    
     const errorMessage = error.message || 'Could not fetch user data';
-    console.error('Error fetching data:', errorMessage);
+    console.error('Error fetching user data:', errorMessage);
     return res.status(500).json({ error: errorMessage });
   }
 };

@@ -171,7 +171,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       try {
         const params = new URLSearchParams({ email });
         if (asset) params.set('asset', asset);
-        const res = await fetch(`/api/fetchUserVavityAggregator?${params.toString()}`);
+      const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
         const data = await res.json();
         // Only store full (unfiltered) payload in provider state; filtered callers can use return value.
         if (!asset) {
@@ -191,7 +191,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const addEmailInvestments = useCallback(
     async (asset: string, newInvestments: any[]) => {
       if (!email) throw new Error('Email is required');
-      const res = await fetch('/api/addUserVavityAggregator', {
+      const res = await fetch('/api/user/addUserVavityAggregator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, newInvestments, asset }),
@@ -206,7 +206,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const saveEmailInvestments = useCallback(
     async (asset: string, investments: any[]) => {
       if (!email) throw new Error('Email is required');
-      const res = await fetch('/api/saveUserVavityAggregator', {
+      const res = await fetch('/api/user/saveUserVavityAggregator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, investments, asset }),

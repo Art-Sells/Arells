@@ -41,11 +41,16 @@ const VavityBitcoin: React.FC = () => {
   const [mockEntries, setMockEntries] = useState<any[]>([]);
   const [mockStep, setMockStep] = useState<number>(0);
   const [chartReady, setChartReady] = useState<boolean>(false);
+  const [isRealityMode, setIsRealityMode] = useState<boolean>(false);
   const assetSnapshot = getAsset('bitcoin');
   const assetPrice = assetSnapshot?.price ?? 0;
   const vapa = assetSnapshot?.vapa ?? 0;
-  const history = assetSnapshot?.history ?? [];
-  const vapaMarketCap = assetSnapshot?.vapaMarketCap ?? [];
+  const fantasyHistory = assetSnapshot?.history ?? [];
+  const realHistory = assetSnapshot?.realHistory ?? [];
+  const history = isRealityMode ? realHistory : fantasyHistory;
+  const fantasyMarketCap = assetSnapshot?.vapaMarketCap ?? [];
+  const realMarketCap = assetSnapshot?.realMarketCap ?? [];
+  const vapaMarketCap = isRealityMode ? realMarketCap : fantasyMarketCap;
   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
   const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
@@ -270,7 +275,7 @@ const VavityBitcoin: React.FC = () => {
         const data = isSignedIn
           ? await (async () => {
               const params = new URLSearchParams({ email, asset: 'bitcoin' });
-              const res = await fetch(`/api/fetchUserVavityAggregator?${params.toString()}`);
+              const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
               return await res.json();
             })()
           : await fetchVavityAggregator(sessionId, 'bitcoin');
@@ -371,6 +376,9 @@ const VavityBitcoin: React.FC = () => {
   }, []);
   const investmentIds = useMemo(() => investments.map(getInvestmentId), [getInvestmentId, investments]);
   const totals = vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
+  const totalsReality =
+    vavityData?.totalsReality || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
+  const displayTotals = isRealityMode ? totalsReality : totals;
   const hasInvestmentsUI = investments.length > 0 || isClearingInvestments;
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
   // Add-more form lives inside the summary panel. If both the outer summary and the inner form
@@ -548,7 +556,7 @@ const VavityBitcoin: React.FC = () => {
       const isoDate = targetDate.toISOString().split('T')[0];
     try {
         const response = await axios.get('/api/assets/crypto/bitcoin/bitcoinVapaHistoricalPrice', {
-          params: { date: isoDate }
+          params: { date: isoDate, mode: isRealityMode ? 'real' : 'fantasy' }
         });
         const price = response.data?.price;
         if (isMounted) {
@@ -568,7 +576,7 @@ const VavityBitcoin: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [selectedRangeDays]);
+  }, [selectedRangeDays, isRealityMode]);
 
   const chartHistory = useMemo(() => {
     if (!chartRangeDays || !history.length) return history;
@@ -669,21 +677,26 @@ const VavityBitcoin: React.FC = () => {
   }, []);
   const filteredTotals = useMemo(() => {
     if (!selectedRangeDays) {
-      return totals;
+      return displayTotals;
     }
     if (rangeHistoricalPrice == null) {
-      return totals;
+      return displayTotals;
             }
     const rangeStart = Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000;
     return investments.reduce(
       (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
         const amount = Number(entry.cVactTaa) || 0;
-        const currentValue = Number(entry.cVact) || amount * (vapa || 0);
+        const currentModeSpot = isRealityMode ? assetPrice : vapa;
+        const currentValue = isRealityMode
+          ? Number(entry.rCVact) || amount * (currentModeSpot || 0)
+          : Number(entry.cVact) || amount * (currentModeSpot || 0);
         const purchaseTime = entry?.date ? new Date(entry.date).getTime() : null;
         const hasValidPurchaseTime = typeof purchaseTime === 'number' && !Number.isNaN(purchaseTime);
         const pastValue =
           hasValidPurchaseTime && purchaseTime > rangeStart
-            ? Number(entry.cVatop) || amount * (entry.cpVatop || rangeHistoricalPrice)
+            ? isRealityMode
+              ? Number(entry.rCVatop) || amount * (entry.rCpVatop || rangeHistoricalPrice)
+              : Number(entry.cVatop) || amount * (entry.cpVatop || rangeHistoricalPrice)
             : amount * rangeHistoricalPrice;
 
         acc.acVatop += pastValue;
@@ -694,7 +707,7 @@ const VavityBitcoin: React.FC = () => {
       },
       { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
     );
-  }, [investments, rangeHistoricalPrice, selectedRangeDays, totals, vapa]);
+  }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isRealityMode, assetPrice]);
 
   const formatCurrency = useCallback((value: number) => {
     const abs = Math.abs(value);
@@ -782,7 +795,7 @@ const VavityBitcoin: React.FC = () => {
       setHistoricalLoading(true);
       try {
         const response = await axios.get('/api/assets/crypto/bitcoin/bitcoinVapaHistoricalPrice', {
-          params: { date: purchaseDate }
+          params: { date: purchaseDate, mode: isRealityMode ? 'real' : 'fantasy' }
         });
         const price = response.data?.price;
         if (isMounted) {
@@ -803,20 +816,22 @@ const VavityBitcoin: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [purchaseDate]);
+  }, [purchaseDate, isRealityMode]);
 
   const formCpVatop = useMemo(() => {
+    const currentModePrice = isRealityMode ? assetPrice : vapa;
     if (!purchaseDate) {
-      return vapa || 0;
+      return currentModePrice || 0;
     }
-    return historicalPrice ?? assetPrice ?? 0;
-  }, [purchaseDate, historicalPrice, assetPrice, vapa]);
+    return historicalPrice ?? currentModePrice ?? 0;
+  }, [purchaseDate, historicalPrice, assetPrice, vapa, isRealityMode]);
 
   const formCVatop = useMemo(() => {
     const amt = parseTokenAmount(tokenAmount || '0');
     if (Number.isNaN(amt)) return 0;
-    return amt * (vapa || 0);
-  }, [tokenAmount, parseTokenAmount, vapa]);
+    const currentModePrice = isRealityMode ? assetPrice : vapa;
+    return amt * (currentModePrice || 0);
+  }, [tokenAmount, parseTokenAmount, vapa, assetPrice, isRealityMode]);
 
   const handleSubmitInvestment = async () => {
     if (!isSignedIn && !sessionId) return;
@@ -842,7 +857,7 @@ const VavityBitcoin: React.FC = () => {
       if (isSignedIn) {
         await addEmailInvestments('bitcoin', [newInvestment]);
         const params = new URLSearchParams({ email, asset: 'bitcoin' });
-        const res = await fetch(`/api/fetchUserVavityAggregator?${params.toString()}`);
+        const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
         refreshed = await res.json();
       } else {
         await addVavityAggregator(sessionId, [newInvestment], 'bitcoin');
@@ -937,7 +952,7 @@ const VavityBitcoin: React.FC = () => {
       if (isSignedIn) {
         await saveEmailInvestmentsForAsset('bitcoin', updated);
         const params = new URLSearchParams({ email, asset: 'bitcoin' });
-        const res = await fetch(`/api/fetchUserVavityAggregator?${params.toString()}`);
+        const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
         const refreshed = await res.json();
         setVavityData(refreshed);
       } else {
@@ -1038,8 +1053,9 @@ const VavityBitcoin: React.FC = () => {
       // Keep `$` aligned with other rows (e.g. Current Value) even while the value is still loading/empty.
       if (!tokenAmount) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
       if (purchaseDate && historicalPrice == null) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
-      const basePrice = purchaseDate ? (historicalPrice ?? 0) : (vapa || 0);
-      const profitValue = (vapa - basePrice) * parseTokenAmount(tokenAmount || '0');
+      const currentModePrice = isRealityMode ? assetPrice : vapa;
+      const basePrice = purchaseDate ? (historicalPrice ?? 0) : (currentModePrice || 0);
+      const profitValue = ((currentModePrice || 0) - basePrice) * parseTokenAmount(tokenAmount || '0');
       const isProfit = profitValue > 0.005;
       const title = isProfit ? 'Profits' : 'Losses';
       const formattedValue =
@@ -1196,12 +1212,11 @@ const VavityBitcoin: React.FC = () => {
       >
         <div className="asset-section-header">
           <div className="asset-header-title">Bitcoin</div>
-          <div
-            className="asset-header-slogan"
-            ref={sloganRef}
-          >
-            if investments never lost value
-          </div>
+          {!isRealityMode && (
+            <div className="asset-header-slogan" ref={sloganRef}>
+              if investments never lost value
+            </div>
+          )}
         </div>
         <div
           className="asset-panel asset-panel--bitcoin asset-price-chart-row asset-price-chart-row--combined"
@@ -1230,7 +1245,9 @@ const VavityBitcoin: React.FC = () => {
             <div className="asset-metric-row">
               <span className="asset-metric-title--bitcoin">Price:</span>
               <span className="asset-metric-symbol--bitcoin">$</span>
-              <span className="asset-metric-value">{formatCurrency(activePoint?.price ?? vapa ?? 0)}</span>
+              <span className="asset-metric-value">
+                {formatCurrency(activePoint?.price ?? (isRealityMode ? assetPrice : vapa) ?? 0)}
+              </span>
             </div>
             <div className="asset-metric-row">
               <span className="asset-metric-title--bitcoin">Market Cap:</span>
@@ -1274,7 +1291,7 @@ const VavityBitcoin: React.FC = () => {
                                 : rawLabel === '1 yr'
                                   ? '1 year'
                                   : rawLabel;
-                      const marketKey = `${label}-${percentageIncrease > 0 ? 'bull' : 'sloth'}`;
+                      const marketKey = `${label}-${percentageIncrease > 0 ? 'bull' : isRealityMode ? 'bear' : 'sloth'}`;
                       return (
                         <>
                           <span
@@ -1287,7 +1304,7 @@ const VavityBitcoin: React.FC = () => {
                             key={marketKey}
                             className="asset-metric-inline-value asset-market-status-value"
                           >
-                            {percentageIncrease > 0 ? 'Bull Market' : 'Sloth Market'}
+                            {percentageIncrease > 0 ? 'Bull Market' : isRealityMode ? 'Bear Market' : 'Sloth Market'}
                           </span>
                         </>
                       );
@@ -1385,6 +1402,20 @@ const VavityBitcoin: React.FC = () => {
               </div>
             </div>
 
+          <div className="asset-reality-toggle-row asset-reality-toggle-row--bitcoin">
+            <span className={`asset-reality-toggle-label${isRealityMode ? ' is-active' : ''}`}>Reality</span>
+            <button
+              type="button"
+              className={`asset-reality-toggle${isRealityMode ? ' is-reality' : ''}`}
+              aria-pressed={isRealityMode}
+              aria-label="Toggle Reality/Fantasy mode"
+              onClick={() => setIsRealityMode((v) => !v)}
+            >
+              <span className="asset-reality-toggle-knob" aria-hidden="true" />
+            </button>
+            <span className={`asset-reality-toggle-label${!isRealityMode ? ' is-active' : ''}`}>Fantasy</span>
+          </div>
+
       <div
         className={`asset-panel asset-panel--bitcoin asset-portfolio-center asset-section-slide${
           summaryOpen && !isClearingInvestments ? ' asset-portfolio-center--summary-open' : ''
@@ -1464,14 +1495,14 @@ const VavityBitcoin: React.FC = () => {
                 <span className="asset-metric-title--bitcoin">Purchased Value</span>
                 <span className="asset-money-wrap">
                   <span className="asset-metric-symbol--bitcoin">$</span>
-                  <span className="asset-metric-value">{formatCurrency(totals.acVatop || 0)}</span>
+                  <span className="asset-metric-value">{formatCurrency(filteredTotals.acVatop || 0)}</span>
                 </span>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
                 <span className="asset-metric-title--bitcoin">Current Value</span>
                 <span className="asset-money-wrap">
                   <span className="asset-metric-symbol--bitcoin">$</span>
-                  <span className="asset-metric-value">{formatCurrency(totals.acVact || 0)}</span>
+                  <span className="asset-metric-value">{formatCurrency(filteredTotals.acVact || 0)}</span>
                 </span>
             </div>
               <div
@@ -1492,8 +1523,8 @@ const VavityBitcoin: React.FC = () => {
                         return `${days} days`;
                       };
                   if (selectedRangeDays && rangeHistoricalPrice != null) {
-                    const pastValue = (totals.acVactTaa || 0) * rangeHistoricalPrice;
-                    const profitValue = (totals.acVact || 0) - pastValue;
+                    const pastValue = (filteredTotals.acVactTaa || 0) * rangeHistoricalPrice;
+                    const profitValue = (filteredTotals.acVact || 0) - pastValue;
                         const isProfit = profitValue > 0.005;
                         const label = isProfit ? 'Profits' : 'Losses';
                         const formattedValue = formatMoneyFixed(Math.abs(profitValue));
@@ -1527,7 +1558,7 @@ const VavityBitcoin: React.FC = () => {
                           </span>
                         );
                   }
-                      const defaultProfit = (totals.acVact || 0) - (totals.acVatop || 0);
+                      const defaultProfit = (filteredTotals.acVact || 0) - (filteredTotals.acVatop || 0);
                       const isProfit = defaultProfit > 0.005;
                       const label = isProfit ? 'Profits' : 'Losses';
                       const formattedValue = formatMoneyFixed(Math.abs(defaultProfit));
@@ -1737,19 +1768,23 @@ const VavityBitcoin: React.FC = () => {
                               <span className="asset-metric-title--bitcoin">Purchased Value</span>
                               <span className="asset-money-wrap">
                                 <span className="asset-metric-symbol--bitcoin">$</span>
-                                <span className="asset-metric-value">{formatCurrency(entry.cVatop ?? 0)}</span>
+                                <span className="asset-metric-value">
+                                  {formatCurrency((isRealityMode ? entry.rCVatop : entry.cVatop) ?? 0)}
+                                </span>
                               </span>
                             </div>
                             <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                               <span className="asset-metric-title--bitcoin">Current Value</span>
                               <span className="asset-money-wrap">
                                 <span className="asset-metric-symbol--bitcoin">$</span>
-                                <span className="asset-metric-value">{formatCurrency(entry.cVact ?? 0)}</span>
+                                <span className="asset-metric-value">
+                                  {formatCurrency((isRealityMode ? entry.rCVact : entry.cVact) ?? 0)}
+                                </span>
                               </span>
                             </div>
                             <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                               {(() => {
-                                const value = Number(entry.cdVatop ?? 0);
+                                const value = Number((isRealityMode ? entry.rCdVatop : entry.cdVatop) ?? 0);
                                 const isProfit = value > 0.005;
                                 const title = isProfit ? 'Profits' : 'Losses';
                                 const prefix = isProfit ? '+$' : '$';

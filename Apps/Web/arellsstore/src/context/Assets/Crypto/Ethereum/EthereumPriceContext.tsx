@@ -16,7 +16,7 @@ export const EthereumPriceProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const fetchPrice = async () => {
       try {
-        const response = await axios.get('/api/ethereumPrice');
+        const response = await axios.get('/api/assets/crypto/ethereum/ethereumPrice');
         const price = response.data?.ethereum?.usd;
         if (typeof price === 'number') {
           setEthereumPrice(price);

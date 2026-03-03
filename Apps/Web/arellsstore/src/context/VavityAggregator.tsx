@@ -27,7 +27,9 @@ type AssetSnapshot = {
   vapa: number;
   vapaDate: string | null;
   history: { date: string; price: number }[];
+  realHistory: { date: string; price: number }[];
   vapaMarketCap: number[];
+  realMarketCap: number[];
   historyLastUpdated: number | null;
 };
 
@@ -67,7 +69,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         vapa: typeof data.vapa === 'number' ? data.vapa : 0,
         vapaDate: data.vapaDate ?? null,
         history: Array.isArray(data.history) ? data.history : [],
+        realHistory: Array.isArray(data.realHistory) ? data.realHistory : [],
         vapaMarketCap: Array.isArray(data.vapaMarketCap) ? data.vapaMarketCap : [],
+        realMarketCap: Array.isArray(data.realMarketCap) ? data.realMarketCap : [],
         historyLastUpdated: typeof data.historyLastUpdated === 'number' ? data.historyLastUpdated : null,
       };
       setAssets((prev) => ({ ...prev, [assetId]: snapshot }));
