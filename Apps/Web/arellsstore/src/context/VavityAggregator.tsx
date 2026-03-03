@@ -26,10 +26,10 @@ type AssetSnapshot = {
   price: number;
   vapa: number;
   vapaDate: string | null;
-  history: { date: string; price: number }[];
-  realHistory: { date: string; price: number }[];
-  vapaMarketCap: number[];
-  realMarketCap: number[];
+  solidHistory: { date: string; price: number }[];
+  liquidHistory: { date: string; price: number }[];
+  solidMarketCap: number[];
+  liquidMarketCap: number[];
   historyLastUpdated: number | null;
 };
 
@@ -68,10 +68,11 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         price: typeof data.price === 'number' ? data.price : 0,
         vapa: typeof data.vapa === 'number' ? data.vapa : 0,
         vapaDate: data.vapaDate ?? null,
-        history: Array.isArray(data.history) ? data.history : [],
-        realHistory: Array.isArray(data.realHistory) ? data.realHistory : [],
-        vapaMarketCap: Array.isArray(data.vapaMarketCap) ? data.vapaMarketCap : [],
-        realMarketCap: Array.isArray(data.realMarketCap) ? data.realMarketCap : [],
+        // Prefer Liquid/Solid keys; fall back to legacy keys.
+        solidHistory: Array.isArray(data.solidHistory) ? data.solidHistory : (Array.isArray(data.history) ? data.history : []),
+        liquidHistory: Array.isArray(data.liquidHistory) ? data.liquidHistory : (Array.isArray(data.realHistory) ? data.realHistory : []),
+        solidMarketCap: Array.isArray(data.solidMarketCap) ? data.solidMarketCap : (Array.isArray(data.vapaMarketCap) ? data.vapaMarketCap : []),
+        liquidMarketCap: Array.isArray(data.liquidMarketCap) ? data.liquidMarketCap : (Array.isArray(data.realMarketCap) ? data.realMarketCap : []),
         historyLastUpdated: typeof data.historyLastUpdated === 'number' ? data.historyLastUpdated : null,
       };
       setAssets((prev) => ({ ...prev, [assetId]: snapshot }));

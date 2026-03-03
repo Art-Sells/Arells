@@ -87,9 +87,11 @@ const buildMonotonicHistory = (prices: [number, number][], marketCaps: [number, 
 export async function refreshVapa(config: VapaAssetConfig) {
   let storedVAPA = 0;
   let storedVapaDate: string | null = null;
+  // Solid series (monotonic/VAPA)
   let storedHistory: { date: string; price: number }[] = [];
   let storedHistoryLastUpdated: number | null = null;
   let storedVapaMarketCap: number[] = [];
+  // Liquid series (real/raw)
   let storedRealHistory: { date: string; price: number }[] = [];
   let storedRealMarketCap: number[] = [];
   let storedPrice: number | null = null;
@@ -101,11 +103,28 @@ export async function refreshVapa(config: VapaAssetConfig) {
       const data = JSON.parse(response.Body.toString());
       storedVAPA = data.vapa || 0;
       storedVapaDate = data.vapaDate ?? data.lastUpdated ?? null;
-      storedHistory = Array.isArray(data.history) ? data.history : [];
+      // Prefer new Liquid/Solid keys; fall back to legacy keys.
+      storedHistory = Array.isArray(data.solidHistory)
+        ? data.solidHistory
+        : Array.isArray(data.history)
+          ? data.history
+          : [];
       storedHistoryLastUpdated = typeof data.historyLastUpdated === 'number' ? data.historyLastUpdated : null;
-      storedVapaMarketCap = Array.isArray(data.vapaMarketCap) ? data.vapaMarketCap : [];
-      storedRealHistory = Array.isArray(data.realHistory) ? data.realHistory : [];
-      storedRealMarketCap = Array.isArray(data.realMarketCap) ? data.realMarketCap : [];
+      storedVapaMarketCap = Array.isArray(data.solidMarketCap)
+        ? data.solidMarketCap
+        : Array.isArray(data.vapaMarketCap)
+          ? data.vapaMarketCap
+          : [];
+      storedRealHistory = Array.isArray(data.liquidHistory)
+        ? data.liquidHistory
+        : Array.isArray(data.realHistory)
+          ? data.realHistory
+          : [];
+      storedRealMarketCap = Array.isArray(data.liquidMarketCap)
+        ? data.liquidMarketCap
+        : Array.isArray(data.realMarketCap)
+          ? data.realMarketCap
+          : [];
       storedPrice = typeof data.price === 'number' ? data.price : null;
       fileExists = true;
     }
@@ -193,10 +212,12 @@ export async function refreshVapa(config: VapaAssetConfig) {
           vapa: newVAPA,
           vapaDate: newVapaDate,
           price: currentPrice,
-          history,
-          vapaMarketCap,
-          realHistory,
-          realMarketCap,
+          // Solid series (monotonic/VAPA)
+          solidHistory: history,
+          solidMarketCap: vapaMarketCap,
+          // Liquid series (real/raw)
+          liquidHistory: realHistory,
+          liquidMarketCap: realMarketCap,
           historyLastUpdated
         }),
         ContentType: 'application/json',
@@ -208,10 +229,10 @@ export async function refreshVapa(config: VapaAssetConfig) {
     vapa: newVAPA,
     vapaDate: newVapaDate ?? null,
     price: currentPrice,
-    history,
-    vapaMarketCap,
-    realHistory,
-    realMarketCap,
+    solidHistory: history,
+    solidMarketCap: vapaMarketCap,
+    liquidHistory: realHistory,
+    liquidMarketCap: realMarketCap,
     historyLastUpdated,
   };
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface UserContextType {
   sessionId: string;
@@ -19,6 +20,7 @@ interface UserContextType {
 
   emailInvestments: any[];
   emailTotals: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number };
+  emailTotalsLiquid: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number };
   emailLoading: boolean;
   refreshEmailAggregator: (asset?: string) => Promise<any>;
   addEmailInvestments: (asset: string, newInvestments: any[]) => Promise<any>;
@@ -33,7 +35,6 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 const SESSION_KEY = 'arells_session_id';
 const EMAIL_KEY = 'arells_user_email';
-const SESSION_CLEAR_KEY = 'arells_session_investments_cleared';
 
 const generateSessionId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -54,6 +55,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [emailTotals, setEmailTotals] = useState<{ acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }>(
     { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
   );
+  const [emailTotalsLiquid, setEmailTotalsLiquid] = useState<{
+    acVatop: number;
+    acdVatop: number;
+    acVact: number;
+    acVactTaa: number;
+  }>({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
 
   const setSessionId = useCallback((value: string) => {
     setSessionIdState(value);
@@ -89,12 +96,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setSignInOpen(false);
     setEmailInvestments([]);
     setEmailTotals({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+    setEmailTotalsLiquid({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
   }, [setEmail]);
 
   const openSignIn = useCallback(() => setSignInOpen(true), []);
   const closeSignIn = useCallback(() => setSignInOpen(false), []);
 
   const isSignedIn = Boolean(email);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -123,15 +132,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener('storage', handleStorage);
   }, [setSessionId]);
 
-  // Clear session investments ONCE per browser session (tab session) when a sessionId exists.
+  // Clear session investments on every route change ("page mount" behavior) for guest sessions.
   useEffect(() => {
     let cancelled = false;
     if (typeof window === 'undefined') return;
     if (!sessionId) return;
-
-    const markerKey = `${SESSION_CLEAR_KEY}:${sessionId}`;
-    const already = window.sessionStorage.getItem(markerKey) === '1';
-    if (already) {
+    if (isSignedIn) {
       setSessionReady(true);
       return;
     }
@@ -148,11 +154,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         // If it fails, still allow the app to run; next refresh will retry.
       } finally {
         if (cancelled) return;
-        try {
-          window.sessionStorage.setItem(markerKey, '1');
-        } catch {
-          // ignore
-        }
         setSessionReady(true);
       }
     };
@@ -162,7 +163,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       cancelled = true;
     };
-  }, [sessionId]);
+  }, [sessionId, pathname, isSignedIn]);
 
   const refreshEmailAggregator = useCallback(
     async (asset?: string) => {
@@ -178,6 +179,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           setEmailInvestments(Array.isArray(data?.investments) ? data.investments : []);
           setEmailTotals(
             data?.totals || { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 }
+          );
+          setEmailTotalsLiquid(
+            data?.totalsLiquid ??
+              data?.totalsReality ??
+              { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 }
           );
         }
         return data;
@@ -284,6 +290,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
         emailInvestments,
         emailTotals,
+        emailTotalsLiquid,
         emailLoading,
         refreshEmailAggregator,
         addEmailInvestments,

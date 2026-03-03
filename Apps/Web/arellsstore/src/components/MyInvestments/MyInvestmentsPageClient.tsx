@@ -16,6 +16,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     openSignIn,
     emailInvestments,
     emailTotals,
+    emailTotalsLiquid,
     emailLoading,
     refreshEmailAggregator,
     assetsPresentInEmail,
@@ -23,6 +24,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   } = useUser();
 
   const [open, setOpen] = useState(false);
+  const [isLiquidMode, setIsLiquidMode] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setOpen(true), 0);
@@ -36,9 +38,10 @@ const MyInvestmentsPageClient: React.FC = () => {
 
   const hasAny = emailInvestments.length > 0;
 
-  const totalProfit = (emailTotals?.acdVatop || 0) as number;
+  const displayTotals = isLiquidMode ? emailTotalsLiquid : emailTotals;
+  const totalProfit = (displayTotals?.acdVatop || 0) as number;
   const profitLabel = totalProfit >= 0 ? 'Profits' : 'Losses';
-  const profitPrefix = totalProfit >= 0 ? '+$' : '$';
+  const profitPrefix = totalProfit >= 0 ? '+$' : '-$';
 
   const addMissingButtons = useMemo(() => {
     return assetsMissingInEmail.map((asset) => {
@@ -89,7 +92,23 @@ const MyInvestmentsPageClient: React.FC = () => {
 
           <div className="myinv-header">
             <div className="myinv-title">My Investments</div>
-            <div className="myinv-slogan">if investments never lost value</div>
+            <div className={`myinv-slogan asset-header-slogan${isLiquidMode ? ' is-hidden' : ''}`}>
+              if investments never lost value
+            </div>
+          </div>
+
+          <div className="asset-reality-toggle-row">
+            <span className={`asset-reality-toggle-label${isLiquidMode ? ' is-active' : ''}`}>Liquid</span>
+            <button
+              type="button"
+              className={`asset-reality-toggle${!isLiquidMode ? ' is-fantasy' : ''}`}
+              aria-pressed={isLiquidMode}
+              aria-label="Toggle Liquid/Solid mode"
+              onClick={() => setIsLiquidMode((v) => !v)}
+            >
+              <span className="asset-reality-toggle-knob" aria-hidden="true" />
+            </button>
+            <span className={`asset-reality-toggle-label${!isLiquidMode ? ' is-active' : ''}`}>Solid</span>
           </div>
 
           {!isSignedIn ? (
@@ -115,14 +134,14 @@ const MyInvestmentsPageClient: React.FC = () => {
                     <span className="myinv-metric-title">Purchased Value</span>
                     <span className="asset-money-wrap">
                       <span className="myinv-metric-symbol">$</span>
-                      <span className="myinv-metric-value">{formatCurrency(emailTotals?.acVatop || 0)}</span>
+                      <span className="myinv-metric-value">{formatCurrency(displayTotals?.acVatop || 0)}</span>
                     </span>
                   </div>
                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
                     <span className="myinv-metric-title">Current Value</span>
                     <span className="asset-money-wrap">
                       <span className="myinv-metric-symbol">$</span>
-                      <span className="myinv-metric-value">{formatCurrency(emailTotals?.acVact || 0)}</span>
+                      <span className="myinv-metric-value">{formatCurrency(displayTotals?.acVact || 0)}</span>
                     </span>
                   </div>
                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>

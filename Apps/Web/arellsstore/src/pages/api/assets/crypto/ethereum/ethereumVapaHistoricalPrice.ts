@@ -28,15 +28,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const targetDay = dateParam ? normalizeToIsoDay(dateParam) : null;
   if (!targetDay) return res.status(400).json({ error: 'Missing or invalid date' });
   const modeParam = typeof req.query.mode === 'string' ? req.query.mode : '';
-  const mode = modeParam?.toLowerCase() === 'real' ? 'real' : 'fantasy';
+  const modeRaw = modeParam?.toLowerCase();
+  const mode = modeRaw === 'liquid' || modeRaw === 'real' ? 'liquid' : 'solid';
 
   try {
     const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: ETH_VAPA_KEY }).promise();
     const json = JSON.parse(data.Body!.toString());
     const history: { date: string; price: number }[] =
-      mode === 'real'
-        ? (Array.isArray(json.realHistory) ? json.realHistory : [])
-        : (Array.isArray(json.history) ? json.history : []);
+      mode === 'liquid'
+        ? (Array.isArray(json.liquidHistory) ? json.liquidHistory : (Array.isArray(json.realHistory) ? json.realHistory : []))
+        : (Array.isArray(json.solidHistory) ? json.solidHistory : (Array.isArray(json.history) ? json.history : []));
 
     const nearest = getNearestHistoricalPrice(history, targetDay);
     const price = nearest?.price ?? (history.length ? history[history.length - 1].price : null);

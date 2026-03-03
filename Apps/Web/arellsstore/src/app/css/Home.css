@@ -233,10 +233,27 @@ body {
 
 .asset-market-status-value {
 	animation: assetFadeIn 1.5s ease;
+	display: inline-block;
+	/* Prevent width "pops" when switching Bull/Sloth/Bear */
+	min-width: 11ch;
+	text-align: left;
 }
 
 .asset-market-status-title {
 	animation: assetFadeIn 1.5s ease;
+}
+
+.asset-header-slogan.is-hidden {
+	/* Keep layout spacing identical while hiding the words */
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 1.5s ease, visibility 0s linear 1.5s;
+}
+
+.asset-header-slogan {
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 1.5s ease, visibility 0s linear 0s;
 }
 
 .asset-percentage-value {
@@ -1279,24 +1296,37 @@ body {
 	color: #fff !important;
 }
 
-/* Reality/Fantasy toggle (asset pages, under chart) */
+/* Liquid/Solid toggle (asset pages, under chart) */
 .asset-reality-toggle-row {
-	width: 100%;
+	/* Match the wide pill buttons */
+	width: 97%;
+	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 10px;
-	margin-top: 12px;
-	margin-bottom: 4px;
+	margin: 12px auto 4px;
+	padding: 12px 14px;
+	padding-bottom: 15px;
+	/* Match Home asset button edges */
+	border-top-left-radius: 999px;
+	border-bottom-left-radius: 999px;
+	border-top-right-radius: 400px;
+	border-bottom-right-radius: 400px;
+	border: 1px solid var(--asset-border-color);
+	background: transparent;
+	transform: translateX(8px);
 }
 
 .asset-reality-toggle-label {
-	font-size: 11px;
-	font-weight: 800;
-	letter-spacing: -0.5px;
+	/* Match asset title sizing */
+	font-size: 15px;
+	font-weight: 700;
+	letter-spacing: 0px;
 	opacity: 0.45;
 	color: var(--asset-line-color);
 	user-select: none;
+	transition: opacity 0.4s ease;
 }
 
 .asset-reality-toggle-label.is-active {
@@ -1307,13 +1337,18 @@ body {
 	width: 54px;
 	height: 22px;
 	border-radius: 999px;
-	border: 1px solid var(--asset-border-color);
-	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid var(--asset-line-color);
+	background: var(--asset-line-color);
 	box-shadow: none;
 	cursor: pointer;
 	position: relative;
 	padding: 0;
 	transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+	box-sizing: border-box;
+	/* Control knob geometry (so you can tweak both sides independently) */
+	--toggle-knob-size: 18px;
+	--toggle-knob-left-inset: 2px;
+	--toggle-knob-right-inset: 2px;
 }
 
 .asset-reality-toggle:active {
@@ -1322,17 +1357,21 @@ body {
 
 .asset-reality-toggle-knob {
 	position: absolute;
-	top: 2px;
-	left: 2px;
-	width: 18px;
-	height: 18px;
+	top: 50%;
+	left: var(--toggle-knob-left-inset);
+	width: var(--toggle-knob-size);
+	height: var(--toggle-knob-size);
 	border-radius: 999px;
 	background: rgba(255, 255, 255, 0.85);
-	transition: transform 0.25s ease, background 0.2s ease;
+	transition: left 0.25s ease, transform 0.25s ease, background 0.2s ease;
+	transform: translateY(-50%);
+	will-change: transform;
 }
 
-.asset-reality-toggle.is-reality .asset-reality-toggle-knob {
-	transform: translateX(32px);
+.asset-reality-toggle.is-fantasy .asset-reality-toggle-knob {
+	/* Keep identical 2px inset on BOTH sides (accounts for border via the padding box) */
+	left: calc(100% - var(--toggle-knob-right-inset) - var(--toggle-knob-size));
+	transform: translateY(-50%);
 }
 
 .asset-portfolio-actions--signin {

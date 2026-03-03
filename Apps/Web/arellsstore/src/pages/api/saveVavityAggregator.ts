@@ -50,8 +50,8 @@ const loadVapaData = async (
 ): Promise<{
   vapa: number;
   price: number | null;
-  history: { date: string; price: number }[];
-  realHistory: { date: string; price: number }[];
+  solidHistory: { date: string; price: number }[];
+  liquidHistory: { date: string; price: number }[];
 }> => {
   const key = VAPA_KEYS[asset] || VAPA_KEYS.bitcoin;
   try {
@@ -59,12 +59,20 @@ const loadVapaData = async (
     const data = response.Body ? JSON.parse(response.Body.toString()) : {};
     return {
       vapa: typeof data.vapa === 'number' ? data.vapa : 0,
-      history: Array.isArray(data.history) ? data.history : [],
-      realHistory: Array.isArray(data.realHistory) ? data.realHistory : [],
+      solidHistory: Array.isArray(data.solidHistory)
+        ? data.solidHistory
+        : Array.isArray(data.history)
+          ? data.history
+          : [],
+      liquidHistory: Array.isArray(data.liquidHistory)
+        ? data.liquidHistory
+        : Array.isArray(data.realHistory)
+          ? data.realHistory
+          : [],
       price: typeof data.price === 'number' ? data.price : null,
     };
   } catch (error) {
-    return { vapa: 0, history: [], realHistory: [], price: null };
+    return { vapa: 0, solidHistory: [], liquidHistory: [], price: null };
   }
 };
 
@@ -105,12 +113,12 @@ const calculateTotals = (investments: any[]) => {
   );
 };
 
-const calculateTotalsReality = (investments: any[]) => {
+const calculateTotalsLiquid = (investments: any[]) => {
   return investments.reduce(
     (acc, inv) => {
-      const cVatop = inv.rCVatop || 0;
-      const cVact = inv.rCVact || 0;
-      const cdVatop = inv.rCdVatop || 0;
+      const cVatop = inv.lCVatop ?? inv.rCVatop ?? 0;
+      const cVact = inv.lCVact ?? inv.rCVact ?? 0;
+      const cdVatop = inv.lCdVatop ?? inv.rCdVatop ?? 0;
       const cVactTaa = inv.cVactTaa ?? 0;
       return {
         acVatop: acc.acVatop + cVatop,
@@ -152,69 +160,90 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    const existingInvestments = Array.isArray(existingData.investments) ? existingData.investments : [];
-    const incomingInvestments = Array.isArray(investments) ? investments : existingInvestments;
+    const existingInvestmentsRaw = Array.isArray(existingData.investments) ? existingData.investments : [];
+    const incomingInvestmentsRaw = Array.isArray(investments) ? investments : existingInvestmentsRaw;
 
     const vapaData = await loadVapaData(asset);
     const currentPrice = await loadCurrentPrice(asset);
-    const currentRealPrice = currentPrice ?? vapaData.price;
+    const currentLiquidPrice = currentPrice ?? vapaData.price;
 
-    const normalizedInvestments = incomingInvestments.map((inv: any) => {
+    const normalizeExistingInvestment = (inv: any) => {
+      const next = { ...(inv || {}) };
+      if (typeof next.lCpVatop !== 'number' && typeof next.rCpVatop === 'number') next.lCpVatop = next.rCpVatop;
+      if (typeof next.lCpVact !== 'number' && typeof next.rCpVact === 'number') next.lCpVact = next.rCpVact;
+      if (typeof next.lCVatop !== 'number' && typeof next.rCVatop === 'number') next.lCVatop = next.rCVatop;
+      if (typeof next.lCVact !== 'number' && typeof next.rCVact === 'number') next.lCVact = next.rCVact;
+      if (typeof next.lCdVatop !== 'number' && typeof next.rCdVatop === 'number') next.lCdVatop = next.rCdVatop;
+      delete next.rCpVatop;
+      delete next.rCpVact;
+      delete next.rCVatop;
+      delete next.rCVact;
+      delete next.rCdVatop;
+      return next;
+    };
+
+    const normalizedInvestments = incomingInvestmentsRaw.map((inv: any) => {
+      const migrated = normalizeExistingInvestment(inv);
       const rawAmount = inv.cVactTaa ?? 0;
       const cVactTaa = typeof rawAmount === 'number' ? rawAmount : Number(rawAmount) || 0;
       const normalizedDate = typeof inv.date === 'string' ? normalizeToIsoDay(inv.date) : null;
       const hasDateAndAmount = Boolean(normalizedDate) && cVactTaa > 0;
 
       // Fantasy (monotonic/VAPA)
-      let cpVatop = typeof inv.cpVatop === 'number' ? inv.cpVatop : 0;
+      let cpVatop = typeof migrated.cpVatop === 'number' ? migrated.cpVatop : 0;
       if (hasDateAndAmount) {
-        const historical = getNearestHistoricalPrice(vapaData.history, normalizedDate as string);
+        const historical = getNearestHistoricalPrice(vapaData.solidHistory, normalizedDate as string);
         if (historical) cpVatop = historical.price;
-        else if (currentRealPrice != null) cpVatop = currentRealPrice;
+        else if (typeof vapaData.vapa === 'number' && vapaData.vapa > 0) cpVatop = vapaData.vapa;
       }
 
       const cpVact = vapaData.vapa || cpVatop;
-      const cVatop = hasDateAndAmount ? cVactTaa * cpVatop : inv.cVatop ?? cVactTaa * cpVatop;
-      const cVact = hasDateAndAmount ? cVactTaa * cpVact : inv.cVact ?? cVactTaa * cpVact;
-      const cdVatop = hasDateAndAmount ? cVact - cVatop : inv.cdVatop ?? cVact - cVatop;
+      const cVatop = hasDateAndAmount ? cVactTaa * cpVatop : migrated.cVatop ?? cVactTaa * cpVatop;
+      const cVact = hasDateAndAmount ? cVactTaa * cpVact : migrated.cVact ?? cVactTaa * cpVact;
+      const cdVatop = hasDateAndAmount ? cVact - cVatop : migrated.cdVatop ?? cVact - cVatop;
 
-      // Reality (real history + real current price)
-      let rCpVatop = typeof inv.rCpVatop === 'number' ? inv.rCpVatop : 0;
+      // Liquid (liquid history + liquid current price)
+      let lCpVatop =
+        typeof migrated.lCpVatop === 'number'
+          ? migrated.lCpVatop
+          : typeof (migrated as any).rCpVatop === 'number'
+            ? (migrated as any).rCpVatop
+            : 0;
       if (hasDateAndAmount) {
-        const historicalReal = getNearestHistoricalPrice(vapaData.realHistory || [], normalizedDate as string);
-        if (historicalReal) rCpVatop = historicalReal.price;
-        else if (currentRealPrice != null) rCpVatop = currentRealPrice;
+        const historicalLiquid = getNearestHistoricalPrice(vapaData.liquidHistory || [], normalizedDate as string);
+        if (historicalLiquid) lCpVatop = historicalLiquid.price;
+        else if (currentLiquidPrice != null) lCpVatop = currentLiquidPrice;
       }
-      const rCpVact = currentRealPrice ?? rCpVatop;
-      const rCVatop = hasDateAndAmount ? cVactTaa * rCpVatop : inv.rCVatop ?? cVactTaa * rCpVatop;
-      const rCVact = hasDateAndAmount ? cVactTaa * rCpVact : inv.rCVact ?? cVactTaa * rCpVact;
-      const rCdVatop = hasDateAndAmount ? rCVact - rCVatop : inv.rCdVatop ?? rCVact - rCVatop;
+      const lCpVact = currentLiquidPrice ?? lCpVatop;
+      const lCVatop = hasDateAndAmount ? cVactTaa * lCpVatop : migrated.lCVatop ?? (migrated as any).rCVatop ?? cVactTaa * lCpVatop;
+      const lCVact = hasDateAndAmount ? cVactTaa * lCpVact : migrated.lCVact ?? (migrated as any).rCVact ?? cVactTaa * lCpVact;
+      const lCdVatop = hasDateAndAmount ? lCVact - lCVatop : migrated.lCdVatop ?? (migrated as any).rCdVatop ?? lCVact - lCVatop;
 
       return {
-        ...inv,
-        date: normalizedDate ?? inv.date,
+        ...migrated,
+        date: normalizedDate ?? migrated.date,
         cVatop,
         cpVatop,
         cVactTaa,
         cpVact,
         cVact,
         cdVatop,
-        rCpVatop,
-        rCpVact,
-        rCVatop,
-        rCVact,
-        rCdVatop,
+        lCpVatop,
+        lCpVact,
+        lCVatop,
+        lCVact,
+        lCdVatop,
         asset,
       };
     });
 
     const totals = calculateTotals(normalizedInvestments);
-    const totalsReality = calculateTotalsReality(normalizedInvestments);
+    const totalsLiquid = calculateTotalsLiquid(normalizedInvestments);
 
     const newData = {
       investments: normalizedInvestments,
       totals,
-      totalsReality,
+      totalsLiquid,
     };
 
     // Save the updated data back to S3

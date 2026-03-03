@@ -2,7 +2,7 @@
 
 ## Arells v1
 
-- *Create toggle in every asset page under chart that shows this: Reality (--()) Fantasy that switches "sloth" to "bear", hides the "if investments" slogan" and calculates the investments based on the "real" price API history.... this means we'll have to save the real data also in the json... and update as the days go by.... Now read my entire aresstore directory, and plan how you are going to do this...*
+- *Fix toggle UI/UI issue and liquid market 1 day circle not smoothing out....*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
 - *test for long numbers and ensure (add a width maximum for current/purchased/losses/profits sections in portfolio, invesment list and in marketcap asset percentages (test how this would affect UI))*

@@ -44,16 +44,17 @@ const VavityEthereum: React.FC = () => {
   const assetSnapshot = getAsset('ethereum');
   const assetPrice = assetSnapshot?.price ?? 0;
   const vapa = assetSnapshot?.vapa ?? 0;
-  const [isRealityMode, setIsRealityMode] = useState<boolean>(false);
-  const fantasyHistory = assetSnapshot?.history ?? [];
-  const realHistory = assetSnapshot?.realHistory ?? [];
-  const history = isRealityMode ? realHistory : fantasyHistory;
-  const fantasyMarketCap = assetSnapshot?.vapaMarketCap ?? [];
-  const realMarketCap = assetSnapshot?.realMarketCap ?? [];
-  const vapaMarketCap = isRealityMode ? realMarketCap : fantasyMarketCap;
+  const [isLiquidMode, setIsLiquidMode] = useState<boolean>(false);
+  const solidHistory = assetSnapshot?.solidHistory ?? [];
+  const liquidHistory = assetSnapshot?.liquidHistory ?? [];
+  const history = isLiquidMode ? liquidHistory : solidHistory;
+  const solidMarketCap = assetSnapshot?.solidMarketCap ?? [];
+  const liquidMarketCap = assetSnapshot?.liquidMarketCap ?? [];
+  const vapaMarketCap = isLiquidMode ? liquidMarketCap : solidMarketCap;
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
+  const [chartHoverPoint, setChartHoverPoint] = useState<{ x: Date; y: number } | null>(null);
   const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
   const [investmentsListOpen, setInvestmentsListOpen] = useState(false);
   const [closingInvestments, setClosingInvestments] = useState<string[]>([]);
@@ -374,11 +375,14 @@ const VavityEthereum: React.FC = () => {
   }, []);
   const investmentIds = useMemo(() => investments.map(getInvestmentId), [getInvestmentId, investments]);
   const totals = useMemo(() => vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }, [vavityData]);
-  const totalsReality = useMemo(
-    () => vavityData?.totalsReality || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 },
+  const totalsLiquid = useMemo(
+    () =>
+      vavityData?.totalsLiquid ??
+      vavityData?.totalsReality ??
+      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 },
     [vavityData]
   );
-  const displayTotals = isRealityMode ? totalsReality : totals;
+  const displayTotals = isLiquidMode ? totalsLiquid : totals;
   const hasInvestmentsUI = investments.length > 0 || isClearingInvestments;
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
   const summaryTransition = showAddMoreForm || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
@@ -555,7 +559,7 @@ const VavityEthereum: React.FC = () => {
       const isoDate = targetDate.toISOString().split('T')[0];
       try {
         const response = await axios.get('/api/assets/crypto/ethereum/ethereumVapaHistoricalPrice', {
-          params: { date: isoDate, mode: isRealityMode ? 'real' : 'fantasy' }
+          params: { date: isoDate, mode: isLiquidMode ? 'liquid' : 'solid' }
         });
         const price = response.data?.price;
         if (isMounted) {
@@ -575,7 +579,7 @@ const VavityEthereum: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [selectedRangeDays, isRealityMode]);
+  }, [selectedRangeDays, isLiquidMode]);
 
   const filteredTotals = useMemo(() => {
     if (!selectedRangeDays) {
@@ -588,16 +592,16 @@ const VavityEthereum: React.FC = () => {
     return investments.reduce(
       (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
         const amount = Number(entry.cVactTaa) || 0;
-        const currentModeSpot = isRealityMode ? assetPrice : vapa;
-        const currentValue = isRealityMode
-          ? Number(entry.rCVact) || amount * (currentModeSpot || 0)
+        const currentModeSpot = isLiquidMode ? assetPrice : vapa;
+        const currentValue = isLiquidMode
+          ? Number(entry.lCVact ?? entry.rCVact) || amount * (currentModeSpot || 0)
           : Number(entry.cVact) || amount * (currentModeSpot || 0);
         const purchaseTime = entry?.date ? new Date(entry.date).getTime() : null;
         const hasValidPurchaseTime = typeof purchaseTime === 'number' && !Number.isNaN(purchaseTime);
         const pastValue =
           hasValidPurchaseTime && purchaseTime > rangeStart
-            ? isRealityMode
-              ? Number(entry.rCVatop) || amount * (entry.rCpVatop || rangeHistoricalPrice)
+            ? isLiquidMode
+              ? Number(entry.lCVatop ?? entry.rCVatop) || amount * ((entry.lCpVatop ?? entry.rCpVatop) || rangeHistoricalPrice)
               : Number(entry.cVatop) || amount * (entry.cpVatop || rangeHistoricalPrice)
             : amount * rangeHistoricalPrice;
 
@@ -609,7 +613,7 @@ const VavityEthereum: React.FC = () => {
       },
       { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
     );
-  }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isRealityMode, assetPrice]);
+  }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isLiquidMode, assetPrice]);
 
   const chartRanges = useMemo(
     () => [
@@ -709,6 +713,13 @@ const VavityEthereum: React.FC = () => {
     return chartHistory[activeIndex] ?? history[history.length - 1] ?? null;
   }, [activeIndex, chartHistory, history]);
 
+  const displayPoint = useMemo(() => {
+    if (chartHoverPoint) {
+      return { date: chartHoverPoint.x.toISOString(), price: chartHoverPoint.y };
+    }
+    return activePoint;
+  }, [activePoint, chartHoverPoint]);
+
   const activeMarketCap = useMemo(() => {
     if (activeIndex != null && chartMarketCaps.length) {
       const val = chartMarketCaps[activeIndex];
@@ -729,10 +740,10 @@ const VavityEthereum: React.FC = () => {
         : history;
     if (!series || !series.length) return 0;
     const start = series[0]?.price ?? 0;
-    const latest = activePoint?.price ?? series[series.length - 1]?.price ?? 0;
+    const latest = displayPoint?.price ?? series[series.length - 1]?.price ?? 0;
     if (!start) return 0;
     return ((latest - start) / start) * 100;
-  }, [chartHistory, activePoint, history]);
+  }, [chartHistory, displayPoint, history]);
 
   useEffect(() => {
     let isMounted = true;
@@ -794,7 +805,7 @@ const VavityEthereum: React.FC = () => {
       setHistoricalLoading(true);
       try {
         const response = await axios.get('/api/assets/crypto/ethereum/ethereumVapaHistoricalPrice', {
-          params: { date: purchaseDate, mode: isRealityMode ? 'real' : 'fantasy' }
+          params: { date: purchaseDate, mode: isLiquidMode ? 'liquid' : 'solid' }
         });
         const price = response.data?.price;
         if (isMounted) {
@@ -815,22 +826,22 @@ const VavityEthereum: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [purchaseDate, isRealityMode]);
+  }, [purchaseDate, isLiquidMode]);
 
   const formCpVatop = useMemo(() => {
-    const currentModePrice = isRealityMode ? assetPrice : vapa;
+    const currentModePrice = isLiquidMode ? assetPrice : vapa;
     if (!purchaseDate) {
       return currentModePrice || 0;
     }
     return historicalPrice ?? currentModePrice ?? 0;
-  }, [purchaseDate, historicalPrice, assetPrice, vapa, isRealityMode]);
+  }, [purchaseDate, historicalPrice, assetPrice, vapa, isLiquidMode]);
 
   const formCVatop = useMemo(() => {
     const amt = parseTokenAmount(tokenAmount || '0');
     if (Number.isNaN(amt)) return 0;
-    const currentModePrice = isRealityMode ? assetPrice : vapa;
+    const currentModePrice = isLiquidMode ? assetPrice : vapa;
     return amt * (currentModePrice || 0);
-  }, [tokenAmount, parseTokenAmount, vapa, assetPrice, isRealityMode]);
+  }, [tokenAmount, parseTokenAmount, vapa, assetPrice, isLiquidMode]);
 
   const handleSubmitInvestment = async () => {
     if (!isSignedIn && !sessionId) return;
@@ -1045,7 +1056,7 @@ const VavityEthereum: React.FC = () => {
     const profitRow = (() => {
       if (!tokenAmount) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
       if (purchaseDate && historicalPrice == null) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
-      const currentModePrice = isRealityMode ? assetPrice : vapa;
+      const currentModePrice = isLiquidMode ? assetPrice : vapa;
       const basePrice = purchaseDate ? (historicalPrice ?? 0) : (currentModePrice || 0);
       const profitValue = ((currentModePrice || 0) - basePrice) * parseTokenAmount(tokenAmount || '0');
       const isProfit = profitValue > 0.005;
@@ -1204,11 +1215,12 @@ const VavityEthereum: React.FC = () => {
       >
         <div className="asset-section-header">
           <div className="asset-header-title">Ethereum</div>
-          {!isRealityMode && (
-            <div className="asset-header-slogan" ref={sloganRef}>
-              if investments never lost value
-            </div>
-          )}
+          <div
+            className={`asset-header-slogan${isLiquidMode ? ' is-hidden' : ''}`}
+            ref={sloganRef}
+          >
+            if investments never lost value
+          </div>
         </div>
         <div
           className="asset-panel asset-panel--ethereum asset-price-chart-row asset-price-chart-row--combined"
@@ -1238,7 +1250,7 @@ const VavityEthereum: React.FC = () => {
               <span className="asset-metric-title--ethereum">Price:</span>
               <span className="asset-metric-symbol--ethereum">$</span>
               <span className="asset-metric-value">
-                {formatCurrency(activePoint?.price ?? (isRealityMode ? assetPrice : vapa) ?? 0)}
+                {formatCurrency(displayPoint?.price ?? (isLiquidMode ? assetPrice : vapa) ?? 0)}
               </span>
             </div>
             <div className="asset-metric-row">
@@ -1249,17 +1261,17 @@ const VavityEthereum: React.FC = () => {
             <div className="asset-metric-row">
               {percentageIncrease > 0 ? (
                 <span className="asset-metric-trend-icon asset-metric-trend-icon--ethereum" aria-hidden="true" />
-              ) : percentageIncrease === 0 ? (
+              ) : (
                 <span
                   className="asset-metric-trend-icon asset-metric-trend-icon--down asset-metric-trend-icon--ethereum"
                   aria-hidden="true"
                 />
-              ) : null}
+              )}
               <span
                 key={chartRangeDays ?? 'all'}
                 className="asset-metric-value asset-percentage-value"
               >
-                {formatPercent(percentageIncrease).replace('%', '').replace('+', '')}
+                {formatPercent(Math.abs(percentageIncrease)).replace('%', '').replace('+', '')}
               </span>
               <span className="asset-metric-symbol--ethereum asset-metric-percent-symbol--ethereum">%</span>
             </div>
@@ -1283,7 +1295,7 @@ const VavityEthereum: React.FC = () => {
                                 : rawLabel === '1 yr'
                                   ? '1 year'
                                   : rawLabel;
-                      const marketKey = `${label}-${percentageIncrease > 0 ? 'bull' : isRealityMode ? 'bear' : 'sloth'}`;
+                      const marketKey = `${label}-${percentageIncrease > 0 ? 'bull' : isLiquidMode ? 'bear' : 'sloth'}`;
                       return (
                         <>
                           <span
@@ -1296,7 +1308,7 @@ const VavityEthereum: React.FC = () => {
                             key={marketKey}
                             className="asset-metric-inline-value asset-market-status-value"
                           >
-                            {percentageIncrease > 0 ? 'Bull Market' : isRealityMode ? 'Bear Market' : 'Sloth Market'}
+                            {percentageIncrease > 0 ? 'Bull Market' : isLiquidMode ? 'Bear Market' : 'Sloth Market'}
                           </span>
                         </>
                       );
@@ -1335,10 +1347,10 @@ const VavityEthereum: React.FC = () => {
                 height: `${chartPanelHeight}px`
             }}
           >
-            {chartHoverIndex != null && activePoint && (
+            {chartHoverPoint != null && displayPoint && (
                 <div className="asset-chart-date-badge asset-chart-date-badge--ethereum">
                   <span className="asset-metric-inline-title--ethereum">Date:</span>{' '}
-                  <span className="asset-metric-inline-value">{new Date(activePoint.date).toLocaleDateString('en-US')}</span>
+                  <span className="asset-metric-inline-value">{new Date(displayPoint.date).toLocaleDateString('en-US')}</span>
               </div>
             )}
               <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
@@ -1385,6 +1397,7 @@ const VavityEthereum: React.FC = () => {
                   markerShadow="-8px 0 14px rgba(107, 114, 168, 0.28), 0 7px 10px rgba(107, 114, 168, 0.2)"
               onPointHover={(point: { x: Date; y: number } | null, idx: number | null) => {
                 setChartHoverIndex(idx ?? null);
+                setChartHoverPoint(point);
               }}
             />
           </div>
@@ -1393,17 +1406,17 @@ const VavityEthereum: React.FC = () => {
             </div>
 
           <div className="asset-reality-toggle-row asset-reality-toggle-row--ethereum">
-            <span className={`asset-reality-toggle-label${isRealityMode ? ' is-active' : ''}`}>Reality</span>
+            <span className={`asset-reality-toggle-label${isLiquidMode ? ' is-active' : ''}`}>Liquid</span>
             <button
               type="button"
-              className={`asset-reality-toggle${isRealityMode ? ' is-reality' : ''}`}
-              aria-pressed={isRealityMode}
-              aria-label="Toggle Reality/Fantasy mode"
-              onClick={() => setIsRealityMode((v) => !v)}
+              className={`asset-reality-toggle${!isLiquidMode ? ' is-fantasy' : ''}`}
+              aria-pressed={isLiquidMode}
+              aria-label="Toggle Liquid/Solid mode"
+              onClick={() => setIsLiquidMode((v) => !v)}
             >
               <span className="asset-reality-toggle-knob" aria-hidden="true" />
             </button>
-            <span className={`asset-reality-toggle-label${!isRealityMode ? ' is-active' : ''}`}>Fantasy</span>
+            <span className={`asset-reality-toggle-label${!isLiquidMode ? ' is-active' : ''}`}>Solid</span>
           </div>
 
       <div
@@ -1540,7 +1553,7 @@ const VavityEthereum: React.FC = () => {
                                 {formatRangeLabel(selectedRangeDays)} {label}
                               </span>
                               <span className="asset-money-wrap">
-                                <span className="asset-metric-symbol--ethereum">{isProfit ? '+$' : '$'}</span>
+                                <span className="asset-metric-symbol--ethereum">{isProfit ? '+$' : '-$'}</span>
                                 <span className="asset-metric-inline-value">{formattedValue}</span>
                               </span>
                             </span>
@@ -1574,7 +1587,7 @@ const VavityEthereum: React.FC = () => {
                               {formatRangeLabel(null)} {label}
                             </span>
                             <span className="asset-money-wrap">
-                              <span className="asset-metric-symbol--ethereum">{isProfit ? '+$' : '$'}</span>
+                              <span className="asset-metric-symbol--ethereum">{isProfit ? '+$' : '-$'}</span>
                               <span className="asset-metric-inline-value">{formattedValue}</span>
                             </span>
                           </span>
@@ -1758,7 +1771,7 @@ const VavityEthereum: React.FC = () => {
                               <span className="asset-money-wrap">
                                 <span className="asset-metric-symbol--ethereum">$</span>
                                 <span className="asset-metric-value">
-                                  {formatCurrency((isRealityMode ? entry.rCVatop : entry.cVatop) ?? 0)}
+                                  {formatCurrency((isLiquidMode ? (entry.lCVatop ?? entry.rCVatop) : entry.cVatop) ?? 0)}
                                 </span>
                               </span>
                             </div>
@@ -1767,16 +1780,16 @@ const VavityEthereum: React.FC = () => {
                               <span className="asset-money-wrap">
                                 <span className="asset-metric-symbol--ethereum">$</span>
                                 <span className="asset-metric-value">
-                                  {formatCurrency((isRealityMode ? entry.rCVact : entry.cVact) ?? 0)}
+                                  {formatCurrency((isLiquidMode ? (entry.lCVact ?? entry.rCVact) : entry.cVact) ?? 0)}
                                 </span>
                               </span>
                             </div>
                             <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                               {(() => {
-                                const value = Number((isRealityMode ? entry.rCdVatop : entry.cdVatop) ?? 0);
+                                const value = Number((isLiquidMode ? (entry.lCdVatop ?? entry.rCdVatop) : entry.cdVatop) ?? 0);
                                 const isProfit = value > 0.005;
                                 const title = isProfit ? 'Profits' : 'Losses';
-                                const prefix = isProfit ? '+$' : '$';
+                                const prefix = isProfit ? '+$' : '-$';
                                 return (
                                   <>
                                     <span className="asset-metric-title--ethereum">{title}</span>

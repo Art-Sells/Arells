@@ -34,8 +34,8 @@ const getNearestHistoricalPrice = (
 const loadVapaData = async (asset: string): Promise<{
   vapa: number;
   price: number | null;
-  history: { date: string; price: number }[];
-  realHistory: { date: string; price: number }[];
+  solidHistory: { date: string; price: number }[];
+  liquidHistory: { date: string; price: number }[];
 }> => {
   const key = VAPA_KEYS[asset] || VAPA_KEYS.bitcoin;
   try {
@@ -44,11 +44,19 @@ const loadVapaData = async (asset: string): Promise<{
     return {
       vapa: typeof data.vapa === 'number' ? data.vapa : 0,
       price: typeof data.price === 'number' ? data.price : null,
-      history: Array.isArray(data.history) ? data.history : [],
-      realHistory: Array.isArray(data.realHistory) ? data.realHistory : [],
+      solidHistory: Array.isArray(data.solidHistory)
+        ? data.solidHistory
+        : Array.isArray(data.history)
+          ? data.history
+          : [],
+      liquidHistory: Array.isArray(data.liquidHistory)
+        ? data.liquidHistory
+        : Array.isArray(data.realHistory)
+          ? data.realHistory
+          : [],
     };
   } catch {
-    return { vapa: 0, price: null, history: [], realHistory: [] };
+    return { vapa: 0, price: null, solidHistory: [], liquidHistory: [] };
   }
 };
 
@@ -87,12 +95,12 @@ const calculateTotals = (investments: any[]) => {
   );
 };
 
-const calculateTotalsReality = (investments: any[]) => {
+const calculateTotalsLiquid = (investments: any[]) => {
   return investments.reduce(
     (acc: any, inv: any) => {
-      const cVatop = Number(inv.rCVatop) || 0;
-      const cVact = Number(inv.rCVact) || 0;
-      const cdVatop = Number(inv.rCdVatop) || 0;
+      const cVatop = Number(inv.lCVatop ?? inv.rCVatop) || 0;
+      const cVact = Number(inv.lCVact ?? inv.rCVact) || 0;
+      const cdVatop = Number(inv.lCdVatop ?? inv.rCdVatop) || 0;
       const cVactTaa = Number(inv.cVactTaa) || 0;
       acc.acVatop += cVatop;
       acc.acVact += cVact;
@@ -136,42 +144,68 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       currentPriceCache.set(a, await loadCurrentPrice(a));
     }
 
-    let didMutate = false;
+    const hasLegacyLiquidFields = investmentsAll.some(
+      (inv) =>
+        inv &&
+        (typeof inv.rCpVatop === 'number' ||
+          typeof inv.rCpVact === 'number' ||
+          typeof inv.rCVatop === 'number' ||
+          typeof inv.rCVact === 'number' ||
+          typeof inv.rCdVatop === 'number')
+    );
+    const hasLegacyTotals = userData?.totalsReality != null;
+    let didMutate = hasLegacyLiquidFields || hasLegacyTotals;
+    const normalizeExistingInvestment = (inv: any) => {
+      const next = { ...(inv || {}) };
+      if (typeof next.lCpVatop !== 'number' && typeof next.rCpVatop === 'number') next.lCpVatop = next.rCpVatop;
+      if (typeof next.lCpVact !== 'number' && typeof next.rCpVact === 'number') next.lCpVact = next.rCpVact;
+      if (typeof next.lCVatop !== 'number' && typeof next.rCVatop === 'number') next.lCVatop = next.rCVatop;
+      if (typeof next.lCVact !== 'number' && typeof next.rCVact === 'number') next.lCVact = next.rCVact;
+      if (typeof next.lCdVatop !== 'number' && typeof next.rCdVatop === 'number') next.lCdVatop = next.rCdVatop;
+      delete next.rCpVatop;
+      delete next.rCpVact;
+      delete next.rCVatop;
+      delete next.rCVact;
+      delete next.rCdVatop;
+      return next;
+    };
+
     const updatedAll = investmentsAll.map((inv) => {
+      const migrated = normalizeExistingInvestment(inv);
       const assetId = (inv?.asset || 'bitcoin').toLowerCase();
       if (normalizedAsset && assetId !== normalizedAsset) return inv;
-      const vapaData = vapaCache.get(assetId) ?? { vapa: 0, price: null, history: [], realHistory: [] };
-      const currentRealPrice = (currentPriceCache.get(assetId) ?? null) ?? vapaData.price;
+      const vapaData = vapaCache.get(assetId) ?? { vapa: 0, price: null, solidHistory: [], liquidHistory: [] };
+      const currentLiquidPrice = (currentPriceCache.get(assetId) ?? null) ?? vapaData.price;
 
       const rawAmount = inv?.cVactTaa ?? 0;
       const cVactTaa = typeof rawAmount === 'number' ? rawAmount : Number(rawAmount) || 0;
       const normalizedDate = typeof inv?.date === 'string' ? normalizeToIsoDay(inv.date) : null;
       const hasDateAndAmount = Boolean(normalizedDate) && cVactTaa > 0;
 
-      let cpVatop = typeof inv?.cpVatop === 'number' ? inv.cpVatop : 0;
+      let cpVatop = typeof migrated?.cpVatop === 'number' ? migrated.cpVatop : 0;
       if (hasDateAndAmount) {
-        const historical = getNearestHistoricalPrice(vapaData.history, normalizedDate as string);
+        const historical = getNearestHistoricalPrice(vapaData.solidHistory, normalizedDate as string);
         if (historical) cpVatop = historical.price;
-        else if (currentRealPrice != null) cpVatop = currentRealPrice;
+        else if (typeof vapaData.vapa === 'number' && vapaData.vapa > 0) cpVatop = vapaData.vapa;
       }
       const cpVact = vapaData.vapa || cpVatop;
-      const cVatop = hasDateAndAmount ? cVactTaa * cpVatop : Number(inv?.cVatop) || 0;
-      const cVact = hasDateAndAmount ? cVactTaa * cpVact : Number(inv?.cVact) || 0;
-      const cdVatop = hasDateAndAmount ? cVact - cVatop : Number(inv?.cdVatop) || 0;
+      const cVatop = hasDateAndAmount ? cVactTaa * cpVatop : Number(migrated?.cVatop) || 0;
+      const cVact = hasDateAndAmount ? cVactTaa * cpVact : Number(migrated?.cVact) || 0;
+      const cdVatop = hasDateAndAmount ? cVact - cVatop : Number(migrated?.cdVatop) || 0;
 
-      let rCpVatop = typeof inv?.rCpVatop === 'number' ? inv.rCpVatop : 0;
+      let lCpVatop = typeof migrated?.lCpVatop === 'number' ? migrated.lCpVatop : typeof (inv as any)?.rCpVatop === 'number' ? (inv as any).rCpVatop : 0;
       if (hasDateAndAmount) {
-        const historicalReal = getNearestHistoricalPrice(vapaData.realHistory || [], normalizedDate as string);
-        if (historicalReal) rCpVatop = historicalReal.price;
-        else if (currentRealPrice != null) rCpVatop = currentRealPrice;
+        const historicalLiquid = getNearestHistoricalPrice(vapaData.liquidHistory || [], normalizedDate as string);
+        if (historicalLiquid) lCpVatop = historicalLiquid.price;
+        else if (currentLiquidPrice != null) lCpVatop = currentLiquidPrice;
       }
-      const rCpVact = currentRealPrice ?? rCpVatop;
-      const rCVatop = hasDateAndAmount ? cVactTaa * rCpVatop : Number(inv?.rCVatop) || 0;
-      const rCVact = hasDateAndAmount ? cVactTaa * rCpVact : Number(inv?.rCVact) || 0;
-      const rCdVatop = hasDateAndAmount ? rCVact - rCVatop : Number(inv?.rCdVatop) || 0;
+      const lCpVact = currentLiquidPrice ?? lCpVatop;
+      const lCVatop = hasDateAndAmount ? cVactTaa * lCpVatop : Number(migrated?.lCVatop ?? (inv as any)?.rCVatop) || 0;
+      const lCVact = hasDateAndAmount ? cVactTaa * lCpVact : Number(migrated?.lCVact ?? (inv as any)?.rCVact) || 0;
+      const lCdVatop = hasDateAndAmount ? lCVact - lCVatop : Number(migrated?.lCdVatop ?? (inv as any)?.rCdVatop) || 0;
 
       const next = {
-        ...inv,
+        ...migrated,
         asset: assetId,
         date: normalizedDate ?? inv?.date,
         cVatop,
@@ -179,11 +213,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         cpVact,
         cVact,
         cdVatop,
-        rCpVatop,
-        rCpVact,
-        rCVatop,
-        rCVact,
-        rCdVatop,
+        lCpVatop,
+        lCpVact,
+        lCVatop,
+        lCVact,
+        lCdVatop,
       };
 
       const keysToCheck = [
@@ -192,11 +226,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         'cpVact',
         'cVact',
         'cdVatop',
-        'rCpVatop',
-        'rCpVact',
-        'rCVatop',
-        'rCVact',
-        'rCdVatop',
+        'lCpVatop',
+        'lCpVact',
+        'lCVatop',
+        'lCVact',
+        'lCdVatop',
       ] as const;
       for (const k of keysToCheck) {
         const prev = Number(inv?.[k]);
@@ -212,8 +246,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const totalsAll = calculateTotals(updatedAll);
-    const totalsRealityAll = calculateTotalsReality(updatedAll);
-    const newData = { investments: updatedAll, totals: totalsAll, totalsReality: totalsRealityAll };
+    const totalsLiquidAll = calculateTotalsLiquid(updatedAll);
+    const newData = { investments: updatedAll, totals: totalsAll, totalsLiquid: totalsLiquidAll };
 
     if (didMutate) {
       await s3
@@ -230,11 +264,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (normalizedAsset) {
       const filteredInvestments = updatedAll.filter((entry: any) => (entry?.asset || 'bitcoin') === normalizedAsset);
       const totals = calculateTotals(filteredInvestments);
-      const totalsReality = calculateTotalsReality(filteredInvestments);
+      const totalsLiquid = calculateTotalsLiquid(filteredInvestments);
       return res.status(200).json({
         investments: filteredInvestments,
         totals,
-        totalsReality,
+        totalsLiquid,
       });
     }
 
@@ -249,7 +283,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           acdVatop: 0,
           acVactTaa: 0,
         },
-        totalsReality: {
+        totalsLiquid: {
           acVatop: 0,
           acVact: 0,
           acdVatop: 0,

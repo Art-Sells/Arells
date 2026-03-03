@@ -52,6 +52,31 @@ const EthereumChart: React.FC<Props> = ({
   const markerRef = useRef<HTMLDivElement | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
 
+  const cubicAt = useCallback((p0: number, c1: number, c2: number, p1: number, t: number) => {
+    const u = 1 - t;
+    return (
+      u * u * u * p0 +
+      3 * u * u * t * c1 +
+      3 * u * t * t * c2 +
+      t * t * t * p1
+    );
+  }, []);
+
+  const solveTForX = useCallback(
+    (xTarget: number, x0: number, x1: number, x2: number, x3: number) => {
+      let lo = 0;
+      let hi = 1;
+      for (let i = 0; i < 24; i += 1) {
+        const mid = (lo + hi) / 2;
+        const x = cubicAt(x0, x1, x2, x3, mid);
+        if (x < xTarget) lo = mid;
+        else hi = mid;
+      }
+      return (lo + hi) / 2;
+    },
+    [cubicAt]
+  );
+
   const dataPoints = useMemo<PricePoint[]>(() => {
     return (history || []).map((item) => ({ x: new Date(item.date), y: item.price }));
   }, [history]);
@@ -118,32 +143,71 @@ const EthereumChart: React.FC<Props> = ({
       const sorted = dataPoints;
       if (!sorted.length) return null;
 
-      let nearestIdx = 0;
-      for (let i = 0; i < sorted.length; i += 1) {
-        if (sorted[i].x.getTime() >= time) {
-          nearestIdx = i;
+      let segIdx = 0;
+      for (let i = 0; i < sorted.length - 1; i += 1) {
+        const t0 = sorted[i].x.getTime();
+        const t1 = sorted[i + 1].x.getTime();
+        if (time >= t0 && time <= t1) {
+          segIdx = i;
           break;
         }
-        nearestIdx = i;
+        if (time > t1) segIdx = i;
+      }
+      segIdx = Math.max(0, Math.min(segIdx, Math.max(sorted.length - 2, 0)));
+
+      const xTargetPx = xScale.getPixelForValue(time);
+
+      const meta: any = chart.getDatasetMeta?.(0);
+      const elems: any[] | undefined = meta?.data;
+      const e0: any = elems?.[segIdx];
+      const e1: any = elems?.[segIdx + 1];
+
+      const fallbackLinear = () => {
+        const left = sorted[segIdx] ?? sorted[sorted.length - 1];
+        const right = sorted[segIdx + 1] ?? left;
+        let y = left.y;
+        if (right && right !== left) {
+          const x0 = left.x.getTime();
+          const x1 = right.x.getTime();
+          const t = x1 !== x0 ? (time - x0) / (x1 - x0) : 0;
+          y = left.y + (right.y - left.y) * Math.min(Math.max(t, 0), 1);
+        }
+        return {
+          point: { x: new Date(time), y },
+          idx: segIdx,
+          pixel: { x: xTargetPx, y: yScale.getPixelForValue(y) },
+        };
+      };
+
+      if (!e0 || !e1 || typeof e0.x !== 'number' || typeof e1.x !== 'number') {
+        return fallbackLinear();
       }
 
-      const left = sorted[nearestIdx] ?? sorted[sorted.length - 1];
-      const right = sorted[nearestIdx + 1] ?? left;
-      let y = left.y;
-      if (right && right !== left) {
-        const x0 = left.x.getTime();
-        const x1 = right.x.getTime();
-        const t = x1 !== x0 ? (time - x0) / (x1 - x0) : 0;
-        y = left.y + (right.y - left.y) * Math.min(Math.max(t, 0), 1);
-      }
+      const p0x = e0.x;
+      const p0y = e0.y;
+      const p1x = e1.x;
+      const p1y = e1.y;
+      const c1x = typeof e0.controlPointNextX === 'number' ? e0.controlPointNextX : (p0x + p1x) / 2;
+      const c1y = typeof e0.controlPointNextY === 'number' ? e0.controlPointNextY : p0y;
+      const c2x = typeof e1.controlPointPreviousX === 'number' ? e1.controlPointPreviousX : (p0x + p1x) / 2;
+      const c2y = typeof e1.controlPointPreviousY === 'number' ? e1.controlPointPreviousY : p1y;
+
+      const t = solveTForX(xTargetPx, p0x, c1x, c2x, p1x);
+      const px = cubicAt(p0x, c1x, c2x, p1x, t);
+      const py = cubicAt(p0y, c1y, c2y, p1y, t);
+
+      const xValOnCurve: any = xScale.getValueForPixel(px);
+      const timeOnCurve =
+        typeof xValOnCurve === 'number' ? xValOnCurve : new Date(xValOnCurve).getTime();
+      const yValOnCurve = yScale.getValueForPixel(py);
 
       return {
-        point: { x: new Date(time), y },
-        idx: nearestIdx,
-        pixel: { x: xScale.getPixelForValue(time), y: yScale.getPixelForValue(y) },
+        point: { x: new Date(timeOnCurve), y: yValOnCurve },
+        idx: segIdx,
+        pixel: { x: px, y: py },
       };
     },
-    [dataPoints]
+    [dataPoints, cubicAt, solveTForX]
   );
 
   const options = useMemo(() => {

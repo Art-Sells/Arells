@@ -34,8 +34,8 @@ export const AssetsProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           next[key] = {
             vapa: item.vapa || 0,
             vapaDate: item.vapaDate ?? null,
-            history: Array.isArray(item.history) ? item.history : [],
-            vapaMarketCap: Array.isArray(item.vapaMarketCap) ? item.vapaMarketCap : [],
+            history: Array.isArray(item.solidHistory) ? item.solidHistory : (Array.isArray(item.history) ? item.history : []),
+            vapaMarketCap: Array.isArray(item.solidMarketCap) ? item.solidMarketCap : (Array.isArray(item.vapaMarketCap) ? item.vapaMarketCap : []),
           };
         }
         setAssets(next);
