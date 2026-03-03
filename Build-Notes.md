@@ -63,9 +63,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
     Arells is a belief that investments should never lose value.
     ______________________
 
-    History shows that new economic systems begin not as laws or technologies, they begin as beliefs, they begin with you believing what is possible. 
-    
-    And that is how investments never losing value begins, with a belief.
+    History shows that new economic systems begin not as laws or technologies, they begin as beliefs, they begin with you believing in what is possible. 
 
     This belief is powered by a ledger that shows how your investments would look if they never lost value.
 
