@@ -2,7 +2,7 @@
 
 ## Arells v1
 
-- *See what sign in to save investments dissapearing looks like*
+- *See what sign in to save investments dissapearing looks like, then re-implement sign in*
 - *Fix toggle UI/UI issue and liquid market 1 day circle not smoothing out....*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
@@ -12,6 +12,7 @@
 - *loading circle main for asset pages jigs when its transitioning colors, why?*
 - *bitcoin icon in assets pages should not be pixelated (should look like homepage bitcoin icon)*
 - *hide investments hover up cuts off... fix...*
+- *About button (same as in asset pages) in my investmnts footer arells*ß
 
 ### Investment list
 - - (delete) *test this*
@@ -71,13 +72,14 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 
 ### Optimize-UI/UX for mobile
 - Test everything...........
+- Remove "sign in" dynamic to test in mobile...
 - - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes...
 
 ### Sign In/Up
 - Integrate sign-in/up with google....
 - Creates json with the email inside /users inside arells/users/ that functions exactly like the session vavity, except it never deletes any unless specifically asked for by the user...
 
-### Metatags/ Description (all pages.tsx (dont forget my investments page)& components)
+### Metatags/ Description (all pages.tsx (dont forget my investments page) & components)
 - Add unique favicons (and add to online tests)
 - Alter: Descriptions & BannerImages (make [}{] images for promotions), add same color scheme on top behind logos.
 - - If investments never lost value (Bitcoin/Ethereum - If investments never lost value)
