@@ -7,7 +7,7 @@ import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
 import { useVavity } from '../context/VavityAggregator';
-import { useUser } from '../context/UserContext';
+import HomeInvestmentsSlideUpCTA from './Home/HomeInvestmentsSlideUpCTA';
 
 type VotingAsset = 'solana' | 'xrp';
 
@@ -31,7 +31,6 @@ const Index = () => {
     wordLogo: false,
   });
   const { getAsset, sessionId } = useVavity();
-  const { isSignedIn } = useUser();
   const [votingData, setVotingData] = useState<VotingBlockData | null>(null);
   const [votingHidden, setVotingHidden] = useState<boolean>(false);
   const [countdownMs, setCountdownMs] = useState<number>(0);
@@ -377,11 +376,7 @@ const Index = () => {
         </div>
       )}
 
-      {isSignedIn && (
-        <Link href="/my-investments" className="home-view-investments-float">
-          View My Investments
-        </Link>
-      )}
+      <HomeInvestmentsSlideUpCTA />
 
     </>
   );

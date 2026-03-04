@@ -2,11 +2,11 @@
 
 ## Arells v1
 
+- *See what sign in to save investments dissapearing looks like*
 - *Fix toggle UI/UI issue and liquid market 1 day circle not smoothing out....*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
 - *test for long numbers and ensure (add a width maximum for current/purchased/losses/profits sections in portfolio, invesment list and in marketcap asset percentages (test how this would affect UI))*
-- *test min-width when opening inspect*
 - *add submitted icon*
 - *test multiple investment deletions...*
 - *loading circle main for asset pages jigs when its transitioning colors, why?*
@@ -44,16 +44,13 @@ If email is read and no investments exist inside the email json:
 If Investments exist inside email json, replace Add Investments Wrapper with:
 *Investments Wrapper (main child wrapper):*
 - [total of all investments from all assets "acVatops","acVacts", etc with ] <- should be styled exactly like the "Purchased Amount, Current Amount, profits, etc" sections below the asset pages
+- "Toggle liquid solid"
 *Add Investments Wrapper (Investments Child Wrapper): only show if there's an asset/investment not shown from email json, otherwise hide*
 - - Add Investments <- title same sizing styling as the "Investments" title inside asset pages except same color as the "My Investments" title....
 *Add Investments Child Wrapper:*
 - - - (BTCicon) or (ETHicon) or both <- only shows button if there's an asset that exists that does not exist inside email json, otherwise, dont show button and add to:
 *Add More Investments Wrapper (investments CHild Wrapper below Add Investments Wrapper)*
 - - - (BTCicon)(ETHicon) (should start center for one if only one asset icon button is shown and expand...) that link to asset pages... should only show based on jsons if investments were added from their assets, otherwise, 
-
-## Sign In/Up
-- Integrate sign-in/up with google....
-- Creates json with the email inside /users inside arells/users/ that functions exactly like the session vavity, except it never deletes any unless specifically asked for by the user...
 
 
 ### About:
@@ -72,7 +69,15 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 ### Vavity (take everything from vavity.info)
 - Change desc to: Remove "Investment losses are a human psychology issue" just tell WHAT Vavity is... that's it - don't lecture (replace bear markets with investment losses in vavity info and readme) so Vavity solves this psychologically through technical autonomy. By eliminating investment losses etc etc (in github also..., remove "cryptocurrency" from it and make it simply (remove Bitcoin and make it general))
 
-### Metatags/ Description (all pages.tsx & components)
+### Optimize-UI/UX for mobile
+- Test everything...........
+- - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes...
+
+### Sign In/Up
+- Integrate sign-in/up with google....
+- Creates json with the email inside /users inside arells/users/ that functions exactly like the session vavity, except it never deletes any unless specifically asked for by the user...
+
+### Metatags/ Description (all pages.tsx (dont forget my investments page)& components)
 - Add unique favicons (and add to online tests)
 - Alter: Descriptions & BannerImages (make [}{] images for promotions), add same color scheme on top behind logos.
 - - If investments never lost value (Bitcoin/Ethereum - If investments never lost value)

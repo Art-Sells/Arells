@@ -31,7 +31,8 @@ body {
 	justify-content: center;
 	align-items: flex-start;
 	padding-top: 300px;
-	z-index: 2000;
+	/* Must be highest z-index in the app */
+	z-index: 2147483647 !important;
 	opacity: 1;
 	transition: opacity 1s ease;
 }
@@ -1047,6 +1048,114 @@ body {
 	background: rgba(107, 114, 168, 0.16);
 }
 
+.asset-portfolio-slideup {
+	position: fixed;
+	left: 50%; /* default; may be overridden by inline style measurement */
+	/* No "margin bottom" feel: sit flush to the viewport bottom (safe-area aware) */
+	bottom: calc(0px + env(safe-area-inset-bottom, 0px));
+	/* Hide fully off-screen (button is tall and has shadow, so push it farther than 120%) */
+	transform: translate(-50%, 220%);
+	pointer-events: none;
+	/* Sit above page content, but below loader overlays */
+	z-index: 2147483000;
+	isolation: isolate;
+	/* width/left are controlled by JS to match the real button footprint */
+	max-width: none;
+	transition: transform 0.7s ease;
+	display: flex;
+	justify-content: center;
+	font-family: Arial, sans-serif; /* prevent portal-in-body serif fallback */
+}
+
+.asset-portfolio-slideup.is-visible {
+	transform: translate(-50%, 0);
+	pointer-events: auto;
+}
+
+.asset-portfolio-slideup-button {
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	width: 100%;
+	touch-action: pan-y;
+	box-sizing: border-box; /* keep outer width stable even when padding differs */
+}
+
+/* Portal CTA lives outside `.asset-page-content`, so we must explicitly match the in-page "unified" text color */
+.asset-portfolio-slideup--bitcoin .asset-portfolio-slideup-button,
+.asset-portfolio-slideup--bitcoin .asset-portfolio-slideup-button:visited {
+	color: rgb(209, 142, 55) !important; /* same as `--asset-line-color` on `.asset-page--bitcoin` */
+}
+
+.asset-portfolio-slideup--ethereum .asset-portfolio-slideup-button,
+.asset-portfolio-slideup--ethereum .asset-portfolio-slideup-button:visited {
+	color: rgb(107, 114, 168) !important; /* same as `--asset-line-color` on `.asset-page--ethereum` */
+}
+
+/* Slide-up CTA: set background to 0.9 opacity (match calendar popover panel tint) */
+.asset-portfolio-slideup--bitcoin .asset-action-button--add-investments {
+	/* Keep the button background exactly as the real Add Investments button */
+	padding-left: 15px !important;
+	padding-right: 15px !important;
+}
+
+.asset-portfolio-slideup--ethereum .asset-action-button--add-investments {
+	/* Keep the button background exactly as the real Add Investments button */
+	padding-left: 15px !important;
+	padding-right: 15px !important;
+}
+
+/* Slide-up CTA wrapper: match the portfolio wrapper box styling */
+.asset-portfolio-slideup .asset-portfolio-summary-box--slideup {
+	/* Remove the default `.asset-portfolio-summary-box { margin: 0 auto 12px; }` */
+	margin: 0 auto -10px !important;
+	/* Match requested padding */
+	padding-top: 35px;
+	padding-left: 25px;
+	padding-right: 25px;
+	/* Existing was 20px; add another 20px */
+	padding-bottom: 45px;
+	position: relative;
+}
+
+/* Slide-up Portfolio CTA: vertical guide lines that match the wrapper border styling */
+.asset-portfolio-slideup .asset-portfolio-summary-box--slideup::before,
+.asset-portfolio-slideup .asset-portfolio-summary-box--slideup::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: var(--portfolio-slideup-line-width, 1px);
+	background: var(--portfolio-slideup-line-color, rgba(0, 0, 0, 0.2));
+	opacity: 1;
+	pointer-events: none;
+}
+
+.asset-portfolio-slideup .asset-portfolio-summary-box--slideup::before {
+	left: var(--portfolio-slideup-line-left-inset, 0px);
+}
+
+.asset-portfolio-slideup .asset-portfolio-summary-box--slideup::after {
+	right: var(--portfolio-slideup-line-right-inset, 0px);
+}
+
+/* Slide-up CTA section background should be 0.95 opacity */
+.asset-portfolio-slideup--bitcoin .asset-portfolio-summary-box--slideup {
+	background: rgba(255, 244, 232, 0.9);
+}
+
+.asset-portfolio-slideup--ethereum .asset-portfolio-summary-box--slideup {
+	/* Match the perceived tint of `.asset-panel--ethereum { background: rgba(107,114,168,0.07) }` on white */
+	background: rgba(235, 235, 242, 0.9);
+}
+
+/* Slide-up CTA button: remove the Add Investments default bottom margin (the wrapper handles spacing) */
+.asset-portfolio-slideup .asset-action-button--add-investments {
+	margin-bottom: 0px !important;
+}
+
 .asset-date-trigger.is-open {
 	outline: none;
 }
@@ -1869,6 +1978,116 @@ body {
 	transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
+.home-investments-slideup {
+	position: fixed;
+	left: 50%; /* may be overridden by JS measurement */
+	bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+	transform: translate(-50%, 220%);
+	pointer-events: none;
+	opacity: 1;
+	/* Sit above page content, but below loader overlays */
+	z-index: 2147483000;
+	isolation: isolate;
+	transition: transform 0.35s ease;
+}
+
+.home-investments-slideup.is-visible {
+	transform: translate(-50%, 0);
+	pointer-events: auto;
+}
+
+/* Slide-up shell should visually match `.home-assets-wrapper` exactly, but without width constraints */
+.home-investments-slideup-shell {
+	width: 100%;
+	box-sizing: border-box;
+	/* +20px top padding */
+	padding-top: 35px;
+	padding-left: 45px;  /* +10px */
+	padding-right: 45px; /* +10px */
+	padding-bottom: 45px;
+	/* Lower/softer shadow; opacity reduced to ~30% of previous */
+	box-shadow: -4px -1px 12px rgba(0, 0, 0, 0.09);
+	border-radius: 12px;
+	/* Section opacity .9 via background alpha (not global opacity) */
+	background: rgba(255, 255, 255, 0.9);
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	margin-bottom: -30px;
+	/* Same initial mount animation as the Home assets block */
+	animation-name: pageSlideUp;
+	animation-duration: 4s;
+	animation-delay: 0s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+/* Align like the asset rows: leave space for the index column */
+.home-investments-slideup-row {
+	display: grid;
+	/* Center the button (no index-column offset) */
+	grid-template-columns: 1fr;
+	align-items: center;
+	column-gap: 10px;
+	width: 100%;
+	box-sizing: border-box;
+	padding-left: 0px;
+	padding-right: 0px;
+	justify-items: center;
+}
+
+.home-investments-slideup-index-spacer {
+	display: none;
+}
+
+/* Slide-up button should match asset cards width/shape/hover dynamics,
+   but use Add Investments typography (Arial, heavy, tight tracking) with black text. */
+.home-investments-slideup-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	box-sizing: border-box;
+	width: 100%;
+	/* match home asset card shell */
+	background: #ffffff;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	box-shadow: -6px 0px 20px rgba(0, 0, 0, 0.08);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	/* match home asset card rounded ends */
+	border-top-left-radius: 999px;
+	border-bottom-left-radius: 999px;
+	border-top-right-radius: 400px;
+	border-bottom-right-radius: 400px;
+	/* padding adjustments */
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 23px;  /* +10px */
+	padding-bottom: 25px; /* -3px */
+}
+
+.home-investments-slideup-button:hover {
+	transform: translateY(-2px);
+	box-shadow: -6 0px 30px rgba(0, 0, 0, 0.1);
+}
+
+.home-investments-slideup-button-text {
+	font-family: Arial, sans-serif;
+	font-weight: 200;
+	letter-spacing: 0px;
+	/* Match the Home slogan ("if investments never lost value") */
+	font-size: 14px;
+	color: gray;
+	opacity: .5;
+	transition: opacity 0.2s ease;
+}
+
+.home-investments-slideup-button:hover .home-investments-slideup-button-text {
+	opacity: .8;
+}
+
 .home-view-investments-float:hover {
 	transform: translateX(-50%) translateY(-2px);
 }
@@ -2137,6 +2356,10 @@ body {
 		height: 720px;
 	}
 
+	.asset-portfolio-slideup {
+		width: 340px;
+	}
+
 	.asset-price-chart-row {
 		align-items: stretch;
 		min-height: 360px;
@@ -2257,11 +2480,13 @@ body {
 }
 
 /* Re-enable shadow for the empty-state "Add Investments" button (matches chart line hue) */
-.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments {
+.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments,
+.asset-portfolio-slideup--bitcoin .asset-action-button--add-investments {
 	box-shadow: -5px 0px 20px rgba(248, 141, 0, 0.4) !important;
 }
 
-.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments:hover {
+.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments:hover,
+.asset-portfolio-slideup--bitcoin .asset-action-button--add-investments:hover {
 	/* Mimic Home asset button hover: shadow grows */
 	box-shadow: -7px -3px 20px rgba(248, 141, 0, 0.2), 0 4px 14px rgba(248, 141, 0, 0.2) !important;
 	transform: translateY(-4px);
@@ -2275,11 +2500,13 @@ body {
 	box-shadow: none !important;
 }
 
-.asset-page--ethereum .asset-page-content .asset-action-button--add-investments {
+.asset-page--ethereum .asset-page-content .asset-action-button--add-investments,
+.asset-portfolio-slideup--ethereum .asset-action-button--add-investments {
 	box-shadow: -5px 0px 20px rgba(107, 114, 168, 0.4) !important;
 }
 
-.asset-page--ethereum .asset-page-content .asset-action-button--add-investments:hover {
+.asset-page--ethereum .asset-page-content .asset-action-button--add-investments:hover,
+.asset-portfolio-slideup--ethereum .asset-action-button--add-investments:hover {
 	box-shadow: -7px -2px 20px rgba(107, 114, 168, 0.2), 0 4px 14px rgba(107, 114, 168, 0.2) !important;
 	transform: translateY(-4px);
 }
@@ -2332,7 +2559,8 @@ body {
 	align-items: flex-start;
 	justify-content: center;
 	padding-top: 300px;
-	z-index: 2100;
+	/* Must be highest z-index in the app */
+	z-index: 2147483647 !important;
 	opacity: .98;
 	transition: opacity 1s ease;
 }
@@ -3236,6 +3464,10 @@ body {
 	  }
 
 	  #descriptioner {
+		font-size: 12px;
+	  }
+
+	  .home-investments-slideup-button-text {
 		font-size: 12px;
 	  }
 

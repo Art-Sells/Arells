@@ -8,6 +8,7 @@ import { useVavity } from '../../../../../context/VavityAggregator';
 import { useUser } from '../../../../../context/UserContext';
 import EthereumChart from '../../../../Assets/Crypto/Ethereum/EthereumChart';
 import CustomDatePicker from '../../../../common/CustomDatePicker';
+import PortfolioSlideUpCTA from '../../PortfolioSlideUpCTA';
 
 const VavityEthereum: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
@@ -1480,7 +1481,7 @@ const VavityEthereum: React.FC = () => {
                 </div>
               </div>
         )}
-            {!isSignedIn && (
+            {!isSignedIn && !email && (
               <button type="button" className="asset-action-button asset-action-button--save-signin" onClick={openSignIn}>
                 <span className="asset-save-signin-text">Sign In to Save Investments</span>
               </button>
@@ -1691,7 +1692,7 @@ const VavityEthereum: React.FC = () => {
                     </div>
                   </div>
                 )}
-                {!isSignedIn && (
+                {!isSignedIn && !email && (
                   <div className="asset-portfolio-actions asset-portfolio-actions--signin">
                     <button
                       type="button"
@@ -1861,6 +1862,7 @@ const VavityEthereum: React.FC = () => {
       </div>
 
       </div>
+      <PortfolioSlideUpCTA enabled={!!email && isSignedIn} asset="ethereum" />
     </div>
   );
 };

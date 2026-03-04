@@ -8,6 +8,7 @@ import { useVavity } from '../../../../../context/VavityAggregator';
 import { useUser } from '../../../../../context/UserContext';
 import BitcoinChart from '../../../../Assets/Crypto/Bitcoin/BitcoinChart';
 import CustomDatePicker from '../../../../common/CustomDatePicker';
+import PortfolioSlideUpCTA from '../../PortfolioSlideUpCTA';
 
 const VavityBitcoin: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
@@ -1489,7 +1490,7 @@ const VavityBitcoin: React.FC = () => {
                 </div>
               </div>
         )}
-            {!isSignedIn && (
+            {!isSignedIn && !email && (
               <button type="button" className="asset-action-button asset-action-button--save-signin" onClick={openSignIn}>
                 <span className="asset-save-signin-text">Sign In to Save Investments</span>
               </button>
@@ -1701,7 +1702,7 @@ const VavityBitcoin: React.FC = () => {
                   </div>
                 </div>
               )}
-              {!isSignedIn && (
+              {!isSignedIn && !email && (
                 <div className="asset-portfolio-actions asset-portfolio-actions--signin">
                   <button
                     type="button"
@@ -1871,6 +1872,7 @@ const VavityBitcoin: React.FC = () => {
         </div>
 
       </div>
+      <PortfolioSlideUpCTA enabled={!!email && isSignedIn} asset="bitcoin" />
     </div>
   );
 };

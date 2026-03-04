@@ -93,22 +93,8 @@ const MyInvestmentsPageClient: React.FC = () => {
           <div className="myinv-header">
             <div className="myinv-title">My Investments</div>
             <div className={`myinv-slogan asset-header-slogan${isLiquidMode ? ' is-hidden' : ''}`}>
-              if investments never lost value
+              if they never lost value
             </div>
-          </div>
-
-          <div className="asset-reality-toggle-row">
-            <span className={`asset-reality-toggle-label${isLiquidMode ? ' is-active' : ''}`}>Liquid</span>
-            <button
-              type="button"
-              className={`asset-reality-toggle${!isLiquidMode ? ' is-fantasy' : ''}`}
-              aria-pressed={isLiquidMode}
-              aria-label="Toggle Liquid/Solid mode"
-              onClick={() => setIsLiquidMode((v) => !v)}
-            >
-              <span className="asset-reality-toggle-knob" aria-hidden="true" />
-            </button>
-            <span className={`asset-reality-toggle-label${!isLiquidMode ? ' is-active' : ''}`}>Solid</span>
           </div>
 
           {!isSignedIn ? (
@@ -152,6 +138,22 @@ const MyInvestmentsPageClient: React.FC = () => {
                     </span>
                   </div>
                 </div>
+
+                {!!email && (
+                  <div className="asset-reality-toggle-row" style={{ marginTop: 16 }}>
+                    <span className={`asset-reality-toggle-label${isLiquidMode ? ' is-active' : ''}`}>Liquid</span>
+                    <button
+                      type="button"
+                      className={`asset-reality-toggle${!isLiquidMode ? ' is-fantasy' : ''}`}
+                      aria-pressed={isLiquidMode}
+                      aria-label="Toggle Liquid/Solid mode"
+                      onClick={() => setIsLiquidMode((v) => !v)}
+                    >
+                      <span className="asset-reality-toggle-knob" aria-hidden="true" />
+                    </button>
+                    <span className={`asset-reality-toggle-label${!isLiquidMode ? ' is-active' : ''}`}>Solid</span>
+                  </div>
+                )}
               </div>
 
               {assetsMissingInEmail.length > 0 && (
