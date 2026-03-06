@@ -29,20 +29,35 @@ const VavityBitcoin: React.FC = () => {
   const [suppressSummaryTransition, setSuppressSummaryTransition] = useState(false);
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const [purchaseDate, setPurchaseDate] = useState<string>('');
+  const todayIso = useMemo(() => {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${da}`;
+  }, []);
+  const purchaseDateIsFuture = useMemo(() => !!purchaseDate && purchaseDate > todayIso, [purchaseDate, todayIso]);
   const [historicalPrice, setHistoricalPrice] = useState<number | null>(null);
   const [historicalLoading, setHistoricalLoading] = useState<boolean>(false);
   const [selectedRangeDays, setSelectedRangeDays] = useState<number | null>(null);
-  const [rangeHistoricalPrice, setRangeHistoricalPrice] = useState<number | null>(null);
+  // Keep range prices mode-strict: Liquid uses liquid range price only; Solid uses solid range price only.
+  const [rangeHistoricalPriceSolid, setRangeHistoricalPriceSolid] = useState<number | null>(null);
+  const [rangeHistoricalPriceLiquid, setRangeHistoricalPriceLiquid] = useState<number | null>(null);
   const [rangeLoading, setRangeLoading] = useState<boolean>(false);
-  const [profitMiniLoaderVisible, setProfitMiniLoaderVisible] = useState<boolean>(false);
-  const [profitMiniLoaderFading, setProfitMiniLoaderFading] = useState<boolean>(false);
-  const profitMiniLoaderStartRef = useRef<number>(0);
-  const profitMiniLoaderTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const profitMiniLoaderArmedRef = useRef<boolean>(false);
+  const [profitValueHidden, setProfitValueHidden] = useState<boolean>(false);
   const [mockEntries, setMockEntries] = useState<any[]>([]);
   const [mockStep, setMockStep] = useState<number>(0);
   const [chartReady, setChartReady] = useState<boolean>(false);
   const [isLiquidMode, setIsLiquidMode] = useState<boolean>(false);
+  const [toggleKnobLeftPx, setToggleKnobLeftPx] = useState<number | null>(null);
+  const toggleDragRef = useRef<{ active: boolean; pointerId: number | null; startX: number; startLeft: number; didDrag: boolean }>({
+    active: false,
+    pointerId: null,
+    startX: 0,
+    startLeft: 0,
+    didDrag: false,
+  });
+  const rangeHistoricalPrice = isLiquidMode ? rangeHistoricalPriceLiquid : rangeHistoricalPriceSolid;
   const assetSnapshot = getAsset('bitcoin');
   const assetPrice = assetSnapshot?.price ?? 0;
   const vapa = assetSnapshot?.vapa ?? 0;
@@ -65,6 +80,10 @@ const VavityBitcoin: React.FC = () => {
   const [summaryAnimating, setSummaryAnimating] = useState(false);
   const [addMorePulse, setAddMorePulse] = useState(false);
   const [showPulse, setShowPulse] = useState(false);
+  const [summaryValuesHidden, setSummaryValuesHidden] = useState(false);
+  const summaryValuesDidMountRef = useRef(false);
+  const [formValuesHidden, setFormValuesHidden] = useState(false);
+  const formValuesDidMountRef = useRef(false);
   const pulseTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const didMountAddMorePulseRef = useRef(false);
   const didMountShowPulseRef = useRef(false);
@@ -186,6 +205,28 @@ const VavityBitcoin: React.FC = () => {
     return () => clearPulseTimers();
   }, [clearPulseTimers]);
 
+  // Fade Purchased/Current values when range buttons or Liquid/Solid toggle changes.
+  useEffect(() => {
+    if (!summaryValuesDidMountRef.current) {
+      summaryValuesDidMountRef.current = true;
+      return;
+    }
+    setSummaryValuesHidden(true);
+    const t = window.setTimeout(() => setSummaryValuesHidden(false), 350);
+    return () => window.clearTimeout(t);
+  }, [selectedRangeDays, isLiquidMode]);
+
+  // Fade form numbers when Liquid/Solid toggle changes (match viewing section behavior).
+  useEffect(() => {
+    if (!formValuesDidMountRef.current) {
+      formValuesDidMountRef.current = true;
+      return;
+    }
+    setFormValuesHidden(true);
+    const t = window.setTimeout(() => setFormValuesHidden(false), 350);
+    return () => window.clearTimeout(t);
+  }, [isLiquidMode]);
+
   // Pulse when the LABEL actually flips (open <-> hide), including the delayed "hide" after the collapse timeout.
   useEffect(() => {
     if (!didMountAddMorePulseRef.current) {
@@ -203,68 +244,18 @@ const VavityBitcoin: React.FC = () => {
     triggerShowPulse();
   }, [showInvestmentsList, triggerShowPulse]);
 
-  const clearProfitMiniLoaderTimers = useCallback(() => {
-    profitMiniLoaderTimersRef.current.forEach((t) => clearTimeout(t));
-    profitMiniLoaderTimersRef.current = [];
-  }, []);
+  // (profit/loss mini loader removed)
 
+  // Fade the profit/loss value back in after the range request completes.
   useEffect(() => {
-    // reset when leaving range mode
     if (!selectedRangeDays) {
-      // If we're currently showing the loader (e.g. "All" pulse), let it finish fading out.
-      if (!profitMiniLoaderVisible) {
-        profitMiniLoaderArmedRef.current = false;
-        clearProfitMiniLoaderTimers();
-        setProfitMiniLoaderVisible(false);
-        setProfitMiniLoaderFading(false);
-      }
+      setProfitValueHidden(false);
       return;
     }
-
-    if (rangeLoading) {
-      profitMiniLoaderArmedRef.current = true;
-      if (!profitMiniLoaderVisible) {
-        setProfitMiniLoaderVisible(true);
-        setProfitMiniLoaderFading(false);
-        profitMiniLoaderStartRef.current = Date.now();
-      }
-      return;
-    }
-
-    // Only fade out after we've actually been in a loading phase for this range.
-    // Also ensure the range value is ready so we can crossfade loader -> text with no blank gap.
-    if (
-      !rangeLoading &&
-      profitMiniLoaderVisible &&
-      profitMiniLoaderArmedRef.current &&
-      (selectedRangeDays == null || rangeHistoricalPrice != null)
-    ) {
-      const elapsed = Date.now() - profitMiniLoaderStartRef.current;
-      const waitMs = Math.max(0, 500 - elapsed);
-      clearProfitMiniLoaderTimers();
-      const t1 = setTimeout(() => {
-        setProfitMiniLoaderFading(true);
-        const t2 = setTimeout(() => {
-          setProfitMiniLoaderVisible(false);
-          setProfitMiniLoaderFading(false);
-        }, 500);
-        profitMiniLoaderTimersRef.current.push(t2);
-      }, waitMs);
-      profitMiniLoaderTimersRef.current.push(t1);
-    }
-  }, [
-    clearProfitMiniLoaderTimers,
-    profitMiniLoaderVisible,
-    rangeHistoricalPrice,
-    rangeLoading,
-    selectedRangeDays,
-  ]);
-
-  useEffect(() => {
-    return () => {
-      clearProfitMiniLoaderTimers();
-    };
-  }, [clearProfitMiniLoaderTimers]);
+    if (rangeLoading) return;
+    const t = window.setTimeout(() => setProfitValueHidden(false), 250);
+    return () => window.clearTimeout(t);
+  }, [rangeLoading, selectedRangeDays]);
 
   useEffect(() => {
     if (isSignedIn) {
@@ -487,7 +478,7 @@ const VavityBitcoin: React.FC = () => {
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [selectedRangeDays, rangeLoading, profitMiniLoaderVisible, profitMiniLoaderFading]);
+  }, [selectedRangeDays, rangeLoading]);
   const oldestInvestmentDate = useMemo(() => {
     if (investments.length === 0) return null;
     const dates = investments
@@ -555,7 +546,8 @@ const VavityBitcoin: React.FC = () => {
     const loadRangePrice = async () => {
       if (!selectedRangeDays) {
         if (isMounted) {
-          setRangeHistoricalPrice(null);
+          setRangeHistoricalPriceSolid(null);
+          setRangeHistoricalPriceLiquid(null);
           setRangeLoading(false);
         }
       return;
@@ -567,14 +559,14 @@ const VavityBitcoin: React.FC = () => {
         const response = await axios.get('/api/assets/crypto/bitcoin/bitcoinVapaHistoricalPrice', {
           params: { date: isoDate, mode: isLiquidMode ? 'liquid' : 'solid' }
         });
-        const price = response.data?.price;
-        if (isMounted) {
-          setRangeHistoricalPrice(typeof price === 'number' ? price : null);
+        const priceRaw = response.data?.price;
+        const priceNum = Number(priceRaw);
+        if (isMounted && Number.isFinite(priceNum)) {
+          if (isLiquidMode) setRangeHistoricalPriceLiquid(priceNum);
+          else setRangeHistoricalPriceSolid(priceNum);
         }
       } catch (error) {
-        if (isMounted) {
-          setRangeHistoricalPrice(null);
-        }
+        // Keep last known value for this mode; do not flip to null.
       } finally {
         if (isMounted) {
           setRangeLoading(false);
@@ -854,6 +846,7 @@ const VavityBitcoin: React.FC = () => {
     const amt = parseTokenAmount(tokenAmount || '0');
     if (!amt || amt <= 0) return;
     if (!purchaseDate) return;
+    if (purchaseDate > todayIso) return;
 
     const cVactTaa = parseFloat(amt.toFixed(8));
     const newInvestment = {
@@ -1072,13 +1065,14 @@ const VavityBitcoin: React.FC = () => {
       const currentModePrice = isLiquidMode ? assetPrice : vapa;
       const basePrice = purchaseDate ? (historicalPrice ?? 0) : (currentModePrice || 0);
       const profitValue = ((currentModePrice || 0) - basePrice) * parseTokenAmount(tokenAmount || '0');
-      const isProfit = profitValue > 0.005;
+      // Default 0.00 to "Profits" in the form.
+      const isProfit = profitValue >= -0.005;
       const title = isProfit ? 'Profits' : 'Losses';
       const formattedValue =
         profitValue > 0
           ? formatCurrency(profitValue)
           : Math.abs(profitValue).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      return { title, prefix: isProfit ? '+$' : '$', value: formattedValue };
+      return { title, prefix: isProfit ? '+$' : '-$', value: formattedValue };
     })();
 
     return (
@@ -1095,7 +1089,7 @@ const VavityBitcoin: React.FC = () => {
               <div className="asset-invest-form-metrics">
                 <div className="asset-metric-row asset-invest-form-row">
                   <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">Purchased Value</span>
-                  <span className="asset-money-wrap">
+                  <span className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}>
                     <span className="asset-metric-symbol--bitcoin">$</span>
                     <span className="asset-metric-value">{purchasedValue}</span>
                   </span>
@@ -1110,7 +1104,7 @@ const VavityBitcoin: React.FC = () => {
 
                 <div className="asset-metric-row asset-invest-form-row">
                   <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">Current Value</span>
-                  <span className="asset-money-wrap">
+                  <span className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}>
                     <span className="asset-metric-symbol--bitcoin">$</span>
                     <span className="asset-metric-value">{currentValue}</span>
                   </span>
@@ -1125,7 +1119,7 @@ const VavityBitcoin: React.FC = () => {
 
                 <div className="asset-metric-row asset-invest-form-row">
                   <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">{profitRow.title}</span>
-                  <span className="asset-money-wrap">
+                  <span className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}>
                     {profitRow.prefix ? (
                       <span className="asset-metric-inline-symbol--bitcoin">{profitRow.prefix}</span>
                     ) : null}
@@ -1170,7 +1164,7 @@ const VavityBitcoin: React.FC = () => {
 
               <button
                 onClick={handleSubmitInvestment}
-                disabled={submitLoading || !tokenAmount || !purchaseDate}
+                disabled={submitLoading || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
                 {submitLoading ? 'Submitting...' : 'Submit'}
@@ -1420,18 +1414,109 @@ const VavityBitcoin: React.FC = () => {
               </div>
             </div>
 
-          <div className="asset-reality-toggle-row asset-reality-toggle-row--bitcoin">
-            <span className={`asset-reality-toggle-label${isLiquidMode ? ' is-active' : ''}`}>Liquid</span>
-            <button
-              type="button"
-              className={`asset-reality-toggle${!isLiquidMode ? ' is-fantasy' : ''}`}
-              aria-pressed={isLiquidMode}
-              aria-label="Toggle Liquid/Solid mode"
-              onClick={() => setIsLiquidMode((v) => !v)}
-            >
-              <span className="asset-reality-toggle-knob" aria-hidden="true" />
-            </button>
-            <span className={`asset-reality-toggle-label${!isLiquidMode ? ' is-active' : ''}`}>Solid</span>
+          <div className="asset-panel asset-panel--bitcoin asset-reality-toggle-shell">
+            <div className="asset-reality-toggle-row asset-reality-toggle-row--bitcoin">
+              <span className={`asset-reality-toggle-label${isLiquidMode ? ' is-active' : ''}`}>Liquid</span>
+              <button
+                type="button"
+                className={`asset-reality-toggle${!isLiquidMode ? ' is-fantasy' : ''}${toggleKnobLeftPx != null ? ' is-dragging' : ''}`}
+                aria-pressed={isLiquidMode}
+                aria-label="Toggle Liquid/Solid mode"
+                style={
+                  toggleKnobLeftPx != null
+                    ? ({ ['--toggle-knob-left' as any]: `${toggleKnobLeftPx}px` } as React.CSSProperties)
+                    : undefined
+                }
+                onPointerDown={(e) => {
+                  const btn = e.currentTarget;
+                  const cs = window.getComputedStyle(btn);
+                  const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
+                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
+                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
+                  const w = btn.getBoundingClientRect().width;
+                  const minLeft = leftInset;
+                  const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+                  const currentLeft = isLiquidMode ? minLeft : maxLeft;
+
+                  toggleDragRef.current.active = true;
+                  toggleDragRef.current.pointerId = e.pointerId;
+                  toggleDragRef.current.startX = e.clientX;
+                  toggleDragRef.current.startLeft = currentLeft;
+                  toggleDragRef.current.didDrag = false;
+
+                  try {
+                    btn.setPointerCapture(e.pointerId);
+                  } catch {}
+                  setToggleKnobLeftPx(currentLeft);
+                  e.preventDefault();
+                }}
+                onPointerMove={(e) => {
+                  if (!toggleDragRef.current.active) return;
+                  const btn = e.currentTarget;
+                  const cs = window.getComputedStyle(btn);
+                  const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
+                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
+                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
+                  const w = btn.getBoundingClientRect().width;
+                  const minLeft = leftInset;
+                  const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+                  const dx = e.clientX - toggleDragRef.current.startX;
+                  if (Math.abs(dx) > 2) toggleDragRef.current.didDrag = true;
+                  const next = Math.min(maxLeft, Math.max(minLeft, toggleDragRef.current.startLeft + dx));
+                  setToggleKnobLeftPx(next);
+                  e.preventDefault();
+                }}
+                onPointerUp={(e) => {
+                  if (!toggleDragRef.current.active) return;
+                  const btn = e.currentTarget;
+                  const cs = window.getComputedStyle(btn);
+                  const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
+                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
+                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
+                  const w = btn.getBoundingClientRect().width;
+                  const minLeft = leftInset;
+                  const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+                  const mid = (minLeft + maxLeft) / 2;
+                  const finalLeft = toggleKnobLeftPx ?? (isLiquidMode ? minLeft : maxLeft);
+                  const nextIsLiquid = finalLeft <= mid;
+
+                  toggleDragRef.current.active = false;
+                  toggleDragRef.current.pointerId = null;
+                  try {
+                    btn.releasePointerCapture(e.pointerId);
+                  } catch {}
+
+                  if (nextIsLiquid !== isLiquidMode) {
+                    setProfitValueHidden(true);
+                    setIsLiquidMode(nextIsLiquid);
+                    window.setTimeout(() => setProfitValueHidden(false), 350);
+                  }
+                  setToggleKnobLeftPx(null);
+                  e.preventDefault();
+                }}
+                onPointerCancel={(e) => {
+                  if (!toggleDragRef.current.active) return;
+                  toggleDragRef.current.active = false;
+                  toggleDragRef.current.pointerId = null;
+                  setToggleKnobLeftPx(null);
+                  try {
+                    e.currentTarget.releasePointerCapture(e.pointerId);
+                  } catch {}
+                }}
+                onClick={() => {
+                  if (toggleDragRef.current.didDrag) {
+                    toggleDragRef.current.didDrag = false;
+                    return;
+                  }
+                  setProfitValueHidden(true);
+                  setIsLiquidMode((v) => !v);
+                  window.setTimeout(() => setProfitValueHidden(false), 350);
+                }}
+              >
+                <span className="asset-reality-toggle-knob" aria-hidden="true" />
+              </button>
+              <span className={`asset-reality-toggle-label${!isLiquidMode ? ' is-active' : ''}`}>Solid</span>
+            </div>
           </div>
 
       <div
@@ -1447,10 +1532,8 @@ const VavityBitcoin: React.FC = () => {
       >
         {hasInvestmentsUI && (
           <h2
-            className="asset-home-font-title"
-            style={{ display: 'flex', alignItems: 'center', gap: '5px', justifyContent: 'center' }}
+            className="asset-investments-header"
           >
-            <Image src="/images/assets/crypto/bitcoin.png" alt="Bitcoin" width={17} height={17} />
             <span className="asset-portfolio-title-muted">investments</span>
           </h2>
         )}
@@ -1511,15 +1594,22 @@ const VavityBitcoin: React.FC = () => {
             >
               <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--bitcoin">Purchased Value</span>
-                <span className="asset-money-wrap">
+                <span
+                  className={`asset-metric-title--bitcoin asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                  style={{ display: 'inline-block', marginTop: 30 }}
+                >
+                  Purchased Value
+                </span>
+                <span className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}>
                   <span className="asset-metric-symbol--bitcoin">$</span>
                   <span className="asset-metric-value">{formatCurrency(filteredTotals.acVatop || 0)}</span>
                 </span>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span className="asset-metric-title--bitcoin">Current Value</span>
-                <span className="asset-money-wrap">
+                <span className={`asset-metric-title--bitcoin asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}>
+                  Current Value
+                </span>
+                <span className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}>
                   <span className="asset-metric-symbol--bitcoin">$</span>
                   <span className="asset-metric-value">{formatCurrency(filteredTotals.acVact || 0)}</span>
                 </span>
@@ -1547,30 +1637,24 @@ const VavityBitcoin: React.FC = () => {
                         const isProfit = profitValue > 0.005;
                         const label = isProfit ? 'Profits' : 'Losses';
                         const formattedValue = formatMoneyFixed(Math.abs(profitValue));
-                        const showLoader = (selectedRangeDays && rangeLoading) || profitMiniLoaderVisible;
                         return (
                           <span
                             className="asset-profit-inline-wrap"
                             style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                           >
-                            {showLoader && (
-                              <span
-                                className={`asset-mini-loader${profitMiniLoaderFading ? ' is-fading' : ''}`}
-                                aria-hidden="true"
-                              />
-                            )}
                             <span
                               ref={profitInlineAnimRef}
-                              key={`${selectedRangeDays}-${label}-${formattedValue}`}
                               className={`asset-profit-range-anim${
-                                showLoader && !profitMiniLoaderFading ? ' is-hidden' : ''
+                                (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? ' is-hidden' : ''
                               }`}
                             >
                               <span className="asset-metric-inline-title--bitcoin">
                                 {formatRangeLabel(selectedRangeDays)} {label}
                               </span>
                               <span className="asset-money-wrap">
-                                <span className="asset-metric-symbol--bitcoin">{isProfit ? '+$' : '-$'}</span>
+                                <span className="asset-metric-symbol--bitcoin">
+                                  {isProfit ? '+$' : isLiquidMode ? '-$' : '$'}
+                                </span>
                                 <span className="asset-metric-inline-value">{formattedValue}</span>
                               </span>
                             </span>
@@ -1581,30 +1665,24 @@ const VavityBitcoin: React.FC = () => {
                       const isProfit = defaultProfit > 0.005;
                       const label = isProfit ? 'Profits' : 'Losses';
                       const formattedValue = formatMoneyFixed(Math.abs(defaultProfit));
-                      const showLoader = (selectedRangeDays && rangeLoading) || profitMiniLoaderVisible;
                       return (
                         <span
                           className="asset-profit-inline-wrap"
                           style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                         >
-                          {showLoader && (
-                            <span
-                              className={`asset-mini-loader${profitMiniLoaderFading ? ' is-fading' : ''}`}
-                              aria-hidden="true"
-                            />
-                          )}
                           <span
                             ref={profitInlineAnimRef}
-                            key={`all-${label}-${formattedValue}`}
                             className={`asset-profit-range-anim${
-                              showLoader && !profitMiniLoaderFading ? ' is-hidden' : ''
+                              (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? ' is-hidden' : ''
                             }`}
                           >
                             <span className="asset-metric-inline-title--bitcoin">
                               {formatRangeLabel(null)} {label}
                             </span>
                             <span className="asset-money-wrap">
-                              <span className="asset-metric-symbol--bitcoin">{isProfit ? '+$' : '-$'}</span>
+                              <span className="asset-metric-symbol--bitcoin">
+                                {isProfit ? '+$' : isLiquidMode ? '-$' : '$'}
+                              </span>
                               <span className="asset-metric-inline-value">{formattedValue}</span>
                             </span>
                           </span>
@@ -1624,25 +1702,11 @@ const VavityBitcoin: React.FC = () => {
                       disabled={!isEnabled || isActive}
                       onClick={() => {
                         if (isActive) return;
-                        clearProfitMiniLoaderTimers();
-                        profitMiniLoaderArmedRef.current = false;
-                        setProfitMiniLoaderVisible(true);
-                        setProfitMiniLoaderFading(false);
-                        profitMiniLoaderStartRef.current = Date.now();
-
-                        // "All" doesn't fetch range data, so we pulse the loader for 0.5s then fade out 1s.
-                        if (range.days == null) {
-                          const t1 = setTimeout(() => {
-                            setProfitMiniLoaderFading(true);
-                            const t2 = setTimeout(() => {
-                              setProfitMiniLoaderVisible(false);
-                              setProfitMiniLoaderFading(false);
-                            }, 500);
-                            profitMiniLoaderTimersRef.current.push(t2);
-                          }, 500);
-                          profitMiniLoaderTimersRef.current.push(t1);
-                        }
+                        setProfitValueHidden(true);
                         setSelectedRangeDays(range.days);
+                        if (range.days == null) {
+                          window.setTimeout(() => setProfitValueHidden(false), 350);
+                        }
                       }}
                         className={`asset-range-button asset-range-button--bitcoin${isActive ? ' is-active' : ''}`}
                     >
@@ -1709,21 +1773,22 @@ const VavityBitcoin: React.FC = () => {
                   </div>
                 </div>
               )}
-              {!isSignedIn && !email && (
-                <div className="asset-portfolio-actions asset-portfolio-actions--signin">
-                  <button
-                    type="button"
-                    className="asset-action-button asset-action-button--save-signin"
-                    onClick={openSignIn}
-                  >
-                    <span className="asset-save-signin-text">Sign In to Save Investments</span>
-                  </button>
-                </div>
-              )}
             </div>
             </div>
             </div>
-            <div className="asset-portfolio-actions asset-portfolio-actions--show">
+            {!isSignedIn && !email && (
+              <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
+                <button
+                  type="button"
+                  className="asset-action-button asset-action-button--save-signin"
+                  onClick={openSignIn}
+                >
+                  <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                </button>
+              </div>
+            )}
+
+            <div className={`asset-portfolio-actions asset-portfolio-actions--show${showInvestmentsList ? ' is-open' : ''}`}>
               <button
                 className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-show${
                   showPulse ? ' asset-action-button--pulse' : ''

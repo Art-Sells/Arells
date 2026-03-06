@@ -144,7 +144,7 @@ Users
 - Fix long marketcap numbers/etc...
 - Asset/Prices/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust plan based on feedback...
-- If traction is good look at 
+- If traction is good look at Business Plan folder
 - - increase CG API limit? (track)
 - - Compare Retention rate (in bear markets WoM only (percentages)) : Projections (with current trajectory) with/without (WoW percentage comparisons)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)

@@ -45,9 +45,7 @@ export default function PortfolioSlideUpCTA({
     try {
       const params = new URLSearchParams(window.location.search);
       const paramForce = params.get('portfolioCta') === '1';
-      const host = (window.location.hostname || '').toLowerCase();
-      const localhostForce = host === 'localhost' || host === '127.0.0.1';
-      setDebugForceEnabled(paramForce || localhostForce);
+      setDebugForceEnabled(paramForce);
     } catch {
       setDebugForceEnabled(false);
     }

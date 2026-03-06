@@ -71,7 +71,13 @@ export default function CustomDatePicker({ value, onChange, className, placehold
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const closeTimerRef = useRef<number | null>(null);
 
-  const selected = useMemo(() => parseIsoYmd(value), [value]);
+  const todayIso = useMemo(() => toIsoYmd(new Date()), []);
+  const selectedRaw = useMemo(() => parseIsoYmd(value), [value]);
+  const selected = useMemo(() => {
+    if (!selectedRaw) return null;
+    const iso = toIsoYmd(selectedRaw);
+    return iso > todayIso ? null : selectedRaw;
+  }, [selectedRaw, todayIso]);
   const initialMonth = useMemo(() => selected ?? new Date(), [selected]);
   const [open, setOpen] = useState(false);
   const [renderPopover, setRenderPopover] = useState(false);
@@ -138,12 +144,12 @@ export default function CustomDatePicker({ value, onChange, className, placehold
   useEffect(() => {
     // keep active cursor in sync with external value when closed
     if (!open) {
-      setActiveIso(value || '');
+      setActiveIso(value && value <= todayIso ? value : '');
       const d = selected ?? new Date();
       setViewYear(d.getFullYear());
       setViewMonth(d.getMonth());
     }
-  }, [open, selected, value]);
+  }, [open, selected, todayIso, value]);
 
   const days = useMemo(() => {
     const first = new Date(viewYear, viewMonth, 1);
@@ -261,6 +267,7 @@ export default function CustomDatePicker({ value, onChange, className, placehold
     if (!current) return;
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
+      if (iso > todayIso) return;
       onChange(iso);
       startClose();
       return;
@@ -281,7 +288,7 @@ export default function CustomDatePicker({ value, onChange, className, placehold
       setViewYear(year);
       setViewMonth(month);
     }
-  }, [onChange, startClose, viewMonth, viewYear]);
+  }, [onChange, startClose, todayIso, viewMonth, viewYear]);
 
   return (
     <div
@@ -295,8 +302,8 @@ export default function CustomDatePicker({ value, onChange, className, placehold
         ref={triggerRef}
         onClick={() => (open ? startClose() : startOpen())}
       >
-        <span className={`asset-date-value${value ? '' : ' is-placeholder'}`}>
-          {value ? formatDisplay(value) : placeholder}
+        <span className={`asset-date-value${value && value <= todayIso ? '' : ' is-placeholder'}`}>
+          {value && value <= todayIso ? formatDisplay(value) : placeholder}
         </span>
         <span className="asset-date-icon" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 24 24">
@@ -347,6 +354,7 @@ export default function CustomDatePicker({ value, onChange, className, placehold
               {days.map((d) => {
                 const isSelected = !!value && d.iso === value;
                 const isActive = !!activeIso && d.iso === activeIso;
+                const isFuture = d.iso > todayIso;
                 return (
                   <button
                     key={d.iso}
@@ -355,12 +363,18 @@ export default function CustomDatePicker({ value, onChange, className, placehold
                     data-iso={d.iso}
                     className={`asset-date-day${d.inMonth ? '' : ' is-outside'}${isSelected ? ' is-selected' : ''}${
                       isActive ? ' is-active' : ''
-                    }`}
+                    }${isFuture ? ' is-disabled' : ''}`}
                     onKeyDown={onDayKeyDown}
-                    onMouseEnter={() => setActiveIso(d.iso)}
+                    disabled={isFuture}
+                    aria-disabled={isFuture}
+                    onMouseEnter={() => {
+                      if (isFuture) return;
+                      setActiveIso(d.iso);
+                    }}
                     onClick={() => {
+                      if (isFuture) return;
                       onChange(d.iso);
-                    startClose();
+                      startClose();
                     }}
                   >
                     {d.day}

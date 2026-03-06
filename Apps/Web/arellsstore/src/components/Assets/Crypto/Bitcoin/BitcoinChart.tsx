@@ -360,9 +360,11 @@ const BitcoinChart: React.FC<Props> = ({
       const canvas: HTMLCanvasElement | null | undefined = chart?.canvas;
       const rect = canvas?.getBoundingClientRect();
       const radius = 11.5;
-      const maxX = rect ? rect.width - radius : pixel.x;
+      // Let the dot travel fully to the left/right edges (half-dot clipped by overflow:hidden),
+      // but keep it fully visible vertically.
+      const maxX = rect ? rect.width : pixel.x;
       const maxY = rect ? rect.height - radius : pixel.y;
-      const clampedX = Math.min(Math.max(pixel.x, radius), maxX);
+      const clampedX = Math.min(Math.max(pixel.x, 0), maxX);
       const clampedY = Math.min(Math.max(pixel.y, radius), maxY);
       marker.style.left = `${clampedX - radius}px`;
       marker.style.top = `${canvasOffsetTop + clampedY - radius}px`;

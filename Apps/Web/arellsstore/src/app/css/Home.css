@@ -148,12 +148,22 @@ body {
 	opacity: 1;
 }
 
+.asset-page--bitcoin .asset-investments-header {
+	color: var(--asset-slogan-color, rgb(172, 97, 0));
+	opacity: 1;
+	margin-bottom: -12.5px;
+}
+
 .asset-page--bitcoin {
 	--asset-slogan-color: rgb(172, 97, 0);
 	--asset-line-color: rgb(209, 142, 55);
 	--asset-unified-text-color: var(--asset-line-color);
 	/* Match chart hover-dot color (BitcoinChart markerColor) */
 	--asset-hover-dot-color: rgba(248, 141, 0, 1);
+	/* Match chart line color (BitcoinChart color) */
+	--asset-chart-line-color: rgba(248, 141, 0, 0.5);
+	/* Match chart line thickness (BitcoinChart borderWidth) */
+	--asset-chart-line-width: 6.5px;
 }
 
 .asset-page--ethereum .asset-header-slogan,
@@ -162,12 +172,22 @@ body {
 	opacity: 1;
 }
 
+.asset-page--ethereum .asset-investments-header {
+	color: var(--asset-slogan-color, rgb(82, 87, 131));
+	opacity: 1;
+	margin-bottom: -12.5px;
+}
+
 .asset-page--ethereum {
 	--asset-slogan-color: rgb(82, 87, 131);
 	--asset-line-color: rgb(107, 114, 168);
 	--asset-unified-text-color: var(--asset-line-color);
 	/* Match chart hover-dot color (EthereumChart markerColor) */
 	--asset-hover-dot-color: rgba(107, 114, 168, 1);
+	/* Match chart line color (EthereumChart color) */
+	--asset-chart-line-color: rgba(107, 114, 168, 0.5);
+	/* Match chart line thickness (EthereumChart borderWidth) */
+	--asset-chart-line-width: 6.5px;
 }
 
 .asset-page--bitcoin .asset-page-content,
@@ -286,12 +306,6 @@ body {
 	transition: height 0.5s ease;
 }
 
-.asset-profit-inline-wrap .asset-mini-loader {
-	position: absolute;
-	left: 50%;
-	margin-top: 8px;
-}
-
 .asset-profit-inline-wrap .asset-profit-range-anim {
 	position: relative;
 	display: flex;
@@ -305,7 +319,7 @@ body {
 
 .asset-portfolio-title-muted {
 	margin-left: 5px;
-	opacity: 1;
+	opacity: .45;
 	letter-spacing: -2px;
 }
 
@@ -343,24 +357,7 @@ body {
 	border: 1px solid rgba(107, 114, 168, 0.3);
 }
 
-.asset-mini-loader {
-	display: inline-block;
-	width: 15px;
-	height: 15px;
-	box-sizing: border-box;
-	border-radius: 50%;
-	border: 2px solid currentColor;
-	border-top-color: transparent;
-	animation: homeLoaderSpin 1s linear infinite;
-	vertical-align: middle;
-	opacity: 1;
-	transition: opacity .5s ease;
-	margin-top: -4px;
-}
-
-.asset-mini-loader.is-fading {
-	opacity: 0;
-}
+/* (mini loader removed) */
 
 .asset-market-controls {
 	padding: 20px;
@@ -406,7 +403,7 @@ body {
 }
 
 .asset-portfolio-center {
-	margin-top: 17px;
+	margin-top: 0px;
 	text-align: center;
 	margin-left: 20px;
 }
@@ -605,6 +602,33 @@ body {
 	letter-spacing: -0px;
 }
 
+/* Investments header (icon + "investments") — separate from `.asset-home-font-title`
+   so spacing can be tuned without impacting other titles. */
+.asset-investments-header {
+	font-weight: 800;
+	font-size: 32px;
+	letter-spacing: -0px;
+	/* Remove browser default h2 margins (this was the hidden extra spacing). */
+	margin: 0;
+	/* Make the gap between header and bordered section adjustable */
+	padding-bottom: var(--asset-investments-header-padding-bottom, 5px);
+	margin-bottom: var(--asset-investments-header-margin-bottom, 0px);
+	/* Layout for icon + word */
+	display: flex;
+	align-items: center;
+	gap: 0px;
+	justify-content: center;
+}
+
+.asset-investments-header .asset-portfolio-title-muted {
+	margin-left: 0px;
+}
+
+.asset-investments-header img {
+	/* Raise icon relative to the "investments" word */
+	transform: translateY(var(--asset-investments-header-icon-y, -18px));
+}
+
 .asset-home-font-label--bitcoin {
 	font-size: 12px;
 	font-weight: 800;
@@ -788,7 +812,7 @@ body {
 .asset-invest-form-heading .asset-metric-title--ethereum {
 	font-size: 28px;
 	letter-spacing: -2px;
-	opacity: 1;
+	opacity: 0.45;
 }
 
 .asset-invest-form-body {
@@ -1307,6 +1331,14 @@ body {
 	opacity: 0.35;
 }
 
+.asset-date-day.is-disabled,
+.asset-date-day:disabled {
+	opacity: 0.16;
+	cursor: not-allowed;
+	/* ensure no hover tint ever applies */
+	pointer-events: none;
+}
+
 .asset-date-day:hover {
 	background: transparent;
 }
@@ -1411,30 +1443,37 @@ body {
 
 /* Liquid/Solid toggle (asset pages, under chart) */
 .asset-reality-toggle-row {
-	/* Match the wide pill buttons */
-	width: 97%;
-	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 10px;
-	margin: 17px auto 4px;
-	padding: 12px 14px;
-	padding-bottom: 15px;
-	/* Match Home asset button edges */
-	border-top-left-radius: 999px;
-	border-bottom-left-radius: 999px;
-	border-top-right-radius: 400px;
-	border-bottom-right-radius: 400px;
-	border: 1px solid var(--asset-border-color);
+	gap: 30px;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	border: none;
 	background: transparent;
-	transform: translateX(8px);
+	transform: none;
+}
+
+.asset-reality-toggle-shell {
+	/* Wrap the toggle inside a bordered section matching other panels */
+	width: 300px;
+	box-sizing: border-box;
+	margin: var(--asset-reality-toggle-row-margin-top, 20px) auto var(--asset-reality-toggle-shell-margin-bottom, 23px);
+	padding-bottom: 15px;
+	padding-top: 15px;
+	/* Keep the toggle content centered */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transform: translateX(10px);
 }
 
 .asset-reality-toggle-label {
 	/* Match asset title sizing */
-	font-size: 15px;
-	font-weight: 700;
+	font-size: 13px;
+	font-weight: 200;
 	letter-spacing: 0px;
 	opacity: 0.45;
 	color: var(--asset-line-color);
@@ -1447,26 +1486,40 @@ body {
 }
 
 .asset-reality-toggle {
-	width: 54px;
-	height: 22px;
+	/* Make the track 20px longer */
+	width: 74px;
+	/* Keep a larger hit-area, but draw the *visual* track as a thin line (see ::before) */
+	height: 25px;
 	border-radius: 999px;
 	border: none;
-	outline: 1px solid var(--asset-hover-dot-color, var(--asset-line-color));
-	background: var(--asset-hover-dot-color, var(--asset-line-color));
+	outline: none;
+	background: transparent;
 	box-shadow: none;
 	cursor: pointer;
 	position: relative;
 	padding: 0;
-	transition: background 0.2s ease, outline-color 0.2s ease;
+	transition: background 0.2s ease;
 	box-sizing: border-box;
+	touch-action: none;
 	/* Control knob geometry (so you can tweak both sides independently) */
 	/* Match the chart hover dot (23px) */
 	/* +1px padding above and below the knob (23px knob inside 25px track) */
-	height: 25px;
 	--toggle-knob-size: 23px;
 	/* Only show 1px of track background at each end */
 	--toggle-knob-left-inset: 1px;
 	--toggle-knob-right-inset: 1px;
+}
+
+.asset-reality-toggle::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	height: var(--asset-chart-line-width, 6.5px);
+	border-radius: 999px;
+	background: var(--asset-chart-line-color, var(--asset-line-color));
 }
 
 .asset-reality-toggle:active {
@@ -1476,19 +1529,24 @@ body {
 .asset-reality-toggle-knob {
 	position: absolute;
 	top: 50%;
-	left: var(--toggle-knob-left-inset);
+	left: var(--toggle-knob-left, var(--toggle-knob-left-inset));
 	width: var(--toggle-knob-size);
 	height: var(--toggle-knob-size);
 	border-radius: 999px;
-	background: rgba(255, 255, 255, 0.85);
+	/* Match the chart hover-circle color */
+	background: var(--asset-hover-dot-color, rgba(255, 255, 255, 0.85));
 	transition: left 0.25s ease, background 0.2s ease;
 	transform: translateY(-50%);
 	will-change: left;
 }
 
+.asset-reality-toggle.is-dragging .asset-reality-toggle-knob {
+	transition: none;
+}
+
 .asset-reality-toggle.is-fantasy .asset-reality-toggle-knob {
 	/* Keep identical 2px inset on BOTH sides (accounts for border via the padding box) */
-	left: calc(100% - var(--toggle-knob-right-inset) - var(--toggle-knob-size));
+	left: var(--toggle-knob-left, calc(100% - var(--toggle-knob-right-inset) - var(--toggle-knob-size)));
 	transform: translateY(-50%);
 }
 
@@ -1496,10 +1554,43 @@ body {
 	margin-top: 18px;
 }
 
+/* When the sign-in CTA is rendered as a standalone block (above Show/Hide),
+   match the spacing it had when it lived directly under Add Investments. */
+.asset-portfolio-actions--signin.asset-portfolio-actions--signin-standalone {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
 /* Sign-in CTA: remove the button's default bottom margin so the wrapper controls spacing */
 .asset-portfolio-summary-box--signin .asset-action-button--save-signin,
 .asset-portfolio-actions--signin .asset-action-button--save-signin {
 	margin-bottom: 20px;
+}
+
+.asset-portfolio-actions--signin-standalone .asset-action-button--save-signin {
+	margin-bottom: 0px;
+}
+
+/* Summary totals: match the Add/Add More form $ + number typography */
+.asset-portfolio-summary-box .asset-metric-value,
+.asset-portfolio-summary-box .asset-metric-inline-value {
+	font-size: 30px;
+	letter-spacing: -2px;
+}
+
+.asset-portfolio-summary-box .asset-metric-symbol--bitcoin,
+.asset-portfolio-summary-box .asset-metric-symbol--ethereum,
+.asset-portfolio-summary-box .asset-metric-inline-symbol--bitcoin,
+.asset-portfolio-summary-box .asset-metric-inline-symbol--ethereum {
+	font-size: 19px;
+	font-weight: 800;
+	transform: translateY(-2.7px);
+	opacity: 0.7;
+}
+
+/* Show/Hide Investments row: add spacing only when open (Hide Investments state) */
+.asset-portfolio-actions--show.is-open {
+	margin-bottom: 10px;
 }
 
 .asset-page--bitcoin .asset-page-content .asset-action-button--save-signin {

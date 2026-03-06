@@ -11,6 +11,18 @@ const normalizeToIsoDay = (value: string) => {
   return d.toISOString().slice(0, 10);
 };
 
+const sanitizeHistory = (history: any[]) => {
+  return (Array.isArray(history) ? history : [])
+    .map((entry) => {
+      const day = typeof entry?.date === 'string' ? normalizeToIsoDay(entry.date) : null;
+      const priceNum = Number(entry?.price);
+      if (!day) return null;
+      if (!Number.isFinite(priceNum)) return null;
+      return { date: day, price: priceNum };
+    })
+    .filter(Boolean) as { date: string; price: number }[];
+};
+
 const getNearestHistoricalPrice = (history: { date: string; price: number }[], targetDay: string) => {
   if (!history.length) return null;
   const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
@@ -34,10 +46,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: ETH_VAPA_KEY }).promise();
     const json = JSON.parse(data.Body!.toString());
-    const history: { date: string; price: number }[] =
+    const rawHistory =
       mode === 'liquid'
         ? (Array.isArray(json.liquidHistory) ? json.liquidHistory : (Array.isArray(json.realHistory) ? json.realHistory : []))
         : (Array.isArray(json.solidHistory) ? json.solidHistory : (Array.isArray(json.history) ? json.history : []));
+    const history = sanitizeHistory(rawHistory);
 
     const nearest = getNearestHistoricalPrice(history, targetDay);
     const price = nearest?.price ?? (history.length ? history[history.length - 1].price : null);
