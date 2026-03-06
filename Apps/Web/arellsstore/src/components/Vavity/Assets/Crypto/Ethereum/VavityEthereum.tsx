@@ -1002,7 +1002,8 @@ const VavityEthereum: React.FC = () => {
     if (!ready) return;
     if (headerNumbersDidMountRef.current) return;
     headerNumbersDidMountRef.current = true;
-    setHeaderNumbersVisible(true);
+    // Ensure the DOM paints once at opacity:0 before toggling visibility (prevents "pop" on first data load).
+    requestAnimationFrame(() => setHeaderNumbersVisible(true));
   }, [activeMarketCap, assetPrice, chartHistory, displayPoint, history, isLiquidMode, vapa]);
 
   useEffect(() => {
@@ -1538,7 +1539,9 @@ const VavityEthereum: React.FC = () => {
             </Link>
             <div className="asset-metric-row">
               <span className="asset-metric-title--ethereum">Price:</span>
-              <span className="asset-metric-symbol--ethereum">$</span>
+              <span className={`asset-metric-symbol--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                $
+              </span>
               <span className={`asset-header-switch-fade${headerSwitchHidden ? ' is-hidden' : ''}`}>
                 <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
                   {headerNumbersVisible ? formatCurrency(displayPoint?.price ?? (isLiquidMode ? assetPrice : vapa) ?? 0) : '\u00A0'}
@@ -1547,7 +1550,9 @@ const VavityEthereum: React.FC = () => {
             </div>
             <div className="asset-metric-row">
               <span className="asset-metric-title--ethereum">Market Cap:</span>
-              <span className="asset-metric-symbol--ethereum">$</span>
+              <span className={`asset-metric-symbol--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                $
+              </span>
               <span className={`asset-header-switch-fade${headerSwitchHidden ? ' is-hidden' : ''}`}>
                 <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
                   {headerNumbersVisible ? renderDecimalSafe(formatMarketCap(activeMarketCap)) : '\u00A0'}
@@ -1573,7 +1578,13 @@ const VavityEthereum: React.FC = () => {
                     : '\u00A0'}
                 </span>
               </span>
-              <span className="asset-metric-symbol--ethereum asset-metric-percent-symbol--ethereum">%</span>
+              <span
+                className={`asset-metric-symbol--ethereum asset-metric-percent-symbol--ethereum asset-mount-fade-2s${
+                  headerNumbersVisible ? ' is-visible' : ''
+                }`}
+              >
+                %
+              </span>
             </div>
             <div
               className="asset-panel asset-panel--ethereum asset-section-slide asset-market-controls"

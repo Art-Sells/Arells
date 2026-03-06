@@ -2,10 +2,8 @@
 
 ## Arells v1
 
-- *Fix price/mk cap page mount pop after new yarn dec*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
-- *test for long numbers and ensure (add a width maximum for current/purchased/losses/profits sections in portfolio, invesment list and in marketcap asset percentages (test how this would affect UI))*
 - *add submitted icon*
 - *test multiple investment deletions...*
 - *loading circle main for asset pages jigs when its transitioning colors, why?*

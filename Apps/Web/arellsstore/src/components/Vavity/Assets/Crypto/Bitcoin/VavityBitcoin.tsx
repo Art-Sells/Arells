@@ -922,7 +922,8 @@ const VavityBitcoin: React.FC = () => {
     if (!ready) return;
     if (headerNumbersDidMountRef.current) return;
     headerNumbersDidMountRef.current = true;
-    setHeaderNumbersVisible(true);
+    // Ensure the DOM paints once at opacity:0 before toggling visibility (prevents "pop" on first data load).
+    requestAnimationFrame(() => setHeaderNumbersVisible(true));
   }, [activeMarketCap, assetPrice, chartHistory, displayPoint, history, isLiquidMode, vapa]);
 
   const chartRanges = useMemo(
@@ -1554,7 +1555,9 @@ const VavityBitcoin: React.FC = () => {
             </Link>
             <div className="asset-metric-row">
               <span className="asset-metric-title--bitcoin">Price:</span>
-              <span className="asset-metric-symbol--bitcoin">$</span>
+              <span className={`asset-metric-symbol--bitcoin asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                $
+              </span>
               <span className={`asset-header-switch-fade${headerSwitchHidden ? ' is-hidden' : ''}`}>
                 <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
                   {headerNumbersVisible ? formatCurrency(displayPoint?.price ?? (isLiquidMode ? assetPrice : vapa) ?? 0) : '\u00A0'}
@@ -1563,7 +1566,9 @@ const VavityBitcoin: React.FC = () => {
             </div>
             <div className="asset-metric-row">
               <span className="asset-metric-title--bitcoin">Market Cap:</span>
-              <span className="asset-metric-symbol--bitcoin">$</span>
+              <span className={`asset-metric-symbol--bitcoin asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                $
+              </span>
               <span className={`asset-header-switch-fade${headerSwitchHidden ? ' is-hidden' : ''}`}>
                 <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
                   {headerNumbersVisible ? renderDecimalSafe(formatMarketCap(activeMarketCap)) : '\u00A0'}
@@ -1589,7 +1594,13 @@ const VavityBitcoin: React.FC = () => {
                     : '\u00A0'}
                 </span>
               </span>
-              <span className="asset-metric-symbol--bitcoin asset-metric-percent-symbol--bitcoin">%</span>
+              <span
+                className={`asset-metric-symbol--bitcoin asset-metric-percent-symbol--bitcoin asset-mount-fade-2s${
+                  headerNumbersVisible ? ' is-visible' : ''
+                }`}
+              >
+                %
+              </span>
             </div>
             <div
               className="asset-panel asset-panel--bitcoin asset-section-slide asset-market-controls"
