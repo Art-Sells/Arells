@@ -140,7 +140,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                 </div>
 
                 {!!email && (
-                  <div className="asset-reality-toggle-row" style={{ marginTop: 16 }}>
+                  <div className="asset-reality-toggle-row" style={{ marginTop: 21 }}>
                     <span className={`asset-reality-toggle-label${isLiquidMode ? ' is-active' : ''}`}>Liquid</span>
                     <button
                       type="button"

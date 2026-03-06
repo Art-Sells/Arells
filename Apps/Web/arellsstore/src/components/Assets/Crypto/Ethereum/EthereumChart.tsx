@@ -78,7 +78,27 @@ const EthereumChart: React.FC<Props> = ({
   );
 
   const dataPoints = useMemo<PricePoint[]>(() => {
-    return (history || []).map((item) => ({ x: new Date(item.date), y: item.price }));
+    const points = (history || [])
+      .map((item) => {
+        const raw = String(item?.date ?? '');
+        const d = new Date(raw.includes('T') ? raw : `${raw}T00:00:00.000Z`);
+        return { x: d, y: item.price } as PricePoint;
+      })
+      .filter((p) => Number.isFinite(p.x.getTime()) && Number.isFinite(p.y))
+      .sort((a, b) => a.x.getTime() - b.x.getTime());
+
+    // Deduplicate identical timestamps (prevents hover "bouncing" when x-values repeat).
+    const deduped: PricePoint[] = [];
+    for (const p of points) {
+      const t = p.x.getTime();
+      const last = deduped[deduped.length - 1];
+      if (last && last.x.getTime() === t) {
+        deduped[deduped.length - 1] = p;
+      } else {
+        deduped.push(p);
+      }
+    }
+    return deduped;
   }, [history]);
 
   const yRange = useMemo(() => {
@@ -105,7 +125,8 @@ const EthereumChart: React.FC<Props> = ({
         {
           label: 'Price',
           data: dataPoints,
-          borderColor: isInteracting ? activeColor : color,
+          // Keep borderColor stable so hover doesn't trigger a chart update (which would hide the marker).
+          borderColor: color,
           fill: false,
           pointRadius: 0,
           pointHoverRadius: 0, // disable Chart.js hover dot; we render our own
@@ -113,7 +134,8 @@ const EthereumChart: React.FC<Props> = ({
           pointHoverBorderColor: color,
           pointHoverBackgroundColor: backgroundColor,
           pointHitRadius: 20,
-          tension: 0.25,
+          // When the 24h range collapses to 2 points, keep the segment perfectly straight.
+          tension: dataPoints.length < 3 ? 0 : 0.25,
           borderWidth: 6.5,
           borderCapStyle: 'butt' as const,
           borderJoinStyle: 'miter' as const,
@@ -121,7 +143,7 @@ const EthereumChart: React.FC<Props> = ({
         },
       ],
     };
-  }, [dataPoints, color, activeColor, backgroundColor, isInteracting]);
+  }, [dataPoints, color, backgroundColor]);
 
   const resolvePointAtPixel = useCallback(
     (pixelX: number | null) => {
@@ -183,6 +205,26 @@ const EthereumChart: React.FC<Props> = ({
         return fallbackLinear();
       }
 
+      // For 2-point (or effectively 2-point) lines, enforce straight-line marker behavior.
+      if ((elems?.length ?? 0) < 3) {
+        const p0x = e0.x;
+        const p0y = e0.y;
+        const p1x = e1.x;
+        const p1y = e1.y;
+        const tLin = p1x !== p0x ? (xTargetPx - p0x) / (p1x - p0x) : 0;
+        const tt = Math.min(Math.max(tLin, 0), 1);
+        const px = p0x + (p1x - p0x) * tt;
+        const py = p0y + (p1y - p0y) * tt;
+        const xValOnLine: any = xScale.getValueForPixel(px);
+        const timeOnLine = typeof xValOnLine === 'number' ? xValOnLine : new Date(xValOnLine).getTime();
+        const yValOnLine = yScale.getValueForPixel(py);
+        return {
+          point: { x: new Date(timeOnLine), y: yValOnLine },
+          idx: segIdx,
+          pixel: { x: px, y: py },
+        };
+      }
+
       const p0x = e0.x;
       const p0y = e0.y;
       const p1x = e1.x;
@@ -215,7 +257,10 @@ const EthereumChart: React.FC<Props> = ({
       responsive: true,
       maintainAspectRatio: false,
       layout: { padding: 0, autoPadding: false },
-      animation: { duration: 1000, easing: 'easeOutQuart' as const },
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart' as const,
+      },
       interaction: { mode: 'nearest' as const, intersect: false },
       plugins: {
         legend: { display: false },
@@ -265,8 +310,16 @@ const EthereumChart: React.FC<Props> = ({
         return;
       }
       setIsInteracting(true);
-      marker.style.left = `${pixel.x - 11.5}px`;
-      marker.style.top = `${canvasOffsetTop + pixel.y - 11.5}px`;
+      const chart = chartRef.current as any;
+      const canvas: HTMLCanvasElement | null | undefined = chart?.canvas;
+      const rect = canvas?.getBoundingClientRect();
+      const radius = 11.5;
+      const maxX = rect ? rect.width - radius : pixel.x;
+      const maxY = rect ? rect.height - radius : pixel.y;
+      const clampedX = Math.min(Math.max(pixel.x, radius), maxX);
+      const clampedY = Math.min(Math.max(pixel.y, radius), maxY);
+      marker.style.left = `${clampedX - radius}px`;
+      marker.style.top = `${canvasOffsetTop + clampedY - radius}px`;
       marker.style.display = 'block';
       marker.style.background = markerColor;
       marker.style.boxShadow = markerShadow;
@@ -277,7 +330,9 @@ const EthereumChart: React.FC<Props> = ({
 
   const handlePointer = useCallback(
     (clientX: number, clientY: number, target: HTMLDivElement) => {
-      const rect = target.getBoundingClientRect();
+      const chart = chartRef.current as any;
+      const canvas: HTMLCanvasElement | null | undefined = chart?.canvas;
+      const rect = (canvas ?? target).getBoundingClientRect();
       const x = clientX - rect.left;
       const y = clientY - rect.top;
       if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
@@ -296,7 +351,7 @@ const EthereumChart: React.FC<Props> = ({
 
   return (
     <div
-      style={{ height: interactiveHeight ?? height, position: 'relative' }}
+      style={{ height: interactiveHeight ?? height, position: 'relative', overflow: 'hidden', borderRadius: 14 }}
       onMouseMove={(e) => {
         handlePointer(e.clientX, e.clientY, e.currentTarget as HTMLDivElement);
       }}

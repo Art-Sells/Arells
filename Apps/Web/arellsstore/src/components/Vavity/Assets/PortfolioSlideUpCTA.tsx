@@ -22,8 +22,7 @@ export default function PortfolioSlideUpCTA({
   const [mounted, setMounted] = useState(false);
   const lastYRef = useRef<number>(0);
   const rafRef = useRef<number | null>(null);
-  const scrollEndTimerRef = useRef<number | null>(null);
-  const lastDirectionRef = useRef<'up' | 'down' | null>(null);
+  const suppressUntilRef = useRef<number>(0);
   const [layout, setLayout] = useState<{
     left: number;
     width: number;
@@ -66,11 +65,11 @@ export default function PortfolioSlideUpCTA({
     const readPageScrollY = () => document.scrollingElement?.scrollTop ?? window.scrollY ?? 0;
     const threshold = 1; // ignore tiny jitter
 
-    const clearEndTimer = () => {
-      if (scrollEndTimerRef.current != null) {
-        window.clearTimeout(scrollEndTimerRef.current);
-        scrollEndTimerRef.current = null;
-      }
+    const onSuppress = (e: any) => {
+      const msRaw = e?.detail?.ms;
+      const ms = typeof msRaw === 'number' && Number.isFinite(msRaw) ? msRaw : 2200;
+      suppressUntilRef.current = Date.now() + ms;
+      setVisible(false);
     };
 
     const onScroll = () => {
@@ -83,8 +82,6 @@ export default function PortfolioSlideUpCTA({
         if (y <= 0) {
           setVisible(false);
           lastYRef.current = y;
-          lastDirectionRef.current = null;
-          clearEndTimer();
           return;
         }
 
@@ -93,19 +90,17 @@ export default function PortfolioSlideUpCTA({
           return;
         }
 
-        // Fix "first swipe cancels scroll": don't pop the CTA in mid-gesture.
-        // Show only after a downward scroll settles; hide immediately on any upward scroll.
+        // Don't show the CTA while the page is programmatically scrolling due to investment buttons.
+        if (Date.now() < suppressUntilRef.current) {
+          if (delta < 0) setVisible(false);
+          lastYRef.current = y;
+          return;
+        }
+
         if (delta < 0) {
-          lastDirectionRef.current = 'up';
           setVisible(false);
-          clearEndTimer();
         } else {
-          lastDirectionRef.current = 'down';
-          clearEndTimer();
-          scrollEndTimerRef.current = window.setTimeout(() => {
-            if (lastDirectionRef.current === 'down') setVisible(true);
-            scrollEndTimerRef.current = null;
-          }, 140);
+          setVisible(true);
         }
 
         lastYRef.current = y;
@@ -113,14 +108,15 @@ export default function PortfolioSlideUpCTA({
     };
 
     // Capture scrolls from any nested scroll container (not just window scrolling).
+    window.addEventListener('arells:portfolioCtaSuppress', onSuppress as any);
     window.addEventListener('scroll', onScroll, { capture: true, passive: true });
     return () => {
+      window.removeEventListener('arells:portfolioCtaSuppress', onSuppress as any);
       window.removeEventListener('scroll', onScroll, true);
       if (rafRef.current != null) {
         window.cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
-      clearEndTimer();
     };
   }, [enabled, debugForceEnabled]);
 

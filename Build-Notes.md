@@ -2,8 +2,6 @@
 
 ## Arells v1
 
-- *See what sign in to save investments dissapearing looks like, then re-implement sign in*
-- *Fix toggle UI/UI issue and liquid market 1 day circle not smoothing out....*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
 - *test for long numbers and ensure (add a width maximum for current/purchased/losses/profits sections in portfolio, invesment list and in marketcap asset percentages (test how this would affect UI))*
@@ -146,22 +144,17 @@ Users
 - Fix long marketcap numbers/etc...
 - Asset/Prices/etc sorting (default by Marketcap always)
 - Wait at least 2 months to adjust plan based on feedback...
-- If traction is good update (list from X/email): oDAO, FndrsINC, etc, (New?): start updates (no seeking fndng) until revenue
+- If traction is good look at 
 - - increase CG API limit? (track)
 - - Compare Retention rate (in bear markets WoM only (percentages)) : Projections (with current trajectory) with/without (WoW percentage comparisons)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
 
 ### 3 mnths and beyond
 - Start process of building Featured/Sponsored section (with analytics, CTR, etc)... do not launch until at least 200k MAU
-- If revenue, chart: Media (entertainment{profit-margins}) + fintech (reality{retention}), open up Inv opportunity...
-- Compress 20 year timeline to 10 year timeline (different currencies and languages/etc)
+
 
 ### iOS & Android App (after 1-2 years?)
 - iOS App (night/dark mode automatic (website) setting that reads your settings)
 - - Tagline: If investments never lost value
 - - Desc: This is how your investments would look If investments never lost value.
 - - submission: An accounting ledger that shows how investments would look If investments never lost value. 
-
-### Building Healthy Mind?
-- Daily Recommendation: 7-8~ hrs of daily sleep and a personal daily gratitude journal.
-- P/T 25-30 hrs for prnts with kids (research slry). 40+ for those without (apart from Executive positions)

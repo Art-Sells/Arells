@@ -109,6 +109,11 @@ const VavityEthereum: React.FC = () => {
     }, delayMs);
   }, []);
 
+  const suppressPortfolioCta = useCallback((ms = 2200) => {
+    if (typeof window === 'undefined') return;
+    window.dispatchEvent(new CustomEvent('arells:portfolioCtaSuppress', { detail: { ms } }));
+  }, []);
+
   const followScrollUntilRef = useRef<number>(0);
   const followScrollRafRef = useRef<number | null>(null);
   const followScrollFor = useCallback((ms: number) => {
@@ -1446,6 +1451,7 @@ const VavityEthereum: React.FC = () => {
               <button
                 className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
                 onClick={() => {
+                  suppressPortfolioCta();
                   setShowEmptyAddForm(true);
                   setShowAddForm(true);
                   setTimeout(() => setAddFormOpen(true), 0);
@@ -1642,6 +1648,7 @@ const VavityEthereum: React.FC = () => {
                       addMorePulse ? ' asset-action-button--pulse' : ''
                     }`}
                     onClick={() => {
+                      suppressPortfolioCta();
                       triggerAddMorePulse();
                       if (showAddMoreForm) {
                         setAddMoreOpen(false);
@@ -1712,6 +1719,7 @@ const VavityEthereum: React.FC = () => {
                   showPulse ? ' asset-action-button--pulse' : ''
                 }`}
                 onClick={() => {
+                  suppressPortfolioCta();
                   triggerShowPulse();
                   if (showInvestmentsList) {
                     setInvestmentsListOpen(false);
@@ -1847,6 +1855,7 @@ const VavityEthereum: React.FC = () => {
                     type="button"
                     className="asset-action-button asset-action-button--ethereum"
                     onClick={() => {
+                      suppressPortfolioCta();
                       setVisibleInvestments((prev) => prev + 5);
                       followScrollFor(2000);
                     }}

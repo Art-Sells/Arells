@@ -87,6 +87,8 @@ const Index = () => {
     fetchVoting();
   }, [sessionId]);
 
+  // (intentionally no debug modal auto-open)
+
   useEffect(() => {
     if (votingHidden || !votingData) return;
     const interval = setInterval(() => {
@@ -351,8 +353,7 @@ const Index = () => {
               src={voteModal.asset === 'solana' ? '/images/assets/crypto/solana.png' : '/images/assets/crypto/xrp.png'}
             />
             <div className="home-vote-modal-title">
-              {voteModal.asset === 'solana' ? 'Solana' : 'XRP'} is{' '}
-              {voteModal.status === 'tied' ? 'tied' : voteModal.status === 'winning' ? 'winning' : 'losing'}
+              {voteModal.asset === 'solana' ? 'Solana' : 'XRP'}
             </div>
             <div className="home-vote-modal-subtitle">{voteModal.pct}% of votes</div>
             <div className="home-vote-modal-body">Check back next week to see which asset won and was added.</div>
