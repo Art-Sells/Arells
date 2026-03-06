@@ -57,6 +57,7 @@ const VavityBitcoin: React.FC = () => {
     startLeft: 0,
     didDrag: false,
   });
+  const showActionsRef = useRef<HTMLDivElement | null>(null);
   const rangeHistoricalPrice = isLiquidMode ? rangeHistoricalPriceLiquid : rangeHistoricalPriceSolid;
   const assetSnapshot = getAsset('bitcoin');
   const assetPrice = assetSnapshot?.price ?? 0;
@@ -151,6 +152,61 @@ const VavityBitcoin: React.FC = () => {
       const maxScroll =
         document.documentElement?.scrollHeight || document.body?.scrollHeight || window.innerHeight;
       window.scrollTo({ top: maxScroll, behavior: 'auto' });
+      followScrollRafRef.current = window.requestAnimationFrame(tick);
+    };
+    tick();
+  }, []);
+
+  // Ease toward the bottom each frame, so the scroll "follows" the height animation instead of snapping.
+  const followScrollForEased = useCallback((ms: number) => {
+    if (typeof window === 'undefined') return;
+    followScrollUntilRef.current = Date.now() + ms;
+    if (followScrollRafRef.current) {
+      window.cancelAnimationFrame(followScrollRafRef.current);
+      followScrollRafRef.current = null;
+    }
+    const tick = () => {
+      if (Date.now() >= followScrollUntilRef.current) {
+        followScrollRafRef.current = null;
+        return;
+      }
+      const maxScroll =
+        document.documentElement?.scrollHeight || document.body?.scrollHeight || window.innerHeight;
+      const current = window.scrollY;
+      const delta = maxScroll - current;
+      const next = Math.abs(delta) < 1 ? maxScroll : current + delta * 0.35;
+      window.scrollTo({ top: next, behavior: 'auto' });
+      followScrollRafRef.current = window.requestAnimationFrame(tick);
+    };
+    tick();
+  }, []);
+
+  // Follow the Show/Hide row during collapse so that section doesn't "pop" due to bottom clamping.
+  const followShowActionsFor = useCallback((ms: number) => {
+    if (typeof window === 'undefined') return;
+    const until = Date.now() + ms;
+    if (followScrollRafRef.current) {
+      window.cancelAnimationFrame(followScrollRafRef.current);
+      followScrollRafRef.current = null;
+    }
+    const tick = () => {
+      if (Date.now() >= until) {
+        followScrollRafRef.current = null;
+        return;
+      }
+      const el = showActionsRef.current;
+      if (el) {
+        const r = el.getBoundingClientRect();
+        const targetBottom = window.innerHeight - 20;
+        const dy = r.bottom - targetBottom;
+        if (Math.abs(dy) > 0.5) {
+          const maxScroll =
+            (document.scrollingElement?.scrollHeight ?? document.documentElement?.scrollHeight ?? 0) - window.innerHeight;
+          const current = document.scrollingElement?.scrollTop ?? window.scrollY;
+          const next = Math.min(maxScroll, Math.max(0, current + dy * 0.5));
+          window.scrollTo({ top: next, behavior: 'auto' });
+        }
+      }
       followScrollRafRef.current = window.requestAnimationFrame(tick);
     };
     tick();
@@ -429,11 +485,6 @@ const VavityBitcoin: React.FC = () => {
       raf = window.requestAnimationFrame(() => {
         const next = node.scrollHeight;
         setSummaryHeight((prev) => (prev === next ? prev : next));
-        if (Date.now() < followScrollUntilRef.current) {
-          const maxScroll =
-            document.documentElement?.scrollHeight || document.body?.scrollHeight || window.innerHeight;
-          window.scrollTo({ top: maxScroll, behavior: 'auto' });
-        }
       });
     };
 
@@ -777,6 +828,20 @@ const VavityBitcoin: React.FC = () => {
     return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }, []);
 
+  const renderDecimalSafe = useCallback((raw: string) => {
+    const s = String(raw ?? '');
+    const idx = s.lastIndexOf('.');
+    if (idx === -1) return s;
+    const intPart = s.slice(0, idx);
+    const decPart = s.slice(idx); // includes "."
+    return (
+      <>
+        <span className="asset-money-int">{intPart}</span>
+        <span className="asset-money-decimal">{decPart}</span>
+      </>
+    );
+  }, []);
+
   const formatShortDate = useCallback((iso?: string) => {
     if (!iso) return '...';
     const d = new Date(iso);
@@ -1035,6 +1100,9 @@ const VavityBitcoin: React.FC = () => {
 
     // When submitted, auto-close AFTER the collapse-to-zero finishes.
     if (phase === 'submitted') {
+      // Keep viewport pinned to the bottom while the submit panel collapses,
+      // matching the behavior of Show Investments / Add More panels.
+      followShowActionsFor(2800);
       const t = window.setTimeout(() => {
         if (target === 'addMore') {
           setAddMoreOpen(false);
@@ -1048,7 +1116,7 @@ const VavityBitcoin: React.FC = () => {
       }, 2000);
       return () => window.clearTimeout(t);
     }
-  }, [submitPhase, previewSubmit, addFormPanelHeight, addMoreFormPanelHeight, closeAddForm, closeAddMoreForm]);
+  }, [submitPhase, previewSubmit, addFormPanelHeight, addMoreFormPanelHeight, followShowActionsFor, closeAddForm, closeAddMoreForm]);
 
   const renderAddForm = (label: string, onClose: () => void, buttonClass: string) => {
     const purchasedValue =
@@ -1091,7 +1159,7 @@ const VavityBitcoin: React.FC = () => {
                   <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">Purchased Value</span>
                   <span className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}>
                     <span className="asset-metric-symbol--bitcoin">$</span>
-                    <span className="asset-metric-value">{purchasedValue}</span>
+                    <span className="asset-metric-value">{renderDecimalSafe(purchasedValue)}</span>
                   </span>
                   <span
                     className="asset-metric-inline-value asset-invest-form-subnote"
@@ -1106,7 +1174,7 @@ const VavityBitcoin: React.FC = () => {
                   <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">Current Value</span>
                   <span className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}>
                     <span className="asset-metric-symbol--bitcoin">$</span>
-                    <span className="asset-metric-value">{currentValue}</span>
+                    <span className="asset-metric-value">{renderDecimalSafe(currentValue)}</span>
                   </span>
                   <span
                     className="asset-metric-inline-value asset-invest-form-subnote"
@@ -1123,7 +1191,7 @@ const VavityBitcoin: React.FC = () => {
                     {profitRow.prefix ? (
                       <span className="asset-metric-inline-symbol--bitcoin">{profitRow.prefix}</span>
                     ) : null}
-                    <span className="asset-metric-value">{profitRow.value}</span>
+                    <span className="asset-metric-value">{renderDecimalSafe(profitRow.value)}</span>
                   </span>
                   <span
                     className="asset-metric-inline-value asset-invest-form-subnote"
@@ -1263,7 +1331,7 @@ const VavityBitcoin: React.FC = () => {
             <div className="asset-metric-row">
               <span className="asset-metric-title--bitcoin">Market Cap:</span>
               <span className="asset-metric-symbol--bitcoin">$</span>
-              <span className="asset-metric-value">{formatMarketCap(activeMarketCap)}</span>
+              <span className="asset-metric-value">{renderDecimalSafe(formatMarketCap(activeMarketCap))}</span>
             </div>
             <div className="asset-metric-row">
               {percentageIncrease > 0 ? (
@@ -1602,7 +1670,7 @@ const VavityBitcoin: React.FC = () => {
                 </span>
                 <span className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}>
                   <span className="asset-metric-symbol--bitcoin">$</span>
-                  <span className="asset-metric-value">{formatCurrency(filteredTotals.acVatop || 0)}</span>
+                  <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(filteredTotals.acVatop || 0))}</span>
                 </span>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
@@ -1611,7 +1679,7 @@ const VavityBitcoin: React.FC = () => {
                 </span>
                 <span className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}>
                   <span className="asset-metric-symbol--bitcoin">$</span>
-                  <span className="asset-metric-value">{formatCurrency(filteredTotals.acVact || 0)}</span>
+                  <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(filteredTotals.acVact || 0))}</span>
                 </span>
             </div>
               <div
@@ -1655,7 +1723,7 @@ const VavityBitcoin: React.FC = () => {
                                 <span className="asset-metric-symbol--bitcoin">
                                   {isProfit ? '+$' : isLiquidMode ? '-$' : '$'}
                                 </span>
-                                <span className="asset-metric-inline-value">{formattedValue}</span>
+                                <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
                               </span>
                             </span>
                           </span>
@@ -1683,7 +1751,7 @@ const VavityBitcoin: React.FC = () => {
                               <span className="asset-metric-symbol--bitcoin">
                                 {isProfit ? '+$' : isLiquidMode ? '-$' : '$'}
                               </span>
-                              <span className="asset-metric-inline-value">{formattedValue}</span>
+                              <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
                             </span>
                           </span>
                         </span>
@@ -1788,7 +1856,10 @@ const VavityBitcoin: React.FC = () => {
               </div>
             )}
 
-            <div className={`asset-portfolio-actions asset-portfolio-actions--show${showInvestmentsList ? ' is-open' : ''}`}>
+            <div
+              ref={showActionsRef}
+              className={`asset-portfolio-actions asset-portfolio-actions--show${showInvestmentsList ? ' is-open' : ''}`}
+            >
               <button
                 className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-show${
                   showPulse ? ' asset-action-button--pulse' : ''
@@ -1879,7 +1950,7 @@ const VavityBitcoin: React.FC = () => {
                                     <span className="asset-metric-title--bitcoin">{title}</span>
                                     <span className="asset-money-wrap">
                                       <span className="asset-metric-inline-symbol--bitcoin">{prefix}</span>
-                                      <span className="asset-metric-value">{formatMoneyFixed(Math.abs(value))}</span>
+                                      <span className="asset-metric-value">{renderDecimalSafe(formatMoneyFixed(Math.abs(value)))}</span>
                                     </span>
                                   </>
                                 );

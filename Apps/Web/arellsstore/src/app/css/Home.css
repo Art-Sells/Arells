@@ -427,7 +427,7 @@ body {
 	flex-wrap: wrap;
 	gap: 8px;
 	justify-content: center;
-	margin-bottom: 5px;
+	margin-bottom: 0px;
 	transition: opacity 0.6s ease, transform 0.6s ease;
 	will-change: opacity, transform;
 	/* Prevent mount flash: hidden until the summary panel is actually opened */
@@ -442,7 +442,8 @@ body {
 }
 
 .asset-portfolio-actions--show {
-	margin-top: 10px;
+	margin-top: 20px;
+	margin-bottom: 15px;
 }
 
 .asset-portfolio-center--summary-animating .asset-portfolio-actions {
@@ -924,15 +925,28 @@ body {
 	align-items: baseline;
 	gap: 4px;
 	min-width: 0;
+	/* Keep the number anchored right next to `$` even when the value wraps */
+	justify-items: start;
+}
+
+.asset-money-decimal {
+	white-space: nowrap;
 }
 
 .asset-money-wrap .asset-metric-value {
 	min-width: 0;
+	text-align: left;
+	justify-self: start;
 }
 
 .asset-money-wrap .asset-metric-inline-value {
 	min-width: 0;
+	text-align: left;
+	justify-self: start;
 }
+
+/* Keep global wrapping behavior for long numbers.
+   Decimal wrapping is prevented in JS by inserting non-breaking joiners only around the decimal portion. */
 
 .asset-money-row {
 	width: 300px;
@@ -1590,7 +1604,8 @@ body {
 
 /* Show/Hide Investments row: add spacing only when open (Hide Investments state) */
 .asset-portfolio-actions--show.is-open {
-	margin-bottom: 10px;
+	margin-bottom: 15px;
+	margin-top: 20px;
 }
 
 .asset-page--bitcoin .asset-page-content .asset-action-button--save-signin {
@@ -1758,6 +1773,8 @@ body {
 	overflow-y: hidden;
 	transition: max-height 2s ease;
 	will-change: max-height;
+	/* Avoid scroll anchoring "pops" while height is animating/collapsing near bottom */
+	overflow-anchor: none;
 }
 
 /* Put top spacing on an inner wrapper (not on the collapsing panel itself),
@@ -1765,6 +1782,7 @@ body {
 .asset-slide-panel-inner {
 	padding-top: 12px;
 	box-sizing: border-box;
+	overflow-anchor: none;
 }
 
 .asset-slide-panel.is-open {
