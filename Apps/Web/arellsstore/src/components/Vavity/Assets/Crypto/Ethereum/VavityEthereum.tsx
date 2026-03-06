@@ -61,6 +61,7 @@ const VavityEthereum: React.FC = () => {
     didDrag: false,
   });
   const showActionsRef = useRef<HTMLDivElement | null>(null);
+  const bottomActionsWrapRef = useRef<HTMLDivElement | null>(null);
   const rangeHistoricalPrice = isLiquidMode ? rangeHistoricalPriceLiquid : rangeHistoricalPriceSolid;
   const solidHistory = assetSnapshot?.solidHistory ?? [];
   const liquidHistory = assetSnapshot?.liquidHistory ?? [];
@@ -86,7 +87,20 @@ const VavityEthereum: React.FC = () => {
   const summaryValuesDidMountRef = useRef(false);
   const [formValuesHidden, setFormValuesHidden] = useState(false);
   const formValuesDidMountRef = useRef(false);
-  const pulseTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [formCalcHidden, setFormCalcHidden] = useState(false);
+  const formCalcDidMountRef = useRef(false);
+  const [headerNumbersVisible, setHeaderNumbersVisible] = useState(false);
+  const headerNumbersDidMountRef = useRef(false);
+  const [emptySigninGone, setEmptySigninGone] = useState(false);
+  const emptySigninGoneTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const [emptySigninHiding, setEmptySigninHiding] = useState(false);
+  const [emptyAddGone, setEmptyAddGone] = useState(false);
+  const emptyAddGoneTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const [emptyAddHiding, setEmptyAddHiding] = useState(false);
+  const emptyButtonsSequenceTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
+  const [headerSwitchHidden, setHeaderSwitchHidden] = useState(false);
+  const headerSwitchDidMountRef = useRef(false);
+  const pulseTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
   const didMountAddMorePulseRef = useRef(false);
   const didMountShowPulseRef = useRef(false);
   const addMorePulseActiveRef = useRef(false);
@@ -100,6 +114,8 @@ const VavityEthereum: React.FC = () => {
   const investmentIdMapRef = useRef<Map<string, string>>(new Map());
   const investmentIdCounterRef = useRef(0);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
+  const investmentsWholeContentRef = useRef<HTMLDivElement | null>(null);
+  const [investmentsWholeHeight, setInvestmentsWholeHeight] = useState(0);
   const addFormBoxRef = useRef<HTMLDivElement | null>(null);
   const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
   const profitInlineAnimRef = useRef<HTMLSpanElement | null>(null);
@@ -156,6 +172,39 @@ const VavityEthereum: React.FC = () => {
     tick();
   }, []);
 
+  // Smoothly follow the bottom-actions wrapper (Sign In + Show/Hide) during submit collapse,
+  // instead of snapping to the document bottom (which causes the final "pop").
+  const followBottomActionsFor = useCallback((ms: number) => {
+    if (typeof window === 'undefined') return;
+    const until = Date.now() + ms;
+    if (followScrollRafRef.current) {
+      window.cancelAnimationFrame(followScrollRafRef.current);
+      followScrollRafRef.current = null;
+    }
+    const tick = () => {
+      if (Date.now() >= until) {
+        followScrollRafRef.current = null;
+        return;
+      }
+      const el = bottomActionsWrapRef.current;
+      if (el) {
+        const r = el.getBoundingClientRect();
+        const inset = 20;
+        const dy = r.bottom - (window.innerHeight - inset);
+        if (Math.abs(dy) > 0.5) {
+          const scroller = document.scrollingElement ?? document.documentElement;
+          const h = scroller?.scrollHeight ?? 0;
+          const maxScroll = Math.max(0, h - window.innerHeight);
+          const current = scroller?.scrollTop ?? window.scrollY;
+          const next = Math.min(maxScroll, Math.max(0, current + dy * 0.45));
+          window.scrollTo({ top: next, behavior: 'auto' });
+        }
+      }
+      followScrollRafRef.current = window.requestAnimationFrame(tick);
+    };
+    tick();
+  }, []);
+
   // Ease toward the bottom each frame, so the scroll "follows" the height animation instead of snapping.
   const followScrollForEased = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
@@ -180,32 +229,65 @@ const VavityEthereum: React.FC = () => {
     tick();
   }, []);
 
-  // Follow the Show/Hide row during collapse so that section doesn't "pop" due to bottom clamping.
-  const followShowActionsFor = useCallback((ms: number) => {
+  // Follow the page height change frame-by-frame during collapse, so the bottom sections
+  // (Sign In / Show Investments) move up smoothly instead of clamping/popping at the end.
+  const followScrollHeightDeltaFor = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
     const until = Date.now() + ms;
     if (followScrollRafRef.current) {
       window.cancelAnimationFrame(followScrollRafRef.current);
       followScrollRafRef.current = null;
     }
+    let prevH: number | null = null;
     const tick = () => {
       if (Date.now() >= until) {
         followScrollRafRef.current = null;
         return;
       }
-      const el = showActionsRef.current;
-      if (el) {
-        const r = el.getBoundingClientRect();
-        const targetBottom = window.innerHeight - 20;
-        const dy = r.bottom - targetBottom;
-        if (Math.abs(dy) > 0.5) {
-          const maxScroll =
-            (document.scrollingElement?.scrollHeight ?? document.documentElement?.scrollHeight ?? 0) - window.innerHeight;
-          const current = document.scrollingElement?.scrollTop ?? window.scrollY;
-          const next = Math.min(maxScroll, Math.max(0, current + dy * 0.5));
+      const scroller = document.scrollingElement ?? document.documentElement;
+      const h = scroller?.scrollHeight ?? 0;
+      const maxScroll = Math.max(0, h - window.innerHeight);
+      const current = scroller?.scrollTop ?? window.scrollY;
+      if (prevH != null) {
+        const deltaH = h - prevH;
+        if (deltaH !== 0) {
+          const next = Math.min(maxScroll, Math.max(0, current + deltaH));
           window.scrollTo({ top: next, behavior: 'auto' });
         }
       }
+      prevH = h;
+      followScrollRafRef.current = window.requestAnimationFrame(tick);
+    };
+    tick();
+  }, []);
+
+  // Like followScrollHeightDeltaFor, but never scroll upward.
+  // This prevents the "last minute scroll up" after submit when some panels collapse/unmount.
+  const followScrollHeightDeltaForDownOnly = useCallback((ms: number) => {
+    if (typeof window === 'undefined') return;
+    const until = Date.now() + ms;
+    if (followScrollRafRef.current) {
+      window.cancelAnimationFrame(followScrollRafRef.current);
+      followScrollRafRef.current = null;
+    }
+    let prevH: number | null = null;
+    const tick = () => {
+      if (Date.now() >= until) {
+        followScrollRafRef.current = null;
+        return;
+      }
+      const scroller = document.scrollingElement ?? document.documentElement;
+      const h = scroller?.scrollHeight ?? 0;
+      const maxScroll = Math.max(0, h - window.innerHeight);
+      const current = scroller?.scrollTop ?? window.scrollY;
+      if (prevH != null) {
+        const deltaH = h - prevH;
+        if (deltaH > 0) {
+          const next = Math.min(maxScroll, Math.max(0, current + deltaH));
+          window.scrollTo({ top: next, behavior: 'auto' });
+        }
+      }
+      prevH = h;
       followScrollRafRef.current = window.requestAnimationFrame(tick);
     };
     tick();
@@ -220,7 +302,7 @@ const VavityEthereum: React.FC = () => {
   }, []);
 
   const clearPulseTimers = useCallback(() => {
-    pulseTimersRef.current.forEach((t) => clearTimeout(t));
+    pulseTimersRef.current.forEach((t) => globalThis.clearTimeout(t));
     pulseTimersRef.current = [];
   }, []);
 
@@ -240,7 +322,7 @@ const VavityEthereum: React.FC = () => {
     } else {
       setAddMorePulse(true);
     }
-    pulseTimersRef.current.push(setTimeout(() => setAddMorePulse(false), 1000));
+    pulseTimersRef.current.push(globalThis.setTimeout(() => setAddMorePulse(false), 1000));
   }, [clearPulseTimers]);
 
   const triggerShowPulse = useCallback(() => {
@@ -251,12 +333,54 @@ const VavityEthereum: React.FC = () => {
     } else {
       setShowPulse(true);
     }
-    pulseTimersRef.current.push(setTimeout(() => setShowPulse(false), 1000));
+    pulseTimersRef.current.push(globalThis.setTimeout(() => setShowPulse(false), 1000));
   }, [clearPulseTimers]);
 
   useEffect(() => {
     return () => clearPulseTimers();
   }, [clearPulseTimers]);
+
+  // Empty-state buttons: collapse timing is controlled by the click sequence (not by showEmptyAddForm).
+  useEffect(() => {
+    if (!emptySigninHiding) {
+      setEmptySigninGone(false);
+      return;
+    }
+    if (emptySigninGoneTimerRef.current) globalThis.clearTimeout(emptySigninGoneTimerRef.current);
+    emptySigninGoneTimerRef.current = globalThis.setTimeout(() => setEmptySigninGone(true), 500);
+    return () => {
+      if (emptySigninGoneTimerRef.current) globalThis.clearTimeout(emptySigninGoneTimerRef.current);
+    };
+  }, [emptySigninHiding]);
+
+  useEffect(() => {
+    if (!emptyAddHiding) {
+      setEmptyAddGone(false);
+      return;
+    }
+    if (emptyAddGoneTimerRef.current) globalThis.clearTimeout(emptyAddGoneTimerRef.current);
+    emptyAddGoneTimerRef.current = globalThis.setTimeout(() => setEmptyAddGone(true), 500);
+    return () => {
+      if (emptyAddGoneTimerRef.current) globalThis.clearTimeout(emptyAddGoneTimerRef.current);
+    };
+  }, [emptyAddHiding]);
+
+  const clearEmptyButtonsSequenceTimers = useCallback(() => {
+    emptyButtonsSequenceTimersRef.current.forEach((t) => globalThis.clearTimeout(t));
+    emptyButtonsSequenceTimersRef.current = [];
+  }, []);
+
+  // Header numbers: fade out/in when Liquid/Solid changes.
+  useEffect(() => {
+    if (!headerNumbersVisible) return;
+    if (!headerSwitchDidMountRef.current) {
+      headerSwitchDidMountRef.current = true;
+      return;
+    }
+    setHeaderSwitchHidden(true);
+    const t = globalThis.setTimeout(() => setHeaderSwitchHidden(false), 350);
+    return () => globalThis.clearTimeout(t);
+  }, [isLiquidMode, headerNumbersVisible]);
 
   // Fade Purchased/Current values when range buttons or Liquid/Solid toggle changes.
   useEffect(() => {
@@ -279,6 +403,27 @@ const VavityEthereum: React.FC = () => {
     const t = window.setTimeout(() => setFormValuesHidden(false), 350);
     return () => window.clearTimeout(t);
   }, [isLiquidMode]);
+
+  // While historical price is loading for the form, show a line-loader and fade values back in after it resolves.
+  useEffect(() => {
+    if (!formCalcDidMountRef.current) {
+      formCalcDidMountRef.current = true;
+      return;
+    }
+    const hasInputs = !!tokenAmount && !!purchaseDate;
+    if (!hasInputs) {
+      setFormCalcHidden(false);
+      return;
+    }
+    if (historicalLoading) {
+      setFormCalcHidden(true);
+      return;
+    }
+    // Loading finished -> trigger fade-in.
+    setFormCalcHidden(true);
+    const t = window.setTimeout(() => setFormCalcHidden(false), 30);
+    return () => window.clearTimeout(t);
+  }, [historicalLoading, tokenAmount, purchaseDate]);
 
   // Pulse when the LABEL actually flips (open <-> hide), including the delayed "hide" after the collapse timeout.
   useEffect(() => {
@@ -370,15 +515,21 @@ const VavityEthereum: React.FC = () => {
       submitTargetRef.current = 'addMore';
       setShowAddMoreForm(true);
       setTimeout(() => setAddMoreOpen(true), 0);
-      followScrollFor(2000);
+      followScrollHeightDeltaFor(2000);
     } else {
       submitTargetRef.current = 'add';
       setShowEmptyAddForm(true);
       setShowAddForm(true);
-      setTimeout(() => setAddFormOpen(true), 0);
-      followScrollFor(2000);
+      // Pre-measure panel height before opening so the max-height animation matches "Add more investments".
+      requestAnimationFrame(() => {
+        const h = addFormBoxRef.current?.scrollHeight ?? 0;
+        const next = Math.max(0, h + 24);
+        setAddFormPanelHeight((prev) => (prev === next ? prev : next));
+        requestAnimationFrame(() => setAddFormOpen(true));
+      });
+      followScrollHeightDeltaFor(2000);
     }
-  }, [previewSubmit, vavityData, isClearingInvestments, followScrollFor]);
+  }, [previewSubmit, vavityData, isClearingInvestments, followScrollHeightDeltaFor]);
 
   useEffect(() => {
     if (!history.length) {
@@ -435,8 +586,16 @@ const VavityEthereum: React.FC = () => {
     [vavityData]
   );
   const displayTotals = isLiquidMode ? totalsLiquid : totals;
-  const hasInvestmentsUI = investments.length > 0 || isClearingInvestments;
+  const hasInvestmentsUI =
+    investments.length > 0 ||
+    isClearingInvestments ||
+    // If we're submitting the very first investment, keep the "empty" UI mounted
+    // so the submit/collapse animation can finish without swapping branches (which causes the pop).
+    (submitTargetRef.current === 'add' && submitPhase !== 'idle');
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
+  const investmentsWholeMaxHeight = summaryOpen && !isClearingInvestments ? `${investmentsWholeHeight}px` : '0px';
+  const investmentsWholeTransition =
+    showAddMoreForm || showInvestmentsList ? 'max-height 0s ease' : 'max-height 2s ease';
   const summaryTransition = showAddMoreForm || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
 
   useEffect(() => {
@@ -452,9 +611,11 @@ const VavityEthereum: React.FC = () => {
       requestAnimationFrame(() => {
         setSummaryOpen(true);
       });
+      // Keep scroll synced with the ONE combined height-down of the full investments section.
+      followScrollHeightDeltaFor(2000);
     }
     prevSummaryCountRef.current = next;
-  }, [investments.length, isClearingInvestments]);
+  }, [investments.length, isClearingInvestments, followScrollHeightDeltaFor]);
 
   useEffect(() => {
     if (!summaryOpen || isClearingInvestments) {
@@ -484,6 +645,30 @@ const VavityEthereum: React.FC = () => {
       });
     };
 
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [summaryOpen, isClearingInvestments]);
+
+  // Measure the full "investments view" section as ONE: summary panel + bottom actions (+ list).
+  useEffect(() => {
+    if (!summaryOpen || isClearingInvestments) return;
+    const node = investmentsWholeContentRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') {
+      setInvestmentsWholeHeight(node?.scrollHeight ?? 0);
+      return;
+    }
+    let raf = 0;
+    const measure = () => {
+      raf = window.requestAnimationFrame(() => {
+        const next = node.scrollHeight;
+        setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
+      });
+    };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(node);
@@ -793,6 +978,23 @@ const VavityEthereum: React.FC = () => {
     return ((latest - start) / start) * 100;
   }, [chartHistory, displayPoint, history]);
 
+  // Fade in header numbers (Price / Market Cap / %) once real data is available.
+  useEffect(() => {
+    const rawPrice = displayPoint?.price ?? (isLiquidMode ? assetPrice : vapa);
+    const hasPrice = typeof rawPrice === 'number' && Number.isFinite(rawPrice) && rawPrice > 0;
+    const hasMarketCap = typeof activeMarketCap === 'number' && Number.isFinite(activeMarketCap) && activeMarketCap > 0;
+    // Percent can be legitimately 0, so gate on having a usable series & a start price.
+    const series = chartHistory.length >= 2 ? chartHistory : history.length >= 2 ? history.slice(-2) : null;
+    const start = series?.[0]?.price ?? 0;
+    const hasPercent = !!series && typeof start === 'number' && Number.isFinite(start) && start > 0;
+
+    const ready = hasPrice && hasMarketCap && hasPercent;
+    if (!ready) return;
+    if (headerNumbersDidMountRef.current) return;
+    headerNumbersDidMountRef.current = true;
+    setHeaderNumbersVisible(true);
+  }, [activeMarketCap, assetPrice, chartHistory, displayPoint, history, isLiquidMode, vapa]);
+
   useEffect(() => {
     let isMounted = true;
     const loadMock = async () => {
@@ -1044,8 +1246,14 @@ const VavityEthereum: React.FC = () => {
       setShowAddForm(false);
       setShowEmptyAddForm(false);
       setSubmitPhase('idle');
+      // Reset empty-state button sequence so they can appear again.
+      clearEmptyButtonsSequenceTimers();
+      setEmptyAddHiding(false);
+      setEmptyAddGone(false);
+      setEmptySigninHiding(false);
+      setEmptySigninGone(false);
     }, 2000);
-  }, []);
+  }, [clearEmptyButtonsSequenceTimers]);
 
   const closeAddMoreForm = useCallback(() => {
     setAddMoreOpen(false);
@@ -1093,9 +1301,8 @@ const VavityEthereum: React.FC = () => {
     }
 
     if (phase === 'submitted') {
-      // Keep viewport pinned to the bottom while the submit panel collapses,
-      // matching the behavior of Show Investments / Add More panels.
-      followShowActionsFor(2800);
+      // Scroll DOWN with the expanding content, but never scroll UP at the end of the submit collapse.
+      followScrollHeightDeltaForDownOnly(2800);
       const t = window.setTimeout(() => {
         if (target === 'addMore') {
           setAddMoreOpen(false);
@@ -1109,7 +1316,7 @@ const VavityEthereum: React.FC = () => {
       }, 2000);
       return () => window.clearTimeout(t);
     }
-  }, [submitPhase, previewSubmit, addFormPanelHeight, addMoreFormPanelHeight, followShowActionsFor]);
+  }, [submitPhase, previewSubmit, addFormPanelHeight, addMoreFormPanelHeight, followScrollHeightDeltaForDownOnly]);
 
   const renderAddForm = (label: string, onClose: () => void, buttonClass: string) => {
     const purchasedValue =
@@ -1149,7 +1356,11 @@ const VavityEthereum: React.FC = () => {
               <div className="asset-invest-form-metrics">
                 <div className="asset-metric-row asset-invest-form-row">
                   <span className="asset-metric-title--ethereum asset-invest-form-metric-title">Purchased Value</span>
-                  <span className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}>
+                  <span
+                    className={`asset-money-wrap asset-profit-range-anim${
+                      formValuesHidden || formCalcHidden ? ' is-hidden' : ''
+                    }`}
+                  >
                     <span className="asset-metric-symbol--ethereum">$</span>
                     <span className="asset-metric-value">{renderDecimalSafe(purchasedValue)}</span>
                   </span>
@@ -1179,7 +1390,11 @@ const VavityEthereum: React.FC = () => {
 
                 <div className="asset-metric-row asset-invest-form-row">
                   <span className="asset-metric-title--ethereum asset-invest-form-metric-title">{profitRow.title}</span>
-                  <span className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}>
+                  <span
+                    className={`asset-money-wrap asset-profit-range-anim${
+                      formValuesHidden || formCalcHidden ? ' is-hidden' : ''
+                    }`}
+                  >
                     {profitRow.prefix ? (
                       <span className="asset-metric-inline-symbol--ethereum">{profitRow.prefix}</span>
                     ) : null}
@@ -1316,14 +1531,20 @@ const VavityEthereum: React.FC = () => {
             <div className="asset-metric-row">
               <span className="asset-metric-title--ethereum">Price:</span>
               <span className="asset-metric-symbol--ethereum">$</span>
-              <span className="asset-metric-value">
-                {formatCurrency(displayPoint?.price ?? (isLiquidMode ? assetPrice : vapa) ?? 0)}
+              <span className={`asset-header-switch-fade${headerSwitchHidden ? ' is-hidden' : ''}`}>
+                <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                  {headerNumbersVisible ? formatCurrency(displayPoint?.price ?? (isLiquidMode ? assetPrice : vapa) ?? 0) : '\u00A0'}
+                </span>
               </span>
             </div>
             <div className="asset-metric-row">
               <span className="asset-metric-title--ethereum">Market Cap:</span>
               <span className="asset-metric-symbol--ethereum">$</span>
-              <span className="asset-metric-value">{renderDecimalSafe(formatMarketCap(activeMarketCap))}</span>
+              <span className={`asset-header-switch-fade${headerSwitchHidden ? ' is-hidden' : ''}`}>
+                <span className={`asset-metric-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                  {headerNumbersVisible ? renderDecimalSafe(formatMarketCap(activeMarketCap)) : '\u00A0'}
+                </span>
+              </span>
             </div>
             <div className="asset-metric-row">
               {percentageIncrease > 0 ? (
@@ -1336,9 +1557,13 @@ const VavityEthereum: React.FC = () => {
               )}
               <span
                 key={chartRangeDays ?? 'all'}
-                className="asset-metric-value asset-percentage-value"
+                className={`asset-metric-value asset-percentage-value asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}
               >
-                {formatPercent(Math.abs(percentageIncrease)).replace('%', '').replace('+', '')}
+                <span className={`asset-header-switch-fade${headerSwitchHidden ? ' is-hidden' : ''}`}>
+                  {headerNumbersVisible
+                    ? formatPercent(Math.abs(percentageIncrease)).replace('%', '').replace('+', '')
+                    : '\u00A0'}
+                </span>
               </span>
               <span className="asset-metric-symbol--ethereum asset-metric-percent-symbol--ethereum">%</span>
             </div>
@@ -1597,23 +1822,67 @@ const VavityEthereum: React.FC = () => {
         )}
         {!hasInvestmentsUI ? (
           <>
-            {!showEmptyAddForm && (
+            <div
+              className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
+            >
               <button
                 className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
+                disabled={showEmptyAddForm || emptyAddHiding}
                 onClick={() => {
                   suppressPortfolioCta();
+                  if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
+                  clearEmptyButtonsSequenceTimers();
+
+                  // 1) Collapse Sign In first
+                  setEmptySigninHiding(true);
+                  setEmptySigninGone(false);
+
+                  // 2) After it's done, collapse Add Investments
+                  setEmptyAddHiding(false);
+                  setEmptyAddGone(false);
+
+                  emptyButtonsSequenceTimersRef.current.push(
+                    globalThis.setTimeout(() => {
+                      setEmptyAddHiding(true);
+                    }, 500)
+                  );
+
+                  // 3) Start opening the add form immediately (do NOT wait for Sign In to finish collapsing).
                   setShowEmptyAddForm(true);
                   setShowAddForm(true);
-                  setTimeout(() => setAddFormOpen(true), 0);
                   setSubmitPhase('idle');
-                  followScrollFor(2000);
+                  // Pre-measure panel height before opening so the max-height animation matches "Add more investments".
+                  requestAnimationFrame(() => {
+                    const h = addFormBoxRef.current?.scrollHeight ?? 0;
+                    const next = Math.max(0, h + 24);
+                    setAddFormPanelHeight((prev) => (prev === next ? prev : next));
+                    requestAnimationFrame(() => setAddFormOpen(true));
+                  });
+                  followScrollHeightDeltaFor(2000);
                 }}
               >
                 Add Investments
               </button>
+            </div>
+            {!isSignedIn && !email && (
+              <div
+                className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
+              >
+                <button
+                  type="button"
+                  className="asset-action-button asset-action-button--save-signin"
+                  onClick={openSignIn}
+                >
+                  <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                </button>
+              </div>
             )}
             {showEmptyAddForm && showAddForm && (
-              <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
+              <div
+                className={`asset-portfolio-summary-box asset-portfolio-summary-box--ethereum${
+                  submitPhase === 'submitted' && submitTargetRef.current === 'add' ? ' is-collapsing' : ''
+                }`}
+              >
                 <div
                   className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}
                   style={{
@@ -1637,20 +1906,24 @@ const VavityEthereum: React.FC = () => {
                 </div>
               </div>
         )}
-            {!isSignedIn && !email && (
-              <button type="button" className="asset-action-button asset-action-button--save-signin" onClick={openSignIn}>
-                <span className="asset-save-signin-text">Sign In to Save Investments</span>
-              </button>
-            )}
           </>
         ) : (
           <>
-            <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
+            {/* Option B: Treat the entire investments viewing section as ONE measured height animation
+                (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
             <div
               className="asset-slide-panel"
-              style={{ maxHeight: summaryMaxHeight, transition: summaryTransition }}
+              style={{
+                maxHeight: investmentsWholeMaxHeight,
+                transition: investmentsWholeTransition,
+                overflowX: 'visible',
+                overflowY: summaryOpen && !summaryAnimating ? 'visible' : 'hidden',
+              }}
             >
-              <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
+              <div ref={investmentsWholeContentRef}>
+                <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
+                  <div className="asset-slide-panel" style={{ maxHeight: 'none', transition: 'none', overflow: 'visible' }}>
+                    <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
                 <span
                   className={`asset-metric-title--ethereum asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
@@ -1801,7 +2074,7 @@ const VavityEthereum: React.FC = () => {
                       setSubmitPhase('idle');
                       setShowAddMoreForm(true);
                       setTimeout(() => setAddMoreOpen(true), 0);
-                      followScrollFor(2000);
+                      followScrollHeightDeltaFor(2000);
                     }}
                   >
                     {showAddMoreForm ? 'Hide add more Investments' : 'Add more Investments'}
@@ -1830,69 +2103,271 @@ const VavityEthereum: React.FC = () => {
                     </div>
                   </div>
                 )}
-            </div>
-            </div>
-            </div>
-            {!isSignedIn && !email && (
-              <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
-                <button
-                  type="button"
-                  className="asset-action-button asset-action-button--save-signin"
-                  onClick={openSignIn}
-                >
-                  <span className="asset-save-signin-text">Sign In to Save Investments</span>
-                </button>
-              </div>
-            )}
 
-            <div
-              ref={showActionsRef}
-              className={`asset-portfolio-actions asset-portfolio-actions--show${showInvestmentsList ? ' is-open' : ''}`}
-            >
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom actions + investments list stay outside the bordered summary box (unchanged). */}
+                <div ref={bottomActionsWrapRef}>
+                  {investments.length > 0 && !isSignedIn && !email && (
+                    <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
+                      <button
+                        type="button"
+                        className="asset-action-button asset-action-button--save-signin"
+                        onClick={openSignIn}
+                      >
+                        <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                      </button>
+                    </div>
+                  )}
+
+                  <div
+                    ref={showActionsRef}
+                    className={`asset-portfolio-actions asset-portfolio-actions--show${showInvestmentsList ? ' is-open' : ''}`}
+                  >
+                    <button
+                      className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-show${
+                        showPulse ? ' asset-action-button--pulse' : ''
+                      }`}
+                      disabled={!investments.length}
+                      onClick={() => {
+                        suppressPortfolioCta();
+                        triggerShowPulse();
+                        if (showInvestmentsList) {
+                          setInvestmentsListOpen(false);
+                          setTimeout(() => {
+                            setShowInvestmentsList(false);
+                            setVisibleInvestments(5);
+                          }, 2000);
+                          return;
+                        }
+                        setShowInvestmentsList(true);
+                        setTimeout(() => setInvestmentsListOpen(true), 0);
+                        followScrollHeightDeltaFor(2000);
+                      }}
+                    >
+                      {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
+                    </button>
+                  </div>
+
+                  {showInvestmentsList && (
+                    <div
+                      className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
+                        investmentsListOpen ? ' is-open' : ''
+                      }`}
+                      style={{ maxHeight: investmentsMaxHeight, transition: 'max-height 2s ease' }}
+                    >
+                      <div className="asset-investments-list" ref={investmentsListRef}>
+                        {investments.slice(0, visibleInvestments).map((entry: any, idx: number) => {
+                          const amount = entry.cVactTaa ?? 0;
+                          const investmentId = investmentIds[idx];
+                          const isClosing = closingInvestments.includes(investmentId);
+                          const isCollapsed = collapsedInvestments.includes(investmentId);
+                          const isDeleting = deletingInvestments.includes(investmentId);
+                          const isNew = slowOpenInvestments.includes(investmentId);
+                          return (
+                            <div
+                              key={investmentId}
+                              className={`asset-slide-panel${!isClosing && !isCollapsed ? ' is-open' : ''}`}
+                              style={isNew ? { transitionDuration: '3s' } : undefined}
+                            >
+                              <div className="asset-panel asset-panel--ethereum" style={{ padding: '12px' }}>
+                                {isDeleting ? (
+                                  <div className="asset-delete-loader">
+                                    <div
+                                      className="asset-delete-loader-spinner"
+                                      style={{
+                                        borderColor: 'rgba(107, 114, 168, 0.2)',
+                                        borderTopColor: 'rgba(107, 114, 168, 0.5)',
+                                      }}
+                                    />
+                                    <Image
+                                      className="asset-delete-loader-icon"
+                                      alt="Deleting"
+                                      width={18}
+                                      height={18}
+                                      src="/images/trash.png"
+                                    />
+                                  </div>
+                                ) : (
+                                  <>
+                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                                      <span className="asset-metric-title--ethereum">Purchased Value</span>
+                                      <span className="asset-money-wrap">
+                                        <span className="asset-metric-symbol--ethereum">$</span>
+                                        <span className="asset-metric-value">
+                                          {formatCurrency(
+                                            (isLiquidMode ? (entry.lCVatop ?? entry.rCVatop) : entry.cVatop) ?? 0
+                                          )}
+                                        </span>
+                                      </span>
+                                    </div>
+                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                                      <span className="asset-metric-title--ethereum">Current Value</span>
+                                      <span className="asset-money-wrap">
+                                        <span className="asset-metric-symbol--ethereum">$</span>
+                                        <span className="asset-metric-value">
+                                          {formatCurrency(
+                                            (isLiquidMode ? (entry.lCVact ?? entry.rCVact) : entry.cVact) ?? 0
+                                          )}
+                                        </span>
+                                      </span>
+                                    </div>
+                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                                      {(() => {
+                                        const value = Number(
+                                          (isLiquidMode ? (entry.lCdVatop ?? entry.rCdVatop) : entry.cdVatop) ?? 0
+                                        );
+                                        const isProfit = value > 0.005;
+                                        const title = isProfit ? 'Profits' : 'Losses';
+                                        const prefix = isProfit ? '+$' : '-$';
+                                        return (
+                                          <>
+                                            <span className="asset-metric-title--ethereum">{title}</span>
+                                            <span className="asset-money-wrap">
+                                              <span className="asset-metric-inline-symbol--ethereum">{prefix}</span>
+                                              <span className="asset-metric-value">
+                                                {renderDecimalSafe(formatMoneyFixed(Math.abs(value)))}
+                                              </span>
+                                            </span>
+                                          </>
+                                        );
+                                      })()}
+                                    </div>
+                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                                      <span className="asset-metric-title--ethereum">Ethereum amount</span>
+                                      <span className="asset-metric-value">
+                                        {Number(amount).toLocaleString('en-US', {
+                                          minimumFractionDigits: 8,
+                                          maximumFractionDigits: 8,
+                                        })}
+                                      </span>
+                                    </div>
+                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+                                      <span className="asset-metric-title--ethereum">Date purchased</span>
+                                      <span className="asset-metric-value">{formatShortDate(entry.date)}</span>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      className="asset-delete-button"
+                                      onClick={() => {
+                                        if (
+                                          closingInvestments.includes(investmentId) ||
+                                          deletingInvestments.includes(investmentId)
+                                        )
+                                          return;
+                                        setDeletingInvestments((prev) => [...prev, investmentId]);
+                                        setClosingInvestments((prev) => [...prev, investmentId]);
+                                        setTimeout(() => {
+                                          handleDeleteInvestment(investmentId)
+                                            .catch(() => {
+                                              // ignore errors
+                                            })
+                                            .finally(() => {
+                                              setClosingInvestments((prev) =>
+                                                prev.filter((value) => value !== investmentId)
+                                              );
+                                              setDeletingInvestments((prev) =>
+                                                prev.filter((value) => value !== investmentId)
+                                              );
+                                            });
+                                        }, 2000);
+                                      }}
+                                    >
+                                      (delete)
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        {investments.length > visibleInvestments && (
+                          <button
+                            type="button"
+                            className="asset-action-button asset-action-button--ethereum"
+                            onClick={() => {
+                              suppressPortfolioCta();
+                              setVisibleInvestments((prev) => prev + 5);
+                              followScrollHeightDeltaFor(2000);
+                            }}
+                          >
+                            Load more 5 per list
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+        {false && (
+        <div ref={bottomActionsWrapRef}>
+          {investments.length > 0 && !isSignedIn && !email && (
+            <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
               <button
-                className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-show${
-                  showPulse ? ' asset-action-button--pulse' : ''
-                }`}
-                onClick={() => {
-                  suppressPortfolioCta();
-                  triggerShowPulse();
-                  if (showInvestmentsList) {
-                    setInvestmentsListOpen(false);
-                    setTimeout(() => {
-                      setShowInvestmentsList(false);
-                      setVisibleInvestments(5);
-                    }, 2000);
-                    return;
-                  }
-                  setShowInvestmentsList(true);
-                  setTimeout(() => setInvestmentsListOpen(true), 0);
-                  followScrollFor(2000);
-                }}
+                type="button"
+                className="asset-action-button asset-action-button--save-signin"
+                onClick={openSignIn}
               >
-                {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
+                <span className="asset-save-signin-text">Sign In to Save Investments</span>
               </button>
             </div>
-            {showInvestmentsList && (
-              <div
-                className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
-                  investmentsListOpen ? ' is-open' : ''
-                }`}
-                style={{ maxHeight: investmentsMaxHeight, transition: 'max-height 2s ease' }}
-              >
-                <div className="asset-investments-list" ref={investmentsListRef}>
+          )}
+
+          <div
+            ref={showActionsRef}
+            className={`asset-portfolio-actions asset-portfolio-actions--show${showInvestmentsList ? ' is-open' : ''}`}
+          >
+            <button
+              className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-show${
+                showPulse ? ' asset-action-button--pulse' : ''
+              }`}
+              disabled={!investments.length}
+              onClick={() => {
+                suppressPortfolioCta();
+                triggerShowPulse();
+                if (showInvestmentsList) {
+                  setInvestmentsListOpen(false);
+                  setTimeout(() => {
+                    setShowInvestmentsList(false);
+                    setVisibleInvestments(5);
+                  }, 2000);
+                  return;
+                }
+                setShowInvestmentsList(true);
+                setTimeout(() => setInvestmentsListOpen(true), 0);
+                followScrollHeightDeltaFor(2000);
+              }}
+            >
+              {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
+            </button>
+          </div>
+
+          {showInvestmentsList && (
+            <div
+              className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
+                investmentsListOpen ? ' is-open' : ''
+              }`}
+              style={{ maxHeight: investmentsMaxHeight, transition: 'max-height 2s ease' }}
+            >
+              <div className="asset-investments-list" ref={investmentsListRef}>
                 {investments.slice(0, visibleInvestments).map((entry: any, idx: number) => {
-              const amount = entry.cVactTaa ?? 0;
+                  const amount = entry.cVactTaa ?? 0;
                   const investmentId = investmentIds[idx];
                   const isClosing = closingInvestments.includes(investmentId);
                   const isCollapsed = collapsedInvestments.includes(investmentId);
                   const isDeleting = deletingInvestments.includes(investmentId);
                   const isNew = slowOpenInvestments.includes(investmentId);
-              return (
-                <div
+                  return (
+                    <div
                       key={investmentId}
                       className={`asset-slide-panel${!isClosing && !isCollapsed ? ' is-open' : ''}`}
                       style={isNew ? { transitionDuration: '3s' } : undefined}
-                >
+                    >
                       <div className="asset-panel asset-panel--ethereum" style={{ padding: '12px' }}>
                         {isDeleting ? (
                           <div className="asset-delete-loader">
@@ -1982,9 +2457,9 @@ const VavityEthereum: React.FC = () => {
                           </>
                         )}
                       </div>
-                </div>
-              );
-            })}
+                    </div>
+                  );
+                })}
                 {investments.length > visibleInvestments && (
                   <button
                     type="button"
@@ -1992,16 +2467,16 @@ const VavityEthereum: React.FC = () => {
                     onClick={() => {
                       suppressPortfolioCta();
                       setVisibleInvestments((prev) => prev + 5);
-                      followScrollFor(2000);
+                      followScrollHeightDeltaFor(2000);
                     }}
                   >
                     Load more 5 per list
                   </button>
                 )}
-                </div>
-          </div>
-            )}
-          </>
+              </div>
+            </div>
+          )}
+        </div>
         )}
       </div>
 

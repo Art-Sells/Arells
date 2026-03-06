@@ -335,6 +335,17 @@ body {
 	padding-top: 0px;
 }
 
+/* When a collapsing submit panel is closing, remove the wrapper's bottom margin
+   so the final unmount doesn't create a last-millisecond "pop". */
+.asset-portfolio-summary-box.is-collapsing {
+	margin-bottom: 0px !important;
+	/* This wrapper has a default padding-bottom: 20px; if we don't animate it down,
+	   the unmount creates a final "pop" even after the inner max-height reaches 0. */
+	padding-bottom: 0px !important;
+	overflow: hidden;
+	transition: margin-bottom 2s ease, padding-bottom 2s ease;
+}
+
 /* Empty-state: sign-in section uses its own wrapper so padding can be tuned without affecting Add Investments */
 .asset-portfolio-summary-box--signin {
 	padding-top: 0px;
@@ -428,12 +439,12 @@ body {
 	gap: 8px;
 	justify-content: center;
 	margin-bottom: 0px;
-	transition: opacity 0.6s ease, transform 0.6s ease;
-	will-change: opacity, transform;
-	/* Prevent mount flash: hidden until the summary panel is actually opened */
-	opacity: 0;
-	transform: translateY(-6px);
-	pointer-events: none;
+	/* Do NOT fade these buttons in/out. Visibility is handled by the parent height animation. */
+	transition: none;
+	will-change: auto;
+	opacity: 1;
+	transform: none;
+	pointer-events: auto;
 }
 
 /* Control spacing for each portfolio action row separately */
@@ -446,17 +457,7 @@ body {
 	margin-bottom: 15px;
 }
 
-.asset-portfolio-center--summary-animating .asset-portfolio-actions {
-	opacity: 0;
-	transform: translateY(-6px);
-	pointer-events: none;
-}
-
-.asset-portfolio-center--summary-open:not(.asset-portfolio-center--summary-animating) .asset-portfolio-actions {
-	opacity: 1;
-	transform: translateY(0);
-	pointer-events: auto;
-}
+/* These used to fade portfolio action rows. Disabled by request (keep layout/placement unchanged). */
 
 .asset-profit-summary {
 	padding: 10px 10px 12px;
@@ -943,6 +944,16 @@ body {
 	min-width: 0;
 	text-align: left;
 	justify-self: start;
+}
+
+/* Page mount number fade (used for Price / Market Cap / % in asset header) */
+.asset-mount-fade-2s {
+	opacity: 0;
+	transition: opacity 2s ease;
+}
+
+.asset-mount-fade-2s.is-visible {
+	opacity: 1;
 }
 
 /* Keep global wrapping behavior for long numbers.
@@ -1447,6 +1458,63 @@ body {
 	transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, background 0.2s ease;
 }
 
+/* Empty-state: fade out Sign-in CTA while the add form is open (no immediate display:none). */
+.asset-empty-signin {
+	/* Important: do NOT clip the button shadow or shift layout while visible */
+	overflow: visible;
+	opacity: 1;
+	max-height: 240px;
+	transition: opacity .6s ease, max-height .5s ease, margin .5s ease, padding .5s ease;
+}
+
+.asset-empty-signin.is-hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* After the fade finishes, collapse the layout footprint. */
+.asset-empty-signin.is-gone {
+	max-height: 0px;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	overflow: hidden;
+}
+
+/* Empty-state: Add Investments button fades out then collapses */
+.asset-empty-addinvest {
+	overflow: visible;
+	opacity: 1;
+	max-height: 140px;
+	transition: opacity .6s ease, max-height .5s ease, margin .6s ease, padding .5s ease;
+}
+
+.asset-empty-addinvest.is-hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.asset-empty-addinvest.is-gone {
+	max-height: 0px;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	overflow: hidden;
+}
+
+/* Header numbers: fade out/in on Liquid/Solid switch */
+.asset-header-switch-fade {
+	display: inline-block;
+	opacity: 1;
+	transition: opacity 0.35s ease;
+}
+
+.asset-header-switch-fade.is-hidden {
+	opacity: 0;
+}
+
 /* Control WORD opacity independently from background */
 .asset-action-button--save-signin .asset-save-signin-text {
 	display: inline-block;
@@ -1607,6 +1675,7 @@ body {
 	margin-bottom: 15px;
 	margin-top: 20px;
 }
+
 
 .asset-page--bitcoin .asset-page-content .asset-action-button--save-signin {
 	background: rgba(248, 141, 0, 1);
@@ -1792,7 +1861,7 @@ body {
 .asset-slide-panel--form.is-open {
 	/* Avoid clipping tall form content (e.g. huge currency numbers that wrap) */
 	max-height: 2000px;
-	transition-duration: 2s;
+	transition-duration: 2.7s;
 }
 
 .asset-submit-status {

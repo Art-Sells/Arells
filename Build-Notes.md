@@ -2,6 +2,8 @@
 
 ## Arells v1
 
+-*Finish height-down issue for invetment views after add investments button*
+- *Fix price/mk cap page mount pop after new yarn dec*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
 - *test for long numbers and ensure (add a width maximum for current/purchased/losses/profits sections in portfolio, invesment list and in marketcap asset percentages (test how this would affect UI))*
@@ -10,7 +12,7 @@
 - *loading circle main for asset pages jigs when its transitioning colors, why?*
 - *bitcoin icon in assets pages should not be pixelated (should look like homepage bitcoin icon)*
 - *hide investments hover up cuts off... fix...*
-- *About button (same as in asset pages) in my investmnts footer arells*ß
+- *About button (same as in asset pages) in my investmnts footer arells* 
 
 ### Investment list
 - - (delete) *test this*
