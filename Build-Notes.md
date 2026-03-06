@@ -2,7 +2,6 @@
 
 ## Arells v1
 
--*Finish height-down issue for invetment views after add investments button*
 - *Fix price/mk cap page mount pop after new yarn dec*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*

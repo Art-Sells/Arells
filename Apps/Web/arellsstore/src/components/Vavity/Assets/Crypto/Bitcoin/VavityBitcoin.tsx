@@ -595,11 +595,11 @@ const VavityBitcoin: React.FC = () => {
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
   const investmentsWholeMaxHeight = summaryOpen && !isClearingInvestments ? `${investmentsWholeHeight}px` : '0px';
   const investmentsWholeTransition =
-    showAddMoreForm || showInvestmentsList ? 'max-height 0s ease' : 'max-height 2s ease';
+    addMoreOpen || investmentsListOpen ? 'max-height 0s ease' : 'max-height 2s ease';
   // Add-more form lives inside the summary panel. If both the outer summary and the inner form
   // animate max-height, it feels slower because the outer panel clips the inner one during its own expand.
   // When Add-more is showing, snap the outer summary height and let only the inner form animate.
-  const summaryTransition = showAddMoreForm || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
+  const summaryTransition = addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
 
   useEffect(() => {
     const prev = prevSummaryCountRef.current;
@@ -616,7 +616,7 @@ const VavityBitcoin: React.FC = () => {
         // when ResizeObserver catches up with the final scrollHeight.
         const whole = investmentsWholeContentRef.current;
         if (whole) {
-          const h = whole.scrollHeight;
+          const h = whole.scrollHeight + 24;
           setInvestmentsWholeHeight((prevH) => (prevH === h ? prevH : h));
         }
         requestAnimationFrame(() => setSummaryOpen(true));
@@ -671,13 +671,16 @@ const VavityBitcoin: React.FC = () => {
     if (!summaryOpen || isClearingInvestments) return;
     const node = investmentsWholeContentRef.current;
     if (!node || typeof ResizeObserver === 'undefined') {
-      setInvestmentsWholeHeight(node?.scrollHeight ?? 0);
+      const h = (node?.scrollHeight ?? 0) + 24;
+      setInvestmentsWholeHeight(h);
       return;
     }
     let raf = 0;
     const measure = () => {
       raf = window.requestAnimationFrame(() => {
-        const next = node.scrollHeight;
+        // Add a small buffer so late micro-layout changes don't cause a final "pop down"
+        // by increasing max-height after the 2s open animation completes.
+        const next = node.scrollHeight + 24;
         setInvestmentsWholeHeight((prev) => (prev === next ? prev : next));
       });
     };
@@ -1266,7 +1269,6 @@ const VavityBitcoin: React.FC = () => {
   const closeAddMoreForm = useCallback(() => {
     setAddMoreOpen(false);
     setTimeout(() => {
-      setShowAddMoreForm(false);
       setSubmitPhase('idle');
     }, 2000);
   }, []);
@@ -1320,7 +1322,6 @@ const VavityBitcoin: React.FC = () => {
       const t = window.setTimeout(() => {
         if (target === 'addMore') {
           setAddMoreOpen(false);
-          setShowAddMoreForm(false);
         } else {
           setAddFormOpen(false);
           setShowAddForm(false);
@@ -2080,20 +2081,13 @@ const VavityBitcoin: React.FC = () => {
                   onClick={() => {
                     suppressPortfolioCta();
                     triggerAddMorePulse();
-                    if (showAddMoreForm) {
+                    if (addMoreOpen) {
                       setAddMoreOpen(false);
-                      setSuppressSummaryTransition(true);
-                      setTimeout(() => {
-                        setShowAddMoreForm(false);
-                        // Let ResizeObserver-driven height updates settle before re-enabling the parent max-height transition.
-                        window.setTimeout(() => setSuppressSummaryTransition(false), 700);
-                      }, 2000);
                       return;
                     }
-                    if (showInvestmentsList) {
+                    if (showInvestmentsList && investmentsListOpen) {
                       setInvestmentsListOpen(false);
                       setTimeout(() => {
-                        setShowInvestmentsList(false);
                         setVisibleInvestments(5);
                       }, 2000);
                     }
@@ -2103,7 +2097,7 @@ const VavityBitcoin: React.FC = () => {
                     followScrollHeightDeltaFor(2000);
                   }}
                 >
-                  {showAddMoreForm ? 'Hide add more Investments' : 'Add more Investments'}
+                  {addMoreOpen ? 'Hide add more Investments' : 'Add more Investments'}
                 </button>
               </div>
               {showAddMoreForm && (
@@ -2150,7 +2144,7 @@ const VavityBitcoin: React.FC = () => {
 
                 <div
                   ref={showActionsRef}
-                  className={`asset-portfolio-actions asset-portfolio-actions--show${showInvestmentsList ? ' is-open' : ''}`}
+                  className={`asset-portfolio-actions asset-portfolio-actions--show${investmentsListOpen ? ' is-open' : ''}`}
                 >
                   <button
                     className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-show${
@@ -2160,10 +2154,9 @@ const VavityBitcoin: React.FC = () => {
                     onClick={() => {
                       suppressPortfolioCta();
                       triggerShowPulse();
-                      if (showInvestmentsList) {
+                      if (investmentsListOpen) {
                         setInvestmentsListOpen(false);
                         setTimeout(() => {
-                          setShowInvestmentsList(false);
                           setVisibleInvestments(5);
                         }, 2000);
                         return;
@@ -2173,7 +2166,7 @@ const VavityBitcoin: React.FC = () => {
                       followScrollHeightDeltaFor(2000);
                     }}
                   >
-                    {showInvestmentsList ? 'Hide Investments' : 'Show Investments'}
+                  {investmentsListOpen ? 'Hide Investments' : 'Show Investments'}
                   </button>
                 </div>
 

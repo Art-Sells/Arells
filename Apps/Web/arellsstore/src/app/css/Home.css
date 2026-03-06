@@ -164,6 +164,16 @@ body {
 	--asset-chart-line-color: rgba(248, 141, 0, 0.5);
 	/* Match chart line thickness (BitcoinChart borderWidth) */
 	--asset-chart-line-width: 6.5px;
+	/* Portfolio spacing tweaks (reduce gap between summary/add-more and Sign In/Show actions) */
+	--asset-portfolio-summary-padding-bottom: 10px;
+	--asset-portfolio-summary-margin-bottom: 6px;
+	--asset-portfolio-actions-add-margin-top: 14px;
+	--asset-portfolio-actions-show-margin-top: 14px;
+	--asset-portfolio-actions-show-margin-bottom: 10px;
+	--asset-portfolio-actions-signin-margin-top: -5px;
+	--asset-portfolio-actions-signin-margin-bottom: 25px;
+	--asset-save-signin-margin-top: 14px;
+	--asset-save-signin-margin-bottom: 18px;
 }
 
 .asset-page--ethereum .asset-header-slogan,
@@ -188,6 +198,16 @@ body {
 	--asset-chart-line-color: rgba(107, 114, 168, 0.5);
 	/* Match chart line thickness (EthereumChart borderWidth) */
 	--asset-chart-line-width: 6.5px;
+	/* Portfolio spacing tweaks (reduce gap between summary/add-more and Sign In/Show actions) */
+	--asset-portfolio-summary-padding-bottom: 10px;
+	--asset-portfolio-summary-margin-bottom: 6px;
+	--asset-portfolio-actions-add-margin-top: 14px;
+	--asset-portfolio-actions-show-margin-top: 14px;
+	--asset-portfolio-actions-show-margin-bottom: 10px;
+	--asset-portfolio-actions-signin-margin-top: 8px;
+	--asset-portfolio-actions-signin-margin-bottom: 0px;
+	--asset-save-signin-margin-top: 14px;
+	--asset-save-signin-margin-bottom: 18px;
 }
 
 .asset-page--bitcoin .asset-page-content,
@@ -329,8 +349,8 @@ body {
 	border-radius: 14px;
 	padding-left: 12px;
 	padding-right: 12px;
-	padding-bottom: 20px;
-	margin: 0 auto 12px;
+	padding-bottom: var(--asset-portfolio-summary-padding-bottom, 20px);
+	margin: 0 auto var(--asset-portfolio-summary-margin-bottom, 12px);
 	background: transparent;
 	padding-top: 0px;
 }
@@ -449,12 +469,12 @@ body {
 
 /* Control spacing for each portfolio action row separately */
 .asset-portfolio-actions--add {
-	margin-top: 20px;
+	margin-top: var(--asset-portfolio-actions-add-margin-top, 20px);
 }
 
 .asset-portfolio-actions--show {
-	margin-top: 20px;
-	margin-bottom: 15px;
+	margin-top: var(--asset-portfolio-actions-show-margin-top, 20px);
+	margin-bottom: var(--asset-portfolio-actions-show-margin-bottom, 15px);
 }
 
 /* These used to fade portfolio action rows. Disabled by request (keep layout/placement unchanged). */
@@ -1442,8 +1462,8 @@ body {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 30px;
-	margin-bottom: 25px;
+	margin-top: var(--asset-save-signin-margin-top, 20px);
+	margin-bottom: var(--asset-save-signin-margin-bottom, 40px);
 	font-weight: 800;
 	font-size: 15px; /* Add Investments is 25px */
 	letter-spacing: -.5px;
@@ -1464,12 +1484,18 @@ body {
 	overflow: visible;
 	opacity: 1;
 	max-height: 240px;
-	transition: opacity .6s ease, max-height .5s ease, margin .5s ease, padding .5s ease;
+	/* No fade-out: collapse via height/margins/padding only */
+	transition: max-height .5s ease, margin .5s ease, padding .5s ease;
 }
 
 .asset-empty-signin.is-hidden {
-	opacity: 0;
 	pointer-events: none;
+	max-height: 0px;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	overflow: hidden;
 }
 
 /* After the fade finishes, collapse the layout footprint. */
@@ -1487,12 +1513,18 @@ body {
 	overflow: visible;
 	opacity: 1;
 	max-height: 140px;
-	transition: opacity .6s ease, max-height .5s ease, margin .6s ease, padding .5s ease;
+	/* No fade-out: collapse via height/margins/padding only */
+	transition: max-height .5s ease, margin .6s ease, padding .5s ease;
 }
 
 .asset-empty-addinvest.is-hidden {
-	opacity: 0;
 	pointer-events: none;
+	max-height: 0px;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	overflow: hidden;
 }
 
 .asset-empty-addinvest.is-gone {
@@ -1633,14 +1665,15 @@ body {
 }
 
 .asset-portfolio-actions--signin {
-	margin-top: 18px;
+	margin-top: var(--asset-portfolio-actions-signin-margin-top, 18px);
+	margin-bottom: var(--asset-portfolio-actions-signin-margin-bottom, 0px);
 }
 
 /* When the sign-in CTA is rendered as a standalone block (above Show/Hide),
    match the spacing it had when it lived directly under Add Investments. */
 .asset-portfolio-actions--signin.asset-portfolio-actions--signin-standalone {
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: var(--asset-portfolio-actions-signin-margin-top, 0px);
+	margin-bottom: var(--asset-portfolio-actions-signin-margin-bottom, 0px);
 }
 
 /* Sign-in CTA: remove the button's default bottom margin so the wrapper controls spacing */
@@ -1672,8 +1705,8 @@ body {
 
 /* Show/Hide Investments row: add spacing only when open (Hide Investments state) */
 .asset-portfolio-actions--show.is-open {
-	margin-bottom: 15px;
-	margin-top: 20px;
+	margin-bottom: var(--asset-portfolio-actions-show-margin-bottom, 15px);
+	margin-top: var(--asset-portfolio-actions-show-margin-top, 20px);
 }
 
 
