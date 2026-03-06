@@ -609,7 +609,14 @@ const VavityEthereum: React.FC = () => {
     if (next > prev && !isClearingInvestments) {
       setSummaryOpen(false);
       requestAnimationFrame(() => {
-        setSummaryOpen(true);
+        // Pre-measure the full wrapper height BEFORE opening so we don't "pop" at the end
+        // when ResizeObserver catches up with the final scrollHeight.
+        const whole = investmentsWholeContentRef.current;
+        if (whole) {
+          const h = whole.scrollHeight;
+          setInvestmentsWholeHeight((prevH) => (prevH === h ? prevH : h));
+        }
+        requestAnimationFrame(() => setSummaryOpen(true));
       });
       // Keep scroll synced with the ONE combined height-down of the full investments section.
       followScrollHeightDeltaFor(2000);
