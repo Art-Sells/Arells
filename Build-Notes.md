@@ -2,6 +2,7 @@
 
 ## Arells v1
 
+- *1 minute count down from sessions assets created (logged into back-end json), after 1 minute has passed, delete all session investments*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
 - *add submitted icon*
@@ -18,11 +19,6 @@
 - (About arells)
 - - Clean up UI (on Modals/buttons/everything)
 
-### Sign In to Save Investments (Above Investments and below "Add Investments" button)
-
-## Inside the Index/Home
-create:
-(View My Investments) button hovers 20 px from the bottom of the page <- only shows after sign-in (e-mail) is read....
 
 ## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
 
@@ -68,7 +64,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 - Change desc to: Remove "Investment losses are a human psychology issue" just tell WHAT Vavity is... that's it - don't lecture (replace bear markets with investment losses in vavity info and readme) so Vavity solves this psychologically through technical autonomy. By eliminating investment losses etc etc (in github also..., remove "cryptocurrency" from it and make it simply (remove Bitcoin and make it general))
 
 ### Optimize-UI/UX for mobile
-- Test everything...........
+- Test everything........... (including inspect)
 - Remove "sign in" dynamic to test in mobile...
 - - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes...
 
