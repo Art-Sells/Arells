@@ -179,7 +179,7 @@ const BitcoinChartPanel: React.FC = () => {
               width={50}
               height={50}
               id="bitcoin-b-home"
-              src="images/howitworks/Bitcoin.png"
+              src="/images/assets/crypto/Bitcoin.svg"
             />
           </div>
         </span>

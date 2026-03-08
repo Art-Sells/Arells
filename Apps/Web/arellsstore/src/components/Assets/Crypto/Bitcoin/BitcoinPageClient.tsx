@@ -55,7 +55,7 @@ const BitcoinPageClient: React.FC = () => {
             <svg className="asset-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
               <circle cx="30" cy="30" r="26" />
             </svg>
-            <Image alt="Bitcoin" width={30} height={30} src="/images/assets/crypto/Bitcoin.png" />
+            <Image alt="Bitcoin" width={30} height={30} src="/images/assets/crypto/Bitcoin.svg" />
           </div>
         </div>
       )}

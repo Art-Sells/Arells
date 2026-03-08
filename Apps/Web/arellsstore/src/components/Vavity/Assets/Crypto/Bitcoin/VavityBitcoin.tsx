@@ -728,6 +728,7 @@ const VavityBitcoin: React.FC = () => {
     // If we're submitting the very first investment, keep the "empty" UI mounted
     // so the submit/collapse animation can finish without swapping branches (which causes the pop).
     (submitTargetRef.current === 'add' && submitPhase !== 'idle');
+  const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
   const investmentsWholeMaxHeight = summaryOpen && !isClearingInvestments ? `${investmentsWholeHeight}px` : '0px';
   const investmentsWholeTransition =
@@ -806,6 +807,21 @@ const VavityBitcoin: React.FC = () => {
     }
     prevSummaryCountRef.current = next;
   }, [investments.length, isClearingInvestments, followScrollHeightDeltaFor]);
+
+  useEffect(() => {
+    const prev = prevHasInvestmentsUIRef.current;
+    if (prev && !hasInvestmentsUI && !showEmptyAddForm) {
+      setEmptySigninGone(false);
+      setEmptyAddGone(false);
+      setEmptySigninHiding(true);
+      setEmptyAddHiding(true);
+      requestAnimationFrame(() => {
+        setEmptySigninHiding(false);
+        setEmptyAddHiding(false);
+      });
+    }
+    prevHasInvestmentsUIRef.current = hasInvestmentsUI;
+  }, [hasInvestmentsUI, showEmptyAddForm]);
 
   useEffect(() => {
     if (!summaryOpen || isClearingInvestments) {
@@ -1155,12 +1171,34 @@ const VavityBitcoin: React.FC = () => {
     [chartRangeDays]
   );
 
+  const chartHistorySolidArc = useMemo(() => {
+    if (!chartMorphPrepared) return decimateSeriesForRange(chartHistorySolid || []);
+    const { solidTs, solidYs } = chartMorphPrepared;
+    const out: { date: string; price: number }[] = [];
+    for (let i = 0; i < solidTs.length; i += 1) {
+      out.push({ date: new Date(solidTs[i]).toISOString(), price: solidYs[i] });
+    }
+    if (out.length >= 2) return out;
+    return decimateSeriesForRange(chartHistorySolid || []);
+  }, [chartHistorySolid, chartMorphPrepared, decimateSeriesForRange]);
+
+  const chartHistoryLiquidArc = useMemo(() => {
+    if (!chartMorphPrepared) return decimateSeriesForRange(chartHistoryLiquid || []);
+    const { liquidTs, liquidYs } = chartMorphPrepared;
+    const out: { date: string; price: number }[] = [];
+    for (let i = 0; i < liquidTs.length; i += 1) {
+      out.push({ date: new Date(liquidTs[i]).toISOString(), price: liquidYs[i] });
+    }
+    if (out.length >= 2) return out;
+    return decimateSeriesForRange(chartHistoryLiquid || []);
+  }, [chartHistoryLiquid, chartMorphPrepared, decimateSeriesForRange]);
+
   const chartHistoryMorph = useMemo(() => {
     const morphActive = toggleKnobLeftPx != null || toggleAnimating;
     if (!morphActive || !chartMorphPrepared) return null;
     const a = Math.max(0, Math.min(1, toggleAlpha));
-    if (a <= 0.001) return decimateSeriesForRange(chartHistorySolid);
-    if (a >= 0.999) return decimateSeriesForRange(chartHistoryLiquid);
+    if (a <= 0.001) return chartHistorySolidArc;
+    if (a >= 0.999) return chartHistoryLiquidArc;
     const { solidTs, solidYs, liquidTs, liquidYs } = chartMorphPrepared;
     const blendA = a;
     let solidMin = Number.POSITIVE_INFINITY;
@@ -1199,10 +1237,12 @@ const VavityBitcoin: React.FC = () => {
       const clamped = Math.min(Math.max(v, min), max);
       return span > 0 ? (clamped - min) / span : 0.5;
     };
+    const normRaw = (v: number, min: number, span: number) => (span > 0 ? (v - min) / span : 0.5);
     const minMix = solidMin * (1 - blendA) + liquidMin * blendA;
     const spanMix = solidSpan * (1 - blendA) + liquidSpan * blendA;
-    const shapePower = chartRangeDays != null && chartRangeDays >= 365 ? 2.2 : chartRangeDays != null && chartRangeDays >= 90 ? 1.8 : 1;
-    const shapeAlpha = shapePower === 1 ? blendA : 1 - Math.pow(1 - blendA, shapePower);
+    const shapePower = 3.5;
+    const shapeAlpha = 1 - Math.pow(1 - blendA, shapePower);
+    const normMix = 4 * blendA * (1 - blendA);
     // Performance mode during manual drag:
     // cap rendered points (especially "All") so the chart can track pointer movement without lag.
     const maxMorphPoints = chartRangeDays == null ? 320 : chartRangeDays >= 365 ? 280 : 9999;
@@ -1212,8 +1252,12 @@ const VavityBitcoin: React.FC = () => {
       for (let idx = 0; idx < total; idx += 1) {
         const pointBlendA = blendA;
         const t = solidTs[idx] * (1 - pointBlendA) + liquidTs[idx] * pointBlendA;
-        const sN = norm(solidYs[idx], solidNormMin, solidNormMax, solidNormSpan);
-        const lN = norm(liquidYs[idx], liquidNormMin, liquidNormMax, liquidNormSpan);
+        const sNRaw = normRaw(solidYs[idx], solidMin, solidSpan);
+        const lNRaw = normRaw(liquidYs[idx], liquidMin, liquidSpan);
+        const sNPerc = norm(solidYs[idx], solidNormMin, solidNormMax, solidNormSpan);
+        const lNPerc = norm(liquidYs[idx], liquidNormMin, liquidNormMax, liquidNormSpan);
+        const sN = sNRaw * (1 - normMix) + sNPerc * normMix;
+        const lN = lNRaw * (1 - normMix) + lNPerc * normMix;
         const yN = sN * (1 - shapeAlpha) + lN * shapeAlpha;
         blended.push({
           date: new Date(t).toISOString(),
@@ -1229,8 +1273,12 @@ const VavityBitcoin: React.FC = () => {
         lastIdx = idx;
         const pointBlendA = blendA;
         const t = solidTs[idx] * (1 - pointBlendA) + liquidTs[idx] * pointBlendA;
-        const sN = norm(solidYs[idx], solidNormMin, solidNormMax, solidNormSpan);
-        const lN = norm(liquidYs[idx], liquidNormMin, liquidNormMax, liquidNormSpan);
+        const sNRaw = normRaw(solidYs[idx], solidMin, solidSpan);
+        const lNRaw = normRaw(liquidYs[idx], liquidMin, liquidSpan);
+        const sNPerc = norm(solidYs[idx], solidNormMin, solidNormMax, solidNormSpan);
+        const lNPerc = norm(liquidYs[idx], liquidNormMin, liquidNormMax, liquidNormSpan);
+        const sN = sNRaw * (1 - normMix) + sNPerc * normMix;
+        const lN = lNRaw * (1 - normMix) + lNPerc * normMix;
         const yN = sN * (1 - shapeAlpha) + lN * shapeAlpha;
         blended.push({
           date: new Date(t).toISOString(),
@@ -1240,12 +1288,20 @@ const VavityBitcoin: React.FC = () => {
     }
     if (blended.length >= 2) return blended;
     if (blended.length === 1) return blended;
-    return decimateSeriesForRange(chartHistorySolid);
-  }, [chartHistoryLiquid, chartHistorySolid, chartMorphPrepared, chartRangeDays, decimateSeriesForRange, toggleAlpha, toggleAnimating, toggleKnobLeftPx]);
+    return chartHistorySolidArc;
+  }, [
+    chartHistoryLiquidArc,
+    chartHistorySolidArc,
+    chartMorphPrepared,
+    chartRangeDays,
+    toggleAlpha,
+    toggleAnimating,
+    toggleKnobLeftPx,
+  ]);
 
   const chartHistoryDisplay = useMemo(() => {
-    return decimateSeriesForRange(chartHistory || []);
-  }, [chartHistory, decimateSeriesForRange]);
+    return displayIsLiquidMode ? chartHistoryLiquidArc : chartHistorySolidArc;
+  }, [chartHistoryLiquidArc, chartHistorySolidArc, displayIsLiquidMode]);
 
   const chartHistoryForLine = chartHistoryMorph ?? chartHistoryDisplay;
 
@@ -2015,7 +2071,7 @@ const VavityBitcoin: React.FC = () => {
                 alt="Bitcoin"
                 width={37}
                 height={37}
-                src="/images/assets/crypto/Bitcoin.png"
+                src="/images/assets/crypto/Bitcoin.svg"
               />
             </Link>
             <div className="asset-metric-row">

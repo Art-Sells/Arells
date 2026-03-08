@@ -46,7 +46,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const addMissingButtons = useMemo(() => {
     return assetsMissingInEmail.map((asset) => {
       const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.png' : '/images/assets/crypto/Ethereum.svg';
+      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
       const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
       const cls = asset === 'bitcoin' ? 'home-voting-button--bitcoin' : 'home-voting-button--ethereum';
       return (
@@ -61,7 +61,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   const addMoreButtons = useMemo(() => {
     return assetsPresentInEmail.map((asset) => {
       const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.png' : '/images/assets/crypto/Ethereum.svg';
+      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
       const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
       const cls = asset === 'bitcoin' ? 'home-voting-button--bitcoin' : 'home-voting-button--ethereum';
       return (

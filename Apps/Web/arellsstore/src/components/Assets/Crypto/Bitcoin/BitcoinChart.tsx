@@ -147,7 +147,7 @@ const BitcoinChart: React.FC<Props> = ({
           // Force a straight segment in that case.
           tension: dataPoints.length < 3 ? 0 : 0.25,
           borderWidth: 6.5,
-          borderCapStyle: 'butt' as const,
+          borderCapStyle: 'round' as const,
           borderJoinStyle: 'miter' as const,
           clip: 12,
         },

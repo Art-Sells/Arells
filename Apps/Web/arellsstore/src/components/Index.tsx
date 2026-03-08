@@ -179,7 +179,7 @@ const Index = () => {
 
   const assetRows = useMemo(() => {
     const assets = [
-      { id: 'bitcoin', label: 'Bitcoin', href: '/bitcoin', icon: 'images/assets/crypto/Bitcoin.png' },
+      { id: 'bitcoin', label: 'Bitcoin', href: '/bitcoin', icon: 'images/assets/crypto/Bitcoin.svg' },
       { id: 'ethereum', label: 'Ethereum', href: '/ethereum', icon: 'images/assets/crypto/Ethereum.svg' }
     ];
 
@@ -247,11 +247,11 @@ const Index = () => {
           <div className="home-voting-title">Which should we add next week?</div>
           <div className="home-voting-options">
             <button type="button" className="home-voting-button home-voting-button--solana" onClick={() => handleVote('solana')}>
-              <Image className="home-voting-icon" alt="Solana" width={22} height={22} src="/images/assets/crypto/solana.png" />
+              <Image className="home-voting-icon" alt="Solana" width={22} height={22} src="/images/assets/crypto/Solana.svg" />
               <span>Solana</span>
             </button>
             <button type="button" className="home-voting-button home-voting-button--xrp" onClick={() => handleVote('xrp')}>
-              <Image className="home-voting-icon" alt="XRP" width={22} height={22} src="/images/assets/crypto/xrp.png" />
+              <Image className="home-voting-icon" alt="XRP" width={22} height={22} src="/images/assets/crypto/XRP.svg" />
               <span>XRP</span>
             </button>
           </div>
@@ -365,7 +365,7 @@ const Index = () => {
               alt={voteModal.asset === 'solana' ? 'Solana' : 'XRP'}
               width={22}
               height={22}
-              src={voteModal.asset === 'solana' ? '/images/assets/crypto/solana.png' : '/images/assets/crypto/xrp.png'}
+              src={voteModal.asset === 'solana' ? '/images/assets/crypto/Solana.svg' : '/images/assets/crypto/XRP.svg'}
             />
             <div className="home-vote-modal-title">
               {voteModal.asset === 'solana' ? 'Solana' : 'XRP'}

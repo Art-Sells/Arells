@@ -139,7 +139,7 @@ const EthereumChart: React.FC<Props> = ({
           // When the 24h range collapses to 2 points, keep the segment perfectly straight.
           tension: dataPoints.length < 3 ? 0 : 0.25,
           borderWidth: 6.5,
-          borderCapStyle: 'butt' as const,
+          borderCapStyle: 'round' as const,
           borderJoinStyle: 'miter' as const,
           clip: 12,
         },
