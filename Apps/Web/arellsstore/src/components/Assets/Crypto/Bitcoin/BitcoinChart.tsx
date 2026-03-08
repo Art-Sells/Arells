@@ -35,6 +35,7 @@ type Props = {
   animateOn?: boolean;
   animateDelayMs?: number;
   animationDurationMs?: number;
+  yRangeOverride?: { min: number; max: number } | null;
 };
 
 const BitcoinChart: React.FC<Props> = ({
@@ -53,6 +54,7 @@ const BitcoinChart: React.FC<Props> = ({
   animateOn = true,
   animateDelayMs = 0,
   animationDurationMs = 1000,
+  yRangeOverride = null,
 }) => {
   const chartRef = useRef<ChartJS<'line', PricePoint[], unknown> | null>(null);
   const markerRef = useRef<HTMLDivElement | null>(null);
@@ -110,6 +112,14 @@ const BitcoinChart: React.FC<Props> = ({
   }, [history]);
 
   const yRange = useMemo(() => {
+    if (yRangeOverride) {
+      const min = yRangeOverride.min;
+      const max = yRangeOverride.max;
+      if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
+      const baseRange = Math.max(max - min, Math.max(Math.abs(max), 1) * 0.05);
+      const pad = baseRange * 2;
+      return { min: min - pad, max: max + pad };
+    }
     if (!dataPoints.length) return null;
     const values = dataPoints.map((p) => p.y);
     const min = Math.min(...values);
@@ -118,7 +128,7 @@ const BitcoinChart: React.FC<Props> = ({
     // Expand Y range to visually shorten the line without shrinking chart canvas height.
     const pad = baseRange * 2;
     return { min: min - pad, max: max + pad };
-  }, [dataPoints]);
+  }, [dataPoints, yRangeOverride]);
 
   const xRange = useMemo(() => {
     if (!dataPoints.length) return null;
@@ -147,8 +157,8 @@ const BitcoinChart: React.FC<Props> = ({
           // Force a straight segment in that case.
           tension: dataPoints.length < 3 ? 0 : 0.25,
           borderWidth: 6.5,
-          borderCapStyle: 'butt' as const,
-          borderJoinStyle: 'miter' as const,
+          borderCapStyle: 'round' as const,
+          borderJoinStyle: 'round' as const,
           clip: 12,
         },
       ],

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
 
@@ -9,7 +9,10 @@ type Props = {
   label?: string;
 };
 
-export default function HomeInvestmentsSlideUpCTA({ href = '/my-investments', label = 'View My Investments' }: Props) {
+export default function HomeInvestmentsSlideUpCTA({
+  href = '/my-investments',
+  label = 'View My Investments',
+}: Props) {
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [layout, setLayout] = useState<{ left: number; width: number; buttonHeight: number } | null>(null);
@@ -17,9 +20,13 @@ export default function HomeInvestmentsSlideUpCTA({ href = '/my-investments', la
   useEffect(() => {
     if (typeof window === 'undefined') return;
     setMounted(true);
-    // Sticky: always visible regardless of scroll direction.
-    setVisible(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const id = window.requestAnimationFrame(() => setVisible(true));
+    return () => window.cancelAnimationFrame(id);
+  }, [mounted]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

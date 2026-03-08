@@ -39,6 +39,16 @@ const Index = () => {
   );
   const [voteModalClosing, setVoteModalClosing] = useState<boolean>(false);
 
+  // Home should always own/reset the global background so asset-page tint never bleeds into `/`.
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const bg = '#ffffff';
+    document.documentElement.style.setProperty('--app-bg', bg);
+    document.body.style.setProperty('--app-bg', bg);
+    document.documentElement.style.backgroundColor = bg;
+    document.body.style.backgroundColor = bg;
+  }, []);
+
 
   const handleImageLoaded = (imageName: string) => {
     setImagesLoaded(prevState => ({ 
@@ -175,7 +185,12 @@ const Index = () => {
 
     return assets.map((asset) => {
       const snapshot = getAsset(asset.id);
-      const history = snapshot?.history ?? [];
+      const history =
+        (Array.isArray(snapshot?.solidHistory) && snapshot.solidHistory.length > 0
+          ? snapshot.solidHistory
+          : Array.isArray(snapshot?.liquidHistory)
+            ? snapshot.liquidHistory
+            : []) ?? [];
       const vapa = snapshot?.vapa ?? 0;
       return {
         ...asset,
@@ -377,7 +392,7 @@ const Index = () => {
         </div>
       )}
 
-      <HomeInvestmentsSlideUpCTA />
+      {!showLoading && <HomeInvestmentsSlideUpCTA />}
 
     </>
   );

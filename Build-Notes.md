@@ -3,10 +3,11 @@
 ## Arells v1
 
 - *1 minute count down from sessions assets created (logged into back-end json), after 1 minute has passed, delete all session investments*
+- *should height up after all investments are deleted before heigting down "add investments/sign in to save investments secton... and that add investments/sign in to save investments section height down shouldn't height down so quickly... it should take 1 second to complete*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
 - *add submitted icon*
-- *test multiple investment deletions...*
+- *test multiple investment deletions... with the "1 minute end all open to see aht it does"*
 - *loading circle main for asset pages jigs when its transitioning colors, why?*
 - *bitcoin icon in assets pages should not be pixelated (should look like homepage bitcoin icon)*
 - *hide investments hover up cuts off... fix...*

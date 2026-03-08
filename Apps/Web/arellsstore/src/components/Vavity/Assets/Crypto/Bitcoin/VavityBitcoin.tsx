@@ -54,6 +54,8 @@ const VavityBitcoin: React.FC = () => {
   // Manual toggle progress (0 = Solid edge, 1 = Liquid edge). Drives manual chart morph + continuous fades.
   const [toggleAlpha, setToggleAlpha] = useState<number>(0);
   const toggleAlphaRef = useRef(0);
+  const toggleAlphaPrevRef = useRef(0);
+  const toggleDirectionRef = useRef<1 | -1>(1);
   const [toggleAnimating, setToggleAnimating] = useState(false);
   const toggleAnimRafRef = useRef<number | null>(null);
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -69,12 +71,24 @@ const VavityBitcoin: React.FC = () => {
       else document.documentElement.style.removeProperty('--app-bg');
     };
   }, []);
-  const toggleDragRef = useRef<{ active: boolean; pointerId: number | null; startX: number; startLeft: number; didDrag: boolean }>({
+  const toggleDragRef = useRef<{
+    active: boolean;
+    pointerId: number | null;
+    startX: number;
+    startLeft: number;
+    lastLeft: number;
+    didDrag: boolean;
+    track: { minLeft: number; maxLeft: number; mid: number } | null;
+    raf: number | null;
+  }>({
     active: false,
     pointerId: null,
     startX: 0,
     startLeft: 0,
+    lastLeft: 0,
     didDrag: false,
+    track: null,
+    raf: null,
   });
   const showActionsRef = useRef<HTMLDivElement | null>(null);
   const bottomActionsWrapRef = useRef<HTMLDivElement | null>(null);
@@ -86,6 +100,10 @@ const VavityBitcoin: React.FC = () => {
       transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
     } as React.CSSProperties;
   }, [realityOpacity, toggleAnimating, toggleKnobLeftPx]);
+  const [marketWordHidden, setMarketWordHidden] = useState(false);
+  const [marketWordText, setMarketWordText] = useState<string>('');
+  const marketWordTimerRef = useRef<number | null>(null);
+  const rangeClickFadeRef = useRef(false);
   const toggleKnobLeftComputedPx = useMemo(() => {
     if (!toggleTrack) return null;
     return toggleTrack.maxLeft - toggleAlpha * (toggleTrack.maxLeft - toggleTrack.minLeft);
@@ -137,6 +155,7 @@ const VavityBitcoin: React.FC = () => {
   const addMorePulseActiveRef = useRef(false);
   const showPulseActiveRef = useRef(false);
   const [isClearingInvestments, setIsClearingInvestments] = useState(false);
+  const clearInvestmentsAnimTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [slowOpenInvestments, setSlowOpenInvestments] = useState<string[]>([]);
   const isMutatingRef = useRef(false);
   const prevInvestmentIdsRef = useRef<string[]>([]);
@@ -375,6 +394,15 @@ const VavityBitcoin: React.FC = () => {
     return () => clearPulseTimers();
   }, [clearPulseTimers]);
 
+  useEffect(() => {
+    return () => {
+      if (clearInvestmentsAnimTimerRef.current) {
+        globalThis.clearTimeout(clearInvestmentsAnimTimerRef.current);
+        clearInvestmentsAnimTimerRef.current = null;
+      }
+    };
+  }, []);
+
   // Empty-state buttons: collapse timing is controlled by the click sequence (not by showEmptyAddForm).
   useEffect(() => {
     if (!emptySigninHiding) {
@@ -426,6 +454,14 @@ const VavityBitcoin: React.FC = () => {
   // Keep refs in sync for pointer handlers.
   useEffect(() => {
     toggleAlphaRef.current = toggleAlpha;
+  }, [toggleAlpha]);
+
+  useEffect(() => {
+    const delta = toggleAlpha - toggleAlphaPrevRef.current;
+    if (Math.abs(delta) > 0.0005) {
+      toggleDirectionRef.current = delta >= 0 ? 1 : -1;
+    }
+    toggleAlphaPrevRef.current = toggleAlpha;
   }, [toggleAlpha]);
 
   // Keep toggleAlpha in sync with committed mode when idle.
@@ -716,6 +752,50 @@ const VavityBitcoin: React.FC = () => {
     const next = investments.length;
     if (next === 0) {
       setSummaryOpen(false);
+      // Auto-expiry/delete-to-zero should play the same collapse dynamic as manual delete.
+      if (prev > 0 && !isClearingInvestments) {
+        setIsClearingInvestments(true);
+        setAddMoreOpen(false);
+        setShowAddMoreForm(false);
+        setInvestmentsListOpen(false);
+        setShowInvestmentsList(false);
+        if (clearInvestmentsAnimTimerRef.current) {
+          globalThis.clearTimeout(clearInvestmentsAnimTimerRef.current);
+          clearInvestmentsAnimTimerRef.current = null;
+        }
+        clearInvestmentsAnimTimerRef.current = globalThis.setTimeout(() => {
+          setIsClearingInvestments(false);
+          setShowEmptyAddForm(false);
+          setShowAddForm(false);
+          setAddFormOpen(false);
+          setEmptySigninHiding(false);
+          setEmptySigninGone(false);
+          setEmptyAddHiding(false);
+          setEmptyAddGone(false);
+          setShowAddMoreForm(false);
+          setAddMoreOpen(false);
+          setShowInvestmentsList(false);
+          setInvestmentsListOpen(false);
+          setSubmitPhase('idle');
+          submitTargetRef.current = 'add';
+          clearInvestmentsAnimTimerRef.current = null;
+        }, 2000);
+      } else if (!isClearingInvestments) {
+        // Initial empty mount or already-finished clear.
+        setShowEmptyAddForm(false);
+        setShowAddForm(false);
+        setAddFormOpen(false);
+        setEmptySigninHiding(false);
+        setEmptySigninGone(false);
+        setEmptyAddHiding(false);
+        setEmptyAddGone(false);
+        setShowAddMoreForm(false);
+        setAddMoreOpen(false);
+        setShowInvestmentsList(false);
+        setInvestmentsListOpen(false);
+        setSubmitPhase('idle');
+        submitTargetRef.current = 'add';
+      }
       prevSummaryCountRef.current = next;
       return;
     }
@@ -888,7 +968,7 @@ const VavityBitcoin: React.FC = () => {
   }, [oldestInvestmentDate]);
   const portfolioRanges = useMemo(
     () => [
-      { label: '24 hours', days: 1 },
+      { label: '24 hrs', days: 1 },
       { label: '1 wk', days: 7 },
       { label: '1 mnth', days: 30 },
       { label: '3 mnths', days: 90 },
@@ -934,25 +1014,32 @@ const VavityBitcoin: React.FC = () => {
     };
   }, [selectedRangeDays]);
 
-  const chartHistory = useMemo(() => {
-    if (!chartRangeDays || !history.length) return history;
-    const cutoff = chartRangeAnchorMs - chartRangeDays * 24 * 60 * 60 * 1000;
-    const filtered = history.filter((item) => {
-      const t = new Date(item.date).getTime();
-      return !Number.isNaN(t) && t >= cutoff;
-    });
-    // Ensure we always have at least two points so a line renders
-    if (filtered.length >= 2) return filtered;
-    if (history.length >= 2) {
-      return history.slice(-2);
-    }
-    if (history.length === 1) {
-      return history;
-    }
-    return filtered;
-  }, [chartRangeAnchorMs, chartRangeDays, history]);
+  const sliceSeriesWithAnchor = useCallback(
+    (src: { date: string; price: number }[]) => {
+      if (!chartRangeDays || !src.length) return src;
+      const cutoff = chartRangeAnchorMs - chartRangeDays * 24 * 60 * 60 * 1000;
+      const parsed = src
+        .map((item) => ({ item, t: new Date(item.date).getTime() }))
+        .filter((entry) => Number.isFinite(entry.t));
+      if (!parsed.length) return src.length >= 2 ? src.slice(-2) : src;
+      const firstInRangeIdx = parsed.findIndex((entry) => entry.t >= cutoff);
+      if (firstInRangeIdx === -1) return parsed.length >= 2 ? parsed.slice(-2).map((e) => e.item) : parsed.map((e) => e.item);
+      const startIdx = Math.max(0, firstInRangeIdx - 1); // include one point just before cutoff for continuous morph
+      const anchored = parsed.slice(startIdx).map((entry) => entry.item);
+      if (anchored.length >= 2) return anchored;
+      return parsed.length >= 2 ? parsed.slice(-2).map((e) => e.item) : anchored;
+    },
+    [chartRangeAnchorMs, chartRangeDays]
+  );
+
+  const chartHistory = useMemo(() => sliceSeriesWithAnchor(history), [history, sliceSeriesWithAnchor]);
 
   const filterSeriesForRange = useCallback(
+    (src: { date: string; price: number }[]) => sliceSeriesWithAnchor(src),
+    [sliceSeriesWithAnchor]
+  );
+
+  const sliceSeriesStrict = useCallback(
     (src: { date: string; price: number }[]) => {
       if (!chartRangeDays || !src.length) return src;
       const cutoff = chartRangeAnchorMs - chartRangeDays * 24 * 60 * 60 * 1000;
@@ -962,8 +1049,7 @@ const VavityBitcoin: React.FC = () => {
       });
       if (filtered.length >= 2) return filtered;
       if (src.length >= 2) return src.slice(-2);
-      if (src.length === 1) return src;
-      return filtered;
+      return filtered.length ? filtered : src;
     },
     [chartRangeAnchorMs, chartRangeDays]
   );
@@ -974,10 +1060,8 @@ const VavityBitcoin: React.FC = () => {
     [filterSeriesForRange, liquidHistory]
   );
 
-  const chartHistoryMorph = useMemo(() => {
-    const morphActive = toggleKnobLeftPx != null || toggleAnimating;
-    if (!morphActive) return null;
-
+  // Prepare union timeline + interpolated series once per range/data change.
+  const chartMorphPrepared = useMemo(() => {
     const toPoints = (src: { date: string; price: number }[]) =>
       (src || [])
         .map((p) => {
@@ -987,11 +1071,12 @@ const VavityBitcoin: React.FC = () => {
         })
         .filter(Boolean) as Array<readonly [number, number]>;
 
-    const solidPts = toPoints(chartHistorySolid).sort((a, b) => a[0] - b[0]);
-    const liquidPts = toPoints(chartHistoryLiquid).sort((a, b) => a[0] - b[0]);
-    if (!solidPts.length && !liquidPts.length) return [];
+    const solidSrc = chartHistorySolid;
+    const liquidSrc = chartHistoryLiquid;
+    const solidPts = toPoints(solidSrc).sort((a, b) => a[0] - b[0]);
+    const liquidPts = toPoints(liquidSrc).sort((a, b) => a[0] - b[0]);
+    if (!solidPts.length && !liquidPts.length) return null;
 
-    // Union timeline (timestamps), then interpolate each series to those timestamps and blend.
     const timesSet = new Set<number>();
     solidPts.forEach(([t]) => timesSet.add(t));
     liquidPts.forEach(([t]) => timesSet.add(t));
@@ -1018,12 +1103,30 @@ const VavityBitcoin: React.FC = () => {
           out.push(y0 + (y1 - y0) * Math.max(0, Math.min(1, frac)));
           continue;
         }
-        if (prev) {
-          out.push(prev[1]);
+        // Edge extrapolation: avoid long flat sections at the boundaries.
+        // Flat-holding here can make morph changes appear delayed for some ranges (e.g. 1/3 month).
+        if (!prev && next) {
+          if (pts.length >= 2) {
+            const p0 = pts[0];
+            const p1 = pts[1];
+            const dt = p1[0] - p0[0];
+            const slope = dt !== 0 ? (p1[1] - p0[1]) / dt : 0;
+            out.push(p0[1] + slope * (t - p0[0]));
+          } else {
+            out.push(next[1]);
+          }
           continue;
         }
-        if (next) {
-          out.push(next[1]);
+        if (prev && !next) {
+          if (pts.length >= 2) {
+            const p0 = pts[pts.length - 2];
+            const p1 = pts[pts.length - 1];
+            const dt = p1[0] - p0[0];
+            const slope = dt !== 0 ? (p1[1] - p0[1]) / dt : 0;
+            out.push(p1[1] + slope * (t - p1[0]));
+          } else {
+            out.push(prev[1]);
+          }
           continue;
         }
         out.push(0);
@@ -1031,43 +1134,126 @@ const VavityBitcoin: React.FC = () => {
       return out;
     };
 
-    const solidYs = sampleAtTimes(solidPts, times);
-    const liquidYs = sampleAtTimes(liquidPts, times);
-    const a = Math.max(0, Math.min(1, toggleAlpha));
-    // Near the edges, return the exact target timeline so we don't "reload" when morphing ends.
-    if (a <= 0.001) return chartHistorySolid;
-    if (a >= 0.999) return chartHistoryLiquid;
+    return {
+      times,
+      solidYs: sampleAtTimes(solidPts, times),
+      liquidYs: sampleAtTimes(liquidPts, times),
+    };
+  }, [chartHistoryLiquid, chartHistorySolid, chartRangeDays, liquidHistory, sliceSeriesStrict, solidHistory]);
 
-    const blended = times.map((t, idx) => ({
-      date: new Date(t).toISOString(),
-      price: solidYs[idx] * (1 - a) + liquidYs[idx] * a,
-    }));
-    // Keep at least 2 points for the chart renderer.
+  const decimateSeriesForRange = useCallback(
+    (src: { date: string; price: number }[]) => {
+      const maxPoints = chartRangeDays == null ? 320 : chartRangeDays >= 365 ? 280 : 9999;
+      if (!src || src.length <= maxPoints) return src || [];
+      const out: { date: string; price: number }[] = [];
+      const target = Math.max(2, maxPoints);
+      let lastIdx = -1;
+      for (let i = 0; i < target; i += 1) {
+        const idx = Math.round((i * (src.length - 1)) / (target - 1));
+        if (idx === lastIdx) continue;
+        lastIdx = idx;
+        out.push(src[idx]);
+      }
+      return out;
+    },
+    [chartRangeDays]
+  );
+
+  const morphActive = toggleKnobLeftPx != null || toggleAnimating;
+
+  const chartHistoryMorph = useMemo(() => {
+    if (!morphActive || !chartMorphPrepared) return null;
+    const a = Math.max(0, Math.min(1, toggleAlpha));
+    if (a <= 0.001) return decimateSeriesForRange(chartHistorySolid);
+    if (a >= 0.999) return decimateSeriesForRange(chartHistoryLiquid);
+    const blendA = a;
+    const { times, solidYs, liquidYs } = chartMorphPrepared;
+    // Performance mode during manual drag:
+    // cap rendered points (especially "All") so the chart can track pointer movement without lag.
+    const maxMorphPoints = chartRangeDays == null ? 320 : chartRangeDays >= 365 ? 280 : 9999;
+    const total = times.length;
+    const blended: { date: string; price: number }[] = [];
+    if (total <= maxMorphPoints) {
+      for (let idx = 0; idx < total; idx += 1) {
+        const recentness = total > 1 ? idx / (total - 1) : 1;
+        let pointBlendA = blendA;
+        if (chartRangeDays === 30 || chartRangeDays === 90) {
+          const bias = 1 + recentness * 2.2;
+          pointBlendA =
+            toggleDirectionRef.current >= 0
+              ? 1 - Math.pow(1 - blendA, bias)
+              : Math.pow(blendA, bias);
+        }
+        blended.push({
+          date: new Date(times[idx]).toISOString(),
+          price: solidYs[idx] * (1 - pointBlendA) + liquidYs[idx] * pointBlendA,
+        });
+      }
+    } else {
+      const target = Math.max(2, maxMorphPoints);
+      let lastIdx = -1;
+      for (let i = 0; i < target; i += 1) {
+        const idx = Math.round((i * (total - 1)) / (target - 1));
+        if (idx === lastIdx) continue;
+        lastIdx = idx;
+        const recentness = total > 1 ? idx / (total - 1) : 1;
+        let pointBlendA = blendA;
+        if (chartRangeDays === 30 || chartRangeDays === 90) {
+          const bias = 1 + recentness * 2.2;
+          pointBlendA =
+            toggleDirectionRef.current >= 0
+              ? 1 - Math.pow(1 - blendA, bias)
+              : Math.pow(blendA, bias);
+        }
+        blended.push({
+          date: new Date(times[idx]).toISOString(),
+          price: solidYs[idx] * (1 - pointBlendA) + liquidYs[idx] * pointBlendA,
+        });
+      }
+    }
     if (blended.length >= 2) return blended;
     if (blended.length === 1) return blended;
-    return displayIsLiquidMode ? chartHistoryLiquid : chartHistorySolid;
-  }, [chartHistoryLiquid, chartHistorySolid, displayIsLiquidMode, toggleAlpha, toggleAnimating, toggleKnobLeftPx]);
+    return decimateSeriesForRange(chartHistorySolid);
+  }, [chartHistoryLiquid, chartHistorySolid, chartMorphPrepared, chartRangeDays, decimateSeriesForRange, morphActive, toggleAlpha]);
 
-  const chartHistoryForLine = chartHistoryMorph ?? chartHistory;
+  const chartMorphYRange = useMemo(() => {
+    if (!chartMorphPrepared) return null;
+    const solidVals = chartMorphPrepared.solidYs.filter((v) => Number.isFinite(v));
+    const liquidVals = chartMorphPrepared.liquidYs.filter((v) => Number.isFinite(v));
+    if (!solidVals.length || !liquidVals.length) return null;
+    const solidMin = Math.min(...solidVals);
+    const solidMax = Math.max(...solidVals);
+    const liquidMin = Math.min(...liquidVals);
+    const liquidMax = Math.max(...liquidVals);
+    if (![solidMin, solidMax, liquidMin, liquidMax].every(Number.isFinite)) return null;
+    const a = Math.max(0, Math.min(1, toggleAlpha));
+    const min = solidMin + (liquidMin - solidMin) * a;
+    const max = solidMax + (liquidMax - solidMax) * a;
+    return { min, max };
+  }, [chartMorphPrepared, toggleAlpha]);
+
+  const chartHistoryDisplay = useMemo(() => {
+    return decimateSeriesForRange(chartHistory || []);
+  }, [chartHistory, decimateSeriesForRange]);
+
+  const chartHistoryForLine = chartHistoryMorph ?? chartHistoryDisplay;
+  // Stabilize 1/3-month only so they track like other ranges without impacting the rest.
+  const chartYRangeOverride =
+    chartRangeDays === 30 || chartRangeDays === 90 ? (morphActive ? chartMorphYRange : null) : null;
 
   const chartMarketCaps = useMemo(() => {
     if (!chartRangeDays || !history.length || !vapaMarketCap.length) return vapaMarketCap;
     const cutoff = chartRangeAnchorMs - chartRangeDays * 24 * 60 * 60 * 1000;
-    const filtered = history
-      .map((item, idx) => ({ ...item, cap: vapaMarketCap[idx] }))
-      .filter((entry) => {
-        const t = new Date(entry.date).getTime();
-        return !Number.isNaN(t) && t >= cutoff;
-      })
-      .map((entry) => entry.cap);
-    if (filtered.length >= 2) return filtered;
-    if (vapaMarketCap.length >= 2) {
-      return vapaMarketCap.slice(-2);
-    }
-    if (vapaMarketCap.length === 1) {
-      return vapaMarketCap;
-    }
-    return filtered;
+    const combined = history
+      .map((item, idx) => ({ t: new Date(item.date).getTime(), cap: vapaMarketCap[idx] }))
+      .filter((entry) => Number.isFinite(entry.t) && typeof entry.cap === 'number' && Number.isFinite(entry.cap));
+    if (!combined.length) return vapaMarketCap.length >= 2 ? vapaMarketCap.slice(-2) : vapaMarketCap;
+    const firstInRangeIdx = combined.findIndex((entry) => entry.t >= cutoff);
+    if (firstInRangeIdx === -1) return combined.length >= 2 ? combined.slice(-2).map((e) => e.cap) : combined.map((e) => e.cap);
+    const startIdx = Math.max(0, firstInRangeIdx - 1);
+    const anchored = combined.slice(startIdx).map((entry) => entry.cap);
+    if (anchored.length >= 2) return anchored;
+    return combined.length >= 2 ? combined.slice(-2).map((e) => e.cap) : anchored;
   }, [chartRangeAnchorMs, chartRangeDays, history, vapaMarketCap]);
 
   const activeIndex = useMemo(() => {
@@ -1115,6 +1301,47 @@ const VavityBitcoin: React.FC = () => {
     return ((latest - start) / start) * 100;
   }, [chartHistory, displayPoint, history]);
 
+  // Fade Bull/Bear/Sloth when chart range buttons change (independent of Liquid/Solid toggle).
+  useEffect(() => {
+    const nextWord =
+      percentageIncrease > 0 ? 'Bull Market' : displayIsLiquidMode ? 'Bear Market' : 'Sloth Market';
+
+    // Initialize once we have the first computed word.
+    if (!marketWordText) {
+      setMarketWordText(nextWord);
+      return;
+    }
+
+    // Range-click fade: hide first (triggered in the onClick), then swap text, then fade back in.
+    if (rangeClickFadeRef.current) {
+      rangeClickFadeRef.current = false;
+      if (marketWordTimerRef.current != null) {
+        window.clearTimeout(marketWordTimerRef.current);
+        marketWordTimerRef.current = null;
+      }
+      marketWordTimerRef.current = window.setTimeout(() => {
+        setMarketWordText(nextWord);
+        window.requestAnimationFrame(() => setMarketWordHidden(false));
+        marketWordTimerRef.current = null;
+      }, 180);
+      return;
+    }
+
+    // Non-range changes (e.g. toggle crossing midpoint): update immediately; toggleAlpha fade handles the transition.
+    if (nextWord !== marketWordText) {
+      setMarketWordText(nextWord);
+    }
+  }, [chartRangeDays, displayIsLiquidMode, marketWordText, percentageIncrease]);
+
+  useEffect(() => {
+    return () => {
+      if (marketWordTimerRef.current != null) {
+        window.clearTimeout(marketWordTimerRef.current);
+        marketWordTimerRef.current = null;
+      }
+    };
+  }, []);
+
   // Fade in header numbers (Price / Market Cap / %) once real data is available.
   useEffect(() => {
     const rawPrice = displayPoint?.price ?? (isLiquidMode ? assetPrice : vapa);
@@ -1135,7 +1362,7 @@ const VavityBitcoin: React.FC = () => {
 
   const chartRanges = useMemo(
     () => [
-      { label: '24 hours', days: 1 },
+      { label: '24 hrs', days: 1 },
       { label: '1 wk', days: 7 },
       { label: '1 mnth', days: 30 },
       { label: '3 mnths', days: 90 },
@@ -1852,22 +2079,24 @@ const VavityBitcoin: React.FC = () => {
                                 : rawLabel === '1 yr'
                                   ? '1 year'
                                   : rawLabel;
-                      // Keep key stable so the text can fade smoothly instead of remounting on mode change.
-                      const marketKey = label;
                       return (
                         <>
-                          <span
-                            key={label}
-                            className="asset-metric-inline-title--bitcoin asset-market-status-title"
-                          >
+                          <span className="asset-metric-inline-title--bitcoin asset-market-status-title">
                             {label}:
                           </span>{' '}
                           <span
-                            key={marketKey}
                             className="asset-metric-inline-value asset-market-status-value"
-                            style={realityFadeStyle}
+                            style={{
+                              opacity: (marketWordHidden ? 0 : 1) * realityOpacity,
+                              transition:
+                                toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 0.25s ease',
+                            }}
                           >
-                            {percentageIncrease > 0 ? 'Bull Market' : displayIsLiquidMode ? 'Bear Market' : 'Sloth Market'}
+                            {marketWordText || (percentageIncrease > 0
+                              ? 'Bull Market'
+                              : displayIsLiquidMode
+                                ? 'Bear Market'
+                                : 'Sloth Market')}
                           </span>
                         </>
                       );
@@ -1886,6 +2115,9 @@ const VavityBitcoin: React.FC = () => {
                       disabled={isActive}
                       onClick={() => {
                         if (isActive) return;
+                        // Trigger Bull/Bear/Sloth fade on range change.
+                        rangeClickFadeRef.current = true;
+                        setMarketWordHidden(true);
                         setChartRangeAnchorMs(Date.now());
                         setChartRangeDays(range.days);
                       }}
@@ -1958,6 +2190,7 @@ const VavityBitcoin: React.FC = () => {
                   animateOn={false}
                   animateDelayMs={0}
                   animationDurationMs={toggleKnobLeftPx != null || toggleAnimating ? 0 : 1000}
+                  yRangeOverride={chartYRangeOverride}
               onPointHover={(point, idx) => {
                 setChartHoverIndex(idx ?? null);
                 setChartHoverPoint(point);
@@ -1999,32 +2232,45 @@ const VavityBitcoin: React.FC = () => {
                   toggleDragRef.current.pointerId = e.pointerId;
                   toggleDragRef.current.startX = e.clientX;
                   toggleDragRef.current.startLeft = currentLeft;
+                  toggleDragRef.current.lastLeft = currentLeft;
                   toggleDragRef.current.didDrag = false;
+                  toggleDragRef.current.track = { minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 };
+                  // Ensure we disable easing immediately on the first frame of a drag.
+                  btn.classList.add('is-dragging');
 
                   try {
                     btn.setPointerCapture(e.pointerId);
                   } catch {}
+                  // Keep state "in drag mode" but drive the knob position imperatively for zero-lag pointer tracking.
                   setToggleKnobLeftPx(currentLeft);
+                  btn.style.setProperty('--toggle-knob-left', `${currentLeft}px`);
                   const alpha = (maxLeft - currentLeft) / Math.max(1e-6, maxLeft - minLeft);
-                  setToggleAlpha(Math.max(0, Math.min(1, alpha)));
+                  toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
+                  setToggleAlpha(toggleAlphaRef.current);
                   e.preventDefault();
                 }}
                 onPointerMove={(e) => {
                   if (!toggleDragRef.current.active) return;
                   const btn = e.currentTarget;
-                  const cs = window.getComputedStyle(btn);
-                  const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
-                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
-                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
-                  const w = btn.getBoundingClientRect().width;
-                  const minLeft = leftInset;
-                  const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+                  const track = toggleDragRef.current.track;
+                  if (!track) return;
+                  const minLeft = track.minLeft;
+                  const maxLeft = track.maxLeft;
                   const dx = e.clientX - toggleDragRef.current.startX;
                   if (Math.abs(dx) > 2) toggleDragRef.current.didDrag = true;
                   const next = Math.min(maxLeft, Math.max(minLeft, toggleDragRef.current.startLeft + dx));
-                  setToggleKnobLeftPx(next);
+                  toggleDragRef.current.lastLeft = next;
+                  btn.style.setProperty('--toggle-knob-left', `${next}px`);
                   const alpha = (maxLeft - next) / Math.max(1e-6, maxLeft - minLeft);
-                  setToggleAlpha(Math.max(0, Math.min(1, alpha)));
+                  toggleAlphaRef.current = Math.max(0, Math.min(1, alpha));
+                  if (toggleDragRef.current.raf == null) {
+                    toggleDragRef.current.raf = window.requestAnimationFrame(() => {
+                      toggleDragRef.current.raf = null;
+                      setToggleAlpha((prev) =>
+                        Math.abs(prev - toggleAlphaRef.current) > 0.001 ? toggleAlphaRef.current : prev
+                      );
+                    });
+                  }
                   e.preventDefault();
                 }}
                 onPointerUp={(e) => {
@@ -2038,11 +2284,13 @@ const VavityBitcoin: React.FC = () => {
                   const minLeft = leftInset;
                   const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
                   const mid = (minLeft + maxLeft) / 2;
-                  const finalLeft = toggleKnobLeftPx ?? (displayIsLiquidMode ? minLeft : maxLeft);
+                  const finalLeft = toggleDragRef.current.lastLeft || (displayIsLiquidMode ? minLeft : maxLeft);
                   const nextIsLiquid = finalLeft <= mid;
 
                   toggleDragRef.current.active = false;
                   toggleDragRef.current.pointerId = null;
+                  toggleDragRef.current.track = null;
+                  btn.classList.remove('is-dragging');
                   try {
                     btn.releasePointerCapture(e.pointerId);
                   } catch {}
@@ -2062,9 +2310,15 @@ const VavityBitcoin: React.FC = () => {
                   if (!toggleDragRef.current.active) return;
                   toggleDragRef.current.active = false;
                   toggleDragRef.current.pointerId = null;
+                  toggleDragRef.current.track = null;
+                  if (toggleDragRef.current.raf != null) {
+                    window.cancelAnimationFrame(toggleDragRef.current.raf);
+                    toggleDragRef.current.raf = null;
+                  }
                   setToggleKnobLeftPx(null);
                   setToggleAlpha(isLiquidMode ? 1 : 0);
                   try {
+                    e.currentTarget.classList.remove('is-dragging');
                     e.currentTarget.releasePointerCapture(e.pointerId);
                   } catch {}
                 }}
@@ -2256,7 +2510,7 @@ const VavityBitcoin: React.FC = () => {
                         if (days === 30) return '1 month';
                         if (days === 90) return '3 months';
                         if (days === 365) return '1 year';
-                        if (days === 1) return '24 hours';
+                        if (days === 1) return '24 hrs';
                         return `${days} days`;
                       };
                   if (selectedRangeDays && rangeHistoricalPrice != null) {

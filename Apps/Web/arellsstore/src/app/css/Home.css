@@ -10,7 +10,7 @@
 	padding-right: 10px;
 	border-radius: 0px;
 	padding-bottom: 90px;
-	background: var(--app-bg, #ffffff);
+	background: transparent;
 	-webkit-animation-name: animatetop;
 	-webkit-animation-duration: 1.00s;
 	animation-name: animatetop;
@@ -21,6 +21,15 @@ html,
 body {
 	margin: 0;
 	padding: 0;
+}
+
+/* Keep a single base paint layer on Home: body only. */
+html {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+body {
 	/* Allow pages (like asset pages) to set a global background that also shows during overscroll. */
 	background: var(--app-bg, #ffffff) !important;
 	background-color: var(--app-bg, #ffffff) !important;
@@ -105,11 +114,11 @@ body {
 }
 
 .asset-page--bitcoin {
-	background: rgba(248, 141, 0, 0.06);
+	background: transparent;
 }
 
 .asset-page--ethereum {
-	background: rgba(107, 114, 168, 0.07);
+	background: transparent;
 }
 
 .asset-header {
@@ -1576,7 +1585,7 @@ body {
 
 .asset-reality-toggle-shell {
 	/* Wrap the toggle inside a bordered section matching other panels */
-	width: 300px;
+	width: 380px;
 	box-sizing: border-box;
 	margin: var(--asset-reality-toggle-row-margin-top, 20px) auto var(--asset-reality-toggle-shell-margin-bottom, 23px);
 	padding-bottom: 15px;
@@ -1605,7 +1614,7 @@ body {
 
 .asset-reality-toggle {
 	/* Make the track 20px longer */
-	width: 74px;
+	width: 154px;
 	/* Keep a larger hit-area, but draw the *visual* track as a thin line (see ::before) */
 	height: 25px;
 	border-radius: 999px;
@@ -2048,6 +2057,15 @@ body {
 	}
 }
 
+@keyframes pageSlideUpNoOpacity {
+	0% {
+		transform: translateY(40px);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}
+
 .asset-investments-wrap {
 	margin-top: 0;
 	padding: 0;
@@ -2198,26 +2216,27 @@ body {
 	border-radius: 999px;
 	padding: 14px 20px;
 	border: 1px solid rgba(0, 0, 0, 0.12);
-	background: rgba(255, 255, 255, 0.95);
+	background: rgba(255, 255, 255, 0.9);
 	box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
 	color: #222;
 	font-size: 14px;
 	font-weight: 700;
 	letter-spacing: -0.2px;
-	transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .home-investments-slideup {
 	position: fixed;
 	left: 50%; /* may be overridden by JS measurement */
 	bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-	transform: translate(-50%, 220%);
+	/* Start completely below the viewport before first paint-in. */
+	transform: translate(-50%, calc(100% + 120px));
 	pointer-events: none;
 	opacity: 1;
-	/* Sit above page content, but below loader overlays */
-	z-index: 2147483000;
+	/* Keep this exactly one layer above the home assets section wrapper. */
+	z-index: 2;
 	isolation: isolate;
-	transition: transform 0.35s ease;
+	transition: transform 1s ease;
 }
 
 .home-investments-slideup.is-visible {
@@ -2237,18 +2256,13 @@ body {
 	/* Lower/softer shadow; opacity reduced to ~30% of previous */
 	box-shadow: -4px -1px 12px rgba(0, 0, 0, 0.09);
 	border-radius: 12px;
-	/* Section opacity .9 via background alpha (not global opacity) */
 	background: rgba(255, 255, 255, 0.9);
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
 	margin-bottom: -30px;
-	/* Same initial mount animation as the Home assets block */
-	animation-name: pageSlideUp;
-	animation-duration: 4s;
-	animation-delay: 0s;
-	animation-timing-function: ease;
-	animation-fill-mode: both;
+	/* Motion is controlled by `.home-investments-slideup` transform transition only. */
+	animation: none;
 }
 
 /* Align like the asset rows: leave space for the index column */
@@ -2280,8 +2294,7 @@ body {
 	cursor: pointer;
 	box-sizing: border-box;
 	width: 100%;
-	/* match home asset card shell */
-	background: #ffffff;
+	background: rgba(255, 255, 255, 0.9);
 	border: 1px solid rgba(0, 0, 0, 0.12);
 	box-shadow: -6px 0px 20px rgba(0, 0, 0, 0.08);
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -2310,7 +2323,7 @@ body {
 	font-size: 14px;
 	color: #000;
 	opacity: .5;
-	transition: opacity 0.2s ease, color 0.2s ease;
+	transition: color 0.2s ease;
 }
 
 .home-investments-slideup-button:hover .home-investments-slideup-button-text {
@@ -3322,7 +3335,9 @@ body {
 				padding-right: 10px;
 				box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
 				border-radius: 12px;
-				background: #ffffff;
+				position: relative;
+				z-index: 1;
+				background: rgba(255, 255, 255, 0.9);
 			}
 
 			.home-assets-header-row {
@@ -3393,7 +3408,7 @@ body {
 				display: grid;
 				grid-template-columns: repeat(5, minmax(0, 1fr));
 				align-items: center;
-				background: #ffffff;
+				background: transparent;
 				border-radius: 14px;
 				padding: 13px 20px 13px 10px;
 				box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);

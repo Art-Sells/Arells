@@ -12,7 +12,8 @@ const BitcoinPageClient: React.FC = () => {
 
   // Set global background immediately for overscroll beyond the asset page.
   useEffect(() => {
-    const bg = 'rgba(248, 141, 0, 0.06)';
+    // Use an opaque tint so overscroll can never blend back to browser white.
+    const bg = 'rgb(255, 247, 236)';
     const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
     const prevBody = document.body.style.getPropertyValue('--app-bg');
     const prevHtmlBg = document.documentElement.style.backgroundColor;
