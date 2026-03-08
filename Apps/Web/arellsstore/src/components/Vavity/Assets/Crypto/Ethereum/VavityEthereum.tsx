@@ -724,7 +724,20 @@ const VavityEthereum: React.FC = () => {
     // If we're submitting the very first investment, keep the "empty" UI mounted
     // so the submit/collapse animation can finish without swapping branches (which causes the pop).
     (submitTargetRef.current === 'add' && submitPhase !== 'idle');
+  const showInvestmentsHeader = investments.length > 0;
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
+  const triggerEmptyButtonsExpand = useCallback(() => {
+    setEmptySigninGone(false);
+    setEmptyAddGone(false);
+    setEmptySigninHiding(true);
+    setEmptyAddHiding(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setEmptySigninHiding(false);
+        setEmptyAddHiding(false);
+      });
+    });
+  }, []);
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
   const investmentsWholeMaxHeight = summaryOpen && !isClearingInvestments ? `${investmentsWholeHeight}px` : '0px';
   const investmentsWholeTransition =
@@ -752,10 +765,6 @@ const VavityEthereum: React.FC = () => {
           setShowEmptyAddForm(false);
           setShowAddForm(false);
           setAddFormOpen(false);
-          setEmptySigninHiding(false);
-          setEmptySigninGone(false);
-          setEmptyAddHiding(false);
-          setEmptyAddGone(false);
           setShowAddMoreForm(false);
           setAddMoreOpen(false);
           setShowInvestmentsList(false);
@@ -804,17 +813,10 @@ const VavityEthereum: React.FC = () => {
   useEffect(() => {
     const prev = prevHasInvestmentsUIRef.current;
     if (prev && !hasInvestmentsUI && !showEmptyAddForm) {
-      setEmptySigninGone(false);
-      setEmptyAddGone(false);
-      setEmptySigninHiding(true);
-      setEmptyAddHiding(true);
-      requestAnimationFrame(() => {
-        setEmptySigninHiding(false);
-        setEmptyAddHiding(false);
-      });
+      triggerEmptyButtonsExpand();
     }
     prevHasInvestmentsUIRef.current = hasInvestmentsUI;
-  }, [hasInvestmentsUI, showEmptyAddForm]);
+  }, [hasInvestmentsUI, showEmptyAddForm, triggerEmptyButtonsExpand]);
 
   useEffect(() => {
     if (!summaryOpen || isClearingInvestments) {
@@ -2381,7 +2383,7 @@ const VavityEthereum: React.FC = () => {
           paddingLeft: '20px',
           paddingRight: '20px' }}
       >
-        {hasInvestmentsUI && (
+        {showInvestmentsHeader && (
           <h2
             className="asset-investments-header"
           >

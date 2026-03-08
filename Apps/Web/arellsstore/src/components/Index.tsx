@@ -47,6 +47,13 @@ const Index = () => {
     document.body.style.setProperty('--app-bg', bg);
     document.documentElement.style.backgroundColor = bg;
     document.body.style.backgroundColor = bg;
+    const href = '/ArellsIcoIcon.png';
+    const links = document.querySelectorAll<HTMLLinkElement>(
+      'link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]'
+    );
+    links.forEach((link) => {
+      link.href = href;
+    });
   }, []);
 
 

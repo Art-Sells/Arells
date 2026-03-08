@@ -1498,7 +1498,7 @@ body {
 	opacity: 1;
 	max-height: 240px;
 	/* No fade-out: collapse via height/margins/padding only */
-	transition: max-height .5s ease, margin .5s ease, padding .5s ease;
+	transition: max-height 1s ease, margin 1s ease, padding 1s ease;
 }
 
 .asset-empty-signin.is-hidden {
@@ -1527,7 +1527,7 @@ body {
 	opacity: 1;
 	max-height: 140px;
 	/* No fade-out: collapse via height/margins/padding only */
-	transition: max-height .5s ease, margin .6s ease, padding .5s ease;
+	transition: max-height 1s ease, margin 1s ease, padding 1s ease;
 }
 
 .asset-empty-addinvest.is-hidden {

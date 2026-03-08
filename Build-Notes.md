@@ -2,7 +2,7 @@
 
 ## Arells v1
 
-
+- *chart-date not matching calendar date..... check API and jsons to see when was the earliest date saved in json to verify....*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
 - *add submitted icon*
