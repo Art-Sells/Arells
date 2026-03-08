@@ -10,7 +10,7 @@
 	padding-right: 10px;
 	border-radius: 0px;
 	padding-bottom: 90px;
-	background: #ffffff;
+	background: var(--app-bg, #ffffff);
 	-webkit-animation-name: animatetop;
 	-webkit-animation-duration: 1.00s;
 	animation-name: animatetop;
@@ -21,6 +21,9 @@ html,
 body {
 	margin: 0;
 	padding: 0;
+	/* Allow pages (like asset pages) to set a global background that also shows during overscroll. */
+	background: var(--app-bg, #ffffff) !important;
+	background-color: var(--app-bg, #ffffff) !important;
 }
 
 .home-loader-overlay {
@@ -94,7 +97,8 @@ body {
 
 .asset-page {
 	min-height: 100vh;
-	background: #fff;
+	/* Let per-asset and global app background show through (also fixes overscroll edge cases). */
+	background: transparent;
 	font-family: Arial;
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
@@ -1655,6 +1659,11 @@ body {
 }
 
 .asset-reality-toggle.is-dragging .asset-reality-toggle-knob {
+	transition: none;
+}
+
+/* While we drive the knob via rAF (click animation), disable CSS easing so it doesn't "lag behind". */
+.asset-reality-toggle.is-animating .asset-reality-toggle-knob {
 	transition: none;
 }
 

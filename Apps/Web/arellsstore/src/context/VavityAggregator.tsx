@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useUser } from './UserContext';
 
 interface Investment {
@@ -59,6 +59,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     acVactTaa: 0,
   });
   const assetIds = useMemo(() => ['bitcoin', 'ethereum'], []);
+  const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
+  const sessionExpiryTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const lastSessionAssetRef = useRef<string>('bitcoin');
 
   const refreshAsset = useCallback(async (assetId: string) => {
     try {
@@ -93,6 +96,38 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const getAsset = useCallback((assetId: string) => assets[assetId], [assets]);
 
+  // While the user is active, auto-trigger a fetch right when the session TTL expires so the session investments clear at ~60s.
+  useEffect(() => {
+    if (!sessionId) return;
+    if (sessionExpiresAt == null) return;
+    if (sessionExpiryTimerRef.current) {
+      globalThis.clearTimeout(sessionExpiryTimerRef.current);
+      sessionExpiryTimerRef.current = null;
+    }
+    const delay = sessionExpiresAt - Date.now();
+    const safeDelay = Math.max(delay, 0) + 25; // small buffer
+    sessionExpiryTimerRef.current = globalThis.setTimeout(async () => {
+      try {
+        const response = await axios.get(`/api/fetchVavityAggregator`, {
+          params: { sessionId, asset: lastSessionAssetRef.current || 'bitcoin' },
+        });
+        const data = response.data || {};
+        setInvestments(Array.isArray(data.investments) ? data.investments : []);
+        setTotals(data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+        const nextExpiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
+        setSessionExpiresAt(nextExpiresAt);
+      } catch {
+        // ignore
+      }
+    }, safeDelay);
+    return () => {
+      if (sessionExpiryTimerRef.current) {
+        globalThis.clearTimeout(sessionExpiryTimerRef.current);
+        sessionExpiryTimerRef.current = null;
+      }
+    };
+  }, [sessionExpiresAt, sessionId]);
+
   const fetchVavityAggregator = useCallback(async (currentSessionId: string, asset = 'bitcoin'): Promise<any> => {
     if (!currentSessionId) throw new Error('Session ID is required');
     const response = await axios.get(`/api/fetchVavityAggregator`, { params: { sessionId: currentSessionId, asset } });
@@ -101,6 +136,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const fetchedTotals: TotalsState = data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
     setInvestments(fetchedInvestments);
     setTotals(fetchedTotals);
+    lastSessionAssetRef.current = asset;
+    const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
+    setSessionExpiresAt(expiresAt);
     return data;
   }, []);
 
@@ -116,6 +154,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const data = response.data?.data || {};
     setInvestments(data.investments || []);
     setTotals(data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+    lastSessionAssetRef.current = asset;
+    const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
+    setSessionExpiresAt(expiresAt);
     return response.data;
   }, []);
 
@@ -131,6 +172,9 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const data = response.data?.data || {};
     setInvestments(data.investments || updatedInvestments || []);
     setTotals(data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+    lastSessionAssetRef.current = asset;
+    const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
+    setSessionExpiresAt(expiresAt);
     return response.data;
   }, []);
 

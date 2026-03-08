@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
+const SESSION_TTL_MS = 60_000;
 const VAPA_KEYS: Record<string, string> = {
   bitcoin: 'vavity/bitcoinVAPA.json',
   ethereum: 'vavity/ethereumVAPA.json',
@@ -130,6 +131,29 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: key }).promise();
     const userData = JSON.parse(data.Body!.toString());
+
+    // Session TTL meta: if expired, delete the session object and return empty.
+    const now = Date.now();
+    const existingCreatedAt = typeof userData?.createdAt === 'number' ? userData.createdAt : null;
+    const existingExpiresAt = typeof userData?.expiresAt === 'number' ? userData.expiresAt : null;
+    const expired = typeof existingExpiresAt === 'number' && Number.isFinite(existingExpiresAt) && now >= existingExpiresAt;
+    if (expired) {
+      try {
+        await s3.deleteObject({ Bucket: BUCKET_NAME, Key: key }).promise();
+      } catch {
+        // ignore delete errors; still return empty
+      }
+      return res.status(200).json({
+        investments: [],
+        totals: { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 },
+        totalsLiquid: { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 },
+      });
+    }
+
+    // Backfill TTL meta for legacy session files that predate createdAt/expiresAt.
+    // This does NOT create a new session file; it only updates existing ones.
+    const createdAt = existingCreatedAt ?? now;
+    const expiresAt = existingExpiresAt ?? createdAt + SESSION_TTL_MS;
     const investmentsAll: any[] = Array.isArray(userData.investments) ? userData.investments : [];
 
     // Recompute/update both Solid + Liquid fields so stored JSON stays current as prices move.
@@ -153,6 +177,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     );
     const hasLegacyTotals = userData?.totalsReality != null;
     let didMutate = hasLegacyLiquidFields || hasLegacyTotals;
+    if (existingCreatedAt == null || existingExpiresAt == null) {
+      didMutate = true;
+    }
     const normalizeExistingInvestment = (inv: any) => {
       const next = { ...(inv || {}) };
       if (typeof next.lCpVatop !== 'number' && typeof next.rCpVatop === 'number') next.lCpVatop = next.rCpVatop;
@@ -235,7 +262,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const totalsAll = calculateTotals(updatedAll);
     const totalsLiquidAll = calculateTotalsLiquid(updatedAll);
-    const newData = { investments: updatedAll, totals: totalsAll, totalsLiquid: totalsLiquidAll };
+    const newData = { createdAt, expiresAt, investments: updatedAll, totals: totalsAll, totalsLiquid: totalsLiquidAll };
 
     if (didMutate) {
       await s3
@@ -254,6 +281,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const totals = calculateTotals(filteredInvestments);
       const totalsLiquid = calculateTotalsLiquid(filteredInvestments);
       return res.status(200).json({
+        createdAt,
+        expiresAt,
         investments: filteredInvestments,
         totals,
         totalsLiquid,

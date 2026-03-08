@@ -34,6 +34,7 @@ type Props = {
   markerShadow?: string;
   animateOn?: boolean;
   animateDelayMs?: number;
+  animationDurationMs?: number;
 };
 
 const BitcoinChart: React.FC<Props> = ({
@@ -51,10 +52,12 @@ const BitcoinChart: React.FC<Props> = ({
   markerShadow = '-5px 0 14px rgba(248, 141, 0, 0.26), 0 7px 10px rgba(248, 141, 0, 0.18)',
   animateOn = true,
   animateDelayMs = 0,
+  animationDurationMs = 1000,
 }) => {
   const chartRef = useRef<ChartJS<'line', PricePoint[], unknown> | null>(null);
   const markerRef = useRef<HTMLDivElement | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
+  const didAnimateResetRef = useRef(false);
 
   const cubicAt = useCallback((p0: number, c1: number, c2: number, p1: number, t: number) => {
     const u = 1 - t;
@@ -269,7 +272,7 @@ const BitcoinChart: React.FC<Props> = ({
       maintainAspectRatio: false,
       layout: { padding: 0, autoPadding: false },
       animation: {
-        duration: 1000,
+        duration: animationDurationMs,
         easing: 'easeOutQuart' as const,
       },
       interaction: { mode: 'nearest' as const, intersect: false },
@@ -301,7 +304,7 @@ const BitcoinChart: React.FC<Props> = ({
     },
       onHover: () => {},
     };
-  }, [xRange, yRange]);
+  }, [xRange, yRange, animationDurationMs]);
 
   // Keep ref in sync for Line and allow animation on data updates
   useEffect(() => {
@@ -313,6 +316,10 @@ const BitcoinChart: React.FC<Props> = ({
 
   useEffect(() => {
     if (!animateOn) return;
+    // Only run the delayed reset once per mount. Otherwise toggles/rerenders can make the line "reload".
+    if (didAnimateResetRef.current) return;
+    didAnimateResetRef.current = true;
+    if (animationDurationMs <= 0) return;
     const chart = chartRef.current;
     if (!chart) return;
     const timer = window.setTimeout(() => {
@@ -320,7 +327,7 @@ const BitcoinChart: React.FC<Props> = ({
       chart.update();
     }, animateDelayMs);
     return () => window.clearTimeout(timer);
-  }, [animateOn, animateDelayMs]);
+  }, [animateOn, animateDelayMs, animationDurationMs]);
 
   useEffect(() => {
     const chart = chartRef.current;

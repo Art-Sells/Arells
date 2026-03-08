@@ -32,6 +32,7 @@ type Props = {
   onPointHover?: (point: PricePoint | null, index: number | null) => void;
   backgroundColor?: string;
   markerShadow?: string;
+  animationDurationMs?: number;
 };
 
 const EthereumChart: React.FC<Props> = ({
@@ -47,6 +48,7 @@ const EthereumChart: React.FC<Props> = ({
   onPointHover,
   backgroundColor = '#161616',
   markerShadow = '-8px 0 14px rgba(107, 114, 168, 0.28), 0 7px 10px rgba(107, 114, 168, 0.2)',
+  animationDurationMs = 1000,
 }) => {
   const chartRef = useRef<ChartJS<'line', PricePoint[], unknown> | null>(null);
   const markerRef = useRef<HTMLDivElement | null>(null);
@@ -258,7 +260,7 @@ const EthereumChart: React.FC<Props> = ({
       maintainAspectRatio: false,
       layout: { padding: 0, autoPadding: false },
       animation: {
-        duration: 1000,
+        duration: animationDurationMs,
         easing: 'easeOutQuart' as const,
       },
       interaction: { mode: 'nearest' as const, intersect: false },
@@ -290,7 +292,7 @@ const EthereumChart: React.FC<Props> = ({
     },
       onHover: () => {},
     };
-  }, [xRange, yRange]);
+  }, [xRange, yRange, animationDurationMs]);
 
   useEffect(() => {
     const chart = chartRef.current;

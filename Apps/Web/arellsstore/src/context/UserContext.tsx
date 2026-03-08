@@ -132,37 +132,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener('storage', handleStorage);
   }, [setSessionId]);
 
-  // Clear session investments on every route change ("page mount" behavior) for guest sessions.
+  // Guest sessions are TTL-controlled server-side; do not wipe them on every route change.
   useEffect(() => {
-    let cancelled = false;
-    if (typeof window === 'undefined') return;
     if (!sessionId) return;
-    if (isSignedIn) {
-      setSessionReady(true);
-      return;
-    }
-
-    const clear = async () => {
-      try {
-        // Wipe the session JSON: sessions/${sessionId}/VavityAggregate.json
-        await fetch('/api/saveVavityAggregator', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId, investments: [], asset: 'bitcoin' }),
-        });
-      } catch {
-        // If it fails, still allow the app to run; next refresh will retry.
-      } finally {
-        if (cancelled) return;
-        setSessionReady(true);
-      }
-    };
-
-    setSessionReady(false);
-    clear();
-    return () => {
-      cancelled = true;
-    };
+    setSessionReady(true);
   }, [sessionId, pathname, isSignedIn]);
 
   const refreshEmailAggregator = useCallback(

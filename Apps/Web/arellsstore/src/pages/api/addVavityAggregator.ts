@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
+const SESSION_TTL_MS = 60_000;
 const VAPA_KEYS: Record<string, string> = {
   bitcoin: 'vavity/bitcoinVAPA.json',
   ethereum: 'vavity/ethereumVAPA.json'
@@ -162,6 +163,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const existingInvestmentsRaw = Array.isArray(existingData.investments) ? existingData.investments : [];
 
+    // Session TTL meta: start countdown when the session JSON is first created.
+    // If the existing session is expired, rotate meta and treat this add as a fresh session (old session investments are dropped).
+    const now = Date.now();
+    const existingCreatedAt = typeof existingData?.createdAt === 'number' ? existingData.createdAt : null;
+    const existingExpiresAt = typeof existingData?.expiresAt === 'number' ? existingData.expiresAt : null;
+    const expired = typeof existingExpiresAt === 'number' && Number.isFinite(existingExpiresAt) && now >= existingExpiresAt;
+    const createdAt = expired ? now : existingCreatedAt ?? now;
+    const expiresAt = expired ? now + SESSION_TTL_MS : existingExpiresAt ?? createdAt + SESSION_TTL_MS;
+
     const vapaData = await loadVapaData(asset);
     const currentPrice = await loadCurrentPrice(asset);
     const currentLiquidPrice = currentPrice ?? vapaData.price;
@@ -183,7 +193,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return next;
     };
 
-    const existingInvestments = existingInvestmentsRaw.map(normalizeExistingInvestment);
+    const existingInvestments = (expired ? [] : existingInvestmentsRaw).map(normalizeExistingInvestment);
 
     const normalizedNewInvestments = newInvestments.map((inv: any) => {
       const rawAmount = inv.cVactTaa ?? 0;
@@ -240,6 +250,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const totalsLiquid = calculateTotalsLiquid(updatedInvestments);
 
     const newData = {
+      createdAt,
+      expiresAt,
       investments: updatedInvestments,
       totals,
       totalsLiquid,
