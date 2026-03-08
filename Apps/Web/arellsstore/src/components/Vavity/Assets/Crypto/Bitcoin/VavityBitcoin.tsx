@@ -1177,9 +1177,32 @@ const VavityBitcoin: React.FC = () => {
     }
     const solidSpan = Math.max(0, solidMax - solidMin);
     const liquidSpan = Math.max(0, liquidMax - liquidMin);
-    const norm = (v: number, min: number, span: number) => (span > 0 ? (v - min) / span : 0.5);
+    const percentileFromSorted = (sorted: number[], p: number) => {
+      if (!sorted.length) return 0;
+      const idx = (sorted.length - 1) * p;
+      const i0 = Math.floor(idx);
+      const i1 = Math.min(sorted.length - 1, i0 + 1);
+      const frac = idx - i0;
+      const v0 = sorted[i0];
+      const v1 = sorted[i1];
+      return v0 + (v1 - v0) * frac;
+    };
+    const solidSorted = [...solidYs].sort((a, b) => a - b);
+    const liquidSorted = [...liquidYs].sort((a, b) => a - b);
+    const solidNormMin = percentileFromSorted(solidSorted, 0.1);
+    const solidNormMax = percentileFromSorted(solidSorted, 0.9);
+    const liquidNormMin = percentileFromSorted(liquidSorted, 0.1);
+    const liquidNormMax = percentileFromSorted(liquidSorted, 0.9);
+    const solidNormSpan = Math.max(solidNormMax - solidNormMin, Math.max(Math.abs(solidNormMax), 1) * 0.05);
+    const liquidNormSpan = Math.max(liquidNormMax - liquidNormMin, Math.max(Math.abs(liquidNormMax), 1) * 0.05);
+    const norm = (v: number, min: number, max: number, span: number) => {
+      const clamped = Math.min(Math.max(v, min), max);
+      return span > 0 ? (clamped - min) / span : 0.5;
+    };
     const minMix = solidMin * (1 - blendA) + liquidMin * blendA;
     const spanMix = solidSpan * (1 - blendA) + liquidSpan * blendA;
+    const shapePower = chartRangeDays != null && chartRangeDays >= 365 ? 2.2 : chartRangeDays != null && chartRangeDays >= 90 ? 1.8 : 1;
+    const shapeAlpha = shapePower === 1 ? blendA : 1 - Math.pow(1 - blendA, shapePower);
     // Performance mode during manual drag:
     // cap rendered points (especially "All") so the chart can track pointer movement without lag.
     const maxMorphPoints = chartRangeDays == null ? 320 : chartRangeDays >= 365 ? 280 : 9999;
@@ -1189,9 +1212,9 @@ const VavityBitcoin: React.FC = () => {
       for (let idx = 0; idx < total; idx += 1) {
         const pointBlendA = blendA;
         const t = solidTs[idx] * (1 - pointBlendA) + liquidTs[idx] * pointBlendA;
-        const sN = norm(solidYs[idx], solidMin, solidSpan);
-        const lN = norm(liquidYs[idx], liquidMin, liquidSpan);
-        const yN = sN * (1 - pointBlendA) + lN * pointBlendA;
+        const sN = norm(solidYs[idx], solidNormMin, solidNormMax, solidNormSpan);
+        const lN = norm(liquidYs[idx], liquidNormMin, liquidNormMax, liquidNormSpan);
+        const yN = sN * (1 - shapeAlpha) + lN * shapeAlpha;
         blended.push({
           date: new Date(t).toISOString(),
           price: minMix + spanMix * yN,
@@ -1206,9 +1229,9 @@ const VavityBitcoin: React.FC = () => {
         lastIdx = idx;
         const pointBlendA = blendA;
         const t = solidTs[idx] * (1 - pointBlendA) + liquidTs[idx] * pointBlendA;
-        const sN = norm(solidYs[idx], solidMin, solidSpan);
-        const lN = norm(liquidYs[idx], liquidMin, liquidSpan);
-        const yN = sN * (1 - pointBlendA) + lN * pointBlendA;
+        const sN = norm(solidYs[idx], solidNormMin, solidNormMax, solidNormSpan);
+        const lN = norm(liquidYs[idx], liquidNormMin, liquidNormMax, liquidNormSpan);
+        const yN = sN * (1 - shapeAlpha) + lN * shapeAlpha;
         blended.push({
           date: new Date(t).toISOString(),
           price: minMix + spanMix * yN,
