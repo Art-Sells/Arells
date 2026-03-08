@@ -33,7 +33,6 @@ type Props = {
   backgroundColor?: string;
   markerShadow?: string;
   animationDurationMs?: number;
-  yRangeOverride?: { min: number; max: number } | null;
 };
 
 const EthereumChart: React.FC<Props> = ({
@@ -50,7 +49,6 @@ const EthereumChart: React.FC<Props> = ({
   backgroundColor = '#161616',
   markerShadow = '-8px 0 14px rgba(107, 114, 168, 0.28), 0 7px 10px rgba(107, 114, 168, 0.2)',
   animationDurationMs = 1000,
-  yRangeOverride = null,
 }) => {
   const chartRef = useRef<ChartJS<'line', PricePoint[], unknown> | null>(null);
   const markerRef = useRef<HTMLDivElement | null>(null);
@@ -106,14 +104,6 @@ const EthereumChart: React.FC<Props> = ({
   }, [history]);
 
   const yRange = useMemo(() => {
-    if (yRangeOverride) {
-      const min = yRangeOverride.min;
-      const max = yRangeOverride.max;
-      if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
-      const baseRange = Math.max(max - min, Math.max(Math.abs(max), 1) * 0.05);
-      const pad = baseRange * 2;
-      return { min: min - pad, max: max + pad };
-    }
     if (!dataPoints.length) return null;
     const values = dataPoints.map((p) => p.y);
     const min = Math.min(...values);
@@ -122,7 +112,7 @@ const EthereumChart: React.FC<Props> = ({
     // Expand Y range to visually shorten the line without shrinking chart canvas height.
     const pad = baseRange * 2;
     return { min: min - pad, max: max + pad };
-  }, [dataPoints, yRangeOverride]);
+  }, [dataPoints]);
 
   const xRange = useMemo(() => {
     if (!dataPoints.length) return null;
@@ -149,8 +139,8 @@ const EthereumChart: React.FC<Props> = ({
           // When the 24h range collapses to 2 points, keep the segment perfectly straight.
           tension: dataPoints.length < 3 ? 0 : 0.25,
           borderWidth: 6.5,
-          borderCapStyle: 'round' as const,
-          borderJoinStyle: 'round' as const,
+          borderCapStyle: 'butt' as const,
+          borderJoinStyle: 'miter' as const,
           clip: 12,
         },
       ],

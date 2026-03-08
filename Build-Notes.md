@@ -2,8 +2,8 @@
 
 ## Arells v1
 
+-*round out out the left/right edges of the lines inside the line graph and fix the "rounding edges" pop after solid/liquid toggle is complete, when its changing, it makes the line changes sharp then smooths them out (pops), after a toggle is complete...*
 - *1 minute count down from sessions assets created (logged into back-end json), after 1 minute has passed, delete all session investments*
-- *should height up after all investments are deleted before heigting down "add investments/sign in to save investments secton... and that add investments/sign in to save investments section height down shouldn't height down so quickly... it should take 1 second to complete*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
 - *add submitted icon*

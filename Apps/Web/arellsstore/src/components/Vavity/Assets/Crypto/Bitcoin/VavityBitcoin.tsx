@@ -54,8 +54,6 @@ const VavityBitcoin: React.FC = () => {
   // Manual toggle progress (0 = Solid edge, 1 = Liquid edge). Drives manual chart morph + continuous fades.
   const [toggleAlpha, setToggleAlpha] = useState<number>(0);
   const toggleAlphaRef = useRef(0);
-  const toggleAlphaPrevRef = useRef(0);
-  const toggleDirectionRef = useRef<1 | -1>(1);
   const [toggleAnimating, setToggleAnimating] = useState(false);
   const toggleAnimRafRef = useRef<number | null>(null);
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -454,14 +452,6 @@ const VavityBitcoin: React.FC = () => {
   // Keep refs in sync for pointer handlers.
   useEffect(() => {
     toggleAlphaRef.current = toggleAlpha;
-  }, [toggleAlpha]);
-
-  useEffect(() => {
-    const delta = toggleAlpha - toggleAlphaPrevRef.current;
-    if (Math.abs(delta) > 0.0005) {
-      toggleDirectionRef.current = delta >= 0 ? 1 : -1;
-    }
-    toggleAlphaPrevRef.current = toggleAlpha;
   }, [toggleAlpha]);
 
   // Keep toggleAlpha in sync with committed mode when idle.
@@ -1039,21 +1029,6 @@ const VavityBitcoin: React.FC = () => {
     [sliceSeriesWithAnchor]
   );
 
-  const sliceSeriesStrict = useCallback(
-    (src: { date: string; price: number }[]) => {
-      if (!chartRangeDays || !src.length) return src;
-      const cutoff = chartRangeAnchorMs - chartRangeDays * 24 * 60 * 60 * 1000;
-      const filtered = src.filter((item) => {
-        const t = new Date(item.date).getTime();
-        return !Number.isNaN(t) && t >= cutoff;
-      });
-      if (filtered.length >= 2) return filtered;
-      if (src.length >= 2) return src.slice(-2);
-      return filtered.length ? filtered : src;
-    },
-    [chartRangeAnchorMs, chartRangeDays]
-  );
-
   const chartHistorySolid = useMemo(() => filterSeriesForRange(solidHistory), [filterSeriesForRange, solidHistory]);
   const chartHistoryLiquid = useMemo(
     () => filterSeriesForRange(liquidHistory),
@@ -1077,69 +1052,90 @@ const VavityBitcoin: React.FC = () => {
     const liquidPts = toPoints(liquidSrc).sort((a, b) => a[0] - b[0]);
     if (!solidPts.length && !liquidPts.length) return null;
 
-    const timesSet = new Set<number>();
-    solidPts.forEach(([t]) => timesSet.add(t));
-    liquidPts.forEach(([t]) => timesSet.add(t));
-    const times = Array.from(timesSet).sort((a, b) => a - b);
+    const targetCount = chartRangeDays == null ? 320 : chartRangeDays >= 365 ? 280 : 240;
 
-    const sampleAtTimes = (pts: Array<readonly [number, number]>, ts: number[]) => {
-      if (!pts.length) return ts.map(() => 0);
-      const out: number[] = [];
-      let i = 0;
-      for (const t of ts) {
-        while (i < pts.length && pts[i][0] < t) i += 1;
-        const next = pts[i] ?? null;
-        const prev = i > 0 ? pts[i - 1] : null;
-        if (next && next[0] === t) {
-          out.push(next[1]);
-          continue;
-        }
-        if (prev && next) {
-          const t0 = prev[0];
-          const t1 = next[0];
-          const y0 = prev[1];
-          const y1 = next[1];
-          const frac = t1 !== t0 ? (t - t0) / (t1 - t0) : 0;
-          out.push(y0 + (y1 - y0) * Math.max(0, Math.min(1, frac)));
-          continue;
-        }
-        // Edge extrapolation: avoid long flat sections at the boundaries.
-        // Flat-holding here can make morph changes appear delayed for some ranges (e.g. 1/3 month).
-        if (!prev && next) {
-          if (pts.length >= 2) {
-            const p0 = pts[0];
-            const p1 = pts[1];
-            const dt = p1[0] - p0[0];
-            const slope = dt !== 0 ? (p1[1] - p0[1]) / dt : 0;
-            out.push(p0[1] + slope * (t - p0[0]));
-          } else {
-            out.push(next[1]);
-          }
-          continue;
-        }
-        if (prev && !next) {
-          if (pts.length >= 2) {
-            const p0 = pts[pts.length - 2];
-            const p1 = pts[pts.length - 1];
-            const dt = p1[0] - p0[0];
-            const slope = dt !== 0 ? (p1[1] - p0[1]) / dt : 0;
-            out.push(p1[1] + slope * (t - p1[0]));
-          } else {
-            out.push(prev[1]);
-          }
-          continue;
-        }
-        out.push(0);
+    const buildArcSampler = (pts: Array<readonly [number, number]>) => {
+      const xs = pts.map((p) => p[0]);
+      const ys = pts.map((p) => p[1]);
+      let minX = xs[0];
+      let maxX = xs[0];
+      let minY = ys[0];
+      let maxY = ys[0];
+      for (let i = 1; i < xs.length; i += 1) {
+        const x = xs[i];
+        const y = ys[i];
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
       }
-      return out;
+      const xSpan = maxX - minX || 1;
+      const ySpan = Math.max(maxY - minY, Math.max(Math.abs(maxY), 1) * 0.05);
+      const cum: number[] = new Array(xs.length).fill(0);
+      let total = 0;
+      for (let i = 1; i < xs.length; i += 1) {
+        const dx = (xs[i] - xs[i - 1]) / xSpan;
+        const dy = (ys[i] - ys[i - 1]) / ySpan;
+        total += Math.hypot(dx, dy);
+        cum[i] = total;
+      }
+      return { xs, ys, cum, total };
     };
 
-    return {
-      times,
-      solidYs: sampleAtTimes(solidPts, times),
-      liquidYs: sampleAtTimes(liquidPts, times),
+    const sampleAtArc = (
+      sampler: { xs: number[]; ys: number[]; cum: number[]; total: number },
+      dist: number
+    ) => {
+      const { xs, ys, cum, total } = sampler;
+      if (!xs.length) return { t: 0, y: 0 };
+      if (xs.length === 1 || total === 0) return { t: xs[0], y: ys[0] };
+      const target = Math.min(Math.max(dist, 0), total);
+      let lo = 0;
+      let hi = cum.length - 1;
+      while (lo < hi) {
+        const mid = Math.floor((lo + hi) / 2);
+        if (cum[mid] < target) lo = mid + 1;
+        else hi = mid;
+      }
+      const i1 = Math.min(Math.max(lo, 1), cum.length - 1);
+      const i0 = i1 - 1;
+      const d0 = cum[i0];
+      const d1 = cum[i1];
+      const frac = d1 !== d0 ? (target - d0) / (d1 - d0) : 0;
+      const t = xs[i0] + (xs[i1] - xs[i0]) * frac;
+      const y = ys[i0] + (ys[i1] - ys[i0]) * frac;
+      return { t, y };
     };
-  }, [chartHistoryLiquid, chartHistorySolid, chartRangeDays, liquidHistory, sliceSeriesStrict, solidHistory]);
+
+    const sampleSeriesByArc = (pts: Array<readonly [number, number]>, count: number) => {
+      if (!pts.length || count <= 0) return null;
+      const sampler = buildArcSampler(pts);
+      const total = sampler.total;
+      const steps = Math.max(2, count);
+      const ts: number[] = new Array(steps);
+      const ys: number[] = new Array(steps);
+      for (let i = 0; i < steps; i += 1) {
+        const d = total * (steps === 1 ? 0 : i / (steps - 1));
+        const point = sampleAtArc(sampler, d);
+        ts[i] = point.t;
+        ys[i] = point.y;
+      }
+      return { ts, ys };
+    };
+
+    const solidBase = solidPts.length ? solidPts : liquidPts;
+    const liquidBase = liquidPts.length ? liquidPts : solidPts;
+    if (!solidBase.length || !liquidBase.length) return null;
+    const solidSample = sampleSeriesByArc(solidBase, targetCount);
+    const liquidSample = sampleSeriesByArc(liquidBase, targetCount);
+    if (!solidSample || !liquidSample) return null;
+    return {
+      solidTs: solidSample.ts,
+      solidYs: solidSample.ys,
+      liquidTs: liquidSample.ts,
+      liquidYs: liquidSample.ys,
+    };
+  }, [chartHistoryLiquid, chartHistorySolid, chartRangeDays]);
 
   const decimateSeriesForRange = useCallback(
     (src: { date: string; price: number }[]) => {
@@ -1159,34 +1155,46 @@ const VavityBitcoin: React.FC = () => {
     [chartRangeDays]
   );
 
-  const morphActive = toggleKnobLeftPx != null || toggleAnimating;
-
   const chartHistoryMorph = useMemo(() => {
+    const morphActive = toggleKnobLeftPx != null || toggleAnimating;
     if (!morphActive || !chartMorphPrepared) return null;
     const a = Math.max(0, Math.min(1, toggleAlpha));
     if (a <= 0.001) return decimateSeriesForRange(chartHistorySolid);
     if (a >= 0.999) return decimateSeriesForRange(chartHistoryLiquid);
+    const { solidTs, solidYs, liquidTs, liquidYs } = chartMorphPrepared;
     const blendA = a;
-    const { times, solidYs, liquidYs } = chartMorphPrepared;
+    let solidMin = Number.POSITIVE_INFINITY;
+    let solidMax = Number.NEGATIVE_INFINITY;
+    let liquidMin = Number.POSITIVE_INFINITY;
+    let liquidMax = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < solidYs.length; i += 1) {
+      const s = solidYs[i];
+      const l = liquidYs[i];
+      if (s < solidMin) solidMin = s;
+      if (s > solidMax) solidMax = s;
+      if (l < liquidMin) liquidMin = l;
+      if (l > liquidMax) liquidMax = l;
+    }
+    const solidSpan = Math.max(0, solidMax - solidMin);
+    const liquidSpan = Math.max(0, liquidMax - liquidMin);
+    const norm = (v: number, min: number, span: number) => (span > 0 ? (v - min) / span : 0.5);
+    const minMix = solidMin * (1 - blendA) + liquidMin * blendA;
+    const spanMix = solidSpan * (1 - blendA) + liquidSpan * blendA;
     // Performance mode during manual drag:
     // cap rendered points (especially "All") so the chart can track pointer movement without lag.
     const maxMorphPoints = chartRangeDays == null ? 320 : chartRangeDays >= 365 ? 280 : 9999;
-    const total = times.length;
+    const total = solidTs.length;
     const blended: { date: string; price: number }[] = [];
     if (total <= maxMorphPoints) {
       for (let idx = 0; idx < total; idx += 1) {
-        const recentness = total > 1 ? idx / (total - 1) : 1;
-        let pointBlendA = blendA;
-        if (chartRangeDays === 30 || chartRangeDays === 90) {
-          const bias = 1 + recentness * 2.2;
-          pointBlendA =
-            toggleDirectionRef.current >= 0
-              ? 1 - Math.pow(1 - blendA, bias)
-              : Math.pow(blendA, bias);
-        }
+        const pointBlendA = blendA;
+        const t = solidTs[idx] * (1 - pointBlendA) + liquidTs[idx] * pointBlendA;
+        const sN = norm(solidYs[idx], solidMin, solidSpan);
+        const lN = norm(liquidYs[idx], liquidMin, liquidSpan);
+        const yN = sN * (1 - pointBlendA) + lN * pointBlendA;
         blended.push({
-          date: new Date(times[idx]).toISOString(),
-          price: solidYs[idx] * (1 - pointBlendA) + liquidYs[idx] * pointBlendA,
+          date: new Date(t).toISOString(),
+          price: minMix + spanMix * yN,
         });
       }
     } else {
@@ -1196,50 +1204,27 @@ const VavityBitcoin: React.FC = () => {
         const idx = Math.round((i * (total - 1)) / (target - 1));
         if (idx === lastIdx) continue;
         lastIdx = idx;
-        const recentness = total > 1 ? idx / (total - 1) : 1;
-        let pointBlendA = blendA;
-        if (chartRangeDays === 30 || chartRangeDays === 90) {
-          const bias = 1 + recentness * 2.2;
-          pointBlendA =
-            toggleDirectionRef.current >= 0
-              ? 1 - Math.pow(1 - blendA, bias)
-              : Math.pow(blendA, bias);
-        }
+        const pointBlendA = blendA;
+        const t = solidTs[idx] * (1 - pointBlendA) + liquidTs[idx] * pointBlendA;
+        const sN = norm(solidYs[idx], solidMin, solidSpan);
+        const lN = norm(liquidYs[idx], liquidMin, liquidSpan);
+        const yN = sN * (1 - pointBlendA) + lN * pointBlendA;
         blended.push({
-          date: new Date(times[idx]).toISOString(),
-          price: solidYs[idx] * (1 - pointBlendA) + liquidYs[idx] * pointBlendA,
+          date: new Date(t).toISOString(),
+          price: minMix + spanMix * yN,
         });
       }
     }
     if (blended.length >= 2) return blended;
     if (blended.length === 1) return blended;
     return decimateSeriesForRange(chartHistorySolid);
-  }, [chartHistoryLiquid, chartHistorySolid, chartMorphPrepared, chartRangeDays, decimateSeriesForRange, morphActive, toggleAlpha]);
-
-  const chartMorphYRange = useMemo(() => {
-    if (!chartMorphPrepared) return null;
-    const solidVals = chartMorphPrepared.solidYs.filter((v) => Number.isFinite(v));
-    const liquidVals = chartMorphPrepared.liquidYs.filter((v) => Number.isFinite(v));
-    if (!solidVals.length || !liquidVals.length) return null;
-    const solidMin = Math.min(...solidVals);
-    const solidMax = Math.max(...solidVals);
-    const liquidMin = Math.min(...liquidVals);
-    const liquidMax = Math.max(...liquidVals);
-    if (![solidMin, solidMax, liquidMin, liquidMax].every(Number.isFinite)) return null;
-    const a = Math.max(0, Math.min(1, toggleAlpha));
-    const min = solidMin + (liquidMin - solidMin) * a;
-    const max = solidMax + (liquidMax - solidMax) * a;
-    return { min, max };
-  }, [chartMorphPrepared, toggleAlpha]);
+  }, [chartHistoryLiquid, chartHistorySolid, chartMorphPrepared, chartRangeDays, decimateSeriesForRange, toggleAlpha, toggleAnimating, toggleKnobLeftPx]);
 
   const chartHistoryDisplay = useMemo(() => {
     return decimateSeriesForRange(chartHistory || []);
   }, [chartHistory, decimateSeriesForRange]);
 
   const chartHistoryForLine = chartHistoryMorph ?? chartHistoryDisplay;
-  // Stabilize 1/3-month only so they track like other ranges without impacting the rest.
-  const chartYRangeOverride =
-    chartRangeDays === 30 || chartRangeDays === 90 ? (morphActive ? chartMorphYRange : null) : null;
 
   const chartMarketCaps = useMemo(() => {
     if (!chartRangeDays || !history.length || !vapaMarketCap.length) return vapaMarketCap;
@@ -2190,7 +2175,6 @@ const VavityBitcoin: React.FC = () => {
                   animateOn={false}
                   animateDelayMs={0}
                   animationDurationMs={toggleKnobLeftPx != null || toggleAnimating ? 0 : 1000}
-                  yRangeOverride={chartYRangeOverride}
               onPointHover={(point, idx) => {
                 setChartHoverIndex(idx ?? null);
                 setChartHoverPoint(point);
