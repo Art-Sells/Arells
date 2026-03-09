@@ -564,7 +564,7 @@ body {
 /* Top asset section (title+slogan + price/controls + chart) fixed sizing */
 .asset-page-content > .asset-header-panel {
 	width: 665px;
-	min-height: 690px;
+	min-height: 600px;
 	height: auto;
 	margin-left: auto;
 	margin-right: auto;
@@ -1498,8 +1498,9 @@ body {
 	opacity: 1;
 	max-height: 240px;
 	/* No fade-out: collapse via height/margins/padding only */
-	transition: max-height 1s ease, margin 1s ease, padding 1s ease;
+	transition: max-height 1.5s ease, margin 1.5s ease, padding 1.5s ease;
 }
+
 
 .asset-empty-signin.is-hidden {
 	pointer-events: none;
@@ -1527,7 +1528,7 @@ body {
 	opacity: 1;
 	max-height: 140px;
 	/* No fade-out: collapse via height/margins/padding only */
-	transition: max-height 1s ease, margin 1s ease, padding 1s ease;
+	transition: max-height 2s ease, margin 2s ease, padding 1s ease;
 }
 
 .asset-empty-addinvest.is-hidden {
@@ -2081,6 +2082,37 @@ body {
 .asset-investments-wrap--ethereum {
 	box-shadow: inset 0 6px 12px rgba(107, 114, 168, 0.3);
 }
+
+/* Empty-state debug preview: keep the "view investments" wrapper visible
+   and force its height to match the measured empty actions wrapper. */
+.asset-empty-actions {
+	width: 100%;
+}
+
+.asset-empty-actions--measure {
+	position: absolute;
+	left: -9999px;
+	top: 0;
+	visibility: hidden;
+	pointer-events: none;
+	height: auto;
+}
+
+/* During delete-to-zero, show a subtle placeholder so height-up is visible. */
+.asset-slide-panel--clearing {
+	border-radius: 12px;
+}
+
+.asset-slide-panel--clearing-bitcoin {
+	background: transparent;
+	box-shadow: none;
+}
+
+.asset-slide-panel--clearing-ethereum {
+	background: transparent;
+	box-shadow: none;
+}
+
 
 .asset-home-font-label--bitcoin,
 .asset-metric-title--bitcoin,
@@ -2769,6 +2801,33 @@ body {
 .asset-page-content .asset-header-asset-icon--bitcoin,
 .asset-page-content .asset-header-asset-icon--ethereum {
 	filter: none !important;
+}
+
+/* Asset pages: remove ALL button shadows */
+.asset-page--bitcoin .asset-page-content button,
+.asset-page--bitcoin .asset-page-content .asset-action-button,
+.asset-page--ethereum .asset-page-content button,
+.asset-page--ethereum .asset-page-content .asset-action-button {
+	box-shadow: none !important;
+}
+
+.asset-page--bitcoin .asset-page-content button:hover,
+.asset-page--bitcoin .asset-page-content button:active,
+.asset-page--bitcoin .asset-page-content button:focus,
+.asset-page--bitcoin .asset-page-content button:focus-visible,
+.asset-page--bitcoin .asset-page-content .asset-action-button:hover,
+.asset-page--bitcoin .asset-page-content .asset-action-button:active,
+.asset-page--bitcoin .asset-page-content .asset-action-button:focus,
+.asset-page--bitcoin .asset-page-content .asset-action-button:focus-visible,
+.asset-page--ethereum .asset-page-content button:hover,
+.asset-page--ethereum .asset-page-content button:active,
+.asset-page--ethereum .asset-page-content button:focus,
+.asset-page--ethereum .asset-page-content button:focus-visible,
+.asset-page--ethereum .asset-page-content .asset-action-button:hover,
+.asset-page--ethereum .asset-page-content .asset-action-button:active,
+.asset-page--ethereum .asset-page-content .asset-action-button:focus,
+.asset-page--ethereum .asset-page-content .asset-action-button:focus-visible {
+	box-shadow: none !important;
 }
 
 .asset-chart-icon {

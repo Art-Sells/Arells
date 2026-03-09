@@ -146,6 +146,8 @@ const VavityBitcoin: React.FC = () => {
   const [emptyAddGone, setEmptyAddGone] = useState(false);
   const emptyAddGoneTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [emptyAddHiding, setEmptyAddHiding] = useState(false);
+  const [emptyActionsExpanding, setEmptyActionsExpanding] = useState(false);
+  const emptyActionsExpandTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const emptyButtonsSequenceTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
   const pulseTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
   const didMountAddMorePulseRef = useRef(false);
@@ -176,6 +178,10 @@ const VavityBitcoin: React.FC = () => {
   const [profitInlineHeight, setProfitInlineHeight] = useState<number>(0);
   const investmentsListRef = useRef<HTMLDivElement | null>(null);
   const [investmentsListHeight, setInvestmentsListHeight] = useState<number>(0);
+  const emptyActionsRef = useRef<HTMLDivElement | null>(null);
+  const emptyActionsMeasureRef = useRef<HTMLDivElement | null>(null);
+  const [emptyActionsHeight, setEmptyActionsHeight] = useState<number>(0);
+  const lastEmptyActionsHeightRef = useRef<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(200);
   const chartTopPadding = 0;
   const chartBottomPadding = 0;
@@ -397,6 +403,10 @@ const VavityBitcoin: React.FC = () => {
       if (clearInvestmentsAnimTimerRef.current) {
         globalThis.clearTimeout(clearInvestmentsAnimTimerRef.current);
         clearInvestmentsAnimTimerRef.current = null;
+      }
+      if (emptyActionsExpandTimerRef.current) {
+        globalThis.clearTimeout(emptyActionsExpandTimerRef.current);
+        emptyActionsExpandTimerRef.current = null;
       }
     };
   }, []);
@@ -735,6 +745,15 @@ const VavityBitcoin: React.FC = () => {
     setEmptyAddGone(false);
     setEmptySigninHiding(true);
     setEmptyAddHiding(true);
+    if (emptyActionsExpandTimerRef.current) {
+      globalThis.clearTimeout(emptyActionsExpandTimerRef.current);
+      emptyActionsExpandTimerRef.current = null;
+    }
+    setEmptyActionsExpanding(true);
+    emptyActionsExpandTimerRef.current = globalThis.setTimeout(() => {
+      setEmptyActionsExpanding(false);
+      emptyActionsExpandTimerRef.current = null;
+    }, 1000);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setEmptySigninHiding(false);
@@ -743,9 +762,18 @@ const VavityBitcoin: React.FC = () => {
     });
   }, []);
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
-  const investmentsWholeMaxHeight = summaryOpen && !isClearingInvestments ? `${investmentsWholeHeight}px` : '0px';
-  const investmentsWholeTransition =
-    addMoreOpen || investmentsListOpen ? 'max-height 0s ease' : 'max-height 2s ease';
+  const emptyActionsTargetHeight = emptyActionsHeight || lastEmptyActionsHeightRef.current;
+  const investmentsWholeMaxHeight =
+    summaryOpen && !isClearingInvestments
+      ? `${investmentsWholeHeight}px`
+      : isClearingInvestments && emptyActionsTargetHeight
+        ? `${emptyActionsTargetHeight}px`
+        : '0px';
+  const investmentsWholeTransition = isClearingInvestments
+    ? 'max-height 2s ease'
+    : addMoreOpen || investmentsListOpen
+      ? 'max-height 0s ease'
+      : 'max-height 2s ease';
   // Add-more form lives inside the summary panel. If both the outer summary and the inner form
   // animate max-height, it feels slower because the outer panel clips the inner one during its own expand.
   // When Add-more is showing, snap the outer summary height and let only the inner form animate.
@@ -768,6 +796,20 @@ const VavityBitcoin: React.FC = () => {
           clearInvestmentsAnimTimerRef.current = null;
         }
         clearInvestmentsAnimTimerRef.current = globalThis.setTimeout(() => {
+          // Ensure empty buttons animate in (height down 1s) after clearing.
+          setEmptySigninHiding(true);
+          setEmptySigninGone(false);
+          setEmptyAddHiding(true);
+          setEmptyAddGone(false);
+          if (emptyActionsExpandTimerRef.current) {
+            globalThis.clearTimeout(emptyActionsExpandTimerRef.current);
+            emptyActionsExpandTimerRef.current = null;
+          }
+          setEmptyActionsExpanding(true);
+          emptyActionsExpandTimerRef.current = globalThis.setTimeout(() => {
+            setEmptyActionsExpanding(false);
+            emptyActionsExpandTimerRef.current = null;
+          }, 1000);
           setIsClearingInvestments(false);
           setShowEmptyAddForm(false);
           setShowAddForm(false);
@@ -2037,6 +2079,32 @@ const VavityBitcoin: React.FC = () => {
     };
   }, [investmentsListOpen]);
 
+  useEffect(() => {
+    const node = emptyActionsMeasureRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') {
+      const next = node?.scrollHeight ?? 0;
+      setEmptyActionsHeight(next);
+      if (next > 0) lastEmptyActionsHeightRef.current = next;
+      return;
+    }
+    let raf = 0;
+    const measure = () => {
+      if (raf) window.cancelAnimationFrame(raf);
+      raf = window.requestAnimationFrame(() => {
+        const next = node.scrollHeight;
+        setEmptyActionsHeight((prev) => (prev === next ? prev : next));
+        if (next > 0) lastEmptyActionsHeightRef.current = next;
+      });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [isSignedIn, email]);
+
   return (
     <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
       <div
@@ -2067,7 +2135,12 @@ const VavityBitcoin: React.FC = () => {
               gap: '10px'
         }}
       >
-            <Link className="asset-home-button asset-home-button--section asset-home-button--bitcoin" href="/">
+            <Link
+              className="asset-home-button asset-home-button--section asset-home-button--bitcoin"
+              href="https://bitcoin.org/en/"
+              target="_blank"
+              rel="noreferrer"
+            >
               <Image
                 className="asset-home-icon asset-home-icon--bitcoin"
                 alt="Bitcoin"
@@ -2416,60 +2489,69 @@ const VavityBitcoin: React.FC = () => {
         {!hasInvestmentsUI ? (
           <>
             <div
-              className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
+              ref={emptyActionsRef}
+              className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
             >
-              <button
-                className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
-                disabled={showEmptyAddForm || emptyAddHiding}
-                onClick={() => {
-                  suppressPortfolioCta();
-                  if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
-                  clearEmptyButtonsSequenceTimers();
-
-                  // 1) Collapse Sign In button first
-                  setEmptySigninHiding(true);
-                  setEmptySigninGone(false);
-                  // Keep Add Investments visible until step 2
-                  setEmptyAddHiding(false);
-                  setEmptyAddGone(false);
-
-                  emptyButtonsSequenceTimersRef.current.push(
-                    globalThis.setTimeout(() => {
-                      // 2) Then collapse Add Investments button
-                      setEmptyAddHiding(true);
-                    }, 500)
-                  );
-
-                  // 3) Start opening the add form immediately (do NOT wait for Sign In to finish collapsing).
-                  setShowEmptyAddForm(true);
-                  setShowAddForm(true);
-                  setSubmitPhase('idle');
-                  // Pre-measure panel height before opening so the max-height animation matches "Add more investments".
-                  requestAnimationFrame(() => {
-                    const h = addFormBoxRef.current?.scrollHeight ?? 0;
-                    const next = Math.max(0, h + 24);
-                    setAddFormPanelHeight((prev) => (prev === next ? prev : next));
-                    requestAnimationFrame(() => setAddFormOpen(true));
-                  });
-                  followScrollHeightDeltaFor(2000);
-                }}
-              >
-                Add Investments
-              </button>
-            </div>
-            {!isSignedIn && !email && (
               <div
-                className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
+                className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
               >
                 <button
-                  type="button"
-                  className="asset-action-button asset-action-button--save-signin"
-                  onClick={openSignIn}
+                  className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
+                  disabled={showEmptyAddForm || emptyAddHiding}
+                  onClick={() => {
+                    suppressPortfolioCta();
+                    if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
+                    clearEmptyButtonsSequenceTimers();
+
+                    // 1) Collapse Sign In button first
+                    setEmptySigninHiding(true);
+                    setEmptySigninGone(false);
+                    // Keep Add Investments visible until step 2
+                    setEmptyAddHiding(false);
+                    setEmptyAddGone(false);
+
+                    emptyButtonsSequenceTimersRef.current.push(
+                      globalThis.setTimeout(() => {
+                        // 2) Then collapse Add Investments button
+                        setEmptyAddHiding(true);
+                      }, 500)
+                    );
+
+                    // 3) Start opening the add form immediately (do NOT wait for Sign In to finish collapsing).
+                    setShowEmptyAddForm(true);
+                    setShowAddForm(true);
+                    setSubmitPhase('idle');
+                    // Pre-measure panel height before opening so the max-height animation matches "Add more investments".
+                    requestAnimationFrame(() => {
+                      const h = addFormBoxRef.current?.scrollHeight ?? 0;
+                      const next = Math.max(0, h + 24);
+                      setAddFormPanelHeight((prev) => (prev === next ? prev : next));
+                      requestAnimationFrame(() => setAddFormOpen(true));
+                    });
+                    followScrollHeightDeltaFor(2000);
+                  }}
                 >
-                  <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                  Add Investments
                 </button>
               </div>
-            )}
+              {!isSignedIn && !email && (
+                <div
+                  className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
+                >
+                  <button
+                    type="button"
+                    className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
+                    style={{
+                      opacity: emptyActionsExpanding ? 0 : 1,
+                      transition: emptyActionsExpanding ? 'none' : 'opacity 1s ease',
+                    }}
+                    onClick={openSignIn}
+                  >
+                    <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                  </button>
+                </div>
+              )}
+            </div>
             {showEmptyAddForm && showAddForm && (
               <div
                 className={`asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin${
@@ -2498,14 +2580,14 @@ const VavityBitcoin: React.FC = () => {
                   </div>
                 </div>
               </div>
-        )}
+            )}
           </>
         ) : (
           <>
             {/* Option B: Treat the entire investments viewing section as ONE measured height animation
                 (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
             <div
-              className="asset-slide-panel"
+              className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-bitcoin' : ''}`}
               style={{
                 maxHeight: investmentsWholeMaxHeight,
                 transition: investmentsWholeTransition,
@@ -2713,6 +2795,30 @@ const VavityBitcoin: React.FC = () => {
                         closeAddMoreForm,
                         'asset-action-button asset-action-button--bitcoin'
                       )}
+        <div ref={emptyActionsMeasureRef} className="asset-empty-actions asset-empty-actions--measure" aria-hidden="true">
+          <div className="asset-empty-addinvest">
+            <button
+              className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
+              type="button"
+              disabled
+              tabIndex={-1}
+            >
+              Add Investments
+            </button>
+          </div>
+          {!isSignedIn && !email && (
+            <div className="asset-empty-signin">
+              <button
+                type="button"
+                className="asset-action-button asset-action-button--save-signin"
+                disabled
+                tabIndex={-1}
+              >
+                <span className="asset-save-signin-text">Sign In to Save Investments</span>
+              </button>
+            </div>
+          )}
+        </div>
                     </div>
                   </div>
                 </div>
