@@ -801,10 +801,7 @@ const VavityEthereum: React.FC = () => {
         }
         emptyAddFadeTimerRef.current = globalThis.setTimeout(() => {
           setEmptyAddFadeIn(true);
-          emptyAddFadeTimerRef.current = globalThis.setTimeout(() => {
-            setEmptyAddFadeIn(false);
-            emptyAddFadeTimerRef.current = null;
-          }, 3000);
+          emptyAddFadeTimerRef.current = null;
         }, 150);
       });
     });
@@ -883,20 +880,8 @@ const VavityEthereum: React.FC = () => {
           clearInvestmentsAnimTimerRef.current = null;
         }
         clearInvestmentsAnimTimerRef.current = globalThis.setTimeout(() => {
-          // Ensure empty buttons animate in (height down 1s) after clearing.
-          setEmptySigninHiding(true);
-          setEmptySigninGone(false);
-          setEmptyAddHiding(true);
-          setEmptyAddGone(false);
-          if (emptyActionsExpandTimerRef.current) {
-            globalThis.clearTimeout(emptyActionsExpandTimerRef.current);
-            emptyActionsExpandTimerRef.current = null;
-          }
-          setEmptyActionsExpanding(true);
-          emptyActionsExpandTimerRef.current = globalThis.setTimeout(() => {
-            setEmptyActionsExpanding(false);
-            emptyActionsExpandTimerRef.current = null;
-          }, 1000);
+          // Ensure empty buttons animate in (height down + fade-in) after clearing.
+          triggerEmptyButtonsExpand();
           setIsClearingInvestments(false);
           setShowEmptyAddForm(false);
           setShowAddForm(false);
@@ -946,7 +931,7 @@ const VavityEthereum: React.FC = () => {
       followScrollHeightDeltaFor(2000);
     }
     prevSummaryCountRef.current = next;
-  }, [investments.length, isClearingInvestments, followScrollHeightDeltaFor]);
+  }, [investments.length, isClearingInvestments, followScrollHeightDeltaFor, triggerEmptyButtonsExpand]);
 
   useEffect(() => {
     const prev = prevHasInvestmentsUIRef.current;
@@ -2610,8 +2595,8 @@ const VavityEthereum: React.FC = () => {
                     type="button"
                     className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
                     style={{
-                      opacity: emptyActionsExpanding ? 0 : 1,
-                      transition: emptyActionsExpanding ? 'none' : 'opacity 3s ease, transform 0.2s ease',
+                      opacity: emptySigninHiding ? 0 : 1,
+                      transition: 'opacity 2s ease, transform 0.2s ease',
                     }}
                     onClick={openSignIn}
                   >

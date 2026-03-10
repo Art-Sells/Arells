@@ -2,7 +2,6 @@
 
 ## Arells v1
 
-- *resolve add investment button not fading in during height down issue*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
 - *test multiple investment deletions... with the "1 minute end all open to see aht it does" with the form open and not open*

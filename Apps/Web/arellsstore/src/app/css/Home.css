@@ -1471,7 +1471,7 @@ body {
 /* Empty-state Add Investments: force fade-in opacity */
 .asset-empty-addinvest .asset-action-button--add-investments {
 	opacity: var(--empty-add-opacity, 1) !important;
-	transition: opacity 3s ease, transform 0.2s ease !important;
+	transition: opacity 1s ease, transform 0.2s ease !important;
 }
 
 /* Asset pages: "Sign In to Save Investments" CTA (same framework as Add Investments, but smaller text + full accent fill) */
@@ -1539,7 +1539,7 @@ body {
 
 .asset-empty-addinvest.is-fading .asset-action-button--add-investments {
 	opacity: var(--empty-add-opacity, 1) !important;
-	transition: opacity 3s ease, transform 0.2s ease !important;
+	transition: opacity 1s ease, transform 0.2s ease !important;
 }
 
 .asset-empty-addinvest.is-hidden {
