@@ -1468,6 +1468,12 @@ body {
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Empty-state Add Investments: force fade-in opacity */
+.asset-empty-addinvest .asset-action-button--add-investments {
+	opacity: var(--empty-add-opacity, 1) !important;
+	transition: opacity 3s ease, transform 0.2s ease !important;
+}
+
 /* Asset pages: "Sign In to Save Investments" CTA (same framework as Add Investments, but smaller text + full accent fill) */
 .asset-action-button--save-signin {
 	width: 97%;
@@ -1528,7 +1534,12 @@ body {
 	opacity: 1;
 	max-height: 140px;
 	/* No fade-out: collapse via height/margins/padding only */
-	transition: max-height 2s ease, margin 2s ease, padding 1s ease;
+	transition: max-height 2s ease, margin 2s ease, padding 2s ease;
+}
+
+.asset-empty-addinvest.is-fading .asset-action-button--add-investments {
+	opacity: var(--empty-add-opacity, 1) !important;
+	transition: opacity 3s ease, transform 0.2s ease !important;
 }
 
 .asset-empty-addinvest.is-hidden {
@@ -1574,7 +1585,7 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 30px;
+	gap: 40px;
 	width: 100%;
 	box-sizing: border-box;
 	margin: 0;
@@ -1630,12 +1641,11 @@ body {
 	box-sizing: border-box;
 	touch-action: none;
 	/* Control knob geometry (so you can tweak both sides independently) */
-	/* Match the chart hover dot (23px) */
-	/* +1px padding above and below the knob (23px knob inside 25px track) */
-	--toggle-knob-size: 23px;
-	/* Only show 1px of track background at each end */
-	--toggle-knob-left-inset: 1px;
-	--toggle-knob-right-inset: 1px;
+	/* Match the chart hover dot (33px) */
+	--toggle-knob-size: 33px;
+	/* Center the knob on the line ends */
+	--toggle-knob-left-inset: 0px;
+	--toggle-knob-right-inset: 0px;
 }
 
 .asset-reality-toggle::before {
@@ -1657,14 +1667,16 @@ body {
 .asset-reality-toggle-knob {
 	position: absolute;
 	top: 50%;
-	left: var(--toggle-knob-left, var(--toggle-knob-left-inset));
+	left: calc(var(--toggle-knob-left, var(--toggle-knob-left-inset)) - (var(--toggle-knob-size) / 2));
 	width: var(--toggle-knob-size);
 	height: var(--toggle-knob-size);
 	border-radius: 999px;
 	/* Match the chart hover-circle color */
-	background: var(--asset-hover-dot-color, rgba(255, 255, 255, 0.85));
+	background: color-mix(in srgb, var(--asset-chart-line-color, var(--asset-line-color)) 20%, transparent);
+	border: var(--asset-chart-line-width, 6.5px) solid var(--asset-hover-dot-color, rgba(255, 255, 255, 0.85));
 	transition: left 0.25s ease, background 0.2s ease;
 	transform: translateY(-50%);
+	box-sizing: border-box;
 	will-change: left;
 }
 
@@ -1678,10 +1690,93 @@ body {
 }
 
 .asset-reality-toggle.is-fantasy .asset-reality-toggle-knob {
-	/* Keep identical 2px inset on BOTH sides (accounts for border via the padding box) */
-	left: var(--toggle-knob-left, calc(100% - var(--toggle-knob-right-inset) - var(--toggle-knob-size)));
+	left: calc(var(--toggle-knob-left, calc(100% - var(--toggle-knob-right-inset))) - (var(--toggle-knob-size) / 2));
 	transform: translateY(-50%);
 }
+
+/* Loader toggle variant (below the asset loader ring) */
+.asset-reality-toggle-shell--loader {
+	margin: 10px auto 0;
+	pointer-events: none;
+}
+
+.asset-loader-toggle-shell {
+	transform: none;
+}
+
+.asset-reality-toggle--loader {
+	cursor: default;
+	pointer-events: none;
+}
+
+.asset-reality-toggle--loader::before {
+	background: rgba(196, 196, 196, 0.3);
+	opacity: 0.6;
+}
+
+.asset-loader-toggle-shell--bitcoin .asset-reality-toggle--loader::before {
+	animation: assetLoaderToggleLineBitcoin 3s ease forwards;
+}
+
+.asset-loader-toggle-shell--ethereum .asset-reality-toggle--loader::before {
+	animation: assetLoaderToggleLineEthereum 3s ease forwards;
+}
+
+.asset-loader-toggle-knob {
+	--loader-circle-size: var(--toggle-knob-size);
+	position: absolute;
+	top: 50%;
+	left: var(--toggle-knob-left, var(--toggle-knob-left-inset));
+	width: var(--loader-circle-size);
+	height: var(--loader-circle-size);
+	border-radius: 999px;
+	background: var(--asset-chart-line-color, var(--asset-line-color));
+	background: color-mix(in srgb, var(--asset-chart-line-color, var(--asset-line-color)) 20%, transparent);
+	border: var(--asset-chart-line-width, 6.5px) solid var(--asset-hover-dot-color, rgba(255, 255, 255, 0.85));
+	display: flex;
+	align-items: center;
+	justify-content: center;
+transform: translateY(calc(-50% - 0.5px));
+	box-sizing: border-box;
+	animation: assetLoaderToggleSlide 2.6s ease-in-out infinite;
+}
+
+.asset-loader-toggle-icon {
+	display: block;
+	width: var(--loader-icon-size);
+	height: var(--loader-icon-size);
+}
+
+@keyframes assetLoaderToggleSlide {
+	0% {
+		left: calc(var(--toggle-knob-left-inset) - (var(--loader-circle-size) / 2));
+	}
+	50% {
+		left: calc(100% - var(--toggle-knob-right-inset) - (var(--loader-circle-size) / 2));
+	}
+	100% {
+		left: calc(var(--toggle-knob-left-inset) - (var(--loader-circle-size) / 2));
+	}
+}
+
+@keyframes assetLoaderToggleLineBitcoin {
+	from {
+		background: rgba(196, 196, 196, 0.9);
+	}
+	to {
+		background: var(--asset-chart-line-color, var(--asset-line-color));
+	}
+}
+
+@keyframes assetLoaderToggleLineEthereum {
+	from {
+		background: rgba(196, 196, 196, 0.9);
+	}
+	to {
+		background: var(--asset-chart-line-color, var(--asset-line-color));
+	}
+}
+
 
 .asset-portfolio-actions--signin {
 	margin-top: var(--asset-portfolio-actions-signin-margin-top, 18px);
@@ -2101,6 +2196,8 @@ body {
 /* During delete-to-zero, show a subtle placeholder so height-up is visible. */
 .asset-slide-panel--clearing {
 	border-radius: 12px;
+	/* Keep the height animation, but lock interaction while clearing. */
+	pointer-events: none;
 }
 
 .asset-slide-panel--clearing-bitcoin {
@@ -2857,9 +2954,11 @@ body {
 	position: fixed;
 	inset: 0;
 	display: flex;
-	align-items: flex-start;
-	justify-content: center;
-	padding-top: 300px;
+	align-items: center;
+	justify-content: flex-start;
+	flex-direction: column;
+	gap: 10px;
+	padding-top: max(0px, calc(50vh - 80px));
 	/* Must be highest z-index in the app */
 	z-index: 2147483647 !important;
 	opacity: .98;

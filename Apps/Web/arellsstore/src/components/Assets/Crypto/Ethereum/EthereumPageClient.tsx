@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import Ethereum from './ethereum';
 import '../../../../app/css/Home.css';
@@ -50,12 +49,15 @@ const EthereumPageClient: React.FC = () => {
     <div className="asset-page asset-page--ethereum">
       <header className="asset-header asset-header--ethereum" />
       {showLoading && (
-        <div className={`asset-loader-overlay asset-loader-overlay--ethereum${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
-          <div className={`asset-loader-ring asset-loader-ring--ethereum${fadeOut ? ' asset-loader-fade' : ''}`}>
-            <svg className="asset-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
-              <circle cx="30" cy="30" r="26" />
-            </svg>
-            <Image alt="Ethereum" width={30} height={30} src="/images/assets/crypto/Ethereum.svg" />
+        <div
+          className={`asset-loader-overlay asset-loader-overlay--ethereum${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
+        >
+          <div className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--ethereum">
+            <div className="asset-reality-toggle-row">
+              <button type="button" className="asset-reality-toggle asset-reality-toggle--loader" aria-hidden="true">
+                <span className="asset-loader-toggle-knob" aria-hidden="true" />
+              </button>
+            </div>
           </div>
         </div>
       )}

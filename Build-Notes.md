@@ -2,16 +2,13 @@
 
 ## Arells v1
 
+- *resolve add investment button not fading in during height down issue*
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
-- *add submitted icon*
-- *test multiple investment deletions... with the "1 minute end all open to see aht it does"*
-- *loading circle main for asset pages jigs when its transitioning colors, why?*
-- *bitcoin icon in assets pages should not be pixelated (should look like homepage bitcoin icon)*
-- *hide investments hover up cuts off... fix...*
+- *test multiple investment deletions... with the "1 minute end all open to see aht it does" with the form open and not open*
 - *About button (same as in asset pages) in my investmnts footer arells* 
 
-### Investment list
+### Investment list (fix when heighting down, it jigs a little at the end (I don't experience this issue with the forms height downs))
 - - (delete) *test this*
 - - (Load More 5 per list) *test this*
 -------------------
@@ -21,7 +18,7 @@
 
 ## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
 
-If no email is read:
+If no email is read1 
 - (Sign In)
 
 If email is read and no investments exist inside the email json:
@@ -68,6 +65,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 - - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes...
 
 ### Sign In/Up
+- Title: Sign In to Save Investments
 - Integrate sign-in/up with google....
 - Creates json with the email inside /users inside arells/users/ that functions exactly like the session vavity, except it never deletes any unless specifically asked for by the user...
 

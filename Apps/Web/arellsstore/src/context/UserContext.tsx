@@ -285,7 +285,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           }}
         >
           <div className="arells-signin-modal">
-            <div className="arells-signin-title">Sign In</div>
+            <div className="arells-signin-title">Sign in to Save Investments</div>
             <div className="arells-signin-subtitle">Enter your email to save investments.</div>
             <input
               className="arells-signin-input"

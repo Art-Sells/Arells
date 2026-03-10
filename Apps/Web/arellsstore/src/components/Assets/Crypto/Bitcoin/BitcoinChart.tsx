@@ -58,6 +58,13 @@ const BitcoinChart: React.FC<Props> = ({
   const markerRef = useRef<HTMLDivElement | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
   const didAnimateResetRef = useRef(false);
+  const chartLineWidth = 6.5;
+  const markerSize = 33;
+  const markerRadius = markerSize / 2;
+  const markerFill = useMemo(
+    () => `color-mix(in srgb, ${color} 20%, transparent)`,
+    [color]
+  );
 
   const cubicAt = useCallback((p0: number, c1: number, c2: number, p1: number, t: number) => {
     const u = 1 - t;
@@ -146,7 +153,7 @@ const BitcoinChart: React.FC<Props> = ({
           // points that make the hover marker look like it's following a curve.
           // Force a straight segment in that case.
           tension: dataPoints.length < 3 ? 0 : 0.25,
-          borderWidth: 6.5,
+          borderWidth: chartLineWidth,
           borderCapStyle: 'round' as const,
           borderJoinStyle: 'miter' as const,
           clip: 12,
@@ -366,7 +373,7 @@ const BitcoinChart: React.FC<Props> = ({
       const chart = chartRef.current as any;
       const canvas: HTMLCanvasElement | null | undefined = chart?.canvas;
       const rect = canvas?.getBoundingClientRect();
-      const radius = 11.5;
+      const radius = markerRadius;
       // Let the dot travel fully to the left/right edges (half-dot clipped by overflow:hidden),
       // but keep it fully visible vertically.
       const maxX = rect ? rect.width : pixel.x;
@@ -376,11 +383,13 @@ const BitcoinChart: React.FC<Props> = ({
       marker.style.left = `${clampedX - radius}px`;
       marker.style.top = `${canvasOffsetTop + clampedY - radius}px`;
       marker.style.display = 'block';
-      marker.style.background = markerColor;
+      marker.style.background = markerFill;
+      marker.style.borderColor = markerColor;
+      marker.style.borderWidth = `${chartLineWidth}px`;
       marker.style.boxShadow = markerShadow;
       onPointHover?.(point, idx);
     },
-    [onPointHover, markerColor, markerShadow, canvasOffsetTop]
+    [onPointHover, markerColor, markerShadow, canvasOffsetTop, markerFill, markerRadius]
   );
 
   const handlePointer = useCallback(
@@ -450,11 +459,12 @@ const BitcoinChart: React.FC<Props> = ({
         ref={markerRef}
         style={{
           position: 'absolute',
-          width: 23,
-          height: 23,
+          width: markerSize,
+          height: markerSize,
           borderRadius: '50%',
-          border: 'none',
-          background: markerColor,
+          border: `${chartLineWidth}px solid ${markerColor}`,
+          boxSizing: 'border-box',
+          background: markerFill,
           boxShadow: markerShadow,
           pointerEvents: 'none',
           display: 'none',

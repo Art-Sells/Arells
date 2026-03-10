@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState, useCallback, useRef, useLayoutEffect } from 'react';
+import { flushSync } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
@@ -14,6 +15,8 @@ const VavityEthereum: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
   const { email, isSignedIn, sessionReady, openSignIn, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
   const [vavityData, setVavityData] = useState<any>(null);
+  const prevVavityDataRef = useRef<any | null>(null);
+  const clearingSnapshotRef = useRef<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [submitPhase, setSubmitPhase] = useState<'idle' | 'submitting' | 'submitted'>('idle');
@@ -147,6 +150,8 @@ const VavityEthereum: React.FC = () => {
   const [emptyAddGone, setEmptyAddGone] = useState(false);
   const emptyAddGoneTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [emptyAddHiding, setEmptyAddHiding] = useState(false);
+  const [emptyAddFadeIn, setEmptyAddFadeIn] = useState(true);
+  const emptyAddFadeTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [emptyActionsExpanding, setEmptyActionsExpanding] = useState(false);
   const emptyActionsExpandTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const emptyButtonsSequenceTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
@@ -166,7 +171,9 @@ const VavityEthereum: React.FC = () => {
   const investmentIdCounterRef = useRef(0);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
   const investmentsWholeContentRef = useRef<HTMLDivElement | null>(null);
+  const investmentsWholePanelRef = useRef<HTMLDivElement | null>(null);
   const [investmentsWholeHeight, setInvestmentsWholeHeight] = useState(0);
+  const lastInvestmentsWholeHeightRef = useRef(0);
   const addFormBoxRef = useRef<HTMLDivElement | null>(null);
   const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
   const profitInlineAnimRef = useRef<HTMLSpanElement | null>(null);
@@ -183,6 +190,9 @@ const VavityEthereum: React.FC = () => {
   const emptyActionsMeasureRef = useRef<HTMLDivElement | null>(null);
   const [emptyActionsHeight, setEmptyActionsHeight] = useState<number>(0);
   const lastEmptyActionsHeightRef = useRef<number>(0);
+  const [clearingHeight, setClearingHeight] = useState<number | null>(null);
+  const clearingHeightRafRef = useRef<number | null>(null);
+  const prevLiveCountRef = useRef(0);
   const [chartHeight, setChartHeight] = useState<number>(200);
   const chartTopPadding = 0;
   const chartBottomPadding = 0;
@@ -405,6 +415,14 @@ const VavityEthereum: React.FC = () => {
         globalThis.clearTimeout(emptyActionsExpandTimerRef.current);
         emptyActionsExpandTimerRef.current = null;
       }
+      if (emptyAddFadeTimerRef.current) {
+        globalThis.clearTimeout(emptyAddFadeTimerRef.current);
+        emptyAddFadeTimerRef.current = null;
+      }
+      if (clearingHeightRafRef.current != null) {
+        window.cancelAnimationFrame(clearingHeightRafRef.current);
+        clearingHeightRafRef.current = null;
+      }
     };
   }, []);
 
@@ -444,12 +462,11 @@ const VavityEthereum: React.FC = () => {
     const btn = toggleBtnRef.current;
     if (!btn) return null;
     const cs = window.getComputedStyle(btn);
-    const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
-    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
-    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
+    const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+    const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
     const w = btn.getBoundingClientRect().width;
     const minLeft = leftInset;
-    const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+    const maxLeft = Math.max(leftInset, w - rightInset);
     const mid = (minLeft + maxLeft) / 2;
     const next = { minLeft, maxLeft, mid };
     setToggleTrack(next);
@@ -647,6 +664,20 @@ const VavityEthereum: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    prevVavityDataRef.current = vavityData;
+  }, [vavityData]);
+
+  useEffect(() => {
+    if (isClearingInvestments) {
+      if (!clearingSnapshotRef.current) {
+        clearingSnapshotRef.current = vavityData;
+      }
+      return;
+    }
+    clearingSnapshotRef.current = null;
+  }, [isClearingInvestments, vavityData]);
+
+  useEffect(() => {
     if (!previewSubmit) return;
     // Auto-mount a form panel so the submitting UI is visible without clicks.
     setSubmitPhase('submitting');
@@ -703,9 +734,15 @@ const VavityEthereum: React.FC = () => {
     };
   }, []);
 
+  const liveInvestmentsAll = vavityData?.investments || [];
+  const displayData = isClearingInvestments && clearingSnapshotRef.current ? clearingSnapshotRef.current : vavityData;
   const investments = useMemo(
-    () => (vavityData?.investments || []).filter((entry: any) => (entry?.asset || 'bitcoin') === 'ethereum'),
-    [vavityData]
+    () => (displayData?.investments || []).filter((entry: any) => (entry?.asset || 'bitcoin') === 'ethereum'),
+    [displayData]
+  );
+  const liveInvestments = useMemo(
+    () => liveInvestmentsAll.filter((entry: any) => (entry?.asset || 'bitcoin') === 'ethereum'),
+    [liveInvestmentsAll]
   );
   const getInvestmentId = useCallback((entry: any) => {
     if (entry?.clientId) return entry.clientId;
@@ -719,13 +756,15 @@ const VavityEthereum: React.FC = () => {
     return nextId;
   }, []);
   const investmentIds = useMemo(() => investments.map(getInvestmentId), [getInvestmentId, investments]);
-  const totals = useMemo(() => vavityData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }, [vavityData]);
+  const totals = useMemo(() => displayData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }, [
+    displayData,
+  ]);
   const totalsLiquid = useMemo(
     () =>
-      vavityData?.totalsLiquid ??
-      vavityData?.totalsReality ??
+      displayData?.totalsLiquid ??
+      displayData?.totalsReality ??
       { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 },
-    [vavityData]
+    [displayData]
   );
   const displayTotals = displayIsLiquidMode ? totalsLiquid : totals;
   const hasInvestmentsUI =
@@ -746,17 +785,30 @@ const VavityEthereum: React.FC = () => {
       emptyActionsExpandTimerRef.current = null;
     }
     setEmptyActionsExpanding(true);
+    flushSync(() => setEmptyAddFadeIn(false));
     emptyActionsExpandTimerRef.current = globalThis.setTimeout(() => {
       setEmptyActionsExpanding(false);
       emptyActionsExpandTimerRef.current = null;
     }, 1000);
+    followScrollHeightDeltaFor(1200);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setEmptySigninHiding(false);
         setEmptyAddHiding(false);
+        if (emptyAddFadeTimerRef.current) {
+          globalThis.clearTimeout(emptyAddFadeTimerRef.current);
+          emptyAddFadeTimerRef.current = null;
+        }
+        emptyAddFadeTimerRef.current = globalThis.setTimeout(() => {
+          setEmptyAddFadeIn(true);
+          emptyAddFadeTimerRef.current = globalThis.setTimeout(() => {
+            setEmptyAddFadeIn(false);
+            emptyAddFadeTimerRef.current = null;
+          }, 3000);
+        }, 150);
       });
     });
-  }, []);
+  }, [followScrollHeightDeltaFor]);
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
   const emptyActionsTargetHeight = emptyActionsHeight || lastEmptyActionsHeightRef.current;
   const investmentsWholeMaxHeight =
@@ -770,20 +822,62 @@ const VavityEthereum: React.FC = () => {
     : addMoreOpen || investmentsListOpen
       ? 'max-height 0s ease'
       : 'max-height 2s ease';
+  const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   const summaryTransition = addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
+
+  const beginClearing = useCallback(
+    (heightOverride?: number) => {
+      if (isClearingInvestments) return;
+      const startHeight =
+        heightOverride ??
+        investmentsWholePanelRef.current?.getBoundingClientRect().height ??
+        lastInvestmentsWholeHeightRef.current ??
+        investmentsWholeHeight ??
+        investmentsWholeContentRef.current?.getBoundingClientRect().height ??
+        0;
+      setClearingHeight(startHeight);
+      setSummaryOpen(true);
+      setIsClearingInvestments(true);
+      if (clearingHeightRafRef.current != null) {
+        window.cancelAnimationFrame(clearingHeightRafRef.current);
+        clearingHeightRafRef.current = null;
+      }
+      clearingHeightRafRef.current = window.requestAnimationFrame(() => {
+        clearingHeightRafRef.current = window.requestAnimationFrame(() => {
+          if (investmentsWholePanelRef.current) {
+            void investmentsWholePanelRef.current.offsetHeight;
+          }
+          setClearingHeight(0);
+          clearingHeightRafRef.current = null;
+        });
+      });
+    },
+    [investmentsWholeHeight, isClearingInvestments]
+  );
+
+  useLayoutEffect(() => {
+    const prev = prevLiveCountRef.current;
+    const next = liveInvestments.length;
+    if (prev > 0 && next === 0 && !isClearingInvestments) {
+      if (!clearingSnapshotRef.current && prevVavityDataRef.current) {
+        clearingSnapshotRef.current = prevVavityDataRef.current;
+      }
+      beginClearing();
+    }
+    prevLiveCountRef.current = next;
+  }, [beginClearing, isClearingInvestments, liveInvestments.length]);
 
   useEffect(() => {
     const prev = prevSummaryCountRef.current;
-    const next = investments.length;
+    const next = liveInvestments.length;
     if (next === 0) {
-      setSummaryOpen(false);
       // Auto-expiry/delete-to-zero should play the same collapse dynamic as manual delete.
-      if (prev > 0 && !isClearingInvestments) {
-        setIsClearingInvestments(true);
-        setAddMoreOpen(false);
-        setShowAddMoreForm(false);
-        setInvestmentsListOpen(false);
-        setShowInvestmentsList(false);
+      if (prev > 0) {
+        if (!clearingSnapshotRef.current && prevVavityDataRef.current) {
+          clearingSnapshotRef.current = prevVavityDataRef.current;
+        }
+        // Keep the wrapper open during the clearing animation.
+        beginClearing();
         if (clearInvestmentsAnimTimerRef.current) {
           globalThis.clearTimeout(clearInvestmentsAnimTimerRef.current);
           clearInvestmentsAnimTimerRef.current = null;
@@ -813,9 +907,11 @@ const VavityEthereum: React.FC = () => {
           setInvestmentsListOpen(false);
           setSubmitPhase('idle');
           submitTargetRef.current = 'add';
+          setSummaryOpen(false);
           clearInvestmentsAnimTimerRef.current = null;
         }, 2000);
       } else if (!isClearingInvestments) {
+        setSummaryOpen(false);
         // Initial empty mount or already-finished clear.
         setShowEmptyAddForm(false);
         setShowAddForm(false);
@@ -923,6 +1019,22 @@ const VavityEthereum: React.FC = () => {
       if (raf) window.cancelAnimationFrame(raf);
     };
   }, [summaryOpen, isClearingInvestments]);
+
+  useEffect(() => {
+    if (investmentsWholeHeight > 0) {
+      lastInvestmentsWholeHeightRef.current = investmentsWholeHeight;
+    }
+  }, [investmentsWholeHeight]);
+
+  useEffect(() => {
+    if (!isClearingInvestments) {
+      if (clearingHeightRafRef.current != null) {
+        window.cancelAnimationFrame(clearingHeightRafRef.current);
+        clearingHeightRafRef.current = null;
+      }
+      setClearingHeight(null);
+    }
+  }, [isClearingInvestments]);
 
   useLayoutEffect(() => {
     if (!addFormOpen || !addFormBoxRef.current) return;
@@ -1750,34 +1862,17 @@ const VavityEthereum: React.FC = () => {
     if (!isSignedIn && !sessionId) return;
     const indexToRemove = investmentIds.indexOf(investmentId);
     if (indexToRemove === -1) return;
-    const updated = investments.filter((_: any, idx: number) => idx !== indexToRemove);
+    const updated = liveInvestments.filter((_: any, idx: number) => idx !== indexToRemove);
     const isLastInvestment = updated.length === 0;
-    if (isLastInvestment) {
-      setIsClearingInvestments(true);
-      if (showAddForm) {
-        setAddFormOpen(false);
-        setTimeout(() => {
-          setShowAddForm(false);
-          setShowEmptyAddForm(false);
-        }, 1000);
-      } else {
-        setShowEmptyAddForm(false);
-      }
-      if (showAddMoreForm) {
-        setAddMoreOpen(false);
-        setTimeout(() => {
-          setShowAddMoreForm(false);
-        }, 1000);
-      }
-      setTimeout(() => {
-        setInvestmentsListOpen(false);
-        setShowInvestmentsList(false);
-      }, 2000);
-      setTimeout(() => {
-        setIsClearingInvestments(false);
-        setSubmitPhase('idle');
-        setVisibleInvestments(5);
-      }, 2000);
+    if (isLastInvestment && !isClearingInvestments) {
+      const startHeight =
+        investmentsWholePanelRef.current?.getBoundingClientRect().height ||
+        lastInvestmentsWholeHeightRef.current ||
+        investmentsWholeHeight ||
+        investmentsWholeContentRef.current?.getBoundingClientRect().height ||
+        0;
+      clearingSnapshotRef.current = vavityData;
+      beginClearing(startHeight);
     }
     isMutatingRef.current = true;
     try {
@@ -2336,12 +2431,11 @@ const VavityEthereum: React.FC = () => {
                   if (toggleAnimating) return;
                   const btn = e.currentTarget;
                   const cs = window.getComputedStyle(btn);
-                  const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
-                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
-                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
+                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
                   const w = btn.getBoundingClientRect().width;
                   const minLeft = leftInset;
-                  const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+                  const maxLeft = Math.max(leftInset, w - rightInset);
                   const currentLeft = toggleKnobLeftEffectivePx ?? (displayIsLiquidMode ? minLeft : maxLeft);
                   setToggleTrack({ minLeft, maxLeft, mid: (minLeft + maxLeft) / 2 });
 
@@ -2392,12 +2486,11 @@ const VavityEthereum: React.FC = () => {
                   if (!toggleDragRef.current.active) return;
                   const btn = e.currentTarget;
                   const cs = window.getComputedStyle(btn);
-                  const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
-                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
-                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
+                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
+                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
                   const w = btn.getBoundingClientRect().width;
                   const minLeft = leftInset;
-                  const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
+                  const maxLeft = Math.max(leftInset, w - rightInset);
                   const mid = (minLeft + maxLeft) / 2;
                   const finalLeft = toggleDragRef.current.lastLeft || (displayIsLiquidMode ? minLeft : maxLeft);
                   const nextIsLiquid = finalLeft <= mid;
@@ -2456,13 +2549,6 @@ const VavityEthereum: React.FC = () => {
           paddingLeft: '20px',
           paddingRight: '20px' }}
       >
-        {showInvestmentsHeader && (
-          <h2
-            className="asset-investments-header"
-          >
-            <span className="asset-portfolio-title-muted">investments</span>
-          </h2>
-        )}
         {!hasInvestmentsUI ? (
           <>
             <div
@@ -2470,11 +2556,16 @@ const VavityEthereum: React.FC = () => {
               className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
             >
               <div
-                className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
+                className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}${
+                  emptyAddFadeIn ? ' is-fading' : ''
+                }`}
               >
                 <button
                   className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
-                  disabled={showEmptyAddForm || emptyAddHiding}
+                disabled={showEmptyAddForm}
+                  style={{
+                  ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
+                  }}
                   onClick={() => {
                     suppressPortfolioCta();
                     if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
@@ -2520,11 +2611,11 @@ const VavityEthereum: React.FC = () => {
                     className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
                     style={{
                       opacity: emptyActionsExpanding ? 0 : 1,
-                      transition: emptyActionsExpanding ? 'none' : 'opacity 1s ease',
+                      transition: emptyActionsExpanding ? 'none' : 'opacity 3s ease, transform 0.2s ease',
                     }}
                     onClick={openSignIn}
                   >
-                    <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                  <span className="asset-save-signin-text">Save Investments</span>
                   </button>
                 </div>
               )}
@@ -2564,15 +2655,21 @@ const VavityEthereum: React.FC = () => {
             {/* Option B: Treat the entire investments viewing section as ONE measured height animation
                 (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
             <div
+              ref={investmentsWholePanelRef}
               className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-ethereum' : ''}`}
               style={{
-                maxHeight: investmentsWholeMaxHeight,
-                transition: investmentsWholeTransition,
+                maxHeight: isClearingInvestments ? clearingHeightPx : investmentsWholeMaxHeight,
+                transition: isClearingInvestments ? 'max-height 2s ease' : investmentsWholeTransition,
                 overflowX: 'visible',
-                overflowY: summaryOpen && !summaryAnimating ? 'visible' : 'hidden',
+                overflowY: isClearingInvestments ? 'hidden' : summaryOpen && !summaryAnimating ? 'visible' : 'hidden',
               }}
             >
               <div ref={investmentsWholeContentRef}>
+                {showInvestmentsHeader && (
+                  <h2 className="asset-investments-header">
+                    <span className="asset-portfolio-title-muted">investments</span>
+                  </h2>
+                )}
                 <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
                   <div className="asset-slide-panel" style={{ maxHeight: 'none', transition: 'none', overflow: 'visible' }}>
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
@@ -2789,7 +2886,7 @@ const VavityEthereum: React.FC = () => {
                         className="asset-action-button asset-action-button--save-signin"
                         onClick={openSignIn}
                       >
-                        <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                        <span className="asset-save-signin-text">Save Investments</span>
                       </button>
                     </div>
                   )}
@@ -2994,7 +3091,7 @@ const VavityEthereum: React.FC = () => {
                 disabled
                 tabIndex={-1}
               >
-                <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                <span className="asset-save-signin-text">Save Investments</span>
               </button>
             </div>
           )}
@@ -3008,7 +3105,7 @@ const VavityEthereum: React.FC = () => {
                 className="asset-action-button asset-action-button--save-signin"
                 onClick={openSignIn}
               >
-                <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                <span className="asset-save-signin-text">Save Investments</span>
               </button>
             </div>
           )}
