@@ -26,6 +26,7 @@ const VavityEthereum: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
   const [showEmptyAddForm, setShowEmptyAddForm] = useState<boolean>(false);
   const [addFormOpen, setAddFormOpen] = useState(false);
+  const [addFormSubmitAnimating, setAddFormSubmitAnimating] = useState(false);
   const [showAddMoreForm, setShowAddMoreForm] = useState<boolean>(false);
   const [addMoreOpen, setAddMoreOpen] = useState(false);
   const [suppressSummaryTransition, setSuppressSummaryTransition] = useState(false);
@@ -147,12 +148,19 @@ const VavityEthereum: React.FC = () => {
     acVactTaa: number;
   } | null>(null);
   const [summaryRangePriceSnapshot, setSummaryRangePriceSnapshot] = useState<number | null>(null);
+  const lastNonEmptyTotalsRef = useRef<{
+    acVatop: number;
+    acdVatop: number;
+    acVact: number;
+    acVactTaa: number;
+  } | null>(null);
+  const lastNonEmptyRangePriceRef = useRef<number | null>(null);
   const [summaryQuickFade, setSummaryQuickFade] = useState(false);
   const summaryQuickFadeTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const summaryQuickFadeEndRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const pendingOpenAfterSubmitRef = useRef(false);
   const [hideEmptyActionsOnSubmit, setHideEmptyActionsOnSubmit] = useState(false);
-  const [addFormSubmitHeight, setAddFormSubmitHeight] = useState<number | null>(null);
+  const emptyActionsHoldRef = useRef(false);
   const [formValuesHidden, setFormValuesHidden] = useState(false);
   const formValuesDidMountRef = useRef(false);
   const [formCalcHidden, setFormCalcHidden] = useState(false);
@@ -190,6 +198,7 @@ const VavityEthereum: React.FC = () => {
   const [investmentsWholeHeight, setInvestmentsWholeHeight] = useState(0);
   const lastInvestmentsWholeHeightRef = useRef(0);
   const addFormPanelRef = useRef<HTMLDivElement | null>(null);
+  const addFormCollapseAnimRef = useRef<Animation | null>(null);
   const addMoreFormPanelRef = useRef<HTMLDivElement | null>(null);
   const addFormBoxRef = useRef<HTMLDivElement | null>(null);
   const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
@@ -892,6 +901,13 @@ const VavityEthereum: React.FC = () => {
       });
     });
   }, [followScrollHeightDeltaFor]);
+  useEffect(() => {
+    if (!emptyActionsHoldRef.current) return;
+    if (investments.length > 0) {
+      emptyActionsHoldRef.current = false;
+      setHideEmptyActionsOnSubmit(false);
+    }
+  }, [investments.length]);
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
   const emptyActionsTargetHeight = emptyActionsHeight || lastEmptyActionsHeightRef.current;
   const investmentsWholeMaxHeight =
@@ -907,6 +923,7 @@ const VavityEthereum: React.FC = () => {
       : 'max-height 2s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   const summaryTransition = addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
+  const shouldRenderAddForm = (showEmptyAddForm && showAddForm) || addFormSubmitAnimating;
 
   const beginClearing = useCallback(
     (heightOverride?: number) => {
@@ -959,6 +976,13 @@ const VavityEthereum: React.FC = () => {
         if (!clearingSnapshotRef.current && prevVavityDataRef.current) {
           clearingSnapshotRef.current = prevVavityDataRef.current;
         }
+        if (!summaryTotalsSnapshot) {
+          const totals = lastNonEmptyTotalsRef.current;
+          if (totals) {
+            setSummaryTotalsSnapshot({ ...totals });
+            setSummaryRangePriceSnapshot(lastNonEmptyRangePriceRef.current ?? null);
+          }
+        }
         // Keep the wrapper open during the clearing animation.
         beginClearing();
         if (clearInvestmentsAnimTimerRef.current) {
@@ -969,6 +993,8 @@ const VavityEthereum: React.FC = () => {
           // Ensure empty buttons animate in (height down + fade-in) after clearing.
           triggerEmptyButtonsExpand();
           setIsClearingInvestments(false);
+          setSummaryTotalsSnapshot(null);
+          setSummaryRangePriceSnapshot(null);
           setShowEmptyAddForm(false);
           setShowAddForm(false);
           setAddFormOpen(false);
@@ -1002,6 +1028,10 @@ const VavityEthereum: React.FC = () => {
       return;
     }
     if (next > prev && !isClearingInvestments) {
+      if (isSubmitCollapsing && submitTargetRef.current === 'addMore') {
+        prevSummaryCountRef.current = next;
+        return;
+      }
       if (suppressInvestmentsUI) {
         pendingOpenAfterSubmitRef.current = true;
         prevSummaryCountRef.current = next;
@@ -1010,7 +1040,14 @@ const VavityEthereum: React.FC = () => {
       openInvestmentsSection();
     }
     prevSummaryCountRef.current = next;
-  }, [investments.length, isClearingInvestments, openInvestmentsSection, suppressInvestmentsUI]);
+  }, [
+    investments.length,
+    isClearingInvestments,
+    openInvestmentsSection,
+    suppressInvestmentsUI,
+    summaryTotalsSnapshot,
+    isSubmitCollapsing,
+  ]);
 
   useEffect(() => {
     const prev = prevHasInvestmentsUIRef.current;
@@ -1272,6 +1309,12 @@ const VavityEthereum: React.FC = () => {
   }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isLiquidMode, assetPrice]);
   const summaryTotals = summaryTotalsSnapshot ?? filteredTotals;
   const summaryRangePrice = summaryRangePriceSnapshot ?? rangeHistoricalPrice;
+  useEffect(() => {
+    if (liveInvestments.length > 0) {
+      lastNonEmptyTotalsRef.current = filteredTotals;
+      lastNonEmptyRangePriceRef.current = rangeHistoricalPrice ?? null;
+    }
+  }, [liveInvestments.length, filteredTotals, rangeHistoricalPrice]);
 
   const chartRanges = useMemo(
     () => [
@@ -1875,23 +1918,22 @@ const VavityEthereum: React.FC = () => {
     const isAddMore = target === 'addMore';
     const panelRef = isAddMore ? addMoreFormPanelRef.current : null;
     const addWrapRef = isAddMore ? null : addFormPanelRef.current;
-    const contentHeight = isAddMore
-      ? addMoreFormBoxRef.current?.scrollHeight
-      : addFormBoxRef.current?.scrollHeight;
+    const contentHeight = isAddMore ? addMoreFormBoxRef.current?.scrollHeight : undefined;
+    const measuredPanelHeight = panelRef?.getBoundingClientRect().height ?? 0;
     const start =
-      panelRef?.getBoundingClientRect().height ??
-      (contentHeight != null ? Math.max(0, contentHeight + 24) : null) ??
-      Math.max(600, addMoreFormPanelHeight);
-    const addStartHeight =
-      addWrapRef?.getBoundingClientRect().height ??
-      (contentHeight != null ? Math.max(0, contentHeight + 24) : Math.max(600, addFormPanelHeight));
+      measuredPanelHeight > 1
+        ? measuredPanelHeight
+        : contentHeight != null
+          ? Math.max(0, contentHeight + 24)
+          : Math.max(600, addMoreFormPanelHeight);
     flushSync(() => {
       setIsSubmitCollapsing(true);
       if (isAddMore) {
         setSubmitPanelMaxHeight(start);
       } else {
         setHideEmptyActionsOnSubmit(true);
-        setAddFormSubmitHeight(addStartHeight);
+        emptyActionsHoldRef.current = true;
+        setAddFormSubmitAnimating(true);
       }
     });
     if (isAddMore) {
@@ -1903,9 +1945,21 @@ const VavityEthereum: React.FC = () => {
         requestAnimationFrame(() => setSubmitPanelMaxHeight(0));
       });
     } else {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setAddFormSubmitHeight(0));
-      });
+      if (addWrapRef) {
+        if (addFormCollapseAnimRef.current) {
+          addFormCollapseAnimRef.current.cancel();
+          addFormCollapseAnimRef.current = null;
+        }
+        const measured = Math.max(0, Math.ceil(addWrapRef.getBoundingClientRect().height));
+        const startHeight = measured > 0 ? measured : Math.max(600, addFormPanelHeight);
+        addWrapRef.style.overflow = 'hidden';
+        addWrapRef.style.height = `${startHeight}px`;
+        addWrapRef.style.willChange = 'height';
+        addFormCollapseAnimRef.current = addWrapRef.animate(
+          [{ height: `${startHeight}px` }, { height: '0px' }],
+          { duration: 2000, easing: 'ease', fill: 'forwards' },
+        );
+      }
     }
 
     if (submitCollapseTimerRef.current) {
@@ -1917,13 +1971,28 @@ const VavityEthereum: React.FC = () => {
         setAddMoreOpen(false);
         setShowAddMoreForm(false);
       } else {
+        if (addFormPanelRef.current) {
+          if (addFormCollapseAnimRef.current) {
+            addFormCollapseAnimRef.current.cancel();
+            addFormCollapseAnimRef.current = null;
+          }
+          addFormPanelRef.current.style.height = '';
+          addFormPanelRef.current.style.overflow = '';
+          addFormPanelRef.current.style.willChange = '';
+        }
         setAddFormOpen(false);
         setShowAddForm(false);
         setShowEmptyAddForm(false);
-        setAddFormSubmitHeight(null);
-        // ensure no pending submit height remains
+        setAddFormSubmitAnimating(false);
       }
-      setHideEmptyActionsOnSubmit(false);
+      if (target === 'add') {
+        if (investments.length > 0) {
+          emptyActionsHoldRef.current = false;
+          setHideEmptyActionsOnSubmit(false);
+        }
+      } else {
+        setHideEmptyActionsOnSubmit(false);
+      }
       if (submitResetPendingRef.current) {
         submitResetPendingRef.current = false;
         setTokenAmount('');
@@ -1950,7 +2019,7 @@ const VavityEthereum: React.FC = () => {
     pulseSummaryValues,
     setIsSubmitCollapsing,
     setHideEmptyActionsOnSubmit,
-    setAddFormSubmitHeight,
+    setAddFormSubmitAnimating,
     setAddFormOpen,
     setAddMoreOpen,
     setShowAddForm,
@@ -2085,6 +2154,9 @@ const VavityEthereum: React.FC = () => {
     setTimeout(() => {
       setShowAddForm(false);
       setShowEmptyAddForm(false);
+      setAddFormSubmitAnimating(false);
+      emptyActionsHoldRef.current = false;
+      setHideEmptyActionsOnSubmit(false);
       setSubmitPhase('idle');
       // Reset empty-state button sequence so they can appear again.
       clearEmptyButtonsSequenceTimers();
@@ -2765,36 +2837,6 @@ const VavityEthereum: React.FC = () => {
                   </div>
                 )}
               </div>
-              {showEmptyAddForm && showAddForm && (
-                <div
-                  ref={addFormPanelRef}
-                  className="asset-submit-collapse"
-                  style={
-                    submitTargetRef.current === 'add' && addFormSubmitHeight != null
-                      ? { height: `${addFormSubmitHeight}px`, overflow: 'hidden', transition: 'height 2s ease' }
-                      : undefined
-                  }
-                >
-                  <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
-                    <div
-                      className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}
-                      style={{
-                        maxHeight: addFormOpen ? `${Math.max(600, addFormPanelHeight)}px` : '0px',
-                      }}
-                    >
-                      <div ref={addFormBoxRef} className="asset-slide-panel-inner">
-                        <div className="asset-invest-form-box asset-invest-form-box--ethereum">
-                          {renderAddForm(
-                            'Add Investments',
-                            closeAddForm,
-                            'asset-action-button asset-action-button--ethereum'
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </>
         ) : (
@@ -3229,6 +3271,28 @@ const VavityEthereum: React.FC = () => {
               </div>
             </div>
           </>
+        )}
+        {shouldRenderAddForm && (
+          <div ref={addFormPanelRef} className="asset-submit-collapse">
+            <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
+              <div
+                className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}
+                style={{
+                  maxHeight: addFormOpen ? `${Math.max(600, addFormPanelHeight)}px` : '0px',
+                }}
+              >
+                <div ref={addFormBoxRef} className="asset-slide-panel-inner">
+                  <div className="asset-invest-form-box asset-invest-form-box--ethereum">
+                    {renderAddForm(
+                      'Add Investments',
+                      closeAddForm,
+                      'asset-action-button asset-action-button--ethereum'
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
         <div ref={emptyActionsMeasureRef} className="asset-empty-actions asset-empty-actions--measure" aria-hidden="true">
           <div className="asset-empty-addinvest">

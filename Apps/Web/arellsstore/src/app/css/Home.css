@@ -328,7 +328,7 @@ body {
 }
 
 .asset-portfolio-summary-box.is-quickfade .asset-profit-range-anim {
-	transition: opacity 0.35s ease;
+	transition: opacity 1s ease;
 }
 
 .asset-profit-inline-wrap {

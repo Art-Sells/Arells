@@ -2,17 +2,18 @@
 
 ## Arells v1
 
-- *Complete submitting/submitted main UI/UX*
+
 - *Complete show investments/ delete investments UI*
 - *test multiple investment deletions... (with page mount clearing refresh page sessions) with the "1 minute end all open to see aht it does" with the form open and not open*
 - *About button (same as in asset pages) in my investmnts footer arells* 
+- *Clean up spacing on buttons insinde  view investment when forms are open/etc*
 
 ### Investment list (fix when heighting down, it jigs a little at the end (I don't experience this issue with the forms height downs))
 - - (delete) *test this*
 - - (Load More 5 per list) *test this*
 -------------------
 - (About arells)
-- - Clean up UI (on Modals/buttons/everything)
+- - Clean up UI spacing/etc
 
 ## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
 
