@@ -327,6 +327,10 @@ body {
 	opacity: 0;
 }
 
+.asset-portfolio-summary-box.is-quickfade .asset-profit-range-anim {
+	transition: opacity 0.35s ease;
+}
+
 .asset-profit-inline-wrap {
 	position: relative;
 	display: block;
@@ -2137,8 +2141,9 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .asset-section-slide {
-	animation: pageSlideUp 4s ease;
+	animation: pageSlideUp 0.1s ease;
 	animation-fill-mode: both;
+	pointer-events: auto;
 }
 
 
@@ -2963,6 +2968,7 @@ transform: translateY(calc(-50% - 0.5px));
 	z-index: 2147483647 !important;
 	opacity: .98;
 	transition: opacity 1s ease;
+	pointer-events: none;
 }
 
 .asset-loader-overlay--bitcoin {

@@ -4,7 +4,7 @@
 
 - *Complete submitting/submitted main UI/UX*
 - *Complete show investments/ delete investments UI*
-- *test multiple investment deletions... with the "1 minute end all open to see aht it does" with the form open and not open*
+- *test multiple investment deletions... (with page mount clearing refresh page sessions) with the "1 minute end all open to see aht it does" with the form open and not open*
 - *About button (same as in asset pages) in my investmnts footer arells* 
 
 ### Investment list (fix when heighting down, it jigs a little at the end (I don't experience this issue with the forms height downs))
@@ -13,7 +13,6 @@
 -------------------
 - (About arells)
 - - Clean up UI (on Modals/buttons/everything)
-
 
 ## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
 
@@ -70,7 +69,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 
 ### Metatags/ Description (all pages.tsx (dont forget my investments page) & components)
 - Add unique favicons (and add to online tests)
-- Alter: Descriptions & BannerImages (make [}{] images for promotions), add same color scheme on top behind logos.
+- Alter: Descriptions & BannerImages (make images for promotions top asset icon, with bordered section like the asset page below it wrapping: If investments never lost value (bold)), add same color scheme on top behind logos.
 - - If investments never lost value (Bitcoin/Ethereum - If investments never lost value)
 - Refactor (optimize with Cursor) Meta-tags {show AI and ask it why it displays home page ps and not meta tags}?
 - - (with vavity.info) Submit to Google Search Console: Submit your sitemap and request indexing

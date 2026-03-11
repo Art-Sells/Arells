@@ -8,6 +8,7 @@ import '../../../../app/css/Home.css';
 const EthereumPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
+  const [extraLoaderHoldMs, setExtraLoaderHoldMs] = useState(0);
 
   // Set global background immediately for overscroll beyond the asset page.
   useEffect(() => {
@@ -33,16 +34,40 @@ const EthereumPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setFadeOut(true), 1000);
+    if (!showLoading) return;
+    const fadeTimer = fadeOut ? null : setTimeout(() => setFadeOut(true), 1000);
     const hideTimer = setTimeout(() => {
       setLoading(false);
       setFadeOut(false);
-    }, 2000);
+      setExtraLoaderHoldMs(0);
+    }, 2000 + extraLoaderHoldMs);
 
     return () => {
-      clearTimeout(fadeTimer);
+      if (fadeTimer) clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
+  }, [extraLoaderHoldMs, fadeOut, showLoading]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const holdUntil = (window as any).__vavitySessionClearingHoldUntil;
+    if (typeof holdUntil === 'number') {
+      const remaining = Math.max(0, holdUntil - Date.now());
+      if (remaining > 0) {
+        setExtraLoaderHoldMs(remaining);
+        setFadeOut(false);
+        setLoading(true);
+      }
+    }
+    const handler = () => {
+      const until = (window as any).__vavitySessionClearingHoldUntil;
+      const remaining = typeof until === 'number' ? Math.max(0, until - Date.now()) : 2000;
+      setExtraLoaderHoldMs(remaining || 2000);
+      setFadeOut(false);
+      setLoading(true);
+    };
+    window.addEventListener('vavity:session-clearing', handler as EventListener);
+    return () => window.removeEventListener('vavity:session-clearing', handler as EventListener);
   }, []);
 
   return (
