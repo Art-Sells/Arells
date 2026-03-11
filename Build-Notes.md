@@ -3,7 +3,7 @@
 ## Arells v1
 
 
-- *Complete show investments/ delete investments UI*
+- *Complete show investments/ delete (why after the delete section heights up after the delete button is clicked for a section, does it height down the investent list secton again? is it because it's not yet deleted from the back end?) investments UI*
 - *test multiple investment deletions... (with page mount clearing refresh page sessions) with the "1 minute end all open to see aht it does" with the form open and not open*
 - *About button (same as in asset pages) in my investmnts footer arells* 
 - *Clean up spacing on buttons insinde  view investment when forms are open/etc*
