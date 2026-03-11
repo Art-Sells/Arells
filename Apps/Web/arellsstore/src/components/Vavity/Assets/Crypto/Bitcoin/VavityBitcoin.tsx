@@ -698,11 +698,29 @@ const VavityBitcoin: React.FC = () => {
     if (isSignedIn || email) return;
     if (clearedSessionOnMountRef.current) return;
     clearedSessionOnMountRef.current = true;
+    const pendingAt = Date.now();
+    if (typeof window !== 'undefined') {
+      (window as any).__vavitySessionClearingPending = true;
+      (window as any).__vavitySessionClearingPendingAt = pendingAt;
+      window.dispatchEvent(new CustomEvent('vavity:session-clearing-pending', { detail: { pendingAt } }));
+    }
     (async () => {
       try {
+        let hasInvestments = Array.isArray(vavityData?.investments) && vavityData!.investments.length > 0;
+        if (!hasInvestments) {
+          const current = await fetchVavityAggregator(sessionId, 'bitcoin');
+          hasInvestments = Array.isArray(current?.investments) && current.investments.length > 0;
+        }
         if (typeof window !== 'undefined') {
-          (window as any).__vavitySessionClearingHoldUntil = Date.now() + 2000;
-          window.dispatchEvent(new CustomEvent('vavity:session-clearing'));
+          const holdMs = hasInvestments ? 4000 : 2000;
+          (window as any).__vavitySessionClearingPending = false;
+          (window as any).__vavitySessionClearingPendingAt = pendingAt;
+          (window as any).__vavitySessionClearingHoldMs = holdMs;
+          window.dispatchEvent(
+            new CustomEvent('vavity:session-clearing-ready', {
+              detail: { holdMs, pendingAt },
+            }),
+          );
         }
         await saveVavityAggregator(sessionId, [], 'bitcoin');
         const cleared = await fetchVavityAggregator(sessionId, 'bitcoin');
@@ -1854,22 +1872,25 @@ const VavityBitcoin: React.FC = () => {
   const triggerSubmitFormCollapse = useCallback(() => {
     const target = submitTargetRef.current;
     const isAddMore = target === 'addMore';
-    const panelRef = isAddMore ? addMoreFormPanelRef.current : addFormPanelRef.current;
-    const contentHeight =
-      isAddMore
-        ? addMoreFormBoxRef.current?.scrollHeight
-        : addFormBoxRef.current?.scrollHeight;
+    const panelRef = isAddMore ? addMoreFormPanelRef.current : null;
+    const addWrapRef = isAddMore ? null : addFormPanelRef.current;
+    const contentHeight = isAddMore
+      ? addMoreFormBoxRef.current?.scrollHeight
+      : addFormBoxRef.current?.scrollHeight;
     const start =
       panelRef?.getBoundingClientRect().height ??
       (contentHeight != null ? Math.max(0, contentHeight + 24) : null) ??
-      (isAddMore ? Math.max(600, addMoreFormPanelHeight) : Math.max(600, addFormPanelHeight));
+      Math.max(600, addMoreFormPanelHeight);
+    const addStartHeight =
+      addWrapRef?.getBoundingClientRect().height ??
+      (contentHeight != null ? Math.max(0, contentHeight + 24) : Math.max(600, addFormPanelHeight));
     flushSync(() => {
       setIsSubmitCollapsing(true);
       if (isAddMore) {
         setSubmitPanelMaxHeight(start);
       } else {
         setHideEmptyActionsOnSubmit(true);
-        setAddFormSubmitHeight(start);
+        setAddFormSubmitHeight(addStartHeight);
       }
     });
     if (isAddMore) {
@@ -1899,6 +1920,7 @@ const VavityBitcoin: React.FC = () => {
         setShowAddForm(false);
         setShowEmptyAddForm(false);
         setAddFormSubmitHeight(null);
+        // ensure no pending submit height remains
       }
       setHideEmptyActionsOnSubmit(false);
       if (submitResetPendingRef.current) {
@@ -2747,30 +2769,30 @@ const VavityBitcoin: React.FC = () => {
                 )}
               </div>
               {showEmptyAddForm && showAddForm && (
-                <div className="asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin">
-                  <div
-                    ref={addFormPanelRef}
-                    className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}
-                    style={{
-                      maxHeight:
-                        submitTargetRef.current === 'add' && addFormSubmitHeight != null
-                          ? `${addFormSubmitHeight}px`
-                          : addFormOpen
-                            ? `${Math.max(600, addFormPanelHeight)}px`
-                            : '0px',
-                      transition:
-                        submitTargetRef.current === 'add' && addFormSubmitHeight != null
-                          ? 'max-height 2s ease'
-                          : undefined,
-                    }}
-                  >
-                    <div ref={addFormBoxRef} className="asset-slide-panel-inner">
-                      <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
-                        {renderAddForm(
-                          'Add Investments',
-                          closeAddForm,
-                          'asset-action-button asset-action-button--bitcoin'
-                        )}
+                <div
+                  ref={addFormPanelRef}
+                  className="asset-submit-collapse"
+                  style={
+                    submitTargetRef.current === 'add' && addFormSubmitHeight != null
+                      ? { height: `${addFormSubmitHeight}px`, overflow: 'hidden', transition: 'height 2s ease' }
+                      : undefined
+                  }
+                >
+                  <div className="asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin">
+                    <div
+                      className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}
+                      style={{
+                        maxHeight: addFormOpen ? `${Math.max(600, addFormPanelHeight)}px` : '0px',
+                      }}
+                    >
+                      <div ref={addFormBoxRef} className="asset-slide-panel-inner">
+                        <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
+                          {renderAddForm(
+                            'Add Investments',
+                            closeAddForm,
+                            'asset-action-button asset-action-button--bitcoin'
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

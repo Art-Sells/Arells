@@ -9,6 +9,7 @@ const EthereumPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [extraLoaderHoldMs, setExtraLoaderHoldMs] = useState(0);
+  const [sessionClearPending, setSessionClearPending] = useState(false);
 
   // Set global background immediately for overscroll beyond the asset page.
   useEffect(() => {
@@ -34,40 +35,51 @@ const EthereumPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!showLoading) return;
-    const fadeTimer = fadeOut ? null : setTimeout(() => setFadeOut(true), 1000);
+    if (!showLoading || sessionClearPending) return;
+    const totalHoldMs = extraLoaderHoldMs > 0 ? extraLoaderHoldMs : 2000;
+    const fadeDelayMs = extraLoaderHoldMs > 0 ? Math.max(0, totalHoldMs - 1000) : 1000;
+    const fadeTimer = fadeOut ? null : setTimeout(() => setFadeOut(true), fadeDelayMs);
     const hideTimer = setTimeout(() => {
       setLoading(false);
       setFadeOut(false);
       setExtraLoaderHoldMs(0);
-    }, 2000 + extraLoaderHoldMs);
+    }, totalHoldMs);
 
     return () => {
       if (fadeTimer) clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
-  }, [extraLoaderHoldMs, fadeOut, showLoading]);
+  }, [extraLoaderHoldMs, fadeOut, showLoading, sessionClearPending]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const holdUntil = (window as any).__vavitySessionClearingHoldUntil;
-    if (typeof holdUntil === 'number') {
-      const remaining = Math.max(0, holdUntil - Date.now());
-      if (remaining > 0) {
-        setExtraLoaderHoldMs(remaining);
-        setFadeOut(false);
-        setLoading(true);
-      }
+    const pending = Boolean((window as any).__vavitySessionClearingPending);
+    if (pending) {
+      setSessionClearPending(true);
+      setFadeOut(false);
+      setLoading(true);
     }
-    const handler = () => {
-      const until = (window as any).__vavitySessionClearingHoldUntil;
-      const remaining = typeof until === 'number' ? Math.max(0, until - Date.now()) : 2000;
-      setExtraLoaderHoldMs(remaining || 2000);
+    const pendingHandler = () => {
+      setSessionClearPending(true);
+      setExtraLoaderHoldMs(0);
       setFadeOut(false);
       setLoading(true);
     };
-    window.addEventListener('vavity:session-clearing', handler as EventListener);
-    return () => window.removeEventListener('vavity:session-clearing', handler as EventListener);
+    const readyHandler = (event: Event) => {
+      const detail = (event as CustomEvent).detail as { holdMs?: number; pendingAt?: number } | undefined;
+      const holdMs = detail?.holdMs ?? 2000;
+      const remaining = Math.max(0, holdMs);
+      setSessionClearPending(false);
+      setExtraLoaderHoldMs(remaining);
+      setFadeOut(false);
+      setLoading(true);
+    };
+    window.addEventListener('vavity:session-clearing-pending', pendingHandler as EventListener);
+    window.addEventListener('vavity:session-clearing-ready', readyHandler as EventListener);
+    return () => {
+      window.removeEventListener('vavity:session-clearing-pending', pendingHandler as EventListener);
+      window.removeEventListener('vavity:session-clearing-ready', readyHandler as EventListener);
+    };
   }, []);
 
   return (
