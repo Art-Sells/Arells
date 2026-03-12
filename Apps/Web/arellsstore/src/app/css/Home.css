@@ -109,6 +109,7 @@ body {
 	/* Let per-asset and global app background show through (also fixes overscroll edge cases). */
 	background: transparent;
 	font-family: Arial;
+	position: relative;
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
 }
@@ -432,6 +433,35 @@ body {
 	box-shadow: none;
 }
 
+.asset-portfolio-icon-anchor {
+	position: fixed;
+	left: calc((100% - min(697px, 100%)) / 2);
+	bottom: 60px;
+	z-index: 50;
+	display: inline-flex;
+	align-items: center;
+}
+
+.asset-portfolio-icon-button {
+	margin-left: 0;
+	--asset-portfolio-icon-size: 37px;
+	--asset-portfolio-icon-padding-x: -3px;
+	--asset-portfolio-icon-padding-y: 10px;
+	width: calc(var(--asset-portfolio-icon-size) + (var(--asset-portfolio-icon-padding-x) * 1));
+	height: calc(var(--asset-portfolio-icon-size) + (var(--asset-portfolio-icon-padding-y) * 2));
+	min-width: calc(var(--asset-portfolio-icon-size) + (var(--asset-portfolio-icon-padding-x) * 1));
+	min-height: calc(var(--asset-portfolio-icon-size) + (var(--asset-portfolio-icon-padding-y) * 2));
+	padding: var(--asset-portfolio-icon-padding-y) var(--asset-portfolio-icon-padding-x);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	position: static;
+	border-radius: 50px !important;
+	line-height: 1;
+	text-decoration: none;
+}
+
 .asset-home-button--bitcoin {
 	border: none;
 	box-shadow: none;
@@ -558,6 +588,7 @@ body {
 	width: min(700px, 100%);
 	margin: 0 auto;
 	box-sizing: border-box;
+	position: relative;
 }
 
 /* Chart height (TSX measures .asset-chart-wrap height) */
@@ -785,14 +816,27 @@ body {
 	border: 1px solid #333;
 	background: #202020;
 	color: #f5f5f5;
+	text-decoration: none;
 	font-size: 12px;
 	font-weight: 400;
 	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
 		transform 0.5s ease;
 }
 
+.asset-action-button:visited {
+	color: inherit;
+	text-decoration: none;
+}
+
 .asset-action-button:hover {
 	transform: translateY(-5px);
+}
+
+.asset-page--bitcoin .asset-action-button,
+.asset-page--ethereum .asset-action-button,
+.asset-page--bitcoin .asset-action-button:hover,
+.asset-page--ethereum .asset-action-button:hover {
+	box-shadow: none !important;
 }
 
 .asset-action-button--bitcoin {
@@ -1138,113 +1182,6 @@ body {
 	background: rgba(107, 114, 168, 0.16);
 }
 
-.asset-portfolio-slideup {
-	position: fixed;
-	left: 50%; /* default; may be overridden by inline style measurement */
-	/* No "margin bottom" feel: sit flush to the viewport bottom (safe-area aware) */
-	bottom: calc(0px + env(safe-area-inset-bottom, 0px));
-	/* Hide fully off-screen (button is tall and has shadow, so push it farther than 120%) */
-	transform: translate(-50%, 220%);
-	pointer-events: none;
-	/* Sit above page content, but below loader overlays */
-	z-index: 2147483000;
-	isolation: isolate;
-	/* width/left are controlled by JS to match the real button footprint */
-	max-width: none;
-	transition: transform 0.7s ease;
-	display: flex;
-	justify-content: center;
-	font-family: Arial, sans-serif; /* prevent portal-in-body serif fallback */
-}
-
-.asset-portfolio-slideup.is-visible {
-	transform: translate(-50%, 0);
-	pointer-events: auto;
-}
-
-.asset-portfolio-slideup-button {
-	text-decoration: none;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	width: 100%;
-	touch-action: pan-y;
-	box-sizing: border-box; /* keep outer width stable even when padding differs */
-}
-
-/* Portal CTA lives outside `.asset-page-content`, so we must explicitly match the in-page "unified" text color */
-.asset-portfolio-slideup--bitcoin .asset-portfolio-slideup-button,
-.asset-portfolio-slideup--bitcoin .asset-portfolio-slideup-button:visited {
-	color: rgb(209, 142, 55) !important; /* same as `--asset-line-color` on `.asset-page--bitcoin` */
-}
-
-.asset-portfolio-slideup--ethereum .asset-portfolio-slideup-button,
-.asset-portfolio-slideup--ethereum .asset-portfolio-slideup-button:visited {
-	color: rgb(107, 114, 168) !important; /* same as `--asset-line-color` on `.asset-page--ethereum` */
-}
-
-/* Slide-up CTA: set background to 0.9 opacity (match calendar popover panel tint) */
-.asset-portfolio-slideup--bitcoin .asset-action-button--add-investments {
-	/* Keep the button background exactly as the real Add Investments button */
-	padding-left: 15px !important;
-	padding-right: 15px !important;
-}
-
-.asset-portfolio-slideup--ethereum .asset-action-button--add-investments {
-	/* Keep the button background exactly as the real Add Investments button */
-	padding-left: 15px !important;
-	padding-right: 15px !important;
-}
-
-/* Slide-up CTA wrapper: match the portfolio wrapper box styling */
-.asset-portfolio-slideup .asset-portfolio-summary-box--slideup {
-	/* Remove the default `.asset-portfolio-summary-box { margin: 0 auto 12px; }` */
-	margin: 0 auto -10px !important;
-	/* Match requested padding */
-	padding-top: 35px;
-	padding-left: 25px;
-	padding-right: 25px;
-	/* Existing was 20px; add another 20px */
-	padding-bottom: 45px;
-	position: relative;
-}
-
-/* Slide-up Portfolio CTA: vertical guide lines that match the wrapper border styling */
-.asset-portfolio-slideup .asset-portfolio-summary-box--slideup::before,
-.asset-portfolio-slideup .asset-portfolio-summary-box--slideup::after {
-	content: '';
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: var(--portfolio-slideup-line-width, 1px);
-	background: var(--portfolio-slideup-line-color, rgba(0, 0, 0, 0.2));
-	opacity: 1;
-	pointer-events: none;
-}
-
-.asset-portfolio-slideup .asset-portfolio-summary-box--slideup::before {
-	left: var(--portfolio-slideup-line-left-inset, 0px);
-}
-
-.asset-portfolio-slideup .asset-portfolio-summary-box--slideup::after {
-	right: var(--portfolio-slideup-line-right-inset, 0px);
-}
-
-/* Slide-up CTA section background should be 0.95 opacity */
-.asset-portfolio-slideup--bitcoin .asset-portfolio-summary-box--slideup {
-	background: rgba(255, 244, 232, 0.9);
-}
-
-.asset-portfolio-slideup--ethereum .asset-portfolio-summary-box--slideup {
-	/* Match the perceived tint of `.asset-panel--ethereum { background: rgba(107,114,168,0.07) }` on white */
-	background: rgba(235, 235, 242, 0.9);
-}
-
-/* Slide-up CTA button: remove the Add Investments default bottom margin (the wrapper handles spacing) */
-.asset-portfolio-slideup .asset-action-button--add-investments {
-	margin-bottom: 0px !important;
-}
 
 .asset-date-trigger.is-open {
 	outline: none;
@@ -1830,27 +1767,27 @@ transform: translateY(calc(-50% - 0.5px));
 
 .asset-page--bitcoin .asset-page-content .asset-action-button--save-signin {
 	background: rgba(248, 141, 0, 1);
-	box-shadow: -5px 0px 20px rgba(248, 141, 0, 0.8) !important;
+	box-shadow: none !important;
 	border-color: rgba(248, 141, 0, 1);
 	/* brighter "same hue" tint of the background */
 	color: color-mix(in srgb, rgba(248, 141, 0, 1) 18%, white 82%) !important;
 }
 
 .asset-page--bitcoin .asset-page-content .asset-action-button--save-signin:hover {
-	box-shadow: -7px -3px 20px rgba(248, 141, 0, 0.2), 0 4px 14px rgba(248, 141, 0, 0.2) !important;
+	box-shadow: none !important;
 	transform: translateY(-4px);
 }
 
 .asset-page--ethereum .asset-page-content .asset-action-button--save-signin {
 	background: rgba(107, 114, 168, 1);
-	box-shadow: -5px 0px 20px rgba(107, 114, 168, 0.8) !important;
+	box-shadow: none !important;
 	border-color: rgba(107, 114, 168, 1);
 	/* brighter "same hue" tint of the background */
 	color: color-mix(in srgb, rgba(107, 114, 168, 1) 18%, white 82%) !important;
 }
 
 .asset-page--ethereum .asset-page-content .asset-action-button--save-signin:hover {
-	box-shadow: -7px -2px 20px rgba(107, 114, 168, 0.2), 0 4px 14px rgba(107, 114, 168, 0.2) !important;
+	box-shadow: none !important;
 	transform: translateY(-4px);
 }
 
@@ -1884,6 +1821,51 @@ transform: translateY(calc(-50% - 0.5px));
 	box-sizing: border-box;
 	transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease, opacity 0.5s ease,
 		transform 0.5s ease;
+}
+
+.asset-range-button.asset-portfolio-icon-button {
+	padding: var(--asset-portfolio-icon-padding-y) var(--asset-portfolio-icon-padding-x);
+	font-size: 40px;
+	line-height: 1;
+	text-decoration: none;
+	font-weight: 200;
+}
+
+.asset-portfolio-icon-text {
+	opacity: var(--asset-portfolio-icon-opacity, .3);
+	display: inline-block;
+	font-weight: 800;
+	transition: opacity 0.2s ease;
+}
+
+
+
+.asset-page--bitcoin .asset-range-button.asset-portfolio-icon-button {
+	background: rgba(248, 141, 0, 0.0) !important;
+}
+
+.asset-page--ethereum .asset-range-button.asset-portfolio-icon-button {
+	background: rgba(107, 114, 168, 0.0) !important;
+}
+
+.asset-page--bitcoin .asset-range-button.asset-portfolio-icon-button {
+	border-color: rgba(248, 141, 0, 0.2) !important;
+}
+
+.asset-page--ethereum .asset-range-button.asset-portfolio-icon-button {
+	border-color: rgba(107, 114, 168, 0.2) !important;
+}
+
+.asset-page--bitcoin .asset-range-button.asset-portfolio-icon-button:hover {
+	border-color: rgba(248, 141, 0, 0.3) !important;
+}
+
+.asset-page--ethereum .asset-range-button.asset-portfolio-icon-button:hover {
+	border-color: rgba(107, 114, 168, 0.3) !important;
+}
+
+.asset-range-button.asset-portfolio-icon-button:hover .asset-portfolio-icon-text {
+	opacity: 0.23;
 }
 
 .asset-range-button:hover {
@@ -2732,10 +2714,6 @@ transform: translateY(calc(-50% - 0.5px));
 		height: 720px;
 	}
 
-	.asset-portfolio-slideup {
-		width: 340px;
-	}
-
 	.asset-price-chart-row {
 		align-items: stretch;
 		min-height: 360px;
@@ -2856,15 +2834,13 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 /* Re-enable shadow for the empty-state "Add Investments" button (matches chart line hue) */
-.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments,
-.asset-portfolio-slideup--bitcoin .asset-action-button--add-investments {
-	box-shadow: -5px 0px 20px rgba(248, 141, 0, 0.4) !important;
+.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments {
+	box-shadow: none !important;
 }
 
-.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments:hover,
-.asset-portfolio-slideup--bitcoin .asset-action-button--add-investments:hover {
+.asset-page--bitcoin .asset-page-content .asset-action-button--add-investments:hover {
 	/* Mimic Home asset button hover: shadow grows */
-	box-shadow: -7px -3px 20px rgba(248, 141, 0, 0.2), 0 4px 14px rgba(248, 141, 0, 0.2) !important;
+	box-shadow: none !important;
 	transform: translateY(-4px);
 }
 
@@ -2876,14 +2852,12 @@ transform: translateY(calc(-50% - 0.5px));
 	box-shadow: none !important;
 }
 
-.asset-page--ethereum .asset-page-content .asset-action-button--add-investments,
-.asset-portfolio-slideup--ethereum .asset-action-button--add-investments {
-	box-shadow: -5px 0px 20px rgba(107, 114, 168, 0.4) !important;
+.asset-page--ethereum .asset-page-content .asset-action-button--add-investments {
+	box-shadow: none !important;
 }
 
-.asset-page--ethereum .asset-page-content .asset-action-button--add-investments:hover,
-.asset-portfolio-slideup--ethereum .asset-action-button--add-investments:hover {
-	box-shadow: -7px -2px 20px rgba(107, 114, 168, 0.2), 0 4px 14px rgba(107, 114, 168, 0.2) !important;
+.asset-page--ethereum .asset-page-content .asset-action-button--add-investments:hover {
+	box-shadow: none !important;
 	transform: translateY(-4px);
 }
 
@@ -3051,8 +3025,30 @@ transform: translateY(calc(-50% - 0.5px));
 
 .asset-footer {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
+	align-items: center;
+	gap: 12px;
 	padding: 24px 0 32px;
+}
+
+.asset-footer-viewmore {
+	margin-bottom: 0;
+	padding: 10px;
+}
+
+.asset-footer .asset-action-button--invest-show {
+	padding-left: 60px;
+	padding-right: 60px;
+	padding-bottom: 20px;
+	padding-top: 20px;
+}
+
+.asset-view-more-assets {
+	font-size: 20px;
+	font-weight: 200;
+	letter-spacing: 0px;
+	border-radius: 50px;
 }
 
 .asset-fade-in {

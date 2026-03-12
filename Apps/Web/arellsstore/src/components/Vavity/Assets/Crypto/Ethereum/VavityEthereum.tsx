@@ -9,7 +9,6 @@ import { useVavity } from '../../../../../context/VavityAggregator';
 import { useUser } from '../../../../../context/UserContext';
 import EthereumChart from '../../../../Assets/Crypto/Ethereum/EthereumChart';
 import CustomDatePicker from '../../../../common/CustomDatePicker';
-import PortfolioSlideUpCTA from '../../PortfolioSlideUpCTA';
 
 const VavityEthereum: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
@@ -3494,7 +3493,6 @@ const VavityEthereum: React.FC = () => {
       </div>
 
       </div>
-      <PortfolioSlideUpCTA enabled={!!email && isSignedIn} asset="ethereum" />
     </div>
   );
 };

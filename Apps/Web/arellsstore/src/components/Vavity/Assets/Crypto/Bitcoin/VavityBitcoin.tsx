@@ -9,7 +9,6 @@ import { useVavity } from '../../../../../context/VavityAggregator';
 import { useUser } from '../../../../../context/UserContext';
 import BitcoinChart from '../../../../Assets/Crypto/Bitcoin/BitcoinChart';
 import CustomDatePicker from '../../../../common/CustomDatePicker';
-import PortfolioSlideUpCTA from '../../PortfolioSlideUpCTA';
 
 const VavityBitcoin: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
@@ -3273,9 +3272,7 @@ const VavityBitcoin: React.FC = () => {
           </div>
         )}
         </div>
-
       </div>
-      <PortfolioSlideUpCTA enabled={!!email && isSignedIn} asset="bitcoin" />
     </div>
   );
 };
