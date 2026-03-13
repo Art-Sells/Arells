@@ -2831,7 +2831,7 @@ const VavityEthereum: React.FC = () => {
                       }}
                       onClick={openSignIn}
                     >
-                    <span className="asset-save-signin-text">Save Investments</span>
+                    <span className="asset-save-signin-text">Sign In to Save Investments</span>
                     </button>
                   </div>
                 )}
@@ -3085,7 +3085,7 @@ const VavityEthereum: React.FC = () => {
                         className="asset-action-button asset-action-button--save-signin"
                         onClick={openSignIn}
                       >
-                        <span className="asset-save-signin-text">Save Investments</span>
+                        <span className="asset-save-signin-text">Sign In to Save Investments</span>
                       </button>
                     </div>
                   )}
@@ -3312,7 +3312,7 @@ const VavityEthereum: React.FC = () => {
                 disabled
                 tabIndex={-1}
               >
-                <span className="asset-save-signin-text">Save Investments</span>
+                <span className="asset-save-signin-text">Sign In to Save Investments</span>
               </button>
             </div>
           )}
@@ -3326,7 +3326,7 @@ const VavityEthereum: React.FC = () => {
                 className="asset-action-button asset-action-button--save-signin"
                 onClick={openSignIn}
               >
-                <span className="asset-save-signin-text">Save Investments</span>
+                <span className="asset-save-signin-text">Sign In to Save Investments</span>
               </button>
             </div>
           )}

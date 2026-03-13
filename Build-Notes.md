@@ -3,17 +3,16 @@
 ## Arells v1
 
 
-- *Complete show investments/ delete (why after the delete section heights up after the delete button is clicked for a section, does it height down the investent list secton again? is it because it's not yet deleted from the back end?) investments UI*
-- *test multiple investment deletions... (with page mount clearing refresh page sessions) with the "1 minute end all open to see aht it does" with the form open and not open*
+- *Complete show investments/ delete (why after the delete section heights up after the delete button is clicked for a section and is deleing, does it height down the investent list secton again? is it because it's not yet deleted from the back end?) investments UI... Put delete 1 minute timer back after UI completion*
+- *test multiple investment deletions big numbers and small... (with page mount clearing refresh page sessions) with the "1 minute end all open to see aht it does" with the form open and not open*
 - *About button (same as in asset pages) in my investmnts footer arells* 
 - *Clean up spacing on buttons insinde  view investment when forms are open/etc*
 
 ### Investment list (fix when heighting down, it jigs a little at the end (I don't experience this issue with the forms height downs))
 - - (delete) *test this*
 - - (Load More 5 per list) *test this*
--------------------
-- (About arells)
-- - Clean up UI spacing/etc
+
+### My investment numbers have thick borders and no background and circle has two black lines.
 
 ## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
 
@@ -60,7 +59,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)
-- Remove "sign in" dynamic to test in mobile...
+- Remove "sign in" dynamic and "1 minute timer "to test in mobile...
 - - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes...
 
 ### Sign In/Up

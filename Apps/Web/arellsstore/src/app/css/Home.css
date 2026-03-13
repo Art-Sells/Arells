@@ -3029,26 +3029,109 @@ transform: translateY(calc(-50% - 0.5px));
 	justify-content: center;
 	align-items: center;
 	gap: 12px;
-	padding: 24px 0 32px;
+	margin-top: 20px;
+	margin-bottom: 15px;
 }
 
 .asset-footer-viewmore {
 	margin-bottom: 0;
 	padding: 10px;
+	margin-top: 0;
 }
 
 .asset-footer .asset-action-button--invest-show {
-	padding-left: 60px;
-	padding-right: 60px;
-	padding-bottom: 20px;
-	padding-top: 20px;
+	padding-left: 35px;
+	padding-right: 28px;
+	padding-bottom: 12px;
+	padding-top: 10px;
+	border-top-left-radius: 999px;
+	border-bottom-left-radius: 999px;
+	border-top-right-radius: 999px;
+	border-bottom-right-radius: 999px;
+}
+
+.asset-footer .asset-footer-about-button {
+	padding-left: 23px;
+	padding-right: 20px;
+	padding-top: 10px;
+	padding-bottom: 11px;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	border-top-left-radius: 999px;
+	border-bottom-left-radius: 999px;
+	border-top-right-radius: 999px;
+	border-bottom-right-radius: 999px;
+	margin-top: 0px;
+}
+
+.asset-footer-about-divider {
+	width: 5px;
+	align-self: stretch;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-top-right-radius: 1px;
+	border-bottom-right-radius: 1px;
+	background: var(--asset-footer-about-divider-color, currentColor);
+	margin-top: 0px;
+	margin-bottom: 0px;
+	opacity: .2;
+}
+
+.asset-footer-about-text {
+	font-size: 12px;
+	letter-spacing: 0px;
+	margin-right: 3px;
+	opacity: 1;
+	font-weight: 800;
+}
+
+.asset-footer-about-logo {
+	--asset-footer-logo-height: 12px;
+	--asset-footer-logo-aspect: 3.5;
+	height: var(--asset-footer-logo-height);
+	width: calc(var(--asset-footer-logo-height) * var(--asset-footer-logo-aspect));
+	display: inline-block;
+	background-color: currentColor;
+	mask: url("/images/Arells-Logo-Ebony.png") no-repeat center / contain;
+	-webkit-mask: url("/images/Arells-Logo-Ebony.png") no-repeat center / contain;
+	margin-top: -3px;
+}
+
+.asset-footer-about-button.asset-action-button--bitcoin {
+	color: rgba(248, 141, 0, 0.95);
+	border-color: rgba(248, 141, 0, 0.9);
+	background: rgba(248, 141, 0, 0.18);
+	--asset-footer-about-divider-color: rgba(248, 141, 0, 0.9);
+}
+
+.asset-footer-about-button.asset-action-button--ethereum {
+	color: rgba(107, 114, 168, 0.95);
+	border-color: rgba(107, 114, 168, 0.9);
+	background: rgba(107, 114, 168, 0.18);
+	--asset-footer-about-divider-color: rgba(107, 114, 168, 0.9);
+}
+
+.asset-view-more-assets--footer.asset-action-button--bitcoin {
+	--asset-footer-about-divider-color: rgba(248, 141, 0, 0.9);
+}
+
+.asset-view-more-assets--footer.asset-action-button--ethereum {
+	--asset-footer-about-divider-color: rgba(107, 114, 168, 0.9);
 }
 
 .asset-view-more-assets {
-	font-size: 20px;
-	font-weight: 200;
-	letter-spacing: 0px;
+	font-size: 15px;
+	font-weight: 600;
+	letter-spacing: -.7px;
 	border-radius: 50px;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.asset-view-more-assets-text {
+	display: inline-block;
 }
 
 .asset-fade-in {
