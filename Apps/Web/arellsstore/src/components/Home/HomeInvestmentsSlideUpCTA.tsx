@@ -91,6 +91,7 @@ export default function HomeInvestmentsSlideUpCTA({
             className="home-investments-slideup-button"
             style={layout?.buttonHeight ? { height: `${layout.buttonHeight}px` } : undefined}
           >
+            <span className="home-investments-slideup-button-bg" aria-hidden="true" />
             <span className="home-investments-slideup-button-text">{label}</span>
           </Link>
         </div>

@@ -132,6 +132,8 @@ const VavityEthereum: React.FC = () => {
   const [closingInvestments, setClosingInvestments] = useState<string[]>([]);
   const [visibleInvestments, setVisibleInvestments] = useState<number>(5);
   const [deletingInvestments, setDeletingInvestments] = useState<string[]>([]);
+  const [pendingDeleteInvestments, setPendingDeleteInvestments] = useState<string[]>([]);
+  const [deleteHeights, setDeleteHeights] = useState<Record<string, number>>({});
   const [collapsedInvestments, setCollapsedInvestments] = useState<string[]>([]);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryAnimating, setSummaryAnimating] = useState(false);
@@ -189,10 +191,24 @@ const VavityEthereum: React.FC = () => {
   const prevInvestmentIdsRef = useRef<string[]>([]);
   const prevSummaryCountRef = useRef(0);
   const pendingNewIdsRef = useRef<string[]>([]);
+  const investmentCardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const deleteFadeTimersRef = useRef<Record<string, number>>({});
+  const deleteActionTimersRef = useRef<Record<string, number>>({});
   const investmentIdMapRef = useRef<Map<string, string>>(new Map());
   const investmentIdCounterRef = useRef(0);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
   const investmentsWholeContentRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    return () => {
+      Object.values(deleteFadeTimersRef.current).forEach((timer) => {
+        if (timer) globalThis.clearTimeout(timer);
+      });
+      Object.values(deleteActionTimersRef.current).forEach((timer) => {
+        if (timer) globalThis.clearTimeout(timer);
+      });
+    };
+  }, []);
   const investmentsWholePanelRef = useRef<HTMLDivElement | null>(null);
   const [investmentsWholeHeight, setInvestmentsWholeHeight] = useState(0);
   const lastInvestmentsWholeHeightRef = useRef(0);
@@ -3132,14 +3148,25 @@ const VavityEthereum: React.FC = () => {
                           const isClosing = closingInvestments.includes(investmentId);
                           const isCollapsed = collapsedInvestments.includes(investmentId);
                           const isDeleting = deletingInvestments.includes(investmentId);
+                          const isPendingDelete = pendingDeleteInvestments.includes(investmentId);
                           const isNew = slowOpenInvestments.includes(investmentId);
+                          const deleteHeight = deleteHeights[investmentId];
                           return (
                             <div
                               key={investmentId}
                               className={`asset-slide-panel${!isClosing && !isCollapsed ? ' is-open' : ''}`}
                               style={isNew ? { transitionDuration: '3s' } : undefined}
                             >
-                              <div className="asset-panel asset-panel--ethereum" style={{ padding: '12px' }}>
+                              <div
+                                ref={(node) => {
+                                  investmentCardRefs.current[investmentId] = node;
+                                }}
+                                className={`asset-panel asset-panel--ethereum${isPendingDelete ? ' is-pending-delete' : ''}`}
+                                style={{
+                                  padding: '12px',
+                                  minHeight: isDeleting && deleteHeight ? `${deleteHeight}px` : undefined,
+                                }}
+                              >
                                 {isDeleting ? (
                                   <div className="asset-delete-loader">
                                     <div
@@ -3149,16 +3176,10 @@ const VavityEthereum: React.FC = () => {
                                         borderTopColor: 'rgba(107, 114, 168, 0.5)',
                                       }}
                                     />
-                                    <Image
-                                      className="asset-delete-loader-icon"
-                                      alt="Deleting"
-                                      width={18}
-                                      height={18}
-                                      src="/images/trash.png"
-                                    />
+                                    <span className="asset-delete-loader-icon" aria-hidden="true" />
                                   </div>
                                 ) : (
-                                  <>
+                                  <div className="asset-investment-metrics">
                                     <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                                       <span className="asset-metric-title--ethereum">Purchased Value</span>
                                       <span className="asset-money-wrap">
@@ -3217,34 +3238,47 @@ const VavityEthereum: React.FC = () => {
                                     </div>
                                     <button
                                       type="button"
-                                      className="asset-delete-button"
+                                      className="asset-range-button asset-range-button--ethereum asset-delete-button"
                                       onClick={() => {
                                         if (
                                           closingInvestments.includes(investmentId) ||
-                                          deletingInvestments.includes(investmentId)
+                                          deletingInvestments.includes(investmentId) ||
+                                          pendingDeleteInvestments.includes(investmentId)
                                         )
                                           return;
-                                        setDeletingInvestments((prev) => [...prev, investmentId]);
-                                        setClosingInvestments((prev) => [...prev, investmentId]);
-                                        setTimeout(() => {
-                                          handleDeleteInvestment(investmentId)
-                                            .catch(() => {
-                                              // ignore errors
-                                            })
-                                            .finally(() => {
-                                              setClosingInvestments((prev) =>
-                                                prev.filter((value) => value !== investmentId)
-                                              );
-                                              setDeletingInvestments((prev) =>
-                                                prev.filter((value) => value !== investmentId)
-                                              );
-                                            });
-                                        }, 2000);
+                                        const card = investmentCardRefs.current[investmentId];
+                                        if (card) {
+                                          const height = card.getBoundingClientRect().height;
+                                          setDeleteHeights((prev) => ({ ...prev, [investmentId]: height }));
+                                        }
+                                        setPendingDeleteInvestments((prev) => [...prev, investmentId]);
+                                        const fadeTimer = window.setTimeout(() => {
+                                          setPendingDeleteInvestments((prev) =>
+                                            prev.filter((value) => value !== investmentId)
+                                          );
+                                          setDeletingInvestments((prev) => [...prev, investmentId]);
+                                          const actionTimer = window.setTimeout(() => {
+                                            handleDeleteInvestment(investmentId)
+                                              .catch(() => {
+                                                // ignore errors
+                                              })
+                                              .finally(() => {
+                                                setClosingInvestments((prev) =>
+                                                  prev.filter((value) => value !== investmentId)
+                                                );
+                                                setDeletingInvestments((prev) =>
+                                                  prev.filter((value) => value !== investmentId)
+                                                );
+                                              });
+                                          }, 2000);
+                                          deleteActionTimersRef.current[investmentId] = actionTimer;
+                                        }, 350);
+                                        deleteFadeTimersRef.current[investmentId] = fadeTimer;
                                       }}
                                     >
                                       (delete)
                                     </button>
-                                  </>
+                                  </div>
                                 )}
                               </div>
                             </div>
@@ -3387,13 +3421,7 @@ const VavityEthereum: React.FC = () => {
                               className="asset-delete-loader-spinner"
                               style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.5)' }}
                             />
-                            <Image
-                              className="asset-delete-loader-icon"
-                              alt="Deleting"
-                              width={18}
-                              height={18}
-                              src="/images/trash.png"
-                            />
+                            <span className="asset-delete-loader-icon" aria-hidden="true" />
                           </div>
                         ) : (
                           <>

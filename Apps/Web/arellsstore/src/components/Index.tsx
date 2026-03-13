@@ -251,7 +251,6 @@ const Index = () => {
 
       {!votingHidden && votingData && (
         <div className="home-voting-block page-slide-down">
-          <div className="home-voting-title">Which should we add next week?</div>
           <div className="home-voting-options">
             <button type="button" className="home-voting-button home-voting-button--solana" onClick={() => handleVote('solana')}>
               <Image className="home-voting-icon" alt="Solana" width={22} height={22} src="/images/assets/crypto/Solana.svg" />
@@ -263,7 +262,7 @@ const Index = () => {
             </button>
           </div>
           <div className="home-voting-countdown">
-            <span>Voting ends</span>
+            <span>Choose Asset, Voting ends</span>
             <span>{formatCountdown(countdownMs)}</span>
           </div>
         </div>

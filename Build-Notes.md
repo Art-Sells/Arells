@@ -5,8 +5,9 @@
 
 - *Complete show investments/ delete (why after the delete section heights up after the delete button is clicked for a section and is deleing, does it height down the investent list secton again? is it because it's not yet deleted from the back end?) investments UI... Put delete 1 minute timer back after UI completion*
 - *test multiple investment deletions big numbers and small... (with page mount clearing refresh page sessions) with the "1 minute end all open to see aht it does" with the form open and not open*
-- *About button (same as in asset pages) in my investmnts footer arells* 
-- *Clean up spacing on buttons insinde  view investment when forms are open/etc*
+- *Clean up spacing on buttons insinde view investment when forms are open/etc*
+
+- Investment page should be styled (shadows/etc) the exact same as the home page
 
 ### Investment list (fix when heighting down, it jigs a little at the end (I don't experience this issue with the forms height downs))
 - - (delete) *test this*
@@ -43,6 +44,9 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 
 ### About:
 
+
+    Arells Icon at the top center overlapping a section with the same shadow as the homepage that wrapps the asset cards that wraps this:
+
     What is Arells?
 
     Arells is a belief that investments should never lose value.
@@ -52,7 +56,9 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 
     This ledger is powered by a new psychological and technological invention called Vavity.
 
-    Learn more > (Vavity (V))
+    Learn more > (Vavity (V)) <links to /vavity
+
+    All the words above (with the exception of the button) are 20 px, 800 font weight and centered.
 
 ### Vavity (take everything from vavity.info)
 - Change desc to: Remove "Investment losses are a human psychology issue" just tell WHAT Vavity is... that's it - don't lecture (replace bear markets with investment losses in vavity info and readme) so Vavity solves this psychologically through technical autonomy. By eliminating investment losses etc etc (in github also..., remove "cryptocurrency" from it and make it simply (remove Bitcoin and make it general))
