@@ -128,12 +128,12 @@ const AboutPageClient = () => {
             </Link>
           </div>
           <div className="about-content">
-            <h1 className="about-title">What is Arells?</h1>
             <p className="about-text">Arells is a belief that investments should never lose value.</p>
             <div className="about-divider" />
             <p className="about-text">
               This belief is powered by a ledger that shows how your investments would look if they never lost value.
             </p>
+            <div className="about-divider" />
             <p className="about-text">
               This ledger is powered by a new psychological and technological invention called Vavity.
             </p>

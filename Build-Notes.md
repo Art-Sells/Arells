@@ -47,12 +47,12 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 
     Arells Icon at the top center overlapping a section with the same shadow as the homepage that wrapps the asset cards that wraps this:
 
-    What is Arells?
-
     Arells is a belief that investments should never lose value.
     ______________________
 
     This belief is powered by a ledger that shows how your investments would look if they never lost value.
+
+    ______________________
 
     This ledger is powered by a new psychological and technological invention called Vavity.
 
