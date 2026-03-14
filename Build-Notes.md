@@ -4,6 +4,7 @@
 
 
 - *Complete show investments/ delete (why after the delete section heights up after the delete button is clicked for a section and is deleing, does it height down the investent list secton again? is it because it's not yet deleted from the back end?) investments UI... Put delete 1 minute timer back after UI completion*
+
 - *test multiple investment deletions big numbers and small... (with page mount clearing refresh page sessions) with the "1 minute end all open to see aht it does" with the form open and not open*
 - *Clean up spacing on buttons insinde view investment when forms are open/etc*
 

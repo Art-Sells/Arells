@@ -918,11 +918,11 @@ const VavityEthereum: React.FC = () => {
   }, [followScrollHeightDeltaFor]);
   useEffect(() => {
     if (!emptyActionsHoldRef.current) return;
-    if (investments.length > 0) {
+    if (investments.length > 0 && !isSubmitCollapsing) {
       emptyActionsHoldRef.current = false;
       setHideEmptyActionsOnSubmit(false);
     }
-  }, [investments.length]);
+  }, [investments.length, isSubmitCollapsing]);
   const summaryMaxHeight = summaryOpen && !isClearingInvestments ? `${summaryHeight}px` : '0px';
   const emptyActionsTargetHeight = emptyActionsHeight || lastEmptyActionsHeightRef.current;
   const investmentsWholeMaxHeight =
