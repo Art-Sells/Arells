@@ -122,7 +122,6 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 
 ### After Launch
 - - Review notes on phone
-- - Look at notes for openings. 
 
 ### Day After Launch:
 - Cancel Infura/Metamask
@@ -138,12 +137,13 @@ Users
 - Start tracking after 2 days (numbers)
 - After Week 1, if things look good, X-prsnl
 - - Call CoingeckoAPI (research how it calls it, maybe to update the VAPA info?) every 5 seconds, not on page mount...
+- Prepare for WACA transition (LTP folder)
 
 ## 1 mnth and beyond:
 - Fix long marketcap numbers/etc...
 - Asset/Prices/etc sorting (default by Marketcap always)
-- Wait at least 2 months to adjust plan based on feedback...
-- If traction is good look at Business Plan folder
+- Wait at least 2 months to adjust LTP based on feedback...
+- - If traction is good look at LTP folder post WACA
 - - increase CG API limit? (track)
 - - Compare Retention rate (in bear markets WoM only (percentages)) : Projections (with current trajectory) with/without (WoW percentage comparisons)
 - Figure out way to save .JSON info into another very secure section (possibly offline for added security)
