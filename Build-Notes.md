@@ -110,6 +110,7 @@ Separate Vavity architecture Offline (for testing) and prepare online version (f
 
 ## Final Test
 - Set voting blocks to 7 days
+- Increase asset deletion session timer to 5 minutes
 - Remove typos from Arells/Vavity readmes, and UI
 - - In notion:  
 - - Users

@@ -4,7 +4,15 @@ import axios from 'axios';
 
 const s3 = new AWS.S3();
 const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
-const SESSION_TTL_MS = 60_000;
+const SESSION_TTL_MS = (() => {
+  const raw = process.env.VAPAGG_SESSION_TTL_MS;
+  if (raw) {
+    const parsed = Number(raw);
+    if (Number.isFinite(parsed) && parsed > 0) return parsed;
+  }
+  // Keep dev sessions alive longer for editing; production stays at 1 minute.
+  return process.env.NODE_ENV === 'production' ? 60_000 : 24 * 60 * 60 * 1000;
+})();
 const VAPA_KEYS: Record<string, string> = {
   bitcoin: 'vavity/bitcoinVAPA.json',
   ethereum: 'vavity/ethereumVAPA.json'

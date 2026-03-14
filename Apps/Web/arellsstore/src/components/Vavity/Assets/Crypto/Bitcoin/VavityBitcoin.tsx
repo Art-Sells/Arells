@@ -2757,8 +2757,7 @@ const VavityBitcoin: React.FC = () => {
                   className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
                   disabled={showEmptyAddForm || emptyAddHiding}
                   style={{
-                    opacity: emptyAddFadeIn ? 1 : 0,
-                    transition: 'opacity 3s ease, transform 0.2s ease',
+                    ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
                   }}
                   onClick={() => {
                     suppressPortfolioCta();
@@ -2804,8 +2803,8 @@ const VavityBitcoin: React.FC = () => {
                     type="button"
                     className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
                     style={{
-                      opacity: emptyActionsExpanding ? 0 : 1,
-                      transition: emptyActionsExpanding ? 'none' : 'opacity 3s ease, transform 0.2s ease',
+                      opacity: emptySigninHiding ? 0 : 1,
+                      transition: 'opacity 3s ease, transform 0.2s ease',
                     }}
                     onClick={openSignIn}
                   >

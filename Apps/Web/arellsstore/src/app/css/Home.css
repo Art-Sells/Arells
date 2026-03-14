@@ -1724,6 +1724,12 @@ body {
 	overflow: hidden;
 }
 
+/* Fade Add Investments only after collapse completes (2s height transition). */
+.asset-empty-addinvest.is-hidden .asset-action-button--add-investments {
+	opacity: 0 !important;
+	transition: opacity 0.3s ease 2s, transform 0.2s ease !important;
+}
+
 .asset-empty-addinvest.is-gone {
 	max-height: 0px;
 	margin-top: 0 !important;
