@@ -3377,18 +3377,7 @@ const VavityEthereum: React.FC = () => {
                             : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
                         }}
                       >
-                        <div
-                          className="asset-investments-list"
-                          ref={investmentsListRef}
-                          style={{
-                            gap:
-                              pendingDeleteInvestments.length > 0 ||
-                              deletingInvestments.length > 0 ||
-                              closingInvestments.length > 0
-                                ? '0px'
-                                : undefined,
-                          }}
-                        >
+                        <div className="asset-investments-list" ref={investmentsListRef}>
                         {displayInvestments.slice(0, visibleInvestments).map(({ entry, id: investmentId, index: idx }) => {
                           const amount = entry.cVactTaa ?? 0;
                           const isClosing = closingInvestments.includes(investmentId);
@@ -3408,16 +3397,7 @@ const VavityEthereum: React.FC = () => {
                                   ? {
                                       height: `${deleteRowHeight}px`,
                                       maxHeight: `${deleteRowHeight}px`,
-                                      marginBottom:
-                                        pendingDeleteInvestments.length > 0 ||
-                                        deletingInvestments.length > 0 ||
-                                        closingInvestments.length > 0
-                                          ? isClosing
-                                            ? '0px'
-                                            : '12px'
-                                          : undefined,
-                                      transition:
-                                        'height 3s ease, max-height 3s ease, margin-bottom 2s ease',
+                                      transition: 'height 3s ease, max-height 3s ease',
                                       overflow: 'hidden',
                                     }
                                   : {}),
@@ -3434,25 +3414,24 @@ const VavityEthereum: React.FC = () => {
                                   investmentCardRefs.current[investmentId] = node;
                                 }}
                                 className={`asset-panel asset-panel--ethereum${isPendingDelete ? ' is-pending-delete' : ''}${
-                                  isDeleting ? ' is-deleting' : ''
+                                  isDeleting || isPendingDelete ? ' is-deleting' : ''
                                 }`}
                                 style={{
                                   padding: '12px',
                                   boxSizing: 'border-box',
+                                  height: deleteRowHeight != null ? '100%' : undefined,
                                 }}
                               >
-                                {isDeleting ? (
-                                  <div className="asset-delete-loader">
-                                    <div
-                                      className="asset-delete-loader-spinner"
-                                      style={{
-                                        borderColor: 'rgba(107, 114, 168, 0.2)',
-                                        borderTopColor: 'rgba(107, 114, 168, 0.5)',
-                                      }}
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="asset-investment-metrics">
+                                <div className={`asset-delete-loader${isPendingDelete || isDeleting ? ' is-active' : ''}`}>
+                                  <div
+                                    className="asset-delete-loader-spinner"
+                                    style={{
+                                      borderColor: 'rgba(107, 114, 168, 0.2)',
+                                      borderTopColor: 'rgba(107, 114, 168, 0.5)',
+                                    }}
+                                  />
+                                </div>
+                                <div className="asset-investment-metrics">
                                     <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                                       <span className="asset-metric-title--ethereum" style={{ marginTop: 20 }}>
                                         Purchased Value
@@ -3569,8 +3548,7 @@ const VavityEthereum: React.FC = () => {
                                     >
                                       Delete
                                     </button>
-                                  </div>
-                                )}
+                                </div>
                               </div>
                             </div>
                           );
@@ -3711,18 +3689,7 @@ const VavityEthereum: React.FC = () => {
                     : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
                 }}
               >
-                <div
-                  className="asset-investments-list"
-                  ref={investmentsListRef}
-                  style={{
-                    gap:
-                      pendingDeleteInvestments.length > 0 ||
-                      deletingInvestments.length > 0 ||
-                      closingInvestments.length > 0
-                        ? '0px'
-                        : undefined,
-                  }}
-                >
+                <div className="asset-investments-list" ref={investmentsListRef}>
                 {displayInvestments.slice(0, visibleInvestments).map(({ entry, id: investmentId, index: idx }) => {
                   const amount = entry.cVactTaa ?? 0;
                   const isClosing = closingInvestments.includes(investmentId);
@@ -3740,16 +3707,7 @@ const VavityEthereum: React.FC = () => {
                           ? {
                               height: `${deleteRowHeight}px`,
                               maxHeight: `${deleteRowHeight}px`,
-                              marginBottom:
-                                pendingDeleteInvestments.length > 0 ||
-                                deletingInvestments.length > 0 ||
-                                closingInvestments.length > 0
-                                  ? isClosing
-                                    ? '0px'
-                                    : '12px'
-                                  : undefined,
-                              transition:
-                                'height 3s ease, max-height 3s ease, margin-bottom 2s ease',
+                              transition: 'height 3s ease, max-height 3s ease',
                               overflow: 'hidden',
                             }
                           : {}),
@@ -3766,17 +3724,16 @@ const VavityEthereum: React.FC = () => {
                         style={{
                           padding: '12px',
                           boxSizing: 'border-box',
+                          height: deleteRowHeight != null ? '100%' : undefined,
                         }}
                       >
-                        {isDeleting ? (
-                          <div className="asset-delete-loader">
-                            <div
-                              className="asset-delete-loader-spinner"
-                              style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.5)' }}
-                            />
-                          </div>
-                        ) : (
-                          <>
+                        <div className={`asset-delete-loader${isDeleting ? ' is-active' : ''}`}>
+                          <div
+                            className="asset-delete-loader-spinner"
+                            style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.5)' }}
+                          />
+                        </div>
+                        <>
                             <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
                               <span className="asset-metric-title--ethereum">Purchased Value</span>
                               <span className="asset-money-wrap">
@@ -3882,8 +3839,7 @@ const VavityEthereum: React.FC = () => {
                             >
                               Delete
                             </button>
-                          </>
-                        )}
+                        </>
                       </div>
                     </div>
                   );
