@@ -36,10 +36,26 @@ const AboutPageClient = () => {
     };
   }, [imagesLoaded]);
 
+  useEffect(() => {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    const root = document.documentElement;
+    const durationMs = 8000;
+    let rafId = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const angle = ((elapsed % durationMs) / durationMs) * 360;
+      root.style.setProperty('--home-shadow-angle', `${angle}deg`);
+      rafId = window.requestAnimationFrame(tick);
+    };
+    rafId = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(rafId);
+  }, []);
+
   useLayoutEffect(() => {
     const edgeColor = 'rgba(232, 220, 255, 1)';
     const gradient =
-      `conic-gradient(from 90deg at var(--about-bg-x, 50%) var(--about-bg-y, 40%), rgba(80, 200, 255, 0.46), rgba(0, 220, 190, 0.5), rgba(255, 220, 120, 0.46), rgba(170, 110, 255, 0.34), rgba(80, 200, 255, 0.46), rgba(255, 120, 200, 0.34), rgba(0, 220, 190, 0.5)),` +
+      `conic-gradient(from calc(90deg + var(--home-shadow-angle, 0deg)) at var(--about-bg-x, 50%) var(--about-bg-y, 40%), rgba(80, 200, 255, 0.46), rgba(0, 220, 190, 0.5), rgba(255, 220, 120, 0.46), rgba(170, 110, 255, 0.34), rgba(80, 200, 255, 0.46), rgba(255, 120, 200, 0.34), rgba(0, 220, 190, 0.5)),` +
       `radial-gradient(220% 160% at 50% -12%, rgba(80, 200, 255, 0.4), ${edgeColor} 64%),` +
       `radial-gradient(210% 160% at 16% 8%, rgba(0, 220, 190, 0.42), ${edgeColor} 62%),` +
       `radial-gradient(210% 160% at 84% 10%, rgba(255, 220, 120, 0.4), ${edgeColor} 62%),` +

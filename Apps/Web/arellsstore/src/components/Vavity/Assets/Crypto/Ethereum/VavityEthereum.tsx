@@ -30,6 +30,8 @@ const VavityEthereum: React.FC = () => {
   const [addMoreOpen, setAddMoreOpen] = useState(false);
   const [suppressSummaryTransition, setSuppressSummaryTransition] = useState(false);
   const [tokenAmount, setTokenAmount] = useState<string>('');
+  const tokenInputRef = useRef<HTMLInputElement | null>(null);
+  const tokenCaretRef = useRef<number | null>(null);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
   const todayIso = useMemo(() => {
     const d = new Date();
@@ -201,8 +203,9 @@ const VavityEthereum: React.FC = () => {
   const deleteCleanupTimersRef = useRef<Record<string, number>>({});
   const deleteLockRef = useRef(false);
   const [deleteLocked, setDeleteLocked] = useState(false);
-  const investmentIdMapRef = useRef<Map<string, string>>(new Map());
   const investmentIdCounterRef = useRef(0);
+  const investmentOrderRef = useRef<Map<string, number>>(new Map());
+  const investmentOrderCounterRef = useRef(0);
   const [deleteGhosts, setDeleteGhosts] = useState<{ id: string; entry: any; index: number }[]>([]);
   const [deleteExpandIds, setDeleteExpandIds] = useState<string[]>([]);
   const lastDeletedSignatureRef = useRef<string | null>(null);
@@ -243,7 +246,11 @@ const VavityEthereum: React.FC = () => {
   const [addMoreFormPanelHeight, setAddMoreFormPanelHeight] = useState<number>(0);
   const [profitInlineHeight, setProfitInlineHeight] = useState<number>(0);
   const investmentsListRef = useRef<HTMLDivElement | null>(null);
+  const investmentsListHeaderRef = useRef<HTMLHeadingElement | null>(null);
   const [investmentsListHeight, setInvestmentsListHeight] = useState<number>(0);
+  const [investmentsListHeaderHeight, setInvestmentsListHeaderHeight] = useState<number>(0);
+  const investmentsListWrapRef = useRef<HTMLDivElement | null>(null);
+  const [investmentsListBorderHeight, setInvestmentsListBorderHeight] = useState<number>(0);
   const emptyActionsRef = useRef<HTMLDivElement | null>(null);
   const emptyActionsMeasureRef = useRef<HTMLDivElement | null>(null);
   const [emptyActionsHeight, setEmptyActionsHeight] = useState<number>(0);
@@ -875,19 +882,29 @@ const VavityEthereum: React.FC = () => {
     if (entry?.clientId) return entry.clientId;
     if (entry?.id) return entry.id;
     if (entry?._id) return entry._id;
-    const signature = `${entry?.date ?? ''}|${entry?.cVactTaa ?? ''}`;
-    const existing = investmentIdMapRef.current.get(signature);
-    if (existing) return existing;
+    if (entry?.__localId) return entry.__localId;
     const nextId = `inv-${investmentIdCounterRef.current++}`;
-    investmentIdMapRef.current.set(signature, nextId);
+    if (entry && typeof entry === 'object') {
+      entry.__localId = nextId;
+    }
     return nextId;
   }, []);
   const investmentIds = useMemo(() => investments.map(getInvestmentId), [getInvestmentId, investments]);
   const displayInvestments = useMemo(() => {
-    const base = investments.map((entry: any, idx: number) => ({ id: investmentIds[idx], entry, index: idx }));
+    const base = investments.map((entry: any, idx: number) => {
+      const id = investmentIds[idx];
+      if (!investmentOrderRef.current.has(id)) {
+        investmentOrderRef.current.set(id, investmentOrderCounterRef.current++);
+      }
+      return { id, entry, index: idx };
+    });
     const existing = new Set(base.map((item: { id: string }) => item.id));
     const ghosts = deleteGhosts.filter((ghost) => !existing.has(ghost.id));
-    return [...base, ...ghosts].sort((a, b) => a.index - b.index);
+    return [...base, ...ghosts].sort((a, b) => {
+      const orderA = investmentOrderRef.current.get(a.id) ?? a.index;
+      const orderB = investmentOrderRef.current.get(b.id) ?? b.index;
+      return orderA - orderB;
+    });
   }, [deleteGhosts, investmentIds, investments]);
   const totals = useMemo(() => displayData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }, [
     displayData,
@@ -903,6 +920,31 @@ const VavityEthereum: React.FC = () => {
   const suppressInvestmentsUI = isSubmitCollapsing && submitTargetRef.current === 'add';
   const hasInvestmentsUI = (investments.length > 0 || isClearingInvestments) && !suppressInvestmentsUI;
   const showInvestmentsHeader = investments.length > 0;
+
+  const finalizeDeleteCollapse = useCallback((investmentId: string) => {
+    setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
+    setDeletingInvestments((prev) => prev.filter((value) => value !== investmentId));
+    setDeleteExpandIds((prev) => prev.filter((value) => value !== investmentId));
+    setPendingDeleteInvestments((prev) => prev.filter((value) => value !== investmentId));
+    setDeleteGhosts((prev) => prev.filter((ghost) => ghost.id !== investmentId));
+    setDeleteHeights((prev) => {
+      const next = { ...prev };
+      delete next[investmentId];
+      return next;
+    });
+    const cleanupTimer = deleteCleanupTimersRef.current[investmentId];
+    if (cleanupTimer) {
+      window.clearTimeout(cleanupTimer);
+      delete deleteCleanupTimersRef.current[investmentId];
+    }
+    const expandTimer = deleteCleanupTimersRef.current[`${investmentId}-expand`];
+    if (expandTimer) {
+      window.clearTimeout(expandTimer);
+      delete deleteCleanupTimersRef.current[`${investmentId}-expand`];
+    }
+    deleteLockRef.current = false;
+    setDeleteLocked(false);
+  }, []);
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
   const openInvestmentsSection = useCallback(() => {
     setSummaryOpen(false);
@@ -1405,11 +1447,78 @@ const VavityEthereum: React.FC = () => {
     return hasDot ? `${prefix}.${decPart}` : prefix;
   }, []);
 
+  const formatIntWithCaret = useCallback((rawInt: string, cursorInInt: number) => {
+    let formatted = '';
+    let caretPos = 0;
+    for (let i = 0; i < rawInt.length; i += 1) {
+      const remaining = rawInt.length - i;
+      if (i > 0 && remaining % 3 === 0) {
+        formatted += ',';
+        if (i < cursorInInt) caretPos += 1;
+      }
+      formatted += rawInt[i];
+      if (i < cursorInInt) caretPos += 1;
+    }
+    return { formattedInt: formatted, caretPos };
+  }, []);
+
+  const normalizeTokenInputWithCaret = useCallback(
+    (value: string, cursor: number | null) => {
+      if (cursor == null) {
+        return { nextValue: normalizeTokenInput(value), nextCaret: null };
+      }
+      let cleaned = '';
+      let cleanedCursor = 0;
+      let hasDot = false;
+      for (let i = 0; i < value.length; i += 1) {
+        const ch = value[i];
+        let keep = false;
+        if (ch >= '0' && ch <= '9') keep = true;
+        if (ch === '.' && !hasDot) {
+          keep = true;
+          hasDot = true;
+        }
+        if (keep) {
+          if (i < cursor) cleanedCursor += 1;
+          cleaned += ch;
+        }
+      }
+      let [rawInt = '', rawDec = ''] = cleaned.split('.');
+      const stripped = rawInt.length - rawInt.replace(/^0+(?=\d)/, '').length;
+      rawInt = rawInt.replace(/^0+(?=\d)/, '');
+      if (stripped > 0 && cleanedCursor <= rawInt.length + stripped) {
+        cleanedCursor = Math.max(0, cleanedCursor - Math.min(stripped, cleanedCursor));
+      }
+      const decPart = rawDec.slice(0, 8);
+      if (hasDot && cleanedCursor > rawInt.length + 1 + decPart.length) {
+        cleanedCursor = rawInt.length + 1 + decPart.length;
+      }
+      const cursorInInt = Math.min(cleanedCursor, rawInt.length);
+      const { formattedInt, caretPos } = formatIntWithCaret(rawInt, cursorInInt);
+      const prefix = formattedInt || (hasDot ? '0' : '');
+      const nextValue = hasDot ? `${prefix}.${decPart}` : prefix;
+      let nextCaret = caretPos;
+      if (hasDot && cleanedCursor > rawInt.length) {
+        const cursorInDec = Math.min(Math.max(cleanedCursor - rawInt.length - 1, 0), decPart.length);
+        nextCaret = prefix.length + 1 + cursorInDec;
+      }
+      return { nextValue, nextCaret };
+    },
+    [formatIntWithCaret, normalizeTokenInput]
+  );
+
   const parseTokenAmount = useCallback((value: string) => {
     const cleaned = value.replace(/,/g, '');
     const parsed = parseFloat(cleaned);
     return Number.isNaN(parsed) ? 0 : parsed;
   }, []);
+
+  useLayoutEffect(() => {
+    if (tokenCaretRef.current == null || !tokenInputRef.current) return;
+    const pos = tokenCaretRef.current;
+    tokenCaretRef.current = null;
+    tokenInputRef.current.setSelectionRange(pos, pos);
+  }, [tokenAmount]);
 
   const sliceSeriesWithAnchor = useCallback(
     (src: { date: string; price: number }[]) => {
@@ -2390,7 +2499,15 @@ const VavityEthereum: React.FC = () => {
                     inputMode="decimal"
                     pattern="^[0-9]*\\.?[0-9]*$"
                     value={tokenAmount}
-                    onChange={(e) => setTokenAmount(normalizeTokenInput(e.target.value))}
+                    ref={tokenInputRef}
+                    onChange={(e) => {
+                      const { nextValue, nextCaret } = normalizeTokenInputWithCaret(
+                        e.target.value,
+                        e.target.selectionStart
+                      );
+                      setTokenAmount(nextValue);
+                      if (nextCaret != null) tokenCaretRef.current = nextCaret;
+                    }}
                   />
                 </div>
               </div>
@@ -2420,13 +2537,34 @@ const VavityEthereum: React.FC = () => {
   };
 
   const visibleInvestmentCount = Math.min(visibleInvestments, investments.length);
-  const investmentsMaxHeight = investmentsListOpen ? `${investmentsListHeight}px` : '0px';
+  const investmentsMaxHeight = investmentsListOpen
+    ? `${investmentsListHeight + investmentsListBorderHeight + 5}px`
+    : '0px';
+  const investmentsSectionMaxHeight = investmentsListOpen
+    ? `${investmentsListHeight + investmentsListHeaderHeight + investmentsListBorderHeight + 2}px`
+    : '0px';
 
   useEffect(() => {
-    if (!investmentsListOpen) return;
+    if (!showInvestmentsList) return;
     const node = investmentsListRef.current;
+    const header = investmentsListHeaderRef.current;
+    const wrap = investmentsListWrapRef.current;
     if (!node || typeof ResizeObserver === 'undefined') {
       setInvestmentsListHeight(node?.scrollHeight ?? 0);
+      if (header) {
+        const styles = window.getComputedStyle(header);
+        const marginTop = parseFloat(styles.marginTop || '0');
+        const marginBottom = parseFloat(styles.marginBottom || '0');
+        const nextHeaderHeight = header.getBoundingClientRect().height + marginTop + marginBottom;
+        setInvestmentsListHeaderHeight((prev) => (prev === nextHeaderHeight ? prev : nextHeaderHeight));
+      }
+      if (wrap) {
+        const styles = window.getComputedStyle(wrap);
+        const borderTop = parseFloat(styles.borderTopWidth || '0');
+        const borderBottom = parseFloat(styles.borderBottomWidth || '0');
+        const nextBorderHeight = borderTop + borderBottom;
+        setInvestmentsListBorderHeight((prev) => (prev === nextBorderHeight ? prev : nextBorderHeight));
+      }
       return;
     }
     let raf = 0;
@@ -2434,6 +2572,20 @@ const VavityEthereum: React.FC = () => {
       raf = window.requestAnimationFrame(() => {
         const next = node.scrollHeight;
         setInvestmentsListHeight((prev) => (prev === next ? prev : next));
+        if (header) {
+          const styles = window.getComputedStyle(header);
+          const marginTop = parseFloat(styles.marginTop || '0');
+          const marginBottom = parseFloat(styles.marginBottom || '0');
+          const nextHeaderHeight = header.getBoundingClientRect().height + marginTop + marginBottom;
+          setInvestmentsListHeaderHeight((prev) => (prev === nextHeaderHeight ? prev : nextHeaderHeight));
+        }
+        if (wrap) {
+          const styles = window.getComputedStyle(wrap);
+          const borderTop = parseFloat(styles.borderTopWidth || '0');
+          const borderBottom = parseFloat(styles.borderBottomWidth || '0');
+          const nextBorderHeight = borderTop + borderBottom;
+          setInvestmentsListBorderHeight((prev) => (prev === nextBorderHeight ? prev : nextBorderHeight));
+        }
       });
     };
     measure();
@@ -2443,7 +2595,7 @@ const VavityEthereum: React.FC = () => {
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [investmentsListOpen]);
+  }, [investmentsListOpen, showInvestmentsList]);
 
   useEffect(() => {
     const node = emptyActionsMeasureRef.current;
@@ -3117,7 +3269,7 @@ const VavityEthereum: React.FC = () => {
                       followScrollHeightDeltaFor(2000);
                     }}
                   >
-                    {addMoreOpen ? 'Hide add more Investments' : 'Add more Investments'}
+                    {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
                   </button>
                 </div>
                 {showAddMoreForm && (
@@ -3193,18 +3345,37 @@ const VavityEthereum: React.FC = () => {
                         followScrollHeightDeltaFor(2000);
                       }}
                     >
-                      {investmentsListOpen ? 'Hide Investments' : 'Show Investments'}
+                      {investmentsListOpen ? 'Hide more investments' : 'Show more investments'}
                     </button>
                   </div>
 
                   {showInvestmentsList && (
                     <div
-                      className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
-                        investmentsListOpen ? ' is-open' : ''
-                      }`}
-                      style={{ maxHeight: investmentsMaxHeight, transition: 'max-height 2s ease' }}
+                      style={{
+                        maxHeight: investmentsSectionMaxHeight,
+                        transition: 'max-height 2s ease',
+                        overflow: 'hidden',
+                      }}
                     >
-                      <div className="asset-investments-list" ref={investmentsListRef}>
+                      <h2
+                        className="asset-investments-header asset-investments-header--more"
+                        ref={investmentsListHeaderRef}
+                      >
+                        <span className="asset-portfolio-title-muted">more investments</span>
+                      </h2>
+                      <div
+                        className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
+                          investmentsListOpen ? ' is-open' : ''
+                        }`}
+                        ref={investmentsListWrapRef}
+                        style={{
+                          maxHeight: investmentsMaxHeight,
+                          transition: investmentsListOpen
+                            ? 'max-height 2s ease, border-color 0.2s ease, padding 0.2s ease, margin 0.2s ease, box-shadow 0.2s ease, background 0.2s ease'
+                            : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
+                        }}
+                      >
+                        <div className="asset-investments-list" ref={investmentsListRef}>
                         {displayInvestments.slice(0, visibleInvestments).map(({ entry, id: investmentId, index: idx }) => {
                           const amount = entry.cVactTaa ?? 0;
                           const isClosing = closingInvestments.includes(investmentId);
@@ -3212,28 +3383,41 @@ const VavityEthereum: React.FC = () => {
                           const isDeleting = deletingInvestments.includes(investmentId);
                           const isPendingDelete = pendingDeleteInvestments.includes(investmentId);
                           const isNew = slowOpenInvestments.includes(investmentId);
-                          const isDeleteExpanded = deleteExpandIds.includes(investmentId);
                           const deleteHeight = deleteHeights[investmentId];
-                          const deleteMinHeight = isDeleting
-                            ? isDeleteExpanded
-                              ? 300
-                              : deleteHeight
-                            : undefined;
+                          const deleteMinHeight = isClosing
+                            ? 0
+                            : isPendingDelete
+                              ? deleteHeight
+                              : isDeleting
+                                ? 100
+                                : undefined;
                           return (
                             <div
                               key={investmentId}
                               className={`asset-slide-panel${!isClosing && !isCollapsed ? ' is-open' : ''}`}
                               style={isNew ? { transitionDuration: '3s' } : undefined}
+                              onTransitionEnd={(event) => {
+                                if (event.target !== event.currentTarget) return;
+                                if (event.propertyName !== 'max-height') return;
+                                if (!closingInvestments.includes(investmentId)) return;
+                                finalizeDeleteCollapse(investmentId);
+                              }}
                             >
                               <div
                                 ref={(node) => {
                                   investmentCardRefs.current[investmentId] = node;
                                 }}
-                                className={`asset-panel asset-panel--ethereum${isPendingDelete ? ' is-pending-delete' : ''}`}
+                                className={`asset-panel asset-panel--ethereum${isPendingDelete ? ' is-pending-delete' : ''}${
+                                  isDeleting ? ' is-deleting' : ''
+                                }`}
                                 style={{
                                   padding: '12px',
                                   minHeight: deleteMinHeight != null ? `${deleteMinHeight}px` : undefined,
-                                  transition: isDeleting ? 'min-height 0.35s ease' : undefined,
+                                  transition: isClosing
+                                    ? 'min-height 2s ease'
+                                    : isDeleting || isPendingDelete
+                                      ? 'min-height 1s ease'
+                                      : undefined,
                                 }}
                               >
                                 {isDeleting ? (
@@ -3245,7 +3429,6 @@ const VavityEthereum: React.FC = () => {
                                         borderTopColor: 'rgba(107, 114, 168, 0.5)',
                                       }}
                                     />
-                                    <span className="asset-delete-loader-icon" aria-hidden="true" />
                                   </div>
                                 ) : (
                                   <div className="asset-investment-metrics">
@@ -3342,38 +3525,14 @@ const VavityEthereum: React.FC = () => {
                                                 // ignore errors
                                               })
                                               .finally(() => {
-                                                setDeleteExpandIds((prev) =>
-                                                  prev.includes(investmentId) ? prev : [...prev, investmentId]
-                                                );
                                                 const expandTimer = window.setTimeout(() => {
                                                   setClosingInvestments((prev) =>
                                                     prev.includes(investmentId) ? prev : [...prev, investmentId]
                                                   );
                                                 }, 350);
                                                 const cleanupTimer = window.setTimeout(() => {
-                                                  setClosingInvestments((prev) =>
-                                                    prev.filter((value) => value !== investmentId)
-                                                  );
-                                                  setDeletingInvestments((prev) =>
-                                                    prev.filter((value) => value !== investmentId)
-                                                  );
-                                                  setDeleteExpandIds((prev) =>
-                                                    prev.filter((value) => value !== investmentId)
-                                                  );
-                                                  setPendingDeleteInvestments((prev) =>
-                                                    prev.filter((value) => value !== investmentId)
-                                                  );
-                                                  setDeleteGhosts((prev) =>
-                                                    prev.filter((ghost) => ghost.id !== investmentId)
-                                                  );
-                                                  setDeleteHeights((prev) => {
-                                                    const next = { ...prev };
-                                                    delete next[investmentId];
-                                                    return next;
-                                                  });
-                                                  deleteLockRef.current = false;
-                                                  setDeleteLocked(false);
-                                                }, 2350);
+                                                  finalizeDeleteCollapse(investmentId);
+                                                }, 4000);
                                                 deleteCleanupTimersRef.current[investmentId] = cleanupTimer;
                                                 deleteCleanupTimersRef.current[`${investmentId}-expand`] = expandTimer;
                                               });
@@ -3404,6 +3563,7 @@ const VavityEthereum: React.FC = () => {
                             Show 3 More
                           </button>
                         )}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -3496,18 +3656,37 @@ const VavityEthereum: React.FC = () => {
                 followScrollHeightDeltaFor(2000);
               }}
             >
-              {investmentsListOpen ? 'Hide Investments' : 'Show Investments'}
+              {investmentsListOpen ? 'Hide more investments' : 'Show more investments'}
             </button>
           </div>
 
           {showInvestmentsList && (
             <div
-              className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
-                investmentsListOpen ? ' is-open' : ''
-              }`}
-              style={{ maxHeight: investmentsMaxHeight, transition: 'max-height 2s ease' }}
+              style={{
+                maxHeight: investmentsSectionMaxHeight,
+                transition: 'max-height 2s ease',
+                overflow: 'hidden',
+              }}
             >
-              <div className="asset-investments-list" ref={investmentsListRef}>
+              <h2
+                className="asset-investments-header asset-investments-header--more"
+                ref={investmentsListHeaderRef}
+              >
+                <span className="asset-portfolio-title-muted">more investments</span>
+              </h2>
+              <div
+                className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
+                  investmentsListOpen ? ' is-open' : ''
+                }`}
+                ref={investmentsListWrapRef}
+                style={{
+                  maxHeight: investmentsMaxHeight,
+                  transition: investmentsListOpen
+                    ? 'max-height 2s ease, border-color 0.2s ease, padding 0.2s ease, margin 0.2s ease, box-shadow 0.2s ease, background 0.2s ease'
+                    : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
+                }}
+              >
+                <div className="asset-investments-list" ref={investmentsListRef}>
                 {displayInvestments.slice(0, visibleInvestments).map(({ entry, id: investmentId, index: idx }) => {
                   const amount = entry.cVactTaa ?? 0;
                   const isClosing = closingInvestments.includes(investmentId);
@@ -3519,15 +3698,27 @@ const VavityEthereum: React.FC = () => {
                       key={investmentId}
                       className={`asset-slide-panel${!isClosing && !isCollapsed ? ' is-open' : ''}`}
                       style={isNew ? { transitionDuration: '3s' } : undefined}
+                      onTransitionEnd={(event) => {
+                        if (event.target !== event.currentTarget) return;
+                        if (event.propertyName !== 'max-height') return;
+                        if (!closingInvestments.includes(investmentId)) return;
+                        finalizeDeleteCollapse(investmentId);
+                      }}
                     >
-                      <div className="asset-panel asset-panel--ethereum" style={{ padding: '12px' }}>
+                      <div
+                        className={`asset-panel asset-panel--ethereum${isDeleting ? ' is-deleting' : ''}`}
+                        style={{
+                          padding: '12px',
+                          minHeight: isClosing ? '0px' : isDeleting ? '100px' : undefined,
+                          transition: isClosing ? 'min-height 2s ease' : isDeleting ? 'min-height 1s ease' : undefined,
+                        }}
+                      >
                         {isDeleting ? (
                           <div className="asset-delete-loader">
                             <div
                               className="asset-delete-loader-spinner"
                               style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.5)' }}
                             />
-                            <span className="asset-delete-loader-icon" aria-hidden="true" />
                           </div>
                         ) : (
                           <>
@@ -3613,38 +3804,14 @@ const VavityEthereum: React.FC = () => {
                                         // ignore errors
                                       })
                                       .finally(() => {
-                                        setDeleteExpandIds((prev) =>
-                                          prev.includes(investmentId) ? prev : [...prev, investmentId]
-                                        );
                                         const expandTimer = window.setTimeout(() => {
                                           setClosingInvestments((prev) =>
                                             prev.includes(investmentId) ? prev : [...prev, investmentId]
                                           );
                                         }, 350);
                                         const cleanupTimer = window.setTimeout(() => {
-                                          setClosingInvestments((prev) =>
-                                            prev.filter((value) => value !== investmentId)
-                                          );
-                                          setDeletingInvestments((prev) =>
-                                            prev.filter((value) => value !== investmentId)
-                                          );
-                                          setDeleteExpandIds((prev) =>
-                                            prev.filter((value) => value !== investmentId)
-                                          );
-                                          setPendingDeleteInvestments((prev) =>
-                                            prev.filter((value) => value !== investmentId)
-                                          );
-                                          setDeleteGhosts((prev) =>
-                                            prev.filter((ghost) => ghost.id !== investmentId)
-                                          );
-                                          setDeleteHeights((prev) => {
-                                            const next = { ...prev };
-                                            delete next[investmentId];
-                                            return next;
-                                          });
-                                          deleteLockRef.current = false;
-                                          setDeleteLocked(false);
-                                        }, 2350);
+                                          finalizeDeleteCollapse(investmentId);
+                                        }, 4000);
                                         deleteCleanupTimersRef.current[investmentId] = cleanupTimer;
                                         deleteCleanupTimersRef.current[`${investmentId}-expand`] = expandTimer;
                                       });
@@ -3675,6 +3842,7 @@ const VavityEthereum: React.FC = () => {
                     Show 3 More
                   </button>
                 )}
+                </div>
               </div>
             </div>
           )}

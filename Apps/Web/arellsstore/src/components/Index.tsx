@@ -58,6 +58,22 @@ const Index = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    const root = document.documentElement;
+    const durationMs = 8000;
+    let rafId = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const angle = ((elapsed % durationMs) / durationMs) * 360;
+      root.style.setProperty('--home-shadow-angle', `${angle}deg`);
+      rafId = window.requestAnimationFrame(tick);
+    };
+    rafId = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(rafId);
+  }, []);
+
 
   const handleImageLoaded = (imageName: string) => {
     setImagesLoaded(prevState => ({ 

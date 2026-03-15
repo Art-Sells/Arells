@@ -55,7 +55,8 @@ body {
 
 /* Shared gradient shadow for Home card wrappers. */
 :root {
-	--home-shadow-bg: conic-gradient(from 90deg at 50% 40%, rgba(80, 200, 255, 0.46), rgba(0, 220, 190, 0.5),
+	--home-shadow-angle: 0deg;
+	--home-shadow-bg: conic-gradient(from calc(90deg + var(--home-shadow-angle, 0deg)) at 50% 40%, rgba(80, 200, 255, 0.46), rgba(0, 220, 190, 0.5),
 			rgba(255, 220, 120, 0.46), rgba(170, 110, 255, 0.34), rgba(80, 200, 255, 0.46), rgba(255, 120, 200, 0.34),
 			rgba(0, 220, 190, 0.5)),
 		radial-gradient(220% 160% at 50% -12%, rgba(80, 200, 255, 0.4), rgba(232, 220, 255, 1) 64%),
@@ -64,6 +65,9 @@ body {
 		radial-gradient(240% 190% at 18% 96%, rgba(255, 120, 200, 0.46), rgba(232, 220, 255, 1) 60%),
 		radial-gradient(240% 190% at 82% 98%, rgba(170, 110, 255, 0.4), rgba(232, 220, 255, 1) 62%),
 		radial-gradient(260% 200% at 52% 118%, rgba(255, 150, 220, 0.48), rgba(232, 220, 255, 1) 64%);
+	--about-shadow-bg: conic-gradient(from calc(90deg + var(--home-shadow-angle, 0deg)) at 50% 40%, rgba(80, 200, 255, 0.46), rgba(0, 220, 190, 0.5),
+			rgba(255, 220, 120, 0.46), rgba(170, 110, 255, 0.34), rgba(80, 200, 255, 0.46), rgba(255, 120, 200, 0.34),
+			rgba(0, 220, 190, 0.5));
 	--button-border-gradient: conic-gradient(
 		from 0deg at 50% 50%,
 		rgba(255, 0, 120, 0.95),
@@ -96,6 +100,7 @@ body {
 		filter: blur(var(--shadow-blur, 30px)) hue-rotate(360deg);
 	}
 }
+
 
 /* Keep a single base paint layer on Home: body only. */
 html {
@@ -447,8 +452,8 @@ body {
 	--asset-portfolio-actions-add-margin-top: 14px;
 	--asset-portfolio-actions-show-margin-top: 14px;
 	--asset-portfolio-actions-show-margin-bottom: 10px;
-	--asset-portfolio-actions-signin-margin-top: 8px;
-	--asset-portfolio-actions-signin-margin-bottom: 0px;
+	--asset-portfolio-actions-signin-margin-top: -5px;
+	--asset-portfolio-actions-signin-margin-bottom: 25px;
 	--asset-save-signin-margin-top: 14px;
 	--asset-save-signin-margin-bottom: 18px;
 }
@@ -918,6 +923,10 @@ body {
 	align-items: center;
 	gap: 0px;
 	justify-content: center;
+}
+
+.asset-investments-header--more {
+	margin-top: 30px;
 }
 
 .asset-investments-header .asset-portfolio-title-muted {
@@ -2166,7 +2175,7 @@ transform: translateY(calc(-50% - 0.5px));
 
 /* Asset pages: ensure ALL disabled buttons match the Submit button disabled look */
 .asset-page-content button:disabled {
-	border: none !important;
+	border: 1px solid transparent !important;
 	opacity: 0.6 !important;
 	pointer-events: none !important;
 	cursor: default !important;
@@ -2184,6 +2193,18 @@ transform: translateY(calc(-50% - 0.5px));
 	background: inherit;
 	padding: 12px;
 	border-radius: 12px;
+}
+
+.asset-investments-list .asset-panel--bitcoin,
+.asset-investments-list .asset-panel--ethereum {
+	background: transparent !important;
+}
+
+.asset-investments-list .asset-action-button--invest-show {
+	display: inline-flex;
+	justify-content: center;
+	place-self: center;
+	width: max-content;
 }
 
 .asset-investments-list .asset-metric-row {
@@ -2481,14 +2502,10 @@ transform: translateY(calc(-50% - 0.5px));
 
 .asset-investments-wrap--bitcoin {
 	border-color: rgba(248, 141, 0, 0.3);
-	background: rgba(248, 141, 0, 0.06);
-	box-shadow: 0px 0 0px rgba(248, 141, 0, 0.26), 0 0px 0px rgba(248, 141, 0, 0.18);
 }
 
 .asset-investments-wrap--ethereum {
 	border-color: rgba(107, 114, 168, 0.3);
-	background: rgba(107, 114, 168, 0.07);
-	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);
 }
 
 /* Investment list values + delete spacing */
@@ -2526,7 +2543,7 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .asset-investments-wrap:not(.is-open) {
-	border-width: 0;
+	border-color: transparent;
 	padding: 0;
 	margin-top: 0;
 	margin-bottom: 0;
@@ -3997,10 +4014,20 @@ transform: translateY(calc(-50% - 0.5px));
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin: 12px auto;
+	margin: 20px auto 12px;
 	position: relative;
 	background: transparent;
 	color: var(--asset-unified-text-color);
+}
+
+.asset-panel.is-deleting {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.asset-panel.is-deleting .asset-delete-loader {
+	margin: 0;
 }
 
 .asset-delete-loader-spinner {
