@@ -2189,10 +2189,15 @@ transform: translateY(calc(-50% - 0.5px));
 
 .asset-investments-list {
 	display: grid;
-	gap: 12px;
+	gap: 0;
 	background: inherit;
 	padding: 12px;
 	border-radius: 12px;
+}
+
+.asset-investment-gap {
+	height: var(--investment-gap, 0px);
+	transition: height 3s ease;
 }
 
 .asset-investments-list .asset-panel--bitcoin,
@@ -2205,6 +2210,7 @@ transform: translateY(calc(-50% - 0.5px));
 	justify-content: center;
 	place-self: center;
 	width: max-content;
+	margin-top: 10px;
 }
 
 .asset-investments-list .asset-metric-row {
@@ -4025,11 +4031,15 @@ transform: translateY(calc(-50% - 0.5px));
 	transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-.asset-panel.is-deleting {
+.asset-panel.is-deleting,
+.asset-panel.is-closing-delete,
+.asset-panel.is-delete-transition {
 	position: relative;
 }
 
-.asset-panel.is-deleting .asset-delete-loader {
+.asset-panel.is-deleting .asset-delete-loader,
+.asset-panel.is-closing-delete .asset-delete-loader,
+.asset-panel.is-delete-transition .asset-delete-loader {
 	opacity: 1;
 	transform: translate(-50%, -50%) scale(1);
 }
@@ -4040,8 +4050,11 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .asset-panel.is-deleting .asset-investment-metrics,
-.asset-panel.is-pending-delete .asset-investment-metrics {
+.asset-panel.is-pending-delete .asset-investment-metrics,
+.asset-panel.is-closing-delete .asset-investment-metrics,
+.asset-panel.is-delete-transition .asset-investment-metrics {
 	opacity: 0;
+	visibility: hidden;
 	pointer-events: none;
 }
 
