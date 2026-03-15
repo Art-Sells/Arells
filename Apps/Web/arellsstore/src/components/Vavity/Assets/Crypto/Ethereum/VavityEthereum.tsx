@@ -106,6 +106,10 @@ const VavityEthereum: React.FC = () => {
   const [marketWordHidden, setMarketWordHidden] = useState(false);
   const [marketWordText, setMarketWordText] = useState<string>('');
   const marketWordTimerRef = useRef<number | null>(null);
+  const debugDelete = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).get('debugDelete') === '1';
+  }, []);
   const rangeClickFadeRef = useRef(false);
   const toggleKnobLeftComputedPx = useMemo(() => {
     if (!toggleTrack) return null;
@@ -130,7 +134,7 @@ const VavityEthereum: React.FC = () => {
   const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
   const [investmentsListOpen, setInvestmentsListOpen] = useState(false);
   const [closingInvestments, setClosingInvestments] = useState<string[]>([]);
-  const [visibleInvestments, setVisibleInvestments] = useState<number>(5);
+  const [visibleInvestments, setVisibleInvestments] = useState<number>(3);
   const [deletingInvestments, setDeletingInvestments] = useState<string[]>([]);
   const [pendingDeleteInvestments, setPendingDeleteInvestments] = useState<string[]>([]);
   const [deleteHeights, setDeleteHeights] = useState<Record<string, number>>({});
@@ -194,8 +198,15 @@ const VavityEthereum: React.FC = () => {
   const investmentCardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const deleteFadeTimersRef = useRef<Record<string, number>>({});
   const deleteActionTimersRef = useRef<Record<string, number>>({});
+  const deleteCleanupTimersRef = useRef<Record<string, number>>({});
+  const deleteLockRef = useRef(false);
+  const [deleteLocked, setDeleteLocked] = useState(false);
   const investmentIdMapRef = useRef<Map<string, string>>(new Map());
   const investmentIdCounterRef = useRef(0);
+  const [deleteGhosts, setDeleteGhosts] = useState<{ id: string; entry: any; index: number }[]>([]);
+  const [deleteExpandIds, setDeleteExpandIds] = useState<string[]>([]);
+  const lastDeletedSignatureRef = useRef<string | null>(null);
+  const lastDeletedAtRef = useRef<number | null>(null);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
   const investmentsWholeContentRef = useRef<HTMLDivElement | null>(null);
 
@@ -205,6 +216,9 @@ const VavityEthereum: React.FC = () => {
         if (timer) globalThis.clearTimeout(timer);
       });
       Object.values(deleteActionTimersRef.current).forEach((timer) => {
+        if (timer) globalThis.clearTimeout(timer);
+      });
+      Object.values(deleteCleanupTimersRef.current).forEach((timer) => {
         if (timer) globalThis.clearTimeout(timer);
       });
     };
@@ -677,6 +691,18 @@ const VavityEthereum: React.FC = () => {
               return await res.json();
             })()
           : await fetchVavityAggregator(sessionId, 'ethereum');
+        if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(data?.investments)) {
+          const signature = lastDeletedSignatureRef.current;
+          const returned = data.investments.some((entry: any) => {
+            const sig =
+              entry?.clientId || entry?.id || entry?._id || `${entry?.date ?? ''}|${entry?.cVactTaa ?? ''}`;
+            return sig === signature;
+          });
+          if (returned) {
+            const ageMs = lastDeletedAtRef.current ? Date.now() - lastDeletedAtRef.current : null;
+            console.warn('[delete-debug] poll returned deleted investment', { signature, ageMs });
+          }
+        }
         if (isMounted) {
           setVavityData(data);
         }
@@ -857,6 +883,12 @@ const VavityEthereum: React.FC = () => {
     return nextId;
   }, []);
   const investmentIds = useMemo(() => investments.map(getInvestmentId), [getInvestmentId, investments]);
+  const displayInvestments = useMemo(() => {
+    const base = investments.map((entry: any, idx: number) => ({ id: investmentIds[idx], entry, index: idx }));
+    const existing = new Set(base.map((item: { id: string }) => item.id));
+    const ghosts = deleteGhosts.filter((ghost) => !existing.has(ghost.id));
+    return [...base, ...ghosts].sort((a, b) => a.index - b.index);
+  }, [deleteGhosts, investmentIds, investments]);
   const totals = useMemo(() => displayData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }, [
     displayData,
   ]);
@@ -2133,6 +2165,17 @@ const VavityEthereum: React.FC = () => {
     if (!isSignedIn && !sessionId) return;
     const indexToRemove = investmentIds.indexOf(investmentId);
     if (indexToRemove === -1) return;
+    const entryToRemove = liveInvestments[indexToRemove];
+    const deleteSignature =
+      entryToRemove?.clientId ||
+      entryToRemove?.id ||
+      entryToRemove?._id ||
+      `${entryToRemove?.date ?? ''}|${entryToRemove?.cVactTaa ?? ''}`;
+    lastDeletedSignatureRef.current = deleteSignature;
+    lastDeletedAtRef.current = Date.now();
+    if (debugDelete) {
+      console.warn('[delete-debug] delete start', { investmentId, signature: deleteSignature });
+    }
     const updated = liveInvestments.filter((_: any, idx: number) => idx !== indexToRemove);
     const isLastInvestment = updated.length === 0;
     if (isLastInvestment && !isClearingInvestments) {
@@ -2153,10 +2196,32 @@ const VavityEthereum: React.FC = () => {
         const params = new URLSearchParams({ email, asset: 'ethereum' });
         const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
         const refreshed = await res.json();
+        if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(refreshed?.investments)) {
+          const signature = lastDeletedSignatureRef.current;
+          const returned = refreshed.investments.some((entry: any) => {
+            const sig =
+              entry?.clientId || entry?.id || entry?._id || `${entry?.date ?? ''}|${entry?.cVactTaa ?? ''}`;
+            return sig === signature;
+          });
+          if (returned) {
+            console.warn('[delete-debug] server refresh returned deleted investment (signed-in)', { signature });
+          }
+        }
         setVavityData(refreshed);
       } else {
         await saveVavityAggregator(sessionId, updated, 'ethereum');
         const refreshed = await fetchVavityAggregator(sessionId, 'ethereum');
+        if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(refreshed?.investments)) {
+          const signature = lastDeletedSignatureRef.current;
+          const returned = refreshed.investments.some((entry: any) => {
+            const sig =
+              entry?.clientId || entry?.id || entry?._id || `${entry?.date ?? ''}|${entry?.cVactTaa ?? ''}`;
+            return sig === signature;
+          });
+          if (returned) {
+            console.warn('[delete-debug] server refresh returned deleted investment (guest)', { signature });
+          }
+        }
         setVavityData(refreshed);
       }
     } finally {
@@ -2882,15 +2947,7 @@ const VavityEthereum: React.FC = () => {
                   <div className="asset-slide-panel" style={{ maxHeight: 'none', transition: 'none', overflow: 'visible' }}>
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span
-                  className={`asset-metric-title--ethereum asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
-                  style={{
-                    display: 'inline-block',
-                    marginTop: 30,
-                    opacity: summaryValuesHidden ? 0 : realityOpacity,
-                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
-                  }}
-                >
+                <span className="asset-metric-title--ethereum" style={{ display: 'inline-block', marginTop: 30 }}>
                   Purchased Value
                 </span>
                 <span
@@ -2905,13 +2962,7 @@ const VavityEthereum: React.FC = () => {
                 </span>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
-                <span
-                  className={`asset-metric-title--ethereum asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
-                  style={{
-                    opacity: summaryValuesHidden ? 0 : realityOpacity,
-                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
-                  }}
-                >
+                <span className="asset-metric-title--ethereum">
                   Current Value
                 </span>
                 <span
@@ -2952,20 +3003,27 @@ const VavityEthereum: React.FC = () => {
                             className="asset-profit-inline-wrap"
                             style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                           >
-                            <span
-                              ref={profitInlineAnimRef}
-                              className={`asset-profit-range-anim${
-                                (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? ' is-hidden' : ''
-                              }`}
-                              style={{
-                                opacity: (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
-                              }}
-                            >
+                            <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
                               <span className="asset-metric-inline-title--ethereum">
-                                {formatRangeLabel(selectedRangeDays)} {label}
+                                {formatRangeLabel(selectedRangeDays)}{' '}
+                                <span
+                                  style={{
+                                    opacity:
+                                      (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
+                                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  }}
+                                >
+                                  {label}
+                                </span>
                               </span>
-                              <span className="asset-money-wrap">
+                              <span
+                                className="asset-money-wrap"
+                                style={{
+                                  opacity:
+                                    (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                }}
+                              >
                                 <span className="asset-metric-symbol--ethereum">
                                   {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
                                 </span>
@@ -2984,16 +3042,27 @@ const VavityEthereum: React.FC = () => {
                           className="asset-profit-inline-wrap"
                           style={profitInlineHeight ? { height: `${profitInlineHeight}px` } : undefined}
                         >
-                          <span
-                            ref={profitInlineAnimRef}
-                            className={`asset-profit-range-anim${
-                              (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? ' is-hidden' : ''
-                            }`}
-                          >
+                          <span ref={profitInlineAnimRef} className="asset-profit-range-anim">
                             <span className="asset-metric-inline-title--ethereum">
-                              {formatRangeLabel(null)} {label}
+                              {formatRangeLabel(null)}{' '}
+                              <span
+                                style={{
+                                  opacity:
+                                    (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                }}
+                              >
+                                {label}
+                              </span>
                             </span>
-                            <span className="asset-money-wrap">
+                            <span
+                              className="asset-money-wrap"
+                              style={{
+                                opacity:
+                                  (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
+                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                              }}
+                            >
                               <span className="asset-metric-symbol--ethereum">
                                 {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
                               </span>
@@ -3041,12 +3110,6 @@ const VavityEthereum: React.FC = () => {
                       if (addMoreOpen) {
                         setAddMoreOpen(false);
                         return;
-                      }
-                      if (showInvestmentsList && investmentsListOpen) {
-                        setInvestmentsListOpen(false);
-                        setTimeout(() => {
-                          setVisibleInvestments(5);
-                        }, 2000);
                       }
                       setSubmitPhase('idle');
                       setShowAddMoreForm(true);
@@ -3121,7 +3184,7 @@ const VavityEthereum: React.FC = () => {
                         if (investmentsListOpen) {
                           setInvestmentsListOpen(false);
                           setTimeout(() => {
-                            setVisibleInvestments(5);
+                            setVisibleInvestments(3);
                           }, 2000);
                           return;
                         }
@@ -3142,15 +3205,20 @@ const VavityEthereum: React.FC = () => {
                       style={{ maxHeight: investmentsMaxHeight, transition: 'max-height 2s ease' }}
                     >
                       <div className="asset-investments-list" ref={investmentsListRef}>
-                        {investments.slice(0, visibleInvestments).map((entry: any, idx: number) => {
+                        {displayInvestments.slice(0, visibleInvestments).map(({ entry, id: investmentId, index: idx }) => {
                           const amount = entry.cVactTaa ?? 0;
-                          const investmentId = investmentIds[idx];
                           const isClosing = closingInvestments.includes(investmentId);
                           const isCollapsed = collapsedInvestments.includes(investmentId);
                           const isDeleting = deletingInvestments.includes(investmentId);
                           const isPendingDelete = pendingDeleteInvestments.includes(investmentId);
                           const isNew = slowOpenInvestments.includes(investmentId);
+                          const isDeleteExpanded = deleteExpandIds.includes(investmentId);
                           const deleteHeight = deleteHeights[investmentId];
+                          const deleteMinHeight = isDeleting
+                            ? isDeleteExpanded
+                              ? 300
+                              : deleteHeight
+                            : undefined;
                           return (
                             <div
                               key={investmentId}
@@ -3164,7 +3232,8 @@ const VavityEthereum: React.FC = () => {
                                 className={`asset-panel asset-panel--ethereum${isPendingDelete ? ' is-pending-delete' : ''}`}
                                 style={{
                                   padding: '12px',
-                                  minHeight: isDeleting && deleteHeight ? `${deleteHeight}px` : undefined,
+                                  minHeight: deleteMinHeight != null ? `${deleteMinHeight}px` : undefined,
+                                  transition: isDeleting ? 'min-height 0.35s ease' : undefined,
                                 }}
                               >
                                 {isDeleting ? (
@@ -3181,7 +3250,9 @@ const VavityEthereum: React.FC = () => {
                                 ) : (
                                   <div className="asset-investment-metrics">
                                     <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                                      <span className="asset-metric-title--ethereum">Purchased Value</span>
+                                      <span className="asset-metric-title--ethereum" style={{ marginTop: 20 }}>
+                                        Purchased Value
+                                      </span>
                                       <span className="asset-money-wrap">
                                         <span className="asset-metric-symbol--ethereum">$</span>
                                         <span className="asset-metric-value">
@@ -3227,7 +3298,7 @@ const VavityEthereum: React.FC = () => {
                                       <span className="asset-metric-title--ethereum">Ethereum amount</span>
                                       <span className="asset-metric-value">
                                         {Number(amount).toLocaleString('en-US', {
-                                          minimumFractionDigits: 8,
+                                          minimumFractionDigits: 0,
                                           maximumFractionDigits: 8,
                                         })}
                                       </span>
@@ -3238,14 +3309,22 @@ const VavityEthereum: React.FC = () => {
                                     </div>
                                     <button
                                       type="button"
-                                      className="asset-range-button asset-range-button--ethereum asset-delete-button"
+                                      className="asset-range-button asset-range-button--ethereum asset-delete-button asset-investment-delete-button"
+                                      disabled={deleteLocked}
                                       onClick={() => {
                                         if (
+                                          deleteLockRef.current ||
                                           closingInvestments.includes(investmentId) ||
                                           deletingInvestments.includes(investmentId) ||
                                           pendingDeleteInvestments.includes(investmentId)
                                         )
                                           return;
+                                        deleteLockRef.current = true;
+                                        setDeleteLocked(true);
+                                        setDeleteGhosts((prev) => {
+                                          if (prev.some((ghost) => ghost.id === investmentId)) return prev;
+                                          return [...prev, { id: investmentId, entry, index: idx }];
+                                        });
                                         const card = investmentCardRefs.current[investmentId];
                                         if (card) {
                                           const height = card.getBoundingClientRect().height;
@@ -3263,12 +3342,40 @@ const VavityEthereum: React.FC = () => {
                                                 // ignore errors
                                               })
                                               .finally(() => {
-                                                setClosingInvestments((prev) =>
-                                                  prev.filter((value) => value !== investmentId)
+                                                setDeleteExpandIds((prev) =>
+                                                  prev.includes(investmentId) ? prev : [...prev, investmentId]
                                                 );
-                                                setDeletingInvestments((prev) =>
-                                                  prev.filter((value) => value !== investmentId)
-                                                );
+                                                const expandTimer = window.setTimeout(() => {
+                                                  setClosingInvestments((prev) =>
+                                                    prev.includes(investmentId) ? prev : [...prev, investmentId]
+                                                  );
+                                                }, 350);
+                                                const cleanupTimer = window.setTimeout(() => {
+                                                  setClosingInvestments((prev) =>
+                                                    prev.filter((value) => value !== investmentId)
+                                                  );
+                                                  setDeletingInvestments((prev) =>
+                                                    prev.filter((value) => value !== investmentId)
+                                                  );
+                                                  setDeleteExpandIds((prev) =>
+                                                    prev.filter((value) => value !== investmentId)
+                                                  );
+                                                  setPendingDeleteInvestments((prev) =>
+                                                    prev.filter((value) => value !== investmentId)
+                                                  );
+                                                  setDeleteGhosts((prev) =>
+                                                    prev.filter((ghost) => ghost.id !== investmentId)
+                                                  );
+                                                  setDeleteHeights((prev) => {
+                                                    const next = { ...prev };
+                                                    delete next[investmentId];
+                                                    return next;
+                                                  });
+                                                  deleteLockRef.current = false;
+                                                  setDeleteLocked(false);
+                                                }, 2350);
+                                                deleteCleanupTimersRef.current[investmentId] = cleanupTimer;
+                                                deleteCleanupTimersRef.current[`${investmentId}-expand`] = expandTimer;
                                               });
                                           }, 2000);
                                           deleteActionTimersRef.current[investmentId] = actionTimer;
@@ -3276,7 +3383,7 @@ const VavityEthereum: React.FC = () => {
                                         deleteFadeTimersRef.current[investmentId] = fadeTimer;
                                       }}
                                     >
-                                      (delete)
+                                      Delete
                                     </button>
                                   </div>
                                 )}
@@ -3284,17 +3391,17 @@ const VavityEthereum: React.FC = () => {
                             </div>
                           );
                         })}
-                        {investments.length > visibleInvestments && (
+                        {displayInvestments.length > visibleInvestments && (
                           <button
                             type="button"
-                            className="asset-action-button asset-action-button--ethereum"
+                            className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show"
                             onClick={() => {
                               suppressPortfolioCta();
-                              setVisibleInvestments((prev) => prev + 5);
+                              setVisibleInvestments((prev) => prev + 3);
                               followScrollHeightDeltaFor(2000);
                             }}
                           >
-                            Load more 5 per list
+                            Show 3 More
                           </button>
                         )}
                       </div>
@@ -3380,7 +3487,7 @@ const VavityEthereum: React.FC = () => {
                 if (showInvestmentsList) {
                   setInvestmentsListOpen(false);
                   setTimeout(() => {
-                    setVisibleInvestments(5);
+                    setVisibleInvestments(3);
                   }, 2000);
                   return;
                 }
@@ -3401,9 +3508,8 @@ const VavityEthereum: React.FC = () => {
               style={{ maxHeight: investmentsMaxHeight, transition: 'max-height 2s ease' }}
             >
               <div className="asset-investments-list" ref={investmentsListRef}>
-                {investments.slice(0, visibleInvestments).map((entry: any, idx: number) => {
+                {displayInvestments.slice(0, visibleInvestments).map(({ entry, id: investmentId, index: idx }) => {
                   const amount = entry.cVactTaa ?? 0;
-                  const investmentId = investmentIds[idx];
                   const isClosing = closingInvestments.includes(investmentId);
                   const isCollapsed = collapsedInvestments.includes(investmentId);
                   const isDeleting = deletingInvestments.includes(investmentId);
@@ -3464,7 +3570,7 @@ const VavityEthereum: React.FC = () => {
                               <span className="asset-metric-title--ethereum">Ethereum amount</span>
                               <span className="asset-metric-value">
                                 {Number(amount).toLocaleString('en-US', {
-                                  minimumFractionDigits: 8,
+                                  minimumFractionDigits: 0,
                                   maximumFractionDigits: 8,
                                 })}
                               </span>
@@ -3475,24 +3581,80 @@ const VavityEthereum: React.FC = () => {
                             </div>
                             <button
                               type="button"
-                              className="asset-delete-button"
+                              className="asset-delete-button asset-investment-delete-button"
+                              disabled={deleteLocked}
                               onClick={() => {
-                                if (closingInvestments.includes(investmentId) || deletingInvestments.includes(investmentId)) return;
-                                setDeletingInvestments((prev) => [...prev, investmentId]);
-                                setClosingInvestments((prev) => [...prev, investmentId]);
-                                setTimeout(() => {
-                                  handleDeleteInvestment(investmentId)
-                                    .catch(() => {
-                                      // ignore errors
-                                    })
-                                    .finally(() => {
-                                      setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
-                                      setDeletingInvestments((prev) => prev.filter((value) => value !== investmentId));
-                                    });
-                                }, 2000);
+                                if (
+                                  deleteLockRef.current ||
+                                  closingInvestments.includes(investmentId) ||
+                                  deletingInvestments.includes(investmentId)
+                                )
+                                  return;
+                                deleteLockRef.current = true;
+                                setDeleteLocked(true);
+                                setDeleteGhosts((prev) => {
+                                  if (prev.some((ghost) => ghost.id === investmentId)) return prev;
+                                  return [...prev, { id: investmentId, entry, index: idx }];
+                                });
+                                const card = investmentCardRefs.current[investmentId];
+                                if (card) {
+                                  const height = card.getBoundingClientRect().height;
+                                  setDeleteHeights((prev) => ({ ...prev, [investmentId]: height }));
+                                }
+                                setPendingDeleteInvestments((prev) => [...prev, investmentId]);
+                                const fadeTimer = window.setTimeout(() => {
+                                  setPendingDeleteInvestments((prev) =>
+                                    prev.filter((value) => value !== investmentId)
+                                  );
+                                  setDeletingInvestments((prev) => [...prev, investmentId]);
+                                  const actionTimer = window.setTimeout(() => {
+                                    handleDeleteInvestment(investmentId)
+                                      .catch(() => {
+                                        // ignore errors
+                                      })
+                                      .finally(() => {
+                                        setDeleteExpandIds((prev) =>
+                                          prev.includes(investmentId) ? prev : [...prev, investmentId]
+                                        );
+                                        const expandTimer = window.setTimeout(() => {
+                                          setClosingInvestments((prev) =>
+                                            prev.includes(investmentId) ? prev : [...prev, investmentId]
+                                          );
+                                        }, 350);
+                                        const cleanupTimer = window.setTimeout(() => {
+                                          setClosingInvestments((prev) =>
+                                            prev.filter((value) => value !== investmentId)
+                                          );
+                                          setDeletingInvestments((prev) =>
+                                            prev.filter((value) => value !== investmentId)
+                                          );
+                                          setDeleteExpandIds((prev) =>
+                                            prev.filter((value) => value !== investmentId)
+                                          );
+                                          setPendingDeleteInvestments((prev) =>
+                                            prev.filter((value) => value !== investmentId)
+                                          );
+                                          setDeleteGhosts((prev) =>
+                                            prev.filter((ghost) => ghost.id !== investmentId)
+                                          );
+                                          setDeleteHeights((prev) => {
+                                            const next = { ...prev };
+                                            delete next[investmentId];
+                                            return next;
+                                          });
+                                          deleteLockRef.current = false;
+                                          setDeleteLocked(false);
+                                        }, 2350);
+                                        deleteCleanupTimersRef.current[investmentId] = cleanupTimer;
+                                        deleteCleanupTimersRef.current[`${investmentId}-expand`] = expandTimer;
+                                      });
+                                  }, 2000);
+                                  deleteActionTimersRef.current[investmentId] = actionTimer;
+                                }, 350);
+                                deleteFadeTimersRef.current[investmentId] = fadeTimer;
                               }}
                             >
-                              (delete)
+                              Delete
                             </button>
                           </>
                         )}
@@ -3500,17 +3662,17 @@ const VavityEthereum: React.FC = () => {
                     </div>
                   );
                 })}
-                {investments.length > visibleInvestments && (
+                {displayInvestments.length > visibleInvestments && (
                   <button
                     type="button"
-                    className="asset-action-button asset-action-button--ethereum"
+                    className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show"
                     onClick={() => {
                       suppressPortfolioCta();
-                      setVisibleInvestments((prev) => prev + 5);
+                      setVisibleInvestments((prev) => prev + 3);
                       followScrollHeightDeltaFor(2000);
                     }}
                   >
-                    Load more 5 per list
+                    Show 3 More
                   </button>
                 )}
               </div>

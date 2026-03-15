@@ -1965,7 +1965,7 @@ transform: translateY(calc(-50% - 0.5px));
    match the spacing it had when it lived directly under Add Investments. */
 .asset-portfolio-actions--signin.asset-portfolio-actions--signin-standalone {
 	margin-top: var(--asset-portfolio-actions-signin-margin-top, 0px);
-	margin-bottom: var(--asset-portfolio-actions-signin-margin-bottom, 0px);
+	margin-bottom: max(calc(var(--asset-portfolio-actions-signin-margin-bottom, 0px) - 10px), 0px);
 }
 
 /* Sign-in CTA: remove the button's default bottom margin so the wrapper controls spacing */
@@ -2239,6 +2239,11 @@ transform: translateY(calc(-50% - 0.5px));
 	overflow-anchor: none;
 }
 
+/* Reduce extra space above Add/Add More forms */
+.asset-slide-panel--form .asset-slide-panel-inner {
+	padding-top: 0;
+}
+
 .asset-slide-panel.is-open {
 	max-height: 2000px;
 }
@@ -2469,16 +2474,69 @@ transform: translateY(calc(-50% - 0.5px));
 	margin-top: 0;
 	padding: 0;
 	border-radius: 12px;
-	box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.12);
-	background: rgba(255, 255, 255, 0.6);
+	border: 1px solid transparent;
+	box-shadow: none;
+	background: transparent;
 }
 
 .asset-investments-wrap--bitcoin {
-	box-shadow: inset 0 6px 12px rgba(248, 141, 0, 0.25);
+	border-color: rgba(248, 141, 0, 0.3);
+	background: rgba(248, 141, 0, 0.06);
+	box-shadow: 0px 0 0px rgba(248, 141, 0, 0.26), 0 0px 0px rgba(248, 141, 0, 0.18);
 }
 
 .asset-investments-wrap--ethereum {
-	box-shadow: inset 0 6px 12px rgba(107, 114, 168, 0.3);
+	border-color: rgba(107, 114, 168, 0.3);
+	background: rgba(107, 114, 168, 0.07);
+	box-shadow: -8px 0 14px rgba(107, 114, 168, 0.28), 0 2px 10px rgba(107, 114, 168, 0.2);
+}
+
+/* Investment list values + delete spacing */
+.asset-investments-wrap .asset-metric-value {
+	font-size: 30px;
+	letter-spacing: -2px;
+	margin-top: -1px;
+}
+
+.asset-investments-wrap .asset-delete-button {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.asset-investment-delete-button {
+	margin-top: 20px !important;
+	margin-bottom: 20px !important;
+}
+
+.asset-investments-wrap .asset-metric-inline-value {
+	font-size: 30px;
+	letter-spacing: -2px;
+	margin-top: -1px;
+}
+
+.asset-investments-wrap .asset-metric-symbol--bitcoin,
+.asset-investments-wrap .asset-metric-symbol--ethereum,
+.asset-investments-wrap .asset-metric-inline-symbol--bitcoin,
+.asset-investments-wrap .asset-metric-inline-symbol--ethereum {
+	font-size: 19px;
+	font-weight: 800;
+	transform: translateY(-2.7px);
+	opacity: 0.7;
+	position: relative;
+}
+
+.asset-investments-wrap:not(.is-open) {
+	border-width: 0;
+	padding: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.asset-investments-wrap:not(.is-open) .asset-investments-list {
+	padding: 0;
+	gap: 0;
 }
 
 /* Empty-state debug preview: keep the "view investments" wrapper visible
@@ -2548,7 +2606,8 @@ transform: translateY(calc(-50% - 0.5px));
 
 }
 .asset-delete-button:not(.asset-range-button) {
-	margin-top: 8px;
+	margin-top: 20px;
+	margin-bottom: 20px;
 	border: none;
 	background: transparent;
 	color: #3e3e3e;
@@ -2556,7 +2615,8 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .asset-delete-button.asset-range-button {
-	margin-top: 8px;
+	margin-top: 20px;
+	margin-bottom: 20px;
 	text-decoration: none;
 }
 
