@@ -61,7 +61,7 @@ const Index = () => {
   useEffect(() => {
     if (typeof document === 'undefined' || typeof window === 'undefined') return;
     const root = document.documentElement;
-    const durationMs = 8000;
+    const durationMs = 15000;
     let rafId = 0;
     const start = performance.now();
     const tick = (now: number) => {

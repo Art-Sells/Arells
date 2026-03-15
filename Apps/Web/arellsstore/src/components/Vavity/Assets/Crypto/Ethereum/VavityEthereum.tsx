@@ -927,11 +927,13 @@ const VavityEthereum: React.FC = () => {
     setDeleteExpandIds((prev) => prev.filter((value) => value !== investmentId));
     setPendingDeleteInvestments((prev) => prev.filter((value) => value !== investmentId));
     setDeleteGhosts((prev) => prev.filter((ghost) => ghost.id !== investmentId));
-    setDeleteHeights((prev) => {
-      const next = { ...prev };
-      delete next[investmentId];
-      return next;
-    });
+    window.setTimeout(() => {
+      setDeleteHeights((prev) => {
+        const next = { ...prev };
+        delete next[investmentId];
+        return next;
+      });
+    }, 200);
     const cleanupTimer = deleteCleanupTimersRef.current[investmentId];
     if (cleanupTimer) {
       window.clearTimeout(cleanupTimer);
@@ -3375,7 +3377,18 @@ const VavityEthereum: React.FC = () => {
                             : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
                         }}
                       >
-                        <div className="asset-investments-list" ref={investmentsListRef}>
+                        <div
+                          className="asset-investments-list"
+                          ref={investmentsListRef}
+                          style={{
+                            gap:
+                              pendingDeleteInvestments.length > 0 ||
+                              deletingInvestments.length > 0 ||
+                              closingInvestments.length > 0
+                                ? '0px'
+                                : undefined,
+                          }}
+                        >
                         {displayInvestments.slice(0, visibleInvestments).map(({ entry, id: investmentId, index: idx }) => {
                           const amount = entry.cVactTaa ?? 0;
                           const isClosing = closingInvestments.includes(investmentId);
@@ -3383,22 +3396,35 @@ const VavityEthereum: React.FC = () => {
                           const isDeleting = deletingInvestments.includes(investmentId);
                           const isPendingDelete = pendingDeleteInvestments.includes(investmentId);
                           const isNew = slowOpenInvestments.includes(investmentId);
-                          const deleteHeight = deleteHeights[investmentId];
-                          const deleteMinHeight = isClosing
-                            ? 0
-                            : isPendingDelete
-                              ? deleteHeight
-                              : isDeleting
-                                ? 100
-                                : undefined;
+                          const deleteRowHeight = deleteHeights[investmentId];
+                          const deleteTargetHeight = 150;
                           return (
                             <div
                               key={investmentId}
-                              className={`asset-slide-panel${!isClosing && !isCollapsed ? ' is-open' : ''}`}
-                              style={isNew ? { transitionDuration: '3s' } : undefined}
+                              className={`asset-slide-panel${!isCollapsed || deleteRowHeight != null ? ' is-open' : ''}`}
+                              style={{
+                                ...(isNew ? { transitionDuration: '3s' } : {}),
+                                ...(deleteRowHeight != null
+                                  ? {
+                                      height: `${deleteRowHeight}px`,
+                                      maxHeight: `${deleteRowHeight}px`,
+                                      marginBottom:
+                                        pendingDeleteInvestments.length > 0 ||
+                                        deletingInvestments.length > 0 ||
+                                        closingInvestments.length > 0
+                                          ? isClosing
+                                            ? '0px'
+                                            : '12px'
+                                          : undefined,
+                                      transition:
+                                        'height 3s ease, max-height 3s ease, margin-bottom 2s ease',
+                                      overflow: 'hidden',
+                                    }
+                                  : {}),
+                              }}
                               onTransitionEnd={(event) => {
                                 if (event.target !== event.currentTarget) return;
-                                if (event.propertyName !== 'max-height') return;
+                                if (event.propertyName !== 'max-height' && event.propertyName !== 'height') return;
                                 if (!closingInvestments.includes(investmentId)) return;
                                 finalizeDeleteCollapse(investmentId);
                               }}
@@ -3412,12 +3438,7 @@ const VavityEthereum: React.FC = () => {
                                 }`}
                                 style={{
                                   padding: '12px',
-                                  minHeight: deleteMinHeight != null ? `${deleteMinHeight}px` : undefined,
-                                  transition: isClosing
-                                    ? 'min-height 2s ease'
-                                    : isDeleting || isPendingDelete
-                                      ? 'min-height 1s ease'
-                                      : undefined,
+                                  boxSizing: 'border-box',
                                 }}
                               >
                                 {isDeleting ? (
@@ -3512,6 +3533,9 @@ const VavityEthereum: React.FC = () => {
                                         if (card) {
                                           const height = card.getBoundingClientRect().height;
                                           setDeleteHeights((prev) => ({ ...prev, [investmentId]: height }));
+                                          window.requestAnimationFrame(() => {
+                                            setDeleteHeights((prev) => ({ ...prev, [investmentId]: deleteTargetHeight }));
+                                          });
                                         }
                                         setPendingDeleteInvestments((prev) => [...prev, investmentId]);
                                         const fadeTimer = window.setTimeout(() => {
@@ -3526,6 +3550,7 @@ const VavityEthereum: React.FC = () => {
                                               })
                                               .finally(() => {
                                                 const expandTimer = window.setTimeout(() => {
+                                                  setDeleteHeights((prev) => ({ ...prev, [investmentId]: 0 }));
                                                   setClosingInvestments((prev) =>
                                                     prev.includes(investmentId) ? prev : [...prev, investmentId]
                                                   );
@@ -3538,7 +3563,7 @@ const VavityEthereum: React.FC = () => {
                                               });
                                           }, 2000);
                                           deleteActionTimersRef.current[investmentId] = actionTimer;
-                                        }, 350);
+                                        }, 1000);
                                         deleteFadeTimersRef.current[investmentId] = fadeTimer;
                                       }}
                                     >
@@ -3686,21 +3711,52 @@ const VavityEthereum: React.FC = () => {
                     : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
                 }}
               >
-                <div className="asset-investments-list" ref={investmentsListRef}>
+                <div
+                  className="asset-investments-list"
+                  ref={investmentsListRef}
+                  style={{
+                    gap:
+                      pendingDeleteInvestments.length > 0 ||
+                      deletingInvestments.length > 0 ||
+                      closingInvestments.length > 0
+                        ? '0px'
+                        : undefined,
+                  }}
+                >
                 {displayInvestments.slice(0, visibleInvestments).map(({ entry, id: investmentId, index: idx }) => {
                   const amount = entry.cVactTaa ?? 0;
                   const isClosing = closingInvestments.includes(investmentId);
                   const isCollapsed = collapsedInvestments.includes(investmentId);
                   const isDeleting = deletingInvestments.includes(investmentId);
                   const isNew = slowOpenInvestments.includes(investmentId);
+                  const deleteRowHeight = deleteHeights[investmentId];
                   return (
                     <div
                       key={investmentId}
-                      className={`asset-slide-panel${!isClosing && !isCollapsed ? ' is-open' : ''}`}
-                      style={isNew ? { transitionDuration: '3s' } : undefined}
+                      className={`asset-slide-panel${!isCollapsed || deleteRowHeight != null ? ' is-open' : ''}`}
+                      style={{
+                        ...(isNew ? { transitionDuration: '3s' } : {}),
+                        ...(deleteRowHeight != null
+                          ? {
+                              height: `${deleteRowHeight}px`,
+                              maxHeight: `${deleteRowHeight}px`,
+                              marginBottom:
+                                pendingDeleteInvestments.length > 0 ||
+                                deletingInvestments.length > 0 ||
+                                closingInvestments.length > 0
+                                  ? isClosing
+                                    ? '0px'
+                                    : '12px'
+                                  : undefined,
+                              transition:
+                                'height 3s ease, max-height 3s ease, margin-bottom 2s ease',
+                              overflow: 'hidden',
+                            }
+                          : {}),
+                      }}
                       onTransitionEnd={(event) => {
                         if (event.target !== event.currentTarget) return;
-                        if (event.propertyName !== 'max-height') return;
+                        if (event.propertyName !== 'max-height' && event.propertyName !== 'height') return;
                         if (!closingInvestments.includes(investmentId)) return;
                         finalizeDeleteCollapse(investmentId);
                       }}
@@ -3709,8 +3765,7 @@ const VavityEthereum: React.FC = () => {
                         className={`asset-panel asset-panel--ethereum${isDeleting ? ' is-deleting' : ''}`}
                         style={{
                           padding: '12px',
-                          minHeight: isClosing ? '0px' : isDeleting ? '100px' : undefined,
-                          transition: isClosing ? 'min-height 2s ease' : isDeleting ? 'min-height 1s ease' : undefined,
+                          boxSizing: 'border-box',
                         }}
                       >
                         {isDeleting ? (
@@ -3791,6 +3846,9 @@ const VavityEthereum: React.FC = () => {
                                 if (card) {
                                   const height = card.getBoundingClientRect().height;
                                   setDeleteHeights((prev) => ({ ...prev, [investmentId]: height }));
+                                  window.requestAnimationFrame(() => {
+                                    setDeleteHeights((prev) => ({ ...prev, [investmentId]: 100 }));
+                                  });
                                 }
                                 setPendingDeleteInvestments((prev) => [...prev, investmentId]);
                                 const fadeTimer = window.setTimeout(() => {
@@ -3805,6 +3863,7 @@ const VavityEthereum: React.FC = () => {
                                       })
                                       .finally(() => {
                                         const expandTimer = window.setTimeout(() => {
+                                          setDeleteHeights((prev) => ({ ...prev, [investmentId]: 0 }));
                                           setClosingInvestments((prev) =>
                                             prev.includes(investmentId) ? prev : [...prev, investmentId]
                                           );
@@ -3817,7 +3876,7 @@ const VavityEthereum: React.FC = () => {
                                       });
                                   }, 2000);
                                   deleteActionTimersRef.current[investmentId] = actionTimer;
-                                }, 350);
+                                }, 1000);
                                 deleteFadeTimersRef.current[investmentId] = fadeTimer;
                               }}
                             >
