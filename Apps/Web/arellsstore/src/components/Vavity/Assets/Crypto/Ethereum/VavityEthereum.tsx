@@ -527,7 +527,7 @@ const VavityEthereum: React.FC = () => {
 
   useEffect(() => {
     if (!summaryAnimating) return;
-    requestAnimationFrame(() => followWholePanelHeightDeltaFor(2000));
+    requestAnimationFrame(() => followWholePanelHeightDeltaFor(5000));
   }, [followWholePanelHeightDeltaFor, summaryAnimating]);
 
   useEffect(() => {}, []);
@@ -1090,6 +1090,7 @@ const VavityEthereum: React.FC = () => {
   }, []);
   const prevHasInvestmentsUIRef = useRef<boolean>(hasInvestmentsUI);
   const openInvestmentsSection = useCallback(() => {
+    followScrollHeightDeltaFor(5000);
     setSummaryOpen(false);
     requestAnimationFrame(() => {
       const whole = investmentsWholeContentRef.current;
@@ -1100,7 +1101,7 @@ const VavityEthereum: React.FC = () => {
       requestAnimationFrame(() => setSummaryOpen(true));
     });
     // Keep scroll synced with the ONE combined height-down of the full investments section.
-    followScrollHeightDeltaFor(2000);
+    followScrollHeightDeltaFor(5000);
   }, [followScrollHeightDeltaFor]);
   const triggerEmptyButtonsExpand = useCallback(() => {
     setEmptySigninGone(false);
@@ -1144,9 +1145,7 @@ const VavityEthereum: React.FC = () => {
   const emptyActionsTargetHeight = emptyActionsHeight || lastEmptyActionsHeightRef.current;
   const investmentsWholeMaxHeight =
     summaryOpen && !isClearingInvestments
-      ? addFormSubmitCollapsing
-        ? 'none'
-        : `${investmentsWholeHeight}px`
+      ? `${investmentsWholeHeight}px`
       : isClearingInvestments && emptyActionsTargetHeight
         ? `${emptyActionsTargetHeight}px`
         : '0px';
@@ -3257,7 +3256,7 @@ const VavityEthereum: React.FC = () => {
                 maxHeight: isClearingInvestments ? clearingHeightPx : investmentsWholeMaxHeight,
                 transition: isClearingInvestments ? 'max-height 2s ease' : investmentsWholeTransition,
                 overflowX: 'visible',
-                overflowY: isClearingInvestments ? 'hidden' : summaryOpen && !summaryAnimating ? 'visible' : 'hidden',
+                overflowY: 'hidden',
               }}
             >
               <div ref={investmentsWholeContentRef}>
@@ -3801,13 +3800,7 @@ const VavityEthereum: React.FC = () => {
                   addFormOpen || addFormSubmitCollapsing ? ' is-open' : ''
                 }${addFormSubmitCollapsing ? ' is-submit-collapse' : ''}`}
                 style={{
-                  maxHeight: addFormSubmitCollapsing
-                    ? 'none'
-                    : addFormOpen
-                      ? `${Math.max(600, addFormPanelHeight)}px`
-                      : '0px',
-                  transition: addFormSubmitCollapsing ? 'none' : undefined,
-                  overflowX: addFormSubmitCollapsing ? undefined : undefined,
+                  maxHeight: addFormOpen ? `${Math.max(600, addFormPanelHeight)}px` : '0px',
                 }}
                 ref={addFormSlidePanelRef}
               >
