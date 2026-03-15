@@ -1009,9 +1009,9 @@ const VavityEthereum: React.FC = () => {
         : '0px';
   const investmentsWholeTransition = isClearingInvestments
     ? 'max-height 2s ease'
-    : addMoreOpen || investmentsListOpen
-      ? 'max-height 0s ease'
-      : 'max-height 2s ease';
+    : summaryAnimating
+      ? 'max-height 2s ease'
+      : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   const summaryTransition = addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
   const shouldRenderAddForm = (showEmptyAddForm && showAddForm) || addFormSubmitAnimating;
@@ -3102,7 +3102,10 @@ const VavityEthereum: React.FC = () => {
                     summaryQuickFade ? ' is-quickfade' : ''
                   }`}
                 >
-                  <div className="asset-slide-panel" style={{ maxHeight: 'none', transition: 'none', overflow: 'visible' }}>
+                  <div
+                    className="asset-slide-panel"
+                    style={{ maxHeight: summaryMaxHeight, transition: summaryTransition, overflow: 'hidden' }}
+                  >
                     <div ref={summaryContentRef} style={{ paddingBottom: '5px' }}>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
                 <span className="asset-metric-title--ethereum" style={{ display: 'inline-block', marginTop: 30 }}>
@@ -3383,7 +3386,14 @@ const VavityEthereum: React.FC = () => {
                             : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
                         }}
                       >
-                        <div className="asset-investments-list" ref={investmentsListRef}>
+                        <div
+                          className="asset-investments-list"
+                          ref={investmentsListRef}
+                          style={{
+                            padding: investmentsListOpen ? '12px' : '0px',
+                            transition: investmentsListOpen ? 'padding 0.2s ease' : 'padding 0.2s ease 2s',
+                          }}
+                        >
                         {displayInvestments
                           .slice(0, visibleInvestments)
                           .map((item, visibleIndex) => {
@@ -3711,7 +3721,14 @@ const VavityEthereum: React.FC = () => {
                     : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
                 }}
               >
-                <div className="asset-investments-list" ref={investmentsListRef}>
+                <div
+                  className="asset-investments-list"
+                  ref={investmentsListRef}
+                  style={{
+                    padding: investmentsListOpen ? '12px' : '0px',
+                    transition: investmentsListOpen ? 'padding 0.2s ease' : 'padding 0.2s ease 2s',
+                  }}
+                >
                 {displayInvestments
                   .slice(0, visibleInvestments)
                   .map((item, visibleIndex) => {
