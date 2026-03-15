@@ -2281,6 +2281,11 @@ transform: translateY(calc(-50% - 0.5px));
 	transition-duration: 2.7s;
 }
 
+.asset-slide-panel--form.is-submit-collapse {
+	transition: max-height 2s ease !important;
+	transition-duration: 2s !important;
+}
+
 .asset-submit-status {
 	display: flex;
 	flex-direction: column;

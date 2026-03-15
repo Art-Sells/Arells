@@ -230,6 +230,7 @@ const VavityBitcoin: React.FC = () => {
   const lastInvestmentsWholeHeightRef = useRef(0);
   const addFormBoxRef = useRef<HTMLDivElement | null>(null);
   const addFormPanelRef = useRef<HTMLDivElement | null>(null);
+  const addFormSlidePanelRef = useRef<HTMLDivElement | null>(null);
   const addFormCollapseAnimRef = useRef<Animation | null>(null);
   const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
   const addMoreFormPanelRef = useRef<HTMLDivElement | null>(null);
@@ -239,6 +240,10 @@ const VavityBitcoin: React.FC = () => {
   const sloganRef = useRef<HTMLDivElement | null>(null);
   const [summaryHeight, setSummaryHeight] = useState<number>(0);
   const [addFormPanelHeight, setAddFormPanelHeight] = useState<number>(0);
+  const [addFormSubmitMaxHeight, setAddFormSubmitMaxHeight] = useState<number | null>(null);
+  const [addFormOuterSubmitMaxHeight, setAddFormOuterSubmitMaxHeight] = useState<number | null>(null);
+  const [addFormSubmitCollapsing, setAddFormSubmitCollapsing] = useState(false);
+  const [submitTargetSnapshot, setSubmitTargetSnapshot] = useState<'add' | 'addMore' | null>(null);
   const [addMoreFormPanelHeight, setAddMoreFormPanelHeight] = useState<number>(0);
   const [profitInlineHeight, setProfitInlineHeight] = useState<number>(0);
   const investmentsListRef = useRef<HTMLDivElement | null>(null);
@@ -280,6 +285,10 @@ const VavityBitcoin: React.FC = () => {
   // Keep the viewport pinned to the bottom while panels are height-animating (prevents scroll/height drift).
   const followScrollUntilRef = useRef<number>(0);
   const followScrollRafRef = useRef<number | null>(null);
+  const addFormScrollRafRef = useRef<number | null>(null);
+  const summaryScrollRafRef = useRef<number | null>(null);
+  const summaryTransitionActiveRef = useRef(false);
+  const summaryTransitionStopTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const followScrollFor = useCallback((ms: number) => {
     if (typeof window === 'undefined') return;
     followScrollUntilRef.current = Date.now() + ms;
@@ -388,6 +397,138 @@ const VavityBitcoin: React.FC = () => {
     };
     tick();
   }, []);
+
+  // Follow the add-form panel height delta directly during submit collapse.
+  const followAddFormHeightDeltaFor = useCallback((ms: number) => {
+    if (typeof window === 'undefined') return;
+    const until = Date.now() + ms;
+    if (addFormScrollRafRef.current) {
+      window.cancelAnimationFrame(addFormScrollRafRef.current);
+      addFormScrollRafRef.current = null;
+    }
+    let prevH: number | null = null;
+    const tick = () => {
+      if (Date.now() >= until) {
+        addFormScrollRafRef.current = null;
+        return;
+      }
+      const node = addFormSlidePanelRef.current;
+      const h = node ? node.getBoundingClientRect().height : 0;
+      if (prevH != null) {
+        const delta = prevH - h;
+        if (delta > 0.5) {
+          window.scrollBy({ top: delta, left: 0, behavior: 'auto' });
+        }
+      }
+      prevH = h;
+      addFormScrollRafRef.current = window.requestAnimationFrame(tick);
+    };
+    tick();
+  }, []);
+
+  const followSummaryHeightDeltaFor = useCallback((ms: number) => {
+    if (typeof window === 'undefined') return;
+    const until = Date.now() + ms;
+    if (summaryScrollRafRef.current) {
+      window.cancelAnimationFrame(summaryScrollRafRef.current);
+      summaryScrollRafRef.current = null;
+    }
+    let prevH: number | null = null;
+    const tick = () => {
+      if (Date.now() >= until) {
+        summaryScrollRafRef.current = null;
+        return;
+      }
+      const node = summaryContentRef.current;
+      const h = node ? node.getBoundingClientRect().height : 0;
+      if (prevH != null) {
+        const delta = prevH - h;
+        if (delta > 0.5) {
+          window.scrollBy({ top: delta, left: 0, behavior: 'auto' });
+        }
+      }
+      prevH = h;
+      summaryScrollRafRef.current = window.requestAnimationFrame(tick);
+    };
+    tick();
+  }, []);
+
+  const startSummaryTransitionFollow = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (summaryTransitionActiveRef.current) return;
+    summaryTransitionActiveRef.current = true;
+    followScrollHeightDeltaFor(2000);
+    if (summaryTransitionStopTimerRef.current) {
+      globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
+      summaryTransitionStopTimerRef.current = null;
+    }
+    summaryTransitionStopTimerRef.current = globalThis.setTimeout(() => {
+      summaryTransitionActiveRef.current = false;
+      summaryTransitionStopTimerRef.current = null;
+    }, 2200);
+  }, []);
+
+  const stopSummaryTransitionFollow = useCallback(() => {
+    summaryTransitionActiveRef.current = false;
+    if (summaryTransitionStopTimerRef.current) {
+      globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
+      summaryTransitionStopTimerRef.current = null;
+    }
+  }, []);
+
+  const followWholePanelHeightDeltaFor = useCallback((ms: number) => {
+    if (typeof window === 'undefined') return;
+    const until = Date.now() + ms;
+    if (summaryScrollRafRef.current) {
+      window.cancelAnimationFrame(summaryScrollRafRef.current);
+      summaryScrollRafRef.current = null;
+    }
+    let prevH: number | null = null;
+    const tick = () => {
+      if (Date.now() >= until) {
+        summaryScrollRafRef.current = null;
+        return;
+      }
+      const scroller = document.scrollingElement ?? document.documentElement;
+      const h = scroller?.scrollHeight ?? 0;
+      const maxScroll = Math.max(0, h - window.innerHeight);
+      const current = scroller?.scrollTop ?? window.scrollY;
+      if (prevH != null) {
+        const deltaH = h - prevH;
+        if (deltaH !== 0) {
+          const next = Math.min(maxScroll, Math.max(0, current + deltaH));
+          window.scrollTo({ top: next, behavior: 'auto' });
+        }
+      }
+      prevH = h;
+      summaryScrollRafRef.current = window.requestAnimationFrame(tick);
+    };
+    tick();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (addFormScrollRafRef.current) {
+        window.cancelAnimationFrame(addFormScrollRafRef.current);
+        addFormScrollRafRef.current = null;
+      }
+      if (summaryScrollRafRef.current) {
+        window.cancelAnimationFrame(summaryScrollRafRef.current);
+        summaryScrollRafRef.current = null;
+      }
+      if (summaryTransitionStopTimerRef.current) {
+        globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
+        summaryTransitionStopTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!summaryAnimating) return;
+    requestAnimationFrame(() => followWholePanelHeightDeltaFor(2000));
+  }, [followWholePanelHeightDeltaFor, summaryAnimating]);
+
+  useEffect(() => {}, []);
 
   // Like followScrollHeightDeltaFor, but never scroll upward.
   // This prevents the "last minute scroll up" after submit when some panels collapse/unmount.
@@ -968,21 +1109,25 @@ const VavityBitcoin: React.FC = () => {
   const emptyActionsTargetHeight = emptyActionsHeight || lastEmptyActionsHeightRef.current;
   const investmentsWholeMaxHeight =
     summaryOpen && !isClearingInvestments
-      ? `${investmentsWholeHeight}px`
+      ? addFormSubmitCollapsing
+        ? 'none'
+        : `${investmentsWholeHeight}px`
       : isClearingInvestments && emptyActionsTargetHeight
         ? `${emptyActionsTargetHeight}px`
         : '0px';
   const investmentsWholeTransition = isClearingInvestments
     ? 'max-height 2s ease'
-    : summaryAnimating
+    : summaryAnimating || addFormSubmitCollapsing
       ? 'max-height 2s ease'
       : 'max-height 0s ease';
   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
   // Add-more form lives inside the summary panel. If both the outer summary and the inner form
   // animate max-height, it feels slower because the outer panel clips the inner one during its own expand.
   // When Add-more is showing, snap the outer summary height and let only the inner form animate.
-  const summaryTransition = addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
-  const shouldRenderAddForm = (showEmptyAddForm && showAddForm) || addFormSubmitAnimating;
+  const summaryTransition =
+    summaryAnimating ? 'max-height 2s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
+  const shouldRenderAddForm =
+    (showEmptyAddForm && showAddForm) || addFormSubmitAnimating || addFormSubmitCollapsing;
 
   const beginClearing = useCallback(
     (heightOverride?: number) => {
@@ -2053,23 +2198,47 @@ const VavityBitcoin: React.FC = () => {
     const target = submitTargetRef.current;
     const isAddMore = target === 'addMore';
     const panelRef = isAddMore ? addMoreFormPanelRef.current : null;
-    const addWrapRef = isAddMore ? null : addFormPanelRef.current;
+    const addPanelRef = isAddMore ? null : addFormSlidePanelRef.current;
     const contentHeight = isAddMore ? addMoreFormBoxRef.current?.scrollHeight : undefined;
     const measuredPanelHeight = panelRef?.getBoundingClientRect().height ?? 0;
+    const measuredAddHeight = addPanelRef?.getBoundingClientRect().height ?? 0;
+    const measuredOuterHeight = !isAddMore
+      ? addFormPanelRef.current?.getBoundingClientRect().height ?? 0
+      : 0;
     const start =
       measuredPanelHeight > 1
         ? measuredPanelHeight
         : contentHeight != null
           ? Math.max(0, contentHeight + 24)
           : Math.max(600, addMoreFormPanelHeight);
+    const prevBodyOverflowAnchor = typeof document !== 'undefined' ? document.body.style.overflowAnchor : '';
     flushSync(() => {
       setIsSubmitCollapsing(true);
+      setSubmitTargetSnapshot(target);
       if (isAddMore) {
         setSubmitPanelMaxHeight(start);
       } else {
         setHideEmptyActionsOnSubmit(true);
         emptyActionsHoldRef.current = true;
         setAddFormSubmitAnimating(true);
+        setAddFormSubmitCollapsing(true);
+        const nextAddStart =
+          measuredAddHeight > 1
+            ? measuredAddHeight
+            : addFormBoxRef.current?.scrollHeight != null
+              ? Math.max(0, addFormBoxRef.current.scrollHeight + 24)
+              : Math.max(600, addFormPanelHeight);
+        setAddFormSubmitMaxHeight(null);
+        const nextOuterStart =
+          measuredOuterHeight > 1 ? measuredOuterHeight : Math.max(0, nextAddStart + 24);
+        setAddFormOuterSubmitMaxHeight(nextOuterStart);
+      }
+    });
+    requestAnimationFrame(() => {
+      if (isAddMore) {
+        followScrollHeightDeltaFor(2000);
+      } else {
+        followSummaryHeightDeltaFor(2000);
       }
     });
     if (isAddMore) {
@@ -2081,21 +2250,14 @@ const VavityBitcoin: React.FC = () => {
         requestAnimationFrame(() => setSubmitPanelMaxHeight(0));
       });
     } else {
-      if (addWrapRef) {
-        if (addFormCollapseAnimRef.current) {
-          addFormCollapseAnimRef.current.cancel();
-          addFormCollapseAnimRef.current = null;
-        }
-        const measured = Math.max(0, Math.ceil(addWrapRef.getBoundingClientRect().height));
-        const startHeight = measured > 0 ? measured : Math.max(600, addFormPanelHeight);
-        addWrapRef.style.overflow = 'hidden';
-        addWrapRef.style.height = `${startHeight}px`;
-        addWrapRef.style.willChange = 'height';
-        addFormCollapseAnimRef.current = addWrapRef.animate(
-          [{ height: `${startHeight}px` }, { height: '0px' }],
-          { duration: 2000, easing: 'ease', fill: 'forwards' },
-        );
-      }
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setAddFormOuterSubmitMaxHeight(0);
+        });
+      });
+    }
+    if (typeof document !== 'undefined') {
+      document.body.style.overflowAnchor = 'none';
     }
 
     if (submitCollapseTimerRef.current) {
@@ -2120,7 +2282,14 @@ const VavityBitcoin: React.FC = () => {
         setShowAddForm(false);
         setShowEmptyAddForm(false);
         setAddFormSubmitAnimating(false);
+        setAddFormSubmitMaxHeight(null);
+        setAddFormOuterSubmitMaxHeight(null);
+        setAddFormSubmitCollapsing(false);
       }
+      if (typeof document !== 'undefined') {
+        document.body.style.overflowAnchor = prevBodyOverflowAnchor;
+      }
+      setSubmitTargetSnapshot(null);
       if (target === 'add') {
         if (investments.length > 0) {
           emptyActionsHoldRef.current = false;
@@ -3248,17 +3417,19 @@ const VavityBitcoin: React.FC = () => {
                   className={`asset-slide-panel asset-slide-panel--form${addMoreOpen ? ' is-open' : ''}`}
                   style={{
                     maxHeight:
-                      submitTargetRef.current === 'addMore' && submitPanelMaxHeight != null
+                      (submitTargetSnapshot ?? submitTargetRef.current) === 'addMore' && submitPanelMaxHeight != null
                         ? `${submitPanelMaxHeight}px`
                         : addMoreOpen
                           ? `${Math.max(600, addMoreFormPanelHeight)}px`
                           : '0px',
                     transition:
-                      submitTargetRef.current === 'addMore' && submitPanelMaxHeight != null
+                      (submitTargetSnapshot ?? submitTargetRef.current) === 'addMore' && submitPanelMaxHeight != null
                         ? 'max-height 2s ease'
                         : undefined,
                     overflowX:
-                      submitTargetRef.current === 'addMore' && submitPanelMaxHeight != null ? 'hidden' : undefined,
+                      (submitTargetSnapshot ?? submitTargetRef.current) === 'addMore' && submitPanelMaxHeight != null
+                        ? 'hidden'
+                        : undefined,
                   }}
                 >
                   <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
@@ -3582,13 +3753,39 @@ const VavityBitcoin: React.FC = () => {
           </>
       )}
         {shouldRenderAddForm && (
-          <div ref={addFormPanelRef} className="asset-submit-collapse">
+          <div
+            ref={addFormPanelRef}
+            className="asset-submit-collapse"
+            style={{
+              maxHeight:
+                (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
+                  ? `${addFormOuterSubmitMaxHeight}px`
+                  : undefined,
+              transition:
+                (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
+                  ? 'max-height 2s ease'
+                  : undefined,
+              overflow:
+                (submitTargetSnapshot ?? submitTargetRef.current) === 'add' && addFormOuterSubmitMaxHeight != null
+                  ? 'hidden'
+                  : undefined,
+            }}
+          >
             <div className="asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin">
               <div
-                className={`asset-slide-panel asset-slide-panel--form${addFormOpen ? ' is-open' : ''}`}
+                className={`asset-slide-panel asset-slide-panel--form${
+                  addFormOpen || addFormSubmitCollapsing ? ' is-open' : ''
+                }${addFormSubmitCollapsing ? ' is-submit-collapse' : ''}`}
                 style={{
-                  maxHeight: addFormOpen ? `${Math.max(600, addFormPanelHeight)}px` : '0px',
+                  maxHeight: addFormSubmitCollapsing
+                    ? 'none'
+                    : addFormOpen
+                      ? `${Math.max(600, addFormPanelHeight)}px`
+                      : '0px',
+                  transition: addFormSubmitCollapsing ? 'none' : undefined,
+                  overflowX: addFormSubmitCollapsing ? undefined : undefined,
                 }}
+                ref={addFormSlidePanelRef}
               >
                 <div ref={addFormBoxRef} className="asset-slide-panel-inner">
                   <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
