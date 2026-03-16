@@ -1,0 +1,85 @@
+.home-loader-ring {
+	width: 90px;
+	height: 90px;
+	--home-loader-ring-size: 110px;
+}
+
+.home-loader-ring::before {
+	background: rgba(255, 255, 255, 0.9);
+}
+
+.home-loader-icon-wrap {
+	position: relative;
+	width: 29px;
+	height: 30px;
+	transform: translate(0.2px, -2.6px);
+	z-index: 2;
+}
+
+.home-loader-icon-img {
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+}
+
+.home-loader-icon-wrap img {
+	opacity: 0;
+}
+
+.home-loader-icon-tint {
+	position: absolute;
+	inset: 0;
+	background: #ff5aa0;
+	-webkit-mask-image: url('/images/Arells-Icon.png');
+	mask-image: url('/images/Arells-Icon.png');
+	-webkit-mask-size: contain;
+	mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+	mask-position: center;
+	animation: homeLoaderFill 2s linear infinite;
+}
+
+.home-loader-spinner {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: var(--home-loader-ring-size, 110px);
+	height: var(--home-loader-ring-size, 110px);
+	margin-left: calc(var(--home-loader-ring-size, 110px) / -2);
+	margin-top: calc(var(--home-loader-ring-size, 110px) / -2);
+	animation: homeLoaderSpin 1s linear infinite;
+	z-index: 0;
+	overflow: visible;
+}
+
+.home-loader-spinner circle {
+	stroke: none;
+	fill: #ff5aa0;
+	opacity: 0.35;
+	animation: homeLoaderFill 2s linear infinite;
+}
+
+@keyframes homeLoaderFill {
+	0% {
+		background-color: #ff5aa0;
+		fill: #ff5aa0;
+	}
+	25% {
+		background-color: #ffb300;
+		fill: #ffb300;
+	}
+	50% {
+		background-color: #00dcb4;
+		fill: #00dcb4;
+	}
+	75% {
+		background-color: #4aa3ff;
+		fill: #4aa3ff;
+	}
+	100% {
+		background-color: #ff5aa0;
+		fill: #ff5aa0;
+	}
+}

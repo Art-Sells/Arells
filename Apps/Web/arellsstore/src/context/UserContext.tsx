@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
 interface UserContextType {
@@ -61,6 +61,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     acVact: number;
     acVactTaa: number;
   }>({ acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+  const sessionBootstrapRef = useRef(false);
+  const emailBootstrapRef = useRef<string | null>(null);
 
   const setSessionId = useCallback((value: string) => {
     setSessionIdState(value);
@@ -138,6 +140,32 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setSessionReady(true);
   }, [sessionId, pathname, isSignedIn]);
 
+  // Ensure a guest session JSON exists on mount (no asset-specific filtering).
+  useEffect(() => {
+    if (!sessionId || sessionBootstrapRef.current) return;
+    if (typeof window === 'undefined') return;
+    sessionBootstrapRef.current = true;
+    (async () => {
+      try {
+        const res = await fetch(`/api/fetchVavityAggregator?sessionId=${encodeURIComponent(sessionId)}`);
+        const data = await res.json();
+        const hasMeta =
+          typeof data?.createdAt === 'number' && Number.isFinite(data.createdAt) &&
+          typeof data?.expiresAt === 'number' && Number.isFinite(data.expiresAt);
+        const hasInvestments = Array.isArray(data?.investments) && data.investments.length > 0;
+        if (!hasMeta && !hasInvestments) {
+          await fetch('/api/saveVavityAggregator', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId, investments: [], asset: 'bitcoin' }),
+          });
+        }
+      } catch {
+        // ignore bootstrap errors
+      }
+    })();
+  }, [sessionId]);
+
   const refreshEmailAggregator = useCallback(
     async (asset?: string) => {
       if (!email) return { investments: [], totals: { acVatop: 0, acVact: 0, acdVatop: 0, acVactTaa: 0 } };
@@ -214,6 +242,37 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     if (!email) return;
     refreshEmailAggregator();
   }, [email, refreshEmailAggregator]);
+
+  // Ensure an email JSON exists on mount (all assets).
+  useEffect(() => {
+    if (!email) return;
+    if (emailBootstrapRef.current === email) return;
+    if (typeof window === 'undefined') return;
+    emailBootstrapRef.current = email;
+    (async () => {
+      try {
+        const res = await fetch(`/api/user/fetchUserVavityAggregator?email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+        const hasInvestments = Array.isArray(data?.investments) && data.investments.length > 0;
+        const totals = data?.totals;
+        const hasTotals =
+          totals &&
+          typeof totals.acVatop === 'number' &&
+          typeof totals.acVact === 'number' &&
+          typeof totals.acdVatop === 'number' &&
+          typeof totals.acVactTaa === 'number';
+        if (!hasInvestments && !hasTotals) {
+          await fetch('/api/user/saveUserVavityAggregator', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, investments: [], asset: 'bitcoin' }),
+          });
+        }
+      } catch {
+        // ignore bootstrap errors
+      }
+    })();
+  }, [email]);
 
   useEffect(() => {
     if (!signInOpen) return;

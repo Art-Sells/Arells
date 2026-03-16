@@ -2,6 +2,7 @@
 
 ## Arells v1
 
+- *Ensure Eth .css and .tsx functions exactly like Bitcoin*
 - *test multiple investment deletions big numbers and small... (with page mount clearing refresh page sessions) with the "1 minute end all open to see aht it does" with the form open and not open*
 
 - Investment page should be styled (shadows/etc) the exact same as the home page
@@ -31,8 +32,6 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 *Investments Wrapper (main child wrapper):*
 - [total of all investments from all assets "acVatops","acVacts", etc with ] <- should be styled exactly like the "Purchased Amount, Current Amount, profits, etc" sections below the asset pages
 - "Toggle liquid solid"
-- [ Edit Invesmtments ]<- button that changes to [Hide Edit Investments]  acts the same way as the "show investments" button that populates a list of ALL investments invesmtents [aggregate of all the assets] 5 per row.... list that heights/scrolls down... the same as the assets pages except this time have it height up all the sections/wrappers below it.... and when hide edit investments is clicked, it heights down the sections back to their places...
-- - Each Investment list is ordered the same as the assets show invesmtnets list but this time, the section that holds their information the texts/number color/styling and section that wraps them is color coded to match the asset that holds it... And also add a tiny asset icon on the top center of their corresponding sections. dont forget about the "load 5 more" button that also heights down and scrolls odown also... 
 *Add Investments Wrapper (Investments Child Wrapper): only show if there's an asset/investment not shown from email json, otherwise hide*
 - - Add Investments <- title same sizing styling as the "Investments" title inside asset pages except same color as the "My Investments" title....
 *Add Investments Child Wrapper:*
@@ -128,7 +127,7 @@ Users
 - Flip sloth pngs horizontally
 - Remove console.logs from all files...
 - Resolve Google/Bing/Yahoo Search Tab issues (Bing Webmaster Tools) (Add Unique Metatags to all recurring pages), look into favicon blurriness issue
-- Prepare to launch new Voting Blocks and Winning asset (banner, shadow opacities should always match (check) etc)
+- Prepare to launch new Voting Blocks and Winning asset (gather evertyhing bitcoin does (components/api-pointers/css-styles)basically and duplicate and change asset names and colors... )
 - Contact CSC (TAX)
 
 ## 2 days after launch

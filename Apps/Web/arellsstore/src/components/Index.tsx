@@ -2,6 +2,7 @@
 
 import type { ImageLoaderProps } from 'next/image';
 import '../app/css/Home.css';
+import '../app/css/HomeLoaderOverrides.css';
 import { useMemo, useState, useEffect } from 'react';
 import Image from 'next/image';
 import React from 'react';
@@ -235,16 +236,25 @@ const Index = () => {
         <div className={`home-loader-overlay${fadeOut ? ' home-loader-overlay-fade' : ''}`}>
           <div className={`home-loader-ring${fadeOut ? ' home-loader-fade' : ''}`}>
             <svg className="home-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
-              <circle cx="30" cy="30" r="26" />
+              <defs>
+                <filter id="homeLoaderBlur" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="10" />
+                </filter>
+              </defs>
+              <circle cx="30" cy="30" r="26" filter="url(#homeLoaderBlur)" />
             </svg>
-            <Image
-              loader={imageLoader}
-              alt=""
-              width={29}
-              height={30}
-              id="arells-loader-icon-bitcoin"
-              src="images/Arells-Icon.png"
-            />
+            <span className="home-loader-icon-wrap" aria-hidden="true">
+              <span className="home-loader-icon-tint" aria-hidden="true" />
+              <Image
+                loader={imageLoader}
+                alt=""
+                width={29}
+                height={30}
+                id="arells-loader-icon-bitcoin"
+                className="home-loader-icon-img"
+                src="images/Arells-Icon.png"
+              />
+            </span>
           </div>
         </div>
       )}

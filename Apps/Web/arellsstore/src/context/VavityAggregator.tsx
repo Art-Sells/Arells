@@ -88,11 +88,8 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     await Promise.all(assetIds.map((assetId) => refreshAsset(assetId)));
   }, [assetIds, refreshAsset]);
 
-  const disableAutoSessionExpiry = true;
-
   useEffect(() => {
     refreshAllAssets();
-    if (disableAutoSessionExpiry) return;
     const interval = setInterval(refreshAllAssets, 60000);
     return () => clearInterval(interval);
   }, [refreshAllAssets]);
@@ -101,7 +98,6 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // While the user is active, auto-trigger a fetch right when the session TTL expires so the session investments clear at ~60s.
   useEffect(() => {
-    if (disableAutoSessionExpiry) return;
     if (!sessionId) return;
     if (sessionExpiresAt == null) return;
     if (sessionExpiryTimerRef.current) {

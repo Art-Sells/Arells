@@ -19,9 +19,19 @@ const VavityBitcoin: React.FC = () => {
   const clearedSessionOnMountRef = useRef(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const submitTargetRef = useRef<'add' | 'addMore'>('add');
+  const [submitLoaderHold, setSubmitLoaderHold] = useState(false);
+  const submitLoaderAwaitingSummaryRef = useRef(false);
+  const submitLoaderHeightHoldTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const submitLoaderFallbackTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const submitLoaderUnmountTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const [submitLoaderMounted, setSubmitLoaderMounted] = useState(false);
+  const [submitLoaderVisible, setSubmitLoaderVisible] = useState(false);
+  const forceSubmitLoader = false;
+  const showSubmitLoader =
+    forceSubmitLoader || ((submitLoading || submitLoaderHold) && submitTargetRef.current !== 'addMore');
   const [submitPhase, setSubmitPhase] = useState<'idle' | 'submitting' | 'submitted'>('idle');
   const [submitPanelMaxHeight, setSubmitPanelMaxHeight] = useState<number | null>(null);
-  const submitTargetRef = useRef<'add' | 'addMore'>('add');
   const [previewSubmit, setPreviewSubmit] = useState(false);
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
   const [showEmptyAddForm, setShowEmptyAddForm] = useState<boolean>(false);
@@ -29,6 +39,8 @@ const VavityBitcoin: React.FC = () => {
   const [addFormSubmitAnimating, setAddFormSubmitAnimating] = useState(false);
   const [showAddMoreForm, setShowAddMoreForm] = useState<boolean>(false);
   const [addMoreOpen, setAddMoreOpen] = useState(false);
+  const [showMoreDisabled, setShowMoreDisabled] = useState(false);
+  const showMoreDisableTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [suppressSummaryTransition, setSuppressSummaryTransition] = useState(false);
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const tokenInputRef = useRef<HTMLInputElement | null>(null);
@@ -63,6 +75,10 @@ const VavityBitcoin: React.FC = () => {
   const toggleAnimRafRef = useRef<number | null>(null);
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
   const [toggleTrack, setToggleTrack] = useState<{ minLeft: number; maxLeft: number; mid: number } | null>(null);
+  const [toggleDisabled, setToggleDisabled] = useState(false);
+  const [toggleKnobHidden, setToggleKnobHidden] = useState(false);
+  const toggleReenableOnSummaryExpandRef = useRef(false);
+  const toggleReenableTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   // Global background (used for overscroll beyond the page)
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -141,6 +157,7 @@ const VavityBitcoin: React.FC = () => {
   const [collapsedInvestments, setCollapsedInvestments] = useState<string[]>([]);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryAnimating, setSummaryAnimating] = useState(false);
+  const clearAfterDeleteRef = useRef(false);
   const [addMorePulse, setAddMorePulse] = useState(false);
   const [showPulse, setShowPulse] = useState(false);
   const [isSubmitCollapsing, setIsSubmitCollapsing] = useState(false);
@@ -152,6 +169,7 @@ const VavityBitcoin: React.FC = () => {
     acVact: number;
     acVactTaa: number;
   } | null>(null);
+  const [summaryPulseAfterDelete, setSummaryPulseAfterDelete] = useState(false);
   const [summaryRangePriceSnapshot, setSummaryRangePriceSnapshot] = useState<number | null>(null);
   const lastNonEmptyTotalsRef = useRef<{
     acVatop: number;
@@ -239,6 +257,19 @@ const VavityBitcoin: React.FC = () => {
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
   const sloganRef = useRef<HTMLDivElement | null>(null);
   const [summaryHeight, setSummaryHeight] = useState<number>(0);
+  const prevSummaryHeightRef = useRef<number>(0);
+  const [purchasedValueHeight, setPurchasedValueHeight] = useState<number | null>(null);
+  const [currentValueHeight, setCurrentValueHeight] = useState<number | null>(null);
+  const [profitValueHeight, setProfitValueHeight] = useState<number | null>(null);
+  const purchasedValueRef = useRef<HTMLDivElement | null>(null);
+  const currentValueRef = useRef<HTMLDivElement | null>(null);
+  const profitValueRef = useRef<HTMLDivElement | null>(null);
+  const purchasedValuePrevRef = useRef<number | null>(null);
+  const currentValuePrevRef = useRef<number | null>(null);
+  const profitValuePrevRef = useRef<number | null>(null);
+  const purchasedValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const currentValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const profitValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [addFormPanelHeight, setAddFormPanelHeight] = useState<number>(0);
   const [addFormSubmitMaxHeight, setAddFormSubmitMaxHeight] = useState<number | null>(null);
   const [addFormOuterSubmitMaxHeight, setAddFormOuterSubmitMaxHeight] = useState<number | null>(null);
@@ -520,6 +551,26 @@ const VavityBitcoin: React.FC = () => {
         globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
         summaryTransitionStopTimerRef.current = null;
       }
+      if (showMoreDisableTimerRef.current) {
+        globalThis.clearTimeout(showMoreDisableTimerRef.current);
+        showMoreDisableTimerRef.current = null;
+      }
+      if (toggleReenableTimerRef.current) {
+        globalThis.clearTimeout(toggleReenableTimerRef.current);
+        toggleReenableTimerRef.current = null;
+      }
+      if (purchasedValueTimerRef.current) {
+        globalThis.clearTimeout(purchasedValueTimerRef.current);
+        purchasedValueTimerRef.current = null;
+      }
+      if (currentValueTimerRef.current) {
+        globalThis.clearTimeout(currentValueTimerRef.current);
+        currentValueTimerRef.current = null;
+      }
+      if (profitValueTimerRef.current) {
+        globalThis.clearTimeout(profitValueTimerRef.current);
+        profitValueTimerRef.current = null;
+      }
     };
   }, []);
 
@@ -620,6 +671,18 @@ const VavityBitcoin: React.FC = () => {
       if (emptyActionsExpandTimerRef.current) {
         globalThis.clearTimeout(emptyActionsExpandTimerRef.current);
         emptyActionsExpandTimerRef.current = null;
+      }
+      if (submitLoaderUnmountTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
+        submitLoaderUnmountTimerRef.current = null;
+      }
+      if (submitLoaderHeightHoldTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
+        submitLoaderHeightHoldTimerRef.current = null;
+      }
+      if (submitLoaderFallbackTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
+        submitLoaderFallbackTimerRef.current = null;
       }
       if (clearingHeightRafRef.current != null) {
         window.cancelAnimationFrame(clearingHeightRafRef.current);
@@ -1040,6 +1103,7 @@ const VavityBitcoin: React.FC = () => {
     setDeleteExpandIds((prev) => prev.filter((value) => value !== investmentId));
     setPendingDeleteInvestments((prev) => prev.filter((value) => value !== investmentId));
     setDeleteGhosts((prev) => prev.filter((ghost) => ghost.id !== investmentId));
+    setSummaryPulseAfterDelete(true);
     window.setTimeout(() => {
       setDeleteHeights((prev) => {
         const next = { ...prev };
@@ -1158,17 +1222,24 @@ const VavityBitcoin: React.FC = () => {
     [investmentsWholeHeight, isClearingInvestments]
   );
 
+  const deleteInFlight =
+    pendingDeleteInvestments.length > 0 || deletingInvestments.length > 0 || closingInvestments.length > 0;
+
   useLayoutEffect(() => {
     const prev = prevLiveCountRef.current;
     const next = liveInvestments.length;
     if (prev > 0 && next === 0 && !isClearingInvestments) {
-      if (!clearingSnapshotRef.current && prevVavityDataRef.current) {
-        clearingSnapshotRef.current = prevVavityDataRef.current;
+      if (deleteInFlight) {
+        clearAfterDeleteRef.current = true;
+      } else {
+        if (!clearingSnapshotRef.current && prevVavityDataRef.current) {
+          clearingSnapshotRef.current = prevVavityDataRef.current;
+        }
+        beginClearing();
       }
-      beginClearing();
     }
     prevLiveCountRef.current = next;
-  }, [beginClearing, isClearingInvestments, liveInvestments.length]);
+  }, [beginClearing, deleteInFlight, isClearingInvestments, liveInvestments.length]);
 
   useEffect(() => {
     const prev = prevSummaryCountRef.current;
@@ -1285,6 +1356,14 @@ const VavityBitcoin: React.FC = () => {
   }, [summaryOpen, isClearingInvestments]);
 
   useEffect(() => {
+    if (summaryAnimating) return;
+    if (!toggleReenableOnSummaryExpandRef.current) return;
+    toggleReenableOnSummaryExpandRef.current = false;
+    setToggleDisabled(false);
+    setToggleKnobHidden(false);
+  }, [summaryAnimating]);
+
+  useEffect(() => {
     if (!summaryOpen || isClearingInvestments) return;
     const node = summaryContentRef.current;
     if (!node || typeof ResizeObserver === 'undefined') {
@@ -1310,6 +1389,64 @@ const VavityBitcoin: React.FC = () => {
       if (raf) window.cancelAnimationFrame(raf);
     };
   }, [summaryOpen, isClearingInvestments]);
+
+  useEffect(() => {
+    if (!clearAfterDeleteRef.current) return;
+    if (deleteInFlight || isClearingInvestments) return;
+    if (liveInvestments.length !== 0) return;
+    clearAfterDeleteRef.current = false;
+    const startHeight =
+      investmentsWholePanelRef.current?.getBoundingClientRect().height ||
+      lastInvestmentsWholeHeightRef.current ||
+      investmentsWholeHeight ||
+      investmentsWholeContentRef.current?.getBoundingClientRect().height ||
+      0;
+    clearingSnapshotRef.current = vavityData;
+    beginClearing(startHeight);
+  }, [
+    beginClearing,
+    deleteInFlight,
+    investmentsWholeHeight,
+    isClearingInvestments,
+    liveInvestments.length,
+    vavityData,
+  ]);
+
+  useEffect(() => {
+    const prev = prevSummaryHeightRef.current;
+    if (summaryHeight !== prev && toggleReenableOnSummaryExpandRef.current) {
+      if (toggleReenableTimerRef.current) {
+        globalThis.clearTimeout(toggleReenableTimerRef.current);
+        toggleReenableTimerRef.current = null;
+      }
+      toggleReenableTimerRef.current = globalThis.setTimeout(() => {
+        toggleReenableTimerRef.current = null;
+        toggleReenableOnSummaryExpandRef.current = false;
+        setToggleDisabled(false);
+        setToggleKnobHidden(false);
+      }, 2000);
+    }
+    prevSummaryHeightRef.current = summaryHeight;
+  }, [summaryHeight]);
+
+  useEffect(() => {
+    if (submitLoading) return;
+    if (!submitLoaderAwaitingSummaryRef.current) return;
+    if (summaryAnimating) return;
+    if (submitLoaderFallbackTimerRef.current) {
+      globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
+      submitLoaderFallbackTimerRef.current = null;
+    }
+    submitLoaderFallbackTimerRef.current = globalThis.setTimeout(() => {
+      submitLoaderFallbackTimerRef.current = null;
+      submitLoaderAwaitingSummaryRef.current = false;
+      if (submitLoaderHeightHoldTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
+        submitLoaderHeightHoldTimerRef.current = null;
+      }
+      setSubmitLoaderHold(false);
+    }, 6000);
+  }, [submitLoading, summaryAnimating]);
 
   // Measure the full "investments view" section as ONE: summary panel + bottom actions (+ list).
   useEffect(() => {
@@ -1945,12 +2082,68 @@ const VavityBitcoin: React.FC = () => {
   }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isLiquidMode, assetPrice]);
   const summaryTotals = summaryTotalsSnapshot ?? filteredTotals;
   const summaryRangePrice = summaryRangePriceSnapshot ?? rangeHistoricalPrice;
+
+  const animateNumberHeight = useCallback(
+    (
+      ref: React.RefObject<HTMLDivElement>,
+      setHeight: React.Dispatch<React.SetStateAction<number | null>>,
+      prevRef: React.MutableRefObject<number | null>,
+      timerRef: React.MutableRefObject<ReturnType<typeof globalThis.setTimeout> | null>
+    ) => {
+      const node = ref.current;
+      if (!node) return;
+      const next = Math.ceil(node.getBoundingClientRect().height);
+      if (next <= 0) {
+        prevRef.current = next;
+        return;
+      }
+      const prev = prevRef.current;
+      prevRef.current = next;
+      if (prev == null) {
+        setHeight(0);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setHeight(next);
+          });
+        });
+      } else {
+        if (prev === next) return;
+        setHeight(prev);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setHeight(next);
+          });
+        });
+      }
+      if (timerRef.current) {
+        globalThis.clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      timerRef.current = globalThis.setTimeout(() => {
+        timerRef.current = null;
+        setHeight(null);
+      }, 2000);
+    },
+    []
+  );
   useEffect(() => {
     if (liveInvestments.length > 0) {
       lastNonEmptyTotalsRef.current = filteredTotals;
       lastNonEmptyRangePriceRef.current = rangeHistoricalPrice ?? null;
     }
   }, [liveInvestments.length, filteredTotals, rangeHistoricalPrice]);
+
+  useLayoutEffect(() => {
+    animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValuePrevRef, purchasedValueTimerRef);
+  }, [animateNumberHeight, summaryTotals.acVatop]);
+
+  useLayoutEffect(() => {
+    animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValuePrevRef, currentValueTimerRef);
+  }, [animateNumberHeight, summaryTotals.acVact]);
+
+  useLayoutEffect(() => {
+    animateNumberHeight(profitValueRef, setProfitValueHeight, profitValuePrevRef, profitValueTimerRef);
+  }, [animateNumberHeight, summaryTotals.acVatop, summaryTotals.acVact, summaryTotals.acVactTaa, summaryRangePrice, selectedRangeDays]);
 
   const formatCurrency = useCallback((value: number) => {
     const abs = Math.abs(value);
@@ -2193,6 +2386,12 @@ const VavityBitcoin: React.FC = () => {
     }, 350);
   }, [filteredTotals, rangeHistoricalPrice, summaryTotalsSnapshot]);
 
+  useEffect(() => {
+    if (!summaryPulseAfterDelete) return;
+    setSummaryPulseAfterDelete(false);
+    pulseSummaryValues();
+  }, [summaryPulseAfterDelete, pulseSummaryValues]);
+
   const triggerSubmitFormCollapse = useCallback(() => {
     const target = submitTargetRef.current;
     const isAddMore = target === 'addMore';
@@ -2267,6 +2466,16 @@ const VavityBitcoin: React.FC = () => {
       if (target === 'addMore') {
         setAddMoreOpen(false);
         setShowAddMoreForm(false);
+        setToggleDisabled(false);
+        setToggleKnobHidden(false);
+        if (showMoreDisableTimerRef.current) {
+          globalThis.clearTimeout(showMoreDisableTimerRef.current);
+          showMoreDisableTimerRef.current = null;
+        }
+        showMoreDisableTimerRef.current = globalThis.setTimeout(() => {
+          showMoreDisableTimerRef.current = null;
+          setShowMoreDisabled(false);
+        }, 3000);
       } else {
         if (addFormPanelRef.current) {
           if (addFormCollapseAnimRef.current) {
@@ -2284,6 +2493,21 @@ const VavityBitcoin: React.FC = () => {
         setAddFormSubmitMaxHeight(null);
         setAddFormOuterSubmitMaxHeight(null);
         setAddFormSubmitCollapsing(false);
+        if (submitLoaderAwaitingSummaryRef.current && submitTargetRef.current !== 'addMore') {
+          if (submitLoaderHeightHoldTimerRef.current) {
+            globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
+            submitLoaderHeightHoldTimerRef.current = null;
+          }
+          submitLoaderHeightHoldTimerRef.current = globalThis.setTimeout(() => {
+            submitLoaderHeightHoldTimerRef.current = null;
+            submitLoaderAwaitingSummaryRef.current = false;
+            if (submitLoaderFallbackTimerRef.current) {
+              globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
+              submitLoaderFallbackTimerRef.current = null;
+            }
+            setSubmitLoaderHold(false);
+          }, 2500);
+        }
       }
       if (typeof document !== 'undefined') {
         document.body.style.overflowAnchor = prevBodyOverflowAnchor;
@@ -2354,6 +2578,33 @@ const VavityBitcoin: React.FC = () => {
     setSubmitLoading(true);
     // Mark which panel is currently being submitted from, so we can collapse that panel smoothly.
     submitTargetRef.current = showAddMoreForm ? 'addMore' : 'add';
+    const isAddMoreSubmit = submitTargetRef.current === 'addMore';
+    if (!isAddMoreSubmit) {
+      setSubmitLoaderHold(true);
+      submitLoaderAwaitingSummaryRef.current = true;
+      if (submitLoaderHeightHoldTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
+        submitLoaderHeightHoldTimerRef.current = null;
+      }
+      if (submitLoaderFallbackTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
+        submitLoaderFallbackTimerRef.current = null;
+      }
+    }
+    if (toggleReenableTimerRef.current) {
+      globalThis.clearTimeout(toggleReenableTimerRef.current);
+      toggleReenableTimerRef.current = null;
+    }
+    toggleReenableOnSummaryExpandRef.current = !isAddMoreSubmit;
+    setToggleDisabled(true);
+    setToggleKnobHidden(true);
+    if (isAddMoreSubmit) {
+      setShowMoreDisabled(true);
+      if (showMoreDisableTimerRef.current) {
+        globalThis.clearTimeout(showMoreDisableTimerRef.current);
+        showMoreDisableTimerRef.current = null;
+      }
+    }
     if (submitTargetRef.current === 'addMore') {
       setSummaryTotalsSnapshot({ ...filteredTotals });
       setSummaryRangePriceSnapshot(rangeHistoricalPrice ?? null);
@@ -2437,15 +2688,26 @@ const VavityBitcoin: React.FC = () => {
     }
     const updated = liveInvestments.filter((_: any, idx: number) => idx !== indexToRemove);
     const isLastInvestment = updated.length === 0;
+    if (!summaryTotalsSnapshot) {
+      const totals = lastNonEmptyTotalsRef.current;
+      if (totals) {
+        setSummaryTotalsSnapshot({ ...totals });
+        setSummaryRangePriceSnapshot(lastNonEmptyRangePriceRef.current ?? null);
+      }
+    }
     if (isLastInvestment && !isClearingInvestments) {
-      const startHeight =
-        investmentsWholePanelRef.current?.getBoundingClientRect().height ||
-        lastInvestmentsWholeHeightRef.current ||
-        investmentsWholeHeight ||
-        investmentsWholeContentRef.current?.getBoundingClientRect().height ||
-        0;
-      clearingSnapshotRef.current = vavityData;
-      beginClearing(startHeight);
+      if (deleteInFlight) {
+        clearAfterDeleteRef.current = true;
+      } else {
+        const startHeight =
+          investmentsWholePanelRef.current?.getBoundingClientRect().height ||
+          lastInvestmentsWholeHeightRef.current ||
+          investmentsWholeHeight ||
+          investmentsWholeContentRef.current?.getBoundingClientRect().height ||
+          0;
+        clearingSnapshotRef.current = vavityData;
+        beginClearing(startHeight);
+      }
     }
     isMutatingRef.current = true;
     try {
@@ -2736,6 +2998,29 @@ const VavityBitcoin: React.FC = () => {
   }, [investmentsListOpen, showInvestmentsList]);
 
   useEffect(() => {
+    if (showSubmitLoader) {
+      if (submitLoaderUnmountTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
+        submitLoaderUnmountTimerRef.current = null;
+      }
+      setSubmitLoaderMounted(true);
+      const raf = window.requestAnimationFrame(() => {
+        setSubmitLoaderVisible(true);
+      });
+      return () => window.cancelAnimationFrame(raf);
+    }
+    setSubmitLoaderVisible(false);
+    if (submitLoaderUnmountTimerRef.current) {
+      globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
+      submitLoaderUnmountTimerRef.current = null;
+    }
+    submitLoaderUnmountTimerRef.current = globalThis.setTimeout(() => {
+      submitLoaderUnmountTimerRef.current = null;
+      setSubmitLoaderMounted(false);
+    }, 1000);
+  }, [showSubmitLoader]);
+
+  useEffect(() => {
     const node = emptyActionsMeasureRef.current;
     if (!node || typeof ResizeObserver === 'undefined') {
       const next = node?.scrollHeight ?? 0;
@@ -2762,7 +3047,28 @@ const VavityBitcoin: React.FC = () => {
   }, [isSignedIn, email]);
 
   return (
-    <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
+    <>
+      {submitLoaderMounted && (
+        <div
+          className={`asset-submit-loader-overlay asset-submit-loader-overlay--bitcoin${
+            submitLoaderVisible ? ' is-visible' : ''
+          }`}
+        >
+          <div className="asset-submit-loader-ring">
+            <svg className="asset-submit-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
+              <circle cx="30" cy="30" r="26" />
+            </svg>
+            <Image
+              className="asset-submit-loader-icon asset-submit-loader-icon--bitcoin"
+              alt="Bitcoin"
+              width={29}
+              height={30}
+              src="/images/assets/crypto/Bitcoin.svg"
+            />
+          </div>
+        </div>
+      )}
+      <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
       <div
         className="asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide"
         ref={headerPanelRef}
@@ -3004,12 +3310,14 @@ const VavityBitcoin: React.FC = () => {
                 className={`asset-reality-toggle${!displayIsLiquidMode ? ' is-fantasy' : ''}${toggleKnobLeftPx != null ? ' is-dragging' : ''}${toggleAnimating ? ' is-animating' : ''}`}
                 aria-pressed={displayIsLiquidMode}
                 aria-label="Toggle Liquid/Solid mode"
+                disabled={toggleDisabled}
                 style={
                   toggleKnobLeftEffectivePx != null
                     ? ({ ['--toggle-knob-left' as any]: `${toggleKnobLeftEffectivePx}px` } as React.CSSProperties)
                     : undefined
                 }
                 onPointerDown={(e) => {
+                  if (toggleDisabled) return;
                   if (toggleAnimating) return;
                   const btn = e.currentTarget;
                   const cs = window.getComputedStyle(btn);
@@ -3117,7 +3425,11 @@ const VavityBitcoin: React.FC = () => {
                 }}
                 onClick={() => {}}
               >
-                <span className="asset-reality-toggle-knob" aria-hidden="true" />
+                <span
+                  className="asset-reality-toggle-knob"
+                  aria-hidden="true"
+                  style={{ opacity: toggleKnobHidden ? 0 : 1, transition: 'opacity 0.8s ease' }}
+                />
               </button>
               <span className={`asset-reality-toggle-label${!displayIsLiquidMode ? ' is-active' : ''}`}>Solid</span>
             </div>
@@ -3239,31 +3551,51 @@ const VavityBitcoin: React.FC = () => {
                 <span className="asset-metric-title--bitcoin" style={{ display: 'inline-block', marginTop: 30 }}>
                   Purchased Value
                 </span>
-                <span
-                  className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                <div
+                  ref={purchasedValueRef}
                   style={{
-                    opacity: summaryValuesHidden ? 0 : realityOpacity,
-                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                    height: purchasedValueHeight != null ? `${purchasedValueHeight}px` : 'auto',
+                    transition: purchasedValueHeight != null ? 'height 2s ease' : undefined,
+                    overflow: purchasedValueHeight != null ? 'hidden' : undefined,
+                    display: 'inline-block',
                   }}
                 >
-                  <span className="asset-metric-symbol--bitcoin">$</span>
-                  <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVatop || 0))}</span>
-                </span>
+                  <span
+                    className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                    style={{
+                      opacity: summaryValuesHidden ? 0 : realityOpacity,
+                      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                    }}
+                  >
+                    <span className="asset-metric-symbol--bitcoin">$</span>
+                    <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVatop || 0))}</span>
+                  </span>
+                </div>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
                 <span className="asset-metric-title--bitcoin">
                   Current Value
                 </span>
-                <span
-                  className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                <div
+                  ref={currentValueRef}
                   style={{
-                    opacity: summaryValuesHidden ? 0 : realityOpacity,
-                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                    height: currentValueHeight != null ? `${currentValueHeight}px` : 'auto',
+                    transition: currentValueHeight != null ? 'height 2s ease' : undefined,
+                    overflow: currentValueHeight != null ? 'hidden' : undefined,
+                    display: 'inline-block',
                   }}
                 >
-                  <span className="asset-metric-symbol--bitcoin">$</span>
-                  <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVact || 0))}</span>
-                </span>
+                  <span
+                    className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                    style={{
+                      opacity: summaryValuesHidden ? 0 : realityOpacity,
+                      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                    }}
+                  >
+                    <span className="asset-metric-symbol--bitcoin">$</span>
+                    <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVact || 0))}</span>
+                  </span>
+                </div>
             </div>
               <div
                 className="asset-panel asset-panel--bitcoin asset-profit-block asset-slide-in asset-section-slide"
@@ -3306,19 +3638,29 @@ const VavityBitcoin: React.FC = () => {
                                   {label}
                                 </span>
                               </span>
-                              <span
-                                className="asset-money-wrap"
+                              <div
+                                ref={profitValueRef}
                                 style={{
-                                  opacity:
-                                    (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  height: profitValueHeight != null ? `${profitValueHeight}px` : 'auto',
+                                  transition: profitValueHeight != null ? 'height 2s ease' : undefined,
+                                  overflow: profitValueHeight != null ? 'hidden' : undefined,
+                                  display: 'inline-block',
                                 }}
                               >
-                                <span className="asset-metric-symbol--bitcoin">
-                                  {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                                <span
+                                  className="asset-money-wrap"
+                                  style={{
+                                    opacity:
+                                      (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
+                                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  }}
+                                >
+                                  <span className="asset-metric-symbol--bitcoin">
+                                    {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                                  </span>
+                                  <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
                                 </span>
-                                <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
-                              </span>
+                              </div>
                             </span>
                           </span>
                         );
@@ -3345,19 +3687,29 @@ const VavityBitcoin: React.FC = () => {
                                 {label}
                               </span>
                             </span>
-                            <span
-                              className="asset-money-wrap"
+                            <div
+                              ref={profitValueRef}
                               style={{
-                                opacity:
-                                  (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                height: profitValueHeight != null ? `${profitValueHeight}px` : 'auto',
+                                transition: profitValueHeight != null ? 'height 2s ease' : undefined,
+                                overflow: profitValueHeight != null ? 'hidden' : undefined,
+                                display: 'inline-block',
                               }}
                             >
-                              <span className="asset-metric-symbol--bitcoin">
+                              <span
+                                className="asset-money-wrap"
+                                style={{
+                                  opacity:
+                                    (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                }}
+                              >
+                                <span className="asset-metric-symbol--bitcoin">
                                   {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
                                 </span>
-                              <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
-                            </span>
+                                <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
+                              </span>
+                            </div>
                           </span>
                         </span>
                       );
@@ -3493,7 +3845,7 @@ const VavityBitcoin: React.FC = () => {
                     className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-show${
                       showPulse ? ' asset-action-button--pulse' : ''
                     }`}
-                    disabled={!investments.length}
+                    disabled={!investments.length || showMoreDisabled}
                     onClick={() => {
                       suppressPortfolioCta();
                       triggerShowPulse();
@@ -3711,6 +4063,7 @@ const VavityBitcoin: React.FC = () => {
                                               }, 350);
                                               const cleanupTimer = window.setTimeout(() => {
                                                 finalizeDeleteCollapse(investmentId);
+                                                pulseSummaryValues();
                                               }, 4000);
                                               deleteCleanupTimersRef.current[investmentId] = cleanupTimer;
                                               deleteCleanupTimersRef.current[`${investmentId}-expand`] = expandTimer;
@@ -3796,6 +4149,7 @@ const VavityBitcoin: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
