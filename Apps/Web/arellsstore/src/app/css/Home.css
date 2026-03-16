@@ -468,6 +468,15 @@ body {
 	transform: translate(0.2px, -0.3px);
 	opacity: 1;
 }
+.asset-submit-loader-icon--ethereum {
+	transform: translate(0.2px, -0.3px);
+	opacity: 1;
+}
+
+.asset-submit-loader-icon--ethereum {
+	transform: translate(0.2px, -0.3px);
+	opacity: 1;
+}
 
 @keyframes homeLoaderSpin {
 	from {

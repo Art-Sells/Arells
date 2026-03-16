@@ -18,9 +18,19 @@ const VavityEthereum: React.FC = () => {
   const clearingSnapshotRef = useRef<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const submitTargetRef = useRef<'add' | 'addMore'>('add');
+  const [submitLoaderHold, setSubmitLoaderHold] = useState(false);
+  const submitLoaderAwaitingSummaryRef = useRef(false);
+  const submitLoaderHeightHoldTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const submitLoaderFallbackTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const submitLoaderUnmountTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const [submitLoaderMounted, setSubmitLoaderMounted] = useState(false);
+  const [submitLoaderVisible, setSubmitLoaderVisible] = useState(false);
+  const forceSubmitLoader = false;
+  const showSubmitLoader =
+    forceSubmitLoader || ((submitLoading || submitLoaderHold) && submitTargetRef.current !== 'addMore');
   const [submitPhase, setSubmitPhase] = useState<'idle' | 'submitting' | 'submitted'>('idle');
   const [submitPanelMaxHeight, setSubmitPanelMaxHeight] = useState<number | null>(null);
-  const submitTargetRef = useRef<'add' | 'addMore'>('add');
   const [previewSubmit, setPreviewSubmit] = useState(false);
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
   const [showEmptyAddForm, setShowEmptyAddForm] = useState<boolean>(false);
@@ -28,6 +38,8 @@ const VavityEthereum: React.FC = () => {
   const [addFormSubmitAnimating, setAddFormSubmitAnimating] = useState(false);
   const [showAddMoreForm, setShowAddMoreForm] = useState<boolean>(false);
   const [addMoreOpen, setAddMoreOpen] = useState(false);
+  const [showMoreDisabled, setShowMoreDisabled] = useState(false);
+  const showMoreDisableTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [suppressSummaryTransition, setSuppressSummaryTransition] = useState(false);
   const [tokenAmount, setTokenAmount] = useState<string>('');
   const tokenInputRef = useRef<HTMLInputElement | null>(null);
@@ -65,6 +77,10 @@ const VavityEthereum: React.FC = () => {
   const toggleAnimRafRef = useRef<number | null>(null);
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
   const [toggleTrack, setToggleTrack] = useState<{ minLeft: number; maxLeft: number; mid: number } | null>(null);
+  const [toggleDisabled, setToggleDisabled] = useState(false);
+  const [toggleKnobHidden, setToggleKnobHidden] = useState(false);
+  const toggleReenableOnSummaryExpandRef = useRef(false);
+  const toggleReenableTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   // Global background (used for overscroll beyond the page)
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -127,8 +143,6 @@ const VavityEthereum: React.FC = () => {
   const liquidMarketCap = assetSnapshot?.liquidMarketCap ?? [];
   const vapaMarketCap = displayIsLiquidMode ? liquidMarketCap : solidMarketCap;
   const [chartReady, setChartReady] = useState<boolean>(false);
-  const [chartInteractiveReady, setChartInteractiveReady] = useState(false);
-  const chartInteractiveTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
   const [chartRangeAnchorMs, setChartRangeAnchorMs] = useState<number>(() => Date.now());
   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
@@ -143,6 +157,7 @@ const VavityEthereum: React.FC = () => {
   const [collapsedInvestments, setCollapsedInvestments] = useState<string[]>([]);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [summaryAnimating, setSummaryAnimating] = useState(false);
+  const clearAfterDeleteRef = useRef(false);
   const [addMorePulse, setAddMorePulse] = useState(false);
   const [showPulse, setShowPulse] = useState(false);
   const [isSubmitCollapsing, setIsSubmitCollapsing] = useState(false);
@@ -154,6 +169,7 @@ const VavityEthereum: React.FC = () => {
     acVact: number;
     acVactTaa: number;
   } | null>(null);
+  const [summaryPulseAfterDelete, setSummaryPulseAfterDelete] = useState(false);
   const [summaryRangePriceSnapshot, setSummaryRangePriceSnapshot] = useState<number | null>(null);
   const lastNonEmptyTotalsRef = useRef<{
     acVatop: number;
@@ -181,7 +197,6 @@ const VavityEthereum: React.FC = () => {
   const emptyAddGoneTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [emptyAddHiding, setEmptyAddHiding] = useState(false);
   const [emptyAddFadeIn, setEmptyAddFadeIn] = useState(true);
-  const emptyAddFadeTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [emptyActionsExpanding, setEmptyActionsExpanding] = useState(false);
   const emptyActionsExpandTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const emptyButtonsSequenceTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
@@ -243,6 +258,19 @@ const VavityEthereum: React.FC = () => {
   const headerPanelRef = useRef<HTMLDivElement | null>(null);
   const sloganRef = useRef<HTMLDivElement | null>(null);
   const [summaryHeight, setSummaryHeight] = useState<number>(0);
+  const prevSummaryHeightRef = useRef<number>(0);
+  const [purchasedValueHeight, setPurchasedValueHeight] = useState<number | null>(null);
+  const [currentValueHeight, setCurrentValueHeight] = useState<number | null>(null);
+  const [profitValueHeight, setProfitValueHeight] = useState<number | null>(null);
+  const purchasedValueRef = useRef<HTMLDivElement | null>(null);
+  const currentValueRef = useRef<HTMLDivElement | null>(null);
+  const profitValueRef = useRef<HTMLDivElement | null>(null);
+  const purchasedValuePrevRef = useRef<number | null>(null);
+  const currentValuePrevRef = useRef<number | null>(null);
+  const profitValuePrevRef = useRef<number | null>(null);
+  const purchasedValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const currentValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const profitValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [addFormPanelHeight, setAddFormPanelHeight] = useState<number>(0);
   const [addFormSubmitMaxHeight, setAddFormSubmitMaxHeight] = useState<number | null>(null);
   const [addFormOuterSubmitMaxHeight, setAddFormOuterSubmitMaxHeight] = useState<number | null>(null);
@@ -522,6 +550,26 @@ const VavityEthereum: React.FC = () => {
         globalThis.clearTimeout(summaryTransitionStopTimerRef.current);
         summaryTransitionStopTimerRef.current = null;
       }
+      if (showMoreDisableTimerRef.current) {
+        globalThis.clearTimeout(showMoreDisableTimerRef.current);
+        showMoreDisableTimerRef.current = null;
+      }
+      if (toggleReenableTimerRef.current) {
+        globalThis.clearTimeout(toggleReenableTimerRef.current);
+        toggleReenableTimerRef.current = null;
+      }
+      if (purchasedValueTimerRef.current) {
+        globalThis.clearTimeout(purchasedValueTimerRef.current);
+        purchasedValueTimerRef.current = null;
+      }
+      if (currentValueTimerRef.current) {
+        globalThis.clearTimeout(currentValueTimerRef.current);
+        currentValueTimerRef.current = null;
+      }
+      if (profitValueTimerRef.current) {
+        globalThis.clearTimeout(profitValueTimerRef.current);
+        profitValueTimerRef.current = null;
+      }
     };
   }, []);
 
@@ -529,8 +577,6 @@ const VavityEthereum: React.FC = () => {
     if (!summaryAnimating) return;
     requestAnimationFrame(() => followWholePanelHeightDeltaFor(5000));
   }, [followWholePanelHeightDeltaFor, summaryAnimating]);
-
-  useEffect(() => {}, []);
 
   // Like followScrollHeightDeltaFor, but never scroll upward.
   // This prevents the "last minute scroll up" after submit when some panels collapse/unmount.
@@ -621,9 +667,17 @@ const VavityEthereum: React.FC = () => {
         globalThis.clearTimeout(emptyActionsExpandTimerRef.current);
         emptyActionsExpandTimerRef.current = null;
       }
-      if (emptyAddFadeTimerRef.current) {
-        globalThis.clearTimeout(emptyAddFadeTimerRef.current);
-        emptyAddFadeTimerRef.current = null;
+      if (submitLoaderUnmountTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
+        submitLoaderUnmountTimerRef.current = null;
+      }
+      if (submitLoaderHeightHoldTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
+        submitLoaderHeightHoldTimerRef.current = null;
+      }
+      if (submitLoaderFallbackTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
+        submitLoaderFallbackTimerRef.current = null;
       }
       if (clearingHeightRafRef.current != null) {
         window.cancelAnimationFrame(clearingHeightRafRef.current);
@@ -818,8 +872,6 @@ const VavityEthereum: React.FC = () => {
     const t = window.setTimeout(() => setProfitValueHidden(false), 250);
     return () => window.clearTimeout(t);
   }, [rangeLoading, selectedRangeDays]);
-  const ethereumAccent = '#6b72a8';
-  const ethereumAccentMuted = 'rgba(107, 114, 168, 0.14)';
 
   useEffect(() => {
     if (isSignedIn) {
@@ -935,7 +987,10 @@ const VavityEthereum: React.FC = () => {
 
   useEffect(() => {
     if (!previewSubmit) return;
-    // Auto-mount a form panel so the form UI is visible without clicks.
+    // Auto-mount a form panel so the submitting UI is visible without clicks.
+    setSubmitPhase('submitting');
+    setSubmitLoading(true);
+
     const hasInvestments = (vavityData?.investments?.length ?? 0) > 0 || isClearingInvestments;
     if (hasInvestments) {
       submitTargetRef.current = 'addMore';
@@ -966,28 +1021,6 @@ const VavityEthereum: React.FC = () => {
     return () => window.clearTimeout(timer);
   }, [chartReady, solidHistory.length, liquidHistory.length]);
 
-  useEffect(() => {
-    const ready = chartReady && !forceChartLoader;
-    if (chartInteractiveTimerRef.current) {
-      globalThis.clearTimeout(chartInteractiveTimerRef.current);
-      chartInteractiveTimerRef.current = null;
-    }
-    if (!ready) {
-      setChartInteractiveReady(false);
-      return;
-    }
-    chartInteractiveTimerRef.current = globalThis.setTimeout(() => {
-      setChartInteractiveReady(true);
-      chartInteractiveTimerRef.current = null;
-    }, 1000);
-    return () => {
-      if (chartInteractiveTimerRef.current) {
-        globalThis.clearTimeout(chartInteractiveTimerRef.current);
-        chartInteractiveTimerRef.current = null;
-      }
-    };
-  }, [chartReady, forceChartLoader]);
-
   // NOTE: `addFormOpen` is intentionally orchestrated alongside `showAddForm`
   // in the click handler (mount, then open next tick) to match the Add-more form timing.
 
@@ -1009,16 +1042,9 @@ const VavityEthereum: React.FC = () => {
     };
   }, []);
 
-  const liveInvestmentsAll = vavityData?.investments || [];
+  const liveInvestments = vavityData?.investments || [];
   const displayData = isClearingInvestments && clearingSnapshotRef.current ? clearingSnapshotRef.current : vavityData;
-  const investments = useMemo(
-    () => (displayData?.investments || []).filter((entry: any) => (entry?.asset || 'bitcoin') === 'ethereum'),
-    [displayData]
-  );
-  const liveInvestments = useMemo(
-    () => liveInvestmentsAll.filter((entry: any) => (entry?.asset || 'bitcoin') === 'ethereum'),
-    [liveInvestmentsAll]
-  );
+  const investments = displayData?.investments || [];
   const getInvestmentId = useCallback((entry: any) => {
     if (entry?.clientId) return entry.clientId;
     if (entry?.id) return entry.id;
@@ -1047,16 +1073,11 @@ const VavityEthereum: React.FC = () => {
       return orderA - orderB;
     });
   }, [deleteGhosts, investmentIds, investments]);
-  const totals = useMemo(() => displayData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }, [
-    displayData,
-  ]);
-  const totalsLiquid = useMemo(
-    () =>
-      displayData?.totalsLiquid ??
-      displayData?.totalsReality ??
-      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 },
-    [displayData]
-  );
+  const totals = displayData?.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
+  const totalsLiquid =
+    displayData?.totalsLiquid ??
+    displayData?.totalsReality ??
+    { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
   const displayTotals = displayIsLiquidMode ? totalsLiquid : totals;
   const suppressInvestmentsUI = isSubmitCollapsing && submitTargetRef.current === 'add';
   const hasInvestmentsUI = (investments.length > 0 || isClearingInvestments) && !suppressInvestmentsUI;
@@ -1068,6 +1089,7 @@ const VavityEthereum: React.FC = () => {
     setDeleteExpandIds((prev) => prev.filter((value) => value !== investmentId));
     setPendingDeleteInvestments((prev) => prev.filter((value) => value !== investmentId));
     setDeleteGhosts((prev) => prev.filter((ghost) => ghost.id !== investmentId));
+    setSummaryPulseAfterDelete(true);
     window.setTimeout(() => {
       setDeleteHeights((prev) => {
         const next = { ...prev };
@@ -1113,7 +1135,7 @@ const VavityEthereum: React.FC = () => {
       emptyActionsExpandTimerRef.current = null;
     }
     setEmptyActionsExpanding(true);
-    flushSync(() => setEmptyAddFadeIn(false));
+    setEmptyAddFadeIn(false);
     emptyActionsExpandTimerRef.current = globalThis.setTimeout(() => {
       setEmptyActionsExpanding(false);
       emptyActionsExpandTimerRef.current = null;
@@ -1121,16 +1143,9 @@ const VavityEthereum: React.FC = () => {
     followScrollHeightDeltaFor(1200);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
+        setEmptyAddFadeIn(true);
         setEmptySigninHiding(false);
         setEmptyAddHiding(false);
-        if (emptyAddFadeTimerRef.current) {
-          globalThis.clearTimeout(emptyAddFadeTimerRef.current);
-          emptyAddFadeTimerRef.current = null;
-        }
-        emptyAddFadeTimerRef.current = globalThis.setTimeout(() => {
-          setEmptyAddFadeIn(true);
-          emptyAddFadeTimerRef.current = null;
-        }, 150);
       });
     });
   }, [followScrollHeightDeltaFor]);
@@ -1190,17 +1205,46 @@ const VavityEthereum: React.FC = () => {
     [investmentsWholeHeight, isClearingInvestments]
   );
 
+  const deleteInFlight =
+    pendingDeleteInvestments.length > 0 || deletingInvestments.length > 0 || closingInvestments.length > 0;
+
   useLayoutEffect(() => {
     const prev = prevLiveCountRef.current;
     const next = liveInvestments.length;
     if (prev > 0 && next === 0 && !isClearingInvestments) {
-      if (!clearingSnapshotRef.current && prevVavityDataRef.current) {
-        clearingSnapshotRef.current = prevVavityDataRef.current;
+      if (deleteInFlight) {
+        clearAfterDeleteRef.current = true;
+      } else {
+        if (!clearingSnapshotRef.current && prevVavityDataRef.current) {
+          clearingSnapshotRef.current = prevVavityDataRef.current;
+        }
+        beginClearing();
       }
-      beginClearing();
     }
     prevLiveCountRef.current = next;
-  }, [beginClearing, isClearingInvestments, liveInvestments.length]);
+  }, [beginClearing, deleteInFlight, isClearingInvestments, liveInvestments.length]);
+
+  useEffect(() => {
+    if (!clearAfterDeleteRef.current) return;
+    if (deleteInFlight || isClearingInvestments) return;
+    if (liveInvestments.length !== 0) return;
+    clearAfterDeleteRef.current = false;
+    const startHeight =
+      investmentsWholePanelRef.current?.getBoundingClientRect().height ||
+      lastInvestmentsWholeHeightRef.current ||
+      investmentsWholeHeight ||
+      investmentsWholeContentRef.current?.getBoundingClientRect().height ||
+      0;
+    clearingSnapshotRef.current = vavityData;
+    beginClearing(startHeight);
+  }, [
+    beginClearing,
+    deleteInFlight,
+    investmentsWholeHeight,
+    isClearingInvestments,
+    liveInvestments.length,
+    vavityData,
+  ]);
 
   useEffect(() => {
     const prev = prevSummaryCountRef.current;
@@ -1305,6 +1349,14 @@ const VavityEthereum: React.FC = () => {
   }, [summaryOpen, isClearingInvestments]);
 
   useEffect(() => {
+    if (summaryAnimating) return;
+    if (!toggleReenableOnSummaryExpandRef.current) return;
+    toggleReenableOnSummaryExpandRef.current = false;
+    setToggleDisabled(false);
+    setToggleKnobHidden(false);
+  }, [summaryAnimating]);
+
+  useEffect(() => {
     if (!summaryOpen || isClearingInvestments) return;
     const node = summaryContentRef.current;
     if (!node || typeof ResizeObserver === 'undefined') {
@@ -1328,6 +1380,42 @@ const VavityEthereum: React.FC = () => {
       if (raf) window.cancelAnimationFrame(raf);
     };
   }, [summaryOpen, isClearingInvestments]);
+
+  useEffect(() => {
+    const prev = prevSummaryHeightRef.current;
+    if (summaryHeight !== prev && toggleReenableOnSummaryExpandRef.current) {
+      if (toggleReenableTimerRef.current) {
+        globalThis.clearTimeout(toggleReenableTimerRef.current);
+        toggleReenableTimerRef.current = null;
+      }
+      toggleReenableTimerRef.current = globalThis.setTimeout(() => {
+        toggleReenableTimerRef.current = null;
+        toggleReenableOnSummaryExpandRef.current = false;
+        setToggleDisabled(false);
+        setToggleKnobHidden(false);
+      }, 2000);
+    }
+    prevSummaryHeightRef.current = summaryHeight;
+  }, [summaryHeight]);
+
+  useEffect(() => {
+    if (submitLoading) return;
+    if (!submitLoaderAwaitingSummaryRef.current) return;
+    if (summaryAnimating) return;
+    if (submitLoaderFallbackTimerRef.current) {
+      globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
+      submitLoaderFallbackTimerRef.current = null;
+    }
+    submitLoaderFallbackTimerRef.current = globalThis.setTimeout(() => {
+      submitLoaderFallbackTimerRef.current = null;
+      submitLoaderAwaitingSummaryRef.current = false;
+      if (submitLoaderHeightHoldTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
+        submitLoaderHeightHoldTimerRef.current = null;
+      }
+      setSubmitLoaderHold(false);
+    }, 6000);
+  }, [submitLoading, summaryAnimating]);
 
   // Measure the full "investments view" section as ONE: summary panel + bottom actions (+ list).
   useEffect(() => {
@@ -1544,12 +1632,79 @@ const VavityEthereum: React.FC = () => {
   }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isLiquidMode, assetPrice]);
   const summaryTotals = summaryTotalsSnapshot ?? filteredTotals;
   const summaryRangePrice = summaryRangePriceSnapshot ?? rangeHistoricalPrice;
+  const animateNumberHeight = useCallback(
+    (
+      ref: React.RefObject<HTMLDivElement>,
+      setHeight: React.Dispatch<React.SetStateAction<number | null>>,
+      prevRef: React.MutableRefObject<number | null>,
+      timerRef: React.MutableRefObject<ReturnType<typeof globalThis.setTimeout> | null>
+    ) => {
+      const node = ref.current;
+      if (!node) return;
+      const next = Math.ceil(node.getBoundingClientRect().height);
+      if (next <= 0) {
+        prevRef.current = next;
+        return;
+      }
+      const prev = prevRef.current;
+      prevRef.current = next;
+      if (prev == null) {
+        setHeight(0);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setHeight(next);
+          });
+        });
+      } else {
+        if (prev === next) return;
+        setHeight(prev);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setHeight(next);
+          });
+        });
+      }
+      if (timerRef.current) {
+        globalThis.clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      timerRef.current = globalThis.setTimeout(() => {
+        timerRef.current = null;
+        setHeight(null);
+      }, 2000);
+    },
+    []
+  );
   useEffect(() => {
     if (liveInvestments.length > 0) {
       lastNonEmptyTotalsRef.current = filteredTotals;
       lastNonEmptyRangePriceRef.current = rangeHistoricalPrice ?? null;
     }
   }, [liveInvestments.length, filteredTotals, rangeHistoricalPrice]);
+
+  useLayoutEffect(() => {
+    animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValuePrevRef, purchasedValueTimerRef);
+  }, [animateNumberHeight, summaryTotals.acVatop]);
+
+  useLayoutEffect(() => {
+    animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValuePrevRef, currentValueTimerRef);
+  }, [animateNumberHeight, summaryTotals.acVact]);
+
+  useLayoutEffect(() => {
+    animateNumberHeight(
+      profitValueRef,
+      setProfitValueHeight,
+      profitValuePrevRef,
+      profitValueTimerRef
+    );
+  }, [
+    animateNumberHeight,
+    summaryTotals.acVatop,
+    summaryTotals.acVact,
+    summaryTotals.acVactTaa,
+    summaryRangePrice,
+    selectedRangeDays,
+  ]);
 
   const chartRanges = useMemo(
     () => [
@@ -2215,6 +2370,12 @@ const VavityEthereum: React.FC = () => {
     }, 350);
   }, [filteredTotals, rangeHistoricalPrice, summaryTotalsSnapshot]);
 
+  useEffect(() => {
+    if (!summaryPulseAfterDelete) return;
+    setSummaryPulseAfterDelete(false);
+    pulseSummaryValues();
+  }, [summaryPulseAfterDelete, pulseSummaryValues]);
+
   const triggerSubmitFormCollapse = useCallback(() => {
     const target = submitTargetRef.current;
     const isAddMore = target === 'addMore';
@@ -2289,6 +2450,16 @@ const VavityEthereum: React.FC = () => {
       if (target === 'addMore') {
         setAddMoreOpen(false);
         setShowAddMoreForm(false);
+        setToggleDisabled(false);
+        setToggleKnobHidden(false);
+        if (showMoreDisableTimerRef.current) {
+          globalThis.clearTimeout(showMoreDisableTimerRef.current);
+          showMoreDisableTimerRef.current = null;
+        }
+        showMoreDisableTimerRef.current = globalThis.setTimeout(() => {
+          showMoreDisableTimerRef.current = null;
+          setShowMoreDisabled(false);
+        }, 3000);
       } else {
         if (addFormPanelRef.current) {
           if (addFormCollapseAnimRef.current) {
@@ -2306,6 +2477,21 @@ const VavityEthereum: React.FC = () => {
         setAddFormSubmitMaxHeight(null);
         setAddFormOuterSubmitMaxHeight(null);
         setAddFormSubmitCollapsing(false);
+        if (submitLoaderAwaitingSummaryRef.current && submitTargetRef.current !== 'addMore') {
+          if (submitLoaderHeightHoldTimerRef.current) {
+            globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
+            submitLoaderHeightHoldTimerRef.current = null;
+          }
+          submitLoaderHeightHoldTimerRef.current = globalThis.setTimeout(() => {
+            submitLoaderHeightHoldTimerRef.current = null;
+            submitLoaderAwaitingSummaryRef.current = false;
+            if (submitLoaderFallbackTimerRef.current) {
+              globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
+              submitLoaderFallbackTimerRef.current = null;
+            }
+            setSubmitLoaderHold(false);
+          }, 2500);
+        }
       }
       if (typeof document !== 'undefined') {
         document.body.style.overflowAnchor = prevBodyOverflowAnchor;
@@ -2376,6 +2562,33 @@ const VavityEthereum: React.FC = () => {
     setSubmitLoading(true);
     // Mark which panel is currently being submitted from, so we can collapse that panel smoothly.
     submitTargetRef.current = showAddMoreForm ? 'addMore' : 'add';
+    const isAddMoreSubmit = submitTargetRef.current === 'addMore';
+    if (!isAddMoreSubmit) {
+      setSubmitLoaderHold(true);
+      submitLoaderAwaitingSummaryRef.current = true;
+      if (submitLoaderHeightHoldTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderHeightHoldTimerRef.current);
+        submitLoaderHeightHoldTimerRef.current = null;
+      }
+      if (submitLoaderFallbackTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderFallbackTimerRef.current);
+        submitLoaderFallbackTimerRef.current = null;
+      }
+    }
+    if (toggleReenableTimerRef.current) {
+      globalThis.clearTimeout(toggleReenableTimerRef.current);
+      toggleReenableTimerRef.current = null;
+    }
+    toggleReenableOnSummaryExpandRef.current = !isAddMoreSubmit;
+    setToggleDisabled(true);
+    setToggleKnobHidden(true);
+    if (isAddMoreSubmit) {
+      setShowMoreDisabled(true);
+      if (showMoreDisableTimerRef.current) {
+        globalThis.clearTimeout(showMoreDisableTimerRef.current);
+        showMoreDisableTimerRef.current = null;
+      }
+    }
     if (submitTargetRef.current === 'addMore') {
       setSummaryTotalsSnapshot({ ...filteredTotals });
       setSummaryRangePriceSnapshot(rangeHistoricalPrice ?? null);
@@ -2430,9 +2643,11 @@ const VavityEthereum: React.FC = () => {
           pendingNewIdsRef.current = Array.from(new Set([...pendingNewIdsRef.current, addedId]));
         }
       }
+      setTimeout(() => {
+        setSubmitPhase('submitted');
+      }, 2000);
     } catch {
       // Quiet failure per prior behavior
-      submitResetPendingRef.current = false;
       setSubmitPhase('idle');
     } finally {
       isMutatingRef.current = false;
@@ -2457,15 +2672,26 @@ const VavityEthereum: React.FC = () => {
     }
     const updated = liveInvestments.filter((_: any, idx: number) => idx !== indexToRemove);
     const isLastInvestment = updated.length === 0;
+    if (!summaryTotalsSnapshot) {
+      const totals = lastNonEmptyTotalsRef.current;
+      if (totals) {
+        setSummaryTotalsSnapshot({ ...totals });
+        setSummaryRangePriceSnapshot(lastNonEmptyRangePriceRef.current ?? null);
+      }
+    }
     if (isLastInvestment && !isClearingInvestments) {
-      const startHeight =
-        investmentsWholePanelRef.current?.getBoundingClientRect().height ||
-        lastInvestmentsWholeHeightRef.current ||
-        investmentsWholeHeight ||
-        investmentsWholeContentRef.current?.getBoundingClientRect().height ||
-        0;
-      clearingSnapshotRef.current = vavityData;
-      beginClearing(startHeight);
+      if (deleteInFlight) {
+        clearAfterDeleteRef.current = true;
+      } else {
+        const startHeight =
+          investmentsWholePanelRef.current?.getBoundingClientRect().height ||
+          lastInvestmentsWholeHeightRef.current ||
+          investmentsWholeHeight ||
+          investmentsWholeContentRef.current?.getBoundingClientRect().height ||
+          0;
+        clearingSnapshotRef.current = vavityData;
+        beginClearing(startHeight);
+      }
     }
     isMutatingRef.current = true;
     try {
@@ -2772,6 +2998,29 @@ const VavityEthereum: React.FC = () => {
   }, [investmentsListOpen, showInvestmentsList]);
 
   useEffect(() => {
+    if (showSubmitLoader) {
+      if (submitLoaderUnmountTimerRef.current) {
+        globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
+        submitLoaderUnmountTimerRef.current = null;
+      }
+      setSubmitLoaderMounted(true);
+      const raf = window.requestAnimationFrame(() => {
+        setSubmitLoaderVisible(true);
+      });
+      return () => window.cancelAnimationFrame(raf);
+    }
+    setSubmitLoaderVisible(false);
+    if (submitLoaderUnmountTimerRef.current) {
+      globalThis.clearTimeout(submitLoaderUnmountTimerRef.current);
+      submitLoaderUnmountTimerRef.current = null;
+    }
+    submitLoaderUnmountTimerRef.current = globalThis.setTimeout(() => {
+      submitLoaderUnmountTimerRef.current = null;
+      setSubmitLoaderMounted(false);
+    }, 1000);
+  }, [showSubmitLoader]);
+
+  useEffect(() => {
     const node = emptyActionsMeasureRef.current;
     if (!node || typeof ResizeObserver === 'undefined') {
       const next = node?.scrollHeight ?? 0;
@@ -2798,7 +3047,29 @@ const VavityEthereum: React.FC = () => {
   }, [isSignedIn, email]);
 
   return (
-    <div className="asset-page-content asset-page-content--ethereum page-slide-down">
+    <>
+      {submitLoaderMounted && (
+        <div
+          className={`asset-submit-loader-overlay asset-submit-loader-overlay--ethereum${
+            submitLoaderVisible ? ' is-visible' : ''
+          }`}
+        >
+          <div className="asset-submit-loader-ring">
+            <svg className="asset-submit-loader-spinner" viewBox="0 0 60 60" aria-hidden="true">
+              <circle cx="30" cy="30" r="26" />
+            </svg>
+            <Image
+              className="asset-submit-loader-icon"
+              alt="Ethereum"
+              width={29}
+              height={30}
+              style={{ transform: 'translate(0.2px, -0.3px)', opacity: 1 }}
+              src="/images/assets/crypto/Ethereum.svg"
+            />
+          </div>
+        </div>
+      )}
+      <div className="asset-page-content asset-page-content--ethereum page-slide-down">
       <div
         className="asset-panel asset-panel--ethereum asset-header-panel asset-section-slide"
         ref={headerPanelRef}
@@ -3005,7 +3276,7 @@ const VavityEthereum: React.FC = () => {
               <div
                 className={`asset-chart-fade asset-chart-interactive${
                   chartReady && !forceChartLoader ? ' is-visible' : ''
-                }${chartInteractiveReady ? '' : ' is-disabled'}`}
+                }${chartReady && !forceChartLoader ? '' : ' is-disabled'}`}
               >
             <EthereumChart
               history={chartHistoryForLine || []}
@@ -3039,12 +3310,14 @@ const VavityEthereum: React.FC = () => {
                 className={`asset-reality-toggle${!displayIsLiquidMode ? ' is-fantasy' : ''}${toggleKnobLeftPx != null ? ' is-dragging' : ''}${toggleAnimating ? ' is-animating' : ''}`}
                 aria-pressed={displayIsLiquidMode}
                 aria-label="Toggle Liquid/Solid mode"
+                disabled={toggleDisabled}
                 style={
                   toggleKnobLeftEffectivePx != null
                     ? ({ ['--toggle-knob-left' as any]: `${toggleKnobLeftEffectivePx}px` } as React.CSSProperties)
                     : undefined
                 }
                 onPointerDown={(e) => {
+                  if (toggleDisabled) return;
                   if (toggleAnimating) return;
                   const btn = e.currentTarget;
                   const cs = window.getComputedStyle(btn);
@@ -3103,11 +3376,12 @@ const VavityEthereum: React.FC = () => {
                   if (!toggleDragRef.current.active) return;
                   const btn = e.currentTarget;
                   const cs = window.getComputedStyle(btn);
-                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 0;
-                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 0;
+                  const knobSize = parseFloat(cs.getPropertyValue('--toggle-knob-size')) || 23;
+                  const leftInset = parseFloat(cs.getPropertyValue('--toggle-knob-left-inset')) || 1;
+                  const rightInset = parseFloat(cs.getPropertyValue('--toggle-knob-right-inset')) || 1;
                   const w = btn.getBoundingClientRect().width;
                   const minLeft = leftInset;
-                  const maxLeft = Math.max(leftInset, w - rightInset);
+                  const maxLeft = Math.max(leftInset, w - rightInset - knobSize);
                   const mid = (minLeft + maxLeft) / 2;
                   const finalLeft = toggleDragRef.current.lastLeft || (displayIsLiquidMode ? minLeft : maxLeft);
                   const nextIsLiquid = finalLeft <= mid;
@@ -3149,7 +3423,11 @@ const VavityEthereum: React.FC = () => {
                 }}
                 onClick={() => {}}
               >
-                <span className="asset-reality-toggle-knob" aria-hidden="true" />
+                <span
+                  className="asset-reality-toggle-knob"
+                  aria-hidden="true"
+                  style={{ opacity: toggleKnobHidden ? 0 : 1, transition: 'opacity 0.8s ease' }}
+                />
               </button>
               <span className={`asset-reality-toggle-label${!displayIsLiquidMode ? ' is-active' : ''}`}>Solid</span>
             </div>
@@ -3279,31 +3557,51 @@ const VavityEthereum: React.FC = () => {
                 <span className="asset-metric-title--ethereum" style={{ display: 'inline-block', marginTop: 30 }}>
                   Purchased Value
                 </span>
-                <span
-                  className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                <div
+                  ref={purchasedValueRef}
                   style={{
-                    opacity: summaryValuesHidden ? 0 : realityOpacity,
-                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                    height: purchasedValueHeight != null ? `${purchasedValueHeight}px` : 'auto',
+                    transition: purchasedValueHeight != null ? 'height 2s ease' : undefined,
+                    overflow: purchasedValueHeight != null ? 'hidden' : undefined,
+                    display: 'inline-block',
                   }}
                 >
-                  <span className="asset-metric-symbol--ethereum">$</span>
-                  <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVatop || 0))}</span>
-                </span>
+                  <span
+                    className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                    style={{
+                      opacity: summaryValuesHidden ? 0 : realityOpacity,
+                      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                    }}
+                  >
+                    <span className="asset-metric-symbol--ethereum">$</span>
+                    <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVatop || 0))}</span>
+                  </span>
+                </div>
             </div>
               <div className="asset-metric-row asset-money-row" style={{ marginBottom: '8px', justifyContent: 'center' }}>
                 <span className="asset-metric-title--ethereum">
                   Current Value
                 </span>
-                <span
-                  className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                <div
+                  ref={currentValueRef}
                   style={{
-                    opacity: summaryValuesHidden ? 0 : realityOpacity,
-                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                    height: currentValueHeight != null ? `${currentValueHeight}px` : 'auto',
+                    transition: currentValueHeight != null ? 'height 2s ease' : undefined,
+                    overflow: currentValueHeight != null ? 'hidden' : undefined,
+                    display: 'inline-block',
                   }}
                 >
-                  <span className="asset-metric-symbol--ethereum">$</span>
-                  <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVact || 0))}</span>
-                </span>
+                  <span
+                    className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                    style={{
+                      opacity: summaryValuesHidden ? 0 : realityOpacity,
+                      transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                    }}
+                  >
+                    <span className="asset-metric-symbol--ethereum">$</span>
+                    <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVact || 0))}</span>
+                  </span>
+                </div>
             </div>
               <div
                 className="asset-panel asset-panel--ethereum asset-profit-block asset-slide-in asset-section-slide"
@@ -3322,7 +3620,7 @@ const VavityEthereum: React.FC = () => {
                         return `${days} days`;
                       };
                   if (selectedRangeDays && summaryRangePrice != null) {
-                    const pastValue = (summaryTotals.acVactTaa || 0) * summaryRangePrice;
+                    const pastValue = (summaryTotals.acVactTaa || 0) * (summaryRangePrice ?? 0);
                     const profitValue = (summaryTotals.acVact || 0) - pastValue;
                         const isProfit = profitValue > 0.005;
                         const label = isProfit ? 'Profits' : 'Losses';
@@ -3345,19 +3643,29 @@ const VavityEthereum: React.FC = () => {
                                   {label}
                                 </span>
                               </span>
-                              <span
-                                className="asset-money-wrap"
+                              <div
+                                ref={profitValueRef}
                                 style={{
-                                  opacity:
-                                    (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  height: profitValueHeight != null ? `${profitValueHeight}px` : 'auto',
+                                  transition: profitValueHeight != null ? 'height 2s ease' : undefined,
+                                  overflow: profitValueHeight != null ? 'hidden' : undefined,
+                                  display: 'inline-block',
                                 }}
                               >
-                                <span className="asset-metric-symbol--ethereum">
-                                  {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                                <span
+                                  className="asset-money-wrap"
+                                  style={{
+                                    opacity:
+                                      (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
+                                    transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                  }}
+                                >
+                                  <span className="asset-metric-symbol--ethereum">
+                                    {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                                  </span>
+                                  <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
                                 </span>
-                                <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
-                              </span>
+                              </div>
                             </span>
                           </span>
                         );
@@ -3384,19 +3692,29 @@ const VavityEthereum: React.FC = () => {
                                 {label}
                               </span>
                             </span>
-                            <span
-                              className="asset-money-wrap"
+                            <div
+                              ref={profitValueRef}
                               style={{
-                                opacity:
-                                  (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                height: profitValueHeight != null ? `${profitValueHeight}px` : 'auto',
+                                transition: profitValueHeight != null ? 'height 2s ease' : undefined,
+                                overflow: profitValueHeight != null ? 'hidden' : undefined,
+                                display: 'inline-block',
                               }}
                             >
-                              <span className="asset-metric-symbol--ethereum">
-                                {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                              <span
+                                className="asset-money-wrap"
+                                style={{
+                                  opacity:
+                                    (selectedRangeDays && rangeLoading) || profitValueHidden || summaryValuesHidden ? 0 : realityOpacity,
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                }}
+                              >
+                                <span className="asset-metric-symbol--ethereum">
+                                  {isProfit ? '+$' : displayIsLiquidMode ? '-$' : '$'}
+                                </span>
+                                <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
                               </span>
-                              <span className="asset-metric-inline-value">{renderDecimalSafe(formattedValue)}</span>
-                            </span>
+                            </div>
                           </span>
                         </span>
                       );
@@ -3508,7 +3826,7 @@ const VavityEthereum: React.FC = () => {
                       className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-show${
                         showPulse ? ' asset-action-button--pulse' : ''
                       }`}
-                      disabled={!investments.length}
+                      disabled={!investments.length || showMoreDisabled}
                       onClick={() => {
                         suppressPortfolioCta();
                         triggerShowPulse();
@@ -3863,7 +4181,7 @@ const VavityEthereum: React.FC = () => {
               className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-show${
                 showPulse ? ' asset-action-button--pulse' : ''
               }`}
-              disabled={!investments.length}
+              disabled={!investments.length || showMoreDisabled}
               onClick={() => {
                 suppressPortfolioCta();
                 triggerShowPulse();
@@ -4117,6 +4435,7 @@ const VavityEthereum: React.FC = () => {
 
       </div>
     </div>
+    </>
   );
 };
 
