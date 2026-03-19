@@ -262,7 +262,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
-	padding-top: 300px;
+	padding-top: var(--home-loader-padding-top, max(0px, calc(30vh)));
 	/* Must be highest z-index in the app */
 	z-index: 2147483647 !important;
 	opacity: 1;
@@ -3682,12 +3682,76 @@ transform: translateY(calc(-50% - 0.5px));
 	justify-content: flex-start;
 	flex-direction: column;
 	gap: 10px;
-	padding-top: max(0px, calc(50vh - 80px));
+	padding-top: var(--asset-loader-padding-top, max(0px, calc(40vh)));
 	/* Must be highest z-index in the app */
 	z-index: 2147483647 !important;
 	opacity: .98;
 	transition: opacity 1s ease;
 	pointer-events: none;
+}
+
+.asset-session-reset-overlay {
+	padding-top: max(0px, calc(40vh));
+	opacity: 0;
+	transition: opacity 1s ease;
+}
+
+.asset-session-reset-overlay.is-visible {
+	opacity: .98;
+}
+
+.asset-session-reset-overlay.asset-loader-overlay-fade {
+	opacity: 0;
+	transition-duration: 2s;
+}
+
+.asset-session-reset-modal {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	text-align: center;
+}
+
+.asset-session-reset-spinner {
+	width: 48px;
+	height: 48px;
+	position: relative;
+}
+
+.asset-session-reset-spinner-wrap {
+	width: 150px;
+	height: 70px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: none;
+	padding-bottom: 10px;
+}
+
+.asset-session-reset-text {
+	line-height: 1.2;
+	color: var(--asset-hover-dot-color, var(--asset-line-color));
+}
+
+.asset-session-reset-line {
+	display: block;
+}
+
+.asset-session-reset-text--title {
+	margin-bottom: -12px;
+	opacity: .4;
+	font-weight: 800;
+	font-size: 15px;
+	letter-spacing: -0.5px;
+}
+
+.asset-session-reset-text--subtitle {
+	margin-top: -20px;	
+	opacity: 1;
+	font-weight: 800;
+	font-size: 20px;
+	letter-spacing: -1.5px;
 }
 
 .asset-loader-overlay--bitcoin {
@@ -4710,16 +4774,13 @@ transform: translateY(calc(-50% - 0.5px));
 		#word-logoo {
 			margin-top: 40px;
 		}  
-		.home-loader-overlay {
-			padding-top: 110px;
-		}
 
 		.home-vote-modal-overlay {
 			padding-top: 110px;
 		}
 
-	.asset-loader-overlay {
-		padding-top: 110px;
+	.asset-session-reset-overlay {
+		padding-top: max(0px, calc(50vh - 80px));
 	}
 
 	@media screen and (max-height: 600px) {

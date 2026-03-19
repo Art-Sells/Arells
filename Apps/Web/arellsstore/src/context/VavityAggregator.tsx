@@ -49,7 +49,7 @@ interface VavityaggregatorType {
 const Vavityaggregator = createContext<VavityaggregatorType | undefined>(undefined);
 
 export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { sessionId } = useUser();
+  const { sessionId, email, isSignedIn } = useUser();
   const [assets, setAssets] = useState<Record<string, AssetSnapshot>>({});
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [totals, setTotals] = useState<TotalsState>({
@@ -100,6 +100,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     if (!sessionId) return;
     if (sessionExpiresAt == null) return;
+    if (investments.length === 0) {
+      if (sessionExpiryTimerRef.current) {
+        globalThis.clearTimeout(sessionExpiryTimerRef.current);
+        sessionExpiryTimerRef.current = null;
+      }
+      return;
+    }
     if (sessionExpiryTimerRef.current) {
       globalThis.clearTimeout(sessionExpiryTimerRef.current);
       sessionExpiryTimerRef.current = null;
@@ -108,6 +115,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const safeDelay = Math.max(delay, 0) + 25; // small buffer
     sessionExpiryTimerRef.current = globalThis.setTimeout(async () => {
       try {
+        if (typeof window !== 'undefined' && !email && !isSignedIn) {
+          window.dispatchEvent(
+            new CustomEvent('vavity:session-expired', {
+              detail: { holdMs: 5000, expiresAt: sessionExpiresAt },
+            })
+          );
+        }
         const response = await axios.get(`/api/fetchVavityAggregator`, {
           params: { sessionId, asset: lastSessionAssetRef.current || 'bitcoin' },
         });
@@ -126,7 +140,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         sessionExpiryTimerRef.current = null;
       }
     };
-  }, [sessionExpiresAt, sessionId]);
+  }, [sessionExpiresAt, sessionId, email, isSignedIn, investments.length]);
 
   const fetchVavityAggregator = useCallback(async (currentSessionId: string, asset = 'bitcoin'): Promise<any> => {
     if (!currentSessionId) throw new Error('Session ID is required');

@@ -11,10 +11,19 @@ const BitcoinPageClient: React.FC = () => {
   const [fadeOut, setFadeOut] = useState(false);
   const [extraLoaderHoldMs, setExtraLoaderHoldMs] = useState(0);
   const [sessionClearPending, setSessionClearPending] = useState(false);
+  const [sessionResetActive, setSessionResetActive] = useState(false);
+  const [sessionResetFade, setSessionResetFade] = useState(false);
+  const [sessionResetKey, setSessionResetKey] = useState(0);
+  const [sessionResetVisible, setSessionResetVisible] = useState(false);
   const [portfolioClampY, setPortfolioClampY] = useState(0);
   const { email } = useUser();
   const pageRef = useRef<HTMLDivElement>(null);
   const portfolioBottomRef = useRef<number | null>(null);
+  const sessionResetTimersRef = useRef<ReturnType<typeof window.setTimeout>[]>([]);
+  const forceSessionResetPreview = false;
+  const showSessionResetOverlay = forceSessionResetPreview || sessionResetActive;
+  const showSessionResetFade = sessionResetFade && !forceSessionResetPreview;
+  const sessionResetKeyValue = forceSessionResetPreview ? 'preview' : sessionResetKey;
 
   // Set global background immediately for overscroll beyond the asset page.
   useEffect(() => {
@@ -88,6 +97,46 @@ const BitcoinPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (!showSessionResetOverlay) {
+      setSessionResetVisible(false);
+      return;
+    }
+    setSessionResetVisible(false);
+    const timer = window.setTimeout(() => setSessionResetVisible(true), 30);
+    return () => window.clearTimeout(timer);
+  }, [showSessionResetOverlay]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const resetHandler = (event: Event) => {
+      const detail = (event as CustomEvent).detail as { holdMs?: number } | undefined;
+      const holdMs = Math.max(5000, detail?.holdMs ?? 5000);
+      const fadeOutDuration = 2000;
+      setSessionResetVisible(false);
+      setSessionResetActive(true);
+      setSessionResetFade(false);
+      setSessionResetKey((prev) => prev + 1);
+      sessionResetTimersRef.current.forEach((timer) => clearTimeout(timer));
+      sessionResetTimersRef.current = [];
+      sessionResetTimersRef.current.push(
+        window.setTimeout(() => setSessionResetFade(true), holdMs)
+      );
+      sessionResetTimersRef.current.push(
+        window.setTimeout(() => {
+          setSessionResetActive(false);
+          setSessionResetFade(false);
+        }, holdMs + fadeOutDuration)
+      );
+    };
+    window.addEventListener('vavity:session-expired', resetHandler as EventListener);
+    return () => {
+      window.removeEventListener('vavity:session-expired', resetHandler as EventListener);
+      sessionResetTimersRef.current.forEach((timer) => clearTimeout(timer));
+      sessionResetTimersRef.current = [];
+    };
+  }, []);
+
+  useEffect(() => {
     if (typeof window === 'undefined') return;
     let raf = 0;
     const update = () => {
@@ -107,7 +156,7 @@ const BitcoinPageClient: React.FC = () => {
       }
       const bottomOffset = portfolioBottomRef.current ?? 0;
       const fixedBottom = window.innerHeight - bottomOffset;
-      const clampGap = 65;
+      const clampGap = 105;
       const clampBottom = footerTop - clampGap;
       const overlap = Math.max(0, fixedBottom - clampBottom);
       const nextY = overlap > 0 ? -overlap : 0;
@@ -131,7 +180,7 @@ const BitcoinPageClient: React.FC = () => {
   return (
     <div className="asset-page asset-page--bitcoin" ref={pageRef}>
       <header className="asset-header asset-header--bitcoin" />
-      {showLoading && (
+      {showLoading && !showSessionResetOverlay && (
         <div
           className={`asset-loader-overlay asset-loader-overlay--bitcoin${fadeOut ? ' asset-loader-overlay-fade' : ''}`}
         >
@@ -144,8 +193,32 @@ const BitcoinPageClient: React.FC = () => {
           </div>
         </div>
       )}
+      {showSessionResetOverlay && (
+        <div
+          className={`asset-loader-overlay asset-loader-overlay--bitcoin asset-session-reset-overlay${
+            showSessionResetFade ? ' asset-loader-overlay-fade' : ''
+          }${sessionResetVisible ? ' is-visible' : ''}`}
+        >
+          <div className="asset-session-reset-modal">
+            <div className="asset-session-reset-text asset-session-reset-text--title asset-metric-title--bitcoin">
+              Resetting Investments
+            </div>
+            <div className="asset-session-reset-spinner-wrap asset-profit-summary asset-profit-summary--bitcoin">
+              <div className="asset-session-reset-spinner" aria-hidden="true">
+                <div
+                  className="asset-delete-loader-spinner"
+                  style={{ borderColor: 'rgba(248, 141, 0, 0.2)', borderTopColor: 'rgba(248, 141, 0, 0.5)' }}
+                />
+              </div>
+            </div>
+            <div className="asset-session-reset-text asset-session-reset-text--subtitle asset-metric-title--bitcoin">
+              Sign In to Save
+            </div>
+          </div>
+        </div>
+      )}
 
-      <Bitcoin />
+      <Bitcoin key={`session-reset-${sessionResetKeyValue}`} />
       {!!email && (
         <div
           className="asset-portfolio-icon-anchor"
