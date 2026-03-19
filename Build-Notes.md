@@ -1,8 +1,6 @@
 # Arells Build Notes...
 
 ## Arells v1
-
-- *Ensure Eth .css and .tsx functions exactly like Bitcoin*
 - *test multiple investment deletions big numbers and small... (with page mount clearing refresh page sessions) with the "1 minute end all open to see aht it does" with the form open and not open*
 
 - Investment page should be styled (shadows/etc) the exact same as the home page

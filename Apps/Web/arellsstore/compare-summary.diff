@@ -1,0 +1,1930 @@
+@@ -134,23 +136,21 @@
+   const toggleKnobLeftEffectivePx = toggleKnobLeftPx ?? toggleKnobLeftComputedPx;
+   const rangeHistoricalPrice = displayIsLiquidMode ? rangeHistoricalPriceLiquid : rangeHistoricalPriceSolid;
+   const historicalPrice = displayIsLiquidMode ? historicalPriceLiquid : historicalPriceSolid;
+-  const assetSnapshot = getAsset('bitcoin');
+-  const assetPrice = assetSnapshot?.price ?? 0;
+-  const vapa = assetSnapshot?.vapa ?? 0;
+   const solidHistory = assetSnapshot?.solidHistory ?? [];
+   const liquidHistory = assetSnapshot?.liquidHistory ?? [];
+   const history = displayIsLiquidMode ? liquidHistory : solidHistory;
+   const solidMarketCap = assetSnapshot?.solidMarketCap ?? [];
+   const liquidMarketCap = assetSnapshot?.liquidMarketCap ?? [];
+   const vapaMarketCap = displayIsLiquidMode ? liquidMarketCap : solidMarketCap;
++  const [chartReady, setChartReady] = useState<boolean>(false);
+   const [chartRangeDays, setChartRangeDays] = useState<number | null>(null);
+   const [chartRangeAnchorMs, setChartRangeAnchorMs] = useState<number>(() => Date.now());
+   const [chartHoverIndex, setChartHoverIndex] = useState<number | null>(null);
+   const [chartHoverPoint, setChartHoverPoint] = useState<{ x: Date; y: number } | null>(null);
+   const [showInvestmentsList, setShowInvestmentsList] = useState<boolean>(false);
+   const [investmentsListOpen, setInvestmentsListOpen] = useState(false);
+-  const [visibleInvestments, setVisibleInvestments] = useState<number>(3);
+   const [closingInvestments, setClosingInvestments] = useState<string[]>([]);
++  const [visibleInvestments, setVisibleInvestments] = useState<number>(3);
+   const [deletingInvestments, setDeletingInvestments] = useState<string[]>([]);
+   const [pendingDeleteInvestments, setPendingDeleteInvestments] = useState<string[]>([]);
+   const [deleteHeights, setDeleteHeights] = useState<Record<string, number>>({});
+
+@@ -200,8 +200,6 @@
+   const [emptyActionsExpanding, setEmptyActionsExpanding] = useState(false);
+   const emptyActionsExpandTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+   const emptyButtonsSequenceTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
+-  const submitCollapseTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+-  const submitResetPendingRef = useRef(false);
+   const pulseTimersRef = useRef<ReturnType<typeof globalThis.setTimeout>[]>([]);
+   const didMountAddMorePulseRef = useRef(false);
+   const didMountShowPulseRef = useRef(false);
+
+@@ -246,12 +244,15 @@
+   const investmentsWholePanelRef = useRef<HTMLDivElement | null>(null);
+   const [investmentsWholeHeight, setInvestmentsWholeHeight] = useState(0);
+   const lastInvestmentsWholeHeightRef = useRef(0);
+-  const addFormBoxRef = useRef<HTMLDivElement | null>(null);
+   const addFormPanelRef = useRef<HTMLDivElement | null>(null);
+   const addFormSlidePanelRef = useRef<HTMLDivElement | null>(null);
+   const addFormCollapseAnimRef = useRef<Animation | null>(null);
+-  const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
+   const addMoreFormPanelRef = useRef<HTMLDivElement | null>(null);
++  const addFormBoxRef = useRef<HTMLDivElement | null>(null);
++  const addMoreFormBoxRef = useRef<HTMLDivElement | null>(null);
++  const clearedSessionOnMountRef = useRef(false);
++  const submitCollapseTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
++  const submitResetPendingRef = useRef(false);
+   const profitInlineAnimRef = useRef<HTMLSpanElement | null>(null);
+   const chartWrapRef = useRef<HTMLDivElement | null>(null);
+   const headerPanelRef = useRef<HTMLDivElement | null>(null);
+
+@@ -294,9 +295,8 @@
+   const chartTopPadding = 0;
+   const chartBottomPadding = 0;
+   const chartProtrusion = 0;
+-  const chartExtraPanelHeight = 0;
+   const chartHeightAdjusted = Math.max(120, chartHeight - 0);
+-  const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartExtraPanelHeight + chartTopPadding + chartBottomPadding;
++  const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartTopPadding + chartBottomPadding;
+   const chartCanvasHeight = chartHeightAdjusted;
+   const forceChartLoader = false;
+   const scrollToBottom = useCallback((delayMs = 500) => {
+
+@@ -313,7 +313,6 @@
+     window.dispatchEvent(new CustomEvent('arells:portfolioCtaSuppress', { detail: { ms } }));
+   }, []);
+ 
+-  // Keep the viewport pinned to the bottom while panels are height-animating (prevents scroll/height drift).
+   const followScrollUntilRef = useRef<number>(0);
+   const followScrollRafRef = useRef<number | null>(null);
+   const addFormScrollRafRef = useRef<number | null>(null);
+
+@@ -872,7 +863,6 @@
+ 
+   // (profit/loss mini loader removed)
+ 
+-  // Fade the profit/loss value back in after the range request completes.
+   useEffect(() => {
+     if (!selectedRangeDays) {
+       setProfitValueHidden(false);
+
+@@ -1184,9 +1170,6 @@
+       ? 'max-height 2s ease'
+       : 'max-height 0s ease';
+   const clearingHeightPx = isClearingInvestments && clearingHeight != null ? `${clearingHeight}px` : undefined;
+-  // Add-more form lives inside the summary panel. If both the outer summary and the inner form
+-  // animate max-height, it feels slower because the outer panel clips the inner one during its own expand.
+-  // When Add-more is showing, snap the outer summary height and let only the inner form animate.
+   const summaryTransition =
+     summaryAnimating ? 'max-height 2s ease' : addMoreOpen || suppressSummaryTransition ? 'max-height 0s ease' : 'max-height 2s ease';
+   const shouldRenderAddForm =
+
+@@ -1240,6 +1223,28 @@
+     }
+     prevLiveCountRef.current = next;
+   }, [beginClearing, deleteInFlight, isClearingInvestments, liveInvestments.length]);
++
++  useEffect(() => {
++    if (!clearAfterDeleteRef.current) return;
++    if (deleteInFlight || isClearingInvestments) return;
++    if (liveInvestments.length !== 0) return;
++    clearAfterDeleteRef.current = false;
++    const startHeight =
++      investmentsWholePanelRef.current?.getBoundingClientRect().height ||
++      lastInvestmentsWholeHeightRef.current ||
++      investmentsWholeHeight ||
++      investmentsWholeContentRef.current?.getBoundingClientRect().height ||
++      0;
++    clearingSnapshotRef.current = vavityData;
++    beginClearing(startHeight);
++  }, [
++    beginClearing,
++    deleteInFlight,
++    investmentsWholeHeight,
++    isClearingInvestments,
++    liveInvestments.length,
++    vavityData,
++  ]);
+ 
+   useEffect(() => {
+     const prev = prevSummaryCountRef.current;
+
+@@ -1290,7 +1295,7 @@
+           setInvestmentsListOpen(false);
+           setSubmitPhase('idle');
+           submitTargetRef.current = 'add';
+-        setSummaryOpen(false);
++          setSummaryOpen(false);
+           clearInvestmentsAnimTimerRef.current = null;
+         }, 2000);
+       } else if (!isClearingInvestments) {
+
+@@ -1330,8 +1335,8 @@
+     investments.length,
+     isClearingInvestments,
+     openInvestmentsSection,
+-    summaryTotalsSnapshot,
+     suppressInvestmentsUI,
++    summaryTotalsSnapshot,
+     isSubmitCollapsing,
+   ]);
+ 
+
+@@ -1380,7 +1384,6 @@
+       });
+     };
+ 
+-    // Measure immediately, then keep in sync with any content growth (e.g. huge wrapped numbers).
+     measure();
+     const ro = new ResizeObserver(measure);
+     ro.observe(node);
+
+@@ -1391,28 +1394,6 @@
+   }, [summaryOpen, isClearingInvestments]);
+ 
+   useEffect(() => {
+-    if (!clearAfterDeleteRef.current) return;
+-    if (deleteInFlight || isClearingInvestments) return;
+-    if (liveInvestments.length !== 0) return;
+-    clearAfterDeleteRef.current = false;
+-    const startHeight =
+-      investmentsWholePanelRef.current?.getBoundingClientRect().height ||
+-      lastInvestmentsWholeHeightRef.current ||
+-      investmentsWholeHeight ||
+-      investmentsWholeContentRef.current?.getBoundingClientRect().height ||
+-      0;
+-    clearingSnapshotRef.current = vavityData;
+-    beginClearing(startHeight);
+-  }, [
+-    beginClearing,
+-    deleteInFlight,
+-    investmentsWholeHeight,
+-    isClearingInvestments,
+-    liveInvestments.length,
+-    vavityData,
+-  ]);
+-
+-  useEffect(() => {
+     const prev = prevSummaryHeightRef.current;
+     if (summaryHeight !== prev && toggleReenableOnSummaryExpandRef.current) {
+       if (toggleReenableTimerRef.current) {
+
+@@ -1523,16 +1504,6 @@
+       if (raf) window.cancelAnimationFrame(raf);
+     };
+   }, [selectedRangeDays, rangeLoading]);
+-  const oldestInvestmentDate = useMemo(() => {
+-    if (investments.length === 0) return null;
+-    const dates = investments
+-      .map((entry: any) => entry?.date)
+-      .filter((value: any) => typeof value === 'string' && value.length > 0)
+-      .map((value: string) => new Date(value))
+-      .filter((date: Date) => !Number.isNaN(date.getTime()));
+-    if (dates.length === 0) return null;
+-    return new Date(Math.min(...dates.map((date: Date) => date.getTime())));
+-  }, [investments]);
+ 
+   useEffect(() => {
+     const prevIds = prevInvestmentIdsRef.current;
+
+@@ -1569,11 +1540,24 @@
+     }, 3000);
+     pendingNewIdsRef.current = [];
+   }, [investmentsListOpen, showInvestmentsList]);
++
++  const oldestInvestmentDate = useMemo(() => {
++    if (investments.length === 0) return null;
++    const dates = investments
++      .map((entry: any) => entry?.date)
++      .filter((value: any) => typeof value === 'string' && value.length > 0)
++      .map((value: string) => new Date(value))
++      .filter((date: Date) => !Number.isNaN(date.getTime()));
++    if (dates.length === 0) return null;
++    return new Date(Math.min(...dates.map((date: Date) => date.getTime())));
++  }, [investments]);
++
+   const oldestInvestmentAgeDays = useMemo(() => {
+     if (!oldestInvestmentDate) return 0;
+     const diffMs = Date.now() - oldestInvestmentDate.getTime();
+     return diffMs > 0 ? diffMs / (1000 * 60 * 60 * 24) : 0;
+   }, [oldestInvestmentDate]);
++
+   const portfolioRanges = useMemo(
+     () => [
+       { label: '24 hrs', days: 1 },
+
+@@ -1611,9 +1596,11 @@
+           if (Number.isFinite(liquidNum)) setRangeHistoricalPriceLiquid(liquidNum);
+         }
+       } catch {
+-        // Keep last known values; do not flip to null.
++        // Keep last known value for this mode; do not flip to null.
+       } finally {
+-        if (isMounted) setRangeLoading(false);
++        if (isMounted) {
++          setRangeLoading(false);
++        }
+       }
+     };
+     loadRangePrice();
+
+@@ -1621,6 +1608,230 @@
+       isMounted = false;
+     };
+   }, [selectedRangeDays]);
++
++  const filteredTotals = useMemo(() => {
++    if (!selectedRangeDays) {
++      return displayTotals;
++    }
++    if (rangeHistoricalPrice == null) {
++      return displayTotals;
++    }
++    const rangeStart = Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000;
++    return investments.reduce(
++      (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
++        const amount = Number(entry.cVactTaa) || 0;
++        const currentModeSpot = displayIsLiquidMode ? assetPrice : vapa;
++        const currentValue = displayIsLiquidMode
++          ? Number(entry.lCVact ?? entry.rCVact) || amount * (currentModeSpot || 0)
++          : Number(entry.cVact) || amount * (currentModeSpot || 0);
++        const purchaseTime = entry?.date ? new Date(entry.date).getTime() : null;
++        const hasValidPurchaseTime = typeof purchaseTime === 'number' && !Number.isNaN(purchaseTime);
++        const pastValue =
++          hasValidPurchaseTime && purchaseTime > rangeStart
++            ? displayIsLiquidMode
++              ? Number(entry.lCVatop ?? entry.rCVatop) || amount * ((entry.lCpVatop ?? entry.rCpVatop) || rangeHistoricalPrice)
++              : Number(entry.cVatop) || amount * (entry.cpVatop || rangeHistoricalPrice)
++            : amount * rangeHistoricalPrice;
++
++        acc.acVatop += pastValue;
++        acc.acVact += currentValue;
++        acc.acdVatop += currentValue - pastValue;
++        acc.acVactTaa += amount;
++        return acc;
++      },
++      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
++    );
++  }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isLiquidMode, assetPrice]);
++  const summaryTotals = summaryTotalsSnapshot ?? filteredTotals;
++  const summaryRangePrice = summaryRangePriceSnapshot ?? rangeHistoricalPrice;
++  const animateNumberHeight = useCallback(
++    (
++      ref: React.RefObject<HTMLDivElement>,
++      setHeight: React.Dispatch<React.SetStateAction<number | null>>,
++      prevRef: React.MutableRefObject<number | null>,
++      timerRef: React.MutableRefObject<ReturnType<typeof globalThis.setTimeout> | null>
++    ) => {
++      const node = ref.current;
++      if (!node) return;
++      const next = Math.ceil(node.getBoundingClientRect().height);
++      if (next <= 0) {
++        prevRef.current = next;
++        return;
++      }
++      const prev = prevRef.current;
++      prevRef.current = next;
++      if (prev == null) {
++        setHeight(0);
++        requestAnimationFrame(() => {
++          requestAnimationFrame(() => {
++            setHeight(next);
++          });
++        });
++      } else {
++        if (prev === next) return;
++        setHeight(prev);
++        requestAnimationFrame(() => {
++          requestAnimationFrame(() => {
++            setHeight(next);
++          });
++        });
++      }
++      if (timerRef.current) {
++        globalThis.clearTimeout(timerRef.current);
++        timerRef.current = null;
++      }
++      timerRef.current = globalThis.setTimeout(() => {
++        timerRef.current = null;
++        setHeight(null);
++      }, 2000);
++    },
++    []
++  );
++  useEffect(() => {
++    if (liveInvestments.length > 0) {
++      lastNonEmptyTotalsRef.current = filteredTotals;
++      lastNonEmptyRangePriceRef.current = rangeHistoricalPrice ?? null;
++    }
++  }, [liveInvestments.length, filteredTotals, rangeHistoricalPrice]);
++
++  useLayoutEffect(() => {
++    animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValuePrevRef, purchasedValueTimerRef);
++  }, [animateNumberHeight, summaryTotals.acVatop]);
++
++  useLayoutEffect(() => {
++    animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValuePrevRef, currentValueTimerRef);
++  }, [animateNumberHeight, summaryTotals.acVact]);
++
++  useLayoutEffect(() => {
++    animateNumberHeight(
++      profitValueRef,
++      setProfitValueHeight,
++      profitValuePrevRef,
++      profitValueTimerRef
++    );
++  }, [
++    animateNumberHeight,
++    summaryTotals.acVatop,
++    summaryTotals.acVact,
++    summaryTotals.acVactTaa,
++    summaryRangePrice,
++    selectedRangeDays,
++  ]);
++
++  const chartRanges = useMemo(
++    () => [
++      { label: '24 hrs', days: 1 },
++      { label: '1 wk', days: 7 },
++      { label: '1 mnth', days: 30 },
++      { label: '3 mnths', days: 90 },
++      { label: '1 yr', days: 365 },
++      { label: 'All', days: null },
++    ],
++    []
++  );
++
++  const formatCurrency = useCallback((value: number) => {
++    const abs = Math.abs(value);
++    const decimals = abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
++    return value.toLocaleString('en-US', {
++      minimumFractionDigits: decimals,
++      maximumFractionDigits: decimals
++    });
++  }, []);
++
++  const formatMarketCap = useCallback((value: number | null) => {
++    if (value == null || Number.isNaN(value)) return '0';
++    return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
++  }, []);
++
++  const formatPercent = useCallback((value: number) => {
++    const sign = value > 0 ? '+' : '';
++    return `${sign}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
++  }, []);
++
++  const normalizeTokenInput = useCallback((value: string) => {
++    const cleaned = value.replace(/,/g, '').replace(/[^\d.]/g, '');
++    const hasDot = cleaned.includes('.');
++    const [rawInt = '', rawDec = ''] = cleaned.split('.');
++    const intPart = rawInt.replace(/^0+(?=\d)/, '');
++    const decPart = rawDec.slice(0, 8);
++    const formattedInt = intPart ? intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
++    const prefix = formattedInt || (hasDot ? '0' : '');
++    return hasDot ? `${prefix}.${decPart}` : prefix;
++  }, []);
++
++  const formatIntWithCaret = useCallback((rawInt: string, cursorInInt: number) => {
++    let formatted = '';
++    let caretPos = 0;
++    for (let i = 0; i < rawInt.length; i += 1) {
++      const remaining = rawInt.length - i;
++      if (i > 0 && remaining % 3 === 0) {
++        formatted += ',';
++        if (i < cursorInInt) caretPos += 1;
++      }
++      formatted += rawInt[i];
++      if (i < cursorInInt) caretPos += 1;
++    }
++    return { formattedInt: formatted, caretPos };
++  }, []);
++
++  const normalizeTokenInputWithCaret = useCallback(
++    (value: string, cursor: number | null) => {
++      if (cursor == null) {
++        return { nextValue: normalizeTokenInput(value), nextCaret: null };
++      }
++      let cleaned = '';
++      let cleanedCursor = 0;
++      let hasDot = false;
++      for (let i = 0; i < value.length; i += 1) {
++        const ch = value[i];
++        let keep = false;
++        if (ch >= '0' && ch <= '9') keep = true;
++        if (ch === '.' && !hasDot) {
++          keep = true;
++          hasDot = true;
++        }
++        if (keep) {
++          if (i < cursor) cleanedCursor += 1;
++          cleaned += ch;
++        }
++      }
++      let [rawInt = '', rawDec = ''] = cleaned.split('.');
++      const stripped = rawInt.length - rawInt.replace(/^0+(?=\d)/, '').length;
++      rawInt = rawInt.replace(/^0+(?=\d)/, '');
++      if (stripped > 0 && cleanedCursor <= rawInt.length + stripped) {
++        cleanedCursor = Math.max(0, cleanedCursor - Math.min(stripped, cleanedCursor));
++      }
++      const decPart = rawDec.slice(0, 8);
++      if (hasDot && cleanedCursor > rawInt.length + 1 + decPart.length) {
++        cleanedCursor = rawInt.length + 1 + decPart.length;
++      }
++      const cursorInInt = Math.min(cleanedCursor, rawInt.length);
++      const { formattedInt, caretPos } = formatIntWithCaret(rawInt, cursorInInt);
++      const prefix = formattedInt || (hasDot ? '0' : '');
++      const nextValue = hasDot ? `${prefix}.${decPart}` : prefix;
++      let nextCaret = caretPos;
++      if (hasDot && cleanedCursor > rawInt.length) {
++        const cursorInDec = Math.min(Math.max(cleanedCursor - rawInt.length - 1, 0), decPart.length);
++        nextCaret = prefix.length + 1 + cursorInDec;
++      }
++      return { nextValue, nextCaret };
++    },
++    [formatIntWithCaret, normalizeTokenInput]
++  );
++
++  const parseTokenAmount = useCallback((value: string) => {
++    const cleaned = value.replace(/,/g, '');
++    const parsed = parseFloat(cleaned);
++    return Number.isNaN(parsed) ? 0 : parsed;
++  }, []);
++
++  useLayoutEffect(() => {
++    if (tokenCaretRef.current == null || !tokenInputRef.current) return;
++    const pos = tokenCaretRef.current;
++    tokenCaretRef.current = null;
++    tokenInputRef.current.setSelectionRange(pos, pos);
++  }, [tokenAmount]);
+ 
+   const sliceSeriesWithAnchor = useCallback(
+     (src: { date: string; price: number }[]) => {
+
+@@ -1972,13 +2183,11 @@
+     const nextWord =
+       percentageIncrease > 0 ? 'Bull Market' : displayIsLiquidMode ? 'Bear Market' : 'Sloth Market';
+ 
+-    // Initialize once we have the first computed word.
+     if (!marketWordText) {
+       setMarketWordText(nextWord);
+       return;
+     }
+ 
+-    // Range-click fade: hide first (triggered in the onClick), then swap text, then fade back in.
+     if (rangeClickFadeRef.current) {
+       rangeClickFadeRef.current = false;
+       if (marketWordTimerRef.current != null) {
+
+@@ -1993,7 +2202,6 @@
+       return;
+     }
+ 
+-    // Non-range changes (e.g. toggle crossing midpoint): update immediately; toggleAlpha fade handles the transition.
+     if (nextWord !== marketWordText) {
+       setMarketWordText(nextWord);
+     }
+
+@@ -2026,223 +2234,11 @@
+     requestAnimationFrame(() => setHeaderNumbersVisible(true));
+   }, [activeMarketCap, assetPrice, chartHistory, displayPoint, history, isLiquidMode, vapa]);
+ 
+-  const chartRanges = useMemo(
+-    () => [
+-      { label: '24 hrs', days: 1 },
+-      { label: '1 wk', days: 7 },
+-      { label: '1 mnth', days: 30 },
+-      { label: '3 mnths', days: 90 },
+-      { label: '1 yr', days: 365 },
+-      { label: 'All', days: null },
+-    ],
+-    []
+-  );
+-
+-  const formatMarketCap = useCallback((value: number | null) => {
+-    if (value == null || Number.isNaN(value)) return '0';
+-    return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+-  }, []);
+-
+-  const formatPercent = useCallback((value: number) => {
+-    const sign = value > 0 ? '+' : '';
+-    return `${sign}${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+-  }, []);
+-  const filteredTotals = useMemo(() => {
+-    if (!selectedRangeDays) {
+-      return displayTotals;
+-    }
+-    if (rangeHistoricalPrice == null) {
+-      return displayTotals;
+-            }
+-    const rangeStart = Date.now() - selectedRangeDays * 24 * 60 * 60 * 1000;
+-    return investments.reduce(
+-      (acc: { acVatop: number; acdVatop: number; acVact: number; acVactTaa: number }, entry: any) => {
+-        const amount = Number(entry.cVactTaa) || 0;
+-        const currentModeSpot = displayIsLiquidMode ? assetPrice : vapa;
+-        const currentValue = displayIsLiquidMode
+-          ? Number(entry.lCVact ?? entry.rCVact) || amount * (currentModeSpot || 0)
+-          : Number(entry.cVact) || amount * (currentModeSpot || 0);
+-        const purchaseTime = entry?.date ? new Date(entry.date).getTime() : null;
+-        const hasValidPurchaseTime = typeof purchaseTime === 'number' && !Number.isNaN(purchaseTime);
+-        const pastValue =
+-          hasValidPurchaseTime && purchaseTime > rangeStart
+-            ? displayIsLiquidMode
+-              ? Number(entry.lCVatop ?? entry.rCVatop) || amount * ((entry.lCpVatop ?? entry.rCpVatop) || rangeHistoricalPrice)
+-              : Number(entry.cVatop) || amount * (entry.cpVatop || rangeHistoricalPrice)
+-            : amount * rangeHistoricalPrice;
+-
+-        acc.acVatop += pastValue;
+-        acc.acVact += currentValue;
+-        acc.acdVatop += currentValue - pastValue;
+-        acc.acVactTaa += amount;
+-        return acc;
+-      },
+-      { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 }
+-    );
+-  }, [investments, rangeHistoricalPrice, selectedRangeDays, displayTotals, vapa, isLiquidMode, assetPrice]);
+-  const summaryTotals = summaryTotalsSnapshot ?? filteredTotals;
+-  const summaryRangePrice = summaryRangePriceSnapshot ?? rangeHistoricalPrice;
+-
+-  const animateNumberHeight = useCallback(
+-    (
+-      ref: React.RefObject<HTMLDivElement>,
+-      setHeight: React.Dispatch<React.SetStateAction<number | null>>,
+-      prevRef: React.MutableRefObject<number | null>,
+-      timerRef: React.MutableRefObject<ReturnType<typeof globalThis.setTimeout> | null>
+-    ) => {
+-      const node = ref.current;
+-      if (!node) return;
+-      const next = Math.ceil(node.getBoundingClientRect().height);
+-      if (next <= 0) {
+-        prevRef.current = next;
+-        return;
+-      }
+-      const prev = prevRef.current;
+-      prevRef.current = next;
+-      if (prev == null) {
+-        setHeight(0);
+-        requestAnimationFrame(() => {
+-          requestAnimationFrame(() => {
+-            setHeight(next);
+-          });
+-        });
+-      } else {
+-        if (prev === next) return;
+-        setHeight(prev);
+-        requestAnimationFrame(() => {
+-          requestAnimationFrame(() => {
+-            setHeight(next);
+-          });
+-        });
+-      }
+-      if (timerRef.current) {
+-        globalThis.clearTimeout(timerRef.current);
+-        timerRef.current = null;
+-      }
+-      timerRef.current = globalThis.setTimeout(() => {
+-        timerRef.current = null;
+-        setHeight(null);
+-      }, 2000);
+-    },
+-    []
+-  );
+   useEffect(() => {
+-    if (liveInvestments.length > 0) {
+-      lastNonEmptyTotalsRef.current = filteredTotals;
+-      lastNonEmptyRangePriceRef.current = rangeHistoricalPrice ?? null;
+-    }
+-  }, [liveInvestments.length, filteredTotals, rangeHistoricalPrice]);
+-
+-  useLayoutEffect(() => {
+-    animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValuePrevRef, purchasedValueTimerRef);
+-  }, [animateNumberHeight, summaryTotals.acVatop]);
+-
+-  useLayoutEffect(() => {
+-    animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValuePrevRef, currentValueTimerRef);
+-  }, [animateNumberHeight, summaryTotals.acVact]);
+-
+-  useLayoutEffect(() => {
+-    animateNumberHeight(profitValueRef, setProfitValueHeight, profitValuePrevRef, profitValueTimerRef);
+-  }, [animateNumberHeight, summaryTotals.acVatop, summaryTotals.acVact, summaryTotals.acVactTaa, summaryRangePrice, selectedRangeDays]);
+-
+-  const formatCurrency = useCallback((value: number) => {
+-    const abs = Math.abs(value);
+-    const decimals = abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
+-    return value.toLocaleString('en-US', {
+-      minimumFractionDigits: decimals,
+-      maximumFractionDigits: decimals
+-    });
+-  }, []);
+-
+-  const normalizeTokenInput = useCallback((value: string) => {
+-    const cleaned = value.replace(/,/g, '').replace(/[^\d.]/g, '');
+-    const hasDot = cleaned.includes('.');
+-    const [rawInt = '', rawDec = ''] = cleaned.split('.');
+-    const intPart = rawInt.replace(/^0+(?=\d)/, '');
+-    const decPart = rawDec.slice(0, 8);
+-    const formattedInt = intPart ? intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
+-    const prefix = formattedInt || (hasDot ? '0' : '');
+-    return hasDot ? `${prefix}.${decPart}` : prefix;
+-  }, []);
+-
+-  const formatIntWithCaret = useCallback((rawInt: string, cursorInInt: number) => {
+-    let formatted = '';
+-    let caretPos = 0;
+-    for (let i = 0; i < rawInt.length; i += 1) {
+-      const remaining = rawInt.length - i;
+-      if (i > 0 && remaining % 3 === 0) {
+-        formatted += ',';
+-        if (i < cursorInInt) caretPos += 1;
+-      }
+-      formatted += rawInt[i];
+-      if (i < cursorInInt) caretPos += 1;
+-    }
+-    return { formattedInt: formatted, caretPos };
+-  }, []);
+-
+-  const normalizeTokenInputWithCaret = useCallback(
+-    (value: string, cursor: number | null) => {
+-      if (cursor == null) {
+-        return { nextValue: normalizeTokenInput(value), nextCaret: null };
+-      }
+-      let cleaned = '';
+-      let cleanedCursor = 0;
+-      let hasDot = false;
+-      for (let i = 0; i < value.length; i += 1) {
+-        const ch = value[i];
+-        let keep = false;
+-        if (ch >= '0' && ch <= '9') keep = true;
+-        if (ch === '.' && !hasDot) {
+-          keep = true;
+-          hasDot = true;
+-        }
+-        if (keep) {
+-          if (i < cursor) cleanedCursor += 1;
+-          cleaned += ch;
+-        }
+-      }
+-      let [rawInt = '', rawDec = ''] = cleaned.split('.');
+-      const stripped = rawInt.length - rawInt.replace(/^0+(?=\d)/, '').length;
+-      rawInt = rawInt.replace(/^0+(?=\d)/, '');
+-      if (stripped > 0 && cleanedCursor <= rawInt.length + stripped) {
+-        cleanedCursor = Math.max(0, cleanedCursor - Math.min(stripped, cleanedCursor));
+-      }
+-      const decPart = rawDec.slice(0, 8);
+-      if (hasDot && cleanedCursor > rawInt.length + 1 + decPart.length) {
+-        cleanedCursor = rawInt.length + 1 + decPart.length;
+-      }
+-      const cursorInInt = Math.min(cleanedCursor, rawInt.length);
+-      const { formattedInt, caretPos } = formatIntWithCaret(rawInt, cursorInInt);
+-      const prefix = formattedInt || (hasDot ? '0' : '');
+-      const nextValue = hasDot ? `${prefix}.${decPart}` : prefix;
+-      let nextCaret = caretPos;
+-      if (hasDot && cleanedCursor > rawInt.length) {
+-        const cursorInDec = Math.min(Math.max(cleanedCursor - rawInt.length - 1, 0), decPart.length);
+-        nextCaret = prefix.length + 1 + cursorInDec;
+-      }
+-      return { nextValue, nextCaret };
+-    },
+-    [formatIntWithCaret, normalizeTokenInput]
+-  );
+-
+-  const parseTokenAmount = useCallback((value: string) => {
+-    const cleaned = value.replace(/,/g, '');
+-    const parsed = parseFloat(cleaned);
+-    return Number.isNaN(parsed) ? 0 : parsed;
+-  }, []);
+-
+-  useLayoutEffect(() => {
+-    if (tokenCaretRef.current == null || !tokenInputRef.current) return;
+-    const pos = tokenCaretRef.current;
+-    tokenCaretRef.current = null;
+-    tokenInputRef.current.setSelectionRange(pos, pos);
+-  }, [tokenAmount]);
+-
+-  useEffect(() => {
+     let isMounted = true;
+     const loadMock = async () => {
+       try {
+-        const resp = await axios.get('/api/assets/crypto/bitcoin/bitcoinMockPortfolio');
++        const resp = await axios.get('/api/assets/crypto/ethereum/ethereumMockPortfolio');
+         const portfolio = Array.isArray(resp.data?.portfolio) ? resp.data.portfolio : [];
+         if (isMounted) {
+           setMockEntries(portfolio);
+
+@@ -2615,13 +2611,13 @@
+     try {
+       let refreshed: any = null;
+       if (isSignedIn) {
+-        await addEmailInvestments('bitcoin', [newInvestment]);
+-        const params = new URLSearchParams({ email, asset: 'bitcoin' });
++        await addEmailInvestments('ethereum', [newInvestment]);
++        const params = new URLSearchParams({ email, asset: 'ethereum' });
+         const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
+         refreshed = await res.json();
+       } else {
+-        await addVavityAggregator(sessionId, [newInvestment], 'bitcoin');
+-        refreshed = await fetchVavityAggregator(sessionId, 'bitcoin');
++        await addVavityAggregator(sessionId, [newInvestment], 'ethereum');
++        refreshed = await fetchVavityAggregator(sessionId, 'ethereum');
+       }
+       const refreshedInvestments = Array.isArray(refreshed?.investments)
+         ? refreshed.investments.map((entry: any) => ({ ...entry }))
+
+@@ -2713,8 +2709,8 @@
+     try {
+       setVavityData((prev: any) => (prev ? { ...prev, investments: updated } : prev));
+       if (isSignedIn) {
+-        await saveEmailInvestmentsForAsset('bitcoin', updated);
+-        const params = new URLSearchParams({ email, asset: 'bitcoin' });
++        await saveEmailInvestmentsForAsset('ethereum', updated);
++        const params = new URLSearchParams({ email, asset: 'ethereum' });
+         const res = await fetch(`/api/user/fetchUserVavityAggregator?${params.toString()}`);
+         const refreshed = await res.json();
+         if (debugDelete && lastDeletedSignatureRef.current && Array.isArray(refreshed?.investments)) {
+
+@@ -2775,6 +2771,23 @@
+     }, 2000);
+   }, []);
+ 
++  useEffect(() => {
++    return () => {
++      if (submitCollapseTimerRef.current) {
++        globalThis.clearTimeout(submitCollapseTimerRef.current);
++        submitCollapseTimerRef.current = null;
++      }
++      if (summaryQuickFadeTimerRef.current) {
++        globalThis.clearTimeout(summaryQuickFadeTimerRef.current);
++        summaryQuickFadeTimerRef.current = null;
++      }
++      if (summaryQuickFadeEndRef.current) {
++        globalThis.clearTimeout(summaryQuickFadeEndRef.current);
++        summaryQuickFadeEndRef.current = null;
++      }
++    };
++  }, []);
++
+   const renderAddForm = (label: string, onClose: () => void, buttonClass: string) => {
+     const purchasedValue =
+       tokenAmount && purchaseDate && historicalPrice != null
+
+@@ -2784,7 +2797,6 @@
+     const currentValue = tokenAmount ? formatCurrency(formCVatop) : '0.00';
+ 
+     const profitRow = (() => {
+-      // Keep `$` aligned with other rows (e.g. Current Value) even while the value is still loading/empty.
+       if (!tokenAmount) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
+       if (purchaseDate && historicalPrice == null) return { title: 'Profits/Losses', prefix: '$', value: '0.00' };
+       const currentModePrice = displayIsLiquidMode ? assetPrice : vapa;
+
+@@ -2804,16 +2816,16 @@
+       <div className="asset-invest-form">
+         <div className="asset-submit-form">
+           <div className="asset-metric-row asset-invest-form-heading">
+-            <span className="asset-metric-title--bitcoin" style={{ fontWeight: 800 }}>
++            <span className="asset-metric-title--ethereum" style={{ fontWeight: 800 }}>
+               {label}
+             </span>
+           </div>
+ 
+-          <div className="asset-invest-form-body asset-invest-form-body--bitcoin">
+-            <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--bitcoin">
++          <div className="asset-invest-form-body asset-invest-form-body--ethereum">
++            <div className="asset-invest-form-metrics-panel asset-invest-form-metrics-panel--ethereum">
+               <div className="asset-invest-form-metrics">
+                 <div className="asset-metric-row asset-invest-form-row">
+-                  <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">Purchased Value</span>
++                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title">Purchased Value</span>
+                   <span
+                     className={`asset-money-wrap asset-profit-range-anim${
+                       formValuesHidden || formCalcHidden ? ' is-hidden' : ''
+
+@@ -2836,7 +2848,7 @@
+                 </div>
+ 
+                 <div className="asset-metric-row asset-invest-form-row">
+-                  <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">Current Value</span>
++                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title">Current Value</span>
+                   <span
+                     className={`asset-money-wrap asset-profit-range-anim${formValuesHidden ? ' is-hidden' : ''}`}
+                     style={{
+
+@@ -2857,7 +2869,7 @@
+                 </div>
+ 
+                 <div className="asset-metric-row asset-invest-form-row">
+-                  <span className="asset-metric-title--bitcoin asset-invest-form-metric-title">{profitRow.title}</span>
++                  <span className="asset-metric-title--ethereum asset-invest-form-metric-title">{profitRow.title}</span>
+                   <span
+                     className={`asset-money-wrap asset-profit-range-anim${
+                       formValuesHidden || formCalcHidden ? ' is-hidden' : ''
+
+@@ -2868,7 +2880,7 @@
+                     }}
+                   >
+                     {profitRow.prefix ? (
+-                      <span className="asset-metric-inline-symbol--bitcoin">{profitRow.prefix}</span>
++                      <span className="asset-metric-inline-symbol--ethereum">{profitRow.prefix}</span>
+                     ) : null}
+                     <span className="asset-metric-value">{renderDecimalSafe(profitRow.value)}</span>
+                   </span>
+
+@@ -2883,14 +2895,14 @@
+               </div>
+             </div>
+ 
+-            <div className="asset-invest-form-controls asset-invest-form-controls--bitcoin">
++            <div className="asset-invest-form-controls asset-invest-form-controls--ethereum">
+               <div className="asset-invest-form-field">
+                 <div className="asset-metric-row asset-invest-form-field-label">
+-                  <span className="asset-metric-title--bitcoin">Bitcoin amount</span>
++                  <span className="asset-metric-title--ethereum">Ethereum amount</span>
+                 </div>
+                 <div className="asset-invest-form-field-control">
+                   <input
+-                    className="asset-invest-input asset-invest-input--bitcoin"
++                    className="asset-invest-input asset-invest-input--ethereum"
+                     type="text"
+                     inputMode="decimal"
+                     pattern="^[0-9]*\\.?[0-9]*$"
+
+@@ -3059,22 +3071,23 @@
+               <circle cx="30" cy="30" r="26" />
+             </svg>
+             <Image
+-              className="asset-submit-loader-icon asset-submit-loader-icon--bitcoin"
+-              alt="Bitcoin"
++              className="asset-submit-loader-icon"
++              alt="Ethereum"
+               width={29}
+               height={30}
+-              src="/images/assets/crypto/Bitcoin.svg"
++              style={{ transform: 'translate(0.2px, -0.3px)', opacity: 1 }}
++              src="/images/assets/crypto/Ethereum.svg"
+             />
+           </div>
+         </div>
+       )}
+-      <div className="asset-page-content asset-page-content--bitcoin page-slide-down">
++      <div className="asset-page-content asset-page-content--ethereum page-slide-down">
+       <div
+-        className="asset-panel asset-panel--bitcoin asset-header-panel asset-section-slide"
++        className="asset-panel asset-panel--ethereum asset-header-panel asset-section-slide"
+         ref={headerPanelRef}
+       >
+         <div className="asset-section-header">
+-          <div className="asset-header-title">Bitcoin</div>
++          <div className="asset-header-title">Ethereum</div>
+           <div
+             className={`asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}
+             ref={sloganRef}
+
+@@ -3083,37 +3096,37 @@
+           </div>
+         </div>
+         <div
+-          className="asset-panel asset-panel--bitcoin asset-price-chart-row asset-price-chart-row--combined"
++          className="asset-panel asset-panel--ethereum asset-price-chart-row asset-price-chart-row--combined"
+           style={{ overflow: 'visible' }}
+       >
+           <div
+-            className="asset-price-panel asset-price-panel--bitcoin asset-section-slide"
++            className="asset-price-panel asset-price-panel--ethereum asset-section-slide"
+             style={{
+               padding: '30px',
+               background: 'transparent',
+               alignSelf: 'flex-start',
+               display: 'flex',
+               flexDirection: 'column',
+-              gap: '10px'
+-        }}
+-      >
++              gap: '8px'
++            }}
++          >
+             <Link
+-              className="asset-home-button asset-home-button--section asset-home-button--bitcoin"
+-              href="https://bitcoin.org/en/"
++              className="asset-home-button asset-home-button--section asset-home-button--ethereum"
++              href="https://ethereum.org/"
+               target="_blank"
+               rel="noreferrer"
+             >
+               <Image
+-                className="asset-home-icon asset-home-icon--bitcoin"
+-                alt="Bitcoin"
++                className="asset-home-icon asset-home-icon--ethereum"
++                alt="Ethereum"
+                 width={37}
+                 height={37}
+-                src="/images/assets/crypto/Bitcoin.svg"
++                src="/images/assets/crypto/Ethereum.svg"
+               />
+             </Link>
+             <div className="asset-metric-row">
+-              <span className="asset-metric-title--bitcoin">Price:</span>
+-              <span className={`asset-metric-symbol--bitcoin asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
++              <span className="asset-metric-title--ethereum">Price:</span>
++              <span className={`asset-metric-symbol--ethereum asset-mount-fade-2s${headerNumbersVisible ? ' is-visible' : ''}`}>
+                 $
+               </span>
+               <span className="asset-header-switch-fade" style={realityFadeStyle}>
+
+@@ -3161,10 +3174,10 @@
+               </span>
+             </div>
+             <div
+-              className="asset-panel asset-panel--bitcoin asset-section-slide asset-market-controls"
++              className="asset-panel asset-panel--ethereum asset-section-slide asset-market-controls"
+             >
+               <div className="asset-market-controls-header">
+-                <div className="asset-profit-summary asset-profit-summary--bitcoin" style={{ marginBottom: 0 }}>
++                <div className="asset-profit-summary asset-profit-summary--ethereum" style={{ marginBottom: 0 }}>
+                   <div className="asset-metric-inline-row">
+                     {(() => {
+                       const rawLabel = chartRanges.find((r) => r.days === chartRangeDays)?.label ?? 'All';
+
+@@ -3212,7 +3226,7 @@
+                     <button
+                       key={range.label}
+                       type="button"
+-                      className={`asset-range-button asset-range-button--bitcoin${isActive ? ' is-active' : ''}`}
++                      className={`asset-range-button asset-range-button--ethereum${isActive ? ' is-active' : ''}`}
+                       disabled={isActive}
+                       onClick={() => {
+                         if (isActive) return;
+
+@@ -3233,27 +3247,27 @@
+ 
+           <div className="asset-chart-wrap" ref={chartWrapRef}>
+           <div
+-              className="asset-panel asset-panel--bitcoin asset-section-slide asset-chart-panel asset-chart-panel--bitcoin"
++              className="asset-panel asset-panel--ethereum asset-section-slide asset-chart-panel asset-chart-panel--ethereum"
+             style={{
+-              padding: '0px',
++                padding: '0px',
+                 position: 'relative',
+                 height: `${chartPanelHeight}px`
+             }}
+           >
+             {chartHoverPoint != null && displayPoint && (
+-                <div className="asset-chart-date-badge asset-chart-date-badge--bitcoin">
+-                <span className="asset-metric-inline-title--bitcoin">Date:</span>{' '}
+-                <span className="asset-metric-inline-value">{new Date(displayPoint.date).toLocaleDateString('en-US')}</span>
++                <div className="asset-chart-date-badge asset-chart-date-badge--ethereum">
++                  <span className="asset-metric-inline-title--ethereum">Date:</span>{' '}
++                  <span className="asset-metric-inline-value">{new Date(displayPoint.date).toLocaleDateString('en-US')}</span>
+               </div>
+             )}
+               <div className={`asset-chart-loader${chartReady && !forceChartLoader ? ' is-hidden' : ''}`}>
+                 <div
+                   className="asset-chart-loader-ring"
+-                  style={{ borderColor: 'rgba(248, 141, 0, 0.1)', borderTopColor: 'rgba(248, 141, 0, 0.4)' }}
++                  style={{ borderColor: 'rgba(107, 114, 168, 0.1)', borderTopColor: 'rgba(107, 114, 168, 0.4)' }}
+                 >
+                   <div
+                     className="asset-chart-loader-spinner"
+-                    style={{ borderColor: 'rgba(248, 141, 0, 0.1)', borderTopColor: 'rgba(248, 141, 0, 0.4)' }}
++                    style={{ borderColor: 'rgba(107, 114, 168, 0.1)', borderTopColor: 'rgba(107, 114, 168, 0.4)' }}
+                   />
+                 </div>
+               </div>
+
+@@ -3301,8 +3313,8 @@
+               </div>
+             </div>
+ 
+-          <div className="asset-panel asset-panel--bitcoin asset-reality-toggle-shell">
+-            <div className="asset-reality-toggle-row asset-reality-toggle-row--bitcoin">
++          <div className="asset-panel asset-panel--ethereum asset-reality-toggle-shell">
++            <div className="asset-reality-toggle-row asset-reality-toggle-row--ethereum">
+               <span className={`asset-reality-toggle-label${displayIsLiquidMode ? ' is-active' : ''}`}>Liquid</span>
+               <button
+                 type="button"
+
+@@ -3436,7 +3446,7 @@
+           </div>
+ 
+       <div
+-        className={`asset-panel asset-panel--bitcoin asset-portfolio-center asset-section-slide${
++        className={`asset-panel asset-panel--ethereum asset-portfolio-center asset-section-slide${
+           summaryOpen && !isClearingInvestments ? ' asset-portfolio-center--summary-open' : ''
+         }${summaryAnimating ? ' asset-portfolio-center--summary-animating' : ''}`}
+         style={{ 
+
+@@ -3451,70 +3461,74 @@
+             <div
+               ref={emptyActionsRef}
+               className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
+-                style={hideEmptyActionsOnSubmit ? { display: 'none' } : undefined}
+-            >
+-              <div
+-                className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
+-              >
+-                <button
+-                  className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
+-                  disabled={showEmptyAddForm || emptyAddHiding}
+-                  style={{
+-                    ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
+-                  }}
+-                  onClick={() => {
+-                    suppressPortfolioCta();
+-                    if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
+-                    clearEmptyButtonsSequenceTimers();
+-
+-                    // 1) Collapse Sign In button first
+-                    setEmptySigninHiding(true);
+-                    setEmptySigninGone(false);
+-                    // Keep Add Investments visible until step 2
+-                    setEmptyAddHiding(false);
+-                    setEmptyAddGone(false);
+-
+-                    emptyButtonsSequenceTimersRef.current.push(
+-                      globalThis.setTimeout(() => {
+-                        // 2) Then collapse Add Investments button
+-                        setEmptyAddHiding(true);
+-                      }, 500)
+-                    );
+-
+-                    // 3) Start opening the add form immediately (do NOT wait for Sign In to finish collapsing).
+-                    setShowEmptyAddForm(true);
+-                    setShowAddForm(true);
+-                    setSubmitPhase('idle');
+-                    // Pre-measure panel height before opening so the max-height animation matches "Add more investments".
+-                    requestAnimationFrame(() => {
+-                      const h = addFormBoxRef.current?.scrollHeight ?? 0;
+-                      const next = Math.max(0, h + 24);
+-                      setAddFormPanelHeight((prev) => (prev === next ? prev : next));
+-                      requestAnimationFrame(() => setAddFormOpen(true));
+-                    });
+-                    followScrollHeightDeltaFor(2000);
+-                  }}
+-                >
+-                  Add Investments
+-                </button>
+-              </div>
+-              {!isSignedIn && !email && (
++              style={
++                hideEmptyActionsOnSubmit
++                  ? { display: 'none' }
++                  : undefined
++              }
++            >
+                 <div
+-                  className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
++                  className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
+                 >
+                   <button
+-                    type="button"
+-                    className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
++                    className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
++                    disabled={showEmptyAddForm || emptyAddHiding}
+                     style={{
+-                      opacity: emptySigninHiding ? 0 : 1,
+-                      transition: 'opacity 3s ease, transform 0.2s ease',
++                      ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
+                     }}
+-                    onClick={openSignIn}
++                    onClick={() => {
++                      suppressPortfolioCta();
++                      if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
++                      clearEmptyButtonsSequenceTimers();
++
++                      // 1) Collapse Sign In first
++                      setEmptySigninHiding(true);
++                      setEmptySigninGone(false);
++
++                      // 2) After it's done, collapse Add Investments
++                      setEmptyAddHiding(false);
++                      setEmptyAddGone(false);
++
++                      emptyButtonsSequenceTimersRef.current.push(
++                        globalThis.setTimeout(() => {
++                          setEmptyAddHiding(true);
++                        }, 500)
++                      );
++
++                      // 3) Start opening the add form immediately (do NOT wait for Sign In to finish collapsing).
++                      setShowEmptyAddForm(true);
++                      setShowAddForm(true);
++                      setSubmitPhase('idle');
++                      // Pre-measure panel height before opening so the max-height animation matches "Add more investments".
++                      requestAnimationFrame(() => {
++                        const h = addFormBoxRef.current?.scrollHeight ?? 0;
++                        const next = Math.max(0, h + 24);
++                        setAddFormPanelHeight((prev) => (prev === next ? prev : next));
++                        requestAnimationFrame(() => setAddFormOpen(true));
++                      });
++                      followScrollHeightDeltaFor(2000);
++                    }}
+                   >
+-                  <span className="asset-save-signin-text">Sign In to Save Investments</span>
++                    Add Investments
+                   </button>
+                 </div>
+-              )}
++                {!isSignedIn && !email && (
++                  <div
++                    className={`asset-empty-signin${emptySigninHiding ? ' is-hidden' : ''}${emptySigninGone ? ' is-gone' : ''}`}
++                  >
++                    <button
++                      type="button"
++                      className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
++                      style={{
++                        opacity: emptySigninHiding ? 0 : 1,
++                        transition: 'opacity 3s ease, transform 0.2s ease',
++                      }}
++                      onClick={openSignIn}
++                    >
++                    <span className="asset-save-signin-text">Sign In to Save Investments</span>
++                    </button>
++                  </div>
++                )}
+             </div>
+           </>
+         ) : (
+
+@@ -3523,7 +3537,7 @@
+                 (summary + add-more + sign-in/show + list) without changing the visual section layout. */}
+             <div
+               ref={investmentsWholePanelRef}
+-              className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-bitcoin' : ''}`}
++              className={`asset-slide-panel${isClearingInvestments ? ' asset-slide-panel--clearing asset-slide-panel--clearing-ethereum' : ''}`}
+               style={{
+                 maxHeight: isClearingInvestments ? clearingHeightPx : investmentsWholeMaxHeight,
+                 transition: isClearingInvestments ? 'max-height 2s ease' : investmentsWholeTransition,
+
+@@ -3538,7 +3552,7 @@
+                   </h2>
+                 )}
+                 <div
+-                  className={`asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin${
++                  className={`asset-portfolio-summary-box asset-portfolio-summary-box--ethereum${
+                     summaryQuickFade ? ' is-quickfade' : ''
+                   }`}
+                 >
+
+@@ -3592,17 +3606,16 @@
+                       transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : undefined,
+                     }}
+                   >
+-                    <span className="asset-metric-symbol--bitcoin">$</span>
++                    <span className="asset-metric-symbol--ethereum">$</span>
+                     <span className="asset-metric-value">{renderDecimalSafe(formatCurrency(summaryTotals.acVact || 0))}</span>
+                   </span>
+                 </div>
+             </div>
+               <div
+-                className="asset-panel asset-panel--bitcoin asset-profit-block asset-slide-in asset-section-slide"
+-                style={{ 
+-                  padding: '20px 20px 20px', marginBottom: '10px', width: '92%', marginLeft: 'auto', marginRight: 'auto' }}
++                className="asset-panel asset-panel--ethereum asset-profit-block asset-slide-in asset-section-slide"
++                style={{ padding: '20px 20px 20px', marginBottom: '10px', width: '92%', marginLeft: 'auto', marginRight: 'auto' }}
+               >
+-                <div className="asset-profit-summary asset-profit-summary--bitcoin">
++                <div className="asset-profit-summary asset-profit-summary--ethereum">
+                   <div className="asset-metric-inline-row">
+                 {(() => {
+                       const formatRangeLabel = (days: number | null) => {
+
+@@ -3733,46 +3746,46 @@
+                           window.setTimeout(() => setProfitValueHidden(false), 350);
+                         }
+                       }}
+-                        className={`asset-range-button asset-range-button--bitcoin${isActive ? ' is-active' : ''}`}
++                        className={`asset-range-button asset-range-button--ethereum${isActive ? ' is-active' : ''}`}
+                     >
+                       {range.label}
+                     </button>
+                   );
+                 })}
+               </div>
+-          </div>
+-              <div className="asset-portfolio-actions asset-portfolio-actions--add">
+-                <button
+-                  className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-add${
+-                    addMorePulse ? ' asset-action-button--pulse' : ''
+-                  }`}
+-                  onClick={() => {
+-                    suppressPortfolioCta();
+-                    triggerAddMorePulse();
+-                    if (addMoreOpen) {
+-                      setAddMoreOpen(false);
+-                      return;
+-                    }
+-                    setSubmitPhase('idle');
+-                    setShowAddMoreForm(true);
+-                    setTimeout(() => setAddMoreOpen(true), 0);
+-                    followScrollHeightDeltaFor(2000);
+-                  }}
+-                >
+-                  {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
+-                </button>
+-              </div>
+-              {showAddMoreForm && (
++            </div>
++                <div className="asset-portfolio-actions asset-portfolio-actions--add">
++                  <button
++                    className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-add${
++                      addMorePulse ? ' asset-action-button--pulse' : ''
++                    }`}
++                    onClick={() => {
++                      suppressPortfolioCta();
++                      triggerAddMorePulse();
++                      if (addMoreOpen) {
++                        setAddMoreOpen(false);
++                        return;
++                      }
++                      setSubmitPhase('idle');
++                      setShowAddMoreForm(true);
++                      setTimeout(() => setAddMoreOpen(true), 0);
++                      followScrollHeightDeltaFor(2000);
++                    }}
++                  >
++                    {addMoreOpen ? 'Hide add more investments' : 'Add more investments'}
++                  </button>
++                </div>
++                {showAddMoreForm && (
+                 <div
+                   ref={addMoreFormPanelRef}
+                   className={`asset-slide-panel asset-slide-panel--form${addMoreOpen ? ' is-open' : ''}`}
+                   style={{
+-                    maxHeight:
++                      maxHeight:
+                       (submitTargetSnapshot ?? submitTargetRef.current) === 'addMore' && submitPanelMaxHeight != null
+-                        ? `${submitPanelMaxHeight}px`
+-                        : addMoreOpen
+-                          ? `${Math.max(600, addMoreFormPanelHeight)}px`
+-                          : '0px',
++                          ? `${submitPanelMaxHeight}px`
++                          : addMoreOpen
++                            ? `${Math.max(600, addMoreFormPanelHeight)}px`
++                            : '0px',
+                     transition:
+                       (submitTargetSnapshot ?? submitTargetRef.current) === 'addMore' && submitPanelMaxHeight != null
+                         ? 'max-height 2s ease'
+
+@@ -3781,43 +3794,47 @@
+                       (submitTargetSnapshot ?? submitTargetRef.current) === 'addMore' && submitPanelMaxHeight != null
+                         ? 'hidden'
+                         : undefined,
+-                  }}
+-                >
+-                  <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
+-                    <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
+-                      {renderAddForm(
+-                        'Add more investments',
+-                        closeAddMoreForm,
+-                        'asset-action-button asset-action-button--bitcoin'
+-                      )}
+-        <div ref={emptyActionsMeasureRef} className="asset-empty-actions asset-empty-actions--measure" aria-hidden="true">
+-          <div className="asset-empty-addinvest">
+-            <button
+-              className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-add asset-action-button--add-investments"
+-              type="button"
+-              disabled
+-              tabIndex={-1}
+-            >
+-              Add Investments
+-            </button>
+-          </div>
+-          {!isSignedIn && !email && (
+-            <div className="asset-empty-signin">
+-              <button
+-                type="button"
+-                className="asset-action-button asset-action-button--save-signin"
+-                disabled
+-                tabIndex={-1}
+-              >
+-                    <span className="asset-save-signin-text">Sign In to Save Investments</span>
+-              </button>
+-            </div>
+-          )}
+-        </div>
++                    }}
++                  >
++                    <div ref={addMoreFormBoxRef} className="asset-slide-panel-inner">
++                      <div className="asset-invest-form-box asset-invest-form-box--ethereum">
++                        {renderAddForm(
++                          'Add more investments',
++                          closeAddMoreForm,
++                        'asset-action-button asset-action-button--ethereum'
++                        )}
++                        <div
++                          ref={emptyActionsMeasureRef}
++                          className="asset-empty-actions asset-empty-actions--measure"
++                          aria-hidden="true"
++                        >
++                          <div className="asset-empty-addinvest">
++                            <button
++                              className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
++                              type="button"
++                              disabled
++                              tabIndex={-1}
++                            >
++                              Add Investments
++                            </button>
++                          </div>
++                          {!isSignedIn && !email && (
++                            <div className="asset-empty-signin">
++                              <button
++                                type="button"
++                                className="asset-action-button asset-action-button--save-signin"
++                                disabled
++                                tabIndex={-1}
++                              >
++                                <span className="asset-save-signin-text">Sign In to Save Investments</span>
++                              </button>
++                            </div>
++                          )}
++                        </div>
++                      </div>
+                     </div>
+                   </div>
+-                </div>
+-              )}
++                )}
+ 
+                     </div>
+                   </div>
+
+@@ -3825,285 +3842,293 @@
+ 
+                 {/* Bottom actions + investments list stay outside the bordered summary box (unchanged). */}
+                 <div ref={bottomActionsWrapRef}>
+-                {investments.length > 0 && !isSignedIn && !email && (
+-                  <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
++                  {investments.length > 0 && !isSignedIn && !email && (
++                    <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
++                      <button
++                        type="button"
++                        className="asset-action-button asset-action-button--save-signin"
++                        onClick={openSignIn}
++                      >
++                        <span className="asset-save-signin-text">Sign In to Save Investments</span>
++                      </button>
++                    </div>
++                  )}
++
++                  <div
++                    ref={showActionsRef}
++                    className={`asset-portfolio-actions asset-portfolio-actions--show${investmentsListOpen ? ' is-open' : ''}`}
++                  >
+                     <button
+-                      type="button"
+-                      className="asset-action-button asset-action-button--save-signin"
+-                      onClick={openSignIn}
++                      className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-show${
++                        showPulse ? ' asset-action-button--pulse' : ''
++                      }`}
++                      disabled={!investments.length || showMoreDisabled}
++                      onClick={() => {
++                        suppressPortfolioCta();
++                        triggerShowPulse();
++                        if (investmentsListOpen) {
++                          setInvestmentsListOpen(false);
++                          setTimeout(() => {
++                            setVisibleInvestments(3);
++                          }, 2000);
++                          return;
++                        }
++                        setShowInvestmentsList(true);
++                        setTimeout(() => setInvestmentsListOpen(true), 0);
++                        followScrollHeightDeltaFor(2000);
++                      }}
+                     >
+-                      <span className="asset-save-signin-text">Sign In to Save Investments</span>
++                      {investmentsListOpen ? 'Hide more investments' : 'Show more investments'}
+                     </button>
+                   </div>
+-                )}
+ 
+-                <div
+-                  ref={showActionsRef}
+-                  className={`asset-portfolio-actions asset-portfolio-actions--show${investmentsListOpen ? ' is-open' : ''}`}
+-                >
+-                  <button
+-                    className={`asset-action-button asset-action-button--bitcoin asset-action-button--invest-show${
+-                      showPulse ? ' asset-action-button--pulse' : ''
+-                    }`}
+-                    disabled={!investments.length || showMoreDisabled}
+-                    onClick={() => {
+-                      suppressPortfolioCta();
+-                      triggerShowPulse();
+-                      if (investmentsListOpen) {
+-                        setInvestmentsListOpen(false);
+-                        setTimeout(() => {
+-                          setVisibleInvestments(3);
+-                        }, 2000);
+-                        return;
+-                      }
+-                      setShowInvestmentsList(true);
+-                      setTimeout(() => setInvestmentsListOpen(true), 0);
+-                      followScrollHeightDeltaFor(2000);
+-                    }}
+-                  >
+-                  {investmentsListOpen ? 'Hide more investments' : 'Show more investments'}
+-                  </button>
+-                </div>
+-
+-                {showInvestmentsList && (
+-                  <div
+-                    style={{
+-                      maxHeight: investmentsSectionMaxHeight,
+-                      transition: 'max-height 2s ease',
+-                      overflow: 'hidden',
+-                    }}
+-                  >
+-                    <h2 className="asset-investments-header asset-investments-header--more" ref={investmentsListHeaderRef}>
+-                      <span className="asset-portfolio-title-muted">more investments</span>
+-                    </h2>
++                  {showInvestmentsList && (
+                     <div
+-                      className={`asset-investments-wrap asset-investments-wrap--bitcoin asset-slide-panel${
+-                        investmentsListOpen ? ' is-open' : ''
+-                      }`}
+-                      ref={investmentsListWrapRef}
+                       style={{
+-                        maxHeight: investmentsMaxHeight,
+-                        transition: investmentsListOpen
+-                          ? `${
+-                              hasActiveDelete ? 'max-height 0s linear' : 'max-height 2s ease'
+-                            }, border-color 0.2s ease, padding 0.2s ease, margin 0.2s ease, box-shadow 0.2s ease, background 0.2s ease`
+-                          : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
++                        maxHeight: investmentsSectionMaxHeight,
++                        transition: 'max-height 2s ease',
++                        overflow: 'hidden',
+                       }}
+                     >
++                      <h2
++                        className="asset-investments-header asset-investments-header--more"
++                        ref={investmentsListHeaderRef}
++                      >
++                        <span className="asset-portfolio-title-muted">more investments</span>
++                      </h2>
+                       <div
+-                        className="asset-investments-list"
+-                        ref={investmentsListRef}
++                        className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
++                          investmentsListOpen ? ' is-open' : ''
++                        }`}
++                        ref={investmentsListWrapRef}
+                         style={{
+-                          padding: investmentsListOpen ? '12px' : '0px',
+-                          transition: investmentsListOpen ? 'padding 0.2s ease' : 'padding 0.2s ease 2s',
++                          maxHeight: investmentsMaxHeight,
++                          transition: investmentsListOpen
++                            ? `${
++                                hasActiveDelete ? 'max-height 0s linear' : 'max-height 2s ease'
++                              }, border-color 0.2s ease, padding 0.2s ease, margin 0.2s ease, box-shadow 0.2s ease, background 0.2s ease`
++                            : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
+                         }}
+                       >
+-                      {displayInvestments
+-                        .slice(0, visibleInvestments)
+-                        .map((item, visibleIndex) => {
++                        <div
++                          className="asset-investments-list"
++                          ref={investmentsListRef}
++                          style={{
++                            padding: investmentsListOpen ? '12px' : '0px',
++                            transition: investmentsListOpen ? 'padding 0.2s ease' : 'padding 0.2s ease 2s',
++                          }}
++                        >
++                        {displayInvestments
++                          .slice(0, visibleInvestments)
++                          .map((item, visibleIndex) => {
+                           const { entry, id: investmentId, index: idx } = item;
+-                        const amount = entry.cVactTaa ?? 0;
+-                        const isClosing = closingInvestments.includes(investmentId);
+-                        const isCollapsed = collapsedInvestments.includes(investmentId);
+-                        const isDeleting = deletingInvestments.includes(investmentId);
+-                        const isPendingDelete = pendingDeleteInvestments.includes(investmentId);
+-                        const isNew = slowOpenInvestments.includes(investmentId);
+-                        const deleteRowHeight = deleteHeights[investmentId];
+-                        const showTopGap = true;
+-                        const gapSize = showTopGap ? '10px' : '0px';
+-                        const deleteTargetHeight = 150 + (showTopGap ? 10 : 0);
+-                        return (
+-                          <React.Fragment key={investmentId}>
+-                            <div
+-                              ref={(node) => {
+-                                investmentCardRefs.current[investmentId] = node;
+-                              }}
+-                              className={`asset-slide-panel${!isCollapsed || deleteRowHeight != null ? ' is-open' : ''}`}
+-                              style={{
+-                                ['--investment-gap' as any]: gapSize,
+-                                ...(isNew ? { transitionDuration: '3s' } : {}),
+-                                ...(deleteRowHeight != null
+-                                  ? {
+-                                      height: `${deleteRowHeight}px`,
+-                                      maxHeight: `${deleteRowHeight}px`,
+-                                      transition: 'height 3s ease, max-height 3s ease',
+-                                      overflow: 'hidden',
+-                                    }
+-                                  : {}),
+-                              }}
+-                              onTransitionEnd={(event) => {
+-                                if (event.target !== event.currentTarget) return;
+-                                if (event.propertyName !== 'max-height' && event.propertyName !== 'height') return;
+-                                if (!closingInvestments.includes(investmentId)) return;
+-                                finalizeDeleteCollapse(investmentId);
+-                              }}
+-                            >
+-                              {showTopGap && (
+-                                <div className="asset-investment-gap" />
+-                              )}
++                          const amount = entry.cVactTaa ?? 0;
++                          const isClosing = closingInvestments.includes(investmentId);
++                          const isCollapsed = collapsedInvestments.includes(investmentId);
++                          const isDeleting = deletingInvestments.includes(investmentId);
++                          const isPendingDelete = pendingDeleteInvestments.includes(investmentId);
++                          const isNew = slowOpenInvestments.includes(investmentId);
++                          const deleteRowHeight = deleteHeights[investmentId];
++                          const showTopGap = true;
++                          const gapSize = showTopGap ? '10px' : '0px';
++                          const deleteTargetHeight = 150 + (showTopGap ? 10 : 0);
++                          return (
++                            <React.Fragment key={investmentId}>
+                               <div
+-                                className={`asset-panel asset-panel--bitcoin${isPendingDelete ? ' is-pending-delete' : ''}${
+-                                  isDeleting || isPendingDelete ? ' is-deleting' : ''
+-                                }${isClosing ? ' is-closing-delete' : ''}${deleteRowHeight != null ? ' is-delete-transition' : ''}`}
++                                ref={(node) => {
++                                  investmentCardRefs.current[investmentId] = node;
++                                }}
++                                className={`asset-slide-panel${!isCollapsed || deleteRowHeight != null ? ' is-open' : ''}`}
+                                 style={{
+-                                  padding: '12px',
+-                                  boxSizing: 'border-box',
+-                                  height: deleteRowHeight != null ? 'calc(100% - var(--investment-gap, 0px))' : undefined,
++                                  ['--investment-gap' as any]: gapSize,
++                                  ...(isNew ? { transitionDuration: '3s' } : {}),
++                                  ...(deleteRowHeight != null
++                                    ? {
++                                        height: `${deleteRowHeight}px`,
++                                        maxHeight: `${deleteRowHeight}px`,
++                                        transition: 'height 3s ease, max-height 3s ease',
++                                        overflow: 'hidden',
++                                      }
++                                    : {}),
+                                 }}
++                                onTransitionEnd={(event) => {
++                                  if (event.target !== event.currentTarget) return;
++                                  if (event.propertyName !== 'max-height' && event.propertyName !== 'height') return;
++                                  if (!closingInvestments.includes(investmentId)) return;
++                                  finalizeDeleteCollapse(investmentId);
++                                }}
+                               >
+-                              <div
+-                                className={`asset-delete-loader${
+-                                  isPendingDelete || isDeleting || isClosing || deleteRowHeight != null ? ' is-active' : ''
+-                                }`}
+-                              >
++                                {showTopGap && (
++                                  <div className="asset-investment-gap" />
++                                )}
+                                 <div
+-                                  className="asset-delete-loader-spinner"
++                                  className={`asset-panel asset-panel--ethereum${isPendingDelete ? ' is-pending-delete' : ''}${
++                                    isDeleting || isPendingDelete ? ' is-deleting' : ''
++                                  }${isClosing ? ' is-closing-delete' : ''}${deleteRowHeight != null ? ' is-delete-transition' : ''}`}
+                                   style={{
+-                                    borderColor: 'rgba(248, 141, 0, 0.2)',
+-                                    borderTopColor: 'rgba(248, 141, 0, 0.5)',
++                                    padding: '12px',
++                                    boxSizing: 'border-box',
++                                    height: deleteRowHeight != null ? 'calc(100% - var(--investment-gap, 0px))' : undefined,
+                                   }}
+-                                />
+-                              </div>
+-                              <div className="asset-investment-metrics">
+-                                  <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+-                                    <span className="asset-metric-title--bitcoin" style={{ marginTop: 20 }}>
+-                                      Purchased Value
+-                                    </span>
+-                                    <span className="asset-money-wrap">
+-                                      <span className="asset-metric-symbol--bitcoin">$</span>
+-                                      <span className="asset-metric-value">
+-                                        {formatCurrency((isLiquidMode ? (entry.lCVatop ?? entry.rCVatop) : entry.cVatop) ?? 0)}
++                                >
++                                <div
++                                  className={`asset-delete-loader${
++                                    isPendingDelete || isDeleting || isClosing || deleteRowHeight != null ? ' is-active' : ''
++                                  }`}
++                                >
++                                  <div
++                                    className="asset-delete-loader-spinner"
++                                    style={{
++                                      borderColor: 'rgba(107, 114, 168, 0.2)',
++                                      borderTopColor: 'rgba(107, 114, 168, 0.5)',
++                                    }}
++                                  />
++                                </div>
++                                <div className="asset-investment-metrics">
++                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
++                                      <span className="asset-metric-title--ethereum" style={{ marginTop: 20 }}>
++                                        Purchased Value
+                                       </span>
+-                                    </span>
+-                                  </div>
+-                                  <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+-                                    <span className="asset-metric-title--bitcoin">Current Value</span>
+-                                    <span className="asset-money-wrap">
+-                                      <span className="asset-metric-symbol--bitcoin">$</span>
+-                                      <span className="asset-metric-value">
+-                                        {formatCurrency((isLiquidMode ? (entry.lCVact ?? entry.rCVact) : entry.cVact) ?? 0)}
++                                      <span className="asset-money-wrap">
++                                        <span className="asset-metric-symbol--ethereum">$</span>
++                                        <span className="asset-metric-value">
++                                          {formatCurrency(
++                                            (isLiquidMode ? (entry.lCVatop ?? entry.rCVatop) : entry.cVatop) ?? 0
++                                          )}
++                                        </span>
+                                       </span>
+-                                    </span>
+-                                  </div>
+-                                  <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+-                                    {(() => {
+-                                      const value = Number(
+-                                        (isLiquidMode ? (entry.lCdVatop ?? entry.rCdVatop) : entry.cdVatop) ?? 0
+-                                      );
+-                                      const isProfit = value > 0.005;
+-                                      const title = isProfit ? 'Profits' : 'Losses';
+-                                      const prefix = isProfit ? '+$' : '-$';
+-                                      return (
+-                                        <>
+-                                          <span className="asset-metric-title--bitcoin">{title}</span>
+-                                          <span className="asset-money-wrap">
+-                                            <span className="asset-metric-inline-symbol--bitcoin">{prefix}</span>
+-                                            <span className="asset-metric-value">
+-                                              {renderDecimalSafe(formatMoneyFixed(Math.abs(value)))}
++                                    </div>
++                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
++                                      <span className="asset-metric-title--ethereum">Current Value</span>
++                                      <span className="asset-money-wrap">
++                                        <span className="asset-metric-symbol--ethereum">$</span>
++                                        <span className="asset-metric-value">
++                                          {formatCurrency(
++                                            (isLiquidMode ? (entry.lCVact ?? entry.rCVact) : entry.cVact) ?? 0
++                                          )}
++                                        </span>
++                                      </span>
++                                    </div>
++                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
++                                      {(() => {
++                                        const value = Number(
++                                          (isLiquidMode ? (entry.lCdVatop ?? entry.rCdVatop) : entry.cdVatop) ?? 0
++                                        );
++                                        const isProfit = value > 0.005;
++                                        const title = isProfit ? 'Profits' : 'Losses';
++                                        const prefix = isProfit ? '+$' : '-$';
++                                        return (
++                                          <>
++                                            <span className="asset-metric-title--ethereum">{title}</span>
++                                            <span className="asset-money-wrap">
++                                              <span className="asset-metric-inline-symbol--ethereum">{prefix}</span>
++                                              <span className="asset-metric-value">
++                                                {renderDecimalSafe(formatMoneyFixed(Math.abs(value)))}
++                                              </span>
+                                             </span>
+-                                          </span>
+-                                        </>
+-                                      );
+-                                    })()}
+-                                  </div>
+-                                  <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+-                                    <span className="asset-metric-title--bitcoin">Bitcoin amount</span>
+-                                    <span className="asset-metric-value">
+-                                      {Number(amount).toLocaleString('en-US', {
+-                                        minimumFractionDigits: 0,
+-                                        maximumFractionDigits: 8,
+-                                      })}
+-                                    </span>
+-                                  </div>
+-                                  <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
+-                                    <span className="asset-metric-title--bitcoin">Date purchased</span>
+-                                    <span className="asset-metric-value">{formatShortDate(entry.date)}</span>
+-                                  </div>
+-                                  <button
+-                                    type="button"
+-                                    className="asset-range-button asset-range-button--bitcoin asset-delete-button asset-investment-delete-button"
+-                                    disabled={deleteLocked}
+-                                    onClick={() => {
+-                                      if (
+-                                        deleteLockRef.current ||
+-                                        closingInvestments.includes(investmentId) ||
+-                                        deletingInvestments.includes(investmentId) ||
+-                                        pendingDeleteInvestments.includes(investmentId)
+-                                      )
+-                                        return;
+-                                      deleteLockRef.current = true;
+-                                      setDeleteLocked(true);
+-                                      setDeleteGhosts((prev) => {
+-                                        if (prev.some((ghost) => ghost.id === investmentId)) return prev;
+-                                        return [...prev, { id: investmentId, entry, index: idx }];
+-                                      });
+-                                      const card = investmentCardRefs.current[investmentId];
+-                                      if (card) {
+-                                        const height = card.getBoundingClientRect().height;
+-                                        setDeleteHeights((prev) => ({ ...prev, [investmentId]: height }));
+-                                        window.requestAnimationFrame(() => {
+-                                          setDeleteHeights((prev) => ({ ...prev, [investmentId]: deleteTargetHeight }));
++                                          </>
++                                        );
++                                      })()}
++                                    </div>
++                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
++                                      <span className="asset-metric-title--ethereum">Ethereum amount</span>
++                                      <span className="asset-metric-value">
++                                        {Number(amount).toLocaleString('en-US', {
++                                          minimumFractionDigits: 0,
++                                          maximumFractionDigits: 8,
++                                        })}
++                                      </span>
++                                    </div>
++                                    <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
++                                      <span className="asset-metric-title--ethereum">Date purchased</span>
++                                      <span className="asset-metric-value">{formatShortDate(entry.date)}</span>
++                                    </div>
++                                    <button
++                                      type="button"
++                                      className="asset-range-button asset-range-button--ethereum asset-delete-button asset-investment-delete-button"
++                                      disabled={deleteLocked}
++                                      onClick={() => {
++                                        if (
++                                          deleteLockRef.current ||
++                                          closingInvestments.includes(investmentId) ||
++                                          deletingInvestments.includes(investmentId) ||
++                                          pendingDeleteInvestments.includes(investmentId)
++                                        )
++                                          return;
++                                        deleteLockRef.current = true;
++                                        setDeleteLocked(true);
++                                        setDeleteGhosts((prev) => {
++                                          if (prev.some((ghost) => ghost.id === investmentId)) return prev;
++                                          return [...prev, { id: investmentId, entry, index: idx }];
+                                         });
+-                                      }
+-                                      setPendingDeleteInvestments((prev) => [...prev, investmentId]);
+-                                      const fadeTimer = window.setTimeout(() => {
+-                                        setPendingDeleteInvestments((prev) => prev.filter((value) => value !== investmentId));
+-                                        setDeletingInvestments((prev) => [...prev, investmentId]);
+-                                        const actionTimer = window.setTimeout(() => {
+-                                          handleDeleteInvestment(investmentId)
+-                                            .catch(() => {
+-                                              // ignore errors
+-                                            })
+-                                            .finally(() => {
+-                                              const expandTimer = window.setTimeout(() => {
+-                                                setDeleteHeights((prev) => ({ ...prev, [investmentId]: 0 }));
+-                                                setClosingInvestments((prev) =>
+-                                                  prev.includes(investmentId) ? prev : [...prev, investmentId]
+-                                                );
+-                                              }, 350);
+-                                              const cleanupTimer = window.setTimeout(() => {
+-                                                finalizeDeleteCollapse(investmentId);
+-                                                pulseSummaryValues();
+-                                              }, 4000);
+-                                              deleteCleanupTimersRef.current[investmentId] = cleanupTimer;
+-                                              deleteCleanupTimersRef.current[`${investmentId}-expand`] = expandTimer;
+-                                            });
+-                                        }, 2000);
+-                                        deleteActionTimersRef.current[investmentId] = actionTimer;
+-                                      }, 1000);
+-                                      deleteFadeTimersRef.current[investmentId] = fadeTimer;
+-                                    }}
+-                                  >
+-                                    Delete
+-                                  </button>
++                                        const card = investmentCardRefs.current[investmentId];
++                                        if (card) {
++                                          const height = card.getBoundingClientRect().height;
++                                          setDeleteHeights((prev) => ({ ...prev, [investmentId]: height }));
++                                          window.requestAnimationFrame(() => {
++                                            setDeleteHeights((prev) => ({ ...prev, [investmentId]: deleteTargetHeight }));
++                                          });
++                                        }
++                                        setPendingDeleteInvestments((prev) => [...prev, investmentId]);
++                                        const fadeTimer = window.setTimeout(() => {
++                                          setPendingDeleteInvestments((prev) =>
++                                            prev.filter((value) => value !== investmentId)
++                                          );
++                                          setDeletingInvestments((prev) => [...prev, investmentId]);
++                                          const actionTimer = window.setTimeout(() => {
++                                            handleDeleteInvestment(investmentId)
++                                              .catch(() => {
++                                                // ignore errors
++                                              })
++                                              .finally(() => {
++                                                const expandTimer = window.setTimeout(() => {
++                                                  setDeleteHeights((prev) => ({ ...prev, [investmentId]: 0 }));
++                                                  setClosingInvestments((prev) =>
++                                                    prev.includes(investmentId) ? prev : [...prev, investmentId]
++                                                  );
++                                                }, 350);
++                                                const cleanupTimer = window.setTimeout(() => {
++                                                  finalizeDeleteCollapse(investmentId);
++                                                }, 4000);
++                                                deleteCleanupTimersRef.current[investmentId] = cleanupTimer;
++                                                deleteCleanupTimersRef.current[`${investmentId}-expand`] = expandTimer;
++                                              });
++                                          }, 2000);
++                                          deleteActionTimersRef.current[investmentId] = actionTimer;
++                                        }, 1000);
++                                        deleteFadeTimersRef.current[investmentId] = fadeTimer;
++                                      }}
++                                    >
++                                      Delete
++                                    </button>
++                                </div>
+                               </div>
+                             </div>
+-                          </div>
+-                          </React.Fragment>
+-                        );
+-                      })}
+-                      {displayInvestments.length > visibleInvestments && (
+-                        <button
+-                          type="button"
+-                          className="asset-action-button asset-action-button--bitcoin asset-action-button--invest-show"
+-                          onClick={() => {
+-                            suppressPortfolioCta();
+-                            setVisibleInvestments((prev) => prev + 3);
+-                            followScrollHeightDeltaFor(2000);
+-                          }}
+-                        >
+-                          Show 3 More
+-                        </button>
+-                      )}
++                            </React.Fragment>
++                          );
++                        })}
++                        {displayInvestments.length > visibleInvestments && (
++                          <button
++                            type="button"
++                            className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show"
++                            onClick={() => {
++                              suppressPortfolioCta();
++                              setVisibleInvestments((prev) => prev + 3);
++                              followScrollHeightDeltaFor(2000);
++                            }}
++                          >
++                            Show 3 More
++                          </button>
++                        )}
++                        </div>
+                       </div>
+                     </div>
+-                  </div>
+-                )}
++                  )}
++                </div>
+               </div>
+-              </div>
+             </div>
+           </>
+-      )}
++        )}
+         {shouldRenderAddForm && (
+           <div
+             ref={addFormPanelRef}
+
+@@ -4123,7 +4148,7 @@
+                   : undefined,
+             }}
+           >
+-            <div className="asset-portfolio-summary-box asset-portfolio-summary-box--bitcoin">
++            <div className="asset-portfolio-summary-box asset-portfolio-summary-box--ethereum">
+               <div
+                 className={`asset-slide-panel asset-slide-panel--form${
+                   addFormOpen || addFormSubmitCollapsing ? ' is-open' : ''
+
+@@ -4134,11 +4159,11 @@
+                 ref={addFormSlidePanelRef}
+               >
+                 <div ref={addFormBoxRef} className="asset-slide-panel-inner">
+-                  <div className="asset-invest-form-box asset-invest-form-box--bitcoin">
++                  <div className="asset-invest-form-box asset-invest-form-box--ethereum">
+                     {renderAddForm(
+                       'Add Investments',
+                       closeAddForm,
+-                      'asset-action-button asset-action-button--bitcoin'
++                      'asset-action-button asset-action-button--ethereum'
+                     )}
+                   </div>
+                 </div>

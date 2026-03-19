@@ -10,8 +10,8 @@ const SESSION_TTL_MS = (() => {
     const parsed = Number(raw);
     if (Number.isFinite(parsed) && parsed > 0) return parsed;
   }
-  // Keep dev sessions alive longer for editing; production stays at 1 minute.
-  return process.env.NODE_ENV === 'production' ? 60_000 : 24 * 60 * 60 * 1000;
+  // Default to 1 minute unless explicitly overridden.
+  return 60_000;
 })();
 const VAPA_KEYS: Record<string, string> = {
   bitcoin: 'vavity/bitcoinVAPA.json',
@@ -179,7 +179,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const existingExpiresAt = typeof existingData?.expiresAt === 'number' ? existingData.expiresAt : null;
     const expired = typeof existingExpiresAt === 'number' && Number.isFinite(existingExpiresAt) && now >= existingExpiresAt;
     const createdAt = expired ? now : existingCreatedAt ?? now;
-    const expiresAt = expired ? now + SESSION_TTL_MS : existingExpiresAt ?? createdAt + SESSION_TTL_MS;
+    // Reset session TTL on every save (session-only behavior).
+    const expiresAt = now + SESSION_TTL_MS;
 
     const vapaData = await loadVapaData(asset);
     const currentPrice = await loadCurrentPrice(asset);

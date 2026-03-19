@@ -295,8 +295,9 @@ const VavityEthereum: React.FC = () => {
   const chartTopPadding = 0;
   const chartBottomPadding = 0;
   const chartProtrusion = 0;
+  const chartExtraPanelHeight = 0;
   const chartHeightAdjusted = Math.max(120, chartHeight - 0);
-  const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartTopPadding + chartBottomPadding;
+  const chartPanelHeight = chartHeightAdjusted + chartProtrusion + chartExtraPanelHeight + chartTopPadding + chartBottomPadding;
   const chartCanvasHeight = chartHeightAdjusted;
   const forceChartLoader = false;
   const scrollToBottom = useCallback((delayMs = 500) => {
@@ -1269,8 +1270,20 @@ const VavityEthereum: React.FC = () => {
           clearInvestmentsAnimTimerRef.current = null;
         }
         clearInvestmentsAnimTimerRef.current = globalThis.setTimeout(() => {
-          // Ensure empty buttons animate in (height down + fade-in) after clearing.
-          triggerEmptyButtonsExpand();
+          // Ensure empty buttons animate in (height down 1s) after clearing.
+          setEmptySigninHiding(true);
+          setEmptySigninGone(false);
+          setEmptyAddHiding(true);
+          setEmptyAddGone(false);
+          if (emptyActionsExpandTimerRef.current) {
+            globalThis.clearTimeout(emptyActionsExpandTimerRef.current);
+            emptyActionsExpandTimerRef.current = null;
+          }
+          setEmptyActionsExpanding(true);
+          emptyActionsExpandTimerRef.current = globalThis.setTimeout(() => {
+            setEmptyActionsExpanding(false);
+            emptyActionsExpandTimerRef.current = null;
+          }, 1000);
           setIsClearingInvestments(false);
           setSummaryTotalsSnapshot(null);
           setSummaryRangePriceSnapshot(null);
@@ -2938,10 +2951,10 @@ const VavityEthereum: React.FC = () => {
     closingInvestments.length > 0;
   const visibleInvestmentCount = Math.min(visibleInvestments, investments.length);
   const investmentsMaxHeight = investmentsListOpen
-    ? `${investmentsListHeight + investmentsListBorderHeight + (hasActiveDelete ? 8 : 5)}px`
+    ? `${investmentsListHeight + investmentsListBorderHeight + (hasActiveDelete ? 8 : 2)}px`
     : '0px';
   const investmentsSectionMaxHeight = investmentsListOpen
-    ? `${investmentsListHeight + investmentsListHeaderHeight + investmentsListBorderHeight + (hasActiveDelete ? 11 : 2)}px`
+    ? `${investmentsListHeight + investmentsListHeaderHeight + investmentsListBorderHeight + (hasActiveDelete ? 11 : 5)}px`
     : '0px';
 
   useEffect(() => {
@@ -3446,24 +3459,21 @@ const VavityEthereum: React.FC = () => {
       >
         {!hasInvestmentsUI ? (
           <>
-            <div>
-              <div
-                ref={emptyActionsRef}
-                className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
-                style={
-                  hideEmptyActionsOnSubmit
-                    ? { display: 'none' }
-                    : undefined
-                }
-              >
+            <div
+              ref={emptyActionsRef}
+              className={`asset-empty-actions${emptyActionsExpanding ? ' is-expanding' : ''}`}
+              style={
+                hideEmptyActionsOnSubmit
+                  ? { display: 'none' }
+                  : undefined
+              }
+            >
                 <div
-                  className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}${
-                    emptyAddFadeIn ? ' is-fading' : ''
-                  }`}
+                  className={`asset-empty-addinvest${emptyAddHiding ? ' is-hidden' : ''}${emptyAddGone ? ' is-gone' : ''}`}
                 >
                   <button
                     className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
-                    disabled={showEmptyAddForm}
+                    disabled={showEmptyAddForm || emptyAddHiding}
                     style={{
                       ['--empty-add-opacity' as any]: emptyAddFadeIn ? 1 : 0,
                     }}
@@ -3512,7 +3522,7 @@ const VavityEthereum: React.FC = () => {
                       className="asset-action-button asset-action-button--save-signin asset-action-button--save-signin-empty"
                       style={{
                         opacity: emptySigninHiding ? 0 : 1,
-                        transition: 'opacity 2s ease, transform 0.2s ease',
+                        transition: 'opacity 3s ease, transform 0.2s ease',
                       }}
                       onClick={openSignIn}
                     >
@@ -3520,7 +3530,6 @@ const VavityEthereum: React.FC = () => {
                     </button>
                   </div>
                 )}
-              </div>
             </div>
           </>
         ) : (
@@ -3619,7 +3628,7 @@ const VavityEthereum: React.FC = () => {
                         if (days === 1) return '24 hrs';
                         return `${days} days`;
                       };
-                  if (selectedRangeDays && summaryRangePrice != null) {
+                  if (selectedRangeDays && rangeHistoricalPrice != null) {
                     const pastValue = (summaryTotals.acVactTaa || 0) * (summaryRangePrice ?? 0);
                     const profitValue = (summaryTotals.acVact || 0) - pastValue;
                         const isProfit = profitValue > 0.005;
@@ -3795,6 +3804,34 @@ const VavityEthereum: React.FC = () => {
                           closeAddMoreForm,
                         'asset-action-button asset-action-button--ethereum'
                         )}
+                        <div
+                          ref={emptyActionsMeasureRef}
+                          className="asset-empty-actions asset-empty-actions--measure"
+                          aria-hidden="true"
+                        >
+                          <div className="asset-empty-addinvest">
+                            <button
+                              className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
+                              type="button"
+                              disabled
+                              tabIndex={-1}
+                            >
+                              Add Investments
+                            </button>
+                          </div>
+                          {!isSignedIn && !email && (
+                            <div className="asset-empty-signin">
+                              <button
+                                type="button"
+                                className="asset-action-button asset-action-button--save-signin"
+                                disabled
+                                tabIndex={-1}
+                              >
+                                <span className="asset-save-signin-text">Sign In to Save Investments</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -4134,302 +4171,6 @@ const VavityEthereum: React.FC = () => {
               </div>
             </div>
           </div>
-        )}
-        <div ref={emptyActionsMeasureRef} className="asset-empty-actions asset-empty-actions--measure" aria-hidden="true">
-          <div className="asset-empty-addinvest">
-            <button
-              className="asset-action-button asset-action-button--ethereum asset-action-button--invest-add asset-action-button--add-investments"
-              type="button"
-              disabled
-              tabIndex={-1}
-            >
-              Add Investments
-            </button>
-          </div>
-          {!isSignedIn && !email && (
-            <div className="asset-empty-signin">
-              <button
-                type="button"
-                className="asset-action-button asset-action-button--save-signin"
-                disabled
-                tabIndex={-1}
-              >
-                <span className="asset-save-signin-text">Sign In to Save Investments</span>
-              </button>
-            </div>
-          )}
-        </div>
-        {false && (
-        <div ref={bottomActionsWrapRef}>
-          {investments.length > 0 && !isSignedIn && !email && (
-            <div className="asset-portfolio-actions asset-portfolio-actions--signin asset-portfolio-actions--signin-standalone">
-              <button
-                type="button"
-                className="asset-action-button asset-action-button--save-signin"
-                onClick={openSignIn}
-              >
-                <span className="asset-save-signin-text">Sign In to Save Investments</span>
-              </button>
-            </div>
-          )}
-
-          <div
-            ref={showActionsRef}
-            className={`asset-portfolio-actions asset-portfolio-actions--show${investmentsListOpen ? ' is-open' : ''}`}
-          >
-            <button
-              className={`asset-action-button asset-action-button--ethereum asset-action-button--invest-show${
-                showPulse ? ' asset-action-button--pulse' : ''
-              }`}
-              disabled={!investments.length || showMoreDisabled}
-              onClick={() => {
-                suppressPortfolioCta();
-                triggerShowPulse();
-                if (showInvestmentsList) {
-                  setInvestmentsListOpen(false);
-                  setTimeout(() => {
-                    setVisibleInvestments(3);
-                  }, 2000);
-                  return;
-                }
-                setShowInvestmentsList(true);
-                setTimeout(() => setInvestmentsListOpen(true), 0);
-                followScrollHeightDeltaFor(2000);
-              }}
-            >
-              {investmentsListOpen ? 'Hide more investments' : 'Show more investments'}
-            </button>
-          </div>
-
-          {showInvestmentsList && (
-            <div
-              style={{
-                maxHeight: investmentsSectionMaxHeight,
-                transition: 'max-height 2s ease',
-                overflow: 'hidden',
-              }}
-            >
-              <h2
-                className="asset-investments-header asset-investments-header--more"
-                ref={investmentsListHeaderRef}
-              >
-                <span className="asset-portfolio-title-muted">more investments</span>
-              </h2>
-              <div
-                className={`asset-investments-wrap asset-investments-wrap--ethereum asset-slide-panel${
-                  investmentsListOpen ? ' is-open' : ''
-                }`}
-                ref={investmentsListWrapRef}
-                style={{
-                  maxHeight: investmentsMaxHeight,
-                  transition: investmentsListOpen
-                    ? `${
-                        hasActiveDelete ? 'max-height 0s linear' : 'max-height 2s ease'
-                      }, border-color 0.2s ease, padding 0.2s ease, margin 0.2s ease, box-shadow 0.2s ease, background 0.2s ease`
-                    : 'max-height 2s ease, border-color 0.2s ease 2s, padding 0.2s ease 2s, margin 0.2s ease 2s, box-shadow 0.2s ease 2s, background 0.2s ease 2s',
-                }}
-              >
-                <div
-                  className="asset-investments-list"
-                  ref={investmentsListRef}
-                  style={{
-                    padding: investmentsListOpen ? '12px' : '0px',
-                    transition: investmentsListOpen ? 'padding 0.2s ease' : 'padding 0.2s ease 2s',
-                  }}
-                >
-                {displayInvestments
-                  .slice(0, visibleInvestments)
-                  .map((item, visibleIndex) => {
-                  const { entry, id: investmentId, index: idx } = item;
-                  const amount = entry.cVactTaa ?? 0;
-                  const isClosing = closingInvestments.includes(investmentId);
-                  const isCollapsed = collapsedInvestments.includes(investmentId);
-                  const isDeleting = deletingInvestments.includes(investmentId);
-                  const isPendingDelete = pendingDeleteInvestments.includes(investmentId);
-                  const isNew = slowOpenInvestments.includes(investmentId);
-                  const deleteRowHeight = deleteHeights[investmentId];
-                  const showTopGap = true;
-                  const gapSize = showTopGap ? '10px' : '0px';
-                  const deleteTargetHeight = 150 + (showTopGap ? 10 : 0);
-                  return (
-                    <React.Fragment key={investmentId}>
-                      <div
-                        ref={(node) => {
-                          investmentCardRefs.current[investmentId] = node;
-                        }}
-                        className={`asset-slide-panel${!isCollapsed || deleteRowHeight != null ? ' is-open' : ''}`}
-                        style={{
-                          ['--investment-gap' as any]: gapSize,
-                          ...(isNew ? { transitionDuration: '3s' } : {}),
-                          ...(deleteRowHeight != null
-                            ? {
-                                height: `${deleteRowHeight}px`,
-                                maxHeight: `${deleteRowHeight}px`,
-                                transition: 'height 3s ease, max-height 3s ease',
-                                overflow: 'hidden',
-                              }
-                            : {}),
-                        }}
-                        onTransitionEnd={(event) => {
-                          if (event.target !== event.currentTarget) return;
-                          if (event.propertyName !== 'max-height' && event.propertyName !== 'height') return;
-                          if (!closingInvestments.includes(investmentId)) return;
-                          finalizeDeleteCollapse(investmentId);
-                        }}
-                      >
-                        {showTopGap && (
-                          <div className="asset-investment-gap" />
-                        )}
-                        <div
-                          className={`asset-panel asset-panel--ethereum${isPendingDelete ? ' is-pending-delete' : ''}${
-                            isDeleting || isPendingDelete ? ' is-deleting' : ''
-                          }${isClosing ? ' is-closing-delete' : ''}${deleteRowHeight != null ? ' is-delete-transition' : ''}`}
-                          style={{
-                            padding: '12px',
-                            boxSizing: 'border-box',
-                            height: deleteRowHeight != null ? 'calc(100% - var(--investment-gap, 0px))' : undefined,
-                          }}
-                        >
-                        <div
-                          className={`asset-delete-loader${
-                            isPendingDelete || isDeleting || isClosing || deleteRowHeight != null ? ' is-active' : ''
-                          }`}
-                        >
-                          <div
-                            className="asset-delete-loader-spinner"
-                            style={{ borderColor: 'rgba(107, 114, 168, 0.2)', borderTopColor: 'rgba(107, 114, 168, 0.5)' }}
-                          />
-                        </div>
-                        <>
-                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                              <span className="asset-metric-title--ethereum">Purchased Value</span>
-                              <span className="asset-money-wrap">
-                                <span className="asset-metric-symbol--ethereum">$</span>
-                                <span className="asset-metric-value">
-                                  {formatCurrency((isLiquidMode ? (entry.lCVatop ?? entry.rCVatop) : entry.cVatop) ?? 0)}
-                                </span>
-                              </span>
-                            </div>
-                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                              <span className="asset-metric-title--ethereum">Current Value</span>
-                              <span className="asset-money-wrap">
-                                <span className="asset-metric-symbol--ethereum">$</span>
-                                <span className="asset-metric-value">
-                                  {formatCurrency((isLiquidMode ? (entry.lCVact ?? entry.rCVact) : entry.cVact) ?? 0)}
-                                </span>
-                              </span>
-                            </div>
-                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                              {(() => {
-                                const value = Number((isLiquidMode ? (entry.lCdVatop ?? entry.rCdVatop) : entry.cdVatop) ?? 0);
-                                const isProfit = value > 0.005;
-                                const title = isProfit ? 'Profits' : 'Losses';
-                                const prefix = isProfit ? '+$' : '-$';
-                                return (
-                                  <>
-                                    <span className="asset-metric-title--ethereum">{title}</span>
-                                    <span className="asset-money-wrap">
-                                      <span className="asset-metric-inline-symbol--ethereum">{prefix}</span>
-                                      <span className="asset-metric-value">{renderDecimalSafe(formatMoneyFixed(Math.abs(value)))}</span>
-                                    </span>
-                                  </>
-                                );
-                              })()}
-                            </div>
-                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                              <span className="asset-metric-title--ethereum">Ethereum amount</span>
-                              <span className="asset-metric-value">
-                                {Number(amount).toLocaleString('en-US', {
-                                  minimumFractionDigits: 0,
-                                  maximumFractionDigits: 8,
-                                })}
-                              </span>
-                            </div>
-                            <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center' }}>
-                              <span className="asset-metric-title--ethereum">Date purchased</span>
-                              <span className="asset-metric-value">{formatShortDate(entry.date)}</span>
-                            </div>
-                            <button
-                              type="button"
-                              className="asset-delete-button asset-investment-delete-button"
-                              disabled={deleteLocked}
-                              onClick={() => {
-                                if (
-                                  deleteLockRef.current ||
-                                  closingInvestments.includes(investmentId) ||
-                                  deletingInvestments.includes(investmentId)
-                                )
-                                  return;
-                                deleteLockRef.current = true;
-                                setDeleteLocked(true);
-                                setDeleteGhosts((prev) => {
-                                  if (prev.some((ghost) => ghost.id === investmentId)) return prev;
-                                  return [...prev, { id: investmentId, entry, index: idx }];
-                                });
-                                const card = investmentCardRefs.current[investmentId];
-                                if (card) {
-                                  const height = card.getBoundingClientRect().height;
-                                  setDeleteHeights((prev) => ({ ...prev, [investmentId]: height }));
-                                  window.requestAnimationFrame(() => {
-                                  setDeleteHeights((prev) => ({ ...prev, [investmentId]: deleteTargetHeight }));
-                                  });
-                                }
-                                setPendingDeleteInvestments((prev) => [...prev, investmentId]);
-                                const fadeTimer = window.setTimeout(() => {
-                                  setPendingDeleteInvestments((prev) =>
-                                    prev.filter((value) => value !== investmentId)
-                                  );
-                                  setDeletingInvestments((prev) => [...prev, investmentId]);
-                                  const actionTimer = window.setTimeout(() => {
-                                    handleDeleteInvestment(investmentId)
-                                      .catch(() => {
-                                        // ignore errors
-                                      })
-                                      .finally(() => {
-                                        const expandTimer = window.setTimeout(() => {
-                                          setDeleteHeights((prev) => ({ ...prev, [investmentId]: 0 }));
-                                          setClosingInvestments((prev) =>
-                                            prev.includes(investmentId) ? prev : [...prev, investmentId]
-                                          );
-                                        }, 350);
-                                        const cleanupTimer = window.setTimeout(() => {
-                                          finalizeDeleteCollapse(investmentId);
-                                        }, 4000);
-                                        deleteCleanupTimersRef.current[investmentId] = cleanupTimer;
-                                        deleteCleanupTimersRef.current[`${investmentId}-expand`] = expandTimer;
-                                      });
-                                  }, 2000);
-                                  deleteActionTimersRef.current[investmentId] = actionTimer;
-                                }, 1000);
-                                deleteFadeTimersRef.current[investmentId] = fadeTimer;
-                              }}
-                            >
-                              Delete
-                            </button>
-                        </>
-                        </div>
-                      </div>
-                    </React.Fragment>
-                  );
-                })}
-                {displayInvestments.length > visibleInvestments && (
-                  <button
-                    type="button"
-                    className="asset-action-button asset-action-button--ethereum asset-action-button--invest-show"
-                    onClick={() => {
-                      suppressPortfolioCta();
-                      setVisibleInvestments((prev) => prev + 3);
-                      followScrollHeightDeltaFor(2000);
-                    }}
-                  >
-                    Show 3 More
-                  </button>
-                )}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
         )}
       </div>
 

@@ -10,8 +10,8 @@ const SESSION_TTL_MS = (() => {
     const parsed = Number(raw);
     if (Number.isFinite(parsed) && parsed > 0) return parsed;
   }
-  // Keep dev sessions alive longer for editing; production stays at 1 minute.
-  return process.env.NODE_ENV === 'production' ? 60_000 : 24 * 60 * 60 * 1000;
+  // Default to 1 minute unless explicitly overridden.
+  return 60_000;
 })();
 const VAPA_KEYS: Record<string, string> = {
   bitcoin: 'vavity/bitcoinVAPA.json',
@@ -161,7 +161,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // Backfill TTL meta for legacy session files that predate createdAt/expiresAt.
     // This does NOT create a new session file; it only updates existing ones.
     const createdAt = existingCreatedAt ?? now;
-    const expiresAt = existingExpiresAt ?? createdAt + SESSION_TTL_MS;
+    let expiresAt = existingExpiresAt ?? createdAt + SESSION_TTL_MS;
+    if (typeof expiresAt === 'number' && Number.isFinite(expiresAt)) {
+      const maxExpiresAt = now + SESSION_TTL_MS;
+      if (expiresAt > maxExpiresAt) {
+        expiresAt = maxExpiresAt;
+        didMutate = true;
+      }
+    }
     const investmentsAll: any[] = Array.isArray(userData.investments) ? userData.investments : [];
 
     // Recompute/update both Solid + Liquid fields so stored JSON stays current as prices move.
