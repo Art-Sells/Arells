@@ -23,7 +23,7 @@ const AboutPageClient = () => {
   };
 
   useEffect(() => {
-    if (!Object.values(imagesLoaded).every(Boolean)) return;
+    if (!showLoading) return;
     const fadeTimer = setTimeout(() => {
       setFadeOut(true);
     }, 1000);
@@ -35,7 +35,13 @@ const AboutPageClient = () => {
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
-  }, [imagesLoaded]);
+  }, [showLoading]);
+
+  const [aboutSlideIn, setAboutSlideIn] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setAboutSlideIn(true), 50);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     if (typeof document === 'undefined' || typeof window === 'undefined') return;
@@ -153,7 +159,7 @@ const AboutPageClient = () => {
               <span className="about-icon" aria-hidden="true" />
             </Link>
           </div>
-          <div className="about-content">
+          <div className={`about-content${aboutSlideIn ? ' page-slide-in' : ''}`}>
             <p className="about-text">Arells is a belief that investments should never lose value.</p>
             <div className="about-divider" />
             <p className="about-text">
@@ -163,7 +169,7 @@ const AboutPageClient = () => {
             <p className="about-text">
               This ledger is powered by a new psychological and technological invention called Vavity.
             </p>
-            <div className="about-cta-row">
+            <div className={`about-cta-row${aboutSlideIn ? ' page-slide-in' : ''}`}>
               <span className="about-cta-text">Learn more &gt;</span>
               <Link href="/vavity" className="asset-action-button asset-action-button--invest-show about-cta">
                 (Vavity (V))

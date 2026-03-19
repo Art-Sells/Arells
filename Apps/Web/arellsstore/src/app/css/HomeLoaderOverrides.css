@@ -30,7 +30,7 @@
 	position: absolute;
 	inset: 0;
 	background: #ff5aa0;
-	opacity: 1;
+	opacity: var(--home-loader-icon-opacity, 1);
 	-webkit-mask-image: url('/images/Arells-Icon.png');
 	mask-image: url('/images/Arells-Icon.png');
 	-webkit-mask-size: contain;
@@ -82,5 +82,23 @@
 	100% {
 		background-color: #ff5aa0;
 		fill: #ff5aa0;
+	}
+}
+
+@keyframes homeLoaderColor {
+	0% {
+		color: #ff5aa0;
+	}
+	25% {
+		color: #ffb300;
+	}
+	50% {
+		color: #00dcb4;
+	}
+	75% {
+		color: #4aa3ff;
+	}
+	100% {
+		color: #ff5aa0;
 	}
 }

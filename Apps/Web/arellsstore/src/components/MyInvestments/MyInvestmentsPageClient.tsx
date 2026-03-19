@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import '../../app/css/Home.css';
+import '../../app/css/HomeLoaderOverrides.css';
 import { useUser } from '../../context/UserContext';
 
 const formatCurrency = (value: number) =>
@@ -25,10 +26,31 @@ const MyInvestmentsPageClient: React.FC = () => {
 
   const [open, setOpen] = useState(false);
   const [isLiquidMode, setIsLiquidMode] = useState(false);
+  const [showLoading, setLoading] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
+  const [slideIn, setSlideIn] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setOpen(true), 0);
     return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const t = setTimeout(() => setSlideIn(true), 50);
+    return () => clearTimeout(t);
+  }, [open]);
+
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => setFadeOut(true), 1000);
+    const hideTimer = setTimeout(() => {
+      setLoading(false);
+      setFadeOut(false);
+    }, 2000);
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(hideTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -73,13 +95,25 @@ const MyInvestmentsPageClient: React.FC = () => {
   }, [assetsPresentInEmail]);
 
   return (
-    <div className="myinv-page">
-      <div
-        className={`asset-slide-panel myinv-slide${open ? ' is-open' : ''}`}
-        style={{ maxHeight: open ? '2200px' : '0px', transition: 'max-height 2s ease' }}
-      >
-        <div className="myinv-wrapper">
-          <div className="myinv-topbar">
+    <>
+      {showLoading && (
+        <div className={`asset-loader-overlay myinv-loader-overlay${fadeOut ? ' asset-loader-overlay-fade' : ''}`}>
+          <div className="asset-reality-toggle-shell asset-reality-toggle-shell--loader asset-loader-toggle-shell asset-loader-toggle-shell--myinv">
+            <div className="asset-reality-toggle-row">
+              <button type="button" className="asset-reality-toggle asset-reality-toggle--loader" aria-hidden="true">
+                <span className="asset-loader-toggle-knob" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="myinv-page">
+        <div
+          className={`asset-slide-panel myinv-slide${open ? ' is-open' : ''}`}
+          style={{ maxHeight: open ? '2200px' : '0px', transition: 'max-height 2s ease' }}
+        >
+          <div className="myinv-wrapper">
+            <div className={`myinv-topbar${slideIn ? ' page-slide-in' : ''}`}>
             {isSignedIn ? (
               <Link className="myinv-home-button" href="/" aria-label="Home">
                 <Image alt="Arells" width={37} height={37} src="/images/Arells-Icon.png" />
@@ -89,7 +123,7 @@ const MyInvestmentsPageClient: React.FC = () => {
             )}
           </div>
 
-          <div className="myinv-header">
+          <div className={`myinv-header${slideIn ? ' page-slide-in' : ''}`}>
             <div className="myinv-title">My Investments</div>
             <div className={`myinv-slogan asset-header-slogan${isLiquidMode ? ' is-hidden' : ''}`}>
               if they never lost value
@@ -97,13 +131,13 @@ const MyInvestmentsPageClient: React.FC = () => {
           </div>
 
           {!isSignedIn ? (
-            <div className="myinv-panel">
+            <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
               <button type="button" className="myinv-signin-button" onClick={openSignIn}>
                 Sign In
               </button>
             </div>
           ) : !hasAny ? (
-            <div className="myinv-panel">
+            <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
               <div className="myinv-panel-title">Add Investments</div>
               <div className={`myinv-asset-buttons${assetsMissingInEmail.length === 1 ? ' is-single' : ''}`}>
                 {/* If user has email but no investments at all, show both asset buttons */}
@@ -112,7 +146,7 @@ const MyInvestmentsPageClient: React.FC = () => {
             </div>
           ) : (
             <>
-              <div className="myinv-panel">
+              <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
                 <div className="myinv-panel-title">{emailLoading ? 'Loading…' : 'Investments'}</div>
                 <div className="myinv-totals">
                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
@@ -156,7 +190,7 @@ const MyInvestmentsPageClient: React.FC = () => {
               </div>
 
               {assetsMissingInEmail.length > 0 && (
-                <div className="myinv-panel">
+                <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
                   <div className="myinv-panel-title">Add Investments</div>
                   <div className={`myinv-asset-buttons${assetsMissingInEmail.length === 1 ? ' is-single' : ''}`}>
                     {addMissingButtons}
@@ -165,7 +199,7 @@ const MyInvestmentsPageClient: React.FC = () => {
               )}
 
               {assetsPresentInEmail.length > 0 && (
-                <div className="myinv-panel">
+                <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
                   <div className="myinv-panel-title">Add More Investments</div>
                   <div className={`myinv-asset-buttons${assetsPresentInEmail.length === 1 ? ' is-single' : ''}`}>
                     {addMoreButtons}
@@ -173,12 +207,13 @@ const MyInvestmentsPageClient: React.FC = () => {
                 </div>
               )}
 
-              <div className="myinv-footnote">{email ? `Signed in as ${email}` : null}</div>
+              <div className={`myinv-footnote${slideIn ? ' page-slide-in' : ''}`}>{email ? `Signed in as ${email}` : null}</div>
             </>
           )}
         </div>
       </div>
     </div>
+    </>
   );
 };
 

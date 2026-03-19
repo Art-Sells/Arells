@@ -317,6 +317,7 @@ body {
 	position: absolute;
 	inset: 0;
 	background: #ff5aa0;
+	opacity: var(--home-loader-icon-opacity, 1);
 	-webkit-mask-image: url('/images/Arells-Icon.png');
 	mask-image: url('/images/Arells-Icon.png');
 	-webkit-mask-size: contain;
@@ -387,6 +388,7 @@ body {
 	position: absolute;
 	inset: 0;
 	background: #ff5aa0;
+	opacity: var(--home-loader-icon-opacity, 1);
 	-webkit-mask-image: url('/images/Arells-Icon.png');
 	mask-image: url('/images/Arells-Icon.png');
 	-webkit-mask-size: contain;
@@ -2604,7 +2606,7 @@ transform: translateY(calc(-50% - 0.5px));
 .asset-page-content > .asset-panel:nth-of-type(2) {
 	animation-name: pageSlideUp;
 	animation-duration: 4s;
-	animation-delay: 0s;
+	animation-delay: 0.2s;
 	animation-timing-function: ease;
 	animation-fill-mode: both;
 }
@@ -2612,7 +2614,7 @@ transform: translateY(calc(-50% - 0.5px));
 .asset-page-content > .asset-panel:nth-of-type(3) {
 	animation-name: pageSlideUp;
 	animation-duration: 4s;
-	animation-delay: 0s;
+	animation-delay: 0.4s;
 	animation-timing-function: ease;
 	animation-fill-mode: both;
 }
@@ -2620,7 +2622,7 @@ transform: translateY(calc(-50% - 0.5px));
 .asset-page-content > .asset-panel:nth-of-type(4) {
 	animation-name: pageSlideUp;
 	animation-duration: 4s;
-	animation-delay: 0s;
+	animation-delay: 0.6s;
 	animation-timing-function: ease;
 	animation-fill-mode: both;
 }
@@ -2628,7 +2630,7 @@ transform: translateY(calc(-50% - 0.5px));
 .asset-page-content > .asset-panel:nth-of-type(5) {
 	animation-name: pageSlideUp;
 	animation-duration: 4s;
-	animation-delay: 0s;
+	animation-delay: 0.8s;
 	animation-timing-function: ease;
 	animation-fill-mode: both;
 }
@@ -2637,6 +2639,51 @@ transform: translateY(calc(-50% - 0.5px));
 	animation: pageSlideUp 0.1s ease;
 	animation-fill-mode: both;
 	pointer-events: auto;
+}
+
+/* Stagger nested asset sections (chart, buttons, toggle, summary, etc.) */
+.asset-page-content .asset-section-slide {
+	animation-duration: 4s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.asset-page-content .asset-header-panel.asset-section-slide {
+	animation-delay: 0s;
+}
+
+.asset-page-content .asset-price-panel.asset-section-slide {
+	animation-delay: 0.2s;
+}
+
+.asset-page-content .asset-market-controls.asset-section-slide {
+	animation-delay: 0.4s;
+}
+
+.asset-page-content .asset-chart-panel.asset-section-slide {
+	animation-delay: 0.6s;
+}
+
+.asset-page-content .asset-reality-toggle-shell {
+	animation-delay: 0.8s;
+	animation-duration: 4s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+	animation-name: pageSlideUp;
+}
+
+.asset-page-content .asset-portfolio-center.asset-section-slide {
+	animation-delay: 1s;
+}
+
+.asset-page-content .asset-profit-block.asset-section-slide {
+	animation-delay: 1.2s;
+}
+
+.page-slide-in {
+	animation: pageSlideUp 4s ease;
+	animation-fill-mode: both;
+	will-change: transform, opacity;
 }
 
 
@@ -2657,6 +2704,24 @@ transform: translateY(calc(-50% - 0.5px));
 	}
 	100% {
 		transform: translateY(0);
+	}
+}
+
+@keyframes myInvLoaderColor {
+	0% {
+		--myinv-loader-color: #ff5aa0;
+	}
+	25% {
+		--myinv-loader-color: #ffb300;
+	}
+	50% {
+		--myinv-loader-color: #00dcb4;
+	}
+	75% {
+		--myinv-loader-color: #4aa3ff;
+	}
+	100% {
+		--myinv-loader-color: #ff5aa0;
 	}
 }
 
@@ -3396,6 +3461,41 @@ transform: translateY(calc(-50% - 0.5px));
 	width: 100%;
 }
 
+.myinv-page .asset-reality-toggle::before {
+	opacity: 0.3;
+}
+
+/* Stagger My Investments sections */
+.myinv-wrapper > .page-slide-in {
+	animation-duration: 4s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+}
+
+.myinv-wrapper > .page-slide-in:nth-of-type(1) {
+	animation-delay: 0s;
+}
+
+.myinv-wrapper > .page-slide-in:nth-of-type(2) {
+	animation-delay: 0.2s;
+}
+
+.myinv-wrapper > .page-slide-in:nth-of-type(3) {
+	animation-delay: 0.4s;
+}
+
+.myinv-wrapper > .page-slide-in:nth-of-type(4) {
+	animation-delay: 0.6s;
+}
+
+.myinv-wrapper > .page-slide-in:nth-of-type(5) {
+	animation-delay: 0.8s;
+}
+
+.myinv-wrapper > .page-slide-in:nth-of-type(6) {
+	animation-delay: 1s;
+}
+
 .myinv-metric-title {
 	font-weight: 800;
 	font-size: 12px;
@@ -3688,6 +3788,27 @@ transform: translateY(calc(-50% - 0.5px));
 	opacity: .98;
 	transition: opacity 1s ease;
 	pointer-events: none;
+}
+
+.myinv-loader-overlay {
+	background: rgba(255, 255, 255, 0.95);
+}
+
+.asset-loader-toggle-shell--myinv {
+	--myinv-loader-color: #ff5aa0;
+	--asset-chart-line-color: var(--myinv-loader-color);
+	--asset-hover-dot-color: var(--myinv-loader-color);
+	animation: myInvLoaderColor 2s linear infinite;
+}
+
+.asset-loader-toggle-shell--myinv .asset-reality-toggle--loader::before {
+	opacity: 0.2 !important;
+	background: var(--asset-chart-line-color);
+}
+
+.asset-loader-toggle-shell--myinv .asset-loader-toggle-knob {
+	opacity: var(--home-loader-icon-opacity, 1);
+	animation: assetLoaderToggleSlide 2.6s ease-in-out infinite;
 }
 
 .asset-session-reset-overlay {

@@ -952,21 +952,40 @@ const VavityBitcoin: React.FC = () => {
     if (isSignedIn || email) return;
     if (clearedSessionOnMountRef.current) return;
     clearedSessionOnMountRef.current = true;
-    const pendingAt = Date.now();
-    if (typeof window !== 'undefined') {
-      (window as any).__vavitySessionClearingPending = true;
-      (window as any).__vavitySessionClearingPendingAt = pendingAt;
-      window.dispatchEvent(new CustomEvent('vavity:session-clearing-pending', { detail: { pendingAt } }));
-    }
     (async () => {
       try {
+        const pendingAt = Date.now();
+        if (typeof window !== 'undefined') {
+          (window as any).__vavitySessionClearCheckPending = true;
+          (window as any).__vavitySessionClearCheckPendingAt = pendingAt;
+          window.dispatchEvent(
+            new CustomEvent('vavity:session-clear-check-start', {
+              detail: { pendingAt },
+            }),
+          );
+        }
         let hasInvestments = Array.isArray(vavityData?.investments) && vavityData!.investments.length > 0;
         if (!hasInvestments) {
           const current = await fetchVavityAggregator(sessionId, 'bitcoin');
           hasInvestments = Array.isArray(current?.investments) && current.investments.length > 0;
         }
         if (typeof window !== 'undefined') {
-          const holdMs = hasInvestments ? 4000 : 2000;
+          (window as any).__vavitySessionClearCheckPending = false;
+          (window as any).__vavitySessionClearCheckPendingAt = pendingAt;
+          window.dispatchEvent(
+            new CustomEvent('vavity:session-clear-check-end', {
+              detail: { pendingAt, hasInvestments },
+            }),
+          );
+        }
+        if (!hasInvestments) return;
+        if (typeof window !== 'undefined') {
+          (window as any).__vavitySessionClearingPending = true;
+          (window as any).__vavitySessionClearingPendingAt = pendingAt;
+          window.dispatchEvent(new CustomEvent('vavity:session-clearing-pending', { detail: { pendingAt } }));
+        }
+        if (typeof window !== 'undefined') {
+          const holdMs = 4000;
           (window as any).__vavitySessionClearingPending = false;
           (window as any).__vavitySessionClearingPendingAt = pendingAt;
           (window as any).__vavitySessionClearingHoldMs = holdMs;

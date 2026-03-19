@@ -4,6 +4,7 @@
 
 - Investment page should be styled (shadows/etc) the exact same as the home page
 
+
 ### Investment list (fix when heighting down, it jigs a little at the end (I don't experience this issue with the forms height downs))
 - - (delete) *test this*
 - - (Load More 5 per list) *test this*

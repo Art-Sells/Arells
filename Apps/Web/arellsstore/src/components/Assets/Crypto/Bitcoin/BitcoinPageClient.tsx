@@ -9,8 +9,9 @@ import { useUser } from '../../../../context/UserContext';
 const BitcoinPageClient: React.FC = () => {
   const [showLoading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
-  const [extraLoaderHoldMs, setExtraLoaderHoldMs] = useState(0);
   const [sessionClearPending, setSessionClearPending] = useState(false);
+  const [clearCheckInFlight, setClearCheckInFlight] = useState(false);
+  const [loaderScheduleKey, setLoaderScheduleKey] = useState(0);
   const [sessionResetActive, setSessionResetActive] = useState(false);
   const [sessionResetFade, setSessionResetFade] = useState(false);
   const [sessionResetKey, setSessionResetKey] = useState(0);
@@ -20,6 +21,7 @@ const BitcoinPageClient: React.FC = () => {
   const pageRef = useRef<HTMLDivElement>(null);
   const portfolioBottomRef = useRef<number | null>(null);
   const sessionResetTimersRef = useRef<ReturnType<typeof window.setTimeout>[]>([]);
+  const loaderHideAtRef = useRef<number | null>(null);
   const forceSessionResetPreview = false;
   const showSessionResetOverlay = forceSessionResetPreview || sessionResetActive;
   const showSessionResetFade = sessionResetFade && !forceSessionResetPreview;
@@ -49,21 +51,26 @@ const BitcoinPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!showLoading || sessionClearPending) return;
-    const totalHoldMs = extraLoaderHoldMs > 0 ? extraLoaderHoldMs : 2000;
-    const fadeDelayMs = extraLoaderHoldMs > 0 ? Math.max(0, totalHoldMs - 1000) : 1000;
+    loaderHideAtRef.current = Date.now() + 2000;
+    setLoaderScheduleKey((prev) => prev + 1);
+  }, []);
+
+  useEffect(() => {
+    if (!showLoading || sessionClearPending || clearCheckInFlight) return;
+    const hideAt = loaderHideAtRef.current ?? Date.now() + 2000;
+    const remaining = Math.max(0, hideAt - Date.now());
+    const fadeDelayMs = Math.max(0, remaining - 1000);
     const fadeTimer = fadeOut ? null : setTimeout(() => setFadeOut(true), fadeDelayMs);
     const hideTimer = setTimeout(() => {
       setLoading(false);
       setFadeOut(false);
-      setExtraLoaderHoldMs(0);
-    }, totalHoldMs);
+    }, remaining);
 
     return () => {
       if (fadeTimer) clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
-  }, [extraLoaderHoldMs, fadeOut, showLoading, sessionClearPending]);
+  }, [fadeOut, showLoading, sessionClearPending, clearCheckInFlight, loaderScheduleKey]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -75,7 +82,6 @@ const BitcoinPageClient: React.FC = () => {
     }
     const pendingHandler = () => {
       setSessionClearPending(true);
-      setExtraLoaderHoldMs(0);
       setFadeOut(false);
       setLoading(true);
     };
@@ -83,16 +89,39 @@ const BitcoinPageClient: React.FC = () => {
       const detail = (event as CustomEvent).detail as { holdMs?: number; pendingAt?: number } | undefined;
       const holdMs = detail?.holdMs ?? 2000;
       const remaining = Math.max(0, holdMs);
+      const nextHideAt = Date.now() + remaining;
+      loaderHideAtRef.current = loaderHideAtRef.current
+        ? Math.max(loaderHideAtRef.current, nextHideAt)
+        : nextHideAt;
       setSessionClearPending(false);
-      setExtraLoaderHoldMs(remaining);
+      setFadeOut(false);
+      setLoading(true);
+      setLoaderScheduleKey((prev) => prev + 1);
+    };
+    const checkStartHandler = () => {
+      setClearCheckInFlight(true);
+      if (!loaderHideAtRef.current) {
+        loaderHideAtRef.current = Date.now() + 2000;
+      }
       setFadeOut(false);
       setLoading(true);
     };
+    const checkEndHandler = (event: Event) => {
+      const detail = (event as CustomEvent).detail as { hasInvestments?: boolean } | undefined;
+      setClearCheckInFlight(false);
+      if (detail?.hasInvestments === false) {
+        setLoaderScheduleKey((prev) => prev + 1);
+      }
+    };
     window.addEventListener('vavity:session-clearing-pending', pendingHandler as EventListener);
     window.addEventListener('vavity:session-clearing-ready', readyHandler as EventListener);
+    window.addEventListener('vavity:session-clear-check-start', checkStartHandler as EventListener);
+    window.addEventListener('vavity:session-clear-check-end', checkEndHandler as EventListener);
     return () => {
       window.removeEventListener('vavity:session-clearing-pending', pendingHandler as EventListener);
       window.removeEventListener('vavity:session-clearing-ready', readyHandler as EventListener);
+      window.removeEventListener('vavity:session-clear-check-start', checkStartHandler as EventListener);
+      window.removeEventListener('vavity:session-clear-check-end', checkEndHandler as EventListener);
     };
   }, []);
 
