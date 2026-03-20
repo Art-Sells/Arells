@@ -69,6 +69,17 @@ export default function HomeInvestmentsSlideUpCTA({
     () => `home-investments-slideup${visible ? ' is-visible' : ''}`,
     [visible]
   );
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const cls = 'has-home-investments-cta';
+    if (visible) {
+      document.body.classList.add(cls);
+      return () => {
+        document.body.classList.remove(cls);
+      };
+    }
+    document.body.classList.remove(cls);
+  }, [visible]);
 
   const node = (
     <div

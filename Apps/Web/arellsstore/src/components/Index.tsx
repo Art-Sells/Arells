@@ -34,6 +34,7 @@ const Index = () => {
   });
   const { getAsset, sessionId } = useVavity();
   const { email } = useUser();
+  const forceHomeInvestmentsPreview = false;
   const [votingData, setVotingData] = useState<VotingBlockData | null>(null);
   const [votingHidden, setVotingHidden] = useState<boolean>(false);
   const [countdownMs, setCountdownMs] = useState<number>(0);
@@ -390,6 +391,12 @@ const Index = () => {
           <div className="home-assets-footer-text">A new asset added weekly</div>
         </div>
       </div>
+      <div className="home-assets-about-wrap page-slide-in">
+        <Link className="myinv-about-button home-assets-about-button" href="/about">
+          <span className="myinv-about-button-bg" aria-hidden="true" />
+          <span className="myinv-about-button-text">about</span>
+        </Link>
+      </div>
 
       {voteModal && (
         <div className={`home-vote-modal-overlay${voteModalClosing ? ' is-fading' : ''}`}>
@@ -426,7 +433,7 @@ const Index = () => {
         </div>
       )}
 
-      {!showLoading && !!email && <HomeInvestmentsSlideUpCTA />}
+      {!showLoading && (!!email || forceHomeInvestmentsPreview) && <HomeInvestmentsSlideUpCTA />}
 
     </>
   );

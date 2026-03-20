@@ -3239,32 +3239,104 @@ transform: translateY(calc(-50% - 0.5px));
 	padding-top: 40px;
 	padding-bottom: 60px;
 	box-sizing: border-box;
+	font-family: Arial, sans-serif;
+}
+
+.myinv-page--guest {
+	display: flex;
+	align-items: safe center;
+	justify-content: center;
+	padding-top: var(--myinv-guest-offset, 3vh);
+	flex-direction: column;
 }
 
 .myinv-slide {
 	width: 100%;
 }
 
-.myinv-wrapper {
-	width: min(920px, 90%);
-	min-width: 280px;
+.myinv-shell {
+	width: min(700px, 100%);
 	margin: 0 auto;
-	padding-top: 18px;
-	padding-bottom: 35px;
-	padding-left: 20px;
-	padding-right: 20px;
-	box-shadow: -6px -2px 16px rgba(0, 0, 0, 0.12);
+	padding-top: 10px;
+	padding-bottom: 37px;
+	padding-left: 45px;
+	padding-right: 45px;
+	box-shadow: none;
 	border-radius: 12px;
-	background: #ffffff;
+	background: transparent;
+	box-sizing: border-box;
+	position: relative;
+	isolation: isolate;
+}
+
+.myinv-page--guest .myinv-shell {
+	margin-top: 0;
+}
+
+.myinv-shell::before {
+	content: '';
+	position: absolute;
+	inset: 40px 20px 20px 20px;
+	background: var(--home-shadow-bg);
+	border-radius: 22px;
+	--shadow-blur: 28px;
+	filter: blur(var(--shadow-blur)) hue-rotate(0deg);
+	--shadow-opacity-min: 0.92;
+	--shadow-opacity-max: 0.98;
+	opacity: 0.98;
+	z-index: -2;
+	pointer-events: none;
+	animation: shadowGradientPulse 52s ease-in-out infinite, shadowGradientHue 8s linear infinite;
+}
+
+.myinv-shell::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: inherit;
+	z-index: -1;
+	pointer-events: none;
+}
+
+.myinv-header-outside {
+	width: min(700px, 100%);
+	margin: 0 auto 12px;
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 16px;
 	box-sizing: border-box;
 }
 
-.myinv-topbar {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	min-height: 44px;
+.myinv-header-outside .myinv-title {
+	text-align: left;
+	margin-left: 80px;
+	white-space: nowrap;
+	position: relative;
+	top: var(--myinv-title-offset, 12px);
 }
+
+.myinv-header-outside .myinv-slogan {
+	text-align: right;
+	margin-top: 0;
+	margin-right: 80px;
+	position: relative;
+	top: var(--myinv-slogan-offset, 14.5px);
+}
+
+.myinv-wrapper {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	box-shadow: none;
+	border-radius: 0;
+	background: transparent;
+	box-sizing: border-box;
+	position: relative;
+	z-index: 1;
+}
+
 
 .myinv-home-button {
 	display: inline-flex;
@@ -3283,23 +3355,25 @@ transform: translateY(calc(-50% - 0.5px));
 
 .myinv-header {
 	text-align: center;
-	margin-top: 12px;
+	margin-top: 0px;
 	margin-bottom: 22px;
 }
 
 .myinv-title {
 	font-weight: 800;
-	font-size: 34px;
+	font-size: 25px;
 	letter-spacing: -2px;
 	color: #222;
 }
 
 .myinv-slogan {
-	margin-top: 10px;
-	font-weight: 600;
-	font-size: 12px;
+	margin-top: 5px;
+	font-weight: 200;
+	font-size: 13px;
 	opacity: 0.5;
 	color: #222;
+	text-align: center;
+	width: 100%;
 }
 
 .myinv-panel {
@@ -3309,6 +3383,204 @@ transform: translateY(calc(-50% - 0.5px));
 	background: transparent;
 	padding: 0;
 	margin-top: 18px;
+}
+
+.myinv-about-wrap {
+	margin-top: var(--myinv-about-gap, 50px);
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.myinv-about-wrap.page-slide-in {
+	animation-delay: 1.2s;
+}
+
+.home-assets-about-wrap {
+	width: min(920px, 90%);
+	margin: var(--home-assets-about-gap, 20px) auto -70px;
+	display: flex;
+	justify-content: center;
+}
+
+body.has-home-investments-cta .home-assets-about-wrap {
+	margin-bottom: var(--home-assets-about-bottom-gap, 60px);
+}
+
+.home-assets-about-wrap.page-slide-in {
+	animation-delay: 1.2s;
+}
+
+.home-assets-about-button {
+	width: auto;
+}
+
+
+.myinv-cta-row {
+	display: grid;
+	grid-template-columns: 1fr;
+	align-items: center;
+	justify-items: center;
+	column-gap: 10px;
+	width: 100%;
+	box-sizing: border-box;
+	padding-left: 0;
+	padding-right: 0;
+	row-gap: 12px;
+}
+
+.myinv-cta-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	box-sizing: border-box;
+	width: 100%;
+	background: transparent !important;
+	border: none;
+	box-shadow: none;
+	margin-top: 10px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	border-top-left-radius: 999px;
+	border-bottom-left-radius: 999px;
+	border-top-right-radius: 400px;
+	border-bottom-right-radius: 400px;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 23px;
+	padding-bottom: 25px;
+	position: relative;
+	isolation: isolate;
+	z-index: 0;
+}
+
+.myinv-cta-button:hover,
+.myinv-cta-button:active {
+	transform: translateY(-2px);
+	box-shadow: none;
+}
+
+.myinv-cta-button::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	padding: 1px;
+	border-radius: inherit;
+	background: var(--button-border-gradient);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.myinv-cta-button-bg {
+	position: absolute;
+	inset: 1px;
+	border-radius: inherit;
+	background: #ffffff;
+	opacity: 0.8;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.myinv-cta-button-text {
+	font-family: Arial, sans-serif;
+	font-weight: 800;
+	letter-spacing: -0.6px;
+	font-size: 14px;
+	color: #000;
+	opacity: 0.5;
+	transition: color 0.2s ease;
+	position: relative;
+	z-index: 3;
+}
+
+.myinv-about-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	box-sizing: border-box;
+	width: 60px;
+	background: transparent !important;
+	border: none;
+	box-shadow: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	border-radius: 10px;
+	padding-top: 9px;
+	padding-bottom: 10px;
+	position: relative;
+	isolation: isolate;
+	z-index: 0;
+}
+
+.myinv-about-button:hover,
+.myinv-about-button:active {
+	transform: translateY(-2px);
+	box-shadow: none;
+}
+
+.myinv-about-button::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	padding: 1px;
+	border-radius: inherit;
+	background: linear-gradient(135deg, #f6d84a, #4fdc7b, #4aa3ff);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.myinv-about-button-bg {
+	position: absolute;
+	inset: 1px;
+	border-radius: inherit;
+	background: #ffffff;
+	opacity: 0.8;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.myinv-about-button-text {
+	font-family: Arial, sans-serif;
+	font-weight: 800;
+	letter-spacing: -0.6px;
+	font-size: 12px;
+	color: #000;
+	opacity: 0.5;
+	transition: color 0.2s ease;
+	position: relative;
+	z-index: 3;
+}
+
+.myinv-about-button:hover .myinv-about-button-text,
+.myinv-about-button:active .myinv-about-button-text {
+	color: #000;
+	opacity: 0.9;
+}
+
+.myinv-cta-button:hover .myinv-cta-button-text,
+.myinv-cta-button:active .myinv-cta-button-text {
+	color: #000;
+	opacity: 0.9;
+}
+
+.myinv-panel .home-investments-slideup-button {
+	width: 100%;
+}
+
+.myinv-panel .home-investments-slideup-button-bg {
+	opacity: 0.8;
 }
 
 .myinv-panel-title {
@@ -3557,6 +3829,12 @@ transform: translateY(calc(-50% - 0.5px));
 	.asset-page-content > .asset-header-panel {
 		width: 340px;
 		height: 720px;
+	}
+
+	.myinv-shell {
+		width: min(340px, 100%);
+		padding-left: 30px;
+		padding-right: 30px;
 	}
 
 	.asset-price-chart-row {

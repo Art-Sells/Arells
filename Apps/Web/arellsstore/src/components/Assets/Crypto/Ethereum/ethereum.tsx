@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import VavityEthereum from '../../../Vavity/Assets/Crypto/Ethereum/VavityEthereum';
+import VavityEthereum from './VavityEthereum';
 
 const Ethereum: React.FC = () => {
   return <VavityEthereum />;

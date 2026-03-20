@@ -5,10 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
 import { flushSync } from 'react-dom';
-import { useVavity } from '../../../../../context/VavityAggregator';
-import { useUser } from '../../../../../context/UserContext';
-import BitcoinChart from '../../../../Assets/Crypto/Bitcoin/BitcoinChart';
-import CustomDatePicker from '../../../../common/CustomDatePicker';
+import { useVavity } from '../../../../context/VavityAggregator';
+import { useUser } from '../../../../context/UserContext';
+import BitcoinChart from './BitcoinChart';
+import CustomDatePicker from '../../../common/CustomDatePicker';
 
 const VavityBitcoin: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
@@ -2494,7 +2494,7 @@ const VavityBitcoin: React.FC = () => {
         showMoreDisableTimerRef.current = globalThis.setTimeout(() => {
           showMoreDisableTimerRef.current = null;
           setShowMoreDisabled(false);
-        }, 3000);
+        }, 1500);
       } else {
         if (addFormPanelRef.current) {
           if (addFormCollapseAnimRef.current) {
