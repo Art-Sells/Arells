@@ -8,8 +8,6 @@
 
 ## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
 
-If no email is read1 
-- (Sign In)
 
 If email is read and no investments exist inside the email json:
 - (Arells icon) <- button that takes to home page same size and dynamics/etc as the asset page icon buttons
@@ -57,7 +55,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)
 - Remove "sign in" dynamic and "1 minute timer "to test in mobile...
-- - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes...
+- - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes, the dollar sign in the my assets page... My investments page If no Email, If email is read and no investments exist inside the email json, If Investments exist inside email json
 
 ### Sign In/Up
 - Title: Sign In to Save Investments

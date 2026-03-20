@@ -23,6 +23,12 @@ const MyInvestmentsPageClient: React.FC = () => {
     assetsPresentInEmail,
     assetsMissingInEmail,
   } = useUser();
+  const forceEmptyEmailPreview = true;
+  const effectiveSignedIn = forceEmptyEmailPreview ? true : isSignedIn;
+  const effectiveEmail = forceEmptyEmailPreview ? 'preview@arells.com' : email;
+  const effectiveInvestments = forceEmptyEmailPreview ? [] : emailInvestments;
+  const effectiveAssetsPresent = forceEmptyEmailPreview ? [] : assetsPresentInEmail;
+  const effectiveAssetsMissing = forceEmptyEmailPreview ? ['bitcoin', 'ethereum'] : assetsMissingInEmail;
 
   const [open, setOpen] = useState(false);
   const [isLiquidMode, setIsLiquidMode] = useState(false);
@@ -42,6 +48,20 @@ const MyInvestmentsPageClient: React.FC = () => {
   }, [open]);
 
   useEffect(() => {
+    const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
+    const prevBody = document.body.style.getPropertyValue('--app-bg');
+    const bg = '#ffffff';
+    document.documentElement.style.setProperty('--app-bg', bg);
+    document.body.style.setProperty('--app-bg', bg);
+    return () => {
+      if (prevHtml) document.documentElement.style.setProperty('--app-bg', prevHtml);
+      else document.documentElement.style.removeProperty('--app-bg');
+      if (prevBody) document.body.style.setProperty('--app-bg', prevBody);
+      else document.body.style.removeProperty('--app-bg');
+    };
+  }, []);
+
+  useEffect(() => {
     const fadeTimer = setTimeout(() => setFadeOut(true), 1000);
     const hideTimer = setTimeout(() => {
       setLoading(false);
@@ -58,7 +78,7 @@ const MyInvestmentsPageClient: React.FC = () => {
     refreshEmailAggregator();
   }, [isSignedIn, refreshEmailAggregator]);
 
-  const hasAny = emailInvestments.length > 0;
+  const hasAny = effectiveInvestments.length > 0;
   const displayTotals = isLiquidMode ? emailTotalsLiquid : emailTotals;
   const totalProfit = (displayTotals?.acdVatop || 0) as number;
   const profitLabel = totalProfit >= 0 ? 'Profits' : 'Losses';
@@ -77,7 +97,7 @@ const MyInvestmentsPageClient: React.FC = () => {
           </div>
         </div>
       )}
-      <div className={`myinv-page${isSignedIn ? '' : ' myinv-page--guest'}`}>
+      <div className={`myinv-page${effectiveSignedIn ? '' : ' myinv-page--guest'}`}>
         <div className={`myinv-header-outside${slideIn ? ' page-slide-in' : ''}`}>
           <div className="myinv-title">my investments</div>
           <div className={`myinv-slogan asset-header-slogan${isLiquidMode ? ' is-hidden' : ''}`}>
@@ -91,16 +111,10 @@ const MyInvestmentsPageClient: React.FC = () => {
           >
             <div className="myinv-wrapper">
             <div className={`myinv-topbar${slideIn ? ' page-slide-in' : ''}`}>
-            {isSignedIn ? (
-              <Link className="myinv-home-button" href="/" aria-label="Home">
-                <Image alt="Arells" width={37} height={37} src="/images/Arells-Icon.png" />
-              </Link>
-            ) : (
-              <span />
-            )}
+            <span />
           </div>
 
-          {!isSignedIn ? (
+          {!effectiveSignedIn ? (
             <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
               <div className="myinv-cta-row">
                 <button type="button" className="myinv-cta-button" onClick={openSignIn}>
@@ -110,18 +124,18 @@ const MyInvestmentsPageClient: React.FC = () => {
               </div>
             </div>
           ) : !hasAny ? (
-            <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
+            <div className={`myinv-panel myinv-panel--shell${slideIn ? ' page-slide-in' : ''}`}>
               <div className="myinv-panel-title">Add Investments</div>
-              <div className={`myinv-cta-row myinv-cta-row--stack${assetsMissingInEmail.length === 1 ? ' is-single' : ''}`}>
+              <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
                 {/* If user has email but no investments at all, show both asset buttons */}
-                {assetsMissingInEmail.length
-                  ? assetsMissingInEmail.map((asset) => {
+                {effectiveAssetsMissing.length
+                  ? effectiveAssetsMissing.map((asset) => {
                       const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
+                      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
                       const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
                       return (
-                        <Link key={`missing-${asset}`} href={href} className="myinv-cta-button">
-                          <span className="myinv-cta-button-bg" aria-hidden="true" />
-                          <span className="myinv-cta-button-text">{label}</span>
+                        <Link key={`missing-${asset}`} href={href} className={`myinv-asset-button myinv-asset-button--${asset}`} aria-label={label}>
+                          <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
                         </Link>
                       );
                     })
@@ -156,7 +170,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                   </div>
                 </div>
 
-                {!!email && (
+                {!!effectiveEmail && (
                   <div className="asset-reality-toggle-row" style={{ marginTop: 21 }}>
                     <span className={`asset-reality-toggle-label${isLiquidMode ? ' is-active' : ''}`}>Liquid</span>
                     <button
@@ -173,17 +187,17 @@ const MyInvestmentsPageClient: React.FC = () => {
                 )}
               </div>
 
-              {assetsMissingInEmail.length > 0 && (
-                <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
+              {effectiveAssetsMissing.length > 0 && (
+                <div className={`myinv-panel myinv-panel--shell${slideIn ? ' page-slide-in' : ''}`}>
                   <div className="myinv-panel-title">Add Investments</div>
-                  <div className={`myinv-cta-row myinv-cta-row--stack${assetsMissingInEmail.length === 1 ? ' is-single' : ''}`}>
-                    {assetsMissingInEmail.map((asset) => {
+                  <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
+                    {effectiveAssetsMissing.map((asset) => {
                       const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
+                      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
                       const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
                       return (
-                        <Link key={`missing-${asset}`} href={href} className="myinv-cta-button">
-                          <span className="myinv-cta-button-bg" aria-hidden="true" />
-                          <span className="myinv-cta-button-text">{label}</span>
+                        <Link key={`missing-${asset}`} href={href} className={`myinv-asset-button myinv-asset-button--${asset}`} aria-label={label}>
+                          <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
                         </Link>
                       );
                     })}
@@ -191,17 +205,17 @@ const MyInvestmentsPageClient: React.FC = () => {
                 </div>
               )}
 
-              {assetsPresentInEmail.length > 0 && (
-                <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
+              {effectiveAssetsPresent.length > 0 && (
+                <div className={`myinv-panel myinv-panel--shell${slideIn ? ' page-slide-in' : ''}`}>
                   <div className="myinv-panel-title">Add More Investments</div>
-                  <div className={`myinv-cta-row myinv-cta-row--stack${assetsPresentInEmail.length === 1 ? ' is-single' : ''}`}>
-                    {assetsPresentInEmail.map((asset) => {
+                  <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
+                    {effectiveAssetsPresent.map((asset) => {
                       const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
+                      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
                       const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
                       return (
-                        <Link key={`more-${asset}`} href={href} className="myinv-cta-button">
-                          <span className="myinv-cta-button-bg" aria-hidden="true" />
-                          <span className="myinv-cta-button-text">{label}</span>
+                        <Link key={`more-${asset}`} href={href} className={`myinv-asset-button myinv-asset-button--${asset}`} aria-label={label}>
+                          <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
                         </Link>
                       );
                     })}
@@ -209,7 +223,9 @@ const MyInvestmentsPageClient: React.FC = () => {
                 </div>
               )}
 
-              <div className={`myinv-footnote${slideIn ? ' page-slide-in' : ''}`}>{email ? `Signed in as ${email}` : null}</div>
+              <div className={`myinv-footnote${slideIn ? ' page-slide-in' : ''}`}>
+                {effectiveEmail ? `Signed in as ${effectiveEmail}` : null}
+              </div>
             </>
           )}
         </div>

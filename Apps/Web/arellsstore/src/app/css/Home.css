@@ -3385,6 +3385,40 @@ transform: translateY(calc(-50% - 0.5px));
 	margin-top: 18px;
 }
 
+.myinv-panel--shell {
+	position: relative;
+	isolation: isolate;
+	padding: 20px 20px 25px;
+	border-radius: 12px;
+	background: transparent;
+}
+
+.myinv-panel--shell::before {
+	content: '';
+	position: absolute;
+	inset: 40px 20px 20px 20px;
+	background: var(--home-shadow-bg);
+	border-radius: 22px;
+	--shadow-blur: 28px;
+	filter: blur(var(--shadow-blur)) hue-rotate(0deg);
+	--shadow-opacity-min: 0.92;
+	--shadow-opacity-max: 0.98;
+	opacity: 0.98;
+	z-index: -2;
+	pointer-events: none;
+	animation: shadowGradientPulse 52s ease-in-out infinite, shadowGradientHue 8s linear infinite;
+}
+
+.myinv-panel--shell::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: inherit;
+	z-index: -1;
+	pointer-events: none;
+}
+
 .myinv-about-wrap {
 	margin-top: var(--myinv-about-gap, 50px);
 	display: flex;
@@ -3427,6 +3461,58 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	padding-left: 0;
 	padding-right: 0;
 	row-gap: 12px;
+}
+
+.myinv-asset-options {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 13px;
+	padding: 0;
+}
+
+.myinv-asset-options.is-single {
+	grid-template-columns: 1fr;
+}
+
+.myinv-asset-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	border: none;
+	border-radius: 14px;
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-top: 17px;
+	padding-bottom: 17px;
+	font-weight: 700;
+	color: #666;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	box-shadow: none;
+	box-sizing: border-box;
+}
+
+.myinv-asset-button:hover,
+.myinv-asset-button:active {
+	transform: translateY(-2px);
+}
+
+.myinv-asset-button--bitcoin {
+	background: rgba(248, 141, 0, 0.12);
+	border: 1px solid rgba(248, 141, 0, 0.5);
+}
+
+.myinv-asset-button--ethereum {
+	background: rgba(107, 114, 168, 0.12);
+	border: 1px solid rgba(107, 114, 168, 0.5);
+}
+
+.myinv-asset-icon {
+	width: 15px;
+	height: 15px;
 }
 
 .myinv-cta-button {
