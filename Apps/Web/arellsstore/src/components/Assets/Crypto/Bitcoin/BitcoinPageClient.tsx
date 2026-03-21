@@ -55,6 +55,7 @@ const BitcoinPageClient: React.FC = () => {
     setLoaderScheduleKey((prev) => prev + 1);
   }, []);
 
+
   useEffect(() => {
     if (!showLoading || sessionClearPending || clearCheckInFlight) return;
     const hideAt = loaderHideAtRef.current ?? Date.now() + 2000;

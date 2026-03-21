@@ -129,6 +129,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const rawAsset = req.query.asset;
   const asset = Array.isArray(rawAsset) ? rawAsset[0] : rawAsset;
   const normalizedAsset = typeof asset === 'string' && asset.length ? asset.toLowerCase() : undefined;
+  const rawSkipExpiry = req.query.skipExpiry;
+  const skipExpiryParam = Array.isArray(rawSkipExpiry) ? rawSkipExpiry[0] : rawSkipExpiry;
+  const skipExpiry =
+    typeof skipExpiryParam === 'string'
+      ? ['1', 'true', 'yes', 'on'].includes(skipExpiryParam.toLowerCase())
+      : Boolean(skipExpiryParam);
 
   if (!sessionId) {
     return res.status(400).json({ error: 'sessionId query parameter is required' });
@@ -145,7 +151,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const existingCreatedAt = typeof userData?.createdAt === 'number' ? userData.createdAt : null;
     const existingExpiresAt = typeof userData?.expiresAt === 'number' ? userData.expiresAt : null;
     const expired = typeof existingExpiresAt === 'number' && Number.isFinite(existingExpiresAt) && now >= existingExpiresAt;
-    if (expired) {
+    if (expired && !skipExpiry) {
       try {
         await s3.deleteObject({ Bucket: BUCKET_NAME, Key: key }).promise();
       } catch {

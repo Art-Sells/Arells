@@ -30,6 +30,10 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 *Add More Investments Wrapper (investments CHild Wrapper below Add Investments Wrapper)*
 - - - (BTCicon)(ETHicon) (should start center for one if only one asset icon button is shown and expand...) that link to asset pages... should only show based on jsons if investments were added from their assets, otherwise, 
 
+- *remove the 1 minute and on page mount delete flags for sessions in all pages and test ...*
+
+- *investigate why it just randomly triggers (after new number submissions and summary has finished heighting down and loading) purchased amount, current amount and profits/losses sections to height down without any number changes*
+
 
 ### About:
 

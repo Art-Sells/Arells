@@ -145,8 +145,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { sessionId, newInvestments, asset: rawAsset } = req.body;
+  const { sessionId, newInvestments, asset: rawAsset, skipExpiry: rawSkipExpiry } = req.body;
   const asset = typeof rawAsset === 'string' && rawAsset.length ? rawAsset.toLowerCase() : 'bitcoin';
+  const skipExpiry =
+    typeof rawSkipExpiry === 'string'
+      ? ['1', 'true', 'yes', 'on'].includes(rawSkipExpiry.toLowerCase())
+      : Boolean(rawSkipExpiry);
 
   if (!sessionId || !Array.isArray(newInvestments) || newInvestments.length === 0) {
     console.error("Invalid request data:", { sessionId, newInvestments });
@@ -176,7 +180,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const now = Date.now();
     const existingCreatedAt = typeof existingData?.createdAt === 'number' ? existingData.createdAt : null;
     const existingExpiresAt = typeof existingData?.expiresAt === 'number' ? existingData.expiresAt : null;
-    const expired = typeof existingExpiresAt === 'number' && Number.isFinite(existingExpiresAt) && now >= existingExpiresAt;
+    const expired = !skipExpiry && typeof existingExpiresAt === 'number' && Number.isFinite(existingExpiresAt) && now >= existingExpiresAt;
     const createdAt = expired ? now : existingCreatedAt ?? now;
     // Reset session TTL on every add (session-only behavior).
     const expiresAt = now + SESSION_TTL_MS;

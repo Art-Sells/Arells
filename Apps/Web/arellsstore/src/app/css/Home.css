@@ -57,16 +57,16 @@ body {
 :root {
 	--home-shadow-angle: 0deg;
 	--home-shadow-bg: conic-gradient(from calc(90deg + var(--home-shadow-angle, 0deg)) at 50% 40%, rgba(80, 200, 255, 0.46), rgba(0, 220, 190, 0.5),
-			rgba(255, 220, 120, 0.46), rgba(170, 110, 255, 0.34), rgba(80, 200, 255, 0.46), rgba(255, 120, 200, 0.34),
+			rgba(255, 220, 120, 0.46), rgba(255, 80, 80, 0.46), rgba(255, 60, 60, 0.4), rgba(80, 200, 255, 0.46), rgba(255, 90, 90, 0.4),
 			rgba(0, 220, 190, 0.5)),
 		radial-gradient(220% 160% at 50% -12%, rgba(80, 200, 255, 0.4), rgba(232, 220, 255, 1) 64%),
 		radial-gradient(210% 160% at 16% 8%, rgba(0, 220, 190, 0.42), rgba(232, 220, 255, 1) 62%),
 		radial-gradient(210% 160% at 84% 10%, rgba(255, 220, 120, 0.4), rgba(232, 220, 255, 1) 62%),
-		radial-gradient(240% 190% at 18% 96%, rgba(255, 120, 200, 0.46), rgba(232, 220, 255, 1) 60%),
-		radial-gradient(240% 190% at 82% 98%, rgba(170, 110, 255, 0.4), rgba(232, 220, 255, 1) 62%),
-		radial-gradient(260% 200% at 52% 118%, rgba(255, 150, 220, 0.48), rgba(232, 220, 255, 1) 64%);
+		radial-gradient(240% 190% at 18% 96%, rgba(255, 90, 90, 0.46), rgba(232, 220, 255, 1) 60%),
+		radial-gradient(240% 190% at 82% 98%, rgba(255, 80, 80, 0.4), rgba(232, 220, 255, 1) 62%),
+		radial-gradient(260% 200% at 52% 118%, rgba(255, 90, 90, 0.48), rgba(232, 220, 255, 1) 64%);
 	--about-shadow-bg: conic-gradient(from calc(90deg + var(--home-shadow-angle, 0deg)) at 50% 40%, rgba(80, 200, 255, 0.46), rgba(0, 220, 190, 0.5),
-			rgba(255, 220, 120, 0.46), rgba(170, 110, 255, 0.34), rgba(80, 200, 255, 0.46), rgba(255, 120, 200, 0.34),
+			rgba(255, 220, 120, 0.46), rgba(255, 80, 80, 0.46), rgba(255, 60, 60, 0.4), rgba(80, 200, 255, 0.46), rgba(255, 90, 90, 0.4),
 			rgba(0, 220, 190, 0.5));
 	--button-border-gradient: conic-gradient(
 		from 0deg at 50% 50%,
@@ -98,6 +98,15 @@ body {
 	}
 	100% {
 		filter: blur(var(--shadow-blur, 30px)) hue-rotate(360deg);
+	}
+}
+
+@keyframes shadowGradientHueText {
+	0% {
+		filter: hue-rotate(0deg);
+	}
+	100% {
+		filter: hue-rotate(360deg);
 	}
 }
 
@@ -3385,6 +3394,15 @@ transform: translateY(calc(-50% - 0.5px));
 	margin-top: 18px;
 }
 
+.myinv-panel-group {
+	width: 100%;
+	margin-top: 18px;
+}
+
+.myinv-panel-group .myinv-panel {
+	margin-top: 0;
+}
+
 .myinv-panel--shell {
 	position: relative;
 	isolation: isolate;
@@ -3394,29 +3412,21 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .myinv-panel--shell::before {
-	content: '';
-	position: absolute;
-	inset: 40px 20px 20px 20px;
-	background: var(--home-shadow-bg);
-	border-radius: 22px;
-	--shadow-blur: 28px;
-	filter: blur(var(--shadow-blur)) hue-rotate(0deg);
-	--shadow-opacity-min: 0.92;
-	--shadow-opacity-max: 0.98;
-	opacity: 0.98;
-	z-index: -2;
-	pointer-events: none;
-	animation: shadowGradientPulse 52s ease-in-out infinite, shadowGradientHue 8s linear infinite;
+	content: none;
 }
 
 .myinv-panel--shell::after {
 	content: '';
 	position: absolute;
 	inset: 0;
-	background: rgba(255, 255, 255, 0.9);
+	background: transparent;
 	border-radius: inherit;
 	z-index: -1;
 	pointer-events: none;
+}
+
+.myinv-panel--asset-buttons::after {
+	background: transparent;
 }
 
 .myinv-about-wrap {
@@ -3468,6 +3478,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 13px;
 	padding: 0;
+	position: relative;
+	z-index: 1;
 }
 
 .myinv-asset-options.is-single {
@@ -3513,6 +3525,22 @@ body.has-home-investments-cta .home-assets-about-wrap {
 .myinv-asset-icon {
 	width: 15px;
 	height: 15px;
+}
+
+.myinv-asset-border {
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	padding: 1px;
+	background: var(--home-shadow-bg);
+	opacity: var(--myinv-asset-border-opacity, 0.5);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	mask-composite: exclude;
+	pointer-events: none;
+	z-index: 0;
+	animation: shadowGradientHueText 8s linear infinite;
 }
 
 .myinv-cta-button {
@@ -3677,6 +3705,20 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	font-size: 18px;
 	letter-spacing: -0.8px;
 	margin-bottom: 14px;
+}
+
+.myinv-panel-title--add {
+	font-size: 32px;
+	letter-spacing: -2px;
+	opacity: 1;
+	margin-top: 10px;
+	margin-bottom: -8px;
+	background: var(--home-shadow-bg);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+	animation: shadowGradientHueText 8s linear infinite;
 }
 
 .myinv-panel--edit {
@@ -4155,7 +4197,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 }
 
 .myinv-loader-overlay {
-	background: rgba(255, 255, 255, 0.95);
+	background: #ffffff;
+	opacity: 1;
 }
 
 .asset-loader-toggle-shell--myinv {

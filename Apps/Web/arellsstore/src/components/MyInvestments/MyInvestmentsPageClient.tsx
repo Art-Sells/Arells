@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import '../../app/css/Home.css';
 import '../../app/css/HomeLoaderOverrides.css';
 import { useUser } from '../../context/UserContext';
+import { useVavity } from '../../context/VavityAggregator';
 
 const formatCurrency = (value: number) =>
   (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -23,12 +24,29 @@ const MyInvestmentsPageClient: React.FC = () => {
     assetsPresentInEmail,
     assetsMissingInEmail,
   } = useUser();
-  const forceEmptyEmailPreview = true;
-  const effectiveSignedIn = forceEmptyEmailPreview ? true : isSignedIn;
-  const effectiveEmail = forceEmptyEmailPreview ? 'preview@arells.com' : email;
-  const effectiveInvestments = forceEmptyEmailPreview ? [] : emailInvestments;
-  const effectiveAssetsPresent = forceEmptyEmailPreview ? [] : assetsPresentInEmail;
-  const effectiveAssetsMissing = forceEmptyEmailPreview ? ['bitcoin', 'ethereum'] : assetsMissingInEmail;
+  const { investments: sessionInvestments, totals: sessionTotals, sessionId, fetchVavityAggregator } = useVavity();
+  const forceSessionPreview = true;
+  const forceEmptyEmailPreview = false;
+  const supportedAssets = useMemo(() => ['bitcoin', 'ethereum'], []);
+  const sessionAssetsPresent = useMemo(() => {
+    const present = new Set(
+      (sessionInvestments || []).map((inv: any) => ((inv?.asset || 'bitcoin') as string).toLowerCase())
+    );
+    return supportedAssets.filter((asset) => present.has(asset));
+  }, [sessionInvestments, supportedAssets]);
+  const sessionAssetsMissing = useMemo(
+    () => supportedAssets.filter((asset) => !sessionAssetsPresent.includes(asset)),
+    [sessionAssetsPresent, supportedAssets]
+  );
+  const effectiveSignedIn = forceSessionPreview ? true : forceEmptyEmailPreview ? true : isSignedIn;
+  const effectiveEmail = forceSessionPreview ? 'session' : forceEmptyEmailPreview ? 'preview@arells.com' : email;
+  const effectiveInvestments = forceSessionPreview ? sessionInvestments : forceEmptyEmailPreview ? [] : emailInvestments;
+  const effectiveAssetsPresent = forceSessionPreview ? sessionAssetsPresent : forceEmptyEmailPreview ? [] : assetsPresentInEmail;
+  const effectiveAssetsMissing = forceSessionPreview
+    ? sessionAssetsMissing
+    : forceEmptyEmailPreview
+      ? ['bitcoin', 'ethereum']
+      : assetsMissingInEmail;
 
   const [open, setOpen] = useState(false);
   const [isLiquidMode, setIsLiquidMode] = useState(false);
@@ -74,15 +92,31 @@ const MyInvestmentsPageClient: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (forceSessionPreview) return;
     if (!isSignedIn) return;
     refreshEmailAggregator();
-  }, [isSignedIn, refreshEmailAggregator]);
+  }, [forceSessionPreview, isSignedIn, refreshEmailAggregator]);
+
+  useEffect(() => {
+    if (!forceSessionPreview) return;
+    if (!sessionId) return;
+    fetchVavityAggregator(sessionId).catch(() => undefined);
+  }, [forceSessionPreview, sessionId, fetchVavityAggregator]);
 
   const hasAny = effectiveInvestments.length > 0;
-  const displayTotals = isLiquidMode ? emailTotalsLiquid : emailTotals;
+  const displayTotals = forceSessionPreview
+    ? isLiquidMode
+      ? sessionTotals
+      : sessionTotals
+    : isLiquidMode
+      ? emailTotalsLiquid
+      : emailTotals;
   const totalProfit = (displayTotals?.acdVatop || 0) as number;
   const profitLabel = totalProfit >= 0 ? 'Profits' : 'Losses';
   const profitPrefix = totalProfit >= 0 ? '+$' : '-$';
+  const investmentsTitle = forceSessionPreview ? 'Investments' : emailLoading ? 'Loading…' : 'Investments';
+  const showLiquidityToggle = forceSessionPreview ? true : !!effectiveEmail;
+  const footnoteLabel = forceSessionPreview ? '' : effectiveEmail ? `Signed in as ${effectiveEmail}` : null;
 
   return (
     <>
@@ -124,28 +158,31 @@ const MyInvestmentsPageClient: React.FC = () => {
               </div>
             </div>
           ) : !hasAny ? (
-            <div className={`myinv-panel myinv-panel--shell${slideIn ? ' page-slide-in' : ''}`}>
-              <div className="myinv-panel-title">Add Investments</div>
-              <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
-                {/* If user has email but no investments at all, show both asset buttons */}
-                {effectiveAssetsMissing.length
-                  ? effectiveAssetsMissing.map((asset) => {
-                      const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
-                      const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
-                      return (
-                        <Link key={`missing-${asset}`} href={href} className={`myinv-asset-button myinv-asset-button--${asset}`} aria-label={label}>
-                          <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
-                        </Link>
-                      );
-                    })
-                  : null}
+            <div className={`myinv-panel-group${slideIn ? ' page-slide-in' : ''}`}>
+              <div className="myinv-panel-title myinv-panel-title--add">Add Investments</div>
+              <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
+                <span className="myinv-asset-border" aria-hidden="true" />
+                <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
+                  {/* If user has email but no investments at all, show both asset buttons */}
+                  {effectiveAssetsMissing.length
+                    ? effectiveAssetsMissing.map((asset) => {
+                        const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
+                        const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
+                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        return (
+                          <Link key={`missing-${asset}`} href={href} className={`myinv-asset-button myinv-asset-button--${asset}`} aria-label={label}>
+                            <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
+                          </Link>
+                        );
+                      })
+                    : null}
+                </div>
               </div>
             </div>
           ) : (
             <>
               <div className={`myinv-panel${slideIn ? ' page-slide-in' : ''}`}>
-                <div className="myinv-panel-title">{emailLoading ? 'Loading…' : 'Investments'}</div>
+                <div className="myinv-panel-title">{investmentsTitle}</div>
                 <div className="myinv-totals">
                   <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
                     <span className="myinv-metric-title">Purchased Value</span>
@@ -170,7 +207,7 @@ const MyInvestmentsPageClient: React.FC = () => {
                   </div>
                 </div>
 
-                {!!effectiveEmail && (
+                {showLiquidityToggle && (
                   <div className="asset-reality-toggle-row" style={{ marginTop: 21 }}>
                     <span className={`asset-reality-toggle-label${isLiquidMode ? ' is-active' : ''}`}>Liquid</span>
                     <button
@@ -188,43 +225,49 @@ const MyInvestmentsPageClient: React.FC = () => {
               </div>
 
               {effectiveAssetsMissing.length > 0 && (
-                <div className={`myinv-panel myinv-panel--shell${slideIn ? ' page-slide-in' : ''}`}>
-                  <div className="myinv-panel-title">Add Investments</div>
-                  <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
-                    {effectiveAssetsMissing.map((asset) => {
-                      const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
-                      const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
-                      return (
-                        <Link key={`missing-${asset}`} href={href} className={`myinv-asset-button myinv-asset-button--${asset}`} aria-label={label}>
-                          <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
-                        </Link>
-                      );
-                    })}
+                <div className={`myinv-panel-group${slideIn ? ' page-slide-in' : ''}`}>
+                  <div className="myinv-panel-title myinv-panel-title--add">Add Investments</div>
+                  <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
+                    <span className="myinv-asset-border" aria-hidden="true" />
+                    <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
+                      {effectiveAssetsMissing.map((asset) => {
+                        const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
+                        const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
+                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        return (
+                          <Link key={`missing-${asset}`} href={href} className={`myinv-asset-button myinv-asset-button--${asset}`} aria-label={label}>
+                            <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
+                          </Link>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               )}
 
               {effectiveAssetsPresent.length > 0 && (
-                <div className={`myinv-panel myinv-panel--shell${slideIn ? ' page-slide-in' : ''}`}>
-                  <div className="myinv-panel-title">Add More Investments</div>
-                  <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
-                    {effectiveAssetsPresent.map((asset) => {
-                      const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                      const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
-                      const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
-                      return (
-                        <Link key={`more-${asset}`} href={href} className={`myinv-asset-button myinv-asset-button--${asset}`} aria-label={label}>
-                          <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
-                        </Link>
-                      );
-                    })}
+                <div className={`myinv-panel-group${slideIn ? ' page-slide-in' : ''}`}>
+                  <div className="myinv-panel-title myinv-panel-title--add">Add More Investments</div>
+                  <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
+                    <span className="myinv-asset-border" aria-hidden="true" />
+                    <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
+                      {effectiveAssetsPresent.map((asset) => {
+                        const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
+                        const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
+                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        return (
+                          <Link key={`more-${asset}`} href={href} className={`myinv-asset-button myinv-asset-button--${asset}`} aria-label={label}>
+                            <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
+                          </Link>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               )}
 
               <div className={`myinv-footnote${slideIn ? ' page-slide-in' : ''}`}>
-                {effectiveEmail ? `Signed in as ${effectiveEmail}` : null}
+                {footnoteLabel}
               </div>
             </>
           )}

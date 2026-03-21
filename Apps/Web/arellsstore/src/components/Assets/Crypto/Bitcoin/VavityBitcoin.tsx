@@ -10,6 +10,8 @@ import { useUser } from '../../../../context/UserContext';
 import BitcoinChart from './BitcoinChart';
 import CustomDatePicker from '../../../common/CustomDatePicker';
 
+const PREVIEW_SKIP_SESSION_DELETES = true;
+
 const VavityBitcoin: React.FC = () => {
   const { sessionId, fetchVavityAggregator, addVavityAggregator, saveVavityAggregator, getAsset } = useVavity();
   const { email, isSignedIn, sessionReady, openSignIn, addEmailInvestments, saveEmailInvestmentsForAsset } = useUser();
@@ -27,6 +29,8 @@ const VavityBitcoin: React.FC = () => {
   const submitLoaderUnmountTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [submitLoaderMounted, setSubmitLoaderMounted] = useState(false);
   const [submitLoaderVisible, setSubmitLoaderVisible] = useState(false);
+  const sessionMountSubmitLoaderRef = useRef(false);
+  const sessionMountSubmitLoaderTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const forceSubmitLoader = false;
   const showSubmitLoader =
     forceSubmitLoader || ((submitLoading || submitLoaderHold) && submitTargetRef.current !== 'addMore');
@@ -937,6 +941,32 @@ const VavityBitcoin: React.FC = () => {
   }, [fetchVavityAggregator, sessionId, sessionReady, isSignedIn, email]);
 
   useEffect(() => {
+    if (!vavityData) return;
+    if (sessionMountSubmitLoaderRef.current) return;
+    sessionMountSubmitLoaderRef.current = true;
+    const hasInvestments = Array.isArray(vavityData?.investments) && vavityData.investments.length > 0;
+    if (!hasInvestments) return;
+    if (isMutatingRef.current || submitLoading || submitLoaderHold || submitPhase !== 'idle') return;
+    setSubmitLoaderHold(true);
+    if (sessionMountSubmitLoaderTimerRef.current) {
+      globalThis.clearTimeout(sessionMountSubmitLoaderTimerRef.current);
+    }
+    sessionMountSubmitLoaderTimerRef.current = globalThis.setTimeout(() => {
+      sessionMountSubmitLoaderTimerRef.current = null;
+      setSubmitLoaderHold(false);
+    }, 2000);
+  }, [vavityData, submitLoading, submitLoaderHold, submitPhase]);
+
+  useEffect(() => {
+    return () => {
+      if (sessionMountSubmitLoaderTimerRef.current) {
+        globalThis.clearTimeout(sessionMountSubmitLoaderTimerRef.current);
+        sessionMountSubmitLoaderTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
       const params = new URLSearchParams(window.location.search);
@@ -948,6 +978,7 @@ const VavityBitcoin: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (PREVIEW_SKIP_SESSION_DELETES) return;
     if (!sessionReady || !sessionId) return;
     if (isSignedIn || email) return;
     if (clearedSessionOnMountRef.current) return;

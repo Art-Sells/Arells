@@ -33,6 +33,8 @@ type AssetSnapshot = {
   historyLastUpdated: number | null;
 };
 
+const PREVIEW_SKIP_SESSION_DELETES = true;
+
 interface VavityaggregatorType {
   assets: Record<string, AssetSnapshot>;
   getAsset: (assetId: string) => AssetSnapshot | undefined;
@@ -98,6 +100,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // While the user is active, auto-trigger a fetch right when the session TTL expires so the session investments clear at ~60s.
   useEffect(() => {
+    if (PREVIEW_SKIP_SESSION_DELETES) {
+      if (sessionExpiryTimerRef.current) {
+        globalThis.clearTimeout(sessionExpiryTimerRef.current);
+        sessionExpiryTimerRef.current = null;
+      }
+      return;
+    }
     if (!sessionId) return;
     if (sessionExpiresAt == null) return;
     if (investments.length === 0) {
@@ -123,7 +132,11 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           );
         }
         const response = await axios.get(`/api/fetchVavityAggregator`, {
-          params: { sessionId, asset: lastSessionAssetRef.current || 'bitcoin' },
+          params: {
+            sessionId,
+            asset: lastSessionAssetRef.current || 'bitcoin',
+            ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: '1' } : {}),
+          },
         });
         const data = response.data || {};
         setInvestments(Array.isArray(data.investments) ? data.investments : []);
@@ -144,7 +157,13 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const fetchVavityAggregator = useCallback(async (currentSessionId: string, asset = 'bitcoin'): Promise<any> => {
     if (!currentSessionId) throw new Error('Session ID is required');
-    const response = await axios.get(`/api/fetchVavityAggregator`, { params: { sessionId: currentSessionId, asset } });
+    const response = await axios.get(`/api/fetchVavityAggregator`, {
+      params: {
+        sessionId: currentSessionId,
+        asset,
+        ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: '1' } : {}),
+      },
+    });
     const data = response.data || {};
     const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
     const fetchedTotals: TotalsState = data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
@@ -164,6 +183,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       sessionId: currentSessionId,
       newInvestments,
       asset,
+      ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: true } : {}),
     });
     const data = response.data?.data || {};
     setInvestments(data.investments || []);
@@ -182,6 +202,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       sessionId: currentSessionId,
       investments: updatedInvestments,
       asset,
+      ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: true } : {}),
     });
     const data = response.data?.data || {};
     setInvestments(data.investments || updatedInvestments || []);

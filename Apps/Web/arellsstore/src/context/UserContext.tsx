@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
+const PREVIEW_SKIP_SESSION_DELETES = true;
+
 interface UserContextType {
   sessionId: string;
   setSessionId: (value: string) => void;
@@ -147,7 +149,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     sessionBootstrapRef.current = true;
     (async () => {
       try {
-        const res = await fetch(`/api/fetchVavityAggregator?sessionId=${encodeURIComponent(sessionId)}`);
+        const skipParam = PREVIEW_SKIP_SESSION_DELETES ? '&skipExpiry=1' : '';
+        const res = await fetch(`/api/fetchVavityAggregator?sessionId=${encodeURIComponent(sessionId)}${skipParam}`);
         const data = await res.json();
         const hasMeta =
           typeof data?.createdAt === 'number' && Number.isFinite(data.createdAt) &&
@@ -157,7 +160,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           await fetch('/api/saveVavityAggregator', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sessionId, investments: [], asset: 'bitcoin' }),
+            body: JSON.stringify({
+              sessionId,
+              investments: [],
+              asset: 'bitcoin',
+              ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: true } : {}),
+            }),
           });
         }
       } catch {
