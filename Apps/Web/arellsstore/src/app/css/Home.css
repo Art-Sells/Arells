@@ -2025,15 +2025,15 @@ body {
 	/* Match the chart hover dot (33px) */
 	--toggle-knob-size: 33px;
 	/* Center the knob on the line ends */
-	--toggle-knob-left-inset: 0px;
-	--toggle-knob-right-inset: 0px;
+	--toggle-knob-left-inset: 15px;
+	--toggle-knob-right-inset: 15px;
 }
 
 .asset-reality-toggle::before {
 	content: '';
 	position: absolute;
-	left: 0;
-	right: 0;
+	left: 15px;
+	right: 15px;
 	top: 50%;
 	transform: translateY(-50%);
 	height: var(--asset-chart-line-width, 6.5px);
@@ -2539,6 +2539,10 @@ transform: translateY(calc(-50% - 0.5px));
 .page-slide-down {
 	animation: pageSlideUp 4s cubic-bezier(0.2, 0.9, 0.2, 1.4);
 	animation-fill-mode: both;
+}
+
+.home-assets-wrapper.page-slide-down {
+	animation-name: pageSlideUpNoOpacity;
 }
 
 .home-header-inner {
@@ -3315,10 +3319,10 @@ transform: translateY(calc(-50% - 0.5px));
 .myinv-shell {
 	width: min(700px, 100%);
 	margin: 0 auto;
-	padding-top: 10px;
-	padding-bottom: 37px;
-	padding-left: 45px;
-	padding-right: 45px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	padding-left: 20px;
+	padding-right: 20px;
 	box-shadow: none;
 	border-radius: 12px;
 	background: transparent;
@@ -3373,6 +3377,10 @@ transform: translateY(calc(-50% - 0.5px));
 	width: min(700px, 100%);
 	margin: 0 auto 12px;
 	display: flex;
+	animation-duration: 1s;
+	animation-delay: 2s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
 	justify-content: flex-end;
 	position: relative;
 	z-index: 1;
@@ -3458,6 +3466,15 @@ transform: translateY(calc(-50% - 0.5px));
 	margin-top: 18px;
 }
 
+.myinv-panel-section {
+	width: min(700px, 100%);
+	margin: 0 auto;
+	padding: 14px 14px 16px;
+	border-radius: 12px;
+	background: #fff;
+	box-sizing: border-box;
+}
+
 .myinv-panel-group .myinv-panel {
 	margin-top: 0;
 }
@@ -3541,16 +3558,34 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .myinv-toggle-shell {
-	width: min(380px, 100%);
+	width: 100%;
 	margin: 18px auto 20px;
 	padding: 14px 12px;
 	border-radius: 12px;
 	--asset-chart-line-color: var(--myinv-accent-color);
 	--asset-hover-dot-color: var(--myinv-accent-color);
+	box-sizing: border-box;
 }
 
 .myinv-toggle-row {
 	transform: none;
+	justify-content: center;
+	gap: 12px;
+	padding: 0 16px;
+	box-sizing: border-box;
+}
+
+.myinv-toggle-shell .asset-reality-toggle-label {
+	flex: 0 0 auto;
+	min-width: 50px;
+	text-align: center;
+}
+
+.myinv-toggle-shell .asset-reality-toggle {
+	flex: 1;
+	width: auto;
+	margin: 0;
+	min-width: 0;
 }
 
 .myinv-toggle-shell .asset-reality-toggle-label {
@@ -3569,6 +3604,14 @@ transform: translateY(calc(-50% - 0.5px));
 	border-radius: 12px;
 	box-sizing: border-box;
 	--myinv-asset-border-opacity: 0.3;
+}
+
+.myinv-summary-block {
+	width: min(700px, 100%);
+	margin: 0 auto 12px;
+	padding: 12px 12px 14px;
+	border-radius: 12px;
+	box-sizing: border-box;
 }
 
 .myinv-profit-summary {
@@ -3647,7 +3690,7 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .myinv-summary-section {
-	width: min(420px, 92%);
+	width: min(700px, 100%);
 	margin: 0 auto 10px;
 	padding: 18px 16px 14px;
 	border-radius: 12px;
@@ -3663,7 +3706,7 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .myinv-summary-shell .asset-metric-row {
-	width: 300px;
+	width: 80%;
 	max-width: 100%;
 	margin-left: auto;
 	margin-right: auto;
@@ -3681,7 +3724,7 @@ transform: translateY(calc(-50% - 0.5px));
 }
 
 .myinv-profit-row {
-	width: 300px;
+	width: 80%;
 	max-width: 100%;
 	margin-left: auto;
 	margin-right: auto;

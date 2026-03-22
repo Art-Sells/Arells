@@ -581,86 +581,59 @@ const MyInvestmentsPageClient: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              ) : !hasAny ? (
-                <div className={`myinv-panel-group${slideIn ? ' page-slide-in' : ''}`}>
-                  <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
-                  <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
-                    <span className="myinv-asset-border" aria-hidden="true" />
-                    <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
-                      {effectiveAssetsMissing.length
-                        ? effectiveAssetsMissing.map((asset) => {
-                            const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                            const icon =
-                              asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
-                            const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
-                            return (
-                              <Link
-                                key={`missing-${asset}`}
-                                href={href}
-                                className={`myinv-asset-button myinv-asset-button--${asset}`}
-                                aria-label={label}
-                              >
-                                <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
-                              </Link>
-                            );
-                          })
-                        : null}
-                    </div>
-                  </div>
-                </div>
-              ) : (
+              ) : hasAny ? (
                 <>
-                  <div
-                    className={`myinv-summary-section${summaryQuickFade ? ' is-quickfade' : ''}${
-                      slideIn ? ' page-slide-in' : ''
-                    }`}
-                  >
-                    <div className="myinv-summary-shell">
-                      <div className="myinv-totals">
-                        <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
-                          <span className="myinv-metric-title">Purchased Value</span>
-                          <div
-                            ref={purchasedValueRef}
-                            style={{
-                              height: purchasedValueHeight != null ? `${purchasedValueHeight}px` : 'auto',
-                              transition: purchasedValueHeight != null ? 'height 2s ease' : undefined,
-                              overflow: purchasedValueHeight != null ? 'hidden' : undefined,
-                              display: 'inline-block',
-                            }}
-                          >
-                            <span
-                              className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                  <div className={`myinv-summary-block myinv-accent-border${slideIn ? ' page-slide-in' : ''}`}>
+                    <div
+                      className={`myinv-summary-section${summaryQuickFade ? ' is-quickfade' : ''}`}
+                    >
+                      <div className="myinv-summary-shell">
+                        <div className="myinv-totals">
+                          <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
+                            <span className="myinv-metric-title">Purchased Value</span>
+                            <div
+                              ref={purchasedValueRef}
                               style={{
-                                opacity: summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                height: purchasedValueHeight != null ? `${purchasedValueHeight}px` : 'auto',
+                                transition: purchasedValueHeight != null ? 'height 2s ease' : undefined,
+                                overflow: purchasedValueHeight != null ? 'hidden' : undefined,
+                                display: 'inline-block',
                               }}
                             >
-                              <span className="myinv-metric-symbol">$</span>
-                              <span className="myinv-metric-value">{formatCurrency(summaryTotals?.acVatop || 0)}</span>
-                            </span>
+                              <span
+                                className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                                style={{
+                                  opacity: summaryValuesHidden ? 0 : realityOpacity,
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                }}
+                              >
+                                <span className="myinv-metric-symbol">$</span>
+                                <span className="myinv-metric-value">{formatCurrency(summaryTotals?.acVatop || 0)}</span>
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
-                          <span className="myinv-metric-title">Current Value</span>
-                          <div
-                            ref={currentValueRef}
-                            style={{
-                              height: currentValueHeight != null ? `${currentValueHeight}px` : 'auto',
-                              transition: currentValueHeight != null ? 'height 2s ease' : undefined,
-                              overflow: currentValueHeight != null ? 'hidden' : undefined,
-                              display: 'inline-block',
-                            }}
-                          >
-                            <span
-                              className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                          <div className="asset-metric-row asset-money-row" style={{ justifyContent: 'center', marginBottom: 8 }}>
+                            <span className="myinv-metric-title">Current Value</span>
+                            <div
+                              ref={currentValueRef}
                               style={{
-                                opacity: summaryValuesHidden ? 0 : realityOpacity,
-                                transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                height: currentValueHeight != null ? `${currentValueHeight}px` : 'auto',
+                                transition: currentValueHeight != null ? 'height 2s ease' : undefined,
+                                overflow: currentValueHeight != null ? 'hidden' : undefined,
+                                display: 'inline-block',
                               }}
                             >
-                              <span className="myinv-metric-symbol">$</span>
-                              <span className="myinv-metric-value">{formatCurrency(summaryTotals?.acVact || 0)}</span>
-                            </span>
+                              <span
+                                className={`asset-money-wrap asset-profit-range-anim${summaryValuesHidden ? ' is-hidden' : ''}`}
+                                style={{
+                                  opacity: summaryValuesHidden ? 0 : realityOpacity,
+                                  transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
+                                }}
+                              >
+                                <span className="myinv-metric-symbol">$</span>
+                                <span className="myinv-metric-value">{formatCurrency(summaryTotals?.acVact || 0)}</span>
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -858,67 +831,72 @@ const MyInvestmentsPageClient: React.FC = () => {
                       </div>
                     </div>
                   )}
-
-                  {effectiveAssetsMissing.length > 0 && (
-                    <div className={`myinv-panel-group${slideIn ? ' page-slide-in' : ''}`}>
-                      <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
-                      <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
-                        <span className="myinv-asset-border" aria-hidden="true" />
-                        <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
-                          {effectiveAssetsMissing.map((asset) => {
-                            const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                            const icon =
-                              asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
-                            const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
-                            return (
-                              <Link
-                                key={`missing-${asset}`}
-                                href={href}
-                                className={`myinv-asset-button myinv-asset-button--${asset}`}
-                                aria-label={label}
-                              >
-                                <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {effectiveAssetsPresent.length > 0 && (
-                    <div className={`myinv-panel-group${slideIn ? ' page-slide-in' : ''}`}>
-                      <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">View Investments</div>
-                      <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
-                        <span className="myinv-asset-border" aria-hidden="true" />
-                        <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
-                          {effectiveAssetsPresent.map((asset) => {
-                            const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
-                            const icon =
-                              asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
-                            const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
-                            return (
-                              <Link
-                                key={`more-${asset}`}
-                                href={href}
-                                className={`myinv-asset-button myinv-asset-button--${asset}`}
-                                aria-label={label}
-                              >
-                                <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className={`myinv-footnote${slideIn ? ' page-slide-in' : ''}`}>{footnoteLabel}</div>
                 </>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
+        {effectiveSignedIn && (
+          <>
+            {effectiveAssetsMissing.length > 0 && (
+              <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
+                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">Add Investments</div>
+                <div className="myinv-panel-section myinv-accent-border">
+                  <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
+                    <span className="myinv-asset-border" aria-hidden="true" />
+                    <div className={`myinv-asset-options${effectiveAssetsMissing.length === 1 ? ' is-single' : ''}`}>
+                      {effectiveAssetsMissing.map((asset) => {
+                        const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
+                        const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
+                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        return (
+                          <Link
+                            key={`missing-${asset}`}
+                            href={href}
+                            className={`myinv-asset-button myinv-asset-button--${asset}`}
+                            aria-label={label}
+                          >
+                            <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {effectiveAssetsPresent.length > 0 && (
+              <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
+                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">View Investments</div>
+                <div className="myinv-panel-section myinv-accent-border">
+                  <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
+                    <span className="myinv-asset-border" aria-hidden="true" />
+                    <div className={`myinv-asset-options${effectiveAssetsPresent.length === 1 ? ' is-single' : ''}`}>
+                      {effectiveAssetsPresent.map((asset) => {
+                        const href = asset === 'bitcoin' ? '/bitcoin' : '/ethereum';
+                        const icon = asset === 'bitcoin' ? '/images/assets/crypto/Bitcoin.svg' : '/images/assets/crypto/Ethereum.svg';
+                        const label = asset === 'bitcoin' ? 'Bitcoin' : 'Ethereum';
+                        return (
+                          <Link
+                            key={`more-${asset}`}
+                            href={href}
+                            className={`myinv-asset-button myinv-asset-button--${asset}`}
+                            aria-label={label}
+                          >
+                            <Image className="myinv-asset-icon" alt={label} width={22} height={22} src={icon} />
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {footnoteLabel && <div className={`myinv-footnote${slideIn ? ' page-slide-in' : ''}`}>{footnoteLabel}</div>}
+          </>
+        )}
         <div className={`myinv-about-wrap${slideIn ? ' page-slide-in' : ''}`}>
           <Link className="myinv-about-button" href="/about">
             <span className="myinv-about-button-bg" aria-hidden="true" />
