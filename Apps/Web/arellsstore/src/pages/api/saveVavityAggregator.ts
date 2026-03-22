@@ -175,6 +175,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const existingInvestmentsRaw = Array.isArray(existingData.investments) ? existingData.investments : [];
     const incomingInvestmentsRaw = Array.isArray(investments) ? investments : existingInvestmentsRaw;
+    const filteredExistingInvestments = existingInvestmentsRaw.filter((inv: any) => {
+      const invAsset =
+        typeof inv?.asset === 'string' && inv.asset.length ? inv.asset.toLowerCase() : 'bitcoin';
+      return invAsset !== asset;
+    });
 
     // Session TTL meta: start countdown when the session JSON is first created.
     // If the existing session is expired, rotate meta and treat this save as a fresh session.
@@ -260,13 +265,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       };
     });
 
-    const totals = calculateTotals(normalizedInvestments);
-    const totalsLiquid = calculateTotalsLiquid(normalizedInvestments);
+    const mergedInvestments = [...filteredExistingInvestments, ...normalizedInvestments];
+    const totals = calculateTotals(mergedInvestments);
+    const totalsLiquid = calculateTotalsLiquid(mergedInvestments);
 
     const newData = {
       createdAt,
       expiresAt,
-      investments: normalizedInvestments,
+      investments: mergedInvestments,
       totals,
       totalsLiquid,
     };

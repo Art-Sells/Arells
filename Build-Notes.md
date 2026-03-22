@@ -3,6 +3,9 @@
 ## Arells v1
 
 
+- *investigate why it just randomly triggers (after new number submissions and summary has finished heighting down and loading) purchased amount, current amount and profits/losses sections to height down without any number changes and on page mount it should default to loading the "asset page loader" trying to get the email/session investments for at least 4 seconds... if no investments, then load the "add investments/ sign in to save investments" section*
+
+
 ## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
 
 
@@ -27,7 +30,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 *Add More Investments Wrapper (investments CHild Wrapper below Add Investments Wrapper)*
 - - - (BTCicon)(ETHicon) (should start center for one if only one asset icon button is shown and expand...) that link to asset pages... should only show based on jsons if investments were added from their assets, otherwise, 
 
-- *investigate why it just randomly triggers (after new number submissions and summary has finished heighting down and loading) purchased amount, current amount and profits/losses sections to height down without any number changes and on page mount it should default to loading the "asset page loader" trying to get the email/session investments for at least 4 seconds... if no investments, then load the "add investments/ sign in to save investments" section*
+
 
 - *remove the 1 minute and on page mount delete flags for sessions in all pages and test ...*
 

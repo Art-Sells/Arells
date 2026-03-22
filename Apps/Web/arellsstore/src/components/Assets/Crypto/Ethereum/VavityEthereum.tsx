@@ -19,6 +19,7 @@ const VavityEthereum: React.FC = () => {
   const prevVavityDataRef = useRef<any | null>(null);
   const clearingSnapshotRef = useRef<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [initialFetchDone, setInitialFetchDone] = useState(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const submitTargetRef = useRef<'add' | 'addMore'>('add');
   const [submitLoaderHold, setSubmitLoaderHold] = useState(false);
@@ -275,6 +276,9 @@ const VavityEthereum: React.FC = () => {
   const purchasedValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const currentValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const profitValueTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const lastFormattedVatopRef = useRef<string | null>(null);
+  const lastFormattedVactRef = useRef<string | null>(null);
+  const lastFormattedProfitRef = useRef<string | null>(null);
   const [addFormPanelHeight, setAddFormPanelHeight] = useState<number>(0);
   const [addFormSubmitMaxHeight, setAddFormSubmitMaxHeight] = useState<number | null>(null);
   const [addFormOuterSubmitMaxHeight, setAddFormOuterSubmitMaxHeight] = useState<number | null>(null);
@@ -916,6 +920,7 @@ const VavityEthereum: React.FC = () => {
       } finally {
         if (isMounted) {
           setLoading(false);
+          setInitialFetchDone((prev) => prev || true);
         }
       }
     };
@@ -1133,6 +1138,8 @@ const VavityEthereum: React.FC = () => {
   const suppressInvestmentsUI = isSubmitCollapsing && submitTargetRef.current === 'add';
   const hasInvestmentsUI = (investments.length > 0 || isClearingInvestments) && !suppressInvestmentsUI;
   const showInvestmentsHeader = investments.length > 0;
+  const shouldFetchInitialData = isSignedIn ? Boolean(email) : Boolean(sessionReady && sessionId && fetchVavityAggregator);
+  const showInitialFetchLoader = shouldFetchInitialData && !initialFetchDone;
 
   const finalizeDeleteCollapse = useCallback((investmentId: string) => {
     setClosingInvestments((prev) => prev.filter((value) => value !== investmentId));
@@ -1746,14 +1753,42 @@ const VavityEthereum: React.FC = () => {
   }, [liveInvestments.length, filteredTotals, rangeHistoricalPrice]);
 
   useLayoutEffect(() => {
+    const value = summaryTotals.acVatop || 0;
+    const abs = Math.abs(value);
+    const decimals = abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
+    const formatted = value.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+    if (lastFormattedVatopRef.current === formatted) return;
+    lastFormattedVatopRef.current = formatted;
     animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValuePrevRef, purchasedValueTimerRef);
   }, [animateNumberHeight, summaryTotals.acVatop]);
 
   useLayoutEffect(() => {
+    const value = summaryTotals.acVact || 0;
+    const abs = Math.abs(value);
+    const decimals = abs > 1 ? 2 : abs > 0.01 ? 4 : 6;
+    const formatted = value.toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+    if (lastFormattedVactRef.current === formatted) return;
+    lastFormattedVactRef.current = formatted;
     animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValuePrevRef, currentValueTimerRef);
   }, [animateNumberHeight, summaryTotals.acVact]);
 
   useLayoutEffect(() => {
+    const profitValue =
+      selectedRangeDays && rangeHistoricalPrice != null
+        ? (summaryTotals.acVact || 0) - (summaryTotals.acVactTaa || 0) * (summaryRangePrice ?? 0)
+        : (summaryTotals.acVact || 0) - (summaryTotals.acVatop || 0);
+    const formatted = Math.abs(profitValue).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    if (lastFormattedProfitRef.current === formatted) return;
+    lastFormattedProfitRef.current = formatted;
     animateNumberHeight(
       profitValueRef,
       setProfitValueHeight,
@@ -1767,6 +1802,7 @@ const VavityEthereum: React.FC = () => {
     summaryTotals.acVactTaa,
     summaryRangePrice,
     selectedRangeDays,
+    rangeHistoricalPrice
   ]);
 
   const chartRanges = useMemo(
@@ -3111,10 +3147,10 @@ const VavityEthereum: React.FC = () => {
 
   return (
     <>
-      {submitLoaderMounted && (
+      {(submitLoaderMounted || showInitialFetchLoader) && (
         <div
           className={`asset-submit-loader-overlay asset-submit-loader-overlay--ethereum${
-            submitLoaderVisible ? ' is-visible' : ''
+            submitLoaderVisible || showInitialFetchLoader ? ' is-visible' : ''
           }`}
         >
           <div className="asset-submit-loader-ring">
@@ -3507,7 +3543,7 @@ const VavityEthereum: React.FC = () => {
           paddingLeft: '20px',
           paddingRight: '20px' }}
       >
-        {!hasInvestmentsUI ? (
+        {!hasInvestmentsUI && !showInitialFetchLoader ? (
           <>
             <div
               ref={emptyActionsRef}
