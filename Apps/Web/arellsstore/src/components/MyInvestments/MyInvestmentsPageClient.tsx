@@ -8,8 +8,11 @@ import '../../app/css/HomeLoaderOverrides.css';
 import { useUser } from '../../context/UserContext';
 import { useVavity } from '../../context/VavityAggregator';
 
-const formatCurrency = (value: number) =>
-  (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const formatCurrencyParts = (value: number) => {
+  const formatted = (value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const [integer, decimals = '00'] = formatted.split('.');
+  return { integer, decimals };
+};
 
 const MyInvestmentsPageClient: React.FC = () => {
   const {
@@ -607,8 +610,16 @@ const MyInvestmentsPageClient: React.FC = () => {
                                   transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
                                 }}
                               >
-                                <span className="myinv-metric-symbol">$</span>
-                                <span className="myinv-metric-value">{formatCurrency(summaryTotals?.acVatop || 0)}</span>
+                              <span className="myinv-metric-symbol">$</span>
+                              {(() => {
+                                const { integer, decimals } = formatCurrencyParts(summaryTotals?.acVatop || 0);
+                                return (
+                                  <span className="myinv-metric-value">
+                                    <span className="myinv-metric-integer">{integer}</span>
+                                    <span className="myinv-metric-decimals">.{decimals}</span>
+                                  </span>
+                                );
+                              })()}
                               </span>
                             </div>
                           </div>
@@ -630,8 +641,16 @@ const MyInvestmentsPageClient: React.FC = () => {
                                   transition: toggleKnobLeftPx != null || toggleAnimating ? 'none' : 'opacity 1s ease',
                                 }}
                               >
-                                <span className="myinv-metric-symbol">$</span>
-                                <span className="myinv-metric-value">{formatCurrency(summaryTotals?.acVact || 0)}</span>
+                              <span className="myinv-metric-symbol">$</span>
+                              {(() => {
+                                const { integer, decimals } = formatCurrencyParts(summaryTotals?.acVact || 0);
+                                return (
+                                  <span className="myinv-metric-value">
+                                    <span className="myinv-metric-integer">{integer}</span>
+                                    <span className="myinv-metric-decimals">.{decimals}</span>
+                                  </span>
+                                );
+                              })()}
                               </span>
                             </div>
                           </div>
@@ -674,7 +693,15 @@ const MyInvestmentsPageClient: React.FC = () => {
                               }}
                             >
                               <span className="myinv-metric-inline-symbol">{profitPrefix}</span>
-                              <span className="myinv-metric-value">{formatCurrency(Math.abs(totalProfit || 0))}</span>
+                              {(() => {
+                                const { integer, decimals } = formatCurrencyParts(Math.abs(totalProfit || 0));
+                                return (
+                                  <span className="myinv-metric-value">
+                                    <span className="myinv-metric-integer">{integer}</span>
+                                    <span className="myinv-metric-decimals">.{decimals}</span>
+                                  </span>
+                                );
+                              })()}
                             </span>
                           </div>
                         </div>
@@ -868,7 +895,7 @@ const MyInvestmentsPageClient: React.FC = () => {
 
             {effectiveAssetsPresent.length > 0 && (
               <div className={`myinv-panel-group myinv-panel-group--bordered${slideIn ? ' page-slide-in' : ''}`}>
-                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">View Investments</div>
+                <div className="myinv-panel-title myinv-panel-title--add myinv-title-accent">My Assets</div>
                 <div className="myinv-panel-section myinv-accent-border">
                   <div className="myinv-panel myinv-panel--shell myinv-panel--asset-buttons">
                     <span className="myinv-asset-border" aria-hidden="true" />

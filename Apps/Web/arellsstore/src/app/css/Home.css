@@ -20,7 +20,6 @@
 /* Home page: remove all button shadows */
 #overlayy .home-voting-button,
 #overlayy .home-vote-modal-button,
-#overlayy .home-assets-button,
 #overlayy .home-investments-slideup-button,
 #overlayy .myinv-home-button,
 #overlayy .asset-home-button,
@@ -34,8 +33,6 @@
 #overlayy .home-voting-button:active,
 #overlayy .home-vote-modal-button:hover,
 #overlayy .home-vote-modal-button:active,
-#overlayy .home-assets-button:hover,
-#overlayy .home-assets-button:active,
 #overlayy .home-investments-slideup-button:hover,
 #overlayy .home-investments-slideup-button:active,
 #overlayy .myinv-home-button:hover,
@@ -2574,8 +2571,8 @@ transform: translateY(calc(-50% - 0.5px));
 	animation-fill-mode: both;
 	position: relative;
 	isolation: isolate;
-	--home-assets-radius-left: 50px;
-	--home-assets-radius-right: 50px;
+	--home-assets-radius-left: 20px;
+	--home-assets-radius-right: 20px;
 	border-top-left-radius: var(--home-assets-radius-left);
 	border-top-right-radius: var(--home-assets-radius-right);
 	border-bottom-left-radius: 0;
@@ -2605,7 +2602,7 @@ transform: translateY(calc(-50% - 0.5px));
 	position: relative;
 	isolation: isolate;
 	background: transparent !important;
-	--home-assets-radius-left: 50px;
+	--home-assets-radius-left: 20px;
 	--home-assets-radius-right: 20px;
 	border-radius: var(--home-assets-radius-left) var(--home-assets-radius-right)
 		var(--home-assets-radius-right) var(--home-assets-radius-left);
@@ -2716,6 +2713,17 @@ transform: translateY(calc(-50% - 0.5px));
 	animation: pageSlideUp 4s ease;
 	animation-fill-mode: both;
 	will-change: transform, opacity;
+}
+
+.home-assets-footer-slide {
+	animation: pageSlideUp 4s ease;
+	animation-fill-mode: both;
+	will-change: transform, opacity;
+	animation-delay: 2.5s;
+	animation-duration: 4s;
+	animation-timing-function: ease;
+	animation-fill-mode: both;
+	animation-name: pageSlideUp;
 }
 
 
@@ -3073,10 +3081,10 @@ transform: translateY(calc(-50% - 0.5px));
 	width: 100%;
 	box-sizing: border-box;
 	/* +20px top padding */
-	padding-top: 35px;
-	padding-left: 45px;  /* +10px */
-	padding-right: 45px; /* +10px */
-	padding-bottom: 45px;
+	padding-top: 25px;
+	padding-left: 25px;  /* +10px */
+	padding-right: 25px; /* +10px */
+	padding-bottom: 35px;
 	/* Shadow handled by gradient glow */
 	box-shadow: none;
 	border-radius: 12px;
@@ -3560,7 +3568,7 @@ transform: translateY(calc(-50% - 0.5px));
 .myinv-toggle-shell {
 	width: 100%;
 	margin: 18px auto 20px;
-	padding: 14px 12px;
+	padding: 10px 12px;
 	border-radius: 12px;
 	--asset-chart-line-color: var(--myinv-accent-color);
 	--asset-hover-dot-color: var(--myinv-accent-color);
@@ -4013,12 +4021,14 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	font-size: 18px;
 	letter-spacing: -0.8px;
 	margin-bottom: 14px;
+	position: relative;
+	z-index: 3;
 }
 
 .myinv-panel-title--add {
 	font-size: 32px;
 	letter-spacing: -2px;
-	opacity: 0.3;
+	opacity: 1;
 	margin-top: 10px;
 	margin-bottom: -8px;
 	color: var(--myinv-accent-color);
@@ -4026,7 +4036,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 .myinv-title-accent {
 	color: var(--myinv-accent-color);
-	opacity: 0.3;
+	opacity: 1;
 }
 
 .myinv-panel--edit {
@@ -4232,6 +4242,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	word-break: break-word;
 	min-width: 0;
 	text-align: left;
+}
+
+.myinv-metric-decimals {
+	white-space: nowrap;
+	display: inline-block;
 }
 
 .myinv-footnote {
@@ -4915,14 +4930,21 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				padding: 5px 0 0;
 			}
 
+.home-assets-footer--outside {
+	margin-top: -10px;
+	margin-bottom: 30px;
+	justify-content: center;
+}
+
 			.home-assets-footer-text {
 				font-size: 35px;
 				font-weight: 800;
 				letter-spacing: -1.5px;
-	color: #222;
-				opacity: .09;
-				padding-top: 40px;
-				margin: auto;
+	color: var(--myinv-accent-color);
+				opacity: 1;
+				padding-top: 30px;
+				margin: 0 auto;
+				text-align: center;
 			}
 
 			.home-voting-block {
@@ -4930,7 +4952,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				max-width: 860px;
 				min-width: 300px;
 				margin: 0 auto -10px;
-				padding: 30px 30px 25px !important;
+				padding: 10px 10px 25px !important;
 				box-shadow: none;
 				border-top-left-radius: var(--home-assets-radius-left);
 				border-top-right-radius: var(--home-assets-radius-right);
@@ -4938,7 +4960,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				border-bottom-right-radius: 0;
 				display: grid;
 				gap: 13px;
-				background: #fff;
+				background: transparent;
 				border: 1px solid var(--voting-block-border);
 				box-sizing: border-box;
 			}
@@ -4947,7 +4969,7 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				font-weight: 600;
 				letter-spacing: 0.2px;
 				color: #222;
-				opacity: 0.5;
+				opacity: 1;
 				font-size: 10px;
 				text-align: center;
 				margin-bottom: 0px;
@@ -4957,7 +4979,13 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				display: grid;
 				grid-template-columns: repeat(2, minmax(0, 1fr));
 				gap: 13px;
-				padding: 0 30px;
+				padding-left: 10px;
+				border-radius: 17px;
+				padding-right: 10px;
+				padding-bottom: 10px;
+				padding-top: 10px;
+				margin-bottom: 0px;
+				background: white;
 			}
 
 			.home-voting-button {
@@ -5011,8 +5039,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 			.home-voting-countdown {
 				font-weight: 600;
 				letter-spacing: 0.2px;
-				color: #222;
-				opacity: 0.2;
+	color: var(--myinv-accent-color);
+	opacity: 1;
 				font-size: 13px;
 				text-align: center;
 				margin-top: 0px;
@@ -5196,16 +5224,16 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				font-size: 20px;
 				font-weight: 800;
 				letter-spacing: -1.5px;
-				color: #222;
-				opacity: .4;
+				color: var(--myinv-accent-color);
+				opacity: 1;
 			}
 
 			.home-vote-modal-body {
 				font-weight: 600;
 				letter-spacing: 0.2px;
 				line-height: 1.2;
-				color: #222;
-				opacity: 0.45;
+				color: var(--myinv-accent-color);
+				opacity: 1;
 				font-size: 13px;
 				width: 130px;
 			}
@@ -5249,21 +5277,74 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 
 			.home-assets-list {
-				width: min(920px, 90%);
+				width: 100%;
 				margin: 18px auto 0;
-				transform: translateX(-10px);
+				transform: none;
 				display: flex;
 				flex-direction: column;
 				gap: 20px;
 			}
 
+.home-assets-table-shell {	
+	margin-top: -10px;
+	margin-left: 0px;
+	padding-top: 0px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	width: 100%;
+	--home-assets-table-radius-left: 20px;
+	--home-assets-table-radius-right: 20px;
+	border-radius: var(--home-assets-table-radius-left) var(--home-assets-table-radius-right)
+		var(--home-assets-table-radius-right) var(--home-assets-table-radius-left);
+	box-sizing: border-box;
+}
+
+.home-assets-rows-shell {
+	margin-top: 12px;
+	margin-left: 0;
+	margin-right: 0;
+	padding-top: 5px;
+	padding-bottom: 15px;
+	padding-left: 15px;
+	padding-right: 10px;
+	--home-assets-rows-radius-left: 20px;
+	--home-assets-rows-radius-right: 20px;
+	border-radius: var(--home-assets-rows-radius-left) var(--home-assets-rows-radius-right)
+		var(--home-assets-rows-radius-right) var(--home-assets-rows-radius-left);
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	position: relative;
+	--home-assets-index-width: 42px;
+	overflow: visible;
+}
+
+.home-assets-rows-shell .home-asset-row {
+	position: relative;
+	margin-top: 0;
+	display: block;
+}
+
+.home-assets-rows-shell{
+	grid-column: auto;
+	width: 100%;
+}
+.home-asset-card {
+	grid-column: auto;
+	width: auto;
+}
+
+/* asset index removed */
+
 			.home-assets-wrapper {
 				width: min(920px, 90%);
-				min-width: 280px;
+				min-width: 200px;
 				margin: 0 auto;
 				padding-top: 5px;
-				padding-bottom: 45px;
-				padding-left: 0px;
+				padding-bottom: 15px;
+				padding-left: 10px;
 				padding-right: 10px;
 				box-shadow: none;
 				border-radius: var(--home-assets-radius-left) var(--home-assets-radius-right)
@@ -5271,24 +5352,12 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				position: relative;
 				z-index: 1;
 				background: transparent !important;
-			}
-
-			.home-assets-header-row {
-				display: grid;
-				grid-template-columns: 42px repeat(5, minmax(0, 1fr));
-				align-items: center;
-				font-weight: 600;
-				font-size: 10px;
-				padding-right: 13px;
-				padding-left: 5px;
-				letter-spacing: 0.2px;
-				opacity: 0.7;
-				margin-bottom: -5px;
+				overflow-x: hidden;
 			}
 
 			.home-asset-row {
 				display: grid;
-				grid-template-columns: 42px repeat(5, minmax(0, 1fr));
+				grid-template-columns: repeat(5, minmax(0, 1fr));
 				align-items: center;
 				column-gap: 10px;
 				animation: pageSlideUp 4s ease;
@@ -5310,40 +5379,15 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				opacity: 1;
 			}
 
-			.home-assets-button {
-				background: transparent;
-				border: none;
-				padding: 0;
-				margin: 0;
-				font: inherit;
-				cursor: default;
-				color: #222;
-			}
-
-			.home-assets-price-header {
-				padding-left: 20px;
-				padding-right: 0px;
-			}
-
-			.home-assets-1w-header {
-				padding-left: 10px;
-				padding-right: 0px;
-			}
-
-			.home-assets-button:first-of-type {
-				text-align: left;
-				padding-left: 30px;
-			}
-
 
 			.home-asset-card {
-				grid-column: 2 / -1;
+				grid-column: 1 / -1;
 				display: grid;
 				grid-template-columns: repeat(5, minmax(0, 1fr));
 				align-items: center;
 				background: transparent;
 				border-radius: 14px;
-				padding: 13px 20px 13px 10px;
+				padding: 13px 5px 13px 10px;
 				transition: transform 0.2s ease;
 				text-decoration: none;
 				color: inherit;
@@ -5367,10 +5411,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				border-bottom-left-radius: 5px;
 			}
 
-			.home-asset-bitcoin:hover,
-			.home-asset-bitcoin:active {
-			}
-
 			.home-asset-ethereum {
 				background: rgba(107, 114, 168, 0.07);
 				border: 1px solid rgba(107, 114, 168, 0.28);
@@ -5381,10 +5421,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 				margin-left: 0px;
 				border-top-left-radius: 5px;
 				border-bottom-left-radius: 5px;
-			}
-
-			.home-asset-ethereum:hover,
-			.home-asset-ethereum:active {
 			}
 
 			.home-assets-asset {
@@ -5633,12 +5669,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		  height: 20px;
 		  margin-bottom: -28px;
 	  }  
-	  .home-assets-price-header {
-		padding-left: 7px;
-	}
-	.home-voting-block {
-		padding: 25px 30px 33px !important;
-	}
 	  
 	  #descriptioner-wrapper {
 		font-size: 7.3px;
@@ -5678,10 +5708,11 @@ body.has-home-investments-cta .home-assets-about-wrap {
 
 	.home-assets-footer-text {
 		font-size: 23.5px;
-		opacity: .15;
+		opacity: 1;
 		letter-spacing: -1.5px;
-		padding-left: 30px;
-		color: #222;
+		padding-left: 0;
+		color: var(--myinv-accent-color);
+		text-align: center;
 	}
 
 	.home-assets-list {
@@ -5696,18 +5727,17 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		font-size: 8px;
 	}
 
-	.home-assets-header-row .home-assets-button {
-		font-size: 8.5px;
-	}
-
 	.home-voting-title
 	{
 		font-size: 8.5px;
 	}
 	.home-voting-countdown {
 		margin-top: 5px;
-		opacity: .25;
+	opacity: 1;
 		font-size: 10px;
+	}
+	.home-voting-options {
+		margin-bottom: -5px;
 	}
 
 	.home-voting-button {
@@ -5727,9 +5757,6 @@ body.has-home-investments-cta .home-assets-about-wrap {
 	}	
 
   @media screen and (min-width: 801px) {
-	.home-assets-header-row .home-assets-button {
-		font-size: 10px;
-	}
   }
 
   @media screen and (max-width: 800px) {
@@ -5737,9 +5764,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		display: none !important;
 	}
 
-	.home-assets-header-row,
 	.home-asset-row {
-		grid-template-columns: 42px repeat(4, minmax(0, 1fr));
+		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 
 	.home-asset-card {
@@ -5760,9 +5786,8 @@ body.has-home-investments-cta .home-assets-about-wrap {
 		display: none !important;
 	}
 
-	.home-assets-header-row,
 	.home-asset-row {
-		grid-template-columns: 42px repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 
 	.home-asset-card {

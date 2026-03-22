@@ -34,9 +34,9 @@ const Index = () => {
   });
   const { getAsset, sessionId } = useVavity();
   const { email } = useUser();
-  const forceHomeInvestmentsPreview = false;
-  const forceVotingPreview = false;
-  const forceVoteModalPreview = false;
+  const forceHomeInvestmentsPreview = true;
+  const forceVotingPreview = true;
+  const forceVoteModalPreview = true;
   const [votingData, setVotingData] = useState<VotingBlockData | null>(null);
   const [votingHidden, setVotingHidden] = useState<boolean>(false);
   const [countdownMs, setCountdownMs] = useState<number>(0);
@@ -301,7 +301,7 @@ const Index = () => {
 
       {!effectiveVotingHidden && effectiveVotingData && (
         <div className="home-voting-block page-slide-down">
-          <div className="home-voting-options">
+          <div className="home-voting-options myinv-accent-border">
             <button type="button" className="home-voting-button home-voting-button--solana" onClick={() => handleVote('solana')}>
               <Image className="home-voting-icon" alt="Solana" width={22} height={22} src="/images/assets/crypto/Solana.svg" />
               <span>Solana</span>
@@ -321,97 +321,81 @@ const Index = () => {
       <div className="home-assets-wrapper shadow-border-wrap page-slide-down">
         <span className="shadow-border" aria-hidden="true" />
         <div className="home-assets-list">
-          <div className="home-assets-header-row">
-            <div className="home-assets-cell home-assets-index"></div>
-          <div className="home-assets-cell home-assets-button">
-              Asset
-          </div>
-          <div className="home-assets-cell home-assets-button home-assets-price-header">
-              Price
-          </div>
-          <div className="home-assets-cell home-assets-button home-assets-1w home-assets-1w-header">
-              1 wk
-          </div>
-          <div className="home-assets-cell home-assets-button home-assets-1y">
-              1 yr
-          </div>
-          <div className="home-assets-cell home-assets-button">
-              all-time
-          </div>
-          </div>
-
-        {sortedRows.map((row, index) => (
-            <div key={row.id} className="home-asset-row">
-              <div className="home-assets-cell home-assets-index">{index + 1}</div>
-              <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
-                <span className="home-asset-icon-wrap">
-                  <Image
-                    loader={imageLoader}
-                    alt={`${row.label} logo`}
-                    width={18}
-                    height={18}
-                    className="home-asset-icon"
-                    src={row.icon}
-                  />
-                </span>
-                <div className="home-assets-cell home-assets-asset">
-                  <span className={`home-asset-label home-asset-label-${row.id}`}>
-                    <span className="home-asset-name">{row.label}</span>
-                  </span>
+          <div className="home-assets-table-shell myinv-accent-border">
+          <div className="home-assets-rows-shell">
+            {sortedRows.map((row, index) => (
+                <div key={row.id} className="home-asset-row">
+                  <Link href={row.href} className={`home-asset-card home-asset-${row.id}`}>
+                    <span className="home-asset-icon-wrap">
+                      <Image
+                        loader={imageLoader}
+                        alt={`${row.label} logo`}
+                        width={18}
+                        height={18}
+                        className="home-asset-icon"
+                        src={row.icon}
+                      />
+                    </span>
+                    <div className="home-assets-cell home-assets-asset">
+                      <span className={`home-asset-label home-asset-label-${row.id}`}>
+                        <span className="home-asset-name">{row.label}</span>
+                      </span>
+                    </div>
+                    <div className="home-assets-cell">
+                      <span className="home-assets-currency home-assets-currency-dollar">$</span>
+                      <span className="home-assets-number home-assets-price">{formatCurrency(row.vapa)}</span>
+                    </div>
+                    <div className="home-assets-cell home-assets-percent home-assets-1w">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={12}
+                        height={12}
+                        className="home-asset-arrow"
+                        src={row.change1w > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                      />
+                      <span className="home-assets-number">
+                        {formatPercent(row.change1w).replace('%', '')}
+                        <span className="home-assets-currency home-assets-currency-percent">%</span>
+                      </span>
+                    </div>
+                    <div className="home-assets-cell home-assets-percent home-assets-1y">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={12}
+                        height={12}
+                        className="home-asset-arrow"
+                        src={row.change1y > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                      />
+                      <span className="home-assets-number">
+                        {formatPercent(row.change1y).replace('%', '')}
+                        <span className="home-assets-currency home-assets-currency-percent">%</span>
+                      </span>
+                    </div>
+                    <div className="home-assets-cell home-assets-percent">
+                      <Image
+                        loader={imageLoader}
+                        alt=""
+                        width={12}
+                        height={12}
+                        className="home-asset-arrow"
+                        src={row.changeAll > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
+                      />
+                      <span className="home-assets-number">
+                        {formatPercent(row.changeAll).replace('%', '')}
+                        <span className="home-assets-currency home-assets-currency-percent">%</span>
+                      </span>
+                    </div>
+                  </Link>
                 </div>
-                <div className="home-assets-cell">
-                  <span className="home-assets-currency home-assets-currency-dollar">$</span>
-                  <span className="home-assets-number home-assets-price">{formatCurrency(row.vapa)}</span>
-                </div>
-                <div className="home-assets-cell home-assets-percent home-assets-1w">
-                  <Image
-                    loader={imageLoader}
-                    alt=""
-                    width={12}
-                    height={12}
-                    className="home-asset-arrow"
-                    src={row.change1w > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
-                  />
-                  <span className="home-assets-number">
-                    {formatPercent(row.change1w).replace('%', '')}
-                    <span className="home-assets-currency home-assets-currency-percent">%</span>
-                  </span>
-                </div>
-                <div className="home-assets-cell home-assets-percent home-assets-1y">
-                  <Image
-                    loader={imageLoader}
-                    alt=""
-                    width={12}
-                    height={12}
-                    className="home-asset-arrow"
-                    src={row.change1y > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
-                  />
-                  <span className="home-assets-number">
-                    {formatPercent(row.change1y).replace('%', '')}
-                    <span className="home-assets-currency home-assets-currency-percent">%</span>
-                  </span>
-                </div>
-                <div className="home-assets-cell home-assets-percent">
-                  <Image
-                    loader={imageLoader}
-                    alt=""
-                    width={12}
-                    height={12}
-                    className="home-asset-arrow"
-                    src={row.changeAll > 0 ? 'images/up-arrow-ebony.png' : 'images/down-arrow-ebony.png'}
-                  />
-                  <span className="home-assets-number">
-                    {formatPercent(row.changeAll).replace('%', '')}
-                    <span className="home-assets-currency home-assets-currency-percent">%</span>
-                  </span>
-                </div>
-              </Link>
-            </div>
-          ))}
+              ))}
+          </div>
+          </div>
         </div>
-        <div className="home-assets-footer">
-          <div className="home-assets-footer-text">A new asset added weekly</div>
-        </div>
+      </div>
+      <div className="home-assets-footer home-assets-footer--outside home-assets-footer-slide">
+        <div className="home-assets-footer-text">A new asset added weekly</div>
       </div>
       <div className="home-assets-about-wrap page-slide-in">
         <Link className="myinv-about-button home-assets-about-button" href="/about">

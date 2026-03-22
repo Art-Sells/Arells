@@ -2,9 +2,6 @@
 
 ## Arells v1
 
-- Investment page should be styled (shadows/etc) the exact same as the home page
-
-### My investment numbers have thick borders and no background.
 
 ## Create a /My-Investments page (UI/UX height downs/ups/etc just like asset pages except without borders and the wrappers have the same shadow as the main wrapper from the home page and words/titles same colors as the home page (excluding the asset colors)) that has:
 
@@ -30,9 +27,9 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 *Add More Investments Wrapper (investments CHild Wrapper below Add Investments Wrapper)*
 - - - (BTCicon)(ETHicon) (should start center for one if only one asset icon button is shown and expand...) that link to asset pages... should only show based on jsons if investments were added from their assets, otherwise, 
 
-- *remove the 1 minute and on page mount delete flags for sessions in all pages and test ...*
-
 - *investigate why it just randomly triggers (after new number submissions and summary has finished heighting down and loading) purchased amount, current amount and profits/losses sections to height down without any number changes and on page mount it should default to loading the "asset page loader" trying to get the email/session investments for at least 4 seconds... if no investments, then load the "add investments/ sign in to save investments" section*
+
+- *remove the 1 minute and on page mount delete flags for sessions in all pages and test ...*
 
 
 ### About:
@@ -59,6 +56,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 ### Optimize-UI/UX for mobile
 - Test everything........... (including inspect)
 - Remove "sign in" dynamic and "1 minute timer "to test in mobile...
+- Make the section in assets holding all the sections maximum height dynamic and the sections inside them width 100% so they resize smoothly without major changes to the UI
 - - Check "view my portfolio slide up" when calendar open on multiple landscape/portrait modes, the dollar sign in the my assets page... My investments page If no Email, If email is read and no investments exist inside the email json, If Investments exist inside email json
 
 ### Sign In/Up
