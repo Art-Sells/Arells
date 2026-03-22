@@ -94,7 +94,8 @@ export default function HomeInvestmentsSlideUpCTA({
           : undefined
       }
     >
-      <div className="home-investments-slideup-shell">
+      <div className="home-investments-slideup-shell shadow-border-wrap">
+        <span className="shadow-border" aria-hidden="true" />
         <div className="home-investments-slideup-row">
           <div className="home-investments-slideup-index-spacer" aria-hidden="true" />
           <Link

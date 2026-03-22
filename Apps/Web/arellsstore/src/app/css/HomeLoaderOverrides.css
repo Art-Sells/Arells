@@ -2,10 +2,14 @@
 	width: 90px;
 	height: 90px;
 	--home-loader-ring-size: 110px;
+	border-radius: 10px;
 }
 
 .home-loader-ring::before {
-	background: rgba(255, 255, 255, 0.9);
+	background: #ff5aa0;
+	opacity: 0.1;
+	animation: homeLoaderFill 2s linear infinite;
+	border-radius: 10px;
 }
 
 .home-loader-icon-wrap {
@@ -56,10 +60,7 @@
 }
 
 .home-loader-spinner circle {
-	stroke: none;
-	fill: #ff5aa0;
-	opacity: 0.35;
-	animation: homeLoaderFill 2s linear infinite;
+	display: none;
 }
 
 @keyframes homeLoaderFill {

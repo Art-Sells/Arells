@@ -42,8 +42,10 @@ interface VavityaggregatorType {
   refreshAllAssets: () => Promise<void>;
   investments: Investment[];
   totals: TotalsState;
+  totalsLiquid: TotalsState;
   sessionId: string;
   fetchVavityAggregator: (sessionId: string, asset?: string) => Promise<any>;
+  fetchVavityAggregatorAll: (sessionId: string) => Promise<any>;
   addVavityAggregator: (sessionId: string, newInvestments: any[], asset?: string) => Promise<any>;
   saveVavityAggregator: (sessionId: string, investments: any[], asset?: string) => Promise<any>;
 }
@@ -55,6 +57,12 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [assets, setAssets] = useState<Record<string, AssetSnapshot>>({});
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [totals, setTotals] = useState<TotalsState>({
+    acVatop: 0,
+    acdVatop: 0,
+    acVact: 0,
+    acVactTaa: 0,
+  });
+  const [totalsLiquid, setTotalsLiquid] = useState<TotalsState>({
     acVatop: 0,
     acdVatop: 0,
     acVact: 0,
@@ -141,6 +149,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const data = response.data || {};
         setInvestments(Array.isArray(data.investments) ? data.investments : []);
         setTotals(data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+        setTotalsLiquid(data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
         const nextExpiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
         setSessionExpiresAt(nextExpiresAt);
       } catch {
@@ -167,9 +176,31 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const data = response.data || {};
     const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
     const fetchedTotals: TotalsState = data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
+    const fetchedTotalsLiquid: TotalsState = data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
     setInvestments(fetchedInvestments);
     setTotals(fetchedTotals);
+    setTotalsLiquid(fetchedTotalsLiquid);
     lastSessionAssetRef.current = asset;
+    const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
+    setSessionExpiresAt(expiresAt);
+    return data;
+  }, []);
+
+  const fetchVavityAggregatorAll = useCallback(async (currentSessionId: string): Promise<any> => {
+    if (!currentSessionId) throw new Error('Session ID is required');
+    const response = await axios.get(`/api/fetchVavityAggregator`, {
+      params: {
+        sessionId: currentSessionId,
+        ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: '1' } : {}),
+      },
+    });
+    const data = response.data || {};
+    const fetchedInvestments: Investment[] = Array.isArray(data.investments) ? data.investments : [];
+    const fetchedTotals: TotalsState = data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
+    const fetchedTotalsLiquid: TotalsState = data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 };
+    setInvestments(fetchedInvestments);
+    setTotals(fetchedTotals);
+    setTotalsLiquid(fetchedTotalsLiquid);
     const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
     setSessionExpiresAt(expiresAt);
     return data;
@@ -188,6 +219,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const data = response.data?.data || {};
     setInvestments(data.investments || []);
     setTotals(data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+    setTotalsLiquid(data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
     lastSessionAssetRef.current = asset;
     const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
     setSessionExpiresAt(expiresAt);
@@ -207,6 +239,7 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const data = response.data?.data || {};
     setInvestments(data.investments || updatedInvestments || []);
     setTotals(data.totals || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
+    setTotalsLiquid(data.totalsLiquid || { acVatop: 0, acdVatop: 0, acVact: 0, acVactTaa: 0 });
     lastSessionAssetRef.current = asset;
     const expiresAt = typeof data.expiresAt === 'number' && Number.isFinite(data.expiresAt) ? data.expiresAt : null;
     setSessionExpiresAt(expiresAt);
@@ -218,12 +251,14 @@ export const VavityProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       value={{
         investments,
         totals,
+        totalsLiquid,
         assets,
         getAsset,
         refreshAsset,
         refreshAllAssets,
         sessionId,
         fetchVavityAggregator,
+        fetchVavityAggregatorAll,
         addVavityAggregator,
         saveVavityAggregator
       }}

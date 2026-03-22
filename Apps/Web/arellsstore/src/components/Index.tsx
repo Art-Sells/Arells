@@ -35,6 +35,8 @@ const Index = () => {
   const { getAsset, sessionId } = useVavity();
   const { email } = useUser();
   const forceHomeInvestmentsPreview = false;
+  const forceVotingPreview = false;
+  const forceVoteModalPreview = false;
   const [votingData, setVotingData] = useState<VotingBlockData | null>(null);
   const [votingHidden, setVotingHidden] = useState<boolean>(false);
   const [countdownMs, setCountdownMs] = useState<number>(0);
@@ -103,6 +105,7 @@ const Index = () => {
   }, [imagesLoaded]);
 
   useEffect(() => {
+    if (forceVotingPreview) return;
     const fetchVoting = async () => {
       try {
         const res = await fetch('/api/votingBlock/getVotingBlock');
@@ -122,11 +125,12 @@ const Index = () => {
     };
 
     fetchVoting();
-  }, [sessionId]);
+  }, [forceVotingPreview, sessionId]);
 
   // (intentionally no debug modal auto-open)
 
   useEffect(() => {
+    if (forceVotingPreview) return;
     if (votingHidden || !votingData) return;
     const interval = setInterval(() => {
       setCountdownMs((prev) => {
@@ -138,7 +142,12 @@ const Index = () => {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [votingHidden, votingData]);
+  }, [forceVotingPreview, votingHidden, votingData]);
+
+  useEffect(() => {
+    if (!forceVoteModalPreview) return;
+    setVoteModal({ asset: 'solana', status: 'winning', pct: 62.5 });
+  }, [forceVoteModalPreview]);
 
   const formatCountdown = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -150,6 +159,7 @@ const Index = () => {
   };
 
   const handleVote = async (asset: VotingAsset) => {
+    if (forceVotingPreview) return;
     if (!sessionId || votingHidden) return;
     try {
       const res = await fetch('/api/votingBlock/vote', {
@@ -231,6 +241,16 @@ const Index = () => {
 
   const sortedRows = assetRows;
 
+  const previewVotingData: VotingBlockData = {
+    expiresAt: Date.now() + 60 * 60 * 1000,
+    votes: { solana: 0, xrp: 0 },
+    sessions: [],
+    remainingMs: 60 * 60 * 1000,
+    isExpired: false,
+  };
+  const effectiveVotingData = forceVotingPreview ? previewVotingData : votingData;
+  const effectiveVotingHidden = forceVotingPreview ? false : votingHidden;
+
   return (
     <>
       {showLoading && (
@@ -278,7 +298,7 @@ const Index = () => {
         </div>
       </div>
 
-      {!votingHidden && votingData && (
+      {!effectiveVotingHidden && effectiveVotingData && (
         <div className="home-voting-block page-slide-down">
           <div className="home-voting-options">
             <button type="button" className="home-voting-button home-voting-button--solana" onClick={() => handleVote('solana')}>
@@ -292,12 +312,13 @@ const Index = () => {
           </div>
           <div className="home-voting-countdown">
             <span>Choose Asset, Voting ends</span>
-            <span>{formatCountdown(countdownMs)}</span>
+            <span>{formatCountdown(forceVotingPreview ? previewVotingData.remainingMs : countdownMs)}</span>
           </div>
         </div>
       )}
 
-      <div className="home-assets-wrapper page-slide-down">
+      <div className="home-assets-wrapper shadow-border-wrap page-slide-down">
+        <span className="shadow-border" aria-hidden="true" />
         <div className="home-assets-list">
           <div className="home-assets-header-row">
             <div className="home-assets-cell home-assets-index"></div>
@@ -422,6 +443,11 @@ const Index = () => {
                 setVoteModalClosing(true);
                 setTimeout(() => {
                   if (typeof window !== 'undefined') {
+                    if (forceVoteModalPreview) {
+                      setVoteModal(null);
+                      setVoteModalClosing(false);
+                      return;
+                    }
                     window.location.reload();
                   }
                 }, 1000);
