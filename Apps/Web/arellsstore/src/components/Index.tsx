@@ -34,9 +34,9 @@ const Index = () => {
   });
   const { getAsset, sessionId } = useVavity();
   const { email } = useUser();
-  const forceHomeInvestmentsPreview = true;
-  const forceVotingPreview = true;
-  const forceVoteModalPreview = true;
+  const forceHomeInvestmentsPreview = false;
+  const forceVotingPreview = false;
+  const forceVoteModalPreview = false;
   const [votingData, setVotingData] = useState<VotingBlockData | null>(null);
   const [votingHidden, setVotingHidden] = useState<boolean>(false);
   const [countdownMs, setCountdownMs] = useState<number>(0);

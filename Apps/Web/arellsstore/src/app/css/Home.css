@@ -3759,7 +3759,7 @@ transform: translateY(calc(-50% - 0.5px));
 
 .home-assets-about-wrap {
 	width: min(920px, 90%);
-	margin: var(--home-assets-about-gap, 20px) auto -70px;
+	margin: var(--home-assets-about-gap, 0px) auto	-50px;
 	display: flex;
 	justify-content: center;
 }
