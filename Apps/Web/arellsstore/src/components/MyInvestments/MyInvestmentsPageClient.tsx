@@ -132,7 +132,7 @@ const MyInvestmentsPageClient: React.FC = () => {
   useEffect(() => {
     const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
     const prevBody = document.body.style.getPropertyValue('--app-bg');
-    const bg = '#ffffff';
+    const bg = 'var(--page-accent-tint)';
     document.documentElement.style.setProperty('--app-bg', bg);
     document.body.style.setProperty('--app-bg', bg);
     return () => {
@@ -555,6 +555,8 @@ const MyInvestmentsPageClient: React.FC = () => {
           className={`myinv-header-outside${slideIn ? ' page-slide-in' : ''}${displayIsLiquidMode ? ' is-liquid' : ''}`}
         >
           <div ref={titleRef} className="myinv-title">my investments</div>
+        </div>
+        <div className={`myinv-slogan-layer${slideIn ? ' page-slide-in' : ''}`}>
           <div className={`myinv-slogan asset-header-slogan${displayIsLiquidMode ? ' is-hidden' : ''}`}>
             if investments never lost value
           </div>

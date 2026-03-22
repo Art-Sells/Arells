@@ -48,7 +48,7 @@ const Index = () => {
   // Home should always own/reset the global background so asset-page tint never bleeds into `/`.
   useEffect(() => {
     if (typeof document === 'undefined') return;
-    const bg = '#ffffff';
+    const bg = 'var(--page-accent-tint)';
     document.documentElement.style.setProperty('--app-bg', bg);
     document.body.style.setProperty('--app-bg', bg);
     document.documentElement.style.backgroundColor = bg;
@@ -290,7 +290,8 @@ const Index = () => {
           id="word-logoo"
           src="images/Arells-Logo-Ebony.png"
         />
-
+      </div>
+      <div className="home-slogan-layer page-slide-down">
         <div id="descriptioner-wrapper">
           <p id="descriptioner" style={{ letterSpacing: '0px', marginLeft: '0px' }}>
             if investments never lost value

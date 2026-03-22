@@ -32,7 +32,7 @@ If Investments exist inside email json, replace Add Investments Wrapper with:
 
 - *remove the 1 minute and on page mount delete flags for sessions in all pages and test ...*
 
-- *investigate why it just randomly triggers (after new number submissions and summary has finished heighting down and loading) purchased amount, current amount and profits/losses sections to height down without any number changes*
+- *investigate why it just randomly triggers (after new number submissions and summary has finished heighting down and loading) purchased amount, current amount and profits/losses sections to height down without any number changes and on page mount it should default to loading the "asset page loader" trying to get the email/session investments for at least 4 seconds... if no investments, then load the "add investments/ sign in to save investments" section*
 
 
 ### About:

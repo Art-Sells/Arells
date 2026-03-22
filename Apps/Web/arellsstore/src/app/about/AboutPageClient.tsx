@@ -44,6 +44,23 @@ const AboutPageClient = () => {
   }, []);
 
   useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const prevHtml = document.documentElement.style.getPropertyValue('--app-bg');
+    const prevBody = document.body.style.getPropertyValue('--app-bg');
+    const bg = 'var(--page-accent-tint)';
+    document.documentElement.style.setProperty('--app-bg', bg);
+    document.body.style.setProperty('--app-bg', bg);
+    document.documentElement.style.backgroundColor = bg;
+    document.body.style.backgroundColor = bg;
+    return () => {
+      if (prevHtml) document.documentElement.style.setProperty('--app-bg', prevHtml);
+      else document.documentElement.style.removeProperty('--app-bg');
+      if (prevBody) document.body.style.setProperty('--app-bg', prevBody);
+      else document.body.style.removeProperty('--app-bg');
+    };
+  }, []);
+
+  useEffect(() => {
     if (typeof document === 'undefined' || typeof window === 'undefined') return;
     const root = document.documentElement;
     const durationMs = 15000;
@@ -99,20 +116,26 @@ const AboutPageClient = () => {
             </Link>
           </div>
           <div className={`about-content${aboutSlideIn ? ' page-slide-in' : ''}`}>
-            <p className="about-text">Arells is a belief that investments should never lose value.</p>
-            <div className="about-divider" />
-            <p className="about-text">
-              This belief is powered by a ledger that shows how your investments would look if they never lost value.
-            </p>
-            <div className="about-divider" />
-            <p className="about-text">
-              This ledger is powered by a new psychological and technological invention called Vavity.
-            </p>
-            <div className={`about-cta-row${aboutSlideIn ? ' page-slide-in' : ''}`}>
-              <span className="about-cta-text">Learn more &gt;</span>
-              <Link href="/vavity" className="asset-action-button asset-action-button--invest-show about-cta">
-                (Vavity (V))
-              </Link>
+            <div className="about-section about-section--outer myinv-accent-border">
+              <p className="about-text">Arells is a belief that investments should never lose value.</p>
+              <div className="about-section about-section--mid myinv-accent-border">
+                <p className="about-text">
+                  This belief is powered by a ledger that shows how your investments would look if they never lost value.
+                </p>
+                <div className="about-section about-section--inner myinv-accent-border">
+                  <p className="about-text">
+                    This ledger is powered by a new psychological and technological invention called Vavity.
+                  </p>
+                  <div className="about-section about-section--cta myinv-accent-border">
+                    <div className={`about-cta-row${aboutSlideIn ? ' page-slide-in' : ''}`}>
+                      <span className="about-cta-text">Learn more &gt;</span>
+                      <Link href="/vavity" className="asset-action-button asset-action-button--invest-show about-cta">
+                        (Vavity (V))
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
