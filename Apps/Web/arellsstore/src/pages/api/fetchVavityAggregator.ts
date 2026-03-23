@@ -315,11 +315,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // If the file doesn't exist, return empty data structure (this is normal for new users)
     if (error.code === 'NoSuchKey' || error.statusCode === 404) {
       // Don't log - this is expected behavior for new users
-      const createdAt = Date.now();
-      const expiresAt = createdAt + SESSION_TTL_MS;
-      const emptyPayload = {
-        createdAt,
-        expiresAt,
+      return res.status(200).json({
         investments: [],
         totals: {
           acVatop: 0,
@@ -333,21 +329,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           acdVatop: 0,
           acVactTaa: 0,
         },
-      };
-      try {
-        await s3
-          .putObject({
-            Bucket: BUCKET_NAME,
-            Key: key,
-            Body: JSON.stringify(emptyPayload),
-            ContentType: 'application/json',
-            ACL: 'private',
-          })
-          .promise();
-      } catch {
-        // ignore init errors; still return empty payload
-      }
-      return res.status(200).json(emptyPayload);
+      });
     }
     
     const errorMessage = error.message || 'Could not fetch user data';
