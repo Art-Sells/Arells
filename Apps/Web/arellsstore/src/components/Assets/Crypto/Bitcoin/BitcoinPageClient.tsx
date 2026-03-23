@@ -20,7 +20,7 @@ const BitcoinPageClient: React.FC = () => {
   const { email } = useUser();
   const pageRef = useRef<HTMLDivElement>(null);
   const portfolioBottomRef = useRef<number | null>(null);
-  const sessionResetTimersRef = useRef<ReturnType<typeof window.setTimeout>[]>([]);
+  const sessionResetTimersRef = useRef<number[]>([]);
   const loaderHideAtRef = useRef<number | null>(null);
   const forceSessionResetPreview = false;
   const showSessionResetOverlay = forceSessionResetPreview || sessionResetActive;

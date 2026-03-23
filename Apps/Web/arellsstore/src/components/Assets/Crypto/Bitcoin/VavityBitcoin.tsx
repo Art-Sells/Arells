@@ -234,6 +234,7 @@ const VavityBitcoin: React.FC = () => {
   const lastDeletedAtRef = useRef<number | null>(null);
   const summaryContentRef = useRef<HTMLDivElement | null>(null);
   const investmentsWholeContentRef = useRef<HTMLDivElement | null>(null);
+  const initialSummaryOpenRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -263,6 +264,7 @@ const VavityBitcoin: React.FC = () => {
   const sloganRef = useRef<HTMLDivElement | null>(null);
   const [summaryHeight, setSummaryHeight] = useState<number>(0);
   const prevSummaryHeightRef = useRef<number>(0);
+  const summaryAnimatingReleaseTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [purchasedValueHeight, setPurchasedValueHeight] = useState<number | null>(null);
   const [currentValueHeight, setCurrentValueHeight] = useState<number | null>(null);
   const [profitValueHeight, setProfitValueHeight] = useState<number | null>(null);
@@ -278,6 +280,18 @@ const VavityBitcoin: React.FC = () => {
   const lastFormattedVatopRef = useRef<string | null>(null);
   const lastFormattedVactRef = useRef<string | null>(null);
   const lastFormattedProfitRef = useRef<string | null>(null);
+  const purchasedAnimatingRef = useRef(false);
+  const currentAnimatingRef = useRef(false);
+  const profitAnimatingRef = useRef(false);
+  const purchasedPendingRef = useRef(false);
+  const currentPendingRef = useRef(false);
+  const profitPendingRef = useRef(false);
+  const purchasedPendingValueRef = useRef<string | null>(null);
+  const currentPendingValueRef = useRef<string | null>(null);
+  const profitPendingValueRef = useRef<string | null>(null);
+  const purchasedAnimTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const currentAnimTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const profitAnimTimerRef = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const [addFormPanelHeight, setAddFormPanelHeight] = useState<number>(0);
   const [addFormSubmitMaxHeight, setAddFormSubmitMaxHeight] = useState<number | null>(null);
   const [addFormOuterSubmitMaxHeight, setAddFormOuterSubmitMaxHeight] = useState<number | null>(null);
@@ -891,6 +905,9 @@ const VavityBitcoin: React.FC = () => {
     return () => window.clearTimeout(t);
   }, [rangeLoading, selectedRangeDays]);
 
+  const deleteInFlight =
+    pendingDeleteInvestments.length > 0 || deletingInvestments.length > 0 || closingInvestments.length > 0;
+
   useEffect(() => {
     if (isSignedIn) {
       if (!email) return;
@@ -902,6 +919,7 @@ const VavityBitcoin: React.FC = () => {
 
     const loadData = async () => {
       if (isMutatingRef.current) return;
+      if (deleteInFlight || deleteLocked) return;
       setLoading(true);
       try {
         const data = isSignedIn
@@ -943,7 +961,7 @@ const VavityBitcoin: React.FC = () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [fetchVavityAggregator, sessionId, sessionReady, isSignedIn, email]);
+  }, [fetchVavityAggregator, sessionId, sessionReady, isSignedIn, email, deleteInFlight, deleteLocked]);
 
   useEffect(() => {
     if (!vavityData) return;
@@ -1191,11 +1209,37 @@ const VavityBitcoin: React.FC = () => {
         const h = whole.scrollHeight + 24;
         setInvestmentsWholeHeight((prevH) => (prevH === h ? prevH : h));
       }
-      requestAnimationFrame(() => setSummaryOpen(true));
+      requestAnimationFrame(() => {
+        flushSync(() => {
+          setSummaryAnimating(true);
+          setSummaryOpen(true);
+        });
+      });
     });
     // Keep scroll synced with the ONE combined height-down of the full investments section.
     followScrollHeightDeltaFor(5000);
   }, [followScrollHeightDeltaFor]);
+
+  useEffect(() => {
+    if (!initialFetchDone) return;
+    if (initialSummaryOpenRef.current) return;
+    if (summaryOpen || summaryAnimating || isClearingInvestments || deleteInFlight) return;
+    if (submitLoading || isSubmitCollapsing || submitPhase !== 'idle') return;
+    if (liveInvestments.length === 0) return;
+    initialSummaryOpenRef.current = true;
+    openInvestmentsSection();
+  }, [
+    deleteInFlight,
+    initialFetchDone,
+    isClearingInvestments,
+    isSubmitCollapsing,
+    liveInvestments.length,
+    openInvestmentsSection,
+    submitLoading,
+    submitPhase,
+    summaryAnimating,
+    summaryOpen,
+  ]);
   const triggerEmptyButtonsExpand = useCallback(() => {
     setEmptySigninGone(false);
     setEmptyAddGone(false);
@@ -1260,7 +1304,10 @@ const VavityBitcoin: React.FC = () => {
         investmentsWholeContentRef.current?.getBoundingClientRect().height ??
         0;
       setClearingHeight(startHeight);
-      setSummaryOpen(true);
+      flushSync(() => {
+        setSummaryAnimating(true);
+        setSummaryOpen(true);
+      });
       setIsClearingInvestments(true);
       if (clearingHeightRafRef.current != null) {
         window.cancelAnimationFrame(clearingHeightRafRef.current);
@@ -1278,9 +1325,6 @@ const VavityBitcoin: React.FC = () => {
     },
     [investmentsWholeHeight, isClearingInvestments]
   );
-
-  const deleteInFlight =
-    pendingDeleteInvestments.length > 0 || deletingInvestments.length > 0 || closingInvestments.length > 0;
 
   useLayoutEffect(() => {
     const prev = prevLiveCountRef.current;
@@ -1400,17 +1444,7 @@ const VavityBitcoin: React.FC = () => {
     prevHasInvestmentsUIRef.current = hasInvestmentsUI;
   }, [hasInvestmentsUI, showEmptyAddForm, triggerEmptyButtonsExpand]);
 
-  useEffect(() => {
-    if (!summaryOpen || isClearingInvestments) {
-      setSummaryAnimating(false);
-      return;
-    }
-    setSummaryAnimating(true);
-    const timer = window.setTimeout(() => {
-      setSummaryAnimating(false);
-    }, 2000);
-    return () => window.clearTimeout(timer);
-  }, [summaryOpen, isClearingInvestments]);
+
 
   useEffect(() => {
     if (summaryAnimating) return;
@@ -1562,14 +1596,20 @@ const VavityBitcoin: React.FC = () => {
     setAddMoreFormPanelHeight((prev) => (prev === next ? prev : next));
   }, [addMoreOpen, tokenAmount, purchaseDate, historicalLoading, historicalPrice, vapa]);
 
+  const measureProfitInlineHeight = useCallback(() => {
+    const el = profitInlineAnimRef.current;
+    if (!el) return;
+    const h = Math.max(16, Math.ceil(el.getBoundingClientRect().height));
+    setProfitInlineHeight((prev) => (prev === h ? prev : h));
+  }, []);
+
   useLayoutEffect(() => {
     const el = profitInlineAnimRef.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
     let raf = 0;
     const update = () => {
       raf = window.requestAnimationFrame(() => {
-        const h = Math.max(16, Math.ceil(el.getBoundingClientRect().height));
-        setProfitInlineHeight((prev) => (prev === h ? prev : h));
+        measureProfitInlineHeight();
       });
     };
     update();
@@ -1579,7 +1619,7 @@ const VavityBitcoin: React.FC = () => {
       ro.disconnect();
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, [selectedRangeDays, rangeLoading]);
+  }, [measureProfitInlineHeight, selectedRangeDays, rangeLoading, summaryOpen]);
   const oldestInvestmentDate = useMemo(() => {
     if (investments.length === 0) return null;
     const dates = investments
@@ -2183,6 +2223,185 @@ const VavityBitcoin: React.FC = () => {
     },
     []
   );
+
+  const scheduleSummaryAnimatingRelease = useCallback((delay: number) => {
+    if (summaryAnimatingReleaseTimerRef.current) {
+      globalThis.clearTimeout(summaryAnimatingReleaseTimerRef.current);
+      summaryAnimatingReleaseTimerRef.current = null;
+    }
+    summaryAnimatingReleaseTimerRef.current = globalThis.setTimeout(() => {
+      const stillAnimating =
+        purchasedAnimatingRef.current || currentAnimatingRef.current || profitAnimatingRef.current;
+      if (stillAnimating) {
+        scheduleSummaryAnimatingRelease(200);
+        return;
+      }
+      summaryAnimatingReleaseTimerRef.current = null;
+      setSummaryAnimating(false);
+    }, delay);
+  }, []);
+
+  const flushPurchasedHeightAnimation = useCallback(() => {
+    if (!summaryOpen || summaryAnimating) return;
+    if (!purchasedPendingRef.current || purchasedAnimatingRef.current) return;
+    const formatted = purchasedPendingValueRef.current;
+    if (!formatted || formatted === lastFormattedVatopRef.current) {
+      purchasedPendingRef.current = false;
+      return;
+    }
+    if (!purchasedValueRef.current) return;
+    purchasedPendingRef.current = false;
+    lastFormattedVatopRef.current = formatted;
+    if (summaryOpen) {
+      if (!summaryAnimating) setSummaryAnimating(true);
+      scheduleSummaryAnimatingRelease(2100);
+    }
+    purchasedAnimatingRef.current = true;
+    animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValuePrevRef, purchasedValueTimerRef);
+    if (purchasedAnimTimerRef.current) {
+      globalThis.clearTimeout(purchasedAnimTimerRef.current);
+      purchasedAnimTimerRef.current = null;
+    }
+    purchasedAnimTimerRef.current = globalThis.setTimeout(() => {
+      purchasedAnimTimerRef.current = null;
+      purchasedAnimatingRef.current = false;
+      if (purchasedPendingRef.current) {
+        flushPurchasedHeightAnimation();
+      }
+    }, 2100);
+  }, [animateNumberHeight, scheduleSummaryAnimatingRelease, summaryAnimating, summaryOpen]);
+
+  const flushCurrentHeightAnimation = useCallback(() => {
+    if (!summaryOpen || summaryAnimating) return;
+    if (!currentPendingRef.current || currentAnimatingRef.current) return;
+    const formatted = currentPendingValueRef.current;
+    if (!formatted || formatted === lastFormattedVactRef.current) {
+      currentPendingRef.current = false;
+      return;
+    }
+    if (!currentValueRef.current) return;
+    currentPendingRef.current = false;
+    lastFormattedVactRef.current = formatted;
+    if (summaryOpen) {
+      if (!summaryAnimating) setSummaryAnimating(true);
+      scheduleSummaryAnimatingRelease(2100);
+    }
+    currentAnimatingRef.current = true;
+    animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValuePrevRef, currentValueTimerRef);
+    if (currentAnimTimerRef.current) {
+      globalThis.clearTimeout(currentAnimTimerRef.current);
+      currentAnimTimerRef.current = null;
+    }
+    currentAnimTimerRef.current = globalThis.setTimeout(() => {
+      currentAnimTimerRef.current = null;
+      currentAnimatingRef.current = false;
+      if (currentPendingRef.current) {
+        flushCurrentHeightAnimation();
+      }
+    }, 2100);
+  }, [animateNumberHeight, scheduleSummaryAnimatingRelease, summaryAnimating, summaryOpen]);
+
+  const flushProfitHeightAnimation = useCallback(() => {
+    if (!summaryOpen || summaryAnimating) return;
+    if (!profitPendingRef.current || profitAnimatingRef.current) return;
+    const formatted = profitPendingValueRef.current;
+    if (!formatted || formatted === lastFormattedProfitRef.current) {
+      profitPendingRef.current = false;
+      return;
+    }
+    if (!profitValueRef.current) return;
+    profitPendingRef.current = false;
+    lastFormattedProfitRef.current = formatted;
+    if (summaryOpen) {
+      if (!summaryAnimating) setSummaryAnimating(true);
+      scheduleSummaryAnimatingRelease(2100);
+    }
+    profitAnimatingRef.current = true;
+    animateNumberHeight(profitValueRef, setProfitValueHeight, profitValuePrevRef, profitValueTimerRef);
+    requestAnimationFrame(() => measureProfitInlineHeight());
+    if (profitAnimTimerRef.current) {
+      globalThis.clearTimeout(profitAnimTimerRef.current);
+      profitAnimTimerRef.current = null;
+    }
+    profitAnimTimerRef.current = globalThis.setTimeout(() => {
+      profitAnimTimerRef.current = null;
+      profitAnimatingRef.current = false;
+      measureProfitInlineHeight();
+      if (profitPendingRef.current) {
+        flushProfitHeightAnimation();
+      }
+    }, 2100);
+  }, [
+    animateNumberHeight,
+    measureProfitInlineHeight,
+    scheduleSummaryAnimatingRelease,
+    summaryAnimating,
+    summaryOpen
+  ]);
+
+  const queuePurchasedHeightAnimation = useCallback(
+    (formatted: string) => {
+      if (formatted === lastFormattedVatopRef.current && !purchasedPendingRef.current) return;
+      purchasedPendingValueRef.current = formatted;
+      purchasedPendingRef.current = true;
+      flushPurchasedHeightAnimation();
+    },
+    [flushPurchasedHeightAnimation]
+  );
+
+  const queueCurrentHeightAnimation = useCallback(
+    (formatted: string) => {
+      if (formatted === lastFormattedVactRef.current && !currentPendingRef.current) return;
+      currentPendingValueRef.current = formatted;
+      currentPendingRef.current = true;
+      flushCurrentHeightAnimation();
+    },
+    [flushCurrentHeightAnimation]
+  );
+
+  const queueProfitHeightAnimation = useCallback(
+    (formatted: string) => {
+      if (formatted === lastFormattedProfitRef.current && !profitPendingRef.current) return;
+      profitPendingValueRef.current = formatted;
+      profitPendingRef.current = true;
+      flushProfitHeightAnimation();
+    },
+    [flushProfitHeightAnimation]
+  );
+
+  useEffect(() => {
+    if (!summaryOpen || isClearingInvestments) {
+      setSummaryAnimating(false);
+      if (summaryAnimatingReleaseTimerRef.current) {
+        globalThis.clearTimeout(summaryAnimatingReleaseTimerRef.current);
+        summaryAnimatingReleaseTimerRef.current = null;
+      }
+      return;
+    }
+    setSummaryAnimating(true);
+    scheduleSummaryAnimatingRelease(2000);
+    return () => {
+      if (summaryAnimatingReleaseTimerRef.current) {
+        globalThis.clearTimeout(summaryAnimatingReleaseTimerRef.current);
+        summaryAnimatingReleaseTimerRef.current = null;
+      }
+    };
+  }, [summaryOpen, isClearingInvestments, scheduleSummaryAnimatingRelease]);
+
+  useEffect(() => {
+    if (!summaryOpen || summaryAnimating) return;
+    flushPurchasedHeightAnimation();
+    flushCurrentHeightAnimation();
+    flushProfitHeightAnimation();
+    measureProfitInlineHeight();
+  }, [
+    flushCurrentHeightAnimation,
+    flushProfitHeightAnimation,
+    flushPurchasedHeightAnimation,
+    measureProfitInlineHeight,
+    summaryAnimating,
+    summaryOpen
+  ]);
   useEffect(() => {
     if (liveInvestments.length > 0) {
       lastNonEmptyTotalsRef.current = filteredTotals;
@@ -2198,10 +2417,8 @@ const VavityBitcoin: React.FC = () => {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals
     });
-    if (lastFormattedVatopRef.current === formatted) return;
-    lastFormattedVatopRef.current = formatted;
-    animateNumberHeight(purchasedValueRef, setPurchasedValueHeight, purchasedValuePrevRef, purchasedValueTimerRef);
-  }, [animateNumberHeight, summaryTotals.acVatop]);
+    queuePurchasedHeightAnimation(formatted);
+  }, [queuePurchasedHeightAnimation, summaryTotals.acVatop]);
 
   useLayoutEffect(() => {
     const value = summaryTotals.acVact || 0;
@@ -2211,10 +2428,8 @@ const VavityBitcoin: React.FC = () => {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals
     });
-    if (lastFormattedVactRef.current === formatted) return;
-    lastFormattedVactRef.current = formatted;
-    animateNumberHeight(currentValueRef, setCurrentValueHeight, currentValuePrevRef, currentValueTimerRef);
-  }, [animateNumberHeight, summaryTotals.acVact]);
+    queueCurrentHeightAnimation(formatted);
+  }, [queueCurrentHeightAnimation, summaryTotals.acVact]);
 
   useLayoutEffect(() => {
     const profitValue =
@@ -2225,11 +2440,9 @@ const VavityBitcoin: React.FC = () => {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
-    if (lastFormattedProfitRef.current === formatted) return;
-    lastFormattedProfitRef.current = formatted;
-    animateNumberHeight(profitValueRef, setProfitValueHeight, profitValuePrevRef, profitValueTimerRef);
+    queueProfitHeightAnimation(formatted);
   }, [
-    animateNumberHeight,
+    queueProfitHeightAnimation,
     summaryTotals.acVatop,
     summaryTotals.acVact,
     summaryTotals.acVactTaa,
@@ -3012,7 +3225,14 @@ const VavityBitcoin: React.FC = () => {
 
               <button
                 onClick={handleSubmitInvestment}
-                disabled={submitLoading || !tokenAmount || !purchaseDate || purchaseDateIsFuture}
+                disabled={
+                  submitLoading ||
+                  deleteInFlight ||
+                  deleteLocked ||
+                  !tokenAmount ||
+                  !purchaseDate ||
+                  purchaseDateIsFuture
+                }
                 className={`${buttonClass} asset-action-button--invest-submit`}
               >
                 {submitLoading ? 'Submitting...' : 'Submit'}

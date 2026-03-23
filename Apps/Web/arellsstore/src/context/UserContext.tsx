@@ -150,24 +150,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     (async () => {
       try {
         const skipParam = PREVIEW_SKIP_SESSION_DELETES ? '&skipExpiry=1' : '';
-        const res = await fetch(`/api/fetchVavityAggregator?sessionId=${encodeURIComponent(sessionId)}${skipParam}`);
-        const data = await res.json();
-        const hasMeta =
-          typeof data?.createdAt === 'number' && Number.isFinite(data.createdAt) &&
-          typeof data?.expiresAt === 'number' && Number.isFinite(data.expiresAt);
-        const hasInvestments = Array.isArray(data?.investments) && data.investments.length > 0;
-        if (!hasMeta && !hasInvestments) {
-          await fetch('/api/saveVavityAggregator', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              sessionId,
-              investments: [],
-              asset: 'bitcoin',
-              ...(PREVIEW_SKIP_SESSION_DELETES ? { skipExpiry: true } : {}),
-            }),
-          });
-        }
+        await fetch(`/api/initVavityAggregator?sessionId=${encodeURIComponent(sessionId)}${skipParam}`);
       } catch {
         // ignore bootstrap errors
       }
