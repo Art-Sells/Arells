@@ -166,7 +166,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Backfill TTL meta for legacy session files that predate createdAt/expiresAt.
     // This does NOT create a new session file; it only updates existing ones.
-    let didMutate = false;
     const createdAt = existingCreatedAt ?? now;
     let expiresAt = existingExpiresAt ?? createdAt + SESSION_TTL_MS;
     if (typeof expiresAt === 'number' && Number.isFinite(expiresAt)) {
@@ -198,7 +197,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           typeof inv.rCdVatop === 'number')
     );
     const hasLegacyTotals = userData?.totalsReality != null;
-    didMutate = hasLegacyLiquidFields || hasLegacyTotals;
+    let didMutate = hasLegacyLiquidFields || hasLegacyTotals;
     if (existingCreatedAt == null || existingExpiresAt == null) {
       didMutate = true;
     }
