@@ -1363,6 +1363,8 @@ const VavityEthereum: React.FC = () => {
           setInvestmentsListOpen(false);
           setSubmitPhase('idle');
           submitTargetRef.current = 'add';
+          setHideEmptyActionsOnSubmit(false);
+          emptyActionsHoldRef.current = false;
           setSummaryOpen(false);
           clearInvestmentsAnimTimerRef.current = null;
         }, 2000);
@@ -1406,6 +1408,7 @@ const VavityEthereum: React.FC = () => {
     suppressInvestmentsUI,
     summaryTotalsSnapshot,
     isSubmitCollapsing,
+    triggerEmptyButtonsExpand,
   ]);
 
   useEffect(() => {
@@ -3764,6 +3767,10 @@ const VavityEthereum: React.FC = () => {
                       suppressPortfolioCta();
                       if (showEmptyAddForm || emptyAddHiding || emptySigninHiding) return;
                       clearEmptyButtonsSequenceTimers();
+                      if (clearInvestmentsAnimTimerRef.current) {
+                        globalThis.clearTimeout(clearInvestmentsAnimTimerRef.current);
+                        clearInvestmentsAnimTimerRef.current = null;
+                      }
 
                       // 1) Collapse Sign In first
                       setEmptySigninHiding(true);

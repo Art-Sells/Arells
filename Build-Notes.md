@@ -2,7 +2,7 @@
 
 ## Arells v1
 
-- *ok now.... we're running into another issue..... After I delete all the investments.... its not heighting up the summary section...... its POPPing it up.....  and when the add investments and signi n to save investments section heights down... and i lclick add investments.... The add investment form doesn't height down (its skips the button)...  Only after page reload and i click the add investments button will it height down... Why investigate*
+- *after add investments/sign in to save investments section heights down after all deletions...... when I click "Add Investments" immediatelly... the add investments form begins to load but dissapears and reloads the add investments save investments section again... I basically have to click add investments again for the form to height down and not reload the add investments/ sign in to save investmnts section... investigate why make sure you compare our current code to this commit which wasn't running into those issues: b11df9f38f2433bc7991c7cff58aeee1fce68aa6*
 
 - *minor my investment box UI/spacing issues (top padding fix) to fix... Also loading issues on page mount if numbers haven't popped up yet... Might have to add a circular loader filed with the arells icon color changes just like the asset summary box loader for the summary box numbers and place it pretty high on top*
 
